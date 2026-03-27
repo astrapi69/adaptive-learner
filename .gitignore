@@ -1,0 +1,61 @@
+##################
+# intellij files #
+##################
+*.iws
+*.iml
+*.ipr
+!.idea/runConfigurations
+.idea/**
+.idea/*.*
+
+#############
+# Zip files #
+#############
+*.tar
+*.tar.gz
+*.zip
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.war
+*.ear
+*.rar
+
+##############
+# .venv #
+##############
+.venv/
+.env
+
+##############
+# Logs files #
+##############
+*.log
+logs/
+
+############################
+# Binaries generated files #
+############################
+/bin
+
+################
+# Build output #
+################
+output
+
+########################
+# Python related files #
+########################
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+.env.*
+.cache/
+.mypy_cache/
+coverage.xml
+htmlcov/
