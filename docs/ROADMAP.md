@@ -10,8 +10,6 @@ Prompt-Referenz: `Setze B-01 um.` reicht als Anweisung.
 
 ## Naechste Schritte (priorisiert)
 
-Diese Punkte haben Vorrang vor den kategorisierten Listen unten.
-
 - [ ] S-01: Template-Reste aufraumen (scripts/, root tests/, root pyproject.toml anpassen)
 - [ ] S-02: Backend-Verzeichnisstruktur anlegen (backend/ mit eigenem pyproject.toml)
 - [ ] S-03: Frontend-Scaffolding (Vite + React + TypeScript)
@@ -36,7 +34,7 @@ Diese Punkte haben Vorrang vor den kategorisierten Listen unten.
 
 - [ ] B-01: database.py (SQLAlchemy + SQLite, Session-Factory)
 - [ ] B-02: hookspecs.py (AdaptiveLearnerHookSpec, alle Hooks)
-- [ ] B-03: main.py (FastAPI, PluginManager, register_plugin, mount_routes)
+- [ ] B-03: main.py (FastAPI, PluginManager, register_plugin, mount_routes, globaler Exception-Handler)
 - [ ] B-04: Core-Router users.py (POST, GET, PATCH)
 - [ ] B-05: Core-Router projects.py (POST, GET, PATCH)
 - [ ] B-06: Core-Router settings.py (GET, PATCH, POST api-key)
@@ -44,7 +42,7 @@ Diese Punkte haben Vorrang vor den kategorisierten Listen unten.
 - [ ] B-08: Core-Models (User, LearningProject, UserSettings) mit SQLAlchemy 2.0
 - [ ] B-09: Pydantic Schemas (Request/Response fuer alle Core-Endpunkte)
 - [ ] B-10: config/app.yaml (App-Config, Plugin-Liste, DB-URL, CORS)
-- [ ] B-11: Alembic-Migrationen (spaeter, nach MVP)
+- [ ] B-11: Exception-Hierarchie (AdaptiveLearnerError, NotFoundError, ValidationError, ProviderError)
 - [ ] B-12: Rate Limiting fuer AI-Provider-Aufrufe (konfigurierbar)
 
 ## Plugins
@@ -160,7 +158,6 @@ Diese Punkte haben Vorrang vor den kategorisierten Listen unten.
 - [ ] Q-09: Frontend Vitest Setup
 - [ ] Q-10: E2E Playwright Setup
 - [ ] Q-11: CI-Pipeline (GitHub Actions)
-- [ ] Q-12: Mutation Testing mit mutmut (spaeter)
 
 ## DevOps
 

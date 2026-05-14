@@ -7,8 +7,6 @@ Automatisierte Durchsetzung von Codequalitaet.
 ### Python (Backend + Plugins)
 
 ```toml
-# backend/pyproject.toml
-
 [tool.ruff]
 target-version = "py311"
 line-length = 100
@@ -29,7 +27,7 @@ indent-style = "space"
 cd backend && poetry run ruff check .         # Linting
 cd backend && poetry run ruff check --fix .   # Auto-Fix
 cd backend && poetry run ruff format .        # Formatierung
-cd backend && poetry run black .              # Formatierung (black)
+cd backend && poetry run black .              # Formatierung
 ```
 
 ### TypeScript (Frontend)
@@ -38,41 +36,53 @@ Standard ESLint + Prettier Config via Vite Template.
 
 ---
 
-## Error-Handling Patterns
+## Error-Handling Architektur
 
-### Backend (FastAPI)
+### Backend: Eigene Exception-Hierarchie
+
+Services werfen NIEMALS `HTTPException`. Services nutzen eigene Exceptions:
 
 ```python
-from fastapi import HTTPException
+class AdaptiveLearnerError(Exception):
+    """Basis-Exception."""
 
-async def get_user(user_id: str):
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail=f"User {user_id} not found")
-    return user
+class NotFoundError(AdaptiveLearnerError):
+    """Ressource nicht gefunden."""
+
+class ValidationError(AdaptiveLearnerError):
+    """Validierungsfehler."""
+
+class ProviderError(AdaptiveLearnerError):
+    """AI-Provider-Fehler."""
 ```
 
-- HTTP 404: Ressource nicht gefunden.
-- HTTP 422: Validierungsfehler (Pydantic automatisch).
-- HTTP 500: Nur fuer unerwartete Fehler.
-- Service-Funktionen werfen ValueError, Router mappen zu HTTPException.
-- AI-Provider-Fehler abfangen und sinnvoll melden (kein Stack-Trace ans Frontend).
+Der globale Exception-Handler in main.py mappt:
 
-### Frontend (React)
+```python
+@app.exception_handler(NotFoundError)
+async def not_found_handler(request, exc):
+    return JSONResponse(status_code=404, content={"detail": str(exc)})
+```
+
+### Frontend: ApiError
 
 ```typescript
 try {
-  await startSession(data)
-  // Erfolg
+  const result = await api.session.start(data);
 } catch (error) {
   if (error instanceof ApiError) {
-    // Fehler anzeigen
+    showError(error.detail);
   }
 }
 ```
 
-- API-Fehler dem User zeigen.
-- Loading-States waehrend API-Calls.
+### Regeln
+
+- JEDES except-Block MUSS logger.error() aufrufen.
+- JEDES except-Block MUSS str(e) in die Exception einbauen.
+- Generische Fehlermeldungen ohne Details sind VERBOTEN.
+- AI-Provider-Fehler abfangen und sinnvoll melden (kein Stack-Trace ans Frontend).
+- Frontend: Loading-States waehrend API-Calls.
 
 ---
 
@@ -86,7 +96,6 @@ PATCH  /api/users/{id}               # Aktualisieren
 DELETE /api/users/{id}               # Loeschen
 ```
 
-- Keine Envelope. HTTP-Status reicht.
 - IDs sind UUIDs als Strings.
 - Timestamps als ISO 8601 (UTC).
 - Plugin-Endpunkte unter /api/plugins/{name}/.

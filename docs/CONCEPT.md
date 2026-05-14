@@ -60,9 +60,9 @@ Kernthese: Die beste Lernmethode ist keine feste Methode, sondern die Faehigkeit
 
 ```
 +----------------------------------------------------------+
-|  Frontend (React 18, TypeScript, Vite)                   |
+|  Frontend (React 19, TypeScript 6, Vite 8)               |
 +----------------------------------------------------------+
-|  Backend (FastAPI)                                        |
+|  Backend (FastAPI 0.136+)                                 |
 |  - User/Project CRUD                                     |
 |  - Session-Orchestrierung                                |
 |  - API-Key-Verwaltung                                    |
@@ -86,11 +86,11 @@ Kernthese: Die beste Lernmethode ist keine feste Methode, sondern die Faehigkeit
 | Komponente | Technologie |
 |------------|-------------|
 | Plugin-Framework | pluginforge (von PyPI) |
-| Backend | FastAPI, SQLAlchemy 2.0, SQLite |
-| Frontend | React 18, TypeScript, Vite, Recharts |
+| Backend | FastAPI 0.136+, SQLAlchemy 2.0.49, Pydantic 2.11+, SQLite |
+| Frontend | React 19, TypeScript 6, Vite 8, Recharts 3.8, Lucide React |
 | AI-Provider | anthropic SDK, openai SDK, google-generativeai SDK |
-| Tooling | Poetry, npm, Docker, Make |
-| Code-Qualitaet | ruff, black, mypy, pre-commit, pytest-cov |
+| Tooling | Poetry, npm (Node 24+), Docker, Make |
+| Code-Qualitaet | ruff, mypy, pre-commit, pytest, vitest |
 
 ---
 

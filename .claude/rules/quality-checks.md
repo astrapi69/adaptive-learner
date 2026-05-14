@@ -5,12 +5,9 @@
 ### 1. Tests laufen lassen
 
 ```bash
-# Alles (MUSS gruen sein vor jedem Commit)
-make test
-
-# Einzeln:
+make test                 # Alles (MUSS gruen sein vor jedem Commit)
 make test-backend         # pytest Backend
-make test-plugins         # Alle Plugin-Tests
+make test-plugins         # Plugin-Tests
 ```
 
 ### 2. Richtlinien manuell pruefen
@@ -25,6 +22,7 @@ Vor dem Commit:
 - [ ] Conventional Commit Message (feat:, fix:, refactor:, ...)
 - [ ] AI-Provider-Tests nutzen Mocks, keine echten API-Calls
 - [ ] API-Keys erscheinen nirgends im Klartext (Logs, Frontend, Tests)
+- [ ] Services werfen KEINE HTTPException (eigene Exceptions nutzen)
 
 ---
 
@@ -37,7 +35,7 @@ Vor dem Commit:
      / ------------ \       Wenige, kritische User-Flows
     / Integration    \      pytest + TestClient
    / ---------------- \    API-Endpunkte mit echtem DB-Zustand
-  /    Unit Tests      \    pytest
+  /    Unit Tests      \    pytest + Vitest
  / -------------------- \  Geschaeftslogik isoliert
 ```
 
@@ -50,10 +48,9 @@ Vor dem Commit:
 - Neuer Service: Mindestens Happy-Path + ein Fehlerfall.
 - Bugfix: Erst failing Test, dann Fix.
 - Switching-Logik: Verschiedene Rating-Szenarien.
+- Jedes Setting/Flag: Mindestens ein Test der den nicht-Default-Wert setzt und beobachtbare Verhaltensaenderung asserted.
 
 ### Integrationstests (Backend - pytest + TestClient)
-
-**Was testen:** API-Endpunkte mit echtem DB-Zustand.
 
 ```python
 from fastapi.testclient import TestClient
@@ -95,4 +92,3 @@ NIEMALS echte API-Calls in Tests. Immer mocken.
 3. **Frontend Vitest** - API Client, Utilities
 4. **E2E Playwright** - Kritische User-Flows
 5. **CI-Pipeline** - GitHub Actions
-6. **Mutation Testing** - mutmut (spaeter)

@@ -61,6 +61,20 @@ backend/plugins/{name}/
 - Methoden-Wechsel-Logik in plugins/session/switching.py.
 - Stagnation-Detection basiert auf gleitendem Durchschnitt der letzten N Ratings.
 
+### Error-Handling Architektur
+
+- Service-Funktionen werfen eigene Exception-Klassen (AdaptiveLearnerError und Subklassen), NIEMALS HTTPException.
+- Route-Handler fangen nichts. Ein globaler Exception-Handler in main.py mappt Exceptions zu HTTP-Codes.
+- Frontend faengt ApiError, zeigt Fehlerdetails dem User.
+
+```python
+# Eigene Exception-Hierarchie
+class AdaptiveLearnerError(Exception): ...
+class NotFoundError(AdaptiveLearnerError): ...
+class ValidationError(AdaptiveLearnerError): ...
+class ProviderError(AdaptiveLearnerError): ...
+```
+
 ## Frontend (React/TypeScript)
 
 ### Komponentenstrategie
@@ -72,7 +86,6 @@ backend/plugins/{name}/
 ### State Management
 
 - React State + Props. Kein globales State-Management fuer v0.1.0.
-- Wenn noetig: Zustand, NICHT Redux.
 
 ## Persistenz
 

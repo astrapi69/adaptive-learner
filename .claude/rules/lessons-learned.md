@@ -11,7 +11,7 @@ Diese Regeln stammen aus der Bibliogon-Entwicklung und allgemeiner Erfahrung. Si
 
 ### Manuelle vs. Entry Point Registrierung
 - v0.1.0 nutzt register_plugin() (Plugins im gleichen Repo).
-- Entry Points erst ab v0.3.0 wenn Plugins in eigene Pakete ausgelagert werden.
+- Entry Points erst ab v0.3.0.
 - Beides kann kombiniert werden.
 
 ### Config-Defaults
@@ -21,6 +21,11 @@ Diese Regeln stammen aus der Bibliogon-Entwicklung und allgemeiner Erfahrung. Si
 ### Hook firstresult
 - AI-Provider Hooks nutzen firstresult=True. Nur der erste registrierte Provider der antwortet gewinnt.
 - Sicherstellen dass nur der aktive Provider registriert ist.
+
+### Plugin Settings YAML lebt in backend/config/plugins/
+- PluginForge liest Settings aus dem Backend-weiten config_dir, NICHT aus dem Plugin-Ordner selbst.
+- Kanonischer Pfad: `backend/config/plugins/{plugin_slug}.yaml`
+- Symptom bei falschem Pfad: Plugin laedt, aber self.config ist leer.
 
 ## AI-Provider
 
@@ -73,9 +78,36 @@ Diese Regeln stammen aus der Bibliogon-Entwicklung und allgemeiner Erfahrung. Si
 - Sprache aus User-Settings laden, nicht aus Browser-Locale.
 - Fallback: Englisch wenn Key in gewaehlter Sprache fehlt.
 
+### TypeScript 6
+- TS 6 inkludiert nicht mehr automatisch alle @types/* Pakete. Jedes benoetigte @types-Paket muss explizit in tsconfig.json unter "types" gelistet werden.
+- Wenn @types/node gebraucht wird (z.B. fuer Tests mit node:fs): devDependency hinzufuegen UND in tsconfig.json "types": ["node", "vite/client"] setzen.
+
+### Vite 8 (Rolldown)
+- Vite 8 nutzt intern Rolldown statt Rollup. manualChunks muss eine Funktion sein, kein Objekt.
+- Bei Trailing-Slash-Matching in manualChunks: `id.includes('/node_modules/react/')` statt bare-Package-Matching, sonst kollidiert "react" mit "react-dom" und "react-router-dom".
+
+### React 19
+- useFormStatus, useOptimistic und verbessertes Suspense sind neu. Kein Breaking Change fuer unseren Use Case.
+- React 19 Dev-Mode (Strict Mode) mounted Komponenten doppelt. In Tests `mockImplementation` statt `mockImplementationOnce` verwenden, sonst wird der Mock beim zweiten Mount konsumiert.
+
 ## Allgemeine Patterns
 
-- Vor Custom-Implementierungen: Pruefen ob eine Library das schon loest.
-- AI-Provider-Tests: IMMER mocken. Kein echter API-Call in Tests.
-- Profil-Berechnung: Deterministisch. Gleiche Antworten = gleiches Profil.
-- Methodenwechsel-Logik: Rein regelbasiert (kein ML). Threshold-basiert.
+### Vor Custom-Implementierungen pruefen
+- Immer zuerst checken ob eine Library das schon loest.
+
+### End-to-End Behavior Tests, nicht "kwarg passes through" Tests
+- Jedes Setting muss mindestens einen Test haben, der den nicht-Default-Wert setzt und eine BEOBACHTBARE Verhaltensaenderung asserted.
+- Smoke-Tests die nur pruefen ob ein Dict korrekt gesetzt wurde, sind kein Ersatz fuer Behavior-Tests.
+
+### Atomic Commits
+- "Atomic Commit" bedeutet: jeder Commit ist die kleinste reversible Einheit die den Baum gruen laesst.
+- Wenn ein Split einen kaputten Zwischenzustand erzeugt (z.B. Source-Aenderung loescht eine Funktion die bestehende Tests noch importieren), ist der Split falsch. Beides in einen Commit.
+
+### CI vs. lokale Umgebung
+- `poetry install` entfernt NICHT Dependencies die aus pyproject.toml verschwunden sind. In langlebigen lokalen venvs bleiben stale .dist-info Verzeichnisse. CI startet frisch und schlaegt sofort fehl.
+- Mitigation: Regelmaessig `poetry install --sync` ausfuehren.
+
+### Error-Handling Fehler die wir vermeiden
+- HTTPException direkt aus Services werfen. Macht Services untestbar.
+- Bare `except Exception: pass` in Plugin-Code. Fehler verschwinden.
+- Frontend: API-Calls ohne catch. User klickt "Starten" und nichts passiert.
