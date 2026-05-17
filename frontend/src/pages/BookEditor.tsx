@@ -5,9 +5,6 @@ import ConflictResolutionDialog, {type ConflictInfo} from "../components/Conflic
 import ChapterVersionsModal from "../components/ChapterVersionsModal";
 import ChapterSidebar from "../components/ChapterSidebar";
 import Editor from "../components/Editor";
-import ExportDialog from "../components/ExportDialog";
-import GitBackupDialog from "../components/GitBackupDialog";
-import GitSyncDialog from "../components/GitSyncDialog";
 import BookMetadataEditor from "../components/BookMetadataEditor";
 import type {NavigableFindingType} from "../components/QualityTab";
 import SaveAsTemplateModal from "../components/SaveAsTemplateModal";
@@ -126,17 +123,9 @@ export default function BookEditor() {
     }, [bookId]);
 
     const refreshGitSyncMapping = useCallback(async () => {
-        if (!bookId) return;
-        try {
-            const mapping = await api.gitSync.status(bookId);
-            setGitSyncMapped(mapping.mapped);
-        } catch {
-            // Non-fatal: 200/{mapped:false} is the normal "no mapping"
-            // shape so anything that throws is a server/network blip;
-            // hide the button rather than spam toasts.
-            setGitSyncMapped(false);
-        }
-    }, [bookId]);
+        // git-sync plugin removed in skeleton
+        setGitSyncMapped(false);
+    }, []);
 
     // Bootstrap effect: load book + app settings + book list.
     //
@@ -599,38 +588,6 @@ export default function BookEditor() {
                             <Plus size={16} /> {t("ui.editor.new_chapter", "Neues Kapitel")}
                         </button>
                     }
-                />
-            )}
-
-            {bookId && (
-                <ExportDialog
-                    open={showExport}
-                    bookId={bookId}
-                    bookTitle={book.title}
-                    hasManualToc={book.chapters.some((ch) => ch.chapter_type === "toc")}
-                    onClose={() => setShowExport(false)}
-                />
-            )}
-
-            {bookId && (
-                <GitBackupDialog
-                    open={showGitBackup}
-                    bookId={bookId}
-                    onClose={() => {
-                        setShowGitBackup(false);
-                        void refreshGitSync();
-                    }}
-                />
-            )}
-
-            {bookId && (
-                <GitSyncDialog
-                    open={showGitSync}
-                    bookId={bookId}
-                    onClose={() => {
-                        setShowGitSync(false);
-                        void refreshGitSyncMapping();
-                    }}
                 />
             )}
 

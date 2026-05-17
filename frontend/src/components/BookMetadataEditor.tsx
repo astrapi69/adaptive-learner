@@ -19,7 +19,6 @@ import CoverUpload from "./CoverUpload";
 import AudiobookPlayer, {PlayerChapter} from "./AudiobookPlayer";
 import * as Tabs from "@radix-ui/react-tabs";
 import QualityTab, {NavigableFindingType} from "./QualityTab";
-import TranslationLinks from "./TranslationLinks";
 import AITemplatePanel from "./AITemplatePanel";
 import styles from "./BookMetadataEditor.module.css";
 
@@ -229,7 +228,6 @@ export default function BookMetadataEditor({book, onSave, onBack, allBooks, onNa
 
                 <Tabs.Content value="general">
                     <div className={styles.tabContent}>
-                        <TranslationLinks bookId={book.id} />
                         <Row>
                             <AuthorSelectField
                                 label={t("ui.metadata.author", "Autor")}
@@ -926,12 +924,12 @@ function AudiobookBookConfig({
     useEffect(() => {
         let cancelled = false;
         setLoadingVoices(true);
-        api.audiobook
+        (api as any).audiobook
             .listVoices(currentEngine, bookLanguage)
-            .then((data) => {
+            .then((data: AudiobookVoice[]) => {
                 if (cancelled) return;
                 setVoices(data);
-                if (data.length > 0 && !data.some((v) => v.id === voice)) {
+                if (data.length > 0 && !data.some((v: AudiobookVoice) => v.id === voice)) {
                     onVoiceChange(data[0].id);
                 }
             })
@@ -1192,7 +1190,7 @@ function AudiobookDownloads({bookId, bookChapters}: {bookId: string; bookChapter
 
     const load = useCallback(async () => {
         try {
-            const result = await api.bookAudiobook.get(bookId);
+            const result = await (api as any).bookAudiobook.get(bookId);
             setData(result);
         } catch (err) {
             if (!(err instanceof ApiError) || err.status !== 404) {
@@ -1201,7 +1199,7 @@ function AudiobookDownloads({bookId, bookChapters}: {bookId: string; bookChapter
             setData({exists: false, book_id: bookId});
         }
         try {
-            const p = await api.bookAudiobook.listPreviews(bookId);
+            const p = await (api as any).bookAudiobook.listPreviews(bookId);
             setPreviews(p);
         } catch {
             setPreviews([]);
@@ -1229,7 +1227,7 @@ function AudiobookDownloads({bookId, bookChapters}: {bookId: string; bookChapter
         if (!confirmed) return;
         setBusy(true);
         try {
-            await api.bookAudiobook.delete(bookId);
+            await (api as any).bookAudiobook.delete(bookId);
             notify.success(t("ui.audiobook.deleted", "Audiobook gelöscht"));
             await load();
         } catch (err) {
@@ -1247,7 +1245,7 @@ function AudiobookDownloads({bookId, bookChapters}: {bookId: string; bookChapter
         if (!confirmed) return;
         setBusy(true);
         try {
-            await api.bookAudiobook.deleteChapter(bookId, filename);
+            await (api as any).bookAudiobook.deleteChapter(bookId, filename);
             await load();
         } catch (err) {
             notify.error(t("ui.audiobook.delete_failed", "Löschen fehlgeschlagen"), err);
@@ -1264,7 +1262,7 @@ function AudiobookDownloads({bookId, bookChapters}: {bookId: string; bookChapter
         if (!confirmed) return;
         setBusy(true);
         try {
-            await api.bookAudiobook.deletePreview(bookId, filename);
+            await (api as any).bookAudiobook.deletePreview(bookId, filename);
             setPreviews((prev) => prev.filter((p) => p.filename !== filename));
         } catch (err) {
             notify.error(t("ui.audiobook.delete_failed", "Löschen fehlgeschlagen"), err);
@@ -1281,7 +1279,7 @@ function AudiobookDownloads({bookId, bookChapters}: {bookId: string; bookChapter
         if (!confirmed) return;
         setBusy(true);
         try {
-            await api.bookAudiobook.deleteAllPreviews(bookId);
+            await (api as any).bookAudiobook.deleteAllPreviews(bookId);
             setPreviews([]);
         } catch (err) {
             notify.error(t("ui.audiobook.delete_failed", "Löschen fehlgeschlagen"), err);
@@ -1370,13 +1368,13 @@ function AudiobookDownloads({bookId, bookChapters}: {bookId: string; bookChapter
                                     )}
                                     <div style={{display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap"}}>
                                         {data.merged && (
-                                            <a className="btn btn-primary btn-sm" href={api.bookAudiobook.mergedUrl(bookId)} download>
+                                            <a className="btn btn-primary btn-sm" href={(api as any).bookAudiobook.mergedUrl(bookId)} download>
                                                 <Download size={12}/> {t("ui.audiobook.download_merged", "Gemergtes Audiobook")}
                                                 {data.merged.duration_seconds ? ` (${formatDuration(data.merged.duration_seconds)})` : ` (${formatBytes(data.merged.size_bytes)})`}
                                             </a>
                                         )}
                                         {data.chapters && data.chapters.length > 0 && (
-                                            <a className="btn btn-secondary btn-sm" href={api.bookAudiobook.zipUrl(bookId)} download>
+                                            <a className="btn btn-secondary btn-sm" href={(api as any).bookAudiobook.zipUrl(bookId)} download>
                                                 <Package size={12}/> {t("ui.audiobook.download_zip", "ZIP")}
                                             </a>
                                         )}

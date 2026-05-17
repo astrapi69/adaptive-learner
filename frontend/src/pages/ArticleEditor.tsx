@@ -267,31 +267,10 @@ export default function ArticleEditor() {
     // Filtering by both means the dropdown only lists providers
     // that will actually translate - no 400s, no 120s timeouts.
     useEffect(() => {
-        if (!translateOpen || providers !== null) return;
-        let cancelled = false;
-        Promise.all([
-            api.articleTranslation.providers(),
-            api.articleTranslation.health(),
-        ])
-            .then(([list, health]) => {
-                if (cancelled) return;
-                const enriched: ProviderInfo[] = list.map((p) => ({
-                    ...p,
-                    healthy: health[p.id]?.status === "ok",
-                }));
-                setProviders(enriched);
-                // Default to the first available (configured AND
-                // healthy) provider.
-                const firstAvailable = enriched.find((p) => p.configured && p.healthy);
-                if (firstAvailable && (firstAvailable.id === "deepl" || firstAvailable.id === "lmstudio")) {
-                    setTranslateProvider(firstAvailable.id);
-                }
-            })
-            .catch(() => setProviders([]));
-        return () => {
-            cancelled = true;
-        };
-    }, [translateOpen, providers]);
+        // Translation plugin removed - no providers available in skeleton.
+        if (!translateOpen) return;
+        setProviders([]);
+    }, [translateOpen]);
 
     const currentProvider = providers?.find((p) => p.id === translateProvider);
     const providerAvailable = currentProvider
@@ -313,16 +292,16 @@ export default function ArticleEditor() {
         }
         setTranslating(true);
         try {
-            const result = await api.articleTranslation.translate(
-                article.id,
-                translateLang,
-                {sourceLang: article.language, provider: translateProvider},
+            // Translation plugin removed in skeleton.
+            throw new ApiError(
+                501,
+                t(
+                    "ui.articles.translate_unavailable",
+                    "Translation is unavailable in the skeleton template.",
+                ),
+                "/api/articles/translate",
+                "POST",
             );
-            notify.success(
-                t("ui.articles.translate_success", "Übersetzung erstellt."),
-            );
-            setTranslateOpen(false);
-            navigate(`/articles/${result.article_id}`);
         } catch (err) {
             if (err instanceof ApiError) {
                 // Surface the backend detail (e.g. "No DeepL API key
@@ -428,9 +407,15 @@ export default function ArticleEditor() {
         if (!article || exporting) return;
         setExporting(fmt);
         try {
-            await api.articleExport.download(article.id, fmt);
-            notify.success(
-                t("ui.articles.export_success", "Export gestartet."),
+            // Export plugin removed in skeleton.
+            throw new ApiError(
+                501,
+                t(
+                    "ui.articles.export_unavailable",
+                    "Article export is unavailable in the skeleton template.",
+                ),
+                "/api/articles/export",
+                "GET",
             );
         } catch (err) {
             if (err instanceof ApiError) {

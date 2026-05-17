@@ -622,11 +622,10 @@ export default function Editor({content, onSave, placeholder, contentKind = "boo
         setSpellcheckLoading(true);
         try {
             const text = editor.getText();
-            const data = await api.grammar.check(text);
-            setSpellcheckResults(data.matches || []);
-            if ((data.matches || []).length === 0) {
-                notify.success(t("ui.editor.spellcheck_ok", "Keine Fehler gefunden"));
-            }
+            // Grammar plugin removed - spellcheck disabled in skeleton
+            const data = {matches: [] as {message: string; short_message: string; offset: number; length: number; replacements: string[]; rule_id: string}[]};
+            setSpellcheckResults(data.matches);
+            notify.info(t("ui.editor.spellcheck_disabled", "Spellcheck disabled in skeleton"));
         } catch (err) {
             const detail = err instanceof ApiError ? err.detail : null;
             notify.error(detail || t("ui.editor.spellcheck_error", "Rechtschreibprüfung fehlgeschlagen"), err);
@@ -674,17 +673,10 @@ export default function Editor({content, onSave, placeholder, contentKind = "boo
                 return;
             }
 
-            try {
-                const blob = await api.audiobook.preview(text, bookId || "", chapterTitle || "");
-                // Revoke any previous preview URL to avoid memory leaks
-                if (previewAudioUrl) URL.revokeObjectURL(previewAudioUrl);
-                setPreviewAudioUrl(URL.createObjectURL(blob));
-            } catch (err) {
-                const detail = err instanceof ApiError ? err.detail : null;
-                notify.error(detail || t("ui.editor.preview_error", "Vorschau fehlgeschlagen"), err);
-                setPreviewLoading(false);
-                return;
-            }
+            // Audiobook plugin removed - audio preview disabled in skeleton
+            notify.info(t("ui.editor.preview_disabled", "Audio preview disabled in skeleton"));
+            setPreviewLoading(false);
+            return;
         } catch {
             notify.error(t("ui.editor.preview_error", "Vorschau fehlgeschlagen"));
         }
