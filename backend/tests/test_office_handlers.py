@@ -1,0 +1,324 @@
+"""Tests for the .docx and .epub import handlers (CIO-04).
+
+Both handlers shell out to Pandoc. Unit tests mock the conversion
+helper so the suite does not require crafted binary fixtures (the
+Pandoc binary is available in CI and Docker but generating minimal
+valid .docx/.epub in-test adds noise without catching more bugs).
+"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import pytest
+from sqlalchemy.orm import Session
+
+from app.database import SessionLocal
+from app.import_plugins.handlers.office import (
+    DocxImportHandler,
+    EpubImportHandler,
+    _extract_title,
+    _split_into_chapters,
+)
+from app.models import Asset, Book, Chapter
+
+
+@pytest.fixture
+def db() -> Session:
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.rollback()
+        session.close()
+
+
+def _fake_conversion(markdown: str):
+    """Factory for the Pandoc mock: returns (markdown, empty_media_dir)."""
+
+    def _convert(path: Path, fmt: str):
+        import tempfile
+
+        media = Path(tempfile.mkdtemp(prefix="fake_media_"))
+        return markdown, media
+
+    return _convert
+
+
+# --- can_handle ---
+
+
+def test_docx_can_handle_docx(tmp_path: Path) -> None:
+    f = tmp_path / "book.docx"
+    f.write_bytes(b"PK\x03\x04")
+    assert DocxImportHandler().can_handle(str(f)) is True
+
+
+def test_docx_rejects_other_extensions(tmp_path: Path) -> None:
+    f = tmp_path / "book.epub"
+    f.write_bytes(b"PK\x03\x04")
+    assert DocxImportHandler().can_handle(str(f)) is False
+
+
+def test_epub_can_handle_epub(tmp_path: Path) -> None:
+    f = tmp_path / "book.epub"
+    f.write_bytes(b"PK\x03\x04")
+    assert EpubImportHandler().can_handle(str(f)) is True
+
+
+def test_epub_rejects_directories(tmp_path: Path) -> None:
+    assert EpubImportHandler().can_handle(str(tmp_path)) is False
+
+
+# --- detect ---
+
+
+def test_detect_splits_on_h1(tmp_path: Path, monkeypatch) -> None:
+    markdown = "# One\n\nFirst body.\n\n# Two\n\nSecond body.\n"
+    monkeypatch.setattr(
+        "app.import_plugins.handlers.office._convert_to_markdown",
+        _fake_conversion(markdown),
+    )
+    f = tmp_path / "book.docx"
+    f.write_bytes(b"PK\x03\x04")
+    detected = DocxImportHandler().detect(str(f))
+    assert [c.title for c in detected.chapters] == ["One", "Two"]
+    assert detected.title == "One"
+    assert detected.format_name == "docx"
+    assert detected.source_identifier.startswith("sha256:")
+
+
+def test_detect_without_h1_yields_single_chapter(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "app.import_plugins.handlers.office._convert_to_markdown",
+        _fake_conversion("Just some text with no H1 at all."),
+    )
+    f = tmp_path / "book.docx"
+    f.write_bytes(b"PK\x03\x04")
+    detected = DocxImportHandler().detect(str(f))
+    assert len(detected.chapters) == 1
+    assert detected.chapters[0].title == "Untitled"
+    assert detected.title == "book"  # path.stem fallback
+
+
+def test_detect_warns_on_long_single_chapter(tmp_path: Path, monkeypatch) -> None:
+    markdown = "Body text.\n" * 10_000
+    monkeypatch.setattr(
+        "app.import_plugins.handlers.office._convert_to_markdown",
+        _fake_conversion(markdown),
+    )
+    f = tmp_path / "book.epub"
+    f.write_bytes(b"PK\x03\x04")
+    detected = EpubImportHandler().detect(str(f))
+    assert any("single long chapter" in w.lower() for w in detected.warnings)
+
+
+# --- execute ---
+
+
+def test_execute_creates_book_and_chapters(tmp_path: Path, db: Session, monkeypatch) -> None:
+    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(
+        "app.import_plugins.handlers.office._convert_to_markdown",
+        _fake_conversion("# Chapter A\n\nBody A.\n\n# Chapter B\n\nBody B.\n"),
+    )
+    f = tmp_path / "book.docx"
+    f.write_bytes(b"PK\x03\x04")
+    handler = DocxImportHandler()
+    detected = handler.detect(str(f))
+    book_id = handler.execute(str(f), detected, overrides={})
+
+    chapters = db.query(Chapter).filter(Chapter.book_id == book_id).order_by(Chapter.position).all()
+    assert [c.title for c in chapters] == ["Chapter A", "Chapter B"]
+
+
+def test_execute_with_overrides_updates_book(tmp_path: Path, db: Session, monkeypatch) -> None:
+    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(tmp_path))
+    monkeypatch.setattr(
+        "app.import_plugins.handlers.office._convert_to_markdown",
+        _fake_conversion("# Auto\n\nBody."),
+    )
+    f = tmp_path / "book.docx"
+    f.write_bytes(b"PK\x03\x04")
+    handler = DocxImportHandler()
+    detected = handler.detect(str(f))
+    book_id = handler.execute(
+        str(f),
+        detected,
+        overrides={"title": "Override", "author": "Alice", "language": "en"},
+    )
+    book = db.query(Book).filter(Book.id == book_id).one()
+    assert book.title == "Override"
+    assert book.language == "en"
+
+
+def test_execute_rejects_unknown_override_key(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "app.import_plugins.handlers.office._convert_to_markdown",
+        _fake_conversion("# A\n\nBody."),
+    )
+    f = tmp_path / "book.docx"
+    f.write_bytes(b"PK\x03\x04")
+    handler = DocxImportHandler()
+    detected = handler.detect(str(f))
+    with pytest.raises(KeyError):
+        handler.execute(str(f), detected, overrides={"bogus": "nope"})
+
+
+def test_execute_overwrite_removes_existing_chapters_and_assets(
+    tmp_path: Path, db: Session, monkeypatch
+) -> None:
+    """``duplicate_action="overwrite"`` must hard-delete the existing
+    Book's chapters AND assets before the new rows land, so the
+    overwritten Book ends up with exactly the new content. Regression
+    pin for `_hard_delete_book`: previous coverage left both DELETE
+    statements untested, so mutating either filter to a no-op would
+    silently leak old data into the overwritten Book.
+    """
+    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(tmp_path))
+
+    def _convert_with_media(path: Path, fmt: str):
+        media = tmp_path / "media_first"
+        media.mkdir(exist_ok=True)
+        (media / "old.png").write_bytes(b"\x89PNG\r\n\x1a\n")
+        return "# Old Chapter\n\nOld body.\n", media
+
+    monkeypatch.setattr(
+        "app.import_plugins.handlers.office._convert_to_markdown",
+        _convert_with_media,
+    )
+    src = tmp_path / "book.docx"
+    src.write_bytes(b"PK\x03\x04")
+    handler = DocxImportHandler()
+    detected_first = handler.detect(str(src))
+    first_id = handler.execute(str(src), detected_first, overrides={})
+
+    assert db.query(Chapter).filter(Chapter.book_id == first_id).count() == 1
+    assert db.query(Asset).filter(Asset.book_id == first_id).count() == 1
+
+    def _convert_second(path: Path, fmt: str):
+        media = tmp_path / "media_second"
+        media.mkdir(exist_ok=True)
+        (media / "new.png").write_bytes(b"\x89PNG\r\n\x1a\n")
+        return "# New A\n\nA body.\n\n# New B\n\nB body.\n", media
+
+    monkeypatch.setattr(
+        "app.import_plugins.handlers.office._convert_to_markdown",
+        _convert_second,
+    )
+    detected_second = handler.detect(str(src))
+    second_id = handler.execute(
+        str(src),
+        detected_second,
+        overrides={},
+        duplicate_action="overwrite",
+        existing_book_id=first_id,
+    )
+    db.expire_all()
+
+    overwritten_chapters = db.query(Chapter).filter(Chapter.book_id == first_id).all()
+    assert [c.title for c in overwritten_chapters] == []
+    overwritten_assets = db.query(Asset).filter(Asset.book_id == first_id).all()
+    assert overwritten_assets == []
+
+    new_chapters = (
+        db.query(Chapter).filter(Chapter.book_id == second_id).order_by(Chapter.position).all()
+    )
+    assert [c.title for c in new_chapters] == ["New A", "New B"]
+    new_assets = db.query(Asset).filter(Asset.book_id == second_id).all()
+    assert any(a.filename == "new.png" for a in new_assets)
+    assert not any(a.filename == "old.png" for a in new_assets)
+
+
+def test_execute_copies_pandoc_extracted_media(tmp_path: Path, db: Session, monkeypatch) -> None:
+    """When Pandoc writes images into the --extract-media dir, the handler
+    copies them into uploads/{book}/figure/ and records Asset rows."""
+    import shutil
+
+    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(tmp_path))
+
+    def _convert_with_media(path: Path, fmt: str):
+        media = tmp_path / "media"
+        media.mkdir(exist_ok=True)
+        (media / "figure1.png").write_bytes(b"\x89PNG\r\n\x1a\n")
+        return "# Intro\n\n![alt](media/figure1.png)\n", media
+
+    monkeypatch.setattr(
+        "app.import_plugins.handlers.office._convert_to_markdown",
+        _convert_with_media,
+    )
+    f = tmp_path / "book.epub"
+    f.write_bytes(b"PK\x03\x04")
+    handler = EpubImportHandler()
+    detected = handler.detect(str(f))
+    book_id = handler.execute(str(f), detected, overrides={})
+
+    figures = db.query(Asset).filter(Asset.book_id == book_id, Asset.asset_type == "figure").all()
+    assert any(a.filename == "figure1.png" for a in figures)
+
+    # cleanup shared between mock invocations
+    shutil.rmtree(tmp_path / "media", ignore_errors=True)
+
+
+# --- Pure helpers ---
+
+
+def test_split_into_chapters_handles_empty() -> None:
+    assert _split_into_chapters("") == []
+
+
+def test_split_into_chapters_discards_prematter() -> None:
+    result = _split_into_chapters("Pre\n\n# A\n\nBody A.\n\n# B\n\nBody B.\n")
+    assert [c["title"] for c in result] == ["A", "B"]
+    assert result[0]["body"].startswith("Body A")
+
+
+def test_extract_title_returns_first_h1() -> None:
+    assert _extract_title("## Not h1\n\n# Real Title\n\n# Later\n") == "Real Title"
+    assert _extract_title("No heading at all.") is None
+
+
+# --- pandoc availability failover ---
+
+
+def test_detect_raises_pandoc_missing_when_binary_absent(tmp_path: Path, monkeypatch) -> None:
+    """If ``pandoc`` is not on PATH, detect must fail with a dedicated
+    ``_PandocMissing`` exception (mapped to a 500 with a clear message
+    by the orchestrator). Regression guard: a bare 500 with a generic
+    subprocess traceback is not acceptable - users need to know they
+    must install pandoc."""
+    from app.import_plugins.handlers.office import (
+        _convert_to_markdown,
+        _PandocMissing,
+    )
+
+    def _fake_run(*args, **kwargs):
+        raise FileNotFoundError(2, "No such file or directory: 'pandoc'")
+
+    monkeypatch.setattr("app.import_plugins.handlers.office.subprocess.run", _fake_run)
+    f = tmp_path / "book.docx"
+    f.write_bytes(b"PK\x03\x04")
+    with pytest.raises(_PandocMissing, match="pandoc"):
+        _convert_to_markdown(f, "docx")
+
+
+def test_detect_raises_pandoc_failure_on_nonzero_exit(tmp_path: Path, monkeypatch) -> None:
+    """Pandoc present but conversion fails: the handler must surface
+    the stderr so users can diagnose the input file."""
+    import subprocess
+
+    from app.import_plugins.handlers.office import (
+        _convert_to_markdown,
+        _PandocFailure,
+    )
+
+    def _fake_run(*args, **kwargs):
+        raise subprocess.CalledProcessError(
+            returncode=1, cmd=["pandoc"], stderr="docx: invalid zip"
+        )
+
+    monkeypatch.setattr("app.import_plugins.handlers.office.subprocess.run", _fake_run)
+    f = tmp_path / "book.docx"
+    f.write_bytes(b"PK\x03\x04")
+    with pytest.raises(_PandocFailure, match="invalid zip"):
+        _convert_to_markdown(f, "docx")

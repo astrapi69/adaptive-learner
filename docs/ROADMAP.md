@@ -1,172 +1,205 @@
-# Adaptive Learner - Anforderungen und Roadmap
+# Bibliogon Roadmap
 
-Offene Punkte, geplante Features und technische Schulden.
-Checkboxen: `[ ]` = offen, `[x]` = erledigt.
-IDs: S=Setup, B=Backend, P=Plugin, F=Frontend, I=i18n, Q=Tests, D=DevOps, T=Technische Schulden.
+Current phase: Phase 2 - build for real users, not just developers
+Last updated: 2026-05-07 (v0.30.0 cut)
+Latest release: v0.30.0 (launcher localized in 8 languages with full parity-test enforcement; DEP-DBPATH-01 cycle closes — BIBLIOGON_DB_PATH no longer honoured as a path override, warning-only on lingering env var; 5 new bilingual core help pages — books bulk-export, cross-platform installers, architecture, contributing, deployment, API reference; plugin dev guide refreshed for Vite 8 + Node 24; pre-release dependency sweep with fastapi 0.135 → 0.136 lock-step + in-range patches across all subsystems).
+Open tasks: 1 P2 (PB-PHASE4) + 3 active (P3..P5) + 2 BLOCKED-on-upstream + 1 P5 (LAUNCHER-I18N-NATIVE-REVIEW-01, public call-for-reviewers at [#18](https://github.com/astrapi69/bibliogon/issues/18))
+Archive: [docs/roadmap-archive/](roadmap-archive/)
 
-Prompt-Referenz: `Setze B-01 um.` reicht als Anweisung.
+Phase 1 (feature-complete single-user tool, v0.1.0 through v0.14.0)
+is archived at
+[docs/roadmap-archive/phase-1-complete.md](roadmap-archive/phase-1-complete.md).
+The bulk of Phase 2 work (v0.15.0 through v0.25.0) is archived at
+[docs/roadmap-archive/v0.25.0-cleanup-2026-05-02.md](roadmap-archive/v0.25.0-cleanup-2026-05-02.md).
+
+This file lists ONLY open tasks. Tasks are sorted by priority tier
+(P0 most urgent, P5 most speculative). BLOCKED-on-upstream items
+sit in their own section between P5 and the archive link. Within
+each tier, smaller-scope and unblocking items come first, with
+alphabetical-by-ID as final tiebreaker.
 
 ---
 
-## Naechste Schritte (priorisiert)
+## Current focus
 
-- [ ] S-01: Template-Reste aufraumen (scripts/, root tests/, root pyproject.toml anpassen)
-- [ ] S-02: Backend-Verzeichnisstruktur anlegen (backend/ mit eigenem pyproject.toml)
-- [ ] S-03: Frontend-Scaffolding (Vite + React + TypeScript)
-- [ ] B-01: database.py + Core-Models (User, LearningProject, UserSettings)
-- [ ] B-02: hookspecs.py (alle Hook-Specs definieren)
-- [ ] B-03: main.py (FastAPI + PluginForge Setup)
-- [ ] B-04: Core-Router (users, projects, settings)
-- [ ] B-05: crypto.py (Fernet API-Key-Verschluesselung)
+All Phase 2 themes (Distribution, Templates, Polish, Git-based
+backup, Donations, Core import orchestrator, plugin-git-sync,
+Article authoring, the deferred dependency sweep) are complete. The
+remaining open work is a small set of deferred-by-design items, a
+passive validation track, and four upstream-blocked dependency
+upgrades. See backlog for a curated daily-planning view.
 
-## Setup
+---
 
-- [ ] S-01: Template-Reste aufraumen (scripts/, root tests/ entfernen)
-- [ ] S-02: Backend-Verzeichnis mit pyproject.toml (pluginforge, FastAPI, SQLAlchemy, etc.)
-- [ ] S-03: Frontend-Scaffolding (Vite + React 18 + TypeScript + Recharts)
-- [ ] S-04: Makefile erweitern (install, dev, test fuer Backend+Frontend)
-- [ ] S-05: docker-compose.yml anlegen
-- [ ] S-06: .env.example mit ADAPTIVE_LEARNER_SECRET_KEY
-- [ ] S-07: .pre-commit-config.yaml anpassen fuer Backend+Frontend
-- [ ] S-08: .github/workflows/ci.yml anpassen
+## P0 - Deadline / Blocker / Security
 
-## Backend
+(none)
 
-- [ ] B-01: database.py (SQLAlchemy + SQLite, Session-Factory)
-- [ ] B-02: hookspecs.py (AdaptiveLearnerHookSpec, alle Hooks)
-- [ ] B-03: main.py (FastAPI, PluginManager, register_plugin, mount_routes, globaler Exception-Handler)
-- [ ] B-04: Core-Router users.py (POST, GET, PATCH)
-- [ ] B-05: Core-Router projects.py (POST, GET, PATCH)
-- [ ] B-06: Core-Router settings.py (GET, PATCH, POST api-key)
-- [ ] B-07: crypto.py (Fernet encrypt/decrypt, Key aus Env-Variable)
-- [ ] B-08: Core-Models (User, LearningProject, UserSettings) mit SQLAlchemy 2.0
-- [ ] B-09: Pydantic Schemas (Request/Response fuer alle Core-Endpunkte)
-- [ ] B-10: config/app.yaml (App-Config, Plugin-Liste, DB-URL, CORS)
-- [ ] B-11: Exception-Hierarchie (AdaptiveLearnerError, NotFoundError, ValidationError, ProviderError)
-- [ ] B-12: Rate Limiting fuer AI-Provider-Aufrufe (konfigurierbar)
+---
 
-## Plugins
+## P1 - Architecture / Hygiene Debt
 
-### Phase 1: Assessment (Lerntyp-Ermittlung)
+(none)
 
-- [ ] P-01: assessment/plugin.py (AssessmentPlugin, BasePlugin, hookimpl)
-- [ ] P-02: assessment/questions.py (12 Fragen, DE + EN)
-- [ ] P-03: assessment/models.py (LearningProfile SQLAlchemy Model)
-- [ ] P-04: assessment/routes.py (GET questions, POST evaluate, GET profile)
-- [ ] P-05: config/plugins/assessment.yaml
+---
 
-### Phase 1: AI-Provider (Claude zuerst)
+## P2 - High-Value User Features
 
-- [ ] P-06: ai_anthropic/plugin.py (AnthropicPlugin, ai_complete Hook)
-- [ ] P-07: config/plugins/ai-anthropic.yaml (default_model, max_tokens)
+- [ ] **PB-PHASE4**: Picture-Book plugin (kinderbuch) — Sessions
+  2-7 per the exploration. Promoted from P5 on 2026-05-16 after
+  user direct ask (Aster authoring a new picture book is a valid
+  go-signal per the exploration's "Triggers for reconsidering"
+  list). Comic-book support is a separate future plugin
+  (`plugin-comics`), not a continuation of this phase.
+  - Architecture: [docs/explorations/children-book-plugin.md](explorations/children-book-plugin.md)
+  - Readiness audit: [docs/audits/kinderbuch-phase4-readiness-2026-05-16.md](audits/kinderbuch-phase4-readiness-2026-05-16.md)
+  - Schema discriminator pattern (flat, one column):
+    - `Book.book_type ∈ {prose, picture_book, comic_book}`.
+      `picture_book` is v1 active in `plugin-kinderbuch`.
+      `comic_book` is reserved at the schema layer so a future
+      `plugin-comics` can ship its own `panels` and
+      `speech_bubbles` migration without re-migrating
+      `book_type`.
+  - Session status:
+    - [x] Session 1 — Architecture exploration (delivered via
+      existing plugin v1.0.0 + the exploration doc).
+    - [x] Session 2 — Backend data model: `Book.book_type` column
+      + `pages` table + Pydantic schemas + Pages CRUD routes +
+      tests + books PATCH immutability guard. Shipped 2026-05-16.
+    - [ ] Session 3 — Frontend page-based editor (three-pane
+      layout, layout picker, drag-reorder, inline image upload).
+      Mandatory go/no-go after Aster authors a 4-page test book.
+    - [ ] Session 4 — Speech-bubble layout (Layout A) + Playwright
+      Chromium PDF export pipeline.
+    - [ ] Session 5 — Image-top-text-bottom layout (Layout B) +
+      KDP page-count validation + AI-disclosure badge.
+    - [ ] Session 6 — EPUB3 Fixed-Layout export + epubcheck.
+    - [ ] Session 7 — Polish + onboarding (new-children-book
+      starter template, in-app help, builtin BookTemplate).
+  - Plugin separation: `bibliogon-plugin-kinderbuch` owns
+    `picture_book` exclusively. A separate
+    `bibliogon-plugin-comics` will own `comic_book` once
+    user-demand triggers the work (see backlog
+    `COMIC-BOOK-PLUGIN-01`).
+  - Out of scope for v1: convert prose <-> picture_book,
+    user-uploaded bubble graphics, two-page spreads, AI-generated
+    illustrations.
 
-### Phase 1: Session (7-Schritte-Zyklus)
+---
 
-- [ ] P-08: session/plugin.py (SessionPlugin, create_session_prompt, process_message Hooks)
-- [ ] P-09: session/prompts.py (System-Prompt-Templates pro Methode + Schritt)
-- [ ] P-10: session/models.py (LearningSession, SessionMessage, SessionRating)
-- [ ] P-11: session/switching.py (Methoden-Wechsel-Logik, Stagnation-Detection)
-- [ ] P-12: session/routes.py (POST start, POST message, POST rate, POST end)
-- [ ] P-13: config/plugins/session.yaml (default_method, stagnation_threshold, etc.)
+## P3 - Infrastructure / Quality
 
-### Phase 1: Tracking (Fortschritt)
+- [ ] **AR-01 validation log**: capture real cross-posting workflow
+  data in
+  [docs/journal/article-workflow-observations.md](journal/article-workflow-observations.md)
+  during normal publication work. Status 2026-05-06: 0 real
+  entries (template fixture + section markers only). The AR-03+
+  committed milestones depend on reaching the 3-5-entry
+  threshold first, which reopens the readiness audit
+  ([docs/audits/2026-05-02-ar-03-readiness.md](audits/2026-05-02-ar-03-readiness.md)).
+  Long-running passive task; fills as the feature is used in anger.
 
-- [ ] P-14: tracking/plugin.py (TrackingPlugin, on_session_complete, get_progress_summary)
-- [ ] P-15: tracking/models.py (ProgressCommit, MethodSwitch)
-- [ ] P-16: tracking/routes.py (GET progress, GET commits)
+- [ ] **PS-14+**: future polish items, surface as found.
 
-### Phase 1: Tools (Empfehlungen)
+---
 
-- [ ] P-17: tools/plugin.py (ToolsPlugin, get_tool_recommendations)
-- [ ] P-18: tools/routes.py (GET recommendations)
+## P4 - Roadmap / Future Phases
 
-### Phase 2: Weitere AI-Provider
+(D-05 closed as won't-fix 2026-05-05; see
+[docs/roadmap-archive/2026-05.md](roadmap-archive/2026-05.md).
+Docker EULA forbids third-party silent install per the
+installer discovery report.)
 
-- [ ] P-19: ai_openai/plugin.py (OpenAIPlugin, ai_complete Hook)
-- [ ] P-20: ai_gemini/plugin.py (GeminiPlugin, ai_complete Hook)
-- [ ] P-21: config/plugins/ai-openai.yaml, ai-gemini.yaml
-- [ ] P-22: Provider-Auswahl im Frontend (Settings)
+---
 
-### Phase 3: Erweiterte Analyse
+## P5 - Speculative / Nice-to-have
 
-- [ ] P-23: Fehlermuster-Erkennung (Tracking-Plugin erweitern)
-- [ ] P-24: Session-Vergleich ueber Zeit
-- [ ] P-25: Export Lernverlauf als PDF/Markdown
+- [ ] **D-03a**: AppImage for Linux — deferred. The PyInstaller
+  binary requires `python3-tk` on the target (preinstalled on
+  every major desktop distro). AppImage would make that
+  self-contained at a 4-10x size cost and added CI complexity
+  (FUSE + appimagetool). Re-evaluate only when a user reports a
+  missing-tkinter failure in the wild.
 
-### Phase 4: SaaS
+- [ ] **Phase 4 article-as-WBT git-sync**: article version control
+  via plugin-git-sync, parallel to the book path. Deferred — only
+  on user demand.
 
-- [ ] P-26: JWT-Authentifizierung
-- [ ] P-27: PostgreSQL statt SQLite
-- [ ] P-28: Multi-User
-- [ ] P-29: Premium-Plugins (erweiterte Analyse, Team-Features)
-- [ ] P-30: Stripe-Integration
+(PB-PHASE4 promoted to P2 on 2026-05-16 — Picture-Book plugin,
+Sessions 2-7 — replacing the narrower "kinderbuch single-page
+article variant" entry that previously sat here. Comic-Book
+support is a separate future plugin track, not part of
+PB-PHASE4.)
 
-## Frontend
+---
 
-### Phase 1: Core-Seiten
+## Blocked / Upstream Wait
 
-- [ ] F-01: Landing.tsx (Sprachauswahl, Einstieg)
-- [ ] F-02: Onboarding.tsx (Lernprojekt anlegen: Thema, Ziel, Timeframe, Minuten, Problem)
-- [ ] F-03: Assessment.tsx (12 Fragen, Progress-Bar, Profil-Ergebnis)
-- [ ] F-04: Dashboard.tsx (Profil-Radar, Fortschritts-Charts, Session starten)
-- [ ] F-05: Session.tsx (Chat-Interface, Zyklus-Progress, Methoden-Badge)
-- [ ] F-06: Settings.tsx (Sprache, API-Key, Provider-Auswahl)
-- [ ] F-07: Progress.tsx (Detaillierte Charts, Commit-Historie)
+Items waiting on external triggers. Re-audit monthly via
+`make check-blockers`. Do not attempt to advance these without an
+unblock signal.
 
-### Phase 1: Komponenten
+- [ ] **DEP-02**: TipTap 2 -> 3 migration.
+  - Blocks on: upstream npm publish of
+    `@sereneinserenade/tiptap-search-and-replace@0.2.0` (issue
+    [#19](https://github.com/sereneinserenade/tiptap-search-and-replace/issues/19)).
+  - Next re-audit: 2026-06-02.
+  - Default unblock path: upstream npm publish.
+  - Alternative unblock path (path B): explicit user go-ahead to
+    write the `prosemirror-search` adapter fallback (~50-80 LOC).
+    Available on demand; default is wait for the npm publish.
+  - Pre-audit: [docs/explorations/tiptap-3-migration.md](explorations/tiptap-3-migration.md).
+    Estimated effort once unblocked: 4-8h code + 1-2h regression
+    verification.
 
-- [ ] F-08: ProfileRadar.tsx (Recharts RadarChart, 6 Methoden)
-- [ ] F-09: ProgressTimeline.tsx (Recharts LineChart, Verstaendnis/Stress)
-- [ ] F-10: SessionChat.tsx (Chat-Nachrichten, Input, Send)
-- [ ] F-11: CycleProgress.tsx (7-Schritte Progress-Bar)
-- [ ] F-12: MethodBadge.tsx (Methoden-Name + Farbe)
-- [ ] F-13: RatingDialog.tsx (Verstaendnis, Stress, Method-Fit, je 1-5)
-- [ ] F-14: MethodSwitchBanner.tsx (Wechsel-Empfehlung mit Accept/Dismiss)
+- [ ] **DEP-05**: elevenlabs SDK 0.2.27 -> 2.45.0 migration
+  (complete SDK rewrite; substantial version jump that requires a
+  careful audit when scheduled).
+  - Blocks on: paid-API access for migration testing.
+  - Next re-audit: when API budget is allocated.
+  - Unblock condition: dedicated audiobook test session with a
+    live ElevenLabs key. Plan a focused session, not a side
+    bump - the 0.2 -> 2.x rewrite is too large to fold into a
+    routine sweep.
 
-### Phase 1: Infrastruktur
+---
 
-- [ ] F-15: api/client.ts (Typed REST Client fuer alle Endpunkte)
-- [ ] F-16: i18n Setup (Translations DE + EN)
-- [ ] F-17: Routing (React Router, alle Seiten)
-- [ ] F-18: Methoden-Farben als Konstanten
-- [ ] F-19: global.css (Basis-Styles, CSS Variables fuer Theming)
+## Article authoring (reference)
 
-### Phase 2: i18n komplett
+Architecture decision (formerly AR-02) resolved as Option B: a
+separate `Article` entity alongside `Book`. Phase 1 + Phase 2
+(Publications + drift detection) shipped; see the Phase 2 archive
+entry. The exploration document at
+[docs/explorations/article-authoring.md](explorations/article-authoring.md)
+captures the decision history.
 
-- [ ] F-20: Translations ES, FR, EL
-- [ ] F-21: Assessment-Fragen in allen 5 Sprachen
+- Architecture exploration: [docs/explorations/article-authoring.md](explorations/article-authoring.md)
+- Editor-parity audit: [docs/explorations/article-editor-parity.md](explorations/article-editor-parity.md)
+- Validation log: [docs/journal/article-workflow-observations.md](journal/article-workflow-observations.md)
+- AR-03+ readiness audit: [docs/audits/2026-05-02-ar-03-readiness.md](audits/2026-05-02-ar-03-readiness.md)
+- UX conventions: [docs/ux-conventions.md](ux-conventions.md)
+- Help docs: [docs/help/en/articles.md](help/en/articles.md), [docs/help/de/articles.md](help/de/articles.md)
 
-## i18n
+The active AR-01 validation log is the only open AR task; it sits
+in P3 above. Phase 4 article-as-WBT is a deferred-on-user-demand
+item in P5; the picture-book work has been promoted to P2 as
+PB-PHASE4 (Picture-Book plugin scope; Comic-Book is filed
+separately in the backlog).
 
-- [ ] I-01: Backend i18n/de.yaml + en.yaml (Core + Plugin-Strings)
-- [ ] I-02: Frontend Translations DE + EN
-- [ ] I-03: Assessment-Fragen DE + EN
-- [ ] I-04: Backend i18n/es.yaml, fr.yaml, el.yaml
-- [ ] I-05: Frontend Translations ES, FR, EL
-- [ ] I-06: Assessment-Fragen ES, FR, EL
+---
 
-## Tests
+## Explorations (not yet committed)
 
-- [ ] Q-01: conftest.py mit Fixtures (TestClient, in-memory DB, Mock-Plugins)
-- [ ] Q-02: test_api.py (Core-Endpunkte: Users, Projects, Settings)
-- [ ] Q-03: test_assessment.py (Profil-Berechnung, Fragen-Laden)
-- [ ] Q-04: test_session.py (Prompt-Generierung, Zyklus-Steuerung)
-- [ ] Q-05: test_tracking.py (ProgressCommits, Stagnation-Detection)
-- [ ] Q-06: test_switching.py (Methoden-Wechsel-Logik, Edge Cases)
-- [ ] Q-07: test_crypto.py (Fernet encrypt/decrypt)
-- [ ] Q-08: AI-Provider Mocks (kein echter API-Call)
-- [ ] Q-09: Frontend Vitest Setup
-- [ ] Q-10: E2E Playwright Setup
-- [ ] Q-11: CI-Pipeline (GitHub Actions)
+See [docs/explorations/](explorations/) for future considerations:
 
-## DevOps
+- [Desktop packaging](explorations/desktop-packaging.md) — Simple Launcher first, Tauri as later option, no Electron.
+- [Monetization strategy](explorations/monetization.md) — donations-first approach, deferred freemium.
+- [Multi-user and SaaS](explorations/multi-user-saas.md) — long-term, not near-term.
 
-- [ ] D-01: docker-compose.yml (Backend + Frontend)
-- [ ] D-02: docker-compose.prod.yml (Production mit Nginx)
-- [ ] D-03: Dockerfile Backend (Multi-Stage, non-root)
-- [ ] D-04: Dockerfile Frontend (Build + Nginx)
-- [ ] D-05: GitHub Actions CI
+---
 
-## Technische Schulden
+## Archive
 
-(Noch keine - Projekt startet frisch.)
+- **Phase 1** (v0.1.0 - v0.14.0): [docs/roadmap-archive/phase-1-complete.md](roadmap-archive/phase-1-complete.md). Includes the 2026-04-15 postscript on CF-01.
+- **Phase 2 cleanup pass** (v0.15.0 - v0.25.0): [docs/roadmap-archive/v0.25.0-cleanup-2026-05-02.md](roadmap-archive/v0.25.0-cleanup-2026-05-02.md). 77 entries archived 2026-05-02. AR-03+ Platform APIs archived as obsolete in the same pass.
+- **Backlog "Recently closed" prose**: [docs/roadmap-archive/backlog-recently-closed-2026-05-02.md](roadmap-archive/backlog-recently-closed-2026-05-02.md). Preserves commit hashes + closure notes for items shipped 2026-04-24..2026-05-02.

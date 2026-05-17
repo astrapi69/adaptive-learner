@@ -1,0 +1,174 @@
+[tool.poetry]
+name = "bibliogon"
+version = "0.33.0"
+description = "Open-source book authoring platform with WYSIWYG and Markdown editing, EPUB/PDF export via Pandoc."
+authors = ["Asterios Raptis"]
+license = "MIT"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.136.0"
+uvicorn = { extras = ["standard"], version = "^0.46.0" }
+sqlalchemy = "^2.0.49"
+pydantic = "^2.13.0"
+python-multipart = "^0.0.27"
+platformdirs = "^4.2.0"
+pluginforge = {version = "^0.5.0", extras = ["fastapi"]}
+bibliogon-plugin-export = {path = "../plugins/bibliogon-plugin-export", develop = true}
+bibliogon-plugin-help = {path = "../plugins/bibliogon-plugin-help", develop = true}
+bibliogon-plugin-getstarted = {path = "../plugins/bibliogon-plugin-getstarted", develop = true}
+bibliogon-plugin-ms-tools = {path = "../plugins/bibliogon-plugin-ms-tools", develop = true}
+bibliogon-plugin-audiobook = {path = "../plugins/bibliogon-plugin-audiobook", develop = true}
+bibliogon-plugin-grammar = {path = "../plugins/bibliogon-plugin-grammar", develop = true}
+bibliogon-plugin-kdp = {path = "../plugins/bibliogon-plugin-kdp", develop = true}
+bibliogon-plugin-kinderbuch = {path = "../plugins/bibliogon-plugin-kinderbuch", develop = true}
+bibliogon-plugin-translation = {path = "../plugins/bibliogon-plugin-translation", develop = true}
+bibliogon-plugin-git-sync = {path = "../plugins/bibliogon-plugin-git-sync", develop = true}
+bibliogon-plugin-medium-import = {path = "../plugins/bibliogon-plugin-medium-import", develop = true}
+markdown = "^3.10.2"
+alembic = "^1.18.4"
+pillow = "^12.0.0"
+gtts = "^2.5.0"
+pyttsx3 = "^2.90"
+elevenlabs = "^0.2.27"
+cryptography = "^48.0.0"
+ruamel-yaml = "^0.19.0"
+gitpython = "^3.1.40"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^9.0.0"
+httpx = "^0.28.0"
+mutmut = "^3.5.0"
+mypy = "^1.20.0"
+types-pyyaml = "^6.0.12.20250915"
+types-markdown = "^3.10.2.20260211"
+pytest-asyncio = "^1.3.0"
+pytest-cov = "^7.1.0"
+ruff = "^0.15.11"
+pre-commit = "^4.5.1"
+pip-audit = "^2.10.0"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# Conservative baseline. Tighten in follow-ups once the code is clean
+# against the current set.
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "UP",   # pyupgrade
+]
+ignore = [
+    "E501",   # line length - handled by formatter, too noisy to fix blind
+    "B008",   # function-call-in-default-argument - FastAPI `Depends(...)` idiom is intentional
+    "UP042",  # replace-str-enum - `(str, Enum)` base class ships in migrations too; deferred
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["B"]                       # bugbear too strict for test fixtures
+"migrations/versions/*" = ["UP"]        # Alembic templates predate py312 syntax
+"app/main.py" = ["E402"]                # setup_logging() before imports is intentional
+"app/licensing.py" = ["E402"]           # LICENSING_ENABLED flag before imports is intentional
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+check_untyped_defs = true
+plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
+
+[[tool.mypy.overrides]]
+module = "pluginforge.*"
+ignore_missing_imports = true
+
+# bibliogon_audiobook + bibliogon_export + manuscripta are the
+# plugin modules actually imported from backend/app/ at runtime
+# (audiobook router delegates into bibliogon_audiobook; the new
+# article_export router reuses bibliogon_export.tiptap_to_md).
+# Other plugins (grammar, kdp, ms_tools, kinderbuch, translation,
+# help, getstarted) are loaded dynamically via the plugin manager,
+# never imported from `app/`, so their mypy overrides would be
+# unused.
+[[tool.mypy.overrides]]
+module = "bibliogon_audiobook.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "bibliogon_export.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "manuscripta.*"
+ignore_missing_imports = true
+
+[tool.mutmut]
+# Audit scope per ``docs/audits/mutmut-2026-05-02-import.md``:
+# the import_plugins/ + import_orchestrator surface is what the
+# nightly workflow ``.github/workflows/mutation-import.yml`` was
+# wired for. Mutating the full ``app/`` is feasible on dedicated
+# CI hardware but the trampoline-wrapped 1648-test baseline
+# overwhelms an 8GB-class dev machine (OOM-kill seen 2026-05-14).
+# Keep the production paths_to_mutate narrow until either CI
+# hardware proves it can run the full sweep or someone explicitly
+# audits a broader module.
+#
+# 2026-05-14 expansion (``MUTMUT-EXPAND-SCOPE-01``): ``app/services/``
+# added as the next-most-critical surface per
+# ``.claude/rules/quality-checks.md``. The relevant services tests
+# are appended to ``tests_dir`` below. If a future expansion OOM-
+# kills, revert this addition and run the two scopes separately.
+paths_to_mutate = ["app/import_plugins/", "app/services/"]
+tests_dir = [
+    "tests/test_import_plugins_protocol.py",
+    "tests/test_import_duplicate_flows.py",
+    "tests/test_import_source_identifiers.py",
+    "tests/test_import_staging_gc.py",
+    "tests/test_import_git_endpoint.py",
+    "tests/test_bgb_handler.py",
+    "tests/test_markdown_handler.py",
+    "tests/test_markdown_folder_handler.py",
+    "tests/test_office_handlers.py",
+    "tests/test_wbt_handler.py",
+    "tests/test_wbt_css_bug.py",
+    "tests/test_wbt_css_cover_propagation.py",
+    "tests/test_wbt_author_assets.py",
+    "tests/test_wbt_metadata_propagation.py",
+    "tests/test_wbt_multi_branch_import.py",
+    "tests/test_wbt_multi_cover.py",
+    "tests/test_backup_articles.py",
+    "tests/test_overrides_yaml_loader.py",
+    # app/services/ tests (MUTMUT-EXPAND-SCOPE-01, 2026-05-14):
+    "tests/test_backup_compare.py",
+    "tests/test_backup_history.py",
+    "tests/test_backup_import_revive.py",
+    "tests/test_backup_utils.py",
+    "tests/test_backup_utils_direct.py",
+    "tests/test_cover_import.py",
+    "tests/test_covers.py",
+    "tests/test_credential_store.py",
+    "tests/test_git_backup.py",
+    "tests/test_git_credentials.py",
+    "tests/test_git_import_adopter.py",
+    "tests/test_git_import_inspector.py",
+    "tests/test_git_sync.py",
+    "tests/test_git_sync_diff.py",
+    "tests/test_git_sync_unified.py",
+    "tests/test_import_backup_parity.py",
+    "tests/test_import_git_adoption_execute.py",
+    "tests/test_reclassify_endpoints.py",
+    "tests/test_ssh_keys.py",
+    "tests/test_translation_groups.py",
+    "tests/test_platform_schema.py",
+]
+do_not_mutate = ["app/main.py", "app/database.py"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

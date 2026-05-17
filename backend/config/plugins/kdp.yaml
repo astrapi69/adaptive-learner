@@ -1,0 +1,27 @@
+plugin:
+  name: kdp
+  license_tier: core
+  display_name:
+    de: "Amazon KDP"
+    en: "Amazon KDP"
+    es: "Amazon KDP"
+    fr: "Amazon KDP"
+    el: "Amazon KDP"
+  description:
+    de: "KDP-Metadaten, Cover-Validierung und Publishing-Workflow"
+    en: "KDP metadata, cover validation, and publishing workflow"
+    es: "Metadatos KDP, validación de portada y flujo de publicación"
+    fr: "Metadonnees KDP, validation de couverture et flux de publication"
+    el: "Μεταδεδομένα KDP, επικύρωση εξωφύλλου και ροή δημοσίευσης"
+  version: "1.0.0"
+  license: "MIT"
+  depends_on:
+    - export
+  api_version: "1"
+
+# NOTE: the former ``settings.cover`` and ``settings.manuscript`` blocks
+# were removed in the plugin-settings audit (2026-04-11). KDP cover and
+# manuscript requirements are dictated by Amazon and must never be
+# user-editable - the values now live as KDP_COVER_REQUIREMENTS in
+# bibliogon_kdp/routes.py with a comment explaining why. See the chat
+# journal entry from 2026-04-11 for the audit decision.

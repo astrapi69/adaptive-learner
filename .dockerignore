@@ -1,0 +1,61 @@
+# Git
+.git
+.gitignore
+
+# Claude Code
+.claude
+
+# Documentation
+docs/
+*.md
+!backend/README.md
+
+# Frontend (built separately)
+frontend/node_modules
+frontend/dist
+frontend/.env
+
+# Backend dev artifacts
+backend/__pycache__
+backend/.pytest_cache
+backend/.mypy_cache
+backend/.ruff_cache
+backend/.coverage
+backend/.coverage.*
+backend/tests
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+backend/htmlcov
+
+# Backend production data that may exist in dev tree (Phase 2 XDG
+# migration moves these to ~/.local/share/bibliogon/ on backend
+# start; they MUST NOT be shipped into the Docker image where they
+# would either bloat the layer or leak real user data).
+backend/uploads/
+backend/.bibliogon-production
+backend/.migration-complete
+
+# Plugin dev artifacts
+plugins/**/tests
+plugins/**/__pycache__
+plugins/**/.pytest_cache
+
+# IDE
+.vscode
+.idea
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# E2E tests
+e2e/
+playwright-report/
+test-results/

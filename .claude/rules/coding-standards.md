@@ -1,133 +1,190 @@
-# Coding Standards
+# Coding standards
 
-## Allgemein
+## General
 
-- Entwickler: Asterios Raptis (Ein-Mann-Show, KI-gestuetzt).
-- Ziel: Pragmatisch, wartbar, schnell lieferbar. Kein Over-Engineering.
-- Wenn unklar: Nachfragen statt raten.
+- Developer: Asterios Raptis (solo developer, AI-assisted).
+- Goal: pragmatic, maintainable, quickly deliverable. No over-engineering.
+- When unclear: ask rather than guess.
 
 ## Python (Backend + Plugins)
 
-- Python 3.11+, Poetry fuer Dependency Management.
-- Type Hints IMMER. Kein `Any` ohne Kommentar.
-- Docstrings fuer oeffentliche Funktionen (Google-Style).
-- pytest fuer Tests. Fixtures bevorzugen, kein setUp/tearDown.
-- Async bevorzugen wo FastAPI es unterstuetzt.
-- Import-Reihenfolge: stdlib, third-party, local (isort-kompatibel).
-- Pydantic v2 fuer Schemas. Field-Validatoren statt manuelle Checks.
-- SQLAlchemy 2.0 Mapped Columns.
+- Python 3.11+, Poetry for dependency management.
+- Type hints ALWAYS. No `Any` without a comment.
+- Docstrings for public functions (Google style).
+- pytest for tests. Prefer fixtures, no setUp/tearDown.
+- Prefer async where FastAPI supports it.
+- Import order: stdlib, third-party, local (isort-compatible).
+- Pydantic v2 for schemas. Field validators instead of manual checks.
+- HTML conversion: HTMLParser-based, NO regex for nested structures.
 
 ## TypeScript (Frontend)
 
-- Strict Mode aktiv. Kein `any` ohne Kommentar.
-- Interfaces fuer Datenmodelle, Types fuer Unions/Aliases.
-- Funktionale Komponenten mit Hooks. Keine Klassen-Komponenten.
-- Props als Interface definiert.
-- Komplexe Logik in Utility-Funktionen oder den API Client auslagern.
+- Strict mode enabled. No `any` without a comment.
+- Interfaces for data models, types for unions/aliases.
+- Functional components with hooks. No class components.
+- Props defined as an interface.
+- Extract complex logic into utility functions or the API client, not into components.
+- Radix UI for dialogs, dropdowns, tooltips, tabs, select. No custom DOM handling for those.
+- @dnd-kit for drag-and-drop. No manual DnD.
+- Lucide React for icons. No other icon libraries.
+- react-toastify for user feedback. No window.alert(), no console.log for user info.
 
-## Benennung
+## Naming
 
-- Python: snake_case (Dateien, Funktionen, Variablen), PascalCase (Klassen).
-- TypeScript: PascalCase (Komponenten, Interfaces), camelCase (Funktionen, Variablen).
-- Plugin-Ordner: backend/plugins/{name} (snake_case).
-- Methoden-Keys: snake_case (deductive, error_based, ai_adaptive).
-- Zyklus-Keys: snake_case (input, attempt, error, feedback, adapt, repeat, integrate).
-- Kein I-Prefix fuer Interfaces. `User` statt `IUser`.
-- Keine generischen Namen: data, info, result, temp, item, obj, val sind verboten.
-  Stattdessen: session_data, profile_info, assessment_result, commit_item.
-  Ausnahme: Loop-Variablen (i, j) und Lambdas.
+- Python: snake_case (files, functions, variables), PascalCase (classes).
+- TypeScript: PascalCase (components, interfaces), camelCase (functions, variables).
+- Plugin folders: bibliogon-plugin-{name} (kebab-case).
+- Python package inside a plugin: bibliogon_{name} (snake_case).
+- Events/hooks: snake_case (chapter_pre_save, export_execute).
+- No I-prefix for interfaces. `Book`, not `IBook`.
+- File formats: .bgb (backup), .bgp (project). Not .zip.
+- No generic names: data, info, result, temp, item, obj, val, tmp, x are forbidden.
+  Use instead: book_data, plugin_info, export_result, chapter_item.
+  Exception: loop variables (i, j) and lambdas.
 
-## Formatierung
+## Formatting
 
-- Kein Em-Dash (-- oder Unicode U+2014). Bindestriche (-) oder Kommas nutzen.
-- Nur Standard-UTF-8-Zeichen.
-- Keine Emojis im Code oder in Kommentaren.
-- Einrueckung: 4 Spaces (Python), 2 Spaces (TypeScript/CSS).
-- Automatische Formatierung: ruff + black (Python). Siehe code-hygiene.md.
+- No em-dash (-- or Unicode U+2014). Use hyphens (-) or commas.
+- Standard UTF-8 characters only.
+- No emojis in code or comments.
+- Indentation: 4 spaces (Python), 2 spaces (TypeScript/CSS).
+- Automatic formatting: ruff (Python), Prettier (TypeScript). See code-hygiene.md.
+- Automatic linting: ruff (Python), ESLint (TypeScript). See code-hygiene.md.
+- Pre-commit hooks enforce formatting and linting before every commit.
 
 ## Git
 
 - Conventional Commits: feat:, fix:, refactor:, docs:, test:, chore:
-- Scope angeben wenn klar: feat(session): ..., fix(assessment): ...
-- Ein Commit pro logische Aenderung.
-- Branch-Benennung: feature/{name}, fix/{name}, chore/{name}
-- Kein `Co-Authored-By` Trailer fuer KI-Tools oder Bots.
+- Provide a scope when it's clear: feat(export): ..., fix(editor): ...
+- One commit per logical change, not everything in one.
+- Branch naming: feature/{name}, fix/{name}, chore/{name}
+- Do not add `Co-Authored-By` trailers attributing non-human
+  collaborators (AI tools, automation bots, MCP agents). Human
+  co-authors are attributed via the standard GitHub mechanism.
+  Exceptions require an explicit note in the commit body
+  stating who authorized the attribution.
 
-## Function Design und Kohaesion
+## Function design and cohesion
 
-### Grundregeln
+### Ground rules
 
-- Jede Funktion hat genau eine Verantwortung.
-- Max 40 Zeilen pro Funktion. Ueber 50 ist ein sofortiges Refactoring-Signal.
-- Funktionen die mehrere Dinge tun (parse UND save, validate UND transform) werden aufgeteilt.
-- Indikator fuer niedrige Kohaesion: Kommentare wie "# Step 1", "# Step 2" in einer Funktion. Jeder Schritt wird eine eigene Funktion.
+- Every function has exactly one responsibility.
+- Max 40 lines per function. Anything over 50 is an immediate refactoring signal.
+- Functions that do multiple things (parse AND save, validate AND transform) get split into separate functions.
+- Indicator of low cohesion: comments like "# Step 1", "# Step 2", "# Now do X" inside a single function. Every step is its own function.
 
-### Abstraktionsebenen nicht mischen
+### Do not mix abstraction levels
 
-- Eine Funktion operiert auf EINER Abstraktionsebene.
-- FALSCH: db.query() und String-Formatierung in der gleichen Funktion.
-- RICHTIG: High-Level-Funktion ruft Low-Level-Helper auf.
+- A function operates at ONE abstraction level.
+- WRONG: db.query() and string formatting in the same function.
+- RIGHT: a high-level function calls low-level helper functions.
 
-### Route-Handler
+### Route handlers
 
-- routes.py enthaelt NUR Routing-Logik: Input validieren, Service aufrufen, Response zurueckgeben.
-- Geschaeftslogik gehoert in Service-Module, NICHT in Route-Handler.
+- routes.py contains ONLY routing logic: validate input, call a service, return the response.
+- Business logic belongs in service modules or helper functions, NOT in route handlers.
+- Different code paths (if/elif cascades for formats, types, etc.) get extracted into their own functions.
 
-### Daten zwischen Funktionen
+### Data between functions
 
-- Gemeinsame Daten: ein Dataclass oder TypedDict, NICHT lose Dicts die herumgereicht werden.
-- Jede extrahierte Funktion muss einzeln testbar sein.
+- Shared data: a dataclass or TypedDict, NOT loose dicts passed around.
+- Every extracted function must be individually testable without reconstructing the whole context.
 
-### Crash Early
+### Crash early
 
-- Ungueltige Inputs am Anfang der Funktion abfangen, nicht tief verschachtelt.
-- Pydantic-Validierung fuer API-Input.
-- Guard Clauses statt tief verschachtelter if/else.
+- Catch invalid inputs at the start of the function, not deeply nested.
+- Pydantic validation for API input.
+- Guard clauses instead of deeply nested if/else.
+
+**Anti-pattern (God Method):**
+```python
+# WRONG: 150+ lines, 8 responsibilities
+@router.get("/{fmt}")
+def export(book_id, fmt, ...):
+    # load DB, load config, detect TOC, scaffold,
+    # build filename, ZIP/audiobook/Pandoc, find cover, ...
+```
+
+**Right (decomposed):**
+```python
+# routes.py - ONLY routing
+@router.get("/{fmt}")
+def export(book_id, fmt, ...):
+    validate_format(fmt)
+    context = build_export_context(book_id, fmt, book_type, ...)
+    return EXPORTERS[fmt](context)
+
+# exporters.py - one function per format group
+def export_project(ctx: ExportContext) -> FileResponse: ...
+def export_audiobook(ctx: ExportContext) -> FileResponse: ...
+def export_document(ctx: ExportContext) -> FileResponse: ...
+
+# helpers.py - individually testable
+def validate_format(fmt: str) -> None: ...
+def detect_manual_toc(chapters: list[dict]) -> bool: ...
+def build_filename(slug: str, book_type: str, suffix: bool) -> str: ...
+def find_cover_image(project_dir: Path) -> str | None: ...
+```
 
 ## DRY - Don't Repeat Yourself
 
-- Gleiche Logik an zwei Stellen: In eine gemeinsame Funktion extrahieren.
-- Gleiche Konstanten an zwei Stellen: In eine zentrale Datei verschieben.
-- Drei Duplikate: Sofort refactoren, nicht spaeter.
+- Same logic in two places: extract into a shared function.
+- Same constants in two places: move them into a central file.
+- Three duplicates: refactor immediately, not later.
 
 ## Boy Scout Rule
 
-- Code sauberer hinterlassen als vorgefunden. Kleine Verbesserungen bei jeder Aenderung.
-- Gilt auch fuer Claude Code: Wenn du eine Funktion anfasst die gegen Regeln verstoesst, den Verstoss gleich mitfixen.
+- Leave code cleaner than you found it. Small improvements on every change.
+- This also applies to Claude Code: if you touch a function and it violates rules, fix the violation along with it.
 
-## Error Reporting
+## Error reporting
 
-Fehlerdetails muessen praezise genug sein, dass ein GitHub Issue daraus direkt umsetzbar ist.
+Error details must be precise enough that a GitHub Issue built from them is directly actionable, without follow-up questions.
 
-- Kein `except` ohne logger.error(). Nie eine Exception verschlucken.
-- Exception-Detail muss den Grund enthalten, nicht nur den Funktionsnamen.
-- Services: str(e) in eigene Exception-Klassen einbauen (NICHT HTTPException).
-- Generische Fehlermeldungen wie "Session failed" oder "Import failed" ohne Details sind VERBOTEN.
-- Frontend: API-Fehler dem User zeigen, nicht nur console.log.
+Chain: BibliogonError -> API response (detail + traceback) -> ApiError -> toast with "Report issue" -> GitHub Issue
+
+- No `except` without logger.error(). Never swallow an exception.
+- Exception detail must contain the reason, not just the function name.
+- Services: include str(e) in BibliogonError subclasses (NOT HTTPException, see code-hygiene.md).
+- In debug mode: include the stacktrace in the response (global exception handler in main.py). Consumed by the "Report issue" button as the issue body.
+- On the frontend: pass the ApiError object to toast.error(), not just a string.
+- "Report issue" button in the toast: opens a GitHub Issue with title (error detail), body (stacktrace, browser, app version).
+- Generic error messages like "Export failed" or "Import failed" without details are FORBIDDEN. They make GitHub Issues worthless.
+- Every fetch call on the frontend must throw ApiError on failure, not Error.
 
 ## Tests
 
-- Backend: pytest. Plugin-Tests in backend/plugins/{name}/.
-- Frontend: Vitest (spaeter).
-- AI-Provider: IMMER mocken, keine echten API-Calls.
-- Neue Endpoints: Mindestens ein Happy-Path-Test.
-- Bugfixes: Erst failing Test, dann Fix.
-- `make test` muss gruen bleiben nach jeder Aenderung.
-- Bestehende Tests NIEMALS loeschen oder abschwaechen.
+- Backend: pytest. Plugin tests in plugins/{name}/tests/.
+- Frontend: Vitest (happy-dom).
+- E2E: Playwright.
+- Mutation testing: mutmut (Python).
+- New endpoints: at least one happy-path test.
+- Bug fixes: failing test FIRST, then fix.
+- Mocking: mock external services (LanguageTool, Pandoc), no real calls in tests.
+- `make test` must stay green after every change.
+- Surviving mutants in critical code: add tests. In trivial code: ignore.
+- See quality-checks.md for the full test strategy and mutmut configuration.
 
-## Sicherheit
+## Security
 
-- ADAPTIVE_LEARNER_SECRET_KEY niemals committen.
-- .env Dateien in .gitignore.
-- API-Keys nur verschluesselt speichern (Fernet).
-- Kein Klartext-Key ans Frontend senden.
+- Never commit BIBLIOGON_SECRET_KEY.
+- .env files in .gitignore.
+- License keys only through LicenseStore (backend/app/licensing.py).
+- Validate user uploads (file type, size) before storage.
+- Plugin ZIP installation: name validation + path traversal check.
 
-## Abhaengigkeiten
+## Performance
 
-Neue Dependencies nur nach Rueckfrage. Bestehender Stack:
+- SQLite is single-writer. Minimize writes, batch where possible.
+- TipTap JSON can get large. Autosave with debounce (not on every keystroke).
+- Plugin loading at app startup. Lazy-load plugin UI where possible.
 
-Backend: FastAPI 0.136+, SQLAlchemy 2.0, Pydantic 2.11+, pluginforge, PyYAML, cryptography, anthropic
-Frontend: React 19, TypeScript 6, Vite 8, Recharts 3.8, Lucide React, react-router-dom 7
-Testing: pytest 8, pytest-cov, httpx, vitest 4, happy-dom, @testing-library/react
-Linting: ruff 0.11+, mypy, pre-commit
+## Dependencies
+
+New dependencies only after asking. Existing stack:
+
+Backend: FastAPI, SQLAlchemy, Pydantic v2, pluginforge, manuscripta, PyYAML, markdown (MD->HTML)
+Frontend: React 18, TypeScript, TipTap (15+1 extensions), Vite, Radix UI, @dnd-kit, Lucide, react-toastify
+Testing: pytest, Playwright, Vitest, mutmut (Python mutation testing)
+Linting/formatting: ruff (Python), ESLint + Prettier (TypeScript), pre-commit
 Tooling: Poetry, npm, Docker, Make

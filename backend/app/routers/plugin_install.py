@@ -1,0 +1,331 @@
+"""Plugin installation API - upload, install, uninstall ZIP plugins.
+
+The installed-plugin directory lives under ``get_data_dir() /
+"plugins" / "installed"`` so it does not depend on the project
+tree being writable. The previous location
+(``BASE_DIR / "plugins" / "installed"`` = ``backend/plugins/
+installed/``) crashed in Docker because the bind-mounted project
+tree was not writable by the container's user — see the
+"Filesystem isolation" rule in ``.claude/rules/lessons-learned.md``.
+
+Plugin metadata writes (the YAML config inside the ZIP and the
+``plugins.enabled`` mutation in app.yaml) route through
+``app.config_overlay`` for the same reason; see that module's
+docstring.
+"""
+
+import importlib
+import logging
+import re
+import shutil
+import sys
+import zipfile
+from pathlib import Path
+from typing import Any
+
+import yaml
+from fastapi import APIRouter, HTTPException, UploadFile
+
+from app import config_overlay
+from app.paths import get_data_dir
+
+logger = logging.getLogger(__name__)
+router = APIRouter(prefix="/plugins", tags=["plugin-install"])
+
+_base_dir: Path = Path(".")
+_manager: Any = None
+_installed_dir: Path = Path(".")
+
+
+def get_installed_plugins_dir() -> Path:
+    """Canonical writable directory for user-installed plugin ZIPs.
+
+    Always re-resolved via ``get_data_dir()`` so test env-var
+    overrides (``BIBLIOGON_DATA_DIR``) take effect even after this
+    module is imported.
+    """
+    return get_data_dir() / "plugins" / "installed"
+
+
+def configure(base_dir: Path, manager: Any) -> None:
+    global _base_dir, _manager, _installed_dir
+    _base_dir = base_dir
+    _manager = manager
+    _installed_dir = get_installed_plugins_dir()
+    _installed_dir.mkdir(parents=True, exist_ok=True)
+
+
+# Validation: only allow safe plugin names
+_SAFE_NAME = re.compile(r"^[a-z][a-z0-9_-]{1,48}[a-z0-9]$")
+
+
+def _validate_plugin_name(name: str) -> None:
+    if not _SAFE_NAME.match(name):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Ungültiger Plugin-Name: '{name}'. "
+            "Erlaubt: Kleinbuchstaben, Ziffern, Bindestriche, Unterstriche (3-50 Zeichen).",
+        )
+
+
+def _validate_zip_paths(zf: zipfile.ZipFile) -> None:
+    """Prevent path traversal attacks in ZIP files."""
+    for info in zf.infolist():
+        if info.filename.startswith("/") or ".." in info.filename:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Ungültiger Pfad im ZIP: '{info.filename}'",
+            )
+
+
+@router.post("/install")
+async def install_plugin(file: UploadFile) -> dict[str, Any]:
+    """Install a plugin from a ZIP file."""
+    if not file.filename or not file.filename.endswith(".zip"):
+        raise HTTPException(status_code=400, detail="Nur ZIP-Dateien erlaubt.")
+
+    content = await file.read()
+    try:
+        zf = zipfile.ZipFile(file=__import__("io").BytesIO(content))
+    except zipfile.BadZipFile as e:
+        raise HTTPException(status_code=400, detail="Ungültige ZIP-Datei.") from e
+
+    plugin_name, package_name, plugin_config = _validate_plugin_zip(zf)
+    install_path = _extract_plugin(zf, plugin_name)
+    registered, error_msg = _register_plugin(plugin_name, package_name, plugin_config)
+    _enable_plugin_in_config(plugin_name)
+
+    return {
+        "plugin": plugin_name,
+        "version": plugin_config.get("plugin", {}).get("version", "unknown"),
+        "package": package_name,
+        "installed_path": str(install_path),
+        "registered": registered,
+        "error": error_msg or None,
+        "status": "installed" if registered else "installed_pending_restart",
+        "message": (
+            f"Plugin '{plugin_name}' installiert und aktiviert."
+            if registered
+            else f"Plugin '{plugin_name}' installiert. Neustart erforderlich."
+            + (f" Fehler: {error_msg}" if error_msg else "")
+        ),
+    }
+
+
+def _validate_plugin_zip(zf: zipfile.ZipFile) -> tuple[str, str, dict]:
+    """Validate ZIP structure and return (plugin_name, package_name, config)."""
+    _validate_zip_paths(zf)
+
+    top_dirs = {n.split("/")[0] for n in zf.namelist() if "/" in n}
+    if len(top_dirs) != 1:
+        raise HTTPException(status_code=400, detail="ZIP muss genau ein Verzeichnis enthalten.")
+    plugin_dir = top_dirs.pop()
+
+    yaml_path = f"{plugin_dir}/plugin.yaml"
+    if yaml_path not in zf.namelist():
+        raise HTTPException(status_code=400, detail=f"plugin.yaml fehlt (erwartet: {yaml_path}).")
+
+    try:
+        config = yaml.safe_load(zf.read(yaml_path))
+    except Exception as e:
+        raise HTTPException(status_code=400, detail="plugin.yaml ist ungültig.") from e
+
+    plugin_name = config.get("plugin", {}).get("name", "")
+    _validate_plugin_name(plugin_name)
+
+    packages = [
+        n.split("/")[1]
+        for n in zf.namelist()
+        if n.count("/") == 2 and n.endswith("__init__.py") and n.startswith(plugin_dir + "/")
+    ]
+    if not packages:
+        raise HTTPException(status_code=400, detail="Kein Python-Paket gefunden.")
+
+    package_name = packages[0]
+    if f"{plugin_dir}/{package_name}/plugin.py" not in zf.namelist():
+        raise HTTPException(status_code=400, detail=f"plugin.py fehlt im Paket '{package_name}'.")
+
+    return plugin_name, package_name, config
+
+
+def _extract_plugin(zf: zipfile.ZipFile, plugin_name: str) -> Path:
+    """Extract plugin ZIP to installed directory and copy config.
+
+    Plugin code lands under ``get_data_dir() / "plugins" / "installed"
+    / <plugin_name>``. The ZIP's ``plugin.yaml`` is then routed
+    through the config overlay (``get_data_dir() / "config" /
+    "plugins" / <plugin_name>.yaml``) so the install path never
+    writes into the project tree.
+    """
+    install_path = _installed_dir / plugin_name
+    if install_path.exists():
+        shutil.rmtree(install_path)
+    install_path.mkdir(parents=True, exist_ok=True)
+
+    for info in zf.infolist():
+        if info.is_dir():
+            continue
+        rel_path = "/".join(info.filename.split("/")[1:])
+        if not rel_path:
+            continue
+        target = install_path / rel_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(zf.read(info.filename))
+
+    extracted_yaml = install_path / "plugin.yaml"
+    if extracted_yaml.exists():
+        with open(extracted_yaml, encoding="utf-8") as f:
+            plugin_yaml = yaml.safe_load(f) or {}
+        if isinstance(plugin_yaml, dict):
+            config_overlay.write_user_plugin_config(plugin_name, plugin_yaml)
+
+    install_str = str(install_path)
+    if install_str not in sys.path:
+        sys.path.insert(0, install_str)
+    return install_path
+
+
+def _register_plugin(plugin_name: str, package_name: str, plugin_config: dict) -> tuple[bool, str]:
+    """Try to dynamically register the plugin. Returns (registered, error_msg)."""
+    if not _manager:
+        return False, "Plugin manager not available"
+    try:
+        module = importlib.import_module(f"{package_name}.plugin")
+        from pluginforge import BasePlugin
+
+        plugin_class = next(
+            (
+                getattr(module, a)
+                for a in dir(module)
+                if isinstance(getattr(module, a), type)
+                and issubclass(getattr(module, a), BasePlugin)
+                and getattr(module, a) is not BasePlugin
+            ),
+            None,
+        )
+        if not plugin_class:
+            return False, f"Keine BasePlugin-Unterklasse in {package_name}.plugin gefunden."
+        _manager.register_plugin(plugin_class(), plugin_config)
+        return True, ""
+    except Exception as e:
+        return False, str(e)
+
+
+def _enable_plugin_in_config(plugin_name: str) -> None:
+    """Add plugin to the enabled list in the user-overlay app.yaml."""
+    app_config = config_overlay.load_app_config_for_edit()
+    enabled = app_config.setdefault("plugins", {}).setdefault("enabled", [])
+    disabled = app_config["plugins"].setdefault("disabled", [])
+    if plugin_name not in enabled:
+        enabled.append(plugin_name)
+    if plugin_name in disabled:
+        disabled.remove(plugin_name)
+    config_overlay.write_user_app_config(app_config)
+    _refresh_manager_app_config()
+
+
+@router.delete("/install/{plugin_name}")
+def uninstall_plugin(plugin_name: str) -> dict[str, str]:
+    """Uninstall a previously installed plugin."""
+    _validate_plugin_name(plugin_name)
+
+    install_path = _installed_dir / plugin_name
+    if not install_path.exists():
+        raise HTTPException(
+            status_code=404,
+            detail=f"Plugin '{plugin_name}' ist nicht installiert.",
+        )
+
+    # Deactivate if active
+    if _manager:
+        active_names = {p.name for p in _manager.get_active_plugins()}
+        if plugin_name in active_names:
+            _manager.deactivate_plugin(plugin_name)
+
+    # Remove from enabled list in the user-overlay app config.
+    app_config = config_overlay.read_app_config_merged()
+    enabled = app_config.get("plugins", {}).get("enabled", [])
+    # Ensure `plugins.disabled` exists in the YAML even if unused here.
+    app_config.setdefault("plugins", {}).setdefault("disabled", [])
+    if plugin_name in enabled:
+        enabled.remove(plugin_name)
+    config_overlay.write_user_app_config(app_config)
+    _refresh_manager_app_config()
+
+    # Remove plugin config from the user overlay.
+    config_overlay.delete_user_plugin_config(plugin_name)
+
+    # Remove installed files
+    shutil.rmtree(install_path)
+
+    # Remove from sys.path
+    install_str = str(install_path)
+    if install_str in sys.path:
+        sys.path.remove(install_str)
+
+    return {"plugin": plugin_name, "status": "uninstalled"}
+
+
+@router.get("/installed")
+def list_installed_plugins() -> list[dict[str, Any]]:
+    """List all plugins installed via ZIP upload."""
+    result: list[dict[str, Any]] = []
+    if not _installed_dir.exists():
+        return result
+
+    for plugin_dir in sorted(_installed_dir.iterdir()):
+        if not plugin_dir.is_dir():
+            continue
+        yaml_path = plugin_dir / "plugin.yaml"
+        if not yaml_path.exists():
+            continue
+
+        with open(yaml_path, encoding="utf-8") as f:
+            config = yaml.safe_load(f) or {}
+        if not isinstance(config, dict):
+            config = {}
+        meta = config.get("plugin", {})
+        active_names = set()
+        if _manager:
+            active_names = {p.name for p in _manager.get_active_plugins()}
+
+        result.append(
+            {
+                "name": meta.get("name", plugin_dir.name),
+                "display_name": meta.get("display_name", plugin_dir.name),
+                "description": meta.get("description", ""),
+                "version": meta.get("version", "unknown"),
+                "license": meta.get("license", "unknown"),
+                "active": meta.get("name", plugin_dir.name) in active_names,
+                "path": str(plugin_dir),
+            }
+        )
+
+    return result
+
+
+# --- Helpers ---
+
+
+def _refresh_manager_app_config() -> None:
+    """Reload + re-merge the plugin manager's app-config snapshot.
+
+    Mirrors ``settings._refresh_manager_app_config`` so plugin
+    install / uninstall updates take effect without a restart.
+    Best-effort: reload failures + manager-API drift log a warning
+    but never raise.
+    """
+    if not _manager:
+        return
+    try:
+        _manager.reload_config()
+    except Exception:  # noqa: BLE001 - reload best-effort
+        logger.exception("Plugin manager reload_config() failed; continuing.")
+    merged = config_overlay.read_app_config_merged()
+    try:
+        _manager._app_config = merged  # type: ignore[attr-defined]
+    except Exception:  # noqa: BLE001 - manager API change protection
+        logger.warning(
+            "Could not patch _manager._app_config after overlay write; "
+            "the manager's view may be stale until the next restart."
+        )

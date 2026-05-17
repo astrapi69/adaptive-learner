@@ -1,0 +1,102 @@
+ai:
+  enabled: false
+  provider: lmstudio
+  api_key: ''
+  base_url: http://localhost:1234/v1
+  max_tokens: 2048
+  model: ''
+  temperature: 0.7
+  bulk:
+    # INTERNAL: per-batch caps for bulk AI operations. No Settings UI;
+    # power users raise via YAML when their AI provider + configured
+    # rate-limit comfortably absorb larger batches.
+    # - max_ai_fill: cap on /articles|books/bulk-ai-fill (one LLM call
+    #   per item per selected field-class). Conservative default of 50
+    #   keeps a single run bounded.
+    # - max_ai_template: cap on /articles|books/bulk-ai-template
+    #   export+import (no LLM calls; ZIP packing only). Same default
+    #   for UX consistency with the AI-fill cap.
+    max_ai_fill: 50
+    max_ai_template: 50
+editor:
+  autosave_debounce_ms: 800
+  draft_save_debounce_ms: 2000
+  draft_max_age_days: 30
+  ai_context_chars: 2000
+app:
+  default_language: de
+  delete_permanently: false
+  description: Open-source book authoring platform
+  name: Bibliogon
+  supported_languages:
+  - de
+  - en
+  - es
+  - fr
+  - el
+  - pt
+  - tr
+  - ja
+  trash_auto_delete_days: 90
+  trash_auto_delete_enabled: true
+  # Advanced: allow importing/saving books without an author. Default
+  # off — the import wizard hides the "defer author" option and the
+  # API rejects POST/PATCH that would clear the author column. Useful
+  # for converting source documents to audiobooks where author info
+  # is genuinely absent.
+  allow_books_without_author: false
+  # Defense-in-depth body-size cap enforced by
+  # BodySizeLimitMiddleware. Applies to every POST / PUT / PATCH
+  # request. Editing requires a server restart.
+  max_upload_mb: 500
+  version: 0.11.0
+author:
+  name: ''
+  pen_names: []
+plugins:
+  config_dir: config/plugins
+  disabled: []
+  enabled:
+  - export
+  - help
+  - getstarted
+  - ms-tools
+  - audiobook
+  - kdp
+  - translation
+  - kinderbuch
+  - grammar
+  - git-sync
+  - medium-import
+  entry_point_group: bibliogon.plugins
+ui:
+  logo: assets/logo.svg
+  subtitle: ''
+  theme: warm-literary
+  title: Bibliogon
+donations:
+  # Project-level config: edit via this YAML, not via the Settings UI.
+  # Flip `enabled: false` to hide all three donation visibility levels
+  # (S-01 Settings section, S-02 onboarding dialog, S-03 90-day banner).
+  # Set `landing_page_url` to a single URL to route every button there
+  # instead of showing the per-channel list; leave null for the list.
+  enabled: true
+  landing_page_url: null
+  channels:
+    - name: Liberapay
+      url: https://liberapay.com/astrapi69/donate
+      icon: liberapay
+      recommended: true
+      description_key: ui.donations.channels.liberapay_desc
+    - name: GitHub Sponsors
+      url: https://github.com/sponsors/astrapi69
+      icon: github
+      description_key: ui.donations.channels.github_desc
+    - name: Ko-fi
+      url: https://ko-fi.com/astrapi69
+      icon: kofi
+      description_key: ui.donations.channels.kofi_desc
+    - name: PayPal
+      url: https://www.paypal.com/donate/?cmd=_s-xclick&hosted_button_id=MJ7V43GU2H386
+      icon: paypal
+      description_key: ui.donations.channels.paypal_desc

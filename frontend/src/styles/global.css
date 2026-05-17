@@ -1,0 +1,1913 @@
+/* --- Local font faces (offline-capable, no Google Fonts CDN) --- */
+
+/* Crimson Pro (variable, latin) */
+@font-face {
+    font-family: "Crimson Pro";
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url("/fonts/crimson-pro-latin.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Crimson Pro";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/crimson-pro-italic-latin.woff2") format("woff2");
+}
+
+/* DM Sans (variable, latin) */
+@font-face {
+    font-family: "DM Sans";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("/fonts/dm-sans-latin.woff2") format("woff2");
+}
+@font-face {
+    font-family: "DM Sans";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/dm-sans-italic-latin.woff2") format("woff2");
+}
+
+/* Inter (variable, latin + greek) */
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("/fonts/inter-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("/fonts/inter-greek.woff2") format("woff2");
+    unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+/* JetBrains Mono (variable, latin + greek) */
+@font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 400 500;
+    font-display: swap;
+    src: url("/fonts/jetbrains-mono-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 400 500;
+    font-display: swap;
+    src: url("/fonts/jetbrains-mono-greek.woff2") format("woff2");
+    unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+/* Lora (variable, latin) */
+@font-face {
+    font-family: "Lora";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("/fonts/lora-latin.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Lora";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/lora-italic-latin.woff2") format("woff2");
+}
+
+/* Source Serif Pro (static, latin + greek) */
+@font-face {
+    font-family: "Source Serif Pro";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/source-serif-pro-400-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: "Source Serif Pro";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/source-serif-pro-400-greek.woff2") format("woff2");
+    unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+    font-family: "Source Serif Pro";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/fonts/source-serif-pro-600-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: "Source Serif Pro";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/fonts/source-serif-pro-600-greek.woff2") format("woff2");
+    unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+    font-family: "Source Serif Pro";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/source-serif-pro-700-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: "Source Serif Pro";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/source-serif-pro-700-greek.woff2") format("woff2");
+    unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+    font-family: "Source Serif Pro";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/source-serif-pro-italic-400-latin.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: "Source Serif Pro";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/source-serif-pro-italic-400-greek.woff2") format("woff2");
+    unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+
+:root {
+    /* Warm, literary palette */
+    --bg-primary: #faf8f5;
+    --bg-secondary: #f0ece6;
+    --bg-sidebar: #f0ece6;
+    --bg-card: #ffffff;
+    --bg-hover: #f5f0ea;
+    --bg-editor: #ffffff;
+
+    /* Secondary surface for soft panels/cards/code blocks. Sits one
+       step "deeper" than --bg-card without flipping to --bg-secondary
+       (which is the page/sidebar fill). */
+    --surface-2: #f5f0ea;
+
+    --text-primary: #1c1917;
+    --text-secondary: #57534e;
+    --text-muted: #78716c;
+    --text-inverse: #faf8f5;
+    --text-sidebar: #3d2817;
+
+    --accent: #b45309;
+    --accent-hover: #92400e;
+    --accent-light: #fef3c7;
+    --accent-subtle: #fde68a;
+
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --danger-bg: #fef2f2;
+
+    /* Status colors for success/warning glyphs. Light-mode defaults;
+       all light palettes inherit these via :root. Dark variants
+       override in [data-theme="dark"] below; per-palette tuning can
+       layer on top if a specific theme warrants it. */
+    --success: #16a34a;
+    --success-light: #dcfce7;
+    --warning: #a16207;
+    --warning-light: #fef3c7;
+    --warning-dark: #b45309;
+    --bg-warning: #fff8e6;
+
+    --shadow-sm: 0 1px 2px rgba(28, 25, 23, 0.05);
+    --shadow-md: 0 4px 12px rgba(28, 25, 23, 0.08);
+    --shadow-lg: 0 8px 24px rgba(28, 25, 23, 0.12);
+
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+
+    --font-display: "Crimson Pro", Georgia, serif;
+    --font-body: "DM Sans", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
+
+    --transition: 180ms ease;
+
+    /* Stops the BookMetadataEditor tab content from jumping around when
+       switching between tabs that have very different amounts of content
+       (the marketing tab is the tallest, everything else snaps up to it). */
+    --metadata-tab-min-height: 600px;
+}
+
+/* --- Cool Modern Theme (Light) --- */
+[data-app-theme="cool-modern"] {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --bg-sidebar: #e2e8f0;
+    --bg-card: #ffffff;
+    --bg-hover: #e2e8f0;
+    --bg-editor: #ffffff;
+
+    --surface-2: #f1f5f9;
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --text-inverse: #f8fafc;
+    --text-sidebar: #334155;
+
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-light: #dbeafe;
+    --accent-subtle: #bfdbfe;
+
+    --border: #e2e8f0;
+    --border-strong: #cbd5e1;
+
+    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+    --shadow-lg: 0 8px 24px rgba(15, 23, 42, 0.12);
+
+    --font-display: "Inter", system-ui, sans-serif;
+}
+
+/* --- Nord Theme (Light) --- */
+[data-app-theme="nord"] {
+    --bg-primary: #eceff4;
+    --bg-secondary: #e5e9f0;
+    --bg-sidebar: #e5e9f0;
+    --bg-card: #ffffff;
+    --bg-hover: #d8dee9;
+    --bg-editor: #ffffff;
+
+    --surface-2: #e5e9f0;
+
+    --text-primary: #2e3440;
+    --text-secondary: #4c566a;
+    --text-muted: #7b88a1;
+    --text-inverse: #eceff4;
+    --text-sidebar: #3b4252;
+
+    --accent: #5e81ac;
+    --accent-hover: #81a1c1;
+    --accent-light: #d8e2ef;
+    --accent-subtle: #b8cce2;
+
+    --border: #d8dee9;
+    --border-strong: #c8ced9;
+
+    --danger: #bf616a;
+    --danger-hover: #a5444d;
+    --danger-bg: #f5e0e2;
+
+    --shadow-sm: 0 1px 2px rgba(46, 52, 64, 0.06);
+    --shadow-md: 0 4px 12px rgba(46, 52, 64, 0.08);
+    --shadow-lg: 0 8px 24px rgba(46, 52, 64, 0.12);
+
+    --font-display: "DM Sans", system-ui, sans-serif;
+}
+
+/* --- Dark Mode (Warm Literary) --- */
+[data-theme="dark"] {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #252525;
+    --bg-sidebar: #1c1917;
+    --bg-card: #222222;
+    --bg-hover: #2a2a2a;
+    --bg-editor: #1e1e1e;
+
+    --surface-2: #2a2a2a;
+
+    --text-primary: #e8e6e3;
+    --text-secondary: #a8a29e;
+    --text-muted: #6b6560;
+    --text-inverse: #1c1917;
+    --text-sidebar: #d6d3d1;
+
+    --accent: #d97706;
+    --accent-hover: #f59e0b;
+    --accent-light: rgba(217, 119, 6, 0.15);
+    --accent-subtle: rgba(217, 119, 6, 0.25);
+
+    --border: #333333;
+    --border-strong: #444444;
+
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+    --danger-bg: rgba(239, 68, 68, 0.12);
+
+    /* Status colors (dark): brighter to maintain contrast against
+       darker surfaces. Inherited by every [data-app-theme=...][data-theme="dark"]
+       variant unless overridden per palette. */
+    --success: #4ade80;
+    --success-light: rgba(74, 222, 128, 0.15);
+    --warning: #fbbf24;
+    --warning-light: rgba(251, 191, 36, 0.15);
+    --warning-dark: #fbbf24;
+    --bg-warning: rgba(251, 191, 36, 0.10);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Dark Mode (Cool Modern) --- */
+[data-app-theme="cool-modern"][data-theme="dark"] {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-sidebar: #0f172a;
+    --bg-card: #1e293b;
+    --bg-hover: #334155;
+    --bg-editor: #0f172a;
+
+    --surface-2: #334155;
+
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --text-muted: #475569;
+    --text-inverse: #0f172a;
+    --text-sidebar: #cbd5e1;
+
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --accent-light: rgba(96, 165, 250, 0.15);
+    --accent-subtle: rgba(96, 165, 250, 0.25);
+
+    --border: #334155;
+    --border-strong: #475569;
+
+    --danger-bg: rgba(239, 68, 68, 0.12);
+}
+
+/* --- Dark Mode (Nord) --- */
+[data-app-theme="nord"][data-theme="dark"] {
+    --bg-primary: #2e3440;
+    --bg-secondary: #3b4252;
+    --bg-sidebar: #2e3440;
+    --bg-card: #3b4252;
+    --bg-hover: #434c5e;
+    --bg-editor: #2e3440;
+
+    --surface-2: #434c5e;
+
+    --text-primary: #eceff4;
+    --text-secondary: #d8dee9;
+    --text-muted: #7b88a1;
+    --text-inverse: #2e3440;
+    --text-sidebar: #d8dee9;
+
+    --accent: #88c0d0;
+    --accent-hover: #8fbcbb;
+    --accent-light: rgba(136, 192, 208, 0.15);
+    --accent-subtle: rgba(136, 192, 208, 0.25);
+
+    --border: #434c5e;
+    --border-strong: #4c566a;
+
+    --danger: #bf616a;
+    --danger-hover: #d08770;
+    --danger-bg: rgba(191, 97, 106, 0.18);
+}
+
+/* --- Classic Theme (Light) ---
+   Warmes Papier-Gefuehl, beige-creme Toene, Bordeaux-Akzent,
+   Serif-Schrift. Spricht Autoren an die einen literarischen,
+   traditionellen Look bevorzugen. */
+[data-app-theme="classic"] {
+    --bg-primary: #f4ede0;
+    --bg-secondary: #ebe1d0;
+    --bg-sidebar: #ebe1d0;
+    --bg-card: #faf6eb;
+    --bg-hover: #e0d5c0;
+    --bg-editor: #faf6eb;
+
+    --surface-2: #ebe1d0;
+
+    --text-primary: #2a1f15;
+    --text-secondary: #5c4733;
+    --text-muted: #8b7355;
+    --text-inverse: #f4ede0;
+    --text-sidebar: #5c4733;
+
+    --accent: #8b3a1f;
+    --accent-hover: #6b2a14;
+    --accent-light: #f0d9c7;
+    --accent-subtle: #e0b89b;
+
+    --border: #c9b896;
+    --border-strong: #a89770;
+
+    --danger: #b8372a;
+    --danger-hover: #8f2a1f;
+    --danger-bg: #f5e0d8;
+
+    --shadow-sm: 0 1px 2px rgba(60, 40, 20, 0.06);
+    --shadow-md: 0 4px 12px rgba(60, 40, 20, 0.10);
+    --shadow-lg: 0 8px 24px rgba(60, 40, 20, 0.14);
+
+    --font-display: "Crimson Pro", Georgia, serif;
+    --font-body: "Crimson Pro", Georgia, serif;
+}
+
+/* --- Classic Theme (Dark) --- */
+[data-app-theme="classic"][data-theme="dark"] {
+    --bg-primary: #1a140d;
+    --bg-secondary: #251c12;
+    --bg-sidebar: #0f0a06;
+    --bg-card: #251c12;
+    --bg-hover: #2f2418;
+    --bg-editor: #1a140d;
+
+    --surface-2: #2f2418;
+
+    --text-primary: #e8d8c0;
+    --text-secondary: #b8a583;
+    --text-muted: #8b7855;
+    --text-inverse: #1a140d;
+    --text-sidebar: #b8a583;
+
+    --accent: #d4956b;
+    --accent-hover: #e0a37a;
+    --accent-light: rgba(212, 149, 107, 0.15);
+    --accent-subtle: rgba(212, 149, 107, 0.25);
+
+    --border: #4a3a25;
+    --border-strong: #5e4b30;
+
+    --danger: #e67e6d;
+    --danger-hover: #f08a79;
+    --danger-bg: rgba(230, 126, 109, 0.15);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+/* --- Studio Theme (Light) ---
+   Klares professionelles Layout, hohe Kontraste, Mint-Akzent.
+   Spricht Power-User an die lange Schreib-Sessions ohne visuelle
+   Ablenkung brauchen. Look orientiert sich an professionellen
+   Audio-/Video-Schnitt-Tools. */
+[data-app-theme="studio"] {
+    --bg-primary: #f7f8fa;
+    --bg-secondary: #eef0f4;
+    --bg-sidebar: #eef0f4;
+    --bg-card: #ffffff;
+    --bg-hover: #e4e7ed;
+    --bg-editor: #ffffff;
+
+    --surface-2: #eef0f4;
+
+    --text-primary: #1a1d23;
+    --text-secondary: #4a5159;
+    --text-muted: #8b929c;
+    --text-inverse: #f7f8fa;
+    --text-sidebar: #4a5159;
+
+    --accent: #0d9488;
+    --accent-hover: #0f766e;
+    --accent-light: #ccfbf1;
+    --accent-subtle: #99f6e4;
+
+    --border: #d1d5db;
+    --border-strong: #9ca3af;
+
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --danger-bg: #fef2f2;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+    --font-display: "Source Serif Pro", Georgia, serif;
+    --font-body: "Inter", system-ui, sans-serif;
+}
+
+/* --- Studio Theme (Dark) --- */
+[data-app-theme="studio"][data-theme="dark"] {
+    --bg-primary: #1c1e22;
+    --bg-secondary: #25282d;
+    --bg-sidebar: #14161a;
+    --bg-card: #25282d;
+    --bg-hover: #2e3239;
+    --bg-editor: #1c1e22;
+
+    --surface-2: #2e3239;
+
+    --text-primary: #e4e6eb;
+    --text-secondary: #9ba3af;
+    --text-muted: #6b7280;
+    --text-inverse: #1c1e22;
+    --text-sidebar: #9ba3af;
+
+    --accent: #5eead4;
+    --accent-hover: #2dd4bf;
+    --accent-light: rgba(94, 234, 212, 0.15);
+    --accent-subtle: rgba(94, 234, 212, 0.25);
+
+    --border: #374151;
+    --border-strong: #4b5563;
+
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+    --danger-bg: rgba(239, 68, 68, 0.12);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* --- Notebook Theme (Light) ---
+   Helles Papier mit Linien-Optik, handschriftliches Gefuehl.
+   Spricht Autoren an die ein notizbuch-aehnliches Schreibgefuehl
+   moegen. Der Editor bekommt zusaetzlich horizontale Linien und
+   einen linken Rand-Strich - siehe .ProseMirror-Regeln weiter unten. */
+[data-app-theme="notebook"] {
+    --bg-primary: #fdfcf7;
+    --bg-secondary: #f7f5ed;
+    --bg-sidebar: #f7f5ed;
+    --bg-card: #ffffff;
+    --bg-hover: #f0ede0;
+    --bg-editor: #fdfcf7;
+
+    --surface-2: #f7f5ed;
+
+    --text-primary: #1f2937;
+    --text-secondary: #4b5563;
+    --text-muted: #6b7280;
+    --text-inverse: #fdfcf7;
+    --text-sidebar: #4b5563;
+
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-light: #dbeafe;
+    --accent-subtle: #bfdbfe;
+
+    --border: #d4cfb8;
+    --border-strong: #b5ad8d;
+
+    --danger: #dc2626;
+    --danger-hover: #b91c1c;
+    --danger-bg: #fdedea;
+
+    --shadow-sm: 0 1px 2px rgba(60, 50, 30, 0.05);
+    --shadow-md: 0 4px 12px rgba(60, 50, 30, 0.08);
+    --shadow-lg: 0 8px 24px rgba(60, 50, 30, 0.12);
+
+    --font-display: "Lora", Georgia, serif;
+    --font-body: "Lora", Georgia, serif;
+
+    /* Notebook-specific tunables: color of the horizontal rule lines
+       in the editor background and the vertical margin line. Kept as
+       locals so the dark variant can override them without touching
+       --border (which is also used by borders of unrelated elements). */
+    --notebook-rule: #e8e3cd;
+    --notebook-margin: rgba(220, 38, 38, 0.55);
+}
+
+/* --- Notebook Theme (Dark) --- */
+[data-app-theme="notebook"][data-theme="dark"] {
+    --bg-primary: #1f1d18;
+    --bg-secondary: #2a2820;
+    --bg-sidebar: #14130f;
+    --bg-card: #2a2820;
+    --bg-hover: #353228;
+    --bg-editor: #1f1d18;
+
+    --surface-2: #353228;
+
+    --text-primary: #f0ede0;
+    --text-secondary: #b8b29a;
+    --text-muted: #807a65;
+    --text-inverse: #1f1d18;
+    --text-sidebar: #b8b29a;
+
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --accent-light: rgba(96, 165, 250, 0.15);
+    --accent-subtle: rgba(96, 165, 250, 0.25);
+
+    --border: #4a4538;
+    --border-strong: #5e5846;
+
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+    --danger-bg: rgba(239, 68, 68, 0.12);
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+
+    --notebook-rule: #353228;
+    --notebook-margin: rgba(239, 68, 68, 0.4);
+}
+
+/* --- Editor-specific palette rules ---
+   Applied to TipTap's .ProseMirror container so they only affect
+   the editor surface, not sidebars or metadata forms. */
+
+/* Classic: first-line indent on body paragraphs. :not(:first-child)
+   follows typographic convention that the first paragraph after a
+   heading is flush-left. */
+[data-app-theme="classic"] .ProseMirror p:not(:first-child) {
+    text-indent: 1.5em;
+}
+
+/* Classic novel convention: the first paragraph of a chapter is
+   flush-left (caught by :not(:first-child) above), AND the first
+   paragraph after any heading is also flush-left. The adjacent-
+   sibling selector cancels the indent on any paragraph that comes
+   immediately after an h1-h6.
+
+   Specificity note: the base rule uses `p:not(:first-child)` which
+   scores one pseudo-class; a bare `h2 + p` would have lower
+   specificity (zero pseudo-classes) and lose the cascade. Each
+   override below repeats `:not(:first-child)` so the specificity
+   matches the base rule on classes/pseudos, then adds the `h2` element
+   on top so the override actually wins. */
+[data-app-theme="classic"] .ProseMirror h1 + p:not(:first-child),
+[data-app-theme="classic"] .ProseMirror h2 + p:not(:first-child),
+[data-app-theme="classic"] .ProseMirror h3 + p:not(:first-child),
+[data-app-theme="classic"] .ProseMirror h4 + p:not(:first-child),
+[data-app-theme="classic"] .ProseMirror h5 + p:not(:first-child),
+[data-app-theme="classic"] .ProseMirror h6 + p:not(:first-child) {
+    text-indent: 0;
+}
+
+/* Notebook: horizontal ruled lines + left margin line. The background
+   gradient draws a 1px line at the bottom of each 1.6em row, so the
+   baseline of the text sits exactly on the line. Matching line-height
+   is mandatory or the lines drift away from the text after a few
+   paragraphs. The left padding clears the margin line. */
+[data-app-theme="notebook"] .ProseMirror {
+    background-image: linear-gradient(
+        transparent,
+        transparent calc(1.6em - 1px),
+        var(--notebook-rule) calc(1.6em - 1px),
+        var(--notebook-rule) 1.6em
+    );
+    background-size: 100% 1.6em;
+    line-height: 1.6em;
+    border-left: 2px solid var(--notebook-margin);
+    padding-left: 2em;
+}
+
+/* Dark mode button adjustments */
+[data-theme="dark"] .btn-danger:hover {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: var(--border);
+}
+
+[data-theme="dark"] .btn-premium {
+    background: rgba(168, 85, 247, 0.18);
+    color: #c084fc;
+    border-color: rgba(168, 85, 247, 0.35);
+}
+
+[data-theme="dark"] .btn-premium:hover {
+    background: rgba(168, 85, 247, 0.28);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html,
+body {
+    height: 100%;
+    overflow: hidden;
+}
+
+#root {
+    height: 100%;
+    overflow-y: auto;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    line-height: 1.6;
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 3px;
+}
+
+/* --- Layout utilities (T-01 quick-wins) ---
+   Single source of truth for the most repeated inline-style flex
+   patterns. See docs/explorations/inline-styles-audit.md.
+*/
+.icon-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.icon-row-sm {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.muted {
+    color: var(--text-muted);
+}
+
+.muted-sm {
+    color: var(--text-muted);
+    font-size: 0.8125rem;
+}
+
+/* --- Buttons --- */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: var(--text-inverse);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+}
+
+.btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-hover);
+    border-color: var(--border-strong);
+}
+
+.btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+}
+
+.btn-ghost:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.btn-danger {
+    background: transparent;
+    color: var(--danger);
+}
+
+.btn-danger:hover {
+    background: rgba(220, 38, 38, 0.08);
+}
+
+.btn-premium {
+    background: rgba(168, 85, 247, 0.12);
+    color: #9333ea;
+    border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.btn-premium:hover {
+    background: rgba(168, 85, 247, 0.2);
+}
+
+.btn:disabled,
+.btn[disabled] {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 0.8125rem;
+}
+
+.btn:disabled,
+.btn-icon:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-icon {
+    padding: 6px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+}
+
+.btn-icon:hover {
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+/* --- Form elements --- */
+.input {
+    width: 100%;
+    padding: 10px 12px;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.input:focus {
+    border-color: var(--accent);
+}
+
+.label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.field {
+    margin-bottom: 16px;
+}
+
+/* --- Radix Dialog --- */
+.dialog-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 2000;
+    animation: fadeIn 150ms ease;
+}
+
+.dialog-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: var(--shadow-lg);
+    z-index: 2001;
+    animation: slideIn 150ms ease;
+}
+
+.dialog-content-wide {
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.dialog-title {
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+}
+
+.dialog-message {
+    color: var(--text-secondary);
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    white-space: pre-line;
+}
+
+.dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.dialog-content-wide .dialog-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin-top: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translate(-50%, -48%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+/* --- Spinner animation ---
+   Used by ``className="spin"`` on lucide-react Loader / Loader2
+   icons inside buttons + the shared <LoadingIndicator>
+   component. Previously defined locally in DetectingStep.tsx +
+   ExecutingStep.tsx; 8+ other callsites referenced the .spin
+   class without a definition (unstyled fall-through). Global
+   definition unifies the visual treatment. */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+/* --- Radix DropdownMenu (Chapter Sidebar) ---
+   The 26 chapter types plus section labels and separators easily
+   exceed the viewport height on small screens. Radix emits the
+   --radix-dropdown-menu-content-available-height CSS variable based
+   on the currently available space in the chosen side direction;
+   we cap max-height to that value and enable native vertical
+   scrolling so the dropdown never clips below the viewport edge.
+   The trigger-side collision detection that flips side="top" when
+   there isn't enough room below still works as before because
+   Radix recomputes the variable when it flips. */
+.chapter-dropdown-content {
+    background: #2a2725;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 6px 0;
+    min-width: 180px;
+    max-height: var(--radix-dropdown-menu-content-available-height);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 50;
+    animation: fadeIn 100ms ease;
+}
+
+.chapter-dropdown-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chapter-dropdown-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 4px;
+}
+
+.chapter-dropdown-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.chapter-dropdown-label {
+    display: block;
+    padding: 4px 14px;
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.chapter-dropdown-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 7px 14px;
+    border: none;
+    background: transparent;
+    color: #d6d3d1;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    text-align: left;
+    outline: none;
+}
+
+.chapter-dropdown-item[data-highlighted] {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.chapter-dropdown-item-danger {
+    color: #ef4444;
+}
+
+.chapter-dropdown-item-danger[data-highlighted] {
+    background: rgba(239, 68, 68, 0.12);
+}
+
+.chapter-dropdown-separator {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+    margin: 4px 0;
+}
+
+/* --- Radix Tooltip --- */
+.radix-tooltip-content {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    line-height: 1.3;
+    max-width: 220px;
+    z-index: 3000;
+    animation: fadeIn 100ms ease;
+    box-shadow: var(--shadow-md);
+}
+
+.radix-tooltip-arrow {
+    fill: var(--text-primary);
+}
+
+/* --- Radix Select --- */
+.radix-select-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-family: var(--font-body);
+    color: var(--text-primary);
+    cursor: pointer;
+    min-width: 180px;
+    outline: none;
+}
+
+.radix-select-trigger:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-light);
+}
+
+.radix-select-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 2100;
+    min-width: var(--radix-select-trigger-width);
+    overflow: hidden;
+    animation: fadeIn 100ms ease;
+}
+
+.radix-select-item {
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+}
+
+.radix-select-item[data-highlighted] {
+    background: var(--bg-hover);
+    color: var(--accent);
+}
+
+/* --- Radix Tabs --- */
+.radix-tabs-list {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.radix-tab-trigger {
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+    color: var(--text-muted);
+    transition: all 150ms;
+}
+
+.radix-tab-trigger[data-state="active"] {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+.radix-tab-trigger:hover {
+    color: var(--text-primary);
+}
+
+.radix-tab-trigger svg {
+    display: inline;
+    vertical-align: -2px;
+    margin-right: 4px;
+}
+
+/* --- Settings page tab switcher: desktop tabs vs. mobile hamburger --- */
+.settings-tabs-mobile {
+    display: none;
+}
+.settings-tabs-mobile-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 12px 16px;
+    font-size: 0.875rem;
+}
+@media (max-width: 768px) {
+    .settings-tabs-desktop {
+        display: none;
+    }
+    .settings-tabs-mobile {
+        display: flex;
+    }
+}
+
+/* --- TipTap Editor --- */
+.tiptap-editor {
+    min-height: 400px;
+    padding: 2rem;
+    outline: none;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+}
+
+.tiptap-editor:focus {
+    outline: none;
+}
+
+/* Focus mode: dim non-focused nodes */
+.focus-mode .tiptap-editor > * {
+    opacity: 0.3;
+    transition: opacity 200ms ease;
+}
+
+.focus-mode .tiptap-editor > .has-focus {
+    opacity: 1;
+}
+
+.tiptap-editor h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 1.5em 0 0.5em;
+    line-height: 1.3;
+}
+
+.tiptap-editor h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 1.25em 0 0.4em;
+    line-height: 1.35;
+}
+
+.tiptap-editor h3 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 1em 0 0.3em;
+}
+
+.tiptap-editor p {
+    margin-bottom: 0.75em;
+}
+
+.tiptap-editor a,
+.tiptap-editor a.tiptap-link {
+    color: var(--accent);
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.tiptap-editor figure {
+    margin: 1.5em 0;
+    text-align: center;
+}
+
+.tiptap-editor img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--radius-sm);
+}
+
+.tiptap-editor img.ProseMirror-selectednode {
+    outline: 2px solid var(--accent);
+}
+
+/* Figcaption: Figure extension renders <figure><figcaption> natively. */
+.tiptap-editor figcaption {
+    font-style: italic;
+    font-size: calc(1em - 1px);
+    color: var(--text-secondary);
+    text-align: center;
+    margin: 0.5em 2rem;
+    padding: 0.5rem 0;
+}
+
+/* Table styles */
+.tiptap-editor table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+}
+
+.tiptap-editor th,
+.tiptap-editor td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.tiptap-editor th {
+    background: var(--bg-secondary);
+    font-weight: 600;
+}
+
+.tiptap-editor .selectedCell {
+    background: var(--accent-light);
+}
+
+/* Task list styles */
+.tiptap-editor ul[data-type="taskList"] {
+    list-style: none;
+    padding-left: 0;
+}
+
+.tiptap-editor ul[data-type="taskList"] li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.tiptap-editor ul[data-type="taskList"] li input[type="checkbox"] {
+    margin-top: 4px;
+    accent-color: var(--accent);
+}
+
+/* Highlight */
+.tiptap-editor mark {
+    background-color: #fef08a;
+    border-radius: 2px;
+    padding: 0 2px;
+}
+
+/* Text alignment */
+.tiptap-editor .has-text-align-center {
+    text-align: center;
+}
+.tiptap-editor .has-text-align-right {
+    text-align: right;
+}
+.tiptap-editor .has-text-align-justify {
+    text-align: justify;
+}
+
+/* Figure extension: resize handles and alignment controls */
+.tiptap-editor [class*="wrapper-element"] {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.tiptap-editor [class*="dot-element"] {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    background: var(--bg-card);
+    z-index: 10;
+}
+
+.tiptap-editor [class*="image-alignment-container"] {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+.tiptap-editor [class*="caption-controls-element"] {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Search & Replace highlights */
+.tiptap-editor .search-result {
+    background-color: rgba(251, 191, 36, 0.4);
+    border-radius: 2px;
+}
+
+.tiptap-editor .search-result-current {
+    background-color: rgba(251, 146, 60, 0.6);
+}
+
+/* Style check marks (ms-tools inline decorations) */
+.tiptap-editor .style-mark {
+    border-radius: 1px;
+    cursor: help;
+}
+.tiptap-editor .style-mark--filler_word {
+    background-color: rgba(96, 165, 250, 0.2);
+    text-decoration: underline wavy rgba(96, 165, 250, 0.7);
+    text-underline-offset: 3px;
+}
+.tiptap-editor .style-mark--passive_voice {
+    background-color: rgba(251, 146, 60, 0.2);
+    text-decoration: underline wavy rgba(251, 146, 60, 0.7);
+    text-underline-offset: 3px;
+}
+.tiptap-editor .style-mark--long_sentence {
+    background-color: rgba(239, 68, 68, 0.1);
+    text-decoration: underline rgba(239, 68, 68, 0.5);
+    text-underline-offset: 3px;
+}
+.tiptap-editor .style-mark--word_repetition {
+    background-color: rgba(250, 204, 21, 0.2);
+    text-decoration: underline rgba(250, 204, 21, 0.7);
+    text-underline-offset: 3px;
+}
+.tiptap-editor .style-mark--adverb {
+    background-color: rgba(168, 85, 247, 0.15);
+    text-decoration: underline dotted rgba(168, 85, 247, 0.6);
+    text-underline-offset: 3px;
+}
+.tiptap-editor .style-mark--adjective {
+    background-color: rgba(34, 197, 94, 0.15);
+    text-decoration: underline dotted rgba(34, 197, 94, 0.6);
+    text-underline-offset: 3px;
+}
+.tiptap-editor .style-mark--redundant_phrase {
+    background-color: rgba(236, 72, 153, 0.15);
+    text-decoration: underline rgba(236, 72, 153, 0.6);
+    text-underline-offset: 3px;
+}
+
+/* Footnotes */
+.tiptap-editor .footnotes {
+    border-top: 1px solid var(--border);
+    margin-top: 2em;
+    padding-top: 1em;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.tiptap-editor .footnote-reference {
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.75em;
+    vertical-align: super;
+    font-weight: 600;
+}
+
+.tiptap-editor .footnote {
+    margin-bottom: 0.5em;
+}
+
+.tiptap-editor blockquote {
+    border-left: 3px solid var(--accent);
+    padding-left: 1rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin: 1em 0;
+}
+
+.tiptap-editor code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--bg-secondary);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.tiptap-editor pre {
+    background: var(--bg-sidebar);
+    color: var(--text-inverse);
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin: 1em 0;
+}
+
+.tiptap-editor pre code {
+    background: none;
+    padding: 0;
+    color: inherit;
+}
+
+.tiptap-editor ul,
+.tiptap-editor ol {
+    padding-left: 1.5rem;
+    margin-bottom: 0.75em;
+}
+
+.tiptap-editor hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2em 0;
+}
+
+.tiptap-editor .is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--text-muted);
+    pointer-events: none;
+    height: 0;
+    font-style: italic;
+}
+
+/* --- Utilities --- */
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+.mt-1 {
+    margin-top: 0.5rem;
+}
+
+.mt-2 {
+    margin-top: 1rem;
+}
+
+.mt-3 {
+    margin-top: 1.5rem;
+}
+
+.gap-1 {
+    gap: 0.5rem;
+}
+
+.gap-2 {
+    gap: 1rem;
+}
+
+/* --- Responsive --- */
+
+.show-mobile-only {
+    display: none !important;
+}
+
+/* Sidebar wrapper for responsive behavior */
+.sidebar-wrapper {
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+    .show-mobile-only {
+        display: flex !important;
+    }
+
+    /* Dashboard: compact header */
+    .radix-tabs-list {
+        padding: 0 12px;
+    }
+
+    /* Reduce padding on small screens */
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+    }
+
+    /* Sidebar as overlay on mobile */
+    .sidebar-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 90;
+        transition: transform 200ms ease;
+    }
+    .sidebar-wrapper.sidebar-closed {
+        transform: translateX(-100%);
+    }
+    .sidebar-wrapper.sidebar-open {
+        transform: translateX(0);
+    }
+}
+
+/* --- Hamburger Menu --- */
+.hamburger-menu-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 6px 0;
+    min-width: 200px;
+    box-shadow: var(--shadow-lg);
+    z-index: 2100;
+    animation: fadeIn 100ms ease;
+}
+
+.hamburger-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    outline: none;
+}
+
+.hamburger-menu-item[data-highlighted] {
+    background: var(--bg-hover);
+    color: var(--accent);
+}
+
+.hamburger-menu-separator {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+}
+
+/* --- Toast overflow protection ---
+ * react-toastify renders inside a fixed-width container. Long error
+ * messages (SQL queries, stacktraces) must wrap instead of blowing
+ * out the container. These rules are defense-in-depth on top of the
+ * inline styles in notify.ts ErrorContent.
+ */
+.Toastify__toast-body {
+    overflow-wrap: break-word;
+    word-break: break-word;
+    overflow: hidden;
+    max-width: 100%;
+}
+
+.Toastify__toast {
+    max-width: 420px;
+}
+
+/* --- Help panel Markdown content ---
+ * Styles for the rendered Markdown inside the help slide-over.
+ * Uses CSS variables so all 6 theme variants work out of the box.
+ */
+.help-content {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+}
+
+.help-content h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+    font-family: var(--font-display);
+}
+
+.help-content h2 {
+    font-size: 1.0625rem;
+    font-weight: 600;
+    margin: 20px 0 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+}
+
+.help-content h3 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 16px 0 6px;
+}
+
+.help-content p {
+    margin: 0 0 10px;
+}
+
+.help-content ul,
+.help-content ol {
+    margin: 0 0 10px;
+    padding-left: 20px;
+}
+
+.help-content li {
+    margin-bottom: 4px;
+}
+
+.help-content code {
+    background: var(--bg-secondary);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.8125rem;
+    font-family: var(--font-mono);
+}
+
+.help-content pre {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    overflow-x: auto;
+    margin: 0 0 12px;
+}
+
+.help-content pre code {
+    background: none;
+    padding: 0;
+}
+
+.help-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 12px;
+    font-size: 0.8125rem;
+}
+
+.help-content th,
+.help-content td {
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    text-align: left;
+}
+
+.help-content th {
+    background: var(--bg-secondary);
+    font-weight: 600;
+}
+
+.help-content blockquote {
+    border-left: 3px solid var(--accent);
+    margin: 0 0 12px;
+    padding: 6px 12px;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.help-content a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.help-content a:hover {
+    text-decoration: underline;
+}
+
+/* === Audiobook Player === */
+
+.audiobook-player {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    padding: 0;
+    z-index: 10;
+    outline: none;
+}
+
+.audiobook-player__progress {
+    padding: 0 12px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.audiobook-player__controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px 8px;
+    flex-wrap: wrap;
+}
+
+.audiobook-player__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.audiobook-player__title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audiobook-player__meta {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.audiobook-player__buttons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.audiobook-player__play-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    transition: opacity 150ms;
+}
+
+.audiobook-player__play-btn:hover {
+    opacity: 0.85;
+}
+
+.audiobook-player__time {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    min-width: 70px;
+    text-align: center;
+}
+
+.audiobook-player__speed-btn {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 2px 6px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.audiobook-player__speed-btn:hover {
+    background: var(--bg-secondary);
+}
+
+.audiobook-player__volume {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.audiobook-player__toggle {
+    color: var(--text-muted);
+    transition: color 150ms;
+}
+
+.audiobook-player__toggle--active {
+    color: var(--accent);
+}
+
+/* --- Radix Slider theming --- */
+
+.audiobook-slider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    user-select: none;
+    touch-action: none;
+    width: 100%;
+    height: 20px;
+    cursor: pointer;
+}
+
+.audiobook-slider--volume {
+    width: 64px;
+    flex-shrink: 0;
+}
+
+.audiobook-slider__track {
+    position: relative;
+    flex-grow: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+}
+
+.audiobook-slider__range {
+    position: absolute;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--accent);
+}
+
+.audiobook-slider__thumb {
+    display: block;
+    width: 14px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 50%;
+    border: 2px solid var(--bg-secondary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    transition: transform 100ms;
+}
+
+.audiobook-slider__thumb:hover {
+    transform: scale(1.2);
+}
+
+.audiobook-slider__thumb:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.audiobook-slider__thumb--sm {
+    width: 10px;
+    height: 10px;
+}
+
+/* Narrow screens: let controls wrap naturally */
+@media (max-width: 600px) {
+    .audiobook-player__volume {
+        display: none;
+    }
+    .audiobook-player__info {
+        flex-basis: 100%;
+        margin-bottom: 2px;
+    }
+}

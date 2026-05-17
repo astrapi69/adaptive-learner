@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "bibliogon-launcher"
+version = "0.33.0"
+description = "Windows Simple Launcher for Bibliogon. Starts the Docker stack, opens the browser, stops the stack on exit."
+authors = ["Asterios Raptis"]
+license = "MIT"
+package-mode = true
+packages = [{include = "bibliogon_launcher"}]
+
+[tool.poetry.dependencies]
+# PyInstaller supports 3.11 through 3.13 as of the current release; pin
+# the upper bound here so poetry's solver is satisfied. Update when
+# PyInstaller ships support for 3.14+.
+python = ">=3.11,<3.14"
+# stdlib-only runtime: tkinter, urllib, webbrowser, subprocess, pathlib, json, logging
+# Tkinter ships with Python on Windows installers; no pip dep required.
+platformdirs = "^4.9.6"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^9.0.0"
+pyinstaller = "^6.11.0"
+pillow = "^12.2.0"  # Used only by the icon-generation script; bumped from 11.x for CVE-2026-{25990,40192,42308,42309,42310,42311}
+
+[tool.poetry.scripts]
+bibliogon-launcher = "bibliogon_launcher.__main__:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

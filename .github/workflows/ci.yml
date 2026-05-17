@@ -6,52 +6,180 @@ on:
   pull_request:
     branches: [main]
 
+# Defensive opt-in: any JavaScript-runtime action still declaring
+# Node 20 (third-party or stragglers) is coerced to Node 24. After
+# the 2026-05-14 standard-action bumps (checkout v5, setup-python v6,
+# setup-node v5, upload-artifact v6, cache v5, configure-pages v6,
+# upload-pages-artifact v5, deploy-pages v5, softprops/action-gh-release v3)
+# every action we use natively runs on Node 24, so this is now a
+# safety net for future additions rather than an active fix.
+# Default Node 20 is removed September 16th 2026 per
+# https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
-  test:
-    name: Test (Python ${{ matrix.python-version }})
+  backend-tests:
+    name: Backend Tests
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.10", "3.11", "3.12"]
-
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.12"
+
+      # Cache Poetry's virtualenv keyed on poetry.lock + python
+      # version. Saves ~15-30s per run on the backend job
+      # (test-infrastructure-audit 2026-05-12 finding 0.5.1).
+      # The frontend job already does this via setup-node's
+      # ``cache: "npm"``; backend was the asymmetry.
+      - name: Cache Poetry virtualenv (backend)
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            poetry-backend-${{ runner.os }}-py3.12-
 
       - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
+        run: pip install poetry
 
-      - name: Cache virtualenv
-        uses: actions/cache@v4
+      - name: Install backend dependencies
+        working-directory: backend
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Run backend tests
+        working-directory: backend
+        # ``-q`` instead of ``-v``: 1601 tests printed verbose is
+        # noise on a green run. Test-infrastructure audit
+        # finding 0.5.4. Failures still print full traceback;
+        # ``-q`` only quietens the per-test pass logs.
+        run: poetry run pytest tests/ -q
+
+  plugin-tests:
+    name: Plugin Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      # Test-infrastructure audit finding 0.5.2: default
+      # fail-fast=true makes a flake in one plugin mask real
+      # failures in the others. coverage.yml already sets
+      # this to false; the asymmetry with ci.yml was a bug.
+      fail-fast: false
+      matrix:
+        plugin:
+          - bibliogon-plugin-audiobook
+          - bibliogon-plugin-export
+          - bibliogon-plugin-getstarted
+          - bibliogon-plugin-grammar
+          - bibliogon-plugin-help
+          - bibliogon-plugin-kdp
+          - bibliogon-plugin-kinderbuch
+          - bibliogon-plugin-ms-tools
+          - bibliogon-plugin-translation
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
         with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('poetry.lock') }}
+          python-version: "3.12"
+
+      # Per-plugin Poetry virtualenv cache, keyed on the
+      # plugin's own poetry.lock. With 9 matrix jobs running in
+      # parallel, this saves ~15-30s per matrix job on cache
+      # hits. The plugin name in the key prevents cross-plugin
+      # cache pollution (different deps per plugin).
+      - name: Cache Poetry virtualenv (${{ matrix.plugin }})
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-${{ hashFiles(format('plugins/{0}/poetry.lock', matrix.plugin)) }}
+          restore-keys: |
+            poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install plugin dependencies
+        working-directory: plugins/${{ matrix.plugin }}
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Run plugin tests
+        working-directory: plugins/${{ matrix.plugin }}
+        run: poetry run pytest tests/ -v
+
+  frontend-tests:
+    name: Frontend Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        run: poetry install --with dev
+        working-directory: frontend
+        run: npm ci
 
-      - name: Lint with ruff
-        run: poetry run ruff check scripts/ tests/
+      - name: TypeScript type check
+        working-directory: frontend
+        run: npx tsc --noEmit
 
-      - name: Check formatting with black
-        run: poetry run black --check scripts/ tests/
+      - name: Run Vitest
+        working-directory: frontend
+        run: npx vitest run
 
-      - name: Type check with mypy
-        run: poetry run mypy scripts/
+      - name: Build
+        working-directory: frontend
+        run: npx vite build
 
-      - name: Run tests with coverage
-        run: poetry run pytest --cov=scripts --cov-report=xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
-        if: matrix.python-version == '3.12'
+  pre-commit:
+    name: Pre-commit hooks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
-          files: coverage.xml
-          fail_ci_if_error: false
+          python-version: "3.12"
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run hooks on all files
+        run: pre-commit run --all-files --show-diff-on-failure
+
+  lint-and-type-check:
+    name: Backend ruff + mypy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      # Reuse the same backend Poetry cache as the test job
+      # (same key). Mypy needs the SQLAlchemy + Pydantic
+      # stub-bearing venv that ``poetry install`` produces.
+      - name: Cache Poetry virtualenv (backend)
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-backend-${{ runner.os }}-py3.12-${{ hashFiles('backend/poetry.lock') }}
+          restore-keys: |
+            poetry-backend-${{ runner.os }}-py3.12-
+      - name: Install Poetry
+        run: pip install poetry
+      - name: Install backend dependencies
+        working-directory: backend
+        run: poetry install --no-interaction --no-ansi
+      - name: ruff check
+        working-directory: backend
+        run: poetry run ruff check app/
+      - name: mypy
+        working-directory: backend
+        run: poetry run mypy app/

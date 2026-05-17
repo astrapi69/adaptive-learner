@@ -1,167 +1,473 @@
-.DEFAULT_GOAL := help
-SHELL := /bin/bash
+.PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend stop restart fix-watchers \
+       install install-backend install-frontend install-plugins install-e2e \
+       test test-backend test-plugins test-e2e test-e2e-ui \
+       test-plugin-export test-plugin-grammar test-plugin-kdp test-plugin-kinderbuch test-plugin-ms-tools test-plugin-translation test-plugin-audiobook test-plugin-help test-plugin-getstarted test-plugin-git-sync \
+       test-coverage test-coverage-backend test-coverage-frontend test-coverage-plugins \
+       test-coverage-plugin-audiobook test-coverage-plugin-export test-coverage-plugin-grammar test-coverage-plugin-kdp test-coverage-plugin-kinderbuch test-coverage-plugin-ms-tools test-coverage-plugin-translation test-coverage-plugin-help test-coverage-plugin-getstarted \
+       mutmut-backend mutmut-export mutmut-ms-tools mutmut-results \
+       check-types check-types-backend check-types-frontend \
+       check-blockers archive-task archive-task-dry install-hooks \
+       sync-versions sync-versions-dry sync-versions-check \
+       generate-trial-key \
+       docs-install docs-build docs-serve \
+       sync-mkdocs-nav verify-mkdocs-nav check-mkdocs-orphans verify-docs-discipline \
+       lock-all-plugins verify-plugin-locks \
+       clean prod prod-down prod-logs help
 
-SRC_DIRS := scripts/ tests/
+# --- Development ---
 
-# ---------------------------------------------------------------------------
-# Setup
-# ---------------------------------------------------------------------------
+dev: ## Start backend + frontend (backend first, then frontend)
+	@if [ -r /proc/sys/fs/inotify/max_user_watches ]; then \
+		watches=$$(cat /proc/sys/fs/inotify/max_user_watches); \
+		if [ "$$watches" -lt 100000 ]; then \
+			echo "WARNING: fs.inotify.max_user_watches=$$watches is low (< 100000)."; \
+			echo "         vite dev will likely fail with ENOSPC."; \
+			echo "         Run 'make fix-watchers' for the persistent fix."; \
+		fi; \
+	fi
+	@echo "Starting Bibliogon..."
+	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run uvicorn app.main:app --reload --port 8000 &
+	@echo "Waiting for backend..."
+	@for i in 1 2 3 4 5 6 7 8 9 10; do \
+		curl -s http://localhost:8000/api/health > /dev/null 2>&1 && break; \
+		sleep 1; \
+	done
+	@echo "Backend ready. Starting frontend..."
+	@cd frontend && npm run dev
 
-.PHONY: lock-install
-lock-install: ## Lock and install project dependencies
-	poetry lock
-	poetry install
+DEV_LOG_DIR ?= /tmp/bibliogon-logs
 
-.PHONY: install
-install: ## Install project with all dependencies
-	poetry install
+dev-bg: ## Start in background, logs to $(DEV_LOG_DIR) (stop with: make dev-down)
+	@mkdir -p $(DEV_LOG_DIR)
+	@echo "Starting Bibliogon (background)..."
+	@echo "  Backend  log: $(DEV_LOG_DIR)/backend.log"
+	@echo "  Frontend log: $(DEV_LOG_DIR)/frontend.log"
+	@# `setsid` puts each child in its own session so it survives the
+	@# Makefile recipe shell exiting. `< /dev/null` closes stdin so the
+	@# child does not block waiting on a tty. `> ... 2>&1` captures both
+	@# streams to a log file we can tail later. The bare `&` backgrounds
+	@# the compound, and `echo $$!` then writes the child PID for
+	@# `dev-down` to kill.
+	@# `A && B &` is one AND-OR list backgrounded in a subshell; the
+	@# subshell inherits the cd, the main shell does not. So PID
+	@# files are written from the main recipe shell at repo root, and
+	@# the path is `.pid-backend` (NOT `../.pid-backend`).
+	@cd backend && \
+		setsid poetry run uvicorn app.main:app --reload --port 8000 \
+			< /dev/null > $(DEV_LOG_DIR)/backend.log 2>&1 & \
+		echo $$! > .pid-backend
+	@cd frontend && \
+		setsid npm run dev \
+			< /dev/null > $(DEV_LOG_DIR)/frontend.log 2>&1 & \
+		echo $$! > .pid-frontend
+	@sleep 2
+	@if kill -0 $$(cat .pid-backend) 2>/dev/null; then \
+		echo "  Backend  PID: $$(cat .pid-backend) (alive)"; \
+	else \
+		echo "  ERROR: backend died on startup. tail $(DEV_LOG_DIR)/backend.log"; \
+		rm -f .pid-backend; \
+		exit 1; \
+	fi
+	@if kill -0 $$(cat .pid-frontend) 2>/dev/null; then \
+		echo "  Frontend PID: $$(cat .pid-frontend) (alive)"; \
+	else \
+		echo "  ERROR: frontend died on startup. tail $(DEV_LOG_DIR)/frontend.log"; \
+		rm -f .pid-frontend; \
+		exit 1; \
+	fi
+	@echo "Stop with: make dev-down  |  Tail logs with: make dev-bg-logs"
 
-.PHONY: install-dev
-install-dev: ## Install with dev dependencies
-	poetry install --with dev
+dev-bg-logs: ## Tail backend + frontend logs from a `make dev-bg` run
+	@if [ ! -f $(DEV_LOG_DIR)/backend.log ] && [ ! -f $(DEV_LOG_DIR)/frontend.log ]; then \
+		echo "No logs in $(DEV_LOG_DIR). Run 'make dev-bg' first."; \
+		exit 1; \
+	fi
+	@echo "Tailing $(DEV_LOG_DIR)/backend.log + $(DEV_LOG_DIR)/frontend.log (Ctrl+C to stop)..."
+	@tail -F $(DEV_LOG_DIR)/backend.log $(DEV_LOG_DIR)/frontend.log
 
-.PHONY: update
-update: ## Update dependencies
-	poetry update
+dev-down: ## Stop background dev servers
+	@if [ -f .pid-backend ]; then kill $$(cat .pid-backend) 2>/dev/null; rm -f .pid-backend; echo "Backend stopped"; fi
+	@if [ -f .pid-frontend ]; then kill $$(cat .pid-frontend) 2>/dev/null; rm -f .pid-frontend; echo "Frontend stopped"; fi
+	@pkill -f "uvicorn app.main:app" 2>/dev/null || true
+	@pkill -f "vite" 2>/dev/null || true
+	@echo "Done"
 
-.PHONY: hooks
-hooks: ## Install pre-commit hooks
-	poetry run pre-commit install
+stop: dev-down ## Alias for dev-down (stop dev servers)
 
-# ---------------------------------------------------------------------------
-# Code Quality
-# ---------------------------------------------------------------------------
+restart: dev-down dev ## Stop and restart dev servers (use after a hung session)
 
-.PHONY: lint
-lint: ## Run ruff linter
-	poetry run ruff check $(SRC_DIRS)
+fix-watchers: ## Persist Linux inotify limits for vite dev (sudo required, runs once)
+	@echo "Bibliogon: persist inotify limits for vite dev mode."
+	@echo "Sudo prompt is for the sysctl write to /etc/sysctl.d/."
+	@echo ""
+	@echo "fs.inotify.max_user_watches=524288" | sudo tee /etc/sysctl.d/99-bibliogon-watchers.conf > /dev/null
+	@echo "fs.inotify.max_user_instances=512" | sudo tee -a /etc/sysctl.d/99-bibliogon-watchers.conf > /dev/null
+	@sudo sysctl --system > /dev/null
+	@echo "Wrote /etc/sysctl.d/99-bibliogon-watchers.conf and applied:"
+	@echo "  fs.inotify.max_user_watches    = $$(cat /proc/sys/fs/inotify/max_user_watches)"
+	@echo "  fs.inotify.max_user_instances  = $$(cat /proc/sys/fs/inotify/max_user_instances)"
+	@echo "Persistent across reboots."
 
-.PHONY: lint-fix
-lint-fix: ## Run ruff linter with auto-fix
-	poetry run ruff check $(SRC_DIRS) --fix --unsafe-fixes
+dev-backend:
+	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run uvicorn app.main:app --reload --port 8000
 
-.PHONY: format
-format: ## Format code with black
-	poetry run black $(SRC_DIRS)
+dev-frontend:
+	cd frontend && npm run dev
 
-.PHONY: format-check
-format-check: ## Check formatting without changes
-	poetry run black --check $(SRC_DIRS)
+# --- Install ---
 
-.PHONY: typecheck
-typecheck: ## Run MyPy type checks
-	poetry run mypy scripts/
+install: install-plugins install-backend install-frontend install-e2e ## Install all dependencies
 
-.PHONY: codespell
-codespell: ## Run codespell
-	poetry run codespell $(SRC_DIRS)
+install-backend:
+	cd backend && poetry install
 
-.PHONY: codespell-fix
-codespell-fix: ## Run codespell with auto-fix
-	poetry run codespell $(SRC_DIRS) --write-changes
+install-frontend:
+	cd frontend && npm install
 
-.PHONY: precommit
-precommit: ## Run all pre-commit hooks
-	poetry run pre-commit run -a
+install-e2e:
+	cd e2e && npm install && npx playwright install chromium
 
-.PHONY: fix
-fix: ## Run all auto-fixes (ruff + black)
-	poetry run ruff check $(SRC_DIRS) --fix --unsafe-fixes
-	poetry run black $(SRC_DIRS)
+install-plugins:
+	@for dir in plugins/bibliogon-plugin-*; do \
+		if [ -f "$$dir/pyproject.toml" ]; then \
+			echo "Installing $$dir..."; \
+			cd "$$dir" && poetry install && cd ../..; \
+		fi; \
+	done
 
-# ---------------------------------------------------------------------------
-# Tests
-# ---------------------------------------------------------------------------
+# --- Test ---
 
-.PHONY: test
-test: ## Run all tests
-	poetry run pytest
+test: test-plugins test-backend test-frontend ## Run ALL tests, no coverage (everyday use; coverage runs in CI - see test-coverage)
+	@echo ""
+	@echo "=== All tests complete ==="
 
-.PHONY: test-v
-test-v: ## Run all tests (verbose)
-	poetry run pytest -v
+test-frontend: ## Run frontend unit tests (Vitest)
+	@echo ""
+	@echo "=== Frontend Tests ==="
+	cd frontend && npx vitest run
 
-.PHONY: test-fast
-test-fast: ## Run tests without coverage (faster)
-	poetry run pytest -q --maxfail=1 --disable-warnings --no-cov
+test-backend: ## Run backend tests
+	@echo ""
+	@echo "=== Backend Tests ==="
+	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-.PHONY: test-cov
-test-cov: ## Run tests with coverage report
-	poetry run pytest --cov=scripts --cov-report=term-missing
+test-plugins: test-plugin-export test-plugin-grammar test-plugin-kdp test-plugin-kinderbuch test-plugin-ms-tools test-plugin-translation test-plugin-audiobook test-plugin-help test-plugin-getstarted test-plugin-git-sync ## Run all plugin tests
 
-.PHONY: test-xml
-test-xml: ## Run tests with XML coverage (for CI)
-	poetry run pytest -q --maxfail=1 --disable-warnings --cov=scripts --cov-report=xml
+test-plugin-export: ## Run export plugin tests
+	@echo ""
+	@echo "=== Export Plugin Tests ==="
+	cd plugins/bibliogon-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-# ---------------------------------------------------------------------------
-# CI
-# ---------------------------------------------------------------------------
+test-plugin-grammar: ## Run grammar plugin tests
+	@echo ""
+	@echo "=== Grammar Plugin Tests ==="
+	cd plugins/bibliogon-plugin-grammar && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-.PHONY: ci
-ci: lint format-check test ## Full CI pipeline (lint + format-check + test)
+test-plugin-kdp: ## Run KDP plugin tests
+	@echo ""
+	@echo "=== KDP Plugin Tests ==="
+	cd plugins/bibliogon-plugin-kdp && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-# ---------------------------------------------------------------------------
-# Version Management
-# ---------------------------------------------------------------------------
+test-plugin-kinderbuch: ## Run kinderbuch plugin tests
+	@echo ""
+	@echo "=== Kinderbuch Plugin Tests ==="
+	cd plugins/bibliogon-plugin-kinderbuch && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-.PHONY: bump-patch
-bump-patch: ## Bump patch version (0.1.0 -> 0.1.1)
-	poetry version patch
+test-plugin-ms-tools: ## Run manuscript tools plugin tests
+	@echo ""
+	@echo "=== Manuscript Tools Plugin Tests ==="
+	cd plugins/bibliogon-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-.PHONY: bump-minor
-bump-minor: ## Bump minor version (0.1.0 -> 0.2.0)
-	poetry version minor
+test-plugin-translation: ## Run translation plugin tests
+	@echo ""
+	@echo "=== Translation Plugin Tests ==="
+	cd plugins/bibliogon-plugin-translation && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-.PHONY: bump-major
-bump-major: ## Bump major version (0.1.0 -> 1.0.0)
-	poetry version major
+test-plugin-audiobook: ## Run audiobook plugin tests
+	@echo ""
+	@echo "=== Audiobook Plugin Tests ==="
+	cd plugins/bibliogon-plugin-audiobook && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-# ---------------------------------------------------------------------------
-# Build & Publish
-# ---------------------------------------------------------------------------
+test-plugin-help: ## Run help plugin tests
+	@echo ""
+	@echo "=== Help Plugin Tests ==="
+	cd plugins/bibliogon-plugin-help && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-.PHONY: build
-build: ## Build distribution package
-	poetry build
+test-plugin-getstarted: ## Run getstarted plugin tests
+	@echo ""
+	@echo "=== Getstarted Plugin Tests ==="
+	cd plugins/bibliogon-plugin-getstarted && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-.PHONY: publish
-publish: ci build ## Run CI, build and publish to PyPI
-	poetry publish
+test-plugin-git-sync: ## Run git-sync plugin tests (PGS-01)
+	@echo ""
+	@echo "=== Git-Sync Plugin Tests ==="
+	cd plugins/bibliogon-plugin-git-sync && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-.PHONY: publish-test
-publish-test: ci build ## Run CI, build and publish to TestPyPI
-	poetry publish -r testpypi
+# --- Coverage (heavy, opt-in; CI runs this on every push - see .github/workflows/coverage.yml) ---
 
-# ---------------------------------------------------------------------------
-# Git
-# ---------------------------------------------------------------------------
+test-coverage: test-coverage-plugins test-coverage-backend test-coverage-frontend ## Run ALL tests with coverage (slow; prefer CI)
+	@echo ""
+	@echo "=== All coverage runs complete ==="
 
-.PHONY: git-setup
-git-setup: ## Configure git hooks and commit template
-	git config core.hooksPath .githooks
-	git config commit.template .gitmessage
-	chmod +x .githooks/*
-	@echo "Git hooks and commit template activated."
+test-coverage-backend: ## Backend coverage report (htmlcov/)
+	@echo ""
+	@echo "=== Backend Coverage ==="
+	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=app --cov-report=html --cov-report=term
 
-# ---------------------------------------------------------------------------
-# Cleanup
-# ---------------------------------------------------------------------------
+test-coverage-frontend: ## Frontend coverage report (coverage/)
+	@echo ""
+	@echo "=== Frontend Coverage ==="
+	cd frontend && npm run test:coverage
 
-.PHONY: clean
+test-coverage-plugins: test-coverage-plugin-audiobook test-coverage-plugin-export test-coverage-plugin-grammar test-coverage-plugin-kdp test-coverage-plugin-kinderbuch test-coverage-plugin-ms-tools test-coverage-plugin-translation test-coverage-plugin-help test-coverage-plugin-getstarted ## Run plugin tests with coverage
+
+test-coverage-plugin-audiobook: ## Audiobook plugin coverage
+	@echo ""
+	@echo "=== Audiobook Plugin Coverage ==="
+	cd plugins/bibliogon-plugin-audiobook && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_audiobook --cov-report=html --cov-report=term
+
+test-coverage-plugin-export: ## Export plugin coverage
+	@echo ""
+	@echo "=== Export Plugin Coverage ==="
+	cd plugins/bibliogon-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_export --cov-report=html --cov-report=term
+
+test-coverage-plugin-grammar: ## Grammar plugin coverage
+	@echo ""
+	@echo "=== Grammar Plugin Coverage ==="
+	cd plugins/bibliogon-plugin-grammar && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_grammar --cov-report=html --cov-report=term
+
+test-coverage-plugin-kdp: ## KDP plugin coverage
+	@echo ""
+	@echo "=== KDP Plugin Coverage ==="
+	cd plugins/bibliogon-plugin-kdp && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_kdp --cov-report=html --cov-report=term
+
+test-coverage-plugin-kinderbuch: ## Kinderbuch plugin coverage
+	@echo ""
+	@echo "=== Kinderbuch Plugin Coverage ==="
+	cd plugins/bibliogon-plugin-kinderbuch && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_kinderbuch --cov-report=html --cov-report=term
+
+test-coverage-plugin-ms-tools: ## ms-tools plugin coverage
+	@echo ""
+	@echo "=== ms-tools Plugin Coverage ==="
+	cd plugins/bibliogon-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_ms_tools --cov-report=html --cov-report=term
+
+test-coverage-plugin-translation: ## Translation plugin coverage
+	@echo ""
+	@echo "=== Translation Plugin Coverage ==="
+	cd plugins/bibliogon-plugin-translation && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_translation --cov-report=html --cov-report=term
+
+test-coverage-plugin-help: ## Help plugin coverage
+	@echo ""
+	@echo "=== Help Plugin Coverage ==="
+	cd plugins/bibliogon-plugin-help && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_help --cov-report=html --cov-report=term
+
+test-coverage-plugin-getstarted: ## Getstarted plugin coverage
+	@echo ""
+	@echo "=== Getstarted Plugin Coverage ==="
+	cd plugins/bibliogon-plugin-getstarted && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_getstarted --cov-report=html --cov-report=term
+
+# --- Mutation Testing ---
+
+mutmut-backend: ## Run mutation testing on backend
+	@echo ""
+	@echo "=== Mutation Testing: Backend ==="
+	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
+
+mutmut-export: ## Run mutation testing on export plugin
+	@echo ""
+	@echo "=== Mutation Testing: Export Plugin ==="
+	cd plugins/bibliogon-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
+
+mutmut-ms-tools: ## Run mutation testing on ms-tools plugin
+	@echo ""
+	@echo "=== Mutation Testing: MS-Tools Plugin ==="
+	cd plugins/bibliogon-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
+
+mutmut-results: ## Show mutation testing results
+	@echo "=== Backend ===" && cd backend && poetry run mutmut results 2>/dev/null || true
+	@echo "=== Export ===" && cd plugins/bibliogon-plugin-export && poetry run mutmut results 2>/dev/null || true
+	@echo "=== MS-Tools ===" && cd plugins/bibliogon-plugin-ms-tools && poetry run mutmut results 2>/dev/null || true
+
+# --- Blocker Status ---
+
+check-blockers: ## Ping upstream sources for every BLOCKED item in docs/backlog.md
+	@bash scripts/check-blockers.sh
+
+archive-task: ## Move completed [x] tasks out of ROADMAP/backlog into docs/roadmap-archive/YYYY-MM.md (interactive)
+	@python3 scripts/archive_completed_task.py
+
+archive-task-dry: ## Same as archive-task but writes nothing (preview)
+	@python3 scripts/archive_completed_task.py --dry-run
+
+# --- Git Hooks ---
+
+install-hooks: ## Install scripts/git-hooks/* into .git/hooks (per-checkout, not committed under .git)
+	@mkdir -p .git/hooks
+	@for hook in scripts/git-hooks/*; do \
+		name=$$(basename $$hook); \
+		ln -sf ../../$$hook .git/hooks/$$name; \
+		echo "linked .git/hooks/$$name -> $$hook"; \
+	done
+	@echo "Hooks installed. They run on every git push; tag pushes trigger pre-commit on all backend files."
+
+# --- Type Checking ---
+
+check-types: check-types-backend check-types-frontend ## Run all type checks
+
+check-types-backend: ## Run mypy on backend
+	@echo ""
+	@echo "=== mypy Backend ==="
+	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run mypy app/
+
+check-types-frontend: ## Run tsc --noEmit on frontend
+	@echo ""
+	@echo "=== TypeScript Frontend ==="
+	cd frontend && npx tsc --noEmit
+
+# --- E2E Tests ---
+
+test-e2e: ## Run Playwright e2e tests (starts servers automatically)
+	cd e2e && npx playwright test
+
+test-e2e-ui: ## Run e2e tests with Playwright UI
+	cd e2e && npx playwright test --ui
+
+# --- Version sync ---
+
+sync-versions: ## Propagate backend/pyproject.toml version to all subsystems
+	@python3 scripts/sync_versions.py
+
+sync-versions-dry: ## Show what sync-versions would change without writing
+	@python3 scripts/sync_versions.py --dry-run
+
+sync-versions-check: ## Exit non-zero if any subsystem version drifts from canonical
+	@python3 scripts/sync_versions.py --check
+
+# --- License ---
+
+generate-trial-key: ## Generate 30-day trial key. Usage: make generate-trial-key AUTHOR="Name"
+	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run python -c \
+		"from app.licensing import *; \
+		v = LicenseValidator(get_license_secret()); \
+		key = create_trial_key(v, author='$(AUTHOR)', days=30); \
+		print('Trial Key:', key); \
+		print('Author:', '$(AUTHOR)' or '(any)'); \
+		from datetime import date, timedelta; \
+		print('Expires:', (date.today() + timedelta(days=30)).isoformat())"
+
+generate-license-key: ## Generate plugin key. Usage: make generate-license-key PLUGIN=audiobook AUTHOR="Name" DAYS=365
+	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run python -c \
+		"from app.licensing import *; \
+		v = LicenseValidator(get_license_secret()); \
+		key = create_plugin_key(v, '$(PLUGIN)', '$(AUTHOR)', int('$(DAYS)' or '365')); \
+		print('Key:', key); \
+		print('Plugin:', '$(PLUGIN)'); \
+		print('Author:', '$(AUTHOR)'); \
+		from datetime import date, timedelta; \
+		print('Expires:', (date.today() + timedelta(days=int('$(DAYS)' or '365'))).isoformat())"
+
+generate-license-key-all: ## Generate key for all plugins. Usage: make generate-license-key-all AUTHOR="Name" DAYS=365
+	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run python -c \
+		"from app.licensing import *; \
+		v = LicenseValidator(get_license_secret()); \
+		from datetime import date, timedelta; \
+		days = int('$(DAYS)' or '365'); \
+		expires = (date.today() + timedelta(days=days)).isoformat(); \
+		p = LicensePayload(plugin='*', version='1', expires=expires, author='$(AUTHOR)'); \
+		key = v.create_license(p); \
+		print('Key:', key); \
+		print('Plugins: ALL'); \
+		print('Author:', '$(AUTHOR)'); \
+		print('Expires:', expires)"
+
+seed-voices: ## Sync Edge TTS voices into the database
+	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run python -c \
+		"import asyncio; from app.database import SessionLocal, init_db; init_db(); \
+		from app.voice_store import sync_edge_tts_voices; \
+		db = SessionLocal(); count = asyncio.run(sync_edge_tts_voices(db)); db.close(); \
+		print(f'{count} voices synced')"
+
+# --- Production (Docker) ---
+
+prod: ## Start production via Docker Compose
+	docker compose -f docker-compose.prod.yml up --build -d
+
+prod-down: ## Stop production
+	docker compose -f docker-compose.prod.yml down
+
+prod-logs: ## Show production logs
+	docker compose -f docker-compose.prod.yml logs -f
+
+# --- Documentation (MkDocs) ---
+
+docs-install: ## Install MkDocs dependencies (separate venv in docs/)
+	cd docs && poetry install
+
+docs-build: ## Build static documentation site
+	cd docs && poetry run python ../scripts/generate_mkdocs_nav.py
+	cd docs && poetry run mkdocs build -f ../mkdocs.yml
+
+docs-serve: ## Serve documentation locally (hot-reload)
+	cd docs && poetry run python ../scripts/generate_mkdocs_nav.py
+	cd docs && poetry run mkdocs serve -f ../mkdocs.yml
+
+sync-mkdocs-nav: ## Regenerate mkdocs.yml nav blocks from docs/help/_meta.yaml
+	cd docs && poetry run python ../scripts/generate_mkdocs_nav.py
+
+verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-friendly)
+	cd docs && poetry run python ../scripts/generate_mkdocs_nav.py --check
+
+check-mkdocs-orphans: ## Adversarial check: fail if mkdocs reports orphan pages
+	bash scripts/check_mkdocs_orphans.sh
+
+verify-docs-discipline: verify-mkdocs-nav check-mkdocs-orphans ## All docs-discipline gates (mandatory in pre-tag chain)
+	@echo "All docs-discipline checks passed."
+
+# --- Plugin lockfile discipline (PLUGIN-LOCKFILE-DRIFT-01) ---
+# `make test` installs plugins from the backend's combined poetry.lock
+# (path-deps); CI installs each plugin from its OWN poetry.lock. The two
+# paths drift independently when a shared external pin (e.g. fastapi)
+# bumps in every plugin's pyproject. Catches the divergence before push.
+
+lock-all-plugins: ## Re-lock every plugin's poetry.lock (after a shared-dep pin bump)
+	@for d in plugins/bibliogon-plugin-*/; do \
+		echo ""; echo "=== $$(basename $$d) ==="; \
+		cd "$$d" && poetry lock && cd - >/dev/null; \
+	done
+	@echo ""
+	@echo "Re-locked $$(ls -d plugins/bibliogon-plugin-*/ | wc -l) plugin(s)."
+
+verify-plugin-locks: ## Detect drift between each plugin's pyproject.toml and its poetry.lock
+	@drift=0; \
+	for d in plugins/bibliogon-plugin-*/; do \
+		name=$$(basename $$d); \
+		out=$$(cd "$$d" && poetry install --dry-run --no-interaction --no-ansi 2>&1 | head -3); \
+		if echo "$$out" | grep -q "changed significantly"; then \
+			echo "DRIFT: $$name (run \`make lock-all-plugins\` or \`cd $$d && poetry lock\`)"; \
+			drift=1; \
+		fi; \
+	done; \
+	if [ $$drift -eq 1 ]; then \
+		echo ""; \
+		echo "ERROR: at least one plugin pyproject.toml drifts from its poetry.lock."; \
+		echo "Same shape as the v0.30.0 release CI red-on-main: the backend's"; \
+		echo "combined lock can be in sync while per-plugin locks lag. Run"; \
+		echo "\`make lock-all-plugins\` to bring all plugin locks in sync."; \
+		exit 1; \
+	fi; \
+	echo "OK: all plugin pyproject.toml/poetry.lock pairs in sync."
+
+# --- Clean ---
+
 clean: ## Remove build artifacts and caches
-	rm -rf dist/ build/ .pytest_cache/ .ruff_cache/ .mypy_cache/ .coverage coverage.xml htmlcov/
-	find scripts/ tests/ -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
-	find . -name '*.pyc' -delete
+	rm -rf backend/__pycache__ backend/.pytest_cache backend/*.db
+	rm -rf frontend/node_modules frontend/dist
+	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name .pytest_cache -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
 
-.PHONY: clean-venv
-clean-venv: ## Remove Poetry virtualenv
-	poetry env remove --all || true
+# --- Help ---
 
-# ---------------------------------------------------------------------------
-# Help
-# ---------------------------------------------------------------------------
-
-.PHONY: help
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
+		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-25s\033[0m %s\n", $$1, $$2}'
