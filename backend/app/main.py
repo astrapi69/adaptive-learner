@@ -110,6 +110,40 @@ def _apply_env_overrides(config: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+# Inverse direction of ``_ENV_SECRET_OVERRIDES``: when a module
+# reads a value from ``os.environ`` directly (the crypto service,
+# uvicorn's CLI flag, etc.) but the value lives in the layered
+# config (typically ``~/.config/adaptive_learner/secrets.yaml``),
+# this map says "populate the env var from the merged config when
+# the env is empty". Lets the secrets-yaml + Fernet flow Just Work
+# without every reader having to learn the layered config.
+_ENV_CONFIG_SOURCES: dict[str, tuple[str, ...]] = {
+    "ADAPTIVE_LEARNER_SECRET_KEY": ("secret_key",),
+}
+
+
+def _hydrate_env_from_config(config: dict[str, Any]) -> None:
+    """Set env vars from the merged config when they're not already
+    in the environment.
+
+    Inverse of :func:`_apply_env_overrides`. An already-exported
+    env var wins; we only fill what's missing. Non-string config
+    values (None, dicts, etc.) are skipped silently — the env-only
+    reader will then surface its own missing-value error.
+    """
+    for env_name, path in _ENV_CONFIG_SOURCES.items():
+        if os.environ.get(env_name):
+            continue
+        cursor: Any = config
+        for segment in path:
+            if not isinstance(cursor, dict):
+                cursor = None
+                break
+            cursor = cursor.get(segment)
+        if isinstance(cursor, str) and cursor.strip():
+            os.environ[env_name] = cursor
+
+
 def _load_override_file(path: Path) -> dict[str, Any]:
     if not path.exists():
         return {}
@@ -234,6 +268,12 @@ def _sync_manager_with_overlay() -> None:
 
 _sync_manager_with_overlay()
 _startup_config = _load_app_config()
+# Hydrate env vars whose canonical reader sits outside the layered
+# config (crypto reads os.environ directly). Runs BEFORE the
+# lifespan + before crypto.validate_at_startup so a key stored in
+# ~/.config/adaptive_learner/secrets.yaml works without the
+# deployer having to manually ``export`` it.
+_hydrate_env_from_config(_startup_config)
 
 
 def _load_installed_plugins() -> None:

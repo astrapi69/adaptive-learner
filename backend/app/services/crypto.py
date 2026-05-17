@@ -7,19 +7,28 @@ service have a single typed entry point and tests get a clean
 Key resolution:
 
 - The encryption key comes from the ``ADAPTIVE_LEARNER_SECRET_KEY``
-  environment variable (the layered-config helpers in ``app.main``
-  copy the value from ``app.yaml`` / the user-overlay / the
-  secrets file into the environment before this module is first
-  used; tests set it directly in ``conftest.py``).
-- A Fernet key is 32 random bytes, url-safe base64-encoded. Generate
-  one with::
+  environment variable. This module reads ``os.environ`` directly;
+  every other source feeds it.
+- Three feeder paths (any one works; first hit wins):
 
-      python -c "from cryptography.fernet import Fernet; \
-                 print(Fernet.generate_key().decode())"
+  1. **Local dev (recommended)** — ``make dev-secret`` generates a
+     Fernet key and persists it to ``.adaptive-learner/dev-secret.env``
+     (gitignored). ``make dev`` / ``make dev-bg`` source the file
+     before launching uvicorn.
+  2. **Inline export** — ``export ADAPTIVE_LEARNER_SECRET_KEY=…``
+     in whatever shell you launch uvicorn from.
+  3. **Production** — set ``secret_key: <key>`` at the top of
+     ``~/.config/adaptive_learner/secrets.yaml``. The layered-config
+     loader in :mod:`app.main` (via ``_hydrate_env_from_config``)
+     populates ``ADAPTIVE_LEARNER_SECRET_KEY`` from this value at
+     startup when the env is unset.
 
-  and either export it as ``ADAPTIVE_LEARNER_SECRET_KEY=…`` or store
-  it in ``~/.config/adaptive_learner/secrets.yaml`` under
-  ``secret_key:``.
+- Tests bypass all three by writing the env var directly in
+  ``conftest.py`` before any ``app.*`` import.
+- Generate a key with::
+
+      python3 -c "from cryptography.fernet import Fernet; \
+                  print(Fernet.generate_key().decode())"
 
 Error surface (typed, fail-fast):
 
@@ -79,12 +88,18 @@ def get_fernet() -> Fernet:
     key = os.environ.get(ENV_VAR, "")
     if not key:
         raise CryptoConfigurationError(
-            f"{ENV_VAR} is not set. Generate a key with "
-            f'``python -c "from cryptography.fernet import Fernet; '
-            f'print(Fernet.generate_key().decode())"`` and either '
-            f"export it or store it in "
-            f"``~/.config/adaptive_learner/secrets.yaml`` under "
-            f"``secret_key:``."
+            f"{ENV_VAR} is not set. Three ways to supply one (any works):\n"
+            f"  1. Local dev (recommended): run `make dev-secret` once. "
+            f"This generates a Fernet key + persists it to "
+            f".adaptive-learner/dev-secret.env (gitignored); "
+            f"`make dev` then sources the file automatically.\n"
+            f"  2. Inline export: `export {ENV_VAR}=$(python3 -c "
+            f'"from cryptography.fernet import Fernet; '
+            f'print(Fernet.generate_key().decode())")`.\n'
+            f"  3. Production: store `secret_key: <key>` at the top "
+            f"of ~/.config/adaptive_learner/secrets.yaml; the layered "
+            f"config loader in app.main hydrates the env var from "
+            f"there at startup."
         )
     try:
         return Fernet(key.encode("utf-8"))

@@ -46,6 +46,14 @@ backend/**/*.migrated-*
 # backend/app/paths.py + backend/tests/conftest.py).
 .adaptive-learner-production
 
+# Dev-only Fernet key (written by `make dev-secret` and sourced by
+# `make dev` / `make dev-bg`; see app/services/crypto.py for the
+# three-path key-resolution policy). The whole .adaptive-learner/
+# subtree is dev scratch space — gitignored as a class so future
+# dev-only artefacts (caches, lockfiles, scratch DBs) can land
+# here without a separate gitignore entry.
+.adaptive-learner/
+
 # MkDocs build output
 site/
 
