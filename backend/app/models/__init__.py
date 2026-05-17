@@ -127,6 +127,29 @@ class UserSettings(Base):
     def __repr__(self) -> str:
         return f"<UserSettings user={self.user_id!r} provider={self.active_provider!r}>"
 
+    # --- Computed fields consumed by ``UserSettingsOut.model_validate(row)``.
+
+    @property
+    def language(self) -> str:
+        """Mirror the parent :class:`User`'s language so the settings
+        response is a single fetch for the frontend. Falls back to
+        ``"de"`` when the user relationship is not loaded (defensive
+        only — every router-layer caller loads the parent first).
+        """
+        return self.user.language if self.user else "de"
+
+    @property
+    def has_anthropic_key(self) -> bool:
+        return self.api_key_anthropic is not None
+
+    @property
+    def has_openai_key(self) -> bool:
+        return self.api_key_openai is not None
+
+    @property
+    def has_gemini_key(self) -> bool:
+        return self.api_key_gemini is not None
+
 
 # --- Learning projects ------------------------------------------------------
 

@@ -297,36 +297,36 @@ def test_rating_create_accepts_boundaries():
 # --- UserSettings ----------------------------------------------------------
 
 
-def test_settings_out_strips_api_keys_via_router_flags():
-    """Out schema never carries plaintext / ciphertext keys; the
-    router fills the boolean flags before returning.
+def test_settings_out_strips_api_keys_via_orm_properties():
+    """Out schema never carries plaintext / ciphertext keys.
+
+    The ORM model exposes ``has_<provider>_key`` and ``language``
+    as computed properties, so ``model_validate(row)`` works
+    directly without the router having to assemble a dict.
+    The api_key_* columns themselves are NOT fields on the schema
+    and therefore can't leak into the response.
     """
     db = SessionLocal()
     try:
-        u = User(name="u")
+        u = User(name="u", language="en")
         db.add(u)
         db.commit()
         db.refresh(u)
-        s = UserSettings(user_id=u.id, active_provider="anthropic", api_key_anthropic="ciphertext")
+        s = UserSettings(
+            user_id=u.id, active_provider="anthropic", api_key_anthropic="ciphertext"
+        )
         db.add(s)
         db.commit()
         db.refresh(s)
-        # Routers will construct the flags from the row. UserSettingsOut
-        # itself does not have api_key_* fields, so feeding the ORM
-        # directly through ``model_validate`` simply ignores them.
-        payload = {
-            **{k: getattr(s, k) for k in ("id", "user_id", "active_provider", "created_at", "updated_at")},
-            "has_anthropic_key": s.api_key_anthropic is not None,
-            "has_openai_key": s.api_key_openai is not None,
-            "has_gemini_key": s.api_key_gemini is not None,
-        }
-        out = UserSettingsOut.model_validate(payload)
+        out = UserSettingsOut.model_validate(s)
         assert out.has_anthropic_key is True
         assert out.has_openai_key is False
-        # Round-tripped JSON must not leak the ciphertext.
+        assert out.has_gemini_key is False
+        assert out.language == "en"  # denormalised from User
         dumped = out.model_dump()
         assert "api_key_anthropic" not in dumped
         assert "api_key_openai" not in dumped
+        assert "api_key_gemini" not in dumped
     finally:
         db.close()
 
@@ -335,6 +335,7 @@ def test_settings_provider_enum_coercion():
     out_payload = {
         "id": "x",
         "user_id": "u",
+        "language": "de",
         "active_provider": "openai",
         "has_anthropic_key": False,
         "has_openai_key": True,
@@ -344,3 +345,4 @@ def test_settings_provider_enum_coercion():
     }
     out = UserSettingsOut.model_validate(out_payload)
     assert out.active_provider is AIProvider.OPENAI
+    assert out.language == "de"

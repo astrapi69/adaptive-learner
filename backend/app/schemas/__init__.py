@@ -124,18 +124,53 @@ class UserSettingsOut(BaseModel):
 
     The router builds the boolean flags from
     ``settings.api_key_<provider> is not None`` before returning.
+    ``language`` is denormalised from the parent :class:`User` row
+    so the frontend Settings page has a single endpoint for both
+    the provider and the UI language (PATCH on this endpoint
+    accepts both, see :class:`SettingsPatchBody`).
     """
 
     model_config = ConfigDict(from_attributes=True)
 
     id: str
     user_id: str
+    language: str
     active_provider: AIProvider
     has_anthropic_key: bool = False
     has_openai_key: bool = False
     has_gemini_key: bool = False
     created_at: datetime
     updated_at: datetime
+
+
+class SettingsPatchBody(BaseModel):
+    """PATCH body for ``/api/settings/{user_id}``.
+
+    Spans two tables: ``active_provider`` lives on
+    :class:`UserSettings`, ``language`` lives on :class:`User`.
+    The service updates both in one transaction so the response
+    reflects a consistent snapshot.
+
+    API-key writes do NOT come through here; the dedicated
+    ``POST /api/settings/{user_id}/api-key`` endpoint is the
+    only way to set an encrypted key (and ``DELETE …/{provider}``
+    is the only way to clear one).
+    """
+
+    active_provider: AIProvider | None = None
+    language: str | None = Field(default=None, min_length=2, max_length=10)
+
+
+class ApiKeySetBody(BaseModel):
+    """POST body for ``/api/settings/{user_id}/api-key``.
+
+    ``key`` is the plaintext API token from the user; the service
+    Fernet-encrypts it before persisting via
+    :mod:`app.services.crypto`.
+    """
+
+    provider: AIProvider
+    key: str = Field(min_length=1)
 
 
 # --- LearningProject --------------------------------------------------------
@@ -504,6 +539,8 @@ __all__ = [
     "UserUpdate",
     "UserOut",
     # UserSettings
+    "ApiKeySetBody",
+    "SettingsPatchBody",
     "UserSettingsCreate",
     "UserSettingsUpdate",
     "UserSettingsOut",
