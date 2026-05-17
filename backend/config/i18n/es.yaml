@@ -1,1113 +1,892 @@
 _meta:
-  review_status: "partial: pending native speaker for new namespaces"
-  translator: "Claude (Anthropic)"
-  translation_date: "2026-05-12"
+  review_status: 'partial: pending native speaker for new namespaces'
+  translator: Claude (Anthropic)
+  translation_date: '2026-05-12'
   reference_lang: en
   pending_namespaces:
-    - ai_template
-    - bulk_ai_fill
-    - comments
-    - convert_to_book
-
+  - ai_template
+  - bulk_ai_fill
+  - comments
+  - convert_to_book
 ui:
   dashboard:
-    title: "Mis libros"
-    articles_nav: "Articulos"
-    view_toggle_label: "Cambiar vista"
-    view_grid: "Vista de cuadricula"
-    view_list: "Vista de lista"
-    list_aria_label: "Lista de libros"
-    col_cover: "Portada"
-    col_title: "Titulo"
-    col_author: "Autor"
-    col_status: "Estado"
-    col_topic: "Tema"
-    col_language: "Idioma"
-    col_last_edit: "Ultima edicion"
-    col_actions: "Acciones"
-    articles_nav_tooltip: "Gestionar articulos"
-    books_nav: "Libros"
-    books_nav_tooltip: "Gestionar libros"
-    new_book: "Nuevo libro"
-    no_books: "Aun no hay libros"
-    book_no_author: "—"
-    confirm_delete: "Seguro que quieres eliminar este libro?"
-    backup: "Copia de seguridad"
-    restore: "Restaurar"
-    import: "Importar"
-    trash: "Papelera"
-    search_placeholder: "Buscar por titulo, autor, genero o idioma..."
-    sort_date: "Fecha"
-    sort_title: "Titulo"
-    sort_author: "Autor"
-    sort_asc: "Ascendente"
-    sort_desc: "Descendente"
-    all_genres: "Todos los géneros"
-    all_languages: "Todos los idiomas"
-    filters: "Filtros"
-    reset_filters: "Restablecer filtros"
-    empty_filtered: "Sin resultados"
-    empty_filtered_hint: "No hay libros que coincidan con los filtros actuales."
-    delete_permanent_title: "Eliminar permanentemente"
-    delete_permanent_warning: "Eliminar este libro permanentemente? Esta accion no se puede deshacer."
-    empty_trash_title: "Vaciar papelera"
-    empty_trash_warning: "Todos los libros en la papelera se eliminaran permanentemente."
-    backup_imported: "libros importados"
-    import_failed: "Error en la importacion"
-    chapters_imported: "capitulos importados"
-    help: "Ayuda"
-    back: "Volver"
-    book_singular: "libro"
-    book_plural: "libros"
-    empty_trash: "Vaciar papelera"
-    trash_empty: "La papelera esta vacia"
-    restore_book: "Restaurar"
-    restored: "Libro restaurado."
-    restore_failed: "Restauración fallida."
-    delete_permanent: "Eliminar permanentemente"
-    welcome: "Bienvenido a Adaptive Learner"
-    welcome_text: "Crea tu primer libro, importa un proyecto existente o consulta la guia de primeros pasos."
-    create_book: "Crear libro"
-    import_project: "Importar proyecto"
-    moved_to_trash: "Movido a la papelera"
-    deleted_permanently: "Libro eliminado permanentemente"
-    version_history: "Historial de versiones"
-    no_history: "Aun no se han creado copias de seguridad."
-    compare_backups: "Comparar copias de seguridad"
-    compare_backups_tooltip: "Comparar dos archivos .bgb del sistema de archivos"
+    title: Mis libros
+    articles_nav: Articulos
+    view_toggle_label: Cambiar vista
+    view_grid: Vista de cuadricula
+    view_list: Vista de lista
+    list_aria_label: Lista de libros
+    col_cover: Portada
+    col_title: Titulo
+    col_author: Autor
+    col_status: Estado
+    col_topic: Tema
+    col_language: Idioma
+    col_last_edit: Ultima edicion
+    col_actions: Acciones
+    articles_nav_tooltip: Gestionar articulos
+    books_nav: Libros
+    books_nav_tooltip: Gestionar libros
+    new_book: Nuevo libro
+    no_books: Aun no hay libros
+    book_no_author: —
+    confirm_delete: Seguro que quieres eliminar este libro?
+    backup: Copia de seguridad
+    restore: Restaurar
+    import: Importar
+    trash: Papelera
+    search_placeholder: Buscar por titulo, autor, genero o idioma...
+    sort_date: Fecha
+    sort_title: Titulo
+    sort_author: Autor
+    sort_asc: Ascendente
+    sort_desc: Descendente
+    all_genres: Todos los géneros
+    all_languages: Todos los idiomas
+    filters: Filtros
+    reset_filters: Restablecer filtros
+    empty_filtered: Sin resultados
+    empty_filtered_hint: No hay libros que coincidan con los filtros actuales.
+    delete_permanent_title: Eliminar permanentemente
+    delete_permanent_warning: Eliminar este libro permanentemente? Esta accion no
+      se puede deshacer.
+    empty_trash_title: Vaciar papelera
+    empty_trash_warning: Todos los libros en la papelera se eliminaran permanentemente.
+    backup_imported: libros importados
+    import_failed: Error en la importacion
+    chapters_imported: capitulos importados
+    help: Ayuda
+    back: Volver
+    book_singular: libro
+    book_plural: libros
+    empty_trash: Vaciar papelera
+    trash_empty: La papelera esta vacia
+    restore_book: Restaurar
+    restored: Libro restaurado.
+    restore_failed: Restauración fallida.
+    delete_permanent: Eliminar permanentemente
+    welcome: Bienvenido a Adaptive Learner
+    welcome_text: Crea tu primer libro, importa un proyecto existente o consulta la
+      guia de primeros pasos.
+    create_book: Crear libro
+    import_project: Importar proyecto
+    moved_to_trash: Movido a la papelera
+    deleted_permanently: Libro eliminado permanentemente
+    version_history: Historial de versiones
+    no_history: Aun no se han creado copias de seguridad.
+    compare_backups: Comparar copias de seguridad
+    compare_backups_tooltip: Comparar dos archivos .bgb del sistema de archivos
     dark_mode: Dark Mode
     light_mode: Light Mode
     move_to_trash: Move to trash
     bulk:
-      selected_count: "{count} selected"
-      format_label: "Format"
-      export_button: "Export"
-      clear_button: "Clear selection"
-      select_all: "Select all"
-      limit_warning_50: "Selecting more than 50 books may take a while."
-      limit_error_200: "Maximum 200 books per export."
-      export_failed: "Bulk book export failed"
+      selected_count: '{count} selected'
+      format_label: Format
+      export_button: Export
+      clear_button: Clear selection
+      select_all: Select all
+      limit_warning_50: Selecting more than 50 books may take a while.
+      limit_error_200: Maximum 200 books per export.
+      export_failed: Bulk book export failed
   backup:
     compare:
-      title: "Comparar copias de seguridad"
-      transition_note: "Se esta planificando un sistema integrado de control de versiones con puntos de guardado automaticos. Por ahora, puedes comparar dos copias de seguridad .bgb cualesquiera de tu sistema de archivos."
-      file_a_label: "Copia A (version anterior)"
-      file_b_label: "Copia B (version mas reciente)"
-      compare_button: "Comparar"
-      new_comparison: "Nueva comparacion"
-      summary_title: "Resumen"
-      summary_books: "Libros en comun:"
-      only_in_a: "Solo en A:"
-      only_in_b: "Solo en B:"
-      chapters_count: "Capitulos:"
-      metadata_heading: "Metadatos"
-      field: "Campo"
-      before: "Antes"
-      after: "Despues"
-      no_changes: "Sin cambios"
-      badge_added: "Anadido"
-      badge_removed: "Eliminado"
-      badge_changed: "Modificado"
-      version_a: "Version A"
-      version_b: "Version B"
-      error_generic: "Error en la comparacion"
+      title: Comparar copias de seguridad
+      transition_note: Se esta planificando un sistema integrado de control de versiones
+        con puntos de guardado automaticos. Por ahora, puedes comparar dos copias
+        de seguridad .bgb cualesquiera de tu sistema de archivos.
+      file_a_label: Copia A (version anterior)
+      file_b_label: Copia B (version mas reciente)
+      compare_button: Comparar
+      new_comparison: Nueva comparacion
+      summary_title: Resumen
+      summary_books: 'Libros en comun:'
+      only_in_a: 'Solo en A:'
+      only_in_b: 'Solo en B:'
+      chapters_count: 'Capitulos:'
+      metadata_heading: Metadatos
+      field: Campo
+      before: Antes
+      after: Despues
+      no_changes: Sin cambios
+      badge_added: Anadido
+      badge_removed: Eliminado
+      badge_changed: Modificado
+      version_a: Version A
+      version_b: Version B
+      error_generic: Error en la comparacion
   editor:
-    new_chapter: "Nuevo capitulo"
-    empty_title: "Crea tu primer capítulo para comenzar."
-    empty_hint: "Haz clic en \"Nuevo capítulo\" abajo, o elige otro tipo de capítulo en la barra lateral."
-    new_chapter_from_template: "Desde plantilla..."
-    confirm_delete_chapter: "Seguro que quieres eliminar este capitulo?"
-    placeholder: "Comienza a escribir..."
-    saving: "Guardando..."
-    saved: "Guardado"
-    save_failed_short: "Error al guardar"
-    save_failed: "Error al guardar el capitulo. Tus cambios estan guardados localmente."
-    save_failed_offline: "Sin conexion. Los cambios se guardan localmente."
-    save_retry: "Reintentar"
-    words: "Palabras"
-    characters: "Caracteres"
-    markdown_mode: "Markdown"
-    wysiwyg_mode: "WYSIWYG"
-    rename_failed: "Error al renombrar"
-    spellcheck: "Corrector ortografico"
-    spellcheck_ok: "Sin errores"
-    spellcheck_error: "Error en la verificacion"
-    checking: "Verificando..."
-    issues: "problemas"
-    suggestions: "Sugerencias"
-    preview_no_text: "No hay texto para leer"
-    preview_error: "Error en la vista previa"
-    delete_chapter_confirm: "Eliminar este capitulo?"
-    delete_chapter_title: "Eliminar capitulo"
-    goal: "Objetivo"
-    replace: "Reemplazar..."
-    replace_all: "Todo"
-    replace_one: "Reemplazar"
-    search: "Buscar..."
-    set_goal: "Establecer objetivo de palabras"
-    toc_error: "Error al validar el indice."
-    toc_invalid: "Enlaces invalidos"
-    toc_not_found: "No se encontro indice."
-    toc_valid: "Indice valido: todos los enlaces correctos."
-    upload_failed: "Carga fallida"
-    ai_assistant: "Asistente AI"
-    ai_improve: "Mejorar"
-    ai_shorten: "Acortar"
-    ai_expand: "Expandir"
-    ai_custom: "Prompt personalizado"
-    ai_custom_placeholder: "p.ej. Haz el tono mas formal..."
-    ai_suggest: "Generar sugerencia"
-    ai_loading: "Pensando..."
-    ai_apply: "Aplicar"
-    ai_discard: "Descartar"
-    ai_applied: "Sugerencia AI aplicada"
-    ai_error: "Servidor AI no disponible"
-    ai_select_text: "Selecciona texto primero para sugerencias AI"
-    ai_fix_issue: "Corregir problema"
-    ai_fix_issue_run: "Generar sugerencia"
-    ai_fix_issue_hint: "AI reescribe la oracion resaltada."
-    ai_fix_issue_loading: "AI esta trabajando en la oracion..."
-    ai_fix_issue_none: "Ningun problema seleccionado"
-    ai_fix_issue_label_passive: "Pasiva"
-    ai_fix_issue_label_adverb: "Adverbio"
-    ai_fix_issue_label_filler: "Muletilla"
-    ai_fix_issue_label_long: "Oracion larga"
-    ai_review: "Review"
-    ai_review_hint: "Analiza el capitulo completo en estilo, coherencia y ritmo."
-    ai_review_start: "Revisar capitulo"
-    ai_review_close: "Cerrar"
-    ai_review_empty: "El capitulo esta vacio."
-    ai_review_focus: "Enfoque de la revision"
-    ai_review_focus_style: "Estilo"
-    ai_review_focus_consistency: "Coherencia"
-    ai_review_focus_beta_reader: "Lector de pruebas"
-    ai_review_download: "Descargar informe"
-    ai_review_tokens: "tokens"
-    recovery_title: "Cambios no guardados encontrados"
-    recovery_desc: "Se encontraron cambios del {timestamp} que no se guardaron en el servidor. Restaurar?"
-    recovery_restore: "Restaurar"
-    recovery_discard: "Descartar"
+    new_chapter: Nuevo capitulo
+    empty_title: Crea tu primer capítulo para comenzar.
+    empty_hint: Haz clic en "Nuevo capítulo" abajo, o elige otro tipo de capítulo
+      en la barra lateral.
+    new_chapter_from_template: Desde plantilla...
+    confirm_delete_chapter: Seguro que quieres eliminar este capitulo?
+    placeholder: Comienza a escribir...
+    saving: Guardando...
+    saved: Guardado
+    save_failed_short: Error al guardar
+    save_failed: Error al guardar el capitulo. Tus cambios estan guardados localmente.
+    save_failed_offline: Sin conexion. Los cambios se guardan localmente.
+    save_retry: Reintentar
+    words: Palabras
+    characters: Caracteres
+    markdown_mode: Markdown
+    wysiwyg_mode: WYSIWYG
+    rename_failed: Error al renombrar
+    spellcheck: Corrector ortografico
+    spellcheck_ok: Sin errores
+    spellcheck_error: Error en la verificacion
+    checking: Verificando...
+    issues: problemas
+    suggestions: Sugerencias
+    preview_no_text: No hay texto para leer
+    preview_error: Error en la vista previa
+    delete_chapter_confirm: Eliminar este capitulo?
+    delete_chapter_title: Eliminar capitulo
+    goal: Objetivo
+    replace: Reemplazar...
+    replace_all: Todo
+    replace_one: Reemplazar
+    search: Buscar...
+    set_goal: Establecer objetivo de palabras
+    toc_error: Error al validar el indice.
+    toc_invalid: Enlaces invalidos
+    toc_not_found: No se encontro indice.
+    toc_valid: 'Indice valido: todos los enlaces correctos.'
+    upload_failed: Carga fallida
+    ai_assistant: Asistente AI
+    ai_improve: Mejorar
+    ai_shorten: Acortar
+    ai_expand: Expandir
+    ai_custom: Prompt personalizado
+    ai_custom_placeholder: p.ej. Haz el tono mas formal...
+    ai_suggest: Generar sugerencia
+    ai_loading: Pensando...
+    ai_apply: Aplicar
+    ai_discard: Descartar
+    ai_applied: Sugerencia AI aplicada
+    ai_error: Servidor AI no disponible
+    ai_select_text: Selecciona texto primero para sugerencias AI
+    ai_fix_issue: Corregir problema
+    ai_fix_issue_run: Generar sugerencia
+    ai_fix_issue_hint: AI reescribe la oracion resaltada.
+    ai_fix_issue_loading: AI esta trabajando en la oracion...
+    ai_fix_issue_none: Ningun problema seleccionado
+    ai_fix_issue_label_passive: Pasiva
+    ai_fix_issue_label_adverb: Adverbio
+    ai_fix_issue_label_filler: Muletilla
+    ai_fix_issue_label_long: Oracion larga
+    ai_review: Review
+    ai_review_hint: Analiza el capitulo completo en estilo, coherencia y ritmo.
+    ai_review_start: Revisar capitulo
+    ai_review_close: Cerrar
+    ai_review_empty: El capitulo esta vacio.
+    ai_review_focus: Enfoque de la revision
+    ai_review_focus_style: Estilo
+    ai_review_focus_consistency: Coherencia
+    ai_review_focus_beta_reader: Lector de pruebas
+    ai_review_download: Descargar informe
+    ai_review_tokens: tokens
+    recovery_title: Cambios no guardados encontrados
+    recovery_desc: Se encontraron cambios del {timestamp} que no se guardaron en el
+      servidor. Restaurar?
+    recovery_restore: Restaurar
+    recovery_discard: Descartar
   sidebar:
-    manuscript: "Manuscrito"
-    content: "Contenido"
-    front_matter: "Preliminares"
-    chapters: "Capitulos"
-    back_matter: "Material final"
-    no_chapters: "Aun no hay capitulos"
-    add_chapter: "Agregar capitulo"
-    delete_chapter: "Eliminar capitulo"
-    rename_chapter: "Renombrar"
-    back_to_dashboard: "Volver al panel"
-    metadata: "Metadatos"
-    export: "Exportar..."
-    export_disabled: "Crea un capitulo primero"
-    export_book: "Exportar libro"
-    toc_validate: "Validar indice"
-    save_as_template: "Guardar como plantilla"
-    save_template_tooltip: "Guardar la estructura del libro como plantilla reutilizable"
-    save_template_disabled: "Crea un capitulo primero"
-    chapter_save_as_template: "Guardar como plantilla"
-    git_backup: "Copia Git"
-    git_sync: "Sincronizar al Repo"
-  git_sync:
-    title: "Sincronizar al repositorio Git"
-    sidebar_tooltip: "Hacer commit del estado actual del libro al repositorio Git enlazado"
-    status_error: "No se pudo cargar el estado de Git sync."
-    unmapped_body: "Este libro no se creó mediante la importación por URL de Git, así que no hay repositorio enlazado para sincronizar."
-    clone_missing_heading: "Clon local no encontrado"
-    clone_missing_body: "La ruta del repositorio clonado previamente ya no existe. Por favor reimporte el libro mediante la importación por URL de Git para restaurar el enlace."
-    repo_url_label: "Repositorio"
-    branch_label: "Rama"
-    last_imported_label: "Última importación (SHA)"
-    last_committed_label: "Último sync commit"
-    dirty_warning: "El clon local tiene cambios sin commit. Serán sobrescritos por esta sincronización."
-    message_label: "Mensaje de commit (opcional)"
-    message_placeholder: "Sync from Adaptive Learner at <utc-iso>"
-    push_toggle: "Push al remoto"
-    commit_button: "Crear commit"
-    commit_success: "Commit creado"
-    commit_success_detail: "Commit {sha} en {branch}"
-    commit_pushed: "(con push)"
-    commit_error: "Error al hacer commit."
-    no_changes: "Sin cambios para hacer commit."
-    clone_missing: "Falta el clon local. Por favor reimporte el libro desde su repositorio."
-    push_auth_failed: "Error en push: no autorizado. Por favor verifique su SSH key o credenciales."
-    push_network_failed: "Error en push: remoto inalcanzable."
-    push_unavailable: "Push al remoto aún no disponible. El commit se creó localmente."
-    diff_title: "Fusionar cambios desde el repo"
-    diff_error: "No se pudo cargar el diff."
-    diff_summary: "{count} capítulos con cambios, {unchanged} sin cambios."
-    diff_empty: "Sin cambios entre Adaptive Learner y el repo. {count} capítulos sin cambios."
-    diff_apply: "Aplicar resoluciones"
-    diff_keep_local: "Adaptive Learner"
-    diff_take_remote: "Repo"
-    diff_keep_tooltip: "Mantener versión de Adaptive Learner (sin actualizar DB)"
-    diff_take_tooltip: "Tomar versión del repo (la DB será sobrescrita)"
-    diff_label_remote_changed: "Repo cambió"
-    diff_label_local_changed: "Adaptive Learner cambió"
-    diff_label_both_changed: "Conflicto"
-    diff_label_remote_added: "Nuevo en repo"
-    diff_label_local_added: "Nuevo en Adaptive Learner"
-    diff_label_remote_removed: "Eliminado en repo"
-    diff_label_local_removed: "Eliminado en Adaptive Learner"
-    diff_label_renamed_remote: "Renombrado en el repo"
-    diff_label_renamed_local: "Renombrado en Adaptive Learner"
-    diff_renamed_from: "Renombrado desde {section}/{slug}"
-    diff_mark_conflict: "Conflicto"
-    diff_mark_conflict_tooltip: "Escribir ambas versiones en el capitulo con marcadores de conflicto (resolver manualmente)"
-    resolve_success_v2: "Actualizado {updated}, creado {created}, eliminado {deleted}, renombrado {renamed}, marcado-con-conflictos {marked}"
-    diff_label_unchanged: "Sin cambios"
-    check_upstream: "Comprobar cambios upstream"
-    resolve_success: "Actualizados {updated}, creados {created}, eliminados {deleted}"
-    resolve_error: "Resolución fallida."
-    unified_banner: "Este libro también tiene Adaptive Learner-Git activo. 'Commit en todas partes' realiza ambos commits en un paso."
-    unified_commit_button: "Commit en todas partes"
-    unified_commit_tooltip: "Commit simultáneo a Adaptive Learner-Git y al repo externo"
-    unified_success: "Commit creado en ambos lados."
-    unified_partial: "Commit parcialmente exitoso. Detalles abajo."
-    unified_lock_busy: "Otro commit en ejecución. Por favor espere."
-    unified_error: "Unified commit fallido."
-    subsystem_core: "Adaptive Learner-Git"
-    subsystem_plugin: "Repo externo"
-    credential_heading: "Acceso al repo (HTTPS)"
-    credential_set: " configurado"
-    credential_unset: " no configurado"
-    credential_add: "Anadir"
-    credential_replace: "Cambiar"
-    credential_remove: "Quitar"
-    credential_input_placeholder: "Personal Access Token"
-    credential_saved: "Token de repo guardado"
-    credential_removed: "Token de repo eliminado"
-    credential_save_error: "No se pudo guardar el token del repo."
-    credential_delete_error: "No se pudo eliminar el token del repo."
-    credential_hint: "Se guarda cifrado y se comparte con la copia de seguridad git principal. Solo HTTPS; SSH usa la clave SSH de Adaptive Learner."
-  git:
-    title: "Git Backup"
-    not_initialized: "Aún no hay repositorio para este libro. Inicializa uno para empezar a hacer commit."
-    init: "Initialize repository"
-    init_ok: "Repository initialized"
-    dirty: "uncommitted changes"
-    commit_message: "Commit message"
-    commit_message_placeholder: "What changed?"
-    commit: "Commit"
-    commit_ok: "Commit created"
-    nothing_to_commit: "Nada para hacer commit"
-    history: "History"
-    no_commits: "No commits yet."
-    abort_merge: Abort merge
-    accept_local: Force push local
-    ahead: ahead
-    apply_resolution: Apply resolution
-    auth_failed: Autenticación fallida. Comprueba el PAT.
-    behind: behind
-    confirm_accept_local_title: ¿Forzar push al remoto?
-    confirm_accept_local: ¿Forzar el envío de la versión local al remoto? Cualquier commit remoto se sobrescribirá y se perderá.
-    conflict_diverged_body: 'Ambos lados tienen sus propios commits. Elige: fusionar (decidir por archivo en conflictos), ignorar remoto (force push) o cancelar.'
-    conflict_diverged_title: Diverged history
-    conflict_push_rejected_body: 'El remoto tiene commits más recientes que no están presentes localmente. Decide qué lado gana:'
-    conflict_push_rejected_title: Push rejected
-    conflict_resolve_body: 'Para cada archivo afectado: conserva la versión local o remota. Luego se crea un commit de fusión.'
-    conflict_resolve_title: Resolve conflicts per file
-    conflicts_found: Conflicts found — pick per file
-    diverged: Local y remoto divergieron. Se requiere resolución manual.
-    diverged_short: diverged
-    force_push_ok: Force push successful - remote overwritten
-    in_sync: in sync
-    keep_mine: Mine
-    keep_theirs: Theirs
-    local_ahead: local ahead
-    merge: Merge
-    merge_aborted: Merge aborted
-    merge_ok: Merge successful
-    merge_resolved: Conflicts resolved
-    never_synced: not synced yet
-    no_remote: No remote configured.
-    pat_hint: El PAT se almacena cifrado y nunca se devuelve. Usa un repositorio privado.
-    pull: Pull
-    pull_no_changes: Ya actualizado
-    pull_ok: Pull successful
-    push: Push
-    push_ok: Push successful
-    push_rejected: Push rechazado. El remoto tiene commits más recientes. Haz pull primero o acepta el remoto.
-    remote: Remote
-    remote_ahead: remote has changes
-    remote_configure: Configure remote
-    remote_delete: Remove remote
-    remote_deleted: Remote removed
-    remote_pat: Personal Access Token
-    remote_pat_stored: guardado — deja vacío para conservar
-    remote_saved: Remote saved
-    remote_url: Remote URL
-    remote_url_required: Remote URL required
-  ssh:
-    title: "SSH Key for Git"
-    intro: "Un par de claves Ed25519 por instalación. La mitad pública se añade a GitHub/GitLab/Gitea; la mitad privada queda en local (permisos 0600)."
-    comment: "Comment (optional)"
-    comment_hint: "Se muestra como etiqueta de la clave en la interfaz del host."
-    generate: "Generate key"
-    generated: "SSH key generated"
-    confirm_overwrite_title: "¿Sobrescribir clave SSH?"
-    confirm_overwrite: "¿Sobrescribir la clave existente? La clave antigua quedará inválida."
-    confirm_delete_title: "¿Eliminar clave SSH?"
-    confirm_delete: "¿Eliminar la clave? El push/pull SSH dejará de funcionar hasta que se genere una nueva."
-    copy: "Copy public key"
-    copied: "Public key copied"
-    copy_failed: "Copy failed"
-    delete: "Delete"
-    deleted: "Key deleted"
-    host_hint: "Paste this key at your git host (GitHub → Settings → SSH keys, GitLab → Preferences → SSH Keys)."
-  chapter_types:
-    chapter: "Capitulo"
-    preface: "Prefacio"
-    foreword: "Prologo"
-    acknowledgments: "Agradecimientos"
-    about_author: "Sobre el autor"
-    appendix: "Apendice"
-    bibliography: "Bibliografia"
-    glossary: "Glosario"
-    epilogue: "Epilogo"
-    imprint: "Pie de imprenta"
-    next_in_series: "Siguiente en la serie"
-    part_intro: "Introduccion de parte"
-    interlude: "Interludio"
-    toc: "Indice"
-    dedication: "Dedicatoria"
-    prologue: "Prologo"
-    introduction: "Introduccion"
-    afterword: "Epílogo del autor"
-    index: "Indice"
-    epigraph: "Epigrafe"
-    endnotes: "Notas finales"
-    part: "Parte"
-    final_thoughts: "Reflexiones finales"
-    also_by_author: "Tambien del autor"
-    excerpt: "Extracto"
-    call_to_action: "Llamada a la accion"
-  export_dialog:
-    title: "Exportar"
-    format: "Formato"
-    book_type: "Tipo de libro"
-    ebook: "Libro electronico"
-    paperback: "Tapa blanda"
-    hardcover: "Tapa dura"
-    toc_depth: "Profundidad del indice"
-    toc_depth_1: "Nivel 1 (solo #)"
-    toc_depth_2: "Nivel 2 (# y ##)"
-    toc_depth_3: "Nivel 3 (# ## ###)"
-    use_manual_toc: "Usar indice manual"
-    manual_toc_hint: "Se usara tu indice existente (sin generacion automatica)."
-    auto_toc_hint: "Se generara un indice automaticamente (el existente sera ignorado)."
-    section_order: "Ajustar orden de capitulos"
-    exporting: "Exportando..."
-    export_as: "Exportar como {format}"
-    ai_assisted: "Marcar contenido asistido por IA"
-    ai_assisted_hint: "Algunas plataformas (ej. Amazon KDP) requieren la divulgacion de contenido asistido por IA."
-    audiobook_failed: "Exportacion de audiolibro fallida"
-    audiobook_generating: "Generando audiolibro..."
-    audiobook_done: "Audiolibro listo! Descarga iniciando..."
-    export_all: "Todos los formatos (ZIP)"
-    dry_run_button: Hear sample
-    dry_run_failed: Test export failed
-    dry_run_hint: Genera solo el primer párrafo del primer capítulo. Verifica el motor y la voz y muestra el costo estimado.
-    dry_run_loading: Generating sample...
-    dry_run_title: Test export
-    free: free
-    missing_images: 'Missing images: {files}'
-    missing_images_hint: Comprueba si los archivos de imagen listados aún existen en el libro.
+    manuscript: Manuscrito
+    content: Contenido
+    front_matter: Preliminares
+    chapters: Capitulos
+    back_matter: Material final
+    no_chapters: Aun no hay capitulos
+    add_chapter: Agregar capitulo
+    delete_chapter: Eliminar capitulo
+    rename_chapter: Renombrar
+    back_to_dashboard: Volver al panel
+    metadata: Metadatos
+    export: Exportar...
+    export_disabled: Crea un capitulo primero
+    export_book: Exportar libro
+    toc_validate: Validar indice
+    save_as_template: Guardar como plantilla
+    save_template_tooltip: Guardar la estructura del libro como plantilla reutilizable
+    save_template_disabled: Crea un capitulo primero
+    chapter_save_as_template: Guardar como plantilla
+    git_backup: Copia Git
+    git_sync: Sincronizar al Repo
   error_report:
-    title: "Crear informe de error"
-    intro: "Adaptive Learner detecto un error y puede preparar un informe para el desarrollador."
-    include_error: "Mensaje de error y stacktrace"
-    include_env: "Informacion del entorno (version, navegador, SO)"
-    include_history: "Historial de acciones"
-    view: "Ver"
-    privacy: "No se envian contenidos de libros, contrasenas ni claves de licencia."
-    show_preview: "Mostrar vista previa"
-    hide_preview: "Ocultar vista previa"
-    copy_preview: "Copiar vista previa"
-    copy_success: "¡Copiado!"
-    copy_failed: "Error al copiar"
-    submit: "Crear issue en GitHub"
+    title: Crear informe de error
+    intro: Adaptive Learner detecto un error y puede preparar un informe para el desarrollador.
+    include_error: Mensaje de error y stacktrace
+    include_env: Informacion del entorno (version, navegador, SO)
+    include_history: Historial de acciones
+    view: Ver
+    privacy: No se envian contenidos de libros, contrasenas ni claves de licencia.
+    show_preview: Mostrar vista previa
+    hide_preview: Ocultar vista previa
+    copy_preview: Copiar vista previa
+    copy_success: ¡Copiado!
+    copy_failed: Error al copiar
+    submit: Crear issue en GitHub
   formats:
-    epub: "EPUB"
-    epub_desc: "Formato de libro electronico"
-    pdf: "PDF"
-    pdf_desc: "Listo para imprimir"
-    docx: "Word"
-    docx_desc: "Para edicion"
-    html: "HTML"
-    html_desc: "Version web"
-    markdown: "Markdown"
-    markdown_desc: "Texto plano"
-    project: "Proyecto (ZIP)"
-    project_desc: "Estructura de proyecto Manuscripta"
-    audiobook: "Audiolibro (MP3)"
-    audiobook_desc: "Audiolibro generado por TTS"
+    epub: EPUB
+    epub_desc: Formato de libro electronico
+    pdf: PDF
+    pdf_desc: Listo para imprimir
+    docx: Word
+    docx_desc: Para edicion
+    html: HTML
+    html_desc: Version web
+    markdown: Markdown
+    markdown_desc: Texto plano
+    project: Proyecto (ZIP)
+    project_desc: Estructura de proyecto Manuscripta
+    audiobook: Audiolibro (MP3)
+    audiobook_desc: Audiolibro generado por TTS
   create_book:
-    title: "Nuevo libro"
-    book_title: "Titulo"
-    book_title_placeholder: "El titulo de tu libro"
-    author: "Autor"
-    author_placeholder: "Nombre del autor o seudonimo"
-    author_select: "Seleccionar autor..."
-    subtitle: "Subtitulo"
-    subtitle_placeholder: "Opcional"
-    language: "Idioma"
-    series: "Serie"
-    series_placeholder: "p. ej. El patron inmortal"
-    volume: "Volumen"
-    volume_placeholder: "No."
-    is_series: "Parte de una serie"
-    more_details: "Mas detalles"
-    genre: "Genre"
-    genre_placeholder: "Elegir genero..."
-    description: "Descripcion"
-    description_placeholder: "Descripcion breve (opcional)"
-    mode_blank: "En blanco"
-    mode_template: "Desde plantilla"
-    template_picker_title: "Elige una plantilla"
-    template_chapter_count: "{count} capitulos"
-    template_loading: "Cargando plantillas..."
-    template_empty: "No hay plantillas disponibles"
-    template_load_error: "No se pudieron cargar las plantillas"
-  genres:
-    novel: "Novela"
-    non_fiction: "No ficcion"
-    technical: "Tecnico"
-    children: "Libro infantil"
-    biography: "Biografia"
-    poetry: "Poesia"
-    short_stories: "Cuentos cortos"
-    academic: "Academico"
-    textbook: "Libro de texto"
-    self_help: "Autoayuda"
-    fantasy: "Fantasia"
-    thriller: "Thriller"
-    romance: "Romance"
-    cookbook: "Libro de cocina"
-    travel: "Guia de viaje"
-    other: "Otro"
-  template_genres:
-    children: "Libro infantil"
-    scifi: "Ciencia ficcion"
-    nonfiction: "No ficcion"
-    philosophy: "Filosofia"
-    memoir: "Memorias"
-  builtin_templates:
-    childrens_picture_book:
-      name: "Libro ilustrado infantil"
-      description: "Una historia ilustrada corta para lectores jovenes. Material preliminar minimo, cinco paginas de historia y una pagina sobre el autor."
-    sci_fi_novel:
-      name: "Novela de ciencia ficcion"
-      description: "Una novela de ciencia ficcion de extension completa con prologo, diez capitulos y epilogo. Diseno estandar de ficcion."
-    non_fiction_how_to:
-      name: "No ficcion / Guia practica"
-      description: "Una guia practica de no ficcion con prefacio, prologo, introduccion, siete lecciones, anexo y bibliografia."
-    philosophy:
-      name: "Filosofia"
-      description: "Una obra filosofica con prefacio, introduccion, seis capitulos numerados, conclusion y bibliografia."
-    memoir:
-      name: "Memorias"
-      description: "Memorias personales enmarcadas por un prologo y un epilogo, con ocho capitulos narrativos y agradecimientos."
+    title: Nuevo libro
+    book_title: Titulo
+    book_title_placeholder: El titulo de tu libro
+    author: Autor
+    author_placeholder: Nombre del autor o seudonimo
+    author_select: Seleccionar autor...
+    subtitle: Subtitulo
+    subtitle_placeholder: Opcional
+    language: Idioma
+    series: Serie
+    series_placeholder: p. ej. El patron inmortal
+    volume: Volumen
+    volume_placeholder: No.
+    is_series: Parte de una serie
+    more_details: Mas detalles
+    genre: Genre
+    genre_placeholder: Elegir genero...
+    description: Descripcion
+    description_placeholder: Descripcion breve (opcional)
+    mode_blank: En blanco
+    mode_template: Desde plantilla
+    template_picker_title: Elige una plantilla
+    template_chapter_count: '{count} capitulos'
+    template_loading: Cargando plantillas...
+    template_empty: No hay plantillas disponibles
+    template_load_error: No se pudieron cargar las plantillas
   save_template:
-    title: "Guardar como plantilla"
-    name: "Nombre"
-    name_placeholder: "p. ej. Mi patron de memorias"
-    description: "Descripcion"
-    description_placeholder: "Para que es esta plantilla?"
-    genre: "Genero"
-    language: "Idioma"
-    content_mode: "Contenido del capitulo"
-    content_empty: "Marcadores vacios"
-    content_empty_hint: "Recomendado para plantillas reutilizables"
-    content_preserve: "Conservar contenido"
-    content_preserve_hint: "Copia el texto del capitulo en la plantilla"
-    preview: "Previsualizar capitulos"
-    save: "Guardar"
-    saving: "Guardando..."
-    saved: "Plantilla guardada"
-    name_required: "El nombre es obligatorio"
-    name_taken: "Ya existe una plantilla con este nombre"
-    description_required: "La descripcion es obligatoria"
-    no_chapters: "Este libro no tiene capitulos para guardar"
-    save_failed: "Error al guardar"
+    title: Guardar como plantilla
+    name: Nombre
+    name_placeholder: p. ej. Mi patron de memorias
+    description: Descripcion
+    description_placeholder: Para que es esta plantilla?
+    genre: Genero
+    language: Idioma
+    content_mode: Contenido del capitulo
+    content_empty: Marcadores vacios
+    content_empty_hint: Recomendado para plantillas reutilizables
+    content_preserve: Conservar contenido
+    content_preserve_hint: Copia el texto del capitulo en la plantilla
+    preview: Previsualizar capitulos
+    save: Guardar
+    saving: Guardando...
+    saved: Plantilla guardada
+    name_required: El nombre es obligatorio
+    name_taken: Ya existe una plantilla con este nombre
+    description_required: La descripcion es obligatoria
+    no_chapters: Este libro no tiene capitulos para guardar
+    save_failed: Error al guardar
   template_picker:
-    builtin: "Incluida"
-    builtin_hint: "Incluida con la aplicacion"
-    delete: "Eliminar"
-    delete_title: "Eliminar plantilla"
-    delete_confirm: "Eliminar plantilla '{name}'? Esta accion no se puede deshacer."
-    deleted: "Plantilla eliminada"
-    canonical_url: "URL canonica"
-    featured_image_url: "URL de imagen destacada"
-    excerpt: "Extracto"
-    tags_label: "Etiquetas (separadas por comas)"
-    all_saved: "Todos los cambios guardados"
-    back_to_list_tooltip: "Volver a la lista de articulos"
-    back_to_dashboard: "Panel"
-    back_to_dashboard_tooltip: "Volver al panel"
-    author_none: "(sin autor)"
-    author_pen_names: "Pseudonimos"
-    delete_failed: "Error al eliminar"
+    builtin: Incluida
+    builtin_hint: Incluida con la aplicacion
+    delete: Eliminar
+    delete_title: Eliminar plantilla
+    delete_confirm: Eliminar plantilla '{name}'? Esta accion no se puede deshacer.
+    deleted: Plantilla eliminada
+    canonical_url: URL canonica
+    featured_image_url: URL de imagen destacada
+    excerpt: Extracto
+    tags_label: Etiquetas (separadas por comas)
+    all_saved: Todos los cambios guardados
+    back_to_list_tooltip: Volver a la lista de articulos
+    back_to_dashboard: Panel
+    back_to_dashboard_tooltip: Volver al panel
+    author_none: (sin autor)
+    author_pen_names: Pseudonimos
+    delete_failed: Error al eliminar
   chapter_template_picker:
-    title: "Elige una plantilla de capitulo"
-    insert: "Insertar"
-    builtin: "Incluida"
-    builtin_hint: "Incluida con la aplicacion"
-    delete: "Eliminar"
-    edit: "Editar"
-    export: "Exportar como JSON"
-    exported: "Plantilla exportada"
-    export_failed: "Exportación fallida"
-    import: "Importar JSON"
-    imported: "Plantilla importada"
-    import_failed: "Importación fallida"
-    delete_title: "Eliminar plantilla de capitulo"
-    delete_confirm: "Eliminar plantilla '{name}'? Esta accion no se puede deshacer."
-    deleted: "Plantilla de capitulo eliminada"
-    delete_failed: "Error al eliminar"
-    loading: "Cargando plantillas..."
-    empty: "No hay plantillas de capitulo disponibles"
-    load_error: "No se pudieron cargar las plantillas"
-    inserted: "Capitulo insertado desde plantilla"
-    group_count: "{count} capítulos"
-    group_hint: "Grupo: inserta varios capítulos a la vez"
-    inserted_group: "{count} capítulos insertados desde el grupo"
-    insert_failed: "Error al insertar"
+    title: Elige una plantilla de capitulo
+    insert: Insertar
+    builtin: Incluida
+    builtin_hint: Incluida con la aplicacion
+    delete: Eliminar
+    edit: Editar
+    export: Exportar como JSON
+    exported: Plantilla exportada
+    export_failed: Exportación fallida
+    import: Importar JSON
+    imported: Plantilla importada
+    import_failed: Importación fallida
+    delete_title: Eliminar plantilla de capitulo
+    delete_confirm: Eliminar plantilla '{name}'? Esta accion no se puede deshacer.
+    deleted: Plantilla de capitulo eliminada
+    delete_failed: Error al eliminar
+    loading: Cargando plantillas...
+    empty: No hay plantillas de capitulo disponibles
+    load_error: No se pudieron cargar las plantillas
+    inserted: Capitulo insertado desde plantilla
+    group_count: '{count} capítulos'
+    group_hint: 'Grupo: inserta varios capítulos a la vez'
+    inserted_group: '{count} capítulos insertados desde el grupo'
+    insert_failed: Error al insertar
   save_chapter_template:
-    title: "Guardar capitulo como plantilla"
-    title_edit: "Editar plantilla de capítulo"
-    name: "Nombre"
-    name_placeholder: "p. ej. Plantilla de entrevista"
-    description: "Descripcion"
-    description_placeholder: "Para que es esta plantilla?"
-    content_mode: "Contenido del capitulo"
-    content_empty: "Marcador vacio"
-    content_empty_hint: "Recomendado para plantillas reutilizables"
-    content_preserve: "Conservar contenido"
-    content_preserve_hint: "Copia el contenido actual del capitulo en la plantilla"
-    save: "Guardar"
-    saving: "Guardando..."
-    saved: "Plantilla guardada"
-    saved_edit: "Plantilla actualizada"
-    name_required: "El nombre es obligatorio"
-    name_taken: "Ya existe una plantilla con este nombre"
-    description_required: "La descripcion es obligatoria"
-    save_failed: "Error al guardar"
+    title: Guardar capitulo como plantilla
+    title_edit: Editar plantilla de capítulo
+    name: Nombre
+    name_placeholder: p. ej. Plantilla de entrevista
+    description: Descripcion
+    description_placeholder: Para que es esta plantilla?
+    content_mode: Contenido del capitulo
+    content_empty: Marcador vacio
+    content_empty_hint: Recomendado para plantillas reutilizables
+    content_preserve: Conservar contenido
+    content_preserve_hint: Copia el contenido actual del capitulo en la plantilla
+    save: Guardar
+    saving: Guardando...
+    saved: Plantilla guardada
+    saved_edit: Plantilla actualizada
+    name_required: El nombre es obligatorio
+    name_taken: Ya existe una plantilla con este nombre
+    description_required: La descripcion es obligatoria
+    save_failed: Error al guardar
   settings:
-    title: "Configuracion"
-    tab_general: "General"
-    tab_ai: "Asistente AI"
-    tab_author: "Autor"
-    tab_plugins: "Plugins"
-    tab_comments: "Comments"
-    open_tab_menu: "Abrir menú de pestañas"
-    tab_topics: "Temas"
-    tab_licenses: "Licencias"
-    tab_authors_database: "Authors Database"
-    topics_title: "Temas de articulos"
-    topics_hint: "Los temas aparecen como un menu desplegable en el editor de articulos. Un tema es la categoria principal de un articulo."
-    topics_add: "Anadir"
-    topics_add_placeholder: "Anadir nuevo tema"
-    topics_remove: "Eliminar tema"
-    topics_saved: "Temas guardados"
-    app_settings: "Configuracion de la aplicacion"
-    language: "Idioma"
-    app_name: "Nombre de la aplicacion"
-    description: "Descripcion"
-    theme: "Tema"
-    saved: "Guardado"
-    save_error: "Error al guardar"
-    author_profile: "Perfil del autor"
-    real_name: "Nombre real"
-    real_name_placeholder: "Tu nombre completo"
-    pen_names: "Seudonimos"
-    pen_names_hint: "Al crear un nuevo libro, puedes elegir entre tu nombre real y tus seudonimos."
-    add_pen_name: "Agregar"
-    add_pen_name_placeholder: "Agregar nuevo seudonimo"
-    author_saved: "Perfil del autor guardado"
-    plugin_settings: "Configuracion de plugins"
-    install_zip: "Instalar ZIP"
-    installing: "Instalando..."
-    add_plugin: "Agregar plugin"
-    available_plugins: "Plugins disponibles"
-    available_plugins_hint: "Estos plugins estan instalados pero aun no activados:"
-    activate: "Activar"
-    no_active_plugins: "No hay plugins activos. Haz clic en \"Agregar plugin\" para activar los plugins disponibles."
-    collapse: "Contraer"
-    advanced: "Avanzado (JSON)"
-    advanced_hint: "JSON, solo para usuarios avanzados"
-    invalid_json: "JSON no valido"
-    expand_settings: "Configuracion"
-    remove_plugin: "Eliminar plugin"
-    remove_confirm: "realmente eliminar? La configuracion sera borrada."
-    free: "Gratis"
-    premium: "Premium"
-    active: "Activo"
-    inactive: "Inactivo"
-    standard: "Estandar"
-    licenses: "Licencias"
-    activate_license: "Activar licencia"
-    plugin_name_placeholder: "Nombre del plugin (p. ej. kinderbuch)"
-    license_key_placeholder: "Clave de licencia"
-    license_activated: "Licencia activada"
-    license_error: "Error de licencia"
-    license_removed: "Licencia eliminada"
-    active_licenses: "Licencias activas"
-    valid: "Valida"
-    invalid: "Invalida"
-    lifetime: "Ilimitada"
-    until: "hasta"
-    no_licenses: "No hay licencias activadas."
-    white_label: "Avanzado: Personalizar aplicacion"
-    white_label_hide: "Ocultar avanzado"
-    white_label_title: "Configuracion de marca blanca"
-    white_label_desc: "Personaliza Adaptive Learner como tu propia aplicacion. Cambia el nombre, elimina plugins estandar y crea tu propia plataforma de escritura."
-    core_plugins: "Plugins estandar"
-    restart_hint: "Los cambios se aplican despues de guardar. Se requiere reinicio."
-    dashboard_books_view_label: "Panel de libros: vista predeterminada"
-    dashboard_books_view_tooltip: "Vista inicial al abrir el panel de libros. Se puede cambiar en cualquier momento con el icono en la esquina superior derecha."
-    dashboard_articles_view_label: "Panel de articulos: vista predeterminada"
-    dashboard_articles_view_tooltip: "Vista inicial al abrir el panel de articulos. Se puede cambiar en cualquier momento con el icono en la esquina superior derecha."
-    dashboard_books_trash_view_label: "Papelera de libros: vista predeterminada"
-    dashboard_books_trash_view_tooltip: "Vista inicial al abrir la papelera de libros. Los cambios dentro de la papelera son por sesion y no sobrescriben este ajuste."
-    dashboard_articles_trash_view_label: "Papelera de articulos: vista predeterminada"
-    dashboard_articles_trash_view_tooltip: "Vista inicial al abrir la papelera de articulos. Los cambios dentro de la papelera son por sesion y no sobrescriben este ajuste."
-    trash_checkbox: "Eliminar automaticamente los libros borrados"
-    trash_delete_after: "Eliminar permanentemente despues de"
-    trash_days_7: "7 dias"
-    trash_days_14: "14 dias"
-    trash_days_30: "30 dias"
-    trash_days_60: "60 dias"
-    trash_days_90: "90 dias"
-    trash_days_180: "180 dias"
-    trash_days_365: "365 dias"
-    trash_disabled: "Desactivado (eliminar manualmente)"
-    trash_info: "Los libros en la papelera se eliminaran automaticamente despues de {days} dias"
-    license_required: "Licencia requerida"
-    enter_license: "Introducir licencia"
-    delete_permanently: "Eliminar libros permanentemente de inmediato"
-    delete_permanently_hint: "Los libros no se moveran a la papelera sino que se eliminaran de inmediato."
-    allow_books_without_author: "Permitir libros sin autor (avanzado)"
-    allow_books_without_author_hint: "Si se activa, puedes importar o guardar libros sin definir un autor. Util al convertir documentos a audiolibros donde la informacion del autor no es necesaria."
-    ai_title: "Asistente AI"
-    ai_enable: "Activar funciones AI"
-    ai_enable_hint: "Si esta desactivado, todas las funciones AI estan ocultas."
-    ai_provider: "Proveedor AI"
-    ai_base_url: "Base URL"
-    ai_model: "Modelo"
-    ai_model_lmstudio: "Proporcionado por el servidor"
-    ai_temperature: "Temperature"
-    ai_max_tokens: "Max Tokens"
-    ai_api_key: "API Key"
-    ai_key_not_required: "No requerida"
-    ai_key_hint: "La clave se almacena localmente y solo se envia al servicio indicado en 'Base URL'."
-    ai_api_key_external_note: "La clave de API se lee de la configuracion externa (~/.config/adaptive_learner/secrets.yaml o variable de entorno ADAPTIVE_LEARNER_AI_API_KEY). Edita el archivo directamente o define la variable para cambiar la clave."
-    ai_lmstudio_hint: "Ejecutandose localmente, sin necesidad de clave API. Los modelos son proporcionados por el servidor LM Studio."
-    ai_provider_anthropic: "Anthropic (Claude)"
-    ai_provider_openai: "OpenAI (GPT)"
-    ai_provider_google: "Google (Gemini)"
-    ai_provider_mistral: "Mistral"
-    ai_provider_lmstudio: "LM Studio (local)"
-    ai_provider_custom: "Personalizado (compatible con OpenAI)"
-    ai_test: "Probar conexion"
-    ai_test_ok: "Conexion exitosa"
-    ai_test_fail: "Conexion fallida"
-    ai_err_auth: "Clave API invalida"
-    ai_err_rate: "Limite de tasa alcanzado. Intente de nuevo mas tarde."
-    ai_err_offline: "Servidor no disponible"
-    ai_err_timeout: "Tiempo de espera agotado"
-    ai_err_model: "Modelo no disponible"
-    ai_err_invalid: "Solicitud no valida"
-    ai_err_server: "Error del servidor del proveedor"
-    ai_err_disabled: "Las funciones AI estan desactivadas. Activalas en Ajustes > General > Asistente AI."
-    editor_title: "Editor"
-    editor_autosave: "Autoguardado (ms)"
-    editor_autosave_hint: "Retraso antes del guardado automatico"
-    editor_draft_save: "Borrador (ms)"
-    editor_draft_hint: "Retraso antes del guardado local"
-    editor_draft_age: "Edad del borrador (dias)"
-    editor_draft_age_hint: "Los borradores locales mas antiguos se eliminan"
-    editor_ai_chars: "Contexto IA (caracteres)"
-    editor_ai_chars_hint: "Maximo de caracteres para sugerencias de IA"
-    "off": "Desactivado"
-    "on": "Activado"
-    ordered_lists: "Orden y listas"
-    plugin_export: "Exportar libros"
-    plugin_export_desc: "EPUB, PDF, Word, estructura de proyecto"
-    plugin_getstarted: "Primeros pasos"
-    plugin_getstarted_desc: "Asistente de inicio, libro de ejemplo"
-    plugin_help: "Ayuda"
-    plugin_help_desc: "Preguntas frecuentes, atajos, acerca de"
-    read_only: "Configuracion (solo lectura)"
+    title: Configuracion
+    tab_general: General
+    tab_ai: Asistente AI
+    tab_author: Autor
+    tab_plugins: Plugins
+    tab_comments: Comments
+    open_tab_menu: Abrir menú de pestañas
+    tab_topics: Temas
+    tab_licenses: Licencias
+    tab_authors_database: Authors Database
+    topics_title: Temas de articulos
+    topics_hint: Los temas aparecen como un menu desplegable en el editor de articulos.
+      Un tema es la categoria principal de un articulo.
+    topics_add: Anadir
+    topics_add_placeholder: Anadir nuevo tema
+    topics_remove: Eliminar tema
+    topics_saved: Temas guardados
+    app_settings: Configuracion de la aplicacion
+    language: Idioma
+    app_name: Nombre de la aplicacion
+    description: Descripcion
+    theme: Tema
+    saved: Guardado
+    save_error: Error al guardar
+    author_profile: Perfil del autor
+    real_name: Nombre real
+    real_name_placeholder: Tu nombre completo
+    pen_names: Seudonimos
+    pen_names_hint: Al crear un nuevo libro, puedes elegir entre tu nombre real y
+      tus seudonimos.
+    add_pen_name: Agregar
+    add_pen_name_placeholder: Agregar nuevo seudonimo
+    author_saved: Perfil del autor guardado
+    plugin_settings: Configuracion de plugins
+    install_zip: Instalar ZIP
+    installing: Instalando...
+    add_plugin: Agregar plugin
+    available_plugins: Plugins disponibles
+    available_plugins_hint: 'Estos plugins estan instalados pero aun no activados:'
+    activate: Activar
+    no_active_plugins: No hay plugins activos. Haz clic en "Agregar plugin" para activar
+      los plugins disponibles.
+    collapse: Contraer
+    advanced: Avanzado (JSON)
+    advanced_hint: JSON, solo para usuarios avanzados
+    invalid_json: JSON no valido
+    expand_settings: Configuracion
+    remove_plugin: Eliminar plugin
+    remove_confirm: realmente eliminar? La configuracion sera borrada.
+    free: Gratis
+    premium: Premium
+    active: Activo
+    inactive: Inactivo
+    standard: Estandar
+    licenses: Licencias
+    activate_license: Activar licencia
+    plugin_name_placeholder: Nombre del plugin (p. ej. kinderbuch)
+    license_key_placeholder: Clave de licencia
+    license_activated: Licencia activada
+    license_error: Error de licencia
+    license_removed: Licencia eliminada
+    active_licenses: Licencias activas
+    valid: Valida
+    invalid: Invalida
+    lifetime: Ilimitada
+    until: hasta
+    no_licenses: No hay licencias activadas.
+    white_label: 'Avanzado: Personalizar aplicacion'
+    white_label_hide: Ocultar avanzado
+    white_label_title: Configuracion de marca blanca
+    white_label_desc: Personaliza Adaptive Learner como tu propia aplicacion. Cambia
+      el nombre, elimina plugins estandar y crea tu propia plataforma de escritura.
+    core_plugins: Plugins estandar
+    restart_hint: Los cambios se aplican despues de guardar. Se requiere reinicio.
+    dashboard_books_view_label: 'Panel de libros: vista predeterminada'
+    dashboard_books_view_tooltip: Vista inicial al abrir el panel de libros. Se puede
+      cambiar en cualquier momento con el icono en la esquina superior derecha.
+    dashboard_articles_view_label: 'Panel de articulos: vista predeterminada'
+    dashboard_articles_view_tooltip: Vista inicial al abrir el panel de articulos.
+      Se puede cambiar en cualquier momento con el icono en la esquina superior derecha.
+    dashboard_books_trash_view_label: 'Papelera de libros: vista predeterminada'
+    dashboard_books_trash_view_tooltip: Vista inicial al abrir la papelera de libros.
+      Los cambios dentro de la papelera son por sesion y no sobrescriben este ajuste.
+    dashboard_articles_trash_view_label: 'Papelera de articulos: vista predeterminada'
+    dashboard_articles_trash_view_tooltip: Vista inicial al abrir la papelera de articulos.
+      Los cambios dentro de la papelera son por sesion y no sobrescriben este ajuste.
+    trash_checkbox: Eliminar automaticamente los libros borrados
+    trash_delete_after: Eliminar permanentemente despues de
+    trash_days_7: 7 dias
+    trash_days_14: 14 dias
+    trash_days_30: 30 dias
+    trash_days_60: 60 dias
+    trash_days_90: 90 dias
+    trash_days_180: 180 dias
+    trash_days_365: 365 dias
+    trash_disabled: Desactivado (eliminar manualmente)
+    trash_info: Los libros en la papelera se eliminaran automaticamente despues de
+      {days} dias
+    license_required: Licencia requerida
+    enter_license: Introducir licencia
+    delete_permanently: Eliminar libros permanentemente de inmediato
+    delete_permanently_hint: Los libros no se moveran a la papelera sino que se eliminaran
+      de inmediato.
+    allow_books_without_author: Permitir libros sin autor (avanzado)
+    allow_books_without_author_hint: Si se activa, puedes importar o guardar libros
+      sin definir un autor. Util al convertir documentos a audiolibros donde la informacion
+      del autor no es necesaria.
+    ai_title: Asistente AI
+    ai_enable: Activar funciones AI
+    ai_enable_hint: Si esta desactivado, todas las funciones AI estan ocultas.
+    ai_provider: Proveedor AI
+    ai_base_url: Base URL
+    ai_model: Modelo
+    ai_model_lmstudio: Proporcionado por el servidor
+    ai_temperature: Temperature
+    ai_max_tokens: Max Tokens
+    ai_api_key: API Key
+    ai_key_not_required: No requerida
+    ai_key_hint: La clave se almacena localmente y solo se envia al servicio indicado
+      en 'Base URL'.
+    ai_api_key_external_note: La clave de API se lee de la configuracion externa (~/.config/adaptive_learner/secrets.yaml
+      o variable de entorno ADAPTIVE_LEARNER_AI_API_KEY). Edita el archivo directamente
+      o define la variable para cambiar la clave.
+    ai_lmstudio_hint: Ejecutandose localmente, sin necesidad de clave API. Los modelos
+      son proporcionados por el servidor LM Studio.
+    ai_provider_anthropic: Anthropic (Claude)
+    ai_provider_openai: OpenAI (GPT)
+    ai_provider_google: Google (Gemini)
+    ai_provider_mistral: Mistral
+    ai_provider_lmstudio: LM Studio (local)
+    ai_provider_custom: Personalizado (compatible con OpenAI)
+    ai_test: Probar conexion
+    ai_test_ok: Conexion exitosa
+    ai_test_fail: Conexion fallida
+    ai_err_auth: Clave API invalida
+    ai_err_rate: Limite de tasa alcanzado. Intente de nuevo mas tarde.
+    ai_err_offline: Servidor no disponible
+    ai_err_timeout: Tiempo de espera agotado
+    ai_err_model: Modelo no disponible
+    ai_err_invalid: Solicitud no valida
+    ai_err_server: Error del servidor del proveedor
+    ai_err_disabled: Las funciones AI estan desactivadas. Activalas en Ajustes > General
+      > Asistente AI.
+    editor_title: Editor
+    editor_autosave: Autoguardado (ms)
+    editor_autosave_hint: Retraso antes del guardado automatico
+    editor_draft_save: Borrador (ms)
+    editor_draft_hint: Retraso antes del guardado local
+    editor_draft_age: Edad del borrador (dias)
+    editor_draft_age_hint: Los borradores locales mas antiguos se eliminan
+    editor_ai_chars: Contexto IA (caracteres)
+    editor_ai_chars_hint: Maximo de caracteres para sugerencias de IA
+    'off': Desactivado
+    'on': Activado
+    ordered_lists: Orden y listas
+    plugin_export: Exportar libros
+    plugin_export_desc: EPUB, PDF, Word, estructura de proyecto
+    plugin_getstarted: Primeros pasos
+    plugin_getstarted_desc: Asistente de inicio, libro de ejemplo
+    plugin_help: Ayuda
+    plugin_help_desc: Preguntas frecuentes, atajos, acerca de
+    read_only: Configuracion (solo lectura)
   authors_database:
-    title: "Authors Database"
-    hint: "Collection of known authors for the book wizard. Existing books and articles are independent — changes here only affect new suggestions."
-    search_placeholder: "Search by name…"
-    add: "Add"
-    name_placeholder: "Full name"
-    bio_placeholder: "Short bio (optional)"
-    empty: "No authors yet."
-    empty_search: "No authors match the search."
-    load_error: "Could not load authors"
-    created: "Author created"
-    create_error: "Create failed"
-    updated: "Author updated"
-    update_error: "Update failed"
-    deleted: "Author deleted"
-    delete_error: "Delete failed"
-    delete_title: "Delete author?"
-    delete_message: "Are you sure you want to remove \"{name}\" from the database? Existing books and articles remain unchanged."
-  translation:
-    provider: "Proveedor"
-    deepl_api_key: "Clave API de DeepL"
-    deepl_api_key_placeholder: "Opcional, vacio = LMStudio"
-    deepl_free_api: "Usar API gratuita de DeepL"
-    lmstudio_url: "URL de LMStudio"
-    lmstudio_model: "Modelo de LMStudio"
-    lmstudio_temperature: "Temperatura de LMStudio"
+    title: Authors Database
+    hint: Collection of known authors for the book wizard. Existing books and articles
+      are independent — changes here only affect new suggestions.
+    search_placeholder: Search by name…
+    add: Add
+    name_placeholder: Full name
+    bio_placeholder: Short bio (optional)
+    empty: No authors yet.
+    empty_search: No authors match the search.
+    load_error: Could not load authors
+    created: Author created
+    create_error: Create failed
+    updated: Author updated
+    update_error: Update failed
+    deleted: Author deleted
+    delete_error: Delete failed
+    delete_title: Delete author?
+    delete_message: Are you sure you want to remove "{name}" from the database? Existing
+      books and articles remain unchanged.
   get_started:
-    title: "Primeros pasos"
-    progress: "Paso {current} de {total}"
-    done: "Listo!"
-    congratulations: "Felicidades!"
-    all_done: "Ahora conoces todas las funciones importantes de Adaptive Learner."
-    to_dashboard: "Ir al panel"
-    restart: "Empezar de nuevo"
-    how_to: "Como funciona?"
-    hide_help: "Ocultar ayuda"
-    mark_complete: "Marcar como completado"
-    finish: "Listo - ir al panel"
-    sample_book: "Crear libro de ejemplo"
-    sample_book_hint: "Crea un libro con capitulos de ejemplo para explorar Adaptive Learner."
-    creating: "Creando..."
-    or_sample: "O: Crear libro de ejemplo"
-    back: "Atras"
-    next: "Siguiente"
-    open_book: "Abrir libro"
-    open_editor: "Abrir editor"
-    open_settings: "Abrir ajustes"
-    sample_book_created: "Libro de ejemplo creado!"
-    help_create_1: "Ve al Dashboard (pagina de inicio)"
-    help_create_2: "Haz clic en el boton \"Nuevo libro\""
-    help_create_3: "Introduce titulo y autor (el pseudonimo se carga de los ajustes)"
-    help_create_4: "Elige el idioma y haz clic en \"Crear\""
-    help_chapters_1: "Abre un libro desde el Dashboard"
-    help_chapters_2: "Haz clic en el \"+\" junto a \"Contenido\" en la barra lateral izquierda"
-    help_chapters_3: "Elige el tipo de capitulo: Capitulo, Prefacio, Epilogo, etc."
-    help_chapters_4: "El nuevo capitulo aparece en la barra lateral"
-    help_write_1: "Haz clic en un capitulo en la barra lateral"
-    help_write_2: "El editor WYSIWYG se abre a la derecha"
-    help_write_3: "Usa la barra de herramientas para formato (Negrita, Cursiva, Encabezados, etc.)"
-    help_write_4: "Cambia al modo Markdown con el boton \"Markdown\" arriba a la derecha"
-    help_write_5: "Los cambios se guardan automaticamente"
-    help_organize_1: "Agarra el icono de agarre a la izquierda de un capitulo"
-    help_organize_2: "Arrastralo a la posicion deseada"
-    help_organize_3: "Front Matter, Capitulos y Back Matter son secciones separadas"
-    help_organize_4: "Las secciones se pueden expandir y colapsar"
-    help_export_1: "Haz clic en \"Exportar...\" en la parte inferior de la barra lateral"
-    help_export_2: "Elige el formato: EPUB, PDF, Word, HTML o Markdown"
-    help_export_3: "Elige el tipo de libro: E-Book, Tapa blanda o Tapa dura"
-    help_export_4: "Si existe una tabla de contenidos: marca \"Usar TOC manual\""
-    help_export_5: "Haz clic en \"Exportar\" - el archivo se descargara"
-    help_settings_1: "Abre los Ajustes con el icono de engranaje"
-    help_settings_2: "Pestana \"General\": Idioma, Tema, Titulo"
-    help_settings_3: "Pestana \"Autor\": Introduce tu nombre y pseudonimos"
-    help_settings_4: "Pestana \"Plugins\": Activar, configurar o instalar plugins via ZIP"
-    help_backup_1: "En el Dashboard: el boton \"Backup\" crea un archivo .bgb"
-    help_backup_2: "El archivo contiene todos los libros, capitulos e imagenes"
-    help_backup_3: "\"Restaurar\" restaura una copia de seguridad"
-    help_backup_4: "Los proyectos externos (.zip, .bgp) se pueden cargar via \"Importar\""
+    title: Primeros pasos
+    progress: Paso {current} de {total}
+    done: Listo!
+    congratulations: Felicidades!
+    all_done: Ahora conoces todas las funciones importantes de Adaptive Learner.
+    to_dashboard: Ir al panel
+    restart: Empezar de nuevo
+    how_to: Como funciona?
+    hide_help: Ocultar ayuda
+    mark_complete: Marcar como completado
+    finish: Listo - ir al panel
+    sample_book: Crear libro de ejemplo
+    sample_book_hint: Crea un libro con capitulos de ejemplo para explorar Adaptive
+      Learner.
+    creating: Creando...
+    or_sample: 'O: Crear libro de ejemplo'
+    back: Atras
+    next: Siguiente
+    open_book: Abrir libro
+    open_editor: Abrir editor
+    open_settings: Abrir ajustes
+    sample_book_created: Libro de ejemplo creado!
+    help_create_1: Ve al Dashboard (pagina de inicio)
+    help_create_2: Haz clic en el boton "Nuevo libro"
+    help_create_3: Introduce titulo y autor (el pseudonimo se carga de los ajustes)
+    help_create_4: Elige el idioma y haz clic en "Crear"
+    help_chapters_1: Abre un libro desde el Dashboard
+    help_chapters_2: Haz clic en el "+" junto a "Contenido" en la barra lateral izquierda
+    help_chapters_3: 'Elige el tipo de capitulo: Capitulo, Prefacio, Epilogo, etc.'
+    help_chapters_4: El nuevo capitulo aparece en la barra lateral
+    help_write_1: Haz clic en un capitulo en la barra lateral
+    help_write_2: El editor WYSIWYG se abre a la derecha
+    help_write_3: Usa la barra de herramientas para formato (Negrita, Cursiva, Encabezados,
+      etc.)
+    help_write_4: Cambia al modo Markdown con el boton "Markdown" arriba a la derecha
+    help_write_5: Los cambios se guardan automaticamente
+    help_organize_1: Agarra el icono de agarre a la izquierda de un capitulo
+    help_organize_2: Arrastralo a la posicion deseada
+    help_organize_3: Front Matter, Capitulos y Back Matter son secciones separadas
+    help_organize_4: Las secciones se pueden expandir y colapsar
+    help_export_1: Haz clic en "Exportar..." en la parte inferior de la barra lateral
+    help_export_2: 'Elige el formato: EPUB, PDF, Word, HTML o Markdown'
+    help_export_3: 'Elige el tipo de libro: E-Book, Tapa blanda o Tapa dura'
+    help_export_4: 'Si existe una tabla de contenidos: marca "Usar TOC manual"'
+    help_export_5: Haz clic en "Exportar" - el archivo se descargara
+    help_settings_1: Abre los Ajustes con el icono de engranaje
+    help_settings_2: 'Pestana "General": Idioma, Tema, Titulo'
+    help_settings_3: 'Pestana "Autor": Introduce tu nombre y pseudonimos'
+    help_settings_4: 'Pestana "Plugins": Activar, configurar o instalar plugins via
+      ZIP'
+    help_backup_1: 'En el Dashboard: el boton "Backup" crea un archivo .bgb'
+    help_backup_2: El archivo contiene todos los libros, capitulos e imagenes
+    help_backup_3: '"Restaurar" restaura una copia de seguridad'
+    help_backup_4: Los proyectos externos (.zip, .bgp) se pueden cargar via "Importar"
   help:
-    title: "Ayuda"
-    open: "Abrir ayuda"
-    shortcuts_tab: "Atajos de teclado"
-    about_tab: "Acerca de"
-    faq_title: "Preguntas frecuentes"
-    about_title: "Acerca de Adaptive Learner"
-    key_column: "Tecla"
-    action_column: "Accion"
-    license: "Licencia"
-    open_online: "Abrir en linea"
-    search_placeholder: "Buscar..."
-    results: "Resultados"
-    not_found: "Pagina no encontrada"
-    popover_title: "Exportar audiolibro"
-    popover_chapter_count: "{current} de {total} capitulos"
-    popover_current: "Actual"
-    popover_open: "Abrir dialogo"
-    badge_done: "Audiolibro listo"
-    badge_failed: "Audiolibro fallido"
-    completion_toast: "Audiolibro listo. Disponible en Metadatos > Audiolibro."
-    completed_hint: "Audiolibro listo - clic abre metadatos"
-  translations:
-    label: "Traducciones"
-    unlinked_hint: "Sin traducciones vinculadas."
-    link: "Vincular"
-    unlink: "Desvincular"
-    unlink_tooltip: "Quitar este libro del grupo"
-    unlink_success: "Libro quitado del grupo de traducciones."
-    unlink_error: "Eliminación fallida."
-    load_error: "No se pudieron cargar las traducciones."
-    link_dialog_title: "Vincular libros como traducciones"
-    link_confirm: "Vincular"
-    link_success: "Libros vinculados como traducciones."
-    link_error: "Vinculación fallida."
-    list_books_error: "No se pudo cargar la lista de libros."
-    no_other_books: "No hay otros libros disponibles para vincular."
-    import_result_imported_heading: "{n} libro(s) importado(s)"
-    import_result_open: "Abrir"
-    import_result_empty: "No se importaron libros."
-    import_result_skipped_heading: "{n} rama(s) requieren atencion"
-    import_result_skipped_hint: "Estas ramas se omitieron. Corrige el problema en el repositorio y vuelve a importar el grupo de traducciones."
-    import_result_reason_no_wbt_layout: "Sin estructura de libro (falta config/metadata.yaml)"
-    import_result_reason_import_failed: "Error al importar (estructura incompatible)"
+    title: Ayuda
+    open: Abrir ayuda
+    shortcuts_tab: Atajos de teclado
+    about_tab: Acerca de
+    faq_title: Preguntas frecuentes
+    about_title: Acerca de Adaptive Learner
+    key_column: Tecla
+    action_column: Accion
+    license: Licencia
+    open_online: Abrir en linea
+    search_placeholder: Buscar...
+    results: Resultados
+    not_found: Pagina no encontrada
+    popover_title: Exportar audiolibro
+    popover_chapter_count: '{current} de {total} capitulos'
+    popover_current: Actual
+    popover_open: Abrir dialogo
+    badge_done: Audiolibro listo
+    badge_failed: Audiolibro fallido
+    completion_toast: Audiolibro listo. Disponible en Metadatos > Audiolibro.
+    completed_hint: Audiolibro listo - clic abre metadatos
   articles:
-    list_heading: "Articulos"
-    count_singular: "Articulo"
-    count_plural: "Articulos"
-    list_error: "No se pudo cargar la lista de articulos."
-    new: "Nuevo articulo"
-    default_title: "Nuevo articulo"
-    create_error: "No se pudo crear el articulo."
-    empty_heading: "Aun no hay articulos"
-    empty_subtitle: "Crea tu primer articulo para escribir publicaciones extensas separadas de los libros."
-    filter_all: "Todos"
-    filter_draft: "Borrador"
-    filter_published: "Publicado"
-    filter_archived: "Archivado"
-    filter_series_label: "Series"
-    filter_series_any: "Any series"
-    filter_tag_label: "Tag"
-    filter_tag_any: "Any tag"
+    list_heading: Articulos
+    count_singular: Articulo
+    count_plural: Articulos
+    list_error: No se pudo cargar la lista de articulos.
+    new: Nuevo articulo
+    default_title: Nuevo articulo
+    create_error: No se pudo crear el articulo.
+    empty_heading: Aun no hay articulos
+    empty_subtitle: Crea tu primer articulo para escribir publicaciones extensas separadas
+      de los libros.
+    filter_all: Todos
+    filter_draft: Borrador
+    filter_published: Publicado
+    filter_archived: Archivado
+    filter_series_label: Series
+    filter_series_any: Any series
+    filter_tag_label: Tag
+    filter_tag_any: Any tag
     bulk:
-      selected_count: "{count} selected"
-      format_label: "Format"
-      mode_label: "Output"
-      mode_zip: "ZIP archive"
-      mode_combined: "Combined document"
-      export_button: "Export"
-      clear_button: "Clear selection"
-      empty_hint: "Select articles to export"
-      select_all: "Select all"
-      limit_warning_50: "Selecting more than 50 articles may take a while."
-      limit_error_200: "Maximum 200 articles per export."
-      export_started: "Bulk export started ..."
-      export_failed: "Bulk export failed"
-    status_draft: "Borrador"
-    status_ready: "Listo"
-    status_published: "Publicado"
-    status_archived: "Archivado"
-    topic_add_new: "+ Anadir nuevo tema"
-    topic_add_new_prompt: "Nuevo tema:"
-    topic_add_failed: "No se pudo anadir el tema."
-    excerpt_placeholder: "Resumen corto para boletines y snippets SEO."
-    subtitle_tooltip: "Subtitulo opcional. Algunas plataformas lo muestran debajo del titulo."
-    author_tooltip: "Autor del articulo. Elige entre tu nombre real y pseudonimos en Ajustes."
-    topic_tooltip: "Categoria principal del articulo. Se administra en Ajustes > Temas."
-    language_tooltip: "Idioma del contenido del articulo."
-    status_tooltip: "Ciclo de vida: Borrador > Listo > Publicado > Archivado."
-    seo_title_tooltip: "Titulo optimizado para SEO. Vacio: usa el titulo del articulo."
-    seo_description_tooltip: "Descripcion para SEO. Vacio: usa el extracto."
-    canonical_url_tooltip: "Si el articulo se publico primero en otro lugar, pega esa URL aqui. Evita penalizaciones de contenido duplicado."
-    featured_image_tooltip: "Imagen principal para vistas previas en redes (Open Graph / Twitter Card). Arrastra, clica o pega una URL."
-    featured_image_label: "Imagen destacada"
-    featured_image_alt: "Imagen destacada"
-    featured_image_dropzone: "Arrastra una imagen o haz clic para elegir"
-    featured_image_format_error: "Solo se permiten .jpg, .jpeg, .png, .webp o .gif"
-    featured_image_remove: "Quitar"
-    featured_image_remove_failed: "No se pudo quitar la imagen"
-    featured_image_uploaded: "Imagen subida"
-    featured_image_upload_failed: "Carga fallida"
-    featured_image_uploading: "Subiendo..."
-    featured_image_url_label: "...o URL"
-    featured_image_url_tooltip: "Alternativa: pega la URL de una imagen ya alojada."
-    export_section: "Exportar"
-    export_markdown: "Markdown"
-    export_html: "HTML"
-    export_pdf: "PDF"
-    export_docx: "DOCX"
-    export_running: "Exportando…"
-    export_success: "Exportación iniciada."
-    export_failed: "Exportación fallida."
-    translate_section: "Traducir"
-    translate_open: "Traducir este articulo"
-    translate_hint: "Crea un nuevo borrador en el idioma destino. El formato en linea (negrita/cursiva) se pierde al traducir."
-    translate_running: "Traduciendo…"
-    translate_submit: "Traducir"
-    translate_success: "Traduccion creada."
-    translate_failed: "Traduccion fallida."
-    translate_same_language: "El idioma destino debe ser distinto del original."
-    translate_provider: "Proveedor"
-    translate_target_lang: "Idioma destino"
-    translate_provider_unconfigured: "Proveedor no configurado. Abre Ajustes > Plugins > Translation para anadir una clave API."
-    translate_no_providers: "Ningun proveedor de traduccion configurado. Abre Ajustes > Plugins > Translation para configurar DeepL o LMStudio."
-    featured_image_hint: "Imagen principal para vistas previas en redes. Carga proximamente - usa una URL por ahora."
-    excerpt_tooltip: "Resumen corto. Se usa como reserva para newsletters y descripciones SEO."
-    tags_tooltip: "Palabras clave para categorizacion y busqueda. Multiples entradas (Enter para anadir)."
-    topic_add_new_placeholder: "Nombre del tema"
-    back_to_list: "Volver a la lista"
-    title_placeholder: "Titulo del articulo"
-    metadata_heading: "Metadatos"
-    subtitle: "Subtitulo"
-    author: "Autor"
-    language: "Idioma"
-    status: "Estado"
-    word_count: "{count} palabras"
-    saving: "Guardando…"
-    saved: "Guardado"
-    save_error_label: "Error"
-    save_failed: "Error al guardar."
-    load_error: "No se pudo cargar el articulo."
-    delete: "Eliminar"
-    delete_title: "¿Eliminar articulo?"
-    delete_body: "Este articulo se eliminara permanentemente. Esta accion no se puede deshacer."
-    delete_trash_body: "Este articulo se movera a la papelera y podra restaurarse mas tarde."
-    delete_confirm: "Eliminar"
-    deleted: "Articulo eliminado."
-    delete_failed: "Error al eliminar."
-    moved_to_trash: "Movido a la papelera"
-    deleted_permanently: "Articulo eliminado permanentemente."
-    restore: "Restaurar"
-    restored: "Articulo restaurado."
-    restore_failed: "No se pudo restaurar."
-    delete_permanent: "Eliminar permanentemente"
-    delete_permanent_title: "Eliminar permanentemente"
-    delete_permanent_warning: "¿Eliminar el articulo permanentemente? Se perderan todas las publicaciones e imagenes subidas. Esta accion no se puede deshacer."
-    trash_title: "Papelera"
-    trash_empty: "No hay articulos eliminados."
-    trashed_at: "Eliminado"
-    empty_trash: "Vaciar papelera"
-    empty_trash_title: "Vaciar papelera"
-    empty_trash_warning: "Todos los articulos en la papelera se eliminaran permanentemente. Esta accion no se puede deshacer."
-    no_author: "—"
-    search_placeholder: "Buscar titulo, autor, tema..."
-    filter_topic: "Tema"
-    filter_topic_any: "Todos los temas"
-    filter_language: "Idioma"
-    filter_language_any: "Todos los idiomas"
-    sort_by: "Ordenar por"
-    sort_date: "Fecha"
-    sort_title: "Titulo"
-    sort_author: "Autor"
-    sort_order: "Orden"
-    empty_filtered: "Ningun articulo coincide con los filtros actuales."
-    reset_filters: "Restablecer filtros"
-    seo_title_generate_tooltip: "Generar titulo SEO desde el contenido del articulo (usa IA)."
-    seo_description_generate_tooltip: "Generar descripcion SEO desde el contenido del articulo (usa IA)."
-    tags_generate_tooltip: "Generar etiquetas desde el contenido del articulo (usa IA). Reemplaza las etiquetas actuales."
-    ai_generate_needs_content: "El articulo necesita contenido antes de que la IA pueda generar."
-    seo_title_generated: "Titulo SEO generado."
-    seo_description_generated: "Descripcion SEO generada."
-    tags_generated: "{count} etiquetas generadas."
-    ai_generation_failed: "La generacion con IA fallo."
-    topic: "Tema"
-    topic_none: "(sin tema)"
-    topic_empty_hint: "Administrar temas en Ajustes."
-    seo_section: "SEO"
-    seo_title: "Titulo SEO"
-    seo_title_placeholder: "Vacio: usa el titulo"
-    seo_description: "Descripcion SEO"
-    seo_description_placeholder: "Vacio: usa el extracto"
-    editor_placeholder: "Empieza a escribir..."
+      selected_count: '{count} selected'
+      format_label: Format
+      mode_label: Output
+      mode_zip: ZIP archive
+      mode_combined: Combined document
+      export_button: Export
+      clear_button: Clear selection
+      empty_hint: Select articles to export
+      select_all: Select all
+      limit_warning_50: Selecting more than 50 articles may take a while.
+      limit_error_200: Maximum 200 articles per export.
+      export_started: Bulk export started ...
+      export_failed: Bulk export failed
+    status_draft: Borrador
+    status_ready: Listo
+    status_published: Publicado
+    status_archived: Archivado
+    topic_add_new: + Anadir nuevo tema
+    topic_add_new_prompt: 'Nuevo tema:'
+    topic_add_failed: No se pudo anadir el tema.
+    excerpt_placeholder: Resumen corto para boletines y snippets SEO.
+    subtitle_tooltip: Subtitulo opcional. Algunas plataformas lo muestran debajo del
+      titulo.
+    author_tooltip: Autor del articulo. Elige entre tu nombre real y pseudonimos en
+      Ajustes.
+    topic_tooltip: Categoria principal del articulo. Se administra en Ajustes > Temas.
+    language_tooltip: Idioma del contenido del articulo.
+    status_tooltip: 'Ciclo de vida: Borrador > Listo > Publicado > Archivado.'
+    seo_title_tooltip: 'Titulo optimizado para SEO. Vacio: usa el titulo del articulo.'
+    seo_description_tooltip: 'Descripcion para SEO. Vacio: usa el extracto.'
+    canonical_url_tooltip: Si el articulo se publico primero en otro lugar, pega esa
+      URL aqui. Evita penalizaciones de contenido duplicado.
+    featured_image_tooltip: Imagen principal para vistas previas en redes (Open Graph
+      / Twitter Card). Arrastra, clica o pega una URL.
+    featured_image_label: Imagen destacada
+    featured_image_alt: Imagen destacada
+    featured_image_dropzone: Arrastra una imagen o haz clic para elegir
+    featured_image_format_error: Solo se permiten .jpg, .jpeg, .png, .webp o .gif
+    featured_image_remove: Quitar
+    featured_image_remove_failed: No se pudo quitar la imagen
+    featured_image_uploaded: Imagen subida
+    featured_image_upload_failed: Carga fallida
+    featured_image_uploading: Subiendo...
+    featured_image_url_label: '...o URL'
+    featured_image_url_tooltip: 'Alternativa: pega la URL de una imagen ya alojada.'
+    export_section: Exportar
+    export_markdown: Markdown
+    export_html: HTML
+    export_pdf: PDF
+    export_docx: DOCX
+    export_running: Exportando…
+    export_success: Exportación iniciada.
+    export_failed: Exportación fallida.
+    translate_section: Traducir
+    translate_open: Traducir este articulo
+    translate_hint: Crea un nuevo borrador en el idioma destino. El formato en linea
+      (negrita/cursiva) se pierde al traducir.
+    translate_running: Traduciendo…
+    translate_submit: Traducir
+    translate_success: Traduccion creada.
+    translate_failed: Traduccion fallida.
+    translate_same_language: El idioma destino debe ser distinto del original.
+    translate_provider: Proveedor
+    translate_target_lang: Idioma destino
+    translate_provider_unconfigured: Proveedor no configurado. Abre Ajustes > Plugins
+      > Translation para anadir una clave API.
+    translate_no_providers: Ningun proveedor de traduccion configurado. Abre Ajustes
+      > Plugins > Translation para configurar DeepL o LMStudio.
+    featured_image_hint: Imagen principal para vistas previas en redes. Carga proximamente
+      - usa una URL por ahora.
+    excerpt_tooltip: Resumen corto. Se usa como reserva para newsletters y descripciones
+      SEO.
+    tags_tooltip: Palabras clave para categorizacion y busqueda. Multiples entradas
+      (Enter para anadir).
+    topic_add_new_placeholder: Nombre del tema
+    back_to_list: Volver a la lista
+    title_placeholder: Titulo del articulo
+    metadata_heading: Metadatos
+    subtitle: Subtitulo
+    author: Autor
+    language: Idioma
+    status: Estado
+    word_count: '{count} palabras'
+    saving: Guardando…
+    saved: Guardado
+    save_error_label: Error
+    save_failed: Error al guardar.
+    load_error: No se pudo cargar el articulo.
+    delete: Eliminar
+    delete_title: ¿Eliminar articulo?
+    delete_body: Este articulo se eliminara permanentemente. Esta accion no se puede
+      deshacer.
+    delete_trash_body: Este articulo se movera a la papelera y podra restaurarse mas
+      tarde.
+    delete_confirm: Eliminar
+    deleted: Articulo eliminado.
+    delete_failed: Error al eliminar.
+    moved_to_trash: Movido a la papelera
+    deleted_permanently: Articulo eliminado permanentemente.
+    restore: Restaurar
+    restored: Articulo restaurado.
+    restore_failed: No se pudo restaurar.
+    delete_permanent: Eliminar permanentemente
+    delete_permanent_title: Eliminar permanentemente
+    delete_permanent_warning: ¿Eliminar el articulo permanentemente? Se perderan todas
+      las publicaciones e imagenes subidas. Esta accion no se puede deshacer.
+    trash_title: Papelera
+    trash_empty: No hay articulos eliminados.
+    trashed_at: Eliminado
+    empty_trash: Vaciar papelera
+    empty_trash_title: Vaciar papelera
+    empty_trash_warning: Todos los articulos en la papelera se eliminaran permanentemente.
+      Esta accion no se puede deshacer.
+    no_author: —
+    search_placeholder: Buscar titulo, autor, tema...
+    filter_topic: Tema
+    filter_topic_any: Todos los temas
+    filter_language: Idioma
+    filter_language_any: Todos los idiomas
+    sort_by: Ordenar por
+    sort_date: Fecha
+    sort_title: Titulo
+    sort_author: Autor
+    sort_order: Orden
+    empty_filtered: Ningun articulo coincide con los filtros actuales.
+    reset_filters: Restablecer filtros
+    seo_title_generate_tooltip: Generar titulo SEO desde el contenido del articulo
+      (usa IA).
+    seo_description_generate_tooltip: Generar descripcion SEO desde el contenido del
+      articulo (usa IA).
+    tags_generate_tooltip: Generar etiquetas desde el contenido del articulo (usa
+      IA). Reemplaza las etiquetas actuales.
+    ai_generate_needs_content: El articulo necesita contenido antes de que la IA pueda
+      generar.
+    seo_title_generated: Titulo SEO generado.
+    seo_description_generated: Descripcion SEO generada.
+    tags_generated: '{count} etiquetas generadas.'
+    ai_generation_failed: La generacion con IA fallo.
+    topic: Tema
+    topic_none: (sin tema)
+    topic_empty_hint: Administrar temas en Ajustes.
+    seo_section: SEO
+    seo_title: Titulo SEO
+    seo_title_placeholder: 'Vacio: usa el titulo'
+    seo_description: Descripcion SEO
+    seo_description_placeholder: 'Vacio: usa el extracto'
+    editor_placeholder: Empieza a escribir...
   publications:
-    title: "Publicaciones"
-    add: "Anadir"
-    empty: "Aun no publicado en ninguna plataforma."
-    load_error: "No se pudieron cargar las publicaciones."
-    add_title: "Anadir publicacion"
-    add_submit: "Anadir"
-    added: "Publicacion anadida."
-    add_failed: "No se pudo anadir la publicacion."
-    platform: "Plataforma"
-    is_promo: "Promo (enlaza a la publicacion principal)"
-    promo_badge: "Promo"
-    status_planned: "Planeado"
-    status_scheduled: "Programado"
-    status_published: "Publicado"
-    status_out_of_sync: "Fuera de sincronia"
-    status_archived: "Archivado"
-    drift_warning: "La version en vivo puede no coincidir con el borrador actual."
-    mark_published: "Marcar como publicada"
-    mark_published_success: "Marcada como publicada."
-    mark_published_error: "No se pudo marcar."
-    verify_live: "Verificar en vivo"
-    verify_live_success: "Version en vivo confirmada."
-    verify_live_error: "No se pudo verificar."
-    delete_title: "Eliminar publicacion?"
-    delete_body: "La publicacion se eliminara. El articulo no se modifica."
-    delete_confirm: "Eliminar"
-    delete_error: "Error al eliminar."
+    title: Publicaciones
+    add: Anadir
+    empty: Aun no publicado en ninguna plataforma.
+    load_error: No se pudieron cargar las publicaciones.
+    add_title: Anadir publicacion
+    add_submit: Anadir
+    added: Publicacion anadida.
+    add_failed: No se pudo anadir la publicacion.
+    platform: Plataforma
+    is_promo: Promo (enlaza a la publicacion principal)
+    promo_badge: Promo
+    status_planned: Planeado
+    status_scheduled: Programado
+    status_published: Publicado
+    status_out_of_sync: Fuera de sincronia
+    status_archived: Archivado
+    drift_warning: La version en vivo puede no coincidir con el borrador actual.
+    mark_published: Marcar como publicada
+    mark_published_success: Marcada como publicada.
+    mark_published_error: No se pudo marcar.
+    verify_live: Verificar en vivo
+    verify_live_success: Version en vivo confirmada.
+    verify_live_error: No se pudo verificar.
+    delete_title: Eliminar publicacion?
+    delete_body: La publicacion se eliminara. El articulo no se modifica.
+    delete_confirm: Eliminar
+    delete_error: Error al eliminar.
   metadata:
-    tab_general: "General"
-    tab_publisher: "Editorial"
-    tab_isbn: "ISBN"
-    tab_marketing: "Marketing"
-    tab_design: "Diseno"
-    tab_audiobook: "Audiolibro"
-    tab_quality: "Calidad"
-    tab_ai_template: "AI Template"
-    quality_error: "Analisis de calidad fallido"
-    quality_empty: "No hay capitulos con contenido de texto."
-    quality_chapters: "Capitulos"
-    quality_avg_readability: "Legibilidad (prom.)"
-    quality_avg_filler: "Muletillas (prom.)"
-    quality_refresh: "Actualizar"
-    quality_col_chapter: "Capitulo"
-    quality_col_sentences: "Oraciones"
-    quality_col_filler: "Mull %"
-    quality_col_passive: "Pasiv %"
-    quality_col_adverb: "Adv %"
-    quality_col_long: "Oraciones largas"
-    quality_tip_words: "Significativamente mas palabras que el promedio del libro ({avg}). Considere dividir el capitulo."
-    quality_tip_filler: "Porcentaje de muletillas por encima del promedio ({avg}%). Reducir muletillas."
-    quality_tip_passive: "Porcentaje de pasiva por encima del promedio ({avg}%). Preferir voz activa."
-    quality_tip_adverb: "Porcentaje de adverbios por encima del promedio ({avg}%). Usar verbos mas fuertes."
-    quality_tip_long: "Mas oraciones largas que el promedio ({avg}). Acortar o dividir oraciones."
-    quality_nav_label: "Saltar al primer problema ({metric}) en {chapter}"
-    quality_nav_no_issues: "Sin coincidencias en este capitulo"
-    subtitle: "Subtitulo"
-    description: "Descripcion"
-    edition: "Edicion"
-    publish_date: "Fecha"
-    publisher: "Editorial"
-    publisher_city: "Ciudad"
-    keywords: "Palabras clave"
-    categories: "Categories"
-    categories_hint: "KDP-style category names. Free-text; every retailer has its own taxonomy."
-    bisac_codes: "BISAC Codes"
-    bisac_hint: "Industry-standard subject codes (KDP recommends ≤ 3)."
-    category_remove: "Remove category"
-    category_placeholder: "Add category…"
-    bisac_remove: "Remove BISAC code"
-    bisac_placeholder: "e.g. FIC022020"
-    bisac_format_error: "Invalid format. Expected: 3 uppercase letters + 6 digits (e.g. FIC022020)."
-    bisac_helper: "Complete BISAC code list:"
-    html_description: "Descripcion (HTML para Amazon)"
-    backpage_description: "Descripcion contraportada"
-    author_bio: "Biografia del autor"
-    cover_image: "Portada"
-    characters: "caracteres"
-    custom_css: "CSS personalizado"
-    copy_from: "Copiar de libro"
-    copy_hint: "Copia editorial, biografia y CSS de otro libro:"
-    copy_success: "Informacion de editorial y autor aplicada"
-    ai_generate: "AI"
-    ai_generate_keywords: "Generar keywords con AI"
-    ai_generate_error: "Generacion AI fallida"
-    ai_text_generated: "Texto generado"
-    ai_keywords_generated: "Keywords generados"
-    ai_usage: "Uso de AI"
-    ai_cost_hint: "Costo estimado basado en precios tipicos de proveedores"
-    html_field_show_preview: "Mostrar vista previa"
-    html_field_show_source: "Mostrar HTML"
+    tab_general: General
+    tab_publisher: Editorial
+    tab_isbn: ISBN
+    tab_marketing: Marketing
+    tab_design: Diseno
+    tab_audiobook: Audiolibro
+    tab_quality: Calidad
+    tab_ai_template: AI Template
+    quality_error: Analisis de calidad fallido
+    quality_empty: No hay capitulos con contenido de texto.
+    quality_chapters: Capitulos
+    quality_avg_readability: Legibilidad (prom.)
+    quality_avg_filler: Muletillas (prom.)
+    quality_refresh: Actualizar
+    quality_col_chapter: Capitulo
+    quality_col_sentences: Oraciones
+    quality_col_filler: Mull %
+    quality_col_passive: Pasiv %
+    quality_col_adverb: Adv %
+    quality_col_long: Oraciones largas
+    quality_tip_words: Significativamente mas palabras que el promedio del libro ({avg}).
+      Considere dividir el capitulo.
+    quality_tip_filler: Porcentaje de muletillas por encima del promedio ({avg}%).
+      Reducir muletillas.
+    quality_tip_passive: Porcentaje de pasiva por encima del promedio ({avg}%). Preferir
+      voz activa.
+    quality_tip_adverb: Porcentaje de adverbios por encima del promedio ({avg}%).
+      Usar verbos mas fuertes.
+    quality_tip_long: Mas oraciones largas que el promedio ({avg}). Acortar o dividir
+      oraciones.
+    quality_nav_label: Saltar al primer problema ({metric}) en {chapter}
+    quality_nav_no_issues: Sin coincidencias en este capitulo
+    subtitle: Subtitulo
+    description: Descripcion
+    edition: Edicion
+    publish_date: Fecha
+    publisher: Editorial
+    publisher_city: Ciudad
+    keywords: Palabras clave
+    categories: Categories
+    categories_hint: KDP-style category names. Free-text; every retailer has its own
+      taxonomy.
+    bisac_codes: BISAC Codes
+    bisac_hint: Industry-standard subject codes (KDP recommends ≤ 3).
+    category_remove: Remove category
+    category_placeholder: Add category…
+    bisac_remove: Remove BISAC code
+    bisac_placeholder: e.g. FIC022020
+    bisac_format_error: 'Invalid format. Expected: 3 uppercase letters + 6 digits
+      (e.g. FIC022020).'
+    bisac_helper: 'Complete BISAC code list:'
+    html_description: Descripcion (HTML para Amazon)
+    backpage_description: Descripcion contraportada
+    author_bio: Biografia del autor
+    cover_image: Portada
+    characters: caracteres
+    custom_css: CSS personalizado
+    copy_from: Copiar de libro
+    copy_hint: 'Copia editorial, biografia y CSS de otro libro:'
+    copy_success: Informacion de editorial y autor aplicada
+    ai_generate: AI
+    ai_generate_keywords: Generar keywords con AI
+    ai_generate_error: Generacion AI fallida
+    ai_text_generated: Texto generado
+    ai_keywords_generated: Keywords generados
+    ai_usage: Uso de AI
+    ai_cost_hint: Costo estimado basado en precios tipicos de proveedores
+    html_field_show_preview: Mostrar vista previa
+    html_field_show_source: Mostrar HTML
     title: Titulo
     author: Autor
-    author_placeholder: "Selecciona un autor"
-    author_unknown_prefix: "[desconocido:"
-    author_pen_names_label: "Seudonimos"
-    author_no_author: "(sin autor)"
-    author_manage_link: "Gestionar autores en Ajustes"
+    author_placeholder: Selecciona un autor
+    author_unknown_prefix: '[desconocido:'
+    author_pen_names_label: Seudonimos
+    author_no_author: (sin autor)
+    author_manage_link: Gestionar autores en Ajustes
     language: Idioma
     series_index: Numero en la serie
     isbn_ebook: ISBN e-book
@@ -1118,321 +897,178 @@ ui:
     asin_hardcover: ASIN tapa dura
     backpage_author_bio: Sobre el autor
   cover:
-    choose_file: "Elegir archivo"
-    uploading: "Subiendo..."
-    upload_success: "Portada subida"
-    upload_failed: "Error al subir la portada"
-    remove: "Quitar portada"
-    remove_success: "Portada eliminada"
-    remove_failed: "No se pudo eliminar la portada"
-    error_format: "Solo se permiten .jpg, .jpeg, .png o .webp"
-    help: "JPG, PNG o WebP, maximo 10 MB. KDP recomienda 1600x2560 pixeles."
-    drop_hint: "Arrastra una imagen aqui o haz clic"
-    drop_here: "Suelta aqui"
-    kdp_warning: "Recomendado para KDP: 1600x2560 pixeles (actual: {w}x{h})"
-  audio_progress:
-    title: "Generando audiolibro"
-    connecting: "Conectando..."
-    starting: "Iniciando generacion..."
-    chapter_x_of_y: "Capitulo {current} de {total}"
-    completed: "Audiolibro listo"
-    failed: "La generacion fallo"
-    download: "Descargar"
-    wait_until_done: "Espera a que termine la generacion"
-    chapters: "capitulos"
-    event_start: "Inicio"
-    event_chapter: "Capitulo"
-    event_done: "listo"
-    event_skipped: "omitido"
-    event_error: "error"
-    event_merge_start: "Uniendo capitulos..."
-    event_merge_done: "Union completa"
-    event_merge_error: "Error al unir"
-    event_ready: "Archivo listo para descargar"
-    event_finished: "Generacion completada"
-    cancel: "Cancelar"
-    cancelling: "Cancelando..."
-    cancelled: "Exportacion cancelada"
-    cancelled_toast: "Exportacion cancelada"
-    cancel_failed: "Error al cancelar"
-    minimize: "Continuar en segundo plano"
-    minimize_hint: "Mantener en segundo plano"
-    download_zip: "Descargar ZIP"
-    individual_files: "Capitulos individuales"
-    expand_hint: "Mostrar exportacion del audiolibro"
-    badge_label: "Audiolibro en curso"
-    event_generating: "generando..."
-    event_reused: "reutilizado (cache)"
-    event_reused_count: "Reutilizados"
-    event_cost: "Coste"
-    event_saved: "Ahorrado"
-    saved_hint: "Audiolibro generado correctamente. Los archivos estan disponibles en Metadatos > Audiolibro."
-    dry_run_title: "Exportacion de prueba"
-    dry_run_hint: "Genera solo el primer parrafo del primer capitulo. Verifica que el motor y la voz funcionen y muestra el coste estimado."
-    dry_run_button: "Escuchar muestra"
-    dry_run_loading: "Generando muestra..."
-    dry_run_failed: "Exportacion de prueba fallida"
-    free: "gratis"
-    popover_title: "Exportar audiolibro"
-    popover_chapter_count: "{current} de {total} capitulos"
-    popover_current: "Actual"
-    popover_open: "Abrir dialogo"
-    badge_done: "Audiolibro listo"
-    badge_failed: "Audiolibro fallido"
-    completion_toast: "Audiolibro listo. Disponible en Metadatos > Audiolibro."
-    completed_hint: "Audiolibro listo - clic abre metadatos"
+    choose_file: Elegir archivo
+    uploading: Subiendo...
+    upload_success: Portada subida
+    upload_failed: Error al subir la portada
+    remove: Quitar portada
+    remove_success: Portada eliminada
+    remove_failed: No se pudo eliminar la portada
+    error_format: Solo se permiten .jpg, .jpeg, .png o .webp
+    help: JPG, PNG o WebP, maximo 10 MB. KDP recomienda 1600x2560 pixeles.
+    drop_hint: Arrastra una imagen aqui o haz clic
+    drop_here: Suelta aqui
+    kdp_warning: 'Recomendado para KDP: 1600x2560 pixeles (actual: {w}x{h})'
   toolbar:
-    bold: "Negrita"
-    italic: "Cursiva"
-    underline: "Subrayado"
-    strikethrough: "Tachado"
-    inline_code: "Codigo"
-    highlight: "Resaltar"
-    subscript: "Subindice"
-    superscript: "Superindice"
-    heading1: "Encabezado 1"
-    heading2: "Encabezado 2"
-    heading3: "Encabezado 3"
-    align_left: "Alinear a la izquierda"
-    align_center: "Centrar"
-    align_right: "Alinear a la derecha"
-    align_justify: "Justificar"
-    bullet_list: "Lista con vinetas"
-    ordered_list: "Lista numerada"
-    task_list: "Lista de tareas"
-    blockquote: "Cita"
-    insert_table: "Insertar tabla"
-    footnote: "Nota al pie"
-    code_block: "Bloque de codigo"
-    horizontal_rule: "Linea horizontal"
-    undo: "Deshacer"
-    redo: "Rehacer"
-    search: "Buscar y reemplazar"
-    focus_mode: "Modo enfoque"
-    style_check: "Revision de estilo"
-    spellcheck: "Corrector ortografico (LanguageTool)"
-    tts_preview: "Escuchar (TTS)"
-    ai_assistant: "Asistente AI"
-    wysiwyg_mode: "Modo WYSIWYG"
-    markdown_mode: "Modo Markdown"
-  audiobook:
-    engine: "Motor de sintesis"
-    language: "Idioma"
-    default_voice: "Voz predeterminada"
-    voice: "Voz"
-    merge: "Unir capitulos"
-    merge_separate: "Todos los capitulos por separado"
-    merge_merged: "Unir todos los capitulos"
-    merge_both: "Ambos"
-    skip_types: "Omitir tipos de capitulo"
-    custom_filename: "Nombre de archivo personalizado"
-    custom_filename_hint: "Sin extension. Dejar vacio para usar el nombre predeterminado."
-    overwrite_label: "Sobrescribir archivos existentes"
-    overwrite_description: "Si esta activado, todos los archivos MP3 generados previamente para este libro se sobrescribiran en la proxima exportacion. Si esta desactivado, solo se regeneraran los capitulos que falten o hayan cambiado (predeterminado)."
-    read_chapter_number_label: "Anunciar el numero de capitulo"
-    read_chapter_number_description: "Si esta activado, el TTS pronuncia una introduccion ordinal ('Primer capitulo', 'Segundo capitulo') antes de cada capitulo. Desactivado por defecto porque la mayoria de los libros no quieren marcadores de capitulo hablados."
-    skip_title: "Omitir tipos de capitulo"
-    skip_description: "Los siguientes tipos de capitulo NO seran narrados"
-    skip_hint: "Los tipos seleccionados se omitiran durante la exportacion del audiolibro."
-    skip_in_book: "Presentes en este libro"
-    skip_other: "Otros tipos"
-    voices_loading: "Cargando voces..."
-    preview: "Vista previa"
-    engine_unavailable: "Motor no disponible"
-    no_voices_for_combo: "No hay voces disponibles para {engine} en {language}"
-    high_quality_only: "Solo voces de alta calidad (Neural2, Journey, Studio)"
-    google_uploaded: "Credenciales de Google Cloud guardadas. Cargando voces..."
-    google_seeded: "Voces cargadas"
-    google_upload_failed: "Error al subir"
-    google_test_ok: "Conexion exitosa"
-    google_test_failed: "Conexion fallida"
-    google_removed: "Credenciales de Google Cloud eliminadas"
-    google_remove_failed: "Error al eliminar"
-    google_connected: "Conectado"
-    google_seeding: "Cargando voces..."
-    google_seeding_error: "Error al cargar las voces"
-    google_voices_count: "voces disponibles"
-    google_hint: "Google Cloud Console > Proyecto > Activar API de Cloud Text-to-Speech > Crear cuenta de servicio > Descargar clave JSON."
-    google_upload: "Subir JSON de cuenta de servicio"
-    settings_saved: "Ajustes guardados"
-    language_from_book: "Se obtiene de la configuracion del libro."
-    api_keys: "Claves de API"
-    elevenlabs_key: "Clave de API de ElevenLabs"
-    elevenlabs_hint: "Solo necesario para el motor ElevenLabs. Crea una cuenta gratuita en elevenlabs.io y genera una clave de API en tu perfil."
-    elevenlabs_test: "Probar"
-    elevenlabs_save: "Guardar"
-    elevenlabs_remove: "Eliminar"
-    elevenlabs_saved: "Clave de ElevenLabs guardada"
-    elevenlabs_save_failed: "No se pudo guardar la clave de ElevenLabs"
-    elevenlabs_test_ok: "Clave de API valida"
-    elevenlabs_test_failed: "Clave de API invalida"
-    elevenlabs_empty: "Introduce una clave de API"
-    elevenlabs_removed: "Clave de ElevenLabs eliminada"
-    elevenlabs_remove_failed: "No se pudo eliminar la clave"
-    elevenlabs_configured: "Clave configurada."
-    elevenlabs_stored: "********** (guardado)"
-    delete_file: "Eliminar archivo"
-    delete_file_confirm: "Eliminar este archivo?"
-    downloads_title: "Descargas disponibles"
-    downloads_empty: "Aun no se ha generado un audiolibro. Usa el dialogo de exportacion para crear uno."
-    created_at: "Creado el"
-    download_merged: "Audiolibro combinado"
-    download_zip: "ZIP con capitulos individuales"
-    download: "Descargar"
-    individual_chapters: "Capitulos individuales"
-    delete: "Eliminar audiolibro"
-    delete_confirm: "Eliminar el audiolibro? Los archivos se perderan."
-    deleted: "Audiolibro eliminado"
-    delete_failed: "Error al eliminar"
-    regen_warning: "Ya existe un audiolibro para este libro.\nMotor: {engine} | Voz: {voice} | {created}\n\nUna nueva exportacion sobrescribira los archivos existentes.\n\nCrear de nuevo?"
-    regen_title: "El audiolibro ya existe"
-    regen_skip: "Omitir existentes"
-    regen_all: "Regenerar todo"
-    regen_chapter_count: "{done} de {total} capítulos ya tienen audio."
-    regen_partial_hint: "La exportación anterior fue cancelada."
-    regen_count_current: "{n} actuales"
-    regen_count_outdated: "{n} desactualizados"
-    regen_count_missing: "{n} faltantes"
-    regen_mode_missing: "Generar solo faltantes ({n})"
-    regen_mode_outdated: "Regenerar solo desactualizados ({n})"
-    regen_mode_standard: "Generar faltantes y desactualizados ({n})"
-    regen_mode_all: "Regenerar todo ({n})"
-    regen_recommended: "Recomendado"
-    regen_generate: "Generar"
-    player:
-      label: "Reproductor de audiolibro"
-      play: "Reproducir"
-      pause: "Pausa"
-      seek: "Buscar"
-      speed: "Velocidad"
-      volume: "Volumen"
-      mute: "Silenciar"
-      unmute: "Activar sonido"
-      prev: "Capitulo anterior"
-      next: "Capitulo siguiente"
-      chapter_of: "{current} de {total}"
-      auto_advance_on: "Avance automatico (activado)"
-      auto_advance_off: "Avance automatico (desactivado)"
-      close: "Cerrar reproductor"
-    status_partial: "Exportación incompleta. Algunos capítulos aún no se han generado."
-    chapter_not_generated: "No generado"
-    delete_all_previews: Delete all
-    delete_previews: Delete all previews
-    delete_previews_confirm: Delete all preview files?
-    previews_empty: Aún no hay previsualizaciones. Usa el botón de Vista previa en el editor para generar una.
-    speed: Speed
+    bold: Negrita
+    italic: Cursiva
+    underline: Subrayado
+    strikethrough: Tachado
+    inline_code: Codigo
+    highlight: Resaltar
+    subscript: Subindice
+    superscript: Superindice
+    heading1: Encabezado 1
+    heading2: Encabezado 2
+    heading3: Encabezado 3
+    align_left: Alinear a la izquierda
+    align_center: Centrar
+    align_right: Alinear a la derecha
+    align_justify: Justificar
+    bullet_list: Lista con vinetas
+    ordered_list: Lista numerada
+    task_list: Lista de tareas
+    blockquote: Cita
+    insert_table: Insertar tabla
+    footnote: Nota al pie
+    code_block: Bloque de codigo
+    horizontal_rule: Linea horizontal
+    undo: Deshacer
+    redo: Rehacer
+    search: Buscar y reemplazar
+    focus_mode: Modo enfoque
+    style_check: Revision de estilo
+    spellcheck: Corrector ortografico (LanguageTool)
+    tts_preview: Escuchar (TTS)
+    ai_assistant: Asistente AI
+    wysiwyg_mode: Modo WYSIWYG
+    markdown_mode: Modo Markdown
   languages:
-    de: "Alemán"
-    en: "Inglés"
-    es: "Español"
-    fr: "Francés"
-    el: "Griego"
-    pt: "Portugués"
-    tr: "Turco"
-    ja: "Japonés"
+    de: Alemán
+    en: Inglés
+    es: Español
+    fr: Francés
+    el: Griego
+    pt: Portugués
+    tr: Turco
+    ja: Japonés
   keywords:
-    placeholder: "Ingresar palabra clave..."
-    counter: "Palabras clave"
-    duplicate: "La palabra clave ya existe"
-    too_long: "La palabra clave debe tener como máximo {max} caracteres"
-    no_comma: "La palabra clave no puede contener comas"
-    over_limit: "Amazon KDP recomienda un máximo de 7 palabras clave. Otras plataformas pueden permitir más."
-    hard_limit: "Se alcanzó el máximo de {max} palabras clave. Elimina una entrada para añadir más."
-    removed: "Palabra clave eliminada"
-    undo: "Deshacer"
-    hint: "Doble clic para editar, arrastrar y soltar para reordenar"
+    placeholder: Ingresar palabra clave...
+    counter: Palabras clave
+    duplicate: La palabra clave ya existe
+    too_long: La palabra clave debe tener como máximo {max} caracteres
+    no_comma: La palabra clave no puede contener comas
+    over_limit: Amazon KDP recomienda un máximo de 7 palabras clave. Otras plataformas
+      pueden permitir más.
+    hard_limit: Se alcanzó el máximo de {max} palabras clave. Elimina una entrada
+      para añadir más.
+    removed: Palabra clave eliminada
+    undo: Deshacer
+    hint: Doble clic para editar, arrastrar y soltar para reordenar
   common:
-    cancel: "Cancelar"
-    create: "Crear"
-    delete: "Eliminar"
-    save: "Guardar"
-    close: "Cerrar"
-    error: "Error"
-    remove: "Quitar"
-    add_entry: "Agregar nueva entrada..."
-    confirm: "Confirmar"
-    hide: "Ocultar"
-    loading: "Cargando..."
-    show: "Mostrar"
-    back: "Atras"
-    next: "Siguiente"
+    cancel: Cancelar
+    create: Crear
+    delete: Eliminar
+    save: Guardar
+    close: Cerrar
+    error: Error
+    remove: Quitar
+    add_entry: Agregar nueva entrada...
+    confirm: Confirmar
+    hide: Ocultar
+    loading: Cargando...
+    show: Mostrar
+    back: Atras
+    next: Siguiente
     edit: Edit
     refresh: Refresh
   ai_wizard:
-    title: "Configurar asistente AI"
-    step1_hint: "Elige tu proveedor de AI. Puedes cambiarlo mas tarde en Ajustes."
-    no_key_needed: "LM Studio no necesita clave API. Asegurate de que el servidor este en ejecucion."
-    step3_hint: "Prueba la conexion con tu proveedor de AI."
-    skip: "Omitir"
-    finish: "Listo"
-    done: "Asistente AI configurado"
+    title: Configurar asistente AI
+    step1_hint: Elige tu proveedor de AI. Puedes cambiarlo mas tarde en Ajustes.
+    no_key_needed: LM Studio no necesita clave API. Asegurate de que el servidor este
+      en ejecucion.
+    step3_hint: Prueba la conexion con tu proveedor de AI.
+    skip: Omitir
+    finish: Listo
+    done: Asistente AI configurado
   shortcuts:
-    title: "Atajos de teclado"
-    section_app: "App"
-    section_editor: "Editor"
-    show_shortcuts: "Mostrar atajos"
-    search_replace: "Buscar y reemplazar"
-    bold: "Negrita"
-    italic: "Cursiva"
-    underline: "Subrayado"
-    strikethrough: "Tachado"
-    code: "Codigo en linea"
-    heading1: "Titulo 1"
-    heading2: "Titulo 2"
-    heading3: "Titulo 3"
-    bullet_list: "Lista con vinetas"
-    ordered_list: "Lista numerada"
-    blockquote: "Cita"
-    undo: "Deshacer"
-    redo: "Rehacer"
-    hint: "Consejo: Pulsa Ctrl+/ para abrir esta vista en cualquier momento."
+    title: Atajos de teclado
+    section_app: App
+    section_editor: Editor
+    show_shortcuts: Mostrar atajos
+    search_replace: Buscar y reemplazar
+    bold: Negrita
+    italic: Cursiva
+    underline: Subrayado
+    strikethrough: Tachado
+    code: Codigo en linea
+    heading1: Titulo 1
+    heading2: Titulo 2
+    heading3: Titulo 3
+    bullet_list: Lista con vinetas
+    ordered_list: Lista numerada
+    blockquote: Cita
+    undo: Deshacer
+    redo: Rehacer
+    hint: 'Consejo: Pulsa Ctrl+/ para abrir esta vista en cualquier momento.'
   offline:
-    banner_message: "Sin conexion. Los cambios se guardan localmente y se sincronizaran cuando vuelvas a estar en linea."
-    synced_toast: "Capitulos sincronizados: {count}"
-    sync_partial: "Algunos capitulos no se pudieron sincronizar."
+    banner_message: Sin conexion. Los cambios se guardan localmente y se sincronizaran
+      cuando vuelvas a estar en linea.
+    synced_toast: 'Capitulos sincronizados: {count}'
+    sync_partial: Algunos capitulos no se pudieron sincronizar.
   versions:
-    menu_item: "Historial de versiones"
-    title: "Historial de versiones"
-    description: "Las ultimas 20 versiones guardadas de este capitulo. Restaurar sobrescribe el contenido actual - la version actual se guarda antes como una nueva instantanea."
-    restore: "Restaurar"
-    restored: "Version restaurada."
-    restore_failed: "Error al restaurar."
-    load_failed: "No se pudo cargar el historial de versiones."
-    empty: "Aun no hay versiones anteriores."
+    menu_item: Historial de versiones
+    title: Historial de versiones
+    description: Las ultimas 20 versiones guardadas de este capitulo. Restaurar sobrescribe
+      el contenido actual - la version actual se guarda antes como una nueva instantanea.
+    restore: Restaurar
+    restored: Version restaurada.
+    restore_failed: Error al restaurar.
+    load_failed: No se pudo cargar el historial de versiones.
+    empty: Aun no hay versiones anteriores.
   conflict:
-    title: "Este capitulo fue modificado en otro lugar"
-    description: "Otro cambio se guardo antes de que enviaras el tuyo. Elige que hacer con tus cambios locales."
-    your_changes: "Tus cambios"
-    server_version: "Version del servidor"
-    keep_local: "Mantener mis cambios"
-    discard_local: "Descartar mis cambios"
-    saved_local: "Tus cambios se guardaron."
-    server_restored: "Version del servidor cargada."
-    save_failed_again: "Error al guardar. Por favor intentalo de nuevo."
-    save_as_new_chapter: "Guardar como nuevo capitulo"
-    save_as_new_chapter_tooltip: "Guarda las ediciones locales como un nuevo capitulo insertado justo despues de este; el capitulo actual mantiene la version del servidor."
-    local_draft_suffix: "(Borrador local)"
-    saved_as_new_chapter: "Ediciones locales guardadas como nuevo capitulo \"{title}\"."
-    save_as_new_failed: "Error al guardar como nuevo capitulo."
+    title: Este capitulo fue modificado en otro lugar
+    description: Otro cambio se guardo antes de que enviaras el tuyo. Elige que hacer
+      con tus cambios locales.
+    your_changes: Tus cambios
+    server_version: Version del servidor
+    keep_local: Mantener mis cambios
+    discard_local: Descartar mis cambios
+    saved_local: Tus cambios se guardaron.
+    server_restored: Version del servidor cargada.
+    save_failed_again: Error al guardar. Por favor intentalo de nuevo.
+    save_as_new_chapter: Guardar como nuevo capitulo
+    save_as_new_chapter_tooltip: Guarda las ediciones locales como un nuevo capitulo
+      insertado justo despues de este; el capitulo actual mantiene la version del
+      servidor.
+    local_draft_suffix: (Borrador local)
+    saved_as_new_chapter: Ediciones locales guardadas como nuevo capitulo "{title}".
+    save_as_new_failed: Error al guardar como nuevo capitulo.
   donations:
-    tab: "Apoyar"
-    section_title: "Apoya Adaptive Learner"
-    intro: "Adaptive Learner se desarrolla como proyecto de codigo abierto, sin seguimiento, sin backend en la nube, sin anuncios. Si la aplicacion te ayuda y quieres apoyar el proyecto:"
-    recommended_badge: "Recomendado"
-    support_button: "Apoyar el proyecto"
-    understood_button: "Entendido"
-    not_now_button: "Ahora no"
-    more_info: "Mas informacion sobre los canales de donacion en la [pagina de soporte](/help)."
+    tab: Apoyar
+    section_title: Apoya Adaptive Learner
+    intro: 'Adaptive Learner se desarrolla como proyecto de codigo abierto, sin seguimiento,
+      sin backend en la nube, sin anuncios. Si la aplicacion te ayuda y quieres apoyar
+      el proyecto:'
+    recommended_badge: Recomendado
+    support_button: Apoyar el proyecto
+    understood_button: Entendido
+    not_now_button: Ahora no
+    more_info: Mas informacion sobre los canales de donacion en la [pagina de soporte](/help).
     channels:
-      liberapay_desc: "Respetuoso con la privacidad, comunidad FOSS, sin cuenta de donante requerida."
-      github_desc: "Nativo para desarrolladores, mensual recurrente, GitHub iguala a nuevos sponsors el primer ano."
-      kofi_desc: "Barrera baja, estilo 'invitame a un cafe', sin cuenta requerida."
-      paypal_desc: "Mayor alcance, pago unico, tarjeta de credito sin cuenta PayPal."
-    onboarding_title: "Apoya Adaptive Learner"
-    onboarding_body: "Adaptive Learner se desarrolla como proyecto de codigo abierto, sin seguimiento, sin backend en la nube, sin anuncios. Si la aplicacion te ayuda y quieres apoyar el proyecto:"
-    onboarding_hint: "Este aviso esta disponible en cualquier momento en Ajustes."
-    reminder_body: "Llevas tres meses usando Adaptive Learner. Si te gusta el proyecto:"
-    reminder_close: "Cerrar"
+      liberapay_desc: Respetuoso con la privacidad, comunidad FOSS, sin cuenta de
+        donante requerida.
+      github_desc: Nativo para desarrolladores, mensual recurrente, GitHub iguala
+        a nuevos sponsors el primer ano.
+      kofi_desc: Barrera baja, estilo 'invitame a un cafe', sin cuenta requerida.
+      paypal_desc: Mayor alcance, pago unico, tarjeta de credito sin cuenta PayPal.
+    onboarding_title: Apoya Adaptive Learner
+    onboarding_body: 'Adaptive Learner se desarrolla como proyecto de codigo abierto,
+      sin seguimiento, sin backend en la nube, sin anuncios. Si la aplicacion te ayuda
+      y quieres apoyar el proyecto:'
+    onboarding_hint: Este aviso esta disponible en cualquier momento en Ajustes.
+    reminder_body: 'Llevas tres meses usando Adaptive Learner. Si te gusta el proyecto:'
+    reminder_close: Cerrar
   themes:
     warm_literary: Literario cálido
     cool_modern: Moderno frío
@@ -1450,13 +1086,15 @@ ui:
     button_back: Atras
     button_import: Importar
     articles_only_heading: Copia de seguridad de articulos
-    articles_only_body: 'Esta copia contiene {count} articulo(s) y ningun libro. Haz clic en Importar para restaurarlos.'
+    articles_only_body: Esta copia contiene {count} articulo(s) y ningun libro. Haz
+      clic en Importar para restaurarlos.
     summary_books: Libros
     summary_articles: Articulos
-    multi_book_articles_note: 'Tambien se restauraran {count} articulo(s).'
-    preview_articles_note: 'Tambien se restauraran {count} articulo(s).'
+    multi_book_articles_note: Tambien se restauraran {count} articulo(s).
+    preview_articles_note: Tambien se restauraran {count} articulo(s).
     step_1_drop_zone: Arrastra el archivo aqui o haz clic para buscar
-    step_1_accepted_formats: 'Acepta: .bgb, .md, .markdown, .txt, .zip (write-book-template), .docx, .epub'
+    step_1_accepted_formats: 'Acepta: .bgb, .md, .markdown, .txt, .zip (write-book-template),
+      .docx, .epub'
     error_unsupported_format: 'Formato de archivo no admitido. Acepta: {formats}'
     error_file_too_large: Archivo demasiado grande (>{max} MB).
     warn_large_file: Archivo grande ({size}); la deteccion puede tardar un momento.
@@ -1482,14 +1120,16 @@ ui:
     duplicate_action_overwrite: Sobrescribir existente
     duplicate_action_copy: Crear como copia nueva
     duplicate_overwrite_title: Sobrescribir existente
-    duplicate_overwrite_confirm: Esto reemplazara todos los capitulos y activos de '{title}'. Se perdera el historial de edicion. Continuar?
+    duplicate_overwrite_confirm: Esto reemplazara todos los capitulos y activos de
+      '{title}'. Se perdera el historial de edicion. Continuar?
     status_creating: Creando libro...
     status_creating_subtle: Puede tardar un momento en importaciones grandes.
     success_title: Importacion completa
     success_book_title: 'Importado como: {title}'
     success_open_editor: Abrir en editor
     success_multi_title: '{n} libros importados'
-    success_multi_subtitle: Abre uno para empezar a editar, o cierra el asistente para volver al panel.
+    success_multi_subtitle: Abre uno para empezar a editar, o cierra el asistente
+      para volver al panel.
     success_multi_open: Abrir
     success_multi_done: Listo
     success_import_another: Importar otro
@@ -1499,17 +1139,19 @@ ui:
     step_1_pick_folder: O elige una carpeta de archivos Markdown
     error_folder_empty: La carpeta no contiene archivos .md/.markdown.
     error_folder_too_many: Demasiados archivos en la carpeta ({count}); maximo {max}.
-    step_1_git_url_label: "Importar desde una URL de git"
-    step_1_git_url_placeholder: "https://github.com/user/write-book-template-fork"
-    step_1_git_url_submit: "Clonar + Importar"
-    step_1_git_url_hint: "Solo HTTPS publico en esta version. El repositorio de destino debe seguir la estructura write-book-template."
-    error_git_url_empty: "Pega una URL de git."
-    error_git_url_invalid: "URL de git no reconocida. Se espera prefijo https://, git@ o ssh://git@."
-    badge_html_description: "Descripcion HTML"
-    badge_backpage_description: "Texto contraportada"
-    badge_backpage_author_bio: "Biografia autor"
-    badge_custom_css: "CSS personalizado"
-    badge_tooltip: "Se importara; editable en el panel de metadatos tras importar."
+    step_1_git_url_label: Importar desde una URL de git
+    step_1_git_url_placeholder: https://github.com/user/write-book-template-fork
+    step_1_git_url_submit: Clonar + Importar
+    step_1_git_url_hint: Solo HTTPS publico en esta version. El repositorio de destino
+      debe seguir la estructura write-book-template.
+    error_git_url_empty: Pega una URL de git.
+    error_git_url_invalid: URL de git no reconocida. Se espera prefijo https://, git@
+      o ssh://git@.
+    badge_html_description: Descripcion HTML
+    badge_backpage_description: Texto contraportada
+    badge_backpage_author_bio: Biografia autor
+    badge_custom_css: CSS personalizado
+    badge_tooltip: Se importara; editable en el panel de metadatos tras importar.
     summary_title: Deteccion completada
     summary_format: Formato
     summary_chapters: Capitulos
@@ -1523,15 +1165,19 @@ ui:
     section_longform: Contenido extenso
     section_styling: Estilo
     section_covers: Portadas
-    covers_hint: Se detectaron varias portadas. Elige la portada principal para book.cover_image. Todos los archivos se importan como activos de portada y se pueden intercambiar mas tarde en el editor de metadatos.
+    covers_hint: Se detectaron varias portadas. Elige la portada principal para book.cover_image.
+      Todos los archivos se importan como activos de portada y se pueden intercambiar
+      mas tarde en el editor de metadatos.
     section_author_assets: Recursos del autor
-    author_assets_hint: Retratos, firmas o imagenes biograficas importadas para la pestana Diseno del editor de metadatos.
+    author_assets_hint: Retratos, firmas o imagenes biograficas importadas para la
+      pestana Diseno del editor de metadatos.
     purpose_author-asset: Recursos del autor
     section_overview: Vista general del contenido
     section_show_empty: Anadir campos
     section_hide_empty: Ocultar campos vacios
     section_git: Historial de Git
-    git_detected_hint: La fuente de importacion contiene un directorio .git/. Elige si adoptar su historial en el nuevo libro.
+    git_detected_hint: La fuente de importacion contiene un directorio .git/. Elige
+      si adoptar su historial en el nuevo libro.
     git_branch: Rama
     git_commits: Commits
     git_remote: Remoto
@@ -1541,415 +1187,318 @@ ui:
     git_is_shallow: Clon superficial
     git_is_corrupted: El repositorio parece danado (fsck fallido)
     git_start_fresh: Empezar desde cero
-    git_start_fresh_desc: Ignorar el .git/ importado. Se creara un nuevo repo en la primera edicion local.
+    git_start_fresh_desc: Ignorar el .git/ importado. Se creara un nuevo repo en la
+      primera edicion local.
     git_adopt_with_remote: Adoptar historial + remoto
-    git_adopt_with_remote_desc: Mantener commits, ramas y la URL remota. Las credenciales se eliminan antes de adoptar.
+    git_adopt_with_remote_desc: Mantener commits, ramas y la URL remota. Las credenciales
+      se eliminan antes de adoptar.
     git_adopt_without_remote: Adoptar solo el historial
-    git_adopt_without_remote_desc: Mantener commits y ramas. Descartar la URL remota para conectar una nueva.
-    author_not_in_settings: 'El autor "{name}" no esta en tus Ajustes.'
-    author_no_source: "No se detecto autor en la fuente."
-    author_action_create: 'Crear "{name}" como nuevo perfil de autor'
-    author_action_existing: "Usar un autor existente diferente"
-    author_action_defer: "Omitir - definir autor mas tarde"
-    author_action_defer_hint: "Se importa sin autor; editalo desde el editor de metadatos."
-    author_create_button: "Crear"
-    author_create_loading: "Creando..."
-    author_name_required: "El nombre no puede estar vacio."
+    git_adopt_without_remote_desc: Mantener commits y ramas. Descartar la URL remota
+      para conectar una nueva.
+    author_not_in_settings: El autor "{name}" no esta en tus Ajustes.
+    author_no_source: No se detecto autor en la fuente.
+    author_action_create: Crear "{name}" como nuevo perfil de autor
+    author_action_existing: Usar un autor existente diferente
+    author_action_defer: Omitir - definir autor mas tarde
+    author_action_defer_hint: Se importa sin autor; editalo desde el editor de metadatos.
+    author_create_button: Crear
+    author_create_loading: Creando...
+    author_name_required: El nombre no puede estar vacio.
     error_title_required: El titulo es obligatorio
     error_author_required: El autor es obligatorio
     mandatory_tooltip: Titulo y autor son obligatorios
     language_default_hint: (se usa 'de' por defecto)
     field_collapse: Contraer
     field_expand: Mostrar todo ({n} caracteres)
-    error_step_failed_at: "Falló en: {step}"
-    error_step_show_details: "Mostrar detalles"
-    error_step_hide_details: "Ocultar detalles"
-    error_step_copy_details: "Copiar detalles"
-    error_step_copy_success: "¡Copiado!"
-    error_step_copy_failed: "Error al copiar"
-    error_step_report: "Reportar en GitHub"
-    error_cancelled_server_side: "La importación fue cancelada en el servidor."
-    multi_book_count: "{count} libros en esta copia"
-    multi_book_select_all: "Seleccionar todos"
-    multi_book_deselect_all: "Deseleccionar todos"
-    multi_book_selected_count: "{count} de {total} seleccionados"
-    multi_book_import_button: "Importar {count} libros"
-    multi_book_no_selection_disabled: "Selecciona al menos un libro"
-    multi_book_chapters: "{count} capítulos"
-    multi_book_has_cover: "Con portada"
-    multi_book_no_cover: "Sin portada"
-    multi_book_duplicate_already: "Ya importado"
-    multi_book_duplicate_action_skip: "Omitir"
-    multi_book_duplicate_action_overwrite: "Sobrescribir"
-    multi_book_duplicate_action_create_new: "Crear copia nueva"
+    error_step_failed_at: 'Falló en: {step}'
+    error_step_show_details: Mostrar detalles
+    error_step_hide_details: Ocultar detalles
+    error_step_copy_details: Copiar detalles
+    error_step_copy_success: ¡Copiado!
+    error_step_copy_failed: Error al copiar
+    error_step_report: Reportar en GitHub
+    error_cancelled_server_side: La importación fue cancelada en el servidor.
+    multi_book_count: '{count} libros en esta copia'
+    multi_book_select_all: Seleccionar todos
+    multi_book_deselect_all: Deseleccionar todos
+    multi_book_selected_count: '{count} de {total} seleccionados'
+    multi_book_import_button: Importar {count} libros
+    multi_book_no_selection_disabled: Selecciona al menos un libro
+    multi_book_chapters: '{count} capítulos'
+    multi_book_has_cover: Con portada
+    multi_book_no_cover: Sin portada
+    multi_book_duplicate_already: Ya importado
+    multi_book_duplicate_action_skip: Omitir
+    multi_book_duplicate_action_overwrite: Sobrescribir
+    multi_book_duplicate_action_create_new: Crear copia nueva
   textarea:
-    copy: "Copiar"
-    copy_success: "¡Copiado!"
-    copy_failed: "Error al copiar"
-    words: "Palabras"
-    characters: "caracteres"
-    show_preview: "Mostrar vista previa"
-    hide_preview: "Ocultar vista previa"
-    fullscreen: "Pantalla completa"
-    exit_fullscreen: "Salir de pantalla completa"
-  medium_import:
-    page_title: "Importar de Medium"
-    nav_label: "Importar de Medium"
-    back_to_articles: "Volver a artículos"
-    intro: "Importa tu archivo de Medium (ZIP de Download your information) a Adaptive Learner como artículos. Cada publicación se convierte en un artículo; la URL canónica se guarda para que reimportar el mismo archivo sea seguro."
-    upload:
-      card_title: "Subir archivo"
-      card_hint: "Elige el ZIP que Medium te envió por correo. Máximo 200 MB."
-      dropzone_primary: "Suelta el archivo de Medium (.zip) aquí"
-      dropzone_secondary: "o haz clic para elegir un archivo"
-      dropzone_aria: "Suelta un ZIP de Medium aquí o haz clic para elegir uno"
-      clear_aria: "Quitar selección"
-      invalid_extension: "Por favor, elige un archivo .zip."
-      too_large: "Archivo demasiado grande. Máximo 200 MB."
-      large_warning: "Archivo muy grande (>50 MB). La subida puede tardar un momento."
-      start: "Iniciar importación"
-      importing: "Importando …"
-    progress:
-      uploading: "Subiendo …"
-      uploading_aria: "Progreso de subida"
-      processing: "Procesando en el servidor. Los archivos grandes pueden tardar más."
-    result:
-      header: "Importación completada"
-      imported_count: "{count} artículos importados"
-      skipped_count: "{count} omitidos"
-      errored_count: "{count} errores"
-      go_to_articles: "Ir a artículos"
-      import_another: "Importar otro ZIP"
-      show_imported: "Mostrar artículos importados ({count})"
-      show_skipped: "Mostrar omitidos ({count})"
-      show_errored: "Mostrar errores ({count})"
-      empty: "Sin entradas."
-    settings:
-      card_title: "Ajustes"
-      card_hint: "Estos ajustes se aplican a todas las importaciones futuras. No se admiten anulaciones por libro o por artículo."
-      download_images: "Descargar imágenes localmente"
-      download_images_hint: "Recomendado. Guarda las imágenes en el almacenamiento de Adaptive Learner en lugar de apuntar al CDN de Medium."
-      timeout_seconds: "Tiempo límite por descarga de imagen (segundos)"
-      skip_existing: "Omitir artículos ya importados"
-      skip_existing_hint: "Los artículos con la misma URL de Medium no se vuelven a importar."
-      default_status: "Estado predeterminado para los artículos importados"
-      status_draft: "Borrador"
-      status_published: "Publicado"
-      status_archived: "Archivado"
-      set_first_image_as_featured: "Usar la primera imagen como imagen destacada"
-      set_first_image_as_featured_hint: "Recomendado. La primera imagen del cuerpo del artículo se convierte en la imagen destacada. Los artículos sin imágenes se quedan sin imagen destacada."
-      save: "Guardar ajustes"
-      saving: "Guardando …"
-      saved: "Guardado"
-      save_failed: "Error al guardar"
-      load_failed: "No se pudieron cargar los ajustes"
-      pointer_hint: "Los ajustes y las importaciones se gestionan en la página dedicada de importación de Medium."
-      pointer_button: "Abrir importación de Medium"
-    toast:
-      imported_summary: "Importación completada: {imported} importados, {skipped} omitidos, {errored} errores."
-      import_failed: "Importación fallida"
+    copy: Copiar
+    copy_success: ¡Copiado!
+    copy_failed: Error al copiar
+    words: Palabras
+    characters: caracteres
+    show_preview: Mostrar vista previa
+    hide_preview: Ocultar vista previa
+    fullscreen: Pantalla completa
+    exit_fullscreen: Salir de pantalla completa
   bulk_delete:
-    delete_button: "Eliminar"
-    disabled_min_two: "Selecciona al menos 2 entradas"
-    option_trash: "Mover a la papelera"
-    option_permanent: "Eliminar permanentemente"
-    confirm_permanent_title: "Eliminar permanentemente"
-    confirm_permanent_summary: "Estás a punto de eliminar permanentemente {count} {noun}. Esta acción NO se puede deshacer."
-    confirm_permanent_button: "Eliminar permanentemente"
-    filter_clause_label: "Filtros activos"
-    type_count_prompt: "Escribe el número ({count}) para confirmar:"
-    type_count_mismatch: "Por favor, introduce exactamente {count}."
-    generic_items: "entradas"
-    items_articles: "artículos"
-    items_books: "libros"
-    toast_trashed: "{count} movidos a la papelera"
-    toast_deleted_permanent: "{count} eliminados permanentemente"
-    toast_undone: "Restaurado"
-    toast_undo_failed: "La restauración ha fallado"
-    toast_failed: "La eliminación masiva ha fallado"
-    undo_label: "Deshacer"
-    filter_search: "Búsqueda"
-    filter_status: "Estado"
-    filter_topic: "Tema"
-    filter_language: "Idioma"
-    filter_series: "Serie"
-    filter_tag: "Etiqueta"
-    filter_genre: "Género"
+    delete_button: Eliminar
+    disabled_min_two: Selecciona al menos 2 entradas
+    option_trash: Mover a la papelera
+    option_permanent: Eliminar permanentemente
+    confirm_permanent_title: Eliminar permanentemente
+    confirm_permanent_summary: Estás a punto de eliminar permanentemente {count} {noun}.
+      Esta acción NO se puede deshacer.
+    confirm_permanent_button: Eliminar permanentemente
+    filter_clause_label: Filtros activos
+    type_count_prompt: 'Escribe el número ({count}) para confirmar:'
+    type_count_mismatch: Por favor, introduce exactamente {count}.
+    generic_items: entradas
+    items_articles: artículos
+    items_books: libros
+    toast_trashed: '{count} movidos a la papelera'
+    toast_deleted_permanent: '{count} eliminados permanentemente'
+    toast_undone: Restaurado
+    toast_undo_failed: La restauración ha fallado
+    toast_failed: La eliminación masiva ha fallado
+    undo_label: Deshacer
+    filter_search: Búsqueda
+    filter_status: Estado
+    filter_topic: Tema
+    filter_language: Idioma
+    filter_series: Serie
+    filter_tag: Etiqueta
+    filter_genre: Género
   ai_template:
-    editor_section: "AI Template"
+    editor_section: AI Template
     panel:
-      title: "AI Template"
-      fill: "Fill with AI"
-      export: "Export template"
-      import: "Import filled template"
+      title: AI Template
+      fill: Fill with AI
+      export: Export template
+      import: Import filled template
     fill_dialog:
-      title: "Fill with AI"
-      description: "Select which field-classes the AI should fill. Each class is one LLM call."
-      submit: "Fill with AI"
-      force: "Overwrite existing values"
-      force_hint: "Without this, fields that already have a value stay unchanged."
-      inline_image_count: "Inline image prompts (override)"
-      inline_image_count_auto: "auto (h2 count, max 5)"
+      title: Fill with AI
+      description: Select which field-classes the AI should fill. Each class is one
+        LLM call.
+      submit: Fill with AI
+      force: Overwrite existing values
+      force_hint: Without this, fields that already have a value stay unchanged.
+      inline_image_count: Inline image prompts (override)
+      inline_image_count_auto: auto (h2 count, max 5)
     field_class:
       seo:
-        label: "SEO"
-        desc: "SEO title (max 60 chars) and meta description (150-160 chars)."
-        targets: "seo_title, seo_description"
+        label: SEO
+        desc: SEO title (max 60 chars) and meta description (150-160 chars).
+        targets: seo_title, seo_description
       tags:
-        label: "Tags"
-        desc: "5-10 lowercase tags reflecting the article's topics."
-        targets: "tags"
+        label: Tags
+        desc: 5-10 lowercase tags reflecting the article's topics.
+        targets: tags
       topic:
-        label: "Topic"
-        desc: "One-word or short-phrase primary topic."
-        targets: "topic"
+        label: Topic
+        desc: One-word or short-phrase primary topic.
+        targets: topic
       excerpt:
-        label: "Excerpt"
-        desc: "200-300 character conversational summary for the article list."
-        targets: "excerpt"
+        label: Excerpt
+        desc: 200-300 character conversational summary for the article list.
+        targets: excerpt
       image_prompts:
-        label: "Image prompts"
-        desc: "Stable-Diffusion-style prompts: one hero + one per H2 section."
-        targets: "featured_image_prompt, inline_image_prompts"
+        label: Image prompts
+        desc: 'Stable-Diffusion-style prompts: one hero + one per H2 section.'
+        targets: featured_image_prompt, inline_image_prompts
       marketing_copy:
-        label: "Marketing copy"
-        desc: "Back-cover description + author bio + Amazon HTML description."
-        targets: "backpage_description, backpage_author_bio, html_description"
+        label: Marketing copy
+        desc: Back-cover description + author bio + Amazon HTML description.
+        targets: backpage_description, backpage_author_bio, html_description
       book_tags:
-        label: "Keywords"
-        desc: "5-10 marketplace keywords."
-        targets: "keywords"
+        label: Keywords
+        desc: 5-10 marketplace keywords.
+        targets: keywords
       description_genre:
-        label: "Description & genre"
-        desc: "Internal description and primary genre."
-        targets: "description, genre"
+        label: Description & genre
+        desc: Internal description and primary genre.
+        targets: description, genre
       cover_prompt:
-        label: "Cover prompt"
-        desc: "Stable-Diffusion-style prompt for the book cover."
-        targets: "cover_image_prompt"
+        label: Cover prompt
+        desc: Stable-Diffusion-style prompt for the book cover.
+        targets: cover_image_prompt
       chapter_summaries:
-        label: "Chapter summaries"
-        desc: "One-sentence summary per existing chapter, matched by chapter id."
-        targets: "chapter_summaries"
+        label: Chapter summaries
+        desc: One-sentence summary per existing chapter, matched by chapter id.
+        targets: chapter_summaries
     fill:
       toast:
-        success: "AI-fill: {updated} field(s) updated, {skipped} skipped ({tokens} tokens)"
-        partial: "AI-fill: {updated} updated, {skipped} skipped, {errors} class errors"
-        error: "AI-fill failed"
+        success: 'AI-fill: {updated} field(s) updated, {skipped} skipped ({tokens}
+          tokens)'
+        partial: 'AI-fill: {updated} updated, {skipped} skipped, {errors} class errors'
+        error: AI-fill failed
     export:
       toast:
-        success: "Template exported: {filename}"
-        error: "Export failed"
+        success: 'Template exported: {filename}'
+        error: Export failed
     import:
       toast:
-        success: "Import complete: {updated} field(s) updated, {skipped} skipped"
-        noop: "Import complete: no fields updated ({skipped} skipped)"
-        dropped_summaries: "{dropped} chapter summary entr(y/ies) could not be matched and were dropped"
-        error: "Import failed"
+        success: 'Import complete: {updated} field(s) updated, {skipped} skipped'
+        noop: 'Import complete: no fields updated ({skipped} skipped)'
+        dropped_summaries: '{dropped} chapter summary entr(y/ies) could not be matched
+          and were dropped'
+        error: Import failed
     import_dialog:
-      title: "Import filled template"
-      description: "Drop a filled .biblio.yaml here. The template's reference.id must match this record."
-      force: "Overwrite existing values"
-      force_hint: "Without this, populated fields stay unchanged."
-      submit: "Import"
+      title: Import filled template
+      description: Drop a filled .biblio.yaml here. The template's reference.id must
+        match this record.
+      force: Overwrite existing values
+      force_hint: Without this, populated fields stay unchanged.
+      submit: Import
     new_from_template:
-      button: "New from template"
-      dialog_title: "New from template"
-      description: "Download an empty template, fill it, then upload the result."
-      step1: "Download an empty template"
-      step2: "Upload the filled template"
-      language: "Language"
-      download_button: "Download empty template"
-      download_success: "Empty template downloaded: {filename}"
-      download_error: "Failed to download empty template"
-      create_success: "Created from template: {title}"
-      create_error: "Could not create from template"
-      submit: "Create"
+      button: New from template
+      dialog_title: New from template
+      description: Download an empty template, fill it, then upload the result.
+      step1: Download an empty template
+      step2: Upload the filled template
+      language: Language
+      download_button: Download empty template
+      download_success: 'Empty template downloaded: {filename}'
+      download_error: Failed to download empty template
+      create_success: 'Created from template: {title}'
+      create_error: Could not create from template
+      submit: Create
     dropzone:
-      label_single: "Drop a .biblio.yaml here, or click to choose a file"
-      label_bulk: "Drop a .zip of templates here, or click to choose a file"
-      error_single: "Please drop a .biblio.yaml file."
-      error_bulk: "Please drop a .zip file produced by 'Bulk export templates'."
+      label_single: Drop a .biblio.yaml here, or click to choose a file
+      label_bulk: Drop a .zip of templates here, or click to choose a file
+      error_single: Please drop a .biblio.yaml file.
+      error_bulk: Please drop a .zip file produced by 'Bulk export templates'.
     bulk:
-      menu_button: "AI"
-      menu_export: "Export templates (ZIP)"
-      menu_import: "Import filled templates (ZIP)"
-      menu_fill: "Fill with AI..."
-      over_cap: "Maximum 50 entries per AI batch"
-      export_success: "{count} template(s) exported as {filename}"
-      export_failed: "Bulk template export failed"
+      menu_button: AI
+      menu_export: Export templates (ZIP)
+      menu_import: Import filled templates (ZIP)
+      menu_fill: Fill with AI...
+      over_cap: Maximum 50 entries per AI batch
+      export_success: '{count} template(s) exported as {filename}'
+      export_failed: Bulk template export failed
     bulk_import:
-      title: "Bulk import filled templates"
-      description: "Drop a .zip of filled .biblio.yaml files. Each entry is matched to its target record by reference.id; up to 50 entries per batch."
-      force: "Overwrite existing values"
-      force_hint: "Without this, populated fields on each target stay unchanged."
-      submit: "Import"
+      title: Bulk import filled templates
+      description: Drop a .zip of filled .biblio.yaml files. Each entry is matched
+        to its target record by reference.id; up to 50 entries per batch.
+      force: Overwrite existing values
+      force_hint: Without this, populated fields on each target stay unchanged.
+      submit: Import
       toast:
-        success: "Bulk import: {imported} entr(y/ies) applied"
-        partial: "Bulk import: {imported} applied, {failed} failed"
-        all_failed: "Bulk import: all {failed} entries failed"
-        error: "Bulk import failed"
+        success: 'Bulk import: {imported} entr(y/ies) applied'
+        partial: 'Bulk import: {imported} applied, {failed} failed'
+        all_failed: 'Bulk import: all {failed} entries failed'
+        error: Bulk import failed
   bulk_ai_fill:
-    field_class_dialog_title: "Bulk AI fill: pick field-classes"
-    field_class_dialog_submit: "Continue to estimate"
+    field_class_dialog_title: 'Bulk AI fill: pick field-classes'
+    field_class_dialog_submit: Continue to estimate
     confirm:
-      title: "Confirm AI-fill estimate"
-      description: "The AI will be called once per item per selected class. Review the cost below before confirming."
-      start: "Start AI-fill"
-      starting: "Starting..."
+      title: Confirm AI-fill estimate
+      description: The AI will be called once per item per selected class. Review
+        the cost below before confirming.
+      start: Start AI-fill
+      starting: Starting...
     estimate:
-      loading: "Estimating cost..."
-      error: "Could not fetch the cost estimate"
-      items_label: "Items"
-      calls_label: "LLM calls"
-      input_tokens_label: "Input tok"
-      output_tokens_label: "Output tok"
-      cost_label: "Estimated cost"
-      model_label: "Model"
-      cost_unknown: "Cost is unknown because the configured model is not in the pricing table."
-      breakdown_toggle: "Per-item breakdown"
+      loading: Estimating cost...
+      error: Could not fetch the cost estimate
+      items_label: Items
+      calls_label: LLM calls
+      input_tokens_label: Input tok
+      output_tokens_label: Output tok
+      cost_label: Estimated cost
+      model_label: Model
+      cost_unknown: Cost is unknown because the configured model is not in the pricing
+        table.
+      breakdown_toggle: Per-item breakdown
     start:
-      error: "Could not start the bulk AI-fill job"
+      error: Could not start the bulk AI-fill job
     dock:
-      running: "AI-fill: {done}/{total}"
-      completed: "AI-fill complete: {updated}/{total} updated"
-      failed: "AI-fill failed"
-      cancelled: "AI-fill cancelled"
-      projected: "~{cost} projected"
+      running: 'AI-fill: {done}/{total}'
+      completed: 'AI-fill complete: {updated}/{total} updated'
+      failed: AI-fill failed
+      cancelled: AI-fill cancelled
+      projected: ~{cost} projected
     modal:
-      description: "Live progress per item. The job keeps running if you close this modal."
-      total_label: "Items:"
-      updated_label: "Updated:"
-      tokens_label: "Tokens:"
-      cost_label: "Cost:"
-      per_item_label: "Per item:"
-      projected_label: "Projected:"
-      no_items_yet: "Waiting for the first item to start..."
-      minimize: "Minimize"
-      dismiss: "Dismiss"
+      description: Live progress per item. The job keeps running if you close this
+        modal.
+      total_label: 'Items:'
+      updated_label: 'Updated:'
+      tokens_label: 'Tokens:'
+      cost_label: 'Cost:'
+      per_item_label: 'Per item:'
+      projected_label: 'Projected:'
+      no_items_yet: Waiting for the first item to start...
+      minimize: Minimize
+      dismiss: Dismiss
   comments:
     dashboard:
-      badge_tooltip: "{count} imported comments"
+      badge_tooltip: '{count} imported comments'
     editor:
-      heading: "Comments"
-      empty: "No comments imported for this article."
-      no_author: "Unknown"
-      load_error: "Could not load comments"
+      heading: Comments
+      empty: No comments imported for this article.
+      no_author: Unknown
+      load_error: Could not load comments
     admin:
-      heading: "Imported comments"
-      description: "Cross-article view of comments imported from external sources."
-      filter_source: "Source:"
-      filter_source_any: "Any"
-      filter_orphans: "Orphans only (no parent article)"
-      col_author: "Author"
-      col_body: "Body"
-      col_source: "Source"
-      col_status: "Status"
-      col_date: "Imported"
-      col_actions: "Actions"
-      no_author: "Unknown"
-      orphan: "Orphan"
-      linked: "Linked"
-      loading: "Loading..."
-      empty: "No comments match the current filters."
-      load_error: "Could not load comments"
-      load_more: "Load more"
-      delete_action: "Delete comment"
-      delete_title: "Delete comment?"
-      delete_message: "This will move the comment to trash. Body preview: \"{preview}\""
-      delete_success: "Comment deleted."
-      delete_error: "Could not delete the comment."
-      # Bug 4: bulk-delete + preview modal + Reclassify-in-modal (passthru, pending native review).
-      reclassify_title: "Move comment to articles?"
-      reclassify_message: "This will move the comment to the articles list with an auto-derived title. Body preview: \"{preview}\""
-      reclassify_action: "Move to articles"
-      reclassify_view: "View article"
-      reclassify_success: "Comment moved to articles."
-      reclassify_error: "Could not move the comment."
-      reclassify_tooltip: "This action moves the comment to the articles collection. Use it when the import heuristic mis-classified an article as a comment."
-      select_row: "Select"
-      select_all_visible: "Select all visible"
+      heading: Imported comments
+      description: Cross-article view of comments imported from external sources.
+      filter_source: 'Source:'
+      filter_source_any: Any
+      filter_orphans: Orphans only (no parent article)
+      col_author: Author
+      col_body: Body
+      col_source: Source
+      col_status: Status
+      col_date: Imported
+      col_actions: Actions
+      no_author: Unknown
+      orphan: Orphan
+      linked: Linked
+      loading: Loading...
+      empty: No comments match the current filters.
+      load_error: Could not load comments
+      load_more: Load more
+      delete_action: Delete comment
+      delete_title: Delete comment?
+      delete_message: 'This will move the comment to trash. Body preview: "{preview}"'
+      delete_success: Comment deleted.
+      delete_error: Could not delete the comment.
+      reclassify_title: Move comment to articles?
+      reclassify_message: 'This will move the comment to the articles list with an
+        auto-derived title. Body preview: "{preview}"'
+      reclassify_action: Move to articles
+      reclassify_view: View article
+      reclassify_success: Comment moved to articles.
+      reclassify_error: Could not move the comment.
+      reclassify_tooltip: This action moves the comment to the articles collection.
+        Use it when the import heuristic mis-classified an article as a comment.
+      select_row: Select
+      select_all_visible: Select all visible
       bulk:
-        selected_count: "{count} selected"
-        region_label: "Bulk actions"
-        clear_button: "Clear selection"
-        item_noun: "comments"
+        selected_count: '{count} selected'
+        region_label: Bulk actions
+        clear_button: Clear selection
+        item_noun: comments
       preview:
-        title: "Comment details"
-        parent_url: "In reply to"
-      # Bug 10: trash-lifecycle view + actions (passthru EN).
-      view_active: "Active"
-      view_trash: "Trash"
-      trash_empty: "Trash is empty."
-      restore_action: "Restore"
-      restore_success: "Comment restored."
-      restore_error: "Restore failed."
-      permanent_delete_action: "Delete permanently"
-      permanent_delete_title: "Delete permanently?"
-      permanent_delete_message: "The comment will be removed permanently. Body preview: \"{preview}\""
-      permanent_delete_success: "Comment permanently deleted."
-      permanent_delete_error: "Permanent delete failed."
-      empty_trash_button: "Empty trash"
-      empty_trash_title: "Empty trash"
-      empty_trash_message: "All {count} comments in the trash will be permanently deleted. This action cannot be undone."
-      empty_trash_success: "Trash emptied."
-      empty_trash_error: "Could not empty the trash."
-      bulk_restore_button: "Restore"
-      bulk_restore_success: "{count} comments restored"
-      bulk_restore_error: "Bulk restore failed"
-      bulk_permanent_button: "Delete permanently"
-  convert_to_book:
-    bar_button: "As book"
-    bar_button_tooltip: "Combine selected articles into a new book"
-    dialog_title: "Combine articles into a book"
-    drag_handle: "Reorder"
-    remove_from_selection: "Remove from selection"
-    success: "Book created."
-    error_generic: "Conversion failed"
-    selection_hint: "Review order and selection. Sort dropdown or drag-and-drop changes the order."
-    sort_label: "Sort"
-    sort_date_asc: "Date (oldest first)"
-    sort_date_desc: "Date (newest first)"
-    sort_title_asc: "Title A-Z"
-    sort_title_desc: "Title Z-A"
-    sort_manual: "Manual (drag)"
-    count: "{count} selected"
-    tag_helper: "Filter to tag:"
-    reset_selection: "Reset"
-    validation_title: "Selection contains invalid entries"
-    validation_trashed: "In trash"
-    validation_non_article: "Wrong content type"
-    validation_not_found: "Not found"
-    metadata_title: "Book title"
-    metadata_title_required: "Title is required"
-    metadata_subtitle: "Subtitle"
-    metadata_subtitle_prefill: "Inherits from the article subtitle when blank."
-    metadata_author: "Author"
-    metadata_author_required: "Author is required"
-    metadata_add_to_authors_db: "Add \"{name}\" to the Authors database"
-    add_to_authors_error: "Could not add the author to the database."
-    metadata_language: "Language"
-    metadata_series: "Series"
-    metadata_series_prefill: "All selected articles share this series."
-    metadata_series_index: "Series index"
-    cover_inherit_note: "Cover inherits from the source article. You can replace it in the Book Editor after conversion."
-    front_matter_hint: "Optional front-matter chapters; skippable."
-    front_matter_title_page: "Title page (empty; customise in the Book Editor)"
-    front_matter_dedication: "Dedication"
-    front_matter_dedication_placeholder: "For ..."
-    front_matter_introduction: "Introduction"
-    back_matter_hint: "Optional back-matter chapters; skippable."
-    back_matter_acknowledgments: "Acknowledgments"
-    back_matter_author_bio: "About the author"
-    chapter_settings_use_article_title: "Use article title as chapter title"
-    chapter_settings_use_article_title_hint: "When off, chapters are named 'Chapter 1', 'Chapter 2', etc."
-    review_hint: "Please review. The original articles remain unchanged on the Articles dashboard."
-    review_title: "Title"
-    review_title_missing: "(not set yet)"
-    review_author: "Author"
-    review_chapter_total: "Chapters total"
-    review_sort: "Sort"
-    review_submitting: "Converting ..."
-    review_confirm: "Create book"
-    step_indicator_aria: "Wizard progress"
-    success_view_book: "View book"
+        title: Comment details
+        parent_url: In reply to
+      view_active: Active
+      view_trash: Trash
+      trash_empty: Trash is empty.
+      restore_action: Restore
+      restore_success: Comment restored.
+      restore_error: Restore failed.
+      permanent_delete_action: Delete permanently
+      permanent_delete_title: Delete permanently?
+      permanent_delete_message: 'The comment will be removed permanently. Body preview:
+        "{preview}"'
+      permanent_delete_success: Comment permanently deleted.
+      permanent_delete_error: Permanent delete failed.
+      empty_trash_button: Empty trash
+      empty_trash_title: Empty trash
+      empty_trash_message: All {count} comments in the trash will be permanently deleted.
+        This action cannot be undone.
+      empty_trash_success: Trash emptied.
+      empty_trash_error: Could not empty the trash.
+      bulk_restore_button: Restore
+      bulk_restore_success: '{count} comments restored'
+      bulk_restore_error: Bulk restore failed
+      bulk_permanent_button: Delete permanently
