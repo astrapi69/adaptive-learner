@@ -1,14 +1,13 @@
-# TEMPLATE: This test is included as adaptable example.
-# Replace with your domain logic when project domain is finalized.
-
 """i18n parity test.
 
-Enforces that every language file in backend/config/i18n/ has the same
-key structure, non-empty values, and matching {placeholder} sets as
-the reference language (EN).
+Every translation catalog must mirror EN's key structure, carry
+non-empty values, and use the same ``{placeholder}`` set per key.
 
 Failure messages are actionable: they name the key, the language, and
-what to fix.
+what to fix. The Bibliogon-era review-status _meta marker is gone; the
+skeleton catalogs are short enough that "review status" doesn't yet
+need a machine-checked marker. Re-introduce one when DE/EN grow past
+maintainer-validated size again.
 """
 
 from __future__ import annotations
@@ -41,21 +40,7 @@ def _load(lang: str) -> dict[str, object]:
     path = I18N_DIR / f"{lang}.yaml"
     assert path.exists(), f"Missing i18n file: {path}"
     raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-    # The top-level ``_meta`` block is catalog metadata (review status,
-    # translator credits, reference language). Treat it like JSON
-    # comments — silent for parity / placeholder / structural checks.
-    # A dedicated test below verifies its shape when present.
-    if isinstance(raw, dict):
-        raw.pop("_meta", None)
-    return raw
-
-
-def _load_raw_with_meta(lang: str) -> dict[str, object]:
-    """Same as _load but preserves the _meta block. Used by the
-    review-status check below."""
-    path = I18N_DIR / f"{lang}.yaml"
-    assert path.exists(), f"Missing i18n file: {path}"
-    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return raw if isinstance(raw, dict) else {}
 
 
 @pytest.fixture(scope="module")
@@ -77,7 +62,6 @@ def test_no_missing_keys(target_lang: str, reference: dict[str, object]) -> None
         f"{target_lang}: {len(missing)} key(s) present in {REFERENCE_LANG} but missing in "
         f"{target_lang}. Fix: add the following keys to backend/config/i18n/{target_lang}.yaml:\n"
         + "\n".join(f"  - {k}" for k in missing[:20])
-        + (f"\n  ... and {len(missing) - 20} more" if len(missing) > 20 else "")
     )
 
 
@@ -89,10 +73,8 @@ def test_no_extra_keys(target_lang: str, reference: dict[str, object]) -> None:
     assert not extra, (
         f"{target_lang}: {len(extra)} key(s) exist in {target_lang} but not in "
         f"{REFERENCE_LANG}. Likely a typo or leftover. Fix: remove from "
-        f"backend/config/i18n/{target_lang}.yaml OR add to the {REFERENCE_LANG}.yaml "
-        f"reference:\n"
+        f"backend/config/i18n/{target_lang}.yaml OR add to {REFERENCE_LANG}.yaml:\n"
         + "\n".join(f"  - {k}" for k in extra[:20])
-        + (f"\n  ... and {len(extra) - 20} more" if len(extra) > 20 else "")
     )
 
 
@@ -106,10 +88,8 @@ def test_no_empty_values(lang: str) -> None:
         if v is None or (isinstance(v, str) and not v.strip())
     ]
     assert not empties, (
-        f"{lang}: {len(empties)} empty value(s) in backend/config/i18n/{lang}.yaml. "
-        f"Fix: provide a translation for each:\n"
+        f"{lang}: {len(empties)} empty value(s) in backend/config/i18n/{lang}.yaml:\n"
         + "\n".join(f"  - {k}" for k in empties[:20])
-        + (f"\n  ... and {len(empties) - 20} more" if len(empties) > 20 else "")
     )
 
 
@@ -133,17 +113,13 @@ def test_structural_parity(target_lang: str, reference_raw: dict[str, object]) -
                     errors.extend(walk(v, tgt[k], child_path))
         else:
             if isinstance(tgt, dict):
-                errors.append(
-                    f"{path}: EN is a scalar, {target_lang} is an object"
-                )
+                errors.append(f"{path}: EN is a scalar, {target_lang} is an object")
         return errors
 
     errors = walk(reference_raw, target_raw)
     assert not errors, (
-        f"{target_lang}: structural divergence from {REFERENCE_LANG}. "
-        f"Fix: align the nesting in backend/config/i18n/{target_lang}.yaml:\n"
+        f"{target_lang}: structural divergence from {REFERENCE_LANG}:\n"
         + "\n".join(f"  - {e}" for e in errors[:20])
-        + (f"\n  ... and {len(errors) - 20} more" if len(errors) > 20 else "")
     )
 
 
@@ -164,128 +140,9 @@ def test_placeholder_parity(target_lang: str, reference: dict[str, object]) -> N
             mismatches.append((key, ref_ph, tgt_ph))
 
     assert not mismatches, (
-        f"{target_lang}: {len(mismatches)} placeholder mismatch(es). "
-        f"Runtime format errors will follow. Fix: align placeholders in "
-        f"backend/config/i18n/{target_lang}.yaml:\n"
+        f"{target_lang}: {len(mismatches)} placeholder mismatch(es):\n"
         + "\n".join(
-            f"  - {k}\n      EN placeholders:  {sorted(ref_ph)}\n      "
-            f"{target_lang} placeholders:  {sorted(tgt_ph)}"
+            f"  - {k}: EN {sorted(ref_ph)} vs {target_lang} {sorted(tgt_ph)}"
             for k, ref_ph, tgt_ph in mismatches[:10]
         )
-        + (
-            f"\n  ... and {len(mismatches) - 10} more"
-            if len(mismatches) > 10
-            else ""
-        )
-    )
-
-
-# --- Advisory check (non-fatal) ---------------------------------------------
-
-_ENGLISH_COMMON_WORDS = {
-    " the ",
-    " and ",
-    " is ",
-    " of ",
-    " with ",
-    " for ",
-    " to ",
-    " or ",
-}
-
-
-def _looks_english(value: str) -> bool:
-    padded = f" {value.lower()} "
-    return any(w in padded for w in _ENGLISH_COMMON_WORDS)
-
-
-@pytest.mark.parametrize("target_lang", TARGET_LANGS)
-def test_advisory_untranslated_en(
-    target_lang: str,
-    reference: dict[str, object],
-    request: pytest.FixtureRequest,
-) -> None:
-    """Advisory only: log keys whose value is byte-identical to EN and looks English.
-
-    Heuristic, not a hard check. Proper nouns, acronyms and short labels
-    legitimately stay identical across languages. Warnings surface likely
-    leftover English placeholders so translators can triage. Always passes.
-    """
-    target = _flatten(_load(target_lang))
-    suspects: list[str] = []
-    for key, ref_val in reference.items():
-        if not isinstance(ref_val, str) or key not in target:
-            continue
-        tgt_val = target[key]
-        if not isinstance(tgt_val, str):
-            continue
-        if (
-            ref_val == tgt_val
-            and len(ref_val) > 15
-            and _looks_english(ref_val)
-        ):
-            suspects.append(key)
-
-    if suspects:
-        terminalreporter = request.config.pluginmanager.getplugin("terminalreporter")
-        if terminalreporter is not None:
-            terminalreporter.write_line(
-                f"\n[i18n advisory] {target_lang}: {len(suspects)} key(s) look like "
-                f"untranslated English placeholders (heuristic, not a failure):"
-            )
-            for k in suspects[:10]:
-                terminalreporter.write_line(f"  - {k}")
-            if len(suspects) > 10:
-                terminalreporter.write_line(f"  ... and {len(suspects) - 10} more")
-
-
-# --- Review-status marker (matches launcher i18n precedent) ----------------
-#
-# Catalogs whose translations were produced without a native-speaker pass
-# carry an explicit ``_meta`` block at the top of the YAML. Two-way contract:
-#
-#   1. If a marker is present, it MUST conform to the shape below.
-#   2. The reference catalog (en) and maintainer-validated catalog (de) MUST
-#      NOT carry the marker.
-#
-# REVIEW_STATUS.md (alongside the YAML files) is the human-readable companion.
-
-_VALID_REVIEW_STATUSES = {
-    "pending native speaker",
-    "partial: pending native speaker for new namespaces",
-}
-_MARKER_FORBIDDEN_FOR = {"en", "de"}
-
-
-@pytest.mark.parametrize("lang", [REFERENCE_LANG, *TARGET_LANGS])
-def test_review_status_marker_shape(lang: str) -> None:
-    """Verify the optional _meta block, when present, has the expected shape."""
-    raw = _load_raw_with_meta(lang)
-    meta = raw.get("_meta") if isinstance(raw, dict) else None
-    if lang in _MARKER_FORBIDDEN_FOR:
-        assert meta is None, (
-            f"{lang}: must not carry a _meta block — it is the reference or "
-            f"a maintainer-validated catalog. Remove _meta: from "
-            f"backend/config/i18n/{lang}.yaml."
-        )
-        return
-    if meta is None:
-        # Catalog has no marker; that's allowed for any catalog the
-        # maintainer treats as user-validated. Nothing to assert.
-        return
-    assert isinstance(meta, dict), (
-        f"{lang}: _meta must be a mapping, got {type(meta).__name__}."
-    )
-    status = meta.get("review_status")
-    assert status in _VALID_REVIEW_STATUSES, (
-        f"{lang}: _meta.review_status must be one of {sorted(_VALID_REVIEW_STATUSES)}, "
-        f"got {status!r}."
-    )
-    pending = meta.get("pending_namespaces")
-    assert isinstance(pending, list) and pending, (
-        f"{lang}: _meta.pending_namespaces must be a non-empty list naming the "
-        f"top-level ui.* sub-namespaces whose values are still passthru English."
-    )
-    assert all(isinstance(ns, str) for ns in pending), (
-        f"{lang}: _meta.pending_namespaces entries must be strings."
     )

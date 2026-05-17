@@ -1,16 +1,11 @@
 .PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
-       test test-backend test-plugins test-e2e test-e2e-ui \
-       test-plugin-export test-plugin-grammar test-plugin-kdp test-plugin-kinderbuch test-plugin-ms-tools test-plugin-translation test-plugin-audiobook test-plugin-help test-plugin-getstarted test-plugin-git-sync \
-       test-coverage test-coverage-backend test-coverage-frontend test-coverage-plugins \
-       test-coverage-plugin-audiobook test-coverage-plugin-export test-coverage-plugin-grammar test-coverage-plugin-kdp test-coverage-plugin-kinderbuch test-coverage-plugin-ms-tools test-coverage-plugin-translation test-coverage-plugin-help test-coverage-plugin-getstarted \
-       mutmut-backend mutmut-export mutmut-ms-tools mutmut-results \
+       test test-backend test-frontend test-e2e test-e2e-ui \
+       test-coverage test-coverage-backend test-coverage-frontend \
        check-types check-types-backend check-types-frontend \
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
-       generate-trial-key \
-       docs-install docs-build docs-serve \
-       sync-mkdocs-nav verify-mkdocs-nav check-mkdocs-orphans verify-docs-discipline \
+       docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
        lock-all-plugins verify-plugin-locks \
        clean prod prod-down prod-logs help
 
@@ -25,7 +20,7 @@ dev: ## Start backend + frontend (backend first, then frontend)
 			echo "         Run 'make fix-watchers' for the persistent fix."; \
 		fi; \
 	fi
-	@echo "Starting AdaptiveLearner..."
+	@echo "Starting Adaptive Learner..."
 	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run uvicorn app.main:app --reload --port 8000 &
 	@echo "Waiting for backend..."
 	@for i in 1 2 3 4 5 6 7 8 9 10; do \
@@ -39,19 +34,9 @@ DEV_LOG_DIR ?= /tmp/adaptive-learner-logs
 
 dev-bg: ## Start in background, logs to $(DEV_LOG_DIR) (stop with: make dev-down)
 	@mkdir -p $(DEV_LOG_DIR)
-	@echo "Starting AdaptiveLearner (background)..."
+	@echo "Starting Adaptive Learner (background)..."
 	@echo "  Backend  log: $(DEV_LOG_DIR)/backend.log"
 	@echo "  Frontend log: $(DEV_LOG_DIR)/frontend.log"
-	@# `setsid` puts each child in its own session so it survives the
-	@# Makefile recipe shell exiting. `< /dev/null` closes stdin so the
-	@# child does not block waiting on a tty. `> ... 2>&1` captures both
-	@# streams to a log file we can tail later. The bare `&` backgrounds
-	@# the compound, and `echo $$!` then writes the child PID for
-	@# `dev-down` to kill.
-	@# `A && B &` is one AND-OR list backgrounded in a subshell; the
-	@# subshell inherits the cd, the main shell does not. So PID
-	@# files are written from the main recipe shell at repo root, and
-	@# the path is `.pid-backend` (NOT `../.pid-backend`).
 	@cd backend && \
 		setsid poetry run uvicorn app.main:app --reload --port 8000 \
 			< /dev/null > $(DEV_LOG_DIR)/backend.log 2>&1 & \
@@ -97,7 +82,7 @@ stop: dev-down ## Alias for dev-down (stop dev servers)
 restart: dev-down dev ## Stop and restart dev servers (use after a hung session)
 
 fix-watchers: ## Persist Linux inotify limits for vite dev (sudo required, runs once)
-	@echo "AdaptiveLearner: persist inotify limits for vite dev mode."
+	@echo "Adaptive Learner: persist inotify limits for vite dev mode."
 	@echo "Sudo prompt is for the sysctl write to /etc/sysctl.d/."
 	@echo ""
 	@echo "fs.inotify.max_user_watches=524288" | sudo tee /etc/sysctl.d/99-adaptive-learner-watchers.conf > /dev/null
@@ -137,7 +122,7 @@ install-plugins:
 
 # --- Test ---
 
-test: test-backend test-frontend ## Run ALL tests, no coverage (everyday use; coverage runs in CI - see test-coverage)
+test: test-backend test-frontend ## Run ALL tests, no coverage (everyday use; coverage runs in CI)
 	@echo ""
 	@echo "=== All tests complete ==="
 
@@ -162,7 +147,7 @@ test-backend: ## Run backend tests
 #		poetry env use python3.12 -q 2>/dev/null; \
 #		poetry run pytest tests/ -v
 
-# --- Coverage (heavy, opt-in; CI runs this on every push - see .github/workflows/coverage.yml) ---
+# --- Coverage (heavy, opt-in; CI runs this on every push) ---
 
 test-coverage: test-coverage-backend test-coverage-frontend ## Run ALL tests with coverage (slow; prefer CI)
 	@echo ""
@@ -178,21 +163,7 @@ test-coverage-frontend: ## Frontend coverage report (coverage/)
 	@echo "=== Frontend Coverage ==="
 	cd frontend && npm run test:coverage
 
-# Plugin coverage: same pattern as test-plugin-<name>. Wire each
-# plugin's `--cov=<package>` into test-coverage-plugin-<name> and
-# add it to test-coverage-plugins.
-
-# --- Mutation Testing ---
-
-mutmut-backend: ## Run mutation testing on backend
-	@echo ""
-	@echo "=== Mutation Testing: Backend ==="
-	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
-
-mutmut-results: ## Show mutation testing results
-	@echo "=== Backend ===" && cd backend && poetry run mutmut results 2>/dev/null || true
-
-# --- Blocker Status ---
+# --- Blocker / archival ---
 
 check-blockers: ## Ping upstream sources for every BLOCKED item in docs/backlog.md
 	@bash scripts/check-blockers.sh
@@ -205,14 +176,13 @@ archive-task-dry: ## Same as archive-task but writes nothing (preview)
 
 # --- Git Hooks ---
 
-install-hooks: ## Install scripts/git-hooks/* into .git/hooks (per-checkout, not committed under .git)
+install-hooks: ## Install scripts/git-hooks/* into .git/hooks
 	@mkdir -p .git/hooks
 	@for hook in scripts/git-hooks/*; do \
 		name=$$(basename $$hook); \
 		ln -sf ../../$$hook .git/hooks/$$name; \
 		echo "linked .git/hooks/$$name -> $$hook"; \
 	done
-	@echo "Hooks installed. They run on every git push; tag pushes trigger pre-commit on all backend files."
 
 # --- Type Checking ---
 
@@ -247,14 +217,6 @@ sync-versions-dry: ## Show what sync-versions would change without writing
 sync-versions-check: ## Exit non-zero if any subsystem version drifts from canonical
 	@python3 scripts/sync_versions.py --check
 
-# --- License ---
-# Licensing infrastructure lives in backend/app/licensing.py. The
-# skeleton ships zero paid plugins, so the per-plugin / trial-key
-# generation Makefile targets that lived here in the upstream
-# project (generate-trial-key, generate-license-key, generate-
-# license-key-all) were removed. Re-add them when you wire a
-# paid-plugin tier.
-
 # --- Production (Docker) ---
 
 prod: ## Start production via Docker Compose
@@ -285,25 +247,13 @@ sync-mkdocs-nav: ## Regenerate mkdocs.yml nav blocks from docs/help/_meta.yaml
 verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-friendly)
 	cd docs && poetry run python ../scripts/generate_mkdocs_nav.py --check
 
-check-mkdocs-orphans: ## Adversarial check: fail if mkdocs reports orphan pages
-	bash scripts/check_mkdocs_orphans.sh
-
-verify-docs-discipline: verify-mkdocs-nav check-mkdocs-orphans ## All docs-discipline gates (mandatory in pre-tag chain)
-	@echo "All docs-discipline checks passed."
-
-# --- Plugin lockfile discipline (PLUGIN-LOCKFILE-DRIFT-01) ---
-# `make test` installs plugins from the backend's combined poetry.lock
-# (path-deps); CI installs each plugin from its OWN poetry.lock. The two
-# paths drift independently when a shared external pin (e.g. fastapi)
-# bumps in every plugin's pyproject. Catches the divergence before push.
+# --- Plugin lockfile discipline ---
 
 lock-all-plugins: ## Re-lock every plugin's poetry.lock (after a shared-dep pin bump)
 	@for d in plugins/adaptive-learner-plugin-*/; do \
 		echo ""; echo "=== $$(basename $$d) ==="; \
 		cd "$$d" && poetry lock && cd - >/dev/null; \
 	done
-	@echo ""
-	@echo "Re-locked $$(ls -d plugins/adaptive-learner-plugin-*/ | wc -l) plugin(s)."
 
 verify-plugin-locks: ## Detect drift between each plugin's pyproject.toml and its poetry.lock
 	@drift=0; \
@@ -311,16 +261,12 @@ verify-plugin-locks: ## Detect drift between each plugin's pyproject.toml and it
 		name=$$(basename $$d); \
 		out=$$(cd "$$d" && poetry install --dry-run --no-interaction --no-ansi 2>&1 | head -3); \
 		if echo "$$out" | grep -q "changed significantly"; then \
-			echo "DRIFT: $$name (run \`make lock-all-plugins\` or \`cd $$d && poetry lock\`)"; \
+			echo "DRIFT: $$name (run \`make lock-all-plugins\`)"; \
 			drift=1; \
 		fi; \
 	done; \
 	if [ $$drift -eq 1 ]; then \
-		echo ""; \
-		echo "ERROR: at least one plugin pyproject.toml drifts from its poetry.lock."; \
-		echo "Same shape as the v0.30.0 release CI red-on-main: the backend's"; \
-		echo "combined lock can be in sync while per-plugin locks lag. Run"; \
-		echo "\`make lock-all-plugins\` to bring all plugin locks in sync."; \
+		echo ""; echo "ERROR: at least one plugin pyproject.toml drifts from its poetry.lock."; \
 		exit 1; \
 	fi; \
 	echo "OK: all plugin pyproject.toml/poetry.lock pairs in sync."

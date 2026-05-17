@@ -6,9 +6,13 @@
 #
 #     poetry run pre-commit run --all-files
 #
-# Each `rev` is pinned to a stable release. Do NOT use `main` or
-# branch names - that would silently pull hook updates on every
-# auto-fetch.
+# Skeleton state (Phase 1A): only the formatter / linter hooks plus
+# the plugin-lockfile-pairing hook stay. The Bibliogon-era custom
+# hooks (roadmap archival reminder, help-meta completeness, notify-
+# error coverage, theme-token completeness, module-state audit) are
+# gone with their scripts; re-introduce alongside the artifacts they
+# guard once the new domain has them.
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -33,51 +37,10 @@ repos:
 
   - repo: local
     hooks:
-      - id: roadmap-archive-reminder
-        name: Remind about ROADMAP archival
-        entry: scripts/check_roadmap_for_done_items.sh
-        language: script
-        pass_filenames: false
-        always_run: true
-        stages: [pre-commit]
-        verbose: true
-
-      - id: help-meta-completeness
-        name: docs/help pages must be in docs/help/_meta.yaml
-        entry: python3 scripts/check_help_meta_completeness.py
-        language: system
-        files: ^docs/help/(en|de)/.*\.md$
-        pass_filenames: true
-        stages: [pre-commit]
-
       - id: plugin-lock-paired-with-pyproject
         name: plugin pyproject.toml must be staged with its poetry.lock
         entry: python3 scripts/check_plugin_lock_paired.py
         language: system
         files: ^plugins/adaptive-learner-plugin-[^/]+/pyproject\.toml$
         pass_filenames: true
-        stages: [pre-commit]
-
-      - id: notify-error-apierror-coverage
-        name: notify.error in catch blocks must pass the caught error
-        entry: python3 scripts/audit_notify_error_calls.py --enforce --quiet
-        language: system
-        files: ^frontend/src/.*\.(ts|tsx)$
-        pass_filenames: false
-        stages: [pre-commit]
-
-      - id: theme-token-completeness
-        name: var(--token, #fallback) must be defined in every palette x mode
-        entry: python3 scripts/audit_theme_tokens.py --enforce --quiet
-        language: system
-        files: ^frontend/src/.*\.(ts|tsx|css)$
-        pass_filenames: false
-        stages: [pre-commit]
-
-      - id: module-state-audit
-        name: new @lru_cache / @cached_property must be audited + allowlisted
-        entry: python3 scripts/audit_module_state.py --enforce --quiet
-        language: system
-        files: ^backend/app/.*\.py$
-        pass_filenames: false
         stages: [pre-commit]

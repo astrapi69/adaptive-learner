@@ -1,13 +1,16 @@
 import {defineConfig} from "@playwright/test";
 
+/**
+ * Skeleton state (Phase 1A): no specs live under ./tests or ./smoke yet.
+ * The webServer block still boots the backend + frontend so a smoke
+ * spec asserting the placeholder Landing page can land at any time.
+ * The first real spec (Phase 4A) is the Landing-page smoke check.
+ */
+
 export default defineConfig({
-    // Default testDir is the main suite under ./tests. Each project
-    // overrides testDir below so `npx playwright test` runs the main
-    // suite and `--project=smoke` picks up the separate ./smoke
-    // directory.
     testDir: "./tests",
     fullyParallel: false,
-    workers: 1, // SQLite = no parallelism
+    workers: 1,
     retries: process.env.CI ? 1 : 0,
     timeout: 30_000,
     use: {
@@ -30,24 +33,7 @@ export default defineConfig({
         },
     ],
     projects: [
-        {
-            name: "chromium",
-            testDir: "./tests",
-            use: {browserName: "chromium"},
-        },
-        {
-            // Separate smoke project for the viewport/zoom/dropdown
-            // regression suite. Run with:
-            //   npx playwright test --project=smoke
-            //
-            // The smoke specs mutate the viewport and the CSS zoom
-            // factor on document.documentElement, which can interfere
-            // with other tests if mixed into the main suite, so it
-            // lives in its own directory and is excluded from the
-            // default run.
-            name: "smoke",
-            testDir: "./smoke",
-            use: {browserName: "chromium"},
-        },
+        {name: "chromium", testDir: "./tests", use: {browserName: "chromium"}},
+        {name: "smoke", testDir: "./smoke", use: {browserName: "chromium"}},
     ],
 });
