@@ -4,16 +4,13 @@ import Dashboard from "./pages/Dashboard";
 import BookEditor from "./pages/BookEditor";
 import ArticleList from "./pages/ArticleList";
 import ArticleEditor from "./pages/ArticleEditor";
-import MediumImportPage from "./pages/MediumImportPage";
 import Settings from "./pages/Settings";
 import Help from "./pages/Help";
 import GetStarted from "./pages/GetStarted";
 import {useTheme} from "./hooks/useTheme";
 import {I18nProvider} from "./hooks/useI18n";
 import {DialogProvider} from "./components/AppDialog";
-import AudioExportGate from "./components/AudioExportGate";
 import OfflineBanner from "./components/OfflineBanner";
-import {AudiobookJobProvider} from "./contexts/AudiobookJobContext";
 import {BulkAiFillJobProvider} from "./contexts/BulkAiFillJobContext";
 import BulkAiFillDock from "./components/BulkAiFillDock";
 import {HelpProvider} from "./contexts/HelpContext";
@@ -79,7 +76,6 @@ export default function App() {
     return (
         <I18nProvider>
         <DialogProvider>
-        <AudiobookJobProvider>
         <BulkAiFillJobProvider>
         <HelpProvider>
             <OfflineBanner />
@@ -87,14 +83,12 @@ export default function App() {
                 <Route path="/" element={<Dashboard/>}/>
                 <Route path="/book/:bookId" element={<BookEditor/>}/>
                 <Route path="/articles" element={<ArticleList/>}/>
-                <Route path="/articles/import/medium" element={<MediumImportPage/>}/>
                 <Route path="/articles/:id" element={<ArticleEditor/>}/>
                 <Route path="/settings" element={<Settings/>}/>
                 <Route path="/help" element={<Help/>}/>
                 <Route path="/get-started" element={<GetStarted/>}/>
             </Routes>
             <EventRecorderSetup/>
-            <AudioExportGate/>
             <BulkAiFillDock/>
             <HelpPanel/>
             <ErrorReportDialog
@@ -120,7 +114,6 @@ export default function App() {
             />
         </HelpProvider>
         </BulkAiFillJobProvider>
-        </AudiobookJobProvider>
         </DialogProvider>
         </I18nProvider>
     );

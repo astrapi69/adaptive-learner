@@ -2,7 +2,6 @@ import {useEffect, useState} from "react";
 import {Save, Wrench} from "lucide-react";
 import {useI18n} from "../../hooks/useI18n";
 import {PALETTES} from "../../themes/palettes";
-import SshKeySection from "../SshKeySection";
 import styles from "../../pages/Settings.module.css";
 import {RadixSelect} from "./RadixSelect";
 
@@ -322,8 +321,6 @@ export function AppSettings({config, onSave, saving}: {
                     <Save size={14}/> {t("ui.common.save", "Speichern")}
                 </button>
             </div>
-
-            <SshKeySection/>
 
             {/* Editor Settings */}
             <div style={{marginTop: 16}}>

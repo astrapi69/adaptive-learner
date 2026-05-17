@@ -1,11 +1,8 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {Save, Check, X, Trash2, Upload} from "lucide-react";
+import {Save, Check, X, Trash2} from "lucide-react";
 import OrderedListEditor from "../OrderedListEditor";
 import {useI18n} from "../../hooks/useI18n";
 import styles from "../../pages/Settings.module.css";
-import {AudiobookSettingsPanel} from "./panels/AudiobookSettingsPanel";
-import {TranslationSettingsPanel} from "./panels/TranslationSettingsPanel";
 import {ScalarSettingField} from "./fields/ScalarSettingField";
 import {ComplexSettingField} from "./fields/ComplexSettingField";
 import {isSectionOrder} from "./utils";
@@ -24,7 +21,6 @@ export function PluginCard({name, displayName, description, version, enabled, se
     onRemove: () => void;
 }) {
     const {t} = useI18n();
-    const navigate = useNavigate();
     const isCore = CORE_PLUGINS.has(name);
     const [localSettings, setLocalSettings] = useState(settings);
     const [expanded, setExpanded] = useState(false);
@@ -127,41 +123,7 @@ export function PluginCard({name, displayName, description, version, enabled, se
 
             {expanded && hasSettings && (
                 <div style={{marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--border)"}}>
-                    {/* Custom audiobook settings with cascading dropdowns */}
-                    {name === "audiobook" && scalarSettings.length > 0 ? (
-                        <AudiobookSettingsPanel
-                            settings={localSettings}
-                            onSave={onSave}
-                        />
-                    ) : name === "translation" && scalarSettings.length > 0 ? (
-                        <TranslationSettingsPanel
-                            settings={localSettings}
-                            onSave={onSave}
-                        />
-                    ) : name === "medium-import" ? (
-                        <div style={{display: "flex", flexDirection: "column", gap: 8}}>
-                            <p style={{fontSize: "0.8125rem", color: "var(--text-muted)", margin: 0}}>
-                                {t(
-                                    "ui.medium_import.settings.pointer_hint",
-                                    "Einstellungen und Importe werden auf der dedizierten Medium-Import-Seite verwaltet.",
-                                )}
-                            </p>
-                            <div>
-                                <button
-                                    type="button"
-                                    className="btn btn-primary btn-sm"
-                                    onClick={() => navigate("/articles/import/medium")}
-                                    data-testid="settings-medium-import-pointer"
-                                >
-                                    <Upload size={12} />{" "}
-                                    {t(
-                                        "ui.medium_import.settings.pointer_button",
-                                        "Medium-Import öffnen",
-                                    )}
-                                </button>
-                            </div>
-                        </div>
-                    ) : scalarSettings.length > 0 && (
+                    {scalarSettings.length > 0 && (
                         <>
                             <h4 style={{fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-muted)", marginBottom: 8}}>
                                 {t("ui.settings.expand_settings", "Einstellungen")}
@@ -186,10 +148,7 @@ export function PluginCard({name, displayName, description, version, enabled, se
                         </>
                     )}
 
-                    {/* Editable ordered lists (section_order, skip files).
-                        Audiobook handles its lists inside AudiobookSettingsPanel
-                        to avoid showing two save buttons for one config. */}
-                    {name !== "audiobook" && orderedListSettings.length > 0 && (
+                    {orderedListSettings.length > 0 && (
                         <div style={{marginTop: scalarSettings.length > 0 ? 16 : 0}}>
                             <h4 style={{fontSize: "0.8125rem", fontWeight: 600, color: "var(--text-muted)", marginBottom: 8}}>
                                 {t("ui.settings.ordered_lists", "Reihenfolge und Listen")}
