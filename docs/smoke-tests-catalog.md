@@ -1,4 +1,11 @@
-# AdaptiveLearner manual smoke-test catalog
+<!--
+TODO: Adapt for your project. Current content is inherited from
+upstream (Bibliogon) and serves as structural reference only.
+The shape of this document (sections, headings, formatting
+conventions) is reusable; the specifics are not.
+-->
+
+# Adaptive Learner manual smoke-test catalog
 
 Structured per-feature catalog of manual smoke checks. Each entry has reproducible steps, severity, last-verified date, and a pointer to the related commit / backlog item / automated spec when one exists.
 

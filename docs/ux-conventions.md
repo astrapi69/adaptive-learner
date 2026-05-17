@@ -1,12 +1,19 @@
-# AdaptiveLearner UX Conventions
+<!--
+TODO: Adapt for your project. Current content is inherited from
+upstream (Bibliogon) and serves as structural reference only.
+The shape of this document (sections, headings, formatting
+conventions) is reusable; the specifics are not.
+-->
+
+# Adaptive Learner UX Conventions
 
 Last updated: 2026-04-27
 Status: Living document — update when patterns evolve.
-Audience: AdaptiveLearner contributors, plugin authors, AI assistants
-generating AdaptiveLearner UI code.
+Audience: Adaptive Learner contributors, plugin authors, AI assistants
+generating Adaptive Learner UI code.
 
 This document is opinionated and prescriptive. Every section
-takes a position and gives a AdaptiveLearner-specific reason. When a
+takes a position and gives a Adaptive Learner-specific reason. When a
 new feature surfaces a UX question this doc does not answer,
 extend the doc in the same PR that resolves it — do not let
 inconsistency accumulate.
@@ -30,12 +37,12 @@ Six principles. Everything else in this doc derives from them.
    surface what the user CAN do to make it usable. "No backups
    yet" is a wall; "No backups yet — [Create First Backup]" is
    a path.
-3. **Author-perspective prioritization.** AdaptiveLearner is for
+3. **Author-perspective prioritization.** Adaptive Learner is for
    authors and self-publishers, not developers. UX trades off
    in favor of writing flow: fewer modals during drafting,
    shorter forms during creation, defer optional fields.
 4. **Local-first transparency.** Users own their data. Show
-   what AdaptiveLearner stores, where, and what's pending sync. A
+   what Adaptive Learner stores, where, and what's pending sync. A
    user who cannot point at "where my book lives on disk" is
    one we have failed.
 5. **Reversibility.** Destructive actions confirmable;
@@ -85,7 +92,7 @@ the disabled button, prefer disabled. If they need to do
 something else first to even make the button relevant, prefer
 hidden + relevant CTA.
 
-**Examples in current AdaptiveLearner.**
+**Examples in current Adaptive Learner.**
 
 | Surface | State | Why |
 |---------|-------|-----|
@@ -271,7 +278,7 @@ validation either. The error belongs at the field.
 
 ### 5.2 Toast notifications
 
-Toasts (via `react-toastify`, AdaptiveLearner's `notify` helper) are
+Toasts (via `react-toastify`, Adaptive Learner's `notify` helper) are
 used for:
 
 - Successful action confirmation, low-attention ("Commit
@@ -318,7 +325,7 @@ Format:
   (stack trace, exception class, request ID). Enabled when
   `ADAPTIVE_LEARNER_DEBUG=true` automatically; collapsible on
   user request otherwise.
-- **"Report Issue" button** if the user can't recover. AdaptiveLearner
+- **"Report Issue" button** if the user can't recover. Adaptive Learner
   already wires this through `ApiError.toGitHubIssueUrl(...)`;
   reuse it. Pre-populates a GitHub issue with stacktrace,
   browser, app version.
@@ -396,7 +403,7 @@ When closing a wizard or modal mid-edit:
 
 ### 7.2 Required fields
 
-AdaptiveLearner convention (set during the import wizard work,
+Adaptive Learner convention (set during the import wizard work,
 documented here for the rest of the app):
 
 - **Required fields are NOT visually marked with an asterisk.**
@@ -521,7 +528,7 @@ long form.
 Used in deep hierarchies. Each segment clickable, last segment
 shown but not a link (current page).
 
-AdaptiveLearner doesn't have a deep hierarchy yet. The book editor is
+Adaptive Learner doesn't have a deep hierarchy yet. The book editor is
 2 levels (Book → Chapter) and uses sidebar-driven navigation,
 not breadcrumbs. When a future feature lands more than 2 levels
 deep, switch to breadcrumbs.
@@ -629,11 +636,11 @@ must match the bar.
 
 ---
 
-## 13. AdaptiveLearner-Specific Patterns
+## 13. Adaptive Learner-Specific Patterns
 
 ### 13.1 Themes and dark mode
 
-AdaptiveLearner ships 6 theme variants (Warm Literary / Cool Modern /
+Adaptive Learner ships 6 theme variants (Warm Literary / Cool Modern /
 Nord, each in light + dark). All UI must work in all of them.
 New components: tested in all 6 themes before merge.
 
@@ -652,7 +659,7 @@ Convention:
   translations or English fallback.
 - Component code passes `t("ui.namespace.key", "Default fallback")`
   with the fallback in the developer's most natural language
-  (typically DE in AdaptiveLearner, EN when written by an external
+  (typically DE in Adaptive Learner, EN when written by an external
   contributor).
 - Keys are dotted, scoped: `ui.git_sync.commit_button`. New
   scopes are namespace-only — match existing keys.
@@ -662,7 +669,7 @@ in the plugin's own YAML; i18n loader merges them in.
 
 ### 13.3 Plugin UI
 
-Plugins extend AdaptiveLearner UI in three ways (see the plugin
+Plugins extend Adaptive Learner UI in three ways (see the plugin
 developer guide for the slot list):
 
 - Settings panels.
@@ -675,7 +682,7 @@ document as authoritative on UX behaviour.
 
 ### 13.4 Editor flow
 
-The TipTap editor is AdaptiveLearner's central surface. UX trade-offs
+The TipTap editor is Adaptive Learner's central surface. UX trade-offs
 favor uninterrupted writing:
 
 - Modals stay out of the editor unless the user explicitly
@@ -716,7 +723,7 @@ scope for the next PR that touches that surface.
 - **Translated strings hardcoded in component source.** Always
   i18n-keyed.
 - **`window.alert / confirm / prompt`** for any user-facing
-  flow. AdaptiveLearner uses Radix dialogs + react-toastify
+  flow. Adaptive Learner uses Radix dialogs + react-toastify
   exclusively.
 
 ---
@@ -746,7 +753,7 @@ For any new UI work, run this checklist before opening the PR:
 
 Conventions to define later. Flag, don't decide:
 
-- **Mobile-specific patterns.** AdaptiveLearner is desktop-first today.
+- **Mobile-specific patterns.** Adaptive Learner is desktop-first today.
   Mobile responsive behaviour (TipTap on touch devices, sidebar
   collapse, asset upload) needs its own pass before "mobile" is
   a supported audience.
@@ -782,7 +789,7 @@ UX question this doc does not answer:
    of this file noting the reversal + the date.
 
 The doc loses its value the moment it falls out of sync with
-shipped AdaptiveLearner. Re-read on every release; flag drift.
+shipped Adaptive Learner. Re-read on every release; flag drift.
 
 ---
 
@@ -790,6 +797,6 @@ shipped AdaptiveLearner. Re-read on every release; flag drift.
 
 - **2026-04-27** — Initial version. 17 sections covering buttons,
   empty states, loading, errors, confirmations, forms, modals,
-  navigation, feedback, color, accessibility, AdaptiveLearner-specific
+  navigation, feedback, color, accessibility, Adaptive Learner-specific
   patterns, anti-patterns, checklist, open items, and the
   living-document protocol.
