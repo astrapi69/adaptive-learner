@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bibliogon macOS doppelklickbar wrapper.
+# AdaptiveLearner macOS doppelklickbar wrapper.
 # Finder runs this file directly; cd to its directory, then invoke
 # install.sh which carries the canonical version. No version
 # placeholder lives here so this file does NOT participate in the

@@ -1,12 +1,12 @@
 # Git-Sicherung: Grundlagen
 
-Git ist ein verteiltes Versionskontrollsystem. Bibliogon nutzt es, um jede Version deines Buchs zu sichern: jeder Commit ist ein Schnappschuss, den du später ansehen, vergleichen oder wiederherstellen kannst.
+Git ist ein verteiltes Versionskontrollsystem. AdaptiveLearner nutzt es, um jede Version deines Buchs zu sichern: jeder Commit ist ein Schnappschuss, den du später ansehen, vergleichen oder wiederherstellen kannst.
 
 Dieses Dokument deckt die lokale Nutzung ab. Synchronisation mit einem Remote (GitHub, GitLab, Gitea) wird in **Git-Sicherung > Remote** beschrieben, SSH-Authentifizierung in **Git-Sicherung > SSH-Schlüssel**.
 
 ## Was wird versioniert
 
-Pro Buch legt Bibliogon ein eigenes Git-Repository an (`.git` innerhalb des Buchverzeichnisses). Bei jedem Commit schreibt Bibliogon den aktuellen Zustand auf die Platte:
+Pro Buch legt AdaptiveLearner ein eigenes Git-Repository an (`.git` innerhalb des Buchverzeichnisses). Bei jedem Commit schreibt AdaptiveLearner den aktuellen Zustand auf die Platte:
 
 - `manuscript/chapters/NN-<slug>.json` — jedes Kapitel als TipTap-JSON
 - `manuscript/front-matter/` und `back-matter/` — Vor- und Nachspann (TOC, Widmung, Impressum, etc.)
@@ -32,13 +32,13 @@ Die Initialisierung ist idempotent: ein weiterer Klick auf **Initialisieren** ä
 2. Eine **Commit-Nachricht** eingeben (z. B. „Kapitel 3 überarbeitet").
 3. **Commit** klicken.
 
-Bibliogon schreibt den aktuellen Buchzustand auf die Platte und legt einen Git-Commit an. Nach dem Commit:
+AdaptiveLearner schreibt den aktuellen Buchzustand auf die Platte und legt einen Git-Commit an. Nach dem Commit:
 
 - Die HEAD-Anzeige zeigt den neuen Hash.
 - Der Eintrag erscheint oben im Verlauf.
 - Die Sidebar-Anzeige (Punkt neben dem Git-Button) aktualisiert sich nach Dialog-Schließung.
 
-Wenn sich seit dem letzten Commit nichts geändert hat, lehnt Bibliogon den Commit mit der Meldung **Keine Änderungen zu committen** ab.
+Wenn sich seit dem letzten Commit nichts geändert hat, lehnt AdaptiveLearner den Commit mit der Meldung **Keine Änderungen zu committen** ab.
 
 ## Wann committen
 
@@ -71,4 +71,4 @@ Die Initialisierung wurde noch nicht gemacht. Klicke **Repository initialisieren
 Der aktuelle Buchzustand ist identisch mit dem letzten Commit. Entweder ist alles schon gesichert oder die Änderung wurde noch nicht automatisch gespeichert — warte kurz und versuche es nochmal.
 
 **Beschädigtes Repository.**
-Bibliogon versucht, Git-Operationen gracefully zu behandeln. Bei unerwarteten Fehlern: das Repository unter `uploads/<Buch-ID>/.git` manuell reparieren oder löschen und neu initialisieren. Die TipTap-JSON-Quelle liegt in der Bibliogon-Datenbank, nicht im Repository — sie geht nicht verloren.
+AdaptiveLearner versucht, Git-Operationen gracefully zu behandeln. Bei unerwarteten Fehlern: das Repository unter `uploads/<Buch-ID>/.git` manuell reparieren oder löschen und neu initialisieren. Die TipTap-JSON-Quelle liegt in der AdaptiveLearner-Datenbank, nicht im Repository — sie geht nicht verloren.

@@ -30,7 +30,7 @@ def project_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     Each test gets its own tmp_path so override-file presence,
     env-var state, AND the v0.32.x ``config_overlay`` user-overlay
     file are isolated from any state a previous test may have
-    written into the session-scope ``BIBLIOGON_DATA_DIR``.
+    written into the session-scope ``ADAPTIVE_LEARNER_DATA_DIR``.
     """
     project = tmp_path / "app.yaml"
     project.write_text("", encoding="utf-8")
@@ -38,12 +38,12 @@ def project_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     override = tmp_path / "secrets.yaml"
     monkeypatch.setattr(main_module, "_get_user_override_path", lambda: override)
     # Isolate the v0.32.x config-overlay layer too: point
-    # BIBLIOGON_DATA_DIR at a per-test tmp so leftover writes from
+    # ADAPTIVE_LEARNER_DATA_DIR at a per-test tmp so leftover writes from
     # earlier tests (Settings PATCH, plugin install/uninstall) do
     # not pollute the merged view this loader returns.
-    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(tmp_path / "user-data"))
+    monkeypatch.setenv("ADAPTIVE_LEARNER_DATA_DIR", str(tmp_path / "user-data"))
     # Always start with a clean env so env-var tests opt-in.
-    monkeypatch.delenv("BIBLIOGON_AI_API_KEY", raising=False)
+    monkeypatch.delenv("ADAPTIVE_LEARNER_AI_API_KEY", raising=False)
     return project
 
 
@@ -80,7 +80,7 @@ def test_nested_merge_precedence(project_yaml: Path) -> None:
                 "api_key": "",
                 "model": "claude-sonnet-4-20250514",
             },
-            "app": {"name": "Bibliogon"},
+            "app": {"name": "AdaptiveLearner"},
         },
     )
     override = main_module._get_user_override_path()
@@ -89,17 +89,17 @@ def test_nested_merge_precedence(project_yaml: Path) -> None:
     assert cfg["ai"]["api_key"] == "sk-override"
     assert cfg["ai"]["provider"] == "anthropic"
     assert cfg["ai"]["model"] == "claude-sonnet-4-20250514"
-    assert cfg["app"]["name"] == "Bibliogon"
+    assert cfg["app"]["name"] == "AdaptiveLearner"
 
 
 def test_env_var_beats_project_and_override(
     project_yaml: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """BIBLIOGON_AI_API_KEY wins against both project and override."""
+    """ADAPTIVE_LEARNER_AI_API_KEY wins against both project and override."""
     _write(project_yaml, {"ai": {"api_key": "from-project"}})
     override = main_module._get_user_override_path()
     _write(override, {"ai": {"api_key": "from-override"}})
-    monkeypatch.setenv("BIBLIOGON_AI_API_KEY", "from-env")
+    monkeypatch.setenv("ADAPTIVE_LEARNER_AI_API_KEY", "from-env")
     cfg = main_module._load_app_config()
     assert cfg["ai"]["api_key"] == "from-env"
 
@@ -134,16 +134,16 @@ def test_xdg_config_home_respected(monkeypatch: pytest.MonkeyPatch, tmp_path: Pa
     monkeypatch.setattr("sys.platform", "linux")
     monkeypatch.setenv("XDG_CONFIG_HOME", str(tmp_path / "xdg"))
     path = main_module._get_user_override_path()
-    assert path == tmp_path / "xdg" / "bibliogon" / "secrets.yaml"
+    assert path == tmp_path / "xdg" / "adaptive_learner" / "secrets.yaml"
 
 
 def test_windows_appdata_branch(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    """On Windows, %APPDATA%/bibliogon/secrets.yaml is the override
+    """On Windows, %APPDATA%/adaptive_learner/secrets.yaml is the override
     location."""
     monkeypatch.setattr("sys.platform", "win32")
     monkeypatch.setenv("APPDATA", str(tmp_path / "AppData" / "Roaming"))
     path = main_module._get_user_override_path()
-    assert path == tmp_path / "AppData" / "Roaming" / "bibliogon" / "secrets.yaml"
+    assert path == tmp_path / "AppData" / "Roaming" / "adaptive_learner" / "secrets.yaml"
 
 
 def test_corrupt_override_file_does_not_crash(

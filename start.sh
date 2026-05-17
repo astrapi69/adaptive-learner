@@ -2,7 +2,7 @@
 set -e
 
 # ============================================================
-#  Bibliogon - Start Script
+#  AdaptiveLearner - Start Script
 #  Starts the book authoring platform via Docker Compose.
 # ============================================================
 
@@ -50,7 +50,7 @@ if [ ! -f .env ]; then
     SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))" 2>/dev/null || \
              openssl rand -hex 32 2>/dev/null || \
              head -c 32 /dev/urandom | xxd -p 2>/dev/null || \
-             echo "bibliogon-$(date +%s)-$(shuf -i 1000-9999 -n 1)")
+             echo "adaptive-learner-$(date +%s)-$(shuf -i 1000-9999 -n 1)")
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
         sed -i '' "s/change-me-to-a-random-secret/$SECRET/" .env
@@ -62,19 +62,19 @@ if [ ! -f .env ]; then
 fi
 
 # --- Read port from .env ---
-PORT=$(grep -E '^BIBLIOGON_PORT=' .env 2>/dev/null | cut -d= -f2 || echo "7880")
+PORT=$(grep -E '^ADAPTIVE_LEARNER_PORT=' .env 2>/dev/null | cut -d= -f2 || echo "7880")
 PORT=${PORT:-7880}
 
 # --- Build and start ---
 echo ""
-echo -e "${BLUE}Starting Bibliogon...${NC}"
+echo -e "${BLUE}Starting AdaptiveLearner...${NC}"
 echo ""
 
 docker compose -f docker-compose.prod.yml up --build -d
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  Bibliogon is running!${NC}"
+echo -e "${GREEN}  AdaptiveLearner is running!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "  Open in browser: ${BLUE}http://localhost:${PORT}${NC}"

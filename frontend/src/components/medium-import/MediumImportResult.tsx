@@ -6,7 +6,7 @@
  * Errored is expanded by default; imported and skipped are
  * collapsed because the imported list can run to hundreds of rows.
  *
- * Imported rows link to the corresponding Bibliogon article via
+ * Imported rows link to the corresponding AdaptiveLearner article via
  * /articles/{id}. Skipped rows link to the existing article that
  * matched the canonical URL.
  */

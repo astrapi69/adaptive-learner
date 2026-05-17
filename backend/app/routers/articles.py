@@ -151,7 +151,7 @@ def list_articles(
     ``tags`` text column. SQLite has no JSON-array operators in the
     portable SQL surface, so the match is a LIKE on the JSON-string
     payload with the tag wrapped in quotes - good enough for the
-    typical tag set sizes Bibliogon ships with and avoids a
+    typical tag set sizes AdaptiveLearner ships with and avoids a
     DB-engine-specific operator.
     """
     query = db.query(Article).filter(Article.deleted_at.is_(None))

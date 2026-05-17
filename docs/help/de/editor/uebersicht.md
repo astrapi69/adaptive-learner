@@ -2,7 +2,7 @@
 
 ## Der TipTap-Editor
 
-Bibliogon verwendet TipTap als Texteditor. TipTap ist ein moderner WYSIWYG-Editor, der auf ProseMirror basiert und in allen gängigen Browsern funktioniert. Du siehst deinen Text so, wie er später im Buch erscheinen wird, mit formatierten Überschriften, Listen, Bildern und Zitaten. Intern speichert Bibliogon die Inhalte als TipTap-JSON, nicht als HTML oder Markdown. Beim Export werden die Inhalte automatisch in das Zielformat konvertiert.
+AdaptiveLearner verwendet TipTap als Texteditor. TipTap ist ein moderner WYSIWYG-Editor, der auf ProseMirror basiert und in allen gängigen Browsern funktioniert. Du siehst deinen Text so, wie er später im Buch erscheinen wird, mit formatierten Überschriften, Listen, Bildern und Zitaten. Intern speichert AdaptiveLearner die Inhalte als TipTap-JSON, nicht als HTML oder Markdown. Beim Export werden die Inhalte automatisch in das Zielformat konvertiert.
 
 ## Toolbar
 
@@ -22,7 +22,7 @@ Die Kapiteltypen bestimmen, in welchem Abschnitt des exportierten Buchs ein Kapi
 
 ## WYSIWYG und Markdown
 
-Der Editor bietet zwei Modi: WYSIWYG (Standard) und Markdown. Im WYSIWYG-Modus arbeitest du visuell mit der Toolbar. Im Markdown-Modus siehst du den Rohtext in Markdown-Syntax und kannst ihn direkt bearbeiten. Beim Wechsel zwischen den Modi konvertiert Bibliogon den Inhalt automatisch. Beachte, dass TipTap intern kein Markdown versteht. Beim Umschalten von Markdown zu WYSIWYG wird der Markdown-Text zu HTML konvertiert und als TipTap-JSON gespeichert.
+Der Editor bietet zwei Modi: WYSIWYG (Standard) und Markdown. Im WYSIWYG-Modus arbeitest du visuell mit der Toolbar. Im Markdown-Modus siehst du den Rohtext in Markdown-Syntax und kannst ihn direkt bearbeiten. Beim Wechsel zwischen den Modi konvertiert AdaptiveLearner den Inhalt automatisch. Beachte, dass TipTap intern kein Markdown versteht. Beim Umschalten von Markdown zu WYSIWYG wird der Markdown-Text zu HTML konvertiert und als TipTap-JSON gespeichert.
 
 ## Autosave
 

@@ -52,7 +52,7 @@ def _system_prompt(article: Any) -> str:
     """Shared system prompt: rules the LLM follows for any
     article-template field-class. Lives in one place so the
     invariants stay consistent across builders."""
-    return f"""You are filling metadata fields for an article in a Bibliogon \
+    return f"""You are filling metadata fields for an article in a AdaptiveLearner \
 AI template. Follow these rules:
 
 1. Respond with a YAML fragment ONLY. No prose, no markdown

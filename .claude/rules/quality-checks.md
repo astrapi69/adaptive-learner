@@ -73,7 +73,7 @@ Current counts: see [docs/audits/current-coverage.md](docs/audits/current-covera
 
 **Example - new service:**
 ```python
-# plugins/bibliogon-plugin-export/tests/test_tiptap_to_md.py
+# plugins/adaptive-learner-plugin-export/tests/test_tiptap_to_md.py
 
 def test_heading_conversion():
     """H2 node becomes ## in Markdown."""
@@ -285,9 +285,9 @@ dict_synonyms = "Struct,NamedStruct"
 
 **For plugins separately:**
 ```toml
-# plugins/bibliogon-plugin-export/pyproject.toml
+# plugins/adaptive-learner-plugin-export/pyproject.toml
 [tool.mutmut]
-paths_to_mutate = "bibliogon_export/"
+paths_to_mutate = "adaptive_learner_export/"
 tests_dir = "tests/"
 runner = "python -m pytest"
 ```
@@ -301,7 +301,7 @@ cd backend && poetry run mutmut run
 cd backend && poetry run mutmut run --paths-to-mutate app/services/
 
 # Just one plugin
-cd plugins/bibliogon-plugin-export && poetry run mutmut run
+cd plugins/adaptive-learner-plugin-export && poetry run mutmut run
 
 # Show results
 poetry run mutmut results
@@ -326,8 +326,8 @@ poetry run mutmut html
 - Include `mutmut results` in the session summary when it was run.
 
 **Test the critical modules first:**
-1. `plugins/bibliogon-plugin-export/bibliogon_export/tiptap_to_md.py` - conversion logic
-2. `plugins/bibliogon-plugin-export/bibliogon_export/scaffolder.py` - project structure
+1. `plugins/adaptive-learner-plugin-export/adaptive_learner_export/tiptap_to_md.py` - conversion logic
+2. `plugins/adaptive-learner-plugin-export/adaptive_learner_export/scaffolder.py` - project structure
 3. `backend/app/services/` - core business logic
 4. `backend/app/licensing.py` - security-critical
 
@@ -429,7 +429,7 @@ mutmut-backend:
 	cd backend && poetry run mutmut run
 
 mutmut-export:
-	cd plugins/bibliogon-plugin-export && poetry run mutmut run
+	cd plugins/adaptive-learner-plugin-export && poetry run mutmut run
 
 mutmut-results:
 	cd backend && poetry run mutmut results

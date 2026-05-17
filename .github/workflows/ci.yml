@@ -70,15 +70,15 @@ jobs:
       fail-fast: false
       matrix:
         plugin:
-          - bibliogon-plugin-audiobook
-          - bibliogon-plugin-export
-          - bibliogon-plugin-getstarted
-          - bibliogon-plugin-grammar
-          - bibliogon-plugin-help
-          - bibliogon-plugin-kdp
-          - bibliogon-plugin-kinderbuch
-          - bibliogon-plugin-ms-tools
-          - bibliogon-plugin-translation
+          - adaptive-learner-plugin-audiobook
+          - adaptive-learner-plugin-export
+          - adaptive-learner-plugin-getstarted
+          - adaptive-learner-plugin-grammar
+          - adaptive-learner-plugin-help
+          - adaptive-learner-plugin-kdp
+          - adaptive-learner-plugin-kinderbuch
+          - adaptive-learner-plugin-ms-tools
+          - adaptive-learner-plugin-translation
     steps:
       - uses: actions/checkout@v5
 

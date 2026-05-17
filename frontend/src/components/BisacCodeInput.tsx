@@ -8,7 +8,7 @@
  * is canonical; this is the inline preview to catch typos before
  * the user submits).
  *
- * Per D3 NO bundled BISAC catalogue ships with Bibliogon — the
+ * Per D3 NO bundled BISAC catalogue ships with AdaptiveLearner — the
  * BISG licensing terms are incompatible with the local-first
  * model. The component renders helper text + a link to
  * bisg.org's free public lookup so the user can find codes.

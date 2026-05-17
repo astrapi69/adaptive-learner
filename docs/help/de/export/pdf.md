@@ -2,11 +2,11 @@
 
 ## Grundlagen
 
-PDF eignet sich besonders für druckfertige Buchversionen (Paperback, Hardcover) und für die Vorschau des finalen Layouts. Bibliogon erzeugt PDF-Dateien über die gleiche Pipeline wie den EPUB-Export: TipTap-JSON wird zu Markdown konvertiert, in eine write-book-template-Projektstruktur eingebettet und von manuscripta mit Pandoc als Konverter zu PDF umgewandelt.
+PDF eignet sich besonders für druckfertige Buchversionen (Paperback, Hardcover) und für die Vorschau des finalen Layouts. AdaptiveLearner erzeugt PDF-Dateien über die gleiche Pipeline wie den EPUB-Export: TipTap-JSON wird zu Markdown konvertiert, in eine write-book-template-Projektstruktur eingebettet und von manuscripta mit Pandoc als Konverter zu PDF umgewandelt.
 
 ## Pandoc als Voraussetzung
 
-Für den PDF-Export ist Pandoc zwingend erforderlich. Pandoc ist ein separates Kommandozeilenwerkzeug und muss auf dem System installiert sein, auf dem das Bibliogon-Backend läuft. Ohne Pandoc schlägt der PDF-Export mit einer entsprechenden Fehlermeldung fehl.
+Für den PDF-Export ist Pandoc zwingend erforderlich. Pandoc ist ein separates Kommandozeilenwerkzeug und muss auf dem System installiert sein, auf dem das AdaptiveLearner-Backend läuft. Ohne Pandoc schlägt der PDF-Export mit einer entsprechenden Fehlermeldung fehl.
 
 **Installation:**
 
@@ -29,7 +29,7 @@ Der PDF-Export unterstützt die gleichen Optionen wie der EPUB-Export:
 
 ## Weitere Formate
 
-Neben PDF exportiert Bibliogon auch in folgende Formate, die alle über Pandoc erzeugt werden:
+Neben PDF exportiert AdaptiveLearner auch in folgende Formate, die alle über Pandoc erzeugt werden:
 
 - **DOCX** (Word): Für die Zusammenarbeit mit Lektoren oder Verlagen, die Word-Dokumente bevorzugen.
 - **HTML**: Eine einzelne HTML-Datei mit dem gesamten Buchinhalt.

@@ -1,6 +1,6 @@
 # AI Assistant
 
-Bibliogon includes an optional AI assistant that helps with writing, editing, and marketing. It supports multiple AI providers and works with both cloud services and local models.
+AdaptiveLearner includes an optional AI assistant that helps with writing, editing, and marketing. It supports multiple AI providers and works with both cloud services and local models.
 
 ## Setting up
 
@@ -57,11 +57,11 @@ The three legacy focus values (Coherence, Pacing, Dialogue, Tension) are still s
 
 ### Cost estimate
 
-The Start button shows a rough input-token count and USD cost estimate based on your chapter length and the configured model (e.g. `~5k tokens, ~$0.075`). The estimate is conservative; actual usage is usually lower. No estimate is shown when the model is unknown to Bibliogon's price table.
+The Start button shows a rough input-token count and USD cost estimate based on your chapter length and the configured model (e.g. `~5k tokens, ~$0.075`). The estimate is conservative; actual usage is usually lower. No estimate is shown when the model is unknown to AdaptiveLearner's price table.
 
 ### Non-prose chapters
 
-For chapter types that are not narrative prose (title page, copyright, table of contents, imprint, index, half title, also-by-author, next-in-series, call-to-action, endnotes, bibliography, glossary), Bibliogon shows a small warning above the Start button. You can still run a review; the feedback may be more limited than for prose.
+For chapter types that are not narrative prose (title page, copyright, table of contents, imprint, index, half title, also-by-author, next-in-series, call-to-action, endnotes, bibliography, glossary), AdaptiveLearner shows a small warning above the Start button. You can still run a review; the feedback may be more limited than for prose.
 
 ### Structured output
 
@@ -95,7 +95,7 @@ The AI uses your book title, author name, genre, description, and chapter titles
 
 ## Usage tracking
 
-Bibliogon tracks how many AI tokens each book uses. The current count and estimated cost range are shown in the Marketing tab. This helps you understand your AI usage and costs.
+AdaptiveLearner tracks how many AI tokens each book uses. The current count and estimated cost range are shown in the Marketing tab. This helps you understand your AI usage and costs.
 
 ## Privacy
 

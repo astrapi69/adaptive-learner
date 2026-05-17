@@ -1,6 +1,6 @@
 """Generate the placeholder launcher icon.
 
-Writes launcher/bibliogon.ico with a simple "B" monogram at multiple
+Writes launcher/adaptive_learner.ico with a simple "B" monogram at multiple
 sizes. Runs via ``python scripts/make_icon.py`` from the launcher dir.
 Re-run whenever the real art arrives; until then this keeps the build
 reproducible from source.
@@ -52,7 +52,7 @@ def main() -> None:
     # PIL's ICO writer reads sizes= off the source image and downscales
     # itself, so we build the largest and let it generate the rest.
     largest = build_frame(max(SIZES))
-    out = Path(__file__).resolve().parent.parent / "bibliogon.ico"
+    out = Path(__file__).resolve().parent.parent / "adaptive_learner.ico"
     largest.save(out, format="ICO", sizes=[(s, s) for s in SIZES])
     print(f"Wrote {out} with sizes {SIZES}")
 

@@ -106,7 +106,7 @@ class TestDryRunErrorPaths:
             engine = AsyncMock()
             engine.synthesize = fake_synth
 
-            with patch("bibliogon_audiobook.tts_engine.get_engine", return_value=engine):
+            with patch("adaptive_learner_audiobook.tts_engine.get_engine", return_value=engine):
                 r = client.post(f"/api/books/{book_id}/audiobook/dry-run")
 
             assert r.status_code == 200, r.text

@@ -1,11 +1,11 @@
 # Vorlagen
 
-Vorlagen sind wiederverwendbare Strukturen, die dir das erneute Aufbauen desselben Skeletts ersparen, wenn du ein neues Buch oder Kapitel anlegst. Bibliogon kennt zwei Arten:
+Vorlagen sind wiederverwendbare Strukturen, die dir das erneute Aufbauen desselben Skeletts ersparen, wenn du ein neues Buch oder Kapitel anlegst. AdaptiveLearner kennt zwei Arten:
 
 - **Buchvorlagen** füllen ein neues Buch mit einer Kapitelliste (Titel, Typ, Reihenfolge). Fünf Genres liegen bei: Kinderbilderbuch, Science-Fiction-Roman, Sachbuch / How-To, Philosophie und Memoiren.
 - **Kapitelvorlagen** füllen ein einzelnes Kapitel mit einer strukturierten Gliederung im TipTap-JSON-Format. Vier liegen bei: Interview, FAQ, Rezept, Fotoreportage.
 
-Beide Arten unterscheiden **mitgelieferte** Vorlagen (Teil von Bibliogon, schreibgeschützt, mit Schloss-Badge) von **eigenen** Vorlagen (aus deinen Büchern oder Kapiteln gespeichert, über den Mülleimer-Button auf der Karte löschbar).
+Beide Arten unterscheiden **mitgelieferte** Vorlagen (Teil von AdaptiveLearner, schreibgeschützt, mit Schloss-Badge) von **eigenen** Vorlagen (aus deinen Büchern oder Kapiteln gespeichert, über den Mülleimer-Button auf der Karte löschbar).
 
 ## Buch aus einer Vorlage erstellen
 
@@ -47,7 +47,7 @@ Gibt es bereits eine Vorlage mit demselben Namen, antwortet der Server mit 409 u
 
 Den entsprechenden Vorlagen-Picker (Buch oder Kapitel) öffnen. Eigene Vorlagen haben einen Mülleimer-Button in der Kartenkopfzeile. Klick darauf, Dialog bestätigen, fertig. Mitgelieferte Vorlagen haben diesen Button nicht und können nicht gelöscht werden.
 
-Vorlagen sind global für deine Installation. Sie gelten für jedes Buch, das du erstellst oder bearbeitest. Es gibt kein Scoping pro Buch oder pro Benutzer (Bibliogon ist als Single-User-Anwendung konzipiert).
+Vorlagen sind global für deine Installation. Sie gelten für jedes Buch, das du erstellst oder bearbeitest. Es gibt kein Scoping pro Buch oder pro Benutzer (AdaptiveLearner ist als Single-User-Anwendung konzipiert).
 
 ## Details der mitgelieferten Kapitelvorlagen
 

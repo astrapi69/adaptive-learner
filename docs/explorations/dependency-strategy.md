@@ -6,7 +6,7 @@ Next review: 2026-07-20 (quarterly) or next major release
 
 ## Purpose
 
-Strategic decision log for Bibliogon's major dependency versions.
+Strategic decision log for AdaptiveLearner's major dependency versions.
 Complements:
 
 - `docs/ROADMAP.md` - forward feature work (DEP items cross-

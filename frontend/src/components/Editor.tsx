@@ -149,7 +149,7 @@ export default function Editor({content, onSave, placeholder, contentKind = "boo
     const reviewEventSource = useRef<EventSource | null>(null);
     const [wordGoal, setWordGoal] = useState<number | null>(() => {
         if (!chapterId) return null;
-        const stored = localStorage.getItem(`bibliogon-word-goal-${chapterId}`);
+        const stored = localStorage.getItem(`adaptive-learner-word-goal-${chapterId}`);
         return stored ? parseInt(stored, 10) : null;
     });
     const [editingGoal, setEditingGoal] = useState(false);
@@ -1299,10 +1299,10 @@ export default function Editor({content, onSave, placeholder, contentKind = "boo
                                 const val = parseInt(e.target.value, 10);
                                 if (val > 0) {
                                     setWordGoal(val);
-                                    localStorage.setItem(`bibliogon-word-goal-${chapterId}`, String(val));
+                                    localStorage.setItem(`adaptive-learner-word-goal-${chapterId}`, String(val));
                                 } else {
                                     setWordGoal(null);
-                                    localStorage.removeItem(`bibliogon-word-goal-${chapterId}`);
+                                    localStorage.removeItem(`adaptive-learner-word-goal-${chapterId}`);
                                 }
                                 setEditingGoal(false);
                             }}

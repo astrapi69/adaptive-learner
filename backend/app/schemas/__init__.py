@@ -9,7 +9,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 # Bug 9: BISAC subject heading code format. 3 uppercase letters
 # identifying the subject prefix (FIC, BIO, SCI, etc.) followed by
 # 6 digits identifying the leaf subject within that prefix. The
-# regex is the format check ONLY — Bibliogon does NOT bundle the
+# regex is the format check ONLY — AdaptiveLearner does NOT bundle the
 # BISG catalogue so we can't validate that the code actually exists
 # (per D3, free-text + format-validation MVP; bundled lookup is
 # the deferred ``BISAC-DATABASE-LOOKUP-01`` P5 item). The format
@@ -352,7 +352,7 @@ class BookFromArticlesCreate(BaseModel):
     Sort strategies operate on the resolved Article rows:
     - ``date_*`` uses :attr:`Article.original_published_at` (earliest
       publication date) with fallback to ``created_at`` for native
-      Bibliogon articles that have no publications.
+      AdaptiveLearner articles that have no publications.
     - ``title_*`` is a case-insensitive lexical sort.
     - ``manual`` requires ``manual_order`` to be a permutation of
       ``article_ids``.

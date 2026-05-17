@@ -1,6 +1,6 @@
-# Bibliogon - concept document
+# AdaptiveLearner - concept document
 
-**Repository:** [github.com/astrapi69/bibliogon](https://github.com/astrapi69/bibliogon)
+**Repository:** [github.com/astrapi69/adaptive_learner](https://github.com/astrapi69/adaptive_learner)
 **Related project:** [github.com/astrapi69/write-book-template](https://github.com/astrapi69/write-book-template)
 **PluginForge:** [github.com/astrapi69/pluginforge](https://github.com/astrapi69/pluginforge) (PyPI: pluginforge ^0.5.0)
 
@@ -10,15 +10,15 @@ This document describes the architecture and the concept. For version history se
 
 ## 1. Goal
 
-Bibliogon consists of two parts:
+AdaptiveLearner consists of two parts:
 
 1. **PluginForge** - An application-agnostic plugin framework for Python/FastAPI applications. Built on top of [pluggy](https://pluggy.readthedocs.io/) (the hook system behind pytest), extended with YAML configuration, plugin lifecycle, FastAPI integration and frontend plugin loading. Any developer can use it as the foundation for their own plugin-capable applications.
 
-2. **Bibliogon app** - An open-source web platform for writing and exporting books. The first application built on PluginForge. The entire export (EPUB, PDF, write-book-template structure) is itself a plugin.
+2. **AdaptiveLearner app** - An open-source web platform for writing and exporting books. The first application built on PluginForge. The entire export (EPUB, PDF, write-book-template structure) is itself a plugin.
 
 The principle: the app core (UI, database, chapter editor) is lean. Everything else - export, children's book mode, audiobook, KDP integration - is delivered via plugins. All plugins are free and open source (MIT). Donations are the current funding model.
 
-Both PluginForge and the Bibliogon core are open source (MIT license).
+Both PluginForge and the AdaptiveLearner core are open source (MIT license).
 
 ---
 
@@ -28,9 +28,9 @@ Both PluginForge and the Bibliogon core are open source (MIT license).
 
 ```
 +----------------------------------------------------------+
-|  Bibliogon app (frontend: React + TipTap)                |
+|  AdaptiveLearner app (frontend: React + TipTap)                |
 +----------------------------------------------------------+
-|  Bibliogon app (backend: FastAPI, Book/Chapter CRUD)     |
+|  AdaptiveLearner app (backend: FastAPI, Book/Chapter CRUD)     |
 +----------------------------------------------------------+
 |  PluginForge (framework)                                  |
 |  +-- pluggy (hook specs + hook impls)                    |
@@ -53,12 +53,12 @@ Both PluginForge and the Bibliogon core are open source (MIT license).
 | Repository | Description | License |
 |------------|-------------|---------|
 | `pluginforge` | Application-agnostic plugin framework (based on pluggy) | MIT |
-| `bibliogon` | Book authoring platform, uses PluginForge | MIT (all plugins free during development) |
+| `adaptive_learner` | Book authoring platform, uses PluginForge | MIT (all plugins free during development) |
 
 PluginForge is a standalone PyPI package:
 
 ```toml
-# bibliogon/backend/pyproject.toml
+# adaptive_learner/backend/pyproject.toml
 [tool.poetry.dependencies]
 pluginforge = {version = "^0.5.0", extras = ["fastapi"]}
 ```
@@ -142,14 +142,14 @@ Everything application-specific lives in YAML files. No hardcoded strings.
 
 ```yaml
 app:
-  name: "Bibliogon"
+  name: "AdaptiveLearner"
   version: "0.2.0"
   description: "Open-source book authoring platform"
   default_language: "de"
   supported_languages: ["de", "en", "es", "fr", "el"]
 
 plugins:
-  entry_point_group: "bibliogon.plugins"
+  entry_point_group: "adaptive_learner.plugins"
   config_dir: "config/plugins"
   enabled:
     - "export"
@@ -158,7 +158,7 @@ plugins:
     - "audiobook"
 
 ui:
-  title: "Bibliogon"
+  title: "AdaptiveLearner"
   subtitle: "Write and export books"
   logo: "assets/logo.svg"
   theme: "warm-literary"
@@ -283,7 +283,7 @@ class BasePlugin(ABC):
 ```
 
 ```python
-# Bibliogon main.py - integration with PluginForge v0.5.0
+# AdaptiveLearner main.py - integration with PluginForge v0.5.0
 from pluginforge import PluginManager
 
 manager = PluginManager(
@@ -291,7 +291,7 @@ manager = PluginManager(
     pre_activate=license_check,  # callback before plugin activation
     api_version="1",
 )
-manager.register_hookspecs(BibliogonHookSpec)
+manager.register_hookspecs(AdaptiveLearnerHookSpec)
 manager.discover_plugins()       # load entry points, filter, sort, activate
 manager.mount_routes(app)        # mount FastAPI routers (prefix="/api")
 
@@ -312,7 +312,7 @@ manager.get_text("key", "de")     # i18n string
 PluginForge is a standalone PyPI package: https://github.com/astrapi69/pluginforge
 
 ```
-pluginforge/       # own repo, not part of Bibliogon
+pluginforge/       # own repo, not part of AdaptiveLearner
 ├── pluginforge/
 │   ├── __init__.py          # public API: BasePlugin, PluginManager
 │   ├── base.py              # BasePlugin ABC (lifecycle, routes, health, manifest)
@@ -344,7 +344,7 @@ migrations = ["alembic"]
 
 ---
 
-## 4. Bibliogon app
+## 4. AdaptiveLearner app
 
 ### 4.1 Data model
 
@@ -424,7 +424,7 @@ UserBackup (v0.4.0 - now replaced by the .bgb backup)
 ### 4.2 Integration with PluginForge v0.5.0
 
 ```python
-# bibliogon/backend/app/main.py
+# adaptive_learner/backend/app/main.py
 
 from pluginforge import PluginManager
 
@@ -433,7 +433,7 @@ manager = PluginManager(
     pre_activate=license_check,  # license check before activation
     api_version="1",
 )
-manager.register_hookspecs(BibliogonHookSpec)
+manager.register_hookspecs(AdaptiveLearnerHookSpec)
 manager.discover_plugins()
 manager.mount_routes(app)  # mount FastAPI routers
 
@@ -475,12 +475,12 @@ On export the export plugin converts TipTap JSON to Markdown (for write-book-tem
 
 ### 4.4 Export as a plugin
 
-The entire export is a plugin (`bibliogon-plugin-export`):
+The entire export is a plugin (`adaptive-learner-plugin-export`):
 
 ```
-bibliogon-plugin-export/
+adaptive-learner-plugin-export/
 ├── pyproject.toml
-├── bibliogon_export/
+├── adaptive_learner_export/
 │   ├── __init__.py
 │   ├── plugin.py            # ExportPlugin(BasePlugin)
 │   ├── hookimpls.py         # hook implementations
@@ -494,9 +494,9 @@ bibliogon-plugin-export/
 ```
 
 ```toml
-# bibliogon-plugin-export/pyproject.toml
-[project.entry-points."bibliogon.plugins"]
-export = "bibliogon_export.plugin:ExportPlugin"
+# adaptive-learner-plugin-export/pyproject.toml
+[project.entry-points."adaptive_learner.plugins"]
+export = "adaptive_learner_export.plugin:ExportPlugin"
 ```
 
 ### 4.5 write-book-template directory structure
@@ -541,7 +541,7 @@ On export the plugin produces:
 
 Mapping DB -> filesystem:
 
-| Bibliogon (DB) | write-book-template (filesystem) |
+| AdaptiveLearner (DB) | write-book-template (filesystem) |
 |----------------|----------------------------------|
 | `Book.title` | project folder name, `config/metadata.yaml` -> `title` |
 | `Book.subtitle` | `config/metadata.yaml` -> `subtitle` |
@@ -556,7 +556,7 @@ Mapping DB -> filesystem:
 
 ### 4.6 Offline/local-first
 
-Bibliogon has to work completely offline:
+AdaptiveLearner has to work completely offline:
 
 - SQLite as the default DB (no external DB required)
 - All assets local on the filesystem
@@ -568,7 +568,7 @@ Bibliogon has to work completely offline:
 Full-data backup as a ZIP:
 
 ```
-bibliogon-backup-2026-03-26/
+adaptive-learner-backup-2026-03-26/
 ├── books/
 │   ├── {book-id-1}/
 │   │   ├── book.json          # book metadata
@@ -591,7 +591,7 @@ Importing a backup restores the entire state. Independent of the export plugin (
 | Layer | License | Content |
 |-------|---------|---------|
 | PluginForge | MIT (free) | Framework, usable by anyone |
-| Bibliogon core | MIT (free) | UI, editor, Book/Chapter CRUD, backup |
+| AdaptiveLearner core | MIT (free) | UI, editor, Book/Chapter CRUD, backup |
 | plugin-export | MIT (free) | EPUB, PDF, project structure |
 | Community plugins | MIT (free) | Developed by the community |
 | All other plugins | MIT (free) | Audiobook, children's books, KDP, translation, grammar |
@@ -639,7 +639,7 @@ class KinderbuchPlugin(BasePlugin):
 
 ### 5.3 Plugin licensing (offline)
 
-Licensing is Bibliogon-specific (not part of PluginForge) and lives in `backend/app/licensing.py`. The check runs via a `pre_activate` callback on the PluginManager:
+Licensing is AdaptiveLearner-specific (not part of PluginForge) and lives in `backend/app/licensing.py`. The check runs via a `pre_activate` callback on the PluginManager:
 
 ```python
 manager = PluginManager(
@@ -759,11 +759,11 @@ For plugins that go beyond simple manifest declarations (e.g. interactive previe
 Hook specs are versioned. Plugins declare which API version they support:
 
 ```python
-# bibliogon/hookspecs.py - version 1
+# adaptive_learner/hookspecs.py - version 1
 import pluggy
-hookspec = pluggy.HookspecMarker("bibliogon.plugins")
+hookspec = pluggy.HookspecMarker("adaptive_learner.plugins")
 
-class BibliogonHookSpec:
+class AdaptiveLearnerHookSpec:
     @hookspec
     def export_formats(self) -> list[dict]:
         """Return list of supported export formats."""
@@ -785,7 +785,7 @@ Feature details and open items see `docs/ROADMAP.md` (with IDs for prompt refere
 
 ## 8. Scope
 
-### What Bibliogon is
+### What AdaptiveLearner is
 
 - A web UI for writing books
 - Built on PluginForge (reusable plugin framework)
@@ -818,7 +818,7 @@ Feature details and open items see `docs/ROADMAP.md` (with IDs for prompt refere
 | Manuskript | Yes | No | Yes | No | Proprietary |
 | Obsidian | No | No | Yes | Yes (community) | No |
 | VS Code | Yes | Yes | Yes | Yes (extensions) | No |
-| **Bibliogon** | **Yes** | **Yes** | **Yes** | **Yes (PluginForge)** | **write-book-template** |
+| **AdaptiveLearner** | **Yes** | **Yes** | **Yes** | **Yes (PluginForge)** | **write-book-template** |
 
 No other authoring tool combines open source, a web UI, offline capability, a real plugin framework on top of pluggy, and a standardized Pandoc-compatible project structure.
 
@@ -830,7 +830,7 @@ No other authoring tool combines open source, a web UI, offline capability, a re
 
 2. **Frontend plugin loading:** dynamic loading of React components at runtime (module federation, importmaps) or static bundling at build time?
 
-3. **PluginForge scope frontend:** should PluginForge also have an npm counterpart for frontend plugin loading, or does that stay Bibliogon-specific?
+3. **PluginForge scope frontend:** should PluginForge also have an npm counterpart for frontend plugin loading, or does that stay AdaptiveLearner-specific?
 
 4. **Plugin DB migrations:** Alembic with multiple `versions` folders (one per plugin) or a central folder with a plugin prefix?
 

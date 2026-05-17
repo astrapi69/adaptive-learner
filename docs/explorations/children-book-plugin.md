@@ -37,7 +37,7 @@ its own exploration (`docs/explorations/comics-plugin.md`).
 
 ## Context
 
-Bibliogon's current chapter-based model fits prose well, but a KDP
+AdaptiveLearner's current chapter-based model fits prose well, but a KDP
 picture book is a different beast: each spread is a designed page
 with one image and (optionally) short text in a specific position.
 The author thinks in pages, not in flowing prose, and the export
@@ -69,10 +69,10 @@ re-derive it.
 
 Already shipped, NOT a stub. Concrete state:
 
-- [bibliogon_kinderbuch/plugin.py](../../plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/plugin.py): `KinderbuchPlugin(BasePlugin)`, depends_on `["export"]`, license_tier `"core"`. `get_frontend_manifest()` returns `editor_extensions: ["kinderbuch-page-layout"]` plus templates and settings.
-- [bibliogon_kinderbuch/page_layout.py](../../plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/page_layout.py): `PageLayout` class with `to_html()` and `to_markdown()`. Pure in-memory rendering, no persistence.
-- [bibliogon_kinderbuch/routes.py](../../plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/routes.py): `GET /api/kinderbuch/templates`, `POST /api/kinderbuch/preview`. Hardcoded template list (4 entries).
-- [bibliogon_kinderbuch/templates/kinderbuch.css](../../plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/templates/kinderbuch.css): page-break-after, layout-specific flex/positioning, "Comic Sans" body font.
+- [adaptive_learner_kinderbuch/plugin.py](../../plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/plugin.py): `KinderbuchPlugin(BasePlugin)`, depends_on `["export"]`, license_tier `"core"`. `get_frontend_manifest()` returns `editor_extensions: ["kinderbuch-page-layout"]` plus templates and settings.
+- [adaptive_learner_kinderbuch/page_layout.py](../../plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/page_layout.py): `PageLayout` class with `to_html()` and `to_markdown()`. Pure in-memory rendering, no persistence.
+- [adaptive_learner_kinderbuch/routes.py](../../plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/routes.py): `GET /api/kinderbuch/templates`, `POST /api/kinderbuch/preview`. Hardcoded template list (4 entries).
+- [adaptive_learner_kinderbuch/templates/kinderbuch.css](../../plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/templates/kinderbuch.css): page-break-after, layout-specific flex/positioning, "Comic Sans" body font.
 - 4 layouts wired: `image-top-text-bottom`, `image-left-text-right`, `image-full-text-overlay`, `text-only`.
 
 What is **missing** for the MVP described in the prompt:
@@ -95,7 +95,7 @@ No new asset infrastructure needed. Children's book pages reference existing ass
 
 ### Export pipeline entry points
 
-[plugins/bibliogon-plugin-export/bibliogon_export/pandoc_runner.py:49](../../plugins/bibliogon-plugin-export/bibliogon_export/pandoc_runner.py#L49) - `run_pandoc(project_dir, fmt, config, ...)` is the single throat through which ALL exports currently go. It calls `manuscripta.export.book.run_export(...)` after scaffolding.
+[plugins/adaptive-learner-plugin-export/adaptive_learner_export/pandoc_runner.py:49](../../plugins/adaptive-learner-plugin-export/adaptive_learner_export/pandoc_runner.py#L49) - `run_pandoc(project_dir, fmt, config, ...)` is the single throat through which ALL exports currently go. It calls `manuscripta.export.book.run_export(...)` after scaffolding.
 
 There is no per-book branching today: every book exports through the same Pandoc/manuscripta path. Adding a children's-book pipeline requires either:
 
@@ -192,7 +192,7 @@ This is the dependency decision the exploration must close.
 |---|---|---|
 | **Playwright Python (headless Chromium)** | Real browser, full CSS support including modern features (CSS Grid, custom fonts, `@page`), explicitly supports PDF. Same Python toolchain. | ~300MB Chromium download per OS. New install step. |
 | **WeasyPrint** | Pure Python, no browser. Already understands `@page`, bleed, marks. Small dep. | No JS execution (irrelevant for our static templates). Limited modern CSS (no Grid in older versions). Speech-bubble SVG positioning has been a documented pain point. |
-| **Puppeteer (Node subprocess)** | The user already has experience with Puppeteer for picture books. | Adds Node.js as a backend runtime dependency, which Bibliogon currently does not require on the server side. Cross-process call overhead. |
+| **Puppeteer (Node subprocess)** | The user already has experience with Puppeteer for picture books. | Adds Node.js as a backend runtime dependency, which AdaptiveLearner currently does not require on the server side. Cross-process call overhead. |
 | **Pandoc + LaTeX** (current path for prose) | Already installed. | LaTeX absolute positioning for speech bubbles is a known nightmare. Defeats the whole point of leaving Pandoc for picture books. |
 
 **Recommendation: Playwright Python.** Rationale:
@@ -239,7 +239,7 @@ CSS pseudo:
 }
 ```
 
-**EPUB3 Fixed-Layout** is a separate generator using the same `render_pages_to_html` per page (each page becomes its own XHTML file) plus an OPF + container.xml with `rendition:layout-pre-paginated` and `rendition:spread-none`. Cover image stays a separate XHTML page. Bibliogon emits the entire EPUB as a ZIP without going through Pandoc.
+**EPUB3 Fixed-Layout** is a separate generator using the same `render_pages_to_html` per page (each page becomes its own XHTML file) plus an OPF + container.xml with `rendition:layout-pre-paginated` and `rendition:spread-none`. Cover image stays a separate XHTML page. AdaptiveLearner emits the entire EPUB as a ZIP without going through Pandoc.
 
 Reference: KDP's [Kindle Comic Creator format spec](https://kdp.amazon.com/) is the closest published spec; we target the picture-book subset.
 
@@ -320,7 +320,7 @@ Mitigations:
 - Plugin falls back to preview-only mode when Chromium is absent
   rather than crashing.
 - Docker image variant with Chromium pre-installed ships as
-  `bibliogon:full`; the default image stays lean.
+  `adaptive_learner:full`; the default image stays lean.
 
 WeasyPrint was rejected: no JS execution is fine, but speech-bubble
 SVG positioning in modern CSS (Grid, flex, absolute inset) has
@@ -365,7 +365,7 @@ User-uploaded bubble graphics are out of scope for MVP. A custom
 bubble library is a post-MVP enhancement if user feedback asks
 for it.
 
-Assets live in `plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/assets/bubbles/`.
+Assets live in `plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/assets/bubbles/`.
 
 ### Cover: Page 1 is the cover, no separate Cover entity
 
@@ -426,7 +426,7 @@ Rationale:
   dialog that requires explicit acknowledgment ("I understand
   this PDF does not meet KDP picture-book requirements").
 
-This matches the existing pattern in other KDP checks in Bibliogon
+This matches the existing pattern in other KDP checks in AdaptiveLearner
 (see plugin-kdp validation behavior). Authors keep authority,
 the tool provides visibility.
 
@@ -442,7 +442,7 @@ These do not block Session 2; the implementing session decides them.
 
 1. **Page numbering display:** off by default for picture books (industry norm). Add an opt-in book setting later if a user asks.
 2. **Image upload during page editing:** does the editor reuse the existing `/api/books/{book_id}/assets` upload as-is, or does the page editor get an inline drag-and-drop that uploads + assigns in one step? Recommendation: inline drag-and-drop calling the existing endpoint under the hood. No new backend API.
-3. **AI illustration generation in-editor:** explicitly out of scope for the picture-book MVP. Bibliogon already has AI infra elsewhere; integrating it is a separate exploration.
+3. **AI illustration generation in-editor:** explicitly out of scope for the picture-book MVP. AdaptiveLearner already has AI infra elsewhere; integrating it is a separate exploration.
 
 ---
 
@@ -485,7 +485,7 @@ Exploration document. No code.
 ### Session 6: Fixed-Layout EPUB3 export
 - EPUB3 generator: per-page XHTML, OPF with `rendition:layout-pre-paginated`, container.xml.
 - ZIP bundling without Pandoc.
-- epubcheck validation hook (already used by [pandoc_runner._run_epubcheck](../../plugins/bibliogon-plugin-export/bibliogon_export/pandoc_runner.py)).
+- epubcheck validation hook (already used by [pandoc_runner._run_epubcheck](../../plugins/adaptive-learner-plugin-export/adaptive_learner_export/pandoc_runner.py)).
 - Smoke test: export same 4-page book to EPUB, run epubcheck, assert pass.
 
 ### Session 7: Polish + onboarding
@@ -506,7 +506,7 @@ Each session ends green (`make test`) and produces a single conventional-commit 
 - Commercial commitment (commission, licensing pre-order).
 - Aster's own new picture-book project starts and current
   toolchain is the bottleneck.
-- Bibliogon passes 100 active users; picture-book becomes a
+- AdaptiveLearner passes 100 active users; picture-book becomes a
   plausible premium-tier expansion.
 
 ### Technical triggers
@@ -514,7 +514,7 @@ Each session ends green (`make test`) and produces a single conventional-commit 
 - KDP changes the picture-book trim size requirements significantly.
 - Playwright-Python becomes unmaintained or licensing changes.
 - A user actually asks for "convert prose to children's book" (currently nobody has).
-- Bibliogon adopts another headless-browser dependency for a different feature; the picture-book pipeline can ride that decision.
+- AdaptiveLearner adopts another headless-browser dependency for a different feature; the picture-book pipeline can ride that decision.
 - Demand for additional layouts grows beyond 6-8 total; that's the point at which the layout catalog should move from string-enum to plugin-pluggable subspecs.
 
 ---
@@ -527,7 +527,7 @@ preview only) until user demand justifies the investment.
 
 ### Reasoning
 
-- Bibliogon's core prose + audiobook + KDP + translation workflows
+- AdaptiveLearner's core prose + audiobook + KDP + translation workflows
   are complete and stable at v0.19.0. The core user journey works.
 - Current user base is small and no feedback has explicitly
   requested picture-book support. Building a 7-session feature
@@ -554,7 +554,7 @@ Revive when any of these are true:
   project.
 - A pre-committed commercial interest (licensing, commission) makes
   the plugin worth building on a deadline.
-- Bibliogon reaches 100+ active users, at which point the picture-
+- AdaptiveLearner reaches 100+ active users, at which point the picture-
   book segment becomes a plausible premium-tier expansion with
   real economic justification.
 
@@ -581,5 +581,5 @@ complexity. A weak Session 3 outcome is a strong signal to stop.
 - [docs/explorations/desktop-packaging.md](desktop-packaging.md) - desktop distribution affects whether bundling Chromium is acceptable.
 - [.claude/rules/architecture.md](../../.claude/rules/architecture.md) - plugin architecture, asset infra, manifest-driven UI.
 - [.claude/rules/lessons-learned.md](../../.claude/rules/lessons-learned.md) - Pandoc raw-HTML pass-through (informs the "no Pandoc for picture books" decision), async-with-SSE pattern (reused for export jobs), plugin path-dep declaration trap.
-- [plugins/bibliogon-plugin-export/bibliogon_export/pandoc_runner.py](../../plugins/bibliogon-plugin-export/bibliogon_export/pandoc_runner.py) - the path picture-book exports deliberately bypass.
+- [plugins/adaptive-learner-plugin-export/adaptive_learner_export/pandoc_runner.py](../../plugins/adaptive-learner-plugin-export/adaptive_learner_export/pandoc_runner.py) - the path picture-book exports deliberately bypass.
 - [backend/app/routers/assets.py](../../backend/app/routers/assets.py) - asset infra reused unchanged.

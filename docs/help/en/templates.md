@@ -1,11 +1,11 @@
 # Templates
 
-Templates are reusable structures that save you from rebuilding the same skeleton every time you start a new book or chapter. Bibliogon has two kinds:
+Templates are reusable structures that save you from rebuilding the same skeleton every time you start a new book or chapter. AdaptiveLearner has two kinds:
 
 - **Book templates** pre-fill a new book with a chapter list (title, type, order). Five genres ship with the app: Children's Picture Book, Sci-Fi Novel, Non-Fiction / How-To, Philosophy, and Memoir.
 - **Chapter templates** pre-fill a single chapter with a structured outline in TipTap JSON. Four ship with the app: Interview, FAQ, Recipe, Photo Report.
 
-Both kinds distinguish **built-in** templates (ship with Bibliogon, read-only, marked with a lock badge) from **user** templates (saved from your own books or chapters, deletable via a trash icon on the template card).
+Both kinds distinguish **built-in** templates (ship with AdaptiveLearner, read-only, marked with a lock badge) from **user** templates (saved from your own books or chapters, deletable via a trash icon on the template card).
 
 ## Creating a book from a template
 
@@ -47,7 +47,7 @@ If a template with the same name already exists, the server responds with a 409 
 
 Open the appropriate template picker (book or chapter) and hover over a user template card. A trash icon appears in the card header. Click it, confirm the dialog, and the template is deleted. Built-in templates do not have this icon and cannot be deleted.
 
-Templates are global to your installation. They apply to every book you create or edit. There is no per-book or per-user scoping (Bibliogon is single-user by design).
+Templates are global to your installation. They apply to every book you create or edit. There is no per-book or per-user scoping (AdaptiveLearner is single-user by design).
 
 ## Built-in chapter template details
 

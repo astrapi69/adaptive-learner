@@ -27,12 +27,12 @@ Verifies: T-XX three-layer config (commits 294e8fa, ad4301a, f2bf783).
 
 2. Create user override file:
    ```bash
-   mkdir -p ~/.config/bibliogon
-   cat > ~/.config/bibliogon/secrets.yaml << 'EOF'
+   mkdir -p ~/.config/adaptive_learner
+   cat > ~/.config/adaptive_learner/secrets.yaml << 'EOF'
    ai:
      api_key: <paste-new-key-here>
    EOF
-   chmod 600 ~/.config/bibliogon/secrets.yaml
+   chmod 600 ~/.config/adaptive_learner/secrets.yaml
    ```
 
 3. Empty the project key (do NOT delete the field; keep schema shape):
@@ -79,7 +79,7 @@ deprecation warnings.
 # Put the key back in app.yaml temporarily.
 # Edit backend/config/app.yaml: ai.api_key: <new-key>
 # Delete the override file.
-rm ~/.config/bibliogon/secrets.yaml
+rm ~/.config/adaptive_learner/secrets.yaml
 make dev-down && make dev
 ```
 
@@ -207,12 +207,12 @@ out of time.
 
 2. Articles dashboard → Backup button:
    - data-testid `article-backup-export-btn`
-   - Browser downloads `<bibliogon-backup>.bgb`
+   - Browser downloads `<adaptive-learner-backup>.bgb`
 
 3. Inspect ZIP:
    ```bash
-   unzip -l ~/Downloads/bibliogon-backup-*.bgb | grep -E "articles|manifest"
-   unzip -p ~/Downloads/bibliogon-backup-*.bgb manifest.json | jq .
+   unzip -l ~/Downloads/adaptive-learner-backup-*.bgb | grep -E "articles|manifest"
+   unzip -p ~/Downloads/adaptive-learner-backup-*.bgb manifest.json | jq .
    ```
 
 4. Expected manifest content:

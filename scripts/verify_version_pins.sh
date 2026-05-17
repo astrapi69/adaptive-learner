@@ -18,9 +18,9 @@
 # Derived references (DO NOT EDIT):
 #   - backend/app/__init__.py:__version__  (tomllib at import)
 #   - install.sh                            (generated from template)
-#   - launcher BIBLIOGON_TARGET_VERSION     (injected at build time)
+#   - launcher ADAPTIVE_LEARNER_TARGET_VERSION     (injected at build time)
 #   - frontend __APP_VERSION__              (Vite define from package.json)
-#   - plugins/bibliogon-plugin-git-sync     (importlib.metadata)
+#   - plugins/adaptive-learner-plugin-git-sync     (importlib.metadata)
 #
 # This script:
 #   1. Confirms the canonical pins match EXPECTED.
@@ -134,14 +134,14 @@ regression_check \
 # the old name; flag it so we re-decide the deprecation cycle.
 regression_check \
     'COMPATIBLE_VERSION' \
-    'reintroduced COMPATIBLE_VERSION (use BIBLIOGON_TARGET_VERSION)' \
-    "$ROOT/launcher/bibliogon_launcher"
+    'reintroduced COMPATIBLE_VERSION (use ADAPTIVE_LEARNER_TARGET_VERSION)' \
+    "$ROOT/launcher/adaptive_learner_launcher"
 
 # Launcher target-version literal outside _build_info
 regression_check \
-    '^BIBLIOGON_TARGET_VERSION\s*=\s*"[0-9]' \
-    'hardcoded BIBLIOGON_TARGET_VERSION literal in source' \
-    "$ROOT/launcher/bibliogon_launcher"
+    '^ADAPTIVE_LEARNER_TARGET_VERSION\s*=\s*"[0-9]' \
+    'hardcoded ADAPTIVE_LEARNER_TARGET_VERSION literal in source' \
+    "$ROOT/launcher/adaptive_learner_launcher"
 
 # install.command + install.cmd are static wrappers (no version
 # literal). Any v0.X.Y string in them signals someone duplicated
@@ -185,7 +185,7 @@ if ! python3 "$ROOT/scripts/sync_versions.py" --check >&2; then
 fi
 
 echo
-echo "Reminder: external Bibliogon-owned deps (manuscripta,"
+echo "Reminder: external AdaptiveLearner-owned deps (manuscripta,"
 echo "pluginforge) are NOT auto-synced. Verify their pins in"
 echo "backend/pyproject.toml + plugins/*/pyproject.toml manually"
 echo "at release time per release-workflow.md Step 4."

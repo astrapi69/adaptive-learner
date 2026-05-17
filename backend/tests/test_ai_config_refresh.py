@@ -49,7 +49,7 @@ def client(temp_base, monkeypatch):
     After PROD-WRITES-ARCHITECTURE-01 the settings router writes
     through ``config_overlay`` and reads via the merged view.
     Pointing both the project layer (``_PROJECT_CONFIG_DIR``) and
-    the user-overlay layer (``BIBLIOGON_DATA_DIR``) at
+    the user-overlay layer (``ADAPTIVE_LEARNER_DATA_DIR``) at
     ``temp_base / "config"`` lets the existing single-file seed
     keep working end-to-end.
     """
@@ -60,7 +60,7 @@ def client(temp_base, monkeypatch):
     settings_module._base_dir = temp_base
     settings_module._manager = None
     config_overlay.set_project_config_dir(temp_base / "config")
-    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(temp_base))
+    monkeypatch.setenv("ADAPTIVE_LEARNER_DATA_DIR", str(temp_base))
 
     config_path = temp_base / "config" / "app.yaml"
 

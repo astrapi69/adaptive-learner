@@ -4,18 +4,18 @@
 
 ## Installation
 
-Bibliogon runs as a set of Docker containers on your own machine. Your books, settings, and exports stay local; nothing is uploaded to a service.
+AdaptiveLearner runs as a set of Docker containers on your own machine. Your books, settings, and exports stay local; nothing is uploaded to a service.
 
 ### Prerequisites
 
-You need [Docker](https://docs.docker.com/get-docker/) installed and running before you can start Bibliogon. Docker Desktop (Windows, macOS) or Docker Engine with Compose (Linux) both work.
+You need [Docker](https://docs.docker.com/get-docker/) installed and running before you can start AdaptiveLearner. Docker Desktop (Windows, macOS) or Docker Engine with Compose (Linux) both work.
 
 ### Quick install (recommended)
 
-The one-line installer downloads Bibliogon to `~/bibliogon`, builds the Docker images, and starts the app.
+The one-line installer downloads AdaptiveLearner to `~/adaptive_learner`, builds the Docker images, and starts the app.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/astrapi69/bibliogon/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.sh | bash
 ```
 
 When the installer finishes, open [http://localhost:7880](http://localhost:7880) in your browser.
@@ -25,35 +25,35 @@ When the installer finishes, open [http://localhost:7880](http://localhost:7880)
 If you prefer to clone the repository yourself:
 
 ```bash
-git clone https://github.com/astrapi69/bibliogon.git
-cd bibliogon
+git clone https://github.com/astrapi69/adaptive_learner.git
+cd adaptive_learner
 ./start.sh
 ```
 
 `start.sh` builds the images on first run, then launches the same Docker stack the one-liner uses. The app is reachable at [http://localhost:7880](http://localhost:7880).
 
-## Running Bibliogon
+## Running AdaptiveLearner
 
-Once installed, Bibliogon is controlled with two scripts in the install directory.
+Once installed, AdaptiveLearner is controlled with two scripts in the install directory.
 
 | Action  | Command                            |
 | ------- | ---------------------------------- |
-| Stop    | `cd ~/bibliogon && ./stop.sh`      |
-| Start   | `cd ~/bibliogon && ./start.sh`     |
+| Stop    | `cd ~/adaptive_learner && ./stop.sh`      |
+| Start   | `cd ~/adaptive_learner && ./start.sh`     |
 | Restart | `./stop.sh && ./start.sh`          |
 
 Stopping the app keeps your data on disk; starting it again brings everything back as it was.
 
 ## Uninstalling
 
-To remove Bibliogon and all local data:
+To remove AdaptiveLearner and all local data:
 
 ```bash
-cd ~/bibliogon && ./stop.sh
-cd ~ && rm -rf ~/bibliogon
+cd ~/adaptive_learner && ./stop.sh
+cd ~ && rm -rf ~/adaptive_learner
 ```
 
-This stops the containers and deletes the install directory, including the SQLite database, uploaded assets, and any exports stored under `~/bibliogon`. Make a backup first if you want to keep your books (Dashboard > **Backup**).
+This stops the containers and deletes the install directory, including the SQLite database, uploaded assets, and any exports stored under `~/adaptive_learner`. Make a backup first if you want to keep your books (Dashboard > **Backup**).
 
 ## Optional: PDF export with Pandoc
 
@@ -61,11 +61,11 @@ EPUB, Word, HTML, and Markdown exports work out of the box. PDF export needs [Pa
 
 ## For developers
 
-Working on Bibliogon itself uses a different setup based on `make install` (Poetry + npm + plugins) and `make dev` (FastAPI on port 8000, Vite on port 5173). The `make prod` target runs the same Docker stack as `./start.sh`. See the [README](https://github.com/astrapi69/bibliogon#development) and [CLAUDE.md](https://github.com/astrapi69/bibliogon/blob/main/CLAUDE.md) for the full development guide.
+Working on AdaptiveLearner itself uses a different setup based on `make install` (Poetry + npm + plugins) and `make dev` (FastAPI on port 8000, Vite on port 5173). The `make prod` target runs the same Docker stack as `./start.sh`. See the [README](https://github.com/astrapi69/adaptive_learner#development) and [CLAUDE.md](https://github.com/astrapi69/adaptive_learner/blob/main/CLAUDE.md) for the full development guide.
 
 ## First start
 
-When you open [http://localhost:7880](http://localhost:7880) for the first time the database is empty. Bibliogon uses SQLite as a local database; all data lives on your machine, no external server is required. From Settings you can change language and theme. Six themes (Warm Literary, Cool Modern, Nord, Classic, Studio, Notebook) are available, each with light and dark variants - see the Themes page for details.
+When you open [http://localhost:7880](http://localhost:7880) for the first time the database is empty. AdaptiveLearner uses SQLite as a local database; all data lives on your machine, no external server is required. From Settings you can change language and theme. Six themes (Warm Literary, Cool Modern, Nord, Classic, Studio, Notebook) are available, each with light and dark variants - see the Themes page for details.
 
 ## Dashboard: filter, sort, trash
 
@@ -85,6 +85,6 @@ After creating the book you are sent straight to the editor. The sidebar lets yo
 
 ## Importing existing projects
 
-If you already have a book project in write-book-template format, you can import it directly. On the Dashboard, click **Import** and select the corresponding ZIP file. Bibliogon reads the chapter structure, metadata (title, author, ISBN, language) and assets (images, cover) automatically and creates the book with everything intact.
+If you already have a book project in write-book-template format, you can import it directly. On the Dashboard, click **Import** and select the corresponding ZIP file. AdaptiveLearner reads the chapter structure, metadata (title, author, ISBN, language) and assets (images, cover) automatically and creates the book with everything intact.
 
 Backups can be restored the same way. A backup (.bgb file) contains the entire state of all books. From the Dashboard you export the current state via **Backup** and restore it via **Restore**.

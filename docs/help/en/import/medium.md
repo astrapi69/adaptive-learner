@@ -1,6 +1,6 @@
 # Import from a Medium archive
 
-Bibliogon imports a Medium HTML export ZIP and produces one
+AdaptiveLearner imports a Medium HTML export ZIP and produces one
 **Article** + one **Publication** entry + one provenance record
 per post.
 
@@ -12,13 +12,13 @@ per post.
    within a few minutes.
 4. Save the ZIP locally. Do **not** extract it.
 
-## Step 2 - Confirm Bibliogon is up
+## Step 2 - Confirm AdaptiveLearner is up
 
 The plugin runs in the backend. Before importing, check that the
 backend started cleanly. Look for these log lines:
 
 ```
-INFO  app.main: Plugin discovery: 11 entry points found via 'bibliogon.plugins' group: ..., medium-import, ...
+INFO  app.main: Plugin discovery: 11 entry points found via 'adaptive_learner.plugins' group: ..., medium-import, ...
 INFO  app.main: Plugins enabled in config (11): ..., medium-import
 INFO  app.main: Plugins loaded (11/11 enabled): ..., medium-import, ...
 ```
@@ -39,7 +39,7 @@ curl -X POST http://localhost:7880/api/medium-import/import \
   | jq .
 ```
 
-Replace `localhost:7880` with your Bibliogon URL. The response is a
+Replace `localhost:7880` with your AdaptiveLearner URL. The response is a
 JSON summary like:
 
 ```json
@@ -105,7 +105,7 @@ future manual-entry workflow.
 
 Medium's HTML export treats user-written responses (short replies
 to other articles) as standalone HTML files indistinguishable
-from articles at the file level. Bibliogon's importer runs a
+from articles at the file level. AdaptiveLearner's importer runs a
 heuristic on each post and routes comment-shaped responses to a
 separate **comments** table instead of polluting the article
 dashboard.
@@ -161,7 +161,7 @@ article. Common follow-ups:
 
 - **Archive unwanted articles.** Select them in the dashboard and
   use **Move to trash**. Old / abandoned posts you do not want to
-  keep in Bibliogon get cleaned up here.
+  keep in AdaptiveLearner get cleaned up here.
 - **Add tags.** Medium did not include them; add them per article
   in the editor.
 - **Adjust language.** Change non-English articles in the editor's
@@ -172,7 +172,7 @@ article. Common follow-ups:
 
 ## Re-import safety
 
-- Articles whose canonical URL already exists on a Bibliogon
+- Articles whose canonical URL already exists on a AdaptiveLearner
   Article are **skipped** on the second import. The summary lists
   every skipped post with the existing article's id.
 - Articles in the trash are still considered "existing" for dedup

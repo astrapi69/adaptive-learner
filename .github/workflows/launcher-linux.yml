@@ -92,26 +92,26 @@ jobs:
       - name: Regenerate placeholder icon
         run: poetry run python scripts/make_icon.py
 
-      - name: Build bibliogon-launcher binary
+      - name: Build adaptive-learner-launcher binary
         # The spec file is cross-platform aware (icon + version metadata
         # are Windows-only and are skipped on Linux). Same spec as the
         # Windows build, same entrypoint, same excludes.
-        run: poetry run pyinstaller bibliogon-launcher.spec --clean --noconfirm
+        run: poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
 
       - name: Compute SHA256 checksum
         run: |
-          hash=$(sha256sum dist/bibliogon-launcher | awk '{print $1}')
-          echo "$hash  bibliogon-launcher" > dist/bibliogon-launcher.sha256
+          hash=$(sha256sum dist/adaptive-learner-launcher | awk '{print $1}')
+          echo "$hash  adaptive-learner-launcher" > dist/adaptive-learner-launcher.sha256
           echo "SHA256: $hash"
 
       - name: Upload smoke artifact (push / PR / dispatch)
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v6
         with:
-          name: bibliogon-launcher-linux
+          name: adaptive-learner-launcher-linux
           path: |
-            launcher/dist/bibliogon-launcher
-            launcher/dist/bibliogon-launcher.sha256
+            launcher/dist/adaptive-learner-launcher
+            launcher/dist/adaptive-learner-launcher.sha256
           if-no-files-found: error
           retention-days: 14
 
@@ -120,6 +120,6 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            launcher/dist/bibliogon-launcher
-            launcher/dist/bibliogon-launcher.sha256
+            launcher/dist/adaptive-learner-launcher
+            launcher/dist/adaptive-learner-launcher.sha256
           fail_on_unmatched_files: true

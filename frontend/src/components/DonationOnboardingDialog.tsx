@@ -1,7 +1,7 @@
 /**
  * S-02: one-time onboarding dialog after the first successful book
  * creation. Mirrors the AiSetupWizard pattern: Radix Dialog + a
- * `bibliogon-donation-onboarding-seen` localStorage flag. Every dismiss
+ * `adaptive-learner-donation-onboarding-seen` localStorage flag. Every dismiss
  * path (Support, Understood, close-X, Escape, overlay click) sets
  * the flag, so the dialog only shows once per user per machine.
  *
@@ -16,7 +16,7 @@ import {useI18n} from "../hooks/useI18n";
 import type {DonationsConfig} from "./SupportSection";
 import styles from "./DonationOnboardingDialog.module.css";
 
-export const DONATION_ONBOARDING_SEEN_KEY = "bibliogon-donation-onboarding-seen";
+export const DONATION_ONBOARDING_SEEN_KEY = "adaptive-learner-donation-onboarding-seen";
 
 export function shouldShowDonationOnboarding(): boolean {
   try {
@@ -69,7 +69,7 @@ export default function DonationOnboardingDialog({open, onClose, donations}: Pro
         <Dialog.Content className={`radix-dialog-content ${styles.content}`} data-testid="donation-onboarding">
           <div className={styles.header}>
             <Dialog.Title className={styles.title}>
-              <Heart size={18} aria-hidden /> {t("ui.donations.onboarding_title", "Bibliogon unterstützen")}
+              <Heart size={18} aria-hidden /> {t("ui.donations.onboarding_title", "AdaptiveLearner unterstützen")}
             </Dialog.Title>
             <Dialog.Close asChild>
               <button className="btn-icon" aria-label={t("ui.common.close", "Schließen")} data-testid="donation-onboarding-close">
@@ -81,7 +81,7 @@ export default function DonationOnboardingDialog({open, onClose, donations}: Pro
           {!showChannels ? (
             <>
               <p className={styles.body}>
-                {t("ui.donations.onboarding_body", "Bibliogon entsteht als Open-Source-Projekt ohne Tracking, ohne Cloud-Backend, ohne Werbung.")}
+                {t("ui.donations.onboarding_body", "AdaptiveLearner entsteht als Open-Source-Projekt ohne Tracking, ohne Cloud-Backend, ohne Werbung.")}
               </p>
               <p className={styles.hint}>{t("ui.donations.onboarding_hint", "Diesen Hinweis findest du jederzeit in den Einstellungen.")}</p>
               <div className={styles.actions}>
@@ -95,7 +95,7 @@ export default function DonationOnboardingDialog({open, onClose, donations}: Pro
             </>
           ) : (
             <>
-              <p className={styles.body}>{t("ui.donations.intro", "Bibliogon entsteht als Open-Source-Projekt...")}</p>
+              <p className={styles.body}>{t("ui.donations.intro", "AdaptiveLearner entsteht als Open-Source-Projekt...")}</p>
               <div className={styles.channelList}>
                 {donations.channels.map((channel) => (
                   <a

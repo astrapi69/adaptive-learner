@@ -14,7 +14,7 @@ If a PDF, DOCX, or HTML export aborts with "Pandoc not found", Pandoc is not ins
 3. For PDF export, also install a LaTeX distribution (e.g. `sudo apt install texlive-full`).
 4. Restart the backend after installing.
 
-If you are running Bibliogon via Docker (`make prod`), Pandoc and LaTeX are already inside the container; in that case the cause is more likely a configuration issue.
+If you are running AdaptiveLearner via Docker (`make prod`), Pandoc and LaTeX are already inside the container; in that case the cause is more likely a configuration issue.
 
 EPUB export works without Pandoc because manuscripta ships its own EPUB generator.
 

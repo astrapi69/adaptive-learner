@@ -8,7 +8,7 @@ from unittest.mock import MagicMock, patch
 
 import urllib.error
 
-from bibliogon_launcher import health
+from adaptive_learner_launcher import health
 
 
 def _fake_response(status: int, body: dict | str) -> MagicMock:
@@ -52,7 +52,7 @@ class TestIsHealthy:
 class TestWaitForHealthy:
 
     def test_returns_true_on_first_success(self) -> None:
-        with patch("bibliogon_launcher.health.is_healthy", return_value=True) as mock_check:
+        with patch("adaptive_learner_launcher.health.is_healthy", return_value=True) as mock_check:
             assert health.wait_for_healthy(7880, timeout_seconds=10.0) is True
         mock_check.assert_called_once_with(7880)
 
@@ -62,7 +62,7 @@ class TestWaitForHealthy:
         times = iter([0.0, 0.5, 1.0, 1.5])
         sleeps: list[float] = []
 
-        with patch("bibliogon_launcher.health.is_healthy", side_effect=lambda _: next(results)):
+        with patch("adaptive_learner_launcher.health.is_healthy", side_effect=lambda _: next(results)):
             assert health.wait_for_healthy(
                 7880,
                 timeout_seconds=60.0,
@@ -77,7 +77,7 @@ class TestWaitForHealthy:
         times = iter([0.0, 0.5, 1.5])
         sleeps: list[float] = []
 
-        with patch("bibliogon_launcher.health.is_healthy", return_value=False):
+        with patch("adaptive_learner_launcher.health.is_healthy", return_value=False):
             assert health.wait_for_healthy(
                 7880,
                 timeout_seconds=1.0,

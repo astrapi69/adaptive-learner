@@ -12,7 +12,7 @@ at release-time from `install.sh.template` +
 `backend/pyproject.toml` via `scripts/generate_install_sh.sh` -
 the template is the editable source, the committed `install.sh`
 stays in git only because users curl-pipe it; (2) the launcher
-embeds `BIBLIOGON_TARGET_VERSION` and refuses to install if it
+embeds `ADAPTIVE_LEARNER_TARGET_VERSION` and refuses to install if it
 is older than the latest GitHub release - any new installer
 artifact must NOT regress this safeguard; (3)
 `LAUNCHER-SELFREPLACE-01` is a separate P4 backlog item, NOT
@@ -30,8 +30,8 @@ below honour all four.
 **What it does, step by step** (read from
 `install.sh.template`, 160 lines, reviewed verbatim):
 
-1. Set `VERSION` from env-var `BIBLIOGON_VERSION` or fall back
-   to the build-time-substituted `@@BIBLIOGON_VERSION@@` token
+1. Set `VERSION` from env-var `ADAPTIVE_LEARNER_VERSION` or fall back
+   to the build-time-substituted `@@ADAPTIVE_LEARNER_VERSION@@` token
    that the generator replaces with the current canonical tag
    (e.g. `v0.26.6`).
 2. Print an ASCII banner + version line.
@@ -39,7 +39,7 @@ below honour all four.
    `docker compose version` succeeds. Each failure prints a URL
    and exits non-zero.
 4. If a `.git` directory exists at `$INSTALL_DIR` (default
-   `$HOME/bibliogon`), back up `.env` to a mktemp file, delete
+   `$HOME/adaptive_learner`), back up `.env` to a mktemp file, delete
    the directory, and proceed to fresh re-clone. The comment
    block in the template (lines 64-70) documents this is
    intentional: shallow-clone in-place updates fail across
@@ -74,16 +74,16 @@ below honour all four.
   Catalina+ all ship openssl. `xxd` is part of vim, ubiquitous.
   Last-resort fallback (timestamp) is weak but at least
   produces non-empty output - flag as a low-severity risk.
-- `$INSTALL_DIR` defaults to `$HOME/bibliogon`. No collision
-  check beyond existing `.git`. If a non-bibliogon directory
-  named `bibliogon` exists in `$HOME` (rare), the script will
+- `$INSTALL_DIR` defaults to `$HOME/adaptive_learner`. No collision
+  check beyond existing `.git`. If a non-adaptive-learner directory
+  named `adaptive_learner` exists in `$HOME` (rare), the script will
   rm-rf it on the "update" branch. Mitigation: the `.git` check
   on line 73 keeps this from triggering on a casual collision -
   only an existing git repo gets deleted.
 - Curl-pipe pattern (the documented invocation in the banner
   comment): users running `curl -fsSL ... | bash` cannot
   inspect or modify the script before running. Standard concern
-  for any curl-pipe installer; not Bibliogon-specific.
+  for any curl-pipe installer; not AdaptiveLearner-specific.
 - Silent failure modes on Linux distros without
   `docker-compose-plugin` (Docker installed without the plugin
   package). Step 3 catches this with a clear error.
@@ -155,14 +155,14 @@ underneath it.
 | Tool | Maturity | License | Build host | Code-sign cost | Sources cited | Recommendation |
 |---|---|---|---|---|---|---|
 | Inno Setup | Active. v6.7.0 stable Jan 2026; v7.0.0-preview-3 Apr 2026. | Custom permissive (free for non-commercial OSS; v6.5.0+ requests but does not require commercial users to purchase a paid license). | Windows-only build host (the compiler). | $0 (unsigned). With sign: see Code-signing section. | [jrsoftware.org/isinfo](https://jrsoftware.org/isinfo.php), [Inno Setup 7 changelog](https://jrsoftware.github.io/issrc/whatsnew.htm), [Wikipedia](https://en.wikipedia.org/wiki/Inno_Setup), [SPDX license entry](https://spdx.org/licenses/InnoSetup.html) | **FALLBACK** for Windows packaged installer. |
-| NSIS | Active. v3.12.0 trusted-package approval Apr 2026; docs repo last updated Feb 2026; primary repo active commits. | zlib/libpng (permissive, commercial-OK, no notice required in installer). | Cross-platform build (Linux/macOS hosts can build Windows installers). | $0 (unsigned). | [SourceForge project](https://sourceforge.net/projects/nsis/), [NSIS Wiki main](https://nsis.sourceforge.io/Main_Page), [NSIS-Dev GitHub org](https://github.com/NSIS-Dev), [License page](https://nsis.sourceforge.io/License) | **ELIMINATED** in favour of Inno Setup as the fallback: comparable maturity, but Inno Setup has cleaner default UX out of the box for Bibliogon's "double-click and wait" target audience and a less Lisp-flavoured DSL. NSIS would be the right choice if cross-platform building from Linux were a hard requirement; for Bibliogon it is not (the launcher CI already runs on Windows). Both are valid; this is a coin-flip the discovery resolves toward Inno Setup to be specific. |
+| NSIS | Active. v3.12.0 trusted-package approval Apr 2026; docs repo last updated Feb 2026; primary repo active commits. | zlib/libpng (permissive, commercial-OK, no notice required in installer). | Cross-platform build (Linux/macOS hosts can build Windows installers). | $0 (unsigned). | [SourceForge project](https://sourceforge.net/projects/nsis/), [NSIS Wiki main](https://nsis.sourceforge.io/Main_Page), [NSIS-Dev GitHub org](https://github.com/NSIS-Dev), [License page](https://nsis.sourceforge.io/License) | **ELIMINATED** in favour of Inno Setup as the fallback: comparable maturity, but Inno Setup has cleaner default UX out of the box for AdaptiveLearner's "double-click and wait" target audience and a less Lisp-flavoured DSL. NSIS would be the right choice if cross-platform building from Linux were a hard requirement; for AdaptiveLearner it is not (the launcher CI already runs on Windows). Both are valid; this is a coin-flip the discovery resolves toward Inno Setup to be specific. |
 | WiX Toolset | Active. v7.0.0 released Apr 2026. | Open-source code; commercial use of WiX requires the Open Source Maintenance Fee (OSMF EULA). v3/v4/v5 out of community support. | Windows-only effectively (.NET/MSBuild). | $0 base + OSMF for commercial use. | [FireGiant release notes](https://docs.firegiant.com/wix/whatsnew/releasenotes/), [WiX GitHub releases](https://github.com/wixtoolset/wix/releases/), [.NET Foundation listing](https://dotnetfoundation.org/projects/project-detail/wix-toolset) | **ELIMINATED**. WiX produces MSI which is the right choice for enterprise/MDM deployment; for an indie OSS book authoring app aimed at writers, MSI is overkill, the OSMF EULA introduces an unnecessary licensing question for a solo OSS maintainer, and the build pipeline is .NET-heavy. |
-| MSIX | Mature; first-class support in Windows 11 / Visual Studio 2026. | Microsoft platform tech; package itself royalty-free. | Windows-only effectively. | Code-sign REQUIRED for non-Store distribution (own cert OR Microsoft's Trusted Signing at $9.99/mo). | [MSIX overview](https://learn.microsoft.com/en-us/windows/msix/overview), [Single-project MSIX](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/single-project-msix), [Distribute unpackaged WinUI](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/unpackage-winui-app) | **ELIMINATED**. MSIX is the right choice for native Windows apps wanting Store presence + auto-update. Bibliogon is a Docker-backed web app behind a launcher: MSIX adds a code-sign requirement (Trusted Signing $120/yr or full cert), AppContainer sandboxing that does not play well with launching out-of-package Docker, and a packaging-tool learning curve for zero gain over Inno Setup at Bibliogon's distribution scale. |
+| MSIX | Mature; first-class support in Windows 11 / Visual Studio 2026. | Microsoft platform tech; package itself royalty-free. | Windows-only effectively. | Code-sign REQUIRED for non-Store distribution (own cert OR Microsoft's Trusted Signing at $9.99/mo). | [MSIX overview](https://learn.microsoft.com/en-us/windows/msix/overview), [Single-project MSIX](https://learn.microsoft.com/en-us/windows/apps/windows-app-sdk/single-project-msix), [Distribute unpackaged WinUI](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/unpackage-winui-app) | **ELIMINATED**. MSIX is the right choice for native Windows apps wanting Store presence + auto-update. AdaptiveLearner is a Docker-backed web app behind a launcher: MSIX adds a code-sign requirement (Trusted Signing $120/yr or full cert), AppContainer sandboxing that does not play well with launching out-of-package Docker, and a packaging-tool learning curve for zero gain over Inno Setup at AdaptiveLearner's distribution scale. |
 | Squirrel.Windows | **Unmaintained.** Repo deprecated since ~2019; PRs no longer reviewed. | MIT (irrelevant given unmaintained status). | n/a | n/a | [Electron deprecation issue](https://github.com/electron/electron/issues/17722), [Squirrel deprecation thread](https://github.com/Squirrel/Squirrel.Windows/issues/1469), [electron-build docs noting deprecated](https://www.electron.build/squirrel-windows.html) | **ELIMINATED**. Unmaintained dependency = automatic disqualification. |
-| Velopack | Active. Native-Rust successor to Squirrel.Windows; cross-platform Win/Mac/Linux. | MIT. | Cross-platform. | Same code-sign reality as anything (optional). | [velopack.io](https://velopack.io/), [GitHub repo](https://github.com/velopack/velopack), [Migrating from Squirrel](https://docs.velopack.io/migrating/squirrel) | **ELIMINATED for Bibliogon**. Velopack's value is auto-update for desktop apps; Bibliogon's update story is the launcher's stale-target safeguard + `git pull && docker compose up --build` from `install.sh`. Adopting Velopack would mean building a real desktop binary to update, which is the launcher's existing scope (`LAUNCHER-SELFREPLACE-01`), and the launcher is PyInstaller-based, not Velopack-compatible. Re-evaluate only if Bibliogon ever ships a true native desktop binary as primary distribution. |
-| winget | Active; first-party Microsoft. | MIT (winget tooling); manifests are CLA-licensed contributions. | Cross-platform (manifest is YAML). | n/a (winget itself is free; signing is recommended-not-required; community-repo moderators may flag unsigned packages). | [Submit your manifest](https://learn.microsoft.com/en-us/windows/package-manager/package/repository), [winget-pkgs repo](https://github.com/microsoft/winget-pkgs), [Submit packages overview](https://learn.microsoft.com/en-us/windows/package-manager/package/), [Wikipedia](https://en.wikipedia.org/wiki/Windows_Package_Manager) | **RECOMMEND as discoverability layer** alongside the preferred PowerShell script. NOT a replacement for the script: winget handles "I have winget and want to install Bibliogon", but does not solve the launcher-+-Docker-Desktop dependency story. Submission is a fork-and-PR to `microsoft/winget-pkgs`; lock-step CI can regenerate the manifest each release. Worth doing in a small follow-up after Phase 2. |
-| Chocolatey | Active community repo; stricter moderation than winget (Package Validator + Package Verifier + Package Scanner + Human Approval, up to 35 days). | Apache 2.0 (chocolatey itself); per-package moderation. | Cross-platform manifest. | n/a directly; signing recommended. | [Community repo overview](https://docs.chocolatey.org/en-us/community-repository/), [Submission process](https://blog.chocolatey.org/2024/03/what-is-chocolatey-community-repository/), [Community packages list](https://community.chocolatey.org/packages) | **ELIMINATED in favour of winget** for the discoverability layer. Two-overlapping-package-manager submissions doubles per-release maintenance for marginal additional reach; winget is shipped by default in Windows 11+ and that is Bibliogon's target audience floor. Re-evaluate if a user reports they specifically use Chocolatey and not winget. |
-| Scoop | Active; developer-targeted; "buckets" model lets us self-publish without third-party moderation. | MIT. | Cross-platform manifest. | n/a. | [Scoop GitHub](https://github.com/ScoopInstaller/scoop), [Bucket model docs](https://scoop.netlify.app/concepts/), [hackspoiler intro](https://hackspoiler.de/scoop-open-source-windows-paketmanager/) | **ELIMINATED**. Scoop's audience is developers; Bibliogon's audience is writers. The user already running Scoop is the user who can already follow `git clone && docker compose up`. No reach gain. |
+| Velopack | Active. Native-Rust successor to Squirrel.Windows; cross-platform Win/Mac/Linux. | MIT. | Cross-platform. | Same code-sign reality as anything (optional). | [velopack.io](https://velopack.io/), [GitHub repo](https://github.com/velopack/velopack), [Migrating from Squirrel](https://docs.velopack.io/migrating/squirrel) | **ELIMINATED for AdaptiveLearner**. Velopack's value is auto-update for desktop apps; AdaptiveLearner's update story is the launcher's stale-target safeguard + `git pull && docker compose up --build` from `install.sh`. Adopting Velopack would mean building a real desktop binary to update, which is the launcher's existing scope (`LAUNCHER-SELFREPLACE-01`), and the launcher is PyInstaller-based, not Velopack-compatible. Re-evaluate only if AdaptiveLearner ever ships a true native desktop binary as primary distribution. |
+| winget | Active; first-party Microsoft. | MIT (winget tooling); manifests are CLA-licensed contributions. | Cross-platform (manifest is YAML). | n/a (winget itself is free; signing is recommended-not-required; community-repo moderators may flag unsigned packages). | [Submit your manifest](https://learn.microsoft.com/en-us/windows/package-manager/package/repository), [winget-pkgs repo](https://github.com/microsoft/winget-pkgs), [Submit packages overview](https://learn.microsoft.com/en-us/windows/package-manager/package/), [Wikipedia](https://en.wikipedia.org/wiki/Windows_Package_Manager) | **RECOMMEND as discoverability layer** alongside the preferred PowerShell script. NOT a replacement for the script: winget handles "I have winget and want to install AdaptiveLearner", but does not solve the launcher-+-Docker-Desktop dependency story. Submission is a fork-and-PR to `microsoft/winget-pkgs`; lock-step CI can regenerate the manifest each release. Worth doing in a small follow-up after Phase 2. |
+| Chocolatey | Active community repo; stricter moderation than winget (Package Validator + Package Verifier + Package Scanner + Human Approval, up to 35 days). | Apache 2.0 (chocolatey itself); per-package moderation. | Cross-platform manifest. | n/a directly; signing recommended. | [Community repo overview](https://docs.chocolatey.org/en-us/community-repository/), [Submission process](https://blog.chocolatey.org/2024/03/what-is-chocolatey-community-repository/), [Community packages list](https://community.chocolatey.org/packages) | **ELIMINATED in favour of winget** for the discoverability layer. Two-overlapping-package-manager submissions doubles per-release maintenance for marginal additional reach; winget is shipped by default in Windows 11+ and that is AdaptiveLearner's target audience floor. Re-evaluate if a user reports they specifically use Chocolatey and not winget. |
+| Scoop | Active; developer-targeted; "buckets" model lets us self-publish without third-party moderation. | MIT. | Cross-platform manifest. | n/a. | [Scoop GitHub](https://github.com/ScoopInstaller/scoop), [Bucket model docs](https://scoop.netlify.app/concepts/), [hackspoiler intro](https://hackspoiler.de/scoop-open-source-windows-paketmanager/) | **ELIMINATED**. Scoop's audience is developers; AdaptiveLearner's audience is writers. The user already running Scoop is the user who can already follow `git clone && docker compose up`. No reach gain. |
 
 **Discovery success criterion check:** every candidate is
 recommended (preferred / fallback / discoverability) OR
@@ -222,11 +222,11 @@ fallback to preferred.
   `.command` file produce >3 unique user-support reports in a
   release cycle.
 - **Fallback:** **Homebrew tap** at
-  `astrapi69/homebrew-bibliogon`. Custom tap, not a PR to
+  `astrapi69/homebrew-adaptive-learner`. Custom tap, not a PR to
   homebrew-core (homebrew-core requires a stable user base and
   has stricter acceptance criteria; a self-tap is the standard
   pattern for indie OSS). Once tapped, `brew install
-  --cask bibliogon` becomes the Mac equivalent of the
+  --cask adaptive_learner` becomes the Mac equivalent of the
   PowerShell-or-winget Windows path.
 
 | Path | Effort | Code-sign | Sources cited | Recommendation |
@@ -282,7 +282,7 @@ returned the following operative passages:
   NOT Docker Desktop itself).
 
 The non-sublicensable clause means a third-party installer (in
-this case Bibliogon's launcher or `install.ps1`) cannot grant
+this case AdaptiveLearner's launcher or `install.ps1`) cannot grant
 itself the right to accept the Docker EULA on the end user's
 behalf. The redistribution clause permits redistributing Docker
 Images but pointedly does not extend to Docker Desktop. There
@@ -317,7 +317,7 @@ Phase 1 ships this):
 2. If yes: continue to repo-download + .env-generation +
    `docker compose up --build` (the existing
    `_run_install_flow` path in
-   `launcher/bibliogon_launcher/__main__.py`).
+   `launcher/adaptive_learner_launcher/__main__.py`).
 3. If no: open Docker's official download page in the user's
    browser, show "Install Docker Desktop yourself, then come
    back and click Install again."
@@ -348,7 +348,7 @@ are UX, not signing, issues.
 re-packaged through Inno Setup as the Windows fallback):**
 
 - Recommendation: **depends on budget; default = ship unsigned
-  with mitigation** until Bibliogon has a clearer signal of
+  with mitigation** until AdaptiveLearner has a clearer signal of
   Windows-user volume.
 - Estimated cost: **OV cert ~$150-300/yr**; **EV cert ~$400+/yr**;
   **Microsoft Trusted Signing ~$120/yr ($9.99/mo)** as the
@@ -366,7 +366,7 @@ re-packaged through Inno Setup as the Windows fallback):**
   standard); document the SmartScreen warning in the install
   guide ("the first user clicks More info -> Run anyway, after
   ~3-5 thousand downloads SmartScreen will trust the binary
-  organically"); rely on `BIBLIOGON_TARGET_VERSION` for
+  organically"); rely on `ADAPTIVE_LEARNER_TARGET_VERSION` for
   integrity (already shipped in v0.26.x).
 
 **Phase 4 (macOS, IF .pkg path is pursued):**
@@ -393,9 +393,9 @@ already shipped in v0.26.x. NOT a discovery target.)
 
 Scope: GUI installer with repo download + .env generation +
 Docker image build + browser open. First-run install path in
-`launcher/bibliogon_launcher/__main__.py`
+`launcher/adaptive_learner_launcher/__main__.py`
 (`_install_or_welcome`, `_run_install_flow`).
-`BIBLIOGON_TARGET_VERSION` stale-target safeguard active.
+`ADAPTIVE_LEARNER_TARGET_VERSION` stale-target safeguard active.
 Detect-and-instruct for Docker Desktop.
 
 **No discovery work here.** Documented for completeness.
@@ -453,7 +453,7 @@ Scope:
 **Risk:** low. POSIX bash is well-trodden ground. PowerShell
 is well-documented. No external dependencies introduced.
 **Blockers:** none identified. The script is independent of
-the launcher and does not regress `BIBLIOGON_TARGET_VERSION`.
+the launcher and does not regress `ADAPTIVE_LEARNER_TARGET_VERSION`.
 
 ### Phase 3: Docker Desktop auto-install integration (this discovery's second deliverable)
 
@@ -500,7 +500,7 @@ STOP for user input:
 
 2. **Repo hosting for installer artifacts**: GitHub Releases
    page sufficient for `install.ps1`, `install.command`,
-   `install.sh`? Or do we want `download.bibliogon.org` (or
+   `install.sh`? Or do we want `download.adaptive_learner.org` (or
    similar) so the curl-pipe URL is stable across repo renames?
    Default assumption (no answer): GitHub Releases is fine,
    matches the existing `install.sh` curl-pipe pattern.
@@ -544,7 +544,7 @@ The original triggers in
 2026-04-12, ~one month ago) listed four conditions for
 re-evaluating desktop packaging:
 
-- **Trigger 1**: "Bibliogon has 100+ active users and 10%+ of
+- **Trigger 1**: "AdaptiveLearner has 100+ active users and 10%+ of
   feedback mentions installation difficulty"
   -> **NOT FIRED**. No active user count metric; no aggregated
      installation-difficulty feedback. The Medium article
@@ -563,7 +563,7 @@ re-evaluating desktop packaging:
 - **Trigger 3**: "Tauri ecosystem reaches a maturity milestone"
   -> **NOT FIRED, AND IRRELEVANT TO THIS DISCOVERY**. The
      desktop-packaging.md document considered Tauri/Electron as
-     a path; this discovery does not. Bibliogon's chosen path is
+     a path; this discovery does not. AdaptiveLearner's chosen path is
      "Docker + launcher (PyInstaller) + scripts", not "wrap the
      web app in Tauri". Tauri remains a long-term option per
      desktop-packaging.md, unchanged.
@@ -622,7 +622,7 @@ Findings to be written back in the next implementation session
   discoverability"**: add to `docs/backlog.md` at P4 (roadmap /
   future) or P5 (speculative; pick based on user demand
   signal). Submit a winget manifest to `microsoft/winget-pkgs`
-  and create a Homebrew tap at `astrapi69/homebrew-bibliogon`.
+  and create a Homebrew tap at `astrapi69/homebrew-adaptive-learner`.
   Effort: 1 session of ~2 hours.
 
 - **Eliminated installer candidates** (NSIS, WiX, MSIX,
@@ -649,8 +649,8 @@ source):**
 
 - v0.26.x state delta: confirmed all four points from
   `CLAUDE.md` (single hand-edited version source =
-  `backend/pyproject.toml`; `BIBLIOGON_TARGET_VERSION` exists
-  in `launcher/bibliogon_launcher/installer.py`;
+  `backend/pyproject.toml`; `ADAPTIVE_LEARNER_TARGET_VERSION` exists
+  in `launcher/adaptive_learner_launcher/installer.py`;
   `LAUNCHER-SELFREPLACE-01` is at `docs/backlog.md` P4 line
   114; `install.sh` generated from `install.sh.template` via
   `scripts/generate_install_sh.sh`).

@@ -27,7 +27,7 @@ VALID_SA = json.dumps({
 @pytest.fixture(autouse=True)
 def set_secret(monkeypatch):
     """Every test gets a consistent encryption secret."""
-    monkeypatch.setenv("BIBLIOGON_CREDENTIALS_SECRET", "test-secret-for-unit-tests")
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CREDENTIALS_SECRET", "test-secret-for-unit-tests")
 
 
 # --- validate_service_account_json ---
@@ -73,14 +73,14 @@ def test_load_nonexistent_raises_file_not_found(tmp_path):
 
 def test_load_with_wrong_secret_raises_runtime(tmp_path, monkeypatch):
     save_encrypted(VALID_SA, credentials_dir=tmp_path)
-    monkeypatch.setenv("BIBLIOGON_CREDENTIALS_SECRET", "different-secret")
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CREDENTIALS_SECRET", "different-secret")
     with pytest.raises(RuntimeError, match="decrypt"):
         load_decrypted(credentials_dir=tmp_path)
 
 
 def test_missing_secret_raises_runtime(tmp_path, monkeypatch):
-    monkeypatch.delenv("BIBLIOGON_CREDENTIALS_SECRET", raising=False)
-    with pytest.raises(RuntimeError, match="BIBLIOGON_CREDENTIALS_SECRET"):
+    monkeypatch.delenv("ADAPTIVE_LEARNER_CREDENTIALS_SECRET", raising=False)
+    with pytest.raises(RuntimeError, match="ADAPTIVE_LEARNER_CREDENTIALS_SECRET"):
         save_encrypted(VALID_SA, credentials_dir=tmp_path)
 
 

@@ -134,7 +134,7 @@ export default function MediumImportPage() {
                 <p className={styles.intro}>
                     {t(
                         "ui.medium_import.intro",
-                        "Importiere dein Medium-Archiv (Download your information ZIP) als Artikel in Bibliogon. Jeder Beitrag wird ein Artikel; die kanonische URL wird erfasst, sodass ein erneuter Import desselben Archivs sicher ist.",
+                        "Importiere dein Medium-Archiv (Download your information ZIP) als Artikel in AdaptiveLearner. Jeder Beitrag wird ein Artikel; die kanonische URL wird erfasst, sodass ein erneuter Import desselben Archivs sicher ist.",
                     )}
                 </p>
 

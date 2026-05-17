@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a defect in Bibliogon
+description: Report a defect in AdaptiveLearner
 labels: [bug]
 body:
   - type: markdown
@@ -52,10 +52,10 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: OS, Bibliogon version, Python and Node versions, deployment mode (Docker, make dev, launcher).
+      description: OS, AdaptiveLearner version, Python and Node versions, deployment mode (Docker, make dev, launcher).
       placeholder: |
         OS: Ubuntu 24.04
-        Bibliogon: 0.30.0
+        AdaptiveLearner: 0.30.0
         Python: 3.12.3
         Node: 24.x
         Deployment: docker compose

@@ -50,7 +50,7 @@ def _write_bgb(
         "assets": [],
     }
 
-    manifest = {"format": "bibliogon-backup", "version": 1}
+    manifest = {"format": "adaptive-learner-backup", "version": 1}
 
     bgb = tmp_path / name
     with zipfile.ZipFile(bgb, "w", zipfile.ZIP_DEFLATED) as zf:
@@ -204,7 +204,7 @@ def _write_multi_bgb(
     tmp_path: Path, book_ids: list[str], name: str = "multi.bgb"
 ) -> Path:
     """Build a .bgb that carries N books inside one archive."""
-    manifest = {"format": "bibliogon-backup", "version": 1}
+    manifest = {"format": "adaptive-learner-backup", "version": 1}
     bgb = tmp_path / name
     with zipfile.ZipFile(bgb, "w", zipfile.ZIP_DEFLATED) as zf:
         zf.writestr("manifest.json", json.dumps(manifest))

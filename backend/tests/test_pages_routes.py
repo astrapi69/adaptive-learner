@@ -1,6 +1,6 @@
 """Pages CRUD + book_type validation + cascade tests (Phase 4 Session 2).
 
-Covers the routes added in bibliogon_kinderbuch/pages.py plus the
+Covers the routes added in adaptive_learner_kinderbuch/pages.py plus the
 ``book_type`` discriminator behaviour added in the backend Book model
 + Pydantic schemas + the books PATCH handler.
 

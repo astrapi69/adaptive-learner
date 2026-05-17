@@ -1,4 +1,4 @@
-# Bibliogon Tester Onboarding
+# AdaptiveLearner Tester Onboarding
 
 Goal: get from zero to running your first test session in 30
 minutes.
@@ -34,8 +34,8 @@ start, but `make build` and Vite 8 tooling fail. See
 ### Clone and install
 
 ```bash
-git clone https://github.com/astrapi69/bibliogon.git
-cd bibliogon
+git clone https://github.com/astrapi69/adaptive_learner.git
+cd adaptive_learner
 make install
 ```
 
@@ -68,7 +68,7 @@ This starts:
 - **Frontend** at `http://localhost:5173` (Vite dev server)
 
 Open `http://localhost:5173` in your browser. The dashboard should
-load. If it shows "Welcome to Bibliogon", setup is correct.
+load. If it shows "Welcome to AdaptiveLearner", setup is correct.
 
 ### Stop / restart
 
@@ -91,7 +91,7 @@ make dev-down   # stop
 ### Fresh installation
 
 A first-time `make dev` boots with an empty database
-(`backend/bibliogon.db` is created on first request). Use the UI
+(`backend/adaptive_learner.db` is created on first request). Use the UI
 to create your test data:
 
 1. Click **New Book** — fill title + author, save.
@@ -110,15 +110,15 @@ test leaves you in a broken state:
 make stop
 # Default platformdirs location (Linux/macOS); v0.25.0+ moved
 # data here from the project tree. Adjust for Windows
-# (%LOCALAPPDATA%\bibliogon\) or for a custom BIBLIOGON_DATA_DIR.
-rm "$HOME/.local/share/bibliogon/bibliogon.db" \
-   "$HOME/.local/share/bibliogon/bibliogon.db-wal" \
-   "$HOME/.local/share/bibliogon/bibliogon.db-shm" 2>/dev/null
+# (%LOCALAPPDATA%\adaptive_learner\) or for a custom ADAPTIVE_LEARNER_DATA_DIR.
+rm "$HOME/.local/share/adaptive_learner/adaptive_learner.db" \
+   "$HOME/.local/share/adaptive_learner/adaptive_learner.db-wal" \
+   "$HOME/.local/share/adaptive_learner/adaptive_learner.db-shm" 2>/dev/null
 make dev
 ```
 
 The database is recreated on next request. Note: this also wipes
-your test fixtures. The `.bibliogon-production` marker file in
+your test fixtures. The `.adaptive-learner-production` marker file in
 that directory is the test-isolation tripwire — leave it alone.
 
 ### Test fixtures via API
@@ -210,7 +210,7 @@ per session under `docs/testing/sessions/YYYY-MM-DD-session-N-{topic}.md`.
 
 Title format: `[Bug][severity] Short description`. Body must include:
 
-- **Bibliogon version** (e.g., `v0.29.0` or commit hash)
+- **AdaptiveLearner version** (e.g., `v0.29.0` or commit hash)
 - **Reproduction steps** (numbered list)
 - **Actual outcome**
 - **Expected outcome**

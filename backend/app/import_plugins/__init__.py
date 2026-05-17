@@ -1,4 +1,4 @@
-"""Plugin-based import system for Bibliogon.
+"""Plugin-based import system for AdaptiveLearner.
 
 Defines the contract every import format handler implements
 (see :mod:`app.import_plugins.protocol`) and a registry for

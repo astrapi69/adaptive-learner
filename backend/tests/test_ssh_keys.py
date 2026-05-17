@@ -64,9 +64,9 @@ def test_generate_with_overwrite_replaces_existing():
     assert first != second
 
 
-def test_generate_default_comment_is_bibliogon():
+def test_generate_default_comment_is_adaptive_learner():
     body = client.post("/api/ssh/generate", json={}).json()
-    assert body["comment"] == "bibliogon"
+    assert body["comment"] == "adaptive_learner"
 
 
 # --- get info + public key + delete ---

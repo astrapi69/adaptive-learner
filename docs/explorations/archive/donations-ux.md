@@ -5,14 +5,14 @@ Last updated: 2026-04-18
 
 ## Core principle
 
-Bibliogon is a self-publishing tool for authors. Donation prompts
+AdaptiveLearner is a self-publishing tool for authors. Donation prompts
 must not disturb the user, manipulate them, or stand between them
 and their work. Three visibility levels, all with a hard opt-out
 path and no dark patterns.
 
 ## Level 1: Permanent link in Settings
 
-New section in Settings: **"Support Bibliogon"**.
+New section in Settings: **"Support AdaptiveLearner"**.
 
 Contents:
 
@@ -30,7 +30,7 @@ After the first successful book creation or the first successful
 export operation, an info card is shown:
 
 ```
-Bibliogon is developed as an open-source project without
+AdaptiveLearner is developed as an open-source project without
 tracking, without a cloud backend, without ads. If the app
 helps you and you want to support the project:
 
@@ -40,7 +40,7 @@ You can find this hint any time in Settings.
 ```
 
 On "Understood": set flag
-`bibliogon-donation-onboarding-seen = true` in localStorage.
+`adaptive-learner-donation-onboarding-seen = true` in localStorage.
 Never shown again unless explicitly opened via Settings.
 
 On "Support project": open external link in a new tab AND set the
@@ -53,7 +53,7 @@ creation), a subtle banner appears at the top of the Dashboard:
 
 ```
 +--------------------------------------------------------------+
-| You have been using Bibliogon for 3 months. If you enjoy     |
+| You have been using AdaptiveLearner for 3 months. If you enjoy     |
 | the project: [Support]           [Not now]   [x]             |
 +--------------------------------------------------------------+
 ```
@@ -71,7 +71,7 @@ Rules:
 ## Anti-patterns (explicitly NOT doing)
 
 - No modal popup on app start
-- No nag screens with counters ("You have opened Bibliogon 47
+- No nag screens with counters ("You have opened AdaptiveLearner 47
   times...")
 - No donation prompts during active workflows (editing, export,
   AI chat)
@@ -119,7 +119,7 @@ expressed in the app text.
 
 Three independent tasks, each small enough for a single session:
 
-**S-01**: Settings section "Support Bibliogon" (Level 1)
+**S-01**: Settings section "Support AdaptiveLearner" (Level 1)
 
 - New section in SettingsScreen
 - Short text + external link
@@ -165,12 +165,12 @@ less visible banner).
 
 Before implementing the S-series:
 
-1. **Landing page URL**: own domain (bibliogon.app/support) or
+1. **Landing page URL**: own domain (adaptive_learner.app/support) or
    GitHub README section or both?
 2. **Initial set of channels**: which two or three start as the
    first set? Proposal: GitHub Sponsors + Liberapay + bank transfer.
 3. **Landing page language**: German only, English only, or both?
-   (German has a specific user base for Bibliogon; English widens
+   (German has a specific user base for AdaptiveLearner; English widens
    reach.)
 4. **Date format for reminder logic**: ISO string or Unix
    timestamp? ISO is more readable; timestamp is simpler for

@@ -2,15 +2,15 @@
 
 ## Context
 
-Bibliogon is positioned today as a **book authoring tool**. The
-project lead (Aster) has started writing articles about Bibliogon
+AdaptiveLearner is positioned today as a **book authoring tool**. The
+project lead (Aster) has started writing articles about AdaptiveLearner
 on Medium, Substack, and LinkedIn as part of project outreach.
 During the v0.19.1 article workflow, the thought surfaced: this
 entire authoring-plus-publication pipeline could itself be a
-Bibliogon feature.
+AdaptiveLearner feature.
 
 **The scope is larger than originally considered.** Not just
-"write an article in Bibliogon", but:
+"write an article in AdaptiveLearner", but:
 
 - New dashboard entry-point (button TBD: "New Article / Blog post /
   Tweet / Short post")
@@ -57,7 +57,7 @@ lines because it is exploration, not specification.
 
 Brief context:
 
-- Aster publishes Bibliogon release content on Medium, Substack,
+- Aster publishes AdaptiveLearner release content on Medium, Substack,
   LinkedIn. Each platform has different metadata, different
   formats, different social-media ecosystems.
 - Cross-posting is manual, repetitive, and forgetful (a URL
@@ -305,7 +305,7 @@ content_type.
 - Book model accumulates many nullable fields for article-only
   concerns (SEO, platform metadata, publications).
 - Schema conflates two product concerns.
-- Positioning ambiguity: "Bibliogon handles books AND articles"
+- Positioning ambiguity: "AdaptiveLearner handles books AND articles"
   is harder to communicate than either alone.
 
 #### Option B: New Article entity + plugin-article
@@ -337,7 +337,7 @@ as extracted npm/PyPI packages, but independent product identity.
 
 **Pros:**
 - Clearest positioning.
-- No risk to Bibliogon's current identity.
+- No risk to AdaptiveLearner's current identity.
 - Can adopt different stack or architecture if desired.
 
 **Cons:**
@@ -362,16 +362,16 @@ during writing the exploration but were not in the original list.
 
 - **Images and media:** articles and blogposts need featured
   images and inline media. Is that the existing asset infrastructure
-  or a new abstraction? Does Bibliogon help with image
+  or a new abstraction? Does AdaptiveLearner help with image
   generation (Midjourney prompt library?) or just storage?
 - **Link management:** articles often link back to other articles,
   other projects, related posts. Is there a linked-content concept?
 - **Analytics (post-publication):** once published, authors want
   to see performance. Views, reads, claps, shares. Is that a
-  Bibliogon concern or an out-of-tool responsibility?
+  AdaptiveLearner concern or an out-of-tool responsibility?
 - **Archive and discoverability:** over time, Aster's article
   archive grows. Is there a search / tag / collection system?
-- **Scheduling:** publishing at a future date. Bibliogon would
+- **Scheduling:** publishing at a future date. AdaptiveLearner would
   need a scheduler, not just publish-now. Significant scope.
 - **Drafting together vs separately:** if the same article is
   adapted for Medium (long) vs X (thread), is it one entity with
@@ -379,7 +379,7 @@ during writing the exploration but were not in the original list.
   short-form of that Medium article"?
 - **Version history across publications:** if the Medium version
   gets edited 3 days after publication, does Substack get
-  updated? Bibliogon tracks, but who enforces?
+  updated? AdaptiveLearner tracks, but who enforces?
 - **Multi-author:** Aster writes alone today, but collaborative
   articles exist. Does the Article entity assume single author?
 - **Tags as shared vocabulary:** is "self-publishing" a tag that
@@ -497,7 +497,7 @@ justifies deeper investment.
 - `docs/explorations/children-book-plugin.md` — architectural
   precedent for a deferred feature
 - `docs/explorations/ai-review-extension.md` — precedent for
-  extending Bibliogon with a focused capability
+  extending AdaptiveLearner with a focused capability
 - `.claude/rules/architecture.md` — plugin vs core decisions
 - `backend/app/models/__init__.py` — Book model; relevant for
   Option A

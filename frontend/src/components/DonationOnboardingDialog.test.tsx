@@ -71,14 +71,14 @@ describe("DonationOnboardingDialog dismiss paths", () => {
   });
 
   it("'Support' with a landing_page_url sets the flag and closes immediately", () => {
-    const config = {...baseConfig, landing_page_url: "https://bibliogon.app/support"};
+    const config = {...baseConfig, landing_page_url: "https://adaptive_learner.app/support"};
     const onClose = vi.fn();
     const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
     render(<DonationOnboardingDialog open={true} onClose={onClose} donations={config} />);
     fireEvent.click(screen.getByTestId("donation-onboarding-support"));
     expect(localStorage.getItem(DONATION_ONBOARDING_SEEN_KEY)).toBe("true");
     expect(openSpy).toHaveBeenCalledWith(
-      "https://bibliogon.app/support",
+      "https://adaptive_learner.app/support",
       "_blank",
       "noopener,noreferrer",
     );

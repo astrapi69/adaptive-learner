@@ -9,7 +9,7 @@ WORKDIR /build
 COPY backend/pyproject.toml backend/poetry.lock* ./backend/
 
 # Copy local plugin packages (path dependencies in backend/pyproject.toml).
-# Glob picks up every plugins/bibliogon-plugin-* directory so new plugins do
+# Glob picks up every plugins/adaptive-learner-plugin-* directory so new plugins do
 # not require a Dockerfile change. .dockerignore strips tests and caches.
 COPY plugins/ ./plugins/
 
@@ -21,12 +21,12 @@ RUN poetry config virtualenvs.create false && \
 
 # Reinstall local plugins as proper packages (not .pth path links).
 # Loop matches the COPY glob so any plugin in the tree is installed.
-RUN for pkg in ../plugins/bibliogon-plugin-*; do \
+RUN for pkg in ../plugins/adaptive-learner-plugin-*; do \
         pip install --no-cache-dir --force-reinstall --no-deps "$pkg"; \
     done
 
 # Remove .pth files left by Poetry's editable installs
-RUN rm -f /usr/local/lib/python3.12/site-packages/bibliogon_plugin_*.pth
+RUN rm -f /usr/local/lib/python3.12/site-packages/adaptive_learner_plugin_*.pth
 
 # Stage 2: Runtime - minimal image without Poetry, pip cache, or dev deps
 FROM python:3.12-slim
@@ -45,10 +45,10 @@ WORKDIR /app
 COPY backend/ .
 
 # Create non-root user and data directory
-RUN groupadd -r bibliogon && useradd -r -g bibliogon bibliogon && \
-    mkdir -p /app/data && chown -R bibliogon:bibliogon /app
+RUN groupadd -r adaptive_learner && useradd -r -g adaptive_learner adaptive_learner && \
+    mkdir -p /app/data && chown -R adaptive_learner:adaptive_learner /app
 
-USER bibliogon
+USER adaptive_learner
 
 EXPOSE 8000
 

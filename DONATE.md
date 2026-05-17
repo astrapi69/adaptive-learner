@@ -1,14 +1,14 @@
-# Support Bibliogon
+# Support Adaptive Learner
 
-Bibliogon is an open-source project developed by a single person. No cloud,
+Adaptive Learner is an open-source project developed by a single person. No cloud,
 no tracking, no ads - your books, articles, and writing stay on your device.
 
 Development happens alongside parenting three children, one of whom requires
 ongoing medical and care support. Donations help carve out reliable
-development time despite a packed schedule. They go directly into Bibliogon
+development time despite a packed schedule. They go directly into Adaptive Learner
 work, not personal expenses.
 
-If Bibliogon helps you and you would like to support its development,
+If Adaptive Learner helps you and you would like to support its development,
 donations are very welcome. Several options are available:
 
 ---
@@ -69,7 +69,7 @@ on the donor side - credit card works as well.
 
 ### What are donations used for?
 
-Bibliogon is developed by a single person, alongside full-time parenting
+Adaptive Learner is developed by a single person, alongside full-time parenting
 responsibilities including caregiving for a child with chronic medical
 needs. Donations cover:
 
@@ -85,7 +85,7 @@ infrastructure costs.
 ### Do I receive a donation receipt?
 
 You receive a payment confirmation through the respective platform. Since
-Bibliogon is not a registered non-profit, donations are not tax-deductible.
+Adaptive Learner is not a registered non-profit, donations are not tax-deductible.
 
 ### What is the difference between recurring and one-time donations?
 
@@ -101,7 +101,7 @@ platforms have account settings for managing subscriptions.
 ### Are donations anonymous?
 
 On all platforms, you can choose whether your name is displayed publicly.
-Bibliogon itself receives no donor information beyond what you actively choose
+Adaptive Learner itself receives no donor information beyond what you actively choose
 to share.
 
 ### Why no direct bank transfer?
@@ -128,4 +128,4 @@ reach out via email (see project profile).
 ---
 
 _Thank you for your support. Every donation, no matter how small, helps keep
-Bibliogon alive._
+Adaptive Learner alive._

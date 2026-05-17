@@ -2,11 +2,11 @@
 
 Mit einem Remote (GitHub, GitLab, Gitea, Codeberg, eigener Server) kannst du Commits vom lokalen Repository hochladen (Push) und von dort holen (Pull). So synchronisierst du dein Buch zwischen Geräten oder sicherst es extern.
 
-Bibliogon spricht standardmäßig Git über HTTPS mit einem Personal Access Token (PAT). SSH wird in **Git-Sicherung > SSH-Schlüssel** beschrieben.
+AdaptiveLearner spricht standardmäßig Git über HTTPS mit einem Personal Access Token (PAT). SSH wird in **Git-Sicherung > SSH-Schlüssel** beschrieben.
 
 ## Privates Repository erstellen
 
-Bevor du in Bibliogon konfigurierst, lege ein leeres Repository bei deinem Host an.
+Bevor du in AdaptiveLearner konfigurierst, lege ein leeres Repository bei deinem Host an.
 
 ### GitHub
 
@@ -31,7 +31,7 @@ Funktioniert wie GitHub/GitLab. Wichtig: leeres Repo, HTTPS-URL notieren.
 
 ## Personal Access Token erstellen
 
-Ein PAT ist ein Ersatz für dein Passwort. Er gibt Bibliogon nur die Rechte, die für Push/Pull nötig sind.
+Ein PAT ist ein Ersatz für dein Passwort. Er gibt AdaptiveLearner nur die Rechte, die für Push/Pull nötig sind.
 
 ### GitHub
 
@@ -48,7 +48,7 @@ Ein PAT ist ein Ersatz für dein Passwort. Er gibt Bibliogon nur die Rechte, die
 3. **Expiration** setzen.
 4. Token kopieren.
 
-## Remote in Bibliogon konfigurieren
+## Remote in AdaptiveLearner konfigurieren
 
 1. **Git-Sicherung** öffnen (Sidebar des Buchs).
 2. Bei noch nicht konfiguriertem Remote: **Remote konfigurieren**.
@@ -56,7 +56,7 @@ Ein PAT ist ein Ersatz für dein Passwort. Er gibt Bibliogon nur die Rechte, die
 4. **Personal Access Token**: den eben erstellten PAT.
 5. **Speichern**.
 
-Bibliogon verschlüsselt den PAT mit Fernet und speichert ihn lokal in `config/git_credentials/<Buch-ID>.enc`. Der Token wird nie in Git-Configs, Commits oder API-Antworten sichtbar.
+AdaptiveLearner verschlüsselt den PAT mit Fernet und speichert ihn lokal in `config/git_credentials/<Buch-ID>.enc`. Der Token wird nie in Git-Configs, Commits oder API-Antworten sichtbar.
 
 ## Push und Pull
 
@@ -98,10 +98,10 @@ Bei Datei-für-Datei-Konflikten pro Datei entweder **Lokal** oder **Remote** wä
 ## Fehlerbehebung
 
 **Authentifizierung fehlgeschlagen: PAT prüfen.**
-Der PAT ist falsch, abgelaufen oder hat keine Schreibrechte auf das Repo. Neuen PAT erstellen, in Bibliogon **Remote bearbeiten**, neuen Token eintragen.
+Der PAT ist falsch, abgelaufen oder hat keine Schreibrechte auf das Repo. Neuen PAT erstellen, in AdaptiveLearner **Remote bearbeiten**, neuen Token eintragen.
 
 **Push abgelehnt.**
 Remote hat Commits, die du nicht hast. Entweder **Mergen** (saubere Auflösung) oder **Lokal erzwingen** (wenn du sicher bist, dass Remote überschrieben werden darf).
 
 **Netzwerk-Fehler.**
-Keine Internetverbindung oder Host nicht erreichbar. Bibliogon arbeitet weiter lokal — commit wie gewohnt, push wenn die Verbindung zurück ist.
+Keine Internetverbindung oder Host nicht erreichbar. AdaptiveLearner arbeitet weiter lokal — commit wie gewohnt, push wenn die Verbindung zurück ist.

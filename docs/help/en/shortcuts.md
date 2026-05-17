@@ -1,6 +1,6 @@
 # Keyboard Shortcuts
 
-The following shortcuts are available throughout Bibliogon. On macOS, replace Ctrl with Cmd.
+The following shortcuts are available throughout AdaptiveLearner. On macOS, replace Ctrl with Cmd.
 
 ## App
 

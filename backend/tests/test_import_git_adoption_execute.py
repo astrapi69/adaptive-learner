@@ -29,7 +29,7 @@ def _isolate_uploads(tmp_path, monkeypatch):
     """Point UPLOADS_ROOT at per-test tmp so adoption writes don't
     pollute the real uploads dir. Also matches the pattern already
     used in test_git_import_adopter.py."""
-    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("ADAPTIVE_LEARNER_DATA_DIR", str(tmp_path))
 
 
 def _wbt_zip_with_git(tmp_dir: Path, *, remote: str | None = None) -> Path:
@@ -135,7 +135,7 @@ def test_git_adoption_adopt_without_remote_copies_git(
     book_id = result["book_id"]
     adopted = git_backup.repo_path(book_id) / ".git"
     assert adopted.is_dir()
-    # Remote stripped: Bibliogon's remote config absent.
+    # Remote stripped: AdaptiveLearner's remote config absent.
     repo = gitpy.Repo(git_backup.repo_path(book_id))
     assert "origin" not in [r.name for r in repo.remotes]
 
@@ -160,8 +160,8 @@ def test_git_adoption_adopt_with_remote_sets_up_remote(
     book_id = result["book_id"]
     adopted_dir = git_backup.repo_path(book_id)
     assert (adopted_dir / ".git").is_dir()
-    # Remote URL in native git config + Bibliogon's
-    # .bibliogon-git-config.yaml written via configure_remote.
+    # Remote URL in native git config + AdaptiveLearner's
+    # .adaptive-learner-git-config.yaml written via configure_remote.
     repo = gitpy.Repo(adopted_dir)
     urls = [next(r.urls) for r in repo.remotes if r.name == "origin"]
     assert urls == ["https://github.com/foo/bar.git"]

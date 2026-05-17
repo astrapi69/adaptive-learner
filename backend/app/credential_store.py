@@ -6,7 +6,7 @@ leaked Service Account can rack up unbounded costs, so we never
 store it in plain text on disk.
 
 Encryption uses Fernet (AES-128-CBC + HMAC-SHA256) with a key
-derived from the ``BIBLIOGON_CREDENTIALS_SECRET`` environment
+derived from the ``ADAPTIVE_LEARNER_CREDENTIALS_SECRET`` environment
 variable. The encrypted blob lives at a configurable path under
 ``config/plugins/audiobook/`` with ``chmod 600`` permissions.
 
@@ -43,10 +43,10 @@ def _get_cipher() -> Fernet:
     it deterministically from the user's secret string via SHA-256 so
     any passphrase length works.
     """
-    secret = os.environ.get("BIBLIOGON_CREDENTIALS_SECRET", "")
+    secret = os.environ.get("ADAPTIVE_LEARNER_CREDENTIALS_SECRET", "")
     if not secret:
         raise RuntimeError(
-            "BIBLIOGON_CREDENTIALS_SECRET is not set. "
+            "ADAPTIVE_LEARNER_CREDENTIALS_SECRET is not set. "
             "Add it to your .env or environment before configuring "
             "encrypted credentials."
         )
@@ -140,7 +140,7 @@ def load_decrypted(
         return cipher.decrypt(target.read_bytes())
     except InvalidToken as e:
         raise RuntimeError(
-            "Failed to decrypt credentials. Is BIBLIOGON_CREDENTIALS_SECRET "
+            "Failed to decrypt credentials. Is ADAPTIVE_LEARNER_CREDENTIALS_SECRET "
             "the same value that was used when the credentials were stored?"
         ) from e
 

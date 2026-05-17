@@ -44,7 +44,7 @@ def import_backup_archive(file: UploadFile, db: Session) -> dict[str, int]:
     before. Manifest ``version`` 1.0 and 2.0 are both accepted.
     """
     _validate_bgb_filename(file.filename)
-    tmp_dir = Path(tempfile.mkdtemp(prefix="bibliogon_restore_"))
+    tmp_dir = Path(tempfile.mkdtemp(prefix="adaptive_learner_restore_"))
     try:
         extracted = _extract_bgb(file, tmp_dir)
         _validate_backup_manifest(extracted)
@@ -91,7 +91,7 @@ def _validate_bgb_filename(filename: str | None) -> None:
             "Das ist eine ZIP-Datei. Für Projekt-Import nutze den 'Import'-Button. "
             "Für Backup-Restore wird eine .bgb-Datei erwartet (erstellt über 'Backup')."
         )
-    raise ValidationError("Datei muss eine .bgb-Datei sein (Bibliogon Backup)")
+    raise ValidationError("Datei muss eine .bgb-Datei sein (AdaptiveLearner Backup)")
 
 
 def _extract_bgb(file: UploadFile, tmp_dir: Path) -> Path:
@@ -113,9 +113,9 @@ def _validate_backup_manifest(extracted: Path) -> None:
     if not manifest:
         return
     manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
-    if manifest_data.get("format") != "bibliogon-backup":
+    if manifest_data.get("format") != "adaptive-learner-backup":
         raise ValidationError(
-            "Ungültige Backup-Datei. Die Datei hat kein gültiges Bibliogon-Backup-Format."
+            "Ungültige Backup-Datei. Die Datei hat kein gültiges AdaptiveLearner-Backup-Format."
         )
     version = str(manifest_data.get("version", "1.0"))
     if version not in _KNOWN_MANIFEST_VERSIONS:
@@ -126,7 +126,7 @@ def _validate_backup_manifest(extracted: Path) -> None:
         logger.warning(
             "Backup manifest version %r is newer than this build "
             "supports (%s). Restoring known segments only; please "
-            "upgrade Bibliogon to read the full archive.",
+            "upgrade AdaptiveLearner to read the full archive.",
             version,
             sorted(_KNOWN_MANIFEST_VERSIONS),
         )

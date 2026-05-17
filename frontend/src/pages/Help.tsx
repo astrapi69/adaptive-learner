@@ -111,7 +111,7 @@ export default function Help() {
 
                 <Tabs.Content value="about">
                     <div className={styles.section}>
-                        <h2 className={styles.sectionTitle}>{t("ui.help.about_title", "Über Bibliogon")}</h2>
+                        <h2 className={styles.sectionTitle}>{t("ui.help.about_title", "Über AdaptiveLearner")}</h2>
                         <div className={styles.card}>
                             <p><strong>{about.name}</strong></p>
                             <p style={{color: "var(--text-muted)", marginTop: 8}}>{about.description}</p>

@@ -1,6 +1,6 @@
-"""Structured logging configuration for Bibliogon.
+"""Structured logging configuration for AdaptiveLearner.
 
-JSON format in production (BIBLIOGON_DEBUG=false), human-readable in development.
+JSON format in production (ADAPTIVE_LEARNER_DEBUG=false), human-readable in development.
 """
 
 import json
@@ -30,12 +30,12 @@ class JsonFormatter(logging.Formatter):
 
 
 def setup_logging() -> None:
-    """Configure logging based on BIBLIOGON_DEBUG environment variable.
+    """Configure logging based on ADAPTIVE_LEARNER_DEBUG environment variable.
 
     - DEBUG=true: human-readable format with DEBUG level
     - DEBUG=false: JSON format with INFO level
     """
-    debug = os.getenv("BIBLIOGON_DEBUG", "true").lower() in ("true", "1", "yes")
+    debug = os.getenv("ADAPTIVE_LEARNER_DEBUG", "true").lower() in ("true", "1", "yes")
 
     root = logging.getLogger()
     root.handlers.clear()

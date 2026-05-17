@@ -1,7 +1,7 @@
 # Git-Historie aus einem importierten ZIP übernehmen
 
 Wenn du ein write-book-template-ZIP importierst, das ein
-`.git/`-Verzeichnis enthält, kann Bibliogon dessen gesamte
+`.git/`-Verzeichnis enthält, kann AdaptiveLearner dessen gesamte
 Commit-Historie in das Git-Backup des Buches übernehmen. Drei
 Modi im Schritt 3 des Import-Assistenten:
 
@@ -45,9 +45,9 @@ Das übernommene Buch hat `uploads/<book_id>/.git/` auf der
 Festplatte. Alle Git-Backup-Endpoints (`commit`, `push`,
 `pull`, `status`, `log`, `merge`) funktionieren sofort.
 
-**Wichtig**: Dein erster Bibliogon-Commit nach der
+**Wichtig**: Dein erster AdaptiveLearner-Commit nach der
 Uebernahme überschreibt die übernommenen Working-Tree-
-Dateien. Bibliogon schreibt `manuscript/*.json` (kanonische
+Dateien. AdaptiveLearner schreibt `manuscript/*.json` (kanonische
 TipTap-Struktur) und `config/metadata.yaml`. Die
 übernommenen Commits bleiben in der Historie unverändert
 erhalten; nur der Working-Tree ändert sich.
@@ -69,13 +69,13 @@ vorhandene Repo zuerst über den Git-Sicherungs-Dialog.
 
 ## Welchen Modus wann
 
-- **Neu anfangen**: die meisten Importe. Bibliogon trackt
+- **Neu anfangen**: die meisten Importe. AdaptiveLearner trackt
   das Buch ab jetzt neu im Git-Backup.
 - **Nur Historie übernehmen**: du willst die Historie
   behalten, aber die Remote der Quelle ist privat, tot oder
   du wirst sie selbst neu anbinden.
 - **Historie + Remote übernehmen**: du importierst ein
-  Buch direkt von GitHub/GitLab und willst, dass Bibliogon
+  Buch direkt von GitHub/GitLab und willst, dass AdaptiveLearner
   weiterhin dorthin pusht. Du brauchst einen PAT
   (Neueingabe im Git-Sicherungs-Dialog).
 

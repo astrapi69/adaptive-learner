@@ -1,7 +1,7 @@
 # Test Session: 2026-04-28 — Session 2: smoke findings (partial)
 
 **Tester:** Aster (manual smoke) + Claude (CC, fixes)
-**Bibliogon version:** v0.24.0 (commit `2b7c577` at session start)
+**AdaptiveLearner version:** v0.24.0 (commit `2b7c577` at session start)
 **Environment:** Linux 6.8.0-110-lowlatency, Chromium-class browser, DE locale
 **Date:** 2026-04-28
 **Duration:** ~30 min (partial — Session 2 continues at next slot)

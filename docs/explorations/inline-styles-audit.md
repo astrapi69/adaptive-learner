@@ -235,7 +235,7 @@ remainders are acceptable end-state.
 ### Rejected: Tailwind
 
 - Would force re-engineering the 6-theme system. Tailwind's `dark:`
-  prefix maps to a single `dark` class; Bibliogon's `[data-app-theme=""][data-theme="dark"]` attribute combo cannot
+  prefix maps to a single `dark` class; AdaptiveLearner's `[data-app-theme=""][data-theme="dark"]` attribute combo cannot
   be replicated without a custom Tailwind plugin.
 - Adds a new build dependency + JIT compiler in the dev path.
 - Tailwind's utility-first model conflicts with the project's

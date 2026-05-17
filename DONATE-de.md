@@ -1,16 +1,16 @@
-# Bibliogon unterstuetzen
+# Adaptive Learner unterstuetzen
 
-Bibliogon ist ein Open-Source-Projekt, das von einer einzelnen Person
+Adaptive Learner ist ein Open-Source-Projekt, das von einer einzelnen Person
 entwickelt wird. Keine Cloud, kein Tracking, keine Werbung - deine
 Buecher, Artikel und Texte bleiben auf deinem Geraet.
 
 Die Entwicklung findet neben der Erziehung von drei Kindern statt, eines
 davon mit dauerhaftem medizinischem und pflegerischem Betreuungsbedarf.
 Spenden helfen dabei, trotz dichter Wochen verlaessliche Entwicklungszeit
-zu sichern. Sie fliessen direkt in die Arbeit an Bibliogon, nicht in
+zu sichern. Sie fliessen direkt in die Arbeit an Adaptive Learner, nicht in
 private Ausgaben.
 
-Wenn Bibliogon dir hilft und du die Entwicklung unterstuetzen moechtest,
+Wenn Adaptive Learner dir hilft und du die Entwicklung unterstuetzen moechtest,
 sind Spenden sehr willkommen. Mehrere Wege stehen zur Verfuegung:
 
 ---
@@ -72,7 +72,7 @@ kein PayPal-Account erforderlich, Kreditkarte funktioniert ebenfalls.
 
 ### Wofuer werden Spenden verwendet?
 
-Bibliogon wird von einer einzelnen Person entwickelt, parallel zu
+Adaptive Learner wird von einer einzelnen Person entwickelt, parallel zu
 Vollzeit-Verantwortung in der Familie inklusive Pflege fuer ein Kind
 mit chronischen medizinischen Anforderungen. Spenden decken:
 
@@ -88,7 +88,7 @@ helfen bei spezifischen Features und Infrastruktur-Kosten.
 ### Bekomme ich eine Spendenquittung?
 
 Ueber die jeweilige Plattform erhaelst du eine Zahlungsbestaetigung. Da
-Bibliogon kein eingetragener Verein ist, sind Spenden nicht steuerlich
+Adaptive Learner kein eingetragener Verein ist, sind Spenden nicht steuerlich
 absetzbar.
 
 ### Was ist der Unterschied zwischen wiederkehrenden und einmaligen Spenden?
@@ -107,7 +107,7 @@ Abonnements.
 ### Sind Spenden anonym?
 
 Auf allen Plattformen kannst du waehlen, ob dein Name oeffentlich
-angezeigt wird. Bibliogon selbst erhaelt keine Spenderdaten ueber das
+angezeigt wird. Adaptive Learner selbst erhaelt keine Spenderdaten ueber das
 hinaus, was du aktiv teilst.
 
 ### Warum keine direkte Bankueberweisung?
@@ -136,4 +136,4 @@ oder kontaktiere mich per E-Mail (siehe Projekt-Profil).
 ---
 
 _Danke fuer deine Unterstuetzung. Jede Spende, egal wie klein, haelft
-Bibliogon am Leben._
+Adaptive Learner am Leben._

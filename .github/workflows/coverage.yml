@@ -62,24 +62,24 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - plugin: bibliogon-plugin-audiobook
-            package: bibliogon_audiobook
-          - plugin: bibliogon-plugin-export
-            package: bibliogon_export
-          - plugin: bibliogon-plugin-getstarted
-            package: bibliogon_getstarted
-          - plugin: bibliogon-plugin-grammar
-            package: bibliogon_grammar
-          - plugin: bibliogon-plugin-help
-            package: bibliogon_help
-          - plugin: bibliogon-plugin-kdp
-            package: bibliogon_kdp
-          - plugin: bibliogon-plugin-kinderbuch
-            package: bibliogon_kinderbuch
-          - plugin: bibliogon-plugin-ms-tools
-            package: bibliogon_ms_tools
-          - plugin: bibliogon-plugin-translation
-            package: bibliogon_translation
+          - plugin: adaptive-learner-plugin-audiobook
+            package: adaptive_learner_audiobook
+          - plugin: adaptive-learner-plugin-export
+            package: adaptive_learner_export
+          - plugin: adaptive-learner-plugin-getstarted
+            package: adaptive_learner_getstarted
+          - plugin: adaptive-learner-plugin-grammar
+            package: adaptive_learner_grammar
+          - plugin: adaptive-learner-plugin-help
+            package: adaptive_learner_help
+          - plugin: adaptive-learner-plugin-kdp
+            package: adaptive_learner_kdp
+          - plugin: adaptive-learner-plugin-kinderbuch
+            package: adaptive_learner_kinderbuch
+          - plugin: adaptive-learner-plugin-ms-tools
+            package: adaptive_learner_ms_tools
+          - plugin: adaptive-learner-plugin-translation
+            package: adaptive_learner_translation
     steps:
       - uses: actions/checkout@v5
 

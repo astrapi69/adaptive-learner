@@ -46,11 +46,11 @@ describe("getDonationsConfig", () => {
     const config = getDonationsConfig({
       donations: {
         enabled: true,
-        landing_page_url: "https://bibliogon.app/support",
+        landing_page_url: "https://adaptive_learner.app/support",
         channels: [],
       },
     });
-    expect(config!.landing_page_url).toBe("https://bibliogon.app/support");
+    expect(config!.landing_page_url).toBe("https://adaptive_learner.app/support");
   });
 
   it("normalises empty-string landing_page_url to null", () => {
@@ -111,7 +111,7 @@ describe("SupportSection rendering", () => {
       <SupportSection
         config={{
           enabled: true,
-          landing_page_url: "https://bibliogon.app/support",
+          landing_page_url: "https://adaptive_learner.app/support",
           channels,
         }}
       />,

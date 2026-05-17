@@ -28,7 +28,7 @@ On a conflict between CLAUDE.md and the rules, the rules win.
 
 - **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry
 - **Frontend:** React 18+, TypeScript (strict), TipTap (editor), Vite, Radix UI, @dnd-kit, Lucide, react-toastify
-- **Plugins:** pluginforge ^0.5.0 (PyPI), entry points under group `adaptive_learner.plugins` (rename pending, currently `bibliogon.plugins` in pyproject)
+- **Plugins:** pluginforge ^0.5.0 (PyPI), entry points under group `adaptive_learner.plugins`
 - **Launcher:** PyInstaller-based cross-OS desktop launcher (`launcher/`); see Launcher section below
 - **Testing:** pytest, Vitest, Playwright, mutmut, Stryker
 - **Tooling:** Poetry, npm, Docker, Make, ruff, ESLint, Prettier, pre-commit
@@ -76,7 +76,7 @@ The inherited model covers a book-authoring workflow. Treat it as a working refe
 - **Asset:** id, book_id, filename, asset_type, path
 - **Settings:** layered config (project YAML < user override < env-vars)
 
-ChapterTypes, BookTemplates, Publications, and other Bibliogon-specific concepts are present in the code as further EXAMPLE-DOMAIN reference.
+ChapterTypes, BookTemplates, Publications, and other inherited domain concepts are present in the code as further EXAMPLE-DOMAIN reference.
 
 ## Plugins
 
@@ -88,10 +88,10 @@ See `plugins/README.md` for the minimal plugin layout.
 
 Cross-OS desktop launcher under `launcher/`, packaged with PyInstaller. Produces a single-file installer-launcher binary per OS that bootstraps the backend, opens the frontend in the user's browser, and manages auto-update + uninstall.
 
-- **Spec:** `launcher/bibliogon-launcher.spec` (PyInstaller; renamed in Phase 2d)
-- **Python package:** `launcher/bibliogon_launcher/` (renamed in Phase 2d)
+- **Spec:** `launcher/adaptive-learner-launcher.spec` (PyInstaller; renamed in Phase 2d)
+- **Python package:** `launcher/adaptive_learner_launcher/` (renamed in Phase 2d)
 - **Per-OS build pipelines:** `.github/workflows/launcher-{linux,macos,windows}.yml` build artifacts on release tags
-- **Embedded version:** injected at PyInstaller build time from `backend/pyproject.toml` via the spec (no hardcoded literal — see Bibliogon "Single source of truth for version pins" pattern in `.claude/rules/lessons-learned.md`)
+- **Embedded version:** injected at PyInstaller build time from `backend/pyproject.toml` via the spec (no hardcoded literal — see the "Single source of truth for version pins" pattern in `.claude/rules/lessons-learned.md`)
 - **User-facing install scripts:** `install.sh` (Linux), `install.command` (macOS), `install.cmd` + `install.ps1` (Windows) — generated from `install.sh.template` + `install.ps1.template` at release time
 
 The launcher is critical distribution infrastructure that carries over to adaptive-learner unchanged in shape; only branding renames in Phase 2c/2d.

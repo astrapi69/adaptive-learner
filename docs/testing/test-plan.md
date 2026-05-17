@@ -1,4 +1,4 @@
-# Bibliogon Test Plan
+# AdaptiveLearner Test Plan
 
 Strategy document for the v0.24.0 systematic test phase. Read once
 to understand the approach; consult [test-result-template.md](test-result-template.md)
@@ -10,7 +10,7 @@ Last updated: 2026-04-28.
 
 ## Purpose
 
-Bibliogon ships features faster than a solo developer can manually
+AdaptiveLearner ships features faster than a solo developer can manually
 re-verify every release. This plan defines a repeatable approach
 that:
 
@@ -51,8 +51,8 @@ Companion docs:
    form components, utility functions. Run via `make test-frontend`.
 
 5. **Mutation testing (mutmut).** Test quality verification on
-   selected modules: `app/services/`, `plugins/bibliogon-plugin-export/`,
-   `plugins/bibliogon-plugin-ms-tools/`. Run nightly or pre-release
+   selected modules: `app/services/`, `plugins/adaptive-learner-plugin-export/`,
+   `plugins/adaptive-learner-plugin-ms-tools/`. Run nightly or pre-release
    via `make mutmut-backend` / `make mutmut-export` / `make mutmut-ms-tools`.
 
 ## Test types out of scope

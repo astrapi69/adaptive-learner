@@ -3,10 +3,10 @@
 ## Context for new chat session
 
 This is the starting prompt for a new chat session focused on
-designing the Children's Book Plugin for Bibliogon. The preceding
+designing the Children's Book Plugin for AdaptiveLearner. The preceding
 work context:
 
-- Bibliogon is at v0.16.0 with complete audiobook infrastructure
+- AdaptiveLearner is at v0.16.0 with complete audiobook infrastructure
 - Phase 2 active, multiple themes in progress
 - Plugin architecture exists (plugin-audiobook, plugin-export,
   plugin-kdp, plugin-kinderbuch stub, etc.)
@@ -35,7 +35,7 @@ work context:
 - 8 x 10 inches: classic portrait picture book
 - 5.5 x 8.5 or 6 x 9 inches: early readers, chapter books
 
-**Recommendation for Bibliogon first version: 8.5 x 8.5 Paperback
+**Recommendation for AdaptiveLearner first version: 8.5 x 8.5 Paperback
 only.** Extension to other sizes later.
 
 ### Print specifications
@@ -153,7 +153,7 @@ Per YAGNI, explicitly deferred:
 - More than 2 layouts (can add later)
 - Multiple image per page
 - Interactive Kindle features
-- Drawing tools within Bibliogon (user uploads prepared images)
+- Drawing tools within AdaptiveLearner (user uploads prepared images)
 - Hardcover variants (Paperback only for first version)
 - Trim sizes other than 8.5 x 8.5 (for now)
 - Bilingual books (future consideration)
@@ -165,7 +165,7 @@ Per YAGNI, explicitly deferred:
 The exploration document must address these before implementation
 starts:
 
-1. Image upload workflow: where in Bibliogon are book-level images
+1. Image upload workflow: where in AdaptiveLearner are book-level images
    managed currently? The plugin should use existing asset
    infrastructure, not invent new.
 
@@ -181,7 +181,7 @@ starts:
 
 5. AI illustration workflow: does plugin-kinderbuch integrate with
    existing AI capabilities? If user has configured an image
-   generation provider in Bibliogon, can they generate illustrations
+   generation provider in AdaptiveLearner, can they generate illustrations
    directly in the children's book editor?
 
    For MVP: no, user uploads prepared images. AI integration is
@@ -209,7 +209,7 @@ this document instead of re-deriving architecture.
 - Written in English (project convention for internal docs)
 - Concrete and decision-oriented, not speculative
 - References KDP specifications with inline sources where applicable
-- Cross-references existing Bibliogon patterns (plugin system,
+- Cross-references existing AdaptiveLearner patterns (plugin system,
   asset management, export pipeline)
 
 ## Pre-audit step
@@ -217,7 +217,7 @@ this document instead of re-deriving architecture.
 Before writing the document, verify:
 - Current state of plugin-kinderbuch (is it a stub or already has
   some code?)
-- Existing asset/image management in Bibliogon (how is it handled
+- Existing asset/image management in AdaptiveLearner (how is it handled
   today?)
 - Current export pipeline entry points (where does Pandoc get
   called, where would plugin-kinderbuch hook in?)

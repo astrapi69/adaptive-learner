@@ -36,8 +36,8 @@ export function AiAssistantSettings({config, onSave, saving}: {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [config]);
 
-    // True when secrets are managed via ~/.config/bibliogon/secrets.yaml
-    // or BIBLIOGON_AI_API_KEY env-var. Backend strips api_key from
+    // True when secrets are managed via ~/.config/adaptive_learner/secrets.yaml
+    // or ADAPTIVE_LEARNER_AI_API_KEY env-var. Backend strips api_key from
     // PATCH bodies in this case as defense-in-depth; we drop it here
     // so the frontend never sends it in the first place.
     const secretsExternal = Boolean(
@@ -156,7 +156,7 @@ export function AiAssistantSettings({config, onSave, saving}: {
                                 }}>
                                     {t(
                                         "ui.settings.ai_api_key_external_note",
-                                        "API-Schlüssel wird aus externer Konfiguration gelesen (~/.config/bibliogon/secrets.yaml oder Umgebungsvariable BIBLIOGON_AI_API_KEY). Editiere die Datei direkt oder setze die Umgebungsvariable, um den Schlüssel zu ändern.",
+                                        "API-Schlüssel wird aus externer Konfiguration gelesen (~/.config/adaptive_learner/secrets.yaml oder Umgebungsvariable ADAPTIVE_LEARNER_AI_API_KEY). Editiere die Datei direkt oder setze die Umgebungsvariable, um den Schlüssel zu ändern.",
                                     )}
                                 </div>
                             </div>

@@ -1,4 +1,4 @@
-"""Smoke tests for Bibliogon API."""
+"""Smoke tests for AdaptiveLearner API."""
 from fastapi.testclient import TestClient
 
 from app.main import app

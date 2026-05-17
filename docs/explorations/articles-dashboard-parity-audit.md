@@ -81,7 +81,7 @@ should be its own dedicated work.
 
 | # | Element | Books | Articles | Severity | Cluster |
 |---|---------|-------|----------|----------|---------|
-| H-1 | Brand logo + name | Yes (`BookOpen` + "Bibliogon") | No (Home button + "Artikel" heading) | Medium | B |
+| H-1 | Brand logo + name | Yes (`BookOpen` + "AdaptiveLearner") | No (Home button + "Artikel" heading) | Medium | B |
 | H-2 | ThemeToggle (light/dark) | Yes | **No** | **High** | B |
 | H-3 | Settings icon-button | Yes | No | Medium | B |
 | H-4 | Help / `?` icon-button | Yes | No | Medium | B |

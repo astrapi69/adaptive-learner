@@ -1,12 +1,12 @@
-# Uninstalling Bibliogon
+# Uninstalling AdaptiveLearner
 
-There are two ways to uninstall Bibliogon, depending on how you installed it.
+There are two ways to uninstall AdaptiveLearner, depending on how you installed it.
 
 ## Path A: Launcher (all platforms)
 
-If you installed Bibliogon using one of the launchers ([Windows](launcher-windows.md), [macOS](launcher-macos.md), or [Linux](launcher-linux.md)):
+If you installed AdaptiveLearner using one of the launchers ([Windows](launcher-windows.md), [macOS](launcher-macos.md), or [Linux](launcher-linux.md)):
 
-1. Open the Bibliogon launcher.
+1. Open the AdaptiveLearner launcher.
 2. Click **Uninstall**.
 3. Confirm when prompted.
 
@@ -21,7 +21,7 @@ To also remove Docker volumes and images, run the commands in the "What gets rem
 If you installed via `install.sh` or want a complete removal including Docker resources:
 
 ```bash
-cd ~/bibliogon
+cd ~/adaptive_learner
 bash uninstall.sh
 ```
 
@@ -34,21 +34,21 @@ The uninstall script removes:
 | Component | Location | Command |
 |-----------|----------|---------|
 | Docker containers | Running stack | `docker compose -f docker-compose.prod.yml down` |
-| Docker volumes | Book data, database | `docker volume ls --filter name=bibliogon -q \| xargs docker volume rm` |
-| Docker images | Backend + frontend images | `docker images --filter reference='*bibliogon*' -q \| xargs docker image rm` |
+| Docker volumes | Book data, database | `docker volume ls --filter name=adaptive_learner -q \| xargs docker volume rm` |
+| Docker images | Backend + frontend images | `docker images --filter reference='*adaptive_learner*' -q \| xargs docker image rm` |
 | Launcher manifest | Platform config dir | See below |
-| Installation directory | `~/bibliogon` (default) | `rm -rf ~/bibliogon` |
+| Installation directory | `~/adaptive_learner` (default) | `rm -rf ~/adaptive_learner` |
 
 Launcher manifest locations:
-- Windows: `%APPDATA%\bibliogon\install.json`
-- macOS: `~/Library/Application Support/bibliogon/install.json`
-- Linux: `~/.config/bibliogon/install.json`
+- Windows: `%APPDATA%\adaptive_learner\install.json`
+- macOS: `~/Library/Application Support/adaptive_learner/install.json`
+- Linux: `~/.config/adaptive_learner/install.json`
 
 ## Keeping your data
 
 If you want to keep your books before uninstalling:
 
-1. Open Bibliogon in the browser
+1. Open AdaptiveLearner in the browser
 2. Go to the Dashboard
 3. Use **Backup** to export each book as a `.bgb` file
 4. Save the `.bgb` files somewhere safe

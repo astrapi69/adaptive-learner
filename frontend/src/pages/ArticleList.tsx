@@ -608,7 +608,7 @@ export default function ArticleList() {
                         data-testid="article-list-dashboard"
                     >
                         <BookOpen size={28} strokeWidth={1.5} />
-                        <h1 className={layout.logoText}>Bibliogon</h1>
+                        <h1 className={layout.logoText}>AdaptiveLearner</h1>
                     </div>
                     <div className={layout.headerActions}>
                         <button

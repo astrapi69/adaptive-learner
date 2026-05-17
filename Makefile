@@ -25,7 +25,7 @@ dev: ## Start backend + frontend (backend first, then frontend)
 			echo "         Run 'make fix-watchers' for the persistent fix."; \
 		fi; \
 	fi
-	@echo "Starting Bibliogon..."
+	@echo "Starting AdaptiveLearner..."
 	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run uvicorn app.main:app --reload --port 8000 &
 	@echo "Waiting for backend..."
 	@for i in 1 2 3 4 5 6 7 8 9 10; do \
@@ -35,11 +35,11 @@ dev: ## Start backend + frontend (backend first, then frontend)
 	@echo "Backend ready. Starting frontend..."
 	@cd frontend && npm run dev
 
-DEV_LOG_DIR ?= /tmp/bibliogon-logs
+DEV_LOG_DIR ?= /tmp/adaptive-learner-logs
 
 dev-bg: ## Start in background, logs to $(DEV_LOG_DIR) (stop with: make dev-down)
 	@mkdir -p $(DEV_LOG_DIR)
-	@echo "Starting Bibliogon (background)..."
+	@echo "Starting AdaptiveLearner (background)..."
 	@echo "  Backend  log: $(DEV_LOG_DIR)/backend.log"
 	@echo "  Frontend log: $(DEV_LOG_DIR)/frontend.log"
 	@# `setsid` puts each child in its own session so it survives the
@@ -97,13 +97,13 @@ stop: dev-down ## Alias for dev-down (stop dev servers)
 restart: dev-down dev ## Stop and restart dev servers (use after a hung session)
 
 fix-watchers: ## Persist Linux inotify limits for vite dev (sudo required, runs once)
-	@echo "Bibliogon: persist inotify limits for vite dev mode."
+	@echo "AdaptiveLearner: persist inotify limits for vite dev mode."
 	@echo "Sudo prompt is for the sysctl write to /etc/sysctl.d/."
 	@echo ""
-	@echo "fs.inotify.max_user_watches=524288" | sudo tee /etc/sysctl.d/99-bibliogon-watchers.conf > /dev/null
-	@echo "fs.inotify.max_user_instances=512" | sudo tee -a /etc/sysctl.d/99-bibliogon-watchers.conf > /dev/null
+	@echo "fs.inotify.max_user_watches=524288" | sudo tee /etc/sysctl.d/99-adaptive-learner-watchers.conf > /dev/null
+	@echo "fs.inotify.max_user_instances=512" | sudo tee -a /etc/sysctl.d/99-adaptive-learner-watchers.conf > /dev/null
 	@sudo sysctl --system > /dev/null
-	@echo "Wrote /etc/sysctl.d/99-bibliogon-watchers.conf and applied:"
+	@echo "Wrote /etc/sysctl.d/99-adaptive-learner-watchers.conf and applied:"
 	@echo "  fs.inotify.max_user_watches    = $$(cat /proc/sys/fs/inotify/max_user_watches)"
 	@echo "  fs.inotify.max_user_instances  = $$(cat /proc/sys/fs/inotify/max_user_instances)"
 	@echo "Persistent across reboots."
@@ -128,7 +128,7 @@ install-e2e:
 	cd e2e && npm install && npx playwright install chromium
 
 install-plugins:
-	@for dir in plugins/bibliogon-plugin-*; do \
+	@for dir in plugins/adaptive-learner-plugin-*; do \
 		if [ -f "$$dir/pyproject.toml" ]; then \
 			echo "Installing $$dir..."; \
 			cd "$$dir" && poetry install && cd ../..; \
@@ -156,52 +156,52 @@ test-plugins: test-plugin-export test-plugin-grammar test-plugin-kdp test-plugin
 test-plugin-export: ## Run export plugin tests
 	@echo ""
 	@echo "=== Export Plugin Tests ==="
-	cd plugins/bibliogon-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 test-plugin-grammar: ## Run grammar plugin tests
 	@echo ""
 	@echo "=== Grammar Plugin Tests ==="
-	cd plugins/bibliogon-plugin-grammar && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-grammar && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 test-plugin-kdp: ## Run KDP plugin tests
 	@echo ""
 	@echo "=== KDP Plugin Tests ==="
-	cd plugins/bibliogon-plugin-kdp && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-kdp && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 test-plugin-kinderbuch: ## Run kinderbuch plugin tests
 	@echo ""
 	@echo "=== Kinderbuch Plugin Tests ==="
-	cd plugins/bibliogon-plugin-kinderbuch && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-kinderbuch && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 test-plugin-ms-tools: ## Run manuscript tools plugin tests
 	@echo ""
 	@echo "=== Manuscript Tools Plugin Tests ==="
-	cd plugins/bibliogon-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 test-plugin-translation: ## Run translation plugin tests
 	@echo ""
 	@echo "=== Translation Plugin Tests ==="
-	cd plugins/bibliogon-plugin-translation && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-translation && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 test-plugin-audiobook: ## Run audiobook plugin tests
 	@echo ""
 	@echo "=== Audiobook Plugin Tests ==="
-	cd plugins/bibliogon-plugin-audiobook && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-audiobook && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 test-plugin-help: ## Run help plugin tests
 	@echo ""
 	@echo "=== Help Plugin Tests ==="
-	cd plugins/bibliogon-plugin-help && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-help && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 test-plugin-getstarted: ## Run getstarted plugin tests
 	@echo ""
 	@echo "=== Getstarted Plugin Tests ==="
-	cd plugins/bibliogon-plugin-getstarted && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-getstarted && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 test-plugin-git-sync: ## Run git-sync plugin tests (PGS-01)
 	@echo ""
 	@echo "=== Git-Sync Plugin Tests ==="
-	cd plugins/bibliogon-plugin-git-sync && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+	cd plugins/adaptive-learner-plugin-git-sync && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
 # --- Coverage (heavy, opt-in; CI runs this on every push - see .github/workflows/coverage.yml) ---
 
@@ -224,47 +224,47 @@ test-coverage-plugins: test-coverage-plugin-audiobook test-coverage-plugin-expor
 test-coverage-plugin-audiobook: ## Audiobook plugin coverage
 	@echo ""
 	@echo "=== Audiobook Plugin Coverage ==="
-	cd plugins/bibliogon-plugin-audiobook && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_audiobook --cov-report=html --cov-report=term
+	cd plugins/adaptive-learner-plugin-audiobook && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_audiobook --cov-report=html --cov-report=term
 
 test-coverage-plugin-export: ## Export plugin coverage
 	@echo ""
 	@echo "=== Export Plugin Coverage ==="
-	cd plugins/bibliogon-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_export --cov-report=html --cov-report=term
+	cd plugins/adaptive-learner-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_export --cov-report=html --cov-report=term
 
 test-coverage-plugin-grammar: ## Grammar plugin coverage
 	@echo ""
 	@echo "=== Grammar Plugin Coverage ==="
-	cd plugins/bibliogon-plugin-grammar && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_grammar --cov-report=html --cov-report=term
+	cd plugins/adaptive-learner-plugin-grammar && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_grammar --cov-report=html --cov-report=term
 
 test-coverage-plugin-kdp: ## KDP plugin coverage
 	@echo ""
 	@echo "=== KDP Plugin Coverage ==="
-	cd plugins/bibliogon-plugin-kdp && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_kdp --cov-report=html --cov-report=term
+	cd plugins/adaptive-learner-plugin-kdp && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_kdp --cov-report=html --cov-report=term
 
 test-coverage-plugin-kinderbuch: ## Kinderbuch plugin coverage
 	@echo ""
 	@echo "=== Kinderbuch Plugin Coverage ==="
-	cd plugins/bibliogon-plugin-kinderbuch && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_kinderbuch --cov-report=html --cov-report=term
+	cd plugins/adaptive-learner-plugin-kinderbuch && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_kinderbuch --cov-report=html --cov-report=term
 
 test-coverage-plugin-ms-tools: ## ms-tools plugin coverage
 	@echo ""
 	@echo "=== ms-tools Plugin Coverage ==="
-	cd plugins/bibliogon-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_ms_tools --cov-report=html --cov-report=term
+	cd plugins/adaptive-learner-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_ms_tools --cov-report=html --cov-report=term
 
 test-coverage-plugin-translation: ## Translation plugin coverage
 	@echo ""
 	@echo "=== Translation Plugin Coverage ==="
-	cd plugins/bibliogon-plugin-translation && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_translation --cov-report=html --cov-report=term
+	cd plugins/adaptive-learner-plugin-translation && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_translation --cov-report=html --cov-report=term
 
 test-coverage-plugin-help: ## Help plugin coverage
 	@echo ""
 	@echo "=== Help Plugin Coverage ==="
-	cd plugins/bibliogon-plugin-help && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_help --cov-report=html --cov-report=term
+	cd plugins/adaptive-learner-plugin-help && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_help --cov-report=html --cov-report=term
 
 test-coverage-plugin-getstarted: ## Getstarted plugin coverage
 	@echo ""
 	@echo "=== Getstarted Plugin Coverage ==="
-	cd plugins/bibliogon-plugin-getstarted && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=bibliogon_getstarted --cov-report=html --cov-report=term
+	cd plugins/adaptive-learner-plugin-getstarted && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_getstarted --cov-report=html --cov-report=term
 
 # --- Mutation Testing ---
 
@@ -276,17 +276,17 @@ mutmut-backend: ## Run mutation testing on backend
 mutmut-export: ## Run mutation testing on export plugin
 	@echo ""
 	@echo "=== Mutation Testing: Export Plugin ==="
-	cd plugins/bibliogon-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
+	cd plugins/adaptive-learner-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
 
 mutmut-ms-tools: ## Run mutation testing on ms-tools plugin
 	@echo ""
 	@echo "=== Mutation Testing: MS-Tools Plugin ==="
-	cd plugins/bibliogon-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
+	cd plugins/adaptive-learner-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
 
 mutmut-results: ## Show mutation testing results
 	@echo "=== Backend ===" && cd backend && poetry run mutmut results 2>/dev/null || true
-	@echo "=== Export ===" && cd plugins/bibliogon-plugin-export && poetry run mutmut results 2>/dev/null || true
-	@echo "=== MS-Tools ===" && cd plugins/bibliogon-plugin-ms-tools && poetry run mutmut results 2>/dev/null || true
+	@echo "=== Export ===" && cd plugins/adaptive-learner-plugin-export && poetry run mutmut results 2>/dev/null || true
+	@echo "=== MS-Tools ===" && cd plugins/adaptive-learner-plugin-ms-tools && poetry run mutmut results 2>/dev/null || true
 
 # --- Blocker Status ---
 
@@ -430,16 +430,16 @@ verify-docs-discipline: verify-mkdocs-nav check-mkdocs-orphans ## All docs-disci
 # bumps in every plugin's pyproject. Catches the divergence before push.
 
 lock-all-plugins: ## Re-lock every plugin's poetry.lock (after a shared-dep pin bump)
-	@for d in plugins/bibliogon-plugin-*/; do \
+	@for d in plugins/adaptive-learner-plugin-*/; do \
 		echo ""; echo "=== $$(basename $$d) ==="; \
 		cd "$$d" && poetry lock && cd - >/dev/null; \
 	done
 	@echo ""
-	@echo "Re-locked $$(ls -d plugins/bibliogon-plugin-*/ | wc -l) plugin(s)."
+	@echo "Re-locked $$(ls -d plugins/adaptive-learner-plugin-*/ | wc -l) plugin(s)."
 
 verify-plugin-locks: ## Detect drift between each plugin's pyproject.toml and its poetry.lock
 	@drift=0; \
-	for d in plugins/bibliogon-plugin-*/; do \
+	for d in plugins/adaptive-learner-plugin-*/; do \
 		name=$$(basename $$d); \
 		out=$$(cd "$$d" && poetry install --dry-run --no-interaction --no-ansi 2>&1 | head -3); \
 		if echo "$$out" | grep -q "changed significantly"; then \

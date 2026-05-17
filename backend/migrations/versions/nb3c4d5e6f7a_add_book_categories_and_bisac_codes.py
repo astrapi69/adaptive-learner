@@ -13,7 +13,7 @@ real JSON type, so the diff / backup paths stay simple).
   6 digits, e.g. ``FIC022020``). Format validation lives in the
   Pydantic schema layer + a regex; the DB stores the strings
   verbatim. Per D3, NO bundled BISAC catalogue ships with
-  Bibliogon — the BISG licensing terms are incompatible with
+  AdaptiveLearner — the BISG licensing terms are incompatible with
   the local-first model. ``BISAC-DATABASE-LOOKUP-01`` (P5) is
   the deferred enhancement path if the licensing landscape
   shifts.
@@ -21,7 +21,7 @@ real JSON type, so the diff / backup paths stay simple).
 Books-only by design (D9). Articles use ``Article.topic`` (single
 enum from ``config/app.yaml``) + ``Article.tags`` (free-text
 JSON list) — see the "Intentional asymmetry" lessons-learned
-entry. Bibliogon's two domain models have fundamentally
+entry. AdaptiveLearner's two domain models have fundamentally
 different metadata shapes; forcing the same fields on both would
 help neither.
 

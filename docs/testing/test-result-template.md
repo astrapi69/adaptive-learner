@@ -9,7 +9,7 @@ don't apply rather than leaving them blank.
 # Test Session: {YYYY-MM-DD} — {Session topic}
 
 **Tester:** {name}
-**Bibliogon version:** v{X.Y.Z} (commit `{hash}`)
+**AdaptiveLearner version:** v{X.Y.Z} (commit `{hash}`)
 **Environment:** {OS} / {browser version} / Node {version} / Python {version}
 **Date:** {YYYY-MM-DD}
 **Duration:** {HH:MM}-{HH:MM} ({hours} h)

@@ -42,7 +42,7 @@ router = APIRouter(prefix="/import", tags=["import-orchestrator"])
 # Staged uploads live on disk between detect and execute so execute can
 # re-read the original bytes (the handler may need to re-hash them or
 # re-extract a ZIP). TTL enforced lazily during each request.
-_STAGING_DIR = Path(tempfile.gettempdir()) / "bibliogon_import_staging"
+_STAGING_DIR = Path(tempfile.gettempdir()) / "adaptive_learner_import_staging"
 _STAGING_DIR.mkdir(parents=True, exist_ok=True)
 _STAGING_TTL_SECONDS = 30 * 60
 

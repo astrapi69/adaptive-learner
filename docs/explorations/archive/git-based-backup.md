@@ -39,7 +39,7 @@ collaboration foundation.
 **Why git:** standard, portable, well-understood. Any GitHub user has
 intuition for commit/push/pull. Prior project
 [write-book-template](https://github.com/astrapi69/write-book-template)
-is a direct precedent for git-as-book-canonical-source; Bibliogon
+is a direct precedent for git-as-book-canonical-source; AdaptiveLearner
 adapts the pattern with TipTap JSON as MVP storage.
 
 **Relation to existing stack:** `.bgb` export/import **stays** for
@@ -66,7 +66,7 @@ the uploads dir manually":
    foreclose.
 
 Any single driver could justify a manual workaround. Together they
-justify first-class integration inside Bibliogon so the UX stays
+justify first-class integration inside AdaptiveLearner so the UX stays
 coherent and the author never needs a terminal.
 
 ---
@@ -75,9 +75,9 @@ coherent and the author never needs a terminal.
 
 ### 4.1 Remote: agnostic
 
-Bibliogon speaks standard git-over-HTTPS and git-over-SSH. No
+AdaptiveLearner speaks standard git-over-HTTPS and git-over-SSH. No
 provider-specific API, no OAuth flows per vendor, no GitHub-only
-features. User configures a remote URL in book settings and Bibliogon
+features. User configures a remote URL in book settings and AdaptiveLearner
 uses it via GitPython.
 
 Works with GitHub, GitLab, Gitea, Bitbucket, Codeberg, self-hosted
@@ -118,7 +118,7 @@ scope.
 
 Phase 1 ships local-only repos. No push, no pull, no remote
 configuration. User can still init, add, commit, log, diff through
-Bibliogon, and inspect the `.git` directory with external tools.
+AdaptiveLearner, and inspect the `.git` directory with external tools.
 
 Phase 2 introduces push/pull with the simplest auth that works:
 HTTPS + Personal Access Token, stored Fernet-encrypted alongside other
@@ -146,7 +146,7 @@ File structure detailed in Section 5.
 Local operations (init, add, commit, log, diff, status, checkout)
 work without network. Only push and pull require network.
 
-Preserves Bibliogon's offline-first principle from
+Preserves AdaptiveLearner's offline-first principle from
 [CONCEPT.md](../CONCEPT.md).
 
 Network-dependent operations are clearly labeled in UI — a push
@@ -158,21 +158,21 @@ last checked X ago" when offline.
 `GitPython` 3.x.
 
 **Rationale:**
-- BSD license (compatible with Bibliogon MIT)
+- BSD license (compatible with AdaptiveLearner MIT)
 - Python API over subprocess — no manual output parsing
 - Widely used (~4000 stars), mature, well-documented
 - Thin wrapper — easy to replace later if perf/license needs shift
 
-**Requires:** `git` binary on host. Bibliogon's Docker base image
+**Requires:** `git` binary on host. AdaptiveLearner's Docker base image
 needs git installed. To verify at Phase 1 start: inspect
 [backend/Dockerfile](../../backend/Dockerfile) (likely `python:3.12-slim`
 which does NOT include git; `apt-get install git` line needed).
 
 **Alternatives considered:**
 - `pygit2` — native libgit2 bindings. Faster, no subprocess. Rejected:
-  GPLv2 with linking exception adds license complexity for Bibliogon's
+  GPLv2 with linking exception adds license complexity for AdaptiveLearner's
   MIT ecosystem and for potential downstream white-label forks.
-- `dulwich` — pure Python. Rejected: slower on large repos; Bibliogon
+- `dulwich` — pure Python. Rejected: slower on large repos; AdaptiveLearner
   books with hundreds of chapters + image assets would notice.
 
 ### 4.8 Conflict strategy: Accept-Remote / Accept-Local MVP
@@ -210,13 +210,13 @@ write-book-template/
 │   ├── covers/, images/, fonts/, templates/
 ├── config/
 │   ├── metadata.yaml, export-settings.yaml, voice-settings.yaml
-├── output/                   (git-ignored in Bibliogon; build artifact)
+├── output/                   (git-ignored in AdaptiveLearner; build artifact)
 ├── pyproject.toml, Makefile, LICENSE, README.md  (not applicable to
-│                                                   Bibliogon's in-repo
+│                                                   AdaptiveLearner's in-repo
 │                                                   use)
 ```
 
-### Bibliogon-adapted layout (proposed)
+### AdaptiveLearner-adapted layout (proposed)
 
 MVP commits this structure inside `uploads/{book_id}/`:
 
@@ -254,14 +254,14 @@ uploads/{book_id}/
 ### What differs from write-book-template
 
 - **File format: JSON not Markdown.** write-book-template writes
-  `.md`; Bibliogon commits TipTap JSON (`.json`). Phase 5 optionally
+  `.md`; AdaptiveLearner commits TipTap JSON (`.json`). Phase 5 optionally
   adds `.md` alongside.
 - **No `pyproject.toml`, `Makefile`, `output/` in repo root.** Those
   belong to the build tooling at export time, not to the book itself.
-- **Assets persisted via Bibliogon's uploads pipeline** — git tracks
+- **Assets persisted via AdaptiveLearner's uploads pipeline** — git tracks
   the files that exist in the book's asset table; deletes propagate.
 - **`chapter_versions` table has no write-book-template equivalent.**
-  That's an internal Bibliogon draft-history mechanism, not for git.
+  That's an internal AdaptiveLearner draft-history mechanism, not for git.
   Not committed.
 
 ### Marked as "starting point, can extend later"
@@ -270,7 +270,7 @@ The proposed layout is a v1 target. As phases progress, structure may
 evolve:
 - ChapterType ordering across front/chapters/back matter might need a
   manifest file (write-book-template uses `export-settings.yaml`
-  `section_order`; Bibliogon stores it in DB)
+  `section_order`; AdaptiveLearner stores it in DB)
 - Chapter content plus `content_html` or `content_md` side-files for
   readability vs fidelity trade-off
 - Per-chapter frontmatter (YAML at top of each chapter file) to carry
@@ -377,7 +377,7 @@ structure, inline-diff editor, rebasing
 - On commit, additionally write Markdown version of each chapter
   alongside JSON (`01-{slug}.md` next to `01-{slug}.json`)
 - Reuse existing TipTap -> Markdown conversion from
-  [plugin-export](../../plugins/bibliogon-plugin-export/bibliogon_export/tiptap_to_md.py)
+  [plugin-export](../../plugins/adaptive-learner-plugin-export/adaptive_learner_export/tiptap_to_md.py)
 - Git-level diff shows both files per chapter (JSON authoritative,
   MD advisory)
 - Doc note: JSON is the source of truth; MD is lossy and regenerated
@@ -427,7 +427,7 @@ approach keeps each doc scoped to what the UI actually exposes.
 
 ### Phase 3 doc — `docs/help/{lang}/git-backup-ssh.md`
 - What SSH auth is, how it differs from HTTPS+PAT
-- How to generate key in Bibliogon
+- How to generate key in AdaptiveLearner
 - How to add the public key to GitHub / GitLab / Gitea
 - Switching an existing book from HTTPS to SSH
 
@@ -452,7 +452,7 @@ Not blockers; each phase resolves the ones it needs.
 - **Large books.** git performance at scale. Probably fine at
   typical sizes (50 chapters x 100 KB) but worth measuring Phase 1
   close.
-- **Nested-repo hygiene.** Dev-checkout of Bibliogon plus per-book
+- **Nested-repo hygiene.** Dev-checkout of AdaptiveLearner plus per-book
   `.git` dirs = nested repos. Needs `.gitignore` entries in the
   outer repo.
 
@@ -494,7 +494,7 @@ session.
 - User-facing demand or the user's own need for SSH / merge / MD
 
 No phase is mandatory — any can be skipped or deferred indefinitely
-without blocking Bibliogon's other work.
+without blocking AdaptiveLearner's other work.
 
 ---
 
@@ -512,8 +512,8 @@ Explicitly NOT part of the 5-phase plan:
 - Visual commit-graph browser
 - Time-travel / checkout-by-date UI (beyond `git checkout {hash}`)
 - Import from an existing git repo ("here's my write-book-template
-  book, import it into Bibliogon")
-- Bibliogon-as-git-server (accepting pushes from other Bibliogon
+  book, import it into AdaptiveLearner")
+- AdaptiveLearner-as-git-server (accepting pushes from other AdaptiveLearner
   installs)
 
 Each is a reasonable future feature but not part of this plan.

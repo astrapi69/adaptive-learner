@@ -35,7 +35,7 @@ export default function ArticleCard({ article, onClick, onDelete, onDeletePerman
     // imported articles; fall back to ``updated_at`` for native
     // articles that have no publications yet. See lessons-learned:
     // a Medium article published in 2020 should NOT display
-    // ``updated_at`` (the 2026 Bibliogon import timestamp) as its
+    // ``updated_at`` (the 2026 AdaptiveLearner import timestamp) as its
     // public date.
     const displayDateRaw = article.original_published_at ?? article.updated_at;
     const updated = (() => {

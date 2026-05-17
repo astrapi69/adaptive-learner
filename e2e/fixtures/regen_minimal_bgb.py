@@ -19,7 +19,7 @@ from pathlib import Path
 BOOK_ID = "e2e-bgb-smoke"
 CHAPTER_ID = f"{BOOK_ID}-ch-1"
 
-MANIFEST = {"format": "bibliogon-backup", "version": 1}
+MANIFEST = {"format": "adaptive-learner-backup", "version": 1}
 
 BOOK = {
     "id": BOOK_ID,

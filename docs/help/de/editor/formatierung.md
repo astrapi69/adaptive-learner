@@ -2,7 +2,7 @@
 
 ## Textformatierung
 
-Bibliogon unterstützt die gängigen Textformatierungen, die du aus Textverarbeitungsprogrammen kennst. Alle Formatierungen sind über die Toolbar oder Tastenkürzel erreichbar:
+AdaptiveLearner unterstützt die gängigen Textformatierungen, die du aus Textverarbeitungsprogrammen kennst. Alle Formatierungen sind über die Toolbar oder Tastenkürzel erreichbar:
 
 - **Fett** (Ctrl+B): Hebt wichtige Begriffe oder Sätze hervor.
 - **Kursiv** (Ctrl+I): Wird für Betonungen, Titel oder fremdsprachige Begriffe verwendet.
@@ -22,7 +22,7 @@ Die Überschriften werden beim Export automatisch in das Inhaltsverzeichnis übe
 
 ## Listen
 
-Bibliogon unterstützt zwei Listenarten:
+AdaptiveLearner unterstützt zwei Listenarten:
 
 - **Aufzählungsliste** (Ctrl+Shift+8): Ungeordnete Liste mit Aufzählungspunkten. Einrückungen über Tab erzeugen verschachtelte Listen.
 - **Nummerierte Liste** (Ctrl+Shift+9): Geordnete Liste mit automatischer Nummerierung. Die Nummerierung passt sich automatisch an, wenn du Einträge hinzufügst oder entfernst.

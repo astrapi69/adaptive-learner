@@ -31,10 +31,10 @@ async def _fake_translate(text, target_lang, source_lang, provider, deepl_client
 def patched_translator():
     """Patch translate_chapter_content used inside the route."""
     with patch(
-        "bibliogon_translation.routes.translate_chapter_content",
+        "adaptive_learner_translation.routes.translate_chapter_content",
         side_effect=_fake_translate,
     ), patch(
-        "bibliogon_translation.routes._build_translation_clients",
+        "adaptive_learner_translation.routes._build_translation_clients",
         return_value=(object(), None),
     ):
         yield
@@ -125,10 +125,10 @@ def test_translate_article_falls_back_to_single_paragraph_on_rebuild_mismatch() 
         return f"FULL TRANSLATION OF: {text.strip()}"
 
     with patch(
-        "bibliogon_translation.routes.translate_chapter_content",
+        "adaptive_learner_translation.routes.translate_chapter_content",
         side_effect=_passthrough,
     ), patch(
-        "bibliogon_translation.routes._build_translation_clients",
+        "adaptive_learner_translation.routes._build_translation_clients",
         return_value=(None, object()),
     ), TestClient(app) as client:
         source = _create_article(client, "Multi para")
@@ -170,10 +170,10 @@ def test_translate_article_returns_502_on_lmstudio_unreachable() -> None:
         raise httpx.ConnectError("Connection refused")
 
     with patch(
-        "bibliogon_translation.routes.translate_chapter_content",
+        "adaptive_learner_translation.routes.translate_chapter_content",
         side_effect=_raise_connect,
     ), patch(
-        "bibliogon_translation.routes._build_translation_clients",
+        "adaptive_learner_translation.routes._build_translation_clients",
         return_value=(None, object()),
     ), TestClient(app) as client:
         source = _create_article(client, "Net failure")

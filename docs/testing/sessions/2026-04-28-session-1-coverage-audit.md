@@ -1,7 +1,7 @@
 # Test Session: 2026-04-28 — Session 1: coverage audit + onboarding
 
 **Tester:** Claude (CC) under Aster's direction
-**Bibliogon version:** v0.24.0 (commit `5611706`)
+**AdaptiveLearner version:** v0.24.0 (commit `5611706`)
 **Environment:** Linux 6.8.0-110-lowlatency, Node 24.15.0, Python 3.12, Poetry 2.x
 **Date:** 2026-04-28
 **Duration:** ~2h
@@ -46,7 +46,7 @@ are the audit checks.
 
 - **Severity:** N/A (audit)
 - **Result:** PASS
-- **Steps:** Loop over `plugins/bibliogon-plugin-*/` running
+- **Steps:** Loop over `plugins/adaptive-learner-plugin-*/` running
   `pytest --collect-only -q`.
 - **Actual outcome:** 432 tests across 10 plugins (audiobook 98,
   export 92, ms-tools 97, translation 35, kdp 33, help 30,

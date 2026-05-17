@@ -18,7 +18,7 @@ without dark patterns. Donation state stored locally, no tracking.
 See [docs/explorations/donations-ux.md](explorations/donations-ux.md)
 for the full strategy document.
 
-- [ ] S-01: Settings section "Support Bibliogon" with project
+- [ ] S-01: Settings section "Support AdaptiveLearner" with project
       context and external link
 - [ ] S-02: One-time onboarding hint after first book creation or
       export, with "Understood" / "Support" buttons and

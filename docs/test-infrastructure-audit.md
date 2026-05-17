@@ -248,14 +248,14 @@ Items currently exercised manually (no automation):
 - **With Testcontainers:** real Postgres per test session.
   Startup overhead: 5-30s. Test execution: similar or slower
   (network hop vs in-process).
-- **Bibliogon-specific evidence:** the project ships with
+- **AdaptiveLearner-specific evidence:** the project ships with
   SQLite as the default and intended production DB
   (CLAUDE.md: "SQLite as the default (no external DB
   required)"). There is no Postgres backend in production.
   No bug history points to SQLite-vs-Postgres divergence.
 - **Recommendation:** **NO.** The "best practice" of using
   containerised real DBs is for projects that ship Postgres
-  in production. Bibliogon doesn't, and adopting
+  in production. AdaptiveLearner doesn't, and adopting
   Testcontainers would add 5-30s startup per CI run with
   zero documented payoff.
 
@@ -288,7 +288,7 @@ Items currently exercised manually (no automation):
 #### Hypothesis (property-based testing)
 
 - **Current:** zero `@given` usages across the codebase.
-- **Bibliogon-specific evidence:** the walker has had two
+- **AdaptiveLearner-specific evidence:** the walker has had two
   classes of bugs in production that property-based tests
   COULD have caught — the `find` vs `find_all` body
   truncation (a specific input shape that example-based tests
@@ -335,7 +335,7 @@ gates any future scope expansion. If survivors look
 trivially fixable, file the fixes as backlog. If they look
 sprawling, surface that and decide on cost.
 
-**Not Phase 1 or 2:** Testcontainers (no Bibliogon-specific
+**Not Phase 1 or 2:** Testcontainers (no AdaptiveLearner-specific
 evidence), Hypothesis (example-based coverage adequate),
 session-scope client fixture refactor (high blast radius),
 heterogeneous TestClient harmonisation (same).
@@ -368,7 +368,7 @@ heterogeneous TestClient harmonisation (same).
      a third walker bug class slips through example-based
      tests.
    - `TESTCONTAINERS-EVAL-01` (P5, low priority): evaluate
-     Postgres-via-Testcontainers IF Bibliogon ever ships
+     Postgres-via-Testcontainers IF AdaptiveLearner ever ships
      a Postgres production path. Trigger: production-DB
      change.
 

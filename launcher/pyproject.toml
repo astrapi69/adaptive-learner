@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "bibliogon-launcher"
+name = "adaptive-learner-launcher"
 version = "0.33.0"
-description = "Windows Simple Launcher for Bibliogon. Starts the Docker stack, opens the browser, stops the stack on exit."
+description = "Windows Simple Launcher for AdaptiveLearner. Starts the Docker stack, opens the browser, stops the stack on exit."
 authors = ["Asterios Raptis"]
 license = "MIT"
 package-mode = true
-packages = [{include = "bibliogon_launcher"}]
+packages = [{include = "adaptive_learner_launcher"}]
 
 [tool.poetry.dependencies]
 # PyInstaller supports 3.11 through 3.13 as of the current release; pin
@@ -22,7 +22,7 @@ pyinstaller = "^6.11.0"
 pillow = "^12.2.0"  # Used only by the icon-generation script; bumped from 11.x for CVE-2026-{25990,40192,42308,42309,42310,42311}
 
 [tool.poetry.scripts]
-bibliogon-launcher = "bibliogon_launcher.__main__:main"
+adaptive-learner-launcher = "adaptive_learner_launcher.__main__:main"
 
 [build-system]
 requires = ["poetry-core"]

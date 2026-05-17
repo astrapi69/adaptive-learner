@@ -1,6 +1,6 @@
 """Regression tests for the import-orchestrator staging GC.
 
-Detect stages bytes under ``<TMP>/bibliogon_import_staging/<temp_ref>/``
+Detect stages bytes under ``<TMP>/adaptive_learner_import_staging/<temp_ref>/``
 so a later execute call can re-read them. The TTL is 30 minutes;
 ``_gc_stale_staging`` runs opportunistically on every detect. These
 tests age a staged directory past the TTL by backdating ``mtime`` and

@@ -41,7 +41,7 @@ def get_installed_plugins_dir() -> Path:
     """Canonical writable directory for user-installed plugin ZIPs.
 
     Always re-resolved via ``get_data_dir()`` so test env-var
-    overrides (``BIBLIOGON_DATA_DIR``) take effect even after this
+    overrides (``ADAPTIVE_LEARNER_DATA_DIR``) take effect even after this
     module is imported.
     """
     return get_data_dir() / "plugins" / "installed"

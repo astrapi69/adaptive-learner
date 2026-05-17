@@ -1,9 +1,9 @@
-# plugin-git-sync: Bi-directional Git Sync for Bibliogon Books
+# plugin-git-sync: Bi-directional Git Sync for AdaptiveLearner Books
 
 Status: Exploration complete. Plugin pending implementation.
 Last updated: 2026-04-23
 License: MIT (part of the open-source plugin set, alongside plugin-export).
-Repository: github.com/astrapi69/bibliogon-plugin-git-sync (to be created).
+Repository: github.com/astrapi69/adaptive-learner-plugin-git-sync (to be created).
 Revived when: Core git integration ([archive/git-based-backup.md](archive/git-based-backup.md)) Phase 1 has shipped AND PluginForge is confirmed to support the required hooks (see Section 5).
 
 **Architectural update (2026-04-23):** since this exploration was written, [core-import-orchestrator.md](core-import-orchestrator.md) landed and shipped as CIO-01. Plugin-git-sync Phase 1 (PGS-01) now targets implementing the `ImportPlugin` protocol defined in that exploration (Section 5) rather than inventing its own import surface. The "Import from Git" UI described below will slot into the core wizard's Step 1 source picker once CIO-02 wires it; the plugin no longer ships its own detect/execute flow. Sections 3-4 of this doc (repo structure spec, use cases) are unaffected; Section 5 (PluginForge stress-test) is partially answered by CIO-01's in-process handler registry, which proved the protocol works end-to-end for `.bgb` and markdown before PGS-01 tries it against a git URL.
@@ -21,17 +21,17 @@ The user maintains existing git-based book projects in the [write-book-template]
 - Asset references (covers, figures)
 - Per-book metadata (ISBN, publisher, description)
 
-Importing those books into Bibliogon today means copy-paste per chapter, manual asset wiring and a dead-end: edits made in Bibliogon never flow back to the git repo. plugin-git-sync closes that gap.
+Importing those books into AdaptiveLearner today means copy-paste per chapter, manual asset wiring and a dead-end: edits made in AdaptiveLearner never flow back to the git repo. plugin-git-sync closes that gap.
 
 ### 1.2 Secondary use cases
 
-- Migration path from write-book-template to Bibliogon for other authors with a similar toolchain.
-- Parallel editing in Bibliogon (WYSIWYG) and in a terminal editor (raw Markdown) on the same book. Both sides sync through git.
-- External collaborators (editors, translators, proofreaders) edit the repo directly via pull request; their changes flow back into Bibliogon on re-import.
+- Migration path from write-book-template to AdaptiveLearner for other authors with a similar toolchain.
+- Parallel editing in AdaptiveLearner (WYSIWYG) and in a terminal editor (raw Markdown) on the same book. Both sides sync through git.
+- External collaborators (editors, translators, proofreaders) edit the repo directly via pull request; their changes flow back into AdaptiveLearner on re-import.
 
 ### 1.3 Not a use case
 
-plugin-git-sync is explicitly NOT a replacement for core git integration (see [git-based-backup.md](git-based-backup.md)). Core git integration targets the 80% case ("I want version control for the book I am writing in Bibliogon"). plugin-git-sync targets the 20% case ("I have an existing git repo that should become a Bibliogon book and stay synced with it").
+plugin-git-sync is explicitly NOT a replacement for core git integration (see [git-based-backup.md](git-based-backup.md)). Core git integration targets the 80% case ("I want version control for the book I am writing in AdaptiveLearner"). plugin-git-sync targets the 20% case ("I have an existing git repo that should become a AdaptiveLearner book and stay synced with it").
 
 The two features are orthogonal and can coexist on the same book (see Section 6, Phase 5).
 
@@ -43,8 +43,8 @@ The two features are orthogonal and can coexist on the same book (see Section 6,
 
 `plugin-export` already owns:
 
-- [bibliogon_export/tiptap_to_md.py](../../plugins/bibliogon-plugin-export/bibliogon_export/tiptap_to_md.py): TipTap JSON to Markdown.
-- [bibliogon_export/html_to_markdown.py](../../plugins/bibliogon-plugin-export/bibliogon_export/html_to_markdown.py): HTML to Markdown (used during import).
+- [adaptive_learner_export/tiptap_to_md.py](../../plugins/adaptive-learner-plugin-export/adaptive_learner_export/tiptap_to_md.py): TipTap JSON to Markdown.
+- [adaptive_learner_export/html_to_markdown.py](../../plugins/adaptive-learner-plugin-export/adaptive_learner_export/html_to_markdown.py): HTML to Markdown (used during import).
 - Pandoc pipeline for document formats.
 - Asset handling during export (scaffolder).
 
@@ -52,10 +52,10 @@ plugin-git-sync REUSES these. The dependency is declared explicitly in `pyprojec
 
 ```toml
 [tool.poetry.dependencies]
-bibliogon-plugin-export = "^1.0.0"
+adaptive-learner-plugin-export = "^1.0.0"
 ```
 
-This is the first plugin-to-plugin dependency in Bibliogon. Section 5 treats it as an architectural stress-test.
+This is the first plugin-to-plugin dependency in AdaptiveLearner. Section 5 treats it as an architectural stress-test.
 
 ### 2.2 Core git integration (separate feature)
 
@@ -63,10 +63,10 @@ This is the first plugin-to-plugin dependency in Bibliogon. Section 5 treats it 
 
 | Aspect | Core git | plugin-git-sync |
 |--------|----------|-----------------|
-| Who owns the repo? | Bibliogon (lives under `uploads/{id}/.git`) | External remote (GitHub, self-hosted, local clone) |
-| Source of truth | Bibliogon DB | External repo (at least on initial import) |
-| Audience | Every Bibliogon user | Users with pre-existing repo-based workflows |
-| Conflict model | Bibliogon-internal 3-way merge | Covered in Section 6, Phase 3 |
+| Who owns the repo? | AdaptiveLearner (lives under `uploads/{id}/.git`) | External remote (GitHub, self-hosted, local clone) |
+| Source of truth | AdaptiveLearner DB | External repo (at least on initial import) |
+| Audience | Every AdaptiveLearner user | Users with pre-existing repo-based workflows |
+| Conflict model | AdaptiveLearner-internal 3-way merge | Covered in Section 6, Phase 3 |
 
 A book may be:
 
@@ -90,9 +90,9 @@ plugin-git-sync does not obsolete any existing backup mechanism. It adds a new i
 The user has pre-committed to the following. They are not revisited here.
 
 1. **Feature is a plugin, not a core addition.** Rationale: forces the plugin architecture to handle a plugin-to-plugin dependency; keeps the core lean; the use case is a 20% case.
-2. **Bi-directional sync, not one-way.** Users must be able to round-trip: repo -> Bibliogon -> repo.
-3. **Overwrite semantics for MVP (variant 2c).** Phase 2 ships plain overwrite from Bibliogon to repo. Smart-merge is a later phase.
-4. **Multi-language via branches.** Each language is a separate branch in the same repo; each branch becomes a separate Bibliogon book linked by a translation group.
+2. **Bi-directional sync, not one-way.** Users must be able to round-trip: repo -> AdaptiveLearner -> repo.
+3. **Overwrite semantics for MVP (variant 2c).** Phase 2 ships plain overwrite from AdaptiveLearner to repo. Smart-merge is a later phase.
+4. **Multi-language via branches.** Each language is a separate branch in the same repo; each branch becomes a separate AdaptiveLearner book linked by a translation group.
 5. **Conversion layer lives in plugin-export.** Both directions (TipTap -> Markdown and Markdown -> TipTap) belong together.
 
 ---
@@ -101,13 +101,13 @@ The user has pre-committed to the following. They are not revisited here.
 
 This is the most precise section of the exploration. Ambiguity here produces bugs in every phase.
 
-The repo structure is a **Bibliogon convention**, not a plugin-git-sync-only convention. Any future plugin or tool that reads or writes this structure follows the same spec. Documenting it in `docs/specifications/` is a Phase 1 deliverable.
+The repo structure is a **AdaptiveLearner convention**, not a plugin-git-sync-only convention. Any future plugin or tool that reads or writes this structure follows the same spec. Documenting it in `docs/specifications/` is a Phase 1 deliverable.
 
 ### 4.1 Directory layout
 
 ```
 repo_root/
-├── .bibliogon/
+├── .adaptive_learner/
 │   ├── version.yaml           # Spec version, compatibility floor
 │   ├── branches.yaml          # Language branch mapping (optional)
 │   └── book.yaml              # Book-level metadata
@@ -197,10 +197,10 @@ plugin_flags:
 
 ```yaml
 spec_version: 1
-bibliogon_min_version: "0.21.0"
+adaptive_learner_min_version: "0.21.0"
 ```
 
-`spec_version` is bumped only on a breaking change in the repo layout. `bibliogon_min_version` lets the plugin refuse to import a repo that uses features unknown to the running Bibliogon.
+`spec_version` is bumped only on a breaking change in the repo layout. `adaptive_learner_min_version` lets the plugin refuse to import a repo that uses features unknown to the running AdaptiveLearner.
 
 #### `branches.yaml` (optional, only for multi-language repos)
 
@@ -230,8 +230,8 @@ Assets in the repo are referenced by **repo-relative path** in chapter JSON:
 }
 ```
 
-- On import: plugin resolves the relative path against the repo root, copies the file into the Bibliogon asset store, rewrites `src` to `/api/books/{id}/assets/file/{filename}`.
-- On export: plugin walks all TipTap image nodes, maps Bibliogon asset IDs back to the original repo-relative paths via a maintained mapping table.
+- On import: plugin resolves the relative path against the repo root, copies the file into the AdaptiveLearner asset store, rewrites `src` to `/api/books/{id}/assets/file/{filename}`.
+- On export: plugin walks all TipTap image nodes, maps AdaptiveLearner asset IDs back to the original repo-relative paths via a maintained mapping table.
 
 The plugin stores the mapping as plugin-local state (SQLite table `plugin_git_sync_asset_map` or a file in the plugin workspace). This lets round-trips preserve original filenames and paths.
 
@@ -244,11 +244,11 @@ The plugin stores the mapping as plugin-local state (SQLite table `plugin_git_sy
 - Generated output (EPUB, PDF, MP3)
 - Cache files
 
-These stay in the Bibliogon database or local filesystem. Committing them would either bloat the repo or leak secrets.
+These stay in the AdaptiveLearner database or local filesystem. Committing them would either bloat the repo or leak secrets.
 
 ### 4.5 Naming conventions to enforce on import and export
 
-- `about_author` NOT `about_the_author` (Bibliogon convention, see user memory).
+- `about_author` NOT `about_the_author` (AdaptiveLearner convention, see user memory).
 - Snake_case for file names and YAML keys.
 - ISO 639-1 codes in `branches.yaml` (`de`, `en`, `es`). No `de-DE`, no `german`.
 - Numeric prefix on chapter filenames (`01-`, `02-`, ...) for deterministic ordering when git lists the directory.
@@ -274,7 +274,7 @@ Expected answers: (1) yes, Poetry handles it. (2) yes, Python packaging handles 
 
 Action item for Phase 1 implementation:
 
-- Add a smoke test that `from bibliogon_export.tiptap_to_md import tiptap_to_markdown` works inside plugin-git-sync at runtime.
+- Add a smoke test that `from adaptive_learner_export.tiptap_to_md import tiptap_to_markdown` works inside plugin-git-sync at runtime.
 - Verify plugin load order: log which plugin's `on_plugin_activate` fires first when both are enabled. If plugin-git-sync activates before plugin-export, that is a PluginForge bug to file upstream.
 
 ### 5.2 Plugin-to-core write access
@@ -306,7 +306,7 @@ Two options for how the plugin writes:
 - Create operations are rare (import events) and must respect the same validation as the frontend. If the core adds a constraint (e.g. title length), the plugin should not need to know; the API tells it.
 - Read operations are frequent (every export/sync-back walks the book). HTTP overhead is not justified; SQLAlchemy read access via `Session` is safe.
 
-This matches Bibliogon's frontend boundary contract and avoids plugins growing into privileged actors.
+This matches AdaptiveLearner's frontend boundary contract and avoids plugins growing into privileged actors.
 
 ### 5.3 Plugin lifecycle hooks required
 
@@ -333,7 +333,7 @@ Option (b) is acceptable for Phase 2. Auto-sync is a Phase 3+ polish.
 If the PluginForge capability check during Phase 1 implementation reveals that plugin-to-plugin imports do not work reliably, the options are:
 
 1. Vendor `tiptap_to_md.py` into plugin-git-sync. Bad: duplication drifts.
-2. Extract the conversion layer into a separate PyPI package (`bibliogon-tiptap-convert`) that both plugins depend on. Clean but heavy.
+2. Extract the conversion layer into a separate PyPI package (`adaptive-learner-tiptap-convert`) that both plugins depend on. Clean but heavy.
 3. Promote the conversion layer into `manuscripta` upstream. Natural home, but slow release cycle.
 
 The exploration does not pick yet. The smoke test in Phase 1 decides.
@@ -348,16 +348,16 @@ Each phase ships independently with user-visible value. No phase is mandatory; t
 
 **Scope:**
 
-- Plugin scaffold: `github.com/astrapi69/bibliogon-plugin-git-sync`, standard structure matching `plugin-export`.
+- Plugin scaffold: `github.com/astrapi69/adaptive-learner-plugin-git-sync`, standard structure matching `plugin-export`.
 - `depends_on = ["export"]` declared.
 - UI: "Import from Git" button on the Dashboard.
 - Input form: git URL (HTTPS only in Phase 1) or local path.
 - Clone repo to plugin workspace (see Section 7.2).
 - Parse repo structure per Section 4.
-- Create Bibliogon book(s):
-  - If `.bibliogon/branches.yaml` exists: one book per language branch, linked by a new `translation_group_id`.
+- Create AdaptiveLearner book(s):
+  - If `.adaptive_learner/branches.yaml` exists: one book per language branch, linked by a new `translation_group_id`.
   - If not: single book from the current branch (typically `main`).
-- Copy all assets from `assets/` into Bibliogon's asset store.
+- Copy all assets from `assets/` into AdaptiveLearner's asset store.
 - Rewrite image paths in chapter JSON from repo-relative to `/api/books/{id}/assets/file/{filename}`.
 - Write plugin-local state: mapping from `book_id` to (`repo_url`, `branch`, `last_imported_commit_sha`).
 - No sync-back in Phase 1.
@@ -377,13 +377,13 @@ Each phase ships independently with user-visible value. No phase is mandatory; t
 
 - Detect imported books via the plugin-local mapping table.
 - "Commit to Repo" button in the book editor.
-- Convert current Bibliogon state to repo spec:
+- Convert current AdaptiveLearner state to repo spec:
   - Each chapter serialized as `manuscript/{section}/{nn-slug}.json`.
   - `book.yaml` regenerated from Book model.
-  - Assets copied from Bibliogon asset store back to `assets/` with original paths preserved via the mapping table.
-- Commit the change to the local clone with a Bibliogon-authored message: `"Sync from Bibliogon at {timestamp}"`.
+  - Assets copied from AdaptiveLearner asset store back to `assets/` with original paths preserved via the mapping table.
+- Commit the change to the local clone with a AdaptiveLearner-authored message: `"Sync from AdaptiveLearner at {timestamp}"`.
 - Optional: push to remote (reuses core git PAT handling from [git-based-backup.md](git-based-backup.md) Phase 2).
-- **Overwrite semantics (variant 2c):** local repo working tree is overwritten from Bibliogon state. No 3-way comparison. If the user edited the repo directly since the last import, those edits are lost unless the user re-imports first.
+- **Overwrite semantics (variant 2c):** local repo working tree is overwritten from AdaptiveLearner state. No 3-way comparison. If the user edited the repo directly since the last import, those edits are lost unless the user re-imports first.
 - Warning UI before commit: "Uncommitted changes in the repo will be overwritten. Continue?"
 
 **Estimated effort:** 10-15 hours.
@@ -396,15 +396,15 @@ Each phase ships independently with user-visible value. No phase is mandatory; t
 
 - Track `last_imported_commit_sha` per book (already written in Phase 1).
 - On re-import, compute three-way comparison:
-  - **Base:** Bibliogon book state at the last-imported commit (reconstructable from the commit and the Bibliogon-side plugin history).
-  - **Local:** current Bibliogon state.
+  - **Base:** AdaptiveLearner book state at the last-imported commit (reconstructable from the commit and the AdaptiveLearner-side plugin history).
+  - **Local:** current AdaptiveLearner state.
   - **Remote:** current repo HEAD on the relevant branch.
 - Per chapter, classify as:
   - Unchanged on both sides: skip.
   - Changed on remote only: apply remote changes.
-  - Changed on Bibliogon only: keep Bibliogon, warn.
+  - Changed on AdaptiveLearner only: keep AdaptiveLearner, warn.
   - Changed on both sides: conflict. Surface in UI.
-- UI for conflict resolution: per-chapter choice between "Keep Bibliogon", "Take from repo", or "Mark conflict" (which writes both versions as visible chapter variants for manual resolution in the editor).
+- UI for conflict resolution: per-chapter choice between "Keep AdaptiveLearner", "Take from repo", or "Mark conflict" (which writes both versions as visible chapter variants for manual resolution in the editor).
 
 **Estimated effort:** 14-20 hours.
 
@@ -453,13 +453,13 @@ Plugin declares its own direct dependency on GitPython in `pyproject.toml`. No v
 
 ### 7.2 Repo workspace location
 
-Plugin maintains a workspace separate from Bibliogon's `uploads/`:
+Plugin maintains a workspace separate from AdaptiveLearner's `uploads/`:
 
-- Linux: `~/.local/share/bibliogon/plugin-git-sync/workspaces/{book_id}/`
-- macOS: `~/Library/Application Support/bibliogon/plugin-git-sync/workspaces/{book_id}/`
-- Windows: `%APPDATA%\bibliogon\plugin-git-sync\workspaces\{book_id}\`
+- Linux: `~/.local/share/adaptive_learner/plugin-git-sync/workspaces/{book_id}/`
+- macOS: `~/Library/Application Support/adaptive_learner/plugin-git-sync/workspaces/{book_id}/`
+- Windows: `%APPDATA%\adaptive_learner\plugin-git-sync\workspaces\{book_id}\`
 
-Resolved via `platformdirs` (already a Bibliogon dependency).
+Resolved via `platformdirs` (already a AdaptiveLearner dependency).
 
 Why separate from `uploads/`:
 
@@ -469,21 +469,21 @@ Why separate from `uploads/`:
 
 ### 7.3 Markdown to TipTap JSON conversion
 
-Phase 1 needs the repo -> Bibliogon direction:
+Phase 1 needs the repo -> AdaptiveLearner direction:
 
-- Repo stores chapter content as TipTap JSON directly (see Section 4.2). No Markdown-to-TipTap conversion needed for Bibliogon-authored repos.
+- Repo stores chapter content as TipTap JSON directly (see Section 4.2). No Markdown-to-TipTap conversion needed for AdaptiveLearner-authored repos.
 - BUT: existing write-book-template repos store Markdown, not TipTap JSON. For those, plugin-git-sync runs a migration on first import: Markdown -> HTML (via Python `markdown` library, already in backend) -> TipTap JSON (via a new `md_to_tiptap.py`).
-- After migration, the plugin asks the user: "Convert this repo to the Bibliogon repo spec (TipTap JSON per chapter)?" If yes, the next Phase 2 commit writes the new format. If no, Phase 2 keeps writing Markdown (with fidelity loss warnings).
+- After migration, the plugin asks the user: "Convert this repo to the AdaptiveLearner repo spec (TipTap JSON per chapter)?" If yes, the next Phase 2 commit writes the new format. If no, Phase 2 keeps writing Markdown (with fidelity loss warnings).
 
 The symmetric conversion module `md_to_tiptap.py` lives in `plugin-export`, not in `plugin-git-sync`:
 
 - Both directions of conversion belong together (already the case for `tiptap_to_md.py` and `html_to_markdown.py`).
 - Other plugins (future) may want to import Markdown too.
-- plugin-export becomes `bibliogon_export.conversions.{tiptap_to_md, md_to_tiptap, html_to_markdown}`.
+- plugin-export becomes `adaptive_learner_export.conversions.{tiptap_to_md, md_to_tiptap, html_to_markdown}`.
 
 ### 7.4 Authentication for remote repos
 
-HTTPS + Personal Access Token (PAT) reuses the mechanism from core git Phase 2 (encrypted PATs stored in Bibliogon DB, same `backend/app/services/git_auth.py`). The plugin asks the core for the PAT via a read-only API.
+HTTPS + Personal Access Token (PAT) reuses the mechanism from core git Phase 2 (encrypted PATs stored in AdaptiveLearner DB, same `backend/app/services/git_auth.py`). The plugin asks the core for the PAT via a read-only API.
 
 SSH keys: Phase 1 punts; HTTPS-only. Phase 5 (or earlier, if user demand) adds SSH via the same key management core shipped in Phase 3 of `git-based-backup.md`.
 
@@ -495,10 +495,10 @@ None of these block Phase 1. Each phase resolves what it needs.
 
 - **Git submodules.** If an imported repo uses submodules, Phase 1 ignores them (clones with `--recurse-submodules=no`, treats submodule directories as opaque). Phase 2+ decision needed.
 - **Git LFS.** Similar treatment. Phase 1 ignores; large assets stay as plain blobs.
-- **Monorepo support.** One repo with multiple books in subdirectories. Phase 1: not supported (the repo is one book). Phase 4+: possible via `.bibliogon/books.yaml` listing subdirectories.
+- **Monorepo support.** One repo with multiple books in subdirectories. Phase 1: not supported (the repo is one book). Phase 4+: possible via `.adaptive_learner/books.yaml` listing subdirectories.
 - **Branch protection and force-push.** If a remote rejects a force-push in Phase 2 (protected branch), what UX? Currently: show the git error verbatim. Polish deferred.
 - **Orphaned plugin state.** If the plugin is uninstalled but books were imported via it, the books stay; sync breaks silently. Help doc must flag this.
-- **Two-way translation sync.** If the user edits the German chapter in Bibliogon, Phase 2 commits it back to `main` (DE branch). The English branch is NOT auto-updated; the user has to translate and commit separately. Cross-branch translation propagation is out of scope.
+- **Two-way translation sync.** If the user edits the German chapter in AdaptiveLearner, Phase 2 commits it back to `main` (DE branch). The English branch is NOT auto-updated; the user has to translate and commit separately. Cross-branch translation propagation is out of scope.
 - **Credential storage per-book.** Phase 2+ may need per-book PAT (different repos, different accounts). Today core git assumes one PAT per host. Decision deferred until Phase 2 is being built.
 
 ---
@@ -514,11 +514,11 @@ Help docs ship alongside implementation. Each doc in 8 languages (DE, EN, ES, FR
 Sections:
 
 - Install and activate the plugin
-- What is a compatible repo (points to `docs/specifications/bibliogon-repo-spec.md`)
+- What is a compatible repo (points to `docs/specifications/adaptive-learner-repo-spec.md`)
 - How to import a single-language book
 - How multi-language branches are detected and imported
 - Migrating a legacy write-book-template repo (Markdown to TipTap)
-- Troubleshooting import errors (common: missing `.bibliogon/`, unsupported `spec_version`, auth failures)
+- Troubleshooting import errors (common: missing `.adaptive_learner/`, unsupported `spec_version`, auth failures)
 
 ### 9.2 Phase 2 doc
 
@@ -526,7 +526,7 @@ Sections:
 
 Sections:
 
-- Committing Bibliogon changes back to the repo
+- Committing AdaptiveLearner changes back to the repo
 - Overwrite semantics and the warning banner
 - Pushing to a remote (HTTPS + PAT)
 - When to commit (guidance: after a work session, not after every keystroke)
@@ -535,7 +535,7 @@ Sections:
 
 Arrive with the phase. Phase 3 adds a conflict resolution guide; Phase 4 adds a multi-language linking guide; Phase 5 adds the unified commit model.
 
-### 9.4 `docs/specifications/bibliogon-repo-spec.md`
+### 9.4 `docs/specifications/adaptive-learner-repo-spec.md`
 
 A Phase 1 deliverable, not a help doc. Precise spec of Section 4 of this exploration, authoritative for any future plugin or tool that reads or writes the structure.
 
@@ -545,12 +545,12 @@ A Phase 1 deliverable, not a help doc. Precise spec of Section 4 of this explora
 
 Items that are NOT part of the 5-phase plan, even at the end:
 
-- Conversion from non-Bibliogon repo formats (Docsify, Hugo, Jekyll, mdBook). Adding Phase 6 if user demand emerges; not on the current roadmap.
-- Bibliogon-to-git without going through plugin-git-sync. That is core git integration, shipped separately in v0.21.0.
-- Collaborative real-time editing with multiple users editing the same Bibliogon book and git as the sync layer. Out of scope architecturally.
+- Conversion from non-AdaptiveLearner repo formats (Docsify, Hugo, Jekyll, mdBook). Adding Phase 6 if user demand emerges; not on the current roadmap.
+- AdaptiveLearner-to-git without going through plugin-git-sync. That is core git integration, shipped separately in v0.21.0.
+- Collaborative real-time editing with multiple users editing the same AdaptiveLearner book and git as the sync layer. Out of scope architecturally.
 - Plugin-provided git hosting (the plugin does not host repos, it only speaks to existing ones).
 - Git-over-web (GitHub REST API, GitLab REST API). The plugin uses the git protocol (`git://`, `https://`, later `ssh://`) only.
-- Branch creation from inside Bibliogon. If the user wants a new language branch, they create it in git first; the plugin discovers it on re-import.
+- Branch creation from inside AdaptiveLearner. If the user wants a new language branch, they create it in git first; the plugin discovers it on re-import.
 
 ---
 
@@ -558,9 +558,9 @@ Items that are NOT part of the 5-phase plan, even at the end:
 
 Phases should start when there is real demand, not speculatively.
 
-- **Phase 1:** the user (or another author) has a concrete write-book-template repo that must land in Bibliogon. Triggered by: real import need.
-- **Phase 2:** at least one book has been successfully imported and has accumulated Bibliogon-side edits the user wants committed back.
-- **Phase 3:** conflicts start happening in practice. Multiple edit sources (Bibliogon + direct git edits) on the same book.
+- **Phase 1:** the user (or another author) has a concrete write-book-template repo that must land in AdaptiveLearner. Triggered by: real import need.
+- **Phase 2:** at least one book has been successfully imported and has accumulated AdaptiveLearner-side edits the user wants committed back.
+- **Phase 3:** conflicts start happening in practice. Multiple edit sources (AdaptiveLearner + direct git edits) on the same book.
 - **Phase 4:** the user is actively maintaining multi-language books and the current UI friction (book list shows 3 unrelated entries for DE/EN/ES) is painful.
 - **Phase 5:** plugin-git-sync Phases 1-2 and core git Phase 1 are both stable in production for at least one release cycle.
 
@@ -574,7 +574,7 @@ No phase starts until the prior phase has shipped and lived in the main branch f
 - [children-book-plugin.md](children-book-plugin.md) - a plugin architecture precedent (plugin-kinderbuch, which depends on plugin-export).
 - [tiptap-3-migration.md](tiptap-3-migration.md) - future migration that may bump the `version` field in chapter JSON from `tiptap-2` to `tiptap-3`.
 - [github.com/astrapi69/write-book-template](https://github.com/astrapi69/write-book-template) - reference repo format; the input shape for the Phase 1 migration path.
-- [github.com/astrapi69/bibliogon-plugin-export](https://github.com/astrapi69/bibliogon-plugin-export) - the required dependency.
+- [github.com/astrapi69/adaptive-learner-plugin-export](https://github.com/astrapi69/adaptive-learner-plugin-export) - the required dependency.
 - [backend/app/services/backup/](../../backend/app/services/backup/) - existing backup stack; plugin-git-sync does not touch it.
 - `docs/ROADMAP.md` - will get new entries PGS-01 through PGS-05 for the plugin phases (see Section 13).
 

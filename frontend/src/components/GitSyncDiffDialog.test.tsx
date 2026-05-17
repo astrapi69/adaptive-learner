@@ -5,7 +5,7 @@
  * - empty diff renders the "nothing to resolve" notice
  * - actionable rows render with default actions (remote_changed
  *   defaults to take_remote; conflict defaults to keep_local)
- * - clicking Bibliogon / Repo flips the row's chosen action
+ * - clicking AdaptiveLearner / Repo flips the row's chosen action
  * - apply: posts only resolvable rows; surfaces success
  * - apply: ApiError surfaces as notify.error and onClose is NOT
  *   called (the user keeps the dialog open to retry)
@@ -181,7 +181,7 @@ describe("GitSyncDiffDialog", () => {
         );
     });
 
-    it("clicking Bibliogon flips the row to keep_local", async () => {
+    it("clicking AdaptiveLearner flips the row to keep_local", async () => {
         await renderDialog(
             makeDiffResponse([
                 makeEntry({ slug: "rc", classification: "remote_changed" }),

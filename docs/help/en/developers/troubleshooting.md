@@ -24,7 +24,7 @@ Fix (one-time, persistent):
 make fix-watchers
 ```
 
-The target writes `/etc/sysctl.d/99-bibliogon-watchers.conf` with
+The target writes `/etc/sysctl.d/99-adaptive-learner-watchers.conf` with
 both limits raised:
 
 - `fs.inotify.max_user_watches=524288`
@@ -36,8 +36,8 @@ limits stick across reboots.
 If `make fix-watchers` is unavailable, run the equivalent commands:
 
 ```bash
-echo "fs.inotify.max_user_watches=524288"   | sudo tee    /etc/sysctl.d/99-bibliogon-watchers.conf
-echo "fs.inotify.max_user_instances=512"    | sudo tee -a /etc/sysctl.d/99-bibliogon-watchers.conf
+echo "fs.inotify.max_user_watches=524288"   | sudo tee    /etc/sysctl.d/99-adaptive-learner-watchers.conf
+echo "fs.inotify.max_user_instances=512"    | sudo tee -a /etc/sysctl.d/99-adaptive-learner-watchers.conf
 sudo sysctl --system
 ```
 
@@ -71,14 +71,14 @@ sqlite3.OperationalError: duplicate column name: ...
 ```
 
 Cause: a new Alembic migration that uses `ALTER TABLE` was pulled
-in, but the local `backend/bibliogon.db` still has the old
+in, but the local `backend/adaptive_learner.db` still has the old
 `alembic_version`. The test harness re-creates tables with the new
 schema while the DB tries to apply the migration on top.
 
 Fix: delete the local SQLite file and rerun.
 
 ```bash
-rm backend/bibliogon.db
+rm backend/adaptive_learner.db
 make test
 ```
 
@@ -136,7 +136,7 @@ Fix:
 
 ```bash
 make dev-down
-rm -f backend/bibliogon.db-shm backend/bibliogon.db-wal
+rm -f backend/adaptive_learner.db-shm backend/adaptive_learner.db-wal
 ```
 
 Restart with `make dev`. Production uses Docker which isolates the

@@ -9,7 +9,7 @@ Why this exists
 apiError?)``. When the second argument is an ``ApiError``, the
 toast renders a "Issue melden" button that opens an
 ``ErrorReportDialog`` prefilled with endpoint, status, stacktrace,
-and environment context — the load-bearing piece of Bibliogon's
+and environment context — the load-bearing piece of AdaptiveLearner's
 "every error must be actionable as a GitHub issue" promise
 from ``.claude/rules/code-hygiene.md`` "Error reporting".
 

@@ -30,10 +30,10 @@ client = TestClient(app)
 @pytest.fixture(autouse=True)
 def _isolate_uploads(tmp_path, monkeypatch):
     """Redirect UPLOADS_ROOT + credentials dir to a tmp dir for every test."""
-    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("ADAPTIVE_LEARNER_DATA_DIR", str(tmp_path))
     monkeypatch.setattr(git_credentials, "GIT_CRED_DIR", tmp_path / "git_credentials")
     # Phase 2 uses credential_store which requires a secret in env.
-    monkeypatch.setenv("BIBLIOGON_CREDENTIALS_SECRET", "test-secret-for-git-backup")
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CREDENTIALS_SECRET", "test-secret-for-git-backup")
     yield
 
 
@@ -398,7 +398,7 @@ def test_pull_fast_forwards_from_remote(tmp_path):
     )
     ext_repo.remote().push()
 
-    # Now pull from the Bibliogon side.
+    # Now pull from the AdaptiveLearner side.
     resp = client.post(f"/api/books/{book_id}/git/pull")
     assert resp.status_code == 200
     body = resp.json()
@@ -532,7 +532,7 @@ def _diverge_histories(tmp_path, book_id: str, url: str, *, overlap: bool) -> No
     work = tmp_path / "external-for-diverge"
     ext_repo = git.Repo.clone_from(url, work)
     if overlap:
-        # Target a file Bibliogon writes via the book state export.
+        # Target a file AdaptiveLearner writes via the book state export.
         target_dir = work / "manuscript" / "chapters"
         target_dir.mkdir(parents=True, exist_ok=True)
         target_files = list(target_dir.glob("*.json"))
@@ -562,8 +562,8 @@ def _diverge_histories(tmp_path, book_id: str, url: str, *, overlap: bool) -> No
         repo.git.add(A=True)
         repo.index.commit(
             "Local side commit",
-            author=git.Actor("Aster", "aster@bibliogon.local"),
-            committer=git.Actor("Aster", "aster@bibliogon.local"),
+            author=git.Actor("Aster", "aster@adaptive_learner.local"),
+            committer=git.Actor("Aster", "aster@adaptive_learner.local"),
         )
     else:
         _add_chapter(book_id, "Local-only chapter")

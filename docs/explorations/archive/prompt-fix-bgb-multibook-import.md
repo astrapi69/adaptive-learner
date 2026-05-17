@@ -367,7 +367,7 @@ cd frontend && npm run test 2>&1 | tail -10
 
 # Manual smoke
 # 1. Create or use a multi-book .bgb (export multiple books
-#    from current Bibliogon)
+#    from current AdaptiveLearner)
 # 2. Import via new wizard
 # 3. Verify list shows all books
 # 4. Select subset, import

@@ -1,4 +1,4 @@
-# Smoke Test: DONATE.md / DONATE-de.md Rebrand (Phylax → Bibliogon)
+# Smoke Test: DONATE.md / DONATE-de.md Rebrand (Phylax → AdaptiveLearner)
 
 **Shipped:** 2026-04-30
 **Commit:** 43895c7

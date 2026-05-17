@@ -1,12 +1,12 @@
 # Git Backup: Basics
 
-Git is a distributed version control system. Bibliogon uses it to preserve every version of your book: each commit is a snapshot you can review, compare, or restore later.
+Git is a distributed version control system. AdaptiveLearner uses it to preserve every version of your book: each commit is a snapshot you can review, compare, or restore later.
 
 This document covers local use only. Syncing with a remote (GitHub, GitLab, Gitea) is described in **Git Backup > Remote**; SSH authentication in **Git Backup > SSH Keys**.
 
 ## What is versioned
 
-Bibliogon creates one git repository per book (`.git` inside the book directory). On every commit, the current state is written to disk:
+AdaptiveLearner creates one git repository per book (`.git` inside the book directory). On every commit, the current state is written to disk:
 
 - `manuscript/chapters/NN-<slug>.json` — each chapter as TipTap JSON
 - `manuscript/front-matter/` and `back-matter/` — front and back matter (TOC, dedication, imprint, etc.)
@@ -32,13 +32,13 @@ Initialization is idempotent: clicking **Initialize** again is a no-op.
 2. Type a **commit message** (e.g. "Revised chapter 3").
 3. Click **Commit**.
 
-Bibliogon writes the current book state to disk and creates a git commit. After the commit:
+AdaptiveLearner writes the current book state to disk and creates a git commit. After the commit:
 
 - HEAD shows the new hash.
 - The entry appears at the top of the history list.
 - The sidebar indicator (dot next to the Git button) refreshes after dialog close.
 
-If nothing has changed since the last commit, Bibliogon rejects the attempt with **Nothing to commit**.
+If nothing has changed since the last commit, AdaptiveLearner rejects the attempt with **Nothing to commit**.
 
 ## When to commit
 
@@ -71,4 +71,4 @@ Initialization hasn't run. Click **Initialize repository** in the dialog.
 The current book state matches the last commit. Either everything is already saved, or your change hasn't been autosaved yet — wait briefly and retry.
 
 **Corrupted repository.**
-Bibliogon tries to handle git operations gracefully. On unexpected errors: repair or delete `uploads/<book-id>/.git` manually and re-initialize. The TipTap JSON source lives in Bibliogon's database, not inside the git repo — it is not lost.
+AdaptiveLearner tries to handle git operations gracefully. On unexpected errors: repair or delete `uploads/<book-id>/.git` manually and re-initialize. The TipTap JSON source lives in AdaptiveLearner's database, not inside the git repo — it is not lost.

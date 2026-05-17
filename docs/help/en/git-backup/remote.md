@@ -2,11 +2,11 @@
 
 With a remote (GitHub, GitLab, Gitea, Codeberg, self-hosted) you can push local commits to a server and pull commits from it. This is how you sync a book across devices or keep an off-site backup.
 
-Bibliogon speaks git over HTTPS with a Personal Access Token (PAT) by default. SSH is described in **Git Backup > SSH Keys**.
+AdaptiveLearner speaks git over HTTPS with a Personal Access Token (PAT) by default. SSH is described in **Git Backup > SSH Keys**.
 
 ## Create a private repository
 
-Before configuring Bibliogon, create an empty repository at your host.
+Before configuring AdaptiveLearner, create an empty repository at your host.
 
 ### GitHub
 
@@ -31,7 +31,7 @@ Works the same as GitHub/GitLab. Key requirement: empty repo, save the HTTPS URL
 
 ## Create a Personal Access Token
 
-A PAT replaces your password. It grants Bibliogon only the permissions needed for push/pull.
+A PAT replaces your password. It grants AdaptiveLearner only the permissions needed for push/pull.
 
 ### GitHub
 
@@ -48,7 +48,7 @@ A PAT replaces your password. It grants Bibliogon only the permissions needed fo
 3. Set an expiration.
 4. Copy the token.
 
-## Configure the remote in Bibliogon
+## Configure the remote in AdaptiveLearner
 
 1. Open **Git Backup** (book sidebar).
 2. If no remote is configured yet: **Configure remote**.
@@ -56,7 +56,7 @@ A PAT replaces your password. It grants Bibliogon only the permissions needed fo
 4. **Personal Access Token**: the token you just created.
 5. **Save**.
 
-Bibliogon encrypts the PAT with Fernet and stores it locally at `config/git_credentials/<book-id>.enc`. The token never appears in git config, commits, or API responses.
+AdaptiveLearner encrypts the PAT with Fernet and stores it locally at `config/git_credentials/<book-id>.enc`. The token never appears in git config, commits, or API responses.
 
 ## Push and pull
 
@@ -98,10 +98,10 @@ In the per-file picker, choose **Mine** or **Theirs** for each conflicted file, 
 ## Troubleshooting
 
 **Authentication failed. Check the PAT.**
-The PAT is wrong, expired, or lacks write permission. Create a fresh PAT, **Edit** the remote in Bibliogon, enter the new token.
+The PAT is wrong, expired, or lacks write permission. Create a fresh PAT, **Edit** the remote in AdaptiveLearner, enter the new token.
 
 **Push rejected.**
 The remote has commits you don't. Either **Merge** (clean resolution) or **Force push** (only if you're sure the remote can be overwritten).
 
 **Network error.**
-No internet or host unreachable. Bibliogon keeps working locally — commit as usual, push when the connection returns.
+No internet or host unreachable. AdaptiveLearner keeps working locally — commit as usual, push when the connection returns.

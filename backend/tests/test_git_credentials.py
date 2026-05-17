@@ -7,7 +7,7 @@ Pin the contract that ``git_backup`` and plugin-git-sync share via
 - HTTPS URL injection produces ``x-access-token:<pat>@host``
 - non-HTTPS URLs are returned unchanged
 - SSH URL detection covers both ``ssh://`` and ``git@host:path``
-- ``ssh_env`` returns None unless a Bibliogon SSH key exists
+- ``ssh_env`` returns None unless a AdaptiveLearner SSH key exists
 """
 
 from __future__ import annotations
@@ -23,7 +23,7 @@ from app.services import git_credentials, ssh_keys
 def _isolate_dirs(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(git_credentials, "GIT_CRED_DIR", tmp_path / "creds")
     monkeypatch.setattr(ssh_keys, "SSH_DIR", tmp_path / "ssh")
-    monkeypatch.setenv("BIBLIOGON_CREDENTIALS_SECRET", "test-secret-pgs02fu")
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CREDENTIALS_SECRET", "test-secret-pgs02fu")
     yield
 
 

@@ -1,6 +1,6 @@
 # Tastenkürzel
 
-Die folgenden Tastenkürzel sind in Bibliogon verfügbar. Auf macOS wird Ctrl durch Cmd ersetzt.
+Die folgenden Tastenkürzel sind in AdaptiveLearner verfügbar. Auf macOS wird Ctrl durch Cmd ersetzt.
 
 ## App
 

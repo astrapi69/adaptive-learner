@@ -7,7 +7,7 @@ touching HTTP route code.
 
 from __future__ import annotations
 
-# All 8 Bibliogon UI languages. Single source for review + marketing
+# All 8 AdaptiveLearner UI languages. Single source for review + marketing
 # prompt builders. See docs/explorations/ai-review-extension.md 3.12.
 LANG_MAP: dict[str, str] = {
     "de": "German",

@@ -61,7 +61,7 @@ def _get_ai_config() -> dict[str, Any]:
     chain (T-XX secrets refactor) reaches the AI client. Reading
     ``app.yaml`` directly here was the bug surfaced when
     ai.api_key was emptied from the project file and moved to
-    ~/.config/bibliogon/secrets.yaml: the AI client kept reading
+    ~/.config/adaptive_learner/secrets.yaml: the AI client kept reading
     the empty project value and failed every connection. Lazy
     import to avoid the circular ai/routes.py <-> app.main cycle.
     """

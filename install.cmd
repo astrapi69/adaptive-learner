@@ -1,5 +1,5 @@
 @echo off
-REM Bibliogon Windows double-click wrapper.
+REM AdaptiveLearner Windows double-click wrapper.
 REM Invokes install.ps1 via PowerShell with -ExecutionPolicy Bypass
 REM so corporate Windows with Group-Policy-locked ExecutionPolicy
 REM still runs the installer. The user does NOT need to run

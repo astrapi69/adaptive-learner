@@ -35,7 +35,7 @@
  * ``.ProseMirror`` is used as a selector for the editor root
  * even though the repo convention is data-testid-only. Rationale:
  * ``.ProseMirror`` is the upstream TipTap/ProseMirror class
- * contract, not a Bibliogon-authored CSS class - it is
+ * contract, not a AdaptiveLearner-authored CSS class - it is
  * effectively as stable as a testid.
  */
 
@@ -49,13 +49,13 @@ type Palette = (typeof PALETTES)[number];
  * reads the stored value on first render. */
 async function seedPalette(page: Page, palette: string) {
     await page.addInitScript((value) => {
-        window.localStorage.setItem("bibliogon-app-theme", value);
+        window.localStorage.setItem("adaptive-learner-app-theme", value);
     }, palette);
 }
 
 async function seedTheme(page: Page, theme: "light" | "dark") {
     await page.addInitScript((value) => {
-        window.localStorage.setItem("bibliogon-theme", value);
+        window.localStorage.setItem("adaptive-learner-theme", value);
     }, theme);
 }
 
@@ -119,7 +119,7 @@ test.describe("Themes - light/dark toggle", () => {
         // the "dark" state we are trying to verify persists. Seed once
         // via page.evaluate after the initial navigation instead.
         await page.goto("/");
-        await page.evaluate(() => window.localStorage.setItem("bibliogon-theme", "light"));
+        await page.evaluate(() => window.localStorage.setItem("adaptive-learner-theme", "light"));
         await page.reload();
         expect(await getTheme(page)).toBe("light");
         await page.getByTestId("theme-toggle").first().click();
@@ -157,7 +157,7 @@ test.describe("Themes - palette selector via Settings UI", () => {
 
         // Persisted in localStorage
         const stored = await page.evaluate(() =>
-            window.localStorage.getItem("bibliogon-app-theme"),
+            window.localStorage.getItem("adaptive-learner-app-theme"),
         );
         expect(stored).toBe("classic");
 

@@ -22,7 +22,7 @@ If you find yourself reaching for chapters or a back-cover description, you want
 
 1. From the Dashboard, click **Articles** in the header. The article list opens.
 2. Click **New Article** (or use the empty-state CTA on first run).
-3. Bibliogon creates a draft and opens the editor immediately. Your changes auto-save every second; the title bar shows "Saving…" / "Saved" while you work.
+3. AdaptiveLearner creates a draft and opens the editor immediately. Your changes auto-save every second; the title bar shows "Saving…" / "Saved" while you work.
 
 ## The editor
 
@@ -59,7 +59,7 @@ The list page filter pills let you scope to a single status. The default `All` v
 
 ## Deleting an article
 
-The sidebar's **Delete** button (red, bottom of the metadata pane) removes the article. A confirmation dialog asks you to acknowledge that the action cannot be undone — Bibliogon does not currently put articles in a trash (that's a Phase 2 polish item, parallel to book trash).
+The sidebar's **Delete** button (red, bottom of the metadata pane) removes the article. A confirmation dialog asks you to acknowledge that the action cannot be undone — AdaptiveLearner does not currently put articles in a trash (that's a Phase 2 polish item, parallel to book trash).
 
 ## Publications (AR-02 Phase 2)
 
@@ -72,14 +72,14 @@ A Publication tracks one piece of outbound content on one platform: the main pub
 3. Pick a platform from the dropdown. The form fills in with that platform's required + optional fields.
 4. Fill in the data (e.g. Medium needs title + tags; X needs body) and submit.
 
-The publication starts in **Planned** state. No platform API is contacted — Bibliogon just records what you intend to publish.
+The publication starts in **Planned** state. No platform API is contacted — AdaptiveLearner just records what you intend to publish.
 
 ### Lifecycle
 
 - **Planned** — created, not yet live.
 - **Scheduled** — has a scheduled_at date; still not live.
-- **Published** — you marked it published after pasting the article into the platform. Bibliogon snapshots the article's TipTap content at this moment for drift detection.
-- **Out of sync** — the article's content has changed since the publication was marked published. Bibliogon flags the publication so you remember to update the live version.
+- **Published** — you marked it published after pasting the article into the platform. AdaptiveLearner snapshots the article's TipTap content at this moment for drift detection.
+- **Out of sync** — the article's content has changed since the publication was marked published. AdaptiveLearner flags the publication so you remember to update the live version.
 - **Archived** — historical, no longer active.
 
 ### Mark as published
@@ -87,20 +87,20 @@ The publication starts in **Planned** state. No platform API is contacted — Bi
 Once you've pasted the article into Medium (or your platform of choice) and the live URL is up:
 
 1. Click **Mark as published** on the row.
-2. Optionally provide the published URL (Bibliogon stores it under `platform_metadata.published_url`).
+2. Optionally provide the published URL (AdaptiveLearner stores it under `platform_metadata.published_url`).
 
-Bibliogon snapshots the article's current `content_json` and remembers it as the baseline for drift detection.
+AdaptiveLearner snapshots the article's current `content_json` and remembers it as the baseline for drift detection.
 
 ### Drift detection
 
-Every time you edit the article after a publication is **Published**, the next time you view that publication Bibliogon compares the live snapshot against the current draft. Mismatch flips the publication to **Out of sync** with a warning banner.
+Every time you edit the article after a publication is **Published**, the next time you view that publication AdaptiveLearner compares the live snapshot against the current draft. Mismatch flips the publication to **Out of sync** with a warning banner.
 
 ### Verify live
 
 When you've updated the live platform version to match (or accept that the local draft is the new baseline):
 
 1. Click **Verify live** on the out-of-sync row.
-2. Bibliogon re-snapshots the article and clears the out-of-sync state.
+2. AdaptiveLearner re-snapshots the article and clears the out-of-sync state.
 
 ### Promo posts
 
@@ -121,4 +121,4 @@ SEO Title and SEO Description fall back to the article title and excerpt at publ
 - Tag taxonomy (tags are free strings, no autocomplete across articles).
 - Trash + restore for articles.
 
-If your cross-posting workflow surfaces a friction Bibliogon can solve, log it in `docs/journal/article-workflow-observations.md` so the case is concrete before Phase 3 priorities are picked.
+If your cross-posting workflow surfaces a friction AdaptiveLearner can solve, log it in `docs/journal/article-workflow-observations.md` so the case is concrete before Phase 3 priorities are picked.

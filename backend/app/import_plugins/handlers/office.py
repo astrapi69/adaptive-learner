@@ -8,7 +8,7 @@ as a TipTap-ready Chapter row.
 
 Scope note: the exploration (Section 7 of
 core-import-orchestrator.md) has these living in a separate
-``bibliogon-plugin-import-office`` package during the plugin
+``adaptive-learner-plugin-import-office`` package during the plugin
 extraction phase (PGS-01-style work after the protocol-location
 decision). For now they ship in-repo as core handlers so users get
 docx/epub import without waiting on external plugin packaging.
@@ -178,7 +178,7 @@ def _convert_to_markdown(path: Path, pandoc_format: str) -> tuple[str, Path]:
     Detect + execute both call this; two invocations per import is
     acceptable given office files are rarely huge.
     """
-    media_dir = Path(tempfile.mkdtemp(prefix="bibliogon_office_media_"))
+    media_dir = Path(tempfile.mkdtemp(prefix="adaptive_learner_office_media_"))
     cmd = [
         "pandoc",
         "-f",

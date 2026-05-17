@@ -29,8 +29,8 @@ When the user says "continue", "next item", "go on" or similar:
 
 ## Order for new plugins
 
-1. Create the plugin folder: plugins/bibliogon-plugin-{name}/
-2. pyproject.toml with entry point: [project.entry-points."bibliogon.plugins"]
+1. Create the plugin folder: plugins/adaptive-learner-plugin-{name}/
+2. pyproject.toml with entry point: [project.entry-points."adaptive_learner.plugins"]
 3. Plugin class: {Name}Plugin(BasePlugin) with name, version, depends_on.
 4. YAML config: backend/config/plugins/{name}.yaml
 5. Hook implementations (if needed, new hook specs in hookspecs.py).
@@ -53,12 +53,12 @@ For code-level prohibitions (fetch, console.log, Tailwind, etc.) see coding-stan
 Additionally for the AI:
 - Introduce new dependencies without asking first.
 - Change architectural decisions (e.g. replace SQLAlchemy, replace TipTap).
-- Change PluginForge code from inside Bibliogon (separate repo!).
+- Change PluginForge code from inside AdaptiveLearner (separate repo!).
 - Change the plugin structure (BasePlugin, hook specs) without asking.
 - Generate code "for later". Only what is needed now.
 - Delete, comment out or weaken existing tests to make `make test` green.
 - Build custom TipTap extensions without first checking whether an official one exists.
-- Throw HTTPException from service functions. Services use BibliogonError subclasses (see code-hygiene.md).
+- Throw HTTPException from service functions. Services use AdaptiveLearnerError subclasses (see code-hygiene.md).
 - In autonomous mode, guess when something is unclear. Prefer to stop and document the uncertainty.
 
 ## Current state
@@ -133,7 +133,7 @@ only.
   and every PR. Uploads HTML reports + coverage.xml as
   GitHub Actions artifacts (14 day retention):
     - `backend-coverage`
-    - `bibliogon-plugin-{export,grammar,kdp,kinderbuch,ms-tools}-coverage`
+    - `adaptive-learner-plugin-{export,grammar,kdp,kinderbuch,ms-tools}-coverage`
     - `frontend-coverage`
 
 To pull the latest coverage reports without running coverage
@@ -142,7 +142,7 @@ locally:
 ```bash
 gh run download --name backend-coverage
 gh run download --name frontend-coverage
-gh run download --name bibliogon-plugin-export-coverage  # etc.
+gh run download --name adaptive-learner-plugin-export-coverage  # etc.
 ```
 
 `audiobook` and `translation` plugins are not yet in the coverage
@@ -170,7 +170,7 @@ Numbers that change with every feature or test session live in ONE canonical loc
 
 **Rationale:** duplicated numbers drift out of sync within one session. A single source is always correct because there is only one place to update.
 
-**When writing documentation:** if you need to mention a count, write the principle or the reference, not the number. Example: "Bibliogon supports multiple languages (see config/i18n/)" instead of "Bibliogon supports 8 languages".
+**When writing documentation:** if you need to mention a count, write the principle or the reference, not the number. Example: "AdaptiveLearner supports multiple languages (see config/i18n/)" instead of "AdaptiveLearner supports 8 languages".
 
 ## Numeric claims verification
 
@@ -384,7 +384,7 @@ and the archive link.
 |------|---------|
 | **P0** | Deadline pressure, active blocker, security issue, or production-data risk. "Do this now." |
 | **P1** | Architecture / hygiene debt. Code-rule violations, test isolation gaps, things that would block a clean release. |
-| **P2** | High-value user features. Anything moving Bibliogon from "toy to serious tool". |
+| **P2** | High-value user features. Anything moving AdaptiveLearner from "toy to serious tool". |
 | **P3** | Infrastructure / quality. Test coverage, CI / tooling, internal refactors with no user-visible effect. |
 | **P4** | Roadmap / future phases. Items deliberately deferred to a later phase. |
 | **P5** | Speculative / nice-to-have. No concrete trigger or user demand. |

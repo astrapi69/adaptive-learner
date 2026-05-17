@@ -27,7 +27,7 @@ app:
   default_language: de
   delete_permanently: false
   description: Open-source book authoring platform
-  name: Bibliogon
+  name: Adaptive Learner
   supported_languages:
   - de
   - en
@@ -57,12 +57,12 @@ plugins:
   config_dir: config/plugins
   disabled: []
   enabled: []
-  entry_point_group: bibliogon.plugins
+  entry_point_group: adaptive_learner.plugins
 ui:
   logo: assets/logo.svg
   subtitle: ''
   theme: warm-literary
-  title: Bibliogon
+  title: Adaptive Learner
 donations:
   # Project-level config: edit via this YAML, not via the Settings UI.
   # Flip `enabled: false` to hide all three donation visibility levels

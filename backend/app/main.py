@@ -22,7 +22,7 @@ from pluginforge.config import load_i18n
 # bare top-level `app` package name does not shadow the `app = FastAPI(
 # ...)` assignment below (mypy attr-defined cascade otherwise).
 from app import import_plugins as _register_core_import_handlers  # noqa: F401, E402
-from app.hookspecs import BibliogonHookSpec
+from app.hookspecs import AdaptiveLearnerHookSpec
 from app.import_plugins import handlers as _import_plugins_handlers  # noqa: F401, E402
 from app.licensing import LicenseError, LicenseStore, LicenseValidator
 from app.routers import (
@@ -63,9 +63,9 @@ if not CONFIG_PATH.exists() and CONFIG_EXAMPLE_PATH.exists():
     logging.getLogger(__name__).info("Created config/app.yaml from app.yaml.example")
 
 # Environment configuration
-DEBUG = os.getenv("BIBLIOGON_DEBUG", "true").lower() in ("true", "1", "yes")
-CORS_ORIGINS = os.getenv("BIBLIOGON_CORS_ORIGINS", "http://localhost:5173,http://localhost:3000")
-SECRET_KEY = os.getenv("BIBLIOGON_SECRET_KEY", "")
+DEBUG = os.getenv("ADAPTIVE_LEARNER_DEBUG", "true").lower() in ("true", "1", "yes")
+CORS_ORIGINS = os.getenv("ADAPTIVE_LEARNER_CORS_ORIGINS", "http://localhost:5173,http://localhost:3000")
+SECRET_KEY = os.getenv("ADAPTIVE_LEARNER_SECRET_KEY", "")
 
 # App config helpers
 import yaml
@@ -80,17 +80,17 @@ def _get_user_override_path() -> Path:
 
     XDG-conformant on Linux/macOS, ``%APPDATA%`` on Windows. Set
     ``XDG_CONFIG_HOME`` to relocate; otherwise defaults to
-    ``~/.config/bibliogon/secrets.yaml``.
+    ``~/.config/adaptive_learner/secrets.yaml``.
     """
     if sys.platform == "win32":
         appdata = os.environ.get("APPDATA")
         if appdata:
-            return Path(appdata) / "bibliogon" / "secrets.yaml"
-        return Path.home() / "AppData" / "Roaming" / "bibliogon" / "secrets.yaml"
+            return Path(appdata) / "adaptive_learner" / "secrets.yaml"
+        return Path.home() / "AppData" / "Roaming" / "adaptive_learner" / "secrets.yaml"
     xdg_config = os.environ.get("XDG_CONFIG_HOME")
     if xdg_config:
-        return Path(xdg_config) / "bibliogon" / "secrets.yaml"
-    return Path.home() / ".config" / "bibliogon" / "secrets.yaml"
+        return Path(xdg_config) / "adaptive_learner" / "secrets.yaml"
+    return Path.home() / ".config" / "adaptive_learner" / "secrets.yaml"
 
 
 def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
@@ -116,7 +116,7 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
 # in a separate refactor (PluginManager loader has its own config path
 # and reload machinery).
 _ENV_SECRET_OVERRIDES: dict[str, tuple[str, ...]] = {
-    "BIBLIOGON_AI_API_KEY": ("ai", "api_key"),
+    "ADAPTIVE_LEARNER_AI_API_KEY": ("ai", "api_key"),
 }
 
 
@@ -192,9 +192,9 @@ def _load_app_config() -> dict[str, Any]:
     1. Project ``app.yaml`` (defaults shipped with the app).
     2. User-overlay ``<data_dir>/config/app.yaml`` (Settings UI
        writes; see ``app.config_overlay``).
-    3. Secrets override ``~/.config/bibliogon/secrets.yaml``
+    3. Secrets override ``~/.config/adaptive_learner/secrets.yaml``
        (long-standing user-home secrets file).
-    4. Environment variables (``BIBLIOGON_AI_API_KEY`` etc.).
+    4. Environment variables (``ADAPTIVE_LEARNER_AI_API_KEY`` etc.).
 
     Higher layers win. Lists REPLACE; dicts deep-merge. Called
     per-request where freshness matters; cheap (small yaml files,
@@ -231,7 +231,7 @@ def _has_project_secret_without_override() -> bool:
         return False
     if _get_user_override_path().exists():
         return False
-    if os.environ.get("BIBLIOGON_AI_API_KEY"):
+    if os.environ.get("ADAPTIVE_LEARNER_AI_API_KEY"):
         return False
     return True
 
@@ -240,7 +240,7 @@ if _has_project_secret_without_override():
     logger.warning(
         "Secrets found in %s (ai.api_key). This file is gitignored but "
         "may be committed accidentally, end up in backups, or appear in "
-        "screen-shares. Move secrets to %s or set BIBLIOGON_AI_API_KEY. "
+        "screen-shares. Move secrets to %s or set ADAPTIVE_LEARNER_AI_API_KEY. "
         "See docs/configuration.md for details.",
         CONFIG_PATH,
         _get_user_override_path(),
@@ -299,14 +299,14 @@ manager = PluginManager(
     pre_activate=_check_license,
     api_version="1",
 )
-manager.register_hookspecs(BibliogonHookSpec)
+manager.register_hookspecs(AdaptiveLearnerHookSpec)
 
 
 def _sync_manager_with_overlay() -> None:
     """Overwrite ``manager._app_config`` with the merged overlay view.
 
     Pluginforge's ``PluginManager`` reads its app config snapshot
-    directly from ``_config_path`` (project app.yaml). Bibliogon
+    directly from ``_config_path`` (project app.yaml). AdaptiveLearner
     layers a user-overlay on top of that (see
     ``app.config_overlay``), so the manager's snapshot would be
     stale right after import. Call this once at startup before
@@ -347,11 +347,11 @@ def _load_installed_plugins() -> None:
                 if path_str not in sys.path:
                     sys.path.insert(0, path_str)
 
-    # Bundled plugins (e.g. plugins/bibliogon-plugin-audiobook/)
+    # Bundled plugins (e.g. plugins/adaptive-learner-plugin-audiobook/)
     bundled_dir = BASE_DIR.parent / "plugins"
     if bundled_dir.exists():
         for plugin_dir in bundled_dir.iterdir():
-            if plugin_dir.is_dir() and plugin_dir.name.startswith("bibliogon-plugin-"):
+            if plugin_dir.is_dir() and plugin_dir.name.startswith("adaptive-learner-plugin-"):
                 path_str = str(plugin_dir)
                 if path_str not in sys.path:
                     sys.path.insert(0, path_str)
@@ -369,7 +369,7 @@ def _enabled_plugins_from_config() -> list[str]:
 
 
 def _discovered_entry_points() -> list[str]:
-    """Names of all plugins registered under the ``bibliogon.plugins``
+    """Names of all plugins registered under the ``adaptive_learner.plugins``
     entry-point group.
 
     Distinguishes 'plugin not in entry-point set' (= not installed,
@@ -380,7 +380,7 @@ def _discovered_entry_points() -> list[str]:
     try:
         from importlib.metadata import entry_points
 
-        return sorted(ep.name for ep in entry_points(group="bibliogon.plugins"))
+        return sorted(ep.name for ep in entry_points(group="adaptive_learner.plugins"))
     except Exception:  # noqa: BLE001 - diagnostic only
         return []
 
@@ -393,7 +393,7 @@ def _log_plugin_diagnostics_pre(*, enabled_in_config: list[str]) -> None:
     """
     discovered = _discovered_entry_points()
     logger.info(
-        "Plugin discovery: %d entry points found via 'bibliogon.plugins' group: %s",
+        "Plugin discovery: %d entry points found via 'adaptive_learner.plugins' group: %s",
         len(discovered),
         ", ".join(discovered) if discovered else "none",
     )
@@ -446,7 +446,7 @@ def _log_plugin_diagnostics_post(
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting Bibliogon (debug=%s)", DEBUG)
+    logger.info("Starting AdaptiveLearner (debug=%s)", DEBUG)
     # Migrate v0.25.0-and-earlier project-tree data into the canonical
     # XDG data dir on first start after the Phase 2 path swap. Runs
     # BEFORE init_db so a moved SQLite DB is picked up rather than
@@ -456,7 +456,7 @@ async def lifespan(app: FastAPI):
     migrate_data_dir_if_needed()
     # Stamp the data dir as production so the test conftest tripwire
     # can refuse to run if a test ever points at this same path.
-    # No-op in test mode (BIBLIOGON_TEST=1).
+    # No-op in test mode (ADAPTIVE_LEARNER_TEST=1).
     from app.paths import mark_data_dir_as_production
 
     mark_data_dir_as_production()
@@ -505,12 +505,12 @@ async def lifespan(app: FastAPI):
     )
 
     yield
-    logger.info("Shutting down Bibliogon")
+    logger.info("Shutting down AdaptiveLearner")
     manager.deactivate_all()
 
 
 app = FastAPI(
-    title="Bibliogon",
+    title="AdaptiveLearner",
     description="Open-source book authoring platform.",
     version=__version__,
     lifespan=lifespan,
@@ -588,11 +588,11 @@ app.include_router(ws_router, prefix="/api")
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
-from app.exceptions import BibliogonError
+from app.exceptions import AdaptiveLearnerError
 
 
-@app.exception_handler(BibliogonError)
-async def bibliogon_error_handler(request: Request, exc: BibliogonError):
+@app.exception_handler(AdaptiveLearnerError)
+async def adaptive_learner_error_handler(request: Request, exc: AdaptiveLearnerError):
     """Map typed domain errors to HTTP responses (per code-hygiene.md)."""
     if exc.status_code >= 500:
         logger.error(

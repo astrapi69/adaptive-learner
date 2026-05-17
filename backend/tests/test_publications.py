@@ -43,7 +43,7 @@ def test_platform_schemas_endpoint_returns_known_platforms() -> None:
 
 def test_platform_schemas_unknown_platform_falls_through_to_permissive() -> None:
     """Unknown platforms validate as OK (permissive). User can define
-    a Publication for a platform Bibliogon doesn't ship a schema for."""
+    a Publication for a platform AdaptiveLearner doesn't ship a schema for."""
     article = _create_article()
     resp = client.post(
         f"/api/articles/{article['id']}/publications",

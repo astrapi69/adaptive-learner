@@ -1,6 +1,6 @@
-# Bibliogon Feature Exploration - 2026-05-15
+# AdaptiveLearner Feature Exploration - 2026-05-15
 
-Strategic exploration of 10 proposed features for Bibliogon
+Strategic exploration of 10 proposed features for AdaptiveLearner
 post-v0.32.0. Each feature evaluated against user-value,
 implementation-complexity, dependency-on-existing-architecture,
 and strategic-fit.
@@ -24,8 +24,8 @@ features to develop into Pre-Inspection-Prompts.
 | 6 | KDP Publishing Workflow | Publishing | XL | High |
 | 7 | Multi-Language-Book Workflow | Publishing | XL | Medium-High |
 | 8 | DOCX-Manuscript Export | Publishing | S | Medium |
-| 9 | Article-to-Book Conversion | Bibliogon-Specific | M | High (immediate) |
-| 10 | Backup-Comparison/Diff-View | Bibliogon-Specific | M | Medium |
+| 9 | Article-to-Book Conversion | AdaptiveLearner-Specific | M | High (immediate) |
+| 10 | Backup-Comparison/Diff-View | AdaptiveLearner-Specific | M | Medium |
 
 Complexity scale: XS (1-3 commits), S (3-5), M (6-10),
 L (11-15), XL (16+)
@@ -68,7 +68,7 @@ L (11-15), XL (16+)
 - "Streak" can feel oppressive for some authors
 - Backend storage decision: persistent vs computed-on-demand
 
-**Strategic fit:** High - aligns with Bibliogon's
+**Strategic fit:** High - aligns with AdaptiveLearner's
 self-publishing-author audience. Daily-writing-habit is core
 author workflow.
 
@@ -106,13 +106,13 @@ infrastructure
 - Pomodoro is established author-tool pattern
 
 **Cons:**
-- May conflict with other Bibliogon panels (AI-Template,
+- May conflict with other AdaptiveLearner panels (AI-Template,
   Comments, etc.) - need clean hide/show
 - Pomodoro adds notification complexity (audio? browser-
   permission? settings?)
 
 **Strategic fit:** Medium - useful but not unique. Standard
-feature in author-tools, doesn't differentiate Bibliogon.
+feature in author-tools, doesn't differentiate AdaptiveLearner.
 
 **Dependencies:** existing Editor.tsx + Toolbar.tsx
 
@@ -177,7 +177,7 @@ feature in author-tools, doesn't differentiate Bibliogon.
 - Click on a @-mention navigates to entity page
 
 **Implementation:**
-- New plugin: bibliogon-plugin-story-bible
+- New plugin: adaptive-learner-plugin-story-bible
 - DB: Character, Setting, PlotPoint, Item, Lore tables
   (per-book scoped)
 - TipTap extension: mention-extension for @-syntax
@@ -189,7 +189,7 @@ feature in author-tools, doesn't differentiate Bibliogon.
 **Pros:**
 - Transformative for fiction-writing (Aster has SciFi
   + Kinderbuch + Comics projects)
-- Differentiates Bibliogon from generic writing tools
+- Differentiates AdaptiveLearner from generic writing tools
 - Plugin architecture means it's optional (non-fiction
   authors don't see it)
 - Showcases plugin extensibility
@@ -280,7 +280,7 @@ preference for plot-structuring vs character-driven writing)
 - Final step: export package ready for KDP upload
 
 **Implementation:**
-- Plugin: bibliogon-plugin-kdp (referenced in roadmap)
+- Plugin: adaptive-learner-plugin-kdp (referenced in roadmap)
 - Backend: KDPMetadata model, validation rules
 - Frontend: KDPDashboard, wizard components
 - DOCX/PDF export with KDP-specific formatting
@@ -299,9 +299,9 @@ preference for plot-structuring vs character-driven writing)
 - Region-specific complexities (US tax forms, EU VAT)
 - Requires deep KDP knowledge for correctness
 
-**Strategic fit:** Highest possible for Aster. Bibliogon's
+**Strategic fit:** Highest possible for Aster. AdaptiveLearner's
 KDP-Niche is explicitly targeted. This is the "marquee
-feature" that makes Bibliogon a KDP-specific tool.
+feature" that makes AdaptiveLearner a KDP-specific tool.
 
 **Dependencies:** Book + Chapter models, plugin-architecture,
 DOCX/PDF export
@@ -422,7 +422,7 @@ publishing. Some authors submit to traditional first.
 - Immediate value for Aster's 201-Article corpus
 - Multiple potential books from existing data:
   - Living Health series
-  - Bibliogon development diary
+  - AdaptiveLearner development diary
   - From Theory to Practice
   - Phylax philosophical articles
   - Steuern-Optimierung German articles
@@ -494,7 +494,7 @@ Feature combinations that compound value:
 - #5 Outline/Structure View
 - (Optional) #1 Writing Goals
 
-Combined: Bibliogon becomes premier fiction-author tool.
+Combined: AdaptiveLearner becomes premier fiction-author tool.
 Plot-structure + character-database + daily-momentum tracking.
 
 Effort: ~30 commits across 3-4 sessions.
@@ -506,11 +506,11 @@ Strategic-Fit: High for Aster's fiction projects.
 - (Optional) #8 DOCX Manuscript
 
 Combined: End-to-end self-publishing pipeline. Compile
-Bibliogon-Content directly to Amazon-ready packages in
+AdaptiveLearner-Content directly to Amazon-ready packages in
 multiple languages.
 
 Effort: ~40 commits across 4-5 sessions.
-Strategic-Fit: Highest for Bibliogon's stated target (KDP-Niche).
+Strategic-Fit: Highest for AdaptiveLearner's stated target (KDP-Niche).
 
 ### Bundle C: Author Productivity Daily-Drivers
 - #1 Writing Goals
@@ -546,7 +546,7 @@ Reasoning:
   multiple books)
 - Uses existing infrastructure (no new architecture)
 - Foundation for future content-compilation features
-- Delivers real Bibliogon-as-KDP-tool experience for Aster
+- Delivers real AdaptiveLearner-as-KDP-tool experience for Aster
 
 If forced to pick a BUNDLE: **Bundle D (Quick Wins)**.
 
@@ -560,10 +560,10 @@ Reasoning:
 If forced to pick STRATEGIC direction: **Bundle B (KDP Publishing)**.
 
 Reasoning:
-- Aligns with Bibliogon's stated target market
+- Aligns with AdaptiveLearner's stated target market
 - Highest differentiation in author-tool space
 - KDP-Specifics are technical moats (not easily replicated)
-- Long-term: this is what Bibliogon BECOMES
+- Long-term: this is what AdaptiveLearner BECOMES
 
 But: Bundle B is multi-month. Quick Wins first might be wiser
 to maintain momentum and avoid premature optimization on

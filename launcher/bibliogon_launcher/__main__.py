@@ -8,7 +8,7 @@ a background thread so the Tk event loop stays responsive.
 User-facing text in this file is intentionally free of internal file
 names, config keys, and raw subprocess output. When a user sees a
 dialog they should see plain-language guidance, not developer traces.
-Raw details go to launcher.log under %APPDATA%\\Bibliogon so
+Raw details go to launcher.log under %APPDATA%\\AdaptiveLearner so
 troubleshooting is possible without leaking complexity into the UI.
 """
 
@@ -20,15 +20,15 @@ import sys
 import webbrowser
 from pathlib import Path
 
-from bibliogon_launcher import __version__, config, docker, health, i18n, installer, lockfile, manifest, settings, ui, update_check
+from adaptive_learner_launcher import __version__, config, docker, health, i18n, installer, lockfile, manifest, settings, ui, update_check
 
 
-logger = logging.getLogger("bibliogon_launcher")
+logger = logging.getLogger("adaptive_learner_launcher")
 
-INSTALL_GUIDE_URL = "https://github.com/astrapi69/bibliogon/blob/main/docs/help/en/launcher-windows.md"
+INSTALL_GUIDE_URL = "https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/en/launcher-windows.md"
 DOCKER_INSTALL_URL = "https://docs.docker.com/desktop/install/windows-install/"
-DOCKER_GUIDE_URL_EN = "https://github.com/astrapi69/bibliogon/blob/main/docs/help/en/install/docker-desktop.md"
-DOCKER_GUIDE_URL_DE = "https://github.com/astrapi69/bibliogon/blob/main/docs/help/de/install/docker-desktop.md"
+DOCKER_GUIDE_URL_EN = "https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/en/install/docker-desktop.md"
+DOCKER_GUIDE_URL_DE = "https://github.com/astrapi69/adaptive_learner/blob/main/docs/help/de/install/docker-desktop.md"
 DOCKER_SECURITY_ANCHOR_EN = DOCKER_GUIDE_URL_EN + "#is-docker-safe-to-install"
 DOCKER_SECURITY_ANCHOR_DE = DOCKER_GUIDE_URL_DE + "#ist-docker-sicher-zu-installieren"
 
@@ -43,7 +43,7 @@ def _docker_security_url() -> str:
 
 def main() -> int:
     _setup_logging()
-    logger.info("Bibliogon launcher v%s starting", __version__)
+    logger.info("AdaptiveLearner launcher v%s starting", __version__)
 
     # i18n must be live before the welcome dialog or any other UI
     # string is rendered. Reads settings.language; falls back to OS
@@ -81,7 +81,7 @@ def _run_launcher() -> int:
     # 0. Retry pending cleanup from a previously interrupted uninstall.
     _retry_pending_cleanup()
 
-    # 0.5 First-ever-launch welcome. Tells the user what Bibliogon
+    # 0.5 First-ever-launch welcome. Tells the user what AdaptiveLearner
     # needs (Docker, ~800 MB) and what the first run looks like
     # (~2 GB / 5-10 min) BEFORE any check fires. Order matters: the
     # user should know what is required before being told they don't
@@ -117,7 +117,7 @@ def _run_launcher() -> int:
             try:
                 webbrowser.open(_docker_guide_url())
             except OSError as exc:
-                logger.warning("opening Bibliogon Docker guide failed: %s", exc)
+                logger.warning("opening AdaptiveLearner Docker guide failed: %s", exc)
         return 1
 
     # 2. Docker daemon running? Retry loop: user may need to start Docker Desktop.
@@ -166,7 +166,7 @@ def _run_launcher() -> int:
         if config.is_valid_repo(repo):
             # Migrate: write manifest so future starts skip legacy path
             try:
-                manifest.write_manifest(repo, installer.BIBLIOGON_TARGET_VERSION)
+                manifest.write_manifest(repo, installer.ADAPTIVE_LEARNER_TARGET_VERSION)
             except Exception as exc:
                 logger.warning("Could not write manifest during migration: %s", exc)
             mdata = manifest.read_manifest()
@@ -251,7 +251,7 @@ def _run_launcher() -> int:
 def _schedule_update_check(window: ui.StatusWindow, mdata: dict | None) -> None:
     """Kick off a background update check and surface a notification.
 
-    Skipped silently if no manifest (Bibliogon not installed) or the
+    Skipped silently if no manifest (AdaptiveLearner not installed) or the
     manifest has no version field. The update_check module handles
     all failure modes silently - this helper's only job is to wire
     the callback through window.after so the tkinter UI update runs
@@ -370,7 +370,7 @@ def _retry_pending_cleanup() -> None:
 
 def _check_launcher_target_stale() -> bool:
     """Pre-install safeguard: warn the user if this launcher targets
-    an older Bibliogon than the latest published release.
+    an older AdaptiveLearner than the latest published release.
 
     Returns True if the install flow may proceed (target is current,
     or the user explicitly chose "Continue with older version", or
@@ -381,7 +381,7 @@ def _check_launcher_target_stale() -> bool:
     toggle governs only the post-install notification check.
     First-install on a fresh machine is special; a stale target
     here causes destructive misalignment (user gets an outdated
-    Bibliogon).
+    AdaptiveLearner).
 
     Strict-newer comparison: any newer release fires the dialog.
     The "Continue with older version" button preserves agency for
@@ -394,14 +394,14 @@ def _check_launcher_target_stale() -> bool:
         return True  # fail-open
 
     tag, url = latest
-    if not update_check.is_newer(installer.BIBLIOGON_TARGET_VERSION, tag):
+    if not update_check.is_newer(installer.ADAPTIVE_LEARNER_TARGET_VERSION, tag):
         return True  # in sync (or this launcher is ahead, weird but proceed)
 
     choice = ui.three_button_dialog(
         title=i18n.t("stale.title"),
         message=i18n.t(
             "stale.message",
-            target=installer.BIBLIOGON_TARGET_VERSION,
+            target=installer.ADAPTIVE_LEARNER_TARGET_VERSION,
             latest=tag,
         ),
         primary_label=i18n.t("stale.download"),
@@ -421,7 +421,7 @@ def _check_launcher_target_stale() -> bool:
 
 
 def _install_or_welcome() -> Path | None:
-    """Offer to install Bibliogon or open the install guide.
+    """Offer to install AdaptiveLearner or open the install guide.
 
     Used for the no-manifest case: either a brand-new install or a
     re-install after the user removed the previous one. The pre-
@@ -457,7 +457,7 @@ def _install_or_welcome() -> Path | None:
 
 
 def _run_install_flow() -> Path | None:
-    """Download and install Bibliogon, returning the install dir on success."""
+    """Download and install AdaptiveLearner, returning the install dir on success."""
     show_details = config.get_show_details_default()
     target = config.default_repo_path()
 
@@ -470,7 +470,7 @@ def _run_install_flow() -> Path | None:
     # Show status window during download + extract
     window = ui.StatusWindow()
     window.set_starting(
-        i18n.t("install.downloading", version=f"v{installer.BIBLIOGON_TARGET_VERSION}")
+        i18n.t("install.downloading", version=f"v{installer.ADAPTIVE_LEARNER_TARGET_VERSION}")
     )
 
     result: dict = {}
@@ -488,7 +488,7 @@ def _run_install_flow() -> Path | None:
             logger.warning("env file creation: %s", detail2)
         # Write manifest
         try:
-            manifest.write_manifest(target, installer.BIBLIOGON_TARGET_VERSION)
+            manifest.write_manifest(target, installer.ADAPTIVE_LEARNER_TARGET_VERSION)
         except Exception as exc:
             result["error"] = f"Could not write manifest: {exc}"
             window.after(0, window.destroy)
@@ -532,7 +532,7 @@ def _run_install_flow() -> Path | None:
 
     if result.get("ok"):
         port = result.get("port", config.DEFAULT_PORT)
-        version_label = f"v{installer.BIBLIOGON_TARGET_VERSION}"
+        version_label = f"v{installer.ADAPTIVE_LEARNER_TARGET_VERSION}"
         if result.get("slow_start"):
             choice = ui.two_button_dialog(
                 title=i18n.t("install.complete.title"),
@@ -564,7 +564,7 @@ def _run_install_flow() -> Path | None:
 
 
 def _run_uninstall_flow(install_dir: Path) -> bool:
-    """Uninstall Bibliogon after user confirmation. Returns True if uninstalled."""
+    """Uninstall AdaptiveLearner after user confirmation. Returns True if uninstalled."""
     show_details = config.get_show_details_default()
     choice = ui.two_button_dialog(
         title=i18n.t("uninstall.title"),
@@ -642,7 +642,7 @@ def _run_uninstall_flow(install_dir: Path) -> bool:
 
 
 def _installation_moved_picker() -> Path | None:
-    """Bibliogon was launched here before but the remembered folder no
+    """AdaptiveLearner was launched here before but the remembered folder no
     longer resolves. Offer folder picker or install guide.
 
     Three buttons: Choose folder / Open install guide / Cancel.
@@ -775,7 +775,7 @@ def _setup_logging() -> None:
     root.setLevel(logging.INFO)
     fmt = logging.Formatter("%(asctime)s %(levelname)s %(name)s %(message)s")
 
-    # Handler 1: legacy launcher.log under APPDATA/Bibliogon/
+    # Handler 1: legacy launcher.log under APPDATA/AdaptiveLearner/
     legacy_path = config.logfile_path()
     legacy_path.parent.mkdir(parents=True, exist_ok=True)
     legacy_handler = logging.FileHandler(str(legacy_path), encoding="utf-8")
@@ -783,7 +783,7 @@ def _setup_logging() -> None:
     root.addHandler(legacy_handler)
 
     # Handler 2: install.log under platformdirs config dir (lowercase
-    # "bibliogon"), rotated at 1 MB. This is the activity log that
+    # "adaptive_learner"), rotated at 1 MB. This is the activity log that
     # records install/uninstall events for troubleshooting.
     try:
         activity_path = manifest.manifest_path().parent / "install.log"

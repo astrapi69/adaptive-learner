@@ -22,7 +22,7 @@ Wenn du Kapitel oder eine Backpage-Beschreibung brauchst, willst du ein Buch, ke
 
 1. Im Dashboard auf **Artikel** in der Kopfzeile klicken. Die Artikelliste öffnet sich.
 2. **Neuer Artikel** klicken (oder den Empty-State-CTA beim ersten Aufruf).
-3. Bibliogon legt einen Entwurf an und öffnet sofort den Editor. Deine Änderungen werden mit 1-Sekunden-Verzögerung automatisch gespeichert; die Kopfzeile zeigt während des Tippens "Speichert…" / "Gespeichert".
+3. AdaptiveLearner legt einen Entwurf an und öffnet sofort den Editor. Deine Änderungen werden mit 1-Sekunden-Verzögerung automatisch gespeichert; die Kopfzeile zeigt während des Tippens "Speichert…" / "Gespeichert".
 
 ## Der Editor
 
@@ -59,7 +59,7 @@ Die Filter-Pills auf der Listenseite engen auf einen Status ein. Die Standard-An
 
 ## Artikel löschen
 
-Der **Löschen**-Button in der Sidebar (rot, unten im Metadaten-Bereich) entfernt den Artikel. Ein Bestätigungsdialog lässt dich anerkennen, dass die Aktion nicht rückgängig gemacht werden kann — Bibliogon legt Artikel derzeit nicht in einen Papierkorb (das ist ein Phase-2-Polish-Punkt, parallel zum Buch-Papierkorb).
+Der **Löschen**-Button in der Sidebar (rot, unten im Metadaten-Bereich) entfernt den Artikel. Ein Bestätigungsdialog lässt dich anerkennen, dass die Aktion nicht rückgängig gemacht werden kann — AdaptiveLearner legt Artikel derzeit nicht in einen Papierkorb (das ist ein Phase-2-Polish-Punkt, parallel zum Buch-Papierkorb).
 
 ## Publikationen (AR-02 Phase 2)
 
@@ -72,14 +72,14 @@ Eine Publikation verfolgt ein einzelnes Stück Inhalt auf einer Plattform: die H
 3. Plattform aus dem Dropdown wählen. Das Formular füllt sich mit den Pflicht- + optionalen Feldern dieser Plattform.
 4. Daten ausfüllen (z.B. Medium braucht Titel + Tags; X braucht Body) und absenden.
 
-Die Publikation startet im Status **Geplant**. Bibliogon kontaktiert keine Plattform-API — es speichert nur, was du veröffentlichen willst.
+Die Publikation startet im Status **Geplant**. AdaptiveLearner kontaktiert keine Plattform-API — es speichert nur, was du veröffentlichen willst.
 
 ### Lebenszyklus
 
 - **Geplant** — angelegt, noch nicht live.
 - **Eingeplant** — hat ein scheduled_at-Datum; noch nicht live.
-- **Veröffentlicht** — du hast es als veröffentlicht markiert nachdem der Artikel auf der Plattform online war. Bibliogon snappt den TipTap-Content für Drift-Detection.
-- **Nicht synchron** — der Artikel-Content hat sich seit der Markierung geändert. Bibliogon flaggt die Publikation, damit du nicht vergisst, die Live-Version zu aktualisieren.
+- **Veröffentlicht** — du hast es als veröffentlicht markiert nachdem der Artikel auf der Plattform online war. AdaptiveLearner snappt den TipTap-Content für Drift-Detection.
+- **Nicht synchron** — der Artikel-Content hat sich seit der Markierung geändert. AdaptiveLearner flaggt die Publikation, damit du nicht vergisst, die Live-Version zu aktualisieren.
 - **Archiviert** — historisch, nicht mehr aktiv.
 
 ### Als veröffentlicht markieren
@@ -87,20 +87,20 @@ Die Publikation startet im Status **Geplant**. Bibliogon kontaktiert keine Platt
 Wenn du den Artikel auf Medium (oder einer anderen Plattform) eingefügt hast und die Live-URL steht:
 
 1. **Als veröffentlicht** auf der Zeile klicken.
-2. Optional die Live-URL angeben (Bibliogon speichert sie unter `platform_metadata.published_url`).
+2. Optional die Live-URL angeben (AdaptiveLearner speichert sie unter `platform_metadata.published_url`).
 
-Bibliogon snappt das aktuelle `content_json` als Baseline für Drift-Detection.
+AdaptiveLearner snappt das aktuelle `content_json` als Baseline für Drift-Detection.
 
 ### Drift-Detection
 
-Jedes Mal wenn du den Artikel nach Markierung als **Veröffentlicht** editierst, vergleicht Bibliogon beim nächsten View den Snapshot gegen den aktuellen Entwurf. Abweichung kippt die Publikation auf **Nicht synchron** mit Warn-Banner.
+Jedes Mal wenn du den Artikel nach Markierung als **Veröffentlicht** editierst, vergleicht AdaptiveLearner beim nächsten View den Snapshot gegen den aktuellen Entwurf. Abweichung kippt die Publikation auf **Nicht synchron** mit Warn-Banner.
 
 ### Live bestätigen
 
 Wenn du die Live-Version aktualisiert hast (oder akzeptierst, dass der lokale Entwurf die neue Baseline ist):
 
 1. **Live bestätigen** auf der out-of-sync-Zeile klicken.
-2. Bibliogon re-snappt den Artikel und löscht den out-of-sync-Status.
+2. AdaptiveLearner re-snappt den Artikel und löscht den out-of-sync-Status.
 
 ### Promo-Posts
 
@@ -121,4 +121,4 @@ SEO-Titel und SEO-Beschreibung fallen bei leerem Wert zur Veröffentlichung auf 
 - Tag-Taxonomie (Tags sind Freitext, kein Autocomplete artikelübergreifend).
 - Papierkorb + Wiederherstellung für Artikel.
 
-Wenn dein Cross-Posting-Workflow eine Friction zeigt, die Bibliogon lösen kann, log sie in `docs/journal/article-workflow-observations.md`, damit der Fall konkret ist bevor Phase-3-Prioritäten gesetzt werden.
+Wenn dein Cross-Posting-Workflow eine Friction zeigt, die AdaptiveLearner lösen kann, log sie in `docs/journal/article-workflow-observations.md`, damit der Fall konkret ist bevor Phase-3-Prioritäten gesetzt werden.

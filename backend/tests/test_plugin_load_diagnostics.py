@@ -66,7 +66,7 @@ def test_pre_log_emits_discovery_and_enabled_lines(
     enabled_lines = [m for m in messages if m.startswith("Plugins enabled in config")]
 
     assert discovery_lines, "expected a 'Plugin discovery:' line"
-    assert "entry points found via 'bibliogon.plugins' group" in discovery_lines[0]
+    assert "entry points found via 'adaptive_learner.plugins' group" in discovery_lines[0]
 
     assert enabled_lines, "expected a 'Plugins enabled in config' line"
     assert "(2)" in enabled_lines[0]

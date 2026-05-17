@@ -3,7 +3,7 @@
 Status: adopted in `frontend/src/components/import-wizard/`.
 Reference example: `wizardMachine.ts`.
 
-## Why XState in Bibliogon
+## Why XState in AdaptiveLearner
 
 The import wizard outgrew ad-hoc `useState` once it had:
 

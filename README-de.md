@@ -1,4 +1,4 @@
-# Bibliogon
+# Adaptive Learner
 
 Open-Source-Toolkit für Self-Publishing-Autorinnen und -Autoren. Bücher, Artikel und Multi-Plattform-Content-Workflows. Offline-zuerst, Plugin-basiert, EPUB- / PDF- / Hörbuch-Export.
 
@@ -6,7 +6,7 @@ Aufgebaut auf [PluginForge](https://github.com/astrapi69/pluginforge), einem wie
 
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 
-**[Dokumentation](https://astrapi69.github.io/bibliogon/)** | **[Issues](https://github.com/astrapi69/bibliogon/issues)** | Aktuelle Version: **v0.29.0**
+**[Dokumentation](https://astrapi69.github.io/adaptive_learner/)** | **[Issues](https://github.com/astrapi69/adaptive_learner/issues)** | Aktuelle Version: **v0.29.0**
 
 ## Funktionen
 
@@ -32,7 +32,7 @@ Aufgebaut auf [PluginForge](https://github.com/astrapi69/pluginforge), einem wie
 
 ## Artikel-Autorenschaft (Phase 2 - beta)
 
-Neben Büchern unterstützt Bibliogon Artikel-Autorenschaft mit Multi-Plattform-Publikations-Tracking.
+Neben Büchern unterstützt Adaptive Learner Artikel-Autorenschaft mit Multi-Plattform-Publikations-Tracking.
 
 - Dedizierter Artikel-Editor mit TipTap (getrennt vom Buch-Editor, Einzeldokument, ohne Kapitel-Sidebar)
 - Artikel-Metadaten: Thema (einstellungsverwaltet), SEO-Titel / -Beschreibung, Tags, Auszug, kanonische URL, Featured Image
@@ -68,16 +68,16 @@ Alle drei Credential-Pfade lassen sich im Git-Backup-Dialog konfigurieren: SSH-A
 **Linux / macOS:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/astrapi69/bibliogon/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.sh | bash
 ```
 
 **Windows (PowerShell):**
 
 ```powershell
-irm https://raw.githubusercontent.com/astrapi69/bibliogon/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.ps1 | iex
 ```
 
-Beides lädt Bibliogon nach `~/bibliogon` (Linux/macOS) bzw. `%USERPROFILE%\bibliogon` (Windows), baut die Docker-Images und startet die App auf **http://localhost:7880**.
+Beides lädt Adaptive Learner nach `~/adaptive_learner` (Linux/macOS) bzw. `%USERPROFILE%\adaptive_learner` (Windows), baut die Docker-Images und startet die App auf **http://localhost:7880**.
 
 ### Doppelklick-Installation (ohne Terminal)
 
@@ -92,17 +92,17 @@ Nach dem Klonen oder Herunterladen des Repos den Wrapper für dein Betriebssyste
 ### Manuelle Installation
 
 ```bash
-git clone https://github.com/astrapi69/bibliogon.git
-cd bibliogon
+git clone https://github.com/astrapi69/adaptive_learner.git
+cd adaptive_learner
 ./start.sh
 ```
 
 ### Stop / Start / Deinstallation
 
 ```bash
-cd ~/bibliogon && ./stop.sh                                  # Stop
-cd ~/bibliogon && ./start.sh                                  # Erneut starten
-cd ~/bibliogon && ./stop.sh && cd ~ && rm -rf ~/bibliogon    # Deinstallation
+cd ~/adaptive_learner && ./stop.sh                                  # Stop
+cd ~/adaptive_learner && ./start.sh                                  # Erneut starten
+cd ~/adaptive_learner && ./stop.sh && cd ~ && rm -rf ~/adaptive_learner    # Deinstallation
 ```
 
 ### Logs ansehen
@@ -126,7 +126,7 @@ Vollständige Entwicklungsdokumentation siehe [CLAUDE.md](CLAUDE.md).
 Die Dokumentation liegt in zwei Formen vor:
 
 - **In-App:** Klick auf das Hilfe-Icon in der Navigationsleiste öffnet das Slide-Over-Hilfe-Panel mit Suche, Navigationsbaum und Markdown-Rendering.
-- **Online:** [astrapi69.github.io/bibliogon](https://astrapi69.github.io/bibliogon/) - MkDocs-Material-Site mit Volltextsuche, Hell-/Dunkel-Modus und i18n.
+- **Online:** [astrapi69.github.io/adaptive_learner](https://astrapi69.github.io/adaptive_learner/) - MkDocs-Material-Site mit Volltextsuche, Hell-/Dunkel-Modus und i18n.
 
 Beide lesen aus denselben Markdown-Dateien in `docs/help/`. Die Doku lokal bauen:
 
@@ -176,13 +176,13 @@ Umgebungsvariablen (in `.env` setzen):
 
 | Variable | Standard | Beschreibung |
 |----------|----------|--------------|
-| `BIBLIOGON_PORT` | 7880 | Port der Web-App |
-| `BIBLIOGON_DEBUG` | false | Debug-Modus (aktiviert Test-Endpoints, API-Docs) |
-| `BIBLIOGON_SECRET_KEY` | (generiert) | Geheimnis für Lizenz-Validierung |
-| `BIBLIOGON_CREDENTIALS_SECRET` | (generiert) | Geheimnis zur Verschlüsselung von API-Keys und Service-Account-Dateien |
-| `BIBLIOGON_CORS_ORIGINS` | localhost:7880 | Erlaubte CORS-Origins |
-| `BIBLIOGON_DATA_DIR` | platformdirs-Standard | Wurzelverzeichnis für Laufzeitdaten (DB, Uploads). Linux/macOS: `~/.local/share/bibliogon/`. Windows: `%LOCALAPPDATA%\bibliogon\`. Docker: `/app/data` |
-| `BIBLIOGON_DB_PATH` | (wird nicht mehr berücksichtigt) | **Entfernt in v0.30.0** (DEP-DBPATH-01 Schritt 3). Die Variable hat keine Wirkung mehr auf die Pfad-Auflösung; ist sie weiterhin in der Umgebung gesetzt, wird beim Start eine einzelne Warnung mit dem ignorierten Wert geloggt. Stattdessen `BIBLIOGON_DATA_DIR` setzen — die Datenbank liegt dann unter `<BIBLIOGON_DATA_DIR>/bibliogon.db`. Verwerfungszyklus: Warnung v0.27.0, Präzedenz-Flip v0.28.0, Entfernung v0.30.0. |
+| `ADAPTIVE_LEARNER_PORT` | 7880 | Port der Web-App |
+| `ADAPTIVE_LEARNER_DEBUG` | false | Debug-Modus (aktiviert Test-Endpoints, API-Docs) |
+| `ADAPTIVE_LEARNER_SECRET_KEY` | (generiert) | Geheimnis für Lizenz-Validierung |
+| `ADAPTIVE_LEARNER_CREDENTIALS_SECRET` | (generiert) | Geheimnis zur Verschlüsselung von API-Keys und Service-Account-Dateien |
+| `ADAPTIVE_LEARNER_CORS_ORIGINS` | localhost:7880 | Erlaubte CORS-Origins |
+| `ADAPTIVE_LEARNER_DATA_DIR` | platformdirs-Standard | Wurzelverzeichnis für Laufzeitdaten (DB, Uploads). Linux/macOS: `~/.local/share/adaptive_learner/`. Windows: `%LOCALAPPDATA%\adaptive_learner\`. Docker: `/app/data` |
+| `ADAPTIVE_LEARNER_DB_PATH` | (wird nicht mehr berücksichtigt) | **Entfernt in v0.30.0** (DEP-DBPATH-01 Schritt 3). Die Variable hat keine Wirkung mehr auf die Pfad-Auflösung; ist sie weiterhin in der Umgebung gesetzt, wird beim Start eine einzelne Warnung mit dem ignorierten Wert geloggt. Stattdessen `ADAPTIVE_LEARNER_DATA_DIR` setzen — die Datenbank liegt dann unter `<ADAPTIVE_LEARNER_DATA_DIR>/adaptive_learner.db`. Verwerfungszyklus: Warnung v0.27.0, Präzedenz-Flip v0.28.0, Entfernung v0.30.0. |
 
 ## Verwandte Projekte
 
@@ -192,7 +192,7 @@ Umgebungsvariablen (in `.env` setzen):
 
 ## Lizenz
 
-Bibliogon wird unter der [MIT-Lizenz](LICENSE) veröffentlicht.
+Adaptive Learner wird unter der [MIT-Lizenz](LICENSE) veröffentlicht.
 Alle Plugins sind kostenlos und Open Source.
 
 ## Sicherheitsrichtlinie

@@ -1,7 +1,7 @@
 # Adopt git history from an imported ZIP
 
 When you import a write-book-template ZIP that contains a
-`.git/` directory, Bibliogon can adopt its full commit history
+`.git/` directory, AdaptiveLearner can adopt its full commit history
 into the book's git backup. Three modes in the wizard's Step 3:
 
 - **Start fresh** (default): ignore the `.git/`. Book starts
@@ -39,8 +39,8 @@ The adopted book has `uploads/<book_id>/.git/` on disk. All
 git-backup endpoints (`commit`, `push`, `pull`, `status`,
 `log`, `merge`) work immediately.
 
-**Important**: your first Bibliogon commit after adoption
-will overwrite the adopted working-tree files. Bibliogon
+**Important**: your first AdaptiveLearner commit after adoption
+will overwrite the adopted working-tree files. AdaptiveLearner
 writes `manuscript/*.json` (canonical TipTap) and
 `config/metadata.yaml`. The adopted commits stay in history
 exactly as they were; only the working tree changes shape.
@@ -60,13 +60,13 @@ field. The endpoint refuses if the book already has a `.git/`
 
 ## When to pick which mode
 
-- **Start fresh**: Most imports. Bibliogon tracks the book
+- **Start fresh**: Most imports. AdaptiveLearner tracks the book
   from scratch in git-backup.
 - **Adopt without remote**: You want the history but the
   source's remote is private, dead, or you'll re-point to a
   new remote yourself.
 - **Adopt with remote**: You import a book straight from
-  GitHub/GitLab and want Bibliogon to keep pushing there.
+  GitHub/GitLab and want AdaptiveLearner to keep pushing there.
   You'll need a PAT (re-entered via Git-Backup dialog).
 
 ## Edge cases

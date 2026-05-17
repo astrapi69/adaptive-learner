@@ -2,9 +2,9 @@
 
 ## Grundlagen
 
-EPUB ist das Standardformat für E-Books und wird von den meisten E-Book-Readern unterstützt (Kindle via Konvertierung, Kobo, Tolino, Apple Books und andere). Bibliogon exportiert EPUB-Dateien über das Export-Plugin, das manuscripta als Konvertierungs-Pipeline nutzt. Du findest den Export-Button in der Sidebar des Editors oder im Export-Dialog.
+EPUB ist das Standardformat für E-Books und wird von den meisten E-Book-Readern unterstützt (Kindle via Konvertierung, Kobo, Tolino, Apple Books und andere). AdaptiveLearner exportiert EPUB-Dateien über das Export-Plugin, das manuscripta als Konvertierungs-Pipeline nutzt. Du findest den Export-Button in der Sidebar des Editors oder im Export-Dialog.
 
-Beim Export konvertiert Bibliogon die TipTap-JSON-Inhalte zunächst in Markdown, erstellt eine write-book-template-Projektstruktur und lässt manuscripta daraus die fertige EPUB-Datei erzeugen. Pandoc wird für die finale Konvertierung von Markdown zu EPUB verwendet.
+Beim Export konvertiert AdaptiveLearner die TipTap-JSON-Inhalte zunächst in Markdown, erstellt eine write-book-template-Projektstruktur und lässt manuscripta daraus die fertige EPUB-Datei erzeugen. Pandoc wird für die finale Konvertierung von Markdown zu EPUB verwendet.
 
 ## Metadaten
 
@@ -21,7 +21,7 @@ Pflege die Metadaten vor dem Export über den Metadaten-Tab im Editor, damit dei
 
 ## Inhaltsverzeichnis
 
-Bibliogon unterstützt zwei Varianten für das Inhaltsverzeichnis:
+AdaptiveLearner unterstützt zwei Varianten für das Inhaltsverzeichnis:
 
 - **Automatisch generiert**: Pandoc erstellt das Inhaltsverzeichnis aus den Überschriften im Text. Die Tiefe (Anzahl der Überschriftenebenen) ist in den Export-Einstellungen konfigurierbar (Standard: 2 Ebenen).
 - **Manuelles Inhaltsverzeichnis**: Wenn dein Buch ein eigenes TOC-Kapitel enthält, kannst du im Export-Dialog die Option "Manuelles Inhaltsverzeichnis" aktivieren. In diesem Fall wird das selbst erstellte Inhaltsverzeichnis verwendet und die automatische Generierung übersprungen.

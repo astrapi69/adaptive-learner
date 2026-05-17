@@ -11,9 +11,9 @@
 - `0b182b5` (docs reconciliation: flat `book_type` scope, dropped `visual_book` umbrella)
 
 **Reference:**
-- Backend router: [plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/pages.py](../../../plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/pages.py)
-- Pydantic schemas: [plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/pages.py](../../../plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/pages.py) (top of file)
-- Tests: `plugins/bibliogon-plugin-kinderbuch/tests/test_pages.py`
+- Backend router: [plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/pages.py](../../../plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/pages.py)
+- Pydantic schemas: [plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/pages.py](../../../plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/pages.py) (top of file)
+- Tests: `plugins/adaptive-learner-plugin-kinderbuch/tests/test_pages.py`
 - Manual test guide (DE + EN): [picture-book-pages-manual.md](./picture-book-pages-manual.md)
 - Frontend UI: deferred to Session 3 (no UI yet; this smoke test exercises the API directly)
 
@@ -30,7 +30,7 @@
 
 ## Prerequisites
 
-- Bibliogon dev backend running (`make dev` or `make dev-bg`)
+- AdaptiveLearner dev backend running (`make dev` or `make dev-bg`)
 - Backend reachable at `http://localhost:8000`
 - An HTTP client of choice (curl, HTTPie, Bruno, the FastAPI
   Swagger UI at `/docs`)
@@ -227,7 +227,7 @@ Stop and investigate if ANY of:
 ## Re-verification cadence
 
 - After any commit that touches:
-  - `plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/pages.py`
+  - `plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/pages.py`
   - `backend/app/routers/books.py` (the PATCH endpoint)
   - `backend/app/models/__init__.py` `Book.book_type` or `Page` model
   - Alembic migrations under `backend/migrations/versions/`

@@ -149,7 +149,7 @@ def test_async_export_filters_by_book_skip_list(client, tmp_path, monkeypatch):
         engine = AsyncMock()
         engine.synthesize = counting_synth
 
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=engine):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=engine):
             job_id = client.post(
                 f"/api/books/{book_id}/export/async/audiobook",
             ).json()["job_id"]
@@ -195,7 +195,7 @@ def test_async_export_empty_skip_list_uses_generator_default(client, tmp_path, m
         engine = AsyncMock()
         engine.synthesize = counting_synth
 
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=engine):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=engine):
             job_id = client.post(
                 f"/api/books/{book_id}/export/async/audiobook",
             ).json()["job_id"]
@@ -237,7 +237,7 @@ def test_dry_run_uses_per_book_skip_list(client, tmp_path, monkeypatch):
         engine = AsyncMock()
         engine.synthesize = capturing_synth
 
-        with patch("bibliogon_audiobook.tts_engine.get_engine", return_value=engine):
+        with patch("adaptive_learner_audiobook.tts_engine.get_engine", return_value=engine):
             r = client.post(f"/api/books/{book_id}/audiobook/dry-run")
         assert r.status_code == 200, r.text
 

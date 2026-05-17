@@ -107,7 +107,7 @@ export interface BulkFillItem {
 
 const BulkAiFillJobContext = createContext<BulkAiFillJobContextValue | null>(null)
 
-const STORAGE_KEY = "bibliogon.bulk_ai_fill_job"
+const STORAGE_KEY = "adaptive_learner.bulk_ai_fill_job"
 
 interface PersistedJob {
     jobId: string

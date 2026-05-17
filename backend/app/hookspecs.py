@@ -1,4 +1,4 @@
-"""Bibliogon hook specifications.
+"""AdaptiveLearner hook specifications.
 
 Defines the hooks that plugins can implement.
 Uses pluggy's HookspecMarker for type-safe hook dispatch.
@@ -9,11 +9,11 @@ from typing import Any
 
 import pluggy
 
-hookspec = pluggy.HookspecMarker("bibliogon.plugins")
+hookspec = pluggy.HookspecMarker("adaptive_learner.plugins")
 
 
-class BibliogonHookSpec:
-    """Hook specifications for the Bibliogon application."""
+class AdaptiveLearnerHookSpec:
+    """Hook specifications for the AdaptiveLearner application."""
 
     @hookspec
     def export_formats(self) -> list[dict[str, Any]]:  # type: ignore[empty-body]

@@ -1,6 +1,6 @@
 # KI-Assistent
 
-Bibliogon enthält einen optionalen KI-Assistenten, der beim Schreiben, Bearbeiten und Vermarkten hilft. Er unterstützt mehrere KI-Anbieter und funktioniert sowohl mit Cloud-Diensten als auch mit lokalen Modellen.
+AdaptiveLearner enthält einen optionalen KI-Assistenten, der beim Schreiben, Bearbeiten und Vermarkten hilft. Er unterstützt mehrere KI-Anbieter und funktioniert sowohl mit Cloud-Diensten als auch mit lokalen Modellen.
 
 ## Einrichten
 
@@ -61,7 +61,7 @@ Der Start-Button zeigt eine grobe Schätzung der Input-Tokens und der USD-Kosten
 
 ### Nicht-Prosa-Kapitel
 
-Für Kapiteltypen, die keine erzählende Prosa sind (Titelseite, Copyright, Inhaltsverzeichnis, Impressum, Index, Schmutztitel, Auch-vom-Autor, Nächster-Band, Call-to-Action, Endnoten, Literatur, Glossar), zeigt Bibliogon eine kleine Warnung über dem Start-Button. Du kannst das Review trotzdem starten; das Feedback ist dann meist eingeschränkter als bei Prosa.
+Für Kapiteltypen, die keine erzählende Prosa sind (Titelseite, Copyright, Inhaltsverzeichnis, Impressum, Index, Schmutztitel, Auch-vom-Autor, Nächster-Band, Call-to-Action, Endnoten, Literatur, Glossar), zeigt AdaptiveLearner eine kleine Warnung über dem Start-Button. Du kannst das Review trotzdem starten; das Feedback ist dann meist eingeschränkter als bei Prosa.
 
 ### Strukturiertes Ergebnis
 
@@ -95,7 +95,7 @@ Die KI nutzt Buchtitel, Autorname, Genre, Beschreibung und Kapitelüberschriften
 
 ## Nutzungsverfolgung
 
-Bibliogon zählt, wie viele KI-Tokens jedes Buch verbraucht. Der aktuelle Stand und die geschätzten Kosten werden im Marketing-Tab angezeigt. So behältst du den Überblick über deine KI-Nutzung.
+AdaptiveLearner zählt, wie viele KI-Tokens jedes Buch verbraucht. Der aktuelle Stand und die geschätzten Kosten werden im Marketing-Tab angezeigt. So behältst du den Überblick über deine KI-Nutzung.
 
 ## Datenschutz
 

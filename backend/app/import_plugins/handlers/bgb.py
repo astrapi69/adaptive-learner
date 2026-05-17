@@ -1,4 +1,4 @@
-"""Core handler for Bibliogon's native ``.bgb`` backup archives.
+"""Core handler for AdaptiveLearner's native ``.bgb`` backup archives.
 
 Wraps the existing restore machinery in
 ``app.services.backup.backup_import`` so the old
@@ -34,7 +34,7 @@ from app.models import Asset, Book, BookImportSource, Chapter
 
 
 class BgbImportHandler:
-    """ImportPlugin for ``.bgb`` Bibliogon backup archives."""
+    """ImportPlugin for ``.bgb`` AdaptiveLearner backup archives."""
 
     format_name = "bgb"
 
@@ -65,7 +65,7 @@ class BgbImportHandler:
         # the wizard. Surface the count so the UI can confirm what
         # will be restored alongside the books. The "no book.json"
         # warning is only meaningful when nothing at all is in the
-        # archive; an articles-only .bgb is a valid Bibliogon backup.
+        # archive; an articles-only .bgb is a valid AdaptiveLearner backup.
         if not blobs and article_count == 0:
             warnings.append("No book.json inside the backup.")
 
@@ -250,7 +250,7 @@ class BgbImportHandler:
                 _restore_book_from_dir,
             )
 
-            tmp_dir = Path(tempfile.mkdtemp(prefix="bibliogon_bgb_multi_"))
+            tmp_dir = Path(tempfile.mkdtemp(prefix="adaptive_learner_bgb_multi_"))
             try:
                 with zipfile.ZipFile(path, "r") as zf:
                     zf.extractall(tmp_dir)
@@ -344,16 +344,16 @@ def _validate_manifest(zf: zipfile.ZipFile, warnings: list[str]) -> None:
     names = zf.namelist()
     manifest_name = next((n for n in names if n.endswith("manifest.json")), None)
     if manifest_name is None:
-        warnings.append("No manifest.json found; file may not be a Bibliogon backup.")
+        warnings.append("No manifest.json found; file may not be a AdaptiveLearner backup.")
         return
     try:
         data = json.loads(zf.read(manifest_name).decode("utf-8"))
     except (json.JSONDecodeError, UnicodeDecodeError):
         warnings.append("manifest.json is not valid JSON.")
         return
-    if data.get("format") != "bibliogon-backup":
+    if data.get("format") != "adaptive-learner-backup":
         warnings.append(
-            f"Unexpected manifest format: {data.get('format')!r} (expected bibliogon-backup)."
+            f"Unexpected manifest format: {data.get('format')!r} (expected adaptive-learner-backup)."
         )
 
 
@@ -494,7 +494,7 @@ def _restore_single_book_and_articles(session: Session, bgb_path: Path) -> tuple
         _restore_book_from_dir,
     )
 
-    tmp_dir = Path(tempfile.mkdtemp(prefix="bibliogon_bgb_handler_"))
+    tmp_dir = Path(tempfile.mkdtemp(prefix="adaptive_learner_bgb_handler_"))
     try:
         with zipfile.ZipFile(bgb_path, "r") as zf:
             zf.extractall(tmp_dir)

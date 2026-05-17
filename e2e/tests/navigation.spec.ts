@@ -3,7 +3,7 @@ import {test, expect, createBook} from "../fixtures/base";
 test.describe("Navigation", () => {
     test("dashboard loads at root", async ({page}) => {
         await page.goto("/");
-        await expect(page.getByText("Bibliogon").first()).toBeVisible();
+        await expect(page.getByText("AdaptiveLearner").first()).toBeVisible();
     });
 
     test("navigate to help", async ({page}) => {

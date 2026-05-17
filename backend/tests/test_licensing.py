@@ -127,7 +127,7 @@ def test_create_license_produces_expected_prefix():
     v = _fresh_validator()
     p = LicensePayload(plugin="audiobook", version="1", expires="lifetime", author="A")
     key = v.create_license(p)
-    assert key.startswith("BIBLIOGON-AUDIOBOOK-v1-")
+    assert key.startswith("ADAPTIVE_LEARNER-AUDIOBOOK-v1-")
     assert "." in key  # payload.signature separator
 
 
@@ -218,13 +218,13 @@ def test_validate_license_wrong_secret_raises():
 def test_validate_license_malformed_key_missing_parts():
     v = _fresh_validator()
     with pytest.raises(LicenseError, match="Malformed"):
-        v.validate_license("BIBLIOGON-AUDIOBOOK", "audiobook")
+        v.validate_license("ADAPTIVE_LEARNER-AUDIOBOOK", "audiobook")
 
 
 def test_validate_license_missing_dot_separator():
     v = _fresh_validator()
     with pytest.raises(LicenseError, match="Malformed"):
-        v.validate_license("BIBLIOGON-AUDIOBOOK-v1-payloadwithoutdot", "audiobook")
+        v.validate_license("ADAPTIVE_LEARNER-AUDIOBOOK-v1-payloadwithoutdot", "audiobook")
 
 
 def test_validate_license_wrong_plugin_raises():
@@ -326,10 +326,10 @@ def test_create_plugin_key_binds_to_specific_plugin():
 
 
 def test_get_license_secret_uses_env_var(monkeypatch):
-    monkeypatch.setenv("BIBLIOGON_LICENSE_SECRET", "env-secret")
+    monkeypatch.setenv("ADAPTIVE_LEARNER_LICENSE_SECRET", "env-secret")
     assert get_license_secret() == "env-secret"
 
 
 def test_get_license_secret_default_when_env_unset(monkeypatch):
-    monkeypatch.delenv("BIBLIOGON_LICENSE_SECRET", raising=False)
+    monkeypatch.delenv("ADAPTIVE_LEARNER_LICENSE_SECRET", raising=False)
     assert get_license_secret() == "pluginforge-default-key"

@@ -11,7 +11,7 @@ Revived when: starting an implementation session.
 
 ## 1. Header
 
-This document audits every textarea in the Bibliogon frontend,
+This document audits every textarea in the AdaptiveLearner frontend,
 inventories the libraries already on the bench, and recommends a
 single strategy that improves the user experience without
 ballooning the bundle. Implementation phases are listed but no
@@ -29,7 +29,7 @@ The user's explicit ask:
 
 ---
 
-## 2. Audit — existing textareas in Bibliogon
+## 2. Audit — existing textareas in AdaptiveLearner
 
 `grep -rn '<textarea\|Textarea\|TextArea' frontend/src/` yields
 ten distinct sites (excluding tests). One additional site uses a
@@ -191,9 +191,9 @@ Fields **out of scope**:
 
 **Strategy A: Minimum + Universal, with one targeted preview.**
 
-### Why A wins for Bibliogon
+### Why A wins for AdaptiveLearner
 
-1. **Audience fit.** Bibliogon's primary user is a self-publishing author, not a developer. CSS is the only field where a power-user editor (CodeMirror/Monaco) has any legitimate appeal, and CSS is the *least* edited surface in the app. Loading 70 KB+ of editor framework for a field most users paste once and forget is the wrong trade.
+1. **Audience fit.** AdaptiveLearner's primary user is a self-publishing author, not a developer. CSS is the only field where a power-user editor (CodeMirror/Monaco) has any legitimate appeal, and CSS is the *least* edited surface in the app. Loading 70 KB+ of editor framework for a field most users paste once and forget is the wrong trade.
 
 2. **Stack reuse.** `react-markdown`, `dompurify`, and `lowlight` are all already paid for. They cover Markdown preview, HTML preview, and read-only CSS syntax coloring respectively without a new dependency. `HtmlFieldWithPreview` is already a real component; the wrapper just generalizes its toolbar.
 

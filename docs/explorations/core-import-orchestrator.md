@@ -34,7 +34,7 @@ Current and anticipated import sources:
 
 | # | Source | Today | Target owner |
 |---|--------|-------|--------------|
-| 1 | Bibliogon `.bgb` backup | `backup_import.py` | Core handler (Bibliogon owns the format) |
+| 1 | AdaptiveLearner `.bgb` backup | `backup_import.py` | Core handler (AdaptiveLearner owns the format) |
 | 2 | Single Markdown file | `markdown_import.py` | Core handler |
 | 3 | write-book-template ZIP | `project_import.py` (partially broken) | `plugin-git-sync` |
 | 4 | Git repo URL | none | `plugin-git-sync` Phase 1 |
@@ -198,7 +198,7 @@ def execute_import(payload: ImportExecute) -> BookIdResponse:
 # backend/config/import-priority.yaml
 - plugin-git-sync       # .bgit, git URLs, write-book-template ZIPs
 - plugin-import-office  # .docx, .epub
-- core-bgb              # .bgb (Bibliogon format)
+- core-bgb              # .bgb (AdaptiveLearner format)
 - core-markdown         # single .md, .md folder
 ```
 
@@ -208,7 +208,7 @@ First-wins. User can re-order via settings UI if two plugins claim the same inpu
 
 The protocol is satisfied by two kinds of implementors:
 
-- **Core handlers:** in-process classes in `backend/app/import_handlers/`. Shipped with Bibliogon, no separate install. Bibliogon-native formats (`.bgb`, core-markdown) live here.
+- **Core handlers:** in-process classes in `backend/app/import_handlers/`. Shipped with AdaptiveLearner, no separate install. AdaptiveLearner-native formats (`.bgb`, core-markdown) live here.
 - **Plugins:** PluginForge-discovered packages. External formats (write-book-template via `plugin-git-sync`, Office via `plugin-import-office`).
 
 The dispatch loop treats both uniformly. Core maintains an internal registry that unions both sources. Priority config orders them.
@@ -226,7 +226,7 @@ The dispatch loop treats both uniformly. Core maintains an internal registry tha
 
 Implicit commitments:
 
-- `.bgb` is Bibliogon's own format. Keeping it in core avoids a plugin dependency for a basic feature (backup/restore).
+- `.bgb` is AdaptiveLearner's own format. Keeping it in core avoids a plugin dependency for a basic feature (backup/restore).
 - Markdown is the universal fallback. Core handler ensures every user can always import a `.md` without installing a plugin.
 - `smart_import`'s dispatch table (peek at ZIP contents) dies with this change — the wizard's Step 1 source-picker + the plugin dispatch loop replace it.
 
@@ -241,7 +241,7 @@ Implicit commitments:
 - `POST /api/import/detect` endpoint (read-only, returns `DetectedProject`).
 - `POST /api/import/execute` endpoint (authoritative, creates book).
 - `ImportPlugin` protocol in `backend/app/import_plugins/protocol.py` (location resolved — see Section 9).
-- PluginForge integration: import plugins discovered via a new `bibliogon.import_plugins` entry-point group.
+- PluginForge integration: import plugins discovered via a new `adaptive_learner.import_plugins` entry-point group.
 - Existing `.bgb` and `markdown_import` rewritten as core handlers.
 - Preview panel: title, author, language (inline editable), chapter list, asset grid with thumbnails, cover preview, CSS snippet, warnings panel.
 - Override UI: per-field inline editors; asset purpose dropdown; chapter reorder + drop.
@@ -277,7 +277,7 @@ Covers PGS-01 scope; integration overhead ~3-5h on top of the existing PGS-01 bu
 ### Phase 4: Office formats via `plugin-import-office`
 
 **Scope:**
-- New plugin package `bibliogon-plugin-import-office`.
+- New plugin package `adaptive-learner-plugin-import-office`.
 - `.docx` via Pandoc (produces Markdown → TipTap JSON via existing converter).
 - `.epub` via Pandoc or `ebooklib` (plugin author picks).
 - Implements `ImportPlugin`.
@@ -307,7 +307,7 @@ Non-blockers for Phase 1 start; each phase resolves what it needs.
 - ~~**Duplicate book detection.**~~ Resolved: moved into Phase 1 scope (Section 8) as a requirement, not a future enhancement. See the `Duplicate detection` bullet there for the full contract (source identifier, `BookImportSource` table, three-way Cancel / Overwrite / Copy confirm in the preview panel).
 - **Partial failure recovery.** `execute` fails halfway through asset copy. Rollback? Leave partial book? Recommendation: execute wraps the DB work in a transaction; disk writes happen AFTER the transaction commits. On disk-write failure, rollback the transaction and delete any partial files.
 - **Format conflict at dispatch.** Two plugins both `can_handle()` the same input. Recommendation: priority config first-wins; log a warning listing all matching plugins so the user can re-order via settings if the automatic pick is wrong.
-- **Plugin discovery UX.** User drops a `.docx` on a Bibliogon install without `plugin-import-office`. Recommendation: wizard Step 2 detects the extension, shows "No plugin can handle `.docx` files yet. Install `plugin-import-office` (one-click)?"
+- **Plugin discovery UX.** User drops a `.docx` on a AdaptiveLearner install without `plugin-import-office`. Recommendation: wizard Step 2 detects the extension, shows "No plugin can handle `.docx` files yet. Install `plugin-import-office` (one-click)?"
 - **Import history.** Track what was imported when, for audit and deduplication. Existing `BackupHistory` table could extend, or a new `ImportHistory`. Recommendation: reuse `BackupHistory` (it already carries backup/restore/import events).
 
 ---
@@ -316,15 +316,15 @@ Non-blockers for Phase 1 start; each phase resolves what it needs.
 
 Four decisions the spec leaves open; each blocks nothing in Phase 1 but needs resolution before the corresponding surface ships.
 
-- **Protocol location. RESOLVED 2026-04-24: stays in Bibliogon (`backend/app/import_plugins/protocol.py`).** Audit findings behind the decision:
+- **Protocol location. RESOLVED 2026-04-24: stays in AdaptiveLearner (`backend/app/import_plugins/protocol.py`).** Audit findings behind the decision:
   - *PluginForge is self-described "application-agnostic plugin framework"* (see `pluginforge/__init__.py` docstring). `DetectedProject` / `DetectedChapter` / `DetectedAsset` are book-authoring domain types. Putting them in PluginForge violates its stated scope and pushes the framework toward per-app domain ownership.
   - *PluginForge has no `protocols/` or `types/` subpackage today.* Public API is `BasePlugin` + `PluginManager` + error types; zero `typing.Protocol` or pydantic usage. Moving `ImportPlugin` would be the first domain protocol in the package — a scope-expansion policy shift, not a file move.
-  - *Monorepo plugin pattern already works.* 9 existing Bibliogon plugins live under `plugins/` and import from `app.*` freely. PGS-01 can follow the same pattern at zero coupling cost. "External PyPI plugin" is a hypothetical future; no plugin has been extracted yet.
-  - *Hookspecs (`backend/app/hookspecs.py`) are already domain-local.* Bibliogon keeps its plugin-facing contracts in-repo as policy; `ImportPlugin` fits that policy.
-  - **Migration contract if the decision is revisited later:** when a concrete second consumer appears — either a second app implements `ImportPlugin`, or a third-party wants to distribute an `ImportPlugin` outside the Bibliogon repo — PluginForge can add a `protocols/` subpackage, Bibliogon re-exports from the new location for one minor release with a `DeprecationWarning` on the old path, then drops the local definition. Until then the protocol stays local and evolves at Bibliogon's cadence.
-  - **Unblocks PGS-01:** plugin-git-sync Phase 1 lives under `plugins/bibliogon-plugin-git-sync/` like the other 9 plugins, imports `from app.import_plugins.protocol import ImportPlugin`, and ships in this repo's `make test` matrix. No PluginForge release coordination needed.
+  - *Monorepo plugin pattern already works.* 9 existing AdaptiveLearner plugins live under `plugins/` and import from `app.*` freely. PGS-01 can follow the same pattern at zero coupling cost. "External PyPI plugin" is a hypothetical future; no plugin has been extracted yet.
+  - *Hookspecs (`backend/app/hookspecs.py`) are already domain-local.* AdaptiveLearner keeps its plugin-facing contracts in-repo as policy; `ImportPlugin` fits that policy.
+  - **Migration contract if the decision is revisited later:** when a concrete second consumer appears — either a second app implements `ImportPlugin`, or a third-party wants to distribute an `ImportPlugin` outside the AdaptiveLearner repo — PluginForge can add a `protocols/` subpackage, AdaptiveLearner re-exports from the new location for one minor release with a `DeprecationWarning` on the old path, then drops the local definition. Until then the protocol stays local and evolves at AdaptiveLearner's cadence.
+  - **Unblocks PGS-01:** plugin-git-sync Phase 1 lives under `plugins/adaptive-learner-plugin-git-sync/` like the other 9 plugins, imports `from app.import_plugins.protocol import ImportPlugin`, and ships in this repo's `make test` matrix. No PluginForge release coordination needed.
 - **Override schema precision.** "User can override any detected field" is loose. The schema must name: which field paths are legal override keys (`title`, `author`, `language`, `assets[i].purpose`, `chapters[i].position`); what happens when an override references an asset/chapter not in the detection (raise? silently skip?); whether overrides can add entries (e.g. promote a figure asset to be the cover) or only modify existing ones. Spec-out at Phase 1 start.
-- **`smart_import` deprecation mechanism.** Wrap (URL stays, proxies internally to new detect+execute) vs deprecate (301 redirect, remove after one release cycle). Wrap keeps clients working through releases; deprecate forces migration and simplifies the codebase. Recommendation: **deprecate with 301** — one release warning is enough given Bibliogon has no external API consumers yet.
+- **`smart_import` deprecation mechanism.** Wrap (URL stays, proxies internally to new detect+execute) vs deprecate (301 redirect, remove after one release cycle). Wrap keeps clients working through releases; deprecate forces migration and simplifies the codebase. Recommendation: **deprecate with 301** — one release warning is enough given AdaptiveLearner has no external API consumers yet.
 - **Plugin-specific data evolution.** `plugin_specific_data: dict` is an escape hatch. When core later adds a first-class field for something currently living there, plugins need a migration path (translate the data, bump a schema version?). No immediate action; revisit if/when the first such migration is needed.
 
 ---

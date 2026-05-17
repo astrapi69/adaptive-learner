@@ -2,7 +2,7 @@
  * UI smoke for the .bgb import happy path via the core wizard.
  *
  * Complements import-wizard.spec.ts (markdown happy path) by
- * exercising the second format the wizard accepts: Bibliogon
+ * exercising the second format the wizard accepts: AdaptiveLearner
  * backup archives dispatched through BgbImportHandler.
  *
  * Uses the committed minimal-book.bgb fixture (~767 bytes, one

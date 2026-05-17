@@ -43,10 +43,10 @@ Restore to `enabled: true` after.
 
 ## Flow 3 — S-02 onboarding dialog (dev-only, organic for users)
 
-S-02 fires when `books.length` goes 0→1 AND `bibliogon-donation-onboarding-seen` not in localStorage AND `donationsConfig` non-null.
+S-02 fires when `books.length` goes 0→1 AND `adaptive-learner-donation-onboarding-seen` not in localStorage AND `donationsConfig` non-null.
 
 Dev recipe:
-1. DevTools → Application → Local Storage → delete `bibliogon-donation-onboarding-seen`.
+1. DevTools → Application → Local Storage → delete `adaptive-learner-donation-onboarding-seen`.
 2. Trash every existing book OR use a fresh DB.
 3. Create one book.
 4. **Expected:** dialog opens once; dismiss writes the localStorage flag; subsequent first-book creations don't re-fire.
@@ -57,9 +57,9 @@ Five-gate: config + onboarding-seen + first-use ≥ 90 days + cooldown clear + D
 
 Dev recipe (fast-forward):
 1. DevTools → Local Storage:
-   - Set `bibliogon-first-use-date` to a date 91+ days ago (e.g. `2026-01-01T00:00:00.000Z`).
-   - Set `bibliogon-donation-onboarding-seen` to `true`.
-   - Delete `bibliogon-donation-reminder-next-allowed` if set.
+   - Set `adaptive-learner-first-use-date` to a date 91+ days ago (e.g. `2026-01-01T00:00:00.000Z`).
+   - Set `adaptive-learner-donation-onboarding-seen` to `true`.
+   - Delete `adaptive-learner-donation-reminder-next-allowed` if set.
 2. Reload Dashboard.
 3. **Expected:** banner renders at top of book grid. Three buttons: Support / Not now / X.
 
@@ -75,4 +75,4 @@ Dev recipe (fast-forward):
 |---------|---|
 | "Unterstützen" tab missing after edit | `donations:` block missing or `enabled: false`. Re-check Flow 1. |
 | Tab present but body empty | `channels: []` in app.yaml. Restore from `.example`. |
-| Banner triggers in production unexpectedly | Cooldown not applied; check `bibliogon-donation-reminder-next-allowed` key in user's browser. |
+| Banner triggers in production unexpectedly | Cooldown not applied; check `adaptive-learner-donation-reminder-next-allowed` key in user's browser. |

@@ -1,6 +1,6 @@
-# Contributing to Bibliogon
+# Contributing to Adaptive Learner
 
-Thank you for considering a contribution. Bibliogon is a
+Thank you for considering a contribution. Adaptive Learner is a
 local-first self-publishing platform for book and article
 authoring, built on PluginForge. Most non-trivial features land
 as plugins, not core changes.
@@ -29,8 +29,8 @@ as plugins, not core changes.
 ### Bootstrap
 
 ```bash
-git clone https://github.com/astrapi69/bibliogon.git
-cd bibliogon
+git clone https://github.com/astrapi69/adaptive_learner.git
+cd adaptive_learner
 make install      # Poetry + npm + plugin path-deps
 make test         # baseline; should be green before you start
 make dev          # backend on :8000, frontend on :5173
@@ -54,7 +54,7 @@ make check-types              # mypy + tsc --noEmit
 
 ## Plugin Development
 
-Bibliogon plugins are standalone Poetry packages that register
+Adaptive Learner plugins are standalone Poetry packages that register
 through PluginForge ^0.5.0 entry points. New format-specific or
 workflow-specific features generally belong in a plugin, not in
 core.
@@ -62,13 +62,13 @@ core.
 ### Quickstart
 
 The smallest existing plugin to copy is
-[`plugins/bibliogon-plugin-getstarted/`](plugins/bibliogon-plugin-getstarted/).
+[`plugins/adaptive-learner-plugin-getstarted/`](plugins/adaptive-learner-plugin-getstarted/).
 Mirror its shape:
 
 ```
-plugins/bibliogon-plugin-yourname/
+plugins/adaptive-learner-plugin-yourname/
   pyproject.toml                # name, version, pluginforge dep, entry point
-  bibliogon_yourname/
+  adaptive_learner_yourname/
     __init__.py
     plugin.py                   # YourPlugin(BasePlugin)
     routes.py                   # FastAPI APIRouter (optional)
@@ -78,10 +78,10 @@ plugins/bibliogon-plugin-yourname/
 
 Steps:
 
-1. Copy the directory; rename `bibliogon-plugin-getstarted` and
-   `bibliogon_getstarted` to your plugin name.
+1. Copy the directory; rename `adaptive-learner-plugin-getstarted` and
+   `adaptive_learner_getstarted` to your plugin name.
 2. Edit `pyproject.toml`: package name, description, the
-   `[tool.poetry.plugins."bibliogon.plugins"]` entry point.
+   `[tool.poetry.plugins."adaptive_learner.plugins"]` entry point.
 3. Implement `plugin.py` extending `BasePlugin` with `name`,
    `version`, `api_version = "1"`, `license_tier = "core"`.
    Override `activate()`, `get_routes()`,
@@ -137,7 +137,7 @@ end-of-file, YAML/JSON validation) run automatically on
 
 ### Internationalization
 
-Bibliogon ships in 8 languages: DE, EN, ES, FR, EL, PT, TR, JA.
+Adaptive Learner ships in 8 languages: DE, EN, ES, FR, EL, PT, TR, JA.
 Every user-facing change must add or update keys in all 8
 catalogs under `backend/config/i18n/{lang}.yaml`. Parity tests
 fail the build if a key is missing in any language.
@@ -151,7 +151,7 @@ whitelist.
 
 ## Commit Conventions
 
-Bibliogon uses [Conventional Commits](https://www.conventionalcommits.org/).
+Adaptive Learner uses [Conventional Commits](https://www.conventionalcommits.org/).
 There is no commit-msg-time tool enforcing this; the convention
 is documentation-only and reinforced through code review.
 
@@ -182,7 +182,7 @@ template.
 
 ## Code of Conduct
 
-Bibliogon follows
+Adaptive Learner follows
 [Contributor Covenant 2.1](CODE_OF_CONDUCT.md). Reports go to
 asterios.raptis@web.de.
 

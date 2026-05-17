@@ -123,7 +123,7 @@ def test_async_audiobook_returns_job_id_not_file(client):
     """POST starts a job and returns a job_id, not the binary."""
     book_id = _create_book_with_chapters(client, 1)
     try:
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             r = client.post(f"/api/books/{book_id}/export/async/audiobook")
             assert r.status_code == 200
             body = r.json()
@@ -137,7 +137,7 @@ def test_async_audiobook_job_emits_progress_events(client):
     """A finished job must have start + per-chapter + done in its event log."""
     book_id = _create_book_with_chapters(client, 2)
     try:
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             r = client.post(f"/api/books/{book_id}/export/async/audiobook")
             job_id = r.json()["job_id"]
 
@@ -165,7 +165,7 @@ def test_polling_endpoint_exposes_progress_and_events(client):
     """GET /api/export/jobs/{id} returns progress + recent events for pollers."""
     book_id = _create_book_with_chapters(client, 1)
     try:
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             job_id = client.post(f"/api/books/{book_id}/export/async/audiobook").json()["job_id"]
             _wait_for_job(job_id)
 
@@ -185,7 +185,7 @@ def test_sse_stream_yields_events_then_stream_end(client):
     """The SSE endpoint must replay events and end with stream_end."""
     book_id = _create_book_with_chapters(client, 2)
     try:
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             job_id = client.post(f"/api/books/{book_id}/export/async/audiobook").json()["job_id"]
             _wait_for_job(job_id)
 
@@ -229,7 +229,7 @@ def test_cancel_running_job_returns_204(client):
 
         engine = AsyncMock()
         engine.synthesize = slow_synth
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=engine):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=engine):
             job_id = client.post(f"/api/books/{book_id}/export/async/audiobook").json()["job_id"]
             # Give the job a beat to actually start
             asyncio.run(asyncio.sleep(0.05))
@@ -253,7 +253,7 @@ def test_cancel_already_completed_job_returns_409(client):
     """You cannot cancel a finished job."""
     book_id = _create_book_with_chapters(client, 1)
     try:
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             job_id = client.post(f"/api/books/{book_id}/export/async/audiobook").json()["job_id"]
             _wait_for_job(job_id)
             r = client.delete(f"/api/export/jobs/{job_id}")
@@ -274,7 +274,7 @@ def test_per_chapter_download_serves_individual_files(client):
     """Each generated chapter MP3 is downloadable via /jobs/{id}/files/{name}."""
     book_id = _create_book_with_chapters(client, 2)
     try:
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             job_id = client.post(f"/api/books/{book_id}/export/async/audiobook").json()["job_id"]
             _wait_for_job(job_id)
 
@@ -300,7 +300,7 @@ def test_per_chapter_download_rejects_unknown_filename(client):
     """Path-traversal guard: only files in the job's chapter_files list."""
     book_id = _create_book_with_chapters(client, 1)
     try:
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             job_id = client.post(f"/api/books/{book_id}/export/async/audiobook").json()["job_id"]
             _wait_for_job(job_id)
 
@@ -356,7 +356,7 @@ def test_async_audiobook_respects_per_book_skip_list(client, tmp_path, monkeypat
         )
         assert r_patch.status_code == 200
 
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             job_id = client.post(f"/api/books/{book_id}/export/async/audiobook").json()["job_id"]
             _wait_for_job(job_id)
             job = job_store.get(job_id)
@@ -379,7 +379,7 @@ def test_async_audiobook_respects_per_book_skip_list(client, tmp_path, monkeypat
 
 def test_async_audiobook_book_not_found(client):
     """POST with a nonexistent book_id starts a job that fails."""
-    with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+    with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
         r = client.post("/api/books/nonexistent-id/export/async/audiobook")
         # The endpoint accepts the request and starts a job, but the job
         # fails when it cannot find the book during execution.
@@ -397,7 +397,7 @@ def test_async_audiobook_no_chapters(client):
     """POST with a book that has zero chapters returns an error."""
     book_id = _create_book_with_chapters(client, 0)
     try:
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             r = client.post(f"/api/books/{book_id}/export/async/audiobook")
             assert r.status_code in (200, 400)
             if r.status_code == 200:
@@ -420,7 +420,7 @@ def test_async_audiobook_engine_failure_results_in_failed_job(client):
 
         engine = AsyncMock()
         engine.synthesize = failing_synth
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=engine):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=engine):
             r = client.post(f"/api/books/{book_id}/export/async/audiobook")
             assert r.status_code == 200
             job_id = r.json()["job_id"]
@@ -438,7 +438,7 @@ def test_async_audiobook_events_contain_expected_fields(client):
     """Verify event data fields: start has total, chapter_done has duration_seconds."""
     book_id = _create_book_with_chapters(client, 1)
     try:
-        with patch("bibliogon_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
+        with patch("adaptive_learner_audiobook.generator.get_engine", return_value=_fake_tts_engine()):
             job_id = client.post(f"/api/books/{book_id}/export/async/audiobook").json()["job_id"]
             _wait_for_job(job_id)
 

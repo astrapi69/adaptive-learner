@@ -1,6 +1,6 @@
 # AI Templates (Articles + Books)
 
-Bibliogon's AI templates let you fill the metadata fields of an
+AdaptiveLearner's AI templates let you fill the metadata fields of an
 Article or Book — SEO title, tags, image-generation prompts,
 back-cover blurbs, chapter summaries, and so on — without typing
 everything by hand. The same `.biblio.yaml` format powers three
@@ -18,14 +18,14 @@ equally first-class workflows; pick whichever fits your setup.
 
 You configure an AI provider (Anthropic, OpenAI, Google, Mistral)
 in Settings → AI Assistant, then click **Fill with AI** in the
-article or book editor. Bibliogon calls the provider directly,
+article or book editor. AdaptiveLearner calls the provider directly,
 parses the YAML response, and applies the fields. The cheapest
 flow ergonomically; costs whatever the provider charges per
 request.
 
 ### Workflow B — Custom local endpoint
 
-Point Bibliogon's AI settings at LM Studio, Ollama, or any
+Point AdaptiveLearner's AI settings at LM Studio, Ollama, or any
 OpenAI-compatible local server. The **Fill with AI** button uses
 your local model instead of a paid cloud API. No API key needed
 for most local setups; latency depends on your hardware. See the
@@ -37,7 +37,7 @@ for most local setups; latency depends on your hardware. See the
 Export an empty (or partially filled) `.biblio.yaml`, paste it
 into Claude.ai or ChatGPT, get the filled YAML back, then upload
 it via **Import filled template**. Zero API configuration on the
-Bibliogon side; works with any AI service that can read and
+AdaptiveLearner side; works with any AI service that can read and
 return YAML.
 
 ## The template format
@@ -159,7 +159,7 @@ AI Settings.
 > and the inline per-item table below with one row per article
 > listing input/output tokens and per-item cost.
 
-If the configured model isn't in Bibliogon's pricing table,
+If the configured model isn't in AdaptiveLearner's pricing table,
 costs render as "—" with a "Cost is unknown because the
 configured model is not in the pricing table" disclaimer. The
 job still runs; only the cost estimate is unavailable.
@@ -172,7 +172,7 @@ currently-processing item. Click it to expand the full per-item
 modal with totals (items / updated / tokens / cost) and a
 scrollable list of every item, color-coded by status
 (running / done / skipped / error). Errors show the per-item
-message inline; you can keep working in other parts of Bibliogon
+message inline; you can keep working in other parts of AdaptiveLearner
 while the job runs.
 
 > Screenshot: the bulk-AI-fill dock minimized in the bottom-left
@@ -189,7 +189,7 @@ After completion you can dismiss the dock, refresh the dashboard
 to see all the updated metadata, or click into individual
 records to verify the fill.
 
-If you reload the browser while a job is running, Bibliogon
+If you reload the browser while a job is running, AdaptiveLearner
 reconnects to the same job via localStorage and the dock comes
 back. The job keeps running on the server regardless of whether
 your browser is open.
@@ -244,7 +244,7 @@ launch.
 
 ### 2. Download a model
 
-The Home tab shows recommended models. Pick something Bibliogon-
+The Home tab shows recommended models. Pick something AdaptiveLearner-
 friendly — Llama 3.1 8B Instruct, Qwen 2.5 7B Instruct, or any
 instruct-tuned model in the 4-8B range works well for metadata
 generation. Click Download.
@@ -265,9 +265,9 @@ compatible base URL.
 > endpoint URL `http://localhost:1234/v1` visible in the right-
 > hand panel.
 
-### 4. Configure Bibliogon
+### 4. Configure AdaptiveLearner
 
-Open Bibliogon → Settings → KI-Assistent. Pick **LM Studio
+Open AdaptiveLearner → Settings → KI-Assistent. Pick **LM Studio
 (local)** from the provider dropdown. The Base URL auto-fills to
 `http://localhost:1234/v1`. Leave Model empty (LM Studio
 provides whatever is loaded) or type the model name LM Studio
@@ -276,7 +276,7 @@ shows. Click **Test connection** — you should get a green
 
 ### 5. Use the AI features
 
-Click **Fill with AI** anywhere in Bibliogon. The local model
+Click **Fill with AI** anywhere in AdaptiveLearner. The local model
 responds; no API key needed, no per-request cost, fully offline
 after the model download.
 
@@ -316,14 +316,14 @@ OpenAI-compatible endpoint sits at `http://localhost:11434/v1`.
 > startup banner "Listening on 127.0.0.1:11434" and a subsequent
 > `ollama list` output confirming the pulled model.
 
-### 3. Configure Bibliogon
+### 3. Configure AdaptiveLearner
 
 Open Settings → KI-Assistent. Pick **Custom (OpenAI-compatible)**
 from the provider dropdown. Type into Base URL:
 `http://localhost:11434/v1`. Type into Model: `llama3.1:8b-instruct`
 (or whatever you pulled). Leave API key empty.
 
-> Screenshot: Bibliogon Settings AI tab with provider set to
+> Screenshot: AdaptiveLearner Settings AI tab with provider set to
 > "Custom (OpenAI-compatible)", Base URL field showing
 > `http://localhost:11434/v1`, Model field showing
 > `llama3.1:8b-instruct`, API key empty, Test connection button
@@ -347,7 +347,7 @@ KI-Assistent and check the "KI-Funktionen aktivieren" toggle at
 the top.
 
 **"Cost is unknown" disclaimer in the bulk estimate.** The
-model you configured isn't in Bibliogon's pricing table. The
+model you configured isn't in AdaptiveLearner's pricing table. The
 job runs fine; only the USD estimate is hidden. Add your model
 to `backend/app/ai/pricing.py` if you're running a local copy.
 

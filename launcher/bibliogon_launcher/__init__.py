@@ -1,4 +1,4 @@
-"""Bibliogon Windows Simple Launcher.
+"""AdaptiveLearner Windows Simple Launcher.
 
 Small Python wrapper that starts the Docker stack, opens the browser,
 monitors for shutdown, and stops the stack on exit. Ships as a single

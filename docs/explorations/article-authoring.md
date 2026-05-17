@@ -9,8 +9,8 @@ Source prompt: [archive/prompt-article-authoring-exploration-v2.md](archive/prom
 
 ## 1. Origin
 
-Bibliogon positions itself as a book authoring tool. Aster has started
-publishing Bibliogon-related articles on Medium, Substack and LinkedIn
+AdaptiveLearner positions itself as a book authoring tool. Aster has started
+publishing AdaptiveLearner-related articles on Medium, Substack and LinkedIn
 as project outreach. Each platform carries its own metadata schema,
 format expectations, and social ecosystem. Cross-posting is manual,
 repetitive, and error-prone: a friend-link changes on one platform,
@@ -18,7 +18,7 @@ the Substack mirror goes stale, and nothing in the current toolchain
 notices.
 
 During the v0.19.1 release article the thought surfaced: the entire
-authoring-plus-publication pipeline could itself be a Bibliogon
+authoring-plus-publication pipeline could itself be a AdaptiveLearner
 feature. Scope: content types, multi-platform publications, promo
 posts, lifecycle state across the fan-out.
 
@@ -226,7 +226,7 @@ on content_type.
 - Book model accumulates nullable article-only fields (SEO,
   publications, promo posts)
 - Schema conflates two product concerns; migrations affect both
-- Positioning ambiguity: "Bibliogon does books AND articles"
+- Positioning ambiguity: "AdaptiveLearner does books AND articles"
 - Per-book features (KDP, audiobook, ISBN) need null-guards where
   article-type rows exist
 
@@ -260,7 +260,7 @@ different stack.
 
 **Pros:**
 - Clearest positioning
-- No risk to Bibliogon's identity
+- No risk to AdaptiveLearner's identity
 - Articles can adopt a web-publishing stack (Astro, Next, headless
   CMS)
 - Potential differentiated monetization
@@ -278,7 +278,7 @@ different stack.
 - **Positioning clarity:** C > B > A
 - **Maintenance burden:** A < B < C
 - **Feature richness ceiling:** C > B > A
-- **Risk to existing Bibliogon workflow:** C (none) < B (low) < A
+- **Risk to existing AdaptiveLearner workflow:** C (none) < B (low) < A
   (moderate, same tables)
 
 ---
@@ -286,7 +286,7 @@ different stack.
 ## 9. Things not yet thought through
 
 - **Images and media.** Featured plus inline. Reuse per-book asset
-  infrastructure or separate pool? Does Bibliogon assist generation
+  infrastructure or separate pool? Does AdaptiveLearner assist generation
   (Midjourney prompt library, SD integration) or only storage?
 - **Aspect-ratio fan-out.** Each platform wants different featured-
   image dimensions. Regenerate from one source prompt, keep N
@@ -311,7 +311,7 @@ different stack.
 - **Preamble, CTA, signature library.** Repeated boilerplate belongs
   in a reusable snippet system, not copy-paste.
 - **Platform credentials.** OAuth tokens need secure storage.
-  Bibliogon has no secrets manager today.
+  AdaptiveLearner has no secrets manager today.
 - **Retroactive import.** Articles already live on Medium/Substack.
   Import path, or tool only tracks what it created?
 
@@ -437,7 +437,7 @@ justifies deeper investment.
 - [children-book-plugin.md](children-book-plugin.md) - precedent
   for a deferred feature with a validation plan
 - [archive/ai-review-extension.md](archive/ai-review-extension.md) -
-  precedent for extending Bibliogon with a focused capability (shipped
+  precedent for extending AdaptiveLearner with a focused capability (shipped
   v0.20.0)
 - [monetization.md](monetization.md) - future tier strategy;
   relevant if writer features ever gate behind a plan
@@ -447,5 +447,5 @@ justifies deeper investment.
   - Book model, directly relevant for Option A
 - [../../backend/app/routers/ai.py](../../backend/app/routers/ai.py)
   - AI integration to reuse for article writing assistance
-- [../../plugins/bibliogon-plugin-grammar](../../plugins/bibliogon-plugin-grammar)
+- [../../plugins/adaptive-learner-plugin-grammar](../../plugins/adaptive-learner-plugin-grammar)
   - grammar checks reusable across content types

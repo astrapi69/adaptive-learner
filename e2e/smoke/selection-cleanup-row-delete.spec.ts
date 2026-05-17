@@ -11,8 +11,8 @@
  *   5. Before the fix: BulkActionBar stays visible referencing an
  *      orphan id.
  *   6. After the fix: selection.remove(id) drops the count to 0,
- *      the bar unmounts (Bibliogon's convention is hide-when-empty,
- *      see lessons-learned "Bibliogon's bar-visibility convention
+ *      the bar unmounts (AdaptiveLearner's convention is hide-when-empty,
+ *      see lessons-learned "AdaptiveLearner's bar-visibility convention
  *      at count===0").
  *
  * Two assertions per surface (Articles + Books):

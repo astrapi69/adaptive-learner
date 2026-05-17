@@ -1,8 +1,8 @@
-# Bibliogon Windows installer (PowerShell mirror of install.sh).
+# AdaptiveLearner Windows installer (PowerShell mirror of install.sh).
 # Downloads and starts the book authoring platform.
 #
 # Usage (in PowerShell):
-#   irm https://raw.githubusercontent.com/astrapi69/bibliogon/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.ps1 | iex
 #
 # Or download and run, with the install.cmd wrapper if your
 # ExecutionPolicy is Restricted (typical for corporate Windows
@@ -15,12 +15,12 @@
 
 $ErrorActionPreference = "Stop"
 
-$Version = if ($env:BIBLIOGON_VERSION) { $env:BIBLIOGON_VERSION } else { "@@BIBLIOGON_VERSION@@" }
-$Repo = "astrapi69/bibliogon"
-$InstallDir = if ($env:BIBLIOGON_DIR) { $env:BIBLIOGON_DIR } else { Join-Path $HOME "bibliogon" }
+$Version = if ($env:ADAPTIVE_LEARNER_VERSION) { $env:ADAPTIVE_LEARNER_VERSION } else { "@@ADAPTIVE_LEARNER_VERSION@@" }
+$Repo = "astrapi69/adaptive_learner"
+$InstallDir = if ($env:ADAPTIVE_LEARNER_DIR) { $env:ADAPTIVE_LEARNER_DIR } else { Join-Path $HOME "adaptive_learner" }
 
 Write-Host ""
-Write-Host "  Bibliogon $Version" -ForegroundColor Blue
+Write-Host "  AdaptiveLearner $Version" -ForegroundColor Blue
 Write-Host "  Open-source book authoring platform"
 Write-Host ""
 
@@ -51,7 +51,7 @@ Write-Host "Docker and Docker Compose found." -ForegroundColor Green
 # Mirrors install.sh: existing install? back up .env, blow away the dir, re-clone.
 $BackupEnv = $null
 if (Test-Path (Join-Path $InstallDir ".git")) {
-    Write-Host "Bibliogon is already installed in $InstallDir" -ForegroundColor Yellow
+    Write-Host "AdaptiveLearner is already installed in $InstallDir" -ForegroundColor Yellow
     Write-Host "Updating to $Version..."
     $envPath = Join-Path $InstallDir ".env"
     if (Test-Path $envPath) {
@@ -62,7 +62,7 @@ if (Test-Path (Join-Path $InstallDir ".git")) {
     Remove-Item -Recurse -Force $InstallDir
 }
 
-Write-Host "Downloading Bibliogon $Version..." -ForegroundColor Blue
+Write-Host "Downloading AdaptiveLearner $Version..." -ForegroundColor Blue
 if (Get-Command git -ErrorAction SilentlyContinue) {
     git clone --depth 1 --branch $Version "https://github.com/$Repo.git" $InstallDir 2>$null
     if ($LASTEXITCODE -ne 0) {
@@ -99,17 +99,17 @@ if (-not (Test-Path ".env")) {
 }
 
 # --- Read port from .env ---
-$port = (Select-String -Path ".env" -Pattern "^BIBLIOGON_PORT=" | Select-Object -First 1).Line -replace "^BIBLIOGON_PORT=", ""
+$port = (Select-String -Path ".env" -Pattern "^ADAPTIVE_LEARNER_PORT=" | Select-Object -First 1).Line -replace "^ADAPTIVE_LEARNER_PORT=", ""
 if (-not $port) { $port = "7880" }
 
 # --- Build and start ---
 Write-Host ""
-Write-Host "Building and starting Bibliogon (this may take a few minutes the first time)..." -ForegroundColor Blue
+Write-Host "Building and starting AdaptiveLearner (this may take a few minutes the first time)..." -ForegroundColor Blue
 docker compose -f docker-compose.prod.yml up --build -d
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green
-Write-Host "  Bibliogon is running!" -ForegroundColor Green
+Write-Host "  AdaptiveLearner is running!" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Open: http://localhost:$port" -ForegroundColor Blue

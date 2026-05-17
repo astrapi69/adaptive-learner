@@ -15,19 +15,19 @@ this guide exercises the API directly. UI lands in Session 3.
 **Verweise / References:**
 - Strukturierter Smoke-Test / Structured smoke test:
   [picture-book-pages.md](./picture-book-pages.md)
-- Code: [pages.py](../../../plugins/bibliogon-plugin-kinderbuch/bibliogon_kinderbuch/pages.py)
+- Code: [pages.py](../../../plugins/adaptive-learner-plugin-kinderbuch/adaptive_learner_kinderbuch/pages.py)
 
 ---
 
 ## Voraussetzungen / Prerequisites
 
-- Bibliogon Dev-Backend läuft (`make dev` oder `make dev-bg`).
+- AdaptiveLearner Dev-Backend läuft (`make dev` oder `make dev-bg`).
 - Backend erreichbar unter `http://localhost:8000`.
 - `curl` (oder eine UI wie Bruno, Insomnia, oder
   `http://localhost:8000/docs` für die FastAPI-Swagger-Ansicht).
 - `jq` empfohlen für JSON-Parsen.
 
-Bibliogon dev backend running (`make dev` or `make dev-bg`).
+AdaptiveLearner dev backend running (`make dev` or `make dev-bg`).
 Backend reachable at `http://localhost:8000`. `curl` (or a UI like
 Bruno, Insomnia, or `http://localhost:8000/docs` for the FastAPI
 Swagger view). `jq` recommended for JSON parsing.

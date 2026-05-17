@@ -2,7 +2,7 @@
 
 Mirrors the backend's ``test_i18n_parity.py`` shape but for the
 launcher's JSON catalogs under
-``bibliogon_launcher/locales/{en,de,el,es,fr,pt,tr,ja}.json``.
+``adaptive_learner_launcher/locales/{en,de,el,es,fr,pt,tr,ja}.json``.
 
 Three contracts enforced:
 
@@ -32,7 +32,7 @@ import pytest
 
 LOCALES_DIR = (
     Path(__file__).resolve().parent.parent
-    / "bibliogon_launcher"
+    / "adaptive_learner_launcher"
     / "locales"
 )
 REFERENCE_LANG = "en"

@@ -39,7 +39,7 @@ interface Props {
 
 const SKIP_SECONDS = 15
 const SPEED_OPTIONS = [0.75, 1.0, 1.25, 1.5, 2.0]
-const AUTO_ADVANCE_KEY = "bibliogon.player.autoAdvance"
+const AUTO_ADVANCE_KEY = "adaptive_learner.player.autoAdvance"
 
 function formatTime(seconds: number): string {
   if (!isFinite(seconds) || seconds < 0) return "0:00"

@@ -4,22 +4,22 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from bibliogon_launcher import config
+from adaptive_learner_launcher import config
 
 
 class TestAppdataDir:
 
     def test_uses_appdata_on_windows_env(self, tmp_path: Path) -> None:
         env = {"APPDATA": str(tmp_path)}
-        assert config.appdata_dir(env) == tmp_path / "Bibliogon"
+        assert config.appdata_dir(env) == tmp_path / "AdaptiveLearner"
 
     def test_falls_back_to_home_config_when_appdata_missing(self, tmp_path: Path) -> None:
         env = {"HOME": str(tmp_path)}
-        assert config.appdata_dir(env) == tmp_path / ".config" / "Bibliogon"
+        assert config.appdata_dir(env) == tmp_path / ".config" / "AdaptiveLearner"
 
     def test_lockfile_and_logfile_are_under_appdata(self, tmp_path: Path) -> None:
         env = {"APPDATA": str(tmp_path)}
-        base = tmp_path / "Bibliogon"
+        base = tmp_path / "AdaptiveLearner"
         assert config.lockfile_path(env) == base / "launcher.lock"
         assert config.logfile_path(env) == base / "launcher.log"
         assert config.launcher_config_path(env) == base / "launcher.json"
@@ -29,11 +29,11 @@ class TestDefaultRepoPath:
 
     def test_uses_userprofile_on_windows(self, tmp_path: Path) -> None:
         env = {"USERPROFILE": str(tmp_path)}
-        assert config.default_repo_path(env) == tmp_path / "bibliogon"
+        assert config.default_repo_path(env) == tmp_path / "adaptive_learner"
 
     def test_falls_back_to_home_when_userprofile_missing(self, tmp_path: Path) -> None:
         env = {"HOME": str(tmp_path)}
-        assert config.default_repo_path(env) == tmp_path / "bibliogon"
+        assert config.default_repo_path(env) == tmp_path / "adaptive_learner"
 
 
 class TestLoadSaveLauncherConfig:
@@ -44,8 +44,8 @@ class TestLoadSaveLauncherConfig:
 
     def test_roundtrip(self, tmp_path: Path) -> None:
         env = {"APPDATA": str(tmp_path)}
-        config.save_launcher_config({"repo_path": "C:\\bibliogon"}, env)
-        assert config.load_launcher_config(env) == {"repo_path": "C:\\bibliogon"}
+        config.save_launcher_config({"repo_path": "C:\\adaptive_learner"}, env)
+        assert config.load_launcher_config(env) == {"repo_path": "C:\\adaptive_learner"}
 
     def test_load_returns_empty_dict_on_parse_error(self, tmp_path: Path) -> None:
         env = {"APPDATA": str(tmp_path)}
@@ -59,13 +59,13 @@ class TestResolveRepoPath:
 
     def test_uses_configured_path_when_present(self, tmp_path: Path) -> None:
         env = {"APPDATA": str(tmp_path), "USERPROFILE": "/somewhere/else"}
-        configured = tmp_path / "custom" / "bibliogon"
+        configured = tmp_path / "custom" / "adaptive_learner"
         config.save_launcher_config({"repo_path": str(configured)}, env)
         assert config.resolve_repo_path(env) == configured
 
     def test_falls_back_to_default_when_not_configured(self, tmp_path: Path) -> None:
         env = {"APPDATA": str(tmp_path), "USERPROFILE": str(tmp_path)}
-        assert config.resolve_repo_path(env) == tmp_path / "bibliogon"
+        assert config.resolve_repo_path(env) == tmp_path / "adaptive_learner"
 
 
 class TestIsValidRepo:
@@ -107,19 +107,19 @@ class TestReadPort:
         assert config.read_port(tmp_path) == config.DEFAULT_PORT
 
     def test_reads_configured_port(self, tmp_path: Path) -> None:
-        (tmp_path / ".env").write_text("BIBLIOGON_PORT=9090\nOTHER=x\n", encoding="utf-8")
+        (tmp_path / ".env").write_text("ADAPTIVE_LEARNER_PORT=9090\nOTHER=x\n", encoding="utf-8")
         assert config.read_port(tmp_path) == 9090
 
     def test_tolerates_whitespace_around_port(self, tmp_path: Path) -> None:
-        (tmp_path / ".env").write_text("  BIBLIOGON_PORT = 8080  \n", encoding="utf-8")
+        (tmp_path / ".env").write_text("  ADAPTIVE_LEARNER_PORT = 8080  \n", encoding="utf-8")
         assert config.read_port(tmp_path) == 8080
 
     def test_falls_back_on_non_numeric(self, tmp_path: Path) -> None:
-        (tmp_path / ".env").write_text("BIBLIOGON_PORT=abc\n", encoding="utf-8")
+        (tmp_path / ".env").write_text("ADAPTIVE_LEARNER_PORT=abc\n", encoding="utf-8")
         assert config.read_port(tmp_path) == config.DEFAULT_PORT
 
     def test_falls_back_on_out_of_range(self, tmp_path: Path) -> None:
-        (tmp_path / ".env").write_text("BIBLIOGON_PORT=70000\n", encoding="utf-8")
+        (tmp_path / ".env").write_text("ADAPTIVE_LEARNER_PORT=70000\n", encoding="utf-8")
         assert config.read_port(tmp_path) == config.DEFAULT_PORT
 
     def test_falls_back_on_missing_key(self, tmp_path: Path) -> None:

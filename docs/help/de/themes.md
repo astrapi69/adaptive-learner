@@ -1,17 +1,17 @@
 # Themes
 
-Bibliogon bietet sechs Farbpaletten, jeweils in einer Hell- und einer Dunkel-Variante. Das Farbschema wird unter **Einstellungen > Anzeige** gewählt, die Hell/Dunkel-Umschaltung liegt auf dem Sonne/Mond-Icon in der Sidebar.
+AdaptiveLearner bietet sechs Farbpaletten, jeweils in einer Hell- und einer Dunkel-Variante. Das Farbschema wird unter **Einstellungen > Anzeige** gewählt, die Hell/Dunkel-Umschaltung liegt auf dem Sonne/Mond-Icon in der Sidebar.
 
 ## Verfügbare Paletten
 
 ### Warm Literary *(Standard)*
-Warme Creme- und Braun-Töne mit Crimson Pro als Serifen-Schrift. Die Originalpalette von Bibliogon, angelehnt an klassisches Druckpapier.
+Warme Creme- und Braun-Töne mit Crimson Pro als Serifen-Schrift. Die Originalpalette von AdaptiveLearner, angelehnt an klassisches Druckpapier.
 
 ### Cool Modern
 Kühle Blau-Grau-Töne mit Inter als serifenloser Schrift. Klares, modernes Layout für Autoren die einen nüchternen Look bevorzugen.
 
 ### Nord
-Die beliebte Nord-Farbpalette in Bibliogon-Anpassung. Gedämpfte Pastelltöne, gut für lange Lesesitzungen.
+Die beliebte Nord-Farbpalette in AdaptiveLearner-Anpassung. Gedämpfte Pastelltöne, gut für lange Lesesitzungen.
 
 ![Nord-Theme](../assets/screenshots/theme-nord.png)
 
@@ -42,4 +42,4 @@ Jede der sechs Paletten existiert in einer Hell- und einer Dunkel-Variante. Die 
 
 - Alle Themes nutzen dieselben CSS-Variablen. Plugins die eigene UI einblenden können ohne Anpassung alle Themes unterstützen indem sie `var(--bg-*)`, `var(--text-*)`, `var(--accent)`, `var(--border)`, `var(--shadow-*)` nutzen statt hardcoded Farbwerte.
 - Alle Schriftarten sind lokal eingebettet (O-01 abgeschlossen). Es werden keine externen Schriftarten-Dienste kontaktiert.
-- Die Theme-Einstellung wird im `localStorage` des Browsers gespeichert (`bibliogon-app-theme` für die Palette, `bibliogon-theme` für Hell/Dunkel). Beim ersten Start folgt Bibliogon der System-Präferenz für Hell/Dunkel, die Palette fällt auf Warm Literary zurück.
+- Die Theme-Einstellung wird im `localStorage` des Browsers gespeichert (`adaptive-learner-app-theme` für die Palette, `adaptive-learner-theme` für Hell/Dunkel). Beim ersten Start folgt AdaptiveLearner der System-Präferenz für Hell/Dunkel, die Palette fällt auf Warm Literary zurück.

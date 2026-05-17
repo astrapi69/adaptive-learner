@@ -2,19 +2,19 @@
 set -e
 
 # ============================================================
-#  Bibliogon Installer
+#  AdaptiveLearner Installer
 #  Downloads and starts the book authoring platform.
 #
 #  Usage:
-#    curl -fsSL https://raw.githubusercontent.com/astrapi69/bibliogon/main/install.sh | bash
+#    curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.sh | bash
 #
 #  Or download and run:
 #    chmod +x install.sh && ./install.sh
 # ============================================================
 
-VERSION="${BIBLIOGON_VERSION:-@@BIBLIOGON_VERSION@@}"
-REPO="astrapi69/bibliogon"
-INSTALL_DIR="${BIBLIOGON_DIR:-$HOME/bibliogon}"
+VERSION="${ADAPTIVE_LEARNER_VERSION:-@@ADAPTIVE_LEARNER_VERSION@@}"
+REPO="astrapi69/adaptive_learner"
+INSTALL_DIR="${ADAPTIVE_LEARNER_DIR:-$HOME/adaptive_learner}"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -70,7 +70,7 @@ echo -e "${GREEN}Docker and Docker Compose found.${NC}"
 # The only user artifact in the repo directory is .env - we preserve it.
 BACKUP_ENV=""
 if [ -d "$INSTALL_DIR/.git" ]; then
-    echo -e "${YELLOW}Bibliogon is already installed in ${INSTALL_DIR}${NC}"
+    echo -e "${YELLOW}AdaptiveLearner is already installed in ${INSTALL_DIR}${NC}"
     echo "Updating to ${VERSION}..."
     if [ -f "$INSTALL_DIR/.env" ]; then
         BACKUP_ENV=$(mktemp)
@@ -80,7 +80,7 @@ if [ -d "$INSTALL_DIR/.git" ]; then
     rm -rf "$INSTALL_DIR"
 fi
 
-echo -e "${BLUE}Downloading Bibliogon ${VERSION}...${NC}"
+echo -e "${BLUE}Downloading AdaptiveLearner ${VERSION}...${NC}"
 
 # Try git clone first (preferred)
 if command -v git &> /dev/null; then
@@ -123,7 +123,7 @@ if [ ! -f .env ]; then
     SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))" 2>/dev/null || \
              openssl rand -hex 32 2>/dev/null || \
              head -c 32 /dev/urandom | xxd -p 2>/dev/null || \
-             echo "bibliogon-$(date +%s)-random")
+             echo "adaptive-learner-$(date +%s)-random")
 
     if [[ "$OSTYPE" == "darwin"* ]]; then
         sed -i '' "s/change-me-to-a-random-secret/$SECRET/" .env
@@ -135,19 +135,19 @@ if [ ! -f .env ]; then
 fi
 
 # --- Read port from .env ---
-PORT=$(grep -E '^BIBLIOGON_PORT=' .env 2>/dev/null | cut -d= -f2 || echo "7880")
+PORT=$(grep -E '^ADAPTIVE_LEARNER_PORT=' .env 2>/dev/null | cut -d= -f2 || echo "7880")
 PORT=${PORT:-7880}
 
 # --- Build and start ---
 echo ""
-echo -e "${BLUE}Building and starting Bibliogon (this may take a few minutes the first time)...${NC}"
+echo -e "${BLUE}Building and starting AdaptiveLearner (this may take a few minutes the first time)...${NC}"
 echo ""
 
 docker compose -f docker-compose.prod.yml up --build -d
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  Bibliogon is running!${NC}"
+echo -e "${GREEN}  AdaptiveLearner is running!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "  Open: ${BLUE}http://localhost:${PORT}${NC}"

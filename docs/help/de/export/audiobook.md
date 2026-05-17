@@ -8,7 +8,7 @@ Die Audiobook-Generierung läuft asynchron im Hintergrund. Nach dem Start wird e
 
 ## TTS-Engines
 
-Bibliogon unterstützt mehrere TTS-Engines, die sich in Qualität, Kosten und Verfügbarkeit unterscheiden:
+AdaptiveLearner unterstützt mehrere TTS-Engines, die sich in Qualität, Kosten und Verfügbarkeit unterscheiden:
 
 - **Edge TTS** (Standard): Microsofts kostenlose Text-to-Speech-Schnittstelle. Bietet eine große Auswahl an Stimmen in vielen Sprachen. Benötigt eine Internetverbindung, ist aber kostenfrei.
 - **Google Cloud TTS**: Googles cloudbasierte Sprachsynthese mit hoher Qualität (Standard, WaveNet, Neural2, Studio, Journey). Erfordert ein Google-Cloud-Konto mit Service-Account-JSON. Kostenlos bis zu einem monatlichen Kontingent, danach kostenpflichtig. Der Service-Account-Schlüssel wird verschlüsselt in `config/google-credentials.enc` abgelegt.

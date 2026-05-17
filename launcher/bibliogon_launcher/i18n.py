@@ -1,6 +1,6 @@
 """Minimal JSON-backed i18n for the launcher.
 
-Catalog files live under ``bibliogon_launcher/locales/{en,de}.json``
+Catalog files live under ``adaptive_learner_launcher/locales/{en,de}.json``
 (plus future languages). At module load they are read into an
 in-memory dict; ``t(key)`` looks up the active language and falls
 back to English when a key is missing.
@@ -9,12 +9,12 @@ Locale resolution priority:
 1. Explicit ``settings.language`` value (set via Settings dialog).
 2. OS locale: ``de_*`` -> ``de``; otherwise ``en``.
 
-The OS-locale step delegates to :func:`bibliogon_launcher.ui._current_lang`
+The OS-locale step delegates to :func:`adaptive_learner_launcher.ui._current_lang`
 so there is one source of truth for locale detection across the
 launcher; if that helper is rewritten the i18n layer follows.
 
 PyInstaller note: ``locales/*.json`` is included via ``datas`` in
-``bibliogon-launcher.spec``. ``importlib.resources.files`` reads
+``adaptive-learner-launcher.spec``. ``importlib.resources.files`` reads
 through the bundled tree without manual ``sys._MEIPASS`` handling.
 """
 
@@ -25,7 +25,7 @@ import logging
 from importlib import resources
 from typing import Any
 
-logger = logging.getLogger("bibliogon_launcher.i18n")
+logger = logging.getLogger("adaptive_learner_launcher.i18n")
 
 _CATALOG: dict[str, dict[str, str]] = {}
 _ACTIVE_LANG: str = "en"
@@ -37,7 +37,7 @@ def _load_catalogs() -> None:
     global _CATALOG
     catalogs: dict[str, dict[str, str]] = {}
     try:
-        locales_dir = resources.files("bibliogon_launcher").joinpath("locales")
+        locales_dir = resources.files("adaptive_learner_launcher").joinpath("locales")
     except (ModuleNotFoundError, FileNotFoundError) as exc:
         logger.warning("locales directory missing: %s", exc)
         _CATALOG = {}
@@ -71,7 +71,7 @@ def _resolve_language(settings_language: str | None) -> str:
     # helper in ui.py. Imported lazily to avoid a circular import at
     # module load (ui.py imports nothing from i18n at module level
     # currently, but future wiring shouldn't create one).
-    from bibliogon_launcher.ui import _current_lang
+    from adaptive_learner_launcher.ui import _current_lang
 
     detected = _current_lang()
     return detected if detected in _CATALOG else _FALLBACK_LANG

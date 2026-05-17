@@ -1,5 +1,5 @@
 {
-  "name": "bibliogon-e2e",
+  "name": "adaptive-learner-e2e",
   "private": true,
   "scripts": {
     "test": "playwright test",

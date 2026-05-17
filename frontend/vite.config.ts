@@ -22,8 +22,8 @@ export default defineConfig({
             },
             includeAssets: ["icon-192.png", "icon-512.png", "icon-192.svg", "icon-512.svg"],
             manifest: {
-                name: "Bibliogon",
-                short_name: "Bibliogon",
+                name: "AdaptiveLearner",
+                short_name: "AdaptiveLearner",
                 description: "Open-source book authoring platform",
                 theme_color: "#b45309",
                 background_color: "#faf8f5",

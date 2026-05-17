@@ -69,7 +69,7 @@ The public call-for-reviewers can either reuse GitHub issue #18
 
 If you read one of the pending-review catalogs and find errors:
 
-1. Fork the repo at <https://github.com/astrapi69/bibliogon>.
+1. Fork the repo at <https://github.com/astrapi69/adaptive_learner>.
 2. Edit the relevant `backend/config/i18n/{lang}.yaml` directly.
 3. After translating one of the three v0.31.0 namespaces,
    remove that name from `_meta.pending_namespaces`.
@@ -92,5 +92,5 @@ specialised (AI-fill cost projections, comment moderation
 language, template field-class semantics) and was deferred to
 ship v0.31.0 on schedule rather than holding the release on six
 native-speaker contacts. The launcher precedent
-(`launcher/bibliogon_launcher/locales/REVIEW_STATUS.md`) covers
+(`launcher/adaptive_learner_launcher/locales/REVIEW_STATUS.md`) covers
 the analogous situation for the launcher itself.

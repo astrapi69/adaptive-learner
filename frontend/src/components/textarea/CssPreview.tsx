@@ -8,7 +8,7 @@
  *
  * Strategy A from textarea-improvements.md keeps editing in a
  * plain textarea and shows the highlighted version on a toggle.
- * Bibliogon's audience (publishers, not developers) edits CSS
+ * AdaptiveLearner's audience (publishers, not developers) edits CSS
  * once per book; the syntax tree is more useful as a sanity
  * check than as a full IDE.
  */

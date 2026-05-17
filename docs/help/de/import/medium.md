@@ -1,6 +1,6 @@
 # Aus einem Medium-Archiv importieren
 
-Bibliogon importiert ein Medium-HTML-Archiv und erzeugt pro
+AdaptiveLearner importiert ein Medium-HTML-Archiv und erzeugt pro
 Beitrag einen **Artikel**, einen **Publication**-Eintrag und
 einen Provenienz-Datensatz.
 
@@ -20,7 +20,7 @@ das Backend sauber gestartet ist. Diese Log-Zeilen müssen
 erscheinen:
 
 ```
-INFO  app.main: Plugin discovery: 11 entry points found via 'bibliogon.plugins' group: ..., medium-import, ...
+INFO  app.main: Plugin discovery: 11 entry points found via 'adaptive_learner.plugins' group: ..., medium-import, ...
 INFO  app.main: Plugins enabled in config (11): ..., medium-import
 INFO  app.main: Plugins loaded (11/11 enabled): ..., medium-import, ...
 ```
@@ -42,7 +42,7 @@ curl -X POST http://localhost:7880/api/medium-import/import \
   | jq .
 ```
 
-`localhost:7880` durch deine Bibliogon-URL ersetzen. Antwort als
+`localhost:7880` durch deine AdaptiveLearner-URL ersetzen. Antwort als
 JSON-Zusammenfassung:
 
 ```json
@@ -110,7 +110,7 @@ künftigen manuellen Eingabe-Workflow.
 Medium speichert von Nutzern geschriebene Antworten (kurze
 Reaktionen auf andere Artikel) im HTML-Export als eigenständige
 Dateien, die auf Dateiebene nicht von Artikeln unterscheidbar
-sind. Der Bibliogon-Importer wendet auf jeden Beitrag eine
+sind. Der AdaptiveLearner-Importer wendet auf jeden Beitrag eine
 Heuristik an und leitet kommentar-förmige Antworten in eine
 separate **Kommentare**-Tabelle, statt das Artikel-Dashboard zu
 fluten.
@@ -167,7 +167,7 @@ Dashboard. Typische Folgeaufgaben:
 
 - **Unerwünschte Artikel archivieren.** Im Dashboard auswählen
   und **In den Papierkorb** verschieben. Alte / verlassene
-  Beiträge, die nicht in Bibliogon bleiben sollen, hier
+  Beiträge, die nicht in AdaptiveLearner bleiben sollen, hier
   aussortieren.
 - **Tags ergänzen.** Medium liefert sie nicht; pro Artikel im
   Editor nachtragen.
@@ -180,7 +180,7 @@ Dashboard. Typische Folgeaufgaben:
 ## Re-Import-Sicherheit
 
 - Artikel, deren Canonical-URL bereits zu einem bestehenden
-  Bibliogon-Artikel gehört, werden beim zweiten Lauf
+  AdaptiveLearner-Artikel gehört, werden beim zweiten Lauf
   **übersprungen**. Die Zusammenfassung listet jeden
   übersprungenen Beitrag mit der ID des bestehenden Artikels.
 - Artikel im Papierkorb gelten weiterhin als „existierend" für

@@ -84,14 +84,14 @@ pattern. Reduces migration surface.
 clean `npm install` with TipTap 3 anywhere in the dependency
 tree.
 
-### Usage surface in Bibliogon
+### Usage surface in AdaptiveLearner
 
 Single import + registration in [Editor.tsx](../../frontend/src/components/Editor.tsx):
 
 - L27: `import SearchAndReplace from "@sereneinserenade/tiptap-search-and-replace";`
 - L251-254: `SearchAndReplace.configure({ searchResultClass: "search-result", disableRegex: true })`
 
-UI is Bibliogon-owned (custom search bar, L983-1028). Package is
+UI is AdaptiveLearner-owned (custom search bar, L983-1028). Package is
 purely programmatic. Commands consumed: `setSearchTerm`,
 `setReplaceTerm`, `nextSearchResult`, `previousSearchResult`,
 `replace`, `replaceAll`. Regex explicitly disabled.
@@ -118,7 +118,7 @@ purely programmatic. Commands consumed: `setSearchTerm`,
 - npm registry listing for 0.1.1 previously read "Proprietary"
   (stale artifact of the 2024 published package.json missing the
   license field). **Actual licensing is MIT throughout.**
-- Safe for use in Bibliogon's MIT codebase.
+- Safe for use in AdaptiveLearner's MIT codebase.
 
 ### Upstream coordination
 
@@ -172,7 +172,7 @@ under time pressure:
 
 - **StarterKit v3 bundles additional extensions.** v3 StarterKit
   dependencies include `extension-link`, `extension-underline`,
-  `extension-list`, list-keymap, etc. Bibliogon currently
+  `extension-list`, list-keymap, etc. AdaptiveLearner currently
   imports some of these explicitly in Editor.tsx. Expect
   de-duplication work (remove redundant imports or rely on
   StarterKit defaults).

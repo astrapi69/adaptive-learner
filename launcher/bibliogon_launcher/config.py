@@ -12,22 +12,22 @@ import re
 from pathlib import Path
 
 
-APP_NAME = "Bibliogon"
+APP_NAME = "AdaptiveLearner"
 DEFAULT_PORT = 7880
-DEFAULT_REPO_DIR_NAME = "bibliogon"
+DEFAULT_REPO_DIR_NAME = "adaptive_learner"
 COMPOSE_FILENAME = "docker-compose.prod.yml"
 ENV_FILENAME = ".env"
 ENV_EXAMPLE_FILENAME = ".env.example"
 
-_PORT_LINE_RE = re.compile(r"^\s*BIBLIOGON_PORT\s*=\s*(\d+)\s*$", re.MULTILINE)
+_PORT_LINE_RE = re.compile(r"^\s*ADAPTIVE_LEARNER_PORT\s*=\s*(\d+)\s*$", re.MULTILINE)
 
 
 def appdata_dir(env: dict[str, str] | None = None) -> Path:
     """Return the user's per-app config directory.
 
-    On Windows this is ``%APPDATA%\\Bibliogon``. On non-Windows (used by
+    On Windows this is ``%APPDATA%\\AdaptiveLearner``. On non-Windows (used by
     tests running on CI or Linux devs), fall back to
-    ``~/.config/Bibliogon`` so the same code path exercises in unit tests.
+    ``~/.config/AdaptiveLearner`` so the same code path exercises in unit tests.
     """
     env = env if env is not None else dict(os.environ)
     appdata = env.get("APPDATA")
@@ -99,7 +99,7 @@ def is_valid_repo(repo: Path) -> bool:
 
 
 def read_port(repo: Path) -> int:
-    """Read ``BIBLIOGON_PORT`` from ``.env`` in the repo; fall back to default.
+    """Read ``ADAPTIVE_LEARNER_PORT`` from ``.env`` in the repo; fall back to default.
 
     Used so the launcher opens the browser on the user's configured port
     rather than hardcoding 7880.

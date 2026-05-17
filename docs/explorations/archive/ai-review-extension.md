@@ -8,7 +8,7 @@ Source: pre-audit findings + UX review.
 
 ## 1. Context
 
-Bibliogon already ships AI chapter review as a **core** feature, not a
+AdaptiveLearner already ships AI chapter review as a **core** feature, not a
 plugin (`backend/app/ai/`). Today's review supports a flat focus list
 (`style`, `coherence`, `pacing`, `dialogue`, `tension`), runs synchronously,
 returns inline JSON only, and is not persisted.
@@ -167,7 +167,7 @@ Examples:
 
 Pre-audit suggested DE/EN MVP with fallback. Rejected.
 
-All 8 supported Bibliogon languages (DE, EN, ES, FR, EL, PT, TR, JA)
+All 8 supported AdaptiveLearner languages (DE, EN, ES, FR, EL, PT, TR, JA)
 get explicit prompt support. Implementation: extend the existing
 `lang_map` dict at [routes.py:313](../../backend/app/ai/routes.py#L313)
 (already explicit for marketing prompts) and reuse from the review

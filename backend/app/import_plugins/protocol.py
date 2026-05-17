@@ -1,6 +1,6 @@
 """Contract for import format handlers.
 
-Every format that Bibliogon can import (``.bgb``, single Markdown,
+Every format that AdaptiveLearner can import (``.bgb``, single Markdown,
 write-book-template ZIP, git URL, ...) implements :class:`ImportPlugin`.
 
 Two-phase design: :meth:`ImportPlugin.detect` is read-only, returns a

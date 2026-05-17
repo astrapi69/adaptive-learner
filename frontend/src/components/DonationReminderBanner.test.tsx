@@ -149,9 +149,9 @@ describe("DonationReminderBanner dismiss paths", () => {
   });
 
   it("Support button links to landing_page_url when set", () => {
-    const config = {...baseConfig, landing_page_url: "https://bibliogon.app/support"};
+    const config = {...baseConfig, landing_page_url: "https://adaptive_learner.app/support"};
     render(<DonationReminderBanner donations={config} onDismiss={vi.fn()} />);
     const supportLink = screen.getByTestId("donation-reminder-support") as HTMLAnchorElement;
-    expect(supportLink.href).toBe("https://bibliogon.app/support");
+    expect(supportLink.href).toBe("https://adaptive_learner.app/support");
   });
 });

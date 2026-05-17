@@ -8,7 +8,7 @@ Generation runs asynchronously in the background. A progress dialog shows each c
 
 ## TTS Engines
 
-Bibliogon ships adapters for several engines with different tradeoffs:
+AdaptiveLearner ships adapters for several engines with different tradeoffs:
 
 - **Edge TTS** (default): Microsoft's free cloud TTS. Large voice selection, online only, no account needed.
 - **Google Cloud TTS**: Standard, WaveNet, Neural2, Studio and Journey quality tiers. Requires a service account JSON which is stored Fernet-encrypted in `config/google-credentials.enc`. Free monthly quota, then paid.

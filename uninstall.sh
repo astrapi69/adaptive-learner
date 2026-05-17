@@ -2,13 +2,13 @@
 set -e
 
 # ============================================================
-#  Bibliogon Uninstaller
+#  AdaptiveLearner Uninstaller
 #
-#  Removes the Bibliogon installation, Docker resources, and
+#  Removes the AdaptiveLearner installation, Docker resources, and
 #  launcher manifest in a single command.
 #
 #  Usage:
-#    cd ~/bibliogon && bash uninstall.sh
+#    cd ~/adaptive_learner && bash uninstall.sh
 # ============================================================
 
 RED='\033[0;31m'
@@ -21,14 +21,14 @@ COMPOSE_FILE="docker-compose.prod.yml"
 
 echo ""
 echo -e "${RED}========================================${NC}"
-echo -e "${RED}  Bibliogon Uninstaller${NC}"
+echo -e "${RED}  AdaptiveLearner Uninstaller${NC}"
 echo -e "${RED}========================================${NC}"
 echo ""
 echo -e "${YELLOW}WARNING: This will permanently remove:${NC}"
 echo ""
-echo "  1. The Bibliogon Docker stack (containers)"
-echo "  2. All Bibliogon Docker volumes (books, chapters, database)"
-echo "  3. All Bibliogon Docker images"
+echo "  1. The AdaptiveLearner Docker stack (containers)"
+echo "  2. All AdaptiveLearner Docker volumes (books, chapters, database)"
+echo "  3. All AdaptiveLearner Docker images"
 echo "  4. The launcher configuration manifest"
 echo "  5. The installation directory: ${INSTALL_DIR}"
 echo ""
@@ -46,7 +46,7 @@ fi
 echo ""
 
 # --- Step 1: Stop Docker stack ---
-echo -e "${YELLOW}Stopping Bibliogon Docker stack...${NC}"
+echo -e "${YELLOW}Stopping AdaptiveLearner Docker stack...${NC}"
 if [ -f "$INSTALL_DIR/$COMPOSE_FILE" ]; then
     docker compose -f "$INSTALL_DIR/$COMPOSE_FILE" down 2>/dev/null || true
     echo -e "${GREEN}  Stack stopped.${NC}"
@@ -55,23 +55,23 @@ else
 fi
 
 # --- Step 2: Remove Docker volumes ---
-echo -e "${YELLOW}Removing Bibliogon Docker volumes...${NC}"
-VOLUMES=$(docker volume ls --filter name=bibliogon -q 2>/dev/null || true)
+echo -e "${YELLOW}Removing AdaptiveLearner Docker volumes...${NC}"
+VOLUMES=$(docker volume ls --filter name=adaptive_learner -q 2>/dev/null || true)
 if [ -n "$VOLUMES" ]; then
     echo "$VOLUMES" | xargs docker volume rm 2>/dev/null || true
     echo -e "${GREEN}  Volumes removed.${NC}"
 else
-    echo "  No Bibliogon volumes found."
+    echo "  No AdaptiveLearner volumes found."
 fi
 
 # --- Step 3: Remove Docker images ---
-echo -e "${YELLOW}Removing Bibliogon Docker images...${NC}"
-IMAGES=$(docker images --filter reference='*bibliogon*' -q 2>/dev/null || true)
+echo -e "${YELLOW}Removing AdaptiveLearner Docker images...${NC}"
+IMAGES=$(docker images --filter reference='*adaptive_learner*' -q 2>/dev/null || true)
 if [ -n "$IMAGES" ]; then
     echo "$IMAGES" | xargs docker image rm --force 2>/dev/null || true
     echo -e "${GREEN}  Images removed.${NC}"
 else
-    echo "  No Bibliogon images found."
+    echo "  No AdaptiveLearner images found."
 fi
 
 # --- Step 4: Remove launcher manifest ---
@@ -83,15 +83,15 @@ OS_TYPE="$(uname -s 2>/dev/null || echo "unknown")"
 case "$OS_TYPE" in
     MINGW*|MSYS*|CYGWIN*|Windows*)
         # Windows (Git Bash / MSYS2 / Cygwin)
-        MANIFEST_DIR="${APPDATA}/bibliogon"
+        MANIFEST_DIR="${APPDATA}/adaptive_learner"
         ;;
     Darwin*)
         # macOS
-        MANIFEST_DIR="${HOME}/Library/Application Support/bibliogon"
+        MANIFEST_DIR="${HOME}/Library/Application Support/adaptive_learner"
         ;;
     *)
         # Linux and other Unix
-        MANIFEST_DIR="${HOME}/.config/bibliogon"
+        MANIFEST_DIR="${HOME}/.config/adaptive_learner"
         ;;
 esac
 
@@ -103,11 +103,11 @@ else
     echo "  No manifest directory found at: ${MANIFEST_DIR}"
 fi
 
-# Also remove legacy launcher.json if it exists under APPDATA/Bibliogon
+# Also remove legacy launcher.json if it exists under APPDATA/AdaptiveLearner
 # (capital B, used by the old launcher config path)
 case "$OS_TYPE" in
     MINGW*|MSYS*|CYGWIN*|Windows*)
-        LEGACY_DIR="${APPDATA}/Bibliogon"
+        LEGACY_DIR="${APPDATA}/AdaptiveLearner"
         if [ -d "$LEGACY_DIR" ]; then
             rm -rf "$LEGACY_DIR"
             echo -e "${GREEN}  Legacy config removed: ${LEGACY_DIR}${NC}"
@@ -125,7 +125,7 @@ echo -e "${GREEN}  Directory removed.${NC}"
 # --- Summary ---
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  Bibliogon has been uninstalled.${NC}"
+echo -e "${GREEN}  AdaptiveLearner has been uninstalled.${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo "  Removed:"
@@ -134,5 +134,5 @@ echo "    - Launcher manifest ($MANIFEST_REMOVED)"
 echo "    - Installation directory"
 echo ""
 echo "  To reinstall:"
-echo "    curl -fsSL https://raw.githubusercontent.com/astrapi69/bibliogon/main/install.sh | bash"
+echo "    curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.sh | bash"
 echo ""

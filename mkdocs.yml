@@ -1,8 +1,8 @@
-site_name: Bibliogon
+site_name: AdaptiveLearner
 site_description: Open-Source Book Authoring Platform
-site_url: https://astrapi69.github.io/bibliogon/
-repo_url: https://github.com/astrapi69/bibliogon
-repo_name: astrapi69/bibliogon
+site_url: https://astrapi69.github.io/adaptive_learner/
+repo_url: https://github.com/astrapi69/adaptive_learner
+repo_name: astrapi69/adaptive_learner
 docs_dir: docs/help
 theme:
   name: material
@@ -97,7 +97,7 @@ markdown_extensions:
 extra:
   social:
   - icon: fontawesome/brands/github
-    link: https://github.com/astrapi69/bibliogon
+    link: https://github.com/astrapi69/adaptive_learner
 nav:
 - Home: de/index.md
 # AUTO-GENERATED-NAV-START (do not edit; regenerate via make sync-mkdocs-nav)

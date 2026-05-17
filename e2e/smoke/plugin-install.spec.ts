@@ -17,13 +17,13 @@ const API = 'http://localhost:8000/api'
  *
  * Uses raw ZIP byte construction (local file headers + central directory)
  * to avoid adding a dependency. The ZIP contains:
- * - bibliogon-plugin-{name}/plugin.yaml
- * - bibliogon-plugin-{name}/{pkg}/__init__.py
- * - bibliogon-plugin-{name}/{pkg}/plugin.py
+ * - adaptive-learner-plugin-{name}/plugin.yaml
+ * - adaptive-learner-plugin-{name}/{pkg}/__init__.py
+ * - adaptive-learner-plugin-{name}/{pkg}/plugin.py
  */
 function buildPluginZip(pluginName: string, version: string = '1.0.0'): Buffer {
   const pkgName = pluginName.replace(/-/g, '_')
-  const topDir = `bibliogon-plugin-${pluginName}`
+  const topDir = `adaptive-learner-plugin-${pluginName}`
 
   const yamlContent = [
     'plugin:',

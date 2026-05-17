@@ -1,8 +1,8 @@
 # Linux Launcher
 
-The Linux launcher is a `bibliogon-launcher-linux` ELF binary that starts Bibliogon with a click: no `docker compose` commands, no terminal session kept open. Docker still runs the actual app; the launcher just starts and stops it for you.
+The Linux launcher is a `adaptive-learner-launcher-linux` ELF binary that starts AdaptiveLearner with a click: no `docker compose` commands, no terminal session kept open. Docker still runs the actual app; the launcher just starts and stops it for you.
 
-> **What the launcher does for you.** On first run, the launcher detects whether Bibliogon is already on disk. If it is not, the launcher offers to download and set up Bibliogon for you (see "First launch" below). The only thing you have to install yourself is Docker; Docker's licensing terms prohibit silent third-party installation. See the [Installation overview](installation.md) for the cross-platform picture.
+> **What the launcher does for you.** On first run, the launcher detects whether AdaptiveLearner is already on disk. If it is not, the launcher offers to download and set up AdaptiveLearner for you (see "First launch" below). The only thing you have to install yourself is Docker; Docker's licensing terms prohibit silent third-party installation. See the [Installation overview](installation.md) for the cross-platform picture.
 
 ## System requirements
 
@@ -14,7 +14,7 @@ The Linux launcher is a `bibliogon-launcher-linux` ELF binary that starts Biblio
 
 ### 1. Install Docker
 
-See the [Bibliogon Docker installation guide](install/docker-desktop.md) for the full picture plus a "Is Docker safe to install?" section. On Linux, two routes are common:
+See the [AdaptiveLearner Docker installation guide](install/docker-desktop.md) for the full picture plus a "Is Docker safe to install?" section. On Linux, two routes are common:
 
 - **Docker Engine** (native, recommended for servers and minimal desktops): [docs.docker.com/engine/install](https://docs.docker.com/engine/install/). After install, add your user to the `docker` group and log out/back in:
 
@@ -32,10 +32,10 @@ docker info
 
 ### 2. Download the launcher
 
-From the Bibliogon releases page, download two files attached to the release:
+From the AdaptiveLearner releases page, download two files attached to the release:
 
-- `bibliogon-launcher-linux`
-- `bibliogon-launcher-linux.sha256`
+- `adaptive-learner-launcher-linux`
+- `adaptive-learner-launcher-linux.sha256`
 
 Save them anywhere; `~/Downloads` is fine.
 
@@ -44,16 +44,16 @@ Save them anywhere; `~/Downloads` is fine.
 The launcher is not signed. To confirm the binary you downloaded is the exact file published, open a terminal where you saved it and run:
 
 ```bash
-sha256sum bibliogon-launcher-linux
-cat bibliogon-launcher-linux.sha256
+sha256sum adaptive-learner-launcher-linux
+cat adaptive-learner-launcher-linux.sha256
 ```
 
-The hash from `sha256sum` should match the hex string in the `.sha256` file. If it does not, do not run the binary and report it on [GitHub Issues](https://github.com/astrapi69/bibliogon/issues).
+The hash from `sha256sum` should match the hex string in the `.sha256` file. If it does not, do not run the binary and report it on [GitHub Issues](https://github.com/astrapi69/adaptive_learner/issues).
 
 ### 4. Make the launcher executable
 
 ```bash
-chmod +x bibliogon-launcher-linux
+chmod +x adaptive-learner-launcher-linux
 ```
 
 Optionally move it somewhere on your `PATH` (for example `~/bin` or `~/.local/bin`) if you want to call it from any directory.
@@ -63,7 +63,7 @@ Optionally move it somewhere on your `PATH` (for example `~/bin` or `~/.local/bi
 Run the launcher from a terminal:
 
 ```bash
-./bibliogon-launcher-linux
+./adaptive-learner-launcher-linux
 ```
 
 Or, if your desktop environment supports launching executables from a file manager, right-click the file and choose "Run" or "Open" (GNOME Files users: enable "Executable Text Files: Ask what to do" in Preferences).
@@ -73,20 +73,20 @@ Or, if your desktop environment supports launching executables from a file manag
 The launcher's first job is to detect what is already in place.
 
 1. **Docker check.** The launcher confirms Docker is installed and reachable without `sudo`. If Docker is missing, a dialog with the install URL appears and the launcher exits. If Docker is installed but not running (or the user is not yet in the `docker` group), a dialog asks you to start Docker and click Retry; the launcher tries up to three times.
-2. **Bibliogon check.** The launcher looks for an existing Bibliogon install via its manifest (`~/.config/bibliogon/install.json`) or, on a clean machine, checks the default location `~/bibliogon`.
+2. **AdaptiveLearner check.** The launcher looks for an existing AdaptiveLearner install via its manifest (`~/.config/adaptive_learner/install.json`) or, on a clean machine, checks the default location `~/adaptive_learner`.
    - **Already installed**: the launcher proceeds straight to step 3.
-   - **Not installed**: a welcome dialog appears: "Bibliogon is not installed on this computer yet". Three buttons: **Install** (the launcher downloads the latest release ZIP, extracts to a folder you pick, generates a fresh `.env`, and builds the Docker images - first build takes 3-5 minutes), **Open install guide** (opens the docs in your browser), or **Close**.
-3. **Start.** A small "Starting Bibliogon..." window appears while Docker brings up the containers.
-4. **Browser.** When Bibliogon is ready, your default browser opens at `http://localhost:7880` (or whatever port is configured in `.env`).
-5. **Status window.** The small window switches to "Bibliogon is running on localhost:7880" with a **Stop Bibliogon** button.
+   - **Not installed**: a welcome dialog appears: "AdaptiveLearner is not installed on this computer yet". Three buttons: **Install** (the launcher downloads the latest release ZIP, extracts to a folder you pick, generates a fresh `.env`, and builds the Docker images - first build takes 3-5 minutes), **Open install guide** (opens the docs in your browser), or **Close**.
+3. **Start.** A small "Starting AdaptiveLearner..." window appears while Docker brings up the containers.
+4. **Browser.** When AdaptiveLearner is ready, your default browser opens at `http://localhost:7880` (or whatever port is configured in `.env`).
+5. **Status window.** The small window switches to "AdaptiveLearner is running on localhost:7880" with a **Stop AdaptiveLearner** button.
 
-## Stopping Bibliogon
+## Stopping AdaptiveLearner
 
-Click **Stop Bibliogon** in the launcher window, or just close it. The launcher runs `docker compose down` and exits. Docker keeps running in the background; only the Bibliogon containers stop.
+Click **Stop AdaptiveLearner** in the launcher window, or just close it. The launcher runs `docker compose down` and exits. Docker keeps running in the background; only the AdaptiveLearner containers stop.
 
 ## Running a second time
 
-Run the launcher again. If Bibliogon is already running (for example because you minimised the launcher window and forgot), the launcher detects the running instance and just opens the browser at the correct URL without starting a second copy.
+Run the launcher again. If AdaptiveLearner is already running (for example because you minimised the launcher window and forgot), the launcher detects the running instance and just opens the browser at the correct URL without starting a second copy.
 
 ## Troubleshooting
 
@@ -99,34 +99,34 @@ docker info
 
 If that fails with a permission error, you are not in the `docker` group yet. After `sudo usermod -aG docker "$USER"` you have to log out of your session completely (not just close the terminal) and log back in. On Wayland, a full reboot is sometimes the only way to get the group change picked up.
 
-**"Bibliogon install not found"**
-The launcher cannot find `docker-compose.prod.yml` at the default or configured path. Click OK, then pick the folder where you cloned or unzipped Bibliogon. That folder typically contains `README.md`, `Makefile`, and the `docker-compose.prod.yml` file.
+**"AdaptiveLearner install not found"**
+The launcher cannot find `docker-compose.prod.yml` at the default or configured path. Click OK, then pick the folder where you cloned or unzipped AdaptiveLearner. That folder typically contains `README.md`, `Makefile`, and the `docker-compose.prod.yml` file.
 
 **"Port 7880 is in use"**
-Another program is already using the Bibliogon port. Options: stop the other program, or edit `.env` in your Bibliogon folder and set `BIBLIOGON_PORT` to a different value (for example `7881`), then start the launcher again.
+Another program is already using the AdaptiveLearner port. Options: stop the other program, or edit `.env` in your AdaptiveLearner folder and set `ADAPTIVE_LEARNER_PORT` to a different value (for example `7881`), then start the launcher again.
 
-**"Bibliogon did not start in time"**
+**"AdaptiveLearner did not start in time"**
 The first start of a fresh install needs to build Docker images, which can take several minutes. Click Retry to wait another 60 seconds. If it still fails, check the last log lines in the dialog and run:
 
 ```bash
-docker compose -f ~/bibliogon/docker-compose.prod.yml logs --tail=100
+docker compose -f ~/adaptive_learner/docker-compose.prod.yml logs --tail=100
 ```
 
-**"./bibliogon-launcher-linux: cannot execute: required file not found"**
-The binary needs glibc 2.35 or newer. You are on an older distribution. Upgrade the distribution, or install Bibliogon via `install.sh` from the repository instead of the launcher.
+**"./adaptive-learner-launcher-linux: cannot execute: required file not found"**
+The binary needs glibc 2.35 or newer. You are on an older distribution. Upgrade the distribution, or install AdaptiveLearner via `install.sh` from the repository instead of the launcher.
 
 **"error while loading shared libraries: libtk..."**
 Tk is not installed. Install the Tk package for your distribution (`python3-tk` on Debian/Ubuntu, `tk` on Arch, `python3-tkinter` on Fedora). An AppImage that bundles Tk is tracked as D-03a and depends on how often this issue surfaces.
 
 **Activity log**
-Every launch writes to `~/.config/bibliogon/install.log` (1 MB rotation, 1 backup). Attach this file to bug reports. See the [Activity log](#activity-log) section for details.
+Every launch writes to `~/.config/adaptive_learner/install.log` (1 MB rotation, 1 backup). Attach this file to bug reports. See the [Activity log](#activity-log) section for details.
 
 ## Activity log
 
 Every launcher action (install, uninstall, Docker operations, errors) is written to:
 
 ```
-~/.config/bibliogon/install.log
+~/.config/adaptive_learner/install.log
 ```
 
 The log rotates at 1 MB with one backup (`install.log.1`). When reporting an issue on GitHub, attach the current log file or paste the last 50-100 lines; it usually shows exactly what failed.

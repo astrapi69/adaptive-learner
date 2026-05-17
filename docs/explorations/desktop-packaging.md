@@ -5,7 +5,7 @@ Last updated: 2026-04-12
 
 ## Context
 
-Bibliogon currently ships as:
+AdaptiveLearner currently ships as:
 - Docker container (primary distribution)
 - Source (clone + manual setup)
 
@@ -130,7 +130,7 @@ Packaged as a platform-specific binary (pyinstaller for Windows/Mac/Linux).
 - Quick to build (weekend project)
 - User sees "desktop app behavior" - click icon, use app, close
 - Docker runs invisibly in the background
-- Keeps Bibliogon's deployment model intact
+- Keeps AdaptiveLearner's deployment model intact
 - No Electron/Tauri complexity
 
 **Cons:**
@@ -208,7 +208,7 @@ Before committing to any desktop path, answer these:
    get stuck on old versions. What's the acceptable frequency
    (monthly, per release, per patch)?
 
-5. **Does Bibliogon stay offline-first with a desktop app?** Some
+5. **Does AdaptiveLearner stay offline-first with a desktop app?** Some
    auto-update mechanisms require server communication that
    contradicts the offline-first principle. Need a design that
    respects this.
@@ -219,7 +219,7 @@ Before committing to any desktop path, answer these:
 
 Re-evaluate this document when:
 
-- Bibliogon has 100+ active users and 10%+ of feedback mentions
+- AdaptiveLearner has 100+ active users and 10%+ of feedback mentions
   installation difficulty
 - A specific publishing event (major release, press coverage)
   would benefit from desktop-app-as-primary-distribution

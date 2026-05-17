@@ -8,7 +8,7 @@ plugin packages ship with the skeleton.
 ## Adding a plugin
 
 A plugin is a separate Python package that declares an entry point
-under the group `bibliogon.plugins` (renamed in Phase 2 to
+under the group `adaptive_learner.plugins` (renamed in Phase 2 to
 `adaptive_learner.plugins`).
 
 Minimal layout:

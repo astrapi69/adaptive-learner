@@ -31,14 +31,14 @@ _SECRET_FIELDS: tuple[tuple[str, str], ...] = (("ai", "api_key"),)
 
 def _secrets_managed_externally() -> bool:
     """True when the user has migrated secrets to the override file
-    OR set the BIBLIOGON_AI_API_KEY env-var. Frontend reads this
+    OR set the ADAPTIVE_LEARNER_AI_API_KEY env-var. Frontend reads this
     flag to hide the API-key input; backend uses it to defensively
     strip the same field from PATCH bodies."""
     from app.main import _get_user_override_path
 
     if _get_user_override_path().exists():
         return True
-    if os.environ.get("BIBLIOGON_AI_API_KEY"):
+    if os.environ.get("ADAPTIVE_LEARNER_AI_API_KEY"):
         return True
     return False
 
@@ -287,9 +287,9 @@ def _collect_available_plugins(active: set[str]) -> set[str]:
     bundled_dir = _base_dir.parent / "plugins"
     if bundled_dir.exists():
         for d in bundled_dir.iterdir():
-            if d.is_dir() and d.name.startswith("bibliogon-plugin-"):
-                plugin_name = d.name.replace("bibliogon-plugin-", "")
-                pkg_dir = d / f"bibliogon_{plugin_name.replace('-', '_')}"
+            if d.is_dir() and d.name.startswith("adaptive-learner-plugin-"):
+                plugin_name = d.name.replace("adaptive-learner-plugin-", "")
+                pkg_dir = d / f"adaptive_learner_{plugin_name.replace('-', '_')}"
                 if (pkg_dir / "plugin.py").exists():
                     available.add(plugin_name)
     return available

@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 import pytest
 
-from bibliogon_launcher import settings, update_check
+from adaptive_learner_launcher import settings, update_check
 
 
 def _patch_path(tmp_path: Path):

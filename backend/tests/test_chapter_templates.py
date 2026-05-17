@@ -288,7 +288,7 @@ def test_export_chapter_template_returns_portable_json(client: TestClient):
         assert "attachment" in cd
         assert "export-source.chapter-template.json" in cd
         body = r.json()
-        assert body["format"] == "bibliogon-chapter-template"
+        assert body["format"] == "adaptive-learner-chapter-template"
         assert body["format_version"] == "1.0"
         assert body["name"] == "Export Source"
         assert body["chapter_type"] == "chapter"
@@ -308,7 +308,7 @@ def test_export_unknown_chapter_template_returns_404(client: TestClient):
 
 def test_import_roundtrip_creates_user_template(client: TestClient):
     payload = {
-        "format": "bibliogon-chapter-template",
+        "format": "adaptive-learner-chapter-template",
         "format_version": "1.0",
         "name": "Imported Template",
         "description": "imported",
@@ -354,7 +354,7 @@ def test_import_rejects_wrong_format_marker(client: TestClient):
         },
     )
     assert r.status_code == 400
-    assert "Bibliogon chapter template" in r.json()["detail"]
+    assert "AdaptiveLearner chapter template" in r.json()["detail"]
 
 
 def test_import_rejects_missing_required_fields(client: TestClient):
@@ -365,7 +365,7 @@ def test_import_rejects_missing_required_fields(client: TestClient):
                 "tpl.json",
                 json.dumps(
                     {
-                        "format": "bibliogon-chapter-template",
+                        "format": "adaptive-learner-chapter-template",
                         "name": "Only name",
                     }
                 ).encode("utf-8"),
@@ -385,7 +385,7 @@ def test_import_rejects_unknown_chapter_type(client: TestClient):
                 "tpl.json",
                 json.dumps(
                     {
-                        "format": "bibliogon-chapter-template",
+                        "format": "adaptive-learner-chapter-template",
                         "name": "Bad Type",
                         "description": "x",
                         "chapter_type": "not-a-real-type",
@@ -497,7 +497,7 @@ def test_import_group_from_json(client: TestClient):
     a = client.post("/api/chapter-templates", json={"name": "Imp A", "description": "a", "chapter_type": "chapter"}).json()
     try:
         payload = {
-            "format": "bibliogon-chapter-template",
+            "format": "adaptive-learner-chapter-template",
             "format_version": "1.0",
             "name": "Imported Group",
             "description": "group",
@@ -554,7 +554,7 @@ def test_import_duplicate_name_returns_409(client: TestClient):
                     "tpl.json",
                     json.dumps(
                         {
-                            "format": "bibliogon-chapter-template",
+                            "format": "adaptive-learner-chapter-template",
                             "name": "Dup Import",
                             "description": "x",
                             "chapter_type": "chapter",

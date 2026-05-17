@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Bibliogon is pre-1.0 software. Only the latest minor version
+Adaptive Learner is pre-1.0 software. Only the latest minor version
 (currently v0.30.x) receives security fixes. Users on older
 versions should upgrade to the latest minor.
 
@@ -16,7 +16,7 @@ versions should upgrade to the latest minor.
 Please report security vulnerabilities through GitHub's
 **Private Vulnerability Reporting** feature:
 
-1. Navigate to https://github.com/astrapi69/bibliogon/security
+1. Navigate to https://github.com/astrapi69/adaptive_learner/security
 2. Click "Report a vulnerability"
 3. Provide a clear description, reproduction steps, and an
    impact assessment
@@ -31,14 +31,14 @@ channel.
 
 ## Out of Scope
 
-Bibliogon runs locally on user machines via Docker. The
+Adaptive Learner runs locally on user machines via Docker. The
 following are explicitly out of scope:
 
 - Issues that require physical access to the user's machine
 - Issues in third-party dependencies that have not been
   reported upstream first
 - Issues in user-provided plugins not maintained by the
-  Bibliogon team
+  Adaptive Learner team
 
 ## Disclosure Policy
 

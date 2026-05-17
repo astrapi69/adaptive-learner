@@ -1,11 +1,11 @@
-"""Install manifest for tracking Bibliogon installation state.
+"""Install manifest for tracking AdaptiveLearner installation state.
 
 The manifest is a small JSON file stored in the platform-specific user
-config directory (``platformdirs.user_config_dir("bibliogon")``):
+config directory (``platformdirs.user_config_dir("adaptive_learner")``):
 
-- Linux:   ``~/.config/bibliogon/install.json``
-- macOS:   ``~/Library/Application Support/bibliogon/install.json``
-- Windows: ``%APPDATA%\\bibliogon\\install.json``
+- Linux:   ``~/.config/adaptive_learner/install.json``
+- macOS:   ``~/Library/Application Support/adaptive_learner/install.json``
+- Windows: ``%APPDATA%\\adaptive_learner\\install.json``
 
 Written by the launcher after a successful install and read on every
 startup to determine whether to show the install UI or the main UI.
@@ -21,7 +21,7 @@ from typing import Any
 
 from platformdirs import user_config_dir
 
-APP_NAME = "bibliogon"
+APP_NAME = "adaptive_learner"
 MANIFEST_FILENAME = "install.json"
 
 

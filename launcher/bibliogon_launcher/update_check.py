@@ -16,9 +16,9 @@ import threading
 import urllib.request
 from collections.abc import Callable
 
-logger = logging.getLogger("bibliogon_launcher.update_check")
+logger = logging.getLogger("adaptive_learner_launcher.update_check")
 
-RELEASES_URL = "https://api.github.com/repos/astrapi69/bibliogon/releases/latest"
+RELEASES_URL = "https://api.github.com/repos/astrapi69/adaptive_learner/releases/latest"
 TIMEOUT_SECONDS = 5.0
 
 
@@ -49,7 +49,7 @@ def fetch_latest_version() -> tuple[str, str] | None:
             RELEASES_URL,
             headers={
                 "Accept": "application/vnd.github+json",
-                "User-Agent": "bibliogon-launcher",
+                "User-Agent": "adaptive-learner-launcher",
             },
         )
         with urllib.request.urlopen(req, timeout=TIMEOUT_SECONDS) as resp:
@@ -87,5 +87,5 @@ def check_for_update_async(
             except Exception as exc:  # noqa: BLE001
                 logger.warning("update notification callback raised: %s", exc)
 
-    thread = threading.Thread(target=_run, daemon=True, name="bibliogon-update-check")
+    thread = threading.Thread(target=_run, daemon=True, name="adaptive-learner-update-check")
     thread.start()

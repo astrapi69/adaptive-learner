@@ -138,7 +138,7 @@ Wired correctly. **Three gates** to fire:
 3. `shouldShowDonationOnboarding()` returns true (i.e. localStorage flag NOT set)
 
 On a dev DB with existing books, gate #1 already blocks. To trigger:
-delete every book + clear `bibliogon-donation-onboarding-seen` from
+delete every book + clear `adaptive-learner-donation-onboarding-seen` from
 localStorage + create fresh book.
 
 ### DonationReminderBanner (S-03)
@@ -184,8 +184,8 @@ export function shouldShowReminder(
 
 Wired correctly. **Five gates** to fire:
 1. `donations` non-null (blocked by primary cause #1)
-2. `localStorage[bibliogon-donation-onboarding-seen] === "true"` (blocked: S-02 must have fired AND been dismissed first)
-3. `localStorage[bibliogon-first-use-date]` set (auto-set on App mount via `ensureFirstUseDate()` in [App.tsx:34](../../frontend/src/App.tsx#L34))
+2. `localStorage[adaptive-learner-donation-onboarding-seen] === "true"` (blocked: S-02 must have fired AND been dismissed first)
+3. `localStorage[adaptive-learner-first-use-date]` set (auto-set on App mount via `ensureFirstUseDate()` in [App.tsx:34](../../frontend/src/App.tsx#L34))
 4. `daysBetween(firstUse, now) >= 90` (a fresh dev install can NEVER pass this gate before 90 calendar days have elapsed)
 5. `nextAllowed` missing or in past (default: missing, so passes)
 
@@ -197,13 +197,13 @@ Three keys involved:
 
 | Key | Set when | Cleared when |
 |-----|----------|--------------|
-| `bibliogon-donation-onboarding-seen` | S-02 dismissed any way (Support / Verstanden / X / Esc / overlay click) | Manually via DevTools |
-| `bibliogon-first-use-date` | App mount via `ensureFirstUseDate()` (idempotent, only sets if absent) | Manually via DevTools |
-| `bibliogon-donation-reminder-next-allowed` | Reminder dismissed (Support: +180d, Not now / X: +90d) | Manually |
+| `adaptive-learner-donation-onboarding-seen` | S-02 dismissed any way (Support / Verstanden / X / Esc / overlay click) | Manually via DevTools |
+| `adaptive-learner-first-use-date` | App mount via `ensureFirstUseDate()` (idempotent, only sets if absent) | Manually via DevTools |
+| `adaptive-learner-donation-reminder-next-allowed` | Reminder dismissed (Support: +180d, Not now / X: +90d) | Manually |
 
 To inspect on Aster's browser: DevTools → Application → Local
-Storage → `http://localhost:5173`. Look for any `bibliogon-donation-*`
-or `bibliogon-first-use-date` key. If `onboarding-seen=true` survives
+Storage → `http://localhost:5173`. Look for any `adaptive-learner-donation-*`
+or `adaptive-learner-first-use-date` key. If `onboarding-seen=true` survives
 from earlier testing, S-02 will not re-fire even after fixing the
 YAML; need to delete the key.
 
@@ -215,7 +215,7 @@ YAML; need to delete the key.
 line:
 
 ```
-Beyond books, Bibliogon supports article authoring with multi-platform publication tracking.
+Beyond books, AdaptiveLearner supports article authoring with multi-platform publication tracking.
 ```
 
 Single hit on the verb "supports", unrelated to donation. **No
@@ -231,7 +231,7 @@ in-app).
 2. README has no donation/support link (no surface outside the app).
 3. S-02 onboarding only fires when book count goes from 0 → 1 (so a dev DB with any existing books bypasses S-02 even after fix #1).
 4. S-03 reminder requires `firstUseDate >= 90 days ago` AND S-02 already acked (impossible on a fresh dev install).
-5. If localStorage from an earlier test session has `bibliogon-donation-onboarding-seen=true`, S-02 is permanently skipped on that browser until the key is deleted.
+5. If localStorage from an earlier test session has `adaptive-learner-donation-onboarding-seen=true`, S-02 is permanently skipped on that browser until the key is deleted.
 
 ---
 
@@ -241,8 +241,8 @@ in-app).
 2. Restart backend (`make dev-down && make dev`).
 3. Hard-reload frontend.
 4. **Settings tab "Unterstützen" appears** — verify SupportSection renders the channel list (Liberapay, GitHub Sponsors, Ko-fi, PayPal).
-5. **For S-02:** browser DevTools → Local Storage → delete `bibliogon-donation-onboarding-seen` if present. Trash every existing book (or use a fresh DB). Create a new book → onboarding dialog fires once.
-6. **For S-03:** in DevTools, set `bibliogon-first-use-date` to a date 91+ days ago (e.g. `2026-01-01T00:00:00.000Z`). Set `bibliogon-donation-onboarding-seen` to `"true"`. Reload Dashboard → banner appears.
+5. **For S-02:** browser DevTools → Local Storage → delete `adaptive-learner-donation-onboarding-seen` if present. Trash every existing book (or use a fresh DB). Create a new book → onboarding dialog fires once.
+6. **For S-03:** in DevTools, set `adaptive-learner-first-use-date` to a date 91+ days ago (e.g. `2026-01-01T00:00:00.000Z`). Set `adaptive-learner-donation-onboarding-seen` to `"true"`. Reload Dashboard → banner appears.
 
 Step 5 + 6 are dev-only verification recipes. Real users hit S-02 organically on first book creation; S-03 hits organically after 90 days of use post-S-02.
 

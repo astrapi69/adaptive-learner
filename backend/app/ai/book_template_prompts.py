@@ -53,7 +53,7 @@ def _system_prompt(book: Any) -> str:
     """Shared system prompt. Same invariants as the article
     side; the book-specific note about chapter_summaries is
     layered in the per-builder user prompt."""
-    return f"""You are filling metadata fields for a book in a Bibliogon \
+    return f"""You are filling metadata fields for a book in a AdaptiveLearner \
 AI template. Follow these rules:
 
 1. Respond with a YAML fragment ONLY. No prose, no markdown

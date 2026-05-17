@@ -552,7 +552,7 @@ function CredentialsSection({
             >
                 {t(
                     "ui.git_sync.credential_hint",
-                    "Wird verschlüsselt gespeichert und auch für das Kern-Git-Backup verwendet. Nur für HTTPS-Remotes; SSH nutzt den Bibliogon-SSH-Key.",
+                    "Wird verschlüsselt gespeichert und auch für das Kern-Git-Backup verwendet. Nur für HTTPS-Remotes; SSH nutzt den AdaptiveLearner-SSH-Key.",
                 )}
             </p>
         </div>
@@ -622,7 +622,7 @@ function CommitForm({
                     onChange={(e) => onMessageChange(e.target.value)}
                     placeholder={t(
                         "ui.git_sync.message_placeholder",
-                        "Sync from Bibliogon at <utc-iso>",
+                        "Sync from AdaptiveLearner at <utc-iso>",
                     )}
                     maxLength={2000}
                     data-testid="git-sync-message"
@@ -670,7 +670,7 @@ function CommitForm({
                         data-testid="git-sync-unified-commit-btn"
                         title={t(
                             "ui.git_sync.unified_commit_tooltip",
-                            "Commit gleichzeitig in Bibliogon-Git und externem Repo",
+                            "Commit gleichzeitig in AdaptiveLearner-Git und externem Repo",
                         )}
                     >
                         {unifying ? (
@@ -711,7 +711,7 @@ function UnifiedCommitBanner() {
             />
             {t(
                 "ui.git_sync.unified_banner",
-                "Dieses Buch hat zusaetzlich Bibliogon-Git aktiv. 'Commit überall' macht beide Commits in einem Schritt.",
+                "Dieses Buch hat zusaetzlich AdaptiveLearner-Git aktiv. 'Commit überall' macht beide Commits in einem Schritt.",
             )}
         </div>
     );
@@ -800,7 +800,7 @@ function UnifiedResult({ result }: { result: GitSyncUnifiedCommitResult }) {
             }}
         >
             {renderRow(
-                t("ui.git_sync.subsystem_core", "Bibliogon-Git"),
+                t("ui.git_sync.subsystem_core", "AdaptiveLearner-Git"),
                 result.core_git,
                 "git-sync-unified-row-core",
             )}

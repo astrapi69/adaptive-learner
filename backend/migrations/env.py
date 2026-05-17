@@ -1,4 +1,4 @@
-"""Alembic environment configuration for Bibliogon."""
+"""Alembic environment configuration for AdaptiveLearner."""
 
 import logging
 from logging.config import fileConfig

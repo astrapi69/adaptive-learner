@@ -5,7 +5,7 @@ Last updated: 2026-04-13
 
 ## Context
 
-Bibliogon is currently single-user, offline-first, self-hosted.
+AdaptiveLearner is currently single-user, offline-first, self-hosted.
 This exploration considers whether and how multi-user capability
 and SaaS deployment could eventually fit.
 
@@ -22,7 +22,7 @@ commitment is real and takes precedence.
 
 ## Tension with current positioning
 
-Bibliogon's core value propositions:
+AdaptiveLearner's core value propositions:
 - Offline-first (no cloud dependency)
 - Data sovereignty (your manuscripts on your machine)
 - No accounts, no logins, no tracking
@@ -61,7 +61,7 @@ This is larger than all work done to date combined.
 
 Before jumping to SaaS, consider:
 
-1. **Enhanced self-hosting.** Make Bibliogon trivially easy to
+1. **Enhanced self-hosting.** Make AdaptiveLearner trivially easy to
    self-host for a small team (family members, writing partners).
    Docker Compose with clear multi-user setup instructions. No
    central SaaS, but multi-user within a household or writing group.
@@ -91,7 +91,7 @@ Revisit SaaS planning when:
   clear use cases (not just "it would be nice")
 - A sustainable funding model is in place that doesn't rely on
   SaaS subscription revenue
-- The Bibliogon single-user product is feature-complete and stable
+- The AdaptiveLearner single-user product is feature-complete and stable
   enough that SaaS wouldn't distract from core development
 
 Without several of these conditions, stay on single-user

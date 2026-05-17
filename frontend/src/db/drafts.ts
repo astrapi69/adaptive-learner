@@ -18,18 +18,18 @@ export interface ChapterDraft {
   savedAt: number       // Date.now() timestamp
 }
 
-class BibliogonDB extends Dexie {
+class AdaptiveLearnerDB extends Dexie {
   drafts!: Table<ChapterDraft, string>
 
   constructor() {
-    super("bibliogon")
+    super("adaptive_learner")
     this.version(1).stores({
       drafts: "chapterId, bookId, savedAt",
     })
   }
 }
 
-export const db = new BibliogonDB()
+export const db = new AdaptiveLearnerDB()
 
 /** Simple string hash for content comparison (not cryptographic). */
 export function hashContent(content: string): string {

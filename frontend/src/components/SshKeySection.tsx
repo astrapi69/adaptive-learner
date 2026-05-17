@@ -109,7 +109,7 @@ export default function SshKeySection() {
                                 className="input"
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
-                                placeholder="bibliogon"
+                                placeholder="adaptive_learner"
                                 disabled={busy}
                                 data-testid="ssh-comment-input"
                             />

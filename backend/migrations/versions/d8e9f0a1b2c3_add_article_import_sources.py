@@ -1,7 +1,7 @@
 """add article_import_sources table
 
 Mirrors book_import_sources for Article-side provenance. Written by
-importer plugins (bibliogon-plugin-medium-import is the first) so
+importer plugins (adaptive-learner-plugin-medium-import is the first) so
 re-imports can detect duplicates and the user can answer "where did
 this article come from?".
 

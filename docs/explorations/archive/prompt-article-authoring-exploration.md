@@ -1,12 +1,12 @@
-# Write exploration document: Article Authoring in Bibliogon
+# Write exploration document: Article Authoring in AdaptiveLearner
 
 ## Context
 
-Bibliogon is positioned today as a **book authoring tool**. Aster
+AdaptiveLearner is positioned today as a **book authoring tool**. Aster
 (the project lead and primary user) has started writing articles
-about Bibliogon on Medium, Substack, and LinkedIn as part of
+about AdaptiveLearner on Medium, Substack, and LinkedIn as part of
 project outreach. The manual cross-posting workflow surfaced a
-potential product expansion: could Bibliogon itself be the tool
+potential product expansion: could AdaptiveLearner itself be the tool
 used to author those articles?
 
 This exploration documents the idea WITHOUT committing to an
@@ -28,7 +28,7 @@ Single file to create:
 `docs/explorations/article-authoring.md`
 
 Single commit:
-`docs(explorations): article authoring as a potential Bibliogon feature`
+`docs(explorations): article authoring as a potential AdaptiveLearner feature`
 
 No code changes. No ROADMAP entries. No plugin scaffolding. No
 architecture committed.
@@ -46,13 +46,13 @@ exploration, not specification.
 
 Brief context on how this idea surfaced:
 
-- Aster publishes Bibliogon release articles on Medium
+- Aster publishes AdaptiveLearner release articles on Medium
 - Cross-posting to Substack and LinkedIn requires manual rework
   (SEO metadata, preview images, different lengths, platform-
   specific framing)
 - During the v0.19.1 article workflow, the thought surfaced:
   "This is the kind of structured, AI-assisted, multi-format
-  publishing workflow Bibliogon already solves for books.
+  publishing workflow AdaptiveLearner already solves for books.
   Could it solve it for articles?"
 
 The idea is worth documenting because it represents a potential
@@ -72,7 +72,7 @@ Non-trivial overlap:
 - Language support (i18n)
 - Export to multiple formats
 
-These overlaps explain why Bibliogon looks like a plausible host
+These overlaps explain why AdaptiveLearner looks like a plausible host
 for article authoring. Roughly 60-70% of the book infrastructure
 applies without modification.
 
@@ -91,7 +91,7 @@ Significant divergences that matter:
   platforms with slight variations. Books are published once per
   edition per platform.
 - **No chapters:** articles are single-document, not multi-
-  chapter. Bibliogon's ChapterType enum with 31 values is
+  chapter. AdaptiveLearner's ChapterType enum with 31 values is
   irrelevant.
 - **No ISBN, no DOI, no audiobook version, no KDP cover
   validation.** Articles have their own metadata ecosystem
@@ -106,7 +106,7 @@ Significant divergences that matter:
 
 ### Section 4: User's current article workflow
 
-Document what Aster does TODAY when writing a Bibliogon article,
+Document what Aster does TODAY when writing a AdaptiveLearner article,
 based on the v0.19.1 experience (this is inferred from the
 conversation; the exploration can use this as a best-effort
 baseline and mark it as "needs validation with actual observation"):
@@ -149,7 +149,7 @@ workflow-solvable:
 - Tag/topic strategy over time
 - Audience-specific framing decisions
 
-The tool-solvable category is where a Bibliogon feature could
+The tool-solvable category is where a AdaptiveLearner feature could
 add value. The workflow-solvable category cannot be automated
 meaningfully.
 
@@ -177,15 +177,15 @@ nullable additions.
   (platform metadata, SEO fields, cross-post tracking)
 - Database schema grows in a way that conflates two product
   concerns
-- Positioning ambiguity: "Bibliogon for books and articles" is
-  harder to communicate than "Bibliogon for books"
+- Positioning ambiguity: "AdaptiveLearner for books and articles" is
+  harder to communicate than "AdaptiveLearner for books"
 - If articles ever outgrow books as a use case, the primary
   product identity becomes unclear
 
 #### Option B: Article as a plugin
 
 New plugin `plugin-article` (or `plugin-writing`, `plugin-blog`)
-that extends Bibliogon with article-specific functionality.
+that extends AdaptiveLearner with article-specific functionality.
 Declares own routes, own DB tables (if needed), own UI components.
 Reuses core editor and AI.
 
@@ -196,8 +196,8 @@ Reuses core editor and AI.
 - Optional for users who don't write articles
 - Future commercial tier possible (plugin licensing infrastructure
   exists)
-- Rebranding "Bibliogon" is not required; articles become "another
-  thing Bibliogon can do via plugins"
+- Rebranding "AdaptiveLearner" is not required; articles become "another
+  thing AdaptiveLearner can do via plugins"
 
 **Cons:**
 - Duplication risk: editor state, autosave, version history, i18n
@@ -215,12 +215,12 @@ editor and AI libraries as extracted packages, but has its own
 product identity, own database, own deployment.
 
 **Pros:**
-- Clearest product positioning: Bibliogon stays a book tool,
+- Clearest product positioning: AdaptiveLearner stays a book tool,
   sister project is an article tool
-- No risk to Bibliogon's current identity or codebase
+- No risk to AdaptiveLearner's current identity or codebase
 - Can experiment with different architectures (e.g., no Docker
   requirement, different storage backend) without breaking
-  Bibliogon
+  AdaptiveLearner
 - Future community: article authors and book authors may be
   different audiences; separate projects let them have separate
   communities
@@ -286,7 +286,7 @@ The questions are grouped by urgency:
 7. **Monetization:** If plugin-article matures, is it free or
    paid? This ties into the dormant licensing infrastructure.
 
-8. **Audience:** Who are article authors on Bibliogon beyond
+8. **Audience:** Who are article authors on AdaptiveLearner beyond
    Aster himself? Understanding the target audience affects
    features.
 
@@ -353,7 +353,7 @@ investment.
 - `backend/app/models/__init__.py` — Book model; where `book_type`
   would be extended under Option A
 - The v0.19.1 Medium article at
-  `docs/blog/2026-04-20-bibliogon-v0-19-1-medium.md` — the
+  `docs/blog/2026-04-20-adaptive-learner-v0-19-1-medium.md` — the
   article that triggered this exploration
 
 ---

@@ -5,17 +5,17 @@ services:
       dockerfile: backend/Dockerfile
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
     volumes:
-      - bibliogon-data:/app/data
+      - adaptive-learner-data:/app/data
     environment:
       - PYTHONDONTWRITEBYTECODE=1
-      - BIBLIOGON_DEBUG=false
-      # Single canonical data dir. DB lives at $DATA_DIR/bibliogon.db
+      - ADAPTIVE_LEARNER_DEBUG=false
+      # Single canonical data dir. DB lives at $DATA_DIR/adaptive_learner.db
       # and uploads at $DATA_DIR/uploads/, both inside the named
       # volume so they survive container rebuilds. The volume mount
       # at /app/data is the persistence boundary.
-      - BIBLIOGON_DATA_DIR=/app/data
-      - BIBLIOGON_CORS_ORIGINS=${BIBLIOGON_CORS_ORIGINS:-http://localhost:7880}
-      - BIBLIOGON_SECRET_KEY=${BIBLIOGON_SECRET_KEY:-}
+      - ADAPTIVE_LEARNER_DATA_DIR=/app/data
+      - ADAPTIVE_LEARNER_CORS_ORIGINS=${ADAPTIVE_LEARNER_CORS_ORIGINS:-http://localhost:7880}
+      - ADAPTIVE_LEARNER_SECRET_KEY=${ADAPTIVE_LEARNER_SECRET_KEY:-}
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
       interval: 30s
@@ -27,11 +27,11 @@ services:
   frontend:
     build: ./frontend
     ports:
-      - "${BIBLIOGON_PORT:-7880}:80"
+      - "${ADAPTIVE_LEARNER_PORT:-7880}:80"
     depends_on:
       backend:
         condition: service_healthy
     restart: unless-stopped
 
 volumes:
-  bibliogon-data:
+  adaptive-learner-data:

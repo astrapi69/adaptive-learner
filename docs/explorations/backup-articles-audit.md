@@ -37,7 +37,7 @@ Backup-System (vor v0.20) kennt sie nicht.
 - `_write_manifest(...)` — schreibt `manifest.json` mit:
   ```json
   {
-    "format": "bibliogon-backup",
+    "format": "adaptive-learner-backup",
     "version": "1.0",
     "created_at": "...",
     "book_count": N,
@@ -53,7 +53,7 @@ Backup-System (vor v0.20) kennt sie nicht.
 - Returnt `{"imported_books": N}`.
 - `_restore_book_from_dir(db, book_dir)` — pro Buch.
 - `_restore_chapters` + `_restore_assets`.
-- Format-Validation: nur `format == "bibliogon-backup"` wird
+- Format-Validation: nur `format == "adaptive-learner-backup"` wird
   akzeptiert (Zeile 88-92). `version` wird **nicht** geprüft —
   ein neueres Backup mit `version=2.0` würde aktuell ohne Warnung
   durchlaufen, aber die Articles-Daten ignorieren.
@@ -188,7 +188,7 @@ ein neues Feld auf `DetectedProject` brauchen
 
 ```json
 {
-  "format": "bibliogon-backup",
+  "format": "adaptive-learner-backup",
   "version": "1.0",
   ...
 }

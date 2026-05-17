@@ -28,7 +28,7 @@
 
 ## Prerequisites
 
-- Bibliogon dev backend + frontend running (`make dev`)
+- AdaptiveLearner dev backend + frontend running (`make dev`)
 - At least 3 articles in Articles-Dashboard (`/articles`); ideally with mixed tags + shared series for stress coverage
 - Optional: the 209-article Medium-imported corpus available for the 22-article stress test
 - Browser open on `/articles`

@@ -159,7 +159,7 @@ export default function MediumImportSettings() {
                     <span className={styles.hint}>
                         {t(
                             "ui.medium_import.settings.download_images_hint",
-                            "Empfohlen. Speichert Bilder im Bibliogon-Speicher statt das Medium-CDN zu referenzieren.",
+                            "Empfohlen. Speichert Bilder im AdaptiveLearner-Speicher statt das Medium-CDN zu referenzieren.",
                         )}
                     </span>
                 </label>

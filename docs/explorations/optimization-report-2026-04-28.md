@@ -1,4 +1,4 @@
-# Bibliogon optimization report — 2026-04-28
+# AdaptiveLearner optimization report — 2026-04-28
 
 Author: Claude (CC), post-v0.24.0 release.
 Audience: future Aster + future CC.
@@ -107,7 +107,7 @@ help-content commits (CI hook).
 
 ### M-3: Mobile read-only / triage view
 
-Bibliogon has no mobile story. Reedsy has it. Atticus has it.
+AdaptiveLearner has no mobile story. Reedsy has it. Atticus has it.
 Full mobile authoring is out of scope; mobile triage (read article
 status, mark a publication verified, see drift flags) is in scope.
 Existing React + Radix already responsive-capable. Audit what
@@ -124,7 +124,7 @@ Desktop install on Windows is itself a multi-step process for
 non-technical users. Two paths:
 
 - **Path A:** Docker-bundled installer (Windows MSI or macOS pkg)
-  that installs Docker Desktop + Bibliogon together. Larger
+  that installs Docker Desktop + AdaptiveLearner together. Larger
   surface, more breakage modes, but matches "Atticus-easy".
 - **Path B:** Tauri shell that bundles backend (Python via PyOxidizer
   or similar) + frontend without Docker. Was previously ruled out;
@@ -164,7 +164,7 @@ markdown + open the platform's compose URL with prefilled body).
 Not a real API integration but solves 80% of the workflow at 5%
 of the cost.
 
-### S-2: Bibliogon as CMS?
+### S-2: AdaptiveLearner as CMS?
 
 Articles + Publications + drift detection inch toward a CMS shape.
 If the user base reports cross-posting as the core pain, the next
@@ -230,7 +230,7 @@ These look like obvious wins but cost more than they return.
 
 ### Real-time collaboration
 
-Reedsy has it. Bibliogon doesn't. Adding it would require
+Reedsy has it. AdaptiveLearner doesn't. Adding it would require
 operational-transformation infrastructure, server state, and a
 fundamental shift away from local-first. Wrong move. The local-
 first pitch is the differentiator; collab is the wrong audience.
@@ -309,7 +309,7 @@ Things explicitly not in this report that someone might ask about:
 
 ## Closing observation
 
-Bibliogon is in a comfortable post-feature-burst state. The biggest
+AdaptiveLearner is in a comfortable post-feature-burst state. The biggest
 risk now isn't missing features — it's losing the discipline that
 got it here:
 

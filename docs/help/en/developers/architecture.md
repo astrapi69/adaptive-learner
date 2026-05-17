@@ -1,6 +1,6 @@
 # Architecture overview
 
-This page is a distilled, outside-reader view of how Bibliogon is structured. The internal source-of-truth lives in [`.claude/rules/architecture.md`](https://github.com/astrapi69/bibliogon/blob/main/.claude/rules/architecture.md) and the per-component README files; this page lifts the parts external contributors should know to navigate the codebase without having to read every internal rule.
+This page is a distilled, outside-reader view of how AdaptiveLearner is structured. The internal source-of-truth lives in [`.claude/rules/architecture.md`](https://github.com/astrapi69/adaptive_learner/blob/main/.claude/rules/architecture.md) and the per-component README files; this page lifts the parts external contributors should know to navigate the codebase without having to read every internal rule.
 
 ## Four layers
 
@@ -18,9 +18,9 @@ New features go into a plugin unless they touch Book/Chapter CRUD, the editor ba
 | Repository | Purpose | License |
 |------------|---------|---------|
 | [astrapi69/pluginforge](https://github.com/astrapi69/pluginforge) | Application-agnostic plugin framework, built on pluggy. Has its own release cycle. | MIT |
-| [astrapi69/bibliogon](https://github.com/astrapi69/bibliogon) | This repo. Book + article authoring platform. Pins `pluginforge ^0.5.0`. | MIT |
+| [astrapi69/adaptive_learner](https://github.com/astrapi69/adaptive_learner) | This repo. Book + article authoring platform. Pins `pluginforge ^0.5.0`. | MIT |
 
-PluginForge changes are a separate codebase + a separate release. Do not edit PluginForge from inside Bibliogon — open a PR against the PluginForge repo and bump the pin here when it ships.
+PluginForge changes are a separate codebase + a separate release. Do not edit PluginForge from inside AdaptiveLearner — open a PR against the PluginForge repo and bump the pin here when it ships.
 
 ## Backend
 
@@ -31,7 +31,7 @@ backend/app/
   main.py                # FastAPI app + lifespan + global exception handler
   paths.py               # Single source of truth for filesystem paths (data, uploads, db)
   hookspecs.py           # PluginForge hook specifications
-  exceptions.py          # BibliogonError hierarchy
+  exceptions.py          # AdaptiveLearnerError hierarchy
   models/                # SQLAlchemy 2.0 mapped classes (Book, Chapter, Asset, ...)
   routers/               # FastAPI routers (one per resource)
   config/                # YAML configs (app.yaml, plugins/*.yaml, i18n/*.yaml)
@@ -42,7 +42,7 @@ backend/app/
 - **Pydantic v2** for every request/response schema.
 - **SQLAlchemy 2.0 mapped columns** for models.
 - **Routers stay thin**: validate input, call a service, return the response. No business logic.
-- **Services throw `BibliogonError` subclasses**, never `HTTPException`. The global exception handler in `main.py` maps each subclass to an HTTP status code (`NotFoundError` → 404, `ValidationError` → 400, `ConflictError` → 409, `ExportError`/`PluginError` → 500, `ExternalServiceError` → 502).
+- **Services throw `AdaptiveLearnerError` subclasses**, never `HTTPException`. The global exception handler in `main.py` maps each subclass to an HTTP status code (`NotFoundError` → 404, `ValidationError` → 400, `ConflictError` → 409, `ExportError`/`PluginError` → 500, `ExternalServiceError` → 502).
 - **Frontend never bypasses the API client.** Every `fetch` call routes through `frontend/src/api/client.ts`; bare `fetch("/api/...")` calls in components are a documented anti-pattern.
 - **Config via YAML**, not hardcoded values. Plugin settings live in `backend/config/plugins/{name}.yaml`.
 
@@ -51,14 +51,14 @@ backend/app/
 ### Structure per plugin
 
 ```
-plugins/bibliogon-plugin-{name}/
-  bibliogon_{name}/
+plugins/adaptive-learner-plugin-{name}/
+  adaptive_learner_{name}/
     plugin.py          # {Name}Plugin(BasePlugin) — hook implementations
     routes.py          # FastAPI router (delegates to service functions)
     {module}.py        # business logic (no FastAPI imports)
   tests/
     test_{name}.py     # pytest tests
-  pyproject.toml       # entry point: [project.entry-points."bibliogon.plugins"]
+  pyproject.toml       # entry point: [project.entry-points."adaptive_learner.plugins"]
 ```
 
 ### Conventions
@@ -67,7 +67,7 @@ plugins/bibliogon-plugin-{name}/
 - `depends_on` is a class attribute (e.g. `depends_on = ["export"]`).
 - `license_tier = "core"` for all plugins today (licensing infrastructure exists but is dormant; `LICENSING_ENABLED = False` in `backend/app/licensing.py`).
 - Hook specs are versioned (`api_version = 1`) in `backend/app/hookspecs.py`. Bump the version when adding a hook spec; existing plugins keep working until they explicitly opt into the new spec.
-- Plugin packages: `bibliogon-plugin-{name}` (kebab-case). Inner package: `bibliogon_{name}` (snake_case).
+- Plugin packages: `adaptive-learner-plugin-{name}` (kebab-case). Inner package: `adaptive_learner_{name}` (snake_case).
 
 ### Plugin install via ZIP
 
@@ -135,16 +135,16 @@ Unidirectional. Routers never reach into the DB directly. Frontend code never ap
 
 Production data lives **outside** the project tree. Resolution order is:
 
-1. `BIBLIOGON_DATA_DIR` env var (highest priority — used in tests, Docker, admin overrides)
-2. `platformdirs.user_data_dir("bibliogon")`:
-   - Linux/macOS: `~/.local/share/bibliogon/`
-   - Windows: `%LOCALAPPDATA%\bibliogon\`
+1. `ADAPTIVE_LEARNER_DATA_DIR` env var (highest priority — used in tests, Docker, admin overrides)
+2. `platformdirs.user_data_dir("adaptive_learner")`:
+   - Linux/macOS: `~/.local/share/adaptive_learner/`
+   - Windows: `%LOCALAPPDATA%\adaptive_learner\`
 3. Tests: a `tmp_path_factory`-managed dir, set by `backend/tests/conftest.py` before any `app.*` import.
 
 Two tripwires guard against tests touching production data:
 
-- A `.bibliogon-production` marker file written by the FastAPI lifespan. If any test ever sees it, the entire test run aborts with `pytest.exit(returncode=2)`.
-- `BIBLIOGON_TEST=1` + `TEST_DATABASE_URL=sqlite:///:memory:` set before the first `app.*` import.
+- A `.adaptive-learner-production` marker file written by the FastAPI lifespan. If any test ever sees it, the entire test run aborts with `pytest.exit(returncode=2)`.
+- `ADAPTIVE_LEARNER_TEST=1` + `TEST_DATABASE_URL=sqlite:///:memory:` set before the first `app.*` import.
 
 If `make test` ever exits with code 2, do **not** delete the marker — investigate why a test pointed at production. The April 2026 data-loss incident is the origin of both tripwires.
 
@@ -154,12 +154,12 @@ If `make test` ever exits with code 2, do **not** delete the marker — investig
 Frontend       Catches ApiError -> toast + "Report issue" button on 5xx
 API client     Converts HTTP errors to ApiError. The only place fetch() lives.
 Router         Thin. Catches nothing. Global exception handler maps.
-Service        Throws BibliogonError subclasses. No HTTP awareness.
+Service        Throws AdaptiveLearnerError subclasses. No HTTP awareness.
 Plugin         Throws PluginError(plugin_name, message).
 External       ExternalServiceError(service, message) for Pandoc/TTS/LanguageTool.
 ```
 
-Each layer handles only what it can; everything else flows up. The global exception handler in `backend/app/main.py` maps `BibliogonError` subclasses to HTTP status codes, includes a stacktrace in the response when `BIBLIOGON_DEBUG=true`, and logs everything ≥ 500 with `exc_info=True`.
+Each layer handles only what it can; everything else flows up. The global exception handler in `backend/app/main.py` maps `AdaptiveLearnerError` subclasses to HTTP status codes, includes a stacktrace in the response when `ADAPTIVE_LEARNER_DEBUG=true`, and logs everything ≥ 500 with `exc_info=True`.
 
 The frontend `ApiError` carries `status`, `detail`, and (in debug mode) `traceback`. On 5xx, the toast offers a "Report issue" button that opens a pre-filled GitHub Issue with the stacktrace, browser info, and app version. Generic error messages like "Export failed" without details are forbidden — they make GitHub Issues worthless.
 
@@ -187,7 +187,7 @@ The whole monorepo ships in lock-step at every release. Only one file is hand-ed
 
 ## Related projects
 
-- [pluginforge](https://github.com/astrapi69/pluginforge) — the plugin framework (PyPI). Bibliogon-agnostic, MIT.
+- [pluginforge](https://github.com/astrapi69/pluginforge) — the plugin framework (PyPI). AdaptiveLearner-agnostic, MIT.
 - [manuscripta](https://github.com/astrapi69/manuscripta) — the book export pipeline (PyPI). Wraps Pandoc + the write-book-template scaffolder + TTS adapters.
 - [write-book-template](https://github.com/astrapi69/write-book-template) — the on-disk project structure that manuscripta consumes.
 

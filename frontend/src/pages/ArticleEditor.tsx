@@ -55,7 +55,7 @@ import { useTopics } from "../hooks/useTopics";
 import { notify } from "../utils/notify";
 import layout from "./ArticleEditor.module.css";
 
-/** Languages Bibliogon UI ships in. Mirrors backend/config/i18n/. */
+/** Languages AdaptiveLearner UI ships in. Mirrors backend/config/i18n/. */
 const SUPPORTED_LANGUAGES: { code: string; label: string }[] = [
     { code: "de", label: "Deutsch" },
     { code: "en", label: "English" },

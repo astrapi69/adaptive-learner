@@ -4,7 +4,7 @@
 **Commits:** 294e8fa (loader), ad4301a (UI gating), f2bf783 (docs), e35ecc8 (AI client routing fix)
 **Reference:** [docs/configuration.md](../../configuration.md), [docs/explorations/secrets-refactor-audit.md](../../explorations/secrets-refactor-audit.md)
 
-Three-layer config: project `app.yaml` < `~/.config/bibliogon/secrets.yaml` < env-vars.
+Three-layer config: project `app.yaml` < `~/.config/adaptive_learner/secrets.yaml` < env-vars.
 
 ## Prerequisites
 
@@ -16,12 +16,12 @@ Three-layer config: project `app.yaml` < `~/.config/bibliogon/secrets.yaml` < en
 
 1. Create override file:
    ```bash
-   mkdir -p ~/.config/bibliogon
-   cat > ~/.config/bibliogon/secrets.yaml << 'EOF'
+   mkdir -p ~/.config/adaptive_learner
+   cat > ~/.config/adaptive_learner/secrets.yaml << 'EOF'
    ai:
      api_key: <paste-real-key>
    EOF
-   chmod 600 ~/.config/bibliogon/secrets.yaml
+   chmod 600 ~/.config/adaptive_learner/secrets.yaml
    ```
 
 2. Empty the project key (keep field, blank value):
@@ -50,21 +50,21 @@ Three-layer config: project `app.yaml` < `~/.config/bibliogon/secrets.yaml` < en
 
 ## Flow 2 — Deprecation warning
 
-1. Put a non-empty key back in `app.yaml` `ai.api_key: sk-...` AND delete `~/.config/bibliogon/secrets.yaml`.
-2. Unset env-var: `unset BIBLIOGON_AI_API_KEY`.
+1. Put a non-empty key back in `app.yaml` `ai.api_key: sk-...` AND delete `~/.config/adaptive_learner/secrets.yaml`.
+2. Unset env-var: `unset ADAPTIVE_LEARNER_AI_API_KEY`.
 3. Restart backend.
 4. **Expected:** WARNING in log naming the file path + migration hint, e.g.:
    ```
    WARNING: Secrets found in /.../backend/config/app.yaml (ai.api_key).
-   ... Move secrets to /home/.../config/bibliogon/secrets.yaml or set
-   BIBLIOGON_AI_API_KEY. See docs/configuration.md for details.
+   ... Move secrets to /home/.../config/adaptive_learner/secrets.yaml or set
+   ADAPTIVE_LEARNER_AI_API_KEY. See docs/configuration.md for details.
    ```
 
 ## Flow 3 — Env-var precedence
 
 1. Override file exists with `ai.api_key: from-override`.
 2. `app.yaml` carries `ai.api_key: from-project`.
-3. `export BIBLIOGON_AI_API_KEY=from-env` then restart backend.
+3. `export ADAPTIVE_LEARNER_AI_API_KEY=from-env` then restart backend.
 4. Trigger AI feature.
 5. **Expected:** request uses `from-env` (highest priority).
 
@@ -86,7 +86,7 @@ Three-layer config: project `app.yaml` < `~/.config/bibliogon/secrets.yaml` < en
 
 ## Flow 5 — AiSetupWizard externally-managed branch
 
-1. Override active. Clear `bibliogon-ai-setup-dismissed` from localStorage.
+1. Override active. Clear `adaptive-learner-ai-setup-dismissed` from localStorage.
 2. Edit `app.yaml`: `ai.enabled: false`. Restart backend.
 3. Reload frontend → wizard opens.
 4. Step 0: pick provider (any).
@@ -98,7 +98,7 @@ Three-layer config: project `app.yaml` < `~/.config/bibliogon/secrets.yaml` < en
 
 1. Corrupt the override file:
    ```bash
-   echo "this is: : : not valid yaml :" > ~/.config/bibliogon/secrets.yaml
+   echo "this is: : : not valid yaml :" > ~/.config/adaptive_learner/secrets.yaml
    ```
 2. Restart backend.
 3. **Expected:** backend starts successfully. Log shows WARNING:

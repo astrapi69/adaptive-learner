@@ -25,7 +25,7 @@ def get_voices(db: Session, engine: str, language: str | None = None) -> list[di
     - ``"de"`` (bare language code): prefix match against the stored
       ``Locale``. Returns ``de-DE``, ``de-AT``, ``de-CH``, ...
 
-    Bibliogon's Book.language field stores bare codes today, so the
+    AdaptiveLearner's Book.language field stores bare codes today, so the
     prefix branch is the common path. The exact branch exists so that
     plugin authors and tests that pass full locales get the strict
     behaviour they reasonably expect.

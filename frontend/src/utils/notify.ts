@@ -62,7 +62,7 @@ function ErrorContent({message, apiError}: {message: string; apiError?: ApiError
         onClick: (e: React.MouseEvent) => {
           e.stopPropagation()
           // Dispatch a custom event that ErrorReportDialog listens for
-          window.dispatchEvent(new CustomEvent('bibliogon:open-error-report', {
+          window.dispatchEvent(new CustomEvent('adaptive_learner:open-error-report', {
             detail: {message, apiError},
           }))
         },

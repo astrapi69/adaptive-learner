@@ -54,7 +54,7 @@ def validate_platform_metadata(platform: str, metadata: dict[str, Any]) -> tuple
     """Check ``metadata`` against the platform's required fields.
 
     Unknown platforms pass (permissive) - the user gets to define a
-    Publication for a platform Bibliogon doesn't ship a schema for.
+    Publication for a platform AdaptiveLearner doesn't ship a schema for.
     Required fields must be present AND non-empty.
 
     Returns ``(is_valid, list_of_error_messages)``.

@@ -14,7 +14,7 @@ Bilinguale Anleitung - Deutsch zuerst, English mirror unten / Bilingual guide - 
 
 ## Voraussetzungen
 
-- Bibliogon läuft lokal oder in einer Dev-Umgebung (`make dev`)
+- AdaptiveLearner läuft lokal oder in einer Dev-Umgebung (`make dev`)
 - Mindestens 5 Artikel im Artikel-Dashboard
 - Idealerweise: einige Artikel mit gleichen Tags (z.B. eine `living-health`-Serie aus dem Medium-Import) für die Tag-Helper-Szenarien
 - Browser auf `/articles` geöffnet
@@ -162,7 +162,7 @@ Gegen GitHub Issue eröffnen mit diesem Template als Body.
 
 ## Prerequisites
 
-- Bibliogon runs locally or in a dev environment (`make dev`)
+- AdaptiveLearner runs locally or in a dev environment (`make dev`)
 - At least 5 articles on the Articles dashboard
 - Ideally: some articles share tags (e.g. a `living-health` series from a Medium import) for the tag-helper scenarios
 - Browser open on `/articles`

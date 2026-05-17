@@ -23,7 +23,7 @@
     border-bottom: 1px solid var(--border);
 }
 
-/* Variant when the list shows bulk-selection checkboxes (Bibliogon
+/* Variant when the list shows bulk-selection checkboxes (AdaptiveLearner
    parity with ArticleRow). Adds a leading 36px column for the
    checkbox in front of the existing 6 columns. */
 .table.tableSelectable .headerRow,

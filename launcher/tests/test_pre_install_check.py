@@ -2,8 +2,8 @@
 
 The safeguard lives in ``__main__._check_launcher_target_stale``.
 It runs at the top of ``_install_or_welcome`` (before the welcome
-dialog) on a fresh machine. If GitHub reports a Bibliogon release
-newer than the launcher's embedded ``BIBLIOGON_TARGET_VERSION``,
+dialog) on a fresh machine. If GitHub reports a AdaptiveLearner release
+newer than the launcher's embedded ``ADAPTIVE_LEARNER_TARGET_VERSION``,
 a 3-button dialog is shown:
 
 - "Open download page" (primary): browser opens, install aborts
@@ -21,13 +21,13 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from bibliogon_launcher import __main__ as launcher_main
-from bibliogon_launcher import installer
+from adaptive_learner_launcher import __main__ as launcher_main
+from adaptive_learner_launcher import installer
 
 
 def _patch_target(monkeypatch, target: str) -> None:
-    """Pin BIBLIOGON_TARGET_VERSION for the duration of the test."""
-    monkeypatch.setattr(installer, "BIBLIOGON_TARGET_VERSION", target)
+    """Pin ADAPTIVE_LEARNER_TARGET_VERSION for the duration of the test."""
+    monkeypatch.setattr(installer, "ADAPTIVE_LEARNER_TARGET_VERSION", target)
 
 
 class TestCheckLauncherTargetStale:
@@ -41,10 +41,10 @@ class TestCheckLauncherTargetStale:
         """
         _patch_target(monkeypatch, "0.17.0")
         with patch(
-            "bibliogon_launcher.update_check.fetch_latest_version",
+            "adaptive_learner_launcher.update_check.fetch_latest_version",
             return_value=("v0.25.0", "https://example/release/v0.25.0"),
         ), patch(
-            "bibliogon_launcher.ui.three_button_dialog",
+            "adaptive_learner_launcher.ui.three_button_dialog",
             return_value="primary",
         ), patch(
             "webbrowser.open"
@@ -65,10 +65,10 @@ class TestCheckLauncherTargetStale:
         """
         _patch_target(monkeypatch, "0.17.0")
         with patch(
-            "bibliogon_launcher.update_check.fetch_latest_version",
+            "adaptive_learner_launcher.update_check.fetch_latest_version",
             return_value=("v0.25.0", "https://example/release/v0.25.0"),
         ), patch(
-            "bibliogon_launcher.ui.three_button_dialog",
+            "adaptive_learner_launcher.ui.three_button_dialog",
             return_value="secondary",
         ), patch(
             "webbrowser.open"
@@ -85,10 +85,10 @@ class TestCheckLauncherTargetStale:
         """
         _patch_target(monkeypatch, "0.17.0")
         with patch(
-            "bibliogon_launcher.update_check.fetch_latest_version",
+            "adaptive_learner_launcher.update_check.fetch_latest_version",
             return_value=("v0.25.0", "https://example/release/v0.25.0"),
         ), patch(
-            "bibliogon_launcher.ui.three_button_dialog",
+            "adaptive_learner_launcher.ui.three_button_dialog",
             return_value="cancel",
         ), patch(
             "webbrowser.open"
@@ -104,10 +104,10 @@ class TestCheckLauncherTargetStale:
         """
         _patch_target(monkeypatch, "0.25.0")
         with patch(
-            "bibliogon_launcher.update_check.fetch_latest_version",
+            "adaptive_learner_launcher.update_check.fetch_latest_version",
             return_value=("v0.25.0", "https://example/release/v0.25.0"),
         ), patch(
-            "bibliogon_launcher.ui.three_button_dialog",
+            "adaptive_learner_launcher.ui.three_button_dialog",
         ) as mock_dialog:
             result = launcher_main._check_launcher_target_stale()
         assert result is True
@@ -121,10 +121,10 @@ class TestCheckLauncherTargetStale:
         """
         _patch_target(monkeypatch, "0.17.0")
         with patch(
-            "bibliogon_launcher.update_check.fetch_latest_version",
+            "adaptive_learner_launcher.update_check.fetch_latest_version",
             return_value=None,
         ), patch(
-            "bibliogon_launcher.ui.three_button_dialog",
+            "adaptive_learner_launcher.ui.three_button_dialog",
         ) as mock_dialog:
             result = launcher_main._check_launcher_target_stale()
         assert result is True

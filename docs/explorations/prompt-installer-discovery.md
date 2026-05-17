@@ -4,14 +4,14 @@
 
 D-05 has been rescoped (2026-05-04 audit; see `docs/ROADMAP.md`
 P4). The original framing was "Full Windows installer (downloads
-Docker Desktop + Bibliogon repo + generates `.env`, no terminal
+Docker Desktop + AdaptiveLearner repo + generates `.env`, no terminal
 required at any step)". Audit of the existing launcher in
-`launcher/bibliogon_launcher/` revealed it already handles three
-of those four steps on first run: it downloads the Bibliogon
+`launcher/adaptive_learner_launcher/` revealed it already handles three
+of those four steps on first run: it downloads the AdaptiveLearner
 release ZIP, extracts it to a folder the user picks, generates
 `.env` with a random secret, builds the Docker images, and opens
 the browser - via the first-run install path in
-`launcher/bibliogon_launcher/__main__.py` (current symbols
+`launcher/adaptive_learner_launcher/__main__.py` (current symbols
 `_install_or_welcome` and `_run_install_flow`; if these have been
 renamed since this prompt was written, anchor on the file +
 "first-run install path" instead of symbol name). The only
@@ -84,10 +84,10 @@ recommendations that ignore them will be wrong:
   committed output. The committed output stays in git only
   because users curl-pipe it directly from the raw GitHub URL.
 
-- **`BIBLIOGON_TARGET_VERSION` stale-target safeguard exists in
-  the launcher** (`launcher/bibliogon_launcher/installer.py`
+- **`ADAPTIVE_LEARNER_TARGET_VERSION` stale-target safeguard exists in
+  the launcher** (`launcher/adaptive_learner_launcher/installer.py`
   consumes it; injected at PyInstaller build time via
-  `bibliogon-launcher.spec`). Any installer-discovery
+  `adaptive-learner-launcher.spec`). Any installer-discovery
   recommendation MUST NOT regress this safeguard - the launcher
   refuses to install if the embedded target version is older
   than the latest GitHub release.
@@ -107,7 +107,7 @@ recommendations that ignore them will be wrong:
   artifacts must read from the existing canonical sources or
   participate in the sync-versions chain.
 
-- **Filesystem isolation** (`~/.local/share/bibliogon/` etc. via
+- **Filesystem isolation** (`~/.local/share/adaptive_learner/` etc. via
   platformdirs, Docker `/app/data` volume). Installer flows on
   fresh machines must NOT recreate the pre-v0.26.x project-tree
   data layout.
@@ -180,7 +180,7 @@ is to avoid that.**
 
 For each candidate, gather:
 - Active maintenance status (last release, GitHub activity)
-- License compatibility with Bibliogon (MIT)
+- License compatibility with AdaptiveLearner (MIT)
 - Code-signing requirements and cost
 - Build host requirements (Windows-only? Cross-platform?)
 - Docker Desktop integration patterns
@@ -207,7 +207,7 @@ installer entirely):**
 
 **App-wrappers (eliminate unless discovery reveals an
 unforeseen advantage):**
-- **Tauri bundler** (would require Tauri-wrapping Bibliogon, big
+- **Tauri bundler** (would require Tauri-wrapping AdaptiveLearner, big
   scope expansion - eliminate by default)
 - **Electron-builder** (similar issue, big scope - eliminate by
   default)
@@ -225,7 +225,7 @@ rejected or maintenance burden is too high".
   required for distribution)
 - **.dmg with drag-to-Applications** (cosmetic, still needs the
   app to install Docker etc.)
-- **Homebrew tap** (`brew install bibliogon`, requires Homebrew;
+- **Homebrew tap** (`brew install adaptive_learner`, requires Homebrew;
   may eliminate the need for a custom installer entirely)
 
 Same package-manager logic as Windows: if Homebrew tap satisfies
@@ -258,17 +258,17 @@ of Docker Desktop is NOT allowed by Docker's EULA. The realistic
 best case is:
 - Detect if Docker is installed
 - If not, open the Docker download page and instruct the user
-- After Docker is installed, the Bibliogon installer continues
+- After Docker is installed, the AdaptiveLearner installer continues
 
 **If discovery confirms the EULA blocker:**
 - Recommend closing D-05 as **won't-fix** (not "deferred")
 - Fall back to **detect-and-instruct**, which is what the
   current launcher already does in
-  `launcher/bibliogon_launcher/__main__.py` first-run path
+  `launcher/adaptive_learner_launcher/__main__.py` first-run path
 - Document the cited EULA passage in the report
 
 Document this clearly. "One-click" may have to be "two-click"
-(one for Docker, one for Bibliogon). This is a key input to the
+(one for Docker, one for AdaptiveLearner). This is a key input to the
 user-facing flow design.
 
 ### Step 0.7: Code-signing landscape
@@ -412,7 +412,7 @@ target.)
 ### Phase 1: Current launcher (already shipped)
 Scope: GUI installer with repo download + .env generation +
 Docker image build + browser open. First-run install path in
-`launcher/bibliogon_launcher/__main__.py`. Detect-and-instruct
+`launcher/adaptive_learner_launcher/__main__.py`. Detect-and-instruct
 for Docker Desktop. **No discovery work here.**
 
 ### Phase 2: Cross-platform scripts (this discovery's first
@@ -460,7 +460,7 @@ STOP for user input:
    EV cert and $99/year on Apple Dev Program? If unknown,
    defer Phase 3/4 and ship Phase 2 unsigned with mitigation.
 2. **Repo hosting for installer artifacts**: GitHub Releases
-   page sufficient, or do we need a download.bibliogon.* domain?
+   page sufficient, or do we need a download.adaptive_learner.* domain?
 3. **Update mechanism**: should the installer support
    self-update, or is "uninstall and reinstall" acceptable for
    v1? (Note: launcher self-replace is a separate scope -

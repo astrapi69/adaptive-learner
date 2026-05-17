@@ -285,9 +285,9 @@ html5lib = ["html5lib"]
 lxml = ["lxml"]
 
 [[package]]
-name = "bibliogon-plugin-audiobook"
+name = "adaptive-learner-plugin-audiobook"
 version = "0.31.0"
-description = "Audiobook generation plugin for Bibliogon: TTS-based chapter-by-chapter audio."
+description = "Audiobook generation plugin for AdaptiveLearner: TTS-based chapter-by-chapter audio."
 optional = false
 python-versions = "^3.11"
 groups = ["main"]
@@ -303,12 +303,12 @@ pluginforge = "^0.5.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-audiobook"
+url = "../plugins/adaptive-learner-plugin-audiobook"
 
 [[package]]
-name = "bibliogon-plugin-export"
+name = "adaptive-learner-plugin-export"
 version = "0.31.0"
-description = "EPUB, PDF and project structure export plugin for Bibliogon"
+description = "EPUB, PDF and project structure export plugin for AdaptiveLearner"
 optional = false
 python-versions = "^3.11"
 groups = ["main"]
@@ -323,12 +323,12 @@ pyyaml = "^6.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-export"
+url = "../plugins/adaptive-learner-plugin-export"
 
 [[package]]
-name = "bibliogon-plugin-getstarted"
+name = "adaptive-learner-plugin-getstarted"
 version = "0.31.0"
-description = "Onboarding and getting started guide for Bibliogon"
+description = "Onboarding and getting started guide for AdaptiveLearner"
 optional = false
 python-versions = "^3.11"
 groups = ["main"]
@@ -341,10 +341,10 @@ pluginforge = "^0.5.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-getstarted"
+url = "../plugins/adaptive-learner-plugin-getstarted"
 
 [[package]]
-name = "bibliogon-plugin-git-sync"
+name = "adaptive-learner-plugin-git-sync"
 version = "0.31.0"
 description = "Import plugin for write-book-template git repositories. Clones a public git URL, stages the repo, and delegates to the core WbtImportHandler."
 optional = false
@@ -354,19 +354,19 @@ files = []
 develop = true
 
 [package.dependencies]
-bibliogon-plugin-export = {path = "../bibliogon-plugin-export", develop = true}
+adaptive-learner-plugin-export = {path = "../adaptive-learner-plugin-export", develop = true}
 fastapi = "^0.136.0"
 gitpython = "^3.1.40"
 pluginforge = "^0.5.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-git-sync"
+url = "../plugins/adaptive-learner-plugin-git-sync"
 
 [[package]]
-name = "bibliogon-plugin-grammar"
+name = "adaptive-learner-plugin-grammar"
 version = "0.31.0"
-description = "Grammar check plugin for Bibliogon via LanguageTool"
+description = "Grammar check plugin for AdaptiveLearner via LanguageTool"
 optional = false
 python-versions = "^3.11"
 groups = ["main"]
@@ -380,12 +380,12 @@ pluginforge = "^0.5.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-grammar"
+url = "../plugins/adaptive-learner-plugin-grammar"
 
 [[package]]
-name = "bibliogon-plugin-help"
+name = "adaptive-learner-plugin-help"
 version = "0.31.0"
-description = "In-app help, keyboard shortcuts, and FAQ for Bibliogon"
+description = "In-app help, keyboard shortcuts, and FAQ for AdaptiveLearner"
 optional = false
 python-versions = "^3.11"
 groups = ["main"]
@@ -398,32 +398,12 @@ pluginforge = "^0.5.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-help"
+url = "../plugins/adaptive-learner-plugin-help"
 
 [[package]]
-name = "bibliogon-plugin-kdp"
+name = "adaptive-learner-plugin-kdp"
 version = "0.31.0"
-description = "Amazon KDP plugin for Bibliogon - metadata export, cover validation, preview"
-optional = false
-python-versions = "^3.11"
-groups = ["main"]
-files = []
-develop = true
-
-[package.dependencies]
-fastapi = "^0.136.0"
-pillow = "^12.0.0"
-pluginforge = "^0.5.0"
-pyyaml = "^6.0"
-
-[package.source]
-type = "directory"
-url = "../plugins/bibliogon-plugin-kdp"
-
-[[package]]
-name = "bibliogon-plugin-kinderbuch"
-version = "0.31.0"
-description = "Children's book plugin for Bibliogon - picture-per-page layout and special templates"
+description = "Amazon KDP plugin for AdaptiveLearner - metadata export, cover validation, preview"
 optional = false
 python-versions = "^3.11"
 groups = ["main"]
@@ -438,12 +418,32 @@ pyyaml = "^6.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-kinderbuch"
+url = "../plugins/adaptive-learner-plugin-kdp"
 
 [[package]]
-name = "bibliogon-plugin-medium-import"
+name = "adaptive-learner-plugin-kinderbuch"
 version = "0.31.0"
-description = "Medium archive importer for Bibliogon - converts Medium HTML export to Articles + Publications"
+description = "Children's book plugin for AdaptiveLearner - picture-per-page layout and special templates"
+optional = false
+python-versions = "^3.11"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+fastapi = "^0.136.0"
+pillow = "^12.0.0"
+pluginforge = "^0.5.0"
+pyyaml = "^6.0"
+
+[package.source]
+type = "directory"
+url = "../plugins/adaptive-learner-plugin-kinderbuch"
+
+[[package]]
+name = "adaptive-learner-plugin-medium-import"
+version = "0.31.0"
+description = "Medium archive importer for AdaptiveLearner - converts Medium HTML export to Articles + Publications"
 optional = false
 python-versions = "^3.11"
 groups = ["main"]
@@ -461,10 +461,10 @@ pyyaml = "^6.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-medium-import"
+url = "../plugins/adaptive-learner-plugin-medium-import"
 
 [[package]]
-name = "bibliogon-plugin-ms-tools"
+name = "adaptive-learner-plugin-ms-tools"
 version = "0.31.0"
 description = "Manuscript quality tools: style checks, sanitization, readability metrics."
 optional = false
@@ -479,12 +479,12 @@ pluginforge = "^0.5.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-ms-tools"
+url = "../plugins/adaptive-learner-plugin-ms-tools"
 
 [[package]]
-name = "bibliogon-plugin-translation"
+name = "adaptive-learner-plugin-translation"
 version = "0.31.0"
-description = "Translation plugin for Bibliogon: DeepL and local LLM (LMStudio) integration."
+description = "Translation plugin for AdaptiveLearner: DeepL and local LLM (LMStudio) integration."
 optional = false
 python-versions = "^3.11"
 groups = ["main"]
@@ -498,7 +498,7 @@ pluginforge = "^0.5.0"
 
 [package.source]
 type = "directory"
-url = "../plugins/bibliogon-plugin-translation"
+url = "../plugins/adaptive-learner-plugin-translation"
 
 [[package]]
 name = "boolean-py"

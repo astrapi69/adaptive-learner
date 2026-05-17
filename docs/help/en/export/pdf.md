@@ -2,11 +2,11 @@
 
 ## Basics
 
-PDF is best suited for print-ready book versions (paperback, hardcover) and for previewing the final layout. Bibliogon produces PDF files via the same pipeline as EPUB export: TipTap JSON is converted to Markdown, scaffolded into a write-book-template project structure, and converted by manuscripta with Pandoc as the converter.
+PDF is best suited for print-ready book versions (paperback, hardcover) and for previewing the final layout. AdaptiveLearner produces PDF files via the same pipeline as EPUB export: TipTap JSON is converted to Markdown, scaffolded into a write-book-template project structure, and converted by manuscripta with Pandoc as the converter.
 
 ## Pandoc as a prerequisite
 
-PDF export requires Pandoc. Pandoc is a separate command-line tool and must be installed on the system that runs the Bibliogon backend. Without Pandoc, PDF export fails with a corresponding error message.
+PDF export requires Pandoc. Pandoc is a separate command-line tool and must be installed on the system that runs the AdaptiveLearner backend. Without Pandoc, PDF export fails with a corresponding error message.
 
 **Installation:**
 
@@ -16,7 +16,7 @@ PDF export requires Pandoc. Pandoc is a separate command-line tool and must be i
 
 A LaTeX distribution is also required, since Pandoc produces PDF files via LaTeX. TeX Live (Linux/macOS) or MiKTeX (Windows) is recommended. On Debian/Ubuntu, `sudo apt install texlive-full` gives you a full install.
 
-If you are running Bibliogon via Docker (`make prod`), Pandoc and TeX Live are already in the container.
+If you are running AdaptiveLearner via Docker (`make prod`), Pandoc and TeX Live are already in the container.
 
 ## Export options
 
@@ -29,7 +29,7 @@ PDF export supports the same options as EPUB export:
 
 ## Other formats
 
-Beyond PDF, Bibliogon also exports to the following formats, all produced via Pandoc:
+Beyond PDF, AdaptiveLearner also exports to the following formats, all produced via Pandoc:
 
 - **DOCX** (Word): for collaboration with editors or publishers who prefer Word documents.
 - **HTML**: a single HTML file containing the entire book.

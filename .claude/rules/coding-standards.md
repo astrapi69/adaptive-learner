@@ -33,8 +33,8 @@
 
 - Python: snake_case (files, functions, variables), PascalCase (classes).
 - TypeScript: PascalCase (components, interfaces), camelCase (functions, variables).
-- Plugin folders: bibliogon-plugin-{name} (kebab-case).
-- Python package inside a plugin: bibliogon_{name} (snake_case).
+- Plugin folders: adaptive-learner-plugin-{name} (kebab-case).
+- Python package inside a plugin: adaptive_learner_{name} (snake_case).
 - Events/hooks: snake_case (chapter_pre_save, export_execute).
 - No I-prefix for interfaces. `Book`, not `IBook`.
 - File formats: .bgb (backup), .bgp (project). Not .zip.
@@ -141,11 +141,11 @@ def find_cover_image(project_dir: Path) -> str | None: ...
 
 Error details must be precise enough that a GitHub Issue built from them is directly actionable, without follow-up questions.
 
-Chain: BibliogonError -> API response (detail + traceback) -> ApiError -> toast with "Report issue" -> GitHub Issue
+Chain: AdaptiveLearnerError -> API response (detail + traceback) -> ApiError -> toast with "Report issue" -> GitHub Issue
 
 - No `except` without logger.error(). Never swallow an exception.
 - Exception detail must contain the reason, not just the function name.
-- Services: include str(e) in BibliogonError subclasses (NOT HTTPException, see code-hygiene.md).
+- Services: include str(e) in AdaptiveLearnerError subclasses (NOT HTTPException, see code-hygiene.md).
 - In debug mode: include the stacktrace in the response (global exception handler in main.py). Consumed by the "Report issue" button as the issue body.
 - On the frontend: pass the ApiError object to toast.error(), not just a string.
 - "Report issue" button in the toast: opens a GitHub Issue with title (error detail), body (stacktrace, browser, app version).
@@ -167,7 +167,7 @@ Chain: BibliogonError -> API response (detail + traceback) -> ApiError -> toast 
 
 ## Security
 
-- Never commit BIBLIOGON_SECRET_KEY.
+- Never commit ADAPTIVE_LEARNER_SECRET_KEY.
 - .env files in .gitignore.
 - License keys only through LicenseStore (backend/app/licensing.py).
 - Validate user uploads (file type, size) before storage.

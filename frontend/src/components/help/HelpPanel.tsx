@@ -133,7 +133,7 @@ export default function HelpPanel() {
                         </Dialog.Title>
                         <div style={{display: "flex", gap: 8, alignItems: "center"}}>
                             <a
-                                href="https://astrapi69.github.io/bibliogon/"
+                                href="https://astrapi69.github.io/adaptive_learner/"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="btn-icon"

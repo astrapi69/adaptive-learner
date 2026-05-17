@@ -1,6 +1,6 @@
 # Import from a git URL
 
-Bibliogon can clone a public git repository that follows the
+AdaptiveLearner can clone a public git repository that follows the
 [write-book-template](https://github.com/astrapi69/write-book-template)
 structure and import it as a new book.
 
@@ -11,7 +11,7 @@ structure and import it as a new book.
    field at the top of Step 1.
 3. Click **Clone + Import**.
 
-Bibliogon clones the repository into a temporary staging
+AdaptiveLearner clones the repository into a temporary staging
 directory, runs the usual format detection, shows you a
 preview panel, and imports on confirm.
 
@@ -32,7 +32,7 @@ The first release of plugin-git-sync covers import-only for
 - Selecting a branch or tag — the default branch is cloned.
 - Shallow clones for large repositories.
 - Git LFS handling.
-- Pushing Bibliogon edits back to the repository ("sync-back").
+- Pushing AdaptiveLearner edits back to the repository ("sync-back").
 - Smart-merge when re-importing a repository that has changed
   since the last import.
 
@@ -59,6 +59,6 @@ from the trash and try a different URL.
 ## Related
 
 - [Git backup](../git-backup/basics.md) — the core feature that versions
-  a book you are editing in Bibliogon. Orthogonal to git URL
+  a book you are editing in AdaptiveLearner. Orthogonal to git URL
   import: one pulls a book in, the other tracks changes to one
-  that is already in Bibliogon.
+  that is already in AdaptiveLearner.

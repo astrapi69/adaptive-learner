@@ -20,8 +20,8 @@ import type {DonationsConfig} from "./SupportSection";
 import {DONATION_ONBOARDING_SEEN_KEY} from "./DonationOnboardingDialog";
 import styles from "./DonationReminderBanner.module.css";
 
-export const FIRST_USE_DATE_KEY = "bibliogon-first-use-date";
-export const REMINDER_NEXT_ALLOWED_KEY = "bibliogon-donation-reminder-next-allowed";
+export const FIRST_USE_DATE_KEY = "adaptive-learner-first-use-date";
+export const REMINDER_NEXT_ALLOWED_KEY = "adaptive-learner-donation-reminder-next-allowed";
 
 const DAYS_90 = 90;
 const DAYS_180 = 180;
@@ -116,10 +116,10 @@ export default function DonationReminderBanner({donations, onDismiss}: Props) {
   };
 
   return (
-    <div role="region" aria-label="Bibliogon support reminder" className={styles.banner} data-testid="donation-reminder">
+    <div role="region" aria-label="AdaptiveLearner support reminder" className={styles.banner} data-testid="donation-reminder">
       <Heart size={16} aria-hidden className={styles.icon} />
       <span className={styles.text}>
-        {t("ui.donations.reminder_body", "Du nutzt Bibliogon seit drei Monaten. Wenn dir das Projekt gefällt:")}
+        {t("ui.donations.reminder_body", "Du nutzt AdaptiveLearner seit drei Monaten. Wenn dir das Projekt gefällt:")}
       </span>
       <div className={styles.actions}>
         <a

@@ -303,7 +303,7 @@ def _sort_articles(
 ) -> list[Article]:
     """Apply the chosen sort strategy. ``date_*`` falls back to
     ``created_at`` when ``original_published_at`` is None (native
-    Bibliogon articles with no publications)."""
+    AdaptiveLearner articles with no publications)."""
     if sort_strategy is BookFromArticlesSortStrategy.MANUAL:
         # manual_order is already validated as a permutation; index lookup
         # is faster than repeated .index() calls for large selections.

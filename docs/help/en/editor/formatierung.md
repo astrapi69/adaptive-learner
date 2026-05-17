@@ -2,7 +2,7 @@
 
 ## Text formatting
 
-Bibliogon supports the usual text formatting options you know from word processors. All of them are reachable via the toolbar or keyboard shortcuts:
+AdaptiveLearner supports the usual text formatting options you know from word processors. All of them are reachable via the toolbar or keyboard shortcuts:
 
 - **Bold** (Ctrl+B): emphasizes important terms or sentences.
 - **Italic** (Ctrl+I): used for emphasis, titles, or foreign-language terms.
@@ -22,7 +22,7 @@ Headings are picked up automatically into the table of contents on export. The T
 
 ## Lists
 
-Bibliogon supports two list types:
+AdaptiveLearner supports two list types:
 
 - **Bullet list** (Ctrl+Shift+8): unordered list with bullet points. Indenting with Tab creates nested lists.
 - **Numbered list** (Ctrl+Shift+9): ordered list with automatic numbering. Numbering adjusts itself when you add or remove entries.

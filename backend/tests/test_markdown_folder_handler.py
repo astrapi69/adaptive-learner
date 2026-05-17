@@ -170,7 +170,7 @@ def test_execute_creates_book_and_chapters(
 def test_execute_copies_cover_and_figures(
     handler: MarkdownFolderHandler, tmp_path: Path, db: Session, monkeypatch
 ) -> None:
-    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("ADAPTIVE_LEARNER_DATA_DIR", str(tmp_path))
 
     root = _folder_with(
         tmp_path,

@@ -1,4 +1,4 @@
-"""Convert bibliogon.ico to bibliogon.icns for the macOS .app bundle.
+"""Convert adaptive_learner.ico to adaptive_learner.icns for the macOS .app bundle.
 
 macOS-only step: creates a .iconset directory with the standard
 Retina-aware size set, then invokes `iconutil` to produce the .icns.
@@ -25,8 +25,8 @@ from PIL import Image
 
 def main() -> int:
     here = Path(__file__).parent.parent
-    ico_path = here / "bibliogon.ico"
-    icns_path = here / "bibliogon.icns"
+    ico_path = here / "adaptive_learner.ico"
+    icns_path = here / "adaptive_learner.icns"
     iconset = here / "icon.iconset"
 
     if not ico_path.is_file():

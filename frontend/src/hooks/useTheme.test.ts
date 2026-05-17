@@ -26,7 +26,7 @@ describe("useTheme", () => {
     })
 
     it("reads stored theme from localStorage", () => {
-      localStorage.setItem("bibliogon-theme", "dark")
+      localStorage.setItem("adaptive-learner-theme", "dark")
       const {result} = renderHook(() => useTheme())
       expect(result.current.theme).toBe("dark")
     })
@@ -40,7 +40,7 @@ describe("useTheme", () => {
     })
 
     it("ignores invalid localStorage values", () => {
-      localStorage.setItem("bibliogon-theme", "sepia")
+      localStorage.setItem("adaptive-learner-theme", "sepia")
       const {result} = renderHook(() => useTheme())
       expect(result.current.theme).toBe("light")
     })
@@ -54,7 +54,7 @@ describe("useTheme", () => {
     })
 
     it("toggles from dark to light", () => {
-      localStorage.setItem("bibliogon-theme", "dark")
+      localStorage.setItem("adaptive-learner-theme", "dark")
       const {result} = renderHook(() => useTheme())
       act(() => result.current.toggle())
       expect(result.current.theme).toBe("light")
@@ -63,7 +63,7 @@ describe("useTheme", () => {
     it("persists toggled theme to localStorage", () => {
       const {result} = renderHook(() => useTheme())
       act(() => result.current.toggle())
-      expect(localStorage.getItem("bibliogon-theme")).toBe("dark")
+      expect(localStorage.getItem("adaptive-learner-theme")).toBe("dark")
     })
 
     it("sets data-theme attribute on document element", () => {
@@ -80,13 +80,13 @@ describe("useTheme", () => {
     })
 
     it("reads stored palette from localStorage", () => {
-      localStorage.setItem("bibliogon-app-theme", "nord")
+      localStorage.setItem("adaptive-learner-app-theme", "nord")
       const {result} = renderHook(() => useTheme())
       expect(result.current.appTheme).toBe("nord")
     })
 
     it("falls back to default for unknown stored palette", () => {
-      localStorage.setItem("bibliogon-app-theme", "nonexistent-theme")
+      localStorage.setItem("adaptive-learner-app-theme", "nonexistent-theme")
       const {result} = renderHook(() => useTheme())
       expect(result.current.appTheme).toBe(DEFAULT_PALETTE)
     })
@@ -100,7 +100,7 @@ describe("useTheme", () => {
     it("persists palette to localStorage", () => {
       const {result} = renderHook(() => useTheme())
       act(() => result.current.setAppTheme("nord"))
-      expect(localStorage.getItem("bibliogon-app-theme")).toBe("nord")
+      expect(localStorage.getItem("adaptive-learner-app-theme")).toBe("nord")
     })
 
     it("sets data-app-theme attribute on document element", () => {

@@ -43,8 +43,8 @@ def export_backup_archive(db: Session, include_audiobook: bool = False) -> tuple
     books = db.query(Book).options(joinedload(Book.chapters)).all()
     articles = db.query(Article).all()
 
-    tmp_dir = Path(tempfile.mkdtemp(prefix="bibliogon_backup_"))
-    backup_dir = tmp_dir / f"bibliogon-backup-{datetime.now(UTC).strftime('%Y-%m-%d')}"
+    tmp_dir = Path(tempfile.mkdtemp(prefix="adaptive_learner_backup_"))
+    backup_dir = tmp_dir / f"adaptive-learner-backup-{datetime.now(UTC).strftime('%Y-%m-%d')}"
     books_dir = backup_dir / "books"
     # Always materialise the books/ directory so the restore-side
     # ``_require_books_dir`` validator can rely on its presence even
@@ -213,7 +213,7 @@ def _write_manifest(
     _write_json(
         backup_dir / "manifest.json",
         {
-            "format": "bibliogon-backup",
+            "format": "adaptive-learner-backup",
             "version": "2.0",
             "created_at": datetime.now(UTC).isoformat(),
             "book_count": book_count,

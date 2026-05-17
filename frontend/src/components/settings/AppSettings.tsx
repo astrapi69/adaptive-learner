@@ -20,7 +20,7 @@ export function AppSettings({config, onSave, saving}: {
     const editorConfig = (config.editor || {}) as Record<string, unknown>;
 
     const [lang, setLang] = useState((app.default_language as string) || "de");
-    const [uiTitle, setUiTitle] = useState((ui.title as string) || "Bibliogon");
+    const [uiTitle, setUiTitle] = useState((ui.title as string) || "AdaptiveLearner");
     const [uiSubtitle, setUiSubtitle] = useState((ui.subtitle as string) || "");
     const [theme, setTheme] = useState((ui.theme as string) || "warm-literary");
     const uiDashboard = (ui.dashboard || {}) as Record<string, unknown>;
@@ -58,7 +58,7 @@ export function AppSettings({config, onSave, saving}: {
 
     useEffect(() => {
         setLang((app.default_language as string) || "de");
-        setUiTitle((ui.title as string) || "Bibliogon");
+        setUiTitle((ui.title as string) || "AdaptiveLearner");
         setUiSubtitle((ui.subtitle as string) || "");
         setTheme((ui.theme as string) || "warm-literary");
         const dashboardCfg = (ui.dashboard || {}) as Record<string, unknown>;
@@ -156,7 +156,7 @@ export function AppSettings({config, onSave, saving}: {
                         onValueChange={(val) => {
                             setTheme(val);
                             document.documentElement.setAttribute("data-app-theme", val);
-                            localStorage.setItem("bibliogon-app-theme", val);
+                            localStorage.setItem("adaptive-learner-app-theme", val);
                         }}
                         testId="palette-select"
                         options={PALETTES.map((p) => ({
@@ -386,7 +386,7 @@ export function AppSettings({config, onSave, saving}: {
                             {t("ui.settings.white_label_title", "White-Label Konfiguration")}
                         </h3>
                         <p style={{color: "var(--text-muted)", fontSize: "0.8125rem", marginBottom: 16}}>
-                            {t("ui.settings.white_label_desc", "Passe Bibliogon als eigene App an. Aendere den Namen, entferne Standard-Plugins und erstelle deine eigene Autoren-Plattform.")}
+                            {t("ui.settings.white_label_desc", "Passe AdaptiveLearner als eigene App an. Aendere den Namen, entferne Standard-Plugins und erstelle deine eigene Autoren-Plattform.")}
                         </p>
 
                         <div className="field" style={{marginBottom: 12}}>

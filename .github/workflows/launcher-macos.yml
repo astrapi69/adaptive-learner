@@ -92,37 +92,37 @@ jobs:
         run: poetry run python scripts/make_icon.py
 
       - name: Convert placeholder icon to .icns (macOS-only iconutil)
-        # bibliogon.ico is multi-size; make_icns.py extracts the largest
+        # adaptive_learner.ico is multi-size; make_icns.py extracts the largest
         # frame, resamples to the standard .icns size set, and invokes
         # iconutil. iconutil is macOS-only so this step does not run on
         # Linux/Windows builds.
         run: poetry run python scripts/make_icns.py
 
       - name: Build .app bundle
-        run: poetry run pyinstaller bibliogon-launcher.spec --clean --noconfirm
+        run: poetry run pyinstaller adaptive-learner-launcher.spec --clean --noconfirm
 
       - name: Zip .app bundle
         # Notarization / distribution expect the .app inside a ZIP or DMG.
         # We ship ZIP only for initial D-02 to keep the pipeline simple.
         run: |
           cd dist
-          zip -r bibliogon-launcher-macos.zip "Bibliogon Launcher.app"
+          zip -r adaptive-learner-launcher-macos.zip "AdaptiveLearner Launcher.app"
 
       - name: Compute SHA256 checksum
         run: |
           cd dist
-          hash=$(shasum -a 256 bibliogon-launcher-macos.zip | awk '{print $1}')
-          echo "$hash  bibliogon-launcher-macos.zip" > bibliogon-launcher-macos.zip.sha256
+          hash=$(shasum -a 256 adaptive-learner-launcher-macos.zip | awk '{print $1}')
+          echo "$hash  adaptive-learner-launcher-macos.zip" > adaptive-learner-launcher-macos.zip.sha256
           echo "SHA256: $hash"
 
       - name: Upload smoke artifact (push / PR / dispatch)
         if: github.event_name != 'release'
         uses: actions/upload-artifact@v6
         with:
-          name: bibliogon-launcher-macos
+          name: adaptive-learner-launcher-macos
           path: |
-            launcher/dist/bibliogon-launcher-macos.zip
-            launcher/dist/bibliogon-launcher-macos.zip.sha256
+            launcher/dist/adaptive-learner-launcher-macos.zip
+            launcher/dist/adaptive-learner-launcher-macos.zip.sha256
           if-no-files-found: error
           retention-days: 14
 
@@ -131,6 +131,6 @@ jobs:
         uses: softprops/action-gh-release@v3
         with:
           files: |
-            launcher/dist/bibliogon-launcher-macos.zip
-            launcher/dist/bibliogon-launcher-macos.zip.sha256
+            launcher/dist/adaptive-learner-launcher-macos.zip
+            launcher/dist/adaptive-learner-launcher-macos.zip.sha256
           fail_on_unmatched_files: true

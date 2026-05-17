@@ -1,10 +1,10 @@
-# Installing Docker Desktop for Bibliogon
+# Installing Docker Desktop for AdaptiveLearner
 
-Bibliogon runs in Docker, a containerization platform. You need to install Docker Desktop before starting the Bibliogon launcher.
+AdaptiveLearner runs in Docker, a containerization platform. You need to install Docker Desktop before starting the AdaptiveLearner launcher.
 
 ## Why Docker?
 
-Bibliogon's backend is a Python application with several dependencies (database, plugin runtimes, export pipeline). Docker bundles them into a single isolated container so you do not have to install Python, SQLite, Pandoc, or any of these manually. Docker Desktop is maintained by Docker Inc. and is widely used.
+AdaptiveLearner's backend is a Python application with several dependencies (database, plugin runtimes, export pipeline). Docker bundles them into a single isolated container so you do not have to install Python, SQLite, Pandoc, or any of these manually. Docker Desktop is maintained by Docker Inc. and is widely used.
 
 ## Is Docker safe to install?
 
@@ -16,7 +16,7 @@ Short answer: yes. Docker is well-established software from a known vendor; the 
 - **On Windows, Docker Desktop uses WSL 2.** WSL 2 is a Microsoft technology that runs a lightweight Linux kernel; nothing exotic.
 - **On macOS, Docker Desktop uses Hypervisor.framework.** That is Apple's built-in virtualization, used by Docker the same way it is used by other developer tools.
 - **Telemetry is optional.** Docker Desktop sends some usage statistics by default. You can disable this in **Docker Desktop Settings > General > Send usage statistics**.
-- **Bibliogon's own containers are open-source.** Your book data lives in a Docker volume on your computer; nothing is sent anywhere unless you explicitly export or back up.
+- **AdaptiveLearner's own containers are open-source.** Your book data lives in a Docker volume on your computer; nothing is sent anywhere unless you explicitly export or back up.
 
 If you would like to read more, the official [Docker security overview](https://docs.docker.com/security/) covers Docker's own threat model and isolation guarantees.
 
@@ -24,7 +24,7 @@ If you would like to read more, the official [Docker security overview](https://
 
 - Windows 10/11 64-bit, macOS 12 (Monterey) or newer, or a recent Linux distribution
 - ~4 GB RAM available
-- ~5 GB disk space (Docker itself plus Bibliogon's containers)
+- ~5 GB disk space (Docker itself plus AdaptiveLearner's containers)
 - Administrator / sudo access for the install
 
 ## Windows
@@ -33,7 +33,7 @@ If you would like to read more, the official [Docker security overview](https://
 2. Run the installer. Accept the default settings when prompted; the WSL 2 backend is recommended.
 3. Restart the computer if the installer asks you to.
 4. Launch Docker Desktop from the Start menu. Wait until the whale icon in the system tray turns from amber to blue (~30-60 seconds).
-5. Now you can start the Bibliogon launcher.
+5. Now you can start the AdaptiveLearner launcher.
 
 If you see "WSL 2 installation is incomplete", open PowerShell as administrator and run `wsl --install`, then restart.
 
@@ -43,7 +43,7 @@ If you see "WSL 2 installation is incomplete", open PowerShell as administrator 
 2. Open the `.dmg` file and drag Docker into the Applications folder.
 3. Launch Docker from Applications. macOS will ask for your password to install helper services.
 4. Wait until the whale icon in the menu bar turns from amber to blue (~30-60 seconds).
-5. Now you can start the Bibliogon launcher.
+5. Now you can start the AdaptiveLearner launcher.
 
 ## Linux
 
@@ -66,4 +66,4 @@ For other distributions, see the official [Docker Engine installation guide](htt
 
 ## Next steps
 
-After Docker is installed and running, return to the Bibliogon launcher and click "Got it, continue". Bibliogon detects Docker, downloads itself, and starts.
+After Docker is installed and running, return to the AdaptiveLearner launcher and click "Got it, continue". AdaptiveLearner detects Docker, downloads itself, and starts.

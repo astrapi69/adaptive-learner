@@ -24,7 +24,7 @@ import { notify } from "../utils/notify";
 /**
  * PGS-03 conflict resolution dialog.
  *
- * Per chapter the user chooses Keep Bibliogon (DB unchanged),
+ * Per chapter the user chooses Keep AdaptiveLearner (DB unchanged),
  * Take from Repo (DB overwritten with the remote markdown), or
  * Mark Conflict (PGS-03-FU-01 - rewrites the chapter content with
  * git-style conflict markers so the user can resolve in the editor;
@@ -282,7 +282,7 @@ function NothingToResolveNotice({
             />
             {t(
                 "ui.git_sync.diff_empty",
-                "Keine Änderungen zwischen Bibliogon und Repo. {count} Kapitel unveraendert.",
+                "Keine Änderungen zwischen AdaptiveLearner und Repo. {count} Kapitel unveraendert.",
             ).replace("{count}", String(unchangedCount))}
         </div>
     );
@@ -355,10 +355,10 @@ function DiffRow({
                     data-testid={`git-sync-diff-keep-${chapter.slug}`}
                     title={t(
                         "ui.git_sync.diff_keep_tooltip",
-                        "Bibliogon-Stand behalten (kein DB-Update)",
+                        "AdaptiveLearner-Stand behalten (kein DB-Update)",
                     )}
                 >
-                    {t("ui.git_sync.diff_keep_local", "Bibliogon")}
+                    {t("ui.git_sync.diff_keep_local", "AdaptiveLearner")}
                 </button>
                 <button
                     type="button"
@@ -410,7 +410,7 @@ function ClassificationBadge({
             case "local_changed":
                 return t(
                     "ui.git_sync.diff_label_local_changed",
-                    "Bibliogon geändert",
+                    "AdaptiveLearner geändert",
                 );
             case "both_changed":
                 return t("ui.git_sync.diff_label_both_changed", "Konflikt");
@@ -419,7 +419,7 @@ function ClassificationBadge({
             case "local_added":
                 return t(
                     "ui.git_sync.diff_label_local_added",
-                    "Bibliogon neu",
+                    "AdaptiveLearner neu",
                 );
             case "remote_removed":
                 return t(
@@ -429,7 +429,7 @@ function ClassificationBadge({
             case "local_removed":
                 return t(
                     "ui.git_sync.diff_label_local_removed",
-                    "In Bibliogon gelöscht",
+                    "In AdaptiveLearner gelöscht",
                 );
             case "renamed_remote":
                 return t(
@@ -439,7 +439,7 @@ function ClassificationBadge({
             case "renamed_local":
                 return t(
                     "ui.git_sync.diff_label_renamed_local",
-                    "In Bibliogon umbenannt",
+                    "In AdaptiveLearner umbenannt",
                 );
             case "unchanged":
                 return t("ui.git_sync.diff_label_unchanged", "Unverändert");

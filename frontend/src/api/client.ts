@@ -3023,7 +3023,7 @@ export const api = {
                 body: JSON.stringify(payload),
             }),
 
-        /** PGS-03: three-way diff between Bibliogon, the imported
+        /** PGS-03: three-way diff between AdaptiveLearner, the imported
          *  base commit, and current branch HEAD. Read-only. */
         diff: (bookId: string) =>
             request<GitSyncDiffResponse>(`/git-sync/${bookId}/diff`, {
@@ -3183,7 +3183,7 @@ export interface GitSyncMappingStatus {
 
 export interface GitSyncCommitRequest {
     /** Optional commit subject; backend defaults to
-     *  ``"Sync from Bibliogon at <utc-iso>"`` when null. */
+     *  ``"Sync from AdaptiveLearner at <utc-iso>"`` when null. */
     message?: string | null
     /** Push to remote after committing. Currently 501; wired now
      *  so the form can carry the toggle without a future API

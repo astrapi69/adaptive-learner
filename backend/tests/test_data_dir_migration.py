@@ -13,14 +13,14 @@ scenarios called out in the session plan:
 4. Migration marker already present -> short-circuit no-op.
 5. Idempotent: running twice does nothing the second time.
 
-The migration helper uses the in-process ``BIBLIOGON_DATA_DIR``
+The migration helper uses the in-process ``ADAPTIVE_LEARNER_DATA_DIR``
 override and the package-relative ``_PROJECT_BACKEND_DIR``
 constant (= the directory containing ``app/``) for legacy
 locations. Tests monkeypatch the legacy constants to a
 sandboxed ``tmp_path`` tree so we never touch the real
 ``backend/`` while the migration runs.
 
-The helper also short-circuits when ``BIBLIOGON_TEST=1`` is set
+The helper also short-circuits when ``ADAPTIVE_LEARNER_TEST=1`` is set
 (set by conftest before any test runs); we explicitly clear it
 inside each test so the migration code path actually executes
 under the sandboxed paths.
@@ -44,13 +44,13 @@ def sandbox(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Path]:
     """Provide isolated legacy + target directories.
 
     Returns a dict with the canonical paths the test can populate.
-    Sets BIBLIOGON_DATA_DIR to the sandbox target. Clears
-    BIBLIOGON_TEST so the migration's own test-mode short-circuit
+    Sets ADAPTIVE_LEARNER_DATA_DIR to the sandbox target. Clears
+    ADAPTIVE_LEARNER_TEST so the migration's own test-mode short-circuit
     does not skip the run we want to exercise.
     """
     legacy_root = tmp_path / "legacy_backend"
     legacy_root.mkdir()
-    legacy_db = legacy_root / "bibliogon.db"
+    legacy_db = legacy_root / "adaptive_learner.db"
     legacy_uploads = legacy_root / "uploads"
     legacy_backup_history = legacy_root / "config" / "backup_history.json"
     legacy_installed_plugins = legacy_root / "plugins" / "installed"
@@ -65,8 +65,8 @@ def sandbox(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Path]:
     monkeypatch.setattr(
         data_dir_migration, "_LEGACY_INSTALLED_PLUGINS", legacy_installed_plugins
     )
-    monkeypatch.setenv("BIBLIOGON_DATA_DIR", str(target))
-    monkeypatch.delenv("BIBLIOGON_TEST", raising=False)
+    monkeypatch.setenv("ADAPTIVE_LEARNER_DATA_DIR", str(target))
+    monkeypatch.delenv("ADAPTIVE_LEARNER_TEST", raising=False)
 
     return {
         "target": target,
@@ -91,7 +91,7 @@ class TestMigrate:
         assert sandbox["target"].is_dir()
         assert (sandbox["target"] / MIGRATION_MARKER_FILENAME).exists()
         # Nothing was moved
-        assert not (sandbox["target"] / "bibliogon.db").exists()
+        assert not (sandbox["target"] / "adaptive_learner.db").exists()
         assert not (sandbox["target"] / "uploads").exists()
 
     def test_migrates_db_and_uploads(self, sandbox) -> None:
@@ -106,14 +106,14 @@ class TestMigrate:
 
         migrate_data_dir_if_needed()
 
-        moved_db = sandbox["target"] / "bibliogon.db"
+        moved_db = sandbox["target"] / "adaptive_learner.db"
         moved_uploads = sandbox["target"] / "uploads"
         assert moved_db.read_text(encoding="utf-8") == "fake-db-content"
         assert (moved_uploads / "cover.png").read_bytes() == b"fake-png"
 
         # Breadcrumbs at old paths (named with .migrated-YYYY-MM-DD suffix)
         legacy_dir = sandbox["legacy_db"].parent
-        breadcrumbs = list(legacy_dir.glob("bibliogon.db.migrated-*"))
+        breadcrumbs = list(legacy_dir.glob("adaptive_learner.db.migrated-*"))
         assert len(breadcrumbs) == 1
         assert "moved to" in breadcrumbs[0].read_text(encoding="utf-8")
 
@@ -135,17 +135,17 @@ class TestMigrate:
         """
         sandbox["legacy_db"].write_text("legacy-db", encoding="utf-8")
         sandbox["target"].mkdir()
-        (sandbox["target"] / "bibliogon.db").write_text(
+        (sandbox["target"] / "adaptive_learner.db").write_text(
             "target-db", encoding="utf-8"
         )
 
-        with pytest.raises(RuntimeError, match="bibliogon.db.*both legacy"):
+        with pytest.raises(RuntimeError, match="adaptive_learner.db.*both legacy"):
             migrate_data_dir_if_needed()
 
         # Both files still exist with their original content
         assert sandbox["legacy_db"].read_text(encoding="utf-8") == "legacy-db"
         assert (
-            (sandbox["target"] / "bibliogon.db").read_text(encoding="utf-8")
+            (sandbox["target"] / "adaptive_learner.db").read_text(encoding="utf-8")
             == "target-db"
         )
         # Marker NOT planted on conflict
@@ -172,7 +172,7 @@ class TestMigrate:
             "this-should-stay-in-place"
         )
         # Target DB never created (no migration)
-        assert not (sandbox["target"] / "bibliogon.db").exists()
+        assert not (sandbox["target"] / "adaptive_learner.db").exists()
 
     def test_idempotent_on_rerun(self, sandbox) -> None:
         """Running migration twice in a row.
@@ -184,18 +184,18 @@ class TestMigrate:
 
         migrate_data_dir_if_needed()
         first_breadcrumbs = list(
-            sandbox["legacy_db"].parent.glob("bibliogon.db.migrated-*")
+            sandbox["legacy_db"].parent.glob("adaptive_learner.db.migrated-*")
         )
 
         # Second call: idempotent
         migrate_data_dir_if_needed()
         second_breadcrumbs = list(
-            sandbox["legacy_db"].parent.glob("bibliogon.db.migrated-*")
+            sandbox["legacy_db"].parent.glob("adaptive_learner.db.migrated-*")
         )
 
         # Same breadcrumbs (no new file); no error raised
         assert first_breadcrumbs == second_breadcrumbs
         assert (
-            (sandbox["target"] / "bibliogon.db").read_text(encoding="utf-8")
+            (sandbox["target"] / "adaptive_learner.db").read_text(encoding="utf-8")
             == "once-and-only-once"
         )

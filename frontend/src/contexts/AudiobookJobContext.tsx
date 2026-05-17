@@ -73,7 +73,7 @@ interface AudiobookJobContextValue {
 
 const AudiobookJobContext = createContext<AudiobookJobContextValue | null>(null);
 
-const STORAGE_KEY = "bibliogon.audiobook_job";
+const STORAGE_KEY = "adaptive_learner.audiobook_job";
 
 interface PersistedJob {
     jobId: string;

@@ -1,4 +1,4 @@
-# Bibliogon
+# Adaptive Learner
 
 Open-source self-publishing toolkit for authors. Books, articles, and multi-platform content workflows. Offline-first, plugin-based, EPUB / PDF / audiobook export.
 
@@ -6,7 +6,7 @@ Built on [PluginForge](https://github.com/astrapi69/pluginforge), a reusable plu
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**[Documentation](https://astrapi69.github.io/bibliogon/)** | **[Issues](https://github.com/astrapi69/bibliogon/issues)** | Current version: **v0.29.0**
+**[Documentation](https://astrapi69.github.io/adaptive_learner/)** | **[Issues](https://github.com/astrapi69/adaptive_learner/issues)** | Current version: **v0.29.0**
 
 ## Features
 
@@ -32,7 +32,7 @@ Built on [PluginForge](https://github.com/astrapi69/pluginforge), a reusable plu
 
 ## Article Authoring (Phase 2 - beta)
 
-Beyond books, Bibliogon supports article authoring with multi-platform publication tracking.
+Beyond books, Adaptive Learner supports article authoring with multi-platform publication tracking.
 
 - Dedicated article editor with TipTap (separate from the book editor, single-document, no chapter sidebar)
 - Article-level metadata: topic (settings-managed), SEO title / description, tags, excerpt, canonical URL, featured image
@@ -45,7 +45,7 @@ Beyond books, Bibliogon supports article authoring with multi-platform publicati
 
 Books can be synchronized with external git repositories for collaboration, backup, and version control.
 
-- **Import:** clone a public git repo containing a book in Bibliogon's WBT layout
+- **Import:** clone a public git repo containing a book in Adaptive Learner's WBT layout
 - **Commit + Push:** save book changes back to the repo via SSH agent, system credential helper, or per-book PAT
 - **Smart-Merge:** three-way diff with per-chapter conflict resolution UI for chapters edited both locally and remotely
 - **Multi-Language:** repos with `main-XX` branches (e.g. `main-de`, `main-fr`) import as linked translations via `Book.translation_group_id`
@@ -68,16 +68,16 @@ All three credential paths are user-configurable from the Git Backup dialog: SSH
 **Linux / macOS:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/astrapi69/bibliogon/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.sh | bash
 ```
 
 **Windows (PowerShell):**
 
 ```powershell
-irm https://raw.githubusercontent.com/astrapi69/bibliogon/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.ps1 | iex
 ```
 
-Both download Bibliogon to `~/bibliogon` (Linux/macOS) / `%USERPROFILE%\bibliogon` (Windows), build the Docker images, and start the app at **http://localhost:7880**.
+Both download Adaptive Learner to `~/adaptive_learner` (Linux/macOS) / `%USERPROFILE%\adaptive_learner` (Windows), build the Docker images, and start the app at **http://localhost:7880**.
 
 ### Double-click install (no terminal)
 
@@ -92,17 +92,17 @@ After cloning or downloading the repo, double-click the wrapper for your OS:
 ### Manual install
 
 ```bash
-git clone https://github.com/astrapi69/bibliogon.git
-cd bibliogon
+git clone https://github.com/astrapi69/adaptive_learner.git
+cd adaptive_learner
 ./start.sh
 ```
 
 ### Stop / Start / Uninstall
 
 ```bash
-cd ~/bibliogon && ./stop.sh                      # Stop
-cd ~/bibliogon && ./start.sh                      # Start again
-cd ~/bibliogon && ./stop.sh && cd ~ && rm -rf ~/bibliogon  # Uninstall
+cd ~/adaptive_learner && ./stop.sh                      # Stop
+cd ~/adaptive_learner && ./start.sh                      # Start again
+cd ~/adaptive_learner && ./stop.sh && cd ~ && rm -rf ~/adaptive_learner  # Uninstall
 ```
 
 ## Development
@@ -120,7 +120,7 @@ See [CLAUDE.md](CLAUDE.md) for full development documentation.
 The documentation is available in two forms:
 
 - **In-App:** Click the help icon in the navigation bar to open the slide-over help panel with search, navigation tree, and Markdown rendering.
-- **Online:** [astrapi69.github.io/bibliogon](https://astrapi69.github.io/bibliogon/) - MkDocs Material site with full-text search, light/dark mode, and i18n.
+- **Online:** [astrapi69.github.io/adaptive_learner](https://astrapi69.github.io/adaptive_learner/) - MkDocs Material site with full-text search, light/dark mode, and i18n.
 
 Both read from the same Markdown files in `docs/help/`. To build the docs locally:
 
@@ -167,26 +167,26 @@ Third-party plugins can be installed as ZIP files via Settings > Plugins.
 ## Configuration
 
 Three-layer config: project `app.yaml` (defaults) ← user override file
-(`~/.config/bibliogon/secrets.yaml`, gitignored) ← env-vars (CI/Docker).
+(`~/.config/adaptive_learner/secrets.yaml`, gitignored) ← env-vars (CI/Docker).
 Override-wins, env-vars always highest priority. Detailed guide:
 [docs/configuration.md](docs/configuration.md).
 
 Move secrets like `ai.api_key` out of project `app.yaml` into the
-override file or `BIBLIOGON_AI_API_KEY` env-var. The Settings UI
+override file or `ADAPTIVE_LEARNER_AI_API_KEY` env-var. The Settings UI
 hides the API-key input automatically when an override is active.
 
 Environment variables (set in `.env` or shell):
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `BIBLIOGON_PORT` | 7880 | Port for the web app |
-| `BIBLIOGON_DEBUG` | false | Debug mode (enables test endpoints, API docs) |
-| `BIBLIOGON_AI_API_KEY` | (unset) | Overrides `ai.api_key` from any yaml layer |
-| `BIBLIOGON_SECRET_KEY` | (generated) | Secret for license validation |
-| `BIBLIOGON_CREDENTIALS_SECRET` | (generated) | Secret for encrypting API keys and service account files |
-| `BIBLIOGON_CORS_ORIGINS` | localhost:7880 | Allowed CORS origins |
-| `BIBLIOGON_DATA_DIR` | platformdirs default | Root directory for runtime data (DB, uploads). Linux/macOS: `~/.local/share/bibliogon/`. Windows: `%LOCALAPPDATA%\bibliogon\`. Docker: `/app/data` |
-| `BIBLIOGON_DB_PATH` | (no longer honoured) | **Removed in v0.30.0** (DEP-DBPATH-01 step 3). The variable has no effect on path resolution; if still set in the environment, a single warning is logged at startup naming the ignored value. Set `BIBLIOGON_DATA_DIR` instead — the database resolves to `<BIBLIOGON_DATA_DIR>/bibliogon.db`. Deprecation timeline: warning v0.27.0, precedence flip v0.28.0, removal v0.30.0. |
+| `ADAPTIVE_LEARNER_PORT` | 7880 | Port for the web app |
+| `ADAPTIVE_LEARNER_DEBUG` | false | Debug mode (enables test endpoints, API docs) |
+| `ADAPTIVE_LEARNER_AI_API_KEY` | (unset) | Overrides `ai.api_key` from any yaml layer |
+| `ADAPTIVE_LEARNER_SECRET_KEY` | (generated) | Secret for license validation |
+| `ADAPTIVE_LEARNER_CREDENTIALS_SECRET` | (generated) | Secret for encrypting API keys and service account files |
+| `ADAPTIVE_LEARNER_CORS_ORIGINS` | localhost:7880 | Allowed CORS origins |
+| `ADAPTIVE_LEARNER_DATA_DIR` | platformdirs default | Root directory for runtime data (DB, uploads). Linux/macOS: `~/.local/share/adaptive_learner/`. Windows: `%LOCALAPPDATA%\adaptive_learner\`. Docker: `/app/data` |
+| `ADAPTIVE_LEARNER_DB_PATH` | (no longer honoured) | **Removed in v0.30.0** (DEP-DBPATH-01 step 3). The variable has no effect on path resolution; if still set in the environment, a single warning is logged at startup naming the ignored value. Set `ADAPTIVE_LEARNER_DATA_DIR` instead — the database resolves to `<ADAPTIVE_LEARNER_DATA_DIR>/adaptive_learner.db`. Deprecation timeline: warning v0.27.0, precedence flip v0.28.0, removal v0.30.0. |
 
 ## Related Projects
 
@@ -196,7 +196,7 @@ Environment variables (set in `.env` or shell):
 
 ## License
 
-Bibliogon is released under the [MIT License](LICENSE).
+Adaptive Learner is released under the [MIT License](LICENSE).
 All plugins are free and open source.
 
 ## Reporting Security Issues

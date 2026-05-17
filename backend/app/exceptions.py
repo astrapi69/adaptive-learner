@@ -1,12 +1,12 @@
 """Domain exception hierarchy.
 
 Per ``.claude/rules/code-hygiene.md``: services raise typed
-``BibliogonError`` subclasses; the global handler in ``main.py`` maps them
+``AdaptiveLearnerError`` subclasses; the global handler in ``main.py`` maps them
 to HTTP status codes. Routers stay thin; they catch nothing.
 """
 
 
-class BibliogonError(Exception):
+class AdaptiveLearnerError(Exception):
     """Base for domain errors. Each subclass pins its HTTP status."""
 
     status_code: int = 500
@@ -16,31 +16,31 @@ class BibliogonError(Exception):
         super().__init__(detail)
 
 
-class NotFoundError(BibliogonError):
+class NotFoundError(AdaptiveLearnerError):
     """Resource lookup miss (-> HTTP 404)."""
 
     status_code = 404
 
 
-class ValidationError(BibliogonError):
+class ValidationError(AdaptiveLearnerError):
     """Domain validation failed (-> HTTP 400)."""
 
     status_code = 400
 
 
-class ConflictError(BibliogonError):
+class ConflictError(AdaptiveLearnerError):
     """Resource already exists or state conflict (-> HTTP 409)."""
 
     status_code = 409
 
 
-class PayloadTooLargeError(BibliogonError):
+class PayloadTooLargeError(AdaptiveLearnerError):
     """Upload exceeds size cap (-> HTTP 413)."""
 
     status_code = 413
 
 
-class ExternalServiceError(BibliogonError):
+class ExternalServiceError(AdaptiveLearnerError):
     """External dependency unreachable or returned an error (-> HTTP 502)."""
 
     status_code = 502

@@ -7,7 +7,7 @@ import {eventRecorder, formatEventLog} from "../utils/eventRecorder";
 import {copyToClipboard} from "../utils/clipboard";
 import {useI18n} from "../hooks/useI18n";
 
-const ISSUES_URL = "https://github.com/astrapi69/bibliogon/issues/new";
+const ISSUES_URL = "https://github.com/astrapi69/adaptive_learner/issues/new";
 // GitHub rejects URLs over ~8192 chars. After encoding, special chars
 // (spaces, umlauts, markdown) expand 3x, so the raw body limit is ~2500.
 const MAX_ENCODED_URL = 7800;
@@ -91,7 +91,7 @@ export default function ErrorReportDialog({open, onClose, errorMessage, apiError
                     </div>
 
                     <p style={{fontSize: "0.875rem", color: "var(--text-secondary)", margin: "0 0 16px"}}>
-                        {t("ui.error_report.intro", "Bibliogon hat einen Fehler erkannt und kann einen Bug-Report für den Entwickler vorbereiten.")}
+                        {t("ui.error_report.intro", "AdaptiveLearner hat einen Fehler erkannt und kann einen Bug-Report für den Entwickler vorbereiten.")}
                     </p>
 
                     {/* Checkboxes */}
@@ -235,7 +235,7 @@ function buildIssueBody(
     // Environment
     if (includeEnv) {
         const env = [
-            `- Bibliogon Version: ${__APP_VERSION__}`,
+            `- AdaptiveLearner Version: ${__APP_VERSION__}`,
             `- Browser: ${navigator.userAgent.split(" ").slice(-3).join(" ")}`,
             `- OS: ${navigator.platform}`,
             `- Route: ${window.location.pathname}`,
@@ -251,7 +251,7 @@ function buildIssueBody(
     // Reproduction steps
     sections.push("## Reproduktion\n1.\n2.\n3.");
 
-    sections.push("---\n*Dieser Report wurde automatisch von Bibliogon erstellt. Keine sensiblen Daten wurden inkludiert.*");
+    sections.push("---\n*Dieser Report wurde automatisch von AdaptiveLearner erstellt. Keine sensiblen Daten wurden inkludiert.*");
 
     return sections.join("\n\n");
 }

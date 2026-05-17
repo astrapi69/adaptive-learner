@@ -108,7 +108,7 @@ dann Backup nochmal probieren.
 
 ```bash
 make dev-down
-rm -f backend/bibliogon.db   # nicht zwingend, aber auf Nummer sicher
+rm -f backend/adaptive_learner.db   # nicht zwingend, aber auf Nummer sicher
 make dev
 # dann Backup-Button klicken
 ```
@@ -216,8 +216,8 @@ Damit Phase 2 zielgenau wird, brauche ich:
 
 3. **DB-Stand vor dem Klick:**
    ```bash
-   sqlite3 backend/bibliogon.db "SELECT COUNT(*) FROM articles;"
-   sqlite3 backend/bibliogon.db "SELECT id, title, deleted_at FROM articles LIMIT 5;"
+   sqlite3 backend/adaptive_learner.db "SELECT COUNT(*) FROM articles;"
+   sqlite3 backend/adaptive_learner.db "SELECT id, title, deleted_at FROM articles LIMIT 5;"
    ```
 
 Mit diesen drei Outputs ist die Ursache eindeutig zuordenbar.
@@ -230,7 +230,7 @@ Mit diesen drei Outputs ist die Ursache eindeutig zuordenbar.
 
 `backup_import._validate_backup_manifest` (siehe
 `backend/app/services/backup/backup_import.py:83-92`) prüft nur
-`format == "bibliogon-backup"`. **`version` wird gar nicht
+`format == "adaptive-learner-backup"`. **`version` wird gar nicht
 gelesen.** Heißt:
 
 - Backups mit `version: "1.0"` und `version: "2.0"` werden gleich
@@ -247,7 +247,7 @@ Prüfung einbauen:
 version = manifest_data.get("version", "1.0")
 if version not in {"1.0", "2.0"}:
     logger.warning(
-        "Backup manifest version %s is newer than this Bibliogon "
+        "Backup manifest version %s is newer than this AdaptiveLearner "
         "supports; restoring with best-effort. Please upgrade.",
         version,
     )
@@ -327,7 +327,7 @@ f0139a6 docs(explorations): debug articles-backup user-flow gap (Phase 1)
 ed2e3ec feat(backup): articles + publications + article-assets in .bgb (manifest 2.0)
 faf3f9c docs(explorations): backup/restore articles audit (Phase 1)
 
-$ unzip -l ~/Downloads/bibliogon-backup-2026-04-29.bgb | head -30
+$ unzip -l ~/Downloads/adaptive-learner-backup-2026-04-29.bgb | head -30
    Length    Date      Time    Name
         0    2026-04-29 18:54  articles/
         0    2026-04-29 18:54  books/

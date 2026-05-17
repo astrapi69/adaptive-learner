@@ -1,6 +1,6 @@
-# Bibliogon unterstützen
+# AdaptiveLearner unterstützen
 
-Bibliogon ist eine Open-Source-Plattform zum Schreiben von Büchern, entwickelt von einer einzelnen Person im Offenen. Kein Tracking, kein Cloud-Backend, keine Werbung, keine Datensammlung. Deine Bücher bleiben auf deinem Gerät.
+AdaptiveLearner ist eine Open-Source-Plattform zum Schreiben von Büchern, entwickelt von einer einzelnen Person im Offenen. Kein Tracking, kein Cloud-Backend, keine Werbung, keine Datensammlung. Deine Bücher bleiben auf deinem Gerät.
 
 Wenn die App dir beim Schreiben hilft und du das Projekt am Leben halten möchtest: Spenden sind aktuell der einzige Monetarisierungsweg des Projekts. Alle Plugins bleiben in dieser Entwicklungsphase kostenlos (siehe `docs/explorations/monetization.md`).
 
@@ -46,11 +46,11 @@ Vier Kanäle sind aktiv. Nimm den, der dir passt; keiner wird bevorzugt beworben
 - Rechtliche Beratung zum Datenschutz (DSGVO, Plugin-Distribution)
 - Werkzeuge: Code-Signing-Zertifikate (zukünftig), CI-Minuten über den kostenlosen Kontingenten, Design- und UX-Review
 
-Niemand bezieht aktuell ein Gehalt aus Spenden. Bibliogon ist ein Seitenprojekt; Spenden sorgen dafür, dass es sich weiterbewegt, statt stillzustehen.
+Niemand bezieht aktuell ein Gehalt aus Spenden. AdaptiveLearner ist ein Seitenprojekt; Spenden sorgen dafür, dass es sich weiterbewegt, statt stillzustehen.
 
 ### Bekomme ich eine Spendenquittung?
 
-Jede Plattform sendet eine Bestätigung deiner Zahlung. Bibliogon selbst ist keine eingetragene Gemeinnützigkeit, Spenden sind daher **nicht steuerlich absetzbar**. Für eine Spendenquittung bei einer Firmenspende bitte ein Issue aufmachen - eine individuelle Rechnungsstellung ist möglich.
+Jede Plattform sendet eine Bestätigung deiner Zahlung. AdaptiveLearner selbst ist keine eingetragene Gemeinnützigkeit, Spenden sind daher **nicht steuerlich absetzbar**. Für eine Spendenquittung bei einer Firmenspende bitte ein Issue aufmachen - eine individuelle Rechnungsstellung ist möglich.
 
 ### Was ist der Unterschied zwischen wiederkehrenden und einmaligen Spenden?
 
@@ -59,7 +59,7 @@ Jede Plattform sendet eine Bestätigung deiner Zahlung. Bibliogon selbst ist kei
 
 ### Kann ich eine wiederkehrende Spende ändern oder kündigen?
 
-Ja, über die Plattform, auf der du sie gestartet hast. Jede Plattform hat ein Dashboard, in dem du den Betrag ändern oder mit einem Klick kündigen kannst. Bibliogon wickelt keine Zahlungen direkt ab und kann deine Zahlung weder einsehen noch ändern.
+Ja, über die Plattform, auf der du sie gestartet hast. Jede Plattform hat ein Dashboard, in dem du den Betrag ändern oder mit einem Klick kündigen kannst. AdaptiveLearner wickelt keine Zahlungen direkt ab und kann deine Zahlung weder einsehen noch ändern.
 
 ### Sind Spenden anonym?
 
@@ -81,11 +81,11 @@ Viele Wege, und alle sind wertvoll:
 - Bug-Reports mit klaren Reproduktionsschritten
 - Plugins oder Verbesserungen unter der bestehenden MIT-Lizenz beitragen
 - UI oder Dokumentation übersetzen (wir haben 8 Sprachen, jede Korrektur wird geschätzt)
-- Bibliogon anderen Autoren empfehlen, wenn es dir etwas bringt
+- AdaptiveLearner anderen Autoren empfehlen, wenn es dir etwas bringt
 
 ## Kontakt
 
-- GitHub-Issues: [github.com/astrapi69/bibliogon/issues](https://github.com/astrapi69/bibliogon/issues)
+- GitHub-Issues: [github.com/astrapi69/adaptive_learner/issues](https://github.com/astrapi69/adaptive_learner/issues)
 - Projekt-E-Mail: über das GitHub-Profil [github.com/astrapi69](https://github.com/astrapi69)
 
-Danke fürs Lesen. Wenn du dich für eine Spende entscheidest, ist das ehrlich sehr geschätzt. Wenn nicht, nutze Bibliogon trotzdem weiter; das Projekt ist für die Autoren da, nicht für die Einnahmen.
+Danke fürs Lesen. Wenn du dich für eine Spende entscheidest, ist das ehrlich sehr geschätzt. Wenn nicht, nutze AdaptiveLearner trotzdem weiter; das Projekt ist für die Autoren da, nicht für die Einnahmen.

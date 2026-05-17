@@ -3,7 +3,7 @@
  *
  * Pins the prefer-original_published_at-over-updated_at rule that
  * makes imported Medium articles show their canonical Medium publish
- * date instead of the Bibliogon import timestamp. See the matching
+ * date instead of the AdaptiveLearner import timestamp. See the matching
  * backend computed-field tests in test_articles.py.
  */
 import { describe, expect, it, vi } from "vitest";

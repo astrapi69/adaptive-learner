@@ -1,12 +1,12 @@
-"""Pydantic schemas, YAML serializer, and parser for Bibliogon
+"""Pydantic schemas, YAML serializer, and parser for AdaptiveLearner
 AI templates (``.biblio.yaml``).
 
 UNIVERSAL-AI-TEMPLATE-01 Session 1, commit 2/10.
 
-A Bibliogon AI template is a self-contained, self-explanatory
+A AdaptiveLearner AI template is a self-contained, self-explanatory
 YAML file describing one Article or Book and the metadata
 fields an AI assistant (or a human author) can fill in for it.
-The file is designed to travel without Bibliogon context: any
+The file is designed to travel without AdaptiveLearner context: any
 AI that reads YAML can understand from the file alone what
 goes where, because every fillable field carries a
 ``description`` and an ``example`` alongside its
@@ -154,11 +154,11 @@ _RULES_BLOCK = """\
 
 ARTICLE_HEADER = f"""\
 # ============================================================
-# Bibliogon Article Template (schema v{SCHEMA_VERSION})
+# AdaptiveLearner Article Template (schema v{SCHEMA_VERSION})
 # ============================================================
 #
-# Bibliogon is an open-source book and article authoring
-# platform. This file describes one Bibliogon Article and the
+# AdaptiveLearner is an open-source book and article authoring
+# platform. This file describes one AdaptiveLearner Article and the
 # metadata fields you can fill in for it.
 #
 {_RULES_BLOCK}
@@ -168,11 +168,11 @@ ARTICLE_HEADER = f"""\
 
 BOOK_HEADER = f"""\
 # ============================================================
-# Bibliogon Book Template (schema v{SCHEMA_VERSION})
+# AdaptiveLearner Book Template (schema v{SCHEMA_VERSION})
 # ============================================================
 #
-# Bibliogon is an open-source book and article authoring
-# platform. This file describes one Bibliogon Book and the
+# AdaptiveLearner is an open-source book and article authoring
+# platform. This file describes one AdaptiveLearner Book and the
 # metadata fields you can fill in for it.
 #
 {_RULES_BLOCK}
@@ -306,7 +306,7 @@ def apply_field(
     - Existing column populated + ``force=False``: skip.
     - Otherwise: write. JSON-list columns serialize via
       ``json.dumps`` so the on-disk text-as-list shape stays
-      consistent with the rest of Bibliogon's conventions."""
+      consistent with the rest of AdaptiveLearner's conventions."""
     if is_template_value_empty(new_value):
         return APPLY_SKIP_EMPTY
     existing = getattr(record, column_name)
@@ -471,7 +471,7 @@ def _article_field_specs() -> dict[str, dict[str, Any]]:
         },
         "topic": {
             "description": (
-                "Single primary topic (one word or short phrase). Bibliogon "
+                "Single primary topic (one word or short phrase). AdaptiveLearner "
                 "uses this to group articles by theme."
             ),
             "example": "Media Literacy",
@@ -674,7 +674,7 @@ def build_empty_book_template(language: str = "en") -> BookTemplate:
 
 def _decode_json_list(raw: str | None) -> list[Any]:
     """Decode a JSON-list-stored-as-text column back to a list.
-    Empty / NULL / malformed -> empty list (Bibliogon convention
+    Empty / NULL / malformed -> empty list (AdaptiveLearner convention
     for these columns; see lessons-learned)."""
     if not raw:
         return []

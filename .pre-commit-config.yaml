@@ -54,7 +54,7 @@ repos:
         name: plugin pyproject.toml must be staged with its poetry.lock
         entry: python3 scripts/check_plugin_lock_paired.py
         language: system
-        files: ^plugins/bibliogon-plugin-[^/]+/pyproject\.toml$
+        files: ^plugins/adaptive-learner-plugin-[^/]+/pyproject\.toml$
         pass_filenames: true
         stages: [pre-commit]
 

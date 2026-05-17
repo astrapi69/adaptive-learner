@@ -1,18 +1,18 @@
 # Medium import
 
-Bibliogon imports the entire Medium archive that you receive via "Download your information". Each post becomes a Bibliogon article, with provenance metadata and (optionally) locally-downloaded images.
+AdaptiveLearner imports the entire Medium archive that you receive via "Download your information". Each post becomes a AdaptiveLearner article, with provenance metadata and (optionally) locally-downloaded images.
 
 ## When to use it
 
 - You are leaving Medium and want a structured local copy of every post.
-- You moved to your own publication and want the full back catalogue searchable in Bibliogon.
-- You want to keep writing in Bibliogon while still mirroring to Medium for reach.
+- You moved to your own publication and want the full back catalogue searchable in AdaptiveLearner.
+- You want to keep writing in AdaptiveLearner while still mirroring to Medium for reach.
 
 ## Getting your archive
 
 1. On Medium, open **Settings → Security and apps → Download your information**.
 2. Click **Download .zip**. Medium emails a link within minutes for small accounts and within hours for large ones.
-3. Save the ZIP locally. Do **not** unpack it — Bibliogon reads the ZIP directly.
+3. Save the ZIP locally. Do **not** unpack it — AdaptiveLearner reads the ZIP directly.
 
 ## Running the import
 
@@ -20,7 +20,7 @@ Bibliogon imports the entire Medium archive that you receive via "Download your 
 2. Click **Aus Medium importieren** (Import from Medium) in the toolbar.
 3. The dedicated import page opens at `/articles/import/medium`. Adjust settings if needed (see below), then drop the ZIP into the upload zone or pick it via the file dialog. Maximum file size: 200 MB.
 4. Click **Import starten** (Start import). The progress bar shows the upload percentage; once the upload completes, the panel switches to a server-processing indicator. A 200-article archive typically takes 30-60 seconds.
-5. The result panel appears below with three sections: imported, skipped (already existed), errored. Imported article titles link directly to the Bibliogon article.
+5. The result panel appears below with three sections: imported, skipped (already existed), errored. Imported article titles link directly to the AdaptiveLearner article.
 
 You can navigate away from the page during the import and come back to it. The result panel is lost when you navigate away — record any unexpected errors before leaving.
 
@@ -28,7 +28,7 @@ You can navigate away from the page during the import and come back to it. The r
 
 Settings apply to every import; per-archive overrides are not supported.
 
-- **Bilder lokal herunterladen** (Download images locally) — recommended. Bibliogon stores each image under your Bibliogon data directory instead of pointing at the Medium CDN. Disable only if you intentionally want CDN-hosted images.
+- **Bilder lokal herunterladen** (Download images locally) — recommended. AdaptiveLearner stores each image under your AdaptiveLearner data directory instead of pointing at the Medium CDN. Disable only if you intentionally want CDN-hosted images.
 - **Timeout pro Bild-Download (Sekunden)** (Per-image download timeout) — default 30. Raise on slow connections; the importer skips the image and continues if the timeout fires.
 - **Bereits importierte Artikel überspringen** (Skip already-imported articles) — default on. Detection is by canonical Medium URL. Turn off only when you want to re-import a corrected archive on top of an existing one (see "Re-importing" below).
 - **Standardstatus für importierte Artikel** (Default status for imported articles) — draft, published, or archived. Default is published since Medium posts are by definition published.
@@ -44,8 +44,8 @@ The importer is idempotent by canonical Medium URL. Running the same archive twi
 
 - Title, subtitle (Medium "kicker"), publish date, canonical URL.
 - **SEO defaults.** `seo_title` is set to the article title; `seo_description` is set to the Medium subtitle when present. Tags stay empty (Medium's HTML export strips them). All three are editable in the editor; the existing AI-generate button is the path to refine them. For articles without a subtitle, `seo_description` stays empty by design — no heuristic guesswork from body text.
-- Body content, converted from Medium HTML to TipTap JSON (Bibliogon's editor format).
-- **Publish date.** The original Medium publish date is captured during import and stored on the article's Publication row. The dashboard tile and article view display it as the article's date (preferred over `updated_at`) so a 2020 Medium article shows "Feb 2020", not the import timestamp. Native Bibliogon articles without a Publication keep their `updated_at` display.
+- Body content, converted from Medium HTML to TipTap JSON (AdaptiveLearner's editor format).
+- **Publish date.** The original Medium publish date is captured during import and stored on the article's Publication row. The dashboard tile and article view display it as the article's date (preferred over `updated_at`) so a 2020 Medium article shows "Feb 2020", not the import timestamp. Native AdaptiveLearner articles without a Publication keep their `updated_at` display.
 - **Language**, auto-detected from the body text via `langdetect`. Medium HTML carries no language attribute, so detection runs over the body text statistically. Confident detections (≥0.85) are written to `Article.language`; ambiguous or very-short bodies fall back to `default_language` ("en"). You can change the language on any article in the editor; the importer never overwrites a manual change on re-import.
 - Images, downloaded to local storage when the setting is on. The post body's image references are rewritten to point at the local copies.
 - Provenance: an `ArticleImportSource` row records the source ZIP filename and the post's original HTML filename inside it. Useful for tracing an article back to its Medium origin.

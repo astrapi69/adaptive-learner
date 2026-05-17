@@ -1,6 +1,6 @@
-# Bibliogon Help
+# AdaptiveLearner Help
 
-Welcome to the Bibliogon documentation. Everything you need to write, format, and export books.
+Welcome to the AdaptiveLearner documentation. Everything you need to write, format, and export books.
 
 ## Quick Start
 
@@ -23,4 +23,4 @@ Welcome to the Bibliogon documentation. Everything you need to write, format, an
 - [Troubleshooting](troubleshooting.md) - Solutions for known issues
 - [Glossary](glossary.md) - Terms and abbreviations
 - [Plugin Development](developers/plugins.md) - Build your own plugins
-- [GitHub Issues](https://github.com/astrapi69/bibliogon/issues) - Report bugs and suggest features
+- [GitHub Issues](https://github.com/astrapi69/adaptive_learner/issues) - Report bugs and suggest features

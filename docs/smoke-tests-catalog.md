@@ -1,4 +1,4 @@
-# Bibliogon manual smoke-test catalog
+# AdaptiveLearner manual smoke-test catalog
 
 Structured per-feature catalog of manual smoke checks. Each entry has reproducible steps, severity, last-verified date, and a pointer to the related commit / backlog item / automated spec when one exists.
 
@@ -380,7 +380,7 @@ After issue creation, append `**Issue:** #<num>` under the test entry.
 **Last verified:** v0.22.0 audit covered 13 modals; non-wizard sweep open in backlog.
 
 ### CC-04: Production DB tripwire
-**Steps:** continuous; never write `bibliogon.db` outside `backend/` working copy.
+**Steps:** continuous; never write `adaptive_learner.db` outside `backend/` working copy.
 **Severity:** Critical (data corruption vector)
 **Last verified:** Continuously.
 

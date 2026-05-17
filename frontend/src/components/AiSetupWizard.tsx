@@ -2,7 +2,7 @@
  * First-run AI provider setup wizard.
  *
  * Shows on the Dashboard when AI is not yet configured (ai.enabled === false
- * and no "bibliogon-ai-setup-dismissed" flag in localStorage). Three steps:
+ * and no "adaptive-learner-ai-setup-dismissed" flag in localStorage). Three steps:
  * 1. Pick a provider
  * 2. Enter API key + model
  * 3. Test connection
@@ -19,13 +19,13 @@ import {notify} from "../utils/notify"
 import {api} from "../api/client"
 import {AI_PROVIDER_PRESETS, AI_PROVIDER_IDS, getProviderPreset} from "../utils/aiProviders"
 
-const DISMISSED_KEY = "bibliogon-ai-setup-dismissed"
+const DISMISSED_KEY = "adaptive-learner-ai-setup-dismissed"
 
 interface Props {
   open: boolean
   onClose: () => void
   /** True when the backend reports ai.api_key comes from
-   *  ~/.config/bibliogon/secrets.yaml or BIBLIOGON_AI_API_KEY.
+   *  ~/.config/adaptive_learner/secrets.yaml or ADAPTIVE_LEARNER_AI_API_KEY.
    *  Wizard hides the API-key input + skips its validation; the
    *  user has already configured the key out-of-band, the wizard
    *  must not block them from completing setup. */
@@ -179,7 +179,7 @@ export default function AiSetupWizard({open, onClose, secretsManagedExternally =
                   }}>
                     {t(
                       "ui.settings.ai_api_key_external_note",
-                      "API-Schlüssel wird aus externer Konfiguration gelesen (~/.config/bibliogon/secrets.yaml oder Umgebungsvariable BIBLIOGON_AI_API_KEY). Editiere die Datei direkt oder setze die Umgebungsvariable, um den Schlüssel zu ändern.",
+                      "API-Schlüssel wird aus externer Konfiguration gelesen (~/.config/adaptive_learner/secrets.yaml oder Umgebungsvariable ADAPTIVE_LEARNER_AI_API_KEY). Editiere die Datei direkt oder setze die Umgebungsvariable, um den Schlüssel zu ändern.",
                     )}
                   </div>
                 </div>

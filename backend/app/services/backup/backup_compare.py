@@ -34,7 +34,7 @@ def compare_backups(file_a: UploadFile, file_b: UploadFile) -> dict[str, Any]:
     _validate_filename(file_a.filename, label="A")
     _validate_filename(file_b.filename, label="B")
 
-    tmp_root = Path(tempfile.mkdtemp(prefix="bibliogon_compare_"))
+    tmp_root = Path(tempfile.mkdtemp(prefix="adaptive_learner_compare_"))
     try:
         dir_a = _extract_upload(file_a, tmp_root / "a", label="A")
         dir_b = _extract_upload(file_b, tmp_root / "b", label="B")
@@ -98,8 +98,8 @@ def _extract_upload(file: UploadFile, dest: Path, label: str) -> Path:
     manifest = find_manifest(extracted)
     if manifest:
         manifest_data = json.loads(manifest.read_text(encoding="utf-8"))
-        if manifest_data.get("format") != "bibliogon-backup":
-            raise ValidationError(f"Backup {label}: kein gültiges Bibliogon-Backup-Format")
+        if manifest_data.get("format") != "adaptive-learner-backup":
+            raise ValidationError(f"Backup {label}: kein gültiges AdaptiveLearner-Backup-Format")
 
     books_dir = find_books_dir(extracted)
     if not books_dir:

@@ -1,18 +1,18 @@
 # Medium-Import
 
-Bibliogon importiert das gesamte Medium-Archiv, das du über "Download your information" erhältst. Jeder Beitrag wird ein Bibliogon-Artikel mit Provenienz-Metadaten und (optional) lokal heruntergeladenen Bildern.
+AdaptiveLearner importiert das gesamte Medium-Archiv, das du über "Download your information" erhältst. Jeder Beitrag wird ein AdaptiveLearner-Artikel mit Provenienz-Metadaten und (optional) lokal heruntergeladenen Bildern.
 
 ## Wann verwenden
 
 - Du verlässt Medium und möchtest eine strukturierte lokale Kopie jedes Beitrags.
-- Du bist auf deine eigene Publikation umgezogen und möchtest den gesamten Katalog in Bibliogon durchsuchbar haben.
-- Du willst weiter in Bibliogon schreiben und parallel zu Medium spiegeln.
+- Du bist auf deine eigene Publikation umgezogen und möchtest den gesamten Katalog in AdaptiveLearner durchsuchbar haben.
+- Du willst weiter in AdaptiveLearner schreiben und parallel zu Medium spiegeln.
 
 ## Archiv abholen
 
 1. Auf Medium **Settings → Security and apps → Download your information** öffnen.
 2. **Download .zip** klicken. Medium schickt den Link per E-Mail – bei kleinen Accounts in Minuten, bei großen in Stunden.
-3. Die ZIP-Datei lokal speichern. **Nicht** entpacken – Bibliogon liest die ZIP direkt.
+3. Die ZIP-Datei lokal speichern. **Nicht** entpacken – AdaptiveLearner liest die ZIP direkt.
 
 ## Import durchführen
 
@@ -20,7 +20,7 @@ Bibliogon importiert das gesamte Medium-Archiv, das du über "Download your info
 2. **Aus Medium importieren** in der Werkzeugleiste klicken.
 3. Die dedizierte Import-Seite öffnet sich unter `/articles/import/medium`. Bei Bedarf Einstellungen anpassen (siehe unten), dann die ZIP-Datei in die Upload-Zone ziehen oder per Dateidialog auswählen. Maximalgröße: 200 MB.
 4. **Import starten** klicken. Der Fortschrittsbalken zeigt den Upload in Prozent; sobald der Upload abgeschlossen ist, wechselt das Panel auf eine Server-Verarbeitungsanzeige. Ein Archiv mit 200 Artikeln dauert typischerweise 30–60 Sekunden.
-5. Das Ergebnis erscheint darunter mit drei Bereichen: importiert, übersprungen (bereits vorhanden), Fehler. Die Titel der importierten Artikel verlinken direkt auf den Bibliogon-Artikel.
+5. Das Ergebnis erscheint darunter mit drei Bereichen: importiert, übersprungen (bereits vorhanden), Fehler. Die Titel der importierten Artikel verlinken direkt auf den AdaptiveLearner-Artikel.
 
 Du kannst die Seite während des Imports verlassen und später zurückkehren. Das Ergebnis-Panel geht beim Verlassen verloren – unerwartete Fehler vorher notieren.
 
@@ -28,7 +28,7 @@ Du kannst die Seite während des Imports verlassen und später zurückkehren. Da
 
 Die Einstellungen gelten für jeden Import; Überschreibungen pro Archiv werden nicht unterstützt.
 
-- **Bilder lokal herunterladen** – empfohlen. Bibliogon speichert jedes Bild im Bibliogon-Datenverzeichnis statt das Medium-CDN zu referenzieren. Nur deaktivieren, wenn du absichtlich CDN-gehostete Bilder behalten willst.
+- **Bilder lokal herunterladen** – empfohlen. AdaptiveLearner speichert jedes Bild im AdaptiveLearner-Datenverzeichnis statt das Medium-CDN zu referenzieren. Nur deaktivieren, wenn du absichtlich CDN-gehostete Bilder behalten willst.
 - **Timeout pro Bild-Download (Sekunden)** – Standard 30. Auf langsamen Verbindungen erhöhen; bei Timeout überspringt der Importer das Bild und setzt fort.
 - **Bereits importierte Artikel überspringen** – standardmäßig an. Erkennung erfolgt über die kanonische Medium-URL. Nur deaktivieren, wenn du ein korrigiertes Archiv erneut über ein bestehendes laufen lassen willst (siehe "Erneuter Import" unten).
 - **Standardstatus für importierte Artikel** – Entwurf, Veröffentlicht oder Archiviert. Standard ist Veröffentlicht, da Medium-Beiträge per Definition veröffentlicht sind.
@@ -44,8 +44,8 @@ Der Importer ist idempotent über die kanonische Medium-URL. Dasselbe Archiv zwe
 
 - Titel, Untertitel (Medium-"Kicker"), Veröffentlichungsdatum, kanonische URL.
 - **SEO-Standardwerte.** `seo_title` wird auf den Artikeltitel gesetzt; `seo_description` auf den Medium-Untertitel, sofern vorhanden. Tags bleiben leer (Mediums HTML-Export liefert keine). Alle drei Felder sind im Editor bearbeitbar; der bestehende AI-Generieren-Button ist der Weg zur Verfeinerung. Bei Artikeln ohne Untertitel bleibt `seo_description` bewusst leer — keine Heuristik-Rätselei aus dem Body-Text.
-- Inhalt, von Medium-HTML in TipTap-JSON (Bibliogons Editor-Format) konvertiert.
-- **Veröffentlichungsdatum.** Das ursprüngliche Medium-Veröffentlichungsdatum wird beim Import erfasst und in der Publication-Zeile des Artikels gespeichert. Die Dashboard-Kachel und die Artikelansicht zeigen es als Datum des Artikels an (bevorzugt gegenüber `updated_at`), sodass ein 2020 veröffentlichter Medium-Artikel "Feb. 2020" anzeigt – nicht den Import-Zeitstempel. Native Bibliogon-Artikel ohne Publication behalten ihre `updated_at`-Anzeige.
+- Inhalt, von Medium-HTML in TipTap-JSON (AdaptiveLearners Editor-Format) konvertiert.
+- **Veröffentlichungsdatum.** Das ursprüngliche Medium-Veröffentlichungsdatum wird beim Import erfasst und in der Publication-Zeile des Artikels gespeichert. Die Dashboard-Kachel und die Artikelansicht zeigen es als Datum des Artikels an (bevorzugt gegenüber `updated_at`), sodass ein 2020 veröffentlichter Medium-Artikel "Feb. 2020" anzeigt – nicht den Import-Zeitstempel. Native AdaptiveLearner-Artikel ohne Publication behalten ihre `updated_at`-Anzeige.
 - **Sprache**, automatisch aus dem Beitragstext erkannt mittels `langdetect`. Medium-HTML enthält keine Sprachangabe, daher erfolgt die Erkennung statistisch über den Beitragstext. Sichere Erkennungen (≥0,85) werden in `Article.language` gespeichert; mehrdeutige oder sehr kurze Beiträge fallen auf `default_language` ("en") zurück. Du kannst die Sprache jedes Artikels im Editor ändern; ein erneuter Import überschreibt manuelle Änderungen nicht.
 - Bilder, lokal gespeichert, wenn die Einstellung aktiv ist. Bildreferenzen im Beitragstext werden auf die lokalen Kopien umgeschrieben.
 - Provenienz: Ein `ArticleImportSource`-Eintrag speichert den Namen der Quell-ZIP und den ursprünglichen HTML-Dateinamen darin. Nützlich, um einen Artikel auf seinen Medium-Ursprung zurückzuführen.
