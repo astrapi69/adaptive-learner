@@ -56,18 +56,7 @@ author:
 plugins:
   config_dir: config/plugins
   disabled: []
-  enabled:
-  - export
-  - help
-  - getstarted
-  - ms-tools
-  - audiobook
-  - kdp
-  - translation
-  - kinderbuch
-  - grammar
-  - git-sync
-  - medium-import
+  enabled: []
   entry_point_group: bibliogon.plugins
 ui:
   logo: assets/logo.svg

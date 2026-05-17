@@ -32,9 +32,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.import_plugins import (
     find_handler,
-    find_remote_handler,
     list_plugins,
-    list_remote_handlers,
 )
 from app.import_plugins.protocol import DetectedProject
 from app.models import Book, BookImportSource
@@ -67,21 +65,11 @@ class DetectResponse(BaseModel):
     )
 
 
-class GitDetectRequest(BaseModel):
-    git_url: str = Field(min_length=1, max_length=2000)
-
-
 class ExecuteRequest(BaseModel):
     temp_ref: str
     overrides: dict = Field(default_factory=dict)
     duplicate_action: Literal["create", "overwrite", "cancel"] = "create"
     existing_book_id: str | None = None
-    #: When detected.git_repo.present is True, the user picks one of:
-    #: "start_fresh" (default; ignore .git/),
-    #: "adopt_with_remote" (copy .git/ + adopt remote URL),
-    #: "adopt_without_remote" (copy .git/, strip remote).
-    #: None is equivalent to "start_fresh".
-    git_adoption: Literal["start_fresh", "adopt_with_remote", "adopt_without_remote"] | None = None
 
 
 class ExecuteResponse(BaseModel):
@@ -221,75 +209,6 @@ def _is_safe_rel_path(path: str) -> bool:
     return not any(p == ".." for p in parts) and not path.startswith("/")
 
 
-@router.post("/detect/git", response_model=DetectResponse)
-def detect_git_import(
-    payload: GitDetectRequest,
-    db: Session = Depends(get_db),
-) -> DetectResponse:
-    """Clone a git URL into a fresh staging directory and dispatch.
-
-    Protocol:
-    1. Pick the first registered ``RemoteSourceHandler`` whose
-       ``can_handle(url)`` returns True (currently only
-       plugin-git-sync).
-    2. Ask it to clone into ``<STAGING_DIR>/<temp_ref>/payload/``.
-    3. Dispatch the cloned directory through ``find_handler()`` so
-       the existing format handlers (WBT, markdown-folder, ...) run
-       their detect pipeline on it.
-    4. Return the standard :class:`DetectResponse`; follow-up
-       ``POST /api/import/execute`` resolves ``temp_ref`` the same
-       way as file-based imports.
-    """
-    remote = find_remote_handler(payload.git_url)
-    if remote is None:
-        raise HTTPException(
-            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            detail={
-                "message": (
-                    "No remote-source handler can clone this URL. "
-                    "Install a plugin that registers a git/remote "
-                    "handler (e.g. plugin-git-sync)."
-                ),
-                "registered_remote_kinds": [
-                    getattr(h, "source_kind", "unknown") for h in list_remote_handlers()
-                ],
-            },
-        )
-
-    _gc_stale_staging()
-    temp_ref = f"imp-{uuid.uuid4().hex}"
-    payload_dir = _STAGING_DIR / temp_ref / "payload"
-    payload_dir.mkdir(parents=True, exist_ok=True)
-
-    try:
-        staging_path = remote.clone(payload.git_url, payload_dir)
-    except Exception as exc:
-        _drop_staged(temp_ref)
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Clone failed: {exc}",
-        ) from exc
-
-    plugin = find_handler(str(staging_path))
-    if plugin is None:
-        _drop_staged(temp_ref)
-        raise HTTPException(
-            status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-            detail={
-                "message": (
-                    "Cloned repository does not match any known book "
-                    "layout (expected write-book-template structure)."
-                ),
-                "registered_formats": [p.format_name for p in list_plugins()],
-            },
-        )
-
-    detected = plugin.detect(str(staging_path))
-    duplicate = _check_duplicate(db, detected)
-
-    return DetectResponse(detected=detected, duplicate=duplicate, temp_ref=temp_ref)
-
-
 @router.post("/execute", response_model=ExecuteResponse)
 def execute_import(
     payload: ExecuteRequest,
@@ -355,19 +274,6 @@ def execute_import(
                 detail=str(exc),
             ) from exc
 
-    # Reject git_adoption=adopt_* when the source carries no .git/;
-    # handler would silently no-op which is worse than a 400.
-    if payload.git_adoption and payload.git_adoption.startswith("adopt"):
-        if detected.git_repo is None or not detected.git_repo.present:
-            _drop_staged(payload.temp_ref)
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=(
-                    "git_adoption=adopt_* requires detected.git_repo.present; "
-                    "source has no .git/ directory."
-                ),
-            )
-
     is_multi_book_path = bool(
         detected.is_multi_book and detected.books and hasattr(plugin, "execute_multi")
     )
@@ -391,7 +297,6 @@ def execute_import(
                 payload.overrides,
                 duplicate_action=payload.duplicate_action,
                 existing_book_id=payload.existing_book_id,
-                git_adoption=payload.git_adoption,
             )
             ids = [book_id] if book_id else []
     except MandatoryFieldMissing as exc:
@@ -441,16 +346,6 @@ def execute_import(
             format_name=detected.format_name,
             overwrote=payload.duplicate_action == "overwrite",
         )
-
-    # PGS-02: if the staged source was a git clone, lift it into
-    # the long-lived uploads/git-sync/{book_id}/repo/ tree and
-    # write the GitSyncMapping row. Failures log + skip - the
-    # book itself is already committed and the user must not
-    # lose it because mapping persistence had a hiccup.
-    if not is_multi_book_path and book_id:
-        from app.services.git_sync_mapping import persist_clone_after_import
-
-        persist_clone_after_import(db, staging_path=staging_path, book_id=book_id)
 
     _drop_staged(payload.temp_ref)
 

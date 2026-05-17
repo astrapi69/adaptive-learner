@@ -31,11 +31,8 @@ from app.routers import (
     article_ai_fill,
     article_ai_template,
     article_assets,
-    article_bulk_export,
-    article_export,
     articles,
     assets,
-    audiobook,
     authors,
     backup,
     book_ai_fill,
@@ -46,19 +43,12 @@ from app.routers import (
     chapters,
     comments,
     covers,
-    git_backup,
-    git_import_backfill,
-    git_sync,
     import_orchestrator,
     licenses,
     plugin_install,
     publications,
     settings,
     templates,
-    translations,
-)
-from app.routers import (
-    ssh_keys as ssh_keys_router,
 )
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -558,8 +548,6 @@ app.include_router(books.router, prefix="/api")
 app.include_router(articles.router, prefix="/api")
 app.include_router(authors.router, prefix="/api")
 app.include_router(article_assets.router, prefix="/api")
-app.include_router(article_export.router, prefix="/api")
-app.include_router(article_bulk_export.router, prefix="/api")
 app.include_router(article_ai_template.articles_router, prefix="/api")
 app.include_router(article_ai_template.empty_router, prefix="/api")
 app.include_router(article_ai_fill.router, prefix="/api")
@@ -578,7 +566,6 @@ app.include_router(publications.publications_router, prefix="/api")
 app.include_router(publications.platform_schemas_router, prefix="/api")
 app.include_router(chapters.router, prefix="/api")
 app.include_router(assets.router, prefix="/api")
-app.include_router(audiobook.router, prefix="/api")
 app.include_router(covers.router, prefix="/api")
 app.include_router(backup.router, prefix="/api")
 app.include_router(import_orchestrator.router, prefix="/api")
@@ -587,11 +574,6 @@ app.include_router(settings.router, prefix="/api")
 app.include_router(plugin_install.router, prefix="/api")
 app.include_router(templates.router, prefix="/api")
 app.include_router(chapter_templates.router, prefix="/api")
-app.include_router(git_backup.router, prefix="/api")
-app.include_router(git_import_backfill.router, prefix="/api")
-app.include_router(git_sync.router, prefix="/api")
-app.include_router(translations.router, prefix="/api")
-app.include_router(ssh_keys_router.router, prefix="/api")
 
 from app.ai.routes import router as ai_router
 
