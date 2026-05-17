@@ -1,18 +1,31 @@
-"""Alembic environment configuration for AdaptiveLearner."""
+"""Alembic environment configuration for Adaptive Learner."""
 
 import logging
 from logging.config import fileConfig
 
 from alembic import context
+from sqlalchemy import create_engine
 
 import app.models  # noqa: F401 - ensure models are registered
-from app.database import DATABASE_URL, Base, engine
+from app.database import DATABASE_URL, Base
 
 # Alembic Config object
 config = context.config
 
-# Set the database URL from our app config
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+# Three layers of URL precedence:
+#
+#   1. Caller-set ``sqlalchemy.url`` on the Config (tests do
+#      ``cfg.set_main_option("sqlalchemy.url", "sqlite:///...")``).
+#   2. The standard ``alembic.ini`` ``sqlalchemy.url`` setting.
+#   3. The app's resolved ``DATABASE_URL`` (production fallback,
+#      which also seeds the value at module import time).
+#
+# Reading the URL from the config (not from ``app.database.engine``)
+# matters because the production app.database.engine is frozen at
+# import time against the env-var URL, while tests need to point at
+# a tmp file per test.
+if not config.get_main_option("sqlalchemy.url"):
+    config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # Logging.
 #
@@ -59,8 +72,18 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode."""
-    with engine.connect() as connection:
+    """Run migrations in 'online' mode.
+
+    Builds a fresh engine from the resolved ``sqlalchemy.url`` rather
+    than reusing ``app.database.engine``: the latter is frozen at
+    module import time against the env-var URL, while tests need a
+    per-call URL override (``cfg.set_main_option("sqlalchemy.url",
+    ...)``).
+    """
+    url = config.get_main_option("sqlalchemy.url")
+    assert url, "alembic env.py: sqlalchemy.url is empty"
+    fresh_engine = create_engine(url)
+    with fresh_engine.connect() as connection:
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
