@@ -21,7 +21,7 @@ import enum
 import uuid
 from datetime import UTC, datetime
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -70,6 +70,20 @@ class ChapterType(str, enum.Enum):
 
 
 class Book(Base):
+    """EXAMPLE-DOMAIN: Bare-CRUD example. Adapt or replace for your project's domain.
+
+    Demonstrates the minimal SQLAlchemy 2.0 mapped-column shape:
+    primary key, scalar user-data fields, soft-delete + audit
+    timestamps, cascade-delete relationships to Chapter + Asset.
+    The skeleton ships only the 5 user-data fields the bare CRUD
+    needs (title, subtitle, author, language, description).
+    Bibliogon's feature-specific columns (publisher metadata,
+    ISBN/ASIN, BISAC, categories, audiobook/TTS, ms-tools
+    thresholds, translation-group id, picture-book discriminator)
+    were stripped in the skeleton extraction; replace with your
+    domain's columns when ready.
+    """
+
     __tablename__ = "books"
 
     id: Mapped[str] = mapped_column(String(32), primary_key=True, default=_new_id)
@@ -77,108 +91,7 @@ class Book(Base):
     subtitle: Mapped[str | None] = mapped_column(String(500), nullable=True)
     author: Mapped[str | None] = mapped_column(String(300), nullable=True)
     language: Mapped[str] = mapped_column(String(10), default="de")
-    series: Mapped[str | None] = mapped_column(String(300), nullable=True)
-    series_index: Mapped[int | None] = mapped_column(Integer, nullable=True)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    genre: Mapped[str | None] = mapped_column(String(100), nullable=True)
-
-    # Phase-4 discriminator. Splits the editor + export pipeline AND
-    # identifies the owning plugin:
-    #   "prose"        -> chapter-based editor + pandoc/manuscripta
-    #                     export (core).
-    #   "picture_book" -> page-based editor + Playwright renderer
-    #                     (plugin-kinderbuch). v1 active.
-    #   "comic_book"   -> reserved for future plugin-comics. The
-    #                     value is defined in the Pydantic schema
-    #                     layer so a comics plugin can ship without
-    #                     migrating this column.
-    # Immutable after creation; enforced by the books PATCH handler.
-    book_type: Mapped[str] = mapped_column(
-        String(30), nullable=False, default="prose", server_default="prose"
-    )
-
-    # Publishing metadata
-    edition: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    publisher: Mapped[str | None] = mapped_column(String(300), nullable=True)
-    publisher_city: Mapped[str | None] = mapped_column(String(200), nullable=True)
-    publish_date: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    isbn_ebook: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    isbn_paperback: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    isbn_hardcover: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    asin_ebook: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    asin_paperback: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    asin_hardcover: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    keywords: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON array
-    # Bug 9: Books-only subject categorisation. Categories is free-
-    # text (KDP-style category names like "Fiction > Fantasy >
-    # Coming of Age" — the KDP plugin's yaml catalogue ships 25
-    # canonical suggestions, but any string is valid because
-    # platforms beyond KDP have their own taxonomies). BISAC codes
-    # are the industry-standard 9-char identifier (3 letters +
-    # 6 digits, e.g. ``FIC022020`` for Fantasy/Coming of Age) used
-    # by every retail catalogue (KDP, Apple Books, Kobo, Ingram).
-    # Both stored as JSON-encoded list[str] in Text columns,
-    # following the ``keywords`` precedent. Articles deliberately
-    # do NOT get these columns — they use Topic (single enum) +
-    # Tags (free-text) per D9; see the "Intentional asymmetry"
-    # lessons-learned entry for the rationale.
-    categories: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON array
-    bisac_codes: Mapped[str | None] = mapped_column(Text, nullable=True)  # JSON array
-    html_description: Mapped[str | None] = mapped_column(
-        Text, nullable=True
-    )  # Amazon book description
-    backpage_description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    backpage_author_bio: Mapped[str | None] = mapped_column(Text, nullable=True)
-    cover_image: Mapped[str | None] = mapped_column(String(500), nullable=True)
-    custom_css: Mapped[str | None] = mapped_column(Text, nullable=True)
-
-    # UNIVERSAL-AI-TEMPLATE-01 Session 1 fields. ``cover_image_prompt`` is the
-    # Stable-Diffusion-style prompt for the book cover. ``chapter_summaries``
-    # is a JSON-encoded list ``[{chapter_id, title, summary}]`` — same
-    # JSON-list-stored-as-text precedent as ``keywords``.
-    cover_image_prompt: Mapped[str | None] = mapped_column(Text, nullable=True)
-    chapter_summaries: Mapped[str] = mapped_column(
-        Text, nullable=False, default="[]", server_default="[]"
-    )
-
-    # AI-assisted content flag (for KDP/export metadata)
-    ai_assisted: Mapped[bool] = mapped_column(default=False)
-    # Cumulative AI token usage for this book (prompt + completion tokens)
-    ai_tokens_used: Mapped[int] = mapped_column(default=0)
-
-    # Audiobook / TTS settings per book
-    tts_engine: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    tts_voice: Mapped[str | None] = mapped_column(String(200), nullable=True)
-    tts_language: Mapped[str | None] = mapped_column(String(10), nullable=True)
-    tts_speed: Mapped[str | None] = mapped_column(
-        String(10), nullable=True
-    )  # e.g. "1.0", "0.75", "1.25"
-    # Audiobook merge mode: "separate", "merged", "both" (None -> use plugin default)
-    audiobook_merge: Mapped[str | None] = mapped_column(String(20), nullable=True)
-    # Custom audiobook output filename (without extension). None -> derive from book title.
-    audiobook_filename: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    # When True, the next audiobook export regenerates every chapter and
-    # skips the "audiobook already exists" confirm dialog. Replaces the
-    # former plugin-global ``audiobook.settings.overwrite_existing`` flag.
-    audiobook_overwrite_existing: Mapped[bool] = mapped_column(default=False)
-    # JSON-encoded list of chapter type strings to skip during audiobook
-    # generation, e.g. ``["toc", "imprint", "index"]``. Replaces the
-    # former plugin-global ``audiobook.settings.skip_types`` list. Empty
-    # string or NULL means "use the audiobook generator's built-in
-    # SKIP_TYPES fallback". Same Text-as-JSON pattern as ``keywords``.
-    audiobook_skip_chapter_types: Mapped[str | None] = mapped_column(Text, nullable=True)
-
-    # PGS-04: shared id across translations of the same book. NULL when
-    # the book is not linked to any others. Auto-populated on multi-branch
-    # git imports; user-settable via the Settings link/unlink UI for
-    # books imported separately. Flat cross-link - no master/translation
-    # hierarchy, every book in the group references the same id.
-    translation_group_id: Mapped[str | None] = mapped_column(String(36), nullable=True, index=True)
-
-    # ms-tools per-book threshold overrides. None -> fall back to plugin defaults.
-    ms_tools_max_sentence_length: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    ms_tools_repetition_window: Mapped[int | None] = mapped_column(Integer, nullable=True)
-    ms_tools_max_filler_ratio: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     updated_at: Mapped[datetime] = mapped_column(
@@ -189,20 +102,12 @@ class Book(Base):
     chapters: Mapped[list["Chapter"]] = relationship(
         back_populates="book", cascade="all, delete-orphan", order_by="Chapter.position"
     )
-    import_source: Mapped["BookImportSource | None"] = relationship(
-        back_populates="book",
-        cascade="all, delete-orphan",
-        uselist=False,
-    )
     assets: Mapped[list["Asset"]] = relationship(
         back_populates="book", cascade="all, delete-orphan"
     )
-    pages: Mapped[list["Page"]] = relationship(
-        back_populates="book", cascade="all, delete-orphan", order_by="Page.position"
-    )
 
     def __repr__(self) -> str:
-        return f"<Book {self.id!r} title={self.title!r} type={self.book_type}>"
+        return f"<Book {self.id!r} title={self.title!r}>"
 
 
 class Chapter(Base):
