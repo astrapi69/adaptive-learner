@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Selection state hook tests. Selection is component-local (NOT
  * URL-synced); these cases pin the toggle / select-all / clear

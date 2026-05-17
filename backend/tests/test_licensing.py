@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Unit tests for `app.licensing`.
 
 The module implements offline HMAC-SHA256 license validation. Although the

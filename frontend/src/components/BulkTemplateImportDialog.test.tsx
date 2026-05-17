@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 import {describe, it, expect, vi, beforeEach} from "vitest"
 import {render, screen, fireEvent, waitFor} from "@testing-library/react"
 import BulkTemplateImportDialog from "./BulkTemplateImportDialog"

@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Tests for the AiSetupWizard externally-managed-secrets branch
  * (T-XX secrets refactor, addendum 3).

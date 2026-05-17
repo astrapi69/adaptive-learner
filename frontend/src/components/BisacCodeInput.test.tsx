@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * BisacCodeInput tests (Bug 9). Pins the format-validation logic
  * (mirror of the server-side ``BISAC_CODE_RE``) + the chip

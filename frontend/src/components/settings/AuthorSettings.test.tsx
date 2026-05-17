@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * AuthorSettings tests pin the testid surface and the pen-name list
  * mutations (add, remove, dedup, save-payload shape). Extracted from

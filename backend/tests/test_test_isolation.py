@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Regression tests for the test-vs-production DB isolation contract.
 
 These tests exist as a tripwire: if somebody reverts the env-var logic

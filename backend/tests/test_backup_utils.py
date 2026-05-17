@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for backup utility functions (CW-11).
 
 Covers pure functions from archive_utils, asset_utils, and markdown_utils

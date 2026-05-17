@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * CommentPreviewModal tests pin the pure-presentational contract:
  * - Closed when comment === null (testid absent from DOM).

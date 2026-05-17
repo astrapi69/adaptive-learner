@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for ``POST /api/articles/{id}/ai/generate-meta`` plus the
 permissive tag parser. AI provider call is patched so no network /
 key required.

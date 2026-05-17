@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Content-safety: optimistic locking + chapter_versions retention.
 
 Covers the contract the Editor depends on:

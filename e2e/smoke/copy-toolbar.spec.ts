@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * v0.32.0 F3 E2E smoke: toolbar Copy split-button.
  *

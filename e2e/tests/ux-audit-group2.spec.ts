@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * UX-Full-Audit Surface Group 2: Dashboards walkthrough.
  *
@@ -202,27 +205,6 @@ test.describe("UX-Audit Group 2: Dashboards", () => {
             .count()
         // eslint-disable-next-line no-console
         console.log(`table: ${tableExists}, empty: ${emptyState}`)
-    })
-
-    test("06 Medium Import page", async ({page}) => {
-        await page.goto("http://localhost:5173/articles/import/medium")
-        await page.waitForTimeout(1000)
-        await snap(page, "06-medium-import-page")
-
-        const fileInput = await page.locator('input[type="file"]').count()
-        const backBtn = await page
-            .locator('[data-testid="medium-import-back"]')
-            .count()
-        const homeBtn = await page
-            .locator('[data-testid="medium-import-home-btn"]')
-            .count()
-        const startBtn = await page
-            .locator('[data-testid="medium-import-start"]')
-            .count()
-        // eslint-disable-next-line no-console
-        console.log(
-            `Medium import: file-input=${fileInput} back=${backBtn} home=${homeBtn} start=${startBtn}`,
-        )
     })
 
     test("07 Dark mode - all dashboards", async ({page}) => {

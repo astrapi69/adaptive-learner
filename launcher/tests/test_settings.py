@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for launcher settings module and update check guard integration."""
 
 from __future__ import annotations

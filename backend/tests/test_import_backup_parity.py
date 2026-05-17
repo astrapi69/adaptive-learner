@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Parity probe: same .bgb through legacy /api/backup/import vs orchestrator.
 
 CIO-05 removed ``/api/backup/smart-import`` + ``/api/backup/import-project``

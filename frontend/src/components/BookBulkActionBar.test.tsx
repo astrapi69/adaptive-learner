@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * BookBulkActionBar tests pin the threshold UI rules
  * (disabled at 0, warning at >50, error at >200) and the Export

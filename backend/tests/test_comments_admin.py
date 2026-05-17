@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the /api/comments admin router.
 
 MEDIUM-COMMENTS-IMPORT-01 commit 7. Covers list with optional

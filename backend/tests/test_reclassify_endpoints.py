@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the reciprocal reclassify endpoints (v0.32.0 F2b).
 
 Two endpoints under test:

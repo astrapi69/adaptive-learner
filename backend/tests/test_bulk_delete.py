@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """End-to-end tests for POST /api/articles/bulk-delete,
 POST /api/books/bulk-delete, and POST /api/comments/bulk-delete.
 

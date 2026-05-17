@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for Book.categories + Book.bisac_codes (Bug 9).
 
 Covers:

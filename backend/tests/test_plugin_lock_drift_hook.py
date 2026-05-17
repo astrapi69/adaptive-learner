@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Self-check tests for the plugin-lock-paired pre-commit hook.
 
 Sub-task 3 of PLUGIN-LOCKFILE-DRIFT-01. Tests the script directly

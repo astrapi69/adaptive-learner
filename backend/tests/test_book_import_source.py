@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the BookImportSource model.
 
 Covers the row-level contract: create, query by source identifier,

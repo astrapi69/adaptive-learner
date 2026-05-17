@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Bug 4a E2E smoke: bulk-delete flow on the Comments-Admin tab.
  *

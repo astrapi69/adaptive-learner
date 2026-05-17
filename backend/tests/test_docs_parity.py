@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Bilingual parity for docs/help/en/ and docs/help/de/.
 
 Every English help page must have a German counterpart at the

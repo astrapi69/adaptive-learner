@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Pins the three-event contract of `useFlushOnUnload`:
  * beforeunload + pagehide + visibilitychange (when hidden) all fire

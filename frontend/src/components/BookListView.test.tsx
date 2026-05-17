@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Tests for Bug 2 fix (commit `feat(books): BookDashboard list-view
  * selection checkboxes`).

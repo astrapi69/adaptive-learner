@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * UNIVERSAL-AI-TEMPLATE-02 Session 2 smoke: covers the external
  * YAML round-trip workflow (Workflow C) end-to-end on the

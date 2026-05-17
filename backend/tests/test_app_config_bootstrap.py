@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for app.yaml auto-creation from app.yaml.example on first startup."""
 
 import shutil

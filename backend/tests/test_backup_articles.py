@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the articles segment of the backup pipeline.
 
 Covers the v2.0 manifest contract (articles + publications +

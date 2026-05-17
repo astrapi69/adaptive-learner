@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the ArticleImportSource model.
 
 Parallel of test_book_import_source.py. Covers create, lookup by

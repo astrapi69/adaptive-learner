@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """End-to-end tests for the import orchestrator endpoints.
 
 Covers the full detect -> execute flow with duplicate detection

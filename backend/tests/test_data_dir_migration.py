@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the Phase 2 XDG data-dir migration.
 
 The migration helper (``app.data_dir_migration.migrate_data_dir_if_needed``)

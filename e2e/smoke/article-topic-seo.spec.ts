@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * AR-02 Phase 2.1 smoke: Settings → Topics manages a list of topics
  * that the ArticleEditor consumes via a settings-managed dropdown.

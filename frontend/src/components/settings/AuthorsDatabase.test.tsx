@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Bug 8 Phase 1, Commit 5: tests for the Authors-Database
  * Settings tab.

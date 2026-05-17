@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * PluginSettings tests pin the testid surface and the lifecycle
  * callbacks (toggle on/off, activate, install trigger, remove via

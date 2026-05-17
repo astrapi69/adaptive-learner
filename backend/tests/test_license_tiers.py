@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the license infrastructure (dormant but preserved for future reactivation).
 
 The licensing system is currently disabled (LICENSING_ENABLED=False), but these

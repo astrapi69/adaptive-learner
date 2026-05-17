@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Article-to-book conversion (Phase 1) integration tests.
 
 Backs ``POST /api/books/from-articles``. Per the user's confirmed

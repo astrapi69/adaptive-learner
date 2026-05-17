@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Integration tests for dynamically mounted plugin routes (Kinderbuch, KDP).
 
 These plugins are registered during the FastAPI lifespan, so the TestClient

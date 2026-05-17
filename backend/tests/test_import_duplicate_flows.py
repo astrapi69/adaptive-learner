@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """End-to-end duplicate-action flow tests.
 
 ``test_import_orchestrator_e2e.py`` covers the base happy paths;

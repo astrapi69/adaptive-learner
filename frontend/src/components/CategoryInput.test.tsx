@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * CategoryInput tests (Bug 9). Pins the chip-list + add-input
  * surface + the case-insensitive dedup matching the server-side

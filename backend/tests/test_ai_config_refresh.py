@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Regression tests: AI config changes take effect without server restart.
 
 Verifies that toggling ai.enabled in settings is reflected immediately

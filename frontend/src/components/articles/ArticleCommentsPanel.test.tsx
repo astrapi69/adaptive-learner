@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * MEDIUM-COMMENTS-UI-01 commit 3: tests for the read-only
  * editor-sidebar comments panel.

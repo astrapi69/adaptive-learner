@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Execute-path wiring for git_adoption override.
 
 Covers the new orchestrator ExecuteRequest.git_adoption field and

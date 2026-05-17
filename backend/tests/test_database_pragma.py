@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Verify the SQLite PRAGMA event listener is active on every connection.
 
 These checks are cheap and catch a class of regression where the

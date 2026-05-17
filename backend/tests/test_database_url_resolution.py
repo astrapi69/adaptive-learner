@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Verify _resolve_database_url honours its priority chain.
 
 Covers DEP-DBPATH-01 step 3 (full removal of ADAPTIVE_LEARNER_DB_PATH as a

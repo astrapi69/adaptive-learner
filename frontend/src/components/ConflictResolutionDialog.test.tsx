@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Pins the 409 conflict dialog's contract:
  * - Both panels render plain-text previews of local vs server content

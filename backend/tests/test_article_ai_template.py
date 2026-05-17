@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """End-to-end tests for the Article AI-template endpoints.
 
 UNIVERSAL-AI-TEMPLATE-01 Session 1, commit 4/10. Pins three

@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Unit tests for ``app.ai.template_schema``.
 
 UNIVERSAL-AI-TEMPLATE-01 Session 1, commit 2/10. Pins the

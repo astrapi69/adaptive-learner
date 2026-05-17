@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for launcher.health. urllib is mocked to avoid network I/O."""
 
 from __future__ import annotations

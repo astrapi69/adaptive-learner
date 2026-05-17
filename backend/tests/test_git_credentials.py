@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the per-book git credential helpers (PGS-02-FU-01).
 
 Pin the contract that ``git_backup`` and plugin-git-sync share via

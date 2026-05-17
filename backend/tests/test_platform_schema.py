@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Unit tests for ``app.services.platform_schema``.
 
 The module loads ``backend/app/data/platform_schemas.yaml`` once at

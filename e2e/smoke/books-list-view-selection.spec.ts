@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * v0.33.0 Bug 2 E2E smoke: BookDashboard list-view bulk-select +
  * bulk-action flow.

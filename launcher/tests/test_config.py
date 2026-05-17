@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for launcher.config: pure-function path + port helpers."""
 
 from __future__ import annotations

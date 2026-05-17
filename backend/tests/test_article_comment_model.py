@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the ArticleComment model.
 
 MEDIUM-COMMENTS-IMPORT-01 commit 1. Covers create, the FK

@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """i18n parity test.
 
 Enforces that every language file in backend/config/i18n/ has the same

@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the chapter-templates feature (TM-04).
 
 Mirrors the structure of ``test_templates.py``:

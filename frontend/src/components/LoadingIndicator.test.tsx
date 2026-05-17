@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * LoadingIndicator tests pin the render-variant contract:
  *  - spinner-only (no label)

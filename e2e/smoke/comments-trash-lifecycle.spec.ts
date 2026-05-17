@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Bug 10 E2E smoke: full trash-lifecycle on the Comments-Admin tab.
  *

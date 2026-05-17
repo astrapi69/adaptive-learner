@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Selection state hook tests for ``useBookSelection``. Mirrors
  * ``useArticleSelection.test.ts`` — same contract, same coverage.

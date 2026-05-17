@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Unit tests for the AI review filesystem store + cascade delete."""
 
 from app.ai.review_store import (

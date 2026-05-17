@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for backup serializer (Book ORM <-> dict conversion)."""
 
 from datetime import datetime, timezone

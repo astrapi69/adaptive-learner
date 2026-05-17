@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Unit tests for ``_allow_books_without_author_from_yaml``.
 
 The function reads ``backend/config/app.yaml`` and returns the

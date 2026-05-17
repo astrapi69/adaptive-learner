@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * v0.33.0 Bug 1 E2E smoke: Settings/Help/GetStarted back-button
  * uses browser history.

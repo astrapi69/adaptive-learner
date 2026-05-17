@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """MAINT-01: regression test that pins every ``Book.Mapped`` column
 to either the initial schema migration or a subsequent
 ``op.add_column`` migration.

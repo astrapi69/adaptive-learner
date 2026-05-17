@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Round-trip YAML helper contract tests.
 
 Pins the behavior that user-editable plugin YAMLs survive a save from

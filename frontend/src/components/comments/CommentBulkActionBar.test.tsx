@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * CommentBulkActionBar tests pin the count rendering + delete-menu
  * threshold (count < 2 disables) + clear button.

@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Structural consistency tests for the i18n YAMLs.
 
 The goal is NOT full translation-completeness — that is tracked as a

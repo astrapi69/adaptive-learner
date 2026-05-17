@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """AR-02 Phase 2: Publication CRUD + drift detection + platform schemas."""
 
 from __future__ import annotations

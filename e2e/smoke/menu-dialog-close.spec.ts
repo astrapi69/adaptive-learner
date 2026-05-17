@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Bug 6 regression pin: kebab menu must close BEFORE the dialog
  * opens, never linger behind/around it.

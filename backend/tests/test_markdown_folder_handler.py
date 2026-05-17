@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the markdown-folder import handler (CIO-03 foundation)."""
 
 from __future__ import annotations

@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the pre-install stale-target safeguard.
 
 The safeguard lives in ``__main__._check_launcher_target_stale``.

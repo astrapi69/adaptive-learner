@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * ConvertToBookWizard tests (Phase 2). Covers the user's confirmed
  * mandatory Vitest checklist:

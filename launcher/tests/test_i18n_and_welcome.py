@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the JSON-backed i18n catalog, welcome-flag handling, and
 the Docker-missing dispatch added to ``__main__._run_launcher``.
 

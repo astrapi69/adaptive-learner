@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Regression pin for PyInstaller-compatible imports.
 
 PyInstaller compiles adaptive_learner_launcher/__main__.py as the entry script,

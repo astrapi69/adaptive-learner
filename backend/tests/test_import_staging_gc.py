@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Regression tests for the import-orchestrator staging GC.
 
 Detect stages bytes under ``<TMP>/adaptive_learner_import_staging/<temp_ref>/``

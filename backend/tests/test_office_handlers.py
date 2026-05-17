@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the .docx and .epub import handlers (CIO-04).
 
 Both handlers shell out to Pandoc. Unit tests mock the conversion

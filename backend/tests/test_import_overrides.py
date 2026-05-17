@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Override-application contract per handler.
 
 Each handler exposes a narrow allowlist of scalar Book columns that

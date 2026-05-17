@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * AR editor-parity Phase 3 smoke: ArticleEditor sidebar renders the
  * Export panel and Markdown / HTML buttons trigger a file download.

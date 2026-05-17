@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Tests the online/offline hook. Pins the critical contract that
  * OfflineBanner and the Editor's save-failure path rely on: the hook

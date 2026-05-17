@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Tests for Bug 1 fix (commit `fix(navigation): Settings/Help/GetStarted
  * back-button uses browser history`).

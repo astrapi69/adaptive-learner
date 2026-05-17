@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 import {test, expect, acceptDialog, createBook, createChapter} from "../fixtures/base";
 
 test.describe("Book Editor", () => {

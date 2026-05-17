@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for ``voice_store.get_voices`` filter logic.
 
 Regression: the audiobook voice dropdown leaked Edge TTS German voices

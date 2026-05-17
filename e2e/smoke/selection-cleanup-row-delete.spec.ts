@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Selection-cleanup on row-delete smoke (BULK-SELECTION-ROWDELETE-PLAYWRIGHT-01).
  *

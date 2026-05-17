@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for BackupHistory (CW-10).
 
 Covers initialization, add/list/clear operations, entry limits,

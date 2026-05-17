@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Smoke tests for the Article + Book template prompt modules.
 
 UNIVERSAL-AI-TEMPLATE-01 Session 1, commit 3/10. Pins the

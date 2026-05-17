@@ -1,3 +1,6 @@
+# TEMPLATE: This test is included as adaptable example.
+# Replace with your domain logic when project domain is finalized.
+
 """Tests for the three-layer config loader.
 
 Layer chain: project app.yaml < user override file < env-vars.

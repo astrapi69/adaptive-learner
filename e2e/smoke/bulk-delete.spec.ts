@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Bulk-delete UI smoke spec (BULK-DELETE-PLAYWRIGHT-SMOKE-01).
  *

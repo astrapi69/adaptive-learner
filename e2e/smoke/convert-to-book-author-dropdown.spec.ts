@@ -1,3 +1,6 @@
+// TEMPLATE: This test is included as adaptable example.
+// Replace with your domain logic when project domain is finalized.
+
 /**
  * Bug 8 Phase 2 E2E smoke: Wizard Author-Dropdown.
  *
