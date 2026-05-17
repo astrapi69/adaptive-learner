@@ -67,6 +67,14 @@ plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
 module = "pluginforge.*"
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+# Hookspecs are body-less by design — pluggy reads the signature +
+# decorators but never calls the function. Every spec method is an
+# ``... `` Ellipsis-bodied declaration; mypy's empty-body check is
+# false-positive against this idiom.
+module = "app.hookspecs"
+disable_error_code = ["empty-body"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 # Anchored here so pytest's rootdir discovery does not walk up to

@@ -212,13 +212,7 @@ manager = PluginManager(
     config_path=str(CONFIG_PATH),
     api_version="1",
 )
-try:
-    manager.register_hookspecs(AdaptiveLearnerHookSpec)
-except ValueError:
-    # Skeleton-state Phase 1A: AdaptiveLearnerHookSpec is empty and
-    # pluggy refuses to register a class with zero @hookspec methods.
-    # Phase 2 adds real hooks and removes this try/except.
-    logger.debug("Skipping hookspec registration: no hooks defined yet")
+manager.register_hookspecs(AdaptiveLearnerHookSpec)
 
 
 def _sync_manager_with_overlay() -> None:
