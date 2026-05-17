@@ -91,6 +91,16 @@ if _THIS_CONFTEST.parent.parent.name == "mutants":
 os.environ["ADAPTIVE_LEARNER_TEST"] = "1"
 os.environ.setdefault("TEST_DATABASE_URL", "sqlite:///:memory:")
 
+# Crypto: every test session gets a fresh, deterministic-per-process
+# Fernet key. Set via ``setdefault`` so a test that needs a specific
+# key (e.g. ``test_get_fernet_raises_on_missing_env_var``) can
+# monkeypatch + ``reset_fernet_cache()`` to take over. A real
+# production key never appears in the suite.
+if "ADAPTIVE_LEARNER_SECRET_KEY" not in os.environ:
+    from cryptography.fernet import Fernet as _BootstrapFernet  # noqa: E402
+
+    os.environ["ADAPTIVE_LEARNER_SECRET_KEY"] = _BootstrapFernet.generate_key().decode("utf-8")
+
 # Filesystem isolation: redirect every ``get_upload_dir()`` resolution
 # into a process-scoped tmp dir. The session fixture below upgrades
 # this to a tmp_path_factory-managed directory so pytest's own
