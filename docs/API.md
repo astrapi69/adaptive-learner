@@ -1,3 +1,10 @@
+<!--
+TODO: Adapt for your project. Current content is inherited from
+upstream (Bibliogon) and serves as structural reference only.
+The shape of this document (sections, headings, formatting
+conventions) is reusable; the specifics are not.
+-->
+
 # API reference - high-level overview
 
 AdaptiveLearner exposes two API layers: a core with CRUD endpoints for
