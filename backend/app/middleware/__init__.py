@@ -1,1 +1,0 @@
-"""Project-local ASGI middleware."""

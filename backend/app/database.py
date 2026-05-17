@@ -126,20 +126,16 @@ def init_db():
     alembic_cfg.set_main_option("script_location", str(_BACKEND_DIR / "migrations"))
     alembic_cfg.set_main_option("sqlalchemy.url", DATABASE_URL)
 
-    # Check if this is a fresh database (no tables exist)
+    # Fresh database when there is no alembic version table yet:
+    # create whatever ``Base.metadata`` carries (skeleton state =
+    # empty) and stamp head. Otherwise upgrade to head.
     from sqlalchemy import inspect
 
     inspector = inspect(engine)
-    has_tables = inspector.has_table("books")
     has_alembic = inspector.has_table("alembic_version")
 
-    if not has_tables:
-        # Fresh database: create all tables and stamp as current
+    if not has_alembic:
         Base.metadata.create_all(bind=engine)
         command.stamp(alembic_cfg, "head")
-    elif not has_alembic:
-        # Existing database without alembic: stamp as current (assumes schema is up to date)
-        command.stamp(alembic_cfg, "head")
     else:
-        # Existing database with alembic: run pending migrations
         command.upgrade(alembic_cfg, "head")
