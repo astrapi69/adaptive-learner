@@ -1,3 +1,0 @@
-This directory contains production Bibliogon data.
-Do NOT delete this file. It protects against accidental
-data loss caused by test runs (see backend/tests/conftest.py).
