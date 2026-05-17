@@ -58,57 +58,40 @@ jobs:
         # ``-q`` only quietens the per-test pass logs.
         run: poetry run pytest tests/ -q
 
-  plugin-tests:
-    name: Plugin Tests
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    strategy:
-      # Test-infrastructure audit finding 0.5.2: default
-      # fail-fast=true makes a flake in one plugin mask real
-      # failures in the others. coverage.yml already sets
-      # this to false; the asymmetry with ci.yml was a bug.
-      fail-fast: false
-      matrix:
-        plugin:
-          - adaptive-learner-plugin-audiobook
-          - adaptive-learner-plugin-export
-          - adaptive-learner-plugin-getstarted
-          - adaptive-learner-plugin-grammar
-          - adaptive-learner-plugin-help
-          - adaptive-learner-plugin-kdp
-          - adaptive-learner-plugin-kinderbuch
-          - adaptive-learner-plugin-ms-tools
-          - adaptive-learner-plugin-translation
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-
-      # Per-plugin Poetry virtualenv cache, keyed on the
-      # plugin's own poetry.lock. With 9 matrix jobs running in
-      # parallel, this saves ~15-30s per matrix job on cache
-      # hits. The plugin name in the key prevents cross-plugin
-      # cache pollution (different deps per plugin).
-      - name: Cache Poetry virtualenv (${{ matrix.plugin }})
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-${{ hashFiles(format('plugins/{0}/poetry.lock', matrix.plugin)) }}
-          restore-keys: |
-            poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-
-
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Install plugin dependencies
-        working-directory: plugins/${{ matrix.plugin }}
-        run: poetry install --no-interaction --no-ansi
-
-      - name: Run plugin tests
-        working-directory: plugins/${{ matrix.plugin }}
-        run: poetry run pytest tests/ -v
+  # Plugin matrix job: skeleton ships zero plugins, so this job is
+  # disabled. When the user adds their first plugin, re-enable by
+  # populating the `matrix.plugin` list with the plugin directory
+  # name(s) under plugins/, and remove the `if: false` gate.
+  #
+  # plugin-tests:
+  #   name: Plugin Tests
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 15
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       plugin:
+  #         - adaptive-learner-plugin-<your-plugin-name>
+  #   steps:
+  #     - uses: actions/checkout@v5
+  #     - uses: actions/setup-python@v6
+  #       with:
+  #         python-version: "3.12"
+  #     - name: Cache Poetry virtualenv (${{ matrix.plugin }})
+  #       uses: actions/cache@v5
+  #       with:
+  #         path: ~/.cache/pypoetry/virtualenvs
+  #         key: poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-${{ hashFiles(format('plugins/{0}/poetry.lock', matrix.plugin)) }}
+  #         restore-keys: |
+  #           poetry-${{ matrix.plugin }}-${{ runner.os }}-py3.12-
+  #     - name: Install Poetry
+  #       run: pip install poetry
+  #     - name: Install plugin dependencies
+  #       working-directory: plugins/${{ matrix.plugin }}
+  #       run: poetry install --no-interaction --no-ansi
+  #     - name: Run plugin tests
+  #       working-directory: plugins/${{ matrix.plugin }}
+  #       run: poetry run pytest tests/ -v
 
   frontend-tests:
     name: Frontend Tests

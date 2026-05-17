@@ -55,62 +55,46 @@ jobs:
             backend/coverage.xml
           retention-days: 14
 
-  plugin-coverage:
-    name: Plugin Coverage (${{ matrix.plugin }})
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - plugin: adaptive-learner-plugin-audiobook
-            package: adaptive_learner_audiobook
-          - plugin: adaptive-learner-plugin-export
-            package: adaptive_learner_export
-          - plugin: adaptive-learner-plugin-getstarted
-            package: adaptive_learner_getstarted
-          - plugin: adaptive-learner-plugin-grammar
-            package: adaptive_learner_grammar
-          - plugin: adaptive-learner-plugin-help
-            package: adaptive_learner_help
-          - plugin: adaptive-learner-plugin-kdp
-            package: adaptive_learner_kdp
-          - plugin: adaptive-learner-plugin-kinderbuch
-            package: adaptive_learner_kinderbuch
-          - plugin: adaptive-learner-plugin-ms-tools
-            package: adaptive_learner_ms_tools
-          - plugin: adaptive-learner-plugin-translation
-            package: adaptive_learner_translation
-    steps:
-      - uses: actions/checkout@v5
-
-      - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-
-      - name: Install Poetry
-        run: pip install poetry
-
-      - name: Install plugin dependencies
-        working-directory: plugins/${{ matrix.plugin }}
-        run: poetry install --no-interaction --no-ansi
-
-      - name: Run plugin coverage
-        working-directory: plugins/${{ matrix.plugin }}
-        run: |
-          poetry run pytest tests/ \
-            --cov=${{ matrix.package }} \
-            --cov-report=xml \
-            --cov-report=html \
-            --cov-report=term
-
-      - name: Upload plugin coverage artifact
-        uses: actions/upload-artifact@v6
-        with:
-          name: ${{ matrix.plugin }}-coverage
-          path: |
-            plugins/${{ matrix.plugin }}/htmlcov/
-            plugins/${{ matrix.plugin }}/coverage.xml
-          retention-days: 14
+  # Plugin coverage matrix job: skeleton ships zero plugins.
+  # When the user adds their first plugin, re-enable by populating
+  # the matrix include list with {plugin: <dir>, package: <module>}
+  # entries and un-comment the job below.
+  #
+  # plugin-coverage:
+  #   name: Plugin Coverage (${{ matrix.plugin }})
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       include:
+  #         - plugin: adaptive-learner-plugin-<name>
+  #           package: adaptive_learner_<name>
+  #   steps:
+  #     - uses: actions/checkout@v5
+  #     - uses: actions/setup-python@v6
+  #       with:
+  #         python-version: "3.12"
+  #     - name: Install Poetry
+  #       run: pip install poetry
+  #     - name: Install plugin dependencies
+  #       working-directory: plugins/${{ matrix.plugin }}
+  #       run: poetry install --no-interaction --no-ansi
+  #     - name: Run plugin coverage
+  #       working-directory: plugins/${{ matrix.plugin }}
+  #       run: |
+  #         poetry run pytest tests/ \
+  #           --cov=${{ matrix.package }} \
+  #           --cov-report=xml \
+  #           --cov-report=html \
+  #           --cov-report=term
+  #     - name: Upload plugin coverage artifact
+  #       uses: actions/upload-artifact@v6
+  #       with:
+  #         name: ${{ matrix.plugin }}-coverage
+  #         path: |
+  #           plugins/${{ matrix.plugin }}/htmlcov/
+  #           plugins/${{ matrix.plugin }}/coverage.xml
+  #         retention-days: 14
 
   frontend-coverage:
     name: Frontend Coverage
