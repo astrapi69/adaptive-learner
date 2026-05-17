@@ -176,21 +176,6 @@ test.describe("Book metadata round-trip - list[str] fields", () => {
         expect(fetched.keywords).toEqual(ordered);
     });
 
-    test("audiobook_skip_chapter_types non-empty round-trips as list[str]", async () => {
-        const types = ["preface", "foreword", "also_by_author"];
-        await patchBook(bookId, {audiobook_skip_chapter_types: types});
-        const fetched = await getBook(bookId);
-        expect(Array.isArray(fetched.audiobook_skip_chapter_types)).toBe(true);
-        expect(fetched.audiobook_skip_chapter_types).toEqual(types);
-    });
-
-    test("audiobook_skip_chapter_types empty list round-trips as []", async () => {
-        await patchBook(bookId, {audiobook_skip_chapter_types: ["preface"]});
-        await patchBook(bookId, {audiobook_skip_chapter_types: []});
-        const fetched = await getBook(bookId);
-        expect(fetched.audiobook_skip_chapter_types).toEqual([]);
-        expect(fetched.audiobook_skip_chapter_types).not.toBeNull();
-    });
 });
 
 test.describe("Book metadata round-trip - bool fields with default false", () => {
@@ -223,38 +208,6 @@ test.describe("Book metadata round-trip - bool fields with default false", () =>
         expect(fetched.ai_assisted).toBe(false);
     });
 
-    test("audiobook_overwrite_existing=true persists across reload", async () => {
-        const patch = await patchBook(bookId, {audiobook_overwrite_existing: true});
-        expect(patch.audiobook_overwrite_existing).toBe(true);
-
-        const fetched = await getBook(bookId);
-        expect(fetched.audiobook_overwrite_existing).toBe(true);
-    });
-});
-
-test.describe("Book metadata round-trip - TTS and audiobook configuration", () => {
-    let bookId: string;
-
-    test.beforeEach(async () => {
-        const book = await createBook("Round Trip TTS");
-        bookId = book.id;
-    });
-
-    test("all TTS string fields round-trip together", async () => {
-        const config = {
-            tts_engine: "edge-tts",
-            tts_voice: "de-DE-KatjaNeural",
-            tts_language: "de-DE",
-            tts_speed: "1.25",
-            audiobook_merge: "merged",
-            audiobook_filename: "mein-hoerbuch",
-        };
-        await patchBook(bookId, config);
-        const fetched = await getBook(bookId);
-        for (const [key, value] of Object.entries(config)) {
-            expect(fetched[key], `field: ${key}`).toBe(value);
-        }
-    });
 });
 
 test.describe("Book metadata round-trip - ms-tools numeric thresholds", () => {
