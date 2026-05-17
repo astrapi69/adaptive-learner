@@ -1,3 +1,9 @@
+/* EXAMPLE-DOMAIN: This file demonstrates how the frontend connects
+ * to the backend CRUD shape (inherited book / article / chapter
+ * domain from Bibliogon). Adapt or replace for adaptive-learner's
+ * actual domain when it solidifies.
+ */
+
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {api, ApiError, Book, BookCreate, BookFromTemplateCreate} from "../api/client";

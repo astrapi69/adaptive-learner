@@ -1,220 +1,72 @@
 # Adaptive Learner
 
-Open-source self-publishing toolkit for authors. Books, articles, and multi-platform content workflows. Offline-first, plugin-based, EPUB / PDF / audiobook export.
-
-Built on [PluginForge](https://github.com/astrapi69/pluginforge), a reusable plugin framework based on [pluggy](https://pluggy.readthedocs.io/).
+Project skeleton template derived from [Bibliogon](https://github.com/astrapi69/bibliogon) (a book authoring platform). Lean foundation for adaptive-learning applications built on the same architectural pattern: FastAPI + SQLAlchemy + React + TypeScript + a plugin loader on top of [PluginForge](https://github.com/astrapi69/pluginforge).
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**[Documentation](https://astrapi69.github.io/adaptive_learner/)** | **[Issues](https://github.com/astrapi69/adaptive_learner/issues)** | Current version: **v0.29.0**
+## What this is
 
-## Features
+A working full-stack starting point. The plugin-loader infrastructure, layered architecture, test discipline, build/deploy/release tooling, and Pythonic+React tech stack carry over from Bibliogon unchanged. **The DOMAIN ships as EXAMPLE-DOMAIN**: Book, Chapter, Article, ArticleComment, Author, Asset, ... are present in the code as a working reference for how to wire SQLAlchemy models + Pydantic schemas + FastAPI routers + React pages + tests end-to-end. Replace each concept with adaptive-learner equivalents (LearningConcept, CurriculumItem, SkillAssessment, LearnerProgress, ...) as the project's actual domain solidifies.
 
-- WYSIWYG and Markdown editor (TipTap with 15 official + 1 community extension, 24 toolbar buttons)
-- Full-book structure with chapter types for every section (Preface, Foreword, Prologue, Dedication, Part, Epilogue, Afterword, Index, Also by the Author, Excerpt, Call to Action, ...)
-- Genre catalog for Novel, Non-Fiction, Technical, Biography, Poetry, Children, Fantasy, Thriller, Romance, Cookbook, Travel, and more
-- Drag-and-drop chapter ordering with collapsible sections
-- EPUB, PDF, Word, HTML, Markdown export via [manuscripta](https://github.com/astrapi69/manuscripta)
-- Audiobook generation with 5 TTS engines (Edge TTS, Google Cloud TTS, Google Translate, pyttsx3, ElevenLabs)
-- Content-hash cache: unchanged chapters are not re-generated (saves money on paid engines)
-- Cost estimation and savings tracking for paid TTS engines
-- Dry-run mode: listen to a sample before committing to a full export
-- Persistent audiobook storage with per-chapter and merged downloads
-- Full-data backup and restore (.bgb) with images and optional audiobook files
-- Book metadata: ISBN, ASIN, Publisher, Keywords, Cover, Custom CSS
-- In-app help panel with Markdown rendering, search, and context-sensitive links
-- Multi-provider AI assistant (Anthropic, OpenAI, Gemini, Mistral, LM Studio) with chapter review, marketing text generation, and context-aware suggestions
-- Plugin system with ZIP installation for third-party plugins
-- Encrypted credential storage (Fernet) for API keys and service accounts
-- 6 themes (Warm Literary, Cool Modern, Nord, Classic, Studio, Notebook) x Light/Dark
-- i18n: German, English, Spanish, French, Greek, Portuguese, Turkish, Japanese
-- Responsive layout with hamburger menu on mobile
-
-## Article Authoring (Phase 2 - beta)
-
-Beyond books, Adaptive Learner supports article authoring with multi-platform publication tracking.
-
-- Dedicated article editor with TipTap (separate from the book editor, single-document, no chapter sidebar)
-- Article-level metadata: topic (settings-managed), SEO title / description, tags, excerpt, canonical URL, featured image
-- Per-platform publication tracking (Medium, Substack, X, LinkedIn, dev.to, Mastodon, Bluesky, custom)
-- Drift detection: the editor flags out-of-sync publications when article content changes after publish; a "Verify live" action re-snapshots the baseline
-- Promo posts modeled as publications with the `is_promo` flag (short companion piece linking back to a main publication)
-- Manual publishing workflow - no platform API integration yet (Phase 3 scope)
-
-## Git Sync for Books
-
-Books can be synchronized with external git repositories for collaboration, backup, and version control.
-
-- **Import:** clone a public git repo containing a book in Adaptive Learner's WBT layout
-- **Commit + Push:** save book changes back to the repo via SSH agent, system credential helper, or per-book PAT
-- **Smart-Merge:** three-way diff with per-chapter conflict resolution UI for chapters edited both locally and remotely
-- **Multi-Language:** repos with `main-XX` branches (e.g. `main-de`, `main-fr`) import as linked translations via `Book.translation_group_id`
-- **Core-Git Bridge:** unified commit fans out to both core git history and the plugin-git-sync subsystem under a per-book lock
-
-All three credential paths are user-configurable from the Git Backup dialog: SSH agent, system credential helper, and per-book PAT input (encrypted, never returned in clear).
-
-## Multi-Book Backup Import
-
-`.bgb` backup files containing multiple books can be imported with per-book selection (default-all-on) and per-book duplicate detection. The import wizard uses an XState v5 state machine to manage the multi-step flow with single-book and multi-book branches and a shared error boundary that reports details + opens a GitHub Issue on failure.
-
-## Install and Run
-
-### Prerequisites
-
-- [Docker](https://docs.docker.com/get-docker/) (Docker Desktop or Docker Engine with Compose)
-
-### One-liner
-
-**Linux / macOS:**
+Files carrying an explicit `EXAMPLE-DOMAIN:` or `TEMPLATE:` header are flagged at the top so you can find them by grep:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.sh | bash
+grep -rn "EXAMPLE-DOMAIN\|TEMPLATE:" --include='*.py' --include='*.ts' --include='*.tsx'
 ```
 
-**Windows (PowerShell):**
+## What's included
 
-```powershell
-irm https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.ps1 | iex
-```
+- **Backend** (`backend/`) — FastAPI app, SQLAlchemy 2.0 models, Pydantic v2 schemas, Alembic migrations, soft-delete + trash lifecycle, layered config (project YAML < user override < env-vars), test-isolation tripwires, i18n for 8 languages
+- **Frontend** (`frontend/`) — React 18 + TypeScript (strict) + Vite + TipTap editor + Radix UI + react-toastify + Playwright E2E
+- **Plugin system** (`plugins/`) — empty placeholder + `plugins/README.md` documenting the minimal plugin layout. The skeleton ships zero plugins; the loader is wired and ready.
+- **Launcher** (`launcher/`) — cross-OS PyInstaller-based desktop launcher (Linux + macOS + Windows) with auto-update and uninstall flows. Per-OS build pipelines in `.github/workflows/launcher-{linux,macos,windows}.yml`.
+- **CI/CD** — GitHub Actions for tests, coverage, docs site, release gates, mutation testing
+- **Docs** (`docs/`) — architecture overview, configuration chain, ROADMAP shape, in-app help structure (`docs/help/_meta.yaml`), MkDocs site config
+- **Tooling** — Makefile, Docker Compose (dev + prod), install scripts for all three OSes, pre-commit hooks (ruff + ruff-format + check-yaml/json), version-pin sync script
 
-Both download Adaptive Learner to `~/adaptive_learner` (Linux/macOS) / `%USERPROFILE%\adaptive_learner` (Windows), build the Docker images, and start the app at **http://localhost:7880**.
+## Adapting to your project
 
-### Double-click install (no terminal)
+1. **Rename** — search for `adaptive_learner` / `AdaptiveLearner` / `ADAPTIVE_LEARNER` / `adaptive-learner-` across the codebase and replace with your project's name in the same four casings.
+2. **Replace domain** — start with `backend/app/models/__init__.py` (the EXAMPLE-DOMAIN docstring at the top explains the pattern), then cascade through the matching `backend/app/routers/*.py`, `frontend/src/api/client.ts` `api.<model>` namespaces, and `frontend/src/pages/*` page components.
+3. **Refresh `docs/`** — `CONCEPT.md`, `ROADMAP.md`, `API.md`, `docs/help/` all carry inherited shape from Bibliogon. Adapt them to your domain.
+4. **Plugin scaffolding** — when adding your first plugin, follow `plugins/README.md`. Hookspecs live in `backend/app/hookspecs.py`.
 
-After cloning or downloading the repo, double-click the wrapper for your OS:
+## Tech stack
 
-| Platform | File | Notes |
-|---|---|---|
-| macOS | `install.command` | Finder treats `.command` as runnable; on first run, Gatekeeper may prompt — right-click > Open to bypass |
-| Windows | `install.cmd` | Wraps `install.ps1` with `-ExecutionPolicy Bypass` so corporate Windows with Group-Policy-locked ExecutionPolicy still runs the installer |
-| Linux | `bash install.sh` | No special wrapper needed |
+| Layer | Tech |
+|---|---|
+| Backend | Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry, Alembic |
+| Frontend | React 18+, TypeScript (strict), TipTap, Vite, Radix UI, @dnd-kit, Lucide, react-toastify |
+| Plugins | pluginforge ^0.5.0 (PyPI), pluggy entry points |
+| Launcher | PyInstaller, cross-OS (Linux + macOS + Windows) |
+| Testing | pytest, Vitest, Playwright, mutmut, Stryker |
+| Tooling | Poetry, npm, Docker, Make, ruff, ESLint, Prettier, pre-commit |
+| Docs site | MkDocs |
 
-### Manual install
+See [CLAUDE.md](CLAUDE.md) for the full development guide aimed at Claude Code (and useful as human reading too). Rules live in [.claude/rules/](.claude/rules/).
+
+## Quickstart
 
 ```bash
-git clone https://github.com/astrapi69/adaptive_learner.git
-cd adaptive_learner
-./start.sh
+# One-time
+make install              # Poetry + npm + plugins
+
+# Daily
+make dev                  # backend (8000) + frontend (5173) in parallel
+make test                 # backend + frontend, no coverage
+make test-coverage        # opt-in coverage run
+
+# Docker
+make prod                 # Docker Compose
+make prod-down            # stop
 ```
 
-### Stop / Start / Uninstall
+E2E: `npx playwright test --project=smoke` or `--project=full`.
 
-```bash
-cd ~/adaptive_learner && ./stop.sh                      # Stop
-cd ~/adaptive_learner && ./start.sh                      # Start again
-cd ~/adaptive_learner && ./stop.sh && cd ~ && rm -rf ~/adaptive_learner  # Uninstall
-```
+## Provenance
 
-## Development
-
-```bash
-make install    # Install all dependencies (Poetry, npm, plugins)
-make dev        # Start backend (8000) + frontend (5173) in parallel
-make test       # Run all tests (backend + plugins + frontend)
-```
-
-See [CLAUDE.md](CLAUDE.md) for full development documentation.
-
-## Documentation
-
-The documentation is available in two forms:
-
-- **In-App:** Click the help icon in the navigation bar to open the slide-over help panel with search, navigation tree, and Markdown rendering.
-- **Online:** [astrapi69.github.io/adaptive_learner](https://astrapi69.github.io/adaptive_learner/) - MkDocs Material site with full-text search, light/dark mode, and i18n.
-
-Both read from the same Markdown files in `docs/help/`. To build the docs locally:
-
-```bash
-make docs-install   # Install MkDocs dependencies (separate venv)
-make docs-serve     # Serve at http://localhost:8000 with hot-reload
-```
-
-## Architecture
-
-```
-Browser --> nginx (static files + /api proxy) --> FastAPI (uvicorn)
-                                                    |
-                                              PluginForge
-                                                    |
-                              +----------+----------+----------+
-                              |          |          |          |
-                           Export     Help    Audiobook      ...
-```
-
-- **Frontend:** React 18, TypeScript, TipTap, Vite, Radix UI, @dnd-kit, react-markdown
-- **Backend:** FastAPI, SQLAlchemy, SQLite, Pydantic v2
-- **Plugins:** PluginForge (PyPI), pluggy-based, YAML-configured
-- **Export:** manuscripta ^0.9.0 (PyPI), Pandoc, [write-book-template](https://github.com/astrapi69/write-book-template)
-- **TTS:** manuscripta adapter layer with 5 engines (Edge TTS, Google Cloud, gTTS, pyttsx3, ElevenLabs)
-
-## Plugins
-
-| Plugin | License | Description |
-|--------|---------|-------------|
-| export | MIT | EPUB, PDF, Word, HTML, Markdown, Project ZIP |
-| help | MIT | In-app help panel with docs, search, shortcuts |
-| getstarted | MIT | Onboarding guide, sample book |
-| ms-tools | MIT | Style checks, sanitization, text metrics |
-| audiobook | MIT | TTS audiobook generation (5 engines) |
-| translation | MIT | DeepL / LMStudio translation |
-| grammar | MIT | LanguageTool grammar checking |
-| kinderbuch | MIT | Children's book page layout |
-| kdp | MIT | Amazon KDP metadata, cover validation |
-| git-sync | MIT | Book-as-git-repo: import, commit, smart-merge, multi-language linking |
-
-Third-party plugins can be installed as ZIP files via Settings > Plugins.
-
-## Configuration
-
-Three-layer config: project `app.yaml` (defaults) ← user override file
-(`~/.config/adaptive_learner/secrets.yaml`, gitignored) ← env-vars (CI/Docker).
-Override-wins, env-vars always highest priority. Detailed guide:
-[docs/configuration.md](docs/configuration.md).
-
-Move secrets like `ai.api_key` out of project `app.yaml` into the
-override file or `ADAPTIVE_LEARNER_AI_API_KEY` env-var. The Settings UI
-hides the API-key input automatically when an override is active.
-
-Environment variables (set in `.env` or shell):
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `ADAPTIVE_LEARNER_PORT` | 7880 | Port for the web app |
-| `ADAPTIVE_LEARNER_DEBUG` | false | Debug mode (enables test endpoints, API docs) |
-| `ADAPTIVE_LEARNER_AI_API_KEY` | (unset) | Overrides `ai.api_key` from any yaml layer |
-| `ADAPTIVE_LEARNER_SECRET_KEY` | (generated) | Secret for license validation |
-| `ADAPTIVE_LEARNER_CREDENTIALS_SECRET` | (generated) | Secret for encrypting API keys and service account files |
-| `ADAPTIVE_LEARNER_CORS_ORIGINS` | localhost:7880 | Allowed CORS origins |
-| `ADAPTIVE_LEARNER_DATA_DIR` | platformdirs default | Root directory for runtime data (DB, uploads). Linux/macOS: `~/.local/share/adaptive_learner/`. Windows: `%LOCALAPPDATA%\adaptive_learner\`. Docker: `/app/data` |
-| `ADAPTIVE_LEARNER_DB_PATH` | (no longer honoured) | **Removed in v0.30.0** (DEP-DBPATH-01 step 3). The variable has no effect on path resolution; if still set in the environment, a single warning is logged at startup naming the ignored value. Set `ADAPTIVE_LEARNER_DATA_DIR` instead — the database resolves to `<ADAPTIVE_LEARNER_DATA_DIR>/adaptive_learner.db`. Deprecation timeline: warning v0.27.0, precedence flip v0.28.0, removal v0.30.0. |
-
-## Related Projects
-
-- [pluginforge](https://github.com/astrapi69/pluginforge) - Plugin framework (PyPI)
-- [manuscripta](https://github.com/astrapi69/manuscripta) - Book export pipeline with TTS adapter layer (PyPI)
-- [write-book-template](https://github.com/astrapi69/write-book-template) - Target directory structure for export
+Scaffolded from Bibliogon v0.33.0 on 2026-05-17. All 11 plugins (`audiobook`, `export`, `getstarted`, `git-sync`, `grammar`, `help`, `kdp`, `kinderbuch`, `medium-import`, `ms-tools`, `translation`) and their coupled backend routers/services were removed in Phase 1 of the skeleton extraction. The plugin-loader infrastructure was retained intact. See `CLAUDE.md` "Origin" + `git log --oneline` for the full extraction trail.
 
 ## License
 
-Adaptive Learner is released under the [MIT License](LICENSE).
-All plugins are free and open source.
-
-## Reporting Security Issues
-
-See [SECURITY.md](SECURITY.md) for the responsible disclosure process.
-
-## Code of Conduct
-
-This project follows the [Contributor Covenant 2.1](CODE_OF_CONDUCT.md).
-Reports go to asterios.raptis@web.de.
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, workflow, and expectations.
-
-## Issue Templates
-
-Use the appropriate template when opening a new issue:
-- [Bug Report](.github/ISSUE_TEMPLATE/bug_report.yml)
-- [Feature Request](.github/ISSUE_TEMPLATE/feature_request.yml)
-- [Question](.github/ISSUE_TEMPLATE/question.yml)
+MIT — see [LICENSE](LICENSE).

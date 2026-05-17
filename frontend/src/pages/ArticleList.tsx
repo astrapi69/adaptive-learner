@@ -1,3 +1,9 @@
+/* EXAMPLE-DOMAIN: This file demonstrates how the frontend connects
+ * to the backend CRUD shape (inherited book / article / chapter
+ * domain from Bibliogon). Adapt or replace for adaptive-learner's
+ * actual domain when it solidifies.
+ */
+
 /**
  * AR-01 Phase 1 article list.
  *

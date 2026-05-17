@@ -1,3 +1,22 @@
+"""EXAMPLE-DOMAIN: Adapt or replace for your actual project domain.
+
+Inherited from Bibliogon: Book, Chapter, Article, ArticleComment,
+Author, Asset, BookTemplate, ChapterTemplate, Page,
+BookImportSource, Publication, ...
+
+Treat this module as a working reference for how to wire
+SQLAlchemy 2.0 mapped columns + relationships + soft-delete /
+trash lifecycle + ChapterType enum patterns, then replace each
+concept with adaptive-learner equivalents
+(e.g. LearningConcept, CurriculumItem, SkillAssessment,
+LearnerProgress) as the project domain solidifies.
+
+The CRUD routers under ``app.routers.*`` mirror this module's
+shape one-to-one; renaming a model here cascades to the matching
+router file + its Pydantic schemas + the frontend ``api.<model>``
+namespace in ``frontend/src/api/client.ts``.
+"""
+
 import enum
 import uuid
 from datetime import UTC, datetime
