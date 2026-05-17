@@ -5,7 +5,26 @@ The shape of this document (sections, headings, formatting
 conventions) is reusable; the specifics are not.
 -->
 
-# AdaptiveLearner Roadmap
+# Adaptive Learner Roadmap
+
+## P3 - Skeleton-template follow-ups
+
+- [ ] **T-01: Strip Book model to bare CRUD shape** (35 feature
+      columns -> 6). Cascade: schemas, routers, frontend
+      interfaces, migrations, tests. Estimated 50-80 changes.
+      Deferred from the v0.0.0-template skeleton extraction
+      (2026-05-17) because the cascade exceeded the session's
+      scope. Approach when picking it up: strip
+      `backend/app/models/__init__.py` Book class first, then
+      iteratively follow the TS / pytest failure stack
+      (schemas, routers, services, migrations, frontend
+      interfaces, e2e specs). Migrations to delete in the same
+      pass: audiobook (4), ms-tools, git-sync, kinderbuch
+      (book_type+pages), BISAC. Alembic head needs reset.
+
+---
+
+# AdaptiveLearner Roadmap (inherited content below)
 
 Current phase: Phase 2 - build for real users, not just developers
 Last updated: 2026-05-07 (v0.30.0 cut)
