@@ -1,7 +1,5 @@
 import {useEffect, useState} from "react";
 
-import {DEFAULT_PALETTE, isKnownPalette} from "../themes/palettes";
-
 type Theme = "light" | "dark";
 
 function getInitialTheme(): Theme {
@@ -11,30 +9,15 @@ function getInitialTheme(): Theme {
     return "light";
 }
 
-function getInitialAppTheme(): string {
-    // Guard against a stale localStorage value left over from a removed
-    // or renamed palette. Unknown values fall back to the default so
-    // the CSS always matches a real rule block.
-    const stored = localStorage.getItem("adaptive-learner-app-theme");
-    if (stored && isKnownPalette(stored)) return stored;
-    return DEFAULT_PALETTE;
-}
-
 export function useTheme() {
     const [theme, setTheme] = useState<Theme>(getInitialTheme);
-    const [appTheme, setAppTheme] = useState<string>(getInitialAppTheme);
 
     useEffect(() => {
         document.documentElement.setAttribute("data-theme", theme);
         localStorage.setItem("adaptive-learner-theme", theme);
     }, [theme]);
 
-    useEffect(() => {
-        document.documentElement.setAttribute("data-app-theme", appTheme);
-        localStorage.setItem("adaptive-learner-app-theme", appTheme);
-    }, [appTheme]);
-
     const toggle = () => setTheme((t) => (t === "dark" ? "light" : "dark"));
 
-    return {theme, toggle, appTheme, setAppTheme};
+    return {theme, toggle};
 }

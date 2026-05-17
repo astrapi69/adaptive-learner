@@ -1,24 +1,18 @@
-// TEMPLATE: This test is included as adaptable example.
-// Replace with your domain logic when project domain is finalized.
-
 /**
- * Tests for the useTheme hook.
+ * Tests for the useTheme hook (skeleton — light/dark only).
  *
  * Covers: localStorage persistence, system preference fallback,
- * dark/light toggle, appTheme validation against known palettes,
- * DOM attribute syncing (data-theme, data-app-theme).
+ * dark/light toggle, DOM data-theme syncing.
  */
 
-import {describe, it, expect, vi, beforeEach} from "vitest"
+import {describe, it, expect, beforeEach} from "vitest"
 import {renderHook, act} from "@testing-library/react"
 
 import {useTheme} from "./useTheme"
-import {DEFAULT_PALETTE} from "../themes/palettes"
 
 beforeEach(() => {
   localStorage.clear()
   document.documentElement.removeAttribute("data-theme")
-  document.documentElement.removeAttribute("data-app-theme")
 })
 
 describe("useTheme", () => {
@@ -35,9 +29,7 @@ describe("useTheme", () => {
     })
 
     it("falls back to system preference when localStorage is empty", () => {
-      // happy-dom supports matchMedia
-      const mql = window.matchMedia("(prefers-color-scheme: dark)")
-      // In happy-dom, matchMedia always returns matches=false, so light is expected
+      // happy-dom's matchMedia always returns matches=false, so light is expected
       const {result} = renderHook(() => useTheme())
       expect(result.current.theme).toBe("light")
     })
@@ -73,43 +65,6 @@ describe("useTheme", () => {
       const {result} = renderHook(() => useTheme())
       act(() => result.current.toggle())
       expect(document.documentElement.getAttribute("data-theme")).toBe("dark")
-    })
-  })
-
-  describe("appTheme (palette)", () => {
-    it("defaults to warm-literary when no stored value", () => {
-      const {result} = renderHook(() => useTheme())
-      expect(result.current.appTheme).toBe(DEFAULT_PALETTE)
-    })
-
-    it("reads stored palette from localStorage", () => {
-      localStorage.setItem("adaptive-learner-app-theme", "nord")
-      const {result} = renderHook(() => useTheme())
-      expect(result.current.appTheme).toBe("nord")
-    })
-
-    it("falls back to default for unknown stored palette", () => {
-      localStorage.setItem("adaptive-learner-app-theme", "nonexistent-theme")
-      const {result} = renderHook(() => useTheme())
-      expect(result.current.appTheme).toBe(DEFAULT_PALETTE)
-    })
-
-    it("setAppTheme updates the palette", () => {
-      const {result} = renderHook(() => useTheme())
-      act(() => result.current.setAppTheme("cool-modern"))
-      expect(result.current.appTheme).toBe("cool-modern")
-    })
-
-    it("persists palette to localStorage", () => {
-      const {result} = renderHook(() => useTheme())
-      act(() => result.current.setAppTheme("nord"))
-      expect(localStorage.getItem("adaptive-learner-app-theme")).toBe("nord")
-    })
-
-    it("sets data-app-theme attribute on document element", () => {
-      const {result} = renderHook(() => useTheme())
-      act(() => result.current.setAppTheme("classic"))
-      expect(document.documentElement.getAttribute("data-app-theme")).toBe("classic")
     })
   })
 })
