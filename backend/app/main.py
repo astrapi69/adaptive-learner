@@ -38,6 +38,10 @@ from app.database import init_db
 from app.exceptions import AdaptiveLearnerError
 from app.hookspecs import AdaptiveLearnerHookSpec
 from app.logging_config import setup_logging
+from app.routers.projects import projects_router, users_projects_router
+from app.routers.settings import router as settings_router
+from app.routers.users import router as users_router
+from app.services import crypto as crypto_service
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -317,6 +321,12 @@ async def lifespan(app: FastAPI):
     mark_data_dir_as_production()
     init_db()
 
+    # Fail-fast on a missing / malformed ADAPTIVE_LEARNER_SECRET_KEY.
+    # Surfaces the misconfiguration here at boot, not from a random
+    # POST /api/settings/.../api-key call hours later. See
+    # app.services.crypto.validate_at_startup.
+    crypto_service.validate_at_startup()
+
     _load_installed_plugins()
     _log_plugin_diagnostics_pre(enabled_in_config=_enabled_plugins_from_config())
     manager.discover_plugins()
@@ -348,6 +358,15 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
+
+# Phase 1C core routers. Mounted directly here (not via the plugin
+# manager) — these are the foundation every plugin builds on. New
+# routers land alongside their Phase-2+ plugins via
+# ``manager.mount_routes(app)`` in the lifespan.
+app.include_router(users_router, prefix="/api")
+app.include_router(users_projects_router, prefix="/api")
+app.include_router(projects_router, prefix="/api")
+app.include_router(settings_router, prefix="/api")
 
 
 @app.exception_handler(AdaptiveLearnerError)
