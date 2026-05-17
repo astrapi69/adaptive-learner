@@ -5,6 +5,12 @@ languages:
   - code: en
     name: English
 
+# Help-panel + MkDocs nav schema. mkdocs.yml is regenerated from
+# this file at release time via scripts/generate_mkdocs_nav.py.
+# Each top-level entry is a section; children render as a
+# collapsible submenu. Slugs are file paths relative to
+# docs/help/{lang}/ without the .md extension.
+
 navigation:
   - title:
       de: Erste Schritte
@@ -17,39 +23,11 @@ navigation:
       en: Articles
     slug: articles
     icon: file-text
-    children:
-      - title:
-          de: Übersicht
-          en: Overview
-        slug: articles
-      - title:
-          de: Massen-Export
-          en: Bulk export
-        slug: articles/bulk-export
-      - title:
-          de: Medium-Import
-          en: Medium import
-        slug: articles/medium-import
-      - title:
-          de: Als Buch zusammenfassen
-          en: Convert to book
-        slug: articles/convert-to-book
-
-  - title:
-      de: Bücher
-      en: Books
-    slug: books/bulk-export
-    icon: book-open
-    children:
-      - title:
-          de: Massen-Export
-          en: Bulk export
-        slug: books/bulk-export
 
   - title:
       de: Editor
       en: Editor
-    slug: editor
+    slug: editor/uebersicht
     icon: edit
     children:
       - title:
@@ -62,71 +40,21 @@ navigation:
         slug: editor/formatierung
 
   - title:
-      de: Export
-      en: Export
-    slug: export
-    icon: download
-    children:
-      - title:
-          de: EPUB
-          en: EPUB
-        slug: export/epub
-      - title:
-          de: PDF
-          en: PDF
-        slug: export/pdf
-      - title:
-          de: Audiobook
-          en: Audiobook
-        slug: export/audiobook
-
-  - title:
       de: Plugins
       en: Plugins
-    slug: plugins
+    slug: plugins/uebersicht
     icon: puzzle
-    children:
-      - title:
-          de: Übersicht
-          en: Overview
-        slug: plugins/uebersicht
-      - title:
-          de: Manuskript-Tools
-          en: Manuscript Tools
-        slug: plugins/ms-tools
 
   - title:
       de: Vorlagen
       en: Templates
     slug: templates
-    icon: bookmark
-
-  - title:
-      de: Import
-      en: Import
-    slug: import
-    icon: upload
-    children:
-      - title:
-          de: Git-URL
-          en: Git URL
-        slug: import/git-url
-      - title:
-          de: Feldauswahl
-          en: Field selection
-        slug: import/field-selection
-      - title:
-          de: Git-Historie übernehmen
-          en: Adopt git history
-        slug: import/git-adoption
-      - title:
-          de: Medium-Archiv
-          en: Medium archive
-        slug: import/medium
+    icon: layout
 
   - title:
       de: Installation
       en: Installation
+    slug: installation
     icon: download
     children:
       - title:
@@ -162,7 +90,7 @@ navigation:
       de: KI-Assistent
       en: AI Assistant
     slug: ai
-    icon: sparkles
+    icon: cpu
     children:
       - title:
           de: Übersicht
@@ -186,25 +114,6 @@ navigation:
     icon: keyboard
 
   - title:
-      de: Git-Sicherung
-      en: Git Backup
-    slug: git-backup
-    icon: git-branch
-    children:
-      - title:
-          de: Grundlagen
-          en: Basics
-        slug: git-backup/basics
-      - title:
-          de: Remote
-          en: Remote
-        slug: git-backup/remote
-      - title:
-          de: SSH-Schlüssel
-          en: SSH Keys
-        slug: git-backup/ssh
-
-  - title:
       de: Unterstützen
       en: Support
     slug: support
@@ -220,13 +129,13 @@ navigation:
       de: Glossar
       en: Glossary
     slug: glossary
-    icon: book-open
+    icon: book
 
   - title:
       de: Fehlerbehebung
       en: Troubleshooting
     slug: troubleshooting
-    icon: alert-triangle
+    icon: tool
 
   - title:
       de: Entwickler
