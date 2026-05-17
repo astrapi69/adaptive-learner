@@ -37,7 +37,7 @@ from __future__ import annotations
 from datetime import datetime
 from enum import Enum
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
 
 class LearningMethod(str, Enum):
@@ -74,13 +74,16 @@ class AIProvider(str, Enum):
 
 class UserCreate(BaseModel):
     name: str = Field(min_length=1, max_length=200)
-    email: str | None = Field(default=None, max_length=320)
+    # EmailStr brings RFC-5321 validation via email-validator
+    # (pydantic[email] extra). nullable for single-user desktop
+    # installs that never bind an identity to an inbox.
+    email: EmailStr | None = None
     language: str = Field(default="de", max_length=10)
 
 
 class UserUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=200)
-    email: str | None = Field(default=None, max_length=320)
+    email: EmailStr | None = None
     language: str | None = Field(default=None, max_length=10)
 
 
@@ -89,7 +92,10 @@ class UserOut(BaseModel):
 
     id: str
     name: str
-    email: str | None = None
+    # ORM column is plain String(320); validating with EmailStr on the
+    # way out catches a corrupt-row regression early (the DB itself
+    # has no CHECK constraint).
+    email: EmailStr | None = None
     language: str
     created_at: datetime
     updated_at: datetime

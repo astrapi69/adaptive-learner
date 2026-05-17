@@ -68,13 +68,13 @@ def test_user_update_allows_all_none():
 def test_user_out_round_trip_from_orm():
     db = SessionLocal()
     try:
-        row = User(name="Aster", email="a@example.test", language="en")
+        row = User(name="Aster", email="a@example.com", language="en")
         db.add(row)
         db.commit()
         db.refresh(row)
         out = UserOut.model_validate(row)
         assert out.id == row.id
-        assert out.email == "a@example.test"
+        assert out.email == "a@example.com"
         assert out.language == "en"
     finally:
         db.close()

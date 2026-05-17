@@ -42,7 +42,7 @@ def db():
 
 @pytest.fixture()
 def user(db) -> User:
-    u = User(name="Aster", email="aster@example.test", language="de")
+    u = User(name="Aster", email="aster@example.com", language="de")
     db.add(u)
     db.commit()
     db.refresh(u)
@@ -81,9 +81,9 @@ def test_user_defaults(db):
 
 
 def test_user_email_unique(db):
-    db.add(User(name="A", email="dup@example.test"))
+    db.add(User(name="A", email="dup@example.com"))
     db.commit()
-    db.add(User(name="B", email="dup@example.test"))
+    db.add(User(name="B", email="dup@example.com"))
     with pytest.raises(IntegrityError):
         db.commit()
 
