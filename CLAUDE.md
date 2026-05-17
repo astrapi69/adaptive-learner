@@ -1,44 +1,44 @@
-# Bibliogon
+# Adaptive Learner
 
-Open-source book authoring platform. Built on PluginForge (PyPI), a reusable plugin framework based on pluggy. Offline-capable, i18n-ready, local-first. All plugins are free during the current development phase (see docs/explorations/monetization.md for future strategy).
+Project skeleton derived from the Bibliogon codebase (a book authoring platform). The plugin-loader infrastructure, layered architecture, test discipline, and Pythonic + React tech stack carry over; the domain (Articles, Books, Comments, Authors, Settings) ships as **EXAMPLE-DOMAIN** to be replaced by adaptive-learning concepts as the project develops.
 
-- **Repository:** https://github.com/astrapi69/bibliogon
-- **Version:** 0.33.0 (Article-to-Book conversion: 6-step Radix-Dialog wizard turns a multi-article bulk-selection into a new Book via transactional `POST /api/books/from-articles`. Original articles stay untouched (decoupled lifecycle); the book holds an independent TipTap-JSON copy of each article's body as a chapter. Optional front-matter (title page / dedication / introduction) + back-matter (acknowledgments / about-author). Sort strategies date asc/desc + title asc/desc + manual drag-reorder. Single-article conversions pre-fill subtitle + cover_image from the source article. 422 validation gates collect ALL offending ids (trashed / non-article content_type / not-found) in one response so the user fixes the whole selection in one pass. New `notify.successAction` helper drives a "Buch öffnen" / "View book" CTA on the success toast (replaces auto-navigate per the WARN-fix cycle). 52-key i18n namespace `convert_to_book` across 8 catalogs (DE + EN native, 6 passthru). Bilingual help doc at `docs/help/{en,de}/articles/convert-to-book.md` plus smoke-test plan + bilingual manual test guide under `docs/testing/smoke-tests/article-to-book-conversion*.md`. UX-Full-Audit 2026-05-14/15 closure batch: 14 items shipped including shared `<LoadingIndicator>` + `<EmptyState>` components, BookEditor empty-state surface, ArticleFilterBar extraction, Settings monolith split into per-tab components (AppSettings / AiAssistantSettings / TopicsSettings / PluginSettings / AuthorSettings), full BookEditor data-testid coverage, view-agnostic `data-{book,article}-id` attributes for cross-view-mode E2E targeting, 5 theme-token gaps closed (audit script added), 62% of `notify.error` catch sites fixed to forward the caught error (pre-commit hook installed). Restore-button perception-lag fix (419 ms click handler -> optimistic update); BulkActionBar stale-state fix (Bug B). GitHub Actions Node-24 migration across every workflow (10 standard-action majors bumped per the `action.yml runs.using:` authoritative-source methodology). Mutation-testing scope expansion for `app/import_plugins/` + `app/services/` with paired test-isolation fix for the `platform_schema` LRU regression. 5 new lessons-learned sections (multi-tool collaboration, workbox-benign-info, perception-lag class, in-memory cache test-isolation, GH Actions version-drift) + 1 derived rule (testid namespace pinning prevents silent E2E skips). ~78 commits since v0.32.0.)
-- **Concept:** docs/CONCEPT.md
-- **API reference:** FastAPI OpenAPI under `/docs` and `/openapi.json` (source of truth). docs/API.md is a high-level overview.
-- **History:** docs/CHANGELOG.md (completed phases), docs/ROADMAP.md (open items)
+- **Repository:** https://github.com/astrapi69/adaptive-learner
+- **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — inherited from Bibliogon, refine as adaptive-learner-specific concept solidifies
+- **API reference:** FastAPI OpenAPI under `/docs` and `/openapi.json`
+- **Origin:** scaffolded from Bibliogon v0.33.0 (2026-05-17), with all 11 plugins and their coupled backend code removed; foundation kept
 
 ## Development guidelines
 
-Detailed rules live in `.claude/rules/`. Claude Code reads them on demand.
+Detailed rules live in `.claude/rules/` (inherited from Bibliogon; apply to any well-engineered project of this shape).
 
 **Always relevant** (read on every feature/fix):
-- `architecture.md` - layered architecture, plugin structure, UI strategy, data flow
-- `coding-standards.md` - naming, function design, tests, dependencies
+- `architecture.md` — layered architecture, plugin structure, UI strategy, data flow
+- `coding-standards.md` — naming, function design, tests, dependencies
 
 **On demand** (read for specific tasks):
-- `code-hygiene.md` - linting, pre-commit, error handling architecture, API conventions
-- `lessons-learned.md` - known pitfalls (TipTap, import, export, deployment)
-- `quality-checks.md` - test strategy, mutmut/Stryker, pre-commit checklists
-- `ai-workflow.md` - order for features/plugins, prohibitions, docs protocol
-- `release-workflow.md` - release process (triggered by "release new version")
+- `code-hygiene.md` — linting, pre-commit, error handling architecture, API conventions
+- `lessons-learned.md` — known pitfalls (carries over Bibliogon-era learnings; prune entries as they prove irrelevant to adaptive-learner)
+- `quality-checks.md` — test strategy, mutmut/Stryker, pre-commit checklists
+- `ai-workflow.md` — order for features/plugins, prohibitions, docs protocol
+- `release-workflow.md` — release process (triggered by "release new version")
 
 On a conflict between CLAUDE.md and the rules, the rules win.
 
 ## Tech stack
 
 - **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry
-- **Frontend:** React 18, TypeScript (strict), TipTap (15+1 extensions), Vite, Radix UI, @dnd-kit, Lucide, react-toastify
-- **Plugins:** pluginforge ^0.5.0 (PyPI), entry points, YAML config
-- **Export:** manuscripta ^0.7.0 (PyPI), Pandoc, write-book-template structure. All TTS engines delegate to the manuscripta adapter.
+- **Frontend:** React 18+, TypeScript (strict), TipTap (editor), Vite, Radix UI, @dnd-kit, Lucide, react-toastify
+- **Plugins:** pluginforge ^0.5.0 (PyPI), entry points under group `adaptive_learner.plugins` (rename pending, currently `bibliogon.plugins` in pyproject)
+- **Launcher:** PyInstaller-based cross-OS desktop launcher (`launcher/`); see Launcher section below
 - **Testing:** pytest, Vitest, Playwright, mutmut, Stryker
 - **Tooling:** Poetry, npm, Docker, Make, ruff, ESLint, Prettier, pre-commit
+- **Docs site:** MkDocs (`mkdocs.yml`, `docs/pyproject.toml` carries the docs venv)
 
 ## Architecture (short)
 
-4 layers: Frontend -> Backend -> PluginForge -> Plugins. Details in `.claude/rules/architecture.md`.
+4 layers: Frontend → Backend → PluginForge → Plugins. Details in `.claude/rules/architecture.md`.
 
-Lean core (UI, editor, CRUD, backup). Everything else via plugins. All plugins are currently free (`license_tier = "core"`). License infrastructure exists but is dormant (`LICENSING_ENABLED = False` in `backend/app/licensing.py`).
+Lean core (UI, editor, CRUD, settings). Everything domain-specific should ship as a plugin once the adaptive-learner domain is defined. Licensing infrastructure exists but is dormant.
 
 ## Commands
 
@@ -46,188 +46,126 @@ Lean core (UI, editor, CRUD, backup). Everything else via plugins. All plugins a
 make install              # Poetry + npm + plugins
 make dev                  # backend (8000) + frontend (5173) in parallel
 make dev-bg / dev-down    # background mode
-make test                 # all tests (backend + plugins + frontend), no coverage
-make test-coverage        # opt-in coverage run (heavy; CI runs this on every push)
+make test                 # backend + frontend, no coverage
+make test-coverage        # opt-in coverage run
 make test-backend         # backend only
-make test-plugins         # all plugin tests
 make test-frontend        # Vitest
-make prod                 # Docker Compose (port 7880)
+make prod                 # Docker Compose
 make prod-down            # stop Docker
-make generate-trial-key   # 30-day trial key (dormant, licensing disabled)
 make clean                # remove build artifacts
 make help                 # all targets
 ```
 
-Plugin-specific: `make test-plugin-{export,grammar,kdp,kinderbuch,ms-tools,audiobook,translation}`
-
-E2E tests: `npx playwright test --project=smoke` (fast, per feature) or `--project=full` (complete regression).
+E2E tests: `npx playwright test --project=smoke` or `--project=full`.
 
 ## Session start (Claude Code)
 
-1. `git log --oneline -10` - recent changes
-2. Read `docs/ROADMAP.md` - current state
-3. `make test` - green baseline
+1. `git log --oneline -10` — recent changes
+2. `make test` — green baseline
+3. Read this file + relevant rules per the task
 
-## Data model (short)
+## Data model (EXAMPLE-DOMAIN, replace with adaptive-learner concepts)
 
-- **Book:** id, title, subtitle, author, language, series, series_index, description, publishing (ISBN/ASIN/publisher/edition), marketing (keywords, html_description, backpage), design (cover_image, custom_css)
+The inherited model covers a book-authoring workflow. Treat it as a working reference for how to wire backend + frontend + tests, then replace each concept with adaptive-learner equivalents (e.g. `LearningConcept`, `CurriculumItem`, `SkillAssessment`, `LearnerProgress`).
+
+- **Book:** id, title, subtitle, author, language, description, marketing fields, design fields
 - **Chapter:** id, book_id, title, content (TipTap JSON), position, chapter_type
-- **Asset:** id, book_id, filename, asset_type (cover/figure/diagram/table), path
-- **BookTemplate / BookTemplateChapter:** reusable book structures; 5 builtins seeded at startup. `/api/templates/`, `POST /api/books/from-template`.
-- **ChapterTemplate:** reusable single-chapter structures with TipTap JSON content; 4 builtins (Interview, FAQ, Recipe, Photo Report). `/api/chapter-templates/`.
+- **Article:** id, title, content (TipTap JSON), tags, topic, status
+- **ArticleComment:** id, article_id, body, deleted_at (soft-delete + trash lifecycle)
+- **Author:** id, name, pen names
+- **Asset:** id, book_id, filename, asset_type, path
+- **Settings:** layered config (project YAML < user override < env-vars)
 
-**ChapterType (31):** chapter, preface, foreword, acknowledgments, about_author, appendix, bibliography, glossary, epilogue, imprint, next_in_series, part, part_intro, interlude, toc, dedication, prologue, introduction, afterword, final_thoughts, index, epigraph, endnotes, also_by_author, excerpt, call_to_action, half_title, title_page, copyright, section, conclusion. Marketing types (also_by_author, excerpt, call_to_action) are in the audiobook-export skip list by default. Per-book override via Book.audiobook_skip_chapter_types.
+ChapterTypes, BookTemplates, Publications, and other Bibliogon-specific concepts are present in the code as further EXAMPLE-DOMAIN reference.
 
 ## Plugins
 
-| Plugin             | Tier    | Depends on | Description                                                     |
-| ------------------ | ------- | ---------- | --------------------------------------------------------------- |
-| plugin-export      | core    | -          | EPUB, PDF, write-book-template ZIP, async jobs with SSE         |
-| plugin-help        | core    | -          | In-app help, shortcuts, FAQ                                     |
-| plugin-getstarted  | core    | -          | Onboarding, example book                                        |
-| plugin-ms-tools    | core    | -          | Style checks, sanitization, metrics, per-book thresholds        |
-| plugin-audiobook   | core    | export     | TTS via manuscripta (Edge/Google/ElevenLabs/pyttsx3), per-book config |
-| plugin-translation | core    | -          | DeepL/LMStudio translation, custom settings panel               |
-| plugin-grammar     | core    | -          | LanguageTool (self-hosted + premium auth support)               |
-| plugin-kinderbuch  | core    | export     | One-image-per-page layout with 4 templates                      |
-| plugin-kdp         | core    | export     | KDP metadata, cover validation, completeness check              |
-| plugin-git-sync    | core    | -          | Git-backed import + sync for write-book-template repositories   |
-| plugin-medium-import | core  | -          | Medium HTML-export importer: Article + Publication + provenance |
+The skeleton ships with **zero plugins**. The loader infrastructure (`backend/app/hookspecs.py`, PluginForge bootstrap in `backend/app/main.py`, `backend/app/import_plugins/` registry) is in place; add plugins as the adaptive-learner domain matures.
 
-Plugin versions are independent of the app version. A plugin is only bumped when the plugin itself changed, not on every app release.
+See `plugins/README.md` for the minimal plugin layout.
+
+## Launcher
+
+Cross-OS desktop launcher under `launcher/`, packaged with PyInstaller. Produces a single-file installer-launcher binary per OS that bootstraps the backend, opens the frontend in the user's browser, and manages auto-update + uninstall.
+
+- **Spec:** `launcher/bibliogon-launcher.spec` (PyInstaller; renamed in Phase 2d)
+- **Python package:** `launcher/bibliogon_launcher/` (renamed in Phase 2d)
+- **Per-OS build pipelines:** `.github/workflows/launcher-{linux,macos,windows}.yml` build artifacts on release tags
+- **Embedded version:** injected at PyInstaller build time from `backend/pyproject.toml` via the spec (no hardcoded literal — see Bibliogon "Single source of truth for version pins" pattern in `.claude/rules/lessons-learned.md`)
+- **User-facing install scripts:** `install.sh` (Linux), `install.command` (macOS), `install.cmd` + `install.ps1` (Windows) — generated from `install.sh.template` + `install.ps1.template` at release time
+
+The launcher is critical distribution infrastructure that carries over to adaptive-learner unchanged in shape; only branding renames in Phase 2c/2d.
 
 ## Directory structure (short)
 
 ```
-bibliogon/
-├── backend/app/           # FastAPI core (main, database, hookspecs, licensing, models, routers, services)
-├── backend/config/        # app.yaml, plugins/, i18n/ (8 languages)
+adaptive-learner/
+├── backend/app/           # FastAPI core (main, database, hookspecs, models, routers, services)
+├── backend/config/        # app.yaml, i18n/ (multiple languages)
 ├── backend/tests/         # backend tests
-├── plugins/               # plugin packages (bibliogon-plugin-{name})
-│   └── installed/         # plugins installed dynamically via ZIP
+├── plugins/               # empty placeholder + README (no plugins ship with the skeleton)
 ├── frontend/src/
 │   ├── api/client.ts      # typed API client
-│   ├── components/        # Editor, Toolbar, ChapterSidebar, dialogs
-│   ├── pages/             # Dashboard, BookEditor, Settings, Help, GetStarted
-│   └── styles/global.css  # CSS variables, 5 themes x light/dark (10 variants)
-├── e2e/
-│   ├── smoke/             # fast smoke tests (per feature)
-│   └── full/              # full regression suite
-├── docs/                  # CONCEPT.md, ROADMAP.md, CHANGELOG.md
-└── Makefile, docker-compose.yml, docker-compose.prod.yml
+│   ├── components/        # Editor, Toolbar, Sidebars, dialogs
+│   ├── pages/             # Dashboard, Editor, Settings
+│   └── styles/global.css  # CSS variables, themes
+├── e2e/                   # Playwright specs (smoke + full)
+├── launcher/              # cross-OS PyInstaller launcher (see Launcher section)
+├── docs/
+│   ├── CONCEPT.md         # project concept
+│   ├── ROADMAP.md         # open work items
+│   ├── API.md             # high-level API overview (OpenAPI is the source of truth)
+│   ├── backlog.md         # daily planning view of ROADMAP
+│   ├── configuration.md   # config-chain docs (project YAML < user override < env-vars)
+│   ├── architecture/      # architecture deep-dives
+│   ├── explorations/      # architectural decision records / explorations
+│   ├── help/              # in-app help pages + _meta.yaml nav schema
+│   ├── testing/           # test plans, tester onboarding
+│   ├── smoke-tests-catalog.md, ux-conventions.md, test-infrastructure-audit.md
+│   └── pyproject.toml, poetry.lock  # MkDocs venv (separate from backend)
+├── scripts/               # ROADMAP archival, mkdocs nav generator, audits, version sync
+├── .github/workflows/     # CI/CD: ci, coverage, docs, launcher-{linux,macos,windows}, release-gate, mutation-import
+└── Makefile, docker-compose.yml, docker-compose.prod.yml,
+    install.{sh,cmd,ps1,command}, start.sh, stop.sh, .env.example
 ```
 
 ## Core conventions
 
 - TipTap JSON as the internal storage format (NOT HTML, NOT Markdown)
-- i18n: 8 languages (DE, EN, ES, FR, EL, PT, TR, JA), all UI strings in config/i18n/{lang}.yaml
+- i18n: multiple languages, all UI strings in `backend/config/i18n/{lang}.yaml`
 - Python: type hints, snake_case, Pydantic v2, SQLAlchemy 2.0 mapped columns
 - TypeScript: strict mode, no `any`, Radix UI for primitives
-- CSS: custom properties, dark mode via [data-theme="dark"]
-- Plugins: standalone packages under plugins/, depends_on as a class attribute, all free (licensing dormant)
-- Export: manuscripta (PyPI), plugin config in export.yaml is 1:1 the manuscripta format
+- CSS: custom properties, dark mode via `[data-theme="dark"]`
 - Commits: English, conventional (feat/fix/refactor/docs)
-- E2E: data-testid selectors only, no brittle CSS or XPath. Claude Code writes specs, Aster runs them.
-- Secrets NEVER in committed config files. Three-layer chain: project `backend/config/app.yaml` (defaults) < `~/.config/bibliogon/secrets.yaml` (user override, gitignored) < env-vars (`BIBLIOGON_AI_API_KEY`). Details in [docs/configuration.md](docs/configuration.md). When editing AI-assisted, do NOT set `ai.api_key` in `app.yaml` — leave it `""` and route the value via override or env-var.
+- E2E: `data-testid` selectors only
+- Secrets NEVER in committed config files. Three-layer chain: project `backend/config/app.yaml` (defaults) < `~/.config/adaptive-learner/secrets.yaml` (user override, gitignored) < env-vars (`ADAPTIVE_LEARNER_*`).
 
 ## Tests
 
 - `make test` must stay green after every change
 - E2E tests under `e2e/`, not on the `make test` default path
-- Current counts and coverage: see [docs/audits/current-coverage.md](docs/audits/current-coverage.md)
 
 ## Test isolation
 
-Tests run in a temporary data directory, never against production
-data. Two layers of protection in `backend/tests/conftest.py`:
+Tests run in a temporary data directory, never against production data. Two layers of protection in `backend/tests/conftest.py`:
 
-1. `BIBLIOGON_TEST=1` + `TEST_DATABASE_URL=sqlite:///:memory:` are
-   set BEFORE any `app.*` import. `BIBLIOGON_DATA_DIR` is set to a
-   process-scoped tmp dir. All `app.paths.get_data_dir()` and
-   `get_upload_dir()` calls resolve into this tmp path.
-2. Production data directories carry a `.bibliogon-production`
-   marker file (written by the FastAPI lifespan in non-test mode
-   via `app.paths.mark_data_dir_as_production`). If any test ever
-   sees this marker, the entire test run aborts with
-   `pytest.exit(returncode=2)`.
-
-Exit code 2 means a test path was pointed at real data. Investigate;
-never delete the marker just to "make the test pass". Origin: the
-April 2026 data-loss incident — the DB tripwire landed in `a4cf7cf`,
-the filesystem tripwire in this commit.
+1. `ADAPTIVE_LEARNER_TEST=1` + `TEST_DATABASE_URL=sqlite:///:memory:` set BEFORE any `app.*` import. `ADAPTIVE_LEARNER_DATA_DIR` set to a process-scoped tmp dir.
+2. Production data directories carry a `.adaptive-learner-production` marker file. If any test ever sees this marker, the run aborts with `pytest.exit(returncode=2)`.
 
 Path conventions:
-- `Path("uploads")` is forbidden (CWD-relative). Use
-  `app.paths.get_upload_dir()` everywhere — it resolves fresh on
-  every call so test env-var overrides take effect.
-- `from app.routers.assets import UPLOAD_DIR` is forbidden (frozen
-  at import time). Use `from app.paths import get_upload_dir`
-  instead.
+- `Path("uploads")` is forbidden (CWD-relative). Use `app.paths.get_upload_dir()`.
+- Frozen module-level imports of paths are forbidden — use the helper functions.
 
-### In-memory caches (third isolation layer)
-
-The two layers above cover filesystem and DB state. The third layer
-— module-level mutable state in service modules — is NOT covered by
-env-vars or marker files. Production keeps these caches; tests must
-reset them explicitly.
-
-Any service module using `functools.lru_cache`, `cached_property`,
-or module-level mutable state (singletons, registries, dicts
-assigned at import time) needs its own teardown hook in the
-fixtures that exercise it. The bidirectional `yield`-based autouse
-pattern is the simplest shape:
-
-```python
-@pytest.fixture(autouse=True)
-def _clear_module_cache():
-    module.cached_function.cache_clear()
-    yield
-    module.cached_function.cache_clear()
-```
-
-Setup-only clears (the `return None` variant) look correct in
-isolation — single-file pytest runs pass — but cross-file ordering
-poisons the cache for any later test file that hits the same
-service. Today's `platform_schema` regression broke 5
-`test_publications.py` tests via this exact path: the fake-schema
-result from the last test in `test_platform_schema.py` stayed in
-`load_platform_schemas`'s LRU cache; the publications endpoint
-served the stale fake dict to the next test file.
-
-Detection grep:
-```
-grep -E '@(lru_|.*_)cache|_cache *=|^[A-Z_]+ *= *' \
-  backend/app/services/<module>.py
-```
-
-Any match in a module that tests fake out is a candidate for
-state-survival-across-tests. See
-`.claude/rules/lessons-learned.md` "Module-level caches survive
-test boundaries" for the full pattern + anti-pattern. Audit
-backlog item: `TEST-ISOLATION-MODULE-STATE-01` (P3).
+In-memory caches (lru_cache, module-level state) need explicit teardown hooks in fixtures — see `.claude/rules/lessons-learned.md`.
 
 ## Pre-commit hooks
-
-The repo uses pre-commit for formatting and linting. Contributors install once:
 
 ```bash
 cd backend && poetry run pre-commit install
 ```
 
-Hooks run automatically on `git commit`. To run manually on all files:
-
-```bash
-cd backend && poetry run pre-commit run --all-files
-```
-
-Config in `.pre-commit-config.yaml` at repo root. Current hooks: trailing-whitespace, end-of-file-fixer, check-yaml, check-json, check-added-large-files, check-merge-conflict, ruff (with `--fix`), ruff-format. Backend-only; frontend has its own Prettier/ESLint path.
+Hooks: trailing-whitespace, end-of-file-fixer, check-yaml/json, check-merge-conflict, ruff (with `--fix`), ruff-format. Backend-only.
 
 ## Related projects
 
-- [pluginforge](https://github.com/astrapi69/pluginforge) - plugin framework (PyPI)
-- [manuscripta](https://github.com/astrapi69/manuscripta) - book export pipeline (PyPI)
-- [write-book-template](https://github.com/astrapi69/write-book-template) - target directory structure for export
-
-# Reviews
-
-OpenAI Codex will review your output once you are done
+- [pluginforge](https://github.com/astrapi69/pluginforge) — plugin framework (PyPI)
