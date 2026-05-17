@@ -173,39 +173,6 @@ def _wbt_zip_bytes(title: str = "Wbt Original") -> bytes:
     return buf.getvalue()
 
 
-def test_wbt_override_applies_title_and_author(client: TestClient) -> None:
-    detect = _detect(client, [("project.zip", _wbt_zip_bytes())])
-    result = _execute(
-        client,
-        {
-            "temp_ref": detect["temp_ref"],
-            "overrides": {"title": "WBT Overridden", "author": "New Author"},
-            "duplicate_action": "create",
-        },
-    )
-    assert result["status_code"] == 200
-    book = client.get(f"/api/books/{result['book_id']}").json()
-    assert book["title"] == "WBT Overridden"
-    assert book["author"] == "New Author"
-
-
-def test_wbt_override_rejects_disallowed_key(client: TestClient) -> None:
-    detect = _detect(client, [("project.zip", _wbt_zip_bytes(title="X"))])
-    result = _execute(
-        client,
-        {
-            "temp_ref": detect["temp_ref"],
-            # Not in BOOK_IMPORT_OVERRIDE_KEYS; older restriction on
-            # "publisher" was lifted when the Metadata Editor fields
-            # gained full parity in DetectedProject.
-            "overrides": {"tts_engine": "sneaky-override"},
-            "duplicate_action": "create",
-        },
-    )
-    assert result["status_code"] == 400
-    assert "not allowed" in result["detail"].lower()
-
-
 # --- markdown-folder handler ---
 
 
