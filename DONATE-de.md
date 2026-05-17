@@ -1,8 +1,8 @@
 # Adaptive Learner unterstuetzen
 
 Adaptive Learner ist ein Open-Source-Projekt, das von einer einzelnen Person
-entwickelt wird. Keine Cloud, kein Tracking, keine Werbung - deine
-Buecher, Artikel und Texte bleiben auf deinem Geraet.
+entwickelt wird. Keine Cloud, kein Tracking, keine Werbung - alles
+bleibt auf deinem Geraet.
 
 Die Entwicklung findet neben der Erziehung von drei Kindern statt, eines
 davon mit dauerhaftem medizinischem und pflegerischem Betreuungsbedarf.

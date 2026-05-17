@@ -2,21 +2,16 @@
 
 ## Supported Versions
 
-Adaptive Learner is pre-1.0 software. Only the latest minor version
-(currently v0.30.x) receives security fixes. Users on older
-versions should upgrade to the latest minor.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.30.x  | :white_check_mark: |
-| < 0.30  | :x:                |
+Adaptive Learner is pre-1.0 software. Only the latest minor
+version receives security fixes. Users on older versions should
+upgrade to the latest minor.
 
 ## Reporting a Vulnerability
 
 Please report security vulnerabilities through GitHub's
 **Private Vulnerability Reporting** feature:
 
-1. Navigate to https://github.com/astrapi69/adaptive_learner/security
+1. Navigate to https://github.com/astrapi69/adaptive-learner/security
 2. Click "Report a vulnerability"
 3. Provide a clear description, reproduction steps, and an
    impact assessment

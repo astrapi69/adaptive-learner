@@ -1,17 +1,17 @@
 # Contributing to Adaptive Learner
 
 Thank you for considering a contribution. Adaptive Learner is a
-local-first self-publishing platform for book and article
-authoring, built on PluginForge. Most non-trivial features land
-as plugins, not core changes.
+project skeleton template built on PluginForge. The skeleton
+ships with a working full-stack foundation; most non-trivial
+features should land as plugins, not core changes.
 
 ## Project Layout
 
 - `backend/` - FastAPI app, SQLAlchemy models, Alembic migrations
 - `frontend/` - React + TypeScript + Vite, TipTap editor
-- `plugins/` - 10 first-party plugins, each a standalone Poetry package
+- `plugins/` - empty placeholder + plugin loader (zero plugins ship)
 - `launcher/` - Cross-platform launcher (PyInstaller)
-- `docs/` - User docs (MkDocs), API reference, journals, audits
+- `docs/` - Architecture overview, MkDocs site, in-app help structure
 - `.claude/rules/` - Project rules read on demand
 - `e2e/` - Playwright smoke + full suites
 

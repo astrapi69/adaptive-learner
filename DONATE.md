@@ -1,7 +1,7 @@
 # Support Adaptive Learner
 
 Adaptive Learner is an open-source project developed by a single person. No cloud,
-no tracking, no ads - your books, articles, and writing stay on your device.
+no tracking, no ads - everything stays on your device.
 
 Development happens alongside parenting three children, one of whom requires
 ongoing medical and care support. Donations help carve out reliable
