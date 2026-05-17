@@ -102,21 +102,15 @@ class UserOut(BaseModel):
 
 
 # --- UserSettings -----------------------------------------------------------
-
-
-class UserSettingsCreate(BaseModel):
-    user_id: str
-    active_provider: AIProvider = AIProvider.ANTHROPIC
-    api_key_anthropic: str | None = None
-    api_key_openai: str | None = None
-    api_key_gemini: str | None = None
-
-
-class UserSettingsUpdate(BaseModel):
-    active_provider: AIProvider | None = None
-    api_key_anthropic: str | None = None
-    api_key_openai: str | None = None
-    api_key_gemini: str | None = None
+#
+# UserSettings has no ``Create`` / ``Update`` schema by design:
+# the row is auto-created on first GET (via
+# ``settings_service.get_or_create_settings``) and updates go
+# through narrowly-scoped body schemas — :class:`SettingsPatchBody`
+# for active_provider + language; :class:`ApiKeySetBody` for the
+# encryption-required api-key write path. A general Update would
+# re-expose the raw api_key_* columns to clients, which is exactly
+# what the Phase 1C-D security contract forbids.
 
 
 class UserSettingsOut(BaseModel):
@@ -538,11 +532,10 @@ __all__ = [
     "UserCreate",
     "UserUpdate",
     "UserOut",
-    # UserSettings
+    # UserSettings (no Create/Update — see the comment block above
+    # UserSettingsOut in the schema definitions).
     "ApiKeySetBody",
     "SettingsPatchBody",
-    "UserSettingsCreate",
-    "UserSettingsUpdate",
     "UserSettingsOut",
     # LearningProject
     "LearningProjectCreate",
