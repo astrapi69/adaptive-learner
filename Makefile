@@ -137,7 +137,7 @@ install-plugins:
 
 # --- Test ---
 
-test: test-plugins test-backend test-frontend ## Run ALL tests, no coverage (everyday use; coverage runs in CI - see test-coverage)
+test: test-backend test-frontend ## Run ALL tests, no coverage (everyday use; coverage runs in CI - see test-coverage)
 	@echo ""
 	@echo "=== All tests complete ==="
 
@@ -151,61 +151,20 @@ test-backend: ## Run backend tests
 	@echo "=== Backend Tests ==="
 	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-test-plugins: test-plugin-export test-plugin-grammar test-plugin-kdp test-plugin-kinderbuch test-plugin-ms-tools test-plugin-translation test-plugin-audiobook test-plugin-help test-plugin-getstarted test-plugin-git-sync ## Run all plugin tests
-
-test-plugin-export: ## Run export plugin tests
-	@echo ""
-	@echo "=== Export Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
-
-test-plugin-grammar: ## Run grammar plugin tests
-	@echo ""
-	@echo "=== Grammar Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-grammar && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
-
-test-plugin-kdp: ## Run KDP plugin tests
-	@echo ""
-	@echo "=== KDP Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-kdp && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
-
-test-plugin-kinderbuch: ## Run kinderbuch plugin tests
-	@echo ""
-	@echo "=== Kinderbuch Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-kinderbuch && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
-
-test-plugin-ms-tools: ## Run manuscript tools plugin tests
-	@echo ""
-	@echo "=== Manuscript Tools Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
-
-test-plugin-translation: ## Run translation plugin tests
-	@echo ""
-	@echo "=== Translation Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-translation && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
-
-test-plugin-audiobook: ## Run audiobook plugin tests
-	@echo ""
-	@echo "=== Audiobook Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-audiobook && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
-
-test-plugin-help: ## Run help plugin tests
-	@echo ""
-	@echo "=== Help Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-help && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
-
-test-plugin-getstarted: ## Run getstarted plugin tests
-	@echo ""
-	@echo "=== Getstarted Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-getstarted && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
-
-test-plugin-git-sync: ## Run git-sync plugin tests (PGS-01)
-	@echo ""
-	@echo "=== Git-Sync Plugin Tests ==="
-	cd plugins/adaptive-learner-plugin-git-sync && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
+# Plugin test targets: skeleton ships zero plugins. When you add a
+# plugin under plugins/adaptive-learner-plugin-<name>/, follow the
+# pattern below and wire it into `test-plugins`.
+#
+# test-plugins: test-plugin-<name>  ## Run all plugin tests
+#
+# test-plugin-<name>:
+#	cd plugins/adaptive-learner-plugin-<name> && \
+#		poetry env use python3.12 -q 2>/dev/null; \
+#		poetry run pytest tests/ -v
 
 # --- Coverage (heavy, opt-in; CI runs this on every push - see .github/workflows/coverage.yml) ---
 
-test-coverage: test-coverage-plugins test-coverage-backend test-coverage-frontend ## Run ALL tests with coverage (slow; prefer CI)
+test-coverage: test-coverage-backend test-coverage-frontend ## Run ALL tests with coverage (slow; prefer CI)
 	@echo ""
 	@echo "=== All coverage runs complete ==="
 
@@ -219,52 +178,9 @@ test-coverage-frontend: ## Frontend coverage report (coverage/)
 	@echo "=== Frontend Coverage ==="
 	cd frontend && npm run test:coverage
 
-test-coverage-plugins: test-coverage-plugin-audiobook test-coverage-plugin-export test-coverage-plugin-grammar test-coverage-plugin-kdp test-coverage-plugin-kinderbuch test-coverage-plugin-ms-tools test-coverage-plugin-translation test-coverage-plugin-help test-coverage-plugin-getstarted ## Run plugin tests with coverage
-
-test-coverage-plugin-audiobook: ## Audiobook plugin coverage
-	@echo ""
-	@echo "=== Audiobook Plugin Coverage ==="
-	cd plugins/adaptive-learner-plugin-audiobook && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_audiobook --cov-report=html --cov-report=term
-
-test-coverage-plugin-export: ## Export plugin coverage
-	@echo ""
-	@echo "=== Export Plugin Coverage ==="
-	cd plugins/adaptive-learner-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_export --cov-report=html --cov-report=term
-
-test-coverage-plugin-grammar: ## Grammar plugin coverage
-	@echo ""
-	@echo "=== Grammar Plugin Coverage ==="
-	cd plugins/adaptive-learner-plugin-grammar && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_grammar --cov-report=html --cov-report=term
-
-test-coverage-plugin-kdp: ## KDP plugin coverage
-	@echo ""
-	@echo "=== KDP Plugin Coverage ==="
-	cd plugins/adaptive-learner-plugin-kdp && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_kdp --cov-report=html --cov-report=term
-
-test-coverage-plugin-kinderbuch: ## Kinderbuch plugin coverage
-	@echo ""
-	@echo "=== Kinderbuch Plugin Coverage ==="
-	cd plugins/adaptive-learner-plugin-kinderbuch && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_kinderbuch --cov-report=html --cov-report=term
-
-test-coverage-plugin-ms-tools: ## ms-tools plugin coverage
-	@echo ""
-	@echo "=== ms-tools Plugin Coverage ==="
-	cd plugins/adaptive-learner-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_ms_tools --cov-report=html --cov-report=term
-
-test-coverage-plugin-translation: ## Translation plugin coverage
-	@echo ""
-	@echo "=== Translation Plugin Coverage ==="
-	cd plugins/adaptive-learner-plugin-translation && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_translation --cov-report=html --cov-report=term
-
-test-coverage-plugin-help: ## Help plugin coverage
-	@echo ""
-	@echo "=== Help Plugin Coverage ==="
-	cd plugins/adaptive-learner-plugin-help && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_help --cov-report=html --cov-report=term
-
-test-coverage-plugin-getstarted: ## Getstarted plugin coverage
-	@echo ""
-	@echo "=== Getstarted Plugin Coverage ==="
-	cd plugins/adaptive-learner-plugin-getstarted && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ --cov=adaptive_learner_getstarted --cov-report=html --cov-report=term
+# Plugin coverage: same pattern as test-plugin-<name>. Wire each
+# plugin's `--cov=<package>` into test-coverage-plugin-<name> and
+# add it to test-coverage-plugins.
 
 # --- Mutation Testing ---
 
@@ -273,20 +189,8 @@ mutmut-backend: ## Run mutation testing on backend
 	@echo "=== Mutation Testing: Backend ==="
 	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
 
-mutmut-export: ## Run mutation testing on export plugin
-	@echo ""
-	@echo "=== Mutation Testing: Export Plugin ==="
-	cd plugins/adaptive-learner-plugin-export && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
-
-mutmut-ms-tools: ## Run mutation testing on ms-tools plugin
-	@echo ""
-	@echo "=== Mutation Testing: MS-Tools Plugin ==="
-	cd plugins/adaptive-learner-plugin-ms-tools && poetry env use python3.12 -q 2>/dev/null; poetry run mutmut run
-
 mutmut-results: ## Show mutation testing results
 	@echo "=== Backend ===" && cd backend && poetry run mutmut results 2>/dev/null || true
-	@echo "=== Export ===" && cd plugins/adaptive-learner-plugin-export && poetry run mutmut results 2>/dev/null || true
-	@echo "=== MS-Tools ===" && cd plugins/adaptive-learner-plugin-ms-tools && poetry run mutmut results 2>/dev/null || true
 
 # --- Blocker Status ---
 
@@ -344,48 +248,12 @@ sync-versions-check: ## Exit non-zero if any subsystem version drifts from canon
 	@python3 scripts/sync_versions.py --check
 
 # --- License ---
-
-generate-trial-key: ## Generate 30-day trial key. Usage: make generate-trial-key AUTHOR="Name"
-	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run python -c \
-		"from app.licensing import *; \
-		v = LicenseValidator(get_license_secret()); \
-		key = create_trial_key(v, author='$(AUTHOR)', days=30); \
-		print('Trial Key:', key); \
-		print('Author:', '$(AUTHOR)' or '(any)'); \
-		from datetime import date, timedelta; \
-		print('Expires:', (date.today() + timedelta(days=30)).isoformat())"
-
-generate-license-key: ## Generate plugin key. Usage: make generate-license-key PLUGIN=audiobook AUTHOR="Name" DAYS=365
-	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run python -c \
-		"from app.licensing import *; \
-		v = LicenseValidator(get_license_secret()); \
-		key = create_plugin_key(v, '$(PLUGIN)', '$(AUTHOR)', int('$(DAYS)' or '365')); \
-		print('Key:', key); \
-		print('Plugin:', '$(PLUGIN)'); \
-		print('Author:', '$(AUTHOR)'); \
-		from datetime import date, timedelta; \
-		print('Expires:', (date.today() + timedelta(days=int('$(DAYS)' or '365'))).isoformat())"
-
-generate-license-key-all: ## Generate key for all plugins. Usage: make generate-license-key-all AUTHOR="Name" DAYS=365
-	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run python -c \
-		"from app.licensing import *; \
-		v = LicenseValidator(get_license_secret()); \
-		from datetime import date, timedelta; \
-		days = int('$(DAYS)' or '365'); \
-		expires = (date.today() + timedelta(days=days)).isoformat(); \
-		p = LicensePayload(plugin='*', version='1', expires=expires, author='$(AUTHOR)'); \
-		key = v.create_license(p); \
-		print('Key:', key); \
-		print('Plugins: ALL'); \
-		print('Author:', '$(AUTHOR)'); \
-		print('Expires:', expires)"
-
-seed-voices: ## Sync Edge TTS voices into the database
-	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run python -c \
-		"import asyncio; from app.database import SessionLocal, init_db; init_db(); \
-		from app.voice_store import sync_edge_tts_voices; \
-		db = SessionLocal(); count = asyncio.run(sync_edge_tts_voices(db)); db.close(); \
-		print(f'{count} voices synced')"
+# Licensing infrastructure lives in backend/app/licensing.py. The
+# skeleton ships zero paid plugins, so the per-plugin / trial-key
+# generation Makefile targets that lived here in the upstream
+# project (generate-trial-key, generate-license-key, generate-
+# license-key-all) were removed. Re-add them when you wire a
+# paid-plugin tier.
 
 # --- Production (Docker) ---
 
