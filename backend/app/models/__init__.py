@@ -77,16 +77,16 @@ class User(Base):
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
 
-    projects: Mapped[list["LearningProject"]] = relationship(
+    projects: Mapped[list[LearningProject]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    curriculums: Mapped[list["Curriculum"]] = relationship(
+    curriculums: Mapped[list[Curriculum]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    profiles: Mapped[list["LearningProfile"]] = relationship(
+    profiles: Mapped[list[LearningProfile]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    settings: Mapped["UserSettings | None"] = relationship(
+    settings: Mapped[UserSettings | None] = relationship(
         back_populates="user", cascade="all, delete-orphan", uselist=False
     )
 
@@ -112,9 +112,7 @@ class UserSettings(Base):
         nullable=False,
         unique=True,
     )
-    active_provider: Mapped[str] = mapped_column(
-        String(50), nullable=False, default="anthropic"
-    )
+    active_provider: Mapped[str] = mapped_column(String(50), nullable=False, default="anthropic")
     # Ciphertext, written by the Phase 1C encryption service.
     api_key_anthropic: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_openai: Mapped[str | None] = mapped_column(Text, nullable=True)
@@ -124,7 +122,7 @@ class UserSettings(Base):
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
 
-    user: Mapped["User"] = relationship(back_populates="settings")
+    user: Mapped[User] = relationship(back_populates="settings")
 
     def __repr__(self) -> str:
         return f"<UserSettings user={self.user_id!r} provider={self.active_provider!r}>"
@@ -160,17 +158,17 @@ class LearningProject(Base):
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
 
-    user: Mapped["User"] = relationship(back_populates="projects")
-    profiles: Mapped[list["LearningProfile"]] = relationship(
+    user: Mapped[User] = relationship(back_populates="projects")
+    profiles: Mapped[list[LearningProfile]] = relationship(
         back_populates="project", cascade="all, delete-orphan"
     )
-    sessions: Mapped[list["LearningSession"]] = relationship(
+    sessions: Mapped[list[LearningSession]] = relationship(
         back_populates="project", cascade="all, delete-orphan"
     )
-    progress_commits: Mapped[list["ProgressCommit"]] = relationship(
+    progress_commits: Mapped[list[ProgressCommit]] = relationship(
         back_populates="project", cascade="all, delete-orphan"
     )
-    method_switches: Mapped[list["MethodSwitch"]] = relationship(
+    method_switches: Mapped[list[MethodSwitch]] = relationship(
         back_populates="project", cascade="all, delete-orphan"
     )
 
@@ -210,8 +208,8 @@ class LearningProfile(Base):
     )
     version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
 
-    user: Mapped["User"] = relationship(back_populates="profiles")
-    project: Mapped["LearningProject"] = relationship(back_populates="profiles")
+    user: Mapped[User] = relationship(back_populates="profiles")
+    project: Mapped[LearningProject] = relationship(back_populates="profiles")
 
     def __repr__(self) -> str:
         return (
@@ -265,13 +263,13 @@ class Curriculum(Base):
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
 
-    user: Mapped["User"] = relationship(back_populates="curriculums")
-    topics: Mapped[list["LearningTopic"]] = relationship(
+    user: Mapped[User] = relationship(back_populates="curriculums")
+    topics: Mapped[list[LearningTopic]] = relationship(
         back_populates="curriculum",
         cascade="all, delete-orphan",
         order_by="LearningTopic.order_index",
     )
-    lessons: Mapped[list["Lesson"]] = relationship(
+    lessons: Mapped[list[Lesson]] = relationship(
         back_populates="curriculum",
         cascade="all, delete-orphan",
         order_by="Lesson.order_index",
@@ -319,11 +317,11 @@ class LearningTopic(Base):
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
 
-    curriculum: Mapped["Curriculum"] = relationship(back_populates="topics")
-    parent: Mapped["LearningTopic | None"] = relationship(
+    curriculum: Mapped[Curriculum] = relationship(back_populates="topics")
+    parent: Mapped[LearningTopic | None] = relationship(
         remote_side="LearningTopic.id", back_populates="children"
     )
-    children: Mapped[list["LearningTopic"]] = relationship(
+    children: Mapped[list[LearningTopic]] = relationship(
         back_populates="parent",
         order_by="LearningTopic.order_index",
     )
@@ -357,7 +355,7 @@ class Lesson(Base):
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
     )
 
-    curriculum: Mapped["Curriculum"] = relationship(back_populates="lessons")
+    curriculum: Mapped[Curriculum] = relationship(back_populates="lessons")
 
     def __repr__(self) -> str:
         return f"<Lesson {self.id!r} title={self.title!r} order={self.order_index}>"
@@ -392,23 +390,23 @@ class LearningSession(Base):
     cycle_step: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
 
-    project: Mapped["LearningProject"] = relationship(back_populates="sessions")
-    messages: Mapped[list["SessionMessage"]] = relationship(
+    project: Mapped[LearningProject] = relationship(back_populates="sessions")
+    messages: Mapped[list[SessionMessage]] = relationship(
         back_populates="session",
         cascade="all, delete-orphan",
         order_by="SessionMessage.created_at",
     )
-    ratings: Mapped[list["SessionRating"]] = relationship(
+    ratings: Mapped[list[SessionRating]] = relationship(
         back_populates="session",
         cascade="all, delete-orphan",
         order_by="SessionRating.created_at",
     )
-    notes: Mapped[list["SessionNote"]] = relationship(
+    notes: Mapped[list[SessionNote]] = relationship(
         back_populates="session",
         cascade="all, delete-orphan",
         order_by="SessionNote.created_at",
     )
-    progress_commits: Mapped[list["ProgressCommit"]] = relationship(
+    progress_commits: Mapped[list[ProgressCommit]] = relationship(
         back_populates="session",
         cascade="all, delete-orphan",
         order_by="ProgressCommit.committed_at",
@@ -442,7 +440,7 @@ class SessionMessage(Base):
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
 
-    session: Mapped["LearningSession"] = relationship(back_populates="messages")
+    session: Mapped[LearningSession] = relationship(back_populates="messages")
 
     def __repr__(self) -> str:
         return f"<SessionMessage session={self.session_id!r} role={self.role!r}>"
@@ -472,7 +470,7 @@ class SessionRating(Base):
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
 
-    session: Mapped["LearningSession"] = relationship(back_populates="ratings")
+    session: Mapped[LearningSession] = relationship(back_populates="ratings")
 
     def __repr__(self) -> str:
         return (
@@ -498,7 +496,7 @@ class SessionNote(Base):
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
 
-    session: Mapped["LearningSession"] = relationship(back_populates="notes")
+    session: Mapped[LearningSession] = relationship(back_populates="notes")
 
     def __repr__(self) -> str:
         return f"<SessionNote {self.id!r} session={self.session_id!r}>"
@@ -539,8 +537,8 @@ class ProgressCommit(Base):
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
 
-    project: Mapped["LearningProject"] = relationship(back_populates="progress_commits")
-    session: Mapped["LearningSession"] = relationship(back_populates="progress_commits")
+    project: Mapped[LearningProject] = relationship(back_populates="progress_commits")
+    session: Mapped[LearningSession] = relationship(back_populates="progress_commits")
 
     def __repr__(self) -> str:
         return (
@@ -573,12 +571,11 @@ class MethodSwitch(Base):
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
 
-    project: Mapped["LearningProject"] = relationship(back_populates="method_switches")
+    project: Mapped[LearningProject] = relationship(back_populates="method_switches")
 
     def __repr__(self) -> str:
         return (
-            f"<MethodSwitch project={self.project_id!r} "
-            f"{self.from_method!r}->{self.to_method!r}>"
+            f"<MethodSwitch project={self.project_id!r} {self.from_method!r}->{self.to_method!r}>"
         )
 
 

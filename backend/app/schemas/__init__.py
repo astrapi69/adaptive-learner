@@ -36,7 +36,6 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -75,14 +74,14 @@ class AIProvider(str, Enum):
 
 class UserCreate(BaseModel):
     name: str = Field(min_length=1, max_length=200)
-    email: Optional[str] = Field(default=None, max_length=320)
+    email: str | None = Field(default=None, max_length=320)
     language: str = Field(default="de", max_length=10)
 
 
 class UserUpdate(BaseModel):
-    name: Optional[str] = Field(default=None, min_length=1, max_length=200)
-    email: Optional[str] = Field(default=None, max_length=320)
-    language: Optional[str] = Field(default=None, max_length=10)
+    name: str | None = Field(default=None, min_length=1, max_length=200)
+    email: str | None = Field(default=None, max_length=320)
+    language: str | None = Field(default=None, max_length=10)
 
 
 class UserOut(BaseModel):
@@ -90,7 +89,7 @@ class UserOut(BaseModel):
 
     id: str
     name: str
-    email: Optional[str] = None
+    email: str | None = None
     language: str
     created_at: datetime
     updated_at: datetime
@@ -102,16 +101,16 @@ class UserOut(BaseModel):
 class UserSettingsCreate(BaseModel):
     user_id: str
     active_provider: AIProvider = AIProvider.ANTHROPIC
-    api_key_anthropic: Optional[str] = None
-    api_key_openai: Optional[str] = None
-    api_key_gemini: Optional[str] = None
+    api_key_anthropic: str | None = None
+    api_key_openai: str | None = None
+    api_key_gemini: str | None = None
 
 
 class UserSettingsUpdate(BaseModel):
-    active_provider: Optional[AIProvider] = None
-    api_key_anthropic: Optional[str] = None
-    api_key_openai: Optional[str] = None
-    api_key_gemini: Optional[str] = None
+    active_provider: AIProvider | None = None
+    api_key_anthropic: str | None = None
+    api_key_openai: str | None = None
+    api_key_gemini: str | None = None
 
 
 class UserSettingsOut(BaseModel):
@@ -142,17 +141,17 @@ class LearningProjectCreate(BaseModel):
     goal: str = Field(min_length=1)
     timeframe: str = Field(min_length=1, max_length=100)
     daily_minutes: int = Field(gt=0)
-    current_problem: Optional[str] = None
+    current_problem: str | None = None
     active: bool = True
 
 
 class LearningProjectUpdate(BaseModel):
-    topic: Optional[str] = Field(default=None, min_length=1, max_length=500)
-    goal: Optional[str] = Field(default=None, min_length=1)
-    timeframe: Optional[str] = Field(default=None, min_length=1, max_length=100)
-    daily_minutes: Optional[int] = Field(default=None, gt=0)
-    current_problem: Optional[str] = None
-    active: Optional[bool] = None
+    topic: str | None = Field(default=None, min_length=1, max_length=500)
+    goal: str | None = Field(default=None, min_length=1)
+    timeframe: str | None = Field(default=None, min_length=1, max_length=100)
+    daily_minutes: int | None = Field(default=None, gt=0)
+    current_problem: str | None = None
+    active: bool | None = None
 
 
 class LearningProjectOut(BaseModel):
@@ -164,7 +163,7 @@ class LearningProjectOut(BaseModel):
     goal: str
     timeframe: str
     daily_minutes: int
-    current_problem: Optional[str] = None
+    current_problem: str | None = None
     active: bool
     created_at: datetime
     updated_at: datetime
@@ -186,13 +185,13 @@ class LearningProfileCreate(BaseModel):
 
 
 class LearningProfileUpdate(BaseModel):
-    deductive: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    inductive: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    error_based: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    dialogic: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    contextual: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    ai_adaptive: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    version: Optional[int] = Field(default=None, ge=1)
+    deductive: float | None = Field(default=None, ge=0.0, le=1.0)
+    inductive: float | None = Field(default=None, ge=0.0, le=1.0)
+    error_based: float | None = Field(default=None, ge=0.0, le=1.0)
+    dialogic: float | None = Field(default=None, ge=0.0, le=1.0)
+    contextual: float | None = Field(default=None, ge=0.0, le=1.0)
+    ai_adaptive: float | None = Field(default=None, ge=0.0, le=1.0)
+    version: int | None = Field(default=None, ge=1)
 
 
 class LearningProfileOut(BaseModel):
@@ -218,14 +217,14 @@ class LearningProfileOut(BaseModel):
 class CurriculumCreate(BaseModel):
     user_id: str
     title: str = Field(min_length=1, max_length=500)
-    description: Optional[str] = None
+    description: str | None = None
     language: str = Field(default="de", max_length=10)
 
 
 class CurriculumUpdate(BaseModel):
-    title: Optional[str] = Field(default=None, min_length=1, max_length=500)
-    description: Optional[str] = None
-    language: Optional[str] = Field(default=None, max_length=10)
+    title: str | None = Field(default=None, min_length=1, max_length=500)
+    description: str | None = None
+    language: str | None = Field(default=None, max_length=10)
 
 
 class CurriculumOut(BaseModel):
@@ -234,7 +233,7 @@ class CurriculumOut(BaseModel):
     id: str
     user_id: str
     title: str
-    description: Optional[str] = None
+    description: str | None = None
     language: str
     created_at: datetime
     updated_at: datetime
@@ -245,17 +244,17 @@ class CurriculumOut(BaseModel):
 
 class LearningTopicCreate(BaseModel):
     curriculum_id: str
-    parent_id: Optional[str] = None
+    parent_id: str | None = None
     title: str = Field(min_length=1, max_length=500)
-    description: Optional[str] = None
+    description: str | None = None
     order_index: int = Field(default=0, ge=0)
 
 
 class LearningTopicUpdate(BaseModel):
-    parent_id: Optional[str] = None
-    title: Optional[str] = Field(default=None, min_length=1, max_length=500)
-    description: Optional[str] = None
-    order_index: Optional[int] = Field(default=None, ge=0)
+    parent_id: str | None = None
+    title: str | None = Field(default=None, min_length=1, max_length=500)
+    description: str | None = None
+    order_index: int | None = Field(default=None, ge=0)
 
 
 class LearningTopicOut(BaseModel):
@@ -263,9 +262,9 @@ class LearningTopicOut(BaseModel):
 
     id: str
     curriculum_id: str
-    parent_id: Optional[str] = None
+    parent_id: str | None = None
     title: str
-    description: Optional[str] = None
+    description: str | None = None
     order_index: int
     created_at: datetime
     updated_at: datetime
@@ -282,9 +281,9 @@ class LessonCreate(BaseModel):
 
 
 class LessonUpdate(BaseModel):
-    title: Optional[str] = Field(default=None, min_length=1, max_length=500)
-    content: Optional[str] = None
-    order_index: Optional[int] = Field(default=None, ge=0)
+    title: str | None = Field(default=None, min_length=1, max_length=500)
+    content: str | None = None
+    order_index: int | None = Field(default=None, ge=0)
 
 
 class LessonOut(BaseModel):
@@ -310,10 +309,10 @@ class LearningSessionCreate(BaseModel):
 
 
 class LearningSessionUpdate(BaseModel):
-    method: Optional[LearningMethod] = None
-    cycle_step: Optional[int] = Field(default=None, ge=1, le=7)
-    status: Optional[SessionStatus] = None
-    ended_at: Optional[datetime] = None
+    method: LearningMethod | None = None
+    cycle_step: int | None = Field(default=None, ge=1, le=7)
+    status: SessionStatus | None = None
+    ended_at: datetime | None = None
 
 
 class LearningSessionOut(BaseModel):
@@ -323,7 +322,7 @@ class LearningSessionOut(BaseModel):
     project_id: str
     method: LearningMethod
     started_at: datetime
-    ended_at: Optional[datetime] = None
+    ended_at: datetime | None = None
     cycle_step: int
     status: SessionStatus
 
@@ -338,8 +337,8 @@ class SessionMessageCreate(BaseModel):
 
 
 class SessionMessageUpdate(BaseModel):
-    role: Optional[MessageRole] = None
-    content: Optional[str] = Field(default=None, min_length=1)
+    role: MessageRole | None = None
+    content: str | None = Field(default=None, min_length=1)
 
 
 class SessionMessageOut(BaseModel):
@@ -360,14 +359,14 @@ class SessionRatingCreate(BaseModel):
     understanding: int = Field(ge=1, le=5)
     stress: int = Field(ge=1, le=5)
     method_fit: int = Field(ge=1, le=5)
-    notes: Optional[str] = None
+    notes: str | None = None
 
 
 class SessionRatingUpdate(BaseModel):
-    understanding: Optional[int] = Field(default=None, ge=1, le=5)
-    stress: Optional[int] = Field(default=None, ge=1, le=5)
-    method_fit: Optional[int] = Field(default=None, ge=1, le=5)
-    notes: Optional[str] = None
+    understanding: int | None = Field(default=None, ge=1, le=5)
+    stress: int | None = Field(default=None, ge=1, le=5)
+    method_fit: int | None = Field(default=None, ge=1, le=5)
+    notes: str | None = None
 
 
 class SessionRatingOut(BaseModel):
@@ -378,7 +377,7 @@ class SessionRatingOut(BaseModel):
     understanding: int
     stress: int
     method_fit: int
-    notes: Optional[str] = None
+    notes: str | None = None
     created_at: datetime
 
 
@@ -391,7 +390,7 @@ class SessionNoteCreate(BaseModel):
 
 
 class SessionNoteUpdate(BaseModel):
-    content: Optional[str] = Field(default=None, min_length=1)
+    content: str | None = Field(default=None, min_length=1)
 
 
 class SessionNoteOut(BaseModel):
@@ -423,11 +422,11 @@ class ProgressCommitUpdate(BaseModel):
     a commit.
     """
 
-    method: Optional[LearningMethod] = None
-    understanding: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    stress: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    error_rate: Optional[float] = Field(default=None, ge=0.0, le=1.0)
-    duration_minutes: Optional[int] = Field(default=None, gt=0)
+    method: LearningMethod | None = None
+    understanding: float | None = Field(default=None, ge=0.0, le=1.0)
+    stress: float | None = Field(default=None, ge=0.0, le=1.0)
+    error_rate: float | None = Field(default=None, ge=0.0, le=1.0)
+    duration_minutes: int | None = Field(default=None, gt=0)
 
 
 class ProgressCommitOut(BaseModel):
@@ -457,9 +456,9 @@ class MethodSwitchCreate(BaseModel):
 class MethodSwitchUpdate(BaseModel):
     """Same shape as ProgressCommitUpdate — backfill only."""
 
-    from_method: Optional[LearningMethod] = None
-    to_method: Optional[LearningMethod] = None
-    reason: Optional[str] = Field(default=None, min_length=1)
+    from_method: LearningMethod | None = None
+    to_method: LearningMethod | None = None
+    reason: str | None = Field(default=None, min_length=1)
 
 
 class MethodSwitchOut(BaseModel):
