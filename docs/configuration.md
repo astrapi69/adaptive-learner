@@ -145,7 +145,8 @@ secrets, GitLab CI variables, Vault, etc.). The committed
 A quick way to verify what the backend sees at runtime:
 
 ```bash
-curl http://localhost:8000/api/settings/app | jq '.ai.api_key, ._secrets_managed_externally'
+curl http://localhost:"${ADAPTIVE_LEARNER_PORT:-18001}"/api/settings/app \
+  | jq '.ai.api_key, ._secrets_managed_externally'
 ```
 
 - `_secrets_managed_externally: true` → override file or env-var is

@@ -1,3 +1,13 @@
+# Backend / frontend dev ports. ``ADAPTIVE_LEARNER_PORT`` is the
+# project-wide name; the Makefile aliases it as BACKEND_PORT for
+# readability. Defaults are intentionally non-standard (18001 /
+# 15174) so Adaptive Learner can coexist with other projects already
+# bound to 8000 / 5173 on the same workstation. Overriding either
+# via env or ``make BACKEND_PORT=… dev`` flows through to uvicorn,
+# vite, and the health-check curl below.
+BACKEND_PORT  ?= $(or $(ADAPTIVE_LEARNER_PORT),18001)
+FRONTEND_PORT ?= $(or $(ADAPTIVE_LEARNER_FRONTEND_PORT),15174)
+
 .PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
        test test-backend test-frontend test-e2e test-e2e-ui \
@@ -20,15 +30,20 @@ dev: ## Start backend + frontend (backend first, then frontend)
 			echo "         Run 'make fix-watchers' for the persistent fix."; \
 		fi; \
 	fi
-	@echo "Starting Adaptive Learner..."
-	@cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run uvicorn app.main:app --reload --port 8000 &
-	@echo "Waiting for backend..."
+	@echo "Starting Adaptive Learner (backend $(BACKEND_PORT) / frontend $(FRONTEND_PORT))..."
+	@cd backend && poetry env use python3.12 -q 2>/dev/null; \
+		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
+		poetry run uvicorn app.main:app --reload --port $(BACKEND_PORT) &
+	@echo "Waiting for backend on :$(BACKEND_PORT)..."
 	@for i in 1 2 3 4 5 6 7 8 9 10; do \
-		curl -s http://localhost:8000/api/health > /dev/null 2>&1 && break; \
+		curl -s http://localhost:$(BACKEND_PORT)/api/health > /dev/null 2>&1 && break; \
 		sleep 1; \
 	done
-	@echo "Backend ready. Starting frontend..."
-	@cd frontend && npm run dev
+	@echo "Backend ready. Starting frontend on :$(FRONTEND_PORT)..."
+	@cd frontend && \
+		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
+		ADAPTIVE_LEARNER_FRONTEND_PORT=$(FRONTEND_PORT) \
+		npm run dev
 
 DEV_LOG_DIR ?= /tmp/adaptive-learner-logs
 
@@ -38,10 +53,13 @@ dev-bg: ## Start in background, logs to $(DEV_LOG_DIR) (stop with: make dev-down
 	@echo "  Backend  log: $(DEV_LOG_DIR)/backend.log"
 	@echo "  Frontend log: $(DEV_LOG_DIR)/frontend.log"
 	@cd backend && \
-		setsid poetry run uvicorn app.main:app --reload --port 8000 \
+		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
+		setsid poetry run uvicorn app.main:app --reload --port $(BACKEND_PORT) \
 			< /dev/null > $(DEV_LOG_DIR)/backend.log 2>&1 & \
 		echo $$! > .pid-backend
 	@cd frontend && \
+		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
+		ADAPTIVE_LEARNER_FRONTEND_PORT=$(FRONTEND_PORT) \
 		setsid npm run dev \
 			< /dev/null > $(DEV_LOG_DIR)/frontend.log 2>&1 & \
 		echo $$! > .pid-frontend
@@ -94,10 +112,15 @@ fix-watchers: ## Persist Linux inotify limits for vite dev (sudo required, runs 
 	@echo "Persistent across reboots."
 
 dev-backend:
-	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run uvicorn app.main:app --reload --port 8000
+	cd backend && poetry env use python3.12 -q 2>/dev/null; \
+		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
+		poetry run uvicorn app.main:app --reload --port $(BACKEND_PORT)
 
 dev-frontend:
-	cd frontend && npm run dev
+	cd frontend && \
+		ADAPTIVE_LEARNER_PORT=$(BACKEND_PORT) \
+		ADAPTIVE_LEARNER_FRONTEND_PORT=$(FRONTEND_PORT) \
+		npm run dev
 
 # --- Install ---
 

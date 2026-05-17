@@ -33,7 +33,7 @@ git clone https://github.com/astrapi69/adaptive_learner.git
 cd adaptive_learner
 make install      # Poetry + npm + plugin path-deps
 make test         # baseline; should be green before you start
-make dev          # backend on :8000, frontend on :5173
+make dev          # backend on :18001, frontend on :15174 (overridable via ADAPTIVE_LEARNER_PORT / ADAPTIVE_LEARNER_FRONTEND_PORT)
 ```
 
 `make help` lists every available target. The

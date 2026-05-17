@@ -3,7 +3,11 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 2
+    # Internal backend port. Matches the dev value so curl + healthcheck
+    # don't have to special-case prod. Override with ADAPTIVE_LEARNER_PORT
+    # at compose-up time when colocating with another service that
+    # already binds 18001 inside its own network.
+    command: sh -c 'uvicorn app.main:app --host 0.0.0.0 --port ${ADAPTIVE_LEARNER_PORT:-18001} --workers 2'
     volumes:
       - adaptive-learner-data:/app/data
     environment:
@@ -14,10 +18,11 @@ services:
       # volume so they survive container rebuilds. The volume mount
       # at /app/data is the persistence boundary.
       - ADAPTIVE_LEARNER_DATA_DIR=/app/data
-      - ADAPTIVE_LEARNER_CORS_ORIGINS=${ADAPTIVE_LEARNER_CORS_ORIGINS:-http://localhost:7880}
+      - ADAPTIVE_LEARNER_PORT=${ADAPTIVE_LEARNER_PORT:-18001}
+      - ADAPTIVE_LEARNER_CORS_ORIGINS=${ADAPTIVE_LEARNER_CORS_ORIGINS:-http://localhost:${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}}
       - ADAPTIVE_LEARNER_SECRET_KEY=${ADAPTIVE_LEARNER_SECRET_KEY:-}
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      test: ["CMD-SHELL", "python -c \"import os, urllib.request; urllib.request.urlopen(f'http://localhost:{os.environ.get(\\\"ADAPTIVE_LEARNER_PORT\\\", \\\"18001\\\")}/api/health')\""]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -26,8 +31,13 @@ services:
 
   frontend:
     build: ./frontend
+    # Host-published port for the nginx-served static build.
+    # ``ADAPTIVE_LEARNER_PUBLIC_PORT`` is distinct from
+    # ``ADAPTIVE_LEARNER_PORT`` (the BACKEND port) — they're not
+    # interchangeable, and reusing one name for both was the source
+    # of the v0.0.0 confusion.
     ports:
-      - "${ADAPTIVE_LEARNER_PORT:-7880}:80"
+      - "${ADAPTIVE_LEARNER_PUBLIC_PORT:-7880}:80"
     depends_on:
       backend:
         condition: service_healthy

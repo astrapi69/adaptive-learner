@@ -53,9 +53,14 @@ if not CONFIG_PATH.exists() and CONFIG_EXAMPLE_PATH.exists():
     logger.info("Created config/app.yaml from app.yaml.example")
 
 DEBUG = os.getenv("ADAPTIVE_LEARNER_DEBUG", "true").lower() in ("true", "1", "yes")
-CORS_ORIGINS = os.getenv(
-    "ADAPTIVE_LEARNER_CORS_ORIGINS", "http://localhost:5173,http://localhost:3000"
-)
+
+# Backend port. Resolution order: ``ADAPTIVE_LEARNER_PORT`` env var >
+# ``server.port`` in app.yaml > 18001 default. Uvicorn still picks the
+# port from its own CLI flag; this constant exists so other code
+# paths (Docker healthcheck, openapi server-url metadata, eventual
+# self-hosted reverse-proxy hint) read the same value.
+DEFAULT_BACKEND_PORT = 18001
+DEFAULT_FRONTEND_PORT = 15174
 
 
 def _get_user_override_path() -> Path:
@@ -141,6 +146,62 @@ def _load_app_config() -> dict[str, Any]:
     merged = _deep_merge(project, user_overlay)
     merged = _deep_merge(merged, override)
     return _apply_env_overrides(merged)
+
+
+def _coerce_port(value: object) -> int | None:
+    """Best-effort int conversion for a port string from env / yaml."""
+    if value is None:
+        return None
+    try:
+        port = int(str(value).strip())
+    except (TypeError, ValueError):
+        return None
+    return port if 1 <= port <= 65535 else None
+
+
+def resolve_backend_port(config: dict[str, Any] | None = None) -> int:
+    """Resolve the backend port.
+
+    Precedence (highest wins):
+      1. ``ADAPTIVE_LEARNER_PORT`` env var
+      2. ``server.port`` in the resolved app config
+      3. ``DEFAULT_BACKEND_PORT`` (18001)
+
+    Uvicorn still reads ``--port`` from its own CLI flag; this
+    function exists so Docker healthchecks, openapi server-url
+    metadata, and any reverse-proxy hint code can agree with what
+    the deployer actually picked.
+    """
+    env_port = _coerce_port(os.environ.get("ADAPTIVE_LEARNER_PORT"))
+    if env_port is not None:
+        return env_port
+    cfg = config if config is not None else _load_app_config()
+    cfg_port = _coerce_port((cfg.get("server") or {}).get("port"))
+    if cfg_port is not None:
+        return cfg_port
+    return DEFAULT_BACKEND_PORT
+
+
+def resolve_cors_origins(config: dict[str, Any] | None = None) -> list[str]:
+    """Resolve the CORS allow-list.
+
+    Precedence (highest wins):
+      1. ``ADAPTIVE_LEARNER_CORS_ORIGINS`` env var (comma-separated)
+      2. ``server.cors_origins`` list in the resolved app config
+      3. ``[f"http://localhost:{DEFAULT_FRONTEND_PORT}"]``
+
+    The CLAUDE.md security rule "Secrets NEVER in committed config
+    files" applies one level above this — the cors_origins list is
+    not a secret, it's environment-shape config.
+    """
+    env_value = os.environ.get("ADAPTIVE_LEARNER_CORS_ORIGINS", "").strip()
+    if env_value:
+        return [o.strip() for o in env_value.split(",") if o.strip()]
+    cfg = config if config is not None else _load_app_config()
+    cfg_value = (cfg.get("server") or {}).get("cors_origins")
+    if isinstance(cfg_value, list) and cfg_value:
+        return [str(o).strip() for o in cfg_value if str(o).strip()]
+    return [f"http://localhost:{DEFAULT_FRONTEND_PORT}"]
 
 
 manager = PluginManager(
@@ -282,7 +343,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in CORS_ORIGINS.split(",") if o.strip()],
+    allow_origins=resolve_cors_origins(_startup_config),
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],

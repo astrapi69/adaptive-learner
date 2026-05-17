@@ -52,7 +52,7 @@ Siehe [CLAUDE.md](CLAUDE.md) für den vollständigen Entwicklungs-Guide für Cla
 make install              # Poetry + npm + Plugins
 
 # Täglich
-make dev                  # Backend (8000) + Frontend (5173) parallel
+make dev                  # Backend (18001) + Frontend (15174) parallel
 make test                 # Backend + Frontend, ohne Coverage
 make test-coverage        # Opt-in-Coverage-Lauf
 

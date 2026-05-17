@@ -3,8 +3,11 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+    # Backend port. Override on the host with
+    # ADAPTIVE_LEARNER_PORT=… docker compose up; the dev default
+    # (18001) is non-standard so it coexists with anything on :8000.
     ports:
-      - "8000:8000"
+      - "${ADAPTIVE_LEARNER_PORT:-18001}:${ADAPTIVE_LEARNER_PORT:-18001}"
     volumes:
       - ./backend:/app
       - adaptive-learner-data:/app/data
@@ -14,12 +17,15 @@ services:
       # DB at $DATA_DIR/adaptive_learner.db, uploads at $DATA_DIR/uploads/,
       # both inside the named volume.
       - ADAPTIVE_LEARNER_DATA_DIR=/app/data
+      - ADAPTIVE_LEARNER_PORT=${ADAPTIVE_LEARNER_PORT:-18001}
+      - ADAPTIVE_LEARNER_CORS_ORIGINS=${ADAPTIVE_LEARNER_CORS_ORIGINS:-http://localhost:${ADAPTIVE_LEARNER_FRONTEND_PORT:-15174}}
+    command: sh -c 'uvicorn app.main:app --reload --host 0.0.0.0 --port ${ADAPTIVE_LEARNER_PORT:-18001}'
 
   frontend:
     image: node:24-slim
     working_dir: /app
     ports:
-      - "5173:5173"
+      - "${ADAPTIVE_LEARNER_FRONTEND_PORT:-15174}:${ADAPTIVE_LEARNER_FRONTEND_PORT:-15174}"
     volumes:
       - ./frontend:/app
       - frontend-modules:/app/node_modules
@@ -28,7 +34,9 @@ services:
       # (correct for `make dev`); inside Docker Compose the
       # frontend container's localhost is itself, so route via the
       # `backend` service name on the compose network.
-      - VITE_API_PROXY_TARGET=http://backend:8000
+      - VITE_API_PROXY_TARGET=http://backend:${ADAPTIVE_LEARNER_PORT:-18001}
+      - ADAPTIVE_LEARNER_PORT=${ADAPTIVE_LEARNER_PORT:-18001}
+      - ADAPTIVE_LEARNER_FRONTEND_PORT=${ADAPTIVE_LEARNER_FRONTEND_PORT:-15174}
     command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
     depends_on:
       - backend

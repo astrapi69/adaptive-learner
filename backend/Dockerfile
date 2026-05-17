@@ -50,6 +50,11 @@ RUN groupadd -r adaptive_learner && useradd -r -g adaptive_learner adaptive_lear
 
 USER adaptive_learner
 
-EXPOSE 8000
+# Default backend port. Override at run time with
+# ADAPTIVE_LEARNER_PORT=… and a matching `-p host:port` mapping.
+# docker-compose.yml / docker-compose.prod.yml take precedence by
+# overriding the CMD via ``command:``.
+ENV ADAPTIVE_LEARNER_PORT=18001
+EXPOSE 18001
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${ADAPTIVE_LEARNER_PORT:-18001}"]

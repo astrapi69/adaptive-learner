@@ -6,6 +6,20 @@ app:
     - de
     - en
   version: 0.0.0
+server:
+  # Backend dev port. The env var ``ADAPTIVE_LEARNER_PORT`` wins over
+  # this value; the Makefile, Docker compose, e2e Playwright config
+  # and start.sh all read the env var (with this value as fallback).
+  # The default is intentionally non-standard (18001 / 15174) so
+  # Adaptive Learner can coexist on a workstation already running
+  # other projects on 8000 / 5173.
+  port: 18001
+  # Allowed CORS origins. Comma-joined into the
+  # ``ADAPTIVE_LEARNER_CORS_ORIGINS`` env var by deployment tooling;
+  # main.py merges either source. The frontend dev port (15174)
+  # is the only entry that has to be here for local development.
+  cors_origins:
+    - http://localhost:15174
 plugins:
   config_dir: config/plugins
   disabled: []

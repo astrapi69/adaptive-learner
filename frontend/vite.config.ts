@@ -82,20 +82,25 @@ export default defineConfig({
         },
     },
     server: {
-        port: 5173,
+        // Dev port. Resolution order:
+        //   1. ADAPTIVE_LEARNER_FRONTEND_PORT env var (set by `make
+        //      dev`, .env.example, Docker compose)
+        //   2. 15174 default (non-standard so we coexist with
+        //      other projects on :5173)
+        port: Number(process.env.ADAPTIVE_LEARNER_FRONTEND_PORT) || 15174,
         open: true,
         proxy: {
             "/api": {
-                // Default targets the backend on the host (the
-                // `make dev` flow). Inside Docker Compose,
-                // ``localhost`` resolves to the frontend container
-                // itself, not the backend service - so override
-                // via VITE_API_PROXY_TARGET=http://backend:8000 in
-                // docker-compose.yml. The env var is read by Node
-                // when vite.config.ts is evaluated; no client-side
-                // exposure (so the VITE_ prefix is incidental, not
-                // required).
-                target: process.env.VITE_API_PROXY_TARGET || "http://localhost:8000",
+                // Backend target. Resolution order:
+                //   1. VITE_API_PROXY_TARGET (Docker Compose sets
+                //      this to http://backend:18001 because the
+                //      frontend container's localhost is itself)
+                //   2. http://localhost:${ADAPTIVE_LEARNER_PORT}
+                //      with 18001 fallback (matches the Makefile +
+                //      backend defaults)
+                target:
+                    process.env.VITE_API_PROXY_TARGET ||
+                    `http://localhost:${process.env.ADAPTIVE_LEARNER_PORT || 18001}`,
                 changeOrigin: true,
             },
         },

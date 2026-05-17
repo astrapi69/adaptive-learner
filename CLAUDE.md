@@ -61,7 +61,7 @@ Domain endpoints, pages and the first plugins land in Phases 1B / 1C /
 
 ```bash
 make install              # Poetry + npm + plugins
-make dev                  # backend (8000) + frontend (5173) in parallel
+make dev                  # backend (18001) + frontend (15174) in parallel
 make dev-bg / dev-down    # background mode
 make test                 # backend + frontend, no coverage
 make test-coverage        # opt-in coverage run

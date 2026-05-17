@@ -52,7 +52,7 @@ See [CLAUDE.md](CLAUDE.md) for the full development guide aimed at Claude Code (
 make install              # Poetry + npm + plugins
 
 # Daily
-make dev                  # backend (8000) + frontend (5173) in parallel
+make dev                  # backend (18001) + frontend (15174) in parallel
 make test                 # backend + frontend, no coverage
 make test-coverage        # opt-in coverage run
 
