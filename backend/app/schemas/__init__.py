@@ -151,6 +151,21 @@ class LearningProjectCreate(BaseModel):
     active: bool = True
 
 
+class LearningProjectCreateBody(BaseModel):
+    """POST body for the user-scoped ``/users/{user_id}/projects``
+    route. Identical to :class:`LearningProjectCreate` minus
+    ``user_id`` — the route prefix supplies that, and accepting it
+    in the body would let a client forge cross-user writes.
+    """
+
+    topic: str = Field(min_length=1, max_length=500)
+    goal: str = Field(min_length=1)
+    timeframe: str = Field(min_length=1, max_length=100)
+    daily_minutes: int = Field(gt=0)
+    current_problem: str | None = None
+    active: bool = True
+
+
 class LearningProjectUpdate(BaseModel):
     topic: str | None = Field(default=None, min_length=1, max_length=500)
     goal: str | None = Field(default=None, min_length=1)
@@ -494,6 +509,7 @@ __all__ = [
     "UserSettingsOut",
     # LearningProject
     "LearningProjectCreate",
+    "LearningProjectCreateBody",
     "LearningProjectUpdate",
     "LearningProjectOut",
     # LearningProfile
