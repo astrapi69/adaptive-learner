@@ -1,8 +1,8 @@
-# AdaptiveLearner Windows installer (PowerShell mirror of install.sh).
-# Downloads and starts the book authoring platform.
+# Adaptive Learner Windows installer (PowerShell mirror of install.sh).
+# Downloads and starts the adaptive learning platform.
 #
 # Usage (in PowerShell):
-#   irm https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/install.ps1 | iex
 #
 # Or download and run, with the install.cmd wrapper if your
 # ExecutionPolicy is Restricted (typical for corporate Windows
@@ -15,13 +15,13 @@
 
 $ErrorActionPreference = "Stop"
 
-$Version = if ($env:ADAPTIVE_LEARNER_VERSION) { $env:ADAPTIVE_LEARNER_VERSION } else { "v0.33.0" }
-$Repo = "astrapi69/adaptive_learner"
-$InstallDir = if ($env:ADAPTIVE_LEARNER_DIR) { $env:ADAPTIVE_LEARNER_DIR } else { Join-Path $HOME "adaptive_learner" }
+$Version = if ($env:ADAPTIVE_LEARNER_VERSION) { $env:ADAPTIVE_LEARNER_VERSION } else { "v0.0.0-template" }
+$Repo = "astrapi69/adaptive-learner"
+$InstallDir = if ($env:ADAPTIVE_LEARNER_DIR) { $env:ADAPTIVE_LEARNER_DIR } else { Join-Path $HOME "adaptive-learner" }
 
 Write-Host ""
-Write-Host "  AdaptiveLearner $Version" -ForegroundColor Blue
-Write-Host "  Open-source book authoring platform"
+Write-Host "  Adaptive Learner $Version" -ForegroundColor Blue
+Write-Host "  Adaptive learning platform built on PluginForge"
 Write-Host ""
 
 # --- Check Docker ---

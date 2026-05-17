@@ -2,9 +2,9 @@
 set -e
 
 # ============================================================
-#  AdaptiveLearner Uninstaller
+#  Adaptive Learner Uninstaller
 #
-#  Removes the AdaptiveLearner installation, Docker resources, and
+#  Removes the Adaptive Learner installation, Docker resources, and
 #  launcher manifest in a single command.
 #
 #  Usage:
@@ -21,14 +21,14 @@ COMPOSE_FILE="docker-compose.prod.yml"
 
 echo ""
 echo -e "${RED}========================================${NC}"
-echo -e "${RED}  AdaptiveLearner Uninstaller${NC}"
+echo -e "${RED}  Adaptive Learner Uninstaller${NC}"
 echo -e "${RED}========================================${NC}"
 echo ""
 echo -e "${YELLOW}WARNING: This will permanently remove:${NC}"
 echo ""
-echo "  1. The AdaptiveLearner Docker stack (containers)"
-echo "  2. All AdaptiveLearner Docker volumes (books, chapters, database)"
-echo "  3. All AdaptiveLearner Docker images"
+echo "  1. The Adaptive Learner Docker stack (containers)"
+echo "  2. All Adaptive Learner Docker volumes (books, chapters, database)"
+echo "  3. All Adaptive Learner Docker images"
 echo "  4. The launcher configuration manifest"
 echo "  5. The installation directory: ${INSTALL_DIR}"
 echo ""
@@ -46,7 +46,7 @@ fi
 echo ""
 
 # --- Step 1: Stop Docker stack ---
-echo -e "${YELLOW}Stopping AdaptiveLearner Docker stack...${NC}"
+echo -e "${YELLOW}Stopping Adaptive Learner Docker stack...${NC}"
 if [ -f "$INSTALL_DIR/$COMPOSE_FILE" ]; then
     docker compose -f "$INSTALL_DIR/$COMPOSE_FILE" down 2>/dev/null || true
     echo -e "${GREEN}  Stack stopped.${NC}"
@@ -55,23 +55,23 @@ else
 fi
 
 # --- Step 2: Remove Docker volumes ---
-echo -e "${YELLOW}Removing AdaptiveLearner Docker volumes...${NC}"
+echo -e "${YELLOW}Removing Adaptive Learner Docker volumes...${NC}"
 VOLUMES=$(docker volume ls --filter name=adaptive_learner -q 2>/dev/null || true)
 if [ -n "$VOLUMES" ]; then
     echo "$VOLUMES" | xargs docker volume rm 2>/dev/null || true
     echo -e "${GREEN}  Volumes removed.${NC}"
 else
-    echo "  No AdaptiveLearner volumes found."
+    echo "  No Adaptive Learner volumes found."
 fi
 
 # --- Step 3: Remove Docker images ---
-echo -e "${YELLOW}Removing AdaptiveLearner Docker images...${NC}"
+echo -e "${YELLOW}Removing Adaptive Learner Docker images...${NC}"
 IMAGES=$(docker images --filter reference='*adaptive_learner*' -q 2>/dev/null || true)
 if [ -n "$IMAGES" ]; then
     echo "$IMAGES" | xargs docker image rm --force 2>/dev/null || true
     echo -e "${GREEN}  Images removed.${NC}"
 else
-    echo "  No AdaptiveLearner images found."
+    echo "  No Adaptive Learner images found."
 fi
 
 # --- Step 4: Remove launcher manifest ---
@@ -103,11 +103,11 @@ else
     echo "  No manifest directory found at: ${MANIFEST_DIR}"
 fi
 
-# Also remove legacy launcher.json if it exists under APPDATA/AdaptiveLearner
+# Also remove legacy launcher.json if it exists under APPDATA/Adaptive Learner
 # (capital B, used by the old launcher config path)
 case "$OS_TYPE" in
     MINGW*|MSYS*|CYGWIN*|Windows*)
-        LEGACY_DIR="${APPDATA}/AdaptiveLearner"
+        LEGACY_DIR="${APPDATA}/Adaptive Learner"
         if [ -d "$LEGACY_DIR" ]; then
             rm -rf "$LEGACY_DIR"
             echo -e "${GREEN}  Legacy config removed: ${LEGACY_DIR}${NC}"
@@ -125,7 +125,7 @@ echo -e "${GREEN}  Directory removed.${NC}"
 # --- Summary ---
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  AdaptiveLearner has been uninstalled.${NC}"
+echo -e "${GREEN}  Adaptive Learner has been uninstalled.${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo "  Removed:"

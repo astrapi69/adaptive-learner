@@ -2,8 +2,8 @@
 set -e
 
 # ============================================================
-#  AdaptiveLearner - Start Script
-#  Starts the book authoring platform via Docker Compose.
+#  Adaptive Learner - Start Script
+#  Starts the adaptive learning platform built on PluginForge via Docker Compose.
 # ============================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -23,7 +23,7 @@ echo " | |_) | | |_) | | | (_) | (_| | (_) | | | |"
 echo " |____/|_|_.__/|_|_|\\___/ \\__, |\\___/|_| |_|"
 echo "                          |___/              "
 echo -e "${NC}"
-echo "  Open-source book authoring platform"
+echo "  Adaptive learning platform built on PluginForge"
 echo ""
 
 # --- Check Docker ---
@@ -67,14 +67,14 @@ PORT=${PORT:-7880}
 
 # --- Build and start ---
 echo ""
-echo -e "${BLUE}Starting AdaptiveLearner...${NC}"
+echo -e "${BLUE}Starting Adaptive Learner...${NC}"
 echo ""
 
 docker compose -f docker-compose.prod.yml up --build -d
 
 echo ""
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}  AdaptiveLearner is running!${NC}"
+echo -e "${GREEN}  Adaptive Learner is running!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 echo -e "  Open in browser: ${BLUE}http://localhost:${PORT}${NC}"

@@ -2,19 +2,19 @@
 set -e
 
 # ============================================================
-#  AdaptiveLearner Installer
-#  Downloads and starts the book authoring platform.
+#  Adaptive Learner Installer
+#  Downloads and starts the adaptive learning platform.
 #
 #  Usage:
-#    curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive_learner/main/install.sh | bash
+#    curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/install.sh | bash
 #
 #  Or download and run:
 #    chmod +x install.sh && ./install.sh
 # ============================================================
 
 VERSION="${ADAPTIVE_LEARNER_VERSION:-@@ADAPTIVE_LEARNER_VERSION@@}"
-REPO="astrapi69/adaptive_learner"
-INSTALL_DIR="${ADAPTIVE_LEARNER_DIR:-$HOME/adaptive_learner}"
+REPO="astrapi69/adaptive-learner"
+INSTALL_DIR="${ADAPTIVE_LEARNER_DIR:-$HOME/adaptive-learner}"
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -23,14 +23,11 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 echo -e "${BLUE}"
-echo "  ____  _ _     _ _                         "
-echo " | __ )(_) |__ | (_) ___   __ _  ___  _ __  "
-echo " |  _ \\| | '_ \\| | |/ _ \\ / _\` |/ _ \\| '_ \\ "
-echo " | |_) | | |_) | | | (_) | (_| | (_) | | | |"
-echo " |____/|_|_.__/|_|_|\\___/ \\__, |\\___/|_| |_|"
-echo "                          |___/              "
+echo "============================================================"
+echo "  Adaptive Learner"
+echo "  Adaptive learning platform built on PluginForge"
+echo "============================================================"
 echo -e "${NC}"
-echo "  Open-source book authoring platform"
 echo "  Version: ${VERSION}"
 echo ""
 
