@@ -35,7 +35,12 @@ backend/config/plugins/audiobook/google-credentials.enc
 
 # Uploads (user assets)
 backend/uploads/
+# Migration breadcrumbs (written by app.data_dir_migration when it
+# moves a v0.25.0-and-earlier subtree into the platformdirs data dir).
+# Lives anywhere under backend/ — the existing-but-too-narrow pattern
+# missed backend/plugins/installed.migrated-YYYY-MM-DD.
 backend/*.migrated-*
+backend/**/*.migrated-*
 
 # Production marker (written by FastAPI lifespan startup; see
 # backend/app/paths.py + backend/tests/conftest.py).

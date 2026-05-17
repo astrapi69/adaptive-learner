@@ -20,7 +20,7 @@ export default defineConfig({
             devOptions: {
                 enabled: true,
             },
-            includeAssets: ["icon-192.png", "icon-512.png", "icon-192.svg", "icon-512.svg"],
+            includeAssets: ["favicon.svg", "icon-192.svg", "icon-512.svg"],
             manifest: {
                 name: "Adaptive Learner",
                 short_name: "Adaptive Learner",
@@ -32,8 +32,12 @@ export default defineConfig({
                 start_url: "/",
                 scope: "/",
                 icons: [
-                    {src: "/icon-192.png", sizes: "192x192", type: "image/png"},
-                    {src: "/icon-512.png", sizes: "512x512", type: "image/png"},
+                    // SVG-only set. iOS 15+ + every recent Android /
+                    // desktop browser support image/svg+xml for PWA
+                    // icons; dropping the .png raster pair removes the
+                    // Bibliogon-branded legacy and shrinks the precache
+                    // payload. Re-add raster fallbacks only if a real
+                    // user reports an older device.
                     {src: "/icon-192.svg", sizes: "192x192", type: "image/svg+xml", purpose: "any"},
                     {src: "/icon-512.svg", sizes: "512x512", type: "image/svg+xml", purpose: "any"},
                 ],
