@@ -1,7 +1,7 @@
 """FastAPI routes for the session plugin.
 
   POST /api/plugins/session/start              -> SessionStartOut
-  POST /api/plugins/session/{id}/message       -> SessionMessageOut
+  POST /api/plugins/session/{id}/message       -> SessionMessageExchangeOut
   POST /api/plugins/session/{id}/rate          -> SessionRatingOut
   POST /api/plugins/session/{id}/end           -> SessionEndOut
 
@@ -9,16 +9,24 @@ POST /start:
   Body: {project_id, method?, cycle_step?, lang?}. If ``method`` is
   omitted, the latest LearningProfile's dominant method seeds it
   (falls back to ``deductive`` when no profile exists). Returns
-  the new session + the composed system prompt for the frontend
-  to ship to the AI provider.
+  the new session + the composed system prompt; the prompt is
+  ALSO saved as the first ``role=system`` SessionMessage so the
+  ai_complete hook can replay the full history without an
+  external sidecar.
 
-POST /message:
-  Body: {role, content}. Stores one chat message. The AI-call
-  orchestration lives client-side: the frontend (or any external
-  caller) sends the user's text, calls the AI via the ai_complete
-  hook through its own integration, then posts the assistant
-  reply back. Decouples the session model from any one provider's
-  call shape.
+POST /message (v0.2.0):
+  Body: {role: user, content}. Saves the user message, fires the
+  ``ai_complete`` hook against the active provider's API key /
+  default model, saves the assistant reply, and returns BOTH
+  messages plus an optional ``ai_error`` string. The orchestration
+  shifted server-side in v0.2.0 (was client-side in v0.1.0) so:
+    - The provider's API key never reaches the browser.
+    - Conversation history stays consistent regardless of which
+      caller (browser, external integration, future CLI) posts the
+      message.
+    - A missing-key / provider-down failure degrades gracefully:
+      the user message is saved, the route returns
+      ``assistant_message: null`` + ``ai_error``.
 
 POST /rate:
   Body: {understanding, stress, method_fit, notes?}. Persists a
@@ -28,6 +36,11 @@ POST /end:
   Body: optional. Marks the session ``completed`` + ``ended_at``,
   fires the ``on_session_complete`` hook so the tracking plugin
   (Phase 3-D) can write its ProgressCommit row.
+
+GET /switch-recommendation/{session_id} (v0.2.0):
+  Returns the current ``recommend_method_switch`` hook output for
+  the most recent ratings on the session's project. Shape:
+  ``{recommended: bool, to_method?: str, reason?: str}``.
 """
 
 from __future__ import annotations
@@ -49,6 +62,7 @@ from app.models import (
     SessionRating,
 )
 from app.schemas import (
+    AIProvider,
     LearningMethod,
     LearningSessionOut,
     MessageRole,
@@ -56,6 +70,7 @@ from app.schemas import (
     SessionRatingOut,
 )
 
+from . import ai_orchestration
 from .prompts import MAX_STEP, METHODS, MIN_STEP, build_prompt
 
 router = APIRouter(prefix="/plugins/session", tags=["session"])
@@ -81,6 +96,36 @@ class _SessionStartOut(BaseModel):
 class _MessageBody(BaseModel):
     role: MessageRole
     content: str = Field(min_length=1)
+
+
+class _SessionMessageExchangeOut(BaseModel):
+    """Composite return for POST /{id}/message.
+
+    ``assistant_message`` is ``None`` when AI couldn't reply (no
+    API key configured, no provider matched the model, provider
+    raised). ``ai_error`` carries a one-line explanation in that
+    case so the frontend can render a toast / inline notice
+    without parsing a stack trace.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    user_message: SessionMessageOut
+    assistant_message: SessionMessageOut | None = None
+    ai_error: str | None = None
+
+
+class _SwitchRecommendationOut(BaseModel):
+    """Shape of GET /switch-recommendation/{id}.
+
+    ``recommended=False`` means the recommend_method_switch hook
+    returned nothing (no recommendation); ``to_method`` and
+    ``reason`` are only populated when ``recommended=True``.
+    """
+
+    recommended: bool
+    to_method: LearningMethod | None = None
+    reason: str | None = None
 
 
 class _RatingBody(BaseModel):
@@ -188,6 +233,22 @@ def start_session(payload: _StartBody, db: Session = Depends(get_db)) -> _Sessio
     except ValueError as exc:
         raise ValidationError(str(exc)) from exc
 
+    # v0.2.0: persist the system prompt as a real SessionMessage so
+    # subsequent /message calls (where the AI orchestrator loads
+    # the chronological history) see the prompt as the first turn
+    # without the frontend having to re-post it. Stored under the
+    # ``system`` role so the Anthropic / OpenAI / Gemini client
+    # wrappers can lift it back into their per-provider system
+    # field.
+    db.add(
+        SessionMessage(
+            session_id=sess.id,
+            role="system",
+            content=prompt,
+        )
+    )
+    db.commit()
+
     return _SessionStartOut(
         session=LearningSessionOut.model_validate(sess),
         system_prompt=prompt,
@@ -197,31 +258,163 @@ def start_session(payload: _StartBody, db: Session = Depends(get_db)) -> _Sessio
 # --- POST /{id}/message ----------------------------------------------------
 
 
+def _load_prior_messages(db: Session, session_id: str) -> list[dict[str, Any]]:
+    """Return every SessionMessage for the session in chronological
+    order as plain dicts. Stable column subset (role + content) so
+    the AI provider sees only what it needs.
+    """
+    rows = (
+        db.query(SessionMessage)
+        .filter(SessionMessage.session_id == session_id)
+        .order_by(SessionMessage.created_at.asc(), SessionMessage.id.asc())
+        .all()
+    )
+    return [{"role": r.role, "content": r.content} for r in rows]
+
+
+def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | None]:
+    """Return (active_provider, decrypted_api_key) for the user.
+
+    Both can be ``None``:
+      - active_provider is None if the UserSettings row never got
+        seeded (shouldn't happen — settings_service auto-creates
+        it on first GET).
+      - api_key is None when the user hasn't entered one for the
+        active provider yet.
+    """
+    from app.services import settings as settings_service
+
+    settings = settings_service.get_or_create_settings(db, user_id)
+    provider_key = settings.active_provider
+    try:
+        provider_enum = AIProvider(provider_key)
+    except ValueError:
+        return None, None
+    api_key = settings_service.get_decrypted_api_key(db, user_id, provider_enum)
+    return provider_key, api_key
+
+
 @router.post(
     "/{session_id}/message",
-    response_model=SessionMessageOut,
+    response_model=_SessionMessageExchangeOut,
     status_code=status.HTTP_201_CREATED,
 )
 def append_message(
     session_id: str,
     payload: _MessageBody,
     db: Session = Depends(get_db),
-) -> SessionMessageOut:
+) -> _SessionMessageExchangeOut:
     sess = _get_session(db, session_id)
     if sess.status != "active":
         raise ValidationError(
             f"Session {session_id!r} is {sess.status!r}; cannot append messages "
             f"(reopen by starting a new session)."
         )
-    msg = SessionMessage(
+
+    # v0.2.0: orchestrate AI server-side. The v0.1.0 contract
+    # (only user-side append, no AI call) is gone; the route now
+    # owns the round-trip. Callers post user content; the route
+    # saves it, fires ai_complete, persists the assistant reply,
+    # and returns the composite. role=assistant / role=system
+    # bodies are still accepted for back-compat with any external
+    # integration that posts those directly — but the AI step
+    # only fires for role=user.
+    user_msg = SessionMessage(
         session_id=sess.id,
         role=payload.role.value,
         content=payload.content,
     )
-    db.add(msg)
+    db.add(user_msg)
     db.commit()
-    db.refresh(msg)
-    return SessionMessageOut.model_validate(msg)
+    db.refresh(user_msg)
+
+    if payload.role != MessageRole.USER:
+        # No AI step for assistant / system writes. The composite
+        # response still wraps the single saved message so the
+        # frontend's typed contract stays consistent.
+        return _SessionMessageExchangeOut(
+            user_message=SessionMessageOut.model_validate(user_msg),
+        )
+
+    # Look up the project owner -> active provider -> API key.
+    project = db.get(LearningProject, sess.project_id)
+    if project is None:
+        return _SessionMessageExchangeOut(
+            user_message=SessionMessageOut.model_validate(user_msg),
+            ai_error="session has no project; AI reply skipped.",
+        )
+    provider_key, api_key = _resolve_active_key(db, project.user_id)
+    if provider_key is None:
+        return _SessionMessageExchangeOut(
+            user_message=SessionMessageOut.model_validate(user_msg),
+            ai_error="No active AI provider configured.",
+        )
+    if not api_key:
+        return _SessionMessageExchangeOut(
+            user_message=SessionMessageOut.model_validate(user_msg),
+            ai_error=f"No API key stored for provider {provider_key!r}.",
+        )
+
+    model = ai_orchestration.resolve_model(provider_key)
+    if model is None:
+        return _SessionMessageExchangeOut(
+            user_message=SessionMessageOut.model_validate(user_msg),
+            ai_error=f"Provider {provider_key!r} has no default model registered.",
+        )
+
+    # Load EVERY prior message INCLUDING the user message we just
+    # saved (chronological order; the AI sees the freshest user
+    # turn at the end naturally). Loading from the DB rather than
+    # re-using build_messages_history's split keeps the route
+    # consistent with what's actually persisted — anyone who
+    # manually edits the DB sees the same conversation the AI
+    # sees on the next turn.
+    history = _load_prior_messages(db, sess.id)
+
+    # Fire the ai_complete hook. firstresult=True: the matching
+    # provider plugin returns text; the others return None. Any
+    # plugin exception is wrapped server-side as
+    # ExternalServiceError, which the global handler turns into
+    # HTTP 502 — but we catch it here so the user message is
+    # still returned + the error surfaces inline rather than
+    # losing the user turn to a 5xx.
+    try:
+        from app.main import manager  # lazy: app.* not on sys.path in plugin's own test dir
+
+        assistant_text = ai_orchestration.call_ai_complete(
+            pm=manager._pm,
+            messages=history,
+            model=model,
+            api_key=api_key,
+        )
+    except Exception as exc:  # noqa: BLE001
+        return _SessionMessageExchangeOut(
+            user_message=SessionMessageOut.model_validate(user_msg),
+            ai_error=f"AI provider error: {exc}",
+        )
+
+    if not assistant_text:
+        return _SessionMessageExchangeOut(
+            user_message=SessionMessageOut.model_validate(user_msg),
+            ai_error=(
+                f"No registered provider returned a reply for model {model!r}. "
+                f"Is the {provider_key!r} provider plugin enabled?"
+            ),
+        )
+
+    assistant_msg = SessionMessage(
+        session_id=sess.id,
+        role="assistant",
+        content=assistant_text,
+    )
+    db.add(assistant_msg)
+    db.commit()
+    db.refresh(assistant_msg)
+
+    return _SessionMessageExchangeOut(
+        user_message=SessionMessageOut.model_validate(user_msg),
+        assistant_message=SessionMessageOut.model_validate(assistant_msg),
+    )
 
 
 # --- POST /{id}/rate -------------------------------------------------------
@@ -303,6 +496,94 @@ def end_session(
     )
 
     return _SessionEndOut(session=LearningSessionOut.model_validate(sess))
+
+
+# --- GET /switch-recommendation/{id} (v0.2.0) -----------------------------
+
+
+@router.get(
+    "/switch-recommendation/{session_id}",
+    response_model=_SwitchRecommendationOut,
+)
+def get_switch_recommendation(
+    session_id: str,
+    db: Session = Depends(get_db),
+) -> _SwitchRecommendationOut:
+    """Fire the ``recommend_method_switch`` hook against the recent
+    SessionRating history for the session's project. Returns the
+    first non-empty recommendation any plugin produced.
+
+    Pluggy's list-mode dispatch returns a list of every plugin's
+    return value; we pick the first non-empty dict so the route
+    shape is stable. A future ranking strategy (most stale method?
+    most-confident plugin?) replaces this with a real selector.
+    """
+    sess = _get_session(db, session_id)
+
+    # Pull the most recent 5 ratings for the project (across ALL
+    # sessions of that project, not just this one — the
+    # recommender uses cross-session trends). Newest first;
+    # switching.recommend expects ordered-newest-first per its
+    # own docstring.
+    project = db.get(LearningProject, sess.project_id)
+    if project is None:
+        return _SwitchRecommendationOut(recommended=False)
+
+    recent_rows = (
+        db.query(SessionRating)
+        .join(LearningSession, LearningSession.id == SessionRating.session_id)
+        .filter(LearningSession.project_id == project.id)
+        .order_by(SessionRating.created_at.desc())
+        .limit(5)
+        .all()
+    )
+    recent_ratings = [
+        {
+            "understanding": r.understanding,
+            "stress": r.stress,
+            "method_fit": r.method_fit,
+            "method": db.get(LearningSession, r.session_id).method
+            if db.get(LearningSession, r.session_id) is not None
+            else None,
+        }
+        for r in recent_rows
+    ]
+
+    try:
+        from app.main import manager  # lazy: app.* not on sys.path in plugin tests
+
+        results = manager._pm.hook.recommend_method_switch(
+            project_id=project.id,
+            current_method=sess.method,
+            recent_ratings=recent_ratings,
+        )
+    except Exception:
+        import logging
+
+        logging.getLogger(__name__).warning(
+            "recommend_method_switch raised; returning recommended=false",
+            exc_info=True,
+        )
+        return _SwitchRecommendationOut(recommended=False)
+
+    # First non-empty dict wins. pluggy list-mode strips None
+    # automatically; an empty dict counts as "no recommendation"
+    # too so the plugin can return {} for "I don't have one yet"
+    # without breaking the chain.
+    for entry in results or []:
+        if isinstance(entry, dict) and entry.get("to_method"):
+            try:
+                to_method = LearningMethod(entry["to_method"])
+            except ValueError:
+                continue
+            reason = entry.get("reason") if isinstance(entry.get("reason"), str) else None
+            return _SwitchRecommendationOut(
+                recommended=True,
+                to_method=to_method,
+                reason=reason,
+            )
+
+    return _SwitchRecommendationOut(recommended=False)
 
 
 def _fire_on_session_complete(session: dict[str, Any], rating: dict[str, Any]) -> None:

@@ -28,9 +28,10 @@ import type {
     ProgressCommit,
     ProgressSummary,
     SessionEndResult,
-    SessionMessage,
+    SessionMessageExchangeResult,
     SessionRating,
     SessionStartResult,
+    SwitchRecommendation,
     ToolRecommendation,
     User,
     UserSettings,
@@ -303,7 +304,7 @@ export const api = {
                 body,
             }),
         message: (sessionId: string, body: SessionMessageBody) =>
-            apiCall<SessionMessage>(
+            apiCall<SessionMessageExchangeResult>(
                 `/plugins/session/${encodeURIComponent(sessionId)}/message`,
                 {method: "POST", body},
             ),
@@ -316,6 +317,16 @@ export const api = {
             apiCall<SessionEndResult>(
                 `/plugins/session/${encodeURIComponent(sessionId)}/end`,
                 {method: "POST"},
+            ),
+        /**
+         * v0.2.0: GET the current ``recommend_method_switch`` hook
+         * output. Returns ``{recommended:false}`` when no
+         * recommendation; the matching backend impl is in the
+         * session plugin (``switching.recommend``).
+         */
+        switchRecommendation: (sessionId: string) =>
+            apiCall<SwitchRecommendation>(
+                `/plugins/session/switch-recommendation/${encodeURIComponent(sessionId)}`,
             ),
     },
 
@@ -362,8 +373,10 @@ export type {
     ProgressSummary,
     SessionEndResult,
     SessionMessage,
+    SessionMessageExchangeResult,
     SessionRating,
     SessionStartResult,
+    SwitchRecommendation,
     ToolRecommendation,
     User,
     UserSettings,

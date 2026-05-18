@@ -91,6 +91,8 @@ session:
   in_progress: Session in progress
   send_message: Send message
   message_placeholder: Write your reply…
+  ai_thinking: Thinking…
+  ai_error: The AI provider could not reply.
   end_session: End session
   end_session_confirm: Sure? We will close the session and ask for a rating.
   switch_recommended: Method switch recommended

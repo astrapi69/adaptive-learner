@@ -14,7 +14,7 @@ import type {LearningSession} from "../types";
 /**
  * Session page (project-reference §8 row ``/session``).
  *
- * Flow:
+ * Flow (v0.2.0):
  *
  *   1. Mount: read project_id from localStorage. Missing -> redirect
  *      to /onboarding.
@@ -22,10 +22,15 @@ import type {LearningSession} from "../types";
  *      Seed the chat with the returned ``system_prompt`` as the
  *      first "system" message so the user sees what method /
  *      step the AI was primed with.
- *   3. Chat loop: user types in SessionChat -> POST /message,
- *      message appended to the local list. A live AI provider
- *      integration is deferred to Phase 5; v0.1.0 stores only
- *      the user-side of the exchange.
+ *   3. Chat loop: user types in SessionChat -> POST /message.
+ *      v0.2.0 backend orchestrates AI server-side: the route
+ *      saves the user message, fires ai_complete against the
+ *      active provider's API key + default model, persists the
+ *      assistant reply, and returns a composite with both
+ *      messages. The page renders a "thinking…" placeholder
+ *      while the round-trip is in flight, then swaps it for the
+ *      assistant reply (or surfaces ai_error via toast if AI
+ *      couldn't reply).
  *   4. End session: opens RatingDialog. Submit -> POST /rate,
  *      then POST /end. On success, navigate to /dashboard.
  */
@@ -87,28 +92,62 @@ export default function Session() {
 
     const handleSend = async (content: string) => {
         if (!session || sendingMessage) return;
-        const localId = `local-${messages.length + 1}`;
-        // Optimistic append so the chat surface feels responsive.
+        const optimisticUserId = `local-user-${messages.length + 1}`;
+        const thinkingId = `local-thinking-${messages.length + 2}`;
+        // Optimistic append for the user message + a "thinking…"
+        // assistant placeholder so the chat surface stays
+        // responsive while the AI round-trip is in flight.
         setMessages((prev) => [
             ...prev,
-            {id: localId, role: "user", content},
+            {id: optimisticUserId, role: "user", content},
+            {
+                id: thinkingId,
+                role: "assistant",
+                content: t("session.ai_thinking", "Thinking…"),
+            },
         ]);
         setSendingMessage(true);
         try {
-            const saved = await api.session.message(session.id, {
+            const result = await api.session.message(session.id, {
                 role: "user",
                 content,
             });
+            // Replace the optimistic user message with the
+            // backend-issued id; drop the thinking placeholder;
+            // if AI replied, append the assistant message; if
+            // not, surface ai_error via toast.
+            setMessages((prev) => {
+                const next = prev
+                    .map((m) =>
+                        m.id === optimisticUserId
+                            ? {
+                                  id: result.user_message.id,
+                                  role: "user" as const,
+                                  content: result.user_message.content,
+                              }
+                            : m,
+                    )
+                    .filter((m) => m.id !== thinkingId);
+                if (result.assistant_message) {
+                    next.push({
+                        id: result.assistant_message.id,
+                        role: "assistant",
+                        content: result.assistant_message.content,
+                    });
+                }
+                return next;
+            });
+            if (result.ai_error) {
+                notify.error(result.ai_error);
+            }
+        } catch (err) {
+            // Roll back both optimistic appends + surface the
+            // detail so the user knows the message was not saved.
             setMessages((prev) =>
-                prev.map((m) =>
-                    m.id === localId ? {id: saved.id, role: "user", content: saved.content} : m,
+                prev.filter(
+                    (m) => m.id !== optimisticUserId && m.id !== thinkingId,
                 ),
             );
-        } catch (err) {
-            // Roll back the optimistic append + surface the
-            // detail so the user knows the message was not
-            // saved.
-            setMessages((prev) => prev.filter((m) => m.id !== localId));
             const detail =
                 err instanceof ApiError ? err.detail : t("common.error");
             notify.error(detail);

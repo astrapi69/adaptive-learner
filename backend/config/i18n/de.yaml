@@ -102,6 +102,8 @@ session:
   in_progress: Session laeuft
   send_message: Nachricht senden
   message_placeholder: Schreibe deine Antwort …
+  ai_thinking: Denkt nach …
+  ai_error: Die KI konnte nicht antworten.
   end_session: Session beenden
   end_session_confirm: Sicher? Wir koennen die Session beenden und bewerten.
   switch_recommended: Methodenwechsel empfohlen

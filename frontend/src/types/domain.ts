@@ -133,6 +133,33 @@ export interface SessionEndResult {
     session: LearningSession;
 }
 
+/**
+ * v0.2.0 shape for ``POST /api/plugins/session/{id}/message``.
+ *
+ * The backend orchestrates AI server-side: route saves the user
+ * message, fires the ``ai_complete`` hook against the active
+ * provider's API key + default model, persists the assistant
+ * reply, returns the composite. ``assistant_message`` is ``null``
+ * when AI couldn't reply (no API key, no provider matched,
+ * provider raised); ``ai_error`` carries a one-line explanation.
+ */
+export interface SessionMessageExchangeResult {
+    user_message: SessionMessage;
+    assistant_message: SessionMessage | null;
+    ai_error: string | null;
+}
+
+/**
+ * Shape of ``GET /api/plugins/session/switch-recommendation/{id}``.
+ * ``recommended=false`` is the no-op case; the other fields are
+ * populated only when ``recommended=true``.
+ */
+export interface SwitchRecommendation {
+    recommended: boolean;
+    to_method?: LearningMethod | null;
+    reason?: string | null;
+}
+
 // --- ProgressCommit -----------------------------------------------------
 
 export interface ProgressCommit {

@@ -124,14 +124,29 @@ describe("Session page", () => {
         expect(screen.queryByText("Frage")).not.toBeInTheDocument();
     });
 
-    it("persists a user message on success", async () => {
+    it("persists a user message and renders the AI reply on success", async () => {
+        // v0.2.0: /message returns a composite with user + assistant
+        // messages + an optional ai_error. The page replaces the
+        // optimistic user-message placeholder with the canonical
+        // backend id, drops the "thinking…" placeholder, and
+        // appends the assistant reply.
         apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
         apiMessage.mockResolvedValue({
-            id: "m-1",
-            session_id: "s-1",
-            role: "user",
-            content: "Hallo",
-            created_at: "2026-05-18T00:01:00Z",
+            user_message: {
+                id: "m-user",
+                session_id: "s-1",
+                role: "user",
+                content: "Hallo",
+                created_at: "2026-05-18T00:01:00Z",
+            },
+            assistant_message: {
+                id: "m-ai",
+                session_id: "s-1",
+                role: "assistant",
+                content: "Hallo zurueck!",
+                created_at: "2026-05-18T00:01:05Z",
+            },
+            ai_error: null,
         });
         renderSession();
         await screen.findByTestId("session");
@@ -145,6 +160,77 @@ describe("Session page", () => {
             expect(apiMessage).toHaveBeenCalledWith("s-1", {role: "user", content: "Hallo"});
         });
         expect(screen.getByText("Hallo")).toBeInTheDocument();
+        expect(screen.getByText("Hallo zurueck!")).toBeInTheDocument();
+        // No toast on success.
+        expect(toastError).not.toHaveBeenCalled();
+    });
+
+    it("renders a thinking placeholder while AI is in flight", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        let resolveMessage: (value: unknown) => void = () => {};
+        apiMessage.mockReturnValue(
+            new Promise((resolve) => {
+                resolveMessage = resolve;
+            }),
+        );
+        renderSession();
+        await screen.findByTestId("session");
+        fireEvent.change(screen.getByTestId("chat-input"), {
+            target: {value: "Frage"},
+        });
+        fireEvent.click(screen.getByTestId("chat-send"));
+        // Thinking placeholder appears immediately. The string
+        // resolves via i18n fallback (DE catalog -> "Denkt nach …";
+        // EN -> "Thinking…"). Match either.
+        await waitFor(() => {
+            const surface = screen.getByTestId("session-chat").textContent ?? "";
+            expect(surface).toMatch(/Thinking|Denkt nach/);
+        });
+        // Now resolve so React tear-down doesn't warn about
+        // a pending state update on an unmounted component.
+        await act(async () => {
+            resolveMessage({
+                user_message: {
+                    id: "u",
+                    session_id: "s-1",
+                    role: "user",
+                    content: "Frage",
+                    created_at: "2026-05-18T00:01:00Z",
+                },
+                assistant_message: null,
+                ai_error: null,
+            });
+        });
+    });
+
+    it("surfaces ai_error via toast when AI couldn't reply", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiMessage.mockResolvedValue({
+            user_message: {
+                id: "m-user",
+                session_id: "s-1",
+                role: "user",
+                content: "Frage",
+                created_at: "2026-05-18T00:01:00Z",
+            },
+            assistant_message: null,
+            ai_error: "No API key stored for provider 'anthropic'.",
+        });
+        renderSession();
+        await screen.findByTestId("session");
+        fireEvent.change(screen.getByTestId("chat-input"), {
+            target: {value: "Frage"},
+        });
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("chat-send"));
+        });
+        await waitFor(() => {
+            expect(toastError).toHaveBeenCalledWith(
+                "No API key stored for provider 'anthropic'.",
+            );
+        });
+        // The user message is still rendered (saved server-side).
+        expect(screen.getByText("Frage")).toBeInTheDocument();
     });
 
     it("end session submits rating then ends + navigates", async () => {

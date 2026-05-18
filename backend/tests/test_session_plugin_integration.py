@@ -133,6 +133,10 @@ def test_start_includes_project_topic_in_prompt(client: TestClient):
 
 
 def test_message_stores_user_message(client: TestClient):
+    """v0.2.0: POST /message returns a composite with the saved
+    user message + an optional assistant reply. With no API key
+    configured in this test fixture, ``assistant_message`` is
+    ``None`` and ``ai_error`` explains why."""
     _, project_id = _make_user_and_project(client)
     sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
         "session"
@@ -143,12 +147,20 @@ def test_message_stores_user_message(client: TestClient):
     )
     assert resp.status_code == 201, resp.text
     body = resp.json()
-    assert body["session_id"] == sess_id
-    assert body["role"] == "user"
-    assert body["content"] == "What's a class?"
+    assert body["user_message"]["session_id"] == sess_id
+    assert body["user_message"]["role"] == "user"
+    assert body["user_message"]["content"] == "What's a class?"
+    # No API key in this fixture -> AI step is skipped; the user
+    # message is still persisted.
+    assert body["assistant_message"] is None
+    assert isinstance(body["ai_error"], str)
 
 
 def test_message_stores_assistant_message(client: TestClient):
+    """role=assistant writes bypass the AI step (no recursion) and
+    just persist the message; the composite still wraps it under
+    ``user_message`` so the route's return contract stays stable.
+    """
     _, project_id = _make_user_and_project(client)
     sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
         "session"
@@ -157,7 +169,12 @@ def test_message_stores_assistant_message(client: TestClient):
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "assistant", "content": "A class is..."},
     )
-    assert resp.json()["role"] == "assistant"
+    body = resp.json()
+    assert body["user_message"]["role"] == "assistant"
+    assert body["user_message"]["content"] == "A class is..."
+    assert body["assistant_message"] is None
+    # role != user => no AI step, no ai_error either.
+    assert body["ai_error"] is None
 
 
 def test_message_rejects_unknown_session_404(client: TestClient):
@@ -368,3 +385,205 @@ def test_recommend_method_switch_returns_none_on_improving(client: TestClient):
     # as the only registered impl, "no recommendation" looks like
     # an empty list, not [None].
     assert results == []
+
+
+# --- v0.2.0: AI orchestration through POST /message -----------------------
+
+
+@pytest.fixture()
+def mock_ai_plugin():
+    """Register a stub ai_complete hookimpl that the test can
+    configure at runtime. The hookimpl method on the class is
+    decorated at definition time; pluggy resolves the bound
+    method when it dispatches, so the indirection through
+    ``self.reply`` / ``self.raise_on_call`` is what lets tests
+    swap behaviour after the fixture yields.
+
+    Yields the plugin instance; auto-unregisters on teardown.
+    """
+
+    class _FakeAi:
+        name = "fake-ai"
+        api_version = "1"
+        reply: str | None = "Hello from FakeAI."
+        raise_on_call: BaseException | None = None
+
+        @hookimpl(tryfirst=True)
+        def ai_complete(self, messages, model, api_key):
+            del messages, model, api_key
+            if self.raise_on_call is not None:
+                raise self.raise_on_call
+            return self.reply
+
+    plugin = _FakeAi()
+    manager._pm.register(plugin)
+    try:
+        yield plugin
+    finally:
+        manager._pm.unregister(plugin)
+
+
+def _seed_api_key(client: TestClient, user_id: str, provider: str = "anthropic") -> None:
+    """Helper: POST a fake API key for the user so the AI orchestration
+    can find a credential. The crypto service stores the encrypted
+    form; the route decrypts on read. The actual key string never
+    leaves the test process — the fake plugin ignores it."""
+    resp = client.post(
+        f"/api/settings/{user_id}/api-key",
+        json={"provider": provider, "key": "sk-fake-test-key"},
+    )
+    assert resp.status_code == 200, resp.text
+
+
+def test_message_orchestrates_ai_and_persists_assistant_reply(
+    client: TestClient, mock_ai_plugin
+):
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+
+    mock_ai_plugin.reply = "Inheritance lets a class reuse another class."
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "Explain inheritance."},
+    )
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    assert body["user_message"]["content"] == "Explain inheritance."
+    assert body["assistant_message"] is not None
+    assert body["assistant_message"]["role"] == "assistant"
+    assert body["assistant_message"]["content"] == (
+        "Inheritance lets a class reuse another class."
+    )
+    assert body["ai_error"] is None
+
+
+def test_message_returns_ai_error_when_no_api_key(client: TestClient, mock_ai_plugin):
+    """No key seeded -> route returns the user message + an
+    ai_error explaining the gap. The mock plugin is registered
+    but never reached because the route short-circuits before
+    firing the hook."""
+    _user_id, project_id = _make_user_and_project(client)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "Hello?"},
+    )
+    body = resp.json()
+    assert body["user_message"]["content"] == "Hello?"
+    assert body["assistant_message"] is None
+    assert "No API key" in body["ai_error"]
+
+
+def test_message_returns_ai_error_when_plugin_raises(
+    client: TestClient, mock_ai_plugin
+):
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+
+    mock_ai_plugin.raise_on_call = RuntimeError("provider down")
+
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "Will this fail gracefully?"},
+    )
+    body = resp.json()
+    assert body["user_message"]["content"] == "Will this fail gracefully?"
+    assert body["assistant_message"] is None
+    assert "provider down" in body["ai_error"]
+
+
+def test_message_returns_ai_error_when_no_provider_matches(client: TestClient):
+    """No mock plugin registered + the production ai-anthropic
+    plugin only handles claude-* models. Our default model maps
+    map to claude-3-5-haiku-latest, which IS a claude-* prefix
+    — so ai-anthropic WILL match and try the real SDK with our
+    fake key. That hits a real network failure, which the
+    route's exception handler catches and surfaces as an
+    ai_error."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "Trigger the real SDK."},
+    )
+    body = resp.json()
+    assert body["assistant_message"] is None
+    assert body["ai_error"] is not None
+
+
+def test_start_persists_system_prompt_as_first_session_message(client: TestClient):
+    """v0.2.0 contract: /start saves the system prompt as the
+    first SessionMessage so subsequent /message calls see it
+    in chronological history without the frontend re-posting."""
+    from app.models import SessionMessage
+    from app.database import SessionLocal
+
+    _, project_id = _make_user_and_project(client)
+    out = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()
+    sess_id = out["session"]["id"]
+    prompt = out["system_prompt"]
+
+    db = SessionLocal()
+    try:
+        rows = (
+            db.query(SessionMessage)
+            .filter(SessionMessage.session_id == sess_id)
+            .all()
+        )
+        assert len(rows) == 1
+        assert rows[0].role == "system"
+        assert rows[0].content == prompt
+    finally:
+        db.close()
+
+
+# --- v0.2.0: GET /switch-recommendation/{id} ------------------------------
+
+
+def test_switch_recommendation_returns_false_on_no_history(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.get(f"/api/plugins/session/switch-recommendation/{sess_id}")
+    assert resp.status_code == 200
+    body = resp.json()
+    # No ratings yet: stagnation detector says no recommendation.
+    assert body["recommended"] is False
+
+
+def test_switch_recommendation_recommends_after_stagnant_ratings(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    # Three low-understanding / high-stress ratings -> stagnation
+    # detected; switching.recommend returns a non-empty dict.
+    for _ in range(3):
+        client.post(
+            f"/api/plugins/session/{sess_id}/rate",
+            json={"understanding": 2, "stress": 5, "method_fit": 2},
+        )
+    resp = client.get(f"/api/plugins/session/switch-recommendation/{sess_id}")
+    body = resp.json()
+    assert body["recommended"] is True
+    assert body["to_method"] is not None
+    assert isinstance(body["reason"], str)
+
+
+def test_switch_recommendation_404_on_unknown_session(client: TestClient):
+    resp = client.get("/api/plugins/session/switch-recommendation/no-such")
+    assert resp.status_code == 404
