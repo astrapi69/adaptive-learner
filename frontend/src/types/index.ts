@@ -23,6 +23,7 @@ export type {
     SessionMessageExchangeResult,
     SessionRating,
     SessionStartResult,
+    SpacedRecommendation,
     SwitchRecommendation,
     ToolRecommendation,
     TrackingSummary,

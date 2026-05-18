@@ -124,6 +124,11 @@ dashboard:
   card_counter: Sessions
   card_tools: Werkzeug-Empfehlungen
   card_recent_sessions: Letzte Sessions
+  card_spaced: Geplante Übung
+  spaced_empty: Nichts zu wiederholen — guter Rhythmus!
+  spaced_interval_label: Wiederholung in
+  spaced_start: Starten
+  spaced_dismiss: Ausblenden
   metric_total_sessions: Sessions insgesamt
   metric_total_minutes: Minuten insgesamt
   metric_mean_understanding: Mittleres Verstehen

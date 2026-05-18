@@ -1,5 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
+
+import {LEARNING_METHODS} from "../lib/constants";
 
 import CycleProgress from "../components/CycleProgress";
 import MethodBadge from "../components/MethodBadge";
@@ -43,6 +45,7 @@ import type {
 export default function Session() {
     const {t, lang} = useI18n();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
     const [session, setSession] = useState<LearningSession | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -79,8 +82,18 @@ export default function Session() {
         }
         let cancelled = false;
         setLoading(true);
+        // v0.4.0: SpacedRecommendations cards link here with
+        // ``?method=<key>`` so the user can start a session in
+        // the method the card suggests. Unknown / missing values
+        // fall through to the profile-driven default.
+        const rawMethod = searchParams.get("method");
+        const hintedMethod = LEARNING_METHODS.find((m) => m === rawMethod);
         api.session
-            .start({project_id: projectId, lang})
+            .start({
+                project_id: projectId,
+                lang,
+                ...(hintedMethod ? {method: hintedMethod} : {}),
+            })
             .then((result) => {
                 if (cancelled) return;
                 setSession(result.session);

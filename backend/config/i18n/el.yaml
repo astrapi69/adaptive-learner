@@ -106,6 +106,11 @@ dashboard:
   card_counter: Συνεδρίες
   card_tools: Συστάσεις εργαλείων
   card_recent_sessions: Recent sessions
+  card_spaced: Διανεμημένη εξάσκηση
+  spaced_empty: Τίποτα για επανάληψη τώρα. Καλός ρυθμός!
+  spaced_interval_label: Επανάληψη σε
+  spaced_start: Έναρξη
+  spaced_dismiss: Απόρριψη
   metric_total_sessions: Συνολικές συνεδρίες
   metric_total_minutes: Total minutes
   metric_mean_understanding: Μέση κατανόηση

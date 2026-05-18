@@ -326,3 +326,19 @@ export interface ToolRecommendation {
     weight_keys: LearningMethod[];
     score: number;
 }
+
+/**
+ * v0.4.0 spaced-repetition card from
+ * ``GET /api/plugins/tools/spaced/{project_id}``. ``id`` is
+ * stable across requests so the frontend can persist
+ * dismissals in localStorage. ``urgency`` is informational —
+ * the server has already sorted by it.
+ */
+export interface SpacedRecommendation {
+    id: string;
+    method: LearningMethod;
+    interval_days: number;
+    action: string;
+    title: string;
+    urgency: number;
+}

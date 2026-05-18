@@ -149,3 +149,109 @@ def test_get_tool_recommendations_hook_dispatches(client: TestClient):
     assert len(results) == 1
     assert isinstance(results[0], list)
     assert all("name" in r for r in results[0])
+
+
+# --- v0.4.0: GET /spaced/{project_id} -------------------------------------
+
+
+def test_spaced_route_registered(client: TestClient):
+    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    assert "/api/plugins/tools/spaced/{project_id}" in paths
+
+
+def test_spaced_unknown_project_404(client: TestClient):
+    resp = client.get("/api/plugins/tools/spaced/no-such")
+    assert resp.status_code == 404
+
+
+def test_spaced_unassessed_project_returns_empty(client: TestClient):
+    """No profile -> every method has weight 0 -> no cards."""
+    _, project_id = _make_user_and_project(client)
+    resp = client.get(f"/api/plugins/tools/spaced/{project_id}")
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+def test_spaced_after_assessment_returns_cards(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    _evaluate_with_first_answers(client, project_id)
+    body = client.get(f"/api/plugins/tools/spaced/{project_id}").json()
+    assert len(body) > 0
+    for card in body:
+        for key in ("id", "method", "interval_days", "action", "title", "urgency"):
+            assert key in card, f"missing {key!r} in {card}"
+        assert card["action"] == "session"
+        assert card["interval_days"] in (1, 3, 7, 14)
+        assert card["id"].startswith("sr-")
+
+
+def test_spaced_localised_lang_query(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    _evaluate_with_first_answers(client, project_id)
+    de = client.get(f"/api/plugins/tools/spaced/{project_id}?lang=de").json()
+    en = client.get(f"/api/plugins/tools/spaced/{project_id}?lang=en").json()
+    # Same set of cards (same ids), different title text.
+    assert {c["id"] for c in de} == {c["id"] for c in en}
+    assert de[0]["title"] != en[0]["title"]
+
+
+def test_spaced_never_leaks_translation_keys(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    _evaluate_with_first_answers(client, project_id)
+    body = client.get(f"/api/plugins/tools/spaced/{project_id}").json()
+    for card in body:
+        assert "title_de" not in card
+        assert "title_en" not in card
+
+
+def test_spaced_ordered_by_urgency_asc(client: TestClient):
+    """Lower urgency value -> higher priority -> earlier in the
+    list. Pin against future drift in the sort direction."""
+    _, project_id = _make_user_and_project(client)
+    _evaluate_with_first_answers(client, project_id)
+    body = client.get(f"/api/plugins/tools/spaced/{project_id}").json()
+    urgencies = [c["urgency"] for c in body]
+    assert urgencies == sorted(urgencies)
+
+
+def test_spaced_recency_pushes_recently_practised_methods_down(client: TestClient):
+    """A method with a fresh ProgressCommit moves to the longer
+    interval band (interval=14) and lands later in the response
+    than one that's never been committed (interval=1)."""
+    from app.database import SessionLocal
+    from app.models import LearningSession, ProgressCommit
+
+    _, project_id = _make_user_and_project(client)
+    profile = _evaluate_with_first_answers(client, project_id)
+    dominant = profile["dominant_method"]
+
+    db = SessionLocal()
+    try:
+        # Plant a LearningSession + ProgressCommit for the
+        # dominant method TODAY so the recency band for that
+        # method becomes "maintain" (interval=14).
+        sess = LearningSession(project_id=project_id, method=dominant, cycle_step=7)
+        db.add(sess)
+        db.commit()
+        db.refresh(sess)
+        commit = ProgressCommit(
+            project_id=project_id,
+            session_id=sess.id,
+            method=dominant,
+            understanding=0.7,
+            stress=0.3,
+            error_rate=0.1,
+            duration_minutes=30,
+        )
+        db.add(commit)
+        db.commit()
+    finally:
+        db.close()
+
+    body = client.get(f"/api/plugins/tools/spaced/{project_id}").json()
+    methods_in_order = [c["method"] for c in body]
+    if dominant in methods_in_order and len(methods_in_order) > 1:
+        # The dominant method, having been practised today, must
+        # NOT be first anymore — at least one other method outranks
+        # it on urgency.
+        assert methods_in_order[0] != dominant

@@ -16,6 +16,7 @@ vi.mock("react-router-dom", async () => {
 const apiProfile = vi.fn();
 const apiProgress = vi.fn();
 const apiTools = vi.fn();
+const apiSpaced = vi.fn();
 vi.mock("../api/client", async () => {
     const actual = await vi.importActual<typeof import("../api/client")>(
         "../api/client",
@@ -35,6 +36,7 @@ vi.mock("../api/client", async () => {
             tools: {
                 ...actual.api.tools,
                 recommendations: (...args: unknown[]) => apiTools(...args),
+                spaced: (...args: unknown[]) => apiSpaced(...args),
             },
         },
     };
@@ -126,6 +128,9 @@ describe("Dashboard page", () => {
         apiProfile.mockReset();
         apiProgress.mockReset();
         apiTools.mockReset();
+        apiSpaced.mockReset();
+        // Default: empty spaced list. Tests that care override.
+        apiSpaced.mockResolvedValue([]);
         localStorage.clear();
         localStorage.setItem("adaptive-learner.project_id", "p1");
     });
@@ -189,5 +194,37 @@ describe("Dashboard page", () => {
         const badge = screen.getByTestId("quick-start-method");
         expect(badge).toBeInTheDocument();
         expect(badge.textContent).toMatch(/deductive|Deduktiv|Deductive/);
+    });
+
+    it("renders the spaced-practice card with server data", async () => {
+        apiProfile.mockResolvedValue(PROFILE);
+        apiProgress.mockResolvedValue(SUMMARY);
+        apiTools.mockResolvedValue(TOOLS);
+        apiSpaced.mockResolvedValue([
+            {
+                id: "sr-deductive-first",
+                method: "deductive",
+                interval_days: 1,
+                action: "session",
+                title: "First practice in deduction.",
+                urgency: 0.5,
+            },
+        ]);
+        renderDashboard();
+        await screen.findByTestId("dashboard");
+        expect(screen.getByTestId("spaced-recs")).toBeInTheDocument();
+        expect(
+            screen.getByTestId("spaced-rec-sr-deductive-first"),
+        ).toBeInTheDocument();
+    });
+
+    it("renders the spaced empty-state when the server returns []", async () => {
+        apiProfile.mockResolvedValue(PROFILE);
+        apiProgress.mockResolvedValue(SUMMARY);
+        apiTools.mockResolvedValue(TOOLS);
+        apiSpaced.mockResolvedValue([]);
+        renderDashboard();
+        await screen.findByTestId("dashboard");
+        expect(screen.getByTestId("spaced-recs-empty")).toBeInTheDocument();
     });
 });

@@ -7,11 +7,17 @@ import ProgressTimeline from "../components/ProgressTimeline";
 import RecentSessions from "../components/RecentSessions";
 import QuickStartButton from "../components/QuickStartButton";
 import SessionCounter from "../components/SessionCounter";
+import SpacedRecommendations from "../components/SpacedRecommendations";
 import ToolRecommendations from "../components/ToolRecommendations";
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
-import type {LearningProfile, ToolRecommendation, TrackingSummary} from "../types";
+import type {
+    LearningProfile,
+    SpacedRecommendation,
+    ToolRecommendation,
+    TrackingSummary,
+} from "../types";
 
 /**
  * Dashboard page (project-reference §8 row ``/dashboard``).
@@ -35,6 +41,7 @@ export default function Dashboard() {
     const [profile, setProfile] = useState<LearningProfile | null>(null);
     const [summary, setSummary] = useState<TrackingSummary | null>(null);
     const [tools, setTools] = useState<ToolRecommendation[]>([]);
+    const [spaced, setSpaced] = useState<SpacedRecommendation[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -51,9 +58,10 @@ export default function Dashboard() {
             api.assessment.profile(projectId),
             api.tracking.progress(projectId),
             api.tools.recommendations(projectId, lang),
+            api.tools.spaced(projectId, lang),
         ]).then((results) => {
             if (cancelled) return;
-            const [profileR, summaryR, toolsR] = results;
+            const [profileR, summaryR, toolsR, spacedR] = results;
 
             if (profileR.status === "fulfilled") {
                 setProfile(profileR.value);
@@ -73,6 +81,10 @@ export default function Dashboard() {
 
             if (toolsR.status === "fulfilled") {
                 setTools(toolsR.value);
+            }
+
+            if (spacedR.status === "fulfilled") {
+                setSpaced(spacedR.value);
             }
 
             setLoading(false);
@@ -141,6 +153,13 @@ export default function Dashboard() {
                         {t("dashboard.card_tools", "Tool recommendations")}
                     </h2>
                     <ToolRecommendations tools={tools} />
+                </article>
+
+                <article className="dashboard-card">
+                    <h2 className="dashboard-card-title">
+                        {t("dashboard.card_spaced", "Spaced practice")}
+                    </h2>
+                    <SpacedRecommendations cards={spaced} />
                 </article>
 
                 <article className="dashboard-card dashboard-card-wide">

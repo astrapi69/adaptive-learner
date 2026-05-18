@@ -410,6 +410,12 @@ export const api = {
                 `/plugins/tools/recommendations/${encodeURIComponent(projectId)}`,
                 {query: {lang}},
             ),
+        /** v0.4.0 spaced-repetition action cards. */
+        spaced: (projectId: string, lang: string) =>
+            apiCall<import("../types/domain").SpacedRecommendation[]>(
+                `/plugins/tools/spaced/${encodeURIComponent(projectId)}`,
+                {query: {lang}},
+            ),
     },
 
     // --- Curriculum + topics (core, not plugin) -------------------------

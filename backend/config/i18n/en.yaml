@@ -119,6 +119,11 @@ dashboard:
   card_counter: Sessions
   card_tools: Tool recommendations
   card_recent_sessions: Recent sessions
+  card_spaced: Spaced practice
+  spaced_empty: Nothing to refresh right now. Great rhythm!
+  spaced_interval_label: Review in
+  spaced_start: Start
+  spaced_dismiss: Dismiss
   metric_total_sessions: Total sessions
   metric_total_minutes: Total minutes
   metric_mean_understanding: Mean understanding
