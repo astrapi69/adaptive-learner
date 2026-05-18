@@ -12,7 +12,12 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.4.0):** v0.3.0 plus Phase 7:
+- **Current state (v0.4.1):** v0.4.0 patch: Onboarding "Skip"
+  affordance hoisted into the header (above the fold), favicon
+  ships a multi-resolution `.ico` fallback plus a repaired SVG
+  comment, and the longstanding CI Release Gate red is fixed
+  (plugin `__version__` now derives via `importlib.metadata`).
+  v0.4.0 itself shipped Phase 7:
   deterministic cycle-step advance on every successful
   user→AI round-trip (capped at 7), Dashboard streak +
   RecentSessions + 5-cell SessionCounter, per-provider
@@ -181,7 +186,7 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- v0.4.0 baseline: backend 434, plugins 416 (across 7), frontend 224 (Vitest). Total 1074.
+- v0.4.1 baseline: backend 434, plugins 416 (across 7), frontend 226 (Vitest). Total 1076.
 - E2E tests under `e2e/` are NOT on the `make test` default path.
   v0.3.0 shipped 7 Playwright smoke specs under `e2e/smoke/`
   (landing, onboarding+assessment, session, curriculum, settings);
