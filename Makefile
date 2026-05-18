@@ -19,7 +19,8 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
 .PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
        test test-backend test-frontend test-plugins test-plugin-assessment \
-       test-plugin-ai-anthropic test-plugin-session test-e2e test-e2e-ui \
+       test-plugin-ai-anthropic test-plugin-session test-plugin-tracking \
+       test-e2e test-e2e-ui \
        test-coverage test-coverage-backend test-coverage-frontend \
        check-types check-types-backend check-types-frontend \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -196,7 +197,7 @@ test-backend: ## Run backend tests
 # per-plugin pytest run uses that same env via its absolute Python
 # binary; the plugin doesn't need its own poetry env / lock.
 
-test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-session ## Run every plugin's own test suite
+test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-session test-plugin-tracking ## Run every plugin's own test suite
 	@echo ""
 	@echo "=== All plugin tests complete ==="
 
@@ -220,6 +221,11 @@ test-plugin-session: ## session plugin: 7-step prompts, method-switch rec, 4 rou
 	@echo ""
 	@echo "=== Plugin: session ==="
 	cd plugins/adaptive-learner-plugin-session && $(PLUGIN_PYTHON) -m pytest tests/ -q
+
+test-plugin-tracking: ## tracking plugin: ProgressCommit writer + summary aggregator, 2 routes
+	@echo ""
+	@echo "=== Plugin: tracking ==="
+	cd plugins/adaptive-learner-plugin-tracking && $(PLUGIN_PYTHON) -m pytest tests/ -q
 
 # --- Coverage (heavy, opt-in; CI runs this on every push) ---
 

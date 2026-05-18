@@ -27,6 +27,7 @@ plugins:
     - assessment
     - ai-anthropic
     - session
+    - tracking
   entry_point_group: adaptive_learner.plugins
 ui:
   title: Adaptive Learner

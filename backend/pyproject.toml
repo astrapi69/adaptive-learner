@@ -25,6 +25,7 @@ ruamel-yaml = "^0.19.0"
 adaptive-learner-plugin-assessment = {path = "../plugins/adaptive-learner-plugin-assessment", develop = true}
 adaptive-learner-plugin-ai-anthropic = {path = "../plugins/adaptive-learner-plugin-ai-anthropic", develop = true}
 adaptive-learner-plugin-session = {path = "../plugins/adaptive-learner-plugin-session", develop = true}
+adaptive-learner-plugin-tracking = {path = "../plugins/adaptive-learner-plugin-tracking", develop = true}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.0"

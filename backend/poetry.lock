@@ -59,6 +59,26 @@ type = "directory"
 url = "../plugins/adaptive-learner-plugin-session"
 
 [[package]]
+name = "adaptive-learner-plugin-tracking"
+version = "0.1.0"
+description = "Adaptive Learner: writes ProgressCommit on session_complete + dashboard summary aggregator."
+optional = false
+python-versions = "^3.11"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+fastapi = "^0.136.0"
+pluginforge = "^0.5.0"
+pydantic = "^2.13.0"
+sqlalchemy = "^2.0.49"
+
+[package.source]
+type = "directory"
+url = "../plugins/adaptive-learner-plugin-tracking"
+
+[[package]]
 name = "alembic"
 version = "1.18.4"
 description = "A database migration tool for SQLAlchemy."
@@ -2826,4 +2846,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "7138a460de5bcbe5e708dd3ea9f5bca8e6e2797af691e29b7eb62ba9e893e607"
+content-hash = "a8df4cd79fe9d6a70c5f68f90ab2e969180cf818035b98dc75181e344d88f03f"

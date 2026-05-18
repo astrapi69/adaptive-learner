@@ -1,0 +1,97 @@
+"""TrackingPlugin — PluginForge entry point.
+
+Implements two Phase-2 hookspecs:
+
+- ``on_session_complete(session, rating)`` (side-effect): writes
+  a ProgressCommit row via the :mod:`.commits` translator.
+- ``get_progress_summary(project_id)``: returns the tracking
+  namespace slice via :mod:`.summary`.
+
+Plus two routes (``/progress``, ``/commits``) — see :mod:`.routes`.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+import pluggy
+from pluginforge import BasePlugin
+
+from . import commits as _commits
+from . import summary as _summary
+
+hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
+
+
+class TrackingPlugin(BasePlugin):
+    name = "tracking"
+    version = "0.1.0"
+    description = "ProgressCommit writer on session-complete + dashboard summary aggregator."
+    author = "Asterios Raptis"
+
+    @hookimpl
+    def on_session_complete(self, session: dict[str, Any], rating: dict[str, Any]) -> None:
+        """Write the ProgressCommit row.
+
+        Lazy imports of ``app.*`` keep the plugin class importable
+        from the plugin's standalone test dir; the hook only fires
+        in-process under the production app, where ``app.*`` is
+        always available.
+        """
+        kwargs = _commits.build_commit_kwargs(session, rating)
+        if kwargs is None:
+            # Incomplete payload — log and skip rather than crash
+            # the session-close call. The hookspec contract requires
+            # subscriber errors to be non-blocking; quietly dropping
+            # an unwritable row is the same shape.
+            import logging
+
+            logging.getLogger(__name__).warning(
+                "tracking.on_session_complete: incomplete payload, "
+                "skipping ProgressCommit write. session=%r rating=%r",
+                session,
+                rating,
+            )
+            return
+
+        from app.database import SessionLocal
+        from app.models import ProgressCommit
+
+        db = SessionLocal()
+        try:
+            db.add(ProgressCommit(**kwargs))
+            db.commit()
+        finally:
+            db.close()
+
+    @hookimpl
+    def get_progress_summary(self, project_id: str) -> dict[str, Any]:
+        """Return this plugin's namespace slice."""
+        from app.database import SessionLocal
+        from app.models import ProgressCommit
+
+        db = SessionLocal()
+        try:
+            rows = (
+                db.query(ProgressCommit)
+                .filter(ProgressCommit.project_id == project_id)
+                .order_by(ProgressCommit.committed_at.asc())
+                .all()
+            )
+            commits_dicts = [
+                {
+                    "method": r.method,
+                    "understanding": r.understanding,
+                    "stress": r.stress,
+                    "duration_minutes": r.duration_minutes,
+                }
+                for r in rows
+            ]
+        finally:
+            db.close()
+        return {_summary.NAMESPACE: _summary.aggregate(commits_dicts)}
+
+    def get_routes(self) -> list:
+        from .routes import router
+
+        return [router]

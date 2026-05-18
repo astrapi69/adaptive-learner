@@ -1,0 +1,272 @@
+"""Phase 3-D integration: tracking plugin under app.main.app.
+
+Three contracts:
+
+1. Closing a session via POST ``/api/plugins/session/{id}/end``
+   automatically lands a ProgressCommit row (the session plugin
+   fires ``on_session_complete``; the tracking plugin subscribes).
+2. GET ``/api/plugins/tracking/commits/{project_id}`` returns the
+   commit history.
+3. GET ``/api/plugins/tracking/progress/{project_id}`` aggregates
+   every ``get_progress_summary`` impl + namespaces the response
+   so future analytics plugins can stack alongside without
+   collision.
+"""
+
+from __future__ import annotations
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.database import SessionLocal
+from app.main import app, manager
+from app.models import ProgressCommit
+
+
+@pytest.fixture()
+def client():
+    with TestClient(app) as c:
+        yield c
+
+
+def _make_user_and_project(client: TestClient) -> tuple[str, str]:
+    u = client.post("/api/users", json={"name": "Tracker"})
+    user_id = u.json()["id"]
+    p = client.post(
+        f"/api/users/{user_id}/projects",
+        json={
+            "topic": "Tracking",
+            "goal": "Watch progress.",
+            "timeframe": "4 weeks",
+            "daily_minutes": 30,
+        },
+    )
+    return user_id, p.json()["id"]
+
+
+def _run_one_session(
+    client: TestClient,
+    project_id: str,
+    *,
+    method: str = "deductive",
+    understanding: int = 4,
+    stress: int = 2,
+) -> str:
+    sess_id = client.post(
+        "/api/plugins/session/start",
+        json={"project_id": project_id, "method": method},
+    ).json()["session"]["id"]
+    client.post(
+        f"/api/plugins/session/{sess_id}/rate",
+        json={"understanding": understanding, "stress": stress, "method_fit": 4},
+    )
+    client.post(f"/api/plugins/session/{sess_id}/end")
+    return sess_id
+
+
+# --- Plugin wiring ---------------------------------------------------------
+
+
+def test_plugin_is_active(client: TestClient):
+    active = {p.name for p in manager.get_active_plugins()}
+    assert "tracking" in active
+
+
+def test_router_exposes_two_paths(client: TestClient):
+    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    assert "/api/plugins/tracking/progress/{project_id}" in paths
+    assert "/api/plugins/tracking/commits/{project_id}" in paths
+
+
+# --- on_session_complete writes ProgressCommit ----------------------------
+
+
+def test_session_close_writes_progress_commit(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    sess_id = _run_one_session(client, project_id)
+    # Read the DB directly: the row must exist with the right ids
+    # + the int-to-float rescaling applied.
+    db = SessionLocal()
+    try:
+        rows = db.query(ProgressCommit).filter(ProgressCommit.project_id == project_id).all()
+        assert len(rows) == 1
+        row = rows[0]
+        assert row.session_id == sess_id
+        assert row.method == "deductive"
+        assert row.understanding == pytest.approx(4 / 5)
+        assert row.stress == pytest.approx(2 / 5)
+        assert row.error_rate == 0.0
+        assert row.duration_minutes >= 0
+    finally:
+        db.close()
+
+
+def test_session_close_without_rating_skips_understanding(client: TestClient):
+    """When no rating is posted, the session plugin's hook
+    payload has an empty ``rating`` dict; the tracking plugin
+    still writes the row but understanding / stress default to 0.
+    """
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
+    client.post(f"/api/plugins/session/{sess_id}/end")  # no /rate call
+    db = SessionLocal()
+    try:
+        rows = db.query(ProgressCommit).filter(ProgressCommit.project_id == project_id).all()
+        assert len(rows) == 1
+        assert rows[0].understanding == 0.0
+        assert rows[0].stress == 0.0
+    finally:
+        db.close()
+
+
+def test_multiple_sessions_produce_multiple_commits(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    for u in (2, 3, 4):
+        _run_one_session(client, project_id, understanding=u)
+    db = SessionLocal()
+    try:
+        rows = (
+            db.query(ProgressCommit)
+            .filter(ProgressCommit.project_id == project_id)
+            .order_by(ProgressCommit.committed_at.asc())
+            .all()
+        )
+        assert len(rows) == 3
+        assert [round(r.understanding, 2) for r in rows] == [0.4, 0.6, 0.8]
+    finally:
+        db.close()
+
+
+# --- GET /commits ---------------------------------------------------------
+
+
+def test_get_commits_returns_history_ordered_oldest_first(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    _run_one_session(client, project_id, method="deductive", understanding=2)
+    _run_one_session(client, project_id, method="dialogic", understanding=4)
+
+    resp = client.get(f"/api/plugins/tracking/commits/{project_id}")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert len(body) == 2
+    assert body[0]["method"] == "deductive"
+    assert body[1]["method"] == "dialogic"
+    # ProgressCommitOut shape: every documented field is present.
+    for key in (
+        "id",
+        "project_id",
+        "session_id",
+        "method",
+        "understanding",
+        "stress",
+        "error_rate",
+        "duration_minutes",
+        "committed_at",
+    ):
+        assert key in body[0]
+
+
+def test_get_commits_unknown_project_404(client: TestClient):
+    resp = client.get("/api/plugins/tracking/commits/no-such")
+    assert resp.status_code == 404
+
+
+def test_get_commits_empty_when_no_sessions(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    resp = client.get(f"/api/plugins/tracking/commits/{project_id}")
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+# --- GET /progress (summary aggregator) -----------------------------------
+
+
+def test_get_progress_returns_tracking_namespace(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    _run_one_session(client, project_id, understanding=4, stress=2)
+    _run_one_session(client, project_id, understanding=3, stress=3)
+    resp = client.get(f"/api/plugins/tracking/progress/{project_id}")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert "tracking" in body
+    slice_ = body["tracking"]
+    assert slice_["total_sessions"] == 2
+    assert slice_["sessions_per_method"] == {"deductive": 2}
+    assert slice_["recent_understanding"] == [0.8, 0.6]
+    assert slice_["recent_stress"] == [0.4, 0.6]
+    assert slice_["mean_understanding"] == pytest.approx(0.7)
+    assert slice_["mean_stress"] == pytest.approx(0.5)
+
+
+def test_get_progress_unknown_project_404(client: TestClient):
+    resp = client.get("/api/plugins/tracking/progress/no-such")
+    assert resp.status_code == 404
+
+
+def test_get_progress_no_sessions_returns_empty_namespace(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    body = client.get(f"/api/plugins/tracking/progress/{project_id}").json()
+    assert body["tracking"]["total_sessions"] == 0
+    assert body["tracking"]["sessions_per_method"] == {}
+    assert body["tracking"]["recent_understanding"] == []
+
+
+# --- Hook dispatch -------------------------------------------------------
+
+
+def test_on_session_complete_hook_fires_tracking_subscriber(client: TestClient):
+    """Sanity that the tracking plugin's subscription to
+    on_session_complete is registered (the row-creation test
+    above implicitly covers it but this isolates the wiring
+    check by firing the hook directly with a known payload)."""
+    _, project_id = _make_user_and_project(client)
+    # Plant a real LearningSession row first — ProgressCommit.session_id
+    # is a FK so the manual hook fire would IntegrityError otherwise.
+    from app.models import LearningSession
+
+    db = SessionLocal()
+    try:
+        sess = LearningSession(project_id=project_id, method="dialogic")
+        db.add(sess)
+        db.commit()
+        db.refresh(sess)
+        manual_sess_id = sess.id
+    finally:
+        db.close()
+
+    # Direct hook fire — bypasses the session router so we observe
+    # only the tracking plugin's subscriber.
+    manager._pm.hook.on_session_complete(
+        session={
+            "id": manual_sess_id,
+            "project_id": project_id,
+            "method": "dialogic",
+            "started_at": "2026-01-01T12:00:00+00:00",
+            "ended_at": "2026-01-01T12:15:00+00:00",
+            "status": "completed",
+        },
+        rating={"understanding": 5, "stress": 1, "method_fit": 5},
+    )
+    db = SessionLocal()
+    try:
+        rows = db.query(ProgressCommit).filter(ProgressCommit.project_id == project_id).all()
+        assert len(rows) == 1
+        assert rows[0].method == "dialogic"
+        assert rows[0].duration_minutes == 15
+        assert rows[0].understanding == 1.0
+        assert rows[0].stress == 0.2
+    finally:
+        db.close()
+
+
+def test_get_progress_summary_hook_dispatches(client: TestClient):
+    """List-mode dispatch: one plugin → one slice → one dict in
+    the results list."""
+    _, project_id = _make_user_and_project(client)
+    _run_one_session(client, project_id)
+    results = manager._pm.hook.get_progress_summary(project_id=project_id)
+    assert len(results) == 1
+    assert "tracking" in results[0]
+    assert results[0]["tracking"]["total_sessions"] == 1
