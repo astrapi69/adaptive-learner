@@ -42,7 +42,7 @@ merges them.
 
 from __future__ import annotations
 
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from typing import Any
 
 NAMESPACE = "tracking"
@@ -179,7 +179,7 @@ def aggregate(
     commit_dates = {
         d for d in (_parse_iso_date(c.get("committed_at")) for c in commits) if d is not None
     }
-    streak_today = today if today is not None else datetime.now(timezone.utc).date()
+    streak_today = today if today is not None else datetime.now(UTC).date()
     streak_days = _current_streak_days(commit_dates, streak_today)
 
     total_sessions = len(commits)

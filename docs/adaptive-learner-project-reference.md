@@ -253,9 +253,12 @@ class AdaptiveLearnerHookSpec:
 | POST | /api/plugins/session/{id}/message | session |
 | POST | /api/plugins/session/{id}/rate | session |
 | POST | /api/plugins/session/{id}/end | session |
+| GET | /api/plugins/session/switch-recommendation/{id} | session |
+| POST | /api/plugins/session/{id}/switch | session |
 | GET | /api/plugins/tracking/progress/{project_id} | tracking |
 | GET | /api/plugins/tracking/commits/{project_id} | tracking |
 | GET | /api/plugins/tools/recommendations/{project_id} | tools |
+| GET | /api/plugins/tools/spaced/{project_id} | tools (v0.4.0) |
 
 ---
 
