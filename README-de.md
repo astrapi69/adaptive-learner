@@ -1,49 +1,112 @@
 # Adaptive Learner
 
-Projekt-Skeleton-Template, abgeleitet aus [Bibliogon](https://github.com/astrapi69/bibliogon) (einer Buch-Autorenplattform). Schlanke Grundlage für Anwendungen zum adaptiven Lernen, auf demselben Architekturmuster aufgebaut: FastAPI + SQLAlchemy + React + TypeScript + Plugin-Loader auf Basis von [PluginForge](https://github.com/astrapi69/pluginforge).
-
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 
-## Was das ist
+Ein adaptives Lernsystem nach dem forschungsbasierten
+Sechs-Methoden-Modell (Asterios Raptis, *Von Theorie zur
+Praxis*, Medium-Serie). Wähle die Methode, die zum Lernenden
+passt — deduktiv, induktiv, fehlerbasiert, dialogisch,
+kontextuell oder KI-adaptiv — gehe pro Session durch einen
+Sieben-Schritt-Zyklus, und lass ein Dual-Prompt-KI entscheiden,
+wann der Lernende für den nächsten Schritt bereit ist.
 
-Ein lauffähiger Full-Stack-Startpunkt. Die Plugin-Loader-Infrastruktur, die Schichten-Architektur, die Test-Disziplin, das Build/Deploy/Release-Tooling und der Python+React-Tech-Stack werden 1:1 von Bibliogon übernommen. **Die DOMÄNE liegt als EXAMPLE-DOMAIN bei**: Book, Chapter, Article, ArticleComment, Author, Asset, ... sind im Code als Arbeitsreferenz vorhanden, wie man SQLAlchemy-Modelle + Pydantic-Schemas + FastAPI-Router + React-Seiten + Tests end-to-end verdrahtet. Ersetze jede Konzeption durch deine Adaptive-Learner-Äquivalente (LearningConcept, CurriculumItem, SkillAssessment, LearnerProgress, ...), sobald die tatsächliche Projekt-Domäne feststeht.
+**Seit v0.6.0 als installierbare Progressive Web App verfügbar**
+— füge sie auf jedem modernen Smartphone oder Desktop zum
+Startbildschirm hinzu und starte wie eine native App, ohne
+Browser-Tab.
 
-Dateien mit einem expliziten `EXAMPLE-DOMAIN:`- oder `TEMPLATE:`-Header sind oben markiert, sodass sie per grep auffindbar sind:
+[🇬🇧 English](README.md)
 
-```bash
-grep -rn "EXAMPLE-DOMAIN\|TEMPLATE:" --include='*.py' --include='*.ts' --include='*.tsx'
-```
+## Was du bekommst
 
-## Was enthalten ist
-
-- **Backend** (`backend/`) — FastAPI-App, SQLAlchemy 2.0-Modelle, Pydantic v2-Schemas, Alembic-Migrationen, Soft-Delete + Papierkorb-Lebenszyklus, schichtweise Konfig (Projekt-YAML < User-Override < Env-Vars), Test-Isolations-Tripwires, i18n für 8 Sprachen
-- **Frontend** (`frontend/`) — React 18 + TypeScript (strict) + Vite + TipTap-Editor + Radix UI + react-toastify + Playwright-E2E
-- **Plugin-System** (`plugins/`) — leerer Platzhalter + `plugins/README.md` mit der minimalen Plugin-Struktur. Das Skeleton liefert keine Plugins; der Loader ist verdrahtet und bereit.
-- **Launcher** (`launcher/`) — plattformübergreifender PyInstaller-Desktop-Launcher (Linux + macOS + Windows) mit Auto-Update- und Uninstall-Flows. Per-OS-Build-Pipelines unter `.github/workflows/launcher-{linux,macos,windows}.yml`.
-- **CI/CD** — GitHub-Actions für Tests, Coverage, Docs-Site, Release-Gates, Mutation-Testing
-- **Docs** (`docs/`) — Architekturübersicht, Config-Chain, ROADMAP-Form, In-App-Help-Struktur (`docs/help/_meta.yaml`), MkDocs-Site-Config
-- **Tooling** — Makefile, Docker Compose (Dev + Prod), Install-Skripte für alle drei OS, Pre-Commit-Hooks (ruff + ruff-format + check-yaml/json), Versions-Pin-Sync-Skript
-
-## Anpassen an dein Projekt
-
-1. **Umbenennen** — Suche im Codebase nach `adaptive_learner` / `AdaptiveLearner` / `ADAPTIVE_LEARNER` / `adaptive-learner-` und ersetze in derselben Vier-Casings mit deinem Projektnamen.
-2. **Domäne ersetzen** — Beginne mit `backend/app/models/__init__.py` (das EXAMPLE-DOMAIN-Docstring oben erklärt das Muster), dann kaskadiert durch die passenden `backend/app/routers/*.py`, die `api.<model>`-Namespaces in `frontend/src/api/client.ts` und die Page-Komponenten unter `frontend/src/pages/*`.
-3. **`docs/` auffrischen** — `CONCEPT.md`, `ROADMAP.md`, `API.md`, `docs/help/` tragen die aus Bibliogon übernommene Form. Adaptiere sie an deine Domäne.
-4. **Plugin-Scaffolding** — beim ersten Plugin folge `plugins/README.md`. Hookspecs liegen in `backend/app/hookspecs.py`.
+- **Sechs Lernmethoden** mit eigenen Prompts pro (Methode,
+  Schritt). 42-Zellen-Prompt-Matrix, zugeschnitten darauf, wo
+  der Lernende im Zyklus steht und wie die Methode ihn zur
+  Auseinandersetzung einlädt.
+- **Dual-Prompt-Zyklusübergänge (v0.5.0)** — jeder Chat-
+  Austausch löst einen zweiten KI-Call aus, der die Bereitschaft
+  bewertet und den nächsten Schritt vorschlägt (vorwärts,
+  wiederholen, überspringen oder zurück, wenn Verwirrung
+  sichtbar wird). Konfigurierbarer Konfidenz-Schwellenwert; bei
+  Deaktivierung greift das deterministische +1.
+- **Progressive Web App (v0.6.0)** — Manifest +
+  Service-Worker. Vergangene Sessions und das Dashboard
+  bleiben offline lesbar; neue Sessions brauchen Netz (der
+  KI-Anbieter sitzt außerhalb des Browsers). Hamburger-Menü
+  auf Mobile, 44×44-Touch-Targets, kein horizontaler Scroll
+  zwischen 360-768px.
+- **Eigener KI-Schlüssel** — drei Anbieter mitgeliefert
+  (Anthropic Claude, OpenAI GPT, Google Gemini). Modell-
+  Override pro Anbieter in den Einstellungen. Schlüssel liegen
+  verschlüsselt (Fernet) im Speicher; das Frontend sieht den
+  Klartext nie.
+- **Aussagekräftige Analytik** — durchschnittliche KI-Konfidenz
+  pro Session, "wo bleiben Lernende hängen", Zeit pro
+  Zyklusschritt. Auf der Progress-Seite als
+  Insight-Karten angezeigt.
+- **i18n bei 222/222 in 8 Sprachen** — DE / EN / ES / FR /
+  EL vollständig nativ; PT / TR / JA als EN-Passthrough-
+  Gerüst.
 
 ## Tech-Stack
 
 | Schicht | Tech |
 |---|---|
 | Backend | Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry, Alembic |
-| Frontend | React 18+, TypeScript (strict), TipTap, Vite, Radix UI, @dnd-kit, Lucide, react-toastify |
-| Plugins | pluginforge ^0.5.0 (PyPI), pluggy-Entry-Points |
+| Frontend | React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model |
+| PWA | vite-plugin-pwa, Workbox-Service-Worker, Manifest + maskable PNG-Icons |
+| Plugins | pluginforge ^0.5.0 (PyPI), pluggy-Entry-Points unter `adaptive_learner.plugins` |
+| KI-Anbieter | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, plattformübergreifend (Linux + macOS + Windows) |
-| Tests | pytest, Vitest, Playwright, mutmut, Stryker |
-| Tooling | Poetry, npm, Docker, Make, ruff, ESLint, Prettier, pre-commit |
-| Docs-Site | MkDocs |
+| Testing | pytest, Vitest, Playwright |
+| Tooling | Poetry, npm, Docker, Make, ruff, pre-commit |
 
-Siehe [CLAUDE.md](CLAUDE.md) für den vollständigen Entwicklungs-Guide für Claude Code (und als Lektüre für Menschen nützlich). Regeln liegen unter [.claude/rules/](.claude/rules/).
+## Mitgelieferte Plugins
+
+| Plugin | Routen | Zweck |
+|---|---|---|
+| assessment | /questions, /evaluate, /profile/{id} | 12-Fragen-Profil (7 Multi-, 5 Single-Select) → Sechs-Methoden-Gewichte |
+| ai-anthropic | nur Hook | `ai_complete` für `claude-*`-Modelle |
+| ai-openai | nur Hook | `ai_complete` für `gpt-*`-Modelle |
+| ai-gemini | nur Hook | `ai_complete` für `gemini-*`-Modelle |
+| session | /start, /{id}/message, /{id}/rate, /{id}/end, /switch | Per-(Methode, Schritt)-Prompts + Dual-Prompt-Zyklusübergänge |
+| tracking | /progress/{id}, /commits/{id}, /spaced/{id} | Aggregate pro Projekt inkl. v0.5.0-Step-Evaluation-Insights |
+| tools | /recommendations/{id} | Statischer externer Tool-Katalog, nach Methoden-Gewichten sortiert |
+
+## Mobile / PWA
+
+**Auf dem Smartphone installieren:**
+
+1. Öffne die App in Chrome (Android) oder Safari (iOS).
+2. Zum Startbildschirm hinzufügen — Chrome zeigt unseren
+   "Zum Startbildschirm hinzufügen"-Banner automatisch; auf
+   iOS über das Teilen-Menü.
+3. Vom Startbildschirm starten — die App öffnet standalone,
+   ohne Browser-Chrome.
+
+**Offline-Verhalten:**
+
+- Vergangene Sessions, das Dashboard und dein Lernprofil
+  bleiben offline lesbar (Service-Worker cached GET `/api/`-
+  Antworten 24 h mit 60-Eintrag-LRU).
+- Eine neue Chat-Session braucht Netz — der KI-Anbieter sitzt
+  außerhalb des Browsers. Die `/session`-Route erkennt Offline
+  und zeigt eine klare Inline-Nachricht statt still zu
+  scheitern.
+- Ein Online/Offline-Indikator in der Navigation
+  (`role="status"`, höfliche Live-Region) macht den
+  Netzstatus jederzeit sichtbar.
+
+**Responsives Design:**
+
+- Mobile-tauglich unter 768px — Hamburger-Drawer, 44×44-
+  Touch-Targets, kein horizontaler Scroll zwischen 360-768px
+  auf jeder Route. iOS-Safari-Fokus-Zoom durch
+  16px-Input-Schrift unterdrückt.
+- Tablet (≥768px) und Desktop (≥1024px) behalten die
+  ursprüngliche horizontale Top-Bar-Navigation.
+- Getestet in Playwright bei iPhone SE (375), iPhone 14
+  (390), Pixel 7 (412) und iPad (768) Viewports.
 
 ## Schnellstart
 
@@ -52,20 +115,51 @@ Siehe [CLAUDE.md](CLAUDE.md) für den vollständigen Entwicklungs-Guide für Cla
 make install              # Poetry + npm + Plugins
 
 # Täglich
-make dev                  # Backend (18001) + Frontend (15174) parallel
-make test                 # Backend + Frontend, ohne Coverage
+make dev                  # Backend (18001) + Frontend (15174)
+make test                 # Backend + Plugins + Frontend
 make test-coverage        # Opt-in-Coverage-Lauf
 
 # Docker
-make prod                 # Docker Compose
+make prod                 # docker compose up
 make prod-down            # stoppen
 ```
 
-E2E: `npx playwright test --project=smoke` oder `--project=full`.
+E2E: `cd e2e && npx playwright test --project=smoke`.
+
+## Dokumentation
+
+- [`docs/CONCEPT.md`](docs/CONCEPT.md) — Kurzüberblick
+- [`docs/adaptive-learner-project-reference.md`](docs/adaptive-learner-project-reference.md)
+  — vollständiger Projektplan: Domänen-Modelle, Hooks,
+  Plugins, API
+- [`docs/configuration.md`](docs/configuration.md) —
+  dreischichtige Konfig-Kette (Projekt-YAML < User-Overlay <
+  Env)
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — was als Nächstes kommt
+- [`CLAUDE.md`](CLAUDE.md) — Entwicklungsleitfaden für Claude
+  Code (auch für Menschen brauchbar). Regeln in
+  [`.claude/rules/`](.claude/rules/).
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — Contributor-
+  Onboarding, Testkonvention, Mobile-Viewport-Abdeckung.
+
+## Status
+
+Aktive Entwicklung. v0.6.0 wurde am 2026-05-18 veröffentlicht.
+Test-Baseline: **1196 Tests** (447 Backend + 478 Plugins +
+271 Frontend Vitest + 8 Playwright-Smoke-Specs). Jedes Release
+erscheint mit annotierten Tags + GitHub-Releases am gleichen
+Tag.
 
 ## Herkunft
 
-Aus Bibliogon v0.33.0 gescaffolded am 2026-05-17. Alle 11 Plugins (`audiobook`, `export`, `getstarted`, `git-sync`, `grammar`, `help`, `kdp`, `kinderbuch`, `medium-import`, `ms-tools`, `translation`) und ihr daran gekoppelter Backend-Code wurden in Phase 1 der Skeleton-Extraktion entfernt. Die Plugin-Loader-Infrastruktur ist unangetastet. Siehe Abschnitt "Origin" in `CLAUDE.md` und `git log --oneline` für den vollständigen Extraktionsverlauf.
+Im Mai 2026 aus [Bibliogon](https://github.com/astrapi69/bibliogon)
+v0.33.0 ausgegliedert. Die Plugin-Loader-Infrastruktur, die
+Schichten-Architektur, die Test-Disziplin und der
+Pythonic+React-Stack wurden 1:1 übernommen; die
+Bibliogon-EXAMPLE-DOMAIN-Modelle (Book / Chapter / Article /
+Author / ...) und deren Plugins wurden entfernt. Phasen 1-9
+brachten das Projekt in den aktuellen Stand; siehe annotierte
+Tags `v0.0.1` bis `v0.6.0` für die schrittweise Spur.
 
 ## Lizenz
 

@@ -48,9 +48,56 @@ in the same change.
 make test                     # all tests (backend + plugins + frontend)
 make test-backend             # backend only
 make test-frontend            # Vitest only
-make test-plugin-{name}       # single plugin (export, kdp, audiobook, ...)
+make test-plugin-{name}       # single plugin (assessment, session, ...)
 make check-types              # mypy + tsc --noEmit
 ```
+
+E2E (Playwright):
+
+```bash
+cd e2e && npx playwright test --project=smoke
+```
+
+### Mobile viewport coverage (v0.6.0)
+
+Adaptive Learner is a Progressive Web App. UI changes MUST be
+verified against the following viewport sizes — the mobile-first
+viewports are the user's daily experience, the iPad covers the
+tablet / split-screen case:
+
+| Device | Width | Notes |
+|---|---|---|
+| Smallest target | 360px | Layout safety net; no horizontal scroll |
+| iPhone SE | 375px | Compact iOS phones |
+| iPhone 14 | 390px | Standard iOS |
+| Pixel 7 | 412px | Standard Android |
+| iPad | 768px | Tablet / split-screen; at the mobile breakpoint |
+
+The `e2e/smoke/mobile-viewports.spec.ts` Playwright spec pins
+no-horizontal-overflow + hamburger visibility + online indicator
+at iPhone SE / iPhone 14 / Pixel 7 / iPad. Run it after any
+CSS / layout change:
+
+```bash
+cd e2e && npx playwright test smoke/mobile-viewports.spec.ts
+```
+
+Touch-target rule: every interactive element under the
+`@media (max-width: 768px)` block must be ≥44x44px (Apple/Google
+guideline). Inputs also need `font-size: 16px` to suppress
+iOS-Safari focus-zoom.
+
+Manual checks during smoke-test (handled per-release by the
+person tagging):
+
+- Chrome DevTools device emulation at all 4 sizes — confirm no
+  horizontal scroll, hamburger works, Session input is reachable.
+- Chrome "Install app" prompt — open in a real browser, confirm
+  the prompt appears and the installed app launches standalone.
+- Toggle DevTools "Offline" — verify the online indicator flips,
+  `/session` shows the offline message, the `offline.html` page
+  renders when refreshing a non-cached route.
+- Lighthouse audit — target PWA score > 90, Performance > 80.
 
 ## Plugin Development
 

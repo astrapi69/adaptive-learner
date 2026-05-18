@@ -327,6 +327,87 @@ Jede Methode hat ein Prompt-Template. Dynamisch zusammengebaut aus:
 
 ---
 
+## 12a. Mobile / PWA-Architektur (Phase 9 / v0.6.0)
+
+Lernen ist von Natur aus mobil. v0.6.0 macht den Primaer-Use-Case
+dort zugaenglich, wo Lernende tatsaechlich lernen: auf dem
+Smartphone. **Polish, kein Mobile-First-Rewrite** — die
+Desktop-Styles bleiben unveraendert; mobile Breakpoint-Regeln
+werden hinzugefuegt.
+
+### Architektur-Entscheidungen (Q1-Q6 aus Phase 9)
+
+| # | Frage | Entscheidung | Warum |
+|---|---|---|---|
+| Q1 | CSS-Strategie | Polish, nicht Rewrite | Bestehende Desktop-Styles funktionieren; Risiko-arme Erweiterung statt full-CSS-Refactor. Mobile-first-Rewrite bleibt eine separate Aufgabe. |
+| Q2 | Navigation auf Mobile | Hamburger-Drawer ueber Top-Bar | Spec sprach von "Sidebar auf Desktop, Hamburger auf Mobile". Bestehende Top-Bar funktioniert; "Sidebar" war lose Wortwahl. Hamburger + Drawer am Top-Bar-Standort. |
+| Q3 | Touch-Targets (44x44) | Nur unter 768px | Apple/Google-Guideline gilt fuer Touch. Desktop-Buttons werden nicht aufgeblaeht. |
+| Q4 | RatingDialog (Slider vs Buttons) | Universal: 1-5 Buttons | Slider fuer eine 5-stufige Skala ist auf jedem Geraet unpraezise UX. Einheitlicher Code-Pfad gewinnt. |
+| Q5 | Swipe-Gesten (Assessment) | Verschoben auf v0.7.x | Buttons funktionieren fuer prev/next. Gesten-Pass mit a11y-Implikationen (Tastatur, reduced-motion, Screen-Reader) lohnt eigene Phase. |
+| Q6 | Lighthouse + Geraete-Tests | Manuell beim Smoke-Tester | Lighthouse aus dieser Umgebung nicht ausfuehrbar. Playwright-Viewport-Pins decken den automatisierbaren Teil. |
+
+### Komponenten + Hooks
+
+- **`InstallPrompt`** (`frontend/src/components/InstallPrompt.tsx`) —
+  faengt `beforeinstallprompt`-Event, rendert eigenen
+  dismissable Banner, persistiert Dismissal in
+  `localStorage[adaptive-learner.install_dismissed]`.
+- **`useOnlineStatus`** (`frontend/src/hooks/useOnlineStatus.ts`) —
+  reaktiver Online/Offline-Hook ueber `navigator.onLine` +
+  `online`/`offline`-Events.
+- **`Navigation.nav-online-indicator`** — `role="status"` mit
+  Dot + Label, Label versteckt unter 768px.
+
+### Service-Worker-Strategie
+
+Wiring in `frontend/vite.config.ts` unter `VitePWA(...)`:
+
+- **Statische Assets** (JS, CSS, Fonts, Icons, HTML): Precache
+  ueber `globPatterns`.
+- **GET `/api/`**: NetworkFirst mit 4s-Timeout, 24h-LRU,
+  60-Eintrag-Cap. Rueckkehrende Nutzer sehen Dashboard /
+  Progress / Commits offline.
+- **Mutating `/api/`** (POST/PATCH/DELETE): NetworkOnly. Niemals
+  Write-Responses cachen.
+- **`navigateFallback: "/index.html"`** fuer SPA-Routing.
+- **`navigateFallbackDenylist: [/^\/api\//]`** verhindert, dass
+  die SPA-Shell echte Backend-Fehler maskiert.
+- **`offline.html`** als precache-eintrag — statisches
+  Sicherheitsnetz, falls selbst die SPA-Shell nicht erreichbar
+  ist.
+
+### Manifest
+
+- `name: "Adaptive Learner"` / `short_name: "Adaptive"` (≤12
+  Zeichen pro Android-Empfehlung).
+- Icons 192/512 als SVG (`purpose: "any"`) + PNG
+  (`purpose: "any maskable"` fuer Android-Cropping).
+- `theme_color: "#6366f1"` (entspricht `--accent` CSS-Variable).
+- `categories: ["education", "productivity"]` + `lang: "en"`
+  fuer Store-Listings.
+
+### Offline-Verhalten
+
+- Vergangene Sessions, Dashboard, Lernprofil bleiben lesbar.
+- Neue Session-Erstellung ist offline blockiert
+  (`/session`-Mount erkennt Offline-State, zeigt
+  Inline-Nachricht statt POST zu feuern).
+- Online/Offline-Indikator in Navigation mit
+  `aria-live="polite"`.
+
+### Test-Abdeckung
+
+- `e2e/smoke/mobile-viewports.spec.ts` parametrisiert ueber 4
+  Viewports (iPhone SE 375, iPhone 14 390, Pixel 7 412,
+  iPad 768) mit je 4 Checks: kein horizontaler Overflow,
+  Hamburger sichtbar, Dashboard kein Overflow, Online-Indikator
+  sichtbar. 16 neue E2E-Cases.
+- Vitest-Tests fuer `InstallPrompt`, `useOnlineStatus`,
+  `Navigation`-Hamburger + Indikator, `RatingDialog`-Buttons,
+  `Session`-Offline-Guard.
+
+---
+
 ## 13. Roadmap
 
 ### Phase 1: Domain-Migration + MVP

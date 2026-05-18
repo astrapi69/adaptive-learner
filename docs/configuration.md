@@ -188,3 +188,101 @@ See docs/configuration.md for details.
 The warning is informational. Existing installations with hardcoded
 keys keep working unchanged; this is a migration nudge, not a
 breaking change.
+
+---
+
+## PWA configuration (v0.6.0)
+
+The Progressive Web App manifest and service worker live as
+build-time configuration in `frontend/vite.config.ts` under
+the `VitePWA(...)` plugin block. There's NO runtime config
+chain for PWA settings — they're baked into the generated
+`dist/sw.js` and `dist/manifest.webmanifest` during
+`npm run build`. Changing them requires a rebuild + a fresh
+SW registration in the user's browser (Workbox's
+`registerType: "autoUpdate"` handles that on next page load).
+
+### Manifest
+
+```typescript
+manifest: {
+    name: "Adaptive Learner",
+    short_name: "Adaptive",      // ≤12 chars (Android home-screen rec)
+    theme_color: "#6366f1",      // matches --accent CSS variable
+    background_color: "#ffffff",
+    display: "standalone",
+    orientation: "any",
+    start_url: "/",
+    scope: "/",
+    lang: "en",
+    categories: ["education", "productivity"],
+    icons: [
+        // SVG + PNG ("any maskable") at 192 and 512.
+    ],
+}
+```
+
+### Service worker cache strategy
+
+```typescript
+workbox: {
+    globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
+    navigateFallback: "/index.html",
+    navigateFallbackDenylist: [/^\/api\//],
+    runtimeCaching: [
+        {
+            // GET /api/ → NetworkFirst with 24h LRU
+            urlPattern: ({url, request}) =>
+                url.pathname.startsWith("/api/") &&
+                request.method === "GET",
+            handler: "NetworkFirst",
+            options: {
+                cacheName: "adaptive-learner-api",
+                networkTimeoutSeconds: 4,
+                expiration: {maxEntries: 60, maxAgeSeconds: 86400},
+                cacheableResponse: {statuses: [0, 200]},
+            },
+        },
+        {
+            // Mutating /api/ — NetworkOnly
+            urlPattern: /^\/api\//,
+            handler: "NetworkOnly",
+        },
+    ],
+}
+```
+
+Why these defaults:
+
+- **4s `networkTimeoutSeconds`** — gives real network a fair
+  chance before falling back to cache; feels snappy on flaky
+  cellular without being noticeable on broadband.
+- **24h + 60-entry LRU** — keeps the cache useful for a typical
+  learning week without growing unbounded.
+- **`cacheableResponse.statuses: [0, 200]`** — `0` covers
+  opaque-CORS, `200` excludes 5xx so transient backend errors
+  don't poison the cache.
+- **`navigateFallbackDenylist: [/^\/api\//]`** stops the SPA
+  `index.html` from masking real backend 4xx/5xx responses.
+
+### Install-prompt dismissal state
+
+User dismissal of the "Add to home screen" banner persists in
+`localStorage`:
+
+```text
+adaptive-learner.install_dismissed = "1"
+```
+
+Clear that key (DevTools → Application → Local Storage) to
+re-test the prompt without uninstalling the app.
+
+### Mobile breakpoints
+
+CSS breakpoints live in `frontend/src/styles/global.css`
+under the `Mobile responsive polish (Phase 9A)` block:
+
+- `@media (max-width: 768px)` — canonical mobile cut-over
+  (hamburger drawer, 44px touch targets, stacked layouts).
+- `@media (max-width: 360px)` — extreme-narrow safety net.
+- Desktop styles (≥769px) remain unchanged.

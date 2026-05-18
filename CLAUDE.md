@@ -12,28 +12,27 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.5.0):** v0.4.1 plus Phase 8 — the
-  **dual-prompt architecture**. Every successful `/message`
-  round-trip now fires TWO `ai_complete` calls against the same
-  provider: (1) the learning response (existing); (2) a
-  separate step-evaluator that returns a JSON verdict
-  `{advance, confidence, reason, suggested_step}`. The route
-  applies the AI's suggestion to `session.cycle_step` iff
-  `advance ∧ confidence ≥ threshold` (default 0.7); the
-  evaluator can suggest skip-ahead OR backward transitions
-  pedagogically. Cap at step 7 — auto-loop to step 1 with
-  fresh content is deferred to v0.6.x. Disable via
-  `config/plugins/session.yaml step_evaluation.enabled: false`
-  to fall back to v0.4.x deterministic +1.
-  Evaluator architecture: English system prompt (cross-provider
-  JSON reliability) + `output_language` steer for the `reason`
-  field; max_tokens=256 keeps it cheap. Garbage JSON → robust
-  deterministic +1 fallback (never crashes). Frontend surfaces
-  via CycleProgress pulse animation on transitions (any
-  direction) + optional "Why this step?" tooltip + info toast.
-  New `StepEvaluation` table (Alembic 0003) + tracking-plugin
-  aggregates (avg confidence, repeat count, time-per-step) +
-  Progress.tsx insights card.
+- **Current state (v0.6.0):** v0.5.0 plus Phase 9 — **mobile
+  PWA**. The app is now responsive (hamburger drawer at
+  ≤768px, 44×44 touch targets, no horizontal overflow at
+  360-768px on the seven main routes), installable (manifest
+  with PNG + SVG icons at 192/512, `purpose: "any maskable"`
+  for Android cropping, "Add to home screen" prompt component
+  captures `beforeinstallprompt` and persists dismissal), and
+  partially offline-capable (service worker uses NetworkFirst
+  for GET `/api/` with a 4s timeout + 24h LRU cache; mutating
+  calls stay NetworkOnly; `/session` mount detects offline and
+  blocks new-session creation with a clear message; static
+  `offline.html` fallback is precached as the deep safety net).
+  Online/offline indicator with `role="status"` between
+  nav-links and theme toggle (dot-only on mobile). RatingDialog
+  swapped from sliders to 1-5 button group (universal — better
+  UX on every input device). CycleProgress collapses to a
+  single horizontal strip of 7 narrow circles at narrow widths.
+  Playwright viewport pins guard against horizontal-overflow
+  regression on iPhone SE / iPhone 14 / Pixel 7 / iPad.
+  v0.5.0 baseline (Phase 8 dual-prompt + StepEvaluation +
+  tracking aggregates) carried forward unchanged.
 
 ## Development guidelines
 
@@ -57,11 +56,11 @@ On a conflict between CLAUDE.md and the rules, the rules win.
 
 - **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry
 - **Frontend:** React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model 1
+- **PWA (v0.6.0):** vite-plugin-pwa, Workbox-generated service worker, manifest with SVG + maskable-PNG icons at 192/512
 - **Plugins:** pluginforge ^0.5.0 (PyPI), entry points under group `adaptive_learner.plugins`
 - **Launcher:** PyInstaller-based cross-OS desktop launcher (`launcher/`)
 - **Testing:** pytest, Vitest, Playwright
 - **Tooling:** Poetry, npm, Docker, Make, ruff, pre-commit
-- **Docs site:** MkDocs (`mkdocs.yml`, `docs/pyproject.toml` carries the docs venv)
 
 ## Architecture (short)
 
@@ -135,6 +134,69 @@ the backend, opens the frontend in the user's browser, and manages
 auto-update + uninstall. Carries over from Bibliogon unchanged in
 shape; only branding renames in earlier cleanup passes.
 
+## PWA (v0.6.0)
+
+The frontend is an installable Progressive Web App. Wiring lives
+in `frontend/vite.config.ts` under the `VitePWA` plugin block.
+
+**Manifest** — `frontend/dist/manifest.webmanifest` (generated):
+
+- `name: "Adaptive Learner"`, `short_name: "Adaptive"` (≤12 chars
+  per Android home-screen recommendation)
+- `display: "standalone"`, `theme_color: "#6366f1"` (matches
+  the `--accent` CSS variable)
+- Icons at 192 + 512 in both SVG (modern browsers) and PNG
+  (`purpose: "any maskable"` for Android cropping). Sources in
+  `frontend/public/icon-*.{svg,png}`; PNGs generated via
+  ImageMagick from the SVGs (see `make pwa-icons` if you need
+  to regenerate).
+- `categories: ["education", "productivity"]` + `lang: "en"` for
+  store-listing surfaces.
+
+**Service worker strategy** — Workbox `generateSW` mode:
+
+- Static assets (JS, CSS, fonts, icons, HTML) precached via
+  `globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"]`.
+- GET `/api/` → `NetworkFirst` with 4s timeout, 24h LRU,
+  60-entry cap. Returning users see cached Dashboard / Progress
+  / commits when offline.
+- Mutating `/api/` (POST/PATCH/DELETE) → `NetworkOnly`. Never
+  cache write responses.
+- `navigateFallback: "/index.html"` for SPA routing.
+- `navigateFallbackDenylist: [/^\/api\//]` keeps the SPA shell
+  out of backend paths so real 4xx/5xx aren't masked.
+- `offline.html` precached as the deep static fallback when
+  even the SPA shell isn't reachable from cache.
+
+**Install prompt** — `frontend/src/components/InstallPrompt.tsx`
+captures the browser's `beforeinstallprompt` event, renders our
+own dismissable banner (bottom-anchored), and persists dismissal
+to `localStorage[adaptive-learner.install_dismissed]`. Auto-hides
+on `appinstalled`.
+
+**Online status** — `frontend/src/hooks/useOnlineStatus.ts`
+subscribes to `online`/`offline` window events. Navigation
+renders a `role="status"` indicator (dot-only on mobile, dot +
+label on desktop). Session route's offline guard blocks new
+session creation when offline and shows a localised inline
+message.
+
+**Mobile breakpoints** (responsive polish, not a mobile-first
+rewrite):
+
+- `@media (max-width: 768px)` is the canonical mobile cut-over.
+  Hamburger drawer, 44×44 touch targets, layouts that stack
+  vertically.
+- `@media (max-width: 360px)` is the extreme-narrow safety net
+  (smaller page padding).
+- Desktop styles at ≥769px stay unchanged from v0.5.0.
+
+**Testing** — `e2e/smoke/mobile-viewports.spec.ts` parametrises
+4 device sizes (iPhone SE 375, iPhone 14 390, Pixel 7 412,
+iPad 768) and pins no-horizontal-overflow + hamburger
+visibility + online indicator on each. Lighthouse audits stay
+manual (smoke-tester's side).
+
 ## Directory structure (short)
 
 ```
@@ -143,14 +205,19 @@ adaptive-learner/
 ├── backend/config/        # app.yaml + i18n/ (8 languages, skeleton catalogs)
 ├── backend/tests/         # 9 infrastructure tests
 ├── plugins/               # empty placeholder + README
+├── frontend/public/       # static assets: favicon, icon-{192,512}.{svg,png},
+│                          # offline.html (PWA fallback)
 ├── frontend/src/
 │   ├── api/client.ts      # typed namespaces for every backend route
 │   ├── components/        # ProfileRadar, ProgressTimeline, MethodDistribution,
 │   │                      # SessionChat, CycleProgress, RatingDialog,
 │   │                      # MethodBadge, MethodSwitchBanner, Navigation,
 │   │                      # ErrorBoundary, ToolRecommendations,
-│   │                      # TopicTree, TopicNode, AddTopicDialog, ...
-│   ├── hooks/             # useI18n (with fallbacks), useTheme (light/dark)
+│   │                      # SpacedRecommendations, RecentSessions,
+│   │                      # SessionCounter, StepEvaluationInsights (v0.5.0),
+│   │                      # InstallPrompt (v0.6.0), TopicTree, ...
+│   ├── hooks/             # useI18n (fallbacks), useTheme (light/dark),
+│   │                      # useOnlineStatus (v0.6.0)
 │   ├── i18n/fallbacks.ts  # inline DE/EN/ES/FR/EL strings for first-paint resilience
 │   ├── lib/
 │   │   ├── constants.ts   # LearningMethod / CycleStep / METHOD_COLORS / AI_PROVIDERS
@@ -160,18 +227,17 @@ adaptive-learner/
 │   │                      # Curriculum, Progress, Settings, NotFound
 │   ├── types/             # TypeScript interfaces matching Pydantic Out-schemas
 │   ├── utils/notify.ts    # toast wrapper
-│   └── styles/global.css  # full token set: method palette, layout, components
-├── e2e/                   # Playwright (no specs yet)
+│   └── styles/global.css  # full token set + mobile breakpoint rules (v0.6.0)
+├── e2e/                   # Playwright smoke specs (landing, onboarding,
+│                          # session, settings, curriculum, mobile-viewports)
 ├── launcher/              # cross-OS PyInstaller launcher
 ├── docs/
 │   ├── adaptive-learner-project-reference.md  # the plan
 │   ├── CONCEPT.md         # short overview
 │   ├── ROADMAP.md         # open work items
 │   ├── backlog.md         # daily planning view of ROADMAP
-│   ├── configuration.md   # config-chain docs
-│   ├── help/              # in-app help pages + _meta.yaml nav schema (skeleton)
-│   └── pyproject.toml, poetry.lock  # MkDocs venv (separate from backend)
-├── scripts/               # ROADMAP archival, mkdocs nav generator, version sync
+│   └── configuration.md   # config-chain docs
+├── scripts/               # ROADMAP archival, version sync
 ├── .github/workflows/     # CI/CD pipelines
 └── Makefile, docker-compose.yml, docker-compose.prod.yml, install scripts
 ```
@@ -189,11 +255,14 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- v0.5.0 baseline: backend 447, plugins 478 (across 7), frontend 249 (Vitest). Total 1174.
+- v0.6.0 baseline: backend 447, plugins 478 (across 7), frontend 271 (Vitest). Total 1196.
 - E2E tests under `e2e/` are NOT on the `make test` default path.
   v0.3.0 shipped 7 Playwright smoke specs under `e2e/smoke/`
   (landing, onboarding+assessment, session, curriculum, settings);
-  unchanged in v0.4.0.
+  v0.6.0 adds `mobile-viewports.spec.ts` parametrising
+  iPhone SE / iPhone 14 / Pixel 7 / iPad — 16 cases pinning
+  no-horizontal-overflow + hamburger visibility + online
+  indicator at each viewport.
 
 ## Test isolation
 

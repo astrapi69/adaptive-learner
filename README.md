@@ -1,49 +1,103 @@
 # Adaptive Learner
 
-Project skeleton template derived from [Bibliogon](https://github.com/astrapi69/bibliogon) (a book authoring platform). Lean foundation for adaptive-learning applications built on the same architectural pattern: FastAPI + SQLAlchemy + React + TypeScript + a plugin loader on top of [PluginForge](https://github.com/astrapi69/pluginforge).
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## What this is
+An adaptive learning system built on a research-backed six-method
+model (Asterios Raptis, *Von Theorie zur Praxis*, Medium series).
+Pick the method that fits the learner — deductive, inductive,
+error-based, dialogic, contextual, or AI-adaptive — walk through
+a seven-step cycle on every session, and let a dual-prompt AI
+decide when the learner is ready to advance.
 
-A working full-stack starting point. The plugin-loader infrastructure, layered architecture, test discipline, build/deploy/release tooling, and Pythonic+React tech stack carry over from Bibliogon unchanged. **The DOMAIN ships as EXAMPLE-DOMAIN**: Book, Chapter, Article, ArticleComment, Author, Asset, ... are present in the code as a working reference for how to wire SQLAlchemy models + Pydantic schemas + FastAPI routers + React pages + tests end-to-end. Replace each concept with adaptive-learner equivalents (LearningConcept, CurriculumItem, SkillAssessment, LearnerProgress, ...) as the project's actual domain solidifies.
+**Available as an installable Progressive Web App** since v0.6.0
+— add it to your home screen on any modern phone or desktop and
+launch like a native app, no browser tab required.
 
-Files carrying an explicit `EXAMPLE-DOMAIN:` or `TEMPLATE:` header are flagged at the top so you can find them by grep:
+[🇩🇪 Deutsch](README-de.md)
 
-```bash
-grep -rn "EXAMPLE-DOMAIN\|TEMPLATE:" --include='*.py' --include='*.ts' --include='*.tsx'
-```
+## What you get
 
-## What's included
-
-- **Backend** (`backend/`) — FastAPI app, SQLAlchemy 2.0 models, Pydantic v2 schemas, Alembic migrations, soft-delete + trash lifecycle, layered config (project YAML < user override < env-vars), test-isolation tripwires, i18n for 8 languages
-- **Frontend** (`frontend/`) — React 18 + TypeScript (strict) + Vite + TipTap editor + Radix UI + react-toastify + Playwright E2E
-- **Plugin system** (`plugins/`) — empty placeholder + `plugins/README.md` documenting the minimal plugin layout. The skeleton ships zero plugins; the loader is wired and ready.
-- **Launcher** (`launcher/`) — cross-OS PyInstaller-based desktop launcher (Linux + macOS + Windows) with auto-update and uninstall flows. Per-OS build pipelines in `.github/workflows/launcher-{linux,macos,windows}.yml`.
-- **CI/CD** — GitHub Actions for tests, coverage, docs site, release gates, mutation testing
-- **Docs** (`docs/`) — architecture overview, configuration chain, ROADMAP shape, in-app help structure (`docs/help/_meta.yaml`), MkDocs site config
-- **Tooling** — Makefile, Docker Compose (dev + prod), install scripts for all three OSes, pre-commit hooks (ruff + ruff-format + check-yaml/json), version-pin sync script
-
-## Adapting to your project
-
-1. **Rename** — search for `adaptive_learner` / `AdaptiveLearner` / `ADAPTIVE_LEARNER` / `adaptive-learner-` across the codebase and replace with your project's name in the same four casings.
-2. **Replace domain** — start with `backend/app/models/__init__.py` (the EXAMPLE-DOMAIN docstring at the top explains the pattern), then cascade through the matching `backend/app/routers/*.py`, `frontend/src/api/client.ts` `api.<model>` namespaces, and `frontend/src/pages/*` page components.
-3. **Refresh `docs/`** — `CONCEPT.md`, `ROADMAP.md`, `API.md`, `docs/help/` all carry inherited shape from Bibliogon. Adapt them to your domain.
-4. **Plugin scaffolding** — when adding your first plugin, follow `plugins/README.md`. Hookspecs live in `backend/app/hookspecs.py`.
+- **Six learning methods** with bespoke per-(method, step) AI
+  prompts. 42-cell prompt matrix tailored to where the learner
+  is in the cycle and how their method asks them to engage.
+- **Dual-prompt cycle transitions (v0.5.0)** — every chat
+  exchange fires a second AI call that judges readiness and
+  decides the next step (advance, repeat, skip-ahead, or move
+  back if confusion shows). Configurable confidence threshold;
+  config-disable falls back to deterministic +1.
+- **Progressive Web App (v0.6.0)** — installable manifest +
+  service worker. Past sessions and the Dashboard stay readable
+  offline; new sessions need network (the AI provider lives
+  outside the browser). Hamburger nav on mobile, 44×44 touch
+  targets, no horizontal scroll at 360-768px.
+- **Bring-your-own AI key** — three providers shipped
+  (Anthropic Claude, OpenAI GPT, Google Gemini). Per-provider
+  model override in the Settings UI. Keys live encrypted at
+  rest (Fernet); the frontend never sees the plaintext.
+- **Analytics that mean something** — average AI confidence per
+  session, "where do learners get stuck", time-per-cycle-step.
+  Surfaced as the Progress page's insight cards.
+- **i18n at 222/222 across 8 languages** — DE / EN / ES / FR /
+  EL fully native; PT / TR / JA EN-passthrough scaffolding.
 
 ## Tech stack
 
 | Layer | Tech |
 |---|---|
 | Backend | Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry, Alembic |
-| Frontend | React 18+, TypeScript (strict), TipTap, Vite, Radix UI, @dnd-kit, Lucide, react-toastify |
-| Plugins | pluginforge ^0.5.0 (PyPI), pluggy entry points |
+| Frontend | React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model |
+| PWA | vite-plugin-pwa, Workbox service worker, manifest + maskable PNG icons |
+| Plugins | pluginforge ^0.5.0 (PyPI), pluggy entry points under group `adaptive_learner.plugins` |
+| AI providers | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, cross-OS (Linux + macOS + Windows) |
-| Testing | pytest, Vitest, Playwright, mutmut, Stryker |
-| Tooling | Poetry, npm, Docker, Make, ruff, ESLint, Prettier, pre-commit |
-| Docs site | MkDocs |
+| Testing | pytest, Vitest, Playwright |
+| Tooling | Poetry, npm, Docker, Make, ruff, pre-commit |
 
-See [CLAUDE.md](CLAUDE.md) for the full development guide aimed at Claude Code (and useful as human reading too). Rules live in [.claude/rules/](.claude/rules/).
+## Plugins shipped
+
+| Plugin | Routes | Purpose |
+|---|---|---|
+| assessment | /questions, /evaluate, /profile/{id} | 12-question profile (7 multi-select, 5 single-select) → six-method weights |
+| ai-anthropic | hook-only | `ai_complete` for `claude-*` models |
+| ai-openai | hook-only | `ai_complete` for `gpt-*` models |
+| ai-gemini | hook-only | `ai_complete` for `gemini-*` models |
+| session | /start, /{id}/message, /{id}/rate, /{id}/end, /switch | Per-(method, step) prompts + dual-prompt cycle transitions |
+| tracking | /progress/{id}, /commits/{id}, /spaced/{id} | Per-project aggregates incl. v0.5.0 step-evaluation insights |
+| tools | /recommendations/{id} | Static external-tool catalogue ranked by method weights |
+
+## Mobile / PWA
+
+**Install on mobile:**
+
+1. Open the app in Chrome (Android) or Safari (iOS).
+2. Add to Home Screen — Chrome surfaces our "Add to home
+   screen" prompt automatically; on iOS use the Share menu.
+3. Launch from the home screen icon — the app opens
+   standalone, no browser chrome.
+
+**Offline behaviour:**
+
+- Past sessions, the Dashboard, and your learning profile
+  stay readable offline (service worker caches GET `/api/`
+  responses for 24h with a 60-entry LRU).
+- Starting a new chat session needs network — the AI
+  provider lives outside the browser. The `/session` route
+  detects offline and renders a clear inline message
+  instead of failing silently.
+- An online/offline indicator sits in the navigation
+  (`role="status"`, polite live-region) so the network state
+  is always visible.
+
+**Responsive design:**
+
+- Mobile-friendly under 768px — hamburger drawer, 44×44
+  touch targets, no horizontal scroll at 360-768px on every
+  route. iOS Safari focus-zoom suppressed via 16px input
+  font-size.
+- Tablet (≥768px) and desktop (≥1024px) keep the original
+  horizontal top-bar nav.
+- Tested in Playwright at iPhone SE (375), iPhone 14 (390),
+  Pixel 7 (412), and iPad (768) viewports.
 
 ## Quickstart
 
@@ -52,20 +106,48 @@ See [CLAUDE.md](CLAUDE.md) for the full development guide aimed at Claude Code (
 make install              # Poetry + npm + plugins
 
 # Daily
-make dev                  # backend (18001) + frontend (15174) in parallel
-make test                 # backend + frontend, no coverage
+make dev                  # backend (18001) + frontend (15174)
+make test                 # backend + plugins + frontend
 make test-coverage        # opt-in coverage run
 
 # Docker
-make prod                 # Docker Compose
+make prod                 # docker compose up
 make prod-down            # stop
 ```
 
-E2E: `npx playwright test --project=smoke` or `--project=full`.
+E2E: `cd e2e && npx playwright test --project=smoke`.
 
-## Provenance
+## Documentation
 
-Scaffolded from Bibliogon v0.33.0 on 2026-05-17. All 11 plugins (`audiobook`, `export`, `getstarted`, `git-sync`, `grammar`, `help`, `kdp`, `kinderbuch`, `medium-import`, `ms-tools`, `translation`) and their coupled backend routers/services were removed in Phase 1 of the skeleton extraction. The plugin-loader infrastructure was retained intact. See `CLAUDE.md` "Origin" + `git log --oneline` for the full extraction trail.
+- [`docs/CONCEPT.md`](docs/CONCEPT.md) — short overview
+- [`docs/adaptive-learner-project-reference.md`](docs/adaptive-learner-project-reference.md)
+  — full project plan: domain models, hooks, plugins, API
+- [`docs/configuration.md`](docs/configuration.md) —
+  three-layer config chain (project YAML < user overlay < env)
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — what's next
+- [`CLAUDE.md`](CLAUDE.md) — development guide for Claude Code
+  (also useful for humans). Rules in
+  [`.claude/rules/`](.claude/rules/).
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contributor onboarding,
+  testing convention, mobile viewport coverage.
+
+## Status
+
+Active development. v0.6.0 was released 2026-05-18. Test
+baseline: **1196 tests** (447 backend + 478 plugins +
+271 frontend Vitest + 8 Playwright smoke specs). All releases
+ship with annotated tags + GitHub Releases on the same date.
+
+## Origin
+
+Scaffolded from [Bibliogon](https://github.com/astrapi69/bibliogon)
+v0.33.0 on 2026-05-17. The plugin-loader infrastructure,
+layered architecture, test discipline, and Pythonic+React stack
+were retained intact; the Bibliogon EXAMPLE-DOMAIN models
+(Book / Chapter / Article / Author / ...) and their plugins were
+removed. Phases 1-9 brought the project to its current shape;
+see annotated tags `v0.0.1` through `v0.6.0` for the
+incremental trail.
 
 ## License
 
