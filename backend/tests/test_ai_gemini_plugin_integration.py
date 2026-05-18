@@ -1,4 +1,10 @@
-"""Phase 5-C integration test: ai-gemini under app.main.app.
+"""Integration test: ai-gemini under app.main.app.
+
+Phase 5-C shipped the first cut against the deprecated
+``google.generativeai`` SDK; Phase 6-E migrated to
+``google.genai`` 2.x. This file follows the new SDK shape
+(``genai.Client(api_key).models.generate_content(...)`` instead
+of ``genai.configure`` + ``genai.GenerativeModel``).
 
 Exercises the ``firstresult=True`` dispatch path through the
 production PluginManager. Gemini API calls are mocked — no real
@@ -26,14 +32,20 @@ def client():
 @pytest.fixture()
 def mocked_gemini():
     """Patch the Gemini SDK at the wrapper's import site so the
-    real client never configures."""
-    with patch("adaptive_learner_ai_gemini.client.genai", create=True) as m:
-        model_instance = MagicMock()
-        model_instance.generate_content.return_value = SimpleNamespace(
+    real client never instantiates. The 2.x SDK's surface is
+    ``genai.Client(api_key=...).models.generate_content(...)``."""
+    with patch("adaptive_learner_ai_gemini.client.genai", create=True) as m, patch(
+        "adaptive_learner_ai_gemini.client.genai_types", create=True
+    ) as types_m:
+        client_instance = MagicMock()
+        client_instance.models.generate_content.return_value = SimpleNamespace(
             text="MOCKED gemini reply"
         )
-        m.GenerativeModel.return_value = model_instance
-        yield m
+        m.Client.return_value = client_instance
+        types_m.GenerateContentConfig.side_effect = lambda **kwargs: SimpleNamespace(
+            **kwargs
+        )
+        yield m, types_m
 
 
 # --- Plugin wiring ---------------------------------------------------------
@@ -57,20 +69,24 @@ def test_no_routes_mounted_by_ai_plugin(client: TestClient):
 def test_hook_routes_gemini_model_to_gemini_plugin(client: TestClient, mocked_gemini):
     """firstresult dispatch: model starts with 'gemini-' → plugin
     returns the completion → dispatch stops there."""
+    genai_m, _ = mocked_gemini
     result = manager._pm.hook.ai_complete(
         messages=[{"role": "user", "content": "Hi"}],
         model="gemini-2.0-flash",
         api_key="ak-test-XYZ",
     )
     assert result == "MOCKED gemini reply"
-    mocked_gemini.configure.assert_called_once_with(api_key="ak-test-XYZ")
+    # api_key now flows through Client(api_key=...) instead of
+    # genai.configure(api_key=...).
+    genai_m.Client.assert_called_once_with(api_key="ak-test-XYZ")
 
 
-def test_hook_lifts_system_into_constructor(client: TestClient, mocked_gemini):
-    """Gemini's API has no inline 'system' role — system
-    instructions go in the GenerativeModel constructor's
-    system_instruction kwarg. End-to-end check that the
-    transform survives the hook → plugin → client chain."""
+def test_hook_lifts_system_into_config(client: TestClient, mocked_gemini):
+    """v0.2.0 lifted system messages into the GenerativeModel
+    constructor; v0.3.0 lifts them into the per-call
+    GenerateContentConfig.system_instruction field. End-to-end
+    check that the transform survives hook → plugin → client."""
+    genai_m, types_m = mocked_gemini
     manager._pm.hook.ai_complete(
         messages=[
             {"role": "system", "content": "Respond in German."},
@@ -79,19 +95,21 @@ def test_hook_lifts_system_into_constructor(client: TestClient, mocked_gemini):
         model="gemini-2.0-flash",
         api_key="k",
     )
-    call_kwargs = mocked_gemini.GenerativeModel.call_args.kwargs
-    assert call_kwargs["system_instruction"] == "Respond in German."
+    config_kwargs = types_m.GenerateContentConfig.call_args.kwargs
+    assert config_kwargs["system_instruction"] == "Respond in German."
     # Assistant role translated to model role, system message
-    # popped out, content wrapped in parts: [text].
-    history_arg = (
-        mocked_gemini.GenerativeModel.return_value.generate_content.call_args.args[0]
-    )
-    assert history_arg == [{"role": "user", "parts": ["What is 2+2?"]}]
+    # popped out, content wrapped in {"text": ...} per the new
+    # SDK's part schema.
+    gc_kwargs = genai_m.Client.return_value.models.generate_content.call_args.kwargs
+    assert gc_kwargs["contents"] == [
+        {"role": "user", "parts": [{"text": "What is 2+2?"}]}
+    ]
 
 
 def test_hook_translates_assistant_role_to_model(client: TestClient, mocked_gemini):
     """End-to-end check that the user/assistant -> user/model role
     translation lands in the SDK call."""
+    genai_m, _ = mocked_gemini
     manager._pm.hook.ai_complete(
         messages=[
             {"role": "user", "content": "Q1"},
@@ -101,13 +119,11 @@ def test_hook_translates_assistant_role_to_model(client: TestClient, mocked_gemi
         model="gemini-2.0-flash",
         api_key="k",
     )
-    history_arg = (
-        mocked_gemini.GenerativeModel.return_value.generate_content.call_args.args[0]
-    )
-    assert history_arg == [
-        {"role": "user", "parts": ["Q1"]},
-        {"role": "model", "parts": ["A1"]},
-        {"role": "user", "parts": ["Q2"]},
+    gc_kwargs = genai_m.Client.return_value.models.generate_content.call_args.kwargs
+    assert gc_kwargs["contents"] == [
+        {"role": "user", "parts": [{"text": "Q1"}]},
+        {"role": "model", "parts": [{"text": "A1"}]},
+        {"role": "user", "parts": [{"text": "Q2"}]},
     ]
 
 
@@ -124,10 +140,19 @@ def test_sdk_error_wraps_to_external_service_error(client: TestClient):
     """Any SDK-level exception maps to ExternalServiceError so
     FastAPI returns a stable HTTP 502 with detail = 'gemini:
     <message>'."""
-    with patch("adaptive_learner_ai_gemini.client.genai", create=True) as m:
-        model_instance = MagicMock()
-        model_instance.generate_content.side_effect = RuntimeError("safety filter")
-        m.GenerativeModel.return_value = model_instance
+    with patch(
+        "adaptive_learner_ai_gemini.client.genai", create=True
+    ) as m, patch(
+        "adaptive_learner_ai_gemini.client.genai_types", create=True
+    ) as types_m:
+        client_instance = MagicMock()
+        client_instance.models.generate_content.side_effect = RuntimeError(
+            "safety filter"
+        )
+        m.Client.return_value = client_instance
+        types_m.GenerateContentConfig.side_effect = lambda **kwargs: SimpleNamespace(
+            **kwargs
+        )
 
         with pytest.raises(ExternalServiceError) as exc:
             manager._pm.hook.ai_complete(

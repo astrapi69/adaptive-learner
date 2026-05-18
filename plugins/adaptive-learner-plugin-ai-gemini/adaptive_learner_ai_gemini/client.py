@@ -1,4 +1,10 @@
-"""Thin wrapper around the google-generativeai SDK.
+"""Thin wrapper around the google-genai SDK.
+
+Phase 6E: migrated from ``google.generativeai`` (deprecated,
+EOL announced) to ``google.genai`` (current line). The new
+SDK exposes a ``Client(api_key=...)`` entrypoint and a
+``client.models.generate_content`` call surface; the previous
+``genai.configure`` + ``genai.GenerativeModel`` shape is gone.
 
 Kept separate from :mod:`.plugin` so:
 
@@ -12,9 +18,9 @@ Gemini's chat API differs from OpenAI / Anthropic in two ways:
   1. Roles are ``user`` and ``model`` (NOT ``user`` /
      ``assistant``). The wrapper translates assistant -> model.
   2. There is no inline ``system`` role; system instructions go
-     in the GenerativeModel constructor's ``system_instruction``
-     kwarg. The wrapper pops every system message into a single
-     newline-joined instruction.
+     in the per-call config's ``system_instruction`` field. The
+     wrapper pops every system message into a single newline-
+     joined instruction.
 
 The contract returned to the orchestrator is the same string the
 other provider wrappers return — the role translation is opaque
@@ -28,12 +34,13 @@ from typing import Any
 # Top-level import so tests can patch the bound name on this
 # module. The lazy-import-bypasses-the-mock trap documented in
 # the ai-anthropic + ai-openai clients applies here too.
-import google.generativeai as genai
+from google import genai
+from google.genai import types as genai_types
 
 DEFAULT_MAX_TOKENS = 2048
 
 # Map OpenAI-style roles to the Gemini-style roles the SDK
-# accepts in ``history`` entries.
+# accepts in ``contents`` entries.
 _ROLE_MAP: dict[str, str] = {
     "user": "user",
     "assistant": "model",
@@ -46,7 +53,9 @@ def _split_system_and_chat(
     """Pop every ``role="system"`` entry into a single
     system-instruction string; translate user/assistant roles
     into Gemini's user/model roles. ``content`` becomes
-    ``parts: [text]`` per the Gemini history schema.
+    ``parts: [{"text": ...}]`` per the google-genai 2.x Content
+    schema. (The old 0.8.x SDK accepted ``parts: [str]``; the
+    new SDK requires the ``{"text": str}`` shape on every part.)
     """
     system_parts: list[str] = []
     chat: list[dict[str, Any]] = []
@@ -61,7 +70,7 @@ def _split_system_and_chat(
         mapped = _ROLE_MAP.get(role)
         if mapped is None:
             continue
-        chat.append({"role": mapped, "parts": [content]})
+        chat.append({"role": mapped, "parts": [{"text": content}]})
     system_instruction = "\n\n".join(system_parts) if system_parts else None
     return system_instruction, chat
 
@@ -72,29 +81,27 @@ def complete(
     api_key: str,
     max_tokens: int = DEFAULT_MAX_TOKENS,
 ) -> str:
-    """Call ``genai.GenerativeModel.generate_content`` and return
-    the assistant text.
+    """Call ``client.models.generate_content`` and return the
+    assistant text.
 
     Raises the SDK's native exceptions; the plugin layer wraps
     these into typed :class:`app.exceptions.ExternalServiceError`.
     """
-    system_instruction, history = _split_system_and_chat(messages)
-    # ``genai.configure`` is process-global; calling per-request
-    # is wasteful but safe and keeps the API surface flat. A
-    # future per-user-thread model could memoise.
-    genai.configure(api_key=api_key)
-    generative_model = genai.GenerativeModel(
-        model_name=model,
+    system_instruction, contents = _split_system_and_chat(messages)
+    client = genai.Client(api_key=api_key)
+    config = genai_types.GenerateContentConfig(
         system_instruction=system_instruction,
-        generation_config={"max_output_tokens": max_tokens},
+        max_output_tokens=max_tokens,
     )
-    # The simplest call shape: pass the full history list to
-    # generate_content. Gemini will treat the LAST entry's
-    # ``parts`` as the user turn and the prior entries as
-    # history. An empty history (no user message) still calls
-    # generate_content with an empty list, which the SDK
-    # rejects loudly — the orchestrator always appends at
-    # least the new user message before calling here.
-    response = generative_model.generate_content(history)
+    response = client.models.generate_content(
+        model=model,
+        contents=contents,
+        config=config,
+    )
+    # ``response.text`` is a convenience attribute that joins
+    # every text part of the first candidate. Returns the empty
+    # string when a safety filter blocks the response (rather
+    # than raising), which matches the OpenAI wrapper's edge-
+    # case behaviour.
     text = getattr(response, "text", None)
     return text if isinstance(text, str) else ""

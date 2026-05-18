@@ -1,4 +1,8 @@
-"""Adaptive Learner ai-gemini plugin (Phase 5-C).
+"""Adaptive Learner ai-gemini plugin.
+
+Phase 5-C shipped the first cut on the deprecated
+``google.generativeai`` SDK; Phase 6-E migrated to the current
+``google.genai`` 2.x line.
 
 Implements ``ai_complete(messages, model, api_key) -> str`` for any
 ``model`` whose name starts with ``gemini-`` (e.g.
@@ -12,9 +16,9 @@ and pluggy falls through to the next AI provider plugin.
 
 Gemini's chat API uses ``user`` and ``model`` roles (not
 ``assistant``); the client wrapper translates the
-OpenAI-style messages list into Gemini's history shape and
-lifts ``role=system`` entries into the ``system_instruction``
-constructor kwarg.
+OpenAI-style messages list into Gemini's contents shape and
+lifts ``role=system`` entries into the per-call config's
+``system_instruction`` field.
 
 Errors raised by the Gemini SDK are wrapped into
 :class:`app.exceptions.ExternalServiceError`.

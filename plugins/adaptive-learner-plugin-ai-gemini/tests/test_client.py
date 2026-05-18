@@ -1,7 +1,16 @@
 """Tests for the Gemini SDK wrapper. NO real API calls.
 
-Every test patches ``adaptive_learner_ai_gemini.client.genai`` so
-no network egress happens under any circumstance.
+Phase 6E: migrated from the deprecated ``google.generativeai``
+to the current ``google.genai`` 2.x SDK. The wrapper's external
+contract (``complete(messages, model, api_key)`` returns a
+string) is unchanged; the internal call shape and the
+patch-target name move from ``genai.configure`` +
+``genai.GenerativeModel`` to ``genai.Client(api_key).models.
+generate_content(...)``.
+
+Every test patches
+``adaptive_learner_ai_gemini.client.genai`` so no network
+egress happens under any circumstance.
 """
 
 from __future__ import annotations
@@ -19,12 +28,31 @@ from adaptive_learner_ai_gemini.client import (
 
 @pytest.fixture()
 def genai_mock():
-    """Patch the SDK at the plugin's import point. Yields the mocked
-    ``genai`` module so tests can assert on call args."""
+    """Patch the SDK at the plugin's import point. Yields the
+    mocked ``genai`` module so tests can assert on call args.
+
+    The mock wires the new 2.x call surface:
+    ``genai.Client(api_key=...).models.generate_content(...)``.
+    """
     with patch("adaptive_learner_ai_gemini.client.genai", create=True) as m:
-        model_instance = MagicMock()
-        model_instance.generate_content.return_value = SimpleNamespace(text="fine response")
-        m.GenerativeModel.return_value = model_instance
+        client_instance = MagicMock()
+        client_instance.models.generate_content.return_value = SimpleNamespace(
+            text="fine response"
+        )
+        m.Client.return_value = client_instance
+        yield m
+
+
+@pytest.fixture()
+def genai_types_mock():
+    """The wrapper calls ``genai_types.GenerateContentConfig(...)``
+    to build the config object. Patching ``genai_types`` lets us
+    capture those constructor kwargs without instantiating the
+    real Pydantic-like config class."""
+    with patch("adaptive_learner_ai_gemini.client.genai_types", create=True) as m:
+        m.GenerateContentConfig.side_effect = lambda **kwargs: SimpleNamespace(
+            **kwargs
+        )
         yield m
 
 
@@ -40,7 +68,7 @@ def test_split_collects_system_messages_into_single_instruction():
         ]
     )
     assert sys == "Be concise.\n\nUse Markdown."
-    assert chat == [{"role": "user", "parts": ["Hi"]}]
+    assert chat == [{"role": "user", "parts": [{"text": "Hi"}]}]
 
 
 def test_split_translates_assistant_role_to_model():
@@ -53,9 +81,9 @@ def test_split_translates_assistant_role_to_model():
         ]
     )
     assert chat == [
-        {"role": "user", "parts": ["first"]},
-        {"role": "model", "parts": ["reply"]},
-        {"role": "user", "parts": ["follow-up"]},
+        {"role": "user", "parts": [{"text": "first"}]},
+        {"role": "model", "parts": [{"text": "reply"}]},
+        {"role": "user", "parts": [{"text": "follow-up"}]},
     ]
 
 
@@ -66,7 +94,7 @@ def test_split_drops_unknown_roles():
             {"role": "user", "content": "kept"},
         ]
     )
-    assert chat == [{"role": "user", "parts": ["kept"]}]
+    assert chat == [{"role": "user", "parts": [{"text": "kept"}]}]
 
 
 def test_split_drops_non_string_or_empty_content():
@@ -78,7 +106,7 @@ def test_split_drops_non_string_or_empty_content():
             {"role": "user", "content": "ok"},
         ]
     )
-    assert chat == [{"role": "user", "parts": ["ok"]}]
+    assert chat == [{"role": "user", "parts": [{"text": "ok"}]}]
 
 
 def test_split_returns_none_system_when_no_system_messages():
@@ -86,10 +114,18 @@ def test_split_returns_none_system_when_no_system_messages():
     assert sys is None
 
 
+def test_split_uses_text_dict_part_shape():
+    """google-genai 2.x requires each part to be a dict with
+    a ``text`` key (the 0.8.x SDK accepted a bare string). Pin
+    the new shape so a future SDK regression surfaces here."""
+    _, chat = _split_system_and_chat([{"role": "user", "content": "Hi"}])
+    assert chat[0]["parts"][0] == {"text": "Hi"}
+
+
 # --- complete (happy path) -------------------------------------------------
 
 
-def test_complete_returns_assistant_text(genai_mock):
+def test_complete_returns_assistant_text(genai_mock, genai_types_mock):
     out = complete(
         [{"role": "user", "content": "ping"}],
         model="gemini-2.0-flash",
@@ -98,27 +134,36 @@ def test_complete_returns_assistant_text(genai_mock):
     assert out == "fine response"
 
 
-def test_complete_configures_api_key(genai_mock):
+def test_complete_instantiates_client_with_api_key(genai_mock, genai_types_mock):
+    """Phase 6E shape: api_key flows through
+    ``genai.Client(api_key=...)`` rather than the old
+    ``genai.configure(api_key=...)``."""
     complete(
         [{"role": "user", "content": "ping"}],
         model="gemini-2.0-flash",
         api_key="ak-test-XYZ",
     )
-    genai_mock.configure.assert_called_once_with(api_key="ak-test-XYZ")
+    genai_mock.Client.assert_called_once_with(api_key="ak-test-XYZ")
 
 
-def test_complete_passes_model_name_and_max_tokens(genai_mock):
+def test_complete_passes_model_name_and_max_tokens(genai_mock, genai_types_mock):
     complete(
         [{"role": "user", "content": "x"}],
         model="gemini-1.5-pro",
         api_key="k",
     )
-    call_kwargs = genai_mock.GenerativeModel.call_args.kwargs
-    assert call_kwargs["model_name"] == "gemini-1.5-pro"
-    assert call_kwargs["generation_config"]["max_output_tokens"] == DEFAULT_MAX_TOKENS
+    # model name lands on the generate_content kwargs.
+    gc_kwargs = genai_mock.Client.return_value.models.generate_content.call_args.kwargs
+    assert gc_kwargs["model"] == "gemini-1.5-pro"
+    # max_tokens lands on the GenerateContentConfig kwargs.
+    config_kwargs = genai_types_mock.GenerateContentConfig.call_args.kwargs
+    assert config_kwargs["max_output_tokens"] == DEFAULT_MAX_TOKENS
 
 
-def test_complete_lifts_system_messages_into_constructor(genai_mock):
+def test_complete_lifts_system_messages_into_config(genai_mock, genai_types_mock):
+    """v0.2.0 lifted system messages into the GenerativeModel
+    constructor; v0.3.0 lifts them into the per-call
+    GenerateContentConfig.system_instruction field."""
     complete(
         [
             {"role": "system", "content": "Always answer in German."},
@@ -127,11 +172,11 @@ def test_complete_lifts_system_messages_into_constructor(genai_mock):
         model="gemini-2.0-flash",
         api_key="k",
     )
-    call_kwargs = genai_mock.GenerativeModel.call_args.kwargs
-    assert call_kwargs["system_instruction"] == "Always answer in German."
+    config_kwargs = genai_types_mock.GenerateContentConfig.call_args.kwargs
+    assert config_kwargs["system_instruction"] == "Always answer in German."
 
 
-def test_complete_passes_translated_history_to_generate_content(genai_mock):
+def test_complete_passes_translated_contents(genai_mock, genai_types_mock):
     complete(
         [
             {"role": "user", "content": "first"},
@@ -141,21 +186,22 @@ def test_complete_passes_translated_history_to_generate_content(genai_mock):
         model="gemini-2.0-flash",
         api_key="k",
     )
-    model_instance = genai_mock.GenerativeModel.return_value
-    history_arg = model_instance.generate_content.call_args.args[0]
-    # Gemini-style: role=model in place of role=assistant.
-    assert history_arg == [
-        {"role": "user", "parts": ["first"]},
-        {"role": "model", "parts": ["reply"]},
-        {"role": "user", "parts": ["follow-up"]},
+    gc_kwargs = genai_mock.Client.return_value.models.generate_content.call_args.kwargs
+    contents = gc_kwargs["contents"]
+    # Gemini-style: role=model in place of role=assistant;
+    # parts are dicts wrapping ``text``.
+    assert contents == [
+        {"role": "user", "parts": [{"text": "first"}]},
+        {"role": "model", "parts": [{"text": "reply"}]},
+        {"role": "user", "parts": [{"text": "follow-up"}]},
     ]
 
 
-def test_complete_returns_empty_string_on_missing_text(genai_mock):
+def test_complete_returns_empty_string_on_missing_text(genai_mock, genai_types_mock):
     """The SDK occasionally returns a response without ``.text``
     (safety filter triggered). The wrapper returns the empty
     string rather than raising."""
-    genai_mock.GenerativeModel.return_value.generate_content.return_value = (
+    genai_mock.Client.return_value.models.generate_content.return_value = (
         SimpleNamespace()  # no .text attribute
     )
     out = complete(
@@ -166,12 +212,12 @@ def test_complete_returns_empty_string_on_missing_text(genai_mock):
     assert out == ""
 
 
-def test_complete_respects_custom_max_tokens(genai_mock):
+def test_complete_respects_custom_max_tokens(genai_mock, genai_types_mock):
     complete(
         [{"role": "user", "content": "x"}],
         model="gemini-2.0-flash",
         api_key="k",
         max_tokens=512,
     )
-    call_kwargs = genai_mock.GenerativeModel.call_args.kwargs
-    assert call_kwargs["generation_config"]["max_output_tokens"] == 512
+    config_kwargs = genai_types_mock.GenerateContentConfig.call_args.kwargs
+    assert config_kwargs["max_output_tokens"] == 512
