@@ -1,11 +1,20 @@
-"""Tests for the prompt-composition module."""
+"""Tests for the prompt-composition module.
+
+Phase 6A: the 42-cell matrix (6 methods × 7 steps) replaces the
+v0.1.0-v0.2.0 core+modifier overlay. Tests pin:
+
+- Every (method, step) cell is present, in both DE and EN.
+- Each cell's text actually reaches the composed prompt.
+- The project + profile context block stays intact.
+- Validation (unknown method, out-of-range step) keeps raising
+  ValueError so the route layer can translate to HTTP 400.
+"""
 
 from __future__ import annotations
 
 import pytest
 from adaptive_learner_session.prompts import (
-    _METHOD_CORES,
-    _STEP_MODIFIERS,
+    _PROMPTS,
     MAX_STEP,
     METHODS,
     MIN_STEP,
@@ -17,27 +26,38 @@ from adaptive_learner_session.prompts import (
 # --- Coverage matrix -------------------------------------------------------
 
 
-def test_method_cores_cover_all_six_methods():
-    assert set(_METHOD_CORES.keys()) == set(METHODS)
+def test_prompts_cover_all_six_methods():
+    assert set(_PROMPTS.keys()) == set(METHODS)
 
 
-def test_step_modifiers_cover_seven_steps():
-    assert set(_STEP_MODIFIERS.keys()) == set(STEP_RANGE)
-    assert len(STEP_RANGE) == 7
+def test_prompts_cover_seven_steps_per_method():
+    """Every method's inner dict must have entries for steps 1..7
+    — no holes in the 6×7 matrix."""
+    for method in METHODS:
+        assert set(_PROMPTS[method].keys()) == set(STEP_RANGE)
+        assert len(STEP_RANGE) == 7
 
 
 @pytest.mark.parametrize("method", METHODS)
-def test_every_method_has_de_and_en_core(method):
-    cores = _METHOD_CORES[method]
-    assert cores.get("de") and isinstance(cores["de"], str)
-    assert cores.get("en") and isinstance(cores["en"], str)
+@pytest.mark.parametrize("step", list(range(1, 8)))
+def test_every_cell_has_de_and_en(method: str, step: int):
+    """All 42 cells × 2 languages = 84 non-empty strings."""
+    cell = _PROMPTS[method][step]
+    de_text = cell.get("de")
+    en_text = cell.get("en")
+    assert isinstance(de_text, str) and de_text.strip()
+    assert isinstance(en_text, str) and en_text.strip()
 
 
-@pytest.mark.parametrize("step", STEP_RANGE)
-def test_every_step_has_de_and_en_modifier(step):
-    mods = _STEP_MODIFIERS[step]
-    assert mods.get("de") and isinstance(mods["de"], str)
-    assert mods.get("en") and isinstance(mods["en"], str)
+def test_cells_are_distinct_per_step_within_a_method():
+    """Each step's prompt is bespoke — no two steps of the same
+    method should be identical. Catches a future copy-paste
+    regression that leaves a method's matrix half-filled."""
+    for method in METHODS:
+        de_texts = {step: _PROMPTS[method][step]["de"] for step in STEP_RANGE}
+        assert len(set(de_texts.values())) == 7, (
+            f"method {method!r} has duplicate cells across steps"
+        )
 
 
 # --- _dominant_method ------------------------------------------------------
@@ -93,15 +113,28 @@ def _profile_fixture() -> dict:
 
 
 @pytest.mark.parametrize("method", METHODS)
-def test_build_prompt_contains_method_core_for_each_method(method):
+def test_build_prompt_contains_cell_text_for_each_method_at_step_1(method):
     out = build_prompt(_project_fixture(), _profile_fixture(), method, 1, "de")
-    assert _METHOD_CORES[method]["de"] in out
+    assert _PROMPTS[method][1]["de"] in out
 
 
 @pytest.mark.parametrize("step", STEP_RANGE)
-def test_build_prompt_contains_step_modifier_for_each_step(step):
+def test_build_prompt_contains_cell_text_for_each_step_under_deductive(step):
     out = build_prompt(_project_fixture(), _profile_fixture(), "deductive", step, "de")
-    assert _STEP_MODIFIERS[step]["de"] in out
+    assert _PROMPTS["deductive"][step]["de"] in out
+
+
+def test_build_prompt_uses_step_specific_text_not_step_1_for_step_4():
+    """Regression pin against a future bug where build_prompt
+    silently ignores the step argument and always uses step 1.
+    The deductive-step-4 cell talks about correction; the
+    deductive-step-1 cell talks about rule statement — distinct
+    strings."""
+    out_step_1 = build_prompt(_project_fixture(), _profile_fixture(), "deductive", 1, "de")
+    out_step_4 = build_prompt(_project_fixture(), _profile_fixture(), "deductive", 4, "de")
+    assert _PROMPTS["deductive"][1]["de"] in out_step_1
+    assert _PROMPTS["deductive"][1]["de"] not in out_step_4
+    assert _PROMPTS["deductive"][4]["de"] in out_step_4
 
 
 def test_build_prompt_injects_project_topic_and_goal_de():
@@ -118,8 +151,8 @@ def test_build_prompt_injects_project_topic_and_goal_en():
 
 def test_build_prompt_uses_german_text_for_de():
     out = build_prompt(_project_fixture(), _profile_fixture(), "deductive", 1, "de")
-    # The German core for deductive contains "Regel" — the EN version
-    # contains "rule" lowercased.
+    # The German cell for (deductive, 1) contains "Regel" —
+    # English equivalent contains "rule".
     assert "Regel" in out
     assert "Lernprojekt" in out
 
