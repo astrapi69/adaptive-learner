@@ -353,8 +353,36 @@ export interface TrackingSummary {
     recent_sessions: RecentSessionEntry[];
 }
 
+/**
+ * v0.5.0 / 8D — step-evaluation analytics namespace produced by
+ * the tracking plugin's ``get_progress_summary`` from
+ * ``StepEvaluation`` rows joined to the project's sessions.
+ *
+ * ``evaluations_per_step`` and ``time_seconds_per_step`` use
+ * STRING keys ("1".."7") because JSON does not preserve integer
+ * keys over the wire. The aggregator's ``aggregate_step_evaluations``
+ * function produces integer keys internally; the route's JSON
+ * serialiser stringifies them.
+ *
+ * Empty state when the project has no evaluations yet is
+ * "all-zeros" — never ``null`` or ``undefined`` — so the
+ * frontend can map over the fields without conditional
+ * fallbacks.
+ */
+export interface StepEvaluationSummary {
+    total_evaluations: number;
+    average_confidence: number;
+    advance_count: number;
+    repeat_count: number;
+    backward_count: number;
+    fallback_count: number;
+    evaluations_per_step: Record<string, number>;
+    time_seconds_per_step: Record<string, number>;
+}
+
 export interface ProgressSummary {
     tracking?: TrackingSummary;
+    step_evaluation?: StepEvaluationSummary;
     [namespace: string]: unknown;
 }
 

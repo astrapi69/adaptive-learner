@@ -443,6 +443,11 @@ class LearningSession(Base):
         cascade="all, delete-orphan",
         order_by="ProgressCommit.committed_at",
     )
+    step_evaluations: Mapped[list[StepEvaluation]] = relationship(
+        back_populates="session",
+        cascade="all, delete-orphan",
+        order_by="StepEvaluation.evaluated_at",
+    )
 
     def __repr__(self) -> str:
         return (
@@ -579,6 +584,56 @@ class ProgressCommit(Base):
         )
 
 
+class StepEvaluation(Base):
+    """v0.5.0 — one Phase-8 dual-prompt evaluation verdict.
+
+    Written by the session plugin's /message route on every
+    successful round-trip when step_evaluation is enabled. Carries
+    BOTH the evaluator's raw verdict AND the route's derived
+    ``applied`` decision so the 8D analytics layer can answer:
+
+    - average confidence per session / project
+    - how often the AI said "not ready yet" (``applied=False``)
+    - how often the deterministic fallback fired
+      (``fallback_used=True``)
+    - time spent per cycle step (diff of ``evaluated_at`` grouped
+      by ``from_step``)
+
+    Cascades on session delete so abandoned-session cleanup stays
+    clean. ``reason`` is Text rather than String because models
+    occasionally emit reasons >200 chars in non-Latin scripts.
+    """
+
+    __tablename__ = "step_evaluations"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    session_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("learning_sessions.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    from_step: Mapped[int] = mapped_column(Integer, nullable=False)
+    to_step: Mapped[int] = mapped_column(Integer, nullable=False)
+    advance: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    confidence: Mapped[float] = mapped_column(Float, nullable=False)
+    applied: Mapped[bool] = mapped_column(Boolean, nullable=False)
+    fallback_used: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    reason: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    evaluated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+
+    session: Mapped[LearningSession] = relationship(back_populates="step_evaluations")
+
+    def __repr__(self) -> str:
+        return (
+            f"<StepEvaluation session={self.session_id!r} "
+            f"{self.from_step}->{self.to_step} "
+            f"applied={self.applied} conf={self.confidence:.2f}>"
+        )
+
+
 class MethodSwitch(Base):
     """Documents a method switch on a project.
 
@@ -625,5 +680,6 @@ __all__ = [
     "SessionRating",
     "SessionNote",
     "ProgressCommit",
+    "StepEvaluation",
     "MethodSwitch",
 ]

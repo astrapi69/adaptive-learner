@@ -296,3 +296,141 @@ def test_get_progress_summary_hook_dispatches(client: TestClient):
     assert len(results) == 1
     assert "tracking" in results[0]
     assert results[0]["tracking"]["total_sessions"] == 1
+
+
+# --- v0.5.0 / 8D step-evaluation namespace --------------------------------
+
+
+def test_get_progress_includes_step_evaluation_namespace(client: TestClient):
+    """The tracking plugin's get_progress_summary now returns
+    BOTH ``tracking`` and ``step_evaluation`` namespaces. With no
+    sessions yet, the step_evaluation slice is all-zeros."""
+    _, project_id = _make_user_and_project(client)
+    body = client.get(f"/api/plugins/tracking/progress/{project_id}").json()
+    assert "step_evaluation" in body
+    se = body["step_evaluation"]
+    assert se["total_evaluations"] == 0
+    assert se["average_confidence"] == 0.0
+    assert se["advance_count"] == 0
+    assert se["repeat_count"] == 0
+    assert se["backward_count"] == 0
+    assert se["fallback_count"] == 0
+    assert se["evaluations_per_step"] == {}
+    assert se["time_seconds_per_step"] == {}
+
+
+def test_step_evaluation_aggregates_match_persisted_rows(client: TestClient):
+    """Drop two StepEvaluation rows directly into the DB then hit
+    the tracking route — the namespace should reflect both.
+    Bypasses /message so we can control the exact rows without
+    standing up a mocked AI provider."""
+    from app.database import SessionLocal
+    from app.models import LearningSession, StepEvaluation
+
+    _, project_id = _make_user_and_project(client)
+    # Plant one session under the project so the join in the
+    # tracking plugin's query finds our evaluation rows.
+    db = SessionLocal()
+    try:
+        sess = LearningSession(
+            project_id=project_id,
+            method="deductive",
+            cycle_step=2,
+            status="active",
+        )
+        db.add(sess)
+        db.commit()
+        db.refresh(sess)
+        db.add(
+            StepEvaluation(
+                session_id=sess.id,
+                from_step=1,
+                to_step=2,
+                advance=True,
+                confidence=0.9,
+                applied=True,
+                fallback_used=False,
+                reason="Ready.",
+            )
+        )
+        db.add(
+            StepEvaluation(
+                session_id=sess.id,
+                from_step=2,
+                to_step=2,
+                advance=False,
+                confidence=0.4,
+                applied=False,
+                fallback_used=False,
+                reason="Not yet.",
+            )
+        )
+        db.commit()
+    finally:
+        db.close()
+
+    body = client.get(f"/api/plugins/tracking/progress/{project_id}").json()
+    se = body["step_evaluation"]
+    assert se["total_evaluations"] == 2
+    # (0.9 + 0.4) / 2 = 0.65
+    assert se["average_confidence"] == 0.65
+    assert se["advance_count"] == 1  # the 1→2 row
+    assert se["repeat_count"] == 1  # the applied=False row
+    # JSON over the wire stringifies integer dict keys.
+    assert se["evaluations_per_step"] == {"1": 1, "2": 1}
+
+
+def test_step_evaluation_namespace_scopes_to_project(client: TestClient):
+    """Two projects each have their own sessions + evaluations.
+    The /progress/{project_id} endpoint must NOT bleed evaluations
+    across projects — pinned by writing rows to project B's
+    session and asserting project A's response stays empty."""
+    from app.database import SessionLocal
+    from app.models import LearningSession, StepEvaluation
+
+    user_id, project_a = _make_user_and_project(client)
+    # Create a second project for the same user.
+    project_b = client.post(
+        f"/api/users/{user_id}/projects",
+        json={
+            "topic": "Other topic",
+            "goal": "Other goal.",
+            "timeframe": "1 week",
+            "daily_minutes": 30,
+        },
+    ).json()["id"]
+
+    db = SessionLocal()
+    try:
+        # Session + evaluation on project B only.
+        sess_b = LearningSession(
+            project_id=project_b,
+            method="dialogic",
+            cycle_step=3,
+            status="active",
+        )
+        db.add(sess_b)
+        db.commit()
+        db.refresh(sess_b)
+        db.add(
+            StepEvaluation(
+                session_id=sess_b.id,
+                from_step=2,
+                to_step=3,
+                advance=True,
+                confidence=0.85,
+                applied=True,
+                fallback_used=False,
+                reason="ok",
+            )
+        )
+        db.commit()
+    finally:
+        db.close()
+
+    # Project A: still zero evaluations.
+    body_a = client.get(f"/api/plugins/tracking/progress/{project_a}").json()
+    assert body_a["step_evaluation"]["total_evaluations"] == 0
+    # Project B: sees its own evaluation.
+    body_b = client.get(f"/api/plugins/tracking/progress/{project_b}").json()
+    assert body_b["step_evaluation"]["total_evaluations"] == 1

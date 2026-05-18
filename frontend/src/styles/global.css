@@ -635,6 +635,48 @@ select:focus {
   width: 100%;
 }
 
+/* --- v0.5.0 / 8D step-evaluation insights ------------------- */
+
+.step-eval-insights {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.step-eval-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+}
+
+.step-eval-metric {
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  align-items: flex-start;
+}
+
+.step-eval-metric-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1.1;
+}
+
+.step-eval-metric-label {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  line-height: 1.3;
+}
+
+.step-eval-stickiest {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
 .tool-list {
   list-style: none;
   margin: 0;

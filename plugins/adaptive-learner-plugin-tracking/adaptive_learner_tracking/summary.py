@@ -66,6 +66,30 @@ def _mean(values: list[float]) -> float:
     return round(sum(values) / len(values), 4) if values else 0.0
 
 
+def _parse_iso_datetime(value: object) -> datetime | None:
+    """Tolerant ISO-8601 -> ``datetime`` parser. Returns ``None``
+    on anything that can't be coerced. v0.5.0 step-evaluation
+    aggregates use this to compute time deltas between
+    consecutive evaluations within a session.
+    """
+    if isinstance(value, datetime):
+        return value
+    if not isinstance(value, str):
+        return None
+    raw = value.strip()
+    if not raw:
+        return None
+    # ``datetime.fromisoformat`` accepts the ``2026-05-18T07:30:58Z``
+    # shape since Python 3.11 — strip a trailing ``Z`` defensively
+    # for older callers / hand-crafted strings.
+    try:
+        if raw.endswith("Z"):
+            raw = raw[:-1] + "+00:00"
+        return datetime.fromisoformat(raw)
+    except ValueError:
+        return None
+
+
 def _parse_iso_date(value: object) -> date | None:
     """Tolerant ISO-8601 -> ``date`` parser.
 
@@ -211,4 +235,151 @@ def aggregate(
         "mean_understanding": _mean(understanding_all),
         "mean_stress": _mean(stress_all),
         "recent_sessions": recent_sessions,
+    }
+
+
+# --- v0.5.0 / 8D step-evaluation analytics --------------------------------
+
+# Step gaps longer than this are excluded from ``time_seconds_per_step``:
+# any pause longer than 2h almost certainly reflects the learner walking
+# away from the screen, not "time spent on the step". Clamping prevents a
+# single overnight session from dominating the per-step averages.
+_MAX_STEP_GAP_SECONDS = 2 * 60 * 60
+
+
+def _empty_step_eval_aggregate() -> dict[str, Any]:
+    """Shape returned when no evaluations exist yet.
+
+    Matches the populated shape's keys so the frontend can read
+    every field without conditional ``?? 0`` everywhere — empty
+    state is just "all-zeros".
+    """
+    return {
+        "total_evaluations": 0,
+        "average_confidence": 0.0,
+        "advance_count": 0,
+        "repeat_count": 0,
+        "backward_count": 0,
+        "fallback_count": 0,
+        "evaluations_per_step": {},
+        "time_seconds_per_step": {},
+    }
+
+
+def aggregate_step_evaluations(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Build the step_evaluation namespace slice from one project's
+    evaluation rows.
+
+    Caller responsibility: pre-filter to one project (via the
+    StepEvaluation -> LearningSession -> LearningProject join) so
+    the aggregator never crosses project boundaries.
+
+    Each row carries:
+      - id, session_id (str)
+      - from_step, to_step (int)
+      - advance, applied, fallback_used (bool)
+      - confidence (float in [0, 1])
+      - reason (str)
+      - evaluated_at (ISO-8601 string OR ``datetime``)
+
+    Returns:
+      total_evaluations:       overall count
+      average_confidence:      mean across all rows, rounded to 4 dp
+      advance_count:           applied=True ∧ to_step > from_step
+      repeat_count:            applied=False  ("AI said not ready")
+      backward_count:          applied=True ∧ to_step < from_step
+      fallback_count:          fallback_used=True (audit signal)
+      evaluations_per_step:    {step → count of evaluations from
+                                that step}; useful for "where do
+                                learners spend most messages?"
+      time_seconds_per_step:   {step → total seconds spent on that
+                                step across all sessions for the
+                                project}. Computed from per-
+                                session timestamp deltas; long
+                                pauses (>2h) excluded. Sum, not
+                                average — divide by
+                                evaluations_per_step downstream
+                                if you want per-message mean.
+    """
+    if not rows:
+        return _empty_step_eval_aggregate()
+
+    confidences: list[float] = []
+    advance_count = 0
+    repeat_count = 0
+    backward_count = 0
+    fallback_count = 0
+    evaluations_per_step: dict[int, int] = {}
+    by_session: dict[str, list[dict[str, Any]]] = {}
+
+    for r in rows:
+        # Confidence is the most important signal — clamp + collect.
+        c = r.get("confidence")
+        if isinstance(c, (int, float)):
+            confidences.append(float(c))
+
+        applied = bool(r.get("applied"))
+        from_step = r.get("from_step")
+        to_step = r.get("to_step")
+        if applied and isinstance(from_step, int) and isinstance(to_step, int):
+            if to_step > from_step:
+                advance_count += 1
+            elif to_step < from_step:
+                backward_count += 1
+            # to_step == from_step (repeat-applied) folded into
+            # repeat_count to keep the dashboard categories
+            # mutually exclusive.
+        if not applied:
+            repeat_count += 1
+        if r.get("fallback_used"):
+            fallback_count += 1
+
+        if isinstance(from_step, int):
+            evaluations_per_step[from_step] = (
+                evaluations_per_step.get(from_step, 0) + 1
+            )
+
+        sid = r.get("session_id")
+        if isinstance(sid, str):
+            by_session.setdefault(sid, []).append(r)
+
+    # Time per step: walk each session's rows in evaluated_at
+    # order, attribute the gap between consecutive evaluations to
+    # the FROM step of the earlier evaluation. This means a
+    # session that sits on step 2 for three messages credits all
+    # the elapsed-time gaps to step 2.
+    time_seconds_per_step: dict[int, float] = {}
+    for session_rows in by_session.values():
+        ordered = sorted(
+            session_rows,
+            key=lambda r: _parse_iso_datetime(r.get("evaluated_at"))
+            or datetime.min.replace(tzinfo=UTC),
+        )
+        for i in range(1, len(ordered)):
+            prev = ordered[i - 1]
+            curr = ordered[i]
+            prev_ts = _parse_iso_datetime(prev.get("evaluated_at"))
+            curr_ts = _parse_iso_datetime(curr.get("evaluated_at"))
+            if prev_ts is None or curr_ts is None:
+                continue
+            delta = (curr_ts - prev_ts).total_seconds()
+            if delta <= 0 or delta > _MAX_STEP_GAP_SECONDS:
+                continue
+            step = prev.get("from_step")
+            if isinstance(step, int):
+                time_seconds_per_step[step] = (
+                    time_seconds_per_step.get(step, 0.0) + delta
+                )
+
+    return {
+        "total_evaluations": len(rows),
+        "average_confidence": _mean(confidences),
+        "advance_count": advance_count,
+        "repeat_count": repeat_count,
+        "backward_count": backward_count,
+        "fallback_count": fallback_count,
+        "evaluations_per_step": evaluations_per_step,
+        "time_seconds_per_step": {
+            step: round(secs, 2) for step, secs in time_seconds_per_step.items()
+        },
     }

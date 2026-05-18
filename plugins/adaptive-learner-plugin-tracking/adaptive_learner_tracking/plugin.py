@@ -66,9 +66,15 @@ class TrackingPlugin(BasePlugin):
 
     @hookimpl
     def get_progress_summary(self, project_id: str) -> dict[str, Any]:
-        """Return this plugin's namespace slice."""
+        """Return this plugin's namespace slices.
+
+        v0.4.0: ``tracking`` slice from ``ProgressCommit`` rows.
+        v0.5.0: ``step_evaluation`` slice from ``StepEvaluation``
+        rows joined to ``LearningSession`` so the aggregator only
+        sees rows belonging to this project's sessions.
+        """
         from app.database import SessionLocal
-        from app.models import ProgressCommit
+        from app.models import LearningSession, ProgressCommit, StepEvaluation
 
         db = SessionLocal()
         try:
@@ -95,9 +101,42 @@ class TrackingPlugin(BasePlugin):
                 }
                 for r in rows
             ]
+            # v0.5.0 — step evaluation rows for this project. The
+            # join goes through LearningSession so we never
+            # accidentally surface another project's evaluations.
+            eval_rows = (
+                db.query(StepEvaluation)
+                .join(LearningSession, StepEvaluation.session_id == LearningSession.id)
+                .filter(LearningSession.project_id == project_id)
+                .order_by(
+                    StepEvaluation.session_id,
+                    StepEvaluation.evaluated_at.asc(),
+                )
+                .all()
+            )
+            eval_dicts = [
+                {
+                    "id": r.id,
+                    "session_id": r.session_id,
+                    "from_step": r.from_step,
+                    "to_step": r.to_step,
+                    "advance": r.advance,
+                    "applied": r.applied,
+                    "fallback_used": r.fallback_used,
+                    "confidence": r.confidence,
+                    "reason": r.reason,
+                    "evaluated_at": (
+                        r.evaluated_at.isoformat() if r.evaluated_at else None
+                    ),
+                }
+                for r in eval_rows
+            ]
         finally:
             db.close()
-        return {_summary.NAMESPACE: _summary.aggregate(commits_dicts)}
+        return {
+            _summary.NAMESPACE: _summary.aggregate(commits_dicts),
+            "step_evaluation": _summary.aggregate_step_evaluations(eval_dicts),
+        }
 
     def get_routes(self) -> list:
         from .routes import router

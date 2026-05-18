@@ -160,6 +160,14 @@ progress:
   commit_duration: Διάρκεια
   commit_date: Ημερομηνία
   no_commits: Δεν υπάρχουν ολοκληρωμένες συνεδρίες ακόμα.
+  step_eval_title: Αναλυτικά αξιολόγησης AI ανά βήμα
+  step_eval_empty: >-
+    Δεν υπάρχουν ακόμα δεδομένα — ξεκίνα μια συνεδρία για να δεις στοιχεία.
+  step_eval_avg_confidence: Μέση εμπιστοσύνη AI
+  step_eval_repeats: "Φορές που η AI είπε 'όχι ακόμα'"
+  step_eval_advances: Προωθήσεις βήματος
+  step_eval_backward: Επιστροφές
+  step_eval_stickiest_label: "Περισσότερος χρόνος σε:"
 settings:
   title: Ρυθμίσεις
   section_language: Γλώσσα

@@ -58,6 +58,16 @@ const SUMMARY: ProgressSummary = {
         mean_stress: 0.38,
         recent_sessions: [],
     },
+    step_evaluation: {
+        total_evaluations: 0,
+        average_confidence: 0,
+        advance_count: 0,
+        repeat_count: 0,
+        backward_count: 0,
+        fallback_count: 0,
+        evaluations_per_step: {},
+        time_seconds_per_step: {},
+    },
 };
 
 const COMMITS: ProgressCommit[] = [
@@ -145,5 +155,45 @@ describe("Progress page", () => {
         renderProgress();
         await screen.findByTestId("progress-error");
         expect(screen.getByTestId("progress-error").textContent).toContain("DB down");
+    });
+
+    // --- v0.5.0 / 8D step-evaluation insights -------------------------
+
+    it("renders the StepEvaluationInsights empty state when there is no data", async () => {
+        apiProgress.mockResolvedValue(SUMMARY);  // SUMMARY has total_evaluations=0
+        apiCommits.mockResolvedValue(COMMITS);
+        renderProgress();
+        await screen.findByTestId("progress");
+        expect(
+            screen.getByTestId("step-eval-insights-empty"),
+        ).toBeInTheDocument();
+    });
+
+    it("renders the StepEvaluationInsights populated card with metrics", async () => {
+        apiProgress.mockResolvedValue({
+            ...SUMMARY,
+            step_evaluation: {
+                total_evaluations: 5,
+                average_confidence: 0.75,
+                advance_count: 3,
+                repeat_count: 1,
+                backward_count: 1,
+                fallback_count: 0,
+                evaluations_per_step: {"2": 5},
+                time_seconds_per_step: {"2": 120},
+            },
+        });
+        apiCommits.mockResolvedValue(COMMITS);
+        renderProgress();
+        await screen.findByTestId("progress");
+        expect(screen.getByTestId("step-eval-insights")).toBeInTheDocument();
+        // 75% confidence.
+        expect(
+            screen.getByTestId("step-eval-confidence").textContent,
+        ).toContain("75%");
+        // Stickiest step at 120s → "2 min" formatting.
+        expect(screen.getByTestId("step-eval-stickiest").textContent).toContain(
+            "2 min",
+        );
     });
 });

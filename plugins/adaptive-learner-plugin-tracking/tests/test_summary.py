@@ -284,3 +284,273 @@ def test_recent_sessions_carries_id_method_duration_and_ratings():
 def test_recent_sessions_empty_when_no_commits():
     out = aggregate([])
     assert out["recent_sessions"] == []
+
+
+# --- v0.5.0 / 8D step-evaluation aggregator -------------------------------
+
+from adaptive_learner_tracking.summary import (  # noqa: E402 — grouped with 8D tests
+    aggregate_step_evaluations,
+)
+
+
+def _eval(
+    *,
+    session_id: str = "s-1",
+    from_step: int = 1,
+    to_step: int = 2,
+    applied: bool = True,
+    advance: bool = True,
+    fallback_used: bool = False,
+    confidence: float = 0.9,
+    reason: str = "ok",
+    evaluated_at: str = "2026-05-18T10:00:00+00:00",
+) -> dict:
+    return {
+        "id": f"e-{session_id}-{evaluated_at}",
+        "session_id": session_id,
+        "from_step": from_step,
+        "to_step": to_step,
+        "applied": applied,
+        "advance": advance,
+        "fallback_used": fallback_used,
+        "confidence": confidence,
+        "reason": reason,
+        "evaluated_at": evaluated_at,
+    }
+
+
+def test_empty_evaluations_yields_zeros():
+    out = aggregate_step_evaluations([])
+    assert out["total_evaluations"] == 0
+    assert out["average_confidence"] == 0.0
+    assert out["advance_count"] == 0
+    assert out["repeat_count"] == 0
+    assert out["backward_count"] == 0
+    assert out["fallback_count"] == 0
+    assert out["evaluations_per_step"] == {}
+    assert out["time_seconds_per_step"] == {}
+
+
+def test_average_confidence_mean_across_all_rows():
+    out = aggregate_step_evaluations(
+        [
+            _eval(confidence=0.9, evaluated_at="2026-05-18T10:00:00+00:00"),
+            _eval(confidence=0.6, evaluated_at="2026-05-18T10:01:00+00:00"),
+            _eval(confidence=0.3, evaluated_at="2026-05-18T10:02:00+00:00"),
+        ]
+    )
+    assert out["total_evaluations"] == 3
+    assert out["average_confidence"] == 0.6  # (0.9+0.6+0.3)/3
+
+
+def test_advance_repeat_backward_counts_are_mutually_exclusive():
+    out = aggregate_step_evaluations(
+        [
+            # Forward applied → advance_count
+            _eval(from_step=1, to_step=2, applied=True),
+            # Forward, but not applied → repeat_count
+            _eval(from_step=2, to_step=3, applied=False),
+            # Backward applied → backward_count
+            _eval(from_step=4, to_step=2, applied=True),
+            # Repeat-applied (to_step == from_step) → repeat_count
+            _eval(from_step=3, to_step=3, applied=False),
+        ]
+    )
+    assert out["advance_count"] == 1
+    assert out["backward_count"] == 1
+    assert out["repeat_count"] == 2  # 2 rows had applied=False
+
+
+def test_fallback_count_independent_of_applied():
+    out = aggregate_step_evaluations(
+        [
+            _eval(fallback_used=True, applied=True),
+            _eval(fallback_used=True, applied=False),
+            _eval(fallback_used=False, applied=True),
+        ]
+    )
+    assert out["fallback_count"] == 2
+
+
+def test_evaluations_per_step_counts_by_from_step():
+    out = aggregate_step_evaluations(
+        [
+            _eval(from_step=2),
+            _eval(from_step=2),
+            _eval(from_step=2),
+            _eval(from_step=4),
+            _eval(from_step=4),
+            _eval(from_step=1),
+        ]
+    )
+    assert out["evaluations_per_step"] == {2: 3, 4: 2, 1: 1}
+
+
+def test_time_seconds_per_step_sums_gaps_within_session():
+    """Two evaluations in the same session, 60s apart → 60s on
+    the FIRST row's from_step."""
+    out = aggregate_step_evaluations(
+        [
+            _eval(
+                session_id="s-1",
+                from_step=2,
+                evaluated_at="2026-05-18T10:00:00+00:00",
+            ),
+            _eval(
+                session_id="s-1",
+                from_step=3,
+                evaluated_at="2026-05-18T10:01:00+00:00",
+            ),
+        ]
+    )
+    assert out["time_seconds_per_step"] == {2: 60.0}
+
+
+def test_time_seconds_per_step_separates_sessions():
+    """Gaps are computed PER session. Two sessions each on step 2,
+    each contributing 60s → 120s total on step 2."""
+    out = aggregate_step_evaluations(
+        [
+            _eval(
+                session_id="s-1",
+                from_step=2,
+                evaluated_at="2026-05-18T10:00:00+00:00",
+            ),
+            _eval(
+                session_id="s-1",
+                from_step=3,
+                evaluated_at="2026-05-18T10:01:00+00:00",
+            ),
+            _eval(
+                session_id="s-2",
+                from_step=2,
+                evaluated_at="2026-05-18T11:00:00+00:00",
+            ),
+            _eval(
+                session_id="s-2",
+                from_step=3,
+                evaluated_at="2026-05-18T11:01:00+00:00",
+            ),
+        ]
+    )
+    assert out["time_seconds_per_step"] == {2: 120.0}
+
+
+def test_time_seconds_per_step_excludes_long_gaps():
+    """Gaps longer than 2h are excluded (almost certainly idle
+    learner, not "time on step")."""
+    out = aggregate_step_evaluations(
+        [
+            _eval(
+                session_id="s-1",
+                from_step=2,
+                evaluated_at="2026-05-18T10:00:00+00:00",
+            ),
+            # 3 hours later — should be excluded.
+            _eval(
+                session_id="s-1",
+                from_step=3,
+                evaluated_at="2026-05-18T13:00:00+00:00",
+            ),
+            # 30 seconds later — counted toward step 3.
+            _eval(
+                session_id="s-1",
+                from_step=4,
+                evaluated_at="2026-05-18T13:00:30+00:00",
+            ),
+        ]
+    )
+    # Only the 30s gap survives: it's on step 3.
+    assert out["time_seconds_per_step"] == {3: 30.0}
+
+
+def test_time_seconds_per_step_ignores_zero_gap_identical_timestamps():
+    """Two evaluations with identical timestamps contribute nothing
+    to time-per-step — the gap is 0 seconds and the aggregator skips
+    rows where delta <= 0."""
+    out = aggregate_step_evaluations(
+        [
+            _eval(
+                session_id="s-1",
+                from_step=2,
+                evaluated_at="2026-05-18T10:00:00+00:00",
+            ),
+            _eval(
+                session_id="s-1",
+                from_step=3,
+                evaluated_at="2026-05-18T10:00:00+00:00",
+            ),
+        ]
+    )
+    assert out["time_seconds_per_step"] == {}
+
+
+def test_time_seconds_per_step_reorders_out_of_order_input():
+    """Rows arrive with the older timestamp SECOND. The aggregator
+    sorts internally, so the gap is computed correctly as 60s on
+    the earlier step (not nonsense / negative)."""
+    out = aggregate_step_evaluations(
+        [
+            _eval(
+                session_id="s-1",
+                from_step=3,
+                evaluated_at="2026-05-18T10:01:00+00:00",
+            ),
+            _eval(
+                session_id="s-1",
+                from_step=2,
+                evaluated_at="2026-05-18T10:00:00+00:00",
+            ),
+        ]
+    )
+    # After sort: step 2 @ 10:00 → step 3 @ 10:01. Gap 60s on
+    # step 2 (the prev.from_step at the start of the gap).
+    assert out["time_seconds_per_step"] == {2: 60.0}
+
+
+def test_unparseable_timestamps_drop_silently():
+    out = aggregate_step_evaluations(
+        [
+            _eval(session_id="s-1", evaluated_at="not-a-date"),
+            _eval(session_id="s-1", evaluated_at="2026-05-18T10:00:00+00:00"),
+        ]
+    )
+    # No valid gap pair → no time aggregated.
+    assert out["time_seconds_per_step"] == {}
+    # But counts are unaffected.
+    assert out["total_evaluations"] == 2
+
+
+def test_handles_iso_with_trailing_z():
+    """``2026-05-18T10:00:00Z`` (UTC-Z shorthand) is accepted."""
+    out = aggregate_step_evaluations(
+        [
+            _eval(session_id="s-1", from_step=2, evaluated_at="2026-05-18T10:00:00Z"),
+            _eval(session_id="s-1", from_step=3, evaluated_at="2026-05-18T10:00:30Z"),
+        ]
+    )
+    assert out["time_seconds_per_step"] == {2: 30.0}
+
+
+def test_non_string_session_id_does_not_crash():
+    """Defensive: malformed row with session_id=None is ignored
+    for time aggregation but still counts toward totals."""
+    out = aggregate_step_evaluations(
+        [
+            {
+                "id": "e-1",
+                "session_id": None,
+                "from_step": 1,
+                "to_step": 2,
+                "advance": True,
+                "applied": True,
+                "fallback_used": False,
+                "confidence": 0.8,
+                "reason": "",
+                "evaluated_at": "2026-05-18T10:00:00+00:00",
+            }
+        ]
+    )
+    assert out["total_evaluations"] == 1
+    assert out["average_confidence"] == 0.8
+    assert out["time_seconds_per_step"] == {}

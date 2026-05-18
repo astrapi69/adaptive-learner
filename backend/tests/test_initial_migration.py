@@ -41,6 +41,7 @@ EXPECTED_TABLES = {
     "session_ratings",
     "session_notes",
     "progress_commits",
+    "step_evaluations",  # v0.5.0 / 8D — Phase 8 dual-prompt analytics
     "method_switches",
 }
 

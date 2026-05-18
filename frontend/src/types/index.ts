@@ -24,6 +24,7 @@ export type {
     SessionRating,
     SessionStartResult,
     SpacedRecommendation,
+    StepEvaluationSummary,
     StepEvaluationVerdict,
     SwitchRecommendation,
     ToolRecommendation,

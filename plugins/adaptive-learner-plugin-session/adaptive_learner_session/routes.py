@@ -63,6 +63,9 @@ from app.models import (
     SessionRating,
     User,
 )
+from app.models import (
+    StepEvaluation as StepEvaluationRow,
+)
 from app.schemas import (
     AIProvider,
     LearningMethod,
@@ -582,6 +585,28 @@ def append_message(
             )
         if applied:
             sess.cycle_step = evaluation.suggested_step
+        # v0.5.0 / 8D — persist the evaluation row for the
+        # tracking plugin's aggregates (avg confidence, repeat
+        # count, time-per-step). ``to_step`` records where the
+        # session ACTUALLY went (= from_step if not applied,
+        # = suggested_step if applied), not just what the AI
+        # suggested. ``reason`` is stored verbatim regardless of
+        # fallback_used so a future audit can see whether the AI
+        # was outputting useful text or producing parse-fail
+        # garbage.
+        to_step = evaluation.suggested_step if applied else from_step
+        db.add(
+            StepEvaluationRow(
+                session_id=sess.id,
+                from_step=from_step,
+                to_step=to_step,
+                advance=evaluation.advance,
+                confidence=evaluation.confidence,
+                applied=applied,
+                fallback_used=evaluation.fallback_used,
+                reason=evaluation.reason,
+            )
+        )
         step_eval_out = _StepEvaluationOut(
             advance=evaluation.advance,
             confidence=evaluation.confidence,

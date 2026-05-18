@@ -160,6 +160,14 @@ progress:
   commit_duration: Duracion
   commit_date: Fecha
   no_commits: Todavia no hay sesiones completadas.
+  step_eval_title: Analisis de evaluacion IA por paso
+  step_eval_empty: >-
+    Aun no hay datos de evaluacion — inicia una sesion para ver el analisis.
+  step_eval_avg_confidence: Confianza IA media
+  step_eval_repeats: "Veces que la IA dijo 'aun no'"
+  step_eval_advances: Avances de paso
+  step_eval_backward: Retrocesos
+  step_eval_stickiest_label: "Mas tiempo en:"
 settings:
   title: Ajustes
   section_language: Idioma

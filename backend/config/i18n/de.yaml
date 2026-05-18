@@ -182,6 +182,14 @@ progress:
   commit_duration: Dauer
   commit_date: Datum
   no_commits: Noch keine abgeschlossenen Sessions.
+  step_eval_title: KI-Schritt-Bewertung
+  step_eval_empty: >-
+    Noch keine KI-Bewertungsdaten — starte eine Session, um Einblicke zu sehen.
+  step_eval_avg_confidence: Ø KI-Konfidenz
+  step_eval_repeats: "Mal sagte die KI 'noch nicht bereit'"
+  step_eval_advances: Schritt-Vorwärts
+  step_eval_backward: Schritt-Rückwärts
+  step_eval_stickiest_label: "Meiste Zeit bei:"
 
 settings:
   title: Einstellungen

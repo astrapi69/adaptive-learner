@@ -507,6 +507,32 @@ class ProgressCommitOut(BaseModel):
     committed_at: datetime
 
 
+# --- StepEvaluation (v0.5.0 / Phase 8D) -----------------------------------
+
+
+class StepEvaluationOut(BaseModel):
+    """Read-only serialisation of one Phase-8 evaluation verdict.
+
+    Written by the session plugin's /message route; the 8D tracking
+    plugin aggregates a project's rows to compute average confidence,
+    stay-on-step counts, and time-per-step. No Create / Update
+    schemas — the row is immutable once persisted.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    session_id: str
+    from_step: int
+    to_step: int
+    advance: bool
+    confidence: float
+    applied: bool
+    fallback_used: bool
+    reason: str
+    evaluated_at: datetime
+
+
 # --- MethodSwitch -----------------------------------------------------------
 
 
@@ -596,4 +622,6 @@ __all__ = [
     "MethodSwitchCreate",
     "MethodSwitchUpdate",
     "MethodSwitchOut",
+    # StepEvaluation (v0.5.0 / Phase 8D — read-only)
+    "StepEvaluationOut",
 ]

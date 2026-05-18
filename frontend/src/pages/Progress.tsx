@@ -4,10 +4,15 @@ import {useNavigate} from "react-router-dom";
 import MethodBadge from "../components/MethodBadge";
 import MethodDistribution from "../components/MethodDistribution";
 import ProgressTimeline from "../components/ProgressTimeline";
+import StepEvaluationInsights from "../components/StepEvaluationInsights";
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
-import type {ProgressCommit, TrackingSummary} from "../types";
+import type {
+    ProgressCommit,
+    StepEvaluationSummary,
+    TrackingSummary,
+} from "../types";
 
 /**
  * Progress page (project-reference §8 row ``/progress``).
@@ -25,6 +30,8 @@ export default function Progress() {
     const {t} = useI18n();
     const navigate = useNavigate();
     const [summary, setSummary] = useState<TrackingSummary | null>(null);
+    const [stepEvalSummary, setStepEvalSummary] =
+        useState<StepEvaluationSummary | null>(null);
     const [commits, setCommits] = useState<ProgressCommit[]>([]);
     const [loadError, setLoadError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
@@ -43,6 +50,11 @@ export default function Progress() {
             .then(([progressResp, commitsResp]) => {
                 if (cancelled) return;
                 setSummary(progressResp.tracking ?? null);
+                // v0.5.0 / 8D — Phase 8 step-evaluation aggregates
+                // come on the same response under their own
+                // namespace. Missing namespace (e.g. older backend)
+                // → null → component renders empty-state.
+                setStepEvalSummary(progressResp.step_evaluation ?? null);
                 // Reverse so newest commits appear first; backend
                 // returns ASC by committed_at.
                 setCommits([...commitsResp].reverse());
@@ -97,6 +109,16 @@ export default function Progress() {
                     </h2>
                     <MethodDistribution summary={summary} height={260} />
                 </article>
+            </section>
+
+            <section className="dashboard-card dashboard-card-wide">
+                <h2 className="dashboard-card-title">
+                    {t(
+                        "progress.step_eval_title",
+                        "AI step-evaluation insights",
+                    )}
+                </h2>
+                <StepEvaluationInsights summary={stepEvalSummary} />
             </section>
 
             <section className="dashboard-card dashboard-card-wide">

@@ -177,6 +177,14 @@ progress:
   commit_duration: Duration
   commit_date: Date
   no_commits: No completed sessions yet.
+  step_eval_title: AI step-evaluation insights
+  step_eval_empty: >-
+    No AI step-evaluation data yet — start a session to see insights here.
+  step_eval_avg_confidence: Avg AI confidence
+  step_eval_repeats: "Times AI said 'not ready yet'"
+  step_eval_advances: Step advances
+  step_eval_backward: Backward transitions
+  step_eval_stickiest_label: "Most time on:"
 
 settings:
   title: Settings
