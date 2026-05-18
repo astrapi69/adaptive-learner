@@ -19,6 +19,7 @@ const apiRate = vi.fn();
 const apiEnd = vi.fn();
 const apiSwitchRec = vi.fn();
 const apiAcceptSwitch = vi.fn();
+const apiSettingsGet = vi.fn();
 vi.mock("../api/client", async () => {
     const actual = await vi.importActual<typeof import("../api/client")>(
         "../api/client",
@@ -34,6 +35,10 @@ vi.mock("../api/client", async () => {
                 end: (...args: unknown[]) => apiEnd(...args),
                 switchRecommendation: (...args: unknown[]) => apiSwitchRec(...args),
                 acceptSwitch: (...args: unknown[]) => apiAcceptSwitch(...args),
+            },
+            settings: {
+                ...actual.api.settings,
+                get: (...args: unknown[]) => apiSettingsGet(...args),
             },
         },
     };
@@ -77,13 +82,21 @@ describe("Session page", () => {
         apiEnd.mockReset();
         apiSwitchRec.mockReset();
         apiAcceptSwitch.mockReset();
+        apiSettingsGet.mockReset();
         // Default: no recommendation. Per-test override when the
         // banner path is being exercised.
         apiSwitchRec.mockResolvedValue({recommended: false});
+        // Default: pretend the user has no settings record yet
+        // (rejects); the provider chip stays hidden. Per-test
+        // override when the chip is the subject under test.
+        apiSettingsGet.mockRejectedValue(new Error("no settings yet"));
         toastError.mockReset();
         toastSuccess.mockReset();
         localStorage.clear();
         localStorage.setItem("adaptive-learner.project_id", "p-1");
+        // Also seed user_id so the post-start settings fetch in
+        // Session.tsx has somewhere to look up the active provider.
+        localStorage.setItem("adaptive-learner.user_id", "u-1");
     });
     afterEach(() => {
         vi.restoreAllMocks();
@@ -364,5 +377,41 @@ describe("Session page", () => {
             screen.queryByTestId("method-switch-banner"),
         ).not.toBeInTheDocument();
         expect(apiAcceptSwitch).not.toHaveBeenCalled();
+    });
+
+    // --- v0.2.0: active-provider chip in the session header --------
+
+    it("renders the active-provider chip from user settings", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiSettingsGet.mockResolvedValue({
+            id: "us-1",
+            user_id: "u-1",
+            language: "de",
+            active_provider: "openai",
+            has_anthropic_key: false,
+            has_openai_key: true,
+            has_gemini_key: false,
+            created_at: "2026-05-18T00:00:00Z",
+            updated_at: "2026-05-18T00:00:00Z",
+        });
+        renderSession();
+        await screen.findByTestId("session");
+        const chip = await screen.findByTestId("session-active-provider");
+        // Either the localised label or the raw key is acceptable
+        // depending on which i18n fallback resolved.
+        expect(chip.textContent).toMatch(/openai|OpenAI|GPT/);
+    });
+
+    it("does NOT render the provider chip when settings fetch fails", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        // The beforeEach already rejects apiSettingsGet; just
+        // assert the chip is absent.
+        renderSession();
+        await screen.findByTestId("session");
+        // Allow the rejected promise + state update to settle.
+        await waitFor(() => expect(apiSettingsGet).toHaveBeenCalled());
+        expect(
+            screen.queryByTestId("session-active-provider"),
+        ).not.toBeInTheDocument();
     });
 });

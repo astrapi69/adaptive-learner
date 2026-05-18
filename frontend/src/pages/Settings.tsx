@@ -213,14 +213,23 @@ export default function Settings() {
                 </h2>
                 {AI_PROVIDERS.map((provider) => {
                     const has = settings[`has_${provider}_key`] as boolean;
+                    const isActive = settings.active_provider === provider;
                     return (
                         <div
                             key={provider}
-                            className="api-key-row"
+                            className={`api-key-row${isActive ? " is-active-provider" : ""}`}
                             data-testid={`api-key-row-${provider}`}
                         >
                             <div className="api-key-row-head">
                                 <strong>{t(`settings.provider_${provider}`, provider)}</strong>
+                                {isActive && (
+                                    <span
+                                        className="api-key-active-badge"
+                                        data-testid={`api-key-active-${provider}`}
+                                    >
+                                        {t("settings.provider_active", "Active")}
+                                    </span>
+                                )}
                                 <span
                                     className={`api-key-status ${has ? "is-set" : "is-missing"}`}
                                     data-testid={`api-key-status-${provider}`}
@@ -230,6 +239,17 @@ export default function Settings() {
                                         : t("settings.api_key_missing", "Not set")}
                                 </span>
                             </div>
+                            {isActive && !has && (
+                                <p
+                                    className="api-key-warning"
+                                    data-testid={`api-key-warning-${provider}`}
+                                >
+                                    {t(
+                                        "settings.active_provider_missing_key",
+                                        "This is your active provider but no API key is stored. AI replies will be skipped until a key is saved.",
+                                    )}
+                                </p>
+                            )}
                             <div className="api-key-row-input">
                                 <input
                                     data-testid={`api-key-input-${provider}`}

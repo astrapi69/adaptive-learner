@@ -152,6 +152,10 @@ settings:
   api_key_confirm_delete: Diesen API-Key wirklich entfernen?
   saved: Gespeichert.
   save_failed: Speichern fehlgeschlagen.
+  provider_active: Aktiv
+  active_provider_missing_key: >-
+    Dies ist dein aktiver Anbieter, aber kein API-Key ist gespeichert.
+    KI-Antworten werden uebersprungen, bis ein Key hinterlegt ist.
 
 methods:
   deductive:

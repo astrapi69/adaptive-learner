@@ -212,4 +212,59 @@ describe("Settings page", () => {
         await screen.findByTestId("settings-error");
         expect(screen.getByTestId("settings-error").textContent).toContain("DB down");
     });
+
+    // --- v0.2.0: Active-provider visual feedback ---------------------
+
+    it("renders the Active badge next to the active provider's API-key row", async () => {
+        apiGet.mockResolvedValue({...BASE, active_provider: "openai"});
+        renderSettings();
+        await screen.findByTestId("settings");
+        // Active badge appears on the openai row.
+        expect(screen.getByTestId("api-key-active-openai")).toBeInTheDocument();
+        // NOT on the anthropic / gemini rows.
+        expect(screen.queryByTestId("api-key-active-anthropic")).not.toBeInTheDocument();
+        expect(screen.queryByTestId("api-key-active-gemini")).not.toBeInTheDocument();
+    });
+
+    it("renders the missing-key warning when the active provider has no key", async () => {
+        apiGet.mockResolvedValue({
+            ...BASE,
+            active_provider: "openai",
+            has_openai_key: false,
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(
+            screen.getByTestId("api-key-warning-openai"),
+        ).toBeInTheDocument();
+    });
+
+    it("hides the missing-key warning when the active provider has a key", async () => {
+        apiGet.mockResolvedValue({
+            ...BASE,
+            active_provider: "openai",
+            has_openai_key: true,
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(
+            screen.queryByTestId("api-key-warning-openai"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("non-active providers without keys do NOT get the warning", async () => {
+        apiGet.mockResolvedValue({
+            ...BASE,
+            active_provider: "anthropic",
+            has_anthropic_key: true,
+            has_openai_key: false, // no key, but openai is not active
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(
+            screen.queryByTestId("api-key-warning-openai"),
+        ).not.toBeInTheDocument();
+        // The Active badge is on anthropic, not openai.
+        expect(screen.getByTestId("api-key-active-anthropic")).toBeInTheDocument();
+    });
 });

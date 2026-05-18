@@ -153,6 +153,10 @@ settings:
   api_key_confirm_delete: Really remove this API key?
   saved: Saved.
   save_failed: Save failed.
+  provider_active: Active
+  active_provider_missing_key: >-
+    This is your active provider but no API key is stored. AI replies
+    will be skipped until a key is saved.
 
 methods:
   deductive:

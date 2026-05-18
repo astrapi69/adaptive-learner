@@ -11,7 +11,11 @@ import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {notify} from "../utils/notify";
 import type {LearningMethod} from "../lib/constants";
-import type {LearningSession, SwitchRecommendation} from "../types";
+import type {
+    LearningSession,
+    SwitchRecommendation,
+    UserSettings,
+} from "../types";
 
 /**
  * Session page (project-reference §8 row ``/session``).
@@ -50,6 +54,7 @@ export default function Session() {
     const [switchRec, setSwitchRec] = useState<SwitchRecommendation | null>(null);
     const [switchDismissed, setSwitchDismissed] = useState<LearningMethod | null>(null);
     const [accepting, setAccepting] = useState(false);
+    const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
 
     const fetchSwitchRecommendation = useCallback(async (sessionId: string) => {
         try {
@@ -94,6 +99,21 @@ export default function Session() {
                 // ``recommended:false`` and the banner stays
                 // hidden.
                 void fetchSwitchRecommendation(result.session.id);
+                // Resolve the user's active provider so the
+                // session header can surface it. Fire-and-forget;
+                // a failure here is non-blocking — the header
+                // just hides the provider chip.
+                const userId = readLearnerState().userId;
+                if (userId) {
+                    api.settings
+                        .get(userId)
+                        .then((s) => {
+                            if (!cancelled) setUserSettings(s);
+                        })
+                        .catch(() => {
+                            /* non-blocking */
+                        });
+                }
             })
             .catch((err) => {
                 if (cancelled) return;
@@ -262,7 +282,24 @@ export default function Session() {
             <header className="session-header">
                 <div className="session-header-row">
                     <h1>{t("session.title", "Learning session")}</h1>
-                    <MethodBadge method={session.method} />
+                    <div className="session-header-chips">
+                        <MethodBadge method={session.method} />
+                        {userSettings && (
+                            <span
+                                className="provider-chip"
+                                data-testid="session-active-provider"
+                                title={t(
+                                    `settings.provider_${userSettings.active_provider}`,
+                                    userSettings.active_provider,
+                                )}
+                            >
+                                {t(
+                                    `settings.provider_${userSettings.active_provider}`,
+                                    userSettings.active_provider,
+                                )}
+                            </span>
+                        )}
+                    </div>
                 </div>
                 <CycleProgress currentStep={session.cycle_step} />
             </header>
