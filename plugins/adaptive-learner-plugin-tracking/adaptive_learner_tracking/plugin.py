@@ -80,10 +80,18 @@ class TrackingPlugin(BasePlugin):
             )
             commits_dicts = [
                 {
+                    "id": r.id,
                     "method": r.method,
                     "understanding": r.understanding,
                     "stress": r.stress,
+                    "error_rate": r.error_rate,
                     "duration_minutes": r.duration_minutes,
+                    # ISO-8601 (UTC) so the aggregator can group
+                    # by calendar date for the streak calc and
+                    # the frontend can render a localized date.
+                    "committed_at": (
+                        r.committed_at.isoformat() if r.committed_at else None
+                    ),
                 }
                 for r in rows
             ]

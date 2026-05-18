@@ -213,6 +213,32 @@ def test_get_progress_no_sessions_returns_empty_namespace(client: TestClient):
     assert body["tracking"]["recent_understanding"] == []
 
 
+# --- Phase 7B: new tracking fields ---------------------------------------
+
+
+def test_get_progress_carries_v0_4_0_fields(client: TestClient):
+    """v0.4.0 adds total_minutes, streak_days, method_distribution,
+    recent_sessions on top of the v0.1.0 fields. Sanity-check
+    that the live route surfaces all of them in the namespace
+    slice."""
+    _, project_id = _make_user_and_project(client)
+    _run_one_session(client, project_id, understanding=4, stress=2)
+    _run_one_session(client, project_id, understanding=3, stress=3)
+    body = client.get(f"/api/plugins/tracking/progress/{project_id}").json()
+    slice_ = body["tracking"]
+    assert "total_minutes" in slice_
+    assert "streak_days" in slice_
+    assert "method_distribution" in slice_
+    assert "recent_sessions" in slice_
+    # method_distribution always emits one entry per method (6).
+    assert len(slice_["method_distribution"]) == 6
+    # recent_sessions newest-first, capped at 5.
+    assert len(slice_["recent_sessions"]) == 2
+    assert all(
+        row["committed_at"] is not None for row in slice_["recent_sessions"]
+    )
+
+
 # --- Hook dispatch -------------------------------------------------------
 
 

@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import MethodDistribution from "../components/MethodDistribution";
 import ProfileRadar from "../components/ProfileRadar";
 import ProgressTimeline from "../components/ProgressTimeline";
+import RecentSessions from "../components/RecentSessions";
 import QuickStartButton from "../components/QuickStartButton";
 import SessionCounter from "../components/SessionCounter";
 import ToolRecommendations from "../components/ToolRecommendations";
@@ -140,6 +141,13 @@ export default function Dashboard() {
                         {t("dashboard.card_tools", "Tool recommendations")}
                     </h2>
                     <ToolRecommendations tools={tools} />
+                </article>
+
+                <article className="dashboard-card dashboard-card-wide">
+                    <h2 className="dashboard-card-title">
+                        {t("dashboard.card_recent_sessions", "Recent sessions")}
+                    </h2>
+                    <RecentSessions sessions={summary?.recent_sessions ?? []} />
                 </article>
             </section>
         </main>

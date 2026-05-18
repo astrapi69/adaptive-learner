@@ -74,11 +74,31 @@ const PROFILE: LearningProfile = {
 const SUMMARY: ProgressSummary = {
     tracking: {
         total_sessions: 4,
+        total_minutes: 120,
+        streak_days: 2,
         sessions_per_method: {deductive: 3, dialogic: 1},
+        method_distribution: [
+            {method: "deductive", count: 3, percentage: 75},
+            {method: "dialogic", count: 1, percentage: 25},
+            {method: "inductive", count: 0, percentage: 0},
+            {method: "error_based", count: 0, percentage: 0},
+            {method: "contextual", count: 0, percentage: 0},
+            {method: "ai_adaptive", count: 0, percentage: 0},
+        ],
         recent_understanding: [0.4, 0.5, 0.55, 0.6],
         recent_stress: [0.5, 0.4, 0.4, 0.35],
         mean_understanding: 0.51,
         mean_stress: 0.41,
+        recent_sessions: [
+            {
+                id: "c-1",
+                method: "deductive",
+                understanding: 0.6,
+                stress: 0.35,
+                duration_minutes: 30,
+                committed_at: "2026-05-18T11:00:00Z",
+            },
+        ],
     },
 };
 

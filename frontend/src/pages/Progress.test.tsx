@@ -41,11 +41,22 @@ vi.mock("../components/MethodDistribution", () => ({
 const SUMMARY: ProgressSummary = {
     tracking: {
         total_sessions: 2,
+        total_minutes: 75,
+        streak_days: 2,
         sessions_per_method: {deductive: 2},
+        method_distribution: [
+            {method: "deductive", count: 2, percentage: 100},
+            {method: "inductive", count: 0, percentage: 0},
+            {method: "error_based", count: 0, percentage: 0},
+            {method: "dialogic", count: 0, percentage: 0},
+            {method: "contextual", count: 0, percentage: 0},
+            {method: "ai_adaptive", count: 0, percentage: 0},
+        ],
         recent_understanding: [0.5, 0.6],
         recent_stress: [0.4, 0.35],
         mean_understanding: 0.55,
         mean_stress: 0.38,
+        recent_sessions: [],
     },
 };
 

@@ -1,4 +1,4 @@
-# Adaptive Learner i18n catalog (ES — Phase 6).
+# Adaptive Learner i18n catalog (ES — Phase 7).
 #
 # Mirror of en.yaml structure. Strings carrying non-native
 # fallbacks are EN passthroughs. Structure parity-checked by
@@ -105,7 +105,9 @@ dashboard:
   card_distribution: Distribucion de metodos
   card_counter: Sesiones
   card_tools: Recomendaciones de herramientas
+  card_recent_sessions: Recent sessions
   metric_total_sessions: Sesiones totales
+  metric_total_minutes: Total minutes
   metric_mean_understanding: Comprension media
   metric_mean_stress: Estres medio
   metric_streak: Racha de dias

@@ -118,7 +118,9 @@ dashboard:
   card_distribution: Method distribution
   card_counter: Sessions
   card_tools: Tool recommendations
+  card_recent_sessions: Recent sessions
   metric_total_sessions: Total sessions
+  metric_total_minutes: Total minutes
   metric_mean_understanding: Mean understanding
   metric_mean_stress: Mean stress
   metric_streak: Day streak

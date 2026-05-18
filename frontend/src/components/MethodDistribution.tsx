@@ -10,7 +10,7 @@ import {
 } from "recharts";
 
 import {useI18n} from "../hooks/useI18n";
-import {LEARNING_METHODS, METHOD_COLORS, type LearningMethod} from "../lib/constants";
+import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
 import type {TrackingSummary} from "../types";
 
 interface MethodDistributionProps {
@@ -22,17 +22,22 @@ interface BarDatum {
     method: LearningMethod;
     label: string;
     count: number;
+    percentage: number;
     color: string;
 }
 
 /**
- * Horizontal-ish bar chart (one bar per method) showing the
- * number of completed sessions per method. The colour of each
- * bar comes from METHOD_COLORS so the same hex is used across
- * the radar (Phase 4C) and this chart.
+ * Phase 7B: bar chart showing sessions per method as both
+ * absolute count AND percentage of total. Each bar is coloured
+ * from METHOD_COLORS so the same hex flows across the radar
+ * (Phase 4C) and this chart. v0.4.0 wires to the new
+ * ``method_distribution`` field from the tracking aggregator
+ * (one entry per method including zero-counts, percentages
+ * pre-computed server-side so the chart stays a pure
+ * presentation layer).
  *
- * Methods without sessions are still rendered with a zero
- * value so the user can see the full six-method comparison.
+ * The chart renders one bar per method even at zero count so
+ * the user can see the full six-method comparison.
  */
 export default function MethodDistribution({summary, height = 240}: MethodDistributionProps) {
     const {t} = useI18n();
@@ -43,11 +48,14 @@ export default function MethodDistribution({summary, height = 240}: MethodDistri
             </div>
         );
     }
-    const data: BarDatum[] = LEARNING_METHODS.map((method) => ({
-        method,
-        label: t(`methods.${method}.label`, method),
-        count: summary.sessions_per_method[method] ?? 0,
-        color: METHOD_COLORS[method],
+    // method_distribution is server-sorted (count desc); preserve
+    // that order in the chart so the most-used method is leftmost.
+    const data: BarDatum[] = summary.method_distribution.map((entry) => ({
+        method: entry.method,
+        label: t(`methods.${entry.method}.label`, entry.method),
+        count: entry.count,
+        percentage: entry.percentage,
+        color: METHOD_COLORS[entry.method],
     }));
     return (
         <div
@@ -60,7 +68,25 @@ export default function MethodDistribution({summary, height = 240}: MethodDistri
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="label" interval={0} angle={-20} textAnchor="end" height={56} />
                     <YAxis allowDecimals={false} />
-                    <Tooltip />
+                    <Tooltip
+                        // Tooltip is informational only; the
+                        // chart's primary metric (count) shows on
+                        // the Y axis. The bar payload carries the
+                        // pre-computed percentage so the tooltip
+                        // can surface both. Loose typing here
+                        // because Recharts' Formatter type has
+                        // shifted across minor releases; the safe
+                        // path is to cast inside the callback.
+                        formatter={(value, _name, item) => {
+                            const payload = (item as {payload?: BarDatum})
+                                ?.payload;
+                            const pct = payload?.percentage ?? 0;
+                            return [
+                                `${value} (${pct}%)`,
+                                t("progress.commit_method", "Method"),
+                            ];
+                        }}
+                    />
                     <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                         {data.map((d) => (
                             <Cell key={d.method} fill={d.color} />

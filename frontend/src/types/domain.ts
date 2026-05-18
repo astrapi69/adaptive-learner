@@ -272,13 +272,32 @@ export interface AssessmentEvaluatePayload {
  * The shape under ``tracking`` matches
  * ``plugins/.../tracking/summary.py:aggregate``.
  */
+export interface MethodDistributionEntry {
+    method: LearningMethod;
+    count: number;
+    percentage: number;
+}
+
+export interface RecentSessionEntry {
+    id: string;
+    method: LearningMethod;
+    understanding: number;
+    stress: number;
+    duration_minutes: number;
+    committed_at: string;
+}
+
 export interface TrackingSummary {
     total_sessions: number;
+    total_minutes: number;
+    streak_days: number;
     sessions_per_method: Partial<Record<LearningMethod, number>>;
+    method_distribution: MethodDistributionEntry[];
     recent_understanding: number[];
     recent_stress: number[];
     mean_understanding: number;
     mean_stress: number;
+    recent_sessions: RecentSessionEntry[];
 }
 
 export interface ProgressSummary {
