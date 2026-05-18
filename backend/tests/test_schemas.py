@@ -338,3 +338,30 @@ def test_settings_provider_enum_coercion():
     out = UserSettingsOut.model_validate(out_payload)
     assert out.active_provider is AIProvider.OPENAI
     assert out.language == "de"
+
+
+def test_ai_provider_enum_order_is_anthropic_first():
+    """Load-bearing — NOT alphabetical. Anthropic is the user's
+    preferred provider and the app's recommended default. The
+    matching ``AI_PROVIDERS`` list on the frontend keeps the
+    same order; ``UserSettings.active_provider`` defaults to
+    ``"anthropic"``; the session plugin's ``DEFAULT_MODELS``
+    leads with anthropic. A "looks alphabetical, let me tidy
+    it" refactor fails this test loudly.
+    """
+    assert list(AIProvider) == [
+        AIProvider.ANTHROPIC,
+        AIProvider.OPENAI,
+        AIProvider.GEMINI,
+    ]
+
+
+def test_user_settings_default_active_provider_is_anthropic():
+    """``UserSettings.active_provider`` defaults to anthropic so
+    a brand-new install lands on the recommended provider
+    without any user action."""
+    from app.models import UserSettings
+
+    # Inspect the column default directly without DB roundtrip.
+    column = UserSettings.__table__.c.active_provider
+    assert column.default.arg == "anthropic"

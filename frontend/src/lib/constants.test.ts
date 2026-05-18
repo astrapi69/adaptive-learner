@@ -1,9 +1,11 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    AI_PROVIDERS,
     CYCLE_STEPS,
     LEARNING_METHODS,
     METHOD_COLORS,
+    MODEL_SUGGESTIONS,
     cycleStepForIndex,
     isLearningMethod,
 } from "./constants";
@@ -61,5 +63,25 @@ describe("CYCLE_STEPS", () => {
         expect(() => cycleStepForIndex(0)).toThrow(/out of range/);
         expect(() => cycleStepForIndex(8)).toThrow(/out of range/);
         expect(() => cycleStepForIndex(-1)).toThrow(/out of range/);
+    });
+});
+
+describe("AI_PROVIDERS", () => {
+    it("orders providers anthropic-first, NOT alphabetically", () => {
+        // Load-bearing: every Settings dropdown, the API-keys
+        // section, and the model-overrides section drives its
+        // rendering off this constant. Anthropic is the user's
+        // preferred provider and the app's recommended default;
+        // a future "looks alphabetical, let me tidy it" refactor
+        // would silently put Anthropic, Gemini, OpenAI — wrong.
+        expect(AI_PROVIDERS).toEqual(["anthropic", "openai", "gemini"]);
+        expect(AI_PROVIDERS[0]).toBe("anthropic");
+    });
+
+    it("MODEL_SUGGESTIONS has an entry for every provider", () => {
+        for (const provider of AI_PROVIDERS) {
+            expect(MODEL_SUGGESTIONS[provider]).toBeDefined();
+            expect(MODEL_SUGGESTIONS[provider].length).toBeGreaterThan(0);
+        }
     });
 });

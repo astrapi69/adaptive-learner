@@ -95,6 +95,15 @@ export function cycleStepForIndex(index: number): CycleStep {
  * Provider keys for the Settings page's ``active_provider``
  * dropdown and the api-key endpoint's ``provider`` body field.
  * Match ``backend/app/schemas.AIProvider``.
+ *
+ * Order is load-bearing — NOT alphabetical. Anthropic is the
+ * user's preferred provider and the app's recommended default;
+ * Settings dropdowns + API-keys + model-overrides sections all
+ * render in this order. The matching ``AIProvider`` enum on the
+ * backend keeps the same order, and ``UserSettings.active_provider``
+ * defaults to ``"anthropic"``. A regression-pin lives in
+ * ``constants.test.ts`` so a "looks alphabetical, let me tidy it"
+ * refactor fails loudly.
  */
 export const AI_PROVIDERS = ["anthropic", "openai", "gemini"] as const;
 
