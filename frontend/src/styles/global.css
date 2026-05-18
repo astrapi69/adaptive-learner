@@ -353,6 +353,123 @@ select:focus {
   margin-top: var(--space-4);
 }
 
+/* --- Assessment page ------------------------------------------ */
+
+.assessment-page {
+  max-width: 42rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.assessment-page h1 {
+  margin: 0 0 var(--space-2) 0;
+  font-size: 1.75rem;
+}
+
+.assessment-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.assessment-progress-caption {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+.assessment-progress-bar {
+  height: 0.5rem;
+  background: var(--surface-2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.assessment-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.25s ease;
+}
+
+.question-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.question-text {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.question-answers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.answer-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  color: var(--fg);
+  text-align: left;
+  font-size: 1rem;
+  width: 100%;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.answer-option:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--accent);
+}
+
+.answer-option.is-selected {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+.answer-bullet {
+  color: var(--accent);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.answer-text {
+  flex: 1;
+  line-height: 1.4;
+}
+
+.profile-dominant {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 1.05rem;
+}
+
+.muted {
+  color: var(--fg-muted);
+}
+
+.error-text {
+  color: var(--danger);
+}
+
 /* --- Method badges ---------------------------------------------- */
 
 .method-badge {

@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import {useTheme} from "./hooks/useTheme";
 import {I18nProvider} from "./hooks/useI18n";
+import Assessment from "./pages/Assessment";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
 
@@ -15,6 +16,7 @@ export default function App() {
             <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/assessment" element={<Assessment />} />
             </Routes>
             <ToastContainer
                 position="bottom-right"

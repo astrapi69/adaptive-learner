@@ -72,6 +72,8 @@ export default defineConfig({
                     const chunkMap: Record<string, string[]> = {
                         "vendor-react": ["react", "react-dom", "react-router-dom"],
                         "vendor-ui": ["react-toastify"],
+                        "vendor-charts": ["recharts", "d3-shape", "d3-scale", "d3-array", "d3-path", "d3-color", "d3-interpolate", "d3-format", "d3-time", "d3-time-format"],
+                        "vendor-tree": ["tree-model"],
                     };
                     for (const [chunkName, pkgs] of Object.entries(chunkMap)) {
                         for (const pkg of pkgs) {
