@@ -95,35 +95,49 @@ def test_unknown_language_falls_back_to_en(lang: str):
 
 
 @pytest.mark.parametrize("lang", ["es", "fr", "el"])
-def test_phase5f_language_without_translations_falls_back_to_en(lang: str):
-    """v0.2.0 ships the language-mapping infrastructure for ES /
-    FR / EL but the per-question translations are deferred to a
-    native-speaker review pass. Until those land, the resolver
-    must transparently fall back to EN rather than KeyError on
-    the missing ``text_{lang}`` field."""
+def test_phase6c_language_returns_translated_text(lang: str):
+    """v0.3.0 ships proper ES / FR / EL translations for every
+    one of the 12 questions and their answers. Each language's
+    output must NOT equal the EN text any more (would mean the
+    fallback path fired, which is the v0.2.0 behaviour we
+    replaced)."""
     out = questions_for_lang(lang)
-    assert out[0]["text"] == QUESTIONS[0]["text_en"]
-    # Every answer's text also resolves to EN.
+    assert out[0]["text"] != QUESTIONS[0]["text_en"]
+    # Every answer's text is now language-specific.
     for q_out, q_src in zip(out, QUESTIONS):
         for a_out, a_src in zip(q_out["answers"], q_src["answers"]):
-            assert a_out["text"] == a_src["text_en"]
+            assert a_out["text"] != a_src["text_en"]
 
 
-def test_phase5f_language_with_partial_translations_falls_back_per_field():
-    """Future-proof: if a partial translation lands for ES (e.g.
-    only the first question is translated, the rest aren't),
-    the resolver should return ES for the translated entry and
-    EN for the rest. Verified by mutating the live QUESTIONS
-    list inside a try/finally so other tests aren't affected."""
+@pytest.mark.parametrize("lang", ["pt", "tr", "ja", "ko"])
+def test_unsupported_languages_still_fall_back_to_en(lang: str):
+    """PT / TR / JA / future languages remain on the EN-fallback
+    path until their dedicated translation pass lands (the
+    resolver's _LANG_TO_KEY map says so). Pins that the v0.2.0
+    fall-back contract is preserved for any code outside the
+    {de, en, es, fr, el} set."""
+    out = questions_for_lang(lang)
+    assert out[0]["text"] == QUESTIONS[0]["text_en"]
+
+
+def test_partial_translation_falls_back_per_field():
+    """Future-proof: if a partial translation lands for a hitherto
+    untranslated language (e.g. only the first question is
+    translated for Portuguese, the rest aren't), the resolver
+    should return PT for the translated entry and EN for the
+    rest. Verified by mutating the live QUESTIONS list inside a
+    try/finally so other tests aren't affected."""
     q0 = QUESTIONS[0]
-    q0["text_es"] = "Como abordas un tema nuevo?"
+    q0["text_pt"] = "Como abordas um novo tema?"
     try:
-        out = questions_for_lang("es")
-        assert out[0]["text"] == "Como abordas un tema nuevo?"
-        # Q2 has no text_es; resolver falls back to EN.
-        assert out[1]["text"] == QUESTIONS[1]["text_en"]
+        # PT is not in _LANG_TO_KEY; resolver falls back to EN
+        # regardless of whether the field exists. This pins the
+        # invariant: adding the field alone doesn't enable a
+        # language — the map row is the load-bearing part.
+        out = questions_for_lang("pt")
+        assert out[0]["text"] == QUESTIONS[0]["text_en"]
     finally:
-        del q0["text_es"]
+        del q0["text_pt"]
 
 
 def test_questions_for_lang_uses_regional_prefix():
