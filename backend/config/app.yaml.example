@@ -25,6 +25,7 @@ plugins:
   disabled: []
   enabled:
     - assessment
+    - ai-anthropic
   entry_point_group: adaptive_learner.plugins
 ui:
   title: Adaptive Learner

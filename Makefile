@@ -18,7 +18,8 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
 
 .PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
-       test test-backend test-frontend test-plugins test-plugin-assessment test-e2e test-e2e-ui \
+       test test-backend test-frontend test-plugins test-plugin-assessment \
+       test-plugin-ai-anthropic test-e2e test-e2e-ui \
        test-coverage test-coverage-backend test-coverage-frontend \
        check-types check-types-backend check-types-frontend \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -195,7 +196,7 @@ test-backend: ## Run backend tests
 # per-plugin pytest run uses that same env via its absolute Python
 # binary; the plugin doesn't need its own poetry env / lock.
 
-test-plugins: test-plugin-assessment ## Run every plugin's own test suite
+test-plugins: test-plugin-assessment test-plugin-ai-anthropic ## Run every plugin's own test suite
 	@echo ""
 	@echo "=== All plugin tests complete ==="
 
@@ -209,6 +210,11 @@ test-plugin-assessment: ## Assessment plugin: 12 questions DE+EN, profile calc
 	@echo ""
 	@echo "=== Plugin: assessment ==="
 	cd plugins/adaptive-learner-plugin-assessment && $(PLUGIN_PYTHON) -m pytest tests/ -q
+
+test-plugin-ai-anthropic: ## ai-anthropic plugin: Claude provider for ai_complete (mocked SDK)
+	@echo ""
+	@echo "=== Plugin: ai-anthropic ==="
+	cd plugins/adaptive-learner-plugin-ai-anthropic && $(PLUGIN_PYTHON) -m pytest tests/ -q
 
 # --- Coverage (heavy, opt-in; CI runs this on every push) ---
 

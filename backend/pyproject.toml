@@ -23,6 +23,7 @@ ruamel-yaml = "^0.19.0"
 # live code without a separate poetry install per plugin. Each new
 # Phase-3 plugin appends one line here.
 adaptive-learner-plugin-assessment = {path = "../plugins/adaptive-learner-plugin-assessment", develop = true}
+adaptive-learner-plugin-ai-anthropic = {path = "../plugins/adaptive-learner-plugin-ai-anthropic", develop = true}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.0.0"
