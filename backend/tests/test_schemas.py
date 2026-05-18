@@ -17,7 +17,6 @@ from app.models import (
     LearningProfile,
     LearningProject,
     LearningSession,
-    LearningTopic,
     User,
     UserSettings,
 )
@@ -29,8 +28,8 @@ from app.schemas import (
     LearningProfileCreate,
     LearningProfileOut,
     LearningProjectCreate,
-    LearningProjectUpdate,
     LearningProjectOut,
+    LearningProjectUpdate,
     LearningSessionCreate,
     LearningSessionOut,
     LearningTopicCreate,
@@ -43,7 +42,6 @@ from app.schemas import (
     UserSettingsOut,
     UserUpdate,
 )
-
 
 # --- User -------------------------------------------------------------------
 
@@ -155,9 +153,7 @@ def test_profile_out_includes_dominant_method_from_orm_property():
         db.add(u)
         db.commit()
         db.refresh(u)
-        proj = LearningProject(
-            user_id=u.id, topic="t", goal="g", timeframe="4w", daily_minutes=30
-        )
+        proj = LearningProject(user_id=u.id, topic="t", goal="g", timeframe="4w", daily_minutes=30)
         db.add(proj)
         db.commit()
         db.refresh(proj)
@@ -249,9 +245,7 @@ def test_session_out_from_orm():
         db.add(u)
         db.commit()
         db.refresh(u)
-        proj = LearningProject(
-            user_id=u.id, topic="t", goal="g", timeframe="4w", daily_minutes=30
-        )
+        proj = LearningProject(user_id=u.id, topic="t", goal="g", timeframe="4w", daily_minutes=30)
         db.add(proj)
         db.commit()
         db.refresh(proj)
@@ -312,9 +306,7 @@ def test_settings_out_strips_api_keys_via_orm_properties():
         db.add(u)
         db.commit()
         db.refresh(u)
-        s = UserSettings(
-            user_id=u.id, active_provider="anthropic", api_key_anthropic="ciphertext"
-        )
+        s = UserSettings(user_id=u.id, active_provider="anthropic", api_key_anthropic="ciphertext")
         db.add(s)
         db.commit()
         db.refresh(s)

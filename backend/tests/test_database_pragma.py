@@ -8,6 +8,7 @@ listener is silently removed: the backend keeps working on the surface,
 but cascade deletes start failing, commits get slower, and concurrent
 readers start blocking the writer.
 """
+
 import pytest
 from sqlalchemy import text
 

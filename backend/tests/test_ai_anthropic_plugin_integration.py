@@ -27,9 +27,7 @@ def client():
 def mocked_anthropic():
     """Patch the Anthropic SDK at the wrapper's import site so the
     real client never instantiates."""
-    with patch(
-        "adaptive_learner_ai_anthropic.client.anthropic", create=True
-    ) as m:
+    with patch("adaptive_learner_ai_anthropic.client.anthropic", create=True) as m:
         instance = MagicMock()
         instance.messages.create.return_value = SimpleNamespace(
             content=[SimpleNamespace(text="MOCKED claude reply")]
@@ -51,17 +49,13 @@ def test_no_routes_mounted_by_ai_plugin(client: TestClient):
     any /api routes. Catches a future regression where someone
     accidentally adds a debug endpoint."""
     paths = {r.path for r in app.routes if hasattr(r, "path")}
-    assert not any(
-        p.startswith("/api/plugins/ai-anthropic") for p in paths
-    )
+    assert not any(p.startswith("/api/plugins/ai-anthropic") for p in paths)
 
 
 # --- ai_complete hook through the production manager ----------------------
 
 
-def test_hook_routes_claude_model_to_anthropic_plugin(
-    client: TestClient, mocked_anthropic
-):
+def test_hook_routes_claude_model_to_anthropic_plugin(client: TestClient, mocked_anthropic):
     """firstresult dispatch: model starts with 'claude-' → plugin
     returns the completion → dispatch stops there."""
     result = manager._pm.hook.ai_complete(
@@ -74,9 +68,7 @@ def test_hook_routes_claude_model_to_anthropic_plugin(
     mocked_anthropic.Anthropic.assert_called_once_with(api_key="sk-test-XYZ")
 
 
-def test_hook_returns_none_for_non_claude_model(
-    client: TestClient, mocked_anthropic
-):
+def test_hook_returns_none_for_non_claude_model(client: TestClient, mocked_anthropic):
     """No other AI plugin is registered yet, so a gpt-* model has
     nothing to dispatch to. firstresult returns None."""
     result = manager._pm.hook.ai_complete(
@@ -90,9 +82,7 @@ def test_hook_returns_none_for_non_claude_model(
     mocked_anthropic.Anthropic.assert_not_called()
 
 
-def test_hook_passes_system_message_to_top_level_kwarg(
-    client: TestClient, mocked_anthropic
-):
+def test_hook_passes_system_message_to_top_level_kwarg(client: TestClient, mocked_anthropic):
     """End-to-end check that the system / chat split survives the
     hook → plugin → client chain."""
     manager._pm.hook.ai_complete(
@@ -124,9 +114,7 @@ def test_sdk_error_wraps_to_external_service_error(client: TestClient):
     """Any SDK-level exception (auth, rate-limit, network) maps to
     the typed ExternalServiceError so FastAPI returns a stable
     HTTP 502 with detail = 'anthropic: <message>'."""
-    with patch(
-        "adaptive_learner_ai_anthropic.client.anthropic", create=True
-    ) as m:
+    with patch("adaptive_learner_ai_anthropic.client.anthropic", create=True) as m:
         instance = MagicMock()
         instance.messages.create.side_effect = RuntimeError("upstream down")
         m.Anthropic.return_value = instance

@@ -60,9 +60,7 @@ def test_post_rejects_malformed_email_422(client: TestClient):
 def test_post_duplicate_email_returns_409(client: TestClient):
     payload = {"name": "First", "email": "dup@example.com"}
     assert client.post("/api/users", json=payload).status_code == 201
-    second = client.post(
-        "/api/users", json={"name": "Second", "email": "dup@example.com"}
-    )
+    second = client.post("/api/users", json={"name": "Second", "email": "dup@example.com"})
     assert second.status_code == 409
     detail = second.json()["detail"]
     assert "dup@example.com" in detail
@@ -72,9 +70,7 @@ def test_post_duplicate_email_returns_409(client: TestClient):
 
 
 def test_get_returns_user(client: TestClient):
-    create = client.post(
-        "/api/users", json={"name": "Sam", "email": "sam@example.com"}
-    )
+    create = client.post("/api/users", json={"name": "Sam", "email": "sam@example.com"})
     user_id = create.json()["id"]
     resp = client.get(f"/api/users/{user_id}")
     assert resp.status_code == 200
@@ -92,9 +88,7 @@ def test_get_unknown_user_404(client: TestClient):
 
 
 def test_patch_updates_name_only(client: TestClient):
-    create = client.post(
-        "/api/users", json={"name": "Original", "email": "patch@example.com"}
-    )
+    create = client.post("/api/users", json={"name": "Original", "email": "patch@example.com"})
     user_id = create.json()["id"]
     resp = client.patch(f"/api/users/{user_id}", json={"name": "Renamed"})
     assert resp.status_code == 200
@@ -105,9 +99,7 @@ def test_patch_updates_name_only(client: TestClient):
 
 
 def test_patch_clears_email_with_explicit_null(client: TestClient):
-    create = client.post(
-        "/api/users", json={"name": "X", "email": "clear@example.com"}
-    )
+    create = client.post("/api/users", json={"name": "X", "email": "clear@example.com"})
     user_id = create.json()["id"]
     resp = client.patch(f"/api/users/{user_id}", json={"email": None})
     assert resp.status_code == 200
@@ -123,9 +115,7 @@ def test_patch_to_existing_email_returns_409(client: TestClient):
     a = client.post("/api/users", json={"name": "A", "email": "a@example.com"})
     b = client.post("/api/users", json={"name": "B", "email": "b@example.com"})
     assert a.status_code == 201 and b.status_code == 201
-    resp = client.patch(
-        f"/api/users/{b.json()['id']}", json={"email": "a@example.com"}
-    )
+    resp = client.patch(f"/api/users/{b.json()['id']}", json={"email": "a@example.com"})
     assert resp.status_code == 409
 
 
@@ -134,9 +124,7 @@ def test_patch_with_empty_body_is_noop_but_200(client: TestClient):
     returned as-is. Catches the regression where exclude_unset
     accidentally writes None to every column.
     """
-    create = client.post(
-        "/api/users", json={"name": "Same", "email": "same@example.com"}
-    )
+    create = client.post("/api/users", json={"name": "Same", "email": "same@example.com"})
     before = create.json()
     resp = client.patch(f"/api/users/{before['id']}", json={})
     assert resp.status_code == 200
@@ -147,10 +135,6 @@ def test_patch_with_empty_body_is_noop_but_200(client: TestClient):
 
 
 def test_patch_validates_new_email(client: TestClient):
-    create = client.post(
-        "/api/users", json={"name": "X", "email": "good@example.com"}
-    )
-    resp = client.patch(
-        f"/api/users/{create.json()['id']}", json={"email": "still-not-an-email"}
-    )
+    create = client.post("/api/users", json={"name": "X", "email": "good@example.com"})
+    resp = client.patch(f"/api/users/{create.json()['id']}", json={"email": "still-not-an-email"})
     assert resp.status_code == 422

@@ -6,9 +6,7 @@
 import asyncio
 import time
 
-import pytest
-
-from app.job_store import Job, JobStatus, JobStore
+from app.job_store import JobStatus, JobStore
 
 
 def test_create_job():
@@ -116,7 +114,9 @@ def test_publish_event_appends_and_folds_progress():
 
     store.publish_event(job.id, "start", {"total": 5, "book_title": "Test"})
     store.publish_event(job.id, "chapter_start", {"index": 1, "title": "Ch 1"})
-    store.publish_event(job.id, "chapter_done", {"index": 1, "title": "Ch 1", "filename": "001.mp3"})
+    store.publish_event(
+        job.id, "chapter_done", {"index": 1, "title": "Ch 1", "filename": "001.mp3"}
+    )
     store.publish_event(job.id, "chapter_error", {"index": 2, "title": "Ch 2", "error": "tts down"})
 
     j = store.get(job.id)

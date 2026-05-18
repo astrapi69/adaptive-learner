@@ -49,7 +49,7 @@ def test_no_bool_keys_anywhere(lang: str):
             for k, v in node.items():
                 assert not isinstance(k, bool), (
                     f"{lang}.yaml has a bool YAML key at {path or '<root>'}: "
-                    f"{k!r} -> {v!r}. Quote the key as \"{str(k).lower()}\" "
+                    f'{k!r} -> {v!r}. Quote the key as "{str(k).lower()}" '
                     f"to keep PyYAML from interpreting it as a YAML 1.1 bool."
                 )
                 walk(v, f"{path}.{k}" if path else str(k))

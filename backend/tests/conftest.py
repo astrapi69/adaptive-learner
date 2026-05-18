@@ -82,9 +82,7 @@ if _THIS_CONFTEST.parent.parent.name == "mutants":
             _dst = _MUTANT_APP / _app_entry.name
             if _dst.exists():
                 continue
-            os.symlink(
-                _app_entry, _dst, target_is_directory=_app_entry.is_dir()
-            )
+            os.symlink(_app_entry, _dst, target_is_directory=_app_entry.is_dir())
 
 # MUST run before any `from app.* import ...` statement in this file
 # or in any test module that pytest collects.
@@ -107,9 +105,7 @@ if "ADAPTIVE_LEARNER_SECRET_KEY" not in os.environ:
 # cleanup runs at end of session; the env var here is set early so
 # any module-import-time path resolution still hits a tmp location.
 if "ADAPTIVE_LEARNER_DATA_DIR" not in os.environ:
-    os.environ["ADAPTIVE_LEARNER_DATA_DIR"] = tempfile.mkdtemp(
-        prefix="adaptive-learner-test-data-"
-    )
+    os.environ["ADAPTIVE_LEARNER_DATA_DIR"] = tempfile.mkdtemp(prefix="adaptive-learner-test-data-")
 
 # 41+ test modules open a FastAPI TestClient, each of which triggers the
 # app lifespan startup path. Starlette's TestClient recurses through its

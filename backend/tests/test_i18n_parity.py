@@ -82,11 +82,7 @@ def test_no_extra_keys(target_lang: str, reference: dict[str, object]) -> None:
 def test_no_empty_values(lang: str) -> None:
     """No translation value may be empty, None, or whitespace-only."""
     flat = _flatten(_load(lang))
-    empties = [
-        k
-        for k, v in flat.items()
-        if v is None or (isinstance(v, str) and not v.strip())
-    ]
+    empties = [k for k, v in flat.items() if v is None or (isinstance(v, str) and not v.strip())]
     assert not empties, (
         f"{lang}: {len(empties)} empty value(s) in backend/config/i18n/{lang}.yaml:\n"
         + "\n".join(f"  - {k}" for k in empties[:20])
@@ -103,8 +99,7 @@ def test_structural_parity(target_lang: str, reference_raw: dict[str, object]) -
         if isinstance(ref, dict):
             if not isinstance(tgt, dict):
                 errors.append(
-                    f"{path or '<root>'}: EN is an object, {target_lang} is "
-                    f"{type(tgt).__name__}"
+                    f"{path or '<root>'}: EN is an object, {target_lang} is {type(tgt).__name__}"
                 )
                 return errors
             for k, v in ref.items():
@@ -117,9 +112,8 @@ def test_structural_parity(target_lang: str, reference_raw: dict[str, object]) -
         return errors
 
     errors = walk(reference_raw, target_raw)
-    assert not errors, (
-        f"{target_lang}: structural divergence from {REFERENCE_LANG}:\n"
-        + "\n".join(f"  - {e}" for e in errors[:20])
+    assert not errors, f"{target_lang}: structural divergence from {REFERENCE_LANG}:\n" + "\n".join(
+        f"  - {e}" for e in errors[:20]
     )
 
 

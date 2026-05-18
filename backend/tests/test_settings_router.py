@@ -32,9 +32,7 @@ def client() -> TestClient:
 
 
 def _make_user(client: TestClient, language: str = "de") -> str:
-    resp = client.post(
-        "/api/users", json={"name": "Aster", "language": language}
-    )
+    resp = client.post("/api/users", json={"name": "Aster", "language": language})
     assert resp.status_code == 201, resp.text
     return resp.json()["id"]
 
@@ -83,9 +81,7 @@ def test_get_settings_never_returns_api_key_columns(client: TestClient):
 
 def test_patch_updates_active_provider(client: TestClient):
     user_id = _make_user(client)
-    resp = client.patch(
-        f"/api/settings/{user_id}", json={"active_provider": "openai"}
-    )
+    resp = client.patch(f"/api/settings/{user_id}", json={"active_provider": "openai"})
     assert resp.status_code == 200
     assert resp.json()["active_provider"] == "openai"
 
@@ -112,17 +108,13 @@ def test_patch_both_at_once(client: TestClient):
 
 
 def test_patch_unknown_user_404(client: TestClient):
-    resp = client.patch(
-        "/api/settings/does-not-exist", json={"active_provider": "openai"}
-    )
+    resp = client.patch("/api/settings/does-not-exist", json={"active_provider": "openai"})
     assert resp.status_code == 404
 
 
 def test_patch_rejects_unknown_provider_422(client: TestClient):
     user_id = _make_user(client)
-    resp = client.patch(
-        f"/api/settings/{user_id}", json={"active_provider": "magic-llm"}
-    )
+    resp = client.patch(f"/api/settings/{user_id}", json={"active_provider": "magic-llm"})
     assert resp.status_code == 422
 
 
@@ -195,9 +187,7 @@ def test_post_api_key_round_trip_via_service(client: TestClient):
     assert resp.status_code == 200
     db = SessionLocal()
     try:
-        recovered = settings_service.get_decrypted_api_key(
-            db, user_id, AIProvider.OPENAI
-        )
+        recovered = settings_service.get_decrypted_api_key(db, user_id, AIProvider.OPENAI)
         assert recovered == plaintext
     finally:
         db.close()
@@ -220,15 +210,9 @@ def test_post_api_key_each_provider_writes_correct_column(client: TestClient):
     assert body["has_gemini_key"] is True
     db = SessionLocal()
     try:
-        recovered_a = settings_service.get_decrypted_api_key(
-            db, user_id, AIProvider.ANTHROPIC
-        )
-        recovered_o = settings_service.get_decrypted_api_key(
-            db, user_id, AIProvider.OPENAI
-        )
-        recovered_g = settings_service.get_decrypted_api_key(
-            db, user_id, AIProvider.GEMINI
-        )
+        recovered_a = settings_service.get_decrypted_api_key(db, user_id, AIProvider.ANTHROPIC)
+        recovered_o = settings_service.get_decrypted_api_key(db, user_id, AIProvider.OPENAI)
+        recovered_g = settings_service.get_decrypted_api_key(db, user_id, AIProvider.GEMINI)
         assert recovered_a == "ant-key"
         assert recovered_o == "oai-key"
         assert recovered_g == "gem-key"
@@ -276,10 +260,7 @@ def test_post_api_key_replaces_existing_value(client: TestClient):
     )
     db = SessionLocal()
     try:
-        assert (
-            settings_service.get_decrypted_api_key(db, user_id, AIProvider.ANTHROPIC)
-            == "second"
-        )
+        assert settings_service.get_decrypted_api_key(db, user_id, AIProvider.ANTHROPIC) == "second"
     finally:
         db.close()
 

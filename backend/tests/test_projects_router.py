@@ -61,9 +61,7 @@ def test_post_creates_project_201(client: TestClient):
 
 
 def test_post_under_unknown_user_returns_404(client: TestClient):
-    resp = client.post(
-        "/api/users/does-not-exist/projects", json=_project_body()
-    )
+    resp = client.post("/api/users/does-not-exist/projects", json=_project_body())
     assert resp.status_code == 404
     assert "does-not-exist" in resp.json()["detail"]
 
@@ -167,9 +165,7 @@ def test_patch_updates_single_field(client: TestClient):
     user_id = _make_user(client)
     create = client.post(f"/api/users/{user_id}/projects", json=_project_body())
     project_id = create.json()["id"]
-    resp = client.patch(
-        f"/api/projects/{project_id}", json={"daily_minutes": 90}
-    )
+    resp = client.patch(f"/api/projects/{project_id}", json={"daily_minutes": 90})
     assert resp.status_code == 200
     body = resp.json()
     assert body["daily_minutes"] == 90
@@ -190,9 +186,7 @@ def test_patch_clears_current_problem(client: TestClient):
     user_id = _make_user(client)
     create = client.post(f"/api/users/{user_id}/projects", json=_project_body())
     project_id = create.json()["id"]
-    resp = client.patch(
-        f"/api/projects/{project_id}", json={"current_problem": None}
-    )
+    resp = client.patch(f"/api/projects/{project_id}", json={"current_problem": None})
     assert resp.status_code == 200
     assert resp.json()["current_problem"] is None
 
@@ -206,9 +200,7 @@ def test_patch_rejects_invalid_daily_minutes(client: TestClient):
     user_id = _make_user(client)
     create = client.post(f"/api/users/{user_id}/projects", json=_project_body())
     project_id = create.json()["id"]
-    resp = client.patch(
-        f"/api/projects/{project_id}", json={"daily_minutes": 0}
-    )
+    resp = client.patch(f"/api/projects/{project_id}", json={"daily_minutes": 0})
     assert resp.status_code == 422
 
 

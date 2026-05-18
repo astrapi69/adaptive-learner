@@ -71,9 +71,7 @@ def test_db_path_alone_is_ignored_with_warning(monkeypatch, tmp_path, warning_sp
     assert str(db_file) in ignored_msgs[0]
 
 
-def test_db_path_with_data_dir_is_ignored_with_warning(
-    monkeypatch, tmp_path, warning_spy
-):
+def test_db_path_with_data_dir_is_ignored_with_warning(monkeypatch, tmp_path, warning_spy):
     """Same warning regardless of whether DATA_DIR is also set. Path
     resolves to <DATA_DIR>/adaptive_learner.db; DB_PATH is fully ignored."""
     db_file = tmp_path / "ignored.db"

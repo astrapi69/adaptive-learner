@@ -11,7 +11,6 @@ from app.main import (
     resolve_cors_origins,
 )
 
-
 # --- defaults ---------------------------------------------------------------
 
 
@@ -112,8 +111,9 @@ def test_app_yaml_cors_contains_default_frontend_port():
     http://localhost:15174 in its cors_origins list, otherwise local
     `make dev` will produce mysterious browser-side CORS errors.
     """
-    import yaml
     from pathlib import Path
+
+    import yaml
 
     cfg_path = Path(__file__).resolve().parent.parent / "config" / "app.yaml"
     with cfg_path.open(encoding="utf-8") as f:
@@ -127,14 +127,14 @@ def test_app_yaml_cors_contains_default_frontend_port():
 
 def test_app_yaml_server_port_matches_default():
     """Same rule for the documented backend port."""
-    import yaml
     from pathlib import Path
+
+    import yaml
 
     cfg_path = Path(__file__).resolve().parent.parent / "config" / "app.yaml"
     with cfg_path.open(encoding="utf-8") as f:
         cfg = yaml.safe_load(f) or {}
     port = (cfg.get("server") or {}).get("port")
     assert port == DEFAULT_BACKEND_PORT, (
-        f"backend/config/app.yaml server.port should be "
-        f"{DEFAULT_BACKEND_PORT}, got {port!r}."
+        f"backend/config/app.yaml server.port should be {DEFAULT_BACKEND_PORT}, got {port!r}."
     )

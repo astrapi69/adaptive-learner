@@ -108,10 +108,7 @@ def _make_user_and_project(client: TestClient) -> tuple[str, str]:
 
 def _all_first_answers(client: TestClient) -> list[dict]:
     questions = client.get("/api/plugins/assessment/questions").json()
-    return [
-        {"question_id": q["id"], "answer_id": q["answers"][0]["id"]}
-        for q in questions
-    ]
+    return [{"question_id": q["id"], "answer_id": q["answers"][0]["id"]} for q in questions]
 
 
 def test_evaluate_persists_a_learning_profile(client: TestClient):

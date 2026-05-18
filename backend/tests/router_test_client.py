@@ -16,8 +16,8 @@ from __future__ import annotations
 from fastapi import APIRouter, FastAPI
 from fastapi.testclient import TestClient
 
-from app.main import adaptive_learner_error_handler, global_exception_handler
 from app.exceptions import AdaptiveLearnerError
+from app.main import adaptive_learner_error_handler, global_exception_handler
 
 
 def make_app(*routers: APIRouter, prefix: str = "/api") -> FastAPI:

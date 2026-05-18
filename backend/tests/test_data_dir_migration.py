@@ -62,12 +62,8 @@ def sandbox(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Path]:
 
     monkeypatch.setattr(data_dir_migration, "_LEGACY_DB", legacy_db)
     monkeypatch.setattr(data_dir_migration, "_LEGACY_UPLOADS", legacy_uploads)
-    monkeypatch.setattr(
-        data_dir_migration, "_LEGACY_BACKUP_HISTORY", legacy_backup_history
-    )
-    monkeypatch.setattr(
-        data_dir_migration, "_LEGACY_INSTALLED_PLUGINS", legacy_installed_plugins
-    )
+    monkeypatch.setattr(data_dir_migration, "_LEGACY_BACKUP_HISTORY", legacy_backup_history)
+    monkeypatch.setattr(data_dir_migration, "_LEGACY_INSTALLED_PLUGINS", legacy_installed_plugins)
     monkeypatch.setenv("ADAPTIVE_LEARNER_DATA_DIR", str(target))
     monkeypatch.delenv("ADAPTIVE_LEARNER_TEST", raising=False)
 
@@ -81,9 +77,7 @@ def sandbox(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> dict[str, Path]:
 
 
 class TestMigrate:
-    def test_no_legacy_data_creates_target_and_marks(
-        self, sandbox
-    ) -> None:
+    def test_no_legacy_data_creates_target_and_marks(self, sandbox) -> None:
         """Fresh install: no legacy paths, no target dir.
 
         Expected: target dir gets created, .migration-complete marker
@@ -138,19 +132,16 @@ class TestMigrate:
         """
         sandbox["legacy_db"].write_text("legacy-db", encoding="utf-8")
         sandbox["target"].mkdir()
-        (sandbox["target"] / "adaptive_learner.db").write_text(
-            "target-db", encoding="utf-8"
-        )
+        (sandbox["target"] / "adaptive_learner.db").write_text("target-db", encoding="utf-8")
 
         with pytest.raises(RuntimeError, match="adaptive_learner.db.*both legacy"):
             migrate_data_dir_if_needed()
 
         # Both files still exist with their original content
         assert sandbox["legacy_db"].read_text(encoding="utf-8") == "legacy-db"
-        assert (
-            (sandbox["target"] / "adaptive_learner.db").read_text(encoding="utf-8")
-            == "target-db"
-        )
+        assert (sandbox["target"] / "adaptive_learner.db").read_text(
+            encoding="utf-8"
+        ) == "target-db"
         # Marker NOT planted on conflict
         assert not (sandbox["target"] / MIGRATION_MARKER_FILENAME).exists()
 
@@ -164,16 +155,12 @@ class TestMigrate:
         sandbox["target"].mkdir()
         (sandbox["target"] / MIGRATION_MARKER_FILENAME).touch()
         # Plant legacy data that WOULD migrate without the marker
-        sandbox["legacy_db"].write_text(
-            "this-should-stay-in-place", encoding="utf-8"
-        )
+        sandbox["legacy_db"].write_text("this-should-stay-in-place", encoding="utf-8")
 
         migrate_data_dir_if_needed()
 
         # Legacy untouched
-        assert sandbox["legacy_db"].read_text(encoding="utf-8") == (
-            "this-should-stay-in-place"
-        )
+        assert sandbox["legacy_db"].read_text(encoding="utf-8") == ("this-should-stay-in-place")
         # Target DB never created (no migration)
         assert not (sandbox["target"] / "adaptive_learner.db").exists()
 
@@ -186,9 +173,7 @@ class TestMigrate:
         sandbox["legacy_db"].write_text("once-and-only-once", encoding="utf-8")
 
         migrate_data_dir_if_needed()
-        first_breadcrumbs = list(
-            sandbox["legacy_db"].parent.glob("adaptive_learner.db.migrated-*")
-        )
+        first_breadcrumbs = list(sandbox["legacy_db"].parent.glob("adaptive_learner.db.migrated-*"))
 
         # Second call: idempotent
         migrate_data_dir_if_needed()
@@ -198,7 +183,6 @@ class TestMigrate:
 
         # Same breadcrumbs (no new file); no error raised
         assert first_breadcrumbs == second_breadcrumbs
-        assert (
-            (sandbox["target"] / "adaptive_learner.db").read_text(encoding="utf-8")
-            == "once-and-only-once"
-        )
+        assert (sandbox["target"] / "adaptive_learner.db").read_text(
+            encoding="utf-8"
+        ) == "once-and-only-once"

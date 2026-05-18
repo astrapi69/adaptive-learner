@@ -204,9 +204,7 @@ def test_topic_tree_self_reference(db, user):
     child_a = LearningTopic(
         curriculum_id=c.id, parent_id=root.id, title="Binary trees", order_index=1
     )
-    child_b = LearningTopic(
-        curriculum_id=c.id, parent_id=root.id, title="B-trees", order_index=2
-    )
+    child_b = LearningTopic(curriculum_id=c.id, parent_id=root.id, title="B-trees", order_index=2)
     db.add_all([child_a, child_b])
     db.commit()
     db.refresh(root)

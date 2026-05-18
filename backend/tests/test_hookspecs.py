@@ -31,9 +31,7 @@ EXPECTED_HOOKS: frozenset[str] = frozenset(
     }
 )
 
-FIRSTRESULT_HOOKS: frozenset[str] = frozenset(
-    {"create_session_prompt", "ai_complete"}
-)
+FIRSTRESULT_HOOKS: frozenset[str] = frozenset({"create_session_prompt", "ai_complete"})
 
 
 # --- Spec-class shape -------------------------------------------------------
@@ -83,9 +81,7 @@ def test_firstresult_hooks_have_the_flag(hook_name: str):
     )
 
 
-@pytest.mark.parametrize(
-    "hook_name", sorted(EXPECTED_HOOKS - FIRSTRESULT_HOOKS)
-)
+@pytest.mark.parametrize("hook_name", sorted(EXPECTED_HOOKS - FIRSTRESULT_HOOKS))
 def test_non_firstresult_hooks_default_to_list_dispatch(hook_name: str):
     fn = getattr(AdaptiveLearnerHookSpec, hook_name)
     spec_opts = getattr(fn, "adaptive_learner.plugins_spec")
@@ -101,14 +97,14 @@ def test_non_firstresult_hooks_default_to_list_dispatch(hook_name: str):
 # --- Signatures match the project plan -------------------------------------
 
 EXPECTED_SIGNATURES: dict[str, list[str]] = {
-    "get_assessment_questions":  ["self", "lang"],
-    "calculate_profile":         ["self", "answers"],
-    "create_session_prompt":     ["self", "project", "profile", "method", "step", "lang"],
-    "ai_complete":               ["self", "messages", "model", "api_key"],
-    "recommend_method_switch":   ["self", "project_id", "current_method", "recent_ratings"],
-    "on_session_complete":       ["self", "session", "rating"],
-    "get_progress_summary":      ["self", "project_id"],
-    "get_tool_recommendations":  ["self", "profile", "lang"],
+    "get_assessment_questions": ["self", "lang"],
+    "calculate_profile": ["self", "answers"],
+    "create_session_prompt": ["self", "project", "profile", "method", "step", "lang"],
+    "ai_complete": ["self", "messages", "model", "api_key"],
+    "recommend_method_switch": ["self", "project_id", "current_method", "recent_ratings"],
+    "on_session_complete": ["self", "session", "rating"],
+    "get_progress_summary": ["self", "project_id"],
+    "get_tool_recommendations": ["self", "profile", "lang"],
 }
 
 

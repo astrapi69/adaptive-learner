@@ -105,9 +105,7 @@ def test_full_happy_path(client: TestClient):
     assert body[0]["id"] == project_id
 
     # 6. PATCH the project.
-    resp = client.patch(
-        f"/api/projects/{project_id}", json={"daily_minutes": 60}
-    )
+    resp = client.patch(f"/api/projects/{project_id}", json={"daily_minutes": 60})
     assert resp.status_code == 200
     assert resp.json()["daily_minutes"] == 60
 
