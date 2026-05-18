@@ -636,6 +636,239 @@ select:focus {
   gap: var(--space-2);
 }
 
+/* --- Session page --------------------------------------------- */
+
+.session-page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.session-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.session-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.session-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.cycle-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cycle-caption {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+.cycle-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-1);
+}
+
+.cycle-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.cycle-step.is-complete {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--fg);
+}
+
+.cycle-step.is-current {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.cycle-step-index {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.cycle-step-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+@media (max-width: 720px) {
+  .cycle-steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .cycle-step-label {
+    display: none;
+  }
+}
+
+.session-chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-card);
+}
+
+.chat-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 50vh;
+  overflow-y: auto;
+  padding-right: var(--space-2);
+}
+
+.chat-message {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  max-width: 90%;
+  background: var(--surface-2);
+}
+
+.chat-message.is-user {
+  align-self: flex-end;
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.chat-message.is-assistant {
+  align-self: flex-start;
+  background: var(--surface-2);
+}
+
+.chat-message.is-system {
+  align-self: stretch;
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  font-size: 0.9rem;
+  color: var(--fg-muted);
+}
+
+.chat-message-content {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.chat-input-row {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
+.chat-input-row textarea {
+  flex: 1;
+  resize: vertical;
+  min-height: 3rem;
+}
+
+.method-switch-banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--warning) 18%, var(--surface));
+  border: 1px solid var(--warning);
+}
+
+.method-switch-banner-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.method-switch-banner-body {
+  margin: 0;
+  color: var(--fg);
+}
+
+.method-switch-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+/* Rating dialog (inline modal) */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--space-4);
+}
+
+.modal-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-elevated);
+  max-width: 32rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.rating-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.rating-value {
+  margin-left: var(--space-2);
+  color: var(--fg-muted);
+  font-weight: 400;
+}
+
 /* --- Method badges ---------------------------------------------- */
 
 .method-badge {

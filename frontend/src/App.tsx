@@ -8,6 +8,7 @@ import Assessment from "./pages/Assessment";
 import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import Onboarding from "./pages/Onboarding";
+import Session from "./pages/Session";
 
 export default function App() {
     useTheme();
@@ -19,6 +20,7 @@ export default function App() {
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/assessment" element={<Assessment />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/session" element={<Session />} />
             </Routes>
             <ToastContainer
                 position="bottom-right"

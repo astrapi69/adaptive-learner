@@ -69,7 +69,11 @@ export default function Assessment() {
         return () => {
             cancelled = true;
         };
-    }, [lang, navigate, t]);
+        // ``t`` deliberately omitted from deps — see Session.tsx
+        // for the rationale (i18n provider's t reference is
+        // unstable in tests; including it re-fires the effect).
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [lang, navigate]);
 
     const total = questions?.length ?? 0;
     const current = questions?.[currentIndex];

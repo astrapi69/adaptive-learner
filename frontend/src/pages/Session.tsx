@@ -1,0 +1,198 @@
+import {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+
+import CycleProgress from "../components/CycleProgress";
+import MethodBadge from "../components/MethodBadge";
+import RatingDialog, {type RatingValues} from "../components/RatingDialog";
+import SessionChat, {type ChatMessage} from "../components/SessionChat";
+import {api, ApiError} from "../api/client";
+import {useI18n} from "../hooks/useI18n";
+import {readLearnerState} from "../lib/learnerState";
+import {notify} from "../utils/notify";
+import type {LearningSession} from "../types";
+
+/**
+ * Session page (project-reference §8 row ``/session``).
+ *
+ * Flow:
+ *
+ *   1. Mount: read project_id from localStorage. Missing -> redirect
+ *      to /onboarding.
+ *   2. POST /api/plugins/session/start with {project_id, lang}.
+ *      Seed the chat with the returned ``system_prompt`` as the
+ *      first "system" message so the user sees what method /
+ *      step the AI was primed with.
+ *   3. Chat loop: user types in SessionChat -> POST /message,
+ *      message appended to the local list. A live AI provider
+ *      integration is deferred to Phase 5; v0.1.0 stores only
+ *      the user-side of the exchange.
+ *   4. End session: opens RatingDialog. Submit -> POST /rate,
+ *      then POST /end. On success, navigate to /dashboard.
+ */
+export default function Session() {
+    const {t, lang} = useI18n();
+    const navigate = useNavigate();
+
+    const [session, setSession] = useState<LearningSession | null>(null);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [startError, setStartError] = useState<string | null>(null);
+    const [showRating, setShowRating] = useState(false);
+    const [sendingMessage, setSendingMessage] = useState(false);
+    const [submittingRating, setSubmittingRating] = useState(false);
+
+    // Bootstrap: start a fresh session on mount. The v0.1.0
+    // contract is "one /session visit == one new session"; we
+    // don't try to resume across reloads because there's no
+    // GET /messages endpoint to restore the chat history.
+    useEffect(() => {
+        const projectId = readLearnerState().projectId;
+        if (!projectId) {
+            navigate("/onboarding", {replace: true});
+            return;
+        }
+        let cancelled = false;
+        setLoading(true);
+        api.session
+            .start({project_id: projectId, lang})
+            .then((result) => {
+                if (cancelled) return;
+                setSession(result.session);
+                setMessages([
+                    {
+                        id: "system-prompt",
+                        role: "system",
+                        content: result.system_prompt,
+                    },
+                ]);
+                setLoading(false);
+            })
+            .catch((err) => {
+                if (cancelled) return;
+                const detail =
+                    err instanceof ApiError ? err.detail : t("common.error");
+                setStartError(detail);
+                setLoading(false);
+            });
+        return () => {
+            cancelled = true;
+        };
+        // ``t`` is intentionally omitted: useI18n's t reference
+        // changes whenever the i18n provider's strings update,
+        // which would re-trigger this effect mid-flow. Recorded
+        // as a lesson in CLAUDE.md ("React useEffect deps + i18n
+        // test mocks: the t function isn't stable").
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [lang, navigate]);
+
+    const handleSend = async (content: string) => {
+        if (!session || sendingMessage) return;
+        const localId = `local-${messages.length + 1}`;
+        // Optimistic append so the chat surface feels responsive.
+        setMessages((prev) => [
+            ...prev,
+            {id: localId, role: "user", content},
+        ]);
+        setSendingMessage(true);
+        try {
+            const saved = await api.session.message(session.id, {
+                role: "user",
+                content,
+            });
+            setMessages((prev) =>
+                prev.map((m) =>
+                    m.id === localId ? {id: saved.id, role: "user", content: saved.content} : m,
+                ),
+            );
+        } catch (err) {
+            // Roll back the optimistic append + surface the
+            // detail so the user knows the message was not
+            // saved.
+            setMessages((prev) => prev.filter((m) => m.id !== localId));
+            const detail =
+                err instanceof ApiError ? err.detail : t("common.error");
+            notify.error(detail);
+        } finally {
+            setSendingMessage(false);
+        }
+    };
+
+    const handleRatingSubmit = async (rating: RatingValues) => {
+        if (!session || submittingRating) return;
+        setSubmittingRating(true);
+        try {
+            await api.session.rate(session.id, {
+                understanding: rating.understanding,
+                stress: rating.stress,
+                method_fit: rating.method_fit,
+                notes: rating.notes.length > 0 ? rating.notes : null,
+            });
+            await api.session.end(session.id);
+            notify.success(t("toast.session_ended", "Session ended."));
+            setShowRating(false);
+            navigate("/dashboard");
+        } catch (err) {
+            const detail =
+                err instanceof ApiError ? err.detail : t("common.error");
+            notify.error(detail);
+        } finally {
+            setSubmittingRating(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <main data-testid="session-loading" className="session-page">
+                <p className="muted">{t("common.loading", "Loading…")}</p>
+            </main>
+        );
+    }
+
+    if (startError) {
+        return (
+            <main data-testid="session-error" className="session-page">
+                <p className="error-text">{startError}</p>
+            </main>
+        );
+    }
+
+    if (!session) {
+        return null;
+    }
+
+    return (
+        <main data-testid="session" className="session-page">
+            <header className="session-header">
+                <div className="session-header-row">
+                    <h1>{t("session.title", "Learning session")}</h1>
+                    <MethodBadge method={session.method} />
+                </div>
+                <CycleProgress currentStep={session.cycle_step} />
+            </header>
+
+            <SessionChat
+                messages={messages}
+                onSend={handleSend}
+                disabled={sendingMessage}
+            />
+
+            <div className="form-actions">
+                <button
+                    type="button"
+                    className="btn btn-danger"
+                    data-testid="session-end"
+                    onClick={() => setShowRating(true)}
+                >
+                    {t("session.end_session", "End session")}
+                </button>
+            </div>
+
+            <RatingDialog
+                open={showRating}
+                onCancel={() => setShowRating(false)}
+                onSubmit={handleRatingSubmit}
+                submitting={submittingRating}
+            />
+        </main>
+    );
+}
