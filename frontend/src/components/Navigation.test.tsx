@@ -77,4 +77,64 @@ describe("Navigation", () => {
         fireEvent.click(screen.getByTestId("nav-hamburger"));
         expect(nav.className).toContain("is-menu-open");
     });
+
+    // --- v0.6.0 / 9D: online indicator ---------------------------------
+
+    it("renders the online indicator with role=status", () => {
+        renderAt("/dashboard");
+        const indicator = screen.getByTestId("nav-online-indicator");
+        expect(indicator).toBeInTheDocument();
+        expect(indicator.getAttribute("role")).toBe("status");
+        expect(indicator.getAttribute("aria-live")).toBe("polite");
+    });
+
+    it("reflects offline state when navigator.onLine is false", () => {
+        const original = Object.getOwnPropertyDescriptor(
+            window.navigator,
+            "onLine",
+        );
+        Object.defineProperty(window.navigator, "onLine", {
+            configurable: true,
+            value: false,
+        });
+        try {
+            renderAt("/dashboard");
+            const indicator = screen.getByTestId("nav-online-indicator");
+            expect(indicator.getAttribute("data-online")).toBe("false");
+            expect(indicator.className).toContain("is-offline");
+        } finally {
+            if (original) {
+                Object.defineProperty(
+                    window.navigator,
+                    "onLine",
+                    original,
+                );
+            }
+        }
+    });
+
+    it("reflects online state when navigator.onLine is true", () => {
+        const original = Object.getOwnPropertyDescriptor(
+            window.navigator,
+            "onLine",
+        );
+        Object.defineProperty(window.navigator, "onLine", {
+            configurable: true,
+            value: true,
+        });
+        try {
+            renderAt("/dashboard");
+            const indicator = screen.getByTestId("nav-online-indicator");
+            expect(indicator.getAttribute("data-online")).toBe("true");
+            expect(indicator.className).toContain("is-online");
+        } finally {
+            if (original) {
+                Object.defineProperty(
+                    window.navigator,
+                    "onLine",
+                    original,
+                );
+            }
+        }
+    });
 });

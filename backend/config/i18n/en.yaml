@@ -41,6 +41,8 @@ nav:
   settings: Settings
   home: Home
   menu: Menu
+  online: Online
+  offline: Offline
 
 curriculum:
   title: Curriculum
@@ -166,6 +168,9 @@ session:
   step_progress: Step {current} of {total}
   step_advance_toast: "Moving to: {step}"
   step_reason_tooltip: Why this step?
+  offline_start_blocked: >-
+    You're offline. New sessions need a network connection — past
+    sessions stay readable from the Dashboard.
 
 progress:
   title: Progress

@@ -1256,6 +1256,41 @@ select:focus {
   background: color-mix(in srgb, var(--accent) 10%, var(--surface));
 }
 
+.nav-online-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  cursor: default;
+}
+
+.nav-online-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--accent);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nav-online-indicator.is-online .nav-online-dot {
+  /* Sit calmly. Green dot drawn from theme palette so dark mode
+     inherits a darker shade automatically. */
+  background: #10b981;
+  box-shadow: 0 0 0 2px color-mix(in srgb, #10b981 20%, transparent);
+}
+
+.nav-online-indicator.is-offline .nav-online-dot {
+  background: var(--danger, #ef4444);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger, #ef4444) 20%, transparent);
+}
+
+.nav-online-indicator.is-offline .nav-online-label {
+  color: var(--danger, #ef4444);
+}
+
 .nav-theme-toggle {
   background: transparent;
   border: 1px solid var(--border-strong);
@@ -1633,6 +1668,17 @@ select:focus {
 
   .nav-hamburger {
     display: inline-flex;
+  }
+
+  /* ----- Online indicator: dot-only on mobile ---------------- */
+  /* The "Online"/"Offline" word is removed to save horizontal
+     space; the dot + the ``title`` tooltip carry the meaning.
+     Same affordance pattern as the brand-name hiding from 9A. */
+  .nav-online-label {
+    display: none;
+  }
+  .nav-online-indicator {
+    padding: var(--space-1);
   }
 
   /* The drawer pops out below the nav bar. Width 100% of the

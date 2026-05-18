@@ -10,6 +10,7 @@ import RatingDialog, {type RatingValues} from "../components/RatingDialog";
 import SessionChat, {type ChatMessage} from "../components/SessionChat";
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {readLearnerState} from "../lib/learnerState";
 import {notify} from "../utils/notify";
 import type {LearningMethod} from "../lib/constants";
@@ -48,6 +49,7 @@ export default function Session() {
     const {t, lang} = useI18n();
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const online = useOnlineStatus();
 
     const [session, setSession] = useState<LearningSession | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -85,6 +87,21 @@ export default function Session() {
         const projectId = readLearnerState().projectId;
         if (!projectId) {
             navigate("/onboarding", {replace: true});
+            return;
+        }
+        // v0.6.0 / 9D — offline guard. A new session needs the AI
+        // provider, which needs network. Surface a clear inline
+        // message instead of firing the POST and getting a generic
+        // network error. The user can return to /dashboard to
+        // browse past work (cached read endpoints survive offline).
+        if (!online) {
+            setStartError(
+                t(
+                    "session.offline_start_blocked",
+                    "You're offline. New sessions need a network connection — past sessions stay readable from the Dashboard.",
+                ),
+            );
+            setLoading(false);
             return;
         }
         let cancelled = false;
@@ -153,7 +170,7 @@ export default function Session() {
         // ``fetchSwitchRecommendation`` is a stable useCallback so
         // it's fine to omit it from deps too.
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [lang, navigate]);
+    }, [lang, navigate, online]);
 
     const handleSend = async (content: string) => {
         if (!session || sendingMessage) return;

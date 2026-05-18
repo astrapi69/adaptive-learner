@@ -644,4 +644,36 @@ describe("Session page", () => {
             screen.queryByTestId("cycle-evaluation-reason"),
         ).not.toBeInTheDocument();
     });
+
+    // --- v0.6.0 / 9D: offline guard on session start --------------------
+
+    it("shows an offline-blocked message and does NOT fire api.session.start when offline", async () => {
+        const original = Object.getOwnPropertyDescriptor(
+            window.navigator,
+            "onLine",
+        );
+        Object.defineProperty(window.navigator, "onLine", {
+            configurable: true,
+            value: false,
+        });
+        try {
+            renderSession();
+            // The start error path renders; the API never fires.
+            await screen.findByTestId("session-error");
+            expect(apiStart).not.toHaveBeenCalled();
+            expect(
+                screen.getByTestId("session-error").textContent,
+            ).toMatch(
+                /offline|Hors ligne|Sin conexion|Εκτός σύνδεσης|Du bist offline/i,
+            );
+        } finally {
+            if (original) {
+                Object.defineProperty(
+                    window.navigator,
+                    "onLine",
+                    original,
+                );
+            }
+        }
+    });
 });

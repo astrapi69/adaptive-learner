@@ -36,6 +36,8 @@ nav:
   settings: Parametres
   home: Accueil
   menu: Menu
+  online: En ligne
+  offline: Hors ligne
 curriculum:
   title: Programme
   active: Programme actif
@@ -150,6 +152,10 @@ session:
   step_progress: Etape {current} sur {total}
   step_advance_toast: "Passage a : {step}"
   step_reason_tooltip: Pourquoi cette etape ?
+  offline_start_blocked: >-
+    Tu es hors ligne. Les nouvelles sessions necessitent une
+    connexion — les sessions passees restent lisibles depuis le
+    Dashboard.
 progress:
   title: Progres
   chart_timeline: Comprehension et stress au fil du temps

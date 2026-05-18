@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
 import {useI18n} from "../hooks/useI18n";
+import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {useTheme} from "../hooks/useTheme";
 
 /**
@@ -20,6 +21,7 @@ import {useTheme} from "../hooks/useTheme";
 export default function Navigation() {
     const {t} = useI18n();
     const {theme, toggle} = useTheme();
+    const online = useOnlineStatus();
     const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
     const {pathname} = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
@@ -102,6 +104,23 @@ export default function Navigation() {
                     {t("nav.settings", "Settings")}
                 </NavLink>
             </div>
+            <span
+                className={`nav-online-indicator${online ? " is-online" : " is-offline"}`}
+                data-testid="nav-online-indicator"
+                data-online={online ? "true" : "false"}
+                role="status"
+                aria-live="polite"
+                title={
+                    online
+                        ? t("nav.online", "Online")
+                        : t("nav.offline", "Offline — past sessions stay readable")
+                }
+            >
+                <span className="nav-online-dot" aria-hidden="true" />
+                <span className="nav-online-label">
+                    {online ? t("nav.online", "Online") : t("nav.offline", "Offline")}
+                </span>
+            </span>
             <button
                 type="button"
                 className="nav-theme-toggle"

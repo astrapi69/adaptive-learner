@@ -36,6 +36,8 @@ nav:
   settings: Ajustes
   home: Inicio
   menu: Menu
+  online: En linea
+  offline: Sin conexion
 curriculum:
   title: Curriculo
   active: Curriculo activo
@@ -150,6 +152,9 @@ session:
   step_progress: Paso {current} de {total}
   step_advance_toast: "Avanzando a: {step}"
   step_reason_tooltip: Por que este paso?
+  offline_start_blocked: >-
+    Estas sin conexion. Las nuevas sesiones necesitan red — las
+    anteriores siguen siendo legibles desde el Dashboard.
 progress:
   title: Progreso
   chart_timeline: Comprension y estres a lo largo del tiempo
