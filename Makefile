@@ -18,7 +18,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
 
 .PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
-       test test-backend test-frontend test-e2e test-e2e-ui \
+       test test-backend test-frontend test-plugins test-plugin-assessment test-e2e test-e2e-ui \
        test-coverage test-coverage-backend test-coverage-frontend \
        check-types check-types-backend check-types-frontend \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -174,7 +174,7 @@ install-plugins:
 
 # --- Test ---
 
-test: test-backend test-frontend ## Run ALL tests, no coverage (everyday use; coverage runs in CI)
+test: test-backend test-plugins test-frontend ## Run ALL tests, no coverage (everyday use; coverage runs in CI)
 	@echo ""
 	@echo "=== All tests complete ==="
 
@@ -188,16 +188,27 @@ test-backend: ## Run backend tests
 	@echo "=== Backend Tests ==="
 	cd backend && poetry env use python3.12 -q 2>/dev/null; poetry run pytest tests/ -v
 
-# Plugin test targets: skeleton ships zero plugins. When you add a
-# plugin under plugins/adaptive-learner-plugin-<name>/, follow the
-# pattern below and wire it into `test-plugins`.
-#
-# test-plugins: test-plugin-<name>  ## Run all plugin tests
-#
-# test-plugin-<name>:
-#	cd plugins/adaptive-learner-plugin-<name> && \
-#		poetry env use python3.12 -q 2>/dev/null; \
-#		poetry run pytest tests/ -v
+# Plugin test targets. Each plugin lives at
+# plugins/adaptive-learner-plugin-<name>/ and is installed as an
+# editable path-dep of the backend (so the backend's poetry env
+# already has every plugin's source on its import path). The
+# per-plugin pytest run uses that same env via its absolute Python
+# binary; the plugin doesn't need its own poetry env / lock.
+
+test-plugins: test-plugin-assessment ## Run every plugin's own test suite
+	@echo ""
+	@echo "=== All plugin tests complete ==="
+
+# Resolve the backend's poetry venv python at Makefile parse time
+# (NOT inside a recipe — the recipe's CWD may have already cd'd
+# into a plugin subdir). Override with PLUGIN_PYTHON=… on the
+# command line if your env layout differs.
+PLUGIN_PYTHON ?= $(shell cd backend && poetry env info -p)/bin/python
+
+test-plugin-assessment: ## Assessment plugin: 12 questions DE+EN, profile calc
+	@echo ""
+	@echo "=== Plugin: assessment ==="
+	cd plugins/adaptive-learner-plugin-assessment && $(PLUGIN_PYTHON) -m pytest tests/ -q
 
 # --- Coverage (heavy, opt-in; CI runs this on every push) ---
 

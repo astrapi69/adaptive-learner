@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "adaptive-learner-plugin-assessment"
+version = "0.1.0"
+description = "Adaptive Learner: 12-question learner-profile assessment + 6-method-weight calculation."
+authors = ["Asterios Raptis"]
+license = "MIT"
+packages = [{include = "adaptive_learner_assessment"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pluginforge = "^0.5.0"
+fastapi = "^0.136.0"
+pydantic = "^2.13.0"
+sqlalchemy = "^2.0.49"
+
+[tool.poetry.plugins."adaptive_learner.plugins"]
+assessment = "adaptive_learner_assessment.plugin:AssessmentPlugin"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

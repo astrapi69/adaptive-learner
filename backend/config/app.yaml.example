@@ -23,7 +23,8 @@ server:
 plugins:
   config_dir: config/plugins
   disabled: []
-  enabled: []
+  enabled:
+    - assessment
   entry_point_group: adaptive_learner.plugins
 ui:
   title: Adaptive Learner
