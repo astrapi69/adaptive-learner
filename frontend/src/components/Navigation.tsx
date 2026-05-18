@@ -1,3 +1,4 @@
+import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
 import {useI18n} from "../hooks/useI18n";
@@ -9,22 +10,36 @@ import {useTheme} from "../hooks/useTheme";
  * pre-onboarding routes (Landing, Onboarding, Assessment) so the
  * funnel stays focused.
  *
- * Keeps a small set of links (one per main route) plus a theme
- * toggle. Active-route highlighting comes from React Router's
- * NavLink ``isActive`` callback.
+ * v0.6.0 — mobile responsive. Desktop keeps the horizontal nav
+ * exactly as before. On viewports <=768px the links collapse
+ * behind a hamburger toggle that opens a drawer-style menu;
+ * the brand + theme toggle stay visible. Drawer closes on
+ * route change so a tap on a link doesn't leave a half-open
+ * menu behind.
  */
 export default function Navigation() {
     const {t} = useI18n();
     const {theme, toggle} = useTheme();
     const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
     const {pathname} = useLocation();
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    // Collapse the drawer whenever the route changes — a fresh
+    // page should never inherit the previous page's drawer state.
+    useEffect(() => {
+        setMenuOpen(false);
+    }, [pathname]);
+
     if (HIDE_ON.includes(pathname)) return null;
 
     const linkClass = ({isActive}: {isActive: boolean}) =>
         `nav-link${isActive ? " is-active" : ""}`;
 
     return (
-        <nav className="app-nav" data-testid="app-nav">
+        <nav
+            className={`app-nav${menuOpen ? " is-menu-open" : ""}`}
+            data-testid="app-nav"
+        >
             <NavLink to="/dashboard" className="nav-brand">
                 <img
                     src="/icon-192.svg"
@@ -35,7 +50,22 @@ export default function Navigation() {
                 />
                 <span className="nav-brand-name">{t("app.name", "Adaptive Learner")}</span>
             </NavLink>
-            <div className="nav-links">
+            <button
+                type="button"
+                className="nav-hamburger"
+                data-testid="nav-hamburger"
+                aria-label={t("nav.menu", "Menu")}
+                aria-expanded={menuOpen}
+                aria-controls="app-nav-links"
+                onClick={() => setMenuOpen((v) => !v)}
+            >
+                <span aria-hidden="true">{menuOpen ? "✕" : "☰"}</span>
+            </button>
+            <div
+                id="app-nav-links"
+                className={`nav-links${menuOpen ? " is-open" : ""}`}
+                data-testid="nav-links"
+            >
                 <NavLink
                     to="/dashboard"
                     className={linkClass}

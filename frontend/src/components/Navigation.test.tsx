@@ -1,4 +1,4 @@
-import {render, screen} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 import {describe, expect, it} from "vitest";
 
@@ -41,5 +41,40 @@ describe("Navigation", () => {
     it("exposes a theme toggle button", () => {
         renderAt("/dashboard");
         expect(screen.getByTestId("nav-theme-toggle")).toBeInTheDocument();
+    });
+
+    // --- v0.6.0 / 9A: hamburger drawer ----------------------------------
+
+    it("renders the hamburger button with correct aria attributes", () => {
+        renderAt("/dashboard");
+        const burger = screen.getByTestId("nav-hamburger");
+        expect(burger).toBeInTheDocument();
+        // Closed initially.
+        expect(burger.getAttribute("aria-expanded")).toBe("false");
+        expect(burger.getAttribute("aria-controls")).toBe("app-nav-links");
+    });
+
+    it("toggles the nav-links drawer open/closed on hamburger click", () => {
+        renderAt("/dashboard");
+        const burger = screen.getByTestId("nav-hamburger");
+        const links = screen.getByTestId("nav-links");
+        // Closed initially.
+        expect(links.className).not.toContain("is-open");
+        // Open.
+        fireEvent.click(burger);
+        expect(links.className).toContain("is-open");
+        expect(burger.getAttribute("aria-expanded")).toBe("true");
+        // Close again.
+        fireEvent.click(burger);
+        expect(links.className).not.toContain("is-open");
+        expect(burger.getAttribute("aria-expanded")).toBe("false");
+    });
+
+    it("app-nav class reflects menu-open state", () => {
+        renderAt("/dashboard");
+        const nav = screen.getByTestId("app-nav");
+        expect(nav.className).not.toContain("is-menu-open");
+        fireEvent.click(screen.getByTestId("nav-hamburger"));
+        expect(nav.className).toContain("is-menu-open");
     });
 });

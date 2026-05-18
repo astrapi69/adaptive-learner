@@ -1481,3 +1481,234 @@ select:focus {
   border-radius: 999px;
   background: var(--accent);
 }
+
+/* =============================================================
+   v0.6.0 — Mobile responsive polish (Phase 9A)
+   -------------------------------------------------------------
+   These rules ADD mobile-breakpoint fixes; they do NOT replace
+   the desktop styles above. Desktop layout / sizing is unchanged
+   under min-width: 769px. The 768px breakpoint matches the
+   spec's "tablet/mobile" cut-over and the existing
+   `prefers-reduced-motion` etc. block conventions.
+   =============================================================*/
+
+/* The hamburger is hidden on desktop — links + theme toggle
+   render inline as before. The display:none here is the
+   default; the mobile media query below flips it to inline-flex. */
+.nav-hamburger {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  font-size: 1.25rem;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.nav-hamburger:hover {
+  background: var(--surface-2);
+}
+
+@media (max-width: 768px) {
+  /* ----- Navigation: hamburger-controlled drawer -------------- */
+
+  .nav-hamburger {
+    display: inline-flex;
+  }
+
+  /* The drawer pops out below the nav bar. Width 100% of the
+     viewport so the user can tap any link without precise
+     targeting. position:absolute pulls it out of the nav's
+     flex line; the parent `.app-nav` provides the top anchor. */
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    margin-left: 0;
+    padding: var(--space-2);
+  }
+  .nav-links.is-open {
+    display: flex;
+  }
+  .nav-link {
+    /* Full-width tap targets — 44px touch height per Apple/Google
+       guidelines. The vertical padding is the load-bearing knob. */
+    padding: var(--space-3) var(--space-4);
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+  }
+
+  /* When the menu is OPEN, suppress the body shadow on the nav
+     so it looks like one continuous surface — the drawer's own
+     shadow takes over. */
+  .app-nav.is-menu-open {
+    box-shadow: none;
+  }
+
+  /* Theme toggle stays in the nav bar but moves AFTER the
+     hamburger so the order reads brand / hamburger / toggle. */
+  .nav-theme-toggle {
+    width: 2.75rem;
+    height: 2.75rem;
+    margin-left: var(--space-2);
+  }
+
+  /* ----- 44px touch targets everywhere on mobile -------------- */
+  .btn {
+    min-height: 44px;
+    padding: var(--space-3) var(--space-5);
+  }
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px; /* iOS Safari: <16px triggers zoom on focus */
+  }
+  textarea {
+    /* textareas have their own height; just lift the inner padding. */
+    padding: var(--space-2) var(--space-3);
+  }
+
+  /* ----- Form actions: stack vertically when cramped ---------- */
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .form-actions .btn {
+    width: 100%;
+  }
+
+  /* ----- Onboarding header: skip button slides under title ---- */
+  .onboarding-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .onboarding-skip-top {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* ----- Settings: model-override + API-key rows stack -------- */
+  .api-key-row-input,
+  .model-override-row-input {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .api-key-row-input input,
+  .model-override-row-input input {
+    width: 100%;
+  }
+  .api-key-row-input .btn,
+  .model-override-row-input .btn {
+    width: 100%;
+  }
+
+  /* ----- Landing: title shrinks slightly, CTA full-width ------ */
+  .landing-page {
+    padding: var(--space-4) var(--space-4);
+  }
+  .landing-title {
+    font-size: 1.6rem;
+    line-height: 1.2;
+  }
+  .landing-cta {
+    width: 100%;
+    min-height: 44px;
+  }
+  .landing-lang-options {
+    /* Wrap language buttons onto two rows rather than overflow. */
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .landing-lang-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* ----- Assessment: answer hit areas grow ------------------- */
+  .answer-option {
+    min-height: 44px;
+    padding: var(--space-3);
+  }
+  .assessment-page {
+    padding: var(--space-4) var(--space-4);
+  }
+
+  /* ----- Spaced-practice + RecentSessions rows stay readable -- */
+  .spaced-rec-card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-2);
+  }
+  .spaced-rec-actions {
+    flex-direction: row;
+    gap: var(--space-2);
+  }
+  .spaced-rec-actions .btn {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  /* ----- Dashboard / Progress page padding shrinks ----------- */
+  .dashboard-page {
+    padding: var(--space-4) var(--space-3);
+  }
+  .dashboard-card {
+    padding: var(--space-3) var(--space-3);
+  }
+  .dashboard-card-title {
+    font-size: 1rem;
+  }
+
+  /* ----- Tables overflow horizontally rather than the page --- */
+  .commit-table-wrap {
+    overflow-x: auto;
+    /* Indicate scrollability with a subtle scrollbar. */
+    -webkit-overflow-scrolling: touch;
+  }
+  .commit-table {
+    min-width: 32rem;
+  }
+
+  /* ----- Step-evaluation metrics: single-column on narrow ---- */
+  .step-eval-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Extreme-narrow safety net: shrink horizontal page padding
+     and tighten the brand label so the hamburger + theme toggle
+     don't push past the viewport. */
+  .app-nav {
+    padding: var(--space-2) var(--space-3);
+    gap: var(--space-2);
+  }
+  .dashboard-page,
+  .assessment-page,
+  .onboarding-page,
+  .landing-page {
+    padding-left: var(--space-3);
+    padding-right: var(--space-3);
+  }
+}

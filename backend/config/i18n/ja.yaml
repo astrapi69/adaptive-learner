@@ -35,6 +35,7 @@ nav:
   progress: Progress
   settings: Settings
   home: Home
+  menu: Menu
 curriculum:
   title: Curriculum
   active: Active curriculum
