@@ -15,9 +15,11 @@ import {notify} from "../utils/notify";
 import type {LearningMethod} from "../lib/constants";
 import type {
     LearningSession,
+    StepEvaluationVerdict,
     SwitchRecommendation,
     UserSettings,
 } from "../types";
+import {CYCLE_STEPS} from "../lib/constants";
 
 /**
  * Session page (project-reference §8 row ``/session``).
@@ -58,6 +60,11 @@ export default function Session() {
     const [switchDismissed, setSwitchDismissed] = useState<LearningMethod | null>(null);
     const [accepting, setAccepting] = useState(false);
     const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
+    // v0.5.0 — most-recent step-evaluation verdict from /message.
+    // Drives the "Why this step?" tooltip on CycleProgress and the
+    // "Moving to: …" toast on an applied transition.
+    const [stepEvaluation, setStepEvaluation] =
+        useState<StepEvaluationVerdict | null>(null);
 
     const fetchSwitchRecommendation = useCallback(async (sessionId: string) => {
         try {
@@ -201,6 +208,40 @@ export default function Session() {
             // 42-cell prompt matrix in 6A picks up the right
             // (method, step) cell on the next turn.
             setSession(result.session);
+            // v0.5.0: surface the step-evaluation verdict.
+            // ``step_evaluation`` is null when the route bypassed
+            // the evaluator (no API key / no provider / config
+            // disabled) — in those cases the tooltip just hides
+            // and no toast fires.
+            setStepEvaluation(result.step_evaluation);
+            if (
+                result.step_evaluation &&
+                result.step_evaluation.applied &&
+                result.step_evaluation.from_step !==
+                    result.session.cycle_step
+            ) {
+                // The AI accepted advance + the step actually
+                // moved (rules out same-step "applied" where the
+                // evaluator suggested the current step). Fire a
+                // brief toast naming the new step.
+                const newStepKey =
+                    CYCLE_STEPS[
+                        Math.min(
+                            CYCLE_STEPS.length,
+                            Math.max(1, result.session.cycle_step),
+                        ) - 1
+                    ];
+                const stepLabel = t(
+                    `cycle_steps.${newStepKey}.label`,
+                    newStepKey,
+                );
+                notify.info(
+                    t(
+                        "session.step_advance_toast",
+                        "Moving to: {step}",
+                    ).replace("{step}", stepLabel),
+                );
+            }
             if (result.ai_error) {
                 notify.error(result.ai_error);
             }
@@ -320,7 +361,14 @@ export default function Session() {
                         )}
                     </div>
                 </div>
-                <CycleProgress currentStep={session.cycle_step} />
+                <CycleProgress
+                    currentStep={session.cycle_step}
+                    evaluationReason={
+                        stepEvaluation && !stepEvaluation.fallback_used
+                            ? stepEvaluation.reason
+                            : null
+                    }
+                />
             </header>
 
             {switchRec?.recommended &&

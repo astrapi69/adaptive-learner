@@ -147,6 +147,8 @@ session:
   rating_notes: Notes (optionnel)
   rating_submit: Envoyer l'evaluation
   step_progress: Etape {current} sur {total}
+  step_advance_toast: "Passage a : {step}"
+  step_reason_tooltip: Pourquoi cette etape ?
 progress:
   title: Progres
   chart_timeline: Comprehension et stress au fil du temps

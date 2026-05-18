@@ -147,6 +147,8 @@ session:
   rating_notes: Σημειώσεις (προαιρετικό)
   rating_submit: Υποβολή αξιολόγησης
   step_progress: Βήμα {current} από {total}
+  step_advance_toast: "Μετάβαση σε: {step}"
+  step_reason_tooltip: Γιατί αυτό το βήμα;
 progress:
   title: Πρόοδος
   chart_timeline: Κατανόηση και άγχος στον χρόνο

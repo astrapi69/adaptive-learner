@@ -156,11 +156,42 @@ export interface SessionEndResult {
  * separate fetch. Successful round-trips bump cycle_step by 1
  * (capped at 7); failed-AI round-trips leave it unchanged.
  */
+/**
+ * v0.5.0 — AI-driven step-transition verdict carried on every
+ * /message response (Phase 8B dual-prompt architecture).
+ *
+ * ``advance`` / ``confidence`` / ``reason`` / ``suggested_step``
+ * are the evaluator's raw verdict. ``applied`` is the route's
+ * derived decision (true iff ``session.cycle_step`` was
+ * actually updated to ``suggested_step``). ``from_step`` is the
+ * cycle_step BEFORE the suggestion — the frontend uses it to
+ * detect a real transition and trigger the CycleProgress
+ * animation. ``fallback_used=true`` means the AI returned
+ * non-JSON and the route fell back to the deterministic +1
+ * advance.
+ *
+ * ``null`` on the response when the route short-circuited
+ * before the evaluator ran (no API key, no provider, role!=user)
+ * OR when step_evaluation is disabled in the session plugin's
+ * config (v0.4.x compat).
+ */
+export interface StepEvaluationVerdict {
+    advance: boolean;
+    confidence: number;
+    reason: string;
+    suggested_step: number;
+    fallback_used: boolean;
+    applied: boolean;
+    from_step: number;
+}
+
 export interface SessionMessageExchangeResult {
     user_message: SessionMessage;
     assistant_message: SessionMessage | null;
     ai_error: string | null;
     session: LearningSession;
+    /** v0.5.0 — Phase 8B dual-prompt verdict (null when disabled / not reached). */
+    step_evaluation: StepEvaluationVerdict | null;
 }
 
 /**

@@ -46,12 +46,13 @@ vi.mock("../api/client", async () => {
 
 const toastError = vi.fn();
 const toastSuccess = vi.fn();
+const toastInfo = vi.fn();
 vi.mock("../utils/notify", () => ({
     notify: {
         error: (m: string) => toastError(m),
         success: (m: string) => toastSuccess(m),
         warning: vi.fn(),
-        info: vi.fn(),
+        info: (m: string) => toastInfo(m),
     },
 }));
 
@@ -92,6 +93,7 @@ describe("Session page", () => {
         apiSettingsGet.mockRejectedValue(new Error("no settings yet"));
         toastError.mockReset();
         toastSuccess.mockReset();
+        toastInfo.mockReset();
         localStorage.clear();
         localStorage.setItem("adaptive-learner.project_id", "p-1");
         // Also seed user_id so the post-start settings fetch in
@@ -427,6 +429,223 @@ describe("Session page", () => {
         await waitFor(() => expect(apiSettingsGet).toHaveBeenCalled());
         expect(
             screen.queryByTestId("session-active-provider"),
+        ).not.toBeInTheDocument();
+    });
+
+    // --- v0.5.0: Phase 8 step-evaluation wiring -------------------------
+
+    it("fires info toast when step_evaluation is applied AND step actually moved", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiMessage.mockResolvedValue({
+            user_message: {
+                id: "u",
+                session_id: "s-1",
+                role: "user",
+                content: "x",
+                created_at: "2026-05-18T00:01:00Z",
+            },
+            assistant_message: {
+                id: "a",
+                session_id: "s-1",
+                role: "assistant",
+                content: "y",
+                created_at: "2026-05-18T00:01:05Z",
+            },
+            ai_error: null,
+            session: {...SESSION, cycle_step: 2},
+            step_evaluation: {
+                advance: true,
+                confidence: 0.9,
+                reason: "Strong understanding.",
+                suggested_step: 2,
+                fallback_used: false,
+                applied: true,
+                from_step: 1,
+            },
+        });
+        renderSession();
+        await screen.findByTestId("session");
+        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("chat-send"));
+        });
+        await waitFor(() => {
+            expect(toastInfo).toHaveBeenCalledTimes(1);
+        });
+        // Toast text mentions the new step's localised label
+        // (input/attempt/error/feedback/adapt/repeat/integrate) — any
+        // i18n fallback variant is acceptable.
+        const toastArg = toastInfo.mock.calls[0][0] as string;
+        expect(toastArg).toMatch(/attempt|Versuch|Intento|Tentative|Προσπάθεια/i);
+    });
+
+    it("does NOT fire info toast when step_evaluation is applied=false", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiMessage.mockResolvedValue({
+            user_message: {
+                id: "u",
+                session_id: "s-1",
+                role: "user",
+                content: "x",
+                created_at: "2026-05-18T00:01:00Z",
+            },
+            assistant_message: {
+                id: "a",
+                session_id: "s-1",
+                role: "assistant",
+                content: "y",
+                created_at: "2026-05-18T00:01:05Z",
+            },
+            ai_error: null,
+            session: SESSION,
+            step_evaluation: {
+                advance: true,
+                confidence: 0.3,
+                reason: "Mixed signal — stay.",
+                suggested_step: 2,
+                fallback_used: false,
+                applied: false,
+                from_step: 1,
+            },
+        });
+        renderSession();
+        await screen.findByTestId("session");
+        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("chat-send"));
+        });
+        // Wait for the apiMessage call so the result-handling logic
+        // has run; then assert the toast was NOT called.
+        await waitFor(() => expect(apiMessage).toHaveBeenCalled());
+        expect(toastInfo).not.toHaveBeenCalled();
+    });
+
+    it("does NOT fire toast when step is repeated (from_step == new cycle_step)", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiMessage.mockResolvedValue({
+            user_message: {
+                id: "u",
+                session_id: "s-1",
+                role: "user",
+                content: "x",
+                created_at: "2026-05-18T00:01:00Z",
+            },
+            assistant_message: {
+                id: "a",
+                session_id: "s-1",
+                role: "assistant",
+                content: "y",
+                created_at: "2026-05-18T00:01:05Z",
+            },
+            ai_error: null,
+            session: SESSION,  // cycle_step stays at 1
+            step_evaluation: {
+                advance: false,
+                confidence: 0.8,
+                reason: "Stay — not ready yet.",
+                suggested_step: 1,
+                fallback_used: false,
+                applied: false,
+                from_step: 1,
+            },
+        });
+        renderSession();
+        await screen.findByTestId("session");
+        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("chat-send"));
+        });
+        await waitFor(() => expect(apiMessage).toHaveBeenCalled());
+        expect(toastInfo).not.toHaveBeenCalled();
+    });
+
+    it("renders the evaluation reason as CycleProgress tooltip after a successful exchange", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiMessage.mockResolvedValue({
+            user_message: {
+                id: "u",
+                session_id: "s-1",
+                role: "user",
+                content: "x",
+                created_at: "2026-05-18T00:01:00Z",
+            },
+            assistant_message: {
+                id: "a",
+                session_id: "s-1",
+                role: "assistant",
+                content: "y",
+                created_at: "2026-05-18T00:01:05Z",
+            },
+            ai_error: null,
+            session: {...SESSION, cycle_step: 2},
+            step_evaluation: {
+                advance: true,
+                confidence: 0.9,
+                reason: "Learner produced a concrete example.",
+                suggested_step: 2,
+                fallback_used: false,
+                applied: true,
+                from_step: 1,
+            },
+        });
+        renderSession();
+        await screen.findByTestId("session");
+        // No reason before the first exchange.
+        expect(
+            screen.queryByTestId("cycle-evaluation-reason"),
+        ).not.toBeInTheDocument();
+        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("chat-send"));
+        });
+        await waitFor(() => {
+            expect(screen.getByTestId("cycle-evaluation-reason")).toBeInTheDocument();
+        });
+        expect(
+            screen.getByTestId("cycle-evaluation-reason").textContent,
+        ).toContain("Learner produced a concrete example.");
+    });
+
+    it("does NOT render tooltip when fallback_used is true (reason is a placeholder)", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiMessage.mockResolvedValue({
+            user_message: {
+                id: "u",
+                session_id: "s-1",
+                role: "user",
+                content: "x",
+                created_at: "2026-05-18T00:01:00Z",
+            },
+            assistant_message: {
+                id: "a",
+                session_id: "s-1",
+                role: "assistant",
+                content: "y",
+                created_at: "2026-05-18T00:01:05Z",
+            },
+            ai_error: null,
+            session: {...SESSION, cycle_step: 2},
+            step_evaluation: {
+                advance: true,
+                confidence: 0.5,
+                reason: "Evaluator output unparseable; defaulting to +1 advance.",
+                suggested_step: 2,
+                fallback_used: true,
+                applied: true,
+                from_step: 1,
+            },
+        });
+        renderSession();
+        await screen.findByTestId("session");
+        fireEvent.change(screen.getByTestId("chat-input"), {target: {value: "x"}});
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("chat-send"));
+        });
+        await waitFor(() => expect(apiMessage).toHaveBeenCalled());
+        // Fallback reasons are diagnostic, not pedagogical — they
+        // are NOT surfaced to the user as a "why this step" hint.
+        expect(
+            screen.queryByTestId("cycle-evaluation-reason"),
         ).not.toBeInTheDocument();
     });
 });

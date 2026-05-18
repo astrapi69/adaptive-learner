@@ -147,6 +147,8 @@ session:
   rating_notes: Notas (opcional)
   rating_submit: Enviar valoracion
   step_progress: Paso {current} de {total}
+  step_advance_toast: "Avanzando a: {step}"
+  step_reason_tooltip: Por que este paso?
 progress:
   title: Progreso
   chart_timeline: Comprension y estres a lo largo del tiempo

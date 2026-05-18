@@ -761,6 +761,55 @@ select:focus {
   border-color: var(--accent);
   background: var(--accent);
   color: var(--accent-fg);
+  /* Subtle ease so backward transitions also animate the colour
+     shift; the pulse below stacks on top for advance + repeat. */
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* v0.5.0 — brief pulse on the current step after a Phase 8
+   transition. Triggered by the ``is-just-advanced`` class that
+   the CycleProgress component applies for ~900ms after the
+   currentStep prop changes. Direction-agnostic: skip-ahead,
+   backward, and repeat-step all use the same eye-catch. */
+@keyframes cycle-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--accent);
+  }
+  40% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 6px transparent;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.cycle-step.is-just-advanced {
+  animation: cycle-pulse 800ms ease-out 0s 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cycle-step.is-just-advanced {
+    /* Honour reduced-motion: drop the animation, keep only the
+       colour transition from .is-current above. */
+    animation: none;
+  }
+  .cycle-step.is-current {
+    transition: none;
+  }
+}
+
+.cycle-evaluation-reason {
+  margin: var(--space-1) 0 var(--space-3) 0;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  font-style: italic;
+  line-height: 1.4;
 }
 
 .cycle-step-index {

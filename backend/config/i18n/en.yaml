@@ -163,6 +163,8 @@ session:
   rating_notes: Notes (optional)
   rating_submit: Submit rating
   step_progress: Step {current} of {total}
+  step_advance_toast: "Moving to: {step}"
+  step_reason_tooltip: Why this step?
 
 progress:
   title: Progress
