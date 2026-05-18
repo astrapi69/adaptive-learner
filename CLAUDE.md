@@ -12,25 +12,28 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.4.1):** v0.4.0 patch: Onboarding "Skip"
-  affordance hoisted into the header (above the fold), favicon
-  ships a multi-resolution `.ico` fallback plus a repaired SVG
-  comment, and the longstanding CI Release Gate red is fixed
-  (plugin `__version__` now derives via `importlib.metadata`).
-  v0.4.0 itself shipped Phase 7:
-  deterministic cycle-step advance on every successful
-  user→AI round-trip (capped at 7), Dashboard streak +
-  RecentSessions + 5-cell SessionCounter, per-provider
-  `UserSettings.model_override_*` columns + Settings UI
-  picker (Anthropic-first ordering load-bearing across
-  every dropdown), `/api/plugins/tools/spaced/{project_id}`
-  spaced-repetition action cards on the Dashboard with
-  localStorage-persisted dismissals. Plus three smoke-test
-  fixes: 7 of 12 assessment questions now multi-select
-  (checkboxes; weight distributed equally across picks),
-  Onboarding "Later" button creates a default user in 2
-  clicks, and Landing detects a returning user via
-  `GET /api/users/{id}` and skips straight to /dashboard.
+- **Current state (v0.5.0):** v0.4.1 plus Phase 8 — the
+  **dual-prompt architecture**. Every successful `/message`
+  round-trip now fires TWO `ai_complete` calls against the same
+  provider: (1) the learning response (existing); (2) a
+  separate step-evaluator that returns a JSON verdict
+  `{advance, confidence, reason, suggested_step}`. The route
+  applies the AI's suggestion to `session.cycle_step` iff
+  `advance ∧ confidence ≥ threshold` (default 0.7); the
+  evaluator can suggest skip-ahead OR backward transitions
+  pedagogically. Cap at step 7 — auto-loop to step 1 with
+  fresh content is deferred to v0.6.x. Disable via
+  `config/plugins/session.yaml step_evaluation.enabled: false`
+  to fall back to v0.4.x deterministic +1.
+  Evaluator architecture: English system prompt (cross-provider
+  JSON reliability) + `output_language` steer for the `reason`
+  field; max_tokens=256 keeps it cheap. Garbage JSON → robust
+  deterministic +1 fallback (never crashes). Frontend surfaces
+  via CycleProgress pulse animation on transitions (any
+  direction) + optional "Why this step?" tooltip + info toast.
+  New `StepEvaluation` table (Alembic 0003) + tracking-plugin
+  aggregates (avg confidence, repeat count, time-per-step) +
+  Progress.tsx insights card.
 
 ## Development guidelines
 
@@ -186,7 +189,7 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- v0.4.1 baseline: backend 434, plugins 416 (across 7), frontend 226 (Vitest). Total 1076.
+- v0.5.0 baseline: backend 447, plugins 478 (across 7), frontend 249 (Vitest). Total 1174.
 - E2E tests under `e2e/` are NOT on the `make test` default path.
   v0.3.0 shipped 7 Playwright smoke specs under `e2e/smoke/`
   (landing, onboarding+assessment, session, curriculum, settings);
