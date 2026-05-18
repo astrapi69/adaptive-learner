@@ -25,7 +25,7 @@ const DE: Catalog = {
     landing: {
         title: "Adaptive Learner",
         subtitle: "Lernen, das sich an dich anpasst.",
-        choose_language: "Sprache waehlen",
+        choose_language: "Sprache wählen",
         start_button: "Lernreise beginnen",
     },
     nav: {
@@ -35,12 +35,12 @@ const DE: Catalog = {
         settings: "Einstellungen",
     },
     common: {
-        loading: "Laedt …",
+        loading: "Lädt …",
         error: "Etwas ist schiefgegangen.",
         cancel: "Abbrechen",
         save: "Speichern",
         next: "Weiter",
-        back: "Zurueck",
+        back: "Zurück",
         submit: "Absenden",
     },
 };

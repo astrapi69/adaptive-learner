@@ -1,31 +1,37 @@
-# Adaptive Learner i18n-Katalog (DE — Phase 4A).
+# Adaptive Learner i18n-Katalog (DE — Phase 6, korrigiert).
 #
-# Reference language EN unter ../en.yaml; jedes Catalog-File spiegelt
-# dieselbe Schluesselstruktur. Plugin-spezifische Strings (Methoden-
+# Referenzsprache EN unter ../en.yaml; jedes Katalog-File spiegelt
+# dieselbe Schlüsselstruktur. Plugin-spezifische Strings (Methoden-
 # Beschreibungen, Cycle-Steps) bleiben hier, weil die Sechs-Methoden-
-# Anatomie zum Kernmodell gehoert und nicht plugin-spezifisch ist.
+# Anatomie zum Kernmodell gehört und nicht plugin-spezifisch ist.
+#
+# Konvention: echte Umlaute (ä/ö/ü/ß). Die ASCII-Faltung
+# (ae/oe/ue/ss) aus der Bibliogon-Quelle ist eine Source-Code-
+# Konvention für Identifier, nicht für nutzersichtbare Texte —
+# siehe `.claude/rules/lessons-learned.md` "German content uses
+# real umlauts".
 
 app:
   name: Adaptive Learner
   tagline: Adaptives Lernen nach dem Sechs-Methoden-Modell.
   skeleton_notice: >-
     Skeleton-Stand. Domain-Modelle, Plugins und Seiten folgen in den
-    naechsten Phasen — siehe docs/adaptive-learner-project-reference.md.
+    nächsten Phasen — siehe docs/adaptive-learner-project-reference.md.
 
 common:
   save: Speichern
   cancel: Abbrechen
-  loading: Laedt …
+  loading: Lädt …
   error: Etwas ist schiefgegangen.
-  back: Zurueck
+  back: Zurück
   next: Weiter
   start: Starten
   submit: Absenden
   continue: Fortfahren
   done: Fertig
-  delete: Loeschen
+  delete: Löschen
   edit: Bearbeiten
-  confirm: Bestaetigen
+  confirm: Bestätigen
   "yes": Ja
   "no": Nein
   optional: optional
@@ -47,23 +53,23 @@ curriculum:
   create: Curriculum anlegen
   created: Curriculum angelegt.
   saved: Gespeichert.
-  deleted: Thema geloescht.
-  add_topic: Thema hinzufuegen
-  add_root_topic: Hauptthema hinzufuegen
-  add_subtopic: Unterthema hinzufuegen
+  deleted: Thema gelöscht.
+  add_topic: Thema hinzufügen
+  add_root_topic: Hauptthema hinzufügen
+  add_subtopic: Unterthema hinzufügen
   rename_topic: Thema umbenennen
   topic_title: Titel
   no_topics: Noch keine Themen — leg dein erstes an, um zu starten.
   no_curriculum: Lege ein Curriculum an, um einen Themenbaum aufzubauen.
-  delete_confirm: Dieses Thema loeschen? Untergeordnete Themen bleiben als eigene Wurzeln erhalten.
+  delete_confirm: Dieses Thema löschen? Untergeordnete Themen bleiben als eigene Wurzeln erhalten.
 
 landing:
   title: Adaptive Learner
   subtitle: Lernen, das sich an dich anpasst.
-  choose_language: Sprache waehlen
+  choose_language: Sprache wählen
   start_button: Lernreise beginnen
   intro: >-
-    Adaptive Learner findet die fuer dich passende Methode aus sechs
+    Adaptive Learner findet die für dich passende Methode aus sechs
     wissenschaftlich fundierten Lernweisen und begleitet dich mit
     einem 7-Schritte-Zyklus pro Session.
 
@@ -71,12 +77,12 @@ onboarding:
   title: Lernprojekt anlegen
   intro: >-
     Beschreibe dein Lernziel. Adaptive Learner nutzt diese Angaben
-    fuer dein Profil und die ersten Methoden-Empfehlungen.
+    für dein Profil und die ersten Methoden-Empfehlungen.
   field_name: Dein Name
   field_topic: Thema
   field_topic_hint: z. B. Spanisch B1 oder lineare Algebra.
   field_goal: Lernziel
-  field_goal_hint: Was willst du am Ende koennen?
+  field_goal_hint: Was willst du am Ende können?
   field_timeframe: Zeitrahmen
   field_timeframe_hint: z. B. 4 Wochen, 1 Semester.
   field_daily_minutes: Minuten pro Tag
@@ -88,20 +94,20 @@ onboarding:
 assessment:
   title: Lerntyp-Assessment
   intro: >-
-    Zwoelf kurze Fragen ermitteln dein Lernprofil. Es gibt kein
+    Zwölf kurze Fragen ermitteln dein Lernprofil. Es gibt kein
     richtig oder falsch — antworte intuitiv.
   question_progress: Frage {current} von {total}
-  next_question: Naechste Frage
+  next_question: Nächste Frage
   prev_question: Vorherige Frage
   submit: Auswerten
-  evaluating: Auswertung laeuft …
+  evaluating: Auswertung läuft …
   result_title: Dein Lernprofil
   dominant_method: Bevorzugte Methode
   continue_to_dashboard: Weiter zum Dashboard
 
 dashboard:
   title: Dashboard
-  welcome: Willkommen zurueck
+  welcome: Willkommen zurück
   quick_start: Neue Session starten
   quick_start_subtitle: Methode kommt aus deinem Profil.
   card_profile: Lernprofil
@@ -117,17 +123,17 @@ dashboard:
 
 session:
   title: Lern-Session
-  in_progress: Session laeuft
+  in_progress: Session läuft
   send_message: Nachricht senden
   message_placeholder: Schreibe deine Antwort …
   ai_thinking: Denkt nach …
   ai_error: Die KI konnte nicht antworten.
   end_session: Session beenden
-  end_session_confirm: Sicher? Wir koennen die Session beenden und bewerten.
+  end_session_confirm: Sicher? Wir können die Session beenden und bewerten.
   switch_recommended: Methodenwechsel empfohlen
   switch_recommended_subtitle: >-
     Deine letzten Werte weisen darauf hin, dass eine andere Methode
-    besser passen koennte.
+    besser passen könnte.
   switch_accept: Methode wechseln
   switch_dismiss: Aktuelle Methode behalten
   rating_title: Wie war die Session?
@@ -140,7 +146,7 @@ session:
 
 progress:
   title: Fortschritt
-  chart_timeline: Verstehen und Stress ueber Zeit
+  chart_timeline: Verstehen und Stress über Zeit
   chart_methods: Methodenverteilung
   commit_history: Session-Historie
   commit_method: Methode
@@ -162,7 +168,7 @@ settings:
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
   api_key_label: API-Key
-  api_key_placeholder: Hier einfuegen …
+  api_key_placeholder: Hier einfügen …
   api_key_saved: Key gespeichert
   api_key_missing: Nicht gesetzt
   api_key_set: Key speichern
@@ -173,7 +179,7 @@ settings:
   provider_active: Aktiv
   active_provider_missing_key: >-
     Dies ist dein aktiver Anbieter, aber kein API-Key ist gespeichert.
-    KI-Antworten werden uebersprungen, bis ein Key hinterlegt ist.
+    KI-Antworten werden übersprungen, bis ein Key hinterlegt ist.
 
 methods:
   deductive:
@@ -184,16 +190,16 @@ methods:
     summary: Vom Besonderen zum Allgemeinen — Beispiele zuerst, Regeln ableiten.
   error_based:
     label: Fehlerzentriert
-    summary: Aus Fehlern lernen — Korrektur mit Erklaerung.
+    summary: Aus Fehlern lernen — Korrektur mit Erklärung.
   dialogic:
     label: Dialogisch
-    summary: Im Gespraech denken — Stress senken, Motivation aufbauen.
+    summary: Im Gespräch denken — Stress senken, Motivation aufbauen.
   contextual:
     label: Kontextuell
-    summary: Im echten Kontext anwenden — Transfer ueben.
+    summary: Im echten Kontext anwenden — Transfer üben.
   ai_adaptive:
     label: KI-adaptiv
-    summary: Die KI waehlt fuer dich die jeweils beste Methode.
+    summary: Die KI wählt für dich die jeweils beste Methode.
 
 cycle_steps:
   input:
@@ -207,10 +213,10 @@ cycle_steps:
     description: Abweichung zwischen Erwartung und Ergebnis.
   feedback:
     label: Feedback
-    description: Korrektur mit Erklaerung.
+    description: Korrektur mit Erklärung.
   adapt:
     label: Anpassung
-    description: Methode, Tempo oder Fokus aendern.
+    description: Methode, Tempo oder Fokus ändern.
   repeat:
     label: Wiederholung
     description: Erneuter Versuch.
@@ -221,9 +227,9 @@ cycle_steps:
 errors:
   network: Verbindung zum Server fehlgeschlagen.
   not_found: Eintrag nicht gefunden.
-  validation: Eingabe ungueltig.
+  validation: Eingabe ungültig.
   conflict: Eintrag existiert bereits.
-  server: Serverfehler — bitte spaeter erneut versuchen.
+  server: Serverfehler — bitte später erneut versuchen.
 
 toast:
   project_created: Projekt angelegt.

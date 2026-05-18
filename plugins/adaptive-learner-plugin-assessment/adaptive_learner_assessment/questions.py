@@ -104,7 +104,7 @@ QUESTIONS: list[Question] = [
         "answers": [
             {
                 "id": "a",
-                "text_de": "Eine klare Erklaerung, warum es falsch war.",
+                "text_de": "Eine klare Erklärung, warum es falsch war.",
                 "text_en": "A clear explanation of why it was wrong.",
                 "weights": {"deductive": 0.5, "error_based": 0.5},
             },
@@ -116,7 +116,7 @@ QUESTIONS: list[Question] = [
             },
             {
                 "id": "c",
-                "text_de": "Mit jemandem darueber sprechen, der den Fehler einordnen kann.",
+                "text_de": "Mit jemandem darüber sprechen, der den Fehler einordnen kann.",
                 "text_en": "Talking to someone who can put the mistake in context.",
                 "weights": {"dialogic": 1.0},
             },
@@ -130,7 +130,7 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q03",
-        "text_de": "Welches Lerntempo fuehlt sich richtig an?",
+        "text_de": "Welches Lerntempo fühlt sich richtig an?",
         "text_en": "Which learning pace feels right?",
         "answers": [
             {
@@ -153,7 +153,7 @@ QUESTIONS: list[Question] = [
             },
             {
                 "id": "d",
-                "text_de": "Im Gespraech, so wie es sich entwickelt.",
+                "text_de": "Im Gespräch, so wie es sich entwickelt.",
                 "text_en": "Conversationally, however it develops.",
                 "weights": {"dialogic": 1.0},
             },
@@ -178,7 +178,7 @@ QUESTIONS: list[Question] = [
             },
             {
                 "id": "c",
-                "text_de": "Im Gespraech mit anderen.",
+                "text_de": "Im Gespräch mit anderen.",
                 "text_en": "In conversation with others.",
                 "weights": {"dialogic": 1.0},
             },
@@ -215,7 +215,7 @@ QUESTIONS: list[Question] = [
             },
             {
                 "id": "d",
-                "text_de": "Durch Diskussion und Erklaeren an andere.",
+                "text_de": "Durch Diskussion und Erklären an andere.",
                 "text_en": "Through discussion and explaining to others.",
                 "weights": {"dialogic": 1.0},
             },
@@ -259,7 +259,7 @@ QUESTIONS: list[Question] = [
         "answers": [
             {
                 "id": "a",
-                "text_de": "Ich suche eine eindeutige Quelle, die sie aufloest.",
+                "text_de": "Ich suche eine eindeutige Quelle, die sie auflöst.",
                 "text_en": "I find an unambiguous source that resolves it.",
                 "weights": {"deductive": 1.0},
             },
@@ -285,7 +285,7 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q08",
-        "text_de": "Wann sitzt der Stoff fuer dich wirklich?",
+        "text_de": "Wann sitzt der Stoff für dich wirklich?",
         "text_en": "When does material really stick for you?",
         "answers": [
             {
@@ -302,7 +302,7 @@ QUESTIONS: list[Question] = [
             },
             {
                 "id": "c",
-                "text_de": "Wenn ich es jemandem erklaert habe.",
+                "text_de": "Wenn ich es jemandem erklärt habe.",
                 "text_en": "When I've explained it to someone.",
                 "weights": {"dialogic": 1.0},
             },
@@ -347,7 +347,7 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q10",
-        "text_de": "Wann moechtest du Feedback bekommen?",
+        "text_de": "Wann möchtest du Feedback bekommen?",
         "text_en": "When do you want feedback?",
         "answers": [
             {
@@ -364,13 +364,13 @@ QUESTIONS: list[Question] = [
             },
             {
                 "id": "c",
-                "text_de": "Wenn ich ausdruecklich frage.",
+                "text_de": "Wenn ich ausdrücklich frage.",
                 "text_en": "When I explicitly ask for it.",
                 "weights": {"inductive": 0.5, "ai_adaptive": 0.5},
             },
             {
                 "id": "d",
-                "text_de": "Im Gespraech, im Hin und Her.",
+                "text_de": "Im Gespräch, im Hin und Her.",
                 "text_en": "In conversation, back and forth.",
                 "weights": {"dialogic": 1.0},
             },
@@ -395,7 +395,7 @@ QUESTIONS: list[Question] = [
             },
             {
                 "id": "c",
-                "text_de": "Eher selten; ich vertraue Buechern und Menschen.",
+                "text_de": "Eher selten; ich vertraue Büchern und Menschen.",
                 "text_en": "Rarely; I trust books and people more.",
                 "weights": {"deductive": 0.5, "dialogic": 0.5},
             },
@@ -409,12 +409,12 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q12",
-        "text_de": "Wie verhaeltst du dich bei Stoff, der nicht klick macht?",
+        "text_de": "Wie verhältst du dich bei Stoff, der nicht klick macht?",
         "text_en": "How do you respond to material that just won't click?",
         "answers": [
             {
                 "id": "a",
-                "text_de": "Ich gehe zurueck zur Theorie und lese nochmal genau.",
+                "text_de": "Ich gehe zurück zur Theorie und lese nochmal genau.",
                 "text_en": "I go back to the theory and read more carefully.",
                 "weights": {"deductive": 1.0},
             },
