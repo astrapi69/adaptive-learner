@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Adaptive Learner">
   <!-- Indigo rounded-square ground; matches the app's primary token
-       (--accent: #6366f1) and the project plan's ai_adaptive
-       method colour. -->
+       (the accent CSS variable, #6366f1) and the project plan's
+       ai_adaptive method colour. -->
   <rect width="32" height="32" rx="6" fill="#6366f1"/>
   <!-- Edges first so the nodes paint on top. 4-node diamond +
        cross-connections + hub-spokes. -->

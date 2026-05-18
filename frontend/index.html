@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- The .ico fallback is the FIRST tag on purpose: browsers
+         that hit /favicon.ico directly (tab restore, bookmarks,
+         many crawlers) ignore the <link> tag below entirely. Modern
+         browsers prefer the SVG when both are declared. -->
+    <link rel="icon" href="/favicon.ico" sizes="any"/>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
     <meta name="theme-color" content="#6366f1"/>
     <meta name="mobile-web-app-capable" content="yes"/>

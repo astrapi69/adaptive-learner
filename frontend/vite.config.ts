@@ -20,7 +20,12 @@ export default defineConfig({
             devOptions: {
                 enabled: true,
             },
-            includeAssets: ["favicon.svg", "icon-192.svg", "icon-512.svg"],
+            includeAssets: [
+                "favicon.ico",
+                "favicon.svg",
+                "icon-192.svg",
+                "icon-512.svg",
+            ],
             manifest: {
                 name: "Adaptive Learner",
                 short_name: "Adaptive Learner",
@@ -44,7 +49,7 @@ export default defineConfig({
             },
             workbox: {
                 // Precache static assets, skip API calls
-                globPatterns: ["**/*.{js,css,html,svg,png,woff2}"],
+                globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
                 navigateFallback: "/index.html",
                 runtimeCaching: [
                     {
