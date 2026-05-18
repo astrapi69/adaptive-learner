@@ -69,16 +69,18 @@ def test_hook_routes_claude_model_to_anthropic_plugin(client: TestClient, mocked
 
 
 def test_hook_returns_none_for_non_claude_model(client: TestClient, mocked_anthropic):
-    """No other AI plugin is registered yet, so a gpt-* model has
-    nothing to dispatch to. firstresult returns None."""
+    """Use a model no AI plugin handles (mistral-*) so the dispatch
+    confirms None-fallthrough. The v0.2.0 fleet (anthropic +
+    openai + gemini) all return None for this prefix; gpt-* and
+    gemini-* would now be claimed by their own plugins and so
+    wouldn't be a clean None case."""
     result = manager._pm.hook.ai_complete(
         messages=[{"role": "user", "content": "x"}],
-        model="gpt-4o",
+        model="mistral-large",
         api_key="sk-test",
     )
     assert result is None
-    # The wrapper was never reached → the SDK constructor wasn't
-    # called.
+    # The anthropic wrapper was never reached.
     mocked_anthropic.Anthropic.assert_not_called()
 
 

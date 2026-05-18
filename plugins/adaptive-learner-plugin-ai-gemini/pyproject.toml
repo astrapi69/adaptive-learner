@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "adaptive-learner-plugin-ai-gemini"
+version = "0.1.0"
+description = "Adaptive Learner: Google Gemini provider for the ai_complete hook."
+authors = ["Asterios Raptis"]
+license = "MIT"
+packages = [{include = "adaptive_learner_ai_gemini"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pluginforge = "^0.5.0"
+# google-generativeai 0.8.x ships the GenerativeModel +
+# generate_content API the plugin relies on. Pinned with a
+# caret so a future-incompatible 1.x doesn't sneak in.
+google-generativeai = "^0.8.0"
+
+[tool.poetry.plugins."adaptive_learner.plugins"]
+ai-gemini = "adaptive_learner_ai_gemini.plugin:AiGeminiPlugin"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -19,7 +19,8 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
 .PHONY: dev dev-bg dev-bg-logs dev-down dev-backend dev-frontend dev-secret stop restart fix-watchers \
        install install-backend install-frontend install-plugins install-e2e \
        test test-backend test-frontend test-plugins test-plugin-assessment \
-       test-plugin-ai-anthropic test-plugin-session test-plugin-tracking \
+       test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
+       test-plugin-session test-plugin-tracking \
        test-plugin-tools test-e2e test-e2e-ui \
        test-coverage test-coverage-backend test-coverage-frontend \
        check-types check-types-backend check-types-frontend \
@@ -197,7 +198,7 @@ test-backend: ## Run backend tests
 # per-plugin pytest run uses that same env via its absolute Python
 # binary; the plugin doesn't need its own poetry env / lock.
 
-test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-session test-plugin-tracking test-plugin-tools ## Run every plugin's own test suite
+test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini test-plugin-session test-plugin-tracking test-plugin-tools ## Run every plugin's own test suite
 	@echo ""
 	@echo "=== All plugin tests complete ==="
 
@@ -216,6 +217,16 @@ test-plugin-ai-anthropic: ## ai-anthropic plugin: Claude provider for ai_complet
 	@echo ""
 	@echo "=== Plugin: ai-anthropic ==="
 	cd plugins/adaptive-learner-plugin-ai-anthropic && $(PLUGIN_PYTHON) -m pytest tests/ -q
+
+test-plugin-ai-openai: ## ai-openai plugin: GPT provider for ai_complete (mocked SDK)
+	@echo ""
+	@echo "=== Plugin: ai-openai ==="
+	cd plugins/adaptive-learner-plugin-ai-openai && $(PLUGIN_PYTHON) -m pytest tests/ -q
+
+test-plugin-ai-gemini: ## ai-gemini plugin: Gemini provider for ai_complete (mocked SDK)
+	@echo ""
+	@echo "=== Plugin: ai-gemini ==="
+	cd plugins/adaptive-learner-plugin-ai-gemini && $(PLUGIN_PYTHON) -m pytest tests/ -q
 
 test-plugin-session: ## session plugin: 7-step prompts, method-switch rec, 4 routes
 	@echo ""

@@ -26,6 +26,8 @@ plugins:
   enabled:
     - assessment
     - ai-anthropic
+    - ai-openai
+    - ai-gemini
     - session
     - tracking
     - tools

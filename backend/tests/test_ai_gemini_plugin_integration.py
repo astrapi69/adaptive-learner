@@ -1,0 +1,139 @@
+"""Phase 5-C integration test: ai-gemini under app.main.app.
+
+Exercises the ``firstresult=True`` dispatch path through the
+production PluginManager. Gemini API calls are mocked — no real
+network egress.
+"""
+
+from __future__ import annotations
+
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.exceptions import ExternalServiceError, ValidationError
+from app.main import app, manager
+
+
+@pytest.fixture()
+def client():
+    with TestClient(app) as c:
+        yield c
+
+
+@pytest.fixture()
+def mocked_gemini():
+    """Patch the Gemini SDK at the wrapper's import site so the
+    real client never configures."""
+    with patch("adaptive_learner_ai_gemini.client.genai", create=True) as m:
+        model_instance = MagicMock()
+        model_instance.generate_content.return_value = SimpleNamespace(
+            text="MOCKED gemini reply"
+        )
+        m.GenerativeModel.return_value = model_instance
+        yield m
+
+
+# --- Plugin wiring ---------------------------------------------------------
+
+
+def test_plugin_is_active(client: TestClient):
+    active = {p.name for p in manager.get_active_plugins()}
+    assert "ai-gemini" in active
+
+
+def test_no_routes_mounted_by_ai_plugin(client: TestClient):
+    """The ai-gemini plugin is hook-only — it must not mount any
+    /api routes."""
+    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    assert not any(p.startswith("/api/plugins/ai-gemini") for p in paths)
+
+
+# --- ai_complete hook through the production manager ----------------------
+
+
+def test_hook_routes_gemini_model_to_gemini_plugin(client: TestClient, mocked_gemini):
+    """firstresult dispatch: model starts with 'gemini-' → plugin
+    returns the completion → dispatch stops there."""
+    result = manager._pm.hook.ai_complete(
+        messages=[{"role": "user", "content": "Hi"}],
+        model="gemini-2.0-flash",
+        api_key="ak-test-XYZ",
+    )
+    assert result == "MOCKED gemini reply"
+    mocked_gemini.configure.assert_called_once_with(api_key="ak-test-XYZ")
+
+
+def test_hook_lifts_system_into_constructor(client: TestClient, mocked_gemini):
+    """Gemini's API has no inline 'system' role — system
+    instructions go in the GenerativeModel constructor's
+    system_instruction kwarg. End-to-end check that the
+    transform survives the hook → plugin → client chain."""
+    manager._pm.hook.ai_complete(
+        messages=[
+            {"role": "system", "content": "Respond in German."},
+            {"role": "user", "content": "What is 2+2?"},
+        ],
+        model="gemini-2.0-flash",
+        api_key="k",
+    )
+    call_kwargs = mocked_gemini.GenerativeModel.call_args.kwargs
+    assert call_kwargs["system_instruction"] == "Respond in German."
+    # Assistant role translated to model role, system message
+    # popped out, content wrapped in parts: [text].
+    history_arg = (
+        mocked_gemini.GenerativeModel.return_value.generate_content.call_args.args[0]
+    )
+    assert history_arg == [{"role": "user", "parts": ["What is 2+2?"]}]
+
+
+def test_hook_translates_assistant_role_to_model(client: TestClient, mocked_gemini):
+    """End-to-end check that the user/assistant -> user/model role
+    translation lands in the SDK call."""
+    manager._pm.hook.ai_complete(
+        messages=[
+            {"role": "user", "content": "Q1"},
+            {"role": "assistant", "content": "A1"},
+            {"role": "user", "content": "Q2"},
+        ],
+        model="gemini-2.0-flash",
+        api_key="k",
+    )
+    history_arg = (
+        mocked_gemini.GenerativeModel.return_value.generate_content.call_args.args[0]
+    )
+    assert history_arg == [
+        {"role": "user", "parts": ["Q1"]},
+        {"role": "model", "parts": ["A1"]},
+        {"role": "user", "parts": ["Q2"]},
+    ]
+
+
+def test_empty_api_key_raises_validation_error(client: TestClient):
+    with pytest.raises(ValidationError):
+        manager._pm.hook.ai_complete(
+            messages=[{"role": "user", "content": "x"}],
+            model="gemini-2.0-flash",
+            api_key="",
+        )
+
+
+def test_sdk_error_wraps_to_external_service_error(client: TestClient):
+    """Any SDK-level exception maps to ExternalServiceError so
+    FastAPI returns a stable HTTP 502 with detail = 'gemini:
+    <message>'."""
+    with patch("adaptive_learner_ai_gemini.client.genai", create=True) as m:
+        model_instance = MagicMock()
+        model_instance.generate_content.side_effect = RuntimeError("safety filter")
+        m.GenerativeModel.return_value = model_instance
+
+        with pytest.raises(ExternalServiceError) as exc:
+            manager._pm.hook.ai_complete(
+                messages=[{"role": "user", "content": "x"}],
+                model="gemini-2.0-flash",
+                api_key="ak-test",
+            )
+    assert "gemini" in str(exc.value).lower()
+    assert "safety filter" in str(exc.value)
