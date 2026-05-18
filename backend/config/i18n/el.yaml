@@ -1,11 +1,8 @@
-# Adaptive Learner i18n catalog (EL — Phase 5F).
+# Adaptive Learner i18n catalog (EL — Phase 6).
 #
-# Hand-translated by the AI assistant. Quality is comparable
-# to a competent machine translation; native-speaker review is
-# welcome for any string that lands in a published release. The
-# structure is parity-checked by tests/test_i18n_parity.py; do
-# NOT add or remove keys here without mirroring the change in
-# en.yaml.
+# Mirror of en.yaml structure. Strings carrying non-native
+# fallbacks are EN passthroughs. Structure parity-checked by
+# tests/test_i18n_parity.py.
 
 app:
   name: Adaptive Learner
@@ -38,6 +35,30 @@ nav:
   progress: Πρόοδος
   settings: Ρυθμίσεις
   home: Αρχή
+curriculum:
+  title: Πρόγραμμα
+  active: Ενεργό πρόγραμμα
+  new_placeholder: Τίτλος νέου προγράμματος...
+  create: Δημιουργία προγράμματος
+  created: Το πρόγραμμα δημιουργήθηκε.
+  saved: Αποθηκεύτηκε.
+  deleted: Το θέμα διαγράφηκε.
+  add_topic: Προσθήκη θέματος
+  add_root_topic: Προσθήκη θέματος-ρίζας
+  add_subtopic: Προσθήκη υποθέματος
+  rename_topic: Μετονομασία θέματος
+  topic_title: Τίτλος
+  no_topics: Δεν υπάρχουν θέματα ακόμα — πρόσθεσε το πρώτο για να ξεκινήσεις.
+  no_curriculum: Δημιούργησε πρόγραμμα για να ξεκινήσει η δομή θεμάτων.
+  delete_confirm: Διαγραφή αυτού του θέματος; Τα παιδιά του θα παραμείνουν ως ρίζες.
+  lessons_title: Lessons
+  add_lesson: Add lesson
+  new_lesson_placeholder: New lesson title…
+  no_lessons: No lessons yet.
+  lesson_created: Lesson created.
+  lesson_saved: Lesson saved.
+  lesson_deleted: Lesson deleted.
+  lesson_delete_confirm: Delete this lesson?
 landing:
   title: Adaptive Learner
   subtitle: Μάθηση που προσαρμόζεται σε σένα.
@@ -200,19 +221,3 @@ toast:
   api_key_saved: Το κλειδί API αποθηκεύτηκε.
   api_key_deleted: Το κλειδί API αφαιρέθηκε.
   method_switched: Η μέθοδος άλλαξε.
-curriculum:
-  title: Πρόγραμμα
-  active: Ενεργό πρόγραμμα
-  new_placeholder: Τίτλος νέου προγράμματος...
-  create: Δημιουργία προγράμματος
-  created: Το πρόγραμμα δημιουργήθηκε.
-  saved: Αποθηκεύτηκε.
-  deleted: Το θέμα διαγράφηκε.
-  add_topic: Προσθήκη θέματος
-  add_root_topic: Προσθήκη θέματος-ρίζας
-  add_subtopic: Προσθήκη υποθέματος
-  rename_topic: Μετονομασία θέματος
-  topic_title: Τίτλος
-  no_topics: Δεν υπάρχουν θέματα ακόμα — πρόσθεσε το πρώτο για να ξεκινήσεις.
-  no_curriculum: Δημιούργησε πρόγραμμα για να ξεκινήσει η δομή θεμάτων.
-  delete_confirm: Διαγραφή αυτού του θέματος; Τα παιδιά του θα παραμείνουν ως ρίζες.

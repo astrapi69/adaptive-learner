@@ -12,6 +12,7 @@ export type {
     LearningProject,
     LearningSession,
     LearningTopic,
+    Lesson,
     MethodSwitch,
     ProgressCommit,
     ProgressSummary,

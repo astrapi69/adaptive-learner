@@ -222,6 +222,18 @@ export interface TopicUpdateBody {
     order_index?: number;
 }
 
+export interface LessonCreateBody {
+    title: string;
+    content?: string;
+    order_index?: number;
+}
+
+export interface LessonUpdateBody {
+    title?: string;
+    content?: string;
+    order_index?: number;
+}
+
 // --- Public namespaces --------------------------------------------------
 
 export const api = {
@@ -429,6 +441,15 @@ export const api = {
                 `/curricula/${encodeURIComponent(curriculumId)}/topics`,
                 {method: "POST", body},
             ),
+        listLessons: (curriculumId: string) =>
+            apiCall<import("../types/domain").Lesson[]>(
+                `/curricula/${encodeURIComponent(curriculumId)}/lessons`,
+            ),
+        createLesson: (curriculumId: string, body: LessonCreateBody) =>
+            apiCall<import("../types/domain").Lesson>(
+                `/curricula/${encodeURIComponent(curriculumId)}/lessons`,
+                {method: "POST", body},
+            ),
     },
 
     topics: {
@@ -443,6 +464,22 @@ export const api = {
             ),
         remove: (topicId: string) =>
             apiCall<void>(`/topics/${encodeURIComponent(topicId)}`, {
+                method: "DELETE",
+            }),
+    },
+
+    lessons: {
+        get: (lessonId: string) =>
+            apiCall<import("../types/domain").Lesson>(
+                `/lessons/${encodeURIComponent(lessonId)}`,
+            ),
+        update: (lessonId: string, body: LessonUpdateBody) =>
+            apiCall<import("../types/domain").Lesson>(
+                `/lessons/${encodeURIComponent(lessonId)}`,
+                {method: "PATCH", body},
+            ),
+        remove: (lessonId: string) =>
+            apiCall<void>(`/lessons/${encodeURIComponent(lessonId)}`, {
                 method: "DELETE",
             }),
     },

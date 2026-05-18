@@ -1218,6 +1218,72 @@ select:focus {
   gap: var(--space-3);
 }
 
+.lesson-list-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.lesson-create-form {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.lesson-create-form input {
+  flex: 1;
+  min-width: 0;
+}
+
+.lesson-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.lesson-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+
+.lesson-row.is-editing {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+}
+
+.lesson-row-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.lesson-title {
+  font-size: 1rem;
+}
+
+.lesson-content {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  white-space: pre-wrap;
+}
+
+.lesson-row-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.lesson-row.is-editing textarea {
+  resize: vertical;
+}
+
 /* --- Method badges ---------------------------------------------- */
 
 .method-badge {

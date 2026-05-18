@@ -40,6 +40,7 @@ from app.hookspecs import AdaptiveLearnerHookSpec
 from app.logging_config import setup_logging
 from app.routers.curriculum import (
     curricula_router,
+    lessons_router,
     topics_router,
     users_curricula_router,
 )
@@ -409,6 +410,7 @@ app.include_router(settings_router, prefix="/api")
 app.include_router(users_curricula_router, prefix="/api")
 app.include_router(curricula_router, prefix="/api")
 app.include_router(topics_router, prefix="/api")
+app.include_router(lessons_router, prefix="/api")
 
 
 @app.exception_handler(AdaptiveLearnerError)

@@ -1,11 +1,8 @@
-# Adaptive Learner i18n catalog (ES — Phase 5F).
+# Adaptive Learner i18n catalog (ES — Phase 6).
 #
-# Hand-translated by the AI assistant. Quality is comparable
-# to a competent machine translation; native-speaker review is
-# welcome for any string that lands in a published release. The
-# structure is parity-checked by tests/test_i18n_parity.py; do
-# NOT add or remove keys here without mirroring the change in
-# en.yaml.
+# Mirror of en.yaml structure. Strings carrying non-native
+# fallbacks are EN passthroughs. Structure parity-checked by
+# tests/test_i18n_parity.py.
 
 app:
   name: Adaptive Learner
@@ -38,6 +35,30 @@ nav:
   progress: Progreso
   settings: Ajustes
   home: Inicio
+curriculum:
+  title: Curriculo
+  active: Curriculo activo
+  new_placeholder: Titulo del nuevo curriculo...
+  create: Crear curriculo
+  created: Curriculo creado.
+  saved: Guardado.
+  deleted: Tema eliminado.
+  add_topic: Anadir tema
+  add_root_topic: Anadir tema raiz
+  add_subtopic: Anadir subtema
+  rename_topic: Renombrar tema
+  topic_title: Titulo
+  no_topics: Todavia no hay temas — anade el primero para empezar.
+  no_curriculum: Crea un curriculo para empezar a construir un arbol de temas.
+  delete_confirm: Eliminar este tema? Sus hijos quedaran como raices propias.
+  lessons_title: Lessons
+  add_lesson: Add lesson
+  new_lesson_placeholder: New lesson title…
+  no_lessons: No lessons yet.
+  lesson_created: Lesson created.
+  lesson_saved: Lesson saved.
+  lesson_deleted: Lesson deleted.
+  lesson_delete_confirm: Delete this lesson?
 landing:
   title: Adaptive Learner
   subtitle: Aprendizaje que se adapta a ti.
@@ -200,19 +221,3 @@ toast:
   api_key_saved: Clave API guardada.
   api_key_deleted: Clave API eliminada.
   method_switched: Metodo cambiado.
-curriculum:
-  title: Curriculo
-  active: Curriculo activo
-  new_placeholder: Titulo del nuevo curriculo...
-  create: Crear curriculo
-  created: Curriculo creado.
-  saved: Guardado.
-  deleted: Tema eliminado.
-  add_topic: Anadir tema
-  add_root_topic: Anadir tema raiz
-  add_subtopic: Anadir subtema
-  rename_topic: Renombrar tema
-  topic_title: Titulo
-  no_topics: Todavia no hay temas — anade el primero para empezar.
-  no_curriculum: Crea un curriculo para empezar a construir un arbol de temas.
-  delete_confirm: Eliminar este tema? Sus hijos quedaran como raices propias.

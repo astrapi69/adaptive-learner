@@ -2,12 +2,13 @@ import {useCallback, useEffect, useState, type FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 
 import AddTopicDialog from "../components/AddTopicDialog";
+import LessonList from "../components/LessonList";
 import TopicTree from "../components/TopicTree";
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {notify} from "../utils/notify";
-import type {Curriculum, LearningTopic} from "../types";
+import type {Curriculum, LearningTopic, Lesson} from "../types";
 
 /**
  * Curriculum page (project-reference §8 v0.2.0 addition,
@@ -38,6 +39,7 @@ export default function Curriculum() {
     const [curricula, setCurricula] = useState<Curriculum[]>([]);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [topics, setTopics] = useState<LearningTopic[]>([]);
+    const [lessons, setLessons] = useState<Lesson[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [dialog, setDialog] = useState<DialogMode>({kind: "closed"});
@@ -55,6 +57,70 @@ export default function Curriculum() {
             notify.error(detail);
         }
     }, []);
+
+    const reloadLessons = useCallback(async (curriculumId: string) => {
+        try {
+            const fresh = await api.curricula.listLessons(curriculumId);
+            setLessons(fresh);
+        } catch (err) {
+            const detail =
+                err instanceof ApiError ? err.detail : "Failed to load lessons.";
+            notify.error(detail);
+        }
+    }, []);
+
+    const handleCreateLesson = async (title: string) => {
+        if (!selectedId || submitting) return;
+        setSubmitting(true);
+        try {
+            await api.curricula.createLesson(selectedId, {title});
+            await reloadLessons(selectedId);
+            notify.success(t("curriculum.lesson_created", "Lesson created."));
+        } catch (err) {
+            const detail = err instanceof ApiError ? err.detail : t("common.error");
+            notify.error(detail);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleUpdateLesson = async (
+        lessonId: string,
+        title: string,
+        content: string,
+    ) => {
+        if (!selectedId || submitting) return;
+        setSubmitting(true);
+        try {
+            await api.lessons.update(lessonId, {title, content});
+            await reloadLessons(selectedId);
+            notify.success(t("curriculum.lesson_saved", "Lesson saved."));
+        } catch (err) {
+            const detail = err instanceof ApiError ? err.detail : t("common.error");
+            notify.error(detail);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleDeleteLesson = async (lessonId: string) => {
+        if (!selectedId || submitting) return;
+        const ok = window.confirm(
+            t("curriculum.lesson_delete_confirm", "Delete this lesson?"),
+        );
+        if (!ok) return;
+        setSubmitting(true);
+        try {
+            await api.lessons.remove(lessonId);
+            await reloadLessons(selectedId);
+            notify.success(t("curriculum.lesson_deleted", "Lesson deleted."));
+        } catch (err) {
+            const detail = err instanceof ApiError ? err.detail : t("common.error");
+            notify.error(detail);
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     // Bootstrap: load curricula on mount.
     useEffect(() => {
@@ -87,14 +153,17 @@ export default function Curriculum() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [navigate]);
 
-    // Load topics whenever the selected curriculum changes.
+    // Load topics + lessons whenever the selected curriculum
+    // changes.
     useEffect(() => {
         if (!selectedId) {
             setTopics([]);
+            setLessons([]);
             return;
         }
         void reloadTopics(selectedId);
-    }, [selectedId, reloadTopics]);
+        void reloadLessons(selectedId);
+    }, [selectedId, reloadTopics, reloadLessons]);
 
     const handleCreateCurriculum = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -279,14 +348,31 @@ export default function Curriculum() {
                         />
                     )}
                 </section>
-            ) : (
+            ) : null}
+
+            {selectedId && (
+                <section className="dashboard-card dashboard-card-wide">
+                    <h2 className="dashboard-card-title">
+                        {t("curriculum.lessons_title", "Lessons")}
+                    </h2>
+                    <LessonList
+                        lessons={lessons}
+                        onCreate={handleCreateLesson}
+                        onUpdate={handleUpdateLesson}
+                        onDelete={handleDeleteLesson}
+                        submitting={submitting}
+                    />
+                </section>
+            )}
+
+            {!selectedId ? (
                 <p className="muted" data-testid="curriculum-no-selection">
                     {t(
                         "curriculum.no_curriculum",
                         "Create a curriculum to start building a topic tree.",
                     )}
                 </p>
-            )}
+            ) : null}
 
             <AddTopicDialog
                 open={dialog.kind !== "closed"}

@@ -62,6 +62,14 @@ curriculum:
   no_topics: Noch keine Themen — leg dein erstes an, um zu starten.
   no_curriculum: Lege ein Curriculum an, um einen Themenbaum aufzubauen.
   delete_confirm: Dieses Thema löschen? Untergeordnete Themen bleiben als eigene Wurzeln erhalten.
+  lessons_title: Lektionen
+  add_lesson: Lektion hinzufügen
+  new_lesson_placeholder: Titel der neuen Lektion …
+  no_lessons: Noch keine Lektionen.
+  lesson_created: Lektion angelegt.
+  lesson_saved: Lektion gespeichert.
+  lesson_deleted: Lektion gelöscht.
+  lesson_delete_confirm: Diese Lektion löschen?
 
 landing:
   title: Adaptive Learner

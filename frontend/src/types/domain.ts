@@ -197,6 +197,16 @@ export interface LearningTopic {
     updated_at: string;
 }
 
+export interface Lesson {
+    id: string;
+    curriculum_id: string;
+    title: string;
+    content: string;
+    order_index: number;
+    created_at: string;
+    updated_at: string;
+}
+
 // --- MethodSwitch -------------------------------------------------------
 
 export interface MethodSwitch {

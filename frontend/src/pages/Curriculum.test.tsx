@@ -19,6 +19,10 @@ const apiListTopics = vi.fn();
 const apiCreateTopic = vi.fn();
 const apiUpdateTopic = vi.fn();
 const apiRemoveTopic = vi.fn();
+const apiListLessons = vi.fn();
+const apiCreateLesson = vi.fn();
+const apiUpdateLesson = vi.fn();
+const apiRemoveLesson = vi.fn();
 vi.mock("../api/client", async () => {
     const actual = await vi.importActual<typeof import("../api/client")>(
         "../api/client",
@@ -35,11 +39,18 @@ vi.mock("../api/client", async () => {
                 remove: vi.fn(),
                 listTopics: (...args: unknown[]) => apiListTopics(...args),
                 createTopic: (...args: unknown[]) => apiCreateTopic(...args),
+                listLessons: (...args: unknown[]) => apiListLessons(...args),
+                createLesson: (...args: unknown[]) => apiCreateLesson(...args),
             },
             topics: {
                 get: vi.fn(),
                 update: (...args: unknown[]) => apiUpdateTopic(...args),
                 remove: (...args: unknown[]) => apiRemoveTopic(...args),
+            },
+            lessons: {
+                get: vi.fn(),
+                update: (...args: unknown[]) => apiUpdateLesson(...args),
+                remove: (...args: unknown[]) => apiRemoveLesson(...args),
             },
         },
     };
@@ -94,6 +105,14 @@ describe("Curriculum page", () => {
         apiCreateTopic.mockReset();
         apiUpdateTopic.mockReset();
         apiRemoveTopic.mockReset();
+        apiListLessons.mockReset();
+        apiCreateLesson.mockReset();
+        apiUpdateLesson.mockReset();
+        apiRemoveLesson.mockReset();
+        // Default: no lessons in the selected curriculum. Per-test
+        // override when the lesson surface is the subject of the
+        // assertion.
+        apiListLessons.mockResolvedValue([]);
         toastError.mockReset();
         toastSuccess.mockReset();
         localStorage.clear();

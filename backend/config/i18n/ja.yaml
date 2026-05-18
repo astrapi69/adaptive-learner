@@ -1,10 +1,8 @@
-# Adaptive Learner i18n catalog (JA — Phase 4A).
+# Adaptive Learner i18n catalog (JA — Phase 6).
 #
 # Mirror of en.yaml structure. Strings carrying non-native
-# fallbacks are EN passthroughs — proper JA translations
-# land alongside the v0.2.x i18n-expansion track. The structure
-# is parity-checked by tests/test_i18n_parity.py; do NOT add or
-# remove keys here without mirroring the change in en.yaml.
+# fallbacks are EN passthroughs. Structure parity-checked by
+# tests/test_i18n_parity.py.
 
 app:
   name: Adaptive Learner
@@ -53,6 +51,14 @@ curriculum:
   no_topics: No topics yet — add your first to get started.
   no_curriculum: Create a curriculum to start building a topic tree.
   delete_confirm: Delete this topic? Its children stay as their own roots.
+  lessons_title: Lessons
+  add_lesson: Add lesson
+  new_lesson_placeholder: New lesson title…
+  no_lessons: No lessons yet.
+  lesson_created: Lesson created.
+  lesson_saved: Lesson saved.
+  lesson_deleted: Lesson deleted.
+  lesson_delete_confirm: Delete this lesson?
 landing:
   title: Adaptive Learner
   subtitle: Learning that adapts to you.

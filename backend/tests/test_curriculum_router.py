@@ -268,3 +268,145 @@ def test_delete_topic_sets_children_parent_to_null(client: TestClient):
 def test_delete_topic_404(client: TestClient):
     resp = client.delete("/api/topics/no-such")
     assert resp.status_code == 404
+
+
+# --- Lesson CRUD (Phase 6B) -----------------------------------------------
+
+
+def test_create_lesson_succeeds(client: TestClient):
+    user_id = _make_user(client)
+    curriculum_id = _make_curriculum(client, user_id)
+    resp = client.post(
+        f"/api/curricula/{curriculum_id}/lessons",
+        json={"title": "Limits intro", "content": "Lesson body."},
+    )
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    assert body["curriculum_id"] == curriculum_id
+    assert body["title"] == "Limits intro"
+    assert body["content"] == "Lesson body."
+    assert body["order_index"] == 0
+
+
+def test_create_lesson_rejects_unknown_curriculum_404(client: TestClient):
+    resp = client.post(
+        "/api/curricula/no-such/lessons",
+        json={"title": "X"},
+    )
+    assert resp.status_code == 404
+
+
+def test_create_lesson_defaults_content_to_empty(client: TestClient):
+    """Title-only creation is the common 'add lesson header now,
+    fill body later' flow. The Pydantic body schema defaults
+    ``content`` to ''."""
+    user_id = _make_user(client)
+    curriculum_id = _make_curriculum(client, user_id)
+    resp = client.post(
+        f"/api/curricula/{curriculum_id}/lessons",
+        json={"title": "Header only"},
+    )
+    assert resp.status_code == 201
+    assert resp.json()["content"] == ""
+
+
+def test_list_lessons_returns_curriculum_scoped(client: TestClient):
+    user_id = _make_user(client)
+    curriculum_a = _make_curriculum(client, user_id)
+    curriculum_b = _make_curriculum(client, user_id)
+    client.post(f"/api/curricula/{curriculum_a}/lessons", json={"title": "A1"})
+    client.post(f"/api/curricula/{curriculum_a}/lessons", json={"title": "A2"})
+    client.post(f"/api/curricula/{curriculum_b}/lessons", json={"title": "B1"})
+    resp_a = client.get(f"/api/curricula/{curriculum_a}/lessons")
+    resp_b = client.get(f"/api/curricula/{curriculum_b}/lessons")
+    assert len(resp_a.json()) == 2
+    assert len(resp_b.json()) == 1
+
+
+def test_list_lessons_ordered_by_index_then_created_at(client: TestClient):
+    user_id = _make_user(client)
+    curriculum_id = _make_curriculum(client, user_id)
+    client.post(
+        f"/api/curricula/{curriculum_id}/lessons",
+        json={"title": "Beta", "order_index": 2},
+    )
+    client.post(
+        f"/api/curricula/{curriculum_id}/lessons",
+        json={"title": "Alpha", "order_index": 0},
+    )
+    client.post(
+        f"/api/curricula/{curriculum_id}/lessons",
+        json={"title": "Gamma", "order_index": 2},
+    )
+    resp = client.get(f"/api/curricula/{curriculum_id}/lessons")
+    titles = [l["title"] for l in resp.json()]
+    assert titles == ["Alpha", "Beta", "Gamma"]
+
+
+def test_get_lesson_returns_full_row(client: TestClient):
+    user_id = _make_user(client)
+    curriculum_id = _make_curriculum(client, user_id)
+    lesson_id = client.post(
+        f"/api/curricula/{curriculum_id}/lessons",
+        json={"title": "Lesson"},
+    ).json()["id"]
+    resp = client.get(f"/api/lessons/{lesson_id}")
+    assert resp.status_code == 200
+    assert resp.json()["title"] == "Lesson"
+
+
+def test_get_lesson_404(client: TestClient):
+    resp = client.get("/api/lessons/no-such")
+    assert resp.status_code == 404
+
+
+def test_patch_lesson_rename_and_set_content(client: TestClient):
+    user_id = _make_user(client)
+    curriculum_id = _make_curriculum(client, user_id)
+    lesson_id = client.post(
+        f"/api/curricula/{curriculum_id}/lessons",
+        json={"title": "Old"},
+    ).json()["id"]
+    resp = client.patch(
+        f"/api/lessons/{lesson_id}",
+        json={"title": "New title", "content": "Full body."},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["title"] == "New title"
+    assert body["content"] == "Full body."
+
+
+def test_patch_lesson_404_on_unknown(client: TestClient):
+    resp = client.patch("/api/lessons/no-such", json={"title": "x"})
+    assert resp.status_code == 404
+
+
+def test_delete_lesson(client: TestClient):
+    user_id = _make_user(client)
+    curriculum_id = _make_curriculum(client, user_id)
+    lesson_id = client.post(
+        f"/api/curricula/{curriculum_id}/lessons",
+        json={"title": "Doomed"},
+    ).json()["id"]
+    resp = client.delete(f"/api/lessons/{lesson_id}")
+    assert resp.status_code == 204
+    assert client.get(f"/api/lessons/{lesson_id}").status_code == 404
+
+
+def test_delete_lesson_404(client: TestClient):
+    resp = client.delete("/api/lessons/no-such")
+    assert resp.status_code == 404
+
+
+def test_delete_curriculum_cascades_to_lessons(client: TestClient):
+    """Curriculum cascade=all,delete-orphan on the lessons
+    relationship wipes every lesson alongside the curriculum."""
+    user_id = _make_user(client)
+    curriculum_id = _make_curriculum(client, user_id)
+    lesson_id = client.post(
+        f"/api/curricula/{curriculum_id}/lessons",
+        json={"title": "Will cascade away"},
+    ).json()["id"]
+    client.delete(f"/api/curricula/{curriculum_id}")
+    assert client.get(f"/api/lessons/{lesson_id}").status_code == 404

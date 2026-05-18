@@ -57,6 +57,14 @@ curriculum:
   no_topics: No topics yet — add your first to get started.
   no_curriculum: Create a curriculum to start building a topic tree.
   delete_confirm: Delete this topic? Its children stay as their own roots.
+  lessons_title: Lessons
+  add_lesson: Add lesson
+  new_lesson_placeholder: New lesson title…
+  no_lessons: No lessons yet.
+  lesson_created: Lesson created.
+  lesson_saved: Lesson saved.
+  lesson_deleted: Lesson deleted.
+  lesson_delete_confirm: Delete this lesson?
 
 landing:
   title: Adaptive Learner

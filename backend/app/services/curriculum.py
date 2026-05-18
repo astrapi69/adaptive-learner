@@ -21,12 +21,14 @@ from __future__ import annotations
 from sqlalchemy.orm import Session
 
 from app.exceptions import NotFoundError, ValidationError
-from app.models import Curriculum, LearningTopic, User
+from app.models import Curriculum, LearningTopic, Lesson, User
 from app.schemas import (
     CurriculumCreate,
     CurriculumUpdate,
     LearningTopicCreate,
     LearningTopicUpdate,
+    LessonCreate,
+    LessonUpdate,
 )
 
 # --- Curriculum CRUD -------------------------------------------------------
@@ -193,15 +195,79 @@ def delete_topic(db: Session, topic_id: str) -> None:
     db.commit()
 
 
+# --- Lesson CRUD ----------------------------------------------------------
+
+
+def list_lessons(db: Session, curriculum_id: str) -> list[Lesson]:
+    """Return every lesson for the curriculum, ordered by
+    ``order_index`` ASC then created_at ASC. Lessons are a flat
+    list inside the curriculum (per the model design — they are
+    not attached to specific topics in v0.3.0).
+    """
+    get_curriculum(db, curriculum_id)
+    return (
+        db.query(Lesson)
+        .filter(Lesson.curriculum_id == curriculum_id)
+        .order_by(Lesson.order_index.asc(), Lesson.created_at.asc())
+        .all()
+    )
+
+
+def get_lesson(db: Session, lesson_id: str) -> Lesson:
+    row = db.get(Lesson, lesson_id)
+    if row is None:
+        raise NotFoundError(f"Lesson {lesson_id!r} not found.")
+    return row
+
+
+def create_lesson(db: Session, payload: LessonCreate) -> Lesson:
+    """Insert a lesson under the curriculum. Raises NotFoundError
+    if the curriculum doesn't exist (catches a bad client-supplied
+    ``curriculum_id`` before the FK violation reaches SQLAlchemy).
+    """
+    get_curriculum(db, payload.curriculum_id)
+    row = Lesson(
+        curriculum_id=payload.curriculum_id,
+        title=payload.title,
+        content=payload.content,
+        order_index=payload.order_index,
+    )
+    db.add(row)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+def update_lesson(db: Session, lesson_id: str, payload: LessonUpdate) -> Lesson:
+    row = get_lesson(db, lesson_id)
+    updates = payload.model_dump(exclude_unset=True)
+    for field, value in updates.items():
+        setattr(row, field, value)
+    db.commit()
+    db.refresh(row)
+    return row
+
+
+def delete_lesson(db: Session, lesson_id: str) -> None:
+    row = get_lesson(db, lesson_id)
+    db.delete(row)
+    db.commit()
+
+
 __all__ = [
     "create_curriculum",
+    "create_lesson",
     "create_topic",
     "delete_curriculum",
+    "delete_lesson",
     "delete_topic",
     "get_curriculum",
+    "get_lesson",
     "get_topic",
     "list_curriculums_for_user",
+    "list_lessons",
     "list_topics",
     "update_curriculum",
+    "update_lesson",
     "update_topic",
 ]
