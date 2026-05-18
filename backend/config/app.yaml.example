@@ -28,6 +28,7 @@ plugins:
     - ai-anthropic
     - session
     - tracking
+    - tools
   entry_point_group: adaptive_learner.plugins
 ui:
   title: Adaptive Learner
