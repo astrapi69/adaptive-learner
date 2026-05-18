@@ -58,6 +58,7 @@ vi.mock("../components/ProfileRadar", () => ({
 const Q: AssessmentQuestion[] = [
     {
         id: "q01",
+        type: "multi",
         text: "Wie gehst du an ein neues Thema heran?",
         answers: [
             {id: "a", text: "Regeln zuerst.", weights: {deductive: 1.0}},
@@ -66,6 +67,7 @@ const Q: AssessmentQuestion[] = [
     },
     {
         id: "q02",
+        type: "single",
         text: "Magst du Praezision oder Intuition?",
         answers: [
             {id: "a", text: "Praezision.", weights: {deductive: 1.0}},
@@ -147,8 +149,8 @@ describe("Assessment page", () => {
         expect(apiEvaluate).toHaveBeenCalledWith({
             project_id: "p1",
             answers: [
-                {question_id: "q01", answer_id: "a"},
-                {question_id: "q02", answer_id: "b"},
+                {question_id: "q01", answer_ids: ["a"]},
+                {question_id: "q02", answer_ids: ["b"]},
             ],
         });
         expect(toastSuccess).toHaveBeenCalled();
@@ -195,5 +197,74 @@ describe("Assessment page", () => {
         renderAssessment();
         await screen.findByTestId("assessment-error");
         expect(screen.getByTestId("assessment-error").textContent).toContain("DB down");
+    });
+
+    it("multi-select question lets the user pick 2 answers", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        apiEvaluate.mockResolvedValue(PROFILE);
+        renderAssessment();
+
+        await screen.findByTestId("question-card-q01");
+        // q01 is multi — both clicks stick.
+        fireEvent.click(screen.getByTestId("question-q01-answer-a"));
+        fireEvent.click(screen.getByTestId("question-q01-answer-b"));
+        expect(
+            screen.getByTestId("question-q01-answer-a").getAttribute("aria-checked"),
+        ).toBe("true");
+        expect(
+            screen.getByTestId("question-q01-answer-b").getAttribute("aria-checked"),
+        ).toBe("true");
+
+        fireEvent.click(screen.getByTestId("assessment-next"));
+        await screen.findByTestId("question-card-q02");
+        fireEvent.click(screen.getByTestId("question-q02-answer-a"));
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("assessment-submit"));
+        });
+
+        await screen.findByTestId("assessment-result");
+        expect(apiEvaluate).toHaveBeenCalledWith({
+            project_id: "p1",
+            answers: [
+                {question_id: "q01", answer_ids: ["a", "b"]},
+                {question_id: "q02", answer_ids: ["a"]},
+            ],
+        });
+    });
+
+    it("single-select question REPLACES the prior pick on second click", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        apiEvaluate.mockResolvedValue(PROFILE);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        fireEvent.click(screen.getByTestId("question-q01-answer-a"));
+        fireEvent.click(screen.getByTestId("assessment-next"));
+        await screen.findByTestId("question-card-q02");
+        // q02 is single — clicking 'b' after 'a' unselects 'a'.
+        fireEvent.click(screen.getByTestId("question-q02-answer-a"));
+        fireEvent.click(screen.getByTestId("question-q02-answer-b"));
+        expect(
+            screen.getByTestId("question-q02-answer-a").getAttribute("aria-checked"),
+        ).toBe("false");
+        expect(
+            screen.getByTestId("question-q02-answer-b").getAttribute("aria-checked"),
+        ).toBe("true");
+    });
+
+    it("multi-select clicking the same answer twice toggles it off", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        fireEvent.click(screen.getByTestId("question-q01-answer-a"));
+        expect(
+            screen.getByTestId("question-q01-answer-a").getAttribute("aria-checked"),
+        ).toBe("true");
+        fireEvent.click(screen.getByTestId("question-q01-answer-a"));
+        expect(
+            screen.getByTestId("question-q01-answer-a").getAttribute("aria-checked"),
+        ).toBe("false");
+        // With no answer selected, the Next button is disabled.
+        const next = screen.getByTestId("assessment-next") as HTMLButtonElement;
+        expect(next.disabled).toBe(true);
     });
 });

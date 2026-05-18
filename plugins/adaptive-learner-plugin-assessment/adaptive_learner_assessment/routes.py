@@ -15,7 +15,7 @@ from __future__ import annotations
 from typing import Any
 
 from fastapi import APIRouter, Depends, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -30,8 +30,31 @@ router = APIRouter(prefix="/plugins/assessment", tags=["assessment"])
 
 
 class _AnswerIn(BaseModel):
+    """One question's pick. v0.4.0 supports BOTH shapes:
+
+    - ``answer_id: str`` for single-select (legacy, still accepted).
+    - ``answer_ids: list[str]`` for multi-select (v0.4.0).
+
+    At least one MUST be supplied; both is allowed (the multi-select
+    list wins). Empty ``answer_ids`` is rejected — a question
+    submitted with no picks is a client bug.
+    """
+
     question_id: str = Field(min_length=1)
-    answer_id: str = Field(min_length=1)
+    answer_id: str | None = Field(default=None, min_length=1)
+    answer_ids: list[str] | None = None
+
+    @model_validator(mode="after")
+    def _at_least_one_answer(self) -> _AnswerIn:
+        if self.answer_ids is not None:
+            if not self.answer_ids:
+                raise ValueError("answer_ids must not be empty.")
+            for aid in self.answer_ids:
+                if not isinstance(aid, str) or not aid:
+                    raise ValueError("answer_ids entries must be non-empty strings.")
+        elif not self.answer_id:
+            raise ValueError("Either answer_id or answer_ids must be supplied.")
+        return self
 
 
 class _EvaluateBody(BaseModel):

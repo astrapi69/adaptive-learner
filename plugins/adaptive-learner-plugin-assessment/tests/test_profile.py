@@ -134,3 +134,129 @@ def test_returned_values_are_rounded():
     for value in out.values():
         # 4-decimal precision per the docstring contract.
         assert round(value, 4) == value
+
+
+# --- v0.4.0: multi-select (``answer_ids``) --------------------------------
+
+
+def test_multi_select_accepts_answer_ids_list():
+    """A user picking 2 answers via ``answer_ids`` lands the same
+    methods as picking each one individually — just halved."""
+    custom = [
+        {
+            "id": "x1",
+            "answers": [
+                {"id": "a", "weights": {"deductive": 1.0}},
+                {"id": "b", "weights": {"dialogic": 1.0}},
+            ],
+        }
+    ]
+    out = calculate_profile(
+        [{"question_id": "x1", "answer_ids": ["a", "b"]}],
+        questions=custom,
+    )
+    # Two answers picked => each contributes half its weight =>
+    # deductive 0.5 + dialogic 0.5 (then divided by 1 question = 1).
+    assert out["deductive"] == 0.5
+    assert out["dialogic"] == 0.5
+
+
+def test_multi_select_single_pick_equals_legacy_single():
+    """``answer_ids=["a"]`` must produce the same numbers as
+    ``answer_id="a"`` — the multi shape is a generalisation of
+    the single shape, not a different scoring rule."""
+    custom = [
+        {
+            "id": "x1",
+            "answers": [{"id": "a", "weights": {"deductive": 1.0}}],
+        }
+    ]
+    legacy = calculate_profile(
+        [{"question_id": "x1", "answer_id": "a"}],
+        questions=custom,
+    )
+    multi = calculate_profile(
+        [{"question_id": "x1", "answer_ids": ["a"]}],
+        questions=custom,
+    )
+    assert legacy == multi
+
+
+def test_multi_select_three_picks_split_three_ways():
+    custom = [
+        {
+            "id": "x1",
+            "answers": [
+                {"id": "a", "weights": {"deductive": 1.0}},
+                {"id": "b", "weights": {"inductive": 1.0}},
+                {"id": "c", "weights": {"dialogic": 1.0}},
+            ],
+        }
+    ]
+    out = calculate_profile(
+        [{"question_id": "x1", "answer_ids": ["a", "b", "c"]}],
+        questions=custom,
+    )
+    # 1/3 each, exact to 4 decimals.
+    assert out["deductive"] == round(1.0 / 3.0, 4)
+    assert out["inductive"] == round(1.0 / 3.0, 4)
+    assert out["dialogic"] == round(1.0 / 3.0, 4)
+
+
+def test_multi_select_answer_ids_wins_when_both_supplied():
+    """If a client sends both shapes for the same question, the
+    multi-select list takes precedence — single-select is the
+    fallback for clients that forgot to upgrade."""
+    custom = [
+        {
+            "id": "x1",
+            "answers": [
+                {"id": "a", "weights": {"deductive": 1.0}},
+                {"id": "b", "weights": {"inductive": 1.0}},
+            ],
+        }
+    ]
+    out = calculate_profile(
+        [
+            {
+                "question_id": "x1",
+                "answer_id": "a",
+                "answer_ids": ["b"],
+            }
+        ],
+        questions=custom,
+    )
+    # The ``answer_ids`` pick ("b") wins; ``answer_id`` ignored.
+    assert out["inductive"] == 1.0
+    assert out["deductive"] == 0.0
+
+
+def test_multi_select_empty_answer_ids_is_dropped():
+    """An empty ``answer_ids`` list contributes nothing (route-layer
+    validation catches it as 422, but the calculator stays robust)."""
+    out = calculate_profile(
+        [{"question_id": "q01", "answer_ids": []}],
+    )
+    assert all(v == 0.0 for v in out.values())
+
+
+def test_multi_select_non_string_entries_silently_dropped():
+    """Robust against a noisy client sending mixed types in
+    ``answer_ids`` — the non-string entries are filtered, the
+    rest are scored."""
+    custom = [
+        {
+            "id": "x1",
+            "answers": [
+                {"id": "a", "weights": {"deductive": 1.0}},
+                {"id": "b", "weights": {"dialogic": 1.0}},
+            ],
+        }
+    ]
+    out = calculate_profile(
+        [{"question_id": "x1", "answer_ids": ["a", None, 42, "b"]}],
+        questions=custom,
+    )
+    # Only "a" + "b" picked, so each contributes 1/2 of its weight.
+    assert out["deductive"] == 0.5
+    assert out["dialogic"] == 0.5

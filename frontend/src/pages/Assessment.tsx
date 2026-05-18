@@ -34,7 +34,11 @@ export default function Assessment() {
     const navigate = useNavigate();
 
     const [questions, setQuestions] = useState<AssessmentQuestion[] | null>(null);
-    const [answers, setAnswers] = useState<Record<string, string>>({});
+    // v0.4.0: answers are now arrays per-question. Single-select
+    // questions hold either zero or one entry; multi-select hold
+    // 0..N. ``allAnswered`` requires every question to have at
+    // least one entry.
+    const [answers, setAnswers] = useState<Record<string, string[]>>({});
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -80,12 +84,29 @@ export default function Assessment() {
 
     const allAnswered = useMemo(() => {
         if (!questions || questions.length === 0) return false;
-        return questions.every((q) => answers[q.id]);
+        return questions.every((q) => (answers[q.id]?.length ?? 0) > 0);
     }, [questions, answers]);
 
-    const handleSelect = useCallback((questionId: string, answerId: string) => {
-        setAnswers((prev) => ({...prev, [questionId]: answerId}));
-    }, []);
+    const handleToggle = useCallback(
+        (questionId: string, answerId: string) => {
+            if (!questions) return;
+            const question = questions.find((q) => q.id === questionId);
+            if (!question) return;
+            setAnswers((prev) => {
+                const current = prev[questionId] ?? [];
+                if (question.type === "multi") {
+                    // Toggle the answer in the array.
+                    const next = current.includes(answerId)
+                        ? current.filter((a) => a !== answerId)
+                        : [...current, answerId];
+                    return {...prev, [questionId]: next};
+                }
+                // Single-select: replace with just this one answer.
+                return {...prev, [questionId]: [answerId]};
+            });
+        },
+        [questions],
+    );
 
     const handleSubmit = useCallback(async () => {
         if (!questions || !allAnswered || submitting) return;
@@ -100,7 +121,7 @@ export default function Assessment() {
                 project_id: projectId,
                 answers: questions.map((q) => ({
                     question_id: q.id,
-                    answer_id: answers[q.id],
+                    answer_ids: answers[q.id] ?? [],
                 })),
             });
             setProfile(result);
@@ -185,8 +206,8 @@ export default function Assessment() {
 
             <QuestionCard
                 question={current}
-                selectedAnswerId={answers[current.id] ?? null}
-                onSelect={(answerId) => handleSelect(current.id, answerId)}
+                selectedAnswerIds={answers[current.id] ?? []}
+                onToggle={(answerId) => handleToggle(current.id, answerId)}
                 disabled={submitting}
             />
 
@@ -207,7 +228,10 @@ export default function Assessment() {
                         className="btn btn-primary"
                         data-testid="assessment-next"
                         onClick={() => setCurrentIndex((i) => Math.min(total - 1, i + 1))}
-                        disabled={!answers[current.id] || submitting}
+                        disabled={
+                            (answers[current.id]?.length ?? 0) === 0 ||
+                            submitting
+                        }
                     >
                         {t("assessment.next_question", "Next question")}
                     </button>

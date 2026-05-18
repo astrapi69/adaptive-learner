@@ -253,6 +253,13 @@ export interface AssessmentAnswer {
 
 export interface AssessmentQuestion {
     id: string;
+    /**
+     * v0.4.0 — ``"single"`` renders radio buttons (exactly one
+     * answer); ``"multi"`` renders checkboxes (one or more
+     * answers). Backend defaults to "single" for any question
+     * that doesn't declare it.
+     */
+    type: "single" | "multi";
     text: string;
     answers: AssessmentAnswer[];
 }
@@ -261,10 +268,19 @@ export interface AssessmentQuestion {
  * Payload of ``POST /api/plugins/assessment/evaluate``. The
  * answers array carries one entry per question; the plugin
  * validates ``min_length=1`` (every question must be answered).
+ *
+ * v0.4.0 supports both shapes:
+ *   - ``answer_id: string`` for single-select (legacy)
+ *   - ``answer_ids: string[]`` for multi-select
+ * The backend's Pydantic validator requires at least one to be set.
  */
 export interface AssessmentEvaluatePayload {
     project_id: string;
-    answers: {question_id: string; answer_id: string}[];
+    answers: {
+        question_id: string;
+        answer_id?: string;
+        answer_ids?: string[];
+    }[];
 }
 
 // --- Tracking / progress summary ---------------------------------------

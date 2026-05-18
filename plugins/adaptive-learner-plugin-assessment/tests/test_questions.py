@@ -168,3 +168,35 @@ def test_lang_neutral_questions_drops_text():
             assert "text" not in a
             assert "weights" in a
             assert "id" in a
+
+
+# --- v0.4.0: question ``type`` ("single" | "multi") -----------------------
+
+
+def test_each_question_carries_a_type_field_in_lang_output():
+    """The frontend reads ``type`` to pick radio vs checkbox.
+    Every question must declare it (or fall back to "single")."""
+    out = questions_for_lang("en")
+    for q in out:
+        assert q.get("type") in ("single", "multi"), q
+
+
+def test_seven_questions_are_multi_select_by_design():
+    """v0.4.0 marks 7 of the 12 questions multi-select. The set is
+    load-bearing — these are the questions where multiple learning
+    preferences genuinely apply at the same time. The other 5 stay
+    single-select because their answers are mutually exclusive
+    (one pace, one feedback timing, one stance on AI tools, ...).
+    """
+    multi_ids = {q["id"] for q in QUESTIONS if q.get("type") == "multi"}
+    assert multi_ids == {"q01", "q02", "q04", "q05", "q06", "q08", "q12"}
+
+
+def test_remaining_questions_default_to_single():
+    """The 5 that aren't marked ``multi`` must remain single — a
+    missing ``type`` field falls back to "single" in the lang
+    output, which is fine."""
+    single_ids = {
+        q["id"] for q in QUESTIONS if q.get("type", "single") == "single"
+    }
+    assert single_ids == {"q03", "q07", "q09", "q10", "q11"}

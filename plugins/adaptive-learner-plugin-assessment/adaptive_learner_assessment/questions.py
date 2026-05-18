@@ -57,6 +57,13 @@ class Answer(TypedDict, total=False):
 
 class Question(TypedDict, total=False):
     id: str
+    # ``"single"`` (radio buttons, exactly one answer) or ``"multi"``
+    # (checkboxes, one or more answers — multi-select). v0.4.0 adds
+    # multi-select for questions where multiple learning preferences
+    # can genuinely apply at the same time (e.g. "How do you approach
+    # a new topic?" — a learner can lean on BOTH reading theory AND
+    # examples). When omitted, the question is treated as "single".
+    type: str
     text_de: str
     text_en: str
     text_es: str
@@ -68,6 +75,7 @@ class Question(TypedDict, total=False):
 QUESTIONS: list[Question] = [
     {
         "id": "q01",
+        "type": "multi",
         "text_de": "Wie gehst du an ein neues Thema heran?",
         "text_en": "How do you approach a new topic?",
         "text_es": "Como abordas un tema nuevo?",
@@ -114,6 +122,7 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q02",
+        "type": "multi",
         "text_de": "Wenn du einen Fehler machst, was hilft dir am meisten?",
         "text_en": "When you make a mistake, what helps you most?",
         "text_es": "Cuando cometes un error, que te ayuda mas?",
@@ -206,6 +215,7 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q04",
+        "type": "multi",
         "text_de": "Wo lernst du am besten?",
         "text_en": "Where do you learn best?",
         "text_es": "Donde aprendes mejor?",
@@ -252,6 +262,7 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q05",
+        "type": "multi",
         "text_de": "Wie merkst du dir am besten Neues?",
         "text_en": "How do you remember new things best?",
         "text_es": "Como recuerdas mejor las cosas nuevas?",
@@ -298,6 +309,7 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q06",
+        "type": "multi",
         "text_de": "Welche Ressource hilft dir am meisten?",
         "text_en": "Which resource helps you most?",
         "text_es": "Que recurso te ayuda mas?",
@@ -390,6 +402,7 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q08",
+        "type": "multi",
         "text_de": "Wann sitzt der Stoff für dich wirklich?",
         "text_en": "When does material really stick for you?",
         "text_es": "Cuando se te queda realmente el material?",
@@ -574,6 +587,7 @@ QUESTIONS: list[Question] = [
     },
     {
         "id": "q12",
+        "type": "multi",
         "text_de": "Wie verhältst du dich bei Stoff, der nicht klick macht?",
         "text_en": "How do you respond to material that just won't click?",
         "text_es": "Como respondes ante material que no te entra?",
@@ -667,6 +681,11 @@ def questions_for_lang(lang: str) -> list[dict[str, Any]]:
         out.append(
             {
                 "id": q["id"],
+                # v0.4.0: ``type`` lets the frontend pick radio
+                # vs checkbox rendering. Default "single" for
+                # backward compatibility with anything that
+                # forgot to declare it.
+                "type": q.get("type", "single"),
                 "text": q_text,
                 "answers": [
                     {

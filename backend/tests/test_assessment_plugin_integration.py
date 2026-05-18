@@ -223,3 +223,75 @@ def test_calculate_profile_hook_dispatches(client: TestClient):
     }
     # 1 deductive answer out of 12 questions => deductive = 1/12 ≈ 0.0833.
     assert 0.08 <= out["deductive"] <= 0.09
+
+
+# --- v0.4.0: multi-select ``answer_ids`` ----------------------------------
+
+
+def test_questions_response_carries_type_field(client: TestClient):
+    """Every question in the public response declares ``type``
+    so the frontend can pick radio vs checkbox rendering."""
+    resp = client.get("/api/plugins/assessment/questions?lang=en")
+    assert resp.status_code == 200
+    body = resp.json()
+    for q in body:
+        assert q["type"] in ("single", "multi")
+
+
+def test_evaluate_accepts_multi_select_answer_ids(client: TestClient):
+    """A multi-select pick is submitted via ``answer_ids: [...]``
+    and the route persists the resulting profile."""
+    _, project_id = _make_user_and_project(client)
+    resp = client.post(
+        "/api/plugins/assessment/evaluate",
+        json={
+            "project_id": project_id,
+            "answers": [
+                {"question_id": "q01", "answer_ids": ["a", "b"]},
+            ],
+        },
+    )
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    # q01.a is deductive 1.0, q01.b is inductive 1.0 — each gets
+    # halved, then divided by 12 questions => ≈ 0.0417 each.
+    assert 0.04 <= body["deductive"] <= 0.05
+    assert 0.04 <= body["inductive"] <= 0.05
+
+
+def test_evaluate_rejects_empty_answer_ids_422(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    resp = client.post(
+        "/api/plugins/assessment/evaluate",
+        json={
+            "project_id": project_id,
+            "answers": [{"question_id": "q01", "answer_ids": []}],
+        },
+    )
+    assert resp.status_code == 422
+
+
+def test_evaluate_rejects_neither_answer_id_nor_answer_ids_422(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    resp = client.post(
+        "/api/plugins/assessment/evaluate",
+        json={
+            "project_id": project_id,
+            "answers": [{"question_id": "q01"}],
+        },
+    )
+    assert resp.status_code == 422
+
+
+def test_evaluate_legacy_answer_id_still_works(client: TestClient):
+    """Backward compatibility: existing single-select clients keep
+    working without sending ``answer_ids``."""
+    _, project_id = _make_user_and_project(client)
+    resp = client.post(
+        "/api/plugins/assessment/evaluate",
+        json={
+            "project_id": project_id,
+            "answers": [{"question_id": "q01", "answer_id": "a"}],
+        },
+    )
+    assert resp.status_code == 201, resp.text

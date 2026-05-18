@@ -50,11 +50,16 @@ def calculate_profile(
     """Aggregate per-answer weights into a 6-method-weight dict.
 
     Args:
-        answers: List of ``{"question_id": str, "answer_id": str}``.
-            Order does not matter; only one entry per question is
-            honoured (the LAST one wins, so a client that sends two
-            answers for the same question — e.g. a UI bug — gets the
-            most recent pick scored).
+        answers: List of entries with ``question_id`` plus either:
+
+            - ``answer_id: str`` (legacy single-select shape), or
+            - ``answer_ids: list[str]`` (v0.4.0 multi-select shape)
+
+            Both shapes coexist so existing callers keep working.
+            Last entry per ``question_id`` wins. For multi-select,
+            each picked answer's weights contribute proportionally
+            (``weight / num_picked``) so the question's total
+            contribution stays comparable to a single-select pick.
         questions: Optional override of the question pack (tests
             pass a stub here). Default reads the bundled 12.
 
@@ -65,20 +70,35 @@ def calculate_profile(
     num_questions, lookup = _build_lookup(questions)
     totals: dict[str, float] = {m: 0.0 for m in METHODS}
 
-    # Dedupe by question_id (last write wins) so a noisy client can't
-    # double-count one question.
-    by_qid: dict[str, str] = {}
+    # Dedupe by question_id (last write wins). Each value is a
+    # NORMALISED list of answer-ids — single-select legacy shape
+    # gets wrapped, multi-select shape gets filtered to strings.
+    by_qid: dict[str, list[str]] = {}
     for ans in answers:
         qid = ans.get("question_id")
-        aid = ans.get("answer_id")
-        if isinstance(qid, str) and isinstance(aid, str):
-            by_qid[qid] = aid
+        if not isinstance(qid, str):
+            continue
+        aids: list[str] = []
+        raw_ids = ans.get("answer_ids")
+        if isinstance(raw_ids, list):
+            aids = [x for x in raw_ids if isinstance(x, str)]
+        elif isinstance(ans.get("answer_id"), str):
+            aids = [ans["answer_id"]]
+        if aids:
+            by_qid[qid] = aids
 
-    for qid, aid in by_qid.items():
-        weights = lookup.get(qid, {}).get(aid, {})
-        for method, weight in weights.items():
-            if method in totals and isinstance(weight, (int, float)):
-                totals[method] += float(weight)
+    for qid, aids in by_qid.items():
+        n = len(aids)
+        if n == 0:
+            continue
+        for aid in aids:
+            weights = lookup.get(qid, {}).get(aid, {})
+            for method, weight in weights.items():
+                if method in totals and isinstance(weight, (int, float)):
+                    # Multi-select: split the answer's weight
+                    # equally so picking 2 answers contributes
+                    # the same total as picking 1.
+                    totals[method] += float(weight) / n
 
     if num_questions == 0:
         return {m: 0.0 for m in METHODS}
