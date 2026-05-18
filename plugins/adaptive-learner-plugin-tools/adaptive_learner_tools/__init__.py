@@ -15,4 +15,4 @@ same hook without touching this one — the dashboard aggregates
 across plugins.
 """
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"

@@ -24,6 +24,6 @@ Errors raised by the Gemini SDK are wrapped into
 :class:`app.exceptions.ExternalServiceError`.
 """
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 GEMINI_MODEL_PREFIX = "gemini-"

@@ -12,15 +12,20 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.3.0):** v0.2.0 plus Phase 6:
-  per-(method, step) bespoke prompt matrix (42 cells × 2
-  languages, 84 strings), Lesson CRUD on top of the existing
-  Lesson model, proper ES / FR / EL translations for all 12
-  assessment questions, 7 Playwright smoke specs for the
-  critical flows, ai-gemini migrated from deprecated
-  google.generativeai to google.genai 2.x. Plus a one-shot
-  bugfix: every German user-facing string switched from
-  ASCII-folded (ae/oe/ue/ss) to proper Unicode (ä/ö/ü/ß).
+- **Current state (v0.4.0):** v0.3.0 plus Phase 7:
+  deterministic cycle-step advance on every successful
+  user→AI round-trip (capped at 7), Dashboard streak +
+  RecentSessions + 5-cell SessionCounter, per-provider
+  `UserSettings.model_override_*` columns + Settings UI
+  picker (Anthropic-first ordering load-bearing across
+  every dropdown), `/api/plugins/tools/spaced/{project_id}`
+  spaced-repetition action cards on the Dashboard with
+  localStorage-persisted dismissals. Plus three smoke-test
+  fixes: 7 of 12 assessment questions now multi-select
+  (checkboxes; weight distributed equally across picks),
+  Onboarding "Later" button creates a default user in 2
+  clicks, and Landing detects a returning user via
+  `GET /api/users/{id}` and skips straight to /dashboard.
 
 ## Development guidelines
 
@@ -176,10 +181,11 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- v0.3.0 baseline: backend 402, plugins 375 (across 7), frontend 187 (Vitest). Total 964.
+- v0.4.0 baseline: backend 434, plugins 416 (across 7), frontend 224 (Vitest). Total 1074.
 - E2E tests under `e2e/` are NOT on the `make test` default path.
-  v0.3.0 ships 7 Playwright smoke specs under `e2e/smoke/`
-  (landing, onboarding+assessment, session, curriculum, settings).
+  v0.3.0 shipped 7 Playwright smoke specs under `e2e/smoke/`
+  (landing, onboarding+assessment, session, curriculum, settings);
+  unchanged in v0.4.0.
 
 ## Test isolation
 

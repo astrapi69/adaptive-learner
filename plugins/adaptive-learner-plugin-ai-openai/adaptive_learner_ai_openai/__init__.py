@@ -15,6 +15,6 @@ Errors raised by the OpenAI SDK are wrapped into
 maps them to HTTP 502 with a typed detail.
 """
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
 
 GPT_MODEL_PREFIX = "gpt-"
