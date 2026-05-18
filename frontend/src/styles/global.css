@@ -869,6 +869,117 @@ select:focus {
   font-weight: 400;
 }
 
+/* --- Settings page -------------------------------------------- */
+
+.settings-page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.settings-page h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.settings-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.settings-section-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.api-key-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-3);
+}
+
+.api-key-row:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+.api-key-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.api-key-row-input {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.api-key-row-input input {
+  flex: 1;
+  min-width: 0;
+}
+
+.api-key-status {
+  font-size: 0.85rem;
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--fg-muted);
+}
+
+.api-key-status.is-set {
+  background: color-mix(in srgb, var(--success) 18%, var(--surface));
+  color: var(--success);
+}
+
+/* --- Progress table -------------------------------------------- */
+
+.commit-table-wrap {
+  overflow-x: auto;
+}
+
+.commit-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.commit-table th,
+.commit-table td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.commit-table th {
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.78rem;
+}
+
+.commit-table tr:last-child td {
+  border-bottom: none;
+}
+
 /* --- Method badges ---------------------------------------------- */
 
 .method-badge {
