@@ -17,4 +17,9 @@ plugin (Phase 3-C) can fetch the same question pack via pluggy
 instead of going through HTTP.
 """
 
-__version__ = "0.4.0"
+try:
+    from importlib.metadata import PackageNotFoundError, version as _pkg_version
+
+    __version__ = _pkg_version("adaptive-learner-plugin-assessment")
+except PackageNotFoundError:  # pragma: no cover - dist not installed
+    __version__ = "0.0.0+unknown"

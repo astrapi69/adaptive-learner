@@ -15,4 +15,9 @@ same hook without touching this one — the dashboard aggregates
 across plugins.
 """
 
-__version__ = "0.4.0"
+try:
+    from importlib.metadata import PackageNotFoundError, version as _pkg_version
+
+    __version__ = _pkg_version("adaptive-learner-plugin-tools")
+except PackageNotFoundError:  # pragma: no cover - dist not installed
+    __version__ = "0.0.0+unknown"

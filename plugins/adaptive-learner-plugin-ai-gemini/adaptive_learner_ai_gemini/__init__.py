@@ -24,6 +24,10 @@ Errors raised by the Gemini SDK are wrapped into
 :class:`app.exceptions.ExternalServiceError`.
 """
 
-__version__ = "0.4.0"
+try:
+    from importlib.metadata import PackageNotFoundError, version as _pkg_version
 
+    __version__ = _pkg_version("adaptive-learner-plugin-ai-gemini")
+except PackageNotFoundError:  # pragma: no cover - dist not installed
+    __version__ = "0.0.0+unknown"
 GEMINI_MODEL_PREFIX = "gemini-"
