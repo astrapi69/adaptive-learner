@@ -305,6 +305,9 @@ describe("api.settings", () => {
                 has_anthropic_key: true,
                 has_openai_key: false,
                 has_gemini_key: false,
+                model_override_anthropic: null,
+                model_override_openai: null,
+                model_override_gemini: null,
                 created_at: "2026-05-18T00:00:00Z",
                 updated_at: "2026-05-18T00:00:00Z",
             });
@@ -327,6 +330,9 @@ describe("api.settings", () => {
                 has_anthropic_key: false,
                 has_openai_key: false,
                 has_gemini_key: false,
+                model_override_anthropic: null,
+                model_override_openai: null,
+                model_override_gemini: null,
                 created_at: "2026-05-18T00:00:00Z",
                 updated_at: "2026-05-18T00:00:00Z",
             });

@@ -291,15 +291,20 @@ def _load_prior_messages(db: Session, session_id: str) -> list[dict[str, Any]]:
     return [{"role": r.role, "content": r.content} for r in rows]
 
 
-def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | None]:
-    """Return (active_provider, decrypted_api_key) for the user.
+def _resolve_active_key(
+    db: Session, user_id: str
+) -> tuple[str | None, str | None, str | None]:
+    """Return (active_provider, decrypted_api_key, model_override) for the user.
 
-    Both can be ``None``:
+    Any of the three can be ``None``:
       - active_provider is None if the UserSettings row never got
         seeded (shouldn't happen — settings_service auto-creates
         it on first GET).
       - api_key is None when the user hasn't entered one for the
         active provider yet.
+      - model_override (v0.4.0) is None when the user hasn't
+        overridden ai_orchestration.DEFAULT_MODELS for the active
+        provider.
     """
     from app.services import settings as settings_service
 
@@ -308,9 +313,11 @@ def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | No
     try:
         provider_enum = AIProvider(provider_key)
     except ValueError:
-        return None, None
+        return None, None, None
     api_key = settings_service.get_decrypted_api_key(db, user_id, provider_enum)
-    return provider_key, api_key
+    override_attr = f"model_override_{provider_key}"
+    override = getattr(settings, override_attr, None)
+    return provider_key, api_key, override
 
 
 @router.post(
@@ -375,13 +382,13 @@ def append_message(
     project = db.get(LearningProject, sess.project_id)
     if project is None:
         return _build_response(ai_error="session has no project; AI reply skipped.")
-    provider_key, api_key = _resolve_active_key(db, project.user_id)
+    provider_key, api_key, model_override = _resolve_active_key(db, project.user_id)
     if provider_key is None:
         return _build_response(ai_error="No active AI provider configured.")
     if not api_key:
         return _build_response(ai_error=f"No API key stored for provider {provider_key!r}.")
 
-    model = ai_orchestration.resolve_model(provider_key)
+    model = ai_orchestration.resolve_model(provider_key, override=model_override)
     if model is None:
         return _build_response(
             ai_error=f"Provider {provider_key!r} has no default model registered."

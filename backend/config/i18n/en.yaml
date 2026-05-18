@@ -185,6 +185,15 @@ settings:
   active_provider_missing_key: >-
     This is your active provider but no API key is stored. AI replies
     will be skipped until a key is saved.
+  section_model_overrides: Model overrides
+  model_overrides_hint: >-
+    Leave blank to use the default model for each provider. A non-empty
+    value replaces the default at chat time.
+  model_override_placeholder: "Model identifier (e.g. claude-3-5-haiku-latest)"
+  model_override_set: Override active
+  model_override_default: Default model
+  model_override_save: Save model
+  model_override_clear: Use default
 
 methods:
   deductive:

@@ -31,6 +31,53 @@ def test_resolve_model_unknown_provider_returns_none():
     assert ai_orchestration.resolve_model("") is None
 
 
+def test_resolve_model_override_wins_over_default():
+    """v0.4.0: a non-empty override replaces the default for that
+    provider; the default is NOT consulted at all."""
+    assert (
+        ai_orchestration.resolve_model("anthropic", override="claude-sonnet-4-20250514")
+        == "claude-sonnet-4-20250514"
+    )
+    assert (
+        ai_orchestration.resolve_model("openai", override="gpt-4o")
+        == "gpt-4o"
+    )
+
+
+def test_resolve_model_blank_override_falls_back_to_default():
+    """``None``, ``""`` and whitespace-only overrides all behave
+    the same as "no override"."""
+    assert ai_orchestration.resolve_model("anthropic", override=None) == (
+        ai_orchestration.DEFAULT_MODELS["anthropic"]
+    )
+    assert ai_orchestration.resolve_model("anthropic", override="") == (
+        ai_orchestration.DEFAULT_MODELS["anthropic"]
+    )
+    assert ai_orchestration.resolve_model("anthropic", override="   ") == (
+        ai_orchestration.DEFAULT_MODELS["anthropic"]
+    )
+
+
+def test_resolve_model_override_strips_whitespace():
+    """A leading/trailing-space override is stripped before use —
+    a copy-paste accident shouldn't produce an invalid model name."""
+    assert (
+        ai_orchestration.resolve_model("anthropic", override="  claude-sonnet-4-20250514\n")
+        == "claude-sonnet-4-20250514"
+    )
+
+
+def test_resolve_model_override_works_for_unknown_provider():
+    """An override lets a not-yet-shipped provider resolve to a
+    model even though DEFAULT_MODELS doesn't know it — useful
+    for users opting into a new provider before AdaptiveLearner ships
+    its DEFAULT_MODELS row."""
+    assert (
+        ai_orchestration.resolve_model("future-provider", override="future-model-v1")
+        == "future-model-v1"
+    )
+
+
 def test_build_messages_history_no_system_no_prior():
     """Single user message in, single user message out."""
     out = ai_orchestration.build_messages_history(

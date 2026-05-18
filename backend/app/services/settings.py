@@ -91,6 +91,14 @@ def update_settings(db: Session, user_id: str, payload: SettingsPatchBody) -> Us
         )
     if "language" in fields and fields["language"] is not None:
         user.language = fields["language"]
+    # v0.4.0 — model overrides per provider. Empty string clears
+    # the override (column → NULL → "use the default"); non-empty
+    # string sets it. ``None`` (field omitted) leaves the column
+    # alone.
+    for column in ("model_override_anthropic", "model_override_openai", "model_override_gemini"):
+        if column in fields and fields[column] is not None:
+            stripped = fields[column].strip()
+            setattr(settings, column, stripped or None)
     db.commit()
     db.refresh(settings)
     return settings

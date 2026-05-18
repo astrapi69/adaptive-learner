@@ -533,8 +533,8 @@ def test_start_persists_system_prompt_as_first_session_message(client: TestClien
     """v0.2.0 contract: /start saves the system prompt as the
     first SessionMessage so subsequent /message calls see it
     in chronological history without the frontend re-posting."""
-    from app.models import SessionMessage
     from app.database import SessionLocal
+    from app.models import SessionMessage
 
     _, project_id = _make_user_and_project(client)
     out = client.post(
@@ -837,3 +837,104 @@ def test_cycle_step_does_not_advance_for_non_user_role(client: TestClient):
     assert body["assistant_message"] is None
     assert body["ai_error"] is None
     assert body["session"]["cycle_step"] == 1  # unchanged
+
+
+# --- v0.4.0: model_override is passed to ai_complete -----------------------
+
+
+def _patch_call_ai_complete(monkeypatch, captured: dict[str, object]):
+    """Replace ``ai_orchestration.call_ai_complete`` with a capturing
+    stub. Both routes.py and the test see the same module, so the
+    monkeypatch reaches the live import.
+    """
+    from adaptive_learner_session import ai_orchestration as _aio
+    from adaptive_learner_session import routes as _routes
+
+    def _capture(*, pm, messages, model, api_key):  # noqa: ARG001
+        captured["model"] = model
+        return "captured-reply"
+
+    monkeypatch.setattr(_aio, "call_ai_complete", _capture)
+    monkeypatch.setattr(_routes.ai_orchestration, "call_ai_complete", _capture)
+
+
+def test_message_uses_model_override_when_set(client: TestClient, monkeypatch):
+    """When UserSettings.model_override_anthropic is set, the
+    /message handler must pass THAT model string to the
+    ai_complete hook — not the default from
+    ai_orchestration.DEFAULT_MODELS."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    resp = client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "claude-sonnet-4-20250514"},
+    )
+    assert resp.status_code == 200
+
+    captured: dict[str, object] = {}
+    _patch_call_ai_complete(monkeypatch, captured)
+
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "ping"},
+    )
+    assert resp.status_code == 201, resp.text
+    assert captured["model"] == "claude-sonnet-4-20250514"
+
+
+def test_message_falls_back_to_default_when_no_override(
+    client: TestClient, monkeypatch
+):
+    """Without any override, the model passed to ai_complete is
+    the default from ai_orchestration.DEFAULT_MODELS."""
+    from adaptive_learner_session import ai_orchestration
+
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+
+    captured: dict[str, object] = {}
+    _patch_call_ai_complete(monkeypatch, captured)
+
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "ping"},
+    )
+    assert captured["model"] == ai_orchestration.DEFAULT_MODELS["anthropic"]
+
+
+def test_message_override_for_inactive_provider_is_ignored(
+    client: TestClient, monkeypatch
+):
+    """A user can set overrides for all three providers, but
+    only the override for the CURRENTLY ACTIVE provider is
+    consulted at /message time. Pin: an openai override does
+    not bleed into an anthropic conversation."""
+    from adaptive_learner_session import ai_orchestration
+
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    # User stays on anthropic but sets an openai override.
+    client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_openai": "gpt-4o"},
+    )
+
+    captured: dict[str, object] = {}
+    _patch_call_ai_complete(monkeypatch, captured)
+
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "ping"},
+    )
+    # The default for anthropic is still used because anthropic
+    # has no override set — only openai does.
+    assert captured["model"] == ai_orchestration.DEFAULT_MODELS["anthropic"]

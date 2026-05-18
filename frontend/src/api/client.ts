@@ -168,6 +168,12 @@ export interface LearningProjectUpdateBody {
 export interface SettingsPatchBody {
     active_provider?: AIProvider;
     language?: string;
+    // v0.4.0 — per-provider model override. ``""`` (empty string)
+    // clears the override; a non-empty string sets it; field
+    // omitted leaves the existing column alone.
+    model_override_anthropic?: string;
+    model_override_openai?: string;
+    model_override_gemini?: string;
 }
 
 export interface ApiKeySetBody {

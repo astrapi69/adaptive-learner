@@ -53,13 +53,22 @@ class AiOrchestrationResult:
     ai_error: str | None
 
 
-def resolve_model(active_provider: str) -> str | None:
-    """Pick the default model for the active provider.
+def resolve_model(active_provider: str, override: str | None = None) -> str | None:
+    """Pick the model string for the active provider.
 
-    Returns ``None`` for an unknown provider (e.g. a new provider
-    in UserSettings before its plugin lands). The caller treats
-    ``None`` the same as "no provider configured".
+    v0.4.0: a non-empty ``override`` wins over ``DEFAULT_MODELS``
+    for that provider — the Settings page lets users pick a model
+    per provider (e.g. ``claude-sonnet-4-20250514`` instead of the
+    cheap ``claude-3-5-haiku-latest`` default). Whitespace-only
+    overrides are treated as "no override". ``None`` (override
+    not set) falls back to the default.
+
+    Returns ``None`` for an unknown provider with no override — a
+    new provider in UserSettings before its plugin lands. The
+    caller treats ``None`` the same as "no provider configured".
     """
+    if isinstance(override, str) and override.strip():
+        return override.strip()
     return DEFAULT_MODELS.get(active_provider)
 
 

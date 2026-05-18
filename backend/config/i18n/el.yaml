@@ -167,6 +167,14 @@ settings:
   provider_active: Ενεργό
   active_provider_missing_key: Αυτός είναι ο ενεργός πάροχος αλλά δεν είναι αποθηκευμένο
     κλειδί API. Οι απαντήσεις AI θα παραλείπονται μέχρι να αποθηκευτεί κλειδί.
+  section_model_overrides: Παρακάμψεις μοντέλου
+  model_overrides_hint: Άφησε κενό για να χρησιμοποιηθεί το προεπιλεγμένο μοντέλο για
+    κάθε πάροχο. Μη κενή τιμή αντικαθιστά το προεπιλεγμένο κατά τη συνομιλία.
+  model_override_placeholder: "Αναγνωριστικό μοντέλου (π.χ. claude-3-5-haiku-latest)"
+  model_override_set: Ενεργή παράκαμψη
+  model_override_default: Προεπιλεγμένο μοντέλο
+  model_override_save: Αποθήκευση μοντέλου
+  model_override_clear: Χρήση προεπιλογής
 methods:
   deductive:
     label: Επαγωγική (από γενικό)

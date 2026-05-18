@@ -40,6 +40,12 @@ export interface UserSettings {
     has_anthropic_key: boolean;
     has_openai_key: boolean;
     has_gemini_key: boolean;
+    // v0.4.0 — per-provider model override. ``null`` means
+    // "use the session plugin's DEFAULT_MODELS pick"; a string
+    // replaces it.
+    model_override_anthropic: string | null;
+    model_override_openai: string | null;
+    model_override_gemini: string | null;
     created_at: string;
     updated_at: string;
 }

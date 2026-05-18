@@ -117,6 +117,15 @@ class UserSettings(Base):
     api_key_anthropic: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_openai: Mapped[str | None] = mapped_column(Text, nullable=True)
     api_key_gemini: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # v0.4.0: per-provider model override. NULL means the
+    # session plugin's ai_orchestration.DEFAULT_MODELS pick wins;
+    # a non-NULL value replaces it for THAT provider only. Plain
+    # text — the model name isn't a secret. String(200) leaves
+    # room for fully-qualified upstream model IDs (e.g.
+    # ``models/gemini-2.5-pro-exp-03-25``).
+    model_override_anthropic: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    model_override_openai: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    model_override_gemini: Mapped[str | None] = mapped_column(String(200), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow

@@ -100,6 +100,26 @@ export const AI_PROVIDERS = ["anthropic", "openai", "gemini"] as const;
 
 export type AIProvider = (typeof AI_PROVIDERS)[number];
 
+/**
+ * v0.4.0 — suggested model strings per provider. Populated as
+ * a datalist on the Settings page so users see the obvious
+ * options without having to remember the exact identifier.
+ * Empty / arbitrary values are still allowed; this is hint
+ * data, not validation. The defaults the session plugin uses
+ * when no override is set live in
+ * ``ai_orchestration.DEFAULT_MODELS`` on the backend.
+ */
+export const MODEL_SUGGESTIONS: Record<AIProvider, readonly string[]> = {
+    anthropic: [
+        "claude-3-5-haiku-latest",
+        "claude-3-5-sonnet-latest",
+        "claude-sonnet-4-20250514",
+        "claude-haiku-4-5-20251001",
+    ],
+    openai: ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo"],
+    gemini: ["gemini-2.0-flash", "gemini-2.5-pro", "gemini-1.5-pro"],
+};
+
 // --- Session enums -------------------------------------------------------
 
 export const SESSION_STATUSES = ["active", "completed", "abandoned"] as const;

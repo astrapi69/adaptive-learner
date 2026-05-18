@@ -167,6 +167,14 @@ settings:
   provider_active: Actif
   active_provider_missing_key: C'est ton fournisseur actif mais aucune cle API n'est
     enregistree. Les reponses IA seront ignorees jusqu'a ce qu'une cle soit enregistree.
+  section_model_overrides: Surcharges de modele
+  model_overrides_hint: Laisse vide pour utiliser le modele par defaut de chaque fournisseur.
+    Une valeur non vide remplace la valeur par defaut lors du chat.
+  model_override_placeholder: "Identifiant du modele (p. ex. claude-3-5-haiku-latest)"
+  model_override_set: Surcharge active
+  model_override_default: Modele par defaut
+  model_override_save: Enregistrer le modele
+  model_override_clear: Utiliser la valeur par defaut
 methods:
   deductive:
     label: Deductif

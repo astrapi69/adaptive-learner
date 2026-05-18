@@ -55,6 +55,9 @@ const BASE: UserSettings = {
     has_anthropic_key: false,
     has_openai_key: false,
     has_gemini_key: false,
+    model_override_anthropic: null,
+    model_override_openai: null,
+    model_override_gemini: null,
     created_at: "2026-05-18T00:00:00Z",
     updated_at: "2026-05-18T00:00:00Z",
 };
@@ -266,5 +269,103 @@ describe("Settings page", () => {
         ).not.toBeInTheDocument();
         // The Active badge is on anthropic, not openai.
         expect(screen.getByTestId("api-key-active-anthropic")).toBeInTheDocument();
+    });
+
+    // --- v0.4.0: model overrides -------------------------------------------
+
+    it("renders the model-override section with one row per provider", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(screen.getByTestId("settings-model-overrides")).toBeInTheDocument();
+        for (const provider of ["anthropic", "openai", "gemini"]) {
+            expect(
+                screen.getByTestId(`model-override-row-${provider}`),
+            ).toBeInTheDocument();
+            expect(
+                screen.getByTestId(`model-override-input-${provider}`),
+            ).toBeInTheDocument();
+        }
+    });
+
+    it("model input seeds from the persisted override on load", async () => {
+        apiGet.mockResolvedValue({
+            ...BASE,
+            model_override_anthropic: "claude-sonnet-4-20250514",
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        const input = screen.getByTestId(
+            "model-override-input-anthropic",
+        ) as HTMLInputElement;
+        expect(input.value).toBe("claude-sonnet-4-20250514");
+        // Status badge reads as "override active".
+        expect(
+            screen.getByTestId("model-override-status-anthropic").textContent,
+        ).toBeTruthy();
+    });
+
+    it("Save model PATCH only fires for the dirty provider", async () => {
+        apiGet.mockResolvedValue(BASE);
+        apiUpdate.mockResolvedValue({
+            ...BASE,
+            model_override_anthropic: "claude-sonnet-4-20250514",
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        fireEvent.change(screen.getByTestId("model-override-input-anthropic"), {
+            target: {value: "claude-sonnet-4-20250514"},
+        });
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("model-override-save-anthropic"));
+        });
+        await waitFor(() => {
+            expect(apiUpdate).toHaveBeenCalledWith("u-1", {
+                model_override_anthropic: "claude-sonnet-4-20250514",
+            });
+        });
+    });
+
+    it("Save button is disabled when the draft equals the persisted value", async () => {
+        apiGet.mockResolvedValue({
+            ...BASE,
+            model_override_anthropic: "claude-sonnet-4-20250514",
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        const save = screen.getByTestId(
+            "model-override-save-anthropic",
+        ) as HTMLButtonElement;
+        expect(save.disabled).toBe(true);
+    });
+
+    it("Use default sends empty-string to clear the override", async () => {
+        apiGet.mockResolvedValue({
+            ...BASE,
+            model_override_anthropic: "claude-sonnet-4-20250514",
+        });
+        apiUpdate.mockResolvedValue({
+            ...BASE,
+            model_override_anthropic: null,
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("model-override-clear-anthropic"));
+        });
+        await waitFor(() => {
+            expect(apiUpdate).toHaveBeenCalledWith("u-1", {
+                model_override_anthropic: "",
+            });
+        });
+    });
+
+    it("Use default button is hidden when no override is set", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(
+            screen.queryByTestId("model-override-clear-anthropic"),
+        ).not.toBeInTheDocument();
     });
 });

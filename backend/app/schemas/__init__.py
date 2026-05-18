@@ -133,6 +133,12 @@ class UserSettingsOut(BaseModel):
     has_anthropic_key: bool = False
     has_openai_key: bool = False
     has_gemini_key: bool = False
+    # v0.4.0 — nullable override per provider. ``None`` means
+    # "use the session plugin's DEFAULT_MODELS for that provider";
+    # a non-null string replaces the default at /message time.
+    model_override_anthropic: str | None = None
+    model_override_openai: str | None = None
+    model_override_gemini: str | None = None
     created_at: datetime
     updated_at: datetime
 
@@ -149,10 +155,18 @@ class SettingsPatchBody(BaseModel):
     ``POST /api/settings/{user_id}/api-key`` endpoint is the
     only way to set an encrypted key (and ``DELETE …/{provider}``
     is the only way to clear one).
+
+    v0.4.0 also accepts ``model_override_<provider>`` strings —
+    pass ``""`` (empty string) or rely on the dedicated DELETE
+    endpoint to clear an override; pass a non-empty string to set
+    one. ``None`` (field omitted from the body) means "no change".
     """
 
     active_provider: AIProvider | None = None
     language: str | None = Field(default=None, min_length=2, max_length=10)
+    model_override_anthropic: str | None = Field(default=None, max_length=200)
+    model_override_openai: str | None = Field(default=None, max_length=200)
+    model_override_gemini: str | None = Field(default=None, max_length=200)
 
 
 class ApiKeySetBody(BaseModel):

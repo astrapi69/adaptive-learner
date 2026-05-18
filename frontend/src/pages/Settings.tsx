@@ -3,7 +3,12 @@ import {useNavigate} from "react-router-dom";
 
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
-import {AI_PROVIDERS, SUPPORTED_LANGUAGES, type AIProvider} from "../lib/constants";
+import {
+    AI_PROVIDERS,
+    MODEL_SUGGESTIONS,
+    SUPPORTED_LANGUAGES,
+    type AIProvider,
+} from "../lib/constants";
 import {readLearnerState, setLanguage} from "../lib/learnerState";
 import {notify} from "../utils/notify";
 import type {UserSettings} from "../types";
@@ -37,6 +42,14 @@ export default function Settings() {
         openai: "",
         gemini: "",
     });
+    // v0.4.0 — local drafts for the model-override inputs. The
+    // committed value lives on ``settings.model_override_<provider>``;
+    // the draft is the user's in-flight edit before they hit Save.
+    const [modelDrafts, setModelDrafts] = useState<Record<AIProvider, string>>({
+        anthropic: "",
+        openai: "",
+        gemini: "",
+    });
     const [busy, setBusy] = useState<string | null>(null);
 
     useEffect(() => {
@@ -51,6 +64,11 @@ export default function Settings() {
             .then((s) => {
                 if (cancelled) return;
                 setSettings(s);
+                setModelDrafts({
+                    anthropic: s.model_override_anthropic ?? "",
+                    openai: s.model_override_openai ?? "",
+                    gemini: s.model_override_gemini ?? "",
+                });
             })
             .catch((err) => {
                 if (cancelled) return;
@@ -113,6 +131,47 @@ export default function Settings() {
             setSettings(updated);
             setKeyDrafts((prev) => ({...prev, [provider]: ""}));
             notify.success(t("toast.api_key_saved", "API key saved."));
+        } catch (err) {
+            const detail = err instanceof ApiError ? err.detail : t("common.error");
+            notify.error(detail);
+        } finally {
+            setBusy(null);
+        }
+    };
+
+    const handleSaveModel = async (provider: AIProvider) => {
+        if (!settings || busy) return;
+        const draft = modelDrafts[provider].trim();
+        const current = settings[`model_override_${provider}`] ?? "";
+        if (draft === current) return;
+        setBusy(`save-model-${provider}`);
+        try {
+            const updated = await api.settings.update(settings.user_id, {
+                [`model_override_${provider}`]: draft,
+            });
+            setSettings(updated);
+            // Snap the draft back to the canonical persisted value.
+            const fresh = updated[`model_override_${provider}`] ?? "";
+            setModelDrafts((prev) => ({...prev, [provider]: fresh}));
+            notify.success(t("settings.saved", "Saved."));
+        } catch (err) {
+            const detail = err instanceof ApiError ? err.detail : t("common.error");
+            notify.error(detail);
+        } finally {
+            setBusy(null);
+        }
+    };
+
+    const handleClearModel = async (provider: AIProvider) => {
+        if (!settings || busy) return;
+        setBusy(`clear-model-${provider}`);
+        try {
+            const updated = await api.settings.update(settings.user_id, {
+                [`model_override_${provider}`]: "",
+            });
+            setSettings(updated);
+            setModelDrafts((prev) => ({...prev, [provider]: ""}));
+            notify.success(t("settings.saved", "Saved."));
         } catch (err) {
             const detail = err instanceof ApiError ? err.detail : t("common.error");
             notify.error(detail);
@@ -205,6 +264,112 @@ export default function Settings() {
                         ))}
                     </select>
                 </label>
+            </section>
+
+            <section
+                className="settings-section"
+                data-testid="settings-model-overrides"
+            >
+                <h2 className="settings-section-title">
+                    {t("settings.section_model_overrides", "Model overrides")}
+                </h2>
+                <p className="muted">
+                    {t(
+                        "settings.model_overrides_hint",
+                        "Leave blank to use the default model for each provider. A non-empty value replaces the default at chat time.",
+                    )}
+                </p>
+                {AI_PROVIDERS.map((provider) => {
+                    const draft = modelDrafts[provider];
+                    const current = settings[`model_override_${provider}`] ?? "";
+                    const dirty = draft.trim() !== current;
+                    const isActive = settings.active_provider === provider;
+                    return (
+                        <div
+                            key={provider}
+                            className={`model-override-row${isActive ? " is-active-provider" : ""}`}
+                            data-testid={`model-override-row-${provider}`}
+                        >
+                            <div className="model-override-row-head">
+                                <strong>
+                                    {t(`settings.provider_${provider}`, provider)}
+                                </strong>
+                                {isActive && (
+                                    <span
+                                        className="api-key-active-badge"
+                                        data-testid={`model-override-active-${provider}`}
+                                    >
+                                        {t("settings.provider_active", "Active")}
+                                    </span>
+                                )}
+                                <span
+                                    className={`api-key-status ${current ? "is-set" : "is-missing"}`}
+                                    data-testid={`model-override-status-${provider}`}
+                                >
+                                    {current
+                                        ? t(
+                                              "settings.model_override_set",
+                                              "Override active",
+                                          )
+                                        : t(
+                                              "settings.model_override_default",
+                                              "Default model",
+                                          )}
+                                </span>
+                            </div>
+                            <div className="model-override-row-input">
+                                <input
+                                    data-testid={`model-override-input-${provider}`}
+                                    type="text"
+                                    list={`model-suggestions-${provider}`}
+                                    placeholder={t(
+                                        "settings.model_override_placeholder",
+                                        "Model identifier (e.g. claude-3-5-haiku-latest)",
+                                    )}
+                                    autoComplete="off"
+                                    value={draft}
+                                    onChange={(e) =>
+                                        setModelDrafts((prev) => ({
+                                            ...prev,
+                                            [provider]: e.target.value,
+                                        }))
+                                    }
+                                    disabled={busy === `save-model-${provider}`}
+                                />
+                                <datalist id={`model-suggestions-${provider}`}>
+                                    {MODEL_SUGGESTIONS[provider].map((s) => (
+                                        <option key={s} value={s} />
+                                    ))}
+                                </datalist>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    data-testid={`model-override-save-${provider}`}
+                                    onClick={() => handleSaveModel(provider)}
+                                    disabled={
+                                        busy === `save-model-${provider}` || !dirty
+                                    }
+                                >
+                                    {t("settings.model_override_save", "Save model")}
+                                </button>
+                                {current && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        data-testid={`model-override-clear-${provider}`}
+                                        onClick={() => handleClearModel(provider)}
+                                        disabled={busy === `clear-model-${provider}`}
+                                    >
+                                        {t(
+                                            "settings.model_override_clear",
+                                            "Use default",
+                                        )}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
             </section>
 
             <section className="settings-section">

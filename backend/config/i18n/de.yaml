@@ -190,6 +190,15 @@ settings:
   active_provider_missing_key: >-
     Dies ist dein aktiver Anbieter, aber kein API-Key ist gespeichert.
     KI-Antworten werden übersprungen, bis ein Key hinterlegt ist.
+  section_model_overrides: Modellüberschreibungen
+  model_overrides_hint: >-
+    Leer lassen, um das Standardmodell pro Anbieter zu nutzen. Ein
+    nicht-leerer Wert ersetzt das Standardmodell beim Chat.
+  model_override_placeholder: "Modellbezeichner (z. B. claude-3-5-haiku-latest)"
+  model_override_set: Überschreibung aktiv
+  model_override_default: Standardmodell
+  model_override_save: Modell speichern
+  model_override_clear: Standard nutzen
 
 methods:
   deductive:

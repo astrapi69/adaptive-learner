@@ -319,3 +319,106 @@ def test_delete_api_key_does_not_touch_other_providers(client: TestClient):
     assert body["has_anthropic_key"] is False
     assert body["has_openai_key"] is True
     assert body["has_gemini_key"] is False
+
+
+# --- PATCH model_override_* (v0.4.0) ----------------------------------------
+
+
+def test_get_settings_exposes_null_model_overrides_by_default(client: TestClient):
+    user_id = _make_user(client)
+    body = client.get(f"/api/settings/{user_id}").json()
+    assert body["model_override_anthropic"] is None
+    assert body["model_override_openai"] is None
+    assert body["model_override_gemini"] is None
+
+
+def test_patch_sets_anthropic_model_override(client: TestClient):
+    user_id = _make_user(client)
+    resp = client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "claude-sonnet-4-20250514"},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["model_override_anthropic"] == "claude-sonnet-4-20250514"
+
+
+def test_patch_sets_overrides_for_all_three_providers(client: TestClient):
+    user_id = _make_user(client)
+    resp = client.patch(
+        f"/api/settings/{user_id}",
+        json={
+            "model_override_anthropic": "claude-sonnet-4-20250514",
+            "model_override_openai": "gpt-4o",
+            "model_override_gemini": "gemini-2.5-pro",
+        },
+    )
+    body = resp.json()
+    assert body["model_override_anthropic"] == "claude-sonnet-4-20250514"
+    assert body["model_override_openai"] == "gpt-4o"
+    assert body["model_override_gemini"] == "gemini-2.5-pro"
+
+
+def test_patch_empty_string_clears_override(client: TestClient):
+    """Sending ``""`` resets the override to NULL — the convention
+    for "go back to the default model"."""
+    user_id = _make_user(client)
+    client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "claude-sonnet-4-20250514"},
+    )
+    resp = client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": ""},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["model_override_anthropic"] is None
+
+
+def test_patch_whitespace_only_override_clears(client: TestClient):
+    user_id = _make_user(client)
+    client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "claude-sonnet-4-20250514"},
+    )
+    resp = client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "   \n  "},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["model_override_anthropic"] is None
+
+
+def test_patch_strips_whitespace_around_override(client: TestClient):
+    user_id = _make_user(client)
+    resp = client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "  claude-sonnet-4-20250514  "},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["model_override_anthropic"] == "claude-sonnet-4-20250514"
+
+
+def test_patch_omitting_override_leaves_existing_value(client: TestClient):
+    """A PATCH that doesn't mention an override field must NOT
+    clear an existing override."""
+    user_id = _make_user(client)
+    client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_openai": "gpt-4o"},
+    )
+    resp = client.patch(
+        f"/api/settings/{user_id}",
+        json={"active_provider": "openai"},
+    )
+    body = resp.json()
+    assert body["active_provider"] == "openai"
+    assert body["model_override_openai"] == "gpt-4o"
+
+
+def test_patch_rejects_oversized_override_422(client: TestClient):
+    user_id = _make_user(client)
+    resp = client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "x" * 201},
+    )
+    assert resp.status_code == 422
