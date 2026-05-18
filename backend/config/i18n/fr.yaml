@@ -83,6 +83,13 @@ onboarding:
   field_current_problem_hint: optionnel — qu'est-ce qui te bloque ?
   submit: Creer le projet et lancer l'evaluation
   creating: Creation du projet...
+  skip: Plus tard
+  skip_hint: Pas sur ? Touche Plus tard pour commencer — tu pourras
+    completer plus tard depuis la page Curriculum.
+  skip_default_name: Apprenant
+  skip_default_topic: Mon apprentissage
+  skip_default_goal: Decouvrir mon style d'apprentissage.
+  skip_default_timeframe: Flexible
 assessment:
   title: Evaluation du type d'apprentissage
   intro: Douze courtes questions determinent ton profil. Il n'y a ni bonne ni mauvaise

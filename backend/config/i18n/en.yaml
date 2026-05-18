@@ -93,6 +93,14 @@ onboarding:
   field_current_problem_hint: optional — what is blocking you right now?
   submit: Create project and start assessment
   creating: Creating project…
+  skip: Later
+  skip_hint: >-
+    Not sure yet? Tap Later to jump in — you can fill this in from
+    the Curriculum page anytime.
+  skip_default_name: Learner
+  skip_default_topic: My learning
+  skip_default_goal: Discover my learning style.
+  skip_default_timeframe: Flexible
 
 assessment:
   title: Learning-type assessment

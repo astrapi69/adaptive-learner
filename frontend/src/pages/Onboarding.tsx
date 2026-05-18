@@ -3,8 +3,23 @@ import {useNavigate} from "react-router-dom";
 
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {SUPPORTED_LANGUAGES} from "../lib/constants";
 import {setProjectId, setUserId} from "../lib/learnerState";
 import {notify} from "../utils/notify";
+
+/**
+ * Pick a sensible starting language for the Skip flow. The
+ * browser ``navigator.language`` returns e.g. "en-US" or
+ * "de-DE"; we accept the 2-char prefix when it's one of the
+ * supported catalog languages, otherwise fall back to English.
+ */
+function defaultLanguageFromBrowser(): string {
+    const raw = (typeof navigator !== "undefined" && navigator.language) || "en";
+    const prefix = raw.slice(0, 2).toLowerCase();
+    return (SUPPORTED_LANGUAGES as readonly string[]).includes(prefix)
+        ? prefix
+        : "en";
+}
 
 /**
  * Onboarding page (project-reference §8 row ``/onboarding``).
@@ -45,6 +60,55 @@ export default function Onboarding() {
         goal.trim().length > 0 &&
         timeframe.trim().length > 0 &&
         dailyMinutes > 0;
+
+    /**
+     * v0.4.0 — "Later" / skip path. Creates a User row with the
+     * detected browser language (or English) plus a generic
+     * placeholder project, drops both ids in localStorage, and
+     * lands on /dashboard. The Dashboard's empty-state cards
+     * (no profile yet, zero sessions) already handle this
+     * gracefully. The user can edit / refine the project from
+     * the Curriculum page later.
+     *
+     * No fields required — the goal is for a curious visitor
+     * to land in the app in two clicks.
+     */
+    const handleSkip = async () => {
+        if (submitting) return;
+        setSubmitting(true);
+        try {
+            const language = lang || defaultLanguageFromBrowser();
+            const user = await api.users.create({
+                name: t("onboarding.skip_default_name", "Learner"),
+                language,
+            });
+            setUserId(user.id);
+            const project = await api.users.projects.create(user.id, {
+                topic: t("onboarding.skip_default_topic", "My learning"),
+                goal: t(
+                    "onboarding.skip_default_goal",
+                    "Discover my learning style.",
+                ),
+                timeframe: t("onboarding.skip_default_timeframe", "Flexible"),
+                daily_minutes: 30,
+                current_problem: null,
+                active: true,
+            });
+            setProjectId(project.id);
+            notify.success(
+                t("toast.onboarding_skipped", "Welcome! You can refine later."),
+            );
+            navigate("/dashboard");
+        } catch (err) {
+            const detail =
+                err instanceof ApiError
+                    ? err.detail
+                    : t("common.error", "Something went wrong.");
+            notify.error(detail);
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -203,6 +267,15 @@ export default function Onboarding() {
                         {t("common.back", "Back")}
                     </button>
                     <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={handleSkip}
+                        disabled={submitting}
+                        data-testid="onboarding-skip"
+                    >
+                        {t("onboarding.skip", "Later")}
+                    </button>
+                    <button
                         type="submit"
                         data-testid="onboarding-submit"
                         className="btn btn-primary"
@@ -213,6 +286,12 @@ export default function Onboarding() {
                             : t("onboarding.submit", "Create project and start assessment")}
                     </button>
                 </div>
+                <p className="form-hint onboarding-skip-hint">
+                    {t(
+                        "onboarding.skip_hint",
+                        "Not sure yet? Tap Later to jump in — you can fill this in from the Curriculum page anytime.",
+                    )}
+                </p>
             </form>
         </main>
     );

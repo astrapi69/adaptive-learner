@@ -98,6 +98,14 @@ onboarding:
   field_current_problem_hint: optional — was bremst dich gerade?
   submit: Projekt anlegen und Assessment starten
   creating: Projekt wird angelegt …
+  skip: Später
+  skip_hint: >-
+    Noch unsicher? Tippe auf Später, um direkt loszulegen —
+    du kannst die Angaben jederzeit unter Curriculum nachtragen.
+  skip_default_name: Lernender
+  skip_default_topic: Mein Lernen
+  skip_default_goal: Meinen Lernstil entdecken.
+  skip_default_timeframe: Flexibel
 
 assessment:
   title: Lerntyp-Assessment

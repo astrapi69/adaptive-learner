@@ -192,4 +192,99 @@ describe("Onboarding page", () => {
         fireEvent.click(screen.getByTestId("onboarding-back"));
         expect(mockNavigate).toHaveBeenCalledWith("/");
     });
+
+    // --- v0.4.0: Skip / Later flow --------------------------------------
+
+    it("renders a Skip / Later button visible alongside Submit + Back", () => {
+        renderOnboarding();
+        expect(screen.getByTestId("onboarding-skip")).toBeInTheDocument();
+        expect(screen.getByTestId("onboarding-back")).toBeInTheDocument();
+        expect(screen.getByTestId("onboarding-submit")).toBeInTheDocument();
+    });
+
+    it("Skip is enabled regardless of form completeness", () => {
+        renderOnboarding();
+        // No fields filled — Submit is disabled, but Skip is not.
+        const submit = screen.getByTestId("onboarding-submit") as HTMLButtonElement;
+        const skip = screen.getByTestId("onboarding-skip") as HTMLButtonElement;
+        expect(submit.disabled).toBe(true);
+        expect(skip.disabled).toBe(false);
+    });
+
+    it("Skip creates user + placeholder project + navigates to /dashboard", async () => {
+        apiUserCreate.mockResolvedValue({
+            id: "u-skip",
+            name: "Learner",
+            email: null,
+            language: "en",
+            created_at: "2026-05-18T00:00:00Z",
+            updated_at: "2026-05-18T00:00:00Z",
+        });
+        apiProjectCreate.mockResolvedValue({
+            id: "p-skip",
+            user_id: "u-skip",
+            topic: "My learning",
+            goal: "Discover my learning style.",
+            timeframe: "Flexible",
+            daily_minutes: 30,
+            current_problem: null,
+            active: true,
+            created_at: "2026-05-18T00:00:00Z",
+            updated_at: "2026-05-18T00:00:00Z",
+        });
+
+        renderOnboarding();
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("onboarding-skip"));
+        });
+
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
+        });
+
+        // The user call carries SOME name + language; the project
+        // carries the four placeholder fields with 30 min/day.
+        expect(apiUserCreate).toHaveBeenCalledTimes(1);
+        const userCall = apiUserCreate.mock.calls[0][0] as {
+            name: string;
+            language: string;
+        };
+        expect(userCall.name.length).toBeGreaterThan(0);
+        expect(userCall.language.length).toBeGreaterThan(0);
+
+        expect(apiProjectCreate).toHaveBeenCalledTimes(1);
+        const projectCall = apiProjectCreate.mock.calls[0][1] as {
+            topic: string;
+            goal: string;
+            timeframe: string;
+            daily_minutes: number;
+            current_problem: string | null;
+            active: boolean;
+        };
+        expect(projectCall.topic.length).toBeGreaterThan(0);
+        expect(projectCall.goal.length).toBeGreaterThan(0);
+        expect(projectCall.timeframe.length).toBeGreaterThan(0);
+        expect(projectCall.daily_minutes).toBe(30);
+        expect(projectCall.current_problem).toBeNull();
+        expect(projectCall.active).toBe(true);
+
+        expect(localStorage.getItem("adaptive-learner.user_id")).toBe("u-skip");
+        expect(localStorage.getItem("adaptive-learner.project_id")).toBe(
+            "p-skip",
+        );
+        expect(toastSuccess).toHaveBeenCalled();
+    });
+
+    it("Skip surfaces ApiError details + does not navigate on failure", async () => {
+        const {ApiError} = await import("../api/client");
+        apiUserCreate.mockRejectedValue(new ApiError(500, "DB down"));
+        renderOnboarding();
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("onboarding-skip"));
+        });
+        await waitFor(() => {
+            expect(toastError).toHaveBeenCalledWith("DB down");
+        });
+        expect(mockNavigate).not.toHaveBeenCalledWith("/dashboard");
+    });
 });
