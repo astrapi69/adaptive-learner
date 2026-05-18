@@ -212,3 +212,4 @@ toast:
   rating_saved: Rating saved.
   api_key_saved: API key saved.
   api_key_deleted: API key removed.
+  method_switched: Method switched.

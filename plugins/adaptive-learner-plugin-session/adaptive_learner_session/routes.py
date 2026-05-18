@@ -58,6 +58,7 @@ from app.models import (
     LearningProfile,
     LearningProject,
     LearningSession,
+    MethodSwitch,
     SessionMessage,
     SessionRating,
 )
@@ -126,6 +127,17 @@ class _SwitchRecommendationOut(BaseModel):
     recommended: bool
     to_method: LearningMethod | None = None
     reason: str | None = None
+
+
+class _SwitchAcceptBody(BaseModel):
+    """POST /{id}/switch body. The frontend submits the suggested
+    method + reason verbatim from the GET /switch-recommendation
+    response; the route records a MethodSwitch audit row and
+    updates the live session's method in place.
+    """
+
+    to_method: LearningMethod
+    reason: str = Field(min_length=1)
 
 
 class _RatingBody(BaseModel):
@@ -584,6 +596,64 @@ def get_switch_recommendation(
             )
 
     return _SwitchRecommendationOut(recommended=False)
+
+
+# --- POST /{id}/switch (v0.2.0) --------------------------------------------
+
+
+@router.post(
+    "/{session_id}/switch",
+    response_model=LearningSessionOut,
+)
+def accept_method_switch(
+    session_id: str,
+    payload: _SwitchAcceptBody,
+    db: Session = Depends(get_db),
+) -> LearningSessionOut:
+    """Accept a method-switch recommendation.
+
+    Persists a MethodSwitch audit row (project-scoped — the model
+    column lives on ``MethodSwitch.project_id``, not on the
+    session, by design — see :class:`app.models.MethodSwitch`)
+    and updates the current session's method in place. The chat
+    history stays; only the method (and therefore the system
+    prompt for subsequent /message calls) changes.
+
+    Returns the updated LearningSession. The frontend uses the
+    new method to re-render the MethodBadge + drive the cycle UI;
+    a fresh system prompt is NOT injected as a SessionMessage to
+    avoid an opinionated double-prompt — the next AI turn will
+    pick up the per-method prompt via build_prompt at the route
+    layer if a future refactor wires it in. For v0.2.0 the
+    switch is recorded for analytics, the live conversation
+    continues with the original system prompt.
+    """
+    sess = _get_session(db, session_id)
+    if sess.status != "active":
+        raise ValidationError(
+            f"Session {session_id!r} is {sess.status!r}; cannot switch methods "
+            f"(start a new session to pick a method)."
+        )
+    from_method = sess.method
+    to_method = payload.to_method.value
+    if from_method == to_method:
+        # Idempotent: no-op when the user re-accepts the current
+        # method (shouldn't happen via the UI but is cheap to
+        # guard against).
+        return LearningSessionOut.model_validate(sess)
+
+    db.add(
+        MethodSwitch(
+            project_id=sess.project_id,
+            from_method=from_method,
+            to_method=to_method,
+            reason=payload.reason,
+        )
+    )
+    sess.method = to_method
+    db.commit()
+    db.refresh(sess)
+    return LearningSessionOut.model_validate(sess)
 
 
 def _fire_on_session_complete(session: dict[str, Any], rating: dict[str, Any]) -> None:

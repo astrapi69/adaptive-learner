@@ -328,6 +328,19 @@ export const api = {
             apiCall<SwitchRecommendation>(
                 `/plugins/session/switch-recommendation/${encodeURIComponent(sessionId)}`,
             ),
+        /**
+         * Accept a method-switch suggestion. Records a MethodSwitch
+         * audit row and flips the active session's method in
+         * place. Returns the updated LearningSession.
+         */
+        acceptSwitch: (
+            sessionId: string,
+            body: {to_method: LearningMethod; reason: string},
+        ) =>
+            apiCall<import("../types/domain").LearningSession>(
+                `/plugins/session/${encodeURIComponent(sessionId)}/switch`,
+                {method: "POST", body},
+            ),
     },
 
     // --- Tracking plugin -------------------------------------------------

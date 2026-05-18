@@ -1,15 +1,17 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import CycleProgress from "../components/CycleProgress";
 import MethodBadge from "../components/MethodBadge";
+import MethodSwitchBanner from "../components/MethodSwitchBanner";
 import RatingDialog, {type RatingValues} from "../components/RatingDialog";
 import SessionChat, {type ChatMessage} from "../components/SessionChat";
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {notify} from "../utils/notify";
-import type {LearningSession} from "../types";
+import type {LearningMethod} from "../lib/constants";
+import type {LearningSession, SwitchRecommendation} from "../types";
 
 /**
  * Session page (project-reference §8 row ``/session``).
@@ -45,6 +47,20 @@ export default function Session() {
     const [showRating, setShowRating] = useState(false);
     const [sendingMessage, setSendingMessage] = useState(false);
     const [submittingRating, setSubmittingRating] = useState(false);
+    const [switchRec, setSwitchRec] = useState<SwitchRecommendation | null>(null);
+    const [switchDismissed, setSwitchDismissed] = useState<LearningMethod | null>(null);
+    const [accepting, setAccepting] = useState(false);
+
+    const fetchSwitchRecommendation = useCallback(async (sessionId: string) => {
+        try {
+            const rec = await api.session.switchRecommendation(sessionId);
+            setSwitchRec(rec);
+        } catch {
+            // Recommendations are advisory; silently swallow the
+            // error rather than blocking the session UI.
+            setSwitchRec({recommended: false});
+        }
+    }, []);
 
     // Bootstrap: start a fresh session on mount. The v0.1.0
     // contract is "one /session visit == one new session"; we
@@ -71,6 +87,13 @@ export default function Session() {
                     },
                 ]);
                 setLoading(false);
+                // v0.2.0: fetch the method-switch recommendation
+                // once the session id is known. The recommendation
+                // is computed from prior cross-session ratings;
+                // for a brand-new project the result will be
+                // ``recommended:false`` and the banner stays
+                // hidden.
+                void fetchSwitchRecommendation(result.session.id);
             })
             .catch((err) => {
                 if (cancelled) return;
@@ -87,6 +110,8 @@ export default function Session() {
         // which would re-trigger this effect mid-flow. Recorded
         // as a lesson in CLAUDE.md ("React useEffect deps + i18n
         // test mocks: the t function isn't stable").
+        // ``fetchSwitchRecommendation`` is a stable useCallback so
+        // it's fine to omit it from deps too.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [lang, navigate]);
 
@@ -156,6 +181,39 @@ export default function Session() {
         }
     };
 
+    const handleAcceptSwitch = async () => {
+        if (!session || !switchRec?.recommended || !switchRec.to_method || accepting) {
+            return;
+        }
+        setAccepting(true);
+        try {
+            const updated = await api.session.acceptSwitch(session.id, {
+                to_method: switchRec.to_method,
+                reason: switchRec.reason ?? "User accepted method-switch suggestion.",
+            });
+            setSession(updated);
+            setSwitchRec({recommended: false});
+            notify.success(t("toast.method_switched", "Method switched."));
+        } catch (err) {
+            const detail =
+                err instanceof ApiError ? err.detail : t("common.error");
+            notify.error(detail);
+        } finally {
+            setAccepting(false);
+        }
+    };
+
+    const handleDismissSwitch = () => {
+        // Remember which suggestion was dismissed so the banner
+        // doesn't reappear during this session for the same target
+        // method. The next session (or a different to_method)
+        // surfaces a fresh banner.
+        if (switchRec?.recommended && switchRec.to_method) {
+            setSwitchDismissed(switchRec.to_method);
+        }
+        setSwitchRec({recommended: false});
+    };
+
     const handleRatingSubmit = async (rating: RatingValues) => {
         if (!session || submittingRating) return;
         setSubmittingRating(true);
@@ -208,6 +266,17 @@ export default function Session() {
                 </div>
                 <CycleProgress currentStep={session.cycle_step} />
             </header>
+
+            {switchRec?.recommended &&
+                switchRec.to_method &&
+                switchRec.to_method !== switchDismissed && (
+                    <MethodSwitchBanner
+                        suggested={switchRec.to_method}
+                        reason={switchRec.reason ?? undefined}
+                        onAccept={handleAcceptSwitch}
+                        onDismiss={handleDismissSwitch}
+                    />
+                )}
 
             <SessionChat
                 messages={messages}

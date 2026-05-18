@@ -587,3 +587,114 @@ def test_switch_recommendation_recommends_after_stagnant_ratings(client: TestCli
 def test_switch_recommendation_404_on_unknown_session(client: TestClient):
     resp = client.get("/api/plugins/session/switch-recommendation/no-such")
     assert resp.status_code == 404
+
+
+# --- v0.2.0: POST /{id}/switch -------------------------------------------
+
+
+def test_switch_records_audit_row_and_updates_session(client: TestClient):
+    """Accepting a method-switch suggestion records a MethodSwitch
+    row (project-scoped audit) AND flips the session's method.
+    The session stays active so the conversation continues with
+    the new method on the next /message."""
+    from app.database import SessionLocal
+    from app.models import LearningSession, MethodSwitch
+
+    _, project_id = _make_user_and_project(client)
+    sess = client.post(
+        "/api/plugins/session/start",
+        json={"project_id": project_id, "method": "deductive"},
+    ).json()["session"]
+    assert sess["method"] == "deductive"
+
+    resp = client.post(
+        f"/api/plugins/session/{sess['id']}/switch",
+        json={"to_method": "dialogic", "reason": "Stress too high."},
+    )
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["method"] == "dialogic"
+    assert body["status"] == "active"
+
+    db = SessionLocal()
+    try:
+        # MethodSwitch row exists with the expected metadata.
+        switches = (
+            db.query(MethodSwitch)
+            .filter(MethodSwitch.project_id == project_id)
+            .all()
+        )
+        assert len(switches) == 1
+        assert switches[0].from_method == "deductive"
+        assert switches[0].to_method == "dialogic"
+        assert switches[0].reason == "Stress too high."
+
+        # Session row's method column was updated in place.
+        sess_row = db.get(LearningSession, sess["id"])
+        assert sess_row.method == "dialogic"
+        assert sess_row.status == "active"
+    finally:
+        db.close()
+
+
+def test_switch_is_idempotent_for_same_method(client: TestClient):
+    """Re-accepting the current method writes NO MethodSwitch row
+    (defensive guard against a double-click on the banner)."""
+    from app.database import SessionLocal
+    from app.models import MethodSwitch
+
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post(
+        "/api/plugins/session/start",
+        json={"project_id": project_id, "method": "deductive"},
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/switch",
+        json={"to_method": "deductive", "reason": "tap-tap"},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["method"] == "deductive"
+
+    db = SessionLocal()
+    try:
+        switches = (
+            db.query(MethodSwitch)
+            .filter(MethodSwitch.project_id == project_id)
+            .all()
+        )
+        assert len(switches) == 0
+    finally:
+        db.close()
+
+
+def test_switch_rejects_on_closed_session(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    client.post(f"/api/plugins/session/{sess_id}/end")
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/switch",
+        json={"to_method": "dialogic", "reason": "Late switch"},
+    )
+    assert resp.status_code == 400
+
+
+def test_switch_404_on_unknown_session(client: TestClient):
+    resp = client.post(
+        "/api/plugins/session/no-such/switch",
+        json={"to_method": "dialogic", "reason": "x"},
+    )
+    assert resp.status_code == 404
+
+
+def test_switch_422_on_unknown_method(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/switch",
+        json={"to_method": "telekinesis", "reason": "lol"},
+    )
+    assert resp.status_code == 422

@@ -17,6 +17,8 @@ const apiStart = vi.fn();
 const apiMessage = vi.fn();
 const apiRate = vi.fn();
 const apiEnd = vi.fn();
+const apiSwitchRec = vi.fn();
+const apiAcceptSwitch = vi.fn();
 vi.mock("../api/client", async () => {
     const actual = await vi.importActual<typeof import("../api/client")>(
         "../api/client",
@@ -30,6 +32,8 @@ vi.mock("../api/client", async () => {
                 message: (...args: unknown[]) => apiMessage(...args),
                 rate: (...args: unknown[]) => apiRate(...args),
                 end: (...args: unknown[]) => apiEnd(...args),
+                switchRecommendation: (...args: unknown[]) => apiSwitchRec(...args),
+                acceptSwitch: (...args: unknown[]) => apiAcceptSwitch(...args),
             },
         },
     };
@@ -71,6 +75,11 @@ describe("Session page", () => {
         apiMessage.mockReset();
         apiRate.mockReset();
         apiEnd.mockReset();
+        apiSwitchRec.mockReset();
+        apiAcceptSwitch.mockReset();
+        // Default: no recommendation. Per-test override when the
+        // banner path is being exercised.
+        apiSwitchRec.mockResolvedValue({recommended: false});
         toastError.mockReset();
         toastSuccess.mockReset();
         localStorage.clear();
@@ -283,5 +292,77 @@ describe("Session page", () => {
         renderSession();
         await screen.findByTestId("session-error");
         expect(screen.getByTestId("session-error").textContent).toContain("DB down");
+    });
+
+    // --- v0.2.0: MethodSwitchBanner integration ----------------------
+
+    it("does NOT render the method-switch banner when no recommendation", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiSwitchRec.mockResolvedValue({recommended: false});
+        renderSession();
+        await screen.findByTestId("session");
+        // Give the post-start fetchSwitchRecommendation a tick.
+        await waitFor(() => expect(apiSwitchRec).toHaveBeenCalled());
+        expect(screen.queryByTestId("method-switch-banner")).not.toBeInTheDocument();
+    });
+
+    it("renders the method-switch banner when a recommendation is returned", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiSwitchRec.mockResolvedValue({
+            recommended: true,
+            to_method: "dialogic",
+            reason: "Stress trend rising.",
+        });
+        renderSession();
+        await screen.findByTestId("session");
+        await screen.findByTestId("method-switch-banner");
+        expect(screen.getByTestId("method-switch-suggested").textContent).toMatch(
+            /dialogic|Dialogisch|Dialogic/,
+        );
+        expect(screen.getByText("Stress trend rising.")).toBeInTheDocument();
+    });
+
+    it("Accept calls /switch and removes the banner", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiSwitchRec.mockResolvedValue({
+            recommended: true,
+            to_method: "dialogic",
+            reason: "Stress trend.",
+        });
+        apiAcceptSwitch.mockResolvedValue({
+            ...SESSION,
+            method: "dialogic",
+        });
+        renderSession();
+        await screen.findByTestId("method-switch-banner");
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("method-switch-accept"));
+        });
+        await waitFor(() => {
+            expect(apiAcceptSwitch).toHaveBeenCalledWith("s-1", {
+                to_method: "dialogic",
+                reason: "Stress trend.",
+            });
+        });
+        expect(
+            screen.queryByTestId("method-switch-banner"),
+        ).not.toBeInTheDocument();
+        expect(toastSuccess).toHaveBeenCalled();
+    });
+
+    it("Dismiss hides the banner without calling /switch", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiSwitchRec.mockResolvedValue({
+            recommended: true,
+            to_method: "dialogic",
+            reason: "Stress trend.",
+        });
+        renderSession();
+        await screen.findByTestId("method-switch-banner");
+        fireEvent.click(screen.getByTestId("method-switch-dismiss"));
+        expect(
+            screen.queryByTestId("method-switch-banner"),
+        ).not.toBeInTheDocument();
+        expect(apiAcceptSwitch).not.toHaveBeenCalled();
     });
 });
