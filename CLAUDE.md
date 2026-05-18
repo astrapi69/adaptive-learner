@@ -12,12 +12,15 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.2.0):** end-to-end product. v0.1.0 MVP plus
-  Phase 5: server-side AI orchestration in POST /message,
-  multi-provider plugin matrix (anthropic + openai + gemini),
-  method-switch banner with audit-tracked accept route,
-  Curriculum + LearningTopic tree UI (TypedTreeNode finally
-  consumed), ES / FR / EL UI translations.
+- **Current state (v0.3.0):** v0.2.0 plus Phase 6:
+  per-(method, step) bespoke prompt matrix (42 cells × 2
+  languages, 84 strings), Lesson CRUD on top of the existing
+  Lesson model, proper ES / FR / EL translations for all 12
+  assessment questions, 7 Playwright smoke specs for the
+  critical flows, ai-gemini migrated from deprecated
+  google.generativeai to google.genai 2.x. Plus a one-shot
+  bugfix: every German user-facing string switched from
+  ASCII-folded (ae/oe/ue/ss) to proper Unicode (ä/ö/ü/ß).
 
 ## Development guidelines
 
@@ -173,8 +176,10 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- v0.2.0 baseline: backend 390, plugins 339 (across 7), frontend 180 (Vitest). Total 909.
+- v0.3.0 baseline: backend 402, plugins 375 (across 7), frontend 187 (Vitest). Total 964.
 - E2E tests under `e2e/` are NOT on the `make test` default path.
+  v0.3.0 ships 7 Playwright smoke specs under `e2e/smoke/`
+  (landing, onboarding+assessment, session, curriculum, settings).
 
 ## Test isolation
 

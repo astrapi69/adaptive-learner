@@ -172,7 +172,9 @@ def create_topic(
     response_model=list[LessonOut],
 )
 def list_lessons(curriculum_id: str, db: Session = Depends(get_db)) -> list[LessonOut]:
-    return [LessonOut.model_validate(l) for l in curriculum_service.list_lessons(db, curriculum_id)]
+    return [
+        LessonOut.model_validate(row) for row in curriculum_service.list_lessons(db, curriculum_id)
+    ]
 
 
 @curricula_router.post(
