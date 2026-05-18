@@ -15,7 +15,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.14.1",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "tree-model": "^1.0.7"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

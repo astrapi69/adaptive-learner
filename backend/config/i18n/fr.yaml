@@ -1,14 +1,193 @@
-# Adaptive Learner — catalogue i18n (Skeleton — Phase 1A).
+# Adaptive Learner i18n catalog (FR — Phase 4A).
+#
+# Mirror of en.yaml structure. Strings carrying non-native
+# fallbacks are EN passthroughs — proper FR translations
+# land alongside the v0.2.x i18n-expansion track. The structure
+# is parity-checked by tests/test_i18n_parity.py; do NOT add or
+# remove keys here without mirroring the change in en.yaml.
 
 app:
   name: Adaptive Learner
-  skeleton_notice: >-
-    Etat squelette. Les modeles de domaine, les plugins et les pages
-    arrivent dans les phases suivantes — voir
-    docs/adaptive-learner-project-reference.md.
-
+  tagline: Learning that adapts to you.
+  skeleton_notice: Etat squelette. Les modeles de domaine, les plugins et les pages
+    arrivent dans les phases suivantes — voir docs/adaptive-learner-project-reference.md.
 common:
   save: Enregistrer
   cancel: Annuler
   loading: Chargement…
   error: Une erreur est survenue.
+  back: Back
+  next: Next
+  start: Start
+  submit: Submit
+  continue: Continue
+  done: Done
+  delete: Delete
+  edit: Edit
+  confirm: Confirm
+  'yes': true
+  'no': false
+  optional: optional
+  required: required
+  minutes: minutes
+nav:
+  dashboard: Dashboard
+  session: Session
+  progress: Progress
+  settings: Settings
+  home: Home
+landing:
+  title: Adaptive Learner
+  subtitle: Learning that adapts to you.
+  choose_language: Choose your language
+  start_button: Start your learning journey
+  intro: Adaptive Learner finds the method that fits you best from six research-backed
+    learning approaches, and walks you through a seven-step cycle on every session.
+onboarding:
+  title: Create a learning project
+  intro: Tell us about your learning goal. Adaptive Learner uses this to build your
+    profile and recommend a starting method.
+  field_name: Your name
+  field_topic: Topic
+  field_topic_hint: e.g. Spanish B1, linear algebra.
+  field_goal: Goal
+  field_goal_hint: What do you want to be able to do?
+  field_timeframe: Time frame
+  field_timeframe_hint: e.g. 4 weeks, one semester.
+  field_daily_minutes: Minutes per day
+  field_current_problem: Current problem
+  field_current_problem_hint: optional — what is blocking you right now?
+  submit: Create project and start assessment
+  creating: Creating project…
+assessment:
+  title: Learning-type assessment
+  intro: Twelve short questions determine your learning profile. There is no right
+    or wrong answer — go with your gut.
+  question_progress: Question {current} of {total}
+  next_question: Next question
+  prev_question: Previous question
+  submit: Evaluate
+  evaluating: Evaluating…
+  result_title: Your learning profile
+  dominant_method: Preferred method
+  continue_to_dashboard: Continue to dashboard
+dashboard:
+  title: Dashboard
+  welcome: Welcome back
+  quick_start: Start a new session
+  quick_start_subtitle: Method picked from your profile.
+  card_profile: Learning profile
+  card_progress: Progress
+  card_distribution: Method distribution
+  card_counter: Sessions
+  card_tools: Tool recommendations
+  metric_total_sessions: Total sessions
+  metric_mean_understanding: Mean understanding
+  metric_mean_stress: Mean stress
+  metric_streak: Day streak
+  no_data: No sessions yet — start your first one to see trends.
+session:
+  title: Learning session
+  in_progress: Session in progress
+  send_message: Send message
+  message_placeholder: Write your reply…
+  end_session: End session
+  end_session_confirm: Sure? We will close the session and ask for a rating.
+  switch_recommended: Method switch recommended
+  switch_recommended_subtitle: Your recent ratings suggest a different method might
+    fit you better.
+  switch_accept: Switch method
+  switch_dismiss: Keep current method
+  rating_title: How did the session go?
+  rating_understanding: How well did you understand?
+  rating_stress: How stressful was it?
+  rating_method_fit: How well did the method fit?
+  rating_notes: Notes (optional)
+  rating_submit: Submit rating
+  step_progress: Step {current} of {total}
+progress:
+  title: Progress
+  chart_timeline: Understanding and stress over time
+  chart_methods: Method distribution
+  commit_history: Session history
+  commit_method: Method
+  commit_understanding: Understanding
+  commit_stress: Stress
+  commit_duration: Duration
+  commit_date: Date
+  no_commits: No completed sessions yet.
+settings:
+  title: Settings
+  section_language: Language
+  section_provider: AI provider
+  section_api_keys: API keys
+  section_danger: Account
+  language_label: Display language
+  provider_label: Active provider
+  provider_anthropic: Anthropic Claude
+  provider_openai: OpenAI GPT
+  provider_gemini: Google Gemini
+  api_key_label: API key
+  api_key_placeholder: Paste here…
+  api_key_saved: Key stored
+  api_key_missing: Not set
+  api_key_set: Save key
+  api_key_delete: Remove key
+  api_key_confirm_delete: Really remove this API key?
+  saved: Saved.
+  save_failed: Save failed.
+methods:
+  deductive:
+    label: Deductive
+    summary: General to specific — rules first, examples after.
+  inductive:
+    label: Inductive
+    summary: Specific to general — examples first, derive the rule.
+  error_based:
+    label: Error-based
+    summary: Learn from mistakes — correction plus explanation.
+  dialogic:
+    label: Dialogic
+    summary: Think in conversation — lower stress, build motivation.
+  contextual:
+    label: Contextual
+    summary: Apply in a real context — practice transfer.
+  ai_adaptive:
+    label: AI-adaptive
+    summary: The AI picks the method that fits you best.
+cycle_steps:
+  input:
+    label: Input
+    description: Information, example or task is presented.
+  attempt:
+    label: Attempt
+    description: First application without a safety net.
+  error:
+    label: Error
+    description: Mismatch between expectation and result.
+  feedback:
+    label: Feedback
+    description: Correction with explanation.
+  adapt:
+    label: Adapt
+    description: Adjust method, pace or focus.
+  repeat:
+    label: Repeat
+    description: Try again.
+  integrate:
+    label: Integrate
+    description: Knowledge sticks through experience.
+errors:
+  network: Could not reach the server.
+  not_found: Not found.
+  validation: Invalid input.
+  conflict: Entry already exists.
+  server: Server error — please try again later.
+toast:
+  project_created: Project created.
+  assessment_saved: Profile saved.
+  session_started: Session started.
+  session_ended: Session ended.
+  rating_saved: Rating saved.
+  api_key_saved: API key saved.
+  api_key_deleted: API key removed.

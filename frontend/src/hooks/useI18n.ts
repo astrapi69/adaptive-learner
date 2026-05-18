@@ -1,5 +1,7 @@
 import {createContext, useContext, useEffect, useState, useCallback, type ReactNode} from "react";
 import {api} from "../api/client";
+import {fallbackString} from "../i18n/fallbacks";
+import {SUPPORTED_LANGUAGES, type SupportedLanguage} from "../lib/constants";
 import React from "react";
 
 type I18nStrings = Record<string, unknown>;
@@ -8,6 +10,10 @@ interface I18nContextValue {
     t: (key: string, fallback?: string) => string;
     lang: string;
     setLang: (lang: string) => void;
+}
+
+function isSupportedLang(value: string): value is SupportedLanguage {
+    return (SUPPORTED_LANGUAGES as readonly string[]).includes(value);
 }
 
 const I18nContext = createContext<I18nContextValue | null>(null);
@@ -52,17 +58,26 @@ export function I18nProvider({children}: {children: ReactNode}) {
     }, []);
 
     const t = useCallback((key: string, fallback?: string): string => {
+        // 1) Backend catalog (live strings from
+        //    /api/i18n/{lang}). Walk dot-notation path.
         const parts = key.split(".");
         let current: unknown = strings;
+        let resolved = true;
         for (const part of parts) {
             if (current && typeof current === "object" && part in (current as Record<string, unknown>)) {
                 current = (current as Record<string, unknown>)[part];
             } else {
-                return fallback || key;
+                resolved = false;
+                break;
             }
         }
-        return typeof current === "string" ? current : (fallback || key);
-    }, [strings]);
+        if (resolved && typeof current === "string") return current;
+        // 2) Hardcoded frontend fallbacks (first-paint resilience).
+        const localised = isSupportedLang(lang) ? fallbackString(lang, key) : undefined;
+        if (localised) return localised;
+        // 3) Caller-supplied fallback, then the key itself.
+        return fallback || key;
+    }, [strings, lang]);
 
     const value: I18nContextValue = {t, lang, setLang};
 

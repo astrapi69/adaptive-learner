@@ -1,7 +1,13 @@
-# Adaptive Learner i18n-Katalog (Skeleton — Phase 1A).
+# Adaptive Learner i18n-Katalog (DE — Phase 4A).
+#
+# Reference language EN unter ../en.yaml; jedes Catalog-File spiegelt
+# dieselbe Schluesselstruktur. Plugin-spezifische Strings (Methoden-
+# Beschreibungen, Cycle-Steps) bleiben hier, weil die Sechs-Methoden-
+# Anatomie zum Kernmodell gehoert und nicht plugin-spezifisch ist.
 
 app:
   name: Adaptive Learner
+  tagline: Adaptives Lernen nach dem Sechs-Methoden-Modell.
   skeleton_notice: >-
     Skeleton-Stand. Domain-Modelle, Plugins und Seiten folgen in den
     naechsten Phasen — siehe docs/adaptive-learner-project-reference.md.
@@ -11,3 +17,195 @@ common:
   cancel: Abbrechen
   loading: Laedt …
   error: Etwas ist schiefgegangen.
+  back: Zurueck
+  next: Weiter
+  start: Starten
+  submit: Absenden
+  continue: Fortfahren
+  done: Fertig
+  delete: Loeschen
+  edit: Bearbeiten
+  confirm: Bestaetigen
+  "yes": Ja
+  "no": Nein
+  optional: optional
+  required: Pflichtfeld
+  minutes: Minuten
+
+nav:
+  dashboard: Dashboard
+  session: Session
+  progress: Fortschritt
+  settings: Einstellungen
+  home: Start
+
+landing:
+  title: Adaptive Learner
+  subtitle: Lernen, das sich an dich anpasst.
+  choose_language: Sprache waehlen
+  start_button: Lernreise beginnen
+  intro: >-
+    Adaptive Learner findet die fuer dich passende Methode aus sechs
+    wissenschaftlich fundierten Lernweisen und begleitet dich mit
+    einem 7-Schritte-Zyklus pro Session.
+
+onboarding:
+  title: Lernprojekt anlegen
+  intro: >-
+    Beschreibe dein Lernziel. Adaptive Learner nutzt diese Angaben
+    fuer dein Profil und die ersten Methoden-Empfehlungen.
+  field_name: Dein Name
+  field_topic: Thema
+  field_topic_hint: z. B. Spanisch B1 oder lineare Algebra.
+  field_goal: Lernziel
+  field_goal_hint: Was willst du am Ende koennen?
+  field_timeframe: Zeitrahmen
+  field_timeframe_hint: z. B. 4 Wochen, 1 Semester.
+  field_daily_minutes: Minuten pro Tag
+  field_current_problem: Aktuelles Problem
+  field_current_problem_hint: optional — was bremst dich gerade?
+  submit: Projekt anlegen und Assessment starten
+  creating: Projekt wird angelegt …
+
+assessment:
+  title: Lerntyp-Assessment
+  intro: >-
+    Zwoelf kurze Fragen ermitteln dein Lernprofil. Es gibt kein
+    richtig oder falsch — antworte intuitiv.
+  question_progress: Frage {current} von {total}
+  next_question: Naechste Frage
+  prev_question: Vorherige Frage
+  submit: Auswerten
+  evaluating: Auswertung laeuft …
+  result_title: Dein Lernprofil
+  dominant_method: Bevorzugte Methode
+  continue_to_dashboard: Weiter zum Dashboard
+
+dashboard:
+  title: Dashboard
+  welcome: Willkommen zurueck
+  quick_start: Neue Session starten
+  quick_start_subtitle: Methode kommt aus deinem Profil.
+  card_profile: Lernprofil
+  card_progress: Fortschritt
+  card_distribution: Methodenverteilung
+  card_counter: Sessions
+  card_tools: Werkzeug-Empfehlungen
+  metric_total_sessions: Sessions insgesamt
+  metric_mean_understanding: Mittleres Verstehen
+  metric_mean_stress: Mittlerer Stress
+  metric_streak: Tagesserie
+  no_data: Noch keine Sessions — starte deine erste, um Trends zu sehen.
+
+session:
+  title: Lern-Session
+  in_progress: Session laeuft
+  send_message: Nachricht senden
+  message_placeholder: Schreibe deine Antwort …
+  end_session: Session beenden
+  end_session_confirm: Sicher? Wir koennen die Session beenden und bewerten.
+  switch_recommended: Methodenwechsel empfohlen
+  switch_recommended_subtitle: >-
+    Deine letzten Werte weisen darauf hin, dass eine andere Methode
+    besser passen koennte.
+  switch_accept: Methode wechseln
+  switch_dismiss: Aktuelle Methode behalten
+  rating_title: Wie war die Session?
+  rating_understanding: Wie gut hast du es verstanden?
+  rating_stress: Wie hoch war dein Stress?
+  rating_method_fit: Wie gut hat die Methode gepasst?
+  rating_notes: Notizen (optional)
+  rating_submit: Bewertung abschicken
+  step_progress: Schritt {current} von {total}
+
+progress:
+  title: Fortschritt
+  chart_timeline: Verstehen und Stress ueber Zeit
+  chart_methods: Methodenverteilung
+  commit_history: Session-Historie
+  commit_method: Methode
+  commit_understanding: Verstehen
+  commit_stress: Stress
+  commit_duration: Dauer
+  commit_date: Datum
+  no_commits: Noch keine abgeschlossenen Sessions.
+
+settings:
+  title: Einstellungen
+  section_language: Sprache
+  section_provider: KI-Anbieter
+  section_api_keys: API-Keys
+  section_danger: Konto
+  language_label: Anzeigesprache
+  provider_label: Aktiver Anbieter
+  provider_anthropic: Anthropic Claude
+  provider_openai: OpenAI GPT
+  provider_gemini: Google Gemini
+  api_key_label: API-Key
+  api_key_placeholder: Hier einfuegen …
+  api_key_saved: Key gespeichert
+  api_key_missing: Nicht gesetzt
+  api_key_set: Key speichern
+  api_key_delete: Key entfernen
+  api_key_confirm_delete: Diesen API-Key wirklich entfernen?
+  saved: Gespeichert.
+  save_failed: Speichern fehlgeschlagen.
+
+methods:
+  deductive:
+    label: Deduktiv
+    summary: Vom Allgemeinen zum Besonderen — Regeln zuerst, Beispiele danach.
+  inductive:
+    label: Induktiv
+    summary: Vom Besonderen zum Allgemeinen — Beispiele zuerst, Regeln ableiten.
+  error_based:
+    label: Fehlerzentriert
+    summary: Aus Fehlern lernen — Korrektur mit Erklaerung.
+  dialogic:
+    label: Dialogisch
+    summary: Im Gespraech denken — Stress senken, Motivation aufbauen.
+  contextual:
+    label: Kontextuell
+    summary: Im echten Kontext anwenden — Transfer ueben.
+  ai_adaptive:
+    label: KI-adaptiv
+    summary: Die KI waehlt fuer dich die jeweils beste Methode.
+
+cycle_steps:
+  input:
+    label: Input
+    description: Information, Beispiel oder Aufgabe wird vorgestellt.
+  attempt:
+    label: Versuch
+    description: Erste Anwendung ohne Sicherheitsnetz.
+  error:
+    label: Fehler
+    description: Abweichung zwischen Erwartung und Ergebnis.
+  feedback:
+    label: Feedback
+    description: Korrektur mit Erklaerung.
+  adapt:
+    label: Anpassung
+    description: Methode, Tempo oder Fokus aendern.
+  repeat:
+    label: Wiederholung
+    description: Erneuter Versuch.
+  integrate:
+    label: Integration
+    description: Wissen bleibt durch Erfahrung.
+
+errors:
+  network: Verbindung zum Server fehlgeschlagen.
+  not_found: Eintrag nicht gefunden.
+  validation: Eingabe ungueltig.
+  conflict: Eintrag existiert bereits.
+  server: Serverfehler — bitte spaeter erneut versuchen.
+
+toast:
+  project_created: Projekt angelegt.
+  assessment_saved: Profil gespeichert.
+  session_started: Session gestartet.
+  session_ended: Session beendet.
+  rating_saved: Bewertung gespeichert.
+  api_key_saved: API-Key gespeichert.
+  api_key_deleted: API-Key entfernt.
