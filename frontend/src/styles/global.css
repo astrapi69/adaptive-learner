@@ -1,24 +1,91 @@
 /*
- * Skeleton stylesheet for Adaptive Learner (Phase 1A).
+ * Adaptive Learner stylesheet (Phase 4A foundation).
  *
- * The Bibliogon-era theming machinery (5 palettes x light/dark + the
- * .ProseMirror editor surface + 60+ component .module.css files) is
- * gone with the components it served. Two CSS-variable tokens stay
- * defined so the placeholder Landing page renders correctly in both
- * colour modes. New theme tokens land in Phase 4A together with the
- * proper design system.
+ * Single global CSS file. No CSS modules, no Tailwind. Every
+ * component reads from the variables below — switching between
+ * light / dark mode flips the variables; switching method-tinted
+ * UI elements pulls from --method-* (project-reference §3.1 palette,
+ * mirrored from frontend/src/lib/constants.ts METHOD_COLORS).
+ *
+ * Layout tokens (--space-*, --radius-*, --shadow-*) keep the
+ * spacing rhythm consistent across pages; introducing a new page
+ * SHOULD reach for these tokens before declaring local pixel
+ * values.
  */
 
 :root {
+  /* Neutrals (light) */
   --bg: #ffffff;
+  --bg-alt: #f5f7fb;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
   --fg: #1a1a1a;
+  --fg-muted: #64748b;
+  --fg-inverted: #ffffff;
+
+  /* Brand + accent (matches the PWA manifest theme_color + favicon) */
   --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-fg: #ffffff;
+
+  /* Semantic status colours */
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+
+  /* Method palette — single source of truth shared with
+   * frontend/src/lib/constants.ts. Charts, badges and dashboard
+   * tiles read these tokens. */
+  --method-deductive: #3b82f6;
+  --method-inductive: #8b5cf6;
+  --method-error_based: #ef4444;
+  --method-dialogic: #10b981;
+  --method-contextual: #f59e0b;
+  --method-ai_adaptive: #6366f1;
+
+  /* Layout tokens */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-elevated: 0 4px 12px rgba(15, 23, 42, 0.08), 0 24px 48px rgba(15, 23, 42, 0.1);
+
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
 
 [data-theme="dark"] {
   --bg: #0f0f10;
+  --bg-alt: #16161a;
+  --surface: #1c1c20;
+  --surface-2: #232328;
+  --border: #2a2a30;
+  --border-strong: #3a3a42;
   --fg: #ececec;
+  --fg-muted: #94a3b8;
+  --fg-inverted: #0f0f10;
   --accent: #818cf8;
+  --accent-hover: #a5b4fc;
+  --accent-fg: #1e1b4b;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.5), 0 24px 48px rgba(0, 0, 0, 0.55);
+}
+
+* {
+  box-sizing: border-box;
 }
 
 html,
@@ -29,9 +96,281 @@ body,
   height: 100%;
   background: var(--bg);
   color: var(--fg);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans);
+}
+
+#root {
+  overflow-y: auto;
 }
 
 a {
   color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* --- Buttons -------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  font-size: 1rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-fg);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--border-strong);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.btn-danger {
+  background: var(--danger);
+  color: #ffffff;
+}
+
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+/* --- Landing page ----------------------------------------------- */
+
+.landing-page {
+  min-height: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-6);
+}
+
+.landing-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.landing-logo {
+  border-radius: var(--radius-lg);
+}
+
+.landing-title {
+  margin: 0;
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.landing-subtitle {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 1.125rem;
+}
+
+.landing-intro {
+  color: var(--fg-muted);
+  font-size: 1rem;
+  max-width: 36rem;
+}
+
+.landing-intro p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.landing-lang {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.landing-lang-label {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.landing-lang-options {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.landing-lang-btn {
+  min-width: 3rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--fg);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.landing-lang-btn:hover {
+  background: var(--surface-2);
+}
+
+.landing-lang-btn.is-active {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+
+.landing-cta {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1.125rem;
+  font-weight: 500;
+  padding: var(--space-3) var(--space-6);
+  box-shadow: var(--shadow-card);
+}
+
+.landing-cta:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+/* --- Onboarding page ------------------------------------------- */
+
+.onboarding-page {
+  max-width: 38rem;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.onboarding-header h1 {
+  margin: 0 0 var(--space-2) 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.onboarding-intro {
+  margin: 0;
+  color: var(--fg-muted);
+  line-height: 1.5;
+}
+
+.onboarding-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-label {
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.form-required {
+  color: var(--danger);
+  margin-left: var(--space-1);
+}
+
+.form-optional {
+  color: var(--fg-muted);
+  font-weight: 400;
+  font-size: 0.85em;
+}
+
+.form-hint {
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  margin-top: var(--space-4);
+}
+
+/* --- Method badges ---------------------------------------------- */
+
+.method-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: var(--surface-2);
+  color: var(--fg);
+}
+
+.method-dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: var(--accent);
 }
