@@ -1,10 +1,20 @@
 import {defineConfig} from "@playwright/test";
 
 /**
- * Skeleton state (Phase 1A): no specs live under ./tests or ./smoke yet.
- * The webServer block still boots the backend + frontend so a smoke
- * spec asserting the placeholder Landing page can land at any time.
- * The first real spec (Phase 4A) is the Landing-page smoke check.
+ * Phase 6D: 7 smoke specs covering the critical user flows.
+ *
+ * Data isolation: the backend webServer command sets
+ * ``ADAPTIVE_LEARNER_DATA_DIR`` to a tmp directory so E2E
+ * writes never touch the user's real
+ * ``~/.local/share/adaptive_learner/`` data. The filesystem
+ * tripwire in app.paths verifies this — if E2E ever sees the
+ * production marker file, the run aborts.
+ *
+ * It also sets a fixed ``ADAPTIVE_LEARNER_SECRET_KEY`` so the
+ * crypto service has a Fernet key without depending on the
+ * developer's dev-secret.env file. The value is deterministic
+ * (Fernet.generate_key().decode() on a known seed) and lives
+ * only in the spawned uvicorn process.
  *
  * Ports default to the project-wide non-standard pair (backend 18001,
  * frontend 15174) so Playwright coexists with anything already running
@@ -14,6 +24,22 @@ import {defineConfig} from "@playwright/test";
 
 const BACKEND_PORT = Number(process.env.ADAPTIVE_LEARNER_PORT) || 18001;
 const FRONTEND_PORT = Number(process.env.ADAPTIVE_LEARNER_FRONTEND_PORT) || 15174;
+
+// Test-only data dir. Each E2E run wipes + recreates it so
+// fixtures are deterministic.
+const E2E_DATA_DIR = "/tmp/adaptive-learner-e2e-data";
+
+// Fixed Fernet key for the E2E backend. Generated once, kept
+// here so the spec run is self-contained (no .env dependency).
+// 32-byte url-safe base64. Fine to commit since it only ever
+// encrypts the test-process's ephemeral API key fixtures.
+const E2E_FERNET_KEY = "i1u3pP7HXVHrUKE2NgUSe3FxLknXVbNZJxs1u-3pV9k=";
+
+const BACKEND_ENV = [
+    `ADAPTIVE_LEARNER_PORT=${BACKEND_PORT}`,
+    `ADAPTIVE_LEARNER_DATA_DIR=${E2E_DATA_DIR}`,
+    `ADAPTIVE_LEARNER_SECRET_KEY=${E2E_FERNET_KEY}`,
+].join(" ");
 
 export default defineConfig({
     testDir: "./tests",
@@ -28,7 +54,9 @@ export default defineConfig({
     },
     webServer: [
         {
-            command: `cd ../backend && ADAPTIVE_LEARNER_PORT=${BACKEND_PORT} poetry run uvicorn app.main:app --port ${BACKEND_PORT}`,
+            command:
+                `rm -rf ${E2E_DATA_DIR} && mkdir -p ${E2E_DATA_DIR} && ` +
+                `cd ../backend && ${BACKEND_ENV} poetry run uvicorn app.main:app --port ${BACKEND_PORT}`,
             url: `http://localhost:${BACKEND_PORT}/api/health`,
             reuseExistingServer: !process.env.CI,
             timeout: 30_000,
