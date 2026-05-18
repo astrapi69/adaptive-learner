@@ -194,6 +194,34 @@ export interface SessionRatingBody {
     notes?: string | null;
 }
 
+// --- Curriculum bodies -------------------------------------------------
+
+export interface CurriculumCreateBody {
+    title: string;
+    description?: string | null;
+    language?: string;
+}
+
+export interface CurriculumUpdateBody {
+    title?: string;
+    description?: string | null;
+    language?: string;
+}
+
+export interface TopicCreateBody {
+    title: string;
+    description?: string | null;
+    parent_id?: string | null;
+    order_index?: number;
+}
+
+export interface TopicUpdateBody {
+    title?: string;
+    description?: string | null;
+    parent_id?: string | null;
+    order_index?: number;
+}
+
 // --- Public namespaces --------------------------------------------------
 
 export const api = {
@@ -364,6 +392,59 @@ export const api = {
                 `/plugins/tools/recommendations/${encodeURIComponent(projectId)}`,
                 {query: {lang}},
             ),
+    },
+
+    // --- Curriculum + topics (core, not plugin) -------------------------
+
+    curricula: {
+        /** List every curriculum owned by ``user_id``. */
+        list: (userId: string) =>
+            apiCall<import("../types/domain").Curriculum[]>(
+                `/users/${encodeURIComponent(userId)}/curricula`,
+            ),
+        create: (userId: string, body: CurriculumCreateBody) =>
+            apiCall<import("../types/domain").Curriculum>(
+                `/users/${encodeURIComponent(userId)}/curricula`,
+                {method: "POST", body},
+            ),
+        get: (curriculumId: string) =>
+            apiCall<import("../types/domain").Curriculum>(
+                `/curricula/${encodeURIComponent(curriculumId)}`,
+            ),
+        update: (curriculumId: string, body: CurriculumUpdateBody) =>
+            apiCall<import("../types/domain").Curriculum>(
+                `/curricula/${encodeURIComponent(curriculumId)}`,
+                {method: "PATCH", body},
+            ),
+        remove: (curriculumId: string) =>
+            apiCall<void>(`/curricula/${encodeURIComponent(curriculumId)}`, {
+                method: "DELETE",
+            }),
+        listTopics: (curriculumId: string) =>
+            apiCall<import("../types/domain").LearningTopic[]>(
+                `/curricula/${encodeURIComponent(curriculumId)}/topics`,
+            ),
+        createTopic: (curriculumId: string, body: TopicCreateBody) =>
+            apiCall<import("../types/domain").LearningTopic>(
+                `/curricula/${encodeURIComponent(curriculumId)}/topics`,
+                {method: "POST", body},
+            ),
+    },
+
+    topics: {
+        get: (topicId: string) =>
+            apiCall<import("../types/domain").LearningTopic>(
+                `/topics/${encodeURIComponent(topicId)}`,
+            ),
+        update: (topicId: string, body: TopicUpdateBody) =>
+            apiCall<import("../types/domain").LearningTopic>(
+                `/topics/${encodeURIComponent(topicId)}`,
+                {method: "PATCH", body},
+            ),
+        remove: (topicId: string) =>
+            apiCall<void>(`/topics/${encodeURIComponent(topicId)}`, {
+                method: "DELETE",
+            }),
     },
 
     // --- Plugin discovery / health --------------------------------------

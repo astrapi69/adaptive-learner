@@ -7,6 +7,7 @@ import Navigation from "./components/Navigation";
 import {I18nProvider} from "./hooks/useI18n";
 import {useTheme} from "./hooks/useTheme";
 import Assessment from "./pages/Assessment";
+import Curriculum from "./pages/Curriculum";
 import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
@@ -53,6 +54,7 @@ export default function App() {
                     <Route path="/assessment" element={<Assessment />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/session" element={<Session />} />
+                    <Route path="/curriculum" element={<Curriculum />} />
                     <Route path="/progress" element={<Progress />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />

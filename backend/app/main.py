@@ -38,6 +38,11 @@ from app.database import init_db
 from app.exceptions import AdaptiveLearnerError
 from app.hookspecs import AdaptiveLearnerHookSpec
 from app.logging_config import setup_logging
+from app.routers.curriculum import (
+    curricula_router,
+    topics_router,
+    users_curricula_router,
+)
 from app.routers.projects import projects_router, users_projects_router
 from app.routers.settings import router as settings_router
 from app.routers.users import router as users_router
@@ -401,6 +406,9 @@ app.include_router(users_router, prefix="/api")
 app.include_router(users_projects_router, prefix="/api")
 app.include_router(projects_router, prefix="/api")
 app.include_router(settings_router, prefix="/api")
+app.include_router(users_curricula_router, prefix="/api")
+app.include_router(curricula_router, prefix="/api")
+app.include_router(topics_router, prefix="/api")
 
 
 @app.exception_handler(AdaptiveLearnerError)

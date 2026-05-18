@@ -35,9 +35,27 @@ common:
 nav:
   dashboard: Dashboard
   session: Session
+  curriculum: Curriculum
   progress: Fortschritt
   settings: Einstellungen
   home: Start
+
+curriculum:
+  title: Curriculum
+  active: Aktives Curriculum
+  new_placeholder: Titel des neuen Curriculums …
+  create: Curriculum anlegen
+  created: Curriculum angelegt.
+  saved: Gespeichert.
+  deleted: Thema geloescht.
+  add_topic: Thema hinzufuegen
+  add_root_topic: Hauptthema hinzufuegen
+  add_subtopic: Unterthema hinzufuegen
+  rename_topic: Thema umbenennen
+  topic_title: Titel
+  no_topics: Noch keine Themen — leg dein erstes an, um zu starten.
+  no_curriculum: Lege ein Curriculum an, um einen Themenbaum aufzubauen.
+  delete_confirm: Dieses Thema loeschen? Untergeordnete Themen bleiben als eigene Wurzeln erhalten.
 
 landing:
   title: Adaptive Learner

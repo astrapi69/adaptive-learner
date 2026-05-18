@@ -174,6 +174,29 @@ export interface ProgressCommit {
     committed_at: string;
 }
 
+// --- Curriculum + LearningTopic ----------------------------------------
+
+export interface Curriculum {
+    id: string;
+    user_id: string;
+    title: string;
+    description: string | null;
+    language: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface LearningTopic {
+    id: string;
+    curriculum_id: string;
+    parent_id: string | null;
+    title: string;
+    description: string | null;
+    order_index: number;
+    created_at: string;
+    updated_at: string;
+}
+
 // --- MethodSwitch -------------------------------------------------------
 
 export interface MethodSwitch {

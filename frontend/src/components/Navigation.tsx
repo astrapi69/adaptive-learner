@@ -51,6 +51,13 @@ export default function Navigation() {
                     {t("nav.session", "Session")}
                 </NavLink>
                 <NavLink
+                    to="/curriculum"
+                    className={linkClass}
+                    data-testid="nav-curriculum"
+                >
+                    {t("nav.curriculum", "Curriculum")}
+                </NavLink>
+                <NavLink
                     to="/progress"
                     className={linkClass}
                     data-testid="nav-progress"

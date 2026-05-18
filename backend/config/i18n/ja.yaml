@@ -33,9 +33,26 @@ common:
 nav:
   dashboard: Dashboard
   session: Session
+  curriculum: Curriculum
   progress: Progress
   settings: Settings
   home: Home
+curriculum:
+  title: Curriculum
+  active: Active curriculum
+  new_placeholder: New curriculum title…
+  create: Create curriculum
+  created: Curriculum created.
+  saved: Saved.
+  deleted: Topic deleted.
+  add_topic: Add topic
+  add_root_topic: Add root topic
+  add_subtopic: Add subtopic
+  rename_topic: Rename topic
+  topic_title: Title
+  no_topics: No topics yet — add your first to get started.
+  no_curriculum: Create a curriculum to start building a topic tree.
+  delete_confirm: Delete this topic? Its children stay as their own roots.
 landing:
   title: Adaptive Learner
   subtitle: Learning that adapts to you.
