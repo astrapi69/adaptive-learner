@@ -121,7 +121,13 @@ class AdaptiveLearnerHookSpec:
     # --- AI provider --------------------------------------------------------
 
     @hookspec(firstresult=True)
-    def ai_complete(self, messages: list[dict], model: str, api_key: str) -> str:
+    def ai_complete(
+        self,
+        messages: list[dict],
+        model: str,
+        api_key: str,
+        max_tokens: int | None = None,
+    ) -> str:
         """Call the configured AI provider, return the assistant text.
 
         ``messages`` is an OpenAI-style chat history
@@ -129,6 +135,11 @@ class AdaptiveLearnerHookSpec:
         ``model`` is the provider-specific model id; ``api_key`` is
         the plaintext key the settings service decrypted from
         ciphertext storage just before this call.
+
+        ``max_tokens`` (v0.5.0 — optional) caps the provider's
+        completion length. ``None`` means "use the provider's
+        default" (~2048). The Phase 8 step-evaluator uses 256 so
+        the JSON-only evaluation call stays cheap.
 
         ``firstresult=True``: exactly one provider plugin
         (ai-anthropic, ai-openai, ai-gemini, ...) answers per

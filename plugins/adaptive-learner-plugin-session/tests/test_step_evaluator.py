@@ -13,6 +13,7 @@ from types import SimpleNamespace
 
 import pytest
 from adaptive_learner_session.step_evaluator import (
+    EVALUATION_DEFAULT_MAX_TOKENS,
     EVALUATION_SYSTEM_PROMPT,
     MAX_STEP,
     METHOD_EVAL_HINTS,
@@ -46,7 +47,7 @@ def _fake_pm(reply: str | None | type[BaseException]):
     returns ``reply`` (or raises if ``reply`` is an exception class).
     """
 
-    def _ai_complete(messages, model, api_key):  # noqa: ARG001
+    def _ai_complete(messages, model, api_key, max_tokens=None):  # noqa: ARG001
         if isinstance(reply, type) and issubclass(reply, BaseException):
             raise reply("simulated provider failure")
         return reply
@@ -444,8 +445,9 @@ def test_evaluate_step_passes_recent_history_to_the_hook():
     not a generic case."""
     captured: dict[str, object] = {}
 
-    def _capture(messages, model, api_key):  # noqa: ARG001
+    def _capture(messages, model, api_key, max_tokens=None):  # noqa: ARG001
         captured["messages"] = messages
+        captured["max_tokens"] = max_tokens
         return _ok_json()
 
     pm = SimpleNamespace(hook=SimpleNamespace(ai_complete=_capture))
@@ -500,3 +502,53 @@ def test_explicit_no_advance_keeps_advance_false():
     out = parse_evaluation_response(raw, current_step=2)
     assert out.advance is False
     # Route layer must respect explicit false regardless of threshold.
+
+
+# --- max_tokens plumbing (v0.5.0 / Phase 8B) ------------------------------
+
+
+def test_evaluation_default_max_tokens_is_256():
+    """The Phase 8B spec pins this — keep the evaluator cheap. Any
+    future bump should be a deliberate decision, not silent drift."""
+    assert EVALUATION_DEFAULT_MAX_TOKENS == 256
+
+
+def test_evaluate_step_passes_default_max_tokens_to_the_hook():
+    captured: dict[str, object] = {}
+
+    def _capture(messages, model, api_key, max_tokens=None):  # noqa: ARG001
+        captured["max_tokens"] = max_tokens
+        return _ok_json()
+
+    pm = SimpleNamespace(hook=SimpleNamespace(ai_complete=_capture))
+    evaluate_step(
+        pm=pm,
+        method="deductive",
+        current_step=2,
+        history=[{"role": "user", "content": "x"}],
+        model="x",
+        api_key="x",
+        output_language="en",
+    )
+    assert captured["max_tokens"] == 256
+
+
+def test_evaluate_step_respects_caller_supplied_max_tokens():
+    captured: dict[str, object] = {}
+
+    def _capture(messages, model, api_key, max_tokens=None):  # noqa: ARG001
+        captured["max_tokens"] = max_tokens
+        return _ok_json()
+
+    pm = SimpleNamespace(hook=SimpleNamespace(ai_complete=_capture))
+    evaluate_step(
+        pm=pm,
+        method="deductive",
+        current_step=2,
+        history=[{"role": "user", "content": "x"}],
+        model="x",
+        api_key="x",
+        output_language="en",
+        max_tokens=128,
+    )
+    assert captured["max_tokens"] == 128

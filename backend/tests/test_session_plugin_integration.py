@@ -8,6 +8,8 @@ dispatch through the production PluginManager, and the
 
 from __future__ import annotations
 
+import json
+
 import pluggy
 import pytest
 from fastapi.testclient import TestClient
@@ -850,7 +852,7 @@ def _patch_call_ai_complete(monkeypatch, captured: dict[str, object]):
     from adaptive_learner_session import ai_orchestration as _aio
     from adaptive_learner_session import routes as _routes
 
-    def _capture(*, pm, messages, model, api_key):  # noqa: ARG001
+    def _capture(*, pm, messages, model, api_key, max_tokens=None):  # noqa: ARG001
         captured["model"] = model
         return "captured-reply"
 
@@ -938,3 +940,359 @@ def test_message_override_for_inactive_provider_is_ignored(
     # The default for anthropic is still used because anthropic
     # has no override set — only openai does.
     assert captured["model"] == ai_orchestration.DEFAULT_MODELS["anthropic"]
+
+
+# --- v0.5.0: dual-prompt step evaluation (Phase 8B) -----------------------
+#
+# These tests monkeypatch ``call_ai_complete`` so the LEARNING call
+# returns a plain assistant reply but the EVALUATOR call returns a
+# structured JSON verdict. The two are distinguished by the system
+# prompt in ``messages[0]["content"]`` — only the evaluator's system
+# prompt starts with the canonical "You are an assessment co-pilot"
+# anchor.
+
+
+def _dual_call_patch(monkeypatch, *, learning: str, evaluation: str):
+    """Replace ``call_ai_complete`` so the learning + evaluation
+    calls return different canned strings."""
+    from adaptive_learner_session import ai_orchestration as _aio
+    from adaptive_learner_session import routes as _routes
+
+    def _capture(*, pm, messages, model, api_key, max_tokens=None):  # noqa: ARG001
+        sys_msg = messages[0]["content"] if messages else ""
+        if "assessment co-pilot" in sys_msg:
+            return evaluation
+        return learning
+
+    monkeypatch.setattr(_aio, "call_ai_complete", _capture)
+    monkeypatch.setattr(_routes.ai_orchestration, "call_ai_complete", _capture)
+    # The evaluator imports call_ai_complete by name from
+    # ai_orchestration — also monkeypatch the step_evaluator's local
+    # ref.
+    from adaptive_learner_session import step_evaluator as _se
+
+    monkeypatch.setattr(_se, "call_ai_complete", _capture)
+
+
+def test_dual_call_response_carries_step_evaluation(
+    client: TestClient, monkeypatch
+):
+    """When step_evaluation is enabled (the default), the /message
+    response carries the new ``step_evaluation`` field."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    _dual_call_patch(
+        monkeypatch,
+        learning="Here is your lesson.",
+        evaluation=json.dumps(
+            {
+                "advance": True,
+                "confidence": 0.9,
+                "reason": "Learner produced a concrete example.",
+                "suggested_step": 2,
+            }
+        ),
+    )
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "Let me try."},
+    )
+    body = resp.json()
+    assert "step_evaluation" in body
+    se = body["step_evaluation"]
+    assert se is not None
+    assert se["advance"] is True
+    assert se["confidence"] == 0.9
+    assert se["reason"] == "Learner produced a concrete example."
+    assert se["suggested_step"] == 2
+    assert se["from_step"] == 1
+    assert se["applied"] is True
+    assert se["fallback_used"] is False
+    assert body["session"]["cycle_step"] == 2
+
+
+def test_high_confidence_advance_applies(client: TestClient, monkeypatch):
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    _dual_call_patch(
+        monkeypatch,
+        learning="ok",
+        evaluation=json.dumps(
+            {
+                "advance": True,
+                "confidence": 0.95,
+                "reason": "Strong signal.",
+                "suggested_step": 2,
+            }
+        ),
+    )
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    assert body["step_evaluation"]["applied"] is True
+    assert body["session"]["cycle_step"] == 2
+
+
+def test_low_confidence_advance_does_NOT_apply(client: TestClient, monkeypatch):
+    """advance=True but confidence < 0.7 → stay on current step."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    _dual_call_patch(
+        monkeypatch,
+        learning="ok",
+        evaluation=json.dumps(
+            {
+                "advance": True,
+                "confidence": 0.4,
+                "reason": "Mixed signal.",
+                "suggested_step": 2,
+            }
+        ),
+    )
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    assert body["step_evaluation"]["applied"] is False
+    # The suggestion was 2 but we stayed at 1.
+    assert body["step_evaluation"]["suggested_step"] == 2
+    assert body["session"]["cycle_step"] == 1
+
+
+def test_explicit_advance_false_does_NOT_apply(client: TestClient, monkeypatch):
+    """advance=False overrides confidence — even high-confidence
+    'don't advance' keeps the learner on the current step."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    _dual_call_patch(
+        monkeypatch,
+        learning="ok",
+        evaluation=json.dumps(
+            {
+                "advance": False,
+                "confidence": 0.95,
+                "reason": "Not yet — re-attempt first.",
+                "suggested_step": 1,
+            }
+        ),
+    )
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    assert body["step_evaluation"]["applied"] is False
+    assert body["session"]["cycle_step"] == 1
+
+
+def test_skip_ahead_with_high_confidence(client: TestClient, monkeypatch):
+    """Phase 8 spec: evaluator may skip forward (1→3) when the
+    learner clearly already grasps the input step."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    _dual_call_patch(
+        monkeypatch,
+        learning="ok",
+        evaluation=json.dumps(
+            {
+                "advance": True,
+                "confidence": 0.92,
+                "reason": "Already understood; skipping ahead.",
+                "suggested_step": 4,
+            }
+        ),
+    )
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    assert body["step_evaluation"]["from_step"] == 1
+    assert body["step_evaluation"]["suggested_step"] == 4
+    assert body["step_evaluation"]["applied"] is True
+    assert body["session"]["cycle_step"] == 4
+
+
+def test_backward_transition_when_confidence_high(client: TestClient, monkeypatch):
+    """Phase 8 Q4: backward transitions are allowed. Evaluator
+    decides the learner needs to re-attempt at step 2 even though
+    the session is at step 4."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    sess_id = client.post(
+        "/api/plugins/session/start",
+        json={"project_id": project_id, "cycle_step": 4},
+    ).json()["session"]["id"]
+    _dual_call_patch(
+        monkeypatch,
+        learning="ok",
+        evaluation=json.dumps(
+            {
+                "advance": True,
+                "confidence": 0.85,
+                "reason": "Misunderstood — back to attempt.",
+                "suggested_step": 2,
+            }
+        ),
+    )
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    assert body["step_evaluation"]["from_step"] == 4
+    assert body["step_evaluation"]["suggested_step"] == 2
+    assert body["step_evaluation"]["applied"] is True
+    assert body["session"]["cycle_step"] == 2
+
+
+def test_evaluator_garbage_falls_back_to_plus_one(client: TestClient, monkeypatch):
+    """If the AI returns non-JSON, the evaluator's deterministic
+    fallback kicks in (+1 advance, v0.4.x compat)."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    _dual_call_patch(
+        monkeypatch, learning="ok", evaluation="this is not json"
+    )
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    se = body["step_evaluation"]
+    assert se["fallback_used"] is True
+    # Fallback applies regardless of threshold — v0.4.x compat.
+    assert se["applied"] is True
+    assert body["session"]["cycle_step"] == 2
+
+
+def test_step_seven_fallback_stays_at_seven(client: TestClient, monkeypatch):
+    """At step 7 the fallback returns advance=False so the cycle
+    caps cleanly. Phase 8 Q2 — no auto-loop to step 1 in v0.5.0."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    sess_id = client.post(
+        "/api/plugins/session/start",
+        json={"project_id": project_id, "cycle_step": 7},
+    ).json()["session"]["id"]
+    _dual_call_patch(monkeypatch, learning="ok", evaluation="not json")
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    se = body["step_evaluation"]
+    assert se["fallback_used"] is True
+    assert se["applied"] is False
+    assert body["session"]["cycle_step"] == 7
+
+
+def test_step_evaluation_disabled_falls_back_to_v04x_advance(
+    client: TestClient, monkeypatch, tmp_path
+):
+    """With step_evaluation.enabled=false the route bypasses the
+    second AI call entirely and applies the v0.4.x deterministic
+    +1. The response carries step_evaluation=null in that case."""
+    # Override the session plugin's config via the user-overlay
+    # path — that path is consulted by read_plugin_config_merged.
+    from app import config_overlay
+
+    # Stub the project plugin path to point at a tmp file with
+    # enabled=false. Cleanest minimal patch — no real disk write
+    # to a shared location.
+    overlay_path = tmp_path / "session.yaml"
+    overlay_path.write_text(
+        "step_evaluation:\n  enabled: false\n", encoding="utf-8"
+    )
+    monkeypatch.setattr(
+        config_overlay, "_project_plugin_path", lambda name: overlay_path
+    )
+
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    # Even if the evaluator WOULD return valid JSON, it's never
+    # called in disabled mode — the learning call still fires
+    # and the route takes the v0.4.x +1 path.
+    _dual_call_patch(
+        monkeypatch,
+        learning="ok",
+        evaluation=json.dumps({"advance": False, "confidence": 0.99, "reason": "no", "suggested_step": 1}),
+    )
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    # No step_evaluation in the response when disabled.
+    assert body.get("step_evaluation") is None
+    # Deterministic +1 still happened (v0.4.x behaviour).
+    assert body["session"]["cycle_step"] == 2
+
+
+def test_evaluator_max_tokens_caps_at_256_by_default(
+    client: TestClient, monkeypatch
+):
+    """The evaluator call is fired with max_tokens=256 by default
+    (Phase 8B spec) while the learning call uses the provider's
+    default (None). Pin the two distinct caps so a future refactor
+    doesn't silently merge them."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    seen: list[tuple[str, int | None]] = []
+
+    from adaptive_learner_session import ai_orchestration as _aio
+    from adaptive_learner_session import routes as _routes
+    from adaptive_learner_session import step_evaluator as _se
+
+    def _capture(*, pm, messages, model, api_key, max_tokens=None):  # noqa: ARG001
+        sys_msg = messages[0]["content"] if messages else ""
+        kind = "evaluator" if "assessment co-pilot" in sys_msg else "learning"
+        seen.append((kind, max_tokens))
+        if kind == "evaluator":
+            return json.dumps(
+                {
+                    "advance": True,
+                    "confidence": 0.9,
+                    "reason": "ok",
+                    "suggested_step": 2,
+                }
+            )
+        return "ok"
+
+    monkeypatch.setattr(_aio, "call_ai_complete", _capture)
+    monkeypatch.setattr(_routes.ai_orchestration, "call_ai_complete", _capture)
+    monkeypatch.setattr(_se, "call_ai_complete", _capture)
+
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    assert ("learning", None) in seen
+    assert ("evaluator", 256) in seen

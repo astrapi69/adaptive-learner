@@ -61,6 +61,7 @@ from app.models import (
     MethodSwitch,
     SessionMessage,
     SessionRating,
+    User,
 )
 from app.schemas import (
     AIProvider,
@@ -73,6 +74,56 @@ from app.schemas import (
 
 from . import ai_orchestration
 from .prompts import MAX_STEP, METHODS, MIN_STEP, build_prompt
+from .step_evaluator import (
+    EVALUATION_DEFAULT_MAX_TOKENS,
+    StepEvaluation,
+    evaluate_step,
+)
+
+
+def _read_step_evaluation_config() -> tuple[bool, float, int]:
+    """Return ``(enabled, confidence_threshold, max_tokens)`` for the
+    Phase-8 step-evaluator from ``config/plugins/session.yaml`` with
+    sensible defaults.
+
+    Defaults (Phase 8B spec):
+      enabled: True
+      confidence_threshold: 0.7
+      max_tokens: 256
+
+    A missing config file (or a missing ``step_evaluation`` block)
+    yields the defaults. Reading inside the route on every call is
+    cheap (small YAML file, OS file cache) AND avoids the
+    module-level lru_cache test-isolation pitfall called out in
+    lessons-learned.md.
+    """
+    # Lazy import: keep app.* out of the module load path so this
+    # file stays importable from the standalone plugin test dir.
+    from app.config_overlay import read_plugin_config_merged
+
+    try:
+        cfg = read_plugin_config_merged("session")
+    except Exception:  # noqa: BLE001 — config glitch must never block /message
+        cfg = {}
+    block = cfg.get("step_evaluation") if isinstance(cfg, dict) else None
+    if not isinstance(block, dict):
+        block = {}
+    enabled = bool(block.get("enabled", True))
+    try:
+        threshold = float(block.get("confidence_threshold", 0.7))
+    except (TypeError, ValueError):
+        threshold = 0.7
+    if threshold < 0.0:
+        threshold = 0.0
+    elif threshold > 1.0:
+        threshold = 1.0
+    try:
+        max_tokens = int(block.get("max_tokens", EVALUATION_DEFAULT_MAX_TOKENS))
+    except (TypeError, ValueError):
+        max_tokens = EVALUATION_DEFAULT_MAX_TOKENS
+    if max_tokens <= 0:
+        max_tokens = EVALUATION_DEFAULT_MAX_TOKENS
+    return enabled, threshold, max_tokens
 
 router = APIRouter(prefix="/plugins/session", tags=["session"])
 
@@ -99,6 +150,35 @@ class _MessageBody(BaseModel):
     content: str = Field(min_length=1)
 
 
+class _StepEvaluationOut(BaseModel):
+    """v0.5.0 — AI step-evaluation result for the dual-prompt
+    architecture (Phase 8).
+
+    ``advance`` / ``confidence`` / ``reason`` / ``suggested_step``
+    are the evaluator's raw verdict. ``applied`` is the route's
+    DERIVED decision (advance ∧ confidence ≥ threshold; or
+    fallback ∧ advance) — true iff the suggestion was actually
+    written to ``session.cycle_step``. ``from_step`` is the
+    cycle_step BEFORE the suggestion, useful for the 8C
+    front-end transition animation and the 8D analytics layer.
+
+    When the route's step_evaluation config is ``enabled: false``
+    the route writes ``step_evaluation: null`` and falls back to
+    the v0.4.x deterministic +1 advance — Phase 8B's compat
+    contract for installs that opt out of AI-based transitions.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    advance: bool
+    confidence: float
+    reason: str
+    suggested_step: int
+    fallback_used: bool
+    applied: bool
+    from_step: int
+
+
 class _SessionMessageExchangeOut(BaseModel):
     """Composite return for POST /{id}/message.
 
@@ -113,6 +193,11 @@ class _SessionMessageExchangeOut(BaseModel):
     reads ``session.cycle_step`` to drive CycleProgress without
     a separate fetch. Pure read-only: the route never mutates
     the session row outside of cycle-step advances.
+
+    v0.5.0: ``step_evaluation`` carries the second AI call's
+    verdict (Phase 8). ``None`` when step-evaluation is disabled
+    in config OR when the route short-circuited before reaching
+    the evaluation step (no API key, no provider, role!=user, etc.).
     """
 
     model_config = ConfigDict(from_attributes=True)
@@ -121,6 +206,7 @@ class _SessionMessageExchangeOut(BaseModel):
     assistant_message: SessionMessageOut | None = None
     ai_error: str | None = None
     session: LearningSessionOut
+    step_evaluation: _StepEvaluationOut | None = None
 
 
 class _SwitchRecommendationOut(BaseModel):
@@ -362,6 +448,7 @@ def append_message(
     def _build_response(
         assistant: SessionMessage | None = None,
         ai_error: str | None = None,
+        step_evaluation: _StepEvaluationOut | None = None,
     ) -> _SessionMessageExchangeOut:
         return _SessionMessageExchangeOut(
             user_message=SessionMessageOut.model_validate(user_msg),
@@ -370,6 +457,7 @@ def append_message(
             ),
             ai_error=ai_error,
             session=LearningSessionOut.model_validate(sess),
+            step_evaluation=step_evaluation,
         )
 
     if payload.role != MessageRole.USER:
@@ -436,25 +524,83 @@ def append_message(
         content=assistant_text,
     )
     db.add(assistant_msg)
+    db.flush()  # assign assistant_msg.id without committing the txn yet
 
-    # v0.4.0: deterministic cycle-step advance. Each successful
-    # round-trip (user message + AI reply) bumps cycle_step by 1,
-    # capped at MAX_STEP (7). Step 7 is terminal — re-firing
-    # /message at step 7 keeps the session there until the user
-    # ends or restarts. AI-failure paths (assistant_msg = None,
-    # ai_error set) do NOT advance: a round-trip without a real
-    # AI turn isn't real progress. The 42-cell prompt matrix from
-    # 6A picks up the new step on the NEXT /message because
-    # ``_load_prior_messages`` reads from the DB and ``build_prompt``
-    # is invoked per route call — there's no need to rebuild the
-    # prompt right now (no AI turn left in this request).
-    if sess.cycle_step < MAX_STEP:
-        sess.cycle_step += 1
+    # --- v0.5.0 (Phase 8B): dual-prompt cycle-step transition --------------
+    #
+    # The v0.4.x deterministic +1 advance is now config-gated. When
+    # step_evaluation is enabled (the default), the route fires a
+    # SECOND ai_complete call against the same provider with a short
+    # max_tokens cap; the AI returns a JSON verdict
+    # (advance/confidence/reason/suggested_step) and the route
+    # applies the suggestion iff:
+    #   - real evaluation: advance ∧ confidence >= threshold, OR
+    #   - fallback path:   advance (the deterministic-+1 fallback
+    #                       IS the v0.4.x compat path; threshold
+    #                       does not gate it).
+    # When step_evaluation is disabled, the route keeps the v0.4.x
+    # deterministic +1 behaviour verbatim.
+    from_step = int(sess.cycle_step)
+    step_eval_enabled, threshold, eval_max_tokens = _read_step_evaluation_config()
+    step_eval_out: _StepEvaluationOut | None = None
+
+    if step_eval_enabled:
+        # Look up the learner's UI language so the evaluator's
+        # ``reason`` field renders naturally if the frontend surfaces
+        # it as a tooltip. Phase 8 Q3 — English prompt + localised
+        # reason via output_language steer.
+        owner = db.get(User, project.user_id)
+        eval_lang = owner.language if owner else "en"
+
+        # The evaluator judges the FULL exchange including the AI's
+        # just-produced answer — that's the signal-rich payload.
+        # ``history`` at this point already contains the user message
+        # we just saved (loaded via _load_prior_messages above) but
+        # not the assistant reply we haven't committed yet, so append
+        # it explicitly.
+        full_history = history + [
+            {"role": "assistant", "content": assistant_text}
+        ]
+        evaluation: StepEvaluation = evaluate_step(
+            pm=manager._pm,
+            method=sess.method,
+            current_step=from_step,
+            history=full_history,
+            model=model,
+            api_key=api_key,
+            output_language=eval_lang,
+            max_tokens=eval_max_tokens,
+        )
+        if evaluation.fallback_used:
+            # Fallback IS the deterministic advance: apply per
+            # evaluation.advance (which is +1 below step 7, False
+            # at step 7 to cap the cycle).
+            applied = evaluation.advance
+        else:
+            applied = evaluation.advance and (
+                evaluation.confidence >= threshold
+            )
+        if applied:
+            sess.cycle_step = evaluation.suggested_step
+        step_eval_out = _StepEvaluationOut(
+            advance=evaluation.advance,
+            confidence=evaluation.confidence,
+            reason=evaluation.reason,
+            suggested_step=evaluation.suggested_step,
+            fallback_used=evaluation.fallback_used,
+            applied=applied,
+            from_step=from_step,
+        )
+    else:
+        # v0.4.x compat: deterministic +1 advance, capped at 7.
+        if sess.cycle_step < MAX_STEP:
+            sess.cycle_step += 1
+
     db.commit()
     db.refresh(assistant_msg)
     db.refresh(sess)
 
-    return _build_response(assistant=assistant_msg)
+    return _build_response(assistant=assistant_msg, step_evaluation=step_eval_out)
 
 
 # --- POST /{id}/rate -------------------------------------------------------

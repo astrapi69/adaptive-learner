@@ -315,6 +315,9 @@ def parse_evaluation_response(
     )
 
 
+EVALUATION_DEFAULT_MAX_TOKENS = 256
+
+
 def evaluate_step(
     *,
     pm: Any,
@@ -324,14 +327,15 @@ def evaluate_step(
     model: str,
     api_key: str,
     output_language: str = "en",
+    max_tokens: int = EVALUATION_DEFAULT_MAX_TOKENS,
 ) -> StepEvaluation:
     """End-to-end orchestration: build the prompt, fire ``ai_complete``,
     parse the response, return a :class:`StepEvaluation`.
 
     The hook firing is the same one the learning call uses — same
-    provider, same API key, same model. (Phase 8B will plumb a
-    smaller ``max_tokens`` through when the hookspec gains the kwarg;
-    until then, prompt engineering keeps the JSON tight.)
+    provider, same API key, same model. ``max_tokens`` defaults to
+    256 because the JSON evaluation output is tiny (~80-120 tokens
+    in practice); the cap is a safety net against verbose models.
 
     Never raises. A None / empty / malformed response from the hook
     collapses into the deterministic fallback so the route caller
@@ -349,6 +353,7 @@ def evaluate_step(
             messages=messages,
             model=model,
             api_key=api_key,
+            max_tokens=max_tokens,
         )
     except Exception:  # noqa: BLE001 — defensive: never crash the route
         return _deterministic_fallback(current_step, None)

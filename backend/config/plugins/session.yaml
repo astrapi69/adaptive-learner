@@ -1,0 +1,26 @@
+# Session plugin configuration.
+#
+# Read by ``app.config_overlay.read_plugin_config_merged("session")``
+# on every POST /api/plugins/session/{id}/message — see
+# ``adaptive_learner_session.routes._read_step_evaluation_config``.
+
+# v0.5.0 — AI-based cycle-step transition (Phase 8 dual-prompt).
+#
+# When ``enabled: true`` (the default), every successful /message
+# round-trip fires a SECOND ai_complete call against the same
+# provider; the AI returns a JSON verdict
+# {advance, confidence, reason, suggested_step} and the route
+# applies the suggestion iff ``advance ∧ confidence >= threshold``.
+# Set ``enabled: false`` to fall back to the v0.4.x deterministic
+# +1 advance (capped at 7).
+step_evaluation:
+  enabled: true
+  # Minimum confidence for an AI-suggested transition to apply.
+  # Lower = more eager transitions; higher = stickier steps. The
+  # 0.7 default is the Phase 8B spec value.
+  confidence_threshold: 0.7
+  # max_tokens cap for the evaluator call. The JSON output is tiny
+  # (~80-120 tokens in practice); the cap is a safety net against
+  # verbose models. INTERNAL — only bump if logs show truncated
+  # evaluation responses in the wild.
+  max_tokens: 256

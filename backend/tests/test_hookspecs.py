@@ -100,7 +100,10 @@ EXPECTED_SIGNATURES: dict[str, list[str]] = {
     "get_assessment_questions": ["self", "lang"],
     "calculate_profile": ["self", "answers"],
     "create_session_prompt": ["self", "project", "profile", "method", "step", "lang"],
-    "ai_complete": ["self", "messages", "model", "api_key"],
+    # v0.5.0 (Phase 8B): ``max_tokens`` is an optional kwarg with
+    # a sensible default at the provider layer. Required for the
+    # dual-prompt step-evaluator's 256-token cap.
+    "ai_complete": ["self", "messages", "model", "api_key", "max_tokens"],
     "recommend_method_switch": ["self", "project_id", "current_method", "recent_ratings"],
     "on_session_complete": ["self", "session", "rating"],
     "get_progress_summary": ["self", "project_id"],

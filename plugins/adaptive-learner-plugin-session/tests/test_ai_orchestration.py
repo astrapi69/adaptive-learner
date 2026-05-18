@@ -140,7 +140,7 @@ def test_call_ai_complete_returns_string_from_hook():
     object exposing ``.hook.ai_complete``) and forwards the call.
     """
     fake_pm = SimpleNamespace(
-        hook=SimpleNamespace(ai_complete=lambda messages, model, api_key: "the reply")
+        hook=SimpleNamespace(ai_complete=lambda messages, model, api_key, max_tokens=None: "the reply")
     )
     out = ai_orchestration.call_ai_complete(
         pm=fake_pm,
@@ -155,7 +155,7 @@ def test_call_ai_complete_returns_none_when_no_provider_matches():
     """firstresult=True dispatch where every plugin returned None
     surfaces as None at the helper boundary too."""
     fake_pm = SimpleNamespace(
-        hook=SimpleNamespace(ai_complete=lambda messages, model, api_key: None)
+        hook=SimpleNamespace(ai_complete=lambda messages, model, api_key, max_tokens=None: None)
     )
     out = ai_orchestration.call_ai_complete(
         pm=fake_pm,

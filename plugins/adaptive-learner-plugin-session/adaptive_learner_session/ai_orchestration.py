@@ -105,6 +105,7 @@ def call_ai_complete(
     messages: list[dict[str, Any]],
     model: str,
     api_key: str,
+    max_tokens: int | None = None,
 ) -> str | None:
     """Fire the ``ai_complete`` hook (firstresult=True).
 
@@ -116,8 +117,17 @@ def call_ai_complete(
     — the inner pluggy hook caller). Accepts ``Any`` so this
     helper stays importable from the standalone plugin test
     suite where ``app.main.manager`` is not on sys.path.
+
+    v0.5.0: ``max_tokens`` (optional) caps the provider's completion
+    length. ``None`` (the default) leaves the provider's own default
+    in place. The Phase 8B step-evaluator uses 256.
     """
-    result = pm.hook.ai_complete(messages=messages, model=model, api_key=api_key)
+    result = pm.hook.ai_complete(
+        messages=messages,
+        model=model,
+        api_key=api_key,
+        max_tokens=max_tokens,
+    )
     if isinstance(result, str):
         return result
     return None
