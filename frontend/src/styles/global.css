@@ -980,6 +980,85 @@ select:focus {
   border-bottom: none;
 }
 
+/* --- Navigation ----------------------------------------------- */
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-5);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--fg);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nav-brand img {
+  border-radius: var(--radius-sm);
+}
+
+.nav-brand-name {
+  display: inline-block;
+}
+
+@media (max-width: 600px) {
+  .nav-brand-name {
+    display: none;
+  }
+}
+
+.nav-links {
+  display: flex;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.nav-link {
+  color: var(--fg-muted);
+  text-decoration: none;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.nav-link:hover {
+  background: var(--surface-2);
+  color: var(--fg);
+}
+
+.nav-link.is-active {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+.nav-theme-toggle {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  font-size: 1rem;
+}
+
+.nav-theme-toggle:hover {
+  background: var(--surface-2);
+}
+
 /* --- Method badges ---------------------------------------------- */
 
 .method-badge {

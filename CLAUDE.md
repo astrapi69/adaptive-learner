@@ -12,8 +12,10 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state:** Skeleton (Phase 1A complete). Empty-shell backend +
-  minimal React shell + placeholder Landing page.
+- **Current state (v0.1.0):** end-to-end MVP. Full domain backend
+  (Phase 1B/C), all 8 hooks (Phase 2), all five plugins (Phase 3),
+  React frontend with seven pages (Phase 4). Live AI-provider auto-
+  reply on the chat surface is deferred to Phase 5.
 
 ## Development guidelines
 
@@ -36,26 +38,21 @@ On a conflict between CLAUDE.md and the rules, the rules win.
 ## Tech stack
 
 - **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry
-- **Frontend:** React 19, TypeScript 6 (strict), Vite 8, react-toastify
+- **Frontend:** React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model 1
 - **Plugins:** pluginforge ^0.5.0 (PyPI), entry points under group `adaptive_learner.plugins`
 - **Launcher:** PyInstaller-based cross-OS desktop launcher (`launcher/`)
 - **Testing:** pytest, Vitest, Playwright
 - **Tooling:** Poetry, npm, Docker, Make, ruff, pre-commit
 - **Docs site:** MkDocs (`mkdocs.yml`, `docs/pyproject.toml` carries the docs venv)
 
-The frontend tech stack will grow as the new domain lands: TipTap is
-NOT part of the skeleton, neither is Radix UI / @dnd-kit / Lucide. The
-project reference doc names Recharts for the dashboard charts; that
-joins package.json in Phase 4A.
-
 ## Architecture (short)
 
 4 layers: Frontend → Backend → PluginForge → Plugins. Details in
-`.claude/rules/architecture.md`. The skeleton's backend exposes only
-infrastructure endpoints (`/api/health`, `/api/i18n/{lang}`,
-`/api/plugins/*`); the frontend renders a single placeholder page.
-Domain endpoints, pages and the first plugins land in Phases 1B / 1C /
-3 / 4 per the project plan.
+`.claude/rules/architecture.md`. Backend exposes the full v0.1.0
+API surface: core (users / projects / settings) + plugin routes
+(assessment / session / tracking / tools). The frontend renders
+seven routes via React Router: Landing, Onboarding, Assessment,
+Dashboard, Session, Progress, Settings.
 
 ## Commands
 
@@ -82,26 +79,29 @@ for the placeholder Landing lands in Phase 4A).
 2. `make test` — green baseline
 3. Read this file + `docs/adaptive-learner-project-reference.md` + relevant rules per the task
 
-## Data model (skeleton — empty)
+## Data model
 
-The skeleton has no models. The Bibliogon Book / Chapter / Article /
-Author / Asset / Template / Publication models are gone with the
-routers and services that consumed them.
-
-The target adaptive-learning domain (User, LearningProject,
-LearningProfile, LearningTopic, Curriculum, Lesson, SessionNote,
-LearningSession, SessionMessage, SessionRating, ProgressCommit,
-MethodSwitch, UserSettings) is documented in
-`docs/adaptive-learner-project-reference.md` §5.1 and lands in
-Phase 1B.
+13 SQLAlchemy models in `backend/app/models/`: User,
+UserSettings, LearningProject, LearningProfile, Curriculum,
+LearningTopic, Lesson, LearningSession, SessionMessage,
+SessionRating, SessionNote, ProgressCommit, MethodSwitch.
+Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Spec in
+`docs/adaptive-learner-project-reference.md` §5.1.
 
 ## Plugins
 
-The skeleton ships with **zero plugins**. The loader infrastructure
-(empty `backend/app/hookspecs.py`, PluginForge bootstrap in
-`backend/app/main.py`) is in place. Hooks land in Phase 2; the first
-five plugins (assessment, ai-anthropic, session, tracking, tools) land
-in Phase 3. See `plugins/README.md` for the minimal plugin layout.
+Five plugins shipped in v0.1.0, all under `plugins/`:
+
+| Plugin | Routes | Hook coverage |
+|--------|--------|---------------|
+| assessment | /questions, /evaluate, /profile/{id} | get_assessment_questions, calculate_profile |
+| ai-anthropic | (hook-only) | ai_complete (firstresult, model `claude-*`) |
+| session | /start, /{id}/message, /{id}/rate, /{id}/end | create_session_prompt (firstresult), recommend_method_switch |
+| tracking | /progress/{id}, /commits/{id} | on_session_complete, get_progress_summary |
+| tools | /recommendations/{id} | get_tool_recommendations |
+
+All eight hooks live in `backend/app/hookspecs.py`. PluginForge
+bootstraps the registry in `backend/app/main.py`.
 
 ## Launcher
 
@@ -120,11 +120,22 @@ adaptive-learner/
 ├── backend/tests/         # 9 infrastructure tests
 ├── plugins/               # empty placeholder + README
 ├── frontend/src/
-│   ├── api/client.ts      # minimal typed API client
-│   ├── hooks/             # useI18n, useTheme (light/dark only)
-│   ├── pages/Landing.tsx  # placeholder
+│   ├── api/client.ts      # typed namespaces for every backend route
+│   ├── components/        # ProfileRadar, ProgressTimeline, MethodDistribution,
+│   │                      # SessionChat, CycleProgress, RatingDialog,
+│   │                      # MethodBadge, MethodSwitchBanner, Navigation,
+│   │                      # ErrorBoundary, ToolRecommendations, ...
+│   ├── hooks/             # useI18n (with fallbacks), useTheme (light/dark)
+│   ├── i18n/fallbacks.ts  # inline DE+EN strings for first-paint resilience
+│   ├── lib/
+│   │   ├── constants.ts   # LearningMethod / CycleStep / METHOD_COLORS / AI_PROVIDERS
+│   │   ├── learnerState.ts # typed localStorage wrapper (user_id / project_id / lang)
+│   │   └── tree/          # TypedTreeNode<V, K> adapter on tree-model + buildTreeFromFlat
+│   ├── pages/             # Landing, Onboarding, Assessment, Dashboard, Session,
+│   │                      # Progress, Settings, NotFound
+│   ├── types/             # TypeScript interfaces matching Pydantic Out-schemas
 │   ├── utils/notify.ts    # toast wrapper
-│   └── styles/global.css  # minimal token set
+│   └── styles/global.css  # full token set: method palette, layout, components
 ├── e2e/                   # Playwright (no specs yet)
 ├── launcher/              # cross-OS PyInstaller launcher
 ├── docs/
@@ -153,6 +164,7 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
+- v0.1.0 baseline: backend 348, plugins 264, frontend 149 (Vitest).
 - E2E tests under `e2e/` are NOT on the `make test` default path.
 
 ## Test isolation
