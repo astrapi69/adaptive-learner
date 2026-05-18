@@ -1011,6 +1011,53 @@ select:focus {
   font-weight: 400;
 }
 
+/* --- v0.6.0 / 9C: 1-5 rating button group ---------------------- */
+.rating-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.rating-row-label {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.rating-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.rating-button {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  color: var(--fg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-2);
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 44px;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.rating-button:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.rating-button.is-active {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: var(--accent);
+}
+
+.rating-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* --- Settings page -------------------------------------------- */
 
 .settings-page {
@@ -1760,6 +1807,58 @@ select:focus {
   /* ----- Step-evaluation metrics: single-column on narrow ---- */
   .step-eval-metrics {
     grid-template-columns: 1fr;
+  }
+
+  /* ----- 9C: Session chat takes full available height -------- */
+  /* The chat card grows to fill the viewport height (minus nav
+     + page padding). The messages list scrolls vertically; the
+     input row hugs the bottom of the card so the send button is
+     always reachable without scrolling the page. */
+  .session-chat {
+    min-height: calc(100vh - 14rem);
+    padding: var(--space-3);
+    gap: var(--space-2);
+  }
+  .chat-messages {
+    flex: 1;
+    max-height: none;
+    /* No min-height — let the flex parent decide. */
+  }
+  .chat-input-row {
+    gap: var(--space-2);
+    align-items: stretch;
+  }
+  .chat-input-row textarea {
+    /* Two-row textarea — single thumb-reach typing. */
+    min-height: 3rem;
+    font-size: 16px;
+  }
+  .chat-input-row .btn {
+    /* Pin the send button square + 44px tall so it's an obvious
+       thumb target adjacent to the textarea, not a row below. */
+    min-width: 4rem;
+    min-height: 44px;
+  }
+
+  /* ----- 9C: CycleProgress horizontal scroll on cramped widths */
+  /* The 7-step grid drops labels at ≤720px (from 6A) but the 7
+     numeric circles still demand ~280px to render comfortably.
+     At extreme-narrow widths, switch to a single-row scrollable
+     strip rather than crushing the circles. */
+  .cycle-steps {
+    grid-template-columns: repeat(7, minmax(2.4rem, 1fr));
+  }
+  .cycle-step-label {
+    display: none;
+  }
+
+  /* ----- 9C: RatingDialog modal sized for thumb reach -------- */
+  .modal-card {
+    /* On a phone, give the modal the whole viewport with some
+       breathing room. The form-actions row also stacks via 9A. */
+    width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
   }
 }
 

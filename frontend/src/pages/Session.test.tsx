@@ -287,15 +287,11 @@ describe("Session page", () => {
         fireEvent.click(screen.getByTestId("session-end"));
         await screen.findByTestId("rating-dialog");
 
-        fireEvent.change(screen.getByTestId("rating-understanding"), {
-            target: {value: "4"},
-        });
-        fireEvent.change(screen.getByTestId("rating-stress"), {
-            target: {value: "2"},
-        });
-        fireEvent.change(screen.getByTestId("rating-method-fit"), {
-            target: {value: "5"},
-        });
+        // v0.6.0 / 9C: ratings are now 1-5 button groups, not
+        // sliders. Click the desired value's button on each row.
+        fireEvent.click(screen.getByTestId("rating-understanding-4"));
+        fireEvent.click(screen.getByTestId("rating-stress-2"));
+        fireEvent.click(screen.getByTestId("rating-method-fit-5"));
         await act(async () => {
             fireEvent.click(screen.getByTestId("rating-submit"));
         });

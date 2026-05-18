@@ -19,8 +19,15 @@ export interface RatingValues {
 /**
  * Modal dialog (rendered inline, no portal — keeps the SR DOM
  * minimal) for collecting end-of-session ratings: understanding,
- * stress and method-fit each as a 1..5 slider, plus an optional
- * free-text notes field.
+ * stress and method-fit each as a 1..5 tap-button group, plus
+ * an optional free-text notes field.
+ *
+ * v0.6.0 / 9C: button group replaces the slider input. Universal
+ * swap (not mobile-only) — sliders for a 5-position scale are
+ * imprecise on every input device. A 5-button row gives the
+ * exact value with one click on desktop and one thumb-tap on
+ * mobile, and stays accessible to keyboard users (each button
+ * focusable, arrow keys not required for value selection).
  *
  * Returns early with ``null`` when ``open`` is false so the
  * dialog markup doesn't pollute the DOM unnecessarily.
@@ -52,7 +59,7 @@ export default function RatingDialog({
                         onSubmit({understanding, stress, method_fit: methodFit, notes: notes.trim()});
                     }}
                 >
-                    <SliderRow
+                    <RatingRow
                         labelKey="session.rating_understanding"
                         fallback="How well did you understand?"
                         testid="rating-understanding"
@@ -60,7 +67,7 @@ export default function RatingDialog({
                         onChange={setUnderstanding}
                         disabled={submitting}
                     />
-                    <SliderRow
+                    <RatingRow
                         labelKey="session.rating_stress"
                         fallback="How stressful was it?"
                         testid="rating-stress"
@@ -68,7 +75,7 @@ export default function RatingDialog({
                         onChange={setStress}
                         disabled={submitting}
                     />
-                    <SliderRow
+                    <RatingRow
                         labelKey="session.rating_method_fit"
                         fallback="How well did the method fit?"
                         testid="rating-method-fit"
@@ -113,7 +120,7 @@ export default function RatingDialog({
     );
 }
 
-interface SliderRowProps {
+interface RatingRowProps {
     labelKey: string;
     fallback: string;
     testid: string;
@@ -122,26 +129,36 @@ interface SliderRowProps {
     disabled?: boolean;
 }
 
-function SliderRow({labelKey, fallback, testid, value, onChange, disabled}: SliderRowProps) {
+function RatingRow({labelKey, fallback, testid, value, onChange, disabled}: RatingRowProps) {
     const {t} = useI18n();
     return (
-        <label className="form-row">
-            <span className="form-label">
+        <div className="rating-row" data-testid={testid}>
+            <span className="form-label rating-row-label">
                 {t(labelKey, fallback)}{" "}
                 <span className="rating-value" data-testid={`${testid}-value`}>
                     {value} / 5
                 </span>
             </span>
-            <input
-                type="range"
-                min={1}
-                max={5}
-                step={1}
-                value={value}
-                onChange={(e) => onChange(Number(e.target.value))}
-                disabled={disabled}
-                data-testid={testid}
-            />
-        </label>
+            <div
+                className="rating-buttons"
+                role="radiogroup"
+                aria-label={t(labelKey, fallback)}
+            >
+                {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                        type="button"
+                        key={n}
+                        role="radio"
+                        aria-checked={value === n}
+                        disabled={disabled}
+                        data-testid={`${testid}-${n}`}
+                        className={`rating-button${value === n ? " is-active" : ""}`}
+                        onClick={() => onChange(n)}
+                    >
+                        {n}
+                    </button>
+                ))}
+            </div>
+        </div>
     );
 }
