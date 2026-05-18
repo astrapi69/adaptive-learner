@@ -300,11 +300,30 @@ select:focus {
   gap: var(--space-5);
 }
 
+.onboarding-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2);
+}
+
 .onboarding-header h1 {
-  margin: 0 0 var(--space-2) 0;
+  margin: 0;
   font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.01em;
+}
+
+.onboarding-skip-top {
+  /* Smaller than the bottom action buttons so it reads as a
+     side-affordance ("you don't have to do this") rather than
+     the primary CTA, but still a full button (not a bare link)
+     so it's discoverable on first paint. */
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.9rem;
+  flex-shrink: 0;
 }
 
 .onboarding-intro {

@@ -85,6 +85,7 @@ onboarding:
   submit: Creer le projet et lancer l'evaluation
   creating: Creation du projet...
   skip: Plus tard
+  skip_top: Passer pour l'instant →
   skip_hint: Pas sur ? Touche Plus tard pour commencer — tu pourras
     completer plus tard depuis la page Curriculum.
   skip_default_name: Apprenant

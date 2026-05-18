@@ -95,6 +95,7 @@ onboarding:
   submit: Create project and start assessment
   creating: Creating project…
   skip: Later
+  skip_top: Skip for now →
   skip_hint: >-
     Not sure yet? Tap Later to jump in — you can fill this in from
     the Curriculum page anytime.

@@ -140,7 +140,25 @@ export default function Onboarding() {
     return (
         <main data-testid="onboarding" className="onboarding-page">
             <header className="onboarding-header">
-                <h1>{t("onboarding.title", "Create a learning project")}</h1>
+                <div className="onboarding-header-row">
+                    <h1>{t("onboarding.title", "Create a learning project")}</h1>
+                    {/* Prominent skip affordance, visible above the
+                        fold without scrolling. Sits at the top-right
+                        of the header so a curious visitor can land in
+                        the app in one click without filling the
+                        6-field form below. The bottom "Later" button
+                        is the same handler — kept for users who
+                        scroll to the form actions. */}
+                    <button
+                        type="button"
+                        className="btn btn-secondary onboarding-skip-top"
+                        onClick={handleSkip}
+                        disabled={submitting}
+                        data-testid="onboarding-skip-top"
+                    >
+                        {t("onboarding.skip_top", "Skip for now →")}
+                    </button>
+                </div>
                 <p className="onboarding-intro">{t("onboarding.intro")}</p>
             </header>
 

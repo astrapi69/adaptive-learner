@@ -202,6 +202,50 @@ describe("Onboarding page", () => {
         expect(screen.getByTestId("onboarding-submit")).toBeInTheDocument();
     });
 
+    it("renders a top-right Skip button in the header (above the fold)", () => {
+        renderOnboarding();
+        const topSkip = screen.getByTestId("onboarding-skip-top");
+        expect(topSkip).toBeInTheDocument();
+        // The top-right Skip is inside the onboarding header, NOT
+        // the form-actions block. Pinning that DOM location pins
+        // the "visible above the fold" property — a future refactor
+        // that pushes it back into the action row will fail this.
+        const header = topSkip.closest(".onboarding-header");
+        expect(header).not.toBeNull();
+    });
+
+    it("top-right Skip fires the same handler as the bottom Skip", async () => {
+        apiUserCreate.mockResolvedValue({
+            id: "u-top-skip",
+            name: "Learner",
+            email: null,
+            language: "en",
+            created_at: "2026-05-18T00:00:00Z",
+            updated_at: "2026-05-18T00:00:00Z",
+        });
+        apiProjectCreate.mockResolvedValue({
+            id: "p-top-skip",
+            user_id: "u-top-skip",
+            topic: "My learning",
+            goal: "Discover my learning style.",
+            timeframe: "Flexible",
+            daily_minutes: 30,
+            current_problem: null,
+            active: true,
+            created_at: "2026-05-18T00:00:00Z",
+            updated_at: "2026-05-18T00:00:00Z",
+        });
+        renderOnboarding();
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("onboarding-skip-top"));
+        });
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
+        });
+        expect(apiUserCreate).toHaveBeenCalledTimes(1);
+        expect(apiProjectCreate).toHaveBeenCalledTimes(1);
+    });
+
     it("Skip is enabled regardless of form completeness", () => {
         renderOnboarding();
         // No fields filled — Submit is disabled, but Skip is not.
