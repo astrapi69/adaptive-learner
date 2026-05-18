@@ -256,3 +256,11 @@ toast:
   api_key_saved: Το κλειδί API αποθηκεύτηκε.
   api_key_deleted: Το κλειδί API αφαιρέθηκε.
   method_switched: Η μέθοδος άλλαξε.
+
+install:
+  title: Προσθήκη στην αρχική οθόνη
+  subtitle: >-
+    Άνοιξε το Adaptive Learner ως πραγματική εφαρμογή — χωρίς καρτέλα.
+  install: Εγκατάσταση
+  dismiss: Όχι τώρα
+  aria_label: Εγκατάσταση Adaptive Learner

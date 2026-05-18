@@ -3,6 +3,7 @@ import {ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import ErrorBoundary from "./components/ErrorBoundary";
+import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
 import {I18nProvider} from "./hooks/useI18n";
 import {useTheme} from "./hooks/useTheme";
@@ -59,6 +60,7 @@ export default function App() {
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
+                <InstallPrompt />
                 <ToastContainer
                     position="bottom-right"
                     autoClose={5000}

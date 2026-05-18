@@ -24,35 +24,77 @@ export default defineConfig({
                 "favicon.ico",
                 "favicon.svg",
                 "icon-192.svg",
+                "icon-192.png",
                 "icon-512.svg",
+                "icon-512.png",
+                "offline.html",
             ],
             manifest: {
                 name: "Adaptive Learner",
-                short_name: "Adaptive Learner",
-                description: "Adaptive learning system based on the six-method learning model.",
+                // Phase 9B — short_name is what appears under the
+                // home-screen icon. Android recommends ≤12 chars;
+                // "Adaptive" fits comfortably and reads as a clear
+                // app identity. The longer ``name`` still shows in
+                // the app switcher.
+                short_name: "Adaptive",
+                description:
+                    "Adaptive learning system based on the six-method " +
+                    "learning model.",
                 theme_color: "#6366f1",
                 background_color: "#ffffff",
                 display: "standalone",
                 orientation: "any",
                 start_url: "/",
                 scope: "/",
+                lang: "en",
+                categories: ["education", "productivity"],
                 icons: [
-                    // SVG-only set. iOS 15+ + every recent Android /
-                    // desktop browser support image/svg+xml for PWA
-                    // icons; dropping the .png raster pair removes the
-                    // Bibliogon-branded legacy and shrinks the precache
-                    // payload. Re-add raster fallbacks only if a real
-                    // user reports an older device.
+                    // Both SVG + PNG at 192 / 512. iOS 15+ / modern
+                    // Android pick the SVG (scales infinitely, no
+                    // raster artefacts); older Android + some app
+                    // switchers fall back to the PNG. ``maskable``
+                    // ensures Android can crop the icon into its
+                    // platform shape without losing the network mark.
                     {src: "/icon-192.svg", sizes: "192x192", type: "image/svg+xml", purpose: "any"},
+                    {src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable"},
                     {src: "/icon-512.svg", sizes: "512x512", type: "image/svg+xml", purpose: "any"},
+                    {src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable"},
                 ],
             },
             workbox: {
-                // Precache static assets, skip API calls
+                // Precache static assets. The offline.html fallback
+                // is one of them so the SW can serve it without a
+                // network roundtrip.
                 globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
                 navigateFallback: "/index.html",
+                navigateFallbackDenylist: [
+                    // Don't intercept API endpoints with the SPA
+                    // index — let them return real 404/5xx.
+                    /^\/api\//,
+                ],
                 runtimeCaching: [
                     {
+                        // Phase 9B — network-first for API GETs so
+                        // returning users see cached read responses
+                        // when offline. POST / PATCH / DELETE still
+                        // need network (NetworkOnly via the fallback
+                        // entry below).
+                        urlPattern: ({url, request}) =>
+                            url.pathname.startsWith("/api/") &&
+                            request.method === "GET",
+                        handler: "NetworkFirst",
+                        options: {
+                            cacheName: "adaptive-learner-api",
+                            networkTimeoutSeconds: 4,
+                            expiration: {
+                                maxEntries: 60,
+                                maxAgeSeconds: 60 * 60 * 24,
+                            },
+                            cacheableResponse: {statuses: [0, 200]},
+                        },
+                    },
+                    {
+                        // Mutating API calls — never cache.
                         urlPattern: /^\/api\//,
                         handler: "NetworkOnly",
                     },

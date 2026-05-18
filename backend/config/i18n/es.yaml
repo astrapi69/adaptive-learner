@@ -256,3 +256,11 @@ toast:
   api_key_saved: Clave API guardada.
   api_key_deleted: Clave API eliminada.
   method_switched: Metodo cambiado.
+
+install:
+  title: Anadir a la pantalla de inicio
+  subtitle: >-
+    Abre Adaptive Learner como una app real — sin pestana del navegador.
+  install: Instalar
+  dismiss: Ahora no
+  aria_label: Instalar Adaptive Learner

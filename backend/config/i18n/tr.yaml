@@ -256,3 +256,11 @@ toast:
   api_key_saved: API key saved.
   api_key_deleted: API key removed.
   method_switched: Method switched.
+
+install:
+  title: Add to home screen
+  subtitle: >-
+    Open Adaptive Learner like a real app — no browser tab needed.
+  install: Install
+  dismiss: Not now
+  aria_label: Install Adaptive Learner

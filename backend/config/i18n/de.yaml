@@ -285,3 +285,11 @@ toast:
   api_key_saved: API-Key gespeichert.
   api_key_deleted: API-Key entfernt.
   method_switched: Methode gewechselt.
+
+install:
+  title: Zum Startbildschirm hinzufügen
+  subtitle: >-
+    Adaptive Learner wie eine echte App öffnen — ohne Browser-Tab.
+  install: Installieren
+  dismiss: Nicht jetzt
+  aria_label: Adaptive Learner installieren
