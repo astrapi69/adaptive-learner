@@ -107,6 +107,12 @@ class _SessionMessageExchangeOut(BaseModel):
     raised). ``ai_error`` carries a one-line explanation in that
     case so the frontend can render a toast / inline notice
     without parsing a stack trace.
+
+    v0.4.0: ``session`` carries the LearningSession AFTER the
+    cycle-step advance has been applied (if any). The frontend
+    reads ``session.cycle_step`` to drive CycleProgress without
+    a separate fetch. Pure read-only: the route never mutates
+    the session row outside of cycle-step advances.
     """
 
     model_config = ConfigDict(from_attributes=True)
@@ -114,6 +120,7 @@ class _SessionMessageExchangeOut(BaseModel):
     user_message: SessionMessageOut
     assistant_message: SessionMessageOut | None = None
     ai_error: str | None = None
+    session: LearningSessionOut
 
 
 class _SwitchRecommendationOut(BaseModel):
@@ -340,38 +347,44 @@ def append_message(
     db.commit()
     db.refresh(user_msg)
 
-    if payload.role != MessageRole.USER:
-        # No AI step for assistant / system writes. The composite
-        # response still wraps the single saved message so the
-        # frontend's typed contract stays consistent.
+    # Helper closure: every exit point of this handler returns
+    # the same composite shape, so the frontend's typed contract
+    # stays consistent. v0.4.0: the response now also carries the
+    # full LearningSession row so the frontend can read the
+    # current cycle_step without a separate fetch.
+    def _build_response(
+        assistant: SessionMessage | None = None,
+        ai_error: str | None = None,
+    ) -> _SessionMessageExchangeOut:
         return _SessionMessageExchangeOut(
             user_message=SessionMessageOut.model_validate(user_msg),
+            assistant_message=(
+                SessionMessageOut.model_validate(assistant) if assistant is not None else None
+            ),
+            ai_error=ai_error,
+            session=LearningSessionOut.model_validate(sess),
         )
+
+    if payload.role != MessageRole.USER:
+        # No AI step for assistant / system writes; no cycle-step
+        # advance either (the advance only fires on a real
+        # learner-AI round-trip).
+        return _build_response()
 
     # Look up the project owner -> active provider -> API key.
     project = db.get(LearningProject, sess.project_id)
     if project is None:
-        return _SessionMessageExchangeOut(
-            user_message=SessionMessageOut.model_validate(user_msg),
-            ai_error="session has no project; AI reply skipped.",
-        )
+        return _build_response(ai_error="session has no project; AI reply skipped.")
     provider_key, api_key = _resolve_active_key(db, project.user_id)
     if provider_key is None:
-        return _SessionMessageExchangeOut(
-            user_message=SessionMessageOut.model_validate(user_msg),
-            ai_error="No active AI provider configured.",
-        )
+        return _build_response(ai_error="No active AI provider configured.")
     if not api_key:
-        return _SessionMessageExchangeOut(
-            user_message=SessionMessageOut.model_validate(user_msg),
-            ai_error=f"No API key stored for provider {provider_key!r}.",
-        )
+        return _build_response(ai_error=f"No API key stored for provider {provider_key!r}.")
 
     model = ai_orchestration.resolve_model(provider_key)
     if model is None:
-        return _SessionMessageExchangeOut(
-            user_message=SessionMessageOut.model_validate(user_msg),
-            ai_error=f"Provider {provider_key!r} has no default model registered.",
+        return _build_response(
+            ai_error=f"Provider {provider_key!r} has no default model registered."
         )
 
     # Load EVERY prior message INCLUDING the user message we just
@@ -400,18 +413,14 @@ def append_message(
             api_key=api_key,
         )
     except Exception as exc:  # noqa: BLE001
-        return _SessionMessageExchangeOut(
-            user_message=SessionMessageOut.model_validate(user_msg),
-            ai_error=f"AI provider error: {exc}",
-        )
+        return _build_response(ai_error=f"AI provider error: {exc}")
 
     if not assistant_text:
-        return _SessionMessageExchangeOut(
-            user_message=SessionMessageOut.model_validate(user_msg),
+        return _build_response(
             ai_error=(
                 f"No registered provider returned a reply for model {model!r}. "
                 f"Is the {provider_key!r} provider plugin enabled?"
-            ),
+            )
         )
 
     assistant_msg = SessionMessage(
@@ -420,13 +429,25 @@ def append_message(
         content=assistant_text,
     )
     db.add(assistant_msg)
+
+    # v0.4.0: deterministic cycle-step advance. Each successful
+    # round-trip (user message + AI reply) bumps cycle_step by 1,
+    # capped at MAX_STEP (7). Step 7 is terminal — re-firing
+    # /message at step 7 keeps the session there until the user
+    # ends or restarts. AI-failure paths (assistant_msg = None,
+    # ai_error set) do NOT advance: a round-trip without a real
+    # AI turn isn't real progress. The 42-cell prompt matrix from
+    # 6A picks up the new step on the NEXT /message because
+    # ``_load_prior_messages`` reads from the DB and ``build_prompt``
+    # is invoked per route call — there's no need to rebuild the
+    # prompt right now (no AI turn left in this request).
+    if sess.cycle_step < MAX_STEP:
+        sess.cycle_step += 1
     db.commit()
     db.refresh(assistant_msg)
+    db.refresh(sess)
 
-    return _SessionMessageExchangeOut(
-        user_message=SessionMessageOut.model_validate(user_msg),
-        assistant_message=SessionMessageOut.model_validate(assistant_msg),
-    )
+    return _build_response(assistant=assistant_msg)
 
 
 # --- POST /{id}/rate -------------------------------------------------------

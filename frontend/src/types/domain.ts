@@ -134,7 +134,8 @@ export interface SessionEndResult {
 }
 
 /**
- * v0.2.0 shape for ``POST /api/plugins/session/{id}/message``.
+ * Shape for ``POST /api/plugins/session/{id}/message`` since
+ * v0.2.0 (AI orchestration) plus v0.4.0 (cycle-step advance).
  *
  * The backend orchestrates AI server-side: route saves the user
  * message, fires the ``ai_complete`` hook against the active
@@ -142,11 +143,18 @@ export interface SessionEndResult {
  * reply, returns the composite. ``assistant_message`` is ``null``
  * when AI couldn't reply (no API key, no provider matched,
  * provider raised); ``ai_error`` carries a one-line explanation.
+ *
+ * v0.4.0: ``session`` carries the LearningSession row AFTER
+ * the cycle-step advance has been applied. The frontend reads
+ * ``session.cycle_step`` to drive CycleProgress without a
+ * separate fetch. Successful round-trips bump cycle_step by 1
+ * (capped at 7); failed-AI round-trips leave it unchanged.
  */
 export interface SessionMessageExchangeResult {
     user_message: SessionMessage;
     assistant_message: SessionMessage | null;
     ai_error: string | null;
+    session: LearningSession;
 }
 
 /**

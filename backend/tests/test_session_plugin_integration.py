@@ -458,6 +458,13 @@ def test_message_orchestrates_ai_and_persists_assistant_reply(
         "Inheritance lets a class reuse another class."
     )
     assert body["ai_error"] is None
+    # v0.4.0: the response carries the updated LearningSession
+    # so the frontend can drive CycleProgress without a fetch.
+    assert "session" in body
+    assert body["session"]["id"] == sess_id
+    # The successful round-trip advanced cycle_step from the
+    # /start default of 1 to 2.
+    assert body["session"]["cycle_step"] == 2
 
 
 def test_message_returns_ai_error_when_no_api_key(client: TestClient, mock_ai_plugin):
@@ -698,3 +705,135 @@ def test_switch_422_on_unknown_method(client: TestClient):
         json={"to_method": "telekinesis", "reason": "lol"},
     )
     assert resp.status_code == 422
+
+
+# --- v0.4.0: Cycle-step advance through POST /message --------------------
+
+
+def test_cycle_step_advances_on_successful_round_trip(
+    client: TestClient, mock_ai_plugin
+):
+    """Each /message call that produces a successful AI reply
+    bumps cycle_step by 1, persisted on the LearningSession row
+    AND surfaced in the response's ``session`` field."""
+    from app.database import SessionLocal
+    from app.models import LearningSession
+
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    mock_ai_plugin.reply = "Anything."
+
+    # Fire three successful round-trips; cycle should walk 1 -> 4.
+    for expected_step in (2, 3, 4):
+        resp = client.post(
+            f"/api/plugins/session/{sess_id}/message",
+            json={"role": "user", "content": "Question."},
+        )
+        body = resp.json()
+        assert body["session"]["cycle_step"] == expected_step
+
+    # Verify persistence: DB row carries the same value as the
+    # last response (no in-memory-only state).
+    db = SessionLocal()
+    try:
+        row = db.get(LearningSession, sess_id)
+        assert row.cycle_step == 4
+    finally:
+        db.close()
+
+
+def test_cycle_step_caps_at_max(client: TestClient, mock_ai_plugin):
+    """Step 7 is terminal — additional successful round-trips
+    keep the session there (no wraparound to step 1)."""
+    from app.database import SessionLocal
+    from app.models import LearningSession
+
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id)
+    # Start the session already at step 6 so one round-trip
+    # walks it to 7, and a second round-trip should keep it at 7.
+    sess_id = client.post(
+        "/api/plugins/session/start",
+        json={"project_id": project_id, "cycle_step": 6},
+    ).json()["session"]["id"]
+    mock_ai_plugin.reply = "AI reply."
+
+    first = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    ).json()
+    assert first["session"]["cycle_step"] == 7
+    second = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "y"},
+    ).json()
+    assert second["session"]["cycle_step"] == 7  # capped, not 8 or rolled to 1
+
+    db = SessionLocal()
+    try:
+        assert db.get(LearningSession, sess_id).cycle_step == 7
+    finally:
+        db.close()
+
+
+def test_cycle_step_does_not_advance_when_ai_errors_no_api_key(client: TestClient):
+    """No API key configured -> ai_error is set, assistant_message
+    is null, the user message is persisted, but cycle_step stays
+    put. The 'failed turn' isn't real progress through the
+    learning cycle."""
+    _user_id, project_id = _make_user_and_project(client)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    assert body["assistant_message"] is None
+    assert body["ai_error"] is not None
+    assert body["session"]["cycle_step"] == 1  # unchanged
+
+
+def test_cycle_step_does_not_advance_when_plugin_raises(
+    client: TestClient, mock_ai_plugin
+):
+    """SDK / network exception path: route catches, returns the
+    user message + ai_error, but does NOT advance cycle_step."""
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    mock_ai_plugin.raise_on_call = RuntimeError("provider down")
+
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "x"},
+    )
+    body = resp.json()
+    assert body["assistant_message"] is None
+    assert "provider down" in body["ai_error"]
+    assert body["session"]["cycle_step"] == 1
+
+
+def test_cycle_step_does_not_advance_for_non_user_role(client: TestClient):
+    """role=assistant / role=system writes bypass the AI step;
+    they also bypass the cycle-step advance. Pin against a
+    future bug where external integrations that post raw
+    assistant messages would silently progress the cycle."""
+    _user_id, project_id = _make_user_and_project(client)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "assistant", "content": "Out-of-band reply."},
+    )
+    body = resp.json()
+    assert body["assistant_message"] is None
+    assert body["ai_error"] is None
+    assert body["session"]["cycle_step"] == 1  # unchanged

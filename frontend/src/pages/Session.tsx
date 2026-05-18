@@ -182,6 +182,12 @@ export default function Session() {
                 }
                 return next;
             });
+            // v0.4.0: the backend bumps cycle_step on each
+            // successful round-trip. Update local session state
+            // so CycleProgress reflects the new step + the
+            // 42-cell prompt matrix in 6A picks up the right
+            // (method, step) cell on the next turn.
+            setSession(result.session);
             if (result.ai_error) {
                 notify.error(result.ai_error);
             }

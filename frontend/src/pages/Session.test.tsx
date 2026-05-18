@@ -165,10 +165,13 @@ describe("Session page", () => {
                 id: "m-ai",
                 session_id: "s-1",
                 role: "assistant",
-                content: "Hallo zurueck!",
+                content: "Hallo zurück!",
                 created_at: "2026-05-18T00:01:05Z",
             },
             ai_error: null,
+            // v0.4.0: cycle_step advanced from 1 to 2 on this
+            // round-trip; the response carries the new session.
+            session: {...SESSION, cycle_step: 2},
         });
         renderSession();
         await screen.findByTestId("session");
@@ -182,9 +185,15 @@ describe("Session page", () => {
             expect(apiMessage).toHaveBeenCalledWith("s-1", {role: "user", content: "Hallo"});
         });
         expect(screen.getByText("Hallo")).toBeInTheDocument();
-        expect(screen.getByText("Hallo zurueck!")).toBeInTheDocument();
+        expect(screen.getByText("Hallo zurück!")).toBeInTheDocument();
         // No toast on success.
         expect(toastError).not.toHaveBeenCalled();
+        // v0.4.0: CycleProgress reflects the new step from the
+        // response. data-state="current" moves from step 1 to
+        // step 2.
+        expect(
+            screen.getByTestId("cycle-step-attempt").getAttribute("data-state"),
+        ).toBe("current");
     });
 
     it("renders a thinking placeholder while AI is in flight", async () => {
@@ -221,6 +230,7 @@ describe("Session page", () => {
                 },
                 assistant_message: null,
                 ai_error: null,
+                session: SESSION,  // no advance: assistant_message null
             });
         });
     });
@@ -237,6 +247,8 @@ describe("Session page", () => {
             },
             assistant_message: null,
             ai_error: "No API key stored for provider 'anthropic'.",
+            // ai_error path -> cycle_step unchanged.
+            session: SESSION,
         });
         renderSession();
         await screen.findByTestId("session");
