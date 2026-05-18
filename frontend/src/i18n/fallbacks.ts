@@ -73,7 +73,93 @@ const EN: Catalog = {
     },
 };
 
-const FALLBACKS: Record<SupportedLanguage, Catalog> = {de: DE, en: EN};
+// First-paint fallbacks for the three Phase-5F translation
+// languages. Smaller than DE/EN — only the strings the React
+// shell renders before the backend catalog loads. The live API
+// catalog covers the full key set once /api/i18n/{lang} returns.
+
+const ES: Catalog = {
+    app: {name: "Adaptive Learner", tagline: "Aprendizaje que se adapta a ti."},
+    landing: {
+        title: "Adaptive Learner",
+        subtitle: "Aprendizaje que se adapta a ti.",
+        choose_language: "Elige tu idioma",
+        start_button: "Comienza tu viaje de aprendizaje",
+    },
+    nav: {
+        dashboard: "Panel",
+        session: "Sesion",
+        progress: "Progreso",
+        settings: "Ajustes",
+    },
+    common: {
+        loading: "Cargando...",
+        error: "Algo ha ido mal.",
+        cancel: "Cancelar",
+        save: "Guardar",
+        next: "Siguiente",
+        back: "Atras",
+        submit: "Enviar",
+    },
+};
+
+const FR: Catalog = {
+    app: {name: "Adaptive Learner", tagline: "Un apprentissage qui s'adapte a toi."},
+    landing: {
+        title: "Adaptive Learner",
+        subtitle: "Un apprentissage qui s'adapte a toi.",
+        choose_language: "Choisis ta langue",
+        start_button: "Commencer ton parcours d'apprentissage",
+    },
+    nav: {
+        dashboard: "Tableau de bord",
+        session: "Session",
+        progress: "Progres",
+        settings: "Parametres",
+    },
+    common: {
+        loading: "Chargement...",
+        error: "Une erreur est survenue.",
+        cancel: "Annuler",
+        save: "Enregistrer",
+        next: "Suivant",
+        back: "Retour",
+        submit: "Envoyer",
+    },
+};
+
+const EL: Catalog = {
+    app: {name: "Adaptive Learner", tagline: "Μάθηση που προσαρμόζεται σε σένα."},
+    landing: {
+        title: "Adaptive Learner",
+        subtitle: "Μάθηση που προσαρμόζεται σε σένα.",
+        choose_language: "Επίλεξε τη γλώσσα σου",
+        start_button: "Ξεκίνα το ταξίδι μάθησής σου",
+    },
+    nav: {
+        dashboard: "Πίνακας",
+        session: "Συνεδρία",
+        progress: "Πρόοδος",
+        settings: "Ρυθμίσεις",
+    },
+    common: {
+        loading: "Φόρτωση...",
+        error: "Κάτι πήγε στραβά.",
+        cancel: "Άκυρο",
+        save: "Αποθήκευση",
+        next: "Επόμενο",
+        back: "Πίσω",
+        submit: "Υποβολή",
+    },
+};
+
+const FALLBACKS: Record<SupportedLanguage, Catalog> = {
+    de: DE,
+    en: EN,
+    es: ES,
+    fr: FR,
+    el: EL,
+};
 
 /**
  * Resolve a dot-notation key against the fallback catalog. Returns

@@ -1,216 +1,218 @@
-# Adaptive Learner i18n catalog (FR — Phase 4A).
+# Adaptive Learner i18n catalog (FR — Phase 5F).
 #
-# Mirror of en.yaml structure. Strings carrying non-native
-# fallbacks are EN passthroughs — proper FR translations
-# land alongside the v0.2.x i18n-expansion track. The structure
-# is parity-checked by tests/test_i18n_parity.py; do NOT add or
-# remove keys here without mirroring the change in en.yaml.
+# Hand-translated by the AI assistant. Quality is comparable
+# to a competent machine translation; native-speaker review is
+# welcome for any string that lands in a published release. The
+# structure is parity-checked by tests/test_i18n_parity.py; do
+# NOT add or remove keys here without mirroring the change in
+# en.yaml.
 
 app:
   name: Adaptive Learner
-  tagline: Learning that adapts to you.
-  skeleton_notice: Etat squelette. Les modeles de domaine, les plugins et les pages
-    arrivent dans les phases suivantes — voir docs/adaptive-learner-project-reference.md.
+  tagline: Un apprentissage qui s'adapte a toi.
+  skeleton_notice: Etat squelette. Les modeles de domaine, plugins et pages arrivent
+    dans les phases suivantes — voir docs/adaptive-learner-project-reference.md.
 common:
   save: Enregistrer
   cancel: Annuler
-  loading: Chargement…
+  loading: Chargement...
   error: Une erreur est survenue.
-  back: Back
-  next: Next
-  start: Start
-  submit: Submit
-  continue: Continue
-  done: Done
-  delete: Delete
-  edit: Edit
-  confirm: Confirm
-  'yes': true
-  'no': false
-  optional: optional
-  required: required
+  back: Retour
+  next: Suivant
+  start: Commencer
+  submit: Envoyer
+  continue: Continuer
+  done: Termine
+  delete: Supprimer
+  edit: Modifier
+  confirm: Confirmer
+  'yes': Oui
+  'no': Non
+  optional: optionnel
+  required: obligatoire
   minutes: minutes
 nav:
-  dashboard: Dashboard
+  dashboard: Tableau de bord
   session: Session
-  curriculum: Curriculum
-  progress: Progress
-  settings: Settings
-  home: Home
-curriculum:
-  title: Curriculum
-  active: Active curriculum
-  new_placeholder: New curriculum title…
-  create: Create curriculum
-  created: Curriculum created.
-  saved: Saved.
-  deleted: Topic deleted.
-  add_topic: Add topic
-  add_root_topic: Add root topic
-  add_subtopic: Add subtopic
-  rename_topic: Rename topic
-  topic_title: Title
-  no_topics: No topics yet — add your first to get started.
-  no_curriculum: Create a curriculum to start building a topic tree.
-  delete_confirm: Delete this topic? Its children stay as their own roots.
+  curriculum: Programme
+  progress: Progres
+  settings: Parametres
+  home: Accueil
 landing:
   title: Adaptive Learner
-  subtitle: Learning that adapts to you.
-  choose_language: Choose your language
-  start_button: Start your learning journey
-  intro: Adaptive Learner finds the method that fits you best from six research-backed
-    learning approaches, and walks you through a seven-step cycle on every session.
+  subtitle: Un apprentissage qui s'adapte a toi.
+  choose_language: Choisis ta langue
+  start_button: Commencer ton parcours d'apprentissage
+  intro: Adaptive Learner trouve la methode qui te convient le mieux parmi six approches
+    basees sur la recherche et t'accompagne dans un cycle en sept etapes a chaque
+    session.
 onboarding:
-  title: Create a learning project
-  intro: Tell us about your learning goal. Adaptive Learner uses this to build your
-    profile and recommend a starting method.
-  field_name: Your name
-  field_topic: Topic
-  field_topic_hint: e.g. Spanish B1, linear algebra.
-  field_goal: Goal
-  field_goal_hint: What do you want to be able to do?
-  field_timeframe: Time frame
-  field_timeframe_hint: e.g. 4 weeks, one semester.
-  field_daily_minutes: Minutes per day
-  field_current_problem: Current problem
-  field_current_problem_hint: optional — what is blocking you right now?
-  submit: Create project and start assessment
-  creating: Creating project…
+  title: Creer un projet d'apprentissage
+  intro: Decris ton objectif. Adaptive Learner utilise ces informations pour construire
+    ton profil et te recommander une methode de depart.
+  field_name: Ton nom
+  field_topic: Sujet
+  field_topic_hint: ex. Espagnol B1, algebre lineaire.
+  field_goal: Objectif
+  field_goal_hint: Que veux-tu pouvoir faire ?
+  field_timeframe: Echeance
+  field_timeframe_hint: ex. 4 semaines, un semestre.
+  field_daily_minutes: Minutes par jour
+  field_current_problem: Probleme actuel
+  field_current_problem_hint: optionnel — qu'est-ce qui te bloque ?
+  submit: Creer le projet et lancer l'evaluation
+  creating: Creation du projet...
 assessment:
-  title: Learning-type assessment
-  intro: Twelve short questions determine your learning profile. There is no right
-    or wrong answer — go with your gut.
-  question_progress: Question {current} of {total}
-  next_question: Next question
-  prev_question: Previous question
-  submit: Evaluate
-  evaluating: Evaluating…
-  result_title: Your learning profile
-  dominant_method: Preferred method
-  continue_to_dashboard: Continue to dashboard
+  title: Evaluation du type d'apprentissage
+  intro: Douze courtes questions determinent ton profil. Il n'y a ni bonne ni mauvaise
+    reponse — repond a l'instinct.
+  question_progress: Question {current} sur {total}
+  next_question: Question suivante
+  prev_question: Question precedente
+  submit: Evaluer
+  evaluating: Evaluation en cours...
+  result_title: Ton profil d'apprentissage
+  dominant_method: Methode preferee
+  continue_to_dashboard: Continuer vers le tableau de bord
 dashboard:
-  title: Dashboard
-  welcome: Welcome back
-  quick_start: Start a new session
-  quick_start_subtitle: Method picked from your profile.
-  card_profile: Learning profile
-  card_progress: Progress
-  card_distribution: Method distribution
+  title: Tableau de bord
+  welcome: Bon retour
+  quick_start: Demarrer une nouvelle session
+  quick_start_subtitle: Methode choisie depuis ton profil.
+  card_profile: Profil d'apprentissage
+  card_progress: Progres
+  card_distribution: Distribution des methodes
   card_counter: Sessions
-  card_tools: Tool recommendations
-  metric_total_sessions: Total sessions
-  metric_mean_understanding: Mean understanding
-  metric_mean_stress: Mean stress
-  metric_streak: Day streak
-  no_data: No sessions yet — start your first one to see trends.
+  card_tools: Recommandations d'outils
+  metric_total_sessions: Sessions totales
+  metric_mean_understanding: Comprehension moyenne
+  metric_mean_stress: Stress moyen
+  metric_streak: Serie de jours
+  no_data: Aucune session pour l'instant — lance ta premiere pour voir les tendances.
 session:
-  title: Learning session
-  in_progress: Session in progress
-  send_message: Send message
-  message_placeholder: Write your reply…
-  ai_thinking: Thinking…
-  ai_error: The AI provider could not reply.
-  end_session: End session
-  end_session_confirm: Sure? We will close the session and ask for a rating.
-  switch_recommended: Method switch recommended
-  switch_recommended_subtitle: Your recent ratings suggest a different method might
-    fit you better.
-  switch_accept: Switch method
-  switch_dismiss: Keep current method
-  rating_title: How did the session go?
-  rating_understanding: How well did you understand?
-  rating_stress: How stressful was it?
-  rating_method_fit: How well did the method fit?
-  rating_notes: Notes (optional)
-  rating_submit: Submit rating
-  step_progress: Step {current} of {total}
+  title: Session d'apprentissage
+  in_progress: Session en cours
+  send_message: Envoyer le message
+  message_placeholder: Ecris ta reponse...
+  ai_thinking: Reflexion...
+  ai_error: Le fournisseur IA n'a pas pu repondre.
+  end_session: Terminer la session
+  end_session_confirm: Sur ? Nous allons fermer la session et demander une evaluation.
+  switch_recommended: Changement de methode recommande
+  switch_recommended_subtitle: Tes dernieres evaluations suggerent qu'une autre methode
+    pourrait mieux te convenir.
+  switch_accept: Changer de methode
+  switch_dismiss: Garder la methode actuelle
+  rating_title: Comment s'est passee la session ?
+  rating_understanding: As-tu bien compris ?
+  rating_stress: Quel niveau de stress ?
+  rating_method_fit: La methode te convenait-elle ?
+  rating_notes: Notes (optionnel)
+  rating_submit: Envoyer l'evaluation
+  step_progress: Etape {current} sur {total}
 progress:
-  title: Progress
-  chart_timeline: Understanding and stress over time
-  chart_methods: Method distribution
-  commit_history: Session history
-  commit_method: Method
-  commit_understanding: Understanding
+  title: Progres
+  chart_timeline: Comprehension et stress au fil du temps
+  chart_methods: Distribution des methodes
+  commit_history: Historique des sessions
+  commit_method: Methode
+  commit_understanding: Comprehension
   commit_stress: Stress
-  commit_duration: Duration
+  commit_duration: Duree
   commit_date: Date
-  no_commits: No completed sessions yet.
+  no_commits: Aucune session terminee pour l'instant.
 settings:
-  title: Settings
-  section_language: Language
-  section_provider: AI provider
-  section_api_keys: API keys
-  section_danger: Account
-  language_label: Display language
-  provider_label: Active provider
+  title: Parametres
+  section_language: Langue
+  section_provider: Fournisseur IA
+  section_api_keys: Cles API
+  section_danger: Compte
+  language_label: Langue d'affichage
+  provider_label: Fournisseur actif
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
-  api_key_label: API key
-  api_key_placeholder: Paste here…
-  api_key_saved: Key stored
-  api_key_missing: Not set
-  api_key_set: Save key
-  api_key_delete: Remove key
-  api_key_confirm_delete: Really remove this API key?
-  saved: Saved.
-  save_failed: Save failed.
-  provider_active: Active
-  active_provider_missing_key: This is your active provider but no API key is stored.
-    AI replies will be skipped until a key is saved.
+  api_key_label: Cle API
+  api_key_placeholder: Coller ici...
+  api_key_saved: Cle enregistree
+  api_key_missing: Non definie
+  api_key_set: Enregistrer la cle
+  api_key_delete: Supprimer la cle
+  api_key_confirm_delete: Vraiment supprimer cette cle API ?
+  saved: Enregistre.
+  save_failed: Echec de l'enregistrement.
+  provider_active: Actif
+  active_provider_missing_key: C'est ton fournisseur actif mais aucune cle API n'est
+    enregistree. Les reponses IA seront ignorees jusqu'a ce qu'une cle soit enregistree.
 methods:
   deductive:
-    label: Deductive
-    summary: General to specific — rules first, examples after.
+    label: Deductif
+    summary: Du general au particulier — d'abord les regles, puis les exemples.
   inductive:
-    label: Inductive
-    summary: Specific to general — examples first, derive the rule.
+    label: Inductif
+    summary: Du particulier au general — d'abord les exemples, puis la regle.
   error_based:
-    label: Error-based
-    summary: Learn from mistakes — correction plus explanation.
+    label: Centre sur l'erreur
+    summary: Apprendre des erreurs — correction avec explication.
   dialogic:
-    label: Dialogic
-    summary: Think in conversation — lower stress, build motivation.
+    label: Dialogique
+    summary: Penser en conversation — reduire le stress, batir la motivation.
   contextual:
-    label: Contextual
-    summary: Apply in a real context — practice transfer.
+    label: Contextuel
+    summary: Appliquer en contexte reel — pratiquer le transfert.
   ai_adaptive:
-    label: AI-adaptive
-    summary: The AI picks the method that fits you best.
+    label: IA adaptative
+    summary: L'IA choisit la methode qui te convient le mieux.
 cycle_steps:
   input:
-    label: Input
-    description: Information, example or task is presented.
+    label: Entree
+    description: Information, exemple ou tache presentes.
   attempt:
-    label: Attempt
-    description: First application without a safety net.
+    label: Tentative
+    description: Premiere application sans filet.
   error:
-    label: Error
-    description: Mismatch between expectation and result.
+    label: Erreur
+    description: Ecart entre attente et resultat.
   feedback:
-    label: Feedback
-    description: Correction with explanation.
+    label: Retour
+    description: Correction avec explication.
   adapt:
-    label: Adapt
-    description: Adjust method, pace or focus.
+    label: Adapter
+    description: Ajuster methode, rythme ou focus.
   repeat:
-    label: Repeat
-    description: Try again.
+    label: Repeter
+    description: Reessayer.
   integrate:
-    label: Integrate
-    description: Knowledge sticks through experience.
+    label: Integrer
+    description: Le savoir reste par l'experience.
 errors:
-  network: Could not reach the server.
-  not_found: Not found.
-  validation: Invalid input.
-  conflict: Entry already exists.
-  server: Server error — please try again later.
+  network: Impossible de joindre le serveur.
+  not_found: Non trouve.
+  validation: Entree invalide.
+  conflict: L'element existe deja.
+  server: Erreur serveur — reessaie plus tard.
 toast:
-  project_created: Project created.
-  assessment_saved: Profile saved.
-  session_started: Session started.
-  session_ended: Session ended.
-  rating_saved: Rating saved.
-  api_key_saved: API key saved.
-  api_key_deleted: API key removed.
-  method_switched: Method switched.
+  project_created: Projet cree.
+  assessment_saved: Profil enregistre.
+  session_started: Session demarree.
+  session_ended: Session terminee.
+  rating_saved: Evaluation enregistree.
+  api_key_saved: Cle API enregistree.
+  api_key_deleted: Cle API supprimee.
+  method_switched: Methode changee.
+curriculum:
+  title: Programme
+  active: Programme actif
+  new_placeholder: Titre du nouveau programme...
+  create: Creer le programme
+  created: Programme cree.
+  saved: Enregistre.
+  deleted: Sujet supprime.
+  add_topic: Ajouter un sujet
+  add_root_topic: Ajouter un sujet racine
+  add_subtopic: Ajouter un sous-sujet
+  rename_topic: Renommer le sujet
+  topic_title: Titre
+  no_topics: Aucun sujet pour l'instant — ajoute le premier pour commencer.
+  no_curriculum: Cree un programme pour commencer a construire l'arbre des sujets.
+  delete_confirm: Supprimer ce sujet ? Ses enfants resteront comme racines propres.

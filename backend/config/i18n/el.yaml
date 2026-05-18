@@ -1,216 +1,218 @@
-# Adaptive Learner i18n catalog (EL — Phase 4A).
+# Adaptive Learner i18n catalog (EL — Phase 5F).
 #
-# Mirror of en.yaml structure. Strings carrying non-native
-# fallbacks are EN passthroughs — proper EL translations
-# land alongside the v0.2.x i18n-expansion track. The structure
-# is parity-checked by tests/test_i18n_parity.py; do NOT add or
-# remove keys here without mirroring the change in en.yaml.
+# Hand-translated by the AI assistant. Quality is comparable
+# to a competent machine translation; native-speaker review is
+# welcome for any string that lands in a published release. The
+# structure is parity-checked by tests/test_i18n_parity.py; do
+# NOT add or remove keys here without mirroring the change in
+# en.yaml.
 
 app:
   name: Adaptive Learner
-  tagline: Learning that adapts to you.
-  skeleton_notice: Katastasi skeletou. Ta modela tomea, ta plugins kai oi selides
-    erchontai se epomenes faseis — deite docs/adaptive-learner-project-reference.md.
+  tagline: Μάθηση που προσαρμόζεται σε σένα.
+  skeleton_notice: Σκελετική κατάσταση. Τα μοντέλα του τομέα, τα plugins και οι σελίδες
+    έρχονται στις επόμενες φάσεις — δες docs/adaptive-learner-project-reference.md.
 common:
-  save: Apothikefsi
-  cancel: Akyrosi
-  loading: Fortonei…
-  error: Kati pige strava.
-  back: Back
-  next: Next
-  start: Start
-  submit: Submit
-  continue: Continue
-  done: Done
-  delete: Delete
-  edit: Edit
-  confirm: Confirm
-  'yes': true
-  'no': false
-  optional: optional
-  required: required
-  minutes: minutes
+  save: Αποθήκευση
+  cancel: Άκυρο
+  loading: Φόρτωση...
+  error: Κάτι πήγε στραβά.
+  back: Πίσω
+  next: Επόμενο
+  start: Έναρξη
+  submit: Υποβολή
+  continue: Συνέχεια
+  done: Έτοιμο
+  delete: Διαγραφή
+  edit: Επεξεργασία
+  confirm: Επιβεβαίωση
+  'yes': Ναι
+  'no': Όχι
+  optional: προαιρετικό
+  required: υποχρεωτικό
+  minutes: λεπτά
 nav:
-  dashboard: Dashboard
-  session: Session
-  curriculum: Curriculum
-  progress: Progress
-  settings: Settings
-  home: Home
-curriculum:
-  title: Curriculum
-  active: Active curriculum
-  new_placeholder: New curriculum title…
-  create: Create curriculum
-  created: Curriculum created.
-  saved: Saved.
-  deleted: Topic deleted.
-  add_topic: Add topic
-  add_root_topic: Add root topic
-  add_subtopic: Add subtopic
-  rename_topic: Rename topic
-  topic_title: Title
-  no_topics: No topics yet — add your first to get started.
-  no_curriculum: Create a curriculum to start building a topic tree.
-  delete_confirm: Delete this topic? Its children stay as their own roots.
+  dashboard: Πίνακας
+  session: Συνεδρία
+  curriculum: Πρόγραμμα
+  progress: Πρόοδος
+  settings: Ρυθμίσεις
+  home: Αρχή
 landing:
   title: Adaptive Learner
-  subtitle: Learning that adapts to you.
-  choose_language: Choose your language
-  start_button: Start your learning journey
-  intro: Adaptive Learner finds the method that fits you best from six research-backed
-    learning approaches, and walks you through a seven-step cycle on every session.
+  subtitle: Μάθηση που προσαρμόζεται σε σένα.
+  choose_language: Επίλεξε τη γλώσσα σου
+  start_button: Ξεκίνα το ταξίδι μάθησής σου
+  intro: Το Adaptive Learner βρίσκει τη μέθοδο που σου ταιριάζει καλύτερα από έξι
+    ερευνητικά τεκμηριωμένες προσεγγίσεις και σε καθοδηγεί σε έναν κύκλο επτά βημάτων
+    σε κάθε συνεδρία.
 onboarding:
-  title: Create a learning project
-  intro: Tell us about your learning goal. Adaptive Learner uses this to build your
-    profile and recommend a starting method.
-  field_name: Your name
-  field_topic: Topic
-  field_topic_hint: e.g. Spanish B1, linear algebra.
-  field_goal: Goal
-  field_goal_hint: What do you want to be able to do?
-  field_timeframe: Time frame
-  field_timeframe_hint: e.g. 4 weeks, one semester.
-  field_daily_minutes: Minutes per day
-  field_current_problem: Current problem
-  field_current_problem_hint: optional — what is blocking you right now?
-  submit: Create project and start assessment
-  creating: Creating project…
+  title: Δημιουργία έργου μάθησης
+  intro: Πες μας για τον στόχο μάθησής σου. Το Adaptive Learner το χρησιμοποιεί για
+    να χτίσει το προφίλ σου και να προτείνει μέθοδο εκκίνησης.
+  field_name: Το όνομά σου
+  field_topic: Θέμα
+  field_topic_hint: π.χ. Ισπανικά Β1, γραμμική άλγεβρα.
+  field_goal: Στόχος
+  field_goal_hint: Τι θέλεις να μπορείς να κάνεις;
+  field_timeframe: Χρονικό πλαίσιο
+  field_timeframe_hint: π.χ. 4 εβδομάδες, ένα εξάμηνο.
+  field_daily_minutes: Λεπτά την ημέρα
+  field_current_problem: Τρέχον πρόβλημα
+  field_current_problem_hint: προαιρετικό — τι σε μπλοκάρει αυτή τη στιγμή;
+  submit: Δημιουργία έργου και έναρξη αξιολόγησης
+  creating: Δημιουργία έργου...
 assessment:
-  title: Learning-type assessment
-  intro: Twelve short questions determine your learning profile. There is no right
-    or wrong answer — go with your gut.
-  question_progress: Question {current} of {total}
-  next_question: Next question
-  prev_question: Previous question
-  submit: Evaluate
-  evaluating: Evaluating…
-  result_title: Your learning profile
-  dominant_method: Preferred method
-  continue_to_dashboard: Continue to dashboard
+  title: Αξιολόγηση τύπου μάθησης
+  intro: Δώδεκα σύντομες ερωτήσεις καθορίζουν το προφίλ μάθησής σου. Δεν υπάρχει σωστή
+    ή λανθασμένη απάντηση — απάντησε διαισθητικά.
+  question_progress: Ερώτηση {current} από {total}
+  next_question: Επόμενη ερώτηση
+  prev_question: Προηγούμενη ερώτηση
+  submit: Αξιολόγηση
+  evaluating: Αξιολόγηση...
+  result_title: Το προφίλ μάθησής σου
+  dominant_method: Προτιμώμενη μέθοδος
+  continue_to_dashboard: Συνέχεια στον πίνακα
 dashboard:
-  title: Dashboard
-  welcome: Welcome back
-  quick_start: Start a new session
-  quick_start_subtitle: Method picked from your profile.
-  card_profile: Learning profile
-  card_progress: Progress
-  card_distribution: Method distribution
-  card_counter: Sessions
-  card_tools: Tool recommendations
-  metric_total_sessions: Total sessions
-  metric_mean_understanding: Mean understanding
-  metric_mean_stress: Mean stress
-  metric_streak: Day streak
-  no_data: No sessions yet — start your first one to see trends.
+  title: Πίνακας
+  welcome: Καλώς ήρθες ξανά
+  quick_start: Έναρξη νέας συνεδρίας
+  quick_start_subtitle: Μέθοδος επιλεγμένη από το προφίλ σου.
+  card_profile: Προφίλ μάθησης
+  card_progress: Πρόοδος
+  card_distribution: Κατανομή μεθόδων
+  card_counter: Συνεδρίες
+  card_tools: Συστάσεις εργαλείων
+  metric_total_sessions: Συνολικές συνεδρίες
+  metric_mean_understanding: Μέση κατανόηση
+  metric_mean_stress: Μέσο άγχος
+  metric_streak: Σερί ημερών
+  no_data: Δεν υπάρχουν συνεδρίες ακόμα — ξεκίνα την πρώτη για να δεις τις τάσεις.
 session:
-  title: Learning session
-  in_progress: Session in progress
-  send_message: Send message
-  message_placeholder: Write your reply…
-  ai_thinking: Thinking…
-  ai_error: The AI provider could not reply.
-  end_session: End session
-  end_session_confirm: Sure? We will close the session and ask for a rating.
-  switch_recommended: Method switch recommended
-  switch_recommended_subtitle: Your recent ratings suggest a different method might
-    fit you better.
-  switch_accept: Switch method
-  switch_dismiss: Keep current method
-  rating_title: How did the session go?
-  rating_understanding: How well did you understand?
-  rating_stress: How stressful was it?
-  rating_method_fit: How well did the method fit?
-  rating_notes: Notes (optional)
-  rating_submit: Submit rating
-  step_progress: Step {current} of {total}
+  title: Συνεδρία μάθησης
+  in_progress: Συνεδρία σε εξέλιξη
+  send_message: Αποστολή μηνύματος
+  message_placeholder: Γράψε την απάντησή σου...
+  ai_thinking: Σκέφτομαι...
+  ai_error: Ο πάροχος AI δεν μπόρεσε να απαντήσει.
+  end_session: Τερματισμός συνεδρίας
+  end_session_confirm: Σίγουρα; Θα κλείσουμε τη συνεδρία και θα ζητήσουμε αξιολόγηση.
+  switch_recommended: Συνιστάται αλλαγή μεθόδου
+  switch_recommended_subtitle: Οι πρόσφατες αξιολογήσεις σου δείχνουν ότι μια άλλη
+    μέθοδος μπορεί να ταιριάζει καλύτερα.
+  switch_accept: Αλλαγή μεθόδου
+  switch_dismiss: Διατήρηση τρέχουσας μεθόδου
+  rating_title: Πώς πήγε η συνεδρία;
+  rating_understanding: Πόσο καλά κατάλαβες;
+  rating_stress: Πόσο αγχωτικό ήταν;
+  rating_method_fit: Πόσο σου ταίριαξε η μέθοδος;
+  rating_notes: Σημειώσεις (προαιρετικό)
+  rating_submit: Υποβολή αξιολόγησης
+  step_progress: Βήμα {current} από {total}
 progress:
-  title: Progress
-  chart_timeline: Understanding and stress over time
-  chart_methods: Method distribution
-  commit_history: Session history
-  commit_method: Method
-  commit_understanding: Understanding
-  commit_stress: Stress
-  commit_duration: Duration
-  commit_date: Date
-  no_commits: No completed sessions yet.
+  title: Πρόοδος
+  chart_timeline: Κατανόηση και άγχος στον χρόνο
+  chart_methods: Κατανομή μεθόδων
+  commit_history: Ιστορικό συνεδριών
+  commit_method: Μέθοδος
+  commit_understanding: Κατανόηση
+  commit_stress: Άγχος
+  commit_duration: Διάρκεια
+  commit_date: Ημερομηνία
+  no_commits: Δεν υπάρχουν ολοκληρωμένες συνεδρίες ακόμα.
 settings:
-  title: Settings
-  section_language: Language
-  section_provider: AI provider
-  section_api_keys: API keys
-  section_danger: Account
-  language_label: Display language
-  provider_label: Active provider
+  title: Ρυθμίσεις
+  section_language: Γλώσσα
+  section_provider: Πάροχος AI
+  section_api_keys: Κλειδιά API
+  section_danger: Λογαριασμός
+  language_label: Γλώσσα εμφάνισης
+  provider_label: Ενεργός πάροχος
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
-  api_key_label: API key
-  api_key_placeholder: Paste here…
-  api_key_saved: Key stored
-  api_key_missing: Not set
-  api_key_set: Save key
-  api_key_delete: Remove key
-  api_key_confirm_delete: Really remove this API key?
-  saved: Saved.
-  save_failed: Save failed.
-  provider_active: Active
-  active_provider_missing_key: This is your active provider but no API key is stored.
-    AI replies will be skipped until a key is saved.
+  api_key_label: Κλειδί API
+  api_key_placeholder: Επικόλληση εδώ...
+  api_key_saved: Το κλειδί αποθηκεύτηκε
+  api_key_missing: Δεν έχει οριστεί
+  api_key_set: Αποθήκευση κλειδιού
+  api_key_delete: Αφαίρεση κλειδιού
+  api_key_confirm_delete: Όντως να αφαιρεθεί αυτό το κλειδί API;
+  saved: Αποθηκεύτηκε.
+  save_failed: Η αποθήκευση απέτυχε.
+  provider_active: Ενεργό
+  active_provider_missing_key: Αυτός είναι ο ενεργός πάροχος αλλά δεν είναι αποθηκευμένο
+    κλειδί API. Οι απαντήσεις AI θα παραλείπονται μέχρι να αποθηκευτεί κλειδί.
 methods:
   deductive:
-    label: Deductive
-    summary: General to specific — rules first, examples after.
+    label: Επαγωγική (από γενικό)
+    summary: Από το γενικό στο ειδικό — πρώτα οι κανόνες, μετά τα παραδείγματα.
   inductive:
-    label: Inductive
-    summary: Specific to general — examples first, derive the rule.
+    label: Επαγωγική (από ειδικό)
+    summary: Από το ειδικό στο γενικό — πρώτα τα παραδείγματα, μετά ο κανόνας.
   error_based:
-    label: Error-based
-    summary: Learn from mistakes — correction plus explanation.
+    label: Με βάση το λάθος
+    summary: Μάθηση από τα λάθη — διόρθωση με εξήγηση.
   dialogic:
-    label: Dialogic
-    summary: Think in conversation — lower stress, build motivation.
+    label: Διαλογική
+    summary: Σκέψη μέσα από διάλογο — μείωση άγχους, χτίσιμο κινήτρου.
   contextual:
-    label: Contextual
-    summary: Apply in a real context — practice transfer.
+    label: Πλαισιωμένη
+    summary: Εφαρμογή σε πραγματικό πλαίσιο — εξάσκηση μεταφοράς.
   ai_adaptive:
-    label: AI-adaptive
-    summary: The AI picks the method that fits you best.
+    label: Προσαρμοστική AI
+    summary: Η AI επιλέγει τη μέθοδο που σου ταιριάζει καλύτερα.
 cycle_steps:
   input:
-    label: Input
-    description: Information, example or task is presented.
+    label: Είσοδος
+    description: Παρουσιάζεται πληροφορία, παράδειγμα ή εργασία.
   attempt:
-    label: Attempt
-    description: First application without a safety net.
+    label: Προσπάθεια
+    description: Πρώτη εφαρμογή χωρίς δίχτυ ασφαλείας.
   error:
-    label: Error
-    description: Mismatch between expectation and result.
+    label: Λάθος
+    description: Απόκλιση ανάμεσα σε προσδοκία και αποτέλεσμα.
   feedback:
-    label: Feedback
-    description: Correction with explanation.
+    label: Ανατροφοδότηση
+    description: Διόρθωση με εξήγηση.
   adapt:
-    label: Adapt
-    description: Adjust method, pace or focus.
+    label: Προσαρμογή
+    description: Αλλαγή μεθόδου, ρυθμού ή εστίασης.
   repeat:
-    label: Repeat
-    description: Try again.
+    label: Επανάληψη
+    description: Νέα προσπάθεια.
   integrate:
-    label: Integrate
-    description: Knowledge sticks through experience.
+    label: Ενσωμάτωση
+    description: Η γνώση μένει μέσα από την εμπειρία.
 errors:
-  network: Could not reach the server.
-  not_found: Not found.
-  validation: Invalid input.
-  conflict: Entry already exists.
-  server: Server error — please try again later.
+  network: Αδυναμία σύνδεσης με τον διακομιστή.
+  not_found: Δεν βρέθηκε.
+  validation: Μη έγκυρη εισαγωγή.
+  conflict: Το στοιχείο υπάρχει ήδη.
+  server: Σφάλμα διακομιστή — δοκίμασε ξανά αργότερα.
 toast:
-  project_created: Project created.
-  assessment_saved: Profile saved.
-  session_started: Session started.
-  session_ended: Session ended.
-  rating_saved: Rating saved.
-  api_key_saved: API key saved.
-  api_key_deleted: API key removed.
-  method_switched: Method switched.
+  project_created: Το έργο δημιουργήθηκε.
+  assessment_saved: Το προφίλ αποθηκεύτηκε.
+  session_started: Η συνεδρία ξεκίνησε.
+  session_ended: Η συνεδρία τερματίστηκε.
+  rating_saved: Η αξιολόγηση αποθηκεύτηκε.
+  api_key_saved: Το κλειδί API αποθηκεύτηκε.
+  api_key_deleted: Το κλειδί API αφαιρέθηκε.
+  method_switched: Η μέθοδος άλλαξε.
+curriculum:
+  title: Πρόγραμμα
+  active: Ενεργό πρόγραμμα
+  new_placeholder: Τίτλος νέου προγράμματος...
+  create: Δημιουργία προγράμματος
+  created: Το πρόγραμμα δημιουργήθηκε.
+  saved: Αποθηκεύτηκε.
+  deleted: Το θέμα διαγράφηκε.
+  add_topic: Προσθήκη θέματος
+  add_root_topic: Προσθήκη θέματος-ρίζας
+  add_subtopic: Προσθήκη υποθέματος
+  rename_topic: Μετονομασία θέματος
+  topic_title: Τίτλος
+  no_topics: Δεν υπάρχουν θέματα ακόμα — πρόσθεσε το πρώτο για να ξεκινήσεις.
+  no_curriculum: Δημιούργησε πρόγραμμα για να ξεκινήσει η δομή θεμάτων.
+  delete_confirm: Διαγραφή αυτού του θέματος; Τα παιδιά του θα παραμείνουν ως ρίζες.

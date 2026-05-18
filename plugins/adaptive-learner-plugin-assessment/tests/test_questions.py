@@ -86,10 +86,44 @@ def test_questions_for_lang_en_returns_english_text():
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
 
 
-@pytest.mark.parametrize("lang", ["fr", "ja", "es", ""])
+@pytest.mark.parametrize("lang", ["ja", "tr", "pt", ""])
 def test_unknown_language_falls_back_to_en(lang: str):
+    """Languages outside the v0.2.0 translated set (DE / EN / ES /
+    FR / EL) fall back to EN by mapping to text_en."""
     out = questions_for_lang(lang)
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
+
+
+@pytest.mark.parametrize("lang", ["es", "fr", "el"])
+def test_phase5f_language_without_translations_falls_back_to_en(lang: str):
+    """v0.2.0 ships the language-mapping infrastructure for ES /
+    FR / EL but the per-question translations are deferred to a
+    native-speaker review pass. Until those land, the resolver
+    must transparently fall back to EN rather than KeyError on
+    the missing ``text_{lang}`` field."""
+    out = questions_for_lang(lang)
+    assert out[0]["text"] == QUESTIONS[0]["text_en"]
+    # Every answer's text also resolves to EN.
+    for q_out, q_src in zip(out, QUESTIONS):
+        for a_out, a_src in zip(q_out["answers"], q_src["answers"]):
+            assert a_out["text"] == a_src["text_en"]
+
+
+def test_phase5f_language_with_partial_translations_falls_back_per_field():
+    """Future-proof: if a partial translation lands for ES (e.g.
+    only the first question is translated, the rest aren't),
+    the resolver should return ES for the translated entry and
+    EN for the rest. Verified by mutating the live QUESTIONS
+    list inside a try/finally so other tests aren't affected."""
+    q0 = QUESTIONS[0]
+    q0["text_es"] = "Como abordas un tema nuevo?"
+    try:
+        out = questions_for_lang("es")
+        assert out[0]["text"] == "Como abordas un tema nuevo?"
+        # Q2 has no text_es; resolver falls back to EN.
+        assert out[1]["text"] == QUESTIONS[1]["text_en"]
+    finally:
+        del q0["text_es"]
 
 
 def test_questions_for_lang_uses_regional_prefix():

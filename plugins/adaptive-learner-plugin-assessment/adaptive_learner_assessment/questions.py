@@ -39,17 +39,29 @@ METHODS: tuple[str, ...] = (
 )
 
 
-class Answer(TypedDict):
+class Answer(TypedDict, total=False):
+    """Per-answer payload. ``text_es`` / ``text_fr`` / ``text_el``
+    are optional: questions added before Phase 5F's translation
+    pass don't carry them. ``_text_key`` falls back to EN for any
+    language that doesn't have a translation registered yet.
+    """
+
     id: str
     text_de: str
     text_en: str
+    text_es: str
+    text_fr: str
+    text_el: str
     weights: dict[str, float]
 
 
-class Question(TypedDict):
+class Question(TypedDict, total=False):
     id: str
     text_de: str
     text_en: str
+    text_es: str
+    text_fr: str
+    text_el: str
     answers: list[Answer]
 
 
@@ -429,14 +441,29 @@ QUESTIONS: list[Question] = [
 ]
 
 
+_LANG_TO_KEY: dict[str, str] = {
+    "de": "text_de",
+    "en": "text_en",
+    "es": "text_es",
+    "fr": "text_fr",
+    "el": "text_el",
+}
+
+
 def _text_key(lang: str) -> str:
     """Map a UI language code to the in-file translation key.
 
-    The plugin currently ships DE + EN only; anything that doesn't
-    start with ``de`` falls back to EN. Future translation packs
-    can extend this map without touching the questions themselves.
+    v0.2.0 ships DE + EN + ES + FR + EL. Any code that doesn't
+    match (PT / TR / JA / unknown) falls back to EN. Future
+    translation packs add a row to ``_LANG_TO_KEY`` AND populate
+    the matching field in every QUESTIONS entry.
     """
-    return "text_de" if lang.startswith("de") else "text_en"
+    # Match the most-specific 2-char prefix first so ``en-US`` /
+    # ``de-AT`` etc. resolve to the base language.
+    for prefix, key in _LANG_TO_KEY.items():
+        if lang.startswith(prefix):
+            return key
+    return "text_en"
 
 
 def questions_for_lang(lang: str) -> list[dict[str, Any]]:
@@ -452,14 +479,19 @@ def questions_for_lang(lang: str) -> list[dict[str, Any]]:
     key = _text_key(lang)
     out: list[dict[str, Any]] = []
     for q in QUESTIONS:
+        # v0.2.0: a future question added without ES / FR / EL
+        # translations gracefully falls back to EN. The
+        # `total=False` TypedDicts mean ``.get`` is the right
+        # access pattern.
+        q_text = q.get(key) or q["text_en"]  # type: ignore[arg-type]
         out.append(
             {
                 "id": q["id"],
-                "text": q[key],  # type: ignore[literal-required]
+                "text": q_text,
                 "answers": [
                     {
                         "id": a["id"],
-                        "text": a[key],  # type: ignore[literal-required]
+                        "text": a.get(key) or a["text_en"],  # type: ignore[arg-type]
                         "weights": dict(a["weights"]),
                     }
                     for a in q["answers"]
