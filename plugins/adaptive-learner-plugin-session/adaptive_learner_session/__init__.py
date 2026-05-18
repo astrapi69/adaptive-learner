@@ -24,4 +24,4 @@ Owns three concerns:
    arbiter takes the max-confidence non-None result.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

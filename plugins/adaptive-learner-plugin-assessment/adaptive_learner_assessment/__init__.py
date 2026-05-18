@@ -17,4 +17,4 @@ plugin (Phase 3-C) can fetch the same question pack via pluggy
 instead of going through HTTP.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

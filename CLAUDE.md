@@ -12,10 +12,12 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.1.0):** end-to-end MVP. Full domain backend
-  (Phase 1B/C), all 8 hooks (Phase 2), all five plugins (Phase 3),
-  React frontend with seven pages (Phase 4). Live AI-provider auto-
-  reply on the chat surface is deferred to Phase 5.
+- **Current state (v0.2.0):** end-to-end product. v0.1.0 MVP plus
+  Phase 5: server-side AI orchestration in POST /message,
+  multi-provider plugin matrix (anthropic + openai + gemini),
+  method-switch banner with audit-tracked accept route,
+  Curriculum + LearningTopic tree UI (TypedTreeNode finally
+  consumed), ES / FR / EL UI translations.
 
 ## Development guidelines
 
@@ -48,11 +50,11 @@ On a conflict between CLAUDE.md and the rules, the rules win.
 ## Architecture (short)
 
 4 layers: Frontend → Backend → PluginForge → Plugins. Details in
-`.claude/rules/architecture.md`. Backend exposes the full v0.1.0
-API surface: core (users / projects / settings) + plugin routes
+`.claude/rules/architecture.md`. Backend exposes core (users /
+projects / settings / curricula / topics) + plugin routes
 (assessment / session / tracking / tools). The frontend renders
-seven routes via React Router: Landing, Onboarding, Assessment,
-Dashboard, Session, Progress, Settings.
+eight routes via React Router: Landing, Onboarding, Assessment,
+Dashboard, Session, Curriculum, Progress, Settings.
 
 ## Commands
 
@@ -90,18 +92,24 @@ Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Spec in
 
 ## Plugins
 
-Five plugins shipped in v0.1.0, all under `plugins/`:
+Seven plugins shipped in v0.2.0, all under `plugins/`:
 
 | Plugin | Routes | Hook coverage |
 |--------|--------|---------------|
 | assessment | /questions, /evaluate, /profile/{id} | get_assessment_questions, calculate_profile |
 | ai-anthropic | (hook-only) | ai_complete (firstresult, model `claude-*`) |
-| session | /start, /{id}/message, /{id}/rate, /{id}/end | create_session_prompt (firstresult), recommend_method_switch |
+| ai-openai | (hook-only) | ai_complete (firstresult, model `gpt-*`) |
+| ai-gemini | (hook-only) | ai_complete (firstresult, model `gemini-*`) |
+| session | /start, /{id}/message, /{id}/rate, /{id}/end, /switch-recommendation/{id}, /{id}/switch | create_session_prompt (firstresult), recommend_method_switch |
 | tracking | /progress/{id}, /commits/{id} | on_session_complete, get_progress_summary |
 | tools | /recommendations/{id} | get_tool_recommendations |
 
 All eight hooks live in `backend/app/hookspecs.py`. PluginForge
-bootstraps the registry in `backend/app/main.py`.
+bootstraps the registry in `backend/app/main.py`. v0.2.0:
+POST /api/plugins/session/{id}/message orchestrates the AI
+roundtrip server-side (fires `ai_complete` against the active
+provider, persists user + assistant messages, returns a
+composite); the v0.1.0 client-side orchestration is gone.
 
 ## Launcher
 
@@ -124,15 +132,16 @@ adaptive-learner/
 │   ├── components/        # ProfileRadar, ProgressTimeline, MethodDistribution,
 │   │                      # SessionChat, CycleProgress, RatingDialog,
 │   │                      # MethodBadge, MethodSwitchBanner, Navigation,
-│   │                      # ErrorBoundary, ToolRecommendations, ...
+│   │                      # ErrorBoundary, ToolRecommendations,
+│   │                      # TopicTree, TopicNode, AddTopicDialog, ...
 │   ├── hooks/             # useI18n (with fallbacks), useTheme (light/dark)
-│   ├── i18n/fallbacks.ts  # inline DE+EN strings for first-paint resilience
+│   ├── i18n/fallbacks.ts  # inline DE/EN/ES/FR/EL strings for first-paint resilience
 │   ├── lib/
 │   │   ├── constants.ts   # LearningMethod / CycleStep / METHOD_COLORS / AI_PROVIDERS
 │   │   ├── learnerState.ts # typed localStorage wrapper (user_id / project_id / lang)
 │   │   └── tree/          # TypedTreeNode<V, K> adapter on tree-model + buildTreeFromFlat
 │   ├── pages/             # Landing, Onboarding, Assessment, Dashboard, Session,
-│   │                      # Progress, Settings, NotFound
+│   │                      # Curriculum, Progress, Settings, NotFound
 │   ├── types/             # TypeScript interfaces matching Pydantic Out-schemas
 │   ├── utils/notify.ts    # toast wrapper
 │   └── styles/global.css  # full token set: method palette, layout, components
@@ -164,7 +173,7 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- v0.1.0 baseline: backend 348, plugins 264, frontend 149 (Vitest).
+- v0.2.0 baseline: backend 390, plugins 339 (across 7), frontend 180 (Vitest). Total 909.
 - E2E tests under `e2e/` are NOT on the `make test` default path.
 
 ## Test isolation

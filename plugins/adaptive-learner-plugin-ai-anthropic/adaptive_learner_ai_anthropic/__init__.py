@@ -15,6 +15,6 @@ Errors raised by the Anthropic SDK are wrapped into
 maps them to HTTP 502 with a typed detail.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 CLAUDE_MODEL_PREFIX = "claude-"

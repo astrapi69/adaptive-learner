@@ -23,7 +23,7 @@ dashboard can show the raw commit history alongside the
 aggregated view.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Rescale 1-5 user-rating ints to 0.0-1.0 floats so the
 # ProgressCommit columns (Float) stay in the unit interval like

@@ -12,7 +12,7 @@ set -e
 #    chmod +x install.sh && ./install.sh
 # ============================================================
 
-VERSION="${ADAPTIVE_LEARNER_VERSION:-v0.1.0}"
+VERSION="${ADAPTIVE_LEARNER_VERSION:-v0.2.0}"
 REPO="astrapi69/adaptive-learner"
 INSTALL_DIR="${ADAPTIVE_LEARNER_DIR:-$HOME/adaptive-learner}"
 
