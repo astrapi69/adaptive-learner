@@ -258,7 +258,7 @@ die Repo-internen Dateien oben sind für Contributors.
 
 ## Status
 
-Aktive Entwicklung. v0.8.0 wurde am 2026-05-19 veröffentlicht.
+Aktive Entwicklung. v0.8.1 wurde am 2026-05-19 veröffentlicht.
 Test-Baseline: **1312 Tests** (447 Backend + 478 Plugins +
 387 Frontend Vitest + 8 Playwright-Smoke-Specs). Öffentliche
 Doku unter
@@ -275,7 +275,7 @@ Pythonic+React-Stack wurden 1:1 übernommen; die
 Bibliogon-EXAMPLE-DOMAIN-Modelle (Book / Chapter / Article /
 Author / ...) und deren Plugins wurden entfernt. Phasen 1-11
 brachten das Projekt in den aktuellen Stand; siehe annotierte
-Tags `v0.0.1` bis `v0.8.0` für die schrittweise Spur.
+Tags `v0.0.1` bis `v0.8.1` für die schrittweise Spur.
 
 ## Lizenz
 
