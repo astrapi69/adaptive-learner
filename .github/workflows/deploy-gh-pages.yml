@@ -87,7 +87,14 @@ jobs:
 
       - name: Build docs
         working-directory: docs
-        run: poetry run mkdocs build -f ../mkdocs.yml --site-dir ../frontend/dist/docs
+        # ``--site-dir`` is resolved by mkdocs relative to the
+        # CONFIG FILE'S directory (= repo root for -f ../mkdocs.yml),
+        # not the working directory. The earlier ``../frontend/...``
+        # path therefore landed one level ABOVE the repo (outside
+        # the checkout) and the docs never made it into the
+        # upload-pages-artifact bundle. Use the repo-root-relative
+        # path instead.
+        run: poetry run mkdocs build -f ../mkdocs.yml --site-dir frontend/dist/docs
 
       # ---- Upload combined artifact ----
 
