@@ -1,0 +1,263 @@
+/**
+ * Dexie database schema (Phase 10B).
+ *
+ * Mirrors the 14 SQLAlchemy models in ``backend/app/models/`` 1:1
+ * so DexieStorage can store the same row shapes the backend would
+ * have persisted. Field names match the wire JSON (snake_case)
+ * because the IStorageService consumers expect the same domain
+ * types from ``types/domain.ts``.
+ *
+ * Schema version starts at 1. Bump + add a ``stores()`` chain on
+ * every breaking schema change; Dexie's migration system handles
+ * the upgrade transparently for already-populated browsers.
+ */
+
+import Dexie, {type EntityTable} from "dexie";
+
+import type {AIProvider, LearningMethod, MessageRole, SessionStatus} from "../lib/constants";
+
+// ---- Row shapes (mirror backend Pydantic Out-schemas) -----------------
+
+export interface UserRow {
+    id: string;
+    name: string;
+    email: string | null;
+    language: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface UserSettingsRow {
+    id: string;
+    user_id: string;
+    language: string;
+    active_provider: AIProvider;
+    /**
+     * Cleartext API keys. Acceptable per v0.7.0 design: data
+     * sits in the user's own IndexedDB on their own device, no
+     * server roundtrip. ApiStorage / backend never sees these.
+     */
+    api_key_anthropic: string | null;
+    api_key_openai: string | null;
+    api_key_gemini: string | null;
+    model_override_anthropic: string | null;
+    model_override_openai: string | null;
+    model_override_gemini: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface LearningProjectRow {
+    id: string;
+    user_id: string;
+    topic: string;
+    goal: string;
+    timeframe: string;
+    daily_minutes: number;
+    current_problem: string | null;
+    active: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface LearningProfileRow {
+    id: string;
+    user_id: string;
+    project_id: string;
+    deductive: number;
+    inductive: number;
+    error_based: number;
+    dialogic: number;
+    contextual: number;
+    ai_adaptive: number;
+    assessed_at: string;
+    version: number;
+}
+
+export interface CurriculumRow {
+    id: string;
+    user_id: string;
+    title: string;
+    description: string | null;
+    language: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface LearningTopicRow {
+    id: string;
+    curriculum_id: string;
+    parent_id: string | null;
+    title: string;
+    description: string | null;
+    order_index: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface LessonRow {
+    id: string;
+    curriculum_id: string;
+    title: string;
+    content: string;
+    order_index: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface LearningSessionRow {
+    id: string;
+    project_id: string;
+    method: LearningMethod;
+    started_at: string;
+    ended_at: string | null;
+    cycle_step: number;
+    status: SessionStatus;
+}
+
+export interface SessionMessageRow {
+    id: string;
+    session_id: string;
+    role: MessageRole;
+    content: string;
+    created_at: string;
+}
+
+export interface SessionRatingRow {
+    id: string;
+    session_id: string;
+    understanding: number;
+    stress: number;
+    method_fit: number;
+    notes: string | null;
+    created_at: string;
+}
+
+export interface SessionNoteRow {
+    id: string;
+    session_id: string;
+    content: string;
+    created_at: string;
+}
+
+export interface ProgressCommitRow {
+    id: string;
+    project_id: string;
+    session_id: string;
+    method: LearningMethod;
+    understanding: number;
+    stress: number;
+    error_rate: number;
+    duration_minutes: number;
+    committed_at: string;
+}
+
+export interface MethodSwitchRow {
+    id: string;
+    project_id: string;
+    session_id: string | null;
+    from_method: LearningMethod;
+    to_method: LearningMethod;
+    reason: string;
+    switched_at: string;
+}
+
+export interface StepEvaluationRow {
+    id: string;
+    session_id: string;
+    from_step: number;
+    suggested_step: number;
+    advance: boolean;
+    applied: boolean;
+    confidence: number;
+    reason: string;
+    fallback_used: boolean;
+    /**
+     * Wall-clock seconds the user spent on ``from_step`` before
+     * this evaluation. The tracking summary uses it for the
+     * time-per-step chart.
+     */
+    duration_seconds: number;
+    created_at: string;
+}
+
+// ---- Dexie database ---------------------------------------------------
+
+export class AdaptiveLearnerDB extends Dexie {
+    users!: EntityTable<UserRow, "id">;
+    userSettings!: EntityTable<UserSettingsRow, "id">;
+    learningProjects!: EntityTable<LearningProjectRow, "id">;
+    learningProfiles!: EntityTable<LearningProfileRow, "id">;
+    curricula!: EntityTable<CurriculumRow, "id">;
+    learningTopics!: EntityTable<LearningTopicRow, "id">;
+    lessons!: EntityTable<LessonRow, "id">;
+    learningSessions!: EntityTable<LearningSessionRow, "id">;
+    sessionMessages!: EntityTable<SessionMessageRow, "id">;
+    sessionRatings!: EntityTable<SessionRatingRow, "id">;
+    sessionNotes!: EntityTable<SessionNoteRow, "id">;
+    progressCommits!: EntityTable<ProgressCommitRow, "id">;
+    methodSwitches!: EntityTable<MethodSwitchRow, "id">;
+    stepEvaluations!: EntityTable<StepEvaluationRow, "id">;
+
+    constructor(name = "adaptive-learner") {
+        super(name);
+        this.version(1).stores({
+            users: "id, email",
+            userSettings: "id, user_id",
+            learningProjects: "id, user_id, active",
+            learningProfiles: "id, project_id, user_id, assessed_at",
+            curricula: "id, user_id",
+            learningTopics: "id, curriculum_id, parent_id, order_index",
+            lessons: "id, curriculum_id, order_index",
+            learningSessions: "id, project_id, status, started_at",
+            sessionMessages: "id, session_id, created_at",
+            sessionRatings: "id, session_id, created_at",
+            sessionNotes: "id, session_id, created_at",
+            progressCommits: "id, project_id, session_id, committed_at",
+            methodSwitches: "id, project_id, switched_at",
+            stepEvaluations: "id, session_id, created_at",
+        });
+    }
+}
+
+/**
+ * Singleton database handle. ``getDb()`` is the only allowed way
+ * to reach it — tests reset via ``_resetDbForTests``.
+ */
+let _db: AdaptiveLearnerDB | null = null;
+
+export function getDb(): AdaptiveLearnerDB {
+    if (_db === null) {
+        _db = new AdaptiveLearnerDB();
+    }
+    return _db;
+}
+
+/**
+ * Test-only hook: close the current handle and forget it so the
+ * next ``getDb()`` opens a fresh instance. Used to point Dexie
+ * at fake-indexeddb between Vitest cases.
+ */
+export async function _resetDbForTests(): Promise<void> {
+    if (_db !== null) {
+        await _db.close();
+        _db = null;
+    }
+}
+
+/**
+ * ISO timestamp helper. Centralised so a future ``Date.now()``
+ * mock during tests reaches every callsite.
+ */
+export function nowIso(): string {
+    return new Date().toISOString();
+}
+
+/**
+ * UUID v4 generator. Browsers + happy-dom + fake-indexeddb all
+ * ship ``crypto.randomUUID``; tests run under those runtimes.
+ * Pinned in a helper so tests can mock it deterministically.
+ */
+export function newId(): string {
+    return crypto.randomUUID();
+}

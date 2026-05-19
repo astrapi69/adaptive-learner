@@ -21,6 +21,7 @@
  */
 
 import {apiStorage} from "./api-storage";
+import {dexieStorage} from "./dexie-storage";
 import type {IStorageService, StorageMode} from "./types";
 
 const STORAGE_MODE_KEY = "adaptive-learner.storage_mode";
@@ -80,14 +81,7 @@ let cachedStorage: IStorageService | null = null;
 export function getStorage(): IStorageService {
     if (cachedStorage !== null) return cachedStorage;
     const mode = resolveStorageMode();
-    if (mode === "dexie") {
-        // DexieStorage lands in 10B. Until then auto-pick falls
-        // back to apiStorage so the build doesn't break and the
-        // existing user flow stays intact.
-        cachedStorage = apiStorage;
-    } else {
-        cachedStorage = apiStorage;
-    }
+    cachedStorage = mode === "dexie" ? dexieStorage : apiStorage;
     return cachedStorage;
 }
 
@@ -103,3 +97,4 @@ export function _resetStorageCacheForTests(): void {
 
 export type {IStorageService, StorageMode} from "./types";
 export {apiStorage} from "./api-storage";
+export {dexieStorage} from "./dexie-storage";

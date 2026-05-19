@@ -12,6 +12,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "dexie": "^4.4.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.14.1",
@@ -27,6 +28,7 @@
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "^4.1.6",
+    "fake-indexeddb": "^6.2.5",
     "happy-dom": "^20.9.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.12",
