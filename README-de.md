@@ -15,6 +15,11 @@ wann der Lernende für den nächsten Schritt bereit ist.
 Startbildschirm hinzu und starte wie eine native App, ohne
 Browser-Tab.
 
+**Online ausprobieren** (kein Backend nötig, Daten bleiben im
+Browser): [astrapi69.github.io/adaptive-learner/](https://astrapi69.github.io/adaptive-learner/).
+Bring deinen eigenen KI-Schlüssel mit; die öffentliche Seite
+läuft im Local-First-Modus und speichert alles in IndexedDB.
+
 [🇬🇧 English](README.md)
 
 ## Was du bekommst
@@ -35,6 +40,13 @@ Browser-Tab.
   KI-Anbieter sitzt außerhalb des Browsers). Hamburger-Menü
   auf Mobile, 44×44-Touch-Targets, kein horizontaler Scroll
   zwischen 360-768px.
+- **Local-First-Speicher (v0.7.0)** — umschaltbar in den
+  Einstellungen. Im Dexie-Modus läuft die ganze App im
+  Browser: IndexedDB speichert Benutzer, Projekte, Sessions,
+  Nachrichten, Bewertungen und Fortschritts-Commits;
+  KI-Aufrufe gehen direkt aus der Seite an Anthropic / OpenAI
+  / Gemini. Kein Backend nötig; das öffentliche GH-Pages-
+  Deployment nutzt diesen Modus.
 - **Eigener KI-Schlüssel** — drei Anbieter mitgeliefert
   (Anthropic Claude, OpenAI GPT, Google Gemini). Modell-
   Override pro Anbieter in den Einstellungen. Schlüssel liegen
@@ -144,9 +156,9 @@ E2E: `cd e2e && npx playwright test --project=smoke`.
 
 ## Status
 
-Aktive Entwicklung. v0.6.0 wurde am 2026-05-18 veröffentlicht.
-Test-Baseline: **1196 Tests** (447 Backend + 478 Plugins +
-271 Frontend Vitest + 8 Playwright-Smoke-Specs). Jedes Release
+Aktive Entwicklung. v0.7.0 wurde am 2026-05-19 veröffentlicht.
+Test-Baseline: **1312 Tests** (447 Backend + 478 Plugins +
+387 Frontend Vitest + 8 Playwright-Smoke-Specs). Jedes Release
 erscheint mit annotierten Tags + GitHub-Releases am gleichen
 Tag.
 
@@ -157,9 +169,9 @@ v0.33.0 ausgegliedert. Die Plugin-Loader-Infrastruktur, die
 Schichten-Architektur, die Test-Disziplin und der
 Pythonic+React-Stack wurden 1:1 übernommen; die
 Bibliogon-EXAMPLE-DOMAIN-Modelle (Book / Chapter / Article /
-Author / ...) und deren Plugins wurden entfernt. Phasen 1-9
+Author / ...) und deren Plugins wurden entfernt. Phasen 1-10
 brachten das Projekt in den aktuellen Stand; siehe annotierte
-Tags `v0.0.1` bis `v0.6.0` für die schrittweise Spur.
+Tags `v0.0.1` bis `v0.7.0` für die schrittweise Spur.
 
 ## Lizenz
 

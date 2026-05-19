@@ -12,27 +12,29 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.6.0):** v0.5.0 plus Phase 9 — **mobile
-  PWA**. The app is now responsive (hamburger drawer at
-  ≤768px, 44×44 touch targets, no horizontal overflow at
-  360-768px on the seven main routes), installable (manifest
-  with PNG + SVG icons at 192/512, `purpose: "any maskable"`
-  for Android cropping, "Add to home screen" prompt component
-  captures `beforeinstallprompt` and persists dismissal), and
-  partially offline-capable (service worker uses NetworkFirst
-  for GET `/api/` with a 4s timeout + 24h LRU cache; mutating
-  calls stay NetworkOnly; `/session` mount detects offline and
-  blocks new-session creation with a clear message; static
-  `offline.html` fallback is precached as the deep safety net).
-  Online/offline indicator with `role="status"` between
-  nav-links and theme toggle (dot-only on mobile). RatingDialog
-  swapped from sliders to 1-5 button group (universal — better
-  UX on every input device). CycleProgress collapses to a
-  single horizontal strip of 7 narrow circles at narrow widths.
-  Playwright viewport pins guard against horizontal-overflow
-  regression on iPhone SE / iPhone 14 / Pixel 7 / iPad.
-  v0.5.0 baseline (Phase 8 dual-prompt + StepEvaluation +
-  tracking aggregates) carried forward unchanged.
+- **Current state (v0.7.0):** v0.6.0 plus Phase 10 — **Dexie
+  parallel storage + GitHub Pages deploy**. The frontend now
+  has a storage abstraction layer (`frontend/src/storage/`)
+  with two backends behind one `IStorageService` contract:
+  `apiStorage` calls the FastAPI backend (unchanged v0.6.0
+  behaviour); `dexieStorage` persists everything to IndexedDB
+  via Dexie 4.4.2 and fires AI completions directly from the
+  browser. The factory `getStorage()` picks the backend from
+  `VITE_STORAGE_MODE` + a persisted localStorage preference;
+  Settings has a "Storage mode" section letting the user flip
+  between them (reload required). All 9 pages migrated to
+  `getStorage()`; api/client.ts kept for ApiError + types.
+  Three AI provider clients ported (Anthropic with
+  `anthropic-dangerous-direct-browser-access`, OpenAI with
+  Bearer auth, Gemini with query-param key + system-message
+  fold-in). Full dual-prompt session flow runs in Dexie mode:
+  start composes the 42-cell system prompt, message fires AI +
+  step evaluator + advances cycle_step, end commits a
+  ProgressCommit. Tracking + tools aggregators ported (same
+  band policy, same rankings). GH Pages workflow deploys the
+  Dexie build to `https://astrapi69.github.io/adaptive-learner/`
+  on every push to main; `VITE_BASE` configurable so the
+  per-repo subpath stays clean.
 
 ## Development guidelines
 
@@ -57,6 +59,7 @@ On a conflict between CLAUDE.md and the rules, the rules win.
 - **Backend:** Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry
 - **Frontend:** React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model 1
 - **PWA (v0.6.0):** vite-plugin-pwa, Workbox-generated service worker, manifest with SVG + maskable-PNG icons at 192/512
+- **Storage (v0.7.0):** dexie ^4.4.2 (IndexedDB) + fake-indexeddb for tests; storage layer abstracts ApiStorage / DexieStorage behind one interface
 - **Plugins:** pluginforge ^0.5.0 (PyPI), entry points under group `adaptive_learner.plugins`
 - **Launcher:** PyInstaller-based cross-OS desktop launcher (`launcher/`)
 - **Testing:** pytest, Vitest, Playwright
@@ -197,6 +200,48 @@ iPad 768) and pins no-horizontal-overflow + hamburger
 visibility + online indicator on each. Lighthouse audits stay
 manual (smoke-tester's side).
 
+## Storage layer (v0.7.0)
+
+Frontend has a single seam where the backing store is chosen.
+Everything routes through `getStorage(): IStorageService`. Two
+implementations satisfy the same contract:
+
+- **`apiStorage`** (default): thin wrapper around
+  `api/client.ts`. Same v0.6.0 behaviour, same backend roundtrips.
+- **`dexieStorage`**: full local-first stack. Schema in
+  `storage/db.ts` mirrors all 14 SQLAlchemy models;
+  `storage/dexie-storage.ts` provides users / projects /
+  settings / curricula CRUD; `storage/assessment.ts` ports the
+  12-question pack + profile calculator; `storage/prompts.ts`
+  carries the 42-cell system-prompt matrix loaded from
+  `data/session-prompts.json`; `storage/step-evaluator.ts` is
+  the dual-prompt Phase 8B port; `storage/session-flow.ts`
+  orchestrates start + message; `storage/tracking.ts` and
+  `storage/tools.ts` port the aggregators. AI calls fire direct
+  from the browser via `storage/ai-providers.ts` (Anthropic +
+  OpenAI + Gemini).
+
+The factory reads `localStorage["adaptive-learner.storage_mode"]`
+(set by Settings) then `VITE_STORAGE_MODE` (set by GH Pages
+build) then defaults to `api`. Switching modes is intentionally
+not a live-swap: Settings persists the choice and toasts a
+reload-required notice.
+
+API keys in Dexie mode live cleartext in IndexedDB
+(`UserSettings.api_key_{provider}`). Acceptable per design:
+data sits on the user's own device, no server roundtrip, AI
+calls fire direct. ApiStorage never sees these.
+
+## GitHub Pages deployment (v0.7.0)
+
+`.github/workflows/deploy-gh-pages.yml` builds the frontend
+with `VITE_BASE=/adaptive-learner/`, `VITE_STORAGE_MODE=dexie`,
+`VITE_API_BASE=""` on every push to main and publishes to
+GitHub Pages. The deployed site is fully self-contained: PWA
+installable, AI calls direct from browser, all data in
+IndexedDB. SPA-router 404 fallback handled by copying
+`index.html` to `404.html`.
+
 ## Directory structure (short)
 
 ```
@@ -225,6 +270,12 @@ adaptive-learner/
 │   │   └── tree/          # TypedTreeNode<V, K> adapter on tree-model + buildTreeFromFlat
 │   ├── pages/             # Landing, Onboarding, Assessment, Dashboard, Session,
 │   │                      # Curriculum, Progress, Settings, NotFound
+│   ├── storage/           # v0.7.0 — IStorageService + ApiStorage (delegates
+│   │                      # to api/client) + DexieStorage (IndexedDB-backed).
+│   │                      # ai-providers, prompts, step-evaluator,
+│   │                      # session-flow, assessment, tracking, tools.
+│   ├── data/              # v0.7.0 — bundled JSON for Dexie mode:
+│   │                      # assessment-questions.json, session-prompts.json
 │   ├── types/             # TypeScript interfaces matching Pydantic Out-schemas
 │   ├── utils/notify.ts    # toast wrapper
 │   └── styles/global.css  # full token set + mobile breakpoint rules (v0.6.0)
@@ -255,7 +306,7 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- v0.6.0 baseline: backend 447, plugins 478 (across 7), frontend 271 (Vitest). Total 1196.
+- v0.7.0 baseline: backend 447, plugins 478 (across 7), frontend 387 (Vitest). Total 1312.
 - E2E tests under `e2e/` are NOT on the `make test` default path.
   v0.3.0 shipped 7 Playwright smoke specs under `e2e/smoke/`
   (landing, onboarding+assessment, session, curriculum, settings);

@@ -13,6 +13,11 @@ decide when the learner is ready to advance.
 — add it to your home screen on any modern phone or desktop and
 launch like a native app, no browser tab required.
 
+**Try it online** (no backend required, all data stays in your
+browser): [astrapi69.github.io/adaptive-learner/](https://astrapi69.github.io/adaptive-learner/).
+Bring your own AI API key; the public site runs in local-first
+mode and stores everything in IndexedDB.
+
 [🇩🇪 Deutsch](README-de.md)
 
 ## What you get
@@ -30,6 +35,12 @@ launch like a native app, no browser tab required.
   offline; new sessions need network (the AI provider lives
   outside the browser). Hamburger nav on mobile, 44×44 touch
   targets, no horizontal scroll at 360-768px.
+- **Local-first storage mode (v0.7.0)** — toggle in Settings.
+  In Dexie mode the whole app runs in your browser: IndexedDB
+  stores users, projects, sessions, messages, ratings, and
+  progress commits; AI calls fire direct to Anthropic / OpenAI
+  / Gemini from the page. No backend needed; the public GH
+  Pages deploy uses this mode.
 - **Bring-your-own AI key** — three providers shipped
   (Anthropic Claude, OpenAI GPT, Google Gemini). Per-provider
   model override in the Settings UI. Keys live encrypted at
@@ -133,9 +144,9 @@ E2E: `cd e2e && npx playwright test --project=smoke`.
 
 ## Status
 
-Active development. v0.6.0 was released 2026-05-18. Test
-baseline: **1196 tests** (447 backend + 478 plugins +
-271 frontend Vitest + 8 Playwright smoke specs). All releases
+Active development. v0.7.0 was released 2026-05-19. Test
+baseline: **1312 tests** (447 backend + 478 plugins +
+387 frontend Vitest + 8 Playwright smoke specs). All releases
 ship with annotated tags + GitHub Releases on the same date.
 
 ## Origin
@@ -145,8 +156,8 @@ v0.33.0 on 2026-05-17. The plugin-loader infrastructure,
 layered architecture, test discipline, and Pythonic+React stack
 were retained intact; the Bibliogon EXAMPLE-DOMAIN models
 (Book / Chapter / Article / Author / ...) and their plugins were
-removed. Phases 1-9 brought the project to its current shape;
-see annotated tags `v0.0.1` through `v0.6.0` for the
+removed. Phases 1-10 brought the project to its current shape;
+see annotated tags `v0.0.1` through `v0.7.0` for the
 incremental trail.
 
 ## License

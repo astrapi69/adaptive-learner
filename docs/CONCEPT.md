@@ -17,6 +17,14 @@ because the AI provider lives outside the browser; the app surfaces
 this clearly via an online/offline indicator in the nav and a
 graceful inline message on `/session` when offline.
 
+Since v0.7.0 the frontend also ships a **local-first storage mode**.
+A storage abstraction layer routes through either the FastAPI
+backend or a Dexie-backed IndexedDB store; in local mode AI calls
+fire direct from the browser (Anthropic, OpenAI, or Gemini). A
+public Dexie build is deployed to GitHub Pages so anyone with an
+AI API key can try AdaptiveLearner without standing up a backend
+first. The user can switch between modes in Settings.
+
 The full architecture, domain model, plugin catalogue, hook
 specifications, mobile/PWA decisions, and roadmap live in
 [adaptive-learner-project-reference.md](adaptive-learner-project-reference.md).
