@@ -180,6 +180,21 @@ settings:
   section_provider: Proveedor de IA
   section_api_keys: Claves API
   section_danger: Cuenta
+  section_storage_mode: Modo de almacenamiento
+  storage_mode_help: >-
+    Elige donde viven tus datos. El modo local guarda todo en este
+    navegador; el modo Servidor habla con el backend de AdaptiveLearner.
+  storage_mode_api: Servidor
+  storage_mode_api_hint: Requiere un backend de AdaptiveLearner en ejecucion.
+  storage_mode_dexie: Local (Navegador)
+  storage_mode_dexie_hint: >-
+    Datos y claves API viven en este navegador; las llamadas de IA salen
+    directamente desde la pagina.
+  storage_mode_warning: >-
+    Los datos NO se sincronizan entre modos. La sincronizacion esta
+    planeada para una version futura.
+  storage_mode_switch_notice: >-
+    Modo de almacenamiento guardado. Recarga la pagina para activarlo.
   language_label: Idioma de la interfaz
   provider_label: Proveedor activo
   provider_anthropic: Anthropic Claude

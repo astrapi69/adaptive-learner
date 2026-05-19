@@ -368,4 +368,37 @@ describe("Settings page", () => {
             screen.queryByTestId("model-override-clear-anthropic"),
         ).not.toBeInTheDocument();
     });
+
+    it("renders the Phase 10F storage-mode section with both radios", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(screen.getByTestId("settings-storage-mode")).toBeInTheDocument();
+        expect(screen.getByTestId("storage-mode-api")).toBeInTheDocument();
+        expect(screen.getByTestId("storage-mode-dexie")).toBeInTheDocument();
+        expect(screen.getByTestId("storage-mode-warning")).toBeInTheDocument();
+    });
+
+    it("api mode is the default selection on a fresh browser", async () => {
+        localStorage.removeItem("adaptive-learner.storage_mode");
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        const apiRadio = screen.getByTestId("storage-mode-api") as HTMLInputElement;
+        const dexieRadio = screen.getByTestId("storage-mode-dexie") as HTMLInputElement;
+        expect(apiRadio.checked).toBe(true);
+        expect(dexieRadio.checked).toBe(false);
+    });
+
+    it("clicking the dexie radio persists the choice + toasts a reload reminder", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        const dexieRadio = screen.getByTestId("storage-mode-dexie") as HTMLInputElement;
+        fireEvent.click(dexieRadio);
+        expect(localStorage.getItem("adaptive-learner.storage_mode")).toBe("dexie");
+        expect(toastSuccess).toHaveBeenCalledWith(
+            expect.stringMatching(/Reload/i),
+        );
+    });
 });

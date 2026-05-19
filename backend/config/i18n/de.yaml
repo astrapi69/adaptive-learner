@@ -203,6 +203,22 @@ settings:
   section_provider: KI-Anbieter
   section_api_keys: API-Keys
   section_danger: Konto
+  section_storage_mode: Speicher-Modus
+  storage_mode_help: >-
+    Waehle, wo deine Daten liegen. Lokal speichert alles in diesem Browser;
+    Server verbindet sich mit dem AdaptiveLearner-Backend.
+  storage_mode_api: Server
+  storage_mode_api_hint: Benoetigt ein laufendes AdaptiveLearner-Backend.
+  storage_mode_dexie: Lokal (Browser)
+  storage_mode_dexie_hint: >-
+    Daten und API-Keys leben in diesem Browser; KI-Aufrufe gehen direkt
+    aus der Seite raus.
+  storage_mode_warning: >-
+    Daten werden zwischen den Modi NICHT synchronisiert. Synchronisation
+    ist fuer eine spaetere Version geplant.
+  storage_mode_switch_notice: >-
+    Speicher-Modus gespeichert. Seite neu laden, um den neuen Modus zu
+    aktivieren.
   language_label: Anzeigesprache
   provider_label: Aktiver Anbieter
   provider_anthropic: Anthropic Claude

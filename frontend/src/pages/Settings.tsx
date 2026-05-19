@@ -10,7 +10,13 @@ import {
     type AIProvider,
 } from "../lib/constants";
 import {readLearnerState, setLanguage} from "../lib/learnerState";
-import {getStorage} from "../storage";
+import {
+    getStorage,
+    getStorageRowCounts,
+    resolveStorageMode,
+    setPersistedStorageMode,
+    type StorageMode,
+} from "../storage";
 import {notify} from "../utils/notify";
 import type {UserSettings} from "../types";
 
@@ -52,6 +58,38 @@ export default function Settings() {
         gemini: "",
     });
     const [busy, setBusy] = useState<string | null>(null);
+
+    // Phase 10F: storage-mode toggle. ``currentMode`` reflects
+    // what's active *right now* (snapshot at mount). ``pendingMode``
+    // tracks an in-flight choice the user has selected but not
+    // committed; switching is "persist + reload required" since
+    // live-swap would orphan in-memory state.
+    const [currentMode] = useState<StorageMode>(() => resolveStorageMode());
+    const [rowCounts, setRowCounts] = useState<Record<string, number> | null>(
+        null,
+    );
+
+    useEffect(() => {
+        let cancelled = false;
+        getStorageRowCounts().then((counts) => {
+            if (cancelled) return;
+            setRowCounts(counts);
+        });
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    function handleStorageModeChange(next: StorageMode): void {
+        if (next === currentMode) return;
+        setPersistedStorageMode(next);
+        notify.success(
+            t(
+                "settings.storage_mode_switch_notice",
+                "Storage mode saved. Reload the page to switch to the new backend.",
+            ),
+        );
+    }
 
     useEffect(() => {
         const userId = readLearnerState().userId;
@@ -458,6 +496,94 @@ export default function Settings() {
                         </div>
                     );
                 })}
+            </section>
+
+            <section
+                className="settings-section"
+                data-testid="settings-storage-mode"
+            >
+                <h2 className="settings-section-title">
+                    {t("settings.section_storage_mode", "Storage mode")}
+                </h2>
+                <p className="muted">
+                    {t(
+                        "settings.storage_mode_help",
+                        "Choose where your data lives. Local mode keeps everything in this browser; Server mode talks to the AdaptiveLearner backend.",
+                    )}
+                </p>
+                <fieldset className="storage-mode-fieldset">
+                    <label className="storage-mode-option">
+                        <input
+                            type="radio"
+                            name="storage-mode"
+                            value="api"
+                            data-testid="storage-mode-api"
+                            checked={currentMode === "api"}
+                            onChange={() => handleStorageModeChange("api")}
+                        />
+                        <span>
+                            <strong>
+                                {t("settings.storage_mode_api", "Server")}
+                            </strong>
+                            <span className="muted">
+                                {t(
+                                    "settings.storage_mode_api_hint",
+                                    "Requires a running AdaptiveLearner backend.",
+                                )}
+                            </span>
+                        </span>
+                    </label>
+                    <label className="storage-mode-option">
+                        <input
+                            type="radio"
+                            name="storage-mode"
+                            value="dexie"
+                            data-testid="storage-mode-dexie"
+                            checked={currentMode === "dexie"}
+                            onChange={() => handleStorageModeChange("dexie")}
+                        />
+                        <span>
+                            <strong>
+                                {t(
+                                    "settings.storage_mode_dexie",
+                                    "Local (Browser)",
+                                )}
+                            </strong>
+                            <span className="muted">
+                                {t(
+                                    "settings.storage_mode_dexie_hint",
+                                    "Data + API keys live in this browser; AI calls fire direct from the page.",
+                                )}
+                            </span>
+                        </span>
+                    </label>
+                </fieldset>
+                <p
+                    className="storage-mode-warning"
+                    data-testid="storage-mode-warning"
+                >
+                    {t(
+                        "settings.storage_mode_warning",
+                        "Data is NOT synced between modes. Sync is planned for a future version.",
+                    )}
+                </p>
+                {currentMode === "dexie" && rowCounts && (
+                    <ul
+                        className="storage-mode-counts"
+                        data-testid="storage-mode-counts"
+                    >
+                        {Object.entries(rowCounts).map(([table, count]) => (
+                            <li key={table}>
+                                <span className="storage-mode-table">
+                                    {table}
+                                </span>
+                                <span className="storage-mode-count">
+                                    {count}
+                                </span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
             </section>
         </main>
     );

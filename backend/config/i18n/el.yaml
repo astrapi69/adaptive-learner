@@ -180,6 +180,23 @@ settings:
   section_provider: Πάροχος AI
   section_api_keys: Κλειδιά API
   section_danger: Λογαριασμός
+  section_storage_mode: Λειτουργία αποθήκευσης
+  storage_mode_help: >-
+    Διάλεξε πού ζουν τα δεδομένα σου. Η τοπική λειτουργία κρατά τα πάντα
+    σε αυτόν τον περιηγητή· η λειτουργία Server μιλά με το backend
+    του AdaptiveLearner.
+  storage_mode_api: Server
+  storage_mode_api_hint: Απαιτεί ενεργό backend AdaptiveLearner.
+  storage_mode_dexie: Τοπικό (Περιηγητής)
+  storage_mode_dexie_hint: >-
+    Δεδομένα και κλειδιά API ζουν σε αυτόν τον περιηγητή· οι κλήσεις AI
+    γίνονται απευθείας από τη σελίδα.
+  storage_mode_warning: >-
+    Τα δεδομένα ΔΕΝ συγχρονίζονται μεταξύ των λειτουργιών. Ο συγχρονισμός
+    σχεδιάζεται για μελλοντική έκδοση.
+  storage_mode_switch_notice: >-
+    Η λειτουργία αποθήκευσης αποθηκεύτηκε. Φόρτωσε ξανά τη σελίδα
+    για να ενεργοποιήσεις τη νέα.
   language_label: Γλώσσα εμφάνισης
   provider_label: Ενεργός πάροχος
   provider_anthropic: Anthropic Claude

@@ -95,6 +95,32 @@ export function _resetStorageCacheForTests(): void {
     cachedStorage = null;
 }
 
+/**
+ * Per-table row counts for the Settings UI "Storage mode" panel.
+ * Reads the live Dexie database; ApiStorage mode returns an empty
+ * map (counting backend rows from the browser is not in scope).
+ */
+export async function getStorageRowCounts(): Promise<Record<string, number>> {
+    const mode = resolveStorageMode();
+    if (mode !== "dexie") return {};
+    const {getDb} = await import("./db");
+    const db = getDb();
+    return {
+        users: await db.users.count(),
+        learningProjects: await db.learningProjects.count(),
+        learningProfiles: await db.learningProfiles.count(),
+        curricula: await db.curricula.count(),
+        learningTopics: await db.learningTopics.count(),
+        lessons: await db.lessons.count(),
+        learningSessions: await db.learningSessions.count(),
+        sessionMessages: await db.sessionMessages.count(),
+        sessionRatings: await db.sessionRatings.count(),
+        progressCommits: await db.progressCommits.count(),
+        stepEvaluations: await db.stepEvaluations.count(),
+        methodSwitches: await db.methodSwitches.count(),
+    };
+}
+
 export type {IStorageService, StorageMode} from "./types";
 export {apiStorage} from "./api-storage";
 export {dexieStorage} from "./dexie-storage";

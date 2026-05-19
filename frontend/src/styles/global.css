@@ -1094,6 +1094,75 @@ select:focus {
   letter-spacing: 0.04em;
 }
 
+/* --- Phase 10F: storage-mode toggle --- */
+
+.storage-mode-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.storage-mode-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.storage-mode-option:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--surface-2, var(--surface));
+}
+
+.storage-mode-option > input {
+  margin-top: 0.25rem;
+}
+
+.storage-mode-option > span {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.storage-mode-warning {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  border-left: 3px solid var(--warning, var(--accent));
+  padding-left: var(--space-3);
+}
+
+.storage-mode-counts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-1) var(--space-3);
+  font-size: 0.875rem;
+}
+
+.storage-mode-counts li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.storage-mode-table {
+  color: var(--fg-muted);
+}
+
+.storage-mode-count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
 .api-key-row {
   display: flex;
   flex-direction: column;

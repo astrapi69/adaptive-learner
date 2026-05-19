@@ -180,6 +180,19 @@ settings:
   section_provider: AI provider
   section_api_keys: API keys
   section_danger: Account
+  section_storage_mode: Storage mode
+  storage_mode_help: >-
+    Choose where your data lives. Local mode keeps everything in this
+    browser; Server mode talks to the AdaptiveLearner backend.
+  storage_mode_api: Server
+  storage_mode_api_hint: Requires a running AdaptiveLearner backend.
+  storage_mode_dexie: Local (Browser)
+  storage_mode_dexie_hint: >-
+    Data + API keys live in this browser; AI calls fire direct from the page.
+  storage_mode_warning: >-
+    Data is NOT synced between modes. Sync is planned for a future version.
+  storage_mode_switch_notice: >-
+    Storage mode saved. Reload the page to switch to the new backend.
   language_label: Display language
   provider_label: Active provider
   provider_anthropic: Anthropic Claude
