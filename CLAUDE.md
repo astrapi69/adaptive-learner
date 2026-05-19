@@ -12,29 +12,21 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.7.0):** v0.6.0 plus Phase 10 — **Dexie
-  parallel storage + GitHub Pages deploy**. The frontend now
-  has a storage abstraction layer (`frontend/src/storage/`)
-  with two backends behind one `IStorageService` contract:
-  `apiStorage` calls the FastAPI backend (unchanged v0.6.0
-  behaviour); `dexieStorage` persists everything to IndexedDB
-  via Dexie 4.4.2 and fires AI completions directly from the
-  browser. The factory `getStorage()` picks the backend from
-  `VITE_STORAGE_MODE` + a persisted localStorage preference;
-  Settings has a "Storage mode" section letting the user flip
-  between them (reload required). All 9 pages migrated to
-  `getStorage()`; api/client.ts kept for ApiError + types.
-  Three AI provider clients ported (Anthropic with
-  `anthropic-dangerous-direct-browser-access`, OpenAI with
-  Bearer auth, Gemini with query-param key + system-message
-  fold-in). Full dual-prompt session flow runs in Dexie mode:
-  start composes the 42-cell system prompt, message fires AI +
-  step evaluator + advances cycle_step, end commits a
-  ProgressCommit. Tracking + tools aggregators ported (same
-  band policy, same rankings). GH Pages workflow deploys the
-  Dexie build to `https://astrapi69.github.io/adaptive-learner/`
-  on every push to main; `VITE_BASE` configurable so the
-  per-repo subpath stays clean.
+- **Current state (v0.8.0):** v0.7.0 plus Phase 11 —
+  **Comprehensive MkDocs documentation (DE + EN)**. 28
+  content pages across 4 sections (User Guide 9, Concept 5,
+  Developer 9, API 5) plus landing pages, all written in
+  parallel DE + EN. mkdocs-material + mkdocs-static-i18n
+  with folder-strategy; navigation auto-generated from
+  `docs/help/_meta.yaml` via `scripts/generate_mkdocs_nav.py`.
+  The MkDocs site builds into `frontend/dist/docs/` and
+  deploys alongside the frontend at
+  `https://astrapi69.github.io/adaptive-learner/docs/` —
+  unified GH Pages workflow, no more `docs.yml` conflict.
+  Landing page now has a "Read the documentation" link
+  next to the start CTA (i18n-keyed across all 8 catalogs).
+  v0.7.0 baseline (Dexie storage + browser-direct AI + GH
+  Pages frontend deploy) carried forward unchanged.
 
 ## Development guidelines
 
@@ -232,15 +224,56 @@ API keys in Dexie mode live cleartext in IndexedDB
 data sits on the user's own device, no server roundtrip, AI
 calls fire direct. ApiStorage never sees these.
 
-## GitHub Pages deployment (v0.7.0)
+## GitHub Pages deployment (v0.7.0 + v0.8.0)
 
-`.github/workflows/deploy-gh-pages.yml` builds the frontend
-with `VITE_BASE=/adaptive-learner/`, `VITE_STORAGE_MODE=dexie`,
-`VITE_API_BASE=""` on every push to main and publishes to
-GitHub Pages. The deployed site is fully self-contained: PWA
-installable, AI calls direct from browser, all data in
-IndexedDB. SPA-router 404 fallback handled by copying
-`index.html` to `404.html`.
+`.github/workflows/deploy-gh-pages.yml` is the single
+unified workflow. It builds:
+
+- The frontend with `VITE_BASE=/adaptive-learner/`,
+  `VITE_STORAGE_MODE=dexie`, `VITE_API_BASE=""` →
+  `frontend/dist/` (self-contained PWA, browser-direct AI).
+- The MkDocs site → `frontend/dist/docs/` (mkdocs-material +
+  mkdocs-static-i18n DE/EN).
+
+Both deploy together to GitHub Pages on every push to main.
+Frontend at `https://astrapi69.github.io/adaptive-learner/`,
+docs at `https://astrapi69.github.io/adaptive-learner/docs/`.
+SPA-router 404 fallback handled by copying `index.html` to
+`404.html`.
+
+The legacy `docs.yml` workflow was removed in 11G to
+prevent the dual-deploy-to-Pages conflict.
+
+## Documentation site (v0.8.0)
+
+`docs/help/` holds the public MkDocs source. Structure:
+
+```
+docs/help/
+├── _meta.yaml          single source of truth for nav tree
+├── de/                 German content (28 pages + landing)
+│   ├── index.md
+│   ├── user-guide/     getting-started, onboarding, assessment, ...
+│   ├── concept/        philosophy, six-methods, seven-steps, ...
+│   ├── developer/      architecture, setup, plugin-guide, ...
+│   └── api/            overview, core-endpoints, ..., hooks
+└── en/                 English mirror, same shape
+```
+
+Navigation is auto-generated:
+- `_meta.yaml` declares title (DE + EN) + slug per page.
+- `scripts/generate_mkdocs_nav.py` regenerates the
+  `mkdocs.yml` nav block + the nav_translations under the
+  EN locale.
+- `make sync-mkdocs-nav` runs the generator; `make
+  verify-mkdocs-nav` is the CI-friendly drift check.
+
+In-app help reads `_meta.yaml` directly (the Settings >
+Help panel in a future phase will list its tree). The
+public docs site is built from the same Markdown via
+`make docs-build`.
+
+Local preview: `make docs-serve` (port 8000, hot-reload).
 
 ## Directory structure (short)
 
@@ -306,7 +339,7 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- v0.7.0 baseline: backend 447, plugins 478 (across 7), frontend 387 (Vitest). Total 1312.
+- v0.8.0 baseline: backend 447, plugins 478 (across 7), frontend 387 (Vitest). Total 1312. Docs site: 28 content pages + landing, DE + EN parallel.
 - E2E tests under `e2e/` are NOT on the `make test` default path.
   v0.3.0 shipped 7 Playwright smoke specs under `e2e/smoke/`
   (landing, onboarding+assessment, session, curriculum, settings);

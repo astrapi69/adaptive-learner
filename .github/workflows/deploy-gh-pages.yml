@@ -1,11 +1,11 @@
 name: Deploy GitHub Pages
 
-# Phase 10G — publish the Dexie-mode frontend to GitHub Pages.
+# Phase 10G + 11G — publish the Dexie-mode frontend at the root
+# AND the MkDocs documentation site at /docs/ to GitHub Pages.
 # Triggered on every push to main; the workflow can also be run
-# manually from the Actions tab. The deployed site uses the
-# Dexie storage backend (no backend required); the SPA shell
-# falls back to the inline i18n strings + the bundled
-# assessment-questions.json so the first paint always works.
+# manually from the Actions tab. Frontend uses the Dexie storage
+# backend (no backend required); docs are static MkDocs Material
+# in DE + EN.
 
 on:
   push:
@@ -38,9 +38,11 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # full history for git-revision-date plugin in mkdocs
 
       - uses: actions/setup-node@v5
         with:
@@ -48,11 +50,20 @@ jobs:
           cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install dependencies
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      # ---- Frontend build ----
+
+      - name: Install frontend dependencies
         working-directory: frontend
         run: npm ci
 
-      - name: Build for GH Pages
+      - name: Build frontend
         working-directory: frontend
         run: npm run build
 
@@ -63,6 +74,22 @@ jobs:
       # path client-side.
       - name: Configure SPA fallback
         run: cp frontend/dist/index.html frontend/dist/404.html
+
+      # ---- Docs build ----
+
+      - name: Install docs dependencies
+        working-directory: docs
+        run: poetry install --no-interaction
+
+      - name: Generate MkDocs navigation from _meta.yaml
+        working-directory: docs
+        run: poetry run python ../scripts/generate_mkdocs_nav.py
+
+      - name: Build docs
+        working-directory: docs
+        run: poetry run mkdocs build -f ../mkdocs.yml --site-dir ../frontend/dist/docs
+
+      # ---- Upload combined artifact ----
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5

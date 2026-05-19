@@ -1,6 +1,6 @@
 # Adaptive Learner Roadmap
 
-Current state: **v0.7.0 released (Phase 10 / Dexie parallel storage + GH Pages shipped 2026-05-19).**
+Current state: **v0.8.0 released (Phase 11 / MkDocs documentation shipped 2026-05-19).**
 
 ## Phase history (completed)
 
@@ -14,7 +14,8 @@ Current state: **v0.7.0 released (Phase 10 / Dexie parallel storage + GH Pages s
 | 7-extras | v0.4.1 | Skip-button hoist, favicon `.ico` fallback, CI Release Gate fix |
 | 8 | v0.5.0 | Dual-prompt AI cycle transitions, StepEvaluation persistence, tracking aggregates |
 | 9 | v0.6.0 | Mobile PWA — responsive UI, service worker, install prompt, offline indicator |
-| **10** | **v0.7.0** | **Dexie parallel storage + GitHub Pages deploy — IStorageService, browser-direct AI, public site** |
+| 10 | v0.7.0 | Dexie parallel storage + GitHub Pages deploy — IStorageService, browser-direct AI, public site |
+| **11** | **v0.8.0** | **Comprehensive MkDocs documentation (DE + EN) — 28 pages across User Guide / Concept / Developer / API, deployed at /docs/** |
 
 Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
@@ -22,22 +23,28 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phase (planned)
 
-**Phase 11 candidates** (no commitment yet — surface user signal first):
+**Phase 12 candidates** (no commitment yet — surface user signal first):
 
-- **v0.7.x — Sync between Dexie ↔ API modes.** Out of scope for
-  v0.7.0 per Phase 10 spec. Real users with content in both
-  modes will need a one-way or two-way sync flow eventually;
+- **v0.8.x — Sync between Dexie ↔ API modes.** Out of scope
+  for v0.7.0 + 0.8.0. Real users with content in both modes
+  will need a one-way or two-way sync flow eventually;
   defer until someone hits the friction.
-- **v0.8.x — Async dual-call.** Convert `/message` from sync to
-  async `asyncio.gather` so learning + evaluator fire in
-  parallel. Saves ~500ms per round-trip. Same story for Dexie
-  mode: kick off the AI completion and the step evaluator
-  simultaneously. Revisit when users report latency.
-- **v0.8.x — Auto-loop step 7 → 1.** When the dual-prompt
+- **v0.9.x — In-app help panel.** The docs/help/_meta.yaml
+  is already the in-app help source; build a Settings >
+  Help drawer that reads the same Markdown files and renders
+  them inline. Today the docs are only browsable through the
+  public MkDocs site.
+- **v0.9.x — Async dual-call.** Convert `/message` from sync
+  to async `asyncio.gather` so learning + evaluator fire in
+  parallel. Saves ~500ms per round-trip. Same story for
+  Dexie mode: kick off the AI completion and the step
+  evaluator simultaneously. Revisit when users report
+  latency.
+- **v0.9.x — Auto-loop step 7 → 1.** When the dual-prompt
   evaluator signals integration (step 7 + high confidence +
   repeat suggestion), offer to start a new cycle on a fresh
-  topic. Requires a topic-selection prompt + UX. (Deferred from
-  Phase 8, Q2.)
+  topic. Requires a topic-selection prompt + UX. (Deferred
+  from Phase 8, Q2.)
 - **v0.8.x — Swipe gestures on Assessment.** Deferred from
   Phase 9, Q5. Needs accessibility wiring (keyboard, reduced-
   motion, screen-reader). Real touch-event handling.

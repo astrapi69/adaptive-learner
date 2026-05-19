@@ -289,6 +289,22 @@ select:focus {
   background: var(--accent-hover);
 }
 
+.landing-secondary {
+  margin-top: var(--space-4);
+  text-align: center;
+}
+
+.landing-secondary-link {
+  color: var(--fg-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-size: 0.95rem;
+}
+
+.landing-secondary-link:hover {
+  color: var(--accent);
+}
+
 /* --- Onboarding page ------------------------------------------- */
 
 .onboarding-page {

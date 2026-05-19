@@ -156,11 +156,13 @@ E2E: `cd e2e && npx playwright test --project=smoke`.
 
 ## Status
 
-Aktive Entwicklung. v0.7.0 wurde am 2026-05-19 veröffentlicht.
+Aktive Entwicklung. v0.8.0 wurde am 2026-05-19 veröffentlicht.
 Test-Baseline: **1312 Tests** (447 Backend + 478 Plugins +
-387 Frontend Vitest + 8 Playwright-Smoke-Specs). Jedes Release
-erscheint mit annotierten Tags + GitHub-Releases am gleichen
-Tag.
+387 Frontend Vitest + 8 Playwright-Smoke-Specs). Öffentliche
+Doku unter
+[astrapi69.github.io/adaptive-learner/docs/](https://astrapi69.github.io/adaptive-learner/docs/).
+Jedes Release erscheint mit annotierten Tags +
+GitHub-Releases am gleichen Tag.
 
 ## Herkunft
 
@@ -169,9 +171,9 @@ v0.33.0 ausgegliedert. Die Plugin-Loader-Infrastruktur, die
 Schichten-Architektur, die Test-Disziplin und der
 Pythonic+React-Stack wurden 1:1 übernommen; die
 Bibliogon-EXAMPLE-DOMAIN-Modelle (Book / Chapter / Article /
-Author / ...) und deren Plugins wurden entfernt. Phasen 1-10
+Author / ...) und deren Plugins wurden entfernt. Phasen 1-11
 brachten das Projekt in den aktuellen Stand; siehe annotierte
-Tags `v0.0.1` bis `v0.7.0` für die schrittweise Spur.
+Tags `v0.0.1` bis `v0.8.0` für die schrittweise Spur.
 
 ## Lizenz
 

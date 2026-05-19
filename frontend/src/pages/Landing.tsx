@@ -135,6 +135,16 @@ export default function Landing() {
             >
                 {t("landing.start_button", "Start your learning journey")}
             </button>
+
+            <p className="landing-secondary">
+                <a
+                    href="docs/"
+                    data-testid="landing-docs-link"
+                    className="landing-secondary-link"
+                >
+                    {t("landing.docs_link", "Read the documentation")}
+                </a>
+            </p>
         </main>
     );
 }
