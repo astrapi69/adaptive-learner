@@ -6,26 +6,37 @@ repo_name: astrapi69/adaptive-learner
 docs_dir: docs/help
 theme:
   name: material
+  language: de
   palette:
     - media: '(prefers-color-scheme: light)'
       scheme: default
       primary: indigo
+      accent: indigo
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
       primary: indigo
+      accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
   features:
     - navigation.tabs
+    - navigation.sections
     - navigation.top
+    - navigation.tracking
+    - navigation.indexes
     - search.suggest
+    - search.highlight
+    - search.share
     - content.code.copy
+    - content.tabs.link
+    - content.action.edit
   icon:
     repo: fontawesome/brands/github
+edit_uri: edit/main/docs/help/
 plugins:
   - search
   - i18n:
@@ -38,15 +49,83 @@ plugins:
         - locale: en
           name: English
           build: true
+          nav_translations:
+            # AUTO-GENERATED-NAV-TRANSLATIONS-START (do not edit; regenerate via make sync-mkdocs-nav)
+            Benutzerhandbuch: User Guide
+            Erste Schritte: Getting started
+            Lerntyp-Test: Assessment
+            Lern-Session: Learning session
+            Fortschritt: Progress
+            Einstellungen: Settings
+            Konzept: Concept
+            Philosophie: Philosophy
+            Die sechs Methoden: The six methods
+            Der Sieben-Schritt-Zyklus: The seven-step cycle
+            Werkzeuge: Tools
+            Entwickler-Dokumentation: Developer docs
+            Architektur: Architecture
+            Plugin-Leitfaden: Plugin guide
+            Storage-Layer: Storage layer
+            KI-Integration: AI integration
+            Testen: Testing
+            Release-Prozess: Release workflow
+            API-Referenz: API reference
+            Übersicht: Overview
+            Core-Endpoints: Core endpoints
+            Plugin-Endpoints: Plugin endpoints
+            Modelle: Models
+            # AUTO-GENERATED-NAV-TRANSLATIONS-END
 markdown_extensions:
   - admonition
   - attr_list
   - md_in_html
+  - tables
+  - footnotes
   - toc:
       permalink: true
   - pymdownx.details
   - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
 nav:
-  - Home: index.md
+- Home: de/index.md
+# AUTO-GENERATED-NAV-START (do not edit; regenerate via make sync-mkdocs-nav)
+- Benutzerhandbuch:
+  - Erste Schritte: de/user-guide/getting-started.md
+  - Onboarding: de/user-guide/onboarding.md
+  - Lerntyp-Test: de/user-guide/assessment.md
+  - Lern-Session: de/user-guide/learning-session.md
+  - Dashboard: de/user-guide/dashboard.md
+  - Curriculum: de/user-guide/curriculum.md
+  - Fortschritt: de/user-guide/progress.md
+  - Einstellungen: de/user-guide/settings.md
+  - FAQ: de/user-guide/faq.md
+- Konzept:
+  - Philosophie: de/concept/philosophy.md
+  - Die sechs Methoden: de/concept/six-methods.md
+  - Der Sieben-Schritt-Zyklus: de/concept/seven-steps.md
+  - Tracking: de/concept/tracking.md
+  - Werkzeuge: de/concept/tools.md
+- Entwickler-Dokumentation:
+  - Architektur: de/developer/architecture.md
+  - Setup: de/developer/setup.md
+  - Plugin-Leitfaden: de/developer/plugin-guide.md
+  - Storage-Layer: de/developer/storage-layer.md
+  - KI-Integration: de/developer/ai-integration.md
+  - Testen: de/developer/testing.md
+  - Deployment: de/developer/deployment.md
+  - i18n: de/developer/i18n.md
+  - Release-Prozess: de/developer/release.md
+- API-Referenz:
+  - Übersicht: de/api/overview.md
+  - Core-Endpoints: de/api/core-endpoints.md
+  - Plugin-Endpoints: de/api/plugin-endpoints.md
+  - Modelle: de/api/models.md
+  - Hooks: de/api/hooks.md
+# AUTO-GENERATED-NAV-END

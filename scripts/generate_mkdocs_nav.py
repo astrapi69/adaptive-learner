@@ -86,13 +86,18 @@ def _generate_nav_lines(meta: dict) -> list[str]:
     return lines
 
 
-def _generate_translation_lines(meta: dict) -> list[str]:
+def _generate_translation_lines(meta: dict, indent: str = "            ") -> list[str]:
     """Render the nav_translations: map.
 
     Walks every nav item (top-level + recursive children), collects
     DE → EN pairs, deduplicates, and emits only entries where DE !=
     EN. Identity mappings (e.g. "EPUB: EPUB") are dropped because
     mkdocs-static-i18n leaves untranslated keys as-is.
+
+    ``indent`` controls the leading whitespace of each emitted line
+    — should match the YAML indent depth of the ``nav_translations:``
+    block in mkdocs.yml. Defaults to 12 spaces (per-locale nested
+    config under the i18n plugin).
     """
     seen: dict[str, str] = {}
 
@@ -110,7 +115,7 @@ def _generate_translation_lines(meta: dict) -> list[str]:
     # Stable order: insertion order preserves the _meta.yaml walk
     # ordering, which matches the source of truth and produces a
     # readable diff on regeneration.
-    return [f"        {de}: {en}" for de, en in seen.items()]
+    return [f"{indent}{de}: {en}" for de, en in seen.items()]
 
 
 def _replace_block(
@@ -156,10 +161,11 @@ def _build_new_mkdocs_yml() -> str:
 
     # The nav: block is at column 0 (top-level YAML key, items start
     # with "- "). The nav_translations: block sits inside the i18n
-    # plugin config, indented to 8 spaces.
+    # plugin's per-locale config (12 spaces under the EN locale
+    # entry).
     new_text = _replace_block(current, NAV_START, NAV_END, nav_body, indent="")
     new_text = _replace_block(
-        new_text, TR_START, TR_END, tr_body, indent="        "
+        new_text, TR_START, TR_END, tr_body, indent="            "
     )
     return new_text
 

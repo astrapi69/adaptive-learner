@@ -5,15 +5,147 @@ languages:
   - code: en
     name: English
 
-# Skeleton state (Phase 1A): only the index pages exist. Bibliogon's
-# Getting-Started / Articles / Editor / Templates / Plugins / AI /
-# Install / FAQ / Glossary / Shortcuts / Themes / Support /
-# Troubleshooting / Uninstall / Developers section is gone. New
-# help pages land alongside the features they document (Phase 4+).
+# Phase 11 (v0.8.0) — Full documentation tree.
+#
+# Top-level sections:
+#   - Home (landing page)
+#   - User Guide / Benutzerhandbuch — for learners using the app
+#   - Concept / Konzept — the pedagogical thinking
+#   - Developer Docs / Entwickler-Dokumentation — for contributors
+#   - API Reference / API-Referenz — for integrators
+#
+# The in-app help panel reads this file directly; mkdocs.yml's
+# nav block is regenerated from here by scripts/generate_mkdocs_nav.py.
 
 navigation:
   - title:
-      de: Start
-      en: Home
-    slug: index
-    icon: home
+      de: Benutzerhandbuch
+      en: User Guide
+    children:
+      - title:
+          de: Erste Schritte
+          en: Getting started
+        slug: user-guide/getting-started
+      - title:
+          de: Onboarding
+          en: Onboarding
+        slug: user-guide/onboarding
+      - title:
+          de: Lerntyp-Test
+          en: Assessment
+        slug: user-guide/assessment
+      - title:
+          de: Lern-Session
+          en: Learning session
+        slug: user-guide/learning-session
+      - title:
+          de: Dashboard
+          en: Dashboard
+        slug: user-guide/dashboard
+      - title:
+          de: Curriculum
+          en: Curriculum
+        slug: user-guide/curriculum
+      - title:
+          de: Fortschritt
+          en: Progress
+        slug: user-guide/progress
+      - title:
+          de: Einstellungen
+          en: Settings
+        slug: user-guide/settings
+      - title:
+          de: FAQ
+          en: FAQ
+        slug: user-guide/faq
+
+  - title:
+      de: Konzept
+      en: Concept
+    children:
+      - title:
+          de: Philosophie
+          en: Philosophy
+        slug: concept/philosophy
+      - title:
+          de: Die sechs Methoden
+          en: The six methods
+        slug: concept/six-methods
+      - title:
+          de: Der Sieben-Schritt-Zyklus
+          en: The seven-step cycle
+        slug: concept/seven-steps
+      - title:
+          de: Tracking
+          en: Tracking
+        slug: concept/tracking
+      - title:
+          de: Werkzeuge
+          en: Tools
+        slug: concept/tools
+
+  - title:
+      de: Entwickler-Dokumentation
+      en: Developer docs
+    children:
+      - title:
+          de: Architektur
+          en: Architecture
+        slug: developer/architecture
+      - title:
+          de: Setup
+          en: Setup
+        slug: developer/setup
+      - title:
+          de: Plugin-Leitfaden
+          en: Plugin guide
+        slug: developer/plugin-guide
+      - title:
+          de: Storage-Layer
+          en: Storage layer
+        slug: developer/storage-layer
+      - title:
+          de: KI-Integration
+          en: AI integration
+        slug: developer/ai-integration
+      - title:
+          de: Testen
+          en: Testing
+        slug: developer/testing
+      - title:
+          de: Deployment
+          en: Deployment
+        slug: developer/deployment
+      - title:
+          de: i18n
+          en: i18n
+        slug: developer/i18n
+      - title:
+          de: Release-Prozess
+          en: Release workflow
+        slug: developer/release
+
+  - title:
+      de: API-Referenz
+      en: API reference
+    children:
+      - title:
+          de: Übersicht
+          en: Overview
+        slug: api/overview
+      - title:
+          de: Core-Endpoints
+          en: Core endpoints
+        slug: api/core-endpoints
+      - title:
+          de: Plugin-Endpoints
+          en: Plugin endpoints
+        slug: api/plugin-endpoints
+      - title:
+          de: Modelle
+          en: Models
+        slug: api/models
+      - title:
+          de: Hooks
+          en: Hooks
+        slug: api/hooks
