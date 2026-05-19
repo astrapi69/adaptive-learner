@@ -29,7 +29,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pluginforge = "^0.5.0"
+pluginforge = "^0.7.0"
 fastapi = "^0.118.0"
 
 [project.entry-points."adaptive_learner.plugins"]
@@ -54,6 +54,12 @@ from typing import Any
 class HelloPlugin(BasePlugin):
     name = "hello"
     version = "0.1.0"
+    # pluginforge v0.7.0+ identity gating. Set this to
+    # "adaptive_learner" so the host's PluginManager (which
+    # passes ``app_id="adaptive_learner"``) recognises the
+    # plugin as targeted at this app. Plugins without this
+    # attribute will be filtered out once v0.8.0 hosts ship.
+    target_application = "adaptive_learner"
     depends_on: list[str] = []
 
     @hookimpl

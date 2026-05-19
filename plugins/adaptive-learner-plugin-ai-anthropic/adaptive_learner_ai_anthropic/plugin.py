@@ -21,6 +21,7 @@ hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
 class AiAnthropicPlugin(BasePlugin):
     name = "ai-anthropic"
     version = "0.1.0"
+    target_application = "adaptive_learner"
     description = "Anthropic Claude provider for the ai_complete hook."
     author = "Asterios Raptis"
 

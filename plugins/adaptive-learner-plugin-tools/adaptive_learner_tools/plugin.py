@@ -15,6 +15,7 @@ hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
 class ToolsPlugin(BasePlugin):
     name = "tools"
     version = "0.1.0"
+    target_application = "adaptive_learner"
     description = (
         "Static external-tool recommendations tailored to the learner's method-weight profile."
     )

@@ -251,6 +251,13 @@ def resolve_cors_origins(config: dict[str, Any] | None = None) -> list[str]:
 manager = PluginManager(
     config_path=str(CONFIG_PATH),
     api_version="1",
+    # pluginforge v0.7.0+ identity gating. Plugins declare a
+    # ``target_application`` class attribute; the manager filters
+    # out anything that doesn't match. Keeps a host's plugin
+    # registry isolated from third-party plugins built for a
+    # different application that happen to share the
+    # ``adaptive_learner.plugins`` entry-point group.
+    app_id="adaptive_learner",
 )
 manager.register_hookspecs(AdaptiveLearnerHookSpec)
 

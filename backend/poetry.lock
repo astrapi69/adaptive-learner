@@ -2,7 +2,7 @@
 
 [[package]]
 name = "adaptive-learner-plugin-ai-anthropic"
-version = "0.2.0"
+version = "0.8.0"
 description = "Adaptive Learner: Anthropic Claude provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -12,7 +12,7 @@ develop = true
 
 [package.dependencies]
 anthropic = "^0.55.0"
-pluginforge = "^0.5.0"
+pluginforge = "^0.7.0"
 
 [package.source]
 type = "directory"
@@ -20,7 +20,7 @@ url = "../plugins/adaptive-learner-plugin-ai-anthropic"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-gemini"
-version = "0.2.0"
+version = "0.8.0"
 description = "Adaptive Learner: Google Gemini provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -30,7 +30,7 @@ develop = true
 
 [package.dependencies]
 google-genai = "^2.0.0"
-pluginforge = "^0.5.0"
+pluginforge = "^0.7.0"
 
 [package.source]
 type = "directory"
@@ -38,7 +38,7 @@ url = "../plugins/adaptive-learner-plugin-ai-gemini"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-openai"
-version = "0.2.0"
+version = "0.8.0"
 description = "Adaptive Learner: OpenAI GPT provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -48,7 +48,7 @@ develop = true
 
 [package.dependencies]
 openai = "^2.0.0"
-pluginforge = "^0.5.0"
+pluginforge = "^0.7.0"
 
 [package.source]
 type = "directory"
@@ -56,7 +56,7 @@ url = "../plugins/adaptive-learner-plugin-ai-openai"
 
 [[package]]
 name = "adaptive-learner-plugin-assessment"
-version = "0.2.0"
+version = "0.8.0"
 description = "Adaptive Learner: 12-question learner-profile assessment + 6-method-weight calculation."
 optional = false
 python-versions = "^3.11"
@@ -66,7 +66,7 @@ develop = true
 
 [package.dependencies]
 fastapi = "^0.136.0"
-pluginforge = "^0.5.0"
+pluginforge = "^0.7.0"
 pydantic = "^2.13.0"
 sqlalchemy = "^2.0.49"
 
@@ -76,7 +76,7 @@ url = "../plugins/adaptive-learner-plugin-assessment"
 
 [[package]]
 name = "adaptive-learner-plugin-session"
-version = "0.2.0"
+version = "0.8.0"
 description = "Adaptive Learner: 7-step learning cycle, per-method system prompts, stagnation-based method switching."
 optional = false
 python-versions = "^3.11"
@@ -86,7 +86,7 @@ develop = true
 
 [package.dependencies]
 fastapi = "^0.136.0"
-pluginforge = "^0.5.0"
+pluginforge = "^0.7.0"
 pydantic = "^2.13.0"
 sqlalchemy = "^2.0.49"
 
@@ -96,7 +96,7 @@ url = "../plugins/adaptive-learner-plugin-session"
 
 [[package]]
 name = "adaptive-learner-plugin-tools"
-version = "0.2.0"
+version = "0.8.0"
 description = "Adaptive Learner: static external-tool recommendations tailored to the learner's profile."
 optional = false
 python-versions = "^3.11"
@@ -106,7 +106,7 @@ develop = true
 
 [package.dependencies]
 fastapi = "^0.136.0"
-pluginforge = "^0.5.0"
+pluginforge = "^0.7.0"
 pydantic = "^2.13.0"
 sqlalchemy = "^2.0.49"
 
@@ -116,7 +116,7 @@ url = "../plugins/adaptive-learner-plugin-tools"
 
 [[package]]
 name = "adaptive-learner-plugin-tracking"
-version = "0.2.0"
+version = "0.8.0"
 description = "Adaptive Learner: writes ProgressCommit on session_complete + dashboard summary aggregator."
 optional = false
 python-versions = "^3.11"
@@ -126,7 +126,7 @@ develop = true
 
 [package.dependencies]
 fastapi = "^0.136.0"
-pluginforge = "^0.5.0"
+pluginforge = "^0.7.0"
 pydantic = "^2.13.0"
 sqlalchemy = "^2.0.49"
 
@@ -1767,7 +1767,7 @@ version = "26.2"
 description = "Core utilities for Python packages"
 optional = false
 python-versions = ">=3.8"
-groups = ["dev"]
+groups = ["main", "dev"]
 files = [
     {file = "packaging-26.2-py3-none-any.whl", hash = "sha256:5fc45236b9446107ff2415ce77c807cee2862cb6fac22b8a73826d0693b0980e"},
     {file = "packaging-26.2.tar.gz", hash = "sha256:ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661"},
@@ -1898,19 +1898,20 @@ testing = ["coverage", "pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pluginforge"
-version = "0.5.0"
+version = "0.7.0"
 description = "Application-agnostic plugin framework built on pluggy"
 optional = false
 python-versions = "<4.0,>=3.11"
 groups = ["main"]
 files = [
-    {file = "pluginforge-0.5.0-py3-none-any.whl", hash = "sha256:e120818bfbb93e915f494383a4b17a3c67ba4af8a4e4453a816fa1d752d3d8f2"},
-    {file = "pluginforge-0.5.0.tar.gz", hash = "sha256:65ae7d4bb2f5fe69757224553d43f356260fe863bf1e1c3eaca6c202e0a2e01f"},
+    {file = "pluginforge-0.7.0-py3-none-any.whl", hash = "sha256:c3e64ab9d3c55ba1ffce95eb7d9ce92d3059115eaf11a84c1f5c00e9e0266a4f"},
+    {file = "pluginforge-0.7.0.tar.gz", hash = "sha256:524c0e80a771d55d07f3db0653564641669baa186321a8dd51213b236be932c7"},
 ]
 
 [package.dependencies]
+packaging = ">=21.0"
 pluggy = ">=1.5.0,<2.0.0"
-pyyaml = ">=6.0,<7.0"
+pyyaml = ">=6.0,<7.0.0"
 
 [[package]]
 name = "pre-commit"
@@ -3053,4 +3054,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "3b13ce29794db0cff36fa0f02f00b20592d183235391cddf6f2265cafb88ad42"
+content-hash = "79f73c055e4863850ccf000218a5ab5adf41d78ffae526cd2e8bb030c59c1845"

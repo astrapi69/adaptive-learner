@@ -26,6 +26,7 @@ hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
 class TrackingPlugin(BasePlugin):
     name = "tracking"
     version = "0.1.0"
+    target_application = "adaptive_learner"
     description = "ProgressCommit writer on session-complete + dashboard summary aggregator."
     author = "Asterios Raptis"
 

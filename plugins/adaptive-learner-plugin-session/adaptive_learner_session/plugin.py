@@ -28,6 +28,7 @@ hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
 class SessionPlugin(BasePlugin):
     name = "session"
     version = "0.1.0"
+    target_application = "adaptive_learner"
     description = (
         "7-step learning cycle + per-method system prompts + stagnation-based method switching."
     )

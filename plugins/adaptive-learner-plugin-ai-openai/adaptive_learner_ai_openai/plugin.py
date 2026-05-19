@@ -21,6 +21,7 @@ hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
 class AiOpenAiPlugin(BasePlugin):
     name = "ai-openai"
     version = "0.1.0"
+    target_application = "adaptive_learner"
     description = "OpenAI GPT provider for the ai_complete hook."
     author = "Asterios Raptis"
 

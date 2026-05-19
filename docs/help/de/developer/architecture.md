@@ -46,9 +46,16 @@ Handler in `main.py` mappt sie auf HTTP-Codes.
 ## Plugin-System
 
 [PluginForge](https://github.com/astrapi69/pluginforge) ist
-ein externes PyPI-Paket (wir pinnen `^0.5.0`). Es umhüllt
+ein externes PyPI-Paket (wir pinnen `^0.7.0`). Es umhüllt
 [pluggy](https://pluggy.readthedocs.io/) — Pythons De-facto-
 Plugin-Spec, genutzt von pytest, tox, devpi und vielen mehr.
+
+v0.7.0 hat Identitäts-Gating gebracht: jedes Plugin
+deklariert ``target_application = "adaptive_learner"`` und der
+``PluginManager`` wird mit ``app_id="adaptive_learner"``
+konstruiert. Fremde Plugins, die eine andere App adressieren,
+werden automatisch herausgefiltert, selbst wenn ihre
+Entry-Point-Gruppe kollidiert.
 
 Acht Hook-Spezifikationen leben in `backend/app/hookspecs.py`.
 Sieben Plugins gehören zum Standardumfang:

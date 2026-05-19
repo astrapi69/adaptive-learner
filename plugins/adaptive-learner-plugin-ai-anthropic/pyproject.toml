@@ -8,7 +8,7 @@ packages = [{include = "adaptive_learner_ai_anthropic"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pluginforge = "^0.5.0"
+pluginforge = "^0.7.0"
 # anthropic 0.55 ships the messages.create API the plugin relies on.
 # Pinned with a caret so a future-incompatible 0.60 doesn't sneak in;
 # bump the lower bound when the project tests a newer release.

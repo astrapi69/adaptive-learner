@@ -33,6 +33,7 @@ hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
 class AssessmentPlugin(BasePlugin):
     name = "assessment"
     version = "0.1.0"
+    target_application = "adaptive_learner"
     description = "12-question learner-profile assessment + 6-method-weight calculation."
     author = "Asterios Raptis"
 

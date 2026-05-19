@@ -22,6 +22,7 @@ hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
 class AiGeminiPlugin(BasePlugin):
     name = "ai-gemini"
     version = "0.1.0"
+    target_application = "adaptive_learner"
     description = "Google Gemini provider for the ai_complete hook."
     author = "Asterios Raptis"
 
