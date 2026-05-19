@@ -269,12 +269,6 @@ describe("DexieStorage.assessment", () => {
 });
 
 describe("DexieStorage.unimplemented placeholders", () => {
-    it("session.start throws ApiError 501", async () => {
-        await expect(
-            dexieStorage.session.start({project_id: "p"}),
-        ).rejects.toMatchObject({status: 501});
-    });
-
     it("tracking.progress throws ApiError 501", async () => {
         await expect(
             dexieStorage.tracking.progress("p"),

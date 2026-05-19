@@ -32,11 +32,15 @@ import {
     type CurriculumRow,
     type LearningProfileRow,
     type LearningProjectRow,
+    type LearningSessionRow,
     type LearningTopicRow,
     type LessonRow,
+    type MethodSwitchRow,
+    type SessionRatingRow,
     type UserRow,
     type UserSettingsRow,
 } from "./db";
+import {sendMessage, startSession} from "./session-flow";
 import {ApiError} from "../api/client";
 import type {AIProvider, LearningMethod} from "../lib/constants";
 import type {
@@ -501,26 +505,124 @@ export const dexieStorage: IStorageService = {
     },
 
     session: {
-        start: async (_body: SessionStartBody): Promise<SessionStartResult> =>
-            notImplemented("session.start"),
-        message: async (
+        async start(body: SessionStartBody): Promise<SessionStartResult> {
+            return startSession({
+                projectId: body.project_id,
+                method: body.method,
+                cycleStep: body.cycle_step,
+                lang: body.lang,
+            });
+        },
+        async message(
+            sessionId: string,
+            body: SessionMessageBody,
+        ): Promise<SessionMessageExchangeResult> {
+            return sendMessage({
+                sessionId,
+                role: body.role,
+                content: body.content,
+            });
+        },
+        async rate(
+            sessionId: string,
+            body: SessionRatingBody,
+        ): Promise<SessionRating> {
+            const db = getDb();
+            const sess = await db.learningSessions.get(sessionId);
+            if (!sess) {
+                throw new ApiError(404, `Session ${sessionId} not found`);
+            }
+            const row: SessionRatingRow = {
+                id: newId(),
+                session_id: sessionId,
+                understanding: body.understanding,
+                stress: body.stress,
+                method_fit: body.method_fit,
+                notes: body.notes ?? null,
+                created_at: nowIso(),
+            };
+            await db.sessionRatings.add(row);
+            return {
+                id: row.id,
+                session_id: row.session_id,
+                understanding: row.understanding,
+                stress: row.stress,
+                method_fit: row.method_fit,
+                notes: row.notes,
+                created_at: row.created_at,
+            };
+        },
+        async end(sessionId: string): Promise<SessionEndResult> {
+            const db = getDb();
+            const sess = await db.learningSessions.get(sessionId);
+            if (!sess) {
+                throw new ApiError(404, `Session ${sessionId} not found`);
+            }
+            const ts = nowIso();
+            await db.learningSessions.update(sessionId, {
+                status: "completed",
+                ended_at: ts,
+            });
+            const fresh = await db.learningSessions.get(sessionId);
+            if (!fresh) {
+                throw new ApiError(500, "Session disappeared after end");
+            }
+            return {
+                session: {
+                    id: fresh.id,
+                    project_id: fresh.project_id,
+                    method: fresh.method,
+                    started_at: fresh.started_at,
+                    ended_at: fresh.ended_at,
+                    cycle_step: fresh.cycle_step,
+                    status: fresh.status,
+                },
+            };
+        },
+        async switchRecommendation(
             _sessionId: string,
-            _body: SessionMessageBody,
-        ): Promise<SessionMessageExchangeResult> => notImplemented("session.message"),
-        rate: async (
-            _sessionId: string,
-            _body: SessionRatingBody,
-        ): Promise<SessionRating> => notImplemented("session.rate"),
-        end: async (_sessionId: string): Promise<SessionEndResult> =>
-            notImplemented("session.end"),
-        switchRecommendation: async (
-            _sessionId: string,
-        ): Promise<SwitchRecommendation> =>
-            notImplemented("session.switchRecommendation"),
-        acceptSwitch: async (
-            _sessionId: string,
-            _body: {to_method: LearningMethod; reason: string},
-        ): Promise<LearningSession> => notImplemented("session.acceptSwitch"),
+        ): Promise<SwitchRecommendation> {
+            // Stagnation-based method-switch recommendation is
+            // deferred. Dexie mode returns "no recommendation"
+            // until enough rating data accumulates for a
+            // server-style heuristic to fire.
+            return {recommended: false, to_method: null, reason: null};
+        },
+        async acceptSwitch(
+            sessionId: string,
+            body: {to_method: LearningMethod; reason: string},
+        ): Promise<LearningSession> {
+            const db = getDb();
+            const sess = await db.learningSessions.get(sessionId);
+            if (!sess) {
+                throw new ApiError(404, `Session ${sessionId} not found`);
+            }
+            const from = sess.method;
+            await db.learningSessions.update(sessionId, {method: body.to_method});
+            const switchRow: MethodSwitchRow = {
+                id: newId(),
+                project_id: sess.project_id,
+                session_id: sessionId,
+                from_method: from,
+                to_method: body.to_method,
+                reason: body.reason,
+                switched_at: nowIso(),
+            };
+            await db.methodSwitches.add(switchRow);
+            const fresh = await db.learningSessions.get(sessionId);
+            if (!fresh) {
+                throw new ApiError(500, "Session disappeared after switch");
+            }
+            return {
+                id: fresh.id,
+                project_id: fresh.project_id,
+                method: fresh.method,
+                started_at: fresh.started_at,
+                ended_at: fresh.ended_at,
+                cycle_step: fresh.cycle_step,
+                status: fresh.status,
+            };
+        },
     },
 
     tracking: {
