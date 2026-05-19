@@ -41,6 +41,12 @@ import {
     type UserSettingsRow,
 } from "./db";
 import {sendMessage, startSession} from "./session-flow";
+import {
+    aggregateProgress,
+    buildCommitFromSession,
+    rowToCommit,
+} from "./tracking";
+import {buildSpacedRecommendations, rankTools, recencyFromCommits} from "./tools";
 import {ApiError} from "../api/client";
 import type {AIProvider, LearningMethod} from "../lib/constants";
 import type {
@@ -567,6 +573,20 @@ export const dexieStorage: IStorageService = {
             if (!fresh) {
                 throw new ApiError(500, "Session disappeared after end");
             }
+            // Mirror the backend's ``on_session_complete`` fan-out:
+            // pull the latest SessionRating for this session and
+            // write a ProgressCommit so tracking aggregates pick
+            // it up. No-op when the user ended without rating.
+            const ratings = await db.sessionRatings
+                .where("session_id")
+                .equals(sessionId)
+                .toArray();
+            ratings.sort((a, b) => a.created_at.localeCompare(b.created_at));
+            const latestRating = ratings.length > 0 ? ratings[ratings.length - 1] : null;
+            const commit = buildCommitFromSession(fresh, latestRating);
+            if (commit) {
+                await db.progressCommits.add(commit);
+            }
             return {
                 session: {
                     id: fresh.id,
@@ -626,21 +646,75 @@ export const dexieStorage: IStorageService = {
     },
 
     tracking: {
-        progress: async (_projectId: string): Promise<ProgressSummary> =>
-            notImplemented("tracking.progress"),
-        commits: async (_projectId: string): Promise<ProgressCommit[]> =>
-            notImplemented("tracking.commits"),
+        async progress(projectId: string): Promise<ProgressSummary> {
+            const db = getDb();
+            const commits = await db.progressCommits
+                .where("project_id")
+                .equals(projectId)
+                .toArray();
+            commits.sort((a, b) => a.committed_at.localeCompare(b.committed_at));
+            const trackingSlice = aggregateProgress(commits);
+            return {tracking: trackingSlice};
+        },
+        async commits(projectId: string): Promise<ProgressCommit[]> {
+            const db = getDb();
+            const rows = await db.progressCommits
+                .where("project_id")
+                .equals(projectId)
+                .toArray();
+            rows.sort((a, b) => a.committed_at.localeCompare(b.committed_at));
+            return rows.map(rowToCommit);
+        },
     },
 
     tools: {
-        recommendations: async (
-            _projectId: string,
-            _lang: string,
-        ): Promise<ToolRecommendation[]> => notImplemented("tools.recommendations"),
-        spaced: async (
-            _projectId: string,
-            _lang: string,
-        ): Promise<SpacedRecommendation[]> => notImplemented("tools.spaced"),
+        async recommendations(
+            projectId: string,
+            lang: string,
+        ): Promise<ToolRecommendation[]> {
+            const db = getDb();
+            const profile = await db.learningProfiles
+                .where("project_id")
+                .equals(projectId)
+                .first();
+            const weights = profile
+                ? {
+                      deductive: profile.deductive,
+                      inductive: profile.inductive,
+                      error_based: profile.error_based,
+                      dialogic: profile.dialogic,
+                      contextual: profile.contextual,
+                      ai_adaptive: profile.ai_adaptive,
+                  }
+                : {};
+            return rankTools(weights, lang);
+        },
+        async spaced(
+            projectId: string,
+            lang: string,
+        ): Promise<SpacedRecommendation[]> {
+            const db = getDb();
+            const profile = await db.learningProfiles
+                .where("project_id")
+                .equals(projectId)
+                .first();
+            if (!profile) return [];
+            const commits = await db.progressCommits
+                .where("project_id")
+                .equals(projectId)
+                .toArray();
+            commits.sort((a, b) => a.committed_at.localeCompare(b.committed_at));
+            const recency = recencyFromCommits(commits);
+            const weights = {
+                deductive: profile.deductive,
+                inductive: profile.inductive,
+                error_based: profile.error_based,
+                dialogic: profile.dialogic,
+                contextual: profile.contextual,
+                ai_adaptive: profile.ai_adaptive,
+            };
+            return buildSpacedRecommendations(weights, recency, lang);
+        },
     },
 
     curricula: {

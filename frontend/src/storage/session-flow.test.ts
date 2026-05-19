@@ -256,6 +256,43 @@ describe("session.rate / end / acceptSwitch / switchRecommendation", () => {
         expect(rec.recommended).toBe(false);
     });
 
+    it("end writes a ProgressCommit row when a rating exists", async () => {
+        const {projectId} = await setupUserWithKey();
+        const start = await dexieStorage.session.start({project_id: projectId});
+        await dexieStorage.session.rate(start.session.id, {
+            understanding: 5,
+            stress: 1,
+            method_fit: 5,
+        });
+        await dexieStorage.session.end(start.session.id);
+        const commits = await dexieStorage.tracking.commits(projectId);
+        expect(commits).toHaveLength(1);
+        expect(commits[0].understanding).toBe(1);
+        expect(commits[0].stress).toBe(0.2);
+    });
+
+    it("end without rating writes no ProgressCommit", async () => {
+        const {projectId} = await setupUserWithKey();
+        const start = await dexieStorage.session.start({project_id: projectId});
+        await dexieStorage.session.end(start.session.id);
+        const commits = await dexieStorage.tracking.commits(projectId);
+        expect(commits).toHaveLength(0);
+    });
+
+    it("tracking.progress reflects committed sessions", async () => {
+        const {projectId} = await setupUserWithKey();
+        const start = await dexieStorage.session.start({project_id: projectId});
+        await dexieStorage.session.rate(start.session.id, {
+            understanding: 4,
+            stress: 2,
+            method_fit: 4,
+        });
+        await dexieStorage.session.end(start.session.id);
+        const summary = await dexieStorage.tracking.progress(projectId);
+        expect(summary.tracking?.total_sessions).toBe(1);
+        expect(summary.tracking?.sessions_per_method.deductive).toBe(1);
+    });
+
     it("acceptSwitch updates method and writes a MethodSwitch row", async () => {
         const {projectId} = await setupUserWithKey();
         const start = await dexieStorage.session.start({project_id: projectId});

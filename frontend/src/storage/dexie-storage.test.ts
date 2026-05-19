@@ -268,17 +268,57 @@ describe("DexieStorage.assessment", () => {
     });
 });
 
-describe("DexieStorage.unimplemented placeholders", () => {
-    it("tracking.progress throws ApiError 501", async () => {
-        await expect(
-            dexieStorage.tracking.progress("p"),
-        ).rejects.toMatchObject({status: 501});
+describe("DexieStorage.tracking + tools (empty project)", () => {
+    it("tracking.progress returns an empty namespace for a fresh project", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+        const summary = await dexieStorage.tracking.progress(p.id);
+        expect(summary.tracking?.total_sessions).toBe(0);
+        expect(summary.tracking?.total_minutes).toBe(0);
+        expect(summary.tracking?.streak_days).toBe(0);
+        expect(summary.tracking?.method_distribution).toHaveLength(6);
     });
 
-    it("tools.recommendations throws ApiError 501", async () => {
-        await expect(
-            dexieStorage.tools.recommendations("p", "en"),
-        ).rejects.toMatchObject({status: 501});
+    it("tracking.commits returns [] for fresh project", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+        const list = await dexieStorage.tracking.commits(p.id);
+        expect(list).toEqual([]);
+    });
+
+    it("tools.recommendations works without a profile (zero scores, authored order)", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+        const recs = await dexieStorage.tools.recommendations(p.id, "en");
+        expect(recs).toHaveLength(5);
+        expect(recs[0].name).toBe("Anki");
+        for (const r of recs) expect(r.score).toBe(0);
+    });
+
+    it("tools.spaced is empty without a profile", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+        expect(await dexieStorage.tools.spaced(p.id, "en")).toEqual([]);
     });
 });
 
