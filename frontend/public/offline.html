@@ -12,8 +12,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Offline — Adaptive Learner</title>
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <!-- Relative paths so this page works at any base (e.g.
+         /favicon.ico in local dev, /adaptive-learner/favicon.ico on
+         GH Pages). Vite does NOT process files in public/, so
+         absolute /favicon.ico would NOT get the base prefix. -->
+    <link rel="icon" href="favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta name="theme-color" content="#6366f1">
     <style>
         html, body {

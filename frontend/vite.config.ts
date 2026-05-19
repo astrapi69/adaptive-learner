@@ -5,15 +5,23 @@ import {VitePWA} from "vite-plugin-pwa";
 
 import pkg from "./package.json" with {type: "json"};
 
+/**
+ * Base path for the public deployment. GH Pages serves the
+ * site under ``/<repo>/`` (e.g. ``/adaptive-learner/``) so
+ * Vite must prefix every asset URL with that path. CI sets
+ * ``VITE_BASE`` from the workflow; local dev + Docker builds
+ * leave it empty so the path stays ``/``.
+ *
+ * Hoisted to a module-level const so the PWA plugin manifest +
+ * Workbox config can reference the same value (manifest fields
+ * ``start_url``/``scope``/icon ``src`` and Workbox
+ * ``navigateFallback`` all need the prefix, otherwise the
+ * installed PWA + SW point at the wrong URLs).
+ */
+const base = (process.env.VITE_BASE as string) || "/";
+
 export default defineConfig({
-    /**
-     * Base path for the public deployment. GH Pages serves the
-     * site under ``/<repo>/`` (e.g. ``/adaptive-learner/``) so
-     * Vite must prefix every asset URL with that path. CI sets
-     * ``VITE_BASE`` from the workflow; local dev + Docker builds
-     * leave it empty so the path stays ``/``.
-     */
-    base: (process.env.VITE_BASE as string) || "/",
+    base,
     define: {
         // Single source of truth: package.json. Replaced at build
         // time (and during vitest runs) by the literal string.
@@ -52,8 +60,8 @@ export default defineConfig({
                 background_color: "#ffffff",
                 display: "standalone",
                 orientation: "any",
-                start_url: "/",
-                scope: "/",
+                start_url: base,
+                scope: base,
                 lang: "en",
                 categories: ["education", "productivity"],
                 icons: [
@@ -63,10 +71,10 @@ export default defineConfig({
                     // switchers fall back to the PNG. ``maskable``
                     // ensures Android can crop the icon into its
                     // platform shape without losing the network mark.
-                    {src: "/icon-192.svg", sizes: "192x192", type: "image/svg+xml", purpose: "any"},
-                    {src: "/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable"},
-                    {src: "/icon-512.svg", sizes: "512x512", type: "image/svg+xml", purpose: "any"},
-                    {src: "/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable"},
+                    {src: `${base}icon-192.svg`, sizes: "192x192", type: "image/svg+xml", purpose: "any"},
+                    {src: `${base}icon-192.png`, sizes: "192x192", type: "image/png", purpose: "any maskable"},
+                    {src: `${base}icon-512.svg`, sizes: "512x512", type: "image/svg+xml", purpose: "any"},
+                    {src: `${base}icon-512.png`, sizes: "512x512", type: "image/png", purpose: "any maskable"},
                 ],
             },
             workbox: {
@@ -74,11 +82,16 @@ export default defineConfig({
                 // is one of them so the SW can serve it without a
                 // network roundtrip.
                 globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
-                navigateFallback: "/index.html",
+                // navigateFallback must include the base prefix so it
+                // matches the precached index.html entry (which is
+                // resolved against the SW's directory). Same with the
+                // denylist regex — escape the base for use inside a
+                // RegExp.
+                navigateFallback: `${base}index.html`,
                 navigateFallbackDenylist: [
                     // Don't intercept API endpoints with the SPA
                     // index — let them return real 404/5xx.
-                    /^\/api\//,
+                    new RegExp(`^${base.replace(/\//g, "\\/")}api\\/`),
                 ],
                 runtimeCaching: [
                     {

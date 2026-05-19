@@ -89,7 +89,7 @@ export default function Landing() {
         <main data-testid="landing" className="landing-page">
             <header className="landing-brand">
                 <img
-                    src="/icon-192.svg"
+                    src={`${import.meta.env.BASE_URL}icon-192.svg`}
                     alt=""
                     aria-hidden="true"
                     className="landing-logo"
@@ -138,7 +138,7 @@ export default function Landing() {
 
             <p className="landing-secondary">
                 <a
-                    href="docs/"
+                    href={`${import.meta.env.BASE_URL}docs/`}
                     data-testid="landing-docs-link"
                     className="landing-secondary-link"
                 >

@@ -44,7 +44,7 @@ export default function Navigation() {
         >
             <NavLink to="/dashboard" className="nav-brand">
                 <img
-                    src="/icon-192.svg"
+                    src={`${import.meta.env.BASE_URL}icon-192.svg`}
                     alt=""
                     aria-hidden="true"
                     width={28}
