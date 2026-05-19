@@ -21,6 +21,7 @@
  */
 
 import {apiStorage} from "./api-storage";
+import {getDb} from "./db";
 import {dexieStorage} from "./dexie-storage";
 import type {IStorageService, StorageMode} from "./types";
 
@@ -103,7 +104,6 @@ export function _resetStorageCacheForTests(): void {
 export async function getStorageRowCounts(): Promise<Record<string, number>> {
     const mode = resolveStorageMode();
     if (mode !== "dexie") return {};
-    const {getDb} = await import("./db");
     const db = getDb();
     return {
         users: await db.users.count(),

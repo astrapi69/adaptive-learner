@@ -1,0 +1,83 @@
+name: Deploy GitHub Pages
+
+# Phase 10G — publish the Dexie-mode frontend to GitHub Pages.
+# Triggered on every push to main; the workflow can also be run
+# manually from the Actions tab. The deployed site uses the
+# Dexie storage backend (no backend required); the SPA shell
+# falls back to the inline i18n strings + the bundled
+# assessment-questions.json so the first paint always works.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+# Defensive opt-in: any JavaScript-runtime action still declaring
+# Node 20 (third-party or stragglers) is coerced to Node 24.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  # GH Pages serves the site under ``/<repo>/``. Vite's ``base``
+  # reads this env so every asset URL gets the right prefix.
+  VITE_BASE: "/adaptive-learner/"
+  # Force the Dexie storage backend on the deployed site; the
+  # storage factory falls back to ApiStorage when this is empty.
+  VITE_STORAGE_MODE: "dexie"
+  # No backend in the public deployment.
+  VITE_API_BASE: ""
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build for GH Pages
+        working-directory: frontend
+        run: npm run build
+
+      # The default SPA-router fallback for GH Pages is to copy
+      # index.html to 404.html. Without it, any direct hit on a
+      # nested route (``/dashboard``, ``/settings``) returns a
+      # GH-Pages 404 instead of letting React Router resolve the
+      # path client-side.
+      - name: Configure SPA fallback
+        run: cp frontend/dist/index.html frontend/dist/404.html
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: frontend/dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

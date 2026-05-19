@@ -6,6 +6,14 @@ import {VitePWA} from "vite-plugin-pwa";
 import pkg from "./package.json" with {type: "json"};
 
 export default defineConfig({
+    /**
+     * Base path for the public deployment. GH Pages serves the
+     * site under ``/<repo>/`` (e.g. ``/adaptive-learner/``) so
+     * Vite must prefix every asset URL with that path. CI sets
+     * ``VITE_BASE`` from the workflow; local dev + Docker builds
+     * leave it empty so the path stays ``/``.
+     */
+    base: (process.env.VITE_BASE as string) || "/",
     define: {
         // Single source of truth: package.json. Replaced at build
         // time (and during vitest runs) by the literal string.
