@@ -175,7 +175,7 @@ Docs-Venv unter
 | Backend | Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry, Alembic |
 | Frontend | React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model |
 | PWA | vite-plugin-pwa, Workbox-Service-Worker, Manifest + maskable PNG-Icons |
-| Plugins | pluginforge ^0.5.0 (PyPI), pluggy-Entry-Points unter `adaptive_learner.plugins` |
+| Plugins | pluginforge ^0.7.0 (PyPI), pluggy-Entry-Points unter `adaptive_learner.plugins` |
 | KI-Anbieter | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, plattformübergreifend (Linux + macOS + Windows) |
 | Testing | pytest, Vitest, Playwright |

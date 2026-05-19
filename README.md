@@ -1,7 +1,7 @@
 # Adaptive Learner
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
+[![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
 An adaptive learning system built on a research-backed six-method
 model (Asterios Raptis, *Von Theorie zur Praxis*, Medium series).
@@ -14,16 +14,17 @@ decide when the learner is ready to advance.
 
 ## Documentation
 
-Full documentation (DE + EN):
-[**astrapi69.github.io/adaptive-learner/docs/**](https://astrapi69.github.io/adaptive-learner/docs/)
+Full documentation (German default at `/docs/`, English at
+`/docs/en/`):
+[**astrapi69.github.io/adaptive-learner/docs/en/**](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
-- [User Guide](https://astrapi69.github.io/adaptive-learner/docs/user-guide/getting-started/)
+- [User Guide](https://astrapi69.github.io/adaptive-learner/docs/en/user-guide/getting-started/)
   — how to use the app
-- [The Learning Method](https://astrapi69.github.io/adaptive-learner/docs/concept/philosophy/)
+- [The Learning Method](https://astrapi69.github.io/adaptive-learner/docs/en/concept/philosophy/)
   — why adaptive learning works
-- [Developer Guide](https://astrapi69.github.io/adaptive-learner/docs/developer/architecture/)
+- [Developer Guide](https://astrapi69.github.io/adaptive-learner/docs/en/developer/architecture/)
   — architecture, plugins, contributing
-- [API Reference](https://astrapi69.github.io/adaptive-learner/docs/api/overview/)
+- [API Reference](https://astrapi69.github.io/adaptive-learner/docs/en/api/overview/)
   — all endpoints and models
 
 ## Install
@@ -66,7 +67,7 @@ The launcher downloads the matching tagged source tree on first
 run, builds the Docker images, and starts the app on
 `http://localhost:7880`. Building the launcher from source is
 documented in
-[docs/developer/deployment](https://astrapi69.github.io/adaptive-learner/docs/developer/deployment/).
+[docs/developer/deployment](https://astrapi69.github.io/adaptive-learner/docs/en/developer/deployment/).
 
 ### 3. Docker (self-hosted)
 
@@ -107,7 +108,7 @@ cd ~/adaptive-learner
 
 Port and other knobs (CORS origins, debug mode) live in the
 generated `.env`. See
-[docs/developer/deployment](https://astrapi69.github.io/adaptive-learner/docs/developer/deployment/)
+[docs/developer/deployment](https://astrapi69.github.io/adaptive-learner/docs/en/developer/deployment/)
 for the full config-chain reference.
 
 ### 4. Developer setup (source build)
@@ -124,7 +125,7 @@ make dev             # backend on :18001, frontend on :15174 (Vite dev server)
 
 Full setup walkthrough, including pre-commit hooks and the
 docs venv, lives at
-[docs/developer/setup](https://astrapi69.github.io/adaptive-learner/docs/developer/setup/).
+[docs/developer/setup](https://astrapi69.github.io/adaptive-learner/docs/en/developer/setup/).
 
 ## What you get
 
@@ -164,7 +165,7 @@ docs venv, lives at
 | Backend | Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry, Alembic |
 | Frontend | React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model |
 | PWA | vite-plugin-pwa, Workbox service worker, manifest + maskable PNG icons |
-| Plugins | pluginforge ^0.5.0 (PyPI), pluggy entry points under group `adaptive_learner.plugins` |
+| Plugins | pluginforge ^0.7.0 (PyPI), pluggy entry points under group `adaptive_learner.plugins` |
 | AI providers | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, cross-OS (Linux + macOS + Windows) |
 | Testing | pytest, Vitest, Playwright |
