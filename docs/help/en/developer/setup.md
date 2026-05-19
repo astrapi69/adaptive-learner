@@ -1,3 +1,124 @@
-# Setup
+# Development setup
 
-_Stub — content lands in 11B-11F._
+## Prerequisites
+
+- **Python 3.12+** (3.11 also works for backend, but plugins
+  test with 3.12).
+- **Node 24+** (required by Vite 8). Older Node versions will
+  fail at the build step with `crypto.hash is not a function`.
+- **Poetry** for Python dependency management. Install:
+  `curl -sSL https://install.python-poetry.org | python3 -`.
+- **npm** (ships with Node).
+- **GNU Make** for the orchestration targets. The Makefile is
+  the source of truth — every CI command is in there.
+
+## Clone + install
+
+```bash
+git clone git@github.com:astrapi69/adaptive-learner.git
+cd adaptive-learner
+make install
+```
+
+`make install` runs:
+
+1. `cd backend && poetry install` — backend + plugin path-deps.
+2. `cd frontend && npm ci` — frontend dependencies (Node 24).
+3. Installs every plugin in `plugins/` as a path-dep into the
+   backend's venv (`develop = true` so edits are live).
+
+If `make install` fails, the most common culprit is Poetry
+picking the wrong Python. Run `poetry env use python3.12` in
+`backend/` (and each plugin if you went deep) and re-install.
+
+## Configuration
+
+The backend reads its config from a three-layer chain:
+
+1. **Defaults** in `backend/config/app.yaml`.
+2. **User overlay** at `~/.config/adaptive_learner/secrets.yaml`
+   (gitignored, optional).
+3. **Environment variables** prefixed `ADAPTIVE_LEARNER_*` —
+   highest precedence.
+
+The one mandatory env var is `ADAPTIVE_LEARNER_SECRET_KEY` —
+used to encrypt user API keys at rest with Fernet. Generate
+one with `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
+If you don't set it, `start.sh` auto-generates one and writes
+it to `~/.config/adaptive_learner/secrets.yaml`.
+
+## Run
+
+```bash
+make dev
+```
+
+Spins up backend on port 18001 and frontend on port 15174, in
+parallel. Backend has hot-reload via uvicorn's `--reload`;
+frontend is Vite's dev server. Press Ctrl-C once to stop both.
+
+Background mode:
+
+```bash
+make dev-bg   # start backend + frontend in the background
+make dev-down # stop them
+```
+
+## Tests
+
+```bash
+make test                 # backend + plugins + frontend Vitest
+make test-backend         # backend pytest only
+make test-frontend        # frontend Vitest only
+make test-coverage        # opt-in coverage run (slow)
+```
+
+E2E tests:
+
+```bash
+cd e2e && npx playwright test
+```
+
+Smoke specs only — no UI exhaustive coverage yet. Smoke specs
+cover landing, onboarding, session, settings, curriculum,
+mobile viewports.
+
+## Linting + formatting
+
+```bash
+cd backend && poetry run ruff check .       # Python lint
+cd backend && poetry run ruff format .      # Python format
+cd frontend && npx tsc --noEmit             # TypeScript check
+cd frontend && npm run lint                 # ESLint
+cd frontend && npm run format               # Prettier
+```
+
+Pre-commit hooks enforce ruff + formatter checks on every
+commit:
+
+```bash
+cd backend && poetry run pre-commit install
+```
+
+## Docs
+
+```bash
+make docs-install   # one-time, installs MkDocs venv in docs/
+make docs-serve     # serve docs on localhost:8000 with hot-reload
+make docs-build     # build static site to site/
+```
+
+The docs venv is separate from backend's — MkDocs has its
+own `docs/pyproject.toml` with mkdocs-material +
+mkdocs-static-i18n.
+
+## Common gotchas
+
+- **`make dev` crashes with "port already in use"**: another
+  AdaptiveLearner instance is still running. `make dev-down`
+  or `pkill -f uvicorn`.
+- **Tests fail with "duplicate column name"**: an Alembic
+  migration changed the schema. Delete
+  `backend/adaptive_learner.db` and re-run.
+- **`npm run build` fails on Node 18**: bump to Node 24.
+  Vite 8 requires it.
