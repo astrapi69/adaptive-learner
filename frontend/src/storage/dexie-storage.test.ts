@@ -194,16 +194,81 @@ describe("DexieStorage.curricula + topics + lessons", () => {
     });
 });
 
-describe("DexieStorage.unimplemented placeholders", () => {
-    it("assessment.questions throws ApiError 501", async () => {
-        await expect(dexieStorage.assessment.questions("de")).rejects.toBeInstanceOf(
-            ApiError,
-        );
-        await expect(
-            dexieStorage.assessment.questions("de"),
-        ).rejects.toMatchObject({status: 501});
+describe("DexieStorage.assessment", () => {
+    it("questions resolves the 12-pack locally", async () => {
+        const qs = await dexieStorage.assessment.questions("de");
+        expect(qs).toHaveLength(12);
+        expect(qs[0].id).toBe("q01");
     });
 
+    it("evaluate creates a profile + profile() reads it back", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+        const profile = await dexieStorage.assessment.evaluate({
+            project_id: p.id,
+            answers: [{question_id: "q01", answer_id: "a"}],
+        });
+        expect(profile.project_id).toBe(p.id);
+        expect(profile.user_id).toBe(u.id);
+        expect(profile.deductive).toBeCloseTo(0.0833, 4);
+        expect(profile.version).toBe(1);
+        expect(profile.dominant_method).toBe("deductive");
+
+        const re = await dexieStorage.assessment.profile(p.id);
+        expect(re.id).toBe(profile.id);
+    });
+
+    it("re-evaluating bumps version and reuses the same row", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+        const v1 = await dexieStorage.assessment.evaluate({
+            project_id: p.id,
+            answers: [{question_id: "q01", answer_id: "a"}],
+        });
+        const v2 = await dexieStorage.assessment.evaluate({
+            project_id: p.id,
+            answers: [{question_id: "q01", answer_id: "c"}],
+        });
+        expect(v2.id).toBe(v1.id);
+        expect(v2.version).toBe(2);
+        expect(v2.deductive).toBe(0);
+        expect(v2.error_based).toBeCloseTo(0.0833, 4);
+    });
+
+    it("profile() 404s when no evaluation has been run", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+        await expect(
+            dexieStorage.assessment.profile(p.id),
+        ).rejects.toMatchObject({status: 404});
+    });
+
+    it("evaluate against unknown project 404s", async () => {
+        await expect(
+            dexieStorage.assessment.evaluate({
+                project_id: "nope",
+                answers: [{question_id: "q01", answer_id: "a"}],
+            }),
+        ).rejects.toMatchObject({status: 404});
+    });
+});
+
+describe("DexieStorage.unimplemented placeholders", () => {
     it("session.start throws ApiError 501", async () => {
         await expect(
             dexieStorage.session.start({project_id: "p"}),

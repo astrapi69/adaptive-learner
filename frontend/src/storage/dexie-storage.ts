@@ -23,12 +23,14 @@
 
 import type {EntityTable} from "dexie";
 
+import {calculateProfile, questionsForLang} from "./assessment";
 import {
     getDb,
     newId,
     nowIso,
     type AdaptiveLearnerDB,
     type CurriculumRow,
+    type LearningProfileRow,
     type LearningProjectRow,
     type LearningTopicRow,
     type LessonRow,
@@ -144,6 +146,41 @@ function rowToTopic(row: LearningTopicRow): LearningTopic {
         order_index: row.order_index,
         created_at: row.created_at,
         updated_at: row.updated_at,
+    };
+}
+
+function rowToProfile(row: LearningProfileRow): LearningProfile {
+    const weights = {
+        deductive: row.deductive,
+        inductive: row.inductive,
+        error_based: row.error_based,
+        dialogic: row.dialogic,
+        contextual: row.contextual,
+        ai_adaptive: row.ai_adaptive,
+    };
+    // Alphabetical tie-break, matches LearningProfile.dominant_method on backend.
+    const sortedKeys = (Object.keys(weights) as (keyof typeof weights)[]).sort();
+    let dominant = sortedKeys[0];
+    let bestVal = -Infinity;
+    for (const k of sortedKeys) {
+        if (weights[k] > bestVal) {
+            dominant = k;
+            bestVal = weights[k];
+        }
+    }
+    return {
+        id: row.id,
+        user_id: row.user_id,
+        project_id: row.project_id,
+        deductive: row.deductive,
+        inductive: row.inductive,
+        error_based: row.error_based,
+        dialogic: row.dialogic,
+        contextual: row.contextual,
+        ai_adaptive: row.ai_adaptive,
+        assessed_at: row.assessed_at,
+        version: row.version,
+        dominant_method: dominant,
     };
 }
 
@@ -421,12 +458,46 @@ export const dexieStorage: IStorageService = {
     },
 
     assessment: {
-        questions: async (_lang: string): Promise<AssessmentQuestion[]> =>
-            notImplemented("assessment.questions"),
-        evaluate: async (_body: AssessmentEvaluatePayload): Promise<LearningProfile> =>
-            notImplemented("assessment.evaluate"),
-        profile: async (_projectId: string): Promise<LearningProfile> =>
-            notImplemented("assessment.profile"),
+        questions: async (lang: string): Promise<AssessmentQuestion[]> =>
+            questionsForLang(lang),
+        async evaluate(body: AssessmentEvaluatePayload): Promise<LearningProfile> {
+            const db = getDb();
+            const project = await requireRow(
+                db.learningProjects,
+                body.project_id,
+                "Project",
+            );
+            const weights = calculateProfile(body.answers);
+            const ts = nowIso();
+            // One-profile-per-project: replace any existing row so
+            // re-running the assessment overwrites cleanly. Bump
+            // ``version`` so consumers can detect rewrites.
+            const existing = await db.learningProfiles
+                .where("project_id")
+                .equals(body.project_id)
+                .first();
+            const row: LearningProfileRow = {
+                id: existing ? existing.id : newId(),
+                user_id: project.user_id,
+                project_id: project.id,
+                ...weights,
+                assessed_at: ts,
+                version: existing ? existing.version + 1 : 1,
+            };
+            await db.learningProfiles.put(row);
+            return rowToProfile(row);
+        },
+        async profile(projectId: string): Promise<LearningProfile> {
+            const db = getDb();
+            const row = await db.learningProfiles
+                .where("project_id")
+                .equals(projectId)
+                .first();
+            if (!row) {
+                throw new ApiError(404, `Profile for project ${projectId} not found`);
+            }
+            return rowToProfile(row);
+        },
     },
 
     session: {
