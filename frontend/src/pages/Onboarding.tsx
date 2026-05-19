@@ -1,10 +1,11 @@
 import {useState, type FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 
-import {api, ApiError} from "../api/client";
+import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {SUPPORTED_LANGUAGES} from "../lib/constants";
 import {setProjectId, setUserId} from "../lib/learnerState";
+import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
 
 /**
@@ -78,12 +79,12 @@ export default function Onboarding() {
         setSubmitting(true);
         try {
             const language = lang || defaultLanguageFromBrowser();
-            const user = await api.users.create({
+            const user = await getStorage().users.create({
                 name: t("onboarding.skip_default_name", "Learner"),
                 language,
             });
             setUserId(user.id);
-            const project = await api.users.projects.create(user.id, {
+            const project = await getStorage().users.projects.create(user.id, {
                 topic: t("onboarding.skip_default_topic", "My learning"),
                 goal: t(
                     "onboarding.skip_default_goal",
@@ -115,9 +116,9 @@ export default function Onboarding() {
         if (submitting || !allRequiredFilled) return;
         setSubmitting(true);
         try {
-            const user = await api.users.create({name: name.trim(), language: lang});
+            const user = await getStorage().users.create({name: name.trim(), language: lang});
             setUserId(user.id);
-            const project = await api.users.projects.create(user.id, {
+            const project = await getStorage().users.projects.create(user.id, {
                 topic: topic.trim(),
                 goal: goal.trim(),
                 timeframe: timeframe.trim(),

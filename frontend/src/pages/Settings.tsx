@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-import {api, ApiError} from "../api/client";
+import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {
     AI_PROVIDERS,
@@ -10,6 +10,7 @@ import {
     type AIProvider,
 } from "../lib/constants";
 import {readLearnerState, setLanguage} from "../lib/learnerState";
+import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
 import type {UserSettings} from "../types";
 
@@ -59,7 +60,7 @@ export default function Settings() {
             return;
         }
         let cancelled = false;
-        api.settings
+        getStorage().settings
             .get(userId)
             .then((s) => {
                 if (cancelled) return;
@@ -86,7 +87,7 @@ export default function Settings() {
         if (!settings || busy) return;
         setBusy("lang");
         try {
-            const updated = await api.settings.update(settings.user_id, {
+            const updated = await getStorage().settings.update(settings.user_id, {
                 language: newLang,
             });
             setSettings(updated);
@@ -105,7 +106,7 @@ export default function Settings() {
         if (!settings || busy) return;
         setBusy("provider");
         try {
-            const updated = await api.settings.update(settings.user_id, {
+            const updated = await getStorage().settings.update(settings.user_id, {
                 active_provider: provider,
             });
             setSettings(updated);
@@ -124,7 +125,7 @@ export default function Settings() {
         if (key.length === 0) return;
         setBusy(`save-${provider}`);
         try {
-            const updated = await api.settings.setApiKey(settings.user_id, {
+            const updated = await getStorage().settings.setApiKey(settings.user_id, {
                 provider,
                 key,
             });
@@ -146,7 +147,7 @@ export default function Settings() {
         if (draft === current) return;
         setBusy(`save-model-${provider}`);
         try {
-            const updated = await api.settings.update(settings.user_id, {
+            const updated = await getStorage().settings.update(settings.user_id, {
                 [`model_override_${provider}`]: draft,
             });
             setSettings(updated);
@@ -166,7 +167,7 @@ export default function Settings() {
         if (!settings || busy) return;
         setBusy(`clear-model-${provider}`);
         try {
-            const updated = await api.settings.update(settings.user_id, {
+            const updated = await getStorage().settings.update(settings.user_id, {
                 [`model_override_${provider}`]: "",
             });
             setSettings(updated);
@@ -188,7 +189,7 @@ export default function Settings() {
         if (!ok) return;
         setBusy(`delete-${provider}`);
         try {
-            const updated = await api.settings.deleteApiKey(settings.user_id, provider);
+            const updated = await getStorage().settings.deleteApiKey(settings.user_id, provider);
             setSettings(updated);
             notify.success(t("toast.api_key_deleted", "API key removed."));
         } catch (err) {

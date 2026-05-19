@@ -4,9 +4,10 @@ import {useNavigate} from "react-router-dom";
 import AssessmentProgress from "../components/AssessmentProgress";
 import ProfileRadar from "../components/ProfileRadar";
 import QuestionCard from "../components/QuestionCard";
-import {api, ApiError} from "../api/client";
+import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
+import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
 import type {AssessmentQuestion, LearningProfile} from "../types";
 
@@ -57,7 +58,7 @@ export default function Assessment() {
             return;
         }
         let cancelled = false;
-        api.assessment
+        getStorage().assessment
             .questions(lang)
             .then((qs) => {
                 if (cancelled) return;
@@ -117,7 +118,7 @@ export default function Assessment() {
         }
         setSubmitting(true);
         try {
-            const result = await api.assessment.evaluate({
+            const result = await getStorage().assessment.evaluate({
                 project_id: projectId,
                 answers: questions.map((q) => ({
                     question_id: q.id,

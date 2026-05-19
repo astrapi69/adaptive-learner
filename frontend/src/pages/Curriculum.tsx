@@ -4,9 +4,10 @@ import {useNavigate} from "react-router-dom";
 import AddTopicDialog from "../components/AddTopicDialog";
 import LessonList from "../components/LessonList";
 import TopicTree from "../components/TopicTree";
-import {api, ApiError} from "../api/client";
+import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
+import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
 import type {Curriculum, LearningTopic, Lesson} from "../types";
 
@@ -49,7 +50,7 @@ export default function Curriculum() {
 
     const reloadTopics = useCallback(async (curriculumId: string) => {
         try {
-            const fresh = await api.curricula.listTopics(curriculumId);
+            const fresh = await getStorage().curricula.listTopics(curriculumId);
             setTopics(fresh);
         } catch (err) {
             const detail =
@@ -60,7 +61,7 @@ export default function Curriculum() {
 
     const reloadLessons = useCallback(async (curriculumId: string) => {
         try {
-            const fresh = await api.curricula.listLessons(curriculumId);
+            const fresh = await getStorage().curricula.listLessons(curriculumId);
             setLessons(fresh);
         } catch (err) {
             const detail =
@@ -73,7 +74,7 @@ export default function Curriculum() {
         if (!selectedId || submitting) return;
         setSubmitting(true);
         try {
-            await api.curricula.createLesson(selectedId, {title});
+            await getStorage().curricula.createLesson(selectedId, {title});
             await reloadLessons(selectedId);
             notify.success(t("curriculum.lesson_created", "Lesson created."));
         } catch (err) {
@@ -92,7 +93,7 @@ export default function Curriculum() {
         if (!selectedId || submitting) return;
         setSubmitting(true);
         try {
-            await api.lessons.update(lessonId, {title, content});
+            await getStorage().lessons.update(lessonId, {title, content});
             await reloadLessons(selectedId);
             notify.success(t("curriculum.lesson_saved", "Lesson saved."));
         } catch (err) {
@@ -111,7 +112,7 @@ export default function Curriculum() {
         if (!ok) return;
         setSubmitting(true);
         try {
-            await api.lessons.remove(lessonId);
+            await getStorage().lessons.remove(lessonId);
             await reloadLessons(selectedId);
             notify.success(t("curriculum.lesson_deleted", "Lesson deleted."));
         } catch (err) {
@@ -130,7 +131,7 @@ export default function Curriculum() {
             return;
         }
         let cancelled = false;
-        api.curricula
+        getStorage().curricula
             .list(userId)
             .then((list) => {
                 if (cancelled) return;
@@ -173,7 +174,7 @@ export default function Curriculum() {
         if (!userId) return;
         setCreatingCurriculum(true);
         try {
-            const created = await api.curricula.create(userId, {title});
+            const created = await getStorage().curricula.create(userId, {title});
             setCurricula((prev) => [...prev, created]);
             setSelectedId(created.id);
             setNewCurriculumTitle("");
@@ -191,17 +192,17 @@ export default function Curriculum() {
         setSubmitting(true);
         try {
             if (dialog.kind === "add-root") {
-                await api.curricula.createTopic(selectedId, {
+                await getStorage().curricula.createTopic(selectedId, {
                     title,
                     parent_id: null,
                 });
             } else if (dialog.kind === "add-sub") {
-                await api.curricula.createTopic(selectedId, {
+                await getStorage().curricula.createTopic(selectedId, {
                     title,
                     parent_id: dialog.parentId,
                 });
             } else if (dialog.kind === "rename") {
-                await api.topics.update(dialog.topicId, {title});
+                await getStorage().topics.update(dialog.topicId, {title});
             }
             await reloadTopics(selectedId);
             setDialog({kind: "closed"});
@@ -225,7 +226,7 @@ export default function Curriculum() {
         if (!ok) return;
         setSubmitting(true);
         try {
-            await api.topics.remove(topicId);
+            await getStorage().topics.remove(topicId);
             await reloadTopics(selectedId);
             notify.success(t("curriculum.deleted", "Topic deleted."));
         } catch (err) {

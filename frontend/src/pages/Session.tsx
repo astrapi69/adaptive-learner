@@ -8,10 +8,11 @@ import MethodBadge from "../components/MethodBadge";
 import MethodSwitchBanner from "../components/MethodSwitchBanner";
 import RatingDialog, {type RatingValues} from "../components/RatingDialog";
 import SessionChat, {type ChatMessage} from "../components/SessionChat";
-import {api, ApiError} from "../api/client";
+import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {readLearnerState} from "../lib/learnerState";
+import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
 import type {LearningMethod} from "../lib/constants";
 import type {
@@ -70,7 +71,7 @@ export default function Session() {
 
     const fetchSwitchRecommendation = useCallback(async (sessionId: string) => {
         try {
-            const rec = await api.session.switchRecommendation(sessionId);
+            const rec = await getStorage().session.switchRecommendation(sessionId);
             setSwitchRec(rec);
         } catch {
             // Recommendations are advisory; silently swallow the
@@ -112,7 +113,7 @@ export default function Session() {
         // fall through to the profile-driven default.
         const rawMethod = searchParams.get("method");
         const hintedMethod = LEARNING_METHODS.find((m) => m === rawMethod);
-        api.session
+        getStorage().session
             .start({
                 project_id: projectId,
                 lang,
@@ -142,7 +143,7 @@ export default function Session() {
                 // just hides the provider chip.
                 const userId = readLearnerState().userId;
                 if (userId) {
-                    api.settings
+                    getStorage().settings
                         .get(userId)
                         .then((s) => {
                             if (!cancelled) setUserSettings(s);
@@ -190,7 +191,7 @@ export default function Session() {
         ]);
         setSendingMessage(true);
         try {
-            const result = await api.session.message(session.id, {
+            const result = await getStorage().session.message(session.id, {
                 role: "user",
                 content,
             });
@@ -284,7 +285,7 @@ export default function Session() {
         }
         setAccepting(true);
         try {
-            const updated = await api.session.acceptSwitch(session.id, {
+            const updated = await getStorage().session.acceptSwitch(session.id, {
                 to_method: switchRec.to_method,
                 reason: switchRec.reason ?? "User accepted method-switch suggestion.",
             });
@@ -315,13 +316,13 @@ export default function Session() {
         if (!session || submittingRating) return;
         setSubmittingRating(true);
         try {
-            await api.session.rate(session.id, {
+            await getStorage().session.rate(session.id, {
                 understanding: rating.understanding,
                 stress: rating.stress,
                 method_fit: rating.method_fit,
                 notes: rating.notes.length > 0 ? rating.notes : null,
             });
-            await api.session.end(session.id);
+            await getStorage().session.end(session.id);
             notify.success(t("toast.session_ended", "Session ended."));
             setShowRating(false);
             navigate("/dashboard");

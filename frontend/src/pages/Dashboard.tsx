@@ -9,9 +9,10 @@ import QuickStartButton from "../components/QuickStartButton";
 import SessionCounter from "../components/SessionCounter";
 import SpacedRecommendations from "../components/SpacedRecommendations";
 import ToolRecommendations from "../components/ToolRecommendations";
-import {api, ApiError} from "../api/client";
+import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
+import {getStorage} from "../storage";
 import type {
     LearningProfile,
     SpacedRecommendation,
@@ -54,11 +55,12 @@ export default function Dashboard() {
         let cancelled = false;
         setLoading(true);
         setError(null);
+        const storage = getStorage();
         Promise.allSettled([
-            api.assessment.profile(projectId),
-            api.tracking.progress(projectId),
-            api.tools.recommendations(projectId, lang),
-            api.tools.spaced(projectId, lang),
+            storage.assessment.profile(projectId),
+            storage.tracking.progress(projectId),
+            storage.tools.recommendations(projectId, lang),
+            storage.tools.spaced(projectId, lang),
         ]).then((results) => {
             if (cancelled) return;
             const [profileR, summaryR, toolsR, spacedR] = results;

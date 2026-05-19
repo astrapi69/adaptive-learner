@@ -1,10 +1,11 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
-import {api, ApiError} from "../api/client";
+import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {SUPPORTED_LANGUAGES, type SupportedLanguage} from "../lib/constants";
 import {clearLearnerState, readLearnerState, setLanguage} from "../lib/learnerState";
+import {getStorage} from "../storage";
 
 /**
  * Landing page (project-reference §8 row ``/``).
@@ -39,8 +40,8 @@ export default function Landing() {
             return;
         }
         let cancelled = false;
-        api.users
-            .get(userId)
+        getStorage()
+            .users.get(userId)
             .then(() => {
                 if (cancelled) return;
                 // The persisted user still exists; jump straight

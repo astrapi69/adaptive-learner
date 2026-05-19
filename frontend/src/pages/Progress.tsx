@@ -5,9 +5,10 @@ import MethodBadge from "../components/MethodBadge";
 import MethodDistribution from "../components/MethodDistribution";
 import ProgressTimeline from "../components/ProgressTimeline";
 import StepEvaluationInsights from "../components/StepEvaluationInsights";
-import {api, ApiError} from "../api/client";
+import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
+import {getStorage} from "../storage";
 import type {
     ProgressCommit,
     StepEvaluationSummary,
@@ -44,8 +45,8 @@ export default function Progress() {
         }
         let cancelled = false;
         Promise.all([
-            api.tracking.progress(projectId),
-            api.tracking.commits(projectId),
+            getStorage().tracking.progress(projectId),
+            getStorage().tracking.commits(projectId),
         ])
             .then(([progressResp, commitsResp]) => {
                 if (cancelled) return;
