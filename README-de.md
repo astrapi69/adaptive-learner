@@ -1,6 +1,7 @@
 # Adaptive Learner
 
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
+[![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
 Ein adaptives Lernsystem nach dem forschungsbasierten
 Sechs-Methoden-Modell (Asterios Raptis, *Von Theorie zur
@@ -10,17 +11,124 @@ kontextuell oder KI-adaptiv — gehe pro Session durch einen
 Sieben-Schritt-Zyklus, und lass ein Dual-Prompt-KI entscheiden,
 wann der Lernende für den nächsten Schritt bereit ist.
 
-**Seit v0.6.0 als installierbare Progressive Web App verfügbar**
-— füge sie auf jedem modernen Smartphone oder Desktop zum
-Startbildschirm hinzu und starte wie eine native App, ohne
-Browser-Tab.
-
-**Online ausprobieren** (kein Backend nötig, Daten bleiben im
-Browser): [astrapi69.github.io/adaptive-learner/](https://astrapi69.github.io/adaptive-learner/).
-Bring deinen eigenen KI-Schlüssel mit; die öffentliche Seite
-läuft im Local-First-Modus und speichert alles in IndexedDB.
-
 [🇬🇧 English](README.md)
+
+## Dokumentation
+
+Vollständige Dokumentation (DE + EN):
+[**astrapi69.github.io/adaptive-learner/docs/**](https://astrapi69.github.io/adaptive-learner/docs/)
+
+- [Benutzerhandbuch](https://astrapi69.github.io/adaptive-learner/docs/user-guide/getting-started/)
+  — wie du die App nutzt
+- [Die Lernmethode](https://astrapi69.github.io/adaptive-learner/docs/concept/philosophy/)
+  — warum adaptives Lernen funktioniert
+- [Entwickler-Doku](https://astrapi69.github.io/adaptive-learner/docs/developer/architecture/)
+  — Architektur, Plugins, Beitragen
+- [API-Referenz](https://astrapi69.github.io/adaptive-learner/docs/api/overview/)
+  — alle Endpoints und Modelle
+
+## Installation
+
+Vier Wege, AdaptiveLearner zu starten — nach Aufwand sortiert.
+
+### 1. Online ausprobieren (kein Install)
+
+Die öffentliche PWA läuft im **Lokal-Modus** — alle Daten
+bleiben in deinem Browser (IndexedDB), KI-Aufrufe gehen direkt
+aus der Seite an Anthropic / OpenAI / Gemini mit deinem
+eigenen API-Schlüssel. Kein Backend, keine Installation.
+
+[**Zur Live-App →**](https://astrapi69.github.io/adaptive-learner/)
+
+Auf Chrome / Edge / Safari erscheint beim ersten Besuch ein
+"Zum Startbildschirm hinzufügen"-Banner — annehmen, und
+AdaptiveLearner wird zu einer eigenständigen PWA auf deinem
+Desktop oder Smartphone-Startbildschirm, kein Browser-Tab
+nötig.
+
+### 2. Desktop-App (nativer Launcher)
+
+Vorgebaute Single-Binary-Executables, die das Backend
+bootstrappen und die App im Standard-Browser öffnen. Kein
+Docker, kein Terminal nötig.
+
+Download aus dem
+[**letzten GitHub-Release**](https://github.com/astrapi69/adaptive-learner/releases/latest):
+
+| OS | Datei | Starten mit |
+|---|---|---|
+| Linux | `adaptive-learner-launcher` | `chmod +x adaptive-learner-launcher && ./adaptive-learner-launcher` |
+| macOS | `adaptive-learner-launcher-macos.zip` | Entpacken, `adaptive-learner-launcher` doppelt anklicken (oder `./adaptive-learner-launcher` im Terminal) |
+| Windows | `adaptive-learner-launcher.exe` | Doppelklick |
+
+Jedes Release legt neben jedem Binary eine `.sha256`-Datei zur
+Integritätsprüfung ab.
+
+Der Launcher lädt beim ersten Start den passenden getaggten
+Quellbaum, baut die Docker-Images und startet die App auf
+`http://localhost:7880`. Den Launcher aus dem Quelltext zu
+bauen, ist unter
+[docs/developer/deployment](https://astrapi69.github.io/adaptive-learner/docs/developer/deployment/)
+dokumentiert.
+
+### 3. Docker (selbst gehostet)
+
+Voraussetzung: Docker (Docker Desktop oder Docker Engine mit
+Compose).
+
+**Linux / macOS:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/install.sh | bash
+```
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/install.ps1 | iex
+```
+
+Beide Skripte:
+
+1. Klonen oder holen das getaggte Release nach
+   `~/adaptive-learner/`
+   (`%USERPROFILE%\adaptive-learner` auf Windows).
+2. Erzeugen einen `ADAPTIVE_LEARNER_SECRET_KEY`, falls noch
+   keiner existiert (für die Fernet-Verschlüsselung der
+   User-API-Keys im Ruhezustand).
+3. Bauen die Docker-Images und starten den Stack.
+4. Öffnen die App unter `http://localhost:7880` — ein Port,
+   nginx liefert das statische Frontend und proxied
+   `/api/*` ans FastAPI-Backend.
+
+Stoppen / Starten / Deinstallieren:
+
+```bash
+cd ~/adaptive-learner
+./stop.sh      # docker compose down
+./start.sh     # docker compose up -d
+# Deinstallieren:  ./stop.sh && cd ~ && rm -rf adaptive-learner
+```
+
+Port und andere Stellschrauben (CORS-Origins, Debug-Modus)
+leben in der erzeugten `.env`. Volle Konfig-Kette unter
+[docs/developer/deployment](https://astrapi69.github.io/adaptive-learner/docs/developer/deployment/).
+
+### 4. Entwickler-Setup (Source-Build)
+
+Manuelles Poetry + npm-Setup für Contributors.
+Voraussetzungen: Python 3.12+, Node 24+, Poetry, npm, Make.
+
+```bash
+git clone git@github.com:astrapi69/adaptive-learner.git
+cd adaptive-learner
+make install         # Poetry + npm + alle 7 Plugins als Path-Deps
+make dev             # Backend auf :18001, Frontend auf :15174 (Vite-Dev-Server)
+```
+
+Vollständiger Setup-Walkthrough inkl. Pre-Commit-Hooks und
+Docs-Venv unter
+[docs/developer/setup](https://astrapi69.github.io/adaptive-learner/docs/developer/setup/).
 
 ## Was du bekommst
 
@@ -120,39 +228,33 @@ läuft im Local-First-Modus und speichert alles in IndexedDB.
 - Getestet in Playwright bei iPhone SE (375), iPhone 14
   (390), Pixel 7 (412) und iPad (768) Viewports.
 
-## Schnellstart
+## Nützliche Make-Targets
 
 ```bash
-# Einmalig
-make install              # Poetry + npm + Plugins
-
-# Täglich
 make dev                  # Backend (18001) + Frontend (15174)
 make test                 # Backend + Plugins + Frontend
 make test-coverage        # Opt-in-Coverage-Lauf
-
-# Docker
-make prod                 # docker compose up
-make prod-down            # stoppen
+make prod                 # docker compose up (voller Stack)
+make prod-down            # Docker-Stack stoppen
+make docs-serve           # MkDocs-Preview auf :8000 mit Hot-Reload
 ```
 
 E2E: `cd e2e && npx playwright test --project=smoke`.
 
-## Dokumentation
+## Repo-interne Referenzen
 
-- [`docs/CONCEPT.md`](docs/CONCEPT.md) — Kurzüberblick
-- [`docs/adaptive-learner-project-reference.md`](docs/adaptive-learner-project-reference.md)
-  — vollständiger Projektplan: Domänen-Modelle, Hooks,
-  Plugins, API
-- [`docs/configuration.md`](docs/configuration.md) —
-  dreischichtige Konfig-Kette (Projekt-YAML < User-Overlay <
-  Env)
-- [`docs/ROADMAP.md`](docs/ROADMAP.md) — was als Nächstes kommt
 - [`CLAUDE.md`](CLAUDE.md) — Entwicklungsleitfaden für Claude
   Code (auch für Menschen brauchbar). Regeln in
   [`.claude/rules/`](.claude/rules/).
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — Contributor-
   Onboarding, Testkonvention, Mobile-Viewport-Abdeckung.
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — was als Nächstes kommt.
+- [`docs/adaptive-learner-project-reference.md`](docs/adaptive-learner-project-reference.md)
+  — der Projektplan: Domänen-Modelle, Hooks, Plugins, API.
+
+User-orientierte Texte liegen auf der
+[**Docs-Site**](https://astrapi69.github.io/adaptive-learner/docs/) —
+die Repo-internen Dateien oben sind für Contributors.
 
 ## Status
 
