@@ -25,6 +25,22 @@ public Dexie build is deployed to GitHub Pages so anyone with an
 AI API key can try AdaptiveLearner without standing up a backend
 first. The user can switch between modes in Settings.
 
+Since v0.9.0 the system imports existing chat history (ChatGPT,
+Claude, Gemini transcripts) and extracts structured learning
+insights: topic, strengths, weaknesses, error patterns, and a
+recommended method to continue. v1.0.0 added bidirectional
+WiFi-local sync between devices with AI-escalated conflict
+resolution. v1.2.0 shipped backup + restore with auto-rotation,
+and v1.3.0 added PDF + Markdown progress exports.
+
+Since v1.4.0 sessions no longer cap at step 7 — once the
+learner integrates the topic, a topic-transition AI call picks
+a natural next subtopic and the cycle resets to step 1 within
+the same session (hard cap of 5 cycles per session prevents
+runaway). v1.5.0 made the cycle-boundary AI roundtrip parallel
+(step-evaluation + topic-transition fire concurrently), with
+per-message timing metrics exposed to the UI.
+
 The full architecture, domain model, plugin catalogue, hook
 specifications, mobile/PWA decisions, and roadmap live in
 [adaptive-learner-project-reference.md](adaptive-learner-project-reference.md).
