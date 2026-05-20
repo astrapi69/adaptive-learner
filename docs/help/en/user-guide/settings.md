@@ -87,3 +87,30 @@ future sync feature lands.
 The Local-mode view shows per-table row counts so you can see
 what's persisted (users, learningProjects, sessionMessages,
 progressCommits, etc.).
+
+## About
+
+The last section of Settings shows the **About panel**: five
+read-only blocks describing the running app.
+
+- **Version**: app version (from the canonical
+  `pyproject.toml`), short build hash (linked to the GitHub
+  commit when available), and build date.
+- **System**: storage mode (Server vs Local Browser), data
+  directory, database path (Server mode only), Python version
+  (Server mode only), platform, and the bundled backend
+  dependency versions (FastAPI, SQLAlchemy, Pydantic,
+  PluginForge).
+- **Credits**: author, dependency acknowledgements, tagline.
+- **Support development**: three donation channels — Liberapay
+  (preferred), GitHub Sponsors, and Ko-fi. Each opens in a new
+  tab.
+- **License & resources**: MIT license link, repository link,
+  documentation link, and the issue tracker.
+
+In **Local (Browser)** storage mode the panel shows the same
+shape but hides the rows that only make sense for a running
+backend (Python version, FastAPI / SQLAlchemy / Pydantic /
+PluginForge versions, database path). The storage label
+switches from *Server (FastAPI + SQLite)* to *Local Browser
+Storage (IndexedDB)* so it's always clear which side you're on.

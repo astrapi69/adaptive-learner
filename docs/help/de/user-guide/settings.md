@@ -90,3 +90,31 @@ landet.
 Die Lokal-Modus-Ansicht zeigt Zeilenanzahlen pro Tabelle, so
 siehst du, was wo persistiert ist (users, learningProjects,
 sessionMessages, progressCommits etc.).
+
+## Über
+
+Der letzte Abschnitt der Einstellungen zeigt das **Über-Panel**:
+fünf Nur-Lese-Blöcke mit Informationen zur laufenden App.
+
+- **Version**: App-Version (aus der kanonischen
+  `pyproject.toml`), kurzer Build-Hash (verlinkt zum
+  GitHub-Commit, sofern verfügbar) und Build-Datum.
+- **System**: Speichermodus (Server vs. lokaler Browser),
+  Datenverzeichnis, Datenbank-Pfad (nur im Server-Modus),
+  Python-Version (nur im Server-Modus), Plattform und die
+  Versionen der gebündelten Backend-Abhängigkeiten (FastAPI,
+  SQLAlchemy, Pydantic, PluginForge).
+- **Mitwirkende**: Autor, Abhängigkeits-Danksagungen, Tagline.
+- **Entwicklung unterstützen**: drei Spendenkanäle — Liberapay
+  (bevorzugt), GitHub Sponsors und Ko-fi. Jeder öffnet in einem
+  neuen Tab.
+- **Lizenz & Ressourcen**: MIT-Lizenz-Link, Repository-Link,
+  Dokumentations-Link und der Issue-Tracker.
+
+Im **Lokal (Browser)**-Modus zeigt das Panel dieselbe
+Struktur, blendet aber die Zeilen aus, die nur für ein
+laufendes Backend Sinn ergeben (Python-Version,
+FastAPI/SQLAlchemy/Pydantic/PluginForge-Versionen,
+Datenbank-Pfad). Das Speicher-Label wechselt von *Server
+(FastAPI + SQLite)* zu *Lokaler Browser-Speicher (IndexedDB)*,
+damit immer klar ist, auf welcher Seite du dich befindest.

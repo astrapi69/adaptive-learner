@@ -12,23 +12,27 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.0.0):** v0.9.x plus Phase 13 —
-  **Local-network sync with AI-merge.** Cross-device sync
-  between a Dexie-backed PWA and a FastAPI-backed desktop,
-  paired via a 5-minute one-time token rendered as a QR
-  code. New backend surface under ``/api/sync/*`` (status,
-  push, pull, resolve, pair/generate, pair/verify) with the
-  full append-only / mutable / conflict matrix in
-  ``backend/app/services/sync_service.py``. New
-  ``frontend/src/storage/sync-engine.ts`` orchestrates the
-  push → resolve → pull → stamp-last-sync flow; mutable
-  conflicts surface to ``SyncConflictDialog`` with a Smart
-  Merge button when an AI provider is configured. Settings
-  panel + a nav indicator. Sync is ALWAYS user-initiated.
-  Backend 482 tests + frontend 549 vitest at release time.
-  v0.9.x baseline (chat-history import, MkDocs docs, Dexie
-  storage, browser-direct AI, GH Pages deploy) carried
-  forward unchanged.
+- **Current state (v1.1.0):** v1.0.x plus Phase 14 —
+  **About tab in Settings.** New ``GET /api/system/info``
+  endpoint returns app identity (name, version, license,
+  authors, urls, build_hash, build_date), runtime info
+  (python_version, platform), bundled-dep versions
+  (fastapi, sqlalchemy, pydantic, pluginforge) and data
+  paths (database_path, data_directory). Storage-mode-aware:
+  ``DexieStorage.system.info`` synthesises the same shape
+  browser-side for the PWA path with ``null`` for backend-
+  only fields. New ``components/about/`` directory with five
+  sub-section components (Version, SystemInfo, Credits,
+  Donations, License & resources) wired into Settings.tsx as
+  the last block. Donation channels: Liberapay (primary,
+  verified live), GitHub Sponsors, Ko-fi. ~30 i18n keys
+  under ``about.*`` mirrored across all 8 catalogs.
+  Hotfix track v1.0.1 (robust JSON extraction for Haiku
+  prose+fence shapes) is folded into the 1.1.0 line. Backend
+  489 tests + frontend 591 vitest at release time. v1.0.x
+  baseline (local-network sync, MkDocs docs, Dexie storage,
+  browser-direct AI, GH Pages deploy) carried forward
+  unchanged.
 
 ## Development guidelines
 
