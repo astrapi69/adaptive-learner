@@ -12,7 +12,28 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.5.0):** v1.4.0 plus Phase 18 —
+- **Current state (v1.6.0):** v1.5.0 plus Phase 19 —
+  **Streaming Learning Response.** New ``ai_complete_stream``
+  hookspec (firstresult=True) lets provider plugins yield an
+  async iterator of text deltas. All three provider plugins
+  (anthropic, openai, gemini) implement it via their SDK's
+  native async streaming API. New ``call_ai_complete_stream``
+  orchestrator helper falls back to ``call_ai_complete_async``
+  when no plugin claims the call. New SSE route
+  ``POST /api/plugins/session/{id}/message/stream`` emits three
+  event types — ``start`` (user message), ``chunk`` (deltas),
+  ``done`` (same shape as POST ``/message``). Frontend
+  ``lib/sse-reader.ts`` is an inline fetch + ReadableStream
+  parser (no external dep). ``ISessionNamespace.streamMessage``
+  added to the storage contract; ApiStorage hits the SSE route,
+  DexieStorage uses browser-direct provider SDKs via
+  ``aiStream`` + ``sendMessageStream``. SessionChat renders a
+  trailing cursor (▍) on streaming bubbles. The Thinking…
+  placeholder is gone; tokens land in the bubble as they
+  arrive. Backend 606 + session-plugin 199 + frontend 724 at
+  release time.
+
+- **State (v1.5.0):** v1.4.0 plus Phase 18 —
   **Async AI Calls + Performance.** New async SQLAlchemy
   foundation (``async_engine`` + ``AsyncSessionLocal`` +
   ``get_async_db``) lives alongside the sync setup; aiosqlite
@@ -26,8 +47,8 @@ depended on them are gone.
   latency at the cycle boundary. New ``timings`` block on the
   message response carries learning_ms / evaluation_ms /
   topic_transition_ms / total_ms / parallel_saved_ms. SSE
-  streaming (18D) deferred. Backend 551 + session-plugin 197 +
-  frontend 699 at release time.
+  streaming (18D) deferred to v1.6.0 / Phase 19. Backend 551 +
+  session-plugin 197 + frontend 699 at release time.
 
 - **State (v1.4.0):** v1.3.0 plus Phase 17 —
   **Auto-Loop: Continue Learning After Step 7.** When the step

@@ -4,12 +4,11 @@ Daily-planning view of items outside the phase plan. The
 authoritative roadmap lives in [ROADMAP.md](ROADMAP.md); use
 this file for granular items + status.
 
-State: **post v1.5.0 (Phase 18 / Async AI Calls + Performance
-shipped).** BL-01 and BL-02 (originally listed as P0) shipped
-before the backlog re-baseline — BL-01 in v1.4.0 (commits
-`bb088a1`..`7ff50c5`), BL-02 in v1.5.0 (commits
-`b9ac8fb`..`d19dbcc`). Only the SSE-streaming portion of
-BL-02 (18D) was deferred and is now tracked as BL-23.
+State: **post v1.6.0 (Phase 19 / Streaming Learning Response
+shipped).** BL-23 (SSE streaming, deferred from 18D) shipped
+in v1.6.0 across three commits: 19A foundation (`03edb2b`),
+19B-1 SSE route + frontend reader + UI (`5b04d7a`), 19B-2
+Dexie browser-direct streaming (`4bdcb21`).
 
 Items ordered by impact and dependency chain. P0 = next up,
 P5 = speculative. Within each tier, smaller-scope and
@@ -20,15 +19,6 @@ tiebreaker.
 
 ## P0 — Next Releases (Prompts ready)
 
-- [ ] **BL-23**: SSE streaming for `/message` response
-  (deferred from 18D) — Stream the assistant response
-  token-by-token over Server-Sent Events instead of waiting
-  for the full completion. Async foundation already in
-  place; the parallel step-evaluation + topic-transition
-  calls fire concurrently per v1.5.0. Remaining piece is
-  the SSE channel itself + the frontend reader that
-  appends incrementally to the chat. Biggest remaining
-  perceived-performance win.
 - [ ] **BL-03**: pluginforge-app-template repo — Export a
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Add README explaining how to fork. Validates PluginForge

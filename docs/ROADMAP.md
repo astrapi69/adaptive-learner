@@ -1,6 +1,6 @@
 # Adaptive Learner Roadmap
 
-Current state: **v1.5.0 released (Phase 18 / Async AI Calls + Performance shipped 2026-05-20).**
+Current state: **v1.6.0 released (Phase 19 / Streaming Learning Response shipped 2026-05-20).**
 
 ## Phase history (completed)
 
@@ -22,7 +22,8 @@ Current state: **v1.5.0 released (Phase 18 / Async AI Calls + Performance shippe
 | 15 | v1.2.0 | Backup + restore — Dexie + API parity, auto-backup rotation, compare UI, full Settings integration |
 | 16 | v1.3.0 | Learning progress export (PDF + Markdown) — 3 report types (Progress / Session / Curriculum), identical wire shape across storage modes |
 | 17 | v1.4.0 | Auto-Loop: continue learning after step 7 — topic-transition evaluator, cycle counter, multi-cycle session summary |
-| **18** | **v1.5.0** | **Async AI Calls + Performance — async SQLAlchemy foundation, parallel step-eval + topic-transition at cycle boundary, per-message timing metrics. SSE streaming (18D) deferred.** |
+| 18 | v1.5.0 | Async AI Calls + Performance — async SQLAlchemy foundation, parallel step-eval + topic-transition at cycle boundary, per-message timing metrics |
+| **19** | **v1.6.0** | **Streaming Learning Response — ai_complete_stream hookspec + 3 provider impls, POST /message/stream SSE route, inline frontend SSE reader, browser-direct Dexie streaming, incremental SessionChat rendering** |
 
 Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list. Per-release notes live in [changelog/releases/](../changelog/releases/).
 
@@ -30,16 +31,8 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phase (planned)
 
-**Phase 19 candidates** — current top of backlog (see [backlog.md](backlog.md) for full P0..P5 view):
+**Phase 20 candidates** — current top of backlog (see [backlog.md](backlog.md) for full P0..P5 view):
 
-- **BL-23 — SSE streaming for `/message` response.** Complete
-  the deferred 18D piece. Stream the assistant response
-  token-by-token over Server-Sent Events instead of waiting
-  for the full completion. Async foundation already in place
-  from v1.5.0; the parallel step-eval + topic-transition
-  calls fire concurrently. Remaining piece is the SSE channel
-  itself + the frontend reader that appends incrementally.
-  Biggest remaining perceived-performance win.
 - **BL-03 — pluginforge-app-template repo.** Export a
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Validates PluginForge ecosystem (3 repos: framework,
@@ -48,6 +41,9 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
   paste-the-link only. Add native camera scanning via
   `navigator.mediaDevices.getUserMedia` + jsQR (or
   html5-qrcode). Mobile UX improvement.
+- **BL-05 — Sync gap: step_evaluations + session_notes.**
+  Excluded from v1.0.0 sync due to schema mismatch. Align
+  schemas, add to sync surface.
 
 ---
 
