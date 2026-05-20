@@ -511,6 +511,34 @@ export const api = {
             apiCall<import("../types/domain").SystemInfo>("/system/info"),
     },
 
+    // --- Backup / restore (v1.2.0 / Phase 15A) --------------------------
+
+    backup: {
+        /**
+         * Trigger the JSON download endpoint and return the
+         * parsed payload. The endpoint sets a
+         * ``Content-Disposition: attachment`` header so the
+         * browser also offers a save dialog when the caller is
+         * a page navigation rather than this fetch.
+         */
+        export: (userId: string) =>
+            apiCall<import("../types/domain").BackupPayload>(
+                `/backup/export?user_id=${encodeURIComponent(userId)}`,
+            ),
+        stats: (userId: string) =>
+            apiCall<import("../types/domain").BackupStats & {user_id: string}>(
+                `/backup/stats?user_id=${encodeURIComponent(userId)}`,
+            ),
+        import: (
+            userId: string,
+            payload: import("../types/domain").BackupPayload,
+        ) =>
+            apiCall<import("../types/domain").RestoreSummary>(
+                `/backup/import?user_id=${encodeURIComponent(userId)}`,
+                {method: "POST", body: payload},
+            ),
+    },
+
     // --- Imported conversations (v0.9.0 / Phase 12C) ---------------------
 
     imports: {

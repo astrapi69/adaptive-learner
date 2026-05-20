@@ -121,4 +121,10 @@ export const apiStorage: IStorageService = {
     system: {
         info: () => api.system.info(),
     },
+
+    backup: {
+        export: (userId) => api.backup.export(userId),
+        import: (userId, payload) => api.backup.import(userId, payload),
+        stats: (userId) => api.backup.stats(userId),
+    },
 };

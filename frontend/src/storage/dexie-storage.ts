@@ -42,6 +42,11 @@ import {
     type UserRow,
     type UserSettingsRow,
 } from "./db";
+import {
+    createDexieBackup,
+    getDexieBackupStats,
+    restoreDexieBackup,
+} from "./backup";
 import {sendMessage, startSession} from "./session-flow";
 import {
     aggregateProgress,
@@ -1192,5 +1197,13 @@ export const dexieStorage: IStorageService = {
                 },
             };
         },
+    },
+
+    // ---- Backup / restore (v1.2.0 / Phase 15B) -------------------------
+
+    backup: {
+        export: (userId) => createDexieBackup(userId, __APP_VERSION__),
+        import: (userId, payload) => restoreDexieBackup(userId, payload),
+        stats: (userId) => getDexieBackupStats(userId),
     },
 };

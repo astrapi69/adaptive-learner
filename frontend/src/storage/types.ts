@@ -148,16 +148,34 @@ export interface IPluginsNamespace {
 // --- Imports (v0.9.0 / Phase 12C) --------------------------------------
 
 import type {
+    BackupPayload,
+    BackupStats,
     ImportedConversation,
     ImportedConversationDetail,
     ImportedConversationCreateBody,
     ImportedConversationUpdateBody,
     ImportedConversationAnalysis,
+    RestoreSummary,
     SystemInfo,
 } from "../types/domain";
 
 export interface ISystemNamespace {
     info(): Promise<SystemInfo>;
+}
+
+/**
+ * Backup namespace (v1.2.0 / Phase 15). Both storage modes
+ * implement the same shape so the Settings UI doesn't branch.
+ *
+ * - In API mode: delegates to ``/api/backup/*``.
+ * - In Dexie mode: runs the same logic browser-side using the
+ *   IndexedDB tables directly. The wire format is identical so
+ *   a backup created in either mode can be restored in either.
+ */
+export interface IBackupNamespace {
+    export(userId: string): Promise<BackupPayload>;
+    import(userId: string, payload: BackupPayload): Promise<RestoreSummary>;
+    stats(userId: string): Promise<BackupStats & {user_id: string}>;
 }
 
 export interface IImportsNamespace {
@@ -208,4 +226,5 @@ export interface IStorageService {
     plugins: IPluginsNamespace;
     imports: IImportsNamespace;
     system: ISystemNamespace;
+    backup: IBackupNamespace;
 }

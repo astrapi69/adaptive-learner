@@ -543,3 +543,52 @@ export interface SystemInfo {
         data_directory: string;
     };
 }
+
+
+// --- Backup / restore (v1.2.0 / Phase 15) -----------------------------
+
+/**
+ * Per-table row count + total. Used by the Settings UI to show
+ * a pre-restore comparison ("Current: X; backup contains: Y").
+ */
+export interface BackupStats {
+    total_records: number;
+    tables: Record<string, number>;
+}
+
+/**
+ * Wire shape exported by ``GET /api/backup/export`` and produced
+ * locally in Dexie mode by ``storage/backup.ts``. Same shape in
+ * both modes so a backup made in one mode can be restored in the
+ * other.
+ *
+ * ``data`` carries one entry per backup table; each row is a
+ * snake_case dict mirroring the SQLAlchemy column list, minus the
+ * three ``api_key_*`` fields on ``user_settings`` (security).
+ */
+export interface BackupPayload {
+    format: "adaptive-learner-backup";
+    version: string;
+    app_version?: string;
+    created_at: string;
+    user_id: string;
+    storage_mode: "api" | "dexie";
+    data: Record<string, Record<string, unknown>[]>;
+    stats: BackupStats;
+}
+
+export interface RestoreTableSummary {
+    inserted: number;
+    updated: number;
+    skipped: number;
+    errors: string[];
+}
+
+export interface RestoreSummary {
+    user_id: string;
+    inserted: number;
+    updated: number;
+    skipped: number;
+    errors: string[];
+    tables: Record<string, RestoreTableSummary>;
+}
