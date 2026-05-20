@@ -186,8 +186,28 @@ export default function QRScanner({
                     background: "#000",
                     borderRadius: 6,
                     overflow: "hidden",
+                    position: "relative",
                 }}
             />
+            {/* v1.7.0 / Phase 20D — viewfinder overlay. Pure CSS;
+                the corner brackets + animated scan-line guide the
+                user's aim. Suppressed-animation variant for the
+                prefers-reduced-motion path lives in global.css. */}
+            {status === "scanning" && (
+                <div
+                    className="qr-viewfinder"
+                    data-testid="qr-viewfinder"
+                    aria-hidden="true"
+                >
+                    <div className="qr-viewfinder-cutout">
+                        <div className="qr-viewfinder-corner is-tl" />
+                        <div className="qr-viewfinder-corner is-tr" />
+                        <div className="qr-viewfinder-corner is-bl" />
+                        <div className="qr-viewfinder-corner is-br" />
+                        <div className="qr-viewfinder-scanline" />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

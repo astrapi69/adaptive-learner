@@ -862,6 +862,134 @@ select:focus {
   }
 }
 
+
+/* ---- v1.7.0 / Phase 20D — QR scanner viewfinder overlay ---------------
+
+   The viewfinder sits on top of the camera preview region. It
+   provides four corner brackets (purely decorative — the
+   scanning happens across the whole frame) and an optional
+   horizontal scan-line animation. Pure CSS, no JS animation
+   loop. Reduced-motion suppresses the scan-line. */
+
+.qr-viewfinder {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.qr-viewfinder-cutout {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  aspect-ratio: 1;
+  max-width: 240px;
+  max-height: 240px;
+  border-radius: 12px;
+  /* Four corner brackets via background-image gradients on each
+     corner. The big surrounding rectangle stays transparent. */
+}
+
+.qr-viewfinder-corner {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-color: rgba(255, 255, 255, 0.95);
+  border-style: solid;
+  border-width: 0;
+}
+.qr-viewfinder-corner.is-tl {
+  top: 0;
+  left: 0;
+  border-top-width: 4px;
+  border-left-width: 4px;
+  border-top-left-radius: 12px;
+}
+.qr-viewfinder-corner.is-tr {
+  top: 0;
+  right: 0;
+  border-top-width: 4px;
+  border-right-width: 4px;
+  border-top-right-radius: 12px;
+}
+.qr-viewfinder-corner.is-bl {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 4px;
+  border-left-width: 4px;
+  border-bottom-left-radius: 12px;
+}
+.qr-viewfinder-corner.is-br {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 4px;
+  border-right-width: 4px;
+  border-bottom-right-radius: 12px;
+}
+
+.qr-viewfinder-scanline {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 12%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--accent-rgb, 99, 102, 241), 0.95),
+    transparent
+  );
+  animation: qr-scanline 1.8s ease-in-out infinite;
+}
+
+@keyframes qr-scanline {
+  0%,
+  100% {
+    top: 12%;
+    opacity: 0.4;
+  }
+  50% {
+    top: 78%;
+    opacity: 1;
+  }
+}
+
+.qr-success-checkmark {
+  display: inline-block;
+  font-size: 3rem;
+  color: var(--success, #2e7d32);
+  animation: qr-success-pop 320ms ease-out 0s 1;
+}
+
+@keyframes qr-success-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Drop the continuous scan-line animation; the corner
+     brackets alone communicate the viewfinder. */
+  .qr-viewfinder-scanline {
+    animation: none;
+    top: 50%;
+    opacity: 0.6;
+  }
+  .qr-success-checkmark {
+    animation: none;
+  }
+}
+
 .cycle-evaluation-reason {
   margin: var(--space-1) 0 var(--space-3) 0;
   font-size: 0.85rem;

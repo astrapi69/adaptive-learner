@@ -155,6 +155,21 @@ export default function QRScannerModal({
                         <QRScanner
                             onSuccess={(_, raw) => {
                                 setSuccess(true);
+                                // v1.7.0 / Phase 20D — haptic
+                                // confirm on successful scan.
+                                // ``navigator.vibrate`` is a no-op
+                                // on hardware / browsers that lack
+                                // the API (desktop, iOS Safari);
+                                // we don't gate on prefers-reduced-
+                                // motion because vibration is a
+                                // confirm signal, not a visual
+                                // animation. Users disable haptics
+                                // OS-side if they don't want them.
+                                try {
+                                    navigator.vibrate?.(50);
+                                } catch {
+                                    /* unsupported / blocked */
+                                }
                                 onScan(raw);
                             }}
                             onError={(err) => setError(err)}
@@ -314,7 +329,11 @@ function SuccessPanel({
             data-testid="qr-scanner-success"
             style={{textAlign: "center", padding: "1.5rem 0"}}
         >
-            <div style={{fontSize: "3rem", color: "var(--success, #2e7d32)"}}>
+            <div
+                className="qr-success-checkmark"
+                aria-hidden="true"
+                data-testid="qr-success-checkmark"
+            >
                 ✓
             </div>
             <p style={{fontWeight: 600}}>

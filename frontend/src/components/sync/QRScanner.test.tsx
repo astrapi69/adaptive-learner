@@ -217,4 +217,50 @@ describe("QRScanner", () => {
         });
         expect(onError.mock.calls[0][0].code).toBe("init-failed");
     });
+
+    // --- v1.7.0 / Phase 20D — viewfinder overlay -------------------
+
+    it("renders the viewfinder overlay once the scanner reaches the 'scanning' state", async () => {
+        const {getByTestId, queryByTestId} = render(
+            <QRScanner onSuccess={() => {}} onError={() => {}} />,
+        );
+        // Pre-start: no viewfinder while the start() promise is
+        // still pending (status is "starting").
+        expect(queryByTestId("qr-viewfinder")).toBeNull();
+        // Wait until the mock's start() resolves and React commits
+        // the "scanning" status.
+        await waitFor(() => {
+            expect(getByTestId("qr-scanner").dataset.status).toBe("scanning");
+        });
+        const viewfinder = getByTestId("qr-viewfinder");
+        expect(viewfinder).toBeTruthy();
+        // Four corner brackets sit inside the cutout.
+        expect(viewfinder.querySelectorAll(".qr-viewfinder-corner")).toHaveLength(4);
+        // The animated scan-line is present (animation gets
+        // disabled by the global.css prefers-reduced-motion rule;
+        // not testable here without a CSS engine).
+        expect(viewfinder.querySelector(".qr-viewfinder-scanline")).toBeTruthy();
+    });
+
+    it("removes the viewfinder once a successful scan settles the scanner", async () => {
+        const onSuccess = vi.fn();
+        const {getByTestId, queryByTestId} = render(
+            <QRScanner onSuccess={onSuccess} onError={() => {}} />,
+        );
+        await waitFor(() => {
+            expect(getByTestId("qr-scanner").dataset.status).toBe("scanning");
+        });
+        const uri = buildPairingUri({
+            host: "192.168.1.42",
+            port: 18001,
+            token: "abc",
+        });
+        fakeState.instances[0].triggerScan(uri);
+        await waitFor(() => {
+            expect(getByTestId("qr-scanner").dataset.status).toBe("settled");
+        });
+        // The settled state hides the viewfinder so the success
+        // panel above doesn't compete with the moving scan-line.
+        expect(queryByTestId("qr-viewfinder")).toBeNull();
+    });
 });
