@@ -4,6 +4,7 @@ import {NavLink, useLocation} from "react-router-dom";
 import {useI18n} from "../hooks/useI18n";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {useTheme} from "../hooks/useTheme";
+import {readSyncConfig} from "../storage/sync-engine";
 
 /**
  * Top navigation bar. Rendered on every authenticated page
@@ -25,6 +26,21 @@ export default function Navigation() {
     const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
     const {pathname} = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [syncPaired, setSyncPaired] = useState<boolean>(
+        () => readSyncConfig() !== null,
+    );
+
+    useEffect(() => {
+        function refresh() {
+            setSyncPaired(readSyncConfig() !== null);
+        }
+        // Refresh the indicator when the user comes back to the
+        // tab (pair/unpair may have happened elsewhere) or when
+        // the route changes (post-Settings visit).
+        window.addEventListener("focus", refresh);
+        refresh();
+        return () => window.removeEventListener("focus", refresh);
+    }, [pathname]);
 
     // Collapse the drawer whenever the route changes — a fresh
     // page should never inherit the previous page's drawer state.
@@ -111,6 +127,24 @@ export default function Navigation() {
                     {t("nav.settings", "Settings")}
                 </NavLink>
             </div>
+            <NavLink
+                to="/settings"
+                className={`nav-sync-indicator${syncPaired ? " is-paired" : " is-unpaired"}`}
+                data-testid="nav-sync-indicator"
+                data-sync-paired={syncPaired ? "true" : "false"}
+                title={
+                    syncPaired
+                        ? t("nav.sync_paired", "Sync: paired (Settings > Sync)")
+                        : t("nav.sync_unpaired", "Sync: not paired (Settings > Sync)")
+                }
+                aria-label={
+                    syncPaired
+                        ? t("nav.sync_paired", "Sync: paired")
+                        : t("nav.sync_unpaired", "Sync: not paired")
+                }
+            >
+                <span aria-hidden="true">{syncPaired ? "⇄" : "○"}</span>
+            </NavLink>
             <span
                 className={`nav-online-indicator${online ? " is-online" : " is-offline"}`}
                 data-testid="nav-online-indicator"
