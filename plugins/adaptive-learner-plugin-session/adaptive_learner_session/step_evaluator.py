@@ -50,7 +50,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from .ai_orchestration import call_ai_complete
+from .ai_orchestration import call_ai_complete, call_ai_complete_async
 
 # --- The seven cycle steps -------------------------------------------------
 #
@@ -356,5 +356,43 @@ def evaluate_step(
             max_tokens=max_tokens,
         )
     except Exception:  # noqa: BLE001 — defensive: never crash the route
+        return _deterministic_fallback(current_step, None)
+    return parse_evaluation_response(raw, current_step=current_step)
+
+
+async def evaluate_step_async(
+    *,
+    pm: Any,
+    method: str,
+    current_step: int,
+    history: list[dict[str, Any]],
+    model: str,
+    api_key: str,
+    output_language: str = "en",
+    max_tokens: int = EVALUATION_DEFAULT_MAX_TOKENS,
+) -> StepEvaluation:
+    """v1.5.0 / Phase 18B — async wrapper around :func:`evaluate_step`.
+
+    Uses :func:`call_ai_complete_async` so the AI roundtrip runs
+    either via the (future) ``ai_complete_async`` hook OR via the
+    sync hook wrapped in ``asyncio.to_thread``. The thread fallback
+    is what makes :func:`asyncio.gather` in the message route
+    deliver real parallel overlap even on sync provider plugins.
+    """
+    messages = build_evaluation_messages(
+        method=method,
+        current_step=current_step,
+        history=history,
+        output_language=output_language,
+    )
+    try:
+        raw = await call_ai_complete_async(
+            pm=pm,
+            messages=messages,
+            model=model,
+            api_key=api_key,
+            max_tokens=max_tokens,
+        )
+    except Exception:  # noqa: BLE001 — defensive
         return _deterministic_fallback(current_step, None)
     return parse_evaluation_response(raw, current_step=current_step)

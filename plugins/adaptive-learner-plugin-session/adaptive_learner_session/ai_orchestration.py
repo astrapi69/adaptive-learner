@@ -136,3 +136,59 @@ def call_ai_complete(
     if isinstance(result, str):
         return result
     return None
+
+
+async def call_ai_complete_async(
+    *,
+    pm: Any,
+    messages: list[dict[str, Any]],
+    model: str,
+    api_key: str,
+    max_tokens: int | None = None,
+) -> str | None:
+    """v1.5.0 / Phase 18B — async fire of the ai_complete hook.
+
+    Prefers ``ai_complete_async`` when any registered plugin
+    implements it (provider plugin returns a coroutine that the
+    orchestrator awaits). Falls back to ``ai_complete`` wrapped
+    in ``asyncio.to_thread`` so the existing sync provider plugins
+    keep working unchanged.
+
+    The asyncio.gather path in the v1.5.0 message route uses this
+    helper to fan out evaluation + topic-transition calls in
+    parallel even when only sync providers are loaded — the thread
+    pool gives real overlap without forcing a provider rewrite.
+    """
+    import asyncio
+
+    # Try the async hook first. Some pluggy builds raise if the
+    # hookspec was never declared OR no plugin implements it; the
+    # try/except guards both.
+    try:
+        async_hook = getattr(pm.hook, "ai_complete_async", None)
+        if async_hook is not None:
+            result = async_hook(
+                messages=messages,
+                model=model,
+                api_key=api_key,
+                max_tokens=max_tokens,
+            )
+            if asyncio.iscoroutine(result):
+                result = await result
+            if isinstance(result, str):
+                return result
+    except Exception:  # noqa: BLE001 — fallback to sync below
+        pass
+
+    # Fallback: run the sync hook on a thread so the caller can
+    # await it and still benefit from asyncio.gather parallelism.
+    def _call_sync() -> str | None:
+        return call_ai_complete(
+            pm=pm,
+            messages=messages,
+            model=model,
+            api_key=api_key,
+            max_tokens=max_tokens,
+        )
+
+    return await asyncio.to_thread(_call_sync)

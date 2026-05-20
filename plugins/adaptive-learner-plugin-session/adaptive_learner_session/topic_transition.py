@@ -31,7 +31,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from .ai_orchestration import call_ai_complete
+from .ai_orchestration import call_ai_complete, call_ai_complete_async
 
 
 DIFFICULTY_VALUES = ("same", "easier", "harder")
@@ -263,6 +263,43 @@ def evaluate_topic_transition(
     )
     try:
         raw = call_ai_complete(
+            pm=pm,
+            messages=messages,
+            model=model,
+            api_key=api_key,
+            max_tokens=max_tokens,
+        )
+    except Exception:  # noqa: BLE001 — defensive
+        return _deterministic_fallback(None)
+    return parse_transition_response(raw)
+
+
+async def evaluate_topic_transition_async(
+    *,
+    pm: Any,
+    goal: str,
+    topic: str,
+    method: str,
+    history: list[dict[str, Any]],
+    model: str,
+    api_key: str,
+    output_language: str = "en",
+    max_tokens: int = TRANSITION_DEFAULT_MAX_TOKENS,
+) -> TopicTransition:
+    """v1.5.0 / Phase 18B — async wrapper around
+    :func:`evaluate_topic_transition`. Built for the asyncio.gather
+    parallel-evaluation path in the v1.5.0 message route. Same
+    deterministic-fallback contract.
+    """
+    messages = build_transition_messages(
+        goal=goal,
+        topic=topic,
+        method=method,
+        history=history,
+        output_language=output_language,
+    )
+    try:
+        raw = await call_ai_complete_async(
             pm=pm,
             messages=messages,
             model=model,

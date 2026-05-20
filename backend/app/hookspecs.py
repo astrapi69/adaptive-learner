@@ -151,6 +151,31 @@ class AdaptiveLearnerHookSpec:
         """
         ...
 
+    @hookspec(firstresult=True)
+    def ai_complete_async(
+        self,
+        messages: list[dict],
+        model: str,
+        api_key: str,
+        max_tokens: int | None = None,
+    ) -> object:
+        """Async variant of :meth:`ai_complete` — v1.5.0 / Phase 18B.
+
+        Returns an *awaitable* yielding the same string. Provider
+        plugins can implement THIS hook to use async HTTP clients
+        (``AsyncAnthropic``, ``AsyncOpenAI``, etc.) so the session
+        plugin's parallel-evaluation path (18C) can fan out two
+        calls concurrently without a thread pool.
+
+        Backward compatible: providers that DO NOT implement
+        ``ai_complete_async`` simply return ``None`` and the
+        caller falls back to ``ai_complete`` wrapped in
+        ``asyncio.to_thread``. Callers should use the
+        :func:`app.services.ai.call_ai_async` helper rather than
+        invoking pluggy directly.
+        """
+        ...
+
     # --- Adaptive switching -------------------------------------------------
 
     @hookspec
