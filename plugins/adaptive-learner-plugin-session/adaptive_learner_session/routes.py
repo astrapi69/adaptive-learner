@@ -135,6 +135,28 @@ def _read_step_evaluation_config() -> tuple[bool, float, int]:
     return enabled, threshold, max_tokens
 
 
+def _read_async_evaluation_enabled() -> bool:
+    """Read ``session.async_evaluation`` config flag (v1.5.0 / 18C).
+
+    Default ``True``: at the step 6 -> 7 transition the route fires
+    step_evaluation and topic_transition concurrently via
+    ``asyncio.gather`` instead of sequentially. Set to ``False``
+    to fall back to the v1.4.0 sequential behaviour.
+    """
+    from app.config_overlay import read_plugin_config_merged
+
+    try:
+        cfg = read_plugin_config_merged("session")
+    except Exception:  # noqa: BLE001
+        cfg = {}
+    if not isinstance(cfg, dict):
+        return True
+    raw = cfg.get("async_evaluation")
+    if raw is None:
+        return True
+    return bool(raw)
+
+
 def _read_auto_loop_config() -> tuple[bool, int, int]:
     """Return ``(enabled, max_cycles, transition_max_tokens)`` for the
     v1.4.0 auto-loop feature from ``config/plugins/session.yaml``.
@@ -611,7 +633,63 @@ def append_message(
     # deterministic +1 behaviour verbatim.
     from_step = int(sess.cycle_step)
     step_eval_enabled, threshold, eval_max_tokens = _read_step_evaluation_config()
+    auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
+    async_eval_enabled = _read_async_evaluation_enabled()
     step_eval_out: _StepEvaluationOut | None = None
+
+    # v1.5.0 / Phase 18C — at the step 6 -> 7 transition, fire
+    # step_evaluation and topic_transition concurrently via
+    # asyncio.gather. Saves ~T2 worth of latency at the cycle
+    # boundary. When async_evaluation is off / preconditions are
+    # not met, fall back to the v1.4.0 sequential path below.
+    precomputed_eval: StepEvaluation | None = None
+    precomputed_transition: TopicTransition | None = None
+    if (
+        async_eval_enabled
+        and step_eval_enabled
+        and auto_loop_enabled
+        and from_step == MAX_STEP - 1
+    ):
+        import asyncio
+
+        from .step_evaluator import evaluate_step_async
+        from .topic_transition import evaluate_topic_transition_async
+
+        owner = db.get(User, project.user_id)
+        parallel_lang = owner.language if owner else "en"
+        parallel_history = history + [
+            {"role": "assistant", "content": assistant_text}
+        ]
+
+        async def _run_both() -> tuple[StepEvaluation, TopicTransition]:
+            return await asyncio.gather(
+                evaluate_step_async(
+                    pm=manager._pm,
+                    method=sess.method,
+                    current_step=from_step,
+                    history=parallel_history,
+                    model=model,
+                    api_key=api_key,
+                    output_language=parallel_lang,
+                    max_tokens=eval_max_tokens,
+                ),
+                evaluate_topic_transition_async(
+                    pm=manager._pm,
+                    goal=project.goal,
+                    topic=project.topic,
+                    method=sess.method,
+                    history=parallel_history,
+                    model=model,
+                    api_key=api_key,
+                    output_language=parallel_lang,
+                    max_tokens=tt_max_tokens,
+                ),
+            )
+
+        try:
+            precomputed_eval, precomputed_transition = asyncio.run(_run_both())
+        except Exception:  # noqa: BLE001 — fall back to sequential
+            precomputed_eval, precomputed_transition = None, None
 
     if step_eval_enabled:
         # Look up the learner's UI language so the evaluator's
@@ -630,16 +708,21 @@ def append_message(
         full_history = history + [
             {"role": "assistant", "content": assistant_text}
         ]
-        evaluation: StepEvaluation = evaluate_step(
-            pm=manager._pm,
-            method=sess.method,
-            current_step=from_step,
-            history=full_history,
-            model=model,
-            api_key=api_key,
-            output_language=eval_lang,
-            max_tokens=eval_max_tokens,
-        )
+        evaluation: StepEvaluation
+        if precomputed_eval is not None:
+            # 18C parallel path already ran the evaluator.
+            evaluation = precomputed_eval
+        else:
+            evaluation = evaluate_step(
+                pm=manager._pm,
+                method=sess.method,
+                current_step=from_step,
+                history=full_history,
+                model=model,
+                api_key=api_key,
+                output_language=eval_lang,
+                max_tokens=eval_max_tokens,
+            )
         if evaluation.fallback_used:
             # Fallback IS the deterministic advance: apply per
             # evaluation.advance (which is +1 below step 7, False
@@ -693,7 +776,6 @@ def append_message(
     # cycle_complete AND continue_recommended AND cycle_count <
     # max_cycles, reset to step 1 and increment cycle_count.
     topic_transition_out: _TopicTransitionOut | None = None
-    auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
     just_hit_step_7 = (
         step_eval_out is not None
         and step_eval_out.applied
@@ -701,22 +783,27 @@ def append_message(
         and step_eval_out.advance
     )
     if auto_loop_enabled and just_hit_step_7:
-        owner = db.get(User, project.user_id)
-        loop_lang = owner.language if owner else "en"
-        full_history = history + [
-            {"role": "assistant", "content": assistant_text}
-        ]
-        transition: TopicTransition = evaluate_topic_transition(
-            pm=manager._pm,
-            goal=project.goal,
-            topic=project.topic,
-            method=sess.method,
-            history=full_history,
-            model=model,
-            api_key=api_key,
-            output_language=loop_lang,
-            max_tokens=tt_max_tokens,
-        )
+        transition: TopicTransition
+        if precomputed_transition is not None:
+            # 18C parallel path already ran the transition call.
+            transition = precomputed_transition
+        else:
+            owner = db.get(User, project.user_id)
+            loop_lang = owner.language if owner else "en"
+            full_history = history + [
+                {"role": "assistant", "content": assistant_text}
+            ]
+            transition = evaluate_topic_transition(
+                pm=manager._pm,
+                goal=project.goal,
+                topic=project.topic,
+                method=sess.method,
+                history=full_history,
+                model=model,
+                api_key=api_key,
+                output_language=loop_lang,
+                max_tokens=tt_max_tokens,
+            )
         looped = (
             not transition.fallback_used
             and transition.cycle_complete

@@ -43,3 +43,10 @@ auto_loop:
   # max_tokens for the topic-transition call. The JSON output is
   # small (~150-200 tokens); the cap is a safety net. INTERNAL.
   topic_transition_max_tokens: 256
+
+# v1.5.0 — Parallel evaluation. At the step 6 -> 7 transition,
+# step_evaluation and topic_transition fire concurrently via
+# asyncio.gather instead of sequentially. Saves ~T2 of latency
+# at the cycle boundary. Set to false to fall back to the
+# v1.4.0 sequential path.
+async_evaluation: true
