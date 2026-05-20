@@ -43,6 +43,10 @@ import {
     type UserSettingsRow,
 } from "./db";
 import {
+    maybeRunAutoBackup,
+    recordCompletedSession,
+} from "./auto-backup";
+import {
     createDexieBackup,
     getDexieBackupStats,
     restoreDexieBackup,
@@ -631,6 +635,21 @@ export const dexieStorage: IStorageService = {
             const commit = buildCommitFromSession(fresh, latestRating);
             if (commit) {
                 await db.progressCommits.add(commit);
+            }
+            // Auto-backup: bump the session counter and, if the
+            // threshold is crossed, fire-and-forget a backup into
+            // the auto-backup ring. Failures here MUST NOT break
+            // session end — ``maybeRunAutoBackup`` swallows errors.
+            const trigger = recordCompletedSession();
+            if (trigger !== null) {
+                const session = await db.learningSessions.get(sessionId);
+                if (session !== undefined) {
+                    const project = await db.learningProjects.get(session.project_id);
+                    if (project !== undefined) {
+                        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+                        maybeRunAutoBackup(project.user_id, __APP_VERSION__, trigger);
+                    }
+                }
             }
             return {
                 session: {

@@ -449,3 +449,14 @@ backup:
   restored_with_errors: "{{n}} Datensätze konnten nicht wiederhergestellt werden."
   last_backup: "Letzte Sicherung: {{when}}"
   reminder_overdue: "Deine letzte Sicherung ist mehr als {{days}} Tage her."
+  auto_title: Automatische Sicherung
+  auto_help: Automatisch sichern nach 10 abgeschlossenen Sitzungen oder einmal pro Woche.
+  auto_run: Jetzt sichern
+  auto_run_success: Automatische Sicherung erstellt.
+  auto_run_error: "Automatische Sicherung fehlgeschlagen: {{detail}}"
+  auto_restored: Automatische Sicherung wiederhergestellt.
+  auto_restore: Wiederherstellen
+  auto_restore_error: "Wiederherstellung fehlgeschlagen: {{detail}}"
+  auto_records: "{{n}} Datensätze"
+  auto_none: Noch keine automatischen Sicherungen. Die erste läuft nach 10 Sitzungen oder 7 Tagen.
+  storage_pressure: "Browser-Speicher ist fast voll ({{pct}}% des Kontingents). Exportiere jetzt eine Sicherung."

@@ -418,3 +418,14 @@ backup:
   restored_with_errors: "{{n}} records could not be restored."
   last_backup: "Last backup: {{when}}"
   reminder_overdue: "It has been more than {{days}} days since your last backup."
+  auto_title: Auto-backup
+  auto_help: Automatically back up after every 10 completed sessions or once a week.
+  auto_run: Back up now
+  auto_run_success: Auto-backup created.
+  auto_run_error: "Auto-backup failed: {{detail}}"
+  auto_restored: Auto-backup restored.
+  auto_restore: Restore
+  auto_restore_error: "Restore failed: {{detail}}"
+  auto_records: "{{n}} records"
+  auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
+  storage_pressure: "Browser storage is almost full ({{pct}}% of quota). Export a manual backup now."

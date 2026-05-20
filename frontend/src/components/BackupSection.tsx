@@ -19,7 +19,20 @@ import {useEffect, useRef, useState} from "react";
 
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
-import {getStorage} from "../storage";
+import {getStorage, resolveStorageMode} from "../storage";
+import {
+    checkTimeTrigger,
+    deleteAutoBackup,
+    estimateStoragePressure,
+    isAutoBackupEnabled,
+    listAutoBackups,
+    maybeRunAutoBackup,
+    restoreFromAutoBackup,
+    runAutoBackupNow,
+    setAutoBackupEnabled,
+    type AutoBackupSummary,
+    type StoragePressureReport,
+} from "../storage/auto-backup";
 import {notify} from "../utils/notify";
 import type {BackupPayload, BackupStats, RestoreSummary} from "../types/domain";
 
@@ -90,6 +103,7 @@ function buildComparison(
 export default function BackupSection() {
     const {t} = useI18n();
     const storage = getStorage();
+    const storageMode = resolveStorageMode();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const {userId} = readLearnerState();
 
@@ -103,11 +117,50 @@ export default function BackupSection() {
         null,
     );
 
+    // Auto-backup (Dexie mode only)
+    const [autoEnabled, setAutoEnabled] = useState<boolean>(() =>
+        storageMode === "dexie" ? isAutoBackupEnabled() : false,
+    );
+    const [autoBackups, setAutoBackups] = useState<AutoBackupSummary[]>([]);
+    const [pressure, setPressure] = useState<StoragePressureReport | null>(null);
+    const [autoBusy, setAutoBusy] = useState<string | null>(null);
+
     useEffect(() => {
         // Re-read on mount; a user may have backed up via another
         // tab in the meantime.
         setLastBackup(readLastBackup());
     }, []);
+
+    useEffect(() => {
+        if (storageMode !== "dexie" || userId === null) {
+            return;
+        }
+        let cancelled = false;
+        async function refresh() {
+            const list = await listAutoBackups(userId!);
+            if (!cancelled) {
+                setAutoBackups(list);
+            }
+            const pres = await estimateStoragePressure();
+            if (!cancelled) {
+                setPressure(pres);
+            }
+        }
+        refresh();
+        // Run the time-based check once on mount. Fires only when
+        // the last auto-backup is older than 7 days (or absent).
+        const trigger = checkTimeTrigger();
+        if (trigger !== null) {
+            maybeRunAutoBackup(userId, __APP_VERSION__, trigger).then(() => {
+                if (!cancelled) {
+                    refresh();
+                }
+            });
+        }
+        return () => {
+            cancelled = true;
+        };
+    }, [storageMode, userId]);
 
     if (!userId) {
         return null;
@@ -413,6 +466,186 @@ export default function BackupSection() {
                             </li>
                         )}
                     </ul>
+                </div>
+            )}
+
+            {storageMode === "dexie" && (
+                <div
+                    className="backup-auto"
+                    data-testid="backup-auto"
+                >
+                    <h3>{t("backup.auto_title", "Auto-backup")}</h3>
+                    <label className="backup-auto-toggle">
+                        <input
+                            type="checkbox"
+                            checked={autoEnabled}
+                            data-testid="backup-auto-toggle"
+                            onChange={(event) => {
+                                const next = event.target.checked;
+                                setAutoBackupEnabled(next);
+                                setAutoEnabled(next);
+                            }}
+                        />
+                        <span>
+                            {t(
+                                "backup.auto_help",
+                                "Automatically back up after every 10 completed sessions or once a week.",
+                            )}
+                        </span>
+                    </label>
+
+                    {pressure !== null && pressure.is_pressured && (
+                        <p
+                            className="backup-pressure"
+                            data-testid="backup-pressure"
+                        >
+                            {t(
+                                "backup.storage_pressure",
+                                "Browser storage is almost full ({{pct}}% of quota). Export a manual backup now.",
+                            ).replace(
+                                "{{pct}}",
+                                String(Math.round(pressure.usage_ratio * 100)),
+                            )}
+                        </p>
+                    )}
+
+                    <div className="backup-actions">
+                        <button
+                            type="button"
+                            onClick={async () => {
+                                if (userId === null) {
+                                    return;
+                                }
+                                setAutoBusy("run");
+                                try {
+                                    await runAutoBackupNow(
+                                        userId,
+                                        __APP_VERSION__,
+                                        {reason: "manual"},
+                                    );
+                                    setAutoBackups(await listAutoBackups(userId));
+                                    notify.success(
+                                        t(
+                                            "backup.auto_run_success",
+                                            "Auto-backup created.",
+                                        ),
+                                    );
+                                } catch (err) {
+                                    const detail =
+                                        err instanceof Error ? err.message : String(err);
+                                    notify.error(
+                                        t(
+                                            "backup.auto_run_error",
+                                            "Auto-backup failed: {{detail}}",
+                                        ).replace("{{detail}}", detail),
+                                    );
+                                } finally {
+                                    setAutoBusy(null);
+                                }
+                            }}
+                            disabled={autoBusy !== null}
+                            data-testid="backup-auto-run"
+                        >
+                            {autoBusy === "run"
+                                ? t("backup.exporting", "Exporting…")
+                                : t("backup.auto_run", "Back up now")}
+                        </button>
+                    </div>
+
+                    {autoBackups.length === 0 ? (
+                        <p
+                            className="muted"
+                            data-testid="backup-auto-empty"
+                        >
+                            {t(
+                                "backup.auto_none",
+                                "No auto-backups yet. The first one runs after 10 sessions or 7 days.",
+                            )}
+                        </p>
+                    ) : (
+                        <ul
+                            className="backup-auto-list"
+                            data-testid="backup-auto-list"
+                        >
+                            {autoBackups.map((entry) => (
+                                <li key={entry.id}>
+                                    <span className="backup-auto-when">
+                                        {new Date(entry.created_at).toLocaleString()}
+                                    </span>
+                                    <span className="backup-auto-count">
+                                        {t(
+                                            "backup.auto_records",
+                                            "{{n}} records",
+                                        ).replace(
+                                            "{{n}}",
+                                            String(entry.total_records),
+                                        )}
+                                    </span>
+                                    <button
+                                        type="button"
+                                        onClick={async () => {
+                                            if (userId === null) {
+                                                return;
+                                            }
+                                            setAutoBusy(entry.id);
+                                            try {
+                                                const summary =
+                                                    await restoreFromAutoBackup(
+                                                        userId,
+                                                        entry.id,
+                                                    );
+                                                setRestoreSummary(summary);
+                                                notify.success(
+                                                    t(
+                                                        "backup.auto_restored",
+                                                        "Auto-backup restored.",
+                                                    ),
+                                                );
+                                            } catch (err) {
+                                                const detail =
+                                                    err instanceof Error
+                                                        ? err.message
+                                                        : String(err);
+                                                notify.error(
+                                                    t(
+                                                        "backup.auto_restore_error",
+                                                        "Restore failed: {{detail}}",
+                                                    ).replace("{{detail}}", detail),
+                                                );
+                                            } finally {
+                                                setAutoBusy(null);
+                                            }
+                                        }}
+                                        disabled={autoBusy !== null}
+                                        data-testid={`backup-auto-restore-${entry.id}`}
+                                    >
+                                        {t("backup.auto_restore", "Restore")}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={async () => {
+                                            if (userId === null) {
+                                                return;
+                                            }
+                                            setAutoBusy(entry.id);
+                                            try {
+                                                await deleteAutoBackup(entry.id);
+                                                setAutoBackups(
+                                                    await listAutoBackups(userId),
+                                                );
+                                            } finally {
+                                                setAutoBusy(null);
+                                            }
+                                        }}
+                                        disabled={autoBusy !== null}
+                                        data-testid={`backup-auto-delete-${entry.id}`}
+                                    >
+                                        {t("common.delete", "Delete")}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             )}
         </section>
