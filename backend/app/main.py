@@ -38,6 +38,7 @@ from app.database import init_db
 from app.exceptions import AdaptiveLearnerError
 from app.hookspecs import AdaptiveLearnerHookSpec
 from app.logging_config import setup_logging
+from app.routers.backup import router as backup_router
 from app.routers.curriculum import (
     curricula_router,
     lessons_router,
@@ -425,6 +426,7 @@ app.include_router(users_imports_router, prefix="/api")
 app.include_router(imports_router, prefix="/api")
 app.include_router(sync_router, prefix="/api")
 app.include_router(system_router, prefix="/api")
+app.include_router(backup_router, prefix="/api")
 
 
 @app.exception_handler(AdaptiveLearnerError)
