@@ -4,6 +4,13 @@ Daily-planning view of items outside the phase plan. The
 authoritative roadmap lives in [ROADMAP.md](ROADMAP.md); use
 this file for granular items + status.
 
+State: **post v1.5.0 (Phase 18 / Async AI Calls + Performance
+shipped).** BL-01 and BL-02 (originally listed as P0) shipped
+before the backlog re-baseline — BL-01 in v1.4.0 (commits
+`bb088a1`..`7ff50c5`), BL-02 in v1.5.0 (commits
+`b9ac8fb`..`d19dbcc`). Only the SSE-streaming portion of
+BL-02 (18D) was deferred and is now tracked as BL-23.
+
 Items ordered by impact and dependency chain. P0 = next up,
 P5 = speculative. Within each tier, smaller-scope and
 unblocking items come first; alphabetical-by-ID as final
@@ -13,17 +20,16 @@ tiebreaker.
 
 ## P0 — Next Releases (Prompts ready)
 
-- [ ] **BL-01**: Auto-Loop after Step 7 (v1.4.0) — Topic
-  transition evaluator, cycle counter, loop UX, multi-cycle
-  session summary. Unlocks continuous learning flow.
-- [ ] **BL-02**: Async AI Calls + SSE Streaming (v1.5.0) —
-  Async SQLAlchemy, parallel evaluation calls, streaming
-  learning response. Depends on auto-loop (3 sequential
-  calls make this urgent). Biggest perceived-performance win.
-
-## P1 — High Value, Clear Scope
-
-- [ ] **BL-03**: pluginforge-app-template repo — Export
+- [ ] **BL-23**: SSE streaming for `/message` response
+  (deferred from 18D) — Stream the assistant response
+  token-by-token over Server-Sent Events instead of waiting
+  for the full completion. Async foundation already in
+  place; the parallel step-evaluation + topic-transition
+  calls fire concurrently per v1.5.0. Remaining piece is
+  the SSE channel itself + the frontend reader that
+  appends incrementally to the chat. Biggest remaining
+  perceived-performance win.
+- [ ] **BL-03**: pluginforge-app-template repo — Export a
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Add README explaining how to fork. Validates PluginForge
   ecosystem (3 repos: framework, template, app).
@@ -31,6 +37,9 @@ tiebreaker.
   shipped paste-the-link only. Add navigator.mediaDevices
   .getUserMedia + jsQR or html5-qrcode for native camera
   scanning. Mobile UX improvement.
+
+## P1 — High Value, Clear Scope
+
 - [ ] **BL-05**: Sync gap: step_evaluations + session_notes —
   Excluded from v1.0.0 sync due to schema mismatch between
   Dexie and backend. Align schemas, add to sync surface.
