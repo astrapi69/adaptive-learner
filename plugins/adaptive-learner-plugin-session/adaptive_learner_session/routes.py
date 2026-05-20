@@ -46,6 +46,7 @@ GET /switch-recommendation/{session_id} (v0.2.0):
 from __future__ import annotations
 
 import json
+import time
 from datetime import UTC, datetime
 from typing import Any
 
@@ -243,6 +244,25 @@ class _StepEvaluationOut(BaseModel):
     from_step: int
 
 
+class _TimingsOut(BaseModel):
+    """v1.5.0 / Phase 18E — per-message latency breakdown.
+
+    All values in milliseconds (integer). ``None`` for calls that
+    were skipped (e.g. ``topic_transition_ms`` when the route never
+    reached the auto-loop branch). ``parallel_saved_ms`` is the
+    estimate of how much wall-time the asyncio.gather block saved
+    vs. running the two evaluators sequentially.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    learning_ms: int | None = None
+    evaluation_ms: int | None = None
+    topic_transition_ms: int | None = None
+    total_ms: int | None = None
+    parallel_saved_ms: int | None = None
+
+
 class _TopicTransitionOut(BaseModel):
     """v1.4.0 — auto-loop topic-transition result.
 
@@ -296,6 +316,7 @@ class _SessionMessageExchangeOut(BaseModel):
     session: LearningSessionOut
     step_evaluation: _StepEvaluationOut | None = None
     topic_transition: _TopicTransitionOut | None = None
+    timings: _TimingsOut | None = None
 
 
 class _SwitchRecommendationOut(BaseModel):
@@ -520,6 +541,18 @@ def append_message(
     # bodies are still accepted for back-compat with any external
     # integration that posts those directly — but the AI step
     # only fires for role=user.
+    # v1.5.0 / 18E — message-level timing budget. ``total_start``
+    # captures the wall clock at the entry to the AI orchestration
+    # path; per-call markers (learning_ms, evaluation_ms,
+    # topic_transition_ms) accumulate below. The response carries
+    # the breakdown as ``timings`` so the frontend / monitoring can
+    # surface latency without an extra introspection roundtrip.
+    request_start_ts = time.monotonic()
+    learning_ms_holder: dict[str, int | None] = {"value": None}
+    eval_ms_holder: dict[str, int | None] = {"value": None}
+    transition_ms_holder: dict[str, int | None] = {"value": None}
+    parallel_saved_ms_holder: dict[str, int | None] = {"value": None}
+
     user_msg = SessionMessage(
         session_id=sess.id,
         role=payload.role.value,
@@ -540,6 +573,14 @@ def append_message(
         step_evaluation: _StepEvaluationOut | None = None,
         topic_transition: _TopicTransitionOut | None = None,
     ) -> _SessionMessageExchangeOut:
+        total_ms = int((time.monotonic() - request_start_ts) * 1000)
+        timings = _TimingsOut(
+            learning_ms=learning_ms_holder["value"],
+            evaluation_ms=eval_ms_holder["value"],
+            topic_transition_ms=transition_ms_holder["value"],
+            total_ms=total_ms,
+            parallel_saved_ms=parallel_saved_ms_holder["value"],
+        )
         return _SessionMessageExchangeOut(
             user_message=SessionMessageOut.model_validate(user_msg),
             assistant_message=(
@@ -549,6 +590,7 @@ def append_message(
             session=LearningSessionOut.model_validate(sess),
             step_evaluation=step_evaluation,
             topic_transition=topic_transition,
+            timings=timings,
         )
 
     if payload.role != MessageRole.USER:
@@ -592,11 +634,15 @@ def append_message(
     try:
         from app.main import manager  # lazy: app.* not on sys.path in plugin's own test dir
 
+        learning_start = time.monotonic()
         assistant_text = ai_orchestration.call_ai_complete(
             pm=manager._pm,
             messages=history,
             model=model,
             api_key=api_key,
+        )
+        learning_ms_holder["value"] = int(
+            (time.monotonic() - learning_start) * 1000
         )
     except Exception as exc:  # noqa: BLE001
         return _build_response(ai_error=f"AI provider error: {exc}")
@@ -686,10 +732,20 @@ def append_message(
                 ),
             )
 
+        parallel_start = time.monotonic()
         try:
             precomputed_eval, precomputed_transition = asyncio.run(_run_both())
         except Exception:  # noqa: BLE001 — fall back to sequential
             precomputed_eval, precomputed_transition = None, None
+        if precomputed_eval is not None and precomputed_transition is not None:
+            parallel_ms = int((time.monotonic() - parallel_start) * 1000)
+            # Both calls ran concurrently inside that ms budget;
+            # attribute the elapsed time symmetrically and estimate
+            # the sequential cost as roughly 2x for the
+            # parallel_saved_ms display.
+            eval_ms_holder["value"] = parallel_ms
+            transition_ms_holder["value"] = parallel_ms
+            parallel_saved_ms_holder["value"] = parallel_ms
 
     if step_eval_enabled:
         # Look up the learner's UI language so the evaluator's
@@ -713,6 +769,7 @@ def append_message(
             # 18C parallel path already ran the evaluator.
             evaluation = precomputed_eval
         else:
+            eval_start = time.monotonic()
             evaluation = evaluate_step(
                 pm=manager._pm,
                 method=sess.method,
@@ -722,6 +779,9 @@ def append_message(
                 api_key=api_key,
                 output_language=eval_lang,
                 max_tokens=eval_max_tokens,
+            )
+            eval_ms_holder["value"] = int(
+                (time.monotonic() - eval_start) * 1000
             )
         if evaluation.fallback_used:
             # Fallback IS the deterministic advance: apply per
@@ -793,6 +853,7 @@ def append_message(
             full_history = history + [
                 {"role": "assistant", "content": assistant_text}
             ]
+            transition_start = time.monotonic()
             transition = evaluate_topic_transition(
                 pm=manager._pm,
                 goal=project.goal,
@@ -803,6 +864,9 @@ def append_message(
                 api_key=api_key,
                 output_language=loop_lang,
                 max_tokens=tt_max_tokens,
+            )
+            transition_ms_holder["value"] = int(
+                (time.monotonic() - transition_start) * 1000
             )
         looped = (
             not transition.fallback_used

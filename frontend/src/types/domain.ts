@@ -210,6 +210,19 @@ export interface SessionMessageExchangeResult {
      * started (cycle_step reset to 1, cycle_count incremented).
      */
     topic_transition?: TopicTransitionVerdict | null;
+    /**
+     * v1.5.0 — per-message latency breakdown. ``null`` for legacy
+     * routes that don't populate it.
+     */
+    timings?: MessageTimings | null;
+}
+
+export interface MessageTimings {
+    learning_ms: number | null;
+    evaluation_ms: number | null;
+    topic_transition_ms: number | null;
+    total_ms: number | null;
+    parallel_saved_ms: number | null;
 }
 
 export interface TopicTransitionVerdict {
