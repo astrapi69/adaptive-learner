@@ -4,11 +4,12 @@ Daily-planning view of items outside the phase plan. The
 authoritative roadmap lives in [ROADMAP.md](ROADMAP.md); use
 this file for granular items + status.
 
-State: **post v1.6.0 (Phase 19 / Streaming Learning Response
-shipped).** BL-23 (SSE streaming, deferred from 18D) shipped
-in v1.6.0 across three commits: 19A foundation (`03edb2b`),
-19B-1 SSE route + frontend reader + UI (`5b04d7a`), 19B-2
-Dexie browser-direct streaming (`4bdcb21`).
+State: **post v1.7.0 (Phase 20 / QR-Code Camera Scan for Sync
+Pairing shipped).** BL-04 (QR camera scan) shipped in v1.7.0
+across four commits: 20A scanner foundation (`8388656`),
+20B Sync Settings integration (`e246244`), 20C file-upload
+fallback (`d60f47c`), 20D viewfinder + haptics + reduced-
+motion polish (`4a63a1a`).
 
 Items ordered by impact and dependency chain. P0 = next up,
 P5 = speculative. Within each tier, smaller-scope and
@@ -23,10 +24,6 @@ tiebreaker.
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Add README explaining how to fork. Validates PluginForge
   ecosystem (3 repos: framework, template, app).
-- [ ] **BL-04**: QR-Code camera scan for sync — Phase 13
-  shipped paste-the-link only. Add navigator.mediaDevices
-  .getUserMedia + jsQR or html5-qrcode for native camera
-  scanning. Mobile UX improvement.
 
 ## P1 — High Value, Clear Scope
 

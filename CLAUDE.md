@@ -12,7 +12,26 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.6.0):** v1.5.0 plus Phase 19 —
+- **Current state (v1.7.0):** v1.6.0 plus Phase 20 —
+  **QR-Code Camera Scan for Sync Pairing.** New
+  ``html5-qrcode`` frontend dep (exact-pinned). New
+  ``components/sync/QRScanner.tsx`` opens the rear camera on
+  mount and stops every track on unmount / success / cancel
+  (no zombie camera). ``QRScannerModal`` wraps it with a dark
+  backdrop, Escape-to-close, body-scroll lock, viewfinder
+  overlay (four corner brackets + animated scan-line) and
+  success-checkmark animation. Both animations honour
+  prefers-reduced-motion. Haptic feedback on success via
+  ``navigator.vibrate?.(50)``. ``QRImageUpload`` is the
+  fallback for restricted browsers — ``Html5Qrcode.scanFile``
+  decodes a picked screenshot via the same
+  ``parsePairingUri`` path. ``SyncSection.PhoneUnpairedView``
+  is mobile-first: Scan-QR-Code is the primary CTA, paste-
+  the-link lives inside a collapsed ``<details>`` element.
+  Backend 606 + session-plugin 199 + frontend 751 at
+  release time. BL-04 closed.
+
+- **State (v1.6.0):** v1.5.0 plus Phase 19 —
   **Streaming Learning Response.** New ``ai_complete_stream``
   hookspec (firstresult=True) lets provider plugins yield an
   async iterator of text deltas. All three provider plugins
