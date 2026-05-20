@@ -340,3 +340,128 @@ describe("DexieStorage health + i18n + plugins", () => {
         expect(await dexieStorage.plugins.errors()).toEqual({});
     });
 });
+
+describe("DexieStorage imports (Phase 12C)", () => {
+    async function makeUser() {
+        return await dexieStorage.users.create({name: "Aster"});
+    }
+
+    function body(overrides: Record<string, unknown> = {}) {
+        return {
+            source: "chatgpt" as const,
+            title: "Anonymised sample",
+            messages: [
+                {role: "user" as const, content: "Explain induction"},
+                {role: "assistant" as const, content: "Induction generalises..."},
+            ],
+            ...overrides,
+        };
+    }
+
+    it("create + get round-trip preserves messages and order", async () => {
+        const u = await makeUser();
+        const created = await dexieStorage.imports.create(u.id, body());
+        expect(created.source).toBe("chatgpt");
+        expect(created.message_count).toBe(2);
+        const detail = await dexieStorage.imports.get(created.id);
+        expect(detail.messages.length).toBe(2);
+        expect(detail.messages[0]?.order_index).toBe(0);
+        expect(detail.messages[1]?.role).toBe("assistant");
+    });
+
+    it("create rejects when messages list is empty", async () => {
+        const u = await makeUser();
+        await expect(
+            dexieStorage.imports.create(u.id, body({messages: []})),
+        ).rejects.toBeInstanceOf(ApiError);
+    });
+
+    it("create 404s on unknown user", async () => {
+        await expect(
+            dexieStorage.imports.create("bogus", body()),
+        ).rejects.toMatchObject({status: 404});
+    });
+
+    it("create 400s on cross-user project assignment", async () => {
+        const alice = await dexieStorage.users.create({name: "Alice"});
+        const bob = await dexieStorage.users.create({name: "Bob"});
+        const bobProject = await dexieStorage.users.projects.create(bob.id, {
+            topic: "x",
+            goal: "y",
+            timeframe: "1w",
+            daily_minutes: 5,
+        });
+        await expect(
+            dexieStorage.imports.create(
+                alice.id,
+                body({project_id: bobProject.id}),
+            ),
+        ).rejects.toMatchObject({status: 400});
+    });
+
+    it("list returns user's conversations newest first", async () => {
+        const u = await makeUser();
+        const first = await dexieStorage.imports.create(u.id, body({title: "First"}));
+        await new Promise((r) => setTimeout(r, 5));
+        const second = await dexieStorage.imports.create(u.id, body({title: "Second"}));
+        const listing = await dexieStorage.imports.list(u.id);
+        expect(listing.map((c) => c.id)).toEqual([second.id, first.id]);
+    });
+
+    it("update can assign a topic_tag", async () => {
+        const u = await makeUser();
+        const conv = await dexieStorage.imports.create(u.id, body());
+        const updated = await dexieStorage.imports.update(conv.id, {
+            topic_tag: "philosophy",
+        });
+        expect(updated.topic_tag).toBe("philosophy");
+    });
+
+    it("update rejects cross-user project", async () => {
+        const alice = await dexieStorage.users.create({name: "Alice"});
+        const bob = await dexieStorage.users.create({name: "Bob"});
+        const bobProject = await dexieStorage.users.projects.create(bob.id, {
+            topic: "x",
+            goal: "y",
+            timeframe: "1w",
+            daily_minutes: 5,
+        });
+        const aliceConv = await dexieStorage.imports.create(alice.id, body());
+        await expect(
+            dexieStorage.imports.update(aliceConv.id, {project_id: bobProject.id}),
+        ).rejects.toMatchObject({status: 400});
+    });
+
+    it("remove drops the conversation and cascade-deletes messages", async () => {
+        const u = await makeUser();
+        const conv = await dexieStorage.imports.create(u.id, body());
+        await dexieStorage.imports.remove(conv.id);
+        await expect(dexieStorage.imports.get(conv.id)).rejects.toMatchObject({
+            status: 404,
+        });
+        const db = getDb();
+        const leftover = await db.importedMessages
+            .where("conversation_id")
+            .equals(conv.id)
+            .count();
+        expect(leftover).toBe(0);
+    });
+
+    it("saveAnalysis sets analyzed=true and persists the blob", async () => {
+        const u = await makeUser();
+        const conv = await dexieStorage.imports.create(u.id, body());
+        const analysis = {
+            topic: "Induction",
+            user_level: "beginner" as const,
+            recommended_method: "inductive" as const,
+        };
+        const detail = await dexieStorage.imports.saveAnalysis(conv.id, {
+            analysis_result: analysis,
+        });
+        expect(detail.analyzed).toBe(true);
+        expect(detail.analysis_result?.topic).toBe("Induction");
+        const reread = await dexieStorage.imports.get(conv.id);
+        expect(reread.analyzed).toBe(true);
+        expect(reread.analysis_result?.recommended_method).toBe("inductive");
+    });
+});

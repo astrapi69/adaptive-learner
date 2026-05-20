@@ -145,6 +145,34 @@ export interface IPluginsNamespace {
     errors(): Promise<Record<string, string>>;
 }
 
+// --- Imports (v0.9.0 / Phase 12C) --------------------------------------
+
+import type {
+    ImportedConversation,
+    ImportedConversationDetail,
+    ImportedConversationCreateBody,
+    ImportedConversationUpdateBody,
+    ImportedConversationAnalysis,
+} from "../types/domain";
+
+export interface IImportsNamespace {
+    list(userId: string): Promise<ImportedConversation[]>;
+    create(
+        userId: string,
+        body: ImportedConversationCreateBody,
+    ): Promise<ImportedConversation>;
+    get(conversationId: string): Promise<ImportedConversationDetail>;
+    update(
+        conversationId: string,
+        body: ImportedConversationUpdateBody,
+    ): Promise<ImportedConversation>;
+    remove(conversationId: string): Promise<void>;
+    saveAnalysis(
+        conversationId: string,
+        analysis: ImportedConversationAnalysis,
+    ): Promise<ImportedConversationDetail>;
+}
+
 /**
  * Marker for the backing store. Pages don't typically need to
  * branch on this, but Settings (and a few tests) do.
@@ -173,4 +201,5 @@ export interface IStorageService {
     topics: ITopicsNamespace;
     lessons: ILessonsNamespace;
     plugins: IPluginsNamespace;
+    imports: IImportsNamespace;
 }

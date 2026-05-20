@@ -43,6 +43,9 @@ EXPECTED_TABLES = {
     "progress_commits",
     "step_evaluations",  # v0.5.0 / 8D — Phase 8 dual-prompt analytics
     "method_switches",
+    # v0.9.0 / Phase 12C — chat-history import surface
+    "imported_conversations",
+    "imported_messages",
 }
 
 

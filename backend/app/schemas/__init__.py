@@ -562,9 +562,105 @@ class MethodSwitchOut(BaseModel):
     switched_at: datetime
 
 
+# --- Imported conversations (Phase 12C) -------------------------------------
+
+
+class ImportedConversationSource(str, Enum):
+    CHATGPT = "chatgpt"
+    CLAUDE = "claude"
+    GEMINI = "gemini"
+    MANUAL = "manual"
+    UNKNOWN = "unknown"
+
+
+class ImportedMessageCreate(BaseModel):
+    role: MessageRole
+    content: str = Field(min_length=1)
+    timestamp: datetime | None = None
+
+
+class ImportedMessageOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    conversation_id: str
+    role: MessageRole
+    content: str
+    timestamp: datetime | None = None
+    order_index: int
+
+
+class ImportedConversationCreate(BaseModel):
+    """POST body for ``/users/{id}/imports``.
+
+    The user_id comes from the URL prefix (never the body, per the
+    cross-user-write guard pattern used by projects/curricula).
+    """
+
+    source: ImportedConversationSource = ImportedConversationSource.UNKNOWN
+    title: str = Field(min_length=1, max_length=500)
+    project_id: str | None = None
+    topic_tag: str | None = Field(default=None, max_length=200)
+    model: str | None = Field(default=None, max_length=200)
+    source_created_at: datetime | None = None
+    messages: list[ImportedMessageCreate] = Field(min_length=1)
+
+
+class ImportedConversationUpdate(BaseModel):
+    """Partial update for already-imported conversations.
+
+    Only ``project_id`` + ``topic_tag`` are user-editable from the
+    UI; the analysis fields are set by the analyze endpoint, not
+    by direct PATCH from the client.
+    """
+
+    project_id: str | None = None
+    topic_tag: str | None = Field(default=None, max_length=200)
+    title: str | None = Field(default=None, min_length=1, max_length=500)
+
+
+class ImportedConversationAnalysis(BaseModel):
+    """Persist the AI-analysis result.
+
+    Sent by the frontend after it has run the analysis call. The
+    server validates the JSON envelope but does NOT prescribe the
+    inner schema — the analysis engine's prompt is the spec.
+    """
+
+    analysis_result: dict[str, object]
+
+
+class ImportedConversationOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    project_id: str | None = None
+    source: ImportedConversationSource
+    title: str
+    message_count: int
+    imported_at: datetime
+    analyzed: bool
+    topic_tag: str | None = None
+    model: str | None = None
+    source_created_at: datetime | None = None
+    # ``analysis_result`` is serialised JSON on the DB row; the
+    # router deserialises it via a thin DTO before validation so
+    # the wire shape is a dict, not a string.
+    analysis_result: dict[str, object] | None = None
+
+
+class ImportedConversationDetail(ImportedConversationOut):
+    """List endpoint returns ``Out`` (no messages); detail endpoint
+    adds the full transcript."""
+
+    messages: list[ImportedMessageOut] = Field(default_factory=list)
+
+
 __all__ = [
     # Enums
     "AIProvider",
+    "ImportedConversationSource",
     "LearningMethod",
     "MessageRole",
     "SessionStatus",
@@ -624,4 +720,12 @@ __all__ = [
     "MethodSwitchOut",
     # StepEvaluation (v0.5.0 / Phase 8D — read-only)
     "StepEvaluationOut",
+    # ImportedConversation + ImportedMessage (v0.9.0 / Phase 12C)
+    "ImportedConversationCreate",
+    "ImportedConversationUpdate",
+    "ImportedConversationAnalysis",
+    "ImportedConversationOut",
+    "ImportedConversationDetail",
+    "ImportedMessageCreate",
+    "ImportedMessageOut",
 ]

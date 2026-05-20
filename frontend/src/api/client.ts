@@ -503,6 +503,48 @@ export const api = {
         health: () => apiCall<Record<string, unknown>>("/plugins/health"),
         errors: () => apiCall<Record<string, string>>("/plugins/errors"),
     },
+
+    // --- Imported conversations (v0.9.0 / Phase 12C) ---------------------
+
+    imports: {
+        list: (userId: string) =>
+            apiCall<import("../types/domain").ImportedConversation[]>(
+                `/users/${encodeURIComponent(userId)}/imports`,
+            ),
+        create: (
+            userId: string,
+            body: import("../types/domain").ImportedConversationCreateBody,
+        ) =>
+            apiCall<import("../types/domain").ImportedConversation>(
+                `/users/${encodeURIComponent(userId)}/imports`,
+                {method: "POST", body},
+            ),
+        get: (conversationId: string) =>
+            apiCall<import("../types/domain").ImportedConversationDetail>(
+                `/imports/${encodeURIComponent(conversationId)}`,
+            ),
+        update: (
+            conversationId: string,
+            body: import("../types/domain").ImportedConversationUpdateBody,
+        ) =>
+            apiCall<import("../types/domain").ImportedConversation>(
+                `/imports/${encodeURIComponent(conversationId)}`,
+                {method: "PATCH", body},
+            ),
+        remove: (conversationId: string) =>
+            apiCall<void>(
+                `/imports/${encodeURIComponent(conversationId)}`,
+                {method: "DELETE"},
+            ),
+        saveAnalysis: (
+            conversationId: string,
+            analysis: import("../types/domain").ImportedConversationAnalysis,
+        ) =>
+            apiCall<import("../types/domain").ImportedConversationDetail>(
+                `/imports/${encodeURIComponent(conversationId)}/analysis`,
+                {method: "POST", body: analysis},
+            ),
+    },
 };
 
 // --- Re-exports for callers that want the typed payload shapes ---------

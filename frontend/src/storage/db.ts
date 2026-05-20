@@ -162,6 +162,30 @@ export interface MethodSwitchRow {
     switched_at: string;
 }
 
+export interface ImportedConversationRow {
+    id: string;
+    user_id: string;
+    project_id: string | null;
+    source: string;
+    title: string;
+    message_count: number;
+    imported_at: string;
+    analyzed: boolean;
+    analysis_result: Record<string, unknown> | null;
+    topic_tag: string | null;
+    model: string | null;
+    source_created_at: string | null;
+}
+
+export interface ImportedMessageRow {
+    id: string;
+    conversation_id: string;
+    role: MessageRole;
+    content: string;
+    timestamp: string | null;
+    order_index: number;
+}
+
 export interface StepEvaluationRow {
     id: string;
     session_id: string;
@@ -198,6 +222,8 @@ export class AdaptiveLearnerDB extends Dexie {
     progressCommits!: EntityTable<ProgressCommitRow, "id">;
     methodSwitches!: EntityTable<MethodSwitchRow, "id">;
     stepEvaluations!: EntityTable<StepEvaluationRow, "id">;
+    importedConversations!: EntityTable<ImportedConversationRow, "id">;
+    importedMessages!: EntityTable<ImportedMessageRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -216,6 +242,12 @@ export class AdaptiveLearnerDB extends Dexie {
             progressCommits: "id, project_id, session_id, committed_at",
             methodSwitches: "id, project_id, switched_at",
             stepEvaluations: "id, session_id, created_at",
+        });
+        // Schema v2 — v0.9.0 Phase 12C: chat-history import surface.
+        this.version(2).stores({
+            importedConversations:
+                "id, user_id, project_id, imported_at, source, analyzed",
+            importedMessages: "id, conversation_id, order_index",
         });
     }
 }

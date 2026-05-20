@@ -417,3 +417,90 @@ export interface SpacedRecommendation {
     title: string;
     urgency: number;
 }
+
+// --- Imported conversations (v0.9.0 / Phase 12C) -------------------------
+
+export type ImportedConversationSource =
+    | "chatgpt"
+    | "claude"
+    | "gemini"
+    | "manual"
+    | "unknown";
+
+/**
+ * Shape of the AI-analysis blob produced by Phase 12D.
+ * Every field is optional so a partial / malformed model
+ * response still renders something instead of throwing.
+ */
+export interface AnalysisSuggestedLesson {
+    title: string;
+    description: string;
+    priority: number;
+}
+
+export interface ConversationAnalysisResult {
+    topic?: string;
+    subtopics?: string[];
+    user_level?: "beginner" | "intermediate" | "advanced";
+    strengths?: string[];
+    weaknesses?: string[];
+    error_patterns?: string[];
+    recommended_method?: LearningMethod;
+    recommended_focus?: string;
+    suggested_curriculum?: AnalysisSuggestedLesson[];
+    summary?: string;
+    chunk_summaries?: string[];
+    fallback_used?: boolean;
+}
+
+export interface ImportedMessage {
+    id: string;
+    conversation_id: string;
+    role: "user" | "assistant" | "system";
+    content: string;
+    timestamp: string | null;
+    order_index: number;
+}
+
+export interface ImportedConversation {
+    id: string;
+    user_id: string;
+    project_id: string | null;
+    source: ImportedConversationSource;
+    title: string;
+    message_count: number;
+    imported_at: string;
+    analyzed: boolean;
+    topic_tag: string | null;
+    model: string | null;
+    source_created_at: string | null;
+    analysis_result: ConversationAnalysisResult | null;
+}
+
+export interface ImportedConversationDetail extends ImportedConversation {
+    messages: ImportedMessage[];
+}
+
+export interface ImportedConversationCreateBody {
+    source: ImportedConversationSource;
+    title: string;
+    project_id?: string | null;
+    topic_tag?: string | null;
+    model?: string | null;
+    source_created_at?: string | null;
+    messages: Array<{
+        role: "user" | "assistant" | "system";
+        content: string;
+        timestamp?: string | null;
+    }>;
+}
+
+export interface ImportedConversationUpdateBody {
+    project_id?: string | null;
+    topic_tag?: string | null;
+    title?: string;
+}
+
+export interface ImportedConversationAnalysis {
+    analysis_result: ConversationAnalysisResult;
+}

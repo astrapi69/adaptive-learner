@@ -107,4 +107,14 @@ export const apiStorage: IStorageService = {
         health: () => api.plugins.health(),
         errors: () => api.plugins.errors(),
     },
+
+    imports: {
+        list: (userId) => api.imports.list(userId),
+        create: (userId, body) => api.imports.create(userId, body),
+        get: (conversationId) => api.imports.get(conversationId),
+        update: (conversationId, body) => api.imports.update(conversationId, body),
+        remove: (conversationId) => api.imports.remove(conversationId),
+        saveAnalysis: (conversationId, analysis) =>
+            api.imports.saveAnalysis(conversationId, analysis),
+    },
 };
