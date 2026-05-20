@@ -45,4 +45,25 @@ describe("SessionChat", () => {
         fireEvent.click(send);
         expect(onSend).not.toHaveBeenCalled();
     });
+
+    it("renders a streaming assistant message with a cursor + dedicated testid", () => {
+        const streaming: ChatMessage[] = [
+            ...MESSAGES,
+            {
+                id: "streaming-1",
+                role: "assistant",
+                content: "partial reply so",
+                streaming: true,
+            },
+        ];
+        render(<SessionChat messages={streaming} onSend={() => {}} />);
+        // Streaming bubble exposes a distinct testid so consumers can
+        // pin "is the streaming bubble visible?" without parsing
+        // class names.
+        const node = screen.getByTestId("chat-message-assistant-streaming");
+        expect(node).toBeInTheDocument();
+        // Cursor character lives inside the bubble.
+        expect(node.textContent).toContain("partial reply so");
+        expect(node.textContent).toContain("▍"); // ▍
+    });
 });

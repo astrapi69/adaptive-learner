@@ -50,7 +50,8 @@ import time
 from datetime import UTC, datetime
 from typing import Any
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
@@ -79,15 +80,14 @@ from app.schemas import (
 
 from . import ai_orchestration
 from .prompts import MAX_STEP, METHODS, MIN_STEP, build_prompt
-from .topic_transition import (
-    TRANSITION_DEFAULT_MAX_TOKENS,
-    TopicTransition,
-    evaluate_topic_transition,
-)
 from .step_evaluator import (
     EVALUATION_DEFAULT_MAX_TOKENS,
     StepEvaluation,
     evaluate_step,
+)
+from .topic_transition import (
+    TopicTransition,
+    evaluate_topic_transition,
 )
 
 
@@ -487,9 +487,7 @@ def _load_prior_messages(db: Session, session_id: str) -> list[dict[str, Any]]:
     return [{"role": r.role, "content": r.content} for r in rows]
 
 
-def _resolve_active_key(
-    db: Session, user_id: str
-) -> tuple[str | None, str | None, str | None]:
+def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | None, str | None]:
     """Return (active_provider, decrypted_api_key, model_override) for the user.
 
     Any of the three can be ``None``:
@@ -641,9 +639,7 @@ def append_message(
             model=model,
             api_key=api_key,
         )
-        learning_ms_holder["value"] = int(
-            (time.monotonic() - learning_start) * 1000
-        )
+        learning_ms_holder["value"] = int((time.monotonic() - learning_start) * 1000)
     except Exception as exc:  # noqa: BLE001
         return _build_response(ai_error=f"AI provider error: {exc}")
 
@@ -690,12 +686,7 @@ def append_message(
     # not met, fall back to the v1.4.0 sequential path below.
     precomputed_eval: StepEvaluation | None = None
     precomputed_transition: TopicTransition | None = None
-    if (
-        async_eval_enabled
-        and step_eval_enabled
-        and auto_loop_enabled
-        and from_step == MAX_STEP - 1
-    ):
+    if async_eval_enabled and step_eval_enabled and auto_loop_enabled and from_step == MAX_STEP - 1:
         import asyncio
 
         from .step_evaluator import evaluate_step_async
@@ -703,9 +694,7 @@ def append_message(
 
         owner = db.get(User, project.user_id)
         parallel_lang = owner.language if owner else "en"
-        parallel_history = history + [
-            {"role": "assistant", "content": assistant_text}
-        ]
+        parallel_history = history + [{"role": "assistant", "content": assistant_text}]
 
         async def _run_both() -> tuple[StepEvaluation, TopicTransition]:
             return await asyncio.gather(
@@ -761,9 +750,7 @@ def append_message(
         # we just saved (loaded via _load_prior_messages above) but
         # not the assistant reply we haven't committed yet, so append
         # it explicitly.
-        full_history = history + [
-            {"role": "assistant", "content": assistant_text}
-        ]
+        full_history = history + [{"role": "assistant", "content": assistant_text}]
         evaluation: StepEvaluation
         if precomputed_eval is not None:
             # 18C parallel path already ran the evaluator.
@@ -780,18 +767,14 @@ def append_message(
                 output_language=eval_lang,
                 max_tokens=eval_max_tokens,
             )
-            eval_ms_holder["value"] = int(
-                (time.monotonic() - eval_start) * 1000
-            )
+            eval_ms_holder["value"] = int((time.monotonic() - eval_start) * 1000)
         if evaluation.fallback_used:
             # Fallback IS the deterministic advance: apply per
             # evaluation.advance (which is +1 below step 7, False
             # at step 7 to cap the cycle).
             applied = evaluation.advance
         else:
-            applied = evaluation.advance and (
-                evaluation.confidence >= threshold
-            )
+            applied = evaluation.advance and (evaluation.confidence >= threshold)
         if applied:
             sess.cycle_step = evaluation.suggested_step
         # v0.5.0 / 8D — persist the evaluation row for the
@@ -850,9 +833,7 @@ def append_message(
         else:
             owner = db.get(User, project.user_id)
             loop_lang = owner.language if owner else "en"
-            full_history = history + [
-                {"role": "assistant", "content": assistant_text}
-            ]
+            full_history = history + [{"role": "assistant", "content": assistant_text}]
             transition_start = time.monotonic()
             transition = evaluate_topic_transition(
                 pm=manager._pm,
@@ -865,9 +846,7 @@ def append_message(
                 output_language=loop_lang,
                 max_tokens=tt_max_tokens,
             )
-            transition_ms_holder["value"] = int(
-                (time.monotonic() - transition_start) * 1000
-            )
+            transition_ms_holder["value"] = int((time.monotonic() - transition_start) * 1000)
         looped = (
             not transition.fallback_used
             and transition.cycle_complete
@@ -914,6 +893,467 @@ def append_message(
 
     return _build_response(
         assistant=assistant_msg,
+        step_evaluation=step_eval_out,
+        topic_transition=topic_transition_out,
+    )
+
+
+# --- POST /{id}/message/stream (v1.6.0 / Phase 19) -------------------------
+
+
+def _sse_event(event: str, data: dict[str, Any]) -> bytes:
+    """Format one Server-Sent-Events frame.
+
+    SSE wire format: ``event: <name>\\ndata: <json>\\n\\n``. We
+    always JSON-encode the data block so the client parser doesn't
+    have to branch on event type.
+    """
+    payload = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+    return f"event: {event}\ndata: {payload}\n\n".encode()
+
+
+@router.post(
+    "/{session_id}/message/stream",
+    status_code=status.HTTP_200_OK,
+    response_class=StreamingResponse,
+)
+async def append_message_stream(
+    session_id: str,
+    payload: _MessageBody,
+    request: Request,  # noqa: ARG001  — kept for symmetry / future use
+    db: Session = Depends(get_db),
+) -> StreamingResponse:
+    """v1.6.0 / Phase 19 — token-streaming variant of /message.
+
+    Mirrors the non-streaming /message orchestration with these
+    differences:
+
+    - The assistant response streams back via SSE ``chunk`` events
+      so the UI can render tokens as they arrive instead of waiting
+      for the full completion.
+    - When the active provider's plugin implements
+      ``ai_complete_stream`` (Phase 19A), tokens arrive incrementally
+      from the SDK. When it doesn't, the route falls back to
+      ``call_ai_complete_async`` and emits the full string as one
+      ``chunk`` event so the client UI doesn't have to branch.
+    - Step-evaluation + topic-transition still fire AFTER the
+      stream completes (the evaluator reads the assistant message
+      from the transcript). The route emits a final ``done`` event
+      carrying ``session``, ``user_message``, ``assistant_message``,
+      ``step_evaluation``, ``topic_transition``, and ``timings`` —
+      the same payload the non-stream /message returns in one shot.
+    - On a provider error the route emits an ``error`` event with
+      ``ai_error`` set on the final ``done`` event, then closes.
+      The user message is still persisted so the conversation
+      record stays intact.
+
+    SSE event schema:
+      - ``start``: ``{user_message: SessionMessageOut}``
+      - ``chunk``: ``{delta: str}``
+      - ``done``:  ``{session, user_message, assistant_message?,
+                       ai_error?, step_evaluation?, topic_transition?,
+                       timings}``
+      - ``error``: ``{detail: str}`` (only on auth/setup failures
+                    where the route bails before opening the stream
+                    proper; provider errors land in ``done.ai_error``).
+    """
+    sess = _get_session(db, session_id)
+    if sess.status != "active":
+        raise ValidationError(
+            f"Session {session_id!r} is {sess.status!r}; cannot append messages "
+            f"(reopen by starting a new session)."
+        )
+
+    if payload.role != MessageRole.USER:
+        raise ValidationError(
+            "POST /message/stream only accepts role=user payloads; "
+            "non-user writes use POST /message."
+        )
+
+    request_start_ts = time.monotonic()
+    learning_ms_holder: dict[str, int | None] = {"value": None}
+    eval_ms_holder: dict[str, int | None] = {"value": None}
+    transition_ms_holder: dict[str, int | None] = {"value": None}
+    parallel_saved_ms_holder: dict[str, int | None] = {"value": None}
+
+    user_msg = SessionMessage(
+        session_id=sess.id,
+        role=payload.role.value,
+        content=payload.content,
+    )
+    db.add(user_msg)
+    db.commit()
+    db.refresh(user_msg)
+
+    project = db.get(LearningProject, sess.project_id)
+    if project is None:
+        # Mirror the non-stream behaviour: surface the error inside
+        # ``done`` rather than as a hard 500. The user message is
+        # already persisted.
+        async def _orphan_stream() -> Any:
+            yield _sse_event(
+                "start",
+                {
+                    "user_message": SessionMessageOut.model_validate(user_msg).model_dump(
+                        mode="json"
+                    )
+                },
+            )
+            yield _sse_event(
+                "done",
+                {
+                    "session": LearningSessionOut.model_validate(sess).model_dump(mode="json"),
+                    "user_message": SessionMessageOut.model_validate(user_msg).model_dump(
+                        mode="json"
+                    ),
+                    "assistant_message": None,
+                    "ai_error": "session has no project; AI reply skipped.",
+                    "step_evaluation": None,
+                    "topic_transition": None,
+                    "timings": _empty_timings(request_start_ts),
+                },
+            )
+
+        return StreamingResponse(_orphan_stream(), media_type="text/event-stream")
+
+    provider_key, api_key, model_override = _resolve_active_key(db, project.user_id)
+    if provider_key is None:
+        return _setup_error_stream(
+            request_start_ts, user_msg, sess, "No active AI provider configured."
+        )
+    if not api_key:
+        return _setup_error_stream(
+            request_start_ts,
+            user_msg,
+            sess,
+            f"No API key stored for provider {provider_key!r}.",
+        )
+    model = ai_orchestration.resolve_model(provider_key, override=model_override)
+    if model is None:
+        return _setup_error_stream(
+            request_start_ts,
+            user_msg,
+            sess,
+            f"Provider {provider_key!r} has no default model registered.",
+        )
+
+    history = _load_prior_messages(db, sess.id)
+    from app.main import manager
+
+    async def _event_stream() -> Any:
+        from .ai_orchestration import (
+            call_ai_complete_async,
+            call_ai_complete_stream,
+        )
+
+        yield _sse_event(
+            "start",
+            {"user_message": SessionMessageOut.model_validate(user_msg).model_dump(mode="json")},
+        )
+
+        accumulator: list[str] = []
+        ai_error: str | None = None
+        learning_start = time.monotonic()
+        try:
+            iterator = await call_ai_complete_stream(
+                pm=manager._pm,
+                messages=history,
+                model=model,
+                api_key=api_key,
+            )
+            if iterator is None:
+                # Fallback path: the provider doesn't implement the
+                # stream hook. Call the async non-stream variant and
+                # emit one chunk so the client doesn't have to
+                # branch.
+                full_text = await call_ai_complete_async(
+                    pm=manager._pm,
+                    messages=history,
+                    model=model,
+                    api_key=api_key,
+                )
+                if isinstance(full_text, str) and full_text:
+                    accumulator.append(full_text)
+                    yield _sse_event("chunk", {"delta": full_text})
+            else:
+                async for delta in iterator:
+                    if isinstance(delta, str) and delta:
+                        accumulator.append(delta)
+                        yield _sse_event("chunk", {"delta": delta})
+        except Exception as exc:  # noqa: BLE001 — surface as ai_error
+            ai_error = f"AI provider error: {exc}"
+
+        learning_ms_holder["value"] = int((time.monotonic() - learning_start) * 1000)
+
+        assistant_text = "".join(accumulator)
+        if not assistant_text and ai_error is None:
+            ai_error = (
+                f"No registered provider returned a reply for model {model!r}. "
+                f"Is the {provider_key!r} provider plugin enabled?"
+            )
+
+        # Finalise: save assistant message, run step-eval +
+        # topic-transition, emit done.
+        assistant_msg = (
+            _finalize_stream_exchange(
+                db=db,
+                sess=sess,
+                project=project,
+                history=history,
+                assistant_text=assistant_text,
+                model=model,
+                api_key=api_key,
+                eval_ms_holder=eval_ms_holder,
+                transition_ms_holder=transition_ms_holder,
+            )
+            if not ai_error
+            else None
+        )
+
+        total_ms = int((time.monotonic() - request_start_ts) * 1000)
+        yield _sse_event(
+            "done",
+            {
+                "session": LearningSessionOut.model_validate(sess).model_dump(mode="json"),
+                "user_message": SessionMessageOut.model_validate(user_msg).model_dump(mode="json"),
+                "assistant_message": (
+                    SessionMessageOut.model_validate(assistant_msg.message).model_dump(mode="json")
+                    if assistant_msg is not None
+                    else None
+                ),
+                "ai_error": ai_error,
+                "step_evaluation": (
+                    assistant_msg.step_evaluation.model_dump(mode="json")
+                    if assistant_msg and assistant_msg.step_evaluation
+                    else None
+                ),
+                "topic_transition": (
+                    assistant_msg.topic_transition.model_dump(mode="json")
+                    if assistant_msg and assistant_msg.topic_transition
+                    else None
+                ),
+                "timings": {
+                    "learning_ms": learning_ms_holder["value"],
+                    "evaluation_ms": eval_ms_holder["value"],
+                    "topic_transition_ms": transition_ms_holder["value"],
+                    "total_ms": total_ms,
+                    "parallel_saved_ms": parallel_saved_ms_holder["value"],
+                },
+            },
+        )
+
+    return StreamingResponse(_event_stream(), media_type="text/event-stream")
+
+
+def _empty_timings(request_start_ts: float) -> dict[str, Any]:
+    total_ms = int((time.monotonic() - request_start_ts) * 1000)
+    return {
+        "learning_ms": None,
+        "evaluation_ms": None,
+        "topic_transition_ms": None,
+        "total_ms": total_ms,
+        "parallel_saved_ms": None,
+    }
+
+
+def _setup_error_stream(
+    request_start_ts: float,
+    user_msg: SessionMessage,
+    sess: LearningSession,
+    ai_error: str,
+) -> StreamingResponse:
+    """Build a one-shot SSE response for setup failures (no provider,
+    no key, no model). The user message is already persisted; we
+    just emit start + done so the client sees the error inline
+    rather than as a hard HTTP 4xx (consistent with /message)."""
+
+    async def _gen() -> Any:
+        yield _sse_event(
+            "start",
+            {"user_message": SessionMessageOut.model_validate(user_msg).model_dump(mode="json")},
+        )
+        yield _sse_event(
+            "done",
+            {
+                "session": LearningSessionOut.model_validate(sess).model_dump(mode="json"),
+                "user_message": SessionMessageOut.model_validate(user_msg).model_dump(mode="json"),
+                "assistant_message": None,
+                "ai_error": ai_error,
+                "step_evaluation": None,
+                "topic_transition": None,
+                "timings": _empty_timings(request_start_ts),
+            },
+        )
+
+    return StreamingResponse(_gen(), media_type="text/event-stream")
+
+
+class _StreamExchangeResult:
+    """Container for the post-stream finalisation output."""
+
+    def __init__(
+        self,
+        message: SessionMessage,
+        step_evaluation: _StepEvaluationOut | None,
+        topic_transition: _TopicTransitionOut | None,
+    ) -> None:
+        self.message = message
+        self.step_evaluation = step_evaluation
+        self.topic_transition = topic_transition
+
+
+def _finalize_stream_exchange(
+    *,
+    db: Session,
+    sess: LearningSession,
+    project: LearningProject,
+    history: list[dict[str, Any]],
+    assistant_text: str,
+    model: str,
+    api_key: str,
+    eval_ms_holder: dict[str, int | None],
+    transition_ms_holder: dict[str, int | None],
+) -> _StreamExchangeResult:
+    """Persist the assistant message + run step-eval + topic-transition.
+
+    Mirrors the second half of :func:`append_message` from the
+    point ``assistant_text`` is known. Kept inline here rather than
+    extracted as a shared helper because the parallel-evaluation
+    path at the step 6 -> 7 boundary is intrinsically tied to the
+    non-streaming route's flow (evaluators run BEFORE the AI reply
+    in the parallel path, which doesn't make sense for streaming —
+    by the time we get here, the stream is finished and we have
+    the full text).
+    """
+    from app.main import manager  # noqa: F401  — kept for symmetry with /message
+
+    assistant_msg = SessionMessage(
+        session_id=sess.id,
+        role="assistant",
+        content=assistant_text,
+    )
+    db.add(assistant_msg)
+    db.flush()
+
+    from_step = int(sess.cycle_step)
+    step_eval_enabled, threshold, eval_max_tokens = _read_step_evaluation_config()
+    auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
+    step_eval_out: _StepEvaluationOut | None = None
+
+    if step_eval_enabled:
+        owner = db.get(User, project.user_id)
+        eval_lang = owner.language if owner else "en"
+        full_history = history + [{"role": "assistant", "content": assistant_text}]
+        eval_start = time.monotonic()
+        evaluation = evaluate_step(
+            pm=manager._pm,
+            method=sess.method,
+            current_step=from_step,
+            history=full_history,
+            model=model,
+            api_key=api_key,
+            output_language=eval_lang,
+            max_tokens=eval_max_tokens,
+        )
+        eval_ms_holder["value"] = int((time.monotonic() - eval_start) * 1000)
+        if evaluation.fallback_used:
+            applied = evaluation.advance
+        else:
+            applied = evaluation.advance and (evaluation.confidence >= threshold)
+        if applied:
+            sess.cycle_step = evaluation.suggested_step
+        to_step = evaluation.suggested_step if applied else from_step
+        db.add(
+            StepEvaluationRow(
+                session_id=sess.id,
+                from_step=from_step,
+                to_step=to_step,
+                advance=evaluation.advance,
+                confidence=evaluation.confidence,
+                applied=applied,
+                fallback_used=evaluation.fallback_used,
+                reason=evaluation.reason,
+            )
+        )
+        step_eval_out = _StepEvaluationOut(
+            advance=evaluation.advance,
+            confidence=evaluation.confidence,
+            reason=evaluation.reason,
+            suggested_step=evaluation.suggested_step,
+            fallback_used=evaluation.fallback_used,
+            applied=applied,
+            from_step=from_step,
+        )
+    else:
+        if sess.cycle_step < MAX_STEP:
+            sess.cycle_step += 1
+
+    topic_transition_out: _TopicTransitionOut | None = None
+    just_hit_step_7 = (
+        step_eval_out is not None
+        and step_eval_out.applied
+        and step_eval_out.suggested_step == MAX_STEP
+        and step_eval_out.advance
+    )
+    if auto_loop_enabled and just_hit_step_7:
+        owner = db.get(User, project.user_id)
+        loop_lang = owner.language if owner else "en"
+        full_history = history + [{"role": "assistant", "content": assistant_text}]
+        transition_start = time.monotonic()
+        transition = evaluate_topic_transition(
+            pm=manager._pm,
+            goal=project.goal,
+            topic=project.topic,
+            method=sess.method,
+            history=full_history,
+            model=model,
+            api_key=api_key,
+            output_language=loop_lang,
+            max_tokens=tt_max_tokens,
+        )
+        transition_ms_holder["value"] = int((time.monotonic() - transition_start) * 1000)
+        looped = (
+            not transition.fallback_used
+            and transition.cycle_complete
+            and transition.continue_recommended
+            and transition.next_topic is not None
+            and sess.cycle_count < max_cycles
+        )
+        if looped:
+            try:
+                topics_list = json.loads(sess.cycle_topics or "[]")
+                if not isinstance(topics_list, list):
+                    topics_list = []
+            except json.JSONDecodeError:
+                topics_list = []
+            topics_list.append(
+                {
+                    "cycle": sess.cycle_count,
+                    "topic": project.topic,
+                    "summary": transition.summary,
+                    "next_topic": transition.next_topic or "",
+                }
+            )
+            sess.cycle_topics = json.dumps(topics_list, ensure_ascii=False)
+            sess.cycle_count += 1
+            sess.cycle_step = MIN_STEP
+        topic_transition_out = _TopicTransitionOut(
+            cycle_complete=transition.cycle_complete,
+            summary=transition.summary,
+            next_topic=transition.next_topic,
+            next_topic_rationale=transition.next_topic_rationale,
+            difficulty_adjustment=transition.difficulty_adjustment,
+            continue_recommended=transition.continue_recommended,
+            fallback_used=transition.fallback_used,
+            looped=looped,
+            new_cycle_count=sess.cycle_count,
+        )
+
+    db.commit()
+    db.refresh(assistant_msg)
+    db.refresh(sess)
+    return _StreamExchangeResult(
+        message=assistant_msg,
         step_evaluation=step_eval_out,
         topic_transition=topic_transition_out,
     )

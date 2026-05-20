@@ -9,6 +9,7 @@ dispatch through the production PluginManager, and the
 from __future__ import annotations
 
 import json
+from unittest.mock import patch
 
 import pluggy
 import pytest
@@ -211,6 +212,188 @@ def test_message_rejected_on_closed_session(client: TestClient):
     )
     assert resp.status_code == 400
     assert "completed" in resp.json()["detail"]
+
+
+# --- POST /{id}/message/stream (v1.6.0 / Phase 19) -------------------------
+
+
+def _parse_sse(raw: str) -> list[dict]:
+    """Parse the SSE wire bytes into a list of ``{event, data}``
+    dicts. Each frame is ``event: <name>\\ndata: <json>\\n\\n``.
+    """
+    events: list[dict] = []
+    for frame in raw.strip().split("\n\n"):
+        if not frame.strip():
+            continue
+        event_name = ""
+        data_payload = ""
+        for line in frame.splitlines():
+            if line.startswith("event:"):
+                event_name = line[len("event:") :].strip()
+            elif line.startswith("data:"):
+                data_payload = line[len("data:") :].strip()
+        events.append({"event": event_name, "data": json.loads(data_payload)})
+    return events
+
+
+def test_stream_emits_setup_error_when_no_provider_configured(client: TestClient):
+    """No active API key configured in this fixture. The setup
+    chain bails before the AI dispatch and emits start + done
+    with ai_error set, all inside the SSE wire (no HTTP 4xx)."""
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message/stream",
+        json={"role": "user", "content": "Hi"},
+    )
+    assert resp.status_code == 200, resp.text
+    assert resp.headers["content-type"].startswith("text/event-stream")
+    events = _parse_sse(resp.text)
+    assert [e["event"] for e in events] == ["start", "done"]
+    assert events[0]["data"]["user_message"]["content"] == "Hi"
+    # No API key -> ai_error explains why.
+    done = events[1]["data"]
+    assert done["assistant_message"] is None
+    assert "API key" in done["ai_error"]
+
+
+def test_stream_rejects_non_user_role_400(client: TestClient):
+    """role=assistant writes only work on POST /message, not the
+    stream variant (streaming AI input is the whole point)."""
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message/stream",
+        json={"role": "assistant", "content": "x"},
+    )
+    assert resp.status_code == 400
+    assert "user" in resp.json()["detail"].lower()
+
+
+def test_stream_rejects_unknown_session_404(client: TestClient):
+    resp = client.post(
+        "/api/plugins/session/no-such/message/stream",
+        json={"role": "user", "content": "x"},
+    )
+    assert resp.status_code == 404
+
+
+def test_stream_rejected_on_closed_session(client: TestClient):
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
+    client.post(f"/api/plugins/session/{sess_id}/end")
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message/stream",
+        json={"role": "user", "content": "Late"},
+    )
+    assert resp.status_code == 400
+
+
+def test_stream_yields_chunks_and_persists_assistant(client: TestClient):
+    """End-to-end happy path: with the streaming hook patched to
+    yield three chunks, the SSE wire carries start + 3x chunk +
+    done. The assistant message is persisted with the concatenated
+    full text."""
+    user_id, project_id = _make_user_and_project(client)
+    # Set an API key so the route doesn't bail on the setup path.
+    client.post(
+        f"/api/settings/{user_id}/api-key",
+        json={"provider": "anthropic", "key": "sk-test"},
+    )
+    # Use the project's user as the active provider holder.
+    sess_id = client.post(
+        "/api/plugins/session/start",
+        json={"project_id": project_id, "method": "deductive"},
+    ).json()["session"]["id"]
+
+    async def fake_stream(messages, model, api_key, **kwargs):  # noqa: ARG001
+        for delta in ["Hi", " there", "!"]:
+            yield delta
+
+    # Patch both the streaming hook AND the evaluator's underlying
+    # sync ai_complete so the post-stream eval/transition path
+    # doesn't try to hit a real provider.
+    with (
+        patch("adaptive_learner_ai_anthropic.plugin._stream", side_effect=fake_stream),
+        patch(
+            "adaptive_learner_ai_anthropic.plugin._complete",
+            return_value='{"advance":false,"confidence":0.5,"reason":"x","suggested_step":1}',
+        ),
+    ):
+        resp = client.post(
+            f"/api/plugins/session/{sess_id}/message/stream",
+            json={"role": "user", "content": "ping"},
+        )
+    assert resp.status_code == 200, resp.text
+    events = _parse_sse(resp.text)
+    names = [e["event"] for e in events]
+    assert names[0] == "start"
+    assert names[-1] == "done"
+    chunks = [e["data"]["delta"] for e in events if e["event"] == "chunk"]
+    assert chunks == ["Hi", " there", "!"]
+    done = events[-1]["data"]
+    assert done["assistant_message"]["content"] == "Hi there!"
+    assert done["ai_error"] is None
+    # Timing metrics arrive in done.timings (Phase 18E shape).
+    timings = done["timings"]
+    assert timings["learning_ms"] is not None
+    assert timings["total_ms"] is not None
+
+
+def test_stream_falls_back_to_async_when_no_stream_hook_implements(
+    client: TestClient,
+):
+    """When no plugin claims the streaming hook (every provider
+    returns None for the given model), the route falls back to
+    ``call_ai_complete_async`` and emits the full string as one
+    chunk so the client doesn't have to branch."""
+    user_id, project_id = _make_user_and_project(client)
+    client.post(
+        f"/api/settings/{user_id}/api-key",
+        json={"provider": "anthropic", "key": "sk-test"},
+    )
+    sess_id = client.post(
+        "/api/plugins/session/start",
+        json={"project_id": project_id},
+    ).json()["session"]["id"]
+
+    # Patch ``call_ai_complete_stream`` at its definition module so
+    # the route's import-time-bound reference resolves to our async
+    # ``None``-returning stub. The route then falls back to
+    # ``call_ai_complete_async`` which routes through the real
+    # anthropic plugin's ``ai_complete``; we patch ``_complete`` so
+    # that delegation returns a canned string instead of hitting
+    # the wire.
+    async def fake_call_stream(**kwargs):  # noqa: ARG001
+        return None
+
+    with (
+        patch(
+            "adaptive_learner_session.ai_orchestration.call_ai_complete_stream",
+            side_effect=fake_call_stream,
+        ),
+        patch(
+            "adaptive_learner_ai_anthropic.plugin._complete",
+            return_value="full non-streamed answer",
+        ),
+    ):
+        resp = client.post(
+            f"/api/plugins/session/{sess_id}/message/stream",
+            json={"role": "user", "content": "ping"},
+        )
+    assert resp.status_code == 200, resp.text
+    events = _parse_sse(resp.text)
+    chunks = [e["data"]["delta"] for e in events if e["event"] == "chunk"]
+    # Fallback emits the full string as one chunk.
+    assert chunks == ["full non-streamed answer"]
+    done = events[-1]["data"]
+    assert done["assistant_message"]["content"] == "full non-streamed answer"
 
 
 # --- POST /{id}/rate -------------------------------------------------------
@@ -437,14 +620,12 @@ def _seed_api_key(client: TestClient, user_id: str, provider: str = "anthropic")
     assert resp.status_code == 200, resp.text
 
 
-def test_message_orchestrates_ai_and_persists_assistant_reply(
-    client: TestClient, mock_ai_plugin
-):
+def test_message_orchestrates_ai_and_persists_assistant_reply(client: TestClient, mock_ai_plugin):
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id, provider="anthropic")
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
 
     mock_ai_plugin.reply = "Inheritance lets a class reuse another class."
     resp = client.post(
@@ -456,9 +637,7 @@ def test_message_orchestrates_ai_and_persists_assistant_reply(
     assert body["user_message"]["content"] == "Explain inheritance."
     assert body["assistant_message"] is not None
     assert body["assistant_message"]["role"] == "assistant"
-    assert body["assistant_message"]["content"] == (
-        "Inheritance lets a class reuse another class."
-    )
+    assert body["assistant_message"]["content"] == ("Inheritance lets a class reuse another class.")
     assert body["ai_error"] is None
     # v0.4.0: the response carries the updated LearningSession
     # so the frontend can drive CycleProgress without a fetch.
@@ -475,9 +654,9 @@ def test_message_returns_ai_error_when_no_api_key(client: TestClient, mock_ai_pl
     but never reached because the route short-circuits before
     firing the hook."""
     _user_id, project_id = _make_user_and_project(client)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "Hello?"},
@@ -488,14 +667,12 @@ def test_message_returns_ai_error_when_no_api_key(client: TestClient, mock_ai_pl
     assert "No API key" in body["ai_error"]
 
 
-def test_message_returns_ai_error_when_plugin_raises(
-    client: TestClient, mock_ai_plugin
-):
+def test_message_returns_ai_error_when_plugin_raises(client: TestClient, mock_ai_plugin):
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
 
     mock_ai_plugin.raise_on_call = RuntimeError("provider down")
 
@@ -519,9 +696,9 @@ def test_message_returns_ai_error_when_no_provider_matches(client: TestClient):
     ai_error."""
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "Trigger the real SDK."},
@@ -539,19 +716,13 @@ def test_start_persists_system_prompt_as_first_session_message(client: TestClien
     from app.models import SessionMessage
 
     _, project_id = _make_user_and_project(client)
-    out = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()
+    out = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()
     sess_id = out["session"]["id"]
     prompt = out["system_prompt"]
 
     db = SessionLocal()
     try:
-        rows = (
-            db.query(SessionMessage)
-            .filter(SessionMessage.session_id == sess_id)
-            .all()
-        )
+        rows = db.query(SessionMessage).filter(SessionMessage.session_id == sess_id).all()
         assert len(rows) == 1
         assert rows[0].role == "system"
         assert rows[0].content == prompt
@@ -564,9 +735,9 @@ def test_start_persists_system_prompt_as_first_session_message(client: TestClien
 
 def test_switch_recommendation_returns_false_on_no_history(client: TestClient):
     _, project_id = _make_user_and_project(client)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.get(f"/api/plugins/session/switch-recommendation/{sess_id}")
     assert resp.status_code == 200
     body = resp.json()
@@ -576,9 +747,9 @@ def test_switch_recommendation_returns_false_on_no_history(client: TestClient):
 
 def test_switch_recommendation_recommends_after_stagnant_ratings(client: TestClient):
     _, project_id = _make_user_and_project(client)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     # Three low-understanding / high-stress ratings -> stagnation
     # detected; switching.recommend returns a non-empty dict.
     for _ in range(3):
@@ -628,11 +799,7 @@ def test_switch_records_audit_row_and_updates_session(client: TestClient):
     db = SessionLocal()
     try:
         # MethodSwitch row exists with the expected metadata.
-        switches = (
-            db.query(MethodSwitch)
-            .filter(MethodSwitch.project_id == project_id)
-            .all()
-        )
+        switches = db.query(MethodSwitch).filter(MethodSwitch.project_id == project_id).all()
         assert len(switches) == 1
         assert switches[0].from_method == "deductive"
         assert switches[0].to_method == "dialogic"
@@ -666,11 +833,7 @@ def test_switch_is_idempotent_for_same_method(client: TestClient):
 
     db = SessionLocal()
     try:
-        switches = (
-            db.query(MethodSwitch)
-            .filter(MethodSwitch.project_id == project_id)
-            .all()
-        )
+        switches = db.query(MethodSwitch).filter(MethodSwitch.project_id == project_id).all()
         assert len(switches) == 0
     finally:
         db.close()
@@ -678,9 +841,9 @@ def test_switch_is_idempotent_for_same_method(client: TestClient):
 
 def test_switch_rejects_on_closed_session(client: TestClient):
     _, project_id = _make_user_and_project(client)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     client.post(f"/api/plugins/session/{sess_id}/end")
     resp = client.post(
         f"/api/plugins/session/{sess_id}/switch",
@@ -699,9 +862,9 @@ def test_switch_404_on_unknown_session(client: TestClient):
 
 def test_switch_422_on_unknown_method(client: TestClient):
     _, project_id = _make_user_and_project(client)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/switch",
         json={"to_method": "telekinesis", "reason": "lol"},
@@ -712,9 +875,7 @@ def test_switch_422_on_unknown_method(client: TestClient):
 # --- v0.4.0: Cycle-step advance through POST /message --------------------
 
 
-def test_cycle_step_advances_on_successful_round_trip(
-    client: TestClient, mock_ai_plugin
-):
+def test_cycle_step_advances_on_successful_round_trip(client: TestClient, mock_ai_plugin):
     """Each /message call that produces a successful AI reply
     bumps cycle_step by 1, persisted on the LearningSession row
     AND surfaced in the response's ``session`` field."""
@@ -723,9 +884,9 @@ def test_cycle_step_advances_on_successful_round_trip(
 
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     mock_ai_plugin.reply = "Anything."
 
     # Fire three successful round-trips; cycle should walk 1 -> 4.
@@ -787,9 +948,9 @@ def test_cycle_step_does_not_advance_when_ai_errors_no_api_key(client: TestClien
     put. The 'failed turn' isn't real progress through the
     learning cycle."""
     _user_id, project_id = _make_user_and_project(client)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "x"},
@@ -800,16 +961,14 @@ def test_cycle_step_does_not_advance_when_ai_errors_no_api_key(client: TestClien
     assert body["session"]["cycle_step"] == 1  # unchanged
 
 
-def test_cycle_step_does_not_advance_when_plugin_raises(
-    client: TestClient, mock_ai_plugin
-):
+def test_cycle_step_does_not_advance_when_plugin_raises(client: TestClient, mock_ai_plugin):
     """SDK / network exception path: route catches, returns the
     user message + ai_error, but does NOT advance cycle_step."""
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     mock_ai_plugin.raise_on_call = RuntimeError("provider down")
 
     resp = client.post(
@@ -828,9 +987,9 @@ def test_cycle_step_does_not_advance_for_non_user_role(client: TestClient):
     future bug where external integrations that post raw
     assistant messages would silently progress the cycle."""
     _user_id, project_id = _make_user_and_project(client)
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "assistant", "content": "Out-of-band reply."},
@@ -876,9 +1035,9 @@ def test_message_uses_model_override_when_set(client: TestClient, monkeypatch):
     captured: dict[str, object] = {}
     _patch_call_ai_complete(monkeypatch, captured)
 
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "ping"},
@@ -887,9 +1046,7 @@ def test_message_uses_model_override_when_set(client: TestClient, monkeypatch):
     assert captured["model"] == "claude-sonnet-4-20250514"
 
 
-def test_message_falls_back_to_default_when_no_override(
-    client: TestClient, monkeypatch
-):
+def test_message_falls_back_to_default_when_no_override(client: TestClient, monkeypatch):
     """Without any override, the model passed to ai_complete is
     the default from ai_orchestration.DEFAULT_MODELS."""
     from adaptive_learner_session import ai_orchestration
@@ -900,9 +1057,9 @@ def test_message_falls_back_to_default_when_no_override(
     captured: dict[str, object] = {}
     _patch_call_ai_complete(monkeypatch, captured)
 
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "ping"},
@@ -910,9 +1067,7 @@ def test_message_falls_back_to_default_when_no_override(
     assert captured["model"] == ai_orchestration.DEFAULT_MODELS["anthropic"]
 
 
-def test_message_override_for_inactive_provider_is_ignored(
-    client: TestClient, monkeypatch
-):
+def test_message_override_for_inactive_provider_is_ignored(client: TestClient, monkeypatch):
     """A user can set overrides for all three providers, but
     only the override for the CURRENTLY ACTIVE provider is
     consulted at /message time. Pin: an openai override does
@@ -930,9 +1085,9 @@ def test_message_override_for_inactive_provider_is_ignored(
     captured: dict[str, object] = {}
     _patch_call_ai_complete(monkeypatch, captured)
 
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "ping"},
@@ -974,9 +1129,7 @@ def _dual_call_patch(monkeypatch, *, learning: str, evaluation: str):
     monkeypatch.setattr(_se, "call_ai_complete", _capture)
 
 
-def test_dual_call_response_carries_step_evaluation(
-    client: TestClient, monkeypatch
-):
+def test_dual_call_response_carries_step_evaluation(client: TestClient, monkeypatch):
     """When step_evaluation is enabled (the default), the /message
     response carries the new ``step_evaluation`` field."""
     user_id, project_id = _make_user_and_project(client)
@@ -993,9 +1146,9 @@ def test_dual_call_response_carries_step_evaluation(
             }
         ),
     )
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "Let me try."},
@@ -1029,9 +1182,9 @@ def test_high_confidence_advance_applies(client: TestClient, monkeypatch):
             }
         ),
     )
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "x"},
@@ -1057,9 +1210,9 @@ def test_low_confidence_advance_does_NOT_apply(client: TestClient, monkeypatch):
             }
         ),
     )
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "x"},
@@ -1088,9 +1241,9 @@ def test_explicit_advance_false_does_NOT_apply(client: TestClient, monkeypatch):
             }
         ),
     )
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "x"},
@@ -1117,9 +1270,9 @@ def test_skip_ahead_with_high_confidence(client: TestClient, monkeypatch):
             }
         ),
     )
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "x"},
@@ -1169,12 +1322,10 @@ def test_evaluator_garbage_falls_back_to_plus_one(client: TestClient, monkeypatc
     fallback kicks in (+1 advance, v0.4.x compat)."""
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id, provider="anthropic")
-    _dual_call_patch(
-        monkeypatch, learning="ok", evaluation="this is not json"
-    )
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    _dual_call_patch(monkeypatch, learning="ok", evaluation="this is not json")
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "x"},
@@ -1222,25 +1373,23 @@ def test_step_evaluation_disabled_falls_back_to_v04x_advance(
     # enabled=false. Cleanest minimal patch — no real disk write
     # to a shared location.
     overlay_path = tmp_path / "session.yaml"
-    overlay_path.write_text(
-        "step_evaluation:\n  enabled: false\n", encoding="utf-8"
-    )
-    monkeypatch.setattr(
-        config_overlay, "_project_plugin_path", lambda name: overlay_path
-    )
+    overlay_path.write_text("step_evaluation:\n  enabled: false\n", encoding="utf-8")
+    monkeypatch.setattr(config_overlay, "_project_plugin_path", lambda name: overlay_path)
 
     user_id, project_id = _make_user_and_project(client)
     _seed_api_key(client, user_id, provider="anthropic")
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     # Even if the evaluator WOULD return valid JSON, it's never
     # called in disabled mode — the learning call still fires
     # and the route takes the v0.4.x +1 path.
     _dual_call_patch(
         monkeypatch,
         learning="ok",
-        evaluation=json.dumps({"advance": False, "confidence": 0.99, "reason": "no", "suggested_step": 1}),
+        evaluation=json.dumps(
+            {"advance": False, "confidence": 0.99, "reason": "no", "suggested_step": 1}
+        ),
     )
     resp = client.post(
         f"/api/plugins/session/{sess_id}/message",
@@ -1253,9 +1402,7 @@ def test_step_evaluation_disabled_falls_back_to_v04x_advance(
     assert body["session"]["cycle_step"] == 2
 
 
-def test_evaluator_max_tokens_caps_at_256_by_default(
-    client: TestClient, monkeypatch
-):
+def test_evaluator_max_tokens_caps_at_256_by_default(client: TestClient, monkeypatch):
     """The evaluator call is fired with max_tokens=256 by default
     (Phase 8B spec) while the learning call uses the provider's
     default (None). Pin the two distinct caps so a future refactor
@@ -1287,9 +1434,9 @@ def test_evaluator_max_tokens_caps_at_256_by_default(
     monkeypatch.setattr(_routes.ai_orchestration, "call_ai_complete", _capture)
     monkeypatch.setattr(_se, "call_ai_complete", _capture)
 
-    sess_id = client.post(
-        "/api/plugins/session/start", json={"project_id": project_id}
-    ).json()["session"]["id"]
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
     client.post(
         f"/api/plugins/session/{sess_id}/message",
         json={"role": "user", "content": "x"},

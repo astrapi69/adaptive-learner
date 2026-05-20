@@ -19,6 +19,13 @@ export interface ChatMessage {
     cycleNumber?: number;
     /** v1.4.0 — next-cycle topic shown beneath the summary. */
     nextTopic?: string;
+    /**
+     * v1.6.0 — streaming state. ``true`` while SSE deltas are
+     * still being appended to ``content``; the chat renders a
+     * trailing cursor (▍) inside the bubble until the stream
+     * settles.
+     */
+    streaming?: boolean;
 }
 
 interface SessionChatProps {
@@ -101,10 +108,26 @@ export default function SessionChat({
                     return (
                         <div
                             key={msg.id}
-                            className={`chat-message is-${msg.role}`}
-                            data-testid={`chat-message-${msg.role}`}
+                            className={`chat-message is-${msg.role}${
+                                msg.streaming ? " is-streaming" : ""
+                            }`}
+                            data-testid={
+                                msg.streaming
+                                    ? `chat-message-${msg.role}-streaming`
+                                    : `chat-message-${msg.role}`
+                            }
                         >
-                            <pre className="chat-message-content">{msg.content}</pre>
+                            <pre className="chat-message-content">
+                                {msg.content}
+                                {msg.streaming && (
+                                    <span
+                                        className="chat-message-cursor"
+                                        aria-hidden="true"
+                                    >
+                                        ▍
+                                    </span>
+                                )}
+                            </pre>
                         </div>
                     );
                 })}

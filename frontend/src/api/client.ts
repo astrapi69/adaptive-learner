@@ -28,6 +28,7 @@ import type {
     ProgressCommit,
     ProgressSummary,
     SessionEndResult,
+    SessionMessage,
     SessionMessageExchangeResult,
     SessionRating,
     SessionStartResult,
@@ -353,6 +354,51 @@ export const api = {
             apiCall<SessionMessageExchangeResult>(
                 `/plugins/session/${encodeURIComponent(sessionId)}/message`,
                 {method: "POST", body},
+            ),
+        /**
+         * v1.6.0 / Phase 19 — streaming variant of ``message``.
+         *
+         * Opens an SSE stream over ``POST /message/stream``. Calls
+         * ``onChunk`` for every text delta and ``onDone`` with the
+         * full exchange result (assistant message + step
+         * evaluation + topic transition + timings) when the stream
+         * closes. Resolves on clean close; rejects on transport
+         * errors. The user-message persistence happens server-side
+         * before the stream opens, so even on a mid-stream error
+         * the conversation record is intact.
+         */
+        streamMessage: (
+            sessionId: string,
+            body: SessionMessageBody,
+            handlers: {
+                onStart?: (userMessage: SessionMessage) => void;
+                onChunk: (delta: string) => void;
+                onDone: (result: SessionMessageExchangeResult) => void;
+                signal?: AbortSignal;
+            },
+        ) =>
+            import("../lib/sse-reader").then(({streamSse}) =>
+                streamSse({
+                    url: `${API_BASE}/plugins/session/${encodeURIComponent(sessionId)}/message/stream`,
+                    body,
+                    signal: handlers.signal,
+                    onEvent: (event) => {
+                        if (event.event === "start" && handlers.onStart) {
+                            handlers.onStart(
+                                (event.data as {user_message: SessionMessage})
+                                    .user_message,
+                            );
+                        } else if (event.event === "chunk") {
+                            handlers.onChunk(
+                                (event.data as {delta: string}).delta,
+                            );
+                        } else if (event.event === "done") {
+                            handlers.onDone(
+                                event.data as SessionMessageExchangeResult,
+                            );
+                        }
+                    },
+                }),
             ),
         rate: (sessionId: string, body: SessionRatingBody) =>
             apiCall<SessionRating>(

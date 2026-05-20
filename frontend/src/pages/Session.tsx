@@ -17,6 +17,7 @@ import {notify} from "../utils/notify";
 import type {LearningMethod} from "../lib/constants";
 import type {
     LearningSession,
+    SessionMessageExchangeResult,
     StepEvaluationVerdict,
     SwitchRecommendation,
     UserSettings,
@@ -176,45 +177,80 @@ export default function Session() {
     const handleSend = async (content: string) => {
         if (!session || sendingMessage) return;
         const optimisticUserId = `local-user-${messages.length + 1}`;
-        const thinkingId = `local-thinking-${messages.length + 2}`;
-        // Optimistic append for the user message + a "thinking…"
-        // assistant placeholder so the chat surface stays
-        // responsive while the AI round-trip is in flight.
+        const streamingId = `local-streaming-${messages.length + 2}`;
+        // Optimistic append for the user message + an empty
+        // assistant bubble that accumulates streamed chunks.
+        // Pre-v1.6.0 this was a "Thinking…" placeholder; the
+        // SSE channel now feeds tokens directly into the bubble
+        // as they arrive.
         setMessages((prev) => [
             ...prev,
             {id: optimisticUserId, role: "user", content},
             {
-                id: thinkingId,
+                id: streamingId,
                 role: "assistant",
-                content: t("session.ai_thinking", "Thinking…"),
+                content: "",
+                streaming: true,
             },
         ]);
         setSendingMessage(true);
         try {
-            const result = await getStorage().session.message(session.id, {
-                role: "user",
-                content,
-            });
-            // Replace the optimistic user message with the
-            // backend-issued id; drop the thinking placeholder;
-            // if AI replied, append the assistant message; if
-            // not, surface ai_error via toast.
+            let exchange: SessionMessageExchangeResult | null = null as
+                | SessionMessageExchangeResult
+                | null;
+            await getStorage().session.streamMessage(
+                session.id,
+                {role: "user", content},
+                {
+                    onStart: (userMsg) => {
+                        // Replace the optimistic user id with the
+                        // backend-issued one as soon as the server
+                        // confirms persistence.
+                        setMessages((prev) =>
+                            prev.map((m) =>
+                                m.id === optimisticUserId
+                                    ? {
+                                          id: userMsg.id,
+                                          role: "user" as const,
+                                          content: userMsg.content,
+                                      }
+                                    : m,
+                            ),
+                        );
+                    },
+                    onChunk: (delta) => {
+                        // Append the delta to the streaming bubble.
+                        setMessages((prev) =>
+                            prev.map((m) =>
+                                m.id === streamingId
+                                    ? {
+                                          ...m,
+                                          content: m.content + delta,
+                                      }
+                                    : m,
+                            ),
+                        );
+                    },
+                    onDone: (final) => {
+                        exchange = final;
+                    },
+                },
+            );
+            const result = exchange;
+            if (!result) {
+                throw new Error("Stream ended without a done event.");
+            }
+            // Replace the streaming bubble's local id with the
+            // backend-issued assistant message id + clear the
+            // streaming flag. When ai_error fired and no message
+            // was persisted, drop the bubble entirely so the user
+            // doesn't see an empty assistant turn.
             setMessages((prev) => {
-                const next = prev
-                    .map((m) =>
-                        m.id === optimisticUserId
-                            ? {
-                                  id: result.user_message.id,
-                                  role: "user" as const,
-                                  content: result.user_message.content,
-                              }
-                            : m,
-                    )
-                    .filter((m) => m.id !== thinkingId);
+                const next = prev.filter((m) => m.id !== streamingId);
                 if (result.assistant_message) {
                     next.push({
                         id: result.assistant_message.id,
-                        role: "assistant",
+                        role: "assistant" as const,
                         content: result.assistant_message.content,
                     });
                 }
@@ -292,7 +328,7 @@ export default function Session() {
             // detail so the user knows the message was not saved.
             setMessages((prev) =>
                 prev.filter(
-                    (m) => m.id !== optimisticUserId && m.id !== thinkingId,
+                    (m) => m.id !== optimisticUserId && m.id !== streamingId,
                 ),
             );
             const detail =

@@ -54,6 +54,8 @@ export const apiStorage: IStorageService = {
     session: {
         start: (body) => api.session.start(body),
         message: (sessionId, body) => api.session.message(sessionId, body),
+        streamMessage: (sessionId, body, handlers) =>
+            api.session.streamMessage(sessionId, body, handlers),
         rate: (sessionId, body) => api.session.rate(sessionId, body),
         end: (sessionId) => api.session.end(sessionId),
         switchRecommendation: (sessionId) =>

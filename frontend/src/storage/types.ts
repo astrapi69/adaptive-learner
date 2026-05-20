@@ -50,6 +50,7 @@ import type {
     ProgressCommit,
     ProgressSummary,
     SessionEndResult,
+    SessionMessage,
     SessionMessageExchangeResult,
     SessionRating,
     SessionStartResult,
@@ -89,9 +90,28 @@ export interface IAssessmentNamespace {
     profile(projectId: string): Promise<LearningProfile>;
 }
 
+export interface StreamMessageHandlers {
+    onStart?: (userMessage: SessionMessage) => void;
+    onChunk: (delta: string) => void;
+    onDone: (result: SessionMessageExchangeResult) => void;
+    signal?: AbortSignal;
+}
+
 export interface ISessionNamespace {
     start(body: SessionStartBody): Promise<SessionStartResult>;
     message(sessionId: string, body: SessionMessageBody): Promise<SessionMessageExchangeResult>;
+    /**
+     * v1.6.0 / Phase 19 — streaming variant of ``message``. Same
+     * input + same exchange result, but the assistant text streams
+     * back via the ``onChunk`` callback as it arrives. ``onDone``
+     * fires once with the full exchange (assistant message + step
+     * eval + topic transition + timings) when the stream closes.
+     */
+    streamMessage(
+        sessionId: string,
+        body: SessionMessageBody,
+        handlers: StreamMessageHandlers,
+    ): Promise<void>;
     rate(sessionId: string, body: SessionRatingBody): Promise<SessionRating>;
     end(sessionId: string): Promise<SessionEndResult>;
     switchRecommendation(sessionId: string): Promise<SwitchRecommendation>;

@@ -20,6 +20,38 @@ const apiEnd = vi.fn();
 const apiSwitchRec = vi.fn();
 const apiAcceptSwitch = vi.fn();
 const apiSettingsGet = vi.fn();
+
+/**
+ * v1.6.0 — Session.tsx now sends via ``streamMessage``. The
+ * existing tests configure ``apiMessage`` with a result; this
+ * shim translates that result into the equivalent stream
+ * sequence (onStart -> onChunk(assistant_content) -> onDone)
+ * so the existing assertions about navigation, state, toasts,
+ * and step-evaluation handling stay untouched.
+ */
+const apiStreamMessage = vi.fn(
+    async (
+        sessionId: string,
+        body: unknown,
+        handlers: {
+            onStart?: (userMessage: unknown) => void;
+            onChunk: (delta: string) => void;
+            onDone: (result: unknown) => void;
+        },
+    ) => {
+        const result = (await apiMessage(sessionId, body)) as {
+            user_message?: {content?: string};
+            assistant_message?: {content?: string} | null;
+        };
+        handlers.onStart?.(result.user_message);
+        const text = result.assistant_message?.content;
+        if (typeof text === "string" && text) {
+            handlers.onChunk(text);
+        }
+        handlers.onDone(result);
+    },
+);
+
 vi.mock("../api/client", async () => {
     const actual = await vi.importActual<typeof import("../api/client")>(
         "../api/client",
@@ -31,6 +63,10 @@ vi.mock("../api/client", async () => {
             session: {
                 start: (...args: unknown[]) => apiStart(...args),
                 message: (...args: unknown[]) => apiMessage(...args),
+                streamMessage: (...args: unknown[]) =>
+                    apiStreamMessage(
+                        ...(args as Parameters<typeof apiStreamMessage>),
+                    ),
                 rate: (...args: unknown[]) => apiRate(...args),
                 end: (...args: unknown[]) => apiEnd(...args),
                 switchRecommendation: (...args: unknown[]) => apiSwitchRec(...args),
@@ -198,7 +234,7 @@ describe("Session page", () => {
         ).toBe("current");
     });
 
-    it("renders a thinking placeholder while AI is in flight", async () => {
+    it("renders a streaming assistant bubble while the AI reply is in flight", async () => {
         apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
         let resolveMessage: (value: unknown) => void = () => {};
         apiMessage.mockReturnValue(
@@ -212,12 +248,14 @@ describe("Session page", () => {
             target: {value: "Frage"},
         });
         fireEvent.click(screen.getByTestId("chat-send"));
-        // Thinking placeholder appears immediately. The string
-        // resolves via i18n fallback (DE catalog -> "Denkt nach …";
-        // EN -> "Thinking…"). Match either.
+        // v1.6.0: instead of a "Thinking…" placeholder, the chat
+        // surface shows the streaming bubble (testid suffix
+        // ``-streaming``) which carries the live cursor character
+        // until the stream settles.
         await waitFor(() => {
-            const surface = screen.getByTestId("session-chat").textContent ?? "";
-            expect(surface).toMatch(/Thinking|Denkt nach/);
+            expect(
+                screen.getByTestId("chat-message-assistant-streaming"),
+            ).toBeInTheDocument();
         });
         // Now resolve so React tear-down doesn't warn about
         // a pending state update on an unmounted component.

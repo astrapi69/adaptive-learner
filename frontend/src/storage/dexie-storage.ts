@@ -102,6 +102,7 @@ import type {
     ProgressCommit,
     ProgressSummary,
     SessionEndResult,
+    SessionMessage,
     SessionMessageExchangeResult,
     SessionRating,
     SessionStartResult,
@@ -582,6 +583,34 @@ export const dexieStorage: IStorageService = {
                 role: body.role,
                 content: body.content,
             });
+        },
+        async streamMessage(
+            sessionId: string,
+            body: SessionMessageBody,
+            handlers: {
+                onStart?: (userMessage: SessionMessage) => void;
+                onChunk: (delta: string) => void;
+                onDone: (result: SessionMessageExchangeResult) => void;
+                signal?: AbortSignal;
+            },
+        ): Promise<void> {
+            // Phase 19B-1: Dexie-mode streaming lives in the
+            // dedicated browser-direct path in Phase 19B-2. For
+            // now, fall back to the non-streaming ``message`` and
+            // emit the assistant response as a single chunk so
+            // consumers in Dexie mode keep working unchanged.
+            const result = await sendMessage({
+                sessionId,
+                role: body.role,
+                content: body.content,
+            });
+            if (handlers.onStart) {
+                handlers.onStart(result.user_message);
+            }
+            if (result.assistant_message?.content) {
+                handlers.onChunk(result.assistant_message.content);
+            }
+            handlers.onDone(result);
         },
         async rate(
             sessionId: string,
