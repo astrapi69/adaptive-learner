@@ -350,3 +350,41 @@ install:
   install: Εγκατάσταση
   dismiss: Όχι τώρα
   aria_label: Εγκατάσταση Adaptive Learner
+
+
+about:
+  section_heading: Σχετικά με το Adaptive Learner
+  loading: Φόρτωση πληροφοριών…
+  load_failed: "Δεν ήταν δυνατή η φόρτωση πληροφοριών συστήματος:"
+  version_heading: Έκδοση
+  app_label: Adaptive Learner
+  build_hash_label: Build
+  build_date_label: Ημερομηνία build
+  system_heading: Σύστημα
+  storage_label: Αποθήκευση
+  storage_api: Διακομιστής (FastAPI + SQLite)
+  storage_dexie: Τοπική αποθήκευση φυλλομετρητή (IndexedDB)
+  data_dir_label: Κατάλογος δεδομένων
+  db_path_label: Διαδρομή βάσης δεδομένων
+  platform_label: Πλατφόρμα
+  dep_unknown: άγνωστο
+  credits_heading: Συντελεστές
+  author_label: Συγγραφέας
+  dependencies_label: Κατασκευασμένο με
+  tagline: Φτιαγμένο για αυτοκατευθυνόμενους εκπαιδευόμενους.
+  donations_heading: Υποστηρίξτε την ανάπτυξη
+  donations_intro: >-
+    Το Adaptive Learner είναι δωρεάν και ανοιχτού κώδικα. Εάν
+    σας βοηθάει, σκεφτείτε να συμβάλλετε.
+  donations_primary: προτιμώμενο
+  donations:
+    liberapay_desc: >-
+      Επαναλαμβανόμενες δωρεές. Ανοιχτού κώδικα, χωρίς προμήθειες πλατφόρμας.
+    github_desc: Χρηματοδοτήστε μέσω του υπάρχοντος λογαριασμού GitHub σας.
+    kofi_desc: Εφάπαξ φιλοδωρήματα. Δεν απαιτείται σύνδεση.
+  license_heading: Άδεια & πόροι
+  license_label: Άδεια
+  license_text_link: (κείμενο)
+  repo_label: Repository
+  docs_label: Τεκμηρίωση
+  issues_label: Issues

@@ -378,3 +378,40 @@ install:
   install: Installieren
   dismiss: Nicht jetzt
   aria_label: Adaptive Learner installieren
+
+about:
+  section_heading: Über Adaptive Learner
+  loading: Informationen werden geladen…
+  load_failed: "Systeminformationen konnten nicht geladen werden:"
+  version_heading: Version
+  app_label: Adaptive Learner
+  build_hash_label: Build
+  build_date_label: Build-Datum
+  system_heading: System
+  storage_label: Speicher
+  storage_api: Server (FastAPI + SQLite)
+  storage_dexie: Lokaler Browser-Speicher (IndexedDB)
+  data_dir_label: Datenverzeichnis
+  db_path_label: Datenbank-Pfad
+  platform_label: Plattform
+  dep_unknown: unbekannt
+  credits_heading: Mitwirkende
+  author_label: Autor
+  dependencies_label: Gebaut mit
+  tagline: Gebaut für selbstgesteuert Lernende.
+  donations_heading: Entwicklung unterstützen
+  donations_intro: >-
+    Adaptive Learner ist kostenlos und Open Source. Wenn es dir
+    hilft, freuen wir uns über deine Unterstützung.
+  donations_primary: bevorzugt
+  donations:
+    liberapay_desc: >-
+      Wiederkehrende Spenden. Open Source, keine Plattform-Gebühren.
+    github_desc: Spende über dein bestehendes GitHub-Konto.
+    kofi_desc: Einmalige Spende. Kein Login erforderlich.
+  license_heading: Lizenz & Ressourcen
+  license_label: Lizenz
+  license_text_link: (Text)
+  repo_label: Repository
+  docs_label: Dokumentation
+  issues_label: Issues
