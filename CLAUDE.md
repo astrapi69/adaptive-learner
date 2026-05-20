@@ -139,7 +139,7 @@ On a conflict between CLAUDE.md and the rules, the rules win.
 - **Frontend:** React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model 1
 - **PWA (v0.6.0):** vite-plugin-pwa, Workbox-generated service worker, manifest with SVG + maskable-PNG icons at 192/512
 - **Storage (v0.7.0):** dexie ^4.4.2 (IndexedDB) + fake-indexeddb for tests; storage layer abstracts ApiStorage / DexieStorage behind one interface
-- **Plugins:** pluginforge ^0.7.0 (PyPI, identity-gated via `target_application = "adaptive_learner"`), entry points under group `adaptive_learner.plugins`
+- **Plugins:** pluginforge ^0.8.0 (PyPI, identity-gated via `target_application = "adaptive_learner"`), entry points under group `adaptive_learner.plugins`. v0.8.0 ships `pluginforge.testing` (IsolatedPluginManager + MockPlugin) for downstream test isolation; we haven't adopted these yet — our test suite uses TestClient(app) + per-test patches instead.
 - **Launcher:** PyInstaller-based cross-OS desktop launcher (`launcher/`)
 - **Testing:** pytest, Vitest, Playwright
 - **Tooling:** Poetry, npm, Docker, Make, ruff, pre-commit
