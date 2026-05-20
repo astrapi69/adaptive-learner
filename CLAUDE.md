@@ -12,7 +12,26 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.3.0):** v1.2.0 plus Phase 16 —
+- **Current state (v1.4.0):** v1.3.0 plus Phase 17 —
+  **Auto-Loop: Continue Learning After Step 7.** When the step
+  evaluator advances a session to step 7 with advance=true, a
+  third AI call (the topic-transition evaluator in
+  ``plugins/.../session/topic_transition.py``) judges whether
+  the learner integrated the topic and picks a new subtopic.
+  On ``cycle_complete ∧ continue_recommended``, the route
+  resets ``cycle_step`` to 1, increments ``cycle_count``, and
+  appends the completed cycle's summary to ``cycle_topics``
+  (both new columns on ``learning_sessions``, migration 0005).
+  Hard cap of ``max_cycles`` (default 5) prevents runaway
+  loops. Deterministic fallback keeps the v0.5.0 cap-at-7
+  behaviour on any AI / parse failure. Frontend: ChatMessage
+  carries ``kind: "cycle_transition"`` so SessionChat renders
+  the loop as a dashed-border Cycle N card; Session header
+  gets a cycle-counter badge; RatingDialog summarises the
+  multi-cycle journey when ``cycle_count > 1``. Backend 542
+  tests + plugin (session) 192 + frontend 699 at release time.
+
+- **State (v1.3.0):** v1.2.0 plus Phase 16 —
   **Learning Progress Export (PDF + Markdown).** Three
   structured export types — Progress Report, Session Detail,
   Curriculum Overview — produced identically by
