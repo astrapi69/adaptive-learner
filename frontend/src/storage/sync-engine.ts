@@ -16,14 +16,16 @@
  *   MUTABLE   users, user_settings, learning_projects,
  *             learning_profiles, curriculums, learning_topics, lessons
  *   APPEND    learning_sessions, session_messages, session_ratings,
- *             progress_commits, method_switches
+ *             session_notes, progress_commits, method_switches,
+ *             step_evaluations, imported_conversations,
+ *             imported_messages
  *
- * step_evaluations and session_notes are intentionally OUT of
- * scope for v1.0.0: the Dexie schema for ``step_evaluations``
- * carries ``suggested_step`` + ``duration_seconds`` + ``created_at``
- * fields the backend ``evaluated_at`` / ``to_step`` shape doesn't
- * accept — a clean migration is a v1.1 task. ``session_notes`` is
- * unused in the live UI today.
+ * v1.8.0 / Phase 21 — closed the v1.0.0 sync gaps. The Dexie
+ * schema for ``step_evaluations`` was aligned with the backend
+ * (``suggested_step`` -> ``to_step``, ``created_at`` ->
+ * ``evaluated_at``) via the v3 schema upgrade; ``session_notes``
+ * + ``imported_conversations`` + ``imported_messages`` joined
+ * the surface in the same release.
  *
  * Sync is ALWAYS user-initiated (the spec is explicit). Never
  * fires automatically.
@@ -251,6 +253,17 @@ const SYNC_TABLES: SyncTable[] = [
         name: "method_switches",
         dexieTable: "methodSwitches",
         timestampField: "switched_at",
+        appendOnly: true,
+    },
+    {
+        // v1.8.0 / Phase 21A — aligned with backend column names
+        // (``to_step`` + ``evaluated_at``) via the Dexie v3
+        // schema upgrade. Append-only: an evaluation row is the
+        // verdict at the moment of evaluation; later edits would
+        // misrepresent history.
+        name: "step_evaluations",
+        dexieTable: "stepEvaluations",
+        timestampField: "evaluated_at",
         appendOnly: true,
     },
 ];

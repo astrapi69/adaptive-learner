@@ -471,4 +471,132 @@ describe("SyncEngine.sync", () => {
         await expect(engine.sync()).rejects.toMatchObject({status: 409});
         (engine as unknown as {inFlight: boolean}).inFlight = false;
     });
+
+    // --- v1.8.0 / Phase 21A: step_evaluations in sync surface --
+
+    it("pushes step_evaluations rows with the backend column names", async () => {
+        setupConfig();
+        const db = getDb();
+        // Seed a session that scopes the evaluation row.
+        await db.users.put({
+            id: "u-aster",
+            name: "A",
+            email: null,
+            language: "en",
+            created_at: "2026-01-01T00:00:00.000Z",
+            updated_at: "2026-01-01T00:00:00.000Z",
+        });
+        await db.learningProjects.put({
+            id: "p-1",
+            user_id: "u-aster",
+            topic: "x",
+            goal: "y",
+            timeframe: "1w",
+            daily_minutes: 30,
+            current_problem: null,
+            active: true,
+            created_at: "2026-01-01T00:00:00.000Z",
+            updated_at: "2026-01-01T00:00:00.000Z",
+        });
+        await db.learningSessions.put({
+            id: "s-1",
+            project_id: "p-1",
+            method: "deductive",
+            started_at: "2026-05-20T09:00:00.000Z",
+            ended_at: null,
+            cycle_step: 4,
+            status: "active",
+        });
+        // The Dexie row uses the v1.8.0 column names directly.
+        await db.stepEvaluations.put({
+            id: "e-1",
+            session_id: "s-1",
+            from_step: 3,
+            to_step: 4,
+            advance: true,
+            applied: true,
+            confidence: 0.9,
+            reason: "ok",
+            fallback_used: false,
+            duration_seconds: 60,
+            evaluated_at: "2026-05-20T09:10:00.000Z",
+        });
+
+        const pushedRecords: Record<string, unknown[]> = {};
+        const fetch = makeMockFetch({
+            "/api/sync/push": (body: unknown) => {
+                const b = body as {table: string; records: unknown[]};
+                pushedRecords[b.table] = b.records;
+                return {accepted: [], conflicts: [], skipped: []};
+            },
+            "/api/sync/pull": () => ({records: {}}),
+        });
+        const engine = new SyncEngine({fetch});
+        await engine.sync();
+        // step_evaluations ships with the same column names the
+        // backend uses; the local-only ``duration_seconds`` is
+        // dropped at the sync boundary by the (table-agnostic)
+        // ``columns`` filter on the backend side.
+        const evals = pushedRecords.step_evaluations as Array<
+            Record<string, unknown>
+        >;
+        expect(evals).toBeDefined();
+        expect(evals).toHaveLength(1);
+        expect(evals[0]).toMatchObject({
+            id: "e-1",
+            session_id: "s-1",
+            from_step: 3,
+            to_step: 4,
+            applied: true,
+            evaluated_at: "2026-05-20T09:10:00.000Z",
+        });
+    });
+
+    it("pulls step_evaluations and writes the Dexie row with the v1.8.0 column names", async () => {
+        setupConfig();
+        const db = getDb();
+        await db.learningSessions.put({
+            id: "s-remote",
+            project_id: "p-r",
+            method: "deductive",
+            started_at: "2026-05-20T09:00:00.000Z",
+            ended_at: null,
+            cycle_step: 4,
+            status: "active",
+        });
+        const fetch = makeMockFetch({
+            "/api/sync/push": () => ({
+                accepted: [],
+                conflicts: [],
+                skipped: [],
+            }),
+            "/api/sync/pull": () => ({
+                records: {
+                    step_evaluations: [
+                        {
+                            id: "e-remote",
+                            session_id: "s-remote",
+                            from_step: 3,
+                            to_step: 4,
+                            advance: true,
+                            applied: true,
+                            confidence: 0.92,
+                            reason: "remote",
+                            fallback_used: false,
+                            evaluated_at: "2026-05-20T10:00:00.000Z",
+                        },
+                    ],
+                },
+            }),
+        });
+        const engine = new SyncEngine({fetch});
+        await engine.sync();
+        const stored = await db.stepEvaluations.get("e-remote");
+        expect(stored).toBeDefined();
+        expect(stored?.to_step).toBe(4);
+        expect(stored?.evaluated_at).toBe("2026-05-20T10:00:00.000Z");
+        // The backend doesn't ship ``duration_seconds`` so the
+        // pulled row carries undefined for the Dexie-local
+        // column; consumers default to 0 in their UI math.
+    });
 });

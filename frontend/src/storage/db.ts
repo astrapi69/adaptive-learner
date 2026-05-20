@@ -190,7 +190,16 @@ export interface StepEvaluationRow {
     id: string;
     session_id: string;
     from_step: number;
-    suggested_step: number;
+    /**
+     * Where the session ACTUALLY went after this evaluation
+     * (= ``suggested_step`` when ``applied=true``, else
+     * ``from_step``). Matches the backend column name for
+     * sync-surface parity since v1.8.0 / Phase 21A. The raw AI
+     * verdict (``suggested_step`` from the dataclass) is no
+     * longer persisted to Dexie — when needed for analytics,
+     * recover it from ``to_step`` + ``applied`` + ``from_step``.
+     */
+    to_step: number;
     advance: boolean;
     applied: boolean;
     confidence: number;
@@ -198,11 +207,17 @@ export interface StepEvaluationRow {
     fallback_used: boolean;
     /**
      * Wall-clock seconds the user spent on ``from_step`` before
-     * this evaluation. The tracking summary uses it for the
-     * time-per-step chart.
+     * this evaluation. Dexie-local (the tracking summary uses
+     * it for the time-per-step chart); NOT in the sync column
+     * set since the backend has no equivalent column.
      */
     duration_seconds: number;
-    created_at: string;
+    /**
+     * Backend column name since v1.8.0. The v0.5.0 → v1.7.x
+     * Dexie column ``created_at`` migrates to ``evaluated_at``
+     * via the v3 schema upgrade in AdaptiveLearnerDB.
+     */
+    evaluated_at: string;
 }
 
 // ---- Dexie database ---------------------------------------------------
@@ -249,6 +264,36 @@ export class AdaptiveLearnerDB extends Dexie {
                 "id, user_id, project_id, imported_at, source, analyzed",
             importedMessages: "id, conversation_id, order_index",
         });
+        // Schema v3 — v1.8.0 Phase 21A: step_evaluations column
+        // alignment with the backend. ``suggested_step`` and
+        // ``created_at`` rename to ``to_step`` and
+        // ``evaluated_at`` so the sync surface uses one
+        // vocabulary on both sides. The upgrade callback maps
+        // each existing row in place.
+        this.version(3)
+            .stores({
+                stepEvaluations: "id, session_id, evaluated_at",
+            })
+            .upgrade(async (tx) => {
+                await tx
+                    .table("stepEvaluations")
+                    .toCollection()
+                    .modify((row: Record<string, unknown>) => {
+                        if ("suggested_step" in row) {
+                            const sug = row.suggested_step as number;
+                            const applied = row.applied as boolean;
+                            const fromStep = row.from_step as number;
+                            // Match the backend semantics:
+                            //   to_step = applied ? suggested_step : from_step
+                            row.to_step = applied ? sug : fromStep;
+                            delete row.suggested_step;
+                        }
+                        if ("created_at" in row && !("evaluated_at" in row)) {
+                            row.evaluated_at = row.created_at;
+                            delete row.created_at;
+                        }
+                    });
+            });
     }
 }
 

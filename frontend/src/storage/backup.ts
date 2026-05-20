@@ -137,7 +137,8 @@ const BACKUP_TABLES: Record<string, BackupTableSpec> = {
     },
     step_evaluations: {
         store: "stepEvaluations",
-        timestampField: "created_at",
+        // Renamed v1.8.0 / Phase 21A to match the backend column.
+        timestampField: "evaluated_at",
         appendOnly: true,
         scope: "via_session",
     },

@@ -17,7 +17,9 @@
  *     curriculum with its topic tree and lessons.
  *
  * Field-name reconciliation: the Dexie schema has
- * ``StepEvaluationRow.suggested_step`` + ``created_at`` while the
+ * ``StepEvaluationRow.to_step`` + ``evaluated_at`` (renamed in
+ * v1.8.0 / Phase 21A for sync-surface parity); the older
+ * ``suggested_step`` + ``created_at`` Dexie column names while the
  * backend uses ``to_step`` + ``evaluated_at``. This module emits
  * the backend-style names so renderers see the same shape from
  * either source.
@@ -382,22 +384,23 @@ async function recentSessions(
 }
 
 /**
- * Normalise a Dexie StepEvaluationRow's field names to the
- * backend export shape (from_step / to_step / evaluated_at).
- * The Dexie schema stores ``suggested_step`` + ``created_at``;
- * in practice ``to_step = applied ? suggested_step : from_step``.
+ * Project a Dexie StepEvaluationRow onto the export schema.
+ * Since v1.8.0 / Phase 21A the Dexie column names align with
+ * the backend, so this is a straight pass-through; the
+ * function is kept as the boundary between the storage row
+ * shape and the export-payload shape (so a future schema
+ * divergence has exactly one place to translate).
  */
 function normaliseStepEvaluation(row: StepEvaluationRow): StepEvaluationDetail {
-    const toStep = row.applied ? row.suggested_step : row.from_step;
     return {
         from_step: row.from_step,
-        to_step: toStep,
+        to_step: row.to_step,
         advance: row.advance,
         confidence: row.confidence,
         applied: row.applied,
         fallback_used: row.fallback_used,
         reason: row.reason,
-        evaluated_at: row.created_at,
+        evaluated_at: row.evaluated_at,
     };
 }
 
@@ -426,10 +429,10 @@ async function stepEvaluationInsights(
         const entries = perStep[stepKey];
         const count = entries.length;
         const advances = entries.filter(
-            (e) => e.applied && e.suggested_step > e.from_step,
+            (e) => e.applied && e.to_step > e.from_step,
         ).length;
         const repeats = entries.filter(
-            (e) => e.applied && e.suggested_step <= e.from_step,
+            (e) => e.applied && e.to_step <= e.from_step,
         ).length;
         const deferred = entries.filter((e) => !e.applied).length;
         const meanConf = entries.reduce((s, e) => s + e.confidence, 0) / count;
@@ -543,7 +546,7 @@ export async function buildSessionDetail(
         .where("session_id")
         .equals(sessionId)
         .toArray();
-    evaluations.sort((a, b) => a.created_at.localeCompare(b.created_at));
+    evaluations.sort((a, b) => a.evaluated_at.localeCompare(b.evaluated_at));
 
     return {
         ...envelope("session_detail"),

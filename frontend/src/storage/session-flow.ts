@@ -322,14 +322,20 @@ export async function sendMessage(opts: {
         id: newId(),
         session_id: sess.id,
         from_step: fromStep,
-        suggested_step: evaluation.suggested_step,
+        // Aligned with the backend column in v1.8.0 (Phase 21A).
+        // The raw AI verdict (``evaluation.suggested_step``)
+        // still drives the StepEvaluationVerdict dto below; the
+        // persisted ``to_step`` matches the session's actual
+        // movement so backend / Dexie rows are interchangeable
+        // for sync.
+        to_step: toStep,
         advance: evaluation.advance,
         applied,
         confidence: evaluation.confidence,
         reason: evaluation.reason,
         fallback_used: evaluation.fallback_used,
         duration_seconds: 0,
-        created_at: nowIso(),
+        evaluated_at: nowIso(),
     };
     await db.stepEvaluations.add(stepEvalRow);
 
@@ -503,14 +509,16 @@ export async function sendMessageStream(
         id: newId(),
         session_id: sess.id,
         from_step: fromStep,
-        suggested_step: evaluation.suggested_step,
+        // v1.8.0 Phase 21A alignment — same shape the non-stream
+        // sendMessage writes above.
+        to_step: applied ? evaluation.suggested_step : fromStep,
         advance: evaluation.advance,
         applied,
         confidence: evaluation.confidence,
         reason: evaluation.reason,
         fallback_used: evaluation.fallback_used,
         duration_seconds: 0,
-        created_at: nowIso(),
+        evaluated_at: nowIso(),
     };
     await db.stepEvaluations.add(stepEvalRow);
 

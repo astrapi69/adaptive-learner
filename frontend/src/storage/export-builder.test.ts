@@ -324,14 +324,15 @@ describe("buildSessionDetail", () => {
             id: newId(),
             session_id: sessionId,
             from_step: 3,
-            suggested_step: 4,
+            // v1.8.0 / Phase 21A — column rename for sync parity.
+            to_step: 4,
             advance: true,
             applied: true,
             confidence: 0.85,
             reason: "Step understood",
             fallback_used: false,
             duration_seconds: 60,
-            created_at: "2026-05-01T10:10:00.000Z",
+            evaluated_at: "2026-05-01T10:10:00.000Z",
         });
         const payload = await buildSessionDetail(db, sessionId);
         expect(payload.step_evaluations).toHaveLength(1);
