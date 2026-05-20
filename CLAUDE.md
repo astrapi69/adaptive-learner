@@ -12,21 +12,28 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.8.0):** v0.7.0 plus Phase 11 —
-  **Comprehensive MkDocs documentation (DE + EN)**. 28
-  content pages across 4 sections (User Guide 9, Concept 5,
-  Developer 9, API 5) plus landing pages, all written in
-  parallel DE + EN. mkdocs-material + mkdocs-static-i18n
-  with folder-strategy; navigation auto-generated from
-  `docs/help/_meta.yaml` via `scripts/generate_mkdocs_nav.py`.
-  The MkDocs site builds into `frontend/dist/docs/` and
-  deploys alongside the frontend at
-  `https://astrapi69.github.io/adaptive-learner/docs/` —
-  unified GH Pages workflow, no more `docs.yml` conflict.
-  Landing page now has a "Read the documentation" link
-  next to the start CTA (i18n-keyed across all 8 catalogs).
-  v0.7.0 baseline (Dexie storage + browser-direct AI + GH
-  Pages frontend deploy) carried forward unchanged.
+- **Current state (v0.9.0):** v0.8.x plus Phase 12 —
+  **Chat-history import + AI analysis.** Users paste or
+  upload a conversation from ChatGPT, Claude, Gemini or any
+  generic JSON / markdown source. A new
+  ``frontend/src/chat_import/`` module ships four parser
+  paths plus auto-detection; the analysis engine
+  (``chat_import/analysis.ts``) chunks long transcripts with
+  2-message overlap and emits a structured
+  ``ConversationAnalysisResult`` (topic, strengths,
+  weaknesses, error patterns, recommended method, suggested
+  curriculum). Two new SQLAlchemy models
+  (``ImportedConversation``, ``ImportedMessage``), Alembic
+  migration ``0004_imported_conversations``, mirrored Dexie
+  schema v2, and a new ``IImportsNamespace`` on the storage
+  layer. New pages ``/import`` (Quick Analysis paste box +
+  file upload + list) and ``/import/:id`` (transcript +
+  structured analysis cards + "Create curriculum" action).
+  Backend 462 tests + frontend 503 vitest at release time.
+  All eight i18n catalogs carry the new ``import.*`` block.
+  v0.8.x baseline (MkDocs docs site, Dexie storage,
+  browser-direct AI, GH Pages deploy) carried forward
+  unchanged.
 
 ## Development guidelines
 
@@ -93,11 +100,12 @@ for the placeholder Landing lands in Phase 4A).
 
 ## Data model
 
-13 SQLAlchemy models in `backend/app/models/`: User,
+15 SQLAlchemy models in `backend/app/models/`: User,
 UserSettings, LearningProject, LearningProfile, Curriculum,
 LearningTopic, Lesson, LearningSession, SessionMessage,
-SessionRating, SessionNote, ProgressCommit, MethodSwitch.
-Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Spec in
+SessionRating, SessionNote, ProgressCommit, MethodSwitch,
+ImportedConversation, ImportedMessage. Mirrored Pydantic v2
+schemas in `backend/app/schemas/`. Spec in
 `docs/adaptive-learner-project-reference.md` §5.1.
 
 ## Plugins
