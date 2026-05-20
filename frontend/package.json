@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "dexie": "^4.4.2",
+    "html5-qrcode": "2.3.8",
     "qrcode": "1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
