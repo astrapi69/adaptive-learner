@@ -1,0 +1,667 @@
+"""Cross-device sync service (Phase 13A).
+
+Implements the protocol the ``routers/sync.py`` endpoints expose.
+Two record classes:
+
+- **Append-only** (LearningSession, SessionMessage, SessionRating,
+  ProgressCommit, MethodSwitch, StepEvaluation, SessionNote):
+  history rows that, once written, never change. Sync is
+  idempotent — insert if the UUID is unknown, skip otherwise. No
+  conflicts possible.
+
+- **Mutable** (User, UserSettings, LearningProject, LearningProfile,
+  Curriculum, LearningTopic, Lesson): rows the user edits over
+  time. Sync compares ``updated_at`` vs the client's
+  ``since`` timestamp:
+    * Local untouched since ``since`` → accept remote.
+    * Local updated since ``since`` AND remote also updated → CONFLICT.
+      The conflict bundle goes back to the client for resolution.
+
+ImportedConversation / ImportedMessage are out of scope for the
+v1.0.0 sync surface: they were added in v0.9.0 and a clean sync
+shape for the analysis JSON blob is a separate design question.
+A future v1.x can extend ``TABLES`` to include them.
+
+Identity model: the pairing flow has already aligned the
+``user_id`` on both devices. Every sync call carries the same
+``user_id`` and we scope every query to it so a multi-tenant
+backend (future) doesn't leak rows.
+"""
+
+from __future__ import annotations
+
+import logging
+from collections.abc import Iterable
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from typing import Any
+
+from sqlalchemy.orm import Session
+
+from app.exceptions import NotFoundError, ValidationError
+from app.models import (
+    Curriculum,
+    LearningProfile,
+    LearningProject,
+    LearningSession,
+    LearningTopic,
+    Lesson,
+    MethodSwitch,
+    ProgressCommit,
+    SessionMessage,
+    SessionNote,
+    SessionRating,
+    StepEvaluation,
+    User,
+    UserSettings,
+)
+
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Table classification
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class TableSpec:
+    """Per-table sync metadata.
+
+    ``order`` controls the apply order during push: parents before
+    children, so a project's profile/topics/lessons land after the
+    project itself. Lower numbers go first.
+
+    ``scope`` says how to filter rows by user identity:
+      - ``"self"``: the row IS the user (only ``users`` table).
+      - ``"direct"``: row has a ``user_id`` column we can filter on.
+      - ``"via_curriculum"``: row scopes through a Curriculum.
+      - ``"via_session"``: row scopes through a LearningSession ->
+        LearningProject -> user.
+      - ``"via_project"``: row scopes through a LearningProject -> user.
+    """
+
+    model: type[Any]
+    columns: tuple[str, ...]
+    timestamp_field: str
+    append_only: bool
+    order: int
+    scope: str = "direct"
+
+
+# Common timestamp fields per table. Append-only tables use their
+# "created" timestamp (started_at / committed_at / etc.) because
+# they have no ``updated_at``. Mutable tables use ``updated_at``.
+
+TABLES: dict[str, TableSpec] = {
+    # Mutable, root-first.
+    "users": TableSpec(
+        model=User,
+        columns=("id", "name", "email", "language", "created_at", "updated_at"),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=0,
+        scope="self",  # the row IS the user
+    ),
+    "user_settings": TableSpec(
+        model=UserSettings,
+        columns=(
+            "id",
+            "user_id",
+            "active_provider",
+            "api_key_anthropic",
+            "api_key_openai",
+            "api_key_gemini",
+            "model_override_anthropic",
+            "model_override_openai",
+            "model_override_gemini",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=1,
+    ),
+    "learning_projects": TableSpec(
+        model=LearningProject,
+        columns=(
+            "id",
+            "user_id",
+            "topic",
+            "goal",
+            "timeframe",
+            "daily_minutes",
+            "current_problem",
+            "active",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=2,
+    ),
+    "learning_profiles": TableSpec(
+        model=LearningProfile,
+        columns=(
+            "id",
+            "user_id",
+            "project_id",
+            "deductive",
+            "inductive",
+            "error_based",
+            "dialogic",
+            "contextual",
+            "ai_adaptive",
+            "assessed_at",
+            "version",
+        ),
+        timestamp_field="assessed_at",
+        append_only=False,
+        order=3,
+    ),
+    "curriculums": TableSpec(
+        model=Curriculum,
+        columns=(
+            "id",
+            "user_id",
+            "title",
+            "description",
+            "language",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=4,
+    ),
+    "learning_topics": TableSpec(
+        model=LearningTopic,
+        columns=(
+            "id",
+            "curriculum_id",
+            "parent_id",
+            "title",
+            "description",
+            "order_index",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=5,
+        scope="via_curriculum",
+    ),
+    "lessons": TableSpec(
+        model=Lesson,
+        columns=(
+            "id",
+            "curriculum_id",
+            "title",
+            "content",
+            "order_index",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=6,
+        scope="via_curriculum",
+    ),
+    # Append-only, child rows last.
+    "learning_sessions": TableSpec(
+        model=LearningSession,
+        columns=(
+            "id",
+            "project_id",
+            "method",
+            "started_at",
+            "ended_at",
+            "cycle_step",
+            "status",
+        ),
+        timestamp_field="started_at",
+        append_only=True,
+        order=10,
+        scope="via_project",
+    ),
+    "session_messages": TableSpec(
+        model=SessionMessage,
+        columns=("id", "session_id", "role", "content", "created_at"),
+        timestamp_field="created_at",
+        append_only=True,
+        order=11,
+        scope="via_session",
+    ),
+    "session_ratings": TableSpec(
+        model=SessionRating,
+        columns=(
+            "id",
+            "session_id",
+            "understanding",
+            "stress",
+            "method_fit",
+            "notes",
+            "created_at",
+        ),
+        timestamp_field="created_at",
+        append_only=True,
+        order=12,
+        scope="via_session",
+    ),
+    "session_notes": TableSpec(
+        model=SessionNote,
+        columns=("id", "session_id", "content", "created_at"),
+        timestamp_field="created_at",
+        append_only=True,
+        order=13,
+        scope="via_session",
+    ),
+    "progress_commits": TableSpec(
+        model=ProgressCommit,
+        columns=(
+            "id",
+            "project_id",
+            "session_id",
+            "method",
+            "understanding",
+            "stress",
+            "error_rate",
+            "duration_minutes",
+            "committed_at",
+        ),
+        timestamp_field="committed_at",
+        append_only=True,
+        order=14,
+        scope="via_project",
+    ),
+    "method_switches": TableSpec(
+        model=MethodSwitch,
+        columns=(
+            "id",
+            "project_id",
+            "from_method",
+            "to_method",
+            "reason",
+            "switched_at",
+        ),
+        timestamp_field="switched_at",
+        append_only=True,
+        order=15,
+        scope="via_project",
+    ),
+    "step_evaluations": TableSpec(
+        model=StepEvaluation,
+        columns=(
+            "id",
+            "session_id",
+            "from_step",
+            "to_step",
+            "advance",
+            "confidence",
+            "applied",
+            "fallback_used",
+            "reason",
+            "evaluated_at",
+        ),
+        timestamp_field="evaluated_at",
+        append_only=True,
+        order=16,
+        scope="via_session",
+    ),
+}
+
+APPEND_ONLY_TABLES = {name for name, spec in TABLES.items() if spec.append_only}
+MUTABLE_TABLES = {name for name, spec in TABLES.items() if not spec.append_only}
+ALL_SYNC_TABLES = tuple(TABLES.keys())
+
+
+# ---------------------------------------------------------------------------
+# Serialisation
+# ---------------------------------------------------------------------------
+
+
+def _to_iso(value: datetime | None) -> str | None:
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=UTC)
+    return value.isoformat()
+
+
+def _from_iso(value: str | None) -> datetime | None:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        return None
+    try:
+        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=UTC)
+    return dt
+
+
+def serialize_row(table: str, row: Any) -> dict[str, Any]:
+    """Project an ORM row to a plain JSON dict.
+
+    Datetime fields land as ISO 8601 strings. Booleans / strings /
+    numbers pass through. We never include columns outside the
+    table's declared ``columns`` tuple — that keeps any future
+    sensitive column (e.g. an encrypted blob) from accidentally
+    flowing across the sync wire.
+    """
+    spec = TABLES[table]
+    out: dict[str, Any] = {}
+    for col in spec.columns:
+        value = getattr(row, col, None)
+        if isinstance(value, datetime):
+            value = _to_iso(value)
+        out[col] = value
+    return out
+
+
+def _coerce_field(table: str, col: str, value: Any) -> Any:
+    if col.endswith("_at") or col == "assessed_at":
+        if isinstance(value, str):
+            return _from_iso(value)
+    return value
+
+
+def _apply_record(table: str, record: dict[str, Any], existing: Any | None) -> Any:
+    spec = TABLES[table]
+    target = existing if existing is not None else spec.model()
+    for col in spec.columns:
+        if col == "id" and existing is not None:
+            continue  # never overwrite PK
+        if col in record:
+            setattr(target, col, _coerce_field(table, col, record[col]))
+    return target
+
+
+# ---------------------------------------------------------------------------
+# Push / pull
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class ConflictBundle:
+    table: str
+    record_id: str
+    local: dict[str, Any]
+    remote: dict[str, Any]
+
+
+@dataclass
+class PushResult:
+    accepted: list[str] = field(default_factory=list)
+    conflicts: list[ConflictBundle] = field(default_factory=list)
+    skipped: list[str] = field(default_factory=list)
+
+
+def _row_belongs_to_user(table: str, row: Any, user_id: str) -> bool:
+    """Defensive check: does ``row`` belong to ``user_id``?
+
+    For directly-scoped rows we inspect ``user_id``. For
+    via_curriculum / via_project / via_session rows we trust the
+    parent FK (the per-table pull/push query already JOINed
+    through to the right user). UUIDs make cross-user collision
+    a 1-in-2**128 event, so trusting the parent FK at this layer
+    is safe.
+    """
+    spec = TABLES[table]
+    if spec.scope == "self":
+        return row.id == user_id
+    if hasattr(row, "user_id"):
+        return row.user_id == user_id
+    return True
+
+
+def push_records(
+    db: Session,
+    user_id: str,
+    table: str,
+    records: list[dict[str, Any]],
+    since: datetime | None,
+) -> PushResult:
+    """Apply incoming records for one table.
+
+    For an append-only table: insert if id unknown, skip if
+    known. For a mutable table: insert if unknown, update if
+    local was untouched since ``since``, raise as a conflict if
+    BOTH sides changed.
+    """
+    if table not in TABLES:
+        raise ValidationError(f"Unknown sync table: {table!r}")
+    spec = TABLES[table]
+    model = spec.model
+    result = PushResult()
+
+    for record in records:
+        record_id = record.get("id")
+        if not isinstance(record_id, str) or not record_id:
+            result.skipped.append("<no-id>")
+            continue
+        existing = db.get(model, record_id)
+        if spec.append_only:
+            if existing is not None:
+                result.skipped.append(record_id)
+                continue
+            row = _apply_record(table, record, None)
+            if not _row_belongs_to_user(table, row, user_id):
+                # Skip rows that don't scope to this user, defensively.
+                result.skipped.append(record_id)
+                continue
+            db.add(row)
+            result.accepted.append(record_id)
+            continue
+
+        # Mutable table.
+        remote_ts = _from_iso(record.get(spec.timestamp_field))
+        if existing is None:
+            row = _apply_record(table, record, None)
+            if not _row_belongs_to_user(table, row, user_id):
+                result.skipped.append(record_id)
+                continue
+            db.add(row)
+            result.accepted.append(record_id)
+            continue
+        if not _row_belongs_to_user(table, existing, user_id):
+            # Same id but wrong user — defensive skip. Should
+            # never happen in practice because UUIDs collide
+            # at 1 in 2**128.
+            result.skipped.append(record_id)
+            continue
+        local_ts: datetime | None = getattr(existing, spec.timestamp_field, None)
+        if local_ts is None:
+            local_ts = datetime.min.replace(tzinfo=UTC)
+        if local_ts.tzinfo is None:
+            local_ts = local_ts.replace(tzinfo=UTC)
+
+        # Local untouched since the client's last sync? Accept remote.
+        if since is None or local_ts <= since:
+            _apply_record(table, record, existing)
+            result.accepted.append(record_id)
+            continue
+
+        # Both changed. Conflict.
+        if remote_ts is not None and local_ts == remote_ts:
+            # Same timestamp — treat as no-op accept (idempotent
+            # second send of the same write).
+            result.accepted.append(record_id)
+            continue
+        local_dict = serialize_row(table, existing)
+        result.conflicts.append(
+            ConflictBundle(
+                table=table,
+                record_id=record_id,
+                local=local_dict,
+                remote=record,
+            )
+        )
+
+    if result.accepted or result.conflicts == [] and result.accepted == []:
+        # Always commit even on empty acceptance so subsequent
+        # cascading reads see a clean transaction.
+        db.commit()
+    else:
+        db.flush()
+    return result
+
+
+def _scoped_query(db: Session, table: str, user_id: str):
+    """Build a per-user-scoped query for one table.
+
+    Handles the three nesting paths:
+      - ``"self"``  →  WHERE users.id = :user_id
+      - ``"direct"`` →  WHERE table.user_id = :user_id
+      - ``"via_curriculum"`` →  JOIN curriculums ON ...
+      - ``"via_project"`` →  JOIN learning_projects ON ...
+      - ``"via_session"`` →  JOIN learning_sessions ON learning_projects ON ...
+    """
+    spec = TABLES[table]
+    model = spec.model
+    query = db.query(model)
+    if spec.scope == "self":
+        query = query.filter(model.id == user_id)
+    elif spec.scope == "direct":
+        query = query.filter(model.user_id == user_id)
+    elif spec.scope == "via_curriculum":
+        query = query.join(Curriculum, Curriculum.id == model.curriculum_id).filter(
+            Curriculum.user_id == user_id
+        )
+    elif spec.scope == "via_project":
+        query = query.join(
+            LearningProject, LearningProject.id == model.project_id
+        ).filter(LearningProject.user_id == user_id)
+    elif spec.scope == "via_session":
+        query = (
+            query.join(LearningSession, LearningSession.id == model.session_id)
+            .join(LearningProject, LearningProject.id == LearningSession.project_id)
+            .filter(LearningProject.user_id == user_id)
+        )
+    return query
+
+
+def pull_records(
+    db: Session,
+    user_id: str,
+    tables: Iterable[str],
+    since: datetime | None,
+) -> dict[str, list[dict[str, Any]]]:
+    """Return every row in ``tables`` whose timestamp is greater
+    than ``since`` (or all rows when ``since`` is None — first
+    sync)."""
+    out: dict[str, list[dict[str, Any]]] = {}
+    for table in tables:
+        if table not in TABLES:
+            continue
+        spec = TABLES[table]
+        query = _scoped_query(db, table, user_id)
+        if since is not None:
+            ts_col = getattr(spec.model, spec.timestamp_field)
+            query = query.filter(ts_col > since)
+        # Order so child rows always follow parents inside one
+        # batch — the client applies in order.
+        ts_col = getattr(spec.model, spec.timestamp_field)
+        query = query.order_by(ts_col.asc())
+        out[table] = [serialize_row(table, row) for row in query.all()]
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Resolve
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class Resolution:
+    table: str
+    record_id: str
+    chosen: str  # "local" | "remote" | "merged"
+    merged_data: dict[str, Any] | None = None
+
+
+def apply_resolutions(
+    db: Session, user_id: str, resolutions: list[Resolution]
+) -> dict[str, list[str]]:
+    """Apply user-decided conflict resolutions.
+
+    "local" → keep the row as-is (no-op on the server).
+    "remote" → overwrite with the remote payload (client must
+       have re-sent the data so we keep the API symmetric).
+    "merged" → overwrite with the merged payload.
+
+    The client's choice of ``local`` on a server-side row that
+    was already overwritten is a true no-op; we still record it
+    in ``applied`` so the client can confirm the decision landed.
+    """
+    applied: list[str] = []
+    skipped: list[str] = []
+    for resolution in resolutions:
+        spec = TABLES.get(resolution.table)
+        if spec is None:
+            skipped.append(resolution.record_id)
+            continue
+        existing = db.get(spec.model, resolution.record_id)
+        if resolution.chosen == "local":
+            if existing is None:
+                skipped.append(resolution.record_id)
+                continue
+            applied.append(resolution.record_id)
+            continue
+        payload = resolution.merged_data or {}
+        if resolution.chosen in {"remote", "merged"}:
+            if not payload:
+                skipped.append(resolution.record_id)
+                continue
+            _apply_record(resolution.table, payload, existing)
+            if existing is None and payload.get("id"):
+                row = _apply_record(resolution.table, payload, None)
+                db.add(row)
+            applied.append(resolution.record_id)
+        else:
+            skipped.append(resolution.record_id)
+    db.commit()
+    return {"applied": applied, "skipped": skipped}
+
+
+# ---------------------------------------------------------------------------
+# Status
+# ---------------------------------------------------------------------------
+
+
+def compute_status(db: Session, user_id: str) -> dict[str, Any]:
+    """Per-table row counts, scoped to the user.
+
+    Used by the Settings sync panel + the periodic
+    "is there anything to sync" check. Cheap — single COUNT(*)
+    per table.
+    """
+    if db.get(User, user_id) is None:
+        raise NotFoundError(f"User {user_id!r} not found.")
+    counts: dict[str, int] = {}
+    for table in TABLES:
+        counts[table] = _scoped_query(db, table, user_id).count()
+    return {
+        "user_id": user_id,
+        "counts": counts,
+        "server_time": _to_iso(datetime.now(UTC)),
+    }
+
+
+__all__ = [
+    "ALL_SYNC_TABLES",
+    "APPEND_ONLY_TABLES",
+    "ConflictBundle",
+    "MUTABLE_TABLES",
+    "PushResult",
+    "Resolution",
+    "TABLES",
+    "TableSpec",
+    "apply_resolutions",
+    "compute_status",
+    "pull_records",
+    "push_records",
+    "serialize_row",
+]

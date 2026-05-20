@@ -47,6 +47,7 @@ from app.routers.curriculum import (
 from app.routers.imports import imports_router, users_imports_router
 from app.routers.projects import projects_router, users_projects_router
 from app.routers.settings import router as settings_router
+from app.routers.sync import router as sync_router
 from app.routers.users import router as users_router
 from app.services import crypto as crypto_service
 
@@ -421,6 +422,7 @@ app.include_router(topics_router, prefix="/api")
 app.include_router(lessons_router, prefix="/api")
 app.include_router(users_imports_router, prefix="/api")
 app.include_router(imports_router, prefix="/api")
+app.include_router(sync_router, prefix="/api")
 
 
 @app.exception_handler(AdaptiveLearnerError)
