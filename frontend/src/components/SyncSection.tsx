@@ -38,6 +38,7 @@ import {
 } from "../storage/sync-engine";
 import {notify} from "../utils/notify";
 import SyncConflictDialog from "./SyncConflictDialog";
+import QRScannerModal from "./sync/QRScannerModal";
 
 const DEFAULT_BACKEND_PORT = 18001;
 
@@ -51,6 +52,7 @@ export default function SyncSection() {
     const [busy, setBusy] = useState<string>("");
     const [pairingLink, setPairingLink] = useState("");
     const [conflicts, setConflicts] = useState<ConflictBundle[] | null>(null);
+    const [scannerOpen, setScannerOpen] = useState(false);
 
     // Refresh persisted state on focus so a sync triggered from
     // another tab is reflected here without remount.
@@ -86,6 +88,38 @@ export default function SyncSection() {
                       ? err.message
                       : t("sync.pair_error", "Could not pair the device.");
             notify.error(detail);
+        } finally {
+            setBusy("");
+        }
+    }
+
+    /**
+     * v1.7.0 / Phase 20B — pair via QR scan. Same verify + pair
+     * flow as ``handleConnectViaLink``; the scanned URI is just
+     * routed straight into ``getSyncEngine().pair``. The modal
+     * stays open until pair() resolves so the user sees the
+     * success state inside the scanner overlay, then closes.
+     */
+    async function handleScannedUri(uri: string) {
+        setBusy("pair");
+        try {
+            await getSyncEngine().pair(uri);
+            refreshFromStorage();
+            setPairingLink("");
+            setScannerOpen(false);
+            notify.success(t("sync.paired", "Device paired."));
+        } catch (err) {
+            const detail =
+                err instanceof ApiError
+                    ? err.detail
+                    : err instanceof Error
+                      ? err.message
+                      : t("sync.pair_error", "Could not pair the device.");
+            notify.error(detail);
+            // Keep the modal open so the user can retry with a
+            // fresh QR from the desktop (the v1.0.0 token has
+            // a 5-minute TTL; expired tokens land here).
+            setScannerOpen(true);
         } finally {
             setBusy("");
         }
@@ -192,10 +226,18 @@ export default function SyncSection() {
                     pairingLink={pairingLink}
                     setPairingLink={setPairingLink}
                     onConnect={handleConnectViaLink}
+                    onScanClick={() => setScannerOpen(true)}
                     busy={busy}
                     t={t}
                 />
             )}
+
+            <QRScannerModal
+                open={scannerOpen}
+                onScan={handleScannedUri}
+                onClose={() => setScannerOpen(false)}
+                t={t}
+            />
 
             {conflicts !== null && (
                 <SyncConflictDialog
@@ -526,12 +568,14 @@ function PhoneUnpairedView({
     pairingLink,
     setPairingLink,
     onConnect,
+    onScanClick,
     busy,
     t,
 }: {
     pairingLink: string;
     setPairingLink: (value: string) => void;
     onConnect: () => void;
+    onScanClick: () => void;
     busy: string;
     t: (k: string, fb?: string) => string;
 }) {
@@ -539,40 +583,69 @@ function PhoneUnpairedView({
         <div data-testid="sync-phone-unpaired">
             <p className="muted">
                 {t(
-                    "sync.phone_hint",
-                    "Paste the pairing link from your desktop's Settings > Sync. The link starts with adaptive-learner://sync...",
+                    "sync.phone_hint_v17",
+                    "Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically.",
                 )}
             </p>
-            <textarea
-                value={pairingLink}
-                onChange={(e) => setPairingLink(e.target.value)}
-                placeholder="adaptive-learner://sync?host=...&port=18001&token=..."
-                rows={2}
-                style={{
-                    width: "100%",
-                    padding: "0.5rem",
-                    fontFamily: "monospace",
-                    fontSize: "0.85rem",
-                    border: "1px solid var(--border)",
-                    borderRadius: 4,
-                    background: "var(--bg)",
-                    color: "var(--text)",
-                }}
-                data-testid="sync-pair-input"
-                disabled={busy !== ""}
-            />
             <button
                 type="button"
                 className="btn btn-primary"
-                onClick={onConnect}
-                disabled={!pairingLink.trim() || busy !== ""}
-                data-testid="sync-pair-button"
+                onClick={onScanClick}
+                disabled={busy !== ""}
+                data-testid="sync-scan-button"
+                style={{marginBottom: "0.75rem", width: "100%", maxWidth: 320}}
+            >
+                {t("sync.scan_qr", "Scan QR Code")}
+            </button>
+            <details
+                data-testid="sync-paste-fallback"
                 style={{marginTop: "0.5rem"}}
             >
-                {busy === "pair"
-                    ? t("sync.pairing", "Pairing…")
-                    : t("sync.connect", "Connect")}
-            </button>
+                <summary
+                    style={{
+                        cursor: "pointer",
+                        fontSize: "0.9rem",
+                        opacity: 0.8,
+                        padding: "0.25rem 0",
+                    }}
+                >
+                    {t(
+                        "sync.paste_link_fallback",
+                        "Or paste the link manually",
+                    )}
+                </summary>
+                <textarea
+                    value={pairingLink}
+                    onChange={(e) => setPairingLink(e.target.value)}
+                    placeholder="adaptive-learner://sync?host=...&port=18001&token=..."
+                    rows={2}
+                    style={{
+                        width: "100%",
+                        padding: "0.5rem",
+                        marginTop: "0.5rem",
+                        fontFamily: "monospace",
+                        fontSize: "0.85rem",
+                        border: "1px solid var(--border)",
+                        borderRadius: 4,
+                        background: "var(--bg)",
+                        color: "var(--text)",
+                    }}
+                    data-testid="sync-pair-input"
+                    disabled={busy !== ""}
+                />
+                <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={onConnect}
+                    disabled={!pairingLink.trim() || busy !== ""}
+                    data-testid="sync-pair-button"
+                    style={{marginTop: "0.5rem"}}
+                >
+                    {busy === "pair"
+                        ? t("sync.pairing", "Pairing…")
+                        : t("sync.connect", "Connect")}
+                </button>
+            </details>
         </div>
     );
 }

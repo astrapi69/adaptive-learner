@@ -25,6 +25,15 @@ vi.mock("../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
 
+// Stub the inner QRScanner so the SyncSection tests don't pull
+// in html5-qrcode (which tries to open a real camera in happy-dom
+// and emits unrecoverable errors). The modal's overlay /
+// open-close lifecycle is the surface we want to pin here; the
+// scanner-internal behaviour lives in QRScanner.test.tsx.
+vi.mock("./sync/QRScanner", () => ({
+    default: () => null,
+}));
+
 beforeEach(() => {
     localStorage.clear();
     _resetStorageCacheForTests();
@@ -147,5 +156,48 @@ describe("SyncSection — paired", () => {
         expect(screen.getByTestId("sync-paired-view")).toBeTruthy();
         (window as unknown as {confirm: typeof window.confirm}).confirm =
             originalConfirm;
+    });
+});
+
+
+// --- v1.7.0 / Phase 20B: QR scanner integration ---------------------------
+
+describe("SyncSection — QR scanner integration (Dexie / phone)", () => {
+    beforeEach(() => {
+        localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+    });
+
+    it("renders 'Scan QR Code' as the primary CTA", () => {
+        renderSection();
+        const scan = screen.getByTestId("sync-scan-button") as HTMLButtonElement;
+        expect(scan).toBeTruthy();
+        expect(scan.textContent).toMatch(/Scan QR Code|QR.*scannen/i);
+    });
+
+    it("paste-the-link is collapsed by default inside a <details> element", () => {
+        renderSection();
+        const details = screen.getByTestId(
+            "sync-paste-fallback",
+        ) as HTMLDetailsElement;
+        expect(details).toBeTruthy();
+        // The summary line is visible; the textarea + Connect
+        // button live inside and are hidden until expanded.
+        expect(details.open).toBe(false);
+    });
+
+    it("clicking 'Scan QR Code' opens the modal overlay", () => {
+        renderSection();
+        // No modal in the DOM until the button is clicked.
+        expect(screen.queryByTestId("qr-scanner-modal")).toBeNull();
+        fireEvent.click(screen.getByTestId("sync-scan-button"));
+        expect(screen.getByTestId("qr-scanner-modal")).toBeTruthy();
+    });
+
+    it("modal close button removes the overlay (no zombie camera mount)", () => {
+        renderSection();
+        fireEvent.click(screen.getByTestId("sync-scan-button"));
+        expect(screen.getByTestId("qr-scanner-modal")).toBeTruthy();
+        fireEvent.click(screen.getByTestId("qr-scanner-close"));
+        expect(screen.queryByTestId("qr-scanner-modal")).toBeNull();
     });
 });
