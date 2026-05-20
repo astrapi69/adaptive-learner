@@ -250,9 +250,12 @@ TABLES: dict[str, TableSpec] = {
     ),
     "session_notes": TableSpec(
         model=SessionNote,
-        columns=("id", "session_id", "content", "created_at"),
-        timestamp_field="created_at",
-        append_only=True,
+        columns=("id", "session_id", "content", "created_at", "updated_at"),
+        # v1.8.0 / Phase 21B — promoted to mutable. Notes are
+        # editable in the UI; the sync layer needs ``updated_at``
+        # so push/pull conflicts can be resolved by timestamp.
+        timestamp_field="updated_at",
+        append_only=False,
         order=13,
         scope="via_session",
     ),

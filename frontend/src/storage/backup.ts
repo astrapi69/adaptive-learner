@@ -119,8 +119,13 @@ const BACKUP_TABLES: Record<string, BackupTableSpec> = {
     },
     session_notes: {
         store: "sessionNotes",
+        // v1.8.0 / Phase 21B — session_notes is now mutable.
+        // Backup-side timestampField stays at ``created_at`` for
+        // chronological ordering of the dump; the sync surface
+        // uses ``updated_at`` for conflict resolution
+        // independently of backup.
         timestampField: "created_at",
-        appendOnly: true,
+        appendOnly: false,
         scope: "via_session",
     },
     progress_commits: {

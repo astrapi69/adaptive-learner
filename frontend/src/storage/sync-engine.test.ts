@@ -552,6 +552,149 @@ describe("SyncEngine.sync", () => {
         });
     });
 
+    // --- v1.8.0 / Phase 21B: session_notes mutable sync --------
+
+    it("pushes session_notes as MUTABLE rows with updated_at", async () => {
+        setupConfig();
+        const db = getDb();
+        await db.users.put({
+            id: "u-aster",
+            name: "A",
+            email: null,
+            language: "en",
+            created_at: "2026-01-01T00:00:00.000Z",
+            updated_at: "2026-01-01T00:00:00.000Z",
+        });
+        await db.learningProjects.put({
+            id: "p-1",
+            user_id: "u-aster",
+            topic: "x",
+            goal: "y",
+            timeframe: "1w",
+            daily_minutes: 30,
+            current_problem: null,
+            active: true,
+            created_at: "2026-01-01T00:00:00.000Z",
+            updated_at: "2026-01-01T00:00:00.000Z",
+        });
+        await db.learningSessions.put({
+            id: "s-1",
+            project_id: "p-1",
+            method: "deductive",
+            started_at: "2026-05-20T09:00:00.000Z",
+            ended_at: null,
+            cycle_step: 1,
+            status: "active",
+        });
+        await db.sessionNotes.put({
+            id: "n-1",
+            session_id: "s-1",
+            content: "Initial note (local)",
+            created_at: "2026-05-20T09:30:00.000Z",
+            updated_at: "2026-05-20T09:45:00.000Z",
+        });
+
+        const pushedRecords: Record<string, unknown[]> = {};
+        const fetch = makeMockFetch({
+            "/api/sync/push": (body: unknown) => {
+                const b = body as {table: string; records: unknown[]};
+                pushedRecords[b.table] = b.records;
+                return {accepted: [], conflicts: [], skipped: []};
+            },
+            "/api/sync/pull": () => ({records: {}}),
+        });
+        const engine = new SyncEngine({fetch});
+        await engine.sync();
+        const notes = pushedRecords.session_notes as Array<
+            Record<string, unknown>
+        >;
+        expect(notes).toHaveLength(1);
+        expect(notes[0]).toMatchObject({
+            id: "n-1",
+            content: "Initial note (local)",
+            updated_at: "2026-05-20T09:45:00.000Z",
+        });
+    });
+
+    it("invokes the conflict resolver when a session_notes push collides", async () => {
+        setupConfig();
+        const db = getDb();
+        await db.users.put({
+            id: "u-aster",
+            name: "A",
+            email: null,
+            language: "en",
+            created_at: "2026-01-01T00:00:00.000Z",
+            updated_at: "2026-01-01T00:00:00.000Z",
+        });
+        await db.learningSessions.put({
+            id: "s-1",
+            project_id: "p-1",
+            method: "deductive",
+            started_at: "2026-05-20T09:00:00.000Z",
+            ended_at: null,
+            cycle_step: 1,
+            status: "active",
+        });
+        await db.sessionNotes.put({
+            id: "n-conflict",
+            session_id: "s-1",
+            content: "Edited locally",
+            created_at: "2026-05-20T09:30:00.000Z",
+            updated_at: "2026-05-20T11:00:00.000Z",
+        });
+
+        // Backend reports the note as a conflict — the remote
+        // side has a newer revision. The resolver picks
+        // "remote" so the local row is replaced on pull-back.
+        const fetch = makeMockFetch({
+            "/api/sync/push": (body: unknown) => {
+                const b = body as {table: string};
+                if (b.table === "session_notes") {
+                    return {
+                        accepted: [],
+                        conflicts: [
+                            {
+                                table: "session_notes",
+                                id: "n-conflict",
+                                local: {
+                                    id: "n-conflict",
+                                    content: "Edited locally",
+                                    updated_at: "2026-05-20T11:00:00.000Z",
+                                },
+                                remote: {
+                                    id: "n-conflict",
+                                    content: "Edited remotely",
+                                    updated_at: "2026-05-20T11:30:00.000Z",
+                                },
+                            },
+                        ],
+                        skipped: [],
+                    };
+                }
+                return {accepted: [], conflicts: [], skipped: []};
+            },
+            "/api/sync/resolve": () => ({accepted: 1, rejected: 0}),
+            "/api/sync/pull": () => ({records: {}}),
+        });
+        const resolver = vi.fn(async (conflicts: ConflictBundle[]) => {
+            // Pick the remote side (last-write-wins by timestamp).
+            return conflicts.map((c) => ({
+                table: c.table,
+                id: c.id,
+                chosen: "remote" as const,
+            }));
+        });
+        const engine = new SyncEngine({fetch});
+        const outcome = await engine.sync(resolver);
+        expect(resolver).toHaveBeenCalledTimes(1);
+        // The resolver saw the session_notes conflict.
+        const bundles = resolver.mock.calls[0][0] as ConflictBundle[];
+        expect(bundles[0].table).toBe("session_notes");
+        expect(bundles[0].id).toBe("n-conflict");
+        expect(outcome.conflictsResolved).toBe(1);
+    });
+
     it("pulls step_evaluations and writes the Dexie row with the v1.8.0 column names", async () => {
         setupConfig();
         const db = getDb();

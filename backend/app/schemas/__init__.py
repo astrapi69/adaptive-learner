@@ -495,6 +495,8 @@ class SessionNoteOut(BaseModel):
     session_id: str
     content: str
     created_at: datetime
+    # v1.8.0 / Phase 21B — mutable sync surface for SessionNote.
+    updated_at: datetime
 
 
 # --- ProgressCommit ---------------------------------------------------------

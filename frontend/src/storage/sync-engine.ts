@@ -244,6 +244,18 @@ const SYNC_TABLES: SyncTable[] = [
         appendOnly: true,
     },
     {
+        // v1.8.0 / Phase 21B — promoted to MUTABLE. Notes are
+        // user-editable in the UI; the conflict-resolution
+        // pipeline picks a winner by ``updated_at``. The
+        // backend Alembic migration 0006 + the Dexie v4 schema
+        // upgrade back-fill ``updated_at = created_at`` for
+        // historical rows.
+        name: "session_notes",
+        dexieTable: "sessionNotes",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
+    {
         name: "progress_commits",
         dexieTable: "progressCommits",
         timestampField: "committed_at",

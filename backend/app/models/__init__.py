@@ -539,6 +539,16 @@ class SessionNote(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
+    # v1.8.0 / Phase 21B — promoted SessionNote from append-only
+    # to mutable for the sync surface. Notes are user-editable in
+    # the UI; ``updated_at`` is the timestamp the sync push/pull
+    # conflict-resolution layer compares.
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
+        onupdate=_utcnow,
+    )
 
     session: Mapped[LearningSession] = relationship(back_populates="notes")
 

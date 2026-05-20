@@ -138,6 +138,14 @@ export interface SessionNoteRow {
     session_id: string;
     content: string;
     created_at: string;
+    /**
+     * v1.8.0 / Phase 21B — sync surface promoted SessionNote
+     * from append-only to mutable. ``updated_at`` is set on
+     * creation (== ``created_at``) and on every edit, so the
+     * sync push/pull conflict layer can pick a winner by
+     * timestamp.
+     */
+    updated_at: string;
 }
 
 export interface ProgressCommitRow {
@@ -291,6 +299,25 @@ export class AdaptiveLearnerDB extends Dexie {
                         if ("created_at" in row && !("evaluated_at" in row)) {
                             row.evaluated_at = row.created_at;
                             delete row.created_at;
+                        }
+                    });
+            });
+        // Schema v4 — v1.8.0 Phase 21B: session_notes promoted
+        // from append-only to mutable for the sync surface.
+        // ``updated_at`` is added; existing rows get
+        // ``updated_at = created_at`` (the same back-fill the
+        // backend's Alembic migration 0006 applies).
+        this.version(4)
+            .stores({
+                sessionNotes: "id, session_id, updated_at",
+            })
+            .upgrade(async (tx) => {
+                await tx
+                    .table("sessionNotes")
+                    .toCollection()
+                    .modify((row: Record<string, unknown>) => {
+                        if (!("updated_at" in row)) {
+                            row.updated_at = row.created_at;
                         }
                     });
             });
