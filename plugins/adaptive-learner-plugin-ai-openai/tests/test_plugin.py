@@ -72,6 +72,39 @@ def test_ai_complete_dispatches_to_client_for_gpt_models(model):
         mock_complete.assert_called_once()
 
 
+# --- ai_complete_stream routing (v1.6.0 / Phase 19) ------------------------
+
+
+@pytest.mark.parametrize(
+    "model",
+    ["claude-sonnet-4-6", "gemini-1.5-pro", "", None, 123],
+)
+def test_ai_complete_stream_returns_none_for_non_gpt_models(model):
+    out = AiOpenAiPlugin().ai_complete_stream(
+        messages=[{"role": "user", "content": "x"}],
+        model=model,  # type: ignore[arg-type]
+        api_key="k",
+    )
+    assert out is None
+
+
+@pytest.mark.asyncio
+async def test_ai_complete_stream_dispatches_async_generator_for_gpt_models():
+    async def fake_stream(messages, model, api_key, **kwargs):  # noqa: ARG001
+        yield "Hello"
+        yield " GPT"
+
+    with patch("adaptive_learner_ai_openai.plugin._stream", side_effect=fake_stream):
+        gen = AiOpenAiPlugin().ai_complete_stream(
+            messages=[{"role": "user", "content": "x"}],
+            model="gpt-4o",
+            api_key="sk-test",
+        )
+        assert gen is not None
+        chunks = [c async for c in gen]
+    assert chunks == ["Hello", " GPT"]
+
+
 # Empty-api-key + SDK-exception-wrap coverage lives in
 # backend/tests/test_ai_openai_plugin_integration.py — both need
 # ``app.exceptions`` on sys.path, which the standalone test dir

@@ -176,6 +176,37 @@ class AdaptiveLearnerHookSpec:
         """
         ...
 
+    @hookspec(firstresult=True)
+    def ai_complete_stream(
+        self,
+        messages: list[dict],
+        model: str,
+        api_key: str,
+        max_tokens: int | None = None,
+    ) -> object:
+        """Streaming variant of :meth:`ai_complete` — v1.6.0 / Phase 19.
+
+        Returns an *async iterator* (or an awaitable resolving to
+        one) that yields text deltas as the provider streams them.
+        Concatenating every yielded chunk reproduces the complete
+        assistant message ``ai_complete`` would have returned.
+
+        ``firstresult=True``: exactly one provider plugin answers
+        per call. Providers that DO NOT support streaming simply
+        skip this hook; the orchestrator falls back to the
+        non-streaming :meth:`ai_complete_async` (and emits the full
+        string as one final chunk on the SSE channel) so the route
+        contract stays unchanged from the caller's perspective.
+
+        Callers must use the
+        :func:`adaptive_learner_session.ai_orchestration.call_ai_complete_stream`
+        helper rather than invoking pluggy directly — the helper
+        normalises the ``awaitable | iterator`` shape, attaches an
+        end-of-stream sentinel, and handles cleanup on the caller's
+        early disconnect.
+        """
+        ...
+
     # --- Adaptive switching -------------------------------------------------
 
     @hookspec

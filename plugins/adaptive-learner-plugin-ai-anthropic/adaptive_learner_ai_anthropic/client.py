@@ -87,3 +87,34 @@ def complete(
         if isinstance(text, str):
             parts.append(text)
     return "".join(parts)
+
+
+async def stream(
+    messages: list[dict[str, Any]],
+    model: str,
+    api_key: str,
+    max_tokens: int = DEFAULT_MAX_TOKENS,
+):
+    """v1.6.0 / Phase 19 — yield text deltas as Anthropic streams them.
+
+    Uses ``AsyncAnthropic.messages.stream`` (an async context
+    manager) and yields each text delta via the SDK's
+    ``text_stream`` async iterator. Concatenating every yielded
+    chunk produces the same string :func:`complete` would have
+    returned.
+
+    Raises the SDK's native exceptions; the plugin's hookimpl
+    wraps them as ``ExternalServiceError`` before they reach the
+    SSE channel.
+    """
+    system, chat = _split_system_and_chat(messages)
+    async_client = anthropic.AsyncAnthropic(api_key=api_key)
+    async with async_client.messages.stream(
+        model=model,
+        system=system,
+        messages=chat,
+        max_tokens=max_tokens,
+    ) as stream_handle:
+        async for delta in stream_handle.text_stream:
+            if isinstance(delta, str) and delta:
+                yield delta

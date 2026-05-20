@@ -36,9 +36,7 @@ def genai_mock():
     """
     with patch("adaptive_learner_ai_gemini.client.genai", create=True) as m:
         client_instance = MagicMock()
-        client_instance.models.generate_content.return_value = SimpleNamespace(
-            text="fine response"
-        )
+        client_instance.models.generate_content.return_value = SimpleNamespace(text="fine response")
         m.Client.return_value = client_instance
         yield m
 
@@ -50,9 +48,7 @@ def genai_types_mock():
     capture those constructor kwargs without instantiating the
     real Pydantic-like config class."""
     with patch("adaptive_learner_ai_gemini.client.genai_types", create=True) as m:
-        m.GenerateContentConfig.side_effect = lambda **kwargs: SimpleNamespace(
-            **kwargs
-        )
+        m.GenerateContentConfig.side_effect = lambda **kwargs: SimpleNamespace(**kwargs)
         yield m
 
 
@@ -221,3 +217,89 @@ def test_complete_respects_custom_max_tokens(genai_mock, genai_types_mock):
     )
     config_kwargs = genai_types_mock.GenerateContentConfig.call_args.kwargs
     assert config_kwargs["max_output_tokens"] == 512
+
+
+# --- stream (v1.6.0 / Phase 19) --------------------------------------------
+
+
+class _FakeAsyncChunkStream:
+    """Async iterator yielding ``GenerateContentResponse``-shaped
+    chunks for the streaming wrapper."""
+
+    def __init__(self, deltas: list[str]):
+        self._items = [SimpleNamespace(text=d) for d in deltas]
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if not self._items:
+            raise StopAsyncIteration
+        return self._items.pop(0)
+
+
+@pytest.mark.asyncio
+async def test_stream_yields_each_text_delta(genai_mock, genai_types_mock):
+    """``client.aio.models.generate_content_stream`` returns a
+    coroutine resolving to an async iterator; the wrapper consumes
+    each chunk's ``.text`` and yields non-empty strings."""
+    from adaptive_learner_ai_gemini.client import stream
+
+    async def fake_stream_call(**kwargs):  # noqa: ARG001
+        return _FakeAsyncChunkStream(["Hi", " from", " gemini"])
+
+    genai_mock.Client.return_value.aio.models.generate_content_stream.side_effect = fake_stream_call
+
+    out = [
+        c
+        async for c in stream(
+            [{"role": "user", "content": "x"}],
+            model="gemini-2.0-flash",
+            api_key="k",
+            max_tokens=128,
+        )
+    ]
+    assert out == ["Hi", " from", " gemini"]
+    # SDK was invoked with the model + content list + config object.
+    call_kwargs = genai_mock.Client.return_value.aio.models.generate_content_stream.call_args.kwargs
+    assert call_kwargs["model"] == "gemini-2.0-flash"
+
+
+@pytest.mark.asyncio
+async def test_stream_skips_chunks_with_empty_or_missing_text(genai_mock, genai_types_mock):
+    """Safety-flag and finish-reason chunks come with ``text=None`` or
+    no ``text`` attribute; the wrapper drops them."""
+    from adaptive_learner_ai_gemini.client import stream
+
+    # Mix of valid + empty + missing-text shaped chunks.
+    chunks = [
+        SimpleNamespace(text="real"),
+        SimpleNamespace(text=None),
+        SimpleNamespace(),  # no text attr at all
+        SimpleNamespace(text=""),
+        SimpleNamespace(text="more"),
+    ]
+
+    class _Stream:
+        def __aiter__(self_inner):
+            return self_inner
+
+        async def __anext__(self_inner):
+            if not chunks:
+                raise StopAsyncIteration
+            return chunks.pop(0)
+
+    async def fake_stream_call(**kwargs):  # noqa: ARG001
+        return _Stream()
+
+    genai_mock.Client.return_value.aio.models.generate_content_stream.side_effect = fake_stream_call
+
+    out = [
+        c
+        async for c in stream(
+            [{"role": "user", "content": "x"}],
+            model="gemini-2.0-flash",
+            api_key="k",
+        )
+    ]
+    assert out == ["real", "more"]

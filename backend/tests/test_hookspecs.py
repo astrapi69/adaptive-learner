@@ -25,6 +25,7 @@ EXPECTED_HOOKS: frozenset[str] = frozenset(
         "create_session_prompt",
         "ai_complete",
         "ai_complete_async",
+        "ai_complete_stream",
         "recommend_method_switch",
         "on_session_complete",
         "get_progress_summary",
@@ -33,14 +34,14 @@ EXPECTED_HOOKS: frozenset[str] = frozenset(
 )
 
 FIRSTRESULT_HOOKS: frozenset[str] = frozenset(
-    {"create_session_prompt", "ai_complete", "ai_complete_async"}
+    {"create_session_prompt", "ai_complete", "ai_complete_async", "ai_complete_stream"}
 )
 
 
 # --- Spec-class shape -------------------------------------------------------
 
 
-def test_hookspec_class_carries_all_9_hooks():
+def test_hookspec_class_carries_all_10_hooks():
     declared = {
         name
         for name, attr in vars(AdaptiveLearnerHookSpec).items()
@@ -109,6 +110,8 @@ EXPECTED_SIGNATURES: dict[str, list[str]] = {
     "ai_complete": ["self", "messages", "model", "api_key", "max_tokens"],
     # v1.5.0 (Phase 18B): async variant; same signature.
     "ai_complete_async": ["self", "messages", "model", "api_key", "max_tokens"],
+    # v1.6.0 (Phase 19): streaming variant; same signature, yields chunks.
+    "ai_complete_stream": ["self", "messages", "model", "api_key", "max_tokens"],
     "recommend_method_switch": ["self", "project_id", "current_method", "recent_ratings"],
     "on_session_complete": ["self", "session", "rating"],
     "get_progress_summary": ["self", "project_id"],

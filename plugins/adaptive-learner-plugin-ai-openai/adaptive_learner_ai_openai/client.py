@@ -84,3 +84,41 @@ def complete(
         return ""
     content = getattr(message, "content", None)
     return content if isinstance(content, str) else ""
+
+
+async def stream(
+    messages: list[dict[str, Any]],
+    model: str,
+    api_key: str,
+    max_tokens: int = DEFAULT_MAX_TOKENS,
+):
+    """v1.6.0 / Phase 19 — yield text deltas as OpenAI streams them.
+
+    Uses ``AsyncOpenAI.chat.completions.create(stream=True)``,
+    which returns an async iterator of ``ChatCompletionChunk``
+    objects. Each chunk's ``choices[0].delta.content`` is either
+    a string (the next token group) or ``None`` (a role / tool /
+    finish marker). The wrapper drops everything that isn't a
+    non-empty string.
+
+    Raises the SDK's native exceptions; the plugin's hookimpl
+    wraps them as ``ExternalServiceError``.
+    """
+    filtered = _filter_messages(messages)
+    async_client = openai.AsyncOpenAI(api_key=api_key)
+    response = await async_client.chat.completions.create(
+        model=model,
+        messages=filtered,
+        max_tokens=max_tokens,
+        stream=True,
+    )
+    async for chunk in response:
+        choices = getattr(chunk, "choices", None) or []
+        if not choices:
+            continue
+        delta = getattr(choices[0], "delta", None)
+        if delta is None:
+            continue
+        content = getattr(delta, "content", None)
+        if isinstance(content, str) and content:
+            yield content

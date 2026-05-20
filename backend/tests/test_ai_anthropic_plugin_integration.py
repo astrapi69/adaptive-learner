@@ -129,3 +129,77 @@ def test_sdk_error_wraps_to_external_service_error(client: TestClient):
             )
     assert "anthropic" in str(exc.value).lower()
     assert "upstream down" in str(exc.value)
+
+
+# --- ai_complete_stream (v1.6.0 / Phase 19) --------------------------------
+
+
+def test_stream_hook_returns_none_for_non_claude_model(client: TestClient):
+    """firstresult dispatch: no plugin claims an unknown-prefix
+    model, so the hook returns None all the way through. Using
+    ``gpt-4o`` here would dispatch to ai-openai's hookimpl (which
+    DOES match the prefix) and the hook would return its generator
+    — exactly the behaviour the cross-provider tests pin."""
+    result = manager._pm.hook.ai_complete_stream(
+        messages=[{"role": "user", "content": "x"}],
+        model="mistral-large",
+        api_key="k",
+    )
+    assert result is None
+
+
+def test_stream_hook_rejects_empty_api_key(client: TestClient):
+    """Same defensive guard as the non-stream hook."""
+    with pytest.raises(ValidationError):
+        manager._pm.hook.ai_complete_stream(
+            messages=[{"role": "user", "content": "x"}],
+            model="claude-sonnet-4-6",
+            api_key="",
+        )
+
+
+@pytest.mark.asyncio
+async def test_stream_hook_dispatches_claude_to_anthropic_async_generator(
+    client: TestClient,
+):
+    """When pluggy routes a claude-prefixed model to the anthropic
+    plugin, the resulting async generator yields the deltas the
+    underlying SDK streamed."""
+
+    async def fake_stream(messages, model, api_key, **kwargs):  # noqa: ARG001
+        for delta in ["Hi", " there"]:
+            yield delta
+
+    with patch("adaptive_learner_ai_anthropic.plugin._stream", side_effect=fake_stream):
+        gen = manager._pm.hook.ai_complete_stream(
+            messages=[{"role": "user", "content": "x"}],
+            model="claude-haiku-4-5-20251001",
+            api_key="sk-test",
+        )
+        assert gen is not None
+        chunks = [c async for c in gen]
+    assert chunks == ["Hi", " there"]
+
+
+@pytest.mark.asyncio
+async def test_stream_hook_wraps_sdk_error_as_external_service_error(
+    client: TestClient,
+):
+    """An SDK exception during streaming surfaces as
+    ExternalServiceError when the consumer iterates."""
+
+    async def angry_stream(messages, model, api_key, **kwargs):  # noqa: ARG001
+        raise RuntimeError("stream broke")
+        yield  # pragma: no cover  # makes this a generator function
+
+    with patch("adaptive_learner_ai_anthropic.plugin._stream", side_effect=angry_stream):
+        gen = manager._pm.hook.ai_complete_stream(
+            messages=[{"role": "user", "content": "x"}],
+            model="claude-haiku-4-5-20251001",
+            api_key="sk-test",
+        )
+        assert gen is not None
+        with pytest.raises(ExternalServiceError) as exc:
+            async for _ in gen:
+                pass
+    assert "stream broke" in str(exc.value)

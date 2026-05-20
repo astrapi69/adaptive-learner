@@ -105,3 +105,36 @@ def complete(
     # case behaviour.
     text = getattr(response, "text", None)
     return text if isinstance(text, str) else ""
+
+
+async def stream(
+    messages: list[dict[str, Any]],
+    model: str,
+    api_key: str,
+    max_tokens: int = DEFAULT_MAX_TOKENS,
+):
+    """v1.6.0 / Phase 19 — yield text deltas as Gemini streams them.
+
+    Uses ``client.aio.models.generate_content_stream(...)`` from
+    the google-genai SDK, which yields ``GenerateContentResponse``
+    chunks. Each chunk's ``.text`` attribute carries the next
+    delta (or the empty string for non-text chunks — safety
+    flags, finish reasons). The wrapper drops empty deltas.
+
+    Raises the SDK's native exceptions; the plugin's hookimpl
+    wraps them as ``ExternalServiceError``.
+    """
+    system_instruction, contents = _split_system_and_chat(messages)
+    client = genai.Client(api_key=api_key)
+    config = genai_types.GenerateContentConfig(
+        system_instruction=system_instruction,
+        max_output_tokens=max_tokens,
+    )
+    async for chunk in await client.aio.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=config,
+    ):
+        text = getattr(chunk, "text", None)
+        if isinstance(text, str) and text:
+            yield text

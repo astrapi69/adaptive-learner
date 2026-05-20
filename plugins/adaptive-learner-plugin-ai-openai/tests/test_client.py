@@ -162,3 +162,119 @@ def test_complete_respects_custom_max_tokens(openai_mock):
     )
     call_kwargs = openai_mock.OpenAI.return_value.chat.completions.create.call_args.kwargs
     assert call_kwargs["max_tokens"] == 512
+
+
+# --- stream (v1.6.0 / Phase 19) --------------------------------------------
+
+
+def _fake_chunk(content):
+    """Mock ``ChatCompletionChunk`` with the field the wrapper reads."""
+    return SimpleNamespace(choices=[SimpleNamespace(delta=SimpleNamespace(content=content))])
+
+
+class _FakeAsyncStream:
+    """Async iterator yielding pre-baked ``ChatCompletionChunk``
+    objects; simulates the response of
+    ``AsyncOpenAI.chat.completions.create(stream=True)``."""
+
+    def __init__(self, chunks: list):
+        self._chunks = list(chunks)
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if not self._chunks:
+            raise StopAsyncIteration
+        return self._chunks.pop(0)
+
+
+@pytest.mark.asyncio
+async def test_stream_yields_each_delta_content_in_order():
+    from adaptive_learner_ai_openai.client import stream
+
+    chunks = [_fake_chunk("Hello"), _fake_chunk(", "), _fake_chunk("world!")]
+    with patch("adaptive_learner_ai_openai.client.openai", create=True) as m:
+        async_client = MagicMock()
+
+        async def fake_create(**kwargs):  # noqa: ARG001
+            return _FakeAsyncStream(chunks)
+
+        async_client.chat.completions.create.side_effect = fake_create
+        m.AsyncOpenAI.return_value = async_client
+        out = [
+            c
+            async for c in stream(
+                [{"role": "user", "content": "hi"}],
+                model="gpt-4o",
+                api_key="k",
+                max_tokens=128,
+            )
+        ]
+    assert out == ["Hello", ", ", "world!"]
+    # The SDK was invoked with stream=True + the messages we filtered.
+    call_kwargs = async_client.chat.completions.create.call_args.kwargs
+    assert call_kwargs["stream"] is True
+    assert call_kwargs["model"] == "gpt-4o"
+    assert call_kwargs["max_tokens"] == 128
+
+
+@pytest.mark.asyncio
+async def test_stream_drops_role_and_finish_markers_with_none_content():
+    """The first chunk in an OpenAI stream usually carries
+    ``delta.role`` with ``content=None``; the wrapper drops it."""
+    from adaptive_learner_ai_openai.client import stream
+
+    chunks = [
+        _fake_chunk(None),  # role marker
+        _fake_chunk("real"),
+        _fake_chunk(""),  # empty
+        _fake_chunk("text"),
+        _fake_chunk(None),  # finish marker
+    ]
+    with patch("adaptive_learner_ai_openai.client.openai", create=True) as m:
+        async_client = MagicMock()
+
+        async def fake_create(**kwargs):  # noqa: ARG001
+            return _FakeAsyncStream(chunks)
+
+        async_client.chat.completions.create.side_effect = fake_create
+        m.AsyncOpenAI.return_value = async_client
+        out = [
+            c
+            async for c in stream(
+                [{"role": "user", "content": "x"}],
+                model="gpt-4o",
+                api_key="k",
+            )
+        ]
+    assert out == ["real", "text"]
+
+
+@pytest.mark.asyncio
+async def test_stream_skips_chunks_with_no_choices():
+    """OpenAI emits keepalive chunks with an empty choices list; the
+    wrapper skips them."""
+    from adaptive_learner_ai_openai.client import stream
+
+    chunks = [
+        SimpleNamespace(choices=[]),
+        _fake_chunk("real"),
+    ]
+    with patch("adaptive_learner_ai_openai.client.openai", create=True) as m:
+        async_client = MagicMock()
+
+        async def fake_create(**kwargs):  # noqa: ARG001
+            return _FakeAsyncStream(chunks)
+
+        async_client.chat.completions.create.side_effect = fake_create
+        m.AsyncOpenAI.return_value = async_client
+        out = [
+            c
+            async for c in stream(
+                [{"role": "user", "content": "x"}],
+                model="gpt-4o",
+                api_key="k",
+            )
+        ]
+    assert out == ["real"]

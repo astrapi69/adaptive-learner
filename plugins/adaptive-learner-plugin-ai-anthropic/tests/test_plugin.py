@@ -74,3 +74,40 @@ def test_ai_complete_dispatches_for_claude_models(model):
     call_args = mock_complete.call_args
     assert call_args.args[1] == model
     assert call_args.args[2] == "sk-test"
+
+
+# --- ai_complete_stream routing (v1.6.0 / Phase 19) ------------------------
+
+
+@pytest.mark.parametrize(
+    "model",
+    ["gpt-4o", "gemini-1.5-pro", "", None, 123],
+)
+def test_ai_complete_stream_returns_none_for_non_claude_models(model):
+    out = AiAnthropicPlugin().ai_complete_stream(
+        messages=[{"role": "user", "content": "x"}],
+        model=model,  # type: ignore[arg-type]
+        api_key="k",
+    )
+    assert out is None
+
+
+@pytest.mark.asyncio
+async def test_ai_complete_stream_dispatches_for_claude_models():
+    """The hookimpl returns an async generator that yields the
+    chunks the underlying client stream produces."""
+
+    async def fake_stream(messages, model, api_key, **kwargs):  # noqa: ARG001
+        yield "Hello"
+        yield ", "
+        yield "world!"
+
+    with patch("adaptive_learner_ai_anthropic.plugin._stream", side_effect=fake_stream):
+        gen = AiAnthropicPlugin().ai_complete_stream(
+            messages=[{"role": "user", "content": "x"}],
+            model="claude-haiku-4-5-20251001",
+            api_key="sk-test",
+        )
+        assert gen is not None
+        chunks = [c async for c in gen]
+    assert chunks == ["Hello", ", ", "world!"]

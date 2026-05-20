@@ -192,3 +192,58 @@ async def call_ai_complete_async(
         )
 
     return await asyncio.to_thread(_call_sync)
+
+
+async def call_ai_complete_stream(
+    *,
+    pm: Any,
+    messages: list[dict[str, Any]],
+    model: str,
+    api_key: str,
+    max_tokens: int | None = None,
+):
+    """v1.6.0 / Phase 19 — fire the ``ai_complete_stream`` hook.
+
+    Returns an async iterator yielding ``str`` chunks, or ``None``
+    when no registered plugin implements the stream hook. Callers
+    fall back to :func:`call_ai_complete_async` on ``None``.
+
+    Why a wrapper instead of dispatching pluggy directly:
+
+    - The stream hook may return the iterator directly OR a
+      coroutine that resolves to one (depends on whether the
+      plugin's hookimpl is ``async def`` or plain ``def``). The
+      wrapper normalises both to "directly async-iterable".
+    - When the hookspec is registered but no plugin claims it,
+      pluggy returns ``None`` — the wrapper surfaces that as a
+      ``None`` return so the caller can branch cleanly.
+    - The hookspec is ``firstresult=True``: exactly one provider
+      plugin answers; pluggy enforces first-non-None on dispatch.
+    """
+    import asyncio
+    import inspect
+
+    stream_hook = getattr(pm.hook, "ai_complete_stream", None)
+    if stream_hook is None:
+        return None
+    try:
+        result = stream_hook(
+            messages=messages,
+            model=model,
+            api_key=api_key,
+            max_tokens=max_tokens,
+        )
+    except Exception:  # noqa: BLE001 — fallback to async hook in the caller
+        return None
+    if result is None:
+        return None
+    # An ``async def`` hookimpl returns a coroutine; await it to
+    # get the async iterator. A plain ``def`` hookimpl that
+    # ``return``s an async generator returns it directly.
+    if asyncio.iscoroutine(result):
+        result = await result
+    if result is None:
+        return None
+    if not hasattr(result, "__aiter__") and not inspect.isasyncgen(result):
+        return None
+    return result

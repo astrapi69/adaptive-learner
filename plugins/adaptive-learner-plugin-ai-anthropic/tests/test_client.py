@@ -179,3 +179,109 @@ def test_complete_respects_custom_max_tokens(anthropic_mock):
     )
     call_kwargs = anthropic_mock.Anthropic.return_value.messages.create.call_args.kwargs
     assert call_kwargs["max_tokens"] == 512
+
+
+# --- stream (v1.6.0 / Phase 19) --------------------------------------------
+
+
+class _FakeAsyncTextStream:
+    """Async iterator yielding pre-baked deltas; simulates the
+    ``stream_handle.text_stream`` from the Anthropic SDK."""
+
+    def __init__(self, deltas: list[str]):
+        self._deltas = list(deltas)
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if not self._deltas:
+            raise StopAsyncIteration
+        return self._deltas.pop(0)
+
+
+class _FakeStreamHandle:
+    """Async-context-manager mock of
+    ``AsyncAnthropic.messages.stream(...)``. Exposes the
+    ``text_stream`` attribute the wrapper consumes."""
+
+    def __init__(self, deltas: list[str]):
+        self.text_stream = _FakeAsyncTextStream(deltas)
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        return None
+
+
+@pytest.mark.asyncio
+async def test_stream_yields_each_text_delta_in_order():
+    from adaptive_learner_ai_anthropic.client import stream
+
+    deltas = ["Hello", ", ", "world!"]
+    with patch("adaptive_learner_ai_anthropic.client.anthropic", create=True) as m:
+        async_client = MagicMock()
+        async_client.messages.stream.return_value = _FakeStreamHandle(deltas)
+        m.AsyncAnthropic.return_value = async_client
+        chunks = [
+            c
+            async for c in stream(
+                [{"role": "user", "content": "hi"}],
+                model="claude-haiku-4-5-20251001",
+                api_key="k",
+                max_tokens=128,
+            )
+        ]
+    assert chunks == deltas
+    # Verify the SDK got the model + max_tokens we passed.
+    call_kwargs = async_client.messages.stream.call_args.kwargs
+    assert call_kwargs["model"] == "claude-haiku-4-5-20251001"
+    assert call_kwargs["max_tokens"] == 128
+
+
+@pytest.mark.asyncio
+async def test_stream_skips_empty_and_non_string_deltas():
+    """Anthropic's text_stream occasionally yields empty strings on
+    keepalives. The wrapper drops them so consumers don't render
+    empty bubbles."""
+    from adaptive_learner_ai_anthropic.client import stream
+
+    with patch("adaptive_learner_ai_anthropic.client.anthropic", create=True) as m:
+        async_client = MagicMock()
+        async_client.messages.stream.return_value = _FakeStreamHandle(["valid", "", "more valid"])
+        m.AsyncAnthropic.return_value = async_client
+        chunks = [
+            c
+            async for c in stream(
+                [{"role": "user", "content": "x"}],
+                model="claude-haiku-4-5-20251001",
+                api_key="k",
+            )
+        ]
+    assert chunks == ["valid", "more valid"]
+
+
+@pytest.mark.asyncio
+async def test_stream_passes_split_system_prompt():
+    """The split-system-and-chat transform applies to streaming too."""
+    from adaptive_learner_ai_anthropic.client import stream
+
+    with patch("adaptive_learner_ai_anthropic.client.anthropic", create=True) as m:
+        async_client = MagicMock()
+        async_client.messages.stream.return_value = _FakeStreamHandle(["ok"])
+        m.AsyncAnthropic.return_value = async_client
+        _ = [
+            c
+            async for c in stream(
+                [
+                    {"role": "system", "content": "Be concise."},
+                    {"role": "user", "content": "x"},
+                ],
+                model="claude-haiku-4-5-20251001",
+                api_key="k",
+            )
+        ]
+    call_kwargs = async_client.messages.stream.call_args.kwargs
+    assert call_kwargs["system"] == "Be concise."
+    assert call_kwargs["messages"] == [{"role": "user", "content": "x"}]

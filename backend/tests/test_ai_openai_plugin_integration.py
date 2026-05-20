@@ -30,9 +30,7 @@ def mocked_openai():
     with patch("adaptive_learner_ai_openai.client.openai", create=True) as m:
         instance = MagicMock()
         instance.chat.completions.create.return_value = SimpleNamespace(
-            choices=[
-                SimpleNamespace(message=SimpleNamespace(content="MOCKED gpt reply"))
-            ]
+            choices=[SimpleNamespace(message=SimpleNamespace(content="MOCKED gpt reply"))]
         )
         m.OpenAI.return_value = instance
         yield m
@@ -80,9 +78,7 @@ def test_hook_passes_system_message_inline(client: TestClient, mocked_openai):
         model="gpt-4o",
         api_key="k",
     )
-    call_kwargs = (
-        mocked_openai.OpenAI.return_value.chat.completions.create.call_args.kwargs
-    )
+    call_kwargs = mocked_openai.OpenAI.return_value.chat.completions.create.call_args.kwargs
     assert call_kwargs["messages"] == [
         {"role": "system", "content": "Respond in German."},
         {"role": "user", "content": "What is 2+2?"},
@@ -118,3 +114,66 @@ def test_sdk_error_wraps_to_external_service_error(client: TestClient):
             )
     assert "openai" in str(exc.value).lower()
     assert "rate limit" in str(exc.value)
+
+
+# --- ai_complete_stream (v1.6.0 / Phase 19) --------------------------------
+
+
+def test_stream_hook_returns_none_for_non_gpt_model(client: TestClient):
+    """firstresult dispatch: no plugin claims an unknown-prefix
+    model, so the hook returns None all the way through."""
+    result = manager._pm.hook.ai_complete_stream(
+        messages=[{"role": "user", "content": "x"}],
+        model="mistral-large",
+        api_key="k",
+    )
+    assert result is None
+
+
+def test_stream_hook_rejects_empty_api_key(client: TestClient):
+    with pytest.raises(ValidationError):
+        manager._pm.hook.ai_complete_stream(
+            messages=[{"role": "user", "content": "x"}],
+            model="gpt-4o",
+            api_key="",
+        )
+
+
+@pytest.mark.asyncio
+async def test_stream_hook_dispatches_gpt_to_openai_async_generator(
+    client: TestClient,
+):
+    async def fake_stream(messages, model, api_key, **kwargs):  # noqa: ARG001
+        for delta in ["Hi", " GPT"]:
+            yield delta
+
+    with patch("adaptive_learner_ai_openai.plugin._stream", side_effect=fake_stream):
+        gen = manager._pm.hook.ai_complete_stream(
+            messages=[{"role": "user", "content": "x"}],
+            model="gpt-4o",
+            api_key="sk-test",
+        )
+        assert gen is not None
+        chunks = [c async for c in gen]
+    assert chunks == ["Hi", " GPT"]
+
+
+@pytest.mark.asyncio
+async def test_stream_hook_wraps_sdk_error_as_external_service_error(
+    client: TestClient,
+):
+    async def angry_stream(messages, model, api_key, **kwargs):  # noqa: ARG001
+        raise RuntimeError("openai melted")
+        yield  # pragma: no cover
+
+    with patch("adaptive_learner_ai_openai.plugin._stream", side_effect=angry_stream):
+        gen = manager._pm.hook.ai_complete_stream(
+            messages=[{"role": "user", "content": "x"}],
+            model="gpt-4o",
+            api_key="sk-test",
+        )
+        assert gen is not None
+        with pytest.raises(ExternalServiceError) as exc:
+            async for _ in gen:
+                pass
+    assert "openai melted" in str(exc.value)

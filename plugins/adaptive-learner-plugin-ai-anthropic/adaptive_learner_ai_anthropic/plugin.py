@@ -14,6 +14,7 @@ from pluginforge import BasePlugin
 
 from . import CLAUDE_MODEL_PREFIX
 from .client import complete as _complete
+from .client import stream as _stream
 
 hookimpl = pluggy.HookimplMarker("adaptive_learner.plugins")
 
@@ -62,3 +63,43 @@ class AiAnthropicPlugin(BasePlugin):
             from app.exceptions import ExternalServiceError
 
             raise ExternalServiceError("anthropic", str(exc)) from exc
+
+    @hookimpl
+    def ai_complete_stream(
+        self,
+        messages: list[dict[str, Any]],
+        model: str,
+        api_key: str,
+        max_tokens: int | None = None,
+    ):
+        """v1.6.0 / Phase 19 — streaming variant of :meth:`ai_complete`.
+
+        Returns an async generator yielding text deltas as
+        Anthropic streams them. Returns ``None`` when the requested
+        model isn't ours so pluggy moves on to the next provider
+        plugin (firstresult dispatch).
+        """
+        if not isinstance(model, str) or not model.startswith(CLAUDE_MODEL_PREFIX):
+            return None
+        if not isinstance(api_key, str) or not api_key:
+            from app.exceptions import ValidationError
+
+            raise ValidationError("ai-anthropic: api_key must be a non-empty string.")
+        kwargs: dict[str, Any] = {}
+        if isinstance(max_tokens, int) and max_tokens > 0:
+            kwargs["max_tokens"] = max_tokens
+
+        async def _generator():
+            # Wrap the underlying SDK errors so the SSE handler
+            # sees a typed exception identical to the non-stream
+            # path. The wrapper is per-stream rather than per-yield
+            # so the first failed delta is reported once.
+            try:
+                async for chunk in _stream(messages, model, api_key, **kwargs):
+                    yield chunk
+            except Exception as exc:
+                from app.exceptions import ExternalServiceError
+
+                raise ExternalServiceError("anthropic", str(exc)) from exc
+
+        return _generator()
