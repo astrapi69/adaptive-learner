@@ -99,6 +99,17 @@ export interface LearningSession {
     ended_at: string | null;
     cycle_step: number;
     status: SessionStatus;
+    // v1.4.0 — auto-loop: cycles count from 1; cycle_topics is a
+    // list of {cycle, topic, summary, next_topic} entries appended
+    // when the topic-transition evaluator advances the session
+    // into a new cycle.
+    cycle_count?: number;
+    cycle_topics?: {
+        cycle: number;
+        topic: string;
+        summary: string;
+        next_topic: string;
+    }[];
 }
 
 export interface SessionMessage {
@@ -192,6 +203,25 @@ export interface SessionMessageExchangeResult {
     session: LearningSession;
     /** v0.5.0 — Phase 8B dual-prompt verdict (null when disabled / not reached). */
     step_evaluation: StepEvaluationVerdict | null;
+    /**
+     * v1.4.0 — auto-loop topic transition. Populated only when the
+     * step evaluator just advanced the session into step 7 with
+     * advance=true. ``looped`` is true iff a new cycle was actually
+     * started (cycle_step reset to 1, cycle_count incremented).
+     */
+    topic_transition?: TopicTransitionVerdict | null;
+}
+
+export interface TopicTransitionVerdict {
+    cycle_complete: boolean;
+    summary: string;
+    next_topic: string | null;
+    next_topic_rationale: string;
+    difficulty_adjustment: "same" | "easier" | "harder";
+    continue_recommended: boolean;
+    fallback_used: boolean;
+    looped: boolean;
+    new_cycle_count: number;
 }
 
 /**

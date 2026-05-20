@@ -215,6 +215,9 @@ session:
   rating_submit: Enviar valoracion
   step_progress: Paso {current} de {total}
   step_advance_toast: "Avanzando a: {step}"
+  cycle_label: "Cycle {n}"
+  cycle_advanced: "Cycle {n} started"
+  next_topic: "Next topic:"
   step_reason_tooltip: Por que este paso?
   offline_start_blocked: >-
     Estas sin conexion. Las nuevas sesiones necesitan red — las

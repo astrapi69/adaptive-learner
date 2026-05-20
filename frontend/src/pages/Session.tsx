@@ -232,6 +232,30 @@ export default function Session() {
             // disabled) — in those cases the tooltip just hides
             // and no toast fires.
             setStepEvaluation(result.step_evaluation);
+
+            // v1.4.0 — auto-loop. When the topic-transition
+            // evaluator successfully looped the session into a
+            // new cycle, append a transition card to the chat.
+            const transition = result.topic_transition;
+            if (transition && transition.looped) {
+                setMessages((prev) => [
+                    ...prev,
+                    {
+                        id: `cycle-transition-${transition.new_cycle_count}`,
+                        role: "assistant" as const,
+                        kind: "cycle_transition" as const,
+                        cycleNumber: transition.new_cycle_count,
+                        content: transition.summary,
+                        nextTopic: transition.next_topic ?? "",
+                    },
+                ]);
+                notify.success(
+                    t(
+                        "session.cycle_advanced",
+                        "Cycle {n} started",
+                    ).replace("{n}", String(transition.new_cycle_count)),
+                );
+            }
             if (
                 result.step_evaluation &&
                 result.step_evaluation.applied &&

@@ -179,6 +179,8 @@ interface SendMessageResult {
     ai_error: string | null;
     session: LearningSession;
     step_evaluation: StepEvaluationVerdict | null;
+    /** v1.4.0 — auto-loop not yet implemented in Dexie mode; always null. */
+    topic_transition?: null;
 }
 
 /**

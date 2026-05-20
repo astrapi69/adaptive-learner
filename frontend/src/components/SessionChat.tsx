@@ -9,6 +9,16 @@ export interface ChatMessage {
     id: string;
     role: MessageRole;
     content: string;
+    /**
+     * v1.4.0 — auto-loop transition card. When set, the chat
+     * renders this message with a dedicated style (border,
+     * cycle counter badge) instead of a regular speech bubble.
+     */
+    kind?: "cycle_transition";
+    /** v1.4.0 — auto-loop cycle counter shown on the card. */
+    cycleNumber?: number;
+    /** v1.4.0 — next-cycle topic shown beneath the summary. */
+    nextTopic?: string;
 }
 
 interface SessionChatProps {
@@ -52,15 +62,52 @@ export default function SessionChat({
     return (
         <div className="session-chat" data-testid="session-chat">
             <div className="chat-messages" ref={listRef} data-testid="chat-messages">
-                {messages.map((msg) => (
-                    <div
-                        key={msg.id}
-                        className={`chat-message is-${msg.role}`}
-                        data-testid={`chat-message-${msg.role}`}
-                    >
-                        <pre className="chat-message-content">{msg.content}</pre>
-                    </div>
-                ))}
+                {messages.map((msg) => {
+                    if (msg.kind === "cycle_transition") {
+                        return (
+                            <div
+                                key={msg.id}
+                                className="chat-transition-card"
+                                data-testid="chat-cycle-transition"
+                            >
+                                <div className="chat-transition-header">
+                                    <span className="chat-transition-badge">
+                                        {t(
+                                            "session.cycle_label",
+                                            "Cycle {n}",
+                                        ).replace(
+                                            "{n}",
+                                            String(msg.cycleNumber ?? 1),
+                                        )}
+                                    </span>
+                                </div>
+                                <p className="chat-transition-summary">
+                                    {msg.content}
+                                </p>
+                                {msg.nextTopic && (
+                                    <p className="chat-transition-next">
+                                        <strong>
+                                            {t(
+                                                "session.next_topic",
+                                                "Next topic:",
+                                            )}
+                                        </strong>{" "}
+                                        {msg.nextTopic}
+                                    </p>
+                                )}
+                            </div>
+                        );
+                    }
+                    return (
+                        <div
+                            key={msg.id}
+                            className={`chat-message is-${msg.role}`}
+                            data-testid={`chat-message-${msg.role}`}
+                        >
+                            <pre className="chat-message-content">{msg.content}</pre>
+                        </div>
+                    );
+                })}
             </div>
             <form className="chat-input-row" onSubmit={handleSubmit}>
                 <textarea

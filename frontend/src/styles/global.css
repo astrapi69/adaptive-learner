@@ -2057,3 +2057,37 @@ select:focus {
     max-height: 300px;
     overflow-y: auto;
 }
+
+/* ---- Auto-loop cycle transition card (Phase 17C) ----------------- */
+.chat-transition-card {
+    border: 2px dashed var(--accent, #6366f1);
+    background: var(--surface-2, var(--surface));
+    border-radius: var(--radius-2);
+    padding: var(--space-3);
+    margin: var(--space-3) auto;
+    max-width: 90%;
+    text-align: center;
+}
+.chat-transition-header {
+    margin-bottom: var(--space-2);
+}
+.chat-transition-badge {
+    display: inline-block;
+    background: var(--accent, #6366f1);
+    color: white;
+    font-weight: 600;
+    border-radius: var(--radius-1);
+    padding: 0.2em 0.6em;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.chat-transition-summary {
+    margin: var(--space-2) 0;
+    font-style: italic;
+    color: var(--text);
+}
+.chat-transition-next {
+    margin-top: var(--space-2);
+    color: var(--text);
+}

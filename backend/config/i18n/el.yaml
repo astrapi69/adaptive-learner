@@ -215,6 +215,9 @@ session:
   rating_submit: Υποβολή αξιολόγησης
   step_progress: Βήμα {current} από {total}
   step_advance_toast: "Μετάβαση σε: {step}"
+  cycle_label: "Cycle {n}"
+  cycle_advanced: "Cycle {n} started"
+  next_topic: "Next topic:"
   step_reason_tooltip: Γιατί αυτό το βήμα;
   offline_start_blocked: >-
     Είσαι εκτός σύνδεσης. Οι νέες συνεδρίες χρειάζονται δίκτυο —

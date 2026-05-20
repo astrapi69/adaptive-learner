@@ -230,6 +230,9 @@ session:
   rating_submit: Submit rating
   step_progress: Step {current} of {total}
   step_advance_toast: "Moving to: {step}"
+  cycle_label: "Cycle {n}"
+  cycle_advanced: "Cycle {n} started"
+  next_topic: "Next topic:"
   step_reason_tooltip: Why this step?
   offline_start_blocked: >-
     You're offline. New sessions need a network connection — past

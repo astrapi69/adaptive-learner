@@ -215,6 +215,9 @@ session:
   rating_submit: Envoyer l'evaluation
   step_progress: Etape {current} sur {total}
   step_advance_toast: "Passage a : {step}"
+  cycle_label: "Cycle {n}"
+  cycle_advanced: "Cycle {n} started"
+  next_topic: "Next topic:"
   step_reason_tooltip: Pourquoi cette etape ?
   offline_start_blocked: >-
     Tu es hors ligne. Les nouvelles sessions necessitent une

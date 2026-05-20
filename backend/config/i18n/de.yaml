@@ -237,6 +237,9 @@ session:
   step_progress: Schritt {current} von {total}
   step_advance_toast: "Weiter zu: {step}"
   step_reason_tooltip: Warum dieser Schritt?
+  cycle_label: "Zyklus {n}"
+  cycle_advanced: "Zyklus {n} gestartet"
+  next_topic: "Nächstes Thema:"
   offline_start_blocked: >-
     Du bist offline. Neue Sessions brauchen eine Netzverbindung —
     bisherige Sessions bleiben über das Dashboard lesbar.
