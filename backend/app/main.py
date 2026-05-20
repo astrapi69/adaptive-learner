@@ -45,6 +45,7 @@ from app.routers.curriculum import (
     topics_router,
     users_curricula_router,
 )
+from app.routers.export import router as export_router
 from app.routers.imports import imports_router, users_imports_router
 from app.routers.projects import projects_router, users_projects_router
 from app.routers.settings import router as settings_router
@@ -427,6 +428,7 @@ app.include_router(imports_router, prefix="/api")
 app.include_router(sync_router, prefix="/api")
 app.include_router(system_router, prefix="/api")
 app.include_router(backup_router, prefix="/api")
+app.include_router(export_router, prefix="/api")
 
 
 @app.exception_handler(AdaptiveLearnerError)

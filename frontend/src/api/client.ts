@@ -511,6 +511,30 @@ export const api = {
             apiCall<import("../types/domain").SystemInfo>("/system/info"),
     },
 
+    // --- Export (v1.3.0 / Phase 16A) -------------------------------------
+
+    export: {
+        /**
+         * Aggregate the user's full learning journey into a
+         * structured payload ready for Markdown / PDF rendering.
+         */
+        progress: (userId: string, lang: string) =>
+            apiCall<import("../storage/export-builder").ProgressReport>(
+                `/export/progress?user_id=${encodeURIComponent(userId)}` +
+                    `&lang=${encodeURIComponent(lang)}`,
+            ),
+        session: (sessionId: string, lang: string) =>
+            apiCall<import("../storage/export-builder").SessionDetail>(
+                `/export/session/${encodeURIComponent(sessionId)}` +
+                    `?lang=${encodeURIComponent(lang)}`,
+            ),
+        curriculum: (curriculumId: string, lang: string) =>
+            apiCall<import("../storage/export-builder").CurriculumOverview>(
+                `/export/curriculum/${encodeURIComponent(curriculumId)}` +
+                    `?lang=${encodeURIComponent(lang)}`,
+            ),
+    },
+
     // --- Backup / restore (v1.2.0 / Phase 15A) --------------------------
 
     backup: {

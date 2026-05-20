@@ -51,6 +51,11 @@ import {
     getDexieBackupStats,
     restoreDexieBackup,
 } from "./backup";
+import {
+    buildCurriculumOverview as dexieBuildCurriculumOverview,
+    buildProgressReport as dexieBuildProgressReport,
+    buildSessionDetail as dexieBuildSessionDetail,
+} from "./export-builder";
 import {sendMessage, startSession} from "./session-flow";
 import {
     aggregateProgress,
@@ -1224,5 +1229,13 @@ export const dexieStorage: IStorageService = {
         export: (userId) => createDexieBackup(userId, __APP_VERSION__),
         import: (userId, payload) => restoreDexieBackup(userId, payload),
         stats: (userId) => getDexieBackupStats(userId),
+    },
+
+    export: {
+        progress: (userId, lang) => dexieBuildProgressReport(getDb(), userId, lang),
+        session: (sessionId, lang) =>
+            dexieBuildSessionDetail(getDb(), sessionId, lang),
+        curriculum: (curriculumId, lang) =>
+            dexieBuildCurriculumOverview(getDb(), curriculumId, lang),
     },
 };

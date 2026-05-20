@@ -178,6 +178,26 @@ export interface IBackupNamespace {
     stats(userId: string): Promise<BackupStats & {user_id: string}>;
 }
 
+/**
+ * Export namespace (v1.3.0 / Phase 16). Produces the structured
+ * payload that ``lib/export/markdown-renderer`` and the PDF
+ * renderer consume. Same shape in both storage modes.
+ */
+export interface IExportNamespace {
+    progress(
+        userId: string,
+        lang: string,
+    ): Promise<import("./export-builder").ProgressReport>;
+    session(
+        sessionId: string,
+        lang: string,
+    ): Promise<import("./export-builder").SessionDetail>;
+    curriculum(
+        curriculumId: string,
+        lang: string,
+    ): Promise<import("./export-builder").CurriculumOverview>;
+}
+
 export interface IImportsNamespace {
     list(userId: string): Promise<ImportedConversation[]>;
     create(
@@ -227,4 +247,5 @@ export interface IStorageService {
     imports: IImportsNamespace;
     system: ISystemNamespace;
     backup: IBackupNamespace;
+    export: IExportNamespace;
 }
