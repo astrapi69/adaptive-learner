@@ -117,4 +117,8 @@ export const apiStorage: IStorageService = {
         saveAnalysis: (conversationId, analysis) =>
             api.imports.saveAnalysis(conversationId, analysis),
     },
+
+    system: {
+        info: () => api.system.info(),
+    },
 };

@@ -504,6 +504,13 @@ export const api = {
         errors: () => apiCall<Record<string, string>>("/plugins/errors"),
     },
 
+    // --- System info (v1.1.0 / Phase 14A) -------------------------------
+
+    system: {
+        info: () =>
+            apiCall<import("../types/domain").SystemInfo>("/system/info"),
+    },
+
     // --- Imported conversations (v0.9.0 / Phase 12C) ---------------------
 
     imports: {

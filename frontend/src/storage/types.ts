@@ -153,7 +153,12 @@ import type {
     ImportedConversationCreateBody,
     ImportedConversationUpdateBody,
     ImportedConversationAnalysis,
+    SystemInfo,
 } from "../types/domain";
+
+export interface ISystemNamespace {
+    info(): Promise<SystemInfo>;
+}
 
 export interface IImportsNamespace {
     list(userId: string): Promise<ImportedConversation[]>;
@@ -202,4 +207,5 @@ export interface IStorageService {
     lessons: ILessonsNamespace;
     plugins: IPluginsNamespace;
     imports: IImportsNamespace;
+    system: ISystemNamespace;
 }

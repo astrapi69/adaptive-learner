@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {ApiError} from "../api/client";
+import AboutTab from "../components/about/AboutTab";
 import SyncSection from "../components/SyncSection";
 import {useI18n} from "../hooks/useI18n";
 import {
@@ -588,6 +589,7 @@ export default function Settings() {
             </section>
 
             <SyncSection />
+            <AboutTab />
         </main>
     );
 }

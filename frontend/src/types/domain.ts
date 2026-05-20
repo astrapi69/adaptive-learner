@@ -504,3 +504,42 @@ export interface ImportedConversationUpdateBody {
 export interface ImportedConversationAnalysis {
     analysis_result: ConversationAnalysisResult;
 }
+
+// --- System info (v1.1.0 / Phase 14A) ------------------------------------
+
+/**
+ * Aggregated About-tab payload. Returned by ``/api/system/info`` in
+ * API mode; ``DexieStorage.system.info()`` synthesises the same shape
+ * in browser-only mode. Fields the browser-only path can't know (Python
+ * version, backend dep versions) come through as null so the UI hides
+ * those rows in Dexie mode.
+ */
+export interface SystemInfo {
+    app: {
+        name: string;
+        version: string;
+        license: string;
+        authors: string[];
+        repository_url: string;
+        issues_url: string;
+        docs_url: string;
+        build_hash: string;
+        build_date: string;
+    };
+    runtime: {
+        python_version: string | null;
+        platform_system: string;
+        platform_release: string;
+        platform_machine: string;
+    };
+    dependencies: {
+        fastapi: string | null;
+        sqlalchemy: string | null;
+        pydantic: string | null;
+        pluginforge: string | null;
+    };
+    paths: {
+        database_path: string;
+        data_directory: string;
+    };
+}

@@ -1141,4 +1141,56 @@ export const dexieStorage: IStorageService = {
             };
         },
     },
+
+    // ---- System info (v1.1.0 / Phase 14B) -----------------------------
+
+    system: {
+        async info() {
+            // In Dexie mode there is no backend to query. We
+            // synthesise the same SystemInfo shape so the About
+            // tab renders without conditional branches; fields
+            // we can't know browser-side (Python version, backend
+            // dep versions, server-side build hash) come through
+            // as ``null`` / ``"unknown"`` and the UI hides the
+            // matching rows.
+            return {
+                app: {
+                    name: "Adaptive Learner",
+                    version: __APP_VERSION__,
+                    license: "MIT",
+                    authors: ["Asterios Raptis"],
+                    repository_url:
+                        "https://github.com/astrapi69/adaptive-learner",
+                    issues_url:
+                        "https://github.com/astrapi69/adaptive-learner/issues",
+                    docs_url:
+                        "https://astrapi69.github.io/adaptive-learner/docs/",
+                    build_hash: "unknown",
+                    build_date: "unknown",
+                },
+                runtime: {
+                    python_version: null,
+                    platform_system:
+                        typeof navigator !== "undefined"
+                            ? navigator.platform || "browser"
+                            : "browser",
+                    platform_release:
+                        typeof navigator !== "undefined"
+                            ? navigator.userAgent.slice(0, 80)
+                            : "",
+                    platform_machine: "",
+                },
+                dependencies: {
+                    fastapi: null,
+                    sqlalchemy: null,
+                    pydantic: null,
+                    pluginforge: null,
+                },
+                paths: {
+                    database_path: "Local Browser Storage (IndexedDB)",
+                    data_directory: "Local Browser Storage (IndexedDB)",
+                },
+            };
+        },
+    },
 };
