@@ -24,3 +24,22 @@ step_evaluation:
   # verbose models. INTERNAL — only bump if logs show truncated
   # evaluation responses in the wild.
   max_tokens: 256
+
+# v1.4.0 — Auto-loop: continue learning after step 7.
+#
+# When the step evaluator suggests advancing past step 7 (the
+# learner has integrated the current topic), a THIRD ai_complete
+# call decides the next subtopic + difficulty adjustment. If
+# ``cycle_complete: true`` AND ``continue_recommended: true`` the
+# session resets ``cycle_step`` to 1, increments ``cycle_count``,
+# and continues with the suggested next topic. Fallback: keeps
+# the v0.5.0 cap-at-7 behaviour.
+auto_loop:
+  enabled: true
+  # Hard cap on cycles per session. Prevents runaway loops; user
+  # can always end the session manually. 5 covers a deep learning
+  # session without exhausting the learner.
+  max_cycles: 5
+  # max_tokens for the topic-transition call. The JSON output is
+  # small (~150-200 tokens); the cap is a safety net. INTERNAL.
+  topic_transition_max_tokens: 256
