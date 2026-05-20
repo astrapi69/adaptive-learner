@@ -56,7 +56,7 @@ import {
     buildProgressReport as dexieBuildProgressReport,
     buildSessionDetail as dexieBuildSessionDetail,
 } from "./export-builder";
-import {sendMessage, startSession} from "./session-flow";
+import {sendMessage, sendMessageStream, startSession} from "./session-flow";
 import {
     aggregateProgress,
     buildCommitFromSession,
@@ -594,22 +594,23 @@ export const dexieStorage: IStorageService = {
                 signal?: AbortSignal;
             },
         ): Promise<void> {
-            // Phase 19B-1: Dexie-mode streaming lives in the
-            // dedicated browser-direct path in Phase 19B-2. For
-            // now, fall back to the non-streaming ``message`` and
-            // emit the assistant response as a single chunk so
-            // consumers in Dexie mode keep working unchanged.
-            const result = await sendMessage({
+            // v1.6.0 / Phase 19B-2 — browser-direct streaming via
+            // the provider's SDK SSE wire (Anthropic
+            // /v1/messages?stream=true, OpenAI /chat/completions
+            // ?stream=true, Gemini :streamGenerateContent?alt=sse).
+            // ``sendMessageStream`` accumulates the full text
+            // internally + emits each delta through ``onChunk``,
+            // so the SessionChat bubble fills incrementally while
+            // we still get the full ``SendMessageResult`` to hand
+            // to ``onDone``.
+            const result = await sendMessageStream({
                 sessionId,
                 role: body.role,
                 content: body.content,
+                onStart: handlers.onStart,
+                onChunk: handlers.onChunk,
+                signal: handlers.signal,
             });
-            if (handlers.onStart) {
-                handlers.onStart(result.user_message);
-            }
-            if (result.assistant_message?.content) {
-                handlers.onChunk(result.assistant_message.content);
-            }
             handlers.onDone(result);
         },
         async rate(

@@ -10,7 +10,7 @@
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 
 import {ApiError} from "../api/client";
-import {aiComplete, DEFAULT_MODELS, resolveModel} from "./ai-providers";
+import {aiComplete, aiStream, DEFAULT_MODELS, resolveModel} from "./ai-providers";
 
 interface MockCall {
     url: string;
@@ -218,5 +218,191 @@ describe("geminiComplete", () => {
                 messages: [{role: "user", content: "x"}],
             }),
         ).rejects.toMatchObject({status: 404, detail: /Gemini: Model not found/});
+    });
+});
+
+
+// --- aiStream (v1.6.0 / Phase 19B-2) ---------------------------------------
+
+function sseBodyResponse(frames: string[], status = 200): Response {
+    // Build an SSE wire body and feed it through a ReadableStream
+    // so the reader exercises the partial-frame buffering on its
+    // way out.
+    const wire = frames.map((f) => `${f}\n\n`).join("");
+    const encoder = new TextEncoder();
+    let emitted = false;
+    const stream = new ReadableStream<Uint8Array>({
+        pull(controller) {
+            if (!emitted) {
+                controller.enqueue(encoder.encode(wire));
+                emitted = true;
+            } else {
+                controller.close();
+            }
+        },
+    });
+    return new Response(stream, {
+        status,
+        headers: {"Content-Type": "text/event-stream"},
+    });
+}
+
+describe("aiStream — Anthropic", () => {
+    it("emits each content_block_delta as a chunk in order", async () => {
+        nextResponse = () =>
+            sseBodyResponse([
+                'event: content_block_delta\ndata: {"type":"content_block_delta","delta":{"type":"text_delta","text":"Hi"}}',
+                'event: content_block_delta\ndata: {"type":"content_block_delta","delta":{"type":"text_delta","text":" there"}}',
+                'event: message_stop\ndata: {"type":"message_stop"}',
+            ]);
+        const chunks: string[] = [];
+        await aiStream({
+            provider: "anthropic",
+            model: "claude-haiku-4-5",
+            apiKey: "k",
+            messages: [{role: "user", content: "ping"}],
+            onChunk: (d) => chunks.push(d),
+        });
+        expect(chunks).toEqual(["Hi", " there"]);
+        const body = calls[0].body as Record<string, unknown>;
+        expect(body.stream).toBe(true);
+        expect(calls[0].headers["x-api-key"]).toBe("k");
+    });
+
+    it("ignores non-content_block_delta events (message_start, ping)", async () => {
+        nextResponse = () =>
+            sseBodyResponse([
+                'event: message_start\ndata: {"type":"message_start"}',
+                'event: ping\ndata: {"type":"ping"}',
+                'event: content_block_delta\ndata: {"type":"content_block_delta","delta":{"type":"text_delta","text":"real"}}',
+            ]);
+        const chunks: string[] = [];
+        await aiStream({
+            provider: "anthropic",
+            model: "claude-haiku-4-5",
+            apiKey: "k",
+            messages: [{role: "user", content: "ping"}],
+            onChunk: (d) => chunks.push(d),
+        });
+        expect(chunks).toEqual(["real"]);
+    });
+
+    it("Anthropic 401 -> ApiError with parsed detail", async () => {
+        nextResponse = () =>
+            new Response(
+                JSON.stringify({error: {message: "invalid x-api-key"}}),
+                {status: 401},
+            );
+        await expect(
+            aiStream({
+                provider: "anthropic",
+                model: "claude-haiku-4-5",
+                apiKey: "bad",
+                messages: [{role: "user", content: "x"}],
+                onChunk: () => {},
+            }),
+        ).rejects.toMatchObject({
+            status: 401,
+            detail: /Anthropic: invalid x-api-key/,
+        });
+    });
+});
+
+describe("aiStream — OpenAI", () => {
+    it("emits delta.content for each chunk and stops on [DONE]", async () => {
+        nextResponse = () =>
+            sseBodyResponse([
+                'data: {"choices":[{"delta":{"role":"assistant"}}]}',
+                'data: {"choices":[{"delta":{"content":"Hi"}}]}',
+                'data: {"choices":[{"delta":{"content":" GPT"}}]}',
+                'data: [DONE]',
+            ]);
+        const chunks: string[] = [];
+        await aiStream({
+            provider: "openai",
+            model: "gpt-4o",
+            apiKey: "sk-x",
+            messages: [{role: "user", content: "ping"}],
+            onChunk: (d) => chunks.push(d),
+        });
+        expect(chunks).toEqual(["Hi", " GPT"]);
+        const body = calls[0].body as Record<string, unknown>;
+        expect(body.stream).toBe(true);
+        expect(calls[0].headers["Authorization"]).toBe("Bearer sk-x");
+    });
+
+    it("drops role-only and null-content deltas", async () => {
+        nextResponse = () =>
+            sseBodyResponse([
+                'data: {"choices":[{"delta":{"role":"assistant","content":null}}]}',
+                'data: {"choices":[{"delta":{"content":"only this"}}]}',
+                'data: [DONE]',
+            ]);
+        const chunks: string[] = [];
+        await aiStream({
+            provider: "openai",
+            model: "gpt-4o",
+            apiKey: "k",
+            messages: [{role: "user", content: "x"}],
+            onChunk: (d) => chunks.push(d),
+        });
+        expect(chunks).toEqual(["only this"]);
+    });
+
+    it("OpenAI 429 -> ApiError", async () => {
+        nextResponse = () =>
+            new Response(JSON.stringify({error: {message: "rate limit"}}), {
+                status: 429,
+            });
+        await expect(
+            aiStream({
+                provider: "openai",
+                model: "gpt-4o",
+                apiKey: "k",
+                messages: [{role: "user", content: "x"}],
+                onChunk: () => {},
+            }),
+        ).rejects.toMatchObject({
+            status: 429,
+            detail: /OpenAI: rate limit/,
+        });
+    });
+});
+
+describe("aiStream — Gemini", () => {
+    it("emits each candidate part.text as a chunk", async () => {
+        nextResponse = () =>
+            sseBodyResponse([
+                'data: {"candidates":[{"content":{"parts":[{"text":"Hi"}]}}]}',
+                'data: {"candidates":[{"content":{"parts":[{"text":" gem"}]}}]}',
+            ]);
+        const chunks: string[] = [];
+        await aiStream({
+            provider: "gemini",
+            model: "gemini-2.0-flash",
+            apiKey: "AIza-x",
+            messages: [{role: "user", content: "ping"}],
+            onChunk: (d) => chunks.push(d),
+        });
+        expect(chunks).toEqual(["Hi", " gem"]);
+        // ``alt=sse`` query param + streamGenerateContent endpoint.
+        expect(calls[0].url).toContain(":streamGenerateContent");
+        expect(calls[0].url).toContain("alt=sse");
+    });
+
+    it("Gemini 400 -> ApiError", async () => {
+        nextResponse = () =>
+            new Response(JSON.stringify({error: {message: "Bad model"}}), {
+                status: 400,
+            });
+        await expect(
+            aiStream({
+                provider: "gemini",
+                model: "gemini-x",
+                apiKey: "k",
+                messages: [{role: "user", content: "x"}],
+                onChunk: () => {},
+            }),
+        ).rejects.toMatchObject({status: 400, detail: /Gemini: Bad model/});
     });
 });

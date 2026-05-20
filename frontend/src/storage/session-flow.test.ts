@@ -227,6 +227,152 @@ describe("session.message", () => {
     });
 });
 
+
+// --- session.streamMessage (v1.6.0 / Phase 19B-2) --------------------------
+
+
+/**
+ * Build an SSE-shaped Response carrying the given Anthropic
+ * ``content_block_delta`` chunks. Used to mock the fetch result
+ * for the streaming chat call. The eval call after the stream
+ * goes via the same fetch mock — but it sets ``stream: false``,
+ * so we leave the non-stream JSON branch in the global mock to
+ * handle that.
+ */
+function anthropicSseResponse(chunks: string[]): Response {
+    const frames = chunks
+        .map(
+            (c) =>
+                `event: content_block_delta\ndata: ${JSON.stringify({
+                    type: "content_block_delta",
+                    delta: {type: "text_delta", text: c},
+                })}`,
+        )
+        .concat(["event: message_stop\ndata: {\"type\":\"message_stop\"}"]);
+    const wire = frames.map((f) => `${f}\n\n`).join("");
+    const encoder = new TextEncoder();
+    let emitted = false;
+    const stream = new ReadableStream<Uint8Array>({
+        pull(controller) {
+            if (!emitted) {
+                controller.enqueue(encoder.encode(wire));
+                emitted = true;
+            } else {
+                controller.close();
+            }
+        },
+    });
+    return new Response(stream, {
+        status: 200,
+        headers: {"Content-Type": "text/event-stream"},
+    });
+}
+
+describe("session.streamMessage", () => {
+    it("invokes onChunk for each streamed delta and persists the full assistant text", async () => {
+        const {projectId} = await setupUserWithKey();
+        const start = await dexieStorage.session.start({
+            project_id: projectId,
+            lang: "en",
+        });
+        evalReplies.push(
+            '{"advance":true,"confidence":0.9,"reason":"ok","suggested_step":2}',
+        );
+
+        // Override the global fetch mock for THIS test to emit SSE
+        // for the streaming chat call and fall back to JSON for
+        // the non-streaming eval call.
+        global.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+            const url = typeof input === "string" ? input : (input as URL).toString();
+            let body: unknown = undefined;
+            if (typeof init?.body === "string") {
+                try {
+                    body = JSON.parse(init.body);
+                } catch {
+                    body = init.body;
+                }
+            }
+            calls.push({url, method: (init?.method ?? "GET").toUpperCase(), body});
+            const stream = (body as {stream?: boolean})?.stream === true;
+            if (stream) {
+                return anthropicSseResponse(["Hi ", "there!"]);
+            }
+            const reply =
+                evalReplies.shift() ??
+                '{"advance":false,"confidence":0.3,"reason":"x","suggested_step":1}';
+            return new Response(
+                JSON.stringify({content: [{type: "text", text: reply}]}),
+                {status: 200, headers: {"Content-Type": "application/json"}},
+            );
+        }) as unknown as typeof fetch;
+
+        const chunks: string[] = [];
+        const startUserMessages: string[] = [];
+        let doneResult: unknown = null;
+        await dexieStorage.session.streamMessage(
+            start.session.id,
+            {role: "user", content: "ping"},
+            {
+                onStart: (u) => startUserMessages.push(u.content),
+                onChunk: (d) => chunks.push(d),
+                onDone: (r) => {
+                    doneResult = r;
+                },
+            },
+        );
+        expect(chunks).toEqual(["Hi ", "there!"]);
+        expect(startUserMessages).toEqual(["ping"]);
+        // The full assistant text is persisted + the step
+        // evaluator ran on top of it.
+        const final = doneResult as {
+            assistant_message: {content: string};
+            ai_error: string | null;
+            session: {cycle_step: number};
+            step_evaluation: {applied: boolean};
+        };
+        expect(final.assistant_message.content).toBe("Hi there!");
+        expect(final.ai_error).toBeNull();
+        expect(final.session.cycle_step).toBe(2);
+        expect(final.step_evaluation.applied).toBe(true);
+    });
+
+    it("missing API key surfaces ai_error with no chunks emitted", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 10,
+        });
+        const start = await dexieStorage.session.start({project_id: p.id});
+        const chunks: string[] = [];
+        let doneResult: unknown = null;
+        await dexieStorage.session.streamMessage(
+            start.session.id,
+            {role: "user", content: "hi"},
+            {
+                onChunk: (d) => chunks.push(d),
+                onDone: (r) => {
+                    doneResult = r;
+                },
+            },
+        );
+        expect(chunks).toEqual([]);
+        const final = doneResult as {ai_error: string | null};
+        expect(final.ai_error).toMatch(/No API key/i);
+    });
+
+    it("404 on unknown session (matches the non-stream sendMessage contract)", async () => {
+        await expect(
+            dexieStorage.session.streamMessage(
+                "nope",
+                {role: "user", content: "x"},
+                {onChunk: () => {}, onDone: () => {}},
+            ),
+        ).rejects.toMatchObject({status: 404});
+    });
+});
+
 describe("session.rate / end / acceptSwitch / switchRecommendation", () => {
     it("rate persists a SessionRating row", async () => {
         const {projectId} = await setupUserWithKey();

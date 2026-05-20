@@ -11,7 +11,7 @@
  * testable.
  */
 
-import {aiComplete, resolveModel, type ChatMessage} from "./ai-providers";
+import {aiComplete, aiStream, resolveModel, type ChatMessage} from "./ai-providers";
 import {
     getDb,
     newId,
@@ -315,6 +315,187 @@ export async function sendMessage(opts: {
         ? evaluation.advance
         : evaluation.advance && evaluation.confidence >= STEP_EVAL_CONFIDENCE_THRESHOLD;
     const toStep = applied ? evaluation.suggested_step : fromStep;
+    if (applied) {
+        await db.learningSessions.update(sess.id, {cycle_step: evaluation.suggested_step});
+    }
+    const stepEvalRow: StepEvaluationRow = {
+        id: newId(),
+        session_id: sess.id,
+        from_step: fromStep,
+        suggested_step: evaluation.suggested_step,
+        advance: evaluation.advance,
+        applied,
+        confidence: evaluation.confidence,
+        reason: evaluation.reason,
+        fallback_used: evaluation.fallback_used,
+        duration_seconds: 0,
+        created_at: nowIso(),
+    };
+    await db.stepEvaluations.add(stepEvalRow);
+
+    const stepEvalDto: StepEvaluationVerdict = {
+        advance: evaluation.advance,
+        confidence: evaluation.confidence,
+        reason: evaluation.reason,
+        suggested_step: evaluation.suggested_step,
+        fallback_used: evaluation.fallback_used,
+        applied,
+        from_step: fromStep,
+    };
+    return buildResponse(assistantMsg, null, stepEvalDto);
+}
+
+
+/**
+ * v1.6.0 / Phase 19B-2 — browser-direct streaming variant of
+ * :func:`sendMessage`. Same orchestration (persist user message,
+ * call AI, persist assistant message, run step evaluator) but the
+ * AI call streams via ``aiStream`` and each delta lands in
+ * ``onChunk``. Returns the same ``SendMessageResult`` shape as
+ * ``sendMessage`` so the caller doesn't have to branch.
+ *
+ * On streaming failure mid-response, returns ``ai_error`` and a
+ * null ``assistant_message`` rather than throwing (consistent
+ * with the non-stream path).
+ */
+export async function sendMessageStream(
+    opts: {
+        sessionId: string;
+        role: "user" | "assistant" | "system";
+        content: string;
+        onChunk: (delta: string) => void;
+        onStart?: (userMessage: SessionMessage) => void;
+        signal?: AbortSignal;
+    },
+): Promise<SendMessageResult> {
+    const db = getDb();
+    const sess = await db.learningSessions.get(opts.sessionId);
+    if (!sess) {
+        throw new ApiError(404, `Session ${opts.sessionId} not found`);
+    }
+    if (sess.status !== "active") {
+        throw new ApiError(
+            400,
+            `Session ${opts.sessionId} is ${sess.status}; cannot append messages.`,
+        );
+    }
+    const userMsgRow: SessionMessageRow = {
+        id: newId(),
+        session_id: sess.id,
+        role: opts.role,
+        content: opts.content,
+        created_at: nowIso(),
+    };
+    await db.sessionMessages.add(userMsgRow);
+    opts.onStart?.(rowToMessageDto(userMsgRow));
+
+    const buildResponse = async (
+        assistant: SessionMessageRow | null,
+        aiError: string | null,
+        stepEval: StepEvaluationVerdict | null,
+    ): Promise<SendMessageResult> => {
+        const freshSession = await db.learningSessions.get(sess.id);
+        return {
+            user_message: rowToMessageDto(userMsgRow),
+            assistant_message: assistant ? rowToMessageDto(assistant) : null,
+            ai_error: aiError,
+            session: rowToSessionDto(freshSession ?? sess),
+            step_evaluation: stepEval,
+        };
+    };
+
+    // Non-user writes bypass the AI step (parity with sendMessage).
+    if (opts.role !== "user") {
+        return buildResponse(null, null, null);
+    }
+
+    const project = await db.learningProjects.get(sess.project_id);
+    if (!project) {
+        return buildResponse(null, "session has no project; AI reply skipped.", null);
+    }
+    const settings = await db.userSettings
+        .where("user_id")
+        .equals(project.user_id)
+        .first();
+    if (!settings) {
+        return buildResponse(null, "No active AI provider configured.", null);
+    }
+    const provider = settings.active_provider;
+    const apiKey = settings[`api_key_${provider}`] as string | null;
+    if (!apiKey) {
+        return buildResponse(null, `No API key stored for provider '${provider}'.`, null);
+    }
+    const override = settings[`model_override_${provider}`] as string | null;
+    const model = resolveModel(provider, override);
+
+    const historyRows = await db.sessionMessages
+        .where("session_id")
+        .equals(sess.id)
+        .toArray();
+    historyRows.sort((a, b) => a.created_at.localeCompare(b.created_at));
+    const history: ChatMessage[] = historyRows.map((m) => ({
+        role: m.role,
+        content: m.content,
+    }));
+
+    // Stream the assistant response, accumulating the full text
+    // so we can persist it + feed it to the step evaluator after
+    // the stream ends.
+    const accumulator: string[] = [];
+    try {
+        await aiStream({
+            provider,
+            model,
+            apiKey,
+            messages: history,
+            maxTokens: 1024,
+            signal: opts.signal,
+            onChunk: (delta) => {
+                accumulator.push(delta);
+                opts.onChunk(delta);
+            },
+        });
+    } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        return buildResponse(null, `AI provider error: ${msg}`, null);
+    }
+    const assistantText = accumulator.join("");
+    if (!assistantText) {
+        return buildResponse(
+            null,
+            `No registered provider returned a reply for model '${model}'.`,
+            null,
+        );
+    }
+    const assistantMsg: SessionMessageRow = {
+        id: newId(),
+        session_id: sess.id,
+        role: "assistant",
+        content: assistantText,
+        created_at: nowIso(),
+    };
+    await db.sessionMessages.add(assistantMsg);
+
+    // Step evaluator — same shape as non-stream path.
+    const owner = await db.users.get(project.user_id);
+    const evalLang = owner?.language ?? "en";
+    const fullHistory: ChatMessage[] = [
+        ...history,
+        {role: "assistant", content: assistantText},
+    ];
+    const fromStep = sess.cycle_step;
+    const evaluation: StepEvaluation = await evaluateStep({
+        provider,
+        apiKey,
+        modelOverride: override,
+        method: sess.method,
+        currentStep: fromStep,
+        history: fullHistory,
+        outputLanguage: evalLang,
+    });
+    const applied = evaluation.fallback_used
+        ? evaluation.advance
+        : evaluation.advance && evaluation.confidence >= STEP_EVAL_CONFIDENCE_THRESHOLD;
     if (applied) {
         await db.learningSessions.update(sess.id, {cycle_step: evaluation.suggested_step});
     }
