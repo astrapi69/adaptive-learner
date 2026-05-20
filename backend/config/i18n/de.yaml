@@ -43,11 +43,74 @@ nav:
   session: Session
   curriculum: Curriculum
   progress: Fortschritt
+  import: Import
   settings: Einstellungen
   home: Start
   menu: Menü
   online: Online
   offline: Offline
+
+import:
+  title: Konversation importieren
+  subtitle: >-
+    Füge eine ChatGPT-, Claude- oder Gemini-Konversation ein oder lade
+    sie hoch und erhalte sofort Lern-Erkenntnisse.
+  quick:
+    title: Schnellanalyse
+    hint: Füge hier eine Konversation ein. Wir speichern und analysieren sie in einem Schritt.
+    placeholder: ChatGPT-, Claude-, Gemini- oder Markdown-Konversation hier einfügen…
+  file:
+    title: Datei hochladen
+    hint: Lege eine .json-, .md- oder .txt-Datei hier ab oder klicke zum Auswählen.
+    formats: ChatGPT conversations.json · Claude-Export · Markdown · Generisches JSON
+  list:
+    title: Deine importierten Konversationen
+    empty: Noch keine Konversationen. Nutze die Schnellanalyse oder lade eine Datei hoch.
+  detected_format: Erkanntes Format
+  analyze: Analysieren
+  reanalyze: Neu analysieren
+  analyzing: Analysiere…
+  analyzed: Analysiert
+  analysis_title: Analyse
+  analysis_ready: Analyse bereit.
+  analysis_fallback: Analyse ist gelaufen, aber die KI-Antwort konnte nicht sauber geparst werden.
+  analysis_fallback_long: >-
+    Die KI-Antwort konnte nicht als strukturiertes JSON geparst werden.
+    Die folgende Zusammenfassung ist ein Fallback.
+  analysis_error: Konversation konnte nicht analysiert werden.
+  analysis_save_error: Analyse-Ergebnis konnte nicht gespeichert werden.
+  back_to_list: Zurück zu den Importen
+  create_curriculum: Curriculum erstellen
+  curriculum_created: Curriculum aus der Analyse erstellt.
+  curriculum_error: Curriculum konnte nicht erstellt werden.
+  curriculum_description: Erzeugt aus einer importierten Konversation.
+  default_curriculum_title: Importiertes Curriculum
+  field_topic: Thema
+  field_method: Empfohlene Methode
+  field_strengths: Stärken
+  field_weaknesses: Schwächen
+  field_errors: Fehlermuster
+  field_subtopics: Unterthemen
+  field_curriculum: Vorgeschlagenes Curriculum
+  file_imported_one: Konversation importiert. Klicke auf Analysieren auf der Detailseite.
+  file_imported_many: "{count} Konversationen importiert."
+  list_error: Importierte Konversationen konnten nicht geladen werden.
+  load_error: Konversation konnte nicht geladen werden.
+  messages: Nachrichten
+  no_api_key: >-
+    Lege in den Einstellungen einen API-Schlüssel für den aktiven KI-Anbieter
+    an, um die Analyse zu aktivieren.
+  no_lessons: Die Analyse hat keine Lektionen vorgeschlagen.
+  no_user: Schließe das Onboarding ab, bevor du Konversationen importierst.
+  parse_error: Eingabeformat wurde nicht erkannt.
+  priority: Priorität
+  role_assistant: KI
+  role_system: System
+  role_user: Du
+  save_error: Konversation konnte nicht gespeichert werden.
+  settings_error: KI-Einstellungen konnten nicht gelesen werden.
+  start_session: Sitzung starten
+  transcript: Transkript
 
 curriculum:
   title: Curriculum

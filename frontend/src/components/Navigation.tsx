@@ -97,6 +97,13 @@ export default function Navigation() {
                     {t("nav.progress", "Progress")}
                 </NavLink>
                 <NavLink
+                    to="/import"
+                    className={linkClass}
+                    data-testid="nav-import"
+                >
+                    {t("nav.import", "Import")}
+                </NavLink>
+                <NavLink
                     to="/settings"
                     className={linkClass}
                     data-testid="nav-settings"

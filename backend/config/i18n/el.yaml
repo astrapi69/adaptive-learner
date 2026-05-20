@@ -33,11 +33,74 @@ nav:
   session: Συνεδρία
   curriculum: Πρόγραμμα
   progress: Πρόοδος
+  import: Εισαγωγή
   settings: Ρυθμίσεις
   home: Αρχή
   menu: Μενού
   online: Σε σύνδεση
   offline: Εκτός σύνδεσης
+import:
+  title: Εισαγωγή συνομιλίας
+  subtitle: >-
+    Επικόλλησε ή ανέβασε μια συνομιλία με ChatGPT, Claude ή Gemini
+    και πάρε άμεσα μαθησιακές ιδέες.
+  quick:
+    title: Γρήγορη ανάλυση
+    hint: Επικόλλησε εδώ μια συνομιλία. Θα την αποθηκεύσουμε και θα την αναλύσουμε σε ένα βήμα.
+    placeholder: Επικόλλησε εδώ συνομιλία ChatGPT, Claude, Gemini ή Markdown...
+  file:
+    title: Μεταφόρτωση αρχείου
+    hint: Σύρε εδώ ένα αρχείο .json, .md ή .txt ή κάνε κλικ για επιλογή.
+    formats: ChatGPT conversations.json - Εξαγωγή Claude - Markdown - Γενικό JSON
+  list:
+    title: Οι εισηγμένες συνομιλίες σου
+    empty: Δεν υπάρχουν συνομιλίες ακόμα. Χρησιμοποίησε τη Γρήγορη ανάλυση ή ανέβασε ένα αρχείο.
+  detected_format: Μορφή που εντοπίστηκε
+  analyze: Ανάλυση
+  reanalyze: Επανάληψη ανάλυσης
+  analyzing: Ανάλυση...
+  analyzed: Αναλύθηκε
+  analysis_title: Ανάλυση
+  analysis_ready: Η ανάλυση είναι έτοιμη.
+  analysis_fallback: Η ανάλυση ολοκληρώθηκε αλλά η απάντηση του AI δεν μπόρεσε να αναλυθεί καθαρά.
+  analysis_fallback_long: >-
+    Η απάντηση του AI δεν μπόρεσε να αναλυθεί ως δομημένο JSON.
+    Η παρακάτω σύνοψη είναι εφεδρική.
+  analysis_error: Δεν ήταν δυνατή η ανάλυση της συνομιλίας.
+  analysis_save_error: Δεν ήταν δυνατή η αποθήκευση του αποτελέσματος ανάλυσης.
+  back_to_list: Πίσω στις εισαγωγές
+  create_curriculum: Δημιουργία προγράμματος
+  curriculum_created: Δημιουργήθηκε πρόγραμμα από την ανάλυση.
+  curriculum_error: Δεν ήταν δυνατή η δημιουργία προγράμματος.
+  curriculum_description: Δημιουργήθηκε από εισηγμένη συνομιλία.
+  default_curriculum_title: Εισηγμένο πρόγραμμα
+  field_topic: Θέμα
+  field_method: Συνιστώμενη μέθοδος
+  field_strengths: Δυνατά σημεία
+  field_weaknesses: Αδυναμίες
+  field_errors: Μοτίβα λαθών
+  field_subtopics: Υποθέματα
+  field_curriculum: Προτεινόμενο πρόγραμμα
+  file_imported_one: Η συνομιλία εισήχθη. Πάτα Ανάλυση στη σελίδα λεπτομερειών.
+  file_imported_many: "Εισήχθησαν {count} συνομιλίες."
+  list_error: Δεν ήταν δυνατή η φόρτωση των εισηγμένων συνομιλιών.
+  load_error: Δεν ήταν δυνατή η φόρτωση της συνομιλίας.
+  messages: μηνύματα
+  no_api_key: >-
+    Ρύθμισε ένα κλειδί API για τον ενεργό πάροχο AI στις Ρυθμίσεις
+    για να ενεργοποιήσεις την ανάλυση.
+  no_lessons: Η ανάλυση δεν πρότεινε μαθήματα.
+  no_user: Ολοκλήρωσε την εισαγωγή πριν εισαγάγεις συνομιλίες.
+  parse_error: Η μορφή εισόδου δεν αναγνωρίστηκε.
+  priority: προτεραιότητα
+  role_assistant: AI
+  role_system: Σύστημα
+  role_user: Εσύ
+  save_error: Δεν ήταν δυνατή η αποθήκευση της συνομιλίας.
+  settings_error: Δεν ήταν δυνατή η ανάγνωση των ρυθμίσεων AI.
+  start_session: Έναρξη συνεδρίας
+  transcript: Καταγραφή
+
 curriculum:
   title: Πρόγραμμα
   active: Ενεργό πρόγραμμα

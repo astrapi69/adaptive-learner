@@ -38,11 +38,73 @@ nav:
   session: Session
   curriculum: Curriculum
   progress: Progress
+  import: Import
   settings: Settings
   home: Home
   menu: Menu
   online: Online
   offline: Offline
+
+import:
+  title: Import a conversation
+  subtitle: >-
+    Paste or upload a conversation with ChatGPT, Claude, or Gemini
+    and get instant learning insights.
+  quick:
+    title: Quick Analysis
+    hint: Paste a conversation here. We will save it and analyze it in one step.
+    placeholder: Paste a ChatGPT, Claude, Gemini, or markdown conversation here…
+  file:
+    title: Upload a file
+    hint: Drag a .json, .md, or .txt file here, or click to choose.
+    formats: ChatGPT conversations.json · Claude export · Markdown · Generic JSON
+  list:
+    title: Your imported conversations
+    empty: No conversations yet. Use Quick Analysis or upload a file.
+  detected_format: Detected format
+  analyze: Analyze
+  reanalyze: Re-analyze
+  analyzing: Analyzing…
+  analyzed: Analyzed
+  analysis_title: Analysis
+  analysis_ready: Analysis ready.
+  analysis_fallback: Analysis ran but the AI response could not be parsed cleanly.
+  analysis_fallback_long: >-
+    The AI response was not parseable as structured JSON. The summary
+    below is a fallback.
+  analysis_error: Could not analyze the conversation.
+  analysis_save_error: Could not save the analysis result.
+  back_to_list: Back to imports
+  create_curriculum: Create curriculum
+  curriculum_created: Curriculum created from the analysis.
+  curriculum_error: Could not create the curriculum.
+  curriculum_description: Generated from an imported conversation.
+  default_curriculum_title: Imported curriculum
+  field_topic: Topic
+  field_method: Recommended method
+  field_strengths: Strengths
+  field_weaknesses: Weaknesses
+  field_errors: Error patterns
+  field_subtopics: Subtopics
+  field_curriculum: Suggested curriculum
+  file_imported_one: Conversation imported. Click Analyze on the detail page.
+  file_imported_many: "Imported {count} conversations."
+  list_error: Could not load imported conversations.
+  load_error: Could not load the conversation.
+  messages: messages
+  no_api_key: >-
+    Set an API key for the active AI provider in Settings to enable analysis.
+  no_lessons: The analysis did not suggest any lessons.
+  no_user: Complete the onboarding before importing conversations.
+  parse_error: Could not recognise the input format.
+  priority: priority
+  role_assistant: AI
+  role_system: System
+  role_user: You
+  save_error: Could not save the conversation.
+  settings_error: Could not read AI settings.
+  start_session: Start session
+  transcript: Transcript
 
 curriculum:
   title: Curriculum

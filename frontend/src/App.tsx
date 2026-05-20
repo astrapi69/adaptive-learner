@@ -10,6 +10,8 @@ import {useTheme} from "./hooks/useTheme";
 import Assessment from "./pages/Assessment";
 import Curriculum from "./pages/Curriculum";
 import Dashboard from "./pages/Dashboard";
+import Import from "./pages/Import";
+import ImportDetail from "./pages/ImportDetail";
 import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
@@ -57,6 +59,11 @@ export default function App() {
                     <Route path="/session" element={<Session />} />
                     <Route path="/curriculum" element={<Curriculum />} />
                     <Route path="/progress" element={<Progress />} />
+                    <Route path="/import" element={<Import />} />
+                    <Route
+                        path="/import/:conversationId"
+                        element={<ImportDetail />}
+                    />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>

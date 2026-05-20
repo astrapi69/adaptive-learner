@@ -33,11 +33,74 @@ nav:
   session: Session
   curriculum: Programme
   progress: Progres
+  import: Import
   settings: Parametres
   home: Accueil
   menu: Menu
   online: En ligne
   offline: Hors ligne
+import:
+  title: Importer une conversation
+  subtitle: >-
+    Colle ou televerse une conversation avec ChatGPT, Claude ou Gemini
+    et obtiens des insights d'apprentissage immediats.
+  quick:
+    title: Analyse rapide
+    hint: Colle ici une conversation. Nous la sauvegardons et l'analysons en une etape.
+    placeholder: Colle ici une conversation ChatGPT, Claude, Gemini ou Markdown...
+  file:
+    title: Televerser un fichier
+    hint: Glisse ici un fichier .json, .md ou .txt ou clique pour le choisir.
+    formats: ChatGPT conversations.json - Export Claude - Markdown - JSON generique
+  list:
+    title: Tes conversations importees
+    empty: Pas encore de conversations. Utilise Analyse rapide ou televerse un fichier.
+  detected_format: Format detecte
+  analyze: Analyser
+  reanalyze: Reanalyser
+  analyzing: Analyse en cours...
+  analyzed: Analysee
+  analysis_title: Analyse
+  analysis_ready: Analyse prete.
+  analysis_fallback: L'analyse s'est executee mais la reponse de l'IA n'a pas pu etre analysee proprement.
+  analysis_fallback_long: >-
+    La reponse de l'IA n'a pas pu etre parsee comme JSON structure.
+    Le resume ci-dessous est un fallback.
+  analysis_error: Impossible d'analyser la conversation.
+  analysis_save_error: Impossible de sauvegarder le resultat de l'analyse.
+  back_to_list: Retour aux imports
+  create_curriculum: Creer un programme
+  curriculum_created: Programme cree a partir de l'analyse.
+  curriculum_error: Impossible de creer le programme.
+  curriculum_description: Genere a partir d'une conversation importee.
+  default_curriculum_title: Programme importe
+  field_topic: Sujet
+  field_method: Methode recommandee
+  field_strengths: Forces
+  field_weaknesses: Faiblesses
+  field_errors: Schemas d'erreur
+  field_subtopics: Sous-sujets
+  field_curriculum: Programme suggere
+  file_imported_one: Conversation importee. Clique sur Analyser sur la page de detail.
+  file_imported_many: "{count} conversations importees."
+  list_error: Impossible de charger les conversations importees.
+  load_error: Impossible de charger la conversation.
+  messages: messages
+  no_api_key: >-
+    Configure une cle API pour le fournisseur IA actif dans Parametres
+    pour activer l'analyse.
+  no_lessons: L'analyse n'a suggere aucune lecon.
+  no_user: Termine l'integration avant d'importer des conversations.
+  parse_error: Format d'entree non reconnu.
+  priority: priorite
+  role_assistant: IA
+  role_system: Systeme
+  role_user: Toi
+  save_error: Impossible de sauvegarder la conversation.
+  settings_error: Impossible de lire les parametres IA.
+  start_session: Demarrer une session
+  transcript: Transcription
+
 curriculum:
   title: Programme
   active: Programme actif

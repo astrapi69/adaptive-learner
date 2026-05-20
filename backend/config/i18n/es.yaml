@@ -33,11 +33,74 @@ nav:
   session: Sesion
   curriculum: Curriculo
   progress: Progreso
+  import: Importar
   settings: Ajustes
   home: Inicio
   menu: Menu
   online: En linea
   offline: Sin conexion
+import:
+  title: Importar una conversacion
+  subtitle: >-
+    Pega o sube una conversacion con ChatGPT, Claude o Gemini y obten
+    al instante ideas de aprendizaje.
+  quick:
+    title: Analisis rapido
+    hint: Pega aqui una conversacion. La guardaremos y analizaremos en un paso.
+    placeholder: Pega aqui una conversacion de ChatGPT, Claude, Gemini o Markdown...
+  file:
+    title: Subir un archivo
+    hint: Arrastra un archivo .json, .md o .txt aqui o haz clic para elegir.
+    formats: ChatGPT conversations.json - Exportacion Claude - Markdown - JSON generico
+  list:
+    title: Tus conversaciones importadas
+    empty: Aun no hay conversaciones. Usa Analisis rapido o sube un archivo.
+  detected_format: Formato detectado
+  analyze: Analizar
+  reanalyze: Reanalizar
+  analyzing: Analizando...
+  analyzed: Analizada
+  analysis_title: Analisis
+  analysis_ready: Analisis listo.
+  analysis_fallback: El analisis se ejecuto, pero la respuesta de la IA no se pudo analizar correctamente.
+  analysis_fallback_long: >-
+    La respuesta de la IA no se pudo parsear como JSON estructurado.
+    El resumen a continuacion es un fallback.
+  analysis_error: No se pudo analizar la conversacion.
+  analysis_save_error: No se pudo guardar el resultado del analisis.
+  back_to_list: Volver a las importaciones
+  create_curriculum: Crear curriculo
+  curriculum_created: Curriculo creado a partir del analisis.
+  curriculum_error: No se pudo crear el curriculo.
+  curriculum_description: Generado a partir de una conversacion importada.
+  default_curriculum_title: Curriculo importado
+  field_topic: Tema
+  field_method: Metodo recomendado
+  field_strengths: Fortalezas
+  field_weaknesses: Debilidades
+  field_errors: Patrones de error
+  field_subtopics: Subtemas
+  field_curriculum: Curriculo sugerido
+  file_imported_one: Conversacion importada. Haz clic en Analizar en la pagina de detalle.
+  file_imported_many: "{count} conversaciones importadas."
+  list_error: No se pudieron cargar las conversaciones importadas.
+  load_error: No se pudo cargar la conversacion.
+  messages: mensajes
+  no_api_key: >-
+    Configura una clave API para el proveedor de IA activo en Ajustes
+    para activar el analisis.
+  no_lessons: El analisis no sugirio ninguna leccion.
+  no_user: Completa la incorporacion antes de importar conversaciones.
+  parse_error: No se pudo reconocer el formato de entrada.
+  priority: prioridad
+  role_assistant: IA
+  role_system: Sistema
+  role_user: Tu
+  save_error: No se pudo guardar la conversacion.
+  settings_error: No se pudieron leer los ajustes de IA.
+  start_session: Iniciar sesion
+  transcript: Transcripcion
+
 curriculum:
   title: Curriculo
   active: Curriculo activo
