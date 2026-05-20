@@ -25,6 +25,7 @@
 
 import {useEffect, useState} from "react";
 
+import QRImageUpload from "./QRImageUpload";
 import QRScanner, {type QRScannerError} from "./QRScanner";
 
 export interface QRScannerModalProps {
@@ -135,6 +136,7 @@ export default function QRScannerModal({
                         error={error}
                         onClose={onClose}
                         onRetry={() => setError(null)}
+                        onScan={onScan}
                         t={t}
                     />
                 ) : success ? (
@@ -175,6 +177,27 @@ export default function QRScannerModal({
                                 )}
                             </p>
                         )}
+                        <div
+                            style={{
+                                marginTop: "1rem",
+                                paddingTop: "0.75rem",
+                                borderTop: "1px solid var(--border, #ddd)",
+                            }}
+                        >
+                            <p
+                                style={{
+                                    margin: "0 0 0.5rem",
+                                    fontSize: "0.85rem",
+                                    opacity: 0.75,
+                                }}
+                            >
+                                {t(
+                                    "sync.upload_qr_hint",
+                                    "No camera? Take a screenshot of the desktop's QR and upload it:",
+                                )}
+                            </p>
+                            <QRImageUpload onScan={onScan} t={t} />
+                        </div>
                     </>
                 )}
             </div>
@@ -186,11 +209,13 @@ function ErrorPanel({
     error,
     onClose,
     onRetry,
+    onScan,
     t,
 }: {
     error: QRScannerError;
     onClose: () => void;
     onRetry: () => void;
+    onScan: (uri: string) => void;
     t: (key: string, fallback?: string) => string;
 }) {
     const titleKey =
@@ -226,7 +251,14 @@ function ErrorPanel({
             <p style={{fontSize: "0.9rem", opacity: 0.8}}>
                 {t(hintKey, hintFallback)}
             </p>
-            <div style={{display: "flex", gap: "0.5rem", flexWrap: "wrap"}}>
+            <div
+                style={{
+                    display: "flex",
+                    gap: "0.5rem",
+                    flexWrap: "wrap",
+                    marginBottom: "0.75rem",
+                }}
+            >
                 <button
                     type="button"
                     className="btn btn-secondary"
@@ -243,6 +275,30 @@ function ErrorPanel({
                 >
                     {t("common.close", "Close")}
                 </button>
+            </div>
+            {/* The image-upload fallback works even when the camera
+                doesn't (in-app browsers, older PWAs, desktop with
+                no webcam). Keep it visible inside the error panel
+                so the user has a one-tap path forward. */}
+            <div
+                style={{
+                    paddingTop: "0.75rem",
+                    borderTop: "1px solid var(--border, #ddd)",
+                }}
+            >
+                <p
+                    style={{
+                        margin: "0 0 0.5rem",
+                        fontSize: "0.85rem",
+                        opacity: 0.75,
+                    }}
+                >
+                    {t(
+                        "sync.upload_qr_hint",
+                        "No camera? Take a screenshot of the desktop's QR and upload it:",
+                    )}
+                </p>
+                <QRImageUpload onScan={onScan} t={t} />
             </div>
         </div>
     );
