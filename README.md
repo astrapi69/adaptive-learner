@@ -16,7 +16,7 @@ decide when the learner is ready to advance.
 
 Full documentation (German default at `/docs/`, English at
 `/docs/en/`):
-[**astrapi69.github.io/adaptive-learner/docs/en/**](https://github.com/astrapi69/adaptive-learner/docs/en/)
+[**astrapi69.github.io/adaptive-learner/docs/en/**](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
 - [User Guide](https://astrapi69.github.io/adaptive-learner/docs/en/user-guide/getting-started/)
   — how to use the app
