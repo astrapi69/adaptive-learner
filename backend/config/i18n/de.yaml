@@ -239,6 +239,7 @@ session:
   step_reason_tooltip: Warum dieser Schritt?
   cycle_label: "Zyklus {n}"
   cycle_advanced: "Zyklus {n} gestartet"
+  cycles_completed: "Abgeschlossene Zyklen"
   next_topic: "Nächstes Thema:"
   offline_start_blocked: >-
     Du bist offline. Neue Sessions brauchen eine Netzverbindung —

@@ -7,6 +7,18 @@ interface RatingDialogProps {
     onCancel: () => void;
     onSubmit: (rating: RatingValues) => void;
     submitting?: boolean;
+    /**
+     * v1.4.0 — multi-cycle session summary. When the user has
+     * completed more than one auto-loop cycle, the dialog prepends
+     * a "cycles completed" block summarising the journey.
+     */
+    cycleCount?: number;
+    cycleTopics?: {
+        cycle: number;
+        topic: string;
+        summary: string;
+        next_topic: string;
+    }[];
 }
 
 export interface RatingValues {
@@ -37,6 +49,8 @@ export default function RatingDialog({
     onCancel,
     onSubmit,
     submitting = false,
+    cycleCount,
+    cycleTopics,
 }: RatingDialogProps) {
     const {t} = useI18n();
     const [understanding, setUnderstanding] = useState(3);
@@ -52,6 +66,35 @@ export default function RatingDialog({
                 <h2 id="rating-title" className="modal-title">
                     {t("session.rating_title", "How did the session go?")}
                 </h2>
+                {cycleCount && cycleCount > 1 && (
+                    <div
+                        className="rating-cycles-summary"
+                        data-testid="rating-cycles-summary"
+                    >
+                        <p>
+                            <strong>
+                                {t(
+                                    "session.cycles_completed",
+                                    "Cycles completed",
+                                )}
+                                :
+                            </strong>{" "}
+                            {cycleCount}
+                        </p>
+                        {cycleTopics && cycleTopics.length > 0 && (
+                            <ol className="rating-cycles-list">
+                                {cycleTopics.map((c) => (
+                                    <li key={c.cycle}>
+                                        <strong>{c.topic}</strong>
+                                        {c.summary && (
+                                            <span> — {c.summary}</span>
+                                        )}
+                                    </li>
+                                ))}
+                            </ol>
+                        )}
+                    </div>
+                )}
                 <form
                     className="rating-form"
                     onSubmit={(event) => {

@@ -385,6 +385,20 @@ export default function Session() {
                 <div className="session-header-row">
                     <h1>{t("session.title", "Learning session")}</h1>
                     <div className="session-header-chips">
+                        {session.cycle_count && session.cycle_count > 1 && (
+                            <span
+                                className="cycle-counter-badge"
+                                data-testid="session-cycle-counter"
+                            >
+                                {t(
+                                    "session.cycle_label",
+                                    "Cycle {n}",
+                                ).replace(
+                                    "{n}",
+                                    String(session.cycle_count),
+                                )}
+                            </span>
+                        )}
                         <MethodBadge method={session.method} />
                         {userSettings && (
                             <span
@@ -446,6 +460,8 @@ export default function Session() {
                 onCancel={() => setShowRating(false)}
                 onSubmit={handleRatingSubmit}
                 submitting={submittingRating}
+                cycleCount={session?.cycle_count}
+                cycleTopics={session?.cycle_topics}
             />
         </main>
     );

@@ -217,6 +217,7 @@ session:
   step_advance_toast: "Passage a : {step}"
   cycle_label: "Cycle {n}"
   cycle_advanced: "Cycle {n} started"
+  cycles_completed: "Cycles completed"
   next_topic: "Next topic:"
   step_reason_tooltip: Pourquoi cette etape ?
   offline_start_blocked: >-

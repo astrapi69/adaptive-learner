@@ -2091,3 +2091,31 @@ select:focus {
     margin-top: var(--space-2);
     color: var(--text);
 }
+
+/* ---- Multi-cycle session summary (Phase 17D) -------------------- */
+.cycle-counter-badge {
+    display: inline-block;
+    background: var(--accent, #6366f1);
+    color: white;
+    font-weight: 600;
+    border-radius: var(--radius-1);
+    padding: 0.25em 0.6em;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+}
+.rating-cycles-summary {
+    background: var(--surface-2, var(--surface));
+    border: 1px solid var(--border);
+    border-radius: var(--radius-1);
+    padding: var(--space-3);
+    margin-bottom: var(--space-3);
+}
+.rating-cycles-list {
+    margin: var(--space-2) 0 0 var(--space-3);
+    padding: 0;
+    list-style: decimal;
+    font-size: 0.95rem;
+}
+.rating-cycles-list li {
+    margin: var(--space-1) 0;
+}
