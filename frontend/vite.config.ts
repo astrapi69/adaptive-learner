@@ -92,6 +92,17 @@ export default defineConfig({
                     // Don't intercept API endpoints with the SPA
                     // index — let them return real 404/5xx.
                     new RegExp(`^${base.replace(/\//g, "\\/")}api\\/`),
+                    // Don't intercept the bundled MkDocs site at
+                    // ``${base}docs/...``. The docs subtree is
+                    // built into ``frontend/dist/docs/`` by the
+                    // deploy workflow AFTER the SW is generated,
+                    // so it's not in the precache manifest; without
+                    // this denylist entry the SW's NavigationRoute
+                    // returns the precached SPA shell for every
+                    // ``/docs/*`` navigation and React Router renders
+                    // NotFound instead of GH Pages serving the
+                    // static MkDocs HTML.
+                    new RegExp(`^${base.replace(/\//g, "\\/")}docs\\/`),
                 ],
                 runtimeCaching: [
                     {
