@@ -460,3 +460,31 @@ backup:
   auto_records: "{{n}} Datensätze"
   auto_none: Noch keine automatischen Sicherungen. Die erste läuft nach 10 Sitzungen oder 7 Tagen.
   storage_pressure: "Browser-Speicher ist fast voll ({{pct}}% des Kontingents). Exportiere jetzt eine Sicherung."
+
+export:
+  title: Export
+  intro: >-
+    Lade deine Lernreise als Markdown oder PDF herunter. Markdown ist
+    Klartext zum Bearbeiten und Teilen; PDF öffnet den Druckdialog
+    deines Browsers, sodass du eine Kopie speichern kannst.
+  progress_label: Lernfortschritt (vollständige Übersicht)
+  session_label: Sitzungs-Detail
+  curriculum_label: Lehrplan-Übersicht
+  select_session: -- Sitzung wählen --
+  select_curriculum: -- Lehrplan wählen --
+  preview: Vorschau
+  preview_title: Vorschau
+  preview_close: Schließen
+  download_md: Markdown
+  download_pdf: PDF
+  busy: Arbeite...
+  download_success: Export heruntergeladen.
+  print_opened: Druckdialog geöffnet. Wähle "Als PDF speichern".
+  error: "Export fehlgeschlagen: {{detail}}"
+  preview_error: "Vorschau fehlgeschlagen: {{detail}}"
+  load_error: "Daten konnten nicht geladen werden: {{detail}}"
+  pick_session: Wähle zuerst eine Sitzung.
+  pick_curriculum: Wähle zuerst einen Lehrplan.
+  title_progress: Lernfortschritt
+  title_session: Sitzungs-Detail
+  title_curriculum: Lehrplan

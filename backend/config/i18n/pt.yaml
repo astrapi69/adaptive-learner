@@ -426,3 +426,31 @@ backup:
   auto_records: "{{n}} records"
   auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
   storage_pressure: "Browser storage is almost full ({{pct}}% of quota). Export a manual backup now."
+
+export:
+  title: Export
+  intro: >-
+    Download your learning journey as Markdown or PDF. Markdown is plain
+    text you can edit and share; PDF opens your browser's print dialog
+    so you can save a copy.
+  progress_label: Progress Report (full journey)
+  session_label: Session Detail
+  curriculum_label: Curriculum Overview
+  select_session: -- pick a session --
+  select_curriculum: -- pick a curriculum --
+  preview: Preview
+  preview_title: Preview
+  preview_close: Close
+  download_md: Markdown
+  download_pdf: PDF
+  busy: Working...
+  download_success: Export downloaded.
+  print_opened: Print dialog opened. Pick "Save as PDF".
+  error: "Export failed: {{detail}}"
+  preview_error: "Preview failed: {{detail}}"
+  load_error: "Could not load export data: {{detail}}"
+  pick_session: Pick a session first.
+  pick_curriculum: Pick a curriculum first.
+  title_progress: Learning Progress
+  title_session: Session Detail
+  title_curriculum: Curriculum
