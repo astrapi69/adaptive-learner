@@ -204,7 +204,7 @@ describe("renderMarkdown - progress_report", () => {
         expect(md).toContain("3. Error");
     });
 
-    it("renders extractions section with analysis JSON block", () => {
+    it("renders extractions section with structured analysis fields", () => {
         const report: ProgressReport = {
             ...emptyProgressReport("en"),
             extractions: [
@@ -214,16 +214,62 @@ describe("renderMarkdown - progress_report", () => {
                     source: "claude",
                     message_count: 12,
                     imported_at: "2026-05-02T00:00:00.000Z",
-                    project_id: null,
+                    project_id: "p1",
                     topic_tag: "bayes",
-                    analysis: {topic: "Bayes", key_gaps: ["priors"]},
+                    analysis: {
+                        topic: "Bayes inference",
+                        user_level: "intermediate",
+                        subtopics: ["priors", "posteriors"],
+                        strengths: ["good math basics"],
+                        weaknesses: ["mixes priors"],
+                        recommended_method: "deductive",
+                        recommended_focus: "fix prior intuition",
+                        summary: "Strong basics, mixes\npriors and posteriors",
+                        suggested_curriculum: [
+                            {title: "Priors deep dive", description: "Conjugate priors", priority: 1},
+                        ],
+                    },
                 },
             ],
         };
         const md = renderMarkdown(report);
         expect(md).toContain("### Bayes Tutoring");
+        // Structured renderers fired instead of a JSON dump
+        expect(md).toContain("**Detected topic:** Bayes inference");
+        expect(md).toContain("**Level:** Intermediate");
+        expect(md).toContain("- priors");
+        expect(md).toContain("- mixes priors");
+        expect(md).toContain("**Recommended method:** Deductive");
+        expect(md).toContain("**Recommended focus:** fix prior intuition");
+        expect(md).toContain("> Strong basics, mixes");
+        expect(md).toContain("> priors and posteriors");
+        expect(md).toContain("- **Priors deep dive**");
+        expect(md).toContain("Linked project:** p1");
+        // Should NOT emit a JSON appendix when all fields were consumed
+        expect(md).not.toContain("```json");
+    });
+
+    it("renders unknown analysis fields as a JSON appendix", () => {
+        const report: ProgressReport = {
+            ...emptyProgressReport("en"),
+            extractions: [
+                {
+                    id: "e1",
+                    title: "X",
+                    source: "claude",
+                    message_count: 1,
+                    imported_at: "2026-05-02T00:00:00.000Z",
+                    project_id: null,
+                    topic_tag: null,
+                    analysis: {custom_field: "value", topic: "T"},
+                },
+            ],
+        };
+        const md = renderMarkdown(report);
+        expect(md).toContain("**Detected topic:** T");
+        // The unknown field falls into the JSON appendix
         expect(md).toContain("```json");
-        expect(md).toContain('"key_gaps"');
+        expect(md).toContain('"custom_field"');
     });
 
     it("envelope footer carries the timestamp + app version", () => {

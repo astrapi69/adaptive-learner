@@ -296,17 +296,154 @@ function renderExtractionsSection(payload: ProgressReport): string {
         if (e.topic_tag) {
             lines.push(`- **${t(lang, "topic")}:** ${e.topic_tag}`);
         }
+        if (e.project_id) {
+            lines.push(`- **${t(lang, "linked_project")}:** ${e.project_id}`);
+        }
         if (e.analysis && Object.keys(e.analysis).length > 0) {
             lines.push("");
-            lines.push(`**${t(lang, "analysis")}:**`);
-            lines.push("");
-            lines.push("```json");
-            lines.push(JSON.stringify(e.analysis, null, 2));
-            lines.push("```");
+            lines.push(...renderAnalysis(e.analysis, lang));
         }
         lines.push("");
     }
     return lines.join("\n");
+}
+
+/**
+ * Render a ConversationAnalysisResult as human-readable Markdown
+ * instead of a JSON dump. Each known field gets its own labelled
+ * sub-section; unknown fields fall through to a compact JSON
+ * appendix so partial / future analysis shapes still surface.
+ */
+function renderAnalysis(
+    analysis: Record<string, unknown>,
+    lang: string,
+): string[] {
+    const lines: string[] = [];
+    const consumed = new Set<string>();
+
+    const writeField = (key: string, render: () => void): void => {
+        if (key in analysis && analysis[key] != null) {
+            render();
+            consumed.add(key);
+        }
+    };
+
+    writeField("topic", () => {
+        lines.push(
+            `**${t(lang, "analysis_topic")}:** ${String(analysis["topic"])}`,
+        );
+        lines.push("");
+    });
+
+    writeField("user_level", () => {
+        const level = String(analysis["user_level"]);
+        const levelKey = (
+            level === "beginner"
+                ? "level_beginner"
+                : level === "intermediate"
+                  ? "level_intermediate"
+                  : "level_advanced"
+        ) as Parameters<typeof t>[1];
+        lines.push(
+            `**${t(lang, "analysis_user_level")}:** ${t(lang, levelKey)}`,
+        );
+        lines.push("");
+    });
+
+    writeField("subtopics", () => {
+        const arr = analysis["subtopics"];
+        if (!Array.isArray(arr)) return;
+        lines.push(`**${t(lang, "analysis_subtopics")}:**`);
+        for (const s of arr) lines.push(`- ${String(s)}`);
+        lines.push("");
+    });
+
+    writeField("strengths", () => {
+        const arr = analysis["strengths"];
+        if (!Array.isArray(arr)) return;
+        lines.push(`**${t(lang, "analysis_strengths")}:**`);
+        for (const s of arr) lines.push(`- ${String(s)}`);
+        lines.push("");
+    });
+
+    writeField("weaknesses", () => {
+        const arr = analysis["weaknesses"];
+        if (!Array.isArray(arr)) return;
+        lines.push(`**${t(lang, "analysis_weaknesses")}:**`);
+        for (const s of arr) lines.push(`- ${String(s)}`);
+        lines.push("");
+    });
+
+    writeField("error_patterns", () => {
+        const arr = analysis["error_patterns"];
+        if (!Array.isArray(arr)) return;
+        lines.push(`**${t(lang, "analysis_error_patterns")}:**`);
+        for (const s of arr) lines.push(`- ${String(s)}`);
+        lines.push("");
+    });
+
+    writeField("recommended_method", () => {
+        lines.push(
+            `**${t(lang, "analysis_recommended_method")}:** ${methodLabel(lang, String(analysis["recommended_method"]))}`,
+        );
+        lines.push("");
+    });
+
+    writeField("recommended_focus", () => {
+        lines.push(
+            `**${t(lang, "analysis_recommended_focus")}:** ${String(analysis["recommended_focus"])}`,
+        );
+        lines.push("");
+    });
+
+    writeField("summary", () => {
+        lines.push(`**${t(lang, "analysis_summary")}:**`);
+        lines.push("");
+        for (const para of String(analysis["summary"]).split("\n")) {
+            lines.push(`> ${para}`);
+        }
+        lines.push("");
+    });
+
+    writeField("suggested_curriculum", () => {
+        const arr = analysis["suggested_curriculum"];
+        if (!Array.isArray(arr)) return;
+        lines.push(`**${t(lang, "analysis_suggested_curriculum")}:**`);
+        lines.push("");
+        for (const item of arr) {
+            if (!item || typeof item !== "object") continue;
+            const lesson = item as Record<string, unknown>;
+            const title = String(lesson.title ?? "-");
+            const priority =
+                typeof lesson.priority === "number"
+                    ? ` _(${t(lang, "analysis_priority")}: ${lesson.priority})_`
+                    : "";
+            lines.push(`- **${title}**${priority}`);
+            if (lesson.description) {
+                lines.push(`  - ${String(lesson.description)}`);
+            }
+        }
+        lines.push("");
+    });
+
+    // Any leftover fields → JSON appendix so partial shapes don't
+    // silently drop data.
+    const leftovers: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(analysis)) {
+        if (!consumed.has(k) && k !== "chunk_summaries" && k !== "fallback_used") {
+            leftovers[k] = v;
+        }
+    }
+    if (Object.keys(leftovers).length > 0) {
+        lines.push(`**${t(lang, "analysis")}:**`);
+        lines.push("");
+        lines.push("```json");
+        lines.push(JSON.stringify(leftovers, null, 2));
+        lines.push("```");
+        lines.push("");
+    }
+
+    return lines;
 }
 
 // ---- Session Detail ------------------------------------------------------
