@@ -118,3 +118,81 @@ FastAPI/SQLAlchemy/Pydantic/PluginForge-Versionen,
 Datenbank-Pfad). Das Speicher-Label wechselt von *Server
 (FastAPI + SQLite)* zu *Lokaler Browser-Speicher (IndexedDB)*,
 damit immer klar ist, auf welcher Seite du dich befindest.
+
+## Sicherung
+
+Der Abschnitt **Datensicherung** liegt direkt über "Über"
+und ermöglicht es, dein gesamtes Konto als JSON-Datei zu
+sichern oder wiederherzustellen. Dieselbe Datei funktioniert
+in beiden Speichermodi: Eine Sicherung aus dem Server-Modus
+lässt sich im lokalen Modus wiederherstellen und umgekehrt.
+
+### Sicherung erstellen
+
+Klicke auf **Sicherung erstellen**, um eine Datei namens
+`adaptive-learner-backup-YYYY-MM-DD-<kurz-id>.json`
+herunterzuladen. Sie enthält jeden Datensatz, den das System
+für dein Konto über 16 Tabellen hinweg gespeichert hat
+(Nutzer, Projekte, Profile, Lehrpläne, Themen, Lektionen,
+Sitzungen, Nachrichten, Bewertungen, Notizen, Fortschritts-
+Commits, Methodenwechsel, Schritt-Auswertungen sowie
+importierte Konversationen + Nachrichten).
+
+Die Datei ist im Klartext-JSON formatiert, damit du den
+Inhalt vor einer Wiederherstellung in einem Texteditor
+prüfen kannst.
+
+**API-Schlüssel sind aus Sicherheitsgründen nie enthalten.**
+Nach einer Wiederherstellung musst du jeden Provider-Schlüssel
+neu eingeben.
+
+### Wiederherstellung
+
+Klicke auf **Aus Sicherung wiederherstellen**, wähle eine
+`.json`-Datei aus. Adaptive Learner liest sie lokal und zeigt
+eine Vergleichstabelle: pro Tabelle die aktuelle Anzahl
+Datensätze neben der Anzahl in der Sicherung. **Wiederherstellung
+bestätigen** wendet die Zusammenführung an, **Abbrechen** bricht
+ab.
+
+Die Wiederherstellung ist ein MERGE, kein Überschreiben:
+
+- Neue Datensätze werden eingefügt.
+- Vorhandene veränderbare Datensätze werden nur überschrieben,
+  wenn die Sicherung neuer ist (Zeitstempel-Vergleich).
+- Historien-Zeilen (Sitzungen, Nachrichten, Bewertungen,
+  Fortschritts-Commits, Methodenwechsel, Schritt-Auswertungen)
+  sind unveränderlich — Duplikate werden übersprungen.
+- Es wird nichts gelöscht.
+
+Nach der Wiederherstellung zeigt eine Zusammenfassung die
+Anzahl eingefügter / aktualisierter / übersprungener
+Datensätze sowie eventuelle Fehler.
+
+### Erinnerung
+
+Der Abschnitt zeigt den Zeitstempel deiner letzten Sicherung.
+Nach 7 Tagen erscheint eine dezente Erinnerung, eine neue
+zu erstellen.
+
+### Automatische Sicherung (nur lokaler Modus)
+
+Im lokalen Speichermodus erscheint zusätzlich ein Block
+**Automatische Sicherung**. Das System hält einen Ringspeicher
+von 3 automatischen Schnappschüssen in einer separaten
+IndexedDB-Datenbank vor. Eine neue automatische Sicherung
+läuft:
+
+- nach 10 abgeschlossenen Sitzungen ODER
+- nachdem 7 Tage seit der letzten Sicherung vergangen sind,
+- was zuerst eintritt.
+
+Der Schalter erlaubt es, automatische Sicherungen zu
+deaktivieren. **Jetzt sichern** erzwingt eine sofortige
+Sicherung unabhängig vom Schalter. Jeder Eintrag in der
+Liste hat eigene **Wiederherstellen**- und **Löschen**-Schaltflächen.
+
+Wenn der Browser-Speicher dem Kontingent nahekommt (über
+90 %), erscheint ein Warnhinweis, der dazu rät, eine
+manuelle Sicherung in eine Datei zu exportieren, bevor der
+Browser den IndexedDB-Speicher räumt.

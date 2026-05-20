@@ -12,27 +12,30 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.1.0):** v1.0.x plus Phase 14 —
-  **About tab in Settings.** New ``GET /api/system/info``
-  endpoint returns app identity (name, version, license,
-  authors, urls, build_hash, build_date), runtime info
-  (python_version, platform), bundled-dep versions
-  (fastapi, sqlalchemy, pydantic, pluginforge) and data
-  paths (database_path, data_directory). Storage-mode-aware:
-  ``DexieStorage.system.info`` synthesises the same shape
-  browser-side for the PWA path with ``null`` for backend-
-  only fields. New ``components/about/`` directory with five
-  sub-section components (Version, SystemInfo, Credits,
-  Donations, License & resources) wired into Settings.tsx as
-  the last block. Donation channels: Liberapay (primary,
-  verified live), GitHub Sponsors, Ko-fi. ~30 i18n keys
-  under ``about.*`` mirrored across all 8 catalogs.
-  Hotfix track v1.0.1 (robust JSON extraction for Haiku
-  prose+fence shapes) is folded into the 1.1.0 line. Backend
-  489 tests + frontend 591 vitest at release time. v1.0.x
-  baseline (local-network sync, MkDocs docs, Dexie storage,
-  browser-direct AI, GH Pages deploy) carried forward
-  unchanged.
+- **Current state (v1.2.0):** v1.1.0 plus Phase 15 —
+  **Backup + Restore.** Single JSON wire format
+  (``adaptive-learner-backup`` v1.2.0) spans both storage
+  modes: ``GET /api/backup/export`` and the browser-side
+  ``DexieStorage.backup.export`` produce the same payload
+  shape, and either side can restore the other's file.
+  Backend ``app/services/backup_service.py`` reuses
+  ``sync_service.TABLES`` for the 14 sync tables plus two
+  backup-only tables (``imported_conversations`` /
+  ``imported_messages``). API keys are stripped on export
+  and ignored on import. Restore is MERGE: insert unknown
+  ids, keep the newer side for mutable rows, skip duplicates
+  for append-only rows, never delete. New
+  ``BackupSection.tsx`` in Settings shows the three core
+  actions plus a 16-row pre-restore comparison table; in
+  Dexie mode the same panel exposes an auto-backup ring
+  (3 entries, second IndexedDB DB, triggers every 10
+  sessions or 7 days) with toggle, manual "Back up now",
+  storage-pressure warning via
+  ``navigator.storage.estimate``, and per-row Restore /
+  Delete. ~40 i18n keys under ``backup.*`` (DE + EN
+  translated, six others EN passthrough). Backend 515 tests
+  + frontend 640 vitest at release time. v1.1.x About tab +
+  ``/api/system/info`` endpoint carried forward unchanged.
 
 ## Development guidelines
 

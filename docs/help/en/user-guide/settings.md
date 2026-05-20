@@ -114,3 +114,74 @@ backend (Python version, FastAPI / SQLAlchemy / Pydantic /
 PluginForge versions, database path). The storage label
 switches from *Server (FastAPI + SQLite)* to *Local Browser
 Storage (IndexedDB)* so it's always clear which side you're on.
+
+## Backup
+
+The **Backup section** sits right above About and lets you
+snapshot or restore your entire account as a single JSON
+file. The same file works in either storage mode: a backup
+created in Server mode can be restored in Local mode and
+vice versa.
+
+### Create Backup
+
+Click **Create Backup** to download a file named
+`adaptive-learner-backup-YYYY-MM-DD-<short-id>.json`. It
+contains every record the system has stored for your account
+across 16 tables (users, projects, profiles, curricula,
+topics, lessons, sessions, messages, ratings, notes, progress
+commits, method switches, step evaluations, plus imported
+conversations + messages).
+
+The file is pretty-printed JSON so you can open it in a text
+editor before trusting a restore.
+
+**API keys are never included.** After a restore you have to
+re-enter every provider key in the AI provider section.
+
+### Restore from Backup
+
+Click **Restore from Backup**, pick a `.json` file produced
+by Create Backup. Adaptive Learner reads it locally and shows
+a comparison table: per table, the current row count next to
+the incoming row count. Click **Confirm restore** to apply
+the merge, **Cancel** to abort.
+
+Restore is a MERGE, not an overwrite:
+
+- New records are inserted.
+- Existing mutable records are updated only when the backup
+  is newer (timestamp comparison).
+- History rows (sessions, messages, ratings, progress
+  commits, method switches, step evaluations) are immutable —
+  duplicates are skipped.
+- Nothing is ever deleted.
+
+A summary card after the restore lists inserted / updated /
+skipped counts plus any rows that could not be restored.
+
+### Reminder
+
+The section shows the timestamp of your last backup. After 7
+days you get a subtle reminder to make a fresh one.
+
+### Auto-backup (Local mode only)
+
+In Local (Browser) storage mode the panel also shows an
+**Auto-backup** block. The system keeps a rolling ring of 3
+automatic snapshots in a separate IndexedDB database. A new
+auto-backup runs:
+
+- after every 10 completed sessions, OR
+- after 7 days have passed since the last auto-backup,
+- whichever fires first.
+
+The toggle lets you turn auto-backup off. **Back up now**
+forces an immediate snapshot regardless of the toggle. Each
+snapshot in the list has its own **Restore** + **Delete**
+buttons.
+
+If browser storage usage gets close to the quota (above
+90 %), a warning banner appears urging you to export a
+manual backup to a file before the browser evicts the
+IndexedDB store.
