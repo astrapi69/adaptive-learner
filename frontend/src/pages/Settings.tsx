@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 
 import {ApiError} from "../api/client";
 import AboutTab from "../components/about/AboutTab";
+import BackupSection from "../components/BackupSection";
 import SyncSection from "../components/SyncSection";
 import {useI18n} from "../hooks/useI18n";
 import {
@@ -589,6 +590,7 @@ export default function Settings() {
             </section>
 
             <SyncSection />
+            <BackupSection />
             <AboutTab />
         </main>
     );

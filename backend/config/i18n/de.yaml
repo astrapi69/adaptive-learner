@@ -415,3 +415,37 @@ about:
   repo_label: Repository
   docs_label: Dokumentation
   issues_label: Issues
+
+backup:
+  section_title: Datensicherung
+  section_help: >-
+    Exportiere alle Daten deines Kontos als JSON-Datei. API-Schlüssel
+    sind aus Sicherheitsgründen NICHT enthalten; nach einer
+    Wiederherstellung musst du sie neu eingeben.
+  export: Sicherung erstellen
+  exporting: Wird exportiert…
+  import: Aus Sicherung wiederherstellen
+  importing: Wird wiederhergestellt…
+  confirm: Wiederherstellung bestätigen
+  invalid_format: Diese Datei ist keine gültige Adaptive-Learner-Sicherung.
+  export_success: "Sicherung heruntergeladen ({{count}} Datensätze)."
+  export_error: "Sicherung fehlgeschlagen: {{detail}}"
+  import_parse_error: "Sicherung konnte nicht gelesen werden: {{detail}}"
+  import_error: "Wiederherstellung fehlgeschlagen: {{detail}}"
+  comparison_title: Wiederherstellung bestätigen
+  comparison_help: >-
+    Beim Zusammenführen werden neue Datensätze eingefügt, veränderbare
+    Datensätze nur überschrieben, wenn die Sicherung neuer ist, und
+    Historien-Zeilen bleiben unverändert. Nichts wird gelöscht.
+    API-Schlüssel werden ignoriert.
+  table_header: Tabelle
+  current_header: Aktuell
+  incoming_header: Sicherung
+  restored_summary: Wiederherstellung abgeschlossen.
+  restored_inserted: "Eingefügt: {{n}}"
+  restored_updated: "Aktualisiert: {{n}}"
+  restored_skipped: "Übersprungen: {{n}}"
+  restored_errors: "Fehler: {{n}}"
+  restored_with_errors: "{{n}} Datensätze konnten nicht wiederhergestellt werden."
+  last_backup: "Letzte Sicherung: {{when}}"
+  reminder_overdue: "Deine letzte Sicherung ist mehr als {{days}} Tage her."

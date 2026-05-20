@@ -386,3 +386,35 @@ about:
   repo_label: Repositorio
   docs_label: Documentación
   issues_label: Issues
+
+backup:
+  section_title: Backup
+  section_help: >-
+    Export everything in your account as a JSON file. API keys are
+    NOT included; you will need to re-enter them after a restore.
+  export: Create Backup
+  exporting: Exporting…
+  import: Restore from Backup
+  importing: Restoring…
+  confirm: Confirm restore
+  invalid_format: This file is not a valid Adaptive Learner backup.
+  export_success: "Backup downloaded ({{count}} records)."
+  export_error: "Backup failed: {{detail}}"
+  import_parse_error: "Could not read backup: {{detail}}"
+  import_error: "Restore failed: {{detail}}"
+  comparison_title: Confirm restore
+  comparison_help: >-
+    Restore will merge: new records inserted, mutable records updated
+    only if the backup is newer, history rows kept as-is. Nothing is
+    deleted. API keys are ignored.
+  table_header: Table
+  current_header: Current
+  incoming_header: Backup
+  restored_summary: Restore complete.
+  restored_inserted: "Inserted: {{n}}"
+  restored_updated: "Updated: {{n}}"
+  restored_skipped: "Skipped: {{n}}"
+  restored_errors: "Errors: {{n}}"
+  restored_with_errors: "{{n}} records could not be restored."
+  last_backup: "Last backup: {{when}}"
+  reminder_overdue: "It has been more than {{days}} days since your last backup."
