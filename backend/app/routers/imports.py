@@ -1,4 +1,4 @@
-"""Imports router (Phase 12C).
+"""Imports router (Phase 12C + post-v1.5.0 backend-analysis fix).
 
 Two prefixes match the project-wide convention:
 
@@ -8,10 +8,14 @@ Two prefixes match the project-wide convention:
   PATCH  /api/imports/{conversation_id}          -> ImportedConversationOut
   DELETE /api/imports/{conversation_id}          -> 204
   POST   /api/imports/{conversation_id}/analysis -> ImportedConversationDetail
+  POST   /api/imports/{conversation_id}/analyze  -> ImportedConversationDetail
 
-The analysis is computed client-side (browser-direct AI provider
-call), then POSTed back here for persistence. The server validates
-the envelope but does not prescribe the inner schema.
+``/analysis`` (Phase 12C) accepts an already-computed envelope and
+just persists it — used by Dexie mode where the browser ran the
+AI call itself. ``/analyze`` (post-v1.5.0) is the API-mode path:
+the server decrypts the user's API key, fires the ``ai_complete``
+hook, parses the JSON with the same defensive extractor, persists
+the result. The browser never sees the cleartext key.
 """
 
 from __future__ import annotations
@@ -20,7 +24,9 @@ from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.exceptions import ValidationError
 from app.schemas import (
+    AIProvider,
     ImportedConversationAnalysis,
     ImportedConversationCreate,
     ImportedConversationDetail,
@@ -28,6 +34,11 @@ from app.schemas import (
     ImportedConversationUpdate,
 )
 from app.services import imports as imports_service
+from app.services import settings as settings_service
+from app.services.conversation_analysis import (
+    Message,
+    analyze_conversation_with_ai,
+)
 
 # --- /users/{user_id}/imports ----------------------------------------------
 
@@ -52,9 +63,7 @@ def create_import(
     "/{user_id}/imports",
     response_model=list[ImportedConversationOut],
 )
-def list_imports(
-    user_id: str, db: Session = Depends(get_db)
-) -> list[ImportedConversationOut]:
+def list_imports(user_id: str, db: Session = Depends(get_db)) -> list[ImportedConversationOut]:
     return [
         ImportedConversationOut.model_validate(imports_service.to_out_dict(c))
         for c in imports_service.list_conversations(db, user_id)
@@ -70,13 +79,9 @@ imports_router = APIRouter(prefix="/imports", tags=["imports"])
     "/{conversation_id}",
     response_model=ImportedConversationDetail,
 )
-def get_import(
-    conversation_id: str, db: Session = Depends(get_db)
-) -> ImportedConversationDetail:
+def get_import(conversation_id: str, db: Session = Depends(get_db)) -> ImportedConversationDetail:
     conv = imports_service.get_conversation(db, conversation_id, with_messages=True)
-    return ImportedConversationDetail.model_validate(
-        imports_service.to_detail_dict(conv)
-    )
+    return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))
 
 
 @imports_router.patch(
@@ -96,9 +101,7 @@ def update_import(
     "/{conversation_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def delete_import(
-    conversation_id: str, db: Session = Depends(get_db)
-) -> Response:
+def delete_import(conversation_id: str, db: Session = Depends(get_db)) -> Response:
     imports_service.delete_conversation(db, conversation_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -114,6 +117,98 @@ def save_analysis(
 ) -> ImportedConversationDetail:
     imports_service.save_analysis(db, conversation_id, payload)
     conv = imports_service.get_conversation(db, conversation_id, with_messages=True)
-    return ImportedConversationDetail.model_validate(
-        imports_service.to_detail_dict(conv)
+    return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))
+
+
+def _build_ai_caller(
+    *,
+    model: str,
+    api_key: str,
+    max_tokens: int = 1500,
+):
+    """Return a ``(messages) -> str | None`` callable that fires the
+    ``ai_complete`` hook against the active provider.
+
+    Lazy ``app.main`` import keeps this router importable from
+    test-client contexts that mount only this router without the
+    full lifespan.
+    """
+    from app.main import manager  # lazy: cycle-avoidance + test isolation
+
+    def _call(messages: list[dict[str, str]]) -> str | None:
+        result = manager._pm.hook.ai_complete(
+            messages=messages,
+            model=model,
+            api_key=api_key,
+            max_tokens=max_tokens,
+        )
+        return result if isinstance(result, str) else None
+
+    return _call
+
+
+@imports_router.post(
+    "/{conversation_id}/analyze",
+    response_model=ImportedConversationDetail,
+)
+def analyze_import(
+    conversation_id: str,
+    db: Session = Depends(get_db),
+) -> ImportedConversationDetail:
+    """Server-side conversation analysis.
+
+    Decrypts the user's stored API key, fires ``ai_complete``
+    against the active provider, parses the JSON defensively,
+    persists the result. The frontend in API mode calls this
+    instead of the browser-direct path because cleartext API
+    keys never leave the server.
+    """
+    conv = imports_service.get_conversation(db, conversation_id, with_messages=True)
+
+    settings = settings_service.get_or_create_settings(db, conv.user_id)
+    provider_key = settings.active_provider
+    try:
+        provider_enum = AIProvider(provider_key)
+    except ValueError as exc:
+        raise ValidationError(
+            f"User {conv.user_id!r} has no valid active AI provider configured."
+        ) from exc
+
+    api_key = settings_service.get_decrypted_api_key(db, conv.user_id, provider_enum)
+    if not api_key:
+        raise ValidationError(
+            f"User {conv.user_id!r} has no stored API key for provider {provider_key!r}."
+        )
+
+    override_attr = f"model_override_{provider_key}"
+    override = getattr(settings, override_attr, None)
+    # Default-models map duplicated from
+    # ``adaptive_learner_session.ai_orchestration.DEFAULT_MODELS``
+    # to avoid importing a plugin from the backend core. Keep in
+    # sync when bumping provider defaults.
+    default_models = {
+        "anthropic": "claude-haiku-4-5-20251001",
+        "openai": "gpt-4o-mini",
+        "gemini": "gemini-2.0-flash",
+    }
+    if isinstance(override, str) and override.strip():
+        model: str | None = override.strip()
+    else:
+        model = default_models.get(provider_key)
+    if not model:
+        raise ValidationError(f"Provider {provider_key!r} has no default model registered.")
+
+    messages = [Message(role=m.role, content=m.content) for m in conv.messages]
+    result = analyze_conversation_with_ai(
+        messages,
+        ai_complete_call=_build_ai_caller(model=model, api_key=api_key),
+        title=conv.title,
     )
+
+    imports_service.save_analysis(
+        db,
+        conversation_id,
+        ImportedConversationAnalysis(analysis_result=result),
+    )
+    conv = imports_service.get_conversation(db, conversation_id, with_messages=True)
+    return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))

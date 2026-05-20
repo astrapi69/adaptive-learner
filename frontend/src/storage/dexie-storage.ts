@@ -1169,6 +1169,19 @@ export const dexieStorage: IStorageService = {
                 messages: messages.map(rowToImportedMessage),
             };
         },
+        async analyze(conversationId: string): Promise<ImportedConversationDetail> {
+            // Dexie mode runs the analysis browser-side because the
+            // cleartext API key lives in the local Dexie row. The
+            // caller (Import.tsx) branches on storage.mode and uses
+            // ``analyzeConversation`` + ``saveAnalysis`` instead;
+            // calling this method in Dexie mode is a wiring bug.
+            throw new ApiError(
+                501,
+                "Server-side analyze is API-mode only. Use the browser-direct path in Dexie mode.",
+                `/imports/${conversationId}/analyze`,
+                "POST",
+            );
+        },
     },
 
     // ---- System info (v1.1.0 / Phase 14B) -----------------------------

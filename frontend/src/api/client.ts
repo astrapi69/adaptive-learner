@@ -603,6 +603,17 @@ export const api = {
                 `/imports/${encodeURIComponent(conversationId)}/analysis`,
                 {method: "POST", body: analysis},
             ),
+        /**
+         * Server-side analyze. The backend decrypts the user's
+         * stored API key, fires ``ai_complete`` against the active
+         * provider, persists the result. Used by API mode where
+         * the cleartext key never leaves the server.
+         */
+        analyze: (conversationId: string) =>
+            apiCall<import("../types/domain").ImportedConversationDetail>(
+                `/imports/${encodeURIComponent(conversationId)}/analyze`,
+                {method: "POST", body: {}},
+            ),
     },
 };
 

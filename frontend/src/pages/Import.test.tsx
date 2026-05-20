@@ -18,6 +18,8 @@ import {_resetDbForTests} from "../storage/db";
 import {dexieStorage} from "../storage/dexie-storage";
 import {_resetStorageCacheForTests} from "../storage";
 import * as analysisModule from "../chat_import/analysis";
+import * as storageModule from "../storage";
+import * as aiProvidersModule from "../storage/ai-providers";
 
 vi.mock("../storage/ai-providers", () => ({
     aiComplete: vi.fn().mockResolvedValue(
@@ -141,5 +143,96 @@ describe("Import page", () => {
         await waitFor(() => {
             expect(screen.getByTestId("imports-empty")).toBeTruthy();
         });
+    });
+
+    /**
+     * End-to-end regression for the post-v1.5.0 API-mode fix:
+     * in API mode the page MUST dispatch the analysis through
+     * the new server-side ``imports.analyze`` endpoint and MUST
+     * NOT hit the browser-direct ``aiComplete`` path (the
+     * cleartext key never leaves the backend).
+     */
+    it("API mode: routes analyze through backend, never calls browser-direct AI", async () => {
+        await makeUserWithKey();
+        const aiCompleteSpy = vi.spyOn(aiProvidersModule, "aiComplete");
+        const analyzeSpy = vi.fn(async (conversationId: string) => ({
+            id: conversationId,
+            user_id: "u1",
+            source: "manual" as const,
+            title: "test",
+            message_count: 2,
+            imported_at: new Date().toISOString(),
+            analyzed: true,
+            messages: [],
+            analysis_result: {
+                topic: "Server-side topic",
+                summary: "Computed on the backend.",
+            },
+        }));
+        const fakeApiStorage = {
+            ...dexieStorage,
+            mode: "api" as const,
+            imports: {
+                ...dexieStorage.imports,
+                analyze: analyzeSpy,
+            },
+        };
+        vi.spyOn(storageModule, "getStorage").mockReturnValue(
+            fakeApiStorage as unknown as ReturnType<typeof storageModule.getStorage>,
+        );
+
+        renderImport();
+        await waitFor(() => {
+            expect(screen.getByTestId("quick-paste-textarea")).toBeTruthy();
+        });
+        const textarea = screen.getByTestId("quick-paste-textarea");
+        fireEvent.change(textarea, {
+            target: {value: "User: hi\nAssistant: hello."},
+        });
+        fireEvent.click(screen.getByTestId("quick-analyze-button"));
+
+        await waitFor(
+            () => {
+                expect(analyzeSpy).toHaveBeenCalled();
+            },
+            {timeout: 3000},
+        );
+        // Cleartext key MUST stay server-side: browser-direct AI
+        // was never invoked.
+        expect(aiCompleteSpy).not.toHaveBeenCalled();
+    });
+
+    /**
+     * Companion regression: Dexie mode keeps the browser-direct
+     * path. The new backend endpoint MUST NOT be called.
+     */
+    it("Dexie mode: keeps browser-direct path, never calls backend analyze", async () => {
+        await makeUserWithKey();
+        const dexieAnalyzeSpy = vi.spyOn(dexieStorage.imports, "analyze");
+        const analysisSpy = vi
+            .spyOn(analysisModule, "analyzeConversation")
+            .mockResolvedValue({
+                topic: "Learning",
+                summary: "Computed in the browser.",
+            });
+
+        renderImport();
+        await waitFor(() => {
+            expect(screen.getByTestId("quick-paste-textarea")).toBeTruthy();
+        });
+        const textarea = screen.getByTestId("quick-paste-textarea");
+        fireEvent.change(textarea, {
+            target: {value: "User: hi\nAssistant: hello."},
+        });
+        fireEvent.click(screen.getByTestId("quick-analyze-button"));
+
+        await waitFor(
+            () => {
+                expect(analysisSpy).toHaveBeenCalled();
+            },
+            {timeout: 3000},
+        );
+        // Backend /analyze MUST NOT be called in Dexie mode.
+        expect(dexieAnalyzeSpy).not.toHaveBeenCalled();
     });
 });

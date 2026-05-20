@@ -148,6 +148,47 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
     ): Promise<boolean> {
         const {userId} = readLearnerState();
         if (!userId) return false;
+        const storage = getStorage();
+        // API mode dispatches the AI call server-side so the
+        // cleartext key never leaves the backend. Dexie mode runs
+        // browser-direct because the key lives in the local row.
+        if (storage.mode === "api") {
+            return runAnalysisApiMode(conversationId);
+        }
+        return runAnalysisDexieMode(conversationId, userId, messages, title);
+    }
+
+    async function runAnalysisApiMode(conversationId: string): Promise<boolean> {
+        try {
+            const detail = await getStorage().imports.analyze(conversationId);
+            const result = detail.analysis_result ?? {};
+            if ((result as {fallback_used?: boolean}).fallback_used) {
+                notify.warning(
+                    t(
+                        "import.analysis_fallback",
+                        "Analysis ran but the AI response could not be parsed cleanly.",
+                    ),
+                );
+            } else {
+                notify.success(t("import.analysis_ready", "Analysis ready."));
+            }
+            return true;
+        } catch (err) {
+            const msg =
+                err instanceof ApiError
+                    ? err.detail
+                    : t("import.analysis_error", "Could not analyze the conversation.");
+            notify.error(msg);
+            return false;
+        }
+    }
+
+    async function runAnalysisDexieMode(
+        conversationId: string,
+        userId: string,
+        messages: NormalizedConversation["messages"],
+        title: string,
+    ): Promise<boolean> {
         let providerInfo: {
             provider: AIProvider;
             apiKey: string;
@@ -156,7 +197,7 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
         try {
             const settings = await getStorage().settings.get(userId);
             const provider = settings.active_provider as AIProvider;
-            const apiKey = await readApiKeyFor(userId, provider);
+            const apiKey = await readDexieApiKey(userId, provider);
             if (!apiKey) {
                 notify.warning(
                     t(
@@ -549,19 +590,15 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
 }
 
 /**
- * Read the API key for the given provider from the active
- * storage backend. Dexie mode reads it from the local user
- * settings (which expose ``has_*_key`` but not the cleartext);
- * we work around by reaching into the Dexie row directly.
- * ApiStorage cannot read the cleartext (server-side encryption),
- * so on that path the analysis only works if the user has
- * already entered the key — the UI surfaces a warning in that
- * case.
- *
- * This is a pragmatic shim until the storage layer grows a
- * proper ``settings.getApiKeyCleartext`` method.
+ * Read the cleartext API key for the given provider from Dexie's
+ * local userSettings row. Dexie-mode-only: in API mode the
+ * cleartext never leaves the backend (encrypted at rest under
+ * ``UserSettings.api_key_*``), so calling this helper there
+ * always returns ``null`` — that's the bug the v1.5.x backend
+ * ``/analyze`` route exists to fix. Callers must branch on
+ * ``storage.mode`` BEFORE invoking this helper.
  */
-async function readApiKeyFor(
+async function readDexieApiKey(
     userId: string,
     provider: AIProvider,
 ): Promise<string | null> {

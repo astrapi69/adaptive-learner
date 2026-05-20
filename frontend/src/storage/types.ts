@@ -214,6 +214,15 @@ export interface IImportsNamespace {
         conversationId: string,
         analysis: ImportedConversationAnalysis,
     ): Promise<ImportedConversationDetail>;
+    /**
+     * Server-side analyze. API mode dispatches the analysis call
+     * server-side because the user's cleartext API key never
+     * leaves the backend. Dexie mode keeps the browser-direct
+     * path (the cleartext key lives in the local Dexie row), so
+     * this method throws there — callers must branch on
+     * ``storage.mode``.
+     */
+    analyze(conversationId: string): Promise<ImportedConversationDetail>;
 }
 
 /**

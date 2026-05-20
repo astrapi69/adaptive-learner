@@ -116,6 +116,7 @@ export const apiStorage: IStorageService = {
         remove: (conversationId) => api.imports.remove(conversationId),
         saveAnalysis: (conversationId, analysis) =>
             api.imports.saveAnalysis(conversationId, analysis),
+        analyze: (conversationId) => api.imports.analyze(conversationId),
     },
 
     system: {
