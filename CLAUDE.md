@@ -12,7 +12,24 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.4.0):** v1.3.0 plus Phase 17 —
+- **Current state (v1.5.0):** v1.4.0 plus Phase 18 —
+  **Async AI Calls + Performance.** New async SQLAlchemy
+  foundation (``async_engine`` + ``AsyncSessionLocal`` +
+  ``get_async_db``) lives alongside the sync setup; aiosqlite
+  dep. New ``ai_complete_async`` hookspec is additive — no
+  provider plugin must implement it. ``call_ai_complete_async``
+  prefers the async hook when present, falls back to the sync
+  hook wrapped in ``asyncio.to_thread``. At the step 6 → 7
+  transition the session message route fires step-evaluation
+  and topic-transition concurrently via ``asyncio.gather``
+  (config flag ``async_evaluation: true``), saving ~T₂ of
+  latency at the cycle boundary. New ``timings`` block on the
+  message response carries learning_ms / evaluation_ms /
+  topic_transition_ms / total_ms / parallel_saved_ms. SSE
+  streaming (18D) deferred. Backend 551 + session-plugin 197 +
+  frontend 699 at release time.
+
+- **State (v1.4.0):** v1.3.0 plus Phase 17 —
   **Auto-Loop: Continue Learning After Step 7.** When the step
   evaluator advances a session to step 7 with advance=true, a
   third AI call (the topic-transition evaluator in
