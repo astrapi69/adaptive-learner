@@ -3,6 +3,11 @@ import os
 from pathlib import Path
 
 from sqlalchemy import create_engine, event
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 logger = logging.getLogger(__name__)
@@ -79,6 +84,46 @@ engine = create_engine(DATABASE_URL, **_engine_kwargs(DATABASE_URL))
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
+def _async_database_url(url: str) -> str:
+    """Translate a sync SQLAlchemy URL to its async-driver equivalent.
+
+    Adaptive Learner ships SQLite as the only supported backend, so
+    we only have to handle the ``sqlite://`` -> ``sqlite+aiosqlite://``
+    case. Any other URL passes through untouched (the deployer is on
+    their own to use a compatible async driver).
+    """
+    if url.startswith("sqlite:///") and "+aiosqlite" not in url:
+        return url.replace("sqlite:///", "sqlite+aiosqlite:///", 1)
+    if url.startswith("sqlite://") and "+aiosqlite" not in url:
+        return url.replace("sqlite://", "sqlite+aiosqlite://", 1)
+    return url
+
+
+def _async_engine_kwargs(url: str) -> dict:
+    """StaticPool for in-memory async too, so every async session
+    sees the same ephemeral DB. ``check_same_thread=False`` is not
+    a concern for aiosqlite (it runs queries in a single dispatcher
+    thread) but we keep it for parity with the sync engine."""
+    kwargs: dict = {}
+    if ":memory:" in url:
+        from sqlalchemy.pool import StaticPool
+
+        kwargs["poolclass"] = StaticPool
+        kwargs["connect_args"] = {"check_same_thread": False}
+    return kwargs
+
+
+# v1.5.0 — async engine + session maker (Phase 18A). Lives ALONGSIDE
+# the sync infrastructure so existing routes / tests stay unchanged.
+# New async routes use ``get_async_db`` as their DI dependency.
+async_engine = create_async_engine(
+    _async_database_url(DATABASE_URL), **_async_engine_kwargs(DATABASE_URL)
+)
+AsyncSessionLocal = async_sessionmaker(
+    bind=async_engine, expire_on_commit=False, autoflush=False, class_=AsyncSession
+)
+
+
 @event.listens_for(engine, "connect")
 def _set_sqlite_pragma(dbapi_connection, connection_record):  # noqa: ARG001
     """Enable WAL + NORMAL sync + foreign keys on every new connection.
@@ -109,6 +154,18 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+async def get_async_db():
+    """FastAPI dependency: an :class:`AsyncSession` scoped to one
+    request. Mirrors :func:`get_db` for the v1.5.0 async path. Routes
+    that need async DB access (currently: nothing in core; reserved
+    for plugins that opt in) use this instead of ``get_db``."""
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+        finally:
+            await session.close()
 
 
 def init_db():
