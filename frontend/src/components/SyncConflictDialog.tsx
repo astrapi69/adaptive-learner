@@ -27,6 +27,7 @@ import {useEffect, useState} from "react";
 
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {extractJsonObject} from "../lib/extract-json";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import {getDb} from "../storage/db";
@@ -58,11 +59,18 @@ const SMART_MERGE_SYSTEM_PROMPT = [
     "job is to propose ONE merged row that preserves the intent of",
     "both edits.",
     "",
-    "Output ONLY a single valid JSON object — no surrounding prose,",
-    "no markdown code fences, no trailing commentary. The JSON must",
-    "contain every column the input rows have, with no extra keys.",
+    "OUTPUT FORMAT (MUST follow exactly):",
+    "1. Your response MUST start with the character `{` and end with `}`.",
+    "2. NO text before the opening `{`. No 'Here is', 'Sure', 'I'll merge'.",
+    "3. NO text after the closing `}`. No explanations of your choices.",
+    "4. NO markdown code fences (no ``` or ```json).",
+    "5. NO comments inside the JSON.",
+    "6. The JSON must contain every column the input rows have, with no",
+    "   extra keys.",
     "",
-    "Rules:",
+    "Failure to follow these rules breaks the calling system.",
+    "",
+    "MERGE RULES:",
     "- For text fields: pick whichever side carries the more recent",
     "  or more specific content. If both sides changed substantively,",
     "  concatenate with a space.",
@@ -73,6 +81,8 @@ const SMART_MERGE_SYSTEM_PROMPT = [
     "- Never invent fields. Every output key must appear in at least",
     "  one input row.",
     "- Preserve the 'id' from either input (they are identical).",
+    "",
+    "REMINDER: start your response with `{`. End with `}`. Nothing else.",
 ].join("\n");
 
 export default function SyncConflictDialog({
@@ -560,8 +570,6 @@ function Choice({
 
 // ---- AI merge --------------------------------------------------------
 
-const FENCE_RE = /^\s*```(?:json|JSON)?\s*\n?|\n?```\s*$/g;
-
 export async function smartMerge(
     conflict: ConflictBundle,
 ): Promise<Record<string, unknown>> {
@@ -617,13 +625,8 @@ export function parseMergeResponse(
             "POST",
         );
     }
-    const cleaned = raw.trim().replace(FENCE_RE, "");
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    const candidate = match ? match[0] : cleaned;
-    let data: unknown;
-    try {
-        data = JSON.parse(candidate);
-    } catch {
+    const merged = extractJsonObject(raw);
+    if (merged === null) {
         throw new ApiError(
             502,
             "Smart merge response was not valid JSON",
@@ -631,15 +634,6 @@ export function parseMergeResponse(
             "POST",
         );
     }
-    if (!data || typeof data !== "object" || Array.isArray(data)) {
-        throw new ApiError(
-            502,
-            "Smart merge response had wrong shape",
-            "/sync/smart-merge",
-            "POST",
-        );
-    }
-    const merged = data as Record<string, unknown>;
     // Force-preserve ``id`` so the resolver writes to the right row.
     merged.id = conflict.id;
     return merged;

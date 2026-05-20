@@ -191,4 +191,16 @@ describe("parseMergeResponse", () => {
         );
         expect(result.name).toBe("Merged");
     });
+
+    it("handles the Haiku prose+fence+trailing-braces failure shape (regression)", () => {
+        const raw =
+            "Sure, here's the merged record:\n\n" +
+            "```json\n" +
+            JSON.stringify({id: "u-1", name: "Merged", language: "en"}) +
+            "\n```\n\n" +
+            "I prioritized the {recent} edit.";
+        const result = parseMergeResponse(raw, conflict);
+        expect(result.name).toBe("Merged");
+        expect(result.id).toBe("u-1");
+    });
 });

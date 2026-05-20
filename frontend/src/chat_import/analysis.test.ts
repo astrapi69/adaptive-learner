@@ -62,6 +62,31 @@ describe("parseAnalysisResponse", () => {
         expect(result?.topic).toBe("Bayes theorem");
     });
 
+    it("handles the Haiku prose+fence+trailing-braces failure shape (regression)", () => {
+        // The exact shape that broke v0.9.0 with
+        // claude-3-5-haiku-latest. The greedy regex matched
+        // from the `{weaknesses}` prose-brace through the last
+        // closing brace and produced unparseable input.
+        const raw =
+            "Sure, here's the structured analysis:\n\n" +
+            "```json\n" +
+            validJson +
+            "\n```\n\n" +
+            "Let me know if you'd like me to expand on any of the {weaknesses} I identified!";
+        const result = parseAnalysisResponse(raw);
+        expect(result?.topic).toBe("Bayes theorem");
+        expect(result?.user_level).toBe("beginner");
+    });
+
+    it("handles prose-braces BEFORE the JSON (regression)", () => {
+        const raw =
+            "The user wrote `{placeholder}` as a literal in their question. " +
+            "Analysis: " +
+            validJson;
+        const result = parseAnalysisResponse(raw);
+        expect(result?.topic).toBe("Bayes theorem");
+    });
+
     it("returns null on invalid JSON", () => {
         expect(parseAnalysisResponse("not json at all")).toBeNull();
     });

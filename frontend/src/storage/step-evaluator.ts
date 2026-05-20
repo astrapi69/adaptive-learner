@@ -14,6 +14,7 @@
 
 import {aiComplete, resolveModel, type ChatMessage} from "./ai-providers";
 import type {AIProvider, LearningMethod} from "../lib/constants";
+import {extractJsonObject} from "../lib/extract-json";
 
 const MIN_STEP = 1;
 const MAX_STEP = 7;
@@ -92,8 +93,6 @@ export interface StepEvaluation {
     suggested_step: number;
     fallback_used: boolean;
 }
-
-const FENCE_RE = /^\s*```(?:json|JSON)?\s*\n?|\n?```\s*$/g;
 
 function clampStep(value: unknown, currentStep: number): number {
     const n = typeof value === "number" ? Math.trunc(value) : parseInt(String(value), 10);
@@ -182,19 +181,10 @@ export function parseEvaluationResponse(
     if (typeof raw !== "string" || raw.trim() === "") {
         return deterministicFallback(currentStep);
     }
-    const cleaned = raw.trim().replace(FENCE_RE, "");
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    const candidate = match ? match[0] : cleaned;
-    let data: unknown;
-    try {
-        data = JSON.parse(candidate);
-    } catch {
+    const obj = extractJsonObject(raw);
+    if (obj === null) {
         return deterministicFallback(currentStep);
     }
-    if (!data || typeof data !== "object" || Array.isArray(data)) {
-        return deterministicFallback(currentStep);
-    }
-    const obj = data as Record<string, unknown>;
     if (!("advance" in obj) || !("suggested_step" in obj)) {
         return deterministicFallback(currentStep);
     }

@@ -33,7 +33,12 @@ from typing import Any
 # lands. For now: hard-coded so the orchestration is
 # self-contained.
 DEFAULT_MODELS: dict[str, str] = {
-    "anthropic": "claude-3-5-haiku-latest",
+    # Bumped 2026-05-20 from ``claude-3-5-haiku-latest`` to the
+    # Haiku 4.5 dated alias after v0.9.0 conversation-analysis
+    # surfaced 3-5-haiku's unreliability at structured JSON
+    # output. Haiku 4.5 follows system-prompt instructions much
+    # more tightly while staying in the same cost tier.
+    "anthropic": "claude-haiku-4-5-20251001",
     "openai": "gpt-4o-mini",
     "gemini": "gemini-2.0-flash",
 }

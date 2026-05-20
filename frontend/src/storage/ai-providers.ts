@@ -36,8 +36,22 @@ export interface ChatMessage {
  * the cheap-and-fast tier — chat sessions don't need the high-
  * end model. A per-user override on UserSettings replaces these.
  */
+/**
+ * Default per-provider model. Picked for cost-effective use in
+ * the cheap-and-fast tier; a per-user override on UserSettings
+ * replaces these for power users.
+ *
+ * Anthropic default bumped 2026-05-20 from
+ * ``claude-3-5-haiku-latest`` to ``claude-haiku-4-5-20251001``
+ * after the v0.9.0 conversation-analysis launch surfaced
+ * Haiku-3.5 unreliability at structured JSON output (preamble
+ * text, midstream commentary, prose-wrapped JSON). Haiku 4.5
+ * follows the system-prompt format instructions much more
+ * tightly. The defensive ``extractJsonObject`` parser handles
+ * the remaining edge cases.
+ */
 export const DEFAULT_MODELS: Record<AIProvider, string> = {
-    anthropic: "claude-3-5-haiku-latest",
+    anthropic: "claude-haiku-4-5-20251001",
     openai: "gpt-4o-mini",
     gemini: "gemini-2.0-flash",
 };

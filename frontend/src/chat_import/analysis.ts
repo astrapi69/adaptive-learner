@@ -22,6 +22,7 @@
 
 import {aiComplete, resolveModel} from "../storage/ai-providers";
 import type {AIProvider, LearningMethod} from "../lib/constants";
+import {extractJsonObject} from "../lib/extract-json";
 import type {
     AnalysisSuggestedLesson,
     ConversationAnalysisResult,
@@ -52,57 +53,76 @@ const VALID_LEVELS: ConversationAnalysisResult["user_level"][] = [
  */
 export const MAX_CHUNK_CHARS = 16_000;
 
-const FENCE_RE = /^\s*```(?:json|JSON)?\s*\n?|\n?```\s*$/g;
-
-const SYSTEM_PROMPT = `\
-You are an analysis assistant for an adaptive learning system. The
-user pastes or imports a transcript of a learning-related
-conversation they had with an AI. Your job is to extract
-structured learning insights from it.
-
-Output ONLY a single valid JSON object — no surrounding prose,
-no markdown code fences, no trailing commentary. The schema is:
-
-  {
-    "topic":               <string, the dominant subject>,
-    "subtopics":           [<string>, ...],
-    "user_level":          "beginner" | "intermediate" | "advanced",
-    "strengths":           [<string>, ...],
-    "weaknesses":          [<string>, ...],
-    "error_patterns":      [<string>, ...],
-    "recommended_method":  "deductive" | "inductive" | "error_based"
-                           | "dialogic" | "contextual" | "ai_adaptive",
-    "recommended_focus":   <string, one-sentence action>,
-    "suggested_curriculum": [
-      {"title": <string>, "description": <string>, "priority": <int 1-5>},
-      ...
-    ],
-    "summary":             <string, 1-2 sentences for the UI header>
-  }
-
-Field semantics:
-- 'strengths': what the user already grasps. Concrete, not
-  generic praise.
-- 'weaknesses': recurring gaps, confusions, or unfinished
-  threads in the conversation.
-- 'error_patterns': specific repeated mistakes the user made
-  (not the same as weaknesses — these are observable errors).
-- 'recommended_method': the six-method learning model:
-    deductive   — rule then examples
-    inductive   — examples then rule
-    error_based — fix mistakes as the path to insight
-    dialogic    — back-and-forth questioning
-    contextual  — anchor in the user's real-world situation
-    ai_adaptive — user steers the AI, self-directed
-- 'suggested_curriculum': 2-5 lesson stubs the user could
-  tackle next. 'priority' 1 = highest.
-
-Be specific. "User struggled with concepts" is useless;
-"User confused inductive reasoning with abductive reasoning,
-treating any inference-from-examples as induction" is useful.
-
-If a section is genuinely empty, return an empty array — don't
-invent material.`;
+const SYSTEM_PROMPT = [
+    "You are an analysis assistant for an adaptive learning system.",
+    "The user pastes or imports a transcript of a learning-related",
+    "conversation they had with an AI. Your job is to extract",
+    "structured learning insights from it.",
+    "",
+    "OUTPUT FORMAT (MUST follow exactly):",
+    "",
+    "1. Your response MUST start with the character `{` and end with `}`.",
+    "2. NO text before the opening `{`. No 'Here is...', no 'Sure...',",
+    "   no 'I'll analyze...', no preamble of any kind.",
+    "3. NO text after the closing `}`. No explanations, no offers to",
+    "   provide more detail, no follow-up commentary.",
+    "4. NO markdown code fences (no ``` or ```json).",
+    "5. NO comments inside the JSON (// or /* */ are forbidden).",
+    "6. The response must be parseable by JSON.parse() as a single object.",
+    "",
+    "Failure to follow these rules breaks the calling system. If you",
+    "include ANY characters before `{` or after `}` the parser fails",
+    "and the user sees an error instead of analysis.",
+    "",
+    "JSON SCHEMA:",
+    "",
+    "  {",
+    '    "topic":               <string, the dominant subject>,',
+    '    "subtopics":           [<string>, ...],',
+    '    "user_level":          "beginner" | "intermediate" | "advanced",',
+    '    "strengths":           [<string>, ...],',
+    '    "weaknesses":          [<string>, ...],',
+    '    "error_patterns":      [<string>, ...],',
+    '    "recommended_method":  "deductive" | "inductive" | "error_based"',
+    '                           | "dialogic" | "contextual" | "ai_adaptive",',
+    '    "recommended_focus":   <string, one-sentence action>,',
+    '    "suggested_curriculum": [',
+    '      {"title": <string>, "description": <string>, "priority": <int 1-5>},',
+    "      ...",
+    "    ],",
+    '    "summary":             <string, 1-2 sentences for the UI header>',
+    "  }",
+    "",
+    "If you cannot determine a value for an optional field, OMIT the",
+    "field entirely. Do NOT insert null, empty strings, or placeholder",
+    "text.",
+    "",
+    "FIELD SEMANTICS:",
+    "- 'strengths': what the user already grasps. Concrete, not",
+    "  generic praise.",
+    "- 'weaknesses': recurring gaps, confusions, or unfinished",
+    "  threads in the conversation.",
+    "- 'error_patterns': specific repeated mistakes the user made",
+    "  (not the same as weaknesses — these are observable errors).",
+    "- 'recommended_method': the six-method learning model:",
+    "    deductive   — rule then examples",
+    "    inductive   — examples then rule",
+    "    error_based — fix mistakes as the path to insight",
+    "    dialogic    — back-and-forth questioning",
+    "    contextual  — anchor in the user's real-world situation",
+    "    ai_adaptive — user steers the AI, self-directed",
+    "- 'suggested_curriculum': 2-5 lesson stubs the user could",
+    "  tackle next. 'priority' 1 = highest.",
+    "",
+    "Be specific. 'User struggled with concepts' is useless;",
+    "'User confused inductive reasoning with abductive reasoning,",
+    "treating any inference-from-examples as induction' is useful.",
+    "",
+    "If a section is genuinely empty, return an empty array — don't",
+    "invent material.",
+    "",
+    "REMINDER: start your response with `{`. End with `}`. Nothing else.",
+].join("\n");
 
 export interface AnalysisOptions {
     provider: AIProvider;
@@ -213,24 +233,22 @@ function asLessonArray(value: unknown): AnalysisSuggestedLesson[] | undefined {
 }
 
 /**
- * Strip code fences + extract the first {...} block, then parse.
- * Returns 'null' on any structural problem.
+ * Strip code fences + extract a balanced ``{...}`` block, then
+ * project it onto the ``ConversationAnalysisResult`` schema.
+ * Returns ``null`` on any structural problem.
+ *
+ * Defensive against the common Haiku / GPT-4o-mini misbehaviours:
+ *   - Preamble: ``Sure! Here is the analysis:\n{...}\nLet me know!``
+ *   - Markdown fences: ``\`\`\`json\n{...}\n\`\`\```
+ *   - Curly braces in surrounding prose: ``... {placeholder} ... {actual_json}``
+ *   - Trailing commentary with its own braces
  */
 export function parseAnalysisResponse(
     raw: string | null,
 ): ConversationAnalysisResult | null {
     if (typeof raw !== "string" || raw.trim() === "") return null;
-    const cleaned = raw.trim().replace(FENCE_RE, "");
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    const candidate = match ? match[0] : cleaned;
-    let data: unknown;
-    try {
-        data = JSON.parse(candidate);
-    } catch {
-        return null;
-    }
-    if (!data || typeof data !== "object" || Array.isArray(data)) return null;
-    const obj = data as Record<string, unknown>;
+    const obj = extractJsonObject(raw);
+    if (obj === null) return null;
     const result: ConversationAnalysisResult = {};
     if (typeof obj.topic === "string" && obj.topic.trim()) {
         result.topic = obj.topic.trim();
