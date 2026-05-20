@@ -37,7 +37,9 @@ from __future__ import annotations
 from datetime import datetime
 from enum import Enum
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+import json
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 
 class LearningMethod(str, Enum):
@@ -389,6 +391,35 @@ class LearningSessionOut(BaseModel):
     ended_at: datetime | None = None
     cycle_step: int
     status: SessionStatus
+    # v1.4.0 — auto-loop. ``cycle_count`` starts at 1 and
+    # increments when the topic-transition evaluator advances to
+    # a new subtopic. ``cycle_topics`` is the JSON-decoded list
+    # of per-cycle summaries; the Pydantic layer keeps it as a
+    # plain list of dicts so the frontend does not have to parse
+    # JSON-in-JSON.
+    cycle_count: int = 1
+    cycle_topics: list[dict[str, str]] = Field(default_factory=list)
+
+    @field_validator("cycle_topics", mode="before")
+    @classmethod
+    def _decode_cycle_topics(cls, value: object) -> object:
+        """Accept either a list (already-decoded) or a JSON string
+        (raw column from SQLAlchemy). Empty / malformed strings
+        collapse to ``[]`` so partial DB state never raises."""
+        if value is None:
+            return []
+        if isinstance(value, list):
+            return value
+        if isinstance(value, str):
+            stripped = value.strip()
+            if not stripped:
+                return []
+            try:
+                decoded = json.loads(stripped)
+            except json.JSONDecodeError:
+                return []
+            return decoded if isinstance(decoded, list) else []
+        return []
 
 
 # --- SessionMessage ---------------------------------------------------------

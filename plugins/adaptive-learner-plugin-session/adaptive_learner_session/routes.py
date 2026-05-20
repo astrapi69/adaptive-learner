@@ -45,6 +45,7 @@ GET /switch-recommendation/{session_id} (v0.2.0):
 
 from __future__ import annotations
 
+import json
 from datetime import UTC, datetime
 from typing import Any
 
@@ -77,6 +78,11 @@ from app.schemas import (
 
 from . import ai_orchestration
 from .prompts import MAX_STEP, METHODS, MIN_STEP, build_prompt
+from .topic_transition import (
+    TRANSITION_DEFAULT_MAX_TOKENS,
+    TopicTransition,
+    evaluate_topic_transition,
+)
 from .step_evaluator import (
     EVALUATION_DEFAULT_MAX_TOKENS,
     StepEvaluation,
@@ -127,6 +133,39 @@ def _read_step_evaluation_config() -> tuple[bool, float, int]:
     if max_tokens <= 0:
         max_tokens = EVALUATION_DEFAULT_MAX_TOKENS
     return enabled, threshold, max_tokens
+
+
+def _read_auto_loop_config() -> tuple[bool, int, int]:
+    """Return ``(enabled, max_cycles, transition_max_tokens)`` for the
+    v1.4.0 auto-loop feature from ``config/plugins/session.yaml``.
+
+    Defaults match the spec: enabled, max_cycles=5,
+    transition_max_tokens=256. A missing block yields the defaults.
+    """
+    from app.config_overlay import read_plugin_config_merged
+
+    try:
+        cfg = read_plugin_config_merged("session")
+    except Exception:  # noqa: BLE001 — never block /message
+        cfg = {}
+    block = cfg.get("auto_loop") if isinstance(cfg, dict) else None
+    if not isinstance(block, dict):
+        block = {}
+    enabled = bool(block.get("enabled", True))
+    try:
+        max_cycles = int(block.get("max_cycles", 5))
+    except (TypeError, ValueError):
+        max_cycles = 5
+    if max_cycles < 1:
+        max_cycles = 1
+    try:
+        tt_max = int(block.get("topic_transition_max_tokens", 256))
+    except (TypeError, ValueError):
+        tt_max = 256
+    if tt_max <= 0:
+        tt_max = 256
+    return enabled, max_cycles, tt_max
+
 
 router = APIRouter(prefix="/plugins/session", tags=["session"])
 
@@ -182,6 +221,30 @@ class _StepEvaluationOut(BaseModel):
     from_step: int
 
 
+class _TopicTransitionOut(BaseModel):
+    """v1.4.0 — auto-loop topic-transition result.
+
+    ``cycle_complete`` / ``continue_recommended`` are the AI's
+    raw verdict; ``looped`` is the route's DERIVED decision:
+    true iff a new cycle was actually started (``cycle_step``
+    reset to 1, ``cycle_count`` incremented). The frontend reads
+    ``looped`` to decide whether to render the cycle-transition
+    card.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    cycle_complete: bool
+    summary: str
+    next_topic: str | None
+    next_topic_rationale: str
+    difficulty_adjustment: str
+    continue_recommended: bool
+    fallback_used: bool
+    looped: bool
+    new_cycle_count: int
+
+
 class _SessionMessageExchangeOut(BaseModel):
     """Composite return for POST /{id}/message.
 
@@ -210,6 +273,7 @@ class _SessionMessageExchangeOut(BaseModel):
     ai_error: str | None = None
     session: LearningSessionOut
     step_evaluation: _StepEvaluationOut | None = None
+    topic_transition: _TopicTransitionOut | None = None
 
 
 class _SwitchRecommendationOut(BaseModel):
@@ -452,6 +516,7 @@ def append_message(
         assistant: SessionMessage | None = None,
         ai_error: str | None = None,
         step_evaluation: _StepEvaluationOut | None = None,
+        topic_transition: _TopicTransitionOut | None = None,
     ) -> _SessionMessageExchangeOut:
         return _SessionMessageExchangeOut(
             user_message=SessionMessageOut.model_validate(user_msg),
@@ -461,6 +526,7 @@ def append_message(
             ai_error=ai_error,
             session=LearningSessionOut.model_validate(sess),
             step_evaluation=step_evaluation,
+            topic_transition=topic_transition,
         )
 
     if payload.role != MessageRole.USER:
@@ -621,11 +687,85 @@ def append_message(
         if sess.cycle_step < MAX_STEP:
             sess.cycle_step += 1
 
+    # v1.4.0 — auto-loop after step 7. When the step evaluator just
+    # ADVANCED the session INTO step 7 with advance=true, ask the
+    # AI whether the topic was integrated + what to learn next. If
+    # cycle_complete AND continue_recommended AND cycle_count <
+    # max_cycles, reset to step 1 and increment cycle_count.
+    topic_transition_out: _TopicTransitionOut | None = None
+    auto_loop_enabled, max_cycles, tt_max_tokens = _read_auto_loop_config()
+    just_hit_step_7 = (
+        step_eval_out is not None
+        and step_eval_out.applied
+        and step_eval_out.suggested_step == MAX_STEP
+        and step_eval_out.advance
+    )
+    if auto_loop_enabled and just_hit_step_7:
+        owner = db.get(User, project.user_id)
+        loop_lang = owner.language if owner else "en"
+        full_history = history + [
+            {"role": "assistant", "content": assistant_text}
+        ]
+        transition: TopicTransition = evaluate_topic_transition(
+            pm=manager._pm,
+            goal=project.goal,
+            topic=project.topic,
+            method=sess.method,
+            history=full_history,
+            model=model,
+            api_key=api_key,
+            output_language=loop_lang,
+            max_tokens=tt_max_tokens,
+        )
+        looped = (
+            not transition.fallback_used
+            and transition.cycle_complete
+            and transition.continue_recommended
+            and transition.next_topic is not None
+            and sess.cycle_count < max_cycles
+        )
+        if looped:
+            # Persist the completed cycle's summary BEFORE
+            # resetting so the export tells the full multi-cycle
+            # story.
+            try:
+                topics_list = json.loads(sess.cycle_topics or "[]")
+                if not isinstance(topics_list, list):
+                    topics_list = []
+            except json.JSONDecodeError:
+                topics_list = []
+            topics_list.append(
+                {
+                    "cycle": sess.cycle_count,
+                    "topic": project.topic,
+                    "summary": transition.summary,
+                    "next_topic": transition.next_topic or "",
+                }
+            )
+            sess.cycle_topics = json.dumps(topics_list, ensure_ascii=False)
+            sess.cycle_count += 1
+            sess.cycle_step = MIN_STEP
+        topic_transition_out = _TopicTransitionOut(
+            cycle_complete=transition.cycle_complete,
+            summary=transition.summary,
+            next_topic=transition.next_topic,
+            next_topic_rationale=transition.next_topic_rationale,
+            difficulty_adjustment=transition.difficulty_adjustment,
+            continue_recommended=transition.continue_recommended,
+            fallback_used=transition.fallback_used,
+            looped=looped,
+            new_cycle_count=sess.cycle_count,
+        )
+
     db.commit()
     db.refresh(assistant_msg)
     db.refresh(sess)
 
-    return _build_response(assistant=assistant_msg, step_evaluation=step_eval_out)
+    return _build_response(
+        assistant=assistant_msg,
+        step_evaluation=step_eval_out,
+        topic_transition=topic_transition_out,
+    )
 
 
 # --- POST /{id}/rate -------------------------------------------------------

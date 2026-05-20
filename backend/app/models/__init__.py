@@ -421,6 +421,13 @@ class LearningSession(Base):
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     cycle_step: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")
+    # v1.4.0 — auto-loop after step 7. ``cycle_count`` starts at 1
+    # and increments when the topic-transition evaluator advances
+    # to a new subtopic. ``cycle_topics`` stores a JSON array of
+    # per-cycle summaries (topic + summary) so the session detail
+    # export can show the full multi-cycle journey.
+    cycle_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    cycle_topics: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
 
     project: Mapped[LearningProject] = relationship(back_populates="sessions")
     messages: Mapped[list[SessionMessage]] = relationship(
