@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-ai-openai"
-version = "0.9.0"
+version = "1.0.0"
 description = "Adaptive Learner: OpenAI GPT provider for the ai_complete hook."
 authors = ["Asterios Raptis"]
 license = "MIT"

@@ -12,28 +12,23 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v0.9.0):** v0.8.x plus Phase 12 —
-  **Chat-history import + AI analysis.** Users paste or
-  upload a conversation from ChatGPT, Claude, Gemini or any
-  generic JSON / markdown source. A new
-  ``frontend/src/chat_import/`` module ships four parser
-  paths plus auto-detection; the analysis engine
-  (``chat_import/analysis.ts``) chunks long transcripts with
-  2-message overlap and emits a structured
-  ``ConversationAnalysisResult`` (topic, strengths,
-  weaknesses, error patterns, recommended method, suggested
-  curriculum). Two new SQLAlchemy models
-  (``ImportedConversation``, ``ImportedMessage``), Alembic
-  migration ``0004_imported_conversations``, mirrored Dexie
-  schema v2, and a new ``IImportsNamespace`` on the storage
-  layer. New pages ``/import`` (Quick Analysis paste box +
-  file upload + list) and ``/import/:id`` (transcript +
-  structured analysis cards + "Create curriculum" action).
-  Backend 462 tests + frontend 503 vitest at release time.
-  All eight i18n catalogs carry the new ``import.*`` block.
-  v0.8.x baseline (MkDocs docs site, Dexie storage,
-  browser-direct AI, GH Pages deploy) carried forward
-  unchanged.
+- **Current state (v1.0.0):** v0.9.x plus Phase 13 —
+  **Local-network sync with AI-merge.** Cross-device sync
+  between a Dexie-backed PWA and a FastAPI-backed desktop,
+  paired via a 5-minute one-time token rendered as a QR
+  code. New backend surface under ``/api/sync/*`` (status,
+  push, pull, resolve, pair/generate, pair/verify) with the
+  full append-only / mutable / conflict matrix in
+  ``backend/app/services/sync_service.py``. New
+  ``frontend/src/storage/sync-engine.ts`` orchestrates the
+  push → resolve → pull → stamp-last-sync flow; mutable
+  conflicts surface to ``SyncConflictDialog`` with a Smart
+  Merge button when an AI provider is configured. Settings
+  panel + a nav indicator. Sync is ALWAYS user-initiated.
+  Backend 482 tests + frontend 549 vitest at release time.
+  v0.9.x baseline (chat-history import, MkDocs docs, Dexie
+  storage, browser-direct AI, GH Pages deploy) carried
+  forward unchanged.
 
 ## Development guidelines
 
