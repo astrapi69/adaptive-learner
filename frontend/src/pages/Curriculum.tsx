@@ -2,6 +2,7 @@ import {useCallback, useEffect, useState, type FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 
 import AddTopicDialog from "../components/AddTopicDialog";
+import CurriculumDescriptionEditor from "../components/CurriculumDescriptionEditor";
 import LessonList from "../components/LessonList";
 import TopicTree from "../components/TopicTree";
 import {ApiError} from "../api/client";
@@ -215,6 +216,26 @@ export default function Curriculum() {
         }
     };
 
+    const handleUpdateDescription = async (next: string | null) => {
+        if (!selectedId) return;
+        try {
+            const updated = await getStorage().curricula.update(selectedId, {
+                description: next,
+            });
+            setCurricula((prev) =>
+                prev.map((c) => (c.id === updated.id ? updated : c)),
+            );
+            notify.success(
+                t("curriculum.description_saved", "Description saved."),
+            );
+        } catch (err) {
+            const detail =
+                err instanceof ApiError ? err.detail : t("common.error");
+            notify.error(detail);
+            throw err;
+        }
+    };
+
     const handleDelete = async (topicId: string) => {
         if (!selectedId || submitting) return;
         const ok = window.confirm(
@@ -325,6 +346,15 @@ export default function Curriculum() {
                             {t("curriculum.add_root_topic", "Add root topic")}
                         </button>
                     </div>
+                    <CurriculumDescriptionEditor
+                        key={selectedId}
+                        description={
+                            curricula.find((c) => c.id === selectedId)
+                                ?.description ?? null
+                        }
+                        onSave={handleUpdateDescription}
+                    />
+
                     {topics.length === 0 ? (
                         <p className="muted" data-testid="curriculum-empty">
                             {t(

@@ -1,6 +1,14 @@
 import {useState, type FormEvent} from "react";
+import type {Editor} from "@tiptap/react";
+import type {JSONContent} from "@tiptap/core";
 
 import {useI18n} from "../hooks/useI18n";
+import RichTextEditor from "./editor/RichTextEditor";
+import EditorToolbar from "./editor/EditorToolbar";
+import {
+    parseEditorContent,
+    serializeEditorContent,
+} from "./editor/content-utils";
 import type {Lesson} from "../types";
 
 interface LessonListProps {
@@ -16,9 +24,11 @@ interface LessonListProps {
  * to topics in v0.3.0 — see the Lesson model docstring). Each
  * row exposes inline-edit (title + content) and delete.
  *
- * Pure presentational: the parent (``Curriculum.tsx``) owns the
- * data fetch + the CRUD callbacks. State here is the create-
- * form draft and the currently-editing lesson id.
+ * v1.14.0 / Phase 27C: the content surface is now a
+ * ``RichTextEditor`` (read-only in view mode, editable + toolbar
+ * in edit mode). The persistence pipeline stores serialised
+ * TipTap JSON in ``lessons.content`` (TEXT column); legacy
+ * plain-text rows still render via ``content-utils``.
  */
 export default function LessonList({
     lessons,
@@ -31,7 +41,8 @@ export default function LessonList({
     const [newTitle, setNewTitle] = useState("");
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editTitle, setEditTitle] = useState("");
-    const [editContent, setEditContent] = useState("");
+    const [editContentDoc, setEditContentDoc] = useState<JSONContent | null>(null);
+    const [editEditor, setEditEditor] = useState<Editor | null>(null);
 
     const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -44,14 +55,22 @@ export default function LessonList({
     const startEdit = (lesson: Lesson) => {
         setEditingId(lesson.id);
         setEditTitle(lesson.title);
-        setEditContent(lesson.content);
+        setEditContentDoc(parseEditorContent(lesson.content));
+        setEditEditor(null);
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setEditEditor(null);
     };
 
     const submitEdit = async (lessonId: string) => {
         const trimmed = editTitle.trim();
         if (!trimmed || submitting) return;
-        await onUpdate(lessonId, trimmed, editContent);
+        const serialised = serializeEditorContent(editContentDoc) ?? "";
+        await onUpdate(lessonId, trimmed, serialised);
         setEditingId(null);
+        setEditEditor(null);
     };
 
     return (
@@ -62,7 +81,10 @@ export default function LessonList({
                     data-testid="lesson-new-title"
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    placeholder={t("curriculum.new_lesson_placeholder", "New lesson title…")}
+                    placeholder={t(
+                        "curriculum.new_lesson_placeholder",
+                        "New lesson title…",
+                    )}
                     disabled={submitting}
                 />
                 <button
@@ -95,19 +117,32 @@ export default function LessonList({
                                     onChange={(e) => setEditTitle(e.target.value)}
                                     disabled={submitting}
                                 />
-                                <textarea
-                                    data-testid={`lesson-edit-content-${lesson.id}`}
-                                    rows={3}
-                                    value={editContent}
-                                    onChange={(e) => setEditContent(e.target.value)}
-                                    disabled={submitting}
+                                <EditorToolbar
+                                    editor={editEditor}
+                                    testidNamespace={`lesson-edit-toolbar-${lesson.id}`}
+                                />
+                                <RichTextEditor
+                                    content={editContentDoc}
+                                    onChange={setEditContentDoc}
+                                    onEditorReady={setEditEditor}
+                                    editable={!submitting}
+                                    placeholder={t(
+                                        "curriculum.lesson_content_placeholder",
+                                        "Lesson content — supports headings, lists, code blocks, links.",
+                                    )}
+                                    testidNamespace={`lesson-edit-content-${lesson.id}`}
+                                    minHeight={140}
+                                    ariaLabel={t(
+                                        "curriculum.lesson_content_aria",
+                                        "Lesson content",
+                                    )}
                                 />
                                 <div className="lesson-row-actions">
                                     <button
                                         type="button"
                                         className="btn btn-secondary"
                                         data-testid={`lesson-edit-cancel-${lesson.id}`}
-                                        onClick={() => setEditingId(null)}
+                                        onClick={cancelEdit}
                                         disabled={submitting}
                                     >
                                         {t("common.cancel", "Cancel")}
@@ -154,9 +189,17 @@ export default function LessonList({
                                         </button>
                                     </div>
                                 </div>
-                                {lesson.content && (
-                                    <p className="lesson-content">{lesson.content}</p>
-                                )}
+                                {lesson.content && parseEditorContent(lesson.content) ? (
+                                    <RichTextEditor
+                                        content={parseEditorContent(lesson.content)}
+                                        editable={false}
+                                        testidNamespace={`lesson-content-${lesson.id}`}
+                                        ariaLabel={t(
+                                            "curriculum.lesson_content_aria",
+                                            "Lesson content",
+                                        )}
+                                    />
+                                ) : null}
                             </li>
                         ),
                     )}

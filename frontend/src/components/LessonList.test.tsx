@@ -29,7 +29,7 @@ describe("LessonList", () => {
         expect(screen.getByTestId("lesson-list-empty")).toBeInTheDocument();
     });
 
-    it("renders a row per lesson with title + content", () => {
+    it("renders a row per lesson with title + read-only content editor", async () => {
         const lessons = [
             lesson("l1", "Limits", "Body of l1."),
             lesson("l2", "Continuity"),
@@ -44,10 +44,16 @@ describe("LessonList", () => {
         );
         expect(screen.getByTestId("lesson-row-l1")).toBeInTheDocument();
         expect(screen.getByTestId("lesson-row-l2")).toBeInTheDocument();
-        expect(screen.getByText("Body of l1.")).toBeInTheDocument();
-        // l2 has no content; the <p> stays hidden so the row is
-        // visually tighter.
-        expect(screen.queryByText(/Continuity body/)).not.toBeInTheDocument();
+        // Read-only RichTextEditor renders the legacy plain-text
+        // content. The text shows up inside the editor's content
+        // surface.
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("lesson-content-l1-content").textContent,
+            ).toContain("Body of l1."),
+        );
+        // l2 has no content -> no read-only editor mounted.
+        expect(screen.queryByTestId("lesson-content-l2-root")).toBeNull();
     });
 
     it("Create form is disabled until the input has content", () => {
@@ -87,28 +93,71 @@ describe("LessonList", () => {
         expect(onCreate).toHaveBeenCalledWith("My lesson");
     });
 
-    it("Edit reveals title + content inputs, save fires onUpdate", async () => {
-        const onUpdate = vi.fn(async () => {});
+    it("Edit reveals the title input + rich-text editor + toolbar", async () => {
         render(
             <LessonList
-                lessons={[lesson("l1", "Old", "Body.")]}
+                lessons={[lesson("l1", "Old", "Legacy body.")]}
+                onCreate={async () => {}}
+                onUpdate={async () => {}}
+                onDelete={async () => {}}
+            />,
+        );
+        fireEvent.click(screen.getByTestId("lesson-edit-l1"));
+        const title = screen.getByTestId("lesson-edit-title-l1") as HTMLInputElement;
+        expect(title.value).toBe("Old");
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("lesson-edit-content-l1-root"),
+            ).toBeTruthy(),
+        );
+        // Toolbar mounts in edit mode too.
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("lesson-edit-toolbar-l1-root"),
+            ).toBeTruthy(),
+        );
+        // The editor renders the legacy plain-text content
+        // wrapped as a paragraph.
+        expect(
+            screen.getByTestId("lesson-edit-content-l1-content").textContent,
+        ).toContain("Legacy body.");
+    });
+
+    it("Save fires onUpdate with the (possibly migrated) content string", async () => {
+        const onUpdate =
+            vi.fn<(id: string, title: string, content: string) => Promise<void>>(
+                async () => {},
+            );
+        render(
+            <LessonList
+                lessons={[lesson("l1", "Old", "Legacy body.")]}
                 onCreate={async () => {}}
                 onUpdate={onUpdate}
                 onDelete={async () => {}}
             />,
         );
         fireEvent.click(screen.getByTestId("lesson-edit-l1"));
-        const title = screen.getByTestId("lesson-edit-title-l1") as HTMLInputElement;
-        const content = screen.getByTestId("lesson-edit-content-l1") as HTMLTextAreaElement;
-        // Pre-filled with current values.
-        expect(title.value).toBe("Old");
-        expect(content.value).toBe("Body.");
-        fireEvent.change(title, {target: {value: "New"}});
-        fireEvent.change(content, {target: {value: "Updated body."}});
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("lesson-edit-content-l1-root"),
+            ).toBeTruthy(),
+        );
+        // Change title, leave content untouched.
+        fireEvent.change(screen.getByTestId("lesson-edit-title-l1"), {
+            target: {value: "Renamed"},
+        });
         await act(async () => {
             fireEvent.click(screen.getByTestId("lesson-edit-save-l1"));
         });
-        expect(onUpdate).toHaveBeenCalledWith("l1", "New", "Updated body.");
+        await waitFor(() => expect(onUpdate).toHaveBeenCalled());
+        const [id, newTitle, newContent] = onUpdate.mock.calls[0];
+        expect(id).toBe("l1");
+        expect(newTitle).toBe("Renamed");
+        // Legacy plain text gets migrated to TipTap JSON on save.
+        // Verify the new shape is valid JSON wrapping a doc.
+        const parsed = JSON.parse(newContent);
+        expect(parsed.type).toBe("doc");
+        expect(JSON.stringify(parsed)).toContain("Legacy body.");
     });
 
     it("Edit cancel exits edit mode without firing onUpdate", () => {
