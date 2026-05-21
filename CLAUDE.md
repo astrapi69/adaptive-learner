@@ -12,7 +12,44 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.8.0):** v1.7.0 plus Phase 21 —
+- **Current state (v1.9.0):** v1.8.0 plus Phase 22 —
+  **Global Subjects and Tags.** Four new domain tables join
+  the sync surface: ``subjects`` (global hierarchical taxonomy,
+  parent_id self-FK SET NULL), ``tags`` (per-user, unique on
+  user_id+name, optional hex colour), ``project_subjects`` +
+  ``project_tags`` (M:N with unique pair constraints). Sync
+  classifications: Subjects + Tags MUTABLE, association rows
+  APPEND-ONLY; Subjects use a new ``global`` scope (no
+  user-filter — every device's taxonomy converges on the same
+  tree). Alembic 0008 + Dexie schema v6 + sync surface pinned
+  to 20 tables (was 16). Pre-seeded ``subjects.yaml`` ships
+  80+ nodes across 8 top-level categories (Languages /
+  Mathematics / Programming / Sciences / Music / Humanities /
+  Social Sciences / Skills) with DE display names for every
+  top-level + most sub-categories; the slug-keyed loader is
+  idempotent and fires from the FastAPI lifespan. Full CRUD
+  routes for Subjects (``/api/subjects``), Tags
+  (``/api/users/{id}/tags`` + ``/api/tags/{id}``), and
+  per-project assignment
+  (``/api/projects/{id}/{subjects,tags}``); ApiStorage thin
+  pass-through, DexieStorage full mirror. Three new components:
+  ``SubjectBrowser`` (tree + search + add-custom),
+  ``TagManager`` (per-user list + colour picker),
+  ``ProjectTaxonomy`` (assignment chips). New Dashboard
+  ``DashboardFilterBar`` filters by Subject + Tag with URL
+  query params (shareable / bookmarkable) and lists matching
+  projects; clicking switches the active projectId so the
+  per-project widgets re-fetch. Onboarding gains a client-side
+  Subject suggester (fuzzy match against the seed tree, top-5
+  with ancestor paths) + comma-separated Tag input; both run
+  as soft-fail steps after project creation. Bundled:
+  PluginForge ^0.8.0→^0.9.0 (hard-filter transition for
+  ``target_application`` is now active — all 7 plugins already
+  declared it since v1.7.0 so the upgrade is transparent).
+  Backend 648 + session-plugin 199 + frontend 816 at release
+  time. BL-07 closed.
+
+- **State (v1.8.0):** v1.7.0 plus Phase 21 —
   **Sync Gaps: step_evaluations + session_notes + i18n keys.**
   ``step_evaluations`` joins the sync surface after the Dexie
   schema v3 alignment (``suggested_step``→``to_step``,
@@ -161,7 +198,7 @@ On a conflict between CLAUDE.md and the rules, the rules win.
 - **Frontend:** React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model 1
 - **PWA (v0.6.0):** vite-plugin-pwa, Workbox-generated service worker, manifest with SVG + maskable-PNG icons at 192/512
 - **Storage (v0.7.0):** dexie ^4.4.2 (IndexedDB) + fake-indexeddb for tests; storage layer abstracts ApiStorage / DexieStorage behind one interface
-- **Plugins:** pluginforge ^0.8.0 (PyPI, identity-gated via `target_application = "adaptive_learner"`), entry points under group `adaptive_learner.plugins`. v0.8.0 ships `pluginforge.testing` (IsolatedPluginManager + MockPlugin) for downstream test isolation; we haven't adopted these yet — our test suite uses TestClient(app) + per-test patches instead.
+- **Plugins:** pluginforge ^0.9.0 (PyPI, identity-gated via `target_application = "adaptive_learner"` — the v0.9.0 hard-filter transition is now active; plugins without `target_application` would be rejected, all 7 of ours have it set since v1.7.0), entry points under group `adaptive_learner.plugins`. v0.9.0 also adds lifecycle visibility (`activated_at` / `last_config_change` on `PluginState`, `inspect_plugin()` aggregator, `on_plugin_activated` event hooks); not yet consumed in our settings UI.
 - **Launcher:** PyInstaller-based cross-OS desktop launcher (`launcher/`)
 - **Testing:** pytest, Vitest, Playwright
 - **Tooling:** Poetry, npm, Docker, Make, ruff, pre-commit
@@ -202,12 +239,13 @@ for the placeholder Landing lands in Phase 4A).
 
 ## Data model
 
-15 SQLAlchemy models in `backend/app/models/`: User,
+19 SQLAlchemy models in `backend/app/models/`: User,
 UserSettings, LearningProject, LearningProfile, Curriculum,
 LearningTopic, Lesson, LearningSession, SessionMessage,
-SessionRating, SessionNote, ProgressCommit, MethodSwitch,
-ImportedConversation, ImportedMessage. Mirrored Pydantic v2
-schemas in `backend/app/schemas/`. Spec in
+SessionRating, SessionNote, ProgressCommit, StepEvaluation,
+MethodSwitch, ImportedConversation, ImportedMessage, Subject,
+Tag, ProjectSubject, ProjectTag. Mirrored Pydantic v2 schemas
+in `backend/app/schemas/`. Spec in
 `docs/adaptive-learner-project-reference.md` §5.1.
 
 ## Plugins

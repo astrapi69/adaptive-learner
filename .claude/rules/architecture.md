@@ -5,7 +5,7 @@
 ```
 1. Frontend        React 18 + TypeScript + TipTap + Vite
 2. Backend         FastAPI + SQLAlchemy + SQLite + Pydantic v2
-3. PluginForge     External PyPI package (pluginforge ^0.8.0), based on pluggy
+3. PluginForge     External PyPI package (pluginforge ^0.9.0), based on pluggy
 4. Plugins         Standalone packages, registered via entry points
 ```
 
@@ -18,7 +18,7 @@ New features ALWAYS belong in a plugin, unless they touch the core (Book/Chapter
 | `pluginforge` | Application-agnostic plugin framework (PyPI) | MIT |
 | `adaptive_learner` | Book authoring platform, uses PluginForge | MIT (all plugins free during development) |
 
-PluginForge is EXTERNAL. Changes to PluginForge are a separate repo and a separate release cycle. AdaptiveLearner pins `pluginforge ^0.8.0`. v0.8.0 added the `pluginforge.testing` submodule (IsolatedPluginManager + MockPlugin) for downstream test isolation; we have not adopted those helpers yet — our test suite isolates via `TestClient(app)` + per-test patches.
+PluginForge is EXTERNAL. Changes to PluginForge are a separate repo and a separate release cycle. AdaptiveLearner pins `pluginforge ^0.9.0`. v0.9.0 shipped the hard-filter transition for `target_application` (plugins without it would be rejected on a host with `app_id` set); all our plugins have declared it since v1.7.0. v0.9.0 also added lifecycle visibility (`PluginState.activated_at` / `.last_config_change`, `inspect_plugin()` aggregator, `on_plugin_activated` / `on_plugin_deactivated` / `on_config_refreshed` event hooks). v0.8.0's `pluginforge.testing` submodule (IsolatedPluginManager + MockPlugin) is still not adopted — our test suite isolates via `TestClient(app)` + per-test patches.
 
 ## Backend (Python/FastAPI)
 

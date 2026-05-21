@@ -30,10 +30,10 @@ tiebreaker.
 
 ## P2 — Medium Value, Medium Effort
 
-- [ ] **BL-07**: Global subjects/tags — Shared taxonomy
+- [x] **BL-07**: Global subjects/tags — Shared taxonomy
   across projects (Mathematics, Languages, Programming, etc.).
-  Useful when user has 5+ learning projects. Enables
-  cross-project analytics.
+  Closed in v1.9.0 / Phase 22 — see
+  `changelog/releases/v1.9.0.md`.
 - [ ] **BL-08**: Swipe gestures on Assessment — Left/right
   swipe for next/previous question on mobile. Touch-event
   handling, accessibility (keyboard equivalent,

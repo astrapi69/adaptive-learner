@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-tracking"
-version = "1.8.0"
+version = "1.9.0"
 description = "Adaptive Learner: writes ProgressCommit on session_complete + dashboard summary aggregator."
 authors = ["Asterios Raptis"]
 license = "MIT"
@@ -8,7 +8,7 @@ packages = [{include = "adaptive_learner_tracking"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pluginforge = "^0.8.0"
+pluginforge = "^0.9.0"
 fastapi = "^0.136.0"
 pydantic = "^2.13.0"
 sqlalchemy = "^2.0.49"

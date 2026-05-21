@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-ai-gemini"
-version = "1.8.0"
+version = "1.9.0"
 description = "Adaptive Learner: Google Gemini provider for the ai_complete hook."
 authors = ["Asterios Raptis"]
 license = "MIT"
@@ -8,7 +8,7 @@ packages = [{include = "adaptive_learner_ai_gemini"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pluginforge = "^0.8.0"
+pluginforge = "^0.9.0"
 # google-genai 2.x is the current SDK line; replaces the
 # deprecated ``google.generativeai`` namespace (EOL announced
 # upstream, was shipping a FutureWarning on every import).
