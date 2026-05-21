@@ -96,6 +96,16 @@ def clear_cache() -> None:
     _cache.clear()
 
 
+def get_cached_models(provider: AIProvider, api_key: str) -> list[ModelInfo] | None:
+    """Return the cached model list for ``(provider, api_key)``
+    without firing a network call. Returns ``None`` when no entry
+    exists or when it has expired. Used by session-start model
+    validation (v1.11.0 / Phase 24D) — the validator skips when no
+    list is available rather than blocking on a fresh fetch.
+    """
+    return _cache_get(provider, api_key)
+
+
 # --- Filtering --------------------------------------------------------------
 
 # OpenAI model IDs that should NOT appear in the chat picker.
@@ -302,7 +312,7 @@ def fetch_gemini_models(api_key: str) -> list[ModelInfo]:
             ModelInfo(
                 id=model_id,
                 name=str(display),
-                context_window=int(context) if isinstance(context, int) else None,
+                context_window=context if isinstance(context, int) else None,
                 description=description,
             )
         )

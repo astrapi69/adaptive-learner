@@ -317,6 +317,11 @@ class _SessionMessageExchangeOut(BaseModel):
     step_evaluation: _StepEvaluationOut | None = None
     topic_transition: _TopicTransitionOut | None = None
     timings: _TimingsOut | None = None
+    # v1.11.0 / Phase 24D — non-fatal warning when the requested
+    # model is not in the provider's cached available-models list.
+    # The route falls back to the provider's default model and
+    # surfaces this string so the frontend can toast.
+    model_warning: str | None = None
 
 
 class _SwitchRecommendationOut(BaseModel):
@@ -565,6 +570,8 @@ def append_message(
     # stays consistent. v0.4.0: the response now also carries the
     # full LearningSession row so the frontend can read the
     # current cycle_step without a separate fetch.
+    model_warning_holder: dict[str, str | None] = {"value": None}
+
     def _build_response(
         assistant: SessionMessage | None = None,
         ai_error: str | None = None,
@@ -589,6 +596,7 @@ def append_message(
             step_evaluation=step_evaluation,
             topic_transition=topic_transition,
             timings=timings,
+            model_warning=model_warning_holder["value"],
         )
 
     if payload.role != MessageRole.USER:
@@ -612,6 +620,37 @@ def append_message(
         return _build_response(
             ai_error=f"Provider {provider_key!r} has no default model registered."
         )
+
+    # v1.11.0 / Phase 24D — validate the chosen model against the
+    # provider's cached available-models list. If the cache holds a
+    # list (the Settings picker fetched it earlier in this process)
+    # AND the requested model is not in it, fall back to the
+    # default and surface a non-fatal warning. When no cache exists
+    # we skip validation entirely — the spec is to try anyway, NOT
+    # to block the route on a fresh fetch.
+    try:
+        from app.schemas import AIProvider as _AIProvider
+        from app.services import model_discovery as _model_discovery
+
+        provider_enum = _AIProvider(provider_key)
+        cached = _model_discovery.get_cached_models(provider_enum, api_key)
+        if cached is not None and not any(m.id == model for m in cached):
+            default_model = ai_orchestration.DEFAULT_MODELS.get(provider_key)
+            if default_model and default_model != model:
+                model_warning_holder["value"] = (
+                    f"Model {model!r} is not in the available models for "
+                    f"provider {provider_key!r}. Falling back to {default_model!r}."
+                )
+                model = default_model
+            else:
+                model_warning_holder["value"] = (
+                    f"Model {model!r} may not be available for provider "
+                    f"{provider_key!r}; trying anyway."
+                )
+    except Exception:  # noqa: BLE001
+        # Validation must never break the chat path. If anything in
+        # the cache lookup misbehaves we silently proceed.
+        pass
 
     # Load EVERY prior message INCLUDING the user message we just
     # saved (chronological order; the AI sees the freshest user

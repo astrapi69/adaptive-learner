@@ -1443,3 +1443,145 @@ def test_evaluator_max_tokens_caps_at_256_by_default(client: TestClient, monkeyp
     )
     assert ("learning", None) in seen
     assert ("evaluator", 256) in seen
+
+
+# --- v1.11.0 / Phase 24D: model validation on session start ----------------
+
+
+def test_message_no_warning_when_cache_empty(client: TestClient, monkeypatch):
+    """If model_discovery has no cached list for the (provider, key)
+    pair, the route must NOT warn — it just proceeds with the
+    requested model. Validation is opt-in."""
+    from app.services import model_discovery
+
+    model_discovery.clear_cache()
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "claude-deprecated-xyz"},
+    )
+
+    captured: dict[str, object] = {}
+    _patch_call_ai_complete(monkeypatch, captured)
+
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "hi"},
+    )
+    assert resp.status_code == 201
+    body = resp.json()
+    assert body["model_warning"] is None
+    # The original (unknown) model is still used because validation
+    # is skipped when no cache exists.
+    assert captured["model"] == "claude-deprecated-xyz"
+
+
+def test_message_warns_and_falls_back_when_model_not_in_cache(
+    client: TestClient, monkeypatch
+):
+    """When a list IS cached AND the requested override is NOT in it,
+    the route falls back to ai_orchestration.DEFAULT_MODELS and
+    sets model_warning."""
+    from adaptive_learner_session import ai_orchestration
+    from app.schemas import AIProvider
+    from app.services import model_discovery
+
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "claude-renamed-old-model"},
+    )
+
+    # Seed the cache so validation has something to compare against.
+    model_discovery.clear_cache()
+    valid_models = [
+        model_discovery.ModelInfo(
+            id="claude-opus-4-20250514",
+            name="Claude Opus 4",
+            context_window=200000,
+        ),
+        model_discovery.ModelInfo(
+            id="claude-sonnet-4-20250514",
+            name="Claude Sonnet 4",
+            context_window=200000,
+        ),
+        model_discovery.ModelInfo(
+            id=ai_orchestration.DEFAULT_MODELS["anthropic"],
+            name="Claude Haiku 4.5",
+            context_window=200000,
+        ),
+    ]
+    # Directly poke the cache via the public API: a get_cached_models
+    # round-trip after a fetch would require a network mock, but the
+    # router's only contract with the cache is that get_cached_models
+    # returns a list. Force-populate via the internal helper.
+    model_discovery._cache_put(AIProvider.ANTHROPIC, "sk-fake-test-key", valid_models)
+    assert (
+        model_discovery.get_cached_models(AIProvider.ANTHROPIC, "sk-fake-test-key")
+        is not None
+    )
+
+    captured: dict[str, object] = {}
+    _patch_call_ai_complete(monkeypatch, captured)
+
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "hi"},
+    )
+    assert resp.status_code == 201, resp.text
+    body = resp.json()
+    assert body["model_warning"] is not None
+    assert "claude-renamed-old-model" in body["model_warning"]
+    # Fell back to the default model.
+    assert captured["model"] == ai_orchestration.DEFAULT_MODELS["anthropic"]
+    model_discovery.clear_cache()
+
+
+def test_message_no_warning_when_model_in_cache(client: TestClient, monkeypatch):
+    """When the cached list contains the requested model, no warning
+    and no fallback happen."""
+    from app.schemas import AIProvider
+    from app.services import model_discovery
+
+    user_id, project_id = _make_user_and_project(client)
+    _seed_api_key(client, user_id, provider="anthropic")
+    client.patch(
+        f"/api/settings/{user_id}",
+        json={"model_override_anthropic": "claude-opus-4-20250514"},
+    )
+
+    model_discovery.clear_cache()
+    model_discovery._cache_put(
+        AIProvider.ANTHROPIC,
+        "sk-fake-test-key",
+        [
+            model_discovery.ModelInfo(
+                id="claude-opus-4-20250514",
+                name="Claude Opus 4",
+                context_window=200000,
+            ),
+        ],
+    )
+
+    captured: dict[str, object] = {}
+    _patch_call_ai_complete(monkeypatch, captured)
+
+    sess_id = client.post("/api/plugins/session/start", json={"project_id": project_id}).json()[
+        "session"
+    ]["id"]
+    resp = client.post(
+        f"/api/plugins/session/{sess_id}/message",
+        json={"role": "user", "content": "hi"},
+    )
+    body = resp.json()
+    assert body["model_warning"] is None
+    assert captured["model"] == "claude-opus-4-20250514"
+    model_discovery.clear_cache()
