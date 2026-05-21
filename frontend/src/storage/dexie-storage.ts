@@ -789,7 +789,22 @@ export const dexieStorage: IStorageService = {
                 .equals(projectId)
                 .toArray();
             rows.sort((a, b) => a.committed_at.localeCompare(b.committed_at));
-            return rows.map(rowToCommit);
+            // v1.14.0 / Phase 27B — join each commit with its
+            // session's rating notes. Mirrors the backend route's
+            // LEFT JOIN so both storage modes return the same
+            // wire shape. Sessions without a rating row produce
+            // ``notes: null``.
+            const sessionIds = rows.map((r) => r.session_id);
+            const ratings = await db.sessionRatings
+                .where("session_id")
+                .anyOf(sessionIds)
+                .toArray();
+            const notesBySession = new Map<string, string | null>(
+                ratings.map((r) => [r.session_id, r.notes ?? null]),
+            );
+            return rows.map((row) =>
+                rowToCommit(row, notesBySession.get(row.session_id) ?? null),
+            );
         },
     },
 

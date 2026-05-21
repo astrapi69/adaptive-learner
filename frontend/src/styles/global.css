@@ -3017,3 +3017,16 @@ select:focus {
 [data-theme="dark"] .editor-toolbar-highlight-swatch {
     background: rgba(245, 158, 11, 0.45);
 }
+
+/* Progress page: each commit row may be followed by a notes
+ * row spanning every column. The wrapping cell removes its
+ * default vertical padding so the read-only RichTextEditor
+ * sits flush below the commit row it belongs to. */
+.commit-notes-row > td {
+    padding: 0 var(--space-3, 0.75rem) var(--space-3, 0.75rem);
+    background: var(--surface-2, #f8fafc);
+    border-top: none;
+}
+.commit-notes-row .rich-text-editor {
+    background: var(--surface, #ffffff);
+}

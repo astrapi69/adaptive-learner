@@ -553,6 +553,11 @@ class ProgressCommitOut(BaseModel):
     error_rate: float
     duration_minutes: int
     committed_at: datetime
+    # v1.14.0 / Phase 27B — joined from SessionRating for the
+    # Progress page's "session history" view. May carry plain
+    # text (legacy) or a serialised TipTap JSON document. The
+    # frontend's content-utils handles both shapes.
+    notes: str | None = None
 
 
 # --- StepEvaluation (v0.5.0 / Phase 8D) -----------------------------------

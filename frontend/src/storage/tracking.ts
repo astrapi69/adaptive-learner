@@ -165,9 +165,15 @@ export function aggregateProgress(
 
 /**
  * Convert a stored ProgressCommitRow into the wire-shape DTO
- * the frontend consumes (currently identical).
+ * the frontend consumes. Callers in DexieStorage join the
+ * matching SessionRating row's ``notes`` field separately (the
+ * ProgressCommitRow has no notes column of its own — it lives
+ * on ``session_ratings``).
  */
-export function rowToCommit(row: ProgressCommitRow): ProgressCommit {
+export function rowToCommit(
+    row: ProgressCommitRow,
+    notes?: string | null,
+): ProgressCommit {
     return {
         id: row.id,
         project_id: row.project_id,
@@ -178,5 +184,6 @@ export function rowToCommit(row: ProgressCommitRow): ProgressCommit {
         error_rate: row.error_rate,
         duration_minutes: row.duration_minutes,
         committed_at: row.committed_at,
+        notes: notes ?? null,
     };
 }

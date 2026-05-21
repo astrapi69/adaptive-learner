@@ -1,10 +1,12 @@
-import {useEffect, useState} from "react";
+import {Fragment, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import MethodBadge from "../components/MethodBadge";
 import MethodDistribution from "../components/MethodDistribution";
 import ProgressTimeline from "../components/ProgressTimeline";
 import StepEvaluationInsights from "../components/StepEvaluationInsights";
+import RichTextEditor from "../components/editor/RichTextEditor";
+import {parseEditorContent} from "../components/editor/content-utils";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
@@ -145,20 +147,58 @@ export default function Progress() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {commits.map((c) => (
-                                    <tr key={c.id} data-testid={`commit-row-${c.id}`}>
-                                        <td>{formatDate(c.committed_at)}</td>
-                                        <td>
-                                            <MethodBadge method={c.method} compact />
-                                        </td>
-                                        <td>{Math.round(c.understanding * 100)}%</td>
-                                        <td>{Math.round(c.stress * 100)}%</td>
-                                        <td>
-                                            {c.duration_minutes}{" "}
-                                            {t("common.minutes", "minutes")}
-                                        </td>
-                                    </tr>
-                                ))}
+                                {commits.map((c) => {
+                                    const notesDoc = parseEditorContent(c.notes);
+                                    return (
+                                        <Fragment key={c.id}>
+                                            <tr data-testid={`commit-row-${c.id}`}>
+                                                <td>
+                                                    {formatDate(c.committed_at)}
+                                                </td>
+                                                <td>
+                                                    <MethodBadge
+                                                        method={c.method}
+                                                        compact
+                                                    />
+                                                </td>
+                                                <td>
+                                                    {Math.round(
+                                                        c.understanding * 100,
+                                                    )}
+                                                    %
+                                                </td>
+                                                <td>
+                                                    {Math.round(c.stress * 100)}%
+                                                </td>
+                                                <td>
+                                                    {c.duration_minutes}{" "}
+                                                    {t(
+                                                        "common.minutes",
+                                                        "minutes",
+                                                    )}
+                                                </td>
+                                            </tr>
+                                            {notesDoc ? (
+                                                <tr
+                                                    data-testid={`commit-notes-row-${c.id}`}
+                                                    className="commit-notes-row"
+                                                >
+                                                    <td colSpan={5}>
+                                                        <RichTextEditor
+                                                            content={notesDoc}
+                                                            editable={false}
+                                                            testidNamespace={`commit-notes-${c.id}`}
+                                                            ariaLabel={t(
+                                                                "progress.commit_notes_aria",
+                                                                "Session notes",
+                                                            )}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            ) : null}
+                                        </Fragment>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     </div>

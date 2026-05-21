@@ -51,15 +51,20 @@ def _run_one_session(
     method: str = "deductive",
     understanding: int = 4,
     stress: int = 2,
+    notes: str | None = None,
 ) -> str:
     sess_id = client.post(
         "/api/plugins/session/start",
         json={"project_id": project_id, "method": method},
     ).json()["session"]["id"]
-    client.post(
-        f"/api/plugins/session/{sess_id}/rate",
-        json={"understanding": understanding, "stress": stress, "method_fit": 4},
-    )
+    rating_body: dict[str, object] = {
+        "understanding": understanding,
+        "stress": stress,
+        "method_fit": 4,
+    }
+    if notes is not None:
+        rating_body["notes"] = notes
+    client.post(f"/api/plugins/session/{sess_id}/rate", json=rating_body)
     client.post(f"/api/plugins/session/{sess_id}/end")
     return sess_id
 
@@ -178,6 +183,59 @@ def test_get_commits_empty_when_no_sessions(client: TestClient):
     resp = client.get(f"/api/plugins/tracking/commits/{project_id}")
     assert resp.status_code == 200
     assert resp.json() == []
+
+
+def test_get_commits_includes_session_rating_notes(client: TestClient):
+    """Phase 27B regression pin: the LEFT JOIN with SessionRating
+    surfaces the rating's ``notes`` field on each commit response
+    so the Progress page can render past notes as rich text.
+    Sessions without a rating row yield ``notes: None``.
+    """
+    _, project_id = _make_user_and_project(client)
+    # Session 1: legacy plain-text note.
+    _run_one_session(client, project_id, notes="Took it slowly — bonus walk.")
+    # Session 2: serialised TipTap JSON note (the Phase 27 shape).
+    tiptap_json = (
+        '{"type":"doc","content":[{"type":"paragraph",'
+        '"content":[{"type":"text","text":"Felt focused."}]}]}'
+    )
+    _run_one_session(client, project_id, notes=tiptap_json)
+    # Session 3: no notes (rating dialog left empty).
+    _run_one_session(client, project_id)
+
+    resp = client.get(f"/api/plugins/tracking/commits/{project_id}")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert len(body) == 3
+    # Each row must expose the notes field (even if None) so the
+    # frontend's TypeScript narrowing can rely on its presence.
+    for row in body:
+        assert "notes" in row
+    # The first two carry their notes; the third is None.
+    assert body[0]["notes"] == "Took it slowly — bonus walk."
+    assert body[1]["notes"] == tiptap_json
+    assert body[2]["notes"] is None
+
+
+def test_get_commits_handles_session_without_rating_row(client: TestClient):
+    """Sessions that ended without a /rate call (per
+    ``test_session_close_without_rating_skips_understanding``)
+    still produce a ProgressCommit. The LEFT JOIN must surface
+    ``notes: None`` for those rows rather than dropping the
+    commit entirely.
+    """
+    _, project_id = _make_user_and_project(client)
+    sess_id = client.post(
+        "/api/plugins/session/start", json={"project_id": project_id}
+    ).json()["session"]["id"]
+    client.post(f"/api/plugins/session/{sess_id}/end")  # no /rate
+
+    resp = client.get(f"/api/plugins/tracking/commits/{project_id}")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert len(body) == 1
+    assert body[0]["session_id"] == sess_id
+    assert body[0]["notes"] is None
 
 
 # --- GET /progress (summary aggregator) -----------------------------------

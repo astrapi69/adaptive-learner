@@ -140,6 +140,60 @@ describe("Progress page", () => {
         expect(rows[1].getAttribute("data-testid")).toBe("commit-row-c-1");
     });
 
+    it("renders a notes row under each commit that carries a non-empty note", async () => {
+        apiProgress.mockResolvedValue(SUMMARY);
+        apiCommits.mockResolvedValue([
+            {...COMMITS[0], notes: "Plain legacy note."},
+            {
+                ...COMMITS[1],
+                notes: JSON.stringify({
+                    type: "doc",
+                    content: [
+                        {
+                            type: "paragraph",
+                            content: [
+                                {type: "text", text: "Rich-text note"},
+                            ],
+                        },
+                    ],
+                }),
+            },
+        ]);
+        renderProgress();
+        await screen.findByTestId("progress");
+        await waitFor(() =>
+            expect(screen.getByTestId("commit-notes-row-c-1")).toBeTruthy(),
+        );
+        expect(screen.getByTestId("commit-notes-row-c-2")).toBeTruthy();
+        // Read-only editor for each notes row renders the text.
+        await waitFor(() => {
+            expect(
+                screen
+                    .getByTestId("commit-notes-c-1-content")
+                    .textContent?.toLowerCase(),
+            ).toContain("plain legacy note");
+        });
+        await waitFor(() => {
+            expect(
+                screen
+                    .getByTestId("commit-notes-c-2-content")
+                    .textContent?.toLowerCase(),
+            ).toContain("rich-text note");
+        });
+    });
+
+    it("omits the notes row when notes is null or undefined", async () => {
+        apiProgress.mockResolvedValue(SUMMARY);
+        apiCommits.mockResolvedValue([
+            {...COMMITS[0], notes: null},
+            {...COMMITS[1]}, // notes undefined
+        ]);
+        renderProgress();
+        await screen.findByTestId("progress");
+        expect(screen.queryByTestId("commit-notes-row-c-1")).toBeNull();
+        expect(screen.queryByTestId("commit-notes-row-c-2")).toBeNull();
+    });
+
     it("renders the empty state when commits are empty", async () => {
         apiProgress.mockResolvedValue(SUMMARY);
         apiCommits.mockResolvedValue([]);

@@ -260,6 +260,10 @@ export interface ProgressCommit {
     error_rate: number;
     duration_minutes: number;
     committed_at: string;
+    // v1.14.0 / Phase 27B — joined from SessionRating. Carries
+    // legacy plain text or a serialised TipTap JSON document;
+    // ``content-utils.parseEditorContent`` handles both shapes.
+    notes?: string | null;
 }
 
 // --- Curriculum + LearningTopic ----------------------------------------
