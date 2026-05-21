@@ -318,6 +318,16 @@ settings:
   model_override_default: Standardmodell
   model_override_save: Modell speichern
   model_override_clear: Standard nutzen
+  model_picker_placeholder: Modell auswählen oder eingeben
+  model_picker_open: Modellliste öffnen
+  model_picker_default_hint: "Standard:"
+  model_picker_loading: Modelle werden geladen...
+  model_picker_error: Modelle konnten nicht geladen werden. API-Schlüssel prüfen.
+  model_picker_retry: Erneut versuchen
+  model_picker_no_key: API-Schlüssel speichern, um die verfügbaren Modelle zu laden.
+  model_picker_recommended: Empfohlen
+  model_picker_all: Alle Modelle
+  model_picker_suggestions: Vorschläge (offline)
 
 methods:
   deductive:

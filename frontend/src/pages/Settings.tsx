@@ -5,7 +5,9 @@ import {ApiError} from "../api/client";
 import AboutTab from "../components/about/AboutTab";
 import BackupSection from "../components/BackupSection";
 import ExportSection from "../components/ExportSection";
+import {ModelPicker} from "../components/ModelPicker";
 import SyncSection from "../components/SyncSection";
+import {DEFAULT_MODELS} from "../storage/ai-providers";
 import {useI18n} from "../hooks/useI18n";
 import {
     AI_PROVIDERS,
@@ -403,29 +405,24 @@ export default function Settings() {
                                 </span>
                             </div>
                             <div className="model-override-row-input">
-                                <input
-                                    data-testid={`model-override-input-${provider}`}
-                                    type="text"
-                                    list={`model-suggestions-${provider}`}
-                                    placeholder={t(
-                                        "settings.model_override_placeholder",
-                                        "Model identifier (e.g. claude-3-5-haiku-latest)",
-                                    )}
-                                    autoComplete="off"
-                                    value={draft}
-                                    onChange={(e) =>
+                                <ModelPicker
+                                    userId={settings.user_id}
+                                    provider={provider}
+                                    value={current}
+                                    draft={draft}
+                                    onDraftChange={(next) =>
                                         setModelDrafts((prev) => ({
                                             ...prev,
-                                            [provider]: e.target.value,
+                                            [provider]: next,
                                         }))
                                     }
+                                    defaultModel={DEFAULT_MODELS[provider]}
+                                    staticSuggestions={MODEL_SUGGESTIONS[provider]}
                                     disabled={busy === `save-model-${provider}`}
+                                    hasApiKey={
+                                        (settings[`has_${provider}_key`] as boolean) ?? false
+                                    }
                                 />
-                                <datalist id={`model-suggestions-${provider}`}>
-                                    {MODEL_SUGGESTIONS[provider].map((s) => (
-                                        <option key={s} value={s} />
-                                    ))}
-                                </datalist>
                                 <button
                                     type="button"
                                     className="btn btn-primary"

@@ -283,7 +283,7 @@ describe("Settings page", () => {
                 screen.getByTestId(`model-override-row-${provider}`),
             ).toBeInTheDocument();
             expect(
-                screen.getByTestId(`model-override-input-${provider}`),
+                screen.getByTestId(`model-picker-input-${provider}`),
             ).toBeInTheDocument();
         }
     });
@@ -296,7 +296,7 @@ describe("Settings page", () => {
         renderSettings();
         await screen.findByTestId("settings");
         const input = screen.getByTestId(
-            "model-override-input-anthropic",
+            "model-picker-input-anthropic",
         ) as HTMLInputElement;
         expect(input.value).toBe("claude-sonnet-4-20250514");
         // Status badge reads as "override active".
@@ -313,7 +313,7 @@ describe("Settings page", () => {
         });
         renderSettings();
         await screen.findByTestId("settings");
-        fireEvent.change(screen.getByTestId("model-override-input-anthropic"), {
+        fireEvent.change(screen.getByTestId("model-picker-input-anthropic"), {
             target: {value: "claude-sonnet-4-20250514"},
         });
         await act(async () => {

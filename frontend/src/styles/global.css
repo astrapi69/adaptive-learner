@@ -2393,3 +2393,139 @@ select:focus {
 .rating-cycles-list li {
     margin: var(--space-1) 0;
 }
+
+/* ============================================================
+   ModelPicker (v1.11.0 / Phase 24C)
+   Replaces the v0.4.0 datalist input on Settings > Model
+   overrides with a searchable dropdown of provider-discovered
+   models + an offline fallback.
+   ============================================================ */
+
+.model-picker {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+.model-picker-input-row {
+    display: flex;
+    gap: var(--space-1);
+}
+.model-picker-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: var(--space-2);
+    border: 1px solid var(--border, #ccc);
+    border-radius: var(--radius-sm, 4px);
+    background: var(--surface, #fff);
+    color: var(--text, #111);
+}
+.model-picker-toggle {
+    padding: var(--space-1) var(--space-2);
+    min-width: 2.5rem;
+}
+.model-picker-chip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding: var(--space-1) var(--space-2);
+    background: var(--surface-2, #f3f3f3);
+    border-radius: var(--radius-sm, 4px);
+}
+.model-picker-context {
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    background: var(--accent, #6366f1);
+    color: var(--accent-fg, #fff);
+    border-radius: 8px;
+}
+.model-picker-default-hint {
+    margin: var(--space-1) 0 0;
+    font-size: 0.85rem;
+}
+.model-picker-default-hint code {
+    background: var(--surface-2, #f3f3f3);
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 0.8rem;
+}
+.model-picker-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: var(--space-1);
+    max-height: 360px;
+    overflow-y: auto;
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #ccc);
+    border-radius: var(--radius-sm, 4px);
+    box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
+    z-index: 100;
+}
+.model-picker-group-title {
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted, #666);
+    background: var(--surface-2, #f5f5f5);
+    border-bottom: 1px solid var(--border, #eee);
+}
+.model-picker-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "name context"
+        "id   id";
+    gap: 2px var(--space-2);
+    width: 100%;
+    padding: var(--space-2);
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border, #eee);
+    text-align: left;
+    cursor: pointer;
+    color: var(--text, #111);
+}
+.model-picker-row:hover,
+.model-picker-row:focus {
+    background: var(--surface-2, #f5f5f5);
+}
+.model-picker-row.is-selected {
+    background: var(--accent-subtle, rgba(99, 102, 241, 0.1));
+}
+.model-picker-row-name {
+    grid-area: name;
+    font-weight: 500;
+}
+.model-picker-row-id {
+    grid-area: id;
+    font-size: 0.8rem;
+    font-family: var(--font-mono, monospace);
+}
+.model-picker-row-context {
+    grid-area: context;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    background: var(--accent, #6366f1);
+    color: var(--accent-fg, #fff);
+    border-radius: 8px;
+    align-self: start;
+}
+.model-picker-loading,
+.model-picker-empty {
+    padding: var(--space-3);
+    color: var(--muted, #666);
+    text-align: center;
+}
+.model-picker-error {
+    padding: var(--space-3);
+}
+.model-picker-error p {
+    margin: 0 0 var(--space-2);
+}
+.model-picker-static {
+    padding: 0;
+}

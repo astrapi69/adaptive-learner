@@ -292,6 +292,16 @@ settings:
   model_override_default: Modelo predeterminado
   model_override_save: Guardar modelo
   model_override_clear: Usar predeterminado
+  model_picker_placeholder: Select or type a model id
+  model_picker_open: Open model list
+  model_picker_default_hint: "Uses default:"
+  model_picker_loading: Loading models...
+  model_picker_error: Could not load models. Check your API key.
+  model_picker_retry: Retry
+  model_picker_no_key: Save an API key for this provider to load the available models.
+  model_picker_recommended: Recommended
+  model_picker_all: All models
+  model_picker_suggestions: Suggested (offline)
 methods:
   deductive:
     label: Deductivo
