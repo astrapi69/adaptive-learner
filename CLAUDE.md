@@ -12,7 +12,41 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.11.0):** v1.10.0 plus Phase 24 —
+- **Current state (v1.12.0):** v1.11.0 plus Phase 25 —
+  **Backup Compare UI.** New ``frontend/src/lib/backup-diff.ts``
+  is a client-side diff engine over two parsed
+  ``BackupPayload`` objects: UUID-keyed matching produces
+  per-table added / removed / changed (with field-level diff
+  on mutable rows; append-only tables only surface
+  added/removed). Chunked async processing (1000 rows per
+  yield via ``requestIdleCallback`` with ``setTimeout(0)``
+  fallback) keeps the UI responsive on 10 000+ row backups.
+  Field blacklist drops ``updated_at`` from the change
+  detector so a mere re-export doesn't surface every row.
+  ``components/BackupCompare.tsx`` renders the diff as
+  sortable / filterable per-table cards with green / red /
+  amber / grey chips, expandable record lists and a
+  field-level diff table per changed row.
+  ``BackupSection`` gained a "Compare Backups" sub-section
+  with two file pickers + a "Use current state" shortcut.
+  The restore flow's v0.7.0 row-count table is now followed
+  by the full diff preview (same component, ``hideExport``
+  prop on); the Restore button label becomes "Restore
+  ({{added}} added, {{updated}} updated)". Dexie auto-backup
+  rows gained "Compare as A/B" buttons that load the
+  rotated snapshot into the same compare surface via the
+  new ``getAutoBackupPayload`` helper. The Markdown export
+  produces the spec format (header with dates + versions +
+  delta one-liner, summary table with zero-delta tables
+  omitted, per-table sections with field-level ``old → new``
+  lines, high-volume tables collapsed to a count summary,
+  version watermark). 35 new i18n keys
+  (``backup.compare_*`` + ``backup.auto_compare_*`` +
+  ``backup.confirm_with_counts``) — DE+EN translated, 6
+  EN-passthrough. Backend 671 + session-plugin 199 +
+  frontend 921 at release time. BL-10 closed.
+
+- **State (v1.11.0):** v1.10.0 plus Phase 24 —
   **Provider Model Picker via API.** New
   ``backend/app/services/model_discovery.py`` calls each
   provider's official ``/models`` endpoint (Anthropic +

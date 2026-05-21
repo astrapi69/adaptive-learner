@@ -45,9 +45,11 @@ tiebreaker.
   provider API (Anthropic `/v1/models`, OpenAI `/v1/models`).
   Show real model list in Settings. Closed in v1.11.0 /
   Phase 24 — see `changelog/releases/v1.11.0.md`.
-- [ ] **BL-10**: Backup compare UI — Side-by-side comparison
+- [x] **BL-10**: Backup compare UI — Side-by-side comparison
   of two backup files. Show diff per table (added, changed,
   removed records). Useful for auditing before restore.
+  Closed in v1.12.0 / Phase 25 — see
+  `changelog/releases/v1.12.0.md`.
 
 ## P3 — Lower Value or Large Effort
 

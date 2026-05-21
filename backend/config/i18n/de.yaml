@@ -478,6 +478,42 @@ backup:
   auto_records: "{{n}} Datensätze"
   auto_none: Noch keine automatischen Sicherungen. Die erste läuft nach 10 Sitzungen oder 7 Tagen.
   storage_pressure: "Browser-Speicher ist fast voll ({{pct}}% des Kontingents). Exportiere jetzt eine Sicherung."
+  compare_title: Sicherungen vergleichen
+  compare_help: >-
+    Wähle zwei Sicherungsdateien (oder eine Datei plus den aktuellen Stand),
+    um zu sehen, was sich geändert hat. Es werden keine Daten verändert —
+    der Vergleich ist nur lesend.
+  compare_slot_a: Sicherung A (älter)
+  compare_slot_b: Sicherung B (neuer)
+  compare_pick: "Datei wählen…"
+  compare_use_current: Aktuellen Stand verwenden
+  compare_current_label: Aktueller Stand
+  compare_clear: Zurücksetzen
+  compare_label_a: Sicherung A
+  compare_label_b: Sicherung B
+  compare_records: Datensätze
+  compare_loading: Sicherungen werden verglichen…
+  compare_progress: Wird verglichen…
+  compare_hide_unchanged: Unveränderte Tabellen ausblenden
+  compare_sort_label: "Sortierung:"
+  compare_sort_delta: Größte Änderungen zuerst
+  compare_sort_alpha: Alphabetisch
+  compare_no_changes: Die beiden Sicherungen sind identisch — keine Unterschiede gefunden.
+  compare_section_added: Hinzugefügt
+  compare_section_removed: Entfernt
+  compare_section_changed: Geändert
+  compare_field: Feld
+  compare_old: Alt
+  compare_new: Neu
+  compare_field_changes: Feldänderungen
+  compare_high_volume_hint: Tabelle mit vielen Einträgen — Vorschau auf Datensatz-Ebene gekürzt.
+  compare_export_md: Als Markdown exportieren
+  compare_markdown_downloaded: Vergleich exportiert.
+  confirm_with_counts: "Wiederherstellen ({{added}} hinzugefügt, {{updated}} aktualisiert)"
+  auto_compare_as_a: Als A vergleichen
+  auto_compare_as_b: Als B vergleichen
+  compare_auto_label: "Auto-Sicherung {{date}}"
+  auto_compare_missing: Auto-Sicherung ist nicht mehr verfügbar — sie wurde rotiert.
 
 export:
   title: Export

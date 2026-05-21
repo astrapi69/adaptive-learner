@@ -444,6 +444,41 @@ backup:
   auto_records: "{{n}} records"
   auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
   storage_pressure: "Browser storage is almost full ({{pct}}% of quota). Export a manual backup now."
+  compare_title: Compare Backups
+  compare_help: >-
+    Pick two backup files (or one file plus the current state) to see what's
+    changed between them. No data is modified — comparison is read-only.
+  compare_slot_a: Backup A (older)
+  compare_slot_b: Backup B (newer)
+  compare_pick: "Pick file…"
+  compare_use_current: Use current state
+  compare_current_label: Current state
+  compare_clear: Clear
+  compare_label_a: Backup A
+  compare_label_b: Backup B
+  compare_records: records
+  compare_loading: Comparing backups…
+  compare_progress: Comparing…
+  compare_hide_unchanged: Hide unchanged tables
+  compare_sort_label: "Sort:"
+  compare_sort_delta: Most changes first
+  compare_sort_alpha: Alphabetical
+  compare_no_changes: The two backups are identical — no differences detected.
+  compare_section_added: Added
+  compare_section_removed: Removed
+  compare_section_changed: Changed
+  compare_field: Field
+  compare_old: Old
+  compare_new: New
+  compare_field_changes: field changes
+  compare_high_volume_hint: High-volume table — record-level previews shown abbreviated.
+  compare_export_md: Export as Markdown
+  compare_markdown_downloaded: Diff exported.
+  confirm_with_counts: "Restore ({{added}} added, {{updated}} updated)"
+  auto_compare_as_a: Compare as A
+  auto_compare_as_b: Compare as B
+  compare_auto_label: "Auto-backup {{date}}"
+  auto_compare_missing: Auto-backup is no longer available — it was rotated out.
 
 export:
   title: Export
