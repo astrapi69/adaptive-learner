@@ -6,6 +6,12 @@ import ProfileRadar from "../components/ProfileRadar";
 import QuestionCard from "../components/QuestionCard";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {hapticSwipe, useSwipe} from "../hooks/useSwipe";
+import {
+    markGestureHintShown,
+    readGestureHintShown,
+    readGesturePref,
+} from "../lib/gesturePref";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
@@ -45,6 +51,13 @@ export default function Assessment() {
 
     const [submitting, setSubmitting] = useState(false);
     const [profile, setProfile] = useState<LearningProfile | null>(null);
+
+    // v1.10.0 / Phase 23B — swipe + keyboard navigation.
+    // ``slideDir`` triggers the CSS slide animation on the
+    // question card when set; cleared after a short timer so the
+    // class doesn't linger across renders.
+    const [slideDir, setSlideDir] = useState<"left" | "right" | null>(null);
+    const [showHint, setShowHint] = useState(false);
 
     // Load questions once on mount (and again when language
     // changes, since the API returns localised text). The
@@ -136,6 +149,103 @@ export default function Assessment() {
         }
     }, [allAnswered, answers, navigate, questions, submitting, t]);
 
+    // --- Swipe + keyboard navigation ----------------------------------
+
+    const goPrev = useCallback(() => {
+        if (currentIndex === 0 || submitting) return;
+        setSlideDir("right");
+        setCurrentIndex((i) => Math.max(0, i - 1));
+        hapticSwipe();
+    }, [currentIndex, submitting]);
+
+    const goNext = useCallback(() => {
+        if (submitting || !questions || !current) return;
+        const hasAnswer = (answers[current.id]?.length ?? 0) > 0;
+        if (!hasAnswer) return;
+        if (currentIndex < total - 1) {
+            setSlideDir("left");
+            setCurrentIndex((i) => Math.min(total - 1, i + 1));
+            hapticSwipe();
+        } else if (allAnswered) {
+            hapticSwipe();
+            void handleSubmit();
+        }
+    }, [
+        allAnswered,
+        answers,
+        current,
+        currentIndex,
+        handleSubmit,
+        questions,
+        submitting,
+        total,
+    ]);
+
+    // Hint shown on the FIRST question only, and only once per
+    // user. Once the user takes ANY action (swipe, keyboard,
+    // button click) the hint hides and never returns.
+    useEffect(() => {
+        if (currentIndex === 0 && !readGestureHintShown()) {
+            setShowHint(true);
+        } else {
+            setShowHint(false);
+        }
+    }, [currentIndex]);
+
+    const dismissHint = useCallback(() => {
+        if (showHint) {
+            setShowHint(false);
+            markGestureHintShown();
+        }
+    }, [showHint]);
+
+    const gesturesEnabled = readGesturePref();
+
+    const {ref: swipeRef} = useSwipe<HTMLDivElement>({
+        enabled: gesturesEnabled,
+        onSwipeLeft: () => {
+            dismissHint();
+            goNext();
+        },
+        onSwipeRight: () => {
+            dismissHint();
+            goPrev();
+        },
+    });
+
+    // Keyboard left/right arrows — desktop equivalent of swipe.
+    // Mirror swipe semantics so the two paths feel identical.
+    useEffect(() => {
+        if (profile || !questions) return;
+        const handleKey = (event: KeyboardEvent) => {
+            // Don't hijack arrows in input fields (none on this
+            // page, but be safe for future additions).
+            const target = event.target as HTMLElement | null;
+            if (target && /^(INPUT|TEXTAREA|SELECT)$/i.test(target.tagName)) {
+                return;
+            }
+            if (event.key === "ArrowLeft") {
+                event.preventDefault();
+                dismissHint();
+                goPrev();
+            } else if (event.key === "ArrowRight") {
+                event.preventDefault();
+                dismissHint();
+                goNext();
+            }
+        };
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [dismissHint, goNext, goPrev, profile, questions]);
+
+    // Clear the slide direction shortly after each change so the
+    // next render is back to a neutral position.
+    useEffect(() => {
+        if (slideDir === null) return;
+        const id = window.setTimeout(() => setSlideDir(null), 220);
+        return () => window.clearTimeout(id);
+    }, [slideDir]);
+
     // --- Render states -------------------------------------------------
 
     if (loadError) {
@@ -205,19 +315,47 @@ export default function Assessment() {
 
             <AssessmentProgress current={currentIndex + 1} total={total} />
 
-            <QuestionCard
-                question={current}
-                selectedAnswerIds={answers[current.id] ?? []}
-                onToggle={(answerId) => handleToggle(current.id, answerId)}
-                disabled={submitting}
-            />
+            <div
+                ref={swipeRef}
+                className={`assessment-question-wrap${
+                    slideDir === "left"
+                        ? " assessment-slide-left"
+                        : slideDir === "right"
+                          ? " assessment-slide-right"
+                          : ""
+                }`}
+                data-testid="assessment-question-wrap"
+            >
+                <QuestionCard
+                    question={current}
+                    selectedAnswerIds={answers[current.id] ?? []}
+                    onToggle={(answerId) => handleToggle(current.id, answerId)}
+                    disabled={submitting}
+                />
+            </div>
+
+            {showHint && gesturesEnabled && (
+                <p
+                    className="assessment-swipe-hint"
+                    data-testid="assessment-swipe-hint"
+                    role="status"
+                >
+                    {t(
+                        "assessment.swipe_hint",
+                        "Swipe left / right (or use arrow keys) to navigate.",
+                    )}
+                </p>
+            )}
 
             <div className="form-actions">
                 <button
                     type="button"
                     className="btn btn-secondary"
                     data-testid="assessment-prev"
-                    onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
+                    onClick={() => {
+                        dismissHint();
+                        goPrev();
+                    }}
                     disabled={currentIndex === 0 || submitting}
                 >
                     {t("assessment.prev_question", "Previous question")}
@@ -228,7 +366,10 @@ export default function Assessment() {
                         type="button"
                         className="btn btn-primary"
                         data-testid="assessment-next"
-                        onClick={() => setCurrentIndex((i) => Math.min(total - 1, i + 1))}
+                        onClick={() => {
+                            dismissHint();
+                            goNext();
+                        }}
                         disabled={
                             (answers[current.id]?.length ?? 0) === 0 ||
                             submitting
@@ -241,7 +382,10 @@ export default function Assessment() {
                         type="button"
                         className="btn btn-primary"
                         data-testid="assessment-submit"
-                        onClick={handleSubmit}
+                        onClick={() => {
+                            dismissHint();
+                            void handleSubmit();
+                        }}
                         disabled={!allAnswered || submitting}
                     >
                         {submitting

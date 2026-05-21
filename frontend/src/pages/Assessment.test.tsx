@@ -268,3 +268,121 @@ describe("Assessment page", () => {
         expect(next.disabled).toBe(true);
     });
 });
+
+describe("Assessment swipe + keyboard navigation (Phase 23B)", () => {
+    beforeEach(() => {
+        mockNavigate.mockClear();
+        apiQuestions.mockReset();
+        apiEvaluate.mockReset();
+        toastError.mockReset();
+        toastSuccess.mockReset();
+        localStorage.clear();
+        localStorage.setItem("adaptive-learner.project_id", "p1");
+        // Enable gestures explicitly (test env may be desktop-like).
+        localStorage.setItem("adaptive-learner.gestures_enabled", "true");
+    });
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it("ArrowRight advances to the next question after selecting an answer", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        // Answer q01 first; without an answer ArrowRight is a no-op.
+        fireEvent.click(screen.getByTestId("question-q01-answer-a"));
+        await act(async () => {
+            fireEvent.keyDown(window, {key: "ArrowRight"});
+        });
+        await screen.findByTestId("question-card-q02");
+    });
+
+    it("ArrowLeft retreats to the previous question", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        fireEvent.click(screen.getByTestId("question-q01-answer-a"));
+        await act(async () => {
+            fireEvent.keyDown(window, {key: "ArrowRight"});
+        });
+        await screen.findByTestId("question-card-q02");
+        await act(async () => {
+            fireEvent.keyDown(window, {key: "ArrowLeft"});
+        });
+        await screen.findByTestId("question-card-q01");
+    });
+
+    it("ArrowLeft on the first question is a no-op (no negative index)", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        await act(async () => {
+            fireEvent.keyDown(window, {key: "ArrowLeft"});
+        });
+        // Still on the first question.
+        expect(screen.getByTestId("question-card-q01")).toBeInTheDocument();
+    });
+
+    it("renders the swipe hint on the first question (once)", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        expect(
+            screen.queryByTestId("assessment-swipe-hint"),
+        ).toBeInTheDocument();
+    });
+
+    it("hint is hidden once the user clicks Next (markGestureHintShown persisted)", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        fireEvent.click(screen.getByTestId("question-q01-answer-a"));
+        fireEvent.click(screen.getByTestId("assessment-next"));
+        await screen.findByTestId("question-card-q02");
+        // After Back to q01, the hint should NOT re-appear because
+        // it was already dismissed.
+        fireEvent.click(screen.getByTestId("assessment-prev"));
+        await screen.findByTestId("question-card-q01");
+        expect(screen.queryByTestId("assessment-swipe-hint")).toBeNull();
+        expect(localStorage.getItem("adaptive-learner.gestures_hint_shown")).toBe(
+            "true",
+        );
+    });
+
+    it("ArrowRight on the last question (with all answers) triggers submit", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        apiEvaluate.mockResolvedValue(PROFILE);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        fireEvent.click(screen.getByTestId("question-q01-answer-a"));
+        fireEvent.click(screen.getByTestId("assessment-next"));
+        await screen.findByTestId("question-card-q02");
+        fireEvent.click(screen.getByTestId("question-q02-answer-a"));
+        await act(async () => {
+            fireEvent.keyDown(window, {key: "ArrowRight"});
+        });
+        await waitFor(() => {
+            expect(apiEvaluate).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    it("ArrowRight is suppressed when an INPUT has focus", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        // Simulate an input field having focus — keyDown's target
+        // is INPUT, so the hook should bail.
+        const fakeInput = document.createElement("input");
+        document.body.appendChild(fakeInput);
+        await act(async () => {
+            const ev = new KeyboardEvent("keydown", {
+                key: "ArrowRight",
+                bubbles: true,
+            });
+            Object.defineProperty(ev, "target", {value: fakeInput});
+            window.dispatchEvent(ev);
+        });
+        // We're still on q01 since the input intercepted it.
+        expect(screen.getByTestId("question-card-q01")).toBeInTheDocument();
+    });
+});

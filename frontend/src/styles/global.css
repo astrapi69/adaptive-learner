@@ -429,6 +429,65 @@ select:focus {
   transition: width 0.25s ease;
 }
 
+/* v1.10.0 / Phase 23B — swipe / keyboard navigation. */
+.assessment-question-wrap {
+  /* Hint to the browser that this layer composites independently
+     so the slide transition runs on the GPU. */
+  will-change: transform, opacity;
+  transition: transform 200ms ease-out, opacity 200ms ease-out;
+  touch-action: pan-y; /* allow vertical scroll, capture horizontal */
+}
+
+.assessment-slide-left {
+  animation: assessment-slide-left 200ms ease-out;
+}
+
+.assessment-slide-right {
+  animation: assessment-slide-right 200ms ease-out;
+}
+
+@keyframes assessment-slide-left {
+  0% { transform: translateX(0); opacity: 1; }
+  50% { transform: translateX(-20px); opacity: 0.6; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes assessment-slide-right {
+  0% { transform: translateX(0); opacity: 1; }
+  50% { transform: translateX(20px); opacity: 0.6; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assessment-slide-left,
+  .assessment-slide-right {
+    animation: none;
+  }
+}
+
+.assessment-swipe-hint {
+  margin: var(--space-3) 0 0 0;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+  font-style: italic;
+  animation: assessment-hint-fade 6s ease-out forwards;
+}
+
+@keyframes assessment-hint-fade {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assessment-swipe-hint {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 .question-card {
   background: var(--surface);
   border: 1px solid var(--border);
