@@ -241,6 +241,32 @@ export interface LessonUpdateBody {
     order_index?: number;
 }
 
+// --- Taxonomy (Phase 22) -----------------------------------------------
+
+export interface SubjectCreateBody {
+    name: string;
+    parent_id?: string | null;
+    description?: string | null;
+    icon?: string | null;
+}
+
+export interface SubjectUpdateBody {
+    name?: string;
+    parent_id?: string | null;
+    description?: string | null;
+    icon?: string | null;
+}
+
+export interface TagCreateBody {
+    name: string;
+    color?: string | null;
+}
+
+export interface TagUpdateBody {
+    name?: string;
+    color?: string | null;
+}
+
 // --- Public namespaces --------------------------------------------------
 
 export const api = {
@@ -540,6 +566,85 @@ export const api = {
             apiCall<void>(`/lessons/${encodeURIComponent(lessonId)}`, {
                 method: "DELETE",
             }),
+    },
+
+    // --- Taxonomy: Subjects + Tags (v1.9.0 / Phase 22) ------------------
+
+    subjects: {
+        list: () =>
+            apiCall<import("../types/domain").Subject[]>("/subjects"),
+        get: (subjectId: string) =>
+            apiCall<import("../types/domain").Subject>(
+                `/subjects/${encodeURIComponent(subjectId)}`,
+            ),
+        create: (body: SubjectCreateBody) =>
+            apiCall<import("../types/domain").Subject>("/subjects", {
+                method: "POST",
+                body,
+            }),
+        update: (subjectId: string, body: SubjectUpdateBody) =>
+            apiCall<import("../types/domain").Subject>(
+                `/subjects/${encodeURIComponent(subjectId)}`,
+                {method: "PATCH", body},
+            ),
+        remove: (subjectId: string) =>
+            apiCall<void>(`/subjects/${encodeURIComponent(subjectId)}`, {
+                method: "DELETE",
+            }),
+    },
+
+    tags: {
+        list: (userId: string) =>
+            apiCall<import("../types/domain").Tag[]>(
+                `/users/${encodeURIComponent(userId)}/tags`,
+            ),
+        create: (userId: string, body: TagCreateBody) =>
+            apiCall<import("../types/domain").Tag>(
+                `/users/${encodeURIComponent(userId)}/tags`,
+                {method: "POST", body},
+            ),
+        update: (tagId: string, body: TagUpdateBody) =>
+            apiCall<import("../types/domain").Tag>(
+                `/tags/${encodeURIComponent(tagId)}`,
+                {method: "PATCH", body},
+            ),
+        remove: (tagId: string) =>
+            apiCall<void>(`/tags/${encodeURIComponent(tagId)}`, {
+                method: "DELETE",
+            }),
+    },
+
+    projectTaxonomy: {
+        listSubjects: (projectId: string) =>
+            apiCall<import("../types/domain").Subject[]>(
+                `/projects/${encodeURIComponent(projectId)}/subjects`,
+            ),
+        assignSubject: (projectId: string, subjectId: string) =>
+            apiCall<import("../types/domain").Subject>(
+                `/projects/${encodeURIComponent(projectId)}/subjects`,
+                {method: "POST", body: {subject_id: subjectId}},
+            ),
+        unassignSubject: (projectId: string, subjectId: string) =>
+            apiCall<void>(
+                `/projects/${encodeURIComponent(projectId)}/subjects/` +
+                    encodeURIComponent(subjectId),
+                {method: "DELETE"},
+            ),
+        listTags: (projectId: string) =>
+            apiCall<import("../types/domain").Tag[]>(
+                `/projects/${encodeURIComponent(projectId)}/tags`,
+            ),
+        assignTag: (projectId: string, tagId: string) =>
+            apiCall<import("../types/domain").Tag>(
+                `/projects/${encodeURIComponent(projectId)}/tags`,
+                {method: "POST", body: {tag_id: tagId}},
+            ),
+        unassignTag: (projectId: string, tagId: string) =>
+            apiCall<void>(
+                `/projects/${encodeURIComponent(projectId)}/tags/` +
+                    encodeURIComponent(tagId),
+                {method: "DELETE"},
+            ),
     },
 
     // --- Plugin discovery / health --------------------------------------

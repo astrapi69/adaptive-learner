@@ -51,6 +51,12 @@ from app.routers.projects import projects_router, users_projects_router
 from app.routers.settings import router as settings_router
 from app.routers.sync import router as sync_router
 from app.routers.system import router as system_router
+from app.routers.taxonomy import (
+    projects_taxonomy_router,
+    subjects_router,
+    tags_router,
+    users_tags_router,
+)
 from app.routers.users import router as users_router
 from app.services import crypto as crypto_service
 
@@ -445,6 +451,10 @@ app.include_router(topics_router, prefix="/api")
 app.include_router(lessons_router, prefix="/api")
 app.include_router(users_imports_router, prefix="/api")
 app.include_router(imports_router, prefix="/api")
+app.include_router(subjects_router, prefix="/api")
+app.include_router(tags_router, prefix="/api")
+app.include_router(users_tags_router, prefix="/api")
+app.include_router(projects_taxonomy_router, prefix="/api")
 app.include_router(sync_router, prefix="/api")
 app.include_router(system_router, prefix="/api")
 app.include_router(backup_router, prefix="/api")

@@ -137,4 +137,32 @@ export const apiStorage: IStorageService = {
         curriculum: (curriculumId, lang) =>
             api.export.curriculum(curriculumId, lang),
     },
+
+    subjects: {
+        list: () => api.subjects.list(),
+        get: (subjectId) => api.subjects.get(subjectId),
+        create: (body) => api.subjects.create(body),
+        update: (subjectId, body) => api.subjects.update(subjectId, body),
+        remove: (subjectId) => api.subjects.remove(subjectId),
+    },
+
+    tags: {
+        list: (userId) => api.tags.list(userId),
+        create: (userId, body) => api.tags.create(userId, body),
+        update: (tagId, body) => api.tags.update(tagId, body),
+        remove: (tagId) => api.tags.remove(tagId),
+    },
+
+    projectTaxonomy: {
+        listSubjects: (projectId) => api.projectTaxonomy.listSubjects(projectId),
+        assignSubject: (projectId, subjectId) =>
+            api.projectTaxonomy.assignSubject(projectId, subjectId),
+        unassignSubject: (projectId, subjectId) =>
+            api.projectTaxonomy.unassignSubject(projectId, subjectId),
+        listTags: (projectId) => api.projectTaxonomy.listTags(projectId),
+        assignTag: (projectId, tagId) =>
+            api.projectTaxonomy.assignTag(projectId, tagId),
+        unassignTag: (projectId, tagId) =>
+            api.projectTaxonomy.unassignTag(projectId, tagId),
+    },
 };

@@ -465,3 +465,178 @@ describe("DexieStorage imports (Phase 12C)", () => {
         expect(reread.analysis_result?.recommended_method).toBe("inductive");
     });
 });
+
+describe("DexieStorage taxonomy (Phase 22C)", () => {
+    async function makeUser() {
+        return await dexieStorage.users.create({name: "Tagger"});
+    }
+
+    async function makeProject(userId: string) {
+        return await dexieStorage.users.projects.create(userId, {
+            topic: "Spanish Grammar",
+            goal: "Master conversational Spanish",
+            timeframe: "3 months",
+            daily_minutes: 30,
+        });
+    }
+
+    describe("subjects", () => {
+        it("create + list returns sorted by name", async () => {
+            await dexieStorage.subjects.create({name: "Zebra"});
+            await dexieStorage.subjects.create({name: "Alpha"});
+            const list = await dexieStorage.subjects.list();
+            expect(list.map((s) => s.name)).toEqual(["Alpha", "Zebra"]);
+        });
+
+        it("create under parent links parent_id", async () => {
+            const parent = await dexieStorage.subjects.create({name: "Math"});
+            const child = await dexieStorage.subjects.create({
+                name: "Algebra",
+                parent_id: parent.id,
+            });
+            expect(child.parent_id).toBe(parent.id);
+        });
+
+        it("rejects create with unknown parent", async () => {
+            await expect(
+                dexieStorage.subjects.create({
+                    name: "Orphan",
+                    parent_id: "nope",
+                }),
+            ).rejects.toBeInstanceOf(ApiError);
+        });
+
+        it("rejects update making subject its own parent", async () => {
+            const s = await dexieStorage.subjects.create({name: "Self"});
+            await expect(
+                dexieStorage.subjects.update(s.id, {parent_id: s.id}),
+            ).rejects.toBeInstanceOf(ApiError);
+        });
+
+        it("remove detaches children (SET NULL semantics)", async () => {
+            const parent = await dexieStorage.subjects.create({name: "Parent"});
+            const child = await dexieStorage.subjects.create({
+                name: "Child",
+                parent_id: parent.id,
+            });
+            await dexieStorage.subjects.remove(parent.id);
+            const refreshed = await dexieStorage.subjects.get(child.id);
+            expect(refreshed.parent_id).toBeNull();
+        });
+    });
+
+    describe("tags", () => {
+        it("create + list scopes to user", async () => {
+            const u = await makeUser();
+            await dexieStorage.tags.create(u.id, {name: "exam-prep"});
+            await dexieStorage.tags.create(u.id, {name: "daily"});
+            const list = await dexieStorage.tags.list(u.id);
+            expect(list.map((t) => t.name)).toEqual(["daily", "exam-prep"]);
+        });
+
+        it("rejects duplicate name per user", async () => {
+            const u = await makeUser();
+            await dexieStorage.tags.create(u.id, {name: "dup"});
+            await expect(
+                dexieStorage.tags.create(u.id, {name: "dup"}),
+            ).rejects.toBeInstanceOf(ApiError);
+        });
+
+        it("same name across two users is allowed", async () => {
+            const a = await makeUser();
+            const b = await dexieStorage.users.create({name: "Other"});
+            await dexieStorage.tags.create(a.id, {name: "shared"});
+            await dexieStorage.tags.create(b.id, {name: "shared"});
+            expect((await dexieStorage.tags.list(a.id)).length).toBe(1);
+            expect((await dexieStorage.tags.list(b.id)).length).toBe(1);
+        });
+
+        it("rename rejects collision", async () => {
+            const u = await makeUser();
+            await dexieStorage.tags.create(u.id, {name: "tag-a"});
+            const second = await dexieStorage.tags.create(u.id, {name: "tag-b"});
+            await expect(
+                dexieStorage.tags.update(second.id, {name: "tag-a"}),
+            ).rejects.toBeInstanceOf(ApiError);
+        });
+
+        it("remove deletes associations too", async () => {
+            const u = await makeUser();
+            const project = await makeProject(u.id);
+            const tag = await dexieStorage.tags.create(u.id, {name: "trans"});
+            await dexieStorage.projectTaxonomy.assignTag(project.id, tag.id);
+            expect(
+                (await dexieStorage.projectTaxonomy.listTags(project.id)).length,
+            ).toBe(1);
+            await dexieStorage.tags.remove(tag.id);
+            expect(
+                (await dexieStorage.projectTaxonomy.listTags(project.id)).length,
+            ).toBe(0);
+        });
+    });
+
+    describe("projectTaxonomy", () => {
+        it("assign + list subjects round-trip", async () => {
+            const u = await makeUser();
+            const project = await makeProject(u.id);
+            const subject = await dexieStorage.subjects.create({name: "S1"});
+            await dexieStorage.projectTaxonomy.assignSubject(
+                project.id,
+                subject.id,
+            );
+            const list = await dexieStorage.projectTaxonomy.listSubjects(
+                project.id,
+            );
+            expect(list.length).toBe(1);
+            expect(list[0]?.id).toBe(subject.id);
+        });
+
+        it("assignSubject twice is idempotent", async () => {
+            const u = await makeUser();
+            const project = await makeProject(u.id);
+            const subject = await dexieStorage.subjects.create({name: "Idemp"});
+            await dexieStorage.projectTaxonomy.assignSubject(
+                project.id,
+                subject.id,
+            );
+            await dexieStorage.projectTaxonomy.assignSubject(
+                project.id,
+                subject.id,
+            );
+            const list = await dexieStorage.projectTaxonomy.listSubjects(
+                project.id,
+            );
+            expect(list.length).toBe(1);
+        });
+
+        it("unassignSubject removes the association only", async () => {
+            const u = await makeUser();
+            const project = await makeProject(u.id);
+            const subject = await dexieStorage.subjects.create({name: "X"});
+            await dexieStorage.projectTaxonomy.assignSubject(
+                project.id,
+                subject.id,
+            );
+            await dexieStorage.projectTaxonomy.unassignSubject(
+                project.id,
+                subject.id,
+            );
+            const list = await dexieStorage.projectTaxonomy.listSubjects(
+                project.id,
+            );
+            expect(list).toEqual([]);
+            // The Subject itself survives.
+            expect(await dexieStorage.subjects.get(subject.id)).toBeDefined();
+        });
+
+        it("assignTag rejects cross-user mismatch", async () => {
+            const a = await makeUser();
+            const b = await dexieStorage.users.create({name: "Other"});
+            const projectA = await makeProject(a.id);
+            const tagB = await dexieStorage.tags.create(b.id, {name: "leak"});
+            await expect(
+                dexieStorage.projectTaxonomy.assignTag(projectA.id, tagB.id),
+            ).rejects.toBeInstanceOf(ApiError);
+        });
+    });
+});

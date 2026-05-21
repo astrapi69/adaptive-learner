@@ -635,3 +635,23 @@ export interface RestoreSummary {
     errors: string[];
     tables: Record<string, RestoreTableSummary>;
 }
+
+// --- Taxonomy: Subject + Tag (Phase 22) ---------------------------------
+
+export interface Subject {
+    id: string;
+    parent_id: string | null;
+    name: string;
+    description: string | null;
+    icon: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Tag {
+    id: string;
+    user_id: string;
+    name: string;
+    color: string | null;
+    created_at: string;
+}

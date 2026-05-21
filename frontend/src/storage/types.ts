@@ -33,6 +33,10 @@ import type {
     SessionRatingBody,
     SessionStartBody,
     SettingsPatchBody,
+    SubjectCreateBody,
+    SubjectUpdateBody,
+    TagCreateBody,
+    TagUpdateBody,
     TopicCreateBody,
     TopicUpdateBody,
     UserCreateBody,
@@ -55,7 +59,9 @@ import type {
     SessionRating,
     SessionStartResult,
     SpacedRecommendation,
+    Subject,
     SwitchRecommendation,
+    Tag,
     ToolRecommendation,
     User,
     UserSettings,
@@ -218,6 +224,32 @@ export interface IExportNamespace {
     ): Promise<import("./export-builder").CurriculumOverview>;
 }
 
+// --- Taxonomy: Subjects + Tags (v1.9.0 / Phase 22) ---------------------
+
+export interface ISubjectsNamespace {
+    list(): Promise<Subject[]>;
+    get(subjectId: string): Promise<Subject>;
+    create(body: SubjectCreateBody): Promise<Subject>;
+    update(subjectId: string, body: SubjectUpdateBody): Promise<Subject>;
+    remove(subjectId: string): Promise<void>;
+}
+
+export interface ITagsNamespace {
+    list(userId: string): Promise<Tag[]>;
+    create(userId: string, body: TagCreateBody): Promise<Tag>;
+    update(tagId: string, body: TagUpdateBody): Promise<Tag>;
+    remove(tagId: string): Promise<void>;
+}
+
+export interface IProjectTaxonomyNamespace {
+    listSubjects(projectId: string): Promise<Subject[]>;
+    assignSubject(projectId: string, subjectId: string): Promise<Subject>;
+    unassignSubject(projectId: string, subjectId: string): Promise<void>;
+    listTags(projectId: string): Promise<Tag[]>;
+    assignTag(projectId: string, tagId: string): Promise<Tag>;
+    unassignTag(projectId: string, tagId: string): Promise<void>;
+}
+
 export interface IImportsNamespace {
     list(userId: string): Promise<ImportedConversation[]>;
     create(
@@ -277,4 +309,7 @@ export interface IStorageService {
     system: ISystemNamespace;
     backup: IBackupNamespace;
     export: IExportNamespace;
+    subjects: ISubjectsNamespace;
+    tags: ITagsNamespace;
+    projectTaxonomy: IProjectTaxonomyNamespace;
 }
