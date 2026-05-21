@@ -7,6 +7,11 @@
  * ``completeOnboarding`` only. Tests that need an evaluated
  * profile (e.g. Dashboard radar) should additionally call
  * ``completeAssessment``.
+ *
+ * v1.15.0 / Phase 28A: the ``createTestUser`` shorthand
+ * combines both flows. Specs that need a clean, evaluated
+ * learner ready on /dashboard should reach for that helper
+ * directly rather than calling the two-step pair every time.
  */
 
 import type {Page} from "@playwright/test";
@@ -70,4 +75,19 @@ export async function completeAssessment(page: Page): Promise<void> {
     await page.getByTestId("assessment-result").waitFor();
     await page.getByTestId("assessment-continue").click();
     await page.waitForURL("**/dashboard");
+}
+
+/**
+ * v1.15.0 / Phase 28A — single-call helper that lands a
+ * fresh learner on /dashboard with a fully evaluated
+ * profile. Equivalent to ``completeOnboarding(page, args)``
+ * followed by ``completeAssessment(page)``. Use this in
+ * specs that don't care about the onboarding flow itself.
+ */
+export async function createTestUser(
+    page: Page,
+    args: OnboardingArgs = {},
+): Promise<void> {
+    await completeOnboarding(page, args);
+    await completeAssessment(page);
 }
