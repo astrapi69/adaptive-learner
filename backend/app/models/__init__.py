@@ -950,6 +950,73 @@ class UserXP(Base):
         return f"<UserXP user={self.user_id!r} xp={self.total_xp} level={self.level}>"
 
 
+class Badge(Base):
+    """Catalog of available badges (Phase 29B).
+
+    Seeded from ``plugins/adaptive-learner-plugin-gamification/
+    badges.yaml`` on first startup; the seeder is idempotent on
+    the ``key`` slug. ``name_key`` and ``description_key`` are
+    i18n catalog references (under ``gamification.badges.*``)
+    rather than literal strings so the badge surface translates
+    across all 8 languages without touching the DB.
+    """
+
+    __tablename__ = "badges"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    key: Mapped[str] = mapped_column(String(100), nullable=False, unique=True, index=True)
+    name_key: Mapped[str] = mapped_column(String(200), nullable=False)
+    description_key: Mapped[str] = mapped_column(String(200), nullable=False)
+    icon: Mapped[str] = mapped_column(String(50), nullable=False, default="")
+    category: Mapped[str] = mapped_column(String(50), nullable=False, default="general")
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return f"<Badge key={self.key!r} category={self.category!r}>"
+
+
+class UserBadge(Base):
+    """Earned-badge record (Phase 29B).
+
+    APPEND-ONLY: once a user earns a badge, the row stays. Unique
+    on ``(user_id, badge_id)`` so the evaluator can't double-award
+    the same badge.
+    """
+
+    __tablename__ = "user_badges"
+    __table_args__ = (
+        UniqueConstraint("user_id", "badge_id", name="uq_user_badges_pair"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    badge_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("badges.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    earned_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<UserBadge user={self.user_id!r} badge={self.badge_id!r} "
+            f"earned_at={self.earned_at!r}>"
+        )
+
+
 __all__ = [
     "Base",
     "User",
@@ -973,4 +1040,6 @@ __all__ = [
     "ProjectSubject",
     "ProjectTag",
     "UserXP",
+    "Badge",
+    "UserBadge",
 ]

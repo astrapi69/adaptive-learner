@@ -53,6 +53,9 @@ EXPECTED_TABLES = {
     "project_tags",
     # v1.16.0 / Phase 29A — gamification XP singleton
     "user_xp",
+    # v1.16.0 / Phase 29B — badge catalog + earned-badge record
+    "badges",
+    "user_badges",
 }
 
 

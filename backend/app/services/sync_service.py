@@ -59,8 +59,10 @@ from app.models import (
     SessionRating,
     StepEvaluation,
     Subject,
+    Badge,
     Tag,
     User,
+    UserBadge,
     UserSettings,
     UserXP,
 )
@@ -427,6 +429,39 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="updated_at",
         append_only=False,
         order=23,
+        scope="direct",
+    ),
+    # v1.16.0 / Phase 29B — badge catalog. MUTABLE (icon, name_key,
+    # description_key, category can shift between releases); the
+    # seed YAML is the source of truth so post-sync the receiving
+    # device re-syncs from its own seed AND the wire shape, with
+    # the wire winning if the timestamp is newer.
+    "badges": TableSpec(
+        model=Badge,
+        columns=(
+            "id",
+            "key",
+            "name_key",
+            "description_key",
+            "icon",
+            "category",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=24,
+        scope="global",
+    ),
+    # v1.16.0 / Phase 29B — earned-badge record. APPEND-ONLY:
+    # earning a badge is an insert; un-earning is not a supported
+    # operation. Unique on (user_id, badge_id).
+    "user_badges": TableSpec(
+        model=UserBadge,
+        columns=("id", "user_id", "badge_id", "earned_at"),
+        timestamp_field="earned_at",
+        append_only=True,
+        order=25,
         scope="direct",
     ),
 }

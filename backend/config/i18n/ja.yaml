@@ -1,16 +1,7 @@
-# Adaptive Learner i18n catalog (JA — Phase 26C / v1.13.0).
-#
-# AI-translated (ja), polite form (です/ます), not keigo.
-# Pending native speaker review. Mirror of en.yaml structure;
-# parity-checked by backend/tests/test_i18n_parity.py.
-
 app:
   name: Adaptive Learner
   tagline: あなたに合わせて適応する学習。
-  skeleton_notice: >-
-    スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで
-    追加されます — docs/adaptive-learner-project-reference.md を参照してください。
-
+  skeleton_notice: スケルトン状態です。ドメインモデル、プラグイン、ページは今後のフェーズで 追加されます — docs/adaptive-learner-project-reference.md を参照してください。
 common:
   save: 保存
   cancel: キャンセル
@@ -25,12 +16,11 @@ common:
   delete: 削除
   edit: 編集
   confirm: 確認
-  "yes": はい
-  "no": いいえ
+  'yes': はい
+  'no': いいえ
   optional: 任意
   required: 必須
   minutes: 分
-
 nav:
   dashboard: ダッシュボード
   session: セッション
@@ -42,12 +32,9 @@ nav:
   menu: メニュー
   online: オンライン
   offline: オフライン
-
 import:
   title: 会話をインポート
-  subtitle: >-
-    ChatGPT、Claude、Gemini との会話を貼り付けるかアップロードすると、
-    学習のインサイトをすぐに得られます。
+  subtitle: ChatGPT、Claude、Gemini との会話を貼り付けるかアップロードすると、 学習のインサイトをすぐに得られます。
   quick:
     title: クイック分析
     hint: ここに会話を貼り付けてください。1 ステップで保存して分析します。
@@ -67,9 +54,7 @@ import:
   analysis_title: 分析
   analysis_ready: 分析の準備ができました。
   analysis_fallback: 分析は実行されましたが、AI の応答をきれいに解析できませんでした。
-  analysis_fallback_long: >-
-    AI の応答は構造化された JSON として解析できませんでした。下の要約は
-    フォールバックです。
+  analysis_fallback_long: AI の応答は構造化された JSON として解析できませんでした。下の要約は フォールバックです。
   analysis_error: 会話を分析できませんでした。
   analysis_save_error: 分析結果を保存できませんでした。
   back_to_list: インポート一覧に戻る
@@ -86,13 +71,11 @@ import:
   field_subtopics: サブトピック
   field_curriculum: 推奨カリキュラム
   file_imported_one: 会話がインポートされました。詳細ページで分析をクリックしてください。
-  file_imported_many: "{count} 件の会話をインポートしました。"
+  file_imported_many: '{count} 件の会話をインポートしました。'
   list_error: インポートされた会話を読み込めませんでした。
   load_error: 会話を読み込めませんでした。
   messages: メッセージ
-  no_api_key: >-
-    分析を有効にするには、設定で現在の AI プロバイダーの API キーを
-    設定してください。
+  no_api_key: 分析を有効にするには、設定で現在の AI プロバイダーの API キーを 設定してください。
   no_lessons: 分析でレッスンは提案されませんでした。
   no_user: 会話をインポートする前にオンボーディングを完了してください。
   parse_error: 入力形式を認識できませんでした。
@@ -104,7 +87,6 @@ import:
   settings_error: AI 設定を読み込めませんでした。
   start_session: セッションを開始
   transcript: トランスクリプト
-
 curriculum:
   title: カリキュラム
   active: アクティブなカリキュラム
@@ -129,7 +111,6 @@ curriculum:
   lesson_saved: レッスンを保存しました。
   lesson_deleted: レッスンを削除しました。
   lesson_delete_confirm: このレッスンを削除しますか?
-
 landing:
   title: Adaptive Learner
   subtitle: あなたに合わせて適応する学習。
@@ -137,22 +118,17 @@ landing:
   start_button: 学習の旅を始める
   docs_link: ドキュメントを読む
   checking_session: おかえりなさい…
-  intro: >-
-    Adaptive Learner は、研究に基づく 6 つの学習アプローチからあなたに
-    最適な方法を見つけ、毎セッションで 7 ステップのサイクルをガイドします。
-
+  intro: Adaptive Learner は、研究に基づく 6 つの学習アプローチからあなたに 最適な方法を見つけ、毎セッションで 7 ステップのサイクルをガイドします。
 onboarding:
   title: 学習プロジェクトを作成
-  intro: >-
-    学習目標について教えてください。Adaptive Learner はこれをもとに
-    プロフィールを構築し、開始する方法を推奨します。
+  intro: 学習目標について教えてください。Adaptive Learner はこれをもとに プロフィールを構築し、開始する方法を推奨します。
   field_name: お名前
   field_topic: トピック
-  field_topic_hint: "例: スペイン語 B1、線形代数。"
+  field_topic_hint: '例: スペイン語 B1、線形代数。'
   field_goal: 目標
   field_goal_hint: 何ができるようになりたいですか?
   field_timeframe: 期間
-  field_timeframe_hint: "例: 4 週間、1 学期。"
+  field_timeframe_hint: '例: 4 週間、1 学期。'
   field_daily_minutes: 1 日あたりの分
   field_current_problem: 現在の問題
   field_current_problem_hint: 任意 — 今、何が妨げになっていますか?
@@ -160,19 +136,14 @@ onboarding:
   creating: プロジェクトを作成中…
   skip: あとで
   skip_top: 今はスキップ →
-  skip_hint: >-
-    まだ決められませんか? 「あとで」をタップして始めてください — カリキュラム
-    ページからいつでも記入できます。
+  skip_hint: まだ決められませんか? 「あとで」をタップして始めてください — カリキュラム ページからいつでも記入できます。
   skip_default_name: 学習者
   skip_default_topic: 私の学習
   skip_default_goal: 自分の学習スタイルを見つける。
   skip_default_timeframe: 柔軟
-
 assessment:
   title: 学習タイプ評価
-  intro: >-
-    12 の短い質問で学習プロフィールを判定します。正解も不正解もありません —
-    直感で答えてください。
+  intro: 12 の短い質問で学習プロフィールを判定します。正解も不正解もありません — 直感で答えてください。
   question_progress: 質問 {current} / {total}
   next_question: 次の質問
   prev_question: 前の質問
@@ -181,7 +152,6 @@ assessment:
   result_title: あなたの学習プロフィール
   dominant_method: 好まれる方法
   continue_to_dashboard: ダッシュボードへ進む
-
 dashboard:
   title: ダッシュボード
   welcome: おかえりなさい
@@ -204,7 +174,6 @@ dashboard:
   metric_mean_stress: 平均ストレス
   metric_streak: 連続日数
   no_data: まだセッションがありません — 最初のセッションを始めて傾向を確認しましょう。
-
 session:
   title: 学習セッション
   in_progress: セッション進行中
@@ -215,8 +184,7 @@ session:
   end_session: セッションを終了
   end_session_confirm: よろしいですか? セッションを終了して評価をお願いします。
   switch_recommended: 方法の切り替えを推奨
-  switch_recommended_subtitle: >-
-    最近の評価から、別の方法のほうが合っているかもしれません。
+  switch_recommended_subtitle: 最近の評価から、別の方法のほうが合っているかもしれません。
   switch_accept: 方法を切り替える
   switch_dismiss: 現在の方法を維持
   rating_title: セッションはどうでしたか?
@@ -226,16 +194,13 @@ session:
   rating_notes: メモ (任意)
   rating_submit: 評価を送信
   step_progress: ステップ {current} / {total}
-  step_advance_toast: "次へ進みます: {step}"
-  cycle_label: "サイクル {n}"
-  cycle_advanced: "サイクル {n} 開始"
-  cycles_completed: "完了したサイクル"
-  next_topic: "次のトピック:"
+  step_advance_toast: '次へ進みます: {step}'
+  cycle_label: サイクル {n}
+  cycle_advanced: サイクル {n} 開始
+  cycles_completed: 完了したサイクル
+  next_topic: '次のトピック:'
   step_reason_tooltip: なぜこのステップ?
-  offline_start_blocked: >-
-    オフラインです。新しいセッションにはネットワーク接続が必要です — 過去の
-    セッションはダッシュボードから読み続けられます。
-
+  offline_start_blocked: オフラインです。新しいセッションにはネットワーク接続が必要です — 過去の セッションはダッシュボードから読み続けられます。
 progress:
   title: 進捗
   chart_timeline: 時間経過に伴う理解度とストレス
@@ -248,15 +213,12 @@ progress:
   commit_date: 日付
   no_commits: まだ完了したセッションはありません。
   step_eval_title: AI ステップ評価のインサイト
-  step_eval_empty: >-
-    まだ AI ステップ評価データがありません — セッションを開始してここに
-    インサイトを表示しましょう。
+  step_eval_empty: まだ AI ステップ評価データがありません — セッションを開始してここに インサイトを表示しましょう。
   step_eval_avg_confidence: AI の平均信頼度
-  step_eval_repeats: "AI が「まだ準備ができていない」と言った回数"
+  step_eval_repeats: AI が「まだ準備ができていない」と言った回数
   step_eval_advances: ステップ前進
   step_eval_backward: 後退遷移
-  step_eval_stickiest_label: "最も時間を費やしたステップ:"
-
+  step_eval_stickiest_label: '最も時間を費やしたステップ:'
 settings:
   title: 設定
   section_language: 言語
@@ -265,25 +227,15 @@ settings:
   section_danger: アカウント
   section_ui: インターフェース
   gestures: スワイプジェスチャー
-  gestures_description: >-
-    評価、セッション、カリキュラムをスワイプして移動します。
+  gestures_description: 評価、セッション、カリキュラムをスワイプして移動します。
   section_storage_mode: ストレージモード
-  storage_mode_help: >-
-    データの保存場所を選択してください。ローカルモードはすべてをこの
-    ブラウザに保存します。サーバーモードは AdaptiveLearner のバックエンドと
-    通信します。
+  storage_mode_help: データの保存場所を選択してください。ローカルモードはすべてをこの ブラウザに保存します。サーバーモードは AdaptiveLearner のバックエンドと 通信します。
   storage_mode_api: サーバー
   storage_mode_api_hint: 実行中の AdaptiveLearner バックエンドが必要です。
   storage_mode_dexie: ローカル (ブラウザ)
-  storage_mode_dexie_hint: >-
-    データと API キーはこのブラウザに保存され、AI 呼び出しはこのページから
-    直接実行されます。
-  storage_mode_warning: >-
-    データはモード間で同期されません。同期は将来のバージョンで予定されて
-    います。
-  storage_mode_switch_notice: >-
-    ストレージモードを保存しました。新しいバックエンドに切り替えるには
-    ページを再読み込みしてください。
+  storage_mode_dexie_hint: データと API キーはこのブラウザに保存され、AI 呼び出しはこのページから 直接実行されます。
+  storage_mode_warning: データはモード間で同期されません。同期は将来のバージョンで予定されて います。
+  storage_mode_switch_notice: ストレージモードを保存しました。新しいバックエンドに切り替えるには ページを再読み込みしてください。
   language_label: 表示言語
   provider_label: アクティブなプロバイダー
   provider_anthropic: Anthropic Claude
@@ -299,21 +251,17 @@ settings:
   saved: 保存しました。
   save_failed: 保存に失敗しました。
   provider_active: アクティブ
-  active_provider_missing_key: >-
-    これはアクティブなプロバイダーですが、API キーが保存されていません。
-    キーが保存されるまで AI の応答はスキップされます。
+  active_provider_missing_key: これはアクティブなプロバイダーですが、API キーが保存されていません。 キーが保存されるまで AI の応答はスキップされます。
   section_model_overrides: モデルの上書き
-  model_overrides_hint: >-
-    各プロバイダーのデフォルトモデルを使う場合は空のままにしてください。
-    空でない値はチャット時にデフォルトを置き換えます。
-  model_override_placeholder: "モデル識別子 (例: claude-3-5-haiku-latest)"
+  model_overrides_hint: 各プロバイダーのデフォルトモデルを使う場合は空のままにしてください。 空でない値はチャット時にデフォルトを置き換えます。
+  model_override_placeholder: 'モデル識別子 (例: claude-3-5-haiku-latest)'
   model_override_set: 上書きが有効
   model_override_default: デフォルトモデル
   model_override_save: モデルを保存
   model_override_clear: デフォルトを使用
   model_picker_placeholder: モデル ID を選択または入力
   model_picker_open: モデル一覧を開く
-  model_picker_default_hint: "デフォルトを使用:"
+  model_picker_default_hint: 'デフォルトを使用:'
   model_picker_loading: モデルを読み込み中...
   model_picker_error: モデルを読み込めませんでした。API キーを確認してください。
   model_picker_retry: 再試行
@@ -321,7 +269,6 @@ settings:
   model_picker_recommended: 推奨
   model_picker_all: すべてのモデル
   model_picker_suggestions: 候補 (オフライン)
-
 methods:
   deductive:
     label: 演繹的
@@ -341,7 +288,6 @@ methods:
   ai_adaptive:
     label: AI 適応型
     summary: AI があなたに最適な方法を選びます。
-
 cycle_steps:
   input:
     label: インプット
@@ -364,14 +310,12 @@ cycle_steps:
   integrate:
     label: 統合
     description: 経験を通じて知識が定着する。
-
 errors:
   network: サーバーに接続できませんでした。
   not_found: 見つかりませんでした。
   validation: 入力が無効です。
   conflict: エントリーは既に存在します。
   server: サーバーエラー — しばらくしてからもう一度お試しください。
-
 toast:
   project_created: プロジェクトを作成しました。
   assessment_saved: プロフィールを保存しました。
@@ -381,20 +325,16 @@ toast:
   api_key_saved: API キーを保存しました。
   api_key_deleted: API キーを削除しました。
   method_switched: 方法を切り替えました。
-
 install:
   title: ホーム画面に追加
-  subtitle: >-
-    Adaptive Learner を本物のアプリのように開きます — ブラウザのタブは
-    不要です。
+  subtitle: Adaptive Learner を本物のアプリのように開きます — ブラウザのタブは 不要です。
   install: インストール
   dismiss: 今はしない
   aria_label: Adaptive Learner をインストール
-
 about:
   section_heading: Adaptive Learner について
   loading: 情報を読み込み中…
-  load_failed: "システム情報を読み込めませんでした:"
+  load_failed: 'システム情報を読み込めませんでした:'
   version_heading: バージョン
   app_label: Adaptive Learner
   build_hash_label: ビルド
@@ -412,13 +352,10 @@ about:
   dependencies_label: 使用技術
   tagline: 自律的に学ぶ人のために作られました。
   donations_heading: 開発を支援する
-  donations_intro: >-
-    Adaptive Learner は無料でオープンソースです。役に立ったら、ぜひ
-    支援を検討してください。
+  donations_intro: Adaptive Learner は無料でオープンソースです。役に立ったら、ぜひ 支援を検討してください。
   donations_primary: 推奨
   donations:
-    liberapay_desc: >-
-      定期的な寄付。オープンソース、プラットフォーム手数料なし。
+    liberapay_desc: 定期的な寄付。オープンソース、プラットフォーム手数料なし。
     github_desc: 既存の GitHub アカウントでスポンサーになります。
     kofi_desc: 一回限りの寄付。ログイン不要。
   license_heading: ライセンスとリソース
@@ -427,57 +364,48 @@ about:
   repo_label: リポジトリ
   docs_label: ドキュメント
   issues_label: 課題
-
 backup:
   section_title: バックアップ
-  section_help: >-
-    アカウントのすべてを JSON ファイルとしてエクスポートします。API
-    キーは含まれません。復元後にもう一度入力する必要があります。
+  section_help: アカウントのすべてを JSON ファイルとしてエクスポートします。API キーは含まれません。復元後にもう一度入力する必要があります。
   export: バックアップを作成
   exporting: エクスポート中…
   import: バックアップから復元
   importing: 復元中…
   confirm: 復元を確認
   invalid_format: このファイルは有効な Adaptive Learner バックアップではありません。
-  export_success: "バックアップをダウンロードしました ({{count}} 件)。"
-  export_error: "バックアップに失敗しました: {{detail}}"
-  import_parse_error: "バックアップを読み込めませんでした: {{detail}}"
-  import_error: "復元に失敗しました: {{detail}}"
+  export_success: バックアップをダウンロードしました ({{count}} 件)。
+  export_error: 'バックアップに失敗しました: {{detail}}'
+  import_parse_error: 'バックアップを読み込めませんでした: {{detail}}'
+  import_error: '復元に失敗しました: {{detail}}'
   comparison_title: 復元を確認
-  comparison_help: >-
-    復元はマージ方式です。新しいレコードは挿入され、可変レコードは
-    バックアップのほうが新しい場合のみ更新され、履歴行はそのまま残り
-    ます。何も削除されません。API キーは無視されます。
+  comparison_help: 復元はマージ方式です。新しいレコードは挿入され、可変レコードは バックアップのほうが新しい場合のみ更新され、履歴行はそのまま残り ます。何も削除されません。API キーは無視されます。
   table_header: テーブル
   current_header: 現在
   incoming_header: バックアップ
   restored_summary: 復元が完了しました。
-  restored_inserted: "挿入: {{n}}"
-  restored_updated: "更新: {{n}}"
-  restored_skipped: "スキップ: {{n}}"
-  restored_errors: "エラー: {{n}}"
-  restored_with_errors: "{{n}} 件のレコードを復元できませんでした。"
-  last_backup: "最終バックアップ: {{when}}"
-  reminder_overdue: "前回のバックアップから {{days}} 日以上経過しています。"
+  restored_inserted: '挿入: {{n}}'
+  restored_updated: '更新: {{n}}'
+  restored_skipped: 'スキップ: {{n}}'
+  restored_errors: 'エラー: {{n}}'
+  restored_with_errors: '{{n}} 件のレコードを復元できませんでした。'
+  last_backup: '最終バックアップ: {{when}}'
+  reminder_overdue: 前回のバックアップから {{days}} 日以上経過しています。
   auto_title: 自動バックアップ
   auto_help: 10 セッション完了ごと、または週に 1 回自動的にバックアップします。
   auto_run: 今すぐバックアップ
   auto_run_success: 自動バックアップを作成しました。
-  auto_run_error: "自動バックアップに失敗しました: {{detail}}"
+  auto_run_error: '自動バックアップに失敗しました: {{detail}}'
   auto_restored: 自動バックアップを復元しました。
   auto_restore: 復元
-  auto_restore_error: "復元に失敗しました: {{detail}}"
-  auto_records: "{{n}} 件"
+  auto_restore_error: '復元に失敗しました: {{detail}}'
+  auto_records: '{{n}} 件'
   auto_none: まだ自動バックアップはありません。最初のものは 10 セッション後または 7 日後に実行されます。
-  storage_pressure: "ブラウザストレージがほぼいっぱいです (クォータの {{pct}}%)。今すぐ手動バックアップをエクスポートしてください。"
+  storage_pressure: ブラウザストレージがほぼいっぱいです (クォータの {{pct}}%)。今すぐ手動バックアップをエクスポートしてください。
   compare_title: バックアップを比較
-  compare_help: >-
-    2 つのバックアップファイル (または 1 つのファイルと現在の状態) を
-    選択して、それらの間で何が変わったかを確認します。データは
-    変更されません — 比較は読み取り専用です。
+  compare_help: 2 つのバックアップファイル (または 1 つのファイルと現在の状態) を 選択して、それらの間で何が変わったかを確認します。データは 変更されません — 比較は読み取り専用です。
   compare_slot_a: バックアップ A (古い方)
   compare_slot_b: バックアップ B (新しい方)
-  compare_pick: "ファイルを選択…"
+  compare_pick: ファイルを選択…
   compare_use_current: 現在の状態を使う
   compare_current_label: 現在の状態
   compare_clear: クリア
@@ -487,7 +415,7 @@ backup:
   compare_loading: バックアップを比較中…
   compare_progress: 比較中…
   compare_hide_unchanged: 変更のないテーブルを非表示
-  compare_sort_label: "並べ替え:"
+  compare_sort_label: '並べ替え:'
   compare_sort_delta: 変更の多い順
   compare_sort_alpha: アルファベット順
   compare_no_changes: 2 つのバックアップは同一です — 差分は検出されませんでした。
@@ -501,18 +429,14 @@ backup:
   compare_high_volume_hint: 大量レコードのテーブル — レコード単位のプレビューは要約表示されます。
   compare_export_md: Markdown としてエクスポート
   compare_markdown_downloaded: 差分をエクスポートしました。
-  confirm_with_counts: "復元 ({{added}} 件追加、{{updated}} 件更新)"
+  confirm_with_counts: 復元 ({{added}} 件追加、{{updated}} 件更新)
   auto_compare_as_a: A として比較
   auto_compare_as_b: B として比較
-  compare_auto_label: "自動バックアップ {{date}}"
+  compare_auto_label: 自動バックアップ {{date}}
   auto_compare_missing: 自動バックアップは利用できなくなりました — ローテーションで削除されました。
-
 export:
   title: エクスポート
-  intro: >-
-    学習の旅を Markdown または PDF としてダウンロードします。Markdown は
-    編集と共有ができるプレーンテキストです。PDF はブラウザの印刷
-    ダイアログを開くので、コピーを保存できます。
+  intro: 学習の旅を Markdown または PDF としてダウンロードします。Markdown は 編集と共有ができるプレーンテキストです。PDF はブラウザの印刷 ダイアログを開くので、コピーを保存できます。
   progress_label: 進捗レポート (完全な旅)
   session_label: セッション詳細
   curriculum_label: カリキュラム概要
@@ -526,15 +450,14 @@ export:
   busy: 処理中...
   download_success: エクスポートをダウンロードしました。
   print_opened: 印刷ダイアログを開きました。「PDF として保存」を選択してください。
-  error: "エクスポートに失敗しました: {{detail}}"
-  preview_error: "プレビューに失敗しました: {{detail}}"
-  load_error: "エクスポートデータを読み込めませんでした: {{detail}}"
+  error: 'エクスポートに失敗しました: {{detail}}'
+  preview_error: 'プレビューに失敗しました: {{detail}}'
+  load_error: 'エクスポートデータを読み込めませんでした: {{detail}}'
   pick_session: 先にセッションを選択してください。
   pick_curriculum: 先にカリキュラムを選択してください。
   title_progress: 学習の進捗
   title_session: セッション詳細
   title_curriculum: カリキュラム
-
 sync:
   api_mode_note: このデバイスは自身のバックエンドを実行しています。ペアリングされたデバイスでも、同期パネルにこの接続が表示されるはずです。
   camera_denied: カメラへのアクセスが拒否されました
@@ -576,12 +499,12 @@ sync:
   paired_at: ペアリング日
   pairing: ペアリング中…
   paste_link_fallback: または、手動でリンクを貼り付け
-  phone_hint_v17: "デスクトップの 設定 > 同期 画面に表示された QR コードをスキャンします。携帯電話の背面カメラがペアリングリンクを自動的に読み取ります。"
+  phone_hint_v17: デスクトップの 設定 > 同期 画面に表示された QR コードをスキャンします。携帯電話の背面カメラがペアリングリンクを自動的に読み取ります。
   port: ポート
   qr_alt: ペアリング QR コード
   remote_version: もう一方のデバイス
   scan_again: もう一度スキャン
-  scan_hint: "携帯電話の 設定 > 同期 を開いて、このリンクを貼り付け、接続をタップします。リンクは 5 分で期限切れになり、1 回だけ使用できます。"
+  scan_hint: 携帯電話の 設定 > 同期 を開いて、このリンクを貼り付け、接続をタップします。リンクは 5 分で期限切れになり、1 回だけ使用できます。
   scan_instruction: カメラをデスクトップの QR コードに向けてください。
   scan_qr: QR コードをスキャン
   scan_success: 接続が見つかりました
@@ -597,16 +520,99 @@ sync:
   unpair_confirm: このデバイスのペアリングを解除しますか? ローカルデータは保持されますが、再度ペアリングするまで今後の同期はブロックされます。
   unpaired: デバイスのペアリングを解除しました。
   upload_qr: QR 画像をアップロード
-  upload_qr_hint: "カメラがありませんか? デスクトップの QR のスクリーンショットを撮ってアップロードしてください:"
+  upload_qr_hint: 'カメラがありませんか? デスクトップの QR のスクリーンショットを撮ってアップロードしてください:'
 gamification:
   card_xp: XPとレベル
   level: レベル
   xp: XP
   xp_no_data: セッションを完了してXPを獲得しましょう。
-  xp_to_next_level: "次のレベルまで {n} XP"
+  xp_to_next_level: 次のレベルまで {n} XP
   max_level: 最大レベルに到達しました
   level_up: レベルアップ！
   reason_session_complete: セッション完了
   reason_assessment_complete: アセスメント完了
   reason_conversation_imported: 会話をインポートしました
   reason_flat: XPを獲得
+  card_badges: バッジ
+  badges_earned: 獲得済み
+  badges_empty: まだ利用可能なバッジはありません。
+  badge_earned_toast: 'バッジを獲得: {name}'
+  badge_category:
+    getting_started: 始めの一歩
+    consistency: 継続
+    method_explorer: メソッド探求
+    depth: 深さ
+    polyglot: ポリグロット
+  badges:
+    first_session:
+      name: 初めてのセッション
+      description: 最初の学習セッションを完了する。
+    first_assessment:
+      name: 初めてのアセスメント
+      description: アセスメントを完了する。
+    first_import:
+      name: 初めてのインポート
+      description: 最初の会話をインポートする。
+    streak_3_days:
+      name: 3日連続
+      description: 3日連続で練習する。
+    streak_7_days:
+      name: 7日連続
+      description: 7日連続で練習する。
+    streak_30_days:
+      name: 30日連続
+      description: 30日連続で練習する。
+    streak_100_days:
+      name: 100日連続
+      description: 100日連続で練習する。
+    all_six_methods:
+      name: メソッド・エクスプローラー
+      description: 6つの学習メソッド全てでセッションを完了する。
+    deductive_10:
+      name: 演繹 10
+      description: 演繹的セッションを10回完了する。
+    inductive_10:
+      name: 帰納 10
+      description: 帰納的セッションを10回完了する。
+    error_based_10:
+      name: エラーベース 10
+      description: エラーベースのセッションを10回完了する。
+    dialogic_10:
+      name: 対話 10
+      description: 対話的セッションを10回完了する。
+    contextual_10:
+      name: 文脈 10
+      description: 文脈的セッションを10回完了する。
+    ai_adaptive_10:
+      name: AI適応 10
+      description: AI適応セッションを10回完了する。
+    five_cycles_one_session:
+      name: 5サイクル
+      description: 1回のセッションで5サイクル完了する。
+    sessions_10:
+      name: 10セッション
+      description: 合計10セッションを完了する。
+    sessions_50:
+      name: 50セッション
+      description: 合計50セッションを完了する。
+    sessions_100:
+      name: 100セッション
+      description: 合計100セッションを完了する。
+    level_5:
+      name: レベル5
+      description: レベル5に到達する。
+    level_10:
+      name: レベル10
+      description: レベル10に到達する。
+    level_25:
+      name: レベル25
+      description: レベル25に到達する。
+    two_languages:
+      name: ポリグロット
+      description: 2つの言語で学ぶ。
+    three_providers:
+      name: プロバイダー・トリオ
+      description: 3つのAIプロバイダーを設定する。
+    import_10_conversations:
+      name: 会話キュレーター
+      description: 10件の会話をインポートする。

@@ -251,6 +251,26 @@ export interface UserXPRow {
     updated_at: string;
 }
 
+/** Badge catalog row (Phase 29B). */
+export interface BadgeRow {
+    id: string;
+    key: string;
+    name_key: string;
+    description_key: string;
+    icon: string;
+    category: string;
+    created_at: string;
+    updated_at: string;
+}
+
+/** Earned-badge record (Phase 29B). Unique on (user_id, badge_id). */
+export interface UserBadgeRow {
+    id: string;
+    user_id: string;
+    badge_id: string;
+    earned_at: string;
+}
+
 export interface StepEvaluationRow {
     id: string;
     session_id: string;
@@ -309,6 +329,8 @@ export class AdaptiveLearnerDB extends Dexie {
     projectSubjects!: EntityTable<ProjectSubjectRow, "id">;
     projectTags!: EntityTable<ProjectTagRow, "id">;
     userXp!: EntityTable<UserXPRow, "id">;
+    badges!: EntityTable<BadgeRow, "id">;
+    userBadges!: EntityTable<UserBadgeRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -432,6 +454,12 @@ export class AdaptiveLearnerDB extends Dexie {
         // One new table; clean add, no data migration needed.
         this.version(7).stores({
             userXp: "id, user_id, updated_at",
+        });
+        // Schema v8 — v1.16.0 Phase 29B: badge catalog + earned
+        // records. Two clean-add tables; no data migration.
+        this.version(8).stores({
+            badges: "id, key, category, updated_at",
+            userBadges: "id, user_id, badge_id, earned_at",
         });
     }
 }

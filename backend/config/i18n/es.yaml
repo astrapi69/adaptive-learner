@@ -1,14 +1,7 @@
-# Adaptive Learner i18n catalog (ES — Phase 7).
-#
-# Mirror of en.yaml structure. Strings carrying non-native
-# fallbacks are EN passthroughs. Structure parity-checked by
-# tests/test_i18n_parity.py.
-
 app:
   name: Adaptive Learner
   tagline: Aprendizaje que se adapta a ti.
-  skeleton_notice: Estado esqueleto. Los modelos de dominio, plugins y paginas llegan
-    en fases proximas — ver docs/adaptive-learner-project-reference.md.
+  skeleton_notice: Estado esqueleto. Los modelos de dominio, plugins y paginas llegan en fases proximas — ver docs/adaptive-learner-project-reference.md.
 common:
   save: Guardar
   cancel: Cancelar
@@ -41,9 +34,7 @@ nav:
   offline: Sin conexion
 import:
   title: Importar una conversacion
-  subtitle: >-
-    Pega o sube una conversacion con ChatGPT, Claude o Gemini y obten
-    al instante ideas de aprendizaje.
+  subtitle: Pega o sube una conversacion con ChatGPT, Claude o Gemini y obten al instante ideas de aprendizaje.
   quick:
     title: Analisis rapido
     hint: Pega aqui una conversacion. La guardaremos y analizaremos en un paso.
@@ -63,9 +54,7 @@ import:
   analysis_title: Analisis
   analysis_ready: Analisis listo.
   analysis_fallback: El analisis se ejecuto, pero la respuesta de la IA no se pudo analizar correctamente.
-  analysis_fallback_long: >-
-    La respuesta de la IA no se pudo parsear como JSON estructurado.
-    El resumen a continuacion es un fallback.
+  analysis_fallback_long: La respuesta de la IA no se pudo parsear como JSON estructurado. El resumen a continuacion es un fallback.
   analysis_error: No se pudo analizar la conversacion.
   analysis_save_error: No se pudo guardar el resultado del analisis.
   back_to_list: Volver a las importaciones
@@ -82,13 +71,11 @@ import:
   field_subtopics: Subtemas
   field_curriculum: Curriculo sugerido
   file_imported_one: Conversacion importada. Haz clic en Analizar en la pagina de detalle.
-  file_imported_many: "{count} conversaciones importadas."
+  file_imported_many: '{count} conversaciones importadas.'
   list_error: No se pudieron cargar las conversaciones importadas.
   load_error: No se pudo cargar la conversacion.
   messages: mensajes
-  no_api_key: >-
-    Configura una clave API para el proveedor de IA activo en Ajustes
-    para activar el analisis.
+  no_api_key: Configura una clave API para el proveedor de IA activo en Ajustes para activar el analisis.
   no_lessons: El analisis no sugirio ninguna leccion.
   no_user: Completa la incorporacion antes de importar conversaciones.
   parse_error: No se pudo reconocer el formato de entrada.
@@ -100,7 +87,6 @@ import:
   settings_error: No se pudieron leer los ajustes de IA.
   start_session: Iniciar sesion
   transcript: Transcripcion
-
 curriculum:
   title: Curriculo
   active: Curriculo activo
@@ -132,13 +118,10 @@ landing:
   start_button: Comienza tu viaje de aprendizaje
   docs_link: Leer la documentación
   checking_session: Bienvenido de nuevo...
-  intro: Adaptive Learner encuentra el metodo que mejor se adapta a ti entre seis
-    enfoques de aprendizaje basados en investigacion, y te acompana en un ciclo de
-    siete pasos en cada sesion.
+  intro: Adaptive Learner encuentra el metodo que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigacion, y te acompana en un ciclo de siete pasos en cada sesion.
 onboarding:
   title: Crear un proyecto de aprendizaje
-  intro: Cuentanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para
-    construir tu perfil y recomendar un metodo inicial.
+  intro: Cuentanos sobre tu objetivo de aprendizaje. Adaptive Learner usa esto para construir tu perfil y recomendar un metodo inicial.
   field_name: Tu nombre
   field_topic: Tema
   field_topic_hint: p. ej. Espanol B1, algebra lineal.
@@ -153,16 +136,14 @@ onboarding:
   creating: Creando proyecto...
   skip: Mas tarde
   skip_top: Saltar por ahora →
-  skip_hint: No estas seguro? Toca Mas tarde para empezar — puedes
-    completarlo despues en la pagina Curriculum.
+  skip_hint: No estas seguro? Toca Mas tarde para empezar — puedes completarlo despues en la pagina Curriculum.
   skip_default_name: Aprendiz
   skip_default_topic: Mi aprendizaje
   skip_default_goal: Descubrir mi estilo de aprendizaje.
   skip_default_timeframe: Flexible
 assessment:
   title: Evaluacion del tipo de aprendizaje
-  intro: Doce preguntas cortas determinan tu perfil de aprendizaje. No hay respuestas
-    correctas o incorrectas — responde por intuicion.
+  intro: Doce preguntas cortas determinan tu perfil de aprendizaje. No hay respuestas correctas o incorrectas — responde por intuicion.
   question_progress: Pregunta {current} de {total}
   next_question: Siguiente pregunta
   prev_question: Pregunta anterior
@@ -203,8 +184,7 @@ session:
   end_session: Terminar sesion
   end_session_confirm: Seguro? Cerraremos la sesion y pediremos una valoracion.
   switch_recommended: Se recomienda cambiar de metodo
-  switch_recommended_subtitle: Tus ultimas valoraciones sugieren que otro metodo podria
-    encajar mejor.
+  switch_recommended_subtitle: Tus ultimas valoraciones sugieren que otro metodo podria encajar mejor.
   switch_accept: Cambiar metodo
   switch_dismiss: Mantener el metodo actual
   rating_title: Como fue la sesion?
@@ -214,15 +194,13 @@ session:
   rating_notes: Notas (opcional)
   rating_submit: Enviar valoracion
   step_progress: Paso {current} de {total}
-  step_advance_toast: "Avanzando a: {step}"
-  cycle_label: "Cycle {n}"
-  cycle_advanced: "Cycle {n} started"
-  cycles_completed: "Cycles completed"
-  next_topic: "Next topic:"
+  step_advance_toast: 'Avanzando a: {step}'
+  cycle_label: Cycle {n}
+  cycle_advanced: Cycle {n} started
+  cycles_completed: Cycles completed
+  next_topic: 'Next topic:'
   step_reason_tooltip: Por que este paso?
-  offline_start_blocked: >-
-    Estas sin conexion. Las nuevas sesiones necesitan red — las
-    anteriores siguen siendo legibles desde el Dashboard.
+  offline_start_blocked: Estas sin conexion. Las nuevas sesiones necesitan red — las anteriores siguen siendo legibles desde el Dashboard.
 progress:
   title: Progreso
   chart_timeline: Comprension y estres a lo largo del tiempo
@@ -235,13 +213,12 @@ progress:
   commit_date: Fecha
   no_commits: Todavia no hay sesiones completadas.
   step_eval_title: Analisis de evaluacion IA por paso
-  step_eval_empty: >-
-    Aun no hay datos de evaluacion — inicia una sesion para ver el analisis.
+  step_eval_empty: Aun no hay datos de evaluacion — inicia una sesion para ver el analisis.
   step_eval_avg_confidence: Confianza IA media
-  step_eval_repeats: "Veces que la IA dijo 'aun no'"
+  step_eval_repeats: Veces que la IA dijo 'aun no'
   step_eval_advances: Avances de paso
   step_eval_backward: Retrocesos
-  step_eval_stickiest_label: "Mas tiempo en:"
+  step_eval_stickiest_label: 'Mas tiempo en:'
 settings:
   title: Ajustes
   section_language: Idioma
@@ -250,23 +227,15 @@ settings:
   section_danger: Cuenta
   section_ui: Interface
   gestures: Swipe Gestures
-  gestures_description: >-
-    Swipe to navigate in Assessment, Session, and Curriculum.
+  gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
   section_storage_mode: Modo de almacenamiento
-  storage_mode_help: >-
-    Elige donde viven tus datos. El modo local guarda todo en este
-    navegador; el modo Servidor habla con el backend de AdaptiveLearner.
+  storage_mode_help: Elige donde viven tus datos. El modo local guarda todo en este navegador; el modo Servidor habla con el backend de AdaptiveLearner.
   storage_mode_api: Servidor
   storage_mode_api_hint: Requiere un backend de AdaptiveLearner en ejecucion.
   storage_mode_dexie: Local (Navegador)
-  storage_mode_dexie_hint: >-
-    Datos y claves API viven en este navegador; las llamadas de IA salen
-    directamente desde la pagina.
-  storage_mode_warning: >-
-    Los datos NO se sincronizan entre modos. La sincronizacion esta
-    planeada para una version futura.
-  storage_mode_switch_notice: >-
-    Modo de almacenamiento guardado. Recarga la pagina para activarlo.
+  storage_mode_dexie_hint: Datos y claves API viven en este navegador; las llamadas de IA salen directamente desde la pagina.
+  storage_mode_warning: Los datos NO se sincronizan entre modos. La sincronizacion esta planeada para una version futura.
+  storage_mode_switch_notice: Modo de almacenamiento guardado. Recarga la pagina para activarlo.
   language_label: Idioma de la interfaz
   provider_label: Proveedor activo
   provider_anthropic: Anthropic Claude
@@ -282,19 +251,17 @@ settings:
   saved: Guardado.
   save_failed: Error al guardar.
   provider_active: Activo
-  active_provider_missing_key: Este es tu proveedor activo pero no hay clave API guardada.
-    Las respuestas de IA se omitiran hasta que se guarde una clave.
+  active_provider_missing_key: Este es tu proveedor activo pero no hay clave API guardada. Las respuestas de IA se omitiran hasta que se guarde una clave.
   section_model_overrides: Modelos personalizados
-  model_overrides_hint: Deja en blanco para usar el modelo predeterminado por proveedor.
-    Un valor no vacio reemplaza el predeterminado al chatear.
-  model_override_placeholder: "Identificador del modelo (p. ej. claude-3-5-haiku-latest)"
+  model_overrides_hint: Deja en blanco para usar el modelo predeterminado por proveedor. Un valor no vacio reemplaza el predeterminado al chatear.
+  model_override_placeholder: Identificador del modelo (p. ej. claude-3-5-haiku-latest)
   model_override_set: Anulacion activa
   model_override_default: Modelo predeterminado
   model_override_save: Guardar modelo
   model_override_clear: Usar predeterminado
   model_picker_placeholder: Select or type a model id
   model_picker_open: Open model list
-  model_picker_default_hint: "Uses default:"
+  model_picker_default_hint: 'Uses default:'
   model_picker_loading: Loading models...
   model_picker_error: Could not load models. Check your API key.
   model_picker_retry: Retry
@@ -358,20 +325,16 @@ toast:
   api_key_saved: Clave API guardada.
   api_key_deleted: Clave API eliminada.
   method_switched: Metodo cambiado.
-
 install:
   title: Anadir a la pantalla de inicio
-  subtitle: >-
-    Abre Adaptive Learner como una app real — sin pestana del navegador.
+  subtitle: Abre Adaptive Learner como una app real — sin pestana del navegador.
   install: Instalar
   dismiss: Ahora no
   aria_label: Instalar Adaptive Learner
-
-
 about:
   section_heading: Acerca de Adaptive Learner
   loading: Cargando información…
-  load_failed: "No se pudo cargar la información del sistema:"
+  load_failed: 'No se pudo cargar la información del sistema:'
   version_heading: Versión
   app_label: Adaptive Learner
   build_hash_label: Build
@@ -389,13 +352,10 @@ about:
   dependencies_label: Construido con
   tagline: Construido para quienes aprenden de forma autónoma.
   donations_heading: Apoya el desarrollo
-  donations_intro: >-
-    Adaptive Learner es gratuito y de código abierto. Si te
-    ayuda, considera contribuir.
+  donations_intro: Adaptive Learner es gratuito y de código abierto. Si te ayuda, considera contribuir.
   donations_primary: preferido
   donations:
-    liberapay_desc: >-
-      Donaciones recurrentes. Open-source, sin comisiones de la plataforma.
+    liberapay_desc: Donaciones recurrentes. Open-source, sin comisiones de la plataforma.
     github_desc: Patrocina con tu cuenta de GitHub existente.
     kofi_desc: Donaciones puntuales. Sin necesidad de iniciar sesión.
   license_heading: Licencia y recursos
@@ -404,56 +364,48 @@ about:
   repo_label: Repositorio
   docs_label: Documentación
   issues_label: Issues
-
 backup:
   section_title: Backup
-  section_help: >-
-    Export everything in your account as a JSON file. API keys are
-    NOT included; you will need to re-enter them after a restore.
+  section_help: Export everything in your account as a JSON file. API keys are NOT included; you will need to re-enter them after a restore.
   export: Create Backup
   exporting: Exporting…
   import: Restore from Backup
   importing: Restoring…
   confirm: Confirm restore
   invalid_format: This file is not a valid Adaptive Learner backup.
-  export_success: "Backup downloaded ({{count}} records)."
-  export_error: "Backup failed: {{detail}}"
-  import_parse_error: "Could not read backup: {{detail}}"
-  import_error: "Restore failed: {{detail}}"
+  export_success: Backup downloaded ({{count}} records).
+  export_error: 'Backup failed: {{detail}}'
+  import_parse_error: 'Could not read backup: {{detail}}'
+  import_error: 'Restore failed: {{detail}}'
   comparison_title: Confirm restore
-  comparison_help: >-
-    Restore will merge: new records inserted, mutable records updated
-    only if the backup is newer, history rows kept as-is. Nothing is
-    deleted. API keys are ignored.
+  comparison_help: 'Restore will merge: new records inserted, mutable records updated only if the backup is newer, history rows kept as-is. Nothing is deleted. API keys are ignored.'
   table_header: Table
   current_header: Current
   incoming_header: Backup
   restored_summary: Restore complete.
-  restored_inserted: "Inserted: {{n}}"
-  restored_updated: "Updated: {{n}}"
-  restored_skipped: "Skipped: {{n}}"
-  restored_errors: "Errors: {{n}}"
-  restored_with_errors: "{{n}} records could not be restored."
-  last_backup: "Last backup: {{when}}"
-  reminder_overdue: "It has been more than {{days}} days since your last backup."
+  restored_inserted: 'Inserted: {{n}}'
+  restored_updated: 'Updated: {{n}}'
+  restored_skipped: 'Skipped: {{n}}'
+  restored_errors: 'Errors: {{n}}'
+  restored_with_errors: '{{n}} records could not be restored.'
+  last_backup: 'Last backup: {{when}}'
+  reminder_overdue: It has been more than {{days}} days since your last backup.
   auto_title: Auto-backup
   auto_help: Automatically back up after every 10 completed sessions or once a week.
   auto_run: Back up now
   auto_run_success: Auto-backup created.
-  auto_run_error: "Auto-backup failed: {{detail}}"
+  auto_run_error: 'Auto-backup failed: {{detail}}'
   auto_restored: Auto-backup restored.
   auto_restore: Restore
-  auto_restore_error: "Restore failed: {{detail}}"
-  auto_records: "{{n}} records"
+  auto_restore_error: 'Restore failed: {{detail}}'
+  auto_records: '{{n}} records'
   auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
-  storage_pressure: "Browser storage is almost full ({{pct}}% of quota). Export a manual backup now."
+  storage_pressure: Browser storage is almost full ({{pct}}% of quota). Export a manual backup now.
   compare_title: Compare Backups
-  compare_help: >-
-    Pick two backup files (or one file plus the current state) to see what's
-    changed between them. No data is modified — comparison is read-only.
+  compare_help: Pick two backup files (or one file plus the current state) to see what's changed between them. No data is modified — comparison is read-only.
   compare_slot_a: Backup A (older)
   compare_slot_b: Backup B (newer)
-  compare_pick: "Pick file…"
+  compare_pick: Pick file…
   compare_use_current: Use current state
   compare_current_label: Current state
   compare_clear: Clear
@@ -463,7 +415,7 @@ backup:
   compare_loading: Comparing backups…
   compare_progress: Comparing…
   compare_hide_unchanged: Hide unchanged tables
-  compare_sort_label: "Sort:"
+  compare_sort_label: 'Sort:'
   compare_sort_delta: Most changes first
   compare_sort_alpha: Alphabetical
   compare_no_changes: The two backups are identical — no differences detected.
@@ -477,18 +429,14 @@ backup:
   compare_high_volume_hint: High-volume table — record-level previews shown abbreviated.
   compare_export_md: Export as Markdown
   compare_markdown_downloaded: Diff exported.
-  confirm_with_counts: "Restore ({{added}} added, {{updated}} updated)"
+  confirm_with_counts: Restore ({{added}} added, {{updated}} updated)
   auto_compare_as_a: Compare as A
   auto_compare_as_b: Compare as B
-  compare_auto_label: "Auto-backup {{date}}"
+  compare_auto_label: Auto-backup {{date}}
   auto_compare_missing: Auto-backup is no longer available — it was rotated out.
-
 export:
   title: Export
-  intro: >-
-    Download your learning journey as Markdown or PDF. Markdown is plain
-    text you can edit and share; PDF opens your browser's print dialog
-    so you can save a copy.
+  intro: Download your learning journey as Markdown or PDF. Markdown is plain text you can edit and share; PDF opens your browser's print dialog so you can save a copy.
   progress_label: Progress Report (full journey)
   session_label: Session Detail
   curriculum_label: Curriculum Overview
@@ -502,9 +450,9 @@ export:
   busy: Working...
   download_success: Export downloaded.
   print_opened: Print dialog opened. Pick "Save as PDF".
-  error: "Export failed: {{detail}}"
-  preview_error: "Preview failed: {{detail}}"
-  load_error: "Could not load export data: {{detail}}"
+  error: 'Export failed: {{detail}}'
+  preview_error: 'Preview failed: {{detail}}'
+  load_error: 'Could not load export data: {{detail}}'
   pick_session: Pick a session first.
   pick_curriculum: Pick a curriculum first.
   title_progress: Learning Progress
@@ -551,12 +499,12 @@ sync:
   paired_at: Paired
   pairing: Pairing…
   paste_link_fallback: Or paste the link manually
-  phone_hint_v17: "Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically."
+  phone_hint_v17: Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically.
   port: Port
   qr_alt: Pairing QR code
   remote_version: Other device
   scan_again: Scan again
-  scan_hint: "Open the phone's Settings > Sync, paste this link, and tap Connect. The link expires in 5 minutes and can be used once."
+  scan_hint: Open the phone's Settings > Sync, paste this link, and tap Connect. The link expires in 5 minutes and can be used once.
   scan_instruction: Point your camera at the QR code on your desktop.
   scan_qr: Scan QR Code
   scan_success: Connection found
@@ -572,16 +520,99 @@ sync:
   unpair_confirm: Unpair this device? Local data is kept; future syncs are blocked until you pair again.
   unpaired: Device unpaired.
   upload_qr: Upload QR image
-  upload_qr_hint: "No camera? Take a screenshot of the desktop's QR and upload it:"
+  upload_qr_hint: 'No camera? Take a screenshot of the desktop''s QR and upload it:'
 gamification:
   card_xp: XP y Nivel
   level: Nivel
   xp: XP
   xp_no_data: Completa una sesión para ganar XP.
-  xp_to_next_level: "{n} XP hasta el siguiente nivel"
+  xp_to_next_level: '{n} XP hasta el siguiente nivel'
   max_level: Nivel máximo alcanzado
-  level_up: "¡Subiste de nivel!"
+  level_up: ¡Subiste de nivel!
   reason_session_complete: Sesión completada
   reason_assessment_complete: Evaluación completada
   reason_conversation_imported: Conversación importada
   reason_flat: XP otorgado
+  card_badges: Insignias
+  badges_earned: ganadas
+  badges_empty: No hay insignias disponibles aún.
+  badge_earned_toast: '¡Insignia ganada: {name}!'
+  badge_category:
+    getting_started: Primeros Pasos
+    consistency: Consistencia
+    method_explorer: Explorador de Métodos
+    depth: Profundidad
+    polyglot: Políglota
+  badges:
+    first_session:
+      name: Primera Sesión
+      description: Completa tu primera sesión de aprendizaje.
+    first_assessment:
+      name: Primera Evaluación
+      description: Completa la evaluación inicial.
+    first_import:
+      name: Primera Importación
+      description: Importa tu primera conversación.
+    streak_3_days:
+      name: Racha de 3 Días
+      description: Practica 3 días seguidos.
+    streak_7_days:
+      name: Racha de 7 Días
+      description: Practica 7 días seguidos.
+    streak_30_days:
+      name: Racha de 30 Días
+      description: Practica 30 días seguidos.
+    streak_100_days:
+      name: Racha de 100 Días
+      description: Practica 100 días seguidos.
+    all_six_methods:
+      name: Explorador de Métodos
+      description: Completa una sesión en los seis métodos.
+    deductive_10:
+      name: Deductivo 10
+      description: Completa 10 sesiones deductivas.
+    inductive_10:
+      name: Inductivo 10
+      description: Completa 10 sesiones inductivas.
+    error_based_10:
+      name: Por Errores 10
+      description: Completa 10 sesiones basadas en errores.
+    dialogic_10:
+      name: Dialógico 10
+      description: Completa 10 sesiones dialógicas.
+    contextual_10:
+      name: Contextual 10
+      description: Completa 10 sesiones contextuales.
+    ai_adaptive_10:
+      name: IA Adaptativa 10
+      description: Completa 10 sesiones IA-adaptativas.
+    five_cycles_one_session:
+      name: Cinco Ciclos
+      description: Completa cinco ciclos en una sesión.
+    sessions_10:
+      name: 10 Sesiones
+      description: Completa 10 sesiones en total.
+    sessions_50:
+      name: 50 Sesiones
+      description: Completa 50 sesiones en total.
+    sessions_100:
+      name: 100 Sesiones
+      description: Completa 100 sesiones en total.
+    level_5:
+      name: Nivel 5
+      description: Alcanza el nivel 5.
+    level_10:
+      name: Nivel 10
+      description: Alcanza el nivel 10.
+    level_25:
+      name: Nivel 25
+      description: Alcanza el nivel 25.
+    two_languages:
+      name: Políglota
+      description: Aprende en dos idiomas.
+    three_providers:
+      name: Trío de Proveedores
+      description: Configura tres proveedores de IA.
+    import_10_conversations:
+      name: Curador de Conversaciones
+      description: Importa 10 conversaciones.

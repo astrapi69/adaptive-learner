@@ -402,6 +402,22 @@ async def lifespan(app: FastAPI):
         enabled_in_config=_enabled_plugins_from_config(),
     )
 
+    # v1.16.0 / Phase 29B — seed the badge catalog from the
+    # gamification plugin's YAML bundle. Runs AFTER plugin
+    # discovery so the plugin's module is importable. Idempotent
+    # on the ``key`` slug; non-fatal on failure (the dashboard
+    # showcase just renders empty).
+    try:
+        from app.database import SessionLocal as _BadgeSessionLocal
+
+        from adaptive_learner_gamification.badge_service import seed_catalog
+
+        with _BadgeSessionLocal() as _seed_db:
+            inserted = seed_catalog(_seed_db)
+        logger.info("Seed badges: inserted_or_updated=%d", inserted)
+    except Exception:  # noqa: BLE001
+        logger.exception("Badge seeding failed; continuing without seed.")
+
     yield
     logger.info("Shutting down Adaptive Learner")
     manager.deactivate_all()

@@ -1,16 +1,7 @@
-# Adaptive Learner i18n catalog (TR — Phase 26B / v1.13.0).
-#
-# AI-translated (tr), informal "sen" form. Pending native
-# speaker review. Mirror of en.yaml structure; parity-checked
-# by backend/tests/test_i18n_parity.py.
-
 app:
   name: Adaptive Learner
   tagline: Sana uyum sağlayan öğrenme.
-  skeleton_notice: >-
-    İskelet aşaması. Alan modelleri, eklentiler ve sayfalar sonraki
-    aşamalarda geliyor — bkz. docs/adaptive-learner-project-reference.md.
-
+  skeleton_notice: İskelet aşaması. Alan modelleri, eklentiler ve sayfalar sonraki aşamalarda geliyor — bkz. docs/adaptive-learner-project-reference.md.
 common:
   save: Kaydet
   cancel: İptal
@@ -25,12 +16,11 @@ common:
   delete: Sil
   edit: Düzenle
   confirm: Onayla
-  "yes": Evet
-  "no": Hayır
+  'yes': Evet
+  'no': Hayır
   optional: isteğe bağlı
   required: zorunlu
   minutes: dakika
-
 nav:
   dashboard: Pano
   session: Oturum
@@ -42,12 +32,9 @@ nav:
   menu: Menü
   online: Çevrimiçi
   offline: Çevrimdışı
-
 import:
   title: Bir konuşmayı içe aktar
-  subtitle: >-
-    ChatGPT, Claude veya Gemini ile yaptığın bir konuşmayı yapıştır
-    ya da yükle ve anında öğrenme içgörüleri al.
+  subtitle: ChatGPT, Claude veya Gemini ile yaptığın bir konuşmayı yapıştır ya da yükle ve anında öğrenme içgörüleri al.
   quick:
     title: Hızlı Analiz
     hint: Bir konuşmayı buraya yapıştır. Tek adımda kaydedip analiz edeceğiz.
@@ -67,9 +54,7 @@ import:
   analysis_title: Analiz
   analysis_ready: Analiz hazır.
   analysis_fallback: Analiz çalıştı ama yapay zekânın cevabı temiz şekilde ayrıştırılamadı.
-  analysis_fallback_long: >-
-    Yapay zekânın cevabı yapılandırılmış JSON olarak ayrıştırılamadı.
-    Aşağıdaki özet bir yedek çözümdür.
+  analysis_fallback_long: Yapay zekânın cevabı yapılandırılmış JSON olarak ayrıştırılamadı. Aşağıdaki özet bir yedek çözümdür.
   analysis_error: Konuşma analiz edilemedi.
   analysis_save_error: Analiz sonucu kaydedilemedi.
   back_to_list: İçe aktarmalara dön
@@ -86,13 +71,11 @@ import:
   field_subtopics: Alt konular
   field_curriculum: Önerilen müfredat
   file_imported_one: Konuşma içe aktarıldı. Detay sayfasında Analiz et'e tıkla.
-  file_imported_many: "{count} konuşma içe aktarıldı."
+  file_imported_many: '{count} konuşma içe aktarıldı.'
   list_error: İçe aktarılan konuşmalar yüklenemedi.
   load_error: Konuşma yüklenemedi.
   messages: mesajlar
-  no_api_key: >-
-    Analizi açmak için Ayarlar'da aktif yapay zekâ sağlayıcısı için
-    bir API anahtarı belirle.
+  no_api_key: Analizi açmak için Ayarlar'da aktif yapay zekâ sağlayıcısı için bir API anahtarı belirle.
   no_lessons: Analiz herhangi bir ders önermedi.
   no_user: Konuşmaları içe aktarmadan önce başlangıç sürecini tamamla.
   parse_error: Giriş formatı tanınamadı.
@@ -104,7 +87,6 @@ import:
   settings_error: YZ ayarları okunamadı.
   start_session: Oturum başlat
   transcript: Döküm
-
 curriculum:
   title: Müfredat
   active: Aktif müfredat
@@ -129,7 +111,6 @@ curriculum:
   lesson_saved: Ders kaydedildi.
   lesson_deleted: Ders silindi.
   lesson_delete_confirm: Bu ders silinsin mi?
-
 landing:
   title: Adaptive Learner
   subtitle: Sana uyum sağlayan öğrenme.
@@ -137,16 +118,10 @@ landing:
   start_button: Öğrenme yolculuğuna başla
   docs_link: Belgeleri oku
   checking_session: Tekrar hoş geldin…
-  intro: >-
-    Adaptive Learner, araştırmalara dayanan altı öğrenme yaklaşımı
-    arasından sana en uygun yöntemi bulur ve her oturumda yedi
-    adımlı bir döngüden geçirir.
-
+  intro: Adaptive Learner, araştırmalara dayanan altı öğrenme yaklaşımı arasından sana en uygun yöntemi bulur ve her oturumda yedi adımlı bir döngüden geçirir.
 onboarding:
   title: Bir öğrenme projesi oluştur
-  intro: >-
-    Bize öğrenme hedefini anlat. Adaptive Learner bunu kullanarak
-    profilini oluşturur ve sana başlangıç için bir yöntem önerir.
+  intro: Bize öğrenme hedefini anlat. Adaptive Learner bunu kullanarak profilini oluşturur ve sana başlangıç için bir yöntem önerir.
   field_name: Adın
   field_topic: Konu
   field_topic_hint: ör. İspanyolca B1, lineer cebir.
@@ -161,19 +136,14 @@ onboarding:
   creating: Proje oluşturuluyor…
   skip: Sonra
   skip_top: Şimdilik atla →
-  skip_hint: >-
-    Henüz emin değil misin? Başlamak için Sonra'ya dokun — Müfredat
-    sayfasından istediğin zaman doldurabilirsin.
+  skip_hint: Henüz emin değil misin? Başlamak için Sonra'ya dokun — Müfredat sayfasından istediğin zaman doldurabilirsin.
   skip_default_name: Öğrenci
   skip_default_topic: Öğrenmem
   skip_default_goal: Öğrenme tarzımı keşfetmek.
   skip_default_timeframe: Esnek
-
 assessment:
   title: Öğrenme tipi değerlendirmesi
-  intro: >-
-    On iki kısa soru öğrenme profilini belirler. Doğru ya da yanlış
-    cevap yok — içgüdüne güven.
+  intro: On iki kısa soru öğrenme profilini belirler. Doğru ya da yanlış cevap yok — içgüdüne güven.
   question_progress: Soru {current} / {total}
   next_question: Sonraki soru
   prev_question: Önceki soru
@@ -182,7 +152,6 @@ assessment:
   result_title: Öğrenme profilin
   dominant_method: Tercih edilen yöntem
   continue_to_dashboard: Panoya devam et
-
 dashboard:
   title: Pano
   welcome: Tekrar hoş geldin
@@ -205,7 +174,6 @@ dashboard:
   metric_mean_stress: Ortalama stres
   metric_streak: Günlük seri
   no_data: Henüz oturum yok — eğilimleri görmek için ilkini başlat.
-
 session:
   title: Öğrenme oturumu
   in_progress: Oturum devam ediyor
@@ -216,9 +184,7 @@ session:
   end_session: Oturumu bitir
   end_session_confirm: Emin misin? Oturumu kapatıp bir değerlendirme isteyeceğiz.
   switch_recommended: Yöntem değişikliği öneriliyor
-  switch_recommended_subtitle: >-
-    Son değerlendirmelerin sana farklı bir yöntemin daha uygun
-    olabileceğini gösteriyor.
+  switch_recommended_subtitle: Son değerlendirmelerin sana farklı bir yöntemin daha uygun olabileceğini gösteriyor.
   switch_accept: Yöntemi değiştir
   switch_dismiss: Mevcut yöntemi koru
   rating_title: Oturum nasıl geçti?
@@ -228,16 +194,13 @@ session:
   rating_notes: Notlar (isteğe bağlı)
   rating_submit: Değerlendirmeyi gönder
   step_progress: Adım {current} / {total}
-  step_advance_toast: "Geçiliyor: {step}"
-  cycle_label: "Döngü {n}"
-  cycle_advanced: "Döngü {n} başladı"
-  cycles_completed: "Tamamlanan döngüler"
-  next_topic: "Sonraki konu:"
+  step_advance_toast: 'Geçiliyor: {step}'
+  cycle_label: Döngü {n}
+  cycle_advanced: Döngü {n} başladı
+  cycles_completed: Tamamlanan döngüler
+  next_topic: 'Sonraki konu:'
   step_reason_tooltip: Neden bu adım?
-  offline_start_blocked: >-
-    Çevrimdışısın. Yeni oturumlar için ağ bağlantısı gerekli — geçmiş
-    oturumlar Pano'dan okunabilir kalır.
-
+  offline_start_blocked: Çevrimdışısın. Yeni oturumlar için ağ bağlantısı gerekli — geçmiş oturumlar Pano'dan okunabilir kalır.
 progress:
   title: İlerleme
   chart_timeline: Zaman içinde anlayış ve stres
@@ -250,15 +213,12 @@ progress:
   commit_date: Tarih
   no_commits: Henüz tamamlanmış oturum yok.
   step_eval_title: YZ adım değerlendirme içgörüleri
-  step_eval_empty: >-
-    Henüz YZ adım değerlendirme verisi yok — burada içgörü görmek
-    için bir oturum başlat.
+  step_eval_empty: Henüz YZ adım değerlendirme verisi yok — burada içgörü görmek için bir oturum başlat.
   step_eval_avg_confidence: Ortalama YZ güveni
-  step_eval_repeats: "YZ'nin 'henüz hazır değil' dediği zamanlar"
+  step_eval_repeats: YZ'nin 'henüz hazır değil' dediği zamanlar
   step_eval_advances: Adım ilerlemeleri
   step_eval_backward: Geri geçişler
-  step_eval_stickiest_label: "En çok zaman:"
-
+  step_eval_stickiest_label: 'En çok zaman:'
 settings:
   title: Ayarlar
   section_language: Dil
@@ -267,25 +227,15 @@ settings:
   section_danger: Hesap
   section_ui: Arayüz
   gestures: Kaydırma Hareketleri
-  gestures_description: >-
-    Değerlendirme, Oturum ve Müfredat'ta gezinmek için kaydır.
+  gestures_description: Değerlendirme, Oturum ve Müfredat'ta gezinmek için kaydır.
   section_storage_mode: Depolama modu
-  storage_mode_help: >-
-    Verilerinin nerede yaşayacağını seç. Yerel mod her şeyi bu
-    tarayıcıda tutar; Sunucu modu AdaptiveLearner arka uçuyla
-    iletişim kurar.
+  storage_mode_help: Verilerinin nerede yaşayacağını seç. Yerel mod her şeyi bu tarayıcıda tutar; Sunucu modu AdaptiveLearner arka uçuyla iletişim kurar.
   storage_mode_api: Sunucu
   storage_mode_api_hint: Çalışan bir AdaptiveLearner arka ucu gerektirir.
   storage_mode_dexie: Yerel (Tarayıcı)
-  storage_mode_dexie_hint: >-
-    Veri ve API anahtarları bu tarayıcıda kalır; YZ çağrıları
-    doğrudan sayfadan yapılır.
-  storage_mode_warning: >-
-    Veriler modlar arasında SENKRONİZE EDİLMEZ. Senkronizasyon
-    gelecek bir sürüm için planlanıyor.
-  storage_mode_switch_notice: >-
-    Depolama modu kaydedildi. Yeni arka uca geçmek için sayfayı
-    yeniden yükle.
+  storage_mode_dexie_hint: Veri ve API anahtarları bu tarayıcıda kalır; YZ çağrıları doğrudan sayfadan yapılır.
+  storage_mode_warning: Veriler modlar arasında SENKRONİZE EDİLMEZ. Senkronizasyon gelecek bir sürüm için planlanıyor.
+  storage_mode_switch_notice: Depolama modu kaydedildi. Yeni arka uca geçmek için sayfayı yeniden yükle.
   language_label: Görüntüleme dili
   provider_label: Aktif sağlayıcı
   provider_anthropic: Anthropic Claude
@@ -301,22 +251,17 @@ settings:
   saved: Kaydedildi.
   save_failed: Kaydetme başarısız oldu.
   provider_active: Aktif
-  active_provider_missing_key: >-
-    Bu senin aktif sağlayıcın ama saklı bir API anahtarı yok. Bir
-    anahtar kaydedilene kadar YZ cevapları atlanacak.
+  active_provider_missing_key: Bu senin aktif sağlayıcın ama saklı bir API anahtarı yok. Bir anahtar kaydedilene kadar YZ cevapları atlanacak.
   section_model_overrides: Model geçersiz kılmaları
-  model_overrides_hint: >-
-    Her sağlayıcı için varsayılan modeli kullanmak istiyorsan boş
-    bırak. Boş olmayan bir değer sohbet sırasında varsayılanın
-    yerine geçer.
-  model_override_placeholder: "Model tanımlayıcısı (ör. claude-3-5-haiku-latest)"
+  model_overrides_hint: Her sağlayıcı için varsayılan modeli kullanmak istiyorsan boş bırak. Boş olmayan bir değer sohbet sırasında varsayılanın yerine geçer.
+  model_override_placeholder: Model tanımlayıcısı (ör. claude-3-5-haiku-latest)
   model_override_set: Geçersiz kılma aktif
   model_override_default: Varsayılan model
   model_override_save: Modeli kaydet
   model_override_clear: Varsayılanı kullan
   model_picker_placeholder: Bir model kimliği seç veya yaz
   model_picker_open: Model listesini aç
-  model_picker_default_hint: "Varsayılan kullanılıyor:"
+  model_picker_default_hint: 'Varsayılan kullanılıyor:'
   model_picker_loading: Modeller yükleniyor...
   model_picker_error: Modeller yüklenemedi. API anahtarını kontrol et.
   model_picker_retry: Tekrar dene
@@ -324,7 +269,6 @@ settings:
   model_picker_recommended: Önerilen
   model_picker_all: Tüm modeller
   model_picker_suggestions: Önerilen (çevrimdışı)
-
 methods:
   deductive:
     label: Tümdengelimsel
@@ -344,7 +288,6 @@ methods:
   ai_adaptive:
     label: YZ-uyarlanır
     summary: YZ sana en uygun yöntemi seçer.
-
 cycle_steps:
   input:
     label: Girdi
@@ -367,14 +310,12 @@ cycle_steps:
   integrate:
     label: Bütünleştir
     description: Bilgi deneyimle yerleşir.
-
 errors:
   network: Sunucuya ulaşılamadı.
   not_found: Bulunamadı.
   validation: Geçersiz giriş.
   conflict: Kayıt zaten var.
   server: Sunucu hatası — lütfen daha sonra tekrar dene.
-
 toast:
   project_created: Proje oluşturuldu.
   assessment_saved: Profil kaydedildi.
@@ -384,20 +325,16 @@ toast:
   api_key_saved: API anahtarı kaydedildi.
   api_key_deleted: API anahtarı kaldırıldı.
   method_switched: Yöntem değiştirildi.
-
 install:
   title: Ana ekrana ekle
-  subtitle: >-
-    Adaptive Learner'ı gerçek bir uygulama gibi aç — tarayıcı
-    sekmesi gerekmez.
+  subtitle: Adaptive Learner'ı gerçek bir uygulama gibi aç — tarayıcı sekmesi gerekmez.
   install: Yükle
   dismiss: Şimdi değil
   aria_label: Adaptive Learner'ı yükle
-
 about:
   section_heading: Adaptive Learner hakkında
   loading: Bilgiler yükleniyor…
-  load_failed: "Sistem bilgileri yüklenemedi:"
+  load_failed: 'Sistem bilgileri yüklenemedi:'
   version_heading: Sürüm
   app_label: Adaptive Learner
   build_hash_label: Yapı
@@ -415,14 +352,10 @@ about:
   dependencies_label: Şununla yapıldı
   tagline: Kendi kendine öğrenenler için yapıldı.
   donations_heading: Geliştirmeyi destekle
-  donations_intro: >-
-    Adaptive Learner ücretsiz ve açık kaynaktır. Sana yardımcı
-    olduysa katkıda bulunmayı düşün.
+  donations_intro: Adaptive Learner ücretsiz ve açık kaynaktır. Sana yardımcı olduysa katkıda bulunmayı düşün.
   donations_primary: tercih edilen
   donations:
-    liberapay_desc: >-
-      Tekrarlayan bağışlar. Açık kaynak, platform ücreti
-      alınmıyor.
+    liberapay_desc: Tekrarlayan bağışlar. Açık kaynak, platform ücreti alınmıyor.
     github_desc: Mevcut GitHub hesabınla sponsor ol.
     kofi_desc: Tek seferlik bahşişler. Giriş yapmak gerekmez.
   license_heading: Lisans ve kaynaklar
@@ -431,59 +364,48 @@ about:
   repo_label: Depo
   docs_label: Belgeler
   issues_label: Sorunlar
-
 backup:
   section_title: Yedek
-  section_help: >-
-    Hesabındaki her şeyi bir JSON dosyası olarak dışa aktar. API
-    anahtarları dahil edilmez; geri yüklemeden sonra tekrar girmen
-    gerekir.
+  section_help: Hesabındaki her şeyi bir JSON dosyası olarak dışa aktar. API anahtarları dahil edilmez; geri yüklemeden sonra tekrar girmen gerekir.
   export: Yedek oluştur
   exporting: Dışa aktarılıyor…
   import: Yedekten geri yükle
   importing: Geri yükleniyor…
   confirm: Geri yüklemeyi onayla
   invalid_format: Bu dosya geçerli bir Adaptive Learner yedeği değil.
-  export_success: "Yedek indirildi ({{count}} kayıt)."
-  export_error: "Yedekleme başarısız oldu: {{detail}}"
-  import_parse_error: "Yedek okunamadı: {{detail}}"
-  import_error: "Geri yükleme başarısız oldu: {{detail}}"
+  export_success: Yedek indirildi ({{count}} kayıt).
+  export_error: 'Yedekleme başarısız oldu: {{detail}}'
+  import_parse_error: 'Yedek okunamadı: {{detail}}'
+  import_error: 'Geri yükleme başarısız oldu: {{detail}}'
   comparison_title: Geri yüklemeyi onayla
-  comparison_help: >-
-    Geri yükleme birleştirme yapar: yeni kayıtlar eklenir,
-    değişebilir kayıtlar sadece yedek daha yeniyse güncellenir,
-    geçmiş satırları olduğu gibi kalır. Hiçbir şey silinmez. API
-    anahtarları yok sayılır.
+  comparison_help: 'Geri yükleme birleştirme yapar: yeni kayıtlar eklenir, değişebilir kayıtlar sadece yedek daha yeniyse güncellenir, geçmiş satırları olduğu gibi kalır. Hiçbir şey silinmez. API anahtarları yok sayılır.'
   table_header: Tablo
   current_header: Mevcut
   incoming_header: Yedek
   restored_summary: Geri yükleme tamamlandı.
-  restored_inserted: "Eklenen: {{n}}"
-  restored_updated: "Güncellenen: {{n}}"
-  restored_skipped: "Atlanan: {{n}}"
-  restored_errors: "Hatalar: {{n}}"
-  restored_with_errors: "{{n}} kayıt geri yüklenemedi."
-  last_backup: "Son yedek: {{when}}"
-  reminder_overdue: "Son yedeğinden bu yana {{days}} günden fazla zaman geçti."
+  restored_inserted: 'Eklenen: {{n}}'
+  restored_updated: 'Güncellenen: {{n}}'
+  restored_skipped: 'Atlanan: {{n}}'
+  restored_errors: 'Hatalar: {{n}}'
+  restored_with_errors: '{{n}} kayıt geri yüklenemedi.'
+  last_backup: 'Son yedek: {{when}}'
+  reminder_overdue: Son yedeğinden bu yana {{days}} günden fazla zaman geçti.
   auto_title: Otomatik yedek
   auto_help: Her 10 tamamlanan oturumdan sonra ya da haftada bir otomatik yedek alır.
   auto_run: Şimdi yedek al
   auto_run_success: Otomatik yedek oluşturuldu.
-  auto_run_error: "Otomatik yedek başarısız oldu: {{detail}}"
+  auto_run_error: 'Otomatik yedek başarısız oldu: {{detail}}'
   auto_restored: Otomatik yedek geri yüklendi.
   auto_restore: Geri yükle
-  auto_restore_error: "Geri yükleme başarısız oldu: {{detail}}"
-  auto_records: "{{n}} kayıt"
+  auto_restore_error: 'Geri yükleme başarısız oldu: {{detail}}'
+  auto_records: '{{n}} kayıt'
   auto_none: Henüz otomatik yedek yok. İlki 10 oturum veya 7 gün sonra çalışır.
-  storage_pressure: "Tarayıcı deposu neredeyse dolu (kotanın %{{pct}}'i). Şimdi manuel yedek al."
+  storage_pressure: Tarayıcı deposu neredeyse dolu (kotanın %{{pct}}'i). Şimdi manuel yedek al.
   compare_title: Yedekleri karşılaştır
-  compare_help: >-
-    Aralarında ne değiştiğini görmek için iki yedek dosyası seç
-    (ya da bir dosya ve mevcut durum). Hiçbir veri değişmez —
-    karşılaştırma sadece okumadır.
+  compare_help: Aralarında ne değiştiğini görmek için iki yedek dosyası seç (ya da bir dosya ve mevcut durum). Hiçbir veri değişmez — karşılaştırma sadece okumadır.
   compare_slot_a: Yedek A (daha eski)
   compare_slot_b: Yedek B (daha yeni)
-  compare_pick: "Dosya seç…"
+  compare_pick: Dosya seç…
   compare_use_current: Mevcut durumu kullan
   compare_current_label: Mevcut durum
   compare_clear: Temizle
@@ -493,7 +415,7 @@ backup:
   compare_loading: Yedekler karşılaştırılıyor…
   compare_progress: Karşılaştırılıyor…
   compare_hide_unchanged: Değişmeyen tabloları gizle
-  compare_sort_label: "Sırala:"
+  compare_sort_label: 'Sırala:'
   compare_sort_delta: Önce en çok değişenler
   compare_sort_alpha: Alfabetik
   compare_no_changes: İki yedek de aynı — fark tespit edilmedi.
@@ -507,18 +429,14 @@ backup:
   compare_high_volume_hint: Yoğun tablo — kayıt başına önizleme kısaltılmış olarak gösterilir.
   compare_export_md: Markdown olarak dışa aktar
   compare_markdown_downloaded: Fark dışa aktarıldı.
-  confirm_with_counts: "Geri yükle ({{added}} eklenecek, {{updated}} güncellenecek)"
+  confirm_with_counts: Geri yükle ({{added}} eklenecek, {{updated}} güncellenecek)
   auto_compare_as_a: A olarak karşılaştır
   auto_compare_as_b: B olarak karşılaştır
-  compare_auto_label: "Otomatik yedek {{date}}"
+  compare_auto_label: Otomatik yedek {{date}}
   auto_compare_missing: Otomatik yedek artık mevcut değil — döngüden çıkarıldı.
-
 export:
   title: Dışa aktar
-  intro: >-
-    Öğrenme yolculuğunu Markdown veya PDF olarak indir. Markdown
-    düzenleyip paylaşabileceğin düz metindir; PDF tarayıcının
-    yazdırma penceresini açar ve bir kopya kaydedebilirsin.
+  intro: Öğrenme yolculuğunu Markdown veya PDF olarak indir. Markdown düzenleyip paylaşabileceğin düz metindir; PDF tarayıcının yazdırma penceresini açar ve bir kopya kaydedebilirsin.
   progress_label: İlerleme raporu (tüm yolculuk)
   session_label: Oturum detayı
   curriculum_label: Müfredat özeti
@@ -532,15 +450,14 @@ export:
   busy: Çalışılıyor...
   download_success: Dışa aktarma indirildi.
   print_opened: Yazdırma penceresi açıldı. "PDF olarak kaydet"i seç.
-  error: "Dışa aktarma başarısız oldu: {{detail}}"
-  preview_error: "Önizleme başarısız oldu: {{detail}}"
-  load_error: "Dışa aktarma verileri yüklenemedi: {{detail}}"
+  error: 'Dışa aktarma başarısız oldu: {{detail}}'
+  preview_error: 'Önizleme başarısız oldu: {{detail}}'
+  load_error: 'Dışa aktarma verileri yüklenemedi: {{detail}}'
   pick_session: Önce bir oturum seç.
   pick_curriculum: Önce bir müfredat seç.
   title_progress: Öğrenme ilerlemesi
   title_session: Oturum detayı
   title_curriculum: Müfredat
-
 sync:
   api_mode_note: Bu cihaz kendi arka ucunu çalıştırıyor. Eşleştirilmiş cihaz da bu bağlantıyı kendi senkronizasyon panelinde görmeli.
   camera_denied: Kamera erişimi reddedildi
@@ -582,12 +499,12 @@ sync:
   paired_at: Eşleştirilme
   pairing: Eşleştiriliyor…
   paste_link_fallback: Ya da bağlantıyı manuel yapıştır
-  phone_hint_v17: "Masaüstündeki Ayarlar > Senkronizasyon ekranındaki QR kodu tara. Telefonun arka kamerası eşleştirme bağlantısını otomatik okur."
+  phone_hint_v17: Masaüstündeki Ayarlar > Senkronizasyon ekranındaki QR kodu tara. Telefonun arka kamerası eşleştirme bağlantısını otomatik okur.
   port: Port
   qr_alt: Eşleştirme QR kodu
   remote_version: Diğer cihaz
   scan_again: Tekrar tara
-  scan_hint: "Telefonda Ayarlar > Senkronizasyon'u aç, bu bağlantıyı yapıştır ve Bağlan'a dokun. Bağlantı 5 dakikada sona erer ve bir kez kullanılabilir."
+  scan_hint: Telefonda Ayarlar > Senkronizasyon'u aç, bu bağlantıyı yapıştır ve Bağlan'a dokun. Bağlantı 5 dakikada sona erer ve bir kez kullanılabilir.
   scan_instruction: Kameranı masaüstündeki QR koduna doğrult.
   scan_qr: QR Kodu Tara
   scan_success: Bağlantı bulundu
@@ -603,16 +520,99 @@ sync:
   unpair_confirm: Bu cihaz ayrılsın mı? Yerel veriler korunur; tekrar eşleşene kadar gelecek senkronizasyonlar engellenir.
   unpaired: Cihaz ayrıldı.
   upload_qr: QR görüntüsü yükle
-  upload_qr_hint: "Kamera yok mu? Masaüstündeki QR'ın ekran görüntüsünü çek ve yükle:"
+  upload_qr_hint: 'Kamera yok mu? Masaüstündeki QR''ın ekran görüntüsünü çek ve yükle:'
 gamification:
   card_xp: XP & Seviye
   level: Seviye
   xp: XP
   xp_no_data: XP kazanmak için bir oturumu tamamla.
-  xp_to_next_level: "Bir sonraki seviye için {n} XP"
+  xp_to_next_level: Bir sonraki seviye için {n} XP
   max_level: Maksimum seviyeye ulaşıldı
-  level_up: "Seviye atladın!"
+  level_up: Seviye atladın!
   reason_session_complete: Oturum tamamlandı
   reason_assessment_complete: Değerlendirme tamamlandı
   reason_conversation_imported: Konuşma içe aktarıldı
   reason_flat: XP kazanıldı
+  card_badges: Rozetler
+  badges_earned: kazanıldı
+  badges_empty: Henüz uygun rozet yok.
+  badge_earned_toast: 'Rozet kazandın: {name}'
+  badge_category:
+    getting_started: İlk Adımlar
+    consistency: Süreklilik
+    method_explorer: Yöntem Kâşifi
+    depth: Derinlik
+    polyglot: Çok Dilli
+  badges:
+    first_session:
+      name: İlk Oturum
+      description: İlk öğrenme oturumunu tamamla.
+    first_assessment:
+      name: İlk Değerlendirme
+      description: İlk değerlendirmeyi tamamla.
+    first_import:
+      name: İlk İçe Aktarma
+      description: İlk konuşmanı içe aktar.
+    streak_3_days:
+      name: 3 Gün Üst Üste
+      description: 3 gün üst üste pratik yap.
+    streak_7_days:
+      name: 7 Gün Üst Üste
+      description: 7 gün üst üste pratik yap.
+    streak_30_days:
+      name: 30 Gün Üst Üste
+      description: 30 gün üst üste pratik yap.
+    streak_100_days:
+      name: 100 Gün Üst Üste
+      description: 100 gün üst üste pratik yap.
+    all_six_methods:
+      name: Yöntem Kâşifi
+      description: Altı yöntemin hepsinde birer oturum tamamla.
+    deductive_10:
+      name: Tümdengelimli 10
+      description: 10 tümdengelimli oturum tamamla.
+    inductive_10:
+      name: Tümevarımlı 10
+      description: 10 tümevarımlı oturum tamamla.
+    error_based_10:
+      name: Hata Bazlı 10
+      description: 10 hata bazlı oturum tamamla.
+    dialogic_10:
+      name: Diyalojik 10
+      description: 10 diyalojik oturum tamamla.
+    contextual_10:
+      name: Bağlamsal 10
+      description: 10 bağlamsal oturum tamamla.
+    ai_adaptive_10:
+      name: YZ Uyarlanır 10
+      description: 10 YZ-uyarlanır oturum tamamla.
+    five_cycles_one_session:
+      name: Beş Döngü
+      description: Bir oturumda beş döngü tamamla.
+    sessions_10:
+      name: 10 Oturum
+      description: Toplam 10 oturum tamamla.
+    sessions_50:
+      name: 50 Oturum
+      description: Toplam 50 oturum tamamla.
+    sessions_100:
+      name: 100 Oturum
+      description: Toplam 100 oturum tamamla.
+    level_5:
+      name: Seviye 5
+      description: Seviye 5'e ulaş.
+    level_10:
+      name: Seviye 10
+      description: Seviye 10'a ulaş.
+    level_25:
+      name: Seviye 25
+      description: Seviye 25'e ulaş.
+    two_languages:
+      name: Çok Dilli
+      description: İki dilde öğren.
+    three_providers:
+      name: Sağlayıcı Üçlüsü
+      description: Üç YZ sağlayıcı yapılandır.
+    import_10_conversations:
+      name: Konuşma Küratörü
+      description: 10 konuşma içe aktar.

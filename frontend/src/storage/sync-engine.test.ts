@@ -870,6 +870,9 @@ describe("SYNC_TABLES — surface audit", () => {
         "project_tags",
         // v1.16.0 / Phase 29A — gamification XP singleton.
         "user_xp",
+        // v1.16.0 / Phase 29B — badge catalog + earned record.
+        "badges",
+        "user_badges",
     ];
 
     it("covers every domain Dexie table", () => {
@@ -895,6 +898,8 @@ describe("SYNC_TABLES — surface audit", () => {
                 // v1.9.0 / Phase 22A — M:N association rows.
                 "project_subjects",
                 "project_tags",
+                // v1.16.0 / Phase 29B — earned-badge record.
+                "user_badges",
             ].sort(),
         );
     });

@@ -23,7 +23,7 @@ from app.database import get_db
 from app.exceptions import NotFoundError
 from app.models import User
 
-from . import xp_service
+from . import badge_service, xp_service
 
 router = APIRouter(prefix="/plugins/gamification", tags=["gamification"])
 
@@ -57,6 +57,8 @@ def award_assessment(user_id: str, db: Session = Depends(get_db)) -> dict[str, A
     award = xp_service.award_xp_flat(
         db, user_id=user_id, amount=100, reason="assessment_complete"
     )
+    # Re-evaluate badges (first_assessment + any level-up triggers).
+    badge_service.evaluate_user(db, user_id)
     return award.to_dict()
 
 
@@ -67,7 +69,58 @@ def award_import(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
     award = xp_service.award_xp_flat(
         db, user_id=user_id, amount=75, reason="conversation_imported"
     )
+    badge_service.evaluate_user(db, user_id)
     return award.to_dict()
+
+
+# --- Badges (Phase 29B) ----------------------------------------------------
+
+
+@router.get("/badges/{user_id}")
+def list_user_badges(
+    user_id: str, db: Session = Depends(get_db)
+) -> list[dict[str, Any]]:
+    """Catalog + per-user earn state for the dashboard showcase.
+
+    Returns every catalog badge with ``earned``/``earned_at``
+    so the showcase can grey out locked ones and show earn dates
+    next to unlocked ones in a single roundtrip.
+    """
+    _ensure_user(db, user_id)
+    return badge_service.list_badges_with_progress(db, user_id)
+
+
+@router.get("/badges")
+def list_badge_catalog(db: Session = Depends(get_db)) -> list[dict[str, Any]]:
+    """Public catalog — no user context. For the marketing surface
+    and Settings preview."""
+    from app.models import Badge
+
+    rows = (
+        db.query(Badge).order_by(Badge.category.asc(), Badge.key.asc()).all()
+    )
+    return [
+        {
+            "key": r.key,
+            "name_key": r.name_key,
+            "description_key": r.description_key,
+            "icon": r.icon,
+            "category": r.category,
+        }
+        for r in rows
+    ]
+
+
+@router.post("/badges/{user_id}/evaluate")
+def trigger_badge_evaluation(
+    user_id: str, db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    """Force a badge re-evaluation. Used by Settings + the import +
+    assessment flows when a non-session action might unlock a
+    badge (e.g. "Three providers configured")."""
+    _ensure_user(db, user_id)
+    earned = badge_service.evaluate_user(db, user_id)
+    return {"earned": earned}
 
 
 @router.post("/xp/{user_id}/award")

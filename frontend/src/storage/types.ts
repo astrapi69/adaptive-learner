@@ -300,10 +300,29 @@ export interface XPAwardResult {
     reason: string;
 }
 
+/**
+ * Badge catalog + earn state combined (Phase 29B). The frontend
+ * receives the full catalog with per-user ``earned`` + ``earned_at``
+ * fields so the showcase can render locked + unlocked badges in
+ * one roundtrip.
+ */
+export interface BadgeWithProgress {
+    key: string;
+    name_key: string;
+    description_key: string;
+    icon: string;
+    category: string;
+    earned: boolean;
+    earned_at: string | null;
+    progress: string | null;
+}
+
 export interface IGamificationNamespace {
     getState(userId: string): Promise<XPState>;
     awardAssessment(userId: string): Promise<XPAwardResult>;
     awardImport(userId: string): Promise<XPAwardResult>;
+    listBadges(userId: string): Promise<BadgeWithProgress[]>;
+    evaluateBadges(userId: string): Promise<{earned: string[]}>;
 }
 
 export interface IImportsNamespace {

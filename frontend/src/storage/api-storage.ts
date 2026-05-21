@@ -172,5 +172,7 @@ export const apiStorage: IStorageService = {
         getState: (userId) => api.gamification.getState(userId),
         awardAssessment: (userId) => api.gamification.awardAssessment(userId),
         awardImport: (userId) => api.gamification.awardImport(userId),
+        listBadges: (userId) => api.gamification.listBadges(userId),
+        evaluateBadges: (userId) => api.gamification.evaluateBadges(userId),
     },
 };

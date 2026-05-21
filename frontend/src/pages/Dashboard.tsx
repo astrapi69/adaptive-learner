@@ -11,11 +11,12 @@ import SessionCounter from "../components/SessionCounter";
 import SpacedRecommendations from "../components/SpacedRecommendations";
 import ToolRecommendations from "../components/ToolRecommendations";
 import XPWidget from "../components/XPWidget";
+import BadgeShowcase from "../components/BadgeShowcase";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
-import type {XPState} from "../storage/types";
+import type {BadgeWithProgress, XPState} from "../storage/types";
 import type {
     LearningProfile,
     SpacedRecommendation,
@@ -47,6 +48,7 @@ export default function Dashboard() {
     const [tools, setTools] = useState<ToolRecommendation[]>([]);
     const [spaced, setSpaced] = useState<SpacedRecommendation[]>([]);
     const [xpState, setXpState] = useState<XPState | null>(null);
+    const [badges, setBadges] = useState<BadgeWithProgress[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     /**
@@ -71,17 +73,24 @@ export default function Dashboard() {
         const xpPromise = userId
             ? storage.gamification.getState(userId)
             : Promise.resolve<XPState | null>(null);
+        const badgesPromise = userId
+            ? storage.gamification.listBadges(userId)
+            : Promise.resolve<BadgeWithProgress[] | null>(null);
         Promise.allSettled([
             storage.assessment.profile(projectId),
             storage.tracking.progress(projectId),
             storage.tools.recommendations(projectId, lang),
             storage.tools.spaced(projectId, lang),
             xpPromise,
+            badgesPromise,
         ]).then((results) => {
             if (cancelled) return;
-            const [profileR, summaryR, toolsR, spacedR, xpR] = results;
+            const [profileR, summaryR, toolsR, spacedR, xpR, badgesR] = results;
             if (xpR.status === "fulfilled") {
                 setXpState(xpR.value);
+            }
+            if (badgesR.status === "fulfilled") {
+                setBadges(badgesR.value);
             }
 
             if (profileR.status === "fulfilled") {
@@ -167,6 +176,13 @@ export default function Dashboard() {
                         {t("gamification.card_xp", "XP & Level")}
                     </h2>
                     <XPWidget state={xpState} />
+                </article>
+
+                <article className="dashboard-card dashboard-card-wide">
+                    <h2 className="dashboard-card-title">
+                        {t("gamification.card_badges", "Badges")}
+                    </h2>
+                    <BadgeShowcase badges={badges} />
                 </article>
 
                 <article className="dashboard-card dashboard-card-wide">

@@ -752,6 +752,15 @@ export const api = {
                 `/plugins/gamification/xp/${encodeURIComponent(userId)}/award-import`,
                 {method: "POST", body: {}},
             ),
+        listBadges: (userId: string) =>
+            apiCall<import("../storage/types").BadgeWithProgress[]>(
+                `/plugins/gamification/badges/${encodeURIComponent(userId)}`,
+            ),
+        evaluateBadges: (userId: string) =>
+            apiCall<{earned: string[]}>(
+                `/plugins/gamification/badges/${encodeURIComponent(userId)}/evaluate`,
+                {method: "POST", body: {}},
+            ),
     },
 
     // --- Imported conversations (v0.9.0 / Phase 12C) ---------------------

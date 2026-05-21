@@ -37,23 +37,31 @@ class GamificationPlugin(BasePlugin):
     def on_session_complete(
         self, session: dict[str, Any], rating: dict[str, Any]
     ) -> None:
-        """Award XP for the completed session.
+        """Award XP and evaluate badges for the completed session.
 
         Errors here MUST NOT roll back the session close — pluggy's
         list-mode dispatch already isolates one subscriber's failure
         from the others, but we also catch + log so a DB error
         doesn't propagate through the hook caller's stack.
+
+        v1.16.0 / Phase 29B — after the XP award lands, evaluate
+        every badge predicate against the user's current state.
+        New earns are inserted into ``user_badges``; the route layer
+        exposes them via ``GET /badges/{user_id}``.
         """
         from app.database import SessionLocal
 
-        from . import xp_service
+        from . import badge_service, xp_service
 
         db = SessionLocal()
         try:
             xp_service.award_xp_for_session(db, session=session, rating=rating)
+            user_id = xp_service._resolve_user_id_from_session(db, session)
+            if user_id:
+                badge_service.evaluate_user(db, user_id)
         except Exception:  # noqa: BLE001
             logger.exception(
-                "gamification.on_session_complete: XP award failed "
+                "gamification.on_session_complete: hook failed "
                 "(session=%r). Continuing — session close is unaffected.",
                 session.get("id"),
             )

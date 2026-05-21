@@ -876,6 +876,9 @@ __all__ = [
     # Gamification (Phase 29)
     "UserXPOut",
     "XPAwardOut",
+    "BadgeOut",
+    "UserBadgeOut",
+    "BadgeWithProgressOut",
 ]
 
 
@@ -909,3 +912,48 @@ class XPAwardOut(BaseModel):
     breakdown: dict[str, int] = {}
     multiplier: float = 1.0
     reason: str = ""
+
+
+class BadgeOut(BaseModel):
+    """Catalog entry (Phase 29B)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    key: str
+    name_key: str
+    description_key: str
+    icon: str
+    category: str
+
+
+class UserBadgeOut(BaseModel):
+    """Earned-badge record (Phase 29B)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    badge_id: str
+    earned_at: datetime
+
+
+class BadgeWithProgressOut(BaseModel):
+    """Combined catalog + earn state for the dashboard showcase.
+
+    ``earned_at`` is non-null iff the badge is earned; locked
+    badges still appear in the showcase with a greyed-out icon
+    plus an optional ``progress`` hint (e.g. "3 / 7 days") so
+    the user knows what's still attainable.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    key: str
+    name_key: str
+    description_key: str
+    icon: str
+    category: str
+    earned: bool
+    earned_at: datetime | None = None
+    progress: str | None = None

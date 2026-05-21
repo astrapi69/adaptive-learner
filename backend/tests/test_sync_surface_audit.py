@@ -45,6 +45,9 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         "tags",
         # v1.16.0 / Phase 29A: gamification XP singleton.
         "user_xp",
+        # v1.16.0 / Phase 29B: badge catalog (mutable for icon /
+        # i18n key edits across releases).
+        "badges",
     }
 )
 
@@ -63,6 +66,8 @@ EXPECTED_APPEND_ONLY: frozenset[str] = frozenset(
         # v1.9.0 / Phase 22A: M:N taxonomy associations.
         "project_subjects",
         "project_tags",
+        # v1.16.0 / Phase 29B: earned-badge record.
+        "user_badges",
     }
 )
 

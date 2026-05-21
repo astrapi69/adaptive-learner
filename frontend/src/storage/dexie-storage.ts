@@ -24,6 +24,7 @@
 import type {EntityTable} from "dexie";
 
 import {calculateProfile, questionsForLang} from "./assessment";
+import {evaluateBadgesForUser, listBadgesWithProgress} from "./badges";
 import {awardXPFlat, awardXPForSession, getXPState} from "./gamification";
 import {
     getDb,
@@ -713,9 +714,12 @@ export const dexieStorage: IStorageService = {
                         cycleStep: fresh.cycle_step,
                         cycleCount: 1,
                     });
+                    // 29B — evaluate badges after the XP award so
+                    // level-/streak-/method-gated badges fire.
+                    await evaluateBadgesForUser(projectForXP.user_id);
                 } catch (err) {
                     // eslint-disable-next-line no-console
-                    console.warn("gamification.awardXPForSession failed", err);
+                    console.warn("gamification (session-end) failed", err);
                 }
             }
             // Auto-backup: bump the session counter and, if the
@@ -1685,9 +1689,38 @@ export const dexieStorage: IStorageService = {
 
     gamification: {
         getState: (userId) => getXPState(userId),
-        awardAssessment: (userId) =>
-            awardXPFlat(userId, 100, "assessment_complete"),
-        awardImport: (userId) =>
-            awardXPFlat(userId, 75, "conversation_imported"),
+        awardAssessment: async (userId) => {
+            const award = await awardXPFlat(
+                userId,
+                100,
+                "assessment_complete",
+            );
+            try {
+                await evaluateBadgesForUser(userId);
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.warn("badge evaluate (assessment) failed", err);
+            }
+            return award;
+        },
+        awardImport: async (userId) => {
+            const award = await awardXPFlat(
+                userId,
+                75,
+                "conversation_imported",
+            );
+            try {
+                await evaluateBadgesForUser(userId);
+            } catch (err) {
+                // eslint-disable-next-line no-console
+                console.warn("badge evaluate (import) failed", err);
+            }
+            return award;
+        },
+        listBadges: (userId) => listBadgesWithProgress(userId),
+        evaluateBadges: async (userId) => {
+            const earned = await evaluateBadgesForUser(userId);
+            return {earned};
+        },
     },
 };

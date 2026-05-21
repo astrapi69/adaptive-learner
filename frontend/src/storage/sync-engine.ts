@@ -340,6 +340,24 @@ const SYNC_TABLES: SyncTable[] = [
         timestampField: "updated_at",
         appendOnly: false,
     },
+    {
+        // v1.16.0 / Phase 29B — badge catalog (global, MUTABLE).
+        // The seed YAML is the source of truth; sync carries the
+        // catalog so a fresh device knows about every available
+        // badge before the user earns any.
+        name: "badges",
+        dexieTable: "badges",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
+    {
+        // v1.16.0 / Phase 29B — earned-badge record. APPEND-ONLY:
+        // earning is an insert; un-earning isn't supported.
+        name: "user_badges",
+        dexieTable: "userBadges",
+        timestampField: "earned_at",
+        appendOnly: true,
+    },
 ];
 
 const APPEND_ONLY_TABLES = new Set(
