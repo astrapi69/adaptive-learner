@@ -25,6 +25,7 @@ import type {
     ProgressReport,
     SessionDetail,
 } from "../../storage/export-builder";
+import {renderStoredContent} from "../tiptap-to-markdown";
 import {methodLabel, statusLabel, stepLabel, t} from "./i18n";
 
 export type ExportPayload = ProgressReport | SessionDetail | CurriculumOverview;
@@ -528,8 +529,14 @@ function renderSessionRating(payload: SessionDetail): string {
         lines.push("");
         lines.push(`**${t(lang, "notes")}:**`);
         lines.push("");
-        for (const line of r.notes.split("\n")) {
-            lines.push(`> ${line}`);
+        // v1.14.0 / Phase 27E — notes may carry serialised
+        // TipTap JSON; renderStoredContent emits Markdown and
+        // returns plain text verbatim for legacy rows. Each
+        // resulting line gets the blockquote prefix so the
+        // note stays visually attached to the section.
+        const noteMd = renderStoredContent(r.notes);
+        for (const line of noteMd.split("\n")) {
+            lines.push(line.length > 0 ? `> ${line}` : ">");
         }
     }
     lines.push("");
@@ -578,8 +585,13 @@ function renderCurriculumOverview(payload: CurriculumOverview): string {
         "",
     ];
     if (c.description) {
-        sections.push(`**${t(lang, "description")}:** ${c.description}`);
-        sections.push("");
+        const descMd = renderStoredContent(c.description);
+        if (descMd.length > 0) {
+            sections.push(`**${t(lang, "description")}:**`);
+            sections.push("");
+            sections.push(descMd);
+            sections.push("");
+        }
     }
     sections.push(`**${t(lang, "language")}:** ${c.language}  `);
     sections.push(`**${t(lang, "generated_at")}:** ${formatDate(c.created_at)}`);
@@ -602,7 +614,17 @@ function renderTopicTree(payload: CurriculumOverview): string {
         const indent = "  ".repeat(topic.depth);
         lines.push(`${indent}- **${topic.title}**`);
         if (topic.description) {
-            lines.push(`${indent}  - ${topic.description}`);
+            // Topic descriptions are not yet edited via the
+            // rich-text editor (the rich-text UI does not cover
+            // topics in Phase 27), but the TEXT column still
+            // accepts serialised TipTap JSON via sync from
+            // future-versioned clients. renderStoredContent
+            // round-trips both shapes.
+            const md = renderStoredContent(topic.description);
+            const flat = md.replace(/\n+/g, " ").trim();
+            if (flat.length > 0) {
+                lines.push(`${indent}  - ${flat}`);
+            }
         }
     }
     lines.push("");
@@ -621,7 +643,10 @@ function renderLessons(payload: CurriculumOverview): string {
         lines.push(`### ${lesson.title}`);
         lines.push("");
         if (lesson.content) {
-            lines.push(lesson.content);
+            const md = renderStoredContent(lesson.content);
+            if (md.length > 0) {
+                lines.push(md);
+            }
         }
         lines.push("");
     }
