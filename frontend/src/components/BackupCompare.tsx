@@ -50,6 +50,12 @@ interface BackupCompareProps {
     labelB?: string;
     /** Hide the Markdown export button (used by pre-restore preview). */
     hideExport?: boolean;
+    /**
+     * Called once when the diff has been computed. The pre-restore
+     * preview uses this to drive the Restore button label (e.g.
+     * "Restore (76 added, 12 updated)").
+     */
+    onDiffReady?: (diff: BackupDiff) => void;
 }
 
 export function BackupCompare({
@@ -58,6 +64,7 @@ export function BackupCompare({
     labelA,
     labelB,
     hideExport,
+    onDiffReady,
 }: BackupCompareProps) {
     const {t} = useI18n();
     const [diff, setDiff] = useState<BackupDiff | null>(null);
@@ -84,6 +91,7 @@ export function BackupCompare({
                 if (!cancelled) {
                     setDiff(result);
                     setProgress(null);
+                    onDiffReady?.(result);
                 }
             })
             .catch((err) => {
@@ -95,6 +103,10 @@ export function BackupCompare({
         return () => {
             cancelled = true;
         };
+        // ``onDiffReady`` is intentionally excluded: it's a fire-
+        // once callback for the parent; including it would re-run
+        // the diff on every parent render.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [backupA, backupB]);
 
     const visibleTables = useMemo(() => {

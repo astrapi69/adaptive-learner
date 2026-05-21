@@ -114,6 +114,16 @@ export default function BackupSection() {
         null,
     );
     const [comparison, setComparison] = useState<ComparisonRow[] | null>(null);
+    // v1.12.0 / Phase 25C — snapshot of the current state, used as
+    // "Backup A" in the pre-restore diff preview.
+    const [currentSnapshot, setCurrentSnapshot] = useState<BackupPayload | null>(
+        null,
+    );
+    const [restoreDiffCounts, setRestoreDiffCounts] = useState<{
+        added: number;
+        removed: number;
+        changed: number;
+    } | null>(null);
     const [restoreSummary, setRestoreSummary] = useState<RestoreSummary | null>(
         null,
     );
@@ -303,6 +313,18 @@ export default function BackupSection() {
             const currentStats = await storage.backup.stats(userId);
             setComparison(buildComparison(currentStats, parsed));
             setPendingPayload(parsed);
+            // v1.12.0 / Phase 25C — pre-restore diff preview. Pull
+            // the current state as a backup payload so BackupCompare
+            // can render the per-table delta the user is about to
+            // commit. Fire-and-forget: we must NOT keep ``busy``
+            // pinned on a network call that can hang in tests or
+            // offline environments. When the snapshot resolves the
+            // preview pops in below the legacy row-count table; on
+            // failure the preview silently doesn't render.
+            storage.backup
+                .export(userId)
+                .then((snap) => setCurrentSnapshot(snap))
+                .catch(() => setCurrentSnapshot(null));
         } catch (err) {
             const detail = err instanceof Error ? err.message : String(err);
             notify.error(
@@ -326,6 +348,8 @@ export default function BackupSection() {
             setRestoreSummary(summary);
             setPendingPayload(null);
             setComparison(null);
+            setCurrentSnapshot(null);
+            setRestoreDiffCounts(null);
             const parts = [
                 t("backup.restored_inserted", "Inserted: {{n}}").replace(
                     "{{n}}",
@@ -365,6 +389,8 @@ export default function BackupSection() {
     function handleCancelRestore() {
         setPendingPayload(null);
         setComparison(null);
+        setCurrentSnapshot(null);
+        setRestoreDiffCounts(null);
     }
 
     return (
@@ -476,6 +502,28 @@ export default function BackupSection() {
                             ))}
                         </tbody>
                     </table>
+
+                    {/* v1.12.0 / Phase 25C — pre-restore diff preview */}
+                    {currentSnapshot !== null && (
+                        <BackupCompare
+                            backupA={currentSnapshot}
+                            backupB={pendingPayload}
+                            labelA={t(
+                                "backup.compare_current_label",
+                                "Current state",
+                            )}
+                            labelB={t("backup.incoming_header", "Backup")}
+                            hideExport
+                            onDiffReady={(diff) =>
+                                setRestoreDiffCounts({
+                                    added: diff.totals.added,
+                                    removed: diff.totals.removed,
+                                    changed: diff.totals.changed,
+                                })
+                            }
+                        />
+                    )}
+
                     <div className="backup-actions">
                         <button
                             type="button"
@@ -486,7 +534,20 @@ export default function BackupSection() {
                         >
                             {busy === "import"
                                 ? t("backup.importing", "Restoring…")
-                                : t("backup.confirm", "Confirm restore")}
+                                : restoreDiffCounts !== null
+                                  ? t(
+                                        "backup.confirm_with_counts",
+                                        "Restore ({{added}} added, {{updated}} updated)",
+                                    )
+                                        .replace(
+                                            "{{added}}",
+                                            String(restoreDiffCounts.added),
+                                        )
+                                        .replace(
+                                            "{{updated}}",
+                                            String(restoreDiffCounts.changed),
+                                        )
+                                  : t("backup.confirm", "Confirm restore")}
                         </button>
                         <button
                             type="button"

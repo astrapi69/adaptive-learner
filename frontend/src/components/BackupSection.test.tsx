@@ -224,4 +224,77 @@ describe("BackupSection", () => {
         expect(importSpy).not.toHaveBeenCalled();
         expect(screen.queryByTestId("backup-comparison")).toBeNull();
     });
+
+    // --- v1.12.0 / Phase 25C: pre-restore diff preview --------------
+
+    it("renders the diff preview above the confirm button when restoring", async () => {
+        const currentSnapshot: BackupPayload = {
+            ...samplePayload,
+            created_at: "2026-05-10T10:00:00.000Z",
+            data: {
+                learning_projects: [
+                    {
+                        id: "p1",
+                        topic: "Old topic",
+                        daily_minutes: 30,
+                        updated_at: "2026-05-10",
+                    },
+                ],
+            },
+        };
+        const incomingPayload: BackupPayload = {
+            ...samplePayload,
+            created_at: "2026-05-18T10:00:00.000Z",
+            data: {
+                learning_projects: [
+                    {
+                        id: "p1",
+                        topic: "Old topic",
+                        daily_minutes: 45,
+                        updated_at: "2026-05-18",
+                    },
+                    {
+                        id: "p2",
+                        topic: "New project",
+                        daily_minutes: 20,
+                        updated_at: "2026-05-18",
+                    },
+                ],
+            },
+        };
+        vi.spyOn(getStorage().backup, "stats").mockResolvedValue({
+            user_id: SEED_USER_ID,
+            total_records: 1,
+            tables: {learning_projects: 1},
+        });
+        vi.spyOn(getStorage().backup, "export").mockResolvedValue(currentSnapshot);
+
+        renderSection();
+        const input = screen.getByTestId("backup-file-input") as HTMLInputElement;
+        const file = new File([JSON.stringify(incomingPayload)], "backup.json", {
+            type: "application/json",
+        });
+        await act(async () => {
+            fireEvent.change(input, {target: {files: [file]}});
+        });
+
+        // The diff preview surface (BackupCompare) renders, showing
+        // 1 added (p2) and 1 changed (p1.daily_minutes).
+        await waitFor(() => {
+            expect(screen.getByTestId("backup-compare")).toBeInTheDocument();
+        });
+        await waitFor(() => {
+            expect(screen.getByTestId("totals-added").textContent).toBe("+1");
+        });
+        expect(screen.getByTestId("totals-changed").textContent).toBe("~1");
+
+        // The Restore button picks up the dynamic counts.
+        const confirm = screen.getByTestId(
+            "backup-confirm",
+        ) as HTMLButtonElement;
+        await waitFor(() => {
+            expect(confirm.textContent).toMatch(/1 added/);
+            expect(confirm.textContent).toMatch(/1 updated/);
+        });
+    });
 });
