@@ -1,572 +1,606 @@
-# Adaptive Learner i18n catalog (TR — Phase 7).
+# Adaptive Learner i18n catalog (TR — Phase 26B / v1.13.0).
 #
-# Mirror of en.yaml structure. Strings carrying non-native
-# fallbacks are EN passthroughs. Structure parity-checked by
-# tests/test_i18n_parity.py.
+# AI-translated (tr), informal "sen" form. Pending native
+# speaker review. Mirror of en.yaml structure; parity-checked
+# by backend/tests/test_i18n_parity.py.
 
 app:
   name: Adaptive Learner
-  tagline: Learning that adapts to you.
-  skeleton_notice: Iskelet durumu. Domain modelleri, eklentiler ve sayfalar sonraki
-    asamalarda geliyor — bkz. docs/adaptive-learner-project-reference.md.
+  tagline: Sana uyum sağlayan öğrenme.
+  skeleton_notice: >-
+    İskelet aşaması. Alan modelleri, eklentiler ve sayfalar sonraki
+    aşamalarda geliyor — bkz. docs/adaptive-learner-project-reference.md.
+
 common:
   save: Kaydet
-  cancel: Iptal
-  loading: Yukleniyor…
-  error: Bir seyler ters gitti.
-  back: Back
-  next: Next
-  start: Start
-  submit: Submit
-  continue: Continue
-  done: Done
-  delete: Delete
-  edit: Edit
-  confirm: Confirm
-  'yes': true
-  'no': false
-  optional: optional
-  required: required
-  minutes: minutes
+  cancel: İptal
+  loading: Yükleniyor…
+  error: Bir şeyler ters gitti.
+  back: Geri
+  next: İleri
+  start: Başla
+  submit: Gönder
+  continue: Devam et
+  done: Bitti
+  delete: Sil
+  edit: Düzenle
+  confirm: Onayla
+  "yes": Evet
+  "no": Hayır
+  optional: isteğe bağlı
+  required: zorunlu
+  minutes: dakika
+
 nav:
-  dashboard: Dashboard
-  session: Session
-  curriculum: Curriculum
-  progress: Progress
-  import: Import
-  settings: Settings
-  home: Home
-  menu: Menu
-  online: Online
-  offline: Offline
+  dashboard: Pano
+  session: Oturum
+  curriculum: Müfredat
+  progress: İlerleme
+  import: İçe aktar
+  settings: Ayarlar
+  home: Ana sayfa
+  menu: Menü
+  online: Çevrimiçi
+  offline: Çevrimdışı
+
 import:
-  title: Import a conversation
+  title: Bir konuşmayı içe aktar
   subtitle: >-
-    Paste or upload a conversation with ChatGPT, Claude, or Gemini
-    and get instant learning insights.
+    ChatGPT, Claude veya Gemini ile yaptığın bir konuşmayı yapıştır
+    ya da yükle ve anında öğrenme içgörüleri al.
   quick:
-    title: Quick Analysis
-    hint: Paste a conversation here. We will save and analyze it in one step.
-    placeholder: Paste a ChatGPT, Claude, Gemini, or markdown conversation here...
+    title: Hızlı Analiz
+    hint: Bir konuşmayı buraya yapıştır. Tek adımda kaydedip analiz edeceğiz.
+    placeholder: Buraya bir ChatGPT, Claude, Gemini veya markdown konuşması yapıştır…
   file:
-    title: Upload a file
-    hint: Drag a .json, .md, or .txt file here, or click to choose.
-    formats: ChatGPT conversations.json - Claude export - Markdown - Generic JSON
+    title: Dosya yükle
+    hint: Bir .json, .md veya .txt dosyasını buraya sürükle ya da seçmek için tıkla.
+    formats: ChatGPT conversations.json · Claude dışa aktarımı · Markdown · Genel JSON
   list:
-    title: Your imported conversations
-    empty: No conversations yet. Use Quick Analysis or upload a file.
-  detected_format: Detected format
-  analyze: Analyze
-  reanalyze: Re-analyze
-  analyzing: Analyzing...
-  analyzed: Analyzed
-  analysis_title: Analysis
-  analysis_ready: Analysis ready.
-  analysis_fallback: Analysis ran but the AI response could not be parsed cleanly.
+    title: İçe aktardığın konuşmalar
+    empty: Henüz konuşma yok. Hızlı Analiz'i kullan veya dosya yükle.
+  detected_format: Tespit edilen format
+  analyze: Analiz et
+  reanalyze: Yeniden analiz et
+  analyzing: Analiz ediliyor…
+  analyzed: Analiz edildi
+  analysis_title: Analiz
+  analysis_ready: Analiz hazır.
+  analysis_fallback: Analiz çalıştı ama yapay zekânın cevabı temiz şekilde ayrıştırılamadı.
   analysis_fallback_long: >-
-    The AI response was not parseable as structured JSON. The summary
-    below is a fallback.
-  analysis_error: Could not analyze the conversation.
-  analysis_save_error: Could not save the analysis result.
-  back_to_list: Back to imports
-  create_curriculum: Create curriculum
-  curriculum_created: Curriculum created from the analysis.
-  curriculum_error: Could not create the curriculum.
-  curriculum_description: Generated from an imported conversation.
-  default_curriculum_title: Imported curriculum
-  field_topic: Topic
-  field_method: Recommended method
-  field_strengths: Strengths
-  field_weaknesses: Weaknesses
-  field_errors: Error patterns
-  field_subtopics: Subtopics
-  field_curriculum: Suggested curriculum
-  file_imported_one: Conversation imported. Click Analyze on the detail page.
-  file_imported_many: "Imported {count} conversations."
-  list_error: Could not load imported conversations.
-  load_error: Could not load the conversation.
-  messages: messages
+    Yapay zekânın cevabı yapılandırılmış JSON olarak ayrıştırılamadı.
+    Aşağıdaki özet bir yedek çözümdür.
+  analysis_error: Konuşma analiz edilemedi.
+  analysis_save_error: Analiz sonucu kaydedilemedi.
+  back_to_list: İçe aktarmalara dön
+  create_curriculum: Müfredat oluştur
+  curriculum_created: Analizden müfredat oluşturuldu.
+  curriculum_error: Müfredat oluşturulamadı.
+  curriculum_description: İçe aktarılan bir konuşmadan oluşturuldu.
+  default_curriculum_title: İçe aktarılan müfredat
+  field_topic: Konu
+  field_method: Önerilen yöntem
+  field_strengths: Güçlü yönler
+  field_weaknesses: Zayıf yönler
+  field_errors: Hata kalıpları
+  field_subtopics: Alt konular
+  field_curriculum: Önerilen müfredat
+  file_imported_one: Konuşma içe aktarıldı. Detay sayfasında Analiz et'e tıkla.
+  file_imported_many: "{count} konuşma içe aktarıldı."
+  list_error: İçe aktarılan konuşmalar yüklenemedi.
+  load_error: Konuşma yüklenemedi.
+  messages: mesajlar
   no_api_key: >-
-    Set an API key for the active AI provider in Settings to enable analysis.
-  no_lessons: The analysis did not suggest any lessons.
-  no_user: Complete the onboarding before importing conversations.
-  parse_error: Could not recognise the input format.
-  priority: priority
-  role_assistant: AI
-  role_system: System
-  role_user: You
-  save_error: Could not save the conversation.
-  settings_error: Could not read AI settings.
-  start_session: Start session
-  transcript: Transcript
+    Analizi açmak için Ayarlar'da aktif yapay zekâ sağlayıcısı için
+    bir API anahtarı belirle.
+  no_lessons: Analiz herhangi bir ders önermedi.
+  no_user: Konuşmaları içe aktarmadan önce başlangıç sürecini tamamla.
+  parse_error: Giriş formatı tanınamadı.
+  priority: öncelik
+  role_assistant: YZ
+  role_system: Sistem
+  role_user: Sen
+  save_error: Konuşma kaydedilemedi.
+  settings_error: YZ ayarları okunamadı.
+  start_session: Oturum başlat
+  transcript: Döküm
 
 curriculum:
-  title: Curriculum
-  active: Active curriculum
-  new_placeholder: New curriculum title…
-  create: Create curriculum
-  created: Curriculum created.
-  saved: Saved.
-  deleted: Topic deleted.
-  add_topic: Add topic
-  add_root_topic: Add root topic
-  add_subtopic: Add subtopic
-  rename_topic: Rename topic
-  topic_title: Title
-  no_topics: No topics yet — add your first to get started.
-  no_curriculum: Create a curriculum to start building a topic tree.
-  delete_confirm: Delete this topic? Its children stay as their own roots.
-  lessons_title: Lessons
-  add_lesson: Add lesson
-  new_lesson_placeholder: New lesson title…
-  no_lessons: No lessons yet.
-  lesson_created: Lesson created.
-  lesson_saved: Lesson saved.
-  lesson_deleted: Lesson deleted.
-  lesson_delete_confirm: Delete this lesson?
+  title: Müfredat
+  active: Aktif müfredat
+  new_placeholder: Yeni müfredat başlığı…
+  create: Müfredat oluştur
+  created: Müfredat oluşturuldu.
+  saved: Kaydedildi.
+  deleted: Konu silindi.
+  add_topic: Konu ekle
+  add_root_topic: Kök konu ekle
+  add_subtopic: Alt konu ekle
+  rename_topic: Konuyu yeniden adlandır
+  topic_title: Başlık
+  no_topics: Henüz konu yok — başlamak için ilkini ekle.
+  no_curriculum: Bir konu ağacı oluşturmaya başlamak için bir müfredat oluştur.
+  delete_confirm: Bu konu silinsin mi? Alt konular kendi kökleri olarak kalır.
+  lessons_title: Dersler
+  add_lesson: Ders ekle
+  new_lesson_placeholder: Yeni ders başlığı…
+  no_lessons: Henüz ders yok.
+  lesson_created: Ders oluşturuldu.
+  lesson_saved: Ders kaydedildi.
+  lesson_deleted: Ders silindi.
+  lesson_delete_confirm: Bu ders silinsin mi?
+
 landing:
   title: Adaptive Learner
-  subtitle: Learning that adapts to you.
-  choose_language: Choose your language
-  start_button: Start your learning journey
-  docs_link: Read the documentation
-  checking_session: Welcome back…
-  intro: Adaptive Learner finds the method that fits you best from six research-backed
-    learning approaches, and walks you through a seven-step cycle on every session.
+  subtitle: Sana uyum sağlayan öğrenme.
+  choose_language: Dilini seç
+  start_button: Öğrenme yolculuğuna başla
+  docs_link: Belgeleri oku
+  checking_session: Tekrar hoş geldin…
+  intro: >-
+    Adaptive Learner, araştırmalara dayanan altı öğrenme yaklaşımı
+    arasından sana en uygun yöntemi bulur ve her oturumda yedi
+    adımlı bir döngüden geçirir.
+
 onboarding:
-  title: Create a learning project
-  intro: Tell us about your learning goal. Adaptive Learner uses this to build your
-    profile and recommend a starting method.
-  field_name: Your name
-  field_topic: Topic
-  field_topic_hint: e.g. Spanish B1, linear algebra.
-  field_goal: Goal
-  field_goal_hint: What do you want to be able to do?
-  field_timeframe: Time frame
-  field_timeframe_hint: e.g. 4 weeks, one semester.
-  field_daily_minutes: Minutes per day
-  field_current_problem: Current problem
-  field_current_problem_hint: optional — what is blocking you right now?
-  submit: Create project and start assessment
-  creating: Creating project…
-  skip: Later
-  skip_top: Skip for now →
+  title: Bir öğrenme projesi oluştur
+  intro: >-
+    Bize öğrenme hedefini anlat. Adaptive Learner bunu kullanarak
+    profilini oluşturur ve sana başlangıç için bir yöntem önerir.
+  field_name: Adın
+  field_topic: Konu
+  field_topic_hint: ör. İspanyolca B1, lineer cebir.
+  field_goal: Hedef
+  field_goal_hint: Ne yapabilmek istiyorsun?
+  field_timeframe: Zaman dilimi
+  field_timeframe_hint: ör. 4 hafta, bir dönem.
+  field_daily_minutes: Günlük dakika
+  field_current_problem: Şu anki problem
+  field_current_problem_hint: isteğe bağlı — şu an seni neyin engelliyor?
+  submit: Projeyi oluştur ve değerlendirmeye başla
+  creating: Proje oluşturuluyor…
+  skip: Sonra
+  skip_top: Şimdilik atla →
   skip_hint: >-
-    Not sure yet? Tap Later to jump in — you can fill this in from
-    the Curriculum page anytime.
-  skip_default_name: Learner
-  skip_default_topic: My learning
-  skip_default_goal: Discover my learning style.
-  skip_default_timeframe: Flexible
+    Henüz emin değil misin? Başlamak için Sonra'ya dokun — Müfredat
+    sayfasından istediğin zaman doldurabilirsin.
+  skip_default_name: Öğrenci
+  skip_default_topic: Öğrenmem
+  skip_default_goal: Öğrenme tarzımı keşfetmek.
+  skip_default_timeframe: Esnek
+
 assessment:
-  title: Learning-type assessment
-  intro: Twelve short questions determine your learning profile. There is no right
-    or wrong answer — go with your gut.
-  question_progress: Question {current} of {total}
-  next_question: Next question
-  prev_question: Previous question
-  submit: Evaluate
-  evaluating: Evaluating…
-  result_title: Your learning profile
-  dominant_method: Preferred method
-  continue_to_dashboard: Continue to dashboard
+  title: Öğrenme tipi değerlendirmesi
+  intro: >-
+    On iki kısa soru öğrenme profilini belirler. Doğru ya da yanlış
+    cevap yok — içgüdüne güven.
+  question_progress: Soru {current} / {total}
+  next_question: Sonraki soru
+  prev_question: Önceki soru
+  submit: Değerlendir
+  evaluating: Değerlendiriliyor…
+  result_title: Öğrenme profilin
+  dominant_method: Tercih edilen yöntem
+  continue_to_dashboard: Panoya devam et
+
 dashboard:
-  title: Dashboard
-  welcome: Welcome back
-  quick_start: Start a new session
-  quick_start_subtitle: Method picked from your profile.
-  card_profile: Learning profile
-  card_progress: Progress
-  card_distribution: Method distribution
-  card_counter: Sessions
-  card_tools: Tool recommendations
-  card_recent_sessions: Recent sessions
-  card_spaced: Spaced practice
-  spaced_empty: Nothing to refresh right now. Great rhythm!
-  spaced_interval_label: Review in
-  spaced_start: Start
-  spaced_dismiss: Dismiss
-  metric_total_sessions: Total sessions
-  metric_total_minutes: Total minutes
-  metric_mean_understanding: Mean understanding
-  metric_mean_stress: Mean stress
-  metric_streak: Day streak
-  no_data: No sessions yet — start your first one to see trends.
+  title: Pano
+  welcome: Tekrar hoş geldin
+  quick_start: Yeni bir oturum başlat
+  quick_start_subtitle: Yöntem profilinden seçildi.
+  card_profile: Öğrenme profili
+  card_progress: İlerleme
+  card_distribution: Yöntem dağılımı
+  card_counter: Oturumlar
+  card_tools: Araç önerileri
+  card_recent_sessions: Son oturumlar
+  card_spaced: Aralıklı pratik
+  spaced_empty: Şu an tazelenecek bir şey yok. Harika bir ritim!
+  spaced_interval_label: Tekrar
+  spaced_start: Başla
+  spaced_dismiss: Kapat
+  metric_total_sessions: Toplam oturum
+  metric_total_minutes: Toplam dakika
+  metric_mean_understanding: Ortalama anlayış
+  metric_mean_stress: Ortalama stres
+  metric_streak: Günlük seri
+  no_data: Henüz oturum yok — eğilimleri görmek için ilkini başlat.
+
 session:
-  title: Learning session
-  in_progress: Session in progress
-  send_message: Send message
-  message_placeholder: Write your reply…
-  ai_thinking: Thinking…
-  ai_error: The AI provider could not reply.
-  end_session: End session
-  end_session_confirm: Sure? We will close the session and ask for a rating.
-  switch_recommended: Method switch recommended
-  switch_recommended_subtitle: Your recent ratings suggest a different method might
-    fit you better.
-  switch_accept: Switch method
-  switch_dismiss: Keep current method
-  rating_title: How did the session go?
-  rating_understanding: How well did you understand?
-  rating_stress: How stressful was it?
-  rating_method_fit: How well did the method fit?
-  rating_notes: Notes (optional)
-  rating_submit: Submit rating
-  step_progress: Step {current} of {total}
-  step_advance_toast: "Moving to: {step}"
-  cycle_label: "Cycle {n}"
-  cycle_advanced: "Cycle {n} started"
-  cycles_completed: "Cycles completed"
-  next_topic: "Next topic:"
-  step_reason_tooltip: Why this step?
+  title: Öğrenme oturumu
+  in_progress: Oturum devam ediyor
+  send_message: Mesaj gönder
+  message_placeholder: Cevabını yaz…
+  ai_thinking: Düşünüyor…
+  ai_error: YZ sağlayıcısı cevap veremedi.
+  end_session: Oturumu bitir
+  end_session_confirm: Emin misin? Oturumu kapatıp bir değerlendirme isteyeceğiz.
+  switch_recommended: Yöntem değişikliği öneriliyor
+  switch_recommended_subtitle: >-
+    Son değerlendirmelerin sana farklı bir yöntemin daha uygun
+    olabileceğini gösteriyor.
+  switch_accept: Yöntemi değiştir
+  switch_dismiss: Mevcut yöntemi koru
+  rating_title: Oturum nasıl geçti?
+  rating_understanding: Ne kadar iyi anladın?
+  rating_stress: Ne kadar stresliydi?
+  rating_method_fit: Yöntem ne kadar uydu?
+  rating_notes: Notlar (isteğe bağlı)
+  rating_submit: Değerlendirmeyi gönder
+  step_progress: Adım {current} / {total}
+  step_advance_toast: "Geçiliyor: {step}"
+  cycle_label: "Döngü {n}"
+  cycle_advanced: "Döngü {n} başladı"
+  cycles_completed: "Tamamlanan döngüler"
+  next_topic: "Sonraki konu:"
+  step_reason_tooltip: Neden bu adım?
   offline_start_blocked: >-
-    You're offline. New sessions need a network connection — past
-    sessions stay readable from the Dashboard.
+    Çevrimdışısın. Yeni oturumlar için ağ bağlantısı gerekli — geçmiş
+    oturumlar Pano'dan okunabilir kalır.
+
 progress:
-  title: Progress
-  chart_timeline: Understanding and stress over time
-  chart_methods: Method distribution
-  commit_history: Session history
-  commit_method: Method
-  commit_understanding: Understanding
-  commit_stress: Stress
-  commit_duration: Duration
-  commit_date: Date
-  no_commits: No completed sessions yet.
-  step_eval_title: AI step-evaluation insights
+  title: İlerleme
+  chart_timeline: Zaman içinde anlayış ve stres
+  chart_methods: Yöntem dağılımı
+  commit_history: Oturum geçmişi
+  commit_method: Yöntem
+  commit_understanding: Anlayış
+  commit_stress: Stres
+  commit_duration: Süre
+  commit_date: Tarih
+  no_commits: Henüz tamamlanmış oturum yok.
+  step_eval_title: YZ adım değerlendirme içgörüleri
   step_eval_empty: >-
-    No AI step-evaluation data yet — start a session to see insights here.
-  step_eval_avg_confidence: Avg AI confidence
-  step_eval_repeats: "Times AI said 'not ready yet'"
-  step_eval_advances: Step advances
-  step_eval_backward: Backward transitions
-  step_eval_stickiest_label: "Most time on:"
+    Henüz YZ adım değerlendirme verisi yok — burada içgörü görmek
+    için bir oturum başlat.
+  step_eval_avg_confidence: Ortalama YZ güveni
+  step_eval_repeats: "YZ'nin 'henüz hazır değil' dediği zamanlar"
+  step_eval_advances: Adım ilerlemeleri
+  step_eval_backward: Geri geçişler
+  step_eval_stickiest_label: "En çok zaman:"
+
 settings:
-  title: Settings
-  section_language: Language
-  section_provider: AI provider
-  section_api_keys: API keys
-  section_danger: Account
-  section_ui: Interface
-  gestures: Swipe Gestures
+  title: Ayarlar
+  section_language: Dil
+  section_provider: YZ sağlayıcısı
+  section_api_keys: API anahtarları
+  section_danger: Hesap
+  section_ui: Arayüz
+  gestures: Kaydırma Hareketleri
   gestures_description: >-
-    Swipe to navigate in Assessment, Session, and Curriculum.
-  section_storage_mode: Storage mode
+    Değerlendirme, Oturum ve Müfredat'ta gezinmek için kaydır.
+  section_storage_mode: Depolama modu
   storage_mode_help: >-
-    Choose where your data lives. Local mode keeps everything in this
-    browser; Server mode talks to the AdaptiveLearner backend.
-  storage_mode_api: Server
-  storage_mode_api_hint: Requires a running AdaptiveLearner backend.
-  storage_mode_dexie: Local (Browser)
+    Verilerinin nerede yaşayacağını seç. Yerel mod her şeyi bu
+    tarayıcıda tutar; Sunucu modu AdaptiveLearner arka uçuyla
+    iletişim kurar.
+  storage_mode_api: Sunucu
+  storage_mode_api_hint: Çalışan bir AdaptiveLearner arka ucu gerektirir.
+  storage_mode_dexie: Yerel (Tarayıcı)
   storage_mode_dexie_hint: >-
-    Data + API keys live in this browser; AI calls fire direct from the page.
+    Veri ve API anahtarları bu tarayıcıda kalır; YZ çağrıları
+    doğrudan sayfadan yapılır.
   storage_mode_warning: >-
-    Data is NOT synced between modes. Sync is planned for a future version.
+    Veriler modlar arasında SENKRONİZE EDİLMEZ. Senkronizasyon
+    gelecek bir sürüm için planlanıyor.
   storage_mode_switch_notice: >-
-    Storage mode saved. Reload the page to switch to the new backend.
-  language_label: Display language
-  provider_label: Active provider
+    Depolama modu kaydedildi. Yeni arka uca geçmek için sayfayı
+    yeniden yükle.
+  language_label: Görüntüleme dili
+  provider_label: Aktif sağlayıcı
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
-  api_key_label: API key
-  api_key_placeholder: Paste here…
-  api_key_saved: Key stored
-  api_key_missing: Not set
-  api_key_set: Save key
-  api_key_delete: Remove key
-  api_key_confirm_delete: Really remove this API key?
-  saved: Saved.
-  save_failed: Save failed.
-  provider_active: Active
-  active_provider_missing_key: This is your active provider but no API key is stored.
-    AI replies will be skipped until a key is saved.
-  section_model_overrides: Model overrides
-  model_overrides_hint: Leave blank to use the default model for each provider. A non-empty
-    value replaces the default at chat time.
-  model_override_placeholder: "Model identifier (e.g. claude-3-5-haiku-latest)"
-  model_override_set: Override active
-  model_override_default: Default model
-  model_override_save: Save model
-  model_override_clear: Use default
-  model_picker_placeholder: Select or type a model id
-  model_picker_open: Open model list
-  model_picker_default_hint: "Uses default:"
-  model_picker_loading: Loading models...
-  model_picker_error: Could not load models. Check your API key.
-  model_picker_retry: Retry
-  model_picker_no_key: Save an API key for this provider to load the available models.
-  model_picker_recommended: Recommended
-  model_picker_all: All models
-  model_picker_suggestions: Suggested (offline)
+  api_key_label: API anahtarı
+  api_key_placeholder: Buraya yapıştır…
+  api_key_saved: Anahtar saklandı
+  api_key_missing: Ayarlanmadı
+  api_key_set: Anahtarı kaydet
+  api_key_delete: Anahtarı kaldır
+  api_key_confirm_delete: Bu API anahtarı gerçekten kaldırılsın mı?
+  saved: Kaydedildi.
+  save_failed: Kaydetme başarısız oldu.
+  provider_active: Aktif
+  active_provider_missing_key: >-
+    Bu senin aktif sağlayıcın ama saklı bir API anahtarı yok. Bir
+    anahtar kaydedilene kadar YZ cevapları atlanacak.
+  section_model_overrides: Model geçersiz kılmaları
+  model_overrides_hint: >-
+    Her sağlayıcı için varsayılan modeli kullanmak istiyorsan boş
+    bırak. Boş olmayan bir değer sohbet sırasında varsayılanın
+    yerine geçer.
+  model_override_placeholder: "Model tanımlayıcısı (ör. claude-3-5-haiku-latest)"
+  model_override_set: Geçersiz kılma aktif
+  model_override_default: Varsayılan model
+  model_override_save: Modeli kaydet
+  model_override_clear: Varsayılanı kullan
+  model_picker_placeholder: Bir model kimliği seç veya yaz
+  model_picker_open: Model listesini aç
+  model_picker_default_hint: "Varsayılan kullanılıyor:"
+  model_picker_loading: Modeller yükleniyor...
+  model_picker_error: Modeller yüklenemedi. API anahtarını kontrol et.
+  model_picker_retry: Tekrar dene
+  model_picker_no_key: Mevcut modelleri yüklemek için bu sağlayıcıya bir API anahtarı kaydet.
+  model_picker_recommended: Önerilen
+  model_picker_all: Tüm modeller
+  model_picker_suggestions: Önerilen (çevrimdışı)
+
 methods:
   deductive:
-    label: Deductive
-    summary: General to specific — rules first, examples after.
+    label: Tümdengelimsel
+    summary: Genelden özele — önce kurallar, sonra örnekler.
   inductive:
-    label: Inductive
-    summary: Specific to general — examples first, derive the rule.
+    label: Tümevarımsal
+    summary: Özelden genele — önce örnekler, sonra kuralı çıkar.
   error_based:
-    label: Error-based
-    summary: Learn from mistakes — correction plus explanation.
+    label: Hataya dayalı
+    summary: Hatalardan öğren — düzeltme ve açıklama birlikte.
   dialogic:
-    label: Dialogic
-    summary: Think in conversation — lower stress, build motivation.
+    label: Diyaloğa dayalı
+    summary: Sohbet içinde düşün — daha az stres, daha çok motivasyon.
   contextual:
-    label: Contextual
-    summary: Apply in a real context — practice transfer.
+    label: Bağlamsal
+    summary: Gerçek bir bağlamda uygula — aktarımı pratik et.
   ai_adaptive:
-    label: AI-adaptive
-    summary: The AI picks the method that fits you best.
+    label: YZ-uyarlanır
+    summary: YZ sana en uygun yöntemi seçer.
+
 cycle_steps:
   input:
-    label: Input
-    description: Information, example or task is presented.
+    label: Girdi
+    description: Bilgi, örnek veya görev sunulur.
   attempt:
-    label: Attempt
-    description: First application without a safety net.
+    label: Deneme
+    description: Güvenlik ağı olmadan ilk uygulama.
   error:
-    label: Error
-    description: Mismatch between expectation and result.
+    label: Hata
+    description: Beklenti ile sonuç arasındaki uyumsuzluk.
   feedback:
-    label: Feedback
-    description: Correction with explanation.
+    label: Geri bildirim
+    description: Açıklama ile düzeltme.
   adapt:
-    label: Adapt
-    description: Adjust method, pace or focus.
+    label: Uyarla
+    description: Yöntemi, hızı veya odağı ayarla.
   repeat:
-    label: Repeat
-    description: Try again.
+    label: Tekrarla
+    description: Tekrar dene.
   integrate:
-    label: Integrate
-    description: Knowledge sticks through experience.
+    label: Bütünleştir
+    description: Bilgi deneyimle yerleşir.
+
 errors:
-  network: Could not reach the server.
-  not_found: Not found.
-  validation: Invalid input.
-  conflict: Entry already exists.
-  server: Server error — please try again later.
+  network: Sunucuya ulaşılamadı.
+  not_found: Bulunamadı.
+  validation: Geçersiz giriş.
+  conflict: Kayıt zaten var.
+  server: Sunucu hatası — lütfen daha sonra tekrar dene.
+
 toast:
-  project_created: Project created.
-  assessment_saved: Profile saved.
-  session_started: Session started.
-  session_ended: Session ended.
-  rating_saved: Rating saved.
-  api_key_saved: API key saved.
-  api_key_deleted: API key removed.
-  method_switched: Method switched.
+  project_created: Proje oluşturuldu.
+  assessment_saved: Profil kaydedildi.
+  session_started: Oturum başladı.
+  session_ended: Oturum bitti.
+  rating_saved: Değerlendirme kaydedildi.
+  api_key_saved: API anahtarı kaydedildi.
+  api_key_deleted: API anahtarı kaldırıldı.
+  method_switched: Yöntem değiştirildi.
 
 install:
-  title: Add to home screen
+  title: Ana ekrana ekle
   subtitle: >-
-    Open Adaptive Learner like a real app — no browser tab needed.
-  install: Install
-  dismiss: Not now
-  aria_label: Install Adaptive Learner
-
+    Adaptive Learner'ı gerçek bir uygulama gibi aç — tarayıcı
+    sekmesi gerekmez.
+  install: Yükle
+  dismiss: Şimdi değil
+  aria_label: Adaptive Learner'ı yükle
 
 about:
-  section_heading: About Adaptive Learner
-  loading: Loading information…
-  load_failed: "Could not load system info:"
-  version_heading: Version
+  section_heading: Adaptive Learner hakkında
+  loading: Bilgiler yükleniyor…
+  load_failed: "Sistem bilgileri yüklenemedi:"
+  version_heading: Sürüm
   app_label: Adaptive Learner
-  build_hash_label: Build
-  build_date_label: Build date
-  system_heading: System
-  storage_label: Storage
-  storage_api: Server (FastAPI + SQLite)
-  storage_dexie: Local Browser Storage (IndexedDB)
-  data_dir_label: Data directory
-  db_path_label: Database path
+  build_hash_label: Yapı
+  build_date_label: Yapı tarihi
+  system_heading: Sistem
+  storage_label: Depolama
+  storage_api: Sunucu (FastAPI + SQLite)
+  storage_dexie: Yerel Tarayıcı Deposu (IndexedDB)
+  data_dir_label: Veri dizini
+  db_path_label: Veritabanı yolu
   platform_label: Platform
-  dep_unknown: unknown
-  credits_heading: Credits
-  author_label: Author
-  dependencies_label: Built with
-  tagline: Built for self-directed learners.
-  donations_heading: Support development
+  dep_unknown: bilinmiyor
+  credits_heading: Katkılar
+  author_label: Yazar
+  dependencies_label: Şununla yapıldı
+  tagline: Kendi kendine öğrenenler için yapıldı.
+  donations_heading: Geliştirmeyi destekle
   donations_intro: >-
-    Adaptive Learner is free and open-source. If it helps you,
-    consider chipping in.
-  donations_primary: preferred
+    Adaptive Learner ücretsiz ve açık kaynaktır. Sana yardımcı
+    olduysa katkıda bulunmayı düşün.
+  donations_primary: tercih edilen
   donations:
     liberapay_desc: >-
-      Recurring donations. Open-source, no fees taken by the platform.
-    github_desc: Sponsor via your existing GitHub account.
-    kofi_desc: One-time tips. No login required.
-  license_heading: License & resources
-  license_label: License
-  license_text_link: (text)
-  repo_label: Repository
-  docs_label: Documentation
-  issues_label: Issues
+      Tekrarlayan bağışlar. Açık kaynak, platform ücreti
+      alınmıyor.
+    github_desc: Mevcut GitHub hesabınla sponsor ol.
+    kofi_desc: Tek seferlik bahşişler. Giriş yapmak gerekmez.
+  license_heading: Lisans ve kaynaklar
+  license_label: Lisans
+  license_text_link: (metin)
+  repo_label: Depo
+  docs_label: Belgeler
+  issues_label: Sorunlar
 
 backup:
-  section_title: Backup
+  section_title: Yedek
   section_help: >-
-    Export everything in your account as a JSON file. API keys are
-    NOT included; you will need to re-enter them after a restore.
-  export: Create Backup
-  exporting: Exporting…
-  import: Restore from Backup
-  importing: Restoring…
-  confirm: Confirm restore
-  invalid_format: This file is not a valid Adaptive Learner backup.
-  export_success: "Backup downloaded ({{count}} records)."
-  export_error: "Backup failed: {{detail}}"
-  import_parse_error: "Could not read backup: {{detail}}"
-  import_error: "Restore failed: {{detail}}"
-  comparison_title: Confirm restore
+    Hesabındaki her şeyi bir JSON dosyası olarak dışa aktar. API
+    anahtarları dahil edilmez; geri yüklemeden sonra tekrar girmen
+    gerekir.
+  export: Yedek oluştur
+  exporting: Dışa aktarılıyor…
+  import: Yedekten geri yükle
+  importing: Geri yükleniyor…
+  confirm: Geri yüklemeyi onayla
+  invalid_format: Bu dosya geçerli bir Adaptive Learner yedeği değil.
+  export_success: "Yedek indirildi ({{count}} kayıt)."
+  export_error: "Yedekleme başarısız oldu: {{detail}}"
+  import_parse_error: "Yedek okunamadı: {{detail}}"
+  import_error: "Geri yükleme başarısız oldu: {{detail}}"
+  comparison_title: Geri yüklemeyi onayla
   comparison_help: >-
-    Restore will merge: new records inserted, mutable records updated
-    only if the backup is newer, history rows kept as-is. Nothing is
-    deleted. API keys are ignored.
-  table_header: Table
-  current_header: Current
-  incoming_header: Backup
-  restored_summary: Restore complete.
-  restored_inserted: "Inserted: {{n}}"
-  restored_updated: "Updated: {{n}}"
-  restored_skipped: "Skipped: {{n}}"
-  restored_errors: "Errors: {{n}}"
-  restored_with_errors: "{{n}} records could not be restored."
-  last_backup: "Last backup: {{when}}"
-  reminder_overdue: "It has been more than {{days}} days since your last backup."
-  auto_title: Auto-backup
-  auto_help: Automatically back up after every 10 completed sessions or once a week.
-  auto_run: Back up now
-  auto_run_success: Auto-backup created.
-  auto_run_error: "Auto-backup failed: {{detail}}"
-  auto_restored: Auto-backup restored.
-  auto_restore: Restore
-  auto_restore_error: "Restore failed: {{detail}}"
-  auto_records: "{{n}} records"
-  auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
-  storage_pressure: "Browser storage is almost full ({{pct}}% of quota). Export a manual backup now."
-  compare_title: Compare Backups
+    Geri yükleme birleştirme yapar: yeni kayıtlar eklenir,
+    değişebilir kayıtlar sadece yedek daha yeniyse güncellenir,
+    geçmiş satırları olduğu gibi kalır. Hiçbir şey silinmez. API
+    anahtarları yok sayılır.
+  table_header: Tablo
+  current_header: Mevcut
+  incoming_header: Yedek
+  restored_summary: Geri yükleme tamamlandı.
+  restored_inserted: "Eklenen: {{n}}"
+  restored_updated: "Güncellenen: {{n}}"
+  restored_skipped: "Atlanan: {{n}}"
+  restored_errors: "Hatalar: {{n}}"
+  restored_with_errors: "{{n}} kayıt geri yüklenemedi."
+  last_backup: "Son yedek: {{when}}"
+  reminder_overdue: "Son yedeğinden bu yana {{days}} günden fazla zaman geçti."
+  auto_title: Otomatik yedek
+  auto_help: Her 10 tamamlanan oturumdan sonra ya da haftada bir otomatik yedek alır.
+  auto_run: Şimdi yedek al
+  auto_run_success: Otomatik yedek oluşturuldu.
+  auto_run_error: "Otomatik yedek başarısız oldu: {{detail}}"
+  auto_restored: Otomatik yedek geri yüklendi.
+  auto_restore: Geri yükle
+  auto_restore_error: "Geri yükleme başarısız oldu: {{detail}}"
+  auto_records: "{{n}} kayıt"
+  auto_none: Henüz otomatik yedek yok. İlki 10 oturum veya 7 gün sonra çalışır.
+  storage_pressure: "Tarayıcı deposu neredeyse dolu (kotanın %{{pct}}'i). Şimdi manuel yedek al."
+  compare_title: Yedekleri karşılaştır
   compare_help: >-
-    Pick two backup files (or one file plus the current state) to see what's
-    changed between them. No data is modified — comparison is read-only.
-  compare_slot_a: Backup A (older)
-  compare_slot_b: Backup B (newer)
-  compare_pick: "Pick file…"
-  compare_use_current: Use current state
-  compare_current_label: Current state
-  compare_clear: Clear
-  compare_label_a: Backup A
-  compare_label_b: Backup B
-  compare_records: records
-  compare_loading: Comparing backups…
-  compare_progress: Comparing…
-  compare_hide_unchanged: Hide unchanged tables
-  compare_sort_label: "Sort:"
-  compare_sort_delta: Most changes first
-  compare_sort_alpha: Alphabetical
-  compare_no_changes: The two backups are identical — no differences detected.
-  compare_section_added: Added
-  compare_section_removed: Removed
-  compare_section_changed: Changed
-  compare_field: Field
-  compare_old: Old
-  compare_new: New
-  compare_field_changes: field changes
-  compare_high_volume_hint: High-volume table — record-level previews shown abbreviated.
-  compare_export_md: Export as Markdown
-  compare_markdown_downloaded: Diff exported.
-  confirm_with_counts: "Restore ({{added}} added, {{updated}} updated)"
-  auto_compare_as_a: Compare as A
-  auto_compare_as_b: Compare as B
-  compare_auto_label: "Auto-backup {{date}}"
-  auto_compare_missing: Auto-backup is no longer available — it was rotated out.
+    Aralarında ne değiştiğini görmek için iki yedek dosyası seç
+    (ya da bir dosya ve mevcut durum). Hiçbir veri değişmez —
+    karşılaştırma sadece okumadır.
+  compare_slot_a: Yedek A (daha eski)
+  compare_slot_b: Yedek B (daha yeni)
+  compare_pick: "Dosya seç…"
+  compare_use_current: Mevcut durumu kullan
+  compare_current_label: Mevcut durum
+  compare_clear: Temizle
+  compare_label_a: Yedek A
+  compare_label_b: Yedek B
+  compare_records: kayıt
+  compare_loading: Yedekler karşılaştırılıyor…
+  compare_progress: Karşılaştırılıyor…
+  compare_hide_unchanged: Değişmeyen tabloları gizle
+  compare_sort_label: "Sırala:"
+  compare_sort_delta: Önce en çok değişenler
+  compare_sort_alpha: Alfabetik
+  compare_no_changes: İki yedek de aynı — fark tespit edilmedi.
+  compare_section_added: Eklenenler
+  compare_section_removed: Kaldırılanlar
+  compare_section_changed: Değişenler
+  compare_field: Alan
+  compare_old: Eski
+  compare_new: Yeni
+  compare_field_changes: alan değişikliği
+  compare_high_volume_hint: Yoğun tablo — kayıt başına önizleme kısaltılmış olarak gösterilir.
+  compare_export_md: Markdown olarak dışa aktar
+  compare_markdown_downloaded: Fark dışa aktarıldı.
+  confirm_with_counts: "Geri yükle ({{added}} eklenecek, {{updated}} güncellenecek)"
+  auto_compare_as_a: A olarak karşılaştır
+  auto_compare_as_b: B olarak karşılaştır
+  compare_auto_label: "Otomatik yedek {{date}}"
+  auto_compare_missing: Otomatik yedek artık mevcut değil — döngüden çıkarıldı.
 
 export:
-  title: Export
+  title: Dışa aktar
   intro: >-
-    Download your learning journey as Markdown or PDF. Markdown is plain
-    text you can edit and share; PDF opens your browser's print dialog
-    so you can save a copy.
-  progress_label: Progress Report (full journey)
-  session_label: Session Detail
-  curriculum_label: Curriculum Overview
-  select_session: -- pick a session --
-  select_curriculum: -- pick a curriculum --
-  preview: Preview
-  preview_title: Preview
-  preview_close: Close
+    Öğrenme yolculuğunu Markdown veya PDF olarak indir. Markdown
+    düzenleyip paylaşabileceğin düz metindir; PDF tarayıcının
+    yazdırma penceresini açar ve bir kopya kaydedebilirsin.
+  progress_label: İlerleme raporu (tüm yolculuk)
+  session_label: Oturum detayı
+  curriculum_label: Müfredat özeti
+  select_session: -- bir oturum seç --
+  select_curriculum: -- bir müfredat seç --
+  preview: Önizle
+  preview_title: Önizleme
+  preview_close: Kapat
   download_md: Markdown
   download_pdf: PDF
-  busy: Working...
-  download_success: Export downloaded.
-  print_opened: Print dialog opened. Pick "Save as PDF".
-  error: "Export failed: {{detail}}"
-  preview_error: "Preview failed: {{detail}}"
-  load_error: "Could not load export data: {{detail}}"
-  pick_session: Pick a session first.
-  pick_curriculum: Pick a curriculum first.
-  title_progress: Learning Progress
-  title_session: Session Detail
-  title_curriculum: Curriculum
+  busy: Çalışılıyor...
+  download_success: Dışa aktarma indirildi.
+  print_opened: Yazdırma penceresi açıldı. "PDF olarak kaydet"i seç.
+  error: "Dışa aktarma başarısız oldu: {{detail}}"
+  preview_error: "Önizleme başarısız oldu: {{detail}}"
+  load_error: "Dışa aktarma verileri yüklenemedi: {{detail}}"
+  pick_session: Önce bir oturum seç.
+  pick_curriculum: Önce bir müfredat seç.
+  title_progress: Öğrenme ilerlemesi
+  title_session: Oturum detayı
+  title_curriculum: Müfredat
+
 sync:
-  api_mode_note: This device is running its own backend. The paired device should also see this connection in its sync panel.
-  camera_denied: Camera access denied
-  camera_denied_hint: Allow camera access in your browser settings, then re-open the scanner.
-  camera_error: Could not start the camera
-  camera_error_hint: Something went wrong starting the camera. Try again, or use paste-the-link.
-  conflict_apply: Apply choices
-  conflict_cancel: Cancel (keep all local)
-  conflicts_intro: Both devices changed the same record since the last sync. Pick which version to keep for each one.
-  conflicts_title: Resolve sync conflicts
-  connect: Connect
-  connected_to: Connected to
-  copy_error: Could not copy to clipboard.
-  copy_link: Copy link
-  desktop_hint: Generate a short-lived pairing link. Open this app on your phone, paste the link, and the two devices will share the same user account.
-  expires_at: Expires
-  generate: Generate pairing code
-  generating: Generating…
-  history: Recent syncs
-  host: Local IP / host
-  image_decode_failed: Could not read a QR code from this image. Re-take the screenshot.
-  image_decoding: Reading image…
-  intro: Pair a phone and a desktop on the same local network. Sync is always opt-in; you click Sync Now when you want to merge changes.
-  invalid_qr: Not a valid pairing code.
-  keep_local: Keep this device
-  keep_remote: Keep other device
-  last_sync: Last sync
-  link_copied: Pairing link copied.
-  local_version: This device
-  merge: Merge manually
-  merge_editor: Merged record (editable)
-  never: never
-  no_camera: No camera available
-  no_camera_hint: This device has no camera available. Use the paste-the-link option instead.
-  no_user: Complete the onboarding before generating a pairing code.
-  now: Sync Now
-  pair_error: Could not pair the device.
-  paired: Device paired.
-  paired_at: Paired
-  pairing: Pairing…
-  paste_link_fallback: Or paste the link manually
-  phone_hint_v17: "Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically."
+  api_mode_note: Bu cihaz kendi arka ucunu çalıştırıyor. Eşleştirilmiş cihaz da bu bağlantıyı kendi senkronizasyon panelinde görmeli.
+  camera_denied: Kamera erişimi reddedildi
+  camera_denied_hint: Tarayıcı ayarlarından kamera erişimine izin ver ve tarayıcıyı yeniden aç.
+  camera_error: Kamera başlatılamadı
+  camera_error_hint: Kamerayı başlatırken bir şeyler ters gitti. Tekrar dene ya da bağlantıyı yapıştır seçeneğini kullan.
+  conflict_apply: Seçimleri uygula
+  conflict_cancel: İptal (hepsini yerel tut)
+  conflicts_intro: Son senkronizasyondan beri her iki cihaz da aynı kaydı değiştirdi. Her biri için hangi sürümü tutacağını seç.
+  conflicts_title: Senkronizasyon çakışmalarını çöz
+  connect: Bağlan
+  connected_to: Bağlanılan cihaz
+  copy_error: Panoya kopyalanamadı.
+  copy_link: Bağlantıyı kopyala
+  desktop_hint: Kısa ömürlü bir eşleştirme bağlantısı oluştur. Bu uygulamayı telefonunda aç, bağlantıyı yapıştır; iki cihaz aynı kullanıcı hesabını paylaşacak.
+  expires_at: Sona eriyor
+  generate: Eşleştirme kodu oluştur
+  generating: Oluşturuluyor…
+  history: Son senkronizasyonlar
+  host: Yerel IP / sunucu
+  image_decode_failed: Bu görüntüden QR kodu okunamadı. Ekran görüntüsünü yeniden al.
+  image_decoding: Görüntü okunuyor…
+  intro: Aynı yerel ağdaki bir telefon ve masaüstünü eşleştir. Senkronizasyon her zaman isteğe bağlıdır; değişiklikleri birleştirmek istediğinde Şimdi Senkronize Et'e tıklarsın.
+  invalid_qr: Geçerli bir eşleştirme kodu değil.
+  keep_local: Bu cihazı tut
+  keep_remote: Diğer cihazı tut
+  last_sync: Son senkronizasyon
+  link_copied: Eşleştirme bağlantısı kopyalandı.
+  local_version: Bu cihaz
+  merge: Manuel birleştir
+  merge_editor: Birleştirilmiş kayıt (düzenlenebilir)
+  never: hiç
+  no_camera: Kamera yok
+  no_camera_hint: Bu cihazda kamera yok. Bağlantıyı yapıştır seçeneğini kullan.
+  no_user: Bir eşleştirme kodu oluşturmadan önce başlangıç sürecini tamamla.
+  now: Şimdi Senkronize Et
+  pair_error: Cihaz eşleştirilemedi.
+  paired: Cihaz eşleştirildi.
+  paired_at: Eşleştirilme
+  pairing: Eşleştiriliyor…
+  paste_link_fallback: Ya da bağlantıyı manuel yapıştır
+  phone_hint_v17: "Masaüstündeki Ayarlar > Senkronizasyon ekranındaki QR kodu tara. Telefonun arka kamerası eşleştirme bağlantısını otomatik okur."
   port: Port
-  qr_alt: Pairing QR code
-  remote_version: Other device
-  scan_again: Scan again
-  scan_hint: "Open the phone's Settings > Sync, paste this link, and tap Connect. The link expires in 5 minutes and can be used once."
-  scan_instruction: Point your camera at the QR code on your desktop.
-  scan_qr: Scan QR Code
-  scan_success: Connection found
-  scan_success_hint: Verifying with the desktop…
-  smart_merge: Smart Merge (AI)
-  smart_merge_error: Smart merge failed.
-  smart_merge_ready: AI merge ready — review and apply.
-  smart_merge_running: Merging with AI…
-  sync_error: Sync failed.
-  synced: Synced
-  syncing: Syncing…
-  unpair: Unpair device
-  unpair_confirm: Unpair this device? Local data is kept; future syncs are blocked until you pair again.
-  unpaired: Device unpaired.
-  upload_qr: Upload QR image
-  upload_qr_hint: "No camera? Take a screenshot of the desktop's QR and upload it:"
+  qr_alt: Eşleştirme QR kodu
+  remote_version: Diğer cihaz
+  scan_again: Tekrar tara
+  scan_hint: "Telefonda Ayarlar > Senkronizasyon'u aç, bu bağlantıyı yapıştır ve Bağlan'a dokun. Bağlantı 5 dakikada sona erer ve bir kez kullanılabilir."
+  scan_instruction: Kameranı masaüstündeki QR koduna doğrult.
+  scan_qr: QR Kodu Tara
+  scan_success: Bağlantı bulundu
+  scan_success_hint: Masaüstüyle doğrulanıyor…
+  smart_merge: Akıllı Birleştirme (YZ)
+  smart_merge_error: Akıllı birleştirme başarısız oldu.
+  smart_merge_ready: YZ birleştirme hazır — inceleyip uygula.
+  smart_merge_running: YZ ile birleştiriliyor…
+  sync_error: Senkronizasyon başarısız oldu.
+  synced: Senkronize edildi
+  syncing: Senkronize ediliyor…
+  unpair: Cihazı ayır
+  unpair_confirm: Bu cihaz ayrılsın mı? Yerel veriler korunur; tekrar eşleşene kadar gelecek senkronizasyonlar engellenir.
+  unpaired: Cihaz ayrıldı.
+  upload_qr: QR görüntüsü yükle
+  upload_qr_hint: "Kamera yok mu? Masaüstündeki QR'ın ekran görüntüsünü çek ve yükle:"

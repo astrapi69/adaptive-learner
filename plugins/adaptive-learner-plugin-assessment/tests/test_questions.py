@@ -86,7 +86,7 @@ def test_questions_for_lang_en_returns_english_text():
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
 
 
-@pytest.mark.parametrize("lang", ["ja", "tr", "ko", ""])
+@pytest.mark.parametrize("lang", ["ja", "ko", ""])
 def test_unknown_language_falls_back_to_en(lang: str):
     """Languages outside the translated set fall back to EN by
     mapping to text_en. v1.13.0 adds PT/TR/JA to the supported
@@ -114,13 +114,13 @@ def test_phase6c_language_returns_translated_text(lang: str):
             assert a_out["text"] != a_src["text_en"]
 
 
-@pytest.mark.parametrize("lang", ["pt"])
+@pytest.mark.parametrize("lang", ["pt", "tr"])
 def test_phase26_language_returns_translated_text(lang: str):
     """v1.13.0 / Phase 26 ships PT/TR/JA translations for every
     one of the 12 questions and their answers. Same contract as
     the v0.3.0 ES/FR/EL pack: per-language output must NOT equal
-    the EN text. PT lands in 26A; TR + JA join the parametrize
-    list as 26B + 26C land."""
+    the EN text. PT lands in 26A; TR in 26B; JA joins as 26C
+    lands."""
     out = questions_for_lang(lang)
     assert out[0]["text"] != QUESTIONS[0]["text_en"]
     for q_out, q_src in zip(out, QUESTIONS):
@@ -128,12 +128,12 @@ def test_phase26_language_returns_translated_text(lang: str):
             assert a_out["text"] != a_src["text_en"]
 
 
-@pytest.mark.parametrize("lang", ["tr", "ja", "ko"])
+@pytest.mark.parametrize("lang", ["ja", "ko"])
 def test_unsupported_languages_still_fall_back_to_en(lang: str):
     """Languages that don't have a full translation pack remain on
     the EN-fallback path (the resolver's _LANG_TO_KEY map says
-    so). After 26B + 26C land this parametrize will shrink to
-    just "ko" + any other hypothetical unmapped code."""
+    so). After 26C lands this parametrize will shrink to just
+    "ko" + any other hypothetical unmapped code."""
     out = questions_for_lang(lang)
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
 
