@@ -2,7 +2,7 @@
 
 [[package]]
 name = "adaptive-learner-plugin-ai-anthropic"
-version = "1.8.0"
+version = "1.11.0"
 description = "Adaptive Learner: Anthropic Claude provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -20,7 +20,7 @@ url = "../plugins/adaptive-learner-plugin-ai-anthropic"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-gemini"
-version = "1.8.0"
+version = "1.11.0"
 description = "Adaptive Learner: Google Gemini provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -38,7 +38,7 @@ url = "../plugins/adaptive-learner-plugin-ai-gemini"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-openai"
-version = "1.8.0"
+version = "1.11.0"
 description = "Adaptive Learner: OpenAI GPT provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -56,7 +56,7 @@ url = "../plugins/adaptive-learner-plugin-ai-openai"
 
 [[package]]
 name = "adaptive-learner-plugin-assessment"
-version = "1.8.0"
+version = "1.11.0"
 description = "Adaptive Learner: 12-question learner-profile assessment + 6-method-weight calculation."
 optional = false
 python-versions = "^3.11"
@@ -76,7 +76,7 @@ url = "../plugins/adaptive-learner-plugin-assessment"
 
 [[package]]
 name = "adaptive-learner-plugin-session"
-version = "1.8.0"
+version = "1.11.0"
 description = "Adaptive Learner: 7-step learning cycle, per-method system prompts, stagnation-based method switching."
 optional = false
 python-versions = "^3.11"
@@ -96,7 +96,7 @@ url = "../plugins/adaptive-learner-plugin-session"
 
 [[package]]
 name = "adaptive-learner-plugin-tools"
-version = "1.8.0"
+version = "1.11.0"
 description = "Adaptive Learner: static external-tool recommendations tailored to the learner's profile."
 optional = false
 python-versions = "^3.11"
@@ -116,7 +116,7 @@ url = "../plugins/adaptive-learner-plugin-tools"
 
 [[package]]
 name = "adaptive-learner-plugin-tracking"
-version = "1.8.0"
+version = "1.11.0"
 description = "Adaptive Learner: writes ProgressCommit on session_complete + dashboard summary aggregator."
 optional = false
 python-versions = "^3.11"
@@ -3070,4 +3070,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "e3eeb6a5d44147bb8387f759bb45ca550f241f47df308f6a34269d7cea47b73b"
+content-hash = "687ee115e37173bdd05c8f991c5a8ed7e3b536e9aa38b36b00ee4890c276dda1"
