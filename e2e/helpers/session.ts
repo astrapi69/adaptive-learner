@@ -10,7 +10,7 @@
  * picks via the method-card UI).
  */
 
-import type {Page} from "@playwright/test";
+import {expect, type Page} from "@playwright/test";
 
 import type {LearningMethod} from "./types";
 
@@ -31,16 +31,43 @@ export async function startSessionWithMethod(
     await page.waitForURL("**/session");
 }
 
-/** Send a single user message in the open session. Waits for
- *  the chat input to clear and the assistant bubble to
- *  appear (assuming the AI route is mocked via
- *  ``mockSessionMessage``). */
+/** Send a single user message in the open session.
+ *
+ *  Three real-world quirks the helper papers over:
+ *
+ *  1. The chat-send button is disabled while a stream is in
+ *     flight (sendingMessage=true) AND when the draft is
+ *     empty. We type the text first so the draft is non-empty,
+ *     THEN wait for the button to be enabled (handles the
+ *     previous-turn-still-streaming case).
+ *  2. React's controlled ``draft`` state and Playwright's
+ *     ``fill`` race in multi-turn loops: typing per-keystroke
+ *     (via ``page.keyboard.type``) updates React state in
+ *     step with the DOM value, which a single ``fill`` call
+ *     does not always do.
+ *  3. The bottom-right Toastify container can intercept
+ *     pointer events even when no toast is visible (the
+ *     react-toastify portal stays in the DOM). ``force: true``
+ *     bypasses the actionability check; the real click
+ *     event still dispatches.
+ */
 export async function sendChatMessage(
     page: Page,
     text: string,
 ): Promise<void> {
-    await page.getByTestId("chat-input").fill(text);
-    await page.getByTestId("chat-send").click();
+    const sendButton = page.getByTestId("chat-send");
+    const input = page.getByTestId("chat-input");
+    await input.click();
+    await input.fill("");
+    await page.keyboard.type(text, {delay: 5});
+    await expect(sendButton).toBeEnabled({timeout: 15_000});
+    // Use the native HTMLElement click() (not Playwright's
+    // synthetic click) to avoid the Toastify portal's
+    // pointer-events intercept that produced the multi-turn
+    // hang during 28B development. The native click still
+    // fires the form's submit handler via the browser's
+    // default behaviour for ``type="submit"`` buttons.
+    await sendButton.evaluate((el: HTMLButtonElement) => el.click());
 }
 
 /** Click End → submit the rating dialog at defaults. Lands
