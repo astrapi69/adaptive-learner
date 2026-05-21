@@ -42,7 +42,6 @@ from app.schemas import (
 )
 from app.services import taxonomy as taxonomy_service
 
-
 subjects_router = APIRouter(prefix="/subjects", tags=["taxonomy"])
 tags_router = APIRouter(prefix="/tags", tags=["taxonomy"])
 users_tags_router = APIRouter(prefix="/users", tags=["taxonomy"])
@@ -78,9 +77,7 @@ def get_subject(subject_id: str, db: Session = Depends(get_db)) -> SubjectOut:
     response_model=SubjectOut,
     status_code=status.HTTP_201_CREATED,
 )
-def create_subject(
-    payload: SubjectCreate, db: Session = Depends(get_db)
-) -> SubjectOut:
+def create_subject(payload: SubjectCreate, db: Session = Depends(get_db)) -> SubjectOut:
     return SubjectOut.model_validate(taxonomy_service.create_subject(db, payload))
 
 
@@ -90,9 +87,7 @@ def update_subject(
     payload: SubjectUpdate,
     db: Session = Depends(get_db),
 ) -> SubjectOut:
-    return SubjectOut.model_validate(
-        taxonomy_service.update_subject(db, subject_id, payload)
-    )
+    return SubjectOut.model_validate(taxonomy_service.update_subject(db, subject_id, payload))
 
 
 @subjects_router.delete("/{subject_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -106,9 +101,7 @@ def delete_subject(subject_id: str, db: Session = Depends(get_db)) -> Response:
 
 @users_tags_router.get("/{user_id}/tags", response_model=list[TagOut])
 def list_user_tags(user_id: str, db: Session = Depends(get_db)) -> list[TagOut]:
-    return [
-        TagOut.model_validate(row) for row in taxonomy_service.list_tags_for_user(db, user_id)
-    ]
+    return [TagOut.model_validate(row) for row in taxonomy_service.list_tags_for_user(db, user_id)]
 
 
 @users_tags_router.post(
@@ -145,12 +138,8 @@ def delete_tag(tag_id: str, db: Session = Depends(get_db)) -> Response:
 # --- /projects/{project_id}/subjects + /tags -------------------------------
 
 
-@projects_taxonomy_router.get(
-    "/{project_id}/subjects", response_model=list[SubjectOut]
-)
-def list_project_subjects(
-    project_id: str, db: Session = Depends(get_db)
-) -> list[SubjectOut]:
+@projects_taxonomy_router.get("/{project_id}/subjects", response_model=list[SubjectOut])
+def list_project_subjects(project_id: str, db: Session = Depends(get_db)) -> list[SubjectOut]:
     return [
         SubjectOut.model_validate(row)
         for row in taxonomy_service.list_project_subjects(db, project_id)
@@ -168,9 +157,7 @@ def assign_subject_to_project(
     db: Session = Depends(get_db),
 ) -> SubjectOut:
     taxonomy_service.assign_subject_to_project(db, project_id, payload.subject_id)
-    return SubjectOut.model_validate(
-        taxonomy_service.get_subject(db, payload.subject_id)
-    )
+    return SubjectOut.model_validate(taxonomy_service.get_subject(db, payload.subject_id))
 
 
 @projects_taxonomy_router.delete(
@@ -186,15 +173,10 @@ def unassign_subject_from_project(
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
-@projects_taxonomy_router.get(
-    "/{project_id}/tags", response_model=list[TagOut]
-)
-def list_project_tags(
-    project_id: str, db: Session = Depends(get_db)
-) -> list[TagOut]:
+@projects_taxonomy_router.get("/{project_id}/tags", response_model=list[TagOut])
+def list_project_tags(project_id: str, db: Session = Depends(get_db)) -> list[TagOut]:
     return [
-        TagOut.model_validate(row)
-        for row in taxonomy_service.list_project_tags(db, project_id)
+        TagOut.model_validate(row) for row in taxonomy_service.list_project_tags(db, project_id)
     ]
 
 

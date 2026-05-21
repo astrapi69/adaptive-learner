@@ -518,13 +518,13 @@ def _row_belongs_to_user(table: str, row: Any, user_id: str) -> bool:
     """
     spec = TABLES[table]
     if spec.scope == "self":
-        return row.id == user_id
+        return bool(row.id == user_id)
     if spec.scope == "global":
         # Globally-shared rows (e.g. Subjects taxonomy) are not
         # tied to a user; every device accepts every row.
         return True
     if hasattr(row, "user_id"):
-        return row.user_id == user_id
+        return bool(row.user_id == user_id)
     return True
 
 
@@ -647,9 +647,9 @@ def _scoped_query(db: Session, table: str, user_id: str):
             Curriculum.user_id == user_id
         )
     elif spec.scope == "via_project":
-        query = query.join(
-            LearningProject, LearningProject.id == model.project_id
-        ).filter(LearningProject.user_id == user_id)
+        query = query.join(LearningProject, LearningProject.id == model.project_id).filter(
+            LearningProject.user_id == user_id
+        )
     elif spec.scope == "via_session":
         query = (
             query.join(LearningSession, LearningSession.id == model.session_id)

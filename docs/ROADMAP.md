@@ -29,7 +29,8 @@ Current state: **v1.8.0 released (Phase 21 / Sync Gaps: step_evaluations + sessi
 | 22 | v1.9.0 | Global Subjects and Tags — 4 new tables (subjects, tags, project_subjects, project_tags) join the sync surface (20 tables); pre-seeded subjects.yaml with 80+ nodes across 8 categories; SubjectBrowser + TagManager + ProjectTaxonomy + DashboardFilterBar components; Onboarding subject suggester + tag input. PluginForge ^0.8.0→^0.9.0 (hard-filter transition active). BL-07 closed. |
 | 23 | v1.10.0 | Swipe Gestures on Assessment + Session — useSwipe hook (horizontal-only, velocity-gated, reduced-motion-aware), Assessment swipe+keyboard navigation with one-shot hint, CycleProgress swipe-to-peek overlay, TopicNode iOS-style swipe-to-reveal actions, Settings → Interface gesture toggle. BL-08 closed. |
 | 24 | v1.11.0 | Provider Model Picker via API — model_discovery service (Anthropic + OpenAI + Gemini /v1/models with 1-hour cache + chat-only filtering), GET /settings/{id}/available-models endpoint, browser-direct model-discovery for Dexie mode (sessionStorage cache), Settings ModelPicker dropdown component with Recommended/All grouping + offline fallback, model validation on session start (warn + fallback to default when override not in cached list), model name + context-window in session header. BL-09 closed. |
-| **25** | **v1.12.0** | **Backup Compare UI — client-side `lib/backup-diff.ts` engine (UUID matching, chunked async processing, append-only vs mutable split, high-volume tables flagged for summary rendering), shared BackupCompare React component with sortable/filterable per-table cards + field-level diff tables, Settings Compare Backups picker (file/file or file/current), pre-restore diff preview replacing the v0.7.0 row-count table (Restore button gains "(N added, M updated)" dynamic label), Dexie auto-backup "Compare as A/B" controls feeding the same surface, Markdown report exporter (zero-delta tables omitted, high-volume tables summarised, field-level old → new lines), 35 new i18n keys (DE+EN translated, 6 EN-passthrough). BL-10 closed.** |
+| 25 | v1.12.0 | Backup Compare UI — client-side `lib/backup-diff.ts` engine (UUID matching, chunked async processing, append-only vs mutable split, high-volume tables flagged for summary rendering), shared BackupCompare React component with sortable/filterable per-table cards + field-level diff tables, Settings Compare Backups picker (file/file or file/current), pre-restore diff preview replacing the v0.7.0 row-count table (Restore button gains "(N added, M updated)" dynamic label), Dexie auto-backup "Compare as A/B" controls feeding the same surface, Markdown report exporter (zero-delta tables omitted, high-volume tables summarised, field-level old → new lines), 35 new i18n keys (DE+EN translated, 6 EN-passthrough). BL-10 closed. |
+| **26** | **v1.13.0** | **PT/TR/JA Native Translations — full Brazilian Portuguese (informal "você"), Turkish (informal "sen"), and Japanese (polite desu/masu) translations replacing the EN-passthrough placeholders in `backend/config/i18n/{pt,tr,ja}.yaml`. Assessment plugin's QUESTIONS list extended with `text_pt`/`text_tr`/`text_ja` on every one of the 12 questions + 48 answers; `_LANG_TO_KEY` gains 3 rows. New `test_i18n_translation_audit.py` (12 tests) pins no-EN-passthrough heuristic, ≥90% divergence from EN, complete assessment translation set, _LANG_TO_KEY registration. Each translated YAML carries a "AI-translated, pending native speaker review" header marker. BL-11 closed (native review remains a follow-up).** |
 
 Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list. Per-release notes live in [changelog/releases/](../changelog/releases/).
 
@@ -37,14 +38,15 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phase (planned)
 
-**Phase 26 candidates** — current top of backlog (see [backlog.md](backlog.md) for full P0..P5 view):
+**Phase 27 candidates** — current top of backlog (see [backlog.md](backlog.md) for full P0..P5 view):
 
 - **BL-03 — pluginforge-app-template repo.** Export a
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Validates PluginForge ecosystem (3 repos: framework,
   template, app).
-- **BL-11 — PT/TR/JA native-quality translations.**
 - **BL-13 — E2E Playwright expansion.** (multi-cycle, import, backup, sync, export)
+- **BL-12 — Rich-text in notes (TipTap).** SessionNotes +
+  Curriculum/Lesson descriptions.
 
 ---
 
@@ -66,9 +68,13 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## P3 — Lower value or large effort
 
-- **BL-11 — PT/TR/JA native-quality translations**
 - **BL-12 — Rich-text in notes (TipTap)**
 - **BL-13 — E2E Playwright expansion** (multi-cycle, import, backup, sync, export)
+- **PT/TR/JA native-speaker review.** Phase 26 / v1.13.0
+  shipped AI-translated PT/TR/JA. Native review of the
+  catalogs (~220 keys + 60 assessment strings per language)
+  remains an open follow-up; opportunistic when a native
+  speaker reports awkward phrasings.
 - **iOS-Safari `apple-mobile-web-app-*` meta tags.** Manifest
   is standard-compliant; iOS PWA install works but the
   iOS-specific status-bar / title meta tags aren't wired. Add

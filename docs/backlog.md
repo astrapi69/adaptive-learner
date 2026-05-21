@@ -53,10 +53,14 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
-- [ ] **BL-11**: PT/TR/JA translations (native quality) —
+- [x] **BL-11**: PT/TR/JA translations (native quality) —
   Currently EN-passthrough. Need native speakers or
   professional translation for 213+ keys x 3 languages +
-  12 assessment questions x 3 languages.
+  12 assessment questions x 3 languages. AI-translated pass
+  shipped in v1.13.0 / Phase 26 — see
+  `changelog/releases/v1.13.0.md`. Each YAML carries a
+  "AI-translated, pending native speaker review" header
+  comment; native review remains an open follow-up.
 - [ ] **BL-12**: Rich-text in notes (TipTap) — Add TipTap
   editor for SessionNotes and Curriculum/Lesson descriptions.
   Code snippets, math formulas, highlighting. Large

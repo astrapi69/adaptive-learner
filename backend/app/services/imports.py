@@ -44,7 +44,7 @@ def _to_dto(row: ImportedConversation) -> dict[str, object]:
     stores JSON text. The router calls this before invoking
     ``ImportedConversationOut.model_validate``.
     """
-    base = {
+    base: dict[str, object] = {
         "id": row.id,
         "user_id": row.user_id,
         "project_id": row.project_id,
@@ -96,9 +96,7 @@ def create_conversation(
     if payload.project_id is not None:
         project = db.get(LearningProject, payload.project_id)
         if project is None:
-            raise NotFoundError(
-                f"LearningProject {payload.project_id!r} not found."
-            )
+            raise NotFoundError(f"LearningProject {payload.project_id!r} not found.")
         if project.user_id != user_id:
             raise ValidationError(
                 f"Project {payload.project_id!r} does not belong to user {user_id!r}."
@@ -130,9 +128,7 @@ def create_conversation(
     return conv
 
 
-def list_conversations(
-    db: Session, user_id: str
-) -> list[ImportedConversation]:
+def list_conversations(db: Session, user_id: str) -> list[ImportedConversation]:
     if db.get(User, user_id) is None:
         raise NotFoundError(f"User {user_id!r} not found.")
     return (
@@ -146,16 +142,12 @@ def list_conversations(
 def get_conversation(
     db: Session, conversation_id: str, *, with_messages: bool = False
 ) -> ImportedConversation:
-    query = db.query(ImportedConversation).filter(
-        ImportedConversation.id == conversation_id
-    )
+    query = db.query(ImportedConversation).filter(ImportedConversation.id == conversation_id)
     if with_messages:
         query = query.options(selectinload(ImportedConversation.messages))
     conv = query.one_or_none()
     if conv is None:
-        raise NotFoundError(
-            f"ImportedConversation {conversation_id!r} not found."
-        )
+        raise NotFoundError(f"ImportedConversation {conversation_id!r} not found.")
     return conv
 
 
@@ -169,9 +161,7 @@ def update_conversation(
     if "project_id" in fields and fields["project_id"] is not None:
         project = db.get(LearningProject, fields["project_id"])
         if project is None:
-            raise NotFoundError(
-                f"LearningProject {fields['project_id']!r} not found."
-            )
+            raise NotFoundError(f"LearningProject {fields['project_id']!r} not found.")
         if project.user_id != conv.user_id:
             raise ValidationError(
                 f"Project {fields['project_id']!r} does not belong to user {conv.user_id!r}."

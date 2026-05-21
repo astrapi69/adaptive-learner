@@ -194,9 +194,7 @@ def _project_summary(db: Session, project: LearningProject) -> dict[str, Any]:
         {
             "method": m,
             "count": per_method[m],
-            "percentage": (
-                round((per_method[m] * 100) / session_count) if session_count else 0
-            ),
+            "percentage": (round((per_method[m] * 100) / session_count) if session_count else 0),
         }
         for m in _METHODS
     ]
@@ -245,9 +243,7 @@ def _recent_sessions(
     )
     topic_by_id = {
         p.id: p.topic
-        for p in db.query(LearningProject)
-        .filter(LearningProject.id.in_(project_ids))
-        .all()
+        for p in db.query(LearningProject).filter(LearningProject.id.in_(project_ids)).all()
     }
     out: list[dict[str, Any]] = []
     for s in sessions:
@@ -275,9 +271,7 @@ def _recent_sessions(
     return out
 
 
-def _step_evaluation_insights(
-    db: Session, project_ids: list[str]
-) -> list[dict[str, Any]] | None:
+def _step_evaluation_insights(db: Session, project_ids: list[str]) -> list[dict[str, Any]] | None:
     """Per-cycle-step aggregates: how often each step was reached,
     advance rate, mean confidence. Returns ``None`` when the user
     has no step-evaluations yet (the section is rendered only when
@@ -286,15 +280,11 @@ def _step_evaluation_insights(
         return None
     session_ids = [
         s.id
-        for s in db.query(LearningSession)
-        .filter(LearningSession.project_id.in_(project_ids))
-        .all()
+        for s in db.query(LearningSession).filter(LearningSession.project_id.in_(project_ids)).all()
     ]
     if not session_ids:
         return None
-    evaluations = (
-        db.query(StepEvaluation).filter(StepEvaluation.session_id.in_(session_ids)).all()
-    )
+    evaluations = db.query(StepEvaluation).filter(StepEvaluation.session_id.in_(session_ids)).all()
     if not evaluations:
         return None
 
@@ -374,17 +364,11 @@ def build_session_detail(
 ) -> dict[str, Any]:
     """Aggregate one session with full transcript + ratings +
     step-evaluation timeline."""
-    session = (
-        db.query(LearningSession).filter(LearningSession.id == session_id).first()
-    )
+    session = db.query(LearningSession).filter(LearningSession.id == session_id).first()
     if session is None:
         raise NotFoundError(f"Session {session_id} not found")
 
-    project = (
-        db.query(LearningProject)
-        .filter(LearningProject.id == session.project_id)
-        .first()
-    )
+    project = db.query(LearningProject).filter(LearningProject.id == session.project_id).first()
     messages = (
         db.query(SessionMessage)
         .filter(SessionMessage.session_id == session_id)
@@ -413,9 +397,7 @@ def build_session_detail(
             "method": session.method,
             "started_at": _iso(session.started_at),
             "ended_at": _iso(session.ended_at),
-            "duration_minutes": _duration_minutes(
-                session.started_at, session.ended_at
-            ),
+            "duration_minutes": _duration_minutes(session.started_at, session.ended_at),
             "cycle_step": session.cycle_step,
             "status": session.status,
         },
@@ -468,9 +450,7 @@ def _rating_dict(rating: SessionRating | None) -> dict[str, Any] | None:
     }
 
 
-def _duration_minutes(
-    started_at: datetime | None, ended_at: datetime | None
-) -> int:
+def _duration_minutes(started_at: datetime | None, ended_at: datetime | None) -> int:
     if started_at is None or ended_at is None:
         return 0
     delta = ended_at - started_at
@@ -526,12 +506,12 @@ def build_curriculum_overview(
         "topics": topic_data,
         "lessons": [
             {
-                "id": l.id,
-                "title": l.title,
-                "content": l.content,
-                "order_index": l.order_index,
+                "id": lesson.id,
+                "title": lesson.title,
+                "content": lesson.content,
+                "order_index": lesson.order_index,
             }
-            for l in lessons
+            for lesson in lessons
         ],
     }
 
@@ -545,9 +525,7 @@ def _flatten_topic_tree(topics: list[LearningTopic]) -> list[dict[str, Any]]:
     children_of: dict[str | None, list[LearningTopic]] = {}
     for t in topics:
         # Orphans -> roots
-        parent_key: str | None = (
-            t.parent_id if t.parent_id and t.parent_id in by_id else None
-        )
+        parent_key: str | None = t.parent_id if t.parent_id and t.parent_id in by_id else None
         children_of.setdefault(parent_key, []).append(t)
 
     for siblings in children_of.values():

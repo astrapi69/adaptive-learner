@@ -30,7 +30,6 @@ from app.schemas import (
     TagUpdate,
 )
 
-
 # --- Subject CRUD ----------------------------------------------------------
 
 
@@ -95,9 +94,7 @@ def create_tag(db: Session, user_id: str, payload: TagCreate) -> Tag:
         raise NotFoundError(f"User {user_id!r} not found.")
     # The DB has a uniqueness constraint on (user_id, name), but
     # surface a clean ConflictError instead of an IntegrityError.
-    existing = (
-        db.query(Tag).filter(Tag.user_id == user_id, Tag.name == payload.name).first()
-    )
+    existing = db.query(Tag).filter(Tag.user_id == user_id, Tag.name == payload.name).first()
     if existing is not None:
         raise ConflictError(f"Tag {payload.name!r} already exists for this user.")
     row = Tag(user_id=user_id, name=payload.name, color=payload.color)
@@ -117,12 +114,7 @@ def get_tag(db: Session, tag_id: str) -> Tag:
 def list_tags_for_user(db: Session, user_id: str) -> list[Tag]:
     if db.get(User, user_id) is None:
         raise NotFoundError(f"User {user_id!r} not found.")
-    return (
-        db.query(Tag)
-        .filter(Tag.user_id == user_id)
-        .order_by(Tag.name.asc())
-        .all()
-    )
+    return db.query(Tag).filter(Tag.user_id == user_id).order_by(Tag.name.asc()).all()
 
 
 def update_tag(db: Session, tag_id: str, payload: TagUpdate) -> Tag:
@@ -139,9 +131,7 @@ def update_tag(db: Session, tag_id: str, payload: TagUpdate) -> Tag:
             .first()
         )
         if clash is not None:
-            raise ConflictError(
-                f"Tag {updates['name']!r} already exists for this user."
-            )
+            raise ConflictError(f"Tag {updates['name']!r} already exists for this user.")
     for field, value in updates.items():
         setattr(row, field, value)
     db.commit()
@@ -165,9 +155,7 @@ def _get_project(db: Session, project_id: str) -> LearningProject:
     return project
 
 
-def assign_subject_to_project(
-    db: Session, project_id: str, subject_id: str
-) -> ProjectSubject:
+def assign_subject_to_project(db: Session, project_id: str, subject_id: str) -> ProjectSubject:
     _get_project(db, project_id)
     if db.get(Subject, subject_id) is None:
         raise NotFoundError(f"Subject {subject_id!r} not found.")
@@ -188,9 +176,7 @@ def assign_subject_to_project(
     return row
 
 
-def unassign_subject_from_project(
-    db: Session, project_id: str, subject_id: str
-) -> None:
+def unassign_subject_from_project(db: Session, project_id: str, subject_id: str) -> None:
     existing = (
         db.query(ProjectSubject)
         .filter(
@@ -200,9 +186,7 @@ def unassign_subject_from_project(
         .first()
     )
     if existing is None:
-        raise NotFoundError(
-            f"Subject {subject_id!r} is not assigned to project {project_id!r}."
-        )
+        raise NotFoundError(f"Subject {subject_id!r} is not assigned to project {project_id!r}.")
     db.delete(existing)
     db.commit()
 
@@ -226,9 +210,7 @@ def assign_tag_to_project(db: Session, project_id: str, tag_id: str) -> ProjectT
     # Defensive: a tag belongs to a user; the project must belong
     # to the SAME user. Cross-user tagging is meaningless.
     if tag.user_id != project.user_id:
-        raise ValidationError(
-            "Tag and project belong to different users."
-        )
+        raise ValidationError("Tag and project belong to different users.")
     existing = (
         db.query(ProjectTag)
         .filter(
@@ -256,9 +238,7 @@ def unassign_tag_from_project(db: Session, project_id: str, tag_id: str) -> None
         .first()
     )
     if existing is None:
-        raise NotFoundError(
-            f"Tag {tag_id!r} is not assigned to project {project_id!r}."
-        )
+        raise NotFoundError(f"Tag {tag_id!r} is not assigned to project {project_id!r}.")
     db.delete(existing)
     db.commit()
 

@@ -36,7 +36,6 @@ must carry the full user state, so they are wired in here.
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterable
 from datetime import UTC, datetime
 from typing import Any
 
@@ -47,6 +46,8 @@ from app.exceptions import NotFoundError, ValidationError
 from app.models import ImportedConversation, ImportedMessage, User
 from app.services.sync_service import (
     TABLES as SYNC_TABLES,
+)
+from app.services.sync_service import (
     TableSpec,
     _from_iso,
     _scoped_query,
@@ -152,9 +153,7 @@ def _imported_messages_for_user(db: Session, user_id: str) -> list[ImportedMessa
     """
     return (
         db.query(ImportedMessage)
-        .join(
-            ImportedConversation, ImportedConversation.id == ImportedMessage.conversation_id
-        )
+        .join(ImportedConversation, ImportedConversation.id == ImportedMessage.conversation_id)
         .filter(ImportedConversation.user_id == user_id)
         .order_by(ImportedMessage.conversation_id, ImportedMessage.order_index.asc())
         .all()
@@ -173,16 +172,13 @@ def _gather_user_rows(db: Session, user_id: str) -> dict[str, list[dict[str, Any
     data: dict[str, list[dict[str, Any]]] = {}
     for table in SYNC_TABLES:
         rows = _scoped_query(db, table, user_id).all()
-        data[table] = [
-            _strip_excluded_fields(table, _serialize(table, row)) for row in rows
-        ]
+        data[table] = [_strip_excluded_fields(table, _serialize(table, row)) for row in rows]
     data["imported_conversations"] = [
         _serialize("imported_conversations", row)
         for row in _imported_conversations_for_user(db, user_id)
     ]
     data["imported_messages"] = [
-        _serialize("imported_messages", row)
-        for row in _imported_messages_for_user(db, user_id)
+        _serialize("imported_messages", row) for row in _imported_messages_for_user(db, user_id)
     ]
     return data
 
@@ -232,15 +228,11 @@ def get_backup_stats(db: Session, user_id: str) -> dict[str, Any]:
     for table in SYNC_TABLES:
         tables[table] = _scoped_query(db, table, user_id).count()
     tables["imported_conversations"] = (
-        db.query(ImportedConversation)
-        .filter(ImportedConversation.user_id == user_id)
-        .count()
+        db.query(ImportedConversation).filter(ImportedConversation.user_id == user_id).count()
     )
     tables["imported_messages"] = (
         db.query(ImportedMessage)
-        .join(
-            ImportedConversation, ImportedConversation.id == ImportedMessage.conversation_id
-        )
+        .join(ImportedConversation, ImportedConversation.id == ImportedMessage.conversation_id)
         .filter(ImportedConversation.user_id == user_id)
         .count()
     )
@@ -262,8 +254,7 @@ def _validate_payload(payload: Any) -> dict[str, Any]:
         raise ValidationError("Backup payload must be a JSON object.")
     if payload.get("format") != BACKUP_FORMAT:
         raise ValidationError(
-            f"Unrecognized backup format: {payload.get('format')!r}. "
-            f"Expected {BACKUP_FORMAT!r}."
+            f"Unrecognized backup format: {payload.get('format')!r}. Expected {BACKUP_FORMAT!r}."
         )
     version = str(payload.get("version", ""))
     if not version:
@@ -312,9 +303,7 @@ def _record_timestamp(spec: TableSpec, record: dict[str, Any]) -> datetime | Non
     return None
 
 
-def _apply_columns(
-    table: str, record: dict[str, Any], target: Any, *, allow_pk: bool
-) -> None:
+def _apply_columns(table: str, record: dict[str, Any], target: Any, *, allow_pk: bool) -> None:
     """Copy fields from a record onto an ORM instance. ``allow_pk``
     flips on for inserts (so the UUID survives) and off for updates.
     """
@@ -397,9 +386,9 @@ def _row_belongs_to_user(table: str, row: Any, user_id: str) -> bool:
     """Defensive user-scoping check used during restore."""
     spec = _spec(table)
     if spec.scope == "self":
-        return row.id == user_id
+        return bool(row.id == user_id)
     if hasattr(row, "user_id") and row.user_id is not None:
-        return row.user_id == user_id
+        return bool(row.user_id == user_id)
     # via_curriculum / via_project / via_session / via_conversation:
     # the parent FK already pins the user. Trust it.
     return True
@@ -411,7 +400,7 @@ def _record_belongs_to_user(table: str, record: dict[str, Any], user_id: str) ->
     if spec.scope == "self":
         return record.get("id") == user_id
     if "user_id" in record and record["user_id"] is not None:
-        return record["user_id"] == user_id
+        return bool(record["user_id"] == user_id)
     return True
 
 

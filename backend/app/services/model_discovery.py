@@ -259,7 +259,11 @@ def _openai_context_window(model_id: str) -> int | None:
     lowered = model_id.lower()
     if "gpt-4o" in lowered or "gpt-4.1" in lowered:
         return 128000
-    if "gpt-4-turbo" in lowered or lowered.startswith("gpt-4-1106") or lowered.startswith("gpt-4-0125"):
+    if (
+        "gpt-4-turbo" in lowered
+        or lowered.startswith("gpt-4-1106")
+        or lowered.startswith("gpt-4-0125")
+    ):
         return 128000
     if lowered.startswith("gpt-4"):
         return 8192

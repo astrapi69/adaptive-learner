@@ -167,9 +167,7 @@ def sync_pull(payload: PullBody, db: Session = Depends(get_db)) -> PullResponse:
 
 
 @router.post("/resolve", response_model=ResolveResponse)
-def sync_resolve(
-    payload: ResolveBody, db: Session = Depends(get_db)
-) -> ResolveResponse:
+def sync_resolve(payload: ResolveBody, db: Session = Depends(get_db)) -> ResolveResponse:
     resolutions = [
         Resolution(
             table=r.table,
@@ -188,9 +186,7 @@ def sync_resolve(
     response_model=PairGenerateResponse,
     status_code=status.HTTP_201_CREATED,
 )
-def pair_generate(
-    payload: PairGenerateBody, db: Session = Depends(get_db)
-) -> PairGenerateResponse:
+def pair_generate(payload: PairGenerateBody, db: Session = Depends(get_db)) -> PairGenerateResponse:
     """Mint a one-time pairing token for the desktop side.
 
     The desktop calls this when the user clicks "Pair device".
@@ -212,9 +208,7 @@ def pair_generate(
 
 
 @router.post("/pair/verify", response_model=PairVerifyResponse)
-def pair_verify(
-    payload: PairVerifyBody, db: Session = Depends(get_db)
-) -> PairVerifyResponse:
+def pair_verify(payload: PairVerifyBody, db: Session = Depends(get_db)) -> PairVerifyResponse:
     """Consume the pairing token from the phone side.
 
     Returns the user object so the phone can mirror the

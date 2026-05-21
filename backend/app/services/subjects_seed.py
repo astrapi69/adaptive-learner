@@ -57,9 +57,7 @@ def _load_yaml(path: Path) -> list[Mapping[str, Any]]:
     for entry in nodes:
         if not isinstance(entry, Mapping):
             continue
-        if not isinstance(entry.get("slug"), str) or not isinstance(
-            entry.get("name"), str
-        ):
+        if not isinstance(entry.get("slug"), str) or not isinstance(entry.get("name"), str):
             logger.warning("Skipping malformed subject entry: %r", entry)
             continue
         valid.append(entry)

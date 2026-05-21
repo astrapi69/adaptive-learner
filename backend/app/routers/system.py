@@ -137,9 +137,7 @@ def get_system_info() -> dict[str, Any]:
     exact values (Python + platform + git state vary per env).
     """
     authors_raw = _read_pyproject_field("authors", []) or []
-    authors: list[str] = [
-        str(a) for a in authors_raw if isinstance(a, str)
-    ]
+    authors: list[str] = [str(a) for a in authors_raw if isinstance(a, str)]
     license_str = _read_pyproject_field("license", "MIT") or "MIT"
     if not isinstance(license_str, str):
         license_str = "MIT"

@@ -12,7 +12,28 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.12.0):** v1.11.0 plus Phase 25 —
+- **Current state (v1.13.0):** v1.12.0 plus Phase 26 —
+  **PT/TR/JA Native Translations.** The three EN-passthrough
+  catalogs (``backend/config/i18n/{pt,tr,ja}.yaml``) are now
+  fully translated: Brazilian Portuguese (informal "você"
+  form), Turkish (informal "sen" form), and Japanese
+  (polite ``desu``/``masu``, not keigo). Each YAML carries
+  an "AI-translated, pending native speaker review" header
+  so future native review is targeted. The assessment
+  plugin's ``QUESTIONS`` list gains ``text_pt`` / ``text_tr``
+  / ``text_ja`` on every one of the 12 questions and 48
+  answers; ``_LANG_TO_KEY`` adds three rows so the resolver
+  picks the new fields automatically. A new
+  ``backend/tests/test_i18n_translation_audit.py`` (12 tests)
+  pins the translation quality: no EN-passthrough markers
+  sneak back into pt/tr/ja, ≥90% of values diverge from EN,
+  every assessment string is present and not byte-identical
+  to text_en, and every new language is registered in
+  ``_LANG_TO_KEY``. Backend tests 671 → 683 with the new
+  audit; frontend 921 unchanged. BL-11 closed (native review
+  remains a separate P3 follow-up).
+
+- **State (v1.12.0):** v1.11.0 plus Phase 25 —
   **Backup Compare UI.** New ``frontend/src/lib/backup-diff.ts``
   is a client-side diff engine over two parsed
   ``BackupPayload`` objects: UUID-keyed matching produces

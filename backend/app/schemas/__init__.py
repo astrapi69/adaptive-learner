@@ -34,10 +34,9 @@ Conventions:
 
 from __future__ import annotations
 
+import json
 from datetime import datetime
 from enum import Enum
-
-import json
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 

@@ -882,18 +882,14 @@ class ProjectSubject(Base):
     )
 
     def __repr__(self) -> str:
-        return (
-            f"<ProjectSubject project={self.project_id!r} subject={self.subject_id!r}>"
-        )
+        return f"<ProjectSubject project={self.project_id!r} subject={self.subject_id!r}>"
 
 
 class ProjectTag(Base):
     """Many-to-many between :class:`LearningProject` and :class:`Tag`."""
 
     __tablename__ = "project_tags"
-    __table_args__ = (
-        UniqueConstraint("project_id", "tag_id", name="uq_project_tags_pair"),
-    )
+    __table_args__ = (UniqueConstraint("project_id", "tag_id", name="uq_project_tags_pair"),)
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
     project_id: Mapped[str] = mapped_column(
