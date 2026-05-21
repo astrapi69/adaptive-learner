@@ -1,6 +1,6 @@
 # Adaptive Learner Roadmap
 
-Current state: **v1.7.0 released (Phase 20 / QR-Code Camera Scan for Sync Pairing shipped 2026-05-20).**
+Current state: **v1.8.0 released (Phase 21 / Sync Gaps: step_evaluations + session_notes + i18n keys shipped 2026-05-20).**
 
 ## Phase history (completed)
 
@@ -24,7 +24,8 @@ Current state: **v1.7.0 released (Phase 20 / QR-Code Camera Scan for Sync Pairin
 | 17 | v1.4.0 | Auto-Loop: continue learning after step 7 — topic-transition evaluator, cycle counter, multi-cycle session summary |
 | 18 | v1.5.0 | Async AI Calls + Performance — async SQLAlchemy foundation, parallel step-eval + topic-transition at cycle boundary, per-message timing metrics |
 | 19 | v1.6.0 | Streaming Learning Response — ai_complete_stream hookspec + 3 provider impls, POST /message/stream SSE route, inline frontend SSE reader, browser-direct Dexie streaming, incremental SessionChat rendering |
-| **20** | **v1.7.0** | **QR-Code Camera Scan for Sync Pairing — html5-qrcode dep, QRScanner + QRScannerModal + QRImageUpload, viewfinder overlay with reduced-motion, haptic feedback, file-upload fallback. BL-04 closed.** |
+| 20 | v1.7.0 | QR-Code Camera Scan for Sync Pairing — html5-qrcode dep, QRScanner + QRScannerModal + QRImageUpload, viewfinder overlay with reduced-motion, haptic feedback, file-upload fallback. BL-04 closed. |
+| **21** | **v1.8.0** | **Sync Gaps: step_evaluations + session_notes + i18n + imported_conversations + imported_messages — Dexie schema v3+v4+v5 aligning with backend Alembic 0006+0007, 62 sync.* keys to YAML catalogs, full 16-table sync surface audit, PluginForge ^0.7.0→^0.8.0. BL-05 + BL-06 closed.** |
 
 Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list. Per-release notes live in [changelog/releases/](../changelog/releases/).
 
@@ -32,19 +33,18 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phase (planned)
 
-**Phase 21 candidates** — current top of backlog (see [backlog.md](backlog.md) for full P0..P5 view):
+**Phase 22 candidates** — current top of backlog (see [backlog.md](backlog.md) for full P0..P5 view):
 
 - **BL-03 — pluginforge-app-template repo.** Export a
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Validates PluginForge ecosystem (3 repos: framework,
   template, app).
-- **BL-05 — Sync gap: step_evaluations + session_notes.**
-  Excluded from v1.0.0 sync due to schema mismatch. Align
-  schemas, add to sync surface.
-- **BL-06 — Sync i18n strings.** Currently inline `t()`
-  fallbacks across SyncSection + the new QR scanner
-  components. Promote all sync.* keys to the 8 YAML
-  catalogs in one consistent pass.
+- **BL-07 — Global subjects/tags.** Trigger: 5+ projects.
+- **BL-08 — Swipe gestures on Assessment.** Deferred from
+  Phase 9.
+- **BL-09 — Provider model picker via API.** Anthropic +
+  OpenAI ``/v1/models``.
+- **BL-10 — Backup compare UI.** Side-by-side diff per table.
 
 ---
 

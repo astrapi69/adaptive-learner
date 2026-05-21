@@ -12,7 +12,29 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.7.0):** v1.6.0 plus Phase 20 —
+- **Current state (v1.8.0):** v1.7.0 plus Phase 21 —
+  **Sync Gaps: step_evaluations + session_notes + i18n keys.**
+  ``step_evaluations`` joins the sync surface after the Dexie
+  schema v3 alignment (``suggested_step``→``to_step``,
+  ``created_at``→``evaluated_at``). ``session_notes`` promoted
+  from append-only to mutable: Alembic 0006 + Dexie v4 add
+  ``updated_at`` with back-fill from ``created_at``; the
+  conflict-resolution layer routes notes through the existing
+  ``/api/sync/resolve`` path. ``imported_conversations`` +
+  ``imported_messages`` join sync (append-only); Alembic 0007
+  + Dexie v5 add ``created_at`` to the message rows with a
+  parent-conversation back-fill. 62 ``sync.*`` i18n keys
+  promoted from inline ``t(key, "fallback")`` args to the 8
+  YAML catalogs (DE+EN hand-translated, 6 EN-passthrough);
+  ``fallbacks.ts`` gains a sync block for first-paint
+  resilience. ``test_sync_surface_audit.py`` pins the
+  16-table sync surface against drift on both sides (backend
+  + frontend symmetric coverage). Bundled: PluginForge
+  ^0.7.0→^0.8.0 upgrade. Backend 612 + session-plugin 199 +
+  frontend 759 at release time. BL-04 (closed v1.7.0), BL-05
+  + BL-06 closed.
+
+- **State (v1.7.0):** v1.6.0 plus Phase 20 —
   **QR-Code Camera Scan for Sync Pairing.** New
   ``html5-qrcode`` frontend dep (exact-pinned). New
   ``components/sync/QRScanner.tsx`` opens the rear camera on

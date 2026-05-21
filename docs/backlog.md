@@ -4,12 +4,15 @@ Daily-planning view of items outside the phase plan. The
 authoritative roadmap lives in [ROADMAP.md](ROADMAP.md); use
 this file for granular items + status.
 
-State: **post v1.7.0 (Phase 20 / QR-Code Camera Scan for Sync
-Pairing shipped).** BL-04 (QR camera scan) shipped in v1.7.0
-across four commits: 20A scanner foundation (`8388656`),
-20B Sync Settings integration (`e246244`), 20C file-upload
-fallback (`d60f47c`), 20D viewfinder + haptics + reduced-
-motion polish (`4a63a1a`).
+State: **post v1.8.0 (Phase 21 / Sync Gaps shipped).** BL-05
+(step_evaluations + session_notes sync) shipped in v1.8.0
+across `872cf84` (21A step_evaluations) and `f83aeb4`
+(21B session_notes mutable + conflict resolution). BL-06
+(sync.* i18n YAML migration) shipped in `1c22895` (21C).
+Bundled bonus: pluginforge ^0.7.0→^0.8.0 in `c4670c0`.
+imported_conversations + imported_messages joined the sync
+surface in `3f98bf1` (21D); the 16-table sync surface audit
+locks the invariant in `2c8bee8` (21E).
 
 Items ordered by impact and dependency chain. P0 = next up,
 P5 = speculative. Within each tier, smaller-scope and
@@ -24,14 +27,6 @@ tiebreaker.
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Add README explaining how to fork. Validates PluginForge
   ecosystem (3 repos: framework, template, app).
-
-## P1 — High Value, Clear Scope
-
-- [ ] **BL-05**: Sync gap: step_evaluations + session_notes —
-  Excluded from v1.0.0 sync due to schema mismatch between
-  Dexie and backend. Align schemas, add to sync surface.
-- [ ] **BL-06**: Sync i18n strings — Currently inline `t()`
-  fallbacks. Add proper `sync.*` keys to all 8 YAML catalogs.
 
 ## P2 — Medium Value, Medium Effort
 
