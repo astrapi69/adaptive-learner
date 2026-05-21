@@ -58,6 +58,13 @@ class GamificationPlugin(BasePlugin):
             xp_service.award_xp_for_session(db, session=session, rating=rating)
             user_id = xp_service._resolve_user_id_from_session(db, session)
             if user_id:
+                from . import streak_service
+
+                # 29C — update persisted streak state (current,
+                # longest, freezes). Done BEFORE the badge
+                # evaluation so streak-milestone badges
+                # (streak_3_days etc.) see the fresh count.
+                streak_service.update_streak_state(db, user_id)
                 badge_service.evaluate_user(db, user_id)
         except Exception:  # noqa: BLE001
             logger.exception(

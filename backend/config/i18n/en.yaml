@@ -616,3 +616,11 @@ gamification:
     import_10_conversations:
       name: Conversation Curator
       description: Import 10 conversations.
+  card_streak: Streak
+  current_streak: Current streak
+  longest_streak: Longest streak
+  freezes_available: Freezes available
+  streak_no_data: Start a session to begin your streak.
+  streak_calendar: Activity heatmap
+  weekend_mode: Weekend mode
+  weekend_mode_help: Weekends don't count toward streak gaps.

@@ -358,6 +358,14 @@ const SYNC_TABLES: SyncTable[] = [
         timestampField: "earned_at",
         appendOnly: true,
     },
+    {
+        // v1.16.0 / Phase 29C — per-user streak state singleton.
+        // MUTABLE: freezes earned / spent + weekend-mode flag.
+        name: "user_streaks",
+        dexieTable: "userStreaks",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
 ];
 
 const APPEND_ONLY_TABLES = new Set(

@@ -616,3 +616,11 @@ gamification:
     import_10_conversations:
       name: Επιμελητής Συζητήσεων
       description: Εισήγαγε 10 συζητήσεις.
+  card_streak: Σερί
+  current_streak: Τρέχον σερί
+  longest_streak: Μεγαλύτερο σερί
+  freezes_available: Διαθέσιμα παγώματα
+  streak_no_data: Ξεκίνα μια συνεδρία για να αρχίσει το σερί σου.
+  streak_calendar: Χάρτης δραστηριότητας
+  weekend_mode: Λειτουργία Σαββατοκύριακου
+  weekend_mode_help: Τα Σαββατοκύριακα δεν διακόπτουν το σερί.

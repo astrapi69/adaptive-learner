@@ -64,6 +64,7 @@ from app.models import (
     User,
     UserBadge,
     UserSettings,
+    UserStreak,
     UserXP,
 )
 
@@ -462,6 +463,27 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="earned_at",
         append_only=True,
         order=25,
+        scope="direct",
+    ),
+    # v1.16.0 / Phase 29C — per-user streak state singleton.
+    # MUTABLE: freezes earned/used and weekend-mode flag change
+    # over time. Conflict resolution by ``updated_at``.
+    "user_streaks": TableSpec(
+        model=UserStreak,
+        columns=(
+            "id",
+            "user_id",
+            "freezes_available",
+            "last_freeze_earned_on",
+            "last_freeze_used_on",
+            "weekend_mode",
+            "current_streak_days",
+            "longest_streak_days",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=26,
         scope="direct",
     ),
 }

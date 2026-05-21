@@ -174,5 +174,10 @@ export const apiStorage: IStorageService = {
         awardImport: (userId) => api.gamification.awardImport(userId),
         listBadges: (userId) => api.gamification.listBadges(userId),
         evaluateBadges: (userId) => api.gamification.evaluateBadges(userId),
+        getStreak: (userId) => api.gamification.getStreak(userId),
+        getStreakHeatmap: (userId, days) =>
+            api.gamification.getStreakHeatmap(userId, days),
+        setWeekendMode: (userId, enabled) =>
+            api.gamification.setWeekendMode(userId, enabled),
     },
 };

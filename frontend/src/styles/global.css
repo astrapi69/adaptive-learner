@@ -3319,3 +3319,48 @@ select:focus {
         transition: none;
     }
 }
+
+/* --- Streaks (Phase 29C) ---------------------------------- */
+.streak-widget {
+    display: flex;
+    gap: 24px;
+    padding: 8px 0 12px 0;
+    flex-wrap: wrap;
+}
+.streak-widget__cell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.streak-widget__label {
+    font-size: 0.75rem;
+    color: var(--text-muted, #64748b);
+}
+.streak-widget__value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+.streak-calendar {
+    display: flex;
+    gap: 3px;
+    overflow-x: auto;
+    padding: 6px 0;
+}
+.streak-calendar__week {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.streak-cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    background: var(--border, #e2e8f0);
+}
+.streak-cell--empty { visibility: hidden; }
+.streak-cell--tier-0 { background: var(--border, #e2e8f0); }
+.streak-cell--tier-1 { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+.streak-cell--tier-2 { background: color-mix(in srgb, var(--accent) 50%, transparent); }
+.streak-cell--tier-3 { background: color-mix(in srgb, var(--accent) 75%, transparent); }
+.streak-cell--tier-4 { background: var(--accent); }

@@ -980,6 +980,58 @@ class Badge(Base):
         return f"<Badge key={self.key!r} category={self.category!r}>"
 
 
+class UserStreak(Base):
+    """Per-user streak state singleton (Phase 29C).
+
+    Holds the streak fields that need persistence beyond what
+    we can derive from ``LearningSession`` activity alone:
+
+    - ``freezes_available``: 0..N, max 1 freeze per 7 days. A
+      freeze pauses (not resets) the streak when the user
+      misses a day. Earned passively as the streak grows.
+    - ``last_freeze_earned_on``: the calendar date of the last
+      freeze grant; used to throttle the "1 per 7 days" rule.
+    - ``last_freeze_used_on``: the date the user most recently
+      consumed a freeze (so a missed day doesn't double-spend).
+    - ``weekend_mode``: when true, weekends don't count toward
+      streak gaps (Saturday/Sunday gaps don't reset).
+    - ``current_streak_days`` / ``longest_streak_days``: cached
+      snapshots; the live streak is still derived from
+      ``LearningSession`` rows (this is the *enhanced* counter
+      that respects freeze + weekend mode).
+    """
+
+    __tablename__ = "user_streaks"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    freezes_available: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    last_freeze_earned_on: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    last_freeze_used_on: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    weekend_mode: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    current_streak_days: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    longest_streak_days: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<UserStreak user={self.user_id!r} current={self.current_streak_days} "
+            f"longest={self.longest_streak_days} freezes={self.freezes_available}>"
+        )
+
+
 class UserBadge(Base):
     """Earned-badge record (Phase 29B).
 
@@ -1042,4 +1094,5 @@ __all__ = [
     "UserXP",
     "Badge",
     "UserBadge",
+    "UserStreak",
 ]

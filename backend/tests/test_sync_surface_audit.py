@@ -48,6 +48,9 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # v1.16.0 / Phase 29B: badge catalog (mutable for icon /
         # i18n key edits across releases).
         "badges",
+        # v1.16.0 / Phase 29C: streak state singleton (freezes,
+        # weekend mode, longest streak).
+        "user_streaks",
     }
 )
 

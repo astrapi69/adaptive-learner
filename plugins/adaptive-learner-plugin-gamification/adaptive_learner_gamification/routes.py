@@ -23,7 +23,7 @@ from app.database import get_db
 from app.exceptions import NotFoundError
 from app.models import User
 
-from . import badge_service, xp_service
+from . import badge_service, streak_service, xp_service
 
 router = APIRouter(prefix="/plugins/gamification", tags=["gamification"])
 
@@ -121,6 +121,45 @@ def trigger_badge_evaluation(
     _ensure_user(db, user_id)
     earned = badge_service.evaluate_user(db, user_id)
     return {"earned": earned}
+
+
+# --- Streaks (Phase 29C) ---------------------------------------------------
+
+
+class _WeekendModeBody(BaseModel):
+    enabled: bool
+
+
+@router.get("/streak/{user_id}")
+def get_streak(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
+    """Per-user streak state: current/longest counts + freeze
+    inventory + weekend-mode flag. Recomputes the current count
+    on read so the dashboard never shows stale data."""
+    _ensure_user(db, user_id)
+    streak_service.update_streak_state(db, user_id)
+    return streak_service.get_streak_state(db, user_id)
+
+
+@router.get("/streak/{user_id}/heatmap")
+def get_streak_heatmap(
+    user_id: str, days: int = 365, db: Session = Depends(get_db)
+) -> list[dict[str, Any]]:
+    """52-week-by-default activity heatmap for the calendar
+    component. ``days`` clamps to [7, 730]."""
+    _ensure_user(db, user_id)
+    days = max(7, min(730, days))
+    return streak_service.calendar_heatmap(db, user_id, days=days)
+
+
+@router.post("/streak/{user_id}/weekend-mode")
+def set_weekend_mode(
+    user_id: str,
+    body: _WeekendModeBody,
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    """Toggle weekend mode: weekends don't break the streak."""
+    _ensure_user(db, user_id)
+    return streak_service.set_weekend_mode(db, user_id, body.enabled)
 
 
 @router.post("/xp/{user_id}/award")

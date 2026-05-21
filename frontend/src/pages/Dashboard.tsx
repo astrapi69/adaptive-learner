@@ -12,11 +12,18 @@ import SpacedRecommendations from "../components/SpacedRecommendations";
 import ToolRecommendations from "../components/ToolRecommendations";
 import XPWidget from "../components/XPWidget";
 import BadgeShowcase from "../components/BadgeShowcase";
+import StreakCalendar from "../components/StreakCalendar";
+import StreakWidget from "../components/StreakWidget";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
-import type {BadgeWithProgress, XPState} from "../storage/types";
+import type {
+    BadgeWithProgress,
+    HeatmapEntryOut,
+    StreakStateOut,
+    XPState,
+} from "../storage/types";
 import type {
     LearningProfile,
     SpacedRecommendation,
@@ -49,6 +56,8 @@ export default function Dashboard() {
     const [spaced, setSpaced] = useState<SpacedRecommendation[]>([]);
     const [xpState, setXpState] = useState<XPState | null>(null);
     const [badges, setBadges] = useState<BadgeWithProgress[] | null>(null);
+    const [streakState, setStreakState] = useState<StreakStateOut | null>(null);
+    const [heatmap, setHeatmap] = useState<HeatmapEntryOut[] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     /**
@@ -76,6 +85,12 @@ export default function Dashboard() {
         const badgesPromise = userId
             ? storage.gamification.listBadges(userId)
             : Promise.resolve<BadgeWithProgress[] | null>(null);
+        const streakPromise = userId
+            ? storage.gamification.getStreak(userId)
+            : Promise.resolve<StreakStateOut | null>(null);
+        const heatmapPromise = userId
+            ? storage.gamification.getStreakHeatmap(userId, 365)
+            : Promise.resolve<HeatmapEntryOut[] | null>(null);
         Promise.allSettled([
             storage.assessment.profile(projectId),
             storage.tracking.progress(projectId),
@@ -83,14 +98,31 @@ export default function Dashboard() {
             storage.tools.spaced(projectId, lang),
             xpPromise,
             badgesPromise,
+            streakPromise,
+            heatmapPromise,
         ]).then((results) => {
             if (cancelled) return;
-            const [profileR, summaryR, toolsR, spacedR, xpR, badgesR] = results;
+            const [
+                profileR,
+                summaryR,
+                toolsR,
+                spacedR,
+                xpR,
+                badgesR,
+                streakR,
+                heatmapR,
+            ] = results;
             if (xpR.status === "fulfilled") {
                 setXpState(xpR.value);
             }
             if (badgesR.status === "fulfilled") {
                 setBadges(badgesR.value);
+            }
+            if (streakR.status === "fulfilled") {
+                setStreakState(streakR.value);
+            }
+            if (heatmapR.status === "fulfilled") {
+                setHeatmap(heatmapR.value);
             }
 
             if (profileR.status === "fulfilled") {
@@ -176,6 +208,14 @@ export default function Dashboard() {
                         {t("gamification.card_xp", "XP & Level")}
                     </h2>
                     <XPWidget state={xpState} />
+                </article>
+
+                <article className="dashboard-card dashboard-card-wide">
+                    <h2 className="dashboard-card-title">
+                        {t("gamification.card_streak", "Streak")}
+                    </h2>
+                    <StreakWidget state={streakState} />
+                    <StreakCalendar entries={heatmap} />
                 </article>
 
                 <article className="dashboard-card dashboard-card-wide">

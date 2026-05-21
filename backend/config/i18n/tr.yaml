@@ -616,3 +616,11 @@ gamification:
     import_10_conversations:
       name: Konuşma Küratörü
       description: 10 konuşma içe aktar.
+  card_streak: Seri
+  current_streak: Mevcut seri
+  longest_streak: En uzun seri
+  freezes_available: Kullanılabilir dondurmalar
+  streak_no_data: Serine başlamak için bir oturumu başlat.
+  streak_calendar: Etkinlik ısı haritası
+  weekend_mode: Hafta sonu modu
+  weekend_mode_help: Hafta sonları serini bozmaz.

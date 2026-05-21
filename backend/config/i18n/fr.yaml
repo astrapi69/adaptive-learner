@@ -616,3 +616,11 @@ gamification:
     import_10_conversations:
       name: Conservateur de Conversations
       description: Importe 10 conversations.
+  card_streak: Série
+  current_streak: Série actuelle
+  longest_streak: Plus longue série
+  freezes_available: Gels disponibles
+  streak_no_data: Commence une session pour démarrer ta série.
+  streak_calendar: Carte d'activité
+  weekend_mode: Mode week-end
+  weekend_mode_help: Les week-ends ne brisent pas ta série.

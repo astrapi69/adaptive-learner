@@ -761,6 +761,20 @@ export const api = {
                 `/plugins/gamification/badges/${encodeURIComponent(userId)}/evaluate`,
                 {method: "POST", body: {}},
             ),
+        getStreak: (userId: string) =>
+            apiCall<import("../storage/types").StreakStateOut>(
+                `/plugins/gamification/streak/${encodeURIComponent(userId)}`,
+            ),
+        getStreakHeatmap: (userId: string, days?: number) =>
+            apiCall<import("../storage/types").HeatmapEntryOut[]>(
+                `/plugins/gamification/streak/${encodeURIComponent(userId)}/heatmap`,
+                {query: days !== undefined ? {days: String(days)} : undefined},
+            ),
+        setWeekendMode: (userId: string, enabled: boolean) =>
+            apiCall<import("../storage/types").StreakStateOut>(
+                `/plugins/gamification/streak/${encodeURIComponent(userId)}/weekend-mode`,
+                {method: "POST", body: {enabled}},
+            ),
     },
 
     // --- Imported conversations (v0.9.0 / Phase 12C) ---------------------

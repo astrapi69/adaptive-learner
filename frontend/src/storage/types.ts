@@ -317,12 +317,30 @@ export interface BadgeWithProgress {
     progress: string | null;
 }
 
+export interface StreakStateOut {
+    user_id: string;
+    current_streak_days: number;
+    longest_streak_days: number;
+    freezes_available: number;
+    weekend_mode: boolean;
+    last_freeze_earned_on: string | null;
+    last_freeze_used_on: string | null;
+}
+
+export interface HeatmapEntryOut {
+    date: string;
+    count: number;
+}
+
 export interface IGamificationNamespace {
     getState(userId: string): Promise<XPState>;
     awardAssessment(userId: string): Promise<XPAwardResult>;
     awardImport(userId: string): Promise<XPAwardResult>;
     listBadges(userId: string): Promise<BadgeWithProgress[]>;
     evaluateBadges(userId: string): Promise<{earned: string[]}>;
+    getStreak(userId: string): Promise<StreakStateOut>;
+    getStreakHeatmap(userId: string, days?: number): Promise<HeatmapEntryOut[]>;
+    setWeekendMode(userId: string, enabled: boolean): Promise<StreakStateOut>;
 }
 
 export interface IImportsNamespace {

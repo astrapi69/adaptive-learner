@@ -271,6 +271,19 @@ export interface UserBadgeRow {
     earned_at: string;
 }
 
+/** Per-user streak state (Phase 29C). One row per user. */
+export interface UserStreakRow {
+    id: string;
+    user_id: string;
+    freezes_available: number;
+    last_freeze_earned_on: string | null;
+    last_freeze_used_on: string | null;
+    weekend_mode: boolean;
+    current_streak_days: number;
+    longest_streak_days: number;
+    updated_at: string;
+}
+
 export interface StepEvaluationRow {
     id: string;
     session_id: string;
@@ -331,6 +344,7 @@ export class AdaptiveLearnerDB extends Dexie {
     userXp!: EntityTable<UserXPRow, "id">;
     badges!: EntityTable<BadgeRow, "id">;
     userBadges!: EntityTable<UserBadgeRow, "id">;
+    userStreaks!: EntityTable<UserStreakRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -460,6 +474,11 @@ export class AdaptiveLearnerDB extends Dexie {
         this.version(8).stores({
             badges: "id, key, category, updated_at",
             userBadges: "id, user_id, badge_id, earned_at",
+        });
+        // Schema v9 — v1.16.0 Phase 29C: per-user streak state
+        // singleton (freezes, weekend mode, longest streak).
+        this.version(9).stores({
+            userStreaks: "id, user_id, updated_at",
         });
     }
 }

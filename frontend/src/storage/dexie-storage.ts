@@ -27,6 +27,12 @@ import {calculateProfile, questionsForLang} from "./assessment";
 import {evaluateBadgesForUser, listBadgesWithProgress} from "./badges";
 import {awardXPFlat, awardXPForSession, getXPState} from "./gamification";
 import {
+    calendarHeatmap,
+    getStreakState,
+    setWeekendMode as setWeekendModeStorage,
+    updateStreakState,
+} from "./streaks";
+import {
     getDb,
     newId,
     nowIso,
@@ -714,8 +720,13 @@ export const dexieStorage: IStorageService = {
                         cycleStep: fresh.cycle_step,
                         cycleCount: 1,
                     });
-                    // 29B — evaluate badges after the XP award so
-                    // level-/streak-/method-gated badges fire.
+                    // 29C — refresh persisted streak state so the
+                    // dashboard widget + the streak-milestone
+                    // badges see the new ``current_streak_days``.
+                    await updateStreakState(projectForXP.user_id);
+                    // 29B — evaluate badges after the XP + streak
+                    // update so level-/streak-/method-gated badges
+                    // fire.
                     await evaluateBadgesForUser(projectForXP.user_id);
                 } catch (err) {
                     // eslint-disable-next-line no-console
@@ -1722,5 +1733,9 @@ export const dexieStorage: IStorageService = {
             const earned = await evaluateBadgesForUser(userId);
             return {earned};
         },
+        getStreak: (userId) => getStreakState(userId),
+        getStreakHeatmap: (userId, days) => calendarHeatmap(userId, days ?? 365),
+        setWeekendMode: (userId, enabled) =>
+            setWeekendModeStorage(userId, enabled),
     },
 };

@@ -616,3 +616,11 @@ gamification:
     import_10_conversations:
       name: Curador de Conversas
       description: Importe 10 conversas.
+  card_streak: Sequência
+  current_streak: Sequência atual
+  longest_streak: Maior sequência
+  freezes_available: Proteções disponíveis
+  streak_no_data: Inicie uma sessão para começar sua sequência.
+  streak_calendar: Mapa de atividade
+  weekend_mode: Modo fim de semana
+  weekend_mode_help: Fins de semana não quebram sua sequência.

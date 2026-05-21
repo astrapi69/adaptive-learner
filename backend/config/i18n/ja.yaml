@@ -616,3 +616,11 @@ gamification:
     import_10_conversations:
       name: 会話キュレーター
       description: 10件の会話をインポートする。
+  card_streak: ストリーク
+  current_streak: 現在のストリーク
+  longest_streak: 最長ストリーク
+  freezes_available: 利用可能なフリーズ
+  streak_no_data: セッションを開始してストリークを始めましょう。
+  streak_calendar: アクティビティ・ヒートマップ
+  weekend_mode: 週末モード
+  weekend_mode_help: 週末はストリークの中断にカウントされません。

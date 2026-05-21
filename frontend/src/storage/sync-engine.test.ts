@@ -873,6 +873,8 @@ describe("SYNC_TABLES — surface audit", () => {
         // v1.16.0 / Phase 29B — badge catalog + earned record.
         "badges",
         "user_badges",
+        // v1.16.0 / Phase 29C — streak state singleton.
+        "user_streaks",
     ];
 
     it("covers every domain Dexie table", () => {
