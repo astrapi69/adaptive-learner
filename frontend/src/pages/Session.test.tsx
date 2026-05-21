@@ -20,6 +20,7 @@ const apiEnd = vi.fn();
 const apiSwitchRec = vi.fn();
 const apiAcceptSwitch = vi.fn();
 const apiSettingsGet = vi.fn();
+const apiSettingsGetAvailableModels = vi.fn();
 
 /**
  * v1.6.0 — Session.tsx now sends via ``streamMessage``. The
@@ -75,6 +76,8 @@ vi.mock("../api/client", async () => {
             settings: {
                 ...actual.api.settings,
                 get: (...args: unknown[]) => apiSettingsGet(...args),
+                getAvailableModels: (...args: unknown[]) =>
+                    apiSettingsGetAvailableModels(...args),
             },
         },
     };
@@ -120,6 +123,7 @@ describe("Session page", () => {
         apiSwitchRec.mockReset();
         apiAcceptSwitch.mockReset();
         apiSettingsGet.mockReset();
+        apiSettingsGetAvailableModels.mockReset();
         // Default: no recommendation. Per-test override when the
         // banner path is being exercised.
         apiSwitchRec.mockResolvedValue({recommended: false});
@@ -127,6 +131,9 @@ describe("Session page", () => {
         // (rejects); the provider chip stays hidden. Per-test
         // override when the chip is the subject under test.
         apiSettingsGet.mockRejectedValue(new Error("no settings yet"));
+        // Default: empty available-models. Tests that exercise the
+        // model name lookup override per-test.
+        apiSettingsGetAvailableModels.mockResolvedValue([]);
         toastError.mockReset();
         toastSuccess.mockReset();
         toastInfo.mockReset();
@@ -451,6 +458,66 @@ describe("Session page", () => {
         // Either the localised label or the raw key is acceptable
         // depending on which i18n fallback resolved.
         expect(chip.textContent).toMatch(/openai|OpenAI|GPT/);
+    });
+
+    it("renders the active model name next to the provider when discovery cache has it", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiSettingsGet.mockResolvedValue({
+            id: "us-1",
+            user_id: "u-1",
+            language: "de",
+            active_provider: "anthropic",
+            has_anthropic_key: true,
+            has_openai_key: false,
+            has_gemini_key: false,
+            model_override_anthropic: "claude-opus-4-20250514",
+            model_override_openai: null,
+            model_override_gemini: null,
+            created_at: "2026-05-18T00:00:00Z",
+            updated_at: "2026-05-18T00:00:00Z",
+        });
+        apiSettingsGetAvailableModels.mockResolvedValue([
+            {
+                id: "claude-opus-4-20250514",
+                name: "Claude Opus 4",
+                context_window: 200000,
+                description: null,
+            },
+        ]);
+        renderSession();
+        await screen.findByTestId("session");
+        const modelEl = await screen.findByTestId("session-active-model");
+        expect(modelEl.textContent).toBe("Claude Opus 4");
+    });
+
+    it("renders the raw model id when discovery cache has no match", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiSettingsGet.mockResolvedValue({
+            id: "us-1",
+            user_id: "u-1",
+            language: "de",
+            active_provider: "anthropic",
+            has_anthropic_key: true,
+            has_openai_key: false,
+            has_gemini_key: false,
+            model_override_anthropic: "claude-mystery-foo",
+            model_override_openai: null,
+            model_override_gemini: null,
+            created_at: "2026-05-18T00:00:00Z",
+            updated_at: "2026-05-18T00:00:00Z",
+        });
+        apiSettingsGetAvailableModels.mockResolvedValue([
+            {
+                id: "claude-opus-4-20250514",
+                name: "Claude Opus 4",
+                context_window: 200000,
+                description: null,
+            },
+        ]);
+        renderSession();
+        await screen.findByTestId("session");
+        const modelEl = await screen.findByTestId("session-active-model");
+        expect(modelEl.textContent).toBe("claude-mystery-foo");
     });
 
     it("does NOT render the provider chip when settings fetch fails", async () => {

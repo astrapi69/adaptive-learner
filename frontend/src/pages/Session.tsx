@@ -13,6 +13,8 @@ import {useI18n} from "../hooks/useI18n";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
+import {DEFAULT_MODELS, resolveModel} from "../storage/ai-providers";
+import type {AvailableModel} from "../storage/types";
 import {notify} from "../utils/notify";
 import type {LearningMethod} from "../lib/constants";
 import type {
@@ -23,6 +25,15 @@ import type {
     UserSettings,
 } from "../types";
 import {CYCLE_STEPS} from "../lib/constants";
+
+function formatContextWindowLabel(tokens: number): string {
+    if (tokens >= 1_000_000) {
+        const text = (tokens / 1_000_000).toFixed(1);
+        return `${text.endsWith(".0") ? text.slice(0, -2) : text}M tokens`;
+    }
+    if (tokens >= 1000) return `${Math.round(tokens / 1000)}K tokens`;
+    return `${tokens} tokens`;
+}
 
 /**
  * Session page (project-reference §8 row ``/session``).
@@ -64,11 +75,71 @@ export default function Session() {
     const [switchDismissed, setSwitchDismissed] = useState<LearningMethod | null>(null);
     const [accepting, setAccepting] = useState(false);
     const [userSettings, setUserSettings] = useState<UserSettings | null>(null);
+    // v1.11.0 / Phase 24E — resolved model + its human-readable
+    // info (looked up from the discovery cache, if available).
+    const [activeModelInfo, setActiveModelInfo] = useState<{
+        id: string;
+        name: string;
+        contextWindow: number | null;
+    } | null>(null);
     // v0.5.0 — most-recent step-evaluation verdict from /message.
     // Drives the "Why this step?" tooltip on CycleProgress and the
     // "Moving to: …" toast on an applied transition.
     const [stepEvaluation, setStepEvaluation] =
         useState<StepEvaluationVerdict | null>(null);
+
+    // Resolve the active model whenever userSettings changes. The
+    // model id always renders; the human name + context window come
+    // from the available-models cache when one exists. This is
+    // best-effort: no network roundtrip blocks the header on first
+    // paint.
+    useEffect(() => {
+        if (!userSettings) {
+            setActiveModelInfo(null);
+            return;
+        }
+        const provider = userSettings.active_provider;
+        const override = userSettings[
+            `model_override_${provider}` as keyof UserSettings
+        ] as string | null | undefined;
+        const modelId = resolveModel(provider, override ?? null);
+        const fallback = {
+            id: modelId,
+            name: modelId,
+            contextWindow: null as number | null,
+        };
+        // hasApiKey gates the cache lookup — without a key the
+        // backend / browser never fetched the list.
+        const hasKey = userSettings[
+            `has_${provider}_key` as keyof UserSettings
+        ] as boolean;
+        if (!hasKey) {
+            setActiveModelInfo(fallback);
+            return;
+        }
+        let cancelled = false;
+        getStorage()
+            .settings.getAvailableModels(userSettings.user_id, provider)
+            .then((models: AvailableModel[]) => {
+                if (cancelled) return;
+                const match = models.find((m) => m.id === modelId);
+                setActiveModelInfo(
+                    match
+                        ? {
+                              id: match.id,
+                              name: match.name,
+                              contextWindow: match.context_window,
+                          }
+                        : fallback,
+                );
+            })
+            .catch(() => {
+                if (!cancelled) setActiveModelInfo(fallback);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [userSettings]);
 
     const fetchSwitchRecommendation = useCallback(async (sessionId: string) => {
         try {
@@ -440,14 +511,35 @@ export default function Session() {
                             <span
                                 className="provider-chip"
                                 data-testid="session-active-provider"
-                                title={t(
-                                    `settings.provider_${userSettings.active_provider}`,
-                                    userSettings.active_provider,
-                                )}
+                                title={
+                                    activeModelInfo
+                                        ? `${activeModelInfo.id}${
+                                              activeModelInfo.contextWindow
+                                                  ? ` · ${formatContextWindowLabel(
+                                                        activeModelInfo.contextWindow,
+                                                    )}`
+                                                  : ""
+                                          }`
+                                        : t(
+                                              `settings.provider_${userSettings.active_provider}`,
+                                              userSettings.active_provider,
+                                          )
+                                }
                             >
                                 {t(
                                     `settings.provider_${userSettings.active_provider}`,
                                     userSettings.active_provider,
+                                )}
+                                {activeModelInfo && (
+                                    <>
+                                        :{" "}
+                                        <span
+                                            className="provider-chip-model"
+                                            data-testid="session-active-model"
+                                        >
+                                            {activeModelInfo.name}
+                                        </span>
+                                    </>
                                 )}
                             </span>
                         )}
