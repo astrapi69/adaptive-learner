@@ -52,6 +52,8 @@ import TableHeader from "@tiptap/extension-table-header";
 import type {JSONContent} from "@tiptap/core";
 import {useEffect, useRef, type CSSProperties} from "react";
 
+import {codeBlockExtension} from "./code-block-config";
+
 interface Props {
     /** Current TipTap doc. ``null`` mounts an empty editor. */
     content: JSONContent | null;
@@ -87,7 +89,13 @@ export default function RichTextEditor({
 }: Props) {
     const editor = useEditor({
         extensions: [
-            StarterKit,
+            // StarterKit ships a plain codeBlock; we replace it
+            // with the lowlight-backed variant configured in
+            // code-block-config.ts (Phase 27D — syntax
+            // highlighting + per-block language picker + copy
+            // button via a React NodeView).
+            StarterKit.configure({codeBlock: false}),
+            codeBlockExtension,
             Underline,
             TextAlign.configure({
                 types: ["heading", "paragraph"],

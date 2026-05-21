@@ -3030,3 +3030,140 @@ select:focus {
 .commit-notes-row .rich-text-editor {
     background: var(--surface, #ffffff);
 }
+
+/* === Code block (Phase 27D — lowlight syntax highlighting) ============ */
+
+/* React NodeView wrapper around each code block. The wrapper
+ * carries the toolbar (language selector + copy button) and
+ * the ``<pre><code>`` ProseMirror renders into. */
+.rich-text-prosemirror .code-block-view {
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius-sm, 4px);
+    background: var(--surface-2, #f8fafc);
+    margin: 0.4em 0;
+    overflow: hidden;
+}
+
+.code-block-view-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: color-mix(in srgb, var(--fg, #1a1a1a) 6%, transparent);
+    border-bottom: 1px solid var(--border, #e2e8f0);
+    font-size: 0.75rem;
+}
+
+.code-block-view-language {
+    height: 24px;
+    padding: 0 4px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 3px;
+    background: var(--surface, #ffffff);
+    color: var(--fg, #1a1a1a);
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    cursor: pointer;
+}
+.code-block-view-language:focus-visible {
+    outline: 2px solid var(--accent, #6366f1);
+    outline-offset: 1px;
+}
+
+.code-block-view-copy {
+    margin-left: auto;
+    height: 24px;
+    padding: 0 8px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 3px;
+    background: var(--surface, #ffffff);
+    color: var(--fg, #1a1a1a);
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+.code-block-view-copy:hover {
+    background: color-mix(in srgb, var(--fg, #1a1a1a) 6%, transparent);
+}
+.code-block-view-copy:focus-visible {
+    outline: 2px solid var(--accent, #6366f1);
+    outline-offset: 1px;
+}
+
+.rich-text-prosemirror .code-block-view > pre {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    background: var(--surface, #ffffff);
+}
+
+/* highlight.js token theme — light. Covers the common token
+ * classes (keyword / string / comment / number / function /
+ * tag / attribute / variable / etc.). The palette uses the
+ * same accent / semantic colours as the rest of the UI. */
+.rich-text-prosemirror .hljs-keyword,
+.rich-text-prosemirror .hljs-built_in,
+.rich-text-prosemirror .hljs-literal {
+    color: #8b5cf6;
+}
+.rich-text-prosemirror .hljs-string,
+.rich-text-prosemirror .hljs-meta-string {
+    color: #10b981;
+}
+.rich-text-prosemirror .hljs-number,
+.rich-text-prosemirror .hljs-symbol {
+    color: #f59e0b;
+}
+.rich-text-prosemirror .hljs-comment,
+.rich-text-prosemirror .hljs-quote {
+    color: #94a3b8;
+    font-style: italic;
+}
+.rich-text-prosemirror .hljs-title,
+.rich-text-prosemirror .hljs-function,
+.rich-text-prosemirror .hljs-class .hljs-title {
+    color: #3b82f6;
+}
+.rich-text-prosemirror .hljs-tag,
+.rich-text-prosemirror .hljs-name,
+.rich-text-prosemirror .hljs-selector-tag {
+    color: #ef4444;
+}
+.rich-text-prosemirror .hljs-attr,
+.rich-text-prosemirror .hljs-attribute,
+.rich-text-prosemirror .hljs-selector-attr,
+.rich-text-prosemirror .hljs-selector-id,
+.rich-text-prosemirror .hljs-selector-class,
+.rich-text-prosemirror .hljs-variable {
+    color: #6366f1;
+}
+.rich-text-prosemirror .hljs-meta {
+    color: #64748b;
+}
+
+/* Dark-mode override: the palette stays the same family but
+ * brighter so contrast against --surface stays readable. */
+[data-theme="dark"] .rich-text-prosemirror .hljs-keyword,
+[data-theme="dark"] .rich-text-prosemirror .hljs-built_in,
+[data-theme="dark"] .rich-text-prosemirror .hljs-literal {
+    color: #c4b5fd;
+}
+[data-theme="dark"] .rich-text-prosemirror .hljs-string {
+    color: #6ee7b7;
+}
+[data-theme="dark"] .rich-text-prosemirror .hljs-number {
+    color: #fbbf24;
+}
+[data-theme="dark"] .rich-text-prosemirror .hljs-comment {
+    color: #64748b;
+}
+[data-theme="dark"] .rich-text-prosemirror .hljs-title,
+[data-theme="dark"] .rich-text-prosemirror .hljs-function {
+    color: #93c5fd;
+}
+[data-theme="dark"] .rich-text-prosemirror .hljs-tag,
+[data-theme="dark"] .rich-text-prosemirror .hljs-name {
+    color: #fca5a5;
+}
+[data-theme="dark"] .rich-text-prosemirror .hljs-attr {
+    color: #a5b4fc;
+}
