@@ -3175,3 +3175,64 @@ both `useViewMode` and the new `useTrashViewMode` simultaneously).
 - "End-to-end behavior tests are not 'kwarg passes through'
   tests" — both rules pin "test the OBSERVABLE OUTPUT through
   the full component tree", not just the new code's inputs.
+
+## PluginForge v0.9.0: filtered plugins are NOT load errors
+
+PluginForge v0.9.0 made `target_application` enforcement a hard
+filter (retired the v0.7.0 deprecation warning). When the host's
+`PluginManager(app_id="adaptive_learner", ...)` encounters a
+discovered plugin whose `target_application` is missing or
+mismatched, the plugin is dropped at discovery time and the
+event is recorded in `DiscoveryResult.filtered` — NOT in
+`DiscoveryResult.errors` or in `manager.get_load_errors()`.
+
+The two channels mean different things:
+
+- **`get_load_errors()` / `DiscoveryResult.errors`**: a plugin
+  that the manager TRIED to load and that FAILED (import error,
+  hookspec mismatch, missing required attribute, activation
+  exception). This is a real fault the operator should see.
+- **`DiscoveryResult.filtered`** (v0.9.0+): a plugin that was
+  intentionally not loaded because its identity gate said "not
+  for this host." This is correct behaviour, not a failure.
+
+Operational consequence for the v0.9.0+ era: our existing
+`get_load_errors()` consumers
+([backend/app/main.py:414](../../backend/app/main.py#L414)
+diagnostics log,
+[backend/app/main.py:532](../../backend/app/main.py#L532)
+`/api/plugins/errors` endpoint) do NOT need severity-tagging
+or a "filtered vs errored" split. Filter events never appear
+in the error channel under v0.9.0+. Our current boot log
+confirms this: `Plugins loaded (N/N enabled)` reports the
+expected count with zero filter warnings, zero load errors,
+across all 7 shipped plugins (all of which declare
+`target_application = "adaptive_learner"` since v1.7.0).
+
+This is why the v1.11.0 PluginForge-adoption audit closed the
+"severity filter" question as docs-only rather than code-only:
+the framework already separates filters from errors at the API
+layer, so the host doesn't need to.
+
+### When this would change
+
+If we ever add a third-party plugin path (Settings → Plugins →
+Install from ZIP, or any other surface that loads plugins
+authored against a DIFFERENT host), those plugins would be
+filtered by `target_application`. To surface the filter event
+to the user (e.g. "This plugin was built for X, not Adaptive
+Learner — installation refused"), call
+`manager.get_last_discovery_result().filtered` directly and
+emit a UI message. Do NOT promote filter events into the
+error channel; they are not the same severity class and
+conflating them re-creates the bug v0.9.0 fixed at the
+framework level.
+
+### Pairs with
+
+- `architecture.md` § "Plugin installation (ZIP)" — the future
+  third-party install path is where filter-event surfacing
+  becomes user-visible value.
+- `.claude/rules/code-hygiene.md` § "Error handling
+  architecture" — filters are not errors, the same way a 401
+  is not a 500. Keep the channels separate.

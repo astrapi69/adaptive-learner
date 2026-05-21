@@ -63,6 +63,19 @@ tiebreaker.
   specs + 16 viewport pins. Expand to cover: multi-cycle
   session, conversation import+analysis, backup/restore,
   sync pairing, export.
+- [ ] **PLUGINFORGE-LIFECYCLE-UI-01**: Consume v0.9.0
+  lifecycle visibility in Settings → Plugins. The installed
+  manager exposes `inspect_plugin(name)` (returns a
+  `PluginInspection` with `activated_at` + `last_config_change`
+  + `source`) plus the `on_plugin_activated` /
+  `on_plugin_deactivated` / `on_config_refreshed` event hooks
+  — none of them are surfaced in the UI yet. Estimated scope:
+  add `GET /api/plugins/inspect/{name}` (~20 LOC + 1 happy-path
+  test), render the two timestamps + source on each plugin row
+  in the Settings panel (~40 LOC frontend). Trigger: the next
+  time the Settings → Plugins panel gets touched for any
+  reason, fold this in. Audit
+  ([docs/audits/pluginforge-0.9.0-adoption-signal-2026-05-21.md](audits/pluginforge-0.9.0-adoption-signal-2026-05-21.md)).
 
 ## P4 — Future / SaaS
 
