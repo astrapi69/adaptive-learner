@@ -3167,3 +3167,89 @@ select:focus {
 [data-theme="dark"] .rich-text-prosemirror .hljs-attr {
     color: #a5b4fc;
 }
+
+/* --- Gamification (Phase 29A) ------------------------------------ */
+
+.xp-widget {
+    background: var(--bg-elevated, #f8fafc);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.xp-widget--empty {
+    text-align: center;
+    color: var(--text-muted, #94a3b8);
+}
+.xp-widget__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.9rem;
+}
+.xp-widget__level {
+    font-weight: 600;
+    color: var(--accent);
+}
+.xp-widget__total {
+    color: var(--text-muted, #64748b);
+}
+.xp-widget__bar {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--border, #e2e8f0);
+    overflow: hidden;
+}
+.xp-widget__bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+    transition: width 600ms ease-out;
+}
+.xp-widget__footer {
+    font-size: 0.8rem;
+    color: var(--text-muted, #64748b);
+}
+
+.xp-notification {
+    position: fixed;
+    top: 80px;
+    right: 16px;
+    z-index: 1000;
+    background: var(--accent);
+    color: var(--accent-fg);
+    padding: 10px 16px;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: xp-rise 0.5s ease-out;
+}
+.xp-notification__amount {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+.xp-notification__level-up {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+@keyframes xp-rise {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .xp-notification {
+        animation: none;
+    }
+    .xp-widget__bar-fill {
+        transition: none;
+    }
+}

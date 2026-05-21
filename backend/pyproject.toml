@@ -29,6 +29,7 @@ adaptive-learner-plugin-ai-gemini = {path = "../plugins/adaptive-learner-plugin-
 adaptive-learner-plugin-session = {path = "../plugins/adaptive-learner-plugin-session", develop = true}
 adaptive-learner-plugin-tracking = {path = "../plugins/adaptive-learner-plugin-tracking", develop = true}
 adaptive-learner-plugin-tools = {path = "../plugins/adaptive-learner-plugin-tools", develop = true}
+adaptive-learner-plugin-gamification = {path = "../plugins/adaptive-learner-plugin-gamification", develop = true}
 aiosqlite = "^0.22.1"
 
 [tool.poetry.group.dev.dependencies]

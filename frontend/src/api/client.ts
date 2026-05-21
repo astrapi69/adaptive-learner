@@ -735,6 +735,25 @@ export const api = {
             ),
     },
 
+    // --- Gamification plugin (v1.16.0 / Phase 29) ------------------------
+
+    gamification: {
+        getState: (userId: string) =>
+            apiCall<import("../storage/types").XPState>(
+                `/plugins/gamification/xp/${encodeURIComponent(userId)}`,
+            ),
+        awardAssessment: (userId: string) =>
+            apiCall<import("../storage/types").XPAwardResult>(
+                `/plugins/gamification/xp/${encodeURIComponent(userId)}/award-assessment`,
+                {method: "POST", body: {}},
+            ),
+        awardImport: (userId: string) =>
+            apiCall<import("../storage/types").XPAwardResult>(
+                `/plugins/gamification/xp/${encodeURIComponent(userId)}/award-import`,
+                {method: "POST", body: {}},
+            ),
+    },
+
     // --- Imported conversations (v0.9.0 / Phase 12C) ---------------------
 
     imports: {

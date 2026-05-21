@@ -604,3 +604,15 @@ sync:
   unpaired: Cihaz ayrıldı.
   upload_qr: QR görüntüsü yükle
   upload_qr_hint: "Kamera yok mu? Masaüstündeki QR'ın ekran görüntüsünü çek ve yükle:"
+gamification:
+  card_xp: XP & Seviye
+  level: Seviye
+  xp: XP
+  xp_no_data: XP kazanmak için bir oturumu tamamla.
+  xp_to_next_level: "Bir sonraki seviye için {n} XP"
+  max_level: Maksimum seviyeye ulaşıldı
+  level_up: "Seviye atladın!"
+  reason_session_complete: Oturum tamamlandı
+  reason_assessment_complete: Değerlendirme tamamlandı
+  reason_conversation_imported: Konuşma içe aktarıldı
+  reason_flat: XP kazanıldı

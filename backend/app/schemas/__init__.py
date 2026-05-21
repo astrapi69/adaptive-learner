@@ -873,4 +873,39 @@ __all__ = [
     "TagOut",
     "ProjectSubjectOut",
     "ProjectTagOut",
+    # Gamification (Phase 29)
+    "UserXPOut",
+    "XPAwardOut",
 ]
+
+
+class UserXPOut(BaseModel):
+    """Per-user XP and level state (Phase 29A)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    total_xp: int
+    level: int
+    updated_at: datetime
+
+
+class XPAwardOut(BaseModel):
+    """Single XP-award event returned alongside the source action.
+
+    Not a persisted row — the breakdown is computed on the fly so
+    the frontend can render the ``+50 XP`` floating animation
+    without a second roundtrip. The persisted state is
+    :class:`UserXPOut`.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    xp_earned: int
+    xp_total: int
+    level: int
+    level_up: bool = False
+    breakdown: dict[str, int] = {}
+    multiplier: float = 1.0
+    reason: str = ""

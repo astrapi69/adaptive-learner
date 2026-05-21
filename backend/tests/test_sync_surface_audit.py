@@ -43,6 +43,8 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # v1.9.0 / Phase 22A: taxonomy.
         "subjects",
         "tags",
+        # v1.16.0 / Phase 29A: gamification XP singleton.
+        "user_xp",
     }
 )
 

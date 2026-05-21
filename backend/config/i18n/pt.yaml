@@ -606,3 +606,15 @@ sync:
   unpaired: Dispositivo despareado.
   upload_qr: Enviar imagem do QR
   upload_qr_hint: "Sem câmera? Tire um screenshot do QR do desktop e envie:"
+gamification:
+  card_xp: XP & Nível
+  level: Nível
+  xp: XP
+  xp_no_data: Conclua uma sessão para ganhar XP.
+  xp_to_next_level: "{n} XP até o próximo nível"
+  max_level: Nível máximo alcançado
+  level_up: "Subiu de nível!"
+  reason_session_complete: Sessão concluída
+  reason_assessment_complete: Avaliação concluída
+  reason_conversation_imported: Conversa importada
+  reason_flat: XP recebido

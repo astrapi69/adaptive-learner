@@ -167,4 +167,10 @@ export const apiStorage: IStorageService = {
         unassignTag: (projectId, tagId) =>
             api.projectTaxonomy.unassignTag(projectId, tagId),
     },
+
+    gamification: {
+        getState: (userId) => api.gamification.getState(userId),
+        awardAssessment: (userId) => api.gamification.awardAssessment(userId),
+        awardImport: (userId) => api.gamification.awardImport(userId),
+    },
 };

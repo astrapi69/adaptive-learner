@@ -346,14 +346,23 @@ def test_on_session_complete_hook_fires_tracking_subscriber(client: TestClient):
 
 
 def test_get_progress_summary_hook_dispatches(client: TestClient):
-    """List-mode dispatch: one plugin → one slice → one dict in
-    the results list."""
+    """List-mode dispatch: every subscriber contributes its
+    namespace slice. v1.16.0 added the gamification plugin as a
+    second subscriber, so the result list now has two entries —
+    one ``{tracking, step_evaluation}`` from tracking, one
+    ``{gamification}`` from gamification. Order is whatever
+    pluggy's hook-call dispatch settles on (subscriber-
+    registration order, not a stable contract); the assertion
+    finds the right slice in each result rather than relying on
+    index 0."""
     _, project_id = _make_user_and_project(client)
     _run_one_session(client, project_id)
     results = manager._pm.hook.get_progress_summary(project_id=project_id)
-    assert len(results) == 1
-    assert "tracking" in results[0]
-    assert results[0]["tracking"]["total_sessions"] == 1
+    assert len(results) == 2
+    tracking_slice = next(r for r in results if "tracking" in r)
+    assert tracking_slice["tracking"]["total_sessions"] == 1
+    gam_slice = next(r for r in results if "gamification" in r)
+    assert gam_slice["gamification"]["total_xp"] > 0
 
 
 # --- v0.5.0 / 8D step-evaluation namespace --------------------------------

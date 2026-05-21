@@ -140,6 +140,18 @@ export default function Assessment() {
             });
             setProfile(result);
             notify.success(t("toast.assessment_saved", "Profile saved."));
+            // v1.16.0 / Phase 29A — award 100 XP for completing
+            // the assessment. Errors are non-fatal: gamification
+            // is optional and must never block the save toast.
+            try {
+                const userId = readLearnerState().userId;
+                if (userId) {
+                    await getStorage().gamification.awardAssessment(userId);
+                }
+            } catch (xpErr) {
+                // eslint-disable-next-line no-console
+                console.warn("XP awardAssessment failed", xpErr);
+            }
         } catch (err) {
             const detail =
                 err instanceof ApiError ? err.detail : t("common.error");

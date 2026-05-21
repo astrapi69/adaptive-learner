@@ -24,6 +24,7 @@
 import type {EntityTable} from "dexie";
 
 import {calculateProfile, questionsForLang} from "./assessment";
+import {awardXPFlat, awardXPForSession, getXPState} from "./gamification";
 import {
     getDb,
     newId,
@@ -697,6 +698,25 @@ export const dexieStorage: IStorageService = {
             const commit = buildCommitFromSession(fresh, latestRating);
             if (commit) {
                 await db.progressCommits.add(commit);
+            }
+            // v1.16.0 / Phase 29A — mirror the backend's
+            // gamification ``on_session_complete``: award XP for
+            // the closed session. Errors MUST NOT break session
+            // end — log and continue.
+            const projectForXP = await db.learningProjects.get(fresh.project_id);
+            if (projectForXP) {
+                try {
+                    await awardXPForSession({
+                        userId: projectForXP.user_id,
+                        sessionId: fresh.id,
+                        method: fresh.method,
+                        cycleStep: fresh.cycle_step,
+                        cycleCount: 1,
+                    });
+                } catch (err) {
+                    // eslint-disable-next-line no-console
+                    console.warn("gamification.awardXPForSession failed", err);
+                }
             }
             // Auto-backup: bump the session counter and, if the
             // threshold is crossed, fire-and-forget a backup into
@@ -1661,5 +1681,13 @@ export const dexieStorage: IStorageService = {
             }
             await db.projectTags.delete(existing.id);
         },
+    },
+
+    gamification: {
+        getState: (userId) => getXPState(userId),
+        awardAssessment: (userId) =>
+            awardXPFlat(userId, 100, "assessment_complete"),
+        awardImport: (userId) =>
+            awardXPFlat(userId, 75, "conversation_imported"),
     },
 };

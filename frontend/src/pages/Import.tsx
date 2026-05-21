@@ -172,6 +172,17 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
             } else {
                 notify.success(t("import.analysis_ready", "Analysis ready."));
             }
+            // v1.16.0 / Phase 29A — flat 75 XP for a successful
+            // import + analysis. Non-fatal on error.
+            try {
+                const learner = readLearnerState();
+                if (learner.userId) {
+                    await getStorage().gamification.awardImport(learner.userId);
+                }
+            } catch (xpErr) {
+                // eslint-disable-next-line no-console
+                console.warn("XP awardImport failed", xpErr);
+            }
             return true;
         } catch (err) {
             const msg =

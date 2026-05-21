@@ -912,6 +912,44 @@ class ProjectTag(Base):
         return f"<ProjectTag project={self.project_id!r} tag={self.tag_id!r}>"
 
 
+# --- Gamification (Phase 29) -----------------------------------------------
+
+
+class UserXP(Base):
+    """Per-user XP and level singleton (Phase 29A).
+
+    One row per user (unique ``user_id``). XP accumulates over the
+    lifetime of the account; ``level`` is derived from ``total_xp``
+    via the exponential curve in
+    ``adaptive_learner_gamification.xp_service.compute_level``. The
+    column is denormalised so the dashboard can read it without
+    recomputing.
+
+    The gamification plugin owns the write path (
+    ``on_session_complete`` + the assessment / import earn hooks);
+    routes read from this table.
+    """
+
+    __tablename__ = "user_xp"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+        index=True,
+    )
+    total_xp: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    level: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return f"<UserXP user={self.user_id!r} xp={self.total_xp} level={self.level}>"
+
+
 __all__ = [
     "Base",
     "User",
@@ -934,4 +972,5 @@ __all__ = [
     "Tag",
     "ProjectSubject",
     "ProjectTag",
+    "UserXP",
 ]

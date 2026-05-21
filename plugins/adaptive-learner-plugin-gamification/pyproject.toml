@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "adaptive-learner-plugin-gamification"
+version = "1.15.0"
+description = "Adaptive Learner: XP, badges, and enhanced streaks (Phase 29)."
+authors = ["Asterios Raptis"]
+license = "MIT"
+packages = [{include = "adaptive_learner_gamification"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pluginforge = "^0.10.0"
+fastapi = "^0.136.0"
+pydantic = "^2.13.0"
+sqlalchemy = "^2.0.49"
+pyyaml = "^6.0"
+
+[tool.poetry.plugins."adaptive_learner.plugins"]
+gamification = "adaptive_learner_gamification.plugin:GamificationPlugin"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

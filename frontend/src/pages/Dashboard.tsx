@@ -10,10 +10,12 @@ import QuickStartButton from "../components/QuickStartButton";
 import SessionCounter from "../components/SessionCounter";
 import SpacedRecommendations from "../components/SpacedRecommendations";
 import ToolRecommendations from "../components/ToolRecommendations";
+import XPWidget from "../components/XPWidget";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
+import type {XPState} from "../storage/types";
 import type {
     LearningProfile,
     SpacedRecommendation,
@@ -44,6 +46,7 @@ export default function Dashboard() {
     const [summary, setSummary] = useState<TrackingSummary | null>(null);
     const [tools, setTools] = useState<ToolRecommendation[]>([]);
     const [spaced, setSpaced] = useState<SpacedRecommendation[]>([]);
+    const [xpState, setXpState] = useState<XPState | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     /**
@@ -65,14 +68,21 @@ export default function Dashboard() {
         setLoading(true);
         setError(null);
         const storage = getStorage();
+        const xpPromise = userId
+            ? storage.gamification.getState(userId)
+            : Promise.resolve<XPState | null>(null);
         Promise.allSettled([
             storage.assessment.profile(projectId),
             storage.tracking.progress(projectId),
             storage.tools.recommendations(projectId, lang),
             storage.tools.spaced(projectId, lang),
+            xpPromise,
         ]).then((results) => {
             if (cancelled) return;
-            const [profileR, summaryR, toolsR, spacedR] = results;
+            const [profileR, summaryR, toolsR, spacedR, xpR] = results;
+            if (xpR.status === "fulfilled") {
+                setXpState(xpR.value);
+            }
 
             if (profileR.status === "fulfilled") {
                 setProfile(profileR.value);
@@ -150,6 +160,13 @@ export default function Dashboard() {
                         {t("dashboard.card_counter", "Sessions")}
                     </h2>
                     <SessionCounter summary={summary} />
+                </article>
+
+                <article className="dashboard-card">
+                    <h2 className="dashboard-card-title">
+                        {t("gamification.card_xp", "XP & Level")}
+                    </h2>
+                    <XPWidget state={xpState} />
                 </article>
 
                 <article className="dashboard-card dashboard-card-wide">

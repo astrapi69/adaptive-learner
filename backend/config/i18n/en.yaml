@@ -593,3 +593,15 @@ sync:
   unpaired: Device unpaired.
   upload_qr: Upload QR image
   upload_qr_hint: "No camera? Take a screenshot of the desktop's QR and upload it:"
+gamification:
+  card_xp: XP & Level
+  level: Level
+  xp: XP
+  xp_no_data: Complete a session to earn XP.
+  xp_to_next_level: "{n} XP to next level"
+  max_level: Max level reached
+  level_up: Level up!
+  reason_session_complete: Session completed
+  reason_assessment_complete: Assessment completed
+  reason_conversation_imported: Conversation imported
+  reason_flat: XP awarded

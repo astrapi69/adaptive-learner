@@ -326,6 +326,20 @@ const SYNC_TABLES: SyncTable[] = [
         timestampField: "created_at",
         appendOnly: true,
     },
+    {
+        // v1.16.0 / Phase 29A — per-user XP / level singleton.
+        // MUTABLE: ``total_xp`` advances on every session-end,
+        // assessment, import. Conflict resolution by
+        // ``updated_at`` picks the device that accumulated more
+        // recently (the user's true cross-device total can drift
+        // briefly during offline use; the last-write wins is
+        // intentional — exact cross-device merging of XP isn't
+        // useful and rewards the wrong behaviour).
+        name: "user_xp",
+        dexieTable: "userXp",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
 ];
 
 const APPEND_ONLY_TABLES = new Set(

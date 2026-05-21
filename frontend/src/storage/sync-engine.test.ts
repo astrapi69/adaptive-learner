@@ -868,6 +868,8 @@ describe("SYNC_TABLES — surface audit", () => {
         "tags",
         "project_subjects",
         "project_tags",
+        // v1.16.0 / Phase 29A — gamification XP singleton.
+        "user_xp",
     ];
 
     it("covers every domain Dexie table", () => {

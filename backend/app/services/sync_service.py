@@ -62,6 +62,7 @@ from app.models import (
     Tag,
     User,
     UserSettings,
+    UserXP,
 )
 
 logger = logging.getLogger(__name__)
@@ -414,6 +415,19 @@ TABLES: dict[str, TableSpec] = {
         append_only=True,
         order=22,
         scope="via_project",
+    ),
+    # v1.16.0 / Phase 29A — per-user XP and level singleton.
+    # One row per user (unique ``user_id``); MUTABLE because the
+    # XP counter advances on every session-end / assessment /
+    # import. Conflict resolution by ``updated_at`` timestamp
+    # picks the device that accumulated more recently.
+    "user_xp": TableSpec(
+        model=UserXP,
+        columns=("id", "user_id", "total_xp", "level", "updated_at"),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=23,
+        scope="direct",
     ),
 }
 

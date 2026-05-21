@@ -1,0 +1,15 @@
+# Gamification plugin settings (Phase 29).
+#
+# All gamification is OPTIONAL. The user can disable the entire
+# plugin via Settings > Plugins, or fine-tune the behaviour via
+# the Settings > Gamification panel. The frontend flags below are
+# defaults that newly-created UserSettings rows inherit.
+settings:
+  # Award notifications (the floating "+50 XP" toast).
+  xp_notifications: true
+  # Badge-earned toast.
+  badge_notifications: true
+  # Exclude weekends from streak counting (Phase 29C).
+  streak_weekend_mode: false
+  # Daily session target shown on the dashboard.
+  daily_session_goal: 1

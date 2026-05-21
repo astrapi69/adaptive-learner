@@ -598,3 +598,15 @@ sync:
   unpaired: デバイスのペアリングを解除しました。
   upload_qr: QR 画像をアップロード
   upload_qr_hint: "カメラがありませんか? デスクトップの QR のスクリーンショットを撮ってアップロードしてください:"
+gamification:
+  card_xp: XPとレベル
+  level: レベル
+  xp: XP
+  xp_no_data: セッションを完了してXPを獲得しましょう。
+  xp_to_next_level: "次のレベルまで {n} XP"
+  max_level: 最大レベルに到達しました
+  level_up: レベルアップ！
+  reason_session_complete: セッション完了
+  reason_assessment_complete: アセスメント完了
+  reason_conversation_imported: 会話をインポートしました
+  reason_flat: XPを獲得

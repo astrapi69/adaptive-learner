@@ -234,6 +234,23 @@ export interface ProjectTagRow {
     created_at: string;
 }
 
+/**
+ * Per-user XP / level singleton (Phase 29A / v1.16.0).
+ *
+ * One row per user (unique ``user_id``). Mirrors the backend
+ * ``user_xp`` table (Alembic 0009). Both storage backings
+ * (ApiStorage + DexieStorage) maintain the row through the
+ * gamification namespace; the Dexie path runs the XP calculator
+ * client-side because there is no backend in github-pages mode.
+ */
+export interface UserXPRow {
+    id: string;
+    user_id: string;
+    total_xp: number;
+    level: number;
+    updated_at: string;
+}
+
 export interface StepEvaluationRow {
     id: string;
     session_id: string;
@@ -291,6 +308,7 @@ export class AdaptiveLearnerDB extends Dexie {
     tags!: EntityTable<TagRow, "id">;
     projectSubjects!: EntityTable<ProjectSubjectRow, "id">;
     projectTags!: EntityTable<ProjectTagRow, "id">;
+    userXp!: EntityTable<UserXPRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -409,6 +427,11 @@ export class AdaptiveLearnerDB extends Dexie {
             tags: "id, user_id, name, created_at",
             projectSubjects: "id, project_id, subject_id, created_at",
             projectTags: "id, project_id, tag_id, created_at",
+        });
+        // Schema v7 — v1.16.0 Phase 29A: gamification XP singleton.
+        // One new table; clean add, no data migration needed.
+        this.version(7).stores({
+            userXp: "id, user_id, updated_at",
         });
     }
 }

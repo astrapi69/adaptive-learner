@@ -265,6 +265,47 @@ export interface IProjectTaxonomyNamespace {
     unassignTag(projectId: string, tagId: string): Promise<void>;
 }
 
+/**
+ * Per-user XP / level state (Phase 29A / v1.16.0).
+ *
+ * ``state`` returns the current ``UserXP`` row plus derived
+ * ``xp_into_level`` + ``xp_to_next_level`` so the dashboard
+ * progress bar doesn't have to recompute the threshold curve.
+ *
+ * ``awardSession`` is invoked from session-end in Dexie mode
+ * only — in API mode the gamification plugin's hook handles
+ * the award server-side. Returns the breakdown so the floating
+ * "+50 XP" animation can render without a follow-up roundtrip.
+ *
+ * ``awardAssessment`` / ``awardImport`` are flat earns from
+ * the assessment + import flows; both modes call them.
+ */
+export interface XPState {
+    user_id: string;
+    total_xp: number;
+    level: number;
+    xp_into_level: number;
+    xp_to_next_level: number;
+    next_level_threshold: number;
+    updated_at?: string;
+}
+
+export interface XPAwardResult {
+    xp_earned: number;
+    xp_total: number;
+    level: number;
+    level_up: boolean;
+    multiplier: number;
+    breakdown: Record<string, number>;
+    reason: string;
+}
+
+export interface IGamificationNamespace {
+    getState(userId: string): Promise<XPState>;
+    awardAssessment(userId: string): Promise<XPAwardResult>;
+    awardImport(userId: string): Promise<XPAwardResult>;
+}
+
 export interface IImportsNamespace {
     list(userId: string): Promise<ImportedConversation[]>;
     create(
@@ -327,4 +368,5 @@ export interface IStorageService {
     subjects: ISubjectsNamespace;
     tags: ITagsNamespace;
     projectTaxonomy: IProjectTaxonomyNamespace;
+    gamification: IGamificationNamespace;
 }
