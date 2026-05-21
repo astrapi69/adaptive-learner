@@ -84,8 +84,17 @@ tiebreaker.
   streaming chat, and model picker surface. Full suite at
   release: 36 tests across 16 spec files; runtime 2.6 min.
   Two scope-limit notes filed for follow-up
-  (``28C-DETAIL-GET-MOCK``, ``28J-SETTINGS-RACE``). See
-  ``changelog/releases/v1.15.0.md``.
+  (``28C-DETAIL-GET-MOCK`` -> BL-24, ``28J-SETTINGS-RACE``
+  -> BL-23). See ``changelog/releases/v1.15.0.md``.
+- [ ] **BL-23**: Fix get_or_create_settings race condition —
+  concurrent GET requests cause UNIQUE constraint violation
+  under React strict-mode double-effect. Add
+  SELECT ... FOR UPDATE or use INSERT ... ON CONFLICT DO
+  NOTHING.
+- [ ] **BL-24**: Fix page.route GET matcher for
+  /api/imports/{id} in E2E — current workaround uses
+  waitForRequest on POST instead of asserting detail-page
+  cards.
 - [ ] **PLUGINFORGE-LIFECYCLE-UI-01**: Consume v0.9.0
   lifecycle visibility in Settings → Plugins. The installed
   manager exposes `inspect_plugin(name)` (returns a
