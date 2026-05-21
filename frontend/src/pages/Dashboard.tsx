@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+import DashboardFilterBar from "../components/DashboardFilterBar";
 import MethodDistribution from "../components/MethodDistribution";
 import ProfileRadar from "../components/ProfileRadar";
 import ProgressTimeline from "../components/ProgressTimeline";
@@ -45,6 +46,14 @@ export default function Dashboard() {
     const [spaced, setSpaced] = useState<SpacedRecommendation[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    /**
+     * Bumped whenever the DashboardFilterBar swaps the active
+     * projectId. Triggers the main fetch effect to re-run
+     * against the new project's data.
+     */
+    const [activeProjectVersion, setActiveProjectVersion] = useState(0);
+
+    const userId = readLearnerState().userId;
 
     useEffect(() => {
         const projectId = readLearnerState().projectId;
@@ -94,7 +103,7 @@ export default function Dashboard() {
         return () => {
             cancelled = true;
         };
-    }, [lang, navigate]);
+    }, [lang, navigate, activeProjectVersion]);
 
     if (loading) {
         return (
@@ -114,6 +123,13 @@ export default function Dashboard() {
             <QuickStartButton
                 suggestedMethod={profile?.dominant_method ?? null}
             />
+
+            {userId && (
+                <DashboardFilterBar
+                    userId={userId}
+                    onSelectProject={() => setActiveProjectVersion((v) => v + 1)}
+                />
+            )}
 
             <section className="dashboard-grid">
                 <article className="dashboard-card">
