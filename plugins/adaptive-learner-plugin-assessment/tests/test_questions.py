@@ -86,15 +86,12 @@ def test_questions_for_lang_en_returns_english_text():
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
 
 
-@pytest.mark.parametrize("lang", ["ja", "ko", ""])
+@pytest.mark.parametrize("lang", ["ko", ""])
 def test_unknown_language_falls_back_to_en(lang: str):
     """Languages outside the translated set fall back to EN by
-    mapping to text_en. v1.13.0 adds PT/TR/JA to the supported
-    set, but "ko" + any other unmapped code still falls back.
-    (TR and JA are removed from this list as their packs land in
-    26B and 26C; for the duration of Phase 26 the in-flight
-    languages are exercised by ``test_phase26_language_returns_translated_text``.)
-    """
+    mapping to text_en. v1.13.0 / Phase 26 adds PT + TR + JA to
+    the supported set, leaving "ko" + any other unmapped code
+    as the canonical fallback cases."""
     out = questions_for_lang(lang)
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
 
@@ -114,13 +111,12 @@ def test_phase6c_language_returns_translated_text(lang: str):
             assert a_out["text"] != a_src["text_en"]
 
 
-@pytest.mark.parametrize("lang", ["pt", "tr"])
+@pytest.mark.parametrize("lang", ["pt", "tr", "ja"])
 def test_phase26_language_returns_translated_text(lang: str):
     """v1.13.0 / Phase 26 ships PT/TR/JA translations for every
     one of the 12 questions and their answers. Same contract as
     the v0.3.0 ES/FR/EL pack: per-language output must NOT equal
-    the EN text. PT lands in 26A; TR in 26B; JA joins as 26C
-    lands."""
+    the EN text."""
     out = questions_for_lang(lang)
     assert out[0]["text"] != QUESTIONS[0]["text_en"]
     for q_out, q_src in zip(out, QUESTIONS):
@@ -128,12 +124,12 @@ def test_phase26_language_returns_translated_text(lang: str):
             assert a_out["text"] != a_src["text_en"]
 
 
-@pytest.mark.parametrize("lang", ["ja", "ko"])
+@pytest.mark.parametrize("lang", ["ko"])
 def test_unsupported_languages_still_fall_back_to_en(lang: str):
     """Languages that don't have a full translation pack remain on
     the EN-fallback path (the resolver's _LANG_TO_KEY map says
-    so). After 26C lands this parametrize will shrink to just
-    "ko" + any other hypothetical unmapped code."""
+    so). After 26C landed, "ko" is the only unmapped code we
+    pin against."""
     out = questions_for_lang(lang)
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
 
