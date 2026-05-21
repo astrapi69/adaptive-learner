@@ -2744,3 +2744,276 @@ select:focus {
     color: var(--success, #10b981);
     word-break: break-all;
 }
+
+/* === Rich-text editor (Phase 27 — v1.14.0) ============================ */
+
+/* Container around the TipTap editor. Lives between the
+ * EditorToolbar (above) and any character-count read-out
+ * (below). Uses CSS variables so the active theme's surface,
+ * border and accent flow through unchanged. */
+.rich-text-editor {
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius-md, 8px);
+    background: var(--surface, #ffffff);
+    overflow: hidden;
+}
+
+.rich-text-editor .rich-text-prosemirror {
+    padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+    min-height: var(--rich-text-min-height, 140px);
+    color: var(--fg, #1a1a1a);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    outline: none;
+}
+
+.rich-text-editor .rich-text-prosemirror:focus-visible {
+    outline: 2px solid var(--accent, #6366f1);
+    outline-offset: -2px;
+}
+
+/* ProseMirror node typography — matches the rest of the UI
+ * but uses tighter margins inside the editor so short notes
+ * (the common case) do not look sparse. */
+.rich-text-prosemirror p {
+    margin: 0 0 0.6em 0;
+}
+.rich-text-prosemirror p:last-child {
+    margin-bottom: 0;
+}
+.rich-text-prosemirror h1,
+.rich-text-prosemirror h2,
+.rich-text-prosemirror h3 {
+    line-height: 1.25;
+    margin: 1em 0 0.4em 0;
+}
+.rich-text-prosemirror h1:first-child,
+.rich-text-prosemirror h2:first-child,
+.rich-text-prosemirror h3:first-child {
+    margin-top: 0;
+}
+.rich-text-prosemirror h1 { font-size: 1.5rem; }
+.rich-text-prosemirror h2 { font-size: 1.25rem; }
+.rich-text-prosemirror h3 { font-size: 1.1rem; }
+
+.rich-text-prosemirror ul,
+.rich-text-prosemirror ol {
+    padding-left: 1.4em;
+    margin: 0 0 0.6em 0;
+}
+.rich-text-prosemirror ul[data-type="taskList"] {
+    list-style: none;
+    padding-left: 0;
+}
+.rich-text-prosemirror ul[data-type="taskList"] li {
+    display: flex;
+    gap: 0.5em;
+    align-items: flex-start;
+}
+.rich-text-prosemirror ul[data-type="taskList"] li > label {
+    flex-shrink: 0;
+    user-select: none;
+    margin-top: 0.2em;
+}
+.rich-text-prosemirror ul[data-type="taskList"] li > div {
+    flex: 1;
+}
+
+.rich-text-prosemirror blockquote {
+    border-left: 3px solid var(--border-strong, #cbd5e1);
+    color: var(--fg-muted, #64748b);
+    margin: 0.4em 0;
+    padding: 0.1em 0 0.1em 0.8em;
+}
+
+.rich-text-prosemirror code {
+    background: var(--surface-2, #f8fafc);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 3px;
+    padding: 0 0.25em;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+}
+
+.rich-text-prosemirror pre {
+    background: var(--surface-2, #f8fafc);
+    color: var(--fg, #1a1a1a);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: var(--radius-sm, 4px);
+    padding: 0.75em 1em;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    margin: 0.4em 0;
+}
+.rich-text-prosemirror pre code {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+.rich-text-prosemirror a {
+    color: var(--accent, #6366f1);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.rich-text-prosemirror mark {
+    background: rgba(245, 158, 11, 0.3);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 0.1em;
+}
+
+.rich-text-prosemirror img {
+    max-width: 100%;
+    height: auto;
+}
+
+.rich-text-prosemirror table {
+    border-collapse: collapse;
+    margin: 0.4em 0;
+    table-layout: fixed;
+    width: 100%;
+}
+.rich-text-prosemirror th,
+.rich-text-prosemirror td {
+    border: 1px solid var(--border, #e2e8f0);
+    padding: 0.3em 0.5em;
+    vertical-align: top;
+}
+.rich-text-prosemirror th {
+    background: var(--surface-2, #f8fafc);
+    font-weight: 600;
+}
+
+/* Placeholder text shown when the editor is empty (TipTap
+ * Placeholder extension). Renders via the
+ * ``[data-placeholder]`` attribute on the first empty
+ * paragraph. */
+.rich-text-prosemirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    color: var(--fg-muted, #64748b);
+    pointer-events: none;
+    height: 0;
+}
+
+.rich-text-prosemirror .has-focus {
+    border-radius: 2px;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, #6366f1) 20%, transparent);
+}
+
+/* === Editor toolbar ==================================================== */
+
+.editor-toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-bottom: none;
+    border-radius: var(--radius-md, 8px) var(--radius-md, 8px) 0 0;
+    background: var(--surface-2, #f8fafc);
+    scrollbar-width: thin;
+}
+
+/* When the toolbar sits directly above the editor, the
+ * editor's top corners should be square so the two surfaces
+ * read as one component. */
+.editor-toolbar + .rich-text-editor {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.editor-toolbar-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.editor-toolbar-divider {
+    display: inline-block;
+    width: 1px;
+    height: 22px;
+    background: var(--border-strong, #cbd5e1);
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+.editor-toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 6px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm, 4px);
+    background: transparent;
+    color: var(--fg, #1a1a1a);
+    cursor: pointer;
+    font-size: 0.875rem;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.editor-toolbar-btn:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--fg, #1a1a1a) 8%, transparent);
+}
+
+.editor-toolbar-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.editor-toolbar-btn.is-active {
+    background: color-mix(in srgb, var(--accent, #6366f1) 15%, transparent);
+    border-color: color-mix(in srgb, var(--accent, #6366f1) 30%, transparent);
+    color: var(--accent, #6366f1);
+}
+
+.editor-toolbar-btn:focus-visible {
+    outline: 2px solid var(--accent, #6366f1);
+    outline-offset: 1px;
+}
+
+.editor-toolbar-highlight-swatch {
+    background: rgba(245, 158, 11, 0.4);
+    padding: 0 0.25em;
+    border-radius: 2px;
+}
+
+/* Mobile: bump the touch target. The toolbar already
+ * scrolls horizontally so the row never wraps. */
+@media (max-width: 768px) {
+    .editor-toolbar-btn {
+        min-width: 36px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}
+
+/* Character-count read-out (Phase 27 — printed below the
+ * editor by callers that want to show it; not enforced
+ * by RichTextEditor itself). */
+.editor-character-count {
+    display: flex;
+    justify-content: flex-end;
+    color: var(--fg-muted, #64748b);
+    font-size: 0.75rem;
+    padding: 4px 8px;
+}
+
+/* Dark theme overrides — the CSS variable cascade already
+ * flips most surfaces, but the highlight swatch and
+ * code-block need explicit dark adjustments. */
+[data-theme="dark"] .rich-text-prosemirror mark {
+    background: rgba(245, 158, 11, 0.35);
+}
+[data-theme="dark"] .editor-toolbar-highlight-swatch {
+    background: rgba(245, 158, 11, 0.45);
+}
