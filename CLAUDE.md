@@ -12,7 +12,38 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.13.0):** v1.12.0 plus Phase 26 —
+- **Current state (v1.14.0):** v1.13.0 plus Phase 27 —
+  **Rich-Text Notes with TipTap.** Session-rating notes,
+  curriculum descriptions and lesson content all graduate
+  from plain ``<textarea>`` to a TipTap-based
+  ``RichTextEditor`` (bold / italic / underline / strike,
+  headings 1-3, bullet + ordered + task lists, blockquote,
+  inline code, code blocks with lowlight syntax highlighting,
+  links, text alignment, highlight, undo / redo,
+  character-count read-out). Mobile-friendly toolbar
+  (horizontal scroll, 40 px touch targets). 23 TipTap deps
+  pinned to Bibliogon-aligned versions plus ``lowlight 3.3.0``.
+  Code blocks gain a per-block native ``<select>`` language
+  picker (11 grammars: bash / css / html / java / javascript
+  / json / markdown / python / sql / typescript / yaml) and
+  a copy-to-clipboard button via a React NodeView. Past
+  session notes render on the Progress page via the same
+  ``RichTextEditor`` in read-only mode. ``ProgressCommitOut``
+  gains optional ``notes: str | None``; the tracking plugin's
+  ``/commits`` endpoint LEFT JOINs ``session_ratings`` to
+  populate it. Persistence stays on the existing TEXT columns
+  — legacy plain text and serialised TipTap JSON co-exist
+  via ``content-utils`` (``parseEditorContent`` /
+  ``serializeEditorContent`` / ``isLegacyPlainText``).
+  Markdown / PDF exports honour the new shape via
+  ``frontend/src/lib/tiptap-to-markdown.ts``
+  (``renderStoredContent`` walks the doc tree and emits GFM
+  Markdown; plain text passes through verbatim). Backend
+  tests 682 → 684 + frontend 921 → 1002 at release time;
+  BL-12 closed. Math formulas deferred (no ``katex``
+  dependency).
+
+- **State (v1.13.0):** v1.12.0 plus Phase 26 —
   **PT/TR/JA Native Translations.** The three EN-passthrough
   catalogs (``backend/config/i18n/{pt,tr,ja}.yaml``) are now
   fully translated: Brazilian Portuguese (informal "você"

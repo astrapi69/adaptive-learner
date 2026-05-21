@@ -61,10 +61,19 @@ tiebreaker.
   `changelog/releases/v1.13.0.md`. Each YAML carries a
   "AI-translated, pending native speaker review" header
   comment; native review remains an open follow-up.
-- [ ] **BL-12**: Rich-text in notes (TipTap) — Add TipTap
-  editor for SessionNotes and Curriculum/Lesson descriptions.
-  Code snippets, math formulas, highlighting. Large
-  dependency (TipTap ecosystem).
+- [x] **BL-12**: Rich-text in notes (TipTap) — Shipped in
+  v1.14.0 / Phase 27. RatingDialog session notes,
+  Curriculum.description and Lesson.content all use a TipTap
+  ``RichTextEditor`` (bold / italic / underline / strike,
+  headings, lists incl. task lists, blockquote, links,
+  highlight, text-align, undo/redo). Code blocks gain
+  lowlight-backed syntax highlighting with a per-block
+  language picker + copy button (11 languages: bash, css,
+  html, java, javascript, json, markdown, python, sql,
+  typescript, yaml). Markdown / PDF exports honour the new
+  rich-text shape via ``lib/tiptap-to-markdown.ts``. Math
+  formulas explicitly deferred — re-file when triggered.
+  See ``changelog/releases/v1.14.0.md``.
 - [ ] **BL-13**: E2E Playwright expansion — Current: 7 smoke
   specs + 16 viewport pins. Expand to cover: multi-cycle
   session, conversation import+analysis, backup/restore,
