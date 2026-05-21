@@ -742,4 +742,89 @@ describe("SyncEngine.sync", () => {
         // pulled row carries undefined for the Dexie-local
         // column; consumers default to 0 in their UI math.
     });
+
+    // --- v1.8.0 / Phase 21D: imported_conversations + ---------
+    // ---           imported_messages in sync surface ---------
+
+    it("pushes imported_conversations + imported_messages to the backend", async () => {
+        setupConfig();
+        const db = getDb();
+        await db.users.put({
+            id: "u-aster",
+            name: "A",
+            email: null,
+            language: "en",
+            created_at: "2026-01-01T00:00:00.000Z",
+            updated_at: "2026-01-01T00:00:00.000Z",
+        });
+        await db.importedConversations.put({
+            id: "c-1",
+            user_id: "u-aster",
+            project_id: null,
+            source: "chatgpt",
+            title: "Test conversation",
+            message_count: 2,
+            imported_at: "2026-05-20T09:00:00.000Z",
+            analyzed: false,
+            analysis_result: null,
+            topic_tag: null,
+            model: null,
+            source_created_at: null,
+        });
+        await db.importedMessages.bulkPut([
+            {
+                id: "m-1",
+                conversation_id: "c-1",
+                role: "user",
+                content: "Hello",
+                timestamp: null,
+                order_index: 0,
+                created_at: "2026-05-20T09:00:00.000Z",
+            },
+            {
+                id: "m-2",
+                conversation_id: "c-1",
+                role: "assistant",
+                content: "Hi there",
+                timestamp: null,
+                order_index: 1,
+                created_at: "2026-05-20T09:00:00.000Z",
+            },
+        ]);
+
+        const pushedRecords: Record<string, unknown[]> = {};
+        const fetch = makeMockFetch({
+            "/api/sync/push": (body: unknown) => {
+                const b = body as {table: string; records: unknown[]};
+                pushedRecords[b.table] = b.records;
+                return {accepted: [], conflicts: [], skipped: []};
+            },
+            "/api/sync/pull": () => ({records: {}}),
+        });
+        const engine = new SyncEngine({fetch});
+        await engine.sync();
+
+        const conversations = pushedRecords.imported_conversations as Array<
+            Record<string, unknown>
+        >;
+        expect(conversations).toHaveLength(1);
+        expect(conversations[0]).toMatchObject({
+            id: "c-1",
+            source: "chatgpt",
+            title: "Test conversation",
+            imported_at: "2026-05-20T09:00:00.000Z",
+        });
+        const messages = pushedRecords.imported_messages as Array<
+            Record<string, unknown>
+        >;
+        expect(messages).toHaveLength(2);
+        // Per-message created_at lets the backend filter on
+        // "since last sync"; both messages share the parent's
+        // imported_at because they were bulk-created.
+        expect(messages[0]).toMatchObject({
+            id: "m-1",
+            conversation_id: "c-1",
+            created_at: "2026-05-20T09:00:00.000Z",
+        });
+    });
 });

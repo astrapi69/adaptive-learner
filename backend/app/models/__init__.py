@@ -762,6 +762,12 @@ class ImportedMessage(Base):
     content: Mapped[str] = mapped_column(Text, nullable=False)
     timestamp: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     order_index: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # v1.8.0 / Phase 21D — per-row timestamp for sync surface
+    # inclusion. Backfilled from parent conversation's
+    # ``imported_at`` via Alembic 0007.
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
 
     conversation: Mapped[ImportedConversation] = relationship(back_populates="messages")
 

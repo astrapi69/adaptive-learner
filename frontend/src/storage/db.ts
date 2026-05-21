@@ -192,6 +192,14 @@ export interface ImportedMessageRow {
     content: string;
     timestamp: string | null;
     order_index: number;
+    /**
+     * v1.8.0 / Phase 21D — per-row timestamp for sync surface
+     * inclusion. Matches the backend column added in Alembic
+     * migration 0007; back-filled from the parent
+     * ``ImportedConversationRow.imported_at`` via the Dexie v5
+     * schema upgrade.
+     */
+    created_at: string;
 }
 
 export interface StepEvaluationRow {
@@ -318,6 +326,43 @@ export class AdaptiveLearnerDB extends Dexie {
                     .modify((row: Record<string, unknown>) => {
                         if (!("updated_at" in row)) {
                             row.updated_at = row.created_at;
+                        }
+                    });
+            });
+        // Schema v5 — v1.8.0 Phase 21D: imported_messages joins
+        // the sync surface. ``created_at`` is added per row;
+        // existing rows get ``created_at = parent.imported_at``
+        // (matches the back-fill in Alembic 0007). The index
+        // switches to ``created_at`` so the sync filter can
+        // page through "since last sync" efficiently.
+        this.version(5)
+            .stores({
+                importedMessages: "id, conversation_id, created_at",
+            })
+            .upgrade(async (tx) => {
+                const conversations = await tx
+                    .table("importedConversations")
+                    .toArray();
+                const importedAt = new Map<string, string>(
+                    conversations.map((c: Record<string, unknown>) => [
+                        String(c.id),
+                        String(c.imported_at),
+                    ]),
+                );
+                await tx
+                    .table("importedMessages")
+                    .toCollection()
+                    .modify((row: Record<string, unknown>) => {
+                        if (!("created_at" in row)) {
+                            const parentTs = importedAt.get(
+                                String(row.conversation_id),
+                            );
+                            // Fall back to "now" if the parent
+                            // somehow doesn't exist (orphan
+                            // message; shouldn't happen but
+                            // guards the migration anyway).
+                            row.created_at =
+                                parentTs ?? new Date().toISOString();
                         }
                     });
             });

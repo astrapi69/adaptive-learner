@@ -278,6 +278,24 @@ const SYNC_TABLES: SyncTable[] = [
         timestampField: "evaluated_at",
         appendOnly: true,
     },
+    {
+        // v1.8.0 / Phase 21D — chat-history surface joins sync.
+        // APPEND-ONLY: ``analyzed`` + ``analysis_result`` are NOT
+        // updated post-sync; each device runs its own analysis
+        // (the AI roundtrip is expensive and per-device).
+        name: "imported_conversations",
+        dexieTable: "importedConversations",
+        timestampField: "imported_at",
+        appendOnly: true,
+    },
+    {
+        // v1.8.0 / Phase 21D — paired with imported_conversations.
+        // ``created_at`` added via Dexie v5 + Alembic 0007.
+        name: "imported_messages",
+        dexieTable: "importedMessages",
+        timestampField: "created_at",
+        appendOnly: true,
+    },
 ];
 
 const APPEND_ONLY_TABLES = new Set(

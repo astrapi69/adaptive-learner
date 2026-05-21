@@ -75,6 +75,8 @@ def to_detail_dict(row: ImportedConversation) -> dict[str, object]:
             "content": m.content,
             "timestamp": m.timestamp,
             "order_index": m.order_index,
+            # v1.8.0 / Phase 21D — added for sync surface inclusion.
+            "created_at": m.created_at,
         }
         for m in row.messages
     ]

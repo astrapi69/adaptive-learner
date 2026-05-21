@@ -621,6 +621,8 @@ class ImportedMessageOut(BaseModel):
     content: str
     timestamp: datetime | None = None
     order_index: int
+    # v1.8.0 / Phase 21D — sync timestamp.
+    created_at: datetime
 
 
 class ImportedConversationCreate(BaseModel):

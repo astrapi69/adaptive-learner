@@ -17,10 +17,12 @@ Two record classes:
     * Local updated since ``since`` AND remote also updated → CONFLICT.
       The conflict bundle goes back to the client for resolution.
 
-ImportedConversation / ImportedMessage are out of scope for the
-v1.0.0 sync surface: they were added in v0.9.0 and a clean sync
-shape for the analysis JSON blob is a separate design question.
-A future v1.x can extend ``TABLES`` to include them.
+v1.8.0 / Phase 21D — ImportedConversation + ImportedMessage are
+now in the sync surface. Both are classified APPEND-ONLY (the
+``analysis_result`` blob and ``analyzed`` flag are NOT updated
+post-sync; each device runs its own analysis). The Pydantic
+schema serialises ``analysis_result`` to/from JSON text at the
+storage boundary; the wire shape stays a dict.
 
 Identity model: the pairing flow has already aligned the
 ``user_id`` on both devices. Every sync call carries the same
@@ -41,6 +43,8 @@ from sqlalchemy.orm import Session
 from app.exceptions import NotFoundError, ValidationError
 from app.models import (
     Curriculum,
+    ImportedConversation,
+    ImportedMessage,
     LearningProfile,
     LearningProject,
     LearningSession,
@@ -311,6 +315,54 @@ TABLES: dict[str, TableSpec] = {
         order=16,
         scope="via_session",
     ),
+    # v1.8.0 / Phase 21D — imported conversations and their
+    # transcript messages join the sync surface. Both are
+    # APPEND-ONLY: ``analysis_result`` and ``analyzed`` are NOT
+    # synced after the row's initial push so each device runs
+    # its own analysis (the spec's intentional trade-off; the
+    # heavy AI call shouldn't ride the wire).
+    "imported_conversations": TableSpec(
+        model=ImportedConversation,
+        columns=(
+            "id",
+            "user_id",
+            "project_id",
+            "source",
+            "title",
+            "message_count",
+            "imported_at",
+            "analyzed",
+            "analysis_result",
+            "topic_tag",
+            "model",
+            "source_created_at",
+        ),
+        timestamp_field="imported_at",
+        append_only=True,
+        order=17,
+        scope="direct",
+    ),
+    "imported_messages": TableSpec(
+        model=ImportedMessage,
+        columns=(
+            "id",
+            "conversation_id",
+            "role",
+            "content",
+            "timestamp",
+            "order_index",
+            "created_at",
+        ),
+        timestamp_field="created_at",
+        append_only=True,
+        order=18,
+        # Scoped via the parent ImportedConversation -> user.
+        # The existing scope helpers handle ``via_session`` /
+        # ``via_project`` / ``via_curriculum``; ``via_imported_conversation``
+        # is the new scope; the user-filter helper below adds
+        # the corresponding JOIN.
+        scope="via_imported_conversation",
+    ),
 }
 
 APPEND_ONLY_TABLES = {name for name, spec in TABLES.items() if spec.append_only}
@@ -515,12 +567,14 @@ def push_records(
 def _scoped_query(db: Session, table: str, user_id: str):
     """Build a per-user-scoped query for one table.
 
-    Handles the three nesting paths:
+    Handles the nesting paths:
       - ``"self"``  →  WHERE users.id = :user_id
       - ``"direct"`` →  WHERE table.user_id = :user_id
       - ``"via_curriculum"`` →  JOIN curriculums ON ...
       - ``"via_project"`` →  JOIN learning_projects ON ...
       - ``"via_session"`` →  JOIN learning_sessions ON learning_projects ON ...
+      - ``"via_imported_conversation"`` →  JOIN imported_conversations
+        ON ... (v1.8.0 / Phase 21D, for ``imported_messages``)
     """
     spec = TABLES[table]
     model = spec.model
@@ -543,6 +597,11 @@ def _scoped_query(db: Session, table: str, user_id: str):
             .join(LearningProject, LearningProject.id == LearningSession.project_id)
             .filter(LearningProject.user_id == user_id)
         )
+    elif spec.scope == "via_imported_conversation":
+        query = query.join(
+            ImportedConversation,
+            ImportedConversation.id == model.conversation_id,
+        ).filter(ImportedConversation.user_id == user_id)
     return query
 
 

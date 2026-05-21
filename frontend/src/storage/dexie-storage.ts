@@ -1085,6 +1085,12 @@ export const dexieStorage: IStorageService = {
                 source_created_at: body.source_created_at ?? null,
             };
             await db.importedConversations.put(conv);
+            // v1.8.0 / Phase 21D — every imported message now
+            // carries ``created_at`` for sync timestamp filtering.
+            // We use the parent's ``imported_at`` so every
+            // message of a single import shares the same wall-
+            // clock moment (matches the backend's Alembic 0007
+            // back-fill).
             const messageRows: ImportedMessageRow[] = body.messages.map(
                 (msg, idx) => ({
                     id: newId(),
@@ -1093,6 +1099,7 @@ export const dexieStorage: IStorageService = {
                     content: msg.content,
                     timestamp: msg.timestamp ?? null,
                     order_index: idx,
+                    created_at: conv.imported_at,
                 }),
             );
             await db.importedMessages.bulkPut(messageRows);
