@@ -1707,10 +1707,40 @@ select:focus {
   display: flex;
   gap: var(--space-1);
   opacity: 0.6;
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
 }
 
 .topic-row:hover .topic-actions {
   opacity: 1;
+}
+
+/* v1.10.0 / Phase 23D — iOS-style swipe-to-reveal on touch
+ * devices. Desktop layout unchanged. */
+.topic-row {
+  touch-action: pan-y;
+}
+
+@media (max-width: 768px) {
+  .topic-row .topic-actions {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(20px);
+  }
+  .topic-row[data-actions-revealed="true"] .topic-actions {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+  .topic-row[data-actions-revealed="true"] {
+    background: var(--surface);
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topic-actions {
+    transition: none;
+  }
 }
 
 .topic-action-btn {

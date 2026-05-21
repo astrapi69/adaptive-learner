@@ -1,7 +1,9 @@
 import {useState} from "react";
 
 import {useI18n} from "../hooks/useI18n";
+import {useSwipe} from "../hooks/useSwipe";
 import type {TypedTreeNode} from "../lib/tree";
+import {readGesturePref} from "../lib/gesturePref";
 import type {LearningTopic} from "../types";
 
 interface TopicNodeProps {
@@ -25,13 +27,41 @@ export default function TopicNode({
 }: TopicNodeProps) {
     const {t} = useI18n();
     const [expanded, setExpanded] = useState(true);
+    const [actionsRevealed, setActionsRevealed] = useState(false);
     const value = node.value;
     const children = node.children();
     const hasChildren = children.length > 0;
 
+    // v1.10.0 / Phase 23D — iOS-style swipe-to-reveal on touch.
+    // The actions are hidden by default on mobile (CSS media
+    // query); swipe-left exposes them, swipe-right collapses
+    // back. Desktop keeps the current always-visible behavior.
+    const {ref: swipeRef} = useSwipe<HTMLDivElement>({
+        enabled: readGesturePref(),
+        onSwipeLeft: () => setActionsRevealed(true),
+        onSwipeRight: () => setActionsRevealed(false),
+    });
+
     return (
         <li className="topic-node" data-testid={`topic-node-${value.id}`}>
-            <div className="topic-row">
+            <div
+                ref={swipeRef}
+                className="topic-row"
+                data-actions-revealed={actionsRevealed ? "true" : "false"}
+                data-testid={`topic-row-${value.id}`}
+                onClick={(e) => {
+                    // Tap-anywhere-else (not on an action button)
+                    // collapses the revealed state. Mirrors iOS
+                    // Mail behaviour.
+                    const target = e.target as HTMLElement;
+                    if (
+                        actionsRevealed &&
+                        !target.closest(".topic-action-btn")
+                    ) {
+                        setActionsRevealed(false);
+                    }
+                }}
+            >
                 {hasChildren ? (
                     <button
                         type="button"
