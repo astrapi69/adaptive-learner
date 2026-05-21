@@ -40,10 +40,11 @@ tiebreaker.
   Also covered Session CycleProgress peek + Curriculum
   topic swipe-to-reveal + Settings toggle (broader scope
   than the original BL-08).
-- [ ] **BL-09**: Provider model picker via API — Currently
+- [x] **BL-09**: Provider model picker via API — Currently
   static datalist suggestions. Fetch available models from
   provider API (Anthropic `/v1/models`, OpenAI `/v1/models`).
-  Show real model list in Settings.
+  Show real model list in Settings. Closed in v1.11.0 /
+  Phase 24 — see `changelog/releases/v1.11.0.md`.
 - [ ] **BL-10**: Backup compare UI — Side-by-side comparison
   of two backup files. Show diff per table (added, changed,
   removed records). Useful for auditing before restore.

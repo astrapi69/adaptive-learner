@@ -27,7 +27,8 @@ Current state: **v1.8.0 released (Phase 21 / Sync Gaps: step_evaluations + sessi
 | 20 | v1.7.0 | QR-Code Camera Scan for Sync Pairing — html5-qrcode dep, QRScanner + QRScannerModal + QRImageUpload, viewfinder overlay with reduced-motion, haptic feedback, file-upload fallback. BL-04 closed. |
 | 21 | v1.8.0 | Sync Gaps: step_evaluations + session_notes + i18n + imported_conversations + imported_messages — Dexie schema v3+v4+v5 aligning with backend Alembic 0006+0007, 62 sync.* keys to YAML catalogs, full 16-table sync surface audit, PluginForge ^0.7.0→^0.8.0. BL-05 + BL-06 closed. |
 | 22 | v1.9.0 | Global Subjects and Tags — 4 new tables (subjects, tags, project_subjects, project_tags) join the sync surface (20 tables); pre-seeded subjects.yaml with 80+ nodes across 8 categories; SubjectBrowser + TagManager + ProjectTaxonomy + DashboardFilterBar components; Onboarding subject suggester + tag input. PluginForge ^0.8.0→^0.9.0 (hard-filter transition active). BL-07 closed. |
-| **23** | **v1.10.0** | **Swipe Gestures on Assessment + Session — useSwipe hook (horizontal-only, velocity-gated, reduced-motion-aware), Assessment swipe+keyboard navigation with one-shot hint, CycleProgress swipe-to-peek overlay, TopicNode iOS-style swipe-to-reveal actions, Settings → Interface gesture toggle. BL-08 closed.** |
+| 23 | v1.10.0 | Swipe Gestures on Assessment + Session — useSwipe hook (horizontal-only, velocity-gated, reduced-motion-aware), Assessment swipe+keyboard navigation with one-shot hint, CycleProgress swipe-to-peek overlay, TopicNode iOS-style swipe-to-reveal actions, Settings → Interface gesture toggle. BL-08 closed. |
+| **24** | **v1.11.0** | **Provider Model Picker via API — model_discovery service (Anthropic + OpenAI + Gemini /v1/models with 1-hour cache + chat-only filtering), GET /settings/{id}/available-models endpoint, browser-direct model-discovery for Dexie mode (sessionStorage cache), Settings ModelPicker dropdown component with Recommended/All grouping + offline fallback, model validation on session start (warn + fallback to default when override not in cached list), model name + context-window in session header. BL-09 closed.** |
 
 Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list. Per-release notes live in [changelog/releases/](../changelog/releases/).
 
@@ -35,14 +36,12 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phase (planned)
 
-**Phase 24 candidates** — current top of backlog (see [backlog.md](backlog.md) for full P0..P5 view):
+**Phase 25 candidates** — current top of backlog (see [backlog.md](backlog.md) for full P0..P5 view):
 
 - **BL-03 — pluginforge-app-template repo.** Export a
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Validates PluginForge ecosystem (3 repos: framework,
   template, app).
-- **BL-09 — Provider model picker via API.** Anthropic +
-  OpenAI ``/v1/models``.
 - **BL-10 — Backup compare UI.** Side-by-side diff per table.
 
 ---
@@ -59,7 +58,6 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## P2 — Medium value, medium effort
 
-- **BL-09 — Provider model picker via API** (Anthropic + OpenAI `/v1/models`)
 - **BL-10 — Backup compare UI** (side-by-side diff per table)
 
 ---

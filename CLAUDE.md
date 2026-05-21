@@ -12,7 +12,40 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.10.0):** v1.9.0 plus Phase 23 —
+- **Current state (v1.11.0):** v1.10.0 plus Phase 24 —
+  **Provider Model Picker via API.** New
+  ``backend/app/services/model_discovery.py`` calls each
+  provider's official ``/models`` endpoint (Anthropic +
+  OpenAI + Gemini) via httpx with a 5 s timeout; results are
+  cached in-memory per
+  ``(provider, sha256(api_key)[:16])`` for 1 hour. Chat-only
+  filter drops embedding / audio / DALL·E / moderation /
+  deprecated-completion / vision-only models. New endpoint
+  ``GET /api/settings/{user_id}/available-models?provider=…``
+  decrypts the stored key and forwards. Browser-direct
+  ``storage/model-discovery.ts`` mirrors the same shape for
+  Dexie mode, cached in sessionStorage with the same TTL.
+  ``ISettingsNamespace.getAvailableModels`` joined the
+  storage contract; both backings implement it. New
+  ``components/ModelPicker.tsx`` replaces the v0.4.0
+  ``<datalist>`` input with a searchable dropdown grouped
+  Recommended / All, showing human name + raw id +
+  context-window badge; loading + error + no-key + offline-
+  fallback states all rendered; default-model hint when no
+  override is set. Session ``POST /message`` validates the
+  chosen model against ``model_discovery.get_cached_models``;
+  if a cache is populated and the model is not in it, the
+  route falls back to ``DEFAULT_MODELS[provider]`` and
+  surfaces a new ``model_warning`` field (separate from the
+  fatal ``ai_error`` field). Session header now reads
+  ``"<Provider>: <Model name>"`` with full id +
+  context-window in the tooltip; resolution uses the
+  available-models cache for the human name. 14 new i18n
+  keys (``settings.model_picker_*``) — DE+EN translated, 6
+  EN-passthrough. Backend 671 + session-plugin 199 +
+  frontend 886 at release time. BL-09 closed.
+
+- **State (v1.10.0):** v1.9.0 plus Phase 23 —
   **Swipe Gestures on Assessment + Session.** New
   ``hooks/useSwipe.ts`` is a reusable horizontal-swipe hook
   with a passive-touch contract: ``|dx| > |dy|`` to never
