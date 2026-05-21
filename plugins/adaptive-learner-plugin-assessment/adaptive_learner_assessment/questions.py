@@ -41,9 +41,10 @@ METHODS: tuple[str, ...] = (
 
 class Answer(TypedDict, total=False):
     """Per-answer payload. ``text_es`` / ``text_fr`` / ``text_el``
-    are optional: questions added before Phase 5F's translation
-    pass don't carry them. ``_text_key`` falls back to EN for any
-    language that doesn't have a translation registered yet.
+    were added in Phase 5F; ``text_pt`` / ``text_tr`` / ``text_ja``
+    in Phase 26 / v1.13.0. All translation fields are optional —
+    ``_text_key`` falls back to EN for any language that doesn't
+    have a translation registered yet.
     """
 
     id: str
@@ -52,6 +53,9 @@ class Answer(TypedDict, total=False):
     text_es: str
     text_fr: str
     text_el: str
+    text_pt: str
+    text_tr: str
+    text_ja: str
     weights: dict[str, float]
 
 
@@ -69,6 +73,9 @@ class Question(TypedDict, total=False):
     text_es: str
     text_fr: str
     text_el: str
+    text_pt: str
+    text_tr: str
+    text_ja: str
     answers: list[Answer]
 
 
@@ -81,6 +88,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Como abordas un tema nuevo?",
         "text_fr": "Comment abordes-tu un nouveau sujet ?",
         "text_el": "Πώς προσεγγίζεις ένα νέο θέμα;",
+        "text_pt": "Como você aborda um tema novo?",
         "answers": [
             {
                 "id": "a",
@@ -89,6 +97,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Primero leo las reglas y la teoria.",
                 "text_fr": "Je lis d'abord les regles et la theorie.",
                 "text_el": "Διαβάζω πρώτα τους κανόνες και τη θεωρία.",
+                "text_pt": "Primeiro leio as regras e a teoria.",
                 "weights": {"deductive": 1.0},
             },
             {
@@ -98,6 +107,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Miro ejemplos y deduzco la regla por mi mismo.",
                 "text_fr": "Je regarde des exemples et je deduis la regle moi-meme.",
                 "text_el": "Κοιτάω παραδείγματα και βγάζω μόνος τον κανόνα.",
+                "text_pt": "Olho exemplos e deduzo a regra eu mesmo.",
                 "weights": {"inductive": 1.0},
             },
             {
@@ -107,6 +117,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Pruebo algo y aprendo de los errores.",
                 "text_fr": "J'essaie quelque chose et j'apprends de mes erreurs.",
                 "text_el": "Δοκιμάζω κάτι και μαθαίνω από τα λάθη.",
+                "text_pt": "Tento alguma coisa e aprendo com os erros.",
                 "weights": {"error_based": 1.0},
             },
             {
@@ -116,6 +127,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Lo hablo con alguien que ya lo conoce.",
                 "text_fr": "J'en discute avec quelqu'un qui le connait deja.",
                 "text_el": "Το συζητάω με κάποιον που ήδη το ξέρει.",
+                "text_pt": "Converso com alguém que já conhece o assunto.",
                 "weights": {"dialogic": 1.0},
             },
         ],
@@ -128,6 +140,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Cuando cometes un error, que te ayuda mas?",
         "text_fr": "Quand tu fais une erreur, qu'est-ce qui t'aide le plus ?",
         "text_el": "Όταν κάνεις λάθος, τι σε βοηθάει περισσότερο;",
+        "text_pt": "Quando você comete um erro, o que mais te ajuda?",
         "answers": [
             {
                 "id": "a",
@@ -136,6 +149,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Una explicacion clara de por que estuvo mal.",
                 "text_fr": "Une explication claire de pourquoi c'etait faux.",
                 "text_el": "Μια ξεκάθαρη εξήγηση γιατί ήταν λάθος.",
+                "text_pt": "Uma explicação clara de por que estava errado.",
                 "weights": {"deductive": 0.5, "error_based": 0.5},
             },
             {
@@ -145,6 +159,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Repasar el error y corregirlo.",
                 "text_fr": "Reprendre l'erreur et la corriger.",
                 "text_el": "Να ξαναπεράσω το λάθος και να το διορθώσω.",
+                "text_pt": "Refazer o erro e corrigi-lo.",
                 "weights": {"error_based": 1.0},
             },
             {
@@ -154,6 +169,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Hablar con alguien que pueda contextualizar el error.",
                 "text_fr": "Parler a quelqu'un qui peut replacer l'erreur dans son contexte.",
                 "text_el": "Να μιλήσω με κάποιον που μπορεί να βάλει το λάθος σε πλαίσιο.",
+                "text_pt": "Falar com alguém que consegue colocar o erro em contexto.",
                 "weights": {"dialogic": 1.0},
             },
             {
@@ -163,6 +179,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Ver un ejemplo donde se hizo bien.",
                 "text_fr": "Voir un exemple ou cela a ete fait correctement.",
                 "text_el": "Να δω ένα παράδειγμα όπου έγινε σωστά.",
+                "text_pt": "Ver um exemplo em que foi feito corretamente.",
                 "weights": {"inductive": 0.7, "contextual": 0.3},
             },
         ],
@@ -174,6 +191,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Que ritmo de aprendizaje te resulta adecuado?",
         "text_fr": "Quel rythme d'apprentissage te convient ?",
         "text_el": "Ποιος ρυθμός μάθησης σου φαίνεται σωστός;",
+        "text_pt": "Que ritmo de aprendizado parece o ideal?",
         "answers": [
             {
                 "id": "a",
@@ -182,6 +200,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Estructurado y predecible.",
                 "text_fr": "Structure et previsible.",
                 "text_el": "Δομημένος και προβλέψιμος.",
+                "text_pt": "Estruturado e previsível.",
                 "weights": {"deductive": 1.0},
             },
             {
@@ -191,6 +210,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Rapido y exploratorio.",
                 "text_fr": "Rapide et exploratoire.",
                 "text_el": "Γρήγορος και εξερευνητικός.",
+                "text_pt": "Rápido e exploratório.",
                 "weights": {"error_based": 0.5, "inductive": 0.5},
             },
             {
@@ -200,6 +220,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Adaptable a mi energia diaria.",
                 "text_fr": "Adaptable a mon energie du jour.",
                 "text_el": "Προσαρμόσιμος στην ημερήσια ενέργειά μου.",
+                "text_pt": "Adaptável à minha energia do dia.",
                 "weights": {"ai_adaptive": 1.0},
             },
             {
@@ -209,6 +230,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Conversacional, como se vaya dando.",
                 "text_fr": "Conversationnel, au fil de l'echange.",
                 "text_el": "Συνομιλιακός, όπως κι αν εξελιχθεί.",
+                "text_pt": "Conversacional, conforme se desenrolar.",
                 "weights": {"dialogic": 1.0},
             },
         ],
@@ -221,6 +243,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Donde aprendes mejor?",
         "text_fr": "Ou apprends-tu le mieux ?",
         "text_el": "Πού μαθαίνεις καλύτερα;",
+        "text_pt": "Onde você aprende melhor?",
         "answers": [
             {
                 "id": "a",
@@ -229,6 +252,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "A solas, con un libro o apuntes.",
                 "text_fr": "Seul, avec un livre ou des notes.",
                 "text_el": "Μόνος, με βιβλίο ή σημειώσεις.",
+                "text_pt": "Sozinho, com um livro ou apostila.",
                 "weights": {"deductive": 1.0},
             },
             {
@@ -238,6 +262,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "En una situacion de aplicacion real.",
                 "text_fr": "Dans un contexte d'application reel.",
                 "text_el": "Σε ένα πραγματικό πλαίσιο εφαρμογής.",
+                "text_pt": "Em uma situação de aplicação real.",
                 "weights": {"contextual": 1.0},
             },
             {
@@ -247,6 +272,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "En conversacion con otros.",
                 "text_fr": "En conversation avec d'autres.",
                 "text_el": "Σε συζήτηση με άλλους.",
+                "text_pt": "Em conversa com outras pessoas.",
                 "weights": {"dialogic": 1.0},
             },
             {
@@ -256,6 +282,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "En un proyecto que me interesa.",
                 "text_fr": "Sur un projet qui m'interesse.",
                 "text_el": "Σε ένα έργο που με ενδιαφέρει.",
+                "text_pt": "Em um projeto que me interessa.",
                 "weights": {"contextual": 0.7, "error_based": 0.3},
             },
         ],
@@ -268,6 +295,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Como recuerdas mejor las cosas nuevas?",
         "text_fr": "Comment te souviens-tu le mieux de nouvelles choses ?",
         "text_el": "Πώς θυμάσαι καλύτερα νέα πράγματα;",
+        "text_pt": "Como você se lembra melhor de coisas novas?",
         "answers": [
             {
                 "id": "a",
@@ -276,6 +304,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Mediante repeticion y reglas fijas.",
                 "text_fr": "Par la repetition et des regles fixes.",
                 "text_el": "Μέσα από επανάληψη και σταθερούς κανόνες.",
+                "text_pt": "Pela repetição e regras fixas.",
                 "weights": {"deductive": 1.0},
             },
             {
@@ -285,6 +314,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Mediante la aplicacion real en la vida cotidiana.",
                 "text_fr": "Par l'application reelle au quotidien.",
                 "text_el": "Μέσα από πραγματική εφαρμογή στην καθημερινότητα.",
+                "text_pt": "Pela aplicação real no dia a dia.",
                 "weights": {"contextual": 1.0},
             },
             {
@@ -294,6 +324,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "A traves de multiples errores y correcciones propias.",
                 "text_fr": "A travers plusieurs erreurs et corrections personnelles.",
                 "text_el": "Μέσα από πολλά προσωπικά λάθη και διορθώσεις.",
+                "text_pt": "Por vários erros pessoais e correções.",
                 "weights": {"error_based": 1.0},
             },
             {
@@ -303,6 +334,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Discutiendo y explicando a otros.",
                 "text_fr": "En discutant et en expliquant aux autres.",
                 "text_el": "Μέσα από συζήτηση και εξήγηση σε άλλους.",
+                "text_pt": "Discutindo e explicando para outras pessoas.",
                 "weights": {"dialogic": 1.0},
             },
         ],
@@ -315,6 +347,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Que recurso te ayuda mas?",
         "text_fr": "Quelle ressource t'aide le plus ?",
         "text_el": "Ποιος πόρος σε βοηθάει περισσότερο;",
+        "text_pt": "Qual recurso te ajuda mais?",
         "answers": [
             {
                 "id": "a",
@@ -323,6 +356,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Un libro de texto bien estructurado.",
                 "text_fr": "Un manuel bien structure.",
                 "text_el": "Ένα καλά δομημένο εγχειρίδιο.",
+                "text_pt": "Um livro-texto bem estruturado.",
                 "weights": {"deductive": 1.0},
             },
             {
@@ -332,6 +366,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Tutoriales o videos basados en ejemplos.",
                 "text_fr": "Des tutoriels ou videos centres sur des exemples.",
                 "text_el": "Tutorial ή βίντεο βασισμένα σε παραδείγματα.",
+                "text_pt": "Tutoriais ou vídeos baseados em exemplos.",
                 "weights": {"inductive": 1.0},
             },
             {
@@ -341,6 +376,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Proyectos reales o estudios de caso.",
                 "text_fr": "Des projets reels ou des etudes de cas.",
                 "text_el": "Πραγματικά έργα ή μελέτες περίπτωσης.",
+                "text_pt": "Projetos reais ou estudos de caso.",
                 "weights": {"contextual": 1.0},
             },
             {
@@ -350,6 +386,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Una persona con experiencia que me guie.",
                 "text_fr": "Une personne experimentee qui me guide.",
                 "text_el": "Ένα έμπειρο άτομο που με καθοδηγεί.",
+                "text_pt": "Uma pessoa experiente que me oriente.",
                 "weights": {"dialogic": 1.0},
             },
         ],
@@ -361,6 +398,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Como reaccionas ante la incertidumbre al aprender?",
         "text_fr": "Comment reagis-tu a l'incertitude en apprenant ?",
         "text_el": "Πώς αντιδράς στην αβεβαιότητα κατά τη μάθηση;",
+        "text_pt": "Como você reage à incerteza ao aprender?",
         "answers": [
             {
                 "id": "a",
@@ -369,6 +407,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Busco una fuente clara que la resuelva.",
                 "text_fr": "Je cherche une source sans ambiguite qui la resout.",
                 "text_el": "Βρίσκω μια ξεκάθαρη πηγή που τη λύνει.",
+                "text_pt": "Procuro uma fonte clara que resolva a dúvida.",
                 "weights": {"deductive": 1.0},
             },
             {
@@ -378,6 +417,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Le pregunto a alguien de confianza.",
                 "text_fr": "Je demande a quelqu'un de confiance.",
                 "text_el": "Ρωτάω κάποιον που εμπιστεύομαι.",
+                "text_pt": "Pergunto a alguém de confiança.",
                 "weights": {"dialogic": 1.0},
             },
             {
@@ -387,6 +427,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Sigo intentando y voy resolviendo sobre la marcha.",
                 "text_fr": "Je continue d'essayer et je demele en chemin.",
                 "text_el": "Συνεχίζω να προσπαθώ και ξεδιαλύνω καθώς προχωράω.",
+                "text_pt": "Continuo tentando e vou resolvendo no caminho.",
                 "weights": {"error_based": 1.0},
             },
             {
@@ -396,6 +437,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Dejo que un asistente de IA me guie.",
                 "text_fr": "Je laisse un assistant IA me guider.",
                 "text_el": "Αφήνω έναν βοηθό AI να με καθοδηγήσει.",
+                "text_pt": "Deixo um assistente de IA me guiar.",
                 "weights": {"ai_adaptive": 1.0},
             },
         ],
@@ -408,6 +450,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Cuando se te queda realmente el material?",
         "text_fr": "Quand la matiere s'ancre-t-elle vraiment chez toi ?",
         "text_el": "Πότε εμπεδώνεται πραγματικά η ύλη για σένα;",
+        "text_pt": "Quando o conteúdo realmente fica para você?",
         "answers": [
             {
                 "id": "a",
@@ -416,6 +459,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Cuando lo he aplicado en un contexto real.",
                 "text_fr": "Quand je l'ai applique dans un contexte reel.",
                 "text_el": "Όταν το έχω εφαρμόσει σε πραγματικό πλαίσιο.",
+                "text_pt": "Quando apliquei em um contexto real.",
                 "weights": {"contextual": 1.0},
             },
             {
@@ -425,6 +469,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Cuando puedo abstraer la regla con claridad.",
                 "text_fr": "Quand je peux abstraire la regle proprement.",
                 "text_el": "Όταν μπορώ να αφαιρέσω καθαρά τον κανόνα.",
+                "text_pt": "Quando consigo abstrair a regra com clareza.",
                 "weights": {"deductive": 0.5, "inductive": 0.5},
             },
             {
@@ -434,6 +479,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Cuando se lo he explicado a alguien.",
                 "text_fr": "Quand je l'ai explique a quelqu'un.",
                 "text_el": "Όταν το έχω εξηγήσει σε κάποιον.",
+                "text_pt": "Quando expliquei para alguém.",
                 "weights": {"dialogic": 1.0},
             },
             {
@@ -443,6 +489,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Cuando he cometido y corregido suficientes errores.",
                 "text_fr": "Quand j'ai fait et corrige assez d'erreurs.",
                 "text_el": "Όταν έχω κάνει και διορθώσει αρκετά λάθη.",
+                "text_pt": "Quando cometi e corrigi erros o suficiente.",
                 "weights": {"error_based": 1.0},
             },
         ],
@@ -454,6 +501,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Quien prefieres que defina tu programa de aprendizaje?",
         "text_fr": "Qui preferes-tu pour fixer ton programme d'apprentissage ?",
         "text_el": "Ποιος προτιμάς να καθορίζει το πρόγραμμα μάθησής σου;",
+        "text_pt": "Quem você prefere que defina o seu programa de aprendizado?",
         "answers": [
             {
                 "id": "a",
@@ -462,6 +510,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Yo, sobre un plan claro.",
                 "text_fr": "Moi-meme, avec un plan clair.",
                 "text_el": "Εγώ ο ίδιος, με ξεκάθαρο πλάνο.",
+                "text_pt": "Eu mesmo, seguindo um plano claro.",
                 "weights": {"deductive": 1.0},
             },
             {
@@ -471,6 +520,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Un mentor o coach.",
                 "text_fr": "Un mentor ou coach.",
                 "text_el": "Ένας μέντορας ή coach.",
+                "text_pt": "Um mentor ou coach.",
                 "weights": {"dialogic": 1.0},
             },
             {
@@ -480,6 +530,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Una IA que incorpore mi progreso.",
                 "text_fr": "Une IA qui integre ma progression.",
                 "text_el": "Μια AI που ενσωματώνει την πρόοδό μου.",
+                "text_pt": "Uma IA que incorpora o meu progresso.",
                 "weights": {"ai_adaptive": 1.0},
             },
             {
@@ -489,6 +540,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "El tema en si — sigo mis propias preguntas.",
                 "text_fr": "Le sujet lui-meme — je suis mes propres questions.",
                 "text_el": "Το ίδιο το θέμα — ακολουθώ τις δικές μου ερωτήσεις.",
+                "text_pt": "O próprio tema — sigo as minhas próprias perguntas.",
                 "weights": {"inductive": 0.5, "contextual": 0.5},
             },
         ],
@@ -500,6 +552,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Cuando quieres feedback?",
         "text_fr": "Quand veux-tu un retour ?",
         "text_el": "Πότε θέλεις ανατροφοδότηση;",
+        "text_pt": "Quando você quer feedback?",
         "answers": [
             {
                 "id": "a",
@@ -508,6 +561,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Inmediatamente despues de cada paso.",
                 "text_fr": "Immediatement apres chaque etape.",
                 "text_el": "Αμέσως μετά από κάθε βήμα.",
+                "text_pt": "Imediatamente após cada passo.",
                 "weights": {"error_based": 0.7, "dialogic": 0.3},
             },
             {
@@ -517,6 +571,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Al final de una unidad completada.",
                 "text_fr": "A la fin d'une unite terminee.",
                 "text_el": "Στο τέλος μιας ολοκληρωμένης ενότητας.",
+                "text_pt": "Ao final de uma unidade concluída.",
                 "weights": {"deductive": 1.0},
             },
             {
@@ -526,6 +581,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Cuando lo pido explicitamente.",
                 "text_fr": "Quand je le demande explicitement.",
                 "text_el": "Όταν το ζητήσω ρητά.",
+                "text_pt": "Quando eu pedir explicitamente.",
                 "weights": {"inductive": 0.5, "ai_adaptive": 0.5},
             },
             {
@@ -535,6 +591,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "En conversacion, ida y vuelta.",
                 "text_fr": "En conversation, dans un va-et-vient.",
                 "text_el": "Σε συζήτηση, πέρα-δώθε.",
+                "text_pt": "Em conversa, indo e voltando.",
                 "weights": {"dialogic": 1.0},
             },
         ],
@@ -546,6 +603,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Que opinas de las herramientas de IA al aprender?",
         "text_fr": "Que penses-tu des outils d'IA pour apprendre ?",
         "text_el": "Πώς νιώθεις για τα εργαλεία AI στη μάθηση;",
+        "text_pt": "O que você acha de ferramentas de IA ao aprender?",
         "answers": [
             {
                 "id": "a",
@@ -554,6 +612,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Las uso como mi principal compañero.",
                 "text_fr": "Je les utilise comme mon compagnon principal.",
                 "text_el": "Τα χρησιμοποιώ ως κύριο συνοδό.",
+                "text_pt": "Uso como meu principal companheiro.",
                 "weights": {"ai_adaptive": 1.0},
             },
             {
@@ -563,6 +622,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "De forma selectiva — cuando tengo preguntas concretas.",
                 "text_fr": "De maniere selective — quand j'ai des questions precises.",
                 "text_el": "Επιλεκτικά — όταν έχω συγκεκριμένες ερωτήσεις.",
+                "text_pt": "De forma seletiva — quando tenho dúvidas específicas.",
                 "weights": {"ai_adaptive": 0.5, "inductive": 0.5},
             },
             {
@@ -572,6 +632,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Pocas veces; confio mas en libros y personas.",
                 "text_fr": "Rarement ; je fais davantage confiance aux livres et aux personnes.",
                 "text_el": "Σπάνια· εμπιστεύομαι περισσότερο τα βιβλία και τους ανθρώπους.",
+                "text_pt": "Raramente; confio mais em livros e pessoas.",
                 "weights": {"deductive": 0.5, "dialogic": 0.5},
             },
             {
@@ -581,6 +642,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Solo despues de haberlo intentado sin ellas primero.",
                 "text_fr": "Seulement apres avoir essaye sans elles d'abord.",
                 "text_el": "Μόνο αφού πρώτα δοκιμάσω χωρίς αυτά.",
+                "text_pt": "Só depois de ter tentado sem elas primeiro.",
                 "weights": {"error_based": 0.7, "contextual": 0.3},
             },
         ],
@@ -593,6 +655,7 @@ QUESTIONS: list[Question] = [
         "text_es": "Como respondes ante material que no te entra?",
         "text_fr": "Comment reagis-tu face a une matiere qui ne passe pas ?",
         "text_el": "Πώς αντιδράς σε ύλη που δεν κουμπώνει;",
+        "text_pt": "Como você reage a um conteúdo que simplesmente não engata?",
         "answers": [
             {
                 "id": "a",
@@ -601,6 +664,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Vuelvo a la teoria y leo con mas atencion.",
                 "text_fr": "Je retourne a la theorie et je lis plus attentivement.",
                 "text_el": "Επιστρέφω στη θεωρία και διαβάζω πιο προσεκτικά.",
+                "text_pt": "Volto à teoria e leio com mais atenção.",
                 "weights": {"deductive": 1.0},
             },
             {
@@ -610,6 +674,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Busco mas ejemplos de la practica real.",
                 "text_fr": "Je cherche plus d'exemples de la pratique reelle.",
                 "text_el": "Ψάχνω περισσότερα παραδείγματα από την πραγματική πράξη.",
+                "text_pt": "Procuro mais exemplos da prática real.",
                 "weights": {"inductive": 0.5, "contextual": 0.5},
             },
             {
@@ -619,6 +684,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Sigo intentando hasta que funciona — errores incluidos.",
                 "text_fr": "Je continue jusqu'a ce que cela fonctionne — erreurs comprises.",
                 "text_el": "Συνεχίζω να προσπαθώ μέχρι να πετύχει — με τα λάθη.",
+                "text_pt": "Continuo tentando até dar certo — com os erros junto.",
                 "weights": {"error_based": 1.0},
             },
             {
@@ -628,6 +694,7 @@ QUESTIONS: list[Question] = [
                 "text_es": "Dejo que una IA me sugiera el camino.",
                 "text_fr": "Je laisse une IA proposer le chemin.",
                 "text_el": "Αφήνω μια AI να προτείνει την πορεία.",
+                "text_pt": "Deixo uma IA sugerir o caminho.",
                 "weights": {"ai_adaptive": 1.0},
             },
         ],
@@ -641,16 +708,20 @@ _LANG_TO_KEY: dict[str, str] = {
     "es": "text_es",
     "fr": "text_fr",
     "el": "text_el",
+    # v1.13.0 / Phase 26 — PT/TR/JA full translations.
+    "pt": "text_pt",
+    "tr": "text_tr",
+    "ja": "text_ja",
 }
 
 
 def _text_key(lang: str) -> str:
     """Map a UI language code to the in-file translation key.
 
-    v0.2.0 ships DE + EN + ES + FR + EL. Any code that doesn't
-    match (PT / TR / JA / unknown) falls back to EN. Future
-    translation packs add a row to ``_LANG_TO_KEY`` AND populate
-    the matching field in every QUESTIONS entry.
+    v0.2.0 shipped DE + EN + ES + FR + EL; Phase 26 (v1.13.0)
+    adds PT + TR + JA. Unknown codes still fall back to EN.
+    Future translation packs add a row to ``_LANG_TO_KEY`` AND
+    populate the matching field in every QUESTIONS entry.
     """
     # Match the most-specific 2-char prefix first so ``en-US`` /
     # ``de-AT`` etc. resolve to the base language.

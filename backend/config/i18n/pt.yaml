@@ -1,572 +1,608 @@
-# Adaptive Learner i18n catalog (PT — Phase 7).
+# Adaptive Learner i18n catalog (PT-BR — Phase 26A / v1.13.0).
 #
-# Mirror of en.yaml structure. Strings carrying non-native
-# fallbacks are EN passthroughs. Structure parity-checked by
-# tests/test_i18n_parity.py.
+# AI-translated (pt-BR), informal "você" form. Pending native
+# speaker review. Mirror of en.yaml structure; parity-checked
+# by backend/tests/test_i18n_parity.py.
 
 app:
   name: Adaptive Learner
-  tagline: Learning that adapts to you.
-  skeleton_notice: Estado de esqueleto. Modelos de dominio, plugins e paginas chegam
-    em fases posteriores — veja docs/adaptive-learner-project-reference.md.
+  tagline: Aprendizado que se adapta a você.
+  skeleton_notice: >-
+    Estado de esqueleto. Modelos de domínio, plugins e páginas chegam em
+    fases posteriores — veja docs/adaptive-learner-project-reference.md.
+
 common:
   save: Salvar
   cancel: Cancelar
   loading: Carregando…
   error: Algo deu errado.
-  back: Back
-  next: Next
-  start: Start
-  submit: Submit
-  continue: Continue
-  done: Done
-  delete: Delete
-  edit: Edit
-  confirm: Confirm
-  'yes': true
-  'no': false
-  optional: optional
-  required: required
-  minutes: minutes
+  back: Voltar
+  next: Próximo
+  start: Começar
+  submit: Enviar
+  continue: Continuar
+  done: Pronto
+  delete: Excluir
+  edit: Editar
+  confirm: Confirmar
+  "yes": Sim
+  "no": Não
+  optional: opcional
+  required: obrigatório
+  minutes: minutos
+
 nav:
-  dashboard: Dashboard
-  session: Session
-  curriculum: Curriculum
-  progress: Progress
-  import: Import
-  settings: Settings
-  home: Home
+  dashboard: Painel
+  session: Sessão
+  curriculum: Currículo
+  progress: Progresso
+  import: Importar
+  settings: Configurações
+  home: Início
   menu: Menu
   online: Online
   offline: Offline
+
 import:
-  title: Import a conversation
+  title: Importar uma conversa
   subtitle: >-
-    Paste or upload a conversation with ChatGPT, Claude, or Gemini
-    and get instant learning insights.
+    Cole ou envie uma conversa com o ChatGPT, Claude ou Gemini e
+    obtenha insights de aprendizado na hora.
   quick:
-    title: Quick Analysis
-    hint: Paste a conversation here. We will save and analyze it in one step.
-    placeholder: Paste a ChatGPT, Claude, Gemini, or markdown conversation here...
+    title: Análise rápida
+    hint: Cole uma conversa aqui. Vamos salvar e analisar em uma única etapa.
+    placeholder: Cole aqui uma conversa do ChatGPT, Claude, Gemini ou em markdown…
   file:
-    title: Upload a file
-    hint: Drag a .json, .md, or .txt file here, or click to choose.
-    formats: ChatGPT conversations.json - Claude export - Markdown - Generic JSON
+    title: Enviar um arquivo
+    hint: Arraste um arquivo .json, .md ou .txt aqui, ou clique para escolher.
+    formats: Conversas do ChatGPT (.json) · Exportação do Claude · Markdown · JSON genérico
   list:
-    title: Your imported conversations
-    empty: No conversations yet. Use Quick Analysis or upload a file.
-  detected_format: Detected format
-  analyze: Analyze
-  reanalyze: Re-analyze
-  analyzing: Analyzing...
-  analyzed: Analyzed
-  analysis_title: Analysis
-  analysis_ready: Analysis ready.
-  analysis_fallback: Analysis ran but the AI response could not be parsed cleanly.
+    title: Suas conversas importadas
+    empty: Nenhuma conversa ainda. Use a Análise rápida ou envie um arquivo.
+  detected_format: Formato detectado
+  analyze: Analisar
+  reanalyze: Reanalisar
+  analyzing: Analisando…
+  analyzed: Analisada
+  analysis_title: Análise
+  analysis_ready: Análise pronta.
+  analysis_fallback: A análise foi executada, mas a resposta da IA não pôde ser interpretada corretamente.
   analysis_fallback_long: >-
-    The AI response was not parseable as structured JSON. The summary
-    below is a fallback.
-  analysis_error: Could not analyze the conversation.
-  analysis_save_error: Could not save the analysis result.
-  back_to_list: Back to imports
-  create_curriculum: Create curriculum
-  curriculum_created: Curriculum created from the analysis.
-  curriculum_error: Could not create the curriculum.
-  curriculum_description: Generated from an imported conversation.
-  default_curriculum_title: Imported curriculum
-  field_topic: Topic
-  field_method: Recommended method
-  field_strengths: Strengths
-  field_weaknesses: Weaknesses
-  field_errors: Error patterns
-  field_subtopics: Subtopics
-  field_curriculum: Suggested curriculum
-  file_imported_one: Conversation imported. Click Analyze on the detail page.
-  file_imported_many: "Imported {count} conversations."
-  list_error: Could not load imported conversations.
-  load_error: Could not load the conversation.
-  messages: messages
+    A resposta da IA não pôde ser interpretada como JSON estruturado.
+    O resumo abaixo é uma alternativa.
+  analysis_error: Não foi possível analisar a conversa.
+  analysis_save_error: Não foi possível salvar o resultado da análise.
+  back_to_list: Voltar para importações
+  create_curriculum: Criar currículo
+  curriculum_created: Currículo criado a partir da análise.
+  curriculum_error: Não foi possível criar o currículo.
+  curriculum_description: Gerado a partir de uma conversa importada.
+  default_curriculum_title: Currículo importado
+  field_topic: Tópico
+  field_method: Método recomendado
+  field_strengths: Pontos fortes
+  field_weaknesses: Pontos fracos
+  field_errors: Padrões de erro
+  field_subtopics: Subtópicos
+  field_curriculum: Currículo sugerido
+  file_imported_one: Conversa importada. Clique em Analisar na página de detalhes.
+  file_imported_many: "{count} conversas importadas."
+  list_error: Não foi possível carregar as conversas importadas.
+  load_error: Não foi possível carregar a conversa.
+  messages: mensagens
   no_api_key: >-
-    Set an API key for the active AI provider in Settings to enable analysis.
-  no_lessons: The analysis did not suggest any lessons.
-  no_user: Complete the onboarding before importing conversations.
-  parse_error: Could not recognise the input format.
-  priority: priority
-  role_assistant: AI
-  role_system: System
-  role_user: You
-  save_error: Could not save the conversation.
-  settings_error: Could not read AI settings.
-  start_session: Start session
-  transcript: Transcript
+    Configure uma chave de API para o provedor de IA ativo em Configurações
+    para habilitar a análise.
+  no_lessons: A análise não sugeriu nenhuma aula.
+  no_user: Conclua a integração antes de importar conversas.
+  parse_error: Não foi possível reconhecer o formato da entrada.
+  priority: prioridade
+  role_assistant: IA
+  role_system: Sistema
+  role_user: Você
+  save_error: Não foi possível salvar a conversa.
+  settings_error: Não foi possível ler as configurações de IA.
+  start_session: Iniciar sessão
+  transcript: Transcrição
 
 curriculum:
-  title: Curriculum
-  active: Active curriculum
-  new_placeholder: New curriculum title…
-  create: Create curriculum
-  created: Curriculum created.
-  saved: Saved.
-  deleted: Topic deleted.
-  add_topic: Add topic
-  add_root_topic: Add root topic
-  add_subtopic: Add subtopic
-  rename_topic: Rename topic
-  topic_title: Title
-  no_topics: No topics yet — add your first to get started.
-  no_curriculum: Create a curriculum to start building a topic tree.
-  delete_confirm: Delete this topic? Its children stay as their own roots.
-  lessons_title: Lessons
-  add_lesson: Add lesson
-  new_lesson_placeholder: New lesson title…
-  no_lessons: No lessons yet.
-  lesson_created: Lesson created.
-  lesson_saved: Lesson saved.
-  lesson_deleted: Lesson deleted.
-  lesson_delete_confirm: Delete this lesson?
+  title: Currículo
+  active: Currículo ativo
+  new_placeholder: Título do novo currículo…
+  create: Criar currículo
+  created: Currículo criado.
+  saved: Salvo.
+  deleted: Tópico excluído.
+  add_topic: Adicionar tópico
+  add_root_topic: Adicionar tópico raiz
+  add_subtopic: Adicionar subtópico
+  rename_topic: Renomear tópico
+  topic_title: Título
+  no_topics: Nenhum tópico ainda — adicione o primeiro para começar.
+  no_curriculum: Crie um currículo para começar a construir sua árvore de tópicos.
+  delete_confirm: Excluir este tópico? Os filhos permanecem como suas próprias raízes.
+  lessons_title: Aulas
+  add_lesson: Adicionar aula
+  new_lesson_placeholder: Título da nova aula…
+  no_lessons: Nenhuma aula ainda.
+  lesson_created: Aula criada.
+  lesson_saved: Aula salva.
+  lesson_deleted: Aula excluída.
+  lesson_delete_confirm: Excluir esta aula?
+
 landing:
   title: Adaptive Learner
-  subtitle: Learning that adapts to you.
-  choose_language: Choose your language
-  start_button: Start your learning journey
-  docs_link: Read the documentation
-  checking_session: Welcome back…
-  intro: Adaptive Learner finds the method that fits you best from six research-backed
-    learning approaches, and walks you through a seven-step cycle on every session.
+  subtitle: Aprendizado que se adapta a você.
+  choose_language: Escolha o seu idioma
+  start_button: Comece sua jornada de aprendizado
+  docs_link: Leia a documentação
+  checking_session: Bem-vindo de volta…
+  intro: >-
+    O Adaptive Learner identifica o método que melhor se encaixa em
+    você entre seis abordagens de aprendizado embasadas em pesquisa,
+    e te guia por um ciclo de sete passos em cada sessão.
+
 onboarding:
-  title: Create a learning project
-  intro: Tell us about your learning goal. Adaptive Learner uses this to build your
-    profile and recommend a starting method.
-  field_name: Your name
-  field_topic: Topic
-  field_topic_hint: e.g. Spanish B1, linear algebra.
-  field_goal: Goal
-  field_goal_hint: What do you want to be able to do?
-  field_timeframe: Time frame
-  field_timeframe_hint: e.g. 4 weeks, one semester.
-  field_daily_minutes: Minutes per day
-  field_current_problem: Current problem
-  field_current_problem_hint: optional — what is blocking you right now?
-  submit: Create project and start assessment
-  creating: Creating project…
-  skip: Later
-  skip_top: Skip for now →
+  title: Criar um projeto de aprendizado
+  intro: >-
+    Conte-nos sobre o seu objetivo de aprendizado. O Adaptive Learner
+    usa essas informações para construir seu perfil e recomendar um
+    método inicial.
+  field_name: Seu nome
+  field_topic: Tópico
+  field_topic_hint: ex. Espanhol B1, álgebra linear.
+  field_goal: Objetivo
+  field_goal_hint: O que você quer ser capaz de fazer?
+  field_timeframe: Prazo
+  field_timeframe_hint: ex. 4 semanas, um semestre.
+  field_daily_minutes: Minutos por dia
+  field_current_problem: Problema atual
+  field_current_problem_hint: opcional — o que está te travando agora?
+  submit: Criar projeto e iniciar avaliação
+  creating: Criando projeto…
+  skip: Depois
+  skip_top: Pular por enquanto →
   skip_hint: >-
-    Not sure yet? Tap Later to jump in — you can fill this in from
-    the Curriculum page anytime.
-  skip_default_name: Learner
-  skip_default_topic: My learning
-  skip_default_goal: Discover my learning style.
-  skip_default_timeframe: Flexible
+    Ainda não tem certeza? Toque em Depois para começar — você pode
+    preencher isso na página de Currículo a qualquer momento.
+  skip_default_name: Aprendiz
+  skip_default_topic: Meu aprendizado
+  skip_default_goal: Descobrir meu estilo de aprendizado.
+  skip_default_timeframe: Flexível
+
 assessment:
-  title: Learning-type assessment
-  intro: Twelve short questions determine your learning profile. There is no right
-    or wrong answer — go with your gut.
-  question_progress: Question {current} of {total}
-  next_question: Next question
-  prev_question: Previous question
-  submit: Evaluate
-  evaluating: Evaluating…
-  result_title: Your learning profile
-  dominant_method: Preferred method
-  continue_to_dashboard: Continue to dashboard
+  title: Avaliação de tipo de aprendizado
+  intro: >-
+    Doze perguntas curtas determinam seu perfil de aprendizado. Não
+    existe resposta certa ou errada — vá no instinto.
+  question_progress: Pergunta {current} de {total}
+  next_question: Próxima pergunta
+  prev_question: Pergunta anterior
+  submit: Avaliar
+  evaluating: Avaliando…
+  result_title: Seu perfil de aprendizado
+  dominant_method: Método preferido
+  continue_to_dashboard: Ir para o painel
+
 dashboard:
-  title: Dashboard
-  welcome: Welcome back
-  quick_start: Start a new session
-  quick_start_subtitle: Method picked from your profile.
-  card_profile: Learning profile
-  card_progress: Progress
-  card_distribution: Method distribution
-  card_counter: Sessions
-  card_tools: Tool recommendations
-  card_recent_sessions: Recent sessions
-  card_spaced: Spaced practice
-  spaced_empty: Nothing to refresh right now. Great rhythm!
-  spaced_interval_label: Review in
-  spaced_start: Start
-  spaced_dismiss: Dismiss
-  metric_total_sessions: Total sessions
-  metric_total_minutes: Total minutes
-  metric_mean_understanding: Mean understanding
-  metric_mean_stress: Mean stress
-  metric_streak: Day streak
-  no_data: No sessions yet — start your first one to see trends.
+  title: Painel
+  welcome: Bem-vindo de volta
+  quick_start: Iniciar uma nova sessão
+  quick_start_subtitle: Método escolhido a partir do seu perfil.
+  card_profile: Perfil de aprendizado
+  card_progress: Progresso
+  card_distribution: Distribuição de métodos
+  card_counter: Sessões
+  card_tools: Recomendações de ferramentas
+  card_recent_sessions: Sessões recentes
+  card_spaced: Prática espaçada
+  spaced_empty: Nada para revisar agora. Ótimo ritmo!
+  spaced_interval_label: Revisar em
+  spaced_start: Começar
+  spaced_dismiss: Dispensar
+  metric_total_sessions: Total de sessões
+  metric_total_minutes: Total de minutos
+  metric_mean_understanding: Compreensão média
+  metric_mean_stress: Estresse médio
+  metric_streak: Sequência de dias
+  no_data: Nenhuma sessão ainda — comece a primeira para ver tendências.
+
 session:
-  title: Learning session
-  in_progress: Session in progress
-  send_message: Send message
-  message_placeholder: Write your reply…
-  ai_thinking: Thinking…
-  ai_error: The AI provider could not reply.
-  end_session: End session
-  end_session_confirm: Sure? We will close the session and ask for a rating.
-  switch_recommended: Method switch recommended
-  switch_recommended_subtitle: Your recent ratings suggest a different method might
-    fit you better.
-  switch_accept: Switch method
-  switch_dismiss: Keep current method
-  rating_title: How did the session go?
-  rating_understanding: How well did you understand?
-  rating_stress: How stressful was it?
-  rating_method_fit: How well did the method fit?
-  rating_notes: Notes (optional)
-  rating_submit: Submit rating
-  step_progress: Step {current} of {total}
-  step_advance_toast: "Moving to: {step}"
-  cycle_label: "Cycle {n}"
-  cycle_advanced: "Cycle {n} started"
-  cycles_completed: "Cycles completed"
-  next_topic: "Next topic:"
-  step_reason_tooltip: Why this step?
+  title: Sessão de aprendizado
+  in_progress: Sessão em andamento
+  send_message: Enviar mensagem
+  message_placeholder: Escreva sua resposta…
+  ai_thinking: Pensando…
+  ai_error: O provedor de IA não conseguiu responder.
+  end_session: Encerrar sessão
+  end_session_confirm: Tem certeza? Vamos fechar a sessão e pedir uma avaliação.
+  switch_recommended: Troca de método recomendada
+  switch_recommended_subtitle: >-
+    Suas avaliações recentes sugerem que um método diferente pode se
+    encaixar melhor.
+  switch_accept: Trocar método
+  switch_dismiss: Manter método atual
+  rating_title: Como foi a sessão?
+  rating_understanding: Quão bem você entendeu?
+  rating_stress: Quão estressante foi?
+  rating_method_fit: Quão bem o método se encaixou?
+  rating_notes: Observações (opcional)
+  rating_submit: Enviar avaliação
+  step_progress: Passo {current} de {total}
+  step_advance_toast: "Avançando para: {step}"
+  cycle_label: "Ciclo {n}"
+  cycle_advanced: "Ciclo {n} iniciado"
+  cycles_completed: "Ciclos concluídos"
+  next_topic: "Próximo tópico:"
+  step_reason_tooltip: Por que este passo?
   offline_start_blocked: >-
-    You're offline. New sessions need a network connection — past
-    sessions stay readable from the Dashboard.
+    Você está offline. Novas sessões precisam de conexão de rede — as
+    sessões anteriores continuam acessíveis no Painel.
+
 progress:
-  title: Progress
-  chart_timeline: Understanding and stress over time
-  chart_methods: Method distribution
-  commit_history: Session history
-  commit_method: Method
-  commit_understanding: Understanding
-  commit_stress: Stress
-  commit_duration: Duration
-  commit_date: Date
-  no_commits: No completed sessions yet.
-  step_eval_title: AI step-evaluation insights
+  title: Progresso
+  chart_timeline: Compreensão e estresse ao longo do tempo
+  chart_methods: Distribuição de métodos
+  commit_history: Histórico de sessões
+  commit_method: Método
+  commit_understanding: Compreensão
+  commit_stress: Estresse
+  commit_duration: Duração
+  commit_date: Data
+  no_commits: Nenhuma sessão concluída ainda.
+  step_eval_title: Insights da avaliação de passos pela IA
   step_eval_empty: >-
-    No AI step-evaluation data yet — start a session to see insights here.
-  step_eval_avg_confidence: Avg AI confidence
-  step_eval_repeats: "Times AI said 'not ready yet'"
-  step_eval_advances: Step advances
-  step_eval_backward: Backward transitions
-  step_eval_stickiest_label: "Most time on:"
+    Sem dados de avaliação de passos pela IA ainda — inicie uma sessão
+    para ver insights aqui.
+  step_eval_avg_confidence: Confiança média da IA
+  step_eval_repeats: "Vezes em que a IA disse 'ainda não está pronto'"
+  step_eval_advances: Avanços de passo
+  step_eval_backward: Transições para trás
+  step_eval_stickiest_label: "Mais tempo em:"
+
 settings:
-  title: Settings
-  section_language: Language
-  section_provider: AI provider
-  section_api_keys: API keys
-  section_danger: Account
+  title: Configurações
+  section_language: Idioma
+  section_provider: Provedor de IA
+  section_api_keys: Chaves de API
+  section_danger: Conta
   section_ui: Interface
-  gestures: Swipe Gestures
+  gestures: Gestos de deslizar
   gestures_description: >-
-    Swipe to navigate in Assessment, Session, and Curriculum.
-  section_storage_mode: Storage mode
+    Deslize para navegar na Avaliação, Sessão e Currículo.
+  section_storage_mode: Modo de armazenamento
   storage_mode_help: >-
-    Choose where your data lives. Local mode keeps everything in this
-    browser; Server mode talks to the AdaptiveLearner backend.
-  storage_mode_api: Server
-  storage_mode_api_hint: Requires a running AdaptiveLearner backend.
-  storage_mode_dexie: Local (Browser)
+    Escolha onde seus dados ficam. O modo Local mantém tudo neste
+    navegador; o modo Servidor se comunica com o backend do
+    AdaptiveLearner.
+  storage_mode_api: Servidor
+  storage_mode_api_hint: Requer um backend do AdaptiveLearner em execução.
+  storage_mode_dexie: Local (Navegador)
   storage_mode_dexie_hint: >-
-    Data + API keys live in this browser; AI calls fire direct from the page.
+    Dados e chaves de API ficam neste navegador; as chamadas de IA
+    são feitas diretamente desta página.
   storage_mode_warning: >-
-    Data is NOT synced between modes. Sync is planned for a future version.
+    Os dados NÃO são sincronizados entre os modos. A sincronização
+    está planejada para uma versão futura.
   storage_mode_switch_notice: >-
-    Storage mode saved. Reload the page to switch to the new backend.
-  language_label: Display language
-  provider_label: Active provider
+    Modo de armazenamento salvo. Recarregue a página para trocar para
+    o novo backend.
+  language_label: Idioma de exibição
+  provider_label: Provedor ativo
   provider_anthropic: Anthropic Claude
   provider_openai: OpenAI GPT
   provider_gemini: Google Gemini
-  api_key_label: API key
-  api_key_placeholder: Paste here…
-  api_key_saved: Key stored
-  api_key_missing: Not set
-  api_key_set: Save key
-  api_key_delete: Remove key
-  api_key_confirm_delete: Really remove this API key?
-  saved: Saved.
-  save_failed: Save failed.
-  provider_active: Active
-  active_provider_missing_key: This is your active provider but no API key is stored.
-    AI replies will be skipped until a key is saved.
-  section_model_overrides: Model overrides
-  model_overrides_hint: Leave blank to use the default model for each provider. A non-empty
-    value replaces the default at chat time.
-  model_override_placeholder: "Model identifier (e.g. claude-3-5-haiku-latest)"
-  model_override_set: Override active
-  model_override_default: Default model
-  model_override_save: Save model
-  model_override_clear: Use default
-  model_picker_placeholder: Select or type a model id
-  model_picker_open: Open model list
-  model_picker_default_hint: "Uses default:"
-  model_picker_loading: Loading models...
-  model_picker_error: Could not load models. Check your API key.
-  model_picker_retry: Retry
-  model_picker_no_key: Save an API key for this provider to load the available models.
-  model_picker_recommended: Recommended
-  model_picker_all: All models
-  model_picker_suggestions: Suggested (offline)
+  api_key_label: Chave de API
+  api_key_placeholder: Cole aqui…
+  api_key_saved: Chave salva
+  api_key_missing: Não definida
+  api_key_set: Salvar chave
+  api_key_delete: Remover chave
+  api_key_confirm_delete: Remover mesmo esta chave de API?
+  saved: Salvo.
+  save_failed: Falha ao salvar.
+  provider_active: Ativo
+  active_provider_missing_key: >-
+    Este é o seu provedor ativo, mas nenhuma chave de API está
+    armazenada. As respostas da IA serão ignoradas até que uma chave
+    seja salva.
+  section_model_overrides: Substituições de modelo
+  model_overrides_hint: >-
+    Deixe em branco para usar o modelo padrão de cada provedor. Um
+    valor não vazio substitui o padrão durante o chat.
+  model_override_placeholder: "Identificador do modelo (ex. claude-3-5-haiku-latest)"
+  model_override_set: Substituição ativa
+  model_override_default: Modelo padrão
+  model_override_save: Salvar modelo
+  model_override_clear: Usar padrão
+  model_picker_placeholder: Selecione ou digite um ID de modelo
+  model_picker_open: Abrir lista de modelos
+  model_picker_default_hint: "Usa o padrão:"
+  model_picker_loading: Carregando modelos...
+  model_picker_error: Não foi possível carregar os modelos. Verifique sua chave de API.
+  model_picker_retry: Tentar novamente
+  model_picker_no_key: Salve uma chave de API para este provedor para carregar os modelos disponíveis.
+  model_picker_recommended: Recomendados
+  model_picker_all: Todos os modelos
+  model_picker_suggestions: Sugeridos (offline)
+
 methods:
   deductive:
-    label: Deductive
-    summary: General to specific — rules first, examples after.
+    label: Dedutivo
+    summary: Do geral ao específico — regras primeiro, exemplos depois.
   inductive:
-    label: Inductive
-    summary: Specific to general — examples first, derive the rule.
+    label: Indutivo
+    summary: Do específico ao geral — exemplos primeiro, deduza a regra.
   error_based:
-    label: Error-based
-    summary: Learn from mistakes — correction plus explanation.
+    label: Baseado em erros
+    summary: Aprenda com os erros — correção com explicação.
   dialogic:
-    label: Dialogic
-    summary: Think in conversation — lower stress, build motivation.
+    label: Dialógico
+    summary: Pensar em conversa — menos estresse, mais motivação.
   contextual:
     label: Contextual
-    summary: Apply in a real context — practice transfer.
+    summary: Aplicar em um contexto real — transferir na prática.
   ai_adaptive:
-    label: AI-adaptive
-    summary: The AI picks the method that fits you best.
+    label: Adaptativo por IA
+    summary: A IA escolhe o método que melhor se encaixa em você.
+
 cycle_steps:
   input:
-    label: Input
-    description: Information, example or task is presented.
+    label: Entrada
+    description: Informação, exemplo ou tarefa é apresentado.
   attempt:
-    label: Attempt
-    description: First application without a safety net.
+    label: Tentativa
+    description: Primeira aplicação sem rede de proteção.
   error:
-    label: Error
-    description: Mismatch between expectation and result.
+    label: Erro
+    description: Discrepância entre a expectativa e o resultado.
   feedback:
     label: Feedback
-    description: Correction with explanation.
+    description: Correção com explicação.
   adapt:
-    label: Adapt
-    description: Adjust method, pace or focus.
+    label: Adaptar
+    description: Ajustar método, ritmo ou foco.
   repeat:
-    label: Repeat
-    description: Try again.
+    label: Repetir
+    description: Tentar de novo.
   integrate:
-    label: Integrate
-    description: Knowledge sticks through experience.
+    label: Integrar
+    description: O conhecimento se fixa pela experiência.
+
 errors:
-  network: Could not reach the server.
-  not_found: Not found.
-  validation: Invalid input.
-  conflict: Entry already exists.
-  server: Server error — please try again later.
+  network: Não foi possível alcançar o servidor.
+  not_found: Não encontrado.
+  validation: Entrada inválida.
+  conflict: O registro já existe.
+  server: Erro no servidor — por favor, tente novamente mais tarde.
+
 toast:
-  project_created: Project created.
-  assessment_saved: Profile saved.
-  session_started: Session started.
-  session_ended: Session ended.
-  rating_saved: Rating saved.
-  api_key_saved: API key saved.
-  api_key_deleted: API key removed.
-  method_switched: Method switched.
+  project_created: Projeto criado.
+  assessment_saved: Perfil salvo.
+  session_started: Sessão iniciada.
+  session_ended: Sessão encerrada.
+  rating_saved: Avaliação salva.
+  api_key_saved: Chave de API salva.
+  api_key_deleted: Chave de API removida.
+  method_switched: Método trocado.
 
 install:
-  title: Add to home screen
+  title: Adicionar à tela inicial
   subtitle: >-
-    Open Adaptive Learner like a real app — no browser tab needed.
-  install: Install
-  dismiss: Not now
-  aria_label: Install Adaptive Learner
-
+    Abra o Adaptive Learner como um aplicativo de verdade — sem
+    precisar de aba do navegador.
+  install: Instalar
+  dismiss: Agora não
+  aria_label: Instalar o Adaptive Learner
 
 about:
-  section_heading: About Adaptive Learner
-  loading: Loading information…
-  load_failed: "Could not load system info:"
-  version_heading: Version
+  section_heading: Sobre o Adaptive Learner
+  loading: Carregando informações…
+  load_failed: "Não foi possível carregar as informações do sistema:"
+  version_heading: Versão
   app_label: Adaptive Learner
   build_hash_label: Build
-  build_date_label: Build date
-  system_heading: System
-  storage_label: Storage
-  storage_api: Server (FastAPI + SQLite)
-  storage_dexie: Local Browser Storage (IndexedDB)
-  data_dir_label: Data directory
-  db_path_label: Database path
-  platform_label: Platform
-  dep_unknown: unknown
-  credits_heading: Credits
-  author_label: Author
-  dependencies_label: Built with
-  tagline: Built for self-directed learners.
-  donations_heading: Support development
+  build_date_label: Data do build
+  system_heading: Sistema
+  storage_label: Armazenamento
+  storage_api: Servidor (FastAPI + SQLite)
+  storage_dexie: Armazenamento local do navegador (IndexedDB)
+  data_dir_label: Diretório de dados
+  db_path_label: Caminho do banco de dados
+  platform_label: Plataforma
+  dep_unknown: desconhecido
+  credits_heading: Créditos
+  author_label: Autor
+  dependencies_label: Construído com
+  tagline: Feito para aprendizes autodirigidos.
+  donations_heading: Apoie o desenvolvimento
   donations_intro: >-
-    Adaptive Learner is free and open-source. If it helps you,
-    consider chipping in.
-  donations_primary: preferred
+    O Adaptive Learner é gratuito e de código aberto. Se ele te ajuda,
+    considere contribuir.
+  donations_primary: preferido
   donations:
     liberapay_desc: >-
-      Recurring donations. Open-source, no fees taken by the platform.
-    github_desc: Sponsor via your existing GitHub account.
-    kofi_desc: One-time tips. No login required.
-  license_heading: License & resources
-  license_label: License
-  license_text_link: (text)
-  repo_label: Repository
-  docs_label: Documentation
+      Doações recorrentes. Código aberto, sem taxas cobradas pela
+      plataforma.
+    github_desc: Patrocine pela sua conta existente do GitHub.
+    kofi_desc: Gorjetas únicas. Sem login necessário.
+  license_heading: Licença e recursos
+  license_label: Licença
+  license_text_link: (texto)
+  repo_label: Repositório
+  docs_label: Documentação
   issues_label: Issues
 
 backup:
   section_title: Backup
   section_help: >-
-    Export everything in your account as a JSON file. API keys are
-    NOT included; you will need to re-enter them after a restore.
-  export: Create Backup
-  exporting: Exporting…
-  import: Restore from Backup
-  importing: Restoring…
-  confirm: Confirm restore
-  invalid_format: This file is not a valid Adaptive Learner backup.
-  export_success: "Backup downloaded ({{count}} records)."
-  export_error: "Backup failed: {{detail}}"
-  import_parse_error: "Could not read backup: {{detail}}"
-  import_error: "Restore failed: {{detail}}"
-  comparison_title: Confirm restore
+    Exporte tudo da sua conta como um arquivo JSON. As chaves de API
+    NÃO são incluídas; você precisará digitá-las novamente após uma
+    restauração.
+  export: Criar backup
+  exporting: Exportando…
+  import: Restaurar a partir de backup
+  importing: Restaurando…
+  confirm: Confirmar restauração
+  invalid_format: Este arquivo não é um backup válido do Adaptive Learner.
+  export_success: "Backup baixado ({{count}} registros)."
+  export_error: "Falha no backup: {{detail}}"
+  import_parse_error: "Não foi possível ler o backup: {{detail}}"
+  import_error: "Falha na restauração: {{detail}}"
+  comparison_title: Confirmar restauração
   comparison_help: >-
-    Restore will merge: new records inserted, mutable records updated
-    only if the backup is newer, history rows kept as-is. Nothing is
-    deleted. API keys are ignored.
-  table_header: Table
-  current_header: Current
+    A restauração fará mesclagem: novos registros são inseridos,
+    registros mutáveis são atualizados apenas se o backup for mais
+    recente, e o histórico é mantido como está. Nada é excluído. As
+    chaves de API são ignoradas.
+  table_header: Tabela
+  current_header: Atual
   incoming_header: Backup
-  restored_summary: Restore complete.
-  restored_inserted: "Inserted: {{n}}"
-  restored_updated: "Updated: {{n}}"
-  restored_skipped: "Skipped: {{n}}"
-  restored_errors: "Errors: {{n}}"
-  restored_with_errors: "{{n}} records could not be restored."
-  last_backup: "Last backup: {{when}}"
-  reminder_overdue: "It has been more than {{days}} days since your last backup."
-  auto_title: Auto-backup
-  auto_help: Automatically back up after every 10 completed sessions or once a week.
-  auto_run: Back up now
-  auto_run_success: Auto-backup created.
-  auto_run_error: "Auto-backup failed: {{detail}}"
-  auto_restored: Auto-backup restored.
-  auto_restore: Restore
-  auto_restore_error: "Restore failed: {{detail}}"
-  auto_records: "{{n}} records"
-  auto_none: No auto-backups yet. The first one runs after 10 sessions or 7 days.
-  storage_pressure: "Browser storage is almost full ({{pct}}% of quota). Export a manual backup now."
-  compare_title: Compare Backups
+  restored_summary: Restauração concluída.
+  restored_inserted: "Inseridos: {{n}}"
+  restored_updated: "Atualizados: {{n}}"
+  restored_skipped: "Ignorados: {{n}}"
+  restored_errors: "Erros: {{n}}"
+  restored_with_errors: "{{n}} registros não puderam ser restaurados."
+  last_backup: "Último backup: {{when}}"
+  reminder_overdue: "Já se passaram mais de {{days}} dias desde o último backup."
+  auto_title: Backup automático
+  auto_help: Faz backup automaticamente após cada 10 sessões concluídas ou uma vez por semana.
+  auto_run: Fazer backup agora
+  auto_run_success: Backup automático criado.
+  auto_run_error: "Falha no backup automático: {{detail}}"
+  auto_restored: Backup automático restaurado.
+  auto_restore: Restaurar
+  auto_restore_error: "Falha na restauração: {{detail}}"
+  auto_records: "{{n}} registros"
+  auto_none: Ainda não há backups automáticos. O primeiro acontece após 10 sessões ou 7 dias.
+  storage_pressure: "O armazenamento do navegador está quase cheio ({{pct}}% da cota). Exporte um backup manual agora."
+  compare_title: Comparar backups
   compare_help: >-
-    Pick two backup files (or one file plus the current state) to see what's
-    changed between them. No data is modified — comparison is read-only.
-  compare_slot_a: Backup A (older)
-  compare_slot_b: Backup B (newer)
-  compare_pick: "Pick file…"
-  compare_use_current: Use current state
-  compare_current_label: Current state
-  compare_clear: Clear
+    Escolha dois arquivos de backup (ou um arquivo mais o estado
+    atual) para ver o que mudou entre eles. Nenhum dado é
+    modificado — a comparação é apenas leitura.
+  compare_slot_a: Backup A (mais antigo)
+  compare_slot_b: Backup B (mais recente)
+  compare_pick: "Escolher arquivo…"
+  compare_use_current: Usar estado atual
+  compare_current_label: Estado atual
+  compare_clear: Limpar
   compare_label_a: Backup A
   compare_label_b: Backup B
-  compare_records: records
-  compare_loading: Comparing backups…
-  compare_progress: Comparing…
-  compare_hide_unchanged: Hide unchanged tables
-  compare_sort_label: "Sort:"
-  compare_sort_delta: Most changes first
-  compare_sort_alpha: Alphabetical
-  compare_no_changes: The two backups are identical — no differences detected.
-  compare_section_added: Added
-  compare_section_removed: Removed
-  compare_section_changed: Changed
-  compare_field: Field
-  compare_old: Old
-  compare_new: New
-  compare_field_changes: field changes
-  compare_high_volume_hint: High-volume table — record-level previews shown abbreviated.
-  compare_export_md: Export as Markdown
-  compare_markdown_downloaded: Diff exported.
-  confirm_with_counts: "Restore ({{added}} added, {{updated}} updated)"
-  auto_compare_as_a: Compare as A
-  auto_compare_as_b: Compare as B
-  compare_auto_label: "Auto-backup {{date}}"
-  auto_compare_missing: Auto-backup is no longer available — it was rotated out.
+  compare_records: registros
+  compare_loading: Comparando backups…
+  compare_progress: Comparando…
+  compare_hide_unchanged: Ocultar tabelas inalteradas
+  compare_sort_label: "Ordenar:"
+  compare_sort_delta: Mais mudanças primeiro
+  compare_sort_alpha: Alfabético
+  compare_no_changes: Os dois backups são idênticos — nenhuma diferença detectada.
+  compare_section_added: Adicionados
+  compare_section_removed: Removidos
+  compare_section_changed: Alterados
+  compare_field: Campo
+  compare_old: Antigo
+  compare_new: Novo
+  compare_field_changes: alterações de campo
+  compare_high_volume_hint: Tabela com muitos registros — prévias por registro mostradas de forma abreviada.
+  compare_export_md: Exportar como Markdown
+  compare_markdown_downloaded: Diferença exportada.
+  confirm_with_counts: "Restaurar ({{added}} adicionados, {{updated}} atualizados)"
+  auto_compare_as_a: Comparar como A
+  auto_compare_as_b: Comparar como B
+  compare_auto_label: "Backup automático {{date}}"
+  auto_compare_missing: O backup automático não está mais disponível — foi rotacionado.
 
 export:
-  title: Export
+  title: Exportar
   intro: >-
-    Download your learning journey as Markdown or PDF. Markdown is plain
-    text you can edit and share; PDF opens your browser's print dialog
-    so you can save a copy.
-  progress_label: Progress Report (full journey)
-  session_label: Session Detail
-  curriculum_label: Curriculum Overview
-  select_session: -- pick a session --
-  select_curriculum: -- pick a curriculum --
-  preview: Preview
-  preview_title: Preview
-  preview_close: Close
+    Baixe sua jornada de aprendizado como Markdown ou PDF. O Markdown
+    é texto puro que você pode editar e compartilhar; o PDF abre a
+    caixa de diálogo de impressão do navegador para você salvar uma
+    cópia.
+  progress_label: Relatório de progresso (jornada completa)
+  session_label: Detalhes da sessão
+  curriculum_label: Visão geral do currículo
+  select_session: -- escolha uma sessão --
+  select_curriculum: -- escolha um currículo --
+  preview: Pré-visualizar
+  preview_title: Pré-visualização
+  preview_close: Fechar
   download_md: Markdown
   download_pdf: PDF
-  busy: Working...
-  download_success: Export downloaded.
-  print_opened: Print dialog opened. Pick "Save as PDF".
-  error: "Export failed: {{detail}}"
-  preview_error: "Preview failed: {{detail}}"
-  load_error: "Could not load export data: {{detail}}"
-  pick_session: Pick a session first.
-  pick_curriculum: Pick a curriculum first.
-  title_progress: Learning Progress
-  title_session: Session Detail
-  title_curriculum: Curriculum
+  busy: Trabalhando...
+  download_success: Exportação baixada.
+  print_opened: Caixa de diálogo de impressão aberta. Escolha "Salvar como PDF".
+  error: "Falha na exportação: {{detail}}"
+  preview_error: "Falha na pré-visualização: {{detail}}"
+  load_error: "Não foi possível carregar os dados de exportação: {{detail}}"
+  pick_session: Escolha uma sessão primeiro.
+  pick_curriculum: Escolha um currículo primeiro.
+  title_progress: Progresso de aprendizado
+  title_session: Detalhes da sessão
+  title_curriculum: Currículo
+
 sync:
-  api_mode_note: This device is running its own backend. The paired device should also see this connection in its sync panel.
-  camera_denied: Camera access denied
-  camera_denied_hint: Allow camera access in your browser settings, then re-open the scanner.
-  camera_error: Could not start the camera
-  camera_error_hint: Something went wrong starting the camera. Try again, or use paste-the-link.
-  conflict_apply: Apply choices
-  conflict_cancel: Cancel (keep all local)
-  conflicts_intro: Both devices changed the same record since the last sync. Pick which version to keep for each one.
-  conflicts_title: Resolve sync conflicts
-  connect: Connect
-  connected_to: Connected to
-  copy_error: Could not copy to clipboard.
-  copy_link: Copy link
-  desktop_hint: Generate a short-lived pairing link. Open this app on your phone, paste the link, and the two devices will share the same user account.
-  expires_at: Expires
-  generate: Generate pairing code
-  generating: Generating…
-  history: Recent syncs
-  host: Local IP / host
-  image_decode_failed: Could not read a QR code from this image. Re-take the screenshot.
-  image_decoding: Reading image…
-  intro: Pair a phone and a desktop on the same local network. Sync is always opt-in; you click Sync Now when you want to merge changes.
-  invalid_qr: Not a valid pairing code.
-  keep_local: Keep this device
-  keep_remote: Keep other device
-  last_sync: Last sync
-  link_copied: Pairing link copied.
-  local_version: This device
-  merge: Merge manually
-  merge_editor: Merged record (editable)
-  never: never
-  no_camera: No camera available
-  no_camera_hint: This device has no camera available. Use the paste-the-link option instead.
-  no_user: Complete the onboarding before generating a pairing code.
-  now: Sync Now
-  pair_error: Could not pair the device.
-  paired: Device paired.
-  paired_at: Paired
-  pairing: Pairing…
-  paste_link_fallback: Or paste the link manually
-  phone_hint_v17: "Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically."
-  port: Port
-  qr_alt: Pairing QR code
-  remote_version: Other device
-  scan_again: Scan again
-  scan_hint: "Open the phone's Settings > Sync, paste this link, and tap Connect. The link expires in 5 minutes and can be used once."
-  scan_instruction: Point your camera at the QR code on your desktop.
-  scan_qr: Scan QR Code
-  scan_success: Connection found
-  scan_success_hint: Verifying with the desktop…
-  smart_merge: Smart Merge (AI)
-  smart_merge_error: Smart merge failed.
-  smart_merge_ready: AI merge ready — review and apply.
-  smart_merge_running: Merging with AI…
-  sync_error: Sync failed.
-  synced: Synced
-  syncing: Syncing…
-  unpair: Unpair device
-  unpair_confirm: Unpair this device? Local data is kept; future syncs are blocked until you pair again.
-  unpaired: Device unpaired.
-  upload_qr: Upload QR image
-  upload_qr_hint: "No camera? Take a screenshot of the desktop's QR and upload it:"
+  api_mode_note: Este dispositivo está executando seu próprio backend. O dispositivo pareado também deve ver esta conexão em seu painel de sincronização.
+  camera_denied: Acesso à câmera negado
+  camera_denied_hint: Permita o acesso à câmera nas configurações do navegador e reabra o leitor.
+  camera_error: Não foi possível iniciar a câmera
+  camera_error_hint: Algo deu errado ao iniciar a câmera. Tente novamente ou use o modo colar-o-link.
+  conflict_apply: Aplicar escolhas
+  conflict_cancel: Cancelar (manter tudo local)
+  conflicts_intro: Os dois dispositivos alteraram o mesmo registro desde a última sincronização. Escolha qual versão manter para cada um.
+  conflicts_title: Resolver conflitos de sincronização
+  connect: Conectar
+  connected_to: Conectado a
+  copy_error: Não foi possível copiar para a área de transferência.
+  copy_link: Copiar link
+  desktop_hint: Gere um link de pareamento de curta duração. Abra este app no seu celular, cole o link e os dois dispositivos compartilharão a mesma conta de usuário.
+  expires_at: Expira em
+  generate: Gerar código de pareamento
+  generating: Gerando…
+  history: Sincronizações recentes
+  host: IP / host local
+  image_decode_failed: Não foi possível ler um QR code desta imagem. Tire o screenshot novamente.
+  image_decoding: Lendo imagem…
+  intro: Pareie um celular e um desktop na mesma rede local. A sincronização é sempre opcional; você clica em Sincronizar agora quando quiser mesclar mudanças.
+  invalid_qr: Não é um código de pareamento válido.
+  keep_local: Manter este dispositivo
+  keep_remote: Manter o outro dispositivo
+  last_sync: Última sincronização
+  link_copied: Link de pareamento copiado.
+  local_version: Este dispositivo
+  merge: Mesclar manualmente
+  merge_editor: Registro mesclado (editável)
+  never: nunca
+  no_camera: Nenhuma câmera disponível
+  no_camera_hint: Este dispositivo não tem câmera disponível. Use a opção de colar o link.
+  no_user: Conclua a integração antes de gerar um código de pareamento.
+  now: Sincronizar agora
+  pair_error: Não foi possível parear o dispositivo.
+  paired: Dispositivo pareado.
+  paired_at: Pareado
+  pairing: Pareando…
+  paste_link_fallback: Ou cole o link manualmente
+  phone_hint_v17: "Escaneie o QR code na tela Configurações > Sincronização do seu desktop. A câmera traseira do celular lê o link de pareamento automaticamente."
+  port: Porta
+  qr_alt: QR code de pareamento
+  remote_version: Outro dispositivo
+  scan_again: Escanear novamente
+  scan_hint: "Abra Configurações > Sincronização no celular, cole este link e toque em Conectar. O link expira em 5 minutos e só pode ser usado uma vez."
+  scan_instruction: Aponte sua câmera para o QR code no seu desktop.
+  scan_qr: Escanear QR code
+  scan_success: Conexão encontrada
+  scan_success_hint: Verificando com o desktop…
+  smart_merge: Mesclagem inteligente (IA)
+  smart_merge_error: Falha na mesclagem inteligente.
+  smart_merge_ready: Mesclagem por IA pronta — revise e aplique.
+  smart_merge_running: Mesclando com IA…
+  sync_error: Falha na sincronização.
+  synced: Sincronizado
+  syncing: Sincronizando…
+  unpair: Desparear dispositivo
+  unpair_confirm: Desparear este dispositivo? Os dados locais são mantidos; as sincronizações futuras são bloqueadas até você parear novamente.
+  unpaired: Dispositivo despareado.
+  upload_qr: Enviar imagem do QR
+  upload_qr_hint: "Sem câmera? Tire um screenshot do QR do desktop e envie:"

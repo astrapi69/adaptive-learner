@@ -86,10 +86,15 @@ def test_questions_for_lang_en_returns_english_text():
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
 
 
-@pytest.mark.parametrize("lang", ["ja", "tr", "pt", ""])
+@pytest.mark.parametrize("lang", ["ja", "tr", "ko", ""])
 def test_unknown_language_falls_back_to_en(lang: str):
-    """Languages outside the v0.2.0 translated set (DE / EN / ES /
-    FR / EL) fall back to EN by mapping to text_en."""
+    """Languages outside the translated set fall back to EN by
+    mapping to text_en. v1.13.0 adds PT/TR/JA to the supported
+    set, but "ko" + any other unmapped code still falls back.
+    (TR and JA are removed from this list as their packs land in
+    26B and 26C; for the duration of Phase 26 the in-flight
+    languages are exercised by ``test_phase26_language_returns_translated_text``.)
+    """
     out = questions_for_lang(lang)
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
 
@@ -109,13 +114,26 @@ def test_phase6c_language_returns_translated_text(lang: str):
             assert a_out["text"] != a_src["text_en"]
 
 
-@pytest.mark.parametrize("lang", ["pt", "tr", "ja", "ko"])
+@pytest.mark.parametrize("lang", ["pt"])
+def test_phase26_language_returns_translated_text(lang: str):
+    """v1.13.0 / Phase 26 ships PT/TR/JA translations for every
+    one of the 12 questions and their answers. Same contract as
+    the v0.3.0 ES/FR/EL pack: per-language output must NOT equal
+    the EN text. PT lands in 26A; TR + JA join the parametrize
+    list as 26B + 26C land."""
+    out = questions_for_lang(lang)
+    assert out[0]["text"] != QUESTIONS[0]["text_en"]
+    for q_out, q_src in zip(out, QUESTIONS):
+        for a_out, a_src in zip(q_out["answers"], q_src["answers"]):
+            assert a_out["text"] != a_src["text_en"]
+
+
+@pytest.mark.parametrize("lang", ["tr", "ja", "ko"])
 def test_unsupported_languages_still_fall_back_to_en(lang: str):
-    """PT / TR / JA / future languages remain on the EN-fallback
-    path until their dedicated translation pass lands (the
-    resolver's _LANG_TO_KEY map says so). Pins that the v0.2.0
-    fall-back contract is preserved for any code outside the
-    {de, en, es, fr, el} set."""
+    """Languages that don't have a full translation pack remain on
+    the EN-fallback path (the resolver's _LANG_TO_KEY map says
+    so). After 26B + 26C land this parametrize will shrink to
+    just "ko" + any other hypothetical unmapped code."""
     out = questions_for_lang(lang)
     assert out[0]["text"] == QUESTIONS[0]["text_en"]
 
@@ -123,21 +141,21 @@ def test_unsupported_languages_still_fall_back_to_en(lang: str):
 def test_partial_translation_falls_back_per_field():
     """Future-proof: if a partial translation lands for a hitherto
     untranslated language (e.g. only the first question is
-    translated for Portuguese, the rest aren't), the resolver
-    should return PT for the translated entry and EN for the
-    rest. Verified by mutating the live QUESTIONS list inside a
-    try/finally so other tests aren't affected."""
+    translated for Korean, the rest aren't), the resolver should
+    fall back to EN for everything because the map row is the
+    load-bearing part. Verified by mutating the live QUESTIONS
+    list inside a try/finally so other tests aren't affected."""
     q0 = QUESTIONS[0]
-    q0["text_pt"] = "Como abordas um novo tema?"
+    q0["text_ko"] = "새로운 주제에 어떻게 접근합니까?"  # type: ignore[typeddict-unknown-key]
     try:
-        # PT is not in _LANG_TO_KEY; resolver falls back to EN
+        # KO is not in _LANG_TO_KEY; resolver falls back to EN
         # regardless of whether the field exists. This pins the
         # invariant: adding the field alone doesn't enable a
         # language — the map row is the load-bearing part.
-        out = questions_for_lang("pt")
+        out = questions_for_lang("ko")
         assert out[0]["text"] == QUESTIONS[0]["text_en"]
     finally:
-        del q0["text_pt"]
+        del q0["text_ko"]  # type: ignore[typeddict-unknown-key]
 
 
 def test_questions_for_lang_uses_regional_prefix():
