@@ -183,6 +183,22 @@ class ApiKeySetBody(BaseModel):
     key: str = Field(min_length=1)
 
 
+class AvailableModelOut(BaseModel):
+    """One row returned by ``GET /api/settings/{user_id}/available-models``.
+
+    v1.11.0 / Phase 24A — model discovery picker. The list is
+    derived from the provider's own models endpoint (Anthropic
+    ``/v1/models``, OpenAI ``/v1/models``, Gemini ``/v1beta/models``)
+    so the Settings UI can show what the user actually has access
+    to instead of a static suggestion list.
+    """
+
+    id: str
+    name: str
+    context_window: int | None = None
+    description: str | None = None
+
+
 # --- LearningProject --------------------------------------------------------
 
 

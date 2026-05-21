@@ -422,3 +422,74 @@ def test_patch_rejects_oversized_override_422(client: TestClient):
         json={"model_override_anthropic": "x" * 201},
     )
     assert resp.status_code == 422
+
+
+# --- GET /available-models (v1.11.0 / Phase 24A) ---------------------------
+
+
+def test_available_models_no_key_returns_empty(client: TestClient):
+    """Without an API key for the requested provider, the endpoint
+    returns an empty list (no upstream call, no error)."""
+    user_id = _make_user(client)
+    resp = client.get(
+        f"/api/settings/{user_id}/available-models",
+        params={"provider": "anthropic"},
+    )
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
+def test_available_models_decrypts_key_and_returns_list(client, monkeypatch):
+    import httpx
+
+    from app.services import model_discovery
+
+    model_discovery.clear_cache()
+
+    user_id = _make_user(client)
+    client.post(
+        f"/api/settings/{user_id}/api-key",
+        json={"provider": "anthropic", "key": "sk-ant-fake-router-test"},
+    )
+
+    def fake_get(url, **kwargs):
+        # Verify the router decrypted + passed our plaintext key.
+        assert kwargs["headers"]["x-api-key"] == "sk-ant-fake-router-test"
+        request = httpx.Request("GET", url)
+        return httpx.Response(
+            200,
+            json={
+                "data": [
+                    {"id": "claude-opus-4-20250514", "display_name": "Claude Opus 4"},
+                ]
+            },
+            request=request,
+        )
+
+    monkeypatch.setattr(model_discovery.httpx, "get", fake_get)
+    resp = client.get(
+        f"/api/settings/{user_id}/available-models",
+        params={"provider": "anthropic"},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert len(body) == 1
+    assert body[0]["id"] == "claude-opus-4-20250514"
+    assert body[0]["name"] == "Claude Opus 4"
+    assert body[0]["context_window"] == 200000
+    model_discovery.clear_cache()
+
+
+def test_available_models_provider_required_422(client: TestClient):
+    user_id = _make_user(client)
+    resp = client.get(f"/api/settings/{user_id}/available-models")
+    assert resp.status_code == 422
+
+
+def test_available_models_invalid_provider_422(client: TestClient):
+    user_id = _make_user(client)
+    resp = client.get(
+        f"/api/settings/{user_id}/available-models",
+        params={"provider": "magic-llm"},
+    )
+    assert resp.status_code == 422
