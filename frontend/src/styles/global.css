@@ -360,6 +360,20 @@ select:focus {
   gap: var(--space-2);
 }
 
+/* v1.10.0 / Phase 23E — toggle row variant. Label + hint stack
+ * on the left, the input (checkbox) sits on the right. */
+.form-row-toggle {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-label-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
 .form-label {
   font-weight: 500;
   font-size: 0.95rem;

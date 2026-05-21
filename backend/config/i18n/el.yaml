@@ -248,6 +248,10 @@ settings:
   section_provider: Πάροχος AI
   section_api_keys: Κλειδιά API
   section_danger: Λογαριασμός
+  section_ui: Interface
+  gestures: Swipe Gestures
+  gestures_description: >-
+    Swipe to navigate in Assessment, Session, and Curriculum.
   section_storage_mode: Λειτουργία αποθήκευσης
   storage_mode_help: >-
     Διάλεξε πού ζουν τα δεδομένα σου. Η τοπική λειτουργία κρατά τα πάντα

@@ -402,3 +402,67 @@ describe("Settings page", () => {
         );
     });
 });
+
+describe("Settings — gesture toggle (Phase 23E)", () => {
+    beforeEach(() => {
+        mockNavigate.mockReset();
+        apiGet.mockReset();
+        toastError.mockReset();
+        toastSuccess.mockReset();
+        localStorage.clear();
+        localStorage.setItem("adaptive-learner.user_id", "u-1");
+    });
+
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
+    it("renders the gesture toggle in the Interface section", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(
+            screen.getByTestId("settings-section-ui"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("settings-gestures-toggle"),
+        ).toBeInTheDocument();
+    });
+
+    it("flipping the toggle persists the new value", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        const toggle = screen.getByTestId(
+            "settings-gestures-toggle",
+        ) as HTMLInputElement;
+        const initial = toggle.checked;
+        fireEvent.click(toggle);
+        expect(toggle.checked).toBe(!initial);
+        expect(localStorage.getItem("adaptive-learner.gestures_enabled")).toBe(
+            String(!initial),
+        );
+    });
+
+    it("initialises from the persisted value (true)", async () => {
+        localStorage.setItem("adaptive-learner.gestures_enabled", "true");
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        const toggle = screen.getByTestId(
+            "settings-gestures-toggle",
+        ) as HTMLInputElement;
+        expect(toggle.checked).toBe(true);
+    });
+
+    it("initialises from the persisted value (false)", async () => {
+        localStorage.setItem("adaptive-learner.gestures_enabled", "false");
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        const toggle = screen.getByTestId(
+            "settings-gestures-toggle",
+        ) as HTMLInputElement;
+        expect(toggle.checked).toBe(false);
+    });
+});

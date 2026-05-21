@@ -13,6 +13,7 @@ import {
     SUPPORTED_LANGUAGES,
     type AIProvider,
 } from "../lib/constants";
+import {readGesturePref, writeGesturePref} from "../lib/gesturePref";
 import {readLearnerState, setLanguage} from "../lib/learnerState";
 import {
     getStorage,
@@ -48,6 +49,17 @@ export default function Settings() {
 
     const [settings, setSettings] = useState<UserSettings | null>(null);
     const [loadError, setLoadError] = useState<string | null>(null);
+    // v1.10.0 / Phase 23E — swipe-gesture toggle. Persisted in
+    // localStorage via ``gesturePref`` so the consumer hooks
+    // (Assessment, Curriculum, Session) read the same flag.
+    const [gesturesOn, setGesturesOn] = useState<boolean>(() =>
+        readGesturePref(),
+    );
+
+    const handleGesturesToggle = (next: boolean) => {
+        setGesturesOn(next);
+        writeGesturePref(next);
+    };
     const [keyDrafts, setKeyDrafts] = useState<Record<AIProvider, string>>({
         anthropic: "",
         openai: "",
@@ -283,6 +295,36 @@ export default function Settings() {
                             </option>
                         ))}
                     </select>
+                </label>
+            </section>
+
+            <section
+                className="settings-section"
+                data-testid="settings-section-ui"
+            >
+                <h2 className="settings-section-title">
+                    {t("settings.section_ui", "Interface")}
+                </h2>
+                <label className="form-row form-row-toggle">
+                    <span className="form-label-stack">
+                        <span className="form-label">
+                            {t("settings.gestures", "Swipe Gestures")}
+                        </span>
+                        <span className="form-hint">
+                            {t(
+                                "settings.gestures_description",
+                                "Swipe to navigate in Assessment, Session, and Curriculum.",
+                            )}
+                        </span>
+                    </span>
+                    <input
+                        type="checkbox"
+                        data-testid="settings-gestures-toggle"
+                        checked={gesturesOn}
+                        onChange={(e) =>
+                            handleGesturesToggle(e.target.checked)
+                        }
+                    />
                 </label>
             </section>
 

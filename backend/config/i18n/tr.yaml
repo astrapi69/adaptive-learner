@@ -247,6 +247,10 @@ settings:
   section_provider: AI provider
   section_api_keys: API keys
   section_danger: Account
+  section_ui: Interface
+  gestures: Swipe Gestures
+  gestures_description: >-
+    Swipe to navigate in Assessment, Session, and Curriculum.
   section_storage_mode: Storage mode
   storage_mode_help: >-
     Choose where your data lives. Local mode keeps everything in this
