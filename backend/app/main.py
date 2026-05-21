@@ -33,7 +33,7 @@ from fastapi.responses import JSONResponse
 from pluginforge import PluginManager
 from pluginforge.config import load_i18n
 
-from app import __version__
+from app import __version__, config_overlay
 from app.database import init_db
 from app.exceptions import AdaptiveLearnerError
 from app.hookspecs import AdaptiveLearnerHookSpec
@@ -272,25 +272,12 @@ manager = PluginManager(
 )
 manager.register_hookspecs(AdaptiveLearnerHookSpec)
 
+# Layer the user-overlay (Settings-UI plugin enable/disable lists)
+# onto the manager's active app config. pluginforge v0.10.0+ exposes
+# this as the public ``merge_app_config`` method; before v0.10.0 we
+# assigned ``manager._app_config`` directly.
+manager.merge_app_config(config_overlay.read_app_config_merged())
 
-def _sync_manager_with_overlay() -> None:
-    """Patch ``manager._app_config`` so user-overlay enable/disable
-    lists are honoured. Pluginforge reads its app config from
-    ``_config_path`` directly; we layer user-overlay on top.
-    """
-    from app import config_overlay
-
-    merged = config_overlay.read_app_config_merged()
-    try:
-        manager._app_config = merged  # type: ignore[attr-defined]
-    except Exception:  # noqa: BLE001
-        logger.warning(
-            "Could not patch PluginManager._app_config with overlay view; "
-            "Settings-UI changes will not take effect until next restart."
-        )
-
-
-_sync_manager_with_overlay()
 _startup_config = _load_app_config()
 # Hydrate env vars whose canonical reader sits outside the layered
 # config (crypto reads os.environ directly). Runs BEFORE the

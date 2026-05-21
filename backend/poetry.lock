@@ -2,7 +2,7 @@
 
 [[package]]
 name = "adaptive-learner-plugin-ai-anthropic"
-version = "1.11.0"
+version = "1.14.0"
 description = "Adaptive Learner: Anthropic Claude provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -12,7 +12,7 @@ develop = true
 
 [package.dependencies]
 anthropic = "^0.55.0"
-pluginforge = "^0.9.0"
+pluginforge = "^0.10.0"
 
 [package.source]
 type = "directory"
@@ -20,7 +20,7 @@ url = "../plugins/adaptive-learner-plugin-ai-anthropic"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-gemini"
-version = "1.11.0"
+version = "1.14.0"
 description = "Adaptive Learner: Google Gemini provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -30,7 +30,7 @@ develop = true
 
 [package.dependencies]
 google-genai = "^2.0.0"
-pluginforge = "^0.9.0"
+pluginforge = "^0.10.0"
 
 [package.source]
 type = "directory"
@@ -38,7 +38,7 @@ url = "../plugins/adaptive-learner-plugin-ai-gemini"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-openai"
-version = "1.11.0"
+version = "1.14.0"
 description = "Adaptive Learner: OpenAI GPT provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -48,7 +48,7 @@ develop = true
 
 [package.dependencies]
 openai = "^2.0.0"
-pluginforge = "^0.9.0"
+pluginforge = "^0.10.0"
 
 [package.source]
 type = "directory"
@@ -56,7 +56,7 @@ url = "../plugins/adaptive-learner-plugin-ai-openai"
 
 [[package]]
 name = "adaptive-learner-plugin-assessment"
-version = "1.11.0"
+version = "1.14.0"
 description = "Adaptive Learner: 12-question learner-profile assessment + 6-method-weight calculation."
 optional = false
 python-versions = "^3.11"
@@ -66,7 +66,7 @@ develop = true
 
 [package.dependencies]
 fastapi = "^0.136.0"
-pluginforge = "^0.9.0"
+pluginforge = "^0.10.0"
 pydantic = "^2.13.0"
 sqlalchemy = "^2.0.49"
 
@@ -76,7 +76,7 @@ url = "../plugins/adaptive-learner-plugin-assessment"
 
 [[package]]
 name = "adaptive-learner-plugin-session"
-version = "1.11.0"
+version = "1.14.0"
 description = "Adaptive Learner: 7-step learning cycle, per-method system prompts, stagnation-based method switching."
 optional = false
 python-versions = "^3.11"
@@ -86,7 +86,7 @@ develop = true
 
 [package.dependencies]
 fastapi = "^0.136.0"
-pluginforge = "^0.9.0"
+pluginforge = "^0.10.0"
 pydantic = "^2.13.0"
 sqlalchemy = "^2.0.49"
 
@@ -96,7 +96,7 @@ url = "../plugins/adaptive-learner-plugin-session"
 
 [[package]]
 name = "adaptive-learner-plugin-tools"
-version = "1.11.0"
+version = "1.14.0"
 description = "Adaptive Learner: static external-tool recommendations tailored to the learner's profile."
 optional = false
 python-versions = "^3.11"
@@ -106,7 +106,7 @@ develop = true
 
 [package.dependencies]
 fastapi = "^0.136.0"
-pluginforge = "^0.9.0"
+pluginforge = "^0.10.0"
 pydantic = "^2.13.0"
 sqlalchemy = "^2.0.49"
 
@@ -116,7 +116,7 @@ url = "../plugins/adaptive-learner-plugin-tools"
 
 [[package]]
 name = "adaptive-learner-plugin-tracking"
-version = "1.11.0"
+version = "1.14.0"
 description = "Adaptive Learner: writes ProgressCommit on session_complete + dashboard summary aggregator."
 optional = false
 python-versions = "^3.11"
@@ -126,7 +126,7 @@ develop = true
 
 [package.dependencies]
 fastapi = "^0.136.0"
-pluginforge = "^0.9.0"
+pluginforge = "^0.10.0"
 pydantic = "^2.13.0"
 sqlalchemy = "^2.0.49"
 
@@ -1914,14 +1914,14 @@ testing = ["coverage", "pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pluginforge"
-version = "0.9.0"
+version = "0.10.0"
 description = "Application-agnostic plugin framework built on pluggy"
 optional = false
 python-versions = "<4.0,>=3.11"
 groups = ["main"]
 files = [
-    {file = "pluginforge-0.9.0-py3-none-any.whl", hash = "sha256:5c755e6011396799a9270f08e28ac63e0be6379816d78baec0e729192a8a8758"},
-    {file = "pluginforge-0.9.0.tar.gz", hash = "sha256:6efaa0749ed0b626a3ef5f679f16cd010b0e406bad46070205b7dc0b0a2251e6"},
+    {file = "pluginforge-0.10.0-py3-none-any.whl", hash = "sha256:da5281a034834c4177a931c74b9e830cadf5f1e70910cf7c59752d2fbd6cf07b"},
+    {file = "pluginforge-0.10.0.tar.gz", hash = "sha256:91c5cae22b263c699d0644f441e05d8715e32881ed7a84af3ec1f84fdf9acd63"},
 ]
 
 [package.dependencies]
@@ -3070,4 +3070,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "687ee115e37173bdd05c8f991c5a8ed7e3b536e9aa38b36b00ee4890c276dda1"
+content-hash = "7a32b41a7348caf0fe72d6c5aac9298c93d86318954d54097de1c8786caf0035"
