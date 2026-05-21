@@ -11,6 +11,7 @@ import "fake-indexeddb/auto";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 import {
+    SYNC_TABLES,
     SyncEngine,
     appendSyncHistory,
     buildPairingUri,
@@ -826,5 +827,72 @@ describe("SyncEngine.sync", () => {
             conversation_id: "c-1",
             created_at: "2026-05-20T09:00:00.000Z",
         });
+    });
+});
+
+
+// --- v1.8.0 / Phase 21E: frontend sync surface audit -----------------------
+
+
+describe("SYNC_TABLES — surface audit", () => {
+    /**
+     * Pinned list of every Dexie table that domain code writes
+     * to. If a new table is added to ``db.ts`` but not
+     * ``SYNC_TABLES``, the test below fails and surfaces it as
+     * a missing-from-sync hazard.
+     *
+     * Kept in this test file (not imported from db.ts) so the
+     * canonical "is this table synced?" check has a hand-curated
+     * audit list backing it — a code reviewer adding a Dexie
+     * table has to touch BOTH places, which is the point.
+     */
+    const EXPECTED_TABLES = [
+        "users",
+        "user_settings",
+        "learning_projects",
+        "learning_profiles",
+        "curriculums",
+        "learning_topics",
+        "lessons",
+        "learning_sessions",
+        "session_messages",
+        "session_ratings",
+        "session_notes",
+        "progress_commits",
+        "method_switches",
+        "step_evaluations",
+        "imported_conversations",
+        "imported_messages",
+    ];
+
+    it("covers every domain Dexie table", () => {
+        const actual = SYNC_TABLES.map((t) => t.name).sort();
+        const expected = [...EXPECTED_TABLES].sort();
+        expect(actual).toEqual(expected);
+    });
+
+    it("appendOnly classifications match the v1.8.0 spec", () => {
+        const append = SYNC_TABLES.filter((t) => t.appendOnly)
+            .map((t) => t.name)
+            .sort();
+        expect(append).toEqual(
+            [
+                "learning_sessions",
+                "session_messages",
+                "session_ratings",
+                "progress_commits",
+                "method_switches",
+                "step_evaluations",
+                "imported_conversations",
+                "imported_messages",
+            ].sort(),
+        );
+    });
+
+    it("every entry has a timestampField that the backend can filter on", () => {
+        for (const t of SYNC_TABLES) {
+            expect(t.timestampField).toBeTruthy();
+            expect(typeof t.timestampField).toBe("string");
+        }
     });
 });
