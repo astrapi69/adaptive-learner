@@ -1,11 +1,13 @@
-import {useState, type FormEvent} from "react";
+import {useEffect, useMemo, useState, type FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {SUPPORTED_LANGUAGES} from "../lib/constants";
 import {setProjectId, setUserId} from "../lib/learnerState";
+import {suggestSubjects, type SubjectSuggestion} from "../lib/subjectSuggest";
 import {getStorage} from "../storage";
+import type {Subject} from "../types/domain";
 import {notify} from "../utils/notify";
 
 /**
@@ -54,6 +56,95 @@ export default function Onboarding() {
     const [timeframe, setTimeframe] = useState("");
     const [dailyMinutes, setDailyMinutes] = useState(30);
     const [currentProblem, setCurrentProblem] = useState("");
+
+    // v22F — Subject + Tag picker.
+    const [subjects, setSubjects] = useState<Subject[]>([]);
+    const [selectedSubjectIds, setSelectedSubjectIds] = useState<Set<string>>(
+        new Set(),
+    );
+    const [tagInput, setTagInput] = useState("");
+
+    useEffect(() => {
+        let cancelled = false;
+        // Wrap in Promise.resolve so a synchronous throw (e.g.
+        // storage layer not wired) is captured by the .catch
+        // instead of bubbling up as an unhandled rejection. Subject
+        // suggestions are a nice-to-have; the page must not break
+        // when subject seeding hasn't run yet.
+        Promise.resolve()
+            .then(() => getStorage().subjects.list())
+            .then((rows) => {
+                if (!cancelled) setSubjects(rows);
+            })
+            .catch(() => {
+                /* no-op; suggestions just stay empty */
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, []);
+
+    const suggestions: SubjectSuggestion[] = useMemo(
+        () => suggestSubjects(topic, subjects, 5),
+        [topic, subjects],
+    );
+
+    function toggleSubject(subjectId: string) {
+        setSelectedSubjectIds((prev) => {
+            const next = new Set(prev);
+            if (next.has(subjectId)) next.delete(subjectId);
+            else next.add(subjectId);
+            return next;
+        });
+    }
+
+    function parseTagInput(value: string): string[] {
+        return value
+            .split(",")
+            .map((t) => t.trim())
+            .filter((t) => t.length > 0);
+    }
+
+    /**
+     * After the project + user are created, assign every picked
+     * subject + create-and-assign every entered tag. Failures here
+     * do not block onboarding — surface a soft toast and continue
+     * to the next page so a partial taxonomy assignment never
+     * traps the user before the Assessment.
+     */
+    async function applyTaxonomy(userId: string, projectId: string) {
+        const storage = getStorage();
+        for (const subjectId of selectedSubjectIds) {
+            try {
+                await storage.projectTaxonomy.assignSubject(projectId, subjectId);
+            } catch {
+                /* soft-fail; surfaced once below */
+            }
+        }
+        const tagNames = parseTagInput(tagInput);
+        for (const tagName of tagNames) {
+            try {
+                let tag;
+                try {
+                    tag = await storage.tags.create(userId, {name: tagName});
+                } catch (err) {
+                    // 409 means the tag already exists for this
+                    // user — re-fetch the list to find its id.
+                    if (err instanceof ApiError && err.status === 409) {
+                        const existing = await storage.tags.list(userId);
+                        tag = existing.find((t) => t.name === tagName);
+                    } else {
+                        throw err;
+                    }
+                }
+                if (tag) {
+                    await storage.projectTaxonomy.assignTag(projectId, tag.id);
+                }
+            } catch {
+                /* soft-fail */
+            }
+        }
+    }
 
     const allRequiredFilled =
         name.trim().length > 0 &&
@@ -127,6 +218,7 @@ export default function Onboarding() {
                 active: true,
             });
             setProjectId(project.id);
+            await applyTaxonomy(user.id, project.id);
             notify.success(t("toast.project_created", "Project created."));
             navigate("/assessment");
         } catch (err) {
@@ -198,6 +290,68 @@ export default function Onboarding() {
                         disabled={submitting}
                     />
                     <span className="form-hint">{t("onboarding.field_topic_hint")}</span>
+                </label>
+
+                {suggestions.length > 0 && (
+                    <div
+                        className="onboarding-subject-suggestions"
+                        data-testid="onboarding-subject-suggestions"
+                    >
+                        <p className="form-label">
+                            {t(
+                                "onboarding.subject_suggestions",
+                                "Suggested subjects (tap to assign):",
+                            )}
+                        </p>
+                        <ul className="taxonomy-chip-list">
+                            {suggestions.map((suggestion) => {
+                                const isOn = selectedSubjectIds.has(
+                                    suggestion.subject.id,
+                                );
+                                return (
+                                    <li key={suggestion.subject.id}>
+                                        <button
+                                            type="button"
+                                            className={`tag-badge${isOn ? " tag-badge-selected" : ""}`}
+                                            data-testid={`onboarding-subject-suggestion-${suggestion.subject.id}`}
+                                            onClick={() =>
+                                                toggleSubject(suggestion.subject.id)
+                                            }
+                                            disabled={submitting}
+                                        >
+                                            {suggestion.path}
+                                        </button>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </div>
+                )}
+
+                <label className="form-row">
+                    <span className="form-label">
+                        {t("onboarding.field_tags", "Tags")}{" "}
+                        <span className="form-optional">
+                            ({t("common.optional", "optional")})
+                        </span>
+                    </span>
+                    <input
+                        data-testid="onboarding-tags"
+                        type="text"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        placeholder={t(
+                            "onboarding.field_tags_placeholder",
+                            "exam-prep, daily-practice",
+                        )}
+                        disabled={submitting}
+                    />
+                    <span className="form-hint">
+                        {t(
+                            "onboarding.field_tags_hint",
+                            "Comma-separated. Reuse existing tags or create new ones on the fly.",
+                        )}
+                    </span>
                 </label>
 
                 <label className="form-row">
