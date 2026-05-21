@@ -21,6 +21,13 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
         args: [--allow-multiple-documents]
+        # mkdocs.yml uses pymdownx Python-tag constructors
+        # (``!!python/name:material.extensions.emoji.twemoji``) that
+        # PyYAML's safe_load cannot resolve. mkdocs's own loader
+        # handles them; check-yaml is a syntax-only gate, so the
+        # exclude is the right scope-narrowing fix rather than
+        # weakening every YAML file with ``--unsafe``.
+        exclude: ^mkdocs\.yml$
       - id: check-json
       - id: check-added-large-files
         args: [--maxkb=1000]
