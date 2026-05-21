@@ -179,5 +179,6 @@ export const apiStorage: IStorageService = {
             api.gamification.getStreakHeatmap(userId, days),
         setWeekendMode: (userId, enabled) =>
             api.gamification.setWeekendMode(userId, enabled),
+        resetProgress: (userId) => api.gamification.resetProgress(userId),
     },
 };

@@ -162,6 +162,42 @@ def set_weekend_mode(
     return streak_service.set_weekend_mode(db, user_id, body.enabled)
 
 
+# --- Reset (Phase 29D) ----------------------------------------------------
+
+
+@router.post("/reset/{user_id}")
+def reset_progress(
+    user_id: str, db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    """Destructive reset of XP / badges / streak state for one user.
+
+    Wipes ``user_xp``, ``user_badges``, ``user_streaks`` rows; the
+    badge catalog (``badges``) is shared + survives. The frontend
+    gates the call behind a double confirmation.
+
+    Returns ``{xp_deleted, badges_deleted, streak_deleted}`` counts
+    for the success toast.
+    """
+    from app.models import UserBadge, UserStreak, UserXP
+
+    _ensure_user(db, user_id)
+    xp_deleted = (
+        db.query(UserXP).filter(UserXP.user_id == user_id).delete()
+    )
+    badges_deleted = (
+        db.query(UserBadge).filter(UserBadge.user_id == user_id).delete()
+    )
+    streak_deleted = (
+        db.query(UserStreak).filter(UserStreak.user_id == user_id).delete()
+    )
+    db.commit()
+    return {
+        "xp_deleted": int(xp_deleted),
+        "badges_deleted": int(badges_deleted),
+        "streak_deleted": int(streak_deleted),
+    }
+
+
 @router.post("/xp/{user_id}/award")
 def manual_award(
     user_id: str,

@@ -269,6 +269,17 @@ settings:
   model_picker_recommended: Recommended
   model_picker_all: All models
   model_picker_suggestions: Suggested (offline)
+  section_gamification: Gamification
+  xp_notifications: Show XP notifications
+  xp_notifications_help: Floating ‘+50 XP’ animation when you earn XP.
+  badge_notifications: Show badge notifications
+  badge_notifications_help: Toast when a new badge is earned.
+  daily_session_goal: Daily session goal
+  daily_session_goal_help: Sessions per day shown as a progress hint.
+  reset_progress: Reset progress
+  reset_progress_help: Permanently delete XP, badges, and streak. Cannot be undone.
+  reset_confirm_first: Click again to confirm
+  reset_confirm_second: Click once more to delete forever
 methods:
   deductive:
     label: Deductive
@@ -624,3 +635,6 @@ gamification:
   streak_calendar: Activity heatmap
   weekend_mode: Weekend mode
   weekend_mode_help: Weekends don't count toward streak gaps.
+  reset_done: 'Progress reset: {xp} XP, {badges} badges, {streak} streaks.'
+  reset_failed: Could not reset progress.
+  weekend_mode_save_failed: Could not save the weekend-mode setting.

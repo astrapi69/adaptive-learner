@@ -341,6 +341,12 @@ export interface IGamificationNamespace {
     getStreak(userId: string): Promise<StreakStateOut>;
     getStreakHeatmap(userId: string, days?: number): Promise<HeatmapEntryOut[]>;
     setWeekendMode(userId: string, enabled: boolean): Promise<StreakStateOut>;
+    /** Destructive: wipes XP, badges, streak. Used by Settings. */
+    resetProgress(userId: string): Promise<{
+        xp_deleted: number;
+        badges_deleted: number;
+        streak_deleted: number;
+    }>;
 }
 
 export interface IImportsNamespace {

@@ -269,6 +269,17 @@ settings:
   model_picker_recommended: Recomendados
   model_picker_all: Todos os modelos
   model_picker_suggestions: Sugeridos (offline)
+  section_gamification: Gamificação
+  xp_notifications: Mostrar notificações de XP
+  xp_notifications_help: Animação flutuante «+50 XP» ao ganhar.
+  badge_notifications: Mostrar notificações de emblemas
+  badge_notifications_help: Aviso quando um novo emblema é ganho.
+  daily_session_goal: Meta diária de sessões
+  daily_session_goal_help: Sessões por dia como indicador de progresso.
+  reset_progress: Redefinir progresso
+  reset_progress_help: Apaga XP, emblemas e sequência. Não pode ser desfeito.
+  reset_confirm_first: Clique de novo para confirmar
+  reset_confirm_second: Clique mais uma vez para apagar para sempre
 methods:
   deductive:
     label: Dedutivo
@@ -624,3 +635,6 @@ gamification:
   streak_calendar: Mapa de atividade
   weekend_mode: Modo fim de semana
   weekend_mode_help: Fins de semana não quebram sua sequência.
+  reset_done: 'Progresso redefinido: {xp} XP, {badges} emblemas, {streak} sequências.'
+  reset_failed: Não foi possível redefinir o progresso.
+  weekend_mode_save_failed: Não foi possível salvar o modo fim de semana.

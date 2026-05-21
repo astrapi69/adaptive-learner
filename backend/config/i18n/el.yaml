@@ -269,6 +269,17 @@ settings:
   model_picker_recommended: Recommended
   model_picker_all: All models
   model_picker_suggestions: Suggested (offline)
+  section_gamification: Gamification
+  xp_notifications: Εμφάνιση ειδοποιήσεων XP
+  xp_notifications_help: Αναδυόμενη κίνηση «+50 XP» όταν κερδίζεις.
+  badge_notifications: Εμφάνιση ειδοποιήσεων σημάτων
+  badge_notifications_help: Ειδοποίηση όταν κερδίζεις νέο σήμα.
+  daily_session_goal: Ημερήσιος στόχος συνεδριών
+  daily_session_goal_help: Συνεδρίες ανά ημέρα ως ένδειξη προόδου.
+  reset_progress: Επαναφορά προόδου
+  reset_progress_help: Διαγράφει οριστικά XP, σήματα και σερί.
+  reset_confirm_first: Πάτησε ξανά για επιβεβαίωση
+  reset_confirm_second: Πάτησε ξανά για οριστική διαγραφή
 methods:
   deductive:
     label: Επαγωγική (από γενικό)
@@ -624,3 +635,6 @@ gamification:
   streak_calendar: Χάρτης δραστηριότητας
   weekend_mode: Λειτουργία Σαββατοκύριακου
   weekend_mode_help: Τα Σαββατοκύριακα δεν διακόπτουν το σερί.
+  reset_done: 'Πρόοδος μηδενίστηκε: {xp} XP, {badges} σήματα, {streak} σερί.'
+  reset_failed: Δεν ήταν δυνατή η επαναφορά της προόδου.
+  weekend_mode_save_failed: Δεν αποθηκεύτηκε η λειτουργία Σαββατοκύριακου.

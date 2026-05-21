@@ -269,6 +269,17 @@ settings:
   model_picker_recommended: Önerilen
   model_picker_all: Tüm modeller
   model_picker_suggestions: Önerilen (çevrimdışı)
+  section_gamification: Oyunlaştırma
+  xp_notifications: XP bildirimlerini göster
+  xp_notifications_help: XP kazanırken yüzen «+50 XP» animasyonu.
+  badge_notifications: Rozet bildirimlerini göster
+  badge_notifications_help: Yeni rozet kazandığında bildirim.
+  daily_session_goal: Günlük oturum hedefi
+  daily_session_goal_help: İlerleme göstergesi olarak gün başına oturum.
+  reset_progress: İlerlemeyi sıfırla
+  reset_progress_help: XP, rozet ve seriyi kalıcı olarak siler. Geri alınamaz.
+  reset_confirm_first: Onaylamak için tekrar tıkla
+  reset_confirm_second: Kalıcı silmek için bir kez daha tıkla
 methods:
   deductive:
     label: Tümdengelimsel
@@ -624,3 +635,6 @@ gamification:
   streak_calendar: Etkinlik ısı haritası
   weekend_mode: Hafta sonu modu
   weekend_mode_help: Hafta sonları serini bozmaz.
+  reset_done: 'İlerleme sıfırlandı: {xp} XP, {badges} rozet, {streak} seri.'
+  reset_failed: İlerleme sıfırlanamadı.
+  weekend_mode_save_failed: Hafta sonu modu kaydedilemedi.

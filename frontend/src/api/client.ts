@@ -775,6 +775,15 @@ export const api = {
                 `/plugins/gamification/streak/${encodeURIComponent(userId)}/weekend-mode`,
                 {method: "POST", body: {enabled}},
             ),
+        resetProgress: (userId: string) =>
+            apiCall<{
+                xp_deleted: number;
+                badges_deleted: number;
+                streak_deleted: number;
+            }>(
+                `/plugins/gamification/reset/${encodeURIComponent(userId)}`,
+                {method: "POST", body: {}},
+            ),
     },
 
     // --- Imported conversations (v0.9.0 / Phase 12C) ---------------------

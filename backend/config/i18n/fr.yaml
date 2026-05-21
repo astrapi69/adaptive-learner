@@ -269,6 +269,17 @@ settings:
   model_picker_recommended: Recommended
   model_picker_all: All models
   model_picker_suggestions: Suggested (offline)
+  section_gamification: Gamification
+  xp_notifications: Afficher les notifications XP
+  xp_notifications_help: Animation flottante « +50 XP » à chaque gain.
+  badge_notifications: Afficher les notifications de badge
+  badge_notifications_help: Notification lorsqu'un nouveau badge est gagné.
+  daily_session_goal: Objectif quotidien de sessions
+  daily_session_goal_help: Sessions par jour comme indicateur de progression.
+  reset_progress: Réinitialiser la progression
+  reset_progress_help: Supprime XP, badges et série. Irréversible.
+  reset_confirm_first: Clique encore pour confirmer
+  reset_confirm_second: Clique une dernière fois pour supprimer définitivement
 methods:
   deductive:
     label: Deductif
@@ -624,3 +635,6 @@ gamification:
   streak_calendar: Carte d'activité
   weekend_mode: Mode week-end
   weekend_mode_help: Les week-ends ne brisent pas ta série.
+  reset_done: 'Progression réinitialisée : {xp} XP, {badges} badges, {streak} séries.'
+  reset_failed: Impossible de réinitialiser la progression.
+  weekend_mode_save_failed: Impossible d'enregistrer le mode week-end.

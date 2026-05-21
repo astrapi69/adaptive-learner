@@ -269,6 +269,17 @@ settings:
   model_picker_recommended: 推奨
   model_picker_all: すべてのモデル
   model_picker_suggestions: 候補 (オフライン)
+  section_gamification: ゲーミフィケーション
+  xp_notifications: XP通知を表示
+  xp_notifications_help: XP獲得時の「+50 XP」フローティングアニメーション。
+  badge_notifications: バッジ通知を表示
+  badge_notifications_help: 新しいバッジを獲得したときの通知。
+  daily_session_goal: 1日のセッション目標
+  daily_session_goal_help: 進捗の目安として1日あたりのセッション数。
+  reset_progress: 進捗をリセット
+  reset_progress_help: XP、バッジ、ストリークを完全に削除。元に戻せません。
+  reset_confirm_first: 確認のためもう一度クリック
+  reset_confirm_second: 完全削除するにはもう一度クリック
 methods:
   deductive:
     label: 演繹的
@@ -624,3 +635,6 @@ gamification:
   streak_calendar: アクティビティ・ヒートマップ
   weekend_mode: 週末モード
   weekend_mode_help: 週末はストリークの中断にカウントされません。
+  reset_done: '進捗をリセット: {xp} XP、{badges} バッジ、{streak} ストリーク。'
+  reset_failed: 進捗をリセットできませんでした。
+  weekend_mode_save_failed: 週末モードを保存できませんでした。

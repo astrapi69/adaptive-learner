@@ -1737,5 +1737,29 @@ export const dexieStorage: IStorageService = {
         getStreakHeatmap: (userId, days) => calendarHeatmap(userId, days ?? 365),
         setWeekendMode: (userId, enabled) =>
             setWeekendModeStorage(userId, enabled),
+        async resetProgress(userId) {
+            const db = getDb();
+            const xp = await db.userXp.where({user_id: userId}).toArray();
+            const badges = await db.userBadges
+                .where({user_id: userId})
+                .toArray();
+            const streak = await db.userStreaks
+                .where({user_id: userId})
+                .toArray();
+            const xpDeleted = await db.userXp
+                .where({user_id: userId})
+                .delete();
+            const badgesDeleted = await db.userBadges
+                .where({user_id: userId})
+                .delete();
+            const streakDeleted = await db.userStreaks
+                .where({user_id: userId})
+                .delete();
+            return {
+                xp_deleted: xpDeleted || xp.length,
+                badges_deleted: badgesDeleted || badges.length,
+                streak_deleted: streakDeleted || streak.length,
+            };
+        },
     },
 };

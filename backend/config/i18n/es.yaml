@@ -269,6 +269,17 @@ settings:
   model_picker_recommended: Recommended
   model_picker_all: All models
   model_picker_suggestions: Suggested (offline)
+  section_gamification: Gamificación
+  xp_notifications: Mostrar notificaciones de XP
+  xp_notifications_help: Animación flotante «+50 XP» al ganar.
+  badge_notifications: Mostrar notificaciones de insignias
+  badge_notifications_help: Aviso cuando se gana una insignia nueva.
+  daily_session_goal: Meta diaria de sesiones
+  daily_session_goal_help: Sesiones por día como indicador de progreso.
+  reset_progress: Reiniciar progreso
+  reset_progress_help: Elimina XP, insignias y racha. No se puede deshacer.
+  reset_confirm_first: Haz clic de nuevo para confirmar
+  reset_confirm_second: Haz clic una vez más para eliminar para siempre
 methods:
   deductive:
     label: Deductivo
@@ -624,3 +635,6 @@ gamification:
   streak_calendar: Mapa de actividad
   weekend_mode: Modo fin de semana
   weekend_mode_help: Los fines de semana no rompen tu racha.
+  reset_done: 'Progreso reiniciado: {xp} XP, {badges} insignias, {streak} rachas.'
+  reset_failed: No se pudo reiniciar el progreso.
+  weekend_mode_save_failed: No se pudo guardar el modo fin de semana.

@@ -269,6 +269,17 @@ settings:
   model_picker_recommended: Empfohlen
   model_picker_all: Alle Modelle
   model_picker_suggestions: Vorschläge (offline)
+  section_gamification: Gamification
+  xp_notifications: XP-Benachrichtigungen anzeigen
+  xp_notifications_help: Schwebende „+50 XP"-Animation beim Verdienen.
+  badge_notifications: Abzeichen-Benachrichtigungen anzeigen
+  badge_notifications_help: Toast, wenn ein neues Abzeichen verdient wurde.
+  daily_session_goal: Tägliches Sitzungsziel
+  daily_session_goal_help: Sitzungen pro Tag als Fortschrittshinweis.
+  reset_progress: Fortschritt zurücksetzen
+  reset_progress_help: Löscht XP, Abzeichen und Serie unwiderruflich.
+  reset_confirm_first: Erneut klicken zum Bestätigen
+  reset_confirm_second: Noch einmal klicken — endgültig löschen
 methods:
   deductive:
     label: Deduktiv
@@ -624,3 +635,6 @@ gamification:
   streak_calendar: Aktivitäts-Heatmap
   weekend_mode: Wochenend-Modus
   weekend_mode_help: Wochenenden zählen nicht als Lücke in deiner Serie.
+  reset_done: 'Fortschritt zurückgesetzt: {xp} XP, {badges} Abzeichen, {streak} Serien.'
+  reset_failed: Fortschritt konnte nicht zurückgesetzt werden.
+  weekend_mode_save_failed: Wochenend-Modus konnte nicht gespeichert werden.

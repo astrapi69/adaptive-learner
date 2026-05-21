@@ -5,6 +5,7 @@ import {ApiError} from "../api/client";
 import AboutTab from "../components/about/AboutTab";
 import BackupSection from "../components/BackupSection";
 import ExportSection from "../components/ExportSection";
+import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import {ModelPicker} from "../components/ModelPicker";
 import SyncSection from "../components/SyncSection";
 import {DEFAULT_MODELS} from "../storage/ai-providers";
@@ -629,6 +630,7 @@ export default function Settings() {
                 )}
             </section>
 
+            <GamificationSettingsSection />
             <SyncSection />
             <BackupSection />
             <ExportSection />
