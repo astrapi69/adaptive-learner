@@ -79,7 +79,7 @@ export default function QRScannerModal({
         <div
             role="dialog"
             aria-modal="true"
-            aria-label={t("sync.scan_qr", "Scan QR Code")}
+            aria-label={t("sync.scan_qr")}
             data-testid="qr-scanner-modal"
             style={{
                 position: "fixed",
@@ -128,7 +128,7 @@ export default function QRScannerModal({
                     ×
                 </button>
                 <h3 style={{marginTop: 0, paddingRight: "2rem"}}>
-                    {t("sync.scan_qr", "Scan QR Code")}
+                    {t("sync.scan_qr")}
                 </h3>
 
                 {error !== null ? (
@@ -147,10 +147,7 @@ export default function QRScannerModal({
                             style={{margin: "0 0 0.75rem", fontSize: "0.9rem"}}
                             data-testid="qr-scanner-instruction"
                         >
-                            {t(
-                                "sync.scan_instruction",
-                                "Point your camera at the QR code on your desktop.",
-                            )}
+                            {t("sync.scan_instruction")}
                         </p>
                         <QRScanner
                             onSuccess={(_, raw) => {
@@ -186,10 +183,7 @@ export default function QRScannerModal({
                                 role="status"
                                 aria-live="polite"
                             >
-                                {t(
-                                    "sync.invalid_qr",
-                                    "Not a valid pairing code. Re-aim at the desktop's QR.",
-                                )}
+                                {t("sync.invalid_qr")}
                             </p>
                         )}
                         <div
@@ -206,10 +200,7 @@ export default function QRScannerModal({
                                     opacity: 0.75,
                                 }}
                             >
-                                {t(
-                                    "sync.upload_qr_hint",
-                                    "No camera? Take a screenshot of the desktop's QR and upload it:",
-                                )}
+                                {t("sync.upload_qr_hint")}
                             </p>
                             <QRImageUpload onScan={onScan} t={t} />
                         </div>
@@ -233,38 +224,30 @@ function ErrorPanel({
     onScan: (uri: string) => void;
     t: (key: string, fallback?: string) => string;
 }) {
+    // v1.8.0 / Phase 21C — i18n keys live in the YAML catalogs;
+    // the per-call fallback args are gone. The key picker stays
+    // as a computed expression because the displayed string
+    // depends on the camera-error code.
     const titleKey =
         error.code === "permission-denied"
             ? "sync.camera_denied"
             : error.code === "no-camera"
               ? "sync.no_camera"
               : "sync.camera_error";
-    const titleFallback =
-        error.code === "permission-denied"
-            ? "Camera access denied"
-            : error.code === "no-camera"
-              ? "No camera available"
-              : "Could not start the camera";
     const hintKey =
         error.code === "permission-denied"
             ? "sync.camera_denied_hint"
             : error.code === "no-camera"
               ? "sync.no_camera_hint"
               : "sync.camera_error_hint";
-    const hintFallback =
-        error.code === "permission-denied"
-            ? "Allow camera access in your browser settings, then re-open the scanner."
-            : error.code === "no-camera"
-              ? "This device has no camera available. Use the paste-the-link option instead."
-              : "Something went wrong starting the camera. Try again, or use paste-the-link.";
 
     return (
         <div data-testid="qr-scanner-error">
             <p style={{fontWeight: 600, marginTop: "0.5rem"}}>
-                {t(titleKey, titleFallback)}
+                {t(titleKey)}
             </p>
             <p style={{fontSize: "0.9rem", opacity: 0.8}}>
-                {t(hintKey, hintFallback)}
+                {t(hintKey)}
             </p>
             <div
                 style={{
@@ -280,7 +263,7 @@ function ErrorPanel({
                     onClick={onRetry}
                     data-testid="qr-scanner-retry"
                 >
-                    {t("sync.scan_again", "Scan again")}
+                    {t("sync.scan_again")}
                 </button>
                 <button
                     type="button"
@@ -308,10 +291,7 @@ function ErrorPanel({
                         opacity: 0.75,
                     }}
                 >
-                    {t(
-                        "sync.upload_qr_hint",
-                        "No camera? Take a screenshot of the desktop's QR and upload it:",
-                    )}
+                    {t("sync.upload_qr_hint")}
                 </p>
                 <QRImageUpload onScan={onScan} t={t} />
             </div>
@@ -337,10 +317,10 @@ function SuccessPanel({
                 ✓
             </div>
             <p style={{fontWeight: 600}}>
-                {t("sync.scan_success", "Connection found")}
+                {t("sync.scan_success")}
             </p>
             <p style={{fontSize: "0.85rem", opacity: 0.8}}>
-                {t("sync.scan_success_hint", "Verifying with the desktop…")}
+                {t("sync.scan_success_hint")}
             </p>
         </div>
     );

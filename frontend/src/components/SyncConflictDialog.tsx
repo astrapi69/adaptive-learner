@@ -132,7 +132,7 @@ export default function SyncConflictDialog({
                 aiBusy: false,
             });
             notify.success(
-                t("sync.smart_merge_ready", "AI merge ready — review and apply."),
+                t("sync.smart_merge_ready"),
             );
         } catch (err) {
             updateState(idx, {aiBusy: false});
@@ -141,7 +141,7 @@ export default function SyncConflictDialog({
                     ? err.detail
                     : err instanceof Error
                       ? err.message
-                      : t("sync.smart_merge_error", "Smart merge failed.");
+                      : t("sync.smart_merge_error");
             notify.error(detail);
         }
     }
@@ -196,14 +196,11 @@ export default function SyncConflictDialog({
                 }}
             >
                 <h2 style={{marginTop: 0}}>
-                    {t("sync.conflicts_title", "Resolve sync conflicts")}{" "}
+                    {t("sync.conflicts_title")}{" "}
                     ({conflicts.length})
                 </h2>
                 <p className="muted">
-                    {t(
-                        "sync.conflicts_intro",
-                        "Both devices changed the same record since the last sync. Pick which version to keep for each one.",
-                    )}
+                    {t("sync.conflicts_intro")}
                 </p>
                 {conflicts.map((c, idx) => (
                     <ConflictRow
@@ -235,7 +232,7 @@ export default function SyncConflictDialog({
                         onClick={onCancel}
                         data-testid="sync-conflict-cancel"
                     >
-                        {t("sync.conflict_cancel", "Cancel (keep all local)")}
+                        {t("sync.conflict_cancel")}
                     </button>
                     <button
                         type="button"
@@ -243,7 +240,7 @@ export default function SyncConflictDialog({
                         onClick={handleApply}
                         data-testid="sync-conflict-apply"
                     >
-                        {t("sync.conflict_apply", "Apply choices")}
+                        {t("sync.conflict_apply")}
                     </button>
                 </div>
             </div>
@@ -292,13 +289,13 @@ function ConflictRow({
                 }}
             >
                 <ColumnCard
-                    title={t("sync.local_version", "This device")}
+                    title={t("sync.local_version")}
                     record={conflict.local}
                     fields={fields}
                     highlightAgainst={conflict.remote}
                 />
                 <ColumnCard
-                    title={t("sync.remote_version", "Other device")}
+                    title={t("sync.remote_version")}
                     record={conflict.remote}
                     fields={fields}
                     highlightAgainst={conflict.local}
@@ -315,7 +312,7 @@ function ConflictRow({
                 }}
             >
                 <Choice
-                    label={t("sync.keep_local", "Keep this device")}
+                    label={t("sync.keep_local")}
                     value="local"
                     selected={state.chosen}
                     onSelect={onChoose}
@@ -323,7 +320,7 @@ function ConflictRow({
                     testid={`sync-conflict-${index}-local`}
                 />
                 <Choice
-                    label={t("sync.keep_remote", "Keep other device")}
+                    label={t("sync.keep_remote")}
                     value="remote"
                     selected={state.chosen}
                     onSelect={onChoose}
@@ -331,7 +328,7 @@ function ConflictRow({
                     testid={`sync-conflict-${index}-remote`}
                 />
                 <Choice
-                    label={t("sync.merge", "Merge manually")}
+                    label={t("sync.merge")}
                     value="merged"
                     selected={state.chosen}
                     onSelect={onChoose}
@@ -348,8 +345,8 @@ function ConflictRow({
                         style={{marginLeft: "auto"}}
                     >
                         {state.aiBusy
-                            ? t("sync.smart_merge_running", "Merging with AI…")
-                            : t("sync.smart_merge", "Smart Merge (AI)")}
+                            ? t("sync.smart_merge_running")
+                            : t("sync.smart_merge")}
                     </button>
                 )}
             </fieldset>
@@ -445,7 +442,7 @@ function MergeEditor({
             }}
         >
             <small style={{opacity: 0.7}}>
-                {t("sync.merge_editor", "Merged record (editable)")}
+                {t("sync.merge_editor")}
             </small>
             {fields.map((f) => {
                 if (f === "id" || f.endsWith("_at") || f === "user_id") {

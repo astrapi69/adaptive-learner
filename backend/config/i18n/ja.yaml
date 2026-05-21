@@ -458,3 +458,66 @@ export:
   title_progress: Learning Progress
   title_session: Session Detail
   title_curriculum: Curriculum
+sync:
+  api_mode_note: This device is running its own backend. The paired device should also see this connection in its sync panel.
+  camera_denied: Camera access denied
+  camera_denied_hint: Allow camera access in your browser settings, then re-open the scanner.
+  camera_error: Could not start the camera
+  camera_error_hint: Something went wrong starting the camera. Try again, or use paste-the-link.
+  conflict_apply: Apply choices
+  conflict_cancel: Cancel (keep all local)
+  conflicts_intro: Both devices changed the same record since the last sync. Pick which version to keep for each one.
+  conflicts_title: Resolve sync conflicts
+  connect: Connect
+  connected_to: Connected to
+  copy_error: Could not copy to clipboard.
+  copy_link: Copy link
+  desktop_hint: Generate a short-lived pairing link. Open this app on your phone, paste the link, and the two devices will share the same user account.
+  expires_at: Expires
+  generate: Generate pairing code
+  generating: Generating…
+  history: Recent syncs
+  host: Local IP / host
+  image_decode_failed: Could not read a QR code from this image. Re-take the screenshot.
+  image_decoding: Reading image…
+  intro: Pair a phone and a desktop on the same local network. Sync is always opt-in; you click Sync Now when you want to merge changes.
+  invalid_qr: Not a valid pairing code.
+  keep_local: Keep this device
+  keep_remote: Keep other device
+  last_sync: Last sync
+  link_copied: Pairing link copied.
+  local_version: This device
+  merge: Merge manually
+  merge_editor: Merged record (editable)
+  never: never
+  no_camera: No camera available
+  no_camera_hint: This device has no camera available. Use the paste-the-link option instead.
+  no_user: Complete the onboarding before generating a pairing code.
+  now: Sync Now
+  pair_error: Could not pair the device.
+  paired: Device paired.
+  paired_at: Paired
+  pairing: Pairing…
+  paste_link_fallback: Or paste the link manually
+  phone_hint_v17: "Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically."
+  port: Port
+  qr_alt: Pairing QR code
+  remote_version: Other device
+  scan_again: Scan again
+  scan_hint: "Open the phone's Settings > Sync, paste this link, and tap Connect. The link expires in 5 minutes and can be used once."
+  scan_instruction: Point your camera at the QR code on your desktop.
+  scan_qr: Scan QR Code
+  scan_success: Connection found
+  scan_success_hint: Verifying with the desktop…
+  smart_merge: Smart Merge (AI)
+  smart_merge_error: Smart merge failed.
+  smart_merge_ready: AI merge ready — review and apply.
+  smart_merge_running: Merging with AI…
+  sync_error: Sync failed.
+  synced: Synced
+  syncing: Syncing…
+  unpair: Unpair device
+  unpair_confirm: Unpair this device? Local data is kept; future syncs are blocked until you pair again.
+  unpaired: Device unpaired.
+  upload_qr: Upload QR image
+  upload_qr_hint: "No camera? Take a screenshot of the desktop's QR and upload it:"

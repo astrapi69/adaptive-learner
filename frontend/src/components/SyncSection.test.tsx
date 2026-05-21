@@ -105,7 +105,12 @@ describe("SyncSection — paired", () => {
         pair();
         renderSection();
         const lastSync = screen.getByTestId("sync-last");
-        expect(lastSync.textContent).toContain("never");
+        // v1.8.0 / Phase 21C — i18n moved to YAML + inline
+        // fallbacks. The I18nProvider defaults to DE for tests
+        // without an explicit language, so the rendered text is
+        // "noch nie"; match either DE or EN form so this test
+        // survives a future test-env locale change.
+        expect(lastSync.textContent).toMatch(/never|noch nie/);
     });
 
     it("renders sync history when entries exist", () => {

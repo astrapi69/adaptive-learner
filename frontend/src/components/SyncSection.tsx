@@ -79,14 +79,14 @@ export default function SyncSection() {
             await getSyncEngine().pair(pairingLink.trim());
             refreshFromStorage();
             setPairingLink("");
-            notify.success(t("sync.paired", "Device paired."));
+            notify.success(t("sync.paired"));
         } catch (err) {
             const detail =
                 err instanceof ApiError
                     ? err.detail
                     : err instanceof Error
                       ? err.message
-                      : t("sync.pair_error", "Could not pair the device.");
+                      : t("sync.pair_error");
             notify.error(detail);
         } finally {
             setBusy("");
@@ -107,14 +107,14 @@ export default function SyncSection() {
             refreshFromStorage();
             setPairingLink("");
             setScannerOpen(false);
-            notify.success(t("sync.paired", "Device paired."));
+            notify.success(t("sync.paired"));
         } catch (err) {
             const detail =
                 err instanceof ApiError
                     ? err.detail
                     : err instanceof Error
                       ? err.message
-                      : t("sync.pair_error", "Could not pair the device.");
+                      : t("sync.pair_error");
             notify.error(detail);
             // Keep the modal open so the user can retry with a
             // fresh QR from the desktop (the v1.0.0 token has
@@ -139,14 +139,14 @@ export default function SyncSection() {
                 });
             });
             refreshFromStorage();
-            notify.success(`${t("sync.synced", "Synced")}: ${outcome.summary}`);
+            notify.success(`${t("sync.synced")}: ${outcome.summary}`);
         } catch (err) {
             const detail =
                 err instanceof ApiError
                     ? err.detail
                     : err instanceof Error
                       ? err.message
-                      : t("sync.sync_error", "Sync failed.");
+                      : t("sync.sync_error");
             notify.error(detail);
         } finally {
             setBusy("");
@@ -155,15 +155,12 @@ export default function SyncSection() {
 
     function handleUnpair() {
         const ok = window.confirm(
-            t(
-                "sync.unpair_confirm",
-                "Unpair this device? Local data is kept; future syncs are blocked until you pair again.",
-            ),
+            t("sync.unpair_confirm"),
         );
         if (!ok) return;
         getSyncEngine().unpair();
         refreshFromStorage();
-        notify.info(t("sync.unpaired", "Device unpaired."));
+        notify.info(t("sync.unpaired"));
     }
 
     // Conflict-resolver bridge: we pass a promise resolver into
@@ -202,10 +199,7 @@ export default function SyncSection() {
                 {t("settings.section_sync", "Sync")}
             </h2>
             <p className="muted">
-                {t(
-                    "sync.intro",
-                    "Pair a phone and a desktop on the same local network. Sync is always opt-in; you click Sync Now when you want to merge changes.",
-                )}
+                {t("sync.intro")}
             </p>
 
             {config ? (
@@ -283,20 +277,20 @@ function PairedView({
                 }}
             >
                 <div style={{fontWeight: 600}}>
-                    {t("sync.connected_to", "Connected to")}: {config.user_name}
+                    {t("sync.connected_to")}: {config.user_name}
                 </div>
                 <small style={{opacity: 0.7}}>
                     {config.host}:{config.port}
                     {" · "}
-                    {t("sync.paired_at", "Paired")}:{" "}
+                    {t("sync.paired_at")}:{" "}
                     {new Date(config.paired_at).toLocaleString()}
                 </small>
                 <div style={{marginTop: "0.5rem"}}>
                     <small data-testid="sync-last">
-                        {t("sync.last_sync", "Last sync")}:{" "}
+                        {t("sync.last_sync")}:{" "}
                         {lastSync
                             ? new Date(lastSync).toLocaleString()
-                            : t("sync.never", "never")}
+                            : t("sync.never")}
                     </small>
                 </div>
                 <div
@@ -315,8 +309,8 @@ function PairedView({
                         data-testid="sync-now-button"
                     >
                         {busy === "sync"
-                            ? t("sync.syncing", "Syncing…")
-                            : t("sync.now", "Sync Now")}
+                            ? t("sync.syncing")
+                            : t("sync.now")}
                     </button>
                     <button
                         type="button"
@@ -325,7 +319,7 @@ function PairedView({
                         disabled={busy !== ""}
                         data-testid="sync-unpair-button"
                     >
-                        {t("sync.unpair", "Unpair device")}
+                        {t("sync.unpair")}
                     </button>
                 </div>
                 {storageMode === "api" && (
@@ -333,10 +327,7 @@ function PairedView({
                         className="muted"
                         style={{marginTop: "0.5rem", fontSize: "0.85rem"}}
                     >
-                        {t(
-                            "sync.api_mode_note",
-                            "This device is running its own backend. The paired device should also see this connection in its sync panel.",
-                        )}
+                        {t("sync.api_mode_note")}
                     </p>
                 )}
             </div>
@@ -344,7 +335,7 @@ function PairedView({
             {history.length > 0 && (
                 <div data-testid="sync-history">
                     <h3 style={{margin: "1rem 0 0.5rem"}}>
-                        {t("sync.history", "Recent syncs")}
+                        {t("sync.history")}
                     </h3>
                     <ul style={{listStyle: "none", padding: 0, margin: 0}}>
                         {history.map((h, i) => (
@@ -396,10 +387,7 @@ function DesktopUnpairedView({
         const {userId} = readLearnerState();
         if (!userId) {
             notify.error(
-                t(
-                    "sync.no_user",
-                    "Complete the onboarding before generating a pairing code.",
-                ),
+                t("sync.no_user"),
             );
             return;
         }
@@ -430,7 +418,7 @@ function DesktopUnpairedView({
             setExpiresAt(body.expires_at);
         } catch (err) {
             const detail = err instanceof Error ? err.message : "unknown error";
-            notify.error(`${t("sync.pair_error", "Could not pair the device.")} (${detail})`);
+            notify.error(`${t("sync.pair_error")} (${detail})`);
         } finally {
             setBusy(false);
         }
@@ -439,18 +427,15 @@ function DesktopUnpairedView({
     function copyLink() {
         if (!link) return;
         navigator.clipboard?.writeText(link).then(
-            () => notify.success(t("sync.link_copied", "Pairing link copied.")),
-            () => notify.error(t("sync.copy_error", "Could not copy to clipboard.")),
+            () => notify.success(t("sync.link_copied")),
+            () => notify.error(t("sync.copy_error")),
         );
     }
 
     return (
         <div data-testid="sync-desktop-unpaired">
             <p className="muted">
-                {t(
-                    "sync.desktop_hint",
-                    "Generate a short-lived pairing link. Open this app on your phone, paste the link, and the two devices will share the same user account.",
-                )}
+                {t("sync.desktop_hint")}
             </p>
             <div
                 style={{
@@ -463,7 +448,7 @@ function DesktopUnpairedView({
             >
                 <label style={{display: "flex", flexDirection: "column"}}>
                     <small style={{opacity: 0.7}}>
-                        {t("sync.host", "Local IP / host")}
+                        {t("sync.host")}
                     </small>
                     <input
                         type="text"
@@ -474,7 +459,7 @@ function DesktopUnpairedView({
                     />
                 </label>
                 <label style={{display: "flex", flexDirection: "column"}}>
-                    <small style={{opacity: 0.7}}>{t("sync.port", "Port")}</small>
+                    <small style={{opacity: 0.7}}>{t("sync.port")}</small>
                     <input
                         type="number"
                         value={port}
@@ -493,8 +478,8 @@ function DesktopUnpairedView({
                     data-testid="sync-generate-button"
                 >
                     {busy
-                        ? t("sync.generating", "Generating…")
-                        : t("sync.generate", "Generate pairing code")}
+                        ? t("sync.generating")
+                        : t("sync.generate")}
                 </button>
             </div>
             {qrDataUrl && link && (
@@ -510,7 +495,7 @@ function DesktopUnpairedView({
                     <div style={{textAlign: "center"}}>
                         <img
                             src={qrDataUrl}
-                            alt={t("sync.qr_alt", "Pairing QR code")}
+                            alt={t("sync.qr_alt")}
                             data-testid="sync-qr-image"
                             style={{maxWidth: 256, height: "auto"}}
                         />
@@ -535,7 +520,7 @@ function DesktopUnpairedView({
                             onClick={copyLink}
                             data-testid="sync-copy-link"
                         >
-                            {t("sync.copy_link", "Copy link")}
+                            {t("sync.copy_link")}
                         </button>
                         {expiresAt && (
                             <small
@@ -544,7 +529,7 @@ function DesktopUnpairedView({
                                     alignSelf: "center",
                                 }}
                             >
-                                {t("sync.expires_at", "Expires")}:{" "}
+                                {t("sync.expires_at")}:{" "}
                                 {new Date(expiresAt).toLocaleTimeString()}
                             </small>
                         )}
@@ -553,10 +538,7 @@ function DesktopUnpairedView({
                         className="muted"
                         style={{marginTop: "0.5rem", fontSize: "0.85rem"}}
                     >
-                        {t(
-                            "sync.scan_hint",
-                            "Open the phone's Settings > Sync, paste this link, and tap Connect. The link expires in 5 minutes and can be used once.",
-                        )}
+                        {t("sync.scan_hint")}
                     </p>
                 </div>
             )}
@@ -582,10 +564,7 @@ function PhoneUnpairedView({
     return (
         <div data-testid="sync-phone-unpaired">
             <p className="muted">
-                {t(
-                    "sync.phone_hint_v17",
-                    "Scan the QR code on your desktop's Settings > Sync screen. The phone's rear camera reads the pairing link automatically.",
-                )}
+                {t("sync.phone_hint_v17")}
             </p>
             <button
                 type="button"
@@ -595,7 +574,7 @@ function PhoneUnpairedView({
                 data-testid="sync-scan-button"
                 style={{marginBottom: "0.75rem", width: "100%", maxWidth: 320}}
             >
-                {t("sync.scan_qr", "Scan QR Code")}
+                {t("sync.scan_qr")}
             </button>
             <details
                 data-testid="sync-paste-fallback"
@@ -609,10 +588,7 @@ function PhoneUnpairedView({
                         padding: "0.25rem 0",
                     }}
                 >
-                    {t(
-                        "sync.paste_link_fallback",
-                        "Or paste the link manually",
-                    )}
+                    {t("sync.paste_link_fallback")}
                 </summary>
                 <textarea
                     value={pairingLink}
@@ -642,8 +618,8 @@ function PhoneUnpairedView({
                     style={{marginTop: "0.5rem"}}
                 >
                     {busy === "pair"
-                        ? t("sync.pairing", "Pairing…")
-                        : t("sync.connect", "Connect")}
+                        ? t("sync.pairing")
+                        : t("sync.connect")}
                 </button>
             </details>
         </div>

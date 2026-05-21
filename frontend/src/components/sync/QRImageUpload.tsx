@@ -66,10 +66,7 @@ export default function QRImageUpload({
             if (payload === null) {
                 setStatus({
                     kind: "invalid",
-                    message: t(
-                        "sync.invalid_qr",
-                        "Not a valid pairing code.",
-                    ),
+                    message: t("sync.invalid_qr"),
                 });
                 return;
             }
@@ -82,10 +79,7 @@ export default function QRImageUpload({
             const message = err instanceof Error ? err.message : String(err);
             setStatus({
                 kind: "decode-failed",
-                message: t(
-                    "sync.image_decode_failed",
-                    "Could not read a QR code from this image. Re-take the screenshot.",
-                ).replace("{detail}", message),
+                message: t("sync.image_decode_failed").replace("{detail}", message),
             });
         } finally {
             // Reset the input so picking the same file again
@@ -113,8 +107,8 @@ export default function QRImageUpload({
                 data-testid="qr-image-upload-button"
             >
                 {status.kind === "decoding"
-                    ? t("sync.image_decoding", "Reading image…")
-                    : t("sync.upload_qr", "Upload QR image")}
+                    ? t("sync.image_decoding")
+                    : t("sync.upload_qr")}
             </button>
             <input
                 ref={inputRef}
