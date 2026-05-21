@@ -17,6 +17,7 @@
 
 import {useEffect, useRef, useState} from "react";
 
+import {BackupCompare} from "./BackupCompare";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage, resolveStorageMode} from "../storage";
@@ -125,6 +126,19 @@ export default function BackupSection() {
     const [pressure, setPressure] = useState<StoragePressureReport | null>(null);
     const [autoBusy, setAutoBusy] = useState<string | null>(null);
 
+    // v1.12.0 / Phase 25B — compare two backups (or one + live).
+    const compareInputARef = useRef<HTMLInputElement>(null);
+    const compareInputBRef = useRef<HTMLInputElement>(null);
+    const [compareA, setCompareA] = useState<{
+        payload: BackupPayload;
+        label: string;
+    } | null>(null);
+    const [compareB, setCompareB] = useState<{
+        payload: BackupPayload;
+        label: string;
+    } | null>(null);
+    const [compareError, setCompareError] = useState<string | null>(null);
+
     useEffect(() => {
         // Re-read on mount; a user may have backed up via another
         // tab in the meantime.
@@ -164,6 +178,62 @@ export default function BackupSection() {
 
     if (!userId) {
         return null;
+    }
+
+    async function readBackupFile(file: File): Promise<BackupPayload> {
+        const text = await file.text();
+        const parsed = JSON.parse(text) as BackupPayload;
+        if (
+            parsed.format !== "adaptive-learner-backup" ||
+            typeof parsed.version !== "string"
+        ) {
+            throw new Error(
+                t(
+                    "backup.invalid_format",
+                    "This file is not a valid Adaptive Learner backup.",
+                ),
+            );
+        }
+        return parsed;
+    }
+
+    async function handleCompareFilePick(
+        slot: "a" | "b",
+        event: React.ChangeEvent<HTMLInputElement>,
+    ) {
+        const file = event.target.files?.[0];
+        const inputRef = slot === "a" ? compareInputARef : compareInputBRef;
+        if (inputRef.current) inputRef.current.value = "";
+        if (!file) return;
+        setCompareError(null);
+        try {
+            const payload = await readBackupFile(file);
+            const entry = {payload, label: file.name};
+            if (slot === "a") setCompareA(entry);
+            else setCompareB(entry);
+        } catch (err) {
+            setCompareError(err instanceof Error ? err.message : String(err));
+        }
+    }
+
+    async function handleCompareWithCurrent() {
+        if (userId === null) return;
+        setCompareError(null);
+        try {
+            const payload = await storage.backup.export(userId);
+            setCompareB({
+                payload,
+                label: t("backup.compare_current_label", "Current state"),
+            });
+        } catch (err) {
+            setCompareError(err instanceof Error ? err.message : String(err));
+        }
+    }
+
+    function handleClearCompare() {
+        setCompareA(null);
+        setCompareB(null);
+        setCompareError(null);
     }
 
     const reminderDue =
@@ -648,6 +718,105 @@ export default function BackupSection() {
                     )}
                 </div>
             )}
+
+            {/* v1.12.0 / Phase 25B — Compare Backups */}
+            <div
+                className="backup-compare-section"
+                data-testid="backup-compare-section"
+            >
+                <h3>{t("backup.compare_title", "Compare Backups")}</h3>
+                <p className="muted">
+                    {t(
+                        "backup.compare_help",
+                        "Pick two backup files (or one file plus the current state) to see what's changed between them. No data is modified — comparison is read-only.",
+                    )}
+                </p>
+                <div className="backup-compare-pickers">
+                    <div className="backup-compare-slot">
+                        <label className="backup-compare-slot-label">
+                            {t("backup.compare_slot_a", "Backup A (older)")}
+                        </label>
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => compareInputARef.current?.click()}
+                            data-testid="backup-compare-pick-a"
+                        >
+                            {compareA
+                                ? compareA.label
+                                : t("backup.compare_pick", "Pick file…")}
+                        </button>
+                        <input
+                            ref={compareInputARef}
+                            type="file"
+                            accept="application/json,.json"
+                            onChange={(e) => void handleCompareFilePick("a", e)}
+                            style={{display: "none"}}
+                            data-testid="backup-compare-input-a"
+                        />
+                    </div>
+                    <div className="backup-compare-slot">
+                        <label className="backup-compare-slot-label">
+                            {t("backup.compare_slot_b", "Backup B (newer)")}
+                        </label>
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            onClick={() => compareInputBRef.current?.click()}
+                            data-testid="backup-compare-pick-b"
+                        >
+                            {compareB
+                                ? compareB.label
+                                : t("backup.compare_pick", "Pick file…")}
+                        </button>
+                        <button
+                            type="button"
+                            className="btn"
+                            onClick={() => void handleCompareWithCurrent()}
+                            data-testid="backup-compare-use-current"
+                        >
+                            {t(
+                                "backup.compare_use_current",
+                                "Use current state",
+                            )}
+                        </button>
+                        <input
+                            ref={compareInputBRef}
+                            type="file"
+                            accept="application/json,.json"
+                            onChange={(e) => void handleCompareFilePick("b", e)}
+                            style={{display: "none"}}
+                            data-testid="backup-compare-input-b"
+                        />
+                    </div>
+                    {(compareA || compareB) && (
+                        <button
+                            type="button"
+                            className="btn"
+                            onClick={handleClearCompare}
+                            data-testid="backup-compare-clear"
+                        >
+                            {t("backup.compare_clear", "Clear")}
+                        </button>
+                    )}
+                </div>
+                {compareError !== null && (
+                    <p
+                        className="backup-compare-error"
+                        data-testid="backup-compare-section-error"
+                    >
+                        {compareError}
+                    </p>
+                )}
+                {compareA && compareB && (
+                    <BackupCompare
+                        backupA={compareA.payload}
+                        backupB={compareB.payload}
+                        labelA={compareA.label}
+                        labelB={compareB.label}
+                    />
+                )}
+            </div>
         </section>
     );
 }
