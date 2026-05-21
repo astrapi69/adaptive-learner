@@ -1,0 +1,330 @@
+# Pre-seeded Subject taxonomy (Phase 22B).
+#
+# Loaded on first run by ``app.services.subjects_seed.seed_subjects``;
+# subsequent runs are no-ops because the loader compares by ``slug``
+# and skips rows that already exist. Adding a NEW node to this file
+# is safe — the loader inserts it on the next startup. Renaming
+# or restructuring nodes here is NOT safe: the slug is the
+# identity, so a rename creates a new row and the old one stays.
+#
+# The shape is a flat list of nodes; ``parent`` references another
+# node's slug. ``name`` is the EN display name; ``name_de`` is the
+# German override. Other locales fall through to EN.
+#
+# Icons are short emoji or text labels the UI renders next to the
+# subject name. Keep them short (<= 4 chars) so the tree row stays
+# readable. Description is optional.
+#
+# Slugs are stable; never reuse a slug for a different concept.
+
+subjects:
+  # ---- Languages ----
+  - slug: languages
+    name: Languages
+    name_de: Sprachen
+    icon: "\U0001F310"  # globe
+  - slug: language-english
+    name: English
+    name_de: Englisch
+    parent: languages
+  - slug: language-english-grammar
+    name: Grammar
+    name_de: Grammatik
+    parent: language-english
+  - slug: language-english-vocabulary
+    name: Vocabulary
+    name_de: Vokabular
+    parent: language-english
+  - slug: language-english-conversation
+    name: Conversation
+    name_de: Konversation
+    parent: language-english
+  - slug: language-spanish
+    name: Spanish
+    name_de: Spanisch
+    parent: languages
+  - slug: language-spanish-grammar
+    name: Grammar
+    name_de: Grammatik
+    parent: language-spanish
+  - slug: language-spanish-vocabulary
+    name: Vocabulary
+    name_de: Vokabular
+    parent: language-spanish
+  - slug: language-spanish-conversation
+    name: Conversation
+    name_de: Konversation
+    parent: language-spanish
+  - slug: language-french
+    name: French
+    name_de: Französisch
+    parent: languages
+  - slug: language-french-grammar
+    name: Grammar
+    name_de: Grammatik
+    parent: language-french
+  - slug: language-french-vocabulary
+    name: Vocabulary
+    name_de: Vokabular
+    parent: language-french
+  - slug: language-german
+    name: German
+    name_de: Deutsch
+    parent: languages
+  - slug: language-german-grammar
+    name: Grammar
+    name_de: Grammatik
+    parent: language-german
+  - slug: language-german-vocabulary
+    name: Vocabulary
+    name_de: Vokabular
+    parent: language-german
+  - slug: language-greek
+    name: Greek
+    name_de: Griechisch
+    parent: languages
+  - slug: language-italian
+    name: Italian
+    name_de: Italienisch
+    parent: languages
+  - slug: language-portuguese
+    name: Portuguese
+    name_de: Portugiesisch
+    parent: languages
+  - slug: language-japanese
+    name: Japanese
+    name_de: Japanisch
+    parent: languages
+  - slug: language-chinese
+    name: Chinese
+    name_de: Chinesisch
+    parent: languages
+  - slug: language-turkish
+    name: Turkish
+    name_de: Türkisch
+    parent: languages
+
+  # ---- Mathematics ----
+  - slug: mathematics
+    name: Mathematics
+    name_de: Mathematik
+    icon: "√"  # square root
+  - slug: math-arithmetic
+    name: Arithmetic
+    name_de: Arithmetik
+    parent: mathematics
+  - slug: math-algebra
+    name: Algebra
+    name_de: Algebra
+    parent: mathematics
+  - slug: math-geometry
+    name: Geometry
+    name_de: Geometrie
+    parent: mathematics
+  - slug: math-trigonometry
+    name: Trigonometry
+    name_de: Trigonometrie
+    parent: mathematics
+  - slug: math-calculus
+    name: Calculus
+    name_de: Analysis
+    parent: mathematics
+  - slug: math-statistics
+    name: Statistics
+    name_de: Statistik
+    parent: mathematics
+  - slug: math-linear-algebra
+    name: Linear Algebra
+    name_de: Lineare Algebra
+    parent: mathematics
+  - slug: math-discrete
+    name: Discrete Mathematics
+    name_de: Diskrete Mathematik
+    parent: mathematics
+
+  # ---- Programming ----
+  - slug: programming
+    name: Programming
+    name_de: Programmierung
+    icon: "</>"  # </>
+  - slug: programming-python
+    name: Python
+    parent: programming
+  - slug: programming-python-basics
+    name: Basics
+    name_de: Grundlagen
+    parent: programming-python
+  - slug: programming-python-frameworks
+    name: Frameworks
+    parent: programming-python
+  - slug: programming-python-data-science
+    name: Data Science
+    parent: programming-python
+  - slug: programming-javascript
+    name: JavaScript
+    parent: programming
+  - slug: programming-typescript
+    name: TypeScript
+    parent: programming
+  - slug: programming-react
+    name: React
+    parent: programming
+  - slug: programming-java
+    name: Java
+    parent: programming
+  - slug: programming-csharp
+    name: "C#"
+    parent: programming
+  - slug: programming-cpp
+    name: "C++"
+    parent: programming
+  - slug: programming-rust
+    name: Rust
+    parent: programming
+  - slug: programming-go
+    name: Go
+    parent: programming
+  - slug: programming-algorithms
+    name: Algorithms
+    name_de: Algorithmen
+    parent: programming
+  - slug: programming-data-structures
+    name: Data Structures
+    name_de: Datenstrukturen
+    parent: programming
+  - slug: programming-design-patterns
+    name: Design Patterns
+    name_de: Entwurfsmuster
+    parent: programming
+  - slug: programming-databases
+    name: Databases
+    name_de: Datenbanken
+    parent: programming
+  - slug: programming-devops
+    name: DevOps
+    parent: programming
+
+  # ---- Sciences ----
+  - slug: sciences
+    name: Sciences
+    name_de: Naturwissenschaften
+    icon: "\U0001F52C"  # microscope
+  - slug: science-physics
+    name: Physics
+    name_de: Physik
+    parent: sciences
+  - slug: science-chemistry
+    name: Chemistry
+    name_de: Chemie
+    parent: sciences
+  - slug: science-biology
+    name: Biology
+    name_de: Biologie
+    parent: sciences
+  - slug: science-astronomy
+    name: Astronomy
+    name_de: Astronomie
+    parent: sciences
+  - slug: science-earth
+    name: Earth Sciences
+    name_de: Geowissenschaften
+    parent: sciences
+
+  # ---- Music ----
+  - slug: music
+    name: Music
+    name_de: Musik
+    icon: "\U0001F3B5"  # musical note
+  - slug: music-theory
+    name: Theory
+    name_de: Musiktheorie
+    parent: music
+  - slug: music-piano
+    name: Piano
+    name_de: Klavier
+    parent: music
+  - slug: music-guitar
+    name: Guitar
+    name_de: Gitarre
+    parent: music
+  - slug: music-violin
+    name: Violin
+    name_de: Violine
+    parent: music
+  - slug: music-singing
+    name: Singing
+    name_de: Gesang
+    parent: music
+  - slug: music-composition
+    name: Composition
+    name_de: Komposition
+    parent: music
+
+  # ---- Humanities ----
+  - slug: humanities
+    name: Humanities
+    name_de: Geisteswissenschaften
+    icon: "\U0001F4D6"  # open book
+  - slug: humanities-history
+    name: History
+    name_de: Geschichte
+    parent: humanities
+  - slug: humanities-philosophy
+    name: Philosophy
+    name_de: Philosophie
+    parent: humanities
+  - slug: humanities-literature
+    name: Literature
+    name_de: Literatur
+    parent: humanities
+  - slug: humanities-art
+    name: Art History
+    name_de: Kunstgeschichte
+    parent: humanities
+
+  # ---- Social Sciences ----
+  - slug: social-sciences
+    name: Social Sciences
+    name_de: Sozialwissenschaften
+    icon: "\U0001F4CA"  # bar chart
+  - slug: social-economics
+    name: Economics
+    name_de: Wirtschaft
+    parent: social-sciences
+  - slug: social-psychology
+    name: Psychology
+    name_de: Psychologie
+    parent: social-sciences
+  - slug: social-sociology
+    name: Sociology
+    name_de: Soziologie
+    parent: social-sciences
+  - slug: social-politics
+    name: Political Science
+    name_de: Politikwissenschaft
+    parent: social-sciences
+
+  # ---- Skills ----
+  - slug: skills
+    name: Skills
+    name_de: Fertigkeiten
+    icon: "\U0001F6E0"  # hammer and wrench
+  - slug: skills-writing
+    name: Writing
+    name_de: Schreiben
+    parent: skills
+  - slug: skills-speaking
+    name: Public Speaking
+    name_de: Rhetorik
+    parent: skills
+  - slug: skills-photography
+    name: Photography
+    name_de: Fotografie
+    parent: skills
+  - slug: skills-design
+    name: Design
+    parent: skills
+  - slug: skills-cooking
+    name: Cooking
+    name_de: Kochen
+    parent: skills

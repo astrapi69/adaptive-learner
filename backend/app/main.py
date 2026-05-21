@@ -379,6 +379,26 @@ async def lifespan(app: FastAPI):
     # app.services.crypto.validate_at_startup.
     crypto_service.validate_at_startup()
 
+    # v1.9.0 / Phase 22B — pre-seed the global Subject taxonomy.
+    # Idempotent: subsequent runs are no-ops because the loader
+    # matches by slug.
+    try:
+        from app.database import SessionLocal
+        from app.services.subjects_seed import seed_subjects
+
+        with SessionLocal() as _seed_db:
+            summary = seed_subjects(_seed_db)
+        logger.info(
+            "Seed subjects: available=%d existing=%d inserted=%d",
+            summary["available"],
+            summary["existing"],
+            summary["inserted"],
+        )
+    except Exception:  # noqa: BLE001
+        # A seed failure must not block startup; the user can still
+        # add subjects manually via the UI.
+        logger.exception("Subject seeding failed; continuing without seed.")
+
     _load_installed_plugins()
     _log_plugin_diagnostics_pre(enabled_in_config=_enabled_plugins_from_config())
     manager.discover_plugins()
