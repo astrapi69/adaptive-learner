@@ -154,3 +154,112 @@ describe("CycleProgress", () => {
         });
     });
 });
+
+describe("CycleProgress swipe-to-peek (Phase 23C)", () => {
+    beforeEach(() => {
+        vi.useFakeTimers();
+        localStorage.setItem("adaptive-learner.gestures_enabled", "true");
+        Object.defineProperty(window, "matchMedia", {
+            writable: true,
+            value: (q: string) => ({
+                matches: false,
+                media: q,
+                addEventListener: vi.fn(),
+                removeEventListener: vi.fn(),
+                addListener: vi.fn(),
+                removeListener: vi.fn(),
+                onchange: null,
+                dispatchEvent: vi.fn(),
+            }),
+        });
+    });
+
+    afterEach(() => {
+        vi.useRealTimers();
+        localStorage.clear();
+    });
+
+    function simulateSwipe(
+        node: HTMLElement,
+        opts: {fromX: number; toX: number; fromY?: number; toY?: number},
+    ) {
+        const fromY = opts.fromY ?? 100;
+        const toY = opts.toY ?? 100;
+        function ev(type: string, x: number, y: number) {
+            const e = new Event(type, {bubbles: true}) as TouchEvent;
+            (e as unknown as {touches: {clientX: number; clientY: number}[]}).touches =
+                type === "touchend" ? [] : [{clientX: x, clientY: y}];
+            return e;
+        }
+        // Wrap the whole gesture in act() so React processes the
+        // setState calls triggered by the touchend listener
+        // synchronously inside the test.
+        act(() => {
+            node.dispatchEvent(ev("touchstart", opts.fromX, fromY));
+            vi.advanceTimersByTime(50);
+            node.dispatchEvent(ev("touchmove", opts.toX, toY));
+            node.dispatchEvent(ev("touchend", opts.toX, toY));
+        });
+    }
+
+    it("shows a peek overlay for the next step on swipe-left", () => {
+        render(<CycleProgress currentStep={3} />);
+        const container = screen.getByTestId("cycle-progress");
+        simulateSwipe(container, {fromX: 250, toX: 50});
+        const overlay = screen.getByTestId("cycle-peek-overlay");
+        expect(overlay).toBeInTheDocument();
+        expect(overlay.getAttribute("data-peek-step")).toBe("4");
+    });
+
+    it("shows a peek overlay for the previous step on swipe-right", () => {
+        render(<CycleProgress currentStep={3} />);
+        const container = screen.getByTestId("cycle-progress");
+        simulateSwipe(container, {fromX: 50, toX: 250});
+        const overlay = screen.getByTestId("cycle-peek-overlay");
+        expect(overlay.getAttribute("data-peek-step")).toBe("2");
+    });
+
+    it("auto-dismisses after 2 seconds", () => {
+        render(<CycleProgress currentStep={3} />);
+        const container = screen.getByTestId("cycle-progress");
+        simulateSwipe(container, {fromX: 250, toX: 50});
+        expect(screen.getByTestId("cycle-peek-overlay")).toBeInTheDocument();
+        act(() => {
+            vi.advanceTimersByTime(2100);
+        });
+        expect(screen.queryByTestId("cycle-peek-overlay")).toBeNull();
+    });
+
+    it("clicking the overlay dismisses it immediately", () => {
+        render(<CycleProgress currentStep={3} />);
+        const container = screen.getByTestId("cycle-progress");
+        simulateSwipe(container, {fromX: 250, toX: 50});
+        const overlay = screen.getByTestId("cycle-peek-overlay");
+        act(() => {
+            overlay.click();
+        });
+        expect(screen.queryByTestId("cycle-peek-overlay")).toBeNull();
+    });
+
+    it("does NOT show overlay when swiping past step 1 (no previous)", () => {
+        render(<CycleProgress currentStep={1} />);
+        const container = screen.getByTestId("cycle-progress");
+        simulateSwipe(container, {fromX: 50, toX: 250});
+        expect(screen.queryByTestId("cycle-peek-overlay")).toBeNull();
+    });
+
+    it("does NOT show overlay when swiping past step 7 (no next)", () => {
+        render(<CycleProgress currentStep={7} />);
+        const container = screen.getByTestId("cycle-progress");
+        simulateSwipe(container, {fromX: 250, toX: 50});
+        expect(screen.queryByTestId("cycle-peek-overlay")).toBeNull();
+    });
+
+    it("does NOT attach swipe handlers when gestures_enabled=false", () => {
+        localStorage.setItem("adaptive-learner.gestures_enabled", "false");
+        render(<CycleProgress currentStep={3} />);
+        const container = screen.getByTestId("cycle-progress");
+        simulateSwipe(container, {fromX: 250, toX: 50});
+        expect(screen.queryByTestId("cycle-peek-overlay")).toBeNull();
+    });
+});

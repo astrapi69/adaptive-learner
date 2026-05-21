@@ -1,7 +1,9 @@
-import {useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 import {useI18n} from "../hooks/useI18n";
+import {useSwipe} from "../hooks/useSwipe";
 import {CYCLE_STEPS, cycleStepForIndex} from "../lib/constants";
+import {readGesturePref} from "../lib/gesturePref";
 
 interface CycleProgressProps {
     /**
@@ -69,8 +71,65 @@ export default function CycleProgress({
         return () => window.clearTimeout(handle);
     }, [clamped]);
 
+    // v1.10.0 / Phase 23C — swipe-to-peek at adjacent steps.
+    // INFORMATIONAL only: the user cannot skip AI-driven steps,
+    // so the swipe surfaces a brief overlay showing the
+    // previous / next step description, then auto-dismisses.
+    const [peekIndex, setPeekIndex] = useState<number | null>(null);
+    const peekTimerRef = useRef<number | null>(null);
+
+    const showPeek = useCallback(
+        (target: number) => {
+            if (target < 1 || target > CYCLE_STEPS.length) return;
+            setPeekIndex(target);
+            if (peekTimerRef.current !== null) {
+                window.clearTimeout(peekTimerRef.current);
+            }
+            peekTimerRef.current = window.setTimeout(() => {
+                setPeekIndex(null);
+                peekTimerRef.current = null;
+            }, 2000);
+        },
+        [],
+    );
+
+    const dismissPeek = useCallback(() => {
+        if (peekTimerRef.current !== null) {
+            window.clearTimeout(peekTimerRef.current);
+            peekTimerRef.current = null;
+        }
+        setPeekIndex(null);
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (peekTimerRef.current !== null) {
+                window.clearTimeout(peekTimerRef.current);
+            }
+        };
+    }, []);
+
+    const {ref: swipeRef} = useSwipe<HTMLDivElement>({
+        enabled: readGesturePref(),
+        onSwipeLeft: () => showPeek(clamped + 1),
+        onSwipeRight: () => showPeek(clamped - 1),
+    });
+
+    const peekKey =
+        peekIndex !== null && peekIndex >= 1 && peekIndex <= CYCLE_STEPS.length
+            ? cycleStepForIndex(peekIndex)
+            : null;
+    const peekLabel = peekKey ? t(`cycle_steps.${peekKey}.label`, peekKey) : "";
+    const peekDescription = peekKey
+        ? t(`cycle_steps.${peekKey}.description`, "")
+        : "";
+
     return (
-        <div className="cycle-progress" data-testid="cycle-progress">
+        <div
+            ref={swipeRef}
+            className="cycle-progress"
+            data-testid="cycle-progress"
+        >
             <p className="cycle-caption" data-testid="cycle-caption">
                 {caption} —{" "}
                 <strong>{t(`cycle_steps.${currentKey}.label`, currentKey)}</strong>
@@ -123,6 +182,26 @@ export default function CycleProgress({
                     );
                 })}
             </ol>
+            {peekIndex !== null && peekKey && (
+                <button
+                    type="button"
+                    className="cycle-peek-overlay"
+                    data-testid="cycle-peek-overlay"
+                    data-peek-step={peekIndex}
+                    aria-live="polite"
+                    onClick={dismissPeek}
+                >
+                    <span className="cycle-peek-step">
+                        {t("session.peek_step_prefix", "Step")} {peekIndex}:{" "}
+                        <strong>{peekLabel}</strong>
+                    </span>
+                    {peekDescription && (
+                        <span className="cycle-peek-description">
+                            {peekDescription}
+                        </span>
+                    )}
+                </button>
+            )}
         </div>
     );
 }

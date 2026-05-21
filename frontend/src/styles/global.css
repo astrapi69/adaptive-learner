@@ -837,6 +837,49 @@ select:focus {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  position: relative;
+  touch-action: pan-y; /* allow vertical scroll, capture horizontal swipe */
+}
+
+/* v1.10.0 / Phase 23C — swipe-to-peek overlay on CycleProgress. */
+.cycle-peek-overlay {
+  position: absolute;
+  inset: auto 0 -8px 0;
+  transform: translateY(100%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: var(--space-3);
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #d4d4d8);
+  border-radius: var(--radius-md, 6px);
+  box-shadow: var(--shadow-card, 0 4px 12px rgba(0, 0, 0, 0.15));
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  z-index: 1;
+  animation: cycle-peek-fade 200ms ease-out;
+}
+
+.cycle-peek-step {
+  font-size: 0.95rem;
+}
+
+.cycle-peek-description {
+  font-size: 0.875rem;
+  color: var(--text-muted, #6b7280);
+}
+
+@keyframes cycle-peek-fade {
+  from { opacity: 0; transform: translateY(110%); }
+  to { opacity: 1; transform: translateY(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cycle-peek-overlay {
+    animation: none;
+  }
 }
 
 .cycle-caption {
