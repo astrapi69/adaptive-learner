@@ -63,7 +63,7 @@ describe("createDexieBackup", () => {
         expect(payload.stats.total_records).toBeGreaterThan(0);
     });
 
-    it("includes every backup table key (16 tables)", async () => {
+    it("includes every backup table key (20 tables)", async () => {
         const {user} = await seedUser();
         const payload = await createDexieBackup(user.id, "test");
         for (const table of [
@@ -83,6 +83,11 @@ describe("createDexieBackup", () => {
             "step_evaluations",
             "imported_conversations",
             "imported_messages",
+            // v1.9.0 / Phase 22A — Subjects + Tags taxonomy.
+            "subjects",
+            "tags",
+            "project_subjects",
+            "project_tags",
         ]) {
             expect(payload.data).toHaveProperty(table);
             expect(Array.isArray(payload.data[table])).toBe(true);

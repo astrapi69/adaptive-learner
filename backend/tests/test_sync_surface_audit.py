@@ -28,7 +28,7 @@ from app.services.sync_service import (
 )
 
 
-# Expected sync-surface classification per the Phase 21 spec.
+# Expected sync-surface classification per the Phase 21 + 22 spec.
 EXPECTED_MUTABLE: frozenset[str] = frozenset(
     {
         "users",
@@ -40,6 +40,9 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         "lessons",
         # v1.8.0 / Phase 21B: promoted from append-only.
         "session_notes",
+        # v1.9.0 / Phase 22A: taxonomy.
+        "subjects",
+        "tags",
     }
 )
 
@@ -55,6 +58,9 @@ EXPECTED_APPEND_ONLY: frozenset[str] = frozenset(
         # v1.8.0 / Phase 21D: chat-history imports.
         "imported_conversations",
         "imported_messages",
+        # v1.9.0 / Phase 22A: M:N taxonomy associations.
+        "project_subjects",
+        "project_tags",
     }
 )
 

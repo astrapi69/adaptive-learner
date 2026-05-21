@@ -296,6 +296,36 @@ const SYNC_TABLES: SyncTable[] = [
         timestampField: "created_at",
         appendOnly: true,
     },
+    {
+        // v1.9.0 / Phase 22A — Subjects (global taxonomy) +
+        // Tags (per-user labels). Subjects are MUTABLE (rename /
+        // re-parent / icon edit). Tags are MUTABLE too (rename /
+        // color edit).
+        name: "subjects",
+        dexieTable: "subjects",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
+    {
+        name: "tags",
+        dexieTable: "tags",
+        timestampField: "created_at",
+        appendOnly: false,
+    },
+    {
+        // M:N association rows are APPEND-ONLY: assigning /
+        // unassigning is an insert / delete, never an update.
+        name: "project_subjects",
+        dexieTable: "projectSubjects",
+        timestampField: "created_at",
+        appendOnly: true,
+    },
+    {
+        name: "project_tags",
+        dexieTable: "projectTags",
+        timestampField: "created_at",
+        appendOnly: true,
+    },
 ];
 
 const APPEND_ONLY_TABLES = new Set(

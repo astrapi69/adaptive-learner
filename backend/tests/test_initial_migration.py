@@ -46,6 +46,11 @@ EXPECTED_TABLES = {
     # v0.9.0 / Phase 12C — chat-history import surface
     "imported_conversations",
     "imported_messages",
+    # v1.9.0 / Phase 22A — Subjects + Tags taxonomy
+    "subjects",
+    "tags",
+    "project_subjects",
+    "project_tags",
 }
 
 

@@ -202,6 +202,38 @@ export interface ImportedMessageRow {
     created_at: string;
 }
 
+export interface SubjectRow {
+    id: string;
+    parent_id: string | null;
+    name: string;
+    description: string | null;
+    icon: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface TagRow {
+    id: string;
+    user_id: string;
+    name: string;
+    color: string | null;
+    created_at: string;
+}
+
+export interface ProjectSubjectRow {
+    id: string;
+    project_id: string;
+    subject_id: string;
+    created_at: string;
+}
+
+export interface ProjectTagRow {
+    id: string;
+    project_id: string;
+    tag_id: string;
+    created_at: string;
+}
+
 export interface StepEvaluationRow {
     id: string;
     session_id: string;
@@ -255,6 +287,10 @@ export class AdaptiveLearnerDB extends Dexie {
     stepEvaluations!: EntityTable<StepEvaluationRow, "id">;
     importedConversations!: EntityTable<ImportedConversationRow, "id">;
     importedMessages!: EntityTable<ImportedMessageRow, "id">;
+    subjects!: EntityTable<SubjectRow, "id">;
+    tags!: EntityTable<TagRow, "id">;
+    projectSubjects!: EntityTable<ProjectSubjectRow, "id">;
+    projectTags!: EntityTable<ProjectTagRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -366,6 +402,14 @@ export class AdaptiveLearnerDB extends Dexie {
                         }
                     });
             });
+        // Schema v6 — v1.9.0 Phase 22A: Subjects + Tags taxonomy.
+        // Four new tables; no data migration needed (clean adds).
+        this.version(6).stores({
+            subjects: "id, parent_id, name, updated_at",
+            tags: "id, user_id, name, created_at",
+            projectSubjects: "id, project_id, subject_id, created_at",
+            projectTags: "id, project_id, tag_id, created_at",
+        });
     }
 }
 

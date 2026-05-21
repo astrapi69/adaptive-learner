@@ -41,6 +41,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -778,6 +779,143 @@ class ImportedMessage(Base):
         )
 
 
+# --- Taxonomy: Subjects + Tags (Phase 22) ----------------------------------
+
+
+class Subject(Base):
+    """A node in the global subject taxonomy.
+
+    Hierarchical (``parent_id`` self-FK, same pattern as
+    :class:`LearningTopic`). GLOBAL: not scoped to a user — pre-seeded
+    on first run plus any user-created custom subjects. Cross-project:
+    a single Subject can be assigned to multiple
+    :class:`LearningProject` rows via :class:`ProjectSubject`.
+
+    Deleting a parent detaches the children rather than recursively
+    wiping the subtree (``ondelete="SET NULL"``), so a custom-subject
+    removal doesn't take its (potentially also user-meaningful)
+    descendants with it.
+    """
+
+    __tablename__ = "subjects"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    parent_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("subjects.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    icon: Mapped[str | None] = mapped_column(String(50), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
+    )
+
+    parent: Mapped[Subject | None] = relationship(
+        remote_side="Subject.id", back_populates="children"
+    )
+    children: Mapped[list[Subject]] = relationship(
+        back_populates="parent",
+        order_by="Subject.name",
+    )
+
+    def __repr__(self) -> str:
+        return f"<Subject {self.id!r} name={self.name!r} parent={self.parent_id!r}>"
+
+
+class Tag(Base):
+    """A user-scoped flat label.
+
+    Per-user (``user_id`` FK, unique-per-user on ``name``). Tags are
+    free-form labels the learner creates ad hoc — exam-prep,
+    daily-practice, high-priority. Cross-project: a single Tag can
+    attach to multiple :class:`LearningProject` rows via
+    :class:`ProjectTag`. Optional ``color`` is a hex string the UI
+    renders as the badge background.
+    """
+
+    __tablename__ = "tags"
+    __table_args__ = (UniqueConstraint("user_id", "name", name="uq_tags_user_name"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    color: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+    def __repr__(self) -> str:
+        return f"<Tag {self.id!r} user={self.user_id!r} name={self.name!r}>"
+
+
+class ProjectSubject(Base):
+    """Many-to-many between :class:`LearningProject` and :class:`Subject`.
+
+    Append-only association — assigning or unassigning a subject is
+    an insert / delete on this table, never an update.
+    """
+
+    __tablename__ = "project_subjects"
+    __table_args__ = (
+        UniqueConstraint("project_id", "subject_id", name="uq_project_subjects_pair"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("learning_projects.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    subject_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("subjects.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<ProjectSubject project={self.project_id!r} subject={self.subject_id!r}>"
+        )
+
+
+class ProjectTag(Base):
+    """Many-to-many between :class:`LearningProject` and :class:`Tag`."""
+
+    __tablename__ = "project_tags"
+    __table_args__ = (
+        UniqueConstraint("project_id", "tag_id", name="uq_project_tags_pair"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    project_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("learning_projects.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    tag_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("tags.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return f"<ProjectTag project={self.project_id!r} tag={self.tag_id!r}>"
+
+
 __all__ = [
     "Base",
     "User",
@@ -796,4 +934,8 @@ __all__ = [
     "MethodSwitch",
     "ImportedConversation",
     "ImportedMessage",
+    "Subject",
+    "Tag",
+    "ProjectSubject",
+    "ProjectTag",
 ]

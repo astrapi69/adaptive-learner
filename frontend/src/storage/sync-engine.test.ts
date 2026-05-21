@@ -863,6 +863,11 @@ describe("SYNC_TABLES — surface audit", () => {
         "step_evaluations",
         "imported_conversations",
         "imported_messages",
+        // v1.9.0 / Phase 22A — Subjects + Tags taxonomy.
+        "subjects",
+        "tags",
+        "project_subjects",
+        "project_tags",
     ];
 
     it("covers every domain Dexie table", () => {
@@ -871,7 +876,7 @@ describe("SYNC_TABLES — surface audit", () => {
         expect(actual).toEqual(expected);
     });
 
-    it("appendOnly classifications match the v1.8.0 spec", () => {
+    it("appendOnly classifications match the v1.9.0 spec", () => {
         const append = SYNC_TABLES.filter((t) => t.appendOnly)
             .map((t) => t.name)
             .sort();
@@ -885,6 +890,9 @@ describe("SYNC_TABLES — surface audit", () => {
                 "step_evaluations",
                 "imported_conversations",
                 "imported_messages",
+                // v1.9.0 / Phase 22A — M:N association rows.
+                "project_subjects",
+                "project_tags",
             ].sort(),
         );
     });

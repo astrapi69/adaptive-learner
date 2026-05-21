@@ -52,10 +52,14 @@ from app.models import (
     Lesson,
     MethodSwitch,
     ProgressCommit,
+    ProjectSubject,
+    ProjectTag,
     SessionMessage,
     SessionNote,
     SessionRating,
     StepEvaluation,
+    Subject,
+    Tag,
     User,
     UserSettings,
 )
@@ -363,6 +367,54 @@ TABLES: dict[str, TableSpec] = {
         # the corresponding JOIN.
         scope="via_imported_conversation",
     ),
+    # v1.9.0 / Phase 22A — Subjects + Tags taxonomy joins the sync
+    # surface. Subjects are GLOBAL (no user scope): every device's
+    # subject tree converges on the same taxonomy. Tags are
+    # per-user (direct ``user_id`` scope). Both classifications
+    # are MUTABLE (the user can rename / re-parent / change
+    # colour). Association rows are APPEND-ONLY (assigning or
+    # unassigning is an insert/delete, never an update); they
+    # scope via the parent project.
+    "subjects": TableSpec(
+        model=Subject,
+        columns=(
+            "id",
+            "parent_id",
+            "name",
+            "description",
+            "icon",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=19,
+        scope="global",
+    ),
+    "tags": TableSpec(
+        model=Tag,
+        columns=("id", "user_id", "name", "color", "created_at"),
+        timestamp_field="created_at",
+        append_only=False,
+        order=20,
+        scope="direct",
+    ),
+    "project_subjects": TableSpec(
+        model=ProjectSubject,
+        columns=("id", "project_id", "subject_id", "created_at"),
+        timestamp_field="created_at",
+        append_only=True,
+        order=21,
+        scope="via_project",
+    ),
+    "project_tags": TableSpec(
+        model=ProjectTag,
+        columns=("id", "project_id", "tag_id", "created_at"),
+        timestamp_field="created_at",
+        append_only=True,
+        order=22,
+        scope="via_project",
+    ),
 }
 
 APPEND_ONLY_TABLES = {name for name, spec in TABLES.items() if spec.append_only}
@@ -467,6 +519,10 @@ def _row_belongs_to_user(table: str, row: Any, user_id: str) -> bool:
     spec = TABLES[table]
     if spec.scope == "self":
         return row.id == user_id
+    if spec.scope == "global":
+        # Globally-shared rows (e.g. Subjects taxonomy) are not
+        # tied to a user; every device accepts every row.
+        return True
     if hasattr(row, "user_id"):
         return row.user_id == user_id
     return True
@@ -581,6 +637,9 @@ def _scoped_query(db: Session, table: str, user_id: str):
     query = db.query(model)
     if spec.scope == "self":
         query = query.filter(model.id == user_id)
+    elif spec.scope == "global":
+        # No user scope — every row is shared across users.
+        pass
     elif spec.scope == "direct":
         query = query.filter(model.user_id == user_id)
     elif spec.scope == "via_curriculum":

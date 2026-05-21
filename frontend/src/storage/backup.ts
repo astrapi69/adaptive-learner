@@ -53,7 +53,8 @@ interface BackupTableSpec {
         | "via_curriculum" // row.curriculum_id IN curriculums of user
         | "via_project" // row.project_id IN projects of user
         | "via_session" // row.session_id IN sessions of user
-        | "via_conversation"; // row.conversation_id IN conversations of user
+        | "via_conversation" // row.conversation_id IN conversations of user
+        | "global"; // row is shared across users (subjects taxonomy)
 }
 
 const BACKUP_TABLES: Record<string, BackupTableSpec> = {
@@ -159,6 +160,34 @@ const BACKUP_TABLES: Record<string, BackupTableSpec> = {
         appendOnly: true,
         scope: "via_conversation",
     },
+    // v1.9.0 / Phase 22A — taxonomy. Subjects are GLOBAL (the
+    // entire taxonomy travels with the backup so a restore on
+    // another device preserves the tree). Tags + project_*
+    // associations are user-scoped through the existing helpers.
+    subjects: {
+        store: "subjects",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "global",
+    },
+    tags: {
+        store: "tags",
+        timestampField: "created_at",
+        appendOnly: false,
+        scope: "user",
+    },
+    project_subjects: {
+        store: "projectSubjects",
+        timestampField: "created_at",
+        appendOnly: true,
+        scope: "via_project",
+    },
+    project_tags: {
+        store: "projectTags",
+        timestampField: "created_at",
+        appendOnly: true,
+        scope: "via_project",
+    },
 };
 
 /**
@@ -182,6 +211,13 @@ const RESTORE_ORDER: readonly string[] = [
     "step_evaluations",
     "imported_conversations",
     "imported_messages",
+    // v1.9.0 / Phase 22A — Subjects + Tags taxonomy. Subjects
+    // before tags (no dependency); both before the M:N rows
+    // that point at them.
+    "subjects",
+    "tags",
+    "project_subjects",
+    "project_tags",
 ];
 
 // ---- Helpers -----------------------------------------------------------
@@ -268,6 +304,10 @@ function rowsBelongToUser(
                     typeof row.conversation_id === "string" &&
                     scopes.conversationIds.has(row.conversation_id),
             );
+        case "global":
+            // GLOBAL rows (subjects taxonomy) belong to no user.
+            // Every row in the table goes into the backup.
+            return rows;
     }
 }
 

@@ -692,6 +692,87 @@ class ImportedConversationDetail(ImportedConversationOut):
     messages: list[ImportedMessageOut] = Field(default_factory=list)
 
 
+# --- Taxonomy: Subject + Tag (Phase 22) -----------------------------------
+
+
+class SubjectCreate(BaseModel):
+    """POST body for ``/api/subjects``.
+
+    Subjects are GLOBAL — no ``user_id`` field. Anyone can add a
+    custom node; the seed pack ships with the common taxonomy.
+    """
+
+    parent_id: str | None = None
+    name: str = Field(min_length=1, max_length=200)
+    description: str | None = None
+    icon: str | None = Field(default=None, max_length=50)
+
+
+class SubjectUpdate(BaseModel):
+    parent_id: str | None = None
+    name: str | None = Field(default=None, min_length=1, max_length=200)
+    description: str | None = None
+    icon: str | None = Field(default=None, max_length=50)
+
+
+class SubjectOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    parent_id: str | None = None
+    name: str
+    description: str | None = None
+    icon: str | None = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class TagCreate(BaseModel):
+    """POST body for ``/api/users/{user_id}/tags``.
+
+    Tags are per-user; ``user_id`` comes from the path prefix so a
+    client can't forge cross-user writes.
+    """
+
+    name: str = Field(min_length=1, max_length=100)
+    color: str | None = Field(default=None, max_length=20)
+
+
+class TagUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=100)
+    color: str | None = Field(default=None, max_length=20)
+
+
+class TagOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    name: str
+    color: str | None = None
+    created_at: datetime
+
+
+class ProjectSubjectOut(BaseModel):
+    """Read-only association row (assigned / unassigned, no update)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    project_id: str
+    subject_id: str
+    created_at: datetime
+
+
+class ProjectTagOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    project_id: str
+    tag_id: str
+    created_at: datetime
+
+
 __all__ = [
     # Enums
     "AIProvider",
@@ -763,4 +844,13 @@ __all__ = [
     "ImportedConversationDetail",
     "ImportedMessageCreate",
     "ImportedMessageOut",
+    # Taxonomy (Phase 22)
+    "SubjectCreate",
+    "SubjectUpdate",
+    "SubjectOut",
+    "TagCreate",
+    "TagUpdate",
+    "TagOut",
+    "ProjectSubjectOut",
+    "ProjectTagOut",
 ]

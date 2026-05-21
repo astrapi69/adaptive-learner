@@ -21,9 +21,13 @@ from app.models import (
     Lesson,
     MethodSwitch,
     ProgressCommit,
+    ProjectSubject,
+    ProjectTag,
     SessionMessage,
     SessionNote,
     SessionRating,
+    Subject,
+    Tag,
     User,
     UserSettings,
 )
@@ -344,3 +348,117 @@ def test_method_switch(db, project):
     db.refresh(project)
     assert sw in project.method_switches
     assert sw.switched_at is not None
+
+
+# --- Taxonomy: Subject + Tag (Phase 22) -------------------------------------
+
+
+def test_subject_tree_self_reference(db):
+    root = Subject(name="Languages")
+    db.add(root)
+    db.commit()
+    db.refresh(root)
+    spanish = Subject(parent_id=root.id, name="Spanish")
+    french = Subject(parent_id=root.id, name="French")
+    db.add_all([spanish, french])
+    db.commit()
+    db.refresh(root)
+    assert {child.name for child in root.children} == {"Spanish", "French"}
+    assert spanish.parent is root
+
+
+def test_subject_parent_set_null_on_parent_delete(db):
+    parent = Subject(name="Programming")
+    db.add(parent)
+    db.commit()
+    db.refresh(parent)
+    child = Subject(parent_id=parent.id, name="Python")
+    db.add(child)
+    db.commit()
+    db.delete(parent)
+    db.commit()
+    db.refresh(child)
+    assert child.parent_id is None  # SET NULL, not cascade
+
+
+def test_tag_unique_per_user(db, user):
+    t1 = Tag(user_id=user.id, name="exam-prep", color="#ff0000")
+    db.add(t1)
+    db.commit()
+    duplicate = Tag(user_id=user.id, name="exam-prep")
+    db.add(duplicate)
+    with pytest.raises(IntegrityError):
+        db.commit()
+    db.rollback()
+
+
+def test_tag_same_name_different_users_ok(db, user):
+    other = User(name="Other", language="en")
+    db.add(other)
+    db.commit()
+    db.refresh(other)
+    db.add(Tag(user_id=user.id, name="daily"))
+    db.add(Tag(user_id=other.id, name="daily"))
+    db.commit()
+    assert db.query(Tag).filter(Tag.name == "daily").count() == 2
+
+
+def test_tag_cascade_on_user_delete(db, user):
+    db.add(Tag(user_id=user.id, name="cleanup"))
+    db.commit()
+    db.delete(user)
+    db.commit()
+    assert db.query(Tag).count() == 0
+
+
+def test_project_subject_unique_pair(db, project):
+    s = Subject(name="DummySubject")
+    db.add(s)
+    db.commit()
+    db.refresh(s)
+    db.add(ProjectSubject(project_id=project.id, subject_id=s.id))
+    db.commit()
+    db.add(ProjectSubject(project_id=project.id, subject_id=s.id))
+    with pytest.raises(IntegrityError):
+        db.commit()
+    db.rollback()
+
+
+def test_project_tag_unique_pair(db, user, project):
+    t = Tag(user_id=user.id, name="active")
+    db.add(t)
+    db.commit()
+    db.refresh(t)
+    db.add(ProjectTag(project_id=project.id, tag_id=t.id))
+    db.commit()
+    db.add(ProjectTag(project_id=project.id, tag_id=t.id))
+    with pytest.raises(IntegrityError):
+        db.commit()
+    db.rollback()
+
+
+def test_project_subject_cascade_on_project_delete(db, project):
+    s = Subject(name="CascadeSubject")
+    db.add(s)
+    db.commit()
+    db.refresh(s)
+    db.add(ProjectSubject(project_id=project.id, subject_id=s.id))
+    db.commit()
+    db.delete(project)
+    db.commit()
+    # Association rows cascade with the project; the Subject itself
+    # is GLOBAL and survives.
+    assert db.query(ProjectSubject).count() == 0
+    assert db.query(Subject).filter(Subject.id == s.id).first() is not None
+
+
+def test_project_tag_cascade_on_tag_delete(db, user, project):
+    t = Tag(user_id=user.id, name="ephemeral")
+    db.add(t)
+    db.commit()
+    db.refresh(t)
+    db.add(ProjectTag(project_id=project.id, tag_id=t.id))
+    db.commit()
+    db.delete(t)
+    db.commit()
+    assert db.query(ProjectTag).count() == 0
