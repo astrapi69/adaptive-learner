@@ -25,6 +25,7 @@ import {
     checkTimeTrigger,
     deleteAutoBackup,
     estimateStoragePressure,
+    getAutoBackupPayload,
     isAutoBackupEnabled,
     listAutoBackups,
     maybeRunAutoBackup,
@@ -149,6 +150,7 @@ export default function BackupSection() {
     } | null>(null);
     const [compareError, setCompareError] = useState<string | null>(null);
 
+
     useEffect(() => {
         // Re-read on mount; a user may have backed up via another
         // tab in the meantime.
@@ -244,6 +246,39 @@ export default function BackupSection() {
         setCompareA(null);
         setCompareB(null);
         setCompareError(null);
+    }
+
+    async function handleLoadAutoIntoCompare(
+        entry: AutoBackupSummary,
+        slot: "a" | "b",
+    ) {
+        setCompareError(null);
+        try {
+            const payload = await getAutoBackupPayload(entry.id);
+            if (payload === null) {
+                throw new Error(
+                    t(
+                        "backup.auto_compare_missing",
+                        "Auto-backup is no longer available — it was rotated out.",
+                    ),
+                );
+            }
+            const label = t("backup.compare_auto_label", "Auto-backup {{date}}").replace(
+                "{{date}}",
+                new Date(entry.created_at).toLocaleString(),
+            );
+            if (slot === "a") setCompareA({payload, label});
+            else setCompareB({payload, label});
+            // Scroll the compare section into view so the user sees
+            // the slot fill in.
+            requestAnimationFrame(() => {
+                document
+                    .querySelector('[data-testid="backup-compare-section"]')
+                    ?.scrollIntoView({behavior: "smooth", block: "start"});
+            });
+        } catch (err) {
+            setCompareError(err instanceof Error ? err.message : String(err));
+        }
     }
 
     const reminderDue =
@@ -772,6 +807,34 @@ export default function BackupSection() {
                                         data-testid={`backup-auto-delete-${entry.id}`}
                                     >
                                         {t("common.delete", "Delete")}
+                                    </button>
+                                    {/* v1.12.0 / Phase 25D — load this auto-backup
+                                        slot into the Compare section as A or B. */}
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            void handleLoadAutoIntoCompare(entry, "a")
+                                        }
+                                        disabled={autoBusy !== null}
+                                        data-testid={`backup-auto-compare-a-${entry.id}`}
+                                    >
+                                        {t(
+                                            "backup.auto_compare_as_a",
+                                            "Compare as A",
+                                        )}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            void handleLoadAutoIntoCompare(entry, "b")
+                                        }
+                                        disabled={autoBusy !== null}
+                                        data-testid={`backup-auto-compare-b-${entry.id}`}
+                                    >
+                                        {t(
+                                            "backup.auto_compare_as_b",
+                                            "Compare as B",
+                                        )}
                                     </button>
                                 </li>
                             ))}

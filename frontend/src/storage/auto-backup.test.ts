@@ -14,6 +14,7 @@ import {
     _resetAutoBackupStateForTests,
     checkTimeTrigger,
     deleteAutoBackup,
+    getAutoBackupPayload,
     estimateStoragePressure,
     isAutoBackupEnabled,
     listAutoBackups,
@@ -204,6 +205,21 @@ describe("auto-backup restore + delete", () => {
         expect((await listAutoBackups(userId)).length).toBe(1);
         await deleteAutoBackup(row.id);
         expect((await listAutoBackups(userId)).length).toBe(0);
+    });
+
+    // --- v1.12.0 / Phase 25D: payload accessor for compare UI ---------
+    it("getAutoBackupPayload returns the stored payload for a known id", async () => {
+        const userId = await seedUserId();
+        const row = await runAutoBackupNow(userId, "test", {reason: "manual"});
+        const payload = await getAutoBackupPayload(row.id);
+        expect(payload).not.toBeNull();
+        expect(payload!.format).toBe("adaptive-learner-backup");
+        expect(payload!.user_id).toBe(userId);
+    });
+
+    it("getAutoBackupPayload returns null for an unknown id", async () => {
+        const result = await getAutoBackupPayload("nope");
+        expect(result).toBeNull();
     });
 });
 

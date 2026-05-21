@@ -213,6 +213,19 @@ export async function deleteAutoBackup(id: string): Promise<void> {
     await db.backups.delete(id);
 }
 
+/**
+ * v1.12.0 / Phase 25D — fetch the full payload of one stored
+ * auto-backup. Used by the auto-backup compare UI to feed a
+ * snapshot into ``BackupCompare``. Returns ``null`` when the id
+ * does not exist (the slot may have been rotated out between
+ * the list render and the compare click).
+ */
+export async function getAutoBackupPayload(id: string): Promise<import("../types/domain").BackupPayload | null> {
+    const db = getBackupDb();
+    const row = await db.backups.get(id);
+    return row ? row.payload : null;
+}
+
 export async function restoreFromAutoBackup(
     userId: string,
     id: string,
