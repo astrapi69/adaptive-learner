@@ -56,6 +56,7 @@ import {
     buildProgressReport as dexieBuildProgressReport,
     buildSessionDetail as dexieBuildSessionDetail,
 } from "./export-builder";
+import {fetchAvailableModels} from "./model-discovery";
 import {sendMessage, sendMessageStream, startSession} from "./session-flow";
 import {
     aggregateProgress,
@@ -118,7 +119,7 @@ import type {
     User,
     UserSettings,
 } from "../types/domain";
-import type {IStorageService} from "./types";
+import type {AvailableModel, IStorageService} from "./types";
 
 // ---- Row <-> wire mappers --------------------------------------------
 
@@ -526,6 +527,26 @@ export const dexieStorage: IStorageService = {
             return rowToSettings(updated);
         },
         getApp: async () => ({}),
+        async getAvailableModels(
+            userId: string,
+            provider: AIProvider,
+        ): Promise<AvailableModel[]> {
+            const db = getDb();
+            const user = await requireRow(db.users, userId, "User");
+            const row = await ensureSettings(db, userId, user.language);
+            const field = `api_key_${provider}` as const;
+            const apiKey = (row as unknown as Record<string, unknown>)[field];
+            if (typeof apiKey !== "string" || apiKey.length === 0) {
+                return [];
+            }
+            const models = await fetchAvailableModels(provider, apiKey);
+            return models.map((m) => ({
+                id: m.id,
+                name: m.name,
+                context_window: m.context_window,
+                description: m.description,
+            }));
+        },
     },
 
     assessment: {

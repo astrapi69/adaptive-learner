@@ -182,6 +182,13 @@ export interface ApiKeySetBody {
     key: string;
 }
 
+export interface AvailableModelResponse {
+    id: string;
+    name: string;
+    context_window: number | null;
+    description: string | null;
+}
+
 export interface SessionStartBody {
     project_id: string;
     method?: LearningMethod;
@@ -348,6 +355,20 @@ export const api = {
          * useI18n.ts keeps compiling unchanged.
          */
         getApp: async (): Promise<Record<string, unknown>> => ({}),
+
+        /**
+         * v1.11.0 / Phase 24A — list chat-capable models for the
+         * requested provider. The backend decrypts the user's
+         * stored API key and forwards it to the provider's
+         * ``/models`` endpoint; results are cached server-side
+         * for one hour. Returns ``[]`` when no key for the
+         * provider is configured.
+         */
+        getAvailableModels: (userId: string, provider: AIProvider) =>
+            apiCall<AvailableModelResponse[]>(
+                `/settings/${encodeURIComponent(userId)}/available-models`,
+                {query: {provider}},
+            ),
     },
 
     // --- Assessment plugin ----------------------------------------------

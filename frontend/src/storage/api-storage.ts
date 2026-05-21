@@ -43,6 +43,8 @@ export const apiStorage: IStorageService = {
         deleteApiKey: (userId, provider) =>
             api.settings.deleteApiKey(userId, provider),
         getApp: () => api.settings.getApp(),
+        getAvailableModels: (userId, provider) =>
+            api.settings.getAvailableModels(userId, provider),
     },
 
     assessment: {

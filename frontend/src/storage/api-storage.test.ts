@@ -107,6 +107,12 @@ describe("ApiStorage delegation", () => {
         expect(calls).toHaveLength(0);
     });
 
+    it("settings.getAvailableModels passes provider as a query parameter", async () => {
+        await apiStorage.settings.getAvailableModels("u1", "openai");
+        expect(calls[0].url).toBe("/api/settings/u1/available-models?provider=openai");
+        expect(calls[0].method).toBe("GET");
+    });
+
     it("assessment.questions encodes lang", async () => {
         await apiStorage.assessment.questions("de");
         expect(calls[0].url).toBe("/api/plugins/assessment/questions?lang=de");
