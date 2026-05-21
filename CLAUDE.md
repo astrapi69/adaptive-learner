@@ -12,7 +12,40 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.14.0):** v1.13.0 plus Phase 27 —
+- **Current state (v1.15.0):** v1.14.0 plus Phase 28 —
+  **E2E Playwright Expansion.** 10 new smoke specs land
+  alongside the existing 6 from Phase 6D / 9: multi-cycle
+  session auto-loop (28B, 3-event SSE × 7 turns), conversation
+  import + analysis (28C, paste → analyze → detail-page
+  transcript), backup export + restore roundtrip (28D, JSON
+  shape pin + API-key strip + comparison preview), sync
+  pairing UI in both desktop + mobile-viewport / dexie-mode
+  variants (28E), Markdown export flows for progress +
+  curriculum (28F, download capture + content assertion),
+  subjects + tags Dashboard filter bar (28G, seeded
+  taxonomy), rich-text editor in RatingDialog notes (28H,
+  toolbar mount + bold-toggle + Submit roundtrip), 3-chunk
+  SSE streaming chat (28I, start / chunk / done event
+  flow), and model picker mount + no-key empty state (28J).
+  Shared infrastructure (28A) ships ``e2e/helpers/`` with
+  ``createTestUser``, ``startSession``, ``sendChatMessage``
+  (force-click + per-keystroke type to work around the
+  Toastify-portal pointer intercept), ``mockSessionMessage``
+  / ``mockSessionMessageStream`` / ``mockConversationAnalysis``
+  / ``mockAvailableModels``. AI mocking is browser-level
+  via ``page.route()`` — no backend changes. The legacy
+  ``session.spec.ts`` (broken since v1.6.0 streaming
+  shipped) is repaired to wait on the SSE endpoint. Full
+  smoke suite: 36 tests across 16 spec files; runtime
+  2.6 min. Backend tests 684, frontend 1002 — both
+  unchanged. BL-13 closed. Two follow-up audit items filed
+  in the v1.15.0 release notes: ``28C-DETAIL-GET-MOCK``
+  (page.route on GET /api/imports/{id} silently misses
+  despite multiple matcher shapes) and ``28J-SETTINGS-RACE``
+  (backend ``get_or_create_settings`` UNIQUE-constraint
+  race under React strict-mode double-effect).
+
+- **State (v1.14.0):** v1.13.0 plus Phase 27 —
   **Rich-Text Notes with TipTap.** Session-rating notes,
   curriculum descriptions and lesson content all graduate
   from plain ``<textarea>`` to a TipTap-based

@@ -74,10 +74,18 @@ tiebreaker.
   rich-text shape via ``lib/tiptap-to-markdown.ts``. Math
   formulas explicitly deferred — re-file when triggered.
   See ``changelog/releases/v1.14.0.md``.
-- [ ] **BL-13**: E2E Playwright expansion — Current: 7 smoke
-  specs + 16 viewport pins. Expand to cover: multi-cycle
-  session, conversation import+analysis, backup/restore,
-  sync pairing, export.
+- [x] **BL-13**: E2E Playwright expansion — Shipped in
+  v1.15.0 / Phase 28. 10 new smoke specs covering
+  multi-cycle session auto-loop, conversation import +
+  analysis, backup export + restore roundtrip, sync pairing
+  UI (desktop + mobile), Markdown export flows
+  (progress / curriculum), subjects + tags filter bar,
+  rich-text editor mount in RatingDialog, 3-chunk SSE
+  streaming chat, and model picker surface. Full suite at
+  release: 36 tests across 16 spec files; runtime 2.6 min.
+  Two scope-limit notes filed for follow-up
+  (``28C-DETAIL-GET-MOCK``, ``28J-SETTINGS-RACE``). See
+  ``changelog/releases/v1.15.0.md``.
 - [ ] **PLUGINFORGE-LIFECYCLE-UI-01**: Consume v0.9.0
   lifecycle visibility in Settings → Plugins. The installed
   manager exposes `inspect_plugin(name)` (returns a
