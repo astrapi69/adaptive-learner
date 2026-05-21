@@ -126,8 +126,12 @@ tiebreaker.
 
 ## P5 — Speculative (No concrete trigger)
 
-- [ ] **BL-18**: Gamification (XP, badges, leaderboard) —
-  Could increase engagement. Risk: gimmicky if not done well.
+- [x] **BL-18**: Gamification (XP, badges, leaderboard) —
+  Closed in v1.16.0 / Phase 29. Shipped XP, 24 badges,
+  enhanced streaks (freezes + weekend mode + heatmap), and
+  Settings controls. Leaderboard intentionally NOT shipped —
+  it requires multi-user infrastructure (see BL-19 / social
+  features).
 - [ ] **BL-19**: Social features (share progress, study
   groups) — Requires multi-user. Far future.
 - [ ] **BL-20**: Voice input/output (TTS/STT) — Speak

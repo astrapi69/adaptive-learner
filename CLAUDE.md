@@ -12,7 +12,56 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.15.0):** v1.14.0 plus Phase 28 —
+- **Current state (v1.16.0):** v1.15.0 plus Phase 29 —
+  **Gamification (XP, Badges, Streaks).** A new
+  ``adaptive-learner-plugin-gamification`` plugin (mounted under
+  ``/api/plugins/gamification/*``) adds an optional motivation
+  layer. **29A — XP system:** ``UserXP`` singleton (Alembic
+  0009) carries ``total_xp`` + derived ``level`` on an
+  exponential curve (``threshold(n) = 50 * n * (n - 1)``;
+  levels 1..5 at 0/100/300/600/1000). Session base 50 XP + 10
+  per completed cycle + 25 per cycle-step-7 + 50 first-method
+  bonus, all multiplied by ``1 + 0.25 * min(streak_days, 7)``
+  (caps at 2.75x at 7 days). Assessment + import flat earns
+  (100 / 75 XP, no multiplier). The plugin subscribes to
+  ``on_session_complete``; routes ``GET /xp/{user_id}``,
+  ``POST /xp/{user_id}/{award-assessment,award-import,award}``.
+  Dashboard ``XPWidget`` shows level badge + progress bar.
+  **29B — Badges:** ``Badge`` catalog + ``UserBadge`` earned
+  (Alembic 0010). ``badges.yaml`` ships 24 badges across 5
+  categories (getting_started 3, consistency 4,
+  method_explorer 7, depth 7, polyglot 3); the seeder runs
+  from the FastAPI lifespan idempotently. Every catalog key has
+  a matching predicate (lockstep audit-pinned). The
+  ``on_session_complete`` hook + the assessment / import earn
+  routes re-evaluate after each action. Dashboard
+  ``BadgeShowcase`` renders tiles grouped by category, earned
+  colored + dated, locked greyed-out. **29C — Enhanced
+  streaks:** ``UserStreak`` singleton (Alembic 0011) holds
+  ``freezes_available``, ``last_freeze_*_on``, ``weekend_mode``,
+  cached ``current_streak_days`` + ``longest_streak_days``. The
+  walker (``compute_current_streak_with_state``) treats freezes
+  as pause-not-reset across missed days and skips Sat/Sun gaps
+  when weekend mode is on. 1 freeze granted per 7 streak days,
+  capped at 3 stockpiled. ``calendar_heatmap`` returns
+  ``[{date, count}]`` for the last 365 days (clamps to
+  [7, 730]). Dashboard ``StreakWidget`` + ``StreakCalendar``
+  render the heatmap GitHub-style (5 tier colors via
+  ``color-mix`` on ``var(--accent)``, weekly columns Mon..Sun).
+  **29D — Settings:** new Settings > Gamification section with
+  XP / badge notification toggles (localStorage), weekend mode
+  toggle (server-side), daily session goal 1..10
+  (localStorage), and Reset progress (double-confirm,
+  ``POST /reset/{user_id}`` wipes ``user_xp`` + ``user_badges``
+  + ``user_streaks``). All gamification optional — disabling
+  notifications hides toasts but the system still records
+  state. **Sync surface:** 20 → 26 tables (``user_xp``,
+  ``badges``, ``user_badges``, ``user_streaks`` added). Backend
+  720 tests + plugin (gamification) 23 + frontend 1055 at
+  release time. 8-lang i18n with ~150 new keys, all native
+  translations; BL-11 audit clean. BL-18 closed.
+
+- **State (v1.15.0):** v1.14.0 plus Phase 28 —
   **E2E Playwright Expansion.** 10 new smoke specs land
   alongside the existing 6 from Phase 6D / 9: multi-cycle
   session auto-loop (28B, 3-event SSE × 7 turns), conversation
