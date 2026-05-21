@@ -34,10 +34,12 @@ tiebreaker.
   across projects (Mathematics, Languages, Programming, etc.).
   Closed in v1.9.0 / Phase 22 — see
   `changelog/releases/v1.9.0.md`.
-- [ ] **BL-08**: Swipe gestures on Assessment — Left/right
-  swipe for next/previous question on mobile. Touch-event
-  handling, accessibility (keyboard equivalent,
-  reduced-motion). Deferred from Phase 9.
+- [x] **BL-08**: Swipe gestures on Assessment — Left/right
+  swipe for next/previous question on mobile. Closed in
+  v1.10.0 / Phase 23 — see `changelog/releases/v1.10.0.md`.
+  Also covered Session CycleProgress peek + Curriculum
+  topic swipe-to-reveal + Settings toggle (broader scope
+  than the original BL-08).
 - [ ] **BL-09**: Provider model picker via API — Currently
   static datalist suggestions. Fetch available models from
   provider API (Anthropic `/v1/models`, OpenAI `/v1/models`).

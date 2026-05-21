@@ -12,7 +12,38 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.9.0):** v1.8.0 plus Phase 22 —
+- **Current state (v1.10.0):** v1.9.0 plus Phase 23 —
+  **Swipe Gestures on Assessment + Session.** New
+  ``hooks/useSwipe.ts`` is a reusable horizontal-swipe hook
+  with a passive-touch contract: ``|dx| > |dy|`` to never
+  hijack vertical scroll, default 50 px threshold (100 px
+  with ``prefers-reduced-motion``), 0.15 px/ms velocity
+  floor, ``enabled=false`` detaches listeners entirely.
+  ``hapticSwipe()`` wraps ``navigator.vibrate(10)`` for
+  subtle feedback. Assessment gains swipe + keyboard
+  navigation (left/right arrows = prev/next, suppressed when
+  an INPUT has focus), a one-shot first-question hint
+  persisted in localStorage, and 200 ms GPU-accelerated
+  slide animation honouring reduced-motion. CycleProgress
+  gets swipe-to-peek: an informational overlay describing
+  the previous / next cycle step (auto-dismisses after 2 s,
+  tap-to-dismiss; cannot skip AI-driven steps). TopicNode
+  gets iOS-style swipe-to-reveal: actions hidden by default
+  on mobile (``@media (max-width: 768px)``), swipe-left
+  exposes them with an accent left-border highlight,
+  swipe-right or tap-elsewhere collapses; desktop unchanged.
+  New Settings → Interface section with a single toggle
+  persisting to
+  ``localStorage["adaptive-learner.gestures_enabled"]``
+  (default ON for touch-capable devices, OFF otherwise);
+  ``lib/gesturePref.ts`` holds the helper. 3 new i18n keys
+  per catalog (``settings.section_ui`` +
+  ``settings.gestures`` + ``settings.gestures_description``;
+  DE+EN translated, 6 EN-passthrough). Backend 649 +
+  session-plugin 199 + frontend 856 at release time. BL-08
+  closed.
+
+- **State (v1.9.0):** v1.8.0 plus Phase 22 —
   **Global Subjects and Tags.** Four new domain tables join
   the sync surface: ``subjects`` (global hierarchical taxonomy,
   parent_id self-FK SET NULL), ``tags`` (per-user, unique on
