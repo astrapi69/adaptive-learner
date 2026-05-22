@@ -75,6 +75,22 @@ def _split_system_and_chat(
     return system_instruction, chat
 
 
+def _build_config(
+    system_instruction: str | None, max_tokens: int
+) -> genai_types.GenerateContentConfig:
+    """Phase 36 Bug 5 — symmetric with the Anthropic guard:
+    ``system_instruction`` is only set when there is a real value
+    so the wire shape stays clean. The google-genai SDK accepts
+    ``None`` defensively, but omitting the kwarg matches the
+    Anthropic-side fix and keeps the three provider wrappers
+    behaviourally identical.
+    """
+    config_kwargs: dict[str, Any] = {"max_output_tokens": max_tokens}
+    if system_instruction is not None:
+        config_kwargs["system_instruction"] = system_instruction
+    return genai_types.GenerateContentConfig(**config_kwargs)
+
+
 def complete(
     messages: list[dict[str, Any]],
     model: str,
@@ -89,10 +105,7 @@ def complete(
     """
     system_instruction, contents = _split_system_and_chat(messages)
     client = genai.Client(api_key=api_key)
-    config = genai_types.GenerateContentConfig(
-        system_instruction=system_instruction,
-        max_output_tokens=max_tokens,
-    )
+    config = _build_config(system_instruction, max_tokens)
     response = client.models.generate_content(
         model=model,
         contents=contents,
@@ -126,10 +139,7 @@ async def stream(
     """
     system_instruction, contents = _split_system_and_chat(messages)
     client = genai.Client(api_key=api_key)
-    config = genai_types.GenerateContentConfig(
-        system_instruction=system_instruction,
-        max_output_tokens=max_tokens,
-    )
+    config = _build_config(system_instruction, max_tokens)
     async for chunk in await client.aio.models.generate_content_stream(
         model=model,
         contents=contents,

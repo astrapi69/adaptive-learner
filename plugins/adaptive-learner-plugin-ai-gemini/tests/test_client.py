@@ -172,6 +172,21 @@ def test_complete_lifts_system_messages_into_config(genai_mock, genai_types_mock
     assert config_kwargs["system_instruction"] == "Always answer in German."
 
 
+def test_complete_omits_system_instruction_when_no_system_messages(genai_mock, genai_types_mock):
+    """Phase 36 Bug 5 regression — companion to the ai-anthropic
+    and ai-openai pins. When the transcript has no system message,
+    the per-call config MUST omit ``system_instruction`` entirely
+    so the wire shape stays clean. Pins symmetric behaviour across
+    all three providers."""
+    complete(
+        [{"role": "user", "content": "Extract Anki cards from: foo bar"}],
+        model="gemini-2.0-flash",
+        api_key="k",
+    )
+    config_kwargs = genai_types_mock.GenerateContentConfig.call_args.kwargs
+    assert "system_instruction" not in config_kwargs
+
+
 def test_complete_passes_translated_contents(genai_mock, genai_types_mock):
     complete(
         [

@@ -67,15 +67,25 @@ def complete(
     etc.). The plugin layer wraps these into typed
     :class:`app.exceptions.ExternalServiceError` so the FastAPI
     response stays consistent with the rest of the surface.
+
+    Phase 36 Bug 5: when the caller passes a transcript with no
+    ``role="system"`` entries, ``_split_system_and_chat`` returns
+    ``system=None``. The Anthropic API rejects ``system: null`` on
+    the wire ("Input should be a valid array"); the SDK accepts
+    either a string OR omission. We build the kwargs dict
+    conditionally so the ``system`` key is only attached when
+    there is a real value.
     """
     system, chat = _split_system_and_chat(messages)
     client = anthropic.Anthropic(api_key=api_key)
-    response = client.messages.create(
-        model=model,
-        system=system,
-        messages=chat,
-        max_tokens=max_tokens,
-    )
+    kwargs: dict[str, Any] = {
+        "model": model,
+        "messages": chat,
+        "max_tokens": max_tokens,
+    }
+    if system is not None:
+        kwargs["system"] = system
+    response = client.messages.create(**kwargs)
     # ``response.content`` is a list of content blocks; the first
     # text block carries the assistant's response. Concatenate any
     # additional text blocks (the SDK occasionally returns multiple
@@ -107,14 +117,19 @@ async def stream(
     wraps them as ``ExternalServiceError`` before they reach the
     SSE channel.
     """
+    # Same Phase 36 Bug 5 guard as ``complete``: ``system=None``
+    # becomes JSON ``null`` on the wire which the Anthropic API
+    # rejects. Omit the kwarg entirely when there's no system.
     system, chat = _split_system_and_chat(messages)
     async_client = anthropic.AsyncAnthropic(api_key=api_key)
-    async with async_client.messages.stream(
-        model=model,
-        system=system,
-        messages=chat,
-        max_tokens=max_tokens,
-    ) as stream_handle:
+    stream_kwargs: dict[str, Any] = {
+        "model": model,
+        "messages": chat,
+        "max_tokens": max_tokens,
+    }
+    if system is not None:
+        stream_kwargs["system"] = system
+    async with async_client.messages.stream(**stream_kwargs) as stream_handle:
         async for delta in stream_handle.text_stream:
             if isinstance(delta, str) and delta:
                 yield delta

@@ -145,6 +145,27 @@ def test_complete_routes_system_messages_to_top_level_kwarg(anthropic_mock):
     assert call_kwargs["messages"] == [{"role": "user", "content": "What is 2+2?"}]
 
 
+def test_complete_omits_system_kwarg_when_no_system_messages(anthropic_mock):
+    """Phase 36 Bug 5 regression: when there's no system message,
+    the SDK call MUST omit ``system`` entirely. Passing
+    ``system=None`` becomes JSON ``null`` on the wire which the
+    Anthropic API rejects with HTTP 400 ("system: Input should be
+    a valid array"). Reproduces the Anki-extract failure flagged
+    by the Phase 36 manual test."""
+    complete(
+        [{"role": "user", "content": "Extract Anki cards from: foo bar"}],
+        model="claude-haiku-4-5-20251001",
+        api_key="k",
+    )
+    call_kwargs = anthropic_mock.Anthropic.return_value.messages.create.call_args.kwargs
+    # The kwarg MUST be absent entirely (not present-with-None).
+    assert "system" not in call_kwargs, (
+        "system=None on the wire is what broke the Anki extraction in "
+        "Phase 36; the SDK call must omit the kwarg when there's no "
+        "system message."
+    )
+
+
 def test_complete_concatenates_multiple_content_blocks(anthropic_mock):
     anthropic_mock.Anthropic.return_value.messages.create.return_value = SimpleNamespace(
         content=[

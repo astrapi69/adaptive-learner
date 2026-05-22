@@ -126,6 +126,27 @@ def test_complete_passes_filtered_messages_inline(openai_mock):
     ]
 
 
+def test_complete_does_not_pass_system_kwarg_for_no_system_messages(openai_mock):
+    """Phase 36 Bug 5 regression — companion to the ai-anthropic
+    pin. OpenAI's chat completions API takes ``system`` as a
+    message inline (NOT a top-level kwarg), so a transcript with
+    no system messages MUST NOT have a phantom ``system`` kwarg
+    leak into the SDK call. Pins symmetric behaviour across all
+    three providers."""
+    complete(
+        [{"role": "user", "content": "Extract Anki cards from: foo bar"}],
+        model="gpt-4o-mini",
+        api_key="k",
+    )
+    call_kwargs = openai_mock.OpenAI.return_value.chat.completions.create.call_args.kwargs
+    assert "system" not in call_kwargs
+    # And the messages list contains only the user message —
+    # no synthesised empty system entry.
+    assert call_kwargs["messages"] == [
+        {"role": "user", "content": "Extract Anki cards from: foo bar"}
+    ]
+
+
 def test_complete_returns_empty_string_on_no_choices(openai_mock):
     openai_mock.OpenAI.return_value.chat.completions.create.return_value = SimpleNamespace(
         choices=[]
