@@ -1,14 +1,20 @@
 # Adaptive Learner
 
+[![Version](https://img.shields.io/badge/version-v1.20.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-2634%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
-An adaptive learning system built on a research-backed six-method
-model (Asterios Raptis, *Von Theorie zur Praxis*, Medium series).
-Pick the method that fits the learner — deductive, inductive,
-error-based, dialogic, contextual, or AI-adaptive — walk through
-a seven-step cycle on every session, and let a dual-prompt AI
-decide when the learner is ready to advance.
+A complete adaptive-learning platform built on the six-method
+learning model (Asterios Raptis, *Von Theorie zur Praxis*, Medium
+series). Pick the method that fits the learner — deductive,
+inductive, error-based, dialogic, contextual, or AI-adaptive —
+walk through a seven-step cycle on every session, and let a
+dual-prompt AI decide when the learner is ready to advance.
+Auto-loop into a new cycle once the topic is integrated. Bring
+your own AI key (Anthropic / OpenAI / Gemini), or configure
+keys in `~/.config/adaptive_learner/secrets.yaml` for the
+desktop launcher.
 
 [🇩🇪 Deutsch](README-de.md)
 
@@ -26,10 +32,139 @@ Full documentation (German default at `/docs/`, English at
   — architecture, plugins, contributing
 - [API Reference](https://astrapi69.github.io/adaptive-learner/docs/en/api/overview/)
   — all endpoints and models
+- [Configuration](docs/configuration.md) — three-layer config
+  chain (env > `secrets.yaml` > DB)
+
+## What you get
+
+### Learning core
+
+- **Six learning methods** with bespoke per-(method, step) AI
+  prompts — a 42-cell prompt matrix tailored to where the
+  learner is in the cycle and how the chosen method asks them to
+  engage.
+- **Seven-step cycle** on every session — input, focus, attempt,
+  feedback, refine, transfer, integrate. The dual-prompt
+  evaluator judges each turn and decides advance, repeat,
+  skip-ahead, or step back.
+- **Auto-loop** beyond step 7 — when the topic is integrated,
+  a third AI call picks a new subtopic and starts a fresh
+  cycle (capped at 5 cycles per session for runaway protection).
+- **Method switching** — stagnation detection recommends a
+  different method when ratings flatline; one-click accept in
+  the Session header.
+- **Streaming AI replies** — token-by-token rendering via SSE;
+  inline cursor while the assistant thinks; no "Thinking..."
+  placeholder.
+
+### Three AI providers
+
+- **Anthropic Claude**, **OpenAI GPT**, **Google Gemini** —
+  shipped as separate plugins, all routed through the
+  `ai_complete` / `ai_complete_async` / `ai_complete_stream`
+  hooks.
+- **Provider model picker** — live model discovery via each
+  provider's `/v1/models` endpoint (cached 1h), with chat-only
+  filtering and a Recommended / All grouping in Settings.
+- **Bring-your-own key** — three resolution layers:
+  - Environment variables (CI / Docker).
+  - `~/.config/adaptive_learner/secrets.yaml` (desktop
+    launcher; auto-generated template with `chmod 0600` on
+    POSIX).
+  - Settings UI (Fernet-encrypted in SQLite).
+  - The UI shows the per-provider source ("Key from:
+    secrets.yaml" / "environment" / "Settings") and disables
+    the input when externally managed.
+
+### Dual storage
+
+- **Server mode** (`ApiStorage`) — FastAPI backend, SQLite,
+  per-user Fernet-encrypted API keys, sync between devices.
+- **Local-first mode** (`DexieStorage`) — everything in browser
+  IndexedDB, AI calls fire direct to the providers. No backend
+  needed; the public GH Pages deploy uses this mode.
+- One `IStorageService` interface, 22 namespaces; switch at
+  startup via Settings.
+
+### Sync + backup
+
+- **Local-network sync** between devices — bidirectional WiFi
+  sync with AI-merge conflict resolution. QR-code camera scan
+  for pairing (with image-upload fallback for restricted
+  browsers).
+- **Backup / restore** — JSON export + import, automatic
+  rotation, side-by-side compare UI with field-level diffs.
+  API keys stripped from exports.
+
+### Import + analysis
+
+- **Chat-history import** from ChatGPT (JSON), Claude (JSON
+  bulk export), Claude (single-conversation Markdown export),
+  Gemini, and arbitrary markdown.
+- **AI-driven analysis** extracts topic, weaknesses, error
+  patterns, recommended method, vocabulary (for language
+  conversations), and a suggested curriculum.
+- One click to **seed a curriculum** + **start a targeted
+  session** from the analysis.
+
+### Exports
+
+- **Anki .apkg export** — AI-extracted flashcards (Basic +
+  Cloze), reviewed in the `/anki` page, packaged client-side
+  via sql.js + JSZip.
+- **NotebookLM ZIP** — summary + vocabulary + rules + errors
+  + flashcards + sessions packaged for NotebookLM's source
+  upload.
+- **Markdown + PDF** progress reports — Progress, Session
+  Detail, Curriculum Overview, identical wire shape across
+  storage modes.
+
+### Gamification
+
+- **XP + levels** with an exponential curve, streak multipliers
+  on session completion, first-method bonuses.
+- **24 badges** across 5 categories (getting started,
+  consistency, method explorer, depth, polyglot), seeded from
+  YAML on first start.
+- **Streak heatmap** (GitHub-style, last 365 days) with
+  weekend-mode toggle + freeze stockpile (1 freeze per 7
+  streak days, max 3).
+
+### Voice (Web Speech API)
+
+- **Text-to-speech** on AI replies + Assessment results.
+- **Speech-to-text** on the Session input (interim transcripts
+  populate the textarea before send).
+- **Pronunciation practice** for language projects (target
+  phrase → speak → AI judges similarity).
+
+### Mobile / PWA
+
+- **Installable** on Chrome / Edge / Safari — "Add to home
+  screen" prompt, standalone display, no browser tab.
+- **Offline** for past sessions + Dashboard + Progress via the
+  service worker (24h LRU on GET `/api/`); new sessions need
+  network for the AI call.
+- **Swipe gestures** — Assessment left/right navigation,
+  Curriculum topic swipe-to-reveal, session cycle peek;
+  reduced-motion respected.
+- **Mobile-tested** at iPhone SE / iPhone 14 / Pixel 7 / iPad
+  viewports.
+
+### Rich text + i18n
+
+- **TipTap rich text** in session notes + curriculum
+  descriptions + lessons (bold/italic, headings, lists,
+  blockquotes, code blocks with lowlight syntax highlight,
+  links, character count).
+- **8 languages fully translated**: DE, EN, ES, FR, EL, PT,
+  TR, JA — single-source YAML catalogs in
+  `backend/config/i18n/` mirrored to the frontend Dexie
+  bundle via `make sync-i18n`.
 
 ## Install
 
-Four ways to run AdaptiveLearner, in order of friction.
+Four ways to run Adaptive Learner, in order of friction.
 
 ### 1. Try online (zero install)
 
@@ -41,9 +176,9 @@ no install.
 [**Open the live app →**](https://astrapi69.github.io/adaptive-learner/)
 
 On Chrome / Edge / Safari you'll see an "Add to home screen"
-prompt the first time — accept and AdaptiveLearner becomes a
+prompt the first time — accept and Adaptive Learner becomes a
 standalone PWA you launch from your desktop or phone home
-screen, no browser tab required.
+screen.
 
 ### 2. Desktop app (native launcher)
 
@@ -57,17 +192,16 @@ Download from the
 | OS | Asset | How to run |
 |---|---|---|
 | Linux | `adaptive-learner-launcher` | `chmod +x adaptive-learner-launcher && ./adaptive-learner-launcher` |
-| macOS | `adaptive-learner-launcher-macos.zip` | Unzip, then double-click `adaptive-learner-launcher` (or `./adaptive-learner-launcher` from Terminal) |
+| macOS | `adaptive-learner-launcher-macos.zip` | Unzip, then double-click (or `./adaptive-learner-launcher` from Terminal) |
 | Windows | `adaptive-learner-launcher.exe` | Double-click |
 
 Each release also ships a `.sha256` next to each binary for
-integrity verification.
-
-The launcher downloads the matching tagged source tree on first
-run, builds the Docker images, and starts the app on
-`http://localhost:7880`. Building the launcher from source is
-documented in
-[docs/developer/deployment](https://astrapi69.github.io/adaptive-learner/docs/en/developer/deployment/).
+integrity verification. The launcher downloads the matching
+tagged source tree on first run, builds the Docker images,
+and starts the app on `http://localhost:7880`. On first start
+it also creates `~/.config/adaptive-learner/secrets.yaml` as a
+commented template — uncomment and fill in your provider API
+keys to skip the Settings UI dance.
 
 ### 3. Docker (self-hosted)
 
@@ -86,185 +220,127 @@ curl -fsSL https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/ins
 irm https://raw.githubusercontent.com/astrapi69/adaptive-learner/main/install.ps1 | iex
 ```
 
-Both scripts:
-
-1. Clone or fetch the tagged release into `~/adaptive-learner/`
-   (`%USERPROFILE%\adaptive-learner` on Windows).
-2. Generate an `ADAPTIVE_LEARNER_SECRET_KEY` if you don't have
-   one yet (used to encrypt user API keys at rest with Fernet).
-3. Build the Docker images and start the stack.
-4. Open the app at `http://localhost:7880` — single port,
-   nginx serves the static frontend and proxies `/api/*` to
-   the FastAPI backend.
-
-To stop / start / uninstall:
+Both scripts clone the tagged release into `~/adaptive-learner/`,
+generate an `ADAPTIVE_LEARNER_SECRET_KEY` (Fernet at-rest
+encryption), build the Docker images, and start the stack at
+`http://localhost:7880` (single port; nginx serves the static
+frontend and proxies `/api/*` to FastAPI).
 
 ```bash
 cd ~/adaptive-learner
-./stop.sh      # docker compose down
-./start.sh     # docker compose up -d
-# uninstall:  ./stop.sh && cd ~ && rm -rf adaptive-learner
+./stop.sh   # docker compose down
+./start.sh  # docker compose up -d
+# uninstall: ./stop.sh && cd ~ && rm -rf adaptive-learner
 ```
-
-Port and other knobs (CORS origins, debug mode) live in the
-generated `.env`. See
-[docs/developer/deployment](https://astrapi69.github.io/adaptive-learner/docs/en/developer/deployment/)
-for the full config-chain reference.
 
 ### 4. Developer setup (source build)
 
 Manual Poetry + npm setup for contributors. Prerequisites:
-Python 3.12+, Node 24+, Poetry, npm, Make.
+Python 3.11+, Node ≥24, Poetry, npm, Make.
 
 ```bash
 git clone git@github.com:astrapi69/adaptive-learner.git
 cd adaptive-learner
-make install         # Poetry + npm + all 7 plugins as path-deps
-make dev             # backend on :18001, frontend on :15174 (Vite dev server)
+make install   # Poetry + npm + all 10 plugins as path-deps
+make dev       # backend :18001 + frontend :15174 (Vite dev server)
 ```
 
-Full setup walkthrough, including pre-commit hooks and the
-docs venv, lives at
+Full setup walkthrough lives at
 [docs/developer/setup](https://astrapi69.github.io/adaptive-learner/docs/en/developer/setup/).
-
-## What you get
-
-- **Six learning methods** with bespoke per-(method, step) AI
-  prompts. 42-cell prompt matrix tailored to where the learner
-  is in the cycle and how their method asks them to engage.
-- **Dual-prompt cycle transitions (v0.5.0)** — every chat
-  exchange fires a second AI call that judges readiness and
-  decides the next step (advance, repeat, skip-ahead, or move
-  back if confusion shows). Configurable confidence threshold;
-  config-disable falls back to deterministic +1.
-- **Progressive Web App (v0.6.0)** — installable manifest +
-  service worker. Past sessions and the Dashboard stay readable
-  offline; new sessions need network (the AI provider lives
-  outside the browser). Hamburger nav on mobile, 44×44 touch
-  targets, no horizontal scroll at 360-768px.
-- **Local-first storage mode (v0.7.0)** — toggle in Settings.
-  In Dexie mode the whole app runs in your browser: IndexedDB
-  stores users, projects, sessions, messages, ratings, and
-  progress commits; AI calls fire direct to Anthropic / OpenAI
-  / Gemini from the page. No backend needed; the public GH
-  Pages deploy uses this mode.
-- **Bring-your-own AI key** — three providers shipped
-  (Anthropic Claude, OpenAI GPT, Google Gemini). Per-provider
-  model override in the Settings UI. Keys live encrypted at
-  rest (Fernet); the frontend never sees the plaintext.
-- **Analytics that mean something** — average AI confidence per
-  session, "where do learners get stuck", time-per-cycle-step.
-  Surfaced as the Progress page's insight cards.
-- **i18n at 222/222 across 8 languages** — DE / EN / ES / FR /
-  EL fully native; PT / TR / JA EN-passthrough scaffolding.
 
 ## Tech stack
 
 | Layer | Tech |
 |---|---|
-| Backend | Python 3.11+, FastAPI, SQLAlchemy 2.0, SQLite, Pydantic v2, Poetry, Alembic |
-| Frontend | React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, tree-model |
-| PWA | vite-plugin-pwa, Workbox service worker, manifest + maskable PNG icons |
-| Plugins | pluginforge ^0.7.0 (PyPI), pluggy entry points under group `adaptive_learner.plugins` |
+| Backend | Python 3.11+, FastAPI ^0.136, SQLAlchemy ^2.0, Pydantic v2, Alembic, aiosqlite, cryptography (Fernet), platformdirs, Poetry |
+| Frontend | React 19, TypeScript 6 (strict), Vite 8, react-router-dom 7, react-toastify, Recharts 3, TipTap 2 + 15 extensions, Dexie 4 (IndexedDB), html5-qrcode, sql.js + jszip |
+| PWA | vite-plugin-pwa, Workbox SW, manifest + maskable PNG icons |
+| Plugins | pluginforge ^0.10.0 (PyPI), identity-gated `target_application = "adaptive_learner"` |
 | AI providers | Anthropic SDK, OpenAI SDK, google.genai 2.x |
 | Launcher | PyInstaller, cross-OS (Linux + macOS + Windows) |
-| Testing | pytest, Vitest, Playwright |
+| Testing | pytest ^9, Vitest 4 (happy-dom), Playwright (E2E smoke) |
 | Tooling | Poetry, npm, Docker, Make, ruff, pre-commit |
 
 ## Plugins shipped
 
+10 plugins, all under `plugins/`. Routes mounted at
+`/api/plugins/<name>/*`.
+
 | Plugin | Routes | Purpose |
 |---|---|---|
-| assessment | /questions, /evaluate, /profile/{id} | 12-question profile (7 multi-select, 5 single-select) → six-method weights |
-| ai-anthropic | hook-only | `ai_complete` for `claude-*` models |
-| ai-openai | hook-only | `ai_complete` for `gpt-*` models |
-| ai-gemini | hook-only | `ai_complete` for `gemini-*` models |
-| session | /start, /{id}/message, /{id}/rate, /{id}/end, /switch | Per-(method, step) prompts + dual-prompt cycle transitions |
-| tracking | /progress/{id}, /commits/{id}, /spaced/{id} | Per-project aggregates incl. v0.5.0 step-evaluation insights |
-| tools | /recommendations/{id} | Static external-tool catalogue ranked by method weights |
-
-## Mobile / PWA
-
-**Install on mobile:**
-
-1. Open the app in Chrome (Android) or Safari (iOS).
-2. Add to Home Screen — Chrome surfaces our "Add to home
-   screen" prompt automatically; on iOS use the Share menu.
-3. Launch from the home screen icon — the app opens
-   standalone, no browser chrome.
-
-**Offline behaviour:**
-
-- Past sessions, the Dashboard, and your learning profile
-  stay readable offline (service worker caches GET `/api/`
-  responses for 24h with a 60-entry LRU).
-- Starting a new chat session needs network — the AI
-  provider lives outside the browser. The `/session` route
-  detects offline and renders a clear inline message
-  instead of failing silently.
-- An online/offline indicator sits in the navigation
-  (`role="status"`, polite live-region) so the network state
-  is always visible.
-
-**Responsive design:**
-
-- Mobile-friendly under 768px — hamburger drawer, 44×44
-  touch targets, no horizontal scroll at 360-768px on every
-  route. iOS Safari focus-zoom suppressed via 16px input
-  font-size.
-- Tablet (≥768px) and desktop (≥1024px) keep the original
-  horizontal top-bar nav.
-- Tested in Playwright at iPhone SE (375), iPhone 14 (390),
-  Pixel 7 (412), and iPad (768) viewports.
+| ai-anthropic | hook-only | `ai_complete*` for `claude-*` |
+| ai-openai | hook-only | `ai_complete*` for `gpt-*` |
+| ai-gemini | hook-only | `ai_complete*` for `gemini-*` |
+| assessment | /questions, /evaluate, /profile/{id} | 12-question profile → six-method weights |
+| session | /start, /{id}/message, /message/stream, /rate, /end, /switch, /pronunciation/* | 7-step cycles, dual-prompt eval, streaming, auto-loop, pronunciation judge |
+| tracking | /progress/{id}, /commits/{id} | Per-project aggregates + step-evaluation insights |
+| tools | /recommendations/{id}, /spaced/{id} | Method-tailored tool list + spaced practice |
+| gamification | /xp/*, /badges/*, /streak/*, /reset | XP + 24 badges + streak heatmap |
+| anki | /cards CRUD, /extract/{session,conversation}, /mark-exported | AI-extracted flashcards + .apkg export |
+| notebooklm | /questions CRUD, /generate/{session,project}, /study-guide/{id} | Active-recall questions + study guide + ZIP export |
 
 ## Useful make targets
 
 ```bash
-make dev                  # backend (18001) + frontend (15174)
-make test                 # backend + plugins + frontend
-make test-coverage        # opt-in coverage run
-make prod                 # docker compose up (full stack)
-make prod-down            # stop the docker stack
-make docs-serve           # MkDocs preview on :8000 with hot-reload
+make dev               # backend (18001) + frontend (15174)
+make test              # backend + plugins + Vitest (2634 tests)
+make test-coverage     # opt-in coverage (CI runs it nightly)
+make sync-versions     # propagate version across 18 files
+make sync-i18n         # backend YAML → frontend JSON bundles
+make docs-serve        # MkDocs preview on :8000 with hot-reload
+make prod / prod-down  # docker compose stack
 ```
 
-E2E: `cd e2e && npx playwright test --project=smoke`.
+E2E smoke: `cd e2e && npx playwright test --project=smoke`
+(16 spec files at v1.20.0).
+
+## Tests
+
+| Suite | Count |
+|---|---|
+| Backend (pytest) | 786 |
+| Plugins (10 × pytest) | 615 |
+| Frontend (Vitest 4) | 1233 |
+| **Total** | **2634** |
+
+Plus 16 Playwright smoke spec files covering: landing,
+onboarding+assessment, session (3-chunk SSE), curriculum,
+settings, mobile viewports, sync pairing, backup roundtrip,
+multi-cycle auto-loop, import + analysis, MD export,
+subjects/tags filter, rich-text notes, model picker.
 
 ## Local project references
 
 - [`CLAUDE.md`](CLAUDE.md) — development guide for Claude Code
-  (also useful for humans). Rules in
-  [`.claude/rules/`](.claude/rules/).
-- [`CONTRIBUTING.md`](CONTRIBUTING.md) — contributor onboarding,
-  testing convention, mobile viewport coverage.
-- [`docs/ROADMAP.md`](docs/ROADMAP.md) — what's next.
+  (under 10K, single-line state pointer).
+- [`docs/configuration.md`](docs/configuration.md) — the
+  three-layer config chain.
+- [`docs/ROADMAP.md`](docs/ROADMAP.md) — phase history + next.
+- [`docs/backlog.md`](docs/backlog.md) — daily-planning view
+  (P0–P5 tiers + blocked items).
 - [`docs/adaptive-learner-project-reference.md`](docs/adaptive-learner-project-reference.md)
-  — the project plan: domain models, hooks, plugins, API.
+  — original plan + shipped architecture.
 
-User-facing prose lives on the
-[**docs site**](https://astrapi69.github.io/adaptive-learner/docs/) —
+User-facing prose lives on the [**docs site**](https://astrapi69.github.io/adaptive-learner/docs/);
 the in-repo files above are for contributors.
 
 ## Status
 
-Active development. v0.8.1 was released 2026-05-19. Test
-baseline: **1312 tests** (447 backend + 478 plugins +
-387 frontend Vitest + 8 Playwright smoke specs). Public
-docs at
-[astrapi69.github.io/adaptive-learner/docs/](https://astrapi69.github.io/adaptive-learner/docs/).
-All releases ship with annotated tags + GitHub Releases on
-the same date.
+Active development. **v1.20.0 was released 2026-05-22** with
+secrets.yaml file-based key configuration. 34 development
+phases shipped; per-release notes in
+[`changelog/releases/`](changelog/releases/).
 
 ## Origin
 
-Scaffolded from [Bibliogon](https://github.com/astrapi69/bibliogon)
-v0.33.0 on 2026-05-17. The plugin-loader infrastructure,
-layered architecture, test discipline, and Pythonic+React stack
-were retained intact; the Bibliogon EXAMPLE-DOMAIN models
-(Book / Chapter / Article / Author / ...) and their plugins were
-removed. Phases 1-11 brought the project to its current shape;
-see annotated tags `v0.0.1` through `v0.8.1` for the
-incremental trail.
+The plugin-loader infrastructure, layered architecture, test
+discipline, and Python + React stack were extracted from
+[Bibliogon](https://github.com/astrapi69/bibliogon) v0.33.0 in
+March 2026. The Bibliogon book-domain models and plugins were
+removed; adaptive-learner has diverged on domain (learning
+sessions, curricula, assessment, AI integration) entirely. The
+launcher shape carries over; the application is a separate
+codebase.
 
 ## License
 
