@@ -1492,6 +1492,31 @@ select:focus {
   padding: var(--space-2) var(--space-3);
 }
 
+/* Phase 34 (v1.20.0) — per-provider key-source badge + the
+   externally-managed info banner that explains where the key
+   comes from when the Settings UI is read-only. */
+.api-key-source {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-muted);
+}
+.api-key-source-secrets_yaml,
+.api-key-source-env {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--accent);
+}
+.api-key-external-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--accent);
+}
+
 /* --- Progress table -------------------------------------------- */
 
 .commit-table-wrap {

@@ -177,6 +177,14 @@ function rowToProject(row: LearningProjectRow): LearningProject {
 }
 
 function rowToSettings(row: UserSettingsRow): UserSettings {
+    // Phase 34 (v1.20.0) — Dexie mode is desktop-only via PWA;
+    // there is no filesystem access from the browser sandbox, so
+    // ``secrets.yaml`` never applies here. Every key source
+    // collapses to either "settings" (when present in IndexedDB)
+    // or "none" (when absent). The UI renders identical
+    // affordances in both modes; in Dexie mode the user never
+    // sees the externally-managed warning because they can't
+    // hit that state.
     return {
         id: row.id,
         user_id: row.user_id,
@@ -188,6 +196,9 @@ function rowToSettings(row: UserSettingsRow): UserSettings {
         model_override_anthropic: row.model_override_anthropic,
         model_override_openai: row.model_override_openai,
         model_override_gemini: row.model_override_gemini,
+        key_source_anthropic: row.api_key_anthropic ? "settings" : "none",
+        key_source_openai: row.api_key_openai ? "settings" : "none",
+        key_source_gemini: row.api_key_gemini ? "settings" : "none",
         created_at: row.created_at,
         updated_at: row.updated_at,
     };

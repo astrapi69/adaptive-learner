@@ -58,6 +58,9 @@ const BASE: UserSettings = {
     model_override_anthropic: null,
     model_override_openai: null,
     model_override_gemini: null,
+    key_source_anthropic: "none",
+    key_source_openai: "none",
+    key_source_gemini: "none",
     created_at: "2026-05-18T00:00:00Z",
     updated_at: "2026-05-18T00:00:00Z",
 };
@@ -464,5 +467,119 @@ describe("Settings — gesture toggle (Phase 23E)", () => {
             "settings-gestures-toggle",
         ) as HTMLInputElement;
         expect(toggle.checked).toBe(false);
+    });
+});
+
+describe("Settings — per-provider key source (Phase 34)", () => {
+    beforeEach(() => {
+        apiGet.mockReset();
+        apiUpdate.mockReset();
+        apiSetKey.mockReset();
+        apiDeleteKey.mockReset();
+        localStorage.clear();
+        localStorage.setItem("adaptive-learner.user_id", "u-1");
+    });
+
+    it("renders 'Key from: Settings' badge when source is settings", async () => {
+        apiGet.mockResolvedValue({
+            ...BASE,
+            has_anthropic_key: true,
+            key_source_anthropic: "settings",
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(
+            /Settings/,
+        );
+        // No externally-managed banner.
+        expect(
+            screen.queryByTestId("api-key-external-anthropic"),
+        ).not.toBeInTheDocument();
+        // Save + input are enabled.
+        expect(screen.getByTestId("api-key-input-anthropic")).not.toBeDisabled();
+    });
+
+    it("renders 'Key from: secrets.yaml' badge + disables Save when externally managed", async () => {
+        apiGet.mockResolvedValue({
+            ...BASE,
+            has_anthropic_key: false,
+            key_source_anthropic: "secrets_yaml",
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(
+            /secrets\.yaml/,
+        );
+        expect(
+            screen.getByTestId("api-key-external-anthropic"),
+        ).toHaveTextContent(/secrets\.yaml/);
+        expect(screen.getByTestId("api-key-save-anthropic")).toBeDisabled();
+        expect(screen.getByTestId("api-key-input-anthropic")).toBeDisabled();
+    });
+
+    it("renders 'Key from: environment' badge + env-var hint when externally managed", async () => {
+        apiGet.mockResolvedValue({
+            ...BASE,
+            has_openai_key: false,
+            key_source_openai: "env",
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(screen.getByTestId("api-key-source-openai")).toHaveTextContent(
+            /environment/,
+        );
+        // Env hint substitutes the OPENAI provider name.
+        expect(screen.getByTestId("api-key-external-openai")).toHaveTextContent(
+            /OPENAI/,
+        );
+        expect(screen.getByTestId("api-key-save-openai")).toBeDisabled();
+    });
+
+    it("suppresses the active-provider 'missing key' warning when key is externally managed", async () => {
+        // Anthropic is the active provider AND has no key —
+        // but it's externally managed (env), so the existing
+        // "save a key" warning should NOT render. The
+        // externally-managed banner replaces it.
+        apiGet.mockResolvedValue({
+            ...BASE,
+            active_provider: "anthropic",
+            has_anthropic_key: false,
+            key_source_anthropic: "env",
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(
+            screen.queryByTestId("api-key-warning-anthropic"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId("api-key-external-anthropic"),
+        ).toBeInTheDocument();
+    });
+
+    it("hides the Remove button when externally managed (even if has_*_key is true)", async () => {
+        // Edge: the DB column had a key from a previous UI
+        // configuration, but secrets.yaml has overridden it.
+        // Removing the DB column would have no user-visible
+        // effect (the resolver still picks the yaml key), so we
+        // hide the Remove button to avoid the confusing dance.
+        apiGet.mockResolvedValue({
+            ...BASE,
+            has_anthropic_key: true,
+            key_source_anthropic: "secrets_yaml",
+        });
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(
+            screen.queryByTestId("api-key-delete-anthropic"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("renders 'No key configured' when source is none and no key stored", async () => {
+        apiGet.mockResolvedValue({...BASE});  // all sources default "none"
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(
+            /No key/,
+        );
     });
 });

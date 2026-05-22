@@ -463,6 +463,13 @@ export default function Settings() {
                 {AI_PROVIDERS.map((provider) => {
                     const has = settings[`has_${provider}_key`] as boolean;
                     const isActive = settings.active_provider === provider;
+                    // Phase 34 (v1.20.0) — when the key is sourced
+                    // from secrets.yaml or an env var, the UI is
+                    // read-only. The Save / Remove buttons are
+                    // disabled and an info banner points the user
+                    // at the externally-managed file.
+                    const source = settings[`key_source_${provider}`];
+                    const externallyManaged = source === "secrets_yaml" || source === "env";
                     return (
                         <div
                             key={provider}
@@ -487,8 +494,36 @@ export default function Settings() {
                                         ? t("settings.api_key_saved", "Key stored")
                                         : t("settings.api_key_missing", "Not set")}
                                 </span>
+                                <span
+                                    className={`api-key-source api-key-source-${source}`}
+                                    data-testid={`api-key-source-${provider}`}
+                                >
+                                    {source === "secrets_yaml"
+                                        ? t("settings.api_key_source_file", "Key from: secrets.yaml")
+                                        : source === "env"
+                                          ? t("settings.api_key_source_env", "Key from: environment")
+                                          : source === "settings"
+                                            ? t("settings.api_key_source_settings", "Key from: Settings")
+                                            : t("settings.api_key_source_none", "No key configured")}
+                                </span>
                             </div>
-                            {isActive && !has && (
+                            {externallyManaged && (
+                                <p
+                                    className="api-key-external-hint"
+                                    data-testid={`api-key-external-${provider}`}
+                                >
+                                    {source === "secrets_yaml"
+                                        ? t(
+                                              "settings.api_key_external_hint_file",
+                                              "This key is configured in ~/.config/adaptive-learner/secrets.yaml. Edit the file to change it.",
+                                          )
+                                        : t(
+                                              "settings.api_key_external_hint_env",
+                                              "This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.",
+                                          ).replace("{PROVIDER}", provider.toUpperCase())}
+                                </p>
+                            )}
+                            {isActive && !has && !externallyManaged && (
                                 <p
                                     className="api-key-warning"
                                     data-testid={`api-key-warning-${provider}`}
@@ -512,7 +547,7 @@ export default function Settings() {
                                             [provider]: e.target.value,
                                         }))
                                     }
-                                    disabled={busy === `save-${provider}`}
+                                    disabled={busy === `save-${provider}` || externallyManaged}
                                 />
                                 <button
                                     type="button"
@@ -521,12 +556,13 @@ export default function Settings() {
                                     onClick={() => handleSaveKey(provider)}
                                     disabled={
                                         busy === `save-${provider}` ||
-                                        keyDrafts[provider].trim().length === 0
+                                        keyDrafts[provider].trim().length === 0 ||
+                                        externallyManaged
                                     }
                                 >
                                     {t("settings.api_key_set", "Save key")}
                                 </button>
-                                {has && (
+                                {has && !externallyManaged && (
                                     <button
                                         type="button"
                                         className="btn btn-danger"

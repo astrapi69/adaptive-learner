@@ -32,6 +32,16 @@ export interface User {
 
 // --- UserSettings -------------------------------------------------------
 
+/**
+ * Phase 34 (v1.20.0) — per-provider key-source enum surfaced to
+ * the Settings UI so it can render "Key from: secrets.yaml" /
+ * "Key from: environment" / "Key from: Settings" and gate the
+ * Save button when the key is externally managed.
+ *
+ * Mirrors ``backend/app/schemas/__init__.py:ApiKeySource``.
+ */
+export type ApiKeySource = "env" | "secrets_yaml" | "settings" | "none";
+
 export interface UserSettings {
     id: string;
     user_id: string;
@@ -46,6 +56,10 @@ export interface UserSettings {
     model_override_anthropic: string | null;
     model_override_openai: string | null;
     model_override_gemini: string | null;
+    // Phase 34 — per-provider key-source attribution.
+    key_source_anthropic: ApiKeySource;
+    key_source_openai: ApiKeySource;
+    key_source_gemini: ApiKeySource;
     created_at: string;
     updated_at: string;
 }

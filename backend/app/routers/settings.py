@@ -36,9 +36,31 @@ from app.services import settings as settings_service
 router = APIRouter(prefix="/settings", tags=["settings"])
 
 
+def _build_settings_out(db: Session, settings) -> UserSettingsOut:
+    """Wrap the ORM row + per-provider key-source attribution into
+    a ``UserSettingsOut``.
+
+    Phase 34 (v1.20.0) — every response path that returns
+    ``UserSettingsOut`` goes through here so the UI sees consistent
+    ``key_source_*`` values whether the caller hit GET, PATCH,
+    POST /api-key, or DELETE /api-key/{provider}.
+    """
+    out = UserSettingsOut.model_validate(settings)
+    out.key_source_anthropic = settings_service.detect_api_key_source(
+        db, settings.user_id, AIProvider.ANTHROPIC
+    )
+    out.key_source_openai = settings_service.detect_api_key_source(
+        db, settings.user_id, AIProvider.OPENAI
+    )
+    out.key_source_gemini = settings_service.detect_api_key_source(
+        db, settings.user_id, AIProvider.GEMINI
+    )
+    return out
+
+
 @router.get("/{user_id}", response_model=UserSettingsOut)
 def get_settings(user_id: str, db: Session = Depends(get_db)) -> UserSettingsOut:
-    return UserSettingsOut.model_validate(settings_service.get_or_create_settings(db, user_id))
+    return _build_settings_out(db, settings_service.get_or_create_settings(db, user_id))
 
 
 @router.patch("/{user_id}", response_model=UserSettingsOut)
@@ -47,7 +69,7 @@ def patch_settings(
     payload: SettingsPatchBody,
     db: Session = Depends(get_db),
 ) -> UserSettingsOut:
-    return UserSettingsOut.model_validate(settings_service.update_settings(db, user_id, payload))
+    return _build_settings_out(db, settings_service.update_settings(db, user_id, payload))
 
 
 @router.post("/{user_id}/api-key", response_model=UserSettingsOut)
@@ -56,7 +78,7 @@ def set_api_key(
     payload: ApiKeySetBody,
     db: Session = Depends(get_db),
 ) -> UserSettingsOut:
-    return UserSettingsOut.model_validate(settings_service.set_api_key(db, user_id, payload))
+    return _build_settings_out(db, settings_service.set_api_key(db, user_id, payload))
 
 
 @router.delete("/{user_id}/api-key/{provider}", response_model=UserSettingsOut)
@@ -65,7 +87,7 @@ def delete_api_key(
     provider: AIProvider,
     db: Session = Depends(get_db),
 ) -> UserSettingsOut:
-    return UserSettingsOut.model_validate(settings_service.delete_api_key(db, user_id, provider))
+    return _build_settings_out(db, settings_service.delete_api_key(db, user_id, provider))
 
 
 @router.get(
