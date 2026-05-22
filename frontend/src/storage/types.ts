@@ -140,6 +140,13 @@ export interface ISessionNamespace {
         sessionId: string,
         body: {to_method: LearningMethod; reason: string},
     ): Promise<LearningSession>;
+    /**
+     * Phase 36 Bug 4 — return the most recent active session
+     * started from the given imported conversation, or ``null`` if
+     * none. ImportDetail uses this to flip "Start session" into
+     * "Continue session" before the user clicks.
+     */
+    getActiveForConversation(conversationId: string): Promise<LearningSession | null>;
 }
 
 export interface ITrackingNamespace {

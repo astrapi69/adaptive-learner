@@ -64,6 +64,11 @@ export const apiStorage: IStorageService = {
             api.session.switchRecommendation(sessionId),
         acceptSwitch: (sessionId, body) =>
             api.session.acceptSwitch(sessionId, body),
+        // Phase 36 Bug 4 — HTTP shape lives under /imports/, not
+        // /session/, because the lookup is "did THIS conversation
+        // start a session?". Same answer either way.
+        getActiveForConversation: (conversationId) =>
+            api.imports.getActiveSession(conversationId),
     },
 
     tracking: {

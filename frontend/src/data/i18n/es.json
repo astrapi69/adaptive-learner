@@ -95,6 +95,8 @@
     "save_error": "No se pudo guardar la conversacion.",
     "settings_error": "No se pudieron leer los ajustes de IA.",
     "start_session": "Iniciar sesion",
+    "continue_session": "Continuar sesion",
+    "session_start_error": "No se pudo iniciar la sesión.",
     "transcript": "Transcripcion",
     "anki_extract": "Extraer tarjetas Anki",
     "anki_extracting": "Extrayendo tarjetas…",

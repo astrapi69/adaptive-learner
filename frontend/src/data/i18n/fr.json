@@ -95,6 +95,8 @@
     "save_error": "Impossible de sauvegarder la conversation.",
     "settings_error": "Impossible de lire les parametres IA.",
     "start_session": "Demarrer une session",
+    "continue_session": "Continuer la session",
+    "session_start_error": "Impossible de démarrer la session.",
     "transcript": "Transcription",
     "anki_extract": "Extraire les cartes Anki",
     "anki_extracting": "Extraction des cartes…",

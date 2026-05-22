@@ -206,6 +206,7 @@ describe("Dexie awardXPForSession", () => {
             ended_at: null,
             cycle_step: 3,
             status: "completed",
+            imported_conversation_id: null,
         });
         const award = await awardXPForSession({
             userId,

@@ -88,6 +88,8 @@ import:
   save_error: Konversation konnte nicht gespeichert werden.
   settings_error: KI-Einstellungen konnten nicht gelesen werden.
   start_session: Sitzung starten
+  continue_session: Sitzung fortsetzen
+  session_start_error: Sitzung konnte nicht gestartet werden.
   transcript: Transkript
   anki_extract: Anki-Karten extrahieren
   anki_extracting: Karten werden extrahiert…

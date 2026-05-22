@@ -121,6 +121,14 @@ export interface LearningSessionRow {
     ended_at: string | null;
     cycle_step: number;
     status: SessionStatus;
+    /**
+     * Phase 36 Bug 4 — children-side FK back to the imported
+     * conversation this session was started from. ``null`` for
+     * free-form sessions. Dexie schema v14 adds the secondary
+     * index so the "is there an active session for this
+     * conversation?" lookup is O(log n).
+     */
+    imported_conversation_id: string | null;
 }
 
 export interface SessionMessageRow {
@@ -598,6 +606,16 @@ export class AdaptiveLearnerDB extends Dexie {
         // correct for the historic set.
         this.version(13).stores({
             curricula: "id, user_id, imported_conversation_id",
+        });
+        // Schema v14 — v1.21.1 Phase 36 Bug 4: children-side FK
+        // from a learning session back to the imported
+        // conversation it was started from. New secondary index
+        // for the "is there an active session for this
+        // conversation?" lookup. No back-fill: pre-v14 sessions
+        // were all free-form so ``null`` is correct historically.
+        this.version(14).stores({
+            learningSessions:
+                "id, project_id, status, started_at, imported_conversation_id",
         });
     }
 }

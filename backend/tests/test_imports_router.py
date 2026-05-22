@@ -337,6 +337,25 @@ def test_get_curriculum_404_on_unknown_conversation(client: TestClient):
     assert resp.status_code == 404
 
 
+# --- Phase 36 Bug 4 — active-session-link surface ----------------------------
+
+
+def test_get_active_session_returns_null_when_none_exists(client: TestClient):
+    """Conversation exists but never started a session → endpoint
+    returns ``null``, NOT 404. ImportDetail uses the null answer to
+    keep the CTA on "Start session"."""
+    user_id = _make_user(client)
+    created = client.post(f"/api/users/{user_id}/imports", json=_conv_body()).json()
+    resp = client.get(f"/api/imports/{created['id']}/active-session")
+    assert resp.status_code == 200
+    assert resp.json() is None
+
+
+def test_get_active_session_404_on_unknown_conversation(client: TestClient):
+    resp = client.get("/api/imports/bogus/active-session")
+    assert resp.status_code == 404
+
+
 def test_whitespace_only_difference_still_collapses(client: TestClient):
     """The hash strips leading/trailing whitespace per message, so
     pasting the same transcript with extra padding (a common

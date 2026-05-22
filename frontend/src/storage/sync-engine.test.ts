@@ -507,6 +507,7 @@ describe("SyncEngine.sync", () => {
             ended_at: null,
             cycle_step: 4,
             status: "active",
+            imported_conversation_id: null,
         });
         // The Dexie row uses the v1.8.0 column names directly.
         await db.stepEvaluations.put({
@@ -586,6 +587,7 @@ describe("SyncEngine.sync", () => {
             ended_at: null,
             cycle_step: 1,
             status: "active",
+            imported_conversation_id: null,
         });
         await db.sessionNotes.put({
             id: "n-1",
@@ -636,6 +638,7 @@ describe("SyncEngine.sync", () => {
             ended_at: null,
             cycle_step: 1,
             status: "active",
+            imported_conversation_id: null,
         });
         await db.sessionNotes.put({
             id: "n-conflict",
@@ -707,6 +710,7 @@ describe("SyncEngine.sync", () => {
             ended_at: null,
             cycle_step: 4,
             status: "active",
+            imported_conversation_id: null,
         });
         const fetch = makeMockFetch({
             "/api/sync/push": () => ({

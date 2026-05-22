@@ -452,6 +452,10 @@ class LearningSessionOut(BaseModel):
     # JSON-in-JSON.
     cycle_count: int = 1
     cycle_topics: list[dict[str, str]] = Field(default_factory=list)
+    # Phase 36 Bug 4 — children-side FK back to the imported
+    # conversation that started this session. Lets ImportDetail
+    # show a "Continue session" CTA instead of always creating new.
+    imported_conversation_id: str | None = None
 
     @field_validator("cycle_topics", mode="before")
     @classmethod

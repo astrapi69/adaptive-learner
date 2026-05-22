@@ -34,6 +34,7 @@ import type {
     ConversationAnalysisResult,
     Curriculum,
     ImportedConversationDetail,
+    LearningSession,
 } from "../types/domain";
 
 interface ImportDetailProps {
@@ -65,6 +66,13 @@ export default function ImportDetail({
     // longer accidentally generate duplicates by clicking twice.
     const [existingCurriculum, setExistingCurriculum] =
         useState<Curriculum | null>(null);
+    // Phase 36 Bug 4 — same idea for sessions: when there's an
+    // active session for this conversation, "Start session" flips
+    // into "Continue session" and the click resumes instead of
+    // creating a duplicate session.
+    const [activeSession, setActiveSession] =
+        useState<LearningSession | null>(null);
+    const [startingSession, setStartingSession] = useState(false);
 
     const go = (path: string) => (onNavigate ? onNavigate(path) : navigate(path));
 
@@ -86,6 +94,18 @@ export default function ImportDetail({
                 } catch {
                     // Older backends without the /curriculum lookup
                     // endpoint fall through gracefully.
+                }
+                // Phase 36 Bug 4 — same shape for the active
+                // session lookup; missing endpoint / null is
+                // non-fatal (CTA stays on "Start session").
+                try {
+                    const sess =
+                        await getStorage().session.getActiveForConversation(
+                            conversationId,
+                        );
+                    if (!cancelled) setActiveSession(sess);
+                } catch {
+                    /* tolerate missing endpoint */
                 }
             } catch (err) {
                 if (!cancelled) {
@@ -179,6 +199,50 @@ export default function ImportDetail({
             notify.error(msg);
         } finally {
             setAnalyzing(false);
+        }
+    }
+
+    async function startOrResumeSession() {
+        // Phase 36 Bug 4 — if an active session already exists,
+        // navigate to it. Otherwise create a new session linked
+        // back to this conversation so the next return-visit
+        // resumes instead of duplicating.
+        if (!detail || startingSession) return;
+        if (activeSession) {
+            go(`/session?id=${encodeURIComponent(activeSession.id)}`);
+            return;
+        }
+        const {projectId} = readLearnerState();
+        if (!projectId) {
+            // No active project — fall back to the generic
+            // /session route which routes the user to onboarding.
+            // Keeps the legacy behaviour for free-form learners.
+            go("/session");
+            return;
+        }
+        setStartingSession(true);
+        try {
+            const learnerLang = readLearnerState().language;
+            const result = await getStorage().session.start({
+                project_id: projectId,
+                lang: learnerLang ?? "en",
+                imported_conversation_id: detail.id,
+            });
+            // Update the local state in case the user comes back
+            // before navigating away.
+            setActiveSession(result.session);
+            go(`/session?id=${encodeURIComponent(result.session.id)}`);
+        } catch (err) {
+            const msg =
+                err instanceof ApiError
+                    ? err.detail
+                    : t(
+                          "import.session_start_error",
+                          "Could not start the session.",
+                      );
+            notify.error(msg, {persistent: true});
+        } finally {
+            setStartingSession(false);
         }
     }
 
@@ -364,10 +428,29 @@ export default function ImportDetail({
                         <button
                             type="button"
                             className="btn btn-secondary"
-                            onClick={() => go("/session")}
-                            data-testid="start-session-button"
+                            // Phase 36 Bug 4 — when an active
+                            // session for this conversation
+                            // already exists, the click navigates
+                            // back to it. Otherwise we start a
+                            // new session linked back via the
+                            // ``imported_conversation_id`` FK so a
+                            // future return-visit resumes cleanly.
+                            onClick={startOrResumeSession}
+                            disabled={startingSession}
+                            data-testid={
+                                activeSession
+                                    ? "continue-session-button"
+                                    : "start-session-button"
+                            }
                         >
-                            {t("import.start_session", "Start session")}
+                            {startingSession
+                                ? t("common.loading", "Loading…")
+                                : activeSession
+                                  ? t(
+                                        "import.continue_session",
+                                        "Continue session",
+                                    )
+                                  : t("import.start_session", "Start session")}
                         </button>
                     )}
                     {analysis && (

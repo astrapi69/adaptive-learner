@@ -77,6 +77,7 @@ async function seedSessionWithRating(
         ended_at: endedAt,
         cycle_step: 7,
         status: "completed" as never,
+        imported_conversation_id: null,
     });
     await db.sessionMessages.add({
         id: newId(),
@@ -309,6 +310,7 @@ describe("buildSessionDetail", () => {
             ended_at: null,
             cycle_step: 2,
             status: "active" as never,
+            imported_conversation_id: null,
         });
         const payload = await buildSessionDetail(db, sessionId);
         expect(payload.rating).toBeNull();

@@ -88,6 +88,8 @@ import:
   save_error: Could not save the conversation.
   settings_error: Could not read AI settings.
   start_session: Start session
+  continue_session: Continue session
+  session_start_error: Could not start the session.
   transcript: Transcript
   anki_extract: Extract Anki cards
   anki_extracting: Extracting cards…

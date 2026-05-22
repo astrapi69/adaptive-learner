@@ -213,6 +213,13 @@ export interface SessionStartBody {
     method?: LearningMethod;
     cycle_step?: number;
     lang?: string;
+    /**
+     * Phase 36 Bug 4 — optional FK back to the imported
+     * conversation that started this session. The backend resumes
+     * an existing active session for the same conversation
+     * instead of creating a new one when this is set.
+     */
+    imported_conversation_id?: string | null;
 }
 
 export interface SessionMessageBody {
@@ -1024,6 +1031,14 @@ export const api = {
         getCurriculum: (conversationId: string) =>
             apiCall<import("../types/domain").Curriculum | null>(
                 `/imports/${encodeURIComponent(conversationId)}/curriculum`,
+            ),
+        /**
+         * Phase 36 Bug 4 — return the most recent active session
+         * started from this conversation, or ``null`` if none.
+         */
+        getActiveSession: (conversationId: string) =>
+            apiCall<import("../types/domain").LearningSession | null>(
+                `/imports/${encodeURIComponent(conversationId)}/active-session`,
             ),
     },
 };

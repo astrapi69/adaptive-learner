@@ -95,6 +95,8 @@
     "save_error": "Δεν ήταν δυνατή η αποθήκευση της συνομιλίας.",
     "settings_error": "Δεν ήταν δυνατή η ανάγνωση των ρυθμίσεων AI.",
     "start_session": "Έναρξη συνεδρίας",
+    "continue_session": "Συνέχιση συνεδρίας",
+    "session_start_error": "Δεν ήταν δυνατή η έναρξη της συνεδρίας.",
     "transcript": "Καταγραφή",
     "anki_extract": "Εξαγωγή καρτών Anki",
     "anki_extracting": "Εξάγονται κάρτες…",

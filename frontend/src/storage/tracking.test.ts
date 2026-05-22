@@ -133,6 +133,7 @@ describe("buildCommitFromSession", () => {
         ended_at: "2026-05-19T10:15:00.000Z",
         cycle_step: 7,
         status: "completed",
+        imported_conversation_id: null,
     };
     const baseRating: SessionRatingRow = {
         id: "r1",

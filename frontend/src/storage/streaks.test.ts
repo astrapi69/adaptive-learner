@@ -128,6 +128,7 @@ describe("Dexie streak persistence", () => {
                 ended_at: d.toISOString(),
                 cycle_step: 3,
                 status: "completed" as const,
+                imported_conversation_id: null,
             };
         });
         for (const s of sessions) {
@@ -162,6 +163,7 @@ describe("calendarHeatmap", () => {
             ended_at: today,
             cycle_step: 3,
             status: "completed",
+            imported_conversation_id: null,
         });
         const out = await calendarHeatmap(userId, 7);
         const todayIso = today.slice(0, 10);

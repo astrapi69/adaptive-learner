@@ -25,7 +25,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.exceptions import ValidationError
-from app.models import User
+from app.models import LearningSession, User
 from app.schemas import (
     AIProvider,
     CurriculumOut,
@@ -34,6 +34,7 @@ from app.schemas import (
     ImportedConversationDetail,
     ImportedConversationOut,
     ImportedConversationUpdate,
+    LearningSessionOut,
 )
 from app.services import curriculum as curriculum_service
 from app.services import imports as imports_service
@@ -128,6 +129,33 @@ def get_curriculum_for_import(
     if row is None:
         return None
     return CurriculumOut.model_validate(row)
+
+
+@imports_router.get(
+    "/{conversation_id}/active-session",
+    response_model=LearningSessionOut | None,
+)
+def get_active_session_for_import(
+    conversation_id: str, db: Session = Depends(get_db)
+) -> LearningSessionOut | None:
+    """Phase 36 Bug 4 — return the most recent active session
+    started from this conversation, or ``null`` if none exists.
+    Lets ImportDetail flip the "Start session" CTA into a
+    "Continue session" navigate when there is one already
+    running."""
+    imports_service.get_conversation(db, conversation_id)
+    row = (
+        db.query(LearningSession)
+        .filter(
+            LearningSession.imported_conversation_id == conversation_id,
+            LearningSession.status == "active",
+        )
+        .order_by(LearningSession.started_at.desc())
+        .first()
+    )
+    if row is None:
+        return None
+    return LearningSessionOut.model_validate(row)
 
 
 @imports_router.post(

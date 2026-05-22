@@ -441,6 +441,19 @@ class LearningSession(Base):
     # export can show the full multi-cycle journey.
     cycle_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     cycle_topics: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
+    # Phase 36 Bug 4 — children-side FK back to the imported
+    # conversation this session was started FROM (the user clicked
+    # "Start session" on the analysis page). Nullable: free-form
+    # sessions keep ``NULL``. ``SET NULL`` on delete so removing
+    # the source conversation does not delete the session. Indexed
+    # so ImportDetail's "is there an active session for this
+    # conversation?" lookup is O(log n).
+    imported_conversation_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("imported_conversations.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
 
     project: Mapped[LearningProject] = relationship(back_populates="sessions")
     messages: Mapped[list[SessionMessage]] = relationship(

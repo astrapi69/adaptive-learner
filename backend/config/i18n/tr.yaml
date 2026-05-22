@@ -88,6 +88,8 @@ import:
   save_error: Konuşma kaydedilemedi.
   settings_error: YZ ayarları okunamadı.
   start_session: Oturum başlat
+  continue_session: Oturuma devam et
+  session_start_error: Oturum başlatılamadı.
   transcript: Döküm
   anki_extract: Anki kartlarını çıkar
   anki_extracting: Kartlar çıkarılıyor…

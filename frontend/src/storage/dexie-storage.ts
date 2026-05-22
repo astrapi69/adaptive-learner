@@ -652,7 +652,36 @@ export const dexieStorage: IStorageService = {
                 method: body.method,
                 cycleStep: body.cycle_step,
                 lang: body.lang,
+                importedConversationId: body.imported_conversation_id ?? null,
             });
+        },
+        /**
+         * Phase 36 Bug 4 — find the most recent active session
+         * started from this conversation. ImportDetail uses the
+         * result to flip "Start session" into "Continue session".
+         */
+        async getActiveForConversation(
+            conversationId: string,
+        ): Promise<LearningSession | null> {
+            const db = getDb();
+            const rows = await db.learningSessions
+                .where("imported_conversation_id")
+                .equals(conversationId)
+                .filter((row) => row.status === "active")
+                .sortBy("started_at");
+            if (rows.length === 0) return null;
+            // sortBy is ascending; pick the latest.
+            const latest = rows[rows.length - 1];
+            return {
+                id: latest.id,
+                project_id: latest.project_id,
+                method: latest.method,
+                started_at: latest.started_at,
+                ended_at: latest.ended_at,
+                cycle_step: latest.cycle_step,
+                status: latest.status,
+                imported_conversation_id: latest.imported_conversation_id ?? null,
+            };
         },
         async message(
             sessionId: string,

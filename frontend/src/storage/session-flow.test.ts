@@ -126,6 +126,89 @@ describe("session.start", () => {
             dexieStorage.session.start({project_id: "nope"}),
         ).rejects.toMatchObject({status: 404});
     });
+
+    // --- Phase 36 Bug 4 — session resume per imported conversation ---
+
+    it("stamps imported_conversation_id when provided (Phase 36 Bug 4)", async () => {
+        const {userId, projectId} = await setupUserWithKey();
+        const conv = await dexieStorage.imports.create(userId, {
+            source: "manual",
+            title: "Linked source",
+            model: null,
+            source_created_at: null,
+            messages: [
+                {role: "user", content: "Q", timestamp: null},
+                {role: "assistant", content: "A", timestamp: null},
+            ],
+        });
+        const result = await dexieStorage.session.start({
+            project_id: projectId,
+            lang: "en",
+            imported_conversation_id: conv.id,
+        });
+        expect(result.session.imported_conversation_id).toBe(conv.id);
+    });
+
+    it(
+        "resumes an existing active session for the same conversation (Phase 36 Bug 4)",
+        async () => {
+            const {userId, projectId} = await setupUserWithKey();
+            const conv = await dexieStorage.imports.create(userId, {
+                source: "manual",
+                title: "Resume me",
+                model: null,
+                source_created_at: null,
+                messages: [
+                    {role: "user", content: "Q", timestamp: null},
+                    {role: "assistant", content: "A", timestamp: null},
+                ],
+            });
+            const first = await dexieStorage.session.start({
+                project_id: projectId,
+                lang: "en",
+                imported_conversation_id: conv.id,
+            });
+            const second = await dexieStorage.session.start({
+                project_id: projectId,
+                lang: "en",
+                imported_conversation_id: conv.id,
+            });
+            // Second call MUST return the same session id, not
+            // create a new one.
+            expect(second.session.id).toBe(first.session.id);
+        },
+    );
+
+    it(
+        "getActiveForConversation returns null + linked session (Phase 36 Bug 4)",
+        async () => {
+            const {userId, projectId} = await setupUserWithKey();
+            const conv = await dexieStorage.imports.create(userId, {
+                source: "manual",
+                title: "Linked source",
+                model: null,
+                source_created_at: null,
+                messages: [
+                    {role: "user", content: "x", timestamp: null},
+                    {role: "assistant", content: "y", timestamp: null},
+                ],
+            });
+            // Before any session: null.
+            expect(
+                await dexieStorage.session.getActiveForConversation(conv.id),
+            ).toBeNull();
+            // After starting with FK: returns the active session.
+            const started = await dexieStorage.session.start({
+                project_id: projectId,
+                lang: "en",
+                imported_conversation_id: conv.id,
+            });
+            const lookup = await dexieStorage.session.getActiveForConversation(
+                conv.id,
+            );
+            expect(lookup?.id).toBe(started.session.id);
+        },
+    );
 });
 
 describe("session.message", () => {

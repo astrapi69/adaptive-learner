@@ -124,6 +124,13 @@ export interface LearningSession {
         summary: string;
         next_topic: string;
     }[];
+    /**
+     * Phase 36 Bug 4 — children-side FK back to the imported
+     * conversation this session was started from. ImportDetail
+     * uses this to detect an existing active session and flip
+     * the "Start session" CTA into a "Continue session" navigate.
+     */
+    imported_conversation_id?: string | null;
 }
 
 export interface SessionMessage {

@@ -201,6 +201,11 @@ class _StartBody(BaseModel):
     method: LearningMethod | None = None
     cycle_step: int = Field(default=1, ge=MIN_STEP, le=MAX_STEP)
     lang: str = "de"
+    # Phase 36 Bug 4 — children-side FK back to the imported
+    # conversation this session was started from. The router uses
+    # it to resume an existing active session for the same
+    # conversation instead of always creating a new one.
+    imported_conversation_id: str | None = None
 
 
 class _SessionStartOut(BaseModel):
@@ -432,11 +437,42 @@ def start_session(payload: _StartBody, db: Session = Depends(get_db)) -> _Sessio
     profile = _latest_profile(db, project.id)
     method_key = payload.method.value if payload.method else _pick_initial_method(profile)
 
+    # Phase 36 Bug 4 — resume an existing active session for the
+    # same conversation instead of creating a new one. The lookup
+    # short-circuits the new-session insert; the system prompt
+    # already lives on the session's first message.
+    if payload.imported_conversation_id:
+        active = (
+            db.query(LearningSession)
+            .filter(
+                LearningSession.imported_conversation_id
+                == payload.imported_conversation_id,
+                LearningSession.status == "active",
+            )
+            .order_by(LearningSession.started_at.desc())
+            .first()
+        )
+        if active is not None:
+            prior_system = (
+                db.query(SessionMessage)
+                .filter(
+                    SessionMessage.session_id == active.id,
+                    SessionMessage.role == "system",
+                )
+                .order_by(SessionMessage.created_at.asc())
+                .first()
+            )
+            return _SessionStartOut(
+                session=LearningSessionOut.model_validate(active),
+                system_prompt=prior_system.content if prior_system else "",
+            )
+
     sess = LearningSession(
         project_id=project.id,
         method=method_key,
         cycle_step=payload.cycle_step,
         status="active",
+        imported_conversation_id=payload.imported_conversation_id,
     )
     db.add(sess)
     db.commit()

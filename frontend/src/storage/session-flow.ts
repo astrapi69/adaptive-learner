@@ -86,6 +86,7 @@ function rowToSessionDto(row: LearningSessionRow): LearningSession {
         ended_at: row.ended_at,
         cycle_step: row.cycle_step,
         status: row.status,
+        imported_conversation_id: row.imported_conversation_id ?? null,
     };
 }
 
@@ -110,12 +111,44 @@ export async function startSession(opts: {
     method?: LearningMethod;
     cycleStep?: number;
     lang?: string;
+    /**
+     * Phase 36 Bug 4 — when set, ``startSession`` first looks for
+     * an existing active session for the same conversation and
+     * returns it (with its persisted system prompt) instead of
+     * creating a new one. ImportDetail uses this so the "Start
+     * session" button resumes rather than duplicates.
+     */
+    importedConversationId?: string | null;
 }): Promise<{session: LearningSession; system_prompt: string}> {
     const db = getDb();
     const project = await db.learningProjects.get(opts.projectId);
     if (!project) {
         throw new ApiError(404, `Project ${opts.projectId} not found`);
     }
+
+    // Phase 36 Bug 4 — resume existing active session for the
+    // same conversation rather than creating a new one. Matches
+    // the backend's short-circuit in
+    // ``adaptive_learner_session.routes.start_session``.
+    if (opts.importedConversationId) {
+        const active = await db.learningSessions
+            .where("imported_conversation_id")
+            .equals(opts.importedConversationId)
+            .filter((row) => row.status === "active")
+            .first();
+        if (active) {
+            const priorSystem = await db.sessionMessages
+                .where("session_id")
+                .equals(active.id)
+                .filter((m) => m.role === "system")
+                .sortBy("created_at");
+            return {
+                session: rowToSessionDto(active),
+                system_prompt: priorSystem[0]?.content ?? "",
+            };
+        }
+    }
+
     const profile = await db.learningProfiles
         .where("project_id")
         .equals(opts.projectId)
@@ -139,6 +172,7 @@ export async function startSession(opts: {
         ended_at: null,
         cycle_step: cycleStep,
         status: "active",
+        imported_conversation_id: opts.importedConversationId ?? null,
     };
     await db.learningSessions.add(sessionRow);
 

@@ -113,6 +113,7 @@ describe("evaluateBadgesForUser", () => {
             ended_at: nowIso(),
             cycle_step: 3,
             status: "completed",
+            imported_conversation_id: null,
         });
         const newly = await evaluateBadgesForUser(userId);
         expect(newly).toContain("first_session");
@@ -156,6 +157,7 @@ describe("evaluateBadgesForUser", () => {
             ended_at: nowIso(),
             cycle_step: 3,
             status: "completed",
+            imported_conversation_id: null,
         });
         const first = await evaluateBadgesForUser(userId);
         const second = await evaluateBadgesForUser(userId);
