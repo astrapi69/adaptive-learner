@@ -341,3 +341,101 @@ describe("api.settings", () => {
         expect(calls[0].method).toBe("DELETE");
     });
 });
+
+// ----- Phase 37: eventRecorder hooks -------------------------------------
+
+describe("apiCall + eventRecorder integration", () => {
+    /** The recorder is a module-singleton; clear it before each
+     *  test so per-test assertions only see the events the test
+     *  itself produced. Dynamic import to avoid surfacing the
+     *  recorder dependency at the top of the file (matches the
+     *  api/client.ts production path). */
+    async function clearRecorder() {
+        const {eventRecorder} = await import("../utils/eventRecorder");
+        eventRecorder.clear();
+        return eventRecorder;
+    }
+
+    it("records an api_call event on every successful request", async () => {
+        const recorder = await clearRecorder();
+        nextResponse = () => jsonResponse({status: "ok", version: "x", debug: false});
+        await api.health();
+        // Allow the dynamic import inside apiCall to flush.
+        await new Promise((r) => setTimeout(r, 5));
+        const events = recorder.getAll();
+        const apiCallEvent = events.find((e) => e.type === "api_call");
+        expect(apiCallEvent).toBeDefined();
+        expect(apiCallEvent?.method).toBe("GET");
+        expect(apiCallEvent?.endpoint).toBe("/health");
+        expect(apiCallEvent?.status).toBe(200);
+        expect(typeof apiCallEvent?.durationMs).toBe("number");
+    });
+
+    it("records an api_call event with the non-2xx status when the request fails", async () => {
+        const recorder = await clearRecorder();
+        nextResponse = () =>
+            new Response(JSON.stringify({detail: "Not found"}), {
+                status: 404,
+                headers: {"Content-Type": "application/json"},
+            });
+        await expect(api.users.get("missing")).rejects.toBeInstanceOf(ApiError);
+        await new Promise((r) => setTimeout(r, 5));
+        const events = recorder.getAll();
+        const apiCallEvent = events.find((e) => e.type === "api_call");
+        expect(apiCallEvent).toBeDefined();
+        expect(apiCallEvent?.status).toBe(404);
+        expect(apiCallEvent?.endpoint).toBe("/users/missing");
+    });
+
+    it("records an api_error event on network failures", async () => {
+        const recorder = await clearRecorder();
+        global.fetch = vi.fn(async () => {
+            throw new TypeError("Failed to fetch");
+        }) as unknown as typeof fetch;
+        await expect(api.health()).rejects.toThrow("Failed to fetch");
+        await new Promise((r) => setTimeout(r, 5));
+        const events = recorder.getAll();
+        const apiErrorEvent = events.find((e) => e.type === "api_error");
+        expect(apiErrorEvent).toBeDefined();
+        expect(apiErrorEvent?.endpoint).toBe("/health");
+        expect(apiErrorEvent?.method).toBe("GET");
+        expect(apiErrorEvent?.message).toContain("Failed to fetch");
+    });
+
+    it("strips URL query params from the recorded endpoint (sanitizer)", async () => {
+        const recorder = await clearRecorder();
+        nextResponse = () => jsonResponse([]);
+        await api.assessment.questions("de-DE");
+        await new Promise((r) => setTimeout(r, 5));
+        const events = recorder.getAll();
+        const apiCallEvent = events.find((e) => e.type === "api_call");
+        // The sanitizer drops the ?lang=de-DE part before storing.
+        expect(apiCallEvent?.endpoint).toBe("/plugins/assessment/questions");
+    });
+});
+
+// ----- Phase 37: ApiError shape -----------------------------------------
+
+describe("ApiError", () => {
+    it("auto-fills the timestamp on construction (ISO 8601)", () => {
+        const before = Date.now();
+        const err = new ApiError(500, "Boom", "/x", "GET");
+        const after = Date.now();
+        const ts = Date.parse(err.timestamp);
+        expect(ts).toBeGreaterThanOrEqual(before);
+        expect(ts).toBeLessThanOrEqual(after);
+    });
+
+    it("captures the structured extra context (Phase 36 compat)", () => {
+        const err = new ApiError(
+            409,
+            "Duplicate",
+            "/imports",
+            "POST",
+            undefined,
+            {existing_id: "abc-123"},
+        );
+        expect(err.extra).toEqual({existing_id: "abc-123"});
+        expect(err.isConflict).toBe(true);
+    });
+});
