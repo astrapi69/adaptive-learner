@@ -352,6 +352,81 @@ Filed in [docs/backlog.md](../backlog.md). Severity ordering:
 | BL-27 | `vocabulary` field spec/code drift (asked-vs-read-vs-consumed) | P1 | API+Dexie | **closed** (Phase 33 second commit, `analysis.ts` + `analysis.vocabulary.test.ts`) |
 | BL-28 | source-stamping for Claude .md exports (`source="claude"` instead of `"manual"`) | P3 | n/a | **closed** (same commit as BL-25) |
 
+## Post-fix re-validation — A1 through A5 against the real fixture
+
+After BL-25/26/28 (commit `2d79c5d`) and BL-27 (commit `79d2d1c`)
+landed, the same fixture flows through the pipeline cleanly.
+Captured via a one-off Vitest diagnostic (deleted after capture):
+
+### A1 PARSE (post-fix)
+
+```
+source         : claude
+title          : Grammatik mit adaptivem Lernprotokoll
+messages       : 50
+user           : 25
+assistant      : 25
+with timestamp : 50
+metadata       : {"created_at": "3/23/2026 8:53:40"}
+first ts       : 2026-03-23T08:53:41
+last ts        : 2026-04-22T09:55:53
+```
+
+### A2 CHUNK PLAN (MAX_CHUNK_CHARS=16000)
+
+```
+chunk 1:  9 msgs (5u/4a),  14,123 chars
+chunk 2:  8 msgs (4u/4a),  15,459 chars
+chunk 3: 10 msgs (5u/5a),  15,406 chars
+chunk 4: 14 msgs (7u/7a),  12,428 chars
+chunk 5: 12 msgs (6u/6a),  13,820 chars
+chunk 6:  7 msgs (3u/4a),  11,197 chars
+```
+
+Six chunks, each well under the 16K threshold, every chunk
+carries a balanced user/assistant mix. Chunk 1's full prompt
+sent to the AI is 14,250 chars (transcript scaffolding adds
+~127 chars to the raw content).
+
+### A4 / A5 INPUT SHAPE — what the AI actually sees
+
+The first Learner turn in chunk 1 (truncated):
+
+```
+Learner: Ich möchte meine Grammatikkenntnisse auffrischen. Ich habe
+ein lernprompt in den vorherigen Sitzungen gemacht wie zum Beispiel
+the previous topic. Kannst du den lesen und auch hier anwenden?
+```
+
+This is the actual first prompt from the conversation, role-
+tagged `Learner:`, paired with the assistant's `AI:` reply in
+the next paragraph. Pre-fix, the entire 73-KB blob arrived
+labelled `Learner:` and the AI had no way to tell user errors
+from assistant corrections.
+
+The metadata header (`**Created:**`, `**Link:**`, `**Exported:**`)
+no longer appears in the analyzer's transcript body — the
+parser correctly skips it.
+
+### A4 / A5 — actual AI quality verification (still manual)
+
+The AI's analysis quality (does it surface the specific
+"Komma vor 'obwohl'" gap? Does the recommended_method match
+the explicit-vs-implicit knowledge angle the conversation
+actually establishes? Does suggested_curriculum include a
+Konjunktiv-II drill?) requires a real provider call against
+configured API keys. Aster's manual run via Part B section
+B7 closes this. The CLI session can guarantee:
+
+  - The AI receives 25 user + 25 assistant role-labelled turns
+    instead of a single 72K user blob — **this is the load-
+    bearing change**.
+  - vocabulary will be requested per the BL-27 prompt
+    extension (the conversation is explicitly about German
+    grammar, the AI should emit vocabulary entries).
+  - Chunked analysis merges correctly via the new
+    `mergeVocabulary` (regression-pinned).
+
 ## Reproducibility
 
 ```bash
