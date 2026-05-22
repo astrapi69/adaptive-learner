@@ -27,22 +27,34 @@ app's progress bar updates accordingly.
 
 ## How the AI guides you
 
-Every message you send triggers two AI calls in sequence:
+Every message you send triggers up to three AI calls:
 
-1. **The learning reply** — the AI answers in the active
-   method's style, at the current cycle step. The system
-   prompt is composed from a 42-cell matrix (6 methods × 7
-   steps), so a deductive Input feels very different from a
-   contextual Repeat.
+1. **The learning reply** — streamed token-by-token via SSE.
+   You see the inline cursor (▍) while the assistant thinks;
+   tokens land in the bubble as they arrive (no "Thinking..."
+   placeholder). The system prompt is composed from a 42-cell
+   matrix (6 methods × 7 steps), so a deductive Input feels
+   very different from a contextual Repeat.
 2. **The step evaluator** — a second AI call reads the
    exchange and decides whether you're ready to advance. It
-   emits a verdict: `advance`, `confidence`, `reason`,
-   `suggested_step`. The app applies the suggestion only if
-   the confidence is high enough (default threshold 0.6).
+   emits `advance`, `confidence`, `reason`, `suggested_step`.
+   The app applies the suggestion when confidence ≥ 0.6.
+3. **The topic-transition evaluator** (only at step 7) —
+   a third AI call decides whether the topic has been
+   integrated. If yes AND `continue_recommended`, a new cycle
+   starts automatically with a fresh subtopic (auto-loop,
+   max 5 cycles per session).
 
 The verdict is shown discreetly above the chat as a "Step
 moved from X to Y because…" notification when it actually
-applies.
+applies. Cycle-transition cards render as dashed-border
+"Cycle N" cards in the chat history.
+
+**Voice on / off** — a TTS button (▶) next to each AI reply
+reads it aloud; a microphone button (🎤) on the input lets you
+dictate; interim transcripts populate the textarea so you can
+review before sending. Both are Web Speech API; toggle in
+Settings → Voice.
 
 ## Cycle-progress indicator
 
@@ -69,18 +81,22 @@ second-strongest method that you haven't used recently. You
 can dismiss the banner; it'll come back if the stagnation
 pattern continues.
 
-(In Local mode the switch-recommendation heuristic is still
-being ported — the banner currently returns "no recommendation"
-in that mode.)
+Both storage modes (Server + Local) support method-switch
+recommendations.
 
 ## Rating + ending a session
 
 The Session page has an "End session" button. Before the
 session closes you fill a short rating: understanding,
-stress, and method-fit on a 1-5 scale. These ratings drive
-the Dashboard's trend lines AND the method-switch heuristic.
+stress, and method-fit on a 1-5 scale, plus an optional
+**rich-text note** (TipTap: bold, italic, lists, code blocks
+with syntax highlighting, links). The note is yours — the AI
+doesn't read it.
 
-The ratings turn into a `ProgressCommit` row — the Git-style
-snapshot of one session. See
-[Progress](progress.md) and the
+The ratings + multi-cycle journey summary turn into a
+`ProgressCommit` row — the Git-style snapshot of one
+session. Completing a session awards XP (50 base × streak
+multiplier, plus per-cycle bonuses), checks for newly-earned
+badges, and updates your streak. See
+[Progress](progress.md), [Dashboard](dashboard.md), and the
 [Tracking concept](../concept/tracking.md).

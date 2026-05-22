@@ -1,187 +1,165 @@
 # Settings
 
-The Settings page is short on purpose. Five sections:
+The Settings page collects everything you can tweak without
+touching code or YAML. Sections, top to bottom:
 
 1. **Language** — UI language (DE / EN / ES / FR / EL / PT /
-   TR / JA). Live-swaps every string the next render.
-2. **AI provider** — which provider sees your messages
-   (Anthropic / OpenAI / Gemini). Live-applied; the next
-   message you send uses the new provider.
-3. **Model overrides** — per-provider model picker. Empty =
-   use the plugin's default. Datalist hints suggest the
-   common options.
-4. **API keys** — one per provider. Stored encrypted (Fernet)
-   in Server mode; stored cleartext in IndexedDB in Local
-   mode. The frontend only sees a `has_<provider>_key: bool`
-   flag for each.
-5. **Storage mode** *(v0.7.0+)* — Server vs Local.
+   TR / JA, all fully translated).
+2. **AI provider + model picker** — which provider sees your
+   messages, and which model to use.
+3. **API keys** — per-provider keys with source attribution
+   (env / `secrets.yaml` / Settings).
+4. **Storage mode** — Server (FastAPI + SQLite) vs Local
+   (browser IndexedDB).
+5. **Sync** — pair this device with another over local
+   network.
+6. **Backup** — export / import / compare.
+7. **Voice** — TTS + STT + pronunciation toggles.
+8. **Interface** — gestures + theme + density.
+9. **Gamification** — XP / badge notifications + weekend mode.
+10. **About** — version, system info, credits, donations,
+    license.
 
 ## Language
 
-The dropdown writes through `PATCH /api/settings/{user_id}` to
-update both `User.language` and `UserSettings.language` in one
-transaction. The i18n provider on the frontend also reloads
-the strings, so the swap is instant. Persisted across reloads
-via `localStorage`.
+Live-swaps every UI string on the next render via `PATCH
+/api/settings/{user_id}`. All 8 languages are first-class —
+DE / EN / ES / FR / EL / PT / TR / JA — each with a fully
+translated catalog. Persisted across reloads via
+`localStorage`.
 
-Five languages are first-class. PT / TR / JA ship as English
-passthroughs with placeholder text — translations land when a
-native speaker contributes them.
+## AI provider + model picker
 
-## AI provider
-
-The dropdown writes `active_provider` to UserSettings. The
-next message you send fires `ai_complete` against the new
+The provider dropdown writes `active_provider` to
+UserSettings; the next AI call goes through the new
 provider's plugin (Server mode) or the new provider's HTTP
-client (Local mode). The Active badge in the API-keys section
-follows the dropdown.
+client (Local mode).
 
-## Model override
+The **Model picker** (since v1.11.0) is a searchable
+dropdown grouped Recommended / All, populated from each
+provider's live `/v1/models` endpoint (1h cache). Each row
+shows the human name + raw id + context-window badge. When
+the discovered list is unavailable (no API key, no network),
+the picker falls back to the static defaults and surfaces a
+"using offline default" hint. The Session header reads
+`<Provider>: <Model name>`; the full id + context window
+sit in the tooltip.
 
-Each provider has a default model picked for the cheap-and-
-fast tier (e.g. `claude-3-5-haiku-latest`, `gpt-4o-mini`,
-`gemini-2.0-flash`). The override input lets you pick a
-different model per provider — your `claude-sonnet-4` calls
-will land if you set Anthropic's override.
+## API keys (Phase 34 / v1.20.0)
 
-Empty override = use the plugin's default. A datalist
-attached to the input suggests the common options (e.g.
-`claude-3-5-sonnet-latest`, `claude-haiku-4-5-20251001`).
+Each provider has its own row: a key-entry input, a Save
+button, a Remove button, the active-provider badge, plus the
+new **source attribution** badge:
 
-## API keys
+- **Key from: Settings** — the key is stored Fernet-encrypted
+  in the DB (Server mode) or cleartext in IndexedDB (Local
+  mode). You can Save / Remove freely.
+- **Key from: secrets.yaml** — the key is configured in
+  `~/.config/adaptive-learner/secrets.yaml`. The Save button
+  is disabled; edit the file directly to change it. An info
+  banner under the row reminds you of the path.
+- **Key from: environment** — the key is configured via the
+  `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` environment variable.
+  Save disabled; the env var is the source of truth.
+- **No key configured** — nothing's set anywhere. Type and
+  hit Save to start.
 
-Each provider has its own row: a key-entry input, a
-"Save key" button, a "Delete key" button. The active
-provider's row carries an "Active" badge so you don't lose
-track of which key the next session will use.
+Resolution chain (highest priority wins): env > secrets.yaml
+> DB. See [the Configuration doc](../../configuration.md) for
+the full breakdown.
 
-Keys never leave your device cleartext:
+## Storage mode
 
-- **Server mode**: the backend encrypts with Fernet
-  (`ADAPTIVE_LEARNER_SECRET_KEY`) before persisting. The
-  decryption happens server-side only at the moment of an AI
-  call.
-- **Local mode**: the key sits in IndexedDB on your own
-  device, no server roundtrip. Acceptable threat model
-  because the data never leaves the browser; the AI provider
-  IS the only network endpoint that sees the key.
-
-## Storage mode {#storage-mode}
-
-The v0.7.0 toggle between **Server** and **Local (Browser)**
-storage:
+The toggle between **Server** and **Local (Browser)** storage:
 
 - **Server** — every read and write hits the FastAPI backend.
-  Requires a running backend. Best when you want to use the
-  same data from multiple devices (sync is server-side).
+  Requires a running backend. Best for multi-device usage
+  with backend-side sync.
 - **Local (Browser)** — every read and write hits IndexedDB
   in this browser. AI calls fire direct to the provider. No
-  backend required. Best when you want a private,
-  device-local setup with zero infrastructure.
+  backend required. Best for a private, device-local setup.
 
-Switching modes saves your choice to `localStorage` and
-toasts a "reload required" notice. Data is NOT synced between
-modes — files in one are invisible to the other until a
-future sync feature lands.
+Switching modes saves to `localStorage` and toasts a
+"reload required" notice. Data is NOT synced between modes.
 
-The Local-mode view shows per-table row counts so you can see
-what's persisted (users, learningProjects, sessionMessages,
-progressCommits, etc.).
+## Sync
 
-## About
+Pair this device with another over your local network using
+the QR-code scanner (rear camera) or paste the pairing URL.
+Once paired, push + pull buttons exchange data
+bidirectionally. Conflicts go through an AI-merge resolver
+on the backend.
 
-The last section of Settings shows the **About panel**: five
-read-only blocks describing the running app.
-
-- **Version**: app version (from the canonical
-  `pyproject.toml`), short build hash (linked to the GitHub
-  commit when available), and build date.
-- **System**: storage mode (Server vs Local Browser), data
-  directory, database path (Server mode only), Python version
-  (Server mode only), platform, and the bundled backend
-  dependency versions (FastAPI, SQLAlchemy, Pydantic,
-  PluginForge).
-- **Credits**: author, dependency acknowledgements, tagline.
-- **Support development**: three donation channels — Liberapay
-  (preferred), GitHub Sponsors, and Ko-fi. Each opens in a new
-  tab.
-- **License & resources**: MIT license link, repository link,
-  documentation link, and the issue tracker.
-
-In **Local (Browser)** storage mode the panel shows the same
-shape but hides the rows that only make sense for a running
-backend (Python version, FastAPI / SQLAlchemy / Pydantic /
-PluginForge versions, database path). The storage label
-switches from *Server (FastAPI + SQLite)* to *Local Browser
-Storage (IndexedDB)* so it's always clear which side you're on.
+Restricted-browser fallback: upload a screenshot of the QR
+code from your other device (`Html5Qrcode.scanFile`).
 
 ## Backup
 
-The **Backup section** sits right above About and lets you
-snapshot or restore your entire account as a single JSON
-file. The same file works in either storage mode: a backup
-created in Server mode can be restored in Local mode and
-vice versa.
+Three things in one section: **Export** (download a
+timestamped JSON), **Import** (restore from file), and
+**Compare** (side-by-side diff against current state).
+API keys are stripped from every export.
 
-### Create Backup
+Restore is a MERGE, not an overwrite: new rows insert,
+mutable rows update on newer `updated_at`, history rows
+(sessions / commits / ratings) dedupe on UUID. The compare
+preview shows per-table added / removed / changed before you
+click Restore; the Restore button label reads "Restore
+(N added, M updated)" once the diff settles.
 
-Click **Create Backup** to download a file named
-`adaptive-learner-backup-YYYY-MM-DD-<short-id>.json`. It
-contains every record the system has stored for your account
-across 16 tables (users, projects, profiles, curricula,
-topics, lessons, sessions, messages, ratings, notes, progress
-commits, method switches, step evaluations, plus imported
-conversations + messages).
+In Local mode the section also shows the **Auto-backup**
+block: rolling ring of 3 snapshots in a separate IndexedDB
+DB, runs every 10 sessions OR every 7 days (whichever
+fires first). Each snapshot has its own Restore + Delete +
+Compare-as-A/B buttons.
 
-The file is pretty-printed JSON so you can open it in a text
-editor before trusting a restore.
+## Voice
 
-**API keys are never included.** After a restore you have to
-re-enter every provider key in the AI provider section.
+Three toggles (since v1.18.0):
 
-### Restore from Backup
+- **TTS enabled** — adds a ▶ button next to AI replies +
+  Assessment results that reads them aloud. Picks the
+  language-matched voice when available; rate + pitch
+  clamped to [0.5, 2.0].
+- **Auto-play AI** — speaks every AI reply automatically
+  (default OFF — surprise audio is rarely what you want).
+- **STT enabled** — adds a 🎤 button to the Session input
+  that captures speech and populates the textarea with
+  interim transcripts before send.
+- **Pronunciation Practice enabled** — surfaces the
+  `/pronunciation` page from the Dashboard quick-start for
+  Languages-tagged projects.
 
-Click **Restore from Backup**, pick a `.json` file produced
-by Create Backup. Adaptive Learner reads it locally and shows
-a comparison table: per table, the current row count next to
-the incoming row count. Click **Confirm restore** to apply
-the merge, **Cancel** to abort.
+The Voice section hides itself when neither Web Speech API
+side (synth nor recognition) is supported by the browser.
 
-Restore is a MERGE, not an overwrite:
+## Interface
 
-- New records are inserted.
-- Existing mutable records are updated only when the backup
-  is newer (timestamp comparison).
-- History rows (sessions, messages, ratings, progress
-  commits, method switches, step evaluations) are immutable —
-  duplicates are skipped.
-- Nothing is ever deleted.
+Theme picker (5 palettes × light/dark = 10 variants),
+density, and the **Gestures toggle** (since v1.10.0,
+default ON for touch-capable devices). Gestures cover
+Assessment swipe navigation, Curriculum topic
+swipe-to-reveal, and Session cycle peek.
 
-A summary card after the restore lists inserted / updated /
-skipped counts plus any rows that could not be restored.
+## Gamification
 
-### Reminder
+Toggles for XP / badge / level-up notifications (off
+silences toasts but the system still records state),
+**weekend mode** (skip Sat/Sun gaps in the streak heatmap),
+daily session goal (1..10), and **Reset progress** (double-
+confirm; wipes `user_xp` + `user_badges` + `user_streaks`
+rows).
 
-The section shows the timestamp of your last backup. After 7
-days you get a subtle reminder to make a fresh one.
+## About
 
-### Auto-backup (Local mode only)
+Five read-only blocks: **Version** (canonical version from
+`pyproject.toml`, build hash, build date), **System**
+(storage mode, data dir, DB path in Server mode, Python +
+platform info), **Credits** (author, dependency
+acknowledgements), **Support development** (Liberapay /
+GitHub Sponsors / Ko-fi links), **License & resources** (MIT
+link, repository, docs, issue tracker).
 
-In Local (Browser) storage mode the panel also shows an
-**Auto-backup** block. The system keeps a rolling ring of 3
-automatic snapshots in a separate IndexedDB database. A new
-auto-backup runs:
-
-- after every 10 completed sessions, OR
-- after 7 days have passed since the last auto-backup,
-- whichever fires first.
-
-The toggle lets you turn auto-backup off. **Back up now**
-forces an immediate snapshot regardless of the toggle. Each
-snapshot in the list has its own **Restore** + **Delete**
-buttons.
-
-If browser storage usage gets close to the quota (above
-90 %), a warning banner appears urging you to export a
-manual backup to a file before the browser evicts the
-IndexedDB store.
+In Local mode the panel hides the rows that only make sense
+for a running backend (Python version, FastAPI /
+SQLAlchemy / Pydantic / PluginForge versions, DB path).

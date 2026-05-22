@@ -58,13 +58,31 @@ slowly.
 ## Commit history
 
 Each row is one ProgressCommit: method, understanding rating,
-stress rating, duration in minutes, committed_at timestamp.
-The list is sortable by date or by understanding.
+stress rating, duration in minutes, committed_at timestamp,
+plus the rich-text session note rendered inline (read-only
+TipTap). The list is sortable by date or by understanding.
 
-Clicking a commit doesn't currently jump to the underlying
-session messages — message history isn't surfaced from the
-Progress page in v0.7.0. The dashboard's "Recent sessions"
-list is the closest UX in this direction.
+Rendered notes show bold / italic / lists / code blocks
+with syntax highlighting / links — exactly what was typed
+in the end-of-session rating dialog. Legacy plain-text notes
+from pre-v1.14.0 pass through unchanged.
+
+## Exports
+
+Three export types via Settings → Export, all identical in
+shape across storage modes:
+
+- **Progress Report** — the full Progress page packaged into
+  a Markdown or PDF doc.
+- **Session Detail** — a single session's transcript +
+  rating + step evaluations.
+- **Curriculum Overview** — the topic tree + lesson summaries
+  for a single curriculum.
+
+Markdown is generated client-side; PDF uses the browser's
+print-to-PDF (open a hidden iframe with a print-optimised
+stylesheet, then `contentWindow.print()`). No external PDF
+library, no roundtrip to the backend.
 
 ## Filtering
 

@@ -43,20 +43,23 @@ KI-Anbieter außerhalb des Browsers sitzt.
 
 ## Die ersten fünf Minuten
 
-1. **App öffnen** und Sprache wählen. Fünf UI-Sprachen sind
-   nativ (DE, EN, ES, FR, EL); drei weitere (PT, TR, JA)
-   liegen vorerst als englischer Durchgriff bereit.
-2. **Lernprojekt anlegen**: Thema, Ziel, Zeitrahmen und wie
-   viele Minuten pro Tag du investieren kannst. Siehe
+1. **App öffnen** und Sprache wählen. Alle 8 UI-Sprachen
+   sind voll übersetzt (DE, EN, ES, FR, EL, PT, TR, JA).
+2. **Lernprojekt anlegen**: Thema, Ziel, Zeitrahmen, Minuten
+   pro Tag plus optionale Subject-Taxonomie und Tags. Siehe
    [Onboarding](onboarding.md).
 3. **Den 12-Fragen-Test machen**, damit die App weiß, auf
-   welche Methoden sie setzen soll. Siehe
+   welche Methoden sie setzen soll. Auf Mobil swipest du
+   links/rechts zwischen den Fragen. Siehe
    [Lerntyp-Test](assessment.md).
-4. **API-Schlüssel hinterlegen** in den Einstellungen (der
-   Onboarding-Flow erinnert daran, wenn du es übersprungen
-   hast).
-5. **Deine erste Session starten**. Der "Session starten"-
-   Button im Dashboard öffnet ein Lern-Gespräch. Siehe
+4. **API-Schlüssel hinterlegen** in den Einstellungen ODER
+   in `~/.config/adaptive-learner/secrets.yaml`, falls du
+   den Desktop-Launcher nutzt. Die Einstellungs-UI zeigt
+   pro Anbieter, aus welcher Schicht der Schlüssel kommt.
+5. **Deine erste Session starten**. Der „Session starten"-
+   Button im Dashboard öffnet ein Lern-Gespräch. Die
+   KI-Antworten streamen Token für Token; der Dual-Prompt-
+   Evaluator entscheidet pro Zyklus-Schritt. Siehe
    [Lern-Session](learning-session.md).
 
 ## Wie es weitergeht

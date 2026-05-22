@@ -1,10 +1,16 @@
 # Das Dashboard
 
-Das Dashboard ist deine Startbasis. Es bündelt vier Datenscheiben:
-wer du als Lernender bist (dein Profil), wie es gerade läuft
-(Trend + Streak), was du zuletzt gemacht hast (jüngste Sessions
-+ Methodenverteilung), und was als Nächstes ansteht
-(Werkzeug- + Spaced-Empfehlungen).
+Das Dashboard ist deine Startbasis. Es bündelt mehrere
+Datenscheiben in eine Ansicht: wer du als Lernender bist
+(Profil + XP + Abzeichen), wie es gerade läuft
+(Streak-Heatmap + Session-Zähler), was du zuletzt gemacht
+hast (jüngste Sessions + Methodenverteilung), und was als
+Nächstes ansteht (Werkzeug- + Spaced-Empfehlungen).
+
+Ganz oben sitzt die **Subjects + Tags Filter-Leiste** —
+wähle ein Subject (z. B. Sprachen → Spanisch) oder ein Tag,
+um jedes Widget unten auf Projekte mit dieser Klassifizierung
+zu beschränken. Filter sind über URL-Query-Params teilbar.
 
 ## Profil-Radar
 
@@ -16,19 +22,28 @@ hervorgehoben.
 Wenn du den Test noch nicht gemacht hast, zeigt der Radar eine
 Null-Form und verlinkt zum Test.
 
-## Streak-Zähler + Session-Zähler
+## XP + Streak + Abzeichen
 
-Zwei kompakte Kacheln neben dem Radar:
-
-- **Streak-Tage** — aufeinanderfolgende Kalendertage mit
-  mindestens einer beendeten Session. Setzt auf 0 zurück,
-  wenn heute noch keine Session lief.
-- **Sessions gesamt** — wie viele Sessions du jemals
-  abgeschlossen hast. Zählt nur Sessions, die mit Bewertung
-  beendet wurden (und so einen ProgressCommit erzeugt haben).
-
-Der Streak folgt der Duolingo/Habitica-Logik: Heute verpasst
-heißt Streak auf 0, sobald der Kalender umspringt.
+- **XP-Widget** — aktuelles Level + XP gesamt + ein
+  Fortschrittsbalken zum nächsten Level. Levels folgen
+  einer Exponentialkurve
+  (`threshold(n) = 50 * n * (n - 1)`); Level 1-5 liegen
+  bei 0 / 100 / 300 / 600 / 1000 XP. 50 XP Basis pro
+  beendeter Session, plus Pro-Zyklus-Boni + First-Method-
+  Bonus + Streak-Multiplikator (bis 2,75× bei 7-Tage-Streak).
+- **Streak-Heatmap** (GitHub-Stil) — 365 Tage Aktivität in
+  Wochenspalten Mo..So. Fünf Tier-Farben via `color-mix`
+  auf `var(--accent)`. Wochenend-Modus in den Einstellungen
+  überspringt Sa/So-Lücken; Freeze-Vorrat (1 pro 7
+  Streak-Tage, max. 3) wirkt als Pause-statt-Reset bei
+  einem verpassten Werktag.
+- **Badge-Vitrine** — 24 Abzeichen in 5 Kategorien
+  (Einstieg 3, Konsistenz 4, Methoden-Entdecker 7, Tiefe 7,
+  Polyglott 3). Verdiente sind farbig + datiert; gesperrte
+  bleiben grau.
+- **Session-Zähler** — Kacheln für Sessions, Minuten,
+  aktueller Streak, Durchschnitts-Verständnis, Durchschnitts-
+  Stress.
 
 ## Fortschritts-Timeline
 
@@ -68,10 +83,10 @@ und du nachsehen willst, was passierte.
 
 Zwei Empfehlungskarten am unteren Rand:
 
-- **Werkzeuge** — 5 externe Tools (Anki, NotebookLM, Adaptive
-  AI Prompt, Excalidraw, Obsidian), nach Relevanz zu deinem
-  Profil sortiert. Jedes mit einem einzeiligen "Warum",
-  angepasst an deine Sprache.
+- **Werkzeuge** — externe Tools nach Relevanz zu deinem
+  Profil sortiert. Anki + NotebookLM sind jetzt First-Class
+  mit ausgelieferten Exporten (kein manueller Übergang).
+  Jedes mit einem einzeiligen „Warum", in deiner UI-Sprache.
 - **Spaced Repetition** — kurze "mach das als Nächstes"-Karten,
   getrieben davon, welche Methoden du zuletzt nicht geübt
   hast. Eine 5-Band-Logik (erstmals / Auffrischung /

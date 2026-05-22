@@ -1,198 +1,177 @@
 # Einstellungen
 
-Die Einstellungen-Seite ist bewusst kurz. Fünf Abschnitte:
+Die Einstellungen-Seite sammelt alles, was du ohne Code- oder
+YAML-Eingriff anpassen kannst. Abschnitte, von oben nach unten:
 
 1. **Sprache** — UI-Sprache (DE / EN / ES / FR / EL / PT /
-   TR / JA). Wechselt jeden String beim nächsten Rendern.
-2. **KI-Anbieter** — wer deine Nachrichten sieht (Anthropic
-   / OpenAI / Gemini). Live-Wechsel; die nächste Nachricht
-   nutzt den neuen Anbieter.
-3. **Modell-Überschreibungen** — Modellwahl pro Anbieter.
-   Leer = Standard des Plugins. Datalist-Hinweise schlagen
-   gängige Optionen vor.
-4. **API-Keys** — einer pro Anbieter. Im Server-Modus
-   verschlüsselt gespeichert (Fernet), im Lokal-Modus
-   Klartext in IndexedDB. Das Frontend sieht nur ein
-   `has_<provider>_key: bool`-Flag pro Anbieter.
-5. **Speicher-Modus** *(v0.7.0+)* — Server vs Lokal.
+   TR / JA, alle voll übersetzt).
+2. **KI-Anbieter + Modell-Picker** — welcher Anbieter deine
+   Nachrichten sieht und welches Modell zum Einsatz kommt.
+3. **API-Schlüssel** — pro Anbieter mit Quellen-Attribution
+   (Umgebung / `secrets.yaml` / Einstellungen).
+4. **Speichermodus** — Server (FastAPI + SQLite) vs. Lokal
+   (Browser-IndexedDB).
+5. **Sync** — dieses Gerät über lokales Netz mit einem
+   anderen koppeln.
+6. **Backup** — Export / Import / Vergleich.
+7. **Stimme** — TTS + STT + Aussprache-Toggles.
+8. **Oberfläche** — Gesten + Theme + Dichte.
+9. **Gamification** — XP- / Abzeichen-Benachrichtigungen +
+   Wochenend-Modus.
+10. **Über** — Version, Systeminfo, Credits, Spenden, Lizenz.
 
 ## Sprache
 
-Das Dropdown schreibt via `PATCH /api/settings/{user_id}`
-sowohl `User.language` als auch `UserSettings.language` in
-einer Transaktion. Der i18n-Provider im Frontend lädt die
-Strings neu, der Wechsel ist sofort. Über `localStorage`
-über Reloads hinweg persistiert.
+Tauscht jeden UI-String beim nächsten Render live aus via
+`PATCH /api/settings/{user_id}`. Alle 8 Sprachen sind
+First-Class — DE / EN / ES / FR / EL / PT / TR / JA — jede mit
+einem voll übersetzten Katalog. Über `localStorage` persistent.
 
-Fünf Sprachen sind nativ. PT / TR / JA sind aktuell
-englischer Durchgriff mit Platzhalter-Text — Übersetzungen
-kommen, wenn Muttersprachler beitragen.
+## KI-Anbieter + Modell-Picker
 
-## KI-Anbieter
+Das Anbieter-Dropdown schreibt `active_provider` in die
+UserSettings; der nächste KI-Aufruf geht durch das Plugin des
+neuen Anbieters (Server-Modus) oder den HTTP-Client des neuen
+Anbieters (Lokal-Modus).
 
-Das Dropdown schreibt `active_provider` in UserSettings. Die
-nächste Nachricht löst `ai_complete` gegen das Plugin des
-neuen Anbieters (Server-Modus) oder den HTTP-Client des
-neuen Anbieters (Lokal-Modus) aus. Das Active-Badge in den
-API-Keys folgt dem Dropdown.
+Der **Modell-Picker** (seit v1.11.0) ist ein durchsuchbares
+Dropdown, gruppiert in Empfohlen / Alle, gefüllt aus dem
+Live-`/v1/models`-Endpoint jedes Anbieters (1 h Cache). Jede
+Zeile zeigt den Klarnamen + die Roh-ID + ein Kontext-Fenster-
+Badge. Wenn die Liste nicht verfügbar ist (kein API-Key,
+kein Netz), fällt der Picker auf die statischen Defaults
+zurück und zeigt einen „Offline-Default"-Hinweis. Der Header
+der Sitzung liest `<Anbieter>: <Modellname>`; volle ID +
+Kontext-Fenster sitzen im Tooltip.
 
-## Modell-Überschreibung
+## API-Schlüssel (Phase 34 / v1.20.0)
 
-Jeder Anbieter hat ein Standardmodell aus der billig-und-
-schnell-Ebene (z.B. `claude-3-5-haiku-latest`, `gpt-4o-mini`,
-`gemini-2.0-flash`). Mit der Überschreibung kannst du pro
-Anbieter ein anderes Modell wählen — deine `claude-sonnet-4`-
-Aufrufe gehen, wenn du Anthropics Überschreibung setzt.
+Jeder Anbieter hat seine eigene Zeile: ein Schlüssel-
+Eingabefeld, einen Speichern-Knopf, einen Entfernen-Knopf,
+das Aktiv-Anbieter-Badge — plus das neue **Quellen-
+Attributions**-Badge:
 
-Leer = Standard nutzen. Eine an das Feld geklemmte Datalist
-schlägt gängige Optionen vor (z.B.
-`claude-3-5-sonnet-latest`, `claude-haiku-4-5-20251001`).
+- **Schlüssel aus: Einstellungen** — der Schlüssel ist
+  Fernet-verschlüsselt in der DB gespeichert (Server-Modus)
+  oder im Klartext in IndexedDB (Lokal-Modus). Speichern /
+  Entfernen frei nutzbar.
+- **Schlüssel aus: secrets.yaml** — der Schlüssel ist in
+  `~/.config/adaptive-learner/secrets.yaml` konfiguriert. Der
+  Speichern-Knopf ist deaktiviert; bearbeite die Datei direkt,
+  um ihn zu ändern. Ein Info-Banner unter der Zeile erinnert
+  an den Pfad.
+- **Schlüssel aus: Umgebungsvariable** — der Schlüssel ist
+  über die `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungs-
+  variable gesetzt. Speichern deaktiviert; die Env-Variable
+  ist die Quelle der Wahrheit.
+- **Kein Schlüssel konfiguriert** — nichts ist irgendwo
+  gesetzt. Tippen und auf Speichern klicken, um zu beginnen.
 
-## API-Keys
+Auflösungskette (höchste Priorität gewinnt): Umgebung >
+`secrets.yaml` > DB. Siehe
+[die Konfigurations-Doku](../../configuration.md) für die
+volle Aufschlüsselung.
 
-Jeder Anbieter hat eine eigene Zeile: Eingabe für den
-Schlüssel, "Schlüssel speichern", "Schlüssel löschen". Die
-Zeile des aktiven Anbieters trägt ein "Aktiv"-Badge, damit
-du nicht den Überblick verlierst, welcher Schlüssel die
-nächste Session bedient.
+## Speichermodus
 
-Schlüssel verlassen dein Gerät nie im Klartext:
+Der Schalter zwischen **Server** und **Lokal (Browser)**:
 
-- **Server-Modus**: Das Backend verschlüsselt mit Fernet
-  (`ADAPTIVE_LEARNER_SECRET_KEY`) vor dem Persistieren. Die
-  Entschlüsselung passiert nur serverseitig beim KI-Aufruf.
-- **Lokal-Modus**: Der Schlüssel liegt in IndexedDB auf
-  deinem Gerät, kein Server-Roundtrip. Akzeptables
-  Bedrohungsmodell, weil die Daten den Browser nie
-  verlassen; der KI-Anbieter IST der einzige Netzwerk-
-  Endpunkt, der den Schlüssel sieht.
+- **Server** — jeder Lese- und Schreibvorgang geht ans
+  FastAPI-Backend. Setzt ein laufendes Backend voraus. Am
+  besten für Multi-Device-Nutzung mit Backend-seitigem Sync.
+- **Lokal (Browser)** — jeder Lese- und Schreibvorgang geht
+  an IndexedDB in diesem Browser. KI-Aufrufe gehen direkt an
+  den Anbieter. Kein Backend nötig. Am besten für ein
+  privates, geräte-lokales Setup.
 
-## Speicher-Modus {#speicher-modus}
+Modus-Wechsel speichert nach `localStorage` und zeigt eine
+„Neu laden nötig"-Meldung. Daten werden NICHT zwischen
+Modi synchronisiert.
 
-Der v0.7.0-Schalter zwischen **Server** und **Lokal
-(Browser)**:
+## Sync
 
-- **Server** — jeder Lese- und Schreibzugriff trifft das
-  FastAPI-Backend. Braucht ein laufendes Backend. Am besten
-  wenn du dieselben Daten von mehreren Geräten nutzen willst
-  (Sync ist serverseitig).
-- **Lokal (Browser)** — jeder Lese- und Schreibzugriff
-  trifft IndexedDB in diesem Browser. KI-Aufrufe gehen
-  direkt zum Anbieter. Kein Backend nötig. Am besten für
-  ein privates, gerätelokales Setup ohne Infrastruktur.
+Kopple dieses Gerät mit einem anderen über dein lokales Netz
+per QR-Code-Scanner (Rückkamera) oder eingefügte Pairing-
+URL. Nach dem Pairing tauschen Push- + Pull-Knöpfe Daten
+bidirektional aus. Konflikte gehen durch einen KI-Merge-
+Resolver auf dem Backend.
 
-Ein Wechsel speichert die Auswahl in `localStorage` und
-zeigt einen "Reload nötig"-Toast. Daten werden NICHT
-zwischen den Modi synchronisiert — was im einen Modus liegt,
-ist im anderen unsichtbar, bis ein zukünftiges Sync-Feature
-landet.
+Eingeschränkter-Browser-Fallback: Lade einen Screenshot des
+QR-Codes vom anderen Gerät hoch (`Html5Qrcode.scanFile`).
 
-Die Lokal-Modus-Ansicht zeigt Zeilenanzahlen pro Tabelle, so
-siehst du, was wo persistiert ist (users, learningProjects,
-sessionMessages, progressCommits etc.).
+## Backup
+
+Drei Dinge in einem Abschnitt: **Export** (Download eines
+zeitgestempelten JSONs), **Import** (Wiederherstellen aus
+Datei) und **Vergleich** (Side-by-Side-Diff gegen aktuellen
+Zustand). API-Schlüssel werden aus jedem Export entfernt.
+
+Restore ist ein MERGE, kein Overwrite: neue Zeilen fügen
+ein, mutable Zeilen aktualisieren bei neuerem `updated_at`,
+History-Zeilen (Sessions / Commits / Ratings) deduplizieren
+über UUID. Die Vergleichs-Vorschau zeigt pro Tabelle
+hinzugefügt / entfernt / geändert, bevor du auf
+Wiederherstellen klickst; das Knopf-Label liest dann
+„Wiederherstellen (N hinzugefügt, M aktualisiert)".
+
+Im Lokal-Modus zeigt der Abschnitt zusätzlich den
+**Auto-Backup**-Block: ein rollender Ring aus 3 Snapshots in
+einer separaten IndexedDB-DB, läuft alle 10 Sessions ODER
+alle 7 Tage (je nachdem, was zuerst eintritt). Jeder Snapshot
+hat eigene Wiederherstellen- + Löschen- + Vergleich-als-A/B-
+Knöpfe.
+
+## Stimme
+
+Drei Toggles (seit v1.18.0):
+
+- **TTS aktiviert** — fügt einen ▶-Knopf neben KI-Antworten
+  + Assessment-Ergebnissen ein, der sie laut vorliest. Wählt
+  die sprach-passende Stimme, wenn verfügbar; Rate + Pitch
+  auf [0,5; 2,0] geklemmt.
+- **Auto-Wiedergabe KI** — spricht jede KI-Antwort
+  automatisch (Standard AUS — überraschendes Audio ist
+  selten, was man will).
+- **STT aktiviert** — fügt einen 🎤-Knopf zum Sitzungs-
+  Eingabefeld hinzu, der Sprache aufnimmt und das Textarea
+  mit Zwischen-Transkripten füllt, bevor du absendest.
+- **Aussprache-Übung aktiviert** — bringt die
+  `/pronunciation`-Seite vom Dashboard-Quick-Start für
+  Sprachen-getaggte Projekte zum Vorschein.
+
+Der Stimme-Abschnitt blendet sich aus, wenn weder die
+Web-Speech-API-Synthese noch die -Erkennung vom Browser
+unterstützt wird.
+
+## Oberfläche
+
+Theme-Picker (5 Paletten × hell/dunkel = 10 Varianten),
+Dichte und der **Gesten-Toggle** (seit v1.10.0, Standard
+EIN auf touch-fähigen Geräten). Gesten umfassen
+Assessment-Swipe-Navigation, Curriculum-Topic-Swipe-to-
+Reveal und Sitzungs-Zyklus-Peek.
+
+## Gamification
+
+Toggles für XP- / Badge- / Level-Up-Benachrichtigungen
+(Aus stoppt Toasts, das System speichert den Zustand
+trotzdem), **Wochenend-Modus** (Sa/So-Lücken in der
+Streak-Heatmap überspringen), tägliches Sessions-Ziel
+(1..10) und **Fortschritt zurücksetzen** (doppelte
+Bestätigung; löscht `user_xp` + `user_badges` +
+`user_streaks`-Zeilen).
 
 ## Über
 
-Der letzte Abschnitt der Einstellungen zeigt das **Über-Panel**:
-fünf Nur-Lese-Blöcke mit Informationen zur laufenden App.
+Fünf Read-Only-Blöcke: **Version** (kanonische Version aus
+`pyproject.toml`, Build-Hash, Build-Datum), **System**
+(Speichermodus, Daten-Verzeichnis, DB-Pfad im Server-Modus,
+Python + Plattform-Info), **Credits** (Autor, Abhängigkeits-
+Danksagungen), **Entwicklung unterstützen** (Liberapay /
+GitHub Sponsors / Ko-fi-Links), **Lizenz & Ressourcen**
+(MIT-Link, Repo, Doku, Issue-Tracker).
 
-- **Version**: App-Version (aus der kanonischen
-  `pyproject.toml`), kurzer Build-Hash (verlinkt zum
-  GitHub-Commit, sofern verfügbar) und Build-Datum.
-- **System**: Speichermodus (Server vs. lokaler Browser),
-  Datenverzeichnis, Datenbank-Pfad (nur im Server-Modus),
-  Python-Version (nur im Server-Modus), Plattform und die
-  Versionen der gebündelten Backend-Abhängigkeiten (FastAPI,
-  SQLAlchemy, Pydantic, PluginForge).
-- **Mitwirkende**: Autor, Abhängigkeits-Danksagungen, Tagline.
-- **Entwicklung unterstützen**: drei Spendenkanäle — Liberapay
-  (bevorzugt), GitHub Sponsors und Ko-fi. Jeder öffnet in einem
-  neuen Tab.
-- **Lizenz & Ressourcen**: MIT-Lizenz-Link, Repository-Link,
-  Dokumentations-Link und der Issue-Tracker.
-
-Im **Lokal (Browser)**-Modus zeigt das Panel dieselbe
-Struktur, blendet aber die Zeilen aus, die nur für ein
-laufendes Backend Sinn ergeben (Python-Version,
-FastAPI/SQLAlchemy/Pydantic/PluginForge-Versionen,
-Datenbank-Pfad). Das Speicher-Label wechselt von *Server
-(FastAPI + SQLite)* zu *Lokaler Browser-Speicher (IndexedDB)*,
-damit immer klar ist, auf welcher Seite du dich befindest.
-
-## Sicherung
-
-Der Abschnitt **Datensicherung** liegt direkt über "Über"
-und ermöglicht es, dein gesamtes Konto als JSON-Datei zu
-sichern oder wiederherzustellen. Dieselbe Datei funktioniert
-in beiden Speichermodi: Eine Sicherung aus dem Server-Modus
-lässt sich im lokalen Modus wiederherstellen und umgekehrt.
-
-### Sicherung erstellen
-
-Klicke auf **Sicherung erstellen**, um eine Datei namens
-`adaptive-learner-backup-YYYY-MM-DD-<kurz-id>.json`
-herunterzuladen. Sie enthält jeden Datensatz, den das System
-für dein Konto über 16 Tabellen hinweg gespeichert hat
-(Nutzer, Projekte, Profile, Lehrpläne, Themen, Lektionen,
-Sitzungen, Nachrichten, Bewertungen, Notizen, Fortschritts-
-Commits, Methodenwechsel, Schritt-Auswertungen sowie
-importierte Konversationen + Nachrichten).
-
-Die Datei ist im Klartext-JSON formatiert, damit du den
-Inhalt vor einer Wiederherstellung in einem Texteditor
-prüfen kannst.
-
-**API-Schlüssel sind aus Sicherheitsgründen nie enthalten.**
-Nach einer Wiederherstellung musst du jeden Provider-Schlüssel
-neu eingeben.
-
-### Wiederherstellung
-
-Klicke auf **Aus Sicherung wiederherstellen**, wähle eine
-`.json`-Datei aus. Adaptive Learner liest sie lokal und zeigt
-eine Vergleichstabelle: pro Tabelle die aktuelle Anzahl
-Datensätze neben der Anzahl in der Sicherung. **Wiederherstellung
-bestätigen** wendet die Zusammenführung an, **Abbrechen** bricht
-ab.
-
-Die Wiederherstellung ist ein MERGE, kein Überschreiben:
-
-- Neue Datensätze werden eingefügt.
-- Vorhandene veränderbare Datensätze werden nur überschrieben,
-  wenn die Sicherung neuer ist (Zeitstempel-Vergleich).
-- Historien-Zeilen (Sitzungen, Nachrichten, Bewertungen,
-  Fortschritts-Commits, Methodenwechsel, Schritt-Auswertungen)
-  sind unveränderlich — Duplikate werden übersprungen.
-- Es wird nichts gelöscht.
-
-Nach der Wiederherstellung zeigt eine Zusammenfassung die
-Anzahl eingefügter / aktualisierter / übersprungener
-Datensätze sowie eventuelle Fehler.
-
-### Erinnerung
-
-Der Abschnitt zeigt den Zeitstempel deiner letzten Sicherung.
-Nach 7 Tagen erscheint eine dezente Erinnerung, eine neue
-zu erstellen.
-
-### Automatische Sicherung (nur lokaler Modus)
-
-Im lokalen Speichermodus erscheint zusätzlich ein Block
-**Automatische Sicherung**. Das System hält einen Ringspeicher
-von 3 automatischen Schnappschüssen in einer separaten
-IndexedDB-Datenbank vor. Eine neue automatische Sicherung
-läuft:
-
-- nach 10 abgeschlossenen Sitzungen ODER
-- nachdem 7 Tage seit der letzten Sicherung vergangen sind,
-- was zuerst eintritt.
-
-Der Schalter erlaubt es, automatische Sicherungen zu
-deaktivieren. **Jetzt sichern** erzwingt eine sofortige
-Sicherung unabhängig vom Schalter. Jeder Eintrag in der
-Liste hat eigene **Wiederherstellen**- und **Löschen**-Schaltflächen.
-
-Wenn der Browser-Speicher dem Kontingent nahekommt (über
-90 %), erscheint ein Warnhinweis, der dazu rät, eine
-manuelle Sicherung in eine Datei zu exportieren, bevor der
-Browser den IndexedDB-Speicher räumt.
+Im Lokal-Modus blendet das Panel die Zeilen aus, die nur bei
+laufendem Backend Sinn ergeben (Python-Version,
+FastAPI / SQLAlchemy / Pydantic / PluginForge-Versionen,
+DB-Pfad).

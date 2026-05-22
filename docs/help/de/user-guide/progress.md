@@ -61,15 +61,34 @@ langsam.
 
 ## Commit-Historie
 
-Jede Zeile ist ein ProgressCommit: Methode, Verständnis-Rating,
-Stress-Rating, Dauer in Minuten, committed_at-Zeitstempel. Die
-Liste ist nach Datum oder nach Verständnis sortierbar.
+Jede Zeile ist ein ProgressCommit: Methode, Verständnis-
+Rating, Stress-Rating, Dauer in Minuten, committed_at-
+Zeitstempel plus die Rich-Text-Sitzungsnotiz inline (Read-
+Only-TipTap). Die Liste ist nach Datum oder nach Verständnis
+sortierbar.
 
-Klick auf einen Commit springt in v0.7.0 noch nicht zu den
-zugrundeliegenden Session-Nachrichten — der Nachrichten-
-verlauf ist von der Fortschritts-Seite nicht erreichbar. Die
-"Letzte Sessions"-Liste im Dashboard ist die nächste UX in
-diese Richtung.
+Gerenderte Notizen zeigen fett / kursiv / Listen / Code-
+Blöcke mit Syntax-Highlighting / Links — exakt das, was im
+Bewertungsdialog am Sitzungsende getippt wurde.
+Plain-Text-Notizen von vor v1.14.0 werden unverändert
+durchgereicht.
+
+## Exporte
+
+Drei Export-Typen über Einstellungen → Export, alle in
+identischer Shape über beide Speichermodi:
+
+- **Fortschrittsbericht** — die ganze Fortschritts-Seite
+  als Markdown- oder PDF-Dokument verpackt.
+- **Sitzungsdetail** — Transkript einer einzelnen Session
+  + Bewertung + Schritt-Evaluationen.
+- **Curriculum-Übersicht** — der Themenbaum + Lektions-
+  Zusammenfassungen eines einzelnen Curriculums.
+
+Markdown wird client-seitig erzeugt; PDF nutzt den Browser-
+Druck-zu-PDF (versteckter Iframe mit druckoptimiertem
+Stylesheet, dann `contentWindow.print()`). Keine externe
+PDF-Bibliothek, kein Roundtrip zum Backend.
 
 ## Filter
 

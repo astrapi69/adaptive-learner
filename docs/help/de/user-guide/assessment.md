@@ -11,6 +11,11 @@ sind **Einfachauswahl** (Radio-Buttons — eine wählen). Einige
 sind **Mehrfachauswahl** (Checkboxen — alles wählen, was
 passt). Die App zeigt dir an, welcher Typ jeweils gilt.
 
+Auf Mobil und Touch-Geräten **wischst du nach links oder
+rechts**, um zwischen Fragen zu navigieren. Auf dem Desktop
+machen das die Pfeiltasten. Ein einmaliger Hinweis auf der
+ersten Frage erklärt das.
+
 Hinter jeder Antwort liegt ein Gewicht: wie stark sie dich in
 Richtung einer der sechs Lernmethoden (deduktiv, induktiv,
 fehlerbasiert, dialogisch, kontextuell, KI-adaptiv) zieht.
@@ -46,7 +51,10 @@ Die Form sagt viel:
   KI-adaptive Methode greift hier besonders gut.
 
 Die **dominante Methode** (höchstes Gewicht, alphabetischer
-Tie-Break) steht explizit über dem Chart.
+Tie-Break) steht explizit über dem Chart. Ein
+**Text-to-Speech**-Button neben dem Ergebnis liest die
+Zusammenfassung vor (Web Speech API; funktioniert in
+modernen Browsern).
 
 ## Mehrfachauswahl
 

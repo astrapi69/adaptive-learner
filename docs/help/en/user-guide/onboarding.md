@@ -1,7 +1,7 @@
 # Onboarding
 
 After the language picker on the Landing page, the Onboarding
-flow collects four things about your learning project:
+flow collects four required fields plus optional taxonomy:
 
 1. **Topic** — what you want to learn. "Spanish grammar",
    "Machine learning fundamentals", "Lead guitar improvisation".
@@ -16,6 +16,20 @@ flow collects four things about your learning project:
 4. **Daily minutes** — how much time you can realistically
    give. 15-45 minutes is the sweet spot for adaptive learning;
    the app doesn't reward marathon sessions.
+
+**Subject taxonomy** (optional, since v1.9.0) — a fuzzy
+suggester matches your topic against the seeded 80+-node
+taxonomy under Languages / Mathematics / Programming /
+Sciences / Music / Humanities / Social Sciences / Skills.
+Picking a Languages subject unlocks Pronunciation Practice
+for the project later.
+
+**Tags** (optional) — comma-separated free-text labels
+("exam-prep", "daily", "self-paced") that show up on the
+Dashboard filter bar later.
+
+You can also skip the form entirely — a default user is
+created and you land on the Dashboard immediately.
 
 You also pick a **language** for the project. This is the
 language the AI will respond in during sessions; it can differ

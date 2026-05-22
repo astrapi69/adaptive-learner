@@ -52,25 +52,34 @@ Rechts in der Curriculum-Ansicht steht die Lektionsliste,
 sortiert nach `order_index`. Jede Zeile zeigt den Lektions-
 titel und einen Ausschnitt; Klick öffnet den Lektions-Editor.
 
-Der Editor ist ein reiner Markdown-/Plaintext-Editor — bewusst
-kein voller WYSIWYG (der Bibliogon-Ära-TipTap-Editor wurde
-beim v0.1.0-Skeleton-Schnitt entfernt, siehe die Projekt-
-referenz für die Abwägung). Überschriften, Links, Code-Blöcke,
-Listen und einfache Hervorhebungen funktionieren über
-Markdown.
+Der Editor ist **TipTap-Rich-Text** (seit v1.14.0): fett /
+kursiv / unterstrichen / durchgestrichen, Überschriften
+(H1–H3), Aufzählungs- + Nummerierungs- + Aufgaben-Listen,
+Blockquote, Inline-Code, Fenced Code-Blöcke mit `lowlight`-
+Syntax-Highlighting für 11 Sprachen (bash / css / html /
+java / javascript / json / markdown / python / sql /
+typescript / yaml), Links, Textausrichtung, Highlight,
+Undo / Redo, Zeichenzähler. Die Toolbar ist mobilfreundlich
+mit horizontalem Scroll + 40-px-Touch-Zielen.
+
+Curriculum-Beschreibungen, Sitzungsnotizen und Lektions-
+Inhalte nutzen denselben Editor. Markdown- / PDF-Exporte
+gehen durch `renderStoredContent`, das den TipTap-Doc-Baum
+durchläuft und GFM-Markdown erzeugt; Plain-Text-Inhalte von
+vor v1.14.0 werden unverändert durchgereicht.
 
 ## Wie Curricula zu Sessions passen
 
-In v0.7.0 ziehen Sessions noch keine Themen-/Lektions-Inhalte
-in den KI-System-Prompt. Der Wert des Curriculums liegt heute
-darin, **dein eigenes Denken zu strukturieren**: schreibe
-Zusammenfassungen, baue einen Themenbaum, verknüpfe Lektionen
-miteinander.
+Sessions lassen sich aus einem Chat-Verlauf-Import oder von
+Grund auf starten. Der Konversations-Analyzer
+(`/api/imports`) extrahiert ein `suggested_curriculum`-Feld;
+ein Klick im analysierten Import sät ein Curriculum mit
+Topics + Lektionen aus den Lücken, die die KI identifiziert
+hat.
 
-Eine zukünftige Phase wird das Curriculum in den Session-
-Prompt einklinken, sodass die KI auf deine eigenen Notizen
-verweisen kann. Bewusst aufgeschoben, bis die Curriculum-
-Datenform sich gesetzt hat.
+Die Session-KI zieht (noch) keine einzelnen Lektions-Inhalte
+in den System-Prompt — das ist ein bewusster Halt, bis sich
+die Curriculum-KI-Integrations-Form gesetzt hat.
 
 ## Pro-Speichermodus-Verhalten
 

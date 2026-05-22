@@ -11,6 +11,11 @@ Each question shows 3-4 possible answers. Most questions are
 **multi-select** (checkboxes — pick everything that applies).
 The app shows you which type each question is.
 
+On mobile and touch devices, **swipe left or right** to
+navigate between questions. The keyboard arrow keys do the
+same on desktop. A one-shot hint on the first question
+points this out.
+
 Behind each answer sits a weight: how much picking it tilts
 you toward one of the six learning methods (deductive,
 inductive, error-based, dialogic, contextual, AI-adaptive). The
@@ -46,7 +51,9 @@ you a lot:
   especially well here.
 
 The **dominant method** (highest weight, alphabetical
-tie-break) is shown explicitly above the chart.
+tie-break) is shown explicitly above the chart. A
+**Text-to-Speech** button next to the result reads the
+summary aloud (Web Speech API; works in modern browsers).
 
 ## Multi-select questions
 

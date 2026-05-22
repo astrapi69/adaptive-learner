@@ -40,19 +40,22 @@ outside the browser.
 
 ## First five minutes
 
-1. **Open the app** and pick your language. Five UI languages
-   are first-class (DE, EN, ES, FR, EL); three more (PT, TR, JA)
-   ship as English passthroughs for now.
+1. **Open the app** and pick your language. All 8 UI languages
+   are fully translated (DE, EN, ES, FR, EL, PT, TR, JA).
 2. **Onboard your learning project**: topic, goal, timeframe,
-   and how many minutes per day you can give it. See
-   [Onboarding](onboarding.md).
+   minutes per day, plus optional subject taxonomy and tags.
+   See [Onboarding](onboarding.md).
 3. **Take the 12-question assessment** so the app knows which
-   learning methods to lean on. See [Assessment](assessment.md).
-4. **Add your AI API key** in Settings (the Onboarding flow
-   nudges you here if you skipped it).
+   learning methods to lean on. Swipe left/right between
+   questions on mobile. See [Assessment](assessment.md).
+4. **Add your AI API key** in Settings, OR drop it into
+   `~/.config/adaptive-learner/secrets.yaml` if you run the
+   desktop launcher. The Settings UI shows which layer your
+   key came from.
 5. **Start your first session**. The Dashboard's "Start session"
-   button drops you into a learning conversation. See
-   [Learning session](learning-session.md).
+   button drops you into a learning conversation. AI replies
+   stream token-by-token; the dual-prompt evaluator decides
+   each cycle step. See [Learning session](learning-session.md).
 
 ## Where to go next
 

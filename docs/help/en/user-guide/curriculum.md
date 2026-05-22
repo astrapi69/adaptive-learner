@@ -49,25 +49,33 @@ The right side of the curriculum view is the lesson list,
 ordered by `order_index`. Each row shows the lesson title and
 a snippet of its content; clicking opens the lesson editor.
 
-The lesson editor is a plain Markdown / plain-text editor —
-deliberately not a full WYSIWYG (the Bibliogon-era TipTap
-editor was stripped during the v0.1.0 skeleton work, see the
-project reference for the trade-off discussion). Headings,
-links, code blocks, lists, and basic emphasis are supported
-via Markdown.
+The lesson editor is **TipTap rich text** (since v1.14.0):
+bold / italic / underline / strike, headings (H1-H3), bullet
++ ordered + task lists, blockquote, inline code, fenced code
+blocks with `lowlight` syntax highlighting across 11
+languages (bash / css / html / java / javascript / json /
+markdown / python / sql / typescript / yaml), links, text
+alignment, highlight, undo / redo, character count. The
+toolbar is mobile-friendly with horizontal scroll + 40px
+touch targets.
+
+Curriculum descriptions, session notes, and lesson content
+all use the same editor. Markdown / PDF exports go through
+`renderStoredContent` which walks the TipTap doc tree and
+emits GFM Markdown; plain-text content from before v1.14.0
+passes through verbatim.
 
 ## How curricula connect to sessions
 
-In v0.7.0 sessions don't yet auto-pull topic/lesson content
-into the AI's system prompt. The curriculum's value today is
-**organising your own thinking**: write summaries of what
-you learned, build a tree of topics you want to tackle, link
-lessons to one another.
+Sessions can be seeded from a chat-history import or from
+scratch. The conversation analyzer (`/api/imports`) extracts
+a `suggested_curriculum` field; one click on the analyzed
+import seeds a Curriculum with topics + lessons matching the
+gaps the AI identified.
 
-A future phase will plug the curriculum into the session
-prompt so the AI can reference your own notes when guiding
-you. That's deliberately deferred until the curriculum data
-shape has settled.
+The session AI does not (yet) auto-pull individual lesson
+content into the system prompt — that's a deliberate hold
+until the curriculum-AI integration shape settles.
 
 ## Per-storage-mode behaviour
 

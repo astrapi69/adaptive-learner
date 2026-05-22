@@ -1,7 +1,7 @@
 # Onboarding
 
 Nach der Sprachauswahl auf der Startseite sammelt das Onboarding
-vier Informationen über dein Lernprojekt:
+vier Pflichtfelder plus optionale Taxonomie:
 
 1. **Thema** — was du lernen willst. "Spanische Grammatik",
    "Machine-Learning-Grundlagen", "Solo-Improvisation auf der
@@ -22,6 +22,22 @@ Außerdem wählst du eine **Sprache** für das Projekt. Das ist
 die Sprache, in der die KI in den Sessions antwortet; sie darf
 von der UI-Sprache abweichen (du kannst die Oberfläche auf
 Deutsch lassen und trotzdem Spanisch auf Spanisch lernen).
+
+**Subject-Taxonomie** (optional, seit v1.9.0) — ein
+Fuzzy-Suggester gleicht dein Thema mit dem geseedeten
+80+-Knoten-Baum unter Sprachen / Mathematik / Programmierung /
+Naturwissenschaften / Musik / Geisteswissenschaften /
+Sozialwissenschaften / Skills ab. Wer ein Sprachen-Subject
+wählt, schaltet später die Aussprache-Übung für das Projekt
+frei.
+
+**Tags** (optional) — komma-getrennte Freitext-Labels
+(„prüfungsvorbereitung", „täglich", „self-paced"), die später
+in der Dashboard-Filter-Leiste auftauchen.
+
+Du kannst das Formular auch komplett überspringen — dann wird
+ein Default-User angelegt und du landest direkt auf dem
+Dashboard.
 
 ## Optional: aktuelles Problem
 

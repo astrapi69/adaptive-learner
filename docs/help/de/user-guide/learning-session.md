@@ -28,23 +28,37 @@ entsprechend.
 
 ## Wie die KI dich begleitet
 
-Jede Nachricht löst zwei KI-Aufrufe nacheinander aus:
+Jede Nachricht löst bis zu drei KI-Aufrufe aus:
 
-1. **Die Lernantwort** — die KI antwortet im Stil der aktiven
-   Methode beim aktuellen Schritt. Der System-Prompt setzt
+1. **Die Lernantwort** — streamt Token für Token via SSE.
+   Du siehst den Inline-Cursor (▍) während die KI denkt;
+   die Tokens landen im Bubble, sobald sie ankommen (kein
+   „Denke nach…"-Platzhalter). Der System-Prompt setzt
    sich aus einer 42-Zellen-Matrix zusammen (6 Methoden × 7
    Schritte), sodass ein deduktives Input sich deutlich
    anders anfühlt als ein kontextuelles Wiederholen.
-2. **Der Schritt-Bewerter** — ein zweiter KI-Aufruf liest den
-   Austausch und entscheidet, ob du für den nächsten Schritt
-   bereit bist. Er liefert ein Urteil: `advance`, `confidence`,
+2. **Der Schritt-Bewerter** — ein zweiter KI-Aufruf liest
+   den Austausch und entscheidet, ob du für den nächsten
+   Schritt bereit bist. Er liefert `advance`, `confidence`,
    `reason`, `suggested_step`. Die App wendet den Vorschlag
-   nur an, wenn die Konfidenz hoch genug ist (Standardwert
-   0.6).
+   bei Konfidenz ≥ 0.6 an.
+3. **Der Topic-Transition-Bewerter** (nur bei Schritt 7) —
+   ein dritter KI-Aufruf entscheidet, ob das Thema
+   integriert ist. Wenn ja UND `continue_recommended`,
+   startet automatisch ein neuer Zyklus mit einem frischen
+   Unterthema (Auto-Loop, max. 5 Zyklen pro Session).
 
-Das Urteil erscheint dezent über dem Chat als "Schritt von X
-nach Y verschoben, weil…", wenn es tatsächlich angewendet
-wird.
+Das Urteil erscheint dezent über dem Chat als „Schritt von
+X nach Y verschoben, weil…", wenn es greift. Zyklus-Übergänge
+rendern als Karten mit gestricheltem Rand und „Zyklus N"-
+Beschriftung im Chat-Verlauf.
+
+**Stimme an/aus** — ein TTS-Knopf (▶) neben jeder
+KI-Antwort liest sie laut vor; ein Mikrofon-Knopf (🎤) am
+Eingabefeld lässt dich diktieren; Zwischen-Transkripte
+füllen das Textarea, sodass du vor dem Absenden noch
+lesen kannst. Beides Web Speech API; in den Einstellungen
+unter Stimme an/abschaltbar.
 
 ## Zyklus-Fortschrittsanzeige
 
@@ -71,18 +85,23 @@ zweitstärkste Methode, die du zuletzt nicht genutzt hast.
 Bannerhinweis lässt sich schließen; er kommt wieder, wenn das
 Stagnationsmuster weiterläuft.
 
-(Im Lokal-Modus wird die Switch-Heuristik gerade portiert —
-das Banner gibt dort aktuell "keine Empfehlung" zurück.)
+Beide Speichermodi (Server + Lokal) unterstützen
+Methodenwechsel-Empfehlungen.
 
 ## Bewerten + Session beenden
 
-Die Session-Seite hat einen "Session beenden"-Button. Vor dem
-Schließen füllst du eine kurze Bewertung aus: Verständnis,
-Stress, Methoden-Passung auf einer 1-5-Skala. Diese
-Bewertungen steuern die Dashboard-Trendlinien UND die
-Methodenwechsel-Heuristik.
+Die Session-Seite hat einen „Session beenden"-Button. Vor
+dem Schließen füllst du eine kurze Bewertung aus:
+Verständnis, Stress, Methoden-Passung auf einer 1-5-Skala
+plus eine optionale **Rich-Text-Notiz** (TipTap: fett,
+kursiv, Listen, Code-Blöcke mit Syntax-Highlighting, Links).
+Die Notiz gehört dir — die KI liest sie nicht.
 
-Aus den Bewertungen wird ein `ProgressCommit` — der
-Git-artige Schnappschuss einer Session. Siehe
-[Fortschritt](progress.md) und das
+Aus den Bewertungen plus der Multi-Cycle-Zusammenfassung
+wird ein `ProgressCommit` — der Git-artige Schnappschuss
+einer Session. Eine abgeschlossene Session bringt XP
+(50 Basis × Streak-Multiplikator, plus Pro-Zyklus-Boni),
+prüft auf neu verdiente Abzeichen und aktualisiert deinen
+Streak. Siehe [Fortschritt](progress.md),
+[Dashboard](dashboard.md) und das
 [Tracking-Konzept](../concept/tracking.md).

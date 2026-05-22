@@ -11,7 +11,8 @@ can read it.
 In **Server mode** the data lives in the SQLite database the
 FastAPI backend manages. API keys are encrypted at rest with
 Fernet using a secret you set via the
-`ADAPTIVE_LEARNER_SECRET_KEY` environment variable.
+`ADAPTIVE_LEARNER_SECRET_KEY` environment variable, or via
+`secret_key:` in `~/.config/adaptive-learner/secrets.yaml`.
 
 Neither mode sends telemetry, analytics, or your messages to
 any third party other than the AI provider you've chosen — and
@@ -22,14 +23,20 @@ prompt + your text + the AI's prior responses in the session).
 
 Yes for AI sessions. The app uses **bring-your-own-key** for
 all three supported providers: Anthropic Claude, OpenAI GPT,
-Google Gemini. Free-tier limits on each provider are usually
-enough for a few sessions a day; if you go heavier, paid tiers
-unlock higher quotas.
+Google Gemini. Free-tier limits are usually enough to get
+started.
 
-You can browse the Curriculum, take the Assessment, and view
-your Dashboard without an API key. The Session page is the
-only feature that needs one, because it's the one that calls
-the AI.
+Three places to put the key (highest priority wins): an
+`ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` env var, the
+`ai.<provider>.api_key` field in
+`~/.config/adaptive-learner/secrets.yaml`, or the Settings UI.
+The UI shows the per-provider source so you always know where
+your key came from.
+
+You can browse the Curriculum, take the Assessment, view your
+Dashboard, and even run the chat-history Import without an
+API key. The Session page + the analysis step + the
+AI-extraction features are the ones that need a key.
 
 ## Can I use it offline?
 
@@ -41,7 +48,7 @@ so reading old material works fine.
 **Live sessions still need internet** because the AI provider
 sits outside your browser. The Session page detects "offline"
 and shows a clear inline message rather than failing
-silently when you start a new session without a connection.
+silently.
 
 ## What does the method switch mean?
 
@@ -53,53 +60,114 @@ you haven't used recently.
 
 It's a *suggestion*, not an order. You can dismiss the banner
 and continue with your current method; the banner reappears if
-the stagnation pattern continues.
+the stagnation pattern continues. Method switches are
+recorded in the `method_switches` table and surface in the
+Progress page distribution.
+
+## What is auto-loop?
+
+When a session reaches step 7 (Integrate) and the
+topic-transition evaluator judges the topic integrated AND
+recommends continuing, a fresh cycle starts automatically
+with a new subtopic. Up to 5 cycles per session (runaway
+protection). The chat history renders dashed-border "Cycle N"
+cards at each transition. The end-of-session rating dialog
+summarises the multi-cycle journey when `cycle_count > 1`.
+
+## Can I export my data?
+
+Yes. Three export paths shipped:
+
+- **Backup**: Settings → Backup → Create Backup. Downloads a
+  timestamped JSON with every row from your account. API keys
+  are stripped. Works in both storage modes.
+- **Progress / Session / Curriculum reports**: Settings →
+  Export. Markdown + PDF (browser print-to-PDF).
+- **Anki .apkg**: review AI-extracted flashcards on the
+  `/anki` page, accept the ones you like, click Export. The
+  file works directly in Anki desktop.
+- **NotebookLM ZIP**: from the Progress page, download a
+  structured ZIP (summary + vocabulary + rules + errors +
+  flashcards + sessions) formatted for NotebookLM's source
+  upload.
+
+## What's the voice feature?
+
+Three Web Speech API integrations (since v1.18.0):
+
+- **Text-to-Speech** on AI replies + Assessment results — a
+  ▶ button next to each speaks it aloud, language-matched.
+- **Speech-to-Text** on the Session input — a 🎤 button
+  captures your voice and populates the textarea with
+  interim transcripts before send.
+- **Pronunciation Practice** for language projects — visit
+  `/pronunciation`, the AI generates a target phrase, you
+  speak, and a judge AI scores similarity + suggests
+  improvements.
+
+Voice toggles live in Settings → Voice. The section hides
+itself in browsers that don't support the API.
+
+## What's the chat-history import?
+
+The Import page (`/import`) accepts pasted or uploaded chat
+transcripts from ChatGPT, Claude.ai (both JSON bulk export
+and single-conversation Markdown export), Gemini, and
+arbitrary Markdown. The analyzer extracts your topic,
+weaknesses, error patterns, recommended method, vocabulary
+(for language conversations), and a suggested curriculum.
+One click seeds a Curriculum + starts a targeted session
+from the analysis.
+
+The Claude.ai per-conversation Markdown export was the
+v1.19.0 audit case — the parser ships with full timestamp
+extraction + role boundary preservation for that format
+(BL-25 / BL-26 / BL-28 closed in v1.19.1).
+
+## Sync between devices?
+
+Local-network bidirectional sync since v1.0.0. Settings →
+Sync → "Pair this device": scan the QR code on the other
+device's screen (rear camera), or paste the pairing URL.
+Once paired, push + pull buttons exchange data; conflicts
+go through an AI-merge resolver. 28 tables on the sync
+surface as of v1.19.0 (subjects + tags + study questions
+included).
 
 ## How is this different from ChatGPT?
 
 ChatGPT is a chat interface to a single model. Adaptive
 Learner is a *structured learning system* that uses an AI
-under the hood but adds five things:
+under the hood but adds:
 
 1. **A 6-method × 7-step matrix** of bespoke system prompts.
-   The AI behaves very differently as a deductive Input
-   companion vs a contextual Integrate companion.
 2. **Per-turn step evaluation** — a second AI call judges
-   whether you're ready to advance and may suggest moving
-   forward, repeating, or going back.
-3. **A profile** of your learning preferences, picked up from
-   a 12-question assessment, that shapes which method the
-   sessions start in.
-4. **Long-term tracking** — ProgressCommits, streak days,
-   per-method distribution, time-per-step charts. ChatGPT
-   forgets the moment you close the tab.
-5. **Provider freedom** — pick Anthropic, OpenAI, or Gemini.
-   Adaptive Learner is the orchestration; the model is your
-   choice.
+   readiness and may move you forward / back.
+3. **Auto-loop into new cycles** when the topic is
+   integrated.
+4. **A profile** of your learning preferences from the
+   12-question assessment.
+5. **Long-term tracking** — ProgressCommits, streak heatmap,
+   XP, badges, time-per-step charts. ChatGPT forgets when
+   you close the tab.
+6. **Provider freedom** — Anthropic, OpenAI, or Gemini.
+7. **Local-first option** — everything in your browser,
+   nothing sent to a server (except your AI calls).
 
 ## What if the AI goes wrong?
 
-The system is designed to fail visibly:
+The system fails visibly:
 
 - **Wrong API key**: the AI call returns a clear error
   message, surfaced inline in the chat.
-- **Provider down**: same — the error rendering surfaces the
-  HTTP status from the provider's API.
+- **Provider down**: same — the error renders the HTTP
+  status from the provider's API.
 - **JSON parse failure from the evaluator**: a deterministic
   +1 advance kicks in (capped at step 7), with
   `fallback_used: true` recorded so a future audit can spot
   models that struggle with the format.
+- **Streaming aborted mid-response**: the partial reply is
+  saved; the next message picks up from there.
 - **Stale or weird AI response**: end the session, give it a
   low rating, retake. The method-switch heuristic will
   surface a different method if the pattern persists.
-
-## Can I export my data?
-
-In v0.7.0 export isn't a first-class button yet. In Local
-mode you can read the raw rows via the browser's IndexedDB
-inspector (Chrome DevTools > Application > IndexedDB >
-adaptive-learner). In Server mode you can query the SQLite
-database directly (it's a single file, no special tools
-needed).
-
-Proper export / backup / restore is a known follow-up.

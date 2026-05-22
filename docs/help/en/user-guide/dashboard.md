@@ -1,10 +1,15 @@
 # The Dashboard
 
-The Dashboard is your home base. It pulls four data slices into
-one view: who you are as a learner (your profile), how you're
-doing right now (trend + streak), what you've been doing (recent
-sessions + method distribution), and what to do next (tool +
-spaced recommendations).
+The Dashboard is your home base. It pulls multiple data slices
+into one view: who you are as a learner (profile + XP + badges),
+how you're doing right now (streak heatmap + session counter),
+what you've been doing (recent sessions + method distribution),
+and what to do next (tool + spaced recommendations).
+
+At the top sits the **Subjects + Tags filter bar** — pick a
+subject (e.g. Languages → Spanish) or a tag to scope every
+widget below to projects with that classification. Filters are
+shareable via URL query params.
 
 ## Profile radar
 
@@ -16,18 +21,26 @@ chart with a colored badge.
 If you haven't taken the assessment yet, the radar shows an
 all-zero shape and links to the Assessment page.
 
-## Streak counter + session counter
+## XP + Streak + Badges
 
-Two compact tiles next to the radar:
-
-- **Streak days** — consecutive calendar days with at least one
-  ended session. Resets to 0 if today has no session yet.
-- **Total sessions** — how many sessions you've completed,
-  ever. Counts only sessions that were ended with a rating
-  (and so produced a ProgressCommit).
-
-The streak follows the Duolingo / Habitica convention: missing
-today drops the streak to 0 the moment the calendar flips.
+- **XP widget** — current level + total XP + a progress bar to
+  the next level. Levels follow an exponential curve
+  (`threshold(n) = 50 * n * (n - 1)`); levels 1-5 sit at
+  0 / 100 / 300 / 600 / 1000 XP. Base 50 XP per ended session,
+  plus per-cycle bonuses + first-method bonus + streak
+  multiplier (up to 2.75× at a 7-day streak).
+- **Streak heatmap** (GitHub-style) — 365 days of activity in
+  weekly columns Mon..Sun. Five tier colors via
+  `color-mix` on `var(--accent)`. Toggle weekend mode in
+  Settings to skip Sat/Sun gaps; freeze stockpile (1 per 7
+  streak days, max 3) acts as pause-not-reset on a missed
+  weekday.
+- **Badge showcase** — 24 badges across 5 categories
+  (getting_started 3, consistency 4, method_explorer 7, depth
+  7, polyglot 3). Earned ones light up colored + dated; locked
+  ones stay grey.
+- **Session counter** — tiles for sessions, minutes, current
+  streak, average understanding, average stress.
 
 ## Progress timeline
 
@@ -65,9 +78,9 @@ felt great or terrible and you want to see what happened.
 
 Two recommendation cards along the bottom edge:
 
-- **Tools** — 5 external tools (Anki, NotebookLM, Adaptive AI
-  Prompt, Excalidraw, Obsidian) ranked by relevance to your
-  profile. Each shows a one-line "why" tailored to your
+- **Tools** — ranked external tools tailored to your profile.
+  Anki + NotebookLM are now first-class with shipped exports
+  (no manual handoff). Each shows a one-line "why" in your UI
   language.
 - **Spaced repetition** — short "do this next" action cards
   driven by which methods you haven't practised recently. A
