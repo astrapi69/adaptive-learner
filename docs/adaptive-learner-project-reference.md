@@ -1,9 +1,103 @@
 # Adaptive Learner - Projekt-Referenz
 
-**Datum:** 2026-05-17
 **Repository:** https://github.com/astrapi69/adaptive-learner
-**Aktueller Tag:** v0.0.0-template (Skeleton aus Bibliogon v0.33.0)
-**Status:** Template steht, Domain-Umbau als naechster Schritt
+**Aktueller Stand:** v1.20.0, ausgeliefert 2026-05-22
+(Phase 34 / `secrets.yaml`-API-Key-Storage).
+**Tests:** 786 Backend + 615 Plugins + 1233 Vitest = 2634 grün.
+**Original-Tag:** v0.0.0-template (Skeleton aus
+Bibliogon v0.33.0, März 2026).
+
+Dieses Dokument trägt beides: den ursprünglichen Plan vom
+März 2026 (ab Abschnitt 1 weiter unten — historisches
+Artefakt) UND einen Snapshot der ausgelieferten Architektur
+nach 34 Entwicklungsphasen (direkt unten).
+
+---
+
+## Ausgelieferte Architektur (v1.20.0)
+
+Adaptive Learner ist heute eine vollständige adaptive
+Lernplattform mit:
+
+- **10 Plugins** unter `plugins/`, alle auf Version
+  1.20.0 gepinnt:
+  - 3 KI-Anbieter (anthropic / openai / gemini, hook-only).
+  - assessment (12 Fragen, 6-Methoden-Gewichte).
+  - session (7-Schritt-Zyklen, Dual-Prompt-Evaluator,
+    Streaming via `ai_complete_stream`, Auto-Loop ab
+    v1.4.0, Aussprache-Bewertung ab v1.18.0).
+  - tracking (ProgressCommits + Dashboard-Aggregator).
+  - tools (Methodenbezogene Empfehlungen + Spaced-
+    Practice).
+  - gamification (XP + 24 Abzeichen + Streak-Heatmap, seit
+    v1.16.0).
+  - anki (KI-extrahierte Karteikarten + `.apkg`-Export
+    client-seitig, seit v1.17.0).
+  - notebooklm (Aktive-Recall-Fragen + Studienführer +
+    ZIP-Export, seit v1.19.0).
+- **25 SQLAlchemy-Models** (User, UserSettings,
+  LearningProject, LearningProfile, Curriculum,
+  LearningTopic, Lesson, LearningSession, SessionMessage,
+  SessionRating, SessionNote, ProgressCommit,
+  StepEvaluation, MethodSwitch, ImportedConversation,
+  ImportedMessage, Subject, Tag, ProjectSubject,
+  ProjectTag, UserXP, Badge, UserBadge, UserStreak,
+  AnkiCardSuggestion, StudyQuestion). Sync-Oberfläche:
+  28 Tabellen (inkl. 3 Assoziations-Tabellen).
+- **10 Hookspecs** in `backend/app/hookspecs.py`:
+  `get_assessment_questions`, `calculate_profile`,
+  `create_session_prompt`, `ai_complete` (sync,
+  firstresult), `ai_complete_async` (v1.5.0+),
+  `ai_complete_stream` (v1.6.0+),
+  `recommend_method_switch`, `on_session_complete`,
+  `get_progress_summary`, `get_tool_recommendations`.
+- **13 Frontend-Routen**: Landing, Onboarding, Assessment,
+  Dashboard, Session, Curriculum, Progress, Settings,
+  Import, ImportDetail, Anki, Pronunciation, NotFound.
+- **22 Storage-Namespaces** in `IStorageService`. Dual-
+  Storage: ApiStorage (Server-Modus) vs. DexieStorage
+  (Lokal-Modus mit IndexedDB + Browser-direkten KI-
+  Aufrufen).
+- **Drei-Schichten-Konfiguration für API-Keys** (Phase 34
+  / v1.20.0): env-Variablen >
+  `~/.config/adaptive_learner/secrets.yaml` > Fernet-
+  verschlüsselte DB-Spalte. Die Einstellungs-UI zeigt pro
+  Anbieter die Schlüssel-Quelle und deaktiviert
+  Bearbeiten, wenn der Schlüssel extern verwaltet ist.
+- **Lokal-Netz-Sync** zwischen Geräten (v1.0.0) mit
+  AI-Merge-Konfliktauflösung und QR-Code-Pairing (v1.7.0).
+- **Export-Wege**: JSON-Backup mit Vergleich (v1.12.0),
+  Markdown- / PDF-Fortschrittsberichte (v1.3.0),
+  Anki-`.apkg` (v1.17.0), NotebookLM-ZIP (v1.19.0).
+- **PWA**: vite-plugin-pwa, Workbox-SW, installierbar,
+  offline-fähig für Lesen, mobil getestet auf 4 Viewports.
+- **i18n**: 8 voll übersetzte Sprachen (DE / EN / ES / FR /
+  EL / PT / TR / JA) seit v1.13.0. Single-Source-YAML in
+  `backend/config/i18n/`, gespiegelt nach
+  `frontend/src/data/i18n/` via `make sync-i18n`.
+- **34 Entwicklungsphasen** ausgeliefert; Per-Release-
+  Notes in [`changelog/releases/`](../changelog/releases/).
+
+Die laufende, maschinen-lesbare Referenz für jede dieser
+Zahlen ist die OpenAPI-Spec unter `/api/openapi.json` plus
+[CLAUDE.md](../CLAUDE.md) für die High-Level-Übersicht.
+
+---
+
+## Original Plan (2026-03)
+
+> Was folgt, ist das ursprüngliche Planungsdokument vom
+> März 2026, als Adaptive Learner aus dem Bibliogon-
+> Skeleton heraus gestartet wurde. Erhalten als historisches
+> Artefakt — die ausgelieferte Architektur (oben) weicht
+> teilweise davon ab, vor allem in den Phasen 27–34
+> (TipTap-Rich-Text, E2E-Erweiterung, Gamification, Anki,
+> Voice, NotebookLM, secrets.yaml), die im Originalplan
+> nicht vorgesehen waren.
+
+**Datum (damals):** 2026-05-17
+**Aktueller Tag (damals):** v0.0.0-template (Skeleton aus Bibliogon v0.33.0)
+**Status (damals):** Template steht, Domain-Umbau als nächster Schritt
 
 ---
 

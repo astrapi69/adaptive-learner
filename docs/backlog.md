@@ -4,15 +4,20 @@ Daily-planning view of items outside the phase plan. The
 authoritative roadmap lives in [ROADMAP.md](ROADMAP.md); use
 this file for granular items + status.
 
-State: **post v1.8.0 (Phase 21 / Sync Gaps shipped).** BL-05
-(step_evaluations + session_notes sync) shipped in v1.8.0
-across `872cf84` (21A step_evaluations) and `f83aeb4`
-(21B session_notes mutable + conflict resolution). BL-06
-(sync.* i18n YAML migration) shipped in `1c22895` (21C).
-Bundled bonus: pluginforge ^0.7.0→^0.8.0 in `c4670c0`.
-imported_conversations + imported_messages joined the sync
-surface in `3f98bf1` (21D); the 16-table sync surface audit
-locks the invariant in `2c8bee8` (21E).
+State: **post v1.20.0 (Phase 34 / secrets.yaml shipped).**
+Phase history through Phase 34 + per-release notes live in
+[changelog/releases/](../changelog/releases/). 28 tables on
+the sync surface. 10 plugins, 25 SQLAlchemy models, 786 +
+615 + 1233 = 2634 tests green. Closed in this release line:
+BL-04 (QR scan, v1.7.0), BL-05/06 (sync gaps, v1.8.0),
+BL-07 (subjects/tags, v1.9.0), BL-08 (gestures, v1.10.0),
+BL-09 (model picker, v1.11.0), BL-10 (backup compare,
+v1.12.0), BL-11 (PT/TR/JA native, v1.13.0), BL-12 (TipTap,
+v1.14.0), BL-13 (E2E expansion, v1.15.0), BL-18
+(gamification, v1.16.0), BL-21 (Anki, v1.17.0), BL-20
+(voice, v1.18.0), BL-22 (NotebookLM, v1.19.0), BL-25/26/27/28
+(import parser audit, v1.19.x), BL-29 (metadata.created_at
+ISO normalisation, v1.19.2).
 
 Items ordered by impact and dependency chain. P0 = next up,
 P5 = speculative. Within each tier, smaller-scope and
