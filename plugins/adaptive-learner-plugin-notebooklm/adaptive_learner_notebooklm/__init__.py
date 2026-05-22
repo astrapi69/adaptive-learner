@@ -20,4 +20,4 @@ possible. This plugin provides the next-best path:
      (short paragraphs, clear headers, Q&A blocks).
 """
 
-__version__ = "1.20.0"
+__version__ = "1.21.0"

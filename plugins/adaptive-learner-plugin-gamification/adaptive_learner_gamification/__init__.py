@@ -8,4 +8,4 @@ state to ``user_xp`` (29A), ``user_badges`` (29B), and
 ``/api/plugins/gamification/*``.
 """
 
-__version__ = "1.20.0"
+__version__ = "1.21.0"
