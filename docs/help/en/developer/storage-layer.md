@@ -2,7 +2,8 @@
 
 The v0.7.0 storage layer (`frontend/src/storage/`) gives the
 frontend two interchangeable backends behind a single
-contract.
+contract. The contract has grown to 22 namespaces across
+Phases 7–34.
 
 ## IStorageService
 
@@ -14,18 +15,33 @@ storage implementation satisfies. It mirrors the
 export interface IStorageService {
   readonly mode: StorageMode;
   health(): Promise<HealthInfo>;
+  // Core
   i18n: II18nNamespace;
   users: IUsersNamespace;
   projects: IProjectsNamespace;
-  settings: ISettingsNamespace;
+  settings: ISettingsNamespace;   // get/set including key_source_*
   assessment: IAssessmentNamespace;
-  session: ISessionNamespace;
+  session: ISessionNamespace;     // includes streamMessage()
   tracking: ITrackingNamespace;
   tools: IToolsNamespace;
   curricula: ICurriculaNamespace;
   topics: ITopicsNamespace;
   lessons: ILessonsNamespace;
   plugins: IPluginsNamespace;
+  system: ISystemNamespace;
+  // Phase 12+
+  backup: IBackupNamespace;
+  export: IExportNamespace;
+  imports: IImportsNamespace;
+  // Phase 22 — taxonomy
+  subjects: ISubjectsNamespace;
+  tags: ITagsNamespace;
+  projectTaxonomy: IProjectTaxonomyNamespace;
+  // Phase 29-32 — gamification + exports
+  gamification: IGamificationNamespace;
+  anki: IAnkiNamespace;
+  notebooklm: INotebookLmNamespace;
+  pronunciation: IPronunciationNamespace;
 }
 ```
 
@@ -41,12 +57,9 @@ Every method delegates 1:1. Behaviour is identical to v0.6.0.
 ## DexieStorage
 
 `storage/dexie-storage.ts` persists everything to IndexedDB
-via Dexie 4.4.2. Schema in `storage/db.ts` mirrors all 14
-SQLAlchemy models 1:1 (users, userSettings, learningProjects,
-learningProfiles, curricula, learningTopics, lessons,
-learningSessions, sessionMessages, sessionRatings,
-sessionNotes, progressCommits, methodSwitches,
-stepEvaluations).
+via Dexie 4.4.2. Schema in `storage/db.ts` mirrors all 25
+SQLAlchemy models 1:1, plus the 4 association tables
+(project_subjects / project_tags / etc.).
 
 Sub-modules under `storage/` carry the ported logic:
 
@@ -123,6 +136,14 @@ In Dexie mode the user's API key sits in IndexedDB cleartext
 The Server-mode behaviour is different: API keys go through
 Fernet encryption at rest (`ADAPTIVE_LEARNER_SECRET_KEY`).
 ApiStorage never sees the cleartext.
+
+Since v1.20.0 / Phase 34, both modes also surface a per-
+provider source attribution
+(`UserSettings.key_source_anthropic | openai | gemini`) so
+the UI can render "Key from: secrets.yaml" / "environment" /
+"Settings". In Dexie mode the source collapses to `settings`
+or `none` because the browser sandbox has no filesystem
+access — `secrets.yaml` is a desktop / server-mode concept.
 
 ## Mode resolution
 

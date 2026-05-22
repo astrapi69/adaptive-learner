@@ -1,120 +1,184 @@
 # Architecture
 
-Adaptive Learner is a four-layer system. The boundaries are
-strict: each layer's code only knows about the layer below it.
+Adaptive Learner is a 4-layer plugin-driven application.
 
 ```
-1. Frontend       React 19 + TypeScript 6 (strict) + Vite 8
-2. Backend        FastAPI + SQLAlchemy 2.0 + SQLite + Pydantic v2
-3. PluginForge    External PyPI package, based on pluggy
-4. Plugins        Standalone packages, registered via entry points
+┌─────────────────────────────────────────────────────────────┐
+│ Frontend           React 19 + TypeScript 6 + Vite 8 +       │
+│                    Vitest 4 + Dexie 4 (IndexedDB) + TipTap  │
+└─────────────────────────────────────────────────────────────┘
+                            ↑↓ /api/*
+┌─────────────────────────────────────────────────────────────┐
+│ Backend            FastAPI ^0.136 + SQLAlchemy ^2.0 +       │
+│                    Pydantic v2 + Alembic + Fernet           │
+└─────────────────────────────────────────────────────────────┘
+                            ↑↓ hookspecs
+┌─────────────────────────────────────────────────────────────┐
+│ PluginForge        ^0.10.0 (external PyPI; identity-gated   │
+│                    via target_application)                  │
+└─────────────────────────────────────────────────────────────┘
+                            ↑↓ entry_points
+┌─────────────────────────────────────────────────────────────┐
+│ Plugins            10 packages under plugins/               │
+│                    (ai-{anthropic,openai,gemini}, assessment,│
+│                    session, tracking, tools, gamification,  │
+│                    anki, notebooklm)                        │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-## Frontend: dual storage
+New features ALWAYS belong in a plugin, unless they touch the
+core (users / projects / settings / curriculum / topics /
+lessons / backup / sync / system / import).
 
-Since v0.7.0 the frontend has a single seam where the backing
-store is chosen. Every page consumes an `IStorageService` via
-the `getStorage()` factory. Two implementations satisfy it:
+## Dual storage (v0.7.0)
 
-- **ApiStorage** — thin pass-through to `api/client.ts`, which
-  calls the FastAPI backend. v0.6.0 behaviour.
-- **DexieStorage** — persists everything in IndexedDB via
-  Dexie 4.4.2. AI calls fire direct to Anthropic / OpenAI /
-  Gemini from the browser.
+The frontend has a single seam where the backing store is
+chosen: `getStorage(): IStorageService`. Two implementations
+satisfy one contract:
 
-The factory reads `localStorage["adaptive-learner.storage_mode"]`
-(set by Settings) then `VITE_STORAGE_MODE` (set by GH Pages
-build) then defaults to `api`. Switching is intentionally not
-a live-swap — Settings persists the choice and toasts a
-reload-required notice.
+- **`apiStorage`** (default): thin wrapper around
+  `api/client.ts` that talks to the FastAPI backend.
+- **`dexieStorage`** (local-first): full IndexedDB stack
+  mirroring all 25 SQLAlchemy models. AI calls fire direct
+  from the browser via `storage/ai-providers.ts`.
 
-[Storage layer in depth](storage-layer.md)
+`IStorageService` exposes 22 namespaces (users, projects,
+settings, assessment, session with streaming, tracking,
+tools, curricula, topics, lessons, plugins, system, backup,
+export, subjects, tags, projectTaxonomy, imports,
+gamification, anki, pronunciation, notebooklm). Both
+backings implement every method.
 
-## Backend: layered FastAPI
+The factory reads
+`localStorage["adaptive-learner.storage_mode"]` then
+`VITE_STORAGE_MODE` (set by the GH Pages build) then
+defaults to `api`. Switching modes is not a live-swap: the
+Settings page persists the choice and toasts a reload-
+required notice.
+
+## Three-layer secrets (v1.20.0 / Phase 34)
 
 ```
-UI (React) -> API client -> FastAPI router -> service/plugin -> SQLAlchemy -> SQLite
+env vars            > secrets.yaml         > Fernet DB column
+ADAPTIVE_LEARNER_*    ~/.config/...yaml      api_key_<provider>
 ```
 
-Unidirectional. Routers are thin (validate input, call a
-service, return the response). Business logic lives in
-service modules and plugins. Services throw
-`AdaptiveLearnerError` subclasses; the global exception
-handler in `main.py` maps them to HTTP codes.
+Every AI call walks the chain via
+`services/settings.resolve_api_key`:
 
-## Plugin system
+1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` env var.
+2. `ai.<provider>.api_key` in
+   `~/.config/adaptive_learner/secrets.yaml`.
+3. Fernet-decrypted DB column.
+4. `None` — the AI call surfaces an error to the UI.
 
-[PluginForge](https://github.com/astrapi69/pluginforge) is an
-external PyPI package (we pin `^0.7.0`). It wraps
-[pluggy](https://pluggy.readthedocs.io/) — Python's de-facto
-plugin spec used by pytest, tox, devpi, and many more.
+Source attribution lives on `UserSettingsOut.key_source_*`
+(enum: `env` / `secrets_yaml` / `settings` / `none`).
+Settings UI disables Save / Remove when source is env or
+secrets_yaml.
 
-v0.7.0 brought identity gating: every plugin declares
-``target_application = "adaptive_learner"`` and the
-``PluginManager`` is constructed with
-``app_id="adaptive_learner"``. Foreign plugins that target a
-different app are filtered out automatically, even when their
-entry-point group collides.
+Same chain applies to `default_model` overrides per
+provider; `secrets.yaml` beats the UI override per the
+Phase 34 design (file-config wins over UI for power users).
 
-Eight hook specifications live in `backend/app/hookspecs.py`.
-Seven plugins ship with the project:
+## Plugin structure
 
-| Plugin | Routes | Hooks |
+```
+plugins/adaptive-learner-plugin-<name>/
+  adaptive_learner_<name>/
+    plugin.py     # <Name>Plugin(BasePlugin), hook implementations
+    routes.py     # FastAPI router (delegates to service functions)
+    <module>.py   # business logic
+  tests/
+    test_*.py     # pytest tests
+  pyproject.toml  # entry point: [project.entry-points."adaptive_learner.plugins"]
+```
+
+- Plugin class inherits from `BasePlugin` (pluginforge).
+- Business logic lives in its own modules, NOT in routes.py.
+- routes.py contains only FastAPI endpoints that delegate.
+- Hook specs live in `backend/app/hookspecs.py`.
+- Plugin dependencies as a class attribute: `depends_on =
+  ["session"]`.
+- All plugins are free (MIT). The licensing infrastructure
+  exists but is dormant (`LICENSING_ENABLED = False`).
+
+## Hooks (8 specs in `backend/app/hookspecs.py`)
+
+| Hook | When | First-result? |
 |---|---|---|
-| assessment | /questions, /evaluate, /profile/{id} | get_assessment_questions, calculate_profile |
-| ai-anthropic | (hook-only) | ai_complete (firstresult, model `claude-*`) |
-| ai-openai | (hook-only) | ai_complete (firstresult, model `gpt-*`) |
-| ai-gemini | (hook-only) | ai_complete (firstresult, model `gemini-*`) |
-| session | /start, /{id}/message, /{id}/rate, /{id}/end, /switch-recommendation/{id}, /{id}/switch | create_session_prompt (firstresult), recommend_method_switch |
-| tracking | /progress/{id}, /commits/{id} | on_session_complete, get_progress_summary |
-| tools | /recommendations/{id}, /spaced/{id} | get_tool_recommendations |
-
-PluginForge bootstraps the registry in
-`backend/app/main.py` at app startup. Plugin discovery is via
-entry points in each plugin's `pyproject.toml`:
-
-```toml
-[project.entry-points."adaptive_learner.plugins"]
-my_plugin = "my_plugin.plugin:MyPlugin"
-```
+| `get_assessment_questions(lang)` | Assessment page load | yes |
+| `calculate_profile(answers)` | Assessment submit | yes |
+| `create_session_prompt(...)` | Each chat turn | yes |
+| `ai_complete(messages, model, api_key, max_tokens)` | Standard AI call | yes (provider routes by model prefix) |
+| `ai_complete_async(...)` | Parallel cycle-boundary eval (v1.5.0) | yes |
+| `ai_complete_stream(...)` | Streaming session reply (v1.6.0) | yes |
+| `recommend_method_switch(...)` | Dashboard + Session | yes |
+| `on_session_complete(session, rating)` | Session end | broadcast |
+| `get_progress_summary(project_id)` | Dashboard widgets | broadcast |
+| `get_tool_recommendations(profile, lang)` | Dashboard tools | broadcast |
 
 ## Data flow
 
-A typical session message:
-
 ```
-User types -> SessionChat.send() -> getStorage().session.message()
-                                                |
-                          ApiStorage                       DexieStorage
-                              |                                |
-        POST /api/plugins/session/{id}/message     direct AI call (Anthropic/OpenAI/Gemini)
-                              |                                |
-                  session plugin route                  step evaluator
-                              |                                |
-                    ai_complete hook                   write to IndexedDB
-                              |
-                       step evaluator
-                              |
-                  write to SQLite tables
+UI (React) → IStorageService
+            → (API mode) FastAPI router → service → SQLAlchemy → SQLite
+            → (Dexie mode) Dexie table → IndexedDB
+            ↓
+            AI orchestrator → resolve_api_key (env > yaml > DB)
+                            → pluginforge → provider plugin's ai_complete*
+                            → Anthropic / OpenAI / Gemini SDK
 ```
 
-Both paths produce the same `SessionMessageExchangeResult`
-shape; the frontend doesn't branch on storage mode for chat
-behaviour.
+Unidirectional. No direct DB access from routers (services
+own the SQLAlchemy work). No frontend code in the backend.
 
-## Repository layout
+## Error handling
 
 ```
-adaptive-learner/
-├── backend/app/           FastAPI shell + database + hookspecs + plugin manager
-├── backend/config/        app.yaml + i18n/ (8 languages)
-├── frontend/src/storage/  IStorageService + ApiStorage + DexieStorage
-├── frontend/src/pages/    Landing, Onboarding, Assessment, Dashboard, ...
-├── plugins/               7 plugins, each a standalone Poetry package
-├── launcher/              Cross-OS PyInstaller desktop launcher
-├── docs/help/             MkDocs source for this site
-├── .github/workflows/     CI + GH Pages deploy
-└── Makefile, docker-compose.yml
+Frontend       ApiError (status + detail) → toast for the user
+API client     HTTP error → converted to ApiError
+Router         Thin, catches nothing. Global exception handler maps.
+Service        Throws AdaptiveLearnerError subclasses
+Plugin         Throws PluginError(plugin_name, message)
+External       ExternalServiceError(service, message) for provider SDKs
 ```
 
-[Setup the dev environment](setup.md)
+Services NEVER throw `HTTPException`; routers catch
+NOTHING. The global exception handler in `main.py` maps
+domain errors to HTTP status codes. See
+`.claude/rules/code-hygiene.md` for the full pattern.
+
+## Persistence
+
+- Backend: SQLAlchemy + SQLite. Alembic migrations in
+  `backend/migrations/versions/`.
+- Sync surface: 28 tables (v1.19.0 baseline). Append-only
+  history rows (sessions, messages, ratings, progress
+  commits, step evaluations, method switches, imported
+  conversations, imported messages, anki cards, study
+  questions) plus mutable settings + curriculum rows.
+- Backup format: JSON; API keys stripped on export; restore
+  is a merge.
+- Test isolation: production data dirs carry a
+  `.adaptive-learner-production` marker; if a test ever
+  sees it, the run aborts with `pytest.exit(returncode=2)`.
+
+## Theming
+
+5 themes (Classic, Cool Modern, Nord, Notebook, Studio) ×
+light/dark = 10 variants. CSS variables throughout; no
+Tailwind. Custom properties in
+`frontend/src/styles/global.css`. New UI elements MUST use
+the variable set.
+
+## Mobile / PWA
+
+`@media (max-width: 768px)` is the canonical mobile cut-over
+(hamburger drawer, 44×44 touch targets, stacked layouts).
+`@media (max-width: 360px)` is the extreme-narrow safety
+net. Desktop styles ≥769px unchanged.
+
+Service worker (Workbox via vite-plugin-pwa): NetworkFirst
+on GET `/api/` with 4s timeout, 24h LRU, 60-entry cap.
+Mutating `/api/` is NetworkOnly.

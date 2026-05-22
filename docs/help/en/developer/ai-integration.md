@@ -1,9 +1,10 @@
 # AI integration
 
-AdaptiveLearner runs every learning conversation through two
-AI calls per round-trip — one for the response, one for the
-step evaluator. Three providers ship out of the box; new
-providers plug in via the `ai_complete` hook.
+Adaptive Learner runs every learning conversation through up
+to **three** AI calls per round-trip — the streamed response,
+the step evaluator, and (at step 7) the topic-transition
+evaluator. Three providers ship out of the box; new providers
+plug in via the `ai_complete*` hook family.
 
 ## The ai_complete hook
 
@@ -36,40 +37,77 @@ def ai_complete(
 Three plugins ship: `ai-anthropic` (claude-*), `ai-openai`
 (gpt-*), `ai-gemini` (gemini-*).
 
-## Provider selection logic
+## Async + streaming variants
 
-The session route's `_resolve_active_key()` looks up:
+```python
+@hookspec(firstresult=True)
+async def ai_complete_async(messages, model, api_key, max_tokens) -> str:
+    """Awaitable; same shape as ai_complete. v1.5.0+."""
 
-1. The user's `UserSettings.active_provider` (`anthropic` /
-   `openai` / `gemini`).
-2. The matching `api_key_<provider>` field on `UserSettings`
-   (decrypted with Fernet at read time).
-3. The matching `model_override_<provider>` field (or fall
-   back to `DEFAULT_MODELS[provider]`).
+@hookspec(firstresult=True)
+def ai_complete_stream(messages, model, api_key, max_tokens):
+    """Returns an async iterator of text deltas. v1.6.0+."""
+```
 
-Then it fires `ai_complete` with those values. The matching
-provider's plugin returns the text; the others return None
-(firstresult stops at the first hit).
+`ai_complete_async` is used by the session route at the
+step 6→7 cycle boundary so step-evaluation +
+topic-transition fire concurrently via `asyncio.gather`
+(`async_evaluation: true` in `app.yaml`).
 
-## Dual-prompt architecture
+`ai_complete_stream` powers the streaming SSE endpoint
+`POST /api/plugins/session/{id}/message/stream` that emits
+`start` / `chunk` / `done` events.
+
+## Provider selection logic (v1.20.0)
+
+The session route's `_resolve_active_key()` calls
+`services/settings.resolve_api_key(db, user_id, provider)`
+which walks the three-layer chain:
+
+1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` env var.
+2. `ai.<provider>.api_key` in
+   `~/.config/adaptive_learner/secrets.yaml`.
+3. Fernet-decrypted `UserSettings.api_key_<provider>`.
+4. `None` — the call surfaces `ai_error` to the UI.
+
+`resolve_default_model(db, user_id, provider)` walks the same
+chain for the model override (env > yaml > UI override >
+`DEFAULT_MODELS[provider]`).
+
+Then `ai_complete*` fires with the resolved values. The
+matching provider's plugin returns the text; the others
+return None (firstresult stops at the first hit).
+
+## Dual-prompt architecture (v0.5.0) + auto-loop (v1.4.0)
 
 Every `POST /api/plugins/session/{id}/message` for a `user`
-role makes **two** AI calls:
+role makes up to three AI calls:
 
-1. **Learning reply** — uses the system prompt composed by
-   `build_prompt(project, profile, method, cycle_step, lang)`
-   from the 42-cell matrix. `max_tokens=1024`.
-2. **Step evaluator** — uses a separate system prompt
+1. **Learning reply** — streamed via `ai_complete_stream`.
+   System prompt composed by `build_prompt(project, profile,
+   method, cycle_step, lang)` from the 42-cell matrix.
+   `max_tokens=1024`. SSE emits `start` / `chunk` /
+   `done` events.
+2. **Step evaluator** — separate system prompt
    (`EVALUATION_SYSTEM_PROMPT`) asking the AI to read the
    exchange and emit a JSON verdict
    (`advance`, `confidence`, `reason`, `suggested_step`).
-   `max_tokens=256`.
+   `max_tokens=256`. The evaluator's verdict drives the
+   `cycle_step` advance (gated by `confidence ≥ 0.6`).
+3. **Topic transition** — only at step 7. A third AI call
+   judges whether the topic was integrated and whether to
+   start a new cycle on a new subtopic. Cap of
+   `max_cycles=5` per session.
 
-Both calls use the same provider + key. The evaluator's
-verdict drives the `cycle_step` advance. If the evaluator
-returns unparseable JSON, the deterministic +1 fallback kicks
-in (capped at 7) and `fallback_used=True` is recorded for
-audit.
+If the evaluator returns unparseable JSON, the deterministic
++1 fallback kicks in (capped at 7) and `fallback_used=True`
+is recorded.
+
+The cycle boundary (step 6 → 7) fires step-eval +
+topic-transition concurrently via `asyncio.gather` (saves ~T₂
+of latency). Returned in the `timings` block of the message
+response (`learning_ms`, `evaluation_ms`,
+`topic_transition_ms`, `total_ms`, `parallel_saved_ms`).
 
 ## The 42-cell prompt matrix
 
@@ -129,3 +167,29 @@ always apply the +1 advance regardless.
 The Dexie port mirrors this with a hardcoded 0.6 in
 `storage/session-flow.ts`. A future phase will expose this in
 the Settings UI.
+
+## Other AI surfaces (read-only summary)
+
+Several non-session features use the same AI provider plugins
+via `ai_complete*`:
+
+- **Conversation analyzer** (Phase 12 / v0.9.0+) —
+  `frontend/src/chat_import/analysis.ts` chunks imported
+  transcripts at 16K chars with 2-message overlap, fires
+  `ai_complete` per chunk, merges results. Extracts topic /
+  weaknesses / error_patterns / recommended_method /
+  vocabulary (since v1.20.0). Tolerant JSON parser handles
+  Haiku-class misbehaviour (fenced output, preamble prose).
+- **Anki extraction** (Phase 30 / v1.17.0) — `plugins/.../
+  anki/card_extraction.py` extracts flashcard candidates
+  from a session or conversation; vocabulary path runs
+  client-side without AI when `analysis_result.vocabulary`
+  is populated.
+- **NotebookLM study questions + guide** (Phase 32 /
+  v1.19.0) — `plugins/.../notebooklm/question_generator.py`
+  + `study_guide.py`; tolerant JSON parser; user-edited
+  questions skip re-generation.
+- **Pronunciation judge** (Phase 31 / v1.18.0) —
+  `plugins/.../pronunciation.py` generates target phrases
+  + judges learner audio similarity (eligibility gated by
+  the Languages subject taxonomy).

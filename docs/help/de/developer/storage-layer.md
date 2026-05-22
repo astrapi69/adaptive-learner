@@ -40,12 +40,9 @@ Jede Methode delegiert 1:1. Verhalten identisch zu v0.6.0.
 ## DexieStorage
 
 `storage/dexie-storage.ts` persistiert alles in IndexedDB via
-Dexie 4.4.2. Das Schema in `storage/db.ts` spiegelt alle 14
-SQLAlchemy-Models 1:1 (users, userSettings, learningProjects,
-learningProfiles, curricula, learningTopics, lessons,
-learningSessions, sessionMessages, sessionRatings,
-sessionNotes, progressCommits, methodSwitches,
-stepEvaluations).
+Dexie 4.4.2. Das Schema in `storage/db.ts` spiegelt alle 25
+SQLAlchemy-Models 1:1, plus die 4 Assoziations-Tabellen
+(`project_subjects` / `project_tags` etc.).
 
 Submodule unter `storage/` tragen die portierte Logik:
 

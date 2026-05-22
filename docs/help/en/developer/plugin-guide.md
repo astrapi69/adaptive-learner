@@ -22,15 +22,15 @@ cd plugins/adaptive-learner-plugin-hello
 ```toml
 [tool.poetry]
 name = "adaptive-learner-plugin-hello"
-version = "0.1.0"
+version = "1.0.0"
 description = "Adaptive Learner: hello-world plugin"
 authors = ["Your Name"]
 license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pluginforge = "^0.8.0"
-fastapi = "^0.118.0"
+pluginforge = "^0.10.0"
+fastapi = "^0.136.0"
 
 [project.entry-points."adaptive_learner.plugins"]
 hello = "adaptive_learner_hello.plugin:HelloPlugin"
@@ -53,12 +53,13 @@ from typing import Any
 
 class HelloPlugin(BasePlugin):
     name = "hello"
-    version = "0.1.0"
-    # pluginforge v0.7.0+ (we ship ^0.8.0) identity gating. Set this to
+    version = "1.0.0"
+    # pluginforge ^0.10.0 identity gating. Set this to
     # "adaptive_learner" so the host's PluginManager (which
     # passes ``app_id="adaptive_learner"``) recognises the
-    # plugin as targeted at this app. Plugins without this
-    # attribute will be filtered out once v0.8.0 hosts ship.
+    # plugin as targeted at this app. The v0.9.0 transition
+    # made this a HARD filter — plugins without it are
+    # rejected at discovery time.
     target_application = "adaptive_learner"
     depends_on: list[str] = []
 
@@ -130,18 +131,30 @@ make dev
 curl http://localhost:18001/api/plugins/hello/greet
 ```
 
-## The 8 hookspecs
+## The 10 hookspecs
 
 All hook specifications live in `backend/app/hookspecs.py`:
 
-1. `get_assessment_questions(lang: str)` — return question pack (list).
-2. `calculate_profile(answers: list)` — compute method weights (firstresult).
-3. `create_session_prompt(...)` — compose the system prompt (firstresult).
-4. `ai_complete(messages, model, api_key, max_tokens)` — call the AI (firstresult, model prefix matches).
-5. `recommend_method_switch(history, profile)` — return a switch recommendation or None.
-6. `on_session_complete(session, rating)` — side effect (e.g. write ProgressCommit).
-7. `get_progress_summary(project_id, db)` — return one namespace slice of the summary.
-8. `get_tool_recommendations(profile, lang)` — return ranked tools.
+1. `get_assessment_questions(lang: str)` — return question pack.
+2. `calculate_profile(answers: list)` — compute method weights
+   (firstresult).
+3. `create_session_prompt(...)` — compose the system prompt
+   (firstresult).
+4. `ai_complete(messages, model, api_key, max_tokens)` — call
+   the AI synchronously (firstresult, provider routes by model
+   prefix).
+5. `ai_complete_async(...)` — async variant for parallel
+   cycle-boundary evaluation (v1.5.0+, firstresult).
+6. `ai_complete_stream(...)` — streaming variant yielding text
+   deltas via SSE (v1.6.0+, firstresult).
+7. `recommend_method_switch(history, profile)` — return a
+   switch recommendation or None.
+8. `on_session_complete(session, rating)` — broadcast side
+   effect; gamification + tracking listen.
+9. `get_progress_summary(project_id, db)` — return one
+   namespace slice of the dashboard summary.
+10. `get_tool_recommendations(profile, lang)` — return ranked
+    tools.
 
 [Full hookspec reference](../api/hooks.md)
 

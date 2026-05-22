@@ -1,12 +1,13 @@
 # Deployment
 
-Drei Deployment-Modi ab v0.7.0:
+Vier Deployment-Modi ab v1.20.0:
 
-| Modus | Wo | Backend | KI-Aufrufe | Anwendungsfall |
+| Modus | Wo | Backend | KI-Aufrufe | Schlüssel-Quelle |
 |---|---|---|---|---|
-| Lokal-Dev | `make dev` | FastAPI auf :18001 | Serverseitig | Entwickeln |
-| GitHub Pages | `https://astrapi69.github.io/adaptive-learner/` | Keins (Dexie) | Browser-direkt | Public-Probelauf |
-| Server | Docker Compose | FastAPI im Container | Serverseitig | Selbst-gehostet |
+| Lokal-Dev | `make dev` | FastAPI auf :18001 | Serverseitig | env / secrets.yaml / DB |
+| GitHub Pages | `astrapi69.github.io/adaptive-learner/` | Keins (Dexie) | Browser-direkt | DB (IndexedDB) |
+| Desktop-Launcher | PyInstaller-Binary | FastAPI lokal hochgefahren | Serverseitig | secrets.yaml (autom. erstellt) / Einstellungs-UI |
+| Docker | Docker-Compose-Selbst-Host | FastAPI im Container | Serverseitig | env / Einstellungs-UI |
 
 ## Lokale Entwicklung
 

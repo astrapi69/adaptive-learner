@@ -1,12 +1,13 @@
 # Deployment
 
-Three deployment modes ship with v0.7.0+:
+Four deployment modes ship at v1.20.0:
 
-| Mode | Where | Backend | AI calls | Use case |
+| Mode | Where | Backend | AI calls | Key source |
 |---|---|---|---|---|
-| Local dev | `make dev` | FastAPI on :18001 | Server-side | Develop |
-| GitHub Pages | `https://astrapi69.github.io/adaptive-learner/` | None (Dexie) | Browser-direct | Public try |
-| Server | Docker Compose | FastAPI in container | Server-side | Self-hosted |
+| Local dev | `make dev` | FastAPI on :18001 | Server-side | env / secrets.yaml / DB |
+| GitHub Pages | `astrapi69.github.io/adaptive-learner/` | None (Dexie) | Browser-direct | DB (IndexedDB) |
+| Desktop launcher | PyInstaller binary | FastAPI bootstrapped locally | Server-side | secrets.yaml (auto-created) / Settings UI |
+| Docker | Docker Compose self-host | FastAPI in container | Server-side | env / Settings UI |
 
 ## Local development
 
@@ -82,12 +83,28 @@ Three things matter for prod:
 1. **`ADAPTIVE_LEARNER_SECRET_KEY`**: must be a stable Fernet
    key. Generate once, store it somewhere safe (HashiCorp
    Vault, AWS Secrets Manager, a sealed `.env`). Losing it
-   means all encrypted API keys become unreadable.
+   means all encrypted API keys become unreadable. The app
+   fails hard at startup if it's unset (no silent default).
 2. **`ADAPTIVE_LEARNER_CORS_ORIGINS`**: comma-separated list
    of allowed origins. Default is permissive; tighten it down
    for prod.
 3. **`ADAPTIVE_LEARNER_DEBUG`**: leave unset / false in prod.
    Debug mode exposes stack traces in error responses.
+
+For containers, env vars are the idiomatic injection channel.
+The `~/.config/adaptive_learner/secrets.yaml` overlay is
+meant for desktop / launcher use; you can bind-mount it
+into a container too if you prefer one config file over
+several env vars.
+
+## Desktop launcher
+
+The PyInstaller binaries under `launcher/` bootstrap a local
+FastAPI on `http://localhost:7880`, then open the user's
+default browser. On first start the launcher also creates
+`~/.config/adaptive-learner/secrets.yaml` as a commented
+template + `chmod 0600` on POSIX so the user can drop their
+API keys there without ever touching the Settings UI.
 
 The full three-layer config chain (project YAML < user overlay
 < env vars) is documented in `docs/configuration.md`.

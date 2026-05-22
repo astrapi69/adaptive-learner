@@ -18,16 +18,37 @@ Backend-Speicher gewählt wird. Jede Seite konsumiert ein
 Implementierungen erfüllen das Interface:
 
 - **ApiStorage** — dünner Durchgriff auf `api/client.ts`,
-  ruft das FastAPI-Backend. v0.6.0-Verhalten.
+  ruft das FastAPI-Backend.
 - **DexieStorage** — persistiert alles in IndexedDB via
-  Dexie 4.4.2. KI-Aufrufe gehen direkt aus dem Browser an
+  Dexie 4. KI-Aufrufe gehen direkt aus dem Browser an
   Anthropic / OpenAI / Gemini.
+
+`IStorageService` umfasst inzwischen 22 Namespaces über die
+Phasen 7–34 hinweg (Users, Projects, Settings inkl.
+`key_source_*`, Assessment, Session mit `streamMessage`,
+Tracking, Tools, Curricula, Topics, Lessons, Plugins, System,
+Backup, Export, Subjects, Tags, ProjectTaxonomy, Imports,
+Gamification, Anki, Pronunciation, NotebookLM).
 
 Die Factory liest `localStorage["adaptive-learner.storage_mode"]`
 (in den Einstellungen gesetzt), dann `VITE_STORAGE_MODE`
 (im GH-Pages-Build gesetzt), Fallback `api`. Der Wechsel ist
-bewusst kein Live-Swap — Einstellungen speichert die Wahl und
-zeigt einen "Reload nötig"-Toast.
+bewusst kein Live-Swap.
+
+## Drei-Schichten-Geheimnisse (v1.20.0 / Phase 34)
+
+Jeder KI-Aufruf läuft durch `services/settings.resolve_api_key`:
+
+1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungsvariable.
+2. `ai.<provider>.api_key` in
+   `~/.config/adaptive_learner/secrets.yaml`.
+3. Fernet-entschlüsselte DB-Spalte.
+4. `None` — der Aufruf zeigt einen Fehler in der UI.
+
+Die Quelle wird als `UserSettingsOut.key_source_*`-Enum
+(`env` / `secrets_yaml` / `settings` / `none`) zum Frontend
+zurückgegeben. Die Einstellungs-UI deaktiviert Speichern /
+Entfernen, wenn die Quelle `env` oder `secrets_yaml` ist.
 
 [Storage-Layer im Detail](storage-layer.md)
 

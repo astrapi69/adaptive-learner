@@ -33,19 +33,29 @@ picking the wrong Python. Run `poetry env use python3.12` in
 
 ## Configuration
 
-The backend reads its config from a three-layer chain:
+The backend reads its config from a three-layer chain
+(highest priority wins):
 
-1. **Defaults** in `backend/config/app.yaml`.
-2. **User overlay** at `~/.config/adaptive_learner/secrets.yaml`
-   (gitignored, optional).
-3. **Environment variables** prefixed `ADAPTIVE_LEARNER_*` —
-   highest precedence.
+1. **Environment variables** prefixed `ADAPTIVE_LEARNER_*`.
+2. **User secrets** at `~/.config/adaptive_learner/secrets.yaml`
+   — auto-generated as a commented template on first start
+   (`chmod 0600` on POSIX); never committed to git.
+3. **Defaults** in `backend/config/app.yaml`.
 
-The one mandatory env var is `ADAPTIVE_LEARNER_SECRET_KEY` —
+Plus per-provider AI key resolution layered on top:
+**env > secrets.yaml > Fernet-encrypted DB column** (set via
+the Settings UI), surfaced to the UI as the `key_source_*`
+field on `UserSettingsOut`.
+
+The one mandatory secret is `ADAPTIVE_LEARNER_SECRET_KEY` —
 used to encrypt user API keys at rest with Fernet. Generate
 one with `python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"`.
-If you don't set it, `start.sh` auto-generates one and writes
-it to `~/.config/adaptive_learner/secrets.yaml`.
+Three places to put it (highest priority wins):
+`ADAPTIVE_LEARNER_SECRET_KEY` env var, `secret_key:` in
+`secrets.yaml`, or `make dev-secret` for a one-shot dev key.
+The app fails hard at startup if the key is unset (no
+silent-generated-default footgun — see
+[docs/configuration.md](../../configuration.md)).
 
 ## Run
 
@@ -79,9 +89,11 @@ E2E tests:
 cd e2e && npx playwright test
 ```
 
-Smoke specs only — no UI exhaustive coverage yet. Smoke specs
-cover landing, onboarding, session, settings, curriculum,
-mobile viewports.
+16 smoke spec files at v1.20.0: landing, onboarding +
+assessment, session (3-chunk SSE), curriculum, settings,
+mobile viewports, sync pairing, backup roundtrip,
+multi-cycle auto-loop, import + analysis, MD export,
+subjects/tags filter, rich-text notes, model picker.
 
 ## Linting + formatting
 

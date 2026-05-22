@@ -23,15 +23,15 @@ cd plugins/adaptive-learner-plugin-hello
 ```toml
 [tool.poetry]
 name = "adaptive-learner-plugin-hello"
-version = "0.1.0"
+version = "1.0.0"
 description = "Adaptive Learner: hello-world plugin"
 authors = ["Your Name"]
 license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pluginforge = "^0.8.0"
-fastapi = "^0.118.0"
+pluginforge = "^0.10.0"
+fastapi = "^0.136.0"
 
 [project.entry-points."adaptive_learner.plugins"]
 hello = "adaptive_learner_hello.plugin:HelloPlugin"
@@ -54,12 +54,13 @@ from typing import Any
 
 class HelloPlugin(BasePlugin):
     name = "hello"
-    version = "0.1.0"
-    # pluginforge v0.7.0+ (we ship ^0.8.0) Identitäts-Gating. Setze auf
+    version = "1.0.0"
+    # pluginforge ^0.10.0 Identitäts-Gating. Setze auf
     # "adaptive_learner", damit der ``PluginManager`` des Hosts
     # (der ``app_id="adaptive_learner"`` übergibt) das Plugin
-    # als für diese App vorgesehen erkennt. Plugins ohne dieses
-    # Attribut werden mit v0.8.0-Hosts ausgefiltert.
+    # als für diese App vorgesehen erkennt. Der v0.9.0-Übergang
+    # hat dies zu einem HARTEN Filter gemacht — Plugins ohne
+    # das Attribut werden bei Discovery abgewiesen.
     target_application = "adaptive_learner"
     depends_on: list[str] = []
 
@@ -131,18 +132,30 @@ make dev
 curl http://localhost:18001/api/plugins/hello/greet
 ```
 
-## Die 8 Hookspecs
+## Die 10 Hookspecs
 
 Alle Hookspecs leben in `backend/app/hookspecs.py`:
 
-1. `get_assessment_questions(lang: str)` — Fragepack zurückgeben (Liste).
-2. `calculate_profile(answers: list)` — Methodengewichte berechnen (firstresult).
-3. `create_session_prompt(...)` — System-Prompt zusammensetzen (firstresult).
-4. `ai_complete(messages, model, api_key, max_tokens)` — KI aufrufen (firstresult, Modell-Präfix passt).
-5. `recommend_method_switch(history, profile)` — Switch-Empfehlung oder None.
-6. `on_session_complete(session, rating)` — Seiteneffekt (z.B. ProgressCommit schreiben).
-7. `get_progress_summary(project_id, db)` — Namespace-Slice der Summary zurück.
-8. `get_tool_recommendations(profile, lang)` — gerankte Tools zurück.
+1. `get_assessment_questions(lang: str)` — Fragepack zurückgeben.
+2. `calculate_profile(answers: list)` — Methodengewichte
+   berechnen (firstresult).
+3. `create_session_prompt(...)` — System-Prompt
+   zusammensetzen (firstresult).
+4. `ai_complete(messages, model, api_key, max_tokens)` — KI
+   synchron aufrufen (firstresult, Anbieter routet nach
+   Modell-Präfix).
+5. `ai_complete_async(...)` — async-Variante für parallele
+   Zyklus-Grenz-Bewertung (v1.5.0+, firstresult).
+6. `ai_complete_stream(...)` — Streaming-Variante mit
+   Text-Deltas über SSE (v1.6.0+, firstresult).
+7. `recommend_method_switch(history, profile)` —
+   Switch-Empfehlung oder None.
+8. `on_session_complete(session, rating)` — Broadcast-
+   Seiteneffekt; Gamification + Tracking hören mit.
+9. `get_progress_summary(project_id, db)` — Namespace-Slice
+   der Dashboard-Summary zurück.
+10. `get_tool_recommendations(profile, lang)` — gerankte
+    Tools zurück.
 
 [Vollständige Hookspec-Referenz](../api/hooks.md)
 

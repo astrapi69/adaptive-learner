@@ -7,13 +7,14 @@ choice, CHANGELOG, and tag.
 
 ## Versioning convention
 
-AdaptiveLearner follows Semantic Versioning 2.0.0:
+Adaptive Learner follows Semantic Versioning 2.0.0:
 
 - **Major (X.0.0)** — breaking changes in API or
-  architecture. Rare in the 0.x phase.
-- **Minor (0.X.0)** — new features, backward-compatible. The
-  default for each phase completion.
-- **Patch (0.X.Y)** — bug fixes, backward-compatible. Hotfix
+  architecture. Reserved for future big shifts.
+- **Minor (X.Y.0)** — new features, backward-compatible.
+  Default for each phase completion (we're at v1.20.0 / 34
+  phases shipped).
+- **Patch (X.Y.Z)** — bug fixes, backward-compatible. Hotfix
   chains.
 
 Pre-release tags (`-alpha`, `-beta`, `-rc`) are not used.
@@ -30,11 +31,13 @@ git diff --stat $(git describe --tags --abbrev=0)..HEAD
 
 Review what landed since the last tag. Decide the bump tier.
 
-### 2. Update the CHANGELOG entry
+### 2. Write the per-release notes
 
-Add a top-block entry to `docs/CHANGELOG.md` (currently
-unstructured prose; the project plan tracks per-version notes
-under "Phase history"). Group by Added / Changed / Fixed.
+Add a `changelog/releases/vX.Y.Z.md` file following the
+shape of the most recent release (Added / Fixed / Tests /
+Closed backlog items / Commits / Upgrade notes). The
+release-gate CI checks that this file exists for the tag
+being pushed.
 
 ### 3. Hand-edit the canonical version
 
@@ -43,7 +46,7 @@ The only hand-edited version field in the entire repo:
 ```toml
 # backend/pyproject.toml
 [tool.poetry]
-version = "0.X.Y"
+version = "X.Y.Z"
 ```
 
 ### 4. Propagate
@@ -52,21 +55,23 @@ version = "0.X.Y"
 make sync-versions
 ```
 
-Updates 12 files automatically:
+Updates **18 files** automatically:
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
-- `launcher/adaptive-learner-launcher.spec` (CFBundle plist)
-- 7× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- `install.sh` (regenerated from template)
-- `install.ps1` (regenerated from template)
+- `launcher/adaptive-learner-launcher.spec` (CFBundle plist
+  + CFBundleShortVersionString)
+- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
+- 3× plugin `__init__.py` `__version__` literals
+- `install.sh` (regenerated from `install.sh.template`)
+- `install.ps1` (regenerated from `install.ps1.template`)
 
 ### 5. Verify
 
 ```bash
 make sync-versions-check     # exits non-zero on drift
-make test                    # 1312 tests must pass
+make test                    # 2634 tests must pass
 cd frontend && npm run build # must succeed
 ```
 
@@ -79,8 +84,8 @@ your local check and the push — investigate.
 
 ```bash
 git add -A
-git commit -m "chore(release): bump to v0.X.Y + docs sweep"
-git tag -a v0.X.Y -m "v0.X.Y — phase headline + summary"
+git commit -m "chore(release): bump version to vX.Y.Z"
+git tag -a vX.Y.Z -m "vX.Y.Z — phase headline + summary"
 ```
 
 Tag messages are annotated, multi-line, and summarise the
@@ -106,19 +111,21 @@ Triggers:
 ### 8. Create the GitHub Release
 
 ```bash
-gh release create v0.X.Y --generate-notes
+gh release create vX.Y.Z \
+  --title "Adaptive Learner vX.Y.Z" \
+  --notes-file changelog/releases/vX.Y.Z.md
 ```
 
-`--generate-notes` pulls the commit list since the last tag.
-You can edit the release notes after creation to highlight
-the headline changes.
+`--notes-file` ensures the GitHub Release page matches the
+per-release notes committed in step 2.
 
 ## Plugin versions
 
-Plugins lock-step with the canonical app version since v0.2.0
-— the same number across all 7 plugin `pyproject.toml` files.
-A future "core vs third-party plugin" decision may unlink
-them, but the v0.7.0 setup is uniform.
+Plugins lock-step with the canonical app version. The same
+number across all 10 plugin `pyproject.toml` files plus the
+three plugin `__init__.py` `__version__` literals. A future
+"core vs third-party plugin" decision may unlink them, but
+the v1.20.0 setup is uniform across the 18 propagated files.
 
 ## Hotfix flow
 

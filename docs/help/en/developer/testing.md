@@ -4,22 +4,26 @@ AdaptiveLearner's test discipline is enforced by `make test`
 on every change. The strategy is a pyramid: unit at the base,
 integration in the middle, E2E smoke at the top.
 
-## Test counts (v0.7.0)
+## Test counts (v1.20.0)
 
 | Layer | Count | Tool |
 |---|---|---|
-| Backend unit + integration | 447 | pytest |
-| Plugin tests (7 plugins) | 478 | pytest |
-| Frontend unit + integration | 387 | Vitest |
-| E2E smoke | 8 specs | Playwright |
-| **Total** | **1312 + 8** | |
+| Backend unit + integration | 786 | pytest ^9 |
+| Plugin tests (10 plugins) | 615 | pytest ^9 |
+| Frontend unit + integration | 1233 | Vitest 4 |
+| E2E smoke | 16 spec files | Playwright |
+| **Total (`make test`)** | **2634** | |
+
+Plugin breakdown: assessment 110 + ai-anthropic 34 +
+ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 +
+tools 58 + gamification 23 + anki 20 + notebooklm 27.
 
 ## Backend pytest
 
 ```bash
-make test-backend      # 447 tests, ~10s
+make test-backend      # 786 tests, ~35s
 cd backend && poetry run pytest -k "test_session" -v
-cd backend && poetry run pytest --pdb  # drop into debugger on first failure
+cd backend && poetry run pytest --pdb
 ```
 
 Tests live in `backend/tests/`. Fixtures in `conftest.py`

@@ -5,20 +5,24 @@ jeder Änderung erzwungen. Die Strategie ist eine Pyramide:
 Unit-Tests an der Basis, Integration in der Mitte, E2E-Smoke
 oben.
 
-## Test-Zahlen (v0.7.0)
+## Test-Zahlen (v1.20.0)
 
 | Schicht | Anzahl | Werkzeug |
 |---|---|---|
-| Backend-Unit + -Integration | 447 | pytest |
-| Plugin-Tests (7 Plugins) | 478 | pytest |
-| Frontend-Unit + -Integration | 387 | Vitest |
-| E2E-Smoke | 8 Specs | Playwright |
-| **Gesamt** | **1312 + 8** | |
+| Backend-Unit + -Integration | 786 | pytest ^9 |
+| Plugin-Tests (10 Plugins) | 615 | pytest ^9 |
+| Frontend-Unit + -Integration | 1233 | Vitest 4 |
+| E2E-Smoke | 16 Spec-Dateien | Playwright |
+| **Gesamt (`make test`)** | **2634** | |
+
+Plugin-Aufschlüsselung: assessment 110 + ai-anthropic 34 +
+ai-openai 31 + ai-gemini 33 + session 215 + tracking 64 +
+tools 58 + gamification 23 + anki 20 + notebooklm 27.
 
 ## Backend-pytest
 
 ```bash
-make test-backend      # 447 Tests, ~10s
+make test-backend      # 786 Tests, ~35s
 cd backend && poetry run pytest -k "test_session" -v
 cd backend && poetry run pytest --pdb  # bei erstem Fehler in Debugger
 ```
@@ -34,7 +38,7 @@ Isolation ist hart — `ADAPTIVE_LEARNER_TEST=1` wird vor jedem
 Jedes Plugin hat sein eigenes `tests/`-Verzeichnis:
 
 ```bash
-make test-plugins              # alle 7
+make test-plugins              # alle 10
 make test-plugin-session       # nur eines
 cd plugins/adaptive-learner-plugin-session && poetry run pytest
 ```
@@ -46,7 +50,7 @@ du Hook-Firing testest.
 ## Frontend-Vitest
 
 ```bash
-make test-frontend                # 387 Tests, ~2s
+make test-frontend                # 1233 Tests, ~6s
 cd frontend && npx vitest         # Watch-Modus
 cd frontend && npx vitest run src/storage/  # ein Verzeichnis
 ```

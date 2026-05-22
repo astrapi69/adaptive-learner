@@ -54,21 +54,23 @@ version = "0.X.Y"
 make sync-versions
 ```
 
-Aktualisiert 12 Dateien automatisch:
+Aktualisiert **18 Dateien** automatisch:
 
 - `frontend/package.json`
 - `launcher/pyproject.toml`
 - `launcher/adaptive_learner_launcher/__init__.py`
-- `launcher/adaptive-learner-launcher.spec` (CFBundle-plist)
-- 7× `plugins/adaptive-learner-plugin-*/pyproject.toml`
-- `install.sh` (aus Template neu generiert)
-- `install.ps1` (aus Template neu generiert)
+- `launcher/adaptive-learner-launcher.spec`
+  (CFBundle-plist + CFBundleShortVersionString)
+- 10× `plugins/adaptive-learner-plugin-*/pyproject.toml`
+- 3× Plugin-`__init__.py`-`__version__`-Literale
+- `install.sh` (aus `install.sh.template` neu generiert)
+- `install.ps1` (aus `install.ps1.template` neu generiert)
 
 ### 5. Verifizieren
 
 ```bash
 make sync-versions-check     # Exit-Code != 0 bei Drift
-make test                    # 1312 Tests müssen passieren
+make test                    # 2634 Tests müssen passieren
 cd frontend && npm run build # muss durchlaufen
 ```
 
@@ -82,8 +84,8 @@ deinem lokalen Check und dem Push eingeführt — investigieren.
 
 ```bash
 git add -A
-git commit -m "chore(release): bump to v0.X.Y + docs sweep"
-git tag -a v0.X.Y -m "v0.X.Y — Phase-Headline + Zusammenfassung"
+git commit -m "chore(release): bump version to vX.Y.Z"
+git tag -a vX.Y.Z -m "vX.Y.Z — Phase-Headline + Zusammenfassung"
 ```
 
 Tag-Messages sind annotiert, mehrzeilig und fassen das
@@ -110,20 +112,23 @@ Löst aus:
 ### 8. GitHub-Release erstellen
 
 ```bash
-gh release create v0.X.Y --generate-notes
+gh release create vX.Y.Z \
+  --title "Adaptive Learner vX.Y.Z" \
+  --notes-file changelog/releases/vX.Y.Z.md
 ```
 
-`--generate-notes` zieht die Commit-Liste seit dem letzten
-Tag. Du kannst die Release-Notes nach dem Anlegen editieren,
-um die Headline-Änderungen hervorzuheben.
+`--notes-file` sorgt dafür, dass die GitHub-Release-Seite
+den in Schritt 2 committeten Per-Release-Notes entspricht.
 
 ## Plugin-Versionen
 
-Plugins laufen seit v0.2.0 im Gleichschritt mit der
-kanonischen App-Version — dieselbe Nummer in allen 7
-Plugin-`pyproject.toml`-Dateien. Eine spätere "Core vs
-Third-Party-Plugin"-Entscheidung könnte das entkoppeln; das
-v0.7.0-Setup ist einheitlich.
+Plugins laufen im Gleichschritt mit der kanonischen App-
+Version: dieselbe Nummer in allen 10
+Plugin-`pyproject.toml`-Dateien plus den drei Plugin-
+`__init__.py`-`__version__`-Literalen. Eine spätere „Core
+vs Third-Party-Plugin"-Entscheidung könnte das entkoppeln;
+das v1.20.0-Setup ist einheitlich über die 18 propagierten
+Dateien.
 
 ## Hotfix-Flow
 
