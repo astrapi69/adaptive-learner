@@ -747,3 +747,23 @@ notebooklm:
   zip_failed: ZIPエクスポートに失敗しました。
   guide_ready: 学習ガイドをダウンロードしました。
   guide_failed: 学習ガイドを生成できませんでした。
+
+ui:
+  error_report:
+    dialog_title: "問題を報告する"
+    intro: "Adaptive Learner がエラーを検出しました。開発者向けのバグレポートを準備できます。"
+    description_label: "再現手順（任意）"
+    description_placeholder: "エラーが発生したときに何をしていたかを簡単に説明してください。スキップする場合は空欄のままで構いません。"
+    include_error: "エラーメッセージとスタックトレース"
+    include_environment: "環境情報（バージョン、ブラウザ、OS）"
+    include_history: "操作履歴"
+    view: "表示"
+    privacy_note: "プロジェクトの内容、パスワード、API キーは一切送信されません。"
+    preview: "プレビューを表示"
+    hide_preview: "プレビューを隠す"
+    copy_preview: "プレビューをコピー"
+    copied: "コピーしました！"
+    copy_failed: "コピーに失敗しました"
+    open_github: "GitHub で開く"
+    close: "閉じる"
+    truncated: "GitHub の URL 長制限に合わせてレポートを切り詰めました。"

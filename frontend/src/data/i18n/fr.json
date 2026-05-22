@@ -816,5 +816,26 @@
     "zip_failed": "Échec de l'export ZIP.",
     "guide_ready": "Guide d'étude téléchargé.",
     "guide_failed": "Impossible de générer le guide d'étude."
+  },
+  "ui": {
+    "error_report": {
+      "dialog_title": "Report an issue",
+      "intro": "Adaptive Learner caught an error and can prepare a bug report for the developer.",
+      "description_label": "Steps to reproduce (optional)",
+      "description_placeholder": "Briefly describe what you were doing when the error appeared. Leave blank to skip.",
+      "include_error": "Error message and stacktrace",
+      "include_environment": "Environment info (version, browser, OS)",
+      "include_history": "Action history",
+      "view": "View",
+      "privacy_note": "No project content, no passwords, no API keys are ever sent.",
+      "preview": "Show preview",
+      "hide_preview": "Hide preview",
+      "copy_preview": "Copy preview",
+      "copied": "Copied!",
+      "copy_failed": "Copy failed",
+      "open_github": "Open on GitHub",
+      "close": "Close",
+      "truncated": "Report truncated to fit GitHub's URL length limit."
+    }
   }
 }

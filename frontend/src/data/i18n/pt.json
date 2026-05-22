@@ -816,5 +816,26 @@
     "zip_failed": "Falha na exportação ZIP.",
     "guide_ready": "Guia de estudo baixado.",
     "guide_failed": "Não foi possível gerar o guia de estudo."
+  },
+  "ui": {
+    "error_report": {
+      "dialog_title": "Comunicar um problema",
+      "intro": "Adaptive Learner detetou um erro e pode preparar um relatório de bug para o programador.",
+      "description_label": "Passos para reproduzir (opcional)",
+      "description_placeholder": "Descreve brevemente o que estavas a fazer quando o erro surgiu. Deixa em branco para ignorar.",
+      "include_error": "Mensagem de erro e stacktrace",
+      "include_environment": "Informações do ambiente (versão, navegador, SO)",
+      "include_history": "Histórico de ações",
+      "view": "Ver",
+      "privacy_note": "Nenhum conteúdo do projeto, palavras-passe ou chaves de API são enviados.",
+      "preview": "Mostrar pré-visualização",
+      "hide_preview": "Ocultar pré-visualização",
+      "copy_preview": "Copiar pré-visualização",
+      "copied": "Copiado!",
+      "copy_failed": "Falha ao copiar",
+      "open_github": "Abrir no GitHub",
+      "close": "Fechar",
+      "truncated": "Relatório truncado para respeitar o limite de URL do GitHub."
+    }
   }
 }

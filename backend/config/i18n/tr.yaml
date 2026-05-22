@@ -747,3 +747,23 @@ notebooklm:
   zip_failed: ZIP dışa aktarımı başarısız.
   guide_ready: Çalışma kılavuzu indirildi.
   guide_failed: Çalışma kılavuzu oluşturulamadı.
+
+ui:
+  error_report:
+    dialog_title: "Bir sorun bildir"
+    intro: "Adaptive Learner bir hata yakaladı ve geliştirici için bir hata raporu hazırlayabilir."
+    description_label: "Yeniden oluşturma adımları (isteğe bağlı)"
+    description_placeholder: "Hata göründüğünde ne yapmakta olduğunuzu kısaca anlatın. Atlamak için boş bırakın."
+    include_error: "Hata mesajı ve yığın izleme"
+    include_environment: "Ortam bilgisi (sürüm, tarayıcı, işletim sistemi)"
+    include_history: "İşlem geçmişi"
+    view: "Görüntüle"
+    privacy_note: "Hiçbir proje içeriği, parola veya API anahtarı asla gönderilmez."
+    preview: "Önizlemeyi göster"
+    hide_preview: "Önizlemeyi gizle"
+    copy_preview: "Önizlemeyi kopyala"
+    copied: "Kopyalandı!"
+    copy_failed: "Kopyalama başarısız"
+    open_github: "GitHub'da aç"
+    close: "Kapat"
+    truncated: "Rapor, GitHub URL sınırına uyacak şekilde kısaltıldı."

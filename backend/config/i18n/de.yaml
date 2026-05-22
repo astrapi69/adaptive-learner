@@ -747,3 +747,23 @@ notebooklm:
   zip_failed: ZIP-Export fehlgeschlagen.
   guide_ready: Lernleitfaden heruntergeladen.
   guide_failed: Lernleitfaden konnte nicht erstellt werden.
+
+ui:
+  error_report:
+    dialog_title: "Fehler melden"
+    intro: "Adaptive Learner hat einen Fehler erkannt und kann einen Bug-Report für den Entwickler vorbereiten."
+    description_label: "Schritte zur Reproduktion (optional)"
+    description_placeholder: "Beschreibe kurz, was du gemacht hast, als der Fehler auftrat. Leer lassen, um zu überspringen."
+    include_error: "Fehlermeldung und Stacktrace"
+    include_environment: "Umgebungsinformationen (Version, Browser, Betriebssystem)"
+    include_history: "Aktionsverlauf"
+    view: "Ansehen"
+    privacy_note: "Keine Projektinhalte, keine Passwörter, keine API-Schlüssel werden jemals gesendet."
+    preview: "Vorschau anzeigen"
+    hide_preview: "Vorschau ausblenden"
+    copy_preview: "Vorschau kopieren"
+    copied: "Kopiert!"
+    copy_failed: "Kopieren fehlgeschlagen"
+    open_github: "Auf GitHub öffnen"
+    close: "Schließen"
+    truncated: "Bericht gekürzt wegen GitHub-URL-Längenbegrenzung."
