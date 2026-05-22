@@ -27,41 +27,25 @@ tiebreaker.
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Add README explaining how to fork. Validates PluginForge
   ecosystem (3 repos: framework, template, app).
-- [ ] **BL-25**: Claude.ai per-conversation Markdown export
-  collapses to one big user message. The 80%-case input for
-  "I want to import this chat" is the `Export this chat as
-  Markdown` button inside Claude.ai. Today the entire
-  72-KB / 50-turn transcript lands as a single ``user``
-  message, no role boundaries, no per-turn timestamps,
-  ``source="manual"``. Auto-detect routes to
-  ``markdown_parser`` (correct — it is .md, not the JSON bulk
-  export), but neither ``## Prompt:`` nor ``## Response:`` is
-  in ``recogniseMarker``'s allowlist. Phase 33 audit fixture
-  + Vitest regression-pin at
-  ``frontend/src/chat_import/__fixtures__/claude-markdown-export.md``
-  + ``claude_markdown_export.audit.test.ts``; full findings
-  in ``docs/manual-tests/phase-33-import-audit.md``. Minimal
-  fix: add ``prompt`` to USER_MARKERS + ``response`` to
-  ASSISTANT_MARKERS in
-  ``frontend/src/chat_import/markdown_parser.ts``. Proper
-  fix: also stamp ``source="claude"`` (separate BL-28) and
-  extract per-turn timestamps (the line after the header is
-  ``D.M.YYYY, HH:MM:SS``). Blocks A2 / A3 / A4 / A5 of the
-  Phase 33 manual flow. P0 because every downstream feature
-  (analysis quality, curriculum generation, targeted session
-  start, Anki extraction, NotebookLM package) silently
-  degrades on this input shape.
-- [ ] **BL-26**: ``markdown_parser`` allowlist misses generic
-  "Prompt:" / "Response:" headers used by multiple chat
-  exporters. Smaller in scope than BL-25 but the same root
-  cause: a minimal ``## Prompt:\n...\n## Response:\n...``
-  shape collapses to a single user message because neither
-  "prompt" nor "response" is in the role allowlists. Filing
-  separately so the regression-pin test in
-  ``claude_markdown_export.audit.test.ts`` (the
-  ``BL-26 — Claude.ai 'Prompt:' / 'Response:'`` case) can
-  flip green independently of full fixture parity. Same fix
-  closes both.
+- [x] **BL-25**: Claude.ai per-conversation Markdown export
+  collapses to one big user message. Closed by the dedicated
+  ``frontend/src/chat_import/claude_md_parser.ts`` shipped
+  in Phase 33. Auto-detect now stamps ``source="claude"``,
+  produces 50 alternating turns from the real 73-KB fixture,
+  preserves every per-turn timestamp as ISO-8601 local-naive
+  (``D.M.YYYY, HH:MM:SS`` → ``YYYY-MM-DDTHH:MM:SS``), keeps
+  internal H2 headings and ``plaintext`` thought-process
+  fences inside the surrounding response body, and skips
+  the top-of-file metadata block. Regression-pinned via
+  ``claude_md_parser.test.ts`` (20 unit cases) +
+  ``claude_markdown_export.audit.test.ts`` (17 fixture cases).
+- [x] **BL-26**: ``markdown_parser`` allowlist misses generic
+  "Prompt:" / "Response:" headers. Closed alongside BL-25 by
+  the new dedicated ``claude_md_parser``. The generic
+  ``markdown_parser`` semantics are intentionally unchanged
+  (it remains the no-marker-found fallback for free-form
+  pastes); the minimal-shape regression-pin moved into
+  ``claude_md_parser.test.ts`` ("BL-26 minimal shape").
 
 ## P1 — Architecture / Hygiene Debt
 
@@ -114,21 +98,11 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
-- [ ] **BL-28**: Source-stamp Claude.ai per-conversation
-  Markdown exports as ``source="claude"`` (currently
-  ``source="manual"``). Once BL-25 lands, the parser will
-  produce 50 alternating turns from a Claude .md export —
-  but the dispatcher path still reads as a markdown fallback
-  and stamps ``source="manual"`` for the
-  ``ImportedConversation`` row. The H1 + metadata block at
-  the top of the file is a strong signature
-  (``# <title>\n\n**Created:** ... \n**Link:**
-  https://claude.ai/chat/...``). Wire ``detectFormat`` to
-  recognize it and route through a thin Claude-Markdown
-  variant of the parser (or just have ``markdown_parser``
-  detect the signature and override ``source``). Cosmetic
-  for analysis (source field is informational), but useful
-  for telemetry + future per-source UI affordances.
+- [x] **BL-28**: Source-stamp Claude.ai per-conversation
+  Markdown exports as ``source="claude"``. Closed alongside
+  BL-25 — ``claude_md_parser.ts`` stamps the source on the
+  ``NormalizedConversation`` it returns and ``detectFormat``
+  returns ``"claude"`` for the .md signature.
 - [x] **BL-11**: PT/TR/JA translations (native quality) —
   Currently EN-passthrough. Need native speakers or
   professional translation for 213+ keys x 3 languages +

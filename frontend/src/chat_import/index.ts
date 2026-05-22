@@ -24,6 +24,10 @@
 
 import {parseChatGptExport, isChatGptExport, parseChatGptConversation} from "./chatgpt_parser";
 import {parseClaudeExport, isClaudeExport, parseClaudeConversation} from "./claude_parser";
+import {
+    isClaudeMarkdownExport,
+    parseClaudeMarkdownExport,
+} from "./claude_md_parser";
 import {parseGenericJson, isGenericJsonShape} from "./generic_parser";
 import {parseMarkdownConversation} from "./markdown_parser";
 import {
@@ -36,7 +40,7 @@ export interface ParseChatImportOptions {
     /** Title override for markdown fallback (e.g. filename). */
     title?: string;
     /** Force a specific format; skips auto-detect. */
-    format?: "chatgpt" | "claude" | "generic" | "markdown" | "auto";
+    format?: "chatgpt" | "claude" | "claude-md" | "generic" | "markdown" | "auto";
 }
 
 /**
@@ -71,6 +75,18 @@ export function parseChatImport(
         }
         return parseClaudeExport(parsed);
     }
+    if (format === "claude-md") {
+        if (typeof input !== "string") {
+            throw new ChatImportParseError(
+                "Claude Markdown format requires a string input",
+                "claude",
+            );
+        }
+        return {
+            conversations: [parseClaudeMarkdownExport(input)],
+            warnings: [],
+        };
+    }
     if (format === "generic") {
         if (!isJson) {
             throw new ChatImportParseError(
@@ -93,7 +109,14 @@ export function parseChatImport(
         };
     }
 
-    // Auto-detect.
+    // Auto-detect. String-input Claude .md export wins before
+    // the markdown fallback would otherwise swallow it.
+    if (typeof input === "string" && isClaudeMarkdownExport(input)) {
+        return {
+            conversations: [parseClaudeMarkdownExport(input)],
+            warnings: [],
+        };
+    }
     if (isJson) {
         if (isChatGptExport(parsed)) {
             return parseChatGptExport(parsed);
@@ -148,6 +171,13 @@ export function parseChatImport(
 export function detectFormat(
     input: string | unknown,
 ): "chatgpt" | "claude" | "generic" | "markdown" | "unknown" {
+    // The Claude.ai per-conversation .md export is JSON-rejected
+    // by ``tryParseJson`` (it doesn't start with `{` or `[`) so
+    // the JSON branch below would miss it. Check it first while
+    // we still have the raw string.
+    if (typeof input === "string" && isClaudeMarkdownExport(input)) {
+        return "claude";
+    }
     const parsed: unknown =
         typeof input === "string" ? tryParseJson(input) : input;
     if (parsed !== undefined && parsed !== null) {
@@ -193,5 +223,9 @@ export function totalMessageCount(result: BulkImportResult): number {
 export * from "./types";
 export {parseChatGptExport, parseChatGptConversation, isChatGptExport} from "./chatgpt_parser";
 export {parseClaudeExport, parseClaudeConversation, isClaudeExport} from "./claude_parser";
+export {
+    parseClaudeMarkdownExport,
+    isClaudeMarkdownExport,
+} from "./claude_md_parser";
 export {parseMarkdownConversation} from "./markdown_parser";
 export {parseGenericJson, isGenericJsonShape} from "./generic_parser";

@@ -345,12 +345,12 @@ Gemini key:
 
 Filed in [docs/backlog.md](../backlog.md). Severity ordering:
 
-| ID    | Title                                                  | Severity | Mode      |
-|-------|--------------------------------------------------------|----------|-----------|
-| BL-25 | Claude.ai .md export collapses to 1 user message       | P0       | API+Dexie |
-| BL-26 | markdown_parser allowlist missing prompt/response      | P0       | API+Dexie |
-| BL-27 | `vocabulary` field spec/code drift (asked-vs-read-vs-consumed) | P1 | API+Dexie |
-| BL-28 | source-stamping for Claude .md exports (`source="claude"` instead of `"manual"`) | P3 | n/a |
+| ID    | Title                                                  | Severity | Mode      | Status |
+|-------|--------------------------------------------------------|----------|-----------|--------|
+| BL-25 | Claude.ai .md export collapses to 1 user message       | P0       | API+Dexie | **closed** (Phase 33 commit, dedicated `claude_md_parser.ts`) |
+| BL-26 | minimal `## Prompt:` / `## Response:` shape not recognized | P0       | API+Dexie | **closed** (same commit as BL-25) |
+| BL-27 | `vocabulary` field spec/code drift (asked-vs-read-vs-consumed) | P1 | API+Dexie | pending |
+| BL-28 | source-stamping for Claude .md exports (`source="claude"` instead of `"manual"`) | P3 | n/a | **closed** (same commit as BL-25) |
 
 ## Reproducibility
 
