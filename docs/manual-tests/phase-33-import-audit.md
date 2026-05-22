@@ -349,7 +349,7 @@ Filed in [docs/backlog.md](../backlog.md). Severity ordering:
 |-------|--------------------------------------------------------|----------|-----------|--------|
 | BL-25 | Claude.ai .md export collapses to 1 user message       | P0       | API+Dexie | **closed** (Phase 33 commit, dedicated `claude_md_parser.ts`) |
 | BL-26 | minimal `## Prompt:` / `## Response:` shape not recognized | P0       | API+Dexie | **closed** (same commit as BL-25) |
-| BL-27 | `vocabulary` field spec/code drift (asked-vs-read-vs-consumed) | P1 | API+Dexie | pending |
+| BL-27 | `vocabulary` field spec/code drift (asked-vs-read-vs-consumed) | P1 | API+Dexie | **closed** (Phase 33 second commit, `analysis.ts` + `analysis.vocabulary.test.ts`) |
 | BL-28 | source-stamping for Claude .md exports (`source="claude"` instead of `"manual"`) | P3 | n/a | **closed** (same commit as BL-25) |
 
 ## Reproducibility

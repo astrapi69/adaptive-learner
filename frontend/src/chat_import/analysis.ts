@@ -26,6 +26,7 @@ import {extractJsonObject} from "../lib/extract-json";
 import type {
     AnalysisSuggestedLesson,
     ConversationAnalysisResult,
+    VocabularyEntry,
 } from "../types/domain";
 import type {NormalizedMessage} from "./types";
 
@@ -90,7 +91,13 @@ const SYSTEM_PROMPT = [
     '      {"title": <string>, "description": <string>, "priority": <int 1-5>},',
     "      ...",
     "    ],",
-    '    "summary":             <string, 1-2 sentences for the UI header>',
+    '    "summary":             <string, 1-2 sentences for the UI header>,',
+    '    "vocabulary":          [   // OPTIONAL — see FIELD SEMANTICS',
+    '      {"word": <string>, "translation": <string>,',
+    '       "example": <string?>, "phonetic": <string?>,',
+    '       "tags": [<string>, ...]?},',
+    "      ...",
+    "    ]",
     "  }",
     "",
     "If you cannot determine a value for an optional field, OMIT the",
@@ -113,6 +120,18 @@ const SYSTEM_PROMPT = [
     "    ai_adaptive — user steers the AI, self-directed",
     "- 'suggested_curriculum': 2-5 lesson stubs the user could",
     "  tackle next. 'priority' 1 = highest.",
+    "- 'vocabulary': ONLY include this field if the conversation is",
+    "  about learning a foreign language (grammar, vocabulary,",
+    "  pronunciation, reading, etc.). For each new word, idiom or",
+    "  phrase the user encountered or struggled with, emit",
+    "  {word, translation} required; 'example' should be a real",
+    "  sentence FROM THE TRANSCRIPT that uses the word so the",
+    "  consumer can build a cloze card; 'phonetic' optional IPA",
+    "  or simplified pronunciation; 'tags' optional categorisation",
+    "  (e.g. ['verb', 'irregular']). If the conversation is NOT a",
+    "  language-learning conversation (programming, maths, science,",
+    "  history, etc.), OMIT the 'vocabulary' field entirely. Do",
+    "  NOT emit an empty array; do NOT emit 'vocabulary: null'.",
     "",
     "Be specific. 'User struggled with concepts' is useless;",
     "'User confused inductive reasoning with abductive reasoning,",
@@ -213,6 +232,43 @@ function asStringArray(value: unknown): string[] | undefined {
     return out.length > 0 ? out : undefined;
 }
 
+/**
+ * Project the AI's ``vocabulary`` array onto the
+ * ``VocabularyEntry`` schema. Required ``word`` + ``translation``;
+ * optional ``example`` / ``phonetic`` / ``tags``. Drops entries
+ * missing either required field; returns ``undefined`` (not
+ * ``[]``) when the result is empty so a non-language analysis
+ * does not pretend to have vocabulary just because the AI
+ * emitted an empty array against instructions.
+ */
+function asVocabularyArray(value: unknown): VocabularyEntry[] | undefined {
+    if (!Array.isArray(value)) return undefined;
+    const out: VocabularyEntry[] = [];
+    for (const entry of value) {
+        if (!entry || typeof entry !== "object") continue;
+        const obj = entry as Record<string, unknown>;
+        const word = typeof obj.word === "string" ? obj.word.trim() : "";
+        const translation =
+            typeof obj.translation === "string" ? obj.translation.trim() : "";
+        if (!word || !translation) continue;
+        const result: VocabularyEntry = {word, translation};
+        if (typeof obj.example === "string" && obj.example.trim()) {
+            result.example = obj.example.trim();
+        }
+        if (typeof obj.phonetic === "string" && obj.phonetic.trim()) {
+            result.phonetic = obj.phonetic.trim();
+        }
+        if (Array.isArray(obj.tags)) {
+            const tags = obj.tags
+                .filter((t): t is string => typeof t === "string" && t.trim().length > 0)
+                .map((t) => t.trim());
+            if (tags.length > 0) result.tags = tags;
+        }
+        out.push(result);
+    }
+    return out.length > 0 ? out : undefined;
+}
+
 function asLessonArray(value: unknown): AnalysisSuggestedLesson[] | undefined {
     if (!Array.isArray(value)) return undefined;
     const out: AnalysisSuggestedLesson[] = [];
@@ -276,6 +332,8 @@ export function parseAnalysisResponse(
     if (typeof obj.summary === "string" && obj.summary.trim()) {
         result.summary = obj.summary.trim();
     }
+    const vocab = asVocabularyArray(obj.vocabulary);
+    if (vocab) result.vocabulary = vocab;
     return result;
 }
 
@@ -340,6 +398,28 @@ export function mergeAnalyses(
         out.suggested_curriculum,
         next.suggested_curriculum,
     );
+    out.vocabulary = mergeVocabulary(out.vocabulary, next.vocabulary);
+    return out;
+}
+
+function mergeVocabulary(
+    a?: VocabularyEntry[],
+    b?: VocabularyEntry[],
+): VocabularyEntry[] | undefined {
+    const items = [...(a ?? []), ...(b ?? [])];
+    if (items.length === 0) return undefined;
+    const seen = new Set<string>();
+    const out: VocabularyEntry[] = [];
+    for (const item of items) {
+        // Dedupe on the (word, translation) tuple so the same
+        // word with two different translation senses survives,
+        // but the same chunk being analyzed twice does not.
+        const key = `${item.word.toLowerCase()}|${item.translation.toLowerCase()}`;
+        if (!seen.has(key)) {
+            seen.add(key);
+            out.push(item);
+        }
+    }
     return out;
 }
 

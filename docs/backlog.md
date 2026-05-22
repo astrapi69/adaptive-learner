@@ -49,29 +49,21 @@ tiebreaker.
 
 ## P1 — Architecture / Hygiene Debt
 
-- [ ] **BL-27**: ``vocabulary`` field — spec / code drift
-  between SYSTEM_PROMPT, parseAnalysisResponse, and downstream
-  consumers. The TypeScript type
-  (``ConversationAnalysisResult.vocabulary?: VocabularyEntry[]``)
-  is declared; the Anki Dexie path
-  (``frontend/src/storage/anki.ts``
-  ``extractFromConversationDexie``) reads
-  ``analysis_result.vocabulary``; the NotebookLM exporter
-  (``frontend/src/lib/export/notebooklm-package.ts``)
-  collects it across analyzed conversations to fill
-  ``vocabulary.md``. BUT: the SYSTEM_PROMPT in
-  ``frontend/src/chat_import/analysis.ts:56-125`` does NOT
-  list ``vocabulary`` in the JSON schema it asks for, and
-  ``parseAnalysisResponse`` (same file, lines 246-280) does
-  NOT read it even if a model emits it unprompted. Result:
-  Anki "vocabulary path" in Dexie mode is dead code; the
-  ``vocabulary.md`` in NotebookLM ZIPs is always empty; the
-  Anki vocabulary import in v1.17.0's flow is gated on a
-  field nothing populates. Fix: extend SYSTEM_PROMPT to ask
-  for ``vocabulary: [{word, translation, example?, phonetic?,
-  tags?}]`` when the topic looks language-related, and add
-  the ``vocabulary`` read in ``parseAnalysisResponse``. Audit
-  details in ``docs/manual-tests/phase-33-import-audit.md``.
+- [x] **BL-27**: ``vocabulary`` field spec/code drift closed
+  in Phase 33. ``SYSTEM_PROMPT`` now describes the optional
+  ``vocabulary`` field with full field semantics; the AI
+  decides per-conversation whether to emit it (language-
+  learning topics yes, everything else no — the prompt
+  carries that conditional). ``parseAnalysisResponse``
+  reads ``vocabulary`` via the new ``asVocabularyArray``
+  projector (drops malformed entries, returns undefined on
+  empty so non-language analyses don't pretend to carry
+  vocabulary). ``mergeAnalyses`` concatenates + dedupes
+  vocabulary across chunked-transcript chunks by
+  (word, translation) tuple. The Anki Dexie vocabulary path
+  and the NotebookLM ``vocabulary.md`` consumer now have
+  data to read. Regression-pinned via 13 cases in
+  ``analysis.vocabulary.test.ts``.
 
 ## P2 — Medium Value, Medium Effort
 
