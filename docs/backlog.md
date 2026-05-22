@@ -27,6 +27,67 @@ tiebreaker.
   v0.0.0-template tag into astrapi69/pluginforge-app-template.
   Add README explaining how to fork. Validates PluginForge
   ecosystem (3 repos: framework, template, app).
+- [ ] **BL-25**: Claude.ai per-conversation Markdown export
+  collapses to one big user message. The 80%-case input for
+  "I want to import this chat" is the `Export this chat as
+  Markdown` button inside Claude.ai. Today the entire
+  72-KB / 50-turn transcript lands as a single ``user``
+  message, no role boundaries, no per-turn timestamps,
+  ``source="manual"``. Auto-detect routes to
+  ``markdown_parser`` (correct — it is .md, not the JSON bulk
+  export), but neither ``## Prompt:`` nor ``## Response:`` is
+  in ``recogniseMarker``'s allowlist. Phase 33 audit fixture
+  + Vitest regression-pin at
+  ``frontend/src/chat_import/__fixtures__/claude-markdown-export.md``
+  + ``claude_markdown_export.audit.test.ts``; full findings
+  in ``docs/manual-tests/phase-33-import-audit.md``. Minimal
+  fix: add ``prompt`` to USER_MARKERS + ``response`` to
+  ASSISTANT_MARKERS in
+  ``frontend/src/chat_import/markdown_parser.ts``. Proper
+  fix: also stamp ``source="claude"`` (separate BL-28) and
+  extract per-turn timestamps (the line after the header is
+  ``D.M.YYYY, HH:MM:SS``). Blocks A2 / A3 / A4 / A5 of the
+  Phase 33 manual flow. P0 because every downstream feature
+  (analysis quality, curriculum generation, targeted session
+  start, Anki extraction, NotebookLM package) silently
+  degrades on this input shape.
+- [ ] **BL-26**: ``markdown_parser`` allowlist misses generic
+  "Prompt:" / "Response:" headers used by multiple chat
+  exporters. Smaller in scope than BL-25 but the same root
+  cause: a minimal ``## Prompt:\n...\n## Response:\n...``
+  shape collapses to a single user message because neither
+  "prompt" nor "response" is in the role allowlists. Filing
+  separately so the regression-pin test in
+  ``claude_markdown_export.audit.test.ts`` (the
+  ``BL-26 — Claude.ai 'Prompt:' / 'Response:'`` case) can
+  flip green independently of full fixture parity. Same fix
+  closes both.
+
+## P1 — Architecture / Hygiene Debt
+
+- [ ] **BL-27**: ``vocabulary`` field — spec / code drift
+  between SYSTEM_PROMPT, parseAnalysisResponse, and downstream
+  consumers. The TypeScript type
+  (``ConversationAnalysisResult.vocabulary?: VocabularyEntry[]``)
+  is declared; the Anki Dexie path
+  (``frontend/src/storage/anki.ts``
+  ``extractFromConversationDexie``) reads
+  ``analysis_result.vocabulary``; the NotebookLM exporter
+  (``frontend/src/lib/export/notebooklm-package.ts``)
+  collects it across analyzed conversations to fill
+  ``vocabulary.md``. BUT: the SYSTEM_PROMPT in
+  ``frontend/src/chat_import/analysis.ts:56-125`` does NOT
+  list ``vocabulary`` in the JSON schema it asks for, and
+  ``parseAnalysisResponse`` (same file, lines 246-280) does
+  NOT read it even if a model emits it unprompted. Result:
+  Anki "vocabulary path" in Dexie mode is dead code; the
+  ``vocabulary.md`` in NotebookLM ZIPs is always empty; the
+  Anki vocabulary import in v1.17.0's flow is gated on a
+  field nothing populates. Fix: extend SYSTEM_PROMPT to ask
+  for ``vocabulary: [{word, translation, example?, phonetic?,
+  tags?}]`` when the topic looks language-related, and add
+  the ``vocabulary`` read in ``parseAnalysisResponse``. Audit
+  details in ``docs/manual-tests/phase-33-import-audit.md``.
 
 ## P2 — Medium Value, Medium Effort
 
@@ -53,6 +114,21 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
+- [ ] **BL-28**: Source-stamp Claude.ai per-conversation
+  Markdown exports as ``source="claude"`` (currently
+  ``source="manual"``). Once BL-25 lands, the parser will
+  produce 50 alternating turns from a Claude .md export —
+  but the dispatcher path still reads as a markdown fallback
+  and stamps ``source="manual"`` for the
+  ``ImportedConversation`` row. The H1 + metadata block at
+  the top of the file is a strong signature
+  (``# <title>\n\n**Created:** ... \n**Link:**
+  https://claude.ai/chat/...``). Wire ``detectFormat`` to
+  recognize it and route through a thin Claude-Markdown
+  variant of the parser (or just have ``markdown_parser``
+  detect the signature and override ``source``). Cosmetic
+  for analysis (source field is informational), but useful
+  for telemetry + future per-source UI affordances.
 - [x] **BL-11**: PT/TR/JA translations (native quality) —
   Currently EN-passthrough. Need native speakers or
   professional translation for 213+ keys x 3 languages +
