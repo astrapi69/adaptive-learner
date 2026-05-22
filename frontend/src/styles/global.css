@@ -3441,3 +3441,154 @@ select:focus {
     gap: 8px;
     margin-top: 4px;
 }
+
+/* --- Voice (Phase 31) ----------------------------------- */
+.speech-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted, #64748b);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 150ms, color 150ms;
+}
+.speech-button:hover {
+    background: var(--bg-elevated, #f8fafc);
+    color: var(--text, #1e293b);
+}
+.speech-button--speaking {
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+.speech-button__icon {
+    font-size: 0.85rem;
+    line-height: 1;
+}
+.chat-message-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4px;
+}
+.assessment-result-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.mic-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-muted, #64748b);
+    cursor: pointer;
+    transition: background 150ms, color 150ms, transform 150ms;
+}
+.mic-button:hover {
+    background: var(--bg-elevated, #f8fafc);
+    color: var(--text, #1e293b);
+}
+.mic-button--listening {
+    background: var(--accent);
+    color: var(--accent-fg);
+    border-color: var(--accent);
+    animation: mic-pulse 1.2s infinite ease-in-out;
+}
+.mic-button__icon {
+    font-size: 1rem;
+    line-height: 1;
+}
+@keyframes mic-pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent);
+    }
+    50% {
+        box-shadow: 0 0 0 8px color-mix(in srgb, var(--accent) 0%, transparent);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mic-button--listening {
+        animation: none;
+    }
+}
+
+/* --- Pronunciation page (Phase 31C) ----------------------------- */
+.pronunciation-page {
+    padding: 24px;
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.pronunciation-card {
+    background: var(--bg-elevated, #f8fafc);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.pronunciation-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.pronunciation-card__label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted, #64748b);
+}
+.pronunciation-card__target {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text, #1e293b);
+    line-height: 1.4;
+}
+.pronunciation-verdict {
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pronunciation-verdict--match {
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    border-color: var(--accent);
+}
+.pronunciation-verdict--miss {
+    background: color-mix(in srgb, #f59e0b 8%, transparent);
+    border-color: #f59e0b;
+}
+.pronunciation-verdict__score {
+    font-size: 1.05rem;
+    margin: 0;
+}
+.pronunciation-verdict__feedback {
+    margin: 0;
+    color: var(--text, #1e293b);
+}
+.pronunciation-verdict__sounds {
+    font-size: 0.85rem;
+    color: var(--text-muted, #64748b);
+    margin: 4px 0 0 0;
+}
+.dashboard-pronunciation-quick-start {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+}

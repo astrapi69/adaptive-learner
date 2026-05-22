@@ -1643,3 +1643,206 @@ def _fire_on_session_complete(session: dict[str, Any], rating: dict[str, Any]) -
             "on_session_complete subscriber raised; session close not affected",
             exc_info=True,
         )
+
+
+# --- Pronunciation Practice (v1.18.0 / Phase 31C) -------------------------
+
+from . import pronunciation as _pronunciation
+
+
+def _is_language_project(db: Session, project_id: str) -> bool:
+    """True iff the project has at least one Subject under the
+    ``languages`` slug (transitive — direct or via the
+    ancestor chain). Used by the dashboard to decide whether to
+    surface the Pronunciation quick-start.
+
+    Returns False when the project has no subjects assigned —
+    intentional graceful degradation (the page stays hidden
+    rather than guessing from the topic string).
+    """
+    from app.models import ProjectSubject, Subject
+
+    rows = (
+        db.query(Subject)
+        .join(ProjectSubject, ProjectSubject.subject_id == Subject.id)
+        .filter(ProjectSubject.project_id == project_id)
+        .all()
+    )
+    if not rows:
+        return False
+    # Walk each subject up the parent chain looking for the
+    # ``languages`` ancestor. The seed taxonomy from Phase 22A
+    # uses the slug encoded in ``Subject.icon`` via the
+    # ``Subject.name`` lookup — but we'd rather match by name
+    # since the seed loader is name-keyed.
+    visited: set[str] = set()
+    for start in rows:
+        cursor: Subject | None = start
+        while cursor is not None and cursor.id not in visited:
+            visited.add(cursor.id)
+            # Slug encoded in the name: the seed YAML uses
+            # ``name: Languages`` for the root; check that.
+            if cursor.name.lower() in ("languages", "sprachen"):
+                return True
+            if cursor.parent_id is None:
+                break
+            cursor = db.get(Subject, cursor.parent_id)
+    return False
+
+
+def _build_pronunciation_ai_caller(db: Session, user_id: str):
+    """Resolve the user's active provider / api_key / model and
+    return a ``messages -> str | None`` callable suitable for
+    the pronunciation prompt-fns. Mirrors the pattern in
+    ``routers.imports._build_ai_caller`` +
+    ``plugins/anki/routes._build_ai_caller``.
+
+    Raises ``ValidationError`` when the user has no configured
+    provider; the global handler maps to 400.
+    """
+    from app.main import manager  # lazy: cycle + test isolation
+    from app.services import settings as settings_service
+
+    settings = settings_service.get_or_create_settings(db, user_id)
+    provider_key = settings.active_provider
+    try:
+        provider_enum = AIProvider(provider_key)
+    except ValueError as exc:
+        raise ValidationError(
+            f"User {user_id!r} has no valid active AI provider."
+        ) from exc
+    api_key = settings_service.get_decrypted_api_key(
+        db, user_id, provider_enum
+    )
+    if not api_key:
+        raise ValidationError(
+            f"User {user_id!r} has no stored API key for {provider_key!r}."
+        )
+    override_attr = f"model_override_{provider_key}"
+    override = getattr(settings, override_attr, None)
+    default_models = {
+        "anthropic": "claude-haiku-4-5-20251001",
+        "openai": "gpt-4o-mini",
+        "gemini": "gemini-2.0-flash",
+    }
+    if isinstance(override, str) and override.strip():
+        model = override.strip()
+    else:
+        model = default_models.get(provider_key) or ""
+    if not model:
+        raise ValidationError(
+            f"Provider {provider_key!r} has no default model registered."
+        )
+
+    def _call(messages: list[dict[str, str]]) -> str | None:
+        result = manager._pm.hook.ai_complete(
+            messages=messages, model=model, api_key=api_key, max_tokens=256
+        )
+        return result if isinstance(result, str) else None
+
+    return _call
+
+
+class _PronunciationPhraseBody(BaseModel):
+    project_id: str
+    language: str = "en"
+    level: str = "beginner"
+    focus: str = "common sounds"
+    previous: list[str] = Field(default_factory=list)
+
+
+class _PronunciationPhraseOut(BaseModel):
+    phrase: str
+    language: str
+
+
+@router.post(
+    "/pronunciation/phrase", response_model=_PronunciationPhraseOut
+)
+def get_pronunciation_phrase(
+    body: _PronunciationPhraseBody,
+    db: Session = Depends(get_db),
+) -> _PronunciationPhraseOut:
+    """Generate one practice phrase for the user.
+
+    Resolves the project owner, fires the AI with the
+    phrase-prompt, returns ``{phrase, language}``. The phrase is
+    NOT persisted — pronunciation practice is ephemeral
+    (per the v1.18.0 scope decision).
+    """
+    project = db.get(LearningProject, body.project_id)
+    if project is None:
+        raise NotFoundError(
+            f"LearningProject {body.project_id!r} not found."
+        )
+    ai_call = _build_pronunciation_ai_caller(db, project.user_id)
+    phrase = _pronunciation.generate_phrase(
+        ai_call,
+        language=body.language,
+        level=body.level,
+        focus=body.focus,
+        previous=body.previous,
+    )
+    if phrase is None:
+        raise ValidationError(
+            "Could not generate a pronunciation phrase. Try again."
+        )
+    return _PronunciationPhraseOut(phrase=phrase, language=body.language)
+
+
+class _PronunciationJudgeBody(BaseModel):
+    project_id: str
+    target: str
+    actual: str
+    language: str = "en"
+
+
+class _PronunciationJudgeOut(BaseModel):
+    matches: bool
+    score: float
+    feedback: str
+    missed_sounds: list[str]
+
+
+@router.post(
+    "/pronunciation/judge", response_model=_PronunciationJudgeOut
+)
+def judge_pronunciation(
+    body: _PronunciationJudgeBody,
+    db: Session = Depends(get_db),
+) -> _PronunciationJudgeOut:
+    """Score a pronunciation attempt + return short feedback."""
+    project = db.get(LearningProject, body.project_id)
+    if project is None:
+        raise NotFoundError(
+            f"LearningProject {body.project_id!r} not found."
+        )
+    if not body.target.strip() or not body.actual.strip():
+        raise ValidationError("target and actual must both be non-empty.")
+    ai_call = _build_pronunciation_ai_caller(db, project.user_id)
+    verdict = _pronunciation.judge_attempt(
+        ai_call,
+        target=body.target,
+        actual=body.actual,
+        language=body.language,
+    )
+    if verdict is None:
+        raise ValidationError(
+            "Could not judge the pronunciation attempt. Try again."
+        )
+    return _PronunciationJudgeOut(**verdict.to_dict())
+
+
+@router.get("/pronunciation/eligibility/{project_id}")
+def pronunciation_eligibility(
+    project_id: str, db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    """Tell the frontend whether this project should surface
+    the Pronunciation Practice quick-start.
+
+    Returns ``{eligible: bool}``. ``True`` when the project has
+    at least one Subject under the ``languages`` ancestor.
+    """
+    if db.get(LearningProject, project_id) is None:
+        raise NotFoundError(f"LearningProject {project_id!r} not found.")
+    return {"eligible": _is_language_project(db, project_id)}

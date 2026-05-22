@@ -2,6 +2,8 @@ import {useEffect, useRef, useState, type FormEvent} from "react";
 
 import {useI18n} from "../hooks/useI18n";
 import type {MessageRole} from "../lib/constants";
+import MicButton from "./MicButton";
+import SpeechButton from "./SpeechButton";
 
 export interface ChatMessage {
     /** Unique id for React key purposes. Backend-issued where available;
@@ -128,6 +130,20 @@ export default function SessionChat({
                                     </span>
                                 )}
                             </pre>
+                            {/* v1.18.0 / Phase 31A — TTS on assistant
+                                bubbles only. The button hides itself
+                                when speechSynthesis is unavailable or
+                                Settings has TTS off. Streaming bubbles
+                                don't get a button until the stream
+                                settles. */}
+                            {msg.role === "assistant" && !msg.streaming && (
+                                <div className="chat-message-actions">
+                                    <SpeechButton
+                                        text={msg.content}
+                                        testId={`assistant-${msg.id}`}
+                                    />
+                                </div>
+                            )}
                         </div>
                     );
                 })}
@@ -143,6 +159,24 @@ export default function SessionChat({
                         t("session.message_placeholder", "Write your reply…")
                     }
                     disabled={disabled}
+                />
+                {/* v1.18.0 / Phase 31B — dictation. Hides itself
+                    when SpeechRecognition is unavailable or
+                    Settings has STT off. */}
+                <MicButton
+                    onTranscript={(text, isFinal) => {
+                        // Interim results overwrite the in-flight
+                        // draft so the user sees their phrase build
+                        // up. Final commits the same way — the
+                        // user can edit before sending.
+                        setDraft(text);
+                        // ``isFinal`` is intentionally unused: we
+                        // treat interim + final identically for the
+                        // input-field display. The Send button
+                        // remains the explicit submit.
+                        void isFinal;
+                    }}
+                    testId="session-input"
                 />
                 <button
                     type="submit"

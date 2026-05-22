@@ -315,6 +315,45 @@ export interface AnkiCardListFilters {
     includeRejected?: boolean;
 }
 
+/**
+ * Pronunciation practice (Phase 31C / v1.18.0).
+ *
+ * ``eligibility`` works in both storage modes — it just walks
+ * the project's subject taxonomy looking for a ``Languages``
+ * ancestor.
+ *
+ * ``phrase`` + ``judge`` require an active AI provider with a
+ * stored API key; the API-mode path is the backend's
+ * ``/plugins/session/pronunciation/*`` routes, and the
+ * Dexie-mode path throws ``ApiError(501)`` for v1.18.0 (browser-
+ * direct AI for pronunciation deferred to a polish patch). The
+ * Pronunciation page surfaces a clear "switch to API mode"
+ * hint when the throw fires.
+ */
+export interface PronunciationVerdict {
+    matches: boolean;
+    score: number;
+    feedback: string;
+    missed_sounds: string[];
+}
+
+export interface IPronunciationNamespace {
+    eligibility(projectId: string): Promise<{eligible: boolean}>;
+    phrase(args: {
+        project_id: string;
+        language: string;
+        level?: string;
+        focus?: string;
+        previous?: string[];
+    }): Promise<{phrase: string; language: string}>;
+    judge(args: {
+        project_id: string;
+        target: string;
+        actual: string;
+        language: string;
+    }): Promise<PronunciationVerdict>;
+}
+
 export interface IAnkiNamespace {
     list(
         userId: string,
@@ -484,4 +523,5 @@ export interface IStorageService {
     projectTaxonomy: IProjectTaxonomyNamespace;
     gamification: IGamificationNamespace;
     anki: IAnkiNamespace;
+    pronunciation: IPronunciationNamespace;
 }

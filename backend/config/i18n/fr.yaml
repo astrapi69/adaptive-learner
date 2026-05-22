@@ -158,6 +158,7 @@ assessment:
   result_title: Ton profil d'apprentissage
   dominant_method: Methode preferee
   continue_to_dashboard: Continuer vers le tableau de bord
+  read_summary: Lire le résumé
 dashboard:
   title: Tableau de bord
   welcome: Bon retour
@@ -180,6 +181,7 @@ dashboard:
   metric_mean_stress: Stress moyen
   metric_streak: Serie de jours
   no_data: Aucune session pour l'instant — lance ta premiere pour voir les tendances.
+  pronunciation_quick_start: Pratique de Prononciation
 session:
   title: Session d'apprentissage
   in_progress: Session en cours
@@ -286,6 +288,23 @@ settings:
   reset_progress_help: Supprime XP, badges et série. Irréversible.
   reset_confirm_first: Clique encore pour confirmer
   reset_confirm_second: Clique une dernière fois pour supprimer définitivement
+  section_voice: Voix
+  voice:
+    tts_enabled: Afficher les boutons de lecture
+    tts_enabled_help: Lit les réponses IA à voix haute.
+    auto_play: Lire automatiquement les réponses IA
+    auto_play_help: Lit chaque réponse automatiquement (désactivé par défaut).
+    tts_voice: Voix
+    tts_voice_help: 'Par défaut : meilleure correspondance avec ta langue.'
+    voice_default: Défaut (auto)
+    tts_rate: Vitesse
+    tts_pitch: Hauteur
+    stt_enabled: Afficher le bouton micro
+    stt_enabled_help: Dicte tes réponses via le navigateur.
+    stt_lang: Langue de dictée
+    stt_lang_help: 'Vide = langue projet/UI. Format : BCP-47 (fr-FR).'
+    pronunciation_enabled: Pratique de Prononciation
+    pronunciation_enabled_help: Affiche un bouton sur les projets de langues.
 methods:
   deductive:
     label: Deductif
@@ -666,3 +685,29 @@ anki:
   unaccept: Désaccepter
   reject: Rejeter
   deck_description: Cartes exportées depuis Adaptive Learner.
+voice:
+  speak: Lire à voix haute
+  stop_speaking: Arrêter
+  start_listening: Démarrer la dictée
+  stop_listening: Arrêter la dictée
+  mic_permission_denied: Accès au microphone refusé.
+  mic_error: Erreur de reconnaissance vocale.
+pronunciation:
+  title: Pratique de Prononciation
+  intro: Génère une phrase, prononce-la à voix haute et reçois un retour immédiat.
+  project_label: Projet
+  target_label: Phrase cible
+  no_phrase: Clique sur Générer pour commencer.
+  generate: Générer une phrase
+  next_phrase: Phrase suivante
+  generating: Génération…
+  your_attempt: Ton essai
+  attempt_placeholder: Touche le micro pour dicter, ou tape ta réponse.
+  submit: Soumettre
+  judging: Évaluation…
+  match: Réussi
+  miss: Continue à t'entraîner
+  focus_on: 'Concentre-toi sur :'
+  phrase_failed: Impossible de générer une phrase.
+  judge_failed: Impossible d'évaluer cet essai.
+  ineligible: La pratique de prononciation est disponible pour les projets d'apprentissage des langues. Ajoute un sujet sous 'Langues' à ton projet pour l'activer.

@@ -134,9 +134,13 @@ tiebreaker.
   features).
 - [ ] **BL-19**: Social features (share progress, study
   groups) — Requires multi-user. Far future.
-- [ ] **BL-20**: Voice input/output (TTS/STT) — Speak
-  answers, hear AI response. Useful for language learning.
-  Large scope.
+- [x] **BL-20**: Voice input/output (TTS/STT) —
+  Closed in v1.18.0 / Phase 31. Web Speech API integration:
+  SpeechButton on AI responses + Assessment results, MicButton
+  for dictation in SessionChat, new Pronunciation Practice
+  page for language-learning projects, new Voice settings
+  section. Zero external cost (no ElevenLabs / cloud TTS).
+  Graceful degradation on unsupported browsers.
 - [x] **BL-21**: Anki deck export —
   Closed in v1.17.0 / Phase 30. New
   ``adaptive-learner-plugin-anki`` extracts flashcard

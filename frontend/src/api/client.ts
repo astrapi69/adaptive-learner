@@ -735,6 +735,41 @@ export const api = {
             ),
     },
 
+    // --- Pronunciation Practice (v1.18.0 / Phase 31C) -------------------
+
+    pronunciation: {
+        eligibility: (projectId: string) =>
+            apiCall<{eligible: boolean}>(
+                `/plugins/session/pronunciation/eligibility/${encodeURIComponent(projectId)}`,
+            ),
+        phrase: (body: {
+            project_id: string;
+            language: string;
+            level?: string;
+            focus?: string;
+            previous?: string[];
+        }) =>
+            apiCall<{phrase: string; language: string}>(
+                `/plugins/session/pronunciation/phrase`,
+                {method: "POST", body},
+            ),
+        judge: (body: {
+            project_id: string;
+            target: string;
+            actual: string;
+            language: string;
+        }) =>
+            apiCall<{
+                matches: boolean;
+                score: number;
+                feedback: string;
+                missed_sounds: string[];
+            }>(`/plugins/session/pronunciation/judge`, {
+                method: "POST",
+                body,
+            }),
+    },
+
     // --- Gamification plugin (v1.16.0 / Phase 29) ------------------------
 
     gamification: {

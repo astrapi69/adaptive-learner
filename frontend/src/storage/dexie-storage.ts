@@ -56,6 +56,7 @@ import {
     type LessonRow,
     type MethodSwitchRow,
     type SessionRatingRow,
+    type SubjectRow,
     type UserRow,
     type UserSettingsRow,
 } from "./db";
@@ -1781,6 +1782,49 @@ export const dexieStorage: IStorageService = {
                 badges_deleted: badgesDeleted || badges.length,
                 streak_deleted: streakDeleted || streak.length,
             };
+        },
+    },
+
+    pronunciation: {
+        async eligibility(projectId) {
+            // Walk the project's subjects + every parent chain
+            // looking for a "Languages" (or "Sprachen") node.
+            const db = getDb();
+            const assocs = await db.projectSubjects
+                .where({project_id: projectId})
+                .toArray();
+            if (assocs.length === 0) return {eligible: false};
+            const visited = new Set<string>();
+            for (const a of assocs) {
+                let cursor: string | null = a.subject_id;
+                while (cursor !== null && !visited.has(cursor)) {
+                    visited.add(cursor);
+                    const subj: SubjectRow | undefined = await db.subjects.get(cursor);
+                    if (!subj) break;
+                    if (
+                        subj.name.toLowerCase() === "languages" ||
+                        subj.name.toLowerCase() === "sprachen"
+                    ) {
+                        return {eligible: true};
+                    }
+                    cursor = subj.parent_id;
+                }
+            }
+            return {eligible: false};
+        },
+        phrase: async () => {
+            throw new ApiError(
+                501,
+                "Pronunciation practice requires API mode for the AI calls. " +
+                    "Switch to API mode in Settings.",
+            );
+        },
+        judge: async () => {
+            throw new ApiError(
+                501,
+                "Pronunciation practice requires API mode for the AI calls. " +
+                    "Switch to API mode in Settings.",
+            );
         },
     },
 

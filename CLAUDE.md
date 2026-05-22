@@ -12,7 +12,53 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.17.0):** v1.16.0 plus Phase 30 —
+- **Current state (v1.18.0):** v1.17.0 plus Phase 31 —
+  **Voice Input / Output (TTS / STT / Pronunciation).** Web
+  Speech API integration adds voice to AI responses (TTS)
+  and user input (STT), all client-side with zero external
+  cost. **31A — TTS:** ``frontend/src/lib/voice/speech-
+  synthesis.ts`` wraps ``window.speechSynthesis`` with safe
+  async voice loading, lang-matched voice picking (exact →
+  prefix → bare), and rate/pitch clamping to [0.5, 2.0].
+  ``SpeechButton`` component hides on unsupported browsers
+  + on user opt-out; wired into SessionChat (every assistant
+  bubble) + Assessment results ("Read summary"). **31B —
+  STT:** ``frontend/src/lib/voice/speech-recognition.ts``
+  wraps ``webkitSpeechRecognition`` / ``SpeechRecognition``
+  with onInterim / onFinal / onError / onEnd handlers + safe
+  idempotent stop/abort. ``MicButton`` with pulsing-mic
+  visual; wired into SessionChat input — interim transcripts
+  populate the textarea, user reviews + clicks Send.
+  **31C — Pronunciation Practice:** new
+  ``plugins/.../pronunciation.py`` with phrase generator +
+  judge prompts (the judge returns
+  ``{matches, score, feedback, missed_sounds}``). Routes
+  ``POST /pronunciation/phrase``, ``POST /pronunciation/judge``,
+  ``GET /pronunciation/eligibility/{project_id}``.
+  ``_is_language_project`` walks the project's subject
+  taxonomy looking for a ``Languages`` (or ``Sprachen``)
+  ancestor; projects without subjects are not eligible
+  (intentional graceful degradation). New ``/pronunciation``
+  page implements generate → speak → submit → judge.
+  Dashboard surfaces a quick-start button when eligible.
+  Pronunciation is NOT a session (no cycle, no XP/streak
+  interaction) and NOT in the 42-cell matrix. In Dexie
+  mode, eligibility works locally; AI calls throw 501 with
+  "switch to API mode" (browser-direct AI for pronunciation
+  deferred). **31D — Voice Settings:** new ``Settings >
+  Voice`` section with TTS enabled / voice / rate / pitch,
+  auto-play AI (default OFF), STT enabled, STT lang
+  override, pronunciation enabled. Hides the entire
+  section when neither TTS nor STT is supported. ``lib/
+  voice/voicePref.ts`` localStorage prefs. No new
+  dependencies (Web Speech API is browser-native). 8-lang
+  i18n with ~304 new keys (voice.*, pronunciation.*,
+  settings.voice.*, plus dashboard + assessment singletons),
+  all native translations; BL-11 audit clean. Backend 744 +
+  plugin (session) 215 + frontend 1150 at release time.
+  BL-20 closed.
+
+- **State (v1.17.0):** v1.16.0 plus Phase 30 —
   **Anki Deck Export.** New
   ``adaptive-learner-plugin-anki`` (mounted under
   ``/api/plugins/anki/*``) extracts flashcard candidates from

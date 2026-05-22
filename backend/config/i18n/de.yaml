@@ -158,6 +158,7 @@ assessment:
   result_title: Dein Lernprofil
   dominant_method: Bevorzugte Methode
   continue_to_dashboard: Weiter zum Dashboard
+  read_summary: Zusammenfassung vorlesen
 dashboard:
   title: Dashboard
   welcome: Willkommen zurück
@@ -180,6 +181,7 @@ dashboard:
   metric_mean_stress: Mittlerer Stress
   metric_streak: Tagesserie
   no_data: Noch keine Sessions — starte deine erste, um Trends zu sehen.
+  pronunciation_quick_start: Aussprachetraining
 session:
   title: Lern-Session
   in_progress: Session läuft
@@ -286,6 +288,23 @@ settings:
   reset_progress_help: Löscht XP, Abzeichen und Serie unwiderruflich.
   reset_confirm_first: Erneut klicken zum Bestätigen
   reset_confirm_second: Noch einmal klicken — endgültig löschen
+  section_voice: Sprache
+  voice:
+    tts_enabled: Sprechschaltflächen anzeigen
+    tts_enabled_help: Liest KI-Antworten vor, wenn du auf das Lautsprecher-Symbol klickst.
+    auto_play: KI-Antworten automatisch vorlesen
+    auto_play_help: Spricht jede KI-Antwort automatisch (Standard aus).
+    tts_voice: Stimme
+    tts_voice_help: Standard wählt die beste Übereinstimmung für deine Projektsprache.
+    voice_default: Standard (auto)
+    tts_rate: Tempo
+    tts_pitch: Tonhöhe
+    stt_enabled: Mikrofon-Schaltfläche anzeigen
+    stt_enabled_help: Diktiere Antworten über die Spracherkennung des Browsers.
+    stt_lang: Diktiersprache überschreiben
+    stt_lang_help: 'Leer lassen für Projekt-/UI-Sprache. Format: BCP-47 (z.B. de-DE).'
+    pronunciation_enabled: Aussprachetraining
+    pronunciation_enabled_help: Zeigt einen Schalter „Aussprachetraining" auf Dashboards von Sprach-Lernprojekten.
 methods:
   deductive:
     label: Deduktiv
@@ -666,3 +685,29 @@ anki:
   unaccept: Zurücknehmen
   reject: Verwerfen
   deck_description: Karten aus Adaptive Learner exportiert.
+voice:
+  speak: Vorlesen
+  stop_speaking: Stopp
+  start_listening: Diktat starten
+  stop_listening: Diktat stoppen
+  mic_permission_denied: Mikrofon-Zugriff verweigert.
+  mic_error: Spracherkennungsfehler.
+pronunciation:
+  title: Aussprachetraining
+  intro: Generiere einen Satz, sprich ihn laut und erhalte sofortiges Feedback.
+  project_label: Projekt
+  target_label: Zielsatz
+  no_phrase: Klicke auf Generieren, um zu beginnen.
+  generate: Satz generieren
+  next_phrase: Nächster Satz
+  generating: Generiere…
+  your_attempt: Dein Versuch
+  attempt_placeholder: Tippe das Mikrofon-Symbol, um zu diktieren, oder schreibe.
+  submit: Versuch absenden
+  judging: Bewerte…
+  match: Treffer
+  miss: Weiter üben
+  focus_on: 'Fokus auf:'
+  phrase_failed: Satz konnte nicht generiert werden.
+  judge_failed: Versuch konnte nicht bewertet werden.
+  ineligible: Aussprachetraining ist für Sprach-Lernprojekte verfügbar. Füge ein Fach unter 'Sprachen' zu deinem Projekt hinzu, um es zu aktivieren.

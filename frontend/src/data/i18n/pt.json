@@ -168,7 +168,8 @@
     "evaluating": "Avaliando…",
     "result_title": "Seu perfil de aprendizado",
     "dominant_method": "Método preferido",
-    "continue_to_dashboard": "Ir para o painel"
+    "continue_to_dashboard": "Ir para o painel",
+    "read_summary": "Ler resumo"
   },
   "dashboard": {
     "title": "Painel",
@@ -191,7 +192,8 @@
     "metric_mean_understanding": "Compreensão média",
     "metric_mean_stress": "Estresse médio",
     "metric_streak": "Sequência de dias",
-    "no_data": "Nenhuma sessão ainda — comece a primeira para ver tendências."
+    "no_data": "Nenhuma sessão ainda — comece a primeira para ver tendências.",
+    "pronunciation_quick_start": "Prática de Pronúncia"
   },
   "session": {
     "title": "Sessão de aprendizado",
@@ -300,7 +302,25 @@
     "reset_progress": "Redefinir progresso",
     "reset_progress_help": "Apaga XP, emblemas e sequência. Não pode ser desfeito.",
     "reset_confirm_first": "Clique de novo para confirmar",
-    "reset_confirm_second": "Clique mais uma vez para apagar para sempre"
+    "reset_confirm_second": "Clique mais uma vez para apagar para sempre",
+    "section_voice": "Voz",
+    "voice": {
+      "tts_enabled": "Mostrar botões de voz",
+      "tts_enabled_help": "Lê respostas da IA em voz alta.",
+      "auto_play": "Reproduzir respostas da IA automaticamente",
+      "auto_play_help": "Fala cada resposta automaticamente (padrão: desativado).",
+      "tts_voice": "Voz",
+      "tts_voice_help": "Padrão: melhor correspondência com seu idioma.",
+      "voice_default": "Padrão (auto)",
+      "tts_rate": "Velocidade",
+      "tts_pitch": "Tom",
+      "stt_enabled": "Mostrar botão do microfone",
+      "stt_enabled_help": "Dite respostas via o navegador.",
+      "stt_lang": "Idioma de ditado",
+      "stt_lang_help": "Vazio = idioma do projeto/UI. Formato: BCP-47 (pt-BR).",
+      "pronunciation_enabled": "Prática de Pronúncia",
+      "pronunciation_enabled_help": "Mostra um botão em projetos de idiomas."
+    }
   },
   "methods": {
     "deductive": {
@@ -732,5 +752,33 @@
     "unaccept": "Desfazer aceitação",
     "reject": "Rejeitar",
     "deck_description": "Cartões exportados do Adaptive Learner."
+  },
+  "voice": {
+    "speak": "Ler em voz alta",
+    "stop_speaking": "Parar",
+    "start_listening": "Iniciar ditado",
+    "stop_listening": "Parar ditado",
+    "mic_permission_denied": "Acesso ao microfone negado.",
+    "mic_error": "Erro de reconhecimento de voz."
+  },
+  "pronunciation": {
+    "title": "Prática de Pronúncia",
+    "intro": "Gere uma frase, diga-a em voz alta e receba feedback imediato.",
+    "project_label": "Projeto",
+    "target_label": "Frase-alvo",
+    "no_phrase": "Clique em Gerar para começar.",
+    "generate": "Gerar frase",
+    "next_phrase": "Próxima frase",
+    "generating": "Gerando…",
+    "your_attempt": "Sua tentativa",
+    "attempt_placeholder": "Toque no microfone para ditar, ou digite o que disse.",
+    "submit": "Enviar tentativa",
+    "judging": "Avaliando…",
+    "match": "Acerto",
+    "miss": "Siga praticando",
+    "focus_on": "Foque em:",
+    "phrase_failed": "Não foi possível gerar uma frase.",
+    "judge_failed": "Não foi possível avaliar essa tentativa.",
+    "ineligible": "A prática de pronúncia está disponível para projetos de aprendizado de idiomas. Adicione um assunto sob 'Idiomas' ao seu projeto para ativá-la."
   }
 }

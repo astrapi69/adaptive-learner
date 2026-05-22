@@ -58,6 +58,7 @@ export default function Dashboard() {
     const [badges, setBadges] = useState<BadgeWithProgress[] | null>(null);
     const [streakState, setStreakState] = useState<StreakStateOut | null>(null);
     const [heatmap, setHeatmap] = useState<HeatmapEntryOut[] | null>(null);
+    const [pronunciationEligible, setPronunciationEligible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     /**
@@ -91,6 +92,13 @@ export default function Dashboard() {
         const heatmapPromise = userId
             ? storage.gamification.getStreakHeatmap(userId, 365)
             : Promise.resolve<HeatmapEntryOut[] | null>(null);
+        // v1.18.0 / Phase 31C — pronunciation quick-start is only
+        // surfaced for projects with a Languages subject.
+        const eligibilityPromise = projectId
+            ? storage.pronunciation.eligibility(projectId).catch(() => ({
+                  eligible: false,
+              }))
+            : Promise.resolve({eligible: false});
         Promise.allSettled([
             storage.assessment.profile(projectId),
             storage.tracking.progress(projectId),
@@ -100,6 +108,7 @@ export default function Dashboard() {
             badgesPromise,
             streakPromise,
             heatmapPromise,
+            eligibilityPromise,
         ]).then((results) => {
             if (cancelled) return;
             const [
@@ -111,7 +120,11 @@ export default function Dashboard() {
                 badgesR,
                 streakR,
                 heatmapR,
+                eligR,
             ] = results;
+            if (eligR.status === "fulfilled" && eligR.value) {
+                setPronunciationEligible(eligR.value.eligible);
+            }
             if (xpR.status === "fulfilled") {
                 setXpState(xpR.value);
             }
@@ -174,6 +187,21 @@ export default function Dashboard() {
             <QuickStartButton
                 suggestedMethod={profile?.dominant_method ?? null}
             />
+
+            {pronunciationEligible && (
+                <button
+                    type="button"
+                    className="btn btn-secondary dashboard-pronunciation-quick-start"
+                    onClick={() => navigate("/pronunciation")}
+                    data-testid="dashboard-pronunciation-button"
+                >
+                    🎤{" "}
+                    {t(
+                        "dashboard.pronunciation_quick_start",
+                        "Pronunciation Practice",
+                    )}
+                </button>
+            )}
 
             {userId && (
                 <DashboardFilterBar

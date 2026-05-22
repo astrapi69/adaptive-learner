@@ -195,4 +195,10 @@ export const apiStorage: IStorageService = {
             api.anki.extractFromConversation(conversationId),
         markExported: (cardIds) => api.anki.markExported(cardIds),
     },
+
+    pronunciation: {
+        eligibility: (projectId) => api.pronunciation.eligibility(projectId),
+        phrase: (args) => api.pronunciation.phrase(args),
+        judge: (args) => api.pronunciation.judge(args),
+    },
 };

@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import AssessmentProgress from "../components/AssessmentProgress";
 import ProfileRadar from "../components/ProfileRadar";
 import QuestionCard from "../components/QuestionCard";
+import SpeechButton from "../components/SpeechButton";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {hapticSwipe, useSwipe} from "../hooks/useSwipe";
@@ -290,14 +291,24 @@ export default function Assessment() {
                         {t(`methods.${profile.dominant_method}.label`, profile.dominant_method)}
                     </span>
                 </p>
-                <button
-                    type="button"
-                    data-testid="assessment-continue"
-                    className="btn btn-primary"
-                    onClick={() => navigate("/dashboard")}
-                >
-                    {t("assessment.continue_to_dashboard", "Continue to dashboard")}
-                </button>
+                <div className="assessment-result-actions">
+                    <SpeechButton
+                        text={`${t("assessment.dominant_method", "Preferred method")}: ${t(`methods.${profile.dominant_method}.label`, profile.dominant_method)}`}
+                        label={t("assessment.read_summary", "Read summary")}
+                        testId="assessment-result"
+                    />
+                    <button
+                        type="button"
+                        data-testid="assessment-continue"
+                        className="btn btn-primary"
+                        onClick={() => navigate("/dashboard")}
+                    >
+                        {t(
+                            "assessment.continue_to_dashboard",
+                            "Continue to dashboard",
+                        )}
+                    </button>
+                </div>
             </main>
         );
     }

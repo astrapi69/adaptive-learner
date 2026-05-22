@@ -168,7 +168,8 @@
     "evaluating": "Değerlendiriliyor…",
     "result_title": "Öğrenme profilin",
     "dominant_method": "Tercih edilen yöntem",
-    "continue_to_dashboard": "Panoya devam et"
+    "continue_to_dashboard": "Panoya devam et",
+    "read_summary": "Özeti oku"
   },
   "dashboard": {
     "title": "Pano",
@@ -191,7 +192,8 @@
     "metric_mean_understanding": "Ortalama anlayış",
     "metric_mean_stress": "Ortalama stres",
     "metric_streak": "Günlük seri",
-    "no_data": "Henüz oturum yok — eğilimleri görmek için ilkini başlat."
+    "no_data": "Henüz oturum yok — eğilimleri görmek için ilkini başlat.",
+    "pronunciation_quick_start": "Telaffuz Alıştırması"
   },
   "session": {
     "title": "Öğrenme oturumu",
@@ -300,7 +302,25 @@
     "reset_progress": "İlerlemeyi sıfırla",
     "reset_progress_help": "XP, rozet ve seriyi kalıcı olarak siler. Geri alınamaz.",
     "reset_confirm_first": "Onaylamak için tekrar tıkla",
-    "reset_confirm_second": "Kalıcı silmek için bir kez daha tıkla"
+    "reset_confirm_second": "Kalıcı silmek için bir kez daha tıkla",
+    "section_voice": "Ses",
+    "voice": {
+      "tts_enabled": "Konuşma düğmelerini göster",
+      "tts_enabled_help": "YZ yanıtlarını sesli okur.",
+      "auto_play": "YZ yanıtlarını otomatik oynat",
+      "auto_play_help": "Her yanıtı otomatik okur (varsayılan kapalı).",
+      "tts_voice": "Ses",
+      "tts_voice_help": "Varsayılan: projenin diline en yakın eşleşme.",
+      "voice_default": "Varsayılan (oto)",
+      "tts_rate": "Hız",
+      "tts_pitch": "Perde",
+      "stt_enabled": "Mikrofon düğmesini göster",
+      "stt_enabled_help": "Yanıtları tarayıcı üzerinden dikte et.",
+      "stt_lang": "Dikte dili geçersiz kıl",
+      "stt_lang_help": "Boş = proje/UI dili. Biçim: BCP-47 (tr-TR).",
+      "pronunciation_enabled": "Telaffuz Alıştırması",
+      "pronunciation_enabled_help": "Dil öğrenme projelerinde bir düğme gösterir."
+    }
   },
   "methods": {
     "deductive": {
@@ -732,5 +752,33 @@
     "unaccept": "Kabulü geri al",
     "reject": "Reddet",
     "deck_description": "Adaptive Learner'dan dışa aktarılan kartlar."
+  },
+  "voice": {
+    "speak": "Sesli oku",
+    "stop_speaking": "Durdur",
+    "start_listening": "Dikteyi başlat",
+    "stop_listening": "Dikteyi durdur",
+    "mic_permission_denied": "Mikrofon erişimi reddedildi.",
+    "mic_error": "Konuşma tanıma hatası."
+  },
+  "pronunciation": {
+    "title": "Telaffuz Alıştırması",
+    "intro": "Bir cümle oluştur, yüksek sesle söyle ve anında geri bildirim al.",
+    "project_label": "Proje",
+    "target_label": "Hedef cümle",
+    "no_phrase": "Başlamak için Oluştur'a tıkla.",
+    "generate": "Cümle oluştur",
+    "next_phrase": "Sonraki cümle",
+    "generating": "Oluşturuluyor…",
+    "your_attempt": "Denemen",
+    "attempt_placeholder": "Dikte için mikrofona dokun veya söylediğini yaz.",
+    "submit": "Denemeyi gönder",
+    "judging": "Değerlendiriliyor…",
+    "match": "İsabet",
+    "miss": "Çalışmaya devam",
+    "focus_on": "Şuna odaklan:",
+    "phrase_failed": "Cümle oluşturulamadı.",
+    "judge_failed": "Bu deneme değerlendirilemedi.",
+    "ineligible": "Telaffuz alıştırması dil öğrenme projeleri için kullanılabilir. Etkinleştirmek için 'Diller' altında bir konu ekle."
   }
 }

@@ -17,6 +17,7 @@ import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
 import Progress from "./pages/Progress";
+import Pronunciation from "./pages/Pronunciation";
 import Session from "./pages/Session";
 import Settings from "./pages/Settings";
 
@@ -66,6 +67,7 @@ export default function App() {
                         element={<ImportDetail />}
                     />
                     <Route path="/anki" element={<AnkiPage />} />
+                    <Route path="/pronunciation" element={<Pronunciation />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>

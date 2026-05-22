@@ -168,7 +168,8 @@
     "evaluating": "評価中…",
     "result_title": "あなたの学習プロフィール",
     "dominant_method": "好まれる方法",
-    "continue_to_dashboard": "ダッシュボードへ進む"
+    "continue_to_dashboard": "ダッシュボードへ進む",
+    "read_summary": "サマリーを読み上げ"
   },
   "dashboard": {
     "title": "ダッシュボード",
@@ -191,7 +192,8 @@
     "metric_mean_understanding": "平均理解度",
     "metric_mean_stress": "平均ストレス",
     "metric_streak": "連続日数",
-    "no_data": "まだセッションがありません — 最初のセッションを始めて傾向を確認しましょう。"
+    "no_data": "まだセッションがありません — 最初のセッションを始めて傾向を確認しましょう。",
+    "pronunciation_quick_start": "発音練習"
   },
   "session": {
     "title": "学習セッション",
@@ -300,7 +302,25 @@
     "reset_progress": "進捗をリセット",
     "reset_progress_help": "XP、バッジ、ストリークを完全に削除。元に戻せません。",
     "reset_confirm_first": "確認のためもう一度クリック",
-    "reset_confirm_second": "完全削除するにはもう一度クリック"
+    "reset_confirm_second": "完全削除するにはもう一度クリック",
+    "section_voice": "音声",
+    "voice": {
+      "tts_enabled": "音声ボタンを表示",
+      "tts_enabled_help": "スピーカーアイコンをクリックするとAI応答を読み上げます。",
+      "auto_play": "AI応答を自動再生",
+      "auto_play_help": "各AI応答を自動的に読み上げます（デフォルトはオフ）。",
+      "tts_voice": "音声",
+      "tts_voice_help": "デフォルトはプロジェクトの言語に最も近い音声。",
+      "voice_default": "デフォルト（自動）",
+      "tts_rate": "速度",
+      "tts_pitch": "ピッチ",
+      "stt_enabled": "マイクボタンを表示",
+      "stt_enabled_help": "ブラウザの音声認識で返信を口述します。",
+      "stt_lang": "音声入力言語の上書き",
+      "stt_lang_help": "空 = プロジェクト/UI言語。形式: BCP-47 (ja-JP)。",
+      "pronunciation_enabled": "発音練習",
+      "pronunciation_enabled_help": "言語学習プロジェクトのダッシュボードに発音練習ボタンを表示します。"
+    }
   },
   "methods": {
     "deductive": {
@@ -732,5 +752,33 @@
     "unaccept": "承認を取り消す",
     "reject": "却下",
     "deck_description": "Adaptive Learnerからエクスポートしたカード。"
+  },
+  "voice": {
+    "speak": "読み上げ",
+    "stop_speaking": "停止",
+    "start_listening": "音声入力開始",
+    "stop_listening": "音声入力停止",
+    "mic_permission_denied": "マイクへのアクセスが拒否されました。",
+    "mic_error": "音声認識エラー。"
+  },
+  "pronunciation": {
+    "title": "発音練習",
+    "intro": "フレーズを生成し、声に出して読み、即座にフィードバックを受け取ります。",
+    "project_label": "プロジェクト",
+    "target_label": "ターゲット・フレーズ",
+    "no_phrase": "開始するには「生成」をクリック。",
+    "generate": "フレーズを生成",
+    "next_phrase": "次のフレーズ",
+    "generating": "生成中…",
+    "your_attempt": "あなたの発音",
+    "attempt_placeholder": "マイクをタップして音声入力、または手動入力。",
+    "submit": "送信",
+    "judging": "採点中…",
+    "match": "成功",
+    "miss": "練習を続けましょう",
+    "focus_on": "重点ポイント:",
+    "phrase_failed": "フレーズを生成できませんでした。",
+    "judge_failed": "この試行を採点できませんでした。",
+    "ineligible": "発音練習は言語学習プロジェクトで利用できます。プロジェクトに『言語』配下の科目を追加して有効化してください。"
   }
 }

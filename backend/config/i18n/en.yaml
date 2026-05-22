@@ -158,6 +158,7 @@ assessment:
   result_title: Your learning profile
   dominant_method: Preferred method
   continue_to_dashboard: Continue to dashboard
+  read_summary: Read summary
 dashboard:
   title: Dashboard
   welcome: Welcome back
@@ -180,6 +181,7 @@ dashboard:
   metric_mean_stress: Mean stress
   metric_streak: Day streak
   no_data: No sessions yet — start your first one to see trends.
+  pronunciation_quick_start: Pronunciation Practice
 session:
   title: Learning session
   in_progress: Session in progress
@@ -286,6 +288,23 @@ settings:
   reset_progress_help: Permanently delete XP, badges, and streak. Cannot be undone.
   reset_confirm_first: Click again to confirm
   reset_confirm_second: Click once more to delete forever
+  section_voice: Voice
+  voice:
+    tts_enabled: Show speech buttons
+    tts_enabled_help: Reads AI responses aloud when you click the speaker icon.
+    auto_play: Auto-play AI responses
+    auto_play_help: Speak each AI response automatically (default off).
+    tts_voice: Voice
+    tts_voice_help: Default uses the closest match for your project language.
+    voice_default: Default (auto-pick)
+    tts_rate: Rate
+    tts_pitch: Pitch
+    stt_enabled: Show microphone button
+    stt_enabled_help: Dictate your replies via the browser's speech recognition.
+    stt_lang: Dictation language override
+    stt_lang_help: 'Leave empty to use the project / UI language. Format: BCP-47 (e.g. en-US, es-ES).'
+    pronunciation_enabled: Pronunciation Practice
+    pronunciation_enabled_help: Surfaces a 'Pronunciation Practice' button on language-learning project dashboards.
 methods:
   deductive:
     label: Deductive
@@ -666,3 +685,29 @@ anki:
   unaccept: Unaccept
   reject: Reject
   deck_description: Cards exported from Adaptive Learner.
+voice:
+  speak: Read aloud
+  stop_speaking: Stop speaking
+  start_listening: Start dictation
+  stop_listening: Stop listening
+  mic_permission_denied: Microphone access denied.
+  mic_error: Speech recognition error.
+pronunciation:
+  title: Pronunciation Practice
+  intro: Generate a phrase, speak it aloud, and get instant feedback.
+  project_label: Project
+  target_label: Target phrase
+  no_phrase: Click Generate to start.
+  generate: Generate phrase
+  next_phrase: Next phrase
+  generating: Generating…
+  your_attempt: Your attempt
+  attempt_placeholder: Tap the mic to dictate, or type what you said.
+  submit: Submit attempt
+  judging: Scoring…
+  match: Match
+  miss: Keep practising
+  focus_on: 'Focus on:'
+  phrase_failed: Could not generate a phrase.
+  judge_failed: Could not score that attempt.
+  ineligible: Pronunciation practice is available for language-learning projects. Add a subject under 'Languages' to your project to enable it.
