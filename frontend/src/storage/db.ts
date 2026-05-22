@@ -82,6 +82,14 @@ export interface CurriculumRow {
     language: string;
     created_at: string;
     updated_at: string;
+    /**
+     * Phase 36 Bug 3 — children-side FK back to the imported
+     * conversation that produced this curriculum. ``null`` for
+     * free-form curricula. Dexie schema v13 adds the secondary
+     * index so the "did this conversation already produce a
+     * curriculum?" lookup is O(log n).
+     */
+    imported_conversation_id: string | null;
 }
 
 export interface LearningTopicRow {
@@ -582,6 +590,15 @@ export class AdaptiveLearnerDB extends Dexie {
                         .update(conv.id, {content_hash: hex});
                 }
             });
+        // Schema v13 — v1.21.1 Phase 36 Bug 3: children-side FK
+        // from a generated curriculum back to the imported
+        // conversation that produced it. New secondary index for
+        // the per-conversation lookup. No back-fill: pre-v13 rows
+        // were all free-form (no FK existed yet) so ``null`` is
+        // correct for the historic set.
+        this.version(13).stores({
+            curricula: "id, user_id, imported_conversation_id",
+        });
     }
 }
 

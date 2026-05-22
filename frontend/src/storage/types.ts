@@ -158,6 +158,13 @@ export interface ICurriculaNamespace {
     get(curriculumId: string): Promise<Curriculum>;
     update(curriculumId: string, body: CurriculumUpdateBody): Promise<Curriculum>;
     remove(curriculumId: string): Promise<void>;
+    /**
+     * Phase 36 Bug 3 — return the curriculum auto-generated from
+     * the given imported conversation, or ``null`` if none exists.
+     * ImportDetail uses the answer to flip its "Create curriculum"
+     * CTA into a "Go to curriculum" navigate.
+     */
+    getForConversation(conversationId: string): Promise<Curriculum | null>;
     listTopics(curriculumId: string): Promise<LearningTopic[]>;
     createTopic(curriculumId: string, body: TopicCreateBody): Promise<LearningTopic>;
     listLessons(curriculumId: string): Promise<Lesson[]>;

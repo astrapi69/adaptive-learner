@@ -290,6 +290,14 @@ export interface Curriculum {
     language: string;
     created_at: string;
     updated_at: string;
+    /**
+     * Phase 36 Bug 3 — children-side FK back to the imported
+     * conversation that produced this curriculum. ``null`` for
+     * free-form curricula. ImportDetail uses this to flip its
+     * "Create curriculum" CTA into a "Go to curriculum" navigate
+     * when a curriculum already exists for the conversation.
+     */
+    imported_conversation_id: string | null;
 }
 
 export interface LearningTopic {

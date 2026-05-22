@@ -60,6 +60,7 @@ import:
   analysis_save_error: Impossible de sauvegarder le resultat de l'analyse.
   back_to_list: Retour aux imports
   create_curriculum: Creer un programme
+  go_to_curriculum: Aller au programme
   curriculum_created: Programme cree a partir de l'analyse.
   curriculum_error: Impossible de creer le programme.
   curriculum_description: Genere a partir d'une conversation importee.

@@ -9,6 +9,12 @@ from dataclasses import dataclass
 import pytest
 from fastapi.testclient import TestClient
 
+from app.routers.curriculum import (
+    curricula_router,
+    lessons_router,
+    topics_router,
+    users_curricula_router,
+)
 from app.routers.imports import imports_router, users_imports_router
 from app.routers.projects import projects_router, users_projects_router
 from app.routers.settings import router as settings_router
@@ -54,6 +60,13 @@ def client() -> TestClient:
         users_imports_router,
         imports_router,
         settings_router,
+        # Phase 36 Bug 3 — the imports router now reaches into the
+        # curriculum service; tests that exercise the curriculum-
+        # link surface need the curricula routers mounted too.
+        users_curricula_router,
+        curricula_router,
+        topics_router,
+        lessons_router,
     )
 
 
@@ -278,6 +291,50 @@ def test_duplicate_check_is_scoped_per_user(client: TestClient):
     assert b.status_code == 201
     assert a.json()["content_hash"] == b.json()["content_hash"]
     assert a.json()["id"] != b.json()["id"]
+
+
+# --- Phase 36 Bug 3 — curriculum-link surface --------------------------------
+
+
+def test_get_curriculum_for_unlinked_conversation_returns_null(client: TestClient):
+    """No curriculum was ever generated → endpoint returns ``null``,
+    NOT 404. ImportDetail uses the null answer to keep the CTA on
+    "Create curriculum"."""
+    user_id = _make_user(client)
+    created = client.post(f"/api/users/{user_id}/imports", json=_conv_body()).json()
+    resp = client.get(f"/api/imports/{created['id']}/curriculum")
+    assert resp.status_code == 200
+    assert resp.json() is None
+
+
+def test_get_curriculum_returns_linked_record(client: TestClient):
+    """A curriculum created with ``imported_conversation_id`` set
+    is returned by the lookup endpoint so the frontend can flip
+    the CTA into a navigate-to-existing."""
+    user_id = _make_user(client)
+    created = client.post(f"/api/users/{user_id}/imports", json=_conv_body()).json()
+    curric_resp = client.post(
+        f"/api/users/{user_id}/curricula",
+        json={
+            "title": "From import",
+            "imported_conversation_id": created["id"],
+        },
+    )
+    assert curric_resp.status_code == 201, curric_resp.text
+    curric = curric_resp.json()
+    assert curric["imported_conversation_id"] == created["id"]
+
+    lookup = client.get(f"/api/imports/{created['id']}/curriculum")
+    assert lookup.status_code == 200
+    body = lookup.json()
+    assert body is not None
+    assert body["id"] == curric["id"]
+    assert body["imported_conversation_id"] == created["id"]
+
+
+def test_get_curriculum_404_on_unknown_conversation(client: TestClient):
+    resp = client.get("/api/imports/bogus/curriculum")
+    assert resp.status_code == 404
 
 
 def test_whitespace_only_difference_still_collapses(client: TestClient):

@@ -75,6 +75,7 @@ const CURRICULUM: CurriculumT = {
     language: "en",
     created_at: "2026-05-18T00:00:00Z",
     updated_at: "2026-05-18T00:00:00Z",
+    imported_conversation_id: null,
 };
 
 const ROOT_TOPIC: LearningTopic = {

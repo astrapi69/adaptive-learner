@@ -233,6 +233,13 @@ export interface CurriculumCreateBody {
     title: string;
     description?: string | null;
     language?: string;
+    /**
+     * Phase 36 Bug 3 — optional FK back to the imported conversation
+     * this curriculum was generated from. Lets ImportDetail flip
+     * the "Create curriculum" CTA into a "Go to curriculum"
+     * navigation so users do not generate duplicates.
+     */
+    imported_conversation_id?: string | null;
 }
 
 export interface CurriculumUpdateBody {
@@ -1009,6 +1016,14 @@ export const api = {
             apiCall<import("../types/domain").ImportedConversationDetail>(
                 `/imports/${encodeURIComponent(conversationId)}/analyze`,
                 {method: "POST", body: {}},
+            ),
+        /**
+         * Phase 36 Bug 3 — return the curriculum auto-generated
+         * from this conversation, or ``null`` if none exists.
+         */
+        getCurriculum: (conversationId: string) =>
+            apiCall<import("../types/domain").Curriculum | null>(
+                `/imports/${encodeURIComponent(conversationId)}/curriculum`,
             ),
     },
 };

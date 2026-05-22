@@ -214,6 +214,7 @@ function rowToCurriculum(row: CurriculumRow): Curriculum {
         language: row.language,
         created_at: row.created_at,
         updated_at: row.updated_at,
+        imported_conversation_id: row.imported_conversation_id ?? null,
     };
 }
 
@@ -959,9 +960,26 @@ export const dexieStorage: IStorageService = {
                 language: body.language ?? user.language,
                 created_at: ts,
                 updated_at: ts,
+                imported_conversation_id: body.imported_conversation_id ?? null,
             };
             await db.curricula.add(row);
             return rowToCurriculum(row);
+        },
+        /**
+         * Phase 36 Bug 3 — return the curriculum auto-generated
+         * from this conversation, or ``null`` if none exists.
+         * ImportDetail uses the answer to flip the "Create
+         * curriculum" CTA into a "Go to curriculum" navigate.
+         */
+        async getForConversation(
+            conversationId: string,
+        ): Promise<Curriculum | null> {
+            const db = getDb();
+            const row = await db.curricula
+                .where("imported_conversation_id")
+                .equals(conversationId)
+                .first();
+            return row ? rowToCurriculum(row) : null;
         },
         async get(curriculumId: string): Promise<Curriculum> {
             const db = getDb();

@@ -47,6 +47,11 @@ class _CurriculumCreateBody(BaseModel):
     title: str = Field(min_length=1, max_length=500)
     description: str | None = None
     language: str = Field(default="de", max_length=10)
+    # Phase 36 Bug 3 — optional FK back to the imported conversation
+    # this curriculum was generated from. Lets ImportDetail query
+    # "does this conversation already have a curriculum?" and flip
+    # the CTA into a navigate instead of a duplicate create.
+    imported_conversation_id: str | None = None
 
 
 class _TopicCreateBody(BaseModel):

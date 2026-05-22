@@ -60,6 +60,7 @@ import:
   analysis_save_error: Analyse-Ergebnis konnte nicht gespeichert werden.
   back_to_list: Zurück zu den Importen
   create_curriculum: Curriculum erstellen
+  go_to_curriculum: Zum Curriculum
   curriculum_created: Curriculum aus der Analyse erstellt.
   curriculum_error: Curriculum konnte nicht erstellt werden.
   curriculum_description: Erzeugt aus einer importierten Konversation.

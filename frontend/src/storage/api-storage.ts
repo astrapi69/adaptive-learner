@@ -84,6 +84,11 @@ export const apiStorage: IStorageService = {
         update: (curriculumId, body) =>
             api.curricula.update(curriculumId, body),
         remove: (curriculumId) => api.curricula.remove(curriculumId),
+        // Phase 36 Bug 3 — HTTP shape lives under /imports/, not
+        // /curricula/, because the lookup is "what did THIS
+        // conversation produce?". Same answer either way.
+        getForConversation: (conversationId) =>
+            api.imports.getCurriculum(conversationId),
         listTopics: (curriculumId) =>
             api.curricula.listTopics(curriculumId),
         createTopic: (curriculumId, body) =>

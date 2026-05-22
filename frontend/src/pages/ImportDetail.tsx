@@ -32,6 +32,7 @@ import {notify} from "../utils/notify";
 import type {AIProvider} from "../lib/constants";
 import type {
     ConversationAnalysisResult,
+    Curriculum,
     ImportedConversationDetail,
 } from "../types/domain";
 
@@ -58,6 +59,12 @@ export default function ImportDetail({
     const [analyzing, setAnalyzing] = useState(false);
     const [creatingCurriculum, setCreatingCurriculum] = useState(false);
     const [extractingAnki, setExtractingAnki] = useState(false);
+    // Phase 36 Bug 3 — track the curriculum already generated from
+    // this conversation (if any). The CTA flips from "Create
+    // curriculum" to "Go to curriculum" when set, so users no
+    // longer accidentally generate duplicates by clicking twice.
+    const [existingCurriculum, setExistingCurriculum] =
+        useState<Curriculum | null>(null);
 
     const go = (path: string) => (onNavigate ? onNavigate(path) : navigate(path));
 
@@ -68,6 +75,18 @@ export default function ImportDetail({
             try {
                 const d = await getStorage().imports.get(conversationId);
                 if (!cancelled) setDetail(d);
+                // Phase 36 Bug 3 — load the linked curriculum in
+                // parallel; missing endpoint / null result is
+                // non-fatal (the CTA just stays on "Create").
+                try {
+                    const linked = await getStorage().curricula.getForConversation(
+                        conversationId,
+                    );
+                    if (!cancelled) setExistingCurriculum(linked);
+                } catch {
+                    // Older backends without the /curriculum lookup
+                    // endpoint fall through gracefully.
+                }
             } catch (err) {
                 if (!cancelled) {
                     const msg =
@@ -165,6 +184,16 @@ export default function ImportDetail({
 
     async function createCurriculumFromAnalysis() {
         if (!detail?.analysis_result || creatingCurriculum) return;
+        // Phase 36 Bug 3 — if a curriculum already exists for this
+        // conversation, navigate to it instead of generating a
+        // duplicate. The button text already says "Go to
+        // curriculum" in this state, but defence in depth: the
+        // user might double-click before the state observed the
+        // initial load.
+        if (existingCurriculum) {
+            go(`/curriculum?id=${encodeURIComponent(existingCurriculum.id)}`);
+            return;
+        }
         const {userId} = readLearnerState();
         if (!userId) {
             notify.error(t("import.no_user", "No active user."));
@@ -193,7 +222,9 @@ export default function ImportDetail({
                         "import.curriculum_description",
                         "Generated from an imported conversation.",
                     ),
+                imported_conversation_id: detail.id,
             });
+            setExistingCurriculum(curriculum);
             // Sort by priority before persisting; lower number = higher priority.
             const sorted = [...lessons].sort(
                 (a, b) => a.priority - b.priority,
@@ -300,16 +331,33 @@ export default function ImportDetail({
                             <button
                                 type="button"
                                 className="btn btn-secondary"
+                                // Phase 36 Bug 3 — when a curriculum
+                                // already exists for this
+                                // conversation, the click navigates
+                                // to it (handled inside
+                                // ``createCurriculumFromAnalysis``).
+                                // Otherwise the handler generates a
+                                // new curriculum linked back via the
+                                // ``imported_conversation_id`` FK.
                                 onClick={createCurriculumFromAnalysis}
                                 disabled={creatingCurriculum}
-                                data-testid="create-curriculum-button"
+                                data-testid={
+                                    existingCurriculum
+                                        ? "goto-curriculum-button"
+                                        : "create-curriculum-button"
+                                }
                             >
                                 {creatingCurriculum
                                     ? t("common.loading", "Loading…")
-                                    : t(
-                                          "import.create_curriculum",
-                                          "Create curriculum",
-                                      )}
+                                    : existingCurriculum
+                                      ? t(
+                                            "import.go_to_curriculum",
+                                            "Go to curriculum",
+                                        )
+                                      : t(
+                                            "import.create_curriculum",
+                                            "Create curriculum",
+                                        )}
                             </button>
                         )}
                     {analysis && (

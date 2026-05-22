@@ -60,6 +60,7 @@ import:
   analysis_save_error: Analiz sonucu kaydedilemedi.
   back_to_list: İçe aktarmalara dön
   create_curriculum: Müfredat oluştur
+  go_to_curriculum: Müfredata git
   curriculum_created: Analizden müfredat oluşturuldu.
   curriculum_error: Müfredat oluşturulamadı.
   curriculum_description: İçe aktarılan bir konuşmadan oluşturuldu.

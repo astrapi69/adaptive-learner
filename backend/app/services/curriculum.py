@@ -45,11 +45,27 @@ def create_curriculum(db: Session, payload: CurriculumCreate) -> Curriculum:
         title=payload.title,
         description=payload.description,
         language=payload.language,
+        imported_conversation_id=payload.imported_conversation_id,
     )
     db.add(row)
     db.commit()
     db.refresh(row)
     return row
+
+
+def get_curriculum_for_conversation(db: Session, conversation_id: str) -> Curriculum | None:
+    """Phase 36 Bug 3 — return the curriculum created from this
+    conversation (if any). Used by ImportDetail to flip the
+    "Create curriculum" CTA into a "Go to curriculum" navigation.
+
+    Returns ``None`` if the conversation never produced a
+    curriculum, or if the curriculum was later deleted (the FK is
+    ``SET NULL`` on conversation delete; this lookup catches only
+    live curricula).
+    """
+    return (
+        db.query(Curriculum).filter(Curriculum.imported_conversation_id == conversation_id).first()
+    )
 
 
 def get_curriculum(db: Session, curriculum_id: str) -> Curriculum:

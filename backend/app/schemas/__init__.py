@@ -334,6 +334,9 @@ class CurriculumCreate(BaseModel):
     title: str = Field(min_length=1, max_length=500)
     description: str | None = None
     language: str = Field(default="de", max_length=10)
+    # Phase 36 Bug 3 — optional FK to the imported conversation
+    # that produced this curriculum. None for free-form curricula.
+    imported_conversation_id: str | None = None
 
 
 class CurriculumUpdate(BaseModel):
@@ -352,6 +355,7 @@ class CurriculumOut(BaseModel):
     language: str
     created_at: datetime
     updated_at: datetime
+    imported_conversation_id: str | None = None
 
 
 # --- LearningTopic ----------------------------------------------------------

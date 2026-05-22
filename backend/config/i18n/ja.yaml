@@ -60,6 +60,7 @@ import:
   analysis_save_error: 分析結果を保存できませんでした。
   back_to_list: インポート一覧に戻る
   create_curriculum: カリキュラムを作成
+  go_to_curriculum: カリキュラムへ
   curriculum_created: 分析からカリキュラムが作成されました。
   curriculum_error: カリキュラムを作成できませんでした。
   curriculum_description: インポートされた会話から生成されました。

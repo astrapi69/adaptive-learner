@@ -173,6 +173,63 @@ describe("DexieStorage.curricula + topics + lessons", () => {
         expect(await db.lessons.count()).toBe(0);
     });
 
+    // Phase 36 Bug 3 — children-side FK from Curriculum to the
+    // imported conversation that produced it.
+
+    it("create + getForConversation round-trip (Phase 36 Bug 3)", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        // Seed a conversation so the FK references a real row.
+        const conv = await dexieStorage.imports.create(u.id, {
+            source: "manual",
+            title: "Linked source",
+            model: null,
+            source_created_at: null,
+            messages: [
+                {role: "user", content: "Q", timestamp: null},
+                {role: "assistant", content: "A", timestamp: null},
+            ],
+        });
+        const c = await dexieStorage.curricula.create(u.id, {
+            title: "Linked curriculum",
+            imported_conversation_id: conv.id,
+        });
+        expect(c.imported_conversation_id).toBe(conv.id);
+
+        const lookup = await dexieStorage.curricula.getForConversation(conv.id);
+        expect(lookup?.id).toBe(c.id);
+    });
+
+    it("getForConversation returns null when no curriculum exists (Phase 36 Bug 3)", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const conv = await dexieStorage.imports.create(u.id, {
+            source: "manual",
+            title: "Standalone",
+            model: null,
+            source_created_at: null,
+            messages: [
+                {role: "user", content: "alone", timestamp: null},
+                {role: "assistant", content: "yes", timestamp: null},
+            ],
+        });
+        const lookup = await dexieStorage.curricula.getForConversation(conv.id);
+        expect(lookup).toBeNull();
+    });
+
+    it("free-form curricula (no FK) ignore the lookup (Phase 36 Bug 3)", async () => {
+        const u = await dexieStorage.users.create({name: "A"});
+        const conv = await dexieStorage.imports.create(u.id, {
+            source: "manual",
+            title: "Conv",
+            model: null,
+            source_created_at: null,
+            messages: [{role: "user", content: "x", timestamp: null}],
+        });
+        // Create a free-form curriculum (no FK).
+        await dexieStorage.curricula.create(u.id, {title: "Free form"});
+        const lookup = await dexieStorage.curricula.getForConversation(conv.id);
+        expect(lookup).toBeNull();
+    });
+
     it("topics.update + lessons.update + remove", async () => {
         const u = await dexieStorage.users.create({name: "A"});
         const c = await dexieStorage.curricula.create(u.id, {title: "C"});

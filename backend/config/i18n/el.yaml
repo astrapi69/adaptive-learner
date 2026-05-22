@@ -60,6 +60,7 @@ import:
   analysis_save_error: Δεν ήταν δυνατή η αποθήκευση του αποτελέσματος ανάλυσης.
   back_to_list: Πίσω στις εισαγωγές
   create_curriculum: Δημιουργία προγράμματος
+  go_to_curriculum: Μετάβαση στο πρόγραμμα
   curriculum_created: Δημιουργήθηκε πρόγραμμα από την ανάλυση.
   curriculum_error: Δεν ήταν δυνατή η δημιουργία προγράμματος.
   curriculum_description: Δημιουργήθηκε από εισηγμένη συνομιλία.

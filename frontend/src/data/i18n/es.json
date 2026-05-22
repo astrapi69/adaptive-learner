@@ -67,6 +67,7 @@
     "analysis_save_error": "No se pudo guardar el resultado del analisis.",
     "back_to_list": "Volver a las importaciones",
     "create_curriculum": "Crear curriculo",
+    "go_to_curriculum": "Ir al currículo",
     "curriculum_created": "Curriculo creado a partir del analisis.",
     "curriculum_error": "No se pudo crear el curriculo.",
     "curriculum_description": "Generado a partir de una conversacion importada.",

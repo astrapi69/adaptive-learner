@@ -28,12 +28,14 @@ from app.exceptions import ValidationError
 from app.models import User
 from app.schemas import (
     AIProvider,
+    CurriculumOut,
     ImportedConversationAnalysis,
     ImportedConversationCreate,
     ImportedConversationDetail,
     ImportedConversationOut,
     ImportedConversationUpdate,
 )
+from app.services import curriculum as curriculum_service
 from app.services import imports as imports_service
 from app.services import settings as settings_service
 from app.services.conversation_analysis import (
@@ -105,6 +107,27 @@ def update_import(
 def delete_import(conversation_id: str, db: Session = Depends(get_db)) -> Response:
     imports_service.delete_conversation(db, conversation_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@imports_router.get(
+    "/{conversation_id}/curriculum",
+    response_model=CurriculumOut | None,
+)
+def get_curriculum_for_import(
+    conversation_id: str, db: Session = Depends(get_db)
+) -> CurriculumOut | None:
+    """Phase 36 Bug 3 — return the curriculum auto-generated from
+    this conversation, or ``null`` if none exists. The frontend
+    uses this to flip the "Create curriculum" CTA into a "Go to
+    curriculum" navigation so users can no longer accidentally
+    generate duplicates."""
+    # Guard the conversation exists — falls through to
+    # NotFoundError handled by the global exception handler.
+    imports_service.get_conversation(db, conversation_id)
+    row = curriculum_service.get_curriculum_for_conversation(db, conversation_id)
+    if row is None:
+        return None
+    return CurriculumOut.model_validate(row)
 
 
 @imports_router.post(

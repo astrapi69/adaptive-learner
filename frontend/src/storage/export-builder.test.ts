@@ -364,6 +364,7 @@ describe("buildCurriculumOverview", () => {
             language: "de",
             created_at: nowIso(),
             updated_at: nowIso(),
+            imported_conversation_id: null,
         });
         const payload = await buildCurriculumOverview(db, curriculumId);
         expect(payload.curriculum.title).toBe("Empty");
@@ -383,6 +384,7 @@ describe("buildCurriculumOverview", () => {
             language: "de",
             created_at: nowIso(),
             updated_at: nowIso(),
+            imported_conversation_id: null,
         });
         const rootAId = newId();
         const childAId = newId();
@@ -454,6 +456,7 @@ describe("buildCurriculumOverview", () => {
             language: "de",
             created_at: nowIso(),
             updated_at: nowIso(),
+            imported_conversation_id: null,
         });
         await db.lessons.bulkAdd([
             {

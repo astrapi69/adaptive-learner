@@ -291,6 +291,18 @@ class Curriculum(Base):
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     description: Mapped[str | None] = mapped_column(Text, nullable=True)
     language: Mapped[str] = mapped_column(String(10), nullable=False, default="de")
+    # Phase 36 Bug 3 — children-side FK back to the conversation the
+    # curriculum was auto-generated from. Nullable: free-form
+    # curricula keep ``NULL``. ``SET NULL`` on delete so removing
+    # the source conversation does not wipe the derived curriculum.
+    # Indexed so the ImportDetail page's "did this conversation
+    # already produce a curriculum?" check is O(log n).
+    imported_conversation_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("imported_conversations.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow
