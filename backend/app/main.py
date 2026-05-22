@@ -511,7 +511,14 @@ app.include_router(export_router, prefix="/api")
 
 @app.exception_handler(AdaptiveLearnerError)
 async def adaptive_learner_error_handler(request: Request, exc: AdaptiveLearnerError):
-    """Map typed domain errors to HTTP responses (per code-hygiene.md)."""
+    """Map typed domain errors to HTTP responses (per code-hygiene.md).
+
+    In ``DEBUG`` mode, 5xx responses additionally carry
+    ``stacktrace`` / ``endpoint`` / ``method`` so the frontend
+    error-report dialog can pre-fill a GitHub issue body with
+    actionable context. 4xx stay clean (they are not bugs and the
+    extra payload would only add noise to the toast).
+    """
     if exc.status_code >= 500:
         logger.error(
             "%s %s -> %s",
@@ -534,6 +541,14 @@ async def adaptive_learner_error_handler(request: Request, exc: AdaptiveLearnerE
         # on a 409 duplicate-import) into the response body so the
         # frontend can act on the error without parsing prose.
         content.update(exc.extra)
+    if DEBUG and exc.status_code >= 500:
+        import traceback
+
+        content["stacktrace"] = "".join(
+            traceback.format_exception(type(exc), exc, exc.__traceback__)
+        )
+        content["endpoint"] = request.url.path
+        content["method"] = request.method
     return JSONResponse(status_code=exc.status_code, content=content)
 
 
