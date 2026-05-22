@@ -136,6 +136,22 @@ wirken, wenn nicht pro Zug gut begründet.
 treu aus und wechselt, wenn das Signal sagt, sie greift
 nicht.
 
+## Wie die App jede Methode umsetzt
+
+Die sechs Methoden sind nicht nur Labels. Jede treibt eine
+eigene KI-Persönlichkeit über die **42-Zellen-Prompt-
+Matrix** in `plugins/.../session/prompts.py`: ein Prompt
+pro (Methode, Schritt)-Paar, sechs Methoden × sieben
+Schritte. Ein deduktives Input öffnet mit der Regel und
+fragt nach Beispielen; ein kontextuelles Input öffnet mit
+einem realweltlichen Szenario und fragt, wie der Lernende
+es angehen würde. Gleicher Schritt, komplett andere Textur.
+
+Die Matrix wird unverändert nach
+`frontend/src/data/session-prompts.json` exportiert für
+Dexie-Modus-Parität — kein Drift möglich zwischen
+Server- und Lokal-Modus.
+
 ## Wie auswählen
 
 Dein Test liefert dir ein 6-Methoden-Profil. Die dominante

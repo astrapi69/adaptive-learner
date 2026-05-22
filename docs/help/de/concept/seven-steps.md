@@ -137,4 +137,37 @@ anfühlt.
 
 Auf Mobile (≤768px) wird der Streifen zu einer einzigen
 horizontalen Reihe kleiner Kreise, um Vertikalplatz zu
-sparen.
+sparen. Swipe-to-Peek auf dem Streifen blendet ein
+Informations-Overlay ein, das den vorherigen / nächsten
+Zyklus-Schritt beschreibt.
+
+## Auto-Loop (v1.4.0) + Thema-Übergänge
+
+Schritt 7 ist keine Sackgasse mehr. Sobald der Schritt-
+Bewerter dich mit `advance=true` auf Schritt 7 bringt,
+feuert ein dritter KI-Aufruf — der Thema-Übergangs-
+Bewerter — und entscheidet, ob das Thema integriert ist
+und ob ein neuer Zyklus starten soll.
+
+Bei `integrated=true ∧ continue_recommended=true`:
+`cycle_step` springt auf 1, `cycle_count` erhöht sich um 1,
+ein neues Unterthema wird gewählt. Hartcap `max_cycles=5`
+pro Session verhindert Endlosschleifen. Ein deterministischer
+Fallback erhält das v0.5.0-Cap-bei-7-Verhalten bei jedem
+KI- / Parse-Fehler.
+
+Der Chat rendert Zyklus-Übergänge als „Zyklus N"-Karten
+mit gestricheltem Rand im Sitzungsverlauf. Der
+Bewertungsdialog fasst die Multi-Cycle-Reise zusammen, wenn
+`cycle_count > 1`.
+
+## Parallele Zyklus-Grenz-Bewertung (v1.5.0)
+
+Beim Schritt-6→7-Übergang feuern Schritt-Bewerter und
+Thema-Übergangs-Bewerter parallel via `asyncio.gather`
+(`async_evaluation: true` in `app.yaml`). Das spart ~T₂ an
+Latenz an der Zyklus-Grenze.
+
+Die Message-Response trägt einen `timings`-Block mit
+`learning_ms` / `evaluation_ms` / `topic_transition_ms` /
+`total_ms` / `parallel_saved_ms`.

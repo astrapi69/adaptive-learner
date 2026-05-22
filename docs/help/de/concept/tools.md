@@ -125,20 +125,44 @@ Die Karten sind nach Dringlichkeit sortiert (niedrigeres
 Intervall × stärkeres Gewicht = höhere Priorität). Du musst
 ihnen nicht folgen — sie sind Stupser, keine Befehle.
 
+## First-Class ausgelieferte Integrationen (seit v1.17.0)
+
+Drei Werkzeuge sind zwischen v1.17.0 und v1.20.0 von
+„externe Empfehlung" zu „eingebautem Export" geworden:
+
+- **Anki .apkg-Export** (v1.17.0 / Phase 30) — auf der
+  `/anki`-Seite KI-extrahierte Karteikarten prüfen, die
+  gewünschten annehmen, Export klicken. Die `.apkg`-Datei
+  wird client-seitig via sql.js + JSZip gebaut und
+  funktioniert direkt in Anki-Desktop. Kein manueller
+  Übergang.
+- **NotebookLM-ZIP-Paket** (v1.19.0 / Phase 32) — auf der
+  Fortschritts-Seite das Studien-Paket herunterladen. Das
+  ZIP enthält `summary.md`, `vocabulary.md`, `rules.md`,
+  `errors.md`, `flashcards.md` und `sessions/*.md`,
+  formatiert für den NotebookLM-Source-Upload.
+- **Sprache (TTS + STT + Aussprache-Übung)** (v1.18.0 /
+  Phase 31) — Web-Speech-API-Integrationen direkt in
+  Session + Assessment + eine eigene
+  `/pronunciation`-Seite für Sprachprojekte. Kein externes
+  Werkzeug nötig.
+
 ## Was NICHT im Katalog ist
 
 Bewusst ausgelassen:
 
 - **Duolingo / Babbel / ähnliche gamifizierte Apps** — sie
-  widersprechen der Philosophie. AdaptiveLearner ist by
-  design un-gamifiziert.
+  widersprechen der Philosophie. Adaptive Learner liefert
+  zwar XP + Abzeichen + Streaks (v1.16.0), aber als
+  Motivationsschicht über un-gamifiziertem Inhalt, nicht
+  als primäre Schleife.
 - **Khan Academy / Coursera** — sie sind kurs-
   abschluss-orientiert, nicht fertigkeits-erwerb-
   orientiert. Anderer Problemraum.
 - **Memrise** — zu nah an Anki; der Katalog behält ein
   Werkzeug pro Nische.
-- **Notion** — Overkill für die "verlinkte Notizen"-Nische;
+- **Notion** — Overkill für die „verlinkte Notizen"-Nische;
   Obsidian passt sauber ohne Cloud-Lock-in.
 
-Der Katalog ist absichtlich klein. Fünf Werkzeuge decken den
-Raum ab. Mehr hinzuzufügen würde das Signal verdünnen.
+Der Katalog ist absichtlich klein. Mehr hinzuzufügen würde
+das Signal verdünnen.

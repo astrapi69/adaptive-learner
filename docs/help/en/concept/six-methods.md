@@ -132,21 +132,38 @@ jittery if not justified well per turn.
 faithfully, and switches when the signal says it's not
 working.
 
+## How the app implements each
+
+The six methods are not just labels. Each one drives a
+distinct AI personality via the **42-cell prompt matrix**
+in `plugins/.../session/prompts.py`: one prompt per
+(method, step) pair, six methods × seven steps. A deductive
+Input prompt opens with the rule and asks for examples; a
+contextual Input prompt opens with a real-world scenario
+and asks how the learner would tackle it. Same step,
+completely different texture.
+
+The matrix is exported verbatim to
+`frontend/src/data/session-prompts.json` for Dexie-mode
+parity — no drift possible between Server and Local modes.
+
 ## Choosing among them
 
 Your assessment gives you a 6-method profile. The dominant
 method is what new sessions start in. But:
 
-- The **session evaluator** may suggest staying, advancing,
-  or — rarely — stepping back per cycle step.
+- The **step evaluator** (dual-prompt v0.5.0) may suggest
+  staying, advancing, or — rarely — stepping back per
+  cycle step.
 - The **method-switch heuristic** detects stagnation
   (three sessions of flat understanding + high stress) and
-  surfaces a "want to try [other method]?" banner.
+  surfaces a "want to try [other method]?" banner in both
+  storage modes.
 - You can **manually pick** a method on the Session page's
   start button. Useful when you know the topic calls for
   one specific method.
 
 Method-switching is the goal, not method-loyalty. A learner
 who has used five of the six methods across their
-AdaptiveLearner history has a richer mental toolkit than one
-who's locked into deductive forever.
+Adaptive Learner history has a richer mental toolkit than
+one who's locked into deductive forever.

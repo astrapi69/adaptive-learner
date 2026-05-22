@@ -111,6 +111,34 @@ Die Fortschritts-Seite rendert all das als Balkendiagramme.
   einem Lernthema überhaupt heißen? Meisterschaft ist
   eine Haltung, keine Ziellinie.
 
+## Gamification-Schicht (v1.16.0)
+
+Auf der ProgressCommit-als-Git-Grundlage liegen drei
+Motivationsschichten:
+
+- **XP + Levels** — Basis 50 XP pro beendeter Session,
+  plus +10 pro abgeschlossenem Zyklus, +25 pro
+  Zyklus-Schritt-7, +50 First-Method-Bonus, alles
+  multipliziert mit dem Streak-Multiplikator (bis 2,75×
+  bei 7-Tage-Streak). Levels folgen
+  `threshold(n) = 50 * n * (n - 1)`; Level 1–5 liegen
+  bei 0 / 100 / 300 / 600 / 1000 XP.
+- **24 Abzeichen** in 5 Kategorien
+  (getting_started 3 / consistency 4 /
+  method_explorer 7 / depth 7 / polyglot 3), beim ersten
+  Start aus `badges.yaml` geseedet. Prädikate werden nach
+  jeder Session ausgewertet.
+- **Streak-Heatmap** — 365 Tage, GitHub-Stil, Wochen-
+  spalten. Freezes: 1 pro 7 Streak-Tage, max. 3
+  stockpiled, Pause-statt-Reset-Semantik. Wochenend-
+  Modus-Toggle überspringt Sa/So-Lücken.
+
+Die Gamification ist **optional**. Toast-Benachrichtigungen
+in Einstellungen → Gamification ausschalten unterdrückt
+die Prompts; das System speichert den Zustand trotzdem.
+Schritt-Evaluations-Insights + Git-stil Commit-Historie
+bleiben die tragende Analytik.
+
 ## Datenschutz
 
 Im Lokal-Modus liegen die Daten in IndexedDB auf deinem

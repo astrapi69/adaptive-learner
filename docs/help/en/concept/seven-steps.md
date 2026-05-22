@@ -126,4 +126,48 @@ transitions (forward or backward), the strip animates so
 the cycle feels alive.
 
 On mobile (≤768px) the strip becomes a single horizontal
-row of small circles to save vertical space.
+row of small circles to save vertical space. Swipe-to-peek
+on the strip shows an informational overlay describing the
+previous / next cycle step.
+
+## Auto-loop (v1.4.0) + topic transitions
+
+Step 7 is no longer a dead end. Once the step-evaluator
+moves you to step 7 with `advance=true`, a third AI call —
+the topic-transition evaluator — judges whether the topic
+has been integrated and whether to start a new cycle.
+
+```
+       step 1..7 (normal cycle)
+                ↓
+         step 7 reached
+                ↓
+   topic-transition AI call:
+       integrated?  continue_recommended?
+                ↓                    ↓
+              yes ∧ yes            else
+                ↓                    ↓
+   cycle_step ← 1                cycle_step stays at 7
+   cycle_count += 1              (session ready to end)
+   cycle_topics ← [..., summary]
+   new subtopic picked
+```
+
+The hard cap `max_cycles=5` per session prevents runaway
+loops. A deterministic fallback keeps the v0.5.0 cap-at-7
+behaviour on any AI / parse failure.
+
+The chat renders cycle transitions as dashed-border
+"Cycle N" cards in the session history. The rating dialog
+summarises the multi-cycle journey when `cycle_count > 1`.
+
+## Parallel cycle-boundary evaluation (v1.5.0)
+
+At the step 6 → 7 transition both the step-evaluator and
+the topic-transition evaluator fire concurrently via
+`asyncio.gather` (`async_evaluation: true` in `app.yaml`).
+This saves ~T₂ of latency at the cycle boundary.
+
+The message response carries a `timings` block with
+`learning_ms` / `evaluation_ms` / `topic_transition_ms` /
+`total_ms` / `parallel_saved_ms`.

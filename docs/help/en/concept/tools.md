@@ -118,13 +118,35 @@ The cards are sorted by urgency (lower interval × stronger
 weight = higher priority). You don't have to follow them —
 they're nudges, not commands.
 
+## First-class shipped integrations (since v1.17.0)
+
+Three tools moved from "external recommendation" to
+"built-in export" between v1.17.0 and v1.20.0:
+
+- **Anki .apkg export** (v1.17.0 / Phase 30) — review
+  AI-extracted flashcards on the `/anki` page, accept the
+  ones you want, click Export. The `.apkg` is built
+  client-side via sql.js + JSZip and works directly in
+  Anki desktop. No manual handoff.
+- **NotebookLM ZIP package** (v1.19.0 / Phase 32) —
+  Progress page → Download study package. The ZIP contains
+  `summary.md`, `vocabulary.md`, `rules.md`, `errors.md`,
+  `flashcards.md`, and `sessions/*.md` formatted for
+  NotebookLM's source upload. NotebookLM has no public API,
+  so this is the next-best path.
+- **Voice (TTS + STT + Pronunciation Practice)** (v1.18.0 /
+  Phase 31) — Web Speech API integrations directly in the
+  Session + Assessment + a dedicated `/pronunciation` page
+  for language projects. No external tool needed.
+
 ## What's NOT in the catalogue
 
 Deliberately excluded:
 
 - **Duolingo / Babbel / similar gamified apps** — they
-  conflict with the philosophy. AdaptiveLearner is
-  un-gamified by design.
+  conflict with the philosophy. Adaptive Learner does ship
+  XP + badges + streaks (v1.16.0), but as a motivational
+  layer over un-gamified content, not as the primary loop.
 - **Khan Academy / Coursera** — they're course-completion
   oriented, not skill-acquisition oriented. Different
   problem space.
@@ -133,5 +155,5 @@ Deliberately excluded:
 - **Notion** — overkill for the "linked notes" niche;
   Obsidian fits cleanly without a cloud lock-in.
 
-The catalogue is small on purpose. Five tools cover the
-space. Adding more would dilute the signal.
+The catalogue is small on purpose. Adding more would dilute
+the signal.

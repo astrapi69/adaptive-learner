@@ -105,6 +105,32 @@ Deliberately:
   for a learning topic? Mastery is a posture, not a
   finish line.
 
+## Gamification layer (v1.16.0)
+
+On top of the ProgressCommit-as-Git substrate, three
+motivational layers ship:
+
+- **XP + Levels** — base 50 XP per ended session, plus
+  +10 per completed cycle, +25 per cycle-step-7, +50
+  first-method bonus, all multiplied by the streak
+  multiplier (up to 2.75× at a 7-day streak). Levels
+  follow `threshold(n) = 50 * n * (n - 1)`; levels 1-5
+  sit at 0 / 100 / 300 / 600 / 1000 XP.
+- **24 badges** across 5 categories (getting_started 3 /
+  consistency 4 / method_explorer 7 / depth 7 /
+  polyglot 3), seeded from `badges.yaml` on first start.
+  Predicates evaluate after every session.
+- **Streak heatmap** — 365 days, GitHub-style, weekly
+  columns. Freezes: 1 per 7 streak days, max 3 stockpiled,
+  pause-not-reset semantics. Weekend mode toggle skips
+  Sat/Sun gaps.
+
+The gamification is **optional**. Disabling toast
+notifications in Settings → Gamification silences the
+prompts; the system still records state. Step-evaluation
+insights + Git-style commit history remain the load-bearing
+analytic.
+
 ## Privacy
 
 In Local mode the data is in IndexedDB on your device. Read
@@ -132,4 +158,6 @@ you learned. The Git model gives you patterns:
   spaced recommendation card is right to nudge me."
 
 These are the questions a serious learner asks themselves.
-AdaptiveLearner gives you the substrate to ask them.
+Adaptive Learner gives you the substrate to ask them; the
+v1.16.0 gamification layer is sugar on top, off by default
+in spirit.
