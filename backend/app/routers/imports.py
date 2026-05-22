@@ -174,7 +174,8 @@ def analyze_import(
             f"User {conv.user_id!r} has no valid active AI provider configured."
         ) from exc
 
-    api_key = settings_service.get_decrypted_api_key(db, conv.user_id, provider_enum)
+    # Phase 34 — env > secrets.yaml > DB resolution.
+    api_key, _source = settings_service.resolve_api_key(db, conv.user_id, provider_enum)
     if not api_key:
         raise ValidationError(
             f"User {conv.user_id!r} has no stored API key for provider {provider_key!r}."

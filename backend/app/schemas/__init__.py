@@ -114,6 +114,32 @@ class UserOut(BaseModel):
 # what the Phase 1C-D security contract forbids.
 
 
+class ApiKeySource(str, Enum):
+    """Where an API key was sourced from at resolution time.
+
+    Phase 34 (v1.20.0) — surfaces the secrets.yaml + env-var
+    precedence to the frontend so the Settings UI can show
+    "Key from: secrets.yaml" / "Key from: environment" /
+    "Key from: Settings" and gate the Save button when the key
+    is externally managed.
+
+    Precedence (highest wins) at resolution time:
+      ENV          -- an ``ADAPTIVE_LEARNER_<PROVIDER>_API_KEY``
+                      env var was set BEFORE startup (or was set
+                      but differs from any secrets.yaml value)
+      SECRETS_YAML -- the key was read from
+                      ``~/.config/adaptive_learner/secrets.yaml``
+      SETTINGS     -- a UI-configured key in UserSettings.api_key_*
+                      (Fernet-encrypted ciphertext)
+      NONE         -- no key configured anywhere
+    """
+
+    ENV = "env"
+    SECRETS_YAML = "secrets_yaml"
+    SETTINGS = "settings"
+    NONE = "none"
+
+
 class UserSettingsOut(BaseModel):
     """Server response: never exposes the encrypted ciphertext.
 
@@ -140,6 +166,14 @@ class UserSettingsOut(BaseModel):
     model_override_anthropic: str | None = None
     model_override_openai: str | None = None
     model_override_gemini: str | None = None
+    # Phase 34 (v1.20.0) — per-provider key-source enum. The router
+    # populates these by consulting env vars + secrets.yaml + the
+    # encrypted DB column. Default ``NONE`` so callers that build
+    # ``UserSettingsOut`` directly from the ORM row (legacy tests)
+    # still validate; the router overrides explicitly.
+    key_source_anthropic: ApiKeySource = ApiKeySource.NONE
+    key_source_openai: ApiKeySource = ApiKeySource.NONE
+    key_source_gemini: ApiKeySource = ApiKeySource.NONE
     created_at: datetime
     updated_at: datetime
 

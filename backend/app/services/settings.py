@@ -14,11 +14,14 @@ booleans to the schema layer.
 
 from __future__ import annotations
 
+import os
+from typing import Any
+
 from sqlalchemy.orm import Session
 
 from app.exceptions import NotFoundError, ValidationError
 from app.models import User, UserSettings
-from app.schemas import AIProvider, ApiKeySetBody, SettingsPatchBody
+from app.schemas import AIProvider, ApiKeySetBody, ApiKeySource, SettingsPatchBody
 from app.services import crypto
 
 # Column name lookup so the router doesn't have to switch on the
@@ -131,10 +134,14 @@ def delete_api_key(db: Session, user_id: str, provider: AIProvider) -> UserSetti
 
 
 def get_decrypted_api_key(db: Session, user_id: str, provider: AIProvider) -> str | None:
-    """Decrypt + return the stored plaintext API key.
+    """Decrypt + return the stored plaintext API key from the DB.
 
-    Used by the AI provider plugins (Phase 3) — NOT exposed via the
-    HTTP API. Returns ``None`` when the column is unset. May raise
+    DB-only primitive — does NOT consult env vars or
+    ``~/.config/adaptive_learner/secrets.yaml``. Plugin callers
+    that want the full env > secrets.yaml > DB precedence chain
+    should use :func:`resolve_api_key` instead.
+
+    Returns ``None`` when the column is unset. May raise
     :class:`app.services.crypto.CryptoDecryptionError` when the
     encryption key was rotated without re-encrypting the row.
     """
@@ -145,10 +152,161 @@ def get_decrypted_api_key(db: Session, user_id: str, provider: AIProvider) -> st
     return crypto.decrypt_api_key(ciphertext)
 
 
+# Phase 34 (v1.20.0) — file-based config + key resolution chain.
+# The maps below mirror ``backend/app/main.py:_ENV_SECRET_OVERRIDES``
+# but at the per-provider granularity the resolver needs. Keeping
+# them adjacent to the resolver (rather than importing from main)
+# avoids the circular ``main -> settings_service -> main`` cycle
+# that would otherwise form if we used the canonical map.
+
+_PROVIDER_ENV_VARS: dict[AIProvider, str] = {
+    AIProvider.ANTHROPIC: "ADAPTIVE_LEARNER_ANTHROPIC_API_KEY",
+    AIProvider.OPENAI: "ADAPTIVE_LEARNER_OPENAI_API_KEY",
+    AIProvider.GEMINI: "ADAPTIVE_LEARNER_GEMINI_API_KEY",
+}
+
+_PROVIDER_MODEL_ENV_VARS: dict[AIProvider, str] = {
+    AIProvider.ANTHROPIC: "ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL",
+    AIProvider.OPENAI: "ADAPTIVE_LEARNER_OPENAI_DEFAULT_MODEL",
+    AIProvider.GEMINI: "ADAPTIVE_LEARNER_GEMINI_DEFAULT_MODEL",
+}
+
+
+def _read_secrets_yaml_block(provider: AIProvider) -> dict[str, Any]:
+    """Read just the ``ai.<provider>`` block from the secrets.yaml
+    overlay, bypassing env-var injection.
+
+    Lazy-imports ``app.main`` to dodge the import cycle (main
+    imports the settings router which imports this service).
+    Returns ``{}`` when the file is missing / malformed / the block
+    is absent. Never raises.
+    """
+    from app.main import _get_user_override_path, _load_override_file
+
+    try:
+        data = _load_override_file(_get_user_override_path())
+    except Exception:  # noqa: BLE001 — loader already logs warnings
+        return {}
+    ai_block = data.get("ai") if isinstance(data, dict) else None
+    if not isinstance(ai_block, dict):
+        return {}
+    provider_block = ai_block.get(provider.value)
+    if not isinstance(provider_block, dict):
+        return {}
+    return provider_block
+
+
+def detect_api_key_source(db: Session, user_id: str, provider: AIProvider) -> ApiKeySource:
+    """Resolve the per-provider key source for the Settings UI.
+
+    Precedence matches :func:`resolve_api_key`. The Settings GET
+    endpoint calls this once per provider to surface "Key from:
+    secrets.yaml" / "Key from: environment" / "Key from: Settings"
+    affordances and disable the Save button when the key is
+    externally managed.
+
+    Distinguishing env-direct from env-hydrated-from-yaml is a
+    heuristic: when the env var is set AND matches the yaml value
+    byte-for-byte, we attribute to yaml (the common "user only
+    edits yaml" case). When the env var is set with a different
+    value (or yaml has no value), we attribute to env.
+    """
+    env_var = _PROVIDER_ENV_VARS.get(provider)
+    env_value = os.environ.get(env_var) if env_var else None
+    yaml_block = _read_secrets_yaml_block(provider)
+    yaml_value = yaml_block.get("api_key") if isinstance(yaml_block, dict) else None
+    yaml_value = yaml_value.strip() if isinstance(yaml_value, str) else None
+
+    if env_value:
+        if yaml_value and env_value.strip() == yaml_value:
+            return ApiKeySource.SECRETS_YAML
+        return ApiKeySource.ENV
+    if yaml_value:
+        return ApiKeySource.SECRETS_YAML
+    settings = get_or_create_settings(db, user_id)
+    if getattr(settings, _column_for(provider)) is not None:
+        return ApiKeySource.SETTINGS
+    return ApiKeySource.NONE
+
+
+def resolve_api_key(
+    db: Session, user_id: str, provider: AIProvider
+) -> tuple[str | None, ApiKeySource]:
+    """Resolve a plaintext API key + its source.
+
+    Precedence (highest wins):
+      1. Environment variable (``ADAPTIVE_LEARNER_<PROVIDER>_API_KEY``)
+         set BEFORE startup, or set programmatically and differing
+         from the yaml value.
+      2. ``~/.config/adaptive_learner/secrets.yaml`` —
+         ``ai.<provider>.api_key``.
+      3. Database :class:`UserSettings` (Fernet-decrypted from the
+         encrypted column).
+      4. ``None`` — no key configured anywhere.
+
+    The returned :class:`ApiKeySource` mirrors which layer the key
+    came from. Plugin callers should switch from
+    :func:`get_decrypted_api_key` to this function so file-based
+    + env-based desktop configurations work transparently.
+    """
+    env_var = _PROVIDER_ENV_VARS.get(provider)
+    env_value = os.environ.get(env_var, "").strip() if env_var else ""
+    yaml_block = _read_secrets_yaml_block(provider)
+    yaml_value = yaml_block.get("api_key") if isinstance(yaml_block, dict) else None
+    yaml_value = yaml_value.strip() if isinstance(yaml_value, str) else ""
+
+    if env_value:
+        # Heuristic for source attribution — see
+        # :func:`detect_api_key_source`.
+        if yaml_value and env_value == yaml_value:
+            return env_value, ApiKeySource.SECRETS_YAML
+        return env_value, ApiKeySource.ENV
+    if yaml_value:
+        return yaml_value, ApiKeySource.SECRETS_YAML
+    db_key = get_decrypted_api_key(db, user_id, provider)
+    if db_key:
+        return db_key, ApiKeySource.SETTINGS
+    return None, ApiKeySource.NONE
+
+
+def resolve_default_model(db: Session, user_id: str, provider: AIProvider) -> str | None:
+    """Resolve the per-provider default model.
+
+    Precedence (highest wins):
+      1. ``ADAPTIVE_LEARNER_<PROVIDER>_DEFAULT_MODEL`` env var.
+      2. ``~/.config/adaptive_learner/secrets.yaml`` —
+         ``ai.<provider>.default_model``.
+      3. ``UserSettings.model_override_<provider>`` (Settings UI).
+      4. ``None`` — caller falls back to the plugin's
+         ``DEFAULT_MODELS[provider]`` constant.
+
+    Returns the resolved model id string, or ``None`` when nothing
+    is configured anywhere. Per the v1.20.0 design, secrets.yaml
+    beats the UI override (power-user file config wins over UI).
+    """
+    env_var = _PROVIDER_MODEL_ENV_VARS.get(provider)
+    env_value = os.environ.get(env_var, "").strip() if env_var else ""
+    if env_value:
+        return env_value
+    yaml_block = _read_secrets_yaml_block(provider)
+    yaml_value = yaml_block.get("default_model") if isinstance(yaml_block, dict) else None
+    if isinstance(yaml_value, str) and yaml_value.strip():
+        return yaml_value.strip()
+    settings = get_or_create_settings(db, user_id)
+    override_attr = f"model_override_{provider.value}"
+    override = getattr(settings, override_attr, None)
+    if isinstance(override, str) and override.strip():
+        return override.strip()
+    return None
+
+
 __all__ = [
     "delete_api_key",
+    "detect_api_key_source",
     "get_decrypted_api_key",
     "get_or_create_settings",
+    "resolve_api_key",
+    "resolve_default_model",
     "set_api_key",
     "update_settings",
 ]

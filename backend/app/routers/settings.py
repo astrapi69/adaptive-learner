@@ -77,7 +77,10 @@ def list_available_models(
     provider: AIProvider = Query(..., description="Provider to query for available models."),
     db: Session = Depends(get_db),
 ) -> list[AvailableModelOut]:
-    api_key = settings_service.get_decrypted_api_key(db, user_id, provider)
+    # Phase 34 — resolve via env > secrets.yaml > DB so the
+    # model picker works for desktop users whose key lives in
+    # ``~/.config/adaptive_learner/secrets.yaml``.
+    api_key, _source = settings_service.resolve_api_key(db, user_id, provider)
     if not api_key:
         return []
     models = model_discovery.fetch_models(provider, api_key)

@@ -107,9 +107,24 @@ def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any
     return out
 
 
-# Env-var -> dotted config path. Empty in the skeleton; plugins
-# register their own secrets here as they land (Phase 3+).
-_ENV_SECRET_OVERRIDES: dict[str, tuple[str, ...]] = {}
+# Env-var -> dotted config path. Drives ``_apply_env_overrides``
+# (env beats yaml on the merged config view) and the inverse
+# ``_hydrate_env_from_config`` (yaml fills the env when env is
+# empty, so downstream env-only readers see the value too).
+#
+# Phase 34 (v1.20.0) — populate the AI-provider entries so the
+# ``~/.config/adaptive_learner/secrets.yaml`` file-based config
+# flow works for the desktop launcher. Bibliogon parity in shape;
+# adaptive-learner has 3 providers vs Bibliogon's 1, plus per-
+# provider ``default_model`` overrides.
+_ENV_SECRET_OVERRIDES: dict[str, tuple[str, ...]] = {
+    "ADAPTIVE_LEARNER_ANTHROPIC_API_KEY": ("ai", "anthropic", "api_key"),
+    "ADAPTIVE_LEARNER_OPENAI_API_KEY": ("ai", "openai", "api_key"),
+    "ADAPTIVE_LEARNER_GEMINI_API_KEY": ("ai", "gemini", "api_key"),
+    "ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL": ("ai", "anthropic", "default_model"),
+    "ADAPTIVE_LEARNER_OPENAI_DEFAULT_MODEL": ("ai", "openai", "default_model"),
+    "ADAPTIVE_LEARNER_GEMINI_DEFAULT_MODEL": ("ai", "gemini", "default_model"),
+}
 
 
 def _apply_env_overrides(config: dict[str, Any]) -> dict[str, Any]:
@@ -285,6 +300,36 @@ _startup_config = _load_app_config()
 # ~/.config/adaptive_learner/secrets.yaml works without the
 # deployer having to manually ``export`` it.
 _hydrate_env_from_config(_startup_config)
+
+
+def _bootstrap_secrets_template() -> None:
+    """First-run: write a commented secrets template to
+    ``~/.config/adaptive_learner/secrets.yaml`` and audit
+    permissions. Best-effort; never fatal. Phase 34 (v1.20.0).
+
+    Skipped under ``ADAPTIVE_LEARNER_TEST=1`` so test runs don't
+    materialise a file in the developer's real config dir.
+    """
+    if os.environ.get("ADAPTIVE_LEARNER_TEST"):
+        return
+    try:
+        from app.services.secrets_template import (
+            audit_permissions,
+            ensure_template_exists,
+        )
+
+        path = _get_user_override_path()
+        ensure_template_exists(path)
+        audit_permissions(path)
+    except Exception:  # noqa: BLE001
+        # The loader path tolerates a missing file; if the template
+        # write fails for any reason the app continues with no
+        # external secrets configured. Surfaced as a warning by
+        # ``ensure_template_exists`` itself.
+        logger.exception("Secrets template bootstrap failed; continuing.")
+
+
+_bootstrap_secrets_template()
 
 
 def _load_installed_plugins() -> None:

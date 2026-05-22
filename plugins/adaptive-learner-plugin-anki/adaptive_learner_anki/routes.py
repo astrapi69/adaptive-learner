@@ -91,7 +91,8 @@ def _build_ai_caller(db: Session, user_id: str):
         raise ValidationError(
             f"User {user_id!r} has no valid active AI provider configured."
         ) from exc
-    api_key = settings_service.get_decrypted_api_key(
+    # Phase 34 — env > secrets.yaml > DB resolution.
+    api_key, _source = settings_service.resolve_api_key(
         db, user_id, provider_enum
     )
     if not api_key:

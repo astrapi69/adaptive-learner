@@ -513,7 +513,8 @@ def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | No
         provider_enum = AIProvider(provider_key)
     except ValueError:
         return None, None, None
-    api_key = settings_service.get_decrypted_api_key(db, user_id, provider_enum)
+    # Phase 34 — env > secrets.yaml > DB resolution.
+    api_key, _source = settings_service.resolve_api_key(db, user_id, provider_enum)
     override_attr = f"model_override_{provider_key}"
     override = getattr(settings, override_attr, None)
     return provider_key, api_key, override
@@ -1711,7 +1712,8 @@ def _build_pronunciation_ai_caller(db: Session, user_id: str):
         raise ValidationError(
             f"User {user_id!r} has no valid active AI provider."
         ) from exc
-    api_key = settings_service.get_decrypted_api_key(
+    # Phase 34 — env > secrets.yaml > DB resolution.
+    api_key, _source = settings_service.resolve_api_key(
         db, user_id, provider_enum
     )
     if not api_key:
