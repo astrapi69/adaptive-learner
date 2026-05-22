@@ -34,7 +34,8 @@
     "home": "Αρχή",
     "menu": "Μενού",
     "online": "Σε σύνδεση",
-    "offline": "Εκτός σύνδεσης"
+    "offline": "Εκτός σύνδεσης",
+    "anki": "Anki"
   },
   "import": {
     "title": "Εισαγωγή συνομιλίας",
@@ -93,7 +94,12 @@
     "save_error": "Δεν ήταν δυνατή η αποθήκευση της συνομιλίας.",
     "settings_error": "Δεν ήταν δυνατή η ανάγνωση των ρυθμίσεων AI.",
     "start_session": "Έναρξη συνεδρίας",
-    "transcript": "Καταγραφή"
+    "transcript": "Καταγραφή",
+    "anki_extract": "Εξαγωγή καρτών Anki",
+    "anki_extracting": "Εξάγονται κάρτες…",
+    "anki_extracted": "Εξήχθησαν {n} κάρτες Anki. Έλεγξέ τες στη σελίδα Anki.",
+    "anki_no_cards": "Δεν εξήχθησαν κάρτες Anki.",
+    "anki_extract_failed": "Δεν ήταν δυνατή η εξαγωγή των καρτών Anki."
   },
   "curriculum": {
     "title": "Πρόγραμμα",
@@ -703,5 +709,28 @@
     "reset_done": "Πρόοδος μηδενίστηκε: {xp} XP, {badges} σήματα, {streak} σερί.",
     "reset_failed": "Δεν ήταν δυνατή η επαναφορά της προόδου.",
     "weekend_mode_save_failed": "Δεν αποθηκεύτηκε η λειτουργία Σαββατοκύριακου."
+  },
+  "anki": {
+    "title": "Εξαγωγή Anki",
+    "intro": "Έλεγξε τις κάρτες που πρότεινε η ΤΝ, αποδέξου όσες θέλεις και εξήγαγέ τες ως αρχείο .apkg για το Anki.",
+    "filter_project": "Έργο",
+    "filter_all_projects": "Όλα τα έργα",
+    "filter_accepted": "Μόνο αποδεκτές",
+    "stats": "{accepted} από {total} αποδεκτές",
+    "export_button": "Εξαγωγή ως .apkg",
+    "exporting": "Δημιουργία .apkg…",
+    "export_no_accepted": "Αποδέξου τουλάχιστον μία κάρτα πριν την εξαγωγή.",
+    "export_success": "Εξήχθησαν {n} κάρτες στο {filename}.",
+    "export_failed": "Η εξαγωγή απέτυχε.",
+    "empty": "Δεν υπάρχουν ακόμα κάρτες. Εξήγαγε από συνεδρία ή συζήτηση, ή πρόσθεσε χειροκίνητα.",
+    "load_failed": "Δεν φορτώθηκαν οι κάρτες.",
+    "delete_confirm": "Διαγραφή αυτής της κάρτας;",
+    "front": "Μπροστά",
+    "back": "Πίσω",
+    "card_type": "Τύπος",
+    "accept": "Αποδοχή",
+    "unaccept": "Αναίρεση αποδοχής",
+    "reject": "Απόρριψη",
+    "deck_description": "Κάρτες από το Adaptive Learner."
   }
 }

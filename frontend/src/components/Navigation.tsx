@@ -120,6 +120,13 @@ export default function Navigation() {
                     {t("nav.import", "Import")}
                 </NavLink>
                 <NavLink
+                    to="/anki"
+                    className={linkClass}
+                    data-testid="nav-anki"
+                >
+                    {t("nav.anki", "Anki")}
+                </NavLink>
+                <NavLink
                     to="/settings"
                     className={linkClass}
                     data-testid="nav-settings"

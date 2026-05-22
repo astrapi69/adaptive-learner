@@ -51,6 +51,9 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # v1.16.0 / Phase 29C: streak state singleton (freezes,
         # weekend mode, longest streak).
         "user_streaks",
+        # v1.17.0 / Phase 30B: AI-extracted flashcard candidates
+        # (user accepts/edits/rejects before .apkg export).
+        "anki_card_suggestions",
     }
 )
 

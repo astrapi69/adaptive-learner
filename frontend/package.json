@@ -1,7 +1,7 @@
 {
   "name": "adaptive-learner-frontend",
   "private": true,
-  "version": "1.16.0",
+  "version": "1.17.0",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -37,6 +37,7 @@
     "@tiptap/starter-kit": "2.11.0",
     "dexie": "^4.4.2",
     "html5-qrcode": "2.3.8",
+    "jszip": "3.10.1",
     "lowlight": "3.3.0",
     "qrcode": "1.5.4",
     "react": "^19.2.0",
@@ -44,6 +45,7 @@
     "react-router-dom": "^7.14.1",
     "react-toastify": "^11.0.5",
     "recharts": "^3.8.1",
+    "sql.js": "1.13.0",
     "tree-model": "^1.0.7"
   },
   "devDependencies": {
@@ -53,6 +55,7 @@
     "@types/qrcode": "1.5.6",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
+    "@types/sql.js": "1.4.11",
     "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "^4.1.6",
     "fake-indexeddb": "^6.2.5",

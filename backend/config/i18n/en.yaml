@@ -32,6 +32,7 @@ nav:
   menu: Menu
   online: Online
   offline: Offline
+  anki: Anki
 import:
   title: Import a conversation
   subtitle: Paste or upload a conversation with ChatGPT, Claude, or Gemini and get instant learning insights.
@@ -87,6 +88,11 @@ import:
   settings_error: Could not read AI settings.
   start_session: Start session
   transcript: Transcript
+  anki_extract: Extract Anki cards
+  anki_extracting: Extracting cards…
+  anki_extracted: Extracted {n} Anki card(s). Review them on the Anki page.
+  anki_no_cards: No Anki cards extracted.
+  anki_extract_failed: Could not extract Anki cards.
 curriculum:
   title: Curriculum
   active: Active curriculum
@@ -638,3 +644,25 @@ gamification:
   reset_done: 'Progress reset: {xp} XP, {badges} badges, {streak} streaks.'
   reset_failed: Could not reset progress.
   weekend_mode_save_failed: Could not save the weekend-mode setting.
+anki:
+  title: Anki Export
+  intro: Review AI-suggested flashcards, accept the ones you want, then export as an .apkg file for Anki.
+  filter_project: Project
+  filter_all_projects: All projects
+  filter_accepted: Accepted only
+  stats: '{accepted} of {total} accepted'
+  export_button: Export as .apkg
+  exporting: Generating .apkg…
+  export_no_accepted: Accept at least one card before exporting.
+  export_success: Exported {n} cards to {filename}.
+  export_failed: Export failed.
+  empty: No cards yet. Trigger extraction from a session or imported conversation, or add cards manually.
+  load_failed: Could not load cards.
+  delete_confirm: Delete this card?
+  front: Front
+  back: Back
+  card_type: Type
+  accept: Accept
+  unaccept: Unaccept
+  reject: Reject
+  deck_description: Cards exported from Adaptive Learner.

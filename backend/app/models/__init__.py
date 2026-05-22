@@ -980,6 +980,74 @@ class Badge(Base):
         return f"<Badge key={self.key!r} category={self.category!r}>"
 
 
+class AnkiCardSuggestion(Base):
+    """AI-extracted flashcard candidate (Phase 30B).
+
+    Produced by the Anki plugin's extractor (either from a
+    completed session's transcript or from
+    :class:`ImportedConversation.analysis_result.vocabulary`).
+    The user reviews each row in the export UI, edits inline if
+    needed, then marks ``accepted=True``. Only accepted rows
+    land in a .apkg export.
+
+    ``session_id`` is nullable — vocabulary cards extracted from
+    an imported conversation have no parent session. Exactly one
+    of ``session_id`` / ``conversation_id`` is set in practice
+    (asserted at the service layer, not in the DB constraint).
+    """
+
+    __tablename__ = "anki_card_suggestions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    session_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("learning_sessions.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    conversation_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("imported_conversations.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    project_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("learning_projects.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    # "basic" | "cloze"
+    card_type: Mapped[str] = mapped_column(String(20), nullable=False, default="basic")
+    front: Mapped[str] = mapped_column(Text, nullable=False)
+    back: Mapped[str] = mapped_column(Text, nullable=False)
+    # JSON-encoded list of tag strings ([] when empty).
+    tags: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
+    accepted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    rejected: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    exported_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<AnkiCardSuggestion id={self.id!r} type={self.card_type!r} "
+            f"accepted={self.accepted} front={self.front[:30]!r}>"
+        )
+
+
 class UserStreak(Base):
     """Per-user streak state singleton (Phase 29C).
 
@@ -1095,4 +1163,5 @@ __all__ = [
     "Badge",
     "UserBadge",
     "UserStreak",
+    "AnkiCardSuggestion",
 ]

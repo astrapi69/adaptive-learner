@@ -32,6 +32,7 @@ nav:
   menu: Menu
   online: En linea
   offline: Sin conexion
+  anki: Anki
 import:
   title: Importar una conversacion
   subtitle: Pega o sube una conversacion con ChatGPT, Claude o Gemini y obten al instante ideas de aprendizaje.
@@ -87,6 +88,11 @@ import:
   settings_error: No se pudieron leer los ajustes de IA.
   start_session: Iniciar sesion
   transcript: Transcripcion
+  anki_extract: Extraer tarjetas Anki
+  anki_extracting: Extrayendo tarjetas…
+  anki_extracted: Se extrajeron {n} tarjeta(s) Anki. Revísalas en la página Anki.
+  anki_no_cards: No se extrajeron tarjetas Anki.
+  anki_extract_failed: No se pudieron extraer las tarjetas Anki.
 curriculum:
   title: Curriculo
   active: Curriculo activo
@@ -638,3 +644,25 @@ gamification:
   reset_done: 'Progreso reiniciado: {xp} XP, {badges} insignias, {streak} rachas.'
   reset_failed: No se pudo reiniciar el progreso.
   weekend_mode_save_failed: No se pudo guardar el modo fin de semana.
+anki:
+  title: Exportación a Anki
+  intro: Revisa las tarjetas sugeridas por la IA, acepta las que quieras y expórtalas como archivo .apkg para Anki.
+  filter_project: Proyecto
+  filter_all_projects: Todos los proyectos
+  filter_accepted: Solo aceptadas
+  stats: '{accepted} de {total} aceptadas'
+  export_button: Exportar como .apkg
+  exporting: Generando .apkg…
+  export_no_accepted: Acepta al menos una tarjeta antes de exportar.
+  export_success: '{n} tarjetas exportadas a {filename}.'
+  export_failed: Exportación fallida.
+  empty: Aún no hay tarjetas. Extrae desde una sesión o conversación importada, o crea manualmente.
+  load_failed: No se pudieron cargar las tarjetas.
+  delete_confirm: ¿Eliminar esta tarjeta?
+  front: Anverso
+  back: Reverso
+  card_type: Tipo
+  accept: Aceptar
+  unaccept: Desaceptar
+  reject: Rechazar
+  deck_description: Tarjetas exportadas desde Adaptive Learner.

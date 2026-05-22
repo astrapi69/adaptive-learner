@@ -1,0 +1,11 @@
+# Anki plugin settings (Phase 30).
+#
+# AI card extraction is user-triggered, not automatic — the
+# extractor only runs when the user clicks "Generate cards" on a
+# session or imported conversation. This avoids surprise AI cost
+# at session-end.
+settings:
+  # Maximum cards the extractor asks the AI to emit per call.
+  # Higher values mean longer (more expensive) AI responses with
+  # diminishing returns; 8 is the spec-recommended default.
+  extraction_limit: 8

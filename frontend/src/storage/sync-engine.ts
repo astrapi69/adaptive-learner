@@ -366,6 +366,14 @@ const SYNC_TABLES: SyncTable[] = [
         timestampField: "updated_at",
         appendOnly: false,
     },
+    {
+        // v1.17.0 / Phase 30B — Anki flashcard suggestions.
+        // MUTABLE: the user accepts / rejects / edits in-place.
+        name: "anki_card_suggestions",
+        dexieTable: "ankiCards",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
 ];
 
 const APPEND_ONLY_TABLES = new Set(

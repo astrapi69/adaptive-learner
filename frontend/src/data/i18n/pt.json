@@ -34,7 +34,8 @@
     "home": "Início",
     "menu": "Menu",
     "online": "Online",
-    "offline": "Offline"
+    "offline": "Offline",
+    "anki": "Anki"
   },
   "import": {
     "title": "Importar uma conversa",
@@ -93,7 +94,12 @@
     "save_error": "Não foi possível salvar a conversa.",
     "settings_error": "Não foi possível ler as configurações de IA.",
     "start_session": "Iniciar sessão",
-    "transcript": "Transcrição"
+    "transcript": "Transcrição",
+    "anki_extract": "Extrair cartões Anki",
+    "anki_extracting": "Extraindo cartões…",
+    "anki_extracted": "{n} cartão(ões) Anki extraído(s). Revise na página Anki.",
+    "anki_no_cards": "Nenhum cartão Anki extraído.",
+    "anki_extract_failed": "Não foi possível extrair os cartões Anki."
   },
   "curriculum": {
     "title": "Currículo",
@@ -703,5 +709,28 @@
     "reset_done": "Progresso redefinido: {xp} XP, {badges} emblemas, {streak} sequências.",
     "reset_failed": "Não foi possível redefinir o progresso.",
     "weekend_mode_save_failed": "Não foi possível salvar o modo fim de semana."
+  },
+  "anki": {
+    "title": "Exportação Anki",
+    "intro": "Reveja os flashcards sugeridos pela IA, aceite os que quiser e exporte como arquivo .apkg para o Anki.",
+    "filter_project": "Projeto",
+    "filter_all_projects": "Todos os projetos",
+    "filter_accepted": "Apenas aceitos",
+    "stats": "{accepted} de {total} aceitos",
+    "export_button": "Exportar como .apkg",
+    "exporting": "Gerando .apkg…",
+    "export_no_accepted": "Aceite pelo menos um cartão antes de exportar.",
+    "export_success": "{n} cartões exportados para {filename}.",
+    "export_failed": "Falha na exportação.",
+    "empty": "Sem cartões ainda. Extraia de uma sessão ou conversa importada, ou crie manualmente.",
+    "load_failed": "Não foi possível carregar os cartões.",
+    "delete_confirm": "Excluir este cartão?",
+    "front": "Frente",
+    "back": "Verso",
+    "card_type": "Tipo",
+    "accept": "Aceitar",
+    "unaccept": "Desfazer aceitação",
+    "reject": "Rejeitar",
+    "deck_description": "Cartões exportados do Adaptive Learner."
   }
 }

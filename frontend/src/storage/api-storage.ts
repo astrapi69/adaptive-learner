@@ -181,4 +181,18 @@ export const apiStorage: IStorageService = {
             api.gamification.setWeekendMode(userId, enabled),
         resetProgress: (userId) => api.gamification.resetProgress(userId),
     },
+
+    anki: {
+        list: (userId, filters) => api.anki.list(userId, filters),
+        create: (userId, body) => api.anki.create(userId, body),
+        update: (cardId, body) => api.anki.update(cardId, body),
+        remove: async (cardId) => {
+            await api.anki.remove(cardId);
+        },
+        extractFromSession: (sessionId) =>
+            api.anki.extractFromSession(sessionId),
+        extractFromConversation: (conversationId) =>
+            api.anki.extractFromConversation(conversationId),
+        markExported: (cardIds) => api.anki.markExported(cardIds),
+    },
 };

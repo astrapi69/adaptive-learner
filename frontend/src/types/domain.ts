@@ -485,6 +485,23 @@ export interface AnalysisSuggestedLesson {
     priority: number;
 }
 
+/**
+ * Vocabulary entry (Phase 30D / v1.17.0).
+ *
+ * Optional field on a conversation's ``analysis_result`` that
+ * the Anki plugin consumes via ``extract_from_conversation``
+ * to produce vocabulary flashcards directly — no extra AI call
+ * required. Languages-learning projects benefit most; other
+ * projects normally won't have this field present.
+ */
+export interface VocabularyEntry {
+    word: string;
+    translation: string;
+    example?: string;
+    phonetic?: string;
+    tags?: string[];
+}
+
 export interface ConversationAnalysisResult {
     topic?: string;
     subtopics?: string[];
@@ -498,6 +515,14 @@ export interface ConversationAnalysisResult {
     summary?: string;
     chunk_summaries?: string[];
     fallback_used?: boolean;
+    /**
+     * Phase 30D — vocabulary entries the AI extracted from the
+     * conversation. Optional; only language-learning analyses
+     * tend to carry it. Consumed by the Anki plugin to generate
+     * cloze cards with ``front = example with word blanked,
+     * back = translation``.
+     */
+    vocabulary?: VocabularyEntry[];
 }
 
 export interface ImportedMessage {

@@ -32,6 +32,7 @@ nav:
   menu: Menü
   online: Online
   offline: Offline
+  anki: Anki
 import:
   title: Konversation importieren
   subtitle: Füge eine ChatGPT-, Claude- oder Gemini-Konversation ein oder lade sie hoch und erhalte sofort Lern-Erkenntnisse.
@@ -87,6 +88,11 @@ import:
   settings_error: KI-Einstellungen konnten nicht gelesen werden.
   start_session: Sitzung starten
   transcript: Transkript
+  anki_extract: Anki-Karten extrahieren
+  anki_extracting: Karten werden extrahiert…
+  anki_extracted: '{n} Anki-Karten extrahiert. Bewerte sie auf der Anki-Seite.'
+  anki_no_cards: Keine Anki-Karten extrahiert.
+  anki_extract_failed: Anki-Karten konnten nicht extrahiert werden.
 curriculum:
   title: Curriculum
   active: Aktives Curriculum
@@ -638,3 +644,25 @@ gamification:
   reset_done: 'Fortschritt zurückgesetzt: {xp} XP, {badges} Abzeichen, {streak} Serien.'
   reset_failed: Fortschritt konnte nicht zurückgesetzt werden.
   weekend_mode_save_failed: Wochenend-Modus konnte nicht gespeichert werden.
+anki:
+  title: Anki-Export
+  intro: Überprüfe KI-vorgeschlagene Karteikarten, akzeptiere die gewünschten und exportiere sie als .apkg-Datei für Anki.
+  filter_project: Projekt
+  filter_all_projects: Alle Projekte
+  filter_accepted: Nur akzeptierte
+  stats: '{accepted} von {total} akzeptiert'
+  export_button: Als .apkg exportieren
+  exporting: .apkg wird erstellt…
+  export_no_accepted: Akzeptiere mindestens eine Karte vor dem Export.
+  export_success: '{n} Karten in {filename} exportiert.'
+  export_failed: Export fehlgeschlagen.
+  empty: Noch keine Karten. Lass Karten aus einer Sitzung oder einer importierten Konversation extrahieren oder erstelle sie manuell.
+  load_failed: Karten konnten nicht geladen werden.
+  delete_confirm: Diese Karte löschen?
+  front: Vorderseite
+  back: Rückseite
+  card_type: Typ
+  accept: Akzeptieren
+  unaccept: Zurücknehmen
+  reject: Verwerfen
+  deck_description: Karten aus Adaptive Learner exportiert.

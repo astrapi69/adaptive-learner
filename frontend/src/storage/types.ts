@@ -266,6 +266,77 @@ export interface IProjectTaxonomyNamespace {
 }
 
 /**
+ * Anki flashcard suggestion (Phase 30B / v1.17.0).
+ *
+ * AI-extracted candidate that the user reviews + accepts +
+ * edits before .apkg export. Mirrors the backend
+ * ``AnkiCardSuggestionOut`` schema.
+ */
+export interface AnkiCardSuggestion {
+    id: string;
+    user_id: string;
+    session_id: string | null;
+    conversation_id: string | null;
+    project_id: string | null;
+    card_type: "basic" | "cloze";
+    front: string;
+    back: string;
+    tags: string[];
+    accepted: boolean;
+    rejected: boolean;
+    exported_at: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface AnkiCardCreateBody {
+    session_id?: string | null;
+    conversation_id?: string | null;
+    project_id?: string | null;
+    card_type?: "basic" | "cloze";
+    front: string;
+    back: string;
+    tags?: string[];
+    accepted?: boolean;
+}
+
+export interface AnkiCardUpdateBody {
+    card_type?: "basic" | "cloze";
+    front?: string;
+    back?: string;
+    tags?: string[];
+    accepted?: boolean;
+    rejected?: boolean;
+}
+
+export interface AnkiCardListFilters {
+    projectId?: string;
+    acceptedOnly?: boolean;
+    includeRejected?: boolean;
+}
+
+export interface IAnkiNamespace {
+    list(
+        userId: string,
+        filters?: AnkiCardListFilters,
+    ): Promise<AnkiCardSuggestion[]>;
+    create(
+        userId: string,
+        body: AnkiCardCreateBody,
+    ): Promise<AnkiCardSuggestion>;
+    update(
+        cardId: string,
+        body: AnkiCardUpdateBody,
+    ): Promise<AnkiCardSuggestion>;
+    remove(cardId: string): Promise<void>;
+    extractFromSession(sessionId: string): Promise<AnkiCardSuggestion[]>;
+    extractFromConversation(
+        conversationId: string,
+    ): Promise<AnkiCardSuggestion[]>;
+    markExported(cardIds: string[]): Promise<{updated: number}>;
+}
+
+/**
  * Per-user XP / level state (Phase 29A / v1.16.0).
  *
  * ``state`` returns the current ``UserXP`` row plus derived
@@ -412,4 +483,5 @@ export interface IStorageService {
     tags: ITagsNamespace;
     projectTaxonomy: IProjectTaxonomyNamespace;
     gamification: IGamificationNamespace;
+    anki: IAnkiNamespace;
 }

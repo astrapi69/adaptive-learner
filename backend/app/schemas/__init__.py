@@ -879,7 +879,62 @@ __all__ = [
     "BadgeOut",
     "UserBadgeOut",
     "BadgeWithProgressOut",
+    # Anki (Phase 30)
+    "AnkiCardSuggestionOut",
+    "AnkiCardSuggestionCreate",
+    "AnkiCardSuggestionUpdate",
 ]
+
+
+class AnkiCardSuggestionOut(BaseModel):
+    """Read-side flashcard suggestion (Phase 30B)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    session_id: str | None
+    conversation_id: str | None
+    project_id: str | None
+    card_type: str
+    front: str
+    back: str
+    tags: list[str] = []
+    accepted: bool
+    rejected: bool
+    exported_at: datetime | None = None
+    created_at: datetime
+    updated_at: datetime
+
+
+class AnkiCardSuggestionCreate(BaseModel):
+    """Manual / extractor-fed insert payload."""
+
+    session_id: str | None = None
+    conversation_id: str | None = None
+    project_id: str | None = None
+    card_type: str = "basic"
+    front: str
+    back: str
+    tags: list[str] = []
+    accepted: bool = False
+
+
+class AnkiCardSuggestionUpdate(BaseModel):
+    """Inline-edit payload used by the review UI.
+
+    Every field optional; only those present in the body are
+    applied. ``accepted`` + ``rejected`` are mutually exclusive
+    at the service layer (asserting here would make a checkbox
+    toggle two roundtrips).
+    """
+
+    card_type: str | None = None
+    front: str | None = None
+    back: str | None = None
+    tags: list[str] | None = None
+    accepted: bool | None = None
+    rejected: bool | None = None
 
 
 class UserXPOut(BaseModel):

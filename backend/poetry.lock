@@ -2,7 +2,7 @@
 
 [[package]]
 name = "adaptive-learner-plugin-ai-anthropic"
-version = "1.15.0"
+version = "1.16.0"
 description = "Adaptive Learner: Anthropic Claude provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -20,7 +20,7 @@ url = "../plugins/adaptive-learner-plugin-ai-anthropic"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-gemini"
-version = "1.15.0"
+version = "1.16.0"
 description = "Adaptive Learner: Google Gemini provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -38,7 +38,7 @@ url = "../plugins/adaptive-learner-plugin-ai-gemini"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-openai"
-version = "1.15.0"
+version = "1.16.0"
 description = "Adaptive Learner: OpenAI GPT provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -55,8 +55,28 @@ type = "directory"
 url = "../plugins/adaptive-learner-plugin-ai-openai"
 
 [[package]]
+name = "adaptive-learner-plugin-anki"
+version = "1.16.0"
+description = "Adaptive Learner: AI-extracted Anki flashcard suggestions (Phase 30)."
+optional = false
+python-versions = "^3.11"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+fastapi = "^0.136.0"
+pluginforge = "^0.10.0"
+pydantic = "^2.13.0"
+sqlalchemy = "^2.0.49"
+
+[package.source]
+type = "directory"
+url = "../plugins/adaptive-learner-plugin-anki"
+
+[[package]]
 name = "adaptive-learner-plugin-assessment"
-version = "1.15.0"
+version = "1.16.0"
 description = "Adaptive Learner: 12-question learner-profile assessment + 6-method-weight calculation."
 optional = false
 python-versions = "^3.11"
@@ -76,7 +96,7 @@ url = "../plugins/adaptive-learner-plugin-assessment"
 
 [[package]]
 name = "adaptive-learner-plugin-gamification"
-version = "1.15.0"
+version = "1.16.0"
 description = "Adaptive Learner: XP, badges, and enhanced streaks (Phase 29)."
 optional = false
 python-versions = "^3.11"
@@ -97,7 +117,7 @@ url = "../plugins/adaptive-learner-plugin-gamification"
 
 [[package]]
 name = "adaptive-learner-plugin-session"
-version = "1.15.0"
+version = "1.16.0"
 description = "Adaptive Learner: 7-step learning cycle, per-method system prompts, stagnation-based method switching."
 optional = false
 python-versions = "^3.11"
@@ -117,7 +137,7 @@ url = "../plugins/adaptive-learner-plugin-session"
 
 [[package]]
 name = "adaptive-learner-plugin-tools"
-version = "1.15.0"
+version = "1.16.0"
 description = "Adaptive Learner: static external-tool recommendations tailored to the learner's profile."
 optional = false
 python-versions = "^3.11"
@@ -137,7 +157,7 @@ url = "../plugins/adaptive-learner-plugin-tools"
 
 [[package]]
 name = "adaptive-learner-plugin-tracking"
-version = "1.15.0"
+version = "1.16.0"
 description = "Adaptive Learner: writes ProgressCommit on session_complete + dashboard summary aggregator."
 optional = false
 python-versions = "^3.11"
@@ -3091,4 +3111,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "12d2e9a02c3b1f98935e3e1767e281c3f8cf9e8385e3b058ee30975809b1264d"
+content-hash = "983dbd73b64cc09254301333269e5e7c6598a20d5fd3b5c8bc14430ba7781e66"

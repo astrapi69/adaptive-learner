@@ -59,6 +59,7 @@ from app.models import (
     SessionRating,
     StepEvaluation,
     Subject,
+    AnkiCardSuggestion,
     Badge,
     Tag,
     User,
@@ -463,6 +464,33 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="earned_at",
         append_only=True,
         order=25,
+        scope="direct",
+    ),
+    # v1.17.0 / Phase 30B — AI-extracted flashcard candidates.
+    # MUTABLE: the user accepts / edits / rejects in-place.
+    # Direct user_id scope (cards belong to the learner who
+    # generated them).
+    "anki_card_suggestions": TableSpec(
+        model=AnkiCardSuggestion,
+        columns=(
+            "id",
+            "user_id",
+            "session_id",
+            "conversation_id",
+            "project_id",
+            "card_type",
+            "front",
+            "back",
+            "tags",
+            "accepted",
+            "rejected",
+            "exported_at",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=27,
         scope="direct",
     ),
     # v1.16.0 / Phase 29C — per-user streak state singleton.

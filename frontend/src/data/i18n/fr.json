@@ -34,7 +34,8 @@
     "home": "Accueil",
     "menu": "Menu",
     "online": "En ligne",
-    "offline": "Hors ligne"
+    "offline": "Hors ligne",
+    "anki": "Anki"
   },
   "import": {
     "title": "Importer une conversation",
@@ -93,7 +94,12 @@
     "save_error": "Impossible de sauvegarder la conversation.",
     "settings_error": "Impossible de lire les parametres IA.",
     "start_session": "Demarrer une session",
-    "transcript": "Transcription"
+    "transcript": "Transcription",
+    "anki_extract": "Extraire les cartes Anki",
+    "anki_extracting": "Extraction des cartes…",
+    "anki_extracted": "{n} carte(s) Anki extraite(s). Examine-les sur la page Anki.",
+    "anki_no_cards": "Aucune carte Anki extraite.",
+    "anki_extract_failed": "Impossible d'extraire les cartes Anki."
   },
   "curriculum": {
     "title": "Programme",
@@ -703,5 +709,28 @@
     "reset_done": "Progression réinitialisée : {xp} XP, {badges} badges, {streak} séries.",
     "reset_failed": "Impossible de réinitialiser la progression.",
     "weekend_mode_save_failed": "Impossible d'enregistrer le mode week-end."
+  },
+  "anki": {
+    "title": "Exportation Anki",
+    "intro": "Examine les cartes suggérées par l'IA, accepte celles que tu veux, puis exporte-les en fichier .apkg pour Anki.",
+    "filter_project": "Projet",
+    "filter_all_projects": "Tous les projets",
+    "filter_accepted": "Acceptées seulement",
+    "stats": "{accepted} sur {total} acceptées",
+    "export_button": "Exporter en .apkg",
+    "exporting": "Génération du .apkg…",
+    "export_no_accepted": "Accepte au moins une carte avant d'exporter.",
+    "export_success": "{n} cartes exportées vers {filename}.",
+    "export_failed": "Échec de l'exportation.",
+    "empty": "Pas encore de cartes. Extrais d'une session ou conversation importée, ou crée manuellement.",
+    "load_failed": "Impossible de charger les cartes.",
+    "delete_confirm": "Supprimer cette carte ?",
+    "front": "Recto",
+    "back": "Verso",
+    "card_type": "Type",
+    "accept": "Accepter",
+    "unaccept": "Désaccepter",
+    "reject": "Rejeter",
+    "deck_description": "Cartes exportées depuis Adaptive Learner."
   }
 }

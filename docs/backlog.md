@@ -137,9 +137,15 @@ tiebreaker.
 - [ ] **BL-20**: Voice input/output (TTS/STT) — Speak
   answers, hear AI response. Useful for language learning.
   Large scope.
-- [ ] **BL-21**: Anki deck export — Generate Anki-compatible
-  `.apkg` files from session content. Connects to "Three
-  Pillars" article.
+- [x] **BL-21**: Anki deck export —
+  Closed in v1.17.0 / Phase 30. New
+  ``adaptive-learner-plugin-anki`` extracts flashcard
+  candidates from sessions + conversations via the existing
+  ``ai_complete`` hook + ships a client-side .apkg builder
+  (sql.js + JSZip, lazy-loaded). Anki Connect API
+  integration intentionally NOT shipped (out of scope per
+  spec). Browser-direct AI session-extraction in Dexie mode
+  filed as a polish patch.
 - [ ] **BL-22**: NotebookLM integration — Auto-generate
   NotebookLM-compatible study materials from sessions. API
   availability unclear.

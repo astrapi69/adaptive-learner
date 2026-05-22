@@ -34,7 +34,8 @@
     "home": "ホーム",
     "menu": "メニュー",
     "online": "オンライン",
-    "offline": "オフライン"
+    "offline": "オフライン",
+    "anki": "Anki"
   },
   "import": {
     "title": "会話をインポート",
@@ -93,7 +94,12 @@
     "save_error": "会話を保存できませんでした。",
     "settings_error": "AI 設定を読み込めませんでした。",
     "start_session": "セッションを開始",
-    "transcript": "トランスクリプト"
+    "transcript": "トランスクリプト",
+    "anki_extract": "Ankiカードを抽出",
+    "anki_extracting": "カードを抽出中…",
+    "anki_extracted": "Ankiカードを{n}枚抽出しました。Ankiページで確認してください。",
+    "anki_no_cards": "Ankiカードは抽出されませんでした。",
+    "anki_extract_failed": "Ankiカードを抽出できませんでした。"
   },
   "curriculum": {
     "title": "カリキュラム",
@@ -703,5 +709,28 @@
     "reset_done": "進捗をリセット: {xp} XP、{badges} バッジ、{streak} ストリーク。",
     "reset_failed": "進捗をリセットできませんでした。",
     "weekend_mode_save_failed": "週末モードを保存できませんでした。"
+  },
+  "anki": {
+    "title": "Ankiエクスポート",
+    "intro": "AIが提案したフラッシュカードを確認し、好きなものを承認してから.apkgファイルとしてAnkiに出力します。",
+    "filter_project": "プロジェクト",
+    "filter_all_projects": "すべてのプロジェクト",
+    "filter_accepted": "承認済みのみ",
+    "stats": "{total}枚中{accepted}枚を承認済み",
+    "export_button": ".apkgとしてエクスポート",
+    "exporting": ".apkgを生成中…",
+    "export_no_accepted": "エクスポート前に少なくとも1枚承認してください。",
+    "export_success": "{n}枚を{filename}に出力しました。",
+    "export_failed": "エクスポートに失敗しました。",
+    "empty": "まだカードがありません。セッションや会話から抽出するか、手動で追加してください。",
+    "load_failed": "カードを読み込めませんでした。",
+    "delete_confirm": "このカードを削除しますか？",
+    "front": "表",
+    "back": "裏",
+    "card_type": "タイプ",
+    "accept": "承認",
+    "unaccept": "承認を取り消す",
+    "reject": "却下",
+    "deck_description": "Adaptive Learnerからエクスポートしたカード。"
   }
 }

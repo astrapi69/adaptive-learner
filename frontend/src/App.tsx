@@ -7,6 +7,7 @@ import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
 import {I18nProvider} from "./hooks/useI18n";
 import {useTheme} from "./hooks/useTheme";
+import AnkiPage from "./pages/Anki";
 import Assessment from "./pages/Assessment";
 import Curriculum from "./pages/Curriculum";
 import Dashboard from "./pages/Dashboard";
@@ -64,6 +65,7 @@ export default function App() {
                         path="/import/:conversationId"
                         element={<ImportDetail />}
                     />
+                    <Route path="/anki" element={<AnkiPage />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>

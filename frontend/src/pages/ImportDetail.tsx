@@ -57,6 +57,7 @@ export default function ImportDetail({
     const [error, setError] = useState<string | null>(null);
     const [analyzing, setAnalyzing] = useState(false);
     const [creatingCurriculum, setCreatingCurriculum] = useState(false);
+    const [extractingAnki, setExtractingAnki] = useState(false);
 
     const go = (path: string) => (onNavigate ? onNavigate(path) : navigate(path));
 
@@ -311,6 +312,63 @@ export default function ImportDetail({
                             data-testid="start-session-button"
                         >
                             {t("import.start_session", "Start session")}
+                        </button>
+                    )}
+                    {analysis && (
+                        <button
+                            type="button"
+                            className="btn btn-secondary"
+                            disabled={extractingAnki}
+                            data-testid="extract-anki-button"
+                            onClick={async () => {
+                                if (!detail) return;
+                                setExtractingAnki(true);
+                                try {
+                                    const cards =
+                                        await getStorage().anki.extractFromConversation(
+                                            detail.id,
+                                        );
+                                    if (cards.length === 0) {
+                                        notify.info(
+                                            t(
+                                                "import.anki_no_cards",
+                                                "No Anki cards extracted.",
+                                            ),
+                                        );
+                                    } else {
+                                        notify.success(
+                                            t(
+                                                "import.anki_extracted",
+                                                "Extracted {n} Anki card(s). Review them on the Anki page.",
+                                            ).replace(
+                                                "{n}",
+                                                String(cards.length),
+                                            ),
+                                        );
+                                    }
+                                } catch (err) {
+                                    const msg =
+                                        err instanceof ApiError
+                                            ? err.detail
+                                            : t(
+                                                  "import.anki_extract_failed",
+                                                  "Could not extract Anki cards.",
+                                              );
+                                    notify.error(msg);
+                                } finally {
+                                    setExtractingAnki(false);
+                                }
+                            }}
+                        >
+                            {extractingAnki
+                                ? t(
+                                      "import.anki_extracting",
+                                      "Extracting cards…",
+                                  )
+                                : t(
+                                      "import.anki_extract",
+                                      "Extract Anki cards",
+                                  )}
                         </button>
                     )}
                 </div>

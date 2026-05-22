@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "adaptive-learner-plugin-anki"
+version = "1.17.0"
+description = "Adaptive Learner: AI-extracted Anki flashcard suggestions (Phase 30)."
+authors = ["Asterios Raptis"]
+license = "MIT"
+packages = [{include = "adaptive_learner_anki"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pluginforge = "^0.10.0"
+fastapi = "^0.136.0"
+pydantic = "^2.13.0"
+sqlalchemy = "^2.0.49"
+
+[tool.poetry.plugins."adaptive_learner.plugins"]
+anki = "adaptive_learner_anki.plugin:AnkiPlugin"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

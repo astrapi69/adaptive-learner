@@ -3364,3 +3364,80 @@ select:focus {
 .streak-cell--tier-2 { background: color-mix(in srgb, var(--accent) 50%, transparent); }
 .streak-cell--tier-3 { background: color-mix(in srgb, var(--accent) 75%, transparent); }
 .streak-cell--tier-4 { background: var(--accent); }
+
+/* --- Anki page (Phase 30C) -------------------------------- */
+.anki-page {
+    padding: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.anki-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: end;
+    padding: 12px 16px;
+    background: var(--bg-elevated, #f8fafc);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.anki-toolbar__summary {
+    margin-left: auto;
+    font-size: 0.9rem;
+    color: var(--text-muted, #64748b);
+}
+.anki-card-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 12px;
+}
+.anki-card {
+    background: var(--bg-elevated, #f8fafc);
+    border: 1px solid var(--border, #e2e8f0);
+    border-radius: 8px;
+    padding: 16px;
+    display: grid;
+    gap: 8px;
+}
+.anki-card--accepted {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 5%, var(--bg-elevated, #f8fafc));
+}
+.anki-card__type {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted, #64748b);
+}
+.anki-card__front {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--text, #1e293b);
+    white-space: pre-wrap;
+}
+.anki-card__back {
+    color: var(--text-muted, #64748b);
+    font-size: 0.95rem;
+    white-space: pre-wrap;
+}
+.anki-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+.anki-tag {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--border, #e2e8f0);
+    color: var(--text-muted, #64748b);
+}
+.anki-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}

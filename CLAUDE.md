@@ -12,7 +12,52 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.16.0):** v1.15.0 plus Phase 29 —
+- **Current state (v1.17.0):** v1.16.0 plus Phase 30 —
+  **Anki Deck Export.** New
+  ``adaptive-learner-plugin-anki`` (mounted under
+  ``/api/plugins/anki/*``) extracts flashcard candidates from
+  sessions + conversations via ``ai_complete`` and surfaces
+  them on a new ``/anki`` page. **30A — .apkg generator:**
+  ``frontend/src/lib/anki/apkg-builder.ts`` builds the Anki
+  ``collection.anki2`` SQLite DB with sql.js (lazy-loaded WASM)
+  + JSZip; supports Basic + Cloze card types via
+  ``apkg-schema.ts``. **30B — AI extraction:**
+  ``AnkiCardSuggestion`` model (Alembic 0012) carries
+  per-user candidates; ``card_extraction`` parses the AI
+  JSON tolerantly (``json``-fence stripper, defensive empty-
+  list on malformed output); routes:
+  ``GET /cards/{user_id}``, ``POST /cards``,
+  ``PATCH /cards/{id}``, ``DELETE /cards/{id}``,
+  ``POST /cards/extract/session/{id}``,
+  ``POST /cards/extract/conversation/{id}``,
+  ``POST /cards/mark-exported``. Extraction is user-triggered
+  (no auto-fire on session-end). **30C — Anki page:**
+  ``/anki`` route lists cards with project + accepted-only
+  filters, per-card accept / unaccept / inline-edit /
+  reject / delete actions, stats line, lazy-loaded export
+  button. Navigation gets an "Anki" link. **30D — Vocabulary
+  extraction:** byte-compatible Python + TypeScript transform
+  of ``analysis_result.vocabulary`` (``[{word, translation,
+  example, phonetic, tags}]``) into cloze cards (when example
+  contains the word) or basic cards otherwise; auto-adds
+  ``vocabulary`` tag. ``ConversationAnalysisResult.vocabulary``
+  added to the TypeScript domain types. ImportDetail page
+  gets an "Extract Anki cards" button. Vocabulary path skips
+  the AI hook entirely — works without provider/key.
+  **Sync surface:** 26 → 27 tables (``anki_card_suggestions``
+  added; MUTABLE direct scope). **Dexie mode:** full CRUD +
+  vocabulary path work locally; AI session-extraction in
+  Dexie mode throws 501 with a "switch to API mode" message
+  (browser-direct AI extraction deferred to a polish patch).
+  **Deps:** ``jszip 3.10.1`` + ``sql.js 1.13.0`` exact-
+  pinned, both lazy-loaded via dynamic ``import()`` — 0 KiB
+  added to the main bundle, ~1 MB WASM downloaded on first
+  export click. Backend 734 + plugin (anki) 20 + frontend
+  1084 at release time. 8-lang i18n with ~28 new keys
+  (anki.*, nav.anki, import.anki_*), all native translations;
+  BL-11 audit clean. BL-21 closed.
+
+- **State (v1.16.0):** v1.15.0 plus Phase 29 —
   **Gamification (XP, Badges, Streaks).** A new
   ``adaptive-learner-plugin-gamification`` plugin (mounted under
   ``/api/plugins/gamification/*``) adds an optional motivation

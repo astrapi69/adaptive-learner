@@ -32,6 +32,7 @@ nav:
   menu: Menü
   online: Çevrimiçi
   offline: Çevrimdışı
+  anki: Anki
 import:
   title: Bir konuşmayı içe aktar
   subtitle: ChatGPT, Claude veya Gemini ile yaptığın bir konuşmayı yapıştır ya da yükle ve anında öğrenme içgörüleri al.
@@ -87,6 +88,11 @@ import:
   settings_error: YZ ayarları okunamadı.
   start_session: Oturum başlat
   transcript: Döküm
+  anki_extract: Anki kartlarını çıkar
+  anki_extracting: Kartlar çıkarılıyor…
+  anki_extracted: '{n} Anki kartı çıkarıldı. Anki sayfasında incele.'
+  anki_no_cards: Anki kartı çıkarılamadı.
+  anki_extract_failed: Anki kartları çıkarılamadı.
 curriculum:
   title: Müfredat
   active: Aktif müfredat
@@ -638,3 +644,25 @@ gamification:
   reset_done: 'İlerleme sıfırlandı: {xp} XP, {badges} rozet, {streak} seri.'
   reset_failed: İlerleme sıfırlanamadı.
   weekend_mode_save_failed: Hafta sonu modu kaydedilemedi.
+anki:
+  title: Anki Dışa Aktarma
+  intro: YZ'nin önerdiği kartları gözden geçir, istediklerini kabul et ve Anki için .apkg dosyası olarak dışa aktar.
+  filter_project: Proje
+  filter_all_projects: Tüm projeler
+  filter_accepted: Yalnızca kabul edilenler
+  stats: '{total} karttan {accepted} kabul edildi'
+  export_button: .apkg olarak dışa aktar
+  exporting: .apkg oluşturuluyor…
+  export_no_accepted: Dışa aktarmadan önce en az bir kartı kabul et.
+  export_success: '{n} kart {filename} dosyasına aktarıldı.'
+  export_failed: Dışa aktarma başarısız.
+  empty: Henüz kart yok. Bir oturum ya da içe aktarılmış konuşmadan çıkarsa veya elle ekle.
+  load_failed: Kartlar yüklenemedi.
+  delete_confirm: Bu kart silinsin mi?
+  front: Ön
+  back: Arka
+  card_type: Tür
+  accept: Kabul et
+  unaccept: Kabulü geri al
+  reject: Reddet
+  deck_description: Adaptive Learner'dan dışa aktarılan kartlar.

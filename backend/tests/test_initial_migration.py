@@ -58,6 +58,8 @@ EXPECTED_TABLES = {
     "user_badges",
     # v1.16.0 / Phase 29C — streak state singleton
     "user_streaks",
+    # v1.17.0 / Phase 30B — AI-extracted flashcard candidates
+    "anki_card_suggestions",
 }
 
 

@@ -24,6 +24,15 @@
 import type {EntityTable} from "dexie";
 
 import {calculateProfile, questionsForLang} from "./assessment";
+import {
+    createAnkiCard,
+    deleteAnkiCard,
+    extractFromConversationDexie,
+    extractFromSessionDexie,
+    listAnkiCards,
+    markAnkiCardsExported,
+    updateAnkiCard,
+} from "./anki";
 import {evaluateBadgesForUser, listBadgesWithProgress} from "./badges";
 import {awardXPFlat, awardXPForSession, getXPState} from "./gamification";
 import {
@@ -1773,5 +1782,16 @@ export const dexieStorage: IStorageService = {
                 streak_deleted: streakDeleted || streak.length,
             };
         },
+    },
+
+    anki: {
+        list: (userId, filters) => listAnkiCards(userId, filters),
+        create: (userId, body) => createAnkiCard(userId, body),
+        update: (cardId, body) => updateAnkiCard(cardId, body),
+        remove: (cardId) => deleteAnkiCard(cardId),
+        extractFromSession: (sessionId) => extractFromSessionDexie(sessionId),
+        extractFromConversation: (conversationId) =>
+            extractFromConversationDexie(conversationId),
+        markExported: (cardIds) => markAnkiCardsExported(cardIds),
     },
 };

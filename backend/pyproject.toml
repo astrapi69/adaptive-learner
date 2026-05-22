@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive_learner"
-version = "1.16.0"
+version = "1.17.0"
 description = "Adaptive learning system based on the six-method learning model."
 authors = ["Asterios Raptis"]
 license = "MIT"
@@ -30,6 +30,7 @@ adaptive-learner-plugin-session = {path = "../plugins/adaptive-learner-plugin-se
 adaptive-learner-plugin-tracking = {path = "../plugins/adaptive-learner-plugin-tracking", develop = true}
 adaptive-learner-plugin-tools = {path = "../plugins/adaptive-learner-plugin-tools", develop = true}
 adaptive-learner-plugin-gamification = {path = "../plugins/adaptive-learner-plugin-gamification", develop = true}
+adaptive-learner-plugin-anki = {path = "../plugins/adaptive-learner-plugin-anki", develop = true}
 aiosqlite = "^0.22.1"
 
 [tool.poetry.group.dev.dependencies]

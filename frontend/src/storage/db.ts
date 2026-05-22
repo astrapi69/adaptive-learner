@@ -271,6 +271,26 @@ export interface UserBadgeRow {
     earned_at: string;
 }
 
+/** Anki flashcard suggestion (Phase 30B). */
+export interface AnkiCardRow {
+    id: string;
+    user_id: string;
+    session_id: string | null;
+    conversation_id: string | null;
+    project_id: string | null;
+    card_type: "basic" | "cloze";
+    front: string;
+    back: string;
+    /** JSON-encoded array of tag strings, mirroring the backend
+     *  shape so the sync layer can ship the row verbatim. */
+    tags: string;
+    accepted: boolean;
+    rejected: boolean;
+    exported_at: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
 /** Per-user streak state (Phase 29C). One row per user. */
 export interface UserStreakRow {
     id: string;
@@ -345,6 +365,7 @@ export class AdaptiveLearnerDB extends Dexie {
     badges!: EntityTable<BadgeRow, "id">;
     userBadges!: EntityTable<UserBadgeRow, "id">;
     userStreaks!: EntityTable<UserStreakRow, "id">;
+    ankiCards!: EntityTable<AnkiCardRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -479,6 +500,13 @@ export class AdaptiveLearnerDB extends Dexie {
         // singleton (freezes, weekend mode, longest streak).
         this.version(9).stores({
             userStreaks: "id, user_id, updated_at",
+        });
+        // Schema v10 — v1.17.0 Phase 30B: Anki flashcard
+        // suggestions. Indexed by user_id (primary read path)
+        // + project_id + updated_at for sync.
+        this.version(10).stores({
+            ankiCards:
+                "id, user_id, project_id, conversation_id, session_id, updated_at",
         });
     }
 }

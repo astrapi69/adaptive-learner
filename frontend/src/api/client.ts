@@ -786,6 +786,60 @@ export const api = {
             ),
     },
 
+    // --- Anki plugin (v1.17.0 / Phase 30) -------------------------------
+
+    anki: {
+        list: (
+            userId: string,
+            filters?: import("../storage/types").AnkiCardListFilters,
+        ) => {
+            const query: Record<string, string> = {};
+            if (filters?.projectId) query.project_id = filters.projectId;
+            if (filters?.acceptedOnly) query.accepted_only = "true";
+            if (filters?.includeRejected) query.include_rejected = "true";
+            return apiCall<import("../storage/types").AnkiCardSuggestion[]>(
+                `/plugins/anki/cards/${encodeURIComponent(userId)}`,
+                Object.keys(query).length > 0 ? {query} : undefined,
+            );
+        },
+        create: (
+            userId: string,
+            body: import("../storage/types").AnkiCardCreateBody,
+        ) =>
+            apiCall<import("../storage/types").AnkiCardSuggestion>(
+                `/plugins/anki/cards?user_id=${encodeURIComponent(userId)}`,
+                {method: "POST", body},
+            ),
+        update: (
+            cardId: string,
+            body: import("../storage/types").AnkiCardUpdateBody,
+        ) =>
+            apiCall<import("../storage/types").AnkiCardSuggestion>(
+                `/plugins/anki/cards/${encodeURIComponent(cardId)}`,
+                {method: "PATCH", body},
+            ),
+        remove: (cardId: string) =>
+            apiCall<{deleted: string}>(
+                `/plugins/anki/cards/${encodeURIComponent(cardId)}`,
+                {method: "DELETE"},
+            ),
+        extractFromSession: (sessionId: string) =>
+            apiCall<import("../storage/types").AnkiCardSuggestion[]>(
+                `/plugins/anki/cards/extract/session/${encodeURIComponent(sessionId)}`,
+                {method: "POST", body: {}},
+            ),
+        extractFromConversation: (conversationId: string) =>
+            apiCall<import("../storage/types").AnkiCardSuggestion[]>(
+                `/plugins/anki/cards/extract/conversation/${encodeURIComponent(conversationId)}`,
+                {method: "POST", body: {}},
+            ),
+        markExported: (cardIds: string[]) =>
+            apiCall<{updated: number}>(
+                `/plugins/anki/cards/mark-exported`,
+                {method: "POST", body: {card_ids: cardIds}},
+            ),
+    },
+
     // --- Imported conversations (v0.9.0 / Phase 12C) ---------------------
 
     imports: {

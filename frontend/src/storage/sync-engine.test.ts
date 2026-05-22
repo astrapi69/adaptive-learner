@@ -875,6 +875,8 @@ describe("SYNC_TABLES — surface audit", () => {
         "user_badges",
         // v1.16.0 / Phase 29C — streak state singleton.
         "user_streaks",
+        // v1.17.0 / Phase 30B — Anki flashcard suggestions.
+        "anki_card_suggestions",
     ];
 
     it("covers every domain Dexie table", () => {
