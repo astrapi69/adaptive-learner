@@ -69,7 +69,7 @@ Attributions**-Badge:
 
 Auflösungskette (höchste Priorität gewinnt): Umgebung >
 `secrets.yaml` > DB. Siehe
-[die Konfigurations-Doku](../../configuration.md) für die
+[die Konfigurations-Doku](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md) für die
 volle Aufschlüsselung.
 
 ## Speichermodus

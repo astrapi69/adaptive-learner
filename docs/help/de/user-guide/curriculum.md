@@ -89,4 +89,4 @@ IndexedDB und überlebt Browser-Reloads, solange du Site-Daten
 nicht löschst. Im Server-Modus lebt es in der SQLite-Datenbank
 des FastAPI-Backends.
 
-[Wie Speichermodi funktionieren](settings.md#speicher-modus)
+[Wie Speichermodi funktionieren](settings.md)

@@ -55,7 +55,7 @@ Three places to put it (highest priority wins):
 `secrets.yaml`, or `make dev-secret` for a one-shot dev key.
 The app fails hard at startup if the key is unset (no
 silent-generated-default footgun — see
-[docs/configuration.md](../../configuration.md)).
+[docs/configuration.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md)).
 
 ## Run
 

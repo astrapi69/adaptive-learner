@@ -65,7 +65,7 @@ new **source attribution** badge:
   hit Save to start.
 
 Resolution chain (highest priority wins): env > secrets.yaml
-> DB. See [the Configuration doc](../../configuration.md) for
+> DB. See [the Configuration doc](https://github.com/astrapi69/adaptive-learner/blob/main/docs/configuration.md) for
 the full breakdown.
 
 ## Storage mode

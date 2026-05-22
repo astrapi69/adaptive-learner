@@ -76,4 +76,4 @@ du in den Einstellungen.
 Dein KI-Anbieter sieht deine Nachrichten (das ist ja der Sinn
 der KI-Anfrage). Adaptive Learner selbst speichert nur, was du
 tippst — lokal oder im FastAPI-Backend, je nachdem welcher
-[Speicher-Modus](settings.md#speicher-modus) eingestellt ist.
+[Speichermodus](settings.md) eingestellt ist.
