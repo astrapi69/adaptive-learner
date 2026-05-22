@@ -260,6 +260,13 @@ settings:
   save_failed: Kaydetme başarısız oldu.
   provider_active: Aktif
   active_provider_missing_key: Bu senin aktif sağlayıcın ama saklı bir API anahtarı yok. Bir anahtar kaydedilene kadar YZ cevapları atlanacak.
+  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  api_key_source_file: "Anahtar kaynağı: secrets.yaml"
+  api_key_source_env: "Anahtar kaynağı: ortam değişkeni"
+  api_key_source_settings: "Anahtar kaynağı: Ayarlar"
+  api_key_source_none: Yapılandırılmış anahtar yok
+  api_key_external_hint_file: Bu anahtar ~/.config/adaptive-learner/secrets.yaml içinde yapılandırılmış. Değiştirmek için dosyayı düzenleyin.
+  api_key_external_hint_env: Bu anahtar ADAPTIVE_LEARNER_{PROVIDER}_API_KEY ortam değişkeniyle yapılandırılmıştır.
   section_model_overrides: Model geçersiz kılmaları
   model_overrides_hint: Her sağlayıcı için varsayılan modeli kullanmak istiyorsan boş bırak. Boş olmayan bir değer sohbet sırasında varsayılanın yerine geçer.
   model_override_placeholder: Model tanımlayıcısı (ör. claude-3-5-haiku-latest)

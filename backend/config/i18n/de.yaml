@@ -260,6 +260,13 @@ settings:
   save_failed: Speichern fehlgeschlagen.
   provider_active: Aktiv
   active_provider_missing_key: Dies ist dein aktiver Anbieter, aber kein API-Key ist gespeichert. KI-Antworten werden übersprungen, bis ein Key hinterlegt ist.
+  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  api_key_source_file: "Schlüssel aus: secrets.yaml"
+  api_key_source_env: "Schlüssel aus: Umgebungsvariable"
+  api_key_source_settings: "Schlüssel aus: Einstellungen"
+  api_key_source_none: Kein Schlüssel konfiguriert
+  api_key_external_hint_file: Dieser Schlüssel wird in ~/.config/adaptive-learner/secrets.yaml konfiguriert. Bearbeite die Datei, um ihn zu ändern.
+  api_key_external_hint_env: Dieser Schlüssel wird über die Umgebungsvariable ADAPTIVE_LEARNER_{PROVIDER}_API_KEY konfiguriert.
   section_model_overrides: Modellüberschreibungen
   model_overrides_hint: Leer lassen, um das Standardmodell pro Anbieter zu nutzen. Ein nicht-leerer Wert ersetzt das Standardmodell beim Chat.
   model_override_placeholder: Modellbezeichner (z. B. claude-3-5-haiku-latest)

@@ -260,6 +260,13 @@ settings:
   save_failed: Falha ao salvar.
   provider_active: Ativo
   active_provider_missing_key: Este é o seu provedor ativo, mas nenhuma chave de API está armazenada. As respostas da IA serão ignoradas até que uma chave seja salva.
+  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  api_key_source_file: "Chave de: secrets.yaml"
+  api_key_source_env: "Chave de: variável de ambiente"
+  api_key_source_settings: "Chave de: Configurações"
+  api_key_source_none: Nenhuma chave configurada
+  api_key_external_hint_file: Esta chave está configurada em ~/.config/adaptive-learner/secrets.yaml. Edite o arquivo para alterá-la.
+  api_key_external_hint_env: Esta chave é configurada pela variável de ambiente ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.
   section_model_overrides: Substituições de modelo
   model_overrides_hint: Deixe em branco para usar o modelo padrão de cada provedor. Um valor não vazio substitui o padrão durante o chat.
   model_override_placeholder: Identificador do modelo (ex. claude-3-5-haiku-latest)

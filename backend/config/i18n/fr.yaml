@@ -260,6 +260,13 @@ settings:
   save_failed: Echec de l'enregistrement.
   provider_active: Actif
   active_provider_missing_key: C'est ton fournisseur actif mais aucune cle API n'est enregistree. Les reponses IA seront ignorees jusqu'a ce qu'une cle soit enregistree.
+  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  api_key_source_file: "Cle depuis: secrets.yaml"
+  api_key_source_env: "Cle depuis: variable d'environnement"
+  api_key_source_settings: "Cle depuis: Parametres"
+  api_key_source_none: Aucune cle configuree
+  api_key_external_hint_file: Cette cle est configuree dans ~/.config/adaptive-learner/secrets.yaml. Modifie le fichier pour la changer.
+  api_key_external_hint_env: Cette cle est configuree via la variable d'environnement ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.
   section_model_overrides: Surcharges de modele
   model_overrides_hint: Laisse vide pour utiliser le modele par defaut de chaque fournisseur. Une valeur non vide remplace la valeur par defaut lors du chat.
   model_override_placeholder: Identifiant du modele (p. ex. claude-3-5-haiku-latest)

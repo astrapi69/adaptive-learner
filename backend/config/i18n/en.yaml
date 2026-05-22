@@ -260,6 +260,13 @@ settings:
   save_failed: Save failed.
   provider_active: Active
   active_provider_missing_key: This is your active provider but no API key is stored. AI replies will be skipped until a key is saved.
+  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  api_key_source_file: "Key from: secrets.yaml"
+  api_key_source_env: "Key from: environment"
+  api_key_source_settings: "Key from: Settings"
+  api_key_source_none: No key configured
+  api_key_external_hint_file: This key is configured in ~/.config/adaptive-learner/secrets.yaml. Edit the file to change it.
+  api_key_external_hint_env: This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.
   section_model_overrides: Model overrides
   model_overrides_hint: Leave blank to use the default model for each provider. A non-empty value replaces the default at chat time.
   model_override_placeholder: Model identifier (e.g. claude-3-5-haiku-latest)

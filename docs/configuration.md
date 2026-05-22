@@ -1,50 +1,111 @@
-<!--
-TODO: Adapt for your project. Current content is inherited from
-upstream (Bibliogon) and serves as structural reference only.
-The shape of this document (sections, headings, formatting
-conventions) is reusable; the specifics are not.
--->
-
 # Configuration
 
-AdaptiveLearner uses a three-layer config chain so secrets stay out of
-the project tree.
+Adaptive Learner uses a three-layer config chain so secrets stay
+out of the project tree:
 
 ```
-┌─────────────────────────────────────────┐
-│ env-vars (CI/Docker, highest priority)  │
-│ ADAPTIVE_LEARNER_AI_API_KEY                    │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│ env-vars (CI / Docker / shell, highest priority)            │
+│ ADAPTIVE_LEARNER_ANTHROPIC_API_KEY, ..._OPENAI_API_KEY, ... │
+│ ADAPTIVE_LEARNER_SECRET_KEY (Fernet)                        │
+└─────────────────────────────────────────────────────────────┘
                   ↑ overrides
 ┌─────────────────────────────────────────┐
-│ user override file (gitignored)         │
-│ ~/.config/adaptive_learner/secrets.yaml        │
+│ user override file (outside the repo)   │
+│ ~/.config/adaptive_learner/secrets.yaml │
 └─────────────────────────────────────────┘
-                  ↑ overrides
+                  ↑ overrides (for AI keys only)
 ┌─────────────────────────────────────────┐
-│ project app.yaml (committed template)   │
-│ backend/config/app.yaml                 │
+│ database UserSettings (Settings UI)     │
+│ Fernet-encrypted api_key_<provider>     │
 └─────────────────────────────────────────┘
 ```
 
-Override-wins semantics: a value in the override file replaces the
-same key in `app.yaml`; an env-var replaces both. Lists are
+Override-wins semantics: a value in `secrets.yaml` replaces the
+encrypted DB column; an env-var replaces both. Lists are
 **replaced**, not merged.
+
+Phase 34 (v1.20.0) — the secrets.yaml layer was introduced for
+the desktop launcher use case, alongside the existing UI-driven
+Settings flow. Web / Docker deployments can still rely entirely
+on env vars + the Settings UI.
 
 ---
 
-## Where to put what
+## What goes where
 
 | Layer | Examples | Lives in |
 |---|---|---|
-| Project `app.yaml` | non-secret defaults: `app.name`, `app.default_language`, `editor.autosave_debounce_ms`, `plugins.enabled`, etc. | committed to git |
-| User override | secrets the user controls: `ai.api_key`. Anything else they want to override on this machine. | `~/.config/adaptive_learner/secrets.yaml` (Linux/macOS), `%APPDATA%/adaptive_learner/secrets.yaml` (Windows) |
-| Env-var | CI/Docker secrets injected by the orchestrator | environment |
+| Project `app.yaml` | non-secret defaults: `app.name`, `app.default_language`, `plugins.enabled`, server.port. **Never** API keys. | committed to git |
+| User `secrets.yaml` | `ai.<provider>.api_key`, `ai.<provider>.default_model`, `secret_key` (Fernet) | `~/.config/adaptive_learner/secrets.yaml` (Linux/macOS), `%APPDATA%/adaptive_learner/secrets.yaml` (Windows) |
+| Settings UI (DB) | per-user `api_key_<provider>`, `model_override_<provider>`, `language`, `active_provider` | SQLite, Fernet-encrypted for the api_key_* columns |
+| Env-var | CI / Docker / shell overrides of any of the above | environment |
 
-**Rule of thumb:** anything sensitive belongs in the override file
-or env-var. Nothing sensitive belongs in `app.yaml` (which is
-gitignored locally but can leak via screen-shares, backups, or
-accidental `git add -f`).
+**Rule of thumb:** anything sensitive belongs in `secrets.yaml`,
+env-vars, or the Fernet-encrypted DB column. Nothing sensitive
+belongs in `app.yaml`.
+
+---
+
+## `secrets.yaml` format
+
+A first-run template is auto-generated at the path above with all
+keys commented out. POSIX permissions are set to `0600` on
+creation. Uncomment + fill in the keys you want:
+
+```yaml
+# secret_key: "generate with: python3 -c 'from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())'"
+
+ai:
+  anthropic:
+    api_key: "sk-ant-..."
+    default_model: "claude-sonnet-4-20250514"  # optional override
+  openai:
+    api_key: "sk-..."
+    default_model: "gpt-4o"  # optional override
+  gemini:
+    api_key: "AIza..."
+    default_model: "gemini-2.0-flash"  # optional override
+```
+
+The file is parsed with `yaml.safe_load`. Missing keys are
+treated as "not configured here" and resolution falls through to
+the next layer. Malformed YAML logs a single WARNING at startup
+and the loader falls back to "no overrides" (the app continues
+to start). World-readable permissions trigger a one-line WARNING
+at startup recommending `chmod 0600`.
+
+---
+
+## Key resolution chain at runtime
+
+When the AI orchestrator needs an API key for `<provider>`:
+
+1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` env var.
+2. `ai.<provider>.api_key` in `secrets.yaml`.
+3. Fernet-decrypted `api_key_<provider>` column on the user's
+   `UserSettings` row (set via the Settings UI).
+4. `None` — the AI call returns an error asking the user to
+   configure a key.
+
+The Settings UI surfaces which layer the active key came from
+via per-provider badges:
+
+- "Key from: environment"
+- "Key from: secrets.yaml"
+- "Key from: Settings"
+- "No key configured"
+
+When the source is `environment` or `secrets.yaml`, the Save +
+Remove buttons in Settings are disabled and an info banner tells
+the user where to edit the key.
+
+Same chain for `default_model` (per-provider model override) —
+the only difference is that the third layer is
+`UserSettings.model_override_<provider>` instead of the
+encrypted key column. Per the v1.20.0 decision, `secrets.yaml`
+beats the UI override (file-level config wins over UI for power
+users).
 
 ---
 
@@ -58,48 +119,15 @@ Set `XDG_CONFIG_HOME` to relocate (XDG-conformant):
 
 ```bash
 export XDG_CONFIG_HOME=/srv/configs
-# AdaptiveLearner now reads /srv/configs/adaptive_learner/secrets.yaml
+# Adaptive Learner now reads /srv/configs/adaptive_learner/secrets.yaml
 ```
 
 ### Windows
 
 Default: `%APPDATA%/adaptive_learner/secrets.yaml`.
 
-Falls back to `~/AppData/Roaming/adaptive_learner/secrets.yaml` when
-`%APPDATA%` is unset.
-
----
-
-## Migration: move existing `ai.api_key` out of `app.yaml`
-
-Your current `backend/config/app.yaml` may carry `ai.api_key`
-inline (legacy from earlier installations). Migrate in three
-steps:
-
-```bash
-# 1. Pick the destination directory.
-mkdir -p ~/.config/adaptive_learner
-
-# 2. Create the override file (paste your key).
-cat > ~/.config/adaptive_learner/secrets.yaml << 'EOF'
-ai:
-  api_key: sk-ant-api03-your-real-key-here
-EOF
-
-# 3. Empty the api_key in app.yaml. The backend logs a deprecation
-# warning while a non-empty key sits there alongside no override;
-# emptying silences it.
-# Edit backend/config/app.yaml: set ai.api_key: "".
-
-# 4. Restart the backend.
-make dev-down && make dev
-```
-
-Result: backend reads the merged config, sees the override-
-supplied key, never falls back to `app.yaml`. The Settings tab and
-AiSetupWizard hide the API-key input automatically (via the
-`_secrets_managed_externally` flag) and show an info-note
-explaining where the key lives.
+Falls back to `~/AppData/Roaming/adaptive_learner/secrets.yaml`
+when `%APPDATA%` is unset.
 
 ---
 
@@ -107,87 +135,109 @@ explaining where the key lives.
 
 | Env-var | Maps to | Notes |
 |---|---|---|
-| `ADAPTIVE_LEARNER_AI_API_KEY` | `ai.api_key` | Beats both project and override |
-| `ADAPTIVE_LEARNER_DEBUG` | `DEBUG` constant in `main.py` | `true`/`1`/`yes` to enable |
+| `ADAPTIVE_LEARNER_ANTHROPIC_API_KEY` | `ai.anthropic.api_key` | Beats secrets.yaml + DB |
+| `ADAPTIVE_LEARNER_OPENAI_API_KEY` | `ai.openai.api_key` | Beats secrets.yaml + DB |
+| `ADAPTIVE_LEARNER_GEMINI_API_KEY` | `ai.gemini.api_key` | Beats secrets.yaml + DB |
+| `ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL` | `ai.anthropic.default_model` | Beats secrets.yaml + UI override |
+| `ADAPTIVE_LEARNER_OPENAI_DEFAULT_MODEL` | `ai.openai.default_model` | Beats secrets.yaml + UI override |
+| `ADAPTIVE_LEARNER_GEMINI_DEFAULT_MODEL` | `ai.gemini.default_model` | Beats secrets.yaml + UI override |
+| `ADAPTIVE_LEARNER_SECRET_KEY` | Fernet encryption key for `api_key_*` DB columns | hydrated from `secret_key:` in `secrets.yaml` when env empty; fail-hard if neither is set |
+| `ADAPTIVE_LEARNER_PORT` | backend listen port (default 18001) | uvicorn reads its own `--port` flag too |
 | `ADAPTIVE_LEARNER_CORS_ORIGINS` | CORS allowed origins | comma-separated |
-| `ADAPTIVE_LEARNER_SECRET_KEY` | licensing HMAC | leave default in dev |
-
-Plugin-yaml secrets (audiobook, grammar, translation) are NOT yet
-covered by this mechanism — they load via PluginManager and need a
-parallel refactor (T-XX Plugin-Config Secrets Layering, deferred).
-For now, those keys live in their respective `backend/config/plugins/*.yaml`
-files; the Settings UI for each plugin still writes back there.
+| `ADAPTIVE_LEARNER_DEBUG` | `DEBUG` constant in `main.py` | `true`/`1`/`yes` to enable |
+| `ADAPTIVE_LEARNER_TEST` | enables test isolation guards | set automatically by `conftest.py` |
+| `ADAPTIVE_LEARNER_CONFIG_DIR` | overrides `platformdirs.user_config_dir(...)` | rarely needed; XDG-conformant default works |
+| `ADAPTIVE_LEARNER_DATA_DIR` | overrides `platformdirs.user_data_dir(...)` | for sandboxed installations |
 
 ---
 
 ## Docker / CI usage
 
+For Docker / CI / Kubernetes you typically inject every secret
+via env vars from your orchestrator's secrets store. The
+`secrets.yaml` layer is meant for human desktop use — it works
+in Docker too if you bind-mount the path, but env-vars are the
+idiomatic choice in containers:
+
 ```yaml
 # docker-compose.prod.yml (example excerpt)
 services:
   backend:
-    image: adaptive_learner:0.24.0
+    image: adaptive_learner:1.19.2
     environment:
-      ADAPTIVE_LEARNER_AI_API_KEY: ${ADAPTIVE_LEARNER_AI_API_KEY}
+      ADAPTIVE_LEARNER_SECRET_KEY: ${ADAPTIVE_LEARNER_SECRET_KEY}
+      ADAPTIVE_LEARNER_ANTHROPIC_API_KEY: ${ADAPTIVE_LEARNER_ANTHROPIC_API_KEY}
       ADAPTIVE_LEARNER_DEBUG: "false"
     volumes:
-      - ./config:/app/backend/config
+      - adaptive-learner-data:/app/data
 ```
 
-Inject `ADAPTIVE_LEARNER_AI_API_KEY` from CI secrets (GitHub Actions
-secrets, GitLab CI variables, Vault, etc.). The committed
-`app.yaml` keeps `ai.api_key: ""` so the env-var wins on merge.
+Inject the env-vars from your CI secrets store (GitHub Actions
+secrets, GitLab CI variables, Vault, AWS Secrets Manager, etc.).
 
 ---
 
 ## Debugging: which layer wins?
 
-A quick way to verify what the backend sees at runtime:
-
 ```bash
-curl http://localhost:"${ADAPTIVE_LEARNER_PORT:-18001}"/api/settings/app \
-  | jq '.ai.api_key, ._secrets_managed_externally'
+# What does the Settings endpoint say about each provider?
+curl http://localhost:18001/api/settings/<user-id> \
+  | jq '.key_source_anthropic, .key_source_openai, .key_source_gemini'
 ```
 
-- `_secrets_managed_externally: true` → override file or env-var is
-  active. The Settings UI hides the API-key input.
-- `_secrets_managed_externally: false` → only project `app.yaml`
-  in play.
+Expected values: `"env"`, `"secrets_yaml"`, `"settings"`, `"none"`.
 
-To confirm WHICH layer supplied a value:
+To confirm WHICH layer holds a value at the source-of-truth level:
 
 ```bash
-# Project value
-yq '.ai.api_key' backend/config/app.yaml
+# Env var
+echo "$ADAPTIVE_LEARNER_ANTHROPIC_API_KEY"
 
-# Override value
-yq '.ai.api_key' ~/.config/adaptive_learner/secrets.yaml
+# secrets.yaml
+yq '.ai.anthropic.api_key' ~/.config/adaptive_learner/secrets.yaml
 
-# Env-var value
-echo "$ADAPTIVE_LEARNER_AI_API_KEY"
+# DB column (encrypted ciphertext)
+sqlite3 ~/.local/share/adaptive_learner/adaptive_learner.db \
+  "SELECT api_key_anthropic IS NOT NULL FROM user_settings WHERE user_id='<id>';"
 ```
 
-Whichever is non-empty AND highest in the chain wins.
+Whichever is non-empty AND highest in the chain wins. The
+Settings UI mirrors this resolution and disables the input
+fields when the source is `env` or `secrets_yaml`.
 
 ---
 
-## Deprecation warning
+## Fernet `secret_key` notes
 
-When `app.yaml` carries a non-empty `ai.api_key` AND no override
-file exists AND `ADAPTIVE_LEARNER_AI_API_KEY` is unset, the backend logs
-a one-shot WARNING at startup:
+The `secret_key` is a separate concern from the AI provider API
+keys: it's the symmetric encryption key Adaptive Learner uses to
+encrypt `api_key_<provider>` columns at rest in SQLite. If you
+rotate it, existing encrypted rows become unreadable —
+`CryptoDecryptionError` raised on read, and the user has to
+re-enter their keys via the Settings UI.
 
+Resolution order at startup:
+
+1. `ADAPTIVE_LEARNER_SECRET_KEY` env var.
+2. `secret_key:` in `secrets.yaml` (hydrated into the env var
+   by `_hydrate_env_from_config` so downstream readers see it
+   too).
+3. **Fail-hard** with `CryptoConfigurationError`. No silent
+   default — generating one at startup would mean different
+   keys per dev machine and across container restarts, which
+   would silently corrupt the encrypted DB rows.
+
+Generate a fresh key for local dev:
+
+```bash
+python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+# -> paste into secrets.yaml as ``secret_key: "..."``,
+#    OR export ADAPTIVE_LEARNER_SECRET_KEY="..."
 ```
-WARNING: Secrets found in /path/to/backend/config/app.yaml (ai.api_key).
-This file is gitignored but may be committed accidentally, end up
-in backups, or appear in screen-shares. Move secrets to
-/home/.../.config/adaptive_learner/secrets.yaml or set ADAPTIVE_LEARNER_AI_API_KEY.
-See docs/configuration.md for details.
-```
 
-The warning is informational. Existing installations with hardcoded
-keys keep working unchanged; this is a migration nudge, not a
-breaking change.
+For dev convenience, `make dev-secret` writes a key into
+`~/.adaptive-learner/dev-secret.env` (gitignored) the first time
+it's invoked, so subsequent runs of `make dev` Just Work.
 
 ---
 

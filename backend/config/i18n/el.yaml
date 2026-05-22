@@ -260,6 +260,13 @@ settings:
   save_failed: Η αποθήκευση απέτυχε.
   provider_active: Ενεργό
   active_provider_missing_key: Αυτός είναι ο ενεργός πάροχος αλλά δεν είναι αποθηκευμένο κλειδί API. Οι απαντήσεις AI θα παραλείπονται μέχρι να αποθηκευτεί κλειδί.
+  # Phase 34 (v1.20.0) — per-provider key-source badges.
+  api_key_source_file: "Κλειδί από: secrets.yaml"
+  api_key_source_env: "Κλειδί από: μεταβλητή περιβάλλοντος"
+  api_key_source_settings: "Κλειδί από: Ρυθμίσεις"
+  api_key_source_none: Δεν υπάρχει κλειδί
+  api_key_external_hint_file: Αυτό το κλειδί ρυθμίζεται στο ~/.config/adaptive-learner/secrets.yaml. Επεξεργαστείτε το αρχείο για να το αλλάξετε.
+  api_key_external_hint_env: Αυτό το κλειδί ρυθμίζεται μέσω της μεταβλητής περιβάλλοντος ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.
   section_model_overrides: Παρακάμψεις μοντέλου
   model_overrides_hint: Άφησε κενό για να χρησιμοποιηθεί το προεπιλεγμένο μοντέλο για κάθε πάροχο. Μη κενή τιμή αντικαθιστά το προεπιλεγμένο κατά τη συνομιλία.
   model_override_placeholder: Αναγνωριστικό μοντέλου (π.χ. claude-3-5-haiku-latest)
