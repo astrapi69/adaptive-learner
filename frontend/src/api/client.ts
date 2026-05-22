@@ -735,6 +735,71 @@ export const api = {
             ),
     },
 
+    // --- NotebookLM plugin (v1.19.0 / Phase 32) -------------------------
+
+    notebooklm: {
+        listQuestions: (
+            userId: string,
+            filters?: import("../storage/types").StudyQuestionListFilters,
+        ) => {
+            const query: Record<string, string> = {};
+            if (filters?.projectId) query.project_id = filters.projectId;
+            if (filters?.difficulty) query.difficulty = filters.difficulty;
+            if (filters?.topic) query.topic = filters.topic;
+            return apiCall<import("../storage/types").StudyQuestion[]>(
+                `/plugins/notebooklm/questions/${encodeURIComponent(userId)}`,
+                Object.keys(query).length > 0 ? {query} : undefined,
+            );
+        },
+        createQuestion: (
+            userId: string,
+            body: import("../storage/types").StudyQuestionCreateBody,
+        ) =>
+            apiCall<import("../storage/types").StudyQuestion>(
+                `/plugins/notebooklm/questions?user_id=${encodeURIComponent(userId)}`,
+                {method: "POST", body},
+            ),
+        updateQuestion: (
+            questionId: string,
+            body: import("../storage/types").StudyQuestionUpdateBody,
+        ) =>
+            apiCall<import("../storage/types").StudyQuestion>(
+                `/plugins/notebooklm/questions/${encodeURIComponent(questionId)}`,
+                {method: "PATCH", body},
+            ),
+        deleteQuestion: (questionId: string) =>
+            apiCall<{deleted: string}>(
+                `/plugins/notebooklm/questions/${encodeURIComponent(questionId)}`,
+                {method: "DELETE"},
+            ),
+        generateFromSession: (sessionId: string) =>
+            apiCall<import("../storage/types").StudyQuestion[]>(
+                `/plugins/notebooklm/questions/generate/session/${encodeURIComponent(sessionId)}`,
+                {method: "POST", body: {}},
+            ),
+        generateFromProject: (projectId: string) =>
+            apiCall<import("../storage/types").StudyQuestion[]>(
+                `/plugins/notebooklm/questions/generate/project/${encodeURIComponent(projectId)}`,
+                {method: "POST", body: {}},
+            ),
+        studyGuide: async (projectId: string) => {
+            // Returns text/markdown — bypass apiCall (which
+            // parses JSON) and call fetch directly.
+            const res = await fetch(
+                `${API_BASE}/plugins/notebooklm/study-guide/${encodeURIComponent(projectId)}`,
+                {method: "POST", body: ""},
+            );
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({detail: ""}));
+                throw new ApiError(
+                    res.status,
+                    body.detail || `Study guide failed (HTTP ${res.status})`,
+                );
+            }
+            return await res.text();
+        },
+    },
+
     // --- Pronunciation Practice (v1.18.0 / Phase 31C) -------------------
 
     pronunciation: {

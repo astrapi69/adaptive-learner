@@ -74,6 +74,15 @@ import {
     buildProgressReport as dexieBuildProgressReport,
     buildSessionDetail as dexieBuildSessionDetail,
 } from "./export-builder";
+import {
+    createStudyQuestion,
+    deleteStudyQuestion,
+    generateFromProjectDexie,
+    generateFromSessionDexie,
+    listStudyQuestions,
+    studyGuideDexie,
+    updateStudyQuestion,
+} from "./notebooklm";
 import {fetchAvailableModels} from "./model-discovery";
 import {sendMessage, sendMessageStream, startSession} from "./session-flow";
 import {
@@ -1783,6 +1792,19 @@ export const dexieStorage: IStorageService = {
                 streak_deleted: streakDeleted || streak.length,
             };
         },
+    },
+
+    notebooklm: {
+        listQuestions: (userId, filters) =>
+            listStudyQuestions(userId, filters),
+        createQuestion: (userId, body) =>
+            createStudyQuestion(userId, body),
+        updateQuestion: (questionId, body) =>
+            updateStudyQuestion(questionId, body),
+        deleteQuestion: (questionId) => deleteStudyQuestion(questionId),
+        generateFromSession: () => generateFromSessionDexie(),
+        generateFromProject: () => generateFromProjectDexie(),
+        studyGuide: () => studyGuideDexie(),
     },
 
     pronunciation: {

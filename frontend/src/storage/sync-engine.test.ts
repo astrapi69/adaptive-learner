@@ -877,6 +877,8 @@ describe("SYNC_TABLES — surface audit", () => {
         "user_streaks",
         // v1.17.0 / Phase 30B — Anki flashcard suggestions.
         "anki_card_suggestions",
+        // v1.19.0 / Phase 32B — Study questions.
+        "study_questions",
     ];
 
     it("covers every domain Dexie table", () => {

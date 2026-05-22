@@ -201,4 +201,21 @@ export const apiStorage: IStorageService = {
         phrase: (args) => api.pronunciation.phrase(args),
         judge: (args) => api.pronunciation.judge(args),
     },
+
+    notebooklm: {
+        listQuestions: (userId, filters) =>
+            api.notebooklm.listQuestions(userId, filters),
+        createQuestion: (userId, body) =>
+            api.notebooklm.createQuestion(userId, body),
+        updateQuestion: (questionId, body) =>
+            api.notebooklm.updateQuestion(questionId, body),
+        deleteQuestion: async (questionId) => {
+            await api.notebooklm.deleteQuestion(questionId);
+        },
+        generateFromSession: (sessionId) =>
+            api.notebooklm.generateFromSession(sessionId),
+        generateFromProject: (projectId) =>
+            api.notebooklm.generateFromProject(projectId),
+        studyGuide: (projectId) => api.notebooklm.studyGuide(projectId),
+    },
 };

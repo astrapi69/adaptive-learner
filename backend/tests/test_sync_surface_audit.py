@@ -54,6 +54,9 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # v1.17.0 / Phase 30B: AI-extracted flashcard candidates
         # (user accepts/edits/rejects before .apkg export).
         "anki_card_suggestions",
+        # v1.19.0 / Phase 32B: AI-generated active-recall
+        # study questions (user edits / deletes in place).
+        "study_questions",
     }
 )
 

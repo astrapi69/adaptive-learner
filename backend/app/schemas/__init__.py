@@ -883,7 +883,55 @@ __all__ = [
     "AnkiCardSuggestionOut",
     "AnkiCardSuggestionCreate",
     "AnkiCardSuggestionUpdate",
+    # NotebookLM (Phase 32)
+    "StudyQuestionOut",
+    "StudyQuestionCreate",
+    "StudyQuestionUpdate",
 ]
+
+
+class StudyQuestionOut(BaseModel):
+    """Read-side study question (Phase 32B)."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    project_id: str
+    session_id: str | None
+    question: str
+    expected_answer: str
+    question_type: str
+    difficulty: str
+    topic: str
+    edited: bool
+    created_at: datetime
+    updated_at: datetime
+
+
+class StudyQuestionCreate(BaseModel):
+    """Manual insert payload (rarely used — most questions come
+    from the AI generator)."""
+
+    project_id: str
+    session_id: str | None = None
+    question: str
+    expected_answer: str = ""
+    question_type: str = "open"
+    difficulty: str = "medium"
+    topic: str = ""
+
+
+class StudyQuestionUpdate(BaseModel):
+    """Inline-edit payload. Every field optional; setting any of
+    ``question`` / ``expected_answer`` flips ``edited=True`` so
+    the AI re-runner skips this row."""
+
+    question: str | None = None
+    expected_answer: str | None = None
+    question_type: str | None = None
+    difficulty: str | None = None
+    topic: str | None = None
 
 
 class AnkiCardSuggestionOut(BaseModel):

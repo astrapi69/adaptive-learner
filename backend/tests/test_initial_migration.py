@@ -60,6 +60,8 @@ EXPECTED_TABLES = {
     "user_streaks",
     # v1.17.0 / Phase 30B — AI-extracted flashcard candidates
     "anki_card_suggestions",
+    # v1.19.0 / Phase 32B — AI-generated active-recall study questions
+    "study_questions",
 }
 
 

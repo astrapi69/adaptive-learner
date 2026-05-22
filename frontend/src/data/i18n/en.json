@@ -780,5 +780,26 @@
     "phrase_failed": "Could not generate a phrase.",
     "judge_failed": "Could not score that attempt.",
     "ineligible": "Pronunciation practice is available for language-learning projects. Add a subject under 'Languages' to your project to enable it."
+  },
+  "notebooklm": {
+    "section_title": "Study materials (NotebookLM-ready)",
+    "generate_questions": "Generate study questions",
+    "generating": "Generating questions…",
+    "download_zip": "Download NotebookLM package",
+    "exporting_zip": "Building ZIP…",
+    "study_guide": "Download study guide",
+    "generating_guide": "Building study guide…",
+    "filter_difficulty": "Filter by difficulty",
+    "filter_all": "All",
+    "empty": "No study questions yet. Generate some from your recent sessions.",
+    "delete_confirm": "Delete this study question?",
+    "questions_load_failed": "Could not load study questions.",
+    "questions_generated": "Generated {n} new study question(s).",
+    "no_questions_generated": "No study questions extracted. Try after another session or two.",
+    "generate_failed": "Could not generate study questions.",
+    "zip_exported": "Exported {n} file(s) to {filename}.",
+    "zip_failed": "ZIP export failed.",
+    "guide_ready": "Study guide downloaded.",
+    "guide_failed": "Could not generate the study guide."
   }
 }

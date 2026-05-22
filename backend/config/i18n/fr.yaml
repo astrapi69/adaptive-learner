@@ -711,3 +711,23 @@ pronunciation:
   phrase_failed: Impossible de générer une phrase.
   judge_failed: Impossible d'évaluer cet essai.
   ineligible: La pratique de prononciation est disponible pour les projets d'apprentissage des langues. Ajoute un sujet sous 'Langues' à ton projet pour l'activer.
+notebooklm:
+  section_title: Matériel d'étude (prêt pour NotebookLM)
+  generate_questions: Générer des questions d'étude
+  generating: Génération de questions…
+  download_zip: Télécharger le paquet NotebookLM
+  exporting_zip: Création du ZIP…
+  study_guide: Télécharger le guide d'étude
+  generating_guide: Création du guide…
+  filter_difficulty: Filtrer par difficulté
+  filter_all: Toutes
+  empty: Pas encore de questions. Génère-les à partir de tes sessions récentes.
+  delete_confirm: Supprimer cette question ?
+  questions_load_failed: Impossible de charger les questions.
+  questions_generated: '{n} nouvelle(s) question(s) générée(s).'
+  no_questions_generated: Aucune question extraite. Réessaie après quelques sessions.
+  generate_failed: Impossible de générer les questions.
+  zip_exported: '{n} fichier(s) exporté(s) vers {filename}.'
+  zip_failed: Échec de l'export ZIP.
+  guide_ready: Guide d'étude téléchargé.
+  guide_failed: Impossible de générer le guide d'étude.

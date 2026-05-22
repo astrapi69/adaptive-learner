@@ -1048,6 +1048,70 @@ class AnkiCardSuggestion(Base):
         )
 
 
+class StudyQuestion(Base):
+    """AI-generated active-recall question (Phase 32B / v1.19.0).
+
+    Produced by the NotebookLM plugin's question generator (from
+    a session transcript or from project-wide data). The user
+    reviews, edits, deletes, or accepts each. Accepted questions
+    feed the NotebookLM ZIP export's ``flashcards.md`` and the
+    Progress page's Study Questions section.
+
+    ``session_id`` is nullable — project-wide generation produces
+    rows with no parent session. ``difficulty`` is one of
+    ``"easy" | "medium" | "hard"`` (AI picks per question; user
+    can edit).
+    """
+
+    __tablename__ = "study_questions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    project_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("learning_projects.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    session_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("learning_sessions.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+    question: Mapped[str] = mapped_column(Text, nullable=False)
+    expected_answer: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    # "open" | "fill_blank" | "explain" | "compare"
+    question_type: Mapped[str] = mapped_column(
+        String(20), nullable=False, default="open"
+    )
+    difficulty: Mapped[str] = mapped_column(
+        String(10), nullable=False, default="medium"
+    )
+    topic: Mapped[str] = mapped_column(String(200), nullable=False, default="")
+    # User-edited flag. Set by PATCH when the question/answer text
+    # changes so the AI doesn't re-generate identical rows on a
+    # repeat run.
+    edited: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<StudyQuestion id={self.id!r} project={self.project_id!r} "
+            f"difficulty={self.difficulty!r} question={self.question[:40]!r}>"
+        )
+
+
 class UserStreak(Base):
     """Per-user streak state singleton (Phase 29C).
 
@@ -1164,4 +1228,5 @@ __all__ = [
     "UserBadge",
     "UserStreak",
     "AnkiCardSuggestion",
+    "StudyQuestion",
 ]

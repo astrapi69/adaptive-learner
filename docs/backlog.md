@@ -150,9 +150,19 @@ tiebreaker.
   integration intentionally NOT shipped (out of scope per
   spec). Browser-direct AI session-extraction in Dexie mode
   filed as a polish patch.
-- [ ] **BL-22**: NotebookLM integration — Auto-generate
-  NotebookLM-compatible study materials from sessions. API
-  availability unclear.
+- [x] **BL-22**: NotebookLM integration —
+  Closed in v1.19.0 / Phase 32. NotebookLM has no public API,
+  so direct integration isn't possible. The new
+  ``adaptive-learner-plugin-notebooklm`` ships the next-best
+  path: AI-generated active-recall study questions
+  (``study_questions`` table + 3-tier difficulty), an
+  AI-generated comprehensive study guide (one big AI call,
+  ~30K-char content-clipping), and a client-side ZIP
+  exporter that assembles a NotebookLM-optimized package
+  (summary / vocabulary / rules / errors / flashcards /
+  per-session excerpts as structured Markdown). Browser-
+  direct AI in Dexie mode + inline-edit for questions filed
+  as polish patches.
 
 ## Trigger-Gated Items
 

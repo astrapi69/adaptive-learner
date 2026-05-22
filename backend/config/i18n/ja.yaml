@@ -711,3 +711,23 @@ pronunciation:
   phrase_failed: フレーズを生成できませんでした。
   judge_failed: この試行を採点できませんでした。
   ineligible: 発音練習は言語学習プロジェクトで利用できます。プロジェクトに『言語』配下の科目を追加して有効化してください。
+notebooklm:
+  section_title: 学習素材（NotebookLM対応）
+  generate_questions: 学習質問を生成
+  generating: 質問を生成中…
+  download_zip: NotebookLMパッケージをダウンロード
+  exporting_zip: ZIPを作成中…
+  study_guide: 学習ガイドをダウンロード
+  generating_guide: 学習ガイドを作成中…
+  filter_difficulty: 難易度で絞り込み
+  filter_all: すべて
+  empty: まだ質問がありません。最近のセッションから生成してください。
+  delete_confirm: この学習質問を削除しますか？
+  questions_load_failed: 学習質問を読み込めませんでした。
+  questions_generated: '{n}件の新しい質問を生成しました。'
+  no_questions_generated: 質問は抽出されませんでした。もう少しセッションを行った後に再試行してください。
+  generate_failed: 学習質問を生成できませんでした。
+  zip_exported: '{n}ファイルを{filename}にエクスポートしました。'
+  zip_failed: ZIPエクスポートに失敗しました。
+  guide_ready: 学習ガイドをダウンロードしました。
+  guide_failed: 学習ガイドを生成できませんでした。

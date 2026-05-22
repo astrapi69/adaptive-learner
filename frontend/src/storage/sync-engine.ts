@@ -374,6 +374,14 @@ const SYNC_TABLES: SyncTable[] = [
         timestampField: "updated_at",
         appendOnly: false,
     },
+    {
+        // v1.19.0 / Phase 32B — AI-generated study questions.
+        // MUTABLE: the user edits / deletes in-place.
+        name: "study_questions",
+        dexieTable: "studyQuestions",
+        timestampField: "updated_at",
+        appendOnly: false,
+    },
 ];
 
 const APPEND_ONLY_TABLES = new Set(

@@ -780,5 +780,26 @@
     "phrase_failed": "Cümle oluşturulamadı.",
     "judge_failed": "Bu deneme değerlendirilemedi.",
     "ineligible": "Telaffuz alıştırması dil öğrenme projeleri için kullanılabilir. Etkinleştirmek için 'Diller' altında bir konu ekle."
+  },
+  "notebooklm": {
+    "section_title": "Çalışma materyalleri (NotebookLM uyumlu)",
+    "generate_questions": "Çalışma soruları oluştur",
+    "generating": "Sorular oluşturuluyor…",
+    "download_zip": "NotebookLM paketini indir",
+    "exporting_zip": "ZIP oluşturuluyor…",
+    "study_guide": "Çalışma kılavuzunu indir",
+    "generating_guide": "Kılavuz oluşturuluyor…",
+    "filter_difficulty": "Zorluğa göre filtrele",
+    "filter_all": "Tümü",
+    "empty": "Henüz çalışma sorusu yok. Son oturumlardan oluştur.",
+    "delete_confirm": "Bu çalışma sorusu silinsin mi?",
+    "questions_load_failed": "Çalışma soruları yüklenemedi.",
+    "questions_generated": "{n} yeni çalışma sorusu oluşturuldu.",
+    "no_questions_generated": "Çalışma sorusu çıkarılamadı. Birkaç oturum sonra tekrar dene.",
+    "generate_failed": "Çalışma soruları oluşturulamadı.",
+    "zip_exported": "{n} dosya {filename} olarak dışa aktarıldı.",
+    "zip_failed": "ZIP dışa aktarımı başarısız.",
+    "guide_ready": "Çalışma kılavuzu indirildi.",
+    "guide_failed": "Çalışma kılavuzu oluşturulamadı."
   }
 }

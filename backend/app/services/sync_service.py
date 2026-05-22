@@ -61,6 +61,7 @@ from app.models import (
     Subject,
     AnkiCardSuggestion,
     Badge,
+    StudyQuestion,
     Tag,
     User,
     UserBadge,
@@ -491,6 +492,30 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="updated_at",
         append_only=False,
         order=27,
+        scope="direct",
+    ),
+    # v1.19.0 / Phase 32B — AI-generated active-recall questions.
+    # MUTABLE: the user edits / deletes in-place. Direct user_id
+    # scope (questions belong to the learner who generated them).
+    "study_questions": TableSpec(
+        model=StudyQuestion,
+        columns=(
+            "id",
+            "user_id",
+            "project_id",
+            "session_id",
+            "question",
+            "expected_answer",
+            "question_type",
+            "difficulty",
+            "topic",
+            "edited",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=28,
         scope="direct",
     ),
     # v1.16.0 / Phase 29C — per-user streak state singleton.

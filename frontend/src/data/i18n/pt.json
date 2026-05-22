@@ -780,5 +780,26 @@
     "phrase_failed": "Não foi possível gerar uma frase.",
     "judge_failed": "Não foi possível avaliar essa tentativa.",
     "ineligible": "A prática de pronúncia está disponível para projetos de aprendizado de idiomas. Adicione um assunto sob 'Idiomas' ao seu projeto para ativá-la."
+  },
+  "notebooklm": {
+    "section_title": "Materiais de estudo (prontos para NotebookLM)",
+    "generate_questions": "Gerar perguntas de estudo",
+    "generating": "Gerando perguntas…",
+    "download_zip": "Baixar pacote NotebookLM",
+    "exporting_zip": "Criando ZIP…",
+    "study_guide": "Baixar guia de estudo",
+    "generating_guide": "Criando guia de estudo…",
+    "filter_difficulty": "Filtrar por dificuldade",
+    "filter_all": "Todas",
+    "empty": "Sem perguntas ainda. Gere algumas a partir das sessões recentes.",
+    "delete_confirm": "Excluir esta pergunta?",
+    "questions_load_failed": "Não foi possível carregar as perguntas.",
+    "questions_generated": "{n} nova(s) pergunta(s) gerada(s).",
+    "no_questions_generated": "Nenhuma pergunta extraída. Tente após mais sessões.",
+    "generate_failed": "Não foi possível gerar as perguntas.",
+    "zip_exported": "{n} arquivo(s) exportado(s) para {filename}.",
+    "zip_failed": "Falha na exportação ZIP.",
+    "guide_ready": "Guia de estudo baixado.",
+    "guide_failed": "Não foi possível gerar o guia de estudo."
   }
 }

@@ -271,6 +271,24 @@ export interface UserBadgeRow {
     earned_at: string;
 }
 
+/** AI-generated study question (Phase 32B / v1.19.0). */
+export interface StudyQuestionRow {
+    id: string;
+    user_id: string;
+    project_id: string;
+    session_id: string | null;
+    question: string;
+    expected_answer: string;
+    /** "open" | "fill_blank" | "explain" | "compare" */
+    question_type: string;
+    /** "easy" | "medium" | "hard" */
+    difficulty: string;
+    topic: string;
+    edited: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
 /** Anki flashcard suggestion (Phase 30B). */
 export interface AnkiCardRow {
     id: string;
@@ -366,6 +384,7 @@ export class AdaptiveLearnerDB extends Dexie {
     userBadges!: EntityTable<UserBadgeRow, "id">;
     userStreaks!: EntityTable<UserStreakRow, "id">;
     ankiCards!: EntityTable<AnkiCardRow, "id">;
+    studyQuestions!: EntityTable<StudyQuestionRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -507,6 +526,14 @@ export class AdaptiveLearnerDB extends Dexie {
         this.version(10).stores({
             ankiCards:
                 "id, user_id, project_id, conversation_id, session_id, updated_at",
+        });
+        // Schema v11 — v1.19.0 Phase 32B: AI-generated study
+        // questions. Indexed by user_id + project_id +
+        // updated_at for sync; difficulty + topic are
+        // free-text filters served by ``.filter()``.
+        this.version(11).stores({
+            studyQuestions:
+                "id, user_id, project_id, session_id, updated_at",
         });
     }
 }

@@ -711,3 +711,23 @@ pronunciation:
   phrase_failed: Satz konnte nicht generiert werden.
   judge_failed: Versuch konnte nicht bewertet werden.
   ineligible: Aussprachetraining ist für Sprach-Lernprojekte verfügbar. Füge ein Fach unter 'Sprachen' zu deinem Projekt hinzu, um es zu aktivieren.
+notebooklm:
+  section_title: Lernmaterialien (NotebookLM-ready)
+  generate_questions: Lernfragen generieren
+  generating: Fragen werden generiert…
+  download_zip: NotebookLM-Paket herunterladen
+  exporting_zip: ZIP wird erstellt…
+  study_guide: Lernleitfaden herunterladen
+  generating_guide: Lernleitfaden wird erstellt…
+  filter_difficulty: Nach Schwierigkeit filtern
+  filter_all: Alle
+  empty: Noch keine Lernfragen. Generiere welche aus deinen letzten Sitzungen.
+  delete_confirm: Diese Lernfrage löschen?
+  questions_load_failed: Lernfragen konnten nicht geladen werden.
+  questions_generated: '{n} neue Lernfrage(n) generiert.'
+  no_questions_generated: Keine Lernfragen extrahiert. Versuche es nach weiteren Sitzungen.
+  generate_failed: Lernfragen konnten nicht generiert werden.
+  zip_exported: '{n} Datei(en) in {filename} exportiert.'
+  zip_failed: ZIP-Export fehlgeschlagen.
+  guide_ready: Lernleitfaden heruntergeladen.
+  guide_failed: Lernleitfaden konnte nicht erstellt werden.

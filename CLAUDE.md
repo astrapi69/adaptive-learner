@@ -12,7 +12,50 @@ depended on them are gone.
 - **Project plan:** [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md) — domain models, hooks, plugins, API, roadmap
 - **Concept:** [docs/CONCEPT.md](docs/CONCEPT.md) — short overview, points at the project plan
 - **API reference:** FastAPI OpenAPI under `/api/docs` and `/openapi.json`
-- **Current state (v1.18.0):** v1.17.0 plus Phase 31 —
+- **Current state (v1.19.0):** v1.18.0 plus Phase 32 —
+  **NotebookLM Integration Patterns.** New
+  ``adaptive-learner-plugin-notebooklm`` plus a client-side
+  NotebookLM-optimized ZIP exporter. NotebookLM has no public
+  API; instead the plugin generates AI study materials
+  FORMATTED for NotebookLM's source upload (short paragraphs,
+  clear H2 sections, Q&A blocks). **32B — Study questions:**
+  ``StudyQuestion`` model (Alembic 0013) holds AI-generated
+  active-recall questions (open / fill_blank / explain /
+  compare) with difficulty (easy/medium/hard). Routes under
+  ``/api/plugins/notebooklm/questions/*`` for list / create /
+  patch / delete + generate-from-session +
+  generate-from-project. Tolerant JSON parser (strips fences,
+  coerces unknown types/difficulties to safe defaults, returns
+  ``[]`` on parse failure). User edits flip ``edited=True`` so
+  the AI re-runner skips them. **32C — Study guide:** one big
+  AI call with content-clipping to ~30K chars (≈ 10K tokens);
+  ``assemble_project_context`` pulls project + profile +
+  vocabulary (from analyzed conversations) + 10 recent
+  sessions into the prompt; oldest sessions truncate first
+  when over budget. Route
+  ``POST /api/plugins/notebooklm/study-guide/{project_id}``
+  returns ``text/markdown``. No persistence — re-generate
+  anytime. **32A — NotebookLM ZIP package:** CLIENT-SIDE via
+  ``lib/export/notebooklm-package.ts`` (uses lazy-loaded
+  JSZip from the existing Anki bundle). ZIP contents:
+  ``summary.md``, ``vocabulary.md``, ``rules.md``,
+  ``errors.md``, ``flashcards.md``, ``sessions/*.md`` (key
+  excerpts only, not full transcripts). All files structured
+  for NotebookLM's source parser. Works in both API + Dexie
+  modes since everything goes through the storage interface.
+  **Frontend:** new ``NotebookLMSection`` on the Progress page
+  with three actions (generate questions / download ZIP /
+  download study guide) + difficulty filter + question list
+  with inline delete. Dexie mode: full CRUD locally; AI
+  generators throw 501 with "switch to API mode" guidance
+  (same precedent as Anki + Pronunciation). **Sync surface:**
+  27 → 28 tables (``study_questions`` added). **Plugin
+  count:** 10 enabled (was 9). 8-lang i18n with ~152 new
+  keys (notebooklm.*); BL-11 audit clean. Backend 764 +
+  plugin (notebooklm) 27 + frontend 1167 at release time.
+  BL-22 closed.
+
+- **State (v1.18.0):** v1.17.0 plus Phase 31 —
   **Voice Input / Output (TTS / STT / Pronunciation).** Web
   Speech API integration adds voice to AI responses (TTS)
   and user input (STT), all client-side with zero external

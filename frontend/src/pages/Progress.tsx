@@ -2,6 +2,7 @@ import {Fragment, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import MethodBadge from "../components/MethodBadge";
+import NotebookLMSection from "../components/NotebookLMSection";
 import MethodDistribution from "../components/MethodDistribution";
 import ProgressTimeline from "../components/ProgressTimeline";
 import StepEvaluationInsights from "../components/StepEvaluationInsights";
@@ -204,6 +205,16 @@ export default function Progress() {
                     </div>
                 )}
             </section>
+
+            {/* v1.19.0 / Phase 32 — NotebookLM-ready study
+                materials surface. Only renders when a project is
+                active (which it is for any user who reached this
+                page, per the redirect guard in the mount
+                effect). */}
+            {(() => {
+                const pid = readLearnerState().projectId;
+                return pid ? <NotebookLMSection projectId={pid} /> : null;
+            })()}
         </main>
     );
 }
