@@ -11,9 +11,11 @@ from __future__ import annotations
 import json
 
 from app.services.conversation_analysis import (
+    LANGUAGE_NAMES,
     Message,
     analyze_conversation_with_ai,
     build_analysis_user_content,
+    build_system_prompt,
     chunk_messages,
     deterministic_fallback,
     merge_analyses,
@@ -236,3 +238,86 @@ def test_analyze_conversation_records_chunk_summaries_for_multi_chunk_runs():
     assert call_count["n"] >= 2
     assert "chunk_summaries" in result
     assert len(result["chunk_summaries"]) == call_count["n"]
+
+
+# --- Phase 36 Bug 2 — analysis-language passthrough -------------------------
+
+
+def test_build_system_prompt_names_each_supported_language():
+    """Each ISO code in ``LANGUAGE_NAMES`` produces a prompt that
+    explicitly names its display language in the directive block."""
+    for code, name in LANGUAGE_NAMES.items():
+        prompt = build_system_prompt(code)
+        assert "LANGUAGE — IMPORTANT" in prompt
+        assert f"IN {name}" in prompt, f"language {code!r} should mention {name!r} in the directive"
+
+
+def test_build_system_prompt_falls_back_to_english_for_unknown_lang():
+    """Unknown codes do not crash and do not poison the prompt with
+    null / placeholder text — they collapse to English."""
+    for bogus in ("xx", "", "  ", "klingon"):
+        prompt = build_system_prompt(bogus)
+        assert "IN English" in prompt
+        # The directive header is always present so the AI can't
+        # silently drop the language instruction.
+        assert "LANGUAGE — IMPORTANT" in prompt
+
+
+def test_build_system_prompt_normalises_case():
+    """``"DE"`` and ``"de"`` both resolve to German."""
+    assert "IN German" in build_system_prompt("DE")
+    assert "IN German" in build_system_prompt("de")
+
+
+def test_build_system_prompt_keeps_enum_identifiers_machine_only():
+    """The directive explicitly tells the AI to keep enum values
+    untranslated so the parser's clamping still works for non-EN
+    runs."""
+    prompt = build_system_prompt("de")
+    # Stays out of the translate-this list.
+    assert "user_level enum values: beginner / intermediate / advanced" in prompt
+    assert (
+        "recommended_method enum values: deductive / inductive /\n"
+        "  error_based / dialogic / contextual / ai_adaptive"
+    ) in prompt
+
+
+def test_analyze_conversation_passes_lang_directive_to_provider():
+    """The ``lang`` kwarg reaches the system message handed to
+    ``ai_complete_call`` — covers the end-to-end thread that the
+    analyze endpoint relies on."""
+    seen: dict[str, str] = {}
+
+    def capturing_provider(messages: list[dict]) -> str:
+        for m in messages:
+            if m["role"] == "system":
+                seen["system"] = m["content"]
+        return json.dumps({"topic": "x", "summary": "ok"})
+
+    analyze_conversation_with_ai(
+        [Message("user", "wer ist Hegel?"), Message("assistant", "ein Philosoph.")],
+        ai_complete_call=capturing_provider,
+        title="Hegel",
+        lang="de",
+    )
+    assert "system" in seen, "provider must have seen a system message"
+    assert "IN German" in seen["system"]
+
+
+def test_analyze_conversation_defaults_to_english_when_lang_omitted():
+    """Backwards compatibility — callers that don't pass ``lang`` get
+    the English directive, not a crash."""
+    seen: dict[str, str] = {}
+
+    def capturing_provider(messages: list[dict]) -> str:
+        for m in messages:
+            if m["role"] == "system":
+                seen["system"] = m["content"]
+        return json.dumps({"topic": "x", "summary": "ok"})
+
+    analyze_conversation_with_ai(
+        [Message("user", "a"), Message("assistant", "b")],
+        ai_complete_call=capturing_provider,
+        title="t",
+    )
+    assert "IN English" in seen["system"]

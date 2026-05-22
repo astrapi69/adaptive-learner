@@ -50,78 +50,133 @@ VALID_LEVELS: tuple[str, ...] = ("beginner", "intermediate", "advanced")
 # frontend uses the same threshold; keep them in sync.
 MAX_CHUNK_CHARS = 16_000
 
-SYSTEM_PROMPT = "\n".join(
-    [
-        "You are an analysis assistant for an adaptive learning system.",
-        "The user pastes or imports a transcript of a learning-related",
-        "conversation they had with an AI. Your job is to extract",
-        "structured learning insights from it.",
-        "",
-        "OUTPUT FORMAT (MUST follow exactly):",
-        "",
-        "1. Your response MUST start with the character `{` and end with `}`.",
-        "2. NO text before the opening `{`. No 'Here is...', no 'Sure...',",
-        "   no 'I'll analyze...', no preamble of any kind.",
-        "3. NO text after the closing `}`. No explanations, no offers to",
-        "   provide more detail, no follow-up commentary.",
-        "4. NO markdown code fences (no ``` or ```json).",
-        "5. NO comments inside the JSON (// or /* */ are forbidden).",
-        "6. The response must be parseable by JSON.parse() as a single object.",
-        "",
-        "Failure to follow these rules breaks the calling system. If you",
-        "include ANY characters before `{` or after `}` the parser fails",
-        "and the user sees an error instead of analysis.",
-        "",
-        "JSON SCHEMA:",
-        "",
-        "  {",
-        '    "topic":               <string, the dominant subject>,',
-        '    "subtopics":           [<string>, ...],',
-        '    "user_level":          "beginner" | "intermediate" | "advanced",',
-        '    "strengths":           [<string>, ...],',
-        '    "weaknesses":          [<string>, ...],',
-        '    "error_patterns":      [<string>, ...],',
-        '    "recommended_method":  "deductive" | "inductive" | "error_based"',
-        '                           | "dialogic" | "contextual" | "ai_adaptive",',
-        '    "recommended_focus":   <string, one-sentence action>,',
-        '    "suggested_curriculum": [',
-        '      {"title": <string>, "description": <string>, "priority": <int 1-5>},',
-        "      ...",
-        "    ],",
-        '    "summary":             <string, 1-2 sentences for the UI header>',
-        "  }",
-        "",
-        "If you cannot determine a value for an optional field, OMIT the",
-        "field entirely. Do NOT insert null, empty strings, or placeholder",
-        "text.",
-        "",
-        "FIELD SEMANTICS:",
-        "- 'strengths': what the user already grasps. Concrete, not",
-        "  generic praise.",
-        "- 'weaknesses': recurring gaps, confusions, or unfinished",
-        "  threads in the conversation.",
-        "- 'error_patterns': specific repeated mistakes the user made",
-        "  (not the same as weaknesses — these are observable errors).",
-        "- 'recommended_method': the six-method learning model:",
-        "    deductive   — rule then examples",
-        "    inductive   — examples then rule",
-        "    error_based — fix mistakes as the path to insight",
-        "    dialogic    — back-and-forth questioning",
-        "    contextual  — anchor in the user's real-world situation",
-        "    ai_adaptive — user steers the AI, self-directed",
-        "- 'suggested_curriculum': 2-5 lesson stubs the user could",
-        "  tackle next. 'priority' 1 = highest.",
-        "",
-        "Be specific. 'User struggled with concepts' is useless;",
-        "'User confused inductive reasoning with abductive reasoning,",
-        "treating any inference-from-examples as induction' is useful.",
-        "",
-        "If a section is genuinely empty, return an empty array — don't",
-        "invent material.",
-        "",
-        "REMINDER: start your response with `{`. End with `}`. Nothing else.",
-    ]
+
+# ISO-639-1 code → English display name for the 8 catalogues
+# shipped under ``backend/config/i18n/``. Used by
+# :func:`build_system_prompt` to name the user's preferred
+# language to the AI; unknown codes fall back to English.
+LANGUAGE_NAMES: dict[str, str] = {
+    "de": "German",
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "el": "Greek",
+    "pt": "Portuguese",
+    "tr": "Turkish",
+    "ja": "Japanese",
+}
+
+
+_BASE_PROMPT_LINES: tuple[str, ...] = (
+    "You are an analysis assistant for an adaptive learning system.",
+    "The user pastes or imports a transcript of a learning-related",
+    "conversation they had with an AI. Your job is to extract",
+    "structured learning insights from it.",
+    "",
+    "OUTPUT FORMAT (MUST follow exactly):",
+    "",
+    "1. Your response MUST start with the character `{` and end with `}`.",
+    "2. NO text before the opening `{`. No 'Here is...', no 'Sure...',",
+    "   no 'I'll analyze...', no preamble of any kind.",
+    "3. NO text after the closing `}`. No explanations, no offers to",
+    "   provide more detail, no follow-up commentary.",
+    "4. NO markdown code fences (no ``` or ```json).",
+    "5. NO comments inside the JSON (// or /* */ are forbidden).",
+    "6. The response must be parseable by JSON.parse() as a single object.",
+    "",
+    "Failure to follow these rules breaks the calling system. If you",
+    "include ANY characters before `{` or after `}` the parser fails",
+    "and the user sees an error instead of analysis.",
+    "",
+    "JSON SCHEMA:",
+    "",
+    "  {",
+    '    "topic":               <string, the dominant subject>,',
+    '    "subtopics":           [<string>, ...],',
+    '    "user_level":          "beginner" | "intermediate" | "advanced",',
+    '    "strengths":           [<string>, ...],',
+    '    "weaknesses":          [<string>, ...],',
+    '    "error_patterns":      [<string>, ...],',
+    '    "recommended_method":  "deductive" | "inductive" | "error_based"',
+    '                           | "dialogic" | "contextual" | "ai_adaptive",',
+    '    "recommended_focus":   <string, one-sentence action>,',
+    '    "suggested_curriculum": [',
+    '      {"title": <string>, "description": <string>, "priority": <int 1-5>},',
+    "      ...",
+    "    ],",
+    '    "summary":             <string, 1-2 sentences for the UI header>',
+    "  }",
+    "",
+    "If you cannot determine a value for an optional field, OMIT the",
+    "field entirely. Do NOT insert null, empty strings, or placeholder",
+    "text.",
+    "",
+    "FIELD SEMANTICS:",
+    "- 'strengths': what the user already grasps. Concrete, not",
+    "  generic praise.",
+    "- 'weaknesses': recurring gaps, confusions, or unfinished",
+    "  threads in the conversation.",
+    "- 'error_patterns': specific repeated mistakes the user made",
+    "  (not the same as weaknesses — these are observable errors).",
+    "- 'recommended_method': the six-method learning model:",
+    "    deductive   — rule then examples",
+    "    inductive   — examples then rule",
+    "    error_based — fix mistakes as the path to insight",
+    "    dialogic    — back-and-forth questioning",
+    "    contextual  — anchor in the user's real-world situation",
+    "    ai_adaptive — user steers the AI, self-directed",
+    "- 'suggested_curriculum': 2-5 lesson stubs the user could",
+    "  tackle next. 'priority' 1 = highest.",
+    "",
+    "Be specific. 'User struggled with concepts' is useless;",
+    "'User confused inductive reasoning with abductive reasoning,",
+    "treating any inference-from-examples as induction' is useful.",
+    "",
+    "If a section is genuinely empty, return an empty array — don't",
+    "invent material.",
+    "",
+    "REMINDER: start your response with `{`. End with `}`. Nothing else.",
 )
+
+
+def build_system_prompt(lang: str = "en") -> str:
+    """Return the analysis system prompt, localised for ``lang``.
+
+    The prompt body is fixed (English instructions to the AI); a
+    language directive is appended that tells the AI which language
+    to use for the free-text string values. JSON keys and enum
+    values stay English regardless of ``lang`` because the parser
+    clamps against fixed identifier sets.
+
+    Unknown / unsupported language codes fall back to English so a
+    misconfigured user setting never breaks analysis.
+    """
+    name = LANGUAGE_NAMES.get((lang or "en").lower(), "English")
+    directive = (
+        "LANGUAGE — IMPORTANT:\n"
+        f"Write all free-text string values IN {name}. This applies to:\n"
+        "- topic, subtopics\n"
+        "- strengths, weaknesses, error_patterns\n"
+        "- recommended_focus\n"
+        "- summary\n"
+        "- suggested_curriculum entries: both title and description\n"
+        "\n"
+        "Do NOT translate these — they MUST stay exactly as written:\n"
+        "- JSON keys (the names left of `:`)\n"
+        "- user_level enum values: beginner / intermediate / advanced\n"
+        "- recommended_method enum values: deductive / inductive /\n"
+        "  error_based / dialogic / contextual / ai_adaptive\n"
+        "\n"
+        "These are machine identifiers, not display text. If you\n"
+        "translate them the parser breaks."
+    )
+    return "\n".join(_BASE_PROMPT_LINES) + "\n\n" + directive
+
+
+# Backward-compatible English default. Existing callers that
+# imported the constant continue to work; the function form is
+# the canonical API going forward.
+SYSTEM_PROMPT = build_system_prompt("en")
 
 
 @dataclass(frozen=True)
@@ -351,7 +406,8 @@ def analyze_conversation_with_ai(
     ai_complete_call: Any,
     title: str | None = None,
     max_chunk_chars: int = MAX_CHUNK_CHARS,
-    max_tokens: int = 1500,
+    max_tokens: int = 1500,  # noqa: ARG001 — reserved for callers that wrap the hook directly
+    lang: str = "en",
 ) -> dict[str, Any]:
     """End-to-end analysis. Splits the transcript if necessary,
     fires one ``ai_complete_call`` per chunk, merges the results.
@@ -363,7 +419,12 @@ def analyze_conversation_with_ai(
     any provider exception bubbled up) collapses the chunk to the
     deterministic fallback so callers never see a half-broken
     result.
+
+    ``lang`` is the user's preferred display language (ISO-639-1).
+    The system prompt's free-text directive is localised to that
+    language; the JSON schema and enum identifiers stay English.
     """
+    system_prompt = build_system_prompt(lang)
     chunks = chunk_messages(messages, max_chunk_chars)
     if not chunks:
         return deterministic_fallback(title)
@@ -373,7 +434,7 @@ def analyze_conversation_with_ai(
         try:
             raw = ai_complete_call(
                 [
-                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_content},
                 ]
             )
@@ -396,6 +457,7 @@ def analyze_conversation_with_ai(
 
 
 __all__ = [
+    "LANGUAGE_NAMES",
     "MAX_CHUNK_CHARS",
     "Message",
     "SYSTEM_PROMPT",
@@ -403,6 +465,7 @@ __all__ = [
     "VALID_METHODS",
     "analyze_conversation_with_ai",
     "build_analysis_user_content",
+    "build_system_prompt",
     "chunk_messages",
     "deterministic_fallback",
     "merge_analyses",

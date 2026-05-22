@@ -6,8 +6,10 @@
 
 import {describe, it, expect, vi, beforeEach} from "vitest";
 import {
+    LANGUAGE_NAMES,
     analyzeConversation,
     buildAnalysisUserContent,
+    buildSystemPrompt,
     chunkMessages,
     deterministicFallback,
     mergeAnalyses,
@@ -334,5 +336,74 @@ describe("deterministicFallback", () => {
         const result = deterministicFallback("Title");
         expect(result.fallback_used).toBe(true);
         expect(result.topic).toBe("Title");
+    });
+});
+
+// --- Phase 36 Bug 2 — analysis-language passthrough -----------------------
+
+describe("buildSystemPrompt (Phase 36 Bug 2)", () => {
+    it("names every supported language in the directive", () => {
+        for (const [code, name] of Object.entries(LANGUAGE_NAMES)) {
+            const prompt = buildSystemPrompt(code);
+            expect(prompt).toContain("LANGUAGE — IMPORTANT");
+            expect(prompt).toContain(`IN ${name}`);
+        }
+    });
+
+    it("falls back to English for unknown / empty codes", () => {
+        for (const bogus of ["xx", "", "  ", "klingon"]) {
+            const prompt = buildSystemPrompt(bogus);
+            expect(prompt).toContain("IN English");
+            expect(prompt).toContain("LANGUAGE — IMPORTANT");
+        }
+    });
+
+    it("normalises case (DE and de resolve to German)", () => {
+        expect(buildSystemPrompt("DE")).toContain("IN German");
+        expect(buildSystemPrompt("de")).toContain("IN German");
+    });
+
+    it("explicitly keeps enum identifiers untranslated", () => {
+        const prompt = buildSystemPrompt("de");
+        expect(prompt).toContain(
+            "user_level enum values: beginner / intermediate / advanced",
+        );
+        expect(prompt).toContain(
+            "recommended_method enum values: deductive / inductive /",
+        );
+    });
+});
+
+describe("analyzeConversation lang passthrough (Phase 36 Bug 2)", () => {
+    beforeEach(() => {
+        mockedAiComplete.mockReset();
+    });
+
+    it("includes the German directive when lang='de'", async () => {
+        mockedAiComplete.mockResolvedValueOnce(validJson);
+        await analyzeConversation({
+            provider: "anthropic",
+            apiKey: "fake",
+            modelOverride: null,
+            messages: [{role: "user", content: "Q"}],
+            lang: "de",
+        });
+        const call = mockedAiComplete.mock.calls[0]?.[0];
+        const systemMsg = call?.messages.find((m) => m.role === "system");
+        expect(systemMsg).toBeDefined();
+        expect(systemMsg!.content).toContain("IN German");
+    });
+
+    it("defaults to English when lang is omitted (backwards compat)", async () => {
+        mockedAiComplete.mockResolvedValueOnce(validJson);
+        await analyzeConversation({
+            provider: "anthropic",
+            apiKey: "fake",
+            modelOverride: null,
+            messages: [{role: "user", content: "Q"}],
+        });
+        const call = mockedAiComplete.mock.calls[0]?.[0];
+        const systemMsg = call?.messages.find((m) => m.role === "system");
+        expect(systemMsg!.content).toContain("IN English");
     });
 });

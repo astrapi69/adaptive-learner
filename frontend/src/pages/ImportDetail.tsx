@@ -115,6 +115,13 @@ export default function ImportDetail({
                     : provider === "openai"
                       ? settings.model_override_openai
                       : settings.model_override_gemini;
+            // Phase 36 Bug 2 — thread the learner's display language
+            // through to the analysis prompt so free-text fields come
+            // back in DE / ES / FR / etc. instead of always English.
+            // Settings.language mirrors User.language; learnerState is
+            // the fallback because it's set during onboarding.
+            const learnerLang = readLearnerState().language;
+            const lang = settings.language || learnerLang || "en";
             const result = await analyzeConversation({
                 provider,
                 apiKey,
@@ -125,6 +132,7 @@ export default function ImportDetail({
                     timestamp: m.timestamp ?? undefined,
                 })),
                 title: detail.title,
+                lang,
             });
             const updated = await getStorage().imports.saveAnalysis(
                 detail.id,

@@ -25,6 +25,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.exceptions import ValidationError
+from app.models import User
 from app.schemas import (
     AIProvider,
     ImportedConversationAnalysis,
@@ -199,11 +200,20 @@ def analyze_import(
     if not model:
         raise ValidationError(f"Provider {provider_key!r} has no default model registered.")
 
+    # Phase 36 Bug 2 — thread the user's display language through so
+    # the AI emits free-text fields in DE/ES/FR/etc. instead of always
+    # English. Fallback to "de" matches the User.language column
+    # default; ``build_system_prompt`` itself clamps unknown codes to
+    # English so an exotic value never breaks analysis.
+    user = db.get(User, conv.user_id)
+    lang = user.language if user and user.language else "de"
+
     messages = [Message(role=m.role, content=m.content) for m in conv.messages]
     result = analyze_conversation_with_ai(
         messages,
         ai_complete_call=_build_ai_caller(model=model, api_key=api_key),
         title=conv.title,
+        lang=lang,
     )
 
     imports_service.save_analysis(

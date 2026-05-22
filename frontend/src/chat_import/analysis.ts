@@ -54,7 +54,24 @@ const VALID_LEVELS: ConversationAnalysisResult["user_level"][] = [
  */
 export const MAX_CHUNK_CHARS = 16_000;
 
-const SYSTEM_PROMPT = [
+/**
+ * ISO-639-1 code → English display name for the 8 catalogues
+ * shipped under ``backend/config/i18n/``. Used by
+ * :func:`buildSystemPrompt` to name the user's preferred
+ * language to the AI; unknown codes fall back to English.
+ */
+export const LANGUAGE_NAMES: Record<string, string> = {
+    de: "German",
+    en: "English",
+    es: "Spanish",
+    fr: "French",
+    el: "Greek",
+    pt: "Portuguese",
+    tr: "Turkish",
+    ja: "Japanese",
+};
+
+const BASE_PROMPT_LINES = [
     "You are an analysis assistant for an adaptive learning system.",
     "The user pastes or imports a transcript of a learning-related",
     "conversation they had with an AI. Your job is to extract",
@@ -141,7 +158,44 @@ const SYSTEM_PROMPT = [
     "invent material.",
     "",
     "REMINDER: start your response with `{`. End with `}`. Nothing else.",
-].join("\n");
+];
+
+/**
+ * Return the analysis system prompt, localised for ``lang``.
+ *
+ * The prompt body is fixed (English instructions to the AI); a
+ * language directive is appended that tells the AI which language
+ * to use for the free-text string values. JSON keys and enum
+ * values stay English regardless of ``lang`` because the parser
+ * clamps against fixed identifier sets.
+ *
+ * Unknown / unsupported language codes fall back to English so a
+ * misconfigured user setting never breaks analysis.
+ */
+export function buildSystemPrompt(lang: string = "en"): string {
+    const name = LANGUAGE_NAMES[(lang || "en").toLowerCase()] ?? "English";
+    const directive = [
+        "LANGUAGE — IMPORTANT:",
+        `Write all free-text string values IN ${name}. This applies to:`,
+        "- topic, subtopics",
+        "- strengths, weaknesses, error_patterns",
+        "- recommended_focus",
+        "- summary",
+        "- suggested_curriculum entries: both title and description",
+        "- vocabulary entries: the 'translation' field (the 'word'",
+        "  field stays in whatever language the transcript used)",
+        "",
+        "Do NOT translate these — they MUST stay exactly as written:",
+        "- JSON keys (the names left of `:`)",
+        "- user_level enum values: beginner / intermediate / advanced",
+        "- recommended_method enum values: deductive / inductive /",
+        "  error_based / dialogic / contextual / ai_adaptive",
+        "",
+        "These are machine identifiers, not display text. If you",
+        "translate them the parser breaks.",
+    ].join("\n");
+    return BASE_PROMPT_LINES.join("\n") + "\n\n" + directive;
+}
 
 export interface AnalysisOptions {
     provider: AIProvider;
@@ -152,6 +206,13 @@ export interface AnalysisOptions {
     title?: string;
     /** Override the chunk threshold (testing). */
     maxChunkChars?: number;
+    /**
+     * The user's preferred display language (ISO-639-1, e.g. "de").
+     * Threads through to the system prompt's free-text directive so
+     * the AI emits topic / strengths / summary / etc. in that
+     * language. Unknown codes fall back to English. Default "en".
+     */
+    lang?: string;
 }
 
 /**
@@ -466,6 +527,7 @@ export async function analyzeConversation(
     opts: AnalysisOptions,
 ): Promise<ConversationAnalysisResult> {
     const maxChars = opts.maxChunkChars ?? MAX_CHUNK_CHARS;
+    const systemPrompt = buildSystemPrompt(opts.lang ?? "en");
     const chunks = chunkMessages(opts.messages, maxChars);
     if (chunks.length === 0) {
         return deterministicFallback(opts.title);
@@ -480,7 +542,7 @@ export async function analyzeConversation(
                 model: resolveModel(opts.provider, opts.modelOverride),
                 apiKey: opts.apiKey,
                 messages: [
-                    {role: "system", content: SYSTEM_PROMPT},
+                    {role: "system", content: systemPrompt},
                     {role: "user", content: userContent},
                 ],
                 maxTokens: 1500,

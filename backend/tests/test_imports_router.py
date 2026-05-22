@@ -354,3 +354,49 @@ def test_analyze_uses_model_override_when_set(client: TestClient, monkeypatch: p
     resp = client.post(f"/api/imports/{created['id']}/analyze")
     assert resp.status_code == 200, resp.text
     assert captured["calls"][0]["model"] == "claude-sonnet-4-20250514"
+
+
+# --- Phase 36 Bug 2 — analysis-language passthrough -------------------------
+
+
+def test_analyze_threads_user_language_into_system_prompt(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+):
+    """The analyze endpoint must read the user's display language
+    and include the matching directive in the system prompt sent
+    to the AI provider. Reproduction for the Phase 36 manual-test
+    bug: user.language=de yet analysis came back in English."""
+    # Create a user with language="es" to differentiate from the
+    # default ("de") and prove the field — not the default — is
+    # what reaches the prompt.
+    resp = client.post("/api/users", json={"name": "Aster", "language": "es"})
+    assert resp.status_code == 201, resp.text
+    user_id = resp.json()["id"]
+
+    _set_api_key(client, user_id)
+    created = client.post(f"/api/users/{user_id}/imports", json=_conv_body()).json()
+    captured = _patch_ai_complete(monkeypatch, json.dumps({"topic": "Inducción", "summary": "ok"}))
+
+    resp = client.post(f"/api/imports/{created['id']}/analyze")
+    assert resp.status_code == 200, resp.text
+
+    system_msg = next(m for m in captured["calls"][0]["messages"] if m["role"] == "system")
+    assert "LANGUAGE — IMPORTANT" in system_msg["content"]
+    assert "IN Spanish" in system_msg["content"]
+
+
+def test_analyze_uses_default_language_when_user_has_de(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+):
+    """Sanity-check the default path: a user created via _make_user
+    (which does not pass language) carries User.language='de' from
+    the model default. The analyze endpoint must still honour it."""
+    user_id = _make_user(client)
+    _set_api_key(client, user_id)
+    created = client.post(f"/api/users/{user_id}/imports", json=_conv_body()).json()
+    captured = _patch_ai_complete(monkeypatch, json.dumps({"topic": "Induktion", "summary": "ok"}))
+
+    resp = client.post(f"/api/imports/{created['id']}/analyze")
+    assert resp.status_code == 200, resp.text
+    system_msg = next(m for m in captured["calls"][0]["messages"] if m["role"] == "system")
+    assert "IN German" in system_msg["content"]
