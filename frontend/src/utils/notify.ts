@@ -1,34 +1,172 @@
 /**
- * Centralized toast notification wrapper.
+ * Centralized toast notification wrapper with type-specific
+ * display durations.
  *
- * Skeleton state (Phase 1A): minimal `error`/`warning`/`info`/`success`
- * pass-throughs over react-toastify. The Bibliogon-era variants
- * (report-issue link, save-error retry, bulk-action undo, success-action
- * forward) are gone with the components that used them; re-introduce
- * them alongside the new domain handlers when they actually have a
- * use site.
+ * Phase 37 — error toasts include a "Report Issue" button that
+ * dispatches a ``adaptive-learner:open-error-report`` custom
+ * event. The App listens for it and mounts
+ * ``ErrorReportDialog`` with a pre-filled GitHub issue body
+ * (endpoint, status, stacktrace, environment, sanitized action
+ * history). The optional ``apiError`` parameter forwards the
+ * structured context; calls without it still get a working
+ * button (the dialog just has less to pre-fill).
+ *
+ * Phase 36 — the ``persistent`` option keeps the toast open
+ * until the user dismisses it manually. Use for failures the
+ * user must acknowledge (analysis broken, AI provider down,
+ * persistent error states) so the message survives the next
+ * keystroke.
+ *
+ * Layout contract: the ``ErrorContent`` component renders
+ * inside react-toastify's fixed-width toast container. All text
+ * MUST wrap via ``overflow-wrap`` / ``word-break`` so long SQL
+ * errors or stacktraces do not blow out the container width.
+ * The "Report Issue" button must stay visible and clickable on
+ * every screen size.
  */
 
+import React from "react";
 import {toast} from "react-toastify";
+import {ApiError} from "../api/client";
+
+// Truncate the visible error message so the toast stays
+// readable. The full detail is still embedded in the
+// ErrorReportDialog body when the user opts in.
+const MAX_DISPLAY_LENGTH = 200;
 
 interface ErrorOptions {
     /**
      * Phase 36 — when ``true``, the toast does NOT auto-dismiss.
-     * The user has to close it manually. Use for failures the user
-     * must acknowledge (analysis broken, AI provider down,
-     * persistent error states) so the message survives the next
-     * keystroke. Default ``false`` keeps the previous 12 s
-     * auto-dismiss behaviour.
      */
     persistent?: boolean;
+    /**
+     * Phase 37 — structured API error context. Passed to the
+     * error-report dialog so the GitHub issue body can include
+     * the HTTP endpoint / status / stacktrace.
+     */
+    apiError?: ApiError;
+}
+
+function truncateForDisplay(message: string): string {
+    if (message.length <= MAX_DISPLAY_LENGTH) return message;
+    return message.slice(0, MAX_DISPLAY_LENGTH) + "...";
+}
+
+function ErrorContent({
+    message,
+    apiError,
+}: {
+    message: string;
+    apiError?: ApiError;
+}) {
+    return React.createElement(
+        "div",
+        {
+            style: {
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+                // CRITICAL: prevent long SQL errors / stacktraces
+                // from blowing out the toast container width.
+                maxWidth: "100%",
+                overflow: "hidden",
+                overflowWrap: "break-word",
+                wordBreak: "break-word",
+            },
+        },
+        React.createElement(
+            "span",
+            {
+                style: {
+                    display: "block",
+                    fontSize: "0.8125rem",
+                    lineHeight: 1.4,
+                },
+            },
+            truncateForDisplay(message),
+        ),
+        React.createElement(
+            "button",
+            {
+                type: "button",
+                "data-testid": "error-toast-report-issue",
+                onClick: (e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    window.dispatchEvent(
+                        new CustomEvent(
+                            "adaptive-learner:open-error-report",
+                            {detail: {message, apiError}},
+                        ),
+                    );
+                },
+                style: {
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 4,
+                    padding: "4px 10px",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    color: "#fff",
+                    background: "rgba(255,255,255,0.15)",
+                    border: "1px solid rgba(255,255,255,0.3)",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                    alignSelf: "flex-start",
+                },
+            },
+            "Report Issue",
+        ),
+    );
+}
+
+function recordToast(level: string, message: string) {
+    try {
+        // Dynamic import to avoid circular dependencies between
+        // notify.ts and eventRecorder.ts. notify.ts imports
+        // ApiError from api/client.ts which records api_call
+        // events into the recorder; the recorder itself is
+        // therefore loaded indirectly. Keeping the import async
+        // here keeps the dependency graph one-way at module
+        // evaluation time.
+        import("./eventRecorder")
+            .then(({eventRecorder}) => {
+                eventRecorder.add({
+                    type: "toast",
+                    timestamp: performance.now(),
+                    level,
+                    message,
+                });
+            })
+            .catch(() => {});
+    } catch {
+        /* ignore */
+    }
 }
 
 export const notify = {
-    error: (message: string, opts?: ErrorOptions) =>
-        toast.error(message, {
-            autoClose: opts?.persistent ? (false as const) : 12000,
-        }),
-    warning: (message: string) => toast.warning(message, {autoClose: 10000}),
-    info: (message: string) => toast.info(message, {autoClose: 8000}),
-    success: (message: string) => toast.success(message, {autoClose: 5000}),
+    error: (message: string, opts?: ErrorOptions) => {
+        recordToast("error", message);
+        return toast.error(
+            React.createElement(ErrorContent, {
+                message,
+                apiError: opts?.apiError,
+            }),
+            {
+                autoClose: opts?.persistent ? (false as const) : 15000,
+                closeOnClick: false,
+            },
+        );
+    },
+    warning: (message: string) => {
+        recordToast("warning", message);
+        return toast.warning(message, {autoClose: 10000});
+    },
+    info: (message: string) => {
+        recordToast("info", message);
+        return toast.info(message, {autoClose: 8000});
+    },
+    success: (message: string) => {
+        recordToast("success", message);
+        return toast.success(message, {autoClose: 5000});
+    },
 };

@@ -41,6 +41,13 @@ import type {
 // --- Error class --------------------------------------------------------
 
 export class ApiError extends Error {
+    /** Phase 37 — ISO 8601 capture time. The ErrorReportDialog
+     *  embeds it in the GitHub issue body so developers can
+     *  correlate against backend logs. Auto-set by the constructor;
+     *  callers don't pass it.
+     */
+    public readonly timestamp: string;
+
     constructor(
         public readonly status: number,
         public readonly detail: string,
@@ -58,6 +65,7 @@ export class ApiError extends Error {
     ) {
         super(detail);
         this.name = "ApiError";
+        this.timestamp = new Date().toISOString();
     }
 
     get isNotFound(): boolean {
@@ -95,7 +103,44 @@ async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<T> {
         init.headers = {"Content-Type": "application/json"};
         init.body = JSON.stringify(opts.body);
     }
-    const response = await fetch(url, init);
+    // Phase 37 — record every API call (success + error + network
+    // failure) into the in-memory ring buffer. The recorder
+    // sanitizes the endpoint (strips query) and never sees the
+    // body. Dynamic import keeps the dependency graph one-way at
+    // module evaluation time.
+    const startTime = performance.now();
+    let response: Response;
+    try {
+        response = await fetch(url, init);
+    } catch (networkError) {
+        try {
+            const {eventRecorder} = await import("../utils/eventRecorder");
+            eventRecorder.add({
+                type: "api_error",
+                timestamp: startTime,
+                method,
+                endpoint: path,
+                message: String(networkError).substring(0, 200),
+            });
+        } catch {
+            /* recorder not available */
+        }
+        throw networkError;
+    }
+    const durationMs = Math.round(performance.now() - startTime);
+    try {
+        const {eventRecorder} = await import("../utils/eventRecorder");
+        eventRecorder.add({
+            type: "api_call",
+            timestamp: startTime,
+            method,
+            endpoint: path,
+            status: response.status,
+            durationMs,
+        });
+    } catch {
+        /* recorder not available */
+    }
     if (!response.ok) {
         let detail = `HTTP ${response.status}`;
         let stacktrace: string | undefined;

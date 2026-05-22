@@ -1,8 +1,12 @@
+import {useCallback, useEffect, useState} from "react";
 import {Routes, Route} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import type {ApiError} from "./api/client";
 import ErrorBoundary from "./components/ErrorBoundary";
+import ErrorReportDialog from "./components/ErrorReportDialog";
+import EventRecorderSetup from "./components/EventRecorderSetup";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
 import {I18nProvider} from "./hooks/useI18n";
@@ -49,6 +53,39 @@ import Settings from "./pages/Settings";
 export default function App() {
     useTheme();
 
+    // Phase 37 — error-report dialog state, opened via custom
+    // event dispatched from the "Report Issue" button inside the
+    // error toast (``utils/notify.ts``).
+    const [errorReport, setErrorReport] = useState<{
+        open: boolean;
+        message: string;
+        apiError?: ApiError;
+    }>({open: false, message: ""});
+
+    const handleOpenReport = useCallback((e: Event) => {
+        const detail = (e as CustomEvent).detail as {
+            message: string;
+            apiError?: ApiError;
+        };
+        setErrorReport({
+            open: true,
+            message: detail.message,
+            apiError: detail.apiError,
+        });
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener(
+            "adaptive-learner:open-error-report",
+            handleOpenReport,
+        );
+        return () =>
+            window.removeEventListener(
+                "adaptive-learner:open-error-report",
+                handleOpenReport,
+            );
+    }, [handleOpenReport]);
+
     return (
         <ErrorBoundary>
             <I18nProvider>
@@ -72,6 +109,15 @@ export default function App() {
                     <Route path="*" element={<NotFound />} />
                 </Routes>
                 <InstallPrompt />
+                <EventRecorderSetup />
+                <ErrorReportDialog
+                    open={errorReport.open}
+                    onClose={() =>
+                        setErrorReport({open: false, message: ""})
+                    }
+                    errorMessage={errorReport.message}
+                    apiError={errorReport.apiError}
+                />
                 <ToastContainer
                     position="bottom-right"
                     autoClose={5000}
