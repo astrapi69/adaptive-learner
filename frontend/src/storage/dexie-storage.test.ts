@@ -329,9 +329,27 @@ describe("DexieStorage health + i18n + plugins", () => {
         expect(result.debug).toBe(false);
     });
 
-    it("i18n.get returns an empty record (UI falls back to inline strings)", async () => {
+    it("i18n.get returns the bundled JSON catalog for the requested language", async () => {
+        // v1.16.0 / Phase 29F hotfix — Dexie mode used to return
+        // ``{}`` and rely on ``fallbacks.ts``, which only carried
+        // 79 of 542 keys. The bundled catalogs under
+        // ``frontend/src/data/i18n/`` now back this path so GH
+        // Pages users see translated text instead of raw keys.
         const result = await dexieStorage.i18n.get("de");
-        expect(result).toEqual({});
+        expect(Object.keys(result).length).toBeGreaterThan(0);
+        // Pin the keys that motivated the hotfix (raw
+        // ``dashboard.quick_start_subtitle`` bug + gamification
+        // section).
+        expect(
+            (result.dashboard as Record<string, unknown>).quick_start_subtitle,
+        ).toBeTruthy();
+        expect(result.gamification).toBeTruthy();
+    });
+
+    it("i18n.get falls back to en.json for an unknown language", async () => {
+        const unknown = await dexieStorage.i18n.get("xx");
+        const en = await dexieStorage.i18n.get("en");
+        expect(unknown).toEqual(en);
     });
 
     it("plugins helpers return empty containers", async () => {

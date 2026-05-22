@@ -27,6 +27,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
+       sync-i18n \
        lock-all-plugins verify-plugin-locks \
        clean prod prod-down prod-logs help
 
@@ -317,6 +318,9 @@ sync-versions-dry: ## Show what sync-versions would change without writing
 
 sync-versions-check: ## Exit non-zero if any subsystem version drifts from canonical
 	@python3 scripts/sync_versions.py --check
+
+sync-i18n: ## Regenerate frontend/src/data/i18n/*.json from backend YAML catalogs
+	@python3 scripts/sync_i18n_to_frontend.py
 
 # --- Production (Docker) ---
 

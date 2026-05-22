@@ -296,8 +296,11 @@ describe("AboutTab", () => {
         await waitFor(() => {
             expect(screen.getByTestId("about-content")).toBeTruthy();
         });
+        // I18nProvider defaults to lang="de" and now loads the
+        // bundled DE catalog (Phase 29F hotfix), so the storage-
+        // mode label resolves to its DE translation.
         expect(screen.getByTestId("about-storage-mode").textContent).toContain(
-            "Local Browser Storage",
+            "Lokaler Browser-Speicher",
         );
         // Python row hidden in dexie mode.
         expect(screen.queryByTestId("about-python-version")).toBeNull();

@@ -345,12 +345,24 @@ export const dexieStorage: IStorageService = {
 
     i18n: {
         /**
-         * Local mode has no server catalog; ``useI18n`` falls back
-         * to the inline fallback strings in ``i18n/fallbacks.ts``
-         * when the resolved object is empty. Returning ``{}`` is
-         * therefore the right shape, NOT throwing.
+         * Dexie mode has no backend, so the bundled JSON
+         * catalogs under ``frontend/src/data/i18n/`` are the
+         * source of truth at runtime. Mirrors what the backend's
+         * ``GET /api/i18n/{lang}`` returns in API mode.
+         *
+         * The JSON files are regenerated from
+         * ``backend/config/i18n/*.yaml`` via
+         * ``scripts/sync_i18n_to_frontend.py`` — a Vitest pin
+         * (``i18n-sync.test.ts``) catches drift.
          */
-        get: async () => ({}),
+        get: async (lang: string) => {
+            const catalogs = import.meta.glob<Record<string, unknown>>(
+                "../data/i18n/*.json",
+                {eager: true, import: "default"},
+            );
+            const path = `../data/i18n/${lang}.json`;
+            return catalogs[path] ?? catalogs["../data/i18n/en.json"] ?? {};
+        },
     },
 
     users: {
