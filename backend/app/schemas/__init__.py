@@ -737,6 +737,11 @@ class ImportedConversationOut(BaseModel):
     # router deserialises it via a thin DTO before validation so
     # the wire shape is a dict, not a string.
     analysis_result: dict[str, object] | None = None
+    # Phase 36 Bug 1 — SHA-256 of role-prefixed normalised messages.
+    # Title-independent so re-imports with a different display title
+    # still detect as duplicates. Surfaced on the wire so the
+    # frontend can dedupe locally too (Dexie path).
+    content_hash: str | None = None
 
 
 class ImportedConversationDetail(ImportedConversationOut):

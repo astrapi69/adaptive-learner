@@ -561,6 +561,14 @@ export interface ImportedConversation {
     model: string | null;
     source_created_at: string | null;
     analysis_result: ConversationAnalysisResult | null;
+    /**
+     * Phase 36 Bug 1 — SHA-256 of role-prefixed normalised messages.
+     * Title-independent so re-imports with a fresh display title
+     * still detect as duplicates. Nullable because pre-migration
+     * rows haven't been hashed yet (back-fill runs in Alembic 0014
+     * and Dexie schema v12).
+     */
+    content_hash: string | null;
 }
 
 export interface ImportedConversationDetail extends ImportedConversation {

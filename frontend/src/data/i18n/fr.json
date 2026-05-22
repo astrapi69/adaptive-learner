@@ -99,7 +99,13 @@
     "anki_extracting": "Extraction des cartes…",
     "anki_extracted": "{n} carte(s) Anki extraite(s). Examine-les sur la page Anki.",
     "anki_no_cards": "Aucune carte Anki extraite.",
-    "anki_extract_failed": "Impossible d'extraire les cartes Anki."
+    "anki_extract_failed": "Impossible d'extraire les cartes Anki.",
+    "delete": "Supprimer",
+    "delete_aria": "Supprimer cette conversation",
+    "delete_confirm": "Supprimer cette conversation importée ? Cela ne peut pas être annulé.",
+    "delete_success": "Conversation supprimée.",
+    "delete_error": "Impossible de supprimer la conversation.",
+    "duplicate_detected": "Cette conversation a déjà été importée. L'entrée existante est affichée."
   },
   "curriculum": {
     "title": "Programme",

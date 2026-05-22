@@ -93,6 +93,12 @@ import:
   anki_extracted: Extracted {n} Anki card(s). Review them on the Anki page.
   anki_no_cards: No Anki cards extracted.
   anki_extract_failed: Could not extract Anki cards.
+  delete: Delete
+  delete_aria: Delete this conversation
+  delete_confirm: Delete this imported conversation? This cannot be undone.
+  delete_success: Conversation deleted.
+  delete_error: Could not delete the conversation.
+  duplicate_detected: This conversation was already imported. Showing the existing entry.
 curriculum:
   title: Curriculum
   active: Active curriculum

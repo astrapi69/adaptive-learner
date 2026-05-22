@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
+from dataclasses import dataclass
 
 import pytest
 from fastapi.testclient import TestClient
@@ -11,7 +13,36 @@ from app.routers.imports import imports_router, users_imports_router
 from app.routers.projects import projects_router, users_projects_router
 from app.routers.settings import router as settings_router
 from app.routers.users import router as users_router
+from app.services.imports import compute_content_hash
 from tests.router_test_client import make_client
+
+
+@dataclass
+class _Msg:
+    role: str
+    content: str
+
+
+def test_compute_content_hash_pins_canonical_shape():
+    """Regression pin: the algorithm is role-lowercase + content-strip,
+    joined by '\\n', SHA-256 hex. Title is NOT in the input."""
+    msgs = [_Msg("USER", "  what is induction?  "), _Msg("Assistant", "examples to rule.\n")]
+    expected = hashlib.sha256(
+        "user:what is induction?\nassistant:examples to rule.".encode("utf-8")
+    ).hexdigest()
+    assert compute_content_hash(msgs) == expected
+
+
+def test_compute_content_hash_whitespace_padding_does_not_change_digest():
+    a = [_Msg("user", "hello"), _Msg("assistant", "world")]
+    b = [_Msg("user", "  hello\n"), _Msg("assistant", "\nworld  ")]
+    assert compute_content_hash(a) == compute_content_hash(b)
+
+
+def test_compute_content_hash_message_order_matters():
+    forward = [_Msg("user", "Q"), _Msg("assistant", "A")]
+    swapped = [_Msg("assistant", "A"), _Msg("user", "Q")]
+    assert compute_content_hash(forward) != compute_content_hash(swapped)
 
 
 @pytest.fixture()
@@ -113,8 +144,24 @@ def test_post_400_when_project_belongs_to_other_user(client: TestClient):
 
 def test_list_returns_user_imports_newest_first(client: TestClient):
     user_id = _make_user(client)
-    a = client.post(f"/api/users/{user_id}/imports", json=_conv_body(title="A")).json()
-    b = client.post(f"/api/users/{user_id}/imports", json=_conv_body(title="B")).json()
+    # Distinct message content per call so the Phase 36 Bug 1
+    # content-hash dedup doesn't collapse the two imports.
+    body_a = _conv_body(
+        title="A",
+        messages=[
+            {"role": "user", "content": "topic A: question one"},
+            {"role": "assistant", "content": "answer one"},
+        ],
+    )
+    body_b = _conv_body(
+        title="B",
+        messages=[
+            {"role": "user", "content": "topic B: question two"},
+            {"role": "assistant", "content": "answer two"},
+        ],
+    )
+    a = client.post(f"/api/users/{user_id}/imports", json=body_a).json()
+    b = client.post(f"/api/users/{user_id}/imports", json=body_b).json()
     listing = client.get(f"/api/users/{user_id}/imports").json()
     assert [c["id"] for c in listing] == [b["id"], a["id"]]
 
@@ -188,6 +235,67 @@ def test_delete_returns_204_and_removes(client: TestClient):
     resp = client.delete(f"/api/imports/{created['id']}")
     assert resp.status_code == 204
     assert client.get(f"/api/imports/{created['id']}").status_code == 404
+
+
+# --- Phase 36 Bug 1 — content-hash duplicate detection ----------------------
+
+
+def test_create_returns_content_hash_on_the_out_dto(client: TestClient):
+    user_id = _make_user(client)
+    created = client.post(f"/api/users/{user_id}/imports", json=_conv_body()).json()
+    assert "content_hash" in created
+    assert isinstance(created["content_hash"], str)
+    # SHA-256 hex is exactly 64 chars.
+    assert len(created["content_hash"]) == 64
+
+
+def test_duplicate_import_returns_409_with_existing_id(client: TestClient):
+    """Re-posting the same transcript (even under a different
+    title) collapses to 409 + the existing conversation id so the
+    frontend can navigate the user back to it."""
+    user_id = _make_user(client)
+    first = client.post(f"/api/users/{user_id}/imports", json=_conv_body()).json()
+    # Same messages, different title — duplicate should still trip.
+    resp = client.post(
+        f"/api/users/{user_id}/imports",
+        json=_conv_body(title="Another title for the same chat"),
+    )
+    assert resp.status_code == 409, resp.text
+    body = resp.json()
+    assert "existing_id" in body, body
+    assert body["existing_id"] == first["id"]
+    assert "detail" in body
+
+
+def test_duplicate_check_is_scoped_per_user(client: TestClient):
+    """Two different users importing the same transcript both
+    succeed — the dedup is per-user, not global."""
+    alice = _make_user(client, "Alice")
+    bob = _make_user(client, "Bob")
+    a = client.post(f"/api/users/{alice}/imports", json=_conv_body())
+    b = client.post(f"/api/users/{bob}/imports", json=_conv_body())
+    assert a.status_code == 201
+    assert b.status_code == 201
+    assert a.json()["content_hash"] == b.json()["content_hash"]
+    assert a.json()["id"] != b.json()["id"]
+
+
+def test_whitespace_only_difference_still_collapses(client: TestClient):
+    """The hash strips leading/trailing whitespace per message, so
+    pasting the same transcript with extra padding (a common
+    real-world Claude.ai paste shape) detects as a duplicate."""
+    user_id = _make_user(client)
+    client.post(f"/api/users/{user_id}/imports", json=_conv_body()).raise_for_status()
+    padded = _conv_body(
+        messages=[
+            # Same content + role as default _conv_body but with
+            # leading/trailing whitespace that strip() removes.
+            {"role": "user", "content": "  What is induction?  \n"},
+            {"role": "assistant", "content": "\nInduction generalises from examples.\n"},
+        ],
+    )
+    resp = client.post(f"/api/users/{user_id}/imports", json=padded)
+    assert resp.status_code == 409
 
 
 # --- Analysis ---------------------------------------------------------------

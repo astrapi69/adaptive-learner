@@ -99,7 +99,13 @@
     "anki_extracting": "Karten werden extrahiert…",
     "anki_extracted": "{n} Anki-Karten extrahiert. Bewerte sie auf der Anki-Seite.",
     "anki_no_cards": "Keine Anki-Karten extrahiert.",
-    "anki_extract_failed": "Anki-Karten konnten nicht extrahiert werden."
+    "anki_extract_failed": "Anki-Karten konnten nicht extrahiert werden.",
+    "delete": "Löschen",
+    "delete_aria": "Diese Konversation löschen",
+    "delete_confirm": "Diese importierte Konversation löschen? Das kann nicht rückgängig gemacht werden.",
+    "delete_success": "Konversation gelöscht.",
+    "delete_error": "Konversation konnte nicht gelöscht werden.",
+    "duplicate_detected": "Diese Konversation wurde bereits importiert. Der vorhandene Eintrag wird angezeigt."
   },
   "curriculum": {
     "title": "Curriculum",

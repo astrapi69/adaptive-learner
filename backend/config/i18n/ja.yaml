@@ -93,6 +93,12 @@ import:
   anki_extracted: Ankiカードを{n}枚抽出しました。Ankiページで確認してください。
   anki_no_cards: Ankiカードは抽出されませんでした。
   anki_extract_failed: Ankiカードを抽出できませんでした。
+  delete: 削除
+  delete_aria: この会話を削除
+  delete_confirm: このインポートされた会話を削除しますか？元に戻せません。
+  delete_success: 会話を削除しました。
+  delete_error: 会話を削除できませんでした。
+  duplicate_detected: この会話はすでにインポートされています。既存のエントリを表示します。
 curriculum:
   title: カリキュラム
   active: アクティブなカリキュラム

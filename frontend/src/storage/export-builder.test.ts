@@ -249,6 +249,7 @@ describe("buildProgressReport", () => {
             topic_tag: "bayes",
             model: null,
             source_created_at: null,
+            content_hash: null,
         });
         await db.importedConversations.add({
             id: newId(),
@@ -263,6 +264,7 @@ describe("buildProgressReport", () => {
             topic_tag: null,
             model: null,
             source_created_at: null,
+            content_hash: null,
         });
         const payload = await buildProgressReport(db, userId);
         expect(payload.extractions).toHaveLength(1);

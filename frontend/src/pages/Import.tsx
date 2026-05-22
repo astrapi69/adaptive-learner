@@ -113,6 +113,7 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
                     "import.no_user",
                     "Complete the onboarding before importing conversations.",
                 ),
+                {persistent: true},
             );
             go("/onboarding");
             return null;
@@ -132,12 +133,66 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
             setConversations((prev) => [saved, ...prev]);
             return saved;
         } catch (err) {
+            // Phase 36 Bug 1 — 409 means the same transcript was
+            // already imported by this user. Navigate the user to
+            // the existing record instead of leaving them stranded
+            // with a generic save error.
+            if (err instanceof ApiError && err.isConflict) {
+                const existingId =
+                    typeof err.extra.existing_id === "string"
+                        ? err.extra.existing_id
+                        : null;
+                if (existingId) {
+                    notify.info(
+                        t(
+                            "import.duplicate_detected",
+                            "This conversation was already imported. Showing the existing entry.",
+                        ),
+                    );
+                    go(`/import/${existingId}`);
+                    return null;
+                }
+            }
             const msg =
                 err instanceof ApiError
                     ? err.detail
                     : t("import.save_error", "Could not save the conversation.");
-            notify.error(msg);
+            notify.error(msg, {persistent: true});
             return null;
+        }
+    }
+
+    async function handleDelete(
+        e: React.MouseEvent<HTMLButtonElement>,
+        conv: ImportedConversation,
+    ): Promise<void> {
+        // Don't bubble — the row's own onClick navigates to detail.
+        e.stopPropagation();
+        if (
+            !window.confirm(
+                t(
+                    "import.delete_confirm",
+                    "Delete this imported conversation? This cannot be undone.",
+                ),
+            )
+        ) {
+            return;
+        }
+        try {
+            await getStorage().imports.remove(conv.id);
+            setConversations((prev) => prev.filter((c) => c.id !== conv.id));
+            notify.success(
+                t("import.delete_success", "Conversation deleted."),
+            );
+        } catch (err) {
+            const msg =
+                err instanceof ApiError
+                    ? err.detail
+                    : t(
+                          "import.delete_error",
+                          "Could not delete the conversation.",
+                      );
+            notify.error(msg, {persistent: true});
         }
     }
 
@@ -591,6 +646,26 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
                                         {t("import.analyzed", "Analyzed")}
                                     </span>
                                 )}
+                                <button
+                                    type="button"
+                                    className="btn btn-secondary"
+                                    onClick={(e) => handleDelete(e, c)}
+                                    data-testid={`import-delete-${c.id}`}
+                                    aria-label={t(
+                                        "import.delete_aria",
+                                        "Delete this conversation",
+                                    )}
+                                    title={t(
+                                        "import.delete_aria",
+                                        "Delete this conversation",
+                                    )}
+                                    style={{
+                                        padding: "0.15rem 0.5rem",
+                                        fontSize: "0.85rem",
+                                    }}
+                                >
+                                    {t("import.delete", "Delete")}
+                                </button>
                             </li>
                         ))}
                     </ul>

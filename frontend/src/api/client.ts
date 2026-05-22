@@ -47,6 +47,14 @@ export class ApiError extends Error {
         public readonly endpoint?: string,
         public readonly method?: string,
         public readonly stacktrace?: string,
+        /**
+         * Phase 36 — structured context fields the backend's
+         * ``AdaptiveLearnerError.extra`` attaches to the JSON
+         * response alongside ``detail``. Example: a 409 duplicate
+         * import surfaces ``{existing_id: "<uuid>"}`` here so the
+         * caller can navigate to the existing record.
+         */
+        public readonly extra: Record<string, unknown> = {},
     ) {
         super(detail);
         this.name = "ApiError";
@@ -91,6 +99,7 @@ async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<T> {
     if (!response.ok) {
         let detail = `HTTP ${response.status}`;
         let stacktrace: string | undefined;
+        const extra: Record<string, unknown> = {};
         try {
             const errBody = await response.json();
             if (typeof errBody?.detail === "string") {
@@ -110,10 +119,20 @@ async function apiCall<T>(path: string, opts: CallOptions = {}): Promise<T> {
             if (typeof errBody?.stacktrace === "string") {
                 stacktrace = errBody.stacktrace;
             }
+            // Phase 36 — carry any extra fields the backend
+            // attached via ``AdaptiveLearnerError.extra``. Strips
+            // the keys handled above so the caller doesn't see
+            // them twice.
+            if (errBody && typeof errBody === "object") {
+                for (const [key, value] of Object.entries(errBody)) {
+                    if (key === "detail" || key === "stacktrace") continue;
+                    extra[key] = value;
+                }
+            }
         } catch {
             /* non-JSON error body — keep generic detail */
         }
-        throw new ApiError(response.status, detail, path, method, stacktrace);
+        throw new ApiError(response.status, detail, path, method, stacktrace, extra);
     }
     if (response.status === 204) {
         return undefined as T;

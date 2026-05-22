@@ -8,17 +8,50 @@ Dexie-mode design.
 
 from __future__ import annotations
 
+import hashlib
 import json
+from collections.abc import Iterable
 
 from sqlalchemy.orm import Session, selectinload
 
-from app.exceptions import NotFoundError, ValidationError
+from app.exceptions import ConflictError, NotFoundError, ValidationError
 from app.models import ImportedConversation, ImportedMessage, LearningProject, User
 from app.schemas import (
     ImportedConversationAnalysis,
     ImportedConversationCreate,
     ImportedConversationUpdate,
 )
+
+
+def compute_content_hash(messages: Iterable[object]) -> str:
+    """SHA-256 of the role-prefixed, content-stripped transcript.
+
+    Per the Phase 36 Bug 1 contract (user-confirmed in the handover
+    Q&A): each message renders as ``"{role.lower()}:{content.strip()}"``
+    and the full transcript joins those lines with ``"\\n"``. Title
+    is NOT part of the digest so re-imports with a fresh display
+    title still detect as the same conversation.
+
+    Accepts any iterable whose items have ``role`` + ``content``
+    attributes. That covers Pydantic ``ImportedMessageIn``,
+    SQLAlchemy ``ImportedMessage`` rows, and bare dataclasses /
+    namedtuples — anything the import surface might hand it.
+
+    The same algorithm runs in ``frontend/src/chat_import/content-hash.ts``
+    and the Alembic 0014 back-fill; keep all three in lockstep.
+    """
+    parts: list[str] = []
+    for msg in messages:
+        role = getattr(msg, "role", None)
+        if hasattr(role, "value"):
+            # Pydantic Enum field — unwrap the value.
+            role = role.value
+        content = getattr(msg, "content", None)
+        if not isinstance(role, str) or not isinstance(content, str):
+            raise TypeError("compute_content_hash: message must expose .role + .content as strings")
+        parts.append(f"{role.lower()}:{content.strip()}")
+    payload = "\n".join(parts)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _serialise_analysis(value: dict[str, object] | None) -> str | None:
@@ -57,6 +90,7 @@ def _to_dto(row: ImportedConversation) -> dict[str, object]:
         "model": row.model,
         "source_created_at": row.source_created_at,
         "analysis_result": _deserialise_analysis(row.analysis_result),
+        "content_hash": row.content_hash,
     }
     return base
 
@@ -88,8 +122,14 @@ def create_conversation(
 ) -> ImportedConversation:
     """Insert a new imported conversation + its messages.
 
-    Validates user existence and (optional) project ownership.
-    The message order is preserved by ``order_index``.
+    Validates user existence and (optional) project ownership. The
+    message order is preserved by ``order_index``.
+
+    Phase 36 Bug 1: computes a SHA-256 ``content_hash`` from the
+    transcript (title-independent). If the same user already has a
+    conversation with that hash, raises :class:`ConflictError`
+    carrying the existing id in ``extra["existing_id"]`` so the
+    frontend can navigate the user to the existing record.
     """
     if db.get(User, user_id) is None:
         raise NotFoundError(f"User {user_id!r} not found.")
@@ -101,6 +141,20 @@ def create_conversation(
             raise ValidationError(
                 f"Project {payload.project_id!r} does not belong to user {user_id!r}."
             )
+    content_hash = compute_content_hash(payload.messages)
+    existing = (
+        db.query(ImportedConversation)
+        .filter(
+            ImportedConversation.user_id == user_id,
+            ImportedConversation.content_hash == content_hash,
+        )
+        .first()
+    )
+    if existing is not None:
+        raise ConflictError(
+            "Conversation already imported with the same content.",
+            extra={"existing_id": existing.id},
+        )
     conv = ImportedConversation(
         user_id=user_id,
         project_id=payload.project_id,
@@ -110,6 +164,7 @@ def create_conversation(
         topic_tag=payload.topic_tag,
         model=payload.model,
         source_created_at=payload.source_created_at,
+        content_hash=content_hash,
     )
     db.add(conv)
     db.flush()  # so conv.id is populated for message FKs
@@ -199,6 +254,7 @@ def save_analysis(
 
 
 __all__ = [
+    "compute_content_hash",
     "create_conversation",
     "delete_conversation",
     "get_conversation",

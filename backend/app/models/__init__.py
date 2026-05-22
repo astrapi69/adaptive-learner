@@ -729,6 +729,13 @@ class ImportedConversation(Base):
     source_created_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    # Phase 36 Bug 1 — SHA-256 of role-prefixed, content-stripped
+    # messages joined by ``\n``. Title is NOT part of the hash so
+    # re-importing the same transcript with a different display
+    # title still detects as a duplicate. Nullable to keep rows
+    # created before Alembic 0014 valid; the back-fill in that
+    # migration populates every existing row.
+    content_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
 
     messages: Mapped[list[ImportedMessage]] = relationship(
         back_populates="conversation",
@@ -1031,9 +1038,7 @@ class AnkiCardSuggestion(Base):
     tags: Mapped[str] = mapped_column(Text, nullable=False, default="[]")
     accepted: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     rejected: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    exported_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    exported_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
@@ -1087,12 +1092,8 @@ class StudyQuestion(Base):
     question: Mapped[str] = mapped_column(Text, nullable=False)
     expected_answer: Mapped[str] = mapped_column(Text, nullable=False, default="")
     # "open" | "fill_blank" | "explain" | "compare"
-    question_type: Mapped[str] = mapped_column(
-        String(20), nullable=False, default="open"
-    )
-    difficulty: Mapped[str] = mapped_column(
-        String(10), nullable=False, default="medium"
-    )
+    question_type: Mapped[str] = mapped_column(String(20), nullable=False, default="open")
+    difficulty: Mapped[str] = mapped_column(String(10), nullable=False, default="medium")
     topic: Mapped[str] = mapped_column(String(200), nullable=False, default="")
     # User-edited flag. Set by PATCH when the question/answer text
     # changes so the AI doesn't re-generate identical rows on a
@@ -1173,9 +1174,7 @@ class UserBadge(Base):
     """
 
     __tablename__ = "user_badges"
-    __table_args__ = (
-        UniqueConstraint("user_id", "badge_id", name="uq_user_badges_pair"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "badge_id", name="uq_user_badges_pair"),)
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
     user_id: Mapped[str] = mapped_column(

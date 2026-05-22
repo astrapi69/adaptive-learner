@@ -92,6 +92,7 @@ import {
 } from "./tracking";
 import {buildSpacedRecommendations, rankTools, recencyFromCommits} from "./tools";
 import {ApiError} from "../api/client";
+import {computeContentHash} from "../chat_import/content-hash";
 import type {AIProvider, LearningMethod} from "../lib/constants";
 import type {
     ApiKeySetBody,
@@ -292,6 +293,7 @@ function rowToImportedConversation(
         model: row.model,
         source_created_at: row.source_created_at,
         analysis_result: row.analysis_result as ConversationAnalysisResult | null,
+        content_hash: row.content_hash ?? null,
     };
 }
 
@@ -1187,6 +1189,26 @@ export const dexieStorage: IStorageService = {
                     );
                 }
             }
+            // Phase 36 Bug 1 — compute the same SHA-256 the
+            // backend computes (see content-hash.ts) so the per-
+            // user duplicate check matches the API path's 409.
+            const contentHash = await computeContentHash(body.messages);
+            const existing = await db.importedConversations
+                .where("content_hash")
+                .equals(contentHash)
+                .filter((row) => row.user_id === userId)
+                .first();
+            if (existing) {
+                const err = new ApiError(
+                    409,
+                    "Conversation already imported with the same content.",
+                    "/users/.../imports",
+                    "POST",
+                    undefined,
+                    {existing_id: existing.id},
+                );
+                throw err;
+            }
             const conversationId = newId();
             const now = nowIso();
             const conv: ImportedConversationRow = {
@@ -1202,6 +1224,7 @@ export const dexieStorage: IStorageService = {
                 topic_tag: body.topic_tag ?? null,
                 model: body.model ?? null,
                 source_created_at: body.source_created_at ?? null,
+                content_hash: contentHash,
             };
             await db.importedConversations.put(conv);
             // v1.8.0 / Phase 21D — every imported message now

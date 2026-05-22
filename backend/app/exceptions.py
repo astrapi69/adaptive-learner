@@ -5,14 +5,25 @@ Per ``.claude/rules/code-hygiene.md``: services raise typed
 to HTTP status codes. Routers stay thin; they catch nothing.
 """
 
+from typing import Any
+
 
 class AdaptiveLearnerError(Exception):
-    """Base for domain errors. Each subclass pins its HTTP status."""
+    """Base for domain errors. Each subclass pins its HTTP status.
+
+    ``extra`` is an optional dict that the global error handler
+    merges into the JSON response alongside ``detail``. Subclasses
+    use it to carry structured context the frontend needs to act
+    on the error — e.g. a ``ConflictError`` for a duplicate import
+    surfaces ``{"existing_id": "<uuid>"}`` so the UI can navigate
+    to the existing record instead of leaving the user stranded.
+    """
 
     status_code: int = 500
 
-    def __init__(self, detail: str):
+    def __init__(self, detail: str, *, extra: dict[str, Any] | None = None):
         self.detail = detail
+        self.extra: dict[str, Any] | None = extra
         super().__init__(detail)
 
 
@@ -45,6 +56,6 @@ class ExternalServiceError(AdaptiveLearnerError):
 
     status_code = 502
 
-    def __init__(self, service: str, detail: str):
+    def __init__(self, service: str, detail: str, *, extra: dict[str, Any] | None = None):
         self.service = service
-        super().__init__(f"{service}: {detail}")
+        super().__init__(f"{service}: {detail}", extra=extra)

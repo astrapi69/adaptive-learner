@@ -11,9 +11,24 @@
 
 import {toast} from "react-toastify";
 
+interface ErrorOptions {
+    /**
+     * Phase 36 — when ``true``, the toast does NOT auto-dismiss.
+     * The user has to close it manually. Use for failures the user
+     * must acknowledge (analysis broken, AI provider down,
+     * persistent error states) so the message survives the next
+     * keystroke. Default ``false`` keeps the previous 12 s
+     * auto-dismiss behaviour.
+     */
+    persistent?: boolean;
+}
+
 export const notify = {
-  error: (message: string) => toast.error(message, {autoClose: 12000}),
-  warning: (message: string) => toast.warning(message, {autoClose: 10000}),
-  info: (message: string) => toast.info(message, {autoClose: 8000}),
-  success: (message: string) => toast.success(message, {autoClose: 5000}),
+    error: (message: string, opts?: ErrorOptions) =>
+        toast.error(message, {
+            autoClose: opts?.persistent ? (false as const) : 12000,
+        }),
+    warning: (message: string) => toast.warning(message, {autoClose: 10000}),
+    info: (message: string) => toast.info(message, {autoClose: 8000}),
+    success: (message: string) => toast.success(message, {autoClose: 5000}),
 };

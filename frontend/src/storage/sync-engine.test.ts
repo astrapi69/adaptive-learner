@@ -771,6 +771,7 @@ describe("SyncEngine.sync", () => {
             topic_tag: null,
             model: null,
             source_created_at: null,
+            content_hash: null,
         });
         await db.importedMessages.bulkPut([
             {

@@ -419,11 +419,57 @@ describe("DexieStorage imports (Phase 12C)", () => {
 
     it("list returns user's conversations newest first", async () => {
         const u = await makeUser();
-        const first = await dexieStorage.imports.create(u.id, body({title: "First"}));
+        // Distinct message content per call so the Phase 36 Bug 1
+        // content-hash dedup does not collapse the two imports.
+        const first = await dexieStorage.imports.create(
+            u.id,
+            body({
+                title: "First",
+                messages: [
+                    {role: "user" as const, content: "topic 1 q"},
+                    {role: "assistant" as const, content: "topic 1 a"},
+                ],
+            }),
+        );
         await new Promise((r) => setTimeout(r, 5));
-        const second = await dexieStorage.imports.create(u.id, body({title: "Second"}));
+        const second = await dexieStorage.imports.create(
+            u.id,
+            body({
+                title: "Second",
+                messages: [
+                    {role: "user" as const, content: "topic 2 q"},
+                    {role: "assistant" as const, content: "topic 2 a"},
+                ],
+            }),
+        );
         const listing = await dexieStorage.imports.list(u.id);
         expect(listing.map((c) => c.id)).toEqual([second.id, first.id]);
+    });
+
+    it("creates with a 64-char content_hash (Phase 36 Bug 1)", async () => {
+        const u = await makeUser();
+        const created = await dexieStorage.imports.create(u.id, body());
+        expect(created.content_hash).toMatch(/^[0-9a-f]{64}$/);
+    });
+
+    it("re-import collides on hash and surfaces 409 + existing_id (Phase 36 Bug 1)", async () => {
+        const u = await makeUser();
+        const first = await dexieStorage.imports.create(u.id, body());
+        await expect(
+            dexieStorage.imports.create(u.id, body({title: "Different title"})),
+        ).rejects.toMatchObject({
+            status: 409,
+            extra: {existing_id: first.id},
+        });
+    });
+
+    it("dedup is scoped per-user (Phase 36 Bug 1)", async () => {
+        const alice = await dexieStorage.users.create({name: "Alice"});
+        const bob = await dexieStorage.users.create({name: "Bob"});
+        const a = await dexieStorage.imports.create(alice.id, body());
+        const b = await dexieStorage.imports.create(bob.id, body());
+        expect(a.content_hash).toBe(b.content_hash);
+        expect(a.id).not.toBe(b.id);
     });
 
     it("update can assign a topic_tag", async () => {

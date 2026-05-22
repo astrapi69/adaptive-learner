@@ -183,6 +183,14 @@ export interface ImportedConversationRow {
     topic_tag: string | null;
     model: string | null;
     source_created_at: string | null;
+    /**
+     * Phase 36 Bug 1 — SHA-256 of role-prefixed normalised messages.
+     * Title-independent so re-imports with a fresh display title
+     * still detect as duplicates. Nullable because Dexie schema v12
+     * back-fills lazily — rows created before the upgrade can carry
+     * ``null`` if the upgrade hasn't reached them yet.
+     */
+    content_hash: string | null;
 }
 
 export interface ImportedMessageRow {
@@ -535,6 +543,45 @@ export class AdaptiveLearnerDB extends Dexie {
             studyQuestions:
                 "id, user_id, project_id, session_id, updated_at",
         });
+        // Schema v12 — v1.21.1 Phase 36 Bug 1: content_hash for
+        // duplicate-import detection. Adds a secondary index so
+        // the per-user dedup check on create is O(log n). The
+        // upgrade back-fills the digest for every existing row by
+        // reading its messages — mirrors the Alembic 0014
+        // back-fill exactly so API + Dexie modes stay in lockstep.
+        this.version(12)
+            .stores({
+                importedConversations:
+                    "id, user_id, project_id, imported_at, source, analyzed, content_hash",
+            })
+            .upgrade(async (tx) => {
+                const convs = await tx.table("importedConversations").toArray();
+                for (const conv of convs) {
+                    const messages = await tx
+                        .table("importedMessages")
+                        .where("conversation_id")
+                        .equals(conv.id)
+                        .sortBy("order_index");
+                    const payload = messages
+                        .map(
+                            (m: Record<string, unknown>) =>
+                                `${String(m.role).toLowerCase()}:${String(
+                                    m.content,
+                                ).trim()}`,
+                        )
+                        .join("\n");
+                    const data = new TextEncoder().encode(payload);
+                    const digest = await crypto.subtle.digest("SHA-256", data);
+                    const bytes = new Uint8Array(digest);
+                    let hex = "";
+                    for (const b of bytes) {
+                        hex += b.toString(16).padStart(2, "0");
+                    }
+                    await tx
+                        .table("importedConversations")
+                        .update(conv.id, {content_hash: hex});
+                }
+            });
     }
 }
 

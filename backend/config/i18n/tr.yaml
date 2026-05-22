@@ -93,6 +93,12 @@ import:
   anki_extracted: '{n} Anki kartı çıkarıldı. Anki sayfasında incele.'
   anki_no_cards: Anki kartı çıkarılamadı.
   anki_extract_failed: Anki kartları çıkarılamadı.
+  delete: Sil
+  delete_aria: Bu konuşmayı sil
+  delete_confirm: Bu içe aktarılan konuşma silinsin mi? Bu işlem geri alınamaz.
+  delete_success: Konuşma silindi.
+  delete_error: Konuşma silinemedi.
+  duplicate_detected: Bu konuşma zaten içe aktarılmıştı. Mevcut kayıt gösteriliyor.
 curriculum:
   title: Müfredat
   active: Aktif müfredat

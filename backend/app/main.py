@@ -453,9 +453,9 @@ async def lifespan(app: FastAPI):
     # on the ``key`` slug; non-fatal on failure (the dashboard
     # showcase just renders empty).
     try:
-        from app.database import SessionLocal as _BadgeSessionLocal
-
         from adaptive_learner_gamification.badge_service import seed_catalog
+
+        from app.database import SessionLocal as _BadgeSessionLocal
 
         with _BadgeSessionLocal() as _seed_db:
             inserted = seed_catalog(_seed_db)
@@ -528,7 +528,13 @@ async def adaptive_learner_error_handler(request: Request, exc: AdaptiveLearnerE
             exc.status_code,
             exc.detail,
         )
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    content: dict[str, Any] = {"detail": exc.detail}
+    if exc.extra:
+        # Merge subclass-supplied context fields (e.g. existing_id
+        # on a 409 duplicate-import) into the response body so the
+        # frontend can act on the error without parsing prose.
+        content.update(exc.extra)
+    return JSONResponse(status_code=exc.status_code, content=content)
 
 
 @app.exception_handler(Exception)

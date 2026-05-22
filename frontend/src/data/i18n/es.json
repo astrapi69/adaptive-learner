@@ -99,7 +99,13 @@
     "anki_extracting": "Extrayendo tarjetas…",
     "anki_extracted": "Se extrajeron {n} tarjeta(s) Anki. Revísalas en la página Anki.",
     "anki_no_cards": "No se extrajeron tarjetas Anki.",
-    "anki_extract_failed": "No se pudieron extraer las tarjetas Anki."
+    "anki_extract_failed": "No se pudieron extraer las tarjetas Anki.",
+    "delete": "Eliminar",
+    "delete_aria": "Eliminar esta conversación",
+    "delete_confirm": "¿Eliminar esta conversación importada? No se puede deshacer.",
+    "delete_success": "Conversación eliminada.",
+    "delete_error": "No se pudo eliminar la conversación.",
+    "duplicate_detected": "Esta conversación ya fue importada. Mostrando la entrada existente."
   },
   "curriculum": {
     "title": "Curriculo",
