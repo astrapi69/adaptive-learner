@@ -13,6 +13,7 @@ import {describe, expect, it} from "vitest";
 
 import {
     isClaudeMarkdownExport,
+    normaliseMetadataDate,
     parseClaudeMarkdownExport,
 } from "./claude_md_parser";
 import {ChatImportParseError} from "./types";
@@ -281,10 +282,12 @@ describe("parseClaudeMarkdownExport — metadata + title", () => {
         expect(result.title).toBe("My Grammar Chat");
     });
 
-    it("preserves the Created: line in metadata.created_at", () => {
+    it("normalises the Created: line in metadata.created_at to ISO-8601 (BL-29 — Pydantic-acceptable)", () => {
         const raw = build({turns: [{role: "user", body: "hi"}]});
         const result = parseClaudeMarkdownExport(raw);
-        expect(result.metadata.created_at).toBe("3/23/2026 8:53:40");
+        // Source: ``**Created:** 3/23/2026 8:53:40`` (US locale)
+        // After normalisation: backend Pydantic ``datetime`` accepts.
+        expect(result.metadata.created_at).toBe("2026-03-23T08:53:40");
     });
 
     it("the **Created:** block is NOT swallowed into the first message body", () => {
@@ -292,6 +295,51 @@ describe("parseClaudeMarkdownExport — metadata + title", () => {
         const result = parseClaudeMarkdownExport(raw);
         expect(result.messages[0].content).toBe("first user message");
         expect(result.messages[0].content).not.toContain("**Created:**");
+    });
+});
+
+describe("normaliseMetadataDate — BL-29 closure (Pydantic datetime needs ISO)", () => {
+    it("US locale M/D/YYYY H:MM:SS -> ISO", () => {
+        expect(normaliseMetadataDate("3/23/2026 8:53:40")).toBe(
+            "2026-03-23T08:53:40",
+        );
+        // Two-digit month/day/hour also.
+        expect(normaliseMetadataDate("11/29/2026 10:00:00")).toBe(
+            "2026-11-29T10:00:00",
+        );
+    });
+
+    it("DE locale D.M.YYYY HH:MM:SS -> ISO (with and without comma)", () => {
+        expect(normaliseMetadataDate("23.3.2026 08:53:40")).toBe(
+            "2026-03-23T08:53:40",
+        );
+        expect(normaliseMetadataDate("23.3.2026, 08:53:40")).toBe(
+            "2026-03-23T08:53:40",
+        );
+        // Two-digit day + month.
+        expect(normaliseMetadataDate("29.11.2026, 10:00:00")).toBe(
+            "2026-11-29T10:00:00",
+        );
+    });
+
+    it("ISO already pass through", () => {
+        expect(normaliseMetadataDate("2026-03-23T08:53:40")).toBe(
+            "2026-03-23T08:53:40",
+        );
+        // Space-separated ISO normalised to T.
+        expect(normaliseMetadataDate("2026-03-23 08:53:40")).toBe(
+            "2026-03-23T08:53:40",
+        );
+    });
+
+    it("unrecognised shape returns undefined (caller drops the field)", () => {
+        // Anything that doesn't match US, DE, or ISO is dropped
+        // rather than passed through to break Pydantic.
+        expect(normaliseMetadataDate("not a date")).toBeUndefined();
+        expect(normaliseMetadataDate("")).toBeUndefined();
+        expect(normaliseMetadataDate("   ")).toBeUndefined();
+        expect(normaliseMetadataDate("23-3-2026 08:53:40")).toBeUndefined();
+        expect(normaliseMetadataDate("Mar 23, 2026 8:53:40 AM")).toBeUndefined();
     });
 });
 

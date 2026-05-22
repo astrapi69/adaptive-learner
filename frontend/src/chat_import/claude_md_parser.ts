@@ -62,6 +62,14 @@ const TURN_TIMESTAMP_RE =
 
 const H1_RE = /^#\s+(.+?)\s*$/;
 const CREATED_RE = /^\*\*Created:\*\*\s*(.+?)\s*$/;
+/** ``M/D/YYYY H:MM:SS`` — US-locale Claude.ai export metadata.
+ * Used in the top-of-file ``**Created:**`` block. */
+const METADATA_DATE_US_RE =
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2}):(\d{2})\s*$/;
+/** ``D.M.YYYY HH:MM:SS`` — German-locale Claude.ai export metadata,
+ * with or without a comma between the date and the time. */
+const METADATA_DATE_DE_RE =
+    /^(\d{1,2})\.(\d{1,2})\.(\d{4}),?\s*(\d{1,2}):(\d{2}):(\d{2})\s*$/;
 /** Look for the canonical Claude chat link as a signature. The
  * loose form ``https://claude.ai/chat/`` is enough — the UUID
  * has no further structural value at parse time. */
@@ -74,6 +82,37 @@ function normaliseTimestamp(m: RegExpMatchArray): string {
     const mn = mo.padStart(2, "0");
     const hh = h.padStart(2, "0");
     return `${y}-${mn}-${dd}T${hh}:${mm}:${s}`;
+}
+
+/**
+ * Normalise the ``**Created:**`` metadata-block date string to
+ * ISO-8601 local-naive. Claude.ai renders this line with the
+ * exporter's BROWSER locale at the moment of export, so the
+ * shape depends on the user — ``M/D/YYYY H:MM:SS`` for US
+ * locale, ``D.M.YYYY[, ]HH:MM:SS`` for German locale. We try
+ * both. Anything else returns ``undefined`` so the caller
+ * drops the field rather than passing a string that the
+ * backend's Pydantic ``datetime`` validator will reject with a
+ * 422.
+ */
+export function normaliseMetadataDate(value: string): string | undefined {
+    const trimmed = value.trim();
+    if (!trimmed) return undefined;
+    // ISO-8601 already? Cheap pre-check on the YYYY-MM-DD prefix.
+    if (/^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}/.test(trimmed)) {
+        return trimmed.replace(" ", "T");
+    }
+    const us = trimmed.match(METADATA_DATE_US_RE);
+    if (us) {
+        const [, mo, d, y, h, mm, s] = us;
+        return `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}T${h.padStart(2, "0")}:${mm}:${s}`;
+    }
+    const de = trimmed.match(METADATA_DATE_DE_RE);
+    if (de) {
+        const [, d, mo, y, h, mm, s] = de;
+        return `${y}-${mo.padStart(2, "0")}-${d.padStart(2, "0")}T${h.padStart(2, "0")}:${mm}:${s}`;
+    }
+    return undefined;
 }
 
 /**
@@ -130,7 +169,15 @@ function extractCreatedAt(lines: readonly string[]): string | undefined {
     const limit = Math.min(lines.length, 30);
     for (let i = 0; i < limit; i++) {
         const m = lines[i].match(CREATED_RE);
-        if (m) return m[1];
+        if (m) {
+            // The raw value is a locale-specific date string
+            // (``M/D/YYYY H:MM:SS`` for US, ``D.M.YYYY HH:MM:SS``
+            // for DE). Backend's Pydantic ``datetime`` validator
+            // only accepts ISO-8601, so normalise here and drop
+            // the field when the shape is unrecognised — better
+            // than triggering a 422 at import time.
+            return normaliseMetadataDate(m[1]);
+        }
     }
     return undefined;
 }

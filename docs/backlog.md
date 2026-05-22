@@ -46,6 +46,23 @@ tiebreaker.
   (it remains the no-marker-found fallback for free-form
   pastes); the minimal-shape regression-pin moved into
   ``claude_md_parser.test.ts`` ("BL-26 minimal shape").
+- [x] **BL-29**: ``metadata.created_at`` from
+  ``claude_md_parser`` was passed through verbatim as the
+  raw locale-specific string (``M/D/YYYY H:MM:SS`` for US
+  exports, ``D.M.YYYY HH:MM:SS`` for DE exports). Import.tsx
+  forwarded that as ``source_created_at`` in the POST body;
+  the backend Pydantic ``datetime`` validator rejected it
+  with HTTP 422 (``Unprocessable Entity``) on every Claude
+  .md import attempt at v1.19.1. Surfaced in production
+  immediately after the v1.19.1 release. Closed in v1.19.2
+  by ``normaliseMetadataDate`` which converts both
+  locale shapes (and pre-existing ISO strings) to ISO-8601
+  local-naive, returning ``undefined`` when the shape is
+  unrecognised so the field gets dropped rather than
+  triggering another 422. Regression-pinned via 4 new cases
+  in ``claude_md_parser.test.ts`` (US, DE with/without
+  comma, ISO pass-through, unrecognised) plus the existing
+  audit case re-pointed at the ISO output.
 
 ## P1 — Architecture / Hygiene Debt
 

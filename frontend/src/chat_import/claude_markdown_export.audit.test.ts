@@ -84,10 +84,14 @@ describe("Claude.ai per-conversation Markdown export — real fixture", () => {
         }
     });
 
-    it("BL-25 closed — metadata.created_at is preserved from the **Created:** line", () => {
+    it("BL-29 closed — metadata.created_at is ISO-8601 (Pydantic-acceptable)", () => {
+        // The raw line is ``**Created:** 3/23/2026 8:53:40`` (US
+        // locale, M/D/YYYY). Before BL-29 we passed that string
+        // through to the backend, which rejected it with 422
+        // because Pydantic ``datetime`` requires ISO-8601.
         const res = parseChatImport(FIXTURE_TEXT);
         expect(res.conversations[0].metadata.created_at).toBe(
-            "3/23/2026 8:53:40",
+            "2026-03-23T08:53:40",
         );
     });
 
