@@ -7,7 +7,7 @@ on a research-backed six-method model. You take a 12-question
 assessment, the app discovers which methods suit you, then
 AI-supported sessions walk you through a seven-step learning
 cycle. The app adapts how it teaches based on how you
-actually learn.
+actually learn. **v1.20.0**, 34 development phases shipped.
 
 [Try it now](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 [GitHub](https://github.com/astrapi69/adaptive-learner){ .md-button }
@@ -86,15 +86,19 @@ time, what method-switch unlocked progress.
 
 ## Status
 
-Active development. v0.8.0 was released 2026-05-19.
+Active development. **v1.20.0 was released 2026-05-22**
+with `secrets.yaml` file-based key configuration for the
+desktop launcher use case.
 
-- **1312 tests** (447 backend + 478 plugins + 387 frontend
-  Vitest + 8 Playwright smoke)
-- **8 languages** (DE / EN / ES / FR / EL native; PT / TR /
-  JA scaffolded)
-- **7 plugins** (assessment / 3 AI providers / session /
-  tracking / tools)
-- **2 storage modes** (Local IndexedDB / FastAPI backend)
+- **2634 tests** (786 backend + 615 plugins + 1233 frontend
+  Vitest + 16 Playwright smoke spec files)
+- **8 languages, all fully translated** (DE / EN / ES / FR /
+  EL / PT / TR / JA)
+- **10 plugins** (assessment / 3 AI providers / session /
+  tracking / tools / gamification / anki / notebooklm)
+- **25 SQLAlchemy models**, sync surface 28 tables
+- **2 storage modes** (Local IndexedDB / FastAPI backend),
+  plus the desktop launcher's `secrets.yaml` overlay
 - **MIT licensed**
 
 Source code, issues, and contributions:

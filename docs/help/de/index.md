@@ -8,7 +8,7 @@ machst einen 12-Fragen-Test, die App findet heraus, welche
 Methoden zu dir passen, dann führen KI-gestützte Sessions
 dich durch einen Sieben-Schritt-Lernzyklus. Die App passt an,
 wie sie unterrichtet, basierend darauf, wie du tatsächlich
-lernst.
+lernst. **v1.20.0**, 34 Entwicklungsphasen ausgeliefert.
 
 [Jetzt ausprobieren](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 [GitHub](https://github.com/astrapi69/adaptive-learner){ .md-button }
@@ -89,16 +89,20 @@ freigeschaltet hat.
 
 ## Status
 
-Aktive Entwicklung. v0.8.0 wurde am 2026-05-19
-veröffentlicht.
+Aktive Entwicklung. **v1.20.0 wurde am 2026-05-22
+veröffentlicht** mit dateibasierter Schlüsselkonfiguration
+über `secrets.yaml` für den Desktop-Launcher-Use-Case.
+34 Entwicklungsphasen ausgeliefert.
 
-- **1312 Tests** (447 Backend + 478 Plugins + 387 Frontend
-  Vitest + 8 Playwright-Smoke)
-- **8 Sprachen** (DE / EN / ES / FR / EL nativ; PT / TR /
-  JA als Gerüst)
-- **7 Plugins** (Assessment / 3 KI-Anbieter / Session /
-  Tracking / Tools)
-- **2 Speichermodi** (Lokal IndexedDB / FastAPI-Backend)
+- **2634 Tests** (786 Backend + 615 Plugins + 1233 Frontend
+  Vitest + 16 Playwright-Smoke-Spec-Dateien)
+- **8 Sprachen, alle voll übersetzt** (DE / EN / ES / FR /
+  EL / PT / TR / JA)
+- **10 Plugins** (Assessment / 3 KI-Anbieter / Session /
+  Tracking / Tools / Gamification / Anki / NotebookLM)
+- **25 SQLAlchemy-Modelle**, Sync-Oberfläche 28 Tabellen
+- **2 Speichermodi** (Lokal IndexedDB / FastAPI-Backend),
+  plus dem `secrets.yaml`-Overlay des Desktop-Launchers
 - **MIT-lizenziert**
 
 Quellcode, Issues und Beiträge:
