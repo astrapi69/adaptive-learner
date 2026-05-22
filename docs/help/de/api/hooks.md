@@ -1,8 +1,10 @@
 # Hook-Spezifikationen
 
-Die 8 Hookspecs leben in `backend/app/hookspecs.py`. Jede
-Hookspec definiert den Aufruf-Vertrag; Plugins implementieren
-sie mit `@hookimpl`.
+Die 10 Hookspecs leben in `backend/app/hookspecs.py`. Drei
+davon sind KI-Aufruf-Varianten (sync / async / stream), die
+über v1.5.0 und v1.6.0 schrittweise dazukamen; der Rest ist
+seit v0.2.0 unverändert. Jede Hookspec definiert den
+Aufruf-Vertrag; Plugins implementieren sie mit `@hookimpl`.
 
 ## get_assessment_questions
 

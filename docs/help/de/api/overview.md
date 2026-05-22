@@ -18,12 +18,26 @@ Server-Proxy transparent weiterleitet.
 
 ## Authentifizierung
 
-v0.7.0 hat keine Pro-Request-Authentifizierung. Das System
+v1.20.0 hat keine Pro-Request-Authentifizierung. Das System
 ist Single-User-pro-Browser: eine `user_id` liegt im
 `localStorage` und wird in URL-Pfaden mitgegeben
-(`/users/{user_id}/...`). KI-Anbieter-Keys liegen
-verschlüsselt (Fernet) im Backend und kommen nie im Klartext
-zurück zum Frontend.
+(`/users/{user_id}/...`).
+
+KI-Anbieter-Keys werden über eine Drei-Schichten-Kette
+aufgelöst (`services.settings.resolve_api_key`):
+
+1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY`-Umgebungsvariable.
+2. `ai.<provider>.api_key` in
+   `~/.config/adaptive_learner/secrets.yaml`.
+3. Fernet-verschlüsselte
+   `UserSettings.api_key_<provider>`-DB-Spalte (über die
+   Einstellungs-UI gesetzt; nie im Klartext ans Frontend
+   zurückgegeben).
+4. `None` — der KI-Aufruf zeigt einen Fehler in der UI.
+
+`UserSettingsOut.key_source_*` (Enum
+`env | secrets_yaml | settings | none`) meldet pro
+Anbieter, aus welcher Schicht der aktive Schlüssel kam.
 
 Eine zukünftige Multi-User/Multi-Tenant-Phase wird
 Authentifizierung hinzufügen. Aktuell sollten Deployments
@@ -126,7 +140,7 @@ Untermenge für Lesbarkeit.
 
 ## Paginierung
 
-v0.7.0-Endpunkte paginieren nicht. Der Datensatz ist
+Endpunkte paginieren bei v1.20.0 nicht. Der Datensatz ist
 Single-User und klein; die größte Liste (Sessions pro
 Projekt) liegt im niedrigen dreistelligen Bereich, nicht im
 vierstelligen. Eine spätere Phase wird Cursor-basierte

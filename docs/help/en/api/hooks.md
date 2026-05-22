@@ -1,8 +1,10 @@
 # Hook specifications
 
-The 8 hookspecs live in `backend/app/hookspecs.py`. Each
-hookspec defines the calling contract; plugins implement them
-with `@hookimpl`.
+The 10 hookspecs live in `backend/app/hookspecs.py`. Each
+hookspec defines the calling contract; plugins implement
+them with `@hookimpl`. Three of them are AI-call variants
+(sync / async / stream) shipped progressively across v1.5.0
+and v1.6.0; the rest are unchanged since v0.2.0.
 
 ## get_assessment_questions
 
@@ -117,6 +119,48 @@ letting firstresult fall through to the next.
 
 Provider plugins normalise this shape to their own API
 (Anthropic separates `system` out; Gemini folds it in).
+
+## ai_complete_async (v1.5.0+)
+
+```python
+@hookspec(firstresult=True)
+async def ai_complete_async(
+    messages: list[dict[str, Any]],
+    model: str,
+    api_key: str,
+    max_tokens: int = 1024,
+) -> str:
+    """Awaitable variant of ai_complete.
+
+    Implemented by: ai-anthropic, ai-openai, ai-gemini.
+    Used at the step 6 -> 7 cycle boundary so step-eval +
+    topic-transition fire concurrently via asyncio.gather
+    (saves ~T_2 of latency).
+    """
+```
+
+The orchestrator helper `call_ai_complete_async` prefers
+this hook; falls back to `ai_complete` wrapped in
+`asyncio.to_thread` when not implemented.
+
+## ai_complete_stream (v1.6.0+)
+
+```python
+@hookspec(firstresult=True)
+def ai_complete_stream(
+    messages: list[dict[str, Any]],
+    model: str,
+    api_key: str,
+    max_tokens: int = 1024,
+) -> AsyncIterator[str]:
+    """Return an async iterator of text deltas.
+
+    Implemented by: ai-anthropic, ai-openai, ai-gemini, each
+    using the provider SDK's native async streaming.
+    Powers ``POST /api/plugins/session/{id}/message/stream``
+    (SSE: emits ``start`` / ``chunk`` / ``done`` events).
+    """
+```
 
 ## recommend_method_switch
 

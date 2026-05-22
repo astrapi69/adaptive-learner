@@ -283,6 +283,87 @@ Returns spaced-repetition action cards driven by recency:
 ]
 ```
 
+## Session plugin — streaming + pronunciation (v1.6.0+, v1.18.0+)
+
+```
+POST /api/plugins/session/{id}/message/stream  (SSE)
+```
+
+Same body shape as `/message`; emits three SSE event types:
+
+- `start` — payload `{user_message}` (the user turn now
+  persisted).
+- `chunk` — payload `{delta}` (one or more text chunks
+  arriving from the AI provider's stream).
+- `done` — payload identical to the synchronous `/message`
+  response: assistant message + cycle_step + timings +
+  optional cycle-transition card.
+
+```
+GET  /api/plugins/session/pronunciation/eligibility/{project_id}
+POST /api/plugins/session/pronunciation/phrase
+POST /api/plugins/session/pronunciation/judge
+```
+
+Pronunciation eligibility is gated by the project's subject
+taxonomy (walks ancestors looking for a Languages /
+Sprachen root). The judge endpoint returns
+`{matches, score, feedback, missed_sounds}`.
+
+## Gamification plugin (v1.16.0+)
+
+```
+GET  /api/plugins/gamification/xp/{user_id}
+POST /api/plugins/gamification/xp/{user_id}/award
+POST /api/plugins/gamification/xp/{user_id}/award-assessment
+POST /api/plugins/gamification/xp/{user_id}/award-import
+GET  /api/plugins/gamification/badges
+GET  /api/plugins/gamification/badges/{user_id}
+POST /api/plugins/gamification/badges/{user_id}/evaluate
+GET  /api/plugins/gamification/streak/{user_id}
+GET  /api/plugins/gamification/streak/{user_id}/heatmap
+POST /api/plugins/gamification/streak/{user_id}/weekend-mode
+POST /api/plugins/gamification/reset/{user_id}
+```
+
+`/streak/{user_id}/heatmap` returns
+`[{date, count}, ...]` for the last 365 days (clamps to
+[7, 730]). The reset endpoint double-confirms then wipes
+`user_xp` + `user_badges` + `user_streaks` rows.
+
+## Anki plugin (v1.17.0+)
+
+```
+GET    /api/plugins/anki/cards/{user_id}
+POST   /api/plugins/anki/cards
+PATCH  /api/plugins/anki/cards/{id}
+DELETE /api/plugins/anki/cards/{id}
+POST   /api/plugins/anki/cards/extract/session/{id}
+POST   /api/plugins/anki/cards/extract/conversation/{id}
+POST   /api/plugins/anki/cards/mark-exported
+```
+
+AI extraction is user-triggered. The conversation-extract
+path also reads `analysis_result.vocabulary` (since v1.20.0)
+to produce cloze cards without an extra AI call when the
+analysis already populated the vocabulary array.
+
+## NotebookLM plugin (v1.19.0+)
+
+```
+GET    /api/plugins/notebooklm/questions/{user_id}
+POST   /api/plugins/notebooklm/questions
+PATCH  /api/plugins/notebooklm/questions/{id}
+DELETE /api/plugins/notebooklm/questions/{id}
+POST   /api/plugins/notebooklm/generate-from-session/{id}
+POST   /api/plugins/notebooklm/generate-from-project/{id}
+POST   /api/plugins/notebooklm/study-guide/{project_id}
+```
+
+`/study-guide/{project_id}` returns `text/markdown` (one
+big AI call with content-clipping to ~30K chars). User
+edits flip `edited=True` so the AI re-runner skips them.
+
 ## Plugin discovery
 
 ```
@@ -291,5 +372,5 @@ GET /api/plugins/health
 GET /api/plugins/errors
 ```
 
-Each returns a map keyed by plugin name. Used by the Settings
-> Plugins UI (deferred in v0.7.0).
+Each returns a map keyed by plugin name. Used by Settings >
+Plugins UI for activation status + load-error visibility.

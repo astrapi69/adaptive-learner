@@ -12,7 +12,7 @@ GET /api/health
 ```json
 {
   "status": "ok",
-  "version": "0.7.0",
+  "version": "1.20.0",
   "debug": false
 }
 ```
@@ -127,8 +127,9 @@ aktualisierte Zeile.
 GET /api/settings/{user_id}
 ```
 
-Liefert UserSettings mit API-Key-Feldern **als Booleans**
-(das Backend sendet niemals Klartext-Keys zurück):
+Liefert UserSettings mit API-Key-Feldern **als Booleans +
+Quellen-Enums** (das Backend sendet niemals Klartext-Keys
+zurück):
 
 ```json
 {
@@ -139,6 +140,9 @@ Liefert UserSettings mit API-Key-Feldern **als Booleans**
   "has_anthropic_key": true,
   "has_openai_key": false,
   "has_gemini_key": false,
+  "key_source_anthropic": "secrets_yaml",
+  "key_source_openai": "none",
+  "key_source_gemini": "none",
   "model_override_anthropic": "claude-sonnet-4-20250514",
   "model_override_openai": null,
   "model_override_gemini": null,
@@ -146,6 +150,11 @@ Liefert UserSettings mit API-Key-Feldern **als Booleans**
   "updated_at": "2026-05-19T12:00:00+00:00"
 }
 ```
+
+`key_source_*`-Werte: `env` (Env-Variable gesetzt + Wert
+weicht von YAML ab), `secrets_yaml` (Wert stimmt mit YAML
+überein ODER env-aus-YAML hydratisiert), `settings`
+(Fernet-DB-Spalte), `none`.
 
 ```
 PATCH /api/settings/{user_id}

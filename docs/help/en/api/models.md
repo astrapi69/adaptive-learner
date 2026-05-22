@@ -1,7 +1,17 @@
 # Data models
 
-The 14 SQLAlchemy models in `backend/app/models/__init__.py`,
-with their wire-shape Pydantic schemas.
+The **25 SQLAlchemy models** in
+`backend/app/models/__init__.py`, with their wire-shape
+Pydantic schemas. Sync surface includes 28 tables (the 25
+models + 3 association tables: `project_subjects`,
+`project_tags`, `user_badges`).
+
+The original 14 models from v0.7.0 are documented in detail
+below; the 11 added since (Phase 12+ imports, Phase 22
+subjects/tags, Phase 29-30 gamification + anki, Phase 32
+notebooklm) are listed at the bottom by name + table. See
+the OpenAPI spec at `/api/openapi.json` for every field of
+every model.
 
 ## User
 
@@ -34,7 +44,11 @@ Relationships: `projects`, `curriculums`, `profiles`,
 
 The wire schema (`UserSettingsOut`) replaces the three
 `api_key_*` fields with `has_<provider>_key: bool` booleans —
-cleartext never travels back to the client.
+cleartext never travels back to the client. Since v1.20.0 /
+Phase 34, the wire schema also carries
+`key_source_<provider>: ApiKeySource` (enum:
+`env | secrets_yaml | settings | none`) reporting which
+layer the resolver picked.
 
 ## LearningProject
 
@@ -205,7 +219,39 @@ class AIProvider(str, Enum):
     ANTHROPIC = "anthropic"
     OPENAI = "openai"
     GEMINI = "gemini"
+
+# Since v1.20.0 / Phase 34
+class ApiKeySource(str, Enum):
+    ENV = "env"
+    SECRETS_YAML = "secrets_yaml"
+    SETTINGS = "settings"
+    NONE = "none"
+
+# Since v0.9.0 / Phase 12
+class ImportedConversationSource(str, Enum):
+    CHATGPT = "chatgpt"
+    CLAUDE = "claude"
+    GEMINI = "gemini"
+    MANUAL = "manual"
+    UNKNOWN = "unknown"
 ```
 
 The wire form is the lowercase string value (e.g.
 `"deductive"`, not `"DEDUCTIVE"`).
+
+## Models added since the v0.7.0 baseline (11)
+
+| Model | Table | Since | Purpose |
+|---|---|---|---|
+| ImportedConversation | imported_conversations | v0.9.0 | One imported chat (source, title, analysis_result JSON) |
+| ImportedMessage | imported_messages | v0.9.0 | One turn in an imported chat |
+| Subject | subjects | v1.9.0 | Global hierarchical taxonomy node |
+| Tag | tags | v1.9.0 | Per-user free-text label |
+| ProjectSubject | project_subjects | v1.9.0 | M:N (LearningProject, Subject) |
+| ProjectTag | project_tags | v1.9.0 | M:N (LearningProject, Tag) |
+| UserXP | user_xp | v1.16.0 | XP + level singleton per user |
+| Badge | badges | v1.16.0 | Badge catalog (seeded from YAML) |
+| UserBadge | user_badges | v1.16.0 | Earned-badge record (append-only) |
+| UserStreak | user_streaks | v1.16.0 | Streak state + freezes + weekend mode |
+| AnkiCardSuggestion | anki_card_suggestions | v1.17.0 | AI-extracted flashcard candidate |
+| StudyQuestion | study_questions | v1.19.0 | AI-generated active-recall question |

@@ -18,12 +18,26 @@ forwards transparently.
 
 ## Authentication
 
-v0.7.0 has no per-request authentication. The system is
+v1.20.0 has no per-request authentication. The system is
 single-user-per-browser: a `user_id` is stored in
 `localStorage` and passed in URL paths
-(`/users/{user_id}/...`). AI provider keys are stored
-encrypted (Fernet) on the backend and never travel back to the
-frontend in plaintext.
+(`/users/{user_id}/...`).
+
+AI provider keys are resolved via a three-layer chain
+(`services.settings.resolve_api_key`):
+
+1. `ADAPTIVE_LEARNER_<PROVIDER>_API_KEY` environment variable.
+2. `ai.<provider>.api_key` in
+   `~/.config/adaptive_learner/secrets.yaml`.
+3. Fernet-encrypted `UserSettings.api_key_<provider>` column
+   (set via the Settings UI; never returned to the frontend
+   in plaintext).
+4. `None` — the AI call surfaces an error to the UI.
+
+`UserSettingsOut.key_source_*` (enum
+`env | secrets_yaml | settings | none`) reports which layer
+resolved the active key, per provider, for the Settings UI's
+source badge.
 
 A future multi-user / multi-tenant phase will add
 authentication. For now, deployments should sit behind their
@@ -98,11 +112,20 @@ The frontend's `ApiError` class consumes both shapes — see
 | Health + i18n | `/health`, `/i18n/{lang}` | App health + UI strings |
 | Users | `/users` | User CRUD + nested projects |
 | Projects | `/projects` | Project-scoped reads / updates |
-| Settings | `/settings/{user_id}` | UserSettings + API keys |
+| Settings | `/settings/{user_id}` | UserSettings + API keys + key_source + available models |
+| System | `/system/info` | Version, paths, dependency versions |
+| Backup | `/backup/export`, `/backup/import`, `/backup/stats` | JSON snapshot + restore |
+| Export | `/export/{progress,session,curriculum}` | MD + PDF reports |
+| Sync | `/sync/...` | Push, pull, resolve, pair |
+| Imports | `/users/{user_id}/imports` | Chat-history import + analyzer |
+| Subjects + tags | `/subjects`, `/users/{id}/tags`, `/projects/{id}/{subjects,tags}` | Global taxonomy + per-user tags |
 | Assessment plugin | `/plugins/assessment/...` | Questions, evaluate, profile |
-| Session plugin | `/plugins/session/...` | Start, message, rate, end, switch |
+| Session plugin | `/plugins/session/...` | Start, message + stream, rate, end, switch, pronunciation |
 | Tracking plugin | `/plugins/tracking/...` | Progress + commits |
 | Tools plugin | `/plugins/tools/...` | Recommendations + spaced |
+| Gamification plugin | `/plugins/gamification/...` | XP, badges, streaks, reset |
+| Anki plugin | `/plugins/anki/...` | Card CRUD + AI extraction + mark-exported |
+| NotebookLM plugin | `/plugins/notebooklm/...` | Study questions + study guide |
 | Curriculum | `/users/{user_id}/curricula`, `/curricula/{id}` | Curriculum + topics + lessons CRUD |
 | Plugin discovery | `/plugins/manifests`, `/plugins/health`, `/plugins/errors` | What's registered |
 
@@ -125,10 +148,10 @@ readability.
 
 ## Pagination
 
-v0.7.0 endpoints do not paginate. The dataset is single-user
-and small; the largest list (sessions per project) hits
-hundreds, not thousands. A future phase will add
-cursor-based pagination if the data shape grows.
+Endpoints do not paginate at v1.20.0. The dataset is
+single-user and small; the largest list (sessions per
+project) hits hundreds, not thousands. A future phase will
+add cursor-based pagination if the data shape grows.
 
 ## Versioning
 

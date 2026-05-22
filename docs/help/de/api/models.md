@@ -1,7 +1,18 @@
 # Datenmodelle
 
-Die 14 SQLAlchemy-Models in `backend/app/models/__init__.py`,
-mit ihren Wire-Shape-Pydantic-Schemas.
+Die **25 SQLAlchemy-Models** in
+`backend/app/models/__init__.py`, mit ihren Wire-Shape-
+Pydantic-Schemas. Die Sync-Oberfläche umfasst 28 Tabellen
+(die 25 Models + 3 Assoziations-Tabellen:
+`project_subjects`, `project_tags`, `user_badges`).
+
+Die ursprünglichen 14 Models von v0.7.0 sind unten im Detail
+dokumentiert; die 11 seitdem hinzugekommenen (Phase 12+
+Imports, Phase 22 Subjects / Tags, Phase 29–30 Gamification
++ Anki, Phase 32 NotebookLM) werden am Ende nach Name +
+Tabelle gelistet. Die OpenAPI-Spec unter
+`/api/openapi.json` ist die kanonische Referenz für jedes
+Feld jedes Models.
 
 ## User
 
