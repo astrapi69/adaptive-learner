@@ -9,15 +9,18 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.23.0** (Phase 38 — in-app
-  contextual help system: 22-entry glossary DE/EN with
-  EN-passthrough for ES/FR/EL/PT/TR/JA, HelpTooltip with
-  Radix HoverCard, HelpDrawer with react-markdown, HelpLink
-  icons throughout the UI, Settings > Help glossary browser).
-  v1.22.0 was Phase 37 / error-report framework. See
-  [changelog/releases/v1.23.0.md](changelog/releases/v1.23.0.md)
+- **Current state:** **v1.24.0** (Phase 39 — WCAG 2.1 Level
+  AA accessibility audit + remediation: skip-to-content link
+  + landmark structure, keyboard navigation + focus
+  management, ARIA labels + live regions, chart text
+  summaries + data-table alternatives, brand-palette contrast
+  fix + colorblind-safe per-method text colour, @axe-core/react
+  dev-mode integration, prefers-reduced-motion catch-all.
+  Full audit doc at docs/audits/wcag-2026-05-23.md). v1.23.x
+  was Phase 38 / in-app contextual help. See
+  [changelog/releases/v1.24.0.md](changelog/releases/v1.24.0.md)
   for the per-release detail and `git log --oneline` for the
-  feature history across Phases 1–38.
+  feature history across Phases 1–39.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
@@ -191,9 +194,10 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.20.0 baseline:** backend 786 + plugins 615 + Vitest 1233
-  = **2634 tests**. E2E smoke (16 spec files) runs separately
-  via `cd e2e && npx playwright test`.
+- **v1.24.0 baseline:** backend 848 (+1 skipped) + plugins 618
+  + Vitest 1442 = **2908 tests** (+1 skipped). E2E smoke
+  (16 spec files) runs separately via
+  `cd e2e && npx playwright test`.
 
 ## Test isolation
 
