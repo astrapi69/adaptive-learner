@@ -245,6 +245,7 @@ progress:
   step_eval_stickiest_label: 'En çok zaman:'
 settings:
   title: Ayarlar
+  help_intro: "Uygulama içi sözlüğü gözden geçir ve ara. Tam makaleyi açmak için bir girdiye tıkla."
   section_language: Dil
   section_provider: YZ sağlayıcısı
   section_api_keys: API anahtarları

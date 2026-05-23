@@ -260,6 +260,7 @@
   },
   "settings": {
     "title": "Ρυθμίσεις",
+    "help_intro": "Browse and search the in-app glossary. Click any entry for the full article.",
     "section_language": "Γλώσσα",
     "section_provider": "Πάροχος AI",
     "section_api_keys": "Κλειδιά API",

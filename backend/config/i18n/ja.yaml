@@ -245,6 +245,7 @@ progress:
   step_eval_stickiest_label: '最も時間を費やしたステップ:'
 settings:
   title: 設定
+  help_intro: "アプリ内の用語集を閲覧・検索できます。各エントリをクリックすると詳しい記事が開きます。"
   section_language: 言語
   section_provider: AI プロバイダー
   section_api_keys: API キー

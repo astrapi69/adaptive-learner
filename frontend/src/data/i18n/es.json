@@ -260,6 +260,7 @@
   },
   "settings": {
     "title": "Ajustes",
+    "help_intro": "Browse and search the in-app glossary. Click any entry for the full article.",
     "section_language": "Idioma",
     "section_provider": "Proveedor de IA",
     "section_api_keys": "Claves API",

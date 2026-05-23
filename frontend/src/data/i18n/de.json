@@ -260,6 +260,7 @@
   },
   "settings": {
     "title": "Einstellungen",
+    "help_intro": "Durchsuche das integrierte Glossar. Klicke auf einen Eintrag, um den vollständigen Artikel zu öffnen.",
     "section_language": "Sprache",
     "section_provider": "KI-Anbieter",
     "section_api_keys": "API-Keys",

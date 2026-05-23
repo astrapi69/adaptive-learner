@@ -245,6 +245,7 @@ progress:
   step_eval_stickiest_label: 'Mais tempo em:'
 settings:
   title: Configurações
+  help_intro: "Navegue e pesquise o glossário integrado. Clique em qualquer entrada para abrir o artigo completo."
   section_language: Idioma
   section_provider: Provedor de IA
   section_api_keys: Chaves de API

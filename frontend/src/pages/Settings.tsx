@@ -6,6 +6,7 @@ import AboutTab from "../components/about/AboutTab";
 import BackupSection from "../components/BackupSection";
 import ExportSection from "../components/ExportSection";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
+import HelpBrowser from "../components/help/HelpBrowser";
 import VoiceSettingsSection from "../components/VoiceSettingsSection";
 import {ModelPicker} from "../components/ModelPicker";
 import SyncSection from "../components/SyncSection";
@@ -278,6 +279,8 @@ export default function Settings() {
             <header>
                 <h1>{t("settings.title", "Settings")}</h1>
             </header>
+
+            <HelpBrowser />
 
             <section className="settings-section">
                 <h2 className="settings-section-title">
