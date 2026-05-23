@@ -69,6 +69,12 @@ export const apiStorage: IStorageService = {
         // start a session?". Same answer either way.
         getActiveForConversation: (conversationId) =>
             api.imports.getActiveSession(conversationId),
+        // Phase 38 Bug 7 — resume path: fetch the existing
+        // session record + chat history so Session.tsx can
+        // re-render the prior conversation instead of starting
+        // a fresh one.
+        get: (sessionId) => api.session.get(sessionId),
+        getMessages: (sessionId) => api.session.getMessages(sessionId),
     },
 
     tracking: {

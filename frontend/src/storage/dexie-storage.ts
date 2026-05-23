@@ -878,6 +878,59 @@ export const dexieStorage: IStorageService = {
                 status: fresh.status,
             };
         },
+        /**
+         * Phase 38 Bug 7 — fetch a session record by ID for
+         * the resume path. ImportDetail navigates to
+         * ``/session?session=<id>`` and Session.tsx reads
+         * the existing record + messages via these two
+         * methods instead of calling ``start()``.
+         */
+        async get(sessionId: string): Promise<LearningSession> {
+            const db = getDb();
+            const row = await db.learningSessions.get(sessionId);
+            if (!row) {
+                throw new ApiError(404, `Session ${sessionId} not found`);
+            }
+            return {
+                id: row.id,
+                project_id: row.project_id,
+                method: row.method,
+                started_at: row.started_at,
+                ended_at: row.ended_at,
+                cycle_step: row.cycle_step,
+                status: row.status,
+            };
+        },
+        /**
+         * Phase 38 Bug 7 — list the chat history for a
+         * session, oldest-first. Mirrors the backend's
+         * ``GET /plugins/session/{id}/messages`` shape.
+         */
+        async getMessages(sessionId: string): Promise<SessionMessage[]> {
+            const db = getDb();
+            await db.learningSessions.get(sessionId).then((sess) => {
+                if (!sess) {
+                    throw new ApiError(
+                        404,
+                        `Session ${sessionId} not found`,
+                    );
+                }
+            });
+            const rows = await db.sessionMessages
+                .where("session_id")
+                .equals(sessionId)
+                .toArray();
+            rows.sort((a, b) =>
+                a.created_at.localeCompare(b.created_at),
+            );
+            return rows.map((r) => ({
+                id: r.id,
+                session_id: r.session_id,
+                role: r.role,
+                content: r.content,
+                created_at: r.created_at,
+            }));
+        },
     },
 
     tracking: {

@@ -147,6 +147,20 @@ export interface ISessionNamespace {
      * "Continue session" before the user clicks.
      */
     getActiveForConversation(conversationId: string): Promise<LearningSession | null>;
+    /**
+     * Phase 38 Bug 7 — return a session record by ID. Used by the
+     * Session route's resume path (``?session=<id>``): the page
+     * fetches the existing session + its messages instead of
+     * calling ``start()`` and creating a new one.
+     */
+    get(sessionId: string): Promise<LearningSession>;
+    /**
+     * Phase 38 Bug 7 — return the chat history for a session
+     * (oldest-first; the system-prompt message lands as the
+     * first entry). Used by the resume path so SessionChat
+     * remounts with the prior conversation visible.
+     */
+    getMessages(sessionId: string): Promise<SessionMessage[]>;
 }
 
 export interface ITrackingNamespace {

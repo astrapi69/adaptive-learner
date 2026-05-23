@@ -210,7 +210,11 @@ export default function ImportDetail({
         // resumes instead of duplicating.
         if (!detail || startingSession) return;
         if (activeSession) {
-            go(`/session?id=${encodeURIComponent(activeSession.id)}`);
+            // Phase 38 Bug 7 — use ``?session=`` so Session.tsx
+            // takes the resume path (fetches existing record +
+            // chat history) instead of calling start() and
+            // creating a new session.
+            go(`/session?session=${encodeURIComponent(activeSession.id)}`);
             return;
         }
         const {projectId} = readLearnerState();
@@ -232,7 +236,7 @@ export default function ImportDetail({
             // Update the local state in case the user comes back
             // before navigating away.
             setActiveSession(result.session);
-            go(`/session?id=${encodeURIComponent(result.session.id)}`);
+            go(`/session?session=${encodeURIComponent(result.session.id)}`);
         } catch (err) {
             const msg =
                 err instanceof ApiError

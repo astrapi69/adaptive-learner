@@ -153,12 +153,72 @@ export default function Session() {
         }
     }, []);
 
-    // Bootstrap: start a fresh session on mount. The v0.1.0
-    // contract is "one /session visit == one new session"; we
-    // don't try to resume across reloads because there's no
-    // GET /messages endpoint to restore the chat history.
+    // Bootstrap: two modes.
+    //
+    // 1. **Resume mode** (Phase 38 Bug 7): when ``?session=<id>``
+    //    is present in the URL, fetch the existing session +
+    //    its message history. No new session is created. This
+    //    is the path ImportDetail's "Continue session" button
+    //    takes — clicking it must land the user back in their
+    //    prior chat, not in a fresh setup.
+    //
+    // 2. **Start mode**: no ``?session=`` -> create a new
+    //    session via ``start()``. The optional ``?method=<key>``
+    //    param hints the method (used by Dashboard's
+    //    Spaced-Repetition cards).
     useEffect(() => {
         const projectId = readLearnerState().projectId;
+        const resumeId = searchParams.get("session");
+
+        // Resume mode bypasses the projectId / online guards
+        // (the session already exists; the chat just needs to
+        // re-render. Sending the NEXT message requires
+        // network, but loading the history doesn't).
+        if (resumeId) {
+            let cancelled = false;
+            setLoading(true);
+            Promise.all([
+                getStorage().session.get(resumeId),
+                getStorage().session.getMessages(resumeId),
+            ])
+                .then(([existingSession, history]) => {
+                    if (cancelled) return;
+                    setSession(existingSession);
+                    setMessages(
+                        history.map((row) => ({
+                            id: row.id,
+                            role: row.role,
+                            content: row.content,
+                        })),
+                    );
+                    setLoading(false);
+                    void fetchSwitchRecommendation(existingSession.id);
+                    const userId = readLearnerState().userId;
+                    if (userId) {
+                        getStorage().settings
+                            .get(userId)
+                            .then((s) => {
+                                if (!cancelled) setUserSettings(s);
+                            })
+                            .catch(() => {
+                                /* non-blocking */
+                            });
+                    }
+                })
+                .catch((err) => {
+                    if (cancelled) return;
+                    const detail =
+                        err instanceof ApiError
+                            ? err.detail
+                            : t("common.error");
+                    setStartError(detail);
+                    setLoading(false);
+                });
+            return () => {
+                cancelled = true;
+            };
+        }
+
         if (!projectId) {
             navigate("/onboarding", {replace: true});
             return;

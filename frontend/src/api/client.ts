@@ -558,6 +558,23 @@ export const api = {
                 `/plugins/session/${encodeURIComponent(sessionId)}/switch`,
                 {method: "POST", body},
             ),
+        /**
+         * Phase 38 Bug 7 — fetch a session record by ID
+         * (resume path). Throws ApiError (404) on missing.
+         */
+        get: (sessionId: string) =>
+            apiCall<import("../types/domain").LearningSession>(
+                `/plugins/session/${encodeURIComponent(sessionId)}`,
+            ),
+        /**
+         * Phase 38 Bug 7 — fetch the chat history for a
+         * session, oldest-first. The system-prompt message
+         * appears as the first entry.
+         */
+        getMessages: (sessionId: string) =>
+            apiCall<SessionMessage[]>(
+                `/plugins/session/${encodeURIComponent(sessionId)}/messages`,
+            ),
     },
 
     // --- Tracking plugin -------------------------------------------------

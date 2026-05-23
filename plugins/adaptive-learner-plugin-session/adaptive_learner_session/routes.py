@@ -1516,6 +1516,53 @@ def end_session(
     return _SessionEndOut(session=LearningSessionOut.model_validate(sess))
 
 
+# --- GET /{session_id} + /{session_id}/messages (v1.23.0 / Phase 38 Bug 7) ---
+
+
+@router.get(
+    "/{session_id}",
+    response_model=LearningSessionOut,
+)
+def get_session(
+    session_id: str,
+    db: Session = Depends(get_db),
+) -> LearningSessionOut:
+    """Fetch a session record by ID. Used by the frontend's
+    resume path: when a user clicks "Continue session" on the
+    ImportDetail page, the Session route reads ``?session=<id>``
+    and pulls the existing record instead of calling
+    ``POST /start`` (which creates a new session).
+
+    Raises ``NotFoundError`` (-> 404) if the session does not
+    exist; the global exception handler maps it.
+    """
+    sess = _get_session(db, session_id)
+    return LearningSessionOut.model_validate(sess)
+
+
+@router.get(
+    "/{session_id}/messages",
+    response_model=list[SessionMessageOut],
+)
+def list_session_messages(
+    session_id: str,
+    db: Session = Depends(get_db),
+) -> list[SessionMessageOut]:
+    """Return the chat history (oldest-first) for a session.
+    Used by the resume path so the SessionChat re-mounts with
+    the prior conversation visible. The system-prompt message
+    is included so the AI orchestrator's next ``message`` call
+    sees the chronological history."""
+    _get_session(db, session_id)
+    rows = (
+        db.query(SessionMessage)
+        .filter(SessionMessage.session_id == session_id)
+        .order_by(SessionMessage.created_at.asc())
+        .all()
+    )
+    return [SessionMessageOut.model_validate(row) for row in rows]
+
+
 # --- GET /switch-recommendation/{id} (v0.2.0) -----------------------------
 
 

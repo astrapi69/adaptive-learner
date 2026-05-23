@@ -537,3 +537,63 @@ describe("session.rate / end / acceptSwitch / switchRecommendation", () => {
         expect(switches[0].to_method).toBe("dialogic");
     });
 });
+
+describe("session.get / session.getMessages (Phase 38 Bug 7)", () => {
+    it("session.get returns the session record by ID", async () => {
+        const {projectId} = await setupUserWithKey();
+        const started = await dexieStorage.session.start({project_id: projectId});
+        const fetched = await dexieStorage.session.get(started.session.id);
+        expect(fetched.id).toBe(started.session.id);
+        expect(fetched.project_id).toBe(projectId);
+        expect(fetched.status).toBe("active");
+    });
+
+    it("session.get throws ApiError(404) on missing", async () => {
+        await expect(
+            dexieStorage.session.get("does-not-exist"),
+        ).rejects.toMatchObject({status: 404});
+    });
+
+    it("session.getMessages returns the system prompt as the first entry", async () => {
+        const {projectId} = await setupUserWithKey();
+        const started = await dexieStorage.session.start({project_id: projectId});
+        const messages = await dexieStorage.session.getMessages(
+            started.session.id,
+        );
+        expect(messages.length).toBeGreaterThanOrEqual(1);
+        expect(messages[0].role).toBe("system");
+        expect(messages[0].session_id).toBe(started.session.id);
+        // Returned in oldest-first order — the system prompt
+        // must come first.
+        const timestamps = messages.map((m) => m.created_at);
+        expect(timestamps).toEqual([...timestamps].sort());
+    });
+
+    it("session.getMessages returns the chronological history after exchanges", async () => {
+        const {projectId} = await setupUserWithKey();
+        chatReplies.push("Sure, let me explain.");
+        evalReplies.push(
+            '{"advance":false,"confidence":0.6,"reason":"keep going","suggested_step":1}',
+        );
+        const started = await dexieStorage.session.start({project_id: projectId});
+        await dexieStorage.session.message(started.session.id, {
+            role: "user",
+            content: "Hello!",
+        });
+        const messages = await dexieStorage.session.getMessages(
+            started.session.id,
+        );
+        // Expect at least: system prompt, user message, assistant
+        // reply (the order is enforced by created_at).
+        const roles = messages.map((m) => m.role);
+        expect(roles).toContain("system");
+        expect(roles).toContain("user");
+        expect(roles).toContain("assistant");
+    });
+
+    it("session.getMessages throws ApiError(404) on missing session", async () => {
+        await expect(
+            dexieStorage.session.getMessages("missing"),
+        ).rejects.toMatchObject({status: 404});
+    });
+});
