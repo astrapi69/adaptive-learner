@@ -31,6 +31,9 @@ plugins:
     - session
     - tracking
     - tools
+    - gamification
+    - anki
+    - notebooklm
   entry_point_group: adaptive_learner.plugins
 ui:
   title: Adaptive Learner

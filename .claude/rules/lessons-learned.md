@@ -2,6 +2,100 @@
 
 These rules come from real development and solve problems that would otherwise come back over and over.
 
+## Gitignored config + stale example = silent CI drift
+
+Surfaced 2026-05-23 closing
+`COVERAGE-WORKFLOW-PLUGIN-INTEGRATION-01`. When a config file
+is gitignored (so contributors can keep local edits) AND the
+app bootstraps a missing config by copying from a committed
+`.example` sibling, the example MUST be updated every time the
+production config gains a load-bearing entry. Otherwise CI —
+and any other fresh-checkout environment — silently runs with
+the example's shape, not the production shape.
+
+### The trap
+
+`backend/config/app.yaml` is gitignored. `app/main.py`
+copies `app.yaml.example -> app.yaml` on first boot when no
+local file exists. Three new plugins (`gamification`, `anki`,
+`notebooklm`) were enabled in the developer's local `app.yaml`
+when Phases 29A/30B/32 landed, but the example was never
+updated. Every CI push for ~5 releases ran with only 7 of 10
+plugins enabled. 55 plugin-integration tests failed silently
+in the background.
+
+The trap was reinforced by:
+
+- Local `make test` was green for every developer (everyone's
+  local `app.yaml` carried the right shape; the example never
+  got exercised on those machines).
+- The investigation that filed the backlog item hypothesised
+  about `pytest-cov` instrumentation races and entry-point
+  registration ordering — none of which the actual CI log
+  supported. The smoking-gun log line
+  `Plugins enabled in config (7): ...` named the 7 enabled
+  plugins explicitly on every run, but the investigation
+  never read that line.
+
+### Rule
+
+For any gitignored config that has a committed `.example`
+fallback used to bootstrap fresh environments:
+
+1. **Treat `.example` as part of the contract**, not a
+   "for reference" file. It IS what CI / new contributors /
+   docker-build runs against.
+2. **When you add or remove a load-bearing entry in the
+   real config, update the `.example` in the same commit.**
+   Pre-commit hook ideas: a check that diffs the structural
+   shape (top-level keys, list lengths under known paths)
+   between the two files and warns on drift.
+3. **The investigation of a CI-only failure must include
+   the comparison `diff <real-file> <.example-file>`** as
+   step 0, before any hypothesis about flaky tests or
+   tooling races.
+
+### Detection grep
+
+For self-audit on any gitignored config in the project:
+
+```bash
+# Find every gitignored config that has a committed .example.
+git ls-files --others --ignored --exclude-standard \
+  | while read f; do
+      if [ -f "$f.example" ] || [ -f "$(dirname "$f")/$(basename "$f" .yaml).yaml.example" ]; then
+        echo "$f"
+      fi
+    done
+```
+
+Each match is a candidate for the drift pattern. Diff them
+before assuming CI is correct.
+
+### Anti-pattern: hypothesis chains that never read the log
+
+The handover for this bug burned ~2-3 hours of investigation
+across multiple sessions modelling `pytest-cov` / entry-point /
+fixture-order interactions, then ranked four fix paths from
+"highest confidence" downward. The actual CI log printed the
+exact failure mode at INFO level on every run; the
+investigation simply didn't read it. When debugging a CI
+failure, the FIRST artifact to examine is the failing job's
+log — specifically the application's own startup INFO lines.
+Hypothesis-chain triage works for symptoms with no observable
+diagnostic; it actively harms when the diagnostic is sitting
+in plain text in the log.
+
+### Pairs with
+
+- "User-perceived bug ≠ code bug: the perception-lag class"
+  — same family. Both rules push back against
+  hypothesis-first triage when the evidence is one log-line
+  away.
+- "Real-world data audit BEFORE implementation prevents
+  spec-vs-reality drift" — the corollary at the debugging
+  end: audit the actual evidence before the spec.
+
 ## Bulk-operation limits should be per-operation cost-profile
 
 The bulk-delete feature shipped with a 200-row cap copied from the existing `bulk-export` precedent. First real use surfaced the symptom: with 209 imported articles, "Alle auswählen" tripped the cap and both Export AND Löschen disabled. Export's cap is justified (pandoc per row + asset round-trips → minutes); delete's was not (one DB UPDATE / DELETE per row → sub-second).
