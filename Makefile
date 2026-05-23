@@ -29,6 +29,8 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
        sync-i18n \
        lock-all-plugins verify-plugin-locks \
+       release-state release-outdated release-test release-build \
+       release-discover release-tag release-publish \
        clean prod prod-down prod-logs help
 
 # --- Development ---
@@ -388,6 +390,115 @@ verify-plugin-locks: ## Detect drift between each plugin's pyproject.toml and it
 		exit 1; \
 	fi; \
 	echo "OK: all plugin pyproject.toml/poetry.lock pairs in sync."
+
+# --- Release ---
+# Aggregate Makefile targets for the release-workflow.md mechanical
+# steps (Step 1 state capture, Step 4b dep currency, Step 5 test
+# gate, Step 6 builds, Step 7 tag+push, Step 8 GitHub release).
+# Composes existing tools; does NOT replace the canonical
+# sync-versions / verify_version_pins chain. The LLM/human-content
+# steps (CHANGELOG draft, per-release notes composition, CLAUDE.md
+# prose, journal entry) stay manual - release narrative is the
+# human/LLM value-add.
+
+release-state: ## Print state-capture report (release-workflow.md Step 1)
+	@echo "=== Latest tags ==="
+	@git tag --sort=-creatordate | head -5
+	@LAST_TAG=$$(git describe --tags --abbrev=0); \
+		echo ""; \
+		echo "=== Commits since $$LAST_TAG ==="; \
+		git log $$LAST_TAG..HEAD --oneline --no-merges | head -100; \
+		echo ""; \
+		echo "Commit count: $$(git log $$LAST_TAG..HEAD --oneline --no-merges | wc -l)"; \
+		echo ""; \
+		echo "=== Diff stat $$LAST_TAG..HEAD ==="; \
+		git diff $$LAST_TAG..HEAD --stat | tail -1
+	@echo ""
+	@echo "=== Current canonical version ==="
+	@grep "^version" backend/pyproject.toml
+
+release-outdated: ## Dependency currency check across all surfaces (release-workflow.md Step 4b)
+	@echo "=== Backend (poetry show --outdated) ==="
+	@cd backend && COLUMNS=200 poetry show --outdated --no-ansi 2>&1 | grep -v "^adaptive-learner-plugin-" || true
+	@echo ""
+	@echo "=== Launcher (poetry show --outdated) ==="
+	@cd launcher && COLUMNS=200 poetry show --outdated --no-ansi 2>&1 || true
+	@echo ""
+	@echo "=== Frontend (npm outdated) ==="
+	@cd frontend && npm outdated --no-color 2>&1 || true
+	@echo ""
+	@echo "Reminder: apply routine bumps (patch+minor within same major) via 'poetry update <allowlist>' (never bare)."
+
+release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
+	@$(MAKE) test
+	@echo ""
+	@echo "=== Frontend npm run build ==="
+	@cd frontend && npm run build
+	@echo ""
+	@echo "=== Frontend npm run test (vitest) ==="
+	@cd frontend && npm run test
+	@echo ""
+	@echo "=== Subsystem lock-step (sync-versions --check) ==="
+	@$(MAKE) sync-versions-check
+	@echo ""
+	@echo "=== Plugin lockfile drift (verify-plugin-locks) ==="
+	@$(MAKE) verify-plugin-locks
+	@echo ""
+	@echo "Release test gate green. Run Playwright smoke separately: cd e2e && npx playwright test --project=smoke"
+
+release-build: ## Build release artifacts (release-workflow.md Step 6)
+	@PACKAGE_MODE=$$(grep "^package-mode" backend/pyproject.toml | head -1 | awk '{print $$3}' | tr -d ' '); \
+		if [ "$$PACKAGE_MODE" = "false" ]; then \
+			echo "=== Backend poetry build: SKIPPED (package-mode=false) ==="; \
+		else \
+			echo "=== Backend poetry build ==="; \
+			cd backend && poetry build; \
+		fi
+	@echo ""
+	@echo "=== Frontend npm run build ==="
+	@cd frontend && npm run build
+
+release-discover: ## Discover version-shape literals outside the sync-versions target list (advisory)
+	@echo "=== Version-literal discovery ==="
+	@echo "Scanning for X.Y.Z literals in version-assignment contexts"
+	@echo "outside the known sync-versions targets + Tier-4 manual files."
+	@echo ""
+	@output=$$(bash scripts/discover_version_literals.sh); \
+		if [ -z "$$output" ]; then \
+			echo "Clean. No unknown version literals."; \
+		else \
+			echo "$$output"; \
+		fi
+
+release-tag: ## Tag + push main + push tag. Usage: make release-tag VERSION=X.Y.Z
+ifndef VERSION
+	$(error VERSION is required, e.g. make release-tag VERSION=1.25.0)
+endif
+	@echo "=== Pre-tag verification (verify_version_pins.sh) ==="
+	@bash scripts/verify_version_pins.sh $(VERSION)
+	@echo ""
+	@echo "=== Creating tag v$(VERSION) ==="
+	@git tag -a v$(VERSION) -m "Release v$(VERSION)"
+	@echo "=== Pushing main ==="
+	@git push origin main
+	@echo "=== Pushing tag v$(VERSION) ==="
+	@git push origin v$(VERSION)
+	@echo ""
+	@echo "Tag pushed. Next: make release-publish VERSION=$(VERSION)"
+
+release-publish: ## Create GitHub Release from changelog/releases/vX.Y.Z.md. Usage: make release-publish VERSION=X.Y.Z
+ifndef VERSION
+	$(error VERSION is required, e.g. make release-publish VERSION=1.25.0)
+endif
+	@if [ ! -f "changelog/releases/v$(VERSION).md" ]; then \
+		echo "ERROR: changelog/releases/v$(VERSION).md missing."; \
+		echo "Draft the per-release notes file first (release-workflow.md Step 3)."; \
+		exit 1; \
+	fi
+	@echo "=== Creating GitHub Release v$(VERSION) ==="
+	gh release create v$(VERSION) \
+		--title "Adaptive Learner v$(VERSION)" \
+		--notes-file changelog/releases/v$(VERSION).md
 
 # --- Clean ---
 
