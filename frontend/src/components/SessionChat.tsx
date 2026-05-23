@@ -68,10 +68,41 @@ export default function SessionChat({
         setDraft("");
     };
 
+    // v1.23.1 / Bug 7 follow-up — the system-prompt message
+    // is metadata for the AI orchestrator, NOT user-facing
+    // content. Pre-v1.23.1 it rendered as the first chat
+    // bubble (e.g. "Du bist ein Lerncoach..."), which felt
+    // like a wizard/setup screen to users — particularly on
+    // session-resume where the user expected to see their
+    // prior conversation. We hide it from the rendered list
+    // while keeping it in the underlying state so the
+    // backend's next /message call still sees the
+    // chronological history.
+    const visibleMessages = messages.filter((m) => m.role !== "system");
+    const hasOnlySystemPrompt =
+        visibleMessages.length === 0 && messages.length > 0;
+
     return (
         <div className="session-chat" data-testid="session-chat">
             <div className="chat-messages" ref={listRef} data-testid="chat-messages">
-                {messages.map((msg) => {
+                {hasOnlySystemPrompt && (
+                    <div
+                        className="chat-welcome"
+                        data-testid="chat-welcome"
+                        style={{
+                            padding: "1.5rem 1rem",
+                            textAlign: "center",
+                            color: "var(--fg-muted)",
+                            fontStyle: "italic",
+                        }}
+                    >
+                        {t(
+                            "session.welcome_empty",
+                            "Ready to learn! Write your first message.",
+                        )}
+                    </div>
+                )}
+                {visibleMessages.map((msg) => {
                     if (msg.kind === "cycle_transition") {
                         return (
                             <div

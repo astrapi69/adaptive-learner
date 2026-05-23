@@ -219,6 +219,7 @@
     "message_placeholder": "Escribe tu respuesta...",
     "ai_thinking": "Pensando...",
     "ai_error": "El proveedor de IA no pudo responder.",
+    "welcome_empty": "Ready to learn! Write your first message.",
     "end_session": "Terminar sesion",
     "end_session_confirm": "Seguro? Cerraremos la sesion y pediremos una valoracion.",
     "switch_recommended": "Se recomienda cambiar de metodo",

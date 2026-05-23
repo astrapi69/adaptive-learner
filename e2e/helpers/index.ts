@@ -10,6 +10,7 @@ export {
     completeAssessment,
     completeOnboarding,
     createTestUser,
+    seedTestApiKey,
 } from "./onboarding";
 
 export {

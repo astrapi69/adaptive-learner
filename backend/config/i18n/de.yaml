@@ -206,6 +206,7 @@ session:
   message_placeholder: Schreibe deine Antwort …
   ai_thinking: Denkt nach …
   ai_error: Die KI konnte nicht antworten.
+  welcome_empty: "Bereit zum Lernen! Schreibe deine erste Nachricht."
   end_session: Session beenden
   end_session_confirm: Sicher? Wir können die Session beenden und bewerten.
   switch_recommended: Methodenwechsel empfohlen

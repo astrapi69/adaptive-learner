@@ -24,6 +24,7 @@ import {expect, test} from "@playwright/test";
 import {
     completeAssessment,
     completeOnboarding,
+    seedTestApiKey,
     sendChatMessage,
 } from "../helpers";
 
@@ -33,13 +34,25 @@ test.describe("Session flow", () => {
     }) => {
         await completeOnboarding(page, {name: "Session Smoke"});
         await completeAssessment(page);
+        // v1.23.1 / Issue 4 — Quick Start is now gated on
+        // the active provider having a key. Seed a dummy
+        // key so the gate opens; the AI call still fails
+        // (the key isn't real) — which is what this smoke
+        // spec asserts via the ai_error toast path.
+        await seedTestApiKey(page);
+        await page.reload();
 
         // From the dashboard, kick off a new session.
         await page.getByTestId("quick-start").click();
         await page.waitForURL("**/session");
         await expect(page.getByTestId("session")).toBeVisible();
-        // System-prompt seed renders as the first message.
-        await expect(page.getByTestId("chat-message-system")).toBeVisible();
+        // v1.23.1 — the system prompt is HIDDEN from the
+        // chat. The welcome empty-state surfaces instead.
+        // The system prompt is still in the underlying state
+        // for the next /message round-trip; we just don't
+        // render it as a bubble.
+        await expect(page.getByTestId("chat-welcome")).toBeVisible();
+        await expect(page.getByTestId("chat-message-system")).not.toBeVisible();
 
         // Intercept the SSE stream POST so we can pin the
         // dual-prompt contract — the ``done`` event MUST carry a

@@ -219,6 +219,7 @@
     "message_placeholder": "Cevabını yaz…",
     "ai_thinking": "Düşünüyor…",
     "ai_error": "YZ sağlayıcısı cevap veremedi.",
+    "welcome_empty": "Ready to learn! Write your first message.",
     "end_session": "Oturumu bitir",
     "end_session_confirm": "Emin misin? Oturumu kapatıp bir değerlendirme isteyeceğiz.",
     "switch_recommended": "Yöntem değişikliği öneriliyor",

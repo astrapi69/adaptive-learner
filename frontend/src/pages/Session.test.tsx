@@ -162,7 +162,13 @@ describe("Session page", () => {
         });
     });
 
-    it("starts a new session and seeds the chat with the system prompt", async () => {
+    it("starts a new session, seeds the system prompt internally, but HIDES it from the chat", async () => {
+        // v1.23.1 — the system prompt is metadata for the AI
+        // orchestrator. It MUST be seeded into the message
+        // array (so the next /message round-trip includes it
+        // in the chronological history) but MUST NOT render
+        // as a chat bubble; the welcome empty-state surfaces
+        // instead.
         apiStart.mockResolvedValue({
             session: SESSION,
             system_prompt: "Du bist ein Lerncoach.",
@@ -170,9 +176,10 @@ describe("Session page", () => {
         renderSession();
         await screen.findByTestId("session");
         expect(apiStart).toHaveBeenCalledWith({project_id: "p-1", lang: "de"});
-        expect(screen.getByTestId("chat-message-system").textContent).toContain(
-            "Du bist ein Lerncoach.",
-        );
+        expect(
+            screen.queryByTestId("chat-message-system"),
+        ).not.toBeInTheDocument();
+        expect(screen.getByTestId("chat-welcome")).toBeInTheDocument();
         expect(screen.getByTestId("method-badge-deductive")).toBeInTheDocument();
         expect(screen.getByTestId("cycle-progress")).toBeInTheDocument();
     });
@@ -833,8 +840,13 @@ describe("Session page", () => {
         );
         // Critical: ``start()`` was NOT called — no duplicate session.
         expect(apiStart).not.toHaveBeenCalled();
-        // Chat replays the full history (system + user + assistant).
-        expect(screen.getByText("Du bist ein deduktiver Lerncoach.")).toBeInTheDocument();
+        // Chat replays user + assistant turns; the system
+        // prompt is held in state for the next /message
+        // round-trip but is HIDDEN from the rendered list
+        // per the v1.23.1 system-prompt-hiding rule.
+        expect(
+            screen.queryByText("Du bist ein deduktiver Lerncoach."),
+        ).not.toBeInTheDocument();
         expect(
             screen.getByText("Erkläre mir Quantenfeldtheorie."),
         ).toBeInTheDocument();

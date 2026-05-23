@@ -219,6 +219,7 @@
     "message_placeholder": "Γράψε την απάντησή σου...",
     "ai_thinking": "Σκέφτομαι...",
     "ai_error": "Ο πάροχος AI δεν μπόρεσε να απαντήσει.",
+    "welcome_empty": "Ready to learn! Write your first message.",
     "end_session": "Τερματισμός συνεδρίας",
     "end_session_confirm": "Σίγουρα; Θα κλείσουμε τη συνεδρία και θα ζητήσουμε αξιολόγηση.",
     "switch_recommended": "Συνιστάται αλλαγή μεθόδου",

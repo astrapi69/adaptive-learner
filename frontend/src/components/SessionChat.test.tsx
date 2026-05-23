@@ -10,11 +10,44 @@ const MESSAGES: ChatMessage[] = [
 ];
 
 describe("SessionChat", () => {
-    it("renders one message per item with role-tagged testids", () => {
+    it("renders user + assistant bubbles but HIDES system-prompt metadata", () => {
+        // v1.23.1 / Bug 7 follow-up — system messages are
+        // metadata for the AI orchestrator, not user-facing
+        // content. Pre-v1.23.1 they rendered as the first
+        // chat bubble; the resume-session flow surfaced this
+        // as a "wizard/setup" UX smell. The filter belongs
+        // in the chat surface (presentation layer); the
+        // upstream messages array still carries the system
+        // entry so the next /message POST sees the
+        // chronological history.
         render(<SessionChat messages={MESSAGES} onSend={() => {}} />);
-        expect(screen.getByTestId("chat-message-system")).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("chat-message-system"),
+        ).not.toBeInTheDocument();
         expect(screen.getByTestId("chat-message-user")).toBeInTheDocument();
         expect(screen.getByTestId("chat-message-assistant")).toBeInTheDocument();
+    });
+
+    it("shows the welcome empty-state when only the system prompt is in history", () => {
+        // Resume-mode pre-first-exchange: backend returns a
+        // single system row; the chat must NOT render that
+        // row but instead surface a friendly welcome line so
+        // the user understands the chat is empty by design.
+        const onlySystem: ChatMessage[] = [
+            {id: "1", role: "system", content: "Du bist ein Lerncoach."},
+        ];
+        render(<SessionChat messages={onlySystem} onSend={() => {}} />);
+        expect(screen.getByTestId("chat-welcome")).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("chat-message-system"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("does NOT show the welcome empty-state once a user message exists", () => {
+        render(<SessionChat messages={MESSAGES} onSend={() => {}} />);
+        expect(
+            screen.queryByTestId("chat-welcome"),
+        ).not.toBeInTheDocument();
     });
 
     it("disables send when the draft is empty", () => {

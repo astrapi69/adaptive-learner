@@ -219,6 +219,7 @@
     "message_placeholder": "返信を入力…",
     "ai_thinking": "考え中…",
     "ai_error": "AI プロバイダーが返信できませんでした。",
+    "welcome_empty": "Ready to learn! Write your first message.",
     "end_session": "セッションを終了",
     "end_session_confirm": "よろしいですか? セッションを終了して評価をお願いします。",
     "switch_recommended": "方法の切り替えを推奨",

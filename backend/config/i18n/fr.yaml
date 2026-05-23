@@ -206,6 +206,7 @@ session:
   message_placeholder: Ecris ta reponse...
   ai_thinking: Reflexion...
   ai_error: Le fournisseur IA n'a pas pu repondre.
+  welcome_empty: "Ready to learn! Write your first message."
   end_session: Terminer la session
   end_session_confirm: Sur ? Nous allons fermer la session et demander une evaluation.
   switch_recommended: Changement de methode recommande

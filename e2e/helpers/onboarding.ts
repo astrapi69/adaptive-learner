@@ -91,3 +91,55 @@ export async function createTestUser(
     await completeOnboarding(page, args);
     await completeAssessment(page);
 }
+
+/**
+ * v1.23.1 / Issue 4 — seed a dummy API key for the active
+ * provider. Required when the spec wants to click any
+ * AI-gated button (Quick Start, Analyze, Pronunciation,
+ * Extract Anki) — those buttons are disabled until the
+ * user's settings carry ``has_<provider>_key=true``.
+ *
+ * The key is a stub string; the backend stores it as
+ * Fernet-encrypted ciphertext but never actually calls the
+ * provider's API with it. Specs that pin the "ai_error
+ * toast surfaces" path are still valid — the key exists so
+ * the gate opens; the AI call still fails because the key
+ * isn't real.
+ */
+export async function seedTestApiKey(
+    page: Page,
+    provider: "anthropic" | "openai" | "gemini" = "anthropic",
+): Promise<void> {
+    const userId = await page.evaluate(() =>
+        localStorage.getItem("adaptive-learner.user_id"),
+    );
+    if (!userId) {
+        throw new Error(
+            "seedTestApiKey called before user_id is in localStorage; " +
+                "run completeOnboarding first.",
+        );
+    }
+    // PATCH /api/users/{uid}/settings carries the per-
+    // provider key fields. Sending one ``api_key_<provider>``
+    // string flips the matching ``has_<provider>_key`` to
+    // true on the GET response.
+    await page.evaluate(
+        async ({uid, prov}) => {
+            const body: Record<string, string> = {
+                active_provider: prov,
+            };
+            body[`api_key_${prov}`] = "sk-e2e-test-dummy-key";
+            const resp = await fetch(`/api/users/${uid}/settings`, {
+                method: "PATCH",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(body),
+            });
+            if (!resp.ok) {
+                throw new Error(
+                    `seedTestApiKey: PATCH failed ${resp.status}`,
+                );
+            }
+        },
+        {uid: userId, prov: provider},
+    );
+}
