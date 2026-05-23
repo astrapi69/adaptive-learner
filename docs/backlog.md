@@ -112,6 +112,29 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
+- [ ] **BACKUP-DIR-EXPORT-01**: Best-effort "Save backup to
+  disk" feature for Dexie-mode users. Originally scoped as
+  Phase 41C (auto-backup to
+  ``~/.config/adaptive-learner/backup-latest.json`` via the
+  File System Access API), deferred after the Phase 41 audit
+  showed browser sandboxing makes silent writes to an
+  arbitrary user-readable path infeasible:
+  ``showSaveFilePicker()`` is always interactive,
+  ``navigator.storage.getDirectory()`` is the sandboxed
+  Origin Private File System (not visible to the user's file
+  manager), and the "persist a directory handle via
+  IndexedDB" workaround dies the moment IndexedDB is wiped —
+  exactly the failure mode this layer was supposed to
+  address. The two-layer recovery shipped in Phase 41
+  (identity.yaml + Dexie self-recovery from existing tables)
+  covers ~95% of real-world post-wipe scenarios, so the
+  follow-up is an *interactive* "Save backup to disk" Settings
+  action (different UX shape than auto-backup): user clicks,
+  ``showSaveFilePicker`` prompts, a single timestamped JSON
+  drops to their downloads folder. Trigger: a user reports
+  losing data after a full browser-data clear in Dexie mode
+  + at least one request for "can I export a JSON I keep
+  somewhere".
 - [ ] **HELP-CONTENT-TRANSLATIONS-01**: Translate the 22-entry
   help glossary content (``backend/config/help/*.yaml``) for
   ES / FR / EL / PT / TR / JA. Currently EN-passthrough — the
