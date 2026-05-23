@@ -44,6 +44,36 @@ function loadBundle(category: string, lang: string): Bundle {
     );
 }
 
+describe("help bundles — Features", () => {
+    const expectedFeatures = new Set([
+        "feature_method_switch",
+        "feature_auto_loop",
+        "feature_spaced_repetition",
+        "feature_conversation_analysis",
+        "feature_gamification",
+    ]);
+
+    for (const lang of ["de", "en"] as const) {
+        it(`features.${lang} parses + contains all five canonical entries`, () => {
+            const bundle = loadBundle("features", lang);
+            expect(bundle.category).toBe("features");
+            expect(bundle.language).toBe(lang);
+            const keys = new Set(bundle.entries.map((e) => e.key));
+            for (const expected of expectedFeatures) {
+                expect(keys.has(expected)).toBe(true);
+            }
+        });
+    }
+
+    it("DE + EN features bundles have identical key sets", () => {
+        const de = loadBundle("features", "de");
+        const en = loadBundle("features", "en");
+        const deKeys = new Set(de.entries.map((e) => e.key));
+        const enKeys = new Set(en.entries.map((e) => e.key));
+        expect([...deKeys].sort()).toEqual([...enKeys].sort());
+    });
+});
+
 describe("help bundles — Steps", () => {
     const expectedSteps = new Set([
         "step_input",

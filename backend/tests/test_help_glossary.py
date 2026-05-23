@@ -157,6 +157,42 @@ def test_de_en_parity_steps():
     )
 
 
+def test_features_has_five_entries():
+    expected = {
+        "feature_method_switch",
+        "feature_auto_loop",
+        "feature_spaced_repetition",
+        "feature_conversation_analysis",
+        "feature_gamification",
+    }
+    for lang in ("de", "en"):
+        keys = {e["key"] for e in list_entries(lang, category="features")}
+        assert expected <= keys, (
+            f"{lang}: missing features entries: {expected - keys}"
+        )
+
+
+def test_de_en_parity_features():
+    de_keys = {e["key"] for e in list_entries("de", category="features")}
+    en_keys = {e["key"] for e in list_entries("en", category="features")}
+    assert de_keys == en_keys, (
+        f"DE/EN drift in features:\n"
+        f"  only in DE: {de_keys - en_keys}\n"
+        f"  only in EN: {en_keys - de_keys}"
+    )
+
+
+def test_list_entries_no_category_returns_all_22():
+    """Pin: with no category filter, we get every entry across
+    all four categories. The 22-count is the Phase 38A canonical
+    total (4 concepts + 6 methods + 7 steps + 5 features)."""
+    for lang in ("de", "en"):
+        entries = list_entries(lang)
+        assert len(entries) == 22, (
+            f"{lang}: expected 22 entries (4+6+7+5), got {len(entries)}"
+        )
+
+
 def test_categories_constant_covers_filesystem():
     """If a new YAML category lands on disk, CATEGORIES must
     grow to match. Pin so future glossary additions do not
