@@ -9,18 +9,21 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.24.0** (Phase 39 — WCAG 2.1 Level
-  AA accessibility audit + remediation: skip-to-content link
-  + landmark structure, keyboard navigation + focus
-  management, ARIA labels + live regions, chart text
-  summaries + data-table alternatives, brand-palette contrast
-  fix + colorblind-safe per-method text colour, @axe-core/react
-  dev-mode integration, prefers-reduced-motion catch-all.
-  Full audit doc at docs/audits/wcag-2026-05-23.md). v1.23.x
-  was Phase 38 / in-app contextual help. See
-  [changelog/releases/v1.24.0.md](changelog/releases/v1.24.0.md)
+- **Current state:** **v1.25.0** (Phase 41 — identity
+  persistence + browser-wipe recovery + Danger Zone:
+  ``~/.config/adaptive_learner/identity.yaml`` writes on
+  user / project / language changes, frontend Landing flow
+  recovers from disk (API mode) or IndexedDB (Dexie mode)
+  after a localStorage wipe, Settings > About > Identity
+  status panel, Settings > Danger Zone with three-step
+  typed-confirm reset (``POST /api/reset`` truncates every
+  table + scrubs ``ai.*`` from secrets.yaml while preserving
+  the Fernet ``secret_key``). v1.24.x was Phase 39 / WCAG
+  2.1 AA accessibility audit; v1.24.1 = Phase 40 release-
+  automation hardening. See
+  [changelog/releases/v1.25.0.md](changelog/releases/v1.25.0.md)
   for the per-release detail and `git log --oneline` for the
-  feature history across Phases 1–39.
+  feature history across Phases 1–41.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
@@ -194,8 +197,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.24.0 baseline:** backend 848 (+1 skipped) + plugins 618
-  + Vitest 1442 = **2908 tests** (+1 skipped). E2E smoke
+- **v1.25.0 baseline:** backend 882 (+1 skipped) + plugins 618
+  + Vitest 1465 = **2965 tests** (+1 skipped). E2E smoke
   (16 spec files) runs separately via
   `cd e2e && npx playwright test`.
 
