@@ -7,4 +7,4 @@ them as ``anki_card_suggestions`` rows, and serves them through
 accept + edit + bundle into a .apkg.
 """
 
-__version__ = "1.23.1"
+__version__ = "1.23.2"
