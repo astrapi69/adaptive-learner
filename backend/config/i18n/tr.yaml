@@ -701,19 +701,19 @@ gamification:
   reset_done: 'İlerleme sıfırlandı: {xp} XP, {badges} rozet, {streak} seri.'
   reset_failed: İlerleme sıfırlanamadı.
   weekend_mode_save_failed: Hafta sonu modu kaydedilemedi.
-  danger_zone_heading: Danger Zone
-  danger_zone_intro: Permanently delete every piece of learner state on this device.
-  danger_zone_reset_button: Reset Everything
-  danger_zone_warning: This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.
-  danger_zone_confirm_prompt: 'Type RESET to confirm'
+  danger_zone_heading: Tehlikeli Bölge
+  danger_zone_intro: Bu cihazdaki tüm öğrenme verilerini kalıcı olarak sil.
+  danger_zone_reset_button: Her şeyi sıfırla
+  danger_zone_warning: Bu, TÜM öğrenme verilerinizi kalıcı olarak siler — oturumlar, ilerleme, profiller, müfredatlar, içe aktarmalar, Anki kartları, ayarlar ve API anahtarları. Bu işlem GERİ ALINAMAZ.
+  danger_zone_confirm_prompt: 'Onaylamak için RESET yazın'
   danger_zone_input_placeholder: RESET
-  danger_zone_final_button: Delete permanently
-  danger_zone_backup_offer: Create a backup first?
-  danger_zone_backup_button: Create backup
-  danger_zone_complete_toast: All data has been deleted.
-  danger_zone_cancel: Cancel
-  danger_zone_continue: Continue
-  danger_zone_failed_toast: 'Reset failed:'
+  danger_zone_final_button: Kalıcı olarak sil
+  danger_zone_backup_offer: Önce bir yedek oluşturmak ister misin?
+  danger_zone_backup_button: Yedek oluştur
+  danger_zone_complete_toast: Tüm veriler silindi.
+  danger_zone_cancel: Vazgeç
+  danger_zone_continue: Devam et
+  danger_zone_failed_toast: 'Sıfırlama başarısız:'
 anki:
   title: Anki Dışa Aktarma
   intro: YZ'nin önerdiği kartları gözden geçir, istediklerini kabul et ve Anki için .apkg dosyası olarak dışa aktar.
