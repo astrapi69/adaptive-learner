@@ -112,6 +112,37 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
+- [ ] **COVERAGE-WORKFLOW-PLUGIN-INTEGRATION-01**: The
+  ``.github/workflows/coverage.yml`` Backend Coverage job has
+  been failing with 55 plugin-integration test failures since
+  at least v1.23.2 (verified line-for-line against the v1.23.2,
+  v1.24.0, v1.24.1, and v1.25.0 runs - same 55 tests, same
+  assertion shapes). Failure pattern: ``assert 404 == 200`` /
+  ``KeyError: 'id'`` / ``Response [404 Not Found]`` from
+  ``tests/test_notebooklm_plugin_integration.py`` (~16) +
+  ``tests/test_tracking_plugin_integration.py`` (~39). The
+  pattern is consistent with FastAPI plugin routes failing to
+  mount during the test-client lifespan, which happens when
+  PluginForge's entry-point discovery can't find the plugin
+  packages. Locally ``poetry run pytest`` on the same files
+  passes 39/39, and ``make test`` is green - so the production
+  pytest gate works. The coverage workflow runs only
+  ``poetry install --no-interaction`` in ``backend/`` then
+  ``poetry run pytest``, without the per-plugin install dance
+  that ``make install`` does. Two suspected root causes:
+  (1) ``poetry install`` in CI installs the path-dep plugins
+  in a different order or with develop-mode quirks that don't
+  register entry points by the time the lifespan starts;
+  (2) the coverage venv is freshly created and ``pip
+  install -e .`` style entry-point registration races with
+  pytest's collection. Fix is almost certainly to replace the
+  bespoke install steps in ``coverage.yml`` with the
+  ``make install`` chain (which is the canonical install path
+  the rest of the project uses). Low priority because
+  Coverage is informational only - it does not gate releases
+  (``make release-test`` runs ``make test`` directly and is
+  the gate that matters). Trigger: someone wants to read a
+  coverage report and is annoyed by red badges.
 - [ ] **BACKUP-DIR-EXPORT-01**: Best-effort "Save backup to
   disk" feature for Dexie-mode users. Originally scoped as
   Phase 41C (auto-backup to
