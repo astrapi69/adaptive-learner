@@ -9,12 +9,15 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.21.0** (Phase 35 — comprehensive
-  documentation refresh; v1.20.0 was Phase 34 / `secrets.yaml`
-  API-key storage). See
-  [changelog/releases/v1.21.0.md](changelog/releases/v1.21.0.md)
+- **Current state:** **v1.23.0** (Phase 38 — in-app
+  contextual help system: 22-entry glossary DE/EN with
+  EN-passthrough for ES/FR/EL/PT/TR/JA, HelpTooltip with
+  Radix HoverCard, HelpDrawer with react-markdown, HelpLink
+  icons throughout the UI, Settings > Help glossary browser).
+  v1.22.0 was Phase 37 / error-report framework. See
+  [changelog/releases/v1.23.0.md](changelog/releases/v1.23.0.md)
   for the per-release detail and `git log --oneline` for the
-  feature history across Phases 1–35.
+  feature history across Phases 1–38.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
