@@ -143,6 +143,7 @@
     "start_button": "Comece sua jornada de aprendizado",
     "docs_link": "Leia a documentação",
     "checking_session": "Bem-vindo de volta…",
+    "recovered_toast": "Bem-vindo de volta! Seus dados de aprendizado ainda estão aqui.",
     "intro": "O Adaptive Learner identifica o método que melhor se encaixa em você entre seis abordagens de aprendizado embasadas em pesquisa, e te guia por um ciclo de sete passos em cada sessão."
   },
   "onboarding": {

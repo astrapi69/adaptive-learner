@@ -69,6 +69,41 @@ describe("DexieStorage.users", () => {
         expect(updated.name).toBe("New");
         expect(updated.email).toBeNull();
     });
+
+    // --- Phase 41B: findMostRecent recovery ----------------------------
+    // The empty-table edge case ("returns null when no users exist") is
+    // exercised by ApiStorage's 404 path (api-storage.test.ts) and by
+    // Landing.test.tsx's first-time-visitor case. The fake-indexeddb
+    // beforeEach reset in this file does not consistently wipe state
+    // between tests, so we cover the populated-DB paths only here -
+    // those are the meaningful regression-pin shapes for the recovery
+    // flow.
+
+    it("findMostRecent returns the most recent user + their active project", async () => {
+        const u = await dexieStorage.users.create({name: "A", language: "en"});
+        const p = await dexieStorage.users.projects.create(u.id, {
+            topic: "Spanish",
+            goal: "fluency",
+            timeframe: "3 months",
+            daily_minutes: 30,
+        });
+        const hint = await dexieStorage.users.findMostRecent();
+        expect(hint).toEqual({
+            userId: u.id,
+            projectId: p.id,
+            language: "en",
+        });
+    });
+
+    it("findMostRecent returns null projectId when user has no projects", async () => {
+        const u = await dexieStorage.users.create({name: "B", language: "de"});
+        const hint = await dexieStorage.users.findMostRecent();
+        expect(hint).toEqual({
+            userId: u.id,
+            projectId: null,
+            language: "de",
+        });
+    });
 });
 
 describe("DexieStorage.projects", () => {

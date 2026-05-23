@@ -465,6 +465,41 @@ export const dexieStorage: IStorageService = {
                 return rowToProject(row);
             },
         },
+        async findMostRecent() {
+            // Phase 41B: Dexie-mode recovery. When localStorage is
+            // empty but IndexedDB still carries learner data (a
+            // localStorage-only wipe, not a full browser clear), we
+            // can re-seed Landing.tsx from the most recent users row
+            // + their currently-active project.
+            const db = getDb();
+            const rows = await db.users.toArray();
+            if (rows.length === 0) {
+                return null;
+            }
+            // Sort by updated_at desc; ties broken by created_at desc.
+            rows.sort((a, b) => {
+                const u = b.updated_at.localeCompare(a.updated_at);
+                return u !== 0 ? u : b.created_at.localeCompare(a.created_at);
+            });
+            const user = rows[0];
+            // Pick the user's currently-active project; fall back to
+            // the most-recent project when no row is marked active
+            // (legacy seed data, partial imports, etc.).
+            const projects = await db.learningProjects
+                .where("user_id")
+                .equals(user.id)
+                .toArray();
+            const active = projects.find((p) => p.active) ?? null;
+            const fallback = projects
+                .slice()
+                .sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
+            const project = active ?? fallback ?? null;
+            return {
+                userId: user.id,
+                projectId: project?.id ?? null,
+                language: user.language,
+            };
+        },
     },
 
     projects: {

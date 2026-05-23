@@ -134,6 +134,7 @@ landing:
   start_button: Öğrenme yolculuğuna başla
   docs_link: Belgeleri oku
   checking_session: Tekrar hoş geldin…
+  recovered_toast: Tekrar hoş geldin! Öğrenme verilerin hâlâ burada.
   intro: Adaptive Learner, araştırmalara dayanan altı öğrenme yaklaşımı arasından sana en uygun yöntemi bulur ve her oturumda yedi adımlı bir döngüden geçirir.
 onboarding:
   title: Bir öğrenme projesi oluştur

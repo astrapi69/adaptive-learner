@@ -198,6 +198,22 @@ function buildUrl(path: string, query?: Record<string, string | number | undefin
     return qs ? `${base}?${qs}` : base;
 }
 
+// --- Response payload shapes -------------------------------------------
+
+/**
+ * Wire shape of GET /api/identity (Phase 41A). Mirrors backend's
+ * ``IdentityOut`` schema. ``user_id`` is always present; the other
+ * three fields are nullable because the identity file is written
+ * BEFORE the user creates their first project (so active_project_id
+ * may be null) and ``last_seen`` is auto-set on every write.
+ */
+export interface IdentityPayload {
+    user_id: string;
+    active_project_id: string | null;
+    language: string | null;
+    last_seen: string | null;
+}
+
 // --- Request payload shapes --------------------------------------------
 
 export interface UserCreateBody {
@@ -361,6 +377,28 @@ export const api = {
     i18n: {
         get: (lang: string) =>
             apiCall<Record<string, unknown>>(`/i18n/${encodeURIComponent(lang)}`),
+    },
+
+    // --- Identity (Phase 41A) -------------------------------------------
+    // Recovery surface for the post-browser-wipe Landing flow. Backed by
+    // ~/.config/adaptive_learner/identity.yaml; GET returns 404 when the
+    // file is missing (genuine first visit), 200 with the payload when
+    // a prior session left a trace on disk. The wrapper translates the
+    // 404 into a null return so callers don't have to catch ApiError
+    // just to distinguish "missing" from real failures.
+
+    identity: {
+        get: async (): Promise<IdentityPayload | null> => {
+            try {
+                return await apiCall<IdentityPayload>("/identity");
+            } catch (err) {
+                if (err instanceof ApiError && err.status === 404) {
+                    return null;
+                }
+                throw err;
+            }
+        },
+        delete: () => apiCall<void>("/identity", {method: "DELETE"}),
     },
 
     // --- Users -----------------------------------------------------------

@@ -143,6 +143,7 @@
     "start_button": "Comienza tu viaje de aprendizaje",
     "docs_link": "Leer la documentación",
     "checking_session": "Bienvenido de nuevo...",
+    "recovered_toast": "Bienvenido de nuevo. Tus datos de aprendizaje siguen aqui.",
     "intro": "Adaptive Learner encuentra el metodo que mejor se adapta a ti entre seis enfoques de aprendizaje basados en investigacion, y te acompana en un ciclo de siete pasos en cada sesion."
   },
   "onboarding": {

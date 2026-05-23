@@ -134,6 +134,7 @@ landing:
   start_button: Start your learning journey
   docs_link: Read the documentation
   checking_session: Welcome back…
+  recovered_toast: Welcome back! Your learning data is still here.
   intro: Adaptive Learner finds the method that fits you best from six research-backed learning approaches, and walks you through a seven-step cycle on every session.
 onboarding:
   title: Create a learning project

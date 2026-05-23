@@ -134,6 +134,7 @@ landing:
   start_button: Commencer ton parcours d'apprentissage
   docs_link: Lire la documentation
   checking_session: Bon retour...
+  recovered_toast: Bon retour ! Tes donnees d'apprentissage sont toujours la.
   intro: Adaptive Learner trouve la methode qui te convient le mieux parmi six approches basees sur la recherche et t'accompagne dans un cycle en sept etapes a chaque session.
 onboarding:
   title: Creer un projet d'apprentissage

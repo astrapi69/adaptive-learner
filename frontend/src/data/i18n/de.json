@@ -143,6 +143,7 @@
     "start_button": "Lernreise beginnen",
     "docs_link": "Dokumentation lesen",
     "checking_session": "Willkommen zurück …",
+    "recovered_toast": "Willkommen zurück! Deine Lerndaten sind noch da.",
     "intro": "Adaptive Learner findet die für dich passende Methode aus sechs wissenschaftlich fundierten Lernweisen und begleitet dich mit einem 7-Schritte-Zyklus pro Session."
   },
   "onboarding": {

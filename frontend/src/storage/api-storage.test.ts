@@ -78,6 +78,40 @@ describe("ApiStorage delegation", () => {
         expect(calls[1].method).toBe("POST");
     });
 
+    it("users.findMostRecent reads /api/identity and maps to RecoveryHint", async () => {
+        // Phase 41B: identity.yaml -> RecoveryHint adapter.
+        const responseBody = JSON.stringify({
+            user_id: "u-restored",
+            active_project_id: "p-restored",
+            language: "de",
+            last_seen: "2026-05-23T10:00:00Z",
+        });
+        global.fetch = vi.fn(async (input: RequestInfo | URL) => {
+            const url = typeof input === "string" ? input : (input as URL).toString();
+            calls.push({url, method: "GET", body: undefined});
+            return new Response(responseBody, {status: 200});
+        }) as unknown as typeof fetch;
+
+        const hint = await apiStorage.users.findMostRecent();
+        expect(calls[0].url).toBe("/api/identity");
+        expect(hint).toEqual({
+            userId: "u-restored",
+            projectId: "p-restored",
+            language: "de",
+        });
+    });
+
+    it("users.findMostRecent returns null on 404 (no identity.yaml)", async () => {
+        global.fetch = vi.fn(async () => {
+            return new Response(
+                JSON.stringify({detail: "No persisted identity found."}),
+                {status: 404},
+            );
+        }) as unknown as typeof fetch;
+        const hint = await apiStorage.users.findMostRecent();
+        expect(hint).toBeNull();
+    });
+
     it("projects.get + update", async () => {
         await apiStorage.projects.get("p1");
         expect(calls[0].url).toBe("/api/projects/p1");

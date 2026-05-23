@@ -29,6 +29,20 @@ export const apiStorage: IStorageService = {
             list: (userId) => api.users.projects.list(userId),
             create: (userId, body) => api.users.projects.create(userId, body),
         },
+        findMostRecent: async () => {
+            // Phase 41B: identity.yaml is the recovery channel in API
+            // mode. ``api.identity.get`` returns null on 404 so we
+            // pass through without an explicit catch.
+            const payload = await api.identity.get();
+            if (payload === null) {
+                return null;
+            }
+            return {
+                userId: payload.user_id,
+                projectId: payload.active_project_id,
+                language: payload.language,
+            };
+        },
     },
 
     projects: {

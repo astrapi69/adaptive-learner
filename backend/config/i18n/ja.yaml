@@ -134,6 +134,7 @@ landing:
   start_button: 学習の旅を始める
   docs_link: ドキュメントを読む
   checking_session: おかえりなさい…
+  recovered_toast: おかえりなさい！学習データはまだここにあります。
   intro: Adaptive Learner は、研究に基づく 6 つの学習アプローチからあなたに 最適な方法を見つけ、毎セッションで 7 ステップのサイクルをガイドします。
 onboarding:
   title: 学習プロジェクトを作成
