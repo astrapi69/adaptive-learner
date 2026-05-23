@@ -25,6 +25,7 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
 import {useHelp} from "../../contexts/HelpContext";
+import {useButtonTooltips} from "../../hooks/useButtonTooltips";
 import {useI18n} from "../../hooks/useI18n";
 import {getGlossaryEntry, listGlossaryEntries} from "../../lib/help-glossary";
 import type {GlossaryEntry} from "../../types/help";
@@ -56,6 +57,7 @@ function findRelatedKeys(
 export default function HelpDrawer() {
     const {openKey, openHelp, closeHelp} = useHelp();
     const {t, lang} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const entry = openKey ? getGlossaryEntry(openKey, lang) : null;
 
     if (!entry) return null;
@@ -132,6 +134,14 @@ export default function HelpDrawer() {
                                     "ui.common.close",
                                     "Close",
                                 )}
+                                title={
+                                    tooltipsOn
+                                        ? t(
+                                              "ui.common.close",
+                                              "Close",
+                                          )
+                                        : undefined
+                                }
                                 data-testid="help-drawer-close"
                                 style={{
                                     background: "none",

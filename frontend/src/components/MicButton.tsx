@@ -18,6 +18,7 @@
 
 import {useEffect, useRef, useState} from "react";
 
+import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import {readVoicePrefs} from "../lib/voice/voicePref";
 import {
@@ -43,6 +44,7 @@ export default function MicButton({
     testId,
 }: MicButtonProps) {
     const {lang: docLang, t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const [listening, setListening] = useState(false);
     const handleRef = useRef<RecognitionHandle | null>(null);
     const supported = isSpeechRecognitionSupported();
@@ -114,7 +116,7 @@ export default function MicButton({
             data-listening={listening ? "true" : "false"}
             onClick={onClick}
             aria-label={aria}
-            title={aria}
+            title={tooltipsOn ? aria : undefined}
         >
             <span className="mic-button__icon" aria-hidden="true">
                 {listening ? "●" : "🎤"}

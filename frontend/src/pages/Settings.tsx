@@ -7,6 +7,10 @@ import BackupSection from "../components/BackupSection";
 import ExportSection from "../components/ExportSection";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import HelpBrowser from "../components/help/HelpBrowser";
+import {
+    setButtonTooltipsEnabled,
+    useButtonTooltips,
+} from "../hooks/useButtonTooltips";
 import VoiceSettingsSection from "../components/VoiceSettingsSection";
 import {ModelPicker} from "../components/ModelPicker";
 import SyncSection from "../components/SyncSection";
@@ -64,6 +68,15 @@ export default function Settings() {
     const handleGesturesToggle = (next: boolean) => {
         setGesturesOn(next);
         writeGesturePref(next);
+    };
+
+    // Phase 38 — button-tooltip preference. ``useButtonTooltips``
+    // hook reads localStorage + listens for change events; this
+    // local state mirrors it so the toggle reflects the current
+    // value on first render.
+    const buttonTooltipsOn = useButtonTooltips();
+    const handleButtonTooltipsToggle = (next: boolean) => {
+        setButtonTooltipsEnabled(next);
     };
     const [keyDrafts, setKeyDrafts] = useState<Record<AIProvider, string>>({
         anthropic: "",
@@ -330,6 +343,30 @@ export default function Settings() {
                         checked={gesturesOn}
                         onChange={(e) =>
                             handleGesturesToggle(e.target.checked)
+                        }
+                    />
+                </label>
+                <label className="form-row form-row-toggle">
+                    <span className="form-label-stack">
+                        <span className="form-label">
+                            {t(
+                                "settings.button_tooltips",
+                                "Show button tooltips",
+                            )}
+                        </span>
+                        <span className="form-hint">
+                            {t(
+                                "settings.button_tooltips_description",
+                                "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
+                            )}
+                        </span>
+                    </span>
+                    <input
+                        type="checkbox"
+                        data-testid="settings-button-tooltips-toggle"
+                        checked={buttonTooltipsOn}
+                        onChange={(e) =>
+                            handleButtonTooltipsToggle(e.target.checked)
                         }
                     />
                 </label>

@@ -1,5 +1,6 @@
 import {useState} from "react";
 
+import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import {useSwipe} from "../hooks/useSwipe";
 import type {TypedTreeNode} from "../lib/tree";
@@ -26,6 +27,7 @@ export default function TopicNode({
     onDelete,
 }: TopicNodeProps) {
     const {t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const [expanded, setExpanded] = useState(true);
     const [actionsRevealed, setActionsRevealed] = useState(false);
     const value = node.value;
@@ -69,6 +71,18 @@ export default function TopicNode({
                         data-testid={`topic-toggle-${value.id}`}
                         onClick={() => setExpanded((v) => !v)}
                         aria-expanded={expanded}
+                        aria-label={
+                            expanded
+                                ? t("ui.tooltips.collapse", "Collapse")
+                                : t("ui.tooltips.expand", "Expand")
+                        }
+                        title={
+                            tooltipsOn
+                                ? expanded
+                                    ? t("ui.tooltips.collapse", "Collapse")
+                                    : t("ui.tooltips.expand", "Expand")
+                                : undefined
+                        }
                     >
                         {expanded ? "▼" : "▶"}
                     </button>
@@ -84,7 +98,18 @@ export default function TopicNode({
                         className="topic-action-btn"
                         data-testid={`topic-add-${value.id}`}
                         onClick={() => onAddSubtopic(value.id)}
-                        title={t("curriculum.add_subtopic", "Add subtopic")}
+                        aria-label={t(
+                            "ui.tooltips.add_subtopic",
+                            "Add subtopic",
+                        )}
+                        title={
+                            tooltipsOn
+                                ? t(
+                                      "ui.tooltips.add_subtopic",
+                                      "Add subtopic",
+                                  )
+                                : undefined
+                        }
                     >
                         +
                     </button>
@@ -93,7 +118,12 @@ export default function TopicNode({
                         className="topic-action-btn"
                         data-testid={`topic-rename-${value.id}`}
                         onClick={() => onRename(value.id, value.title)}
-                        title={t("common.edit", "Edit")}
+                        aria-label={t("ui.tooltips.rename", "Rename")}
+                        title={
+                            tooltipsOn
+                                ? t("ui.tooltips.rename", "Rename")
+                                : undefined
+                        }
                     >
                         ✎
                     </button>
@@ -102,7 +132,12 @@ export default function TopicNode({
                         className="topic-action-btn is-danger"
                         data-testid={`topic-delete-${value.id}`}
                         onClick={() => onDelete(value.id)}
-                        title={t("common.delete", "Delete")}
+                        aria-label={t("ui.tooltips.delete", "Delete")}
+                        title={
+                            tooltipsOn
+                                ? t("ui.tooltips.delete", "Delete")
+                                : undefined
+                        }
                     >
                         ✕
                     </button>

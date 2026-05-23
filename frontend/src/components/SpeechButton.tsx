@@ -15,6 +15,7 @@
 
 import {useEffect, useRef, useState} from "react";
 
+import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import {readVoicePrefs} from "../lib/voice/voicePref";
 import {
@@ -45,6 +46,7 @@ export default function SpeechButton({
     testId,
 }: SpeechButtonProps) {
     const {lang: docLang, t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const [speaking, setSpeaking] = useState(false);
     const [supported, setSupported] = useState(false);
     const [voiceList, setVoiceList] = useState<SpeechSynthesisVoice[]>([]);
@@ -114,7 +116,7 @@ export default function SpeechButton({
             data-speaking={speaking ? "true" : "false"}
             onClick={onClick}
             aria-label={aria}
-            title={aria}
+            title={tooltipsOn ? aria : undefined}
         >
             <span className="speech-button__icon" aria-hidden="true">
                 {speaking ? "■" : "▶"}

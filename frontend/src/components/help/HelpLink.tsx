@@ -29,6 +29,7 @@
 import {HelpCircle} from "lucide-react";
 
 import {useHelp} from "../../contexts/HelpContext";
+import {useButtonTooltips} from "../../hooks/useButtonTooltips";
 import {useI18n} from "../../hooks/useI18n";
 
 interface Props {
@@ -48,6 +49,7 @@ export default function HelpLink({
 }: Props) {
     const {openHelp} = useHelp();
     const {t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const ariaLabel = label ?? t("ui.help.open_help", "Open help");
 
     return (
@@ -58,7 +60,7 @@ export default function HelpLink({
                 openHelp(glossaryKey);
             }}
             aria-label={ariaLabel}
-            title={ariaLabel}
+            title={tooltipsOn ? ariaLabel : undefined}
             data-testid={`help-link-${glossaryKey}`}
             className="help-link"
             style={{

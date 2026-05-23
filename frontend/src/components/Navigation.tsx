@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
 import {useHelp} from "../contexts/HelpContext";
+import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {useTheme} from "../hooks/useTheme";
@@ -23,6 +24,7 @@ import {readSyncConfig} from "../storage/sync-engine";
  */
 export default function Navigation() {
     const {t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const {theme, toggle} = useTheme();
     const {openHelp} = useHelp();
     const online = useOnlineStatus();
@@ -76,6 +78,7 @@ export default function Navigation() {
                 className="nav-hamburger"
                 data-testid="nav-hamburger"
                 aria-label={t("nav.menu", "Menu")}
+                title={tooltipsOn ? t("nav.menu", "Menu") : undefined}
                 aria-expanded={menuOpen}
                 aria-controls="app-nav-links"
                 onClick={() => setMenuOpen((v) => !v)}
@@ -203,6 +206,11 @@ export default function Navigation() {
                 data-testid="nav-theme-toggle"
                 onClick={toggle}
                 aria-label={`Toggle ${theme === "dark" ? "light" : "dark"} theme`}
+                title={
+                    tooltipsOn
+                        ? `Toggle ${theme === "dark" ? "light" : "dark"} theme`
+                        : undefined
+                }
             >
                 {theme === "dark" ? "☀" : "☾"}
             </button>
