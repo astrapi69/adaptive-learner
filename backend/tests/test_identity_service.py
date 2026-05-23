@@ -242,3 +242,24 @@ def test_delete_identity_removes_file(client, _isolate_config_dir):
     # idempotent
     resp = client.delete("/api/identity")
     assert resp.status_code == 204
+
+
+def test_get_identity_status_when_present(client, _isolate_config_dir):
+    """Phase 41D: status endpoint exposes path + exists + last_seen."""
+    identity_service.update_identity(user_id="u-1", language="de")
+    resp = client.get("/api/identity/status")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["exists"] is True
+    assert body["path"].endswith("/identity.yaml")
+    assert body["last_seen"]
+
+
+def test_get_identity_status_when_missing(client, _isolate_config_dir):
+    """Status endpoint returns 200 (not 404) when no file exists."""
+    resp = client.get("/api/identity/status")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["exists"] is False
+    assert body["path"].endswith("/identity.yaml")
+    assert body["last_seen"] is None

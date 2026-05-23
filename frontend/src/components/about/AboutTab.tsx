@@ -18,6 +18,7 @@ import type {SystemInfo} from "../../types/domain";
 
 import CreditsSection from "./CreditsSection";
 import DonationSection from "./DonationSection";
+import IdentitySection from "./IdentitySection";
 import LicenseResourcesSection from "./LicenseResourcesSection";
 import SystemInfoSection from "./SystemInfoSection";
 import VersionSection from "./VersionSection";
@@ -89,6 +90,7 @@ export default function AboutTab() {
                         storageMode={storageMode}
                         t={t}
                     />
+                    {storageMode === "api" && <IdentitySection t={t} />}
                     <CreditsSection t={t} />
                     <DonationSection t={t} />
                     <LicenseResourcesSection info={info} t={t} />

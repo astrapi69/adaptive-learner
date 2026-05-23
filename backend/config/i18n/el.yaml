@@ -412,6 +412,15 @@ about:
   db_path_label: Διαδρομή βάσης δεδομένων
   platform_label: Πλατφόρμα
   dep_unknown: άγνωστο
+  identity_heading: Αρχείο ταυτότητας
+  identity_loading: Φόρτωση κατάστασης ταυτότητας…
+  identity_error: 'Δεν ήταν δυνατή η φόρτωση της κατάστασης ταυτότητας:'
+  identity_path_label: Διαδρομή
+  identity_status_label: Κατάσταση
+  identity_status_active: Ενεργό
+  identity_status_missing: Δεν βρέθηκε
+  identity_last_seen_label: Τελευταία ενημέρωση
+  identity_explainer: Αυτό το αρχείο διαχειρίζεται αυτόματα από το Adaptive Learner. Επιτρέπει στην εφαρμογή να ανακτήσει την ταυτότητά σου μετά από διαγραφή των δεδομένων του προγράμματος περιήγησης. Μην το επεξεργαστείς χειροκίνητα.
   credits_heading: Συντελεστές
   author_label: Συγγραφέας
   dependencies_label: Κατασκευασμένο με

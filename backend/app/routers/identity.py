@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Response, status
 
-from app.schemas import IdentityOut
+from app.schemas import IdentityOut, IdentityStatusOut
 from app.services import identity_service
 
 router = APIRouter(prefix="/identity", tags=["identity"])
@@ -38,6 +38,24 @@ def get_identity() -> IdentityOut:
             detail="No persisted identity found.",
         )
     return IdentityOut.model_validate(data)
+
+
+@router.get("/status", response_model=IdentityStatusOut)
+def get_identity_status() -> IdentityStatusOut:
+    """Return identity-file diagnostics; always 200 (Phase 41D).
+
+    Powers the Settings > About > Identity status panel. Different
+    from :func:`get_identity` which 404s when the file is missing -
+    this endpoint always returns 200 with ``exists=False`` so the
+    UI can show a "Not found" badge alongside the path the file
+    would live at, without catching an ApiError.
+    """
+    data = identity_service.load_identity()
+    return IdentityStatusOut(
+        exists=data is not None,
+        path=str(identity_service.get_identity_path()),
+        last_seen=(data or {}).get("last_seen"),
+    )
 
 
 @router.delete("", status_code=status.HTTP_204_NO_CONTENT)

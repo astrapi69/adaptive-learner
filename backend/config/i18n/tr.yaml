@@ -412,6 +412,15 @@ about:
   db_path_label: Veritabanı yolu
   platform_label: Platform
   dep_unknown: bilinmiyor
+  identity_heading: Kimlik dosyası
+  identity_loading: Kimlik durumu yükleniyor…
+  identity_error: 'Kimlik durumu yüklenemedi:'
+  identity_path_label: Yol
+  identity_status_label: Durum
+  identity_status_active: Etkin
+  identity_status_missing: Bulunamadı
+  identity_last_seen_label: Son güncelleme
+  identity_explainer: Bu dosya Adaptive Learner tarafından otomatik olarak yönetilir. Tarayıcı verileri silindikten sonra uygulamanın kullanıcı kimliğini kurtarmasını sağlar. Lütfen elle düzenleme.
   credits_heading: Katkılar
   author_label: Yazar
   dependencies_label: Şununla yapıldı

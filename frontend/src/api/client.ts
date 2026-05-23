@@ -214,6 +214,18 @@ export interface IdentityPayload {
     last_seen: string | null;
 }
 
+/**
+ * Wire shape of GET /api/identity/status (Phase 41D). Diagnostic
+ * surface for the Settings > About > Identity panel. Always returns
+ * 200 (even when the file does not exist) so the UI can show a
+ * "Not found" badge with the path the file would live at.
+ */
+export interface IdentityStatusPayload {
+    exists: boolean;
+    path: string;
+    last_seen: string | null;
+}
+
 // --- Request payload shapes --------------------------------------------
 
 export interface UserCreateBody {
@@ -398,6 +410,7 @@ export const api = {
                 throw err;
             }
         },
+        status: () => apiCall<IdentityStatusPayload>("/identity/status"),
         delete: () => apiCall<void>("/identity", {method: "DELETE"}),
     },
 

@@ -1131,3 +1131,21 @@ class IdentityOut(BaseModel):
     active_project_id: str | None = None
     language: str | None = None
     last_seen: str | None = None
+
+
+class IdentityStatusOut(BaseModel):
+    """Payload of GET /api/identity/status (Phase 41D).
+
+    Diagnostic surface for the Settings > About > Identity panel.
+    Different from :class:`IdentityOut`: always returns 200 (even
+    when the file is missing) so the UI can render a "Not found"
+    badge without catching a 404. ``path`` is always resolved
+    (platformdirs config dir + ``identity.yaml``), so the user can
+    see WHERE the file would live even before it gets written.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    exists: bool
+    path: str
+    last_seen: str | None = None

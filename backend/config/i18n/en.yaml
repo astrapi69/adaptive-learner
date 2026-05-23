@@ -412,6 +412,15 @@ about:
   db_path_label: Database path
   platform_label: Platform
   dep_unknown: unknown
+  identity_heading: Identity file
+  identity_loading: Loading identity status…
+  identity_error: 'Could not load identity status:'
+  identity_path_label: Path
+  identity_status_label: Status
+  identity_status_active: Active
+  identity_status_missing: Not found
+  identity_last_seen_label: Last updated
+  identity_explainer: This file is auto-managed by Adaptive Learner. It lets the app recover your user identity after a browser data wipe. Do not edit it manually.
   credits_heading: Credits
   author_label: Author
   dependencies_label: Built with
