@@ -1,5 +1,6 @@
 import {useEffect, useRef, useState, type FormEvent} from "react";
 
+import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import type {MessageRole} from "../lib/constants";
 import MicButton from "./MicButton";
@@ -51,6 +52,7 @@ export default function SessionChat({
     placeholder,
 }: SessionChatProps) {
     const {t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const [draft, setDraft] = useState("");
     const listRef = useRef<HTMLDivElement | null>(null);
 
@@ -214,6 +216,12 @@ export default function SessionChat({
                     className="btn btn-primary"
                     data-testid="chat-send"
                     disabled={disabled || draft.trim().length === 0}
+                    aria-label={t("ui.tooltips.send_message", "Send message")}
+                    title={
+                        tooltipsOn
+                            ? t("ui.tooltips.send_message", "Send message")
+                            : undefined
+                    }
                 >
                     {t("session.send_message", "Send")}
                 </button>

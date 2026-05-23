@@ -2,6 +2,7 @@ import {useState} from "react";
 import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
+import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import RichTextEditor from "./editor/RichTextEditor";
 import EditorToolbar from "./editor/EditorToolbar";
@@ -252,6 +253,13 @@ function RatingRow({
     disabled,
 }: RatingRowProps) {
     const {t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
+    // Rating buttons display just a number (1-5) so the
+    // visible text is ambiguous; every button needs an
+    // explicit aria-label + tooltip describing its tier.
+    // The tiers map: 1-2 -> low, 3 -> medium, 4-5 -> high.
+    const tierKey = (n: number): "rating_low" | "rating_medium" | "rating_high" =>
+        n <= 2 ? "rating_low" : n === 3 ? "rating_medium" : "rating_high";
     return (
         <div className="rating-row" data-testid={testid}>
             <span className="form-label rating-row-label">
@@ -265,20 +273,28 @@ function RatingRow({
                 role="radiogroup"
                 aria-label={t(labelKey, fallback)}
             >
-                {[1, 2, 3, 4, 5].map((n) => (
-                    <button
-                        type="button"
-                        key={n}
-                        role="radio"
-                        aria-checked={value === n}
-                        disabled={disabled}
-                        data-testid={`${testid}-${n}`}
-                        className={`rating-button${value === n ? " is-active" : ""}`}
-                        onClick={() => onChange(n)}
-                    >
-                        {n}
-                    </button>
-                ))}
+                {[1, 2, 3, 4, 5].map((n) => {
+                    const tierLabel = t(
+                        `ui.tooltips.${tierKey(n)}`,
+                        n <= 2 ? "Low" : n === 3 ? "Medium" : "High",
+                    ).replace("{n}", String(n));
+                    return (
+                        <button
+                            type="button"
+                            key={n}
+                            role="radio"
+                            aria-checked={value === n}
+                            aria-label={tierLabel}
+                            title={tooltipsOn ? tierLabel : undefined}
+                            disabled={disabled}
+                            data-testid={`${testid}-${n}`}
+                            className={`rating-button${value === n ? " is-active" : ""}`}
+                            onClick={() => onChange(n)}
+                        >
+                            {n}
+                        </button>
+                    );
+                })}
             </div>
         </div>
     );

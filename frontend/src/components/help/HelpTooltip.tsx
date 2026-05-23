@@ -71,10 +71,27 @@ export default function HelpTooltip({
                         // misroutes the CSS-variable into the
                         // width/style longhands, doesn't corrupt
                         // unit tests. Visual result is identical.
-                        borderBottomWidth: "1px",
+                        //
+                        // 2px dashed in the accent colour
+                        // (the project's primary brand colour
+                        // ``var(--accent)``) makes terms
+                        // discoverable without screaming.
+                        // ``.help-term:hover`` in ``global.css``
+                        // adds a 10% accent-tinted background
+                        // pill so the hover state is unambiguous.
+                        borderBottomWidth: "2px",
                         borderBottomStyle: "dashed",
-                        borderBottomColor: "var(--fg-muted)",
+                        // ``--accent`` is defined in
+                        // ``global.css`` for every theme; no
+                        // fallback needed.
+                        borderBottomColor: "var(--accent)",
                         cursor: "help",
+                        // Padding lets the hover-tint background
+                        // pill breathe a few pixels around the
+                        // term without nudging line layout.
+                        padding: "0 2px",
+                        borderRadius: "4px",
+                        transition: "background-color 120ms ease-in-out",
                     }}
                 >
                     {children}

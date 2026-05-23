@@ -25,6 +25,7 @@
 
 import {useEffect, useState} from "react";
 
+import {useButtonTooltips} from "../../hooks/useButtonTooltips";
 import QRImageUpload from "./QRImageUpload";
 import QRScanner, {type QRScannerError} from "./QRScanner";
 
@@ -42,6 +43,7 @@ export default function QRScannerModal({
     onClose,
     t = (_, fb) => fb ?? "",
 }: QRScannerModalProps) {
+    const tooltipsOn = useButtonTooltips();
     const [error, setError] = useState<QRScannerError | null>(null);
     const [invalidHint, setInvalidHint] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -113,6 +115,11 @@ export default function QRScannerModal({
                     onClick={onClose}
                     data-testid="qr-scanner-close"
                     aria-label={t("common.close", "Close")}
+                    title={
+                        tooltipsOn
+                            ? t("common.close", "Close")
+                            : undefined
+                    }
                     style={{
                         position: "absolute",
                         top: 8,

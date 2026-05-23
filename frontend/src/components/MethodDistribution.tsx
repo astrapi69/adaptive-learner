@@ -61,14 +61,25 @@ export default function MethodDistribution({summary, height = 240}: MethodDistri
         <div
             className="chart-tile"
             data-testid="method-distribution"
-            style={{width: "100%", height}}
+            // ``minHeight`` is load-bearing — see ProgressTimeline
+            // for the full explanation. Flex child of
+            // ``.dashboard-card`` collapses to 0 during the first
+            // layout pass without this; Recharts' ResizeObserver
+            // then measures the parent as 0 and emits the
+            // "width(-1) height(-1)" warning.
+            style={{
+                width: "100%",
+                minWidth: 0,
+                height,
+                minHeight: height,
+            }}
         >
             <ResponsiveContainer
                 width="100%"
                 height="100%"
-                // See ProfileRadar for the rationale; suppress
-                // the Recharts-3.x ``width(-1) height(-1)``
-                // first-render warning.
+                minWidth={0}
+                // Suppress the Recharts-3.x first-render warning
+                // before ResizeObserver measures the real parent.
                 initialDimension={{width: 100, height: 100}}
             >
                 <BarChart data={data} margin={{top: 12, right: 16, bottom: 12, left: 0}}>

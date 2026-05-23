@@ -20,6 +20,7 @@ import {useNavigate} from "react-router-dom";
 
 import {ApiError} from "../api/client";
 import HelpLink from "../components/help/HelpLink";
+import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
@@ -50,6 +51,7 @@ interface ImportPageProps {
 
 export default function Import({onNavigate}: ImportPageProps = {}) {
     const {t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const navigate = useNavigate();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -660,10 +662,14 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
                                         "import.delete_aria",
                                         "Delete this conversation",
                                     )}
-                                    title={t(
-                                        "import.delete_aria",
-                                        "Delete this conversation",
-                                    )}
+                                    title={
+                                        tooltipsOn
+                                            ? t(
+                                                  "import.delete_aria",
+                                                  "Delete this conversation",
+                                              )
+                                            : undefined
+                                    }
                                     style={{
                                         padding: "0.15rem 0.5rem",
                                         fontSize: "0.85rem",

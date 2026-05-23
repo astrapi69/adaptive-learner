@@ -2,6 +2,7 @@ import {useState, type FormEvent} from "react";
 import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
+import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import RichTextEditor from "./editor/RichTextEditor";
 import EditorToolbar from "./editor/EditorToolbar";
@@ -38,6 +39,7 @@ export default function LessonList({
     submitting = false,
 }: LessonListProps) {
     const {t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const [newTitle, setNewTitle] = useState("");
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editTitle, setEditTitle] = useState("");
@@ -174,7 +176,18 @@ export default function LessonList({
                                             className="topic-action-btn"
                                             data-testid={`lesson-edit-${lesson.id}`}
                                             onClick={() => startEdit(lesson)}
-                                            title={t("common.edit", "Edit")}
+                                            aria-label={t(
+                                                "ui.tooltips.edit",
+                                                "Edit",
+                                            )}
+                                            title={
+                                                tooltipsOn
+                                                    ? t(
+                                                          "ui.tooltips.edit",
+                                                          "Edit",
+                                                      )
+                                                    : undefined
+                                            }
                                         >
                                             ✎
                                         </button>
@@ -183,7 +196,18 @@ export default function LessonList({
                                             className="topic-action-btn is-danger"
                                             data-testid={`lesson-delete-${lesson.id}`}
                                             onClick={() => void onDelete(lesson.id)}
-                                            title={t("common.delete", "Delete")}
+                                            aria-label={t(
+                                                "ui.tooltips.delete",
+                                                "Delete",
+                                            )}
+                                            title={
+                                                tooltipsOn
+                                                    ? t(
+                                                          "ui.tooltips.delete",
+                                                          "Delete",
+                                                      )
+                                                    : undefined
+                                            }
                                         >
                                             ✕
                                         </button>

@@ -3699,3 +3699,15 @@ select:focus {
         padding: 12px !important;
     }
 }
+
+/* Phase 38 v1.23.2 — HelpTooltip discoverability. The inline
+ * styles in ``components/help/HelpTooltip.tsx`` set the 2px
+ * dashed accent border on the trigger; this rule adds a
+ * subtle 10%-tinted background on hover so the term reads
+ * as interactive without screaming. ``color-mix`` is widely
+ * supported in modern browsers (Chrome 111+, Safari 16.2+,
+ * Firefox 113+); the fallback is no tint, which is fine. */
+.help-term:hover,
+.help-term:focus-within {
+    background-color: color-mix(in srgb, var(--accent, #6366f1) 10%, transparent);
+}

@@ -67,7 +67,10 @@ describe("HelpTooltip", () => {
         // borders inconsistently in computed style).
         const styleAttr = trigger.getAttribute("style") ?? "";
         expect(styleAttr).toContain("border-bottom-style: dashed");
-        expect(styleAttr).toContain("border-bottom-color: var(--fg-muted)");
+        // v1.23.2 — accent-coloured 2px border for
+        // discoverability (was 1px ``var(--fg-muted)``).
+        expect(styleAttr).toContain("border-bottom-width: 2px");
+        expect(styleAttr).toContain("border-bottom-color: var(--accent");
         expect(styleAttr).toContain("cursor: help");
     });
 

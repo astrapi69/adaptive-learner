@@ -52,14 +52,28 @@ export default function ProgressTimeline({summary, height = 240}: ProgressTimeli
         <div
             className="chart-tile"
             data-testid="progress-timeline"
-            style={{width: "100%", height}}
+            // ``minHeight`` is load-bearing: ``.dashboard-card``
+            // is ``display: flex; flex-direction: column``, so a
+            // flex child without an explicit min-height collapses
+            // to 0 during the first layout pass — Recharts' own
+            // ResizeObserver then measures the parent as 0 and
+            // emits the "width(-1) height(-1)" console warning.
+            // ``minWidth: 0`` mirrors the same trick for the
+            // horizontal axis when the card sits in a tight grid.
+            style={{
+                width: "100%",
+                minWidth: 0,
+                height,
+                minHeight: height,
+            }}
         >
             <ResponsiveContainer
                 width="100%"
                 height="100%"
-                // See ProfileRadar for the rationale; suppress
-                // the Recharts-3.x ``width(-1) height(-1)``
-                // first-render warning.
+                minWidth={0}
+                // See ProfileRadar for the rationale; the
+                // ``initialDimension`` suppresses the warning on
+                // the first render before ResizeObserver fires.
                 initialDimension={{width: 100, height: 100}}
             >
                 <LineChart data={points} margin={{top: 12, right: 24, bottom: 12, left: 0}}>

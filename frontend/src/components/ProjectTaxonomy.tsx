@@ -13,6 +13,7 @@
 
 import {useEffect, useState} from "react";
 
+import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import {getStorage} from "../storage";
 import type {Subject, Tag} from "../types/domain";
@@ -32,6 +33,7 @@ export default function ProjectTaxonomy({
     userId,
 }: ProjectTaxonomyProps) {
     const {t} = useI18n();
+    const tooltipsOn = useButtonTooltips();
     const [assignedSubjects, setAssignedSubjects] = useState<Subject[]>([]);
     const [assignedTags, setAssignedTags] = useState<Tag[]>([]);
     const [allTags, setAllTags] = useState<Tag[]>([]);
@@ -206,6 +208,11 @@ export default function ProjectTaxonomy({
                                         void handleUnassignSubject(subject.id)
                                     }
                                     aria-label={`Remove ${subject.name}`}
+                                    title={
+                                        tooltipsOn
+                                            ? `Remove ${subject.name}`
+                                            : undefined
+                                    }
                                     disabled={submitting}
                                 >
                                     ×

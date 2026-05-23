@@ -41,11 +41,23 @@ export default function ProfileRadar({profile, height = 320}: ProfileRadarProps)
         <div
             className="profile-radar"
             data-testid="profile-radar"
-            style={{width: "100%", height}}
+            // ``minHeight`` + ``minWidth: 0`` are load-bearing —
+            // see ProgressTimeline for the full explanation. The
+            // chart sits inside ``.dashboard-card`` which is
+            // ``display: flex; flex-direction: column``, so a
+            // child without explicit ``min-height`` collapses to
+            // 0 during the first layout pass.
+            style={{
+                width: "100%",
+                minWidth: 0,
+                height,
+                minHeight: height,
+            }}
         >
             <ResponsiveContainer
                 width="100%"
                 height="100%"
+                minWidth={0}
                 // Recharts 3.x defaults ``initialDimension`` to
                 // ``{width:-1, height:-1}`` and the first render
                 // emits a "width(-1) and height(-1) ... should be
