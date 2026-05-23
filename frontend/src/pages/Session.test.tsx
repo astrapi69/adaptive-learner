@@ -21,6 +21,8 @@ const apiSwitchRec = vi.fn();
 const apiAcceptSwitch = vi.fn();
 const apiSettingsGet = vi.fn();
 const apiSettingsGetAvailableModels = vi.fn();
+const apiSessionGet = vi.fn();
+const apiSessionGetMessages = vi.fn();
 
 /**
  * v1.6.0 — Session.tsx now sends via ``streamMessage``. The
@@ -72,6 +74,9 @@ vi.mock("../api/client", async () => {
                 end: (...args: unknown[]) => apiEnd(...args),
                 switchRecommendation: (...args: unknown[]) => apiSwitchRec(...args),
                 acceptSwitch: (...args: unknown[]) => apiAcceptSwitch(...args),
+                get: (...args: unknown[]) => apiSessionGet(...args),
+                getMessages: (...args: unknown[]) =>
+                    apiSessionGetMessages(...args),
             },
             settings: {
                 ...actual.api.settings,
@@ -124,6 +129,8 @@ describe("Session page", () => {
         apiAcceptSwitch.mockReset();
         apiSettingsGet.mockReset();
         apiSettingsGetAvailableModels.mockReset();
+        apiSessionGet.mockReset();
+        apiSessionGetMessages.mockReset();
         // Default: no recommendation. Per-test override when the
         // banner path is being exercised.
         apiSwitchRec.mockResolvedValue({recommended: false});
@@ -766,6 +773,109 @@ describe("Session page", () => {
         expect(
             screen.getByTestId("help-term-learning_session"),
         ).toBeInTheDocument();
+    });
+
+    // --- Bug 7 (regression): resume an existing session via ?session= ---
+    //
+    // The end-to-end contract: when Session.tsx mounts with a
+    // ``?session=<id>`` query param, it MUST NOT call ``start()``
+    // (which would create a fresh session) and MUST instead
+    // fetch the existing session + replay its message history.
+
+    it("resume mode: ?session=<id> fetches the existing session, no new start", async () => {
+        apiSessionGet.mockResolvedValue({
+            id: "resumed-session-id",
+            project_id: "p-1",
+            method: "deductive",
+            started_at: "2026-05-22T10:00:00Z",
+            ended_at: null,
+            cycle_step: 3,
+            status: "active",
+            cycle_count: 1,
+            cycle_topics: [],
+            imported_conversation_id: "conv-1",
+        });
+        apiSessionGetMessages.mockResolvedValue([
+            {
+                id: "sys-1",
+                session_id: "resumed-session-id",
+                role: "system",
+                content: "Du bist ein deduktiver Lerncoach.",
+                created_at: "2026-05-22T10:00:00Z",
+            },
+            {
+                id: "u-1",
+                session_id: "resumed-session-id",
+                role: "user",
+                content: "Erkläre mir Quantenfeldtheorie.",
+                created_at: "2026-05-22T10:00:05Z",
+            },
+            {
+                id: "a-1",
+                session_id: "resumed-session-id",
+                role: "assistant",
+                content: "Quantenfeldtheorie verbindet…",
+                created_at: "2026-05-22T10:00:10Z",
+            },
+        ]);
+        render(
+            <MemoryRouter
+                initialEntries={["/session?session=resumed-session-id"]}
+            >
+                <Session />
+            </MemoryRouter>,
+        );
+        await screen.findByTestId("session");
+        // The two resume endpoints fired.
+        expect(apiSessionGet).toHaveBeenCalledWith("resumed-session-id");
+        expect(apiSessionGetMessages).toHaveBeenCalledWith(
+            "resumed-session-id",
+        );
+        // Critical: ``start()`` was NOT called — no duplicate session.
+        expect(apiStart).not.toHaveBeenCalled();
+        // Chat replays the full history (system + user + assistant).
+        expect(screen.getByText("Du bist ein deduktiver Lerncoach.")).toBeInTheDocument();
+        expect(
+            screen.getByText("Erkläre mir Quantenfeldtheorie."),
+        ).toBeInTheDocument();
+        expect(screen.getByText("Quantenfeldtheorie verbindet…")).toBeInTheDocument();
+        // The session header reflects the resumed cycle_step
+        // (3 -> "error" per CYCLE_STEPS[2]).
+        expect(
+            screen.getByTestId("cycle-step-error").getAttribute("data-state"),
+        ).toBe("current");
+    });
+
+    it("resume mode bypasses the projectId guard (does NOT redirect to onboarding)", async () => {
+        // No project_id in localStorage — would normally redirect
+        // to /onboarding. Resume mode must skip that guard since
+        // the session already exists.
+        localStorage.removeItem("adaptive-learner.project_id");
+        apiSessionGet.mockResolvedValue({
+            id: "resumed-session-id",
+            project_id: "p-1",
+            method: "deductive",
+            started_at: "2026-05-22T10:00:00Z",
+            ended_at: null,
+            cycle_step: 1,
+            status: "active",
+            cycle_count: 1,
+            cycle_topics: [],
+            imported_conversation_id: null,
+        });
+        apiSessionGetMessages.mockResolvedValue([]);
+        render(
+            <MemoryRouter
+                initialEntries={["/session?session=resumed-session-id"]}
+            >
+                <Session />
+            </MemoryRouter>,
+        );
+        await screen.findByTestId("session");
+        expect(mockNavigate).not.toHaveBeenCalledWith("/onboarding", {
+            replace: true,
+        });
+        expect(apiStart).not.toHaveBeenCalled();
     });
 
     // --- v0.6.0 / 9D: offline guard on session start --------------------
