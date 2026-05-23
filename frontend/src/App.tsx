@@ -7,6 +7,7 @@ import type {ApiError} from "./api/client";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ErrorReportDialog from "./components/ErrorReportDialog";
 import EventRecorderSetup from "./components/EventRecorderSetup";
+import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
 import {HelpProvider} from "./contexts/HelpContext";
@@ -112,6 +113,7 @@ export default function App() {
                 </Routes>
                 <InstallPrompt />
                 <EventRecorderSetup />
+                <HelpDrawer />
                 <ErrorReportDialog
                     open={errorReport.open}
                     onClose={() =>
