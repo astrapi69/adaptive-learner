@@ -106,6 +106,41 @@ describe("DexieStorage.users", () => {
     });
 });
 
+// --- Phase 41F Danger Zone reset --------------------------------------
+
+describe("DexieStorage.reset", () => {
+    it("rejects a wrong confirmation token with ApiError(400)", async () => {
+        await expect(dexieStorage.reset("reset")).rejects.toBeInstanceOf(
+            ApiError,
+        );
+        await expect(dexieStorage.reset("RESE")).rejects.toMatchObject({
+            status: 400,
+        });
+    });
+
+    it("clears tables on the correct token + returns {reset, tables_cleared>0}", async () => {
+        const u = await dexieStorage.users.create({name: "X", language: "de"});
+        await dexieStorage.users.projects.create(u.id, {
+            topic: "T",
+            goal: "G",
+            timeframe: "F",
+            daily_minutes: 10,
+        });
+        // Sanity: user is present before reset.
+        const before = await dexieStorage.users.get(u.id);
+        expect(before.id).toBe(u.id);
+
+        const result = await dexieStorage.reset("RESET");
+        expect(result.reset).toBe(true);
+        expect(result.tables_cleared).toBeGreaterThan(0);
+
+        // User is gone after reset.
+        await expect(dexieStorage.users.get(u.id)).rejects.toBeInstanceOf(
+            ApiError,
+        );
+    });
+});
+
 describe("DexieStorage.projects", () => {
     it("create + list + update round-trip", async () => {
         const u = await dexieStorage.users.create({name: "A"});

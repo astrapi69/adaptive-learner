@@ -414,6 +414,16 @@ export const api = {
         delete: () => apiCall<void>("/identity", {method: "DELETE"}),
     },
 
+    // --- Reset (Phase 41F Danger Zone) ----------------------------------
+    // The body's ``confirmation`` field must equal the literal "RESET";
+    // anything else 400s server-side. Surfaced via storage.reset.
+
+    reset: (confirmation: string) =>
+        apiCall<{reset: true; tables_cleared: number}>(
+            "/reset",
+            {method: "POST", body: {confirmation}},
+        ),
+
     // --- Users -----------------------------------------------------------
 
     users: {

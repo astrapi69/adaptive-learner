@@ -701,6 +701,19 @@ gamification:
   reset_done: 'Progresso redefinido: {xp} XP, {badges} emblemas, {streak} sequências.'
   reset_failed: Não foi possível redefinir o progresso.
   weekend_mode_save_failed: Não foi possível salvar o modo fim de semana.
+  danger_zone_heading: Danger Zone
+  danger_zone_intro: Permanently delete every piece of learner state on this device.
+  danger_zone_reset_button: Reset Everything
+  danger_zone_warning: This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.
+  danger_zone_confirm_prompt: 'Type RESET to confirm'
+  danger_zone_input_placeholder: RESET
+  danger_zone_final_button: Delete permanently
+  danger_zone_backup_offer: Create a backup first?
+  danger_zone_backup_button: Create backup
+  danger_zone_complete_toast: All data has been deleted.
+  danger_zone_cancel: Cancel
+  danger_zone_continue: Continue
+  danger_zone_failed_toast: 'Reset failed:'
 anki:
   title: Exportação Anki
   intro: Reveja os flashcards sugeridos pela IA, aceite os que quiser e exporte como arquivo .apkg para o Anki.

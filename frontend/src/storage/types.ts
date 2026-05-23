@@ -646,4 +646,25 @@ export interface IStorageService {
     anki: IAnkiNamespace;
     pronunciation: IPronunciationNamespace;
     notebooklm: INotebookLMNamespace;
+
+    /**
+     * Phase 41F Danger Zone reset. Wipes every piece of learner
+     * state this storage backend owns:
+     *
+     * - ``ApiStorage``: POSTs ``{confirmation}`` to /api/reset.
+     *   The backend truncates every SQLite table, clears
+     *   ~/.config/adaptive_learner/identity.yaml, and scrubs
+     *   ``ai.*`` from secrets.yaml (preserving secret_key).
+     * - ``DexieStorage``: clears every store in the main IndexedDB
+     *   DB plus the separate auto-backup ring. localStorage +
+     *   sessionStorage are cleared by the calling component
+     *   (DangerZoneSection), not here.
+     *
+     * Both implementations require the literal ``"RESET"`` token;
+     * ApiStorage forwards it to the backend gate, DexieStorage
+     * checks it locally and rejects with an ApiError(400) so the
+     * UI's typed-confirm pattern is enforced uniformly across
+     * modes.
+     */
+    reset(confirmation: string): Promise<{reset: true; tables_cleared: number}>;
 }

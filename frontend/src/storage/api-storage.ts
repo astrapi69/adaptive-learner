@@ -248,4 +248,9 @@ export const apiStorage: IStorageService = {
             api.notebooklm.generateFromProject(projectId),
         studyGuide: (projectId) => api.notebooklm.studyGuide(projectId),
     },
+
+    // Phase 41F Danger Zone: typed-confirm reset. ApiStorage hands
+    // the token straight to the backend; the 400 gate lives server-
+    // side (services/reset_service.CONFIRMATION_TOKEN).
+    reset: (confirmation) => api.reset(confirmation),
 };

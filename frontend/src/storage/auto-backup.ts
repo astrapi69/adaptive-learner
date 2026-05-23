@@ -72,6 +72,29 @@ export async function _resetAutoBackupDbForTests(): Promise<void> {
     }
 }
 
+/**
+ * Production: empty the auto-backup ring (Phase 41F Danger Zone).
+ *
+ * Clears the ``backups`` table across all users in a single
+ * transaction. Used by the Settings > Danger Zone reset flow to
+ * scrub the auto-backup ring alongside Dexie's main stores +
+ * localStorage. The cached ``_db`` handle is left in place;
+ * callers that want a truly fresh DB connection (only tests
+ * today) should additionally call ``_resetAutoBackupDbForTests``.
+ *
+ * Best-effort: a failed clear is logged but does not throw, so
+ * the surrounding reset flow can continue.
+ */
+export async function clearAllAutoBackups(): Promise<void> {
+    try {
+        const db = getBackupDb();
+        await db.backups.clear();
+    } catch (err) {
+        // eslint-disable-next-line no-console
+        console.warn("auto-backup clear failed:", err);
+    }
+}
+
 // ---- Preferences --------------------------------------------------------
 
 export function isAutoBackupEnabled(): boolean {

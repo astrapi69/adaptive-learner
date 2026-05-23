@@ -60,25 +60,9 @@ function daysSince(iso: string | null): number | null {
     return Math.floor((Date.now() - ms) / (24 * 60 * 60 * 1000));
 }
 
-function triggerDownload(payload: BackupPayload, filename: string): void {
-    const blob = new Blob([JSON.stringify(payload, null, 2)], {
-        type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-}
-
-function backupFilename(userId: string): string {
-    const date = new Date().toISOString().slice(0, 10);
-    const short = userId.slice(0, 8);
-    return `adaptive-learner-backup-${date}-${short}.json`;
-}
+// Phase 41F: extracted to ``utils/backup-download.ts`` so the
+// DangerZone pre-reset backup button can produce identical files.
+import {triggerBackupDownload, backupFilename} from "../utils/backup-download";
 
 interface ComparisonRow {
     table: string;
@@ -292,7 +276,7 @@ export default function BackupSection() {
         setBusy("export");
         try {
             const payload = await storage.backup.export(userId);
-            triggerDownload(payload, backupFilename(userId));
+            triggerBackupDownload(payload, backupFilename(userId));
             const iso = new Date().toISOString();
             writeLastBackup(iso);
             setLastBackup(iso);

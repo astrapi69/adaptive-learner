@@ -101,6 +101,29 @@ describe("ApiStorage delegation", () => {
         });
     });
 
+    it("reset POSTs the confirmation token to /api/reset", async () => {
+        // Phase 41F Danger Zone: pass-through to the backend.
+        // The 400 gate on wrong tokens is server-side.
+        global.fetch = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+            const url = typeof input === "string" ? input : (input as URL).toString();
+            let body: unknown = undefined;
+            if (typeof init?.body === "string") {
+                body = JSON.parse(init.body);
+            }
+            calls.push({url, method: (init?.method ?? "GET").toUpperCase(), body});
+            return new Response(
+                JSON.stringify({reset: true, tables_cleared: 25}),
+                {status: 200},
+            );
+        }) as unknown as typeof fetch;
+        const result = await apiStorage.reset("RESET");
+        expect(calls[0].url).toBe("/api/reset");
+        expect(calls[0].method).toBe("POST");
+        expect(calls[0].body).toEqual({confirmation: "RESET"});
+        expect(result.reset).toBe(true);
+        expect(result.tables_cleared).toBe(25);
+    });
+
     it("users.findMostRecent returns null on 404 (no identity.yaml)", async () => {
         global.fetch = vi.fn(async () => {
             return new Response(

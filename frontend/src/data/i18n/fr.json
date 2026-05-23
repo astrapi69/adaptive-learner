@@ -765,7 +765,20 @@
     "weekend_mode_help": "Les week-ends ne brisent pas ta série.",
     "reset_done": "Progression réinitialisée : {xp} XP, {badges} badges, {streak} séries.",
     "reset_failed": "Impossible de réinitialiser la progression.",
-    "weekend_mode_save_failed": "Impossible d'enregistrer le mode week-end."
+    "weekend_mode_save_failed": "Impossible d'enregistrer le mode week-end.",
+    "danger_zone_heading": "Danger Zone",
+    "danger_zone_intro": "Permanently delete every piece of learner state on this device.",
+    "danger_zone_reset_button": "Reset Everything",
+    "danger_zone_warning": "This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.",
+    "danger_zone_confirm_prompt": "Type RESET to confirm",
+    "danger_zone_input_placeholder": "RESET",
+    "danger_zone_final_button": "Delete permanently",
+    "danger_zone_backup_offer": "Create a backup first?",
+    "danger_zone_backup_button": "Create backup",
+    "danger_zone_complete_toast": "All data has been deleted.",
+    "danger_zone_cancel": "Cancel",
+    "danger_zone_continue": "Continue",
+    "danger_zone_failed_toast": "Reset failed:"
   },
   "anki": {
     "title": "Exportation Anki",

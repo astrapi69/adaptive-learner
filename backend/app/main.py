@@ -49,6 +49,7 @@ from app.routers.export import router as export_router
 from app.routers.help import router as help_router
 from app.routers.identity import router as identity_router
 from app.routers.imports import imports_router, users_imports_router
+from app.routers.reset import router as reset_router
 from app.routers.projects import projects_router, users_projects_router
 from app.routers.settings import router as settings_router
 from app.routers.sync import router as sync_router
@@ -495,6 +496,7 @@ app.include_router(users_router, prefix="/api")
 app.include_router(users_projects_router, prefix="/api")
 app.include_router(projects_router, prefix="/api")
 app.include_router(identity_router, prefix="/api")
+app.include_router(reset_router, prefix="/api")
 app.include_router(settings_router, prefix="/api")
 app.include_router(users_curricula_router, prefix="/api")
 app.include_router(curricula_router, prefix="/api")

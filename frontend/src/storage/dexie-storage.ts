@@ -61,6 +61,7 @@ import {
     type UserSettingsRow,
 } from "./db";
 import {
+    clearAllAutoBackups,
     maybeRunAutoBackup,
     recordCompletedSession,
 } from "./auto-backup";
@@ -2028,5 +2029,67 @@ export const dexieStorage: IStorageService = {
         extractFromConversation: (conversationId) =>
             extractFromConversationDexie(conversationId),
         markExported: (cardIds) => markAnkiCardsExported(cardIds),
+    },
+
+    // Phase 41F Danger Zone: typed-confirm reset for Dexie mode.
+    // Clears every table on the main Dexie DB plus the separate
+    // auto-backup ring (kept in its own Dexie database by
+    // auto-backup.ts). The confirmation gate matches the backend
+    // server-side check (CONFIRMATION_TOKEN === "RESET"), enforced
+    // here so the UI's typed-confirm pattern behaves identically
+    // across modes; reject with ApiError(400) for parity with the
+    // API-mode 400 response.
+    reset: async (confirmation) => {
+        if (confirmation !== "RESET") {
+            throw new ApiError(400, "Confirmation token mismatch.");
+        }
+        const db = getDb();
+        // Clear every store on the main Dexie DB. Listing them
+        // explicitly rather than iterating ``db.tables`` so a
+        // future contributor who renames a table sees a clear
+        // diff here instead of a silently expanded reset.
+        const tableNames = [
+            "users",
+            "userSettings",
+            "learningProjects",
+            "learningProfiles",
+            "curricula",
+            "learningTopics",
+            "lessons",
+            "learningSessions",
+            "sessionMessages",
+            "sessionRatings",
+            "sessionNotes",
+            "progressCommits",
+            "methodSwitches",
+            "stepEvaluations",
+            "importedConversations",
+            "importedMessages",
+            "subjects",
+            "tags",
+            "projectSubjects",
+            "projectTags",
+            "userXP",
+            "badges",
+            "userBadges",
+            "userStreaks",
+            "ankiCards",
+            "studyQuestions",
+        ];
+        let cleared = 0;
+        for (const name of tableNames) {
+            const table = (db as unknown as Record<string, unknown>)[name];
+            if (table && typeof table === "object" && "clear" in table) {
+                try {
+                    await (table as {clear(): Promise<void>}).clear();
+                    cleared += 1;
+                } catch (err) {
+                    // eslint-disable-next-line no-console
+                    console.warn(`Dexie reset: clear(${name}) failed:`, err);
+                }
+            }
+        }
+        await clearAllAutoBackups();
+        return {reset: true, tables_cleared: cleared};
     },
 };

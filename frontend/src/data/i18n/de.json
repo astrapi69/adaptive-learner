@@ -765,7 +765,20 @@
     "weekend_mode_help": "Wochenenden zählen nicht als Lücke in deiner Serie.",
     "reset_done": "Fortschritt zurückgesetzt: {xp} XP, {badges} Abzeichen, {streak} Serien.",
     "reset_failed": "Fortschritt konnte nicht zurückgesetzt werden.",
-    "weekend_mode_save_failed": "Wochenend-Modus konnte nicht gespeichert werden."
+    "weekend_mode_save_failed": "Wochenend-Modus konnte nicht gespeichert werden.",
+    "danger_zone_heading": "Gefahrenzone",
+    "danger_zone_intro": "Lösche alle Lerndaten auf diesem Gerät unwiderruflich.",
+    "danger_zone_reset_button": "Alles zurücksetzen",
+    "danger_zone_warning": "Das löscht ALLE deine Lerndaten unwiderruflich — Sessions, Fortschritt, Profile, Curricula, Imports, Anki-Karten, Einstellungen und API-Schlüssel. Dieser Vorgang kann NICHT rückgängig gemacht werden.",
+    "danger_zone_confirm_prompt": "Tippe RESET um zu bestätigen",
+    "danger_zone_input_placeholder": "RESET",
+    "danger_zone_final_button": "Endgültig löschen",
+    "danger_zone_backup_offer": "Möchtest du vorher ein Backup erstellen?",
+    "danger_zone_backup_button": "Backup erstellen",
+    "danger_zone_complete_toast": "Alle Daten wurden gelöscht.",
+    "danger_zone_cancel": "Abbrechen",
+    "danger_zone_continue": "Weiter",
+    "danger_zone_failed_toast": "Zurücksetzen fehlgeschlagen:"
   },
   "anki": {
     "title": "Anki-Export",

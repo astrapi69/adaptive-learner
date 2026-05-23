@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import {ApiError} from "../api/client";
 import AboutTab from "../components/about/AboutTab";
 import BackupSection from "../components/BackupSection";
+import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import HelpBrowser from "../components/help/HelpBrowser";
@@ -714,6 +715,7 @@ export default function Settings() {
             <BackupSection />
             <ExportSection />
             <AboutTab />
+            <DangerZoneSection />
         </main>
     );
 }
