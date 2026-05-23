@@ -441,7 +441,7 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
     }
 
     return (
-        <main className="page-import" data-testid="page-import">
+        <main id="main" className="page-import" data-testid="page-import">
             <header style={{padding: "1.5rem", textAlign: "center"}}>
                 <h1 style={{margin: 0}}>
                     {t("import.title", "Import a conversation")}

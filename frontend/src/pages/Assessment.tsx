@@ -263,7 +263,7 @@ export default function Assessment() {
 
     if (loadError) {
         return (
-            <main data-testid="assessment-error" className="assessment-page">
+            <main id="main" data-testid="assessment-error" className="assessment-page">
                 <p className="error-text">{loadError}</p>
             </main>
         );
@@ -271,7 +271,7 @@ export default function Assessment() {
 
     if (profile) {
         return (
-            <main data-testid="assessment-result" className="assessment-page">
+            <main id="main" data-testid="assessment-result" className="assessment-page">
                 <header>
                     <h1>{t("assessment.result_title", "Your learning profile")}</h1>
                 </header>
@@ -315,7 +315,7 @@ export default function Assessment() {
 
     if (!questions) {
         return (
-            <main data-testid="assessment-loading" className="assessment-page">
+            <main id="main" data-testid="assessment-loading" className="assessment-page">
                 <p className="muted">{t("common.loading", "Loading…")}</p>
             </main>
         );
@@ -323,14 +323,14 @@ export default function Assessment() {
 
     if (!current) {
         return (
-            <main data-testid="assessment-empty" className="assessment-page">
+            <main id="main" data-testid="assessment-empty" className="assessment-page">
                 <p className="muted">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }
 
     return (
-        <main data-testid="assessment" className="assessment-page">
+        <main id="main" data-testid="assessment" className="assessment-page">
             <header>
                 <h1>{t("assessment.title", "Learning-type assessment")}</h1>
                 <p className="onboarding-intro">{t("assessment.intro")}</p>

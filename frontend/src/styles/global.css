@@ -112,6 +112,52 @@ a:hover {
   text-decoration: underline;
 }
 
+/* ----------------------------------------------------------------
+ * Accessibility utilities (Phase 39, WCAG 2.1 AA).
+ *
+ *   .sr-only         visually hidden but discoverable by AT.
+ *   .skip-to-content first focusable element on every page;
+ *                    appears top-left when focused.
+ * -------------------------------------------------------------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  z-index: 1000;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition: top 0.15s ease-in-out;
+}
+
+.skip-to-content:focus,
+.skip-to-content:focus-visible {
+  top: 8px;
+  outline: 3px solid var(--fg);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-to-content {
+    transition: none;
+  }
+}
+
 button {
   font-family: inherit;
   cursor: pointer;

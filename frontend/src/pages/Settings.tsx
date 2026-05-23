@@ -274,21 +274,21 @@ export default function Settings() {
 
     if (loadError) {
         return (
-            <main data-testid="settings-error" className="settings-page">
+            <main id="main" data-testid="settings-error" className="settings-page">
                 <p className="error-text">{loadError}</p>
             </main>
         );
     }
     if (!settings) {
         return (
-            <main data-testid="settings-loading" className="settings-page">
+            <main id="main" data-testid="settings-loading" className="settings-page">
                 <p className="muted">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }
 
     return (
-        <main data-testid="settings" className="settings-page">
+        <main id="main" data-testid="settings" className="settings-page">
             <header>
                 <h1>{t("settings.title", "Settings")}</h1>
             </header>

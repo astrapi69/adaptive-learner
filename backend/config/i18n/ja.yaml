@@ -805,6 +805,9 @@ ui:
     feature_pronunciation: "for pronunciation practice"
   common:
     close: "閉じる"
+  a11y:
+    # Phase 39 (WCAG 2.1 AA). Skip link for SC 2.4.1.
+    skip_to_content: "メインコンテンツへスキップ"
   tooltips:
     delete: "削除"
     edit: "編集"

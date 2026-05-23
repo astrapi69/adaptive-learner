@@ -214,7 +214,7 @@ export default function AnkiPage() {
     const totalCount = cards.length;
 
     return (
-        <main className="anki-page" data-testid="anki-page">
+        <main id="main" className="anki-page" data-testid="anki-page">
             <header className="page-header">
                 <h1>{t("anki.title", "Anki Export")}</h1>
                 <p className="muted">

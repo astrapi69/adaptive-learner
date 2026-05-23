@@ -75,6 +75,7 @@ export default function Landing() {
     if (checking) {
         return (
             <main
+                id="main"
                 data-testid="landing-checking"
                 className="landing-page landing-checking"
             >
@@ -86,7 +87,7 @@ export default function Landing() {
     }
 
     return (
-        <main data-testid="landing" className="landing-page">
+        <main id="main" data-testid="landing" className="landing-page">
             <header className="landing-brand">
                 <img
                     src={`${import.meta.env.BASE_URL}icon-192.svg`}

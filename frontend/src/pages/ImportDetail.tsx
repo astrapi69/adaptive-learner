@@ -337,14 +337,14 @@ export default function ImportDetail({
 
     if (loading) {
         return (
-            <main style={{padding: "2rem"}}>
+            <main id="main" style={{padding: "2rem"}}>
                 <p>{t("common.loading", "Loading…")}</p>
             </main>
         );
     }
     if (error || !detail) {
         return (
-            <main style={{padding: "2rem"}} data-testid="import-detail-error">
+            <main id="main" style={{padding: "2rem"}} data-testid="import-detail-error">
                 <h1>{t("errors.not_found", "Not found.")}</h1>
                 <p>{error}</p>
                 <button
@@ -362,6 +362,7 @@ export default function ImportDetail({
 
     return (
         <main
+            id="main"
             className="page-import-detail"
             data-testid="page-import-detail"
             style={{maxWidth: 1000, margin: "0 auto", padding: "1.5rem"}}
@@ -832,7 +833,7 @@ function Card({
                 ...toneStyles[tone],
             }}
         >
-            <h4 style={{margin: "0 0 0.5rem"}}>{title}</h4>
+            <h3 style={{margin: "0 0 0.5rem", fontSize: "1rem"}}>{title}</h3>
             {children}
         </div>
     );

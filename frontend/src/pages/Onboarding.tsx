@@ -233,7 +233,7 @@ export default function Onboarding() {
     };
 
     return (
-        <main data-testid="onboarding" className="onboarding-page">
+        <main id="main" data-testid="onboarding" className="onboarding-page">
             <header className="onboarding-header">
                 <div className="onboarding-header-row">
                     <h1>{t("onboarding.title", "Create a learning project")}</h1>

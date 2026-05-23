@@ -805,6 +805,10 @@ ui:
     feature_pronunciation: "for pronunciation practice"
   common:
     close: "Close"
+  a11y:
+    # Phase 39 (WCAG 2.1 AA). EN passthrough per the existing
+    # project convention (es/fr/el inherit EN for ui.* keys).
+    skip_to_content: "Skip to main content"
   tooltips:
     # Generic icon-button labels. Aim: 1-3 words, action-oriented.
     delete: "Delete"

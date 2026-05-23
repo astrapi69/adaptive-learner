@@ -382,7 +382,7 @@ function ColumnCard({
                 fontSize: "0.85rem",
             }}
         >
-            <h4 style={{margin: "0 0 0.25rem"}}>{title}</h4>
+            <h3 style={{margin: "0 0 0.25rem", fontSize: "0.95rem"}}>{title}</h3>
             <dl style={{margin: 0}}>
                 {fields.map((f) => {
                     const value = record[f];

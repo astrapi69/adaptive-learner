@@ -197,14 +197,14 @@ export default function Dashboard() {
 
     if (loading) {
         return (
-            <main data-testid="dashboard-loading" className="dashboard-page">
+            <main id="main" data-testid="dashboard-loading" className="dashboard-page">
                 <p className="muted">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }
 
     return (
-        <main data-testid="dashboard" className="dashboard-page">
+        <main id="main" data-testid="dashboard" className="dashboard-page">
             <header className="dashboard-header">
                 <h1>{t("dashboard.title", "Dashboard")}</h1>
                 {error && <p className="error-text">{error}</p>}

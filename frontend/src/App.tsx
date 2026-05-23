@@ -26,6 +26,7 @@ import Progress from "./pages/Progress";
 import Pronunciation from "./pages/Pronunciation";
 import Session from "./pages/Session";
 import Settings from "./pages/Settings";
+import SkipToContent from "./components/SkipToContent";
 
 /**
  * Application root. Three concentric layers:
@@ -92,6 +93,7 @@ export default function App() {
         <ErrorBoundary>
             <I18nProvider>
                 <HelpProvider>
+                <SkipToContent />
                 <Navigation />
                 <Routes>
                     <Route path="/" element={<Landing />} />

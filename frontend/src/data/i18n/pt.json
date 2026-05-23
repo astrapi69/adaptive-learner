@@ -879,6 +879,9 @@
     "common": {
       "close": "Fechar"
     },
+    "a11y": {
+      "skip_to_content": "Saltar para o conteúdo principal"
+    },
     "tooltips": {
       "delete": "Eliminar",
       "edit": "Editar",

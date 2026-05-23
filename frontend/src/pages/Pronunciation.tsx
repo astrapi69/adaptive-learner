@@ -133,7 +133,7 @@ export default function PronunciationPage() {
 
     if (eligible === null) {
         return (
-            <main className="pronunciation-page" data-testid="pronunciation-loading">
+            <main id="main" className="pronunciation-page" data-testid="pronunciation-loading">
                 <p className="muted">{t("common.loading", "Loading…")}</p>
             </main>
         );
@@ -141,6 +141,7 @@ export default function PronunciationPage() {
     if (!eligible) {
         return (
             <main
+                id="main"
                 className="pronunciation-page"
                 data-testid="pronunciation-ineligible"
             >
@@ -165,7 +166,7 @@ export default function PronunciationPage() {
     }
 
     return (
-        <main className="pronunciation-page" data-testid="pronunciation-page">
+        <main id="main" className="pronunciation-page" data-testid="pronunciation-page">
             <header className="page-header">
                 <h1>{t("pronunciation.title", "Pronunciation Practice")}</h1>
                 <p className="muted">

@@ -488,11 +488,11 @@ function ChangedSection({
                                 >
                                     <thead>
                                         <tr>
-                                            <th>
+                                            <th scope="col">
                                                 {t("backup.compare_field", "Field")}
                                             </th>
-                                            <th>{t("backup.compare_old", "Old")}</th>
-                                            <th>{t("backup.compare_new", "New")}</th>
+                                            <th scope="col">{t("backup.compare_old", "Old")}</th>
+                                            <th scope="col">{t("backup.compare_new", "New")}</th>
                                         </tr>
                                     </thead>
                                     <tbody>

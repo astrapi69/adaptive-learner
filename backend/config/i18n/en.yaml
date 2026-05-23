@@ -805,6 +805,12 @@ ui:
     feature_pronunciation: "for pronunciation practice"
   common:
     close: "Close"
+  a11y:
+    # Phase 39 (WCAG 2.1 AA) accessibility strings. The skip
+    # link is the first focusable element on every page; SC
+    # 2.4.1 (Bypass Blocks) requires a way to jump past the
+    # navigation directly into the main content.
+    skip_to_content: "Skip to main content"
   tooltips:
     # Generic icon-button labels. Aim: 1-3 words, action-oriented.
     delete: "Delete"

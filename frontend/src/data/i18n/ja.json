@@ -879,6 +879,9 @@
     "common": {
       "close": "閉じる"
     },
+    "a11y": {
+      "skip_to_content": "メインコンテンツへスキップ"
+    },
     "tooltips": {
       "delete": "削除",
       "edit": "編集",

@@ -11,6 +11,7 @@ export default function NotFound() {
     const navigate = useNavigate();
     return (
         <main
+            id="main"
             data-testid="not-found"
             style={{
                 minHeight: "100%",

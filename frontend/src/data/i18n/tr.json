@@ -879,6 +879,9 @@
     "common": {
       "close": "Kapat"
     },
+    "a11y": {
+      "skip_to_content": "Ana içeriğe atla"
+    },
     "tooltips": {
       "delete": "Sil",
       "edit": "Düzenle",

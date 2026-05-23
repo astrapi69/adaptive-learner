@@ -79,7 +79,7 @@ export default function Progress() {
 
     if (loading) {
         return (
-            <main data-testid="progress-loading" className="dashboard-page">
+            <main id="main" data-testid="progress-loading" className="dashboard-page">
                 <p className="muted">{t("common.loading", "Loading…")}</p>
             </main>
         );
@@ -87,14 +87,14 @@ export default function Progress() {
 
     if (loadError) {
         return (
-            <main data-testid="progress-error" className="dashboard-page">
+            <main id="main" data-testid="progress-error" className="dashboard-page">
                 <p className="error-text">{loadError}</p>
             </main>
         );
     }
 
     return (
-        <main data-testid="progress" className="dashboard-page">
+        <main id="main" data-testid="progress" className="dashboard-page">
             <header className="dashboard-header">
                 <h1>{t("progress.title", "Progress")}</h1>
             </header>
@@ -138,13 +138,13 @@ export default function Progress() {
                         <table className="commit-table" data-testid="progress-commits">
                             <thead>
                                 <tr>
-                                    <th>{t("progress.commit_date", "Date")}</th>
-                                    <th>{t("progress.commit_method", "Method")}</th>
-                                    <th>
+                                    <th scope="col">{t("progress.commit_date", "Date")}</th>
+                                    <th scope="col">{t("progress.commit_method", "Method")}</th>
+                                    <th scope="col">
                                         {t("progress.commit_understanding", "Understanding")}
                                     </th>
-                                    <th>{t("progress.commit_stress", "Stress")}</th>
-                                    <th>{t("progress.commit_duration", "Duration")}</th>
+                                    <th scope="col">{t("progress.commit_stress", "Stress")}</th>
+                                    <th scope="col">{t("progress.commit_duration", "Duration")}</th>
                                 </tr>
                             </thead>
                             <tbody>

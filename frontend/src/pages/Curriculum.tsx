@@ -262,7 +262,7 @@ export default function Curriculum() {
 
     if (loading) {
         return (
-            <main data-testid="curriculum-loading" className="dashboard-page">
+            <main id="main" data-testid="curriculum-loading" className="dashboard-page">
                 <p className="muted">{t("common.loading", "Loading…")}</p>
             </main>
         );
@@ -270,14 +270,14 @@ export default function Curriculum() {
 
     if (error) {
         return (
-            <main data-testid="curriculum-error" className="dashboard-page">
+            <main id="main" data-testid="curriculum-error" className="dashboard-page">
                 <p className="error-text">{error}</p>
             </main>
         );
     }
 
     return (
-        <main data-testid="curriculum" className="dashboard-page">
+        <main id="main" data-testid="curriculum" className="dashboard-page">
             <header className="dashboard-header">
                 <h1>
                     <HelpTooltip glossaryKey="curriculum">

@@ -516,13 +516,13 @@ export default function BackupSection() {
                     <table className="backup-comparison-table">
                         <thead>
                             <tr>
-                                <th>
+                                <th scope="col">
                                     {t("backup.table_header", "Table")}
                                 </th>
-                                <th>
+                                <th scope="col">
                                     {t("backup.current_header", "Current")}
                                 </th>
-                                <th>
+                                <th scope="col">
                                     {t("backup.incoming_header", "Backup")}
                                 </th>
                             </tr>
