@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from app.exceptions import ConflictError, NotFoundError
 from app.models import User
 from app.schemas import UserCreate, UserUpdate
+from app.services import identity_service
 
 
 def _email_collision(exc: IntegrityError, email: str | None) -> bool:
@@ -39,6 +40,10 @@ def create_user(db: Session, payload: UserCreate) -> User:
             raise ConflictError(f"User with email {payload.email!r} already exists.") from exc
         raise
     db.refresh(user)
+    # Phase 41A: persist identity to ~/.config/adaptive_learner/identity.yaml
+    # so a future browser-data-wipe can recover the user_id + language.
+    # Best-effort; identity_service swallows OS-level write errors.
+    identity_service.update_identity(user_id=user.id, language=user.language)
     return user
 
 
@@ -70,6 +75,12 @@ def update_user(db: Session, user_id: str, payload: UserUpdate) -> User:
             raise ConflictError(f"User with email {new_email!r} already exists.") from exc
         raise
     db.refresh(user)
+    # Phase 41A: a language change must refresh identity.yaml so the
+    # recovery flow restores the right locale. Name/email changes
+    # also touch last_seen via the merge writer (cheap; identity.yaml
+    # remains the authoritative recency timestamp for the recovery
+    # surface).
+    identity_service.update_identity(user_id=user.id, language=user.language)
     return user
 
 

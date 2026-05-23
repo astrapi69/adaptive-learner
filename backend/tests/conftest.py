@@ -107,6 +107,18 @@ if "ADAPTIVE_LEARNER_SECRET_KEY" not in os.environ:
 if "ADAPTIVE_LEARNER_DATA_DIR" not in os.environ:
     os.environ["ADAPTIVE_LEARNER_DATA_DIR"] = tempfile.mkdtemp(prefix="adaptive-learner-test-data-")
 
+# Phase 41A: identity_service.update_identity() writes to
+# get_config_dir() during the post-DB-commit hooks in users +
+# projects services. Without this isolation, every test that
+# exercises create_user / create_project / etc. would silently
+# write to the real ~/.config/adaptive_learner/identity.yaml.
+# Same shape as the DATA_DIR isolation above; env var read by
+# app.paths.get_config_dir() at call time.
+if "ADAPTIVE_LEARNER_CONFIG_DIR" not in os.environ:
+    os.environ["ADAPTIVE_LEARNER_CONFIG_DIR"] = tempfile.mkdtemp(
+        prefix="adaptive-learner-test-config-"
+    )
+
 # 41+ test modules open a FastAPI TestClient, each of which triggers the
 # app lifespan startup path. Starlette's TestClient recurses through its
 # receive loop on each startup; combined with the async thread-runner

@@ -1107,3 +1107,27 @@ class BadgeWithProgressOut(BaseModel):
     earned: bool
     earned_at: datetime | None = None
     progress: str | None = None
+
+
+# --- Identity (Phase 41) ----------------------------------------------------
+# The identity.yaml file at ~/.config/adaptive_learner/identity.yaml is
+# the recovery surface after a browser data wipe; this schema is the
+# wire shape returned by GET /api/identity. Service-side merging keeps
+# last_seen fresh on every domain change.
+
+
+class IdentityOut(BaseModel):
+    """Payload of GET /api/identity (Phase 41A).
+
+    Mirrors :func:`app.services.identity_service.load_identity` output.
+    ``user_id`` is always present (the file is rejected on load if
+    missing); the other three are nullable because the identity is
+    created BEFORE the user creates their first project.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    user_id: str
+    active_project_id: str | None = None
+    language: str | None = None
+    last_seen: str | None = None

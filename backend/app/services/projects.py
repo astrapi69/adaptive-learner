@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.exceptions import NotFoundError
 from app.models import LearningProject, User
 from app.schemas import LearningProjectCreateBody, LearningProjectUpdate
+from app.services import identity_service
 
 
 def create_project(
@@ -39,6 +40,10 @@ def create_project(
     db.add(project)
     db.commit()
     db.refresh(project)
+    # Phase 41A: the freshly created project is by default what the
+    # user is now working on - persist it as active_project_id so a
+    # recovery after browser wipe lands on the right dashboard.
+    identity_service.update_identity(user_id=user_id, project_id=project.id)
     return project
 
 
@@ -74,6 +79,11 @@ def update_project(db: Session, project_id: str, payload: LearningProjectUpdate)
         setattr(project, key, value)
     db.commit()
     db.refresh(project)
+    # Phase 41A: an active=True flip is the project-switch signal -
+    # refresh identity.yaml's active_project_id so post-wipe recovery
+    # lands on the project the user actually picked last.
+    if fields.get("active") is True:
+        identity_service.update_identity(user_id=project.user_id, project_id=project.id)
     return project
 
 
