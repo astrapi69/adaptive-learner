@@ -332,6 +332,9 @@ sync-versions-check: ## Exit non-zero if any subsystem version drifts from canon
 sync-i18n: ## Regenerate frontend/src/data/i18n/*.json from backend YAML catalogs
 	@python3 scripts/sync_i18n_to_frontend.py
 
+sync-help: ## Regenerate frontend/src/data/help/*.json from backend/config/help YAML files (Phase 38)
+	@python3 scripts/sync_help_to_frontend.py
+
 # --- Production (Docker) ---
 
 prod: ## Start production via Docker Compose
