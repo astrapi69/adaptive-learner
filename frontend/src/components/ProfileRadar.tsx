@@ -10,6 +10,7 @@ import {
 import {useI18n} from "../hooks/useI18n";
 import {LEARNING_METHODS, METHOD_COLORS} from "../lib/constants";
 import type {LearningProfile} from "../types";
+import ChartSummary from "./charts/ChartSummary";
 
 interface ProfileRadarProps {
     profile: LearningProfile;
@@ -37,10 +38,27 @@ export default function ProfileRadar({profile, height = 320}: ProfileRadarProps)
         label: t(`methods.${method}.label`, method),
         value: profile[method],
     }));
+    const dominantLabel = t(
+        `methods.${profile.dominant_method}.label`,
+        profile.dominant_method,
+    );
+    const dominantValue = profile[profile.dominant_method];
+    const summary = t(
+        "ui.a11y.chart_radar_summary",
+        "Your strongest learning method: {method} ({value})",
+    )
+        .replace("{method}", dominantLabel)
+        .replace("{value}", String(round2(dominantValue)));
+    const chartLabel = t(
+        "ui.a11y.chart_radar_label",
+        "Learning profile radar chart",
+    );
     return (
         <div
             className="profile-radar"
             data-testid="profile-radar"
+            role="img"
+            aria-label={`${chartLabel}. ${summary}`}
             // ``minHeight`` + ``minWidth: 0`` are load-bearing —
             // see ProgressTimeline for the full explanation. The
             // chart sits inside ``.dashboard-card`` which is
@@ -90,6 +108,19 @@ export default function ProfileRadar({profile, height = 320}: ProfileRadarProps)
                     />
                 </RadarChart>
             </ResponsiveContainer>
+            <ChartSummary
+                summary={summary}
+                tableHeaders={[
+                    t("progress.commit_method", "Method"),
+                    t("ui.a11y.chart_radar_value", "Score"),
+                ]}
+                tableRows={data.map((d) => [d.label, round2(d.value)])}
+                testid="profile-radar-summary"
+            />
         </div>
     );
+}
+
+function round2(n: number): number {
+    return Math.round(n * 100) / 100;
 }

@@ -880,7 +880,19 @@
       "close": "Schließen"
     },
     "a11y": {
-      "skip_to_content": "Zum Hauptinhalt springen"
+      "skip_to_content": "Zum Hauptinhalt springen",
+      "chart_show_as_table": "Daten als Tabelle anzeigen",
+      "chart_radar_label": "Lernprofil-Radardiagramm",
+      "chart_radar_summary": "Deine stärkste Lernmethode: {method} ({value})",
+      "chart_timeline_label": "Fortschrittsverlauf der letzten {n} Sessions",
+      "chart_timeline_summary": "{n} Sessions; Verständnis-Trend {trend}",
+      "chart_timeline_trend_up": "steigend",
+      "chart_timeline_trend_down": "fallend",
+      "chart_timeline_trend_flat": "gleichbleibend",
+      "chart_distribution_label": "Methoden-Verteilung als Balkendiagramm",
+      "chart_distribution_summary": "Meistgenutzte Methode: {method} ({count} Sessions, {pct}%)",
+      "streak_cell_label": "{count} Sessions am {date}",
+      "streak_cell_label_zero": "Keine Sessions am {date}"
     },
     "tooltips": {
       "delete": "Löschen",

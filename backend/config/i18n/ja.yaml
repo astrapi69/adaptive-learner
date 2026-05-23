@@ -808,6 +808,18 @@ ui:
   a11y:
     # Phase 39 (WCAG 2.1 AA). Skip link for SC 2.4.1.
     skip_to_content: "メインコンテンツへスキップ"
+    chart_show_as_table: "データを表として表示"
+    chart_radar_label: "学習プロファイル レーダーチャート"
+    chart_radar_summary: "最も得意な学習メソッド: {method} ({value})"
+    chart_timeline_label: "直近 {n} セッションの進捗タイムライン"
+    chart_timeline_summary: "{n} セッション; 理解度の傾向は {trend}"
+    chart_timeline_trend_up: "上昇"
+    chart_timeline_trend_down: "下降"
+    chart_timeline_trend_flat: "横ばい"
+    chart_distribution_label: "メソッド分布の棒グラフ"
+    chart_distribution_summary: "最も使われたメソッド: {method} ({count} セッション, {pct}%)"
+    streak_cell_label: "{date} に {count} セッション"
+    streak_cell_label_zero: "{date} はセッションなし"
   tooltips:
     delete: "削除"
     edit: "編集"

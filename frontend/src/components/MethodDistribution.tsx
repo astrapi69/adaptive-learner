@@ -12,6 +12,7 @@ import {
 import {useI18n} from "../hooks/useI18n";
 import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
 import type {TrackingSummary} from "../types";
+import ChartSummary from "./charts/ChartSummary";
 
 interface MethodDistributionProps {
     summary: TrackingSummary | null;
@@ -57,10 +58,24 @@ export default function MethodDistribution({summary, height = 240}: MethodDistri
         percentage: entry.percentage,
         color: METHOD_COLORS[entry.method],
     }));
+    const top = data[0];
+    const summaryText = t(
+        "ui.a11y.chart_distribution_summary",
+        "Most-used method: {method} ({count} sessions, {pct}%)",
+    )
+        .replace("{method}", top.label)
+        .replace("{count}", String(top.count))
+        .replace("{pct}", String(top.percentage));
+    const chartLabel = t(
+        "ui.a11y.chart_distribution_label",
+        "Method distribution bar chart",
+    );
     return (
         <div
             className="chart-tile"
             data-testid="method-distribution"
+            role="img"
+            aria-label={`${chartLabel}. ${summaryText}`}
             // ``minHeight`` is load-bearing — see ProgressTimeline
             // for the full explanation. Flex child of
             // ``.dashboard-card`` collapses to 0 during the first
@@ -112,6 +127,16 @@ export default function MethodDistribution({summary, height = 240}: MethodDistri
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
+            <ChartSummary
+                summary={summaryText}
+                tableHeaders={[
+                    t("progress.commit_method", "Method"),
+                    t("progress.session_count", "Sessions"),
+                    "%",
+                ]}
+                tableRows={data.map((d) => [d.label, d.count, d.percentage])}
+                testid="method-distribution-summary"
+            />
         </div>
     );
 }

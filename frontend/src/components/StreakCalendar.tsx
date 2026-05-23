@@ -88,28 +88,47 @@ export default function StreakCalendar({entries}: StreakCalendarProps) {
         >
             {weeks.map((week, wIdx) => (
                 <div className="streak-calendar__week" key={wIdx}>
-                    {week.map((cell, cIdx) => (
-                        <div
-                            key={`${wIdx}-${cIdx}`}
-                            className={
-                                "streak-cell " +
-                                (cell.date === ""
-                                    ? "streak-cell--empty"
-                                    : `streak-cell--tier-${tierForCount(cell.count)}`)
-                            }
-                            title={
-                                cell.date === ""
-                                    ? ""
-                                    : `${cell.date} — ${cell.count}`
-                            }
-                            data-testid={
-                                cell.date !== ""
-                                    ? `streak-cell-${cell.date}`
-                                    : undefined
-                            }
-                            data-tier={tierForCount(cell.count)}
-                        />
-                    ))}
+                    {week.map((cell, cIdx) => {
+                        const cellLabel =
+                            cell.date === ""
+                                ? undefined
+                                : (cell.count === 0
+                                      ? t(
+                                            "ui.a11y.streak_cell_label_zero",
+                                            "No sessions on {date}",
+                                        )
+                                      : t(
+                                            "ui.a11y.streak_cell_label",
+                                            "{count} sessions on {date}",
+                                        )
+                                  )
+                                      .replace("{count}", String(cell.count))
+                                      .replace("{date}", cell.date);
+                        return (
+                            <div
+                                key={`${wIdx}-${cIdx}`}
+                                className={
+                                    "streak-cell " +
+                                    (cell.date === ""
+                                        ? "streak-cell--empty"
+                                        : `streak-cell--tier-${tierForCount(cell.count)}`)
+                                }
+                                title={
+                                    cell.date === ""
+                                        ? ""
+                                        : `${cell.date} — ${cell.count}`
+                                }
+                                aria-label={cellLabel}
+                                role={cell.date !== "" ? "img" : undefined}
+                                data-testid={
+                                    cell.date !== ""
+                                        ? `streak-cell-${cell.date}`
+                                        : undefined
+                                }
+                                data-tier={tierForCount(cell.count)}
+                            />
+                        );
+                    })}
                 </div>
             ))}
         </div>

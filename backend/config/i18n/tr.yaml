@@ -808,6 +808,18 @@ ui:
   a11y:
     # Phase 39 (WCAG 2.1 AA). Skip link for SC 2.4.1.
     skip_to_content: "Ana içeriğe atla"
+    chart_show_as_table: "Verileri tablo olarak göster"
+    chart_radar_label: "Öğrenme profili radar grafiği"
+    chart_radar_summary: "En güçlü öğrenme yönteminiz: {method} ({value})"
+    chart_timeline_label: "Son {n} oturumun ilerleme zaman çizelgesi"
+    chart_timeline_summary: "{n} oturum; anlama eğilimi {trend}"
+    chart_timeline_trend_up: "yukarı"
+    chart_timeline_trend_down: "aşağı"
+    chart_timeline_trend_flat: "sabit"
+    chart_distribution_label: "Yöntem dağılımı çubuk grafiği"
+    chart_distribution_summary: "En çok kullanılan yöntem: {method} ({count} oturum, {pct}%)"
+    streak_cell_label: "{date} tarihinde {count} oturum"
+    streak_cell_label_zero: "{date} tarihinde oturum yok"
   tooltips:
     delete: "Sil"
     edit: "Düzenle"

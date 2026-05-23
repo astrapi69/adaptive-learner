@@ -11,6 +11,7 @@ import {
 
 import {useI18n} from "../hooks/useI18n";
 import type {TrackingSummary} from "../types";
+import ChartSummary from "./charts/ChartSummary";
 
 interface ProgressTimelineProps {
     summary: TrackingSummary | null;
@@ -48,10 +49,24 @@ export default function ProgressTimeline({summary, height = 240}: ProgressTimeli
         understanding: round2(value),
         stress: round2(s[index] ?? 0),
     }));
+    const trendKey = computeTrendKey(u);
+    const trendLabel = t(`ui.a11y.chart_timeline_trend_${trendKey}`, trendKey);
+    const summaryText = t(
+        "ui.a11y.chart_timeline_summary",
+        "{n} sessions; understanding trending {trend}",
+    )
+        .replace("{n}", String(points.length))
+        .replace("{trend}", trendLabel);
+    const chartLabel = t(
+        "ui.a11y.chart_timeline_label",
+        "Progress timeline of the last {n} sessions",
+    ).replace("{n}", String(points.length));
     return (
         <div
             className="chart-tile"
             data-testid="progress-timeline"
+            role="img"
+            aria-label={`${chartLabel}. ${summaryText}`}
             // ``minHeight`` is load-bearing: ``.dashboard-card``
             // is ``display: flex; flex-direction: column``, so a
             // flex child without an explicit min-height collapses
@@ -100,10 +115,39 @@ export default function ProgressTimeline({summary, height = 240}: ProgressTimeli
                     />
                 </LineChart>
             </ResponsiveContainer>
+            <ChartSummary
+                summary={summaryText}
+                tableHeaders={[
+                    "#",
+                    t("progress.commit_understanding", "Understanding"),
+                    t("progress.commit_stress", "Stress"),
+                ]}
+                tableRows={points.map((p) => [
+                    p.index,
+                    p.understanding,
+                    p.stress,
+                ])}
+                testid="progress-timeline-summary"
+            />
         </div>
     );
 }
 
 function round2(n: number): number {
     return Math.round(n * 100) / 100;
+}
+
+/**
+ * Classify the trend of the understanding series as
+ * up / down / flat. Threshold of 0.05 absolute change to
+ * suppress noise from a single jittery sample.
+ */
+function computeTrendKey(values: readonly number[]): "up" | "down" | "flat" {
+    if (values.length < 2) return "flat";
+    const first = values[0];
+    const last = values[values.length - 1];
+    const delta = last - first;
+    if (delta > 0.05) return "up";
+    if (delta < -0.05) return "down";
+    return "flat";
 }

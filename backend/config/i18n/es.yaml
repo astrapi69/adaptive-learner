@@ -809,6 +809,18 @@ ui:
     # Phase 39 (WCAG 2.1 AA). EN passthrough per the existing
     # project convention (es/fr/el inherit EN for ui.* keys).
     skip_to_content: "Skip to main content"
+    chart_show_as_table: "Show data as table"
+    chart_radar_label: "Learning profile radar chart"
+    chart_radar_summary: "Your strongest learning method: {method} ({value})"
+    chart_timeline_label: "Progress timeline of the last {n} sessions"
+    chart_timeline_summary: "{n} sessions; understanding trending {trend}"
+    chart_timeline_trend_up: "up"
+    chart_timeline_trend_down: "down"
+    chart_timeline_trend_flat: "flat"
+    chart_distribution_label: "Method distribution bar chart"
+    chart_distribution_summary: "Most-used method: {method} ({count} sessions, {pct}%)"
+    streak_cell_label: "{count} sessions on {date}"
+    streak_cell_label_zero: "No sessions on {date}"
   tooltips:
     # Generic icon-button labels. Aim: 1-3 words, action-oriented.
     delete: "Delete"
