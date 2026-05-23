@@ -38,7 +38,7 @@ export default function BadgeShowcase({badges}: BadgeShowcaseProps) {
     if (!badges) {
         return (
             <div className="badge-showcase" data-testid="badge-showcase-loading">
-                <p className="muted">{t("common.loading", "Loading…")}</p>
+                <p className="muted" role="status">{t("common.loading", "Loading…")}</p>
             </div>
         );
     }

@@ -80,7 +80,7 @@ export default function Progress() {
     if (loading) {
         return (
             <main id="main" data-testid="progress-loading" className="dashboard-page">
-                <p className="muted">{t("common.loading", "Loading…")}</p>
+                <p className="muted" role="status">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }
@@ -88,7 +88,7 @@ export default function Progress() {
     if (loadError) {
         return (
             <main id="main" data-testid="progress-error" className="dashboard-page">
-                <p className="error-text">{loadError}</p>
+                <p className="error-text" role="alert">{loadError}</p>
             </main>
         );
     }

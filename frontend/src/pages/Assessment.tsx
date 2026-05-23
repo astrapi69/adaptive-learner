@@ -264,7 +264,7 @@ export default function Assessment() {
     if (loadError) {
         return (
             <main id="main" data-testid="assessment-error" className="assessment-page">
-                <p className="error-text">{loadError}</p>
+                <p className="error-text" role="alert">{loadError}</p>
             </main>
         );
     }
@@ -316,7 +316,7 @@ export default function Assessment() {
     if (!questions) {
         return (
             <main id="main" data-testid="assessment-loading" className="assessment-page">
-                <p className="muted">{t("common.loading", "Loading…")}</p>
+                <p className="muted" role="status">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }
@@ -324,7 +324,7 @@ export default function Assessment() {
     if (!current) {
         return (
             <main id="main" data-testid="assessment-empty" className="assessment-page">
-                <p className="muted">{t("common.loading", "Loading…")}</p>
+                <p className="muted" role="status">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }

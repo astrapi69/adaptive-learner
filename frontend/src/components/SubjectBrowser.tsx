@@ -144,6 +144,7 @@ export default function SubjectBrowser({
                     className="subject-browser-search"
                     data-testid="subject-browser-search"
                     placeholder={t("taxonomy.search_placeholder", "Search subjects…")}
+                    aria-label={t("taxonomy.search_placeholder", "Search subjects…")}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                 />
@@ -174,6 +175,7 @@ export default function SubjectBrowser({
                         type="text"
                         data-testid="subject-add-input"
                         placeholder={t("taxonomy.subject_name", "Subject name")}
+                        aria-label={t("taxonomy.subject_name", "Subject name")}
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         autoFocus

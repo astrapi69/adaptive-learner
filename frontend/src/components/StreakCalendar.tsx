@@ -35,7 +35,7 @@ export default function StreakCalendar({entries}: StreakCalendarProps) {
                 className="streak-calendar streak-calendar--loading"
                 data-testid="streak-calendar-loading"
             >
-                <p className="muted">{t("common.loading", "Loading…")}</p>
+                <p className="muted" role="status">{t("common.loading", "Loading…")}</p>
             </div>
         );
     }

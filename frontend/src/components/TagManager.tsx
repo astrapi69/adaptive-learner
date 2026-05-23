@@ -164,6 +164,7 @@ export default function TagManager({
                         type="text"
                         data-testid="tag-create-input"
                         placeholder={t("taxonomy.tag_name", "New tag")}
+                        aria-label={t("taxonomy.tag_name", "New tag")}
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         disabled={submitting}

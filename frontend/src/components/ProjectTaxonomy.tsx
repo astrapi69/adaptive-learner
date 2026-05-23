@@ -290,6 +290,7 @@ export default function ProjectTaxonomy({
                         type="text"
                         data-testid="project-taxonomy-tag-create-input"
                         placeholder={t("taxonomy.new_tag", "New tag…")}
+                        aria-label={t("taxonomy.new_tag", "New tag…")}
                         value={newTagName}
                         onChange={(e) => setNewTagName(e.target.value)}
                         disabled={submitting}

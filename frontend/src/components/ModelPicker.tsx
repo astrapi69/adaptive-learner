@@ -162,6 +162,10 @@ export function ModelPicker({
                         "settings.model_picker_placeholder",
                         "Select or type a model id",
                     )}
+                    aria-label={t(
+                        "settings.model_picker_placeholder",
+                        "Select or type a model id",
+                    )}
                     onChange={(e) => {
                         onDraftChange(e.target.value);
                         if (!open) openPicker();

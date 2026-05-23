@@ -116,6 +116,10 @@ export default function HelpBrowser() {
                         "ui.help.search_placeholder",
                         "Search the glossary...",
                     )}
+                    aria-label={t(
+                        "ui.help.search_placeholder",
+                        "Search the glossary...",
+                    )}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     style={{

@@ -531,7 +531,7 @@ export default function Session() {
     if (loading) {
         return (
             <main id="main" data-testid="session-loading" className="session-page">
-                <p className="muted">{t("common.loading", "Loading…")}</p>
+                <p className="muted" role="status">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }
@@ -539,7 +539,7 @@ export default function Session() {
     if (startError) {
         return (
             <main id="main" data-testid="session-error" className="session-page">
-                <p className="error-text">{startError}</p>
+                <p className="error-text" role="alert">{startError}</p>
             </main>
         );
     }

@@ -134,7 +134,7 @@ export default function PronunciationPage() {
     if (eligible === null) {
         return (
             <main id="main" className="pronunciation-page" data-testid="pronunciation-loading">
-                <p className="muted">{t("common.loading", "Loading…")}</p>
+                <p className="muted" role="status">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }

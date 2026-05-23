@@ -275,14 +275,14 @@ export default function Settings() {
     if (loadError) {
         return (
             <main id="main" data-testid="settings-error" className="settings-page">
-                <p className="error-text">{loadError}</p>
+                <p className="error-text" role="alert">{loadError}</p>
             </main>
         );
     }
     if (!settings) {
         return (
             <main id="main" data-testid="settings-loading" className="settings-page">
-                <p className="muted">{t("common.loading", "Loading…")}</p>
+                <p className="muted" role="status">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }
@@ -579,6 +579,7 @@ export default function Settings() {
                                     data-testid={`api-key-input-${provider}`}
                                     type="password"
                                     placeholder={t("settings.api_key_placeholder", "Paste here…")}
+                                    aria-label={`${t("settings.api_key_label", "API key")} (${provider})`}
                                     autoComplete="off"
                                     value={keyDrafts[provider]}
                                     onChange={(e) =>

@@ -198,7 +198,7 @@ export default function Dashboard() {
     if (loading) {
         return (
             <main id="main" data-testid="dashboard-loading" className="dashboard-page">
-                <p className="muted">{t("common.loading", "Loading…")}</p>
+                <p className="muted" role="status">{t("common.loading", "Loading…")}</p>
             </main>
         );
     }
@@ -207,7 +207,7 @@ export default function Dashboard() {
         <main id="main" data-testid="dashboard" className="dashboard-page">
             <header className="dashboard-header">
                 <h1>{t("dashboard.title", "Dashboard")}</h1>
-                {error && <p className="error-text">{error}</p>}
+                {error && <p className="error-text" role="alert">{error}</p>}
             </header>
 
             {showApiKeyBanner && (
