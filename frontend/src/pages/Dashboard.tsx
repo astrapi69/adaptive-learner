@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import DashboardFilterBar from "../components/DashboardFilterBar";
 import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
@@ -17,6 +18,7 @@ import BadgeShowcase from "../components/BadgeShowcase";
 import StreakCalendar from "../components/StreakCalendar";
 import StreakWidget from "../components/StreakWidget";
 import {ApiError} from "../api/client";
+import {useApiKeyStatus} from "../hooks/useApiKeyStatus";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
@@ -51,6 +53,28 @@ import type {
 export default function Dashboard() {
     const {t, lang} = useI18n();
     const navigate = useNavigate();
+    // Issue 4 — disable QuickStart when no API key is set.
+    const apiKey = useApiKeyStatus();
+    const [apiKeyBannerDismissed, setApiKeyBannerDismissed] =
+        useState<boolean>(
+            () =>
+                localStorage.getItem(
+                    "adaptive-learner.api_key_banner_dismissed",
+                ) === "true",
+        );
+    const showApiKeyBanner =
+        apiKey.ready && !apiKey.hasKey && !apiKeyBannerDismissed;
+    function dismissApiKeyBanner() {
+        try {
+            localStorage.setItem(
+                "adaptive-learner.api_key_banner_dismissed",
+                "true",
+            );
+        } catch {
+            /* localStorage unavailable — silent no-op */
+        }
+        setApiKeyBannerDismissed(true);
+    }
 
     const [profile, setProfile] = useState<LearningProfile | null>(null);
     const [summary, setSummary] = useState<TrackingSummary | null>(null);
@@ -186,8 +210,60 @@ export default function Dashboard() {
                 {error && <p className="error-text">{error}</p>}
             </header>
 
+            {showApiKeyBanner && (
+                <div
+                    className="api-key-skip-banner"
+                    data-testid="api-key-skip-banner"
+                    role="status"
+                    style={{
+                        margin: "0 0 1rem 0",
+                        padding: "0.75rem 1rem",
+                        background: "var(--info-bg, #e3f2fd)",
+                        color: "var(--info, #0d47a1)",
+                        border: "1px solid var(--info, #1976d2)",
+                        borderRadius: "var(--radius-md, 6px)",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem",
+                        flexWrap: "wrap",
+                    }}
+                >
+                    <span style={{flex: 1, minWidth: 220}}>
+                        {t(
+                            "ui.api_key.skip_banner",
+                            "Configure an API key in Settings to use AI features.",
+                        )}
+                    </span>
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={() => navigate("/settings#api-keys")}
+                        data-testid="api-key-skip-banner-settings"
+                    >
+                        {t("ui.api_key.open_settings", "Open Settings")} →
+                    </button>
+                    <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={dismissApiKeyBanner}
+                        data-testid="api-key-skip-banner-dismiss"
+                    >
+                        {t("ui.api_key.skip_banner_dismiss", "Dismiss")}
+                    </button>
+                </div>
+            )}
+            {apiKey.ready && !apiKey.hasKey && (
+                <ApiKeyRequiredNotice
+                    compact
+                    feature={t(
+                        "ui.api_key.feature_session",
+                        "to start a session",
+                    )}
+                />
+            )}
             <QuickStartButton
                 suggestedMethod={profile?.dominant_method ?? null}
+                disabled={!apiKey.ready || !apiKey.hasKey}
             />
 
             {pronunciationEligible && (

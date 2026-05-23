@@ -17,9 +17,11 @@
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import MicButton from "../components/MicButton";
 import SpeechButton from "../components/SpeechButton";
 import {ApiError} from "../api/client";
+import {useApiKeyStatus} from "../hooks/useApiKeyStatus";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
@@ -30,6 +32,10 @@ import {notify} from "../utils/notify";
 export default function PronunciationPage() {
     const {t} = useI18n();
     const navigate = useNavigate();
+    // Issue 4 — pronunciation needs both generate + judge AI
+    // calls, so the whole page surface is gated on the active
+    // provider having a key.
+    const apiKey = useApiKeyStatus();
     const [project, setProject] = useState<LearningProject | null>(null);
     const [eligible, setEligible] = useState<boolean | null>(null);
     const [target, setTarget] = useState<string>("");
@@ -195,11 +201,30 @@ export default function PronunciationPage() {
                 >
                     {target || t("pronunciation.no_phrase", "Click Generate to start.")}
                 </p>
+                {apiKey.ready && !apiKey.hasKey && (
+                    <ApiKeyRequiredNotice
+                        compact
+                        feature={t(
+                            "ui.api_key.feature_pronunciation",
+                            "for pronunciation practice",
+                        )}
+                    />
+                )}
                 <button
                     type="button"
                     className="btn btn-primary"
                     onClick={generatePhrase}
-                    disabled={generating}
+                    disabled={
+                        generating || !apiKey.ready || !apiKey.hasKey
+                    }
+                    title={
+                        apiKey.ready && !apiKey.hasKey
+                            ? t(
+                                  "ui.api_key.required",
+                                  "API key required.",
+                              )
+                            : undefined
+                    }
                     data-testid="pronunciation-generate"
                 >
                     {generating

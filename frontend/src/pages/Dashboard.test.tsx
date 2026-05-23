@@ -17,6 +17,7 @@ const apiProfile = vi.fn();
 const apiProgress = vi.fn();
 const apiTools = vi.fn();
 const apiSpaced = vi.fn();
+const apiSettingsGet = vi.fn();
 vi.mock("../api/client", async () => {
     const actual = await vi.importActual<typeof import("../api/client")>(
         "../api/client",
@@ -37,6 +38,10 @@ vi.mock("../api/client", async () => {
                 ...actual.api.tools,
                 recommendations: (...args: unknown[]) => apiTools(...args),
                 spaced: (...args: unknown[]) => apiSpaced(...args),
+            },
+            settings: {
+                ...actual.api.settings,
+                get: (...args: unknown[]) => apiSettingsGet(...args),
             },
         },
     };
@@ -123,16 +128,33 @@ function renderDashboard() {
 }
 
 describe("Dashboard page", () => {
-    beforeEach(() => {
+    beforeEach(async () => {
         mockNavigate.mockClear();
         apiProfile.mockReset();
         apiProgress.mockReset();
         apiTools.mockReset();
         apiSpaced.mockReset();
+        apiSettingsGet.mockReset();
         // Default: empty spaced list. Tests that care override.
         apiSpaced.mockResolvedValue([]);
+        // Default: API key is configured. Tests that care
+        // about the "no key" path override this per-test.
+        apiSettingsGet.mockResolvedValue({
+            user_id: "u-1",
+            active_provider: "anthropic",
+            has_anthropic_key: true,
+            has_openai_key: false,
+            has_gemini_key: false,
+        });
+        // Drop the module-level useApiKeyStatus cache so each
+        // test's apiSettingsGet mock is honoured.
+        const {_resetApiKeyStatusCacheForTests} = await import(
+            "../hooks/useApiKeyStatus"
+        );
+        _resetApiKeyStatusCacheForTests();
         localStorage.clear();
         localStorage.setItem("adaptive-learner.project_id", "p1");
+        localStorage.setItem("adaptive-learner.user_id", "u-1");
     });
     afterEach(() => {
         vi.restoreAllMocks();
@@ -226,6 +248,79 @@ describe("Dashboard page", () => {
         renderDashboard();
         await screen.findByTestId("dashboard");
         expect(screen.getByTestId("spaced-recs-empty")).toBeInTheDocument();
+    });
+
+    // --- Issue 4: API-key gating + dismissible skip banner --------------
+
+    it("disables Quick Start and shows the skip banner when no API key is set", async () => {
+        apiSettingsGet.mockResolvedValue({
+            user_id: "u-1",
+            active_provider: "anthropic",
+            has_anthropic_key: false,
+            has_openai_key: false,
+            has_gemini_key: false,
+        });
+        apiProfile.mockResolvedValue(PROFILE);
+        apiProgress.mockResolvedValue(SUMMARY);
+        apiTools.mockResolvedValue(TOOLS);
+        renderDashboard();
+        await screen.findByTestId("dashboard");
+        await waitFor(() => {
+            expect(
+                screen.getByTestId("api-key-skip-banner"),
+            ).toBeInTheDocument();
+        });
+        const quickStart = screen.getByTestId("quick-start");
+        expect((quickStart as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it("hides the skip banner + enables Quick Start once a key is configured", async () => {
+        apiProfile.mockResolvedValue(PROFILE);
+        apiProgress.mockResolvedValue(SUMMARY);
+        apiTools.mockResolvedValue(TOOLS);
+        renderDashboard();
+        await screen.findByTestId("dashboard");
+        await waitFor(() => {
+            const quickStart = screen.getByTestId("quick-start");
+            expect((quickStart as HTMLButtonElement).disabled).toBe(false);
+        });
+        expect(
+            screen.queryByTestId("api-key-skip-banner"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("Dismiss button persists the choice across remounts", async () => {
+        apiSettingsGet.mockResolvedValue({
+            user_id: "u-1",
+            active_provider: "anthropic",
+            has_anthropic_key: false,
+            has_openai_key: false,
+            has_gemini_key: false,
+        });
+        apiProfile.mockResolvedValue(PROFILE);
+        apiProgress.mockResolvedValue(SUMMARY);
+        apiTools.mockResolvedValue(TOOLS);
+        const first = renderDashboard();
+        await first.findByTestId("dashboard");
+        await waitFor(() => {
+            expect(
+                first.getByTestId("api-key-skip-banner"),
+            ).toBeInTheDocument();
+        });
+        first.getByTestId("api-key-skip-banner-dismiss").click();
+        await waitFor(() => {
+            expect(
+                first.queryByTestId("api-key-skip-banner"),
+            ).not.toBeInTheDocument();
+        });
+        first.unmount();
+        // Re-mount; the dismissal must persist via
+        // localStorage.
+        const second = renderDashboard();
+        await second.findByTestId("dashboard");
+        expect(
+            second.queryByTestId("api-key-skip-banner"),
+        ).not.toBeInTheDocument();
     });
 
     // --- Bug 6 (regression): HelpTooltip rendered on key terms ----------

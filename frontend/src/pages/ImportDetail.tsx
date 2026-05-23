@@ -23,7 +23,9 @@ import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
 import {ApiError} from "../api/client";
+import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import HelpLink from "../components/help/HelpLink";
+import {useApiKeyStatus} from "../hooks/useApiKeyStatus";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
@@ -52,6 +54,12 @@ export default function ImportDetail({
     const conversationId = conversationIdOverride ?? params.conversationId ?? "";
     const {t} = useI18n();
     const navigate = useNavigate();
+    // Issue 4 — gate the AI-dependent buttons (Analyze,
+    // Start Session, Extract Anki) on the active provider
+    // having a key. ``ready=false`` means we don't yet know,
+    // so buttons stay disabled until the settings fetch
+    // resolves.
+    const apiKey = useApiKeyStatus();
 
     const [detail, setDetail] = useState<ImportedConversationDetail | null>(
         null,
@@ -374,6 +382,14 @@ export default function ImportDetail({
                     {t("import.messages", "messages")}
                     {detail.model ? ` · ${detail.model}` : ""}
                 </p>
+                {apiKey.ready && !apiKey.hasKey && (
+                    <ApiKeyRequiredNotice
+                        feature={t(
+                            "ui.api_key.feature_analyze",
+                            "to analyze conversations",
+                        )}
+                    />
+                )}
                 <div
                     style={{
                         display: "flex",
@@ -386,7 +402,17 @@ export default function ImportDetail({
                         type="button"
                         className="btn btn-primary"
                         onClick={runAnalysis}
-                        disabled={analyzing}
+                        disabled={
+                            analyzing || !apiKey.ready || !apiKey.hasKey
+                        }
+                        title={
+                            apiKey.ready && !apiKey.hasKey
+                                ? t(
+                                      "ui.api_key.required",
+                                      "API key required.",
+                                  )
+                                : undefined
+                        }
                         data-testid="analyze-button"
                     >
                         {analyzing
@@ -440,8 +466,29 @@ export default function ImportDetail({
                             // new session linked back via the
                             // ``imported_conversation_id`` FK so a
                             // future return-visit resumes cleanly.
+                            //
+                            // Issue 4 — disable when no API key is
+                            // configured (NEW sessions need AI;
+                            // resuming an EXISTING session does
+                            // not, so the gate only fires when
+                            // ``activeSession`` is null).
                             onClick={startOrResumeSession}
-                            disabled={startingSession}
+                            disabled={
+                                startingSession ||
+                                (!activeSession &&
+                                    apiKey.ready &&
+                                    !apiKey.hasKey)
+                            }
+                            title={
+                                !activeSession &&
+                                apiKey.ready &&
+                                !apiKey.hasKey
+                                    ? t(
+                                          "ui.api_key.required",
+                                          "API key required.",
+                                      )
+                                    : undefined
+                            }
                             data-testid={
                                 activeSession
                                     ? "continue-session-button"
@@ -462,7 +509,19 @@ export default function ImportDetail({
                         <button
                             type="button"
                             className="btn btn-secondary"
-                            disabled={extractingAnki}
+                            disabled={
+                                extractingAnki ||
+                                !apiKey.ready ||
+                                !apiKey.hasKey
+                            }
+                            title={
+                                apiKey.ready && !apiKey.hasKey
+                                    ? t(
+                                          "ui.api_key.required",
+                                          "API key required.",
+                                      )
+                                    : undefined
+                            }
                             data-testid="extract-anki-button"
                             onClick={async () => {
                                 if (!detail) return;

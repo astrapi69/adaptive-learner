@@ -788,3 +788,17 @@ ui:
       steps: "Cycle steps"
       features: "App features"
     no_results: "No matching entries."
+  api_key:
+    required: "API key required."
+    required_with_feature: "API key required {feature}."
+    required_long: "Configure a provider key in Settings to enable this action."
+    open_settings: "Open Settings"
+    skip_banner: "Configure an API key in Settings to use AI features."
+    skip_banner_dismiss: "Dismiss"
+    feature_analyze: "to analyze conversations"
+    feature_session: "to start a session"
+    feature_anki: "to extract Anki cards"
+    feature_study_guide: "to generate a study guide"
+    feature_pronunciation: "for pronunciation practice"
+  common:
+    close: "Close"
