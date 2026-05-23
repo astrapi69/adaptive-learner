@@ -7,4 +7,10 @@ them as ``anki_card_suggestions`` rows, and serves them through
 accept + edit + bundle into a .apkg.
 """
 
-__version__ = "1.24.0"
+try:
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version as _pkg_version
+
+    __version__ = _pkg_version("adaptive-learner-plugin-anki")
+except PackageNotFoundError:  # pragma: no cover - dist not installed
+    __version__ = "0.0.0+unknown"
