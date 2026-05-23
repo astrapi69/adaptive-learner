@@ -9,6 +9,7 @@ import ErrorReportDialog from "./components/ErrorReportDialog";
 import EventRecorderSetup from "./components/EventRecorderSetup";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
+import {HelpProvider} from "./contexts/HelpContext";
 import {I18nProvider} from "./hooks/useI18n";
 import {useTheme} from "./hooks/useTheme";
 import AnkiPage from "./pages/Anki";
@@ -89,6 +90,7 @@ export default function App() {
     return (
         <ErrorBoundary>
             <I18nProvider>
+                <HelpProvider>
                 <Navigation />
                 <Routes>
                     <Route path="/" element={<Landing />} />
@@ -127,6 +129,7 @@ export default function App() {
                     pauseOnHover
                     theme="colored"
                 />
+                </HelpProvider>
             </I18nProvider>
         </ErrorBoundary>
     );

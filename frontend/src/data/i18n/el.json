@@ -836,6 +836,20 @@
       "open_github": "Open on GitHub",
       "close": "Close",
       "truncated": "Report truncated to fit GitHub's URL length limit."
+    },
+    "help": {
+      "learn_more": "Learn more",
+      "open_help": "Open help",
+      "drawer_title": "Help",
+      "related": "Related concepts",
+      "search_placeholder": "Search the glossary...",
+      "categories": {
+        "concepts": "Core concepts",
+        "methods": "Learning methods",
+        "steps": "Cycle steps",
+        "features": "App features"
+      },
+      "no_results": "No matching entries."
     }
   }
 }

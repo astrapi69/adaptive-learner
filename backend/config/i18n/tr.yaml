@@ -767,3 +767,15 @@ ui:
     open_github: "GitHub'da aç"
     close: "Kapat"
     truncated: "Rapor, GitHub URL sınırına uyacak şekilde kısaltıldı."
+  help:
+    learn_more: "Daha fazla bilgi"
+    open_help: "Yardımı aç"
+    drawer_title: "Yardım"
+    related: "İlgili kavramlar"
+    search_placeholder: "Sözlükte ara..."
+    categories:
+      concepts: "Temel kavramlar"
+      methods: "Öğrenme yöntemleri"
+      steps: "Döngü adımları"
+      features: "Uygulama özellikleri"
+    no_results: "Eşleşen kayıt yok."

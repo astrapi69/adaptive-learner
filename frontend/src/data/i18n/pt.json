@@ -836,6 +836,20 @@
       "open_github": "Abrir no GitHub",
       "close": "Fechar",
       "truncated": "Relatório truncado para respeitar o limite de URL do GitHub."
+    },
+    "help": {
+      "learn_more": "Saiba mais",
+      "open_help": "Abrir ajuda",
+      "drawer_title": "Ajuda",
+      "related": "Conceitos relacionados",
+      "search_placeholder": "Pesquisar no glossário...",
+      "categories": {
+        "concepts": "Conceitos centrais",
+        "methods": "Métodos de aprendizagem",
+        "steps": "Etapas do ciclo",
+        "features": "Recursos da aplicação"
+      },
+      "no_results": "Nenhuma entrada correspondente."
     }
   }
 }

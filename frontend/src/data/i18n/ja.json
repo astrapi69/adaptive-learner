@@ -836,6 +836,20 @@
       "open_github": "GitHub で開く",
       "close": "閉じる",
       "truncated": "GitHub の URL 長制限に合わせてレポートを切り詰めました。"
+    },
+    "help": {
+      "learn_more": "詳しく見る",
+      "open_help": "ヘルプを開く",
+      "drawer_title": "ヘルプ",
+      "related": "関連する概念",
+      "search_placeholder": "用語集を検索...",
+      "categories": {
+        "concepts": "コア概念",
+        "methods": "学習方法",
+        "steps": "サイクルステップ",
+        "features": "アプリ機能"
+      },
+      "no_results": "一致するエントリがありません。"
     }
   }
 }

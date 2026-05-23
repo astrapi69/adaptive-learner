@@ -836,6 +836,20 @@
       "open_github": "Auf GitHub öffnen",
       "close": "Schließen",
       "truncated": "Bericht gekürzt wegen GitHub-URL-Längenbegrenzung."
+    },
+    "help": {
+      "learn_more": "Mehr erfahren",
+      "open_help": "Hilfe oeffnen",
+      "drawer_title": "Hilfe",
+      "related": "Verwandte Konzepte",
+      "search_placeholder": "Glossar durchsuchen...",
+      "categories": {
+        "concepts": "Kernkonzepte",
+        "methods": "Lernmethoden",
+        "steps": "Zyklusschritte",
+        "features": "App-Features"
+      },
+      "no_results": "Keine Treffer."
     }
   }
 }
