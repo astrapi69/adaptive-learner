@@ -113,6 +113,31 @@ describe("Navigation", () => {
         }
     });
 
+    // --- Issue 3: Help in navigation menu -----------------------------
+
+    it("exposes a Help menu button that opens the drawer without route change", async () => {
+        // Mount with the full provider tree so useHelp() sees a
+        // real HelpProvider (the nav button calls openHelp which
+        // would otherwise no-op in the bare hook fallback).
+        const {HelpProvider} = await import("../contexts/HelpContext");
+        const HelpDrawer = (await import("./help/HelpDrawer")).default;
+        render(
+            <MemoryRouter initialEntries={["/dashboard"]}>
+                <HelpProvider>
+                    <Navigation />
+                    <HelpDrawer />
+                </HelpProvider>
+            </MemoryRouter>,
+        );
+        const helpBtn = screen.getByTestId("nav-help");
+        expect(helpBtn).toBeInTheDocument();
+        // Before click: drawer not mounted.
+        expect(screen.queryByTestId("help-drawer")).not.toBeInTheDocument();
+        fireEvent.click(helpBtn);
+        // After click: drawer is mounted (no route change).
+        expect(screen.getByTestId("help-drawer")).toBeInTheDocument();
+    });
+
     it("reflects online state when navigator.onLine is true", () => {
         const original = Object.getOwnPropertyDescriptor(
             window.navigator,

@@ -1,6 +1,8 @@
+import {HelpCircle} from "lucide-react";
 import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
+import {useHelp} from "../contexts/HelpContext";
 import {useI18n} from "../hooks/useI18n";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {useTheme} from "../hooks/useTheme";
@@ -22,6 +24,7 @@ import {readSyncConfig} from "../storage/sync-engine";
 export default function Navigation() {
     const {t} = useI18n();
     const {theme, toggle} = useTheme();
+    const {openHelp} = useHelp();
     const online = useOnlineStatus();
     const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
     const {pathname} = useLocation();
@@ -133,6 +136,31 @@ export default function Navigation() {
                 >
                     {t("nav.settings", "Settings")}
                 </NavLink>
+                {/* Issue 3 — Help menu entry. Opens the
+                    HelpDrawer in-place (no route change) on
+                    the "learning_project" glossary entry,
+                    which is the broadest concept and exposes
+                    related-concept links to the rest of the
+                    glossary. */}
+                <button
+                    type="button"
+                    className="nav-link nav-link-button"
+                    data-testid="nav-help"
+                    onClick={() => {
+                        openHelp("learning_project");
+                        setMenuOpen(false);
+                    }}
+                >
+                    <HelpCircle
+                        size={16}
+                        aria-hidden="true"
+                        style={{
+                            verticalAlign: "middle",
+                            marginRight: 6,
+                        }}
+                    />
+                    {t("nav.help", "Help")}
+                </button>
             </div>
             <NavLink
                 to="/settings"
