@@ -53,6 +53,14 @@ export function I18nProvider({children}: {children: ReactNode}) {
             });
     }, [lang]);
 
+    // WCAG 2.1 SC 3.1.1 (Language of Page) + SC 3.1.2
+    // (Language of Parts): keep <html lang="..."> in sync with
+    // the active UI language so screen readers choose the
+    // correct pronunciation rules.
+    useEffect(() => {
+        document.documentElement.lang = lang;
+    }, [lang]);
+
     const setLang = useCallback((newLang: string) => {
         setLangState(newLang);
     }, []);
