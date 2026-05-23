@@ -91,7 +91,10 @@ export default function HelpTooltip({
                         // term without nudging line layout.
                         padding: "0 2px",
                         borderRadius: "4px",
-                        transition: "background-color 120ms ease-in-out",
+                        // The hover background-color transition
+                        // is set in global.css on .help-term so
+                        // it respects the page-wide
+                        // prefers-reduced-motion catch-all.
                     }}
                 >
                     {children}

@@ -3827,7 +3827,33 @@ select:focus {
  * as interactive without screaming. ``color-mix`` is widely
  * supported in modern browsers (Chrome 111+, Safari 16.2+,
  * Firefox 113+); the fallback is no tint, which is fine. */
+.help-term {
+    transition: background-color 120ms ease-in-out;
+}
+
 .help-term:hover,
 .help-term:focus-within {
     background-color: color-mix(in srgb, var(--accent, #6366f1) 10%, transparent);
+}
+
+/* ============================================================
+ * Phase 39 C7 — WCAG 2.1 SC 2.3.3 + 2.2.2 catch-all for users
+ * who set ``prefers-reduced-motion: reduce`` in their OS. The
+ * per-animation overrides earlier in this file (cycle-pulse,
+ * assessment-slide, xp-rise, qr-scanline, ...) stay in place
+ * because they substitute a static visual; this block is the
+ * safety net for any animation or transition that doesn't
+ * have its own override. The 0.01ms duration is the standard
+ * "essentially instant but not zero" value that keeps
+ * onfinish / transitionend handlers firing.
+ * ========================================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
