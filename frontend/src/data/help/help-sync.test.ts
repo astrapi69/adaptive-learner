@@ -44,6 +44,56 @@ function loadBundle(category: string, lang: string): Bundle {
     );
 }
 
+describe("help bundles — Phase 38F passthrough parity", () => {
+    const PASSTHROUGH_LANGS = ["es", "fr", "el", "pt", "tr", "ja"] as const;
+    const CATEGORIES = ["concepts", "methods", "steps", "features"] as const;
+
+    for (const lang of PASSTHROUGH_LANGS) {
+        for (const category of CATEGORIES) {
+            it(`${category}.${lang} bundle exists and stamps the right language`, () => {
+                const bundle = loadBundle(category, lang);
+                expect(bundle.category).toBe(category);
+                expect(bundle.language).toBe(lang);
+                expect(bundle.entries.length).toBeGreaterThan(0);
+            });
+        }
+    }
+
+    it("every passthrough language has the same 22 keys as EN", () => {
+        const enConcepts = new Set(
+            loadBundle("concepts", "en").entries.map((e) => e.key),
+        );
+        const enMethods = new Set(
+            loadBundle("methods", "en").entries.map((e) => e.key),
+        );
+        const enSteps = new Set(
+            loadBundle("steps", "en").entries.map((e) => e.key),
+        );
+        const enFeatures = new Set(
+            loadBundle("features", "en").entries.map((e) => e.key),
+        );
+
+        for (const lang of PASSTHROUGH_LANGS) {
+            const concepts = new Set(
+                loadBundle("concepts", lang).entries.map((e) => e.key),
+            );
+            const methods = new Set(
+                loadBundle("methods", lang).entries.map((e) => e.key),
+            );
+            const steps = new Set(
+                loadBundle("steps", lang).entries.map((e) => e.key),
+            );
+            const features = new Set(
+                loadBundle("features", lang).entries.map((e) => e.key),
+            );
+            expect([...concepts].sort()).toEqual([...enConcepts].sort());
+            expect([...methods].sort()).toEqual([...enMethods].sort());
+            expect([...steps].sort()).toEqual([...enSteps].sort());
+            expect([...features].sort()).toEqual([...enFeatures].sort());
+        }
+    });
+});
+
 describe("help bundles — Features", () => {
     const expectedFeatures = new Set([
         "feature_method_switch",

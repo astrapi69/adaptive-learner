@@ -1,0 +1,276 @@
+# Adaptive Learner — Help glossary: App features (English passthrough — translation pending).
+
+category: features
+language: ja
+entries:
+  - key: feature_method_switch
+    title: Method Switch
+    short: "The system recommends a different method when you stagnate — you decide whether to switch."
+    long: |
+      ## What is the method switch?
+
+      If your learning sessions stagnate in a method or
+      produce high stress, Adaptive Learner suggests a method
+      switch. You see the suggestion as a banner above the
+      session chat — you can accept, decline, or defer.
+
+      ## When the suggestion fires
+
+      Three conditions must hold simultaneously:
+
+      - **At least 3 sessions** in the current method.
+      - **Average stress > 3** (on the 1-5 scale) in the last
+        3 ratings.
+      - **Method fit < 3** in the last 3 ratings.
+
+      Stagnation detection alone is not enough: brief
+      difficulties in an otherwise fitting method are normal
+      and pass. Only the combination of duration + stress +
+      low fit triggers the suggestion.
+
+      ## How the system decides
+
+      The ``recommend_method_switch`` hook in the session
+      plugin compares your learning profile to your current
+      trajectory and suggests the method with the highest
+      expected fit. If the top-2 methods are close, you see
+      both as options.
+
+      ## You decide
+
+      The system recommends; you choose. Accepting the switch
+      saves it as a ``MethodSwitch`` audit entry (a trail for
+      your profile). Declining does nothing — the suggestion
+      reappears at the earliest after 3 more sessions.
+
+      ## Why not automatic?
+
+      Method switches are a big change in the learning
+      experience. An automatic switch would break learning
+      continuity and could fire during a difficult but
+      productive phase. You know your context better than the
+      system does.
+
+  - key: feature_auto_loop
+    title: Auto-Loop
+    short: "After step 7, a new cycle with fresh content starts automatically."
+    long: |
+      ## What is the auto-loop?
+
+      When you complete step 7 (integrate), the session can
+      automatically start a new cycle on the next topic from
+      your curriculum — without you pressing a "next cycle"
+      button.
+
+      ## How the next topic is chosen
+
+      - **If a curriculum exists**: the next topic in the
+        hierarchical order.
+      - **If no curriculum exists**: the AI generates a
+        suitable follow-up topic based on the current
+        trajectory.
+      - **If spaced-repetition cards are due**: they are
+        prioritized before new content.
+
+      ## Cycle counter
+
+      Every session shows a cycle counter ("3/5"). When
+      max_cycles is reached (default: 5), auto-loop pauses
+      and asks whether you want to continue. This protects
+      against runaway sessions.
+
+      ## How to interrupt the auto-loop
+
+      - **Submit a rating**: after each cycle, you get the
+        three sliders (understanding, stress, method fit). If
+        stress > 3, the system suggests a break.
+      - **"End session" button**: clickable at any time.
+      - **Accept a method switch**: breaks the current loop
+        and starts a new one with the new method.
+
+      ## When auto-loop is most valuable
+
+      For language learning with small topic units, where
+      "start a new session" overhead slows learning down. For
+      coding, auto-loop is often less useful because topic
+      transitions are larger.
+
+  - key: feature_spaced_repetition
+    title: Spaced Repetition
+    short: "Time-optimized review based on your learning history."
+    long: |
+      ## What is spaced repetition?
+
+      Spaced repetition is the technique of placing reviews at
+      increasing intervals. It uses the forgetting-curve
+      effect: each successfully recalled item lasts longer
+      next time.
+
+      ## The band system in Adaptive Learner
+
+      Six due-date bands:
+
+      - **Today** — new cards + day-of reviews.
+      - **+1d** — learned yesterday, review today.
+      - **+3d** — reviewed three days ago, review today.
+      - **+7d** — one week ago.
+      - **+14d** — two weeks ago.
+      - **+30d** — one month ago.
+
+      Once a card passes four reviews successfully, it is
+      marked "stable" and leaves the active list — but stays
+      in the system for occasional refresher checks.
+
+      ## How history feeds in
+
+      A "successful review" is not just a click. The system
+      evaluates:
+
+      - **Confidence during the review session** (from the
+        dual-prompt evaluator).
+      - **Response time** vs your average.
+      - **Error count** in the current cycle.
+
+      At low confidence, the card slips back to an earlier
+      band rather than advancing.
+
+      ## Connection to Anki
+
+      With the Anki plugin active, you can export cards
+      directly to the Anki format. The system translates the
+      bands into Anki schedules — no progress is lost in the
+      transition.
+
+      ## When the system recommends reviews
+
+      The dashboard's "Spaced Recommendations" panel shows
+      today's due cards. You can step through them
+      individually or have the system place them at the start
+      of your next regular session — before new content. The
+      system prioritizes cards with the highest forgetting
+      risk.
+
+  - key: feature_conversation_analysis
+    title: Conversation Analysis / Import
+    short: "Analyze existing chat histories and extract concrete learning artifacts from them."
+    long: |
+      ## What is conversation analysis?
+
+      Adaptive Learner can analyze existing chats from
+      ChatGPT, Claude or Gemini and extract learning content
+      from them. You import the transcript once — the system
+      reads it, structures it, and turns it into a usable
+      learning artifact.
+
+      ## What gets extracted
+
+      - **Concepts** — terms and ideas discussed in the chat.
+      - **Knowledge gaps** — points where you asked follow-ups
+        or made mistakes.
+      - **Errors** — concrete misconceptions visible in the
+        chat.
+      - **Vocabulary / terminology** — domain words
+        (especially relevant for language learning or
+        specialized fields).
+
+      ## How the import works
+
+      1. Export your chat from ChatGPT, Claude or Gemini as
+        Markdown or JSON.
+      2. Upload the file into Adaptive Learner (drag-and-drop
+        or file picker).
+      3. The system detects the format automatically and
+        stores the messages.
+      4. Trigger the analysis — the AI reads the chat in your
+        learning language and produces the structured
+        breakdown.
+
+      ## What you can do next
+
+      Three actions follow from the analysis:
+
+      - **"Create curriculum"** — the extracted concepts feed
+        into a hierarchical curriculum.
+      - **"Start session"** — a session that starts directly
+        from the detected knowledge gaps.
+      - **"Generate Anki cards"** — flashcards from the
+        concepts and vocabulary.
+
+      ## Duplicates
+
+      If you import the same chat twice, the system detects it
+      via the content hash and offers to navigate to the
+      existing analysis instead of creating a copy.
+
+      ## Privacy
+
+      Chat contents go ONLY to your active AI provider (the
+      one you configured in settings). The system sends
+      nothing to a central server. When you delete the chat,
+      the contents are gone.
+
+  - key: feature_gamification
+    title: Gamification (XP, Badges, Streaks)
+    short: "Progress system with experience points, badges and streaks — motivation without gimmickry."
+    long: |
+      ## What is the gamification layer?
+
+      Three mechanics make learning progress visible and
+      rewarding:
+
+      - **XP (experience points)** — for every completed
+        session, every method switch, every
+        spaced-repetition card. Levels rise with XP.
+      - **Badges** — for thematic milestones ("first
+        session", "10 sessions in a method", "30-day streak",
+        ...).
+      - **Streaks** — daily learning runs. They expire 24
+        hours without a session — with three "streak freezes"
+        per month as emergency pauses.
+
+      ## How XP is earned
+
+      Different actions yield different XP values:
+
+      - **Submit a rated session**: 50 XP.
+      - **Reach step 7 (integrate)**: +25 XP bonus.
+      - **Accept a method switch**: 10 XP (you made a
+        deliberate learning decision).
+      - **Spaced-repetition card with confidence > 80%**:
+        5 XP.
+      - **Anki export of a set**: 20 XP.
+
+      Levels scale with a square-root function (level n =
+      sqrt(XP / 100)) — early levels move quickly, higher
+      levels need longer breath.
+
+      ## Badges are not coercive
+
+      Badge criteria are not UI-load-bearing — you do *not*
+      need a single badge to use the app productively. They
+      are a mirror, not a target. If you start to feel like
+      you are learning for badges rather than for yourself,
+      disable the display in settings.
+
+      ## Streak freezes
+
+      Three streak freezes per month. If you miss a day, a
+      freeze automatically protects your streak. Explicitly
+      designed as a "sick day" or "travel day" allowance, not
+      as an exception mechanism for laziness.
+
+      ## Why this works without gimmicks
+
+      Learning research shows: extrinsic reward can destroy
+      intrinsic motivation ("overjustification effect").
+      Adaptive Learner relies on the mechanics being a
+      **mirror** of progress, not an incentive system. No
+      leaderboards, no social features, no point-sharing —
+      the data stays with you.
+
+      ## Reset
+
+      If the gamification values no longer match your
+      situation (e.g. fresh start after a long break), you
+      can reset them in settings. Curriculum, sessions, and
+      ratings are preserved.

@@ -1,0 +1,262 @@
+# Adaptive Learner — Help glossary: Learning methods (English passthrough — translation pending).
+
+category: methods
+language: es
+entries:
+  - key: method_deductive
+    title: Deductive
+    short: "Learn the rule first, then apply it to concrete examples."
+    long: |
+      ## Deductive method
+
+      The AI explains a rule or concept; you then practice it
+      with examples. Top-down: from the general to the specific.
+
+      ## When it works well
+
+      - **Structured topics** with clear rules (grammar, math
+        formulas, programming syntax).
+      - **You have prior knowledge** the rule can attach to.
+      - **You prefer clarity**: you want to know what's correct
+        before you try something.
+
+      ## How a session flows
+
+      1. AI explains the rule with a brief example.
+      2. You get a practice exercise.
+      3. You solve it; AI gives feedback.
+      4. On understanding: a new task at higher complexity.
+      5. On mistakes: AI refines the explanation.
+
+      ## Typical AI prompts
+
+      The system prompts for this method emphasize clarity and
+      step-by-step build-up. The AI is instructed to state the
+      rule *before* moving to application.
+
+      ## When the system may switch away
+
+      If your **stress** rating rises over several sessions and
+      you feel like you are "learning rules without
+      understanding them", the system recommends switching to a
+      more practice-driven method (inductive, contextual or
+      dialogic). You always have the final say on the switch.
+
+  - key: method_inductive
+    title: Inductive
+    short: "See examples first, derive the rule yourself."
+    long: |
+      ## Inductive method
+
+      The AI presents examples; you recognize the pattern and
+      formulate the rule yourself. Bottom-up: from the concrete
+      to the general.
+
+      ## When it works well
+
+      - **Pattern-recognition topics** like grammar in context,
+        music scales, statistical concepts.
+      - **You learn by discovery** rather than memorizing rules.
+      - **Examples are plentiful** — the AI has material that
+        makes the rule visible.
+
+      ## How a session flows
+
+      1. AI shows 3-5 examples of a phenomenon.
+      2. Question: "What pattern do you see?"
+      3. You formulate a hypothesis.
+      4. AI confirms, corrects or shows more examples.
+      5. On the correct rule: AI states it formally.
+
+      ## Why this goes deeper
+
+      Research shows self-discovered rules stick longer than
+      repeated ones. The inductive path takes longer, but the
+      understanding sits deeper.
+
+      ## When it becomes hard
+
+      If patterns are too complex or your background is too
+      thin, inductive learning can frustrate. The system reads
+      this from low confidence values and may switch to
+      deductive.
+
+  - key: method_error_based
+    title: Error-Based
+    short: "Make mistakes deliberately, then understand why they happen."
+    long: |
+      ## Error-based method
+
+      The AI deliberately guides you into common mistakes — and
+      then back out together. Errors are not avoided but used as
+      learning opportunities.
+
+      ## Why deliberate errors work
+
+      Research on **productive failure** shows that errors you
+      make yourself and then understand create more robust
+      mental models than errors you avoid.
+
+      The method is NOT punitive: this is not about shame, it is
+      about clarity. An understood error is more valuable than
+      a randomly correct answer.
+
+      ## How the AI implements it
+
+      1. AI presents a problem with traps.
+      2. You solve it — and often step into the trap.
+      3. AI shows you the error and explains the underlying
+        misconception.
+      4. You solve a variant without repeating the error.
+      5. AI generalizes the principle.
+
+      ## When this method fits
+
+      - **Topics with classic error sources** (false friends in
+        languages, off-by-one in code, sign errors in math).
+      - **You are not stress-prone** when making mistakes.
+      - **You have basic knowledge** — errors from total
+        ignorance teach little.
+
+      ## Caution at high stress
+
+      If your stress rating exceeds 3 in a session, the system
+      switches to dialogic or deductive — this method needs
+      mental calm to be productive.
+
+  - key: method_dialogic
+    title: Dialogic
+    short: "Learn through conversation with the AI in a low-pressure setting."
+    long: |
+      ## Dialogic method
+
+      You learn through conversation: no rigid exercises, no
+      right/wrong answers, just a flexible dialog about the
+      topic. The AI follows up, deepens, encourages.
+
+      ## When it works
+
+      - **High-stress situations** where exam anxiety or speech
+        inhibition block learning.
+      - **Pure reinforcement**: you explain to the AI what you
+        understood.
+      - **Complex topics** you want to explore before
+        committing to a structured solution.
+
+      ## How a session flows
+
+      No fixed steps. You start with a question, an assumption
+      or a concept. The AI continues the conversation, asks
+      follow-ups, suggests related concepts, gives examples.
+      You can switch topics at any time — unlike deductive or
+      inductive, where the system keeps you on track.
+
+      ## What the AI does
+
+      - **Low pressure**: no judgmental tone.
+      - **Motivational**: progress is highlighted, but not
+        artificially.
+      - **Adaptive**: matches complexity to your fluency and
+        energy.
+
+      ## What the dual-prompt evaluator does
+
+      Confidence evaluation still runs, but more tolerantly —
+      step progression is allowed at 50% confidence (vs the
+      usual 70%). The method is explicitly for exploration, not
+      testing.
+
+  - key: method_contextual
+    title: Contextual
+    short: "Learn in simulated real-world situations."
+    long: |
+      ## Contextual method
+
+      The AI simulates a concrete situation — restaurant, job
+      interview, coding interview — and you solve the task
+      inside it. Learning happens in the application context,
+      not abstractly.
+
+      ## Why context makes the difference
+
+      Research on **situated cognition** shows that knowledge
+      learned in context transfers better to practice. What you
+      learned at the restaurant table, you can apply at the
+      restaurant table — abstract knowledge often will not.
+
+      The method especially helps with the **transfer problem**:
+      "I know the rule, but in a real conversation I cannot
+      access it."
+
+      ## Examples for language
+
+      - "You're at a cafe in Madrid. Order three different tapas
+        and ask for the house recommendation."
+      - "You're asking for directions to the train station; the
+        passerby answers in a dialect — how do you respond?"
+
+      ## Examples for code
+
+      - "Code review: you receive this PR. What do you tell the
+        junior dev?"
+      - "Production bug scenario: logs show X. How do you
+        debug?"
+
+      ## When it fits
+
+      - **When your goal is applied** ("Spanish for travel" fits
+        better than "Spanish for the exam").
+      - **After the first basics** — context only works once
+        the building blocks are in place.
+      - **When preparing for a specific situation** (job
+        interview next week).
+
+      ## When it fits less well
+
+      For pure exam topics (memorizing fact lists), deductive
+      or spaced repetition is usually more efficient.
+
+  - key: method_ai_adaptive
+    title: AI-Adaptive
+    short: "The system automatically picks the best method based on your history."
+    long: |
+      ## AI-adaptive method
+
+      You let the system choose the method. After every step it
+      evaluates your progress (confidence value), your stress,
+      and your method fit, then decides which method to start
+      the next learning cycle with.
+
+      ## How the system decides
+
+      Three data sources feed the choice:
+
+      - **Learning profile**: the weights from your assessment.
+        Methods with higher weights get preference.
+      - **Session history**: which methods led to fast progress
+        in your last 5-10 sessions?
+      - **Current stress level**: at high stress, the system
+        switches to less demanding methods (dialogic,
+        contextual).
+
+      ## Dual-prompt evaluation
+
+      Unlike fixed methods, a second AI instance evaluates your
+      answers after every step and signals to the first AI:
+      "continue as is", "switch method", "repeat step".
+
+      ## When it is ideal
+
+      - **You are new to Adaptive Learner** and have not yet
+        experienced the methods first-hand.
+      - **You change topics often** — the system recalibrates
+        per project.
+      - **You like being surprised** — the AI mixes methods
+        deliberately.
+
+      ## You always have the final say
+
+      If the system suggests a switch, you can decline. If a
+      suggested method does not fit, you end the session and
+      start with another. AI-adaptive is a recommendation
+      system, not a constraint.

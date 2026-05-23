@@ -153,6 +153,26 @@ export default defineConfig({
                         "vendor-ui": ["react-toastify"],
                         "vendor-charts": ["recharts", "d3-shape", "d3-scale", "d3-array", "d3-path", "d3-color", "d3-interpolate", "d3-format", "d3-time", "d3-time-format"],
                         "vendor-tree": ["tree-model"],
+                        // Phase 38 — help-content rendering stack.
+                        // react-markdown + remark/rehype + the
+                        // Radix surfaces consumed only by the
+                        // tooltip + drawer get their own chunk so
+                        // the main bundle stays under the PWA
+                        // precache limit (2 MiB default).
+                        "vendor-markdown": [
+                            "react-markdown",
+                            "remark-gfm",
+                            "rehype-slug",
+                            "rehype-autolink-headings",
+                            "mdast-util-to-hast",
+                            "mdast-util-from-markdown",
+                            "micromark",
+                        ],
+                        "vendor-radix": [
+                            "@radix-ui/react-dialog",
+                            "@radix-ui/react-popover",
+                            "@radix-ui/react-hover-card",
+                        ],
                     };
                     for (const [chunkName, pkgs] of Object.entries(chunkMap)) {
                         for (const pkg of pkgs) {

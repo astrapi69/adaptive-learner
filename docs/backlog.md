@@ -112,6 +112,27 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
+- [ ] **HELP-CONTENT-TRANSLATIONS-01**: Translate the 22-entry
+  help glossary content (``backend/config/help/*.yaml``) for
+  ES / FR / EL / PT / TR / JA. Currently EN-passthrough — the
+  bundles for these six languages are byte-identical copies of
+  the EN authoring files with only the ``language`` field
+  stamped to match the target locale. Each entry is a
+  ``short`` (1-2 sentences) + ``long`` (200-500 words
+  Markdown), so the full scope is ~22 × 6 × 2 ≈ 264 distinct
+  text blobs (~10k words of educational content per
+  language). PT / TR / JA need native-speaker review; ES /
+  FR / EL can ride the EN passthrough until enough demand
+  surfaces to invest in translation. The ``ui.help.*``
+  catalog keys (button labels, dialog chrome) are NOT part of
+  this item — those are short UI strings and were translated
+  inline with the relevant Phase 38 commits. The Phase 26
+  ``test_i18n_translation_audit`` only scans
+  ``backend/config/i18n/*.yaml``, NOT
+  ``backend/config/help/*.yaml``, so the passthrough
+  bundles do not currently fail any test. Trigger: a user
+  reports the help drawer reading awkwardly in one of the
+  six languages, OR a translator volunteers a pass.
 - [x] **BL-28**: Source-stamp Claude.ai per-conversation
   Markdown exports as ``source="claude"``. Closed alongside
   BL-25 — ``claude_md_parser.ts`` stamps the source on the

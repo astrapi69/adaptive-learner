@@ -1,0 +1,284 @@
+# Adaptive Learner — Help glossary: 7 cycle steps (English passthrough — translation pending).
+
+category: steps
+language: el
+entries:
+  - key: step_input
+    title: 1. Input
+    short: "You receive new material — explanation, example or question from the AI."
+    long: |
+      ## Step 1: Input
+
+      Every learning cycle starts with input. The AI presents
+      the material: an explanation, an example, an open
+      question or a situation — depending on the selected
+      method.
+
+      ## What the AI does
+
+      - **In deductive**: explains the rule.
+      - **In inductive**: shows examples.
+      - **In error-based**: presents a problem with a trap.
+      - **In dialogic**: opens the conversation with a
+        question.
+      - **In contextual**: sketches the scenario.
+
+      ## What you do
+
+      Read attentively. Ask questions when something is
+      unclear — the session is a dialog, not a lecture. If you
+      find the AI's confidence too high, stay with it: some
+      explanations only land on the second read.
+
+      ## What the dual-prompt evaluator does
+
+      It is running quietly. It observes your reaction (or
+      lack thereof) and assesses whether you absorbed the
+      material. Active scoring begins in step 2 (attempt).
+
+      ## What happens if you race through this step
+
+      The most common beginner mistake: jumping to "action"
+      without processing the input. The system spots this from
+      low confidence on subsequent attempts — and sends you
+      back to step 1.
+
+  - key: step_attempt
+    title: 2. Attempt
+    short: "You apply what you learned to a concrete task or question."
+    long: |
+      ## Step 2: Attempt
+
+      You get an application of the material and try to solve
+      it. First answer, first example, first concrete
+      application of the rule.
+
+      ## What the AI does
+
+      The AI gives you a clearly scoped task. For language:
+      translate a sentence. For code: write a function. For
+      music: practice a chord change. Difficulty is
+      deliberately low — the first attempt should be
+      achievable.
+
+      ## What you do
+
+      Try it. Even if you are unsure. An incomplete or
+      mistaken answer is more valuable than a refusal because
+      it gives the evaluator material to work with.
+
+      ## Dual-prompt evaluator
+
+      It activates here. It reads your answer and assigns a
+      confidence score (0-100%). At high confidence you skip
+      straight to step 5 (adapt), bypassing error analysis. At
+      low confidence the path goes through step 3 (error) and
+      step 4 (feedback).
+
+      ## Tip: do not stall
+
+      If you have no approach after 30 seconds, tell the AI
+      ("I do not know where to start"). The AI gives you a
+      hint instead of the full solution — and the evaluator
+      does not count this as a failed attempt.
+
+  - key: step_error
+    title: 3. Error
+    short: "A mistake or misconception becomes visible."
+    long: |
+      ## Step 3: Error
+
+      If your attempt in step 2 did not reach the target, the
+      cycle passes through this step. The error is named — not
+      judged, just marked as a learning opportunity.
+
+      ## What the AI does
+
+      It shows you where the error is, without immediately
+      correcting it. The point: you should *see* the error,
+      not just *hear that something was wrong*. That
+      distinction determines whether you repeat the error.
+
+      ## What you do
+
+      Trace the error. If you can correct it yourself, do so.
+      If not, signal that to the AI ("I do not understand
+      where the error is") — the next step (feedback) exists
+      to clarify.
+
+      ## When no error appears
+
+      At high confidence in step 2, the cycle skips this step.
+      The system notes it and raises difficulty in the next
+      cycle — you should be challenged, not bored.
+
+      ## In error-based (method)
+
+      If you chose this method, step 3 is the cycle's main
+      step. The AI deliberately leads you into typical traps
+      — see the methods glossary.
+
+  - key: step_feedback
+    title: 4. Feedback
+    short: "The AI explains why something works or does not work."
+    long: |
+      ## Step 4: Feedback
+
+      Here comes the explanation. The AI describes the
+      principle behind your error or correct answer — ideally
+      so that you can transfer the principle to other cases.
+
+      ## What good feedback contains
+
+      - **What happened** (description of the observation).
+      - **Why it happened** (explanation of the principle).
+      - **How to do it differently next time** (concrete
+        action guidance).
+
+      Without (3), feedback evaporates. With (3), a correction
+      becomes a transferable rule.
+
+      ## What you do
+
+      Read, follow, ask back. If feedback has not clicked yet,
+      say so. The AI is patient — it will explain the
+      principle in another variant. Better understood twice
+      than echoed once.
+
+      ## Dual-prompt evaluator
+
+      It reads your reaction to the feedback. If you say "Ah,
+      now I understand" (or equivalent), confidence rises and
+      you proceed. If you still sound confused, the evaluator
+      pulls the cycle back to step 1 (input) with a new
+      explanation approach.
+
+      ## Also on correct answers
+
+      Feedback is not only for errors. When you solved
+      something correctly, the AI still explains the
+      principle behind it — so the success becomes
+      transferable.
+
+  - key: step_adapt
+    title: 5. Adapt
+    short: "You adjust your strategy or understanding based on the feedback."
+    long: |
+      ## Step 5: Adapt
+
+      You take what you learned from the feedback and adjust
+      your approach. Not just intellectually ("yes, now I
+      understand"), but operationally ("next time I will do it
+      differently").
+
+      ## What happens here concretely
+
+      - **For language**: you rephrase. Instead of the wrong
+        construction you use the corrected one.
+      - **For code**: you restructure the function with the
+        understood principle.
+      - **For math**: you solve a variant using the corrected
+        solution path.
+
+      ## What the AI does
+
+      It gives you a *new* task — not the old one with the
+      known solution, but a variation that demands the
+      understood principle in a new context.
+
+      ## Why this step matters
+
+      Understanding without adaptation evaporates. If you only
+      "echo" the feedback but do not build it into your
+      approach, you will repeat the error next time. Step 5
+      forces operational activation.
+
+      ## Dual-prompt evaluator
+
+      Here it evaluates learning transfer. A successful
+      adaptation in a new variation is the best signal that
+      learning stuck — confidence typically rises above 80%.
+
+  - key: step_repeat
+    title: 6. Repeat
+    short: "You practice with variations until what you learned is fluent."
+    long: |
+      ## Step 6: Repeat
+
+      You get more variations of the task. Not identical
+      repetition (that just leads to memorization), but
+      variation: same core, different context, different
+      difficulty.
+
+      ## What the AI does
+
+      It generates tasks that test the same principle in
+      different guises. For language: different vocabulary,
+      different sentence structure, same grammar. For code:
+      different data, same algorithmic structure.
+
+      ## Why variation, not repetition
+
+      Research on **interleaved practice** shows: blocked
+      practice (all tasks on the same topic in a row) creates
+      illusion of competence. Interleaved practice (related
+      tasks with variation) creates transferable knowledge.
+
+      ## When the step ends
+
+      Once the dual-prompt evaluator sees three variations in
+      a row with confidence > 80%, you proceed to step 7. If
+      confidence fluctuates, the cycle stays in step 6 —
+      until stability is reached.
+
+      ## Connection to spaced repetition
+
+      What you solve successfully in step 6 enters the
+      spaced-repetition system. The system schedules reviews
+      at 1 day, 3 days, 7 days, 14 days, 30 days — so the
+      learning sticks long-term.
+
+  - key: step_integrate
+    title: 7. Integrate
+    short: "You connect what you learned to other knowledge or a real application."
+    long: |
+      ## Step 7: Integrate
+
+      The learning cycle ends with you placing the new
+      learning into a larger context. Not in isolation
+      ("today I learned this") but connected to what you
+      already knew.
+
+      ## What the AI does
+
+      It challenges you to link the new content to other
+      concepts or apply it in a real scenario:
+
+      - **Language**: use the tense in a free conversation.
+      - **Code**: apply the new technique in a larger project.
+      - **Theory**: combine the concept with one of your own
+        questions.
+
+      ## What you do
+
+      Articulate the required link. Find your own examples.
+      Reach the point where you can say: "I can do this now —
+      not because I memorized it, but because I can deploy
+      it."
+
+      ## What happens after step 7
+
+      The cycle is complete. Three options:
+
+      - **End the session** and rate it (understanding /
+        stress / method fit).
+      - **Auto-loop**: a new cycle with a new topic starts
+        automatically.
+      - **Method switch**: at low method fit the system
+        recommends a method change for the next cycle.
+
+      ## Why the system closes here
+
+      Integration is the only robust test that learning
+      worked. Memorized content fails in step 7; understood
+      knowledge thrives here.

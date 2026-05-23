@@ -1,0 +1,209 @@
+# Adaptive Learner — Help glossary: Core concepts (English passthrough — translation pending).
+#
+# Per entry:
+#   key:    stable ID (snake_case, used in URLs)
+#   title:  display title in UI
+#   short:  1-2 sentences. Appears in the tooltip popover.
+#   long:   Markdown. 200-500 words. Appears in the help drawer.
+#
+# Edits land in ``frontend/src/data/help/concepts.en.json`` via
+# ``make sync-help``.
+
+category: concepts
+language: pt
+entries:
+  - key: curriculum
+    title: Curriculum
+    short: "A structured learning plan that ties goals, content, methods and assessment together."
+    long: |
+      ## What is a curriculum?
+
+      In education, a curriculum (plural: curricula) is a
+      structured plan and systematic concept for how learning
+      and teaching happen.
+
+      ## Four core questions
+
+      Every curriculum answers four central questions:
+
+      - **Learning goals (why?)** — Which competencies should be
+        acquired?
+      - **Learning content (what?)** — Which topics will be
+        covered?
+      - **Methodology and didactics (how?)** — Which teaching and
+        learning forms will be used?
+      - **Evaluation (how well?)** — How will learning success be
+        measured?
+
+      ## Difference from a syllabus
+
+      A curriculum puts the learner and their competency acquisition
+      at the center (outcome orientation), not just a rigid list of
+      subject areas. A syllabus documents **what** should be taught;
+      a curriculum also describes **why** and **how** — and measures
+      **what was actually learned**.
+
+      ## Four dimensions
+
+      Curriculum research distinguishes four manifestations:
+
+      - **Intended curriculum** — the documented target.
+      - **Implemented curriculum** — what is actually taught.
+      - **Achieved curriculum** — what learners actually
+        understand.
+      - **Hidden curriculum** — implicit learning that happens
+        alongside (study habits, attitudes, social norms).
+
+      ## In Adaptive Learner
+
+      In Adaptive Learner, a curriculum is your personal learning
+      plan for a topic. It organizes learning topics hierarchically
+      and ties them to lessons. You define the goals, content and
+      methods — the system supports the evaluation through
+      tracking, the learning profile and AI feedback after each
+      step.
+
+      Unlike a printed curriculum, this one adapts continuously:
+      when a method-switch recommendation appears, it is the
+      implemented curriculum reacting to the achieved one.
+
+  - key: learning_project
+    title: Learning Project
+    short: "Your concrete learning effort with topic, goal, timeframe and daily learning time."
+    long: |
+      ## What is a learning project?
+
+      A learning project bundles everything that belongs to a
+      learning effort: the topic, your goal, the timeframe, and
+      your daily learning time. It is the bracket around your
+      sessions, your curriculum and your learning profile.
+
+      ## Why these four fields?
+
+      - **Topic** — what you want to learn (e.g., "Spanish for
+        travel", "Python basics", "C major piano scale").
+        Concrete and bounded, not too broad.
+      - **Goal** — what you want to be able to do at the end.
+        Concrete goals ("order food at a restaurant") produce
+        better AI prompts than vague ones ("learn Spanish").
+      - **Timeframe** — by when. Affects how aggressively the
+        system schedules repetitions and when the method-switch
+        recommendation appears.
+      - **Daily learning time** — how many minutes per day you
+        can invest. Drives the spaced-repetition recommendations
+        and session length.
+
+      ## Why concrete goals matter
+
+      Learning research is clear: SMART goals (specific,
+      measurable, attractive, realistic, time-bound) double
+      learning success compared to vague intentions. Adaptive
+      Learner translates your goal into the AI's system prompt;
+      the more concrete you are, the sharper the generated
+      exercises.
+
+      ## In Adaptive Learner
+
+      You can have several learning projects in parallel. Each
+      session belongs to exactly one project; your progress
+      (XP, badges, streak) is tracked per project. When you
+      change the timeframe, the system automatically adjusts the
+      repetition cadence — a tight timeframe staggers
+      repetitions more densely.
+
+  - key: learning_profile
+    title: Learning Profile
+    short: "Your personal strength profile across six learning methods, derived from the assessment test."
+    long: |
+      ## What is the learning profile?
+
+      The learning profile shows how well each of the six
+      Adaptive Learner methods suits you. It comes from your
+      answers in the assessment test (12 questions) and is
+      visualized as a radar chart.
+
+      ## The six axes
+
+      Each axis is a method with a weight between 0 and 100:
+
+      - **Deductive** — learn the rule, then apply it.
+      - **Inductive** — see examples, derive the rule yourself.
+      - **Error-based** — make mistakes deliberately, then
+        understand why.
+      - **Dialogic** — learn through conversation.
+      - **Contextual** — learn in simulated everyday situations.
+      - **AI-adaptive** — the system picks automatically.
+
+      ## It is a profile, not a label
+
+      Nobody is "a deductive learner". Every learner has a
+      weighted pattern across all six methods. A profile with
+      high inductive and dialogic weights does not mean
+      deductive will not work for you — it means the other two
+      typically get you to learning success faster.
+
+      ## Changes over time
+
+      The learning profile is not carved in stone. With every
+      completed learning cycle and every method switch, the
+      system adjusts its recommendations. You can re-take the
+      assessment test at any time — typically useful every
+      3-6 months, or after a major topic change.
+
+      ## In Adaptive Learner
+
+      The profile drives the dashboard view and session
+      recommendations. If you start a session without specifying
+      a method, the system picks the method with the highest
+      weight in your profile.
+
+  - key: learning_session
+    title: Learning Session
+    short: "An AI-driven learning unit that follows the 7-step cycle."
+    long: |
+      ## What is a learning session?
+
+      A learning session is a continuous learning unit on one
+      topic, driven by the 7-step cycle (input, attempt, error,
+      feedback, adapt, repeat, integrate). The AI plays the
+      teacher role; you drive the dialog.
+
+      ## What makes a session different from a chat?
+
+      In a session the **dual-prompt evaluator** runs alongside:
+      after every answer, a second AI instance judges your
+      understanding (0-100% confidence) and decides whether you
+      are ready for the next step. A regular chat has no such
+      corrective.
+
+      ## Streaming
+
+      The AI's answers appear word by word (Server-Sent Events)
+      so you do not wait for the full reply. You can interrupt
+      at any time and ask follow-ups — the session runs until
+      you end it or the cycle completes.
+
+      ## When should I end a session?
+
+      - After step 7 (integrate), when the learning cycle is
+        complete.
+      - When the system recommends a method switch and you
+        accept the recommendation.
+      - When your **stress** rating has been above 4 in the
+        last few ratings — a break is more productive than
+        pushing through.
+
+      ## Ratings carry forward
+
+      Every session ends with three sliders (understanding,
+      stress, method fit, each 1-5). These values feed into
+      your learning profile and shape future recommendations:
+      sustained high stress plus low method fit triggers the
+      method-switch recommendation.
+
+      ## In Adaptive Learner
+
+      A session belongs to exactly one learning project. You
+      can have only one active session at a time; this prevents
+      topic mixing and shields the method-switch logic from
+      noise.

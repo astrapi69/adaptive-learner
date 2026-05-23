@@ -193,6 +193,57 @@ def test_list_entries_no_category_returns_all_22():
         )
 
 
+# --- Phase 38F: passthrough parity for the 6 deferred languages --------
+
+
+@pytest.mark.parametrize(
+    "lang", ["es", "fr", "el", "pt", "tr", "ja"],
+)
+def test_passthrough_language_has_all_22_entries(lang: str):
+    """Phase 38F — every secondary language has all four
+    category bundles + the same 22 canonical keys as EN, even
+    when the content is an EN passthrough. The actual
+    translation lives in the ``HELP-CONTENT-TRANSLATIONS-01``
+    backlog item; this pin protects against accidentally
+    shipping a language with missing bundles."""
+    entries = list_entries(lang)
+    assert len(entries) == 22, (
+        f"{lang}: expected 22 entries, got {len(entries)}"
+    )
+
+    en_keys = {e["key"] for e in list_entries("en")}
+    lang_keys = {e["key"] for e in entries}
+    assert lang_keys == en_keys, (
+        f"{lang}: drift from EN. Missing: {en_keys - lang_keys}, "
+        f"extra: {lang_keys - en_keys}"
+    )
+
+
+@pytest.mark.parametrize(
+    "lang", ["es", "fr", "el", "pt", "tr", "ja"],
+)
+def test_passthrough_language_bundle_records_correct_language(lang: str):
+    """The bundle's ``language`` field must reflect the file's
+    suffix even on passthrough — otherwise the frontend
+    loader thinks it's reading EN content and falls back
+    silently. Catches "I forgot to stamp the language" mistakes."""
+    from pathlib import Path
+
+    import yaml
+
+    help_dir = (
+        Path(__file__).resolve().parent.parent / "config" / "help"
+    )
+    for category in ("concepts", "methods", "steps", "features"):
+        path = help_dir / f"{category}.{lang}.yaml"
+        assert path.exists(), f"{path} missing"
+        data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        assert data["language"] == lang, (
+            f"{path}: language stamped as {data['language']!r}, "
+            f"expected {lang!r}"
+        )
+
+
 def test_categories_constant_covers_filesystem():
     """If a new YAML category lands on disk, CATEGORIES must
     grow to match. Pin so future glossary additions do not
