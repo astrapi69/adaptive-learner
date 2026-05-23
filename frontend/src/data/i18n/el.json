@@ -147,6 +147,13 @@
   "onboarding": {
     "title": "Δημιουργία έργου μάθησης",
     "intro": "Πες μας για τον στόχο μάθησής σου. Το Adaptive Learner το χρησιμοποιεί για να χτίσει το προφίλ σου και να προτείνει μέθοδο εκκίνησης.",
+    "concepts_explainer_prefix": "You'll define a ",
+    "concepts_explainer_mid1": ", then complete a brief assessment to build a ",
+    "concepts_explainer_mid2": " — which guides every ",
+    "concepts_explainer_suffix": " ahead.",
+    "term_learning_project": "learning project",
+    "term_learning_profile": "learning profile",
+    "term_learning_session": "learning session",
     "field_name": "Το όνομά σου",
     "field_topic": "Θέμα",
     "field_topic_hint": "π.χ. Ισπανικά Β1, γραμμική άλγεβρα.",

@@ -137,6 +137,13 @@ landing:
 onboarding:
   title: Creer un projet d'apprentissage
   intro: Decris ton objectif. Adaptive Learner utilise ces informations pour construire ton profil et te recommander une methode de depart.
+  concepts_explainer_prefix: "You'll define a "
+  concepts_explainer_mid1: ", then complete a brief assessment to build a "
+  concepts_explainer_mid2: " — which guides every "
+  concepts_explainer_suffix: " ahead."
+  term_learning_project: "learning project"
+  term_learning_profile: "learning profile"
+  term_learning_session: "learning session"
   field_name: Ton nom
   field_topic: Sujet
   field_topic_hint: ex. Espagnol B1, algebre lineaire.

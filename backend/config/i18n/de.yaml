@@ -137,6 +137,13 @@ landing:
 onboarding:
   title: Lernprojekt anlegen
   intro: Beschreibe dein Lernziel. Adaptive Learner nutzt diese Angaben für dein Profil und die ersten Methoden-Empfehlungen.
+  concepts_explainer_prefix: "Du definierst ein "
+  concepts_explainer_mid1: ", machst dann den Assessment-Test für dein "
+  concepts_explainer_mid2: " — das jede deiner "
+  concepts_explainer_suffix: " leitet."
+  term_learning_project: "Lernprojekt"
+  term_learning_profile: "Lernprofil"
+  term_learning_session: "Lernsession"
   field_name: Dein Name
   field_topic: Thema
   field_topic_hint: z. B. Spanisch B1 oder lineare Algebra.

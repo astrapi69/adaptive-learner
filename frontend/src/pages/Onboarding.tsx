@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 
 import {ApiError} from "../api/client";
 import HelpLink from "../components/help/HelpLink";
+import HelpTooltip from "../components/help/HelpTooltip";
 import {useI18n} from "../hooks/useI18n";
 import {SUPPORTED_LANGUAGES} from "../lib/constants";
 import {setProjectId, setUserId} from "../lib/learnerState";
@@ -254,6 +255,39 @@ export default function Onboarding() {
                     </button>
                 </div>
                 <p className="onboarding-intro">{t("onboarding.intro")}</p>
+                <p
+                    className="onboarding-intro"
+                    data-testid="onboarding-concepts-explainer"
+                >
+                    {t("onboarding.concepts_explainer_prefix", "You'll define a ")}
+                    <HelpTooltip glossaryKey="learning_project">
+                        {t(
+                            "onboarding.term_learning_project",
+                            "learning project",
+                        )}
+                    </HelpTooltip>
+                    {t(
+                        "onboarding.concepts_explainer_mid1",
+                        ", then complete a brief assessment to build a ",
+                    )}
+                    <HelpTooltip glossaryKey="learning_profile">
+                        {t(
+                            "onboarding.term_learning_profile",
+                            "learning profile",
+                        )}
+                    </HelpTooltip>
+                    {t(
+                        "onboarding.concepts_explainer_mid2",
+                        " — which guides every ",
+                    )}
+                    <HelpTooltip glossaryKey="learning_session">
+                        {t(
+                            "onboarding.term_learning_session",
+                            "learning session",
+                        )}
+                    </HelpTooltip>
+                    {t("onboarding.concepts_explainer_suffix", " ahead.")}
+                </p>
             </header>
 
             <form className="onboarding-form" onSubmit={handleSubmit} noValidate>

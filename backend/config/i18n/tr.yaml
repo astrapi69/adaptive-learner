@@ -137,6 +137,13 @@ landing:
 onboarding:
   title: Bir öğrenme projesi oluştur
   intro: Bize öğrenme hedefini anlat. Adaptive Learner bunu kullanarak profilini oluşturur ve sana başlangıç için bir yöntem önerir.
+  concepts_explainer_prefix: "Önce bir "
+  concepts_explainer_mid1: " tanımlarsın, sonra kısa bir değerlendirmeyle "
+  concepts_explainer_mid2: " oluşur — bu da her "
+  concepts_explainer_suffix: " sürecine yön verir."
+  term_learning_project: "öğrenme projesi"
+  term_learning_profile: "öğrenme profili"
+  term_learning_session: "öğrenme oturumu"
   field_name: Adın
   field_topic: Konu
   field_topic_hint: ör. İspanyolca B1, lineer cebir.

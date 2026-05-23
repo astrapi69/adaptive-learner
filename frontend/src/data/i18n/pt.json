@@ -147,6 +147,13 @@
   "onboarding": {
     "title": "Criar um projeto de aprendizado",
     "intro": "Conte-nos sobre o seu objetivo de aprendizado. O Adaptive Learner usa essas informações para construir seu perfil e recomendar um método inicial.",
+    "concepts_explainer_prefix": "Você define um ",
+    "concepts_explainer_mid1": ", depois faz uma avaliação rápida para construir seu ",
+    "concepts_explainer_mid2": " — que orienta cada ",
+    "concepts_explainer_suffix": " seguinte.",
+    "term_learning_project": "projeto de aprendizado",
+    "term_learning_profile": "perfil de aprendizado",
+    "term_learning_session": "sessão de aprendizado",
     "field_name": "Seu nome",
     "field_topic": "Tópico",
     "field_topic_hint": "ex. Espanhol B1, álgebra linear.",

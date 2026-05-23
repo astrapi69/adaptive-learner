@@ -137,6 +137,13 @@ landing:
 onboarding:
   title: 学習プロジェクトを作成
   intro: 学習目標について教えてください。Adaptive Learner はこれをもとに プロフィールを構築し、開始する方法を推奨します。
+  concepts_explainer_prefix: "まず"
+  concepts_explainer_mid1: "を作成し、簡単な評価で"
+  concepts_explainer_mid2: "を構築します。これが今後の各"
+  concepts_explainer_suffix: "の指針になります。"
+  term_learning_project: "学習プロジェクト"
+  term_learning_profile: "学習プロフィール"
+  term_learning_session: "学習セッション"
   field_name: お名前
   field_topic: トピック
   field_topic_hint: '例: スペイン語 B1、線形代数。'

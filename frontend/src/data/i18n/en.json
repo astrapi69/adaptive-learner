@@ -147,6 +147,13 @@
   "onboarding": {
     "title": "Create a learning project",
     "intro": "Tell us about your learning goal. Adaptive Learner uses this to build your profile and recommend a starting method.",
+    "concepts_explainer_prefix": "You'll define a ",
+    "concepts_explainer_mid1": ", then complete a brief assessment to build your ",
+    "concepts_explainer_mid2": " — which guides every ",
+    "concepts_explainer_suffix": " ahead.",
+    "term_learning_project": "learning project",
+    "term_learning_profile": "learning profile",
+    "term_learning_session": "learning session",
     "field_name": "Your name",
     "field_topic": "Topic",
     "field_topic_hint": "e.g. Spanish B1, linear algebra.",
