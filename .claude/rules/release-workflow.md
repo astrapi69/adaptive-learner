@@ -5,6 +5,14 @@ this file automatically when a release is due.
 
 Prompt triggers: "release new version", "new release", "deploy new version"
 
+**Architecture reference:** the 4-Tier version-propagation model
+(canonical / auto-propagated / runtime-derived / manual content),
+the full Tier-2 file inventory, and the `make release-*`
+aggregate-target catalogue live in
+[docs/development/release-automation.md](../../docs/development/release-automation.md).
+This file is the human-side workflow; the doc is the tooling
+reference.
+
 ---
 
 ## Ground rules
@@ -178,6 +186,7 @@ git push origin main --tags
 | `launcher/pyproject.toml:version` | `backend/pyproject.toml` | `make sync-versions` |
 | `plugins/*/pyproject.toml:version` | `backend/pyproject.toml` | `make sync-versions` (lock-step; per-plugin independent versions deferred to a future Core-vs-Third-Party decision) |
 | `plugins/adaptive-learner-plugin-git-sync/adaptive_learner_git_sync/__init__.py:__version__` | own pyproject | `importlib.metadata.version` |
+| `frontend/package-lock.json` (top-level + `packages[""]`) | `backend/pyproject.toml` | `make sync-versions` (surgical regex, first 2 `"version":` lines only - added Phase 40) |
 | `frontend/src/components/*` `__APP_VERSION__` | `frontend/package.json` | Vite `define` build-time literal |
 
 If a hardcoded version literal appears anywhere in the "DO NOT
