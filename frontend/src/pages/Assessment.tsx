@@ -14,7 +14,9 @@ import {
     readGesturePref,
 } from "../lib/gesturePref";
 import {readLearnerState} from "../lib/learnerState";
+import {METHOD_COLORS} from "../lib/constants";
 import {getStorage} from "../storage";
+import {bestTextOn} from "../styles/contrast";
 import {notify} from "../utils/notify";
 import type {AssessmentQuestion, LearningProfile} from "../types";
 
@@ -285,7 +287,7 @@ export default function Assessment() {
                         className="method-badge"
                         style={{
                             background: `var(--method-${profile.dominant_method})`,
-                            color: "#ffffff",
+                            color: bestTextOn(METHOD_COLORS[profile.dominant_method]),
                         }}
                     >
                         {t(`methods.${profile.dominant_method}.label`, profile.dominant_method)}

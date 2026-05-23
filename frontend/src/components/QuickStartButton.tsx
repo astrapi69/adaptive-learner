@@ -2,6 +2,7 @@ import {useNavigate} from "react-router-dom";
 
 import {useI18n} from "../hooks/useI18n";
 import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
+import {bestTextOn} from "../styles/contrast";
 
 interface QuickStartButtonProps {
     /**
@@ -48,12 +49,17 @@ export default function QuickStartButton({
                     data-testid="quick-start-method"
                     style={{
                         background: METHOD_COLORS[suggestedMethod],
-                        color: "#ffffff",
+                        color: bestTextOn(METHOD_COLORS[suggestedMethod]),
                     }}
                 >
                     <span
                         className="method-dot"
-                        style={{background: "rgba(255,255,255,0.85)"}}
+                        style={{
+                            background:
+                                bestTextOn(METHOD_COLORS[suggestedMethod]) === "#000000"
+                                    ? "rgba(0,0,0,0.85)"
+                                    : "rgba(255,255,255,0.85)",
+                        }}
                         aria-hidden="true"
                     />
                     {t(`methods.${suggestedMethod}.label`, suggestedMethod)}

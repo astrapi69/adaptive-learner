@@ -1,6 +1,7 @@
 import HelpLink from "./help/HelpLink";
 import {useI18n} from "../hooks/useI18n";
 import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
+import {bestTextOn} from "../styles/contrast";
 
 interface MethodSwitchBannerProps {
     /** Method the recommender suggests switching to. */
@@ -40,7 +41,10 @@ export default function MethodSwitchBanner({
                 <HelpLink glossaryKey="feature_method_switch" />
                 <span
                     className="method-badge"
-                    style={{background: METHOD_COLORS[suggested], color: "#ffffff"}}
+                    style={{
+                        background: METHOD_COLORS[suggested],
+                        color: bestTextOn(METHOD_COLORS[suggested]),
+                    }}
                     data-testid="method-switch-suggested"
                 >
                     {t(`methods.${suggested}.label`, suggested)}

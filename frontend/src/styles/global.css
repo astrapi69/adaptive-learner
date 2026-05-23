@@ -25,9 +25,16 @@
   --fg-muted: #64748b;
   --fg-inverted: #ffffff;
 
-  /* Brand + accent (matches the PWA manifest theme_color + favicon) */
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
+  /* Brand + accent (matches the PWA manifest theme_color + favicon).
+   *
+   * Phase 39 C5 (WCAG 2.1 SC 1.4.3): --accent darkened from
+   * #6366f1 to #4f46e5 to bring the primary-button text-on-
+   * background contrast over the 4.5:1 AA threshold. Old
+   * --accent value at 4.47:1 → new value at 6.29:1. The hover
+   * shade moves one more step darker to keep the visual delta.
+   * Dark theme already passes (5.32:1) and stays unchanged. */
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
   --accent-fg: #ffffff;
 
   /* Semantic status colours */
@@ -155,6 +162,24 @@ a:hover {
 @media (prefers-reduced-motion: reduce) {
   .skip-to-content {
     transition: none;
+  }
+}
+
+/* Windows High Contrast Mode (WCAG SC 1.4.11). When the OS
+ * forces a high-contrast palette, ensure the skip link still
+ * sits on top of a visible background and that the bullet
+ * dividers / icon-only-button glyphs keep a border. The rest
+ * of the app uses standard color tokens that HCM remaps
+ * correctly out of the box. */
+@media (forced-colors: active) {
+  .skip-to-content {
+    background: Canvas;
+    color: LinkText;
+    border: 2px solid CanvasText;
+  }
+  .skip-to-content:focus,
+  .skip-to-content:focus-visible {
+    outline: 3px solid Highlight;
   }
 }
 

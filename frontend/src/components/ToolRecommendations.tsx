@@ -1,5 +1,6 @@
 import {useI18n} from "../hooks/useI18n";
 import {METHOD_COLORS} from "../lib/constants";
+import {bestTextOn} from "../styles/contrast";
 import type {ToolRecommendation} from "../types";
 
 interface ToolRecommendationsProps {
@@ -43,7 +44,7 @@ export default function ToolRecommendations({tools}: ToolRecommendationsProps) {
                                 className="method-badge"
                                 style={{
                                     background: METHOD_COLORS[method],
-                                    color: "#ffffff",
+                                    color: bestTextOn(METHOD_COLORS[method]),
                                 }}
                             >
                                 {t(`methods.${method}.label`, method)}
