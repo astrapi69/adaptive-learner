@@ -63,7 +63,14 @@ export default function MethodDistribution({summary, height = 240}: MethodDistri
             data-testid="method-distribution"
             style={{width: "100%", height}}
         >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer
+                width="100%"
+                height="100%"
+                // See ProfileRadar for the rationale; suppress
+                // the Recharts-3.x ``width(-1) height(-1)``
+                // first-render warning.
+                initialDimension={{width: 100, height: 100}}
+            >
                 <BarChart data={data} margin={{top: 12, right: 16, bottom: 12, left: 0}}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="label" interval={0} angle={-20} textAnchor="end" height={56} />

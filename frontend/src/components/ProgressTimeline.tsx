@@ -54,7 +54,14 @@ export default function ProgressTimeline({summary, height = 240}: ProgressTimeli
             data-testid="progress-timeline"
             style={{width: "100%", height}}
         >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer
+                width="100%"
+                height="100%"
+                // See ProfileRadar for the rationale; suppress
+                // the Recharts-3.x ``width(-1) height(-1)``
+                // first-render warning.
+                initialDimension={{width: 100, height: 100}}
+            >
                 <LineChart data={points} margin={{top: 12, right: 24, bottom: 12, left: 0}}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="index" />

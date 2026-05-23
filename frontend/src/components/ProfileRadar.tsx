@@ -43,7 +43,19 @@ export default function ProfileRadar({profile, height = 320}: ProfileRadarProps)
             data-testid="profile-radar"
             style={{width: "100%", height}}
         >
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer
+                width="100%"
+                height="100%"
+                // Recharts 3.x defaults ``initialDimension`` to
+                // ``{width:-1, height:-1}`` and the first render
+                // emits a "width(-1) and height(-1) ... should be
+                // greater than 0" console warning before the
+                // internal ResizeObserver measures the real parent
+                // and re-renders. Passing a positive sentinel
+                // suppresses the noise; the real dimensions take
+                // over on the next frame.
+                initialDimension={{width: 100, height: 100}}
+            >
                 <RadarChart
                     cx="50%"
                     cy="50%"
