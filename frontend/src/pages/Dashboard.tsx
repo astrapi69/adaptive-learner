@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import DashboardFilterBar from "../components/DashboardFilterBar";
+import HelpLink from "../components/help/HelpLink";
 import MethodDistribution from "../components/MethodDistribution";
 import ProfileRadar from "../components/ProfileRadar";
 import ProgressTimeline from "../components/ProgressTimeline";
@@ -214,6 +215,7 @@ export default function Dashboard() {
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
                         {t("dashboard.card_profile", "Learning profile")}
+                        <HelpLink glossaryKey="learning_profile" />
                     </h2>
                     {profile ? (
                         <ProfileRadar profile={profile} height={280} />
@@ -234,6 +236,7 @@ export default function Dashboard() {
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
                         {t("gamification.card_xp", "XP & Level")}
+                        <HelpLink glossaryKey="feature_gamification" />
                     </h2>
                     <XPWidget state={xpState} />
                 </article>
@@ -263,6 +266,7 @@ export default function Dashboard() {
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
                         {t("dashboard.card_distribution", "Method distribution")}
+                        <HelpLink glossaryKey="method_ai_adaptive" />
                     </h2>
                     <MethodDistribution summary={summary} />
                 </article>
@@ -277,6 +281,7 @@ export default function Dashboard() {
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
                         {t("dashboard.card_spaced", "Spaced practice")}
+                        <HelpLink glossaryKey="feature_spaced_repetition" />
                     </h2>
                     <SpacedRecommendations cards={spaced} />
                 </article>

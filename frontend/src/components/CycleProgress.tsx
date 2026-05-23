@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useRef, useState} from "react";
 
+import HelpLink from "./help/HelpLink";
 import {useI18n} from "../hooks/useI18n";
 import {useSwipe} from "../hooks/useSwipe";
 import {CYCLE_STEPS, cycleStepForIndex} from "../lib/constants";
@@ -133,6 +134,7 @@ export default function CycleProgress({
             <p className="cycle-caption" data-testid="cycle-caption">
                 {caption} —{" "}
                 <strong>{t(`cycle_steps.${currentKey}.label`, currentKey)}</strong>
+                <HelpLink glossaryKey={`step_${currentKey}`} />
             </p>
             {evaluationReason && (
                 <p

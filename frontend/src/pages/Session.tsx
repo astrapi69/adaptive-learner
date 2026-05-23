@@ -4,6 +4,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import {LEARNING_METHODS} from "../lib/constants";
 
 import CycleProgress from "../components/CycleProgress";
+import HelpLink from "../components/help/HelpLink";
 import MethodBadge from "../components/MethodBadge";
 import MethodSwitchBanner from "../components/MethodSwitchBanner";
 import RatingDialog, {type RatingValues} from "../components/RatingDialog";
@@ -490,7 +491,10 @@ export default function Session() {
         <main data-testid="session" className="session-page">
             <header className="session-header">
                 <div className="session-header-row">
-                    <h1>{t("session.title", "Learning session")}</h1>
+                    <h1>
+                        {t("session.title", "Learning session")}
+                        <HelpLink glossaryKey="learning_session" size={18} />
+                    </h1>
                     <div className="session-header-chips">
                         {session.cycle_count && session.cycle_count > 1 && (
                             <span
@@ -507,6 +511,9 @@ export default function Session() {
                             </span>
                         )}
                         <MethodBadge method={session.method} />
+                        <HelpLink
+                            glossaryKey={`method_${session.method}`}
+                        />
                         {userSettings && (
                             <span
                                 className="provider-chip"

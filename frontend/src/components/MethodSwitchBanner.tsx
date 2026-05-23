@@ -1,3 +1,4 @@
+import HelpLink from "./help/HelpLink";
 import {useI18n} from "../hooks/useI18n";
 import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
 
@@ -36,6 +37,7 @@ export default function MethodSwitchBanner({
         >
             <header className="method-switch-banner-head">
                 <strong>{t("session.switch_recommended", "Method switch recommended")}</strong>
+                <HelpLink glossaryKey="feature_method_switch" />
                 <span
                     className="method-badge"
                     style={{background: METHOD_COLORS[suggested], color: "#ffffff"}}

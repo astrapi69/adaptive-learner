@@ -2,6 +2,7 @@ import {useEffect, useMemo, useState, type FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {ApiError} from "../api/client";
+import HelpLink from "../components/help/HelpLink";
 import {useI18n} from "../hooks/useI18n";
 import {SUPPORTED_LANGUAGES} from "../lib/constants";
 import {setProjectId, setUserId} from "../lib/learnerState";
@@ -280,6 +281,7 @@ export default function Onboarding() {
                         <span className="form-required" aria-hidden="true">
                             *
                         </span>
+                        <HelpLink glossaryKey="learning_project" />
                     </span>
                     <input
                         data-testid="onboarding-topic"

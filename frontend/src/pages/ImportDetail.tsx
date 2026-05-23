@@ -23,6 +23,7 @@ import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
 import {ApiError} from "../api/client";
+import HelpLink from "../components/help/HelpLink";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
@@ -518,7 +519,10 @@ export default function ImportDetail({
                     style={{marginBottom: "2rem"}}
                     data-testid="analysis-results"
                 >
-                    <h2>{t("import.analysis_title", "Analysis")}</h2>
+                    <h2>
+                        {t("import.analysis_title", "Analysis")}
+                        <HelpLink glossaryKey="feature_conversation_analysis" />
+                    </h2>
                     {analysis.fallback_used && (
                         <p
                             style={{

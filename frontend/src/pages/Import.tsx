@@ -19,6 +19,7 @@ import {useEffect, useState, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {ApiError} from "../api/client";
+import HelpLink from "../components/help/HelpLink";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
@@ -442,6 +443,10 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
             <header style={{padding: "1.5rem", textAlign: "center"}}>
                 <h1 style={{margin: 0}}>
                     {t("import.title", "Import a conversation")}
+                    <HelpLink
+                        glossaryKey="feature_conversation_analysis"
+                        size={18}
+                    />
                 </h1>
                 <p style={{margin: "0.5rem 0 0", opacity: 0.7}}>
                     {t(

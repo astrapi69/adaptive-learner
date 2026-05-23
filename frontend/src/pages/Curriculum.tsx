@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 
 import AddTopicDialog from "../components/AddTopicDialog";
 import CurriculumDescriptionEditor from "../components/CurriculumDescriptionEditor";
+import HelpLink from "../components/help/HelpLink";
 import LessonList from "../components/LessonList";
 import TopicTree from "../components/TopicTree";
 import {ApiError} from "../api/client";
@@ -277,7 +278,10 @@ export default function Curriculum() {
     return (
         <main data-testid="curriculum" className="dashboard-page">
             <header className="dashboard-header">
-                <h1>{t("curriculum.title", "Curriculum")}</h1>
+                <h1>
+                    {t("curriculum.title", "Curriculum")}
+                    <HelpLink glossaryKey="curriculum" size={18} />
+                </h1>
             </header>
 
             {/* Curriculum picker + create form. The picker stays

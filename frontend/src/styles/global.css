@@ -3690,3 +3690,12 @@ select:focus {
     background: color-mix(in srgb, #ef4444 15%, transparent);
     color: #b91c1c;
 }
+
+/* Phase 38D — bump the help icon's hit area on small
+ * viewports so a finger tap is comfortable. The visual icon
+ * stays the same size; only the padding grows. */
+@media (max-width: 720px) {
+    .help-link {
+        padding: 12px !important;
+    }
+}
