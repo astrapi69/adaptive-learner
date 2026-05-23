@@ -130,6 +130,33 @@ def test_de_en_parity_methods():
     )
 
 
+def test_steps_has_seven_entries():
+    expected = {
+        "step_input",
+        "step_attempt",
+        "step_error",
+        "step_feedback",
+        "step_adapt",
+        "step_repeat",
+        "step_integrate",
+    }
+    for lang in ("de", "en"):
+        keys = {e["key"] for e in list_entries(lang, category="steps")}
+        assert expected <= keys, (
+            f"{lang}: missing steps entries: {expected - keys}"
+        )
+
+
+def test_de_en_parity_steps():
+    de_keys = {e["key"] for e in list_entries("de", category="steps")}
+    en_keys = {e["key"] for e in list_entries("en", category="steps")}
+    assert de_keys == en_keys, (
+        f"DE/EN drift in steps:\n"
+        f"  only in DE: {de_keys - en_keys}\n"
+        f"  only in EN: {en_keys - de_keys}"
+    )
+
+
 def test_categories_constant_covers_filesystem():
     """If a new YAML category lands on disk, CATEGORIES must
     grow to match. Pin so future glossary additions do not

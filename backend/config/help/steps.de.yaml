@@ -1,0 +1,298 @@
+# Adaptive Learner — Hilfe-Glossar: 7 Zyklusschritte (Deutsch).
+
+category: steps
+language: de
+entries:
+  - key: step_input
+    title: 1. Input
+    short: "Du erhaeltst neues Material — Erklaerung, Beispiel oder Frage von der AI."
+    long: |
+      ## Schritt 1: Input
+
+      Jeder Lernzyklus startet mit Input. Die AI praesentiert
+      dir das Material: eine Erklaerung, ein Beispiel, eine
+      offene Frage oder eine Situation, je nach gewaehlter
+      Methode.
+
+      ## Was die AI tut
+
+      - **Bei Deduktiv**: erklaert die Regel.
+      - **Bei Induktiv**: zeigt Beispiele.
+      - **Bei Fehlerzentriert**: stellt ein Problem mit Falle.
+      - **Bei Dialogisch**: oeffnet das Gespraech mit einer
+        Frage.
+      - **Bei Kontextuell**: skizziert die Situation.
+
+      ## Was du tust
+
+      Aufmerksam lesen. Fragen stellen, wenn etwas unklar ist —
+      die Session ist ein Dialog, nicht eine Vorlesung. Wenn
+      du die Confidence der AI zu hoch findest, dranbleiben:
+      manchmal wirkt eine Erklaerung erst beim zweiten Lesen.
+
+      ## Was der Dual-Prompt-Evaluator tut
+
+      Hier laeuft er noch leise mit. Er beobachtet deine
+      Reaktion (oder ihr Fehlen) und stellt fest, ob du das
+      Material aufgenommen hast. Erst ab Schritt 2 (Versuch)
+      wird die Bewertung aktiv.
+
+      ## Was passiert, wenn du diesen Schritt zu schnell
+      durchlaeufst
+
+      Der haeufigste Anfaengerfehler: zur "Action" wollen, ohne
+      den Input zu verarbeiten. Das System merkt das daran, dass
+      die nachfolgenden Versuche niedrige Confidence-Werte
+      bekommen — und schickt dich zurueck zu Schritt 1.
+
+  - key: step_attempt
+    title: 2. Versuch
+    short: "Du wendest das Gelernte an einer Aufgabe oder Frage an."
+    long: |
+      ## Schritt 2: Versuch
+
+      Du bekommst eine Anwendung des Materials und versuchst,
+      sie zu loesen. Erste Antwort, erstes Beispiel, erste
+      konkrete Anwendung der Regel.
+
+      ## Was die AI tut
+
+      Die AI gibt dir eine klar abgegrenzte Aufgabe. Bei
+      Sprachenlernen: ein Satz uebersetzen. Bei Code: eine
+      Funktion schreiben. Bei Musik: ein Akkord-Wechsel ueben.
+      Der Schwierigkeitsgrad ist bewusst niedrig — die erste
+      Anwendung soll Erfolg ermoeglichen.
+
+      ## Was du tust
+
+      Versuche es. Auch wenn du dir unsicher bist. Eine
+      unvollstaendige oder fehlerhafte Antwort ist
+      wertvoller als eine Verweigerung, weil sie dem Evaluator
+      Material gibt, mit dem er arbeiten kann.
+
+      ## Dual-Prompt-Evaluator
+
+      Hier wird er aktiv. Er liest deine Antwort und vergibt
+      einen Confidence-Wert (0-100%). Bei hoher Confidence
+      gehst du direkt zu Schritt 5 (Anpassung) und ueberspringst
+      die Fehler-Analyse. Bei niedriger Confidence fuehrt der
+      Weg ueber Schritt 3 (Fehler) und Schritt 4 (Feedback).
+
+      ## Tipp: nicht zu lange ausweichen
+
+      Wenn du nach 30 Sekunden keinen Ansatz hast, sag das der
+      AI ("Ich weiss nicht, wo ich anfangen soll"). Die AI gibt
+      dir einen Hinweis statt die ganze Loesung — und der
+      Evaluator wertet das nicht als Fehlversuch.
+
+  - key: step_error
+    title: 3. Fehler
+    short: "Ein Fehler oder Missverstaendnis wird sichtbar."
+    long: |
+      ## Schritt 3: Fehler
+
+      Wenn dein Versuch in Schritt 2 nicht das gewuenschte
+      Ergebnis erreicht hat, geht der Zyklus durch diesen
+      Schritt. Der Fehler wird benannt — nicht bewertet,
+      sondern als Lernanlass markiert.
+
+      ## Was die AI tut
+
+      Sie zeigt dir, wo der Fehler liegt, ohne ihn
+      sofort zu korrigieren. Der Punkt: du sollst den Fehler
+      *sehen*, nicht nur *hoeren, dass etwas falsch war*. Der
+      Unterschied entscheidet darueber, ob du den Fehler
+      wiederholst.
+
+      ## Was du tust
+
+      Den Fehler nachvollziehen. Wenn du ihn selbst korrigieren
+      kannst, tu es. Wenn nicht, gib der AI ein Signal ("Ich
+      verstehe nicht, wo der Fehler ist") — der naechste
+      Schritt (Feedback) ist da, um das zu klaeren.
+
+      ## Wenn keine Fehler auftreten
+
+      Bei hoher Confidence in Schritt 2 ueberspringt der
+      Zyklus diesen Schritt. Das System merkt sich das und
+      erhoeht den Schwierigkeitsgrad im naechsten Zyklus —
+      du sollst gefordert, nicht gelangweilt werden.
+
+      ## Bei Fehlerzentriert (Methode)
+
+      Wenn du diese Methode gewaehlt hast, ist Schritt 3 der
+      Hauptschritt des Zyklus. Die AI laesst dich gezielt in
+      typische Fallen tappen — siehe das Methoden-Glossar.
+
+  - key: step_feedback
+    title: 4. Feedback
+    short: "Die AI erklaert dir, warum etwas funktioniert oder nicht funktioniert."
+    long: |
+      ## Schritt 4: Feedback
+
+      Hier kommt die Erklaerung. Die AI erlaeutert das Prinzip
+      hinter deinem Fehler oder deiner richtigen Antwort —
+      idealerweise so, dass du das Prinzip auf andere Faelle
+      uebertragen kannst.
+
+      ## Was gutes Feedback enthaelt
+
+      - **Was passiert ist** (Beschreibung der Beobachtung).
+      - **Warum es passiert ist** (Erklaerung des Prinzips).
+      - **Wie du es naechstes Mal anders machen kannst**
+        (konkrete Handlungsanweisung).
+
+      Ohne (3) verpufft Feedback. Mit (3) wird aus einer
+      Korrektur eine uebertragbare Regel.
+
+      ## Was du tust
+
+      Lesen, nachvollziehen, gegenfragen. Wenn das Feedback
+      noch nicht klick gemacht hat, sag es. Die AI ist
+      geduldig — sie wird das Prinzip in einer anderen
+      Variante erklaeren. Lieber zweimal verstanden als
+      einmal nachgesprochen.
+
+      ## Dual-Prompt-Evaluator
+
+      Er liest deine Reaktion auf das Feedback. Wenn du
+      "Aha, jetzt verstehe ich" sagst (oder Aequivalentes
+      formulierst), erhoeht er die Confidence und laesst dich
+      weitergehen. Wenn du weiterhin verwirrt klingst, zieht
+      er den Zyklus zurueck auf Schritt 1 (Input) mit einem
+      neuen Erklaerungsansatz.
+
+      ## Auch bei richtigen Antworten
+
+      Feedback gibt es nicht nur bei Fehlern. Wenn du etwas
+      richtig geloest hast, erklaert die AI dir trotzdem das
+      Prinzip dahinter — damit der Erfolg uebertragbar wird.
+
+  - key: step_adapt
+    title: 5. Anpassung
+    short: "Du justierst deine Strategie oder dein Verstaendnis basierend auf dem Feedback."
+    long: |
+      ## Schritt 5: Anpassung
+
+      Du nimmst, was du im Feedback gelernt hast, und passt
+      dein Vorgehen an. Nicht nur intellektuell ("ja, jetzt
+      verstehe ich"), sondern operativ ("beim naechsten Mal
+      mache ich es anders").
+
+      ## Was passiert hier konkret
+
+      - **Bei Sprachenlernen**: du formulierst um. Statt der
+        falschen Konstruktion verwendest du die korrigierte.
+      - **Bei Code**: du restrukturierst die Funktion mit dem
+        verstandenen Prinzip.
+      - **Bei Mathe**: du loest eine Variante mit dem
+        korrigierten Loesungsweg.
+
+      ## Was die AI tut
+
+      Sie gibt dir eine *neue* Aufgabe — nicht die alte mit
+      bekannter Loesung, sondern eine Variation, die das
+      verstandene Prinzip in einem neuen Kontext fordert.
+
+      ## Warum dieser Schritt wichtig ist
+
+      Verstehen ohne Anpassung verpufft. Wenn du das Feedback
+      nur "nachsprichst", aber nicht in dein Vorgehen
+      einbaust, wirst du den Fehler beim naechsten Mal
+      wiederholen. Schritt 5 zwingt die operative Aktivierung.
+
+      ## Dual-Prompt-Evaluator
+
+      Hier bewertet er den Lerntransfer. Eine erfolgreiche
+      Anpassung in einer neuen Variation ist das beste Signal
+      dafuer, dass das Gelernte sitzt — Confidence steigt
+      typischerweise auf >80%.
+
+  - key: step_repeat
+    title: 6. Wiederholung
+    short: "Du uebst das Gelernte mit Variationen, bis es flueissig sitzt."
+    long: |
+      ## Schritt 6: Wiederholung
+
+      Du bekommst weitere Variationen der Aufgabe. Nicht
+      identische Wiederholung (das fuehrt nur zu Auswendiglernen),
+      sondern Variation: gleicher Kern, anderer Kontext, andere
+      Schwierigkeit.
+
+      ## Was die AI tut
+
+      Sie erzeugt Aufgaben, die das gleiche Prinzip in
+      unterschiedlichen Verkleidungen testen. Bei Sprache:
+      andere Vokabeln, anderer Satzbau, gleiche Grammatik.
+      Bei Code: andere Daten, gleiche Algorithmus-Struktur.
+
+      ## Warum Variation, nicht Wiederholung
+
+      Forschung zur **interleavten Praxis** zeigt: blocked
+      practice (alle Aufgaben zum gleichen Thema
+      hintereinander) erzeugt Schein-Sicherheit. Interleavte
+      Praxis (verwandte Aufgaben mit Variation) erzeugt
+      transferfaehiges Wissen.
+
+      ## Wann der Schritt zu Ende ist
+
+      Sobald der Dual-Prompt-Evaluator drei Variationen
+      hintereinander mit Confidence > 80% sieht, gehst du zu
+      Schritt 7. Falls die Confidence schwankt, bleibt der
+      Zyklus in Schritt 6 — bis Stabilitaet erreicht ist.
+
+      ## Verbindung zu Spaced Repetition
+
+      Was du in Schritt 6 erfolgreich loest, landet im
+      Spaced-Repetition-System. Das System plant
+      Wiederholungen nach 1 Tag, 3 Tagen, 7 Tagen, 14 Tagen,
+      30 Tagen — damit das Gelernte langfristig haftet.
+
+  - key: step_integrate
+    title: 7. Integration
+    short: "Du verbindest das Gelernte mit anderem Wissen oder einer realen Anwendung."
+    long: |
+      ## Schritt 7: Integration
+
+      Der Lernzyklus endet damit, dass du das neu Gelernte in
+      einen groesseren Zusammenhang stellst. Nicht
+      isoliert "das habe ich heute gelernt", sondern verbunden
+      mit dem, was du schon konntest.
+
+      ## Was die AI tut
+
+      Sie fordert dich heraus, das Gelernte mit anderen
+      Konzepten zu verknuepfen oder in einer realen
+      Anwendung einzusetzen:
+
+      - **Sprache**: das Tempus in einem freien Gespraech
+        nutzen.
+      - **Code**: die neue Technik in einem groesseren
+        Projekt anwenden.
+      - **Theorie**: das Konzept mit einer eigenen Frage
+        kombinieren.
+
+      ## Was du tust
+
+      Die geforderte Verknuepfung formulieren. Eigene
+      Beispiele finden. Den Punkt erreichen, an dem du
+      sagen kannst: "Ich kann das jetzt — nicht weil ich es
+      auswendig weiss, sondern weil ich es einsetzen kann."
+
+      ## Was nach Schritt 7 passiert
+
+      Der Zyklus ist abgeschlossen. Drei Optionen:
+
+      - **Session beenden** und Bewertung abgeben
+        (Verstaendnis / Stress / Methodenpassung).
+      - **Auto-Loop**: ein neuer Zyklus mit neuem Thema
+        startet automatisch.
+      - **Methodenwechsel**: bei niedriger Methodenpassung
+        empfiehlt das System einen Methodenwechsel fuer den
+        naechsten Zyklus.
+
+      ## Warum das System hier abschliesst
+
+      Integration ist die einzige robuste Pruefung dafuer, ob
+      Lernen funktioniert hat. Auswendiggelerntes scheitert in
+      Schritt 7; verstandenes Wissen blueht hier auf.
