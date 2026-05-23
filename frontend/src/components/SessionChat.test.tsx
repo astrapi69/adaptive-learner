@@ -79,6 +79,21 @@ describe("SessionChat", () => {
         expect(onSend).not.toHaveBeenCalled();
     });
 
+    // Phase 39 C2 — WCAG SC 2.4.3 (Focus Order). The textarea is
+    // the page's primary action; it must hold focus on first
+    // mount so a keyboard-only user can type immediately.
+    it("focuses the textarea on first mount", () => {
+        render(<SessionChat messages={MESSAGES} onSend={() => {}} />);
+        const input = screen.getByTestId("chat-input") as HTMLTextAreaElement;
+        expect(document.activeElement).toBe(input);
+    });
+
+    it("does NOT auto-focus when the chat is disabled", () => {
+        render(<SessionChat messages={MESSAGES} onSend={() => {}} disabled />);
+        const input = screen.getByTestId("chat-input") as HTMLTextAreaElement;
+        expect(document.activeElement).not.toBe(input);
+    });
+
     it("renders a streaming assistant message with a cursor + dedicated testid", () => {
         const streaming: ChatMessage[] = [
             ...MESSAGES,

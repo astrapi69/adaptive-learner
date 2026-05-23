@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent} from "react";
 import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
@@ -79,6 +79,16 @@ export default function RatingDialog({
     const [notesDoc, setNotesDoc] = useState<JSONContent | null>(null);
     const [notesEditor, setNotesEditor] = useState<Editor | null>(null);
     const [charCount, setCharCount] = useState(0);
+
+    // WCAG SC 2.1.2 (No Keyboard Trap): close on Escape.
+    useEffect(() => {
+        if (!open) return;
+        function handleKey(e: KeyboardEvent) {
+            if (e.key === "Escape" && !submitting) onCancel();
+        }
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [open, submitting, onCancel]);
 
     if (!open) return null;
 
@@ -254,12 +264,49 @@ function RatingRow({
 }: RatingRowProps) {
     const {t} = useI18n();
     const tooltipsOn = useButtonTooltips();
+    const groupRef = useRef<HTMLDivElement | null>(null);
     // Rating buttons display just a number (1-5) so the
     // visible text is ambiguous; every button needs an
     // explicit aria-label + tooltip describing its tier.
     // The tiers map: 1-2 -> low, 3 -> medium, 4-5 -> high.
     const tierKey = (n: number): "rating_low" | "rating_medium" | "rating_high" =>
         n <= 2 ? "rating_low" : n === 3 ? "rating_medium" : "rating_high";
+
+    // WAI-ARIA Radio Group keyboard pattern (SC 2.1.1
+    // Keyboard). Arrow keys move between options AND update
+    // the value; Home/End jump to first/last; the active
+    // option is the only tab stop (roving tabindex) so Tab
+    // exits the group rather than walking through five
+    // buttons.
+    function handleKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
+        if (disabled) return;
+        let next: number | null = null;
+        switch (e.key) {
+            case "ArrowRight":
+            case "ArrowDown":
+                next = value >= 5 ? 1 : value + 1;
+                break;
+            case "ArrowLeft":
+            case "ArrowUp":
+                next = value <= 1 ? 5 : value - 1;
+                break;
+            case "Home":
+                next = 1;
+                break;
+            case "End":
+                next = 5;
+                break;
+            default:
+                return;
+        }
+        e.preventDefault();
+        onChange(next);
+        const node = groupRef.current?.querySelector<HTMLButtonElement>(
+            `[data-testid="${testid}-${next}"]`,
+        );
+        node?.focus();
+    }
+
     return (
         <div className="rating-row" data-testid={testid}>
             <span className="form-label rating-row-label">
@@ -272,23 +319,27 @@ function RatingRow({
                 className="rating-buttons"
                 role="radiogroup"
                 aria-label={t(labelKey, fallback)}
+                ref={groupRef}
+                onKeyDown={handleKeyDown}
             >
                 {[1, 2, 3, 4, 5].map((n) => {
                     const tierLabel = t(
                         `ui.tooltips.${tierKey(n)}`,
                         n <= 2 ? "Low" : n === 3 ? "Medium" : "High",
                     ).replace("{n}", String(n));
+                    const checked = value === n;
                     return (
                         <button
                             type="button"
                             key={n}
                             role="radio"
-                            aria-checked={value === n}
+                            aria-checked={checked}
                             aria-label={tierLabel}
+                            tabIndex={checked ? 0 : -1}
                             title={tooltipsOn ? tierLabel : undefined}
                             disabled={disabled}
                             data-testid={`${testid}-${n}`}
-                            className={`rating-button${value === n ? " is-active" : ""}`}
+                            className={`rating-button${checked ? " is-active" : ""}`}
                             onClick={() => onChange(n)}
                         >
                             {n}

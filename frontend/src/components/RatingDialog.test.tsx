@@ -152,6 +152,58 @@ describe("RatingDialog", () => {
         }
     });
 
+    // Phase 39 C2 — WCAG SC 2.1.2 + radio-group keyboard pattern.
+    it("Escape key fires onCancel", () => {
+        const onCancel = vi.fn();
+        render(<RatingDialog open onSubmit={() => {}} onCancel={onCancel} />);
+        fireEvent.keyDown(window, {key: "Escape"});
+        expect(onCancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("arrow keys move selection within a radiogroup (wrap-around)", () => {
+        render(<RatingDialog open onSubmit={() => {}} onCancel={() => {}} />);
+        const group = screen.getByTestId("rating-understanding").querySelector(
+            '[role="radiogroup"]',
+        ) as HTMLDivElement;
+        // ArrowRight from default 3 -> 4
+        fireEvent.keyDown(group, {key: "ArrowRight"});
+        expect(
+            screen
+                .getByTestId("rating-understanding-4")
+                .getAttribute("aria-checked"),
+        ).toBe("true");
+        // ArrowDown wraps: 5 -> 1
+        fireEvent.keyDown(group, {key: "ArrowRight"}); // -> 5
+        fireEvent.keyDown(group, {key: "ArrowDown"}); // wraps to 1
+        expect(
+            screen
+                .getByTestId("rating-understanding-1")
+                .getAttribute("aria-checked"),
+        ).toBe("true");
+        // Home -> 1, End -> 5
+        fireEvent.keyDown(group, {key: "End"});
+        expect(
+            screen
+                .getByTestId("rating-understanding-5")
+                .getAttribute("aria-checked"),
+        ).toBe("true");
+        fireEvent.keyDown(group, {key: "Home"});
+        expect(
+            screen
+                .getByTestId("rating-understanding-1")
+                .getAttribute("aria-checked"),
+        ).toBe("true");
+    });
+
+    it("only the checked radio is in the tab order (roving tabindex)", () => {
+        render(<RatingDialog open onSubmit={() => {}} onCancel={() => {}} />);
+        for (const n of [1, 2, 3, 4, 5]) {
+            const btn = screen.getByTestId(`rating-understanding-${n}`);
+            const expected = n === 3 ? "0" : "-1";
+            expect(btn.getAttribute("tabindex")).toBe(expected);
+        }
+    });
+
     it("renders the rich-text notes editor + toolbar + character count", async () => {
         render(<RatingDialog open onSubmit={() => {}} onCancel={() => {}} />);
         await waitFor(() =>

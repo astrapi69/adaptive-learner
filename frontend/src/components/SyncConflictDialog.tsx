@@ -100,6 +100,15 @@ export default function SyncConflictDialog({
         })),
     );
 
+    // WCAG SC 2.1.2 (No Keyboard Trap): close on Escape.
+    useEffect(() => {
+        function handleKey(e: KeyboardEvent) {
+            if (e.key === "Escape") onCancel();
+        }
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [onCancel]);
+
     // Probe for an AI provider once on mount.
     useEffect(() => {
         let cancelled = false;

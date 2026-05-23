@@ -136,6 +136,14 @@ describe("SyncConflictDialog actions", () => {
         fireEvent.click(screen.getByTestId("sync-conflict-cancel"));
         expect(onCancel).toHaveBeenCalledTimes(1);
     });
+
+    // Phase 39 C2 — WCAG SC 2.1.2 keyboard escape pin.
+    it("Escape key fires onCancel", () => {
+        const onCancel = vi.fn();
+        renderDialog([makeConflict("users", "u-1")], () => undefined, onCancel);
+        fireEvent.keyDown(window, {key: "Escape"});
+        expect(onCancel).toHaveBeenCalledTimes(1);
+    });
 });
 
 describe("parseMergeResponse", () => {

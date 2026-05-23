@@ -40,6 +40,18 @@ export default function AddTopicDialog({
         }
     }, [open, initialTitle]);
 
+    // WCAG SC 2.1.2 (No Keyboard Trap): close on Escape so
+    // keyboard users can dismiss the modal without finding the
+    // Cancel button by Tab.
+    useEffect(() => {
+        if (!open) return;
+        function handleKey(e: KeyboardEvent) {
+            if (e.key === "Escape" && !submitting) onCancel();
+        }
+        window.addEventListener("keydown", handleKey);
+        return () => window.removeEventListener("keydown", handleKey);
+    }, [open, submitting, onCancel]);
+
     if (!open) return null;
 
     return (

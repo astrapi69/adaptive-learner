@@ -55,12 +55,22 @@ export default function SessionChat({
     const tooltipsOn = useButtonTooltips();
     const [draft, setDraft] = useState("");
     const listRef = useRef<HTMLDivElement | null>(null);
+    const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
     useEffect(() => {
         const el = listRef.current;
         if (!el) return;
         el.scrollTop = el.scrollHeight;
     }, [messages]);
+
+    // WCAG SC 2.4.3 (Focus Order) + general keyboard UX: the
+    // textarea is the primary action on this page; focus it
+    // on first mount so a keyboard user can type immediately.
+    // Subsequent re-renders keep the user's current focus.
+    useEffect(() => {
+        if (!disabled) inputRef.current?.focus();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -183,6 +193,7 @@ export default function SessionChat({
             </div>
             <form className="chat-input-row" onSubmit={handleSubmit}>
                 <textarea
+                    ref={inputRef}
                     data-testid="chat-input"
                     rows={2}
                     value={draft}

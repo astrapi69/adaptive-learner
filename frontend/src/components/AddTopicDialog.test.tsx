@@ -73,4 +73,26 @@ describe("AddTopicDialog", () => {
             (screen.getByTestId("add-topic-cancel") as HTMLButtonElement).disabled,
         ).toBe(true);
     });
+
+    // Phase 39 C2 — WCAG SC 2.1.2 keyboard escape pin.
+    it("Escape key fires onCancel", () => {
+        const onCancel = vi.fn();
+        render(<AddTopicDialog open onCancel={onCancel} onSubmit={() => {}} />);
+        fireEvent.keyDown(window, {key: "Escape"});
+        expect(onCancel).toHaveBeenCalledTimes(1);
+    });
+
+    it("Escape is ignored while submitting", () => {
+        const onCancel = vi.fn();
+        render(
+            <AddTopicDialog
+                open
+                onCancel={onCancel}
+                onSubmit={() => {}}
+                submitting
+            />,
+        );
+        fireEvent.keyDown(window, {key: "Escape"});
+        expect(onCancel).not.toHaveBeenCalled();
+    });
 });
