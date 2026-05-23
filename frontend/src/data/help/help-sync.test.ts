@@ -44,6 +44,37 @@ function loadBundle(category: string, lang: string): Bundle {
     );
 }
 
+describe("help bundles — Methods", () => {
+    const expectedMethods = new Set([
+        "method_deductive",
+        "method_inductive",
+        "method_error_based",
+        "method_dialogic",
+        "method_contextual",
+        "method_ai_adaptive",
+    ]);
+
+    for (const lang of ["de", "en"] as const) {
+        it(`methods.${lang} parses + contains all six canonical entries`, () => {
+            const bundle = loadBundle("methods", lang);
+            expect(bundle.category).toBe("methods");
+            expect(bundle.language).toBe(lang);
+            const keys = new Set(bundle.entries.map((e) => e.key));
+            for (const expected of expectedMethods) {
+                expect(keys.has(expected)).toBe(true);
+            }
+        });
+    }
+
+    it("DE + EN methods bundles have identical key sets", () => {
+        const de = loadBundle("methods", "de");
+        const en = loadBundle("methods", "en");
+        const deKeys = new Set(de.entries.map((e) => e.key));
+        const enKeys = new Set(en.entries.map((e) => e.key));
+        expect([...deKeys].sort()).toEqual([...enKeys].sort());
+    });
+});
+
 describe("help bundles — Concepts", () => {
     const expectedConcepts = new Set([
         "curriculum",

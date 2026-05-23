@@ -1,0 +1,274 @@
+# Adaptive Learner — Hilfe-Glossar: Lernmethoden (Deutsch).
+
+category: methods
+language: de
+entries:
+  - key: method_deductive
+    title: Deduktiv
+    short: "Regel zuerst lernen, dann an konkreten Beispielen anwenden."
+    long: |
+      ## Deduktive Methode
+
+      Die AI erklaert dir eine Regel oder ein Konzept, und du
+      uebst sie anschliessend an Beispielen ein. Top-down: vom
+      Allgemeinen zum Speziellen.
+
+      ## Wann sie gut funktioniert
+
+      - **Strukturierte Themen** mit klaren Regeln (Grammatik,
+        mathematische Formeln, Programmiersyntax).
+      - **Vorwissen vorhanden**, an das die Regel andocken kann.
+      - **Praeferenz fuer Klarheit**: du moechtest erst wissen,
+        was richtig ist, bevor du etwas ausprobierst.
+
+      ## Wie eine Session ablaeuft
+
+      1. AI erklaert die Regel mit kurzem Beispiel.
+      2. Du bekommst eine Uebungsaufgabe.
+      3. Du loest sie, AI gibt Feedback.
+      4. Bei Verstaendnis: neue Aufgabe mit hoeherer Komplexitaet.
+      5. Bei Fehlern: AI verfeinert die Erklaerung.
+
+      ## Typische AI-Prompts
+
+      Die System-Prompts dieser Methode betonen Klarheit und
+      Schritt-fuer-Schritt-Aufbau. Die AI bekommt die Anweisung,
+      Regeln zu nennen *bevor* sie zur Anwendung uebergeht.
+
+      ## Wann das System wegschalten kann
+
+      Wenn der **Stress-Wert** ueber mehrere Sessions steigt und
+      du das Gefuehl bekommst, "Regeln zu lernen ohne sie zu
+      verstehen", empfiehlt das System einen Wechsel zu einer
+      praxisnaeheren Methode (Induktiv, Kontextuell oder
+      Dialogisch). Du hast bei jedem Wechsel das letzte Wort.
+
+  - key: method_inductive
+    title: Induktiv
+    short: "Beispiele zuerst sehen, die Regel selbst ableiten."
+    long: |
+      ## Induktive Methode
+
+      Die AI praesentiert dir Beispiele, du erkennst das Muster
+      und formulierst die Regel selbst. Bottom-up: vom Konkreten
+      zum Allgemeinen.
+
+      ## Wann sie gut funktioniert
+
+      - **Mustererkennung-Themen** wie Sprachgrammatik im
+        Kontext, musikalische Skalen, statistische Konzepte.
+      - **Du lernst gerne durch Entdecken**, statt Regeln
+        auswendig zu lernen.
+      - **Beispiele sind reichlich verfuegbar** — die AI hat
+        Material, das die Regel deutlich zeigt.
+
+      ## Wie eine Session ablaeuft
+
+      1. AI zeigt 3-5 Beispiele eines Phaenomens.
+      2. Frage: "Welches Muster siehst du?"
+      3. Du formulierst eine Hypothese.
+      4. AI bestaetigt, korrigiert oder zeigt weitere Beispiele.
+      5. Bei richtiger Regel: AI fasst sie formal zusammen.
+
+      ## Warum das tiefer geht
+
+      Forschung zeigt, dass selbst entdeckte Regeln laenger
+      haften als nachgesprochene. Der induktive Weg dauert
+      laenger, aber das Verstaendnis sitzt tiefer.
+
+      ## Wann es schwierig wird
+
+      Wenn die Muster zu komplex sind oder du zu wenig
+      Vorkenntnisse hast, kann induktives Lernen frustrieren.
+      Das System merkt das an niedrigen Confidence-Werten und
+      kann auf Deduktiv wechseln.
+
+  - key: method_error_based
+    title: Fehlerzentriert
+    short: "Bewusst Fehler machen und dann verstehen, warum sie auftreten."
+    long: |
+      ## Fehlerzentrierte Methode
+
+      Die AI fuehrt dich gezielt in typische Fehler — und dann
+      gemeinsam mit dir hinaus. Fehler werden nicht vermieden,
+      sondern als Lernanlaesse genutzt.
+
+      ## Warum bewusste Fehler funktionieren
+
+      Forschung zeigt: **Productive Failure** beschleunigt das
+      Lernen. Wenn du einen Fehler selbst machst und ihn dann
+      verstehst, bildest du robustere mentale Modelle als wenn
+      du den Fehler vermeidest.
+
+      Die Methode ist NICHT bestrafend: Es geht nicht um Schaem,
+      sondern um Klarheit. Ein verstandener Fehler ist
+      wertvoller als eine zufaellig richtige Antwort.
+
+      ## Wie die AI das umsetzt
+
+      1. AI praesentiert ein Problem mit Stolperfallen.
+      2. Du loest es — und tappst (oft) in die Falle.
+      3. AI zeigt dir den Fehler und erklaert das dahinterliegende
+        Missverstaendnis.
+      4. Du loest eine Variante ohne den Fehler zu wiederholen.
+      5. AI verallgemeinert das Prinzip.
+
+      ## Wann diese Methode passt
+
+      - **Themen mit klassischen Fehlerquellen** (false friends
+        in Sprachen, off-by-one in Code, Vorzeichenfehler in
+        Mathe).
+      - **Du bist nicht stress-anfaellig** beim Fehler-Machen.
+      - **Du hast Grundwissen** — Fehler aus voelliger
+        Unwissenheit lehren wenig.
+
+      ## Vorsicht bei hohem Stress
+
+      Wenn Stress > 3 in der Session-Bewertung steigt, wechselt
+      das System auf Dialogisch oder Deduktiv — die Methode
+      braucht mentale Ruhe, um produktiv zu sein.
+
+  - key: method_dialogic
+    title: Dialogisch
+    short: "Lernen durch Gespraech mit der AI in entspanntem, niedrig-druck Setting."
+    long: |
+      ## Dialogische Methode
+
+      Du lernst im Gespraech: keine starren Uebungen, keine
+      richtigen/falschen Antworten, sondern ein flexibler Dialog
+      ueber das Thema. Die AI fragt nach, vertieft, ermutigt.
+
+      ## Wann sie wirkt
+
+      - **Hochstress-Situationen** wo Pruefungsangst oder
+        Sprachhemmung lernblockierend wirken.
+      - **Reine Wiederholung** zur Vertiefung: du erklaerst der
+        AI, was du verstanden hast.
+      - **Komplexe Themen**, in denen du explorieren willst,
+        bevor du dich auf eine Loesungsstruktur festlegst.
+
+      ## Wie eine Session ablaeuft
+
+      Keine fixen Schritte. Du steigst mit einer Frage, einer
+      Vermutung oder einem Konzept ein. Die AI fuehrt das
+      Gespraech weiter, fragt nach, schlaegt verwandte
+      Konzepte vor, gibt Beispiele. Du kannst jederzeit das
+      Thema schwenken — anders als bei Deduktiv / Induktiv,
+      wo das System dich auf Kurs haelt.
+
+      ## Was die AI tut
+
+      - **Niedriger Druck**: keine Bewertung im Plauderton.
+      - **Motivational**: Erfolge werden hervorgehoben, ohne
+        kuenstlich.
+      - **Adaptiv**: passt Komplexitaet an deinen Sprachfluss
+        und deine Energie an.
+
+      ## Was der Dual-Prompt-Evaluator tut
+
+      Auch hier laeuft die Confidence-Bewertung mit, aber
+      tolerant — Schritt-Fortschritt erlaubt das System schon
+      bei 50% Confidence statt der ueblichen 70%. Die Methode
+      ist explizit fuers Entdecken, nicht fuers Pruefen
+      gedacht.
+
+  - key: method_contextual
+    title: Kontextuell
+    short: "Lernen in simulierten realen Alltagssituationen."
+    long: |
+      ## Kontextuelle Methode
+
+      Die AI simuliert eine konkrete Situation — Restaurant,
+      Bewerbungsgespraech, Coding-Interview — und du loest die
+      Aufgabe darin. Lernen findet im Anwendungskontext statt,
+      nicht abstrakt.
+
+      ## Warum Kontext den Unterschied macht
+
+      Studien zur **situierten Kognition** zeigen, dass im
+      Kontext gelerntes Wissen sich besser auf die Praxis
+      uebertraegt. Was du am Restauranttisch gelernt hast,
+      kannst du am Restauranttisch anwenden — abstrakt
+      Gelerntes oft nicht.
+
+      Die Methode hilft besonders beim **Transferproblem**:
+      "Ich kann die Regel, aber im echten Gespraech komme ich
+      nicht drauf."
+
+      ## Beispiele fuer Sprache
+
+      - "Du bist im Cafe in Madrid. Bestelle drei verschiedene
+        Tapas und frage nach der Empfehlung des Hauses."
+      - "Du fragst nach dem Weg zum Bahnhof, der Passant
+        antwortet auf Dialekt — wie reagierst du?"
+
+      ## Beispiele fuer Code
+
+      - "Code-Review: Du bekommst diesen PR. Was sagst du dem
+        Junior-Dev?"
+      - "Production-Bug-Szenario: Logs zeigen X. Wie debuggst
+        du?"
+
+      ## Wann sie passt
+
+      - **Wenn dein Ziel anwendungsnah ist** ("Spanisch fuer
+        den Urlaub" eignet sich besser als "Spanisch fuer die
+        Pruefung").
+      - **Nach den ersten Grundlagen** — Kontext wirkt erst,
+        wenn die Bausteine sitzen.
+      - **Wenn du dich auf eine konkrete Situation
+        vorbereitest** (Vorstellungsgespraech naechste Woche).
+
+      ## Wo sie weniger gut passt
+
+      Bei reinen Pruefungs-Themen (Auswendiglernen von
+      Faktenlisten) ist Deduktiv oder Spaced Repetition meist
+      effizienter.
+
+  - key: method_ai_adaptive
+    title: KI-adaptiv
+    short: "Das System waehlt automatisch die beste Methode basierend auf deinem Verlauf."
+    long: |
+      ## KI-adaptive Methode
+
+      Du ueberlaesst die Methodenwahl dem System. Es bewertet
+      nach jedem Schritt deinen Fortschritt (Confidence-Wert),
+      deinen Stress und deine Methodenpassung und entscheidet,
+      mit welcher Methode der naechste Lernzyklus startet.
+
+      ## Wie das System entscheidet
+
+      Drei Datenquellen fliessen in die Wahl:
+
+      - **Lernprofil**: die im Assessment ermittelten Gewichte.
+        Methoden mit hoher Gewichtung werden bevorzugt.
+      - **Verlauf der letzten Sessions**: welche Methoden
+        haben in deinen letzten 5-10 Sessions zu schnellem
+        Fortschritt gefuehrt?
+      - **Aktueller Stress-Wert**: bei hohem Stress wird auf
+        weniger fordernde Methoden (Dialogisch, Kontextuell)
+        gewechselt.
+
+      ## Dual-Prompt-Evaluation
+
+      Anders als bei festen Methoden laeuft hier nach jedem
+      Schritt eine zweite KI-Instanz, die deine Antworten
+      bewertet und der ersten KI signalisiert: "weiter wie
+      bisher", "Methode wechseln", "Schritt wiederholen".
+
+      ## Wann sie ideal ist
+
+      - **Du bist neu im Adaptive Learner** und kennst die
+        Methoden noch nicht aus eigener Erfahrung.
+      - **Du wechselst haeufig Themen** — das System kalibriert
+        sich pro Projekt neu.
+      - **Du moechtest ueberraschend gefordert werden** — die
+        AI mischt Methoden bewusst.
+
+      ## Du hast immer das letzte Wort
+
+      Wenn das System einen Wechsel vorschlaegt, kannst du
+      ablehnen. Wenn dir eine vorgeschlagene Methode nicht
+      passt, beendest du die Session und startest mit einer
+      anderen. Die AI-adaptive Methode ist ein Vorschlag-System,
+      kein Zwang.

@@ -104,6 +104,32 @@ def test_de_en_parity_concepts():
     )
 
 
+def test_methods_has_six_entries():
+    expected = {
+        "method_deductive",
+        "method_inductive",
+        "method_error_based",
+        "method_dialogic",
+        "method_contextual",
+        "method_ai_adaptive",
+    }
+    for lang in ("de", "en"):
+        keys = {e["key"] for e in list_entries(lang, category="methods")}
+        assert expected <= keys, (
+            f"{lang}: missing methods entries: {expected - keys}"
+        )
+
+
+def test_de_en_parity_methods():
+    de_keys = {e["key"] for e in list_entries("de", category="methods")}
+    en_keys = {e["key"] for e in list_entries("en", category="methods")}
+    assert de_keys == en_keys, (
+        f"DE/EN drift in methods:\n"
+        f"  only in DE: {de_keys - en_keys}\n"
+        f"  only in EN: {en_keys - de_keys}"
+    )
+
+
 def test_categories_constant_covers_filesystem():
     """If a new YAML category lands on disk, CATEGORIES must
     grow to match. Pin so future glossary additions do not
