@@ -227,4 +227,36 @@ describe("Dashboard page", () => {
         await screen.findByTestId("dashboard");
         expect(screen.getByTestId("spaced-recs-empty")).toBeInTheDocument();
     });
+
+    // --- Bug 6 (regression): HelpTooltip rendered on key terms ----------
+    //
+    // The contextual help system shipped in Phase 38 wires
+    // dotted-underline tooltips into the UI. A previous
+    // "fix" mounted HelpTooltip only on /onboarding; users
+    // reported that Dashboard (and every post-onboarding
+    // page) still had no tooltips at all. Pin every card
+    // title that wraps a glossary term so a future refactor
+    // can't silently strip them again.
+
+    it("renders dotted-underline tooltips on key Dashboard card titles", async () => {
+        apiProfile.mockResolvedValue(PROFILE);
+        apiProgress.mockResolvedValue(SUMMARY);
+        apiTools.mockResolvedValue(TOOLS);
+        apiSpaced.mockResolvedValue([]);
+        renderDashboard();
+        await screen.findByTestId("dashboard");
+        // Each tooltip renders a span with testid
+        // ``help-term-<glossaryKey>`` (see HelpTooltip).
+        expect(screen.getByTestId("help-term-learning_profile")).toBeInTheDocument();
+        expect(screen.getByTestId("help-term-learning_session")).toBeInTheDocument();
+        expect(
+            screen.getByTestId("help-term-feature_gamification"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("help-term-method_ai_adaptive"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("help-term-feature_spaced_repetition"),
+        ).toBeInTheDocument();
+    });
 });

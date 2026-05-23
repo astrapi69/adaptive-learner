@@ -4,6 +4,7 @@ import {useNavigate} from "react-router-dom";
 import AddTopicDialog from "../components/AddTopicDialog";
 import CurriculumDescriptionEditor from "../components/CurriculumDescriptionEditor";
 import HelpLink from "../components/help/HelpLink";
+import HelpTooltip from "../components/help/HelpTooltip";
 import LessonList from "../components/LessonList";
 import TopicTree from "../components/TopicTree";
 import {ApiError} from "../api/client";
@@ -279,7 +280,9 @@ export default function Curriculum() {
         <main data-testid="curriculum" className="dashboard-page">
             <header className="dashboard-header">
                 <h1>
-                    {t("curriculum.title", "Curriculum")}
+                    <HelpTooltip glossaryKey="curriculum">
+                        {t("curriculum.title", "Curriculum")}
+                    </HelpTooltip>
                     <HelpLink glossaryKey="curriculum" size={18} />
                 </h1>
             </header>

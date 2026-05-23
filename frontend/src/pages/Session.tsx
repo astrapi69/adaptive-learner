@@ -5,6 +5,7 @@ import {LEARNING_METHODS} from "../lib/constants";
 
 import CycleProgress from "../components/CycleProgress";
 import HelpLink from "../components/help/HelpLink";
+import HelpTooltip from "../components/help/HelpTooltip";
 import MethodBadge from "../components/MethodBadge";
 import MethodSwitchBanner from "../components/MethodSwitchBanner";
 import RatingDialog, {type RatingValues} from "../components/RatingDialog";
@@ -552,7 +553,9 @@ export default function Session() {
             <header className="session-header">
                 <div className="session-header-row">
                     <h1>
-                        {t("session.title", "Learning session")}
+                        <HelpTooltip glossaryKey="learning_session">
+                            {t("session.title", "Learning session")}
+                        </HelpTooltip>
                         <HelpLink glossaryKey="learning_session" size={18} />
                     </h1>
                     <div className="session-header-chips">

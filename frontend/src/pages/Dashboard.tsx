@@ -3,6 +3,7 @@ import {useNavigate} from "react-router-dom";
 
 import DashboardFilterBar from "../components/DashboardFilterBar";
 import HelpLink from "../components/help/HelpLink";
+import HelpTooltip from "../components/help/HelpTooltip";
 import MethodDistribution from "../components/MethodDistribution";
 import ProfileRadar from "../components/ProfileRadar";
 import ProgressTimeline from "../components/ProgressTimeline";
@@ -214,7 +215,9 @@ export default function Dashboard() {
             <section className="dashboard-grid">
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
-                        {t("dashboard.card_profile", "Learning profile")}
+                        <HelpTooltip glossaryKey="learning_profile">
+                            {t("dashboard.card_profile", "Learning profile")}
+                        </HelpTooltip>
                         <HelpLink glossaryKey="learning_profile" />
                     </h2>
                     {profile ? (
@@ -228,14 +231,19 @@ export default function Dashboard() {
 
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
-                        {t("dashboard.card_counter", "Sessions")}
+                        <HelpTooltip glossaryKey="learning_session">
+                            {t("dashboard.card_counter", "Sessions")}
+                        </HelpTooltip>
+                        <HelpLink glossaryKey="learning_session" />
                     </h2>
                     <SessionCounter summary={summary} />
                 </article>
 
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
-                        {t("gamification.card_xp", "XP & Level")}
+                        <HelpTooltip glossaryKey="feature_gamification">
+                            {t("gamification.card_xp", "XP & Level")}
+                        </HelpTooltip>
                         <HelpLink glossaryKey="feature_gamification" />
                     </h2>
                     <XPWidget state={xpState} />
@@ -265,7 +273,9 @@ export default function Dashboard() {
 
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
-                        {t("dashboard.card_distribution", "Method distribution")}
+                        <HelpTooltip glossaryKey="method_ai_adaptive">
+                            {t("dashboard.card_distribution", "Method distribution")}
+                        </HelpTooltip>
                         <HelpLink glossaryKey="method_ai_adaptive" />
                     </h2>
                     <MethodDistribution summary={summary} />
@@ -280,7 +290,9 @@ export default function Dashboard() {
 
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
-                        {t("dashboard.card_spaced", "Spaced practice")}
+                        <HelpTooltip glossaryKey="feature_spaced_repetition">
+                            {t("dashboard.card_spaced", "Spaced practice")}
+                        </HelpTooltip>
                         <HelpLink glossaryKey="feature_spaced_repetition" />
                     </h2>
                     <SpacedRecommendations cards={spaced} />

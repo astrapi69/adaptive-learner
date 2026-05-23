@@ -750,6 +750,24 @@ describe("Session page", () => {
         ).not.toBeInTheDocument();
     });
 
+    // --- Bug 6 (regression): HelpTooltip rendered on the Session h1 ----
+    //
+    // Same shape as the Dashboard pin in Dashboard.test.tsx —
+    // pre-Phase-38 the contextual help icons + tooltips were
+    // mounted only on Onboarding, leaving every other route
+    // dark. Asserting the testid here prevents a future
+    // refactor from silently dropping the tooltip from the
+    // chat-page heading.
+
+    it("renders a dotted-underline tooltip on the Learning session heading", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        renderSession();
+        await screen.findByTestId("session");
+        expect(
+            screen.getByTestId("help-term-learning_session"),
+        ).toBeInTheDocument();
+    });
+
     // --- v0.6.0 / 9D: offline guard on session start --------------------
 
     it("shows an offline-blocked message and does NOT fire api.session.start when offline", async () => {
