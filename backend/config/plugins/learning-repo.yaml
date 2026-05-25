@@ -1,20 +1,24 @@
 # Learning Repository plugin settings (Phase 42 / BL-30).
 #
-# Renders per-project Markdown artefacts from existing DB state.
-# Optional ``git init`` + commit-on-render + tag-on-phase-exit
-# integration lands in commit 5 of the BL-30 chain; the Settings
-# UI panel that exposes ``enable_git`` and ``repos_dir`` to the
-# user lands in commit 6. Until then this file is intentionally
-# settings-free — the plugin uses safe in-code defaults
-# (``enable_git = False``, no on-disk writes).
+# Renders per-project Markdown artefacts from existing DB state
+# and (optionally) materialises them to disk under a real git
+# repository for long-term tracking per the Article-3 pattern
+# (Asterios Raptis, *Von Theorie zur Praxis*).
 #
-# When commit 5 lands, the following keys join this file:
-#
-#   settings:
-#     enable_git: false        # Opt-in; off by default.
-#     repos_dir: "~/.local/share/adaptive_learner/repos"
-#
-# Both will be UI-editable via Settings > Plugins > Learning
-# Repository, so the # INTERNAL marker convention does not
-# apply.
-settings: {}
+# Both settings below are user-facing — the Settings UI panel
+# (BL-30 commit 6) lets the user toggle them without editing
+# this file. They are NOT marked ``# INTERNAL`` because they
+# control durable user-visible behaviour (disk writes +
+# tagging) that the user must be able to opt in or out of.
+settings:
+  # Opt-in: when ``true``, the POST /persist endpoint runs
+  # ``git init`` (if needed) + commit + optional tag under
+  # ``repos_dir/{project_id}/``. When ``false`` (default),
+  # /persist responds with HTTP 400 and the read-only /render
+  # + /export-zip endpoints remain the only surface.
+  enable_git: false
+  # Filesystem location for the per-project git repositories.
+  # Resolved with ``~`` expansion. The plugin creates it on
+  # first persist and writes ``{project_id}/`` subdirectories
+  # for each persisted project.
+  repos_dir: "~/.local/share/adaptive_learner/repos"

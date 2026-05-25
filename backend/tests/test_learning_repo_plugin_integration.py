@@ -78,6 +78,7 @@ def test_router_paths_mounted(client: TestClient) -> None:
     paths = {r.path for r in app.routes if hasattr(r, "path")}
     assert "/api/plugins/learning-repo/render/{project_id}" in paths
     assert "/api/plugins/learning-repo/export-zip/{project_id}" in paths
+    assert "/api/plugins/learning-repo/persist/{project_id}" in paths
 
 
 # --- GET /render ----------------------------------------------------------
@@ -281,3 +282,111 @@ def test_export_zip_respects_language_query_param(client: TestClient) -> None:
     # test above already covers it. This test just pins that
     # the language query param is accepted and returns 200 (no
     # unsupported-param rejection).
+
+
+# --- POST /persist (BL-30 commit 5) -------------------------------------
+
+
+def test_persist_default_off_returns_400_with_actionable_message(
+    client: TestClient,
+) -> None:
+    """The plugin ships with ``enable_git: false`` — hitting
+    /persist without flipping that bit must respond with HTTP
+    400 + a message naming the setting key so the user knows
+    where to look."""
+    _, project_id = _make_user_and_project(client)
+    r = client.post(f"/api/plugins/learning-repo/persist/{project_id}")
+    assert r.status_code == 400
+    body = r.json()
+    assert "enable_git" in body["detail"]
+
+
+def test_persist_unknown_project_returns_404_even_when_git_disabled(
+    client: TestClient,
+) -> None:
+    """Routing-order pin: the ``enable_git`` check fires BEFORE
+    the project lookup (cheap settings read before DB query).
+    So an unknown project on the default-off configuration
+    surfaces as 400, not 404. This documents the intentional
+    order; if you swap them the test catches it."""
+    r = client.post("/api/plugins/learning-repo/persist/00000000-aaaa-bbbb-cccc-dddddddddddd")
+    assert r.status_code == 400  # enable_git check beats project lookup
+
+
+def test_persist_with_git_enabled_writes_tree_and_returns_commit_sha(
+    client: TestClient, tmp_path
+) -> None:
+    """Toggle enable_git on the live plugin instance and point
+    repos_dir at ``tmp_path``. Hitting /persist should write the
+    rendered tree under ``{tmp_path}/{project_id}/`` and return a
+    commit SHA. Cleanup restores the original settings so other
+    tests aren't disturbed."""
+    _, project_id = _make_user_and_project(client)
+    plugin = manager.get_plugin("learning-repo")
+    assert plugin is not None
+    original_settings = plugin.config.get("settings", {}).copy()
+    plugin.config["settings"] = {
+        **original_settings,
+        "enable_git": True,
+        "repos_dir": str(tmp_path),
+    }
+    try:
+        r = client.post(f"/api/plugins/learning-repo/persist/{project_id}")
+        assert r.status_code == 200, r.text
+        body = r.json()
+        assert body["project_id"] == project_id
+        assert body["files_written"] >= 4  # README + STATS + CHEATSHEET + ROADMAP
+        assert body["repo_path"] == str(tmp_path / project_id)
+        assert len(body["commit_sha"]) == 40
+        assert body["tag"] is None  # no sessions yet → no exit threshold
+        # Files actually landed on disk:
+        assert (tmp_path / project_id / "README.md").exists()
+        assert (tmp_path / project_id / ".git").is_dir()
+    finally:
+        plugin.config["settings"] = original_settings
+
+
+def test_persist_unknown_project_returns_404_when_git_enabled(client: TestClient, tmp_path) -> None:
+    """Once ``enable_git`` is on, the project-lookup is reached;
+    unknown project IDs surface as 404 from there."""
+    plugin = manager.get_plugin("learning-repo")
+    assert plugin is not None
+    original_settings = plugin.config.get("settings", {}).copy()
+    plugin.config["settings"] = {
+        **original_settings,
+        "enable_git": True,
+        "repos_dir": str(tmp_path),
+    }
+    try:
+        r = client.post("/api/plugins/learning-repo/persist/00000000-aaaa-bbbb-cccc-dddddddddddd")
+        assert r.status_code == 404
+    finally:
+        plugin.config["settings"] = original_settings
+
+
+def test_persist_returns_502_when_git_binary_missing(
+    client: TestClient, tmp_path, monkeypatch
+) -> None:
+    """When ``git`` is not on PATH, the writer raises
+    ExternalServiceError("git", ...) which the global handler
+    maps to HTTP 502 — matches the Pandoc / TTS pattern."""
+    _, project_id = _make_user_and_project(client)
+    plugin = manager.get_plugin("learning-repo")
+    assert plugin is not None
+    original_settings = plugin.config.get("settings", {}).copy()
+    plugin.config["settings"] = {
+        **original_settings,
+        "enable_git": True,
+        "repos_dir": str(tmp_path),
+    }
+    monkeypatch.setattr(
+        "adaptive_learner_learning_repo.git_writer.shutil.which",
+        lambda _name: None,
+    )
+    try:
+        r = client.post(f"/api/plugins/learning-repo/persist/{project_id}")
+        assert r.status_code == 502
+        body = r.json()
+        assert "git" in body["detail"]
+    finally:
+        plugin.config["settings"] = original_settings

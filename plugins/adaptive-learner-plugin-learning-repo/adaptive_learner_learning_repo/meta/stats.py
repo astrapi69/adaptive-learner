@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING
 
 from ..context import RenderContext
 from ..labels import Labels
+from ..thresholds import exit_threshold_indices
 
 if TYPE_CHECKING:
     # Annotation-only; see context.py for rationale.
@@ -51,7 +52,7 @@ def _session_table(ctx: RenderContext, labels: Labels) -> list[str]:
     lines.append(header)
     lines.append("|" + "---|" * 7)
     sessions_sorted = sorted(ctx.sessions, key=lambda s: s.started_at)
-    exit_indices = _exit_threshold_indices(sessions_sorted, ctx)
+    exit_indices = exit_threshold_indices(ctx)
     for index, session in enumerate(sessions_sorted):
         lines.append(_session_row(session, ctx, labels, index in exit_indices))
     lines.append("")
@@ -93,34 +94,6 @@ def _format_rating(rating: SessionRating | None, field: str) -> str:
     raw = getattr(rating, field)
     scaled = raw * 2
     return f"{scaled}/10"
-
-
-def _exit_threshold_indices(
-    sessions: list[LearningSession],
-    ctx: RenderContext,
-) -> set[int]:
-    """Return indices of sessions that satisfy Article-1 § 8.
-
-    Threshold: Understanding ≥ 9/10 AND Transfer ≥ 8/10 stable
-    over 2 consecutive cycles. We approximate "stable over 2
-    consecutive cycles" as "this session AND the immediately
-    preceding session both meet the per-session bar."
-    """
-
-    pinned: set[int] = set()
-    for i, session in enumerate(sessions):
-        if i == 0:
-            continue
-        if _meets_threshold(session, ctx) and _meets_threshold(sessions[i - 1], ctx):
-            pinned.add(i)
-    return pinned
-
-
-def _meets_threshold(session: LearningSession, ctx: RenderContext) -> bool:
-    rating = ctx.latest_rating(session.id)
-    if rating is None:
-        return False
-    return rating.understanding * 2 >= 9 and rating.method_fit * 2 >= 8
 
 
 def _method_switch_table(ctx: RenderContext, labels: Labels) -> list[str]:
