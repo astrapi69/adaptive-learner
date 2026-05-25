@@ -1,6 +1,6 @@
 # Adaptive Learner Roadmap
 
-Current state: **v1.25.0 released 2026-05-23 (Phase 41 / identity persistence + browser-wipe recovery + Settings Danger Zone three-step reset).** 882 (+1 skipped) backend + 618 plugin + 1465 Vitest = 2965 tests green (+1 skipped). 16 Playwright smoke spec files run separately.
+Current state: **v1.26.0 released 2026-05-25 (Phase 42 / Git-Backed Learning Repository, BL-30).** 912 (+1 skipped) backend + 670 plugin + 1479 Vitest = 3061 tests green (+1 skipped). 17 Playwright smoke spec files run separately.
 
 ## Phase history (completed)
 
@@ -45,7 +45,8 @@ Current state: **v1.25.0 released 2026-05-23 (Phase 41 / identity persistence + 
 | 38 | v1.23.0 | In-App Contextual Help System — 22 glossary concepts (curriculum, learning project, learning profile, learning session, the six learning methods, the seven cycle steps, five app features) surfaced via dotted-underline `HelpTooltip` + slide-over `HelpDrawer` with full Markdown articles. Settings > Help browser + search. v1.23.1 + v1.23.2 followed with tooltip mounts on all post-onboarding routes, Recharts width-warning fix, stronger dotted-underline visibility, icon-button a11y sweep, and a button-tooltip user preference toggle. |
 | 39 | v1.24.0 | WCAG 2.1 Level AA Accessibility Audit + Remediation — full audit + atomic fixes for the two real AA violations surfaced; new dev dependency, regression tests pin each finding. 380-line audit at [docs/audits/wcag-2026-05-23.md](audits/wcag-2026-05-23.md). |
 | 40 | v1.24.1 | Release-Automation Hardening — Bibliogon's 4-Tier model adopted: package-lock propagation, open-set version-literal discovery, advisory WARN wiring, aggregate `make release-*` targets, 4-Tier architecture documentation, plugin refactor unblocking the verify chain. No user-visible runtime changes. |
-| **41** | **v1.25.0** | **Identity Persistence + Browser-Wipe Recovery + Danger Zone** — `~/.config/adaptive_learner/identity.yaml` writes on user / project / language changes. Frontend Landing flow recovers from disk (API mode) or IndexedDB (Dexie mode) after a `localStorage` wipe. Settings > About > Identity status panel surfaces the resolved identity. Settings > Danger Zone ships a three-step typed-confirm reset: `POST /api/reset` truncates every table and scrubs `ai.*` from `secrets.yaml` while preserving the Fernet `secret_key`. 13 new i18n keys across 8 catalogs. Two new backend endpoints. Six atomic commits.** |
+| 41 | v1.25.0 | Identity Persistence + Browser-Wipe Recovery + Danger Zone — `~/.config/adaptive_learner/identity.yaml` writes on user / project / language changes. Frontend Landing flow recovers from disk (API mode) or IndexedDB (Dexie mode) after a `localStorage` wipe. Settings > About > Identity status panel surfaces the resolved identity. Settings > Danger Zone ships a three-step typed-confirm reset: `POST /api/reset` truncates every table and scrubs `ai.*` from `secrets.yaml` while preserving the Fernet `secret_key`. 13 new i18n keys across 8 catalogs. Two new backend endpoints. Six atomic commits. |
+| **42** | **v1.26.0** | **Git-Backed Learning Repository (BL-30)** — new `learning-repo` plugin emits per-project Markdown artefacts (`README.md`, `LEARNING_STATS.md`, `CHEATSHEET.md`, `ROADMAP.md` + numbered topic folders) from existing DB state via three endpoints (render JSON, export-zip, persist-to-git). Opt-in `git init` + commit-on-render with semantic subject `Cycle N — U X/10, T Y/10`; tags `cycle-{N}-mastered` on Article-1 § 8 exit threshold (Understanding ≥ 9/10 AND Transfer ≥ 8/10 stable over 2 cycles). New core endpoint `/api/plugin-settings/{plugin_name}` (GET + PATCH) closes the architecture-rule gap on UI-editable plugin settings. New `SessionNote.kind` column (`"note"` / `"meta_learning"`) is the Article-3 "Meta-Learning Insight" slot. Frontend ships `/projects/:projectId/learning-repo` page + Dashboard widget + Settings panel. i18n `repo.*` block in all 8 catalogs (DE+EN native, 6 AI-translated). Seven atomic commits per the BL-30 plan; implements Asterios Raptis' *Von Theorie zur Praxis* Article 3 pattern.** |
 
 Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list. Per-release notes live in [changelog/releases/](../changelog/releases/).
 
@@ -53,45 +54,35 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phases (planned)
 
-**Phase 42 candidate** — confirmed top of backlog after the
-v1.25.0 review (see [backlog.md](backlog.md) for the full
-P0..P5 view):
+**Phase 43 candidate** — no committed item yet. The post-BL-30
+backlog (see [backlog.md](backlog.md)) carries several P2 / P3
+candidates but none are pulled forward; the next phase is set
+in the v1.26.0 → v1.27.0 review.
 
-- **BL-30 — Git-Backed Learning Repository.** Materialise
-  per-project on-disk Markdown artefacts (`README.md`,
-  `LEARNING_STATS.md`, `CHEATSHEET.md`, `ROADMAP.md` + a
-  numbered phase folder per topic) auto-emitted from
-  `LearningSession` / `SessionMessage` / `StepEvaluation` /
-  `SessionRating` / `SessionNote` data, with optional
-  `git init` + commit-on-session-complete + tag-on-phase-exit
-  (Verständnis ≥ 9 AND Transfer ≥ 8 stable over 2 cycles).
-  Closes the gap between the in-app learning surface and
-  the Article-3 "learning repository" pattern from the
-  *Von Theorie zur Praxis* series (Asterios Raptis,
-  Medium). Concretely:
-  - Backend service that renders the four meta-files from
-    DB state (sync read; no AI calls).
-  - New plugin (provisional name `learning-repo`) exposing
-    `GET /api/plugins/learning-repo/render/{project_id}` +
-    `POST .../export-zip/{project_id}` for offline use.
-  - Optional git integration: a setting toggle, then
-    `git init` per project under
-    `~/.local/share/adaptive_learner/repos/{project_id}/`
-    with semantic commits ("Cycle N complete — Verständnis
-    X/10, Transfer Y/10") and tags on phase exit.
-  - Settings panel + Dashboard widget linking to the
-    rendered repo browser.
-  - i18n in all 8 catalogs; smoke spec under `e2e/smoke/`.
+Known follow-ups to BL-30 that may shape Phase 43:
 
-- **BL-03 — pluginforge-app-template repo.** Deferred. Was
-  a Phase 35 candidate but is mechanically low-value next
-  to BL-30. Export the v0.0.0-template tag when the
-  PluginForge-ecosystem triple-repo claim is the load-
-  bearing question.
+- **Per-topic-folder triplet** (`concepts.md` / `tasks.md` /
+  `solutions.md`). Article 3's "Drei-Datei-Prinzip" — folders
+  currently ship only the stub README. Becomes a phase when a
+  user actually wants the deeper structure.
+- **Method-experiment git branches**. Article 3's "branches
+  as method experiments" — short-lived git branches per
+  learning method to support A/B comparisons. Trigger: a user
+  reports wanting to compare two methods on the same topic.
+- **GitHub-push automation for `learning-repo`**. Trigger:
+  user demand for a "share my learning repo publicly" flow.
+
+Other deferred work:
+
 - **BL-14..17 — SaaS-tier items.** Multi-user, JWT auth,
   Postgres migration, Stripe / premium plugins. Deferred
   until the single-user-per-browser model hits an
   obstacle.
+
+BL-03 (`pluginforge-app-template` repo) shipped externally
+ahead of Phase 42 — `astrapi69/pluginforge-app-template`
+exists at tag `v0.1.0` (created 2026-05-17). PluginForge
+ecosystem triple is validated.
 
 ---
 

@@ -9,21 +9,31 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.25.0** (Phase 41 — identity
-  persistence + browser-wipe recovery + Danger Zone:
-  ``~/.config/adaptive_learner/identity.yaml`` writes on
-  user / project / language changes, frontend Landing flow
-  recovers from disk (API mode) or IndexedDB (Dexie mode)
-  after a localStorage wipe, Settings > About > Identity
-  status panel, Settings > Danger Zone with three-step
-  typed-confirm reset (``POST /api/reset`` truncates every
-  table + scrubs ``ai.*`` from secrets.yaml while preserving
-  the Fernet ``secret_key``). v1.24.x was Phase 39 / WCAG
-  2.1 AA accessibility audit; v1.24.1 = Phase 40 release-
-  automation hardening. See
-  [changelog/releases/v1.25.0.md](changelog/releases/v1.25.0.md)
+- **Current state:** **v1.26.0** (Phase 42 — Git-Backed
+  Learning Repository, BL-30): new ``learning-repo`` plugin
+  emits per-project Markdown artefacts (README,
+  LEARNING_STATS, CHEATSHEET, ROADMAP + numbered topic
+  folders) from existing DB state via three endpoints —
+  ``GET /api/plugins/learning-repo/render/{project_id}``
+  (JSON), ``POST .../export-zip/{project_id}`` (ZIP), and
+  opt-in ``POST .../persist/{project_id}`` which writes the
+  tree to ``~/.local/share/adaptive_learner/repos/{project_id}/``
+  and runs ``git commit`` with a semantic subject
+  ("Cycle N — U X/10, T Y/10"). Tags ``cycle-{N}-mastered``
+  when the Article-1 § 8 exit threshold is met
+  (Understanding ≥ 9/10 AND Transfer ≥ 8/10 stable over 2
+  consecutive cycles). New core endpoint
+  ``/api/plugin-settings/{plugin_name}`` (GET + PATCH)
+  backstops the architecture-rule "every non-INTERNAL
+  setting MUST be UI-editable". Frontend ships a per-project
+  ``/projects/:projectId/learning-repo`` page with sidebar +
+  ``react-markdown`` viewer, a Dashboard widget, and a
+  Settings > Learning Repository panel. v1.25.0 = Phase 41
+  identity persistence + Danger Zone; v1.24.x = Phase 39
+  WCAG 2.1 AA + Phase 40 release-automation hardening. See
+  [changelog/releases/v1.26.0.md](changelog/releases/v1.26.0.md)
   for the per-release detail and `git log --oneline` for the
-  feature history across Phases 1–41.
+  feature history across Phases 1–42.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
@@ -94,7 +104,7 @@ make dev              # backend (18001) + frontend (15174)
 make dev-bg / dev-down
 make test             # backend + plugins + Vitest (no coverage)
 make test-backend     # pytest backend only
-make test-plugins     # all 10 plugin test suites
+make test-plugins     # all 11 plugin test suites
 make test-frontend    # Vitest only
 make test-coverage    # opt-in coverage (CI runs the equivalent)
 make prod / prod-down # Docker Compose
@@ -130,7 +140,7 @@ Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Sync
 surface: 28 tables. Full spec in
 [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md).
 
-## Plugins (10 shipped)
+## Plugins (11 shipped)
 
 All under `plugins/`. Routes mounted at `/api/plugins/<name>/*`.
 
@@ -146,6 +156,7 @@ All under `plugins/`. Routes mounted at `/api/plugins/<name>/*`.
 | gamification | /xp/*, /badges/*, /streak/*, /reset | XP/level, badge catalog, streak heatmap |
 | anki | /cards CRUD, /extract/{session,conversation}, /mark-exported | AI-extracted flashcards + .apkg export |
 | notebooklm | /questions CRUD, /generate/{session,project}, /study-guide/{id} | Active-recall questions + study guide + ZIP export |
+| learning-repo | /render/{id}, /export-zip/{id}, /persist/{id} | Article-3 Git-backed Learning Repository (Markdown artefacts + opt-in `git commit` + `cycle-N-mastered` tags) |
 
 All 10 hooks live in `backend/app/hookspecs.py`:
 `get_assessment_questions`, `calculate_profile`,
@@ -161,7 +172,7 @@ adaptive-learner/
 ├── backend/app/           FastAPI app, routers, services, models, hookspecs
 ├── backend/config/        app.yaml + i18n/ (8 catalogs)
 ├── backend/tests/         pytest backend suite
-├── plugins/               10 plugin packages
+├── plugins/               11 plugin packages
 ├── frontend/src/          api/, chat_import/, components/, hooks/, lib/,
 │                          pages/ (13 routes), storage/ (IStorageService +
 │                          ApiStorage + DexieStorage, 22 namespaces),
@@ -197,9 +208,9 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.25.0 baseline:** backend 882 (+1 skipped) + plugins 618
-  + Vitest 1465 = **2965 tests** (+1 skipped). E2E smoke
-  (16 spec files) runs separately via
+- **v1.26.0 baseline:** backend 912 (+1 skipped) + plugins 670
+  + Vitest 1479 = **3061 tests** (+1 skipped). E2E smoke
+  (17 spec files) runs separately via
   `cd e2e && npx playwright test`.
 
 ## Test isolation
