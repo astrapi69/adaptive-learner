@@ -312,6 +312,43 @@ def test_session_cascade_wipes_messages_ratings_notes(db, project):
     assert db.query(SessionNote).count() == 0
 
 
+def test_session_note_kind_defaults_to_note(db, project):
+    """v1.26.0 Phase 42 — kind column defaults to "note"."""
+    s = LearningSession(project_id=project.id, method="dialogic")
+    db.add(s)
+    db.commit()
+    db.refresh(s)
+    note = SessionNote(session_id=s.id, content="default-kind note")
+    db.add(note)
+    db.commit()
+    db.refresh(note)
+    assert note.kind == "note"
+
+
+def test_session_note_kind_accepts_meta_learning(db, project):
+    """v1.26.0 Phase 42 — meta_learning kind round-trips for the
+    Article-3 learning-repo renderer."""
+    from app.models import (
+        SESSION_NOTE_KIND_META_LEARNING,
+        SESSION_NOTE_KINDS,
+    )
+
+    assert SESSION_NOTE_KIND_META_LEARNING in SESSION_NOTE_KINDS
+    s = LearningSession(project_id=project.id, method="ai_adaptive")
+    db.add(s)
+    db.commit()
+    db.refresh(s)
+    note = SessionNote(
+        session_id=s.id,
+        content="Drill eliminates persistent errors faster than general practice.",
+        kind=SESSION_NOTE_KIND_META_LEARNING,
+    )
+    db.add(note)
+    db.commit()
+    db.refresh(note)
+    assert note.kind == "meta_learning"
+
+
 # --- ProgressCommit / MethodSwitch -----------------------------------------
 
 

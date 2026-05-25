@@ -153,6 +153,15 @@ export interface SessionNoteRow {
     id: string;
     session_id: string;
     content: string;
+    /**
+     * v1.26.0 / Phase 42 — free-text kind discriminator.
+     * Canonical values: ``"note"`` (default, free-form) and
+     * ``"meta_learning"`` (Article-3 "Meta-Learning Insight",
+     * surfaced as its own section by the learning-repo
+     * plugin renderer). Plugins may extend with their own
+     * kinds without a schema change.
+     */
+    kind: string;
     created_at: string;
     /**
      * v1.8.0 / Phase 21B — sync surface promoted SessionNote
@@ -617,6 +626,26 @@ export class AdaptiveLearnerDB extends Dexie {
             learningSessions:
                 "id, project_id, status, started_at, imported_conversation_id",
         });
+        // Schema v15 — v1.26.0 Phase 42 (BL-30 prerequisite):
+        // ``session_notes.kind`` joins the row shape. Mirrors
+        // the backend Alembic 0017 migration. Existing rows
+        // back-fill to ``"note"`` (matches the server_default).
+        // No new index — kind is filtered in-memory by the
+        // learning-repo renderer, not paged.
+        this.version(15)
+            .stores({
+                sessionNotes: "id, session_id, updated_at",
+            })
+            .upgrade(async (tx) => {
+                await tx
+                    .table("sessionNotes")
+                    .toCollection()
+                    .modify((row: Record<string, unknown>) => {
+                        if (!("kind" in row)) {
+                            row.kind = "note";
+                        }
+                    });
+            });
     }
 }
 

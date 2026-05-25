@@ -539,10 +539,16 @@ class SessionRatingOut(BaseModel):
 class SessionNoteCreate(BaseModel):
     session_id: str
     content: str = Field(min_length=1)
+    # v1.26.0 / Phase 42 — see models.SESSION_NOTE_KINDS for
+    # the canonical values. Free-text at the DB layer so
+    # plugins can extend with their own kinds without a
+    # migration.
+    kind: str = Field(default="note", max_length=32)
 
 
 class SessionNoteUpdate(BaseModel):
     content: str | None = Field(default=None, min_length=1)
+    kind: str | None = Field(default=None, max_length=32)
 
 
 class SessionNoteOut(BaseModel):
@@ -551,6 +557,7 @@ class SessionNoteOut(BaseModel):
     id: str
     session_id: str
     content: str
+    kind: str
     created_at: datetime
     # v1.8.0 / Phase 21B — mutable sync surface for SessionNote.
     updated_at: datetime

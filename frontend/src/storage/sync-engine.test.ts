@@ -593,6 +593,7 @@ describe("SyncEngine.sync", () => {
             id: "n-1",
             session_id: "s-1",
             content: "Initial note (local)",
+            kind: "note",
             created_at: "2026-05-20T09:30:00.000Z",
             updated_at: "2026-05-20T09:45:00.000Z",
         });
@@ -644,6 +645,7 @@ describe("SyncEngine.sync", () => {
             id: "n-conflict",
             session_id: "s-1",
             content: "Edited locally",
+            kind: "note",
             created_at: "2026-05-20T09:30:00.000Z",
             updated_at: "2026-05-20T11:00:00.000Z",
         });

@@ -549,6 +549,20 @@ class SessionRating(Base):
         )
 
 
+# v1.26.0 / Phase 42 — known SessionNote kinds. Free-text
+# String(32) column (matches MethodSwitch.from_method /
+# to_method shape — no DB-level enum constraint), but these
+# constants are the canonical set the rest of the codebase
+# uses. The "meta_learning" kind is the Article-3
+# "Meta-Learning Insight" slot consumed by the
+# learning-repo plugin renderer.
+SESSION_NOTE_KIND_NOTE = "note"
+SESSION_NOTE_KIND_META_LEARNING = "meta_learning"
+SESSION_NOTE_KINDS = frozenset(
+    {SESSION_NOTE_KIND_NOTE, SESSION_NOTE_KIND_META_LEARNING}
+)
+
+
 class SessionNote(Base):
     """Free-form note the user writes during / after a session."""
 
@@ -562,6 +576,12 @@ class SessionNote(Base):
         index=True,
     )
     content: Mapped[str] = mapped_column(Text, nullable=False)
+    # v1.26.0 / Phase 42 — see SESSION_NOTE_KINDS above. Free
+    # text at the DB layer; callers should prefer the
+    # SESSION_NOTE_KIND_* constants.
+    kind: Mapped[str] = mapped_column(
+        String(32), nullable=False, default=SESSION_NOTE_KIND_NOTE
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
