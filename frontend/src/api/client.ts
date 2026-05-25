@@ -986,6 +986,79 @@ export const api = {
         },
     },
 
+    // --- Plugin settings round-trip (v1.26.0 / generic) -----------------
+
+    pluginSettings: {
+        /** GET /api/plugin-settings/{plugin_name} */
+        get: (pluginName: string) =>
+            apiCall<{plugin: string; settings: Record<string, unknown>}>(
+                `/plugin-settings/${encodeURIComponent(pluginName)}`,
+            ),
+        /** PATCH /api/plugin-settings/{plugin_name} */
+        update: (pluginName: string, body: {settings: Record<string, unknown>}) =>
+            apiCall<{plugin: string; settings: Record<string, unknown>}>(
+                `/plugin-settings/${encodeURIComponent(pluginName)}`,
+                {method: "PATCH", body},
+            ),
+    },
+
+    // --- Learning Repository plugin (v1.26.0 / Phase 42 / BL-30) -------
+
+    learningRepo: {
+        /** GET /api/plugins/learning-repo/render/{project_id} */
+        render: (projectId: string, language?: string) => {
+            const query: Record<string, string> = {};
+            if (language) query.language = language;
+            return apiCall<{
+                project_id: string;
+                language: string;
+                rendered_at: string;
+                files: Record<string, string>;
+            }>(
+                `/plugins/learning-repo/render/${encodeURIComponent(projectId)}`,
+                Object.keys(query).length > 0 ? {query} : undefined,
+            );
+        },
+        /** POST /api/plugins/learning-repo/export-zip/{project_id}
+         *  Returns the raw zip Blob — caller usually pipes it into
+         *  a download anchor. */
+        exportZip: async (projectId: string, language?: string): Promise<Blob> => {
+            const qs = language
+                ? `?language=${encodeURIComponent(language)}`
+                : "";
+            const res = await fetch(
+                `${API_BASE}/plugins/learning-repo/export-zip/${encodeURIComponent(projectId)}${qs}`,
+                {method: "POST"},
+            );
+            if (!res.ok) {
+                const body = await res.json().catch(() => ({detail: ""}));
+                throw new ApiError(
+                    res.status,
+                    body.detail || `Export-zip failed (HTTP ${res.status})`,
+                );
+            }
+            return await res.blob();
+        },
+        /** POST /api/plugins/learning-repo/persist/{project_id} */
+        persist: (projectId: string, language?: string) => {
+            const qs = language
+                ? `?language=${encodeURIComponent(language)}`
+                : "";
+            return apiCall<{
+                project_id: string;
+                language: string;
+                rendered_at: string;
+                files_written: number;
+                repo_path: string;
+                commit_sha: string;
+                tag: string | null;
+            }>(
+                `/plugins/learning-repo/persist/${encodeURIComponent(projectId)}${qs}`,
+                {method: "POST"},
+            );
+        },
+    },
+
     // --- Pronunciation Practice (v1.18.0 / Phase 31C) -------------------
 
     pronunciation: {

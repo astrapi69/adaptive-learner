@@ -498,6 +498,9 @@ app.include_router(projects_router, prefix="/api")
 app.include_router(identity_router, prefix="/api")
 app.include_router(reset_router, prefix="/api")
 app.include_router(settings_router, prefix="/api")
+from app.routers.plugin_settings import router as plugin_settings_router  # noqa: E402
+
+app.include_router(plugin_settings_router, prefix="/api")
 app.include_router(users_curricula_router, prefix="/api")
 app.include_router(curricula_router, prefix="/api")
 app.include_router(topics_router, prefix="/api")

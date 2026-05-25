@@ -20,6 +20,7 @@ import Dashboard from "./pages/Dashboard";
 import Import from "./pages/Import";
 import ImportDetail from "./pages/ImportDetail";
 import Landing from "./pages/Landing";
+import LearningRepoPage from "./pages/LearningRepo";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
 import Progress from "./pages/Progress";
@@ -109,6 +110,10 @@ export default function App() {
                         element={<ImportDetail />}
                     />
                     <Route path="/anki" element={<AnkiPage />} />
+                    <Route
+                        path="/projects/:projectId/learning-repo"
+                        element={<LearningRepoPage />}
+                    />
                     <Route path="/pronunciation" element={<Pronunciation />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="*" element={<NotFound />} />

@@ -5,6 +5,7 @@ import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import DashboardFilterBar from "../components/DashboardFilterBar";
 import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
+import LearningRepoWidget from "../components/dashboard/LearningRepoWidget";
 import MethodDistribution from "../components/MethodDistribution";
 import ProfileRadar from "../components/ProfileRadar";
 import ProgressTimeline from "../components/ProgressTimeline";
@@ -380,6 +381,12 @@ export default function Dashboard() {
                     </h2>
                     <RecentSessions sessions={summary?.recent_sessions ?? []} />
                 </article>
+
+                {readLearnerState().projectId ? (
+                    <LearningRepoWidget
+                        projectId={readLearnerState().projectId as string}
+                    />
+                ) : null}
             </section>
         </main>
     );

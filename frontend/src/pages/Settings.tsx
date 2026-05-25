@@ -7,6 +7,7 @@ import BackupSection from "../components/BackupSection";
 import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
+import LearningRepoSettingsSection from "../components/LearningRepoSettingsSection";
 import HelpBrowser from "../components/help/HelpBrowser";
 import {
     setButtonTooltipsEnabled,
@@ -710,6 +711,7 @@ export default function Settings() {
             </section>
 
             <GamificationSettingsSection />
+            <LearningRepoSettingsSection />
             <VoiceSettingsSection />
             <SyncSection />
             <BackupSection />
