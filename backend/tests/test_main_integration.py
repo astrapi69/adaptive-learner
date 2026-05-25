@@ -56,6 +56,36 @@ def test_infrastructure_endpoints_still_mounted(client: TestClient):
     assert client.get("/api/plugins/errors").status_code == 200
 
 
+def test_plugin_inspect_returns_lifecycle_metadata(client: TestClient):
+    """PLUGINFORGE-LIFECYCLE-UI-01: ``/api/plugins/inspect/{name}``
+    surfaces the v0.9.0 lifecycle visibility (activated_at, source,
+    etc.) for the Settings UI."""
+    resp = client.get("/api/plugins/inspect/assessment")
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["name"] == "assessment"
+    # ``version`` is the plugin's own pyproject version; just
+    # require a non-empty string. ``target_application`` was set
+    # to "adaptive_learner" on every shipped plugin since v1.7.0.
+    assert isinstance(body["version"], str) and body["version"]
+    assert body["target_application"] == "adaptive_learner"
+    state = body["state"]
+    assert state["activated"] is True
+    # activated_at is set by pluginforge v0.9.0+ on every
+    # successful activation. ISO-8601 string, not None.
+    assert isinstance(state["activated_at"], str)
+    assert "T" in state["activated_at"]
+    assert state["source"] == "entry_point"
+    assert state["filter_reason"] is None
+    assert state["load_error"] is None
+
+
+def test_plugin_inspect_unknown_name_404(client: TestClient):
+    resp = client.get("/api/plugins/inspect/nonexistent-plugin")
+    assert resp.status_code == 404
+    assert "nonexistent-plugin" in resp.json()["detail"]
+
+
 def test_full_happy_path(client: TestClient):
     # 1. Create the user.
     resp = client.post(

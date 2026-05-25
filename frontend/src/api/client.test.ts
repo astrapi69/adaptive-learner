@@ -439,3 +439,53 @@ describe("ApiError", () => {
         expect(err.isConflict).toBe(true);
     });
 });
+
+// ----- PLUGINFORGE-LIFECYCLE-UI-01: plugin inspect ----------------------
+
+describe("api.plugins.inspect", () => {
+    it("calls GET /api/plugins/inspect/{name} and returns the lifecycle metadata", async () => {
+        nextResponse = () =>
+            jsonResponse({
+                name: "anki",
+                version: "1.0.0",
+                target_application: "adaptive_learner",
+                state: {
+                    activated: true,
+                    activated_at: "2026-05-23T18:00:00",
+                    last_config_change: null,
+                    source: "entry_point",
+                    filter_reason: null,
+                    load_error: null,
+                },
+            });
+
+        const inspection = await api.plugins.inspect("anki");
+
+        expect(calls[0].url).toBe("/api/plugins/inspect/anki");
+        expect(calls[0].method).toBe("GET");
+        expect(inspection.name).toBe("anki");
+        expect(inspection.state.activated).toBe(true);
+        expect(inspection.state.source).toBe("entry_point");
+        expect(inspection.state.activated_at).toBe("2026-05-23T18:00:00");
+    });
+
+    it("URL-encodes plugin names", async () => {
+        nextResponse = () =>
+            jsonResponse({
+                name: "weird name",
+                version: "0.0.1",
+                target_application: null,
+                state: {
+                    activated: false,
+                    activated_at: null,
+                    last_config_change: null,
+                    source: null,
+                    filter_reason: "not_enabled",
+                    load_error: null,
+                },
+            });
+
+        await api.plugins.inspect("weird name");
+        expect(calls[0].url).toBe("/api/plugins/inspect/weird%20name");
+    });
+});

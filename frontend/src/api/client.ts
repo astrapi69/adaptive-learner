@@ -281,6 +281,28 @@ export interface AvailableModelResponse {
     description: string | null;
 }
 
+/**
+ * PLUGINFORGE-LIFECYCLE-UI-01: lifecycle metadata for one plugin,
+ * mirroring the backend ``/api/plugins/inspect/{name}`` response.
+ * ``state.activated_at`` and ``state.last_config_change`` are
+ * ISO-8601 strings (or null when never set). ``state.source`` is
+ * ``"entry_point"`` for installed plugins, ``"direct_register"``
+ * for programmatically-registered ones.
+ */
+export interface PluginInspection {
+    name: string;
+    version: string;
+    target_application: string | null;
+    state: {
+        activated: boolean;
+        activated_at: string | null;
+        last_config_change: string | null;
+        source: "entry_point" | "direct_register" | null;
+        filter_reason: string | null;
+        load_error: string | null;
+    };
+}
+
 export interface SessionStartBody {
     project_id: string;
     method?: LearningMethod;
@@ -830,6 +852,14 @@ export const api = {
         manifests: () => apiCall<Record<string, unknown>>("/plugins/manifests"),
         health: () => apiCall<Record<string, unknown>>("/plugins/health"),
         errors: () => apiCall<Record<string, string>>("/plugins/errors"),
+        // PLUGINFORGE-LIFECYCLE-UI-01: surfaces the v0.9.0 lifecycle
+        // metadata for one plugin. Used by the (future) Settings →
+        // Plugins panel; backend endpoint shipped first so the panel
+        // can be built on top of a typed contract.
+        inspect: (name: string) =>
+            apiCall<PluginInspection>(
+                `/plugins/inspect/${encodeURIComponent(name)}`,
+            ),
     },
 
     // --- System info (v1.1.0 / Phase 14A) -------------------------------

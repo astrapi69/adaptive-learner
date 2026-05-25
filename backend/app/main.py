@@ -35,7 +35,7 @@ from pluginforge.config import load_i18n
 
 from app import __version__, config_overlay
 from app.database import init_db
-from app.exceptions import AdaptiveLearnerError
+from app.exceptions import AdaptiveLearnerError, NotFoundError
 from app.hookspecs import AdaptiveLearnerHookSpec
 from app.logging_config import setup_logging
 from app.routers.backup import router as backup_router
@@ -605,3 +605,41 @@ def get_plugin_health() -> dict[str, Any]:
 @app.get("/api/plugins/errors")
 def get_plugin_errors() -> dict[str, str]:
     return dict(manager.get_load_errors())
+
+
+@app.get("/api/plugins/inspect/{name}")
+def inspect_plugin(name: str) -> dict[str, Any]:
+    """PluginForge v0.9.0 lifecycle visibility for the Settings UI.
+
+    Exposes a single plugin's lifecycle metadata so the
+    ``Settings → Plugins`` row can show when it was last
+    activated and when its config last changed. 404 when the
+    discovery layer doesn't know the name.
+    """
+    inspection = manager.inspect_plugin(name)
+    if inspection is None:
+        raise NotFoundError(f"Plugin {name!r} not found.")
+    state = inspection.state
+    return {
+        "name": inspection.name,
+        "version": inspection.version,
+        "target_application": inspection.target_application,
+        "state": {
+            "activated": state.activated,
+            "activated_at": (
+                state.activated_at.isoformat()
+                if state.activated_at is not None
+                else None
+            ),
+            "last_config_change": (
+                state.last_config_change.isoformat()
+                if state.last_config_change is not None
+                else None
+            ),
+            "source": state.source,
+            "filter_reason": state.filter_reason,
+            "load_error": (
+                str(state.load_error) if state.load_error is not None else None
+            ),
+        },
+    }
