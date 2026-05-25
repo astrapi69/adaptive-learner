@@ -17,6 +17,7 @@ from __future__ import annotations
 import os
 from typing import Any
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.exceptions import NotFoundError, ValidationError
@@ -58,6 +59,13 @@ def get_or_create_settings(db: Session, user_id: str) -> UserSettings:
     always return a row; an empty / default UserSettings is the
     natural shape for a brand-new account. The auto-create is
     idempotent and stays in one transaction.
+
+    Concurrent first-access (React 18 strict-mode double-effect or
+    parallel GET requests) used to race: both callers passed the
+    ``user.settings is None`` check, both INSERTed, the second hit
+    the ``unique=True`` constraint on ``user_id`` and bubbled up as
+    HTTP 500. Catch the IntegrityError, roll back the doomed insert,
+    and re-read the row the other request just committed.
     Raises :class:`NotFoundError` when the user does not exist.
     """
     user = _get_user(db, user_id)
@@ -65,10 +73,15 @@ def get_or_create_settings(db: Session, user_id: str) -> UserSettings:
         return user.settings
     settings = UserSettings(user_id=user.id)
     db.add(settings)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        db.refresh(user, attribute_names=["settings"])
+        if user.settings is None:
+            raise
+        return user.settings
     db.refresh(settings)
-    # Touch the relationship so the @property ``language`` resolves
-    # without a lazy-load surprise inside the response serializer.
     _ = settings.user
     return settings
 

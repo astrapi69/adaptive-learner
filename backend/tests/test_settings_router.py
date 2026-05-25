@@ -67,6 +67,59 @@ def test_get_settings_idempotent_does_not_duplicate_row(client: TestClient):
     assert first["id"] == second["id"]
 
 
+def test_get_or_create_settings_survives_concurrent_first_access(client: TestClient):
+    """BL-23 regression pin: React 18 strict-mode double-effect or a
+    parallel pair of ``GET /api/settings/{id}`` requests against a
+    user with no UserSettings row used to bubble a UNIQUE constraint
+    IntegrityError out as HTTP 500. Now the loser of the race
+    rolls back and reads the winner's row.
+
+    Simulate the race by having the loser race a pre-committed row
+    that landed AFTER its own None-check: monkeypatch the service to
+    insert a competing row between the check and the commit.
+    """
+    from app.models import User as UserModel
+    from app.models import UserSettings as UserSettingsModel
+
+    user_id = _make_user(client)
+
+    db_loser = SessionLocal()
+    try:
+        user_in_loser = db_loser.get(UserModel, user_id)
+        assert user_in_loser is not None
+        # Loser's None-check passes.
+        assert user_in_loser.settings is None
+
+        # Race winner: a DIFFERENT session inserts and commits the
+        # settings row for the same user. From db_loser's still-open
+        # identity-map view, ``user.settings`` is cached at None even
+        # though the row now exists in the DB.
+        db_winner = SessionLocal()
+        try:
+            winner_row = UserSettingsModel(user_id=user_id)
+            db_winner.add(winner_row)
+            db_winner.commit()
+            winner_id = winner_row.id
+        finally:
+            db_winner.close()
+
+        # Now invoke the service on the loser session. The cached
+        # ``user.settings is None`` will route it through the insert
+        # branch; the commit must hit IntegrityError, recover, and
+        # return the winner's row.
+        result = settings_service.get_or_create_settings(db_loser, user_id)
+        assert result.id == winner_id
+    finally:
+        db_loser.close()
+
+    rows = SessionLocal()
+    try:
+        count = rows.query(UserSettings).filter_by(user_id=user_id).count()
+    finally:
+        rows.close()
+    assert count == 1
+
+
 def test_get_settings_never_returns_api_key_columns(client: TestClient):
     """Defence-in-depth: even if the schema accidentally adds the
     column back, this test fails."""
