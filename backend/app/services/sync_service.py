@@ -42,6 +42,8 @@ from sqlalchemy.orm import Session
 
 from app.exceptions import NotFoundError, ValidationError
 from app.models import (
+    AnkiCardSuggestion,
+    Badge,
     Curriculum,
     ImportedConversation,
     ImportedMessage,
@@ -58,10 +60,8 @@ from app.models import (
     SessionNote,
     SessionRating,
     StepEvaluation,
-    Subject,
-    AnkiCardSuggestion,
-    Badge,
     StudyQuestion,
+    Subject,
     Tag,
     User,
     UserBadge,

@@ -34,7 +34,7 @@ not roll back the legitimate domain change.
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -110,7 +110,7 @@ def update_identity(
         merged["active_project_id"] = project_id
     if language is not None:
         merged["language"] = language
-    merged["last_seen"] = datetime.now(timezone.utc).isoformat()
+    merged["last_seen"] = datetime.now(UTC).isoformat()
     try:
         _write_identity(merged)
     except OSError as exc:

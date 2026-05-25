@@ -33,9 +33,7 @@ SUPPORTED_LANGS = frozenset({"en", "de", "es", "fr", "el", "pt", "tr", "ja"})
 
 CATEGORIES = ("concepts", "methods", "steps", "features")
 
-_DEFAULT_HELP_DIR = (
-    Path(__file__).resolve().parent.parent.parent / "config" / "help"
-)
+_DEFAULT_HELP_DIR = Path(__file__).resolve().parent.parent.parent / "config" / "help"
 
 
 def _help_dir() -> Path:
@@ -75,9 +73,7 @@ def _load_category(category: str, lang: str) -> list[dict[str, object]]:
     return out
 
 
-def list_entries(
-    lang: str, *, category: str | None = None
-) -> list[dict[str, object]]:
+def list_entries(lang: str, *, category: str | None = None) -> list[dict[str, object]]:
     """Return every entry for the language, optionally filtered
     by category. The ordering is stable: category order
     (concepts -> methods -> steps -> features), then the order

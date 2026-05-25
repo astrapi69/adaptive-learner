@@ -43,7 +43,7 @@ def compute_content_hash(messages: Iterable[object]) -> str:
     parts: list[str] = []
     for msg in messages:
         role = getattr(msg, "role", None)
-        if hasattr(role, "value"):
+        if role is not None and hasattr(role, "value"):
             # Pydantic Enum field — unwrap the value.
             role = role.value
         content = getattr(msg, "content", None)

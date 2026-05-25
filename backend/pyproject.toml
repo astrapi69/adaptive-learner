@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive_learner"
-version = "1.25.0"
+version = "1.25.1"
 description = "Adaptive learning system based on the six-method learning model."
 authors = ["Asterios Raptis"]
 license = "MIT"
@@ -81,6 +81,18 @@ plugins = ["pydantic.mypy", "sqlalchemy.ext.mypy.plugin"]
 
 [[tool.mypy.overrides]]
 module = "pluginforge.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Plugin packages are path-deps without ``py.typed`` markers; the
+# backend imports them at runtime for cross-plugin orchestration
+# (badge seeding from gamification, etc.). Treat them as untyped
+# external modules so mypy doesn't refuse to analyse the import.
+# mypy patterns only wildcard at component boundaries; list each
+# plugin top-level package that the backend imports directly.
+# Other plugins load through PluginForge entry points and don't
+# need an explicit override.
+module = "adaptive_learner_gamification.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

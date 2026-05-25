@@ -49,8 +49,8 @@ from app.routers.export import router as export_router
 from app.routers.help import router as help_router
 from app.routers.identity import router as identity_router
 from app.routers.imports import imports_router, users_imports_router
-from app.routers.reset import router as reset_router
 from app.routers.projects import projects_router, users_projects_router
+from app.routers.reset import router as reset_router
 from app.routers.settings import router as settings_router
 from app.routers.sync import router as sync_router
 from app.routers.system import router as system_router
@@ -627,9 +627,7 @@ def inspect_plugin(name: str) -> dict[str, Any]:
         "state": {
             "activated": state.activated,
             "activated_at": (
-                state.activated_at.isoformat()
-                if state.activated_at is not None
-                else None
+                state.activated_at.isoformat() if state.activated_at is not None else None
             ),
             "last_config_change": (
                 state.last_config_change.isoformat()
@@ -638,8 +636,6 @@ def inspect_plugin(name: str) -> dict[str, Any]:
             ),
             "source": state.source,
             "filter_reason": state.filter_reason,
-            "load_error": (
-                str(state.load_error) if state.load_error is not None else None
-            ),
+            "load_error": (str(state.load_error) if state.load_error is not None else None),
         },
     }
