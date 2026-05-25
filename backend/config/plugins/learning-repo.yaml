@@ -1,0 +1,20 @@
+# Learning Repository plugin settings (Phase 42 / BL-30).
+#
+# Renders per-project Markdown artefacts from existing DB state.
+# Optional ``git init`` + commit-on-render + tag-on-phase-exit
+# integration lands in commit 5 of the BL-30 chain; the Settings
+# UI panel that exposes ``enable_git`` and ``repos_dir`` to the
+# user lands in commit 6. Until then this file is intentionally
+# settings-free — the plugin uses safe in-code defaults
+# (``enable_git = False``, no on-disk writes).
+#
+# When commit 5 lands, the following keys join this file:
+#
+#   settings:
+#     enable_git: false        # Opt-in; off by default.
+#     repos_dir: "~/.local/share/adaptive_learner/repos"
+#
+# Both will be UI-editable via Settings > Plugins > Learning
+# Repository, so the # INTERNAL marker convention does not
+# apply.
+settings: {}

@@ -32,6 +32,7 @@ adaptive-learner-plugin-tools = {path = "../plugins/adaptive-learner-plugin-tool
 adaptive-learner-plugin-gamification = {path = "../plugins/adaptive-learner-plugin-gamification", develop = true}
 adaptive-learner-plugin-anki = {path = "../plugins/adaptive-learner-plugin-anki", develop = true}
 adaptive-learner-plugin-notebooklm = {path = "../plugins/adaptive-learner-plugin-notebooklm", develop = true}
+adaptive-learner-plugin-learning-repo = {path = "../plugins/adaptive-learner-plugin-learning-repo", develop = true}
 aiosqlite = "^0.22.1"
 
 [tool.poetry.group.dev.dependencies]

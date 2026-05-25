@@ -21,7 +21,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
        test-plugin-session test-plugin-tracking \
-       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-e2e test-e2e-ui \
+       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-e2e test-e2e-ui \
        test-coverage test-coverage-backend test-coverage-frontend \
        check-types check-types-backend check-types-frontend \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -201,7 +201,7 @@ test-backend: ## Run backend tests
 # per-plugin pytest run uses that same env via its absolute Python
 # binary; the plugin doesn't need its own poetry env / lock.
 
-test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini test-plugin-session test-plugin-tracking test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm ## Run every plugin's own test suite (incl. notebooklm v1.19.0)
+test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini test-plugin-session test-plugin-tracking test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo ## Run every plugin's own test suite (incl. notebooklm v1.19.0)
 	@echo ""
 	@echo "=== All plugin tests complete ==="
 
@@ -260,6 +260,11 @@ test-plugin-notebooklm: ## notebooklm plugin: question + study guide generators 
 	@echo ""
 	@echo "=== Plugin: notebooklm ==="
 	cd plugins/adaptive-learner-plugin-notebooklm && $(PLUGIN_PYTHON) -m pytest tests/ -q
+
+test-plugin-learning-repo: ## learning-repo plugin: Article-3 Git-backed Learning Repository (Phase 42 / BL-30)
+	@echo ""
+	@echo "=== Plugin: learning-repo ==="
+	cd plugins/adaptive-learner-plugin-learning-repo && $(PLUGIN_PYTHON) -m pytest tests/ -q
 
 # --- Coverage (heavy, opt-in; CI runs this on every push) ---
 

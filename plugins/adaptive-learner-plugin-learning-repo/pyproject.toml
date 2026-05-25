@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "adaptive-learner-plugin-learning-repo"
+version = "1.25.1"
+description = "Adaptive Learner: Git-backed Learning Repository — auto-emits per-project Markdown artefacts (README/STATS/CHEATSHEET/ROADMAP) from DB state (Phase 42 / BL-30)."
+authors = ["Asterios Raptis"]
+license = "MIT"
+packages = [{include = "adaptive_learner_learning_repo"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pluginforge = "^0.10.0"
+fastapi = "^0.136.0"
+pydantic = "^2.13.0"
+sqlalchemy = "^2.0.49"
+
+[tool.poetry.plugins."adaptive_learner.plugins"]
+learning-repo = "adaptive_learner_learning_repo.plugin:LearningRepoPlugin"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
