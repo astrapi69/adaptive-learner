@@ -558,9 +558,7 @@ class SessionRating(Base):
 # learning-repo plugin renderer.
 SESSION_NOTE_KIND_NOTE = "note"
 SESSION_NOTE_KIND_META_LEARNING = "meta_learning"
-SESSION_NOTE_KINDS = frozenset(
-    {SESSION_NOTE_KIND_NOTE, SESSION_NOTE_KIND_META_LEARNING}
-)
+SESSION_NOTE_KINDS = frozenset({SESSION_NOTE_KIND_NOTE, SESSION_NOTE_KIND_META_LEARNING})
 
 
 class SessionNote(Base):
@@ -579,9 +577,7 @@ class SessionNote(Base):
     # v1.26.0 / Phase 42 — see SESSION_NOTE_KINDS above. Free
     # text at the DB layer; callers should prefer the
     # SESSION_NOTE_KIND_* constants.
-    kind: Mapped[str] = mapped_column(
-        String(32), nullable=False, default=SESSION_NOTE_KIND_NOTE
-    )
+    kind: Mapped[str] = mapped_column(String(32), nullable=False, default=SESSION_NOTE_KIND_NOTE)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
