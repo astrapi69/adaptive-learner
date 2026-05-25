@@ -11,24 +11,30 @@
  *   - The mock returns the v1.15.0 ImportedConversationDetail
  *     shape with a populated ``analysis_result``.
  *   - The page navigates to /import/{id} after the analyze
- *     call returns; the URL change pins that the flow
- *     reached completion.
+ *     call returns; ImportDetail mounts, refetches via
+ *     GET /api/imports/{id}, and renders the analysis-results
+ *     card from the mocked detail payload.
  *
- * Scope-limit note (v1.15.0 / Phase 28C): the analysis-card
- * surface on the detail page (analysis-results testid) is
- * NOT asserted here because the page re-fetches via
- * GET /api/imports/{id} on mount, and a Playwright
- * page.route on that GET endpoint does NOT fire in this
- * spec's environment (verified with regex matchers, function
- * matchers, multiple glob patterns, and SW unregister). The
- * POST mock fires cleanly; only the GET-on-mount is opaque.
- * Filed as ``28C-DETAIL-GET-MOCK`` in the v1.15.0 release
- * notes for a follow-up debug session.
+ * BL-24 (v1.26.x): the original scope-limit note said
+ * ``page.route`` on the GET endpoint never fired. Root cause:
+ * ``frontend/vite.config.ts`` enables ``VitePWA`` with
+ * ``devOptions.enabled = true``, so the dev Service Worker
+ * intercepts ``GET /api/*`` via the ``NetworkFirst`` runtime
+ * cache rule before Playwright's network interception can see
+ * it. ``test.use({serviceWorker: 'block'})`` scoped to this
+ * spec disables SW registration for this run, so the GET mock
+ * + the detail-page assertions can land.
  */
 
 import {expect, test, type Route} from "@playwright/test";
 
 import {createTestUser} from "../helpers";
+
+// BL-24: block the dev Service Worker for this spec so
+// ``page.route`` can intercept ``GET /api/imports/{id}``. The
+// SW only runs in dev (``devOptions.enabled: true``) but
+// transparently swallows API GETs via the NetworkFirst rule.
+test.use({serviceWorkers: "block"});
 
 const SAMPLE_CONVERSATION = `User: Hola, quisiera mejorar mi español.
 AI: ¡Hola! ¿En qué nivel te encuentras actualmente?
@@ -41,6 +47,50 @@ test.describe("Conversation import + analysis", () => {
         page,
     }) => {
         await createTestUser(page, {name: "Import E2E"});
+
+        // Shared detail-payload builder: the analyze POST and the
+        // detail-page GET-on-mount both return the same shape so
+        // the page renders deterministically without depending on
+        // backend analysis-state persistence.
+        const buildDetail = (conversationId: string) => ({
+            id: conversationId,
+            user_id: "mock-user",
+            project_id: null,
+            source: "claude" as const,
+            title: "Conversación de español B1",
+            message_count: 5,
+            imported_at: new Date().toISOString(),
+            analyzed: true,
+            topic_tag: "Spanish B1",
+            model: "claude-haiku-4-5",
+            source_created_at: null,
+            analysis_result: {
+                topic: "Spanish B1 fluency",
+                user_level: "B1",
+                recommended_method: "dialogic",
+                recommended_focus:
+                    "Subjunctive mood drills with conversational follow-up.",
+                strengths: ["Comfortable with present indicative tense."],
+                weaknesses: ["Subjunctive mood needs targeted practice."],
+                error_patterns: [
+                    "Mixing subjunctive vs indicative after 'que'.",
+                ],
+                subtopics: ["Subjunctive present"],
+                suggested_curriculum: [
+                    {
+                        title: "Subjunctive present practice",
+                        description: "Targeted drills.",
+                        priority: "high",
+                    },
+                ],
+                summary: "B1 learner.",
+                fallback_used: false,
+            },
+            messages: [],
+        });
+
+        const extractConversationId = (url: string) =>
+            new URL(url).pathname.split("/").filter(Boolean)[2];
 
         // Mock the analyze endpoint. The save POST hits the
         // real backend so the conversation row exists; the
@@ -55,55 +105,48 @@ test.describe("Conversation import + analysis", () => {
                     return;
                 }
                 analyzeCallCount += 1;
-                const pathSegments = new URL(route.request().url()).pathname
-                    .split("/")
-                    .filter(Boolean);
-                const conversationId = pathSegments[2];
-                const now = new Date().toISOString();
-                const payload = {
-                    id: conversationId,
-                    user_id: "mock-user",
-                    project_id: null,
-                    source: "claude",
-                    title: "Conversación de español B1",
-                    message_count: 5,
-                    imported_at: now,
-                    analyzed: true,
-                    topic_tag: "Spanish B1",
-                    model: "claude-haiku-4-5",
-                    source_created_at: null,
-                    analysis_result: {
-                        topic: "Spanish B1 fluency",
-                        user_level: "B1",
-                        recommended_method: "dialogic",
-                        recommended_focus:
-                            "Subjunctive mood drills with conversational follow-up.",
-                        strengths: [
-                            "Comfortable with present indicative tense.",
-                        ],
-                        weaknesses: [
-                            "Subjunctive mood needs targeted practice.",
-                        ],
-                        error_patterns: [
-                            "Mixing subjunctive vs indicative after 'que'.",
-                        ],
-                        subtopics: ["Subjunctive present"],
-                        suggested_curriculum: [
-                            {
-                                title: "Subjunctive present practice",
-                                description: "Targeted drills.",
-                                priority: "high",
-                            },
-                        ],
-                        summary: "B1 learner.",
-                        fallback_used: false,
-                    },
-                    messages: [],
-                };
+                const conversationId = extractConversationId(
+                    route.request().url(),
+                );
                 await route.fulfill({
                     status: 200,
                     contentType: "application/json",
-                    body: JSON.stringify(payload),
+                    body: JSON.stringify(buildDetail(conversationId)),
+                });
+            },
+        );
+
+        // BL-24: mock GET /api/imports/{id} that ImportDetail
+        // fires on mount. The real backend wrote the row but
+        // has no analysis_result (analyze was mocked); the GET
+        // mock substitutes the analyzed payload so the detail
+        // page renders the analysis-results card.
+        let detailGetCallCount = 0;
+        await page.route(
+            "**/api/imports/*",
+            async (route: Route) => {
+                const req = route.request();
+                if (req.method() !== "GET") {
+                    await route.continue();
+                    return;
+                }
+                const url = req.url();
+                // The trailing-segment match is necessary so the
+                // glob doesn't also catch ``/api/imports/{id}/analyze``
+                // POST (above) or future sibling routes.
+                const segments = new URL(url).pathname
+                    .split("/")
+                    .filter(Boolean);
+                if (segments.length !== 3 || segments[1] !== "imports") {
+                    await route.continue();
+                    return;
+                }
+                detailGetCallCount += 1;
+                const conversationId = segments[2];
+                await route.fulfill({
+                    status: 200,
+                    contentType: "application/json",
+                    body: JSON.stringify(buildDetail(conversationId)),
                 });
             },
         );
@@ -146,5 +189,11 @@ test.describe("Conversation import + analysis", () => {
         await expect(
             page.getByTestId("conversation-transcript"),
         ).toBeVisible();
+        // BL-24: the GET-on-mount mock fired and the analysis-
+        // results card rendered.
+        await expect(
+            page.getByTestId("analysis-results"),
+        ).toBeVisible();
+        expect(detailGetCallCount).toBeGreaterThanOrEqual(1);
     });
 });
