@@ -4,20 +4,27 @@ Daily-planning view of items outside the phase plan. The
 authoritative roadmap lives in [ROADMAP.md](ROADMAP.md); use
 this file for granular items + status.
 
-State: **post v1.20.0 (Phase 34 / secrets.yaml shipped).**
-Phase history through Phase 34 + per-release notes live in
+State: **post v1.25.0 (Phase 41 / identity persistence +
+Danger Zone shipped).** Phase history through Phase 41 +
+per-release notes live in
 [changelog/releases/](../changelog/releases/). 28 tables on
-the sync surface. 10 plugins, 25 SQLAlchemy models, 786 +
-615 + 1233 = 2634 tests green. Closed in this release line:
-BL-04 (QR scan, v1.7.0), BL-05/06 (sync gaps, v1.8.0),
-BL-07 (subjects/tags, v1.9.0), BL-08 (gestures, v1.10.0),
-BL-09 (model picker, v1.11.0), BL-10 (backup compare,
-v1.12.0), BL-11 (PT/TR/JA native, v1.13.0), BL-12 (TipTap,
-v1.14.0), BL-13 (E2E expansion, v1.15.0), BL-18
-(gamification, v1.16.0), BL-21 (Anki, v1.17.0), BL-20
-(voice, v1.18.0), BL-22 (NotebookLM, v1.19.0), BL-25/26/27/28
-(import parser audit, v1.19.x), BL-29 (metadata.created_at
-ISO normalisation, v1.19.2).
+the sync surface. 10 plugins, 25 SQLAlchemy models,
+882 (+1 skipped) + 618 + 1465 = 2965 tests green
+(+1 skipped). Closed in this release line: BL-04 (QR scan,
+v1.7.0), BL-05/06 (sync gaps, v1.8.0), BL-07 (subjects/tags,
+v1.9.0), BL-08 (gestures, v1.10.0), BL-09 (model picker,
+v1.11.0), BL-10 (backup compare, v1.12.0), BL-11 (PT/TR/JA
+native, v1.13.0), BL-12 (TipTap, v1.14.0), BL-13 (E2E
+expansion, v1.15.0), BL-18 (gamification, v1.16.0), BL-21
+(Anki, v1.17.0), BL-20 (voice, v1.18.0), BL-22 (NotebookLM,
+v1.19.0), BL-25/26/27/28 (import parser audit, v1.19.x),
+BL-29 (metadata.created_at ISO normalisation, v1.19.2).
+Phases 35-41 (v1.21.0..v1.25.0) shipped without consuming
+BL-IDs: Phase 35 doc-staleness refresh, Phase 36 import
+bugfixes, Phase 37 error-toast + GitHub-issue framework,
+Phase 38 in-app help system, Phase 39 WCAG 2.1 AA, Phase 40
+release-automation hardening, Phase 41 identity persistence
++ Danger Zone.
 
 Items ordered by impact and dependency chain. P0 = next up,
 P5 = speculative. Within each tier, smaller-scope and
@@ -28,10 +35,80 @@ tiebreaker.
 
 ## P0 — Next Releases (Prompts ready)
 
-- [ ] **BL-03**: pluginforge-app-template repo — Export a
-  v0.0.0-template tag into astrapi69/pluginforge-app-template.
-  Add README explaining how to fork. Validates PluginForge
-  ecosystem (3 repos: framework, template, app).
+- [ ] **BL-30**: Git-Backed Learning Repository
+  (**Phase 42 / target v1.26.0; sole headline item**).
+  Per-project on-disk Markdown artefacts (`README.md`,
+  `LEARNING_STATS.md`, `CHEATSHEET.md`, `ROADMAP.md` +
+  numbered phase folders per topic) auto-emitted from
+  existing DB state. Closes the gap between the in-app
+  learning surface and the Article-3 "learning repository"
+  pattern from the *Von Theorie zur Praxis* Medium series
+  (Asterios Raptis).
+  - **Data-model prerequisite (folded in, not a separate
+    item):** add the enum value `"meta_learning"` to
+    `SessionNote.kind`. Today the column carries free-form
+    note kinds; the renderer needs a stable kind to slice
+    "Meta-Learning Insight" entries (per Article 3) out of
+    the broader note stream into a separate
+    CHEATSHEET section. Alembic migration adds the value
+    to the `session_note_kind` enum (or extends the
+    free-text check constraint, depending on the current
+    column shape); Dexie schema follows the same shape.
+  - **Source data:** `LearningProject`, `LearningTopic`,
+    `Curriculum`, `LearningSession`, `SessionMessage`,
+    `StepEvaluation`, `SessionRating`, `SessionNote`
+    (now including `kind="meta_learning"`),
+    `ProgressCommit`, `MethodSwitch`, `UserXP`,
+    `UserStreak`, `Badge`, `UserBadge`,
+    `AnkiCardSuggestion`. Sync read, no AI calls in the
+    render path.
+  - **Renderer:** new plugin `learning-repo`
+    (`plugins/adaptive-learner-plugin-learning-repo/`,
+    Python package `adaptive_learner_learning_repo/`)
+    exposing
+    `GET /api/plugins/learning-repo/render/{project_id}`
+    (returns the four meta-files as JSON for the in-app
+    browser) and
+    `POST /api/plugins/learning-repo/export-zip/{project_id}`
+    (returns a zipped on-disk tree the user can store
+    anywhere). Optional git integration toggle under
+    Settings: when enabled, the renderer initialises a
+    repository at
+    `~/.local/share/adaptive_learner/repos/{project_id}/`,
+    commits every render with a semantic message
+    (`Cycle N — Verständnis X/10 | Transfer Y/10 |
+    Fehlerquote Z%`), and tags on phase exit when
+    Verständnis ≥ 9 AND Transfer ≥ 8 stable over 2 cycles.
+  - **Meta-files:**
+    - `README.md` — project headline, current cycle,
+      method distribution, link to STATS / CHEATSHEET /
+      ROADMAP.
+    - `LEARNING_STATS.md` — per-session table from
+      `StepEvaluation` + `SessionRating`
+      (Fehlerquote / Verständnis / Transfer / Fehlerklasse-
+      Verteilung / Methodeneffektivität / Interventionen),
+      grouped by phase folder.
+    - `CHEATSHEET.md` — distilled from `SessionNote` +
+      session AI summaries; deduplicated, organized by
+      topic. Notes with `kind="meta_learning"` get their
+      own "Meta-Learning Insights" section.
+    - `ROADMAP.md` — open `LearningTopic` rows ordered by
+      dependency + planned method, mapped to "Next steps".
+  - **UI surfaces:** Settings panel (toggle git integration
+    + pick repos dir + manual "Render now" button) +
+    Dashboard widget linking to the rendered repo browser.
+  - **Out of scope for v1.26.0:** automatic
+    method-experiment branching, cross-project repo
+    federation, GitHub push automation. Those become
+    follow-up trigger-gated items if the v1 surface lands.
+  - **i18n:** new keys under `repo.*` in all 8 catalogs.
+    Smoke spec under `e2e/smoke/learning-repo.spec.ts`.
+  - **Article 3 mapping pin:** "Numbered folders" =
+    `LearningTopic.position`; "Drei-Datei-Prinzip per
+    folder" = concepts.md / tasks.md / solutions.md
+    derived from `SessionMessage` step-typed blocks;
+    "Meta-Learning Insight" = `SessionNote` with
+    `kind = "meta_learning"`.
 - [x] **BL-25**: Claude.ai per-conversation Markdown export
   collapses to one big user message. Closed by the dedicated
   ``frontend/src/chat_import/claude_md_parser.ts`` shipped
@@ -112,6 +189,11 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
+- [x] **BL-03**: pluginforge-app-template repo. Closed —
+  `astrapi69/pluginforge-app-template` is published
+  (created 2026-05-17, tag `v0.1.0`); validates the
+  PluginForge ecosystem triple
+  (framework / template / app).
 - [ ] **BACKUP-DIR-EXPORT-01**: Best-effort "Save backup to
   disk" feature for Dexie-mode users. Originally scoped as
   Phase 41C (auto-backup to

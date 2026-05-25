@@ -1,6 +1,6 @@
 # Adaptive Learner Roadmap
 
-Current state: **v1.20.0 released 2026-05-22 (Phase 34 / `secrets.yaml` API-key storage for Desktop mode).** 786 backend + 615 plugin + 1233 Vitest = 2634 tests green.
+Current state: **v1.25.0 released 2026-05-23 (Phase 41 / identity persistence + browser-wipe recovery + Settings Danger Zone three-step reset).** 882 (+1 skipped) backend + 618 plugin + 1465 Vitest = 2965 tests green (+1 skipped). 16 Playwright smoke spec files run separately.
 
 ## Phase history (completed)
 
@@ -38,7 +38,14 @@ Current state: **v1.20.0 released 2026-05-22 (Phase 34 / `secrets.yaml` API-key 
 | 31 | v1.18.0 | Voice (TTS + STT + Pronunciation Practice) — Web Speech API integration; SpeechButton on AI replies + Assessment results, MicButton on Session input with interim transcripts; new pronunciation plugin (phrase generator + judge prompt, Languages-subject-gated eligibility). BL-20 closed. |
 | 32 | v1.19.0 | NotebookLM Integration Patterns — new notebooklm plugin: `StudyQuestion` AI-generated active-recall questions, one-shot study guide generator (~30K chars context), client-side NotebookLM-optimized ZIP export (summary + vocabulary + rules + errors + flashcards + sessions). BL-22 closed. |
 | 33 | v1.19.1-v1.19.2 | Phase 33 import-pipeline audit — dedicated Claude.ai per-conversation Markdown parser (`claude_md_parser.ts`) closes BL-25/26/28 (full timestamp extraction, role boundary preservation, source attribution). Vocabulary extraction in analyzer closes BL-27 (SYSTEM_PROMPT + `parseAnalysisResponse` extended; chunked merge dedup). `metadata.created_at` ISO normalisation closes BL-29 (US + DE locale support). |
-| **34** | **v1.20.0** | **`secrets.yaml` API-Key Storage for Desktop Mode** — three-layer config chain (env > `~/.config/adaptive_learner/secrets.yaml` > Fernet-encrypted DB column) for AI provider keys + default-model overrides. New `ApiKeySource` enum on `UserSettingsOut` (`env` / `secrets_yaml` / `settings` / `none`) drives the per-provider source badge + Save-button gating in the Settings UI. Auto-generated commented template with `chmod 0600` on first run; permission audit on subsequent runs. `_ENV_SECRET_OVERRIDES` populated with 6 entries (3 providers × {api_key, default_model}). All 6 plugin/router callers migrated from `get_decrypted_api_key` to `resolve_api_key`. i18n in all 8 catalogs.** |
+| 34 | v1.20.0 | `secrets.yaml` API-Key Storage for Desktop Mode — three-layer config chain (env > `~/.config/adaptive_learner/secrets.yaml` > Fernet-encrypted DB column) for AI provider keys + default-model overrides. New `ApiKeySource` enum on `UserSettingsOut` (`env` / `secrets_yaml` / `settings` / `none`) drives the per-provider source badge + Save-button gating in the Settings UI. Auto-generated commented template with `chmod 0600` on first run; permission audit on subsequent runs. `_ENV_SECRET_OVERRIDES` populated with 6 entries (3 providers × {api_key, default_model}). All 6 plugin/router callers migrated from `get_decrypted_api_key` to `resolve_api_key`. i18n in all 8 catalogs. |
+| 35 | v1.21.0 | Comprehensive Documentation Update — documentation-only release. 10 sub-phases per [docs/audits/docs-staleness-2026-05-22.md](audits/docs-staleness-2026-05-22.md): CLAUDE.md rewrite (46K → <10K), both READMEs rewritten (v0.8.1 → v1.20.0), ROADMAP table extended through Phase 34, CONCEPT post-v1.5.0 milestones, project-reference rebuilt against shipped architecture, MkDocs help pages version-refreshed. 137 stale version refs closed. |
+| 36 | v1.21.1 | Import + Analysis Bugfixes — five regressions surfaced by the v1.21.0 manual smoke against real Claude.ai per-conversation Markdown: analysis language mismatch, silent re-import duplication, curriculum / session CTA always creating duplicates instead of resuming, Anki extraction silently failing. New columns on `imported_conversations` + `curriculums` + `learning_sessions`, paired Dexie schema bumps. |
+| 37 | v1.22.0 | Error-Toast + GitHub Issue Report Framework — 5xx error toasts gain a "Report Issue" button opening a Radix dialog with a pre-filled GitHub issue URL (error + optional env info + opt-in sanitised action history). Exception-handler chain extended in DEBUG mode (stacktrace + endpoint + method embedded in response body); new in-memory action recorder on the frontend. |
+| 38 | v1.23.0 | In-App Contextual Help System — 22 glossary concepts (curriculum, learning project, learning profile, learning session, the six learning methods, the seven cycle steps, five app features) surfaced via dotted-underline `HelpTooltip` + slide-over `HelpDrawer` with full Markdown articles. Settings > Help browser + search. v1.23.1 + v1.23.2 followed with tooltip mounts on all post-onboarding routes, Recharts width-warning fix, stronger dotted-underline visibility, icon-button a11y sweep, and a button-tooltip user preference toggle. |
+| 39 | v1.24.0 | WCAG 2.1 Level AA Accessibility Audit + Remediation — full audit + atomic fixes for the two real AA violations surfaced; new dev dependency, regression tests pin each finding. 380-line audit at [docs/audits/wcag-2026-05-23.md](audits/wcag-2026-05-23.md). |
+| 40 | v1.24.1 | Release-Automation Hardening — Bibliogon's 4-Tier model adopted: package-lock propagation, open-set version-literal discovery, advisory WARN wiring, aggregate `make release-*` targets, 4-Tier architecture documentation, plugin refactor unblocking the verify chain. No user-visible runtime changes. |
+| **41** | **v1.25.0** | **Identity Persistence + Browser-Wipe Recovery + Danger Zone** — `~/.config/adaptive_learner/identity.yaml` writes on user / project / language changes. Frontend Landing flow recovers from disk (API mode) or IndexedDB (Dexie mode) after a `localStorage` wipe. Settings > About > Identity status panel surfaces the resolved identity. Settings > Danger Zone ships a three-step typed-confirm reset: `POST /api/reset` truncates every table and scrubs `ai.*` from `secrets.yaml` while preserving the Fernet `secret_key`. 13 new i18n keys across 8 catalogs. Two new backend endpoints. Six atomic commits.** |
 
 Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list. Per-release notes live in [changelog/releases/](../changelog/releases/).
 
@@ -46,12 +53,41 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phases (planned)
 
-**Phase 35 candidates** — current top of backlog (see [backlog.md](backlog.md) for full P0..P5 view):
+**Phase 42 candidate** — confirmed top of backlog after the
+v1.25.0 review (see [backlog.md](backlog.md) for the full
+P0..P5 view):
 
-- **BL-03 — pluginforge-app-template repo.** Export a
-  v0.0.0-template tag into astrapi69/pluginforge-app-template.
-  Validates PluginForge ecosystem (3 repos: framework,
-  template, app).
+- **BL-30 — Git-Backed Learning Repository.** Materialise
+  per-project on-disk Markdown artefacts (`README.md`,
+  `LEARNING_STATS.md`, `CHEATSHEET.md`, `ROADMAP.md` + a
+  numbered phase folder per topic) auto-emitted from
+  `LearningSession` / `SessionMessage` / `StepEvaluation` /
+  `SessionRating` / `SessionNote` data, with optional
+  `git init` + commit-on-session-complete + tag-on-phase-exit
+  (Verständnis ≥ 9 AND Transfer ≥ 8 stable over 2 cycles).
+  Closes the gap between the in-app learning surface and
+  the Article-3 "learning repository" pattern from the
+  *Von Theorie zur Praxis* series (Asterios Raptis,
+  Medium). Concretely:
+  - Backend service that renders the four meta-files from
+    DB state (sync read; no AI calls).
+  - New plugin (provisional name `learning-repo`) exposing
+    `GET /api/plugins/learning-repo/render/{project_id}` +
+    `POST .../export-zip/{project_id}` for offline use.
+  - Optional git integration: a setting toggle, then
+    `git init` per project under
+    `~/.local/share/adaptive_learner/repos/{project_id}/`
+    with semantic commits ("Cycle N complete — Verständnis
+    X/10, Transfer Y/10") and tags on phase exit.
+  - Settings panel + Dashboard widget linking to the
+    rendered repo browser.
+  - i18n in all 8 catalogs; smoke spec under `e2e/smoke/`.
+
+- **BL-03 — pluginforge-app-template repo.** Deferred. Was
+  a Phase 35 candidate but is mechanically low-value next
+  to BL-30. Export the v0.0.0-template tag when the
+  PluginForge-ecosystem triple-repo claim is the load-
+  bearing question.
 - **BL-14..17 — SaaS-tier items.** Multi-user, JWT auth,
   Postgres migration, Stripe / premium plugins. Deferred
   until the single-user-per-browser model hits an
@@ -89,17 +125,22 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## P5 — Speculative
 
-- **BL-18 — Gamification (XP, badges, leaderboard)**
-- **BL-19 — Social features (share progress, study groups)** (requires multi-user)
-- **BL-20 — Voice input/output (TTS/STT)**
-- **BL-21 — Anki deck export** (.apkg from session content)
-- **BL-22 — NotebookLM integration**
+- **BL-19 — Social features (share progress, study groups)** (requires multi-user; see P4).
+- **Method-experiment branching for the Learning Repository.**
+  Once BL-30 (Phase 42 candidate) ships its synchronous render path,
+  the optional `git`-on-disk surface could grow short-lived branches
+  per learning method to support A/B experiments. Trigger: a user
+  reports actually wanting to compare two methods on the same topic.
 - **Push notifications.** SW is registered, foundation is there;
   notification opt-in + delivery + a "next session due" trigger
   would be its own phase.
 - **Native iOS / Android wrappers.** Capacitor / Tauri Mobile.
   Lower priority than the PWA route since installable PWA covers
   most use cases.
+
+BL-18 (Gamification), BL-20 (Voice), BL-21 (Anki),
+BL-22 (NotebookLM) all shipped — see the Phase history table
+above for the release each landed in.
 
 ---
 
