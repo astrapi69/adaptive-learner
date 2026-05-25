@@ -1,9 +1,14 @@
-"""Plugin class shape tests (no DB)."""
+"""Plugin class shape tests (no DB, no backend imports).
+
+Router-shape and route-behaviour tests live in
+``backend/tests/test_learning_repo_plugin_integration.py`` (BL-30
+commit 4) — those run with the backend on sys.path so
+``routes.py``'s ``from app.* import …`` resolves.
+"""
 
 from __future__ import annotations
 
 from adaptive_learner_learning_repo.plugin import LearningRepoPlugin
-from adaptive_learner_learning_repo.routes import router
 from pluginforge import BasePlugin
 
 
@@ -17,18 +22,3 @@ def test_required_class_attrs() -> None:
     assert LearningRepoPlugin.version
     assert LearningRepoPlugin.description
     assert LearningRepoPlugin.author
-
-
-def test_router_prefix() -> None:
-    """Routes must mount under /plugins/learning-repo so the
-    eventual /api/plugins/learning-repo/* surface lands at the
-    expected path once the backend mounts the plugin routers."""
-    assert router.prefix == "/plugins/learning-repo"
-    assert "learning-repo" in router.tags
-
-
-def test_get_routes_returns_router() -> None:
-    instance = LearningRepoPlugin()
-    routes = instance.get_routes()
-    assert len(routes) == 1
-    assert routes[0] is router
