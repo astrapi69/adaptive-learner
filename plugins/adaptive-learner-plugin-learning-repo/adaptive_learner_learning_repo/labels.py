@@ -119,13 +119,43 @@ class Labels:
 def labels_for(language: str) -> Labels:
     """Return the Labels bundle for ``language``.
 
-    Commit 3 ignores ``language`` and always returns the English
-    defaults — the function signature pins the eventual i18n
-    contract so commit 7 can swap the implementation without
-    touching callers.
+    Reads ``backend/config/i18n/{language}.yaml`` under the
+    ``repo.*`` namespace and builds a Labels instance from it.
+    Falls back to the English defaults defined on the dataclass
+    for any key the catalog doesn't provide — that keeps the
+    renderer robust against partial / in-progress translations.
+
+    Reads from the file system on every call. The catalogs are
+    small (<1 MB each) so the read is fast enough for the
+    user-triggered render path; no caching needed at this layer.
     """
 
-    # Commit 7 will read backend/config/i18n/{language}.yaml under
-    # the repo.* namespace and build a Labels instance from it.
-    _ = language  # acknowledged; not yet consumed
-    return Labels()
+    from dataclasses import fields
+    from pathlib import Path
+
+    import yaml
+
+    # The catalogs live in ``backend/config/i18n/`` in the source
+    # tree. Plugins install via path-deps (per backend/pyproject.toml),
+    # so ``labels.py``'s parent chain reliably reaches the repo
+    # root. ``app.paths.get_config_dir()`` is NOT the right anchor
+    # — that one returns the user's runtime config dir
+    # (~/.config/adaptive_learner), not the source-tree YAMLs.
+    catalog_path = (
+        Path(__file__).resolve().parents[3] / "backend" / "config" / "i18n" / f"{language}.yaml"
+    )
+    if not catalog_path.exists():
+        return Labels()
+    try:
+        loaded = yaml.safe_load(catalog_path.read_text(encoding="utf-8")) or {}
+    except (yaml.YAMLError, OSError):
+        return Labels()
+    repo_block = loaded.get("repo")
+    if not isinstance(repo_block, dict):
+        return Labels()
+    overrides: dict[str, str] = {}
+    for field in fields(Labels):
+        value = repo_block.get(field.name)
+        if isinstance(value, str):
+            overrides[field.name] = value
+    return Labels(**overrides)
