@@ -9,31 +9,49 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.26.0** (Phase 42 — Git-Backed
-  Learning Repository, BL-30): new ``learning-repo`` plugin
-  emits per-project Markdown artefacts (README,
-  LEARNING_STATS, CHEATSHEET, ROADMAP + numbered topic
-  folders) from existing DB state via three endpoints —
-  ``GET /api/plugins/learning-repo/render/{project_id}``
+- **Current state:** **v1.26.1** (public-deploy hardening
+  patch): closes the Phase 42 Dexie-mode crash (the
+  ``LearningRepoSettings`` / ``LearningRepo`` page /
+  Dashboard widget called ``api.*`` unconditionally and
+  blew up on the GitHub Pages deployment with HTTP 404
+  for every visitor). Three protection layers ship
+  alongside the immediate fix: (1) **Developer Mode**
+  toggle in Settings > Interface — off by default, when
+  on shows full HTTP status / endpoint / stack in error
+  toasts and a red DEV badge in the nav; (2) **friendly
+  error mapping** so production users never see "HTTP
+  404" / endpoint paths / stack traces — every
+  ``ApiError`` now maps to a ``ui.errors.*`` i18n string,
+  with eventRecorder still capturing full technical
+  detail for the "Report Issue" GitHub-issue body; (3)
+  **Dexie-mode release gate** (``make test-dexie-smoke``)
+  — Playwright walks every nav-reachable route against a
+  ``VITE_STORAGE_MODE=dexie`` build with no backend, any
+  error toast or page crash blocks the tag. Aggregated
+  into ``make release-test`` as MANDATORY. Bundle-size
+  win as a side effect: route-level ``React.lazy()``
+  drops the main chunk 2,137 kB → 838 kB and clears the
+  Workbox 2 MB precache cap workaround. v1.26.0 = Phase
+  42 (Git-Backed Learning Repository, BL-30): new
+  ``learning-repo`` plugin emits per-project Markdown
+  artefacts (README, LEARNING_STATS, CHEATSHEET, ROADMAP
+  + numbered topic folders) from existing DB state via
+  three endpoints — ``GET /api/plugins/learning-repo/render/{project_id}``
   (JSON), ``POST .../export-zip/{project_id}`` (ZIP), and
-  opt-in ``POST .../persist/{project_id}`` which writes the
-  tree to ``~/.local/share/adaptive_learner/repos/{project_id}/``
+  opt-in ``POST .../persist/{project_id}`` which writes
+  the tree to
+  ``~/.local/share/adaptive_learner/repos/{project_id}/``
   and runs ``git commit`` with a semantic subject
-  ("Cycle N — U X/10, T Y/10"). Tags ``cycle-{N}-mastered``
-  when the Article-1 § 8 exit threshold is met
-  (Understanding ≥ 9/10 AND Transfer ≥ 8/10 stable over 2
-  consecutive cycles). New core endpoint
+  ("Cycle N — U X/10, T Y/10"). Tags
+  ``cycle-{N}-mastered`` when the Article-1 § 8 exit
+  threshold is met. Core endpoint
   ``/api/plugin-settings/{plugin_name}`` (GET + PATCH)
   backstops the architecture-rule "every non-INTERNAL
-  setting MUST be UI-editable". Frontend ships a per-project
-  ``/projects/:projectId/learning-repo`` page with sidebar +
-  ``react-markdown`` viewer, a Dashboard widget, and a
-  Settings > Learning Repository panel. v1.25.0 = Phase 41
-  identity persistence + Danger Zone; v1.24.x = Phase 39
-  WCAG 2.1 AA + Phase 40 release-automation hardening. See
-  [changelog/releases/v1.26.0.md](changelog/releases/v1.26.0.md)
-  for the per-release detail and `git log --oneline` for the
-  feature history across Phases 1–42.
+  setting MUST be UI-editable". v1.25.0 = Phase 41
+  identity persistence + Danger Zone. See
+  [changelog/releases/v1.26.1.md](changelog/releases/v1.26.1.md)
+  for the per-release detail and `git log --oneline` for
+  the feature history across Phases 1–42.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
@@ -208,10 +226,13 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.26.0 baseline:** backend 912 (+1 skipped) + plugins 670
-  + Vitest 1479 = **3061 tests** (+1 skipped). E2E smoke
-  (17 spec files) runs separately via
-  `cd e2e && npx playwright test`.
+- **v1.26.1 baseline:** backend 912 (+1 skipped) + plugins
+  670 + Vitest 1504 = **3086 tests** (+1 skipped). E2E
+  smoke (17 spec files) runs separately via
+  `cd e2e && npx playwright test`. **Dexie-mode release
+  gate** (15 specs) runs via
+  `make test-dexie-smoke`; aggregated into
+  `make release-test` so a red gate blocks the tag.
 
 ## Test isolation
 
