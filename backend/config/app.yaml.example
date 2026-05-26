@@ -35,6 +35,7 @@ plugins:
     - anki
     - notebooklm
     - learning-repo
+    - content-loader
   entry_point_group: adaptive_learner.plugins
 ui:
   title: Adaptive Learner

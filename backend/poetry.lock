@@ -2,7 +2,7 @@
 
 [[package]]
 name = "adaptive-learner-plugin-ai-anthropic"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: Anthropic Claude provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -20,7 +20,7 @@ url = "../plugins/adaptive-learner-plugin-ai-anthropic"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-gemini"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: Google Gemini provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -38,7 +38,7 @@ url = "../plugins/adaptive-learner-plugin-ai-gemini"
 
 [[package]]
 name = "adaptive-learner-plugin-ai-openai"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: OpenAI GPT provider for the ai_complete hook."
 optional = false
 python-versions = "^3.11"
@@ -56,7 +56,7 @@ url = "../plugins/adaptive-learner-plugin-ai-openai"
 
 [[package]]
 name = "adaptive-learner-plugin-anki"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: AI-extracted Anki flashcard suggestions (Phase 30)."
 optional = false
 python-versions = "^3.11"
@@ -76,7 +76,7 @@ url = "../plugins/adaptive-learner-plugin-anki"
 
 [[package]]
 name = "adaptive-learner-plugin-assessment"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: 12-question learner-profile assessment + 6-method-weight calculation."
 optional = false
 python-versions = "^3.11"
@@ -95,8 +95,29 @@ type = "directory"
 url = "../plugins/adaptive-learner-plugin-assessment"
 
 [[package]]
+name = "adaptive-learner-plugin-content-loader"
+version = "1.26.1"
+description = "Adaptive Learner: Content-Loader — downloads and caches structured lesson sets from public content repos (Phase 43 / EXP-002). Works in API mode and Dexie / GitHub-Pages mode."
+optional = false
+python-versions = "^3.11"
+groups = ["main"]
+files = []
+develop = true
+
+[package.dependencies]
+fastapi = "^0.136.0"
+httpx = "^0.28.0"
+pluginforge = "^0.10.0"
+pydantic = "^2.13.0"
+pyyaml = "^6.0.2"
+
+[package.source]
+type = "directory"
+url = "../plugins/adaptive-learner-plugin-content-loader"
+
+[[package]]
 name = "adaptive-learner-plugin-gamification"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: XP, badges, and enhanced streaks (Phase 29)."
 optional = false
 python-versions = "^3.11"
@@ -117,7 +138,7 @@ url = "../plugins/adaptive-learner-plugin-gamification"
 
 [[package]]
 name = "adaptive-learner-plugin-learning-repo"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: Git-backed Learning Repository — auto-emits per-project Markdown artefacts (README/STATS/CHEATSHEET/ROADMAP) from DB state (Phase 42 / BL-30)."
 optional = false
 python-versions = "^3.11"
@@ -137,7 +158,7 @@ url = "../plugins/adaptive-learner-plugin-learning-repo"
 
 [[package]]
 name = "adaptive-learner-plugin-notebooklm"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: NotebookLM-optimized study materials + active-recall questions (Phase 32)."
 optional = false
 python-versions = "^3.11"
@@ -157,7 +178,7 @@ url = "../plugins/adaptive-learner-plugin-notebooklm"
 
 [[package]]
 name = "adaptive-learner-plugin-session"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: 7-step learning cycle, per-method system prompts, stagnation-based method switching."
 optional = false
 python-versions = "^3.11"
@@ -177,7 +198,7 @@ url = "../plugins/adaptive-learner-plugin-session"
 
 [[package]]
 name = "adaptive-learner-plugin-tools"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: static external-tool recommendations tailored to the learner's profile."
 optional = false
 python-versions = "^3.11"
@@ -197,7 +218,7 @@ url = "../plugins/adaptive-learner-plugin-tools"
 
 [[package]]
 name = "adaptive-learner-plugin-tracking"
-version = "1.26.0"
+version = "1.26.1"
 description = "Adaptive Learner: writes ProgressCommit on session_complete + dashboard summary aggregator."
 optional = false
 python-versions = "^3.11"
@@ -3151,4 +3172,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11"
-content-hash = "5d3202b25b4bc1830439a8cf114e3d67bcb0bb60b5e15982643c8572506f0250"
+content-hash = "262be419a3ad9def5c8b2f888a11ccad4553b063077f758a1671f7284d05e7a0"

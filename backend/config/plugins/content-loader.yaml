@@ -1,0 +1,30 @@
+# Content-Loader plugin settings (Phase 43 / EXP-002).
+#
+# Downloads and caches structured lesson sets from public
+# content repos. The defaults below point at the canonical
+# pilot repo (``astrapi69/adaptive-learner-content``); add
+# more sources to extend the catalogue.
+#
+# Both settings are user-facing and will be UI-editable in
+# Settings > Plugins > Content-Loader once the Set Browser
+# lands (Phase 43 commit 7). They are NOT marked
+# ``# INTERNAL`` — they control durable user-visible
+# behaviour (where lessons come from + how stale a cache
+# can be before re-fetching).
+settings:
+  # Default content sources. Each entry is a GitHub repo
+  # ``owner/name`` plus the branch to read from. Sources are
+  # consulted in order; the first source that publishes a
+  # manifest wins for a given set_id. Public repos require
+  # no token; private repos go through the three-layer
+  # secrets chain (env > secrets.yaml > Fernet DB) when a
+  # ``github_token`` is configured.
+  default_sources:
+    - source: "astrapi69/adaptive-learner-content"
+      branch: "main"
+  # Cache TTL in hours. The Content-Loader still consults
+  # the version field on every download attempt; this TTL
+  # only governs how often the manifest itself gets
+  # refreshed (so a new set added upstream becomes visible
+  # without forcing a full re-download of existing sets).
+  manifest_refresh_hours: 24
