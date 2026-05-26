@@ -997,3 +997,5 @@ repo:
   settings_toast_saved: "設定を保存しました"
   settings_error_load: "設定を読み込めませんでした"
   settings_error_save: "設定を保存できませんでした"
+  dexie_unavailable_body: "この機能はサーバーモードでのみ利用できます。git ベースの学習リポジトリを有効にするには、設定でサーバーモードに切り替えてください。"
+  back_to_dashboard: "ダッシュボードに戻る"

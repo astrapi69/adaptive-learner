@@ -23,6 +23,7 @@ import {useEffect, useState} from "react";
 
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {resolveStorageMode} from "../storage";
 import {notify} from "../utils/notify";
 
 const DEFAULT_REPOS_DIR = "~/.local/share/adaptive_learner/repos";
@@ -34,11 +35,13 @@ interface LearningRepoSettings {
 
 export default function LearningRepoSettingsSection() {
     const {t} = useI18n();
+    const storageMode = resolveStorageMode();
     const [settings, setSettings] = useState<LearningRepoSettings | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(storageMode === "api");
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
+        if (storageMode !== "api") return;
         let cancelled = false;
         api.pluginSettings
             .get("learning-repo")
@@ -68,7 +71,7 @@ export default function LearningRepoSettingsSection() {
         return () => {
             cancelled = true;
         };
-    }, [t]);
+    }, [t, storageMode]);
 
     const handleSave = async () => {
         if (settings === null) return;
@@ -93,6 +96,23 @@ export default function LearningRepoSettingsSection() {
             setSaving(false);
         }
     };
+
+    if (storageMode !== "api") {
+        return (
+            <section
+                className="learning-repo-settings-section"
+                data-testid="learning-repo-settings-dexie-unavailable"
+            >
+                <h2>{t("repo.settings_title", "Learning Repository")}</h2>
+                <p className="settings-section-description">
+                    {t(
+                        "repo.dexie_unavailable_body",
+                        "This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories.",
+                    )}
+                </p>
+            </section>
+        );
+    }
 
     if (loading || settings === null) {
         return (

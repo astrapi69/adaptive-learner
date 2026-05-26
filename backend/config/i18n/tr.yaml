@@ -997,3 +997,5 @@ repo:
   settings_toast_saved: "Ayarlar kaydedildi"
   settings_error_load: "Ayarlar yüklenemedi"
   settings_error_save: "Ayarlar kaydedilemedi"
+  dexie_unavailable_body: "Bu özellik yalnızca sunucu modunda kullanılabilir. Git tabanlı öğrenme depolarını etkinleştirmek için Ayarlar'dan sunucu moduna geçin."
+  back_to_dashboard: "Panele dön"

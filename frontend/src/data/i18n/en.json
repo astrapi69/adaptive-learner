@@ -1070,6 +1070,8 @@
     "settings_loading": "Loading…",
     "settings_toast_saved": "Settings saved",
     "settings_error_load": "Could not load settings",
-    "settings_error_save": "Could not save settings"
+    "settings_error_save": "Could not save settings",
+    "dexie_unavailable_body": "This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories.",
+    "back_to_dashboard": "Back to Dashboard"
   }
 }

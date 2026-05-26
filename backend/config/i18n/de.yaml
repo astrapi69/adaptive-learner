@@ -1002,3 +1002,5 @@ repo:
   settings_toast_saved: "Einstellungen gespeichert"
   settings_error_load: "Einstellungen konnten nicht geladen werden"
   settings_error_save: "Einstellungen konnten nicht gespeichert werden"
+  dexie_unavailable_body: "Diese Funktion ist nur im Server-Modus verfügbar. Wechsle in den Einstellungen zum Server-Modus, um git-basierte Lern-Repositories zu nutzen."
+  back_to_dashboard: "Zurück zum Dashboard"

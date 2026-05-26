@@ -999,3 +999,5 @@ repo:
   settings_toast_saved: "Ajustes guardados"
   settings_error_load: "No se pudieron cargar los ajustes"
   settings_error_save: "No se pudieron guardar los ajustes"
+  dexie_unavailable_body: "Esta función solo está disponible en modo servidor. Cambia al modo servidor en Ajustes para activar los repositorios de aprendizaje con git."
+  back_to_dashboard: "Volver al panel"

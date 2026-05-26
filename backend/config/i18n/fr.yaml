@@ -999,3 +999,5 @@ repo:
   settings_toast_saved: "Paramètres enregistrés"
   settings_error_load: "Impossible de charger les paramètres"
   settings_error_save: "Impossible d'enregistrer les paramètres"
+  dexie_unavailable_body: "Cette fonctionnalité n'est disponible qu'en mode serveur. Passez en mode serveur dans les Paramètres pour activer les dépôts d'apprentissage avec git."
+  back_to_dashboard: "Retour au tableau de bord"

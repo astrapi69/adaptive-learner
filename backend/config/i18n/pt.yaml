@@ -997,3 +997,5 @@ repo:
   settings_toast_saved: "Definições salvas"
   settings_error_load: "Não foi possível carregar as definições"
   settings_error_save: "Não foi possível salvar as definições"
+  dexie_unavailable_body: "Esta funcionalidade só está disponível no modo servidor. Mude para o modo servidor nas Definições para ativar os repositórios de aprendizagem com git."
+  back_to_dashboard: "Voltar ao painel"

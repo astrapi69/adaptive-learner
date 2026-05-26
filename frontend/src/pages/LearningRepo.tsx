@@ -26,6 +26,7 @@ import remarkGfm from "remark-gfm";
 
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {resolveStorageMode} from "../storage";
 import {notify} from "../utils/notify";
 
 interface RenderState {
@@ -38,14 +39,16 @@ export default function LearningRepoPage() {
     const {projectId} = useParams<{projectId: string}>();
     const navigate = useNavigate();
     const {t} = useI18n();
+    const storageMode = resolveStorageMode();
 
     const [state, setState] = useState<RenderState | null>(null);
     const [activeFile, setActiveFile] = useState<string>("README.md");
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(storageMode === "api");
     const [persisting, setPersisting] = useState(false);
 
     const loadRepo = useCallback(async () => {
         if (!projectId) return;
+        if (storageMode !== "api") return;
         setLoading(true);
         try {
             const data = await api.learningRepo.render(projectId);
@@ -64,7 +67,7 @@ export default function LearningRepoPage() {
         } finally {
             setLoading(false);
         }
-    }, [projectId, navigate, t]);
+    }, [projectId, navigate, t, storageMode]);
 
     useEffect(() => {
         void loadRepo();
@@ -115,6 +118,34 @@ export default function LearningRepoPage() {
         return (
             <main className="page" data-testid="learning-repo-page-missing-id">
                 <p>{t("repo.error.missing_project", "No project selected.")}</p>
+            </main>
+        );
+    }
+
+    if (storageMode !== "api") {
+        return (
+            <main
+                className="page learning-repo-page"
+                data-testid="learning-repo-page-dexie-unavailable"
+            >
+                <header className="learning-repo-header">
+                    <h1>{t("repo.page_title", "Learning Repository")}</h1>
+                </header>
+                <p>
+                    {t(
+                        "repo.dexie_unavailable_body",
+                        "This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories.",
+                    )}
+                </p>
+                <p>
+                    <button
+                        type="button"
+                        onClick={() => navigate("/dashboard")}
+                        data-testid="learning-repo-back-to-dashboard"
+                    >
+                        {t("repo.back_to_dashboard", "Back to Dashboard")}
+                    </button>
+                </p>
             </main>
         );
     }
