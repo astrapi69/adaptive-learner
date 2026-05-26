@@ -9,8 +9,32 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.26.1** (public-deploy hardening
-  patch): closes the Phase 42 Dexie-mode crash (the
+- **Current state:** **v1.27.0** (Phase 43 — Content-Loader
+  Plugin, EXP-002 + EXP-005 foundations). The app stops
+  requiring an API key for the headline use case: the new
+  ``/content`` page downloads pre-built lesson sets from
+  public GitHub repos and caches them locally
+  (filesystem in API mode, IndexedDB in Dexie/GH-Pages
+  mode). The new ``adaptive-learner-plugin-content-loader``
+  ships with a typed Pydantic v2 lesson schema v1.0
+  (Lesson / LessonStep / Exercise / Card / ExerciseType
+  enum), a manifest parser with forward-compat
+  schema-version gating, a tokenless GitHub raw-URL
+  adapter (optional token via three-layer secrets chain),
+  an atomic version-reconciled cache, and FastAPI routes
+  under ``/api/plugins/content-loader/*``. Frontend ships
+  a new ``contentLoader`` namespace on ``IStorageService``,
+  Dexie schema v16 with two new tables (``contentSets`` +
+  ``contentSetFiles``), and the Set Browser page at
+  ``/content``. App-mode badge in the nav (driven by
+  ``useApiKeyStatus``) renders "AI+Content" vs "Content"
+  so the user always knows which features are available.
+  Pilot French A1 set (2 lessons / 14 cards / 9 exercises
+  across all four ExerciseType variants) lives at
+  ``docs/explorations/sample-content/fr-a1/``, ready to
+  copy into the future
+  ``astrapi69/adaptive-learner-content`` repo. v1.26.1
+  (patch): closes the Phase 42 Dexie-mode crash (the
   ``LearningRepoSettings`` / ``LearningRepo`` page /
   Dashboard widget called ``api.*`` unconditionally and
   blew up on the GitHub Pages deployment with HTTP 404
@@ -49,7 +73,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.26.1.md](changelog/releases/v1.26.1.md)
+  [changelog/releases/v1.27.0.md](changelog/releases/v1.27.0.md)
   for the per-release detail and `git log --oneline` for
   the feature history across Phases 1–42.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
@@ -158,7 +182,7 @@ Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Sync
 surface: 28 tables. Full spec in
 [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md).
 
-## Plugins (11 shipped)
+## Plugins (12 shipped)
 
 All under `plugins/`. Routes mounted at `/api/plugins/<name>/*`.
 
@@ -175,6 +199,7 @@ All under `plugins/`. Routes mounted at `/api/plugins/<name>/*`.
 | anki | /cards CRUD, /extract/{session,conversation}, /mark-exported | AI-extracted flashcards + .apkg export |
 | notebooklm | /questions CRUD, /generate/{session,project}, /study-guide/{id} | Active-recall questions + study guide + ZIP export |
 | learning-repo | /render/{id}, /export-zip/{id}, /persist/{id} | Article-3 Git-backed Learning Repository (Markdown artefacts + opt-in `git commit` + `cycle-N-mastered` tags) |
+| content-loader | /sets, /sets/{src}/{id}/download, /sets/{src}/{id}/lessons[/{filename}] | EXP-002 — downloads structured lesson sets from public GitHub repos, caches locally (FS + Dexie). Foundation of the v1.27.0 no-API-key path. |
 
 All 10 hooks live in `backend/app/hookspecs.py`:
 `get_assessment_questions`, `calculate_profile`,
@@ -226,11 +251,11 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.26.1 baseline:** backend 912 (+1 skipped) + plugins
-  670 + Vitest 1504 = **3086 tests** (+1 skipped). E2E
+- **v1.27.0 baseline:** backend 920 (+1 skipped) + plugins
+  826 + Vitest 1523 = **3269 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
-  gate** (15 specs) runs via
+  gate** (16 specs incl. /content) runs via
   `make test-dexie-smoke`; aggregated into
   `make release-test` so a red gate blocks the tag.
 
