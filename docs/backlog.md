@@ -37,6 +37,67 @@ tiebreaker.
 
 ## P0 — Next Releases (Prompts ready)
 
+- [ ] **PHASE-42-STORAGE-ABSTRACTION-01**: The Learning
+  Repository feature (Phase 42 / BL-30) shipped with direct
+  ``api.*`` calls from
+  ``LearningRepoSettingsSection.tsx`` / ``LearningRepo.tsx``
+  / ``LearningRepoWidget.tsx``, violating the architecture
+  rule "IStorageService is the only interface
+  pages/components use." Production-blocking symptom (HTTP
+  404 on every Settings / Dashboard / Learning-Repo view in
+  Dexie / GitHub-Pages mode) was patched in commit 57aa243
+  by gating components on ``resolveStorageMode()`` and
+  rendering a friendly "only available in server mode"
+  message. The proper fix is:
+  - Add ``pluginSettings`` namespace to ``IStorageService``;
+    ApiStorage delegates to ``api.pluginSettings.*``,
+    DexieStorage persists in a new ``plugin_settings``
+    Dexie table (or localStorage).
+  - Add ``learningRepo`` namespace to ``IStorageService``;
+    ApiStorage delegates to ``api.learningRepo.*``,
+    DexieStorage runs the renderer client-side over the
+    Dexie DB (port ``backend/app/services/learning_repo``
+    to TypeScript). ``persist`` (git commits) stays
+    server-only — DexieStorage throws a typed
+    ``FeatureNotAvailableInDexieMode`` error.
+  - Components route through ``getStorage()`` only; the
+    storage-mode branch lives inside the storage
+    implementations, not at every call site.
+  - Filed 2026-05-26 from the GitHub Pages crash report.
+- [ ] **DEXIE-MODE-RELEASE-GATE-01**: Add a Dexie-mode
+  Playwright smoke spec that runs against a built frontend
+  with ``VITE_STORAGE_MODE=dexie`` and NO backend. Covers
+  every nav-reachable route (Landing, Onboarding,
+  Assessment, Dashboard, Session, Curriculum, Progress,
+  Import, Anki, Pronunciation, Settings, LearningRepo) and
+  fails on any uncaught error, error toast, or visible
+  HTTP-status string. Wire as ``make test-dexie-smoke`` and
+  add as a MANDATORY step in
+  ``.claude/rules/release-workflow.md`` Step 5 (next to the
+  existing tsc / Vitest / smoke / pre-commit chain). The
+  Phase 42 production crash (gh-pages users hitting raw 404
+  toast) is exactly what this gate exists to prevent. Filed
+  2026-05-26.
+- [ ] **DEV-MODE-FRIENDLY-ERRORS-01**: Two-tier error
+  display. **Production mode (default)**: notify.error()
+  shows friendly status-code-mapped messages
+  (``ui.errors.404`` / ``.400`` / ``.401`` / ``.500`` /
+  ``.502`` / ``network`` / ``timeout``) with NO HTTP status
+  / endpoint / stack trace visible. eventRecorder still
+  captures full technical detail silently;
+  ErrorReportDialog reads it for GitHub issue submission.
+  **Developer mode**: opt-in toggle in Settings >
+  Interface (``settings.developer_mode``), persisted to
+  localStorage. When on, error toasts show full technical
+  detail, the "Report Issue" button is more prominent, a
+  small "DEV" badge appears in the Navigation bar, and a
+  floating event-recorder debug panel becomes accessible.
+  New ``useDevMode()`` hook. Status-code → friendly-message
+  mapping added to all 8 i18n catalogs under ``ui.errors.*``.
+  Filed 2026-05-26. Suggested ordering: dev-mode hook +
+  toggle + badge commit 1, notify.error() dual-mode + error
+  mapping commit 2, i18n catalogs commit 3.
+
 - [x] **BL-25**: Claude.ai per-conversation Markdown export
   collapses to one big user message. Closed by the dedicated
   ``frontend/src/chat_import/claude_md_parser.ts`` shipped
