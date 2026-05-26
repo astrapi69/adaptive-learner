@@ -31,6 +31,7 @@ from pathlib import Path
 from typing import Any
 
 from .models import ContentManifest, ContentSet
+from .schema import Card, Exercise, Lesson, LessonStep
 
 
 def manifest_schema() -> dict[str, Any]:
@@ -41,6 +42,49 @@ def manifest_schema() -> dict[str, Any]:
 def set_schema() -> dict[str, Any]:
     """Return the JSON Schema for ``ContentSet``."""
     return ContentSet.model_json_schema()
+
+
+def lesson_schema() -> dict[str, Any]:
+    """Return the JSON Schema for ``Lesson``.
+
+    The Lesson schema includes inline definitions for
+    ``LessonStep``, ``Exercise``, ``Card``, ``ExerciseType``,
+    and ``StepType`` — Pydantic v2's ``model_json_schema()``
+    inlines nested model refs as ``$defs``. External content
+    editors validate a whole lesson .json against this one
+    schema.
+    """
+    return Lesson.model_json_schema()
+
+
+def card_schema() -> dict[str, Any]:
+    """Return the JSON Schema for ``Card`` in isolation.
+
+    Useful for the planned cross-lesson shared-card store
+    (P-111 territory) where individual cards live in their
+    own files.
+    """
+    return Card.model_json_schema()
+
+
+def exercise_schema() -> dict[str, Any]:
+    """Return the JSON Schema for ``Exercise`` in isolation.
+
+    Useful for content authors who want to write exercises
+    once and reference them from multiple lessons (planned
+    for the Phase 44+ shared exercise pool).
+    """
+    return Exercise.model_json_schema()
+
+
+def lesson_step_schema() -> dict[str, Any]:
+    """Return the JSON Schema for ``LessonStep`` in isolation.
+
+    Not directly consumed by the content authoring flow, but
+    used by the Phase 44 viewer when it parses partial step
+    payloads streamed from the cache.
+    """
+    return LessonStep.model_json_schema()
 
 
 def write_schemas(out_dir: Path) -> dict[str, Path]:
@@ -54,6 +98,10 @@ def write_schemas(out_dir: Path) -> dict[str, Path]:
     for name, schema in (
         ("content-manifest.schema.json", manifest_schema()),
         ("content-set.schema.json", set_schema()),
+        ("lesson.schema.json", lesson_schema()),
+        ("card.schema.json", card_schema()),
+        ("exercise.schema.json", exercise_schema()),
+        ("lesson-step.schema.json", lesson_step_schema()),
     ):
         target = out_dir / name
         target.write_text(

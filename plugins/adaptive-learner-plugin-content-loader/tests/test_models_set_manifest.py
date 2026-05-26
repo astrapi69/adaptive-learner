@@ -244,16 +244,16 @@ class TestSchemaExport:
             "lesson_count",
         } <= required
 
-    def test_write_schemas_creates_files(self, tmp_path: Path) -> None:
+    def test_write_schemas_creates_manifest_and_set(self, tmp_path: Path) -> None:
+        # Lesson / card / exercise / step schemas land in
+        # commit 3's test_schema_lesson.py — this test pins
+        # the manifest + set half of the export contract.
         out = tmp_path / "schemas"
         written = write_schemas(out)
         assert (out / "content-manifest.schema.json").exists()
         assert (out / "content-set.schema.json").exists()
-        # The mapping reflects exactly the files written
-        assert set(written.keys()) == {
-            "content-manifest.schema.json",
-            "content-set.schema.json",
-        }
+        assert "content-manifest.schema.json" in written
+        assert "content-set.schema.json" in written
         # Each file is valid JSON
         for path in written.values():
             json.loads(path.read_text(encoding="utf-8"))
