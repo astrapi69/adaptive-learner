@@ -36,6 +36,13 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Entwicklermodus aktiv — Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar."
+  content: Inhalte
+  mode_badge_content: Inhalte
+  mode_badge_ai: "KI+Inhalte"
+  mode_badge_tooltip_content: "Kein API-Schlüssel konfiguriert — nur vorgefertigte Inhalte. Schlüssel in den Einstellungen hinterlegen, um KI-Funktionen zu aktivieren."
+  mode_badge_tooltip_ai: "KI-Anbieter konfiguriert — Übungen nutzen KI für Distraktoren und Hinweise. Tippen, um Inhalte zu durchstöbern."
+  mode_badge_label_content: "Modus: Nur Inhalte"
+  mode_badge_label_ai: "Modus: KI + Inhalte"
 import:
   title: Konversation importieren
   subtitle: Füge eine ChatGPT-, Claude- oder Gemini-Konversation ein oder lade sie hoch und erhalte sofort Lern-Erkenntnisse.
@@ -1019,3 +1026,26 @@ repo:
   settings_error_save: "Einstellungen konnten nicht gespeichert werden"
   dexie_unavailable_body: "Diese Funktion ist nur im Server-Modus verfügbar. Wechsle in den Einstellungen zum Server-Modus, um git-basierte Lern-Repositories zu nutzen."
   back_to_dashboard: "Zurück zum Dashboard"
+# Content-Loader plugin (Phase 43 / EXP-002)
+content:
+  page_title: "Inhalte"
+  intro: "Vorgefertigte Lektionssets, die ohne API-Schlüssel nutzbar sind. Heruntergeladene Sets werden lokal gespeichert und sind nach dem ersten Abruf offline verfügbar."
+  sources: "Quellen"
+  lessons: "Lektionen"
+  loading: "Inhalte werden geladen…"
+  empty: "Noch keine Inhalte verfügbar. Prüfe deine Verbindung und aktualisiere die Seite, oder richte eine Quelle in den Einstellungen ein."
+  status:
+    ready: "Bereit"
+    update_available: "Aktualisierung verfügbar"
+    downloading: "Lädt…"
+  action:
+    refresh: "Aktualisieren"
+    refreshing: "Aktualisiere…"
+    download: "Herunterladen"
+    update: "Aktualisieren"
+    installed: "Installiert"
+  toast:
+    downloaded: "Set wurde heruntergeladen und ist einsatzbereit."
+  error:
+    list_failed: "Inhalte konnten nicht geladen werden."
+    download_failed: "Set konnte nicht heruntergeladen werden."

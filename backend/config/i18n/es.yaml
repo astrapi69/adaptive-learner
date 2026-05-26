@@ -36,6 +36,13 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Modo Desarrollador activo — los avisos de error muestran detalles técnicos. Cámbialo en Ajustes."
+  content: Contenido
+  mode_badge_content: Contenido
+  mode_badge_ai: "IA+Contenido"
+  mode_badge_tooltip_content: "Sin clave API configurada — solo contenido predefinido. Añade una clave en Ajustes para activar funciones de IA."
+  mode_badge_tooltip_ai: "Proveedor de IA configurado — los ejercicios usan IA para distractores y pistas. Pulsa para explorar los sets."
+  mode_badge_label_content: "Modo: Solo contenido"
+  mode_badge_label_ai: "Modo: IA + Contenido"
 import:
   title: Importar una conversacion
   subtitle: Pega o sube una conversacion con ChatGPT, Claude o Gemini y obten al instante ideas de aprendizaje.
@@ -1016,3 +1023,26 @@ repo:
   settings_error_save: "No se pudieron guardar los ajustes"
   dexie_unavailable_body: "Esta función solo está disponible en modo servidor. Cambia al modo servidor en Ajustes para activar los repositorios de aprendizaje con git."
   back_to_dashboard: "Volver al panel"
+# Content-Loader plugin (Phase 43 / EXP-002)
+content:
+  page_title: "Sets de contenido"
+  intro: "Sets de lecciones prediseñados que puedes usar sin clave API. Las descargas se almacenan localmente y funcionan sin conexión tras la primera descarga."
+  sources: "Fuentes"
+  lessons: "lecciones"
+  loading: "Cargando sets de contenido…"
+  empty: "Aún no hay sets disponibles. Comprueba tu conexión y refresca, o configura una fuente en Ajustes."
+  status:
+    ready: "Listo"
+    update_available: "Actualización disponible"
+    downloading: "Descargando…"
+  action:
+    refresh: "Refrescar"
+    refreshing: "Refrescando…"
+    download: "Descargar"
+    update: "Actualizar"
+    installed: "Instalado"
+  toast:
+    downloaded: "Set descargado y listo para usar."
+  error:
+    list_failed: "No se pudieron cargar los sets de contenido."
+    download_failed: "No se pudo descargar el set."

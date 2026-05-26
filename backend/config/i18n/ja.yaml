@@ -36,6 +36,13 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
+  content: コンテンツ
+  mode_badge_content: コンテンツ
+  mode_badge_ai: "AI+コンテンツ"
+  mode_badge_tooltip_content: "API キーが設定されていません — 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。"
+  mode_badge_tooltip_ai: "AI プロバイダー設定済み — 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。"
+  mode_badge_label_content: "モード: コンテンツのみ"
+  mode_badge_label_ai: "モード: AI + コンテンツ"
 import:
   title: 会話をインポート
   subtitle: ChatGPT、Claude、Gemini との会話を貼り付けるかアップロードすると、 学習のインサイトをすぐに得られます。
@@ -1014,3 +1021,26 @@ repo:
   settings_error_save: "設定を保存できませんでした"
   dexie_unavailable_body: "この機能はサーバーモードでのみ利用できます。git ベースの学習リポジトリを有効にするには、設定でサーバーモードに切り替えてください。"
   back_to_dashboard: "ダッシュボードに戻る"
+# Content-Loader plugin (Phase 43 / EXP-002)
+content:
+  page_title: "コンテンツセット"
+  intro: "API キーがなくても使える既製のレッスンセットです。ダウンロードはローカルにキャッシュされ、初回取得後はオフラインでも動作します。"
+  sources: "ソース"
+  lessons: "レッスン"
+  loading: "コンテンツセットを読み込み中…"
+  empty: "まだ利用可能なセットがありません。接続を確認して更新するか、設定でソースを追加してください。"
+  status:
+    ready: "準備完了"
+    update_available: "更新あり"
+    downloading: "ダウンロード中…"
+  action:
+    refresh: "更新"
+    refreshing: "更新中…"
+    download: "ダウンロード"
+    update: "更新"
+    installed: "インストール済み"
+  toast:
+    downloaded: "セットをダウンロードし、使用準備が整いました。"
+  error:
+    list_failed: "コンテンツセットを読み込めませんでした。"
+    download_failed: "セットをダウンロードできませんでした。"

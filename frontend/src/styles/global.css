@@ -1727,6 +1727,179 @@ select:focus {
   filter: brightness(0.9);
 }
 
+/* Phase 43 / EXP-005 — App-mode indicator. Visible reminder
+   of whether the app is content-only or AI-augmented; links
+   to /content so the user can browse downloadable sets. */
+.nav-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: var(--space-2);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  line-height: 1.25;
+  border: 1px solid var(--border-strong);
+}
+
+.nav-mode-badge-content {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  color: var(--accent);
+}
+
+.nav-mode-badge-ai-augmented {
+  background: color-mix(in srgb, #10b981 15%, var(--surface));
+  color: #10b981;
+  border-color: color-mix(in srgb, #10b981 30%, var(--border));
+}
+
+.nav-mode-badge:hover {
+  filter: brightness(1.05);
+}
+
+/* Phase 43 / EXP-002 — Set Browser page. Mobile-first, the
+   action button stays full-width below 600px so touch
+   targets stay above 44px. */
+.content-page {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.content-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.content-header h1 {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.content-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 0.875rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  color: var(--fg);
+  cursor: pointer;
+}
+
+.content-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.content-intro {
+  color: var(--fg-muted);
+  font-size: 0.9375rem;
+  margin-bottom: var(--space-4);
+}
+
+.content-sources {
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-4);
+}
+
+.content-empty {
+  padding: var(--space-4);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+.content-set-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.content-set-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.content-set-meta {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.content-set-meta h2 {
+  margin: 0 0 4px 0;
+  font-size: 1.125rem;
+}
+
+.content-set-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+  margin: 0 0 6px 0;
+}
+
+.content-set-cached {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.content-set-update {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.content-set-desc {
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.content-set-action {
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.content-set-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+}
+
+@media (max-width: 600px) {
+  .content-set-row {
+    flex-direction: column;
+  }
+  .content-set-action {
+    width: 100%;
+  }
+  .content-set-download-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 .nav-links {
   display: flex;
   gap: var(--space-1);

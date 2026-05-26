@@ -36,6 +36,13 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Modo desenvolvedor ativo — as notificações de erro mostram detalhes técnicos. Desative em Definições."
+  content: Conteúdo
+  mode_badge_content: Conteúdo
+  mode_badge_ai: "IA+Conteúdo"
+  mode_badge_tooltip_content: "Sem chave API configurada — apenas conteúdo pré-construído. Adiciona uma chave em Definições para ativar as funcionalidades IA."
+  mode_badge_tooltip_ai: "Fornecedor de IA configurado — os exercícios usam IA para distratores e dicas. Toca para explorar os conjuntos."
+  mode_badge_label_content: "Modo: Apenas conteúdo"
+  mode_badge_label_ai: "Modo: IA + Conteúdo"
 import:
   title: Importar uma conversa
   subtitle: Cole ou envie uma conversa com o ChatGPT, Claude ou Gemini e obtenha insights de aprendizado na hora.
@@ -1014,3 +1021,26 @@ repo:
   settings_error_save: "Não foi possível salvar as definições"
   dexie_unavailable_body: "Esta funcionalidade só está disponível no modo servidor. Mude para o modo servidor nas Definições para ativar os repositórios de aprendizagem com git."
   back_to_dashboard: "Voltar ao painel"
+# Content-Loader plugin (Phase 43 / EXP-002)
+content:
+  page_title: "Conjuntos de conteúdo"
+  intro: "Conjuntos de lições pré-construídos que podes usar sem chave API. Os downloads são armazenados localmente e funcionam offline após a primeira transferência."
+  sources: "Fontes"
+  lessons: "lições"
+  loading: "A carregar conjuntos de conteúdo…"
+  empty: "Ainda não há conjuntos disponíveis. Verifica a tua ligação e atualiza, ou configura uma fonte em Definições."
+  status:
+    ready: "Pronto"
+    update_available: "Atualização disponível"
+    downloading: "A transferir…"
+  action:
+    refresh: "Atualizar"
+    refreshing: "A atualizar…"
+    download: "Transferir"
+    update: "Atualizar"
+    installed: "Instalado"
+  toast:
+    downloaded: "Conjunto transferido e pronto a usar."
+  error:
+    list_failed: "Não foi possível carregar os conjuntos de conteúdo."
+    download_failed: "Não foi possível transferir o conjunto."

@@ -38,7 +38,14 @@
     "offline": "Offline",
     "anki": "Anki",
     "dev_badge": "DEV",
-    "dev_badge_tooltip": "Developer Mode is on — error toasts show full technical detail. Toggle in Settings."
+    "dev_badge_tooltip": "Developer Mode is on — error toasts show full technical detail. Toggle in Settings.",
+    "content": "Content",
+    "mode_badge_content": "Content",
+    "mode_badge_ai": "AI+Content",
+    "mode_badge_tooltip_content": "No API key configured — using pre-built content only. Add a key in Settings to enable AI features.",
+    "mode_badge_tooltip_ai": "AI provider configured — exercises use AI for distractors + hints. Tap to browse content sets.",
+    "mode_badge_label_content": "Mode: Content only",
+    "mode_badge_label_ai": "Mode: AI + Content"
   },
   "import": {
     "title": "Import a conversation",
@@ -1089,5 +1096,32 @@
     "settings_error_save": "Could not save settings",
     "dexie_unavailable_body": "This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories.",
     "back_to_dashboard": "Back to Dashboard"
+  },
+  "content": {
+    "page_title": "Content sets",
+    "intro": "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch.",
+    "sources": "Sources",
+    "lessons": "lessons",
+    "loading": "Loading content sets…",
+    "empty": "No content sets available yet. Check your network connection and refresh, or configure a source in Settings.",
+    "status": {
+      "ready": "Ready",
+      "update_available": "Update available",
+      "downloading": "Downloading…"
+    },
+    "action": {
+      "refresh": "Refresh",
+      "refreshing": "Refreshing…",
+      "download": "Download",
+      "update": "Update",
+      "installed": "Installed"
+    },
+    "toast": {
+      "downloaded": "Set downloaded and ready to use."
+    },
+    "error": {
+      "list_failed": "Could not load content sets.",
+      "download_failed": "Could not download the set."
+    }
   }
 }

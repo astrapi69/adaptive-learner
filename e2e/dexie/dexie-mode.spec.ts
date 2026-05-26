@@ -115,6 +115,23 @@ const ROUTES: RouteCase[] = [
         expectedTestIds: ["learning-repo-page-dexie-unavailable"],
     },
     {
+        name: "Content (Set Browser, Phase 43)",
+        path: "/content",
+        // ``content-loading`` is the first render; the Dexie
+        // fetch then either resolves to ``content-page`` (with
+        // a network-reachable upstream OR a populated cache)
+        // or stays on ``content-empty`` (upstream unreachable
+        // AND empty cache, which is what a first-visit GH
+        // Pages user with no network sees). Both shapes count
+        // as success — the gate's job is to pin that the page
+        // never crashes or shows a raw HTTP error toast.
+        expectedTestIds: [
+            "content-loading",
+            "content-page",
+            "content-empty",
+        ],
+    },
+    {
         name: "NotFound",
         path: "/this-route-does-not-exist",
         expectedTestIds: ["not-found"],

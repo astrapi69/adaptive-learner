@@ -36,6 +36,13 @@ nav:
   anki: Anki
   dev_badge: DEV
   dev_badge_tooltip: "Mode développeur actif — les notifications d'erreur affichent les détails techniques. Désactivez-le dans les Paramètres."
+  content: Contenu
+  mode_badge_content: Contenu
+  mode_badge_ai: "IA+Contenu"
+  mode_badge_tooltip_content: "Aucune clé API configurée — uniquement le contenu pré-construit. Ajoute une clé dans les Paramètres pour activer les fonctions IA."
+  mode_badge_tooltip_ai: "Fournisseur IA configuré — les exercices utilisent l'IA pour les distracteurs et les indices. Touche pour parcourir les sets."
+  mode_badge_label_content: "Mode : Contenu uniquement"
+  mode_badge_label_ai: "Mode : IA + Contenu"
 import:
   title: Importer une conversation
   subtitle: Colle ou televerse une conversation avec ChatGPT, Claude ou Gemini et obtiens des insights d'apprentissage immediats.
@@ -1016,3 +1023,26 @@ repo:
   settings_error_save: "Impossible d'enregistrer les paramètres"
   dexie_unavailable_body: "Cette fonctionnalité n'est disponible qu'en mode serveur. Passez en mode serveur dans les Paramètres pour activer les dépôts d'apprentissage avec git."
   back_to_dashboard: "Retour au tableau de bord"
+# Content-Loader plugin (Phase 43 / EXP-002)
+content:
+  page_title: "Sets de contenu"
+  intro: "Sets de leçons préfabriqués utilisables sans clé API. Les téléchargements sont mis en cache localement et fonctionnent hors-ligne après la première récupération."
+  sources: "Sources"
+  lessons: "leçons"
+  loading: "Chargement des sets de contenu…"
+  empty: "Aucun set disponible pour l'instant. Vérifie ta connexion et rafraîchis, ou configure une source dans les Paramètres."
+  status:
+    ready: "Prêt"
+    update_available: "Mise à jour disponible"
+    downloading: "Téléchargement…"
+  action:
+    refresh: "Rafraîchir"
+    refreshing: "Rafraîchissement…"
+    download: "Télécharger"
+    update: "Mettre à jour"
+    installed: "Installé"
+  toast:
+    downloaded: "Set téléchargé et prêt à utiliser."
+  error:
+    list_failed: "Impossible de charger les sets de contenu."
+    download_failed: "Impossible de télécharger le set."

@@ -19,6 +19,7 @@ import SkipToContent from "./components/SkipToContent";
 // BUNDLE-SIZE-DYNAMIC-IMPORT-01.
 const AnkiPage = lazy(() => import("./pages/Anki"));
 const Assessment = lazy(() => import("./pages/Assessment"));
+const ContentPage = lazy(() => import("./pages/Content"));
 const Curriculum = lazy(() => import("./pages/Curriculum"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Import = lazy(() => import("./pages/Import"));
@@ -123,6 +124,7 @@ export default function App() {
                             element={<ImportDetail />}
                         />
                         <Route path="/anki" element={<AnkiPage />} />
+                        <Route path="/content" element={<ContentPage />} />
                         <Route
                             path="/projects/:projectId/learning-repo"
                             element={<LearningRepoPage />}

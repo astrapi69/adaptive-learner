@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
 import {useHelp} from "../contexts/HelpContext";
+import {useAppMode} from "../hooks/useAppMode";
 import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useDevMode} from "../hooks/useDevMode";
 import {useI18n} from "../hooks/useI18n";
@@ -27,6 +28,7 @@ export default function Navigation() {
     const {t} = useI18n();
     const tooltipsOn = useButtonTooltips();
     const devMode = useDevMode();
+    const {ready: modeReady, mode} = useAppMode();
     const {theme, toggle} = useTheme();
     const {openHelp} = useHelp();
     const online = useOnlineStatus();
@@ -92,6 +94,40 @@ export default function Navigation() {
                     {t("nav.dev_badge", "DEV")}
                 </NavLink>
             )}
+            {modeReady && (
+                <NavLink
+                    to="/content"
+                    className={`nav-mode-badge nav-mode-badge-${mode}`}
+                    data-testid="nav-mode-badge"
+                    data-mode={mode}
+                    title={
+                        mode === "ai-augmented"
+                            ? t(
+                                  "nav.mode_badge_tooltip_ai",
+                                  "AI provider configured — exercises use AI for distractors + hints. Tap to browse content sets.",
+                              )
+                            : t(
+                                  "nav.mode_badge_tooltip_content",
+                                  "No API key configured — using pre-built content only. Add a key in Settings to enable AI features.",
+                              )
+                    }
+                    aria-label={
+                        mode === "ai-augmented"
+                            ? t(
+                                  "nav.mode_badge_label_ai",
+                                  "Mode: AI + Content",
+                              )
+                            : t(
+                                  "nav.mode_badge_label_content",
+                                  "Mode: Content only",
+                              )
+                    }
+                >
+                    {mode === "ai-augmented"
+                        ? t("nav.mode_badge_ai", "AI+Content")
+                        : t("nav.mode_badge_content", "Content")}
+                </NavLink>
+            )}
             <button
                 type="button"
                 className="nav-hamburger"
@@ -150,6 +186,13 @@ export default function Navigation() {
                     data-testid="nav-anki"
                 >
                     {t("nav.anki", "Anki")}
+                </NavLink>
+                <NavLink
+                    to="/content"
+                    className={linkClass}
+                    data-testid="nav-content"
+                >
+                    {t("nav.content", "Content")}
                 </NavLink>
                 <NavLink
                     to="/settings"

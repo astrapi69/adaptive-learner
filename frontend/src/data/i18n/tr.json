@@ -38,7 +38,14 @@
     "offline": "Çevrimdışı",
     "anki": "Anki",
     "dev_badge": "DEV",
-    "dev_badge_tooltip": "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın."
+    "dev_badge_tooltip": "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın.",
+    "content": "İçerik",
+    "mode_badge_content": "İçerik",
+    "mode_badge_ai": "Yapay Zeka+İçerik",
+    "mode_badge_tooltip_content": "Yapılandırılmış API anahtarı yok — yalnızca hazır içerik kullanılıyor. Yapay zeka özelliklerini etkinleştirmek için Ayarlar'dan anahtar ekleyin.",
+    "mode_badge_tooltip_ai": "Yapay zeka sağlayıcısı yapılandırıldı — alıştırmalar dikkat dağıtıcılar ve ipuçları için yapay zeka kullanır. İçerik setlerine göz atmak için dokunun.",
+    "mode_badge_label_content": "Mod: Yalnızca içerik",
+    "mode_badge_label_ai": "Mod: Yapay Zeka + İçerik"
   },
   "import": {
     "title": "Bir konuşmayı içe aktar",
@@ -1089,5 +1096,32 @@
     "settings_error_save": "Ayarlar kaydedilemedi",
     "dexie_unavailable_body": "Bu özellik yalnızca sunucu modunda kullanılabilir. Git tabanlı öğrenme depolarını etkinleştirmek için Ayarlar'dan sunucu moduna geçin.",
     "back_to_dashboard": "Panele dön"
+  },
+  "content": {
+    "page_title": "İçerik setleri",
+    "intro": "API anahtarı olmadan kullanabileceğiniz hazır ders setleri. İndirmeler yerel olarak önbelleğe alınır ve ilk indirmeden sonra çevrimdışı çalışır.",
+    "sources": "Kaynaklar",
+    "lessons": "ders",
+    "loading": "İçerik setleri yükleniyor…",
+    "empty": "Henüz mevcut set yok. Bağlantınızı kontrol edip yenileyin veya Ayarlar'dan bir kaynak yapılandırın.",
+    "status": {
+      "ready": "Hazır",
+      "update_available": "Güncelleme var",
+      "downloading": "İndiriliyor…"
+    },
+    "action": {
+      "refresh": "Yenile",
+      "refreshing": "Yenileniyor…",
+      "download": "İndir",
+      "update": "Güncelle",
+      "installed": "Yüklendi"
+    },
+    "toast": {
+      "downloaded": "Set indirildi ve kullanıma hazır."
+    },
+    "error": {
+      "list_failed": "İçerik setleri yüklenemedi.",
+      "download_failed": "Set indirilemedi."
+    }
   }
 }
