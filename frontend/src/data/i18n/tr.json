@@ -857,6 +857,18 @@
     "guide_failed": "Çalışma kılavuzu oluşturulamadı."
   },
   "ui": {
+    "errors": {
+      "bad_request": "İstek işlenemedi.",
+      "forbidden": "Erişim reddedildi. Lütfen ayarlarını kontrol et.",
+      "not_found": "Bu sayfa veya özellik bulunamadı.",
+      "conflict": "Bu işlem mevcut durumla çakışıyor.",
+      "rate_limited": "Çok fazla istek. Lütfen biraz bekleyip tekrar dene.",
+      "upstream_unavailable": "Yapay zeka hizmetine şu anda ulaşılamıyor.",
+      "server": "Bir iç hata oluştu.",
+      "network": "Sunucuya bağlanılamıyor.",
+      "timeout": "İstek çok uzun sürdü.",
+      "generic": "Bir şeyler ters gitti. Lütfen daha sonra tekrar dene."
+    },
     "error_report": {
       "dialog_title": "Bir sorun bildir",
       "intro": "Adaptive Learner bir hata yakaladı ve geliştirici için bir hata raporu hazırlayabilir.",

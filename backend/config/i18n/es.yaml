@@ -788,6 +788,17 @@ notebooklm:
   guide_failed: No se pudo generar la guía de estudio.
 
 ui:
+  errors:
+    bad_request: "No se pudo procesar la solicitud."
+    forbidden: "Acceso denegado. Comprueba tus ajustes."
+    not_found: "No se encontró esta página o función."
+    conflict: "Esta acción entra en conflicto con el estado actual."
+    rate_limited: "Demasiadas solicitudes. Espera un momento e inténtalo de nuevo."
+    upstream_unavailable: "El servicio de IA no está disponible en este momento."
+    server: "Se produjo un error interno."
+    network: "Sin conexión con el servidor."
+    timeout: "La solicitud tardó demasiado."
+    generic: "Algo salió mal. Inténtalo de nuevo más tarde."
   error_report:
     dialog_title: "Report an issue"
     intro: "Adaptive Learner caught an error and can prepare a bug report for the developer."

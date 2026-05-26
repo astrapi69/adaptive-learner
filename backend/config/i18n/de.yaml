@@ -788,6 +788,17 @@ notebooklm:
   guide_failed: Lernleitfaden konnte nicht erstellt werden.
 
 ui:
+  errors:
+    bad_request: "Die Anfrage konnte nicht verarbeitet werden."
+    forbidden: "Zugriff verweigert. Bitte prüfe deine Einstellungen."
+    not_found: "Diese Seite oder Funktion wurde nicht gefunden."
+    conflict: "Diese Aktion steht im Konflikt mit dem aktuellen Zustand."
+    rate_limited: "Zu viele Anfragen. Bitte warte einen Moment und versuche es erneut."
+    upstream_unavailable: "Der KI-Dienst ist gerade nicht erreichbar."
+    server: "Ein interner Fehler ist aufgetreten."
+    network: "Keine Verbindung zum Server."
+    timeout: "Die Anfrage hat zu lange gedauert."
+    generic: "Etwas ist schiefgelaufen. Bitte versuche es später erneut."
   error_report:
     dialog_title: "Fehler melden"
     intro: "Adaptive Learner hat einen Fehler erkannt und kann einen Bug-Report für den Entwickler vorbereiten."

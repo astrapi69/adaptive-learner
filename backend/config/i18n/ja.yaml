@@ -788,6 +788,17 @@ notebooklm:
   guide_failed: 学習ガイドを生成できませんでした。
 
 ui:
+  errors:
+    bad_request: "リクエストを処理できませんでした。"
+    forbidden: "アクセスが拒否されました。設定を確認してください。"
+    not_found: "このページまたは機能は見つかりませんでした。"
+    conflict: "この操作は現在の状態と競合しています。"
+    rate_limited: "リクエストが多すぎます。少し時間をおいて再度お試しください。"
+    upstream_unavailable: "AI サービスに現在接続できません。"
+    server: "内部エラーが発生しました。"
+    network: "サーバーに接続できません。"
+    timeout: "リクエストに時間がかかりすぎました。"
+    generic: "問題が発生しました。あとでもう一度お試しください。"
   error_report:
     dialog_title: "問題を報告する"
     intro: "Adaptive Learner がエラーを検出しました。開発者向けのバグレポートを準備できます。"

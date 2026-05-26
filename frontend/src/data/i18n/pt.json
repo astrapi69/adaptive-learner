@@ -857,6 +857,18 @@
     "guide_failed": "Não foi possível gerar o guia de estudo."
   },
   "ui": {
+    "errors": {
+      "bad_request": "Não foi possível processar o pedido.",
+      "forbidden": "Acesso negado. Verifica as tuas definições.",
+      "not_found": "Esta página ou funcionalidade não foi encontrada.",
+      "conflict": "Esta ação entra em conflito com o estado atual.",
+      "rate_limited": "Demasiados pedidos. Aguarda um momento e tenta novamente.",
+      "upstream_unavailable": "O serviço de IA não está disponível neste momento.",
+      "server": "Ocorreu um erro interno.",
+      "network": "Sem ligação ao servidor.",
+      "timeout": "O pedido demorou demasiado.",
+      "generic": "Algo correu mal. Tenta novamente mais tarde."
+    },
     "error_report": {
       "dialog_title": "Comunicar um problema",
       "intro": "Adaptive Learner detetou um erro e pode preparar um relatório de bug para o programador.",

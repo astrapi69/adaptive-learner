@@ -28,6 +28,8 @@
 import React from "react";
 import {toast} from "react-toastify";
 import {ApiError} from "../api/client";
+import {isDevMode} from "../hooks/useDevMode";
+import {friendlyErrorMessage} from "./errorMessages";
 
 // Truncate the visible error message so the toast stays
 // readable. The full detail is still embedded in the
@@ -53,10 +55,12 @@ function truncateForDisplay(message: string): string {
 }
 
 function ErrorContent({
-    message,
+    displayMessage,
+    originalMessage,
     apiError,
 }: {
-    message: string;
+    displayMessage: string;
+    originalMessage: string;
     apiError?: ApiError;
 }) {
     return React.createElement(
@@ -83,7 +87,7 @@ function ErrorContent({
                     lineHeight: 1.4,
                 },
             },
-            truncateForDisplay(message),
+            truncateForDisplay(displayMessage),
         ),
         React.createElement(
             "button",
@@ -92,10 +96,20 @@ function ErrorContent({
                 "data-testid": "error-toast-report-issue",
                 onClick: (e: React.MouseEvent) => {
                     e.stopPropagation();
+                    // Pass the ORIGINAL technical message to the
+                    // ErrorReportDialog. Production-mode users see
+                    // the friendly toast text but the submitted
+                    // GitHub issue still carries full technical
+                    // detail (status, endpoint, stacktrace).
                     window.dispatchEvent(
                         new CustomEvent(
                             "adaptive-learner:open-error-report",
-                            {detail: {message, apiError}},
+                            {
+                                detail: {
+                                    message: originalMessage,
+                                    apiError,
+                                },
+                            },
                         ),
                     );
                 },
@@ -143,12 +157,38 @@ function recordToast(level: string, message: string) {
     }
 }
 
+/**
+ * Decide what the user actually sees in the toast.
+ *
+ * - Dev mode (Settings > Interface > Developer Mode): always
+ *   show the caller's original technical message.
+ * - Production mode + ApiError supplied: replace the message
+ *   with a status-code-mapped friendly string from
+ *   ``ui.errors.*``. The user never sees HTTP details.
+ * - Production mode without ApiError: show the caller's
+ *   message as-is. Callers that supply a literal already-
+ *   friendly string (parse errors, validation messages from
+ *   their own code) stay in control of the wording.
+ */
+function pickDisplayMessage(message: string, opts?: ErrorOptions): string {
+    if (isDevMode()) return message;
+    if (!opts?.apiError) return message;
+    return friendlyErrorMessage(opts.apiError);
+}
+
 export const notify = {
     error: (message: string, opts?: ErrorOptions) => {
+        const displayMessage = pickDisplayMessage(message, opts);
+        // eventRecorder always captures the ORIGINAL technical
+        // message — privacy-aware (no API keys / passwords leak
+        // through here) and useful when the user later submits a
+        // bug report. Dev/prod mode only affects what is rendered
+        // in the toast, never what the recorder stores.
         recordToast("error", message);
         return toast.error(
             React.createElement(ErrorContent, {
-                message,
+                displayMessage,
+                originalMessage: message,
                 apiError: opts?.apiError,
             }),
             {

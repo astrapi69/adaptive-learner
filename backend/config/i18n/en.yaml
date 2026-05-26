@@ -788,6 +788,21 @@ notebooklm:
   guide_failed: Could not generate the study guide.
 
 ui:
+  # DEV-MODE-FRIENDLY-ERRORS-01 — status-code-mapped friendly
+  # toast strings. Shown in place of HTTP details when
+  # Developer Mode is off (default). Dev mode bypasses these
+  # and renders the technical message verbatim.
+  errors:
+    bad_request: "The request could not be processed."
+    forbidden: "Access denied. Please check your settings."
+    not_found: "This page or feature was not found."
+    conflict: "This action conflicts with the current state."
+    rate_limited: "Too many requests. Please wait a moment and try again."
+    upstream_unavailable: "The AI service is currently unreachable."
+    server: "An internal error occurred."
+    network: "No connection to the server."
+    timeout: "The request took too long."
+    generic: "Something went wrong. Please try again later."
   error_report:
     dialog_title: "Report an issue"
     intro: "Adaptive Learner caught an error and can prepare a bug report for the developer."

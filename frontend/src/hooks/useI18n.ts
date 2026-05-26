@@ -22,6 +22,33 @@ const I18nContext = createContext<I18nContextValue | null>(null);
 let cachedLang = "";
 let cachedStrings: I18nStrings = {};
 
+/**
+ * Module-level i18n lookup. Walks the same cached catalogue
+ * that the in-React ``t()`` uses, so non-React code (notify.ts,
+ * service modules) can resolve a translated string without
+ * pulling in a hook. Falls back to the supplied default when
+ * the key is missing — never throws.
+ *
+ * Use sparingly. React components should still use ``useI18n``
+ * so they re-render on language switch.
+ */
+export function resolveI18n(key: string, fallback: string): string {
+    const parts = key.split(".");
+    let current: unknown = cachedStrings;
+    for (const part of parts) {
+        if (
+            current &&
+            typeof current === "object" &&
+            part in (current as Record<string, unknown>)
+        ) {
+            current = (current as Record<string, unknown>)[part];
+        } else {
+            return fallback;
+        }
+    }
+    return typeof current === "string" ? current : fallback;
+}
+
 export function I18nProvider({children}: {children: ReactNode}) {
     const [strings, setStrings] = useState<I18nStrings>(cachedStrings);
     const [lang, setLangState] = useState(cachedLang || "de");
