@@ -78,25 +78,6 @@ tiebreaker.
   Phase 42 production crash (gh-pages users hitting raw 404
   toast) is exactly what this gate exists to prevent. Filed
   2026-05-26.
-- [ ] **DEV-MODE-FRIENDLY-ERRORS-01**: Two-tier error
-  display. **Production mode (default)**: notify.error()
-  shows friendly status-code-mapped messages
-  (``ui.errors.404`` / ``.400`` / ``.401`` / ``.500`` /
-  ``.502`` / ``network`` / ``timeout``) with NO HTTP status
-  / endpoint / stack trace visible. eventRecorder still
-  captures full technical detail silently;
-  ErrorReportDialog reads it for GitHub issue submission.
-  **Developer mode**: opt-in toggle in Settings >
-  Interface (``settings.developer_mode``), persisted to
-  localStorage. When on, error toasts show full technical
-  detail, the "Report Issue" button is more prominent, a
-  small "DEV" badge appears in the Navigation bar, and a
-  floating event-recorder debug panel becomes accessible.
-  New ``useDevMode()`` hook. Status-code → friendly-message
-  mapping added to all 8 i18n catalogs under ``ui.errors.*``.
-  Filed 2026-05-26. Suggested ordering: dev-mode hook +
-  toggle + badge commit 1, notify.error() dual-mode + error
-  mapping commit 2, i18n catalogs commit 3.
 
 - [x] **BL-25**: Claude.ai per-conversation Markdown export
   collapses to one big user message. Closed by the dedicated
