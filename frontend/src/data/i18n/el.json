@@ -36,7 +36,9 @@
     "menu": "Μενού",
     "online": "Σε σύνδεση",
     "offline": "Εκτός σύνδεσης",
-    "anki": "Anki"
+    "anki": "Anki",
+    "dev_badge": "DEV",
+    "dev_badge_tooltip": "Λειτουργία προγραμματιστή ενεργή — τα μηνύματα σφάλματος εμφανίζουν τεχνικές λεπτομέρειες. Αλλάξτε στις Ρυθμίσεις."
   },
   "import": {
     "title": "Εισαγωγή συνομιλίας",
@@ -273,6 +275,8 @@
     "gestures_description": "Swipe to navigate in Assessment, Session, and Curriculum.",
     "button_tooltips": "Show button tooltips",
     "button_tooltips_description": "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
+    "developer_mode": "Λειτουργία προγραμματιστή",
+    "developer_mode_description": "Εμφανίζει όλες τις τεχνικές λεπτομέρειες (κωδικός κατάστασης, endpoint, ίχνος στοίβας) στα μηνύματα σφάλματος. Όταν είναι ενεργό, εμφανίζεται μια ένδειξη 'DEV' στη γραμμή πλοήγησης. Απενεργοποιημένο από προεπιλογή· ενεργοποιήστε το μόνο για αποσφαλμάτωση.",
     "section_storage_mode": "Λειτουργία αποθήκευσης",
     "storage_mode_help": "Διάλεξε πού ζουν τα δεδομένα σου. Η τοπική λειτουργία κρατά τα πάντα σε αυτόν τον περιηγητή· η λειτουργία Server μιλά με το backend του AdaptiveLearner.",
     "storage_mode_api": "Server",

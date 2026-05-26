@@ -36,7 +36,9 @@
     "menu": "Menü",
     "online": "Çevrimiçi",
     "offline": "Çevrimdışı",
-    "anki": "Anki"
+    "anki": "Anki",
+    "dev_badge": "DEV",
+    "dev_badge_tooltip": "Geliştirici Modu açık — hata bildirimleri tüm teknik ayrıntıları gösterir. Ayarlar'dan kapatın."
   },
   "import": {
     "title": "Bir konuşmayı içe aktar",
@@ -273,6 +275,8 @@
     "gestures_description": "Değerlendirme, Oturum ve Müfredat'ta gezinmek için kaydır.",
     "button_tooltips": "Buton ipuçlarını göster",
     "button_tooltips_description": "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır.",
+    "developer_mode": "Geliştirici Modu",
+    "developer_mode_description": "Hata bildirimlerinde tüm teknik ayrıntıları (durum kodu, uç nokta, yığın izi) gösterir. Etkinken gezinme çubuğunda 'DEV' rozeti görünür. Varsayılan olarak kapalı; yalnızca hata ayıklama için açın.",
     "section_storage_mode": "Depolama modu",
     "storage_mode_help": "Verilerinin nerede yaşayacağını seç. Yerel mod her şeyi bu tarayıcıda tutar; Sunucu modu AdaptiveLearner arka uçuyla iletişim kurar.",
     "storage_mode_api": "Sunucu",

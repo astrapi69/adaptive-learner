@@ -1705,6 +1705,28 @@ select:focus {
   }
 }
 
+/* DEV-MODE-FRIENDLY-ERRORS-01 — visible reminder that error
+   toasts are in technical mode. Links to Settings so the user
+   can flip it off quickly. */
+.nav-dev-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: var(--space-2);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--danger, #ef4444);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.nav-dev-badge:hover {
+  filter: brightness(0.9);
+}
+
 .nav-links {
   display: flex;
   gap: var(--space-1);

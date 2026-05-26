@@ -4,6 +4,7 @@ import {NavLink, useLocation} from "react-router-dom";
 
 import {useHelp} from "../contexts/HelpContext";
 import {useButtonTooltips} from "../hooks/useButtonTooltips";
+import {useDevMode} from "../hooks/useDevMode";
 import {useI18n} from "../hooks/useI18n";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {useTheme} from "../hooks/useTheme";
@@ -25,6 +26,7 @@ import {readSyncConfig} from "../storage/sync-engine";
 export default function Navigation() {
     const {t} = useI18n();
     const tooltipsOn = useButtonTooltips();
+    const devMode = useDevMode();
     const {theme, toggle} = useTheme();
     const {openHelp} = useHelp();
     const online = useOnlineStatus();
@@ -73,6 +75,23 @@ export default function Navigation() {
                 />
                 <span className="nav-brand-name">{t("app.name", "Adaptive Learner")}</span>
             </NavLink>
+            {devMode && (
+                <NavLink
+                    to="/settings"
+                    className="nav-dev-badge"
+                    data-testid="nav-dev-badge"
+                    title={t(
+                        "nav.dev_badge_tooltip",
+                        "Developer Mode is on — error toasts show full technical detail. Toggle in Settings.",
+                    )}
+                    aria-label={t(
+                        "nav.dev_badge_tooltip",
+                        "Developer Mode is on — error toasts show full technical detail. Toggle in Settings.",
+                    )}
+                >
+                    {t("nav.dev_badge", "DEV")}
+                </NavLink>
+            )}
             <button
                 type="button"
                 className="nav-hamburger"

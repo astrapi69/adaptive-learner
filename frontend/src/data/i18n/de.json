@@ -36,7 +36,9 @@
     "menu": "Menü",
     "online": "Online",
     "offline": "Offline",
-    "anki": "Anki"
+    "anki": "Anki",
+    "dev_badge": "DEV",
+    "dev_badge_tooltip": "Entwicklermodus aktiv — Fehlermeldungen zeigen technische Details. In den Einstellungen umschaltbar."
   },
   "import": {
     "title": "Konversation importieren",
@@ -273,6 +275,8 @@
     "gestures_description": "Wischen zum Navigieren in Assessment, Session und Curriculum.",
     "button_tooltips": "Button-Tooltips anzeigen",
     "button_tooltips_description": "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv.",
+    "developer_mode": "Entwicklermodus",
+    "developer_mode_description": "Zeigt vollständige technische Details (Statuscode, Endpunkt, Stack-Trace) in Fehlermeldungen. Bei aktivem Modus erscheint ein 'DEV'-Hinweis in der Navigationsleiste. Standardmäßig aus; nur zum Debugging einschalten.",
     "section_storage_mode": "Speicher-Modus",
     "storage_mode_help": "Waehle, wo deine Daten liegen. Lokal speichert alles in diesem Browser; Server verbindet sich mit dem AdaptiveLearner-Backend.",
     "storage_mode_api": "Server",

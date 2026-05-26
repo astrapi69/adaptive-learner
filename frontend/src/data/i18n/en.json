@@ -36,7 +36,9 @@
     "menu": "Menu",
     "online": "Online",
     "offline": "Offline",
-    "anki": "Anki"
+    "anki": "Anki",
+    "dev_badge": "DEV",
+    "dev_badge_tooltip": "Developer Mode is on — error toasts show full technical detail. Toggle in Settings."
   },
   "import": {
     "title": "Import a conversation",
@@ -273,6 +275,8 @@
     "gestures_description": "Swipe to navigate in Assessment, Session, and Curriculum.",
     "button_tooltips": "Show button tooltips",
     "button_tooltips_description": "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
+    "developer_mode": "Developer Mode",
+    "developer_mode_description": "Show full technical detail (status code, endpoint, stack trace) in error toasts. A 'DEV' badge appears in the navigation bar while this is on. Off by default; opt-in for debugging.",
     "section_storage_mode": "Storage mode",
     "storage_mode_help": "Choose where your data lives. Local mode keeps everything in this browser; Server mode talks to the AdaptiveLearner backend.",
     "storage_mode_api": "Server",

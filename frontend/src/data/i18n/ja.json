@@ -36,7 +36,9 @@
     "menu": "メニュー",
     "online": "オンライン",
     "offline": "オフライン",
-    "anki": "Anki"
+    "anki": "Anki",
+    "dev_badge": "DEV",
+    "dev_badge_tooltip": "開発者モードがオンです — エラー通知に技術的な詳細が表示されます。設定で切り替えてください。"
   },
   "import": {
     "title": "会話をインポート",
@@ -273,6 +275,8 @@
     "gestures_description": "評価、セッション、カリキュラムをスワイプして移動します。",
     "button_tooltips": "ボタンのツールチップを表示",
     "button_tooltips_description": "アイコンボタンにカーソルを合わせたとき、その機能を説明するツールチップを表示します。スクリーンリーダー用のラベルは、この設定に関わらず常に有効です。",
+    "developer_mode": "開発者モード",
+    "developer_mode_description": "エラー通知に技術的な詳細（ステータスコード、エンドポイント、スタックトレース）をすべて表示します。有効中はナビゲーションバーに 'DEV' バッジが表示されます。既定は無効。デバッグ用にのみ有効化してください。",
     "section_storage_mode": "ストレージモード",
     "storage_mode_help": "データの保存場所を選択してください。ローカルモードはすべてをこの ブラウザに保存します。サーバーモードは AdaptiveLearner のバックエンドと 通信します。",
     "storage_mode_api": "サーバー",

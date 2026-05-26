@@ -34,6 +34,8 @@ nav:
   online: Online
   offline: Offline
   anki: Anki
+  dev_badge: DEV
+  dev_badge_tooltip: "Modo desenvolvedor ativo — as notificações de erro mostram detalhes técnicos. Desative em Definições."
 import:
   title: Importar uma conversa
   subtitle: Cole ou envie uma conversa com o ChatGPT, Claude ou Gemini e obtenha insights de aprendizado na hora.
@@ -258,6 +260,8 @@ settings:
   gestures_description: Deslize para navegar na Avaliação, Sessão e Currículo.
   button_tooltips: Mostrar dicas dos botões
   button_tooltips_description: "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de ecrã permanecem ativas independentemente."
+  developer_mode: Modo desenvolvedor
+  developer_mode_description: "Mostra todos os detalhes técnicos (código de estado, endpoint, rastreio) nas notificações de erro. Aparece uma etiqueta 'DEV' na barra de navegação enquanto estiver ativo. Desativado por defeito; ativar apenas para depuração."
   section_storage_mode: Modo de armazenamento
   storage_mode_help: Escolha onde seus dados ficam. O modo Local mantém tudo neste navegador; o modo Servidor se comunica com o backend do AdaptiveLearner.
   storage_mode_api: Servidor

@@ -13,6 +13,7 @@ import {
     setButtonTooltipsEnabled,
     useButtonTooltips,
 } from "../hooks/useButtonTooltips";
+import {setDevModeEnabled, useDevMode} from "../hooks/useDevMode";
 import VoiceSettingsSection from "../components/VoiceSettingsSection";
 import {ModelPicker} from "../components/ModelPicker";
 import SyncSection from "../components/SyncSection";
@@ -79,6 +80,16 @@ export default function Settings() {
     const buttonTooltipsOn = useButtonTooltips();
     const handleButtonTooltipsToggle = (next: boolean) => {
         setButtonTooltipsEnabled(next);
+    };
+
+    // DEV-MODE-FRIENDLY-ERRORS-01 — Developer Mode toggle.
+    // When ON, error toasts show full technical detail and the
+    // Navigation bar carries a DEV badge. Off by default —
+    // production users only see friendly status-code-mapped
+    // messages.
+    const devModeOn = useDevMode();
+    const handleDevModeToggle = (next: boolean) => {
+        setDevModeEnabled(next);
     };
     const [keyDrafts, setKeyDrafts] = useState<Record<AIProvider, string>>({
         anthropic: "",
@@ -369,6 +380,30 @@ export default function Settings() {
                         checked={buttonTooltipsOn}
                         onChange={(e) =>
                             handleButtonTooltipsToggle(e.target.checked)
+                        }
+                    />
+                </label>
+                <label className="form-row form-row-toggle">
+                    <span className="form-label-stack">
+                        <span className="form-label">
+                            {t(
+                                "settings.developer_mode",
+                                "Developer Mode",
+                            )}
+                        </span>
+                        <span className="form-hint">
+                            {t(
+                                "settings.developer_mode_description",
+                                "Show full technical detail (status code, endpoint, stack trace) in error toasts. A 'DEV' badge appears in the navigation bar while this is on. Off by default; opt-in for debugging.",
+                            )}
+                        </span>
+                    </span>
+                    <input
+                        type="checkbox"
+                        data-testid="settings-developer-mode-toggle"
+                        checked={devModeOn}
+                        onChange={(e) =>
+                            handleDevModeToggle(e.target.checked)
                         }
                     />
                 </label>
