@@ -1127,6 +1127,16 @@
         "left_label": "Terimler",
         "right_label": "Tanımlar",
         "empty": "Bu alıştırmada eşleşme yok."
+      },
+      "picture": {
+        "submit": "Cevabı kontrol et",
+        "retry": "Tekrar dene",
+        "result_correct": "Doğru!",
+        "result_wrong": "Pek değil — vurgulanan seçenek doğru cevap.",
+        "grid_label": "Görsel seçenekler",
+        "correct_label": "Doğru",
+        "wrong_label": "Yanlış",
+        "empty": "Bu alıştırmada görsel yok."
       }
     },
     "summary": {

@@ -1127,6 +1127,16 @@
         "left_label": "Begriffe",
         "right_label": "Definitionen",
         "empty": "Diese Zuordnungs-Übung hat keine Paare."
+      },
+      "picture": {
+        "submit": "Antwort prüfen",
+        "retry": "Erneut versuchen",
+        "result_correct": "Richtig!",
+        "result_wrong": "Nicht ganz — die markierte Kachel ist die richtige Antwort.",
+        "grid_label": "Bild-Auswahl",
+        "correct_label": "Richtig",
+        "wrong_label": "Falsch",
+        "empty": "Diese Bild-Auswahl-Übung enthält keine Bilder."
       }
     },
     "summary": {

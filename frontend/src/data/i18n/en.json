@@ -1127,6 +1127,16 @@
         "left_label": "Terms",
         "right_label": "Definitions",
         "empty": "This matching exercise has no pairs."
+      },
+      "picture": {
+        "submit": "Check answer",
+        "retry": "Try again",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite — the highlighted tile is the right answer.",
+        "grid_label": "Image choices",
+        "correct_label": "Correct",
+        "wrong_label": "Wrong",
+        "empty": "This picture-choice exercise has no images."
       }
     },
     "summary": {

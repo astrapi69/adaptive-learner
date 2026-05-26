@@ -1127,6 +1127,16 @@
         "left_label": "用語",
         "right_label": "意味",
         "empty": "このマッチング演習にはペアがありません。"
+      },
+      "picture": {
+        "submit": "答えを確認",
+        "retry": "もう一度",
+        "result_correct": "正解です！",
+        "result_wrong": "惜しい — 強調されたタイルが正解です。",
+        "grid_label": "画像の選択肢",
+        "correct_label": "正解",
+        "wrong_label": "不正解",
+        "empty": "この画像選択演習には画像がありません。"
       }
     },
     "summary": {

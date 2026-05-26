@@ -1127,6 +1127,16 @@
         "left_label": "Términos",
         "right_label": "Definiciones",
         "empty": "Este ejercicio no tiene pares."
+      },
+      "picture": {
+        "submit": "Comprobar respuesta",
+        "retry": "Intentar de nuevo",
+        "result_correct": "¡Correcto!",
+        "result_wrong": "Casi — la opción resaltada es la respuesta correcta.",
+        "grid_label": "Opciones de imagen",
+        "correct_label": "Correcto",
+        "wrong_label": "Incorrecto",
+        "empty": "Este ejercicio no tiene imágenes."
       }
     },
     "summary": {

@@ -1051,6 +1051,15 @@ lesson:
       left_label: "Όροι"
       right_label: "Ορισμοί"
       empty: "Αυτή η άσκηση δεν περιέχει ζεύγη."
+    picture:
+      submit: "Έλεγχος απάντησης"
+      retry: "Δοκίμασε ξανά"
+      result_correct: "Σωστά!"
+      result_wrong: "Όχι ακριβώς — η επισημασμένη επιλογή είναι η σωστή."
+      grid_label: "Επιλογές εικόνας"
+      correct_label: "Σωστή"
+      wrong_label: "Λάθος"
+      empty: "Αυτή η άσκηση δεν περιέχει εικόνες."
   summary:
     heading: "Τελείωσες"
     aria_label: "Σύνοψη μαθήματος"

@@ -1049,6 +1049,15 @@ lesson:
       left_label: "Termos"
       right_label: "Definições"
       empty: "Este exercício não tem pares."
+    picture:
+      submit: "Verificar resposta"
+      retry: "Tentar de novo"
+      result_correct: "Correto!"
+      result_wrong: "Quase — a opção destacada é a resposta certa."
+      grid_label: "Opções de imagem"
+      correct_label: "Correto"
+      wrong_label: "Errado"
+      empty: "Este exercício não tem imagens."
   summary:
     heading: "Terminado"
     aria_label: "Resumo da lição"
