@@ -4,6 +4,20 @@ Daily-planning view of items outside the phase plan. The
 authoritative roadmap lives in [ROADMAP.md](ROADMAP.md); use
 this file for granular items + status.
 
+## Strategic Expansion: Content-Repository MVP
+
+See [docs/explorations/](explorations/) for the full strategic plan:
+
+- [EXP-INDEX.md](explorations/EXP-INDEX.md): 17 explorations overview
+- [BACKLOG.md](explorations/BACKLOG.md): 223 tasks across 5 phases
+- [ROADMAP-PHASE-1-VORSCHLAG.md](explorations/ROADMAP-PHASE-1-VORSCHLAG.md): Sprint plan for Phase 1
+
+This expansion transforms Adaptive Learner from an AI-chat-only
+tool into a full learning platform with downloadable content
+sets, interactive exercises, and dual-mode operation
+(Content-only + AI-augmented).
+
+
 State: **post v1.26.0 (Phase 42 / Git-Backed Learning
 Repository shipped).** Phase history through Phase 42 +
 per-release notes live in
