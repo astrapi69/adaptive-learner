@@ -9,8 +9,25 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.27.0** (Phase 43 — Content-Loader
-  Plugin, EXP-002 + EXP-005 foundations). The app stops
+- **Current state:** **v1.28.0** (Phase 44 — Lesson Viewer
+  + Matching + Picture-Choice exercises, EXP-002 Sprint 3
+  parts A-D). Adds the viewer the Content-Loader from
+  v1.27.0 was missing: new route
+  ``/lesson/:setSlug/:setId/:filename`` walks the user
+  through theory + exercise steps end-to-end. Matching
+  (tap-to-pair, mobile-first) + picture-choice (with
+  graceful text-only fallback) ship as the first two
+  exercise renderers; free-text + word-tiles render an
+  auto-skip "Coming in v1.29.0" placeholder so pilot
+  lessons stay completable. New ``LessonProgress`` model
+  (Alembic 0018 + Dexie schema v17 + the
+  ``IStorageService.lessonProgress`` namespace) persists
+  per-step scores + time + completion state across both
+  storage modes. Lesson summary screen surfaces score +
+  time + mark-complete affordance. GitHub Pages is now a
+  usable no-API-key learning app for the first time.
+  v1.27.0 = Phase 43 — Content-Loader Plugin, EXP-002 +
+  EXP-005 foundations). The app stops
   requiring an API key for the headline use case: the new
   ``/content`` page downloads pre-built lesson sets from
   public GitHub repos and caches them locally
@@ -73,7 +90,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.27.0.md](changelog/releases/v1.27.0.md)
+  [changelog/releases/v1.28.0.md](changelog/releases/v1.28.0.md)
   for the per-release detail and `git log --oneline` for
   the feature history across Phases 1–42.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
@@ -168,7 +185,7 @@ default path).
 
 ## Data model
 
-**25 SQLAlchemy models** in `backend/app/models/__init__.py`:
+**26 SQLAlchemy models** in `backend/app/models/__init__.py`:
 
 User, UserSettings, LearningProject, LearningProfile,
 Curriculum, LearningTopic, Lesson, LearningSession,
@@ -176,10 +193,10 @@ SessionMessage, SessionRating, SessionNote, ProgressCommit,
 StepEvaluation, MethodSwitch, ImportedConversation,
 ImportedMessage, Subject, Tag, ProjectSubject, ProjectTag,
 UserXP, Badge, UserBadge, UserStreak, AnkiCardSuggestion,
-StudyQuestion.
+StudyQuestion, LessonProgress.
 
 Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Sync
-surface: 28 tables. Full spec in
+surface: 29 tables. Full spec in
 [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md).
 
 ## Plugins (12 shipped)
@@ -251,11 +268,11 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.27.0 baseline:** backend 920 (+1 skipped) + plugins
-  826 + Vitest 1523 = **3269 tests** (+1 skipped). E2E
+- **v1.28.0 baseline:** backend 930 (+1 skipped) + plugins
+  826 + Vitest 1579 = **3335 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
-  gate** (16 specs incl. /content) runs via
+  gate** (17 specs incl. /content + /lesson) runs via
   `make test-dexie-smoke`; aggregated into
   `make release-test` so a red gate blocks the tag.
 
