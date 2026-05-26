@@ -1021,6 +1021,38 @@ repo:
   settings_error_save: "設定を保存できませんでした"
   dexie_unavailable_body: "この機能はサーバーモードでのみ利用できます。git ベースの学習リポジトリを有効にするには、設定でサーバーモードに切り替えてください。"
   back_to_dashboard: "ダッシュボードに戻る"
+# Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
+lesson:
+  page_title: "レッスン"
+  loading: "レッスンを読み込み中…"
+  not_cached_body: "このレッスンはまだダウンロードされていません。コンテンツブラウザを開いてセットをダウンロードしてください。"
+  progress:
+    step_of: "{total} ステップ中 {current} 番目"
+    summary: "まとめ"
+    aria_label: "レッスンの進捗"
+  nav:
+    aria_label: "ステップナビゲーション"
+  action:
+    prev: "前へ"
+    next: "次へ"
+    finish: "レッスンを終了"
+    back_to_browser: "コンテンツブラウザに戻る"
+    open_browser: "コンテンツブラウザを開く"
+  exercise:
+    loading: "演習を読み込み中…"
+    coming_soon: "この演習タイプ ({type}) は将来のバージョンで対応予定です。次のステップへ進んでください。"
+  summary:
+    heading: "完了"
+    aria_label: "レッスンのまとめ"
+    score: "スコア"
+    time: "時間"
+    minutes: "{n} 分"
+    mark_complete: "完了としてマーク"
+    restart: "最初からやり直す"
+    back_to_browser: "コンテンツブラウザに戻る"
+  error:
+    load_failed: "レッスンを読み込めませんでした。"
+    missing_params: "レッスンが選択されていません。コンテンツブラウザから選んでください。"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   page_title: "コンテンツセット"
@@ -1039,8 +1071,12 @@ content:
     download: "ダウンロード"
     update: "更新"
     installed: "インストール済み"
+    open: "開く"
   toast:
     downloaded: "セットをダウンロードし、使用準備が整いました。"
+  warning:
+    no_lessons_in_set: "このセットにはまだレッスンがありません。"
   error:
     list_failed: "コンテンツセットを読み込めませんでした。"
     download_failed: "セットをダウンロードできませんでした。"
+    open_failed: "レッスンを開けませんでした。"

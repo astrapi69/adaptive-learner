@@ -19,8 +19,9 @@
  * touch targets stay above 44px.
  */
 
-import {Download, FolderOpen, RefreshCw} from "lucide-react";
+import {BookOpen, Download, FolderOpen, RefreshCw} from "lucide-react";
 import {useCallback, useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 import {useI18n} from "../hooks/useI18n";
 import {getStorage} from "../storage";
@@ -34,6 +35,7 @@ type DownloadState = "idle" | "downloading" | "done" | "error";
 
 export default function ContentPage() {
     const {t} = useI18n();
+    const navigate = useNavigate();
     const [sets, setSets] = useState<ContentSetEntry[]>([]);
     const [sources, setSources] = useState<ContentSetSource[]>([]);
     const [loading, setLoading] = useState(true);
@@ -72,6 +74,43 @@ export default function ContentPage() {
 
     const setKey = (entry: ContentSetEntry): string =>
         `${entry.source}#${entry.id}`;
+
+    const handleOpenLesson = async (entry: ContentSetEntry) => {
+        // Phase 44 / EXP-002 / 3B: jump to the set's first
+        // cached lesson. Future enhancements can swap this for
+        // a dedicated per-set lesson list page.
+        try {
+            const listing = await getStorage().contentLoader.listLessons(
+                entry.source,
+                entry.id,
+            );
+            const first = listing.lessons[0];
+            if (!first) {
+                notify.warning(
+                    t(
+                        "content.warning.no_lessons_in_set",
+                        "This set has no lessons yet.",
+                    ),
+                );
+                return;
+            }
+            const slug = entry.source.replace(/\//g, "--");
+            navigate(
+                `/lesson/${encodeURIComponent(slug)}/${encodeURIComponent(entry.id)}/${encodeURIComponent(first)}`,
+            );
+        } catch (err) {
+            notify.error(
+                t(
+                    "content.error.open_failed",
+                    "Could not open the lesson.",
+                ),
+                {
+                    apiError:
+                        err instanceof Error ? undefined : undefined,
+                },
+            );
+        }
+    };
 
     const handleDownload = async (entry: ContentSetEntry) => {
         const key = setKey(entry);
@@ -236,6 +275,25 @@ export default function ContentPage() {
                                     )}
                                 </div>
                                 <div className="content-set-action">
+                                    {isCached && (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary content-set-open-btn"
+                                            onClick={() =>
+                                                handleOpenLesson(entry)
+                                            }
+                                            data-testid={`content-set-${entry.id}-open`}
+                                        >
+                                            <BookOpen
+                                                size={14}
+                                                aria-hidden="true"
+                                            />
+                                            {t(
+                                                "content.action.open",
+                                                "Open",
+                                            )}
+                                        </button>
+                                    )}
                                     <button
                                         type="button"
                                         className="btn content-set-download-btn"

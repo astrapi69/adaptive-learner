@@ -1894,9 +1894,183 @@ select:focus {
   .content-set-action {
     width: 100%;
   }
-  .content-set-download-btn {
+  .content-set-download-btn,
+  .content-set-open-btn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/* Phase 44 / EXP-002 — Lesson Viewer page. Mobile-first;
+   prev/next buttons stretch on small viewports so the 44px
+   touch-target rule holds. */
+.lesson-page {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.lesson-header {
+  margin-bottom: var(--space-3);
+}
+
+.lesson-header h1 {
+  margin: var(--space-2) 0 0 0;
+}
+
+.lesson-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.lesson-back-btn:hover {
+  color: var(--fg);
+}
+
+.lesson-description {
+  color: var(--fg-muted);
+  margin: var(--space-2) 0 0 0;
+}
+
+.lesson-progress-bar {
+  position: relative;
+  width: 100%;
+  height: 28px;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin: var(--space-3) 0;
+  border: 1px solid var(--border);
+}
+
+.lesson-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: color-mix(in srgb, var(--accent) 35%, var(--surface));
+  transition: width 0.25s ease-out;
+}
+
+.lesson-progress-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.lesson-step {
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  min-height: 240px;
+}
+
+.lesson-step h2 {
+  margin-top: 0;
+}
+
+.lesson-theory.markdown-body {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.lesson-exercise-placeholder {
+  padding: var(--space-3);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--fg-muted);
+}
+
+.lesson-exercise-prompt-preview {
+  margin-top: var(--space-2);
+  font-style: italic;
+  color: var(--fg);
+}
+
+.lesson-nav {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.lesson-nav-prev {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+}
+
+.lesson-nav-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  margin-left: auto;
+}
+
+.lesson-not-cached-body {
+  padding: var(--space-3);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.lesson-summary {
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+}
+
+.lesson-summary h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0;
+}
+
+.lesson-summary-stats {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lesson-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+@media (max-width: 600px) {
+  .lesson-nav {
+    flex-direction: column;
+  }
+  .lesson-nav-next {
+    margin-left: 0;
+  }
+  .lesson-nav-prev,
+  .lesson-nav-next {
+    width: 100%;
+    justify-content: center;
+  }
+  .lesson-summary-actions .btn {
+    width: 100%;
   }
 }
 

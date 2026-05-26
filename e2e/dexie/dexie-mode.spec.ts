@@ -132,6 +132,18 @@ const ROUTES: RouteCase[] = [
         ],
     },
     {
+        name: "Lesson (viewer, Phase 44, not-cached path)",
+        path: "/lesson/astrapi69--adaptive-learner-content/language-fr-a1/01-greetings.json",
+        // First-visit GH-Pages users land on the "not cached"
+        // shape (no IndexedDB cache yet). Verify the friendly
+        // notice renders rather than a 404 crash.
+        expectedTestIds: [
+            "lesson-loading",
+            "lesson-not-cached",
+            "lesson-page",
+        ],
+    },
+    {
         name: "NotFound",
         path: "/this-route-does-not-exist",
         expectedTestIds: ["not-found"],

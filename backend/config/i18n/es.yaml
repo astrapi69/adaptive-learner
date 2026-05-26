@@ -1023,6 +1023,38 @@ repo:
   settings_error_save: "No se pudieron guardar los ajustes"
   dexie_unavailable_body: "Esta función solo está disponible en modo servidor. Cambia al modo servidor en Ajustes para activar los repositorios de aprendizaje con git."
   back_to_dashboard: "Volver al panel"
+# Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
+lesson:
+  page_title: "Lección"
+  loading: "Cargando lección…"
+  not_cached_body: "Esta lección aún no se ha descargado. Abre el explorador de contenido y descarga primero el set."
+  progress:
+    step_of: "Paso {current} de {total}"
+    summary: "Resumen"
+    aria_label: "Progreso de la lección"
+  nav:
+    aria_label: "Navegación de pasos"
+  action:
+    prev: "Anterior"
+    next: "Siguiente"
+    finish: "Terminar lección"
+    back_to_browser: "Volver al explorador de contenido"
+    open_browser: "Abrir explorador de contenido"
+  exercise:
+    loading: "Cargando ejercicio…"
+    coming_soon: "Este tipo de ejercicio ({type}) llegará en una versión futura. Salta al siguiente paso."
+  summary:
+    heading: "Terminaste"
+    aria_label: "Resumen de la lección"
+    score: "Puntuación"
+    time: "Tiempo"
+    minutes: "{n} min"
+    mark_complete: "Marcar como completada"
+    restart: "Empezar de nuevo"
+    back_to_browser: "Volver al explorador de contenido"
+  error:
+    load_failed: "No se pudo cargar la lección."
+    missing_params: "Ninguna lección seleccionada. Elige una en el explorador de contenido."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   page_title: "Sets de contenido"
@@ -1041,8 +1073,12 @@ content:
     download: "Descargar"
     update: "Actualizar"
     installed: "Instalado"
+    open: "Abrir"
   toast:
     downloaded: "Set descargado y listo para usar."
+  warning:
+    no_lessons_in_set: "Este set aún no tiene lecciones."
   error:
     list_failed: "No se pudieron cargar los sets de contenido."
     download_failed: "No se pudo descargar el set."
+    open_failed: "No se pudo abrir la lección."

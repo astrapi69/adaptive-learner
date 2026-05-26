@@ -1097,6 +1097,44 @@
     "dexie_unavailable_body": "Bu özellik yalnızca sunucu modunda kullanılabilir. Git tabanlı öğrenme depolarını etkinleştirmek için Ayarlar'dan sunucu moduna geçin.",
     "back_to_dashboard": "Panele dön"
   },
+  "lesson": {
+    "page_title": "Ders",
+    "loading": "Ders yükleniyor…",
+    "not_cached_body": "Bu ders henüz indirilmemiş. İçerik tarayıcısını aç ve önce seti indir.",
+    "progress": {
+      "step_of": "{total} adımdan {current}. adım",
+      "summary": "Özet",
+      "aria_label": "Ders ilerlemesi"
+    },
+    "nav": {
+      "aria_label": "Adım gezintisi"
+    },
+    "action": {
+      "prev": "Önceki",
+      "next": "Sonraki",
+      "finish": "Dersi bitir",
+      "back_to_browser": "İçerik tarayıcısına dön",
+      "open_browser": "İçerik tarayıcısını aç"
+    },
+    "exercise": {
+      "loading": "Alıştırma yükleniyor…",
+      "coming_soon": "Bu alıştırma türü ({type}) sonraki sürümlerde gelecek. Bir sonraki adıma geç."
+    },
+    "summary": {
+      "heading": "Tamamladın",
+      "aria_label": "Ders özeti",
+      "score": "Puan",
+      "time": "Süre",
+      "minutes": "{n} dk",
+      "mark_complete": "Tamamlandı olarak işaretle",
+      "restart": "Baştan başla",
+      "back_to_browser": "İçerik tarayıcısına dön"
+    },
+    "error": {
+      "load_failed": "Ders yüklenemedi.",
+      "missing_params": "Ders seçilmedi. İçerik tarayıcısından bir tane seç."
+    }
+  },
   "content": {
     "page_title": "İçerik setleri",
     "intro": "API anahtarı olmadan kullanabileceğiniz hazır ders setleri. İndirmeler yerel olarak önbelleğe alınır ve ilk indirmeden sonra çevrimdışı çalışır.",
@@ -1114,14 +1152,19 @@
       "refreshing": "Yenileniyor…",
       "download": "İndir",
       "update": "Güncelle",
-      "installed": "Yüklendi"
+      "installed": "Yüklendi",
+      "open": "Aç"
     },
     "toast": {
       "downloaded": "Set indirildi ve kullanıma hazır."
     },
+    "warning": {
+      "no_lessons_in_set": "Bu sette henüz ders yok."
+    },
     "error": {
       "list_failed": "İçerik setleri yüklenemedi.",
-      "download_failed": "Set indirilemedi."
+      "download_failed": "Set indirilemedi.",
+      "open_failed": "Ders açılamadı."
     }
   }
 }

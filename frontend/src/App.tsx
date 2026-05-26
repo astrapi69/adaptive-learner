@@ -22,6 +22,7 @@ const Assessment = lazy(() => import("./pages/Assessment"));
 const ContentPage = lazy(() => import("./pages/Content"));
 const Curriculum = lazy(() => import("./pages/Curriculum"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const LessonPage = lazy(() => import("./pages/Lesson"));
 const Import = lazy(() => import("./pages/Import"));
 const ImportDetail = lazy(() => import("./pages/ImportDetail"));
 const LearningRepoPage = lazy(() => import("./pages/LearningRepo"));
@@ -125,6 +126,10 @@ export default function App() {
                         />
                         <Route path="/anki" element={<AnkiPage />} />
                         <Route path="/content" element={<ContentPage />} />
+                        <Route
+                            path="/lesson/:setSlug/:setId/:filename"
+                            element={<LessonPage />}
+                        />
                         <Route
                             path="/projects/:projectId/learning-repo"
                             element={<LearningRepoPage />}

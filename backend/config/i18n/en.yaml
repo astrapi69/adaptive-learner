@@ -1032,6 +1032,38 @@ repo:
   settings_error_save: "Could not save settings"
   dexie_unavailable_body: "This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories."
   back_to_dashboard: "Back to Dashboard"
+# Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
+lesson:
+  page_title: "Lesson"
+  loading: "Loading lesson…"
+  not_cached_body: "This lesson isn't downloaded yet. Open the content browser and download the set first."
+  progress:
+    step_of: "Step {current} of {total}"
+    summary: "Summary"
+    aria_label: "Lesson progress"
+  nav:
+    aria_label: "Step navigation"
+  action:
+    prev: "Previous"
+    next: "Next"
+    finish: "Finish lesson"
+    back_to_browser: "Back to content browser"
+    open_browser: "Open content browser"
+  exercise:
+    loading: "Exercise loading…"
+    coming_soon: "This exercise type ({type}) ships in a future version. Skip to the next step."
+  summary:
+    heading: "You finished"
+    aria_label: "Lesson summary"
+    score: "Score"
+    time: "Time"
+    minutes: "{n} min"
+    mark_complete: "Mark as complete"
+    restart: "Start over"
+    back_to_browser: "Back to content browser"
+  error:
+    load_failed: "Could not load lesson."
+    missing_params: "No lesson selected. Browse content sets to pick one."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   page_title: "Content sets"
@@ -1050,8 +1082,12 @@ content:
     download: "Download"
     update: "Update"
     installed: "Installed"
+    open: "Open"
   toast:
     downloaded: "Set downloaded and ready to use."
+  warning:
+    no_lessons_in_set: "This set has no lessons yet."
   error:
     list_failed: "Could not load content sets."
     download_failed: "Could not download the set."
+    open_failed: "Could not open the lesson."

@@ -1097,6 +1097,44 @@
     "dexie_unavailable_body": "Cette fonctionnalité n'est disponible qu'en mode serveur. Passez en mode serveur dans les Paramètres pour activer les dépôts d'apprentissage avec git.",
     "back_to_dashboard": "Retour au tableau de bord"
   },
+  "lesson": {
+    "page_title": "Leçon",
+    "loading": "Chargement de la leçon…",
+    "not_cached_body": "Cette leçon n'est pas encore téléchargée. Ouvre l'explorateur de contenu et télécharge d'abord le set.",
+    "progress": {
+      "step_of": "Étape {current} sur {total}",
+      "summary": "Résumé",
+      "aria_label": "Progression de la leçon"
+    },
+    "nav": {
+      "aria_label": "Navigation entre les étapes"
+    },
+    "action": {
+      "prev": "Précédent",
+      "next": "Suivant",
+      "finish": "Terminer la leçon",
+      "back_to_browser": "Retour à l'explorateur de contenu",
+      "open_browser": "Ouvrir l'explorateur de contenu"
+    },
+    "exercise": {
+      "loading": "Chargement de l'exercice…",
+      "coming_soon": "Ce type d'exercice ({type}) arrivera dans une version future. Passe à l'étape suivante."
+    },
+    "summary": {
+      "heading": "Terminé",
+      "aria_label": "Résumé de la leçon",
+      "score": "Score",
+      "time": "Temps",
+      "minutes": "{n} min",
+      "mark_complete": "Marquer comme terminée",
+      "restart": "Recommencer",
+      "back_to_browser": "Retour à l'explorateur de contenu"
+    },
+    "error": {
+      "load_failed": "Impossible de charger la leçon.",
+      "missing_params": "Aucune leçon sélectionnée. Choisis-en une dans l'explorateur de contenu."
+    }
+  },
   "content": {
     "page_title": "Sets de contenu",
     "intro": "Sets de leçons préfabriqués utilisables sans clé API. Les téléchargements sont mis en cache localement et fonctionnent hors-ligne après la première récupération.",
@@ -1114,14 +1152,19 @@
       "refreshing": "Rafraîchissement…",
       "download": "Télécharger",
       "update": "Mettre à jour",
-      "installed": "Installé"
+      "installed": "Installé",
+      "open": "Ouvrir"
     },
     "toast": {
       "downloaded": "Set téléchargé et prêt à utiliser."
     },
+    "warning": {
+      "no_lessons_in_set": "Ce set n'a pas encore de leçons."
+    },
     "error": {
       "list_failed": "Impossible de charger les sets de contenu.",
-      "download_failed": "Impossible de télécharger le set."
+      "download_failed": "Impossible de télécharger le set.",
+      "open_failed": "Impossible d'ouvrir la leçon."
     }
   }
 }

@@ -1097,6 +1097,44 @@
     "dexie_unavailable_body": "Diese Funktion ist nur im Server-Modus verfügbar. Wechsle in den Einstellungen zum Server-Modus, um git-basierte Lern-Repositories zu nutzen.",
     "back_to_dashboard": "Zurück zum Dashboard"
   },
+  "lesson": {
+    "page_title": "Lektion",
+    "loading": "Lektion wird geladen…",
+    "not_cached_body": "Diese Lektion ist noch nicht heruntergeladen. Öffne den Inhalts-Browser und lade das Set zuerst herunter.",
+    "progress": {
+      "step_of": "Schritt {current} von {total}",
+      "summary": "Zusammenfassung",
+      "aria_label": "Lektionsfortschritt"
+    },
+    "nav": {
+      "aria_label": "Schritt-Navigation"
+    },
+    "action": {
+      "prev": "Zurück",
+      "next": "Weiter",
+      "finish": "Lektion abschließen",
+      "back_to_browser": "Zurück zur Inhaltsübersicht",
+      "open_browser": "Inhalts-Browser öffnen"
+    },
+    "exercise": {
+      "loading": "Übung wird geladen…",
+      "coming_soon": "Dieser Übungstyp ({type}) folgt in einer späteren Version. Springe zum nächsten Schritt."
+    },
+    "summary": {
+      "heading": "Geschafft",
+      "aria_label": "Lektions-Zusammenfassung",
+      "score": "Punktzahl",
+      "time": "Zeit",
+      "minutes": "{n} Min",
+      "mark_complete": "Als abgeschlossen markieren",
+      "restart": "Neu beginnen",
+      "back_to_browser": "Zurück zur Inhaltsübersicht"
+    },
+    "error": {
+      "load_failed": "Lektion konnte nicht geladen werden.",
+      "missing_params": "Keine Lektion ausgewählt. Wähle eine aus der Inhaltsübersicht."
+    }
+  },
   "content": {
     "page_title": "Inhalte",
     "intro": "Vorgefertigte Lektionssets, die ohne API-Schlüssel nutzbar sind. Heruntergeladene Sets werden lokal gespeichert und sind nach dem ersten Abruf offline verfügbar.",
@@ -1114,14 +1152,19 @@
       "refreshing": "Aktualisiere…",
       "download": "Herunterladen",
       "update": "Aktualisieren",
-      "installed": "Installiert"
+      "installed": "Installiert",
+      "open": "Öffnen"
     },
     "toast": {
       "downloaded": "Set wurde heruntergeladen und ist einsatzbereit."
     },
+    "warning": {
+      "no_lessons_in_set": "Dieses Set enthält noch keine Lektionen."
+    },
     "error": {
       "list_failed": "Inhalte konnten nicht geladen werden.",
-      "download_failed": "Set konnte nicht heruntergeladen werden."
+      "download_failed": "Set konnte nicht heruntergeladen werden.",
+      "open_failed": "Lektion konnte nicht geöffnet werden."
     }
   }
 }
