@@ -64,20 +64,6 @@ tiebreaker.
     storage-mode branch lives inside the storage
     implementations, not at every call site.
   - Filed 2026-05-26 from the GitHub Pages crash report.
-- [ ] **DEXIE-MODE-RELEASE-GATE-01**: Add a Dexie-mode
-  Playwright smoke spec that runs against a built frontend
-  with ``VITE_STORAGE_MODE=dexie`` and NO backend. Covers
-  every nav-reachable route (Landing, Onboarding,
-  Assessment, Dashboard, Session, Curriculum, Progress,
-  Import, Anki, Pronunciation, Settings, LearningRepo) and
-  fails on any uncaught error, error toast, or visible
-  HTTP-status string. Wire as ``make test-dexie-smoke`` and
-  add as a MANDATORY step in
-  ``.claude/rules/release-workflow.md`` Step 5 (next to the
-  existing tsc / Vitest / smoke / pre-commit chain). The
-  Phase 42 production crash (gh-pages users hitting raw 404
-  toast) is exactly what this gate exists to prevent. Filed
-  2026-05-26.
 
 - [x] **BL-25**: Claude.ai per-conversation Markdown export
   collapses to one big user message. Closed by the dedicated
