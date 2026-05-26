@@ -1,0 +1,37 @@
+# Adaptive Learner content repo — root manifest
+# (Phase 43 / EXP-002 / D-105 pilot).
+#
+# This file lives at the repo root. The Content-Loader's
+# default source pin (backend/config/plugins/content-loader.yaml)
+# fetches it on every refresh and reads ``sets`` for the
+# Set Browser listing.
+#
+# Schema reference: ContentManifest in
+# plugins/adaptive-learner-plugin-content-loader/
+#   adaptive_learner_content_loader/models.py.
+schema_version: '1.0'
+name: Adaptive Learner Pilot Content
+description: >-
+  Pilot lesson set ecosystem accompanying the v1.27.0
+  Content-Loader release. Starts with French A1; more sets
+  arrive as community contributions land.
+sets:
+  - id: language-fr-a1
+    title: French A1 (Beginner)
+    language: fr
+    level: A1
+    version: '1.0.0'
+    lesson_count: 2
+    domain: language
+    description: >-
+      Two-lesson pilot covering greetings + numbers 1-10.
+      Roughly 20 minutes total. Demonstrates every Phase 43
+      exercise type (matching, picture-choice, free-text,
+      word-tiles).
+    tags:
+      - beginner
+      - travel
+metadata:
+  author: Asterios Raptis
+  license: CC-BY-SA-4.0
+  homepage: https://github.com/astrapi69/adaptive-learner-content

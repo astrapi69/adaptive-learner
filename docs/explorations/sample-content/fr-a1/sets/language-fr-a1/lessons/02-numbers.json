@@ -1,0 +1,127 @@
+{
+  "id": "02-numbers",
+  "title": "Numbers 1-10",
+  "description": "The first ten numbers in French.",
+  "estimated_minutes": 10,
+  "cards": [
+    {"id": "n-1", "front": "un", "back": "one", "tags": ["number"]},
+    {"id": "n-2", "front": "deux", "back": "two", "tags": ["number"]},
+    {"id": "n-3", "front": "trois", "back": "three", "tags": ["number"]},
+    {"id": "n-4", "front": "quatre", "back": "four", "tags": ["number"]},
+    {"id": "n-5", "front": "cinq", "back": "five", "tags": ["number"]},
+    {"id": "n-6", "front": "six", "back": "six", "tags": ["number"]},
+    {"id": "n-7", "front": "sept", "back": "seven", "tags": ["number"]},
+    {"id": "n-8", "front": "huit", "back": "eight", "tags": ["number"]},
+    {"id": "n-9", "front": "neuf", "back": "nine", "tags": ["number"]},
+    {"id": "n-10", "front": "dix", "back": "ten", "tags": ["number"]}
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Numbers 1 to 10",
+      "body": "# Numbers in French\n\nThe first ten numbers are an everyday building block — you'll need them for time, prices, addresses, phone numbers, and counting almost anything.\n\n| FR | EN |\n|----|----|\n| un | one |\n| deux | two |\n| trois | three |\n| quatre | four |\n| cinq | five |\n| six | six |\n| sept | seven |\n| huit | eight |\n| neuf | nine |\n| dix | ten |\n\nNote the silent letters: **deux**, **trois**, **six**, **dix** all have a silent final consonant in most contexts."
+    },
+    {
+      "id": "ex-match-numbers-low",
+      "type": "exercise",
+      "title": "Match 1-5",
+      "exercise": {
+        "id": "ex-match-numbers-low",
+        "type": "matching",
+        "prompt": "Match the French numbers 1 through 5 to their English equivalents.",
+        "card_ids": ["n-1", "n-2", "n-3", "n-4", "n-5"],
+        "pairs": [
+          {"left": "un", "right": "one"},
+          {"left": "deux", "right": "two"},
+          {"left": "trois", "right": "three"},
+          {"left": "quatre", "right": "four"},
+          {"left": "cinq", "right": "five"}
+        ]
+      }
+    },
+    {
+      "id": "ex-match-numbers-high",
+      "type": "exercise",
+      "title": "Match 6-10",
+      "exercise": {
+        "id": "ex-match-numbers-high",
+        "type": "matching",
+        "prompt": "Match the French numbers 6 through 10 to their English equivalents.",
+        "card_ids": ["n-6", "n-7", "n-8", "n-9", "n-10"],
+        "pairs": [
+          {"left": "six", "right": "six"},
+          {"left": "sept", "right": "seven"},
+          {"left": "huit", "right": "eight"},
+          {"left": "neuf", "right": "nine"},
+          {"left": "dix", "right": "ten"}
+        ]
+      }
+    },
+    {
+      "id": "step-pronunciation",
+      "type": "theory",
+      "title": "Pronunciation tips",
+      "body": "## A few traps\n\n- **Six** and **dix** end in /s/ when said alone (\"sees\", \"deese\") but the /s/ disappears before a consonant (\"si livres\" — six books). Bend the rule for now; native speakers will understand both ways.\n- **Neuf** ends in /f/ except in two fixed expressions where it becomes /v/: **neuf ans** (nine years), **neuf heures** (nine o'clock).\n- **Huit** keeps its silent **h**: there's no aspirated H sound in French at all."
+    },
+    {
+      "id": "ex-free-five",
+      "type": "exercise",
+      "title": "Type the number",
+      "exercise": {
+        "id": "ex-free-five",
+        "type": "free_text",
+        "prompt": "Type the French word for the number 5.",
+        "card_ids": ["n-5"],
+        "accept": ["cinq", "Cinq"],
+        "hint": "Four letters, starts with C.",
+        "distractors": ["six", "sept", "quatre"]
+      }
+    },
+    {
+      "id": "ex-tile-counting",
+      "type": "exercise",
+      "title": "Arrange in order: 1-3",
+      "exercise": {
+        "id": "ex-tile-counting",
+        "type": "word_tiles",
+        "prompt": "Arrange the tiles in counting order from one to three.",
+        "card_ids": ["n-1", "n-2", "n-3"],
+        "tiles": ["un", "deux", "trois"],
+        "hint": "Same order as in English: one, two, three."
+      }
+    },
+    {
+      "id": "ex-pick-seven",
+      "type": "exercise",
+      "title": "Spot the number seven",
+      "exercise": {
+        "id": "ex-pick-seven",
+        "type": "picture_choice",
+        "prompt": "Which image shows seven items?",
+        "card_ids": ["n-7"],
+        "images": [
+          {
+            "src": "assets/img/five-stars.png",
+            "label": "cinq"
+          },
+          {
+            "src": "assets/img/six-circles.png",
+            "label": "six"
+          },
+          {
+            "src": "assets/img/seven-dots.png",
+            "label": "sept",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/eight-squares.png",
+            "label": "huit"
+          }
+        ],
+        "hint": "Count the items in each image.",
+        "distractors": ["cinq", "six", "huit"]
+      }
+    }
+  ]
+}

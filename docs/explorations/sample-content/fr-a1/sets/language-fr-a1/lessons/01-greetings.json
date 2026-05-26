@@ -1,0 +1,139 @@
+{
+  "id": "01-greetings",
+  "title": "Greetings",
+  "description": "Basic French greetings and farewells.",
+  "estimated_minutes": 10,
+  "cards": [
+    {
+      "id": "bonjour",
+      "front": "Bonjour",
+      "back": "Hello / Good morning",
+      "notes": "Used in formal and informal contexts during the daytime.",
+      "tags": ["greeting", "daytime"]
+    },
+    {
+      "id": "bonsoir",
+      "front": "Bonsoir",
+      "back": "Good evening",
+      "notes": "Used in the evening, both as a greeting and a farewell.",
+      "tags": ["greeting", "evening"]
+    },
+    {
+      "id": "salut",
+      "front": "Salut",
+      "back": "Hi / Bye (informal)",
+      "notes": "Informal — use with friends and family, not with strangers or in formal settings.",
+      "tags": ["greeting", "informal"]
+    },
+    {
+      "id": "merci",
+      "front": "Merci",
+      "back": "Thank you",
+      "notes": "Polite acknowledgement. Add 'beaucoup' (a lot) for emphasis: 'Merci beaucoup'.",
+      "tags": ["politeness"]
+    },
+    {
+      "id": "au-revoir",
+      "front": "Au revoir",
+      "back": "Goodbye",
+      "notes": "Standard farewell, formal and informal both work.",
+      "tags": ["farewell"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Why greetings matter",
+      "body": "# Greetings in French\n\nFrench speakers use distinct greetings for different times of day and degrees of formality. Getting this right is the first step to sounding natural — using **Bonjour** in the evening or **Salut** with a stranger is the equivalent of saying \"yo\" to your boss in English.\n\nThis lesson covers five everyday greetings + farewells you'll use in every conversation."
+    },
+    {
+      "id": "step-formality",
+      "type": "theory",
+      "title": "Formal vs informal",
+      "body": "## The formal / informal split\n\n- **Bonjour / Bonsoir / Au revoir** — work in every context. When in doubt, use these.\n- **Salut** — informal only. Friends, family, peers your age. Never with a stranger, a customer, or anyone older you're meeting for the first time.\n\n*Tip*: in France, you say **Bonjour** when entering a small shop or a bakery, even if you don't plan to buy anything. Skipping it reads as rude."
+    },
+    {
+      "id": "ex-match-greetings",
+      "type": "exercise",
+      "title": "Match greetings to translations",
+      "exercise": {
+        "id": "ex-match-greetings",
+        "type": "matching",
+        "prompt": "Match each French greeting with its English translation.",
+        "card_ids": ["bonjour", "bonsoir", "salut", "au-revoir"],
+        "pairs": [
+          {"left": "Bonjour", "right": "Hello / Good morning"},
+          {"left": "Bonsoir", "right": "Good evening"},
+          {"left": "Salut", "right": "Hi / Bye (informal)"},
+          {"left": "Au revoir", "right": "Goodbye"}
+        ]
+      }
+    },
+    {
+      "id": "step-merci",
+      "type": "theory",
+      "title": "Saying thanks",
+      "body": "## Merci\n\n**Merci** is the universal \"thank you\". Add **beaucoup** to make it stronger:\n\n- *Merci* — Thanks\n- *Merci beaucoup* — Thanks a lot\n\nThe response from the other person is usually **De rien** (\"it's nothing\") or **Je vous en prie** (formal — \"you're welcome\")."
+    },
+    {
+      "id": "ex-free-thanks",
+      "type": "exercise",
+      "title": "Translate to French",
+      "exercise": {
+        "id": "ex-free-thanks",
+        "type": "free_text",
+        "prompt": "How do you say 'Thank you' in French?",
+        "card_ids": ["merci"],
+        "accept": ["Merci", "merci", "Merci."],
+        "hint": "It starts with M.",
+        "distractors": ["Bonjour", "Salut", "Au revoir"]
+      }
+    },
+    {
+      "id": "ex-tile-aurevoir",
+      "type": "exercise",
+      "title": "Arrange the farewell",
+      "exercise": {
+        "id": "ex-tile-aurevoir",
+        "type": "word_tiles",
+        "prompt": "Arrange the tiles to spell the standard farewell.",
+        "card_ids": ["au-revoir"],
+        "tiles": ["Au", "revoir"],
+        "hint": "Two short words; the first is two letters long."
+      }
+    },
+    {
+      "id": "ex-pick-evening",
+      "type": "exercise",
+      "title": "Pick the evening greeting",
+      "exercise": {
+        "id": "ex-pick-evening",
+        "type": "picture_choice",
+        "prompt": "You arrive at a friend's house at 8 PM. Which greeting do you use?",
+        "card_ids": ["bonsoir"],
+        "images": [
+          {
+            "src": "assets/img/sunrise.png",
+            "label": "Bonjour"
+          },
+          {
+            "src": "assets/img/dusk.png",
+            "label": "Bonsoir",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/handshake.png",
+            "label": "Salut"
+          },
+          {
+            "src": "assets/img/door.png",
+            "label": "Au revoir"
+          }
+        ],
+        "hint": "What part of the day is 8 PM?",
+        "distractors": ["Bonjour", "Salut", "Au revoir"]
+      }
+    }
+  ]
+}
