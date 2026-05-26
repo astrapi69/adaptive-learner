@@ -29,3 +29,8 @@ class ContentLoaderPlugin(BasePlugin):
         "both API and Dexie (GitHub Pages) storage modes."
     )
     author = "Asterios Raptis"
+
+    def get_routes(self) -> list:
+        from .routes import router
+
+        return [router]

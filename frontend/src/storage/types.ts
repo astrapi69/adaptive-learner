@@ -196,6 +196,119 @@ export interface ITrackingNamespace {
     commits(projectId: string): Promise<ProgressCommit[]>;
 }
 
+// --- Content-Loader (Phase 43 / EXP-002) -----------------------------------
+
+/**
+ * One row in the Set Browser. Mirrors the backend's
+ * ``SetEntryResponse`` 1:1 so the wire shape stays in lockstep
+ * across ApiStorage + DexieStorage.
+ */
+export interface ContentSetEntry {
+    source: string;
+    branch: string;
+    id: string;
+    title: string;
+    language: string;
+    level: string;
+    domain: string;
+    version: string;
+    lesson_count: number;
+    description: string | null;
+    tags: string[];
+    cover_image: string | null;
+    cached_version: string | null;
+    update_available: boolean;
+}
+
+export interface ContentSetSource {
+    source: string;
+    branch: string;
+}
+
+export interface ContentSetsList {
+    sets: ContentSetEntry[];
+    sources: ContentSetSource[];
+}
+
+export interface ContentLessonList {
+    set_id: string;
+    source: string;
+    version: string | null;
+    lessons: string[];
+}
+
+/**
+ * Lesson shape mirrored from the backend's
+ * ``adaptive_learner_content_loader.schema.Lesson``. The
+ * viewer (Phase 44) renders these directly. Optional fields
+ * stay nullable / optional so the type-checker matches the
+ * Pydantic JSON output exactly.
+ */
+export interface ContentLessonStep {
+    id: string;
+    type: "theory" | "exercise";
+    title?: string | null;
+    body?: string | null;
+    exercise?: ContentLessonExercise | null;
+}
+
+export interface ContentLessonExercise {
+    id: string;
+    type: "matching" | "picture_choice" | "free_text" | "word_tiles";
+    prompt: string;
+    card_ids: string[];
+    pairs?: Array<{left: string; right: string}> | null;
+    images?:
+        | Array<{src: string; label: string; is_correct?: string}>
+        | null;
+    accept?: string[] | null;
+    tiles?: string[] | null;
+    accept_orderings?: number[][] | null;
+    distractors: string[];
+    hint?: string | null;
+}
+
+export interface ContentLessonCard {
+    id: string;
+    front: string;
+    back: string;
+    notes?: string | null;
+    image?: string | null;
+    audio?: string | null;
+    tags: string[];
+}
+
+export interface ContentLesson {
+    id: string;
+    title: string;
+    description?: string | null;
+    estimated_minutes: number;
+    cards: ContentLessonCard[];
+    steps: ContentLessonStep[];
+}
+
+/**
+ * Content-Loader namespace. ApiStorage delegates to
+ * ``/api/plugins/content-loader/*``; DexieStorage runs the
+ * GitHub fetcher + IndexedDB cache client-side so GH Pages
+ * users get the same surface without a backend.
+ *
+ * ``listSets`` MUST tolerate offline gracefully: a failed
+ * upstream fetch returns the cached sets (if any) instead
+ * of throwing — the Set Browser stays usable on a flaky
+ * connection.
+ */
+export interface IContentLoaderNamespace {
+    listSets(): Promise<ContentSetsList>;
+    downloadSet(source: string, setId: string): Promise<ContentSetEntry>;
+    listLessons(source: string, setId: string): Promise<ContentLessonList>;
+    getLesson(
+        source: string,
+        setId: string,
+        filename: string,
+    ): Promise<ContentLesson>;
+}
+
 export interface IToolsNamespace {
     recommendations(projectId: string, lang: string): Promise<ToolRecommendation[]>;
     spaced(projectId: string, lang: string): Promise<SpacedRecommendation[]>;
@@ -646,6 +759,7 @@ export interface IStorageService {
     anki: IAnkiNamespace;
     pronunciation: IPronunciationNamespace;
     notebooklm: INotebookLMNamespace;
+    contentLoader: IContentLoaderNamespace;
 
     /**
      * Phase 41F Danger Zone reset. Wipes every piece of learner

@@ -1059,6 +1059,38 @@ export const api = {
         },
     },
 
+    // --- Content-Loader plugin (Phase 43 / EXP-002) ---------------------
+
+    contentLoader: {
+        /** GET /api/plugins/content-loader/sets */
+        listSets: () =>
+            apiCall<import("../storage/types").ContentSetsList>(
+                "/plugins/content-loader/sets",
+            ),
+        /** POST /api/plugins/content-loader/sets/{src}/{id}/download */
+        downloadSet: (source: string, setId: string) => {
+            const slug = source.replace(/\//g, "--");
+            return apiCall<import("../storage/types").ContentSetEntry>(
+                `/plugins/content-loader/sets/${encodeURIComponent(slug)}/${encodeURIComponent(setId)}/download`,
+                {method: "POST"},
+            );
+        },
+        /** GET /api/plugins/content-loader/sets/{src}/{id}/lessons */
+        listLessons: (source: string, setId: string) => {
+            const slug = source.replace(/\//g, "--");
+            return apiCall<import("../storage/types").ContentLessonList>(
+                `/plugins/content-loader/sets/${encodeURIComponent(slug)}/${encodeURIComponent(setId)}/lessons`,
+            );
+        },
+        /** GET /api/plugins/content-loader/sets/{src}/{id}/lessons/{filename} */
+        getLesson: (source: string, setId: string, filename: string) => {
+            const slug = source.replace(/\//g, "--");
+            return apiCall<import("../storage/types").ContentLesson>(
+                `/plugins/content-loader/sets/${encodeURIComponent(slug)}/${encodeURIComponent(setId)}/lessons/${encodeURIComponent(filename)}`,
+            );
+        },
+    },
+
     // --- Pronunciation Practice (v1.18.0 / Phase 31C) -------------------
 
     pronunciation: {

@@ -94,6 +94,12 @@ import {
 import {buildSpacedRecommendations, rankTools, recencyFromCommits} from "./tools";
 import {ApiError} from "../api/client";
 import {computeContentHash} from "../chat_import/content-hash";
+import {
+    downloadSetDexie,
+    getLessonDexie,
+    listLessonsDexie,
+    listSetsDexie,
+} from "./content-loader-dexie";
 import type {AIProvider, LearningMethod} from "../lib/constants";
 import type {
     ApiKeySetBody,
@@ -2031,6 +2037,20 @@ export const dexieStorage: IStorageService = {
         markExported: (cardIds) => markAnkiCardsExported(cardIds),
     },
 
+    // --- Content-Loader (Phase 43 / EXP-002) -----------------------------
+    //
+    // GH-Pages-shape: fetch from raw.githubusercontent.com,
+    // cache in IndexedDB. The default source list lives in
+    // ``content-loader-dexie.ts`` (Settings UI for editing
+    // the sources ships later — v1.27.0 is read-only).
+    contentLoader: {
+        listSets: () => listSetsDexie(),
+        downloadSet: (source, setId) => downloadSetDexie(source, setId),
+        listLessons: (source, setId) => listLessonsDexie(source, setId),
+        getLesson: (source, setId, filename) =>
+            getLessonDexie(source, setId, filename),
+    },
+
     // Phase 41F Danger Zone: typed-confirm reset for Dexie mode.
     // Clears every table on the main Dexie DB plus the separate
     // auto-backup ring (kept in its own Dexie database by
@@ -2075,6 +2095,8 @@ export const dexieStorage: IStorageService = {
             "userStreaks",
             "ankiCards",
             "studyQuestions",
+            "contentSets",
+            "contentSetFiles",
         ];
         let cleared = 0;
         for (const name of tableNames) {

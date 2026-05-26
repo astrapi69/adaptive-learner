@@ -342,6 +342,65 @@ export interface AnkiCardRow {
     updated_at: string;
 }
 
+/**
+ * Phase 43 / EXP-002 — Content-Loader cache. One row per
+ * downloaded set version. ``id`` is a composite cache key
+ * ``"{source-slug}/{set_id}/{version}"`` so Dexie indexes
+ * cheaply and the file-table foreign key
+ * (``contentSetFiles.set_pk``) stays human-readable in dev
+ * tools.
+ *
+ * The row stores the full ``SetEntry``-shaped metadata so
+ * the Set Browser can render the listing without joining
+ * files. Lesson + asset bytes live in ``contentSetFiles``.
+ */
+export interface ContentSetRow {
+    /** Composite cache key. See class doc. */
+    id: string;
+    source: string;
+    branch: string;
+    set_id: string;
+    version: string;
+    /** Mirrors the backend SetEntryResponse shape so the
+     *  Set Browser renders cached + upstream sets the same
+     *  way. */
+    title: string;
+    language: string;
+    level: string;
+    domain: string;
+    lesson_count: number;
+    description: string | null;
+    tags: string;  // JSON-encoded array
+    cover_image: string | null;
+    /** ISO-8601 timestamp of the most recent download. */
+    downloaded_at: string;
+    /** Cached repo-level manifest YAML (verbatim, for
+     *  re-parsing after a schema upgrade). */
+    manifest_yaml: string;
+}
+
+/**
+ * One file (lesson JSON or asset) inside a cached set. The
+ * Phase 44 viewer reads lessons via this table. ``filename``
+ * matches the backend cache layout
+ * (``lessons/{lesson_id}.json`` or
+ * ``assets/{rel_path}``).
+ */
+export interface ContentSetFileRow {
+    /** Composite key: ``"{set_pk}#{filename}"``. */
+    id: string;
+    /** FK to ``contentSets.id``. */
+    set_pk: string;
+    filename: string;
+    /** Body. Most files are text (lesson JSON); the viewer
+     *  decodes when needed. Binary assets are base64 in
+     *  this column (the asset loader handles decoding). */
+    body: string;
+    /** ``text`` or ``binary``; the viewer picks the right
+     *  decoder. */
+    encoding: "text" | "base64";
+}
+
 /** Per-user streak state (Phase 29C). One row per user. */
 export interface UserStreakRow {
     id: string;
@@ -418,6 +477,11 @@ export class AdaptiveLearnerDB extends Dexie {
     userStreaks!: EntityTable<UserStreakRow, "id">;
     ankiCards!: EntityTable<AnkiCardRow, "id">;
     studyQuestions!: EntityTable<StudyQuestionRow, "id">;
+    // Phase 43 / EXP-002 — Content-Loader cache. The Set
+    // Browser (commit 7) reads ``contentSets``; the lesson
+    // viewer (Phase 44) reads ``contentSetFiles``.
+    contentSets!: EntityTable<ContentSetRow, "id">;
+    contentSetFiles!: EntityTable<ContentSetFileRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -646,6 +710,16 @@ export class AdaptiveLearnerDB extends Dexie {
                         }
                     });
             });
+        // Schema v16 — Phase 43 / EXP-002. Content-Loader
+        // cache for Dexie-mode (GitHub Pages) users.
+        // ``contentSets`` carries one row per downloaded set
+        // (cache_key = "{source-slug}/{set_id}/{version}");
+        // ``contentSetFiles`` carries the raw text/bytes of
+        // each lesson + asset.
+        this.version(16).stores({
+            contentSets: "id, source, set_id, version, downloaded_at",
+            contentSetFiles: "id, set_pk, filename",
+        });
     }
 }
 

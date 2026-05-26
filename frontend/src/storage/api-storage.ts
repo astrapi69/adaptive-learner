@@ -249,6 +249,18 @@ export const apiStorage: IStorageService = {
         studyGuide: (projectId) => api.notebooklm.studyGuide(projectId),
     },
 
+    // --- Content-Loader (Phase 43 / EXP-002) -----------------------------
+
+    contentLoader: {
+        listSets: () => api.contentLoader.listSets(),
+        downloadSet: (source, setId) =>
+            api.contentLoader.downloadSet(source, setId),
+        listLessons: (source, setId) =>
+            api.contentLoader.listLessons(source, setId),
+        getLesson: (source, setId, filename) =>
+            api.contentLoader.getLesson(source, setId, filename),
+    },
+
     // Phase 41F Danger Zone: typed-confirm reset. ApiStorage hands
     // the token straight to the backend; the 400 gate lives server-
     // side (services/reset_service.CONFIRMATION_TOKEN).
