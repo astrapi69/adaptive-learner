@@ -21,7 +21,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
        test-plugin-session test-plugin-tracking \
-       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-e2e test-e2e-ui \
+       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-e2e test-e2e-ui test-dexie-smoke \
        test-coverage test-coverage-backend test-coverage-frontend \
        check-types check-types-backend check-types-frontend \
        check-blockers archive-task archive-task-dry install-hooks \
@@ -325,6 +325,21 @@ test-e2e: ## Run Playwright e2e tests (starts servers automatically)
 test-e2e-ui: ## Run e2e tests with Playwright UI
 	cd e2e && npx playwright test --ui
 
+# DEXIE-MODE-RELEASE-GATE-01 — builds the frontend in
+# ``VITE_STORAGE_MODE=dexie`` (matching the GitHub Pages
+# deployment) and runs the dexie-mode Playwright spec against
+# the static preview, with NO backend running. Catches the
+# class of bug where a feature works in API mode but crashes
+# in Dexie mode (Phase 42 / Learning Repository, May 2026).
+# Exits non-zero if any error toast appears or any route
+# crashes on its primary content render.
+test-dexie-smoke: ## Dexie-mode release gate (build + Playwright preview-mode smoke)
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	@echo ""
+	@echo "=== Running Dexie-mode Playwright smoke ==="
+	cd e2e && npx playwright test --config=playwright.dexie.config.ts
+
 # --- Version sync ---
 
 sync-versions: ## Propagate backend/pyproject.toml version to all subsystems
@@ -449,7 +464,10 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo "=== Plugin lockfile drift (verify-plugin-locks) ==="
 	@$(MAKE) verify-plugin-locks
 	@echo ""
-	@echo "Release test gate green. Run Playwright smoke separately: cd e2e && npx playwright test --project=smoke"
+	@echo "=== Dexie-mode release gate (DEXIE-MODE-RELEASE-GATE-01) ==="
+	@$(MAKE) test-dexie-smoke
+	@echo ""
+	@echo "Release test gate green. Run full Playwright smoke separately: cd e2e && npx playwright test --project=smoke"
 
 release-build: ## Build release artifacts (release-workflow.md Step 6)
 	@PACKAGE_MODE=$$(grep "^package-mode" backend/pyproject.toml | head -1 | awk '{print $$3}' | tr -d ' '); \

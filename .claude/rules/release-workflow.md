@@ -283,6 +283,18 @@ cd frontend && npx tsc --noEmit && npm run test
 # Smoke tests (fast Playwright suite)
 npx playwright test --project=smoke
 
+# Dexie-mode release gate (MANDATORY since 2026-05-26,
+# DEXIE-MODE-RELEASE-GATE-01). Builds the frontend with
+# VITE_STORAGE_MODE=dexie (matching the GitHub Pages
+# deployment) and walks every nav-reachable route against a
+# vite-preview static server, NO backend. Any error toast or
+# uncaught error on any route fails this gate. The Phase 42
+# Learning Repository ship-and-pray (raw HTTP 404 on Settings /
+# Dashboard / Learning-Repo for every gh-pages visitor for ~24h
+# after v1.26.0) is exactly the failure mode this prevents.
+# Aggregated into `make release-test` so it cannot be skipped.
+make test-dexie-smoke
+
 # Linting and type checking (MANDATORY)
 cd backend && poetry run ruff check app/ && poetry run mypy app/
 
@@ -451,6 +463,7 @@ as "done". Missing items block the release.
 - [ ] Frontend `tsc --noEmit` clean
 - [ ] `npm run test` (Vitest) green
 - [ ] `npx playwright test --project=smoke` green
+- [ ] `make test-dexie-smoke` green (MANDATORY since 2026-05-26: DEXIE-MODE-RELEASE-GATE-01 — walks every nav-reachable route against the GH-Pages-shape build with NO backend; any error toast or page crash blocks the release)
 - [ ] `ruff check` clean
 - [ ] `mypy app/` clean (MANDATORY since v0.26.x; not "if active")
 - [ ] `poetry run pre-commit run --all-files` clean (MANDATORY)

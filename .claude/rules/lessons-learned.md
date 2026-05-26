@@ -3330,3 +3330,86 @@ framework level.
 - `.claude/rules/code-hygiene.md` § "Error handling
   architecture" — filters are not errors, the same way a 401
   is not a 500. Keep the channels separate.
+
+## Dexie-mode is part of the contract: same-commit or not at all
+
+Surfaced 2026-05-26 from the v1.26.0 Phase 42 / Learning
+Repository incident. The new ``LearningRepoSettingsSection``,
+``LearningRepo`` page, and ``LearningRepoWidget`` all called
+``api.pluginSettings.*`` / ``api.learningRepo.*`` directly,
+bypassing ``IStorageService``. The feature shipped to main,
+the GH-Pages workflow rebuilt with ``VITE_STORAGE_MODE=dexie``,
+and every user landing on the public deployment got a raw
+``HTTP 404`` toast on Settings, Dashboard, and the
+Learning-Repo page. The bug went undetected for ~24h because
+no automated gate exercised the GH-Pages-shape build.
+
+### Rule
+
+**Any new feature whose default path makes an API call MUST
+either:**
+
+1. Route through ``getStorage()`` so ``DexieStorage`` carries
+   the client-side path (preferred — keeps both modes alive),
+   **OR**
+2. Gracefully degrade in Dexie mode with a friendly,
+   user-facing "not available in browser mode" message —
+   shipped IN THE SAME COMMIT as the feature.
+
+"We'll add the Dexie path in a follow-up" is exactly the
+pattern this rule exists to ban. Follow-ups land at "as soon
+as someone has time"; the GH-Pages deploy runs in minutes.
+The half-shipped state spends ~all of its time in production.
+
+### Why the rule lives at this scope
+
+The GitHub Pages deployment at
+``https://astrapi69.github.io/adaptive-learner/`` is the
+**first impression** for every prospective user. Modern users
+have zero tolerance for raw HTTP errors and stack traces —
+one error toast and the tab is closed forever. Server-mode
+users (the dev's own machine) can take a degraded experience;
+public visitors cannot.
+
+### Enforcement
+
+- ``make test-dexie-smoke`` walks every nav-reachable route
+  against the ``VITE_STORAGE_MODE=dexie`` build with NO
+  backend. Any error toast or uncaught error fails the gate.
+- Aggregated into ``make release-test`` so it cannot be
+  skipped at release time.
+- The gate exists in ``e2e/dexie/dexie-mode.spec.ts`` +
+  ``e2e/playwright.dexie.config.ts`` and runs in ~20 seconds
+  (vite preview + 15 chromium navigations + assertions).
+
+### Concrete failure modes the rule prevents
+
+- A component that imports ``api.*`` directly and crashes
+  with 404 in Dexie mode (Phase 42 / Learning Repository).
+- A settings panel that fetches plugin config from a
+  backend-only endpoint (``/api/plugin-settings/{name}``)
+  with no DexieStorage equivalent.
+- A "save" button that toasts a raw ``ApiError.detail`` on
+  failure instead of routing through the friendly mapper
+  shipped in DEV-MODE-FRIENDLY-ERRORS-01.
+- A new plugin route surfaced from a Settings tab where the
+  plugin's manifest only mounts under ApiStorage's plugin
+  discovery.
+
+### Pairs with
+
+- "Operational gaps masquerade as wired infrastructure" —
+  same family. A feature that works in API mode is not the
+  same as a feature that works. A gate that only exercises
+  one mode is operationally half-wired.
+- ``DEV-MODE-FRIENDLY-ERRORS-01`` (closed in commit 3eae5e4)
+  — the friendly-error mapper handles "API errors should
+  never reach the user" at the toast layer; this rule
+  handles the same problem at the architectural layer
+  ("the API call shouldn't happen in the first place when
+  Dexie has the data").
+- ``PHASE-42-STORAGE-ABSTRACTION-01`` (open backlog) —
+  retroactive cleanup of the v1.26.0 incident; ports the
+  Learning Repository to the storage abstraction so the
+  Dexie-mode path works for real instead of merely degrading
+  gracefully.
