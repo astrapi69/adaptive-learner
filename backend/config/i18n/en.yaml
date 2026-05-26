@@ -1052,6 +1052,14 @@ lesson:
   exercise:
     loading: "Exercise loading…"
     coming_soon: "This exercise type ({type}) ships in a future version. Skip to the next step."
+    matching:
+      submit: "Check answers"
+      retry: "Try again"
+      counter: "{matched} / {total} paired"
+      result: "Score: {correct} / {total}"
+      left_label: "Terms"
+      right_label: "Definitions"
+      empty: "This matching exercise has no pairs."
   summary:
     heading: "You finished"
     aria_label: "Lesson summary"

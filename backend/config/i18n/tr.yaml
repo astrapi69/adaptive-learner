@@ -1041,6 +1041,14 @@ lesson:
   exercise:
     loading: "Alıştırma yükleniyor…"
     coming_soon: "Bu alıştırma türü ({type}) sonraki sürümlerde gelecek. Bir sonraki adıma geç."
+    matching:
+      submit: "Cevapları kontrol et"
+      retry: "Tekrar dene"
+      counter: "{total} eşleşmeden {matched}"
+      result: "Puan: {correct} / {total}"
+      left_label: "Terimler"
+      right_label: "Tanımlar"
+      empty: "Bu alıştırmada eşleşme yok."
   summary:
     heading: "Tamamladın"
     aria_label: "Ders özeti"

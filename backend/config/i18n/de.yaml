@@ -1046,6 +1046,14 @@ lesson:
   exercise:
     loading: "Übung wird geladen…"
     coming_soon: "Dieser Übungstyp ({type}) folgt in einer späteren Version. Springe zum nächsten Schritt."
+    matching:
+      submit: "Antworten prüfen"
+      retry: "Erneut versuchen"
+      counter: "{matched} / {total} zugeordnet"
+      result: "Punktzahl: {correct} / {total}"
+      left_label: "Begriffe"
+      right_label: "Definitionen"
+      empty: "Diese Zuordnungs-Übung hat keine Paare."
   summary:
     heading: "Geschafft"
     aria_label: "Lektions-Zusammenfassung"

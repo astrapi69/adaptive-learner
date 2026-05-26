@@ -1041,6 +1041,14 @@ lesson:
   exercise:
     loading: "A carregar o exercício…"
     coming_soon: "Este tipo de exercício ({type}) chegará numa versão futura. Passa para o próximo passo."
+    matching:
+      submit: "Verificar respostas"
+      retry: "Tentar de novo"
+      counter: "{matched} / {total} emparelhados"
+      result: "Pontuação: {correct} / {total}"
+      left_label: "Termos"
+      right_label: "Definições"
+      empty: "Este exercício não tem pares."
   summary:
     heading: "Terminado"
     aria_label: "Resumo da lição"

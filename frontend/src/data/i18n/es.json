@@ -1118,7 +1118,16 @@
     },
     "exercise": {
       "loading": "Cargando ejercicio…",
-      "coming_soon": "Este tipo de ejercicio ({type}) llegará en una versión futura. Salta al siguiente paso."
+      "coming_soon": "Este tipo de ejercicio ({type}) llegará en una versión futura. Salta al siguiente paso.",
+      "matching": {
+        "submit": "Comprobar respuestas",
+        "retry": "Intentar de nuevo",
+        "counter": "{matched} / {total} emparejados",
+        "result": "Puntuación: {correct} / {total}",
+        "left_label": "Términos",
+        "right_label": "Definiciones",
+        "empty": "Este ejercicio no tiene pares."
+      }
     },
     "summary": {
       "heading": "Terminaste",

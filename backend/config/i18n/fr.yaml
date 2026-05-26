@@ -1043,6 +1043,14 @@ lesson:
   exercise:
     loading: "Chargement de l'exercice…"
     coming_soon: "Ce type d'exercice ({type}) arrivera dans une version future. Passe à l'étape suivante."
+    matching:
+      submit: "Vérifier les réponses"
+      retry: "Réessayer"
+      counter: "{matched} / {total} appariés"
+      result: "Score : {correct} / {total}"
+      left_label: "Termes"
+      right_label: "Définitions"
+      empty: "Cet exercice n'a pas de paires."
   summary:
     heading: "Terminé"
     aria_label: "Résumé de la leçon"
