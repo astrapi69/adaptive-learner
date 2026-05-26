@@ -30,17 +30,22 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+import MatchingExercise from "../components/exercises/MatchingExercise";
+import PictureChoiceExercise from "../components/exercises/PictureChoiceExercise";
 import {useI18n} from "../hooks/useI18n";
 import {useLesson} from "../hooks/useLesson";
 import {
     parseStepAnchor,
     rewriteAnchors,
 } from "../lib/lesson-anchors";
-import type {ContentLessonStep} from "../storage/types";
+import type {
+    ContentLessonExercise,
+    ContentLessonStep,
+} from "../storage/types";
 
 const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
-    // Commits 4 + 5 wire these. Until then, every exercise
-    // type renders the "Coming soon" placeholder.
+    "matching",
+    "picture_choice",
 ]);
 
 interface UrlParams {
@@ -72,6 +77,7 @@ export default function LessonPage() {
         goPrev,
         goToStep,
         goToStepById,
+        recordStepResult,
         markCompleted,
     } = useLesson({source, setId, lessonFilename: filename});
 
@@ -251,7 +257,18 @@ export default function LessonPage() {
                             onAnchorClick={goToStepById}
                         />
                     ) : (
-                        <ExerciseStepPlaceholder step={step!} />
+                        <ExerciseDispatcher
+                            step={step!}
+                            onComplete={async (scored) => {
+                                if (step!.exercise) {
+                                    await recordStepResult({
+                                        step_id: step!.id,
+                                        correct: scored.correct,
+                                        total: scored.total,
+                                    });
+                                }
+                            }}
+                        />
                     )}
                 </article>
             )}
@@ -355,6 +372,42 @@ function TheoryStep({
             </Markdown>
         </div>
     );
+}
+
+
+interface ExerciseDispatcherProps {
+    step: ContentLessonStep;
+    onComplete: (result: {correct: number; total: number}) => Promise<void>;
+}
+
+function ExerciseDispatcher({step, onComplete}: ExerciseDispatcherProps) {
+    const ex: ContentLessonExercise | null = step.exercise ?? null;
+    if (ex === null) return <ExerciseStepPlaceholder step={step} />;
+    const supported = SUPPORTED_EXERCISE_TYPES.has(ex.type);
+    if (!supported) {
+        return <ExerciseStepPlaceholder step={step} />;
+    }
+    if (ex.type === "matching") {
+        return (
+            <MatchingExercise
+                exercise={ex}
+                onComplete={(scored) => {
+                    void onComplete(scored);
+                }}
+            />
+        );
+    }
+    if (ex.type === "picture_choice") {
+        return (
+            <PictureChoiceExercise
+                exercise={ex}
+                onComplete={(scored) => {
+                    void onComplete(scored);
+                }}
+            />
+        );
+    }
+    return <ExerciseStepPlaceholder step={step} />;
 }
 
 

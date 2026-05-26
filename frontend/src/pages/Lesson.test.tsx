@@ -183,12 +183,95 @@ describe("LessonPage: ready state rendering", () => {
         expect(screen.getByText(/Welcome/)).toBeInTheDocument();
     });
 
-    it("renders the exercise placeholder for unsupported types", () => {
+    it("renders the matching exercise on an exercise step (commit 6)", () => {
+        // The LESSON fixture's exercise has no pairs, so the
+        // matching component's empty-state surfaces. That's
+        // enough to pin that the dispatcher routed correctly.
         _ready(1);
         renderAtPath(VALID_PATH);
         expect(
-            screen.getByTestId("lesson-exercise-placeholder-matching"),
+            screen.getByTestId("matching-empty"),
         ).toBeInTheDocument();
+    });
+
+    it("renders the coming-soon placeholder for unsupported types", () => {
+        const lesson = {
+            ...LESSON,
+            steps: [
+                {
+                    id: "ex-free",
+                    type: "exercise" as const,
+                    exercise: {
+                        id: "ex-free",
+                        type: "free_text" as const,
+                        prompt: "Translate.",
+                        card_ids: [],
+                        accept: ["x"],
+                        distractors: [],
+                    },
+                },
+            ],
+        };
+        useLessonMock.mockReturnValue({
+            status: "ready",
+            lesson,
+            progress: PROGRESS,
+            currentStepIndex: 0,
+            error: null,
+            goNext: vi.fn(),
+            goPrev: vi.fn(),
+            goToStep: vi.fn(),
+            goToStepById: vi.fn(),
+            recordStepResult: vi.fn(),
+            markCompleted: vi.fn(),
+            refresh: vi.fn(),
+        });
+        renderAtPath(VALID_PATH);
+        expect(
+            screen.getByTestId("lesson-exercise-placeholder-free_text"),
+        ).toBeInTheDocument();
+    });
+
+    it("records a step result when the matching exercise completes", async () => {
+        const recordStepResult = vi.fn().mockResolvedValue(undefined);
+        const lessonWithPairs = {
+            ...LESSON,
+            steps: [
+                LESSON.steps[0],
+                {
+                    ...LESSON.steps[1],
+                    exercise: {
+                        ...LESSON.steps[1].exercise!,
+                        pairs: [{left: "A", right: "1"}],
+                    },
+                },
+            ],
+        };
+        useLessonMock.mockReturnValue({
+            status: "ready",
+            lesson: lessonWithPairs,
+            progress: PROGRESS,
+            currentStepIndex: 1,
+            error: null,
+            goNext: vi.fn(),
+            goPrev: vi.fn(),
+            goToStep: vi.fn(),
+            goToStepById: vi.fn(),
+            recordStepResult,
+            markCompleted: vi.fn(),
+            refresh: vi.fn(),
+        });
+        renderAtPath(VALID_PATH);
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        await waitFor(() => {
+            expect(recordStepResult).toHaveBeenCalledWith({
+                step_id: "ex-1",
+                correct: 1,
+                total: 1,
+            });
+        });
     });
 
     it("renders the summary view at index past last step", () => {
