@@ -1,33 +1,45 @@
-import {useCallback, useEffect, useState} from "react";
+import {lazy, Suspense, useCallback, useEffect, useState} from "react";
 import {Routes, Route} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import type {ApiError} from "./api/client";
 import ErrorBoundary from "./components/ErrorBoundary";
-import ErrorReportDialog from "./components/ErrorReportDialog";
-import EventRecorderSetup from "./components/EventRecorderSetup";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
 import {HelpProvider} from "./contexts/HelpContext";
 import {I18nProvider} from "./hooks/useI18n";
 import {useTheme} from "./hooks/useTheme";
-import AnkiPage from "./pages/Anki";
-import Assessment from "./pages/Assessment";
-import Curriculum from "./pages/Curriculum";
-import Dashboard from "./pages/Dashboard";
-import Import from "./pages/Import";
-import ImportDetail from "./pages/ImportDetail";
 import Landing from "./pages/Landing";
-import LearningRepoPage from "./pages/LearningRepo";
-import NotFound from "./pages/NotFound";
-import Onboarding from "./pages/Onboarding";
-import Progress from "./pages/Progress";
-import Pronunciation from "./pages/Pronunciation";
-import Session from "./pages/Session";
-import Settings from "./pages/Settings";
 import SkipToContent from "./components/SkipToContent";
+
+// Route-level code-splitting. Landing stays in the main bundle as
+// the entry route; everything else loads on first navigation. See
+// BUNDLE-SIZE-DYNAMIC-IMPORT-01.
+const AnkiPage = lazy(() => import("./pages/Anki"));
+const Assessment = lazy(() => import("./pages/Assessment"));
+const Curriculum = lazy(() => import("./pages/Curriculum"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const Import = lazy(() => import("./pages/Import"));
+const ImportDetail = lazy(() => import("./pages/ImportDetail"));
+const LearningRepoPage = lazy(() => import("./pages/LearningRepo"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Progress = lazy(() => import("./pages/Progress"));
+const Pronunciation = lazy(() => import("./pages/Pronunciation"));
+const Session = lazy(() => import("./pages/Session"));
+const Settings = lazy(() => import("./pages/Settings"));
+
+// Lazy-loaded so ``eventRecorder`` (statically imported inside both
+// components) lands in its own chunk instead of the main bundle.
+// See BUNDLE-SIZE-DYNAMIC-IMPORT-01.
+const EventRecorderSetup = lazy(
+    () => import("./components/EventRecorderSetup"),
+);
+const ErrorReportDialog = lazy(
+    () => import("./components/ErrorReportDialog"),
+);
 
 /**
  * Application root. Three concentric layers:
@@ -96,39 +108,50 @@ export default function App() {
                 <HelpProvider>
                 <SkipToContent />
                 <Navigation />
-                <Routes>
-                    <Route path="/" element={<Landing />} />
-                    <Route path="/onboarding" element={<Onboarding />} />
-                    <Route path="/assessment" element={<Assessment />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/session" element={<Session />} />
-                    <Route path="/curriculum" element={<Curriculum />} />
-                    <Route path="/progress" element={<Progress />} />
-                    <Route path="/import" element={<Import />} />
-                    <Route
-                        path="/import/:conversationId"
-                        element={<ImportDetail />}
-                    />
-                    <Route path="/anki" element={<AnkiPage />} />
-                    <Route
-                        path="/projects/:projectId/learning-repo"
-                        element={<LearningRepoPage />}
-                    />
-                    <Route path="/pronunciation" element={<Pronunciation />} />
-                    <Route path="/settings" element={<Settings />} />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
+                <Suspense fallback={null}>
+                    <Routes>
+                        <Route path="/" element={<Landing />} />
+                        <Route path="/onboarding" element={<Onboarding />} />
+                        <Route path="/assessment" element={<Assessment />} />
+                        <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/session" element={<Session />} />
+                        <Route path="/curriculum" element={<Curriculum />} />
+                        <Route path="/progress" element={<Progress />} />
+                        <Route path="/import" element={<Import />} />
+                        <Route
+                            path="/import/:conversationId"
+                            element={<ImportDetail />}
+                        />
+                        <Route path="/anki" element={<AnkiPage />} />
+                        <Route
+                            path="/projects/:projectId/learning-repo"
+                            element={<LearningRepoPage />}
+                        />
+                        <Route
+                            path="/pronunciation"
+                            element={<Pronunciation />}
+                        />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </Suspense>
                 <InstallPrompt />
-                <EventRecorderSetup />
+                <Suspense fallback={null}>
+                    <EventRecorderSetup />
+                </Suspense>
                 <HelpDrawer />
-                <ErrorReportDialog
-                    open={errorReport.open}
-                    onClose={() =>
-                        setErrorReport({open: false, message: ""})
-                    }
-                    errorMessage={errorReport.message}
-                    apiError={errorReport.apiError}
-                />
+                {errorReport.open && (
+                    <Suspense fallback={null}>
+                        <ErrorReportDialog
+                            open={errorReport.open}
+                            onClose={() =>
+                                setErrorReport({open: false, message: ""})
+                            }
+                            errorMessage={errorReport.message}
+                            apiError={errorReport.apiError}
+                        />
+                    </Suspense>
+                )}
                 <ToastContainer
                     position="bottom-right"
                     autoClose={5000}

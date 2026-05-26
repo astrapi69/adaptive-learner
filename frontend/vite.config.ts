@@ -82,13 +82,6 @@ export default defineConfig({
                 // is one of them so the SW can serve it without a
                 // network roundtrip.
                 globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
-                // The main JS chunk grew past workbox's 2 MB default
-                // around v1.26.0 / Phase 42 (BL-30 added the
-                // learning-repo page + react-markdown viewer). Raise
-                // the cap to 4 MB so the SW can precache the current
-                // bundle; code-splitting the routes is a separate
-                // future improvement.
-                maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
                 // navigateFallback must include the base prefix so it
                 // matches the precached index.html entry (which is
                 // resolved against the SW's directory). Same with the

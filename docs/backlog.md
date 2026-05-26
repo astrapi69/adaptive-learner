@@ -94,33 +94,6 @@ tiebreaker.
 
 ## P2 — Medium Value, Medium Effort
 
-- [ ] **BUNDLE-SIZE-DYNAMIC-IMPORT-01**: Fix
-  ``frontend/src/utils/eventRecorder.ts`` import pattern
-  (all-dynamic or all-static) to restore code-splitting and
-  bring the main chunk back under 2MB. Drop the 4MB precache
-  cap workaround in ``frontend/vite.config.ts``
-  (``workbox.maximumFileSizeToCacheInBytes``).
-  - **Symptom**: v1.26.0 push tripped the Pages deploy when
-    the main JS chunk hit 2.14 MB, exceeding workbox's 2 MB
-    default precache cap. Cause: eventRecorder.ts is
-    dynamically imported by ``src/api/client.ts`` +
-    ``src/utils/notify.ts`` but ALSO statically imported by
-    ``src/components/ErrorReportDialog.tsx`` +
-    ``src/components/EventRecorderSetup.tsx`` — Vite logs
-    ``[INEFFECTIVE_DYNAMIC_IMPORT]`` and folds the would-be
-    separate chunk back into the main bundle.
-  - **Fix path**: pick one. Either (a) make all four
-    consumers use a static import (loses the lazy-load
-    optimisation but is simplest) OR (b) refactor
-    ErrorReportDialog + EventRecorderSetup to lazy-load
-    eventRecorder via ``React.lazy()`` / dynamic
-    ``import()`` so the dynamic-import code-split actually
-    kicks in.
-  - **Acceptance**: ``npm run build`` shows main chunk
-    < 2 MB and removes the ``[INEFFECTIVE_DYNAMIC_IMPORT]``
-    warning; ``maximumFileSizeToCacheInBytes`` line in
-    ``vite.config.ts`` is reverted.
-  - Filed 2026-05-25 alongside the v1.26.0 CI-red fix.
 - [x] **BL-07**: Global subjects/tags — Shared taxonomy
   across projects (Mathematics, Languages, Programming, etc.).
   Closed in v1.9.0 / Phase 22 — see
