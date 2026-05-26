@@ -52,6 +52,7 @@ from app.models import (
     LearningSession,
     LearningTopic,
     Lesson,
+    LessonProgress,
     MethodSwitch,
     ProgressCommit,
     ProjectSubject,
@@ -537,6 +538,34 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="updated_at",
         append_only=False,
         order=26,
+        scope="direct",
+    ),
+    # v1.28.0 / Phase 44 — content-loader lesson progress.
+    # MUTABLE: every step completion bumps the score and the
+    # ``step_results`` JSON map; the lesson-summary screen
+    # flips ``status`` to ``completed``. Direct user_id scope
+    # so multi-device syncs converge on the user's progress
+    # row per lesson.
+    "lesson_progress": TableSpec(
+        model=LessonProgress,
+        columns=(
+            "id",
+            "user_id",
+            "source",
+            "set_id",
+            "lesson_filename",
+            "status",
+            "step_results",
+            "score_correct",
+            "score_total",
+            "time_spent_seconds",
+            "started_at",
+            "updated_at",
+            "completed_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=29,
         scope="direct",
     ),
 }

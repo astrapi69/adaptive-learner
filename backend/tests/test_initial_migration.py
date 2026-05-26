@@ -62,6 +62,8 @@ EXPECTED_TABLES = {
     "anki_card_suggestions",
     # v1.19.0 / Phase 32B — AI-generated active-recall study questions
     "study_questions",
+    # v1.28.0 / Phase 44 — per-user content-lesson progress
+    "lesson_progress",
 }
 
 

@@ -37,6 +37,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from enum import Enum
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
@@ -1156,3 +1157,62 @@ class IdentityStatusOut(BaseModel):
     exists: bool
     path: str
     last_seen: str | None = None
+
+
+# --- LessonProgress (Phase 44 / EXP-002 / P-109) ---------------------------
+
+
+class StepResultIn(BaseModel):
+    """One step's result, as the viewer reports it on completion."""
+
+    step_id: str = Field(..., min_length=1, max_length=120)
+    correct: int = Field(..., ge=0)
+    total: int = Field(..., ge=0)
+    attempts: int = Field(default=1, ge=1)
+
+
+class LessonProgressUpsert(BaseModel):
+    """Body for the upsert endpoint.
+
+    The viewer calls this every time a step completes; the
+    server merges the new ``step_result`` into the existing
+    JSON map and recomputes the aggregate score.
+    """
+
+    source: str = Field(..., min_length=1, max_length=200)
+    set_id: str = Field(..., min_length=1, max_length=120)
+    lesson_filename: str = Field(..., min_length=1, max_length=200)
+    step_result: StepResultIn | None = None
+    time_spent_seconds_delta: int = Field(default=0, ge=0)
+    mark_completed: bool = Field(
+        default=False,
+        description=(
+            "Set to true on the lesson-summary screen. Flips "
+            "``status`` to ``completed`` + stamps ``completed_at``."
+        ),
+    )
+
+
+class LessonProgressOut(BaseModel):
+    """Server-side lesson progress payload.
+
+    ``step_results`` is the parsed JSON map; the DB stores
+    it as Text but every route serialises through this schema
+    so callers never see the raw string.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    source: str
+    set_id: str
+    lesson_filename: str
+    status: str  # "in_progress" | "completed"
+    step_results: dict[str, Any]
+    score_correct: int
+    score_total: int
+    time_spent_seconds: int
+    started_at: datetime
+    updated_at: datetime
+    completed_at: datetime | None = None

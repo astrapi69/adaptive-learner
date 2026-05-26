@@ -100,6 +100,11 @@ import {
     listLessonsDexie,
     listSetsDexie,
 } from "./content-loader-dexie";
+import {
+    getLessonProgressDexie,
+    listLessonProgressDexie,
+    upsertLessonProgressDexie,
+} from "./lesson-progress-dexie";
 import type {AIProvider, LearningMethod} from "../lib/constants";
 import type {
     ApiKeySetBody,
@@ -2037,6 +2042,15 @@ export const dexieStorage: IStorageService = {
         markExported: (cardIds) => markAnkiCardsExported(cardIds),
     },
 
+    // --- LessonProgress (Phase 44 / EXP-002 / P-109) -------------------
+
+    lessonProgress: {
+        list: (userId) => listLessonProgressDexie(userId),
+        get: (userId, source, setId, filename) =>
+            getLessonProgressDexie(userId, source, setId, filename),
+        upsert: (userId, body) => upsertLessonProgressDexie(userId, body),
+    },
+
     // --- Content-Loader (Phase 43 / EXP-002) -----------------------------
     //
     // GH-Pages-shape: fetch from raw.githubusercontent.com,
@@ -2097,6 +2111,7 @@ export const dexieStorage: IStorageService = {
             "studyQuestions",
             "contentSets",
             "contentSetFiles",
+            "lessonProgress",
         ];
         let cleared = 0;
         for (const name of tableNames) {

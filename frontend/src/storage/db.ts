@@ -380,6 +380,43 @@ export interface ContentSetRow {
 }
 
 /**
+ * Phase 44 / EXP-002 / P-109 — per-user lesson progress.
+ *
+ * Composite ``id`` is
+ * ``{user_id}#{source-slug}#{set_id}#{lesson_filename}``;
+ * Dexie indexes on ``user_id`` for the list query.
+ * ``step_results`` is the parsed object (NOT a JSON string;
+ * Dexie handles structured cloning natively).
+ *
+ * Wire shape parity: a row converts to the ApiStorage
+ * ``LessonProgress`` type 1:1 — the conversion lives in
+ * ``dexie-storage.ts``.
+ */
+export interface LessonProgressRow {
+    id: string;
+    user_id: string;
+    source: string;
+    set_id: string;
+    lesson_filename: string;
+    status: "in_progress" | "completed";
+    step_results: Record<
+        string,
+        {
+            correct: number;
+            total: number;
+            attempts: number;
+            completed_at: string;
+        }
+    >;
+    score_correct: number;
+    score_total: number;
+    time_spent_seconds: number;
+    started_at: string;
+    updated_at: string;
+    completed_at: string | null;
+}
+
+/**
  * One file (lesson JSON or asset) inside a cached set. The
  * Phase 44 viewer reads lessons via this table. ``filename``
  * matches the backend cache layout
@@ -482,6 +519,11 @@ export class AdaptiveLearnerDB extends Dexie {
     // viewer (Phase 44) reads ``contentSetFiles``.
     contentSets!: EntityTable<ContentSetRow, "id">;
     contentSetFiles!: EntityTable<ContentSetFileRow, "id">;
+    // Phase 44 / EXP-002 / P-109 — per-user lesson progress.
+    // Composite key (``{user_id}#{source-slug}#{set_id}#{filename}``)
+    // matches the backend's UniqueConstraint so the row shape
+    // round-trips identically across modes.
+    lessonProgress!: EntityTable<LessonProgressRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -719,6 +761,13 @@ export class AdaptiveLearnerDB extends Dexie {
         this.version(16).stores({
             contentSets: "id, source, set_id, version, downloaded_at",
             contentSetFiles: "id, set_pk, filename",
+        });
+        // Schema v17 — Phase 44 / EXP-002 / P-109. Lesson
+        // progress. Composite primary key
+        // ``{user_id}#{source-slug}#{set_id}#{filename}``;
+        // ``user_id`` index for the per-user list query.
+        this.version(17).stores({
+            lessonProgress: "id, user_id, set_id, status, updated_at",
         });
     }
 }

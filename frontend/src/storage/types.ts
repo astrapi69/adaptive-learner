@@ -309,6 +309,73 @@ export interface IContentLoaderNamespace {
     ): Promise<ContentLesson>;
 }
 
+
+// --- LessonProgress (Phase 44 / EXP-002 / P-109) ---------------------------
+
+export interface LessonStepResult {
+    step_id: string;
+    correct: number;
+    total: number;
+    attempts?: number;
+}
+
+export interface LessonProgressUpsertBody {
+    source: string;
+    set_id: string;
+    lesson_filename: string;
+    step_result?: LessonStepResult;
+    time_spent_seconds_delta?: number;
+    mark_completed?: boolean;
+}
+
+/**
+ * One stored step result inside ``LessonProgress.step_results``.
+ * Mirrors what the backend service writes per step.
+ */
+export interface LessonStepResultStored {
+    correct: number;
+    total: number;
+    attempts: number;
+    completed_at: string;
+}
+
+export interface LessonProgress {
+    id: string;
+    user_id: string;
+    source: string;
+    set_id: string;
+    lesson_filename: string;
+    status: "in_progress" | "completed";
+    /** Map of step_id → result. Parsed JSON; never a string. */
+    step_results: Record<string, LessonStepResultStored>;
+    score_correct: number;
+    score_total: number;
+    time_spent_seconds: number;
+    started_at: string;
+    updated_at: string;
+    completed_at: string | null;
+}
+
+/**
+ * Per-user × per-lesson progress tracking. Parallel to the
+ * session-plugin's ``ITrackingNamespace`` (sessions stay
+ * separate from content-loader lessons in v1.28.0; Phase 46
+ * unifies them when SRS lands).
+ */
+export interface ILessonProgressNamespace {
+    list(userId: string): Promise<LessonProgress[]>;
+    get(
+        userId: string,
+        source: string,
+        setId: string,
+        lessonFilename: string,
+    ): Promise<LessonProgress | null>;
+    upsert(
+        userId: string,
+        body: LessonProgressUpsertBody,
+    ): Promise<LessonProgress>;
+}
+
 export interface IToolsNamespace {
     recommendations(projectId: string, lang: string): Promise<ToolRecommendation[]>;
     spaced(projectId: string, lang: string): Promise<SpacedRecommendation[]>;
@@ -760,6 +827,7 @@ export interface IStorageService {
     pronunciation: IPronunciationNamespace;
     notebooklm: INotebookLMNamespace;
     contentLoader: IContentLoaderNamespace;
+    lessonProgress: ILessonProgressNamespace;
 
     /**
      * Phase 41F Danger Zone reset. Wipes every piece of learner

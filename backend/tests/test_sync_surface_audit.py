@@ -57,6 +57,10 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # v1.19.0 / Phase 32B: AI-generated active-recall
         # study questions (user edits / deletes in place).
         "study_questions",
+        # v1.28.0 / Phase 44: per-user content-lesson progress
+        # (every step completion bumps the row; lesson summary
+        # flips status to completed).
+        "lesson_progress",
     }
 )
 

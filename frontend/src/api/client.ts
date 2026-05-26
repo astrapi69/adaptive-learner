@@ -1059,6 +1059,49 @@ export const api = {
         },
     },
 
+    // --- Lesson Progress (Phase 44 / EXP-002 / P-109) ------------------
+
+    lessonProgress: {
+        /** GET /api/users/{user_id}/lesson-progress */
+        list: (userId: string) =>
+            apiCall<import("../storage/types").LessonProgress[]>(
+                `/users/${encodeURIComponent(userId)}/lesson-progress`,
+            ),
+        /** GET /api/users/{user_id}/lesson-progress/{src}/{set}/{lesson}
+         *  Translates the 404 into a ``null`` return so callers
+         *  treat "never started" as a fresh-start case, not an
+         *  error. */
+        get: async (
+            userId: string,
+            source: string,
+            setId: string,
+            lessonFilename: string,
+        ): Promise<import("../storage/types").LessonProgress | null> => {
+            const slug = source.replace(/\//g, "--");
+            try {
+                return await apiCall<
+                    import("../storage/types").LessonProgress
+                >(
+                    `/users/${encodeURIComponent(userId)}/lesson-progress/${encodeURIComponent(slug)}/${encodeURIComponent(setId)}/${encodeURIComponent(lessonFilename)}`,
+                );
+            } catch (err) {
+                if (err instanceof ApiError && err.status === 404) {
+                    return null;
+                }
+                throw err;
+            }
+        },
+        /** POST /api/users/{user_id}/lesson-progress */
+        upsert: (
+            userId: string,
+            body: import("../storage/types").LessonProgressUpsertBody,
+        ) =>
+            apiCall<import("../storage/types").LessonProgress>(
+                `/users/${encodeURIComponent(userId)}/lesson-progress`,
+                {method: "POST", body},
+            ),
+    },
+
     // --- Content-Loader plugin (Phase 43 / EXP-002) ---------------------
 
     contentLoader: {

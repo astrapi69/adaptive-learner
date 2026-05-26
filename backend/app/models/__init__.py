@@ -1241,6 +1241,97 @@ class UserBadge(Base):
         )
 
 
+class LessonProgress(Base):
+    """User progress on a single content-set lesson
+    (Phase 44 / EXP-002 / P-109).
+
+    Per-user × per-lesson row. ``set_id`` and ``lesson_filename``
+    point at the content-loader cache; the loader resolves them
+    to a ``Lesson`` payload at lesson-open time.
+
+    ``step_results`` carries a JSON-encoded mapping of
+    ``{step_id: {correct, total, attempts, completed_at}}`` so
+    the viewer can resume a partially-completed lesson and the
+    Phase 46 SRS layer can replay step-level performance.
+
+    Parallel to ``LearningSession`` — the session plugin's
+    7-step AI-driven model and the content-loader's N-step
+    deterministic model differ enough that unifying them is
+    a Phase 46 concern (when XP / streak / progress-commit
+    integration lands). For v1.28.0 the two systems coexist;
+    a lesson does NOT award XP yet, and a session does NOT
+    advance lesson progress.
+    """
+
+    __tablename__ = "lesson_progress"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "source",
+            "set_id",
+            "lesson_filename",
+            name="uq_lesson_progress_user_lesson",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    # The content-loader source slug shape (``owner/name``).
+    # NOT a FK — content sources live in the cache, not the DB.
+    source: Mapped[str] = mapped_column(String(200), nullable=False)
+    set_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    lesson_filename: Mapped[str] = mapped_column(
+        String(200), nullable=False,
+    )
+    # ``in_progress`` | ``completed``
+    status: Mapped[str] = mapped_column(
+        String(20), nullable=False, default="in_progress",
+    )
+    # JSON object: {step_id: {correct: int, total: int,
+    #   attempts: int, completed_at: ISO-8601 string}}.
+    # Empty ``{}`` when nothing answered yet.
+    step_results: Mapped[str] = mapped_column(
+        Text, nullable=False, default="{}",
+    )
+    # Aggregate score across all scored exercise steps the
+    # user attempted. Lesson-summary screen surfaces these.
+    score_correct: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0,
+    )
+    score_total: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0,
+    )
+    # Wall-clock seconds the user has spent inside the lesson
+    # across all visits. Updated on completion / abandonment.
+    time_spent_seconds: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0,
+    )
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
+        onupdate=_utcnow,
+    )
+    completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True,
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<LessonProgress user={self.user_id!r} "
+            f"set={self.set_id!r} lesson={self.lesson_filename!r} "
+            f"status={self.status!r}>"
+        )
+
+
 __all__ = [
     "Base",
     "User",
@@ -1269,4 +1360,5 @@ __all__ = [
     "UserStreak",
     "AnkiCardSuggestion",
     "StudyQuestion",
+    "LessonProgress",
 ]

@@ -249,6 +249,15 @@ export const apiStorage: IStorageService = {
         studyGuide: (projectId) => api.notebooklm.studyGuide(projectId),
     },
 
+    // --- LessonProgress (Phase 44 / EXP-002 / P-109) -------------------
+
+    lessonProgress: {
+        list: (userId) => api.lessonProgress.list(userId),
+        get: (userId, source, setId, filename) =>
+            api.lessonProgress.get(userId, source, setId, filename),
+        upsert: (userId, body) => api.lessonProgress.upsert(userId, body),
+    },
+
     // --- Content-Loader (Phase 43 / EXP-002) -----------------------------
 
     contentLoader: {
