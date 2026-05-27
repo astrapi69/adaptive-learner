@@ -516,6 +516,38 @@ export interface IPluginsNamespace {
 
 /**
  * Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
+ * Learning Repository render + ZIP export. Mirrors the
+ * backend's ``/api/plugins/learning-repo/render`` +
+ * ``/export-zip`` endpoints (v1.26.0 / Phase 42) so the
+ * LearningRepo page works in BOTH storage modes.
+ *
+ * In Dexie mode, the renderer is the TypeScript port at
+ * ``frontend/src/lib/learning-repo/`` (49B-D); the
+ * implementation builds the RenderContext from IndexedDB
+ * via ``loadDexieContext`` and writes the ZIP with JSZip
+ * client-side.
+ *
+ * The ``persist`` endpoint (git commit + tag) is NOT in
+ * this namespace by design: it needs a server-side
+ * filesystem + git binary, so it stays on
+ * ``api.learningRepo.persist`` only. The LearningRepo page
+ * gates the "Persist to git" button on storage mode.
+ */
+export interface ILearningRepoNamespace {
+    render(
+        projectId: string,
+        language?: string,
+    ): Promise<{
+        project_id: string;
+        language: string;
+        rendered_at: string;
+        files: Record<string, string>;
+    }>;
+    exportZip(projectId: string, language?: string): Promise<Blob>;
+}
+
+/**
+ * Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
  * per-plugin settings round-trip. Mirrors the backend's
  * generic ``GET / PATCH /api/plugin-settings/{plugin_name}``
  * endpoints (v1.26.0 / Phase 42) so that every plugin's
@@ -951,6 +983,7 @@ export interface IStorageService {
     lessonProgress: ILessonProgressNamespace;
     elementErrors: IElementErrorsNamespace;
     pluginSettings: IPluginSettingsNamespace;
+    learningRepo: ILearningRepoNamespace;
 
     /**
      * Phase 41F Danger Zone reset. Wipes every piece of learner

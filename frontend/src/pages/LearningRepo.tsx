@@ -26,7 +26,7 @@ import remarkGfm from "remark-gfm";
 
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
-import {resolveStorageMode} from "../storage";
+import {getStorage, resolveStorageMode} from "../storage";
 import {notify} from "../utils/notify";
 
 interface RenderState {
@@ -48,10 +48,16 @@ export default function LearningRepoPage() {
 
     const loadRepo = useCallback(async () => {
         if (!projectId) return;
+        // Phase 49E: ``storage.learningRepo.render`` works in
+        // both API mode (delegates) and Dexie mode (TS
+        // renderer). The remaining storageMode gate at the
+        // render-body level (below) is removed in 49G; this
+        // commit keeps it so the namespace-swap is the only
+        // behavioural change in 49E.
         if (storageMode !== "api") return;
         setLoading(true);
         try {
-            const data = await api.learningRepo.render(projectId);
+            const data = await getStorage().learningRepo.render(projectId);
             setState({
                 rendered_at: data.rendered_at,
                 language: data.language,
@@ -78,7 +84,8 @@ export default function LearningRepoPage() {
     const handleDownloadZip = async () => {
         if (!projectId) return;
         try {
-            const blob = await api.learningRepo.exportZip(projectId);
+            const blob =
+                await getStorage().learningRepo.exportZip(projectId);
             triggerDownload(blob, `${projectId}-learning-repo.zip`);
             notify.success(t("repo.toast.zip_downloaded", "ZIP downloaded"));
         } catch (err) {

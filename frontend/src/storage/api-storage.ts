@@ -291,6 +291,20 @@ export const apiStorage: IStorageService = {
         update: (pluginName, body) => api.pluginSettings.update(pluginName, body),
     },
 
+    // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
+    // Learning Repository render + ZIP. ApiStorage delegates
+    // to the existing backend endpoints; DexieStorage runs
+    // the TS renderer client-side. The ``persist`` endpoint
+    // stays on ``api.learningRepo.persist`` (server-only;
+    // needs filesystem + git binary), so it is intentionally
+    // NOT in the namespace.
+    learningRepo: {
+        render: (projectId, language) =>
+            api.learningRepo.render(projectId, language),
+        exportZip: (projectId, language) =>
+            api.learningRepo.exportZip(projectId, language),
+    },
+
     // Phase 41F Danger Zone: typed-confirm reset. ApiStorage hands
     // the token straight to the backend; the 400 gate lives server-
     // side (services/reset_service.CONFIRMATION_TOKEN).
