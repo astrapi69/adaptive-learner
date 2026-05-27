@@ -1216,3 +1216,75 @@ class LessonProgressOut(BaseModel):
     started_at: datetime
     updated_at: datetime
     completed_at: datetime | None = None
+
+
+# --- ElementError (Phase 46B / EXP-007 / P-129) ----------------------------
+
+
+class ElementAttemptIn(BaseModel):
+    """One element attempt — the unit the recording endpoint
+    consumes. Multiple attempts per exercise (matching fans out
+    one per pair); one attempt per submit for the other types.
+    """
+
+    set_id: str = Field(..., min_length=1, max_length=120)
+    lesson_id: str = Field(..., min_length=1, max_length=200)
+    exercise_id: str = Field(..., min_length=1, max_length=120)
+    element_key: str = Field(..., min_length=1, max_length=500)
+    element_type: str = Field(
+        default="vocabulary",
+        min_length=1,
+        max_length=50,
+        description=(
+            "Heuristic classification: vocabulary, "
+            "grammar_rule, concept. Set by the exercise-side "
+            "deriver in commit C9."
+        ),
+    )
+    user_answer: str = Field(default="", max_length=2000)
+    correct_answer: str = Field(default="", max_length=2000)
+    correct: bool = Field(
+        ...,
+        description=(
+            "True if this attempt was scored as correct. The "
+            "service layer increments correct_streak on true; "
+            "resets to 0 and bumps error_count on false."
+        ),
+    )
+
+
+class ElementAttemptsIn(BaseModel):
+    """Bulk-upsert body. Capped at 100 attempts per call to
+    avoid pathological viewer payloads."""
+
+    attempts: list[ElementAttemptIn] = Field(
+        ...,
+        min_length=1,
+        max_length=100,
+    )
+
+
+class ElementErrorOut(BaseModel):
+    """Server-side element-error payload. Identical shape on
+    both ApiStorage and DexieStorage so the review-queue UI
+    in Phase 46C can render either source uniformly."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    set_id: str
+    lesson_id: str
+    exercise_id: str
+    element_key: str
+    element_type: str
+    user_answer: str
+    correct_answer: str
+    error_count: int
+    correct_streak: int
+    last_error_at: datetime | None = None
+    last_attempt_at: datetime
+    mastered: bool
+    mastered_at: datetime | None = None
+    created_at: datetime
+    updated_at: datetime

@@ -1332,6 +1332,121 @@ class LessonProgress(Base):
         )
 
 
+class ElementError(Base):
+    """Per-element error + mastery tracking (Phase 46B / 4B /
+    P-129 — element-level spaced repetition).
+
+    A row tracks one learnable atom — a vocabulary word, a
+    grammar rule, a concept — for one user across one
+    exercise. The element is identified by the composite
+    ``(user_id, set_id, lesson_id, exercise_id, element_key)``
+    where ``element_key`` is the canonical surface text the
+    exercise teaches (e.g. ``"merci"`` for a free-text
+    exercise whose ``accept[0]`` is ``"Merci"``).
+
+    Lesson-scoped by design (D2, Phase 46 plan): the same
+    word in two different lessons is two separate elements.
+    Cross-lesson element sharing is a future phase (it
+    interacts with content versioning + set updates +
+    domain-author tagging).
+
+    ``error_count`` is the lifetime wrong-attempt count;
+    monotonic — never decremented. ``correct_streak`` is
+    the consecutive-correct counter since the last wrong
+    answer; resets to 0 on every wrong attempt. The element
+    flips ``mastered=true`` when ``correct_streak`` reaches
+    the ``MASTERY_THRESHOLD`` constant (3 in v1, hardcoded;
+    see Phase 46 D4). The service layer (commit C5) owns
+    the transition. Mastered elements are excluded from the
+    review queue but stay in the DB as the audit trail.
+
+    Decoupled from ``LearningSession``: no FK. The
+    Phase 46F unification (v1.31.0) will introduce the
+    "Content Lessons" pseudo-project and create
+    ``LearningSession`` rows on lesson completion; this
+    table stays as-is and its rows continue to reference
+    the lesson by string id, not by session FK. Keeps the
+    v1.30.0 element-tracking foundation independent of the
+    v1.31.0 unification work.
+    """
+
+    __tablename__ = "element_errors"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "set_id",
+            "lesson_id",
+            "exercise_id",
+            "element_key",
+            name="uq_element_errors_user_element",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    # Content-loader identifiers stored as strings — NOT FKs.
+    # The content set / lesson / exercise live in the cache,
+    # not the DB; the element-error rows survive cache evictions.
+    set_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    lesson_id: Mapped[str] = mapped_column(String(200), nullable=False)
+    exercise_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    element_key: Mapped[str] = mapped_column(String(500), nullable=False)
+    # "vocabulary" | "grammar_rule" | "concept" — derived
+    # heuristically from the exercise type at recording time.
+    element_type: Mapped[str] = mapped_column(
+        String(50), nullable=False, default="vocabulary",
+    )
+    # Last attempt's text. Overwritten on each new attempt;
+    # historical attempts are not preserved at the row level
+    # (the review queue only needs the most recent context).
+    user_answer: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    correct_answer: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    # Lifetime wrong-attempt count. Monotonic.
+    error_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    # Consecutive-correct counter since last wrong answer.
+    # Resets to 0 on wrong; flips ``mastered`` when it reaches
+    # the threshold.
+    correct_streak: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=0,
+    )
+    last_error_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True,
+    )
+    # Set on every attempt (correct OR wrong). Drives the SRS
+    # "days since last seen" calculation in commit C11.
+    last_attempt_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow,
+    )
+    mastered: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False,
+    )
+    mastered_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow,
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
+        onupdate=_utcnow,
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<ElementError user={self.user_id!r} "
+            f"set={self.set_id!r} lesson={self.lesson_id!r} "
+            f"key={self.element_key!r} errors={self.error_count} "
+            f"streak={self.correct_streak} mastered={self.mastered}>"
+        )
+
+
 __all__ = [
     "Base",
     "User",

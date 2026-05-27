@@ -61,6 +61,10 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # (every step completion bumps the row; lesson summary
         # flips status to completed).
         "lesson_progress",
+        # v1.30.0 / Phase 46B / P-129: element-level error
+        # tracking (correct_streak grows, error_count
+        # accumulates, mastered flips at threshold).
+        "element_errors",
     }
 )
 

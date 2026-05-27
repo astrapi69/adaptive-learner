@@ -64,6 +64,8 @@ EXPECTED_TABLES = {
     "study_questions",
     # v1.28.0 / Phase 44 — per-user content-lesson progress
     "lesson_progress",
+    # v1.30.0 / Phase 46B / P-129 — element-level error tracking
+    "element_errors",
 }
 
 

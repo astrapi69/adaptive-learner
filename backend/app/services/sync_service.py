@@ -45,6 +45,7 @@ from app.models import (
     AnkiCardSuggestion,
     Badge,
     Curriculum,
+    ElementError,
     ImportedConversation,
     ImportedMessage,
     LearningProfile,
@@ -566,6 +567,37 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="updated_at",
         append_only=False,
         order=29,
+        scope="direct",
+    ),
+    # v1.30.0 / Phase 46B / P-129 — element-level error
+    # tracking. MUTABLE: every attempt upserts the matching
+    # row (correct_streak / error_count / last_*_at /
+    # mastered flip). Direct user_id scope; multi-device
+    # syncs converge on the same row per element.
+    "element_errors": TableSpec(
+        model=ElementError,
+        columns=(
+            "id",
+            "user_id",
+            "set_id",
+            "lesson_id",
+            "exercise_id",
+            "element_key",
+            "element_type",
+            "user_answer",
+            "correct_answer",
+            "error_count",
+            "correct_streak",
+            "last_error_at",
+            "last_attempt_at",
+            "mastered",
+            "mastered_at",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=30,
         scope="direct",
     ),
 }
