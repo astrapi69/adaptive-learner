@@ -2057,6 +2057,153 @@ select:focus {
   margin-top: var(--space-3);
 }
 
+/* Phase 46A / C3 — star row + score bar + per-exercise
+   breakdown + celebration animation. The star colour stays
+   inside the gold-ish range across all 10 theme variants;
+   tokens are only used for surrounding chrome so the star
+   reads as "achievement" in every theme. */
+
+.lesson-summary-stars {
+  display: flex;
+  gap: 6px;
+  margin: var(--space-3) 0;
+  color: #fbbf24;
+}
+
+.lesson-summary-star {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.lesson-summary-star[data-earned="false"] {
+  color: var(--border-strong);
+}
+
+.lesson-summary-score-bar {
+  position: relative;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin: 0 0 var(--space-3) 0;
+}
+
+.lesson-summary-score-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: color-mix(in srgb, var(--accent) 35%, var(--surface));
+  transition: width 0.4s ease;
+}
+
+.lesson-summary-score-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  padding: 0 12px;
+  font-size: 0.9375rem;
+  color: var(--fg);
+}
+
+.lesson-summary-breakdown {
+  margin: var(--space-3) 0;
+}
+
+.lesson-summary-breakdown h3 {
+  font-size: 1rem;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.lesson-summary-breakdown-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lesson-summary-breakdown-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface-2);
+}
+
+.lesson-summary-breakdown-row.is-correct {
+  border-left-color: #10b981;
+}
+
+.lesson-summary-breakdown-row.is-wrong {
+  border-left-color: var(--danger, #ef4444);
+}
+
+.lesson-summary-breakdown-row.is-unattempted {
+  border-left-color: var(--fg-muted);
+  opacity: 0.75;
+}
+
+.lesson-summary-breakdown-title {
+  font-weight: 500;
+}
+
+.lesson-summary-breakdown-score {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+}
+
+.lesson-summary-breakdown-unattempted {
+  font-style: italic;
+}
+
+.lesson-summary-breakdown-canonical {
+  grid-column: 1 / -1;
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+  padding-top: 2px;
+}
+
+/* 3-star celebration. Pulses the earned stars once for ~1.5s
+   on mount. ``prefers-reduced-motion`` disables the animation
+   entirely; the static gold colour still reads as "earned". */
+@keyframes lesson-summary-celebrate {
+  0%   { transform: scale(1);   filter: drop-shadow(0 0 0 transparent); }
+  20%  { transform: scale(1.3); filter: drop-shadow(0 0 6px #fbbf24); }
+  40%  { transform: scale(1);   filter: drop-shadow(0 0 2px #fbbf24); }
+  60%  { transform: scale(1.15); filter: drop-shadow(0 0 4px #fbbf24); }
+  100% { transform: scale(1);   filter: drop-shadow(0 0 0 transparent); }
+}
+
+.lesson-summary.is-celebrating .lesson-summary-star[data-earned="true"] {
+  animation: lesson-summary-celebrate 1.5s ease-out 0.1s 1;
+}
+
+.lesson-summary.is-celebrating .lesson-summary-star[data-earned="true"]:nth-child(2) {
+  animation-delay: 0.25s;
+}
+
+.lesson-summary.is-celebrating .lesson-summary-star[data-earned="true"]:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-summary.is-celebrating .lesson-summary-star {
+    animation: none;
+  }
+  .lesson-summary-score-fill {
+    transition: none;
+  }
+  .lesson-summary-star {
+    transition: none;
+  }
+}
+
 @media (max-width: 600px) {
   .lesson-nav {
     flex-direction: column;
@@ -2071,6 +2218,12 @@ select:focus {
   }
   .lesson-summary-actions .btn {
     width: 100%;
+  }
+  .lesson-summary-breakdown-row {
+    grid-template-columns: 1fr;
+  }
+  .lesson-summary-breakdown-score {
+    grid-column: 1 / -1;
   }
 }
 
