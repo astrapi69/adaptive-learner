@@ -129,6 +129,10 @@ def test_project_out_from_orm():
         out = LearningProjectOut.model_validate(p)
         assert out.user_id == u.id
         assert out.daily_minutes == 30
+        # v1.31.0 / Phase 46F: kind round-trips through the
+        # ORM->schema boundary; default "standard" reflects
+        # the wizard-created path.
+        assert out.kind == "standard"
     finally:
         db.close()
 

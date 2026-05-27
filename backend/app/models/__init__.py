@@ -163,6 +163,18 @@ class UserSettings(Base):
 
 # --- Learning projects ------------------------------------------------------
 
+# v1.31.0 / Phase 46F: LearningProject.kind splits the wizard-
+# created "standard" projects from the auto-managed "content"
+# pseudo-project that backs the LessonProgress<->LearningSession
+# unification. Frontend project pickers (Dashboard, Onboarding,
+# LearningRepoSettings) filter out the "content" kind so the
+# pseudo-project never appears as a legit learning goal. See
+# .claude/rules/architecture.md and docs/journal/handover-to-v1.31.0.md
+# for the D1 decision rationale.
+LEARNING_PROJECT_KIND_STANDARD = "standard"
+LEARNING_PROJECT_KIND_CONTENT = "content"
+LEARNING_PROJECT_KINDS = frozenset({LEARNING_PROJECT_KIND_STANDARD, LEARNING_PROJECT_KIND_CONTENT})
+
 
 class LearningProject(Base):
     """A user's concrete learning goal.
@@ -186,6 +198,12 @@ class LearningProject(Base):
     daily_minutes: Mapped[int] = mapped_column(Integer, nullable=False)
     current_problem: Mapped[str | None] = mapped_column(Text, nullable=True)
     active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    kind: Mapped[str] = mapped_column(
+        String(32),
+        nullable=False,
+        default=LEARNING_PROJECT_KIND_STANDARD,
+        server_default=LEARNING_PROJECT_KIND_STANDARD,
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, onupdate=_utcnow

@@ -13,6 +13,9 @@ from sqlalchemy.exc import IntegrityError
 
 from app.database import SessionLocal
 from app.models import (
+    LEARNING_PROJECT_KIND_CONTENT,
+    LEARNING_PROJECT_KIND_STANDARD,
+    LEARNING_PROJECT_KINDS,
     Curriculum,
     LearningProfile,
     LearningProject,
@@ -139,6 +142,23 @@ def test_project_defaults(db, project):
     assert project.active is True
     assert project.current_problem == "Lose focus after 20 minutes."
     assert project.user.name == "Aster"
+    assert project.kind == LEARNING_PROJECT_KIND_STANDARD
+
+
+def test_project_kind_content_pseudo_project(db, user):
+    p = LearningProject(
+        user_id=user.id,
+        topic="Content Lessons",
+        goal="Auto-managed pseudo-project for content lesson completions.",
+        timeframe="ongoing",
+        daily_minutes=1,
+        kind=LEARNING_PROJECT_KIND_CONTENT,
+    )
+    db.add(p)
+    db.commit()
+    db.refresh(p)
+    assert p.kind == LEARNING_PROJECT_KIND_CONTENT
+    assert p.kind in LEARNING_PROJECT_KINDS
 
 
 def test_project_cascade_delete(db, user, project):

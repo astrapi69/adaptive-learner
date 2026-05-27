@@ -281,6 +281,12 @@ class LearningProjectOut(BaseModel):
     daily_minutes: int
     current_problem: str | None = None
     active: bool
+    # v1.31.0 / Phase 46F: "standard" (wizard-created) vs
+    # "content" (auto-created pseudo-project that owns
+    # content-lesson session rows). Default keeps old clients
+    # working when reading a fresh row that was created before
+    # the migration ran.
+    kind: str = "standard"
     created_at: datetime
     updated_at: datetime
 

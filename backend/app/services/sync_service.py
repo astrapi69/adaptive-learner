@@ -149,6 +149,11 @@ TABLES: dict[str, TableSpec] = {
             "daily_minutes",
             "current_problem",
             "active",
+            # v1.31.0 / Phase 46F: "standard" vs "content"
+            # pseudo-project; round-trips through sync so
+            # both ApiStorage and DexieStorage classify rows
+            # the same way.
+            "kind",
             "created_at",
             "updated_at",
         ),
