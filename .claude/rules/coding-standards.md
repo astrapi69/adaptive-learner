@@ -15,7 +15,6 @@
 - Prefer async where FastAPI supports it.
 - Import order: stdlib, third-party, local (isort-compatible).
 - Pydantic v2 for schemas. Field validators instead of manual checks.
-- HTML conversion: HTMLParser-based, NO regex for nested structures.
 
 ## TypeScript (Frontend)
 
@@ -35,11 +34,11 @@
 - TypeScript: PascalCase (components, interfaces), camelCase (functions, variables).
 - Plugin folders: adaptive-learner-plugin-{name} (kebab-case).
 - Python package inside a plugin: adaptive_learner_{name} (snake_case).
-- Events/hooks: snake_case (chapter_pre_save, export_execute).
-- No I-prefix for interfaces. `Book`, not `IBook`.
-- File formats: .bgb (backup), .bgp (project). Not .zip.
+- Events/hooks: snake_case (on_session_complete, get_progress_summary).
+- No I-prefix for interfaces. `LearningProject`, not `ILearningProject`.
+- Backup format: JSON via `/api/backup/export` + `/api/backup/import`. No proprietary archive extension.
 - No generic names: data, info, result, temp, item, obj, val, tmp, x are forbidden.
-  Use instead: book_data, plugin_info, export_result, chapter_item.
+  Use instead: session_data, plugin_info, evaluation_result, lesson_item.
   Exception: loop variables (i, j) and lambdas.
 
 ## Formatting
@@ -99,31 +98,28 @@
 **Anti-pattern (God Method):**
 ```python
 # WRONG: 150+ lines, 8 responsibilities
-@router.get("/{fmt}")
-def export(book_id, fmt, ...):
-    # load DB, load config, detect TOC, scaffold,
-    # build filename, ZIP/audiobook/Pandoc, find cover, ...
+@router.post("/{session_id}/message")
+def message(session_id, body, ...):
+    # load session + project + profile, build prompt,
+    # call AI provider, parse response, persist message,
+    # award XP, evaluate badges, update streak, ...
 ```
 
 **Right (decomposed):**
 ```python
 # routes.py - ONLY routing
-@router.get("/{fmt}")
-def export(book_id, fmt, ...):
-    validate_format(fmt)
-    context = build_export_context(book_id, fmt, book_type, ...)
-    return EXPORTERS[fmt](context)
+@router.post("/{session_id}/message")
+def message(session_id, body, ...):
+    context = build_message_context(session_id, body)
+    return run_session_step(context)
 
-# exporters.py - one function per format group
-def export_project(ctx: ExportContext) -> FileResponse: ...
-def export_audiobook(ctx: ExportContext) -> FileResponse: ...
-def export_document(ctx: ExportContext) -> FileResponse: ...
+# session_runner.py - orchestration only
+def run_session_step(ctx: MessageContext) -> MessageResponse: ...
 
 # helpers.py - individually testable
-def validate_format(fmt: str) -> None: ...
-def detect_manual_toc(chapters: list[dict]) -> bool: ...
-def build_filename(slug: str, book_type: str, suffix: bool) -> str: ...
-def find_cover_image(project_dir: Path) -> str | None: ...
+def validate_session_open(session_id: str, db: Session) -> LearningSession: ...
+def build_prompt(profile: LearningProfile, history: list, step: int) -> str: ...
+def persist_step_evaluation(db: Session, eval_input: StepEvaluationInput) -> None: ...
 ```
 
 ## DRY - Don't Repeat Yourself
@@ -183,8 +179,8 @@ Chain: AdaptiveLearnerError -> API response (detail + traceback) -> ApiError -> 
 
 New dependencies only after asking. Existing stack:
 
-Backend: FastAPI, SQLAlchemy, Pydantic v2, pluginforge, manuscripta, PyYAML, markdown (MD->HTML)
-Frontend: React 18, TypeScript, TipTap (15+1 extensions), Vite, Radix UI, @dnd-kit, Lucide, react-toastify
-Testing: pytest, Playwright, Vitest, mutmut (Python mutation testing)
+Backend: FastAPI, SQLAlchemy 2.0, Pydantic v2, pluginforge, aiosqlite, cryptography (Fernet), platformdirs, PyYAML
+Frontend: React 19, TypeScript 6 (strict), TipTap 2 (15+1 extensions), Vite 8, Radix UI, Lucide, react-toastify, Recharts 3, Dexie 4, sql.js + jszip
+Testing: pytest, Playwright (E2E), Vitest 4 (happy-dom)
 Linting/formatting: ruff (Python), ESLint + Prettier (TypeScript), pre-commit
 Tooling: Poetry, npm, Docker, Make

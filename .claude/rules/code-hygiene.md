@@ -165,11 +165,11 @@ API client     Converts HTTP errors into ApiError. Only place for fetch().
     |
 Router         Catches nothing. Global exception handler maps automatically.
     |
-Service        Throws domain exceptions (ExportError, ValidationError). No HTTP concepts.
+Service        Throws domain exceptions (NotFoundError, ValidationError, ...). No HTTP concepts.
     |
-Plugin         Throws PluginError. Caught by the exception handler.
+Plugin         Plugin code throws domain exceptions like any other service. Wrapped at the framework boundary if needed.
     |
-External       Pandoc, LanguageTool, edge-TTS. Wrapped inside the service.
+External       AI providers (Anthropic / OpenAI / Gemini), Edge-TTS. Wrapped inside the service as ExternalServiceError.
 ```
 
 Every layer catches only what it can handle itself. Everything else is passed up.
@@ -198,22 +198,21 @@ class ConflictError(AdaptiveLearnerError):
     """Resource already exists (-> HTTP 409)."""
     pass
 
-class ExportError(AdaptiveLearnerError):
-    """Export failed: Pandoc, scaffolding, conversion (-> HTTP 500)."""
+class PayloadTooLargeError(AdaptiveLearnerError):
+    """Request payload exceeded the configured limit (-> HTTP 413)."""
     pass
 
-class PluginError(AdaptiveLearnerError):
-    """Plugin could not load, activate, or run (-> HTTP 500)."""
-    def __init__(self, plugin_name: str, message: str):
-        self.plugin_name = plugin_name
-        super().__init__(f"Plugin '{plugin_name}': {message}")
-
 class ExternalServiceError(AdaptiveLearnerError):
-    """External service unreachable (-> HTTP 502)."""
+    """External service (AI provider, Edge-TTS, ...) unreachable (-> HTTP 502)."""
     def __init__(self, service: str, message: str):
         self.service = service
         super().__init__(f"{service}: {message}")
 ```
+
+The actual hierarchy lives in
+`backend/app/exceptions.py`. Add a new subclass when a new
+domain error needs to map to a distinct HTTP status; do NOT
+overload an existing one.
 
 ### Backend: global exception handler
 
@@ -224,8 +223,7 @@ ERROR_STATUS_MAP = {
     NotFoundError: 404,
     ValidationError: 400,
     ConflictError: 409,
-    ExportError: 500,
-    PluginError: 500,
+    PayloadTooLargeError: 413,
     ExternalServiceError: 502,
 }
 
@@ -246,22 +244,25 @@ async def adaptive_learner_error_handler(request, exc: AdaptiveLearnerError):
 
 ```python
 # RIGHT
-def get_book(book_id: str, db: Session) -> Book:
-    book = db.query(Book).filter(Book.id == book_id).first()
-    if not book:
-        raise NotFoundError(f"Book {book_id} not found")
-    return book
+def get_learning_project(project_id: str, db: Session) -> LearningProject:
+    project = db.get(LearningProject, project_id)
+    if project is None:
+        raise NotFoundError(f"LearningProject {project_id} not found")
+    return project
 
-def export_book(book_id: str, fmt: str, ...) -> Path:
-    if fmt not in SUPPORTED_FORMATS:
-        raise ValidationError(f"Unsupported format: {fmt}")
-    try:
-        return run_pandoc(project_dir, fmt, config)
-    except subprocess.CalledProcessError as e:
-        raise ExportError(f"Pandoc failed: {e.stderr}")
+def end_session(session_id: str, db: Session) -> LearningSession:
+    session = db.get(LearningSession, session_id)
+    if session is None:
+        raise NotFoundError(f"LearningSession {session_id} not found")
+    if session.status == "completed":
+        raise ConflictError(f"LearningSession {session_id} already ended")
+    session.status = "completed"
+    session.ended_at = datetime.now(UTC)
+    db.commit()
+    return session
 
 # WRONG: HTTPException in a service
-def get_book(book_id: str, db: Session) -> Book:
+def get_learning_project(project_id: str, db: Session) -> LearningProject:
     ...
     raise HTTPException(status_code=404, ...)  # NOT in services
 ```
@@ -270,37 +271,35 @@ def get_book(book_id: str, db: Session) -> Book:
 
 ```python
 # RIGHT
-@router.get("/{book_id}")
-def get_book_endpoint(book_id: str, db: Session = Depends(get_db)):
-    return book_service.get_book(book_id, db)
+@router.get("/{project_id}")
+def get_project_endpoint(project_id: str, db: Session = Depends(get_db)):
+    return project_service.get_learning_project(project_id, db)
     # NotFoundError -> exception handler -> 404 automatically
 ```
 
-**Plugins** throw PluginError:
+**Plugins** throw the same domain exceptions as core services:
 
 ```python
-class AudiobookPlugin(BasePlugin):
-    def generate(self, book_data, chapters):
-        try:
-            result = edge_tts.synthesize(...)
-        except ConnectionError as e:
-            raise ExternalServiceError("edge-TTS", str(e))
-        if not result.files:
-            raise PluginError(self.name, "No audio generated")
+class SessionPlugin(BasePlugin):
+    def create_session_prompt(self, profile: dict, step: int) -> str:
+        if step < 1 or step > 7:
+            raise ValidationError(f"Invalid session step: {step}")
+        return _build_prompt(profile, step)
 ```
 
 **External tools** are wrapped:
 
 ```python
-def check_grammar(text: str, lang: str) -> list[dict]:
+async def call_ai_provider(prompt: str, model: str) -> str:
     try:
-        response = httpx.post(LANGUAGETOOL_URL, ...)
-        response.raise_for_status()
-        return response.json()["matches"]
-    except httpx.ConnectError:
-        raise ExternalServiceError("LanguageTool", "Service not reachable")
-    except httpx.HTTPStatusError as e:
-        raise ExternalServiceError("LanguageTool", f"HTTP {e.response.status_code}")
+        response = await anthropic_client.messages.create(
+            model=model, max_tokens=4096, messages=[{"role": "user", "content": prompt}]
+        )
+        return response.content[0].text
+    except anthropic.APIConnectionError as e:
+        raise ExternalServiceError("anthropic", str(e))
+    except anthropic.APIStatusError as e:
+        raise ExternalServiceError("anthropic", f"HTTP {e.status_code}: {e.message}")
 ```
 
 ### Backend: rules
@@ -308,8 +307,8 @@ def check_grammar(text: str, lang: str) -> list[dict]:
 - Services throw AdaptiveLearnerError subclasses, NEVER HTTPException.
 - Routers catch NOTHING. The global exception handler takes over.
 - No bare `except Exception`. Catch specific exceptions.
-- Always wrap external errors into ExternalServiceError.
-- Always surface plugin errors as PluginError with plugin_name.
+- Always wrap external errors (AI providers, Edge-TTS, ...) into ExternalServiceError with the service name.
+- Plugin errors surface as domain exceptions (NotFoundError / ValidationError / ExternalServiceError) — same shapes the core uses.
 - HTTP 422 comes from Pydantic automatically.
 - Logging: 4xx as WARNING, 5xx as ERROR with traceback.
 
@@ -364,24 +363,24 @@ async function apiCall<T>(url: string, options?: RequestInit): Promise<T> {
 
 ```typescript
 // RIGHT: specific + i18n + loading + issue button on 5xx
-async function handleExport() {
+async function handleEndSession(sessionId: string) {
   setLoading(true)
   try {
-    await exportBook(bookId, format)
-    toast.success(t('export_success'))
+    await getStorage().tracking.end(sessionId)
+    toast.success(t('session.end_success'))
   } catch (error) {
     if (error instanceof ApiError) {
       if (error.isNotFound) {
-        toast.error(t('book_not_found'))
+        toast.error(t('ui.errors.session_not_found'))
       } else if (error.isServerError) {
         // Toast with a "Report issue" link for GitHub
-        const issueUrl = error.toGitHubIssueUrl('astrapi69/adaptive_learner', APP_VERSION)
-        toast.error(`${error.detail} | ${t('report_issue')}: ${issueUrl}`)
+        const issueUrl = error.toGitHubIssueUrl('astrapi69/adaptive-learner', APP_VERSION)
+        toast.error(`${error.detail} | ${t('ui.report_issue')}: ${issueUrl}`)
       } else {
         toast.error(error.detail)
       }
     } else {
-      toast.error(t('unexpected_error'))
+      toast.error(t('ui.errors.unexpected'))
     }
   } finally {
     setLoading(false)
@@ -389,7 +388,7 @@ async function handleExport() {
 }
 
 // WRONG: ignore the error
-await exportBook(bookId, format)  // no catch
+await getStorage().tracking.end(sessionId)  // no catch
 
 // WRONG: generic, no context
 catch (error) {
@@ -407,7 +406,8 @@ catch (error) {
 - finally block for the loading-state reset.
 - Toast on server errors (5xx) with a "Report issue" button that opens a GitHub Issue.
 - The GitHub Issue contains: error detail as title, stacktrace (from the debug response), browser info, app version.
-- Generic error messages ("Export failed") are forbidden, they make issues worthless.
+- Generic error messages ("Session failed", "Import failed") are forbidden, they make issues worthless.
+- Production users see friendly `ui.errors.*` strings, not raw HTTP detail or stack traces. Developer Mode in Settings (off by default) flips this on for debugging.
 
 ---
 
@@ -418,31 +418,31 @@ Uniform REST design so humans and AI immediately understand how endpoints behave
 ### URL schema
 
 ```
-GET    /api/books                    # list
-GET    /api/books/{id}               # single
-POST   /api/books                    # create
-PUT    /api/books/{id}               # full update
-PATCH  /api/books/{id}               # partial update
-DELETE /api/books/{id}               # delete
+GET    /api/projects                    # list
+GET    /api/projects/{id}               # single
+POST   /api/projects                    # create
+PUT    /api/projects/{id}               # full update
+PATCH  /api/projects/{id}               # partial update
+DELETE /api/projects/{id}               # delete
 
-GET    /api/books/{id}/chapters      # subresource list
-POST   /api/books/{id}/chapters      # subresource create
+GET    /api/projects/{id}/sessions      # subresource list
+POST   /api/projects/{id}/sessions      # subresource create
 ```
 
 ### Response format
 
 ```json
 // Success (single)
-{ "id": "abc", "title": "My Book", "author": "Asterios" }
+{ "id": "abc", "topic": "Spanish", "goal": "Conversational fluency in 3 months" }
 
 // Success (list)
-[{ "id": "abc", "title": "My Book" }, ...]
+[{ "id": "abc", "topic": "Spanish" }, ...]
 
 // Error (automatically from FastAPI/Pydantic)
-{ "detail": "Book abc not found" }
+{ "detail": "LearningProject abc not found" }
 
 // Validation error (automatically from Pydantic)
-{ "detail": [{ "loc": ["body", "title"], "msg": "field required", "type": "value_error.missing" }] }
+{ "detail": [{ "loc": ["body", "topic"], "msg": "field required", "type": "value_error.missing" }] }
 ```
 
 **Rules:**
@@ -450,7 +450,7 @@ POST   /api/books/{id}/chapters      # subresource create
 - IDs are UUIDs as strings.
 - Timestamps as ISO 8601 (UTC).
 - Lists are NOT paginated. Pagination only when needed.
-- Plugin endpoints under /api/{plugin-name}/... (e.g. /api/grammar/check).
+- Plugin endpoints under /api/plugins/{plugin-name}/... (e.g. /api/plugins/learning-repo/render/{project_id}).
 
 ---
 
@@ -464,20 +464,20 @@ import logging
 logger = logging.getLogger(__name__)
 
 # RIGHT: structured, with context
-logger.info("Book exported", extra={"book_id": book.id, "format": fmt})
+logger.info("Session ended", extra={"session_id": session.id, "method": session.method})
 logger.warning("Plugin load failed", extra={"plugin": name, "error": str(e)})
-logger.error("Export failed", extra={"book_id": book.id}, exc_info=True)
+logger.error("AI provider call failed", extra={"provider": "anthropic", "model": model}, exc_info=True)
 
 # WRONG:
-print("export done")           # no print
-logger.info(f"Exported {book}")  # no objects inside messages, use extra
+print("session done")              # no print
+logger.info(f"Ended {session}")   # no objects inside messages, use extra
 ```
 
 **Log levels:**
 - DEBUG: detailed developer info (only with ADAPTIVE_LEARNER_DEBUG=true).
-- INFO: important actions (export started, plugin loaded, backup created).
+- INFO: important actions (session started, plugin loaded, backup created).
 - WARNING: unexpected behavior that is not critical (plugin not found, fallback used).
-- ERROR: errors that affect the user (export failed, DB error).
+- ERROR: errors that affect the user (AI provider unreachable, DB error).
 
 ### Frontend
 
@@ -493,42 +493,54 @@ logger.info(f"Exported {book}")  # no objects inside messages, use extra
 
 ```python
 # RIGHT: the why, not the what
-# TipTap uses 4-space indent, write-book-template uses 2-space.
-# Double the indentation before conversion.
-content = re.sub(r'^( +)', lambda m: m.group(1) * 2, content, flags=re.MULTILINE)
+# Cycle 7 was the historical exit step; v1.4.0 moved exit to
+# step 7 of any cycle. Don't reintroduce the cycle-only check.
+if step >= 7:
+    completed_cycles += 1
 
 # WRONG: commenting the obvious
-# Create a new book
-book = Book(title=title, author=author)
+# Create a new project
+project = LearningProject(topic=topic, goal=goal)
 ```
 
 **Rules:**
 - Comments explain WHY, not WHAT.
 - Docstrings for every public Python function (Google style).
 - TypeScript: JSDoc only for exported functions with non-obvious parameters.
-- TODOs only with context: `# TODO(phase-8): audiobook plugin needs ffmpeg check`
+- TODOs only with context: `# TODO(EXP-013): per-element grouping in review session`
 - No commented-out code blocks. Git is the versioning.
 
 ### Docstring format (Python)
 
 ```python
-def export_book(book_id: str, fmt: str, options: ExportOptions) -> Path:
-    """Export a book in the given format.
+def award_xp_for_session(
+    db: Session,
+    *,
+    session: dict[str, Any],
+    rating: dict[str, Any] | None = None,
+) -> XPAward | None:
+    """Persist XP for a completed session and return the award.
 
-    Converts TipTap JSON to Markdown, scaffolds the write-book-template
-    structure and calls manuscripta for the final conversion.
+    Composes the session-XP rule
+    (:func:`calculate_session_xp`) with the DB-derived inputs
+    (streak days, first-method bonus eligibility), upserts the
+    UserXP row, and returns the breakdown so the frontend can
+    render the floating-toast animation.
 
     Args:
-        book_id: UUID of the book.
-        fmt: target format (epub, pdf, project).
-        options: export options (toc_depth, use_manual_toc, book_type).
+        db: SQLAlchemy session.
+        session: ``LearningSession.to_dict()`` payload (id +
+            project_id + method + cycle_step + cycle_count).
+        rating: kept for hook parity; not consumed by the
+            calculator today.
 
     Returns:
-        Path to the exported file.
+        ``XPAward`` instance, or ``None`` when the session
+        payload is incomplete (missing ``project_id`` or
+        ``method``).
 
     Raises:
-        HTTPException: 404 when the book is not found.
-        ExportError: when Pandoc/manuscripta fails.
+        NotFoundError: when the project FK doesn't resolve.
     """
 ```
 

@@ -64,14 +64,14 @@ Additionally for the AI:
 ## Current state
 
 See architecture.md for architectural details. Additionally note:
-- Version: 0.17.0 (one-click launcher install/uninstall across Windows/macOS/Linux, auto-update check with opt-out, cleanup retry, activity log, manuscripta 0.9.0 + Pillow 12).
+- Current version: see ``backend/pyproject.toml`` (canonical) — every other version-bearing file derives via ``make sync-versions``.
 - Tests: see `docs/audits/current-coverage.md` for current counts. `make test` covers backend+plugins+Vitest, E2E is separate.
-- 26 ChapterTypes (3 marketing types in audiobook-export skip list by default).
-- 15 official TipTap extensions + 1 community (@pentestpad/tiptap-extension-figure).
-- 24 toolbar buttons in the editor.
-- Deployment: Docker Compose, port 7880, install.sh one-liner.
+- 28 SQLAlchemy models in `backend/app/models/__init__.py` (single-file domain model).
+- 12 plugins shipped (assessment, session, tracking, tools, gamification, anki, notebooklm, learning-repo, content-loader, ai-anthropic, ai-openai, ai-gemini).
+- 15 official TipTap extensions + 1 community (@pentestpad/tiptap-extension-figure) — used for rich-text in session notes, curriculum descriptions, and lesson content.
+- Deployment: Docker Compose, port 18001 (backend) + 15174 (frontend dev), install.sh one-liner. GitHub-Pages-shape build runs Dexie-mode at `https://astrapi69.github.io/adaptive-learner/`.
 - IMPORTANT: Before writing custom code, ALWAYS check whether a TipTap extension or library already exists.
-- IMPORTANT: See lessons-learned.md for known pitfalls (TipTap, import, export).
+- IMPORTANT: See lessons-learned.md for known pitfalls.
 
 ## Test coverage audits
 
@@ -123,18 +123,14 @@ only.
 
 - `make test` - default everyday command. Fast, no coverage.
   Stays green as the gate after every change.
-- `make test-coverage` - explicit opt-in. Runs backend, frontend
-  and the 5 in-CI plugins (export, grammar, kdp, kinderbuch,
-  ms-tools) with `pytest --cov` and `vitest --coverage`. Frontend
-  coverage requires Node 20+; lower versions fail with a
+- `make test-coverage` - explicit opt-in. Runs backend, frontend,
+  and every plugin with `pytest --cov` and `vitest --coverage`.
+  Frontend coverage requires Node 20+; lower versions fail with a
   `node:inspector/promises` ImportError. CI uses Node 24 so this
   is only a local concern.
 - `.github/workflows/coverage.yml` - runs on every push to main
   and every PR. Uploads HTML reports + coverage.xml as
-  GitHub Actions artifacts (14 day retention):
-    - `backend-coverage`
-    - `adaptive-learner-plugin-{export,grammar,kdp,kinderbuch,ms-tools}-coverage`
-    - `frontend-coverage`
+  GitHub Actions artifacts (14 day retention).
 
 To pull the latest coverage reports without running coverage
 locally:
@@ -142,13 +138,8 @@ locally:
 ```bash
 gh run download --name backend-coverage
 gh run download --name frontend-coverage
-gh run download --name adaptive-learner-plugin-export-coverage  # etc.
+gh run download --name adaptive-learner-plugin-gamification-coverage  # etc.
 ```
-
-`audiobook` and `translation` plugins are not yet in the coverage
-matrix - they are tested by `make test` but not by CI's
-`ci.yml` plugin matrix either, so adding them to coverage is
-paired with adding them to ci.yml in a follow-up.
 
 Codecov integration is intentionally not wired up. Adding it is
 a separate prompt: enable the repo on codecov.io, add

@@ -9,13 +9,14 @@
 make test
 
 # Individually when targeted:
-make test-backend           # pytest backend
-make test-plugins           # all plugin tests
-make test-plugin-export     # export only
-make test-plugin-grammar    # grammar only
-make test-plugin-kdp        # KDP only
-make test-plugin-kinderbuch # kinderbuch only
-make test-frontend          # Vitest
+make test-backend                  # pytest backend
+make test-plugins                  # all 12 plugin test suites
+make test-plugin-assessment        # assessment only
+make test-plugin-session           # session (largest plugin) only
+make test-plugin-gamification      # XP / badges / streak
+make test-plugin-learning-repo     # Phase 42 / 49 Learning Repository
+make test-plugin-content-loader    # Phase 43 content sets
+make test-frontend                 # Vitest (happy-dom)
 
 # E2E (needs a running app)
 make dev                    # start the app
@@ -73,27 +74,19 @@ Current counts: see [docs/audits/current-coverage.md](docs/audits/current-covera
 
 **Example - new service:**
 ```python
-# plugins/adaptive-learner-plugin-export/tests/test_tiptap_to_md.py
+# plugins/adaptive-learner-plugin-gamification/tests/test_xp_service.py
 
-def test_heading_conversion():
-    """H2 node becomes ## in Markdown."""
-    tiptap_json = {
-        "type": "doc",
-        "content": [
-            {"type": "heading", "attrs": {"level": 2},
-             "content": [{"type": "text", "text": "Title"}]}
-        ]
-    }
-    result = tiptap_to_markdown(tiptap_json)
-    assert result.strip() == "## Title"
+def test_three_star_band():
+    """90% correct unlocks 3 stars."""
+    assert compute_stars(correct=90, total=100) == 3
 
-def test_image_roundtrip():
-    """Image survives import -> export."""
-    md_input = "![Alt Text](assets/figures/image.png)"
-    html = markdown_to_html(md_input)
-    tiptap_json = html_to_tiptap(html)
-    md_output = tiptap_to_markdown(tiptap_json)
-    assert "image.png" in md_output
+def test_streak_caps_at_seven_days():
+    """A 20-day streak collapses to the 7-day multiplier."""
+    long_streak = {date(2026, 5, day) for day in range(8, 28)}
+    assert current_streak_days(long_streak, today=date(2026, 5, 27)) == 20
+    award = calculate_lesson_session_xp(stars=3, first_attempt=True, streak_days=20)
+    # Base 30 + star 30 + first-attempt 20 = 80, capped multiplier = 2.75
+    assert award.xp_earned == 220
 ```
 
 **Naming convention:** `test_{what_is_tested}.py`, functions: `test_{scenario}()`
@@ -122,17 +115,17 @@ cd frontend && npx vitest   # watch mode
 ```typescript
 // src/api/client.test.ts
 import { describe, it, expect, vi } from 'vitest'
-import { fetchBooks, createBook } from './client'
+import { api } from './client'
 
 describe('API Client', () => {
-  it('fetchBooks returns book list', async () => {
+  it('listProjects returns the user\'s learning projects', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve([{ id: '1', title: 'Test' }])
+      json: () => Promise.resolve([{ id: '1', topic: 'Spanish', goal: 'A2 in 3 months' }])
     })
-    const books = await fetchBooks()
-    expect(books).toHaveLength(1)
-    expect(books[0].title).toBe('Test')
+    const projects = await api.projects.list('user-1')
+    expect(projects).toHaveLength(1)
+    expect(projects[0].topic).toBe('Spanish')
   })
 })
 ```
@@ -152,40 +145,48 @@ from app.main import app
 
 client = TestClient(app)
 
-def test_create_and_export_book():
-    """Create a book, add a chapter, export it."""
-    # Create book
-    resp = client.post("/api/books", json={"title": "Test", "author": "A"})
+def test_create_project_and_start_session():
+    """Create a learning project, start a session, end it."""
+    # Create user (most flows need one)
+    resp = client.post("/api/users", json={"name": "Tester", "language": "en"})
     assert resp.status_code == 200
-    book_id = resp.json()["id"]
+    user_id = resp.json()["id"]
 
-    # Add chapter
-    resp = client.post(f"/api/books/{book_id}/chapters",
-                       json={"title": "Chapter 1", "content": "{}"})
+    # Create project
+    resp = client.post(f"/api/users/{user_id}/projects",
+                       json={"topic": "Spanish", "goal": "A2 in 3 months", "timeframe": "3m"})
     assert resp.status_code == 200
+    project_id = resp.json()["id"]
 
-    # Trigger export
-    resp = client.get(f"/api/books/{book_id}/export/epub")
+    # Start a session via the session plugin
+    resp = client.post("/api/plugins/session/start",
+                       json={"project_id": project_id, "method": "deductive"})
     assert resp.status_code == 200
-    assert resp.headers["content-type"] == "application/epub+zip"
+    session_id = resp.json()["session_id"]
+
+    # End it via tracking
+    resp = client.post(f"/api/plugins/tracking/end/{session_id}")
+    assert resp.status_code == 200
 ```
 
 **When to write new integration tests:**
 - New API endpoint: happy path + error case (404, 422).
 - Plugin installation: ZIP upload -> plugin active -> endpoint reachable.
-- Import: a real write-book-template project -> all chapters, assets, metadata correct.
+- Backup roundtrip: export -> wipe -> import -> verify every domain row is back.
 
 ### E2E tests (Playwright)
 
-**What to test:** critical user flows from the author's perspective.
-**Where:** `frontend/tests/` or `e2e/`
+**What to test:** critical user flows from the learner's perspective.
+**Where:** `e2e/smoke/` (the existing 17 spec files) + `e2e/dexie/` (the Dexie-mode release gate).
 
 **Existing coverage:**
-- Dashboard: create, delete, backup/import a book
-- Editor: create, edit, sort chapters, metadata
-- Export: pick a format, export, download the file
-- Settings: plugins, licenses, language, theme
-- Navigation: every page reachable, links work
+- Onboarding: assessment -> profile -> first project.
+- Dashboard: create / delete / archive a learning project.
+- Session: start a 7-step session, send messages, end + rate.
+- Curriculum: edit lesson rich-text content (TipTap).
+- Settings: provider switch, key entry, language, theme, plugins.
+- Navigation: every of the 13 routes reachable, links work.
+- Dexie-mode release gate (`make test-dexie-smoke`): every nav-reachable route renders in the GH-Pages-shape build with NO backend.
 
 **When to write new E2E tests:**
 - New plugin with UI: at least one flow (enable plugin -> use feature).
@@ -194,24 +195,22 @@ def test_create_and_export_book():
 
 **Example:**
 ```typescript
-// e2e/export.spec.ts
+// e2e/smoke/session-flow.spec.ts
 import { test, expect } from '@playwright/test'
 
-test('export book as EPUB with manual TOC', async ({ page }) => {
-  await page.goto('/books/test-book-id')
+test('start a deductive session, message, end with rating', async ({ page }) => {
+  await page.goto('/')
+  await page.click('[data-testid="start-session-deductive"]')
+  await expect(page.locator('[data-testid="session-step"]')).toBeVisible()
 
-  // Open the export dialog
-  await page.click('[data-testid="export-button"]')
-  await expect(page.locator('.export-dialog')).toBeVisible()
+  await page.fill('[data-testid="session-input"]', 'What is the past tense of "go"?')
+  await page.click('[data-testid="session-send"]')
+  await expect(page.locator('[data-testid="session-message-assistant"]')).toBeVisible()
 
-  // Pick EPUB, enable manual TOC
-  await page.click('[data-testid="format-epub"]')
-  await page.check('[data-testid="use-manual-toc"]')
-  await page.click('[data-testid="export-start"]')
-
-  // Verify the download
-  const download = await page.waitForEvent('download')
-  expect(download.suggestedFilename()).toContain('.epub')
+  await page.click('[data-testid="session-end"]')
+  await page.click('[data-testid="rating-stars-3"]')
+  await page.click('[data-testid="rating-submit"]')
+  await expect(page).toHaveURL(/\/dashboard/)
 })
 ```
 
@@ -258,7 +257,7 @@ These are target coverage levels, not hard gates. They guide where to invest tes
 | Flow Type | Target | Rationale |
 |-----------|--------|-----------|
 | Data-critical flows (backup, import, export, trash) | MUST HAVE | Silent data corruption is the worst bug class |
-| Core user journeys (create book, edit, navigate) | MUST HAVE | Happy path must always work |
+| Core user journeys (assessment -> first session -> end + rate) | MUST HAVE | Happy path must always work |
 | Plugin UI flows | SHOULD HAVE (one smoke per plugin) | Verify plugin UI mounts and basic interaction |
 | Edge cases (long titles, empty states, error recovery) | NICE TO HAVE | Fill as bugs surface |
 
@@ -326,10 +325,11 @@ poetry run mutmut html
 - Include `mutmut results` in the session summary when it was run.
 
 **Test the critical modules first:**
-1. `plugins/adaptive-learner-plugin-export/adaptive_learner_export/tiptap_to_md.py` - conversion logic
-2. `plugins/adaptive-learner-plugin-export/adaptive_learner_export/scaffolder.py` - project structure
-3. `backend/app/services/` - core business logic
-4. `backend/app/licensing.py` - security-critical
+1. `plugins/adaptive-learner-plugin-gamification/adaptive_learner_gamification/xp_service.py` - XP curve + rule
+2. `plugins/adaptive-learner-plugin-session/adaptive_learner_session/` - session orchestration + evaluation
+3. `plugins/adaptive-learner-plugin-learning-repo/adaptive_learner_learning_repo/renderer.py` - Markdown emission
+4. `backend/app/services/` - core business logic
+5. `backend/app/licensing.py` - security-critical
 
 **Reference prompt for Claude Code:**
 ```
@@ -475,12 +475,12 @@ Nightly (separate, slower):
 
 ## Priority for the next improvements
 
-1. **Set up mutmut** - mutation testing for backend and export plugin
+1. **Set up mutmut** - mutation testing for backend + gamification + session plugins
 2. **Set up Stryker** - mutation testing for the frontend (Vitest is already running)
 3. **make check-all** - a single command for everything before push
-4. **Roundtrip tests** - import -> editor -> export -> epubcheck for every book format
-5. **Set up mypy** - type checking for the Python backend
-6. **CI pipeline** - GitHub Actions with all checks + nightly mutmut/Stryker
+4. **Cross-language parity tests** - extend the Phase 49F + Phase 50 pattern to any new shared logic
+5. **Set up mypy nightly** - in addition to the per-commit run, sweep the plugin tree
+6. **CI pipeline** - GitHub Actions with all checks + nightly mutmut/Stryker (partially shipped)
 
 ## Coverage Targets per Module Type
 

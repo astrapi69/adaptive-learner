@@ -84,7 +84,7 @@ Groups in this order:
 
 Format rules:
 - Past tense or present, consistent within the entry
-- Take the scope from the commit when it helps (e.g. "Audiobook plugin: ...")
+- Take the scope from the commit when it helps (e.g. "Gamification plugin: ...")
 - Collapse multiple commits touching the same feature
 - Drop or briefly mention internal refactorings without user impact
 
@@ -199,40 +199,33 @@ new literals.
 - [ ] `docs/CONCEPT.md` (if the version is mentioned in prose)
 - [ ] `README.md` (if the version is mentioned in prose)
 
-### External AdaptiveLearner-owned dependencies
+### External Adaptive Learner-owned dependencies
 
-Two libraries that the AdaptiveLearner project also maintains are
+One library that the Adaptive Learner project also maintains is
 pinned via the standard Poetry mechanism, NOT under
-`make sync-versions` automation. They have independent release
-lifecycles:
+`make sync-versions` automation. It has an independent release
+lifecycle:
 
-- `manuscripta` (book-rendering pipeline)
-- `pluginforge` (plugin framework)
+- `pluginforge` (plugin framework, also used by other apps)
 
-At each AdaptiveLearner release, manually verify both:
+At each Adaptive Learner release, manually verify:
 
-- [ ] `manuscripta` pin in `backend/pyproject.toml` and every
-      `plugins/*/pyproject.toml` matches the latest released
-      `manuscripta` on PyPI (or whichever version you intend
-      to ship with this AdaptiveLearner release)
 - [ ] `pluginforge` pin in `backend/pyproject.toml` and every
       `plugins/*/pyproject.toml` matches the latest released
-      `pluginforge`
+      `pluginforge` on PyPI
 
 Quick check:
 
 ```bash
-pip index versions manuscripta
 pip index versions pluginforge
-grep -rn "manuscripta\|pluginforge" \
+grep -rn "pluginforge" \
   backend/pyproject.toml plugins/*/pyproject.toml \
   | grep "version\|\^"
 ```
 
 The current deferral from `make sync-versions` rests on an
-assumption of low drift (verified 2026-05-04: both pinned at
-their latest PyPI release). If you find these drifting more
-than once between AdaptiveLearner releases, bring them under
+assumption of low drift. If you find PluginForge drifting more
+than once between Adaptive Learner releases, bring it under
 `sync-versions` automation. Concrete repeated drift overrides
 the deferral.
 
@@ -458,7 +451,7 @@ as "done". Missing items block the release.
 - [ ] changelog/releases/v0.X.0.md created for the GitHub release
 - [ ] Version updated in all pyproject.toml and package.json
 - [ ] Version updated in __version__ and other Python modules
-- [ ] manuscripta and other AdaptiveLearner deps at the current version
+- [ ] pluginforge and other externally-owned Adaptive Learner deps at the current version
 - [ ] `make test` green
 - [ ] Frontend `tsc --noEmit` clean
 - [ ] `npm run test` (Vitest) green
