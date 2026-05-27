@@ -358,4 +358,224 @@ execute.
 
 ---
 
+## 8. Long-form context — methodology + lessons from Phase 49
+
+### 8.1 Why we chose the TS port over a Dexie-only design
+
+The deferred question from v1.26.1 was "how do Dexie-mode
+users get the Learning Repository feature?" Three designs
+were viable:
+
+- **(A) Backend-only forever.** Dexie users get a
+  permanent "switch to server mode" panel. The
+  v1.26.1 v1 behaviour. Rejected as a hostile UX for
+  the public landing site.
+- **(B) Dexie-only re-imagining.** A simplified
+  client-side renderer with a different output shape.
+  Rejected because it forks the contract — two
+  renderers producing two outputs creates a "which
+  one is canonical" question forever.
+- **(C) Cross-language port with parity proof.** The
+  Python renderer and a new TypeScript renderer both
+  consume the same RenderContext data and produce
+  byte-identical output. The parity test is the
+  contract. ✅ **Chosen.**
+
+The chosen design has one social effect: changes to the
+renderer require coordinated edits to BOTH sides
+(Python source + TS port) + a regeneration of the
+goldens. That's not a cost — it's a feature. The
+single-source-of-truth is the GOLDEN MARKDOWN, not the
+renderer code. Both renderers serve the goldens; if a
+renderer drifts, the parity test fails.
+
+### 8.2 The parity-test pattern as reusable methodology
+
+Phase 49F validated the approach. It's reusable for any
+future cross-language port. Recipe:
+
+1. **Identify the shared data contract.** For 49F it
+   was the `RenderContext` shape (project + sessions +
+   ratings + …). For the next port candidate (lesson-XP
+   in § 2.1) it would be the input shape of
+   `award_xp_for_lesson_session`: a session dict +
+   user_id + first_attempt + streak_days.
+2. **Create the shared fixture directory** under
+   `tests/fixtures/{feature}-parity/`. One `input.json`
+   carrying the contract data + an `expected/` tree
+   with the per-output golden files.
+3. **Write the OLDER renderer's parity test FIRST.** The
+   older renderer is the canonical authoring surface;
+   it generates the goldens via a regen env-var path
+   (`{FEATURE}_PARITY_REGEN=1`). Pattern:
+   ```python
+   if regen:
+       golden.write_text(content)
+       continue
+   assert content == golden.read_text()
+   ```
+4. **Write a Python adapter (if needed)** that turns
+   the JSON fixture into whatever shape the OLDER
+   renderer's input expects. For 49F the adapter
+   wrapped dicts in `SimpleNamespace` so the Python
+   renderer's attribute-access worked without
+   SQLAlchemy.
+5. **Run regen ONCE** to author the goldens. Inspect
+   them for sanity.
+6. **Switch off regen.** Now the Python parity test
+   asserts.
+7. **Write the TS parity test.** Uses Node's `fs` to
+   load the same fixture + asserts byte-for-byte
+   equality against the same goldens.
+8. **Run TS test.** Fix any drift until it passes.
+
+The first time you do this, the regen step + the TS
+implementation might churn together. By the third
+iteration the methodology is muscle memory. Phase 49F's
+TS renderer passed on the FIRST parity run because the
+TS port was deliberately written to mirror the Python
+line-by-line — that's the cheapest way to converge.
+
+### 8.3 What NOT to do in this codebase
+
+Codebase-specific traps surfaced during Phase 49 that
+are worth pinning explicitly:
+
+- **Don't run `cd backend && X` then expect a follow-up
+  Bash call to still be in `backend`.** Every Bash tool
+  invocation starts at the project root. Always
+  absolute paths or `cd ... &&` per-call. Burned ~3
+  retries during 49F's pytest invocation.
+- **Don't trust IDE diagnostics on plugin code.** Plugin
+  pyproject.toml lives under `plugins/.../pyproject.toml`
+  with no `app.*` on its declared sys.path. The runtime
+  resolution happens via the backend venv's path-install.
+  IDE will scream "Cannot find module `app.models`" on
+  every plugin file. Ignore. The handover § 4.1 lists
+  them.
+- **Don't add an `@functools.lru_cache` to a renderer
+  helper without thinking about test isolation.** The
+  parity tests build multiple contexts in one process;
+  a cached helper carries state across them. Phase 49's
+  renderers are deliberately pure-functional (no
+  caches) for this reason.
+- **Don't assume `t("repo.action.persist", "fallback")`
+  reaches the catalog.** The frontend t() walks dotted
+  paths; the YAML uses flat underscore keys under
+  `repo:`. Today every `repo.action.*` call returns
+  the fallback. See § 2.4 — this is its own backlog
+  item, not a v1.32.0 regression.
+- **Don't import `app.main` at module load in plugin
+  code.** Use the lazy-import pattern (function-local
+  `from app.main import manager`) that the session
+  plugin's `_fire_on_session_complete` uses. Module-
+  level imports of `app.main` deadlock during the
+  FastAPI lifespan that constructs `manager`.
+- **Don't forget the `.split(sep).join("/")` step in
+  cross-platform path tests.** The parity test's golden
+  path collection uses `relative(root, full)` which on
+  Windows would emit backslashes. The renderer always
+  emits forward slashes. The fix is in
+  `parity.test.ts:88` — copy that pattern for any
+  future cross-platform path-comparison code.
+
+### 8.4 Concrete commit message format
+
+Mined from the Phase 46 + 49 commits. The pattern:
+
+```
+feat({scope}): {short imperative} (Phase {N}{Letter} / v{X.Y.Z} / {BACKLOG-ID})
+
+{2-3 paragraph why}
+
+{Bullet list of WHAT changed, grouped by file/area}
+
+Tests (+{N} {framework}): ...
+
+Pre-flight green:
+- backend X (+1 skipped) + plugins Y + Vitest Z
+- mypy clean
+- pre-commit clean
+- TypeScript tsc clean
+
+{Anything NOT in this commit, deliberately}
+```
+
+Scopes used in v1.30-v1.32: `model`, `lesson`,
+`gamification`, `frontend`, `storage`, `learning-repo`,
+`docs`, `test`, `chore`. Conventional commits with
+period-separated phase tags (e.g. `Phase 49E.1`) when
+splitting further.
+
+The release commit is always `chore(release): bump
+version to v{X.Y.Z}`. The post-release is always
+`docs: post-release v{X.Y.Z} documentation update`. The
+handover file is always
+`docs/journal/handover-to-v{next-version}.md`.
+
+### 8.5 The pre-flight gate chain — exact commands
+
+This is the discipline that kept Phase 49 at zero CI red
+events. Run EVERY commit:
+
+```bash
+# From repo root:
+make test                                              # backend + plugins + Vitest
+
+# Then from backend/:
+cd backend && poetry run mypy app/
+cd backend && poetry run pre-commit run --all-files
+# (run pre-commit TWICE the first time — first run
+# triggers ruff-format auto-fix, second run verifies
+# clean. Stage the reformatted files before commit.)
+
+# For commits touching the Dexie path (storage, db.ts,
+# renderer, any IStorageService consumer):
+make test-dexie-smoke                                  # 18 specs, ~25s
+cd frontend && npx tsc --noEmit                        # TS strict check
+
+# For release commits:
+cd frontend && npm run build                           # production bundle
+```
+
+If ANY gate fails: stop, investigate, fix. Don't
+proceed with stacked broken commits — the
+atomic-green-commit discipline (every commit
+individually green) is what makes bisect useful.
+
+### 8.6 Critical-path file map
+
+For a new model picking up this codebase cold, these
+are the files to read FIRST (in this order) for a
+mental model:
+
+1. `CLAUDE.md` — project shape, layered architecture,
+   stack, conventions.
+2. `.claude/rules/architecture.md` — the 4-layer
+   architecture + plugin pattern.
+3. `.claude/rules/coding-standards.md` — function
+   design, error handling, dependencies.
+4. `.claude/rules/lessons-learned.md` — codebase-
+   specific pitfalls (skim, grep for the topic you're
+   touching).
+5. `.claude/rules/release-workflow.md` — sync-versions
+   chain + tag pattern + release checklist.
+6. `backend/app/models/__init__.py` — 28 SQLAlchemy
+   models, the data model is in this single file.
+7. `backend/app/hookspecs.py` — 10 pluggy hooks, the
+   plugin surface.
+8. `frontend/src/storage/types.ts` — `IStorageService`
+   interface, every namespace surface.
+9. `frontend/src/storage/dexie-storage.ts` — Dexie
+   implementation, the load-bearing client-side path.
+10. `frontend/src/storage/db.ts` — Dexie schema history
+    (v1 → v19) + row types.
+
+For ANY changes touching the storage abstraction, files
+9 + 10 are the critical pair: keep their shapes in sync
+with the `ApiStorage` in `api-storage.ts` and the
+backend models in `app/models/__init__.py`.
+
+---
+
 End of handover.
