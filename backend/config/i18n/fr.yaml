@@ -204,6 +204,22 @@ dashboard:
     elements: "élément(s) à réviser"
     overdue: "en retard — commence ici"
     open: "Ouvrir la session de révision"
+review:
+  page_title: "Révision"
+  session_title: "Session de révision"
+  subtitle: "{n} élément(s) à réviser"
+  loading: "Chargement de la session de révision…"
+  empty_body: "Tout est à jour ! Aucun élément à réviser dans cet ensemble."
+  not_cached_body: "Cet ensemble n'est pas encore téléchargé. Ouvre l'explorateur de contenu d'abord."
+  back_to_dashboard: "Retour au tableau de bord"
+  summary:
+    aria_label: "Résumé de la révision"
+    heading: "Révision terminée"
+    score: "Score"
+    note: "Les scores des éléments ont été mis à jour. Les éléments maîtrisés n'apparaîtront plus dans la prochaine session."
+  error:
+    missing_params: "Aucun ensemble de contenu sélectionné."
+    load_failed: "Impossible de charger la session de révision."
   spaced_empty: Rien a reviser pour l'instant. Bon rythme !
   spaced_interval_label: Revoir dans
   spaced_start: Demarrer

@@ -216,6 +216,25 @@
       "elements": "Element(e) zur Wiederholung",
       "overdue": "überfällig — hier starten",
       "open": "Wiederholungssitzung öffnen"
+    }
+  },
+  "review": {
+    "page_title": "Wiederholung",
+    "session_title": "Wiederholungssitzung",
+    "subtitle": "{n} Element(e) zur Wiederholung",
+    "loading": "Wiederholungssitzung wird geladen…",
+    "empty_body": "Alles erledigt! Keine Elemente für dieses Set zu wiederholen.",
+    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhalts-Browser zuerst.",
+    "back_to_dashboard": "Zurück zum Dashboard",
+    "summary": {
+      "aria_label": "Wiederholungs-Zusammenfassung",
+      "heading": "Wiederholung abgeschlossen",
+      "score": "Punktzahl",
+      "note": "Element-Werte wurden aktualisiert. Gemeisterte Elemente erscheinen in der nächsten Sitzung nicht mehr."
+    },
+    "error": {
+      "missing_params": "Kein Inhalts-Set ausgewählt.",
+      "load_failed": "Wiederholungssitzung konnte nicht geladen werden."
     },
     "spaced_empty": "Nichts zu wiederholen — guter Rhythmus!",
     "spaced_interval_label": "Wiederholung in",

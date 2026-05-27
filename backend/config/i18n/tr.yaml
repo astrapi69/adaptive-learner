@@ -204,6 +204,22 @@ dashboard:
     elements: "tekrar için öğe(ler)"
     overdue: "gecikmiş — buradan başla"
     open: "Tekrar oturumu aç"
+review:
+  page_title: "Tekrar"
+  session_title: "Tekrar oturumu"
+  subtitle: "Tekrar için {n} öğe"
+  loading: "Tekrar oturumu yükleniyor…"
+  empty_body: "Hepsi tamam! Bu sette tekrar edilecek öğe yok."
+  not_cached_body: "Bu set henüz indirilmedi. Önce içerik tarayıcısını aç."
+  back_to_dashboard: "Panele dön"
+  summary:
+    aria_label: "Tekrar özeti"
+    heading: "Tekrar tamamlandı"
+    score: "Puan"
+    note: "Öğe puanları güncellendi. Ustalaştığın öğeler bir sonraki oturumda görünmeyecek."
+  error:
+    missing_params: "İçerik seti seçilmedi."
+    load_failed: "Tekrar oturumu yüklenemedi."
   spaced_empty: Şu an tazelenecek bir şey yok. Harika bir ritim!
   spaced_interval_label: Tekrar
   spaced_start: Başla

@@ -216,6 +216,25 @@
       "elements": "element(s) due for review",
       "overdue": "overdue — start here",
       "open": "Open review session"
+    }
+  },
+  "review": {
+    "page_title": "Review",
+    "session_title": "Review session",
+    "subtitle": "Reviewing {n} element(s) due for SRS",
+    "loading": "Loading review session…",
+    "empty_body": "All caught up! No elements due for review in this set.",
+    "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
+    "back_to_dashboard": "Back to Dashboard",
+    "summary": {
+      "aria_label": "Review summary",
+      "heading": "Review complete",
+      "score": "Score",
+      "note": "Element scores have been updated. Mastered elements will not appear in the next session."
+    },
+    "error": {
+      "missing_params": "No content set selected.",
+      "load_failed": "Could not load review session."
     },
     "spaced_empty": "Nothing to refresh right now. Great rhythm!",
     "spaced_interval_label": "Review in",

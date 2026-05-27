@@ -216,6 +216,25 @@
       "elements": "elemento(s) para repasar",
       "overdue": "atrasados — empieza aquí",
       "open": "Abrir sesión de repaso"
+    }
+  },
+  "review": {
+    "page_title": "Repaso",
+    "session_title": "Sesión de repaso",
+    "subtitle": "{n} elemento(s) para repasar",
+    "loading": "Cargando sesión de repaso…",
+    "empty_body": "¡Todo al día! No hay elementos para repasar en este conjunto.",
+    "not_cached_body": "Este conjunto aún no se ha descargado. Abre el explorador de contenido primero.",
+    "back_to_dashboard": "Volver al panel",
+    "summary": {
+      "aria_label": "Resumen del repaso",
+      "heading": "Repaso completo",
+      "score": "Puntuación",
+      "note": "Las puntuaciones de los elementos se han actualizado. Los elementos dominados no aparecerán en la próxima sesión."
+    },
+    "error": {
+      "missing_params": "Ningún conjunto de contenido seleccionado.",
+      "load_failed": "No se pudo cargar la sesión de repaso."
     },
     "spaced_empty": "Nada que repasar ahora mismo. ¡Buen ritmo!",
     "spaced_interval_label": "Revisar en",
