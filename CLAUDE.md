@@ -9,32 +9,40 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.30.0** (Phase 46 sub-phases A-D
-  — Element-Level Error Tracking + SRS Review Sessions,
-  EXP-007 / P-129). The "adaptive" in "Adaptive Learner"
-  now actually means something: every wrong answer in every
-  exercise type writes a per-element ``ElementError`` row
-  keyed by the specific word / pair / phrase the user
-  missed. Mastery flips at 3 consecutive correct
-  (``MASTERY_THRESHOLD=3``); a mastered element that gets a
-  wrong answer demotes back. New SRS scheduling service
-  projects the active rows into a prioritised review queue
-  (1d/3d/7d bands by correct_streak, sorted overdue → error
-  count desc → last_error_at desc). Dashboard widget
-  ``<ReviewQueueCard>`` surfaces the queue count + CTA. New
-  ``/review/:setId`` route runs a synthesised mini-lesson
-  that re-plays exactly the failed exercises, persisting
-  attempts via the same ``elementErrors.recordBulk`` path
-  the main viewer uses. New Alembic 0019 + Dexie schema v18
-  + ``IStorageService.elementErrors`` namespace (storage-
-  mode-agnostic so GH-Pages users get the full SRS loop
-  without a backend). Expanded LessonSummary: per-exercise
-  breakdown, 0-3 star rating, score progress bar, "Next
-  lesson"/"Repeat"/"Back to set" buttons + 3-star
-  celebration CSS animation. **Decoupled from
-  LearningSession by design** — Phase 46 E-F-G
-  (gamification + session-unification + docs) split to
-  v1.31.0; ElementError survives that split unchanged.
+- **Current state:** **v1.31.0** (Phase 46 sub-phases E-F-G
+  — Gamification Integration + LessonProgress↔LearningSession
+  Unification + Docs, EXP-007 / P-129). Closes Phase 46.
+  Content lesson completions now feed the existing XP / streak /
+  badge / ProgressCommit machinery **transparently**: a per-user
+  "Content Lessons" pseudo-project (``LearningProject.kind=
+  "content"``, lazy-created on first completion, Alembic 0020)
+  owns a ``LearningSession`` row with the new
+  ``method="content"`` 7th-value for every lesson completed.
+  The existing ``on_session_complete`` pluggy hook fires —
+  zero new hookspec. Gamification plugin dispatches on method:
+  ``"content"`` routes to the new lesson-XP formula (30 base
+  + 10/star + 20 first-attempt 3-star, same +25%/day streak
+  multiplier capped at 7); other methods stay on the chat
+  formula. Four new badges seed under the existing catalog
+  (``first_lesson``, ``lessons_10``, ``three_star_streak``,
+  ``review_master``); catalog count 24 → 28. Frontend hides
+  the pseudo-project from every project picker
+  (``DashboardFilterBar`` + ``ExportSection`` + ``Anki`` via
+  the new ``filterStandardProjects`` helper). New user-guide
+  page ``lessons.md`` + developer page ``lessons-and-srs.md``,
+  both EN+DE, native umlauts. Dexie-mode lessons still work
+  end-to-end for the review loop; the XP / badge side effects
+  are API-mode-only by deliberate scope (deferred to a future
+  release that ports the rule to the storage abstraction).
+  v1.30.0 = Phase 46 A-D — Element-Level Error Tracking +
+  SRS Review Sessions, EXP-007 / P-129 (every wrong answer
+  writes a per-element ``ElementError`` row keyed by the
+  specific word / pair / phrase missed; mastery flips at 3
+  consecutive correct, demotes on wrong; new SRS scheduler
+  with 1d/3d/7d bands; new ``/review/:setId`` route +
+  Dashboard ``<ReviewQueueCard>`` widget; Alembic 0019 +
+  Dexie schema v18 + ``IStorageService.elementErrors``
+  namespace; expanded LessonSummary with 0-3 star rating).
   v1.29.0 = Phase 45 — Free-Text + Word-Tiles Exercises,
   EXP-002 Sprint 3 parts E-F (the v1.28.0 viewer now ships
   every exercise type the v1.0 lesson schema knows about;
@@ -109,7 +117,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.30.0.md](changelog/releases/v1.30.0.md)
+  [changelog/releases/v1.31.0.md](changelog/releases/v1.31.0.md)
   for the per-release detail and `git log --oneline` for
   the feature history across Phases 1–42.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
@@ -287,8 +295,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.30.0 baseline:** backend 980 (+1 skipped) + plugins
-  826 + Vitest 1748 = **3554 tests** (+1 skipped). E2E
+- **v1.31.0 baseline:** backend 1004 (+1 skipped) + plugins
+  838 + Vitest 1755 = **3597 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (18 specs incl. /content + /lesson + /review)
