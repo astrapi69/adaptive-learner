@@ -1,0 +1,246 @@
+"""Element-error router pins (Phase 46B / C6 / P-129).
+
+Integration tests through TestClient. Service-level
+transition matrix is already pinned by
+``test_element_errors_service.py`` — these tests focus on
+the route surface: paths mount, payloads validate, user
+404 surfaces correctly, response shape matches
+``ElementErrorOut``, the bulk-upsert response preserves
+input order.
+"""
+
+from __future__ import annotations
+
+from collections.abc import Iterator
+
+import pytest
+from fastapi.testclient import TestClient
+
+from app.main import app
+
+
+@pytest.fixture()
+def client() -> Iterator[TestClient]:
+    with TestClient(app) as c:
+        yield c
+
+
+@pytest.fixture()
+def user_id(client: TestClient) -> str:
+    r = client.post(
+        "/api/users", json={"name": "ElementHTTP", "language": "en"},
+    )
+    assert r.status_code in (200, 201), r.text
+    return r.json()["id"]
+
+
+def _attempt_payload(
+    *,
+    element_key: str = "merci",
+    correct: bool,
+    lesson_id: str = "01-greetings.json",
+) -> dict:
+    return {
+        "set_id": "language-fr-a1",
+        "lesson_id": lesson_id,
+        "exercise_id": "ex-thanks",
+        "element_key": element_key,
+        "element_type": "vocabulary",
+        "user_answer": "salut" if not correct else "merci",
+        "correct_answer": "Merci",
+        "correct": correct,
+    }
+
+
+# --- Router wiring ----------------------------------------------------------
+
+
+def test_routes_mounted(client: TestClient) -> None:
+    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    assert "/api/users/{user_id}/element-errors" in paths
+
+
+# --- 404 paths --------------------------------------------------------------
+
+
+def test_list_unknown_user_returns_404(client: TestClient) -> None:
+    r = client.get("/api/users/no-such-user/element-errors")
+    assert r.status_code == 404
+
+
+def test_post_unknown_user_returns_404(client: TestClient) -> None:
+    r = client.post(
+        "/api/users/no-such-user/element-errors",
+        json={"attempts": [_attempt_payload(correct=False)]},
+    )
+    assert r.status_code == 404
+
+
+# --- Empty list -------------------------------------------------------------
+
+
+def test_list_empty_for_fresh_user(
+    client: TestClient, user_id: str,
+) -> None:
+    r = client.get(f"/api/users/{user_id}/element-errors")
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+# --- Bulk upsert + response shape ------------------------------------------
+
+
+def test_post_records_one_attempt_returns_row(
+    client: TestClient, user_id: str,
+) -> None:
+    r = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={"attempts": [_attempt_payload(correct=False)]},
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert isinstance(body, list)
+    assert len(body) == 1
+    row = body[0]
+    assert row["element_key"] == "merci"
+    assert row["element_type"] == "vocabulary"
+    assert row["error_count"] == 1
+    assert row["correct_streak"] == 0
+    assert row["mastered"] is False
+    assert row["last_error_at"] is not None
+    assert row["user_answer"] == "salut"
+    assert row["correct_answer"] == "Merci"
+
+
+def test_post_bulk_preserves_order(
+    client: TestClient, user_id: str,
+) -> None:
+    keys = ["alpha", "beta", "gamma"]
+    r = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                _attempt_payload(element_key=k, correct=False)
+                for k in keys
+            ]
+        },
+    )
+    assert r.status_code == 200, r.text
+    assert [row["element_key"] for row in r.json()] == keys
+
+
+def test_post_compounds_state_across_calls(
+    client: TestClient, user_id: str,
+) -> None:
+    """3 separate POSTs with correct=True on the same element
+    flip mastered — pins the route layer commits each call
+    correctly so subsequent calls see the post-state row."""
+    for _ in range(3):
+        r = client.post(
+            f"/api/users/{user_id}/element-errors",
+            json={"attempts": [_attempt_payload(correct=True)]},
+        )
+        assert r.status_code == 200, r.text
+    listing = client.get(f"/api/users/{user_id}/element-errors")
+    rows = listing.json()
+    assert len(rows) == 1
+    assert rows[0]["mastered"] is True
+    assert rows[0]["correct_streak"] == 3
+
+
+# --- Query-string filters ---------------------------------------------------
+
+
+def test_list_filters_by_set_id(
+    client: TestClient, user_id: str,
+) -> None:
+    client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                {**_attempt_payload(correct=False), "set_id": "set-a"},
+                {**_attempt_payload(correct=False), "set_id": "set-b"},
+            ]
+        },
+    )
+    r = client.get(
+        f"/api/users/{user_id}/element-errors",
+        params={"set_id": "set-a"},
+    )
+    assert r.status_code == 200
+    rows = r.json()
+    assert len(rows) == 1
+    assert rows[0]["set_id"] == "set-a"
+
+
+def test_list_include_mastered_false_excludes_mastered(
+    client: TestClient, user_id: str,
+) -> None:
+    # Master one element.
+    for _ in range(3):
+        client.post(
+            f"/api/users/{user_id}/element-errors",
+            json={"attempts": [_attempt_payload(correct=True)]},
+        )
+    # And leave another active (wrong-only).
+    client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                _attempt_payload(element_key="bonjour", correct=False),
+            ]
+        },
+    )
+    r = client.get(
+        f"/api/users/{user_id}/element-errors",
+        params={"include_mastered": "false"},
+    )
+    rows = r.json()
+    assert len(rows) == 1
+    assert rows[0]["element_key"] == "bonjour"
+    assert rows[0]["mastered"] is False
+
+
+# --- Pydantic validation rejects garbage ------------------------------------
+
+
+def test_post_rejects_empty_attempts_list(
+    client: TestClient, user_id: str,
+) -> None:
+    r = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={"attempts": []},
+    )
+    assert r.status_code == 422
+
+
+def test_post_rejects_oversize_bulk(
+    client: TestClient, user_id: str,
+) -> None:
+    """C4 schema caps the bulk body at 100 attempts."""
+    r = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                _attempt_payload(element_key=f"k-{i}", correct=False)
+                for i in range(101)
+            ]
+        },
+    )
+    assert r.status_code == 422
+
+
+def test_post_rejects_missing_required_field(
+    client: TestClient, user_id: str,
+) -> None:
+    bad = {
+        "set_id": "x",
+        "lesson_id": "y",
+        "exercise_id": "z",
+        # missing element_key + correct
+    }
+    r = client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={"attempts": [bad]},
+    )
+    assert r.status_code == 422

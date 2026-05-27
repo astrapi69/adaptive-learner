@@ -45,6 +45,7 @@ from app.routers.curriculum import (
     topics_router,
     users_curricula_router,
 )
+from app.routers.element_errors import router as element_errors_router
 from app.routers.export import router as export_router
 from app.routers.help import router as help_router
 from app.routers.identity import router as identity_router
@@ -509,6 +510,7 @@ app.include_router(lessons_router, prefix="/api")
 app.include_router(users_imports_router, prefix="/api")
 app.include_router(imports_router, prefix="/api")
 app.include_router(lesson_progress_router, prefix="/api")
+app.include_router(element_errors_router, prefix="/api")
 app.include_router(subjects_router, prefix="/api")
 app.include_router(tags_router, prefix="/api")
 app.include_router(users_tags_router, prefix="/api")
