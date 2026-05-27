@@ -11,10 +11,12 @@ from adaptive_learner_gamification import badge_service
 
 def test_yaml_loads_with_expected_count() -> None:
     catalog = badge_service.load_catalog_from_yaml()
-    # Phase 29B spec: 20-30 badges. We shipped 24 in v1.16.0
+    # Phase 29B spec: 20-30 badges. v1.16.0 shipped 24
     # (3 getting_started + 4 consistency + 7 method_explorer +
-    # 7 depth + 3 polyglot).
-    assert len(catalog) == 24
+    # 7 depth + 3 polyglot). v1.31.0 / Phase 46E.2 adds 4
+    # content-lesson badges (+1 getting_started + 1 consistency +
+    # 2 depth) for 28 total.
+    assert len(catalog) == 28
 
 
 def test_every_yaml_entry_has_required_fields() -> None:

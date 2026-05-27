@@ -723,6 +723,18 @@ gamification:
     import_10_conversations:
       name: Konuşma Küratörü
       description: 10 konuşma içe aktar.
+    first_lesson:
+      name: İlk Ders
+      description: İlk içerik dersini tamamla.
+    lessons_10:
+      name: 10 Ders Tamamlandı
+      description: 10 içerik dersini tamamla.
+    three_star_streak:
+      name: 3-Yıldız Serisi
+      description: Üst üste üç derste 3 yıldız kazan.
+    review_master:
+      name: Tekrar Ustası
+      description: Aralıklı tekrarla 50 öğeyi öğren.
   card_streak: Seri
   current_streak: Mevcut seri
   longest_streak: En uzun seri

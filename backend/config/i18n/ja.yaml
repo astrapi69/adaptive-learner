@@ -723,6 +723,18 @@ gamification:
     import_10_conversations:
       name: 会話キュレーター
       description: 10件の会話をインポートする。
+    first_lesson:
+      name: 初めてのレッスン
+      description: 最初のコンテンツレッスンを完了する。
+    lessons_10:
+      name: 10レッスン完了
+      description: 10件のコンテンツレッスンを完了する。
+    three_star_streak:
+      name: 3つ星連続
+      description: 連続3つのレッスンで3つ星を獲得する。
+    review_master:
+      name: 復習マスター
+      description: 分散学習で50要素を習得する。
   card_streak: ストリーク
   current_streak: 現在のストリーク
   longest_streak: 最長ストリーク

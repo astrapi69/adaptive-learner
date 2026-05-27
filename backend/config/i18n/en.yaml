@@ -723,6 +723,18 @@ gamification:
     import_10_conversations:
       name: Conversation Curator
       description: Import 10 conversations.
+    first_lesson:
+      name: First Lesson
+      description: Complete your first content lesson.
+    lessons_10:
+      name: 10 Lessons Completed
+      description: Complete 10 content lessons.
+    three_star_streak:
+      name: 3-Star Streak
+      description: Earn 3 stars on three lessons in a row.
+    review_master:
+      name: Review Master
+      description: Master 50 elements through spaced repetition.
   card_streak: Streak
   current_streak: Current streak
   longest_streak: Longest streak

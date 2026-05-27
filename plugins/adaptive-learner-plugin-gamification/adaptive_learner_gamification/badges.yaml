@@ -145,3 +145,29 @@ badges:
     description_key: gamification.badges.import_10_conversations.description
     icon: inbox
     category: polyglot
+
+  # --- Content lessons (Phase 46E.2 / v1.31.0) ----------------
+  # New badges around the content-lesson + SRS feature set
+  # that shipped in v1.27-30. Predicates live in
+  # badge_service.py's _EVALUATORS map; the seed loader fails
+  # loud if a yaml key has no matching evaluator.
+  - key: first_lesson
+    name_key: gamification.badges.first_lesson.name
+    description_key: gamification.badges.first_lesson.description
+    icon: book-open
+    category: getting_started
+  - key: lessons_10
+    name_key: gamification.badges.lessons_10.name
+    description_key: gamification.badges.lessons_10.description
+    icon: book-open
+    category: depth
+  - key: three_star_streak
+    name_key: gamification.badges.three_star_streak.name
+    description_key: gamification.badges.three_star_streak.description
+    icon: star
+    category: consistency
+  - key: review_master
+    name_key: gamification.badges.review_master.name
+    description_key: gamification.badges.review_master.description
+    icon: repeat
+    category: depth

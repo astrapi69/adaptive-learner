@@ -790,6 +790,22 @@
       "import_10_conversations": {
         "name": "Curador de Conversas",
         "description": "Importe 10 conversas."
+      },
+      "first_lesson": {
+        "name": "Primeira Lição",
+        "description": "Conclui a tua primeira lição de conteúdo."
+      },
+      "lessons_10": {
+        "name": "10 Lições Concluídas",
+        "description": "Conclui 10 lições de conteúdo."
+      },
+      "three_star_streak": {
+        "name": "Sequência de 3 Estrelas",
+        "description": "Consegue 3 estrelas em três lições seguidas."
+      },
+      "review_master": {
+        "name": "Mestre da Revisão",
+        "description": "Domina 50 elementos através de repetição espaçada."
       }
     },
     "card_streak": "Sequência",

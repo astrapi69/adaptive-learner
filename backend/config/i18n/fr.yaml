@@ -723,6 +723,18 @@ gamification:
     import_10_conversations:
       name: Conservateur de Conversations
       description: Importe 10 conversations.
+    first_lesson:
+      name: Première Leçon
+      description: Termine ta première leçon de contenu.
+    lessons_10:
+      name: 10 Leçons Terminées
+      description: Termine 10 leçons de contenu.
+    three_star_streak:
+      name: Série de 3 Étoiles
+      description: Obtiens 3 étoiles sur trois leçons d'affilée.
+    review_master:
+      name: Maître de la Révision
+      description: Maîtrise 50 éléments grâce à la répétition espacée.
   card_streak: Série
   current_streak: Série actuelle
   longest_streak: Plus longue série

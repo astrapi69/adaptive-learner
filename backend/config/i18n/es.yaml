@@ -723,6 +723,18 @@ gamification:
     import_10_conversations:
       name: Curador de Conversaciones
       description: Importa 10 conversaciones.
+    first_lesson:
+      name: Primera Lección
+      description: Completa tu primera lección de contenido.
+    lessons_10:
+      name: 10 Lecciones Completadas
+      description: Completa 10 lecciones de contenido.
+    three_star_streak:
+      name: Racha de 3 Estrellas
+      description: Consigue 3 estrellas en tres lecciones seguidas.
+    review_master:
+      name: Maestro del Repaso
+      description: Domina 50 elementos mediante repetición espaciada.
   card_streak: Racha
   current_streak: Racha actual
   longest_streak: Racha más larga

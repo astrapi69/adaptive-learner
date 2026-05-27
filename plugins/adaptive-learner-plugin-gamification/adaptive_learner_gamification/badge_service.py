@@ -208,6 +208,75 @@ def _provider_count(db: Session, user_id: str) -> int:
     )
 
 
+def _completed_lesson_count(db: Session, user_id: str) -> int:
+    """Count LessonProgress rows the user has flipped to ``completed``.
+
+    Counted off ``lesson_progress.status`` rather than
+    ``LearningSession(method="content")`` because LessonProgress
+    is the authoritative completion record — a user with a
+    completed lesson but no LearningSession (rare; happens
+    only if the 46F.2 unification fails) still earned the
+    badge.
+    """
+    from app.models import LessonProgress
+
+    return (
+        db.query(LessonProgress)
+        .filter(LessonProgress.user_id == user_id)
+        .filter(LessonProgress.status == "completed")
+        .count()
+    )
+
+
+def _last_n_lessons_all_three_star(
+    db: Session, user_id: str, *, n: int = 3
+) -> bool:
+    """True iff the last ``n`` completed lessons all earned 3 stars.
+
+    Reads the user's most-recently-completed LessonProgress rows
+    ordered by ``completed_at`` desc, projects each to the same
+    star band the 46E.1 XP rule uses (``compute_stars``), and
+    returns True iff every one of the top ``n`` rows hits 3.
+    Returns False when the user has fewer than ``n`` completions.
+    """
+    from app.models import LessonProgress
+
+    from . import xp_service
+
+    rows = (
+        db.query(LessonProgress)
+        .filter(LessonProgress.user_id == user_id)
+        .filter(LessonProgress.status == "completed")
+        .order_by(LessonProgress.completed_at.desc())
+        .limit(n)
+        .all()
+    )
+    if len(rows) < n:
+        return False
+    return all(
+        xp_service.compute_stars(row.score_correct, row.score_total) == 3
+        for row in rows
+    )
+
+
+def _mastered_elements_count(db: Session, user_id: str) -> int:
+    """Count of ``ElementError`` rows where ``mastered=True`` for this user.
+
+    Element-level mastery is the v1.30.0 SRS exit criterion
+    (3 consecutive correct attempts flips ``mastered``;
+    failing a mastered element demotes it). The 50-element
+    threshold for the Review Master badge IS that count.
+    """
+    from app.models import ElementError
+
+    return (
+        db.query(ElementError)
+        .filter(ElementError.user_id == user_id)
+        .filter(ElementError.mastered.is_(True))
+        .count()
+    )
+
+
 def _languages_used(db: Session, user_id: str) -> int:
     """Distinct languages across the user's curricula + own setting.
 
@@ -259,6 +328,13 @@ _EVALUATORS: dict[str, Callable[[Any, str], bool]] = {
     "two_languages": lambda db, uid: _languages_used(db, uid) >= 2,
     "three_providers": lambda db, uid: _provider_count(db, uid) >= 3,
     "import_10_conversations": lambda db, uid: _import_count(db, uid) >= 10,
+    # --- Content lessons (Phase 46E.2 / v1.31.0) -----------------
+    "first_lesson": lambda db, uid: _completed_lesson_count(db, uid) >= 1,
+    "lessons_10": lambda db, uid: _completed_lesson_count(db, uid) >= 10,
+    "three_star_streak": lambda db, uid: _last_n_lessons_all_three_star(
+        db, uid, n=3
+    ),
+    "review_master": lambda db, uid: _mastered_elements_count(db, uid) >= 50,
 }
 
 

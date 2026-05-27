@@ -790,6 +790,22 @@
       "import_10_conversations": {
         "name": "Konversations-Kurator",
         "description": "Importiere 10 Konversationen."
+      },
+      "first_lesson": {
+        "name": "Erste Lektion",
+        "description": "Schließe deine erste Inhaltslektion ab."
+      },
+      "lessons_10": {
+        "name": "10 Lektionen abgeschlossen",
+        "description": "Schließe 10 Inhaltslektionen ab."
+      },
+      "three_star_streak": {
+        "name": "3-Sterne-Serie",
+        "description": "Erreiche drei Lektionen in Folge mit 3 Sternen."
+      },
+      "review_master": {
+        "name": "Wiederholungsmeister",
+        "description": "Beherrsche 50 Elemente durch verteilte Wiederholung."
       }
     },
     "card_streak": "Serie",
