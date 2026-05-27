@@ -130,7 +130,7 @@ def _project(row: ElementError, now: datetime) -> ReviewQueueItem:
     )
 
 
-def _sort_key(item: ReviewQueueItem) -> tuple[int, int, datetime]:
+def _sort_key(item: ReviewQueueItem) -> tuple[int, int, int]:
     """Sort: overdue first (0 beats 1), then error_count
     desc (negated), then last_error_at desc (negated via
     min-datetime fallback). Stable tie-break by id at the
