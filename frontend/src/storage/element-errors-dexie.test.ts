@@ -19,6 +19,8 @@ import {beforeEach, describe, expect, it} from "vitest";
 import {_resetDbForTests, getDb} from "./db";
 import {
     MASTERY_THRESHOLD,
+    computeReviewQueueDexie,
+    intervalDaysForStreak,
     listElementErrorsDexie,
     recordElementAttemptsDexie,
 } from "./element-errors-dexie";
@@ -228,5 +230,139 @@ describe("Dexie elementErrors: list filters", () => {
         expect(all).toHaveLength(2);
         expect(active).toHaveLength(1);
         expect(active[0].element_key).toBe("bonjour");
+    });
+});
+
+// --- Phase 46C / C12: review-queue computation -----------------------------
+
+describe("Dexie elementErrors: intervalDaysForStreak", () => {
+    it("streak 0 → 1 day", () => {
+        expect(intervalDaysForStreak(0)).toBe(1);
+    });
+    it("streak 1 → 3 days", () => {
+        expect(intervalDaysForStreak(1)).toBe(3);
+    });
+    it("streak 2 → 7 days", () => {
+        expect(intervalDaysForStreak(2)).toBe(7);
+    });
+    it("streak 3+ caps at 7 days (mastered handled upstream)", () => {
+        expect(intervalDaysForStreak(3)).toBe(7);
+        expect(intervalDaysForStreak(10)).toBe(7);
+    });
+    it("negative streak defensively returns 1", () => {
+        expect(intervalDaysForStreak(-1)).toBe(1);
+    });
+});
+
+describe("Dexie elementErrors: computeReviewQueueDexie", () => {
+    it("empty user returns empty queue", async () => {
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue).toEqual([]);
+    });
+
+    it("excludes mastered elements", async () => {
+        for (let i = 0; i < MASTERY_THRESHOLD; i++) {
+            await recordElementAttemptsDexie(USER, [attempt({correct: true})]);
+        }
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue).toEqual([]);
+    });
+
+    it("projects active elements with scheduling fields", async () => {
+        await recordElementAttemptsDexie(USER, [attempt({correct: false})]);
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue).toHaveLength(1);
+        expect(queue[0].element_key).toBe("merci");
+        expect(queue[0].suggested_review_at).toBeDefined();
+        expect(typeof queue[0].overdue).toBe("boolean");
+    });
+
+    it("suggested_review_at = last_attempt_at + interval(streak)", async () => {
+        const rows = await recordElementAttemptsDexie(USER, [
+            attempt({correct: false}),
+        ]);
+        const last = new Date(rows[0].last_attempt_at);
+        const queue = await computeReviewQueueDexie(USER);
+        const suggested = new Date(queue[0].suggested_review_at);
+        const deltaMs = suggested.getTime() - last.getTime();
+        // 1 day = 86400000ms; allow ±1s for arithmetic.
+        expect(Math.abs(deltaMs - 86400000)).toBeLessThan(1000);
+    });
+
+    it("overdue flag respects injected clock", async () => {
+        await recordElementAttemptsDexie(USER, [attempt({correct: false})]);
+        const futureIso = new Date(
+            Date.now() + 2 * 86400000,
+        ).toISOString();
+        const queue = await computeReviewQueueDexie(USER, {
+            nowIso: futureIso,
+        });
+        expect(queue[0].overdue).toBe(true);
+
+        const presentIso = new Date().toISOString();
+        const queueNow = await computeReviewQueueDexie(USER, {
+            nowIso: presentIso,
+        });
+        expect(queueNow[0].overdue).toBe(false);
+    });
+
+    it("sorts overdue items first", async () => {
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "overdue-one", correct: false}),
+        ]);
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "fresh-one", correct: false}),
+        ]);
+        // Force "overdue-one" into the overdue bucket by
+        // backdating its last_attempt_at directly in the DB.
+        const db = getDb();
+        const all = await db.elementErrors.toArray();
+        const overdueRow = all.find((r) => r.element_key === "overdue-one");
+        if (overdueRow) {
+            overdueRow.last_attempt_at = new Date(
+                Date.now() - 10 * 86400000,
+            ).toISOString();
+            await db.elementErrors.put(overdueRow);
+        }
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue[0].element_key).toBe("overdue-one");
+        expect(queue[0].overdue).toBe(true);
+        expect(queue[1].element_key).toBe("fresh-one");
+    });
+
+    it("sorts higher error_count first within the overdue bucket", async () => {
+        for (let i = 0; i < 3; i++) {
+            await recordElementAttemptsDexie(USER, [
+                attempt({element_key: "high", correct: false}),
+            ]);
+        }
+        await recordElementAttemptsDexie(USER, [
+            attempt({element_key: "low", correct: false}),
+        ]);
+        // Push both into the overdue bucket.
+        const db = getDb();
+        const all = await db.elementErrors.toArray();
+        const past = new Date(Date.now() - 10 * 86400000).toISOString();
+        for (const row of all) {
+            row.last_attempt_at = past;
+            await db.elementErrors.put(row);
+        }
+        const queue = await computeReviewQueueDexie(USER);
+        expect(queue[0].element_key).toBe("high");
+        expect(queue[0].error_count).toBe(3);
+        expect(queue[1].element_key).toBe("low");
+        expect(queue[1].error_count).toBe(1);
+    });
+
+    it("filters by set_id", async () => {
+        await recordElementAttemptsDexie(USER, [
+            attempt({set_id: "set-a", correct: false}),
+            attempt({set_id: "set-b", correct: false}),
+        ]);
+        const aQueue = await computeReviewQueueDexie(USER, {
+            setId: "set-a",
+        });
+        expect(aQueue).toHaveLength(1);
+        expect(aQueue[0].set_id).toBe("set-a");
     });
 });

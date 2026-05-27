@@ -16,7 +16,11 @@
 
 import {getDb} from "./db";
 import type {ElementErrorRow} from "./db";
-import type {ElementAttempt, ElementError} from "./types";
+import type {
+    ElementAttempt,
+    ElementError,
+    ReviewQueueItem,
+} from "./types";
 
 /** Phase 46 D4: 3 consecutive correct → mastered. Same
  *  constant as ``backend/app/services/element_errors.py``;
@@ -164,4 +168,88 @@ export async function listElementErrorsDexie(
     }
     rows.sort((a, b) => (a.updated_at < b.updated_at ? 1 : -1));
     return rows.map(rowToWire);
+}
+
+// --- Phase 46C / C12: SRS review-queue computation ---------------------
+
+/** Map a correct-streak count to the next-review interval
+ *  in days. Mirrors ``app.services.element_srs.
+ *  interval_days_for_streak``: streak 0 → 1d, 1 → 3d, 2 →
+ *  7d, 3+ (mastered) → 7d as safe fallback. */
+export function intervalDaysForStreak(correctStreak: number): number {
+    if (correctStreak <= 0) return 1;
+    if (correctStreak === 1) return 3;
+    return 7;
+}
+
+function _addDays(iso: string, days: number): string {
+    const d = new Date(iso);
+    d.setUTCDate(d.getUTCDate() + days);
+    return d.toISOString();
+}
+
+function _projectReviewItem(
+    row: ElementErrorRow,
+    nowIso: string,
+): ReviewQueueItem {
+    const interval = intervalDaysForStreak(row.correct_streak);
+    const suggested = _addDays(row.last_attempt_at, interval);
+    return {
+        id: row.id,
+        user_id: row.user_id,
+        set_id: row.set_id,
+        lesson_id: row.lesson_id,
+        exercise_id: row.exercise_id,
+        element_key: row.element_key,
+        element_type: row.element_type,
+        user_answer: row.user_answer,
+        correct_answer: row.correct_answer,
+        error_count: row.error_count,
+        correct_streak: row.correct_streak,
+        last_error_at: row.last_error_at,
+        last_attempt_at: row.last_attempt_at,
+        suggested_review_at: suggested,
+        overdue: suggested <= nowIso,
+    };
+}
+
+export interface ComputeReviewQueueOpts {
+    setId?: string;
+    /** Injectable clock for deterministic tests. Defaults
+     *  to ``new Date().toISOString()``. */
+    nowIso?: string;
+}
+
+export async function computeReviewQueueDexie(
+    userId: string,
+    opts: ComputeReviewQueueOpts = {},
+): Promise<ReviewQueueItem[]> {
+    const nowIso = opts.nowIso ?? new Date().toISOString();
+    const db = getDb();
+    let rows: ElementErrorRow[];
+    if (opts.setId !== undefined) {
+        rows = await db.elementErrors
+            .where("[user_id+set_id]")
+            .equals([userId, opts.setId])
+            .toArray();
+    } else {
+        rows = await db.elementErrors
+            .where("user_id")
+            .equals(userId)
+            .toArray();
+    }
+    rows = rows.filter((r) => !r.mastered);
+    const items = rows.map((r) => _projectReviewItem(r, nowIso));
+    // Sort: overdue first → error_count desc → last_error_at desc.
+    items.sort((a, b) => {
+        if (a.overdue !== b.overdue) return a.overdue ? -1 : 1;
+        if (a.error_count !== b.error_count) {
+            return b.error_count - a.error_count;
+        }
+        const lhs = a.last_error_at ?? "";
+        const rhs = b.last_error_at ?? "";
+        if (lhs === rhs) return 0;
+        return lhs < rhs ? 1 : -1;
+    });
+    return items;
 }

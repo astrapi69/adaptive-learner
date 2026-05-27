@@ -1130,6 +1130,21 @@ export const api = {
                 `/users/${encodeURIComponent(userId)}/element-errors`,
                 {method: "POST", body: {attempts}},
             ),
+        /** GET /api/users/{user_id}/element-errors/review-queue */
+        reviewQueue: (
+            userId: string,
+            opts: {setId?: string} = {},
+        ) => {
+            const params = new URLSearchParams();
+            if (opts.setId !== undefined) params.set("set_id", opts.setId);
+            const qs = params.toString();
+            const path = qs
+                ? `/users/${encodeURIComponent(userId)}/element-errors/review-queue?${qs}`
+                : `/users/${encodeURIComponent(userId)}/element-errors/review-queue`;
+            return apiCall<
+                import("../storage/types").ReviewQueueItem[]
+            >(path);
+        },
     },
 
     // --- Content-Loader plugin (Phase 43 / EXP-002) ---------------------

@@ -422,10 +422,32 @@ export interface ElementError {
 }
 
 /**
+ * One row of the SRS review queue (Phase 46C / P-129).
+ * Mirrors the backend ``ReviewQueueItemOut`` schema 1:1.
+ */
+export interface ReviewQueueItem {
+    id: string;
+    user_id: string;
+    set_id: string;
+    lesson_id: string;
+    exercise_id: string;
+    element_key: string;
+    element_type: string;
+    user_answer: string;
+    correct_answer: string;
+    error_count: number;
+    correct_streak: number;
+    last_error_at: string | null;
+    last_attempt_at: string;
+    suggested_review_at: string;
+    overdue: boolean;
+}
+
+/**
  * Element-error namespace on IStorageService. ApiStorage
  * delegates to /api/users/{user_id}/element-errors;
- * DexieStorage runs the transition matrix client-side via
- * ``element-errors-dexie.ts``.
+ * DexieStorage runs the transition matrix + SRS scheduling
+ * client-side via ``element-errors-dexie.ts``.
  */
 export interface IElementErrorsNamespace {
     list(
@@ -436,6 +458,14 @@ export interface IElementErrorsNamespace {
         userId: string,
         attempts: readonly ElementAttempt[],
     ): Promise<ElementError[]>;
+    /** Projected review queue: active (non-mastered)
+     *  elements with computed suggested_review_at + overdue
+     *  flag, sorted by urgency (overdue → error_count desc →
+     *  last_error_at desc). */
+    reviewQueue(
+        userId: string,
+        opts?: {setId?: string},
+    ): Promise<ReviewQueueItem[]>;
 }
 
 export interface IToolsNamespace {

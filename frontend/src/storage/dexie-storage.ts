@@ -106,6 +106,7 @@ import {
     upsertLessonProgressDexie,
 } from "./lesson-progress-dexie";
 import {
+    computeReviewQueueDexie,
     listElementErrorsDexie,
     recordElementAttemptsDexie,
 } from "./element-errors-dexie";
@@ -2061,6 +2062,8 @@ export const dexieStorage: IStorageService = {
         list: (userId, opts) => listElementErrorsDexie(userId, opts),
         recordBulk: (userId, attempts) =>
             recordElementAttemptsDexie(userId, attempts),
+        reviewQueue: (userId, opts) =>
+            computeReviewQueueDexie(userId, opts),
     },
 
     // --- Content-Loader (Phase 43 / EXP-002) -----------------------------

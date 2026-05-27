@@ -264,6 +264,8 @@ export const apiStorage: IStorageService = {
         list: (userId, opts) => api.elementErrors.list(userId, opts),
         recordBulk: (userId, attempts) =>
             api.elementErrors.recordBulk(userId, attempts),
+        reviewQueue: (userId, opts) =>
+            api.elementErrors.reviewQueue(userId, opts),
     },
 
     // --- Content-Loader (Phase 43 / EXP-002) -----------------------------

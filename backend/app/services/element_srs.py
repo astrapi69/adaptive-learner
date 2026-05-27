@@ -163,7 +163,10 @@ def compute_review_queue(
     """
     clock = now if now is not None else _utcnow()
     rows = element_errors_service.list_for_user(
-        db, user_id, set_id=set_id, include_mastered=False,
+        db,
+        user_id,
+        set_id=set_id,
+        include_mastered=False,
     )
     items = [_project(row, clock) for row in rows]
     items.sort(key=_sort_key)
