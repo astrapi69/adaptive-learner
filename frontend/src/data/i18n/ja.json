@@ -1147,6 +1147,18 @@
         "result_correct": "正解です！",
         "result_wrong": "惜しい。期待されていた答え: {answer}",
         "empty": "この自由記述演習には受け付ける答えがありません。"
+      },
+      "word_tiles": {
+        "submit": "答えを確認",
+        "retry": "もう一度",
+        "answer_label": "あなたの答え",
+        "answer_placeholder": "下のタイルをタップして答えを作ってください",
+        "scrambled_label": "使えるタイル",
+        "scrambled_done": "すべてのタイルを配置しました。",
+        "hint_show": "ヒントが必要ですか？",
+        "result_correct": "正解です！",
+        "result_wrong": "惜しい。期待されていた順序: {answer}",
+        "empty": "この単語タイル演習にはタイルがありません。"
       }
     },
     "summary": {

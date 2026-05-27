@@ -1078,6 +1078,17 @@ lesson:
       result_correct: "Correct!"
       result_wrong: "Not quite. The expected answer was: {answer}"
       empty: "This free-text exercise has no accepted answers."
+    word_tiles:
+      submit: "Check answer"
+      retry: "Try again"
+      answer_label: "Your answer"
+      answer_placeholder: "Tap tiles below to build your answer"
+      scrambled_label: "Available tiles"
+      scrambled_done: "All tiles placed."
+      hint_show: "Need a hint?"
+      result_correct: "Correct!"
+      result_wrong: "Not quite. The expected order was: {answer}"
+      empty: "This word-tiles exercise has no tiles."
   summary:
     heading: "You finished"
     aria_label: "Lesson summary"

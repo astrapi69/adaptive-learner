@@ -1072,6 +1072,17 @@ lesson:
       result_correct: "Richtig!"
       result_wrong: "Nicht ganz. Die erwartete Antwort war: {answer}"
       empty: "Diese Freitext-Übung hat keine akzeptierten Antworten."
+    word_tiles:
+      submit: "Antwort prüfen"
+      retry: "Erneut versuchen"
+      answer_label: "Deine Antwort"
+      answer_placeholder: "Tippe Kacheln unten an, um deine Antwort zu bauen"
+      scrambled_label: "Verfügbare Kacheln"
+      scrambled_done: "Alle Kacheln platziert."
+      hint_show: "Tipp anzeigen?"
+      result_correct: "Richtig!"
+      result_wrong: "Nicht ganz. Die erwartete Reihenfolge war: {answer}"
+      empty: "Diese Wortkachel-Übung hat keine Kacheln."
   summary:
     heading: "Geschafft"
     aria_label: "Lektions-Zusammenfassung"

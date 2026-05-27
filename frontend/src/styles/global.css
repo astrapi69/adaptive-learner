@@ -2404,6 +2404,153 @@ select:focus {
   color: var(--danger, #ef4444);
 }
 
+/* Phase 45 / EXP-002 / 3F — WordTilesExercise. Two stacked
+   tile zones: the user's answer row at top, the scrambled
+   bar below. Tiles wrap on narrow viewports; each tile
+   keeps the 44px touch-target floor. */
+.word-tiles-exercise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.word-tiles-prompt {
+  margin: 0;
+  font-weight: 500;
+}
+
+.word-tiles-answer-row {
+  min-height: 64px;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px dashed var(--border-strong);
+  background: var(--surface-2);
+}
+
+.word-tiles-answer-empty {
+  margin: 0;
+  padding: 8px;
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  font-style: italic;
+  text-align: center;
+}
+
+.word-tiles-scrambled-row {
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.word-tiles-scrambled-empty {
+  margin: 0;
+  padding: 8px;
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.word-tiles-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.word-tile {
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--fg);
+  cursor: pointer;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.word-tile:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.word-tile-placed {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
+.word-tile.is-correct {
+  border-color: #10b981;
+  background: color-mix(in srgb, #10b981 18%, var(--surface));
+}
+
+.word-tile.is-wrong {
+  border-color: var(--danger, #ef4444);
+  background: color-mix(in srgb, var(--danger, #ef4444) 12%, var(--surface));
+}
+
+.word-tile:disabled {
+  cursor: not-allowed;
+}
+
+.word-tiles-hint-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.word-tiles-hint-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.word-tiles-hint-toggle:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.word-tiles-hint {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+  color: var(--fg);
+  font-size: 0.875rem;
+}
+
+.word-tiles-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.word-tiles-result {
+  margin: 0;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.word-tiles-result[data-result="correct"] {
+  color: #10b981;
+}
+
+.word-tiles-result[data-result="wrong"] {
+  color: var(--danger, #ef4444);
+}
+
 .nav-links {
   display: flex;
   gap: var(--space-1);

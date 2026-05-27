@@ -1067,6 +1067,17 @@ lesson:
       result_correct: "Correto!"
       result_wrong: "Quase. A resposta esperada era: {answer}"
       empty: "Este exercício não tem respostas aceitas."
+    word_tiles:
+      submit: "Verificar resposta"
+      retry: "Tentar de novo"
+      answer_label: "A tua resposta"
+      answer_placeholder: "Toca nas peças abaixo para construir a tua resposta"
+      scrambled_label: "Peças disponíveis"
+      scrambled_done: "Todas as peças colocadas."
+      hint_show: "Precisas de uma dica?"
+      result_correct: "Correto!"
+      result_wrong: "Quase. A ordem esperada era: {answer}"
+      empty: "Este exercício de peças não tem peças."
   summary:
     heading: "Terminado"
     aria_label: "Resumo da lição"

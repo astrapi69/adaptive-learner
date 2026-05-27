@@ -1147,6 +1147,18 @@
         "result_correct": "Correct !",
         "result_wrong": "Pas tout à fait. La réponse attendue était : {answer}",
         "empty": "Cet exercice n'a pas de réponses acceptées."
+      },
+      "word_tiles": {
+        "submit": "Vérifier la réponse",
+        "retry": "Réessayer",
+        "answer_label": "Ta réponse",
+        "answer_placeholder": "Touche les tuiles ci-dessous pour construire ta réponse",
+        "scrambled_label": "Tuiles disponibles",
+        "scrambled_done": "Toutes les tuiles sont placées.",
+        "hint_show": "Besoin d'un indice ?",
+        "result_correct": "Correct !",
+        "result_wrong": "Pas tout à fait. L'ordre attendu était : {answer}",
+        "empty": "Cet exercice de tuiles n'a pas de tuiles."
       }
     },
     "summary": {

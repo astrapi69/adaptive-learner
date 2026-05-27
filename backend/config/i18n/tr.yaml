@@ -1067,6 +1067,17 @@ lesson:
       result_correct: "Doğru!"
       result_wrong: "Pek değil. Beklenen cevap: {answer}"
       empty: "Bu serbest metin alıştırmasının kabul edilen cevabı yok."
+    word_tiles:
+      submit: "Cevabı kontrol et"
+      retry: "Tekrar dene"
+      answer_label: "Senin cevabın"
+      answer_placeholder: "Cevabını oluşturmak için aşağıdaki kutucuklara dokun"
+      scrambled_label: "Kullanılabilir kutucuklar"
+      scrambled_done: "Tüm kutucuklar yerleştirildi."
+      hint_show: "İpucu ister misin?"
+      result_correct: "Doğru!"
+      result_wrong: "Pek değil. Beklenen sıra: {answer}"
+      empty: "Bu kelime kutucukları alıştırmasında kutucuk yok."
   summary:
     heading: "Tamamladın"
     aria_label: "Ders özeti"
