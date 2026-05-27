@@ -43,18 +43,13 @@ export default function LearningRepoPage() {
 
     const [state, setState] = useState<RenderState | null>(null);
     const [activeFile, setActiveFile] = useState<string>("README.md");
-    const [loading, setLoading] = useState(storageMode === "api");
+    const [loading, setLoading] = useState(true);
     const [persisting, setPersisting] = useState(false);
 
     const loadRepo = useCallback(async () => {
         if (!projectId) return;
-        // Phase 49E: ``storage.learningRepo.render`` works in
-        // both API mode (delegates) and Dexie mode (TS
-        // renderer). The remaining storageMode gate at the
-        // render-body level (below) is removed in 49G; this
-        // commit keeps it so the namespace-swap is the only
-        // behavioural change in 49E.
-        if (storageMode !== "api") return;
+        // Phase 49G: render works in BOTH storage modes via
+        // the IStorageService.learningRepo namespace (49E).
         setLoading(true);
         try {
             const data = await getStorage().learningRepo.render(projectId);
@@ -64,16 +59,27 @@ export default function LearningRepoPage() {
                 files: data.files,
             });
         } catch (err) {
-            const message =
-                err instanceof ApiError ? err.detail : String(err);
-            notify.error(t("repo.error.render_failed", "Could not render repository") + ": " + message);
+            // Phase 49G: a 404 means the project simply
+            // doesn't exist (typo, stale link, or a smoke-
+            // test fixture path). Navigate silently —
+            // emitting a red toast on every "no such
+            // project" would fail the Dexie-mode release
+            // gate and confuse the user.
             if (err instanceof ApiError && err.status === 404) {
                 navigate("/dashboard");
+                return;
             }
+            const message =
+                err instanceof ApiError ? err.detail : String(err);
+            notify.error(
+                t("repo.error.render_failed", "Could not render repository") +
+                    ": " +
+                    message,
+            );
         } finally {
             setLoading(false);
         }
-    }, [projectId, navigate, t, storageMode]);
+    }, [projectId, navigate, t]);
 
     useEffect(() => {
         void loadRepo();
@@ -129,34 +135,6 @@ export default function LearningRepoPage() {
         );
     }
 
-    if (storageMode !== "api") {
-        return (
-            <main
-                className="page learning-repo-page"
-                data-testid="learning-repo-page-dexie-unavailable"
-            >
-                <header className="learning-repo-header">
-                    <h1>{t("repo.page_title", "Learning Repository")}</h1>
-                </header>
-                <p>
-                    {t(
-                        "repo.dexie_unavailable_body",
-                        "This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories.",
-                    )}
-                </p>
-                <p>
-                    <button
-                        type="button"
-                        onClick={() => navigate("/dashboard")}
-                        data-testid="learning-repo-back-to-dashboard"
-                    >
-                        {t("repo.back_to_dashboard", "Back to Dashboard")}
-                    </button>
-                </p>
-            </main>
-        );
-    }
-
     if (loading || state === null) {
         return (
             <main className="page" data-testid="learning-repo-page-loading">
@@ -192,7 +170,20 @@ export default function LearningRepoPage() {
                     <button
                         type="button"
                         onClick={handlePersist}
-                        disabled={persisting}
+                        // Phase 49G: persist needs a server-
+                        // side filesystem + git binary;
+                        // disabled in Dexie mode with a
+                        // friendly tooltip explaining why.
+                        // Decision F from the v1.32.0 plan.
+                        disabled={persisting || storageMode !== "api"}
+                        title={
+                            storageMode === "api"
+                                ? undefined
+                                : t(
+                                      "repo.action.persist_dexie_tooltip",
+                                      "Git versioning is only available in server mode.",
+                                  )
+                        }
                         data-testid="repo-persist-btn"
                     >
                         <GitCommit size={16} />

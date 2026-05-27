@@ -21,9 +21,9 @@
 
 import {useEffect, useState} from "react";
 
-import {api, ApiError} from "../api/client";
+import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
-import {resolveStorageMode} from "../storage";
+import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
 
 const DEFAULT_REPOS_DIR = "~/.local/share/adaptive_learner/repos";
@@ -35,16 +35,20 @@ interface LearningRepoSettings {
 
 export default function LearningRepoSettingsSection() {
     const {t} = useI18n();
-    const storageMode = resolveStorageMode();
     const [settings, setSettings] = useState<LearningRepoSettings | null>(null);
-    const [loading, setLoading] = useState(storageMode === "api");
+    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        if (storageMode !== "api") return;
+        // Phase 49G: pluginSettings round-trip works in both
+        // modes via getStorage().pluginSettings (49A). The
+        // ApiStorage call hits /api/plugin-settings; the
+        // DexieStorage call reads the IndexedDB row or
+        // falls back to the bundled YAML defaults at
+        // frontend/src/data/plugin-config/learning-repo.json.
         let cancelled = false;
-        api.pluginSettings
-            .get("learning-repo")
+        getStorage()
+            .pluginSettings.get("learning-repo")
             .then((data) => {
                 if (cancelled) return;
                 setSettings({
@@ -71,13 +75,13 @@ export default function LearningRepoSettingsSection() {
         return () => {
             cancelled = true;
         };
-    }, [t, storageMode]);
+    }, [t]);
 
     const handleSave = async () => {
         if (settings === null) return;
         setSaving(true);
         try {
-            await api.pluginSettings.update("learning-repo", {
+            await getStorage().pluginSettings.update("learning-repo", {
                 settings: {
                     enable_git: settings.enable_git,
                     repos_dir: settings.repos_dir || DEFAULT_REPOS_DIR,
@@ -96,23 +100,6 @@ export default function LearningRepoSettingsSection() {
             setSaving(false);
         }
     };
-
-    if (storageMode !== "api") {
-        return (
-            <section
-                className="learning-repo-settings-section"
-                data-testid="learning-repo-settings-dexie-unavailable"
-            >
-                <h2>{t("repo.settings_title", "Learning Repository")}</h2>
-                <p className="settings-section-description">
-                    {t(
-                        "repo.dexie_unavailable_body",
-                        "This feature is only available in server mode. Switch to server mode in Settings to enable git-backed learning repositories.",
-                    )}
-                </p>
-            </section>
-        );
-    }
 
     if (loading || settings === null) {
         return (

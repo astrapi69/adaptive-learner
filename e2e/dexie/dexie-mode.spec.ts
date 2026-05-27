@@ -110,9 +110,23 @@ const ROUTES: RouteCase[] = [
         expectedTestIds: ["settings", "onboarding"],
     },
     {
-        name: "Learning Repository (Dexie unavailable message)",
+        name: "Learning Repository (Phase 49G — works in Dexie mode)",
         path: "/projects/smoke-fixture-project/learning-repo",
-        expectedTestIds: ["learning-repo-page-dexie-unavailable"],
+        // Phase 49G (v1.32.0): the page now renders in Dexie
+        // mode via the TS renderer (49B-D + 49E). For this
+        // smoke fixture the project doesn't exist in the
+        // empty IndexedDB, so the page navigates silently
+        // to /dashboard (the 404 path was de-toasted). Either
+        // "learning-repo-page-loading" (briefly) or
+        // "dashboard" / "onboarding" (after redirect) is the
+        // acceptable surface. The hard pin remains "no error
+        // toast" (asserted by the wrapping smoke step).
+        expectedTestIds: [
+            "learning-repo-page-loading",
+            "learning-repo-page",
+            "dashboard",
+            "onboarding",
+        ],
     },
     {
         name: "Content (Set Browser, Phase 43)",
@@ -277,20 +291,19 @@ test.describe("Dexie-mode release gate", () => {
         expect(collectors.pageErrors()).toEqual([]);
     });
 
-    test("the LearningRepo widget is hidden on the Dashboard in Dexie mode", async ({
+    test("the LearningRepo widget is hidden on the Dashboard when no project exists", async ({
         page,
     }) => {
-        // Even with a projectId in learner state, the widget
-        // hides in Dexie mode because the destination page is
-        // unavailable. Smoke-pin that there's no entry point
-        // the user could follow into the unavailable feature.
+        // Phase 49G (v1.32.0): the widget now renders in BOTH
+        // storage modes — Dexie mode no longer hides it.
+        // What still gates the widget is the projectId being
+        // present in learnerState. The smoke test runs against
+        // a fresh build with no seeded learner state, so the
+        // assert holds via the project-id gate.
         await page.goto("/dashboard");
         await page.waitForLoadState("networkidle");
         await page.waitForTimeout(500);
 
-        // The widget is gated behind ``resolveStorageMode() === "api"``
-        // AND a project being present, so either condition
-        // hides it. Both are absent here — assert hidden.
         await expect(page.getByTestId("learning-repo-widget")).toHaveCount(0);
     });
 });

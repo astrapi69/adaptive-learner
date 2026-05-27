@@ -23,7 +23,7 @@ import {ApiError} from "../api/client";
 import {useApiKeyStatus} from "../hooks/useApiKeyStatus";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
-import {getStorage, resolveStorageMode} from "../storage";
+import {getStorage} from "../storage";
 import type {
     BadgeWithProgress,
     HeatmapEntryOut,
@@ -385,8 +385,10 @@ export default function Dashboard() {
                     <RecentSessions sessions={summary?.recent_sessions ?? []} />
                 </article>
 
-                {resolveStorageMode() === "api" &&
-                readLearnerState().projectId ? (
+                {/* Phase 49G: widget shows in BOTH storage modes.
+                    DexieStorage.learningRepo renders client-side
+                    (49E + parity-proven by 49F). */}
+                {readLearnerState().projectId ? (
                     <LearningRepoWidget
                         projectId={readLearnerState().projectId as string}
                     />
