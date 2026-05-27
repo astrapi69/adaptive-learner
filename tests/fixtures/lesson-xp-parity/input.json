@@ -26,5 +26,33 @@
     {"name": "stars_1_streak_4", "stars": 1, "first_attempt": false, "streak_days": 4},
     {"name": "clamped_negative_stars", "stars": -3, "first_attempt": false, "streak_days": 0},
     {"name": "clamped_high_stars", "stars": 99, "first_attempt": true, "streak_days": 0}
+  ],
+  "streak_cases": [
+    {"name": "empty_activity", "activity_dates": [], "today": "2026-05-27", "expected_streak": 0},
+    {"name": "today_missing_from_activity", "activity_dates": ["2026-05-25", "2026-05-26"], "today": "2026-05-27", "expected_streak": 0},
+    {"name": "today_only", "activity_dates": ["2026-05-27"], "today": "2026-05-27", "expected_streak": 1},
+    {"name": "two_day_streak", "activity_dates": ["2026-05-26", "2026-05-27"], "today": "2026-05-27", "expected_streak": 2},
+    {"name": "three_day_streak", "activity_dates": ["2026-05-25", "2026-05-26", "2026-05-27"], "today": "2026-05-27", "expected_streak": 3},
+    {"name": "seven_day_streak", "activity_dates": ["2026-05-21", "2026-05-22", "2026-05-23", "2026-05-24", "2026-05-25", "2026-05-26", "2026-05-27"], "today": "2026-05-27", "expected_streak": 7},
+    {"name": "gap_breaks_streak", "activity_dates": ["2026-05-20", "2026-05-26", "2026-05-27"], "today": "2026-05-27", "expected_streak": 2},
+    {"name": "streak_crosses_month_boundary", "activity_dates": ["2026-04-30", "2026-05-01"], "today": "2026-05-01", "expected_streak": 2},
+    {"name": "streak_crosses_year_boundary", "activity_dates": ["2025-12-31", "2026-01-01"], "today": "2026-01-01", "expected_streak": 2}
+  ],
+  "first_attempt_cases": [
+    {"name": "null_input", "step_results": null, "expected": false},
+    {"name": "empty_string", "step_results": "", "expected": false},
+    {"name": "malformed_json", "step_results": "not json", "expected": false},
+    {"name": "top_level_array", "step_results": "[1, 2, 3]", "expected": false},
+    {"name": "empty_dict", "step_results": "{}", "expected": false},
+    {"name": "single_step_attempts_1", "step_results": "{\"step1\": {\"attempts\": 1}}", "expected": true},
+    {"name": "single_step_attempts_2", "step_results": "{\"step1\": {\"attempts\": 2}}", "expected": false},
+    {"name": "single_step_no_attempts_key", "step_results": "{\"step1\": {\"correct\": true}}", "expected": true},
+    {"name": "single_step_attempts_zero", "step_results": "{\"step1\": {\"attempts\": 0}}", "expected": true},
+    {"name": "non_dict_step_value_skipped", "step_results": "{\"step1\": \"completed\"}", "expected": true},
+    {"name": "multiple_steps_all_first", "step_results": "{\"s1\": {\"attempts\": 1}, \"s2\": {\"attempts\": 1}, \"s3\": {\"attempts\": 1}}", "expected": true},
+    {"name": "multiple_steps_one_retry", "step_results": "{\"s1\": {\"attempts\": 1}, \"s2\": {\"attempts\": 3}}", "expected": false},
+    {"name": "attempts_as_string_skipped", "step_results": "{\"step1\": {\"attempts\": \"two\"}}", "expected": true},
+    {"name": "attempts_as_float_skipped", "step_results": "{\"step1\": {\"attempts\": 1.5}}", "expected": true},
+    {"name": "attempts_as_boolean_true_skipped", "step_results": "{\"step1\": {\"attempts\": true}}", "expected": true}
   ]
 }

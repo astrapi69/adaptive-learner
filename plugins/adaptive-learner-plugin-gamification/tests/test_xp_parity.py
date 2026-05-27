@@ -22,11 +22,14 @@ from __future__ import annotations
 
 import json
 import os
+from datetime import date
 from pathlib import Path
 
 from adaptive_learner_gamification.xp_service import (
     calculate_lesson_session_xp,
     compute_stars,
+    current_streak_days,
+    is_first_attempt_from_step_results,
 )
 
 # Walk up: __file__ -> tests/ -> plugin pkg dir ->
@@ -123,4 +126,48 @@ def test_calculate_lesson_session_xp_matches_goldens():
             f"Golden file set mismatch:\n"
             f"  only in goldens: {sorted(golden_cases - rendered_cases)}\n"
             f"  only in fixture: {sorted(rendered_cases - golden_cases)}"
+        )
+
+
+def test_current_streak_days_matches_inline_expected():
+    """Streak cases carry expected_streak inline (integer output).
+
+    No per-case golden file — single-int output is easier to read in
+    input.json than in a separate file. The TS parity test at
+    ``frontend/src/lib/gamification/streak.parity.test.ts`` asserts
+    the same expected value against its port.
+    """
+    fixture = _load_fixture()
+    for case in fixture["streak_cases"]:
+        activity_dates = {date.fromisoformat(d) for d in case["activity_dates"]}
+        today = date.fromisoformat(case["today"])
+        actual = current_streak_days(activity_dates, today=today)
+        expected = case["expected_streak"]
+        assert actual == expected, (
+            f"current_streak_days drift in case '{case['name']}': "
+            f"activity={sorted(case['activity_dates'])} today={case['today']} "
+            f"-> Python returned {actual}, expected {expected}."
+        )
+
+
+def test_is_first_attempt_from_step_results_matches_inline_expected():
+    """First-attempt cases carry expected booleans inline.
+
+    Exercises every branch of ``is_first_attempt_from_step_results``:
+    null/empty/malformed JSON, top-level non-dict shapes, empty dict,
+    single + multi-step happy paths, non-dict step values (skipped),
+    attempts as non-int types (skipped), attempts == 0/1/2/3.
+
+    The TS parity test at
+    ``frontend/src/lib/gamification/first-attempt.parity.test.ts``
+    asserts the same expected booleans against its port.
+    """
+    fixture = _load_fixture()
+    for case in fixture["first_attempt_cases"]:
+        actual = is_first_attempt_from_step_results(case["step_results"])
+        expected = case["expected"]
+        assert actual is expected, (
+            f"is_first_attempt drift in case '{case['name']}': "
+            f"input={case['step_results']!r} "
+            f"-> Python returned {actual}, expected {expected}."
         )

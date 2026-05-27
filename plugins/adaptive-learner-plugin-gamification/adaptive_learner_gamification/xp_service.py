@@ -407,25 +407,28 @@ def award_xp_for_session(
     return award
 
 
-def _is_first_attempt(db: Session, lesson_progress_id: str | None) -> bool:
-    """True iff every step in this lesson row was completed on the first attempt.
+def is_first_attempt_from_step_results(step_results: str | None) -> bool:
+    """Pure helper: True iff a ``LessonProgress.step_results`` JSON blob
+    records every step as ``attempts == 1`` (or omits ``attempts``,
+    which defaults to 1).
 
-    Reads ``LessonProgress.step_results`` (JSON-on-Text) and
-    returns False on any step recording ``attempts > 1``.
-    Conservative on missing / malformed data: returns False
-    when the id is missing, the row can't be loaded, or the
-    JSON doesn't parse — the +20 bonus is only awarded with
-    positive evidence.
+    Extracted from :func:`_is_first_attempt` (Phase 50C / v1.33.0)
+    so the JSON-parsing logic is testable cross-language without a
+    DB. The TypeScript port at
+    ``frontend/src/lib/gamification/first-attempt.ts`` mirrors this
+    function exactly; both are pinned by the parity fixture at
+    ``tests/fixtures/lesson-xp-parity/input.json``
+    (``first_attempt_cases``).
+
+    Conservative on missing / malformed data: returns ``False``
+    when the input is empty/None, the JSON doesn't parse, or the
+    top-level value isn't a non-empty dict — the +20 bonus is only
+    awarded with positive evidence.
     """
-    if not lesson_progress_id:
-        return False
-    from app.models import LessonProgress
-
-    row = db.get(LessonProgress, lesson_progress_id)
-    if row is None or not row.step_results:
+    if not step_results:
         return False
     try:
-        results = json.loads(row.step_results)
+        results = json.loads(step_results)
     except json.JSONDecodeError:
         return False
     if not isinstance(results, dict) or not results:
@@ -434,9 +437,31 @@ def _is_first_attempt(db: Session, lesson_progress_id: str | None) -> bool:
         if not isinstance(value, dict):
             continue
         attempts = value.get("attempts", 1)
+        # Reject explicit booleans even though ``bool`` is a subclass of
+        # ``int`` in Python — a JSON ``true`` smuggled into an
+        # ``attempts`` slot should be treated as missing, not as 1.
+        if isinstance(attempts, bool):
+            continue
         if isinstance(attempts, int) and attempts > 1:
             return False
     return True
+
+
+def _is_first_attempt(db: Session, lesson_progress_id: str | None) -> bool:
+    """True iff every step in this lesson row was completed on the first attempt.
+
+    Reads ``LessonProgress.step_results`` (JSON-on-Text) via
+    :func:`is_first_attempt_from_step_results`. Returns ``False`` on
+    missing id or missing row; the pure helper handles the rest.
+    """
+    if not lesson_progress_id:
+        return False
+    from app.models import LessonProgress
+
+    row = db.get(LessonProgress, lesson_progress_id)
+    if row is None:
+        return False
+    return is_first_attempt_from_step_results(row.step_results)
 
 
 def award_xp_for_lesson_session(
