@@ -17,6 +17,7 @@ recomputation step.
 from __future__ import annotations
 
 import json
+import logging
 from datetime import UTC, datetime
 from typing import Any
 
@@ -24,6 +25,8 @@ from sqlalchemy.orm import Session
 
 from app.exceptions import NotFoundError
 from app.models import LessonProgress, User
+
+logger = logging.getLogger(__name__)
 
 
 def _utcnow() -> datetime:
@@ -166,13 +169,43 @@ def upsert_progress(
     if time_spent_seconds_delta > 0:
         row.time_spent_seconds = row.time_spent_seconds + time_spent_seconds_delta
 
+    just_completed = False
     if mark_completed and row.status != "completed":
         row.status = "completed"
         row.completed_at = now
+        just_completed = True
 
     row.updated_at = now
     db.commit()
     db.refresh(row)
+
+    if just_completed:
+        # v1.31.0 / Phase 46F: write a LearningSession row +
+        # fire on_session_complete so the gamification +
+        # tracking plugins pick up the lesson the same way
+        # they pick up chat sessions. Wrapped so a
+        # unification failure cannot mask the lesson-
+        # completion success the user already saw.
+        try:
+            from app.services.lesson_session_unification import (
+                record_lesson_completion_session,
+            )
+
+            record_lesson_completion_session(
+                db,
+                user_id=user_id,
+                lesson_progress_id=row.id,
+                score_correct=row.score_correct,
+                score_total=row.score_total,
+            )
+        except Exception:  # noqa: BLE001
+            logger.exception(
+                "lesson_session_unification failed for user=%s "
+                "lesson_progress=%s; lesson completion stands",
+                user_id,
+                row.id,
+            )
+
     return _row_to_wire(row)
 
 
