@@ -56,6 +56,11 @@ export interface LearningProjectRow {
     daily_minutes: number;
     current_problem: string | null;
     active: boolean;
+    // v1.31.0 / Phase 46F: "standard" | "content". Free-text
+    // at the Dexie layer so future kinds don't need a schema
+    // bump. Pre-v1.31.0 rows back-fill to "standard" via the
+    // rowToProject mapper.
+    kind?: string;
     created_at: string;
     updated_at: string;
 }

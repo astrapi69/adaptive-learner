@@ -22,6 +22,7 @@ import {
     renderMarkdown,
 } from "../lib/export/markdown-renderer";
 import {openPrintWindow} from "../lib/export/pdf-generator";
+import {filterStandardProjects} from "../lib/learning-project";
 import {getStorage} from "../storage";
 import type {
     CurriculumOverview,
@@ -69,8 +70,14 @@ export default function ExportSection() {
         let cancelled = false;
         const load = async (): Promise<void> => {
             try {
-                const projects = await storage.users.projects.list(userId);
+                const rawProjects = await storage.users.projects.list(userId);
                 if (cancelled) return;
+                // v1.31.0 / Phase 46F.3: skip the auto-managed
+                // "Content Lessons" pseudo-project — exporting
+                // a pseudo-project's session list to the export
+                // surface would surface lessons under a fake
+                // project topic.
+                const projects = filterStandardProjects(rawProjects);
                 // Aggregate recent sessions across all projects.
                 const sessionLists = await Promise.all(
                     projects.map(async (p) => {

@@ -185,6 +185,9 @@ export async function startSession(opts: {
         daily_minutes: project.daily_minutes,
         current_problem: project.current_problem,
         active: project.active,
+        // v1.31.0 / Phase 46F: Dexie-mode session-flow only
+        // operates on user-created projects (standard kind).
+        kind: (project.kind ?? "standard") as LearningProject["kind"],
         created_at: project.created_at,
         updated_at: project.updated_at,
     };

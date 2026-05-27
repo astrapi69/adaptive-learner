@@ -180,6 +180,13 @@ function rowToUser(row: UserRow): User {
 }
 
 function rowToProject(row: LearningProjectRow): LearningProject {
+    // v1.31.0 / Phase 46F: back-fill kind for pre-migration
+    // rows. Dexie-mode users never create a "content"
+    // pseudo-project (the unification path runs server-side
+    // only), so every row in Dexie storage is "standard" by
+    // construction — but the type contract requires the
+    // field, so we default.
+    const kind = (row.kind ?? "standard") as LearningProject["kind"];
     return {
         id: row.id,
         user_id: row.user_id,
@@ -189,6 +196,7 @@ function rowToProject(row: LearningProjectRow): LearningProject {
         daily_minutes: row.daily_minutes,
         current_problem: row.current_problem,
         active: row.active,
+        kind,
         created_at: row.created_at,
         updated_at: row.updated_at,
     };
@@ -475,6 +483,9 @@ export const dexieStorage: IStorageService = {
                     daily_minutes: body.daily_minutes,
                     current_problem: body.current_problem ?? null,
                     active: body.active ?? true,
+                    // v1.31.0 / Phase 46F: Dexie-mode creates
+                    // are always wizard-driven (standard).
+                    kind: "standard",
                     created_at: ts,
                     updated_at: ts,
                 };

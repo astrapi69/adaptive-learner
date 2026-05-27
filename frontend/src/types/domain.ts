@@ -66,6 +66,19 @@ export interface UserSettings {
 
 // --- LearningProject ----------------------------------------------------
 
+/**
+ * Phase 46F (v1.31.0) — kind discriminator. ``standard`` is
+ * the wizard-created project; ``content`` is the auto-managed
+ * pseudo-project that owns LearningSession rows for completed
+ * content lessons. Frontend project pickers (Dashboard,
+ * Onboarding, LearningRepoSettings) filter out ``content`` so
+ * the pseudo-project never appears as a legit learning goal.
+ *
+ * Helper: see ``isStandardProject`` in
+ * ``frontend/src/lib/learning-project.ts``.
+ */
+export type LearningProjectKind = "standard" | "content";
+
 export interface LearningProject {
     id: string;
     user_id: string;
@@ -75,6 +88,9 @@ export interface LearningProject {
     daily_minutes: number;
     current_problem: string | null;
     active: boolean;
+    // v1.31.0 / Phase 46F — defaults to "standard" for
+    // older responses that predate the migration.
+    kind: LearningProjectKind;
     created_at: string;
     updated_at: string;
 }

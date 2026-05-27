@@ -92,6 +92,7 @@ describe("applyFilter (unit)", () => {
         daily_minutes: 0,
         current_problem: null,
         active: true,
+        kind: "standard",
         created_at: "2026-01-01T00:00:00Z",
         updated_at: "2026-01-01T00:00:00Z",
     });
@@ -223,5 +224,38 @@ describe("DashboardFilterBar", () => {
                 screen.getByTestId("dashboard-filter-empty"),
             ).toBeInTheDocument();
         });
+    });
+
+    it("hides content-kind pseudo-projects (Phase 46F.3 / v1.31.0)", async () => {
+        // Seed two standard projects + one pseudo via direct
+        // Dexie put (the storage API can't create kind=content
+        // — that's the backend's lazy-create path). Bar should
+        // render the two standard topics and skip the pseudo.
+        const seeded = await seedScenario();
+        const {getDb} = await import("../storage/db");
+        const db = getDb();
+        await db.learningProjects.put({
+            id: "pseudo-content",
+            user_id: seeded.userId,
+            topic: "Content Lessons",
+            goal: "auto-managed",
+            timeframe: "ongoing",
+            daily_minutes: 1,
+            current_problem: null,
+            active: true,
+            kind: "content",
+            created_at: "2026-01-01T00:00:00Z",
+            updated_at: "2026-01-01T00:00:00Z",
+        });
+        renderBar(seeded.userId);
+        await waitFor(() => {
+            expect(
+                screen.getByTestId("dashboard-filter-project-list"),
+            ).toBeInTheDocument();
+        });
+        expect(screen.getByText("Spanish Grammar")).toBeInTheDocument();
+        expect(screen.getByText("Python Algorithms")).toBeInTheDocument();
+        // The pseudo-project's topic must NOT appear in the picker.
+        expect(screen.queryByText("Content Lessons")).toBeNull();
     });
 });

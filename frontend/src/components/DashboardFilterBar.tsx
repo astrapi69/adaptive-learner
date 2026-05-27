@@ -20,6 +20,7 @@ import {useEffect, useMemo, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 
 import {useI18n} from "../hooks/useI18n";
+import {filterStandardProjects} from "../lib/learning-project";
 import {readLearnerState, setProjectId} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import type {
@@ -121,12 +122,18 @@ export default function DashboardFilterBar({
             setLoading(true);
             try {
                 const storage = getStorage();
-                const [proj, subs, tags] = await Promise.all([
+                const [rawProj, subs, tags] = await Promise.all([
                     storage.users.projects.list(userId),
                     storage.subjects.list(),
                     storage.tags.list(userId),
                 ]);
                 if (cancelled) return;
+                // v1.31.0 / Phase 46F.3: hide the auto-managed
+                // "Content Lessons" pseudo-project from the
+                // dashboard filter — it owns content-lesson
+                // LearningSession rows but isn't a goal a user
+                // can pick, edit, or archive.
+                const proj = filterStandardProjects(rawProj);
                 setProjects(proj);
                 setAllSubjects(subs);
                 setAllTags(tags);

@@ -14,6 +14,7 @@ import {useNavigate} from "react-router-dom";
 
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
+import {filterStandardProjects} from "../lib/learning-project";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import type {AnkiCardSuggestion} from "../storage/types";
@@ -66,7 +67,11 @@ export default function AnkiPage() {
         getStorage()
             .users.projects.list(userId)
             .then((p) => {
-                if (!cancelled) setProjects(p);
+                // v1.31.0 / Phase 46F.3: skip the auto-managed
+                // "Content Lessons" pseudo-project — Anki cards
+                // come from chat sessions on standard projects,
+                // not from content-lesson completions.
+                if (!cancelled) setProjects(filterStandardProjects(p));
             })
             .catch(() => {
                 /* non-fatal — page still works without filter */
