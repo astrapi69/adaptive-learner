@@ -37,8 +37,8 @@ async function seedUser(): Promise<string> {
 }
 
 describe("BUNDLED_BADGES", () => {
-    it("ships exactly 24 entries (Phase 29B spec: 20-30)", () => {
-        expect(BUNDLED_BADGES).toHaveLength(24);
+    it("ships exactly 28 entries (Phase 29B spec: 20-30 + Phase 50E lessons)", () => {
+        expect(BUNDLED_BADGES).toHaveLength(28);
     });
 
     it("has no duplicate keys", () => {
@@ -163,5 +163,235 @@ describe("evaluateBadgesForUser", () => {
         const second = await evaluateBadgesForUser(userId);
         expect(first).toContain("first_session");
         expect(second).not.toContain("first_session");
+    });
+});
+
+// --- Lesson-badge predicates (Phase 50E / v1.33.0 / D-DEXIE-GAMIFICATION)
+
+function buildLessonProgress(
+    userId: string,
+    index: number,
+    opts: {correct: number; total: number; completed: boolean},
+): {
+    id: string;
+    user_id: string;
+    source: string;
+    set_id: string;
+    lesson_filename: string;
+    status: "in_progress" | "completed";
+    step_results: Record<
+        string,
+        {correct: number; total: number; attempts: number; completed_at: string}
+    >;
+    score_correct: number;
+    score_total: number;
+    time_spent_seconds: number;
+    started_at: string;
+    updated_at: string;
+    completed_at: string | null;
+} {
+    const ts = `2026-05-${String(20 + index).padStart(2, "0")}T10:00:00Z`;
+    return {
+        id: `${userId}#fr-a1#${String(index).padStart(2, "0")}`,
+        user_id: userId,
+        source: "astrapi69/adaptive-learner-content",
+        set_id: "language-fr-a1",
+        lesson_filename: `${String(index).padStart(2, "0")}-lesson.json`,
+        status: opts.completed ? "completed" : "in_progress",
+        step_results: {
+            step1: {
+                correct: opts.correct,
+                total: opts.total,
+                attempts: 1,
+                completed_at: ts,
+            },
+        },
+        score_correct: opts.correct,
+        score_total: opts.total,
+        time_spent_seconds: 60,
+        started_at: ts,
+        updated_at: ts,
+        completed_at: opts.completed ? ts : null,
+    };
+}
+
+describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
+    beforeEach(async () => {
+        // The lesson predicates read lessonProgress + elementErrors;
+        // the IDBFactory swap in the file-level beforeEach has been
+        // observed to leak rows across tests within the same suite
+        // (same workaround the lesson-xp-dexie.test.ts file uses).
+        // Clear every table this describe touches before each test.
+        const db = getDb();
+        await db.userBadges.clear();
+        await db.badges.clear();
+        await db.lessonProgress.clear();
+        await db.elementErrors.clear();
+        await db.userXp.clear();
+    });
+
+    it("awards first_lesson after the first completed lesson lands", async () => {
+        const userId = await seedUser();
+        await getDb().lessonProgress.put(
+            buildLessonProgress(userId, 1, {
+                correct: 10,
+                total: 10,
+                completed: true,
+            }),
+        );
+        const newly = await evaluateBadgesForUser(userId);
+        expect(newly).toContain("first_lesson");
+        expect(newly).not.toContain("lessons_10");
+    });
+
+    it("does not award first_lesson on an in_progress lesson", async () => {
+        const userId = await seedUser();
+        await getDb().lessonProgress.put(
+            buildLessonProgress(userId, 1, {
+                correct: 5,
+                total: 10,
+                completed: false,
+            }),
+        );
+        const newly = await evaluateBadgesForUser(userId);
+        expect(newly).not.toContain("first_lesson");
+    });
+
+    it("awards lessons_10 only at the 10th completion", async () => {
+        const userId = await seedUser();
+        const db = getDb();
+        for (let i = 1; i <= 9; i++) {
+            await db.lessonProgress.put(
+                buildLessonProgress(userId, i, {
+                    correct: 5,
+                    total: 10,
+                    completed: true,
+                }),
+            );
+        }
+        let newly = await evaluateBadgesForUser(userId);
+        expect(newly).not.toContain("lessons_10");
+        await db.lessonProgress.put(
+            buildLessonProgress(userId, 10, {
+                correct: 5,
+                total: 10,
+                completed: true,
+            }),
+        );
+        newly = await evaluateBadgesForUser(userId);
+        expect(newly).toContain("lessons_10");
+    });
+
+    it("awards three_star_streak after 3 consecutive 3-star completions", async () => {
+        const userId = await seedUser();
+        const db = getDb();
+        // First: only 2 3-star lessons — not enough.
+        for (let i = 1; i <= 2; i++) {
+            await db.lessonProgress.put(
+                buildLessonProgress(userId, i, {
+                    correct: 10,
+                    total: 10,
+                    completed: true,
+                }),
+            );
+        }
+        let newly = await evaluateBadgesForUser(userId);
+        expect(newly).not.toContain("three_star_streak");
+        // Third 3-star lesson — predicate fires.
+        await db.lessonProgress.put(
+            buildLessonProgress(userId, 3, {
+                correct: 10,
+                total: 10,
+                completed: true,
+            }),
+        );
+        newly = await evaluateBadgesForUser(userId);
+        expect(newly).toContain("three_star_streak");
+    });
+
+    it("three_star_streak ignores a 2-star lesson in the latest 3", async () => {
+        const userId = await seedUser();
+        const db = getDb();
+        // Two older 3-star lessons (completed earlier).
+        await db.lessonProgress.put(
+            buildLessonProgress(userId, 1, {
+                correct: 10,
+                total: 10,
+                completed: true,
+            }),
+        );
+        await db.lessonProgress.put(
+            buildLessonProgress(userId, 2, {
+                correct: 10,
+                total: 10,
+                completed: true,
+            }),
+        );
+        // Most-recent lesson is 2-star (80% — between 75% and 90%).
+        await db.lessonProgress.put(
+            buildLessonProgress(userId, 3, {
+                correct: 8,
+                total: 10,
+                completed: true,
+            }),
+        );
+        const newly = await evaluateBadgesForUser(userId);
+        expect(newly).not.toContain("three_star_streak");
+    });
+
+    it("awards review_master when 50 elements are mastered", async () => {
+        const userId = await seedUser();
+        const db = getDb();
+        for (let i = 1; i <= 50; i++) {
+            await db.elementErrors.put({
+                id: `err-${i}`,
+                user_id: userId,
+                set_id: "language-fr-a1",
+                lesson_id: "01-greetings.json",
+                exercise_id: "step1",
+                element_key: `el-${i}`,
+                element_type: "word",
+                user_answer: "",
+                correct_answer: `element ${i}`,
+                error_count: 0,
+                correct_streak: 3,
+                mastered: true,
+                mastered_at: nowIso(),
+                last_error_at: null,
+                last_attempt_at: nowIso(),
+                created_at: nowIso(),
+                updated_at: nowIso(),
+            });
+        }
+        const newly = await evaluateBadgesForUser(userId);
+        expect(newly).toContain("review_master");
+    });
+
+    it("does NOT award review_master at 49 mastered elements", async () => {
+        const userId = await seedUser();
+        const db = getDb();
+        for (let i = 1; i <= 49; i++) {
+            await db.elementErrors.put({
+                id: `err-${i}`,
+                user_id: userId,
+                set_id: "language-fr-a1",
+                lesson_id: "01-greetings.json",
+                exercise_id: "step1",
+                element_key: `el-${i}`,
+                element_type: "word",
+                user_answer: "",
+                correct_answer: `element ${i}`,
+                error_count: 0,
+                correct_streak: 3,
+                mastered: true,
+                mastered_at: nowIso(),
+                last_error_at: null,
+                last_attempt_at: nowIso(),
+                created_at: nowIso(),
+                updated_at: nowIso(),
+            });
+        }
+        const newly = await evaluateBadgesForUser(userId);
+        expect(newly).not.toContain("review_master");
     });
 });

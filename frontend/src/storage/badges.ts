@@ -199,6 +199,38 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         icon: "inbox",
         category: "polyglot",
     },
+    // Content lessons (Phase 46E.2 / v1.31.0 — Python-side
+    // catalog and predicates landed; Phase 50E / v1.33.0 ports
+    // the Dexie-side predicates so Dexie-mode users earn the
+    // same badges.)
+    {
+        key: "first_lesson",
+        name_key: "gamification.badges.first_lesson.name",
+        description_key: "gamification.badges.first_lesson.description",
+        icon: "book-open",
+        category: "getting_started",
+    },
+    {
+        key: "lessons_10",
+        name_key: "gamification.badges.lessons_10.name",
+        description_key: "gamification.badges.lessons_10.description",
+        icon: "book-open",
+        category: "depth",
+    },
+    {
+        key: "three_star_streak",
+        name_key: "gamification.badges.three_star_streak.name",
+        description_key: "gamification.badges.three_star_streak.description",
+        icon: "star",
+        category: "consistency",
+    },
+    {
+        key: "review_master",
+        name_key: "gamification.badges.review_master.name",
+        description_key: "gamification.badges.review_master.description",
+        icon: "repeat",
+        category: "depth",
+    },
 ];
 
 async function ensureCatalogSeeded(): Promise<Map<string, BadgeRow>> {
@@ -365,6 +397,55 @@ async function maxCycleCountInOneSession(userId: string): Promise<number> {
     return max;
 }
 
+// --- Lesson-badge helpers (Phase 50E / v1.33.0 / D-DEXIE-GAMIFICATION)
+//
+// Mirror the Python helpers in ``badge_service.py``:
+//   _completed_lesson_count, _last_n_lessons_all_three_star,
+//   _mastered_elements_count.
+
+async function completedLessonCount(userId: string): Promise<number> {
+    const db = getDb();
+    return await db.lessonProgress
+        .where({user_id: userId})
+        .filter((row) => row.status === "completed")
+        .count();
+}
+
+async function lastNLessonsAllThreeStar(
+    userId: string,
+    n: number,
+): Promise<boolean> {
+    const db = getDb();
+    const rows = await db.lessonProgress
+        .where({user_id: userId})
+        .filter((row) => row.status === "completed")
+        .toArray();
+    if (rows.length < n) {
+        return false;
+    }
+    // Order by completed_at desc; rows without completed_at sort to
+    // the end (newest-first equivalent of Python's
+    // ``order_by(completed_at.desc()).limit(n)``).
+    rows.sort((a, b) => {
+        const ac = a.completed_at ?? "";
+        const bc = b.completed_at ?? "";
+        return bc.localeCompare(ac);
+    });
+    const top = rows.slice(0, n);
+    const {computeStars} = await import("../lib/gamification/lesson-xp");
+    return top.every(
+        (row) => computeStars(row.score_correct, row.score_total) === 3,
+    );
+}
+
+async function masteredElementsCount(userId: string): Promise<number> {
+    const db = getDb();
+    return await db.elementErrors
+        .where({user_id: userId})
+        .filter((row) => row.mastered === true)
+        .count();
+}
+
 type Evaluator = (userId: string) => Promise<boolean>;
 
 const EVALUATORS: Record<string, Evaluator> = {
@@ -401,6 +482,11 @@ const EVALUATORS: Record<string, Evaluator> = {
     two_languages: async (uid) => (await languagesUsed(uid)) >= 2,
     three_providers: async (uid) => (await providerCount(uid)) >= 3,
     import_10_conversations: async (uid) => (await importCount(uid)) >= 10,
+    // Lesson badges (Phase 50E / v1.33.0 / D-DEXIE-GAMIFICATION).
+    first_lesson: async (uid) => (await completedLessonCount(uid)) >= 1,
+    lessons_10: async (uid) => (await completedLessonCount(uid)) >= 10,
+    three_star_streak: async (uid) => await lastNLessonsAllThreeStar(uid, 3),
+    review_master: async (uid) => (await masteredElementsCount(uid)) >= 50,
 };
 
 /**
