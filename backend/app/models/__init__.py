@@ -1286,33 +1286,46 @@ class LessonProgress(Base):
     source: Mapped[str] = mapped_column(String(200), nullable=False)
     set_id: Mapped[str] = mapped_column(String(120), nullable=False)
     lesson_filename: Mapped[str] = mapped_column(
-        String(200), nullable=False,
+        String(200),
+        nullable=False,
     )
     # ``in_progress`` | ``completed``
     status: Mapped[str] = mapped_column(
-        String(20), nullable=False, default="in_progress",
+        String(20),
+        nullable=False,
+        default="in_progress",
     )
     # JSON object: {step_id: {correct: int, total: int,
     #   attempts: int, completed_at: ISO-8601 string}}.
     # Empty ``{}`` when nothing answered yet.
     step_results: Mapped[str] = mapped_column(
-        Text, nullable=False, default="{}",
+        Text,
+        nullable=False,
+        default="{}",
     )
     # Aggregate score across all scored exercise steps the
     # user attempted. Lesson-summary screen surfaces these.
     score_correct: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0,
+        Integer,
+        nullable=False,
+        default=0,
     )
     score_total: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0,
+        Integer,
+        nullable=False,
+        default=0,
     )
     # Wall-clock seconds the user has spent inside the lesson
     # across all visits. Updated on completion / abandonment.
     time_spent_seconds: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0,
+        Integer,
+        nullable=False,
+        default=0,
     )
     started_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, default=_utcnow,
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -1321,7 +1334,8 @@ class LessonProgress(Base):
         onupdate=_utcnow,
     )
     completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
 
     def __repr__(self) -> str:
@@ -1399,7 +1413,9 @@ class ElementError(Base):
     # "vocabulary" | "grammar_rule" | "concept" — derived
     # heuristically from the exercise type at recording time.
     element_type: Mapped[str] = mapped_column(
-        String(50), nullable=False, default="vocabulary",
+        String(50),
+        nullable=False,
+        default="vocabulary",
     )
     # Last attempt's text. Overwritten on each new attempt;
     # historical attempts are not preserved at the row level
@@ -1412,24 +1428,34 @@ class ElementError(Base):
     # Resets to 0 on wrong; flips ``mastered`` when it reaches
     # the threshold.
     correct_streak: Mapped[int] = mapped_column(
-        Integer, nullable=False, default=0,
+        Integer,
+        nullable=False,
+        default=0,
     )
     last_error_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
     # Set on every attempt (correct OR wrong). Drives the SRS
     # "days since last seen" calculation in commit C11.
     last_attempt_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, default=_utcnow,
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
     )
     mastered: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False,
+        Boolean,
+        nullable=False,
+        default=False,
     )
     mastered_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True,
+        DateTime(timezone=True),
+        nullable=True,
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, default=_utcnow,
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),

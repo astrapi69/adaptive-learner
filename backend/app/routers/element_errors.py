@@ -46,8 +46,7 @@ def list_element_errors(
     set_id: str | None = Query(
         default=None,
         description=(
-            "Optional content-set filter. Omit to read across "
-            "all sets the user has touched."
+            "Optional content-set filter. Omit to read across all sets the user has touched."
         ),
     ),
     include_mastered: bool = Query(
@@ -86,7 +85,9 @@ def record_element_attempts(
     in C4 the body caps at 100 attempts per call."""
     _require_user(db, user_id)
     rows = element_errors_service.record_attempts(
-        db, user_id, payload.attempts,
+        db,
+        user_id,
+        payload.attempts,
     )
     db.commit()
     return [ElementErrorOut.model_validate(row) for row in rows]

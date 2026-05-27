@@ -164,9 +164,7 @@ def upsert_progress(
         row.score_correct, row.score_total = _recompute_score(results)
 
     if time_spent_seconds_delta > 0:
-        row.time_spent_seconds = (
-            row.time_spent_seconds + time_spent_seconds_delta
-        )
+        row.time_spent_seconds = row.time_spent_seconds + time_spent_seconds_delta
 
     if mark_completed and row.status != "completed":
         row.status = "completed"

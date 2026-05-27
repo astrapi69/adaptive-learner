@@ -64,8 +64,7 @@ def get_lesson_progress(
     )
     if row is None:
         raise NotFoundError(
-            f"No progress for {_unslug(source_slug)}/{set_id}/"
-            f"{lesson_filename}",
+            f"No progress for {_unslug(source_slug)}/{set_id}/{lesson_filename}",
         )
     return LessonProgressOut.model_validate(row)
 
@@ -79,11 +78,7 @@ def upsert_lesson_progress(
     payload: LessonProgressUpsert,
     db: Session = Depends(get_db),
 ) -> LessonProgressOut:
-    step_result = (
-        payload.step_result.model_dump()
-        if payload.step_result is not None
-        else None
-    )
+    step_result = payload.step_result.model_dump() if payload.step_result is not None else None
     row = lesson_progress_service.upsert_progress(
         db,
         user_id,
