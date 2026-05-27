@@ -258,6 +258,14 @@ export const apiStorage: IStorageService = {
         upsert: (userId, body) => api.lessonProgress.upsert(userId, body),
     },
 
+    // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------
+
+    elementErrors: {
+        list: (userId, opts) => api.elementErrors.list(userId, opts),
+        recordBulk: (userId, attempts) =>
+            api.elementErrors.recordBulk(userId, attempts),
+    },
+
     // --- Content-Loader (Phase 43 / EXP-002) -----------------------------
 
     contentLoader: {

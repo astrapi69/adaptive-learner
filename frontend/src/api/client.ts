@@ -1102,6 +1102,36 @@ export const api = {
             ),
     },
 
+    // --- Element Errors (Phase 46B / EXP-007 / P-129) ------------------
+
+    elementErrors: {
+        /** GET /api/users/{user_id}/element-errors */
+        list: (
+            userId: string,
+            opts: {setId?: string; includeMastered?: boolean} = {},
+        ) => {
+            const params = new URLSearchParams();
+            if (opts.setId !== undefined) params.set("set_id", opts.setId);
+            if (opts.includeMastered === false) {
+                params.set("include_mastered", "false");
+            }
+            const qs = params.toString();
+            const path = qs
+                ? `/users/${encodeURIComponent(userId)}/element-errors?${qs}`
+                : `/users/${encodeURIComponent(userId)}/element-errors`;
+            return apiCall<import("../storage/types").ElementError[]>(path);
+        },
+        /** POST /api/users/{user_id}/element-errors */
+        recordBulk: (
+            userId: string,
+            attempts: readonly import("../storage/types").ElementAttempt[],
+        ) =>
+            apiCall<import("../storage/types").ElementError[]>(
+                `/users/${encodeURIComponent(userId)}/element-errors`,
+                {method: "POST", body: {attempts}},
+            ),
+    },
+
     // --- Content-Loader plugin (Phase 43 / EXP-002) ---------------------
 
     contentLoader: {

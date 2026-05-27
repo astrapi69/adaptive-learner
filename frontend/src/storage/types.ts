@@ -890,6 +890,7 @@ export interface IStorageService {
     notebooklm: INotebookLMNamespace;
     contentLoader: IContentLoaderNamespace;
     lessonProgress: ILessonProgressNamespace;
+    elementErrors: IElementErrorsNamespace;
 
     /**
      * Phase 41F Danger Zone reset. Wipes every piece of learner

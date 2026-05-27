@@ -105,6 +105,10 @@ import {
     listLessonProgressDexie,
     upsertLessonProgressDexie,
 } from "./lesson-progress-dexie";
+import {
+    listElementErrorsDexie,
+    recordElementAttemptsDexie,
+} from "./element-errors-dexie";
 import type {AIProvider, LearningMethod} from "../lib/constants";
 import type {
     ApiKeySetBody,
@@ -2051,6 +2055,14 @@ export const dexieStorage: IStorageService = {
         upsert: (userId, body) => upsertLessonProgressDexie(userId, body),
     },
 
+    // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------
+
+    elementErrors: {
+        list: (userId, opts) => listElementErrorsDexie(userId, opts),
+        recordBulk: (userId, attempts) =>
+            recordElementAttemptsDexie(userId, attempts),
+    },
+
     // --- Content-Loader (Phase 43 / EXP-002) -----------------------------
     //
     // GH-Pages-shape: fetch from raw.githubusercontent.com,
@@ -2112,6 +2124,7 @@ export const dexieStorage: IStorageService = {
             "contentSets",
             "contentSetFiles",
             "lessonProgress",
+            "elementErrors",
         ];
         let cleared = 0;
         for (const name of tableNames) {
