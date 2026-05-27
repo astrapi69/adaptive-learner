@@ -9,27 +9,36 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.29.0** (Phase 45 — Free-Text +
-  Word-Tiles Exercises, EXP-002 Sprint 3 parts E-F). The
-  v1.28.0 viewer now ships every exercise type the v1.0
-  lesson schema knows about. New ``FreeTextExercise``
-  takes a text input, validates against
-  ``exercise.accept`` (case-insensitive, NFC-normalized,
-  with Levenshtein <= 1 typo tolerance — "Mercii" / "Merc"
-  / "Mercy" pass, "Marci" doesn't), and surfaces the
-  canonical first entry on a wrong attempt. New
-  ``WordTilesExercise`` is a two-zone tap-to-place
-  ordering exercise: scrambled bar on top (deterministic
-  Fisher-Yates shuffle), answer row underneath; supports
-  multiple correct orderings via ``accept_orderings`` or
-  canonical-only when absent. Both ship with optional
-  inline "Need a hint?" toggles. Dispatcher's
-  ``SUPPORTED_EXERCISE_TYPES`` grows from 2 to 4; the
-  placeholder code path stays as a defensive fallback for
-  any future schema_version that adds a fifth type. Pilot
-  French A1 lessons now walk end-to-end with all four
-  exercise types scored on the summary screen. No backend
-  changes, no Alembic migration, no Dexie schema bump.
+- **Current state:** **v1.30.0** (Phase 46 sub-phases A-D
+  — Element-Level Error Tracking + SRS Review Sessions,
+  EXP-007 / P-129). The "adaptive" in "Adaptive Learner"
+  now actually means something: every wrong answer in every
+  exercise type writes a per-element ``ElementError`` row
+  keyed by the specific word / pair / phrase the user
+  missed. Mastery flips at 3 consecutive correct
+  (``MASTERY_THRESHOLD=3``); a mastered element that gets a
+  wrong answer demotes back. New SRS scheduling service
+  projects the active rows into a prioritised review queue
+  (1d/3d/7d bands by correct_streak, sorted overdue → error
+  count desc → last_error_at desc). Dashboard widget
+  ``<ReviewQueueCard>`` surfaces the queue count + CTA. New
+  ``/review/:setId`` route runs a synthesised mini-lesson
+  that re-plays exactly the failed exercises, persisting
+  attempts via the same ``elementErrors.recordBulk`` path
+  the main viewer uses. New Alembic 0019 + Dexie schema v18
+  + ``IStorageService.elementErrors`` namespace (storage-
+  mode-agnostic so GH-Pages users get the full SRS loop
+  without a backend). Expanded LessonSummary: per-exercise
+  breakdown, 0-3 star rating, score progress bar, "Next
+  lesson"/"Repeat"/"Back to set" buttons + 3-star
+  celebration CSS animation. **Decoupled from
+  LearningSession by design** — Phase 46 E-F-G
+  (gamification + session-unification + docs) split to
+  v1.31.0; ElementError survives that split unchanged.
+  v1.29.0 = Phase 45 — Free-Text + Word-Tiles Exercises,
+  EXP-002 Sprint 3 parts E-F (the v1.28.0 viewer now ships
+  every exercise type the v1.0 lesson schema knows about;
+  no backend / schema changes).
   v1.28.0 = Phase 44 — Lesson Viewer + Matching +
   Picture-Choice exercises, EXP-002 Sprint 3 parts A-D
   (new route ``/lesson/:setSlug/:setId/:filename``, the
@@ -100,7 +109,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.29.0.md](changelog/releases/v1.29.0.md)
+  [changelog/releases/v1.30.0.md](changelog/releases/v1.30.0.md)
   for the per-release detail and `git log --oneline` for
   the feature history across Phases 1–42.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
@@ -195,7 +204,7 @@ default path).
 
 ## Data model
 
-**26 SQLAlchemy models** in `backend/app/models/__init__.py`:
+**28 SQLAlchemy models** in `backend/app/models/__init__.py`:
 
 User, UserSettings, LearningProject, LearningProfile,
 Curriculum, LearningTopic, Lesson, LearningSession,
@@ -203,10 +212,10 @@ SessionMessage, SessionRating, SessionNote, ProgressCommit,
 StepEvaluation, MethodSwitch, ImportedConversation,
 ImportedMessage, Subject, Tag, ProjectSubject, ProjectTag,
 UserXP, Badge, UserBadge, UserStreak, AnkiCardSuggestion,
-StudyQuestion, LessonProgress.
+StudyQuestion, LessonProgress, ElementError.
 
 Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Sync
-surface: 29 tables. Full spec in
+surface: 30 tables. Full spec in
 [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md).
 
 ## Plugins (12 shipped)
@@ -278,12 +287,12 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.29.0 baseline:** backend 930 (+1 skipped) + plugins
-  826 + Vitest 1634 = **3390 tests** (+1 skipped). E2E
+- **v1.30.0 baseline:** backend 980 (+1 skipped) + plugins
+  826 + Vitest 1748 = **3554 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
-  gate** (17 specs incl. /content + /lesson) runs via
-  `make test-dexie-smoke`; aggregated into
+  gate** (18 specs incl. /content + /lesson + /review)
+  runs via `make test-dexie-smoke`; aggregated into
   `make release-test` so a red gate blocks the tag.
 
 ## Test isolation
