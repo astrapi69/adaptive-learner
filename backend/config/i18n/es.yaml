@@ -198,6 +198,12 @@ dashboard:
   card_tools: Recomendaciones de herramientas
   card_recent_sessions: Recent sessions
   card_spaced: Práctica espaciada
+  card_review_queue: Para repasar
+  review_queue:
+    loading: "Cargando…"
+    elements: "elemento(s) para repasar"
+    overdue: "atrasados — empieza aquí"
+    open: "Abrir sesión de repaso"
   spaced_empty: Nada que repasar ahora mismo. ¡Buen ritmo!
   spaced_interval_label: Revisar en
   spaced_start: Empezar

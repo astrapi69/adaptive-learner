@@ -210,6 +210,13 @@
     "card_tools": "Tool recommendations",
     "card_recent_sessions": "Recent sessions",
     "card_spaced": "Spaced practice",
+    "card_review_queue": "Due for review",
+    "review_queue": {
+      "loading": "Loading…",
+      "elements": "element(s) due for review",
+      "overdue": "overdue — start here",
+      "open": "Open review session"
+    },
     "spaced_empty": "Nothing to refresh right now. Great rhythm!",
     "spaced_interval_label": "Review in",
     "spaced_start": "Start",

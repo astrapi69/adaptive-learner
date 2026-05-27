@@ -210,6 +210,13 @@
     "card_tools": "ツールの推奨",
     "card_recent_sessions": "最近のセッション",
     "card_spaced": "間隔練習",
+    "card_review_queue": "復習する要素",
+    "review_queue": {
+      "loading": "読み込み中…",
+      "elements": "件の要素を復習",
+      "overdue": "件 期限切れ — ここから開始",
+      "open": "復習セッションを開く"
+    },
     "spaced_empty": "今、復習するものはありません。良いリズムです!",
     "spaced_interval_label": "次の復習",
     "spaced_start": "開始",

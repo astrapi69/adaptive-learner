@@ -210,6 +210,13 @@
     "card_tools": "Συστάσεις εργαλείων",
     "card_recent_sessions": "Recent sessions",
     "card_spaced": "Διανεμημένη εξάσκηση",
+    "card_review_queue": "Προς επανάληψη",
+    "review_queue": {
+      "loading": "Φόρτωση…",
+      "elements": "στοιχείο(α) προς επανάληψη",
+      "overdue": "εκπρόθεσμα — ξεκίνα από εδώ",
+      "open": "Άνοιγμα συνεδρίας επανάληψης"
+    },
     "spaced_empty": "Τίποτα για επανάληψη τώρα. Καλός ρυθμός!",
     "spaced_interval_label": "Επανάληψη σε",
     "spaced_start": "Έναρξη",

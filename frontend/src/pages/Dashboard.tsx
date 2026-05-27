@@ -6,6 +6,7 @@ import DashboardFilterBar from "../components/DashboardFilterBar";
 import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
 import LearningRepoWidget from "../components/dashboard/LearningRepoWidget";
+import ReviewQueueCard from "../components/dashboard/ReviewQueueCard";
 import MethodDistribution from "../components/MethodDistribution";
 import ProfileRadar from "../components/ProfileRadar";
 import ProgressTimeline from "../components/ProgressTimeline";
@@ -374,6 +375,8 @@ export default function Dashboard() {
                     </h2>
                     <SpacedRecommendations cards={spaced} />
                 </article>
+
+                {userId && <ReviewQueueCard userId={userId} />}
 
                 <article className="dashboard-card dashboard-card-wide">
                     <h2 className="dashboard-card-title">

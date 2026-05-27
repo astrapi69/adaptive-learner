@@ -210,6 +210,13 @@
     "card_tools": "Werkzeug-Empfehlungen",
     "card_recent_sessions": "Letzte Sessions",
     "card_spaced": "Geplante Übung",
+    "card_review_queue": "Zur Wiederholung",
+    "review_queue": {
+      "loading": "Wird geladen…",
+      "elements": "Element(e) zur Wiederholung",
+      "overdue": "überfällig — hier starten",
+      "open": "Wiederholungssitzung öffnen"
+    },
     "spaced_empty": "Nichts zu wiederholen — guter Rhythmus!",
     "spaced_interval_label": "Wiederholung in",
     "spaced_start": "Starten",

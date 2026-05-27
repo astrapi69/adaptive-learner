@@ -210,6 +210,13 @@
     "card_tools": "Araç önerileri",
     "card_recent_sessions": "Son oturumlar",
     "card_spaced": "Aralıklı pratik",
+    "card_review_queue": "Tekrar için",
+    "review_queue": {
+      "loading": "Yükleniyor…",
+      "elements": "tekrar için öğe(ler)",
+      "overdue": "gecikmiş — buradan başla",
+      "open": "Tekrar oturumu aç"
+    },
     "spaced_empty": "Şu an tazelenecek bir şey yok. Harika bir ritim!",
     "spaced_interval_label": "Tekrar",
     "spaced_start": "Başla",
