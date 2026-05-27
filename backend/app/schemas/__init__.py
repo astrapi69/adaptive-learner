@@ -1288,3 +1288,28 @@ class ElementErrorOut(BaseModel):
     mastered_at: datetime | None = None
     created_at: datetime
     updated_at: datetime
+
+
+class ReviewQueueItemOut(BaseModel):
+    """One item in the SRS review queue (Phase 46C / C11 /
+    P-129). All ElementError fields plus the computed
+    scheduling fields ``suggested_review_at`` + ``overdue``.
+    Mirrors ``app.services.element_srs.ReviewQueueItem``."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str
+    user_id: str
+    set_id: str
+    lesson_id: str
+    exercise_id: str
+    element_key: str
+    element_type: str
+    user_answer: str
+    correct_answer: str
+    error_count: int
+    correct_streak: int
+    last_error_at: datetime | None = None
+    last_attempt_at: datetime
+    suggested_review_at: datetime
+    overdue: bool

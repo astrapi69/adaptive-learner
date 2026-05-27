@@ -244,3 +244,94 @@ def test_post_rejects_missing_required_field(
         json={"attempts": [bad]},
     )
     assert r.status_code == 422
+
+
+# --- Review-queue endpoint (Phase 46C / C11) -------------------------------
+
+
+def test_review_queue_route_mounted(client: TestClient) -> None:
+    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    assert "/api/users/{user_id}/element-errors/review-queue" in paths
+
+
+def test_review_queue_unknown_user_returns_404(client: TestClient) -> None:
+    r = client.get(
+        "/api/users/no-such-user/element-errors/review-queue",
+    )
+    assert r.status_code == 404
+
+
+def test_review_queue_empty_for_fresh_user(
+    client: TestClient, user_id: str,
+) -> None:
+    r = client.get(
+        f"/api/users/{user_id}/element-errors/review-queue",
+    )
+    assert r.status_code == 200
+    assert r.json() == []
+
+
+def test_review_queue_returns_active_elements_with_scheduling(
+    client: TestClient, user_id: str,
+) -> None:
+    client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={"attempts": [_attempt_payload(correct=False)]},
+    )
+    r = client.get(
+        f"/api/users/{user_id}/element-errors/review-queue",
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert len(body) == 1
+    item = body[0]
+    assert item["element_key"] == "merci"
+    # Scheduling fields present in the wire shape.
+    assert "suggested_review_at" in item
+    assert "overdue" in item
+
+
+def test_review_queue_excludes_mastered_elements(
+    client: TestClient, user_id: str,
+) -> None:
+    # Master one element + leave another active.
+    for _ in range(3):
+        client.post(
+            f"/api/users/{user_id}/element-errors",
+            json={"attempts": [_attempt_payload(correct=True)]},
+        )
+    client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                _attempt_payload(element_key="bonjour", correct=False),
+            ]
+        },
+    )
+    r = client.get(
+        f"/api/users/{user_id}/element-errors/review-queue",
+    )
+    rows = r.json()
+    assert len(rows) == 1
+    assert rows[0]["element_key"] == "bonjour"
+
+
+def test_review_queue_filters_by_set_id(
+    client: TestClient, user_id: str,
+) -> None:
+    client.post(
+        f"/api/users/{user_id}/element-errors",
+        json={
+            "attempts": [
+                {**_attempt_payload(correct=False), "set_id": "set-a"},
+                {**_attempt_payload(correct=False), "set_id": "set-b"},
+            ]
+        },
+    )
+    r = client.get(
+        f"/api/users/{user_id}/element-errors/review-queue",
+        params={"set_id": "set-a"},
+    )
+    rows = r.json()
+    assert len(rows) == 1
+    assert rows[0]["set_id"] == "set-a"

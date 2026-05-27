@@ -25,8 +25,10 @@ from app.models import User
 from app.schemas import (
     ElementAttemptsIn,
     ElementErrorOut,
+    ReviewQueueItemOut,
 )
 from app.services import element_errors as element_errors_service
+from app.services import element_srs as element_srs_service
 
 router = APIRouter(prefix="/users", tags=["element-errors"])
 
@@ -66,6 +68,39 @@ def list_element_errors(
         include_mastered=include_mastered,
     )
     return [ElementErrorOut.model_validate(row) for row in rows]
+
+
+@router.get(
+    "/{user_id}/element-errors/review-queue",
+    response_model=list[ReviewQueueItemOut],
+)
+def review_queue(
+    user_id: str,
+    set_id: str | None = Query(
+        default=None,
+        description=(
+            "Optional content-set filter. Omit to read the "
+            "review queue across all sets the user has touched."
+        ),
+    ),
+    db: Session = Depends(get_db),
+) -> list[ReviewQueueItemOut]:
+    """SRS review queue for the user (Phase 46C / P-129).
+
+    Returns active (non-mastered) element-error rows
+    projected into review items with computed
+    ``suggested_review_at`` + ``overdue`` fields. Sorted by
+    overdue → error_count desc → last_error_at desc so the
+    Dashboard widget (C13) renders the most urgent items
+    first.
+    """
+    _require_user(db, user_id)
+    items = element_srs_service.compute_review_queue(
+        db,
+        user_id,
+        set_id=set_id,
+    )
+    return [ReviewQueueItemOut.model_validate(item) for item in items]
 
 
 @router.post(
