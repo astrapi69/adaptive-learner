@@ -20,6 +20,7 @@ vi.mock("../hooks/useLesson", () => ({
 }));
 
 import LessonPage from "./Lesson";
+import type {ContentLessonExercise} from "../storage/types";
 
 const LESSON = {
     id: "01-greetings",
@@ -194,21 +195,14 @@ describe("LessonPage: ready state rendering", () => {
         ).toBeInTheDocument();
     });
 
-    it("renders the coming-soon placeholder for unsupported types", () => {
+    function _renderWithStep(exercise: ContentLessonExercise) {
         const lesson = {
             ...LESSON,
             steps: [
                 {
-                    id: "ex-free",
+                    id: exercise.id,
                     type: "exercise" as const,
-                    exercise: {
-                        id: "ex-free",
-                        type: "free_text" as const,
-                        prompt: "Translate.",
-                        card_ids: [],
-                        accept: ["x"],
-                        distractors: [],
-                    },
+                    exercise,
                 },
             ],
         };
@@ -227,8 +221,76 @@ describe("LessonPage: ready state rendering", () => {
             refresh: vi.fn(),
         });
         renderAtPath(VALID_PATH);
+    }
+
+    it("dispatcher routes picture_choice to the picture component", () => {
+        _renderWithStep({
+            id: "ex-pic",
+            type: "picture_choice",
+            prompt: "Pick the cat.",
+            card_ids: [],
+            images: [
+                {src: "a.png", label: "Cat", is_correct: "true"},
+                {src: "b.png", label: "Dog"},
+            ],
+            distractors: [],
+        });
         expect(
-            screen.getByTestId("lesson-exercise-placeholder-free_text"),
+            screen.getByTestId("picture-exercise"),
+        ).toBeInTheDocument();
+    });
+
+    it("dispatcher routes free_text to the free-text component (Phase 45)", () => {
+        _renderWithStep({
+            id: "ex-free",
+            type: "free_text",
+            prompt: "How do you say 'thanks' in French?",
+            card_ids: [],
+            accept: ["Merci"],
+            distractors: [],
+        });
+        expect(
+            screen.getByTestId("free-text-exercise"),
+        ).toBeInTheDocument();
+        // Placeholder must NOT also fire — exclusive routing.
+        expect(
+            screen.queryByTestId("lesson-exercise-placeholder-free_text"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("dispatcher routes word_tiles to the word-tiles component (Phase 45)", () => {
+        _renderWithStep({
+            id: "ex-tiles",
+            type: "word_tiles",
+            prompt: "Arrange the words.",
+            card_ids: [],
+            tiles: ["Au", "revoir"],
+            distractors: [],
+        });
+        expect(
+            screen.getByTestId("word-tiles-exercise"),
+        ).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("lesson-exercise-placeholder-word_tiles"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("renders the coming-soon placeholder for unknown future types", () => {
+        // Defensive regression-pin: if a future schema_version
+        // ships a new ExerciseType and a lesson lands in the
+        // cache before its renderer exists, the placeholder
+        // must fire so the user can skip the step. We simulate
+        // a future "cloze" type by casting the runtime string;
+        // TypeScript's compile-time union doesn't include it.
+        _renderWithStep({
+            id: "ex-future",
+            type: "cloze" as unknown as ContentLessonExercise["type"],
+            prompt: "Fill in the blank.",
+            card_ids: [],
+            distractors: [],
+        });
+        expect(
+            screen.getByTestId("lesson-exercise-placeholder-cloze"),
         ).toBeInTheDocument();
     });
 

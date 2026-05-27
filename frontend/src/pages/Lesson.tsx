@@ -30,8 +30,10 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+import FreeTextExercise from "../components/exercises/FreeTextExercise";
 import MatchingExercise from "../components/exercises/MatchingExercise";
 import PictureChoiceExercise from "../components/exercises/PictureChoiceExercise";
+import WordTilesExercise from "../components/exercises/WordTilesExercise";
 import {useI18n} from "../hooks/useI18n";
 import {useLesson} from "../hooks/useLesson";
 import {
@@ -46,6 +48,8 @@ import type {
 const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "matching",
     "picture_choice",
+    "free_text",
+    "word_tiles",
 ]);
 
 interface UrlParams {
@@ -400,6 +404,26 @@ function ExerciseDispatcher({step, onComplete}: ExerciseDispatcherProps) {
     if (ex.type === "picture_choice") {
         return (
             <PictureChoiceExercise
+                exercise={ex}
+                onComplete={(scored) => {
+                    void onComplete(scored);
+                }}
+            />
+        );
+    }
+    if (ex.type === "free_text") {
+        return (
+            <FreeTextExercise
+                exercise={ex}
+                onComplete={(scored) => {
+                    void onComplete(scored);
+                }}
+            />
+        );
+    }
+    if (ex.type === "word_tiles") {
+        return (
+            <WordTilesExercise
                 exercise={ex}
                 onComplete={(scored) => {
                     void onComplete(scored);
