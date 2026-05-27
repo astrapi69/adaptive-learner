@@ -1058,6 +1058,15 @@ lesson:
       correct_label: "Correto"
       wrong_label: "Errado"
       empty: "Este exercício não tem imagens."
+    free_text:
+      submit: "Verificar resposta"
+      retry: "Tentar de novo"
+      placeholder: "Escreve a tua resposta…"
+      input_label: "A tua resposta"
+      hint_show: "Precisas de uma dica?"
+      result_correct: "Correto!"
+      result_wrong: "Quase. A resposta esperada era: {answer}"
+      empty: "Este exercício não tem respostas aceitas."
   summary:
     heading: "Terminado"
     aria_label: "Resumo da lição"

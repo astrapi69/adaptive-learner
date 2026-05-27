@@ -1137,6 +1137,16 @@
         "correct_label": "Richtig",
         "wrong_label": "Falsch",
         "empty": "Diese Bild-Auswahl-Übung enthält keine Bilder."
+      },
+      "free_text": {
+        "submit": "Antwort prüfen",
+        "retry": "Erneut versuchen",
+        "placeholder": "Antwort eingeben…",
+        "input_label": "Deine Antwort",
+        "hint_show": "Tipp anzeigen?",
+        "result_correct": "Richtig!",
+        "result_wrong": "Nicht ganz. Die erwartete Antwort war: {answer}",
+        "empty": "Diese Freitext-Übung hat keine akzeptierten Antworten."
       }
     },
     "summary": {

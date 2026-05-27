@@ -1060,6 +1060,15 @@ lesson:
       correct_label: "Correcto"
       wrong_label: "Incorrecto"
       empty: "Este ejercicio no tiene imágenes."
+    free_text:
+      submit: "Comprobar respuesta"
+      retry: "Intentar de nuevo"
+      placeholder: "Escribe tu respuesta…"
+      input_label: "Tu respuesta"
+      hint_show: "¿Necesitas una pista?"
+      result_correct: "¡Correcto!"
+      result_wrong: "Casi. La respuesta esperada era: {answer}"
+      empty: "Este ejercicio no tiene respuestas aceptadas."
   summary:
     heading: "Terminaste"
     aria_label: "Resumen de la lección"

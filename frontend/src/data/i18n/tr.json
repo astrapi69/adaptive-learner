@@ -1137,6 +1137,16 @@
         "correct_label": "Doğru",
         "wrong_label": "Yanlış",
         "empty": "Bu alıştırmada görsel yok."
+      },
+      "free_text": {
+        "submit": "Cevabı kontrol et",
+        "retry": "Tekrar dene",
+        "placeholder": "Cevabını yaz…",
+        "input_label": "Senin cevabın",
+        "hint_show": "İpucu ister misin?",
+        "result_correct": "Doğru!",
+        "result_wrong": "Pek değil. Beklenen cevap: {answer}",
+        "empty": "Bu serbest metin alıştırmasının kabul edilen cevabı yok."
       }
     },
     "summary": {

@@ -1137,6 +1137,16 @@
         "correct_label": "正解",
         "wrong_label": "不正解",
         "empty": "この画像選択演習には画像がありません。"
+      },
+      "free_text": {
+        "submit": "答えを確認",
+        "retry": "もう一度",
+        "placeholder": "答えを入力…",
+        "input_label": "あなたの答え",
+        "hint_show": "ヒントが必要ですか？",
+        "result_correct": "正解です！",
+        "result_wrong": "惜しい。期待されていた答え: {answer}",
+        "empty": "この自由記述演習には受け付ける答えがありません。"
       }
     },
     "summary": {

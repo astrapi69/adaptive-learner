@@ -1137,6 +1137,16 @@
         "correct_label": "Correct",
         "wrong_label": "Wrong",
         "empty": "This picture-choice exercise has no images."
+      },
+      "free_text": {
+        "submit": "Check answer",
+        "retry": "Try again",
+        "placeholder": "Type your answer…",
+        "input_label": "Your answer",
+        "hint_show": "Need a hint?",
+        "result_correct": "Correct!",
+        "result_wrong": "Not quite. The expected answer was: {answer}",
+        "empty": "This free-text exercise has no accepted answers."
       }
     },
     "summary": {

@@ -1137,6 +1137,16 @@
         "correct_label": "Correct",
         "wrong_label": "Incorrect",
         "empty": "Cet exercice n'a pas d'images."
+      },
+      "free_text": {
+        "submit": "Vérifier la réponse",
+        "retry": "Réessayer",
+        "placeholder": "Saisis ta réponse…",
+        "input_label": "Ta réponse",
+        "hint_show": "Besoin d'un indice ?",
+        "result_correct": "Correct !",
+        "result_wrong": "Pas tout à fait. La réponse attendue était : {answer}",
+        "empty": "Cet exercice n'a pas de réponses acceptées."
       }
     },
     "summary": {
