@@ -70,9 +70,7 @@ _PSEUDO_PROJECT_TIMEFRAME = "ongoing"
 _PSEUDO_PROJECT_DAILY_MINUTES = 1
 
 
-def find_or_create_content_pseudo_project(
-    db: Session, user_id: str
-) -> LearningProject:
+def find_or_create_content_pseudo_project(db: Session, user_id: str) -> LearningProject:
     """Return the user's content pseudo-project, creating it if missing.
 
     Identified by ``(user_id, kind="content")``. Idempotent:
@@ -161,9 +159,7 @@ def record_lesson_completion_session(
     return sess
 
 
-def _fire_on_session_complete(
-    session: dict[str, Any], rating: dict[str, Any]
-) -> None:
+def _fire_on_session_complete(session: dict[str, Any], rating: dict[str, Any]) -> None:
     """Mirror of session plugin's ``_fire_on_session_complete``.
 
     Wraps subscriber exceptions so a gamification crash
@@ -178,7 +174,6 @@ def _fire_on_session_complete(
         manager._pm.hook.on_session_complete(session=session, rating=rating)
     except Exception:
         logger.warning(
-            "on_session_complete subscriber raised; "
-            "lesson completion not affected",
+            "on_session_complete subscriber raised; lesson completion not affected",
             exc_info=True,
         )

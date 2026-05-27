@@ -48,6 +48,15 @@ class GamificationPlugin(BasePlugin):
         every badge predicate against the user's current state.
         New earns are inserted into ``user_badges``; the route layer
         exposes them via ``GET /badges/{user_id}``.
+
+        v1.31.0 / Phase 46E.1 — dispatch on ``session["method"]``:
+        ``"content"`` (the pseudo-project lesson path from 46F.2)
+        routes to ``award_xp_for_lesson_session`` (30 base + 10/star
+        + 20 first-attempt 3-star); everything else stays on the
+        original chat-session formula. Badge evaluation runs after
+        the XP award for both branches so lesson-specific badges
+        (e.g. "First Lesson", "10 Lessons Completed") see the fresh
+        UserXP + LearningSession state.
         """
         from app.database import SessionLocal
 
@@ -55,7 +64,12 @@ class GamificationPlugin(BasePlugin):
 
         db = SessionLocal()
         try:
-            xp_service.award_xp_for_session(db, session=session, rating=rating)
+            if session.get("method") == "content":
+                xp_service.award_xp_for_lesson_session(db, session=session)
+            else:
+                xp_service.award_xp_for_session(
+                    db, session=session, rating=rating
+                )
             user_id = xp_service._resolve_user_id_from_session(db, session)
             if user_id:
                 from . import streak_service

@@ -32,7 +32,6 @@ from app.models import (
     LEARNING_PROJECT_KIND_CONTENT,
     LearningProject,
     LearningSession,
-    User,
     UserXP,
 )
 from app.services.lesson_session_unification import (
@@ -319,11 +318,14 @@ def test_mark_completed_two_different_lessons_two_sessions(
 
 def test_mark_completed_triggers_gamification_xp_award(client: TestClient):
     """The on_session_complete hook fires and the
-    gamification plugin's handler writes a UserXP row.
+    gamification plugin's handler writes a UserXP row
+    using the lesson formula (Phase 46E.1).
 
-    The exact XP value is NOT pinned here — that's 46E.1's
-    concern. This test only verifies the plumbing (hook
-    fires, gamification handler runs, UserXP exists).
+    Step posted: ``{correct: 4, total: 4}`` → 100% → 3 stars
+    with attempts=1 (default) → first_attempt=True.
+    Lesson formula: 30 base + 30 star bonus +
+    20 first-attempt-3-star bonus = 80 pre-multiplier.
+    First-day streak multiplier: ×1.25 → 100 XP.
     """
     user_id = _make_user(client, name="E2E-D")
     _post_step(client, user_id, LESSON_A)
@@ -336,7 +338,14 @@ def test_mark_completed_triggers_gamification_xp_award(client: TestClient):
             "UserXP row missing — on_session_complete hook did not fire "
             "or gamification plugin handler crashed"
         )
-        assert xp.total_xp > 0
+        # Pin the lesson-formula award. If this assertion ever
+        # produces the chat-formula 125 (50 base + 50 first-method
+        # + 1.25 multiplier), the plugin's method dispatch broke.
+        assert xp.total_xp == 100, (
+            f"Expected lesson-formula 100 XP "
+            f"(30 base + 30 stars + 20 first-attempt-3-star + 25% streak); "
+            f"got {xp.total_xp}. Dispatch on method='content' likely broken."
+        )
     finally:
         db.close()
 

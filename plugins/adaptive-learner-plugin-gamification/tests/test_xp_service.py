@@ -13,8 +13,10 @@ from datetime import date, timedelta
 import pytest
 from adaptive_learner_gamification.xp_service import (
     XPAward,
+    calculate_lesson_session_xp,
     calculate_session_xp,
     compute_level,
+    compute_stars,
     current_streak_days,
     level_threshold,
 )
@@ -194,3 +196,134 @@ def test_session_xp_award_dataclass_to_dict_roundtrip() -> None:
     assert d["xp_earned"] == 50
     assert d["breakdown"] == {"base": 50}
     assert d["reason"] == "test"
+
+
+# --- Lesson XP calculator (Phase 46E.1 / v1.31.0) -------------------------
+
+
+@pytest.mark.parametrize(
+    "correct, total, expected_stars",
+    [
+        (0, 10, 0),       # 0% → 0
+        (4, 10, 0),       # 40% → 0
+        (5, 10, 1),       # exactly 50% → 1
+        (7, 10, 1),       # 70% → 1
+        (75, 100, 2),     # exactly 75% → 2
+        (89, 100, 2),     # 89% → 2
+        (9, 10, 3),       # exactly 90% → 3
+        (10, 10, 3),      # 100% → 3
+        (0, 0, 0),        # zero-total guard → 0
+        (4, 4, 3),        # small denominator at 100%
+    ],
+)
+def test_compute_stars_band_edges(correct, total, expected_stars) -> None:
+    assert compute_stars(correct, total) == expected_stars
+
+
+def test_lesson_xp_zero_stars_no_first_attempt_streak_zero() -> None:
+    award = calculate_lesson_session_xp(
+        stars=0,
+        first_attempt=False,
+        streak_days=0,
+    )
+    assert award.xp_earned == 30
+    assert award.breakdown == {"base": 30}
+    assert award.multiplier == 1.0
+    assert award.reason == "lesson_complete"
+
+
+def test_lesson_xp_stars_add_ten_each() -> None:
+    one = calculate_lesson_session_xp(
+        stars=1, first_attempt=False, streak_days=0
+    )
+    two = calculate_lesson_session_xp(
+        stars=2, first_attempt=False, streak_days=0
+    )
+    three = calculate_lesson_session_xp(
+        stars=3, first_attempt=False, streak_days=0
+    )
+    assert one.xp_earned == 40   # 30 + 10
+    assert two.xp_earned == 50   # 30 + 20
+    assert three.xp_earned == 60  # 30 + 30
+    assert one.breakdown["star_bonus"] == 10
+    assert two.breakdown["star_bonus"] == 20
+    assert three.breakdown["star_bonus"] == 30
+
+
+def test_lesson_xp_first_attempt_three_star_bonus() -> None:
+    award = calculate_lesson_session_xp(
+        stars=3, first_attempt=True, streak_days=0
+    )
+    # 30 base + 30 star + 20 first-attempt-3-star = 80
+    assert award.xp_earned == 80
+    assert award.breakdown["first_attempt_3star_bonus"] == 20
+
+
+def test_lesson_xp_first_attempt_two_star_no_bonus() -> None:
+    """First-attempt bonus is gated on 3 stars — not awarded for 2."""
+    award = calculate_lesson_session_xp(
+        stars=2, first_attempt=True, streak_days=0
+    )
+    # 30 + 20 = 50; NO first_attempt_3star_bonus key
+    assert award.xp_earned == 50
+    assert "first_attempt_3star_bonus" not in award.breakdown
+
+
+def test_lesson_xp_three_star_no_first_attempt_no_bonus() -> None:
+    """The bonus needs BOTH conditions — 3 stars without first attempt = no bonus."""
+    award = calculate_lesson_session_xp(
+        stars=3, first_attempt=False, streak_days=0
+    )
+    # 30 + 30 = 60; NO first_attempt_3star_bonus key
+    assert award.xp_earned == 60
+    assert "first_attempt_3star_bonus" not in award.breakdown
+
+
+def test_lesson_xp_streak_multiplier_matches_session_formula() -> None:
+    """+25%/day capped at 7. Same shape as the chat-session formula."""
+    one_day = calculate_lesson_session_xp(
+        stars=3, first_attempt=True, streak_days=1
+    )
+    seven = calculate_lesson_session_xp(
+        stars=3, first_attempt=True, streak_days=7
+    )
+    twenty = calculate_lesson_session_xp(
+        stars=3, first_attempt=True, streak_days=20
+    )
+    # Base 80, +25% = 100
+    assert one_day.xp_earned == 100
+    assert one_day.multiplier == pytest.approx(1.25)
+    # Base 80, +175% = 220
+    assert seven.xp_earned == 220
+    assert seven.multiplier == pytest.approx(2.75)
+    # 20 days clamped to 7
+    assert twenty.xp_earned == seven.xp_earned
+
+
+def test_lesson_xp_stars_clamped_above_three() -> None:
+    """Defensive: stars >= 3 are clamped to 3 (no infinite bonus)."""
+    award = calculate_lesson_session_xp(
+        stars=99, first_attempt=False, streak_days=0
+    )
+    # Clamps to 3 stars → 30 + 30 = 60 (no first_attempt bonus
+    # because the bonus also requires first_attempt=True)
+    assert award.xp_earned == 60
+    assert award.breakdown["star_bonus"] == 30
+
+
+def test_lesson_xp_stars_clamped_below_zero() -> None:
+    """Defensive: negative stars clamp to 0."""
+    award = calculate_lesson_session_xp(
+        stars=-5, first_attempt=False, streak_days=0
+    )
+    assert award.xp_earned == 30
+    assert award.breakdown == {"base": 30}
+
+
+def test_lesson_xp_breakdown_records_streak_pct() -> None:
+    award = calculate_lesson_session_xp(
+        stars=2, first_attempt=False, streak_days=4
+    )
+    # 30 + 20 = 50; +100% (4 * 25) = 100
+    assert award.xp_earned == 100
+    assert award.breakdown["streak_multiplier_pct"] == 100

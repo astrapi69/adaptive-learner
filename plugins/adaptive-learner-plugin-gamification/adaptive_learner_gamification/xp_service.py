@@ -1,4 +1,4 @@
-"""XP calculation + persistence (Phase 29A).
+"""XP calculation + persistence (Phase 29A + Phase 46E.1 / v1.31.0).
 
 Pure-function calculator plus a SQLAlchemy-backed
 ``award_xp_for_session`` / ``award_xp_flat`` pair that the plugin
@@ -17,6 +17,22 @@ XP curve and bonuses come from the Phase 29A spec:
   isn't a session).
 - **Conversation import + analysis:** 75 XP flat.
 
+Phase 46E.1 / v1.31.0 adds a parallel formula for content
+lesson sessions (``method="content"``) per the user spec:
+
+- **Lesson base:** 30 XP per completed lesson.
+- **Per-star bonus:** +10 XP per star (0-3 stars → +0 to +30).
+- **First-attempt 3-star bonus:** +20 XP when stars == 3 AND
+  every step in the lesson was completed on the first attempt
+  (no retries on any single step).
+- **Daily streak multiplier:** same +25%/day capped at 7 days
+  as the chat-session formula — engagement is engagement.
+
+Dispatch happens in ``GamificationPlugin.on_session_complete``
+based on ``session["method"]``: ``"content"`` routes to
+``award_xp_for_lesson_session``; everything else to the
+existing ``award_xp_for_session``.
+
 The level curve is exponential: thresholds ``[0, 100, 300, 600,
 1000, 1500, 2100, ...]`` (each gap grows by 100). The closed form
 is ``threshold(level n) = 50 * n * (n - 1)`` (Gauss sum scaled by
@@ -26,12 +42,16 @@ caller never has more than ~50 levels to consider in practice.
 
 from __future__ import annotations
 
+import json
+import logging
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -209,6 +229,85 @@ def calculate_session_xp(
 
 
 # ---------------------------------------------------------------------------
+# Lesson-session XP (Phase 46E.1 / v1.31.0)
+# ---------------------------------------------------------------------------
+
+
+# Bands match the frontend's ``computeStars`` at
+# ``frontend/src/lib/lesson-summary.ts``. Single source of truth
+# at the SPEC level — both the frontend (for the summary screen)
+# and the backend (for the XP bonus) project the same rating.
+_STAR_BAND_3 = 0.9
+_STAR_BAND_2 = 0.75
+_STAR_BAND_1 = 0.5
+
+
+def compute_stars(correct: int, total: int) -> int:
+    """0-3 stars from a correct/total score.
+
+    Bands: ``< 50%`` → 0 stars, ``< 75%`` → 1, ``< 90%`` → 2,
+    ``>= 90%`` → 3. Zero-total guard returns 0 (consistent
+    with the frontend behaviour on an unattempted lesson).
+    """
+    if total <= 0:
+        return 0
+    pct = correct / total
+    if pct >= _STAR_BAND_3:
+        return 3
+    if pct >= _STAR_BAND_2:
+        return 2
+    if pct >= _STAR_BAND_1:
+        return 1
+    return 0
+
+
+def calculate_lesson_session_xp(
+    *,
+    stars: int,
+    first_attempt: bool,
+    streak_days: int,
+) -> XPAward:
+    """Compute XP for a content-lesson completion (Phase 46E.1).
+
+    Pure function; the DB-derived inputs are resolved by
+    :func:`award_xp_for_lesson_session`. Mirrors the spec:
+
+    - Base: 30 XP
+    - Per-star bonus: 10 × clamp(stars, 0, 3)
+    - First-attempt 3-star bonus: +20 XP (stars==3 AND
+      first_attempt)
+    - Streak multiplier: +25%/day capped at 7 days
+    """
+    base = 30
+    breakdown: dict[str, int] = {"base": base}
+
+    clamped_stars = max(0, min(3, stars))
+    star_bonus = 10 * clamped_stars
+    if star_bonus > 0:
+        breakdown["star_bonus"] = star_bonus
+
+    if clamped_stars == 3 and first_attempt:
+        breakdown["first_attempt_3star_bonus"] = 20
+
+    pre_multiplier = sum(breakdown.values())
+
+    capped_days = min(streak_days, 7)
+    multiplier = 1.0 + 0.25 * capped_days
+    xp_earned = int(round(pre_multiplier * multiplier))
+    if streak_days > 0:
+        breakdown["streak_multiplier_pct"] = int(round((multiplier - 1.0) * 100))
+
+    return XPAward(
+        xp_earned=xp_earned,
+        xp_total=0,  # filled in by award_xp_for_lesson_session
+        level=1,
+        multiplier=multiplier,
+        breakdown=breakdown,
+        reason="lesson_complete",
+    )
+
+
+# ---------------------------------------------------------------------------
 # Persistence wrappers
 # ---------------------------------------------------------------------------
 
@@ -293,6 +392,90 @@ def award_xp_for_session(
         cycle_count=int(session.get("cycle_count", 1) or 1),
         streak_days=streak,
         is_first_method_session=first_time,
+    )
+
+    row = _get_or_create_user_xp(db, user_id)
+    previous_level = row.level
+    row.total_xp = int(row.total_xp) + award.xp_earned
+    row.level = compute_level(row.total_xp)
+    db.commit()
+    db.refresh(row)
+
+    award.xp_total = row.total_xp
+    award.level = row.level
+    award.level_up = row.level > previous_level
+    return award
+
+
+def _is_first_attempt(db: Session, lesson_progress_id: str | None) -> bool:
+    """True iff every step in this lesson row was completed on the first attempt.
+
+    Reads ``LessonProgress.step_results`` (JSON-on-Text) and
+    returns False on any step recording ``attempts > 1``.
+    Conservative on missing / malformed data: returns False
+    when the id is missing, the row can't be loaded, or the
+    JSON doesn't parse — the +20 bonus is only awarded with
+    positive evidence.
+    """
+    if not lesson_progress_id:
+        return False
+    from app.models import LessonProgress
+
+    row = db.get(LessonProgress, lesson_progress_id)
+    if row is None or not row.step_results:
+        return False
+    try:
+        results = json.loads(row.step_results)
+    except json.JSONDecodeError:
+        return False
+    if not isinstance(results, dict) or not results:
+        return False
+    for value in results.values():
+        if not isinstance(value, dict):
+            continue
+        attempts = value.get("attempts", 1)
+        if isinstance(attempts, int) and attempts > 1:
+            return False
+    return True
+
+
+def award_xp_for_lesson_session(
+    db: Session,
+    *,
+    session: dict[str, Any],
+) -> XPAward | None:
+    """Persist XP for a completed content-lesson session.
+
+    Sister to :func:`award_xp_for_session` but applies the
+    lesson formula. Returns ``None`` if the session payload
+    is incomplete (missing user resolution).
+
+    The session dict is expected to carry the lesson-specific
+    keys the unification helper writes (``lesson_progress_id``,
+    ``score_correct``, ``score_total``) — see
+    ``backend/app/services/lesson_session_unification.py``.
+    Missing keys degrade gracefully: 0 score → 0 stars → base
+    XP only; missing lesson_progress_id → first_attempt False
+    (no bonus).
+    """
+    from app.models import UserXP  # noqa: F401 — imported for side-effects
+
+    user_id = _resolve_user_id_from_session(db, session)
+    if user_id is None:
+        return None
+
+    score_correct = int(session.get("score_correct", 0) or 0)
+    score_total = int(session.get("score_total", 0) or 0)
+    stars = compute_stars(score_correct, score_total)
+    first_attempt = _is_first_attempt(db, session.get("lesson_progress_id"))
+
+    activity = _activity_dates_for_user(db, user_id)
+    streak = current_streak_days(activity)
+
+    award = calculate_lesson_session_xp(
+        stars=stars,
+        first_attempt=first_attempt,
+        streak_days=streak,
     )
 
     row = _get_or_create_user_xp(db, user_id)
