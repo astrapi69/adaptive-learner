@@ -1,0 +1,30 @@
+{
+  "_doc": "Shared parity fixture for the lesson-XP rule (Phase 50A / v1.33.0 / D-DEXIE-GAMIFICATION). Both renderers (Python in adaptive_learner_gamification.xp_service + TypeScript in frontend/src/lib/gamification/lesson-xp.ts) consume this input and produce byte-identical output against the goldens at expected/. See plugins/adaptive-learner-plugin-gamification/tests/test_xp_parity.py and frontend/src/lib/gamification/lesson-xp.parity.test.ts.",
+  "compute_stars_cases": [
+    {"name": "zero_total_guard", "correct": 0, "total": 0, "expected_stars": 0},
+    {"name": "zero_correct", "correct": 0, "total": 10, "expected_stars": 0},
+    {"name": "below_band_1", "correct": 4, "total": 10, "expected_stars": 0},
+    {"name": "exact_band_1", "correct": 5, "total": 10, "expected_stars": 1},
+    {"name": "below_band_2", "correct": 7, "total": 10, "expected_stars": 1},
+    {"name": "exact_band_2", "correct": 75, "total": 100, "expected_stars": 2},
+    {"name": "below_band_3", "correct": 89, "total": 100, "expected_stars": 2},
+    {"name": "exact_band_3", "correct": 90, "total": 100, "expected_stars": 3},
+    {"name": "perfect_score", "correct": 10, "total": 10, "expected_stars": 3},
+    {"name": "negative_total_guard", "correct": 5, "total": -1, "expected_stars": 0}
+  ],
+  "calculate_xp_cases": [
+    {"name": "stars_0_no_streak_no_first", "stars": 0, "first_attempt": false, "streak_days": 0},
+    {"name": "stars_1_no_streak", "stars": 1, "first_attempt": false, "streak_days": 0},
+    {"name": "stars_2_no_streak", "stars": 2, "first_attempt": false, "streak_days": 0},
+    {"name": "stars_3_no_streak_no_first", "stars": 3, "first_attempt": false, "streak_days": 0},
+    {"name": "stars_3_first_no_streak", "stars": 3, "first_attempt": true, "streak_days": 0},
+    {"name": "stars_3_first_streak_1", "stars": 3, "first_attempt": true, "streak_days": 1},
+    {"name": "stars_3_first_streak_4", "stars": 3, "first_attempt": true, "streak_days": 4},
+    {"name": "stars_3_first_streak_7", "stars": 3, "first_attempt": true, "streak_days": 7},
+    {"name": "stars_3_first_streak_20_capped", "stars": 3, "first_attempt": true, "streak_days": 20},
+    {"name": "stars_2_first_no_3star_bonus", "stars": 2, "first_attempt": true, "streak_days": 0},
+    {"name": "stars_1_streak_4", "stars": 1, "first_attempt": false, "streak_days": 4},
+    {"name": "clamped_negative_stars", "stars": -3, "first_attempt": false, "streak_days": 0},
+    {"name": "clamped_high_stars", "stars": 99, "first_attempt": true, "streak_days": 0}
+  ]
+}

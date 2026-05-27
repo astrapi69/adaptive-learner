@@ -1,0 +1,11 @@
+{
+  "breakdown": {
+    "base": 30,
+    "first_attempt_3star_bonus": 20,
+    "star_bonus": 30,
+    "streak_multiplier_pct": 100
+  },
+  "multiplier": 2.0,
+  "reason": "lesson_complete",
+  "xp_earned": 160
+}

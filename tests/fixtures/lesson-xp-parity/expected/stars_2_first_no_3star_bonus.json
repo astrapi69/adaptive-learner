@@ -1,0 +1,9 @@
+{
+  "breakdown": {
+    "base": 30,
+    "star_bonus": 20
+  },
+  "multiplier": 1.0,
+  "reason": "lesson_complete",
+  "xp_earned": 50
+}
