@@ -1,15 +1,15 @@
-# AdaptiveLearner — systematic audit prompt
+# Adaptive Learner — systematic audit prompt
 
 Drop-in for any future audit pass. Copy-paste verbatim into a fresh
 Claude Code session at the repo root.
 
 ---
 
-Analyze the AdaptiveLearner codebase at the working directory. Perform a systematic audit
-against the project's documented standards. AdaptiveLearner is a Python 3.11+ / FastAPI
-/ SQLAlchemy 2.0 / Pydantic v2 backend; React 18 / TypeScript strict / TipTap /
-Vite frontend; PluginForge-based plugin architecture; manuscripta export pipeline;
-local-first with three-layer secrets config.
+Analyze the Adaptive Learner codebase at the working directory. Perform a systematic audit
+against the project's documented standards. Adaptive Learner is a Python 3.11+ / FastAPI
+/ SQLAlchemy 2.0 / Pydantic v2 backend; React 19 / TypeScript 6 (strict) / Vite 8 /
+Dexie 4 frontend (dual-mode: ApiStorage + DexieStorage); PluginForge-based plugin
+architecture (12 plugins shipped); local-first with three-layer secrets config.
 
 ## Authoritative sources
 
@@ -19,7 +19,7 @@ Before flagging anything, consult:
 - `.claude/rules/architecture.md` (4-layer architecture, plugin shape, UI strategy)
 - `.claude/rules/coding-standards.md` (naming, function design, tests, dependencies)
 - `.claude/rules/code-hygiene.md` (error handling architecture, API conventions)
-- `.claude/rules/lessons-learned.md` (known pitfalls — TipTap, import, export)
+- `.claude/rules/lessons-learned.md` (known pitfalls)
 - `.claude/rules/quality-checks.md` (test pyramid, coverage targets, mutation testing)
 - `docs/ROADMAP.md` (current phase, open items, BLOCKED markers)
 - `docs/backlog.md` (top priorities, "Blocked or waiting" table, recently closed)
@@ -38,8 +38,8 @@ If the convention itself is stale, flag it as Outdated under section 4.
   `frontend/src/**/*.test.*` (Vitest, happy-dom). E2E: `e2e/smoke/` + `e2e/full/`
   (Playwright, data-testid only).
 - Identify outdated, redundant, or unreachable tests. Distinguish
-  `pytest.mark.skipif` (intentional environment gates — e.g. PANDOC_AVAILABLE,
-  `_is_memory`) from `test.skip` (real bugs).
+  `pytest.mark.skipif` (intentional environment gates — e.g. missing
+  external service, `_is_memory`) from `test.skip` (real bugs).
 - Verify coverage of critical execution paths against the targets in
   `quality-checks.md` ("Coverage targets per module type"): services HIGH (>= 80%),
   routers MEDIUM-HIGH (>= 70%), `api/client.ts` HIGH (>= 90%), data-critical E2E
@@ -58,8 +58,10 @@ If the convention itself is stale, flag it as Outdated under section 4.
   Routers catch nothing; the global handler in `main.py` maps. Frontend catches
   throw `ApiError`, surface `.detail` to `notify.error`.
 - Verify architectural compliance:
-  - No `fetch()` outside `frontend/src/api/`. All API calls go through
-    `api/client.ts` (or its `import.ts` neighbour for multipart cases).
+  - No `fetch()` outside `frontend/src/api/`. All component-side API
+    calls go through `getStorage()` (the IStorageService abstraction),
+    not directly through `api/client.ts` — the storage abstraction is
+    what makes both ApiStorage and DexieStorage interchangeable.
   - No `console.log` user-feedback. Toasts via `react-toastify`.
   - No browser dialogs (`alert`, `confirm`, `prompt`). Use `AppDialog`.
   - No raw HTML render of user content. `react-markdown` + remark/rehype only.
@@ -73,9 +75,10 @@ If the convention itself is stale, flag it as Outdated under section 4.
   class attribute, hook specs in `backend/app/hookspecs.py`,
   `license_tier = "core"` (licensing dormant). Plugin settings either UI-visible
   or marked `# INTERNAL`; no dead YAML fields.
-- TipTap storage: TipTap JSON is the canonical chapter format; HTML/Markdown only
-  via export plugin. Custom TipTap extensions are forbidden when an official one
-  exists.
+- TipTap storage: TipTap JSON is the canonical format for the three rich-text
+  fields (`SessionNote.body`, `Curriculum.description`, `Lesson.content`); never
+  HTML or Markdown. Custom TipTap extensions are forbidden when an official one
+  exists. Image nodes are `imageFigure`, NOT `image` (see lessons-learned.md).
 - Function design: max 40 lines, single responsibility, abstraction-level
   consistent. Route handlers thin (validate, call service, return). Anti-pattern:
   `# Step 1` / `# Step 2` comments inside one function.
@@ -94,8 +97,8 @@ If the convention itself is stale, flag it as Outdated under section 4.
   DEP-05 paid-API gate, AR-* validation thresholds).
 - Docker: `backend/Dockerfile`, `frontend/Dockerfile`, `docker-compose.yml`,
   `docker-compose.prod.yml`. Verify base-image consistency (Python 3.12-slim,
-  Node 24-slim per v0.21.0 LTS upgrade), build-context paths (root-relative for
-  plugin glob), no version drift between dev compose and prod compose.
+  Node 24-slim), build-context paths (root-relative for plugin glob), no version
+  drift between dev compose and prod compose.
 - Git: branch model is solo-dev on `main`; verify Conventional Commits prefixes
   (feat/fix/refactor/docs/test/chore), no force-pushes, pre-commit hooks active
   (`.pre-commit-config.yaml`: ruff lint + format, eslint, prettier, pytest
@@ -106,15 +109,17 @@ If the convention itself is stale, flag it as Outdated under section 4.
   (`backend/config/app.yaml`, defaults) < user override
   (`~/.config/adaptive_learner/secrets.yaml`, gitignored) < env vars
   (`ADAPTIVE_LEARNER_*`). Verify no committed YAML carries a non-empty `api_key:`.
-- Environment vars: `ADAPTIVE_LEARNER_PORT=7880` (NOT 8080), `ADAPTIVE_LEARNER_DEBUG`,
-  `ADAPTIVE_LEARNER_DB_PATH`, `ADAPTIVE_LEARNER_CORS_ORIGINS`, `ADAPTIVE_LEARNER_SECRET_KEY`,
-  `ADAPTIVE_LEARNER_CREDENTIALS_SECRET`, `ADAPTIVE_LEARNER_LICENSE_SECRET`, `ADAPTIVE_LEARNER_TEST=1`
-  for in-memory test DB. `.env.example` is the discovery surface.
+- Environment vars: backend default port 18001 + frontend dev port 15174 (see
+  Makefile `dev` target). `ADAPTIVE_LEARNER_DEBUG`, `ADAPTIVE_LEARNER_DATA_DIR`,
+  `ADAPTIVE_LEARNER_CORS_ORIGINS`, `ADAPTIVE_LEARNER_SECRET_KEY`,
+  `ADAPTIVE_LEARNER_TEST=1` for in-memory test DB. `.env.example` is the
+  discovery surface.
 
 ### 4. Documentation and Structure
 
-- README: version line (current: `pyproject.toml` and `package.json`), install
-  one-liner, port `7880`, manuscripta + pluginforge pin pointers, plugin table.
+- README: version line (current: `backend/pyproject.toml`, propagated via
+  `make sync-versions`), install one-liner, port 18001 (backend) + 15174
+  (frontend dev), pluginforge pin pointer, plugin table.
 - ROADMAP: header `Last updated:` + `Latest release:`; `Current focus` paragraph
   reflects shipped state; BLOCKED items tagged inline.
 - backlog: "Blocked or waiting" table accuracy via `make check-blockers`;
@@ -125,9 +130,9 @@ If the convention itself is stale, flag it as Outdated under section 4.
   AND in-app help panel. Pages in `docs/help/{de,en}/` must be listed in
   `_meta.yaml` to be discoverable (post-2026-04 incident with `ai.md` and
   `developers/plugins.md`).
-- Single source of truth: numbers (test counts, ChapterTypes, languages, plugin
-  count) live in ONE canonical location. Documentation references that location
-  instead of inlining the number. Flag any duplication.
+- Single source of truth: numbers (test counts, model counts, supported
+  languages, plugin count) live in ONE canonical location. Documentation
+  references that location instead of inlining the number. Flag any duplication.
 - Project structure: 4-layer architecture under `backend/app/`,
   `plugins/adaptive-learner-plugin-{name}/`,
   `frontend/src/{pages,components,hooks,api,styles}/`, `e2e/{smoke,full}/`,
