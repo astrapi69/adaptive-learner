@@ -109,6 +109,10 @@ navigation:
           en: Storage layer
         slug: developer/storage-layer
       - title:
+          de: Lektionen + SRS
+          en: Lessons + SRS
+        slug: developer/lessons-and-srs
+      - title:
           de: KI-Integration
           en: AI integration
         slug: developer/ai-integration

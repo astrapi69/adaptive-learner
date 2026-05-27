@@ -67,6 +67,7 @@ plugins:
             Architektur: Architecture
             Plugin-Leitfaden: Plugin guide
             Storage-Layer: Storage layer
+            Lektionen + SRS: Lessons + SRS
             KI-Integration: AI integration
             Testen: Testing
             Release-Prozess: Release workflow
@@ -119,6 +120,7 @@ nav:
   - Setup: de/developer/setup.md
   - Plugin-Leitfaden: de/developer/plugin-guide.md
   - Storage-Layer: de/developer/storage-layer.md
+  - Lektionen + SRS: de/developer/lessons-and-srs.md
   - KI-Integration: de/developer/ai-integration.md
   - Testen: de/developer/testing.md
   - Deployment: de/developer/deployment.md
