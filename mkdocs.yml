@@ -55,6 +55,7 @@ plugins:
             Erste Schritte: Getting started
             Lerntyp-Test: Assessment
             Lern-Session: Learning session
+            Lektionen und Wiederholungen: Lessons and reviews
             Fortschritt: Progress
             Einstellungen: Settings
             Konzept: Concept
@@ -101,6 +102,7 @@ nav:
   - Onboarding: de/user-guide/onboarding.md
   - Lerntyp-Test: de/user-guide/assessment.md
   - Lern-Session: de/user-guide/learning-session.md
+  - Lektionen und Wiederholungen: de/user-guide/lessons.md
   - Dashboard: de/user-guide/dashboard.md
   - Curriculum: de/user-guide/curriculum.md
   - Fortschritt: de/user-guide/progress.md

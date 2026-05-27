@@ -39,6 +39,10 @@ navigation:
           en: Learning session
         slug: user-guide/learning-session
       - title:
+          de: Lektionen und Wiederholungen
+          en: Lessons and reviews
+        slug: user-guide/lessons
+      - title:
           de: Dashboard
           en: Dashboard
         slug: user-guide/dashboard
