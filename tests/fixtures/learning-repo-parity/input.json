@@ -1,0 +1,111 @@
+{
+  "rendered_at": "2026-05-27T12:00:00+00:00",
+  "project": {
+    "id": "proj-spanish-001",
+    "user_id": "user-1",
+    "topic": "Spanish",
+    "goal": "Conversational fluency in 3 months",
+    "timeframe": "3 months",
+    "daily_minutes": 30,
+    "current_problem": null,
+    "active": true,
+    "kind": "standard",
+    "created_at": "2026-01-01T00:00:00+00:00",
+    "updated_at": "2026-01-15T00:00:00+00:00"
+  },
+  "sessions": [
+    {
+      "id": "sess-alpha-1234-aaaa",
+      "project_id": "proj-spanish-001",
+      "method": "deductive",
+      "started_at": "2026-01-05T09:00:00+00:00",
+      "ended_at": "2026-01-05T09:30:00+00:00",
+      "cycle_step": 7,
+      "cycle_count": 1,
+      "status": "completed",
+      "cycle_topics": "[{\"topic\":\"Verbs\",\"summary\":\"-ar/-er/-ir patterns\"}]"
+    },
+    {
+      "id": "sess-beta-5678-bbbb",
+      "project_id": "proj-spanish-001",
+      "method": "inductive",
+      "started_at": "2026-01-06T09:00:00+00:00",
+      "ended_at": "2026-01-06T09:30:00+00:00",
+      "cycle_step": 7,
+      "cycle_count": 2,
+      "status": "completed",
+      "cycle_topics": "[{\"topic\":\"Verbs\",\"summary\":\"more verbs\"},{\"topic\":\"Tenses\",\"summary\":\"present\"}]"
+    },
+    {
+      "id": "sess-gamma-9012-cccc",
+      "project_id": "proj-spanish-001",
+      "method": "deductive",
+      "started_at": "2026-01-07T09:00:00+00:00",
+      "ended_at": null,
+      "cycle_step": 3,
+      "cycle_count": 1,
+      "status": "active",
+      "cycle_topics": "[]"
+    }
+  ],
+  "ratings": [
+    {
+      "id": "rate-alpha",
+      "session_id": "sess-alpha-1234-aaaa",
+      "understanding": 5,
+      "stress": 1,
+      "method_fit": 4,
+      "notes": null,
+      "created_at": "2026-01-05T09:30:00+00:00"
+    },
+    {
+      "id": "rate-beta",
+      "session_id": "sess-beta-5678-bbbb",
+      "understanding": 5,
+      "stress": 1,
+      "method_fit": 4,
+      "notes": null,
+      "created_at": "2026-01-06T09:30:00+00:00"
+    }
+  ],
+  "step_evaluations": [
+    {
+      "id": "eval-1",
+      "session_id": "sess-alpha-1234-aaaa",
+      "from_step": 3,
+      "to_step": 4,
+      "advance": true,
+      "applied": true,
+      "confidence": 0.92,
+      "reason": "Grasped the rule cleanly.",
+      "fallback_used": false,
+      "evaluated_at": "2026-01-05T09:15:00+00:00"
+    }
+  ],
+  "method_switches": [
+    {
+      "id": "switch-1",
+      "project_id": "proj-spanish-001",
+      "from_method": "deductive",
+      "to_method": "inductive",
+      "reason": "Wanted to try examples-first.",
+      "switched_at": "2026-01-06T08:55:00+00:00"
+    }
+  ],
+  "notes": [
+    {
+      "id": "note-1",
+      "session_id": "sess-alpha-1234-aaaa",
+      "content": "Memorising conjugation tables is slow but sticks.",
+      "kind": "note",
+      "created_at": "2026-01-05T09:35:00+00:00"
+    },
+    {
+      "id": "note-2",
+      "session_id": "sess-beta-5678-bbbb",
+      "content": "I learn faster\nwhen examples\ncome first.",
+      "kind": "meta_learning",
+      "created_at": "2026-01-06T09:35:00+00:00"
+    }
+  ]
+}
