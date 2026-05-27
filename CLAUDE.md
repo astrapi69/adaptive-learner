@@ -9,23 +9,33 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.28.0** (Phase 44 — Lesson Viewer
-  + Matching + Picture-Choice exercises, EXP-002 Sprint 3
-  parts A-D). Adds the viewer the Content-Loader from
-  v1.27.0 was missing: new route
-  ``/lesson/:setSlug/:setId/:filename`` walks the user
-  through theory + exercise steps end-to-end. Matching
-  (tap-to-pair, mobile-first) + picture-choice (with
-  graceful text-only fallback) ship as the first two
-  exercise renderers; free-text + word-tiles render an
-  auto-skip "Coming in v1.29.0" placeholder so pilot
-  lessons stay completable. New ``LessonProgress`` model
-  (Alembic 0018 + Dexie schema v17 + the
-  ``IStorageService.lessonProgress`` namespace) persists
-  per-step scores + time + completion state across both
-  storage modes. Lesson summary screen surfaces score +
-  time + mark-complete affordance. GitHub Pages is now a
-  usable no-API-key learning app for the first time.
+- **Current state:** **v1.29.0** (Phase 45 — Free-Text +
+  Word-Tiles Exercises, EXP-002 Sprint 3 parts E-F). The
+  v1.28.0 viewer now ships every exercise type the v1.0
+  lesson schema knows about. New ``FreeTextExercise``
+  takes a text input, validates against
+  ``exercise.accept`` (case-insensitive, NFC-normalized,
+  with Levenshtein <= 1 typo tolerance — "Mercii" / "Merc"
+  / "Mercy" pass, "Marci" doesn't), and surfaces the
+  canonical first entry on a wrong attempt. New
+  ``WordTilesExercise`` is a two-zone tap-to-place
+  ordering exercise: scrambled bar on top (deterministic
+  Fisher-Yates shuffle), answer row underneath; supports
+  multiple correct orderings via ``accept_orderings`` or
+  canonical-only when absent. Both ship with optional
+  inline "Need a hint?" toggles. Dispatcher's
+  ``SUPPORTED_EXERCISE_TYPES`` grows from 2 to 4; the
+  placeholder code path stays as a defensive fallback for
+  any future schema_version that adds a fifth type. Pilot
+  French A1 lessons now walk end-to-end with all four
+  exercise types scored on the summary screen. No backend
+  changes, no Alembic migration, no Dexie schema bump.
+  v1.28.0 = Phase 44 — Lesson Viewer + Matching +
+  Picture-Choice exercises, EXP-002 Sprint 3 parts A-D
+  (new route ``/lesson/:setSlug/:setId/:filename``, the
+  first two exercise renderers, new ``LessonProgress``
+  model + Alembic 0018 + Dexie schema v17 + the
+  ``IStorageService.lessonProgress`` namespace).
   v1.27.0 = Phase 43 — Content-Loader Plugin, EXP-002 +
   EXP-005 foundations). The app stops
   requiring an API key for the headline use case: the new
@@ -90,7 +100,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.28.0.md](changelog/releases/v1.28.0.md)
+  [changelog/releases/v1.29.0.md](changelog/releases/v1.29.0.md)
   for the per-release detail and `git log --oneline` for
   the feature history across Phases 1–42.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
@@ -268,8 +278,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.28.0 baseline:** backend 930 (+1 skipped) + plugins
-  826 + Vitest 1579 = **3335 tests** (+1 skipped). E2E
+- **v1.29.0 baseline:** backend 930 (+1 skipped) + plugins
+  826 + Vitest 1634 = **3390 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (17 specs incl. /content + /lesson) runs via
