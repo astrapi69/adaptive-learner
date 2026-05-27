@@ -376,6 +376,68 @@ export interface ILessonProgressNamespace {
     ): Promise<LessonProgress>;
 }
 
+/**
+ * One element attempt — the unit the recording endpoint
+ * consumes. Multiple attempts per exercise submit for
+ * matching (one per pair); single attempt per submit for
+ * picture-choice / free-text / word-tiles. The exercise-side
+ * deriver (C9) builds these from ``(exercise, userInput)``.
+ *
+ * Phase 46B / EXP-007 / P-129.
+ */
+export interface ElementAttempt {
+    set_id: string;
+    lesson_id: string;
+    exercise_id: string;
+    element_key: string;
+    element_type?: string;
+    user_answer?: string;
+    correct_answer?: string;
+    correct: boolean;
+}
+
+/**
+ * Server-side element-error payload. Identical shape on both
+ * ApiStorage and DexieStorage so the review-queue UI in
+ * Phase 46C can render either source uniformly.
+ */
+export interface ElementError {
+    id: string;
+    user_id: string;
+    set_id: string;
+    lesson_id: string;
+    exercise_id: string;
+    element_key: string;
+    element_type: string;
+    user_answer: string;
+    correct_answer: string;
+    error_count: number;
+    correct_streak: number;
+    last_error_at: string | null;
+    last_attempt_at: string;
+    mastered: boolean;
+    mastered_at: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+/**
+ * Element-error namespace on IStorageService. ApiStorage
+ * delegates to /api/users/{user_id}/element-errors;
+ * DexieStorage runs the transition matrix client-side via
+ * ``element-errors-dexie.ts``.
+ */
+export interface IElementErrorsNamespace {
+    list(
+        userId: string,
+        opts?: {setId?: string; includeMastered?: boolean},
+    ): Promise<ElementError[]>;
+    recordBulk(
+        userId: string,
+        attempts: readonly ElementAttempt[],
+    ): Promise<ElementError[]>;
+}
+
 export interface IToolsNamespace {
     recommendations(projectId: string, lang: string): Promise<ToolRecommendation[]>;
     spaced(projectId: string, lang: string): Promise<SpacedRecommendation[]>;

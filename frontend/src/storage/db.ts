@@ -417,6 +417,43 @@ export interface LessonProgressRow {
 }
 
 /**
+ * Phase 46B / EXP-007 / P-129 — per-element error +
+ * mastery tracking. Dexie schema v18.
+ *
+ * Composite primary key
+ * ``{user_id}#{set_id}#{lesson_id}#{exercise_id}#{element_key}``
+ * mirrors the backend's UNIQUE constraint so a duplicate
+ * upsert through either storage backend converges on the
+ * same row.
+ *
+ * The mastered-flag + correct_streak + error_count semantics
+ * mirror ``app.services.element_errors``. The DexieStorage
+ * adapter (``element-errors-dexie.ts``) re-implements the
+ * transition matrix client-side so GH-Pages users get the
+ * same SRS feedback loop the backend ships.
+ */
+export interface ElementErrorRow {
+    /** Composite key. See the class docstring. */
+    id: string;
+    user_id: string;
+    set_id: string;
+    lesson_id: string;
+    exercise_id: string;
+    element_key: string;
+    element_type: string;
+    user_answer: string;
+    correct_answer: string;
+    error_count: number;
+    correct_streak: number;
+    last_error_at: string | null;
+    last_attempt_at: string;
+    mastered: boolean;
+    mastered_at: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+/**
  * One file (lesson JSON or asset) inside a cached set. The
  * Phase 44 viewer reads lessons via this table. ``filename``
  * matches the backend cache layout
@@ -524,6 +561,11 @@ export class AdaptiveLearnerDB extends Dexie {
     // matches the backend's UniqueConstraint so the row shape
     // round-trips identically across modes.
     lessonProgress!: EntityTable<LessonProgressRow, "id">;
+    // Phase 46B / EXP-007 / P-129 — element-level error +
+    // mastery tracking. Composite key
+    // ``{user_id}#{set_id}#{lesson_id}#{exercise_id}#{element_key}``
+    // mirrors the backend UNIQUE constraint.
+    elementErrors!: EntityTable<ElementErrorRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -768,6 +810,20 @@ export class AdaptiveLearnerDB extends Dexie {
         // ``user_id`` index for the per-user list query.
         this.version(17).stores({
             lessonProgress: "id, user_id, set_id, status, updated_at",
+        });
+        // Schema v18 — Phase 46B / EXP-007 / P-129.
+        // Element-level error + mastery tracking. Composite
+        // primary key
+        // ``{user_id}#{set_id}#{lesson_id}#{exercise_id}#{element_key}``
+        // mirrors the backend's UNIQUE constraint so
+        // duplicate upserts converge through either backend.
+        // Indexes: ``user_id`` for the per-user list query,
+        // ``[user_id+set_id]`` for set-filtered listing,
+        // ``mastered`` for the review-queue "exclude
+        // mastered" predicate.
+        this.version(18).stores({
+            elementErrors:
+                "id, user_id, [user_id+set_id], mastered, updated_at",
         });
     }
 }
