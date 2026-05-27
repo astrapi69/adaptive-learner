@@ -144,6 +144,20 @@ const ROUTES: RouteCase[] = [
         ],
     },
     {
+        name: "Review (Phase 46D SRS session, empty queue path)",
+        path: "/review/language-fr-a1",
+        // First-visit GH-Pages users have no ElementError
+        // rows yet, so the queue is empty. The "all caught up"
+        // panel is the right thing to surface. ``review-not-
+        // cached`` is the fallback shape when listSets has the
+        // set; ``review-loading`` covers the brief async gap.
+        expectedTestIds: [
+            "review-loading",
+            "review-empty",
+            "review-not-cached",
+        ],
+    },
+    {
         name: "NotFound",
         path: "/this-route-does-not-exist",
         expectedTestIds: ["not-found"],
