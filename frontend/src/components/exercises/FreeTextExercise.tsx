@@ -32,7 +32,11 @@ import type {KeyboardEvent} from "react";
 import {useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
-import type {ContentLessonExercise} from "../../storage/types";
+import {deriveFreeTextAttempt} from "../../lib/element-attempt";
+import type {
+    ContentLessonExercise,
+    ElementAttempt,
+} from "../../storage/types";
 
 /** Levenshtein edit distance between ``a`` and ``b``.
  *  Two-row DP variant: O(m*n) time, O(n) space. The free-
@@ -86,13 +90,23 @@ export function isFreeTextCorrect(
 
 export interface FreeTextExerciseProps {
     exercise: ContentLessonExercise;
+    /** Phase 46B context for the element-attempt deriver.
+     *  Optional in unit tests; required in production. */
+    setId?: string;
+    lessonId?: string;
     /** Called on submit with the score (0 or 1 correct of 1
-     *  total). The parent persists via ``recordStepResult``. */
-    onComplete: (result: {correct: number; total: number}) => void;
+     *  total) plus the single-attempt SRS payload. */
+    onComplete: (result: {
+        correct: number;
+        total: number;
+        attempts: ElementAttempt[];
+    }) => void;
 }
 
 export default function FreeTextExercise({
     exercise,
+    setId = "",
+    lessonId = "",
     onComplete,
 }: FreeTextExerciseProps) {
     const {t} = useI18n();
@@ -123,9 +137,16 @@ export default function FreeTextExercise({
 
     const handleSubmit = () => {
         if (submitted || isInputEmpty) return;
-        const correct = isFreeTextCorrect(input, accept) ? 1 : 0;
-        const scored = {correct, total: 1};
-        setResult(scored);
+        const isCorrect = isFreeTextCorrect(input, accept);
+        const correct = isCorrect ? 1 : 0;
+        const attempt = deriveFreeTextAttempt(
+            exercise,
+            {setId, lessonId},
+            input,
+            isCorrect,
+        );
+        const scored = {correct, total: 1, attempts: [attempt]};
+        setResult({correct, total: 1});
         setSubmitted(true);
         onComplete(scored);
     };

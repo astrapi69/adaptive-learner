@@ -163,7 +163,7 @@ describe("FreeTextExercise: submit lifecycle", () => {
         });
         fireEvent.click(screen.getByTestId("free-text-submit"));
         expect(onComplete).toHaveBeenCalledTimes(1);
-        expect(onComplete).toHaveBeenCalledWith({correct: 1, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
         expect(screen.getByTestId("free-text-result")).toHaveAttribute(
             "data-result",
             "correct",
@@ -182,7 +182,7 @@ describe("FreeTextExercise: submit lifecycle", () => {
             target: {value: "MERCI"},
         });
         fireEvent.click(screen.getByTestId("free-text-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 1, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
     });
 
     it("reports {correct: 1, total: 1} for a single-edit typo", () => {
@@ -197,7 +197,7 @@ describe("FreeTextExercise: submit lifecycle", () => {
             target: {value: "Mercii"},
         });
         fireEvent.click(screen.getByTestId("free-text-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 1, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
     });
 
     it("reports {correct: 0, total: 1} for a wrong answer and reveals canonical", () => {
@@ -212,7 +212,7 @@ describe("FreeTextExercise: submit lifecycle", () => {
             target: {value: "Bonjour"},
         });
         fireEvent.click(screen.getByTestId("free-text-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 0, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
         const result = screen.getByTestId("free-text-result");
         expect(result).toHaveAttribute("data-result", "wrong");
         // Canonical (first entry of accept) surfaces in the wrong-answer message.
@@ -231,7 +231,7 @@ describe("FreeTextExercise: submit lifecycle", () => {
         fireEvent.change(input, {target: {value: "Merci"}});
         fireEvent.keyDown(input, {key: "Enter"});
         expect(onComplete).toHaveBeenCalledTimes(1);
-        expect(onComplete).toHaveBeenCalledWith({correct: 1, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
     });
 
     it("Enter key does nothing on an empty input", () => {

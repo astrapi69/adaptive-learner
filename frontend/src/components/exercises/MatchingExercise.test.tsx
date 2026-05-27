@@ -126,7 +126,7 @@ describe("MatchingExercise: scoring + completion", () => {
             fireEvent.click(screen.getByTestId(`matching-right-${i}`));
         }
         fireEvent.click(screen.getByTestId("matching-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 3, total: 3});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 3, total: 3}));
         expect(screen.getByTestId("matching-result")).toHaveTextContent(
             /3\s*\/\s*3/,
         );
@@ -148,7 +148,7 @@ describe("MatchingExercise: scoring + completion", () => {
         fireEvent.click(screen.getByTestId("matching-left-2"));
         fireEvent.click(screen.getByTestId("matching-right-2"));
         fireEvent.click(screen.getByTestId("matching-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 1, total: 3});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 3}));
     });
 
     it("'Try again' resets state and re-enables interaction", () => {

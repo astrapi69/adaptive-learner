@@ -29,13 +29,25 @@ import {Check, RotateCcw, X} from "lucide-react";
 import {useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
-import type {ContentLessonExercise} from "../../storage/types";
+import {deriveWordTilesAttempt} from "../../lib/element-attempt";
+import type {
+    ContentLessonExercise,
+    ElementAttempt,
+} from "../../storage/types";
 
 export interface WordTilesExerciseProps {
     exercise: ContentLessonExercise;
+    /** Phase 46B context for the element-attempt deriver.
+     *  Optional in unit tests; required in production. */
+    setId?: string;
+    lessonId?: string;
     /** Called on submit with the score (0 or 1 correct of 1
-     *  total). The parent persists via ``recordStepResult``. */
-    onComplete: (result: {correct: number; total: number}) => void;
+     *  total) plus the single-attempt SRS payload. */
+    onComplete: (result: {
+        correct: number;
+        total: number;
+        attempts: ElementAttempt[];
+    }) => void;
 }
 
 /** Deterministic Fisher-Yates shuffle keyed by ``seed`` so
@@ -84,6 +96,8 @@ function _arraysEqual(
 
 export default function WordTilesExercise({
     exercise,
+    setId = "",
+    lessonId = "",
     onComplete,
 }: WordTilesExerciseProps) {
     const {t} = useI18n();
@@ -143,15 +157,20 @@ export default function WordTilesExercise({
 
     const handleSubmit = () => {
         if (submitted || !allPlaced) return;
-        const correct = isWordTilesCorrect(
+        const isCorrect = isWordTilesCorrect(
             placed,
             tiles.length,
             acceptOrderings,
-        )
-            ? 1
-            : 0;
-        const scored = {correct, total: 1};
-        setResult(scored);
+        );
+        const correct = isCorrect ? 1 : 0;
+        const attempt = deriveWordTilesAttempt(
+            exercise,
+            {setId, lessonId},
+            placed,
+            isCorrect,
+        );
+        const scored = {correct, total: 1, attempts: [attempt]};
+        setResult({correct, total: 1});
         setSubmitted(true);
         onComplete(scored);
     };

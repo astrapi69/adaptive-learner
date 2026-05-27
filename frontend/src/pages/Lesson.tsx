@@ -49,6 +49,7 @@ import {
     parseStepAnchor,
     rewriteAnchors,
 } from "../lib/lesson-anchors";
+import {readLearnerState} from "../lib/learnerState";
 import {
     buildExerciseBreakdown,
     computeStars,
@@ -99,6 +100,12 @@ export default function LessonPage() {
         recordStepResult,
         markCompleted,
     } = useLesson({source, setId, lessonFilename: filename});
+
+    // Phase 46B — userId for the elementErrors.recordBulk
+    // call inside ExerciseDispatcher's onComplete. Read once
+    // on mount; useLesson already reads it for the progress
+    // path but doesn't expose it.
+    const learnerUserId = useMemo(() => readLearnerState().userId, []);
 
     // Phase 46A — fetch the set's lesson list so the summary
     // screen's "Next lesson" button knows whether there's a
@@ -324,13 +331,37 @@ export default function LessonPage() {
                     ) : (
                         <ExerciseDispatcher
                             step={step!}
+                            setId={setId}
+                            lessonId={filename}
                             onComplete={async (scored) => {
-                                if (step!.exercise) {
-                                    await recordStepResult({
-                                        step_id: step!.id,
-                                        correct: scored.correct,
-                                        total: scored.total,
-                                    });
+                                if (!step!.exercise) return;
+                                await recordStepResult({
+                                    step_id: step!.id,
+                                    correct: scored.correct,
+                                    total: scored.total,
+                                });
+                                // Phase 46B — persist per-element
+                                // attempts alongside the per-step
+                                // score. Failures here MUST NOT
+                                // block the step from advancing
+                                // (the per-step score is the
+                                // user's primary feedback).
+                                if (
+                                    scored.attempts.length > 0 &&
+                                    learnerUserId
+                                ) {
+                                    try {
+                                        await getStorage().elementErrors.recordBulk(
+                                            learnerUserId,
+                                            scored.attempts,
+                                        );
+                                    } catch (err) {
+                                        // eslint-disable-next-line no-console
+                                        console.warn(
+                                            "elementErrors.recordBulk failed:",
+                                            err,
+                                        );
+                                    }
                                 }
                             }}
                         />
@@ -442,10 +473,24 @@ function TheoryStep({
 
 interface ExerciseDispatcherProps {
     step: ContentLessonStep;
-    onComplete: (result: {correct: number; total: number}) => Promise<void>;
+    /** Phase 46B context propagated to each exercise so the
+     *  element-attempt deriver can stamp set_id + lesson_id
+     *  on every produced ElementAttempt. */
+    setId: string;
+    lessonId: string;
+    onComplete: (result: {
+        correct: number;
+        total: number;
+        attempts: import("../storage/types").ElementAttempt[];
+    }) => Promise<void>;
 }
 
-function ExerciseDispatcher({step, onComplete}: ExerciseDispatcherProps) {
+function ExerciseDispatcher({
+    step,
+    setId,
+    lessonId,
+    onComplete,
+}: ExerciseDispatcherProps) {
     const ex: ContentLessonExercise | null = step.exercise ?? null;
     if (ex === null) return <ExerciseStepPlaceholder step={step} />;
     const supported = SUPPORTED_EXERCISE_TYPES.has(ex.type);
@@ -456,6 +501,8 @@ function ExerciseDispatcher({step, onComplete}: ExerciseDispatcherProps) {
         return (
             <MatchingExercise
                 exercise={ex}
+                setId={setId}
+                lessonId={lessonId}
                 onComplete={(scored) => {
                     void onComplete(scored);
                 }}
@@ -466,6 +513,8 @@ function ExerciseDispatcher({step, onComplete}: ExerciseDispatcherProps) {
         return (
             <PictureChoiceExercise
                 exercise={ex}
+                setId={setId}
+                lessonId={lessonId}
                 onComplete={(scored) => {
                     void onComplete(scored);
                 }}
@@ -476,6 +525,8 @@ function ExerciseDispatcher({step, onComplete}: ExerciseDispatcherProps) {
         return (
             <FreeTextExercise
                 exercise={ex}
+                setId={setId}
+                lessonId={lessonId}
                 onComplete={(scored) => {
                     void onComplete(scored);
                 }}
@@ -486,6 +537,8 @@ function ExerciseDispatcher({step, onComplete}: ExerciseDispatcherProps) {
         return (
             <WordTilesExercise
                 exercise={ex}
+                setId={setId}
+                lessonId={lessonId}
                 onComplete={(scored) => {
                     void onComplete(scored);
                 }}

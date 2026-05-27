@@ -24,13 +24,25 @@ import {Check, RotateCcw, X} from "lucide-react";
 import {useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
-import type {ContentLessonExercise} from "../../storage/types";
+import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
+import type {
+    ContentLessonExercise,
+    ElementAttempt,
+} from "../../storage/types";
 
 export interface PictureChoiceExerciseProps {
     exercise: ContentLessonExercise;
+    /** Phase 46B context for the element-attempt deriver.
+     *  Optional in unit tests; required in production. */
+    setId?: string;
+    lessonId?: string;
     /** Called on submit with the score (0 or 1 correct of 1
-     *  total). The parent persists via ``recordStepResult``. */
-    onComplete: (result: {correct: number; total: number}) => void;
+     *  total) plus the single-attempt SRS payload. */
+    onComplete: (result: {
+        correct: number;
+        total: number;
+        attempts: ElementAttempt[];
+    }) => void;
     /** Optional base path the parent prepends to each image
      *  ``src``. When absent the component uses the raw
      *  authored path, which works for absolute URLs and for
@@ -60,6 +72,8 @@ function _parseChoices(
 
 export default function PictureChoiceExercise({
     exercise,
+    setId = "",
+    lessonId = "",
     onComplete,
     resolveImageSrc = (raw) => raw,
 }: PictureChoiceExerciseProps) {
@@ -99,8 +113,13 @@ export default function PictureChoiceExercise({
     const handleSubmit = () => {
         if (selected === null) return;
         const correct = choices[selected].isCorrect ? 1 : 0;
-        const scored = {correct, total: 1};
-        setResult(scored);
+        const attempt = derivePictureChoiceAttempt(
+            exercise,
+            {setId, lessonId},
+            selected,
+        );
+        const scored = {correct, total: 1, attempts: [attempt]};
+        setResult({correct, total: 1});
         setSubmitted(true);
         onComplete(scored);
     };

@@ -86,7 +86,7 @@ describe("PictureChoiceExercise: scoring", () => {
         );
         fireEvent.click(screen.getByTestId("picture-choice-0"));
         fireEvent.click(screen.getByTestId("picture-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 1, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
         expect(screen.getByTestId("picture-result")).toHaveAttribute(
             "data-result",
             "correct",
@@ -103,7 +103,7 @@ describe("PictureChoiceExercise: scoring", () => {
         );
         fireEvent.click(screen.getByTestId("picture-choice-2"));
         fireEvent.click(screen.getByTestId("picture-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 0, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
         expect(screen.getByTestId("picture-result")).toHaveAttribute(
             "data-result",
             "wrong",

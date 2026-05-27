@@ -28,14 +28,31 @@ import {Check, RotateCcw, X} from "lucide-react";
 import {useEffect, useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
-import type {ContentLessonExercise} from "../../storage/types";
+import {deriveMatchingAttempts} from "../../lib/element-attempt";
+import type {
+    ContentLessonExercise,
+    ElementAttempt,
+} from "../../storage/types";
 
 export interface MatchingExerciseProps {
     exercise: ContentLessonExercise;
+    /** Content-set id + lesson id — Phase 46B context the
+     *  exercise needs to derive per-element attempts for the
+     *  SRS layer. Optional in unit tests; required in
+     *  production (the viewer always passes them). Empty
+     *  strings still produce attempts; the viewer's guard
+     *  chain decides whether to persist. */
+    setId?: string;
+    lessonId?: string;
     /** Called when the user submits answers AND the parent
      *  should record the result. Receives the scored
-     *  outcome; the parent maps it onto the step id. */
-    onComplete: (result: {correct: number; total: number}) => void;
+     *  outcome AND a per-pair ``attempts`` list the viewer
+     *  passes to ``elementErrors.recordBulk`` (Phase 46B). */
+    onComplete: (result: {
+        correct: number;
+        total: number;
+        attempts: ElementAttempt[];
+    }) => void;
 }
 
 interface LeftTile {
@@ -66,6 +83,8 @@ function _shuffle<T>(items: readonly T[], seed: string): T[] {
 
 export default function MatchingExercise({
     exercise,
+    setId = "",
+    lessonId = "",
     onComplete,
 }: MatchingExerciseProps) {
     const {t} = useI18n();
@@ -162,8 +181,13 @@ export default function MatchingExercise({
         for (const [leftIdx, rightOriginal] of matches) {
             if (leftIdx === rightOriginal) correct += 1;
         }
-        const scored = {correct, total: pairs.length};
-        setResult(scored);
+        const attempts = deriveMatchingAttempts(
+            exercise,
+            {setId, lessonId},
+            matches,
+        );
+        const scored = {correct, total: pairs.length, attempts};
+        setResult({correct, total: pairs.length});
         setSubmitted(true);
         onComplete(scored);
     };

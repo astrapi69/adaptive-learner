@@ -225,7 +225,7 @@ describe("WordTilesExercise: submit lifecycle", () => {
         fireEvent.click(screen.getByTestId("word-tile-scrambled-1"));
         fireEvent.click(screen.getByTestId("word-tiles-submit"));
         expect(onComplete).toHaveBeenCalledTimes(1);
-        expect(onComplete).toHaveBeenCalledWith({correct: 1, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
         expect(screen.getByTestId("word-tiles-result")).toHaveAttribute(
             "data-result",
             "correct",
@@ -243,7 +243,7 @@ describe("WordTilesExercise: submit lifecycle", () => {
         fireEvent.click(screen.getByTestId("word-tile-scrambled-1"));
         fireEvent.click(screen.getByTestId("word-tile-scrambled-0"));
         fireEvent.click(screen.getByTestId("word-tiles-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 0, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
         const result = screen.getByTestId("word-tiles-result");
         expect(result).toHaveAttribute("data-result", "wrong");
         expect(result).toHaveTextContent("Au revoir");
@@ -263,7 +263,7 @@ describe("WordTilesExercise: submit lifecycle", () => {
         fireEvent.click(screen.getByTestId("word-tile-scrambled-1"));
         fireEvent.click(screen.getByTestId("word-tile-scrambled-3"));
         fireEvent.click(screen.getByTestId("word-tiles-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 1, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
     });
 
     it("non-listed permutation reports correct=0 even when accept_orderings is set", () => {
@@ -280,7 +280,7 @@ describe("WordTilesExercise: submit lifecycle", () => {
         fireEvent.click(screen.getByTestId("word-tile-scrambled-1"));
         fireEvent.click(screen.getByTestId("word-tile-scrambled-0"));
         fireEvent.click(screen.getByTestId("word-tiles-submit"));
-        expect(onComplete).toHaveBeenCalledWith({correct: 0, total: 1});
+        expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
     });
 
     it("Try-again resets state so the user can retry", () => {
