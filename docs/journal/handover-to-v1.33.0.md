@@ -140,12 +140,7 @@ Recommendation: **(a)** — minor YAML restructure, no code
 change needed. Affects all 8 catalogs but the
 sync_i18n_to_frontend.py drift pin will catch any miss.
 
-### 2.5 BISAC database for KDP plugin (P5, long-standing)
-
-Still open from prior handovers. Not a v1.33.0 priority
-unless it organically surfaces.
-
-### 2.6 Settings UI consolidation for plugin configs
+### 2.5 Settings UI consolidation for plugin configs
 
 The `LearningRepoSettingsSection` is the only component
 using the new `pluginSettings` namespace. Other plugins
@@ -175,7 +170,7 @@ Carry-over from v1.31.0 handover (one closed, two open):
 |----|------|--------|
 | **D-storage-abstraction** | Learning Repository plugin via IStorageService | **CLOSED** by v1.32.0 / Phase 49 |
 | **D-dexie-gamification** | Should Dexie-mode lessons award XP locally? | Still open. See § 2.1 — promoted from "defer" to "tractable via parity-test pattern". |
-| **D-plugin-settings-ui** | Generic plugin-settings UI? | New. See § 2.6. |
+| **D-plugin-settings-ui** | Generic plugin-settings UI? | New. See § 2.5. |
 
 ---
 
@@ -298,7 +293,7 @@ confirm with `gh run list --limit 5` at session start.
   `make sync-i18n` after YAML change.
 - The drift pin `i18n-sync.test.ts` catches any miss.
 
-#### For generic plugin-settings UI (§ 2.6)
+#### For generic plugin-settings UI (§ 2.5)
 
 - ``frontend/src/components/LearningRepoSettingsSection.tsx``
   — the prototype for the generic form.

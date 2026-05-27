@@ -49,8 +49,7 @@ Candidates listed in handover § 2 (pick ONE):
 - 2.2 EXP-013 Adaptive Lektionen Stufe 3
 - 2.3 Backlog cleanup (close P-131..P-140 by reference)
 - 2.4 i18n catalog cleanup for repo.* keys
-- 2.5 BISAC-DB carry-over (P5)
-- 2.6 Generic plugin-settings UI driven by bundled
+- 2.5 Generic plugin-settings UI driven by bundled
    plugin-config JSON
 
 After pre-flight + reading: propose a commit plan for the

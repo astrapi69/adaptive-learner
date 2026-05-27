@@ -137,11 +137,6 @@ by the v1.30.0 + v1.31.0 work. The next session could
 batch-close them with a clear "marked done by v1.30.0
 SRS / v1.31.0 unification" annotation.
 
-### 2.5 BISAC database for KDP plugin (P5, carried over)
-
-Long-standing low-priority — still open. Not a v1.32.0
-priority unless it organically surfaces.
-
 ---
 
 ## 3. Architectural decisions still in force
