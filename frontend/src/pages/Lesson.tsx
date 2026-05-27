@@ -22,8 +22,17 @@
  * viewports so the touch target stays above 44px.
  */
 
-import {ArrowLeft, ArrowRight, BookOpen, CheckCircle2, Download} from "lucide-react";
-import {useMemo} from "react";
+import {
+    ArrowLeft,
+    ArrowRight,
+    BookOpen,
+    CheckCircle2,
+    ChevronRight,
+    Download,
+    RotateCcw,
+    Star,
+} from "lucide-react";
+import {useEffect, useMemo, useState} from "react";
 import Markdown from "react-markdown";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -40,6 +49,12 @@ import {
     parseStepAnchor,
     rewriteAnchors,
 } from "../lib/lesson-anchors";
+import {
+    buildExerciseBreakdown,
+    computeStars,
+    type StarRating,
+} from "../lib/lesson-summary";
+import {getStorage} from "../storage";
 import type {
     ContentLessonExercise,
     ContentLessonStep,
@@ -84,6 +99,44 @@ export default function LessonPage() {
         recordStepResult,
         markCompleted,
     } = useLesson({source, setId, lessonFilename: filename});
+
+    // Phase 46A — fetch the set's lesson list so the summary
+    // screen's "Next lesson" button knows whether there's a
+    // successor + what filename to navigate to. One extra
+    // storage round-trip on mount; cached by both storages.
+    // ``null`` means "no next lesson" (last in set OR list not
+    // yet loaded). Failures degrade silently — the button just
+    // doesn't render.
+    const [nextLessonFilename, setNextLessonFilename] = useState<
+        string | null
+    >(null);
+    useEffect(() => {
+        if (!source || !setId || !filename) {
+            setNextLessonFilename(null);
+            return;
+        }
+        let cancelled = false;
+        void (async () => {
+            try {
+                const list = await getStorage().contentLoader.listLessons(
+                    source,
+                    setId,
+                );
+                if (cancelled) return;
+                const idx = list.lessons.indexOf(filename);
+                if (idx >= 0 && idx < list.lessons.length - 1) {
+                    setNextLessonFilename(list.lessons[idx + 1]);
+                } else {
+                    setNextLessonFilename(null);
+                }
+            } catch {
+                if (!cancelled) setNextLessonFilename(null);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [source, setId, filename]);
 
     if (!source || !setId || !filename) {
         return (
@@ -239,10 +292,18 @@ export default function LessonPage() {
                 <LessonSummary
                     lesson={lesson}
                     progress={progress}
+                    nextLessonFilename={nextLessonFilename}
                     onMarkComplete={async () => {
                         await markCompleted();
                     }}
-                    onRestart={() => goToStep(0)}
+                    onNextLesson={() => {
+                        if (nextLessonFilename) {
+                            navigate(
+                                `/lesson/${params.setSlug}/${setId}/${nextLessonFilename}`,
+                            );
+                        }
+                    }}
+                    onRepeat={() => goToStep(0)}
                     onExit={() => navigate("/content")}
                 />
             ) : (
@@ -468,16 +529,23 @@ function ExerciseStepPlaceholder({step}: {step: ContentLessonStep}) {
 interface LessonSummaryProps {
     lesson: import("../storage/types").ContentLesson;
     progress: import("../storage/types").LessonProgress | null;
+    /** Next lesson's filename within the set, or null when
+     *  there is no successor (last lesson OR list not yet
+     *  fetched). When null, the "Next lesson" button hides. */
+    nextLessonFilename: string | null;
     onMarkComplete: () => Promise<void> | void;
-    onRestart: () => void;
+    onNextLesson: () => void;
+    onRepeat: () => void;
     onExit: () => void;
 }
 
 function LessonSummary({
     lesson,
     progress,
+    nextLessonFilename,
     onMarkComplete,
-    onRestart,
+    onNextLesson,
+    onRepeat,
     onExit,
 }: LessonSummaryProps) {
     const {t} = useI18n();
@@ -486,10 +554,19 @@ function LessonSummary({
     const seconds = progress?.time_spent_seconds ?? 0;
     const minutes = Math.max(1, Math.round(seconds / 60));
     const isCompleted = progress?.status === "completed";
+
+    const stars: StarRating = computeStars(correct, total);
+    const scorePct = total > 0 ? Math.round((correct / total) * 100) : 0;
+    const breakdown = useMemo(
+        () => buildExerciseBreakdown(lesson, progress),
+        [lesson, progress],
+    );
+
     return (
         <section
-            className="lesson-summary"
+            className={`lesson-summary${stars === 3 ? " is-celebrating" : ""}`}
             data-testid="lesson-summary"
+            data-stars={String(stars)}
             aria-label={t("lesson.summary.aria_label", "Lesson summary")}
         >
             <h2>
@@ -498,15 +575,62 @@ function LessonSummary({
                 ) : null}
                 {t("lesson.summary.heading", "You finished")}: {lesson.title}
             </h2>
-            <ul className="lesson-summary-stats">
-                <li>
+
+            <div
+                className="lesson-summary-stars"
+                data-testid="lesson-summary-stars"
+                role="img"
+                aria-label={t(
+                    "lesson.summary.stars_aria",
+                    "{n} of 3 stars",
+                ).replace("{n}", String(stars))}
+            >
+                {[1, 2, 3].map((n) => {
+                    const earned = n <= stars;
+                    return (
+                        <Star
+                            key={n}
+                            size={28}
+                            aria-hidden="true"
+                            className={`lesson-summary-star${
+                                earned ? " is-earned" : ""
+                            }`}
+                            fill={earned ? "currentColor" : "none"}
+                            data-earned={earned ? "true" : "false"}
+                            data-testid={`lesson-summary-star-${n}`}
+                        />
+                    );
+                })}
+            </div>
+
+            <div
+                className="lesson-summary-score-bar"
+                role="progressbar"
+                aria-valuenow={scorePct}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={t(
+                    "lesson.summary.score_bar_aria",
+                    "Score: {pct} percent",
+                ).replace("{pct}", String(scorePct))}
+                data-testid="lesson-summary-score-bar"
+            >
+                <div
+                    className="lesson-summary-score-fill"
+                    style={{width: `${scorePct}%`}}
+                />
+                <span className="lesson-summary-score-label">
                     <strong>
                         {t("lesson.summary.score", "Score")}:
                     </strong>{" "}
                     <span data-testid="lesson-summary-score">
                         {correct} / {total}
-                    </span>
-                </li>
+                    </span>{" "}
+                    ({scorePct}%)
+                </span>
+            </div>
+
+            <ul className="lesson-summary-stats">
                 <li>
                     <strong>
                         {t("lesson.summary.time", "Time")}:
@@ -519,6 +643,71 @@ function LessonSummary({
                     </span>
                 </li>
             </ul>
+
+            {breakdown.length > 0 && (
+                <section
+                    className="lesson-summary-breakdown"
+                    data-testid="lesson-summary-breakdown"
+                    aria-label={t(
+                        "lesson.summary.breakdown_heading",
+                        "Exercise breakdown",
+                    )}
+                >
+                    <h3>
+                        {t(
+                            "lesson.summary.breakdown_heading",
+                            "Exercise breakdown",
+                        )}
+                    </h3>
+                    <ul className="lesson-summary-breakdown-list">
+                        {breakdown.map((entry) => {
+                            const rowStatus = !entry.attempted
+                                ? "unattempted"
+                                : entry.fullyCorrect
+                                  ? "correct"
+                                  : "wrong";
+                            return (
+                                <li
+                                    key={entry.stepId}
+                                    className={`lesson-summary-breakdown-row is-${rowStatus}`}
+                                    data-testid={`lesson-summary-breakdown-${entry.stepId}`}
+                                    data-status={rowStatus}
+                                >
+                                    <span className="lesson-summary-breakdown-title">
+                                        {entry.title}
+                                    </span>
+                                    {entry.attempted ? (
+                                        <span className="lesson-summary-breakdown-score">
+                                            {entry.correct} / {entry.total}
+                                        </span>
+                                    ) : (
+                                        <span className="lesson-summary-breakdown-score lesson-summary-breakdown-unattempted">
+                                            {t(
+                                                "lesson.summary.breakdown_unattempted",
+                                                "Not attempted",
+                                            )}
+                                        </span>
+                                    )}
+                                    {entry.attempted &&
+                                        !entry.fullyCorrect &&
+                                        entry.canonicalAnswer && (
+                                            <span className="lesson-summary-breakdown-canonical">
+                                                {t(
+                                                    "lesson.summary.breakdown_correct_answer",
+                                                    "Correct answer: {answer}",
+                                                ).replace(
+                                                    "{answer}",
+                                                    entry.canonicalAnswer,
+                                                )}
+                                            </span>
+                                        )}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </section>
+            )}
+
             <div className="lesson-summary-actions">
                 {!isCompleted && (
                     <button
@@ -535,13 +724,25 @@ function LessonSummary({
                         )}
                     </button>
                 )}
+                {nextLessonFilename && (
+                    <button
+                        type="button"
+                        className="btn btn-primary"
+                        onClick={onNextLesson}
+                        data-testid="lesson-summary-next"
+                    >
+                        {t("lesson.summary.next_lesson", "Next lesson")}
+                        <ChevronRight size={14} aria-hidden="true" />
+                    </button>
+                )}
                 <button
                     type="button"
                     className="btn"
-                    onClick={onRestart}
-                    data-testid="lesson-summary-restart"
+                    onClick={onRepeat}
+                    data-testid="lesson-summary-repeat"
                 >
-                    {t("lesson.summary.restart", "Start over")}
+                    <RotateCcw size={14} aria-hidden="true" />
+                    {t("lesson.summary.repeat", "Repeat lesson")}
                 </button>
                 <button
                     type="button"

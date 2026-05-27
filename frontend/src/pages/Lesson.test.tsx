@@ -14,9 +14,26 @@ import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
 const useLessonMock = vi.fn();
+const listLessonsMock = vi.fn();
 
 vi.mock("../hooks/useLesson", () => ({
     useLesson: () => useLessonMock(),
+}));
+
+// Phase 46A — LessonPage now fetches the set's lesson list
+// via getStorage().contentLoader.listLessons to compute the
+// "Next lesson" button. Tests stub it to a single-lesson set
+// by default; per-test overrides set a multi-lesson list when
+// they want to assert the Next button surface.
+vi.mock("../storage", () => ({
+    getStorage: () => ({
+        contentLoader: {
+            listSets: vi.fn(),
+            downloadSet: vi.fn(),
+            listLessons: listLessonsMock,
+            getLesson: vi.fn(),
+        },
+    }),
 }));
 
 import LessonPage from "./Lesson";
@@ -87,6 +104,15 @@ const VALID_PATH =
 
 beforeEach(() => {
     useLessonMock.mockReset();
+    listLessonsMock.mockReset();
+    // Default: single-lesson set so the "Next lesson" button
+    // hides. Tests that assert the button override per-test.
+    listLessonsMock.mockResolvedValue({
+        set_id: "language-fr-a1",
+        source: "astrapi69/adaptive-learner-content",
+        version: "1.0.0",
+        lessons: ["01-greetings.json"],
+    });
 });
 
 describe("LessonPage: load states", () => {
@@ -346,6 +372,193 @@ describe("LessonPage: ready state rendering", () => {
         expect(
             screen.getByTestId("lesson-summary-time"),
         ).toHaveTextContent(/3/);
+    });
+
+    it("summary surfaces 2 stars at the 75% boundary", () => {
+        _ready(2, {...PROGRESS, score_correct: 3, score_total: 4});
+        renderAtPath(VALID_PATH);
+        expect(
+            screen.getByTestId("lesson-summary"),
+        ).toHaveAttribute("data-stars", "2");
+        expect(
+            screen.getByTestId("lesson-summary-star-1"),
+        ).toHaveAttribute("data-earned", "true");
+        expect(
+            screen.getByTestId("lesson-summary-star-2"),
+        ).toHaveAttribute("data-earned", "true");
+        expect(
+            screen.getByTestId("lesson-summary-star-3"),
+        ).toHaveAttribute("data-earned", "false");
+    });
+
+    it("summary surfaces 3 stars + the celebration class at 100%", () => {
+        _ready(2, {...PROGRESS, score_correct: 4, score_total: 4});
+        renderAtPath(VALID_PATH);
+        const summary = screen.getByTestId("lesson-summary");
+        expect(summary).toHaveAttribute("data-stars", "3");
+        expect(summary.className).toContain("is-celebrating");
+    });
+
+    it("summary surfaces 0 stars below 50% (no celebration)", () => {
+        _ready(2, {...PROGRESS, score_correct: 1, score_total: 4});
+        renderAtPath(VALID_PATH);
+        const summary = screen.getByTestId("lesson-summary");
+        expect(summary).toHaveAttribute("data-stars", "0");
+        expect(summary.className).not.toContain("is-celebrating");
+        for (const n of [1, 2, 3]) {
+            expect(
+                screen.getByTestId(`lesson-summary-star-${n}`),
+            ).toHaveAttribute("data-earned", "false");
+        }
+    });
+
+    it("summary renders the score bar with the right ARIA progressbar value", () => {
+        _ready(2, {...PROGRESS, score_correct: 3, score_total: 4});
+        renderAtPath(VALID_PATH);
+        const bar = screen.getByTestId("lesson-summary-score-bar");
+        expect(bar).toHaveAttribute("aria-valuenow", "75");
+        expect(bar).toHaveAttribute("aria-valuemax", "100");
+    });
+
+    it("summary renders the per-exercise breakdown row for each exercise step", () => {
+        _ready(2, {
+            ...PROGRESS,
+            score_correct: 1,
+            score_total: 1,
+            step_results: {
+                "ex-1": {
+                    correct: 1,
+                    total: 1,
+                    attempts: 1,
+                    completed_at: "2026-05-27T00:01:00Z",
+                },
+            },
+        });
+        renderAtPath(VALID_PATH);
+        expect(
+            screen.getByTestId("lesson-summary-breakdown"),
+        ).toBeInTheDocument();
+        const row = screen.getByTestId("lesson-summary-breakdown-ex-1");
+        expect(row).toHaveAttribute("data-status", "correct");
+        expect(row).toHaveTextContent(/1\s*\/\s*1/);
+    });
+
+    it("breakdown row reveals the canonical answer when an exercise was wrong", () => {
+        const lessonWithPairs = {
+            ...LESSON,
+            steps: [
+                LESSON.steps[0],
+                {
+                    ...LESSON.steps[1],
+                    exercise: {
+                        ...LESSON.steps[1].exercise!,
+                        pairs: [
+                            {left: "Bonjour", right: "Hello"},
+                            {left: "Merci", right: "Thanks"},
+                        ],
+                    },
+                },
+            ],
+        };
+        useLessonMock.mockReturnValue({
+            status: "ready",
+            lesson: lessonWithPairs,
+            progress: {
+                ...PROGRESS,
+                score_correct: 1,
+                score_total: 2,
+                step_results: {
+                    "ex-1": {
+                        correct: 1,
+                        total: 2,
+                        attempts: 1,
+                        completed_at: "2026-05-27T00:01:00Z",
+                    },
+                },
+            },
+            currentStepIndex: 2,
+            error: null,
+            goNext: vi.fn(),
+            goPrev: vi.fn(),
+            goToStep: vi.fn(),
+            goToStepById: vi.fn(),
+            recordStepResult: vi.fn(),
+            markCompleted: vi.fn(),
+            refresh: vi.fn(),
+        });
+        renderAtPath(VALID_PATH);
+        const row = screen.getByTestId("lesson-summary-breakdown-ex-1");
+        expect(row).toHaveAttribute("data-status", "wrong");
+        expect(row).toHaveTextContent(/Bonjour/);
+        expect(row).toHaveTextContent(/Hello/);
+    });
+
+    it("breakdown row marks unattempted exercise steps as such", () => {
+        _ready(2, {
+            ...PROGRESS,
+            // No step_results entry for ex-1 → unattempted.
+            step_results: {},
+        });
+        renderAtPath(VALID_PATH);
+        const row = screen.getByTestId("lesson-summary-breakdown-ex-1");
+        expect(row).toHaveAttribute("data-status", "unattempted");
+    });
+
+    it("Repeat button calls goToStep(0)", () => {
+        const goToStep = vi.fn();
+        useLessonMock.mockReturnValue({
+            status: "ready",
+            lesson: LESSON,
+            progress: PROGRESS,
+            currentStepIndex: 2,
+            error: null,
+            goNext: vi.fn(),
+            goPrev: vi.fn(),
+            goToStep,
+            goToStepById: vi.fn(),
+            recordStepResult: vi.fn(),
+            markCompleted: vi.fn(),
+            refresh: vi.fn(),
+        });
+        renderAtPath(VALID_PATH);
+        fireEvent.click(screen.getByTestId("lesson-summary-repeat"));
+        expect(goToStep).toHaveBeenCalledWith(0);
+    });
+
+    it("Next lesson button hides when the set has only this lesson", async () => {
+        // Default listLessonsMock returns a single-lesson set.
+        _ready(2);
+        renderAtPath(VALID_PATH);
+        // listLessons resolves asynchronously; verify the absence
+        // after a microtask tick.
+        await waitFor(() => {
+            expect(listLessonsMock).toHaveBeenCalled();
+        });
+        expect(
+            screen.queryByTestId("lesson-summary-next"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("Next lesson button shows + is wired when the set has a successor", async () => {
+        listLessonsMock.mockResolvedValue({
+            set_id: "language-fr-a1",
+            source: "astrapi69/adaptive-learner-content",
+            version: "1.0.0",
+            lessons: ["01-greetings.json", "02-numbers.json"],
+        });
+        _ready(2);
+        renderAtPath(VALID_PATH);
+        // The button appears once listLessons resolves.
+        const nextBtn = await screen.findByTestId("lesson-summary-next");
+        expect(nextBtn).toBeInTheDocument();
+        expect(nextBtn).not.toBeDisabled();
+        // Clicking it triggers a route change that unmounts the
+        // summary, so we don't post-assert the button — the
+        // contract pinned here is "the button surfaces AND has
+        // a click handler that doesn't throw on activation".
+        await act(async () => {
+            fireEvent.click(nextBtn);
+        });
     });
 
     it("disables Previous on step 0", () => {
