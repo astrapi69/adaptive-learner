@@ -3,22 +3,34 @@
 ## Layered architecture (4 layers, ALWAYS respected)
 
 ```
-1. Frontend        React 18 + TypeScript + TipTap + Vite
-2. Backend         FastAPI + SQLAlchemy + SQLite + Pydantic v2
-3. PluginForge     External PyPI package (pluginforge ^0.9.0), based on pluggy
+1. Frontend        React 19 + TypeScript 6 (strict) + Vite 8
+2. Backend         FastAPI + SQLAlchemy 2.0 + SQLite + Pydantic v2
+3. PluginForge     External PyPI package (pluginforge ^0.10.0), based on pluggy
 4. Plugins         Standalone packages, registered via entry points
 ```
 
-New features ALWAYS belong in a plugin, unless they touch the core (Book/Chapter CRUD, editor base functionality, backup/restore, UI shell).
+New features ALWAYS belong in a plugin, unless they touch the
+core (User / LearningProject / LearningProfile / Curriculum /
+LearningTopic / Lesson / LearningSession CRUD, settings,
+backup/restore, sync, UI shell, 13-route navigation).
 
 ## Two repositories
 
 | Repo | Purpose | License |
 |------|---------|---------|
 | `pluginforge` | Application-agnostic plugin framework (PyPI) | MIT |
-| `adaptive_learner` | Book authoring platform, uses PluginForge | MIT (all plugins free during development) |
+| `adaptive-learner` | Adaptive learning platform, uses PluginForge | MIT (all plugins free during development) |
 
-PluginForge is EXTERNAL. Changes to PluginForge are a separate repo and a separate release cycle. AdaptiveLearner pins `pluginforge ^0.9.0`. v0.9.0 shipped the hard-filter transition for `target_application` (plugins without it would be rejected on a host with `app_id` set); all our plugins have declared it since v1.7.0. v0.9.0 also added lifecycle visibility (`PluginState.activated_at` / `.last_config_change`, `inspect_plugin()` aggregator, `on_plugin_activated` / `on_plugin_deactivated` / `on_config_refreshed` event hooks). v0.8.0's `pluginforge.testing` submodule (IsolatedPluginManager + MockPlugin) is still not adopted — our test suite isolates via `TestClient(app)` + per-test patches.
+PluginForge is EXTERNAL. Changes to PluginForge are a separate
+repo and a separate release cycle. Adaptive Learner pins
+`pluginforge ^0.10.0`. v0.9.0 shipped the hard-filter transition
+for `target_application` (plugins without it would be rejected
+on a host with `app_id` set); all our plugins have declared
+`target_application = "adaptive_learner"` since v1.7.0. v0.9.0
+also added lifecycle visibility
+(`PluginState.activated_at` / `.last_config_change`,
+`inspect_plugin()` aggregator, `on_plugin_activated` /
+`on_plugin_deactivated` / `on_config_refreshed` event hooks).
 
 ## Backend (Python/FastAPI)
 
@@ -40,12 +52,12 @@ plugins/adaptive-learner-plugin-{name}/
 - Plugin class inherits from BasePlugin (pluginforge).
 - Business logic in its own modules, NOT in routes.py.
 - routes.py contains only FastAPI endpoints that delegate to service functions.
-- Hook specs live in backend/app/hookspecs.py. Define new hooks there, with api_version.
+- Hook specs live in backend/app/hookspecs.py. Define new hooks there, with api_version. 10 hooks shipped; see CLAUDE.md plugin table for the catalogue.
 - Pydantic v2 for all request/response schemas.
-- SQLAlchemy models in backend/app/models/.
+- SQLAlchemy 2.0 mapped models in backend/app/models/__init__.py (single-file domain model, currently 28 entities).
 - Configuration via YAML (backend/config/plugins/{name}.yaml), NOT hardcoded.
-- Extend i18n strings in backend/config/i18n/{lang}.yaml (8 languages: DE, EN, ES, FR, EL, PT, TR, JA).
-- Plugin dependencies as a class attribute: `depends_on = ["export"]`.
+- Extend i18n strings in backend/config/i18n/{lang}.yaml (8 languages: DE, EN, ES, FR, EL, PT, TR, JA, all fully translated).
+- Plugin dependencies as a class attribute: `depends_on = ["session"]`.
 - All plugins are free (MIT). Licensing infrastructure exists but is dormant (`LICENSING_ENABLED = False`).
 
 ### Plugin installation (ZIP)
@@ -60,7 +72,7 @@ Third-party plugins are installed as a ZIP through Settings > Plugins:
 
 ### Licensing
 
-- AdaptiveLearner-specific, NOT part of PluginForge.
+- Adaptive Learner-specific, NOT part of PluginForge.
 - Code in backend/app/licensing.py.
 - HMAC-SHA256 signed license keys, offline-validatable.
 - Licenses in config/licenses.json, managed through the Settings UI.
@@ -73,16 +85,18 @@ Third-party plugins are installed as a ZIP through Settings > Plugins:
 | Library | Purpose |
 |---------|---------|
 | Radix UI | Unstyled accessible primitives (Dialog, Tabs, Dropdown, Select, Tooltip) |
-| @dnd-kit | Drag-and-drop (chapter sorting, list reordering) |
-| TipTap | WYSIWYG/Markdown editor (StarterKit + 15 extensions) |
+| TipTap 2 | Rich-text editor in session notes, curriculum descriptions, lesson content (StarterKit + 15 extensions) |
 | Lucide React | Icons |
 | react-toastify | Toast notifications |
+| Recharts 3 | Charts on the Dashboard / Progress pages |
+| html5-qrcode | QR scanner for AI provider keys |
+| Dexie 4 | IndexedDB wrapper for the Dexie-mode storage backing |
 
 Rejected: shadcn/ui (requires Tailwind), MUI (too opinionated), Ant Design (too heavy).
 
 ### Theming
 
-- 5 themes: Classic, Cool Modern, Nord, Notebook, Studio (each with Light + Dark = 10 variants). Notebook + Studio were added after the original "3 themes" doc. Audit recipe to verify the current count: `grep -oE 'data-app-theme="[a-z-]+"' frontend/src/styles/global.css | sort -u`.
+- 5 themes: Classic, Cool Modern, Nord, Notebook, Studio (each with Light + Dark = 10 variants). Audit recipe to verify the current count: `grep -oE 'data-app-theme="[a-z-]+"' frontend/src/styles/global.css | sort -u`.
 - Everything via CSS variables. New UI elements MUST use CSS variables.
 - No Tailwind. Custom properties in frontend/src/styles/global.css.
 
@@ -94,87 +108,122 @@ Predefined UI slots:
 
 | Slot | Location |
 |------|----------|
-| sidebar_actions | BookEditor sidebar |
-| toolbar_buttons | Editor toolbar |
-| editor_panels | Next to the editor |
 | settings_section | Settings > Plugins |
-| export_options | ExportDialog |
+| dashboard_widget | Dashboard cards (e.g. Learning Repository widget) |
+| session_panel | Session step sidebar |
 
 For complex plugin UIs: Web Components as custom elements (compiled JS bundle in the plugin ZIP).
 
-### TipTap editor
+### TipTap editor (rich-text in notes / curriculum / lessons)
 
-- 15 official extensions + 1 community (Figure/Figcaption).
+- 15 official extensions + 1 community (Figure/Figcaption via @pentestpad/tiptap-extension-figure).
 - 24 toolbar buttons.
+- Used as the editor for session-rating notes, curriculum descriptions, and lesson content (since v1.14.0).
+- IMPORTANT: the image node is registered as `imageFigure`, NOT `image` — see lessons-learned.md for the gotcha.
 - Before writing custom code, ALWAYS check whether an official TipTap extension exists.
-- See lessons-learned.md for known TipTap pitfalls.
 
 ### Component structure
 
-- Pages in frontend/src/pages/ (Dashboard, BookEditor, Settings, Help, GetStarted).
+- 13 routes in frontend/src/pages/: Landing, Onboarding, Assessment, Dashboard, Session, Curriculum, Progress, Settings, Import, ImportDetail, Anki, Pronunciation, NotFound.
 - Shared components in frontend/src/components/.
-- API calls ONLY through frontend/src/api/client.ts, never fetch() directly in components.
+- API calls ONLY through `getStorage()` (which returns an `IStorageService` — either ApiStorage or DexieStorage). NEVER call `fetch()` or `api.*` directly from a component; route through the storage abstraction so both modes work. See the "Dual storage" section below.
 
 ### UX patterns for forms
 
 - **Stepped modal** for creation dialogs: step 1 shows only required fields, step 2 is collapsible (Radix Collapsible, "More details") for optional fields.
 - **Reason:** modals stay compact for quick creation, optional fields don't clutter it.
-- **Example:** CreateBookModal - step 1: title, author (required only). Step 2: genre, subtitle, language, series.
+- **Example:** CreateProjectModal - step 1: topic, goal (required only). Step 2: timeframe, daily minutes, language, current problem.
 - **Collapsible:** Radix Collapsible (@radix-ui/react-collapsible) for expandable sections in modals. Collapsed when opened.
-- **Input fields with suggestions:** `<input>` + `<datalist>` for free text with dropdown suggestions (e.g. genre). No hard select when custom values should be possible.
-- **Conditional fields:** checkbox toggle for optional groups (e.g. "Part of a series" -> series name + index). Values are reset when deactivated.
+- **Input fields with suggestions:** `<input>` + `<datalist>` for free text with dropdown suggestions. No hard select when custom values should be possible.
+- **Conditional fields:** checkbox toggle for optional groups. Values are reset when deactivated.
 - **No dedicated page** for simple creation workflows. A modal is enough up to ~8 fields.
 
 ### State management
 
-- Current: React state + props. No global state management.
+- Current: React state + props + a few cross-cutting contexts (`I18nProvider`, theme, auto-backup signal). No global state management library.
 - If global state becomes necessary: introduce Zustand, NOT Redux.
 - Stores communicate through events or callbacks, not through direct imports.
 
 ## Internal storage format
 
-- TipTap JSON is the storage format. NOT HTML, NOT Markdown.
+- TipTap JSON is the rich-text storage format. NOT HTML, NOT Markdown.
 - Markdown is only a display/input mode in the editor.
-- Conversion (JSON -> Markdown, JSON -> HTML) is a plugin responsibility (export plugin).
-- TipTap JSON in the DB: Chapter.content field.
+- Conversion (JSON -> Markdown, JSON -> HTML) lives in `frontend/src/lib/tiptap-to-markdown.ts` and is consumed by the export plugins (Anki, NotebookLM, Learning Repository renderer).
+- TipTap JSON is stored in: `SessionNote.body`, `Curriculum.description`, `Lesson.content`.
 
-## Persistence
+## Persistence — dual storage abstraction
 
-- Backend: SQLAlchemy + SQLite.
-- Frontend: no local storage for book data. Everything via the API.
-- Assets: local on the filesystem, managed through /api/assets/.
-- Backup: .bgb files (ZIP), restore brings the entire state back.
-- Project import: .bgp files (write-book-template ZIP).
+Adaptive Learner ships with TWO independent storage backings,
+selected by the user in Settings (reload required to switch).
+Every page + component reads via `getStorage()` → `IStorageService`
+so the same code runs against either backing.
+
+### ApiStorage (default)
+
+- Backend: FastAPI + SQLAlchemy 2.0 + SQLite (single-writer
+  semantics; minimize writes + batch where possible).
+- Frontend: `api.*` HTTP calls under `/api/`.
+- Assets: local on the filesystem under `~/.local/share/adaptive_learner/`.
+- Backup: round-trip via `/api/backup/export` + `/api/backup/import` — a single JSON dump.
+
+### DexieStorage (GitHub-Pages-shape build)
+
+- Frontend: Dexie 4 (IndexedDB) for every storage namespace.
+- No backend roundtrip — Dexie holds the canonical data; AI calls
+  go browser-direct to the provider.
+- Build flag: `VITE_STORAGE_MODE=dexie`. Static build deployed to
+  `https://astrapi69.github.io/adaptive-learner/`.
+- Some features stay server-only (Learning Repository `git
+  persist` needs filesystem + git binary; the button is disabled
+  with a friendly tooltip in Dexie mode).
+
+### Rule: every new feature MUST work in both modes
+
+A feature that ships in API mode without a Dexie path
+(or without a graceful "not available in browser mode"
+message) is a release blocker — see lessons-learned.md
+"Dexie-mode is part of the contract: same-commit or not at all".
 
 ## Data flow
 
 ```
-UI (React) -> API client -> FastAPI router -> service/plugin -> SQLAlchemy -> SQLite
+API mode:    UI (React) -> getStorage() (ApiStorage) -> api.* -> FastAPI router -> service/plugin -> SQLAlchemy -> SQLite
+Dexie mode:  UI (React) -> getStorage() (DexieStorage) -> Dexie -> IndexedDB
 ```
 
-Unidirectional. No direct DB access from routers. No frontend code in the backend.
+Unidirectional. No direct DB access from routers. No frontend
+code in the backend. No `fetch()` or `api.*` calls outside the
+storage abstraction.
 
 ## Error handling
 
 ```
-Frontend       ApiError (status + detail) -> toast for the user
-API client     HTTP error -> converted to ApiError
+Frontend       ApiError (status + detail) -> toast for the user, mapped via ui.errors.* i18n keys
+API client     HTTP error -> converted to ApiError; debug mode adds traceback for "Report Issue"
 Router         Thin, catches nothing. Global exception handler maps.
-Service        Throws AdaptiveLearnerError subclasses (NotFoundError, ExportError, ...)
+Service        Throws AdaptiveLearnerError subclasses (NotFoundError, ValidationError, ...)
 Plugin         Throws PluginError(plugin_name, message)
-External       ExternalServiceError(service, message) for Pandoc/TTS/LanguageTool
+External       ExternalServiceError(service, message) for AI providers, edge-TTS, etc.
 ```
 
-Services NEVER throw HTTPException, routers catch NOTHING. The global exception handler in main.py maps AdaptiveLearnerError subclasses to HTTP status codes. See code-hygiene.md "Error handling architecture" for details.
+Services NEVER throw HTTPException, routers catch NOTHING. The
+global exception handler in main.py maps AdaptiveLearnerError
+subclasses to HTTP status codes. See code-hygiene.md "Error
+handling architecture" for details.
+
+User-facing errors never expose raw HTTP detail or stack traces
+in production (Dev Mode is a Settings toggle; off by default,
+maps every ApiError to a friendly `ui.errors.*` string).
 
 ## Plugin package versions
 
-Plugin versions are independent of the app version. A plugin is bumped only when the plugin itself changed, not on every app release. Concretely:
+Plugin versions are independent of the app version. A plugin is
+bumped only when the plugin itself changed, not on every app release.
 
-- No forced bump of every `plugins/adaptive-learner-plugin-*/pyproject.toml` on an app release
-- Plugin versions stay at `1.0.0` until there is a real reason to raise them (new hook version, breaking change in the plugin API, ...)
-- The app version bump only touches `backend/pyproject.toml`, `frontend/package.json` and optionally `backend/app/__init__.py`
-- Plugin changes are recorded in the app CHANGELOG, but the plugin version string stays unchanged
+- No forced bump of every `plugins/adaptive-learner-plugin-*/pyproject.toml` on an app release.
+- Plugin versions stay at `1.0.0` until there is a real reason to raise them (new hook version, breaking change in the plugin API, ...).
+- The app version bump touches `backend/pyproject.toml` (canonical) + every Tier-2 file via `make sync-versions`.
+- Plugin changes are recorded in the per-release changelog at `changelog/releases/vX.Y.Z.md`, but the plugin version string stays unchanged.
 
 Reason: plugins have their own lifecycles, and trial keys / license keys are bound to the plugin name, not to the version. A bump without a change would only create noise.
 
@@ -185,21 +234,29 @@ Every plugin setting in `config/plugins/*.yaml` MUST either:
 1. Be editable in the plugin UI (Settings > Plugins > {plugin name}), OR
 2. Be marked with a `# INTERNAL` comment to signal that it can only be edited via YAML.
 
-Hidden settings that influence user behavior without a UI are forbidden. A setting that has a default value and changes how the app behaves MUST be visible and editable by the user.
+Hidden settings that influence user behavior without a UI are
+forbidden. A setting that has a default value and changes how
+the app behaves MUST be visible and editable by the user.
 
 Exceptions are allowed only for:
 - Debug and development settings (marked `# INTERNAL`)
 - Performance-tuning parameters that only power users should touch (marked `# INTERNAL` + comment)
-- Initialization values or pipeline mappings that are not a user configuration target (e.g. Pandoc format mapping in `export.yaml`)
 
-Dead settings (fields in the YAML that the code never reads) are forbidden. When adding a new setting, ALWAYS verify that the code reads it; when removing a feature, ALWAYS remove the corresponding YAML field with it.
+Dead settings (fields in the YAML that the code never reads)
+are forbidden. When adding a new setting, ALWAYS verify that
+the code reads it; when removing a feature, ALWAYS remove the
+corresponding YAML field with it.
 
-Per-user vs per-book: settings that should vary between books do NOT belong in `config/plugins/*.yaml` but as a column on the Book model (examples: `Book.tts_engine`, `Book.audiobook_overwrite_existing`). Plugin-global YAML settings are only for values that must be the same for ALL books.
+Per-user vs per-project: settings that should vary between
+projects do NOT belong in `config/plugins/*.yaml` but as a
+column on the relevant model (e.g. `LearningProject.daily_minutes`,
+`LearningProject.current_problem`). Plugin-global YAML settings
+are only for values that must be the same for ALL projects.
 
 ## Offline/local-first
 
 - SQLite as the default (no external DB required).
-- Assets local on the filesystem.
-- Frontend deliverable as static files.
+- Assets local on the filesystem under `~/.local/share/adaptive_learner/`.
+- Frontend deliverable as static files (GitHub Pages-shape build runs Dexie-mode with no backend).
 - License validation offline (signed keys, no license server).
-- Exception: plugins with external APIs (TTS, LanguageTool) need network access.
+- Exception: plugins with external AI providers (Anthropic, OpenAI, Gemini) need network access; the three-layer key resolution chain (env > `~/.config/adaptive_learner/secrets.yaml` > Fernet-encrypted DB) means the user controls where the key lives.
