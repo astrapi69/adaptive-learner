@@ -105,6 +105,7 @@ import {
     listLessonProgressDexie,
     upsertLessonProgressDexie,
 } from "./lesson-progress-dexie";
+import {awardLessonXpDexie} from "./lesson-xp-dexie";
 import {
     computeReviewQueueDexie,
     listElementErrorsDexie,
@@ -2064,7 +2065,45 @@ export const dexieStorage: IStorageService = {
         list: (userId) => listLessonProgressDexie(userId),
         get: (userId, source, setId, filename) =>
             getLessonProgressDexie(userId, source, setId, filename),
-        upsert: (userId, body) => upsertLessonProgressDexie(userId, body),
+        // Phase 50D / v1.33.0 (D-DEXIE-GAMIFICATION) — detect the
+        // in_progress -> completed transition and fire the
+        // lesson-XP award (the Dexie-mode equivalent of the
+        // backend gamification plugin's ``on_session_complete``
+        // hook for content-lesson sessions). Errors from the
+        // gamification side MUST NOT break a lesson completion —
+        // log and continue, same pattern as the session-end XP
+        // wiring at ``tracking.end``.
+        upsert: async (userId, body) => {
+            const before = await getLessonProgressDexie(
+                userId,
+                body.source,
+                body.set_id,
+                body.lesson_filename,
+            );
+            const wasCompleted = before?.status === "completed";
+            const updated = await upsertLessonProgressDexie(userId, body);
+            const justCompleted =
+                updated.status === "completed" && !wasCompleted;
+            if (justCompleted) {
+                try {
+                    await awardLessonXpDexie(userId, updated);
+                    // Evaluate badges so lesson-gated badges
+                    // (first_lesson, lessons_10, etc.) fire after
+                    // the XP write. Phase 50E lands the badge
+                    // predicates themselves; until then this call
+                    // is a no-op for lesson keys but still updates
+                    // any other earned badges.
+                    await evaluateBadgesForUser(userId);
+                } catch (err) {
+                    // eslint-disable-next-line no-console
+                    console.warn(
+                        "gamification (lesson-complete) failed",
+                        err,
+                    );
+                }
+            }
+            return updated;
+        },
     },
 
     // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------

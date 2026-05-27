@@ -150,7 +150,7 @@ async function getOrCreateUserXP(userId: string): Promise<UserXPRow> {
     return row;
 }
 
-async function persistXP(
+export async function persistXP(
     userId: string,
     deltaXP: number,
 ): Promise<{row: UserXPRow; levelUp: boolean}> {
@@ -167,7 +167,7 @@ async function persistXP(
     return {row: updated, levelUp: updated.level > previousLevel};
 }
 
-async function userActivityDates(userId: string): Promise<Set<string>> {
+export async function userActivityDates(userId: string): Promise<Set<string>> {
     const db = getDb();
     const projects = await db.learningProjects
         .where({user_id: userId})
