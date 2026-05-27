@@ -27,7 +27,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       sync-i18n \
+       sync-i18n sync-plugin-config \
        lock-all-plugins verify-plugin-locks \
        release-state release-outdated release-test release-build \
        release-discover release-tag release-publish \
@@ -358,6 +358,9 @@ sync-versions-check: ## Exit non-zero if any subsystem version drifts from canon
 
 sync-i18n: ## Regenerate frontend/src/data/i18n/*.json from backend YAML catalogs
 	@python3 scripts/sync_i18n_to_frontend.py
+
+sync-plugin-config: ## Regenerate frontend/src/data/plugin-config/*.json from backend/config/plugins/*.yaml (Phase 49 / v1.32.0)
+	@python3 scripts/sync_plugin_config_to_frontend.py
 
 sync-help: ## Regenerate frontend/src/data/help/*.json from backend/config/help YAML files (Phase 38)
 	@python3 scripts/sync_help_to_frontend.py

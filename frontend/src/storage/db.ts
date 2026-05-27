@@ -527,6 +527,34 @@ export interface StepEvaluationRow {
     evaluated_at: string;
 }
 
+// ---- Plugin-settings row (Phase 49 / v1.32.0) -------------------------
+
+/**
+ * One row per plugin name. Lazy-created on first
+ * ``DexieStorage.pluginSettings.update`` — ``get`` for a missing
+ * row falls back to the bundled YAML defaults at
+ * ``frontend/src/data/plugin-config/{name}.json``.
+ *
+ * ``settings`` is the raw JSON blob the
+ * IPluginSettingsNamespace contract round-trips. It mirrors the
+ * shape of the backend's ``api.pluginSettings.get/update``
+ * payload's ``settings`` field, so the DexieStorage and
+ * ApiStorage implementations of the same namespace yield
+ * structurally identical responses.
+ */
+export interface PluginSettingsRow {
+    /** Plugin slug, e.g. "learning-repo". Primary key. */
+    name: string;
+    /** JSON-serialised settings dict — Dexie stores arbitrary
+     *  JSON natively, but we keep the wire shape uniform with
+     *  the API so a future per-key migration script needs zero
+     *  parsing. */
+    settings: Record<string, unknown>;
+    /** ISO datetime of the most recent ``update`` call. Local
+     *  bookkeeping; not exposed in the namespace contract. */
+    updated_at: string;
+}
+
 // ---- Dexie database ---------------------------------------------------
 
 export class AdaptiveLearnerDB extends Dexie {
@@ -571,6 +599,12 @@ export class AdaptiveLearnerDB extends Dexie {
     // ``{user_id}#{set_id}#{lesson_id}#{exercise_id}#{element_key}``
     // mirrors the backend UNIQUE constraint.
     elementErrors!: EntityTable<ElementErrorRow, "id">;
+    // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
+    // per-plugin settings round-trip. One row per plugin
+    // name; lazy-created on first ``update``. Reads against
+    // a missing row fall back to the bundled YAML defaults
+    // at ``frontend/src/data/plugin-config/{name}.json``.
+    pluginSettings!: EntityTable<PluginSettingsRow, "name">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -829,6 +863,14 @@ export class AdaptiveLearnerDB extends Dexie {
         this.version(18).stores({
             elementErrors:
                 "id, user_id, [user_id+set_id], mastered, updated_at",
+        });
+        // Schema v19 — Phase 49 / v1.32.0 / PHASE-42-STORAGE-
+        // ABSTRACTION-01: per-plugin settings round-trip.
+        // Single primary key ``name`` (plugin slug); no
+        // secondary indexes — the table only ever supports
+        // get-by-name + upsert, never a multi-row scan.
+        this.version(19).stores({
+            pluginSettings: "&name",
         });
     }
 }

@@ -280,6 +280,17 @@ export const apiStorage: IStorageService = {
             api.contentLoader.getLesson(source, setId, filename),
     },
 
+    // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
+    // per-plugin settings round-trip. ApiStorage is a thin
+    // pass-through to the existing
+    // ``api.pluginSettings.{get,update}`` helpers (v1.26.0 /
+    // Phase 42). DexieStorage's parallel implementation does
+    // the YAML-defaults fallback locally.
+    pluginSettings: {
+        get: (pluginName) => api.pluginSettings.get(pluginName),
+        update: (pluginName, body) => api.pluginSettings.update(pluginName, body),
+    },
+
     // Phase 41F Danger Zone: typed-confirm reset. ApiStorage hands
     // the token straight to the backend; the 400 gate lives server-
     // side (services/reset_service.CONFIRMATION_TOKEN).
