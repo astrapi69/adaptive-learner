@@ -1109,35 +1109,51 @@
     "topic_readme_methods_heading": "Métodos usados",
     "topic_readme_parent_link": "← [Raíz del proyecto](../README.md)",
     "topic_readme_no_sessions": "_Ninguna sesión ha tratado este tema._",
-    "page_title": "Repositorio de aprendizaje",
-    "page_rendered_at": "Generado el",
-    "page_language": "Idioma",
-    "action_rerender": "Regenerar",
-    "action_download_zip": "Descargar ZIP",
-    "action_persist": "Guardar en git",
-    "action_persisting": "Guardando…",
-    "toast_zip_downloaded": "ZIP descargado",
-    "toast_persisted": "Guardado en git",
-    "error_render_failed": "No se pudo generar el repositorio",
-    "error_zip_failed": "No se pudo exportar el ZIP",
-    "error_persist_failed": "No se pudo guardar en git",
-    "error_missing_project": "Ningún proyecto seleccionado.",
     "loading": "Generando el repositorio…",
-    "widget_title": "Repositorio de aprendizaje",
     "widget_subtitle": "Instantánea versionada del progreso, las notas y la hoja de ruta del proyecto.",
-    "widget_open": "Abrir repositorio",
-    "settings_title": "Repositorio de aprendizaje",
     "settings_description": "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git crea un commit en cada generación.",
     "settings_enable_git": "Activar persistencia en git",
-    "settings_repos_dir": "Directorio de repositorios",
-    "settings_save": "Guardar ajustes",
-    "settings_saving": "Guardando…",
-    "settings_loading": "Cargando…",
-    "settings_toast_saved": "Ajustes guardados",
-    "settings_error_load": "No se pudieron cargar los ajustes",
-    "settings_error_save": "No se pudieron guardar los ajustes",
     "dexie_unavailable_body": "Esta función solo está disponible en modo servidor. Cambia al modo servidor en Ajustes para activar los repositorios de aprendizaje con git.",
-    "back_to_dashboard": "Volver al panel"
+    "back_to_dashboard": "Volver al panel",
+    "page": {
+      "title": "Repositorio de aprendizaje",
+      "rendered_at": "Generado el",
+      "language": "Idioma"
+    },
+    "action": {
+      "rerender": "Regenerar",
+      "download_zip": "Descargar ZIP",
+      "persist": "Guardar en git",
+      "persisting": "Guardando…"
+    },
+    "toast": {
+      "zip_downloaded": "ZIP descargado",
+      "persisted": "Guardado en git"
+    },
+    "error": {
+      "render_failed": "No se pudo generar el repositorio",
+      "zip_failed": "No se pudo exportar el ZIP",
+      "persist_failed": "No se pudo guardar en git",
+      "missing_project": "Ningún proyecto seleccionado."
+    },
+    "widget": {
+      "title": "Repositorio de aprendizaje",
+      "open": "Abrir repositorio"
+    },
+    "settings": {
+      "title": "Repositorio de aprendizaje",
+      "loading": "Cargando…",
+      "repos_dir": "Directorio de repositorios",
+      "save": "Guardar ajustes",
+      "saving": "Guardando…",
+      "toast": {
+        "saved": "Ajustes guardados"
+      },
+      "error": {
+        "load": "No se pudieron cargar los ajustes",
+        "save": "No se pudieron guardar los ajustes"
+      }
+    }
   },
   "lesson": {
     "page_title": "Lección",

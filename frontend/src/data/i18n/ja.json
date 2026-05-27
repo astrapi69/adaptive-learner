@@ -1109,35 +1109,51 @@
     "topic_readme_methods_heading": "使用されたメソッド",
     "topic_readme_parent_link": "← [プロジェクトルート](../README.md)",
     "topic_readme_no_sessions": "_このトピックを扱ったセッションはありません。_",
-    "page_title": "学習リポジトリ",
-    "page_rendered_at": "生成日時",
-    "page_language": "言語",
-    "action_rerender": "再生成",
-    "action_download_zip": "ZIP をダウンロード",
-    "action_persist": "Git に保存",
-    "action_persisting": "保存中…",
-    "toast_zip_downloaded": "ZIP をダウンロードしました",
-    "toast_persisted": "Git に保存しました",
-    "error_render_failed": "リポジトリを生成できませんでした",
-    "error_zip_failed": "ZIP のエクスポートに失敗しました",
-    "error_persist_failed": "Git に保存できませんでした",
-    "error_missing_project": "プロジェクトが選択されていません。",
     "loading": "リポジトリを生成中…",
-    "widget_title": "学習リポジトリ",
     "widget_subtitle": "このプロジェクトの進捗・ノート・ロードマップのバージョン管理されたスナップショット。",
-    "widget_open": "リポジトリを開く",
-    "settings_title": "学習リポジトリ",
     "settings_description": "セッションデータからプロジェクトごとに Markdown 成果物（README, STATS, CHEATSHEET, ROADMAP）を自動生成します。オプションの Git 統合により各生成時にコミットされます。",
     "settings_enable_git": "Git 永続化を有効にする",
-    "settings_repos_dir": "リポジトリディレクトリ",
-    "settings_save": "設定を保存",
-    "settings_saving": "保存中…",
-    "settings_loading": "読み込み中…",
-    "settings_toast_saved": "設定を保存しました",
-    "settings_error_load": "設定を読み込めませんでした",
-    "settings_error_save": "設定を保存できませんでした",
     "dexie_unavailable_body": "この機能はサーバーモードでのみ利用できます。git ベースの学習リポジトリを有効にするには、設定でサーバーモードに切り替えてください。",
-    "back_to_dashboard": "ダッシュボードに戻る"
+    "back_to_dashboard": "ダッシュボードに戻る",
+    "page": {
+      "title": "学習リポジトリ",
+      "rendered_at": "生成日時",
+      "language": "言語"
+    },
+    "action": {
+      "rerender": "再生成",
+      "download_zip": "ZIP をダウンロード",
+      "persist": "Git に保存",
+      "persisting": "保存中…"
+    },
+    "toast": {
+      "zip_downloaded": "ZIP をダウンロードしました",
+      "persisted": "Git に保存しました"
+    },
+    "error": {
+      "render_failed": "リポジトリを生成できませんでした",
+      "zip_failed": "ZIP のエクスポートに失敗しました",
+      "persist_failed": "Git に保存できませんでした",
+      "missing_project": "プロジェクトが選択されていません。"
+    },
+    "widget": {
+      "title": "学習リポジトリ",
+      "open": "リポジトリを開く"
+    },
+    "settings": {
+      "title": "学習リポジトリ",
+      "loading": "読み込み中…",
+      "repos_dir": "リポジトリディレクトリ",
+      "save": "設定を保存",
+      "saving": "保存中…",
+      "toast": {
+        "saved": "設定を保存しました"
+      },
+      "error": {
+        "load": "設定を読み込めませんでした",
+        "save": "設定を保存できませんでした"
+      }
+    }
   },
   "lesson": {
     "page_title": "レッスン",

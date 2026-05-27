@@ -105,4 +105,75 @@ describe("i18n JSON catalogs — Dexie-mode bundled source of truth", () => {
         expect(gamification.card_badges).toBeTruthy();
         expect(gamification.card_streak).toBeTruthy();
     });
+
+    // --- repo.* dotted-path regression pin (Phase B1 / v1.33.0)
+    //
+    // v1.26-1.32 catalogs carried flat keys like ``action_rerender``
+    // under ``repo:``; the frontend ``t("repo.action.rerender", ...)``
+    // walks dotted paths and never resolved them, falling through
+    // to the English fallback in EVERY language. This pin asserts
+    // every dotted-path the frontend calls actually resolves in
+    // every catalog.
+    it("every repo.X.Y key the frontend calls resolves in every catalog", () => {
+        // Mirror the exhaustive grep from
+        // ``grep -rEho 't\("repo\.[^"]+'  frontend/src/`` so a
+        // future drift either at the call site or in the catalog
+        // is caught here. Update this list when the frontend
+        // adds a new t() call against repo.*.
+        const dottedPaths = [
+            "repo.action.download_zip",
+            "repo.action.persist",
+            "repo.action.persisting",
+            "repo.action.rerender",
+            "repo.error.missing_project",
+            "repo.error.persist_failed",
+            "repo.error.render_failed",
+            "repo.error.zip_failed",
+            "repo.loading",
+            "repo.page.language",
+            "repo.page.rendered_at",
+            "repo.page.title",
+            "repo.settings.error.load",
+            "repo.settings.error.save",
+            "repo.settings.loading",
+            "repo.settings.repos_dir",
+            "repo.settings.save",
+            "repo.settings.saving",
+            "repo.settings.title",
+            "repo.settings.toast.saved",
+            "repo.toast.persisted",
+            "repo.toast.zip_downloaded",
+            "repo.widget.open",
+            "repo.widget.title",
+        ];
+        for (const lang of LANGS) {
+            const data = loadJson(lang);
+            for (const path of dottedPaths) {
+                const parts = path.split(".");
+                let cursor: unknown = data;
+                for (const part of parts) {
+                    if (
+                        cursor &&
+                        typeof cursor === "object" &&
+                        !Array.isArray(cursor) &&
+                        part in (cursor as Record<string, unknown>)
+                    ) {
+                        cursor = (cursor as Record<string, unknown>)[part];
+                    } else {
+                        cursor = undefined;
+                        break;
+                    }
+                }
+                expect(
+                    typeof cursor,
+                    `${lang}: ${path} did not resolve to a string ` +
+                        `(would fall back to English in production)`,
+                ).toBe("string");
+                expect(
+                    (cursor as string).length,
+                    `${lang}: ${path} resolved to empty string`,
+                ).toBeGreaterThan(0);
+            }
+        }
+    });
 });

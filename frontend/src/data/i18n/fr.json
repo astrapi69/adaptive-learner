@@ -1109,35 +1109,51 @@
     "topic_readme_methods_heading": "Méthodes utilisées",
     "topic_readme_parent_link": "← [Racine du projet](../README.md)",
     "topic_readme_no_sessions": "_Aucune session n'a abordé ce sujet._",
-    "page_title": "Dépôt d'apprentissage",
-    "page_rendered_at": "Généré le",
-    "page_language": "Langue",
-    "action_rerender": "Régénérer",
-    "action_download_zip": "Télécharger le ZIP",
-    "action_persist": "Enregistrer dans git",
-    "action_persisting": "Enregistrement…",
-    "toast_zip_downloaded": "ZIP téléchargé",
-    "toast_persisted": "Enregistré dans git",
-    "error_render_failed": "Impossible de générer le dépôt",
-    "error_zip_failed": "Échec de l'export ZIP",
-    "error_persist_failed": "Impossible d'enregistrer dans git",
-    "error_missing_project": "Aucun projet sélectionné.",
     "loading": "Génération du dépôt…",
-    "widget_title": "Dépôt d'apprentissage",
     "widget_subtitle": "Instantané versionné de la progression, des notes et de la feuille de route du projet.",
-    "widget_open": "Ouvrir le dépôt",
-    "settings_title": "Dépôt d'apprentissage",
     "settings_description": "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de vos données de session. L'intégration git optionnelle crée un commit à chaque génération.",
     "settings_enable_git": "Activer la persistance git",
-    "settings_repos_dir": "Répertoire des dépôts",
-    "settings_save": "Enregistrer les paramètres",
-    "settings_saving": "Enregistrement…",
-    "settings_loading": "Chargement…",
-    "settings_toast_saved": "Paramètres enregistrés",
-    "settings_error_load": "Impossible de charger les paramètres",
-    "settings_error_save": "Impossible d'enregistrer les paramètres",
     "dexie_unavailable_body": "Cette fonctionnalité n'est disponible qu'en mode serveur. Passez en mode serveur dans les Paramètres pour activer les dépôts d'apprentissage avec git.",
-    "back_to_dashboard": "Retour au tableau de bord"
+    "back_to_dashboard": "Retour au tableau de bord",
+    "page": {
+      "title": "Dépôt d'apprentissage",
+      "rendered_at": "Généré le",
+      "language": "Langue"
+    },
+    "action": {
+      "rerender": "Régénérer",
+      "download_zip": "Télécharger le ZIP",
+      "persist": "Enregistrer dans git",
+      "persisting": "Enregistrement…"
+    },
+    "toast": {
+      "zip_downloaded": "ZIP téléchargé",
+      "persisted": "Enregistré dans git"
+    },
+    "error": {
+      "render_failed": "Impossible de générer le dépôt",
+      "zip_failed": "Échec de l'export ZIP",
+      "persist_failed": "Impossible d'enregistrer dans git",
+      "missing_project": "Aucun projet sélectionné."
+    },
+    "widget": {
+      "title": "Dépôt d'apprentissage",
+      "open": "Ouvrir le dépôt"
+    },
+    "settings": {
+      "title": "Dépôt d'apprentissage",
+      "loading": "Chargement…",
+      "repos_dir": "Répertoire des dépôts",
+      "save": "Enregistrer les paramètres",
+      "saving": "Enregistrement…",
+      "toast": {
+        "saved": "Paramètres enregistrés"
+      },
+      "error": {
+        "load": "Impossible de charger les paramètres",
+        "save": "Impossible d'enregistrer les paramètres"
+      }
+    }
   },
   "lesson": {
     "page_title": "Leçon",
