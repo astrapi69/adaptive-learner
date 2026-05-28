@@ -172,6 +172,23 @@ const ROUTES: RouteCase[] = [
         ],
     },
     {
+        name: "AdaptiveLesson (Phase 53G adaptive session, empty errors path)",
+        path: "/adaptive-lesson/language-fr-a1",
+        // First-visit GH-Pages users have no ElementError
+        // rows, so the analyzer's active set is empty and the
+        // generator can't produce a lesson. The "nothing to
+        // adapt yet" empty panel is the right surface. The
+        // not-cached fallback covers the case where the set
+        // hasn't been downloaded yet, and -loading covers the
+        // async fetch gap. ALL three terminal testids are
+        // accepted — the race between them is benign.
+        expectedTestIds: [
+            "adaptive-lesson-loading",
+            "adaptive-lesson-empty",
+            "adaptive-lesson-not-cached",
+        ],
+    },
+    {
         name: "NotFound",
         path: "/this-route-does-not-exist",
         expectedTestIds: ["not-found"],
