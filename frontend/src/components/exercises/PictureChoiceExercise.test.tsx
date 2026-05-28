@@ -9,6 +9,25 @@ import "@testing-library/jest-dom/vitest";
 import {act, fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
+// Phase 54C: stub the asset resolver so PictureChoiceExercise
+// tests stay synchronous (no Dexie / API / storage mocking
+// required at this layer). The default stub returns the
+// "no asset" path so the legacyResolveSrc / text-fallback
+// branches stay testable.
+interface UseAssetStub {
+    url: string | null;
+    loading: boolean;
+    error: boolean;
+}
+const useAssetMock = vi.fn<() => UseAssetStub>(() => ({
+    url: null,
+    loading: false,
+    error: true,
+}));
+vi.mock("../../hooks/useAsset", () => ({
+    useAsset: () => useAssetMock(),
+}));
+
 import PictureChoiceExercise from "./PictureChoiceExercise";
 import type {ContentLessonExercise} from "../../storage/types";
 
@@ -130,10 +149,13 @@ describe("PictureChoiceExercise: scoring", () => {
 
 describe("PictureChoiceExercise: text fallback on image error", () => {
     it("swaps to text-only when an image fails to load", () => {
+        // Use the legacy resolver to produce an actual <img>
+        // first; then the per-tile onError fallback fires.
         render(
             <PictureChoiceExercise
                 exercise={EXERCISE}
                 onComplete={vi.fn()}
+                resolveImageSrc={(raw) => `/cdn/${raw}`}
             />,
         );
         const tile1 = screen.getByTestId("picture-choice-1");
@@ -147,6 +169,71 @@ describe("PictureChoiceExercise: text fallback on image error", () => {
         expect(
             screen.getByTestId("picture-choice-1").className,
         ).toMatch(/is-text-fallback/);
+    });
+
+    it("renders text-only when no asset AND no legacy resolver", () => {
+        render(
+            <PictureChoiceExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+            />,
+        );
+        // Every tile lands on the text-fallback branch since
+        // useAsset returns error: true (the default mock) and
+        // no legacyResolveSrc is supplied.
+        for (let i = 0; i < 4; i++) {
+            expect(
+                screen.getByTestId(`picture-choice-${i}`).className,
+            ).toMatch(/is-text-fallback/);
+        }
+    });
+
+    it("renders skeleton while the asset resolver is loading", () => {
+        useAssetMock.mockReturnValueOnce({
+            url: null,
+            loading: true,
+            error: false,
+        });
+        // Subsequent calls (the other 3 tiles) use the default
+        // stub (error: true) since mockReturnValueOnce only
+        // fires once. Only tile 0 should show the skeleton.
+        render(
+            <PictureChoiceExercise
+                exercise={EXERCISE}
+                source="owner/repo"
+                setId="set-1"
+                onComplete={vi.fn()}
+            />,
+        );
+        expect(
+            screen.getByTestId("picture-tile-skeleton-0"),
+        ).toBeInTheDocument();
+    });
+
+    it("renders the resolved asset URL as the <img> src", () => {
+        useAssetMock.mockReturnValue({
+            url: "blob:test/asset",
+            loading: false,
+            error: false,
+        });
+        render(
+            <PictureChoiceExercise
+                exercise={EXERCISE}
+                source="owner/repo"
+                setId="set-1"
+                onComplete={vi.fn()}
+            />,
+        );
+        const tile = screen.getByTestId("picture-choice-0");
+        const img = tile.querySelector("img");
+        expect(img?.getAttribute("src")).toBe("blob:test/asset");
+        expect(img?.getAttribute("alt")).toBe("Cat");
+        // Reset for subsequent tests in the file.
+        useAssetMock.mockReturnValue({
+            url: null,
+            loading: false,
+            error: true,
+        });
     });
 });
 

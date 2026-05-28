@@ -41,6 +41,12 @@ export interface ExerciseDispatcherProps {
      *  on every produced ElementAttempt. */
     setId: string;
     lessonId: string;
+    /** Phase 54C / v1.37.0 — content source slug
+     *  ("owner/name"). Threaded through to PictureChoice so
+     *  useAsset can resolve images from the right content
+     *  cache. Optional; review / adaptive sessions pass
+     *  empty and accept the text-only fallback. */
+    source?: string;
     onComplete: (result: {
         correct: number;
         total: number;
@@ -52,6 +58,7 @@ export function ExerciseDispatcher({
     step,
     setId,
     lessonId,
+    source = "",
     onComplete,
 }: ExerciseDispatcherProps) {
     const ex: ContentLessonExercise | null = step.exercise ?? null;
@@ -78,6 +85,7 @@ export function ExerciseDispatcher({
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
+                source={source}
                 onComplete={(scored) => {
                     void onComplete(scored);
                 }}

@@ -367,6 +367,7 @@ export default function LessonPage() {
                             step={step!}
                             setId={setId}
                             lessonId={filename}
+                            source={source}
                             onComplete={async (scored) => {
                                 if (!step!.exercise) return;
                                 // Phase 52C / v1.35.0 — persist the

@@ -1,5 +1,6 @@
 /**
- * PictureChoiceExercise (Phase 44 / EXP-002 / 3D — F-107).
+ * PictureChoiceExercise (Phase 44 / EXP-002 / 3D — F-107;
+ * Phase 54C / v1.37.0 — real image support).
  *
  * "Pick the image" exercise. The lesson schema's
  * ``Exercise.images`` is a list of ``{src, label, is_correct?}``;
@@ -7,22 +8,33 @@
  * renders each image as a tap target; submit reports
  * ``{correct: 0|1, total: 1}`` to the parent.
  *
- * Graceful image-degradation: if an ``<img>`` fails to load
- * (404, network error, asset not in cache), the tile swaps
- * to text-only display showing the label. This matters in
- * v1.28.0 because Phase 43's download orchestrator only
- * fetches lesson JSON, not the ``assets/`` directory — every
- * pilot picture-choice step lands in text-only mode until a
- * future phase adds asset fetching. The exercise is still
- * playable since each image carries a textual label.
+ * Image-resolution chain (Phase 54C):
+ *   1. ``useAsset(source, setId, assetPath)`` looks up the
+ *      cached blob from the storage layer. Hit → render
+ *      ``<img>`` with the object URL. Loading → skeleton.
+ *      Miss/error → step 2.
+ *   2. If the parent supplied a ``resolveImageSrc`` callback
+ *      (legacy v1.28.0 path), call it with the raw ``src``.
+ *      A non-empty return becomes the ``<img>`` src.
+ *   3. Otherwise: text-only fallback — the choice label
+ *      remains the entire tap target. The exercise stays
+ *      playable since each image carries a textual label.
  *
  * Mobile-first: 2-column grid on narrow viewports, 4-column
  * on wide ones. Each tile is a 44px+ touch target.
+ *
+ * Source threading: the parent (ExerciseDispatcher → Lesson
+ * page) passes ``source`` so useAsset can target the right
+ * content repo's cache. Review / AdaptiveLesson pages pass
+ * an empty string; the asset resolver returns null
+ * gracefully → text-only fallback. Future work could thread
+ * source through the review/adaptive routes too.
  */
 
 import {Check, RotateCcw, X} from "lucide-react";
 import {useMemo, useState} from "react";
 
+import {useAsset} from "../../hooks/useAsset";
 import {useI18n} from "../../hooks/useI18n";
 import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
 import type {
@@ -36,6 +48,10 @@ export interface PictureChoiceExerciseProps {
      *  Optional in unit tests; required in production. */
     setId?: string;
     lessonId?: string;
+    /** Phase 54C / v1.37.0 — source slug ("owner/name") for
+     *  asset lookup. When empty, useAsset returns ``error:
+     *  true`` and every tile falls back to text-only. */
+    source?: string;
     /** Called on submit with the score (0 or 1 correct of 1
      *  total) plus the single-attempt SRS payload. */
     onComplete: (result: {
@@ -44,9 +60,11 @@ export interface PictureChoiceExerciseProps {
         attempts: ElementAttempt[];
     }) => void;
     /** Optional base path the parent prepends to each image
-     *  ``src``. When absent the component uses the raw
-     *  authored path, which works for absolute URLs and for
-     *  relative paths the parent has already resolved. */
+     *  ``src``. When absent the component uses the asset
+     *  resolver alone; when present, the resolver's null
+     *  case falls through to the callback before text-only
+     *  fallback. Legacy v1.28.0 hook kept for compatibility
+     *  with tests + ad-hoc lesson previews. */
     resolveImageSrc?: (rawSrc: string) => string;
 }
 
@@ -59,39 +77,40 @@ interface Choice {
 
 function _parseChoices(
     images: ContentLessonExercise["images"] | undefined,
-    resolveImageSrc: (raw: string) => string,
 ): Choice[] {
     if (!images) return [];
     return images.map((img, i) => ({
         index: i,
-        src: resolveImageSrc(img.src),
+        src: img.src,
         label: img.label,
         isCorrect: img.is_correct === "true",
     }));
+}
+
+/** Strip the ``assets/`` prefix from a lesson-authored path
+ *  so the resolver key matches the storage layer's
+ *  manifest-relative form. Idempotent on already-stripped
+ *  paths. */
+function _normalizeAssetPath(raw: string): string {
+    if (raw.startsWith("assets/")) return raw.slice("assets/".length);
+    return raw;
 }
 
 export default function PictureChoiceExercise({
     exercise,
     setId = "",
     lessonId = "",
+    source = "",
     onComplete,
-    resolveImageSrc = (raw) => raw,
+    resolveImageSrc,
 }: PictureChoiceExerciseProps) {
     const {t} = useI18n();
-    const choices = useMemo(
-        () => _parseChoices(exercise.images, resolveImageSrc),
-        [exercise.images, resolveImageSrc],
-    );
+    const choices = useMemo(() => _parseChoices(exercise.images), [exercise.images]);
 
     const [selected, setSelected] = useState<number | null>(null);
     const [submitted, setSubmitted] = useState(false);
     const [result, setResult] = useState<{correct: number; total: number} | null>(
         null,
-    );
-    /** Track which images failed to load so the tile renders
-     *  the text-only fallback. */
-    const [imageErrors, setImageErrors] = useState<Set<number>>(
-        () => new Set(),
     );
 
     if (choices.length === 0) {
@@ -130,15 +149,6 @@ export default function PictureChoiceExercise({
         setResult(null);
     };
 
-    const handleImageError = (idx: number) => {
-        setImageErrors((prev) => {
-            if (prev.has(idx)) return prev;
-            const next = new Set(prev);
-            next.add(idx);
-            return next;
-        });
-    };
-
     return (
         <section
             className="picture-exercise"
@@ -159,82 +169,19 @@ export default function PictureChoiceExercise({
                     "Image choices",
                 )}
             >
-                {choices.map((choice) => {
-                    const isSelected = selected === choice.index;
-                    const showAsCorrect =
-                        submitted && choice.isCorrect;
-                    const showAsWrong =
-                        submitted && isSelected && !choice.isCorrect;
-                    const useTextFallback = imageErrors.has(choice.index);
-                    return (
-                        <li key={choice.index}>
-                            <button
-                                type="button"
-                                className={`picture-tile${
-                                    isSelected ? " is-selected" : ""
-                                }${
-                                    showAsCorrect ? " is-correct" : ""
-                                }${showAsWrong ? " is-wrong" : ""}${
-                                    useTextFallback
-                                        ? " is-text-fallback"
-                                        : ""
-                                }`}
-                                onClick={() => handleSelect(choice.index)}
-                                aria-pressed={isSelected}
-                                disabled={submitted}
-                                data-testid={`picture-choice-${choice.index}`}
-                                data-correct={
-                                    choice.isCorrect ? "true" : "false"
-                                }
-                            >
-                                {useTextFallback ? (
-                                    <span className="picture-tile-fallback">
-                                        {choice.label}
-                                    </span>
-                                ) : (
-                                    <img
-                                        src={choice.src}
-                                        alt={choice.label}
-                                        onError={() =>
-                                            handleImageError(
-                                                choice.index,
-                                            )
-                                        }
-                                        loading="lazy"
-                                    />
-                                )}
-                                <span className="picture-tile-label">
-                                    {choice.label}
-                                </span>
-                                {showAsCorrect && (
-                                    <span
-                                        className="picture-tile-badge picture-tile-badge-correct"
-                                        aria-label={t(
-                                            "lesson.exercise.picture.correct_label",
-                                            "Correct",
-                                        )}
-                                    >
-                                        <Check
-                                            size={14}
-                                            aria-hidden="true"
-                                        />
-                                    </span>
-                                )}
-                                {showAsWrong && (
-                                    <span
-                                        className="picture-tile-badge picture-tile-badge-wrong"
-                                        aria-label={t(
-                                            "lesson.exercise.picture.wrong_label",
-                                            "Wrong",
-                                        )}
-                                    >
-                                        <X size={14} aria-hidden="true" />
-                                    </span>
-                                )}
-                            </button>
-                        </li>
-                    );
-                })}
+                {choices.map((choice) => (
+                    <li key={choice.index}>
+                        <PictureChoiceTile
+                            choice={choice}
+                            source={source}
+                            setId={setId}
+                            isSelected={selected === choice.index}
+                            submitted={submitted}
+                            onSelect={() => handleSelect(choice.index)}
+                            legacyResolveSrc={resolveImageSrc}
+                        />
+                    </li>
+                ))}
             </ul>
 
             <div className="picture-actions">
@@ -288,5 +235,111 @@ export default function PictureChoiceExercise({
                 )}
             </div>
         </section>
+    );
+}
+
+interface PictureChoiceTileProps {
+    choice: Choice;
+    source: string;
+    setId: string;
+    isSelected: boolean;
+    submitted: boolean;
+    onSelect: () => void;
+    legacyResolveSrc?: (rawSrc: string) => string;
+}
+
+/** One image-choice tile. Owns its own useAsset call so the
+ *  parent can stay a flat map() over choices without breaking
+ *  the rules-of-hooks ("hooks must be called at the top level
+ *  of a component, not inside a loop or condition"). */
+function PictureChoiceTile({
+    choice,
+    source,
+    setId,
+    isSelected,
+    submitted,
+    onSelect,
+    legacyResolveSrc,
+}: PictureChoiceTileProps) {
+    const {t} = useI18n();
+    const normalized = _normalizeAssetPath(choice.src);
+    const enabled = Boolean(source && setId && normalized);
+    const asset = useAsset(
+        enabled ? source : null,
+        enabled ? setId : null,
+        enabled ? normalized : null,
+    );
+    // Local <img> error fallback covers the case where the
+    // resolver gave us a URL but the actual image bytes are
+    // corrupt / unsupported. Same flag as v1.28.0.
+    const [imgFailed, setImgFailed] = useState(false);
+
+    let imgSrc: string | null = null;
+    if (asset.url && !imgFailed) {
+        imgSrc = asset.url;
+    } else if (legacyResolveSrc && !imgFailed) {
+        const resolved = legacyResolveSrc(choice.src);
+        if (resolved && resolved !== choice.src) imgSrc = resolved;
+    }
+
+    const showAsCorrect = submitted && choice.isCorrect;
+    const showAsWrong = submitted && isSelected && !choice.isCorrect;
+    const useTextFallback = imgSrc === null && !asset.loading;
+    const isLoading = asset.loading && imgSrc === null;
+
+    return (
+        <button
+            type="button"
+            className={`picture-tile${isSelected ? " is-selected" : ""}${
+                showAsCorrect ? " is-correct" : ""
+            }${showAsWrong ? " is-wrong" : ""}${
+                useTextFallback ? " is-text-fallback" : ""
+            }${isLoading ? " is-loading" : ""}`}
+            onClick={onSelect}
+            aria-pressed={isSelected}
+            disabled={submitted}
+            data-testid={`picture-choice-${choice.index}`}
+            data-correct={choice.isCorrect ? "true" : "false"}
+        >
+            {isLoading ? (
+                <span
+                    className="picture-tile-skeleton"
+                    data-testid={`picture-tile-skeleton-${choice.index}`}
+                    aria-hidden="true"
+                />
+            ) : useTextFallback ? (
+                <span className="picture-tile-fallback">{choice.label}</span>
+            ) : (
+                <img
+                    src={imgSrc as string}
+                    alt={choice.label}
+                    onError={() => setImgFailed(true)}
+                    loading="lazy"
+                />
+            )}
+            <span className="picture-tile-label">{choice.label}</span>
+            {showAsCorrect && (
+                <span
+                    className="picture-tile-badge picture-tile-badge-correct"
+                    aria-label={t(
+                        "lesson.exercise.picture.correct_label",
+                        "Correct",
+                    )}
+                >
+                    <Check size={14} aria-hidden="true" />
+                </span>
+            )}
+            {showAsWrong && (
+                <span
+                    className="picture-tile-badge picture-tile-badge-wrong"
+                    aria-label={t(
+                        "lesson.exercise.picture.wrong_label",
+                        "Wrong",
+                    )}
+                >
+                    <X size={14} aria-hidden="true" />
+                </span>
+            )}
+        </button>
     );
 }
