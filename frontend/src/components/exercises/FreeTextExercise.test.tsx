@@ -200,7 +200,7 @@ describe("FreeTextExercise: submit lifecycle", () => {
         expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 1}));
     });
 
-    it("reports {correct: 0, total: 1} for a wrong answer and reveals canonical", () => {
+    it("reports {correct: 0, total: 1} for a wrong answer and shows the token diff", () => {
         const onComplete = vi.fn();
         render(
             <FreeTextExercise
@@ -215,8 +215,13 @@ describe("FreeTextExercise: submit lifecycle", () => {
         expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
         const result = screen.getByTestId("free-text-result");
         expect(result).toHaveAttribute("data-result", "wrong");
-        // Canonical (first entry of accept) surfaces in the wrong-answer message.
-        expect(result).toHaveTextContent("Merci");
+        // Phase 52C / v1.35.0 — the canonical surfaces inside the
+        // DiffHighlight component sibling, NOT inline in the result
+        // paragraph (which is now just "Not quite.").
+        expect(result).not.toHaveTextContent("Merci");
+        const diffRow = screen.getByTestId("free-text-diff-row");
+        expect(diffRow).toBeInTheDocument();
+        expect(diffRow).toHaveTextContent("Merci");
     });
 
     it("Enter key submits when input is non-empty", () => {

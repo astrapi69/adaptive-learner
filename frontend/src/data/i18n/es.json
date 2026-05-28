@@ -1205,7 +1205,7 @@
         "input_label": "Tu respuesta",
         "hint_show": "¿Necesitas una pista?",
         "result_correct": "¡Correcto!",
-        "result_wrong": "Casi. La respuesta esperada era: {answer}",
+        "result_wrong": "Casi.",
         "empty": "Este ejercicio no tiene respuestas aceptadas."
       },
       "word_tiles": {
@@ -1217,7 +1217,7 @@
         "scrambled_done": "Todas las fichas colocadas.",
         "hint_show": "¿Necesitas una pista?",
         "result_correct": "¡Correcto!",
-        "result_wrong": "Casi. El orden esperado era: {answer}",
+        "result_wrong": "Casi.",
         "empty": "Este ejercicio de fichas no tiene fichas."
       }
     },

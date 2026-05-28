@@ -1205,7 +1205,7 @@
         "input_label": "Deine Antwort",
         "hint_show": "Tipp anzeigen?",
         "result_correct": "Richtig!",
-        "result_wrong": "Nicht ganz. Die erwartete Antwort war: {answer}",
+        "result_wrong": "Nicht ganz.",
         "empty": "Diese Freitext-Übung hat keine akzeptierten Antworten."
       },
       "word_tiles": {
@@ -1217,7 +1217,7 @@
         "scrambled_done": "Alle Kacheln platziert.",
         "hint_show": "Tipp anzeigen?",
         "result_correct": "Richtig!",
-        "result_wrong": "Nicht ganz. Die erwartete Reihenfolge war: {answer}",
+        "result_wrong": "Nicht ganz.",
         "empty": "Diese Wortkachel-Übung hat keine Kacheln."
       }
     },

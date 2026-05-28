@@ -30,10 +30,12 @@ import {useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {deriveWordTilesAttempt} from "../../lib/element-attempt";
+import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {
     ContentLessonExercise,
     ElementAttempt,
 } from "../../storage/types";
+import DiffHighlight from "./DiffHighlight";
 
 export interface WordTilesExerciseProps {
     exercise: ContentLessonExercise;
@@ -345,11 +347,25 @@ export default function WordTilesExercise({
                                     <X size={14} aria-hidden="true" />
                                     {t(
                                         "lesson.exercise.word_tiles.result_wrong",
-                                        "Not quite. The expected order was: {answer}",
-                                    ).replace("{answer}", canonicalDisplay)}
+                                        "Not quite.",
+                                    )}
                                 </>
                             )}
                         </p>
+                        {!isCorrect && (
+                            <div
+                                className="word-tiles-diff-row"
+                                data-testid="word-tiles-diff-row"
+                            >
+                                <DiffHighlight
+                                    tokens={tokenDiff(
+                                        placed.map((idx) => tiles[idx]).join(" "),
+                                        canonicalDisplay,
+                                    )}
+                                    className="word-tiles-diff"
+                                />
+                            </div>
+                        )}
                         <button
                             type="button"
                             className="btn"

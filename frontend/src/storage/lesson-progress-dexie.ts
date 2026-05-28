@@ -119,14 +119,21 @@ export async function upsertLessonProgressDexie(
           };
 
     if (body.step_result) {
+        const storedResult: LessonProgressRow["step_results"][string] = {
+            correct: body.step_result.correct,
+            total: body.step_result.total,
+            attempts: body.step_result.attempts ?? 1,
+            completed_at: now,
+        };
+        // Phase 52C / v1.35.0 — persist the user's text-form
+        // answer when present so the lesson-summary token-diff
+        // display can render without an ElementError round-trip.
+        if (body.step_result.user_answer != null) {
+            storedResult.user_answer = body.step_result.user_answer;
+        }
         row.step_results = {
             ...row.step_results,
-            [body.step_result.step_id]: {
-                correct: body.step_result.correct,
-                total: body.step_result.total,
-                attempts: body.step_result.attempts ?? 1,
-                completed_at: now,
-            },
+            [body.step_result.step_id]: storedResult,
         };
         const aggregate = recomputeScore(row.step_results);
         row.score_correct = aggregate.correct;

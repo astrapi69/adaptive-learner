@@ -39,9 +39,11 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+import DiffHighlight from "../components/exercises/DiffHighlight";
 import {ExerciseDispatcher} from "../components/exercises/ExerciseDispatcher";
 import {useI18n} from "../hooks/useI18n";
 import {useLesson} from "../hooks/useLesson";
+import {tokenDiff} from "../lib/exercises/token-diff";
 import {
     parseStepAnchor,
     rewriteAnchors,
@@ -363,10 +365,33 @@ export default function LessonPage() {
                             lessonId={filename}
                             onComplete={async (scored) => {
                                 if (!step!.exercise) return;
+                                // Phase 52C / v1.35.0 — persist the
+                                // user's text-form answer when the
+                                // exercise type carries a coherent
+                                // text representation of the whole
+                                // answer (free_text + word_tiles).
+                                // Matching + picture_choice DO emit
+                                // a per-element user_answer through
+                                // ElementAttempt for SRS purposes,
+                                // but those single tokens (a paired
+                                // right-tile, a chosen image label)
+                                // are not the "answer" the summary
+                                // diff renders against the lesson
+                                // canonical — leave them null so the
+                                // summary falls back to the
+                                // canonical-only line.
+                                const exerciseType = step!.exercise.type;
+                                const stepUserAnswer =
+                                    exerciseType === "free_text" ||
+                                    exerciseType === "word_tiles"
+                                        ? (scored.attempts[0]?.user_answer ??
+                                          null)
+                                        : null;
                                 await recordStepResult({
                                     step_id: step!.id,
                                     correct: scored.correct,
                                     total: scored.total,
+                                    user_answer: stepUserAnswer,
                                 });
                                 // Phase 46B — persist per-element
                                 // attempts alongside the per-step
@@ -663,7 +688,30 @@ function LessonSummary({
                                     )}
                                     {entry.attempted &&
                                         !entry.fullyCorrect &&
-                                        entry.canonicalAnswer && (
+                                        entry.canonicalAnswer &&
+                                        // Phase 52C / v1.35.0 — when the
+                                        // stored user_answer is available
+                                        // (free-text + word-tiles), show
+                                        // the token-level diff against
+                                        // the canonical instead of a bare
+                                        // "Correct answer: X" line. The
+                                        // bare line stays as the fallback
+                                        // for matching + picture-choice
+                                        // (no text answer) and for
+                                        // lessons stored pre-v1.35.0.
+                                        (entry.userAnswer ? (
+                                            <span
+                                                className="lesson-summary-breakdown-diff"
+                                                data-testid={`lesson-summary-breakdown-diff-${entry.stepId}`}
+                                            >
+                                                <DiffHighlight
+                                                    tokens={tokenDiff(
+                                                        entry.userAnswer,
+                                                        entry.canonicalAnswer,
+                                                    )}
+                                                />
+                                            </span>
+                                        ) : (
                                             <span className="lesson-summary-breakdown-canonical">
                                                 {t(
                                                     "lesson.summary.breakdown_correct_answer",
@@ -673,7 +721,7 @@ function LessonSummary({
                                                     entry.canonicalAnswer,
                                                 )}
                                             </span>
-                                        )}
+                                        ))}
                                 </li>
                             );
                         })}

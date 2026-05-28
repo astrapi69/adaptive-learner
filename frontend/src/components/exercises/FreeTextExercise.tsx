@@ -33,10 +33,12 @@ import {useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {deriveFreeTextAttempt} from "../../lib/element-attempt";
+import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {
     ContentLessonExercise,
     ElementAttempt,
 } from "../../storage/types";
+import DiffHighlight from "./DiffHighlight";
 
 /** Levenshtein edit distance between ``a`` and ``b``.
  *  Two-row DP variant: O(m*n) time, O(n) space. The free-
@@ -260,11 +262,22 @@ export default function FreeTextExercise({
                                     <X size={14} aria-hidden="true" />
                                     {t(
                                         "lesson.exercise.free_text.result_wrong",
-                                        "Not quite. The expected answer was: {answer}",
-                                    ).replace("{answer}", canonical)}
+                                        "Not quite.",
+                                    )}
                                 </>
                             )}
                         </p>
+                        {!isCorrect && (
+                            <div
+                                className="free-text-diff-row"
+                                data-testid="free-text-diff-row"
+                            >
+                                <DiffHighlight
+                                    tokens={tokenDiff(input, canonical)}
+                                    className="free-text-diff"
+                                />
+                            </div>
+                        )}
                         <button
                             type="button"
                             className="btn"

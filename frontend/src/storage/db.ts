@@ -411,6 +411,10 @@ export interface LessonProgressRow {
             total: number;
             attempts: number;
             completed_at: string;
+            /** Phase 52C / v1.35.0 — see ``LessonStepResultStored``
+             *  in storage/types.ts. Free-text + word-tiles populate
+             *  this; matching + picture-choice leave it absent. */
+            user_answer?: string | null;
         }
     >;
     score_correct: number;

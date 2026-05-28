@@ -381,6 +381,44 @@ describe("buildExerciseBreakdown", () => {
         expect(tiles.canonicalAnswer).toBe("Bon soir");
     });
 
+    // Phase 52C / v1.35.0 — user_answer plumbing
+    it("returns userAnswer=null when the step has no stored user_answer", () => {
+        const entries = buildExerciseBreakdown(LESSON, PROGRESS_BASE);
+        for (const entry of entries) {
+            expect(entry.userAnswer).toBeNull();
+        }
+    });
+
+    it("reads userAnswer from step_results[step].user_answer when present", () => {
+        const progress: LessonProgress = {
+            ...PROGRESS_BASE,
+            step_results: {
+                "ex-free": {
+                    correct: 0,
+                    total: 1,
+                    attempts: 1,
+                    completed_at: "2026-05-27T00:02:00Z",
+                    user_answer: "bonjour",
+                },
+                "ex-tiles": {
+                    correct: 1,
+                    total: 1,
+                    attempts: 1,
+                    completed_at: "2026-05-27T00:03:00Z",
+                    user_answer: "Bon soir",
+                },
+            },
+        };
+        const entries = buildExerciseBreakdown(LESSON, progress);
+        const free = entries.find((e) => e.stepId === "ex-free")!;
+        expect(free.userAnswer).toBe("bonjour");
+        const tiles = entries.find((e) => e.stepId === "ex-tiles")!;
+        expect(tiles.userAnswer).toBe("Bon soir");
+        const match = entries.find((e) => e.stepId === "ex-match")!;
+        // ex-match has no result -> userAnswer null (defaults)
+        expect(match.userAnswer).toBeNull();
+    });
+
     it("handles null progress (lesson never started) by returning all-unattempted entries", () => {
         const entries = buildExerciseBreakdown(LESSON, null);
         expect(entries).toHaveLength(3);

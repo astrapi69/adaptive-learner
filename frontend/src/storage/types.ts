@@ -339,6 +339,11 @@ export interface LessonStepResult {
     correct: number;
     total: number;
     attempts?: number;
+    /** Phase 52C / v1.35.0 — the user's text-form answer for the
+     *  step, when applicable. Free-text + word-tiles populate
+     *  it; matching + picture-choice leave it undefined. Powers
+     *  the lesson-summary token-diff display. */
+    user_answer?: string | null;
 }
 
 export interface LessonProgressUpsertBody {
@@ -359,6 +364,10 @@ export interface LessonStepResultStored {
     total: number;
     attempts: number;
     completed_at: string;
+    /** Phase 52C / v1.35.0 — see ``LessonStepResult.user_answer``.
+     *  Old rows without this field surface as ``undefined`` and the
+     *  summary falls back to the canonical-answer-only line. */
+    user_answer?: string | null;
 }
 
 export interface LessonProgress {

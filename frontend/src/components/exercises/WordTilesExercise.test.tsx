@@ -232,7 +232,7 @@ describe("WordTilesExercise: submit lifecycle", () => {
         );
     });
 
-    it("wrong order reports correct=0 and reveals the canonical answer", () => {
+    it("wrong order reports correct=0 and shows the canonical via DiffHighlight", () => {
         const onComplete = vi.fn();
         render(
             <WordTilesExercise
@@ -246,7 +246,12 @@ describe("WordTilesExercise: submit lifecycle", () => {
         expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 0, total: 1}));
         const result = screen.getByTestId("word-tiles-result");
         expect(result).toHaveAttribute("data-result", "wrong");
-        expect(result).toHaveTextContent("Au revoir");
+        // Phase 52C / v1.35.0 — canonical surfaces in the diff
+        // sibling, NOT inline in the result paragraph.
+        expect(result).not.toHaveTextContent("Au revoir");
+        const diffRow = screen.getByTestId("word-tiles-diff-row");
+        expect(diffRow).toBeInTheDocument();
+        expect(diffRow).toHaveTextContent("Au revoir");
     });
 
     it("any accept_orderings permutation reports correct=1", () => {

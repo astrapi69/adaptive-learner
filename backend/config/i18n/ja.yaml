@@ -1109,7 +1109,7 @@ lesson:
       input_label: "あなたの答え"
       hint_show: "ヒントが必要ですか？"
       result_correct: "正解です！"
-      result_wrong: "惜しい。期待されていた答え: {answer}"
+      result_wrong: "惜しい。"
       empty: "この自由記述演習には受け付ける答えがありません。"
     word_tiles:
       submit: "答えを確認"
@@ -1120,7 +1120,7 @@ lesson:
       scrambled_done: "すべてのタイルを配置しました。"
       hint_show: "ヒントが必要ですか？"
       result_correct: "正解です！"
-      result_wrong: "惜しい。期待されていた順序: {answer}"
+      result_wrong: "惜しい。"
       empty: "この単語タイル演習にはタイルがありません。"
   summary:
     heading: "完了"

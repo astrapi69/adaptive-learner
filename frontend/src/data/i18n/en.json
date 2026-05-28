@@ -1205,7 +1205,7 @@
         "input_label": "Your answer",
         "hint_show": "Need a hint?",
         "result_correct": "Correct!",
-        "result_wrong": "Not quite. The expected answer was: {answer}",
+        "result_wrong": "Not quite.",
         "empty": "This free-text exercise has no accepted answers."
       },
       "word_tiles": {
@@ -1217,7 +1217,7 @@
         "scrambled_done": "All tiles placed.",
         "hint_show": "Need a hint?",
         "result_correct": "Correct!",
-        "result_wrong": "Not quite. The expected order was: {answer}",
+        "result_wrong": "Not quite.",
         "empty": "This word-tiles exercise has no tiles."
       }
     },

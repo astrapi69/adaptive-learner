@@ -50,6 +50,14 @@ export interface ExerciseBreakdownEntry {
      *  the cached exercise is missing its type-specific
      *  content (defensive). */
     canonicalAnswer: string;
+    /** Phase 52C / v1.35.0 — the user's text-form answer for
+     *  the step, read from ``step_results[stepId].user_answer``.
+     *  Null when the exercise type does not carry a text answer
+     *  (matching / picture-choice) OR when the lesson predates
+     *  v1.35.0 (no user_answer was stored). The summary renders
+     *  ``<DiffHighlight />`` when present, falls back to the
+     *  canonical-only line otherwise. */
+    userAnswer: string | null;
 }
 
 /** Map a raw correct/total pair to the 0–3 star rating per
@@ -114,10 +122,10 @@ export function buildExerciseBreakdown(
     const entries: ExerciseBreakdownEntry[] = [];
     for (const step of lesson.steps) {
         if (step.type !== "exercise" || !step.exercise) continue;
-        const result = stepResults[step.id];
-        const attempted = result !== undefined;
-        const correct = result?.correct ?? 0;
-        const total = result?.total ?? 0;
+        const stepResult = stepResults[step.id];
+        const attempted = stepResult !== undefined;
+        const correct = stepResult?.correct ?? 0;
+        const total = stepResult?.total ?? 0;
         entries.push({
             stepId: step.id,
             title: step.title ?? step.exercise.prompt,
@@ -127,6 +135,7 @@ export function buildExerciseBreakdown(
             total,
             fullyCorrect: attempted && total > 0 && correct === total,
             canonicalAnswer: deriveCanonicalAnswer(step.exercise),
+            userAnswer: stepResult?.user_answer ?? null,
         });
     }
     return entries;

@@ -1111,7 +1111,7 @@ lesson:
       input_label: "Η απάντησή σου"
       hint_show: "Χρειάζεσαι υπόδειξη;"
       result_correct: "Σωστά!"
-      result_wrong: "Όχι ακριβώς. Η αναμενόμενη απάντηση ήταν: {answer}"
+      result_wrong: "Όχι ακριβώς."
       empty: "Αυτή η άσκηση ελεύθερου κειμένου δεν έχει αποδεκτές απαντήσεις."
     word_tiles:
       submit: "Έλεγχος απάντησης"
@@ -1122,7 +1122,7 @@ lesson:
       scrambled_done: "Όλες οι πλακέτες τοποθετήθηκαν."
       hint_show: "Χρειάζεσαι υπόδειξη;"
       result_correct: "Σωστά!"
-      result_wrong: "Όχι ακριβώς. Η αναμενόμενη σειρά ήταν: {answer}"
+      result_wrong: "Όχι ακριβώς."
       empty: "Αυτή η άσκηση πλακέτας δεν έχει πλακέτες."
   summary:
     heading: "Τελείωσες"

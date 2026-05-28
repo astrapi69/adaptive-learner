@@ -1175,6 +1175,18 @@ class StepResultIn(BaseModel):
     correct: int = Field(..., ge=0)
     total: int = Field(..., ge=0)
     attempts: int = Field(default=1, ge=1)
+    user_answer: str | None = Field(
+        default=None,
+        max_length=2000,
+        description=(
+            "Phase 52C / v1.35.0. The user's text-form answer for "
+            "the step, when applicable. Free-text + word-tiles "
+            "exercises populate this; matching + picture-choice "
+            "leave it None. Powers the Phase 52 lesson-summary "
+            "token-diff display without a separate ElementError "
+            "round-trip."
+        ),
+    )
 
 
 class LessonProgressUpsert(BaseModel):

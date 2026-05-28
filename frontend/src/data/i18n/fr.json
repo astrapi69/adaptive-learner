@@ -1205,7 +1205,7 @@
         "input_label": "Ta réponse",
         "hint_show": "Besoin d'un indice ?",
         "result_correct": "Correct !",
-        "result_wrong": "Pas tout à fait. La réponse attendue était : {answer}",
+        "result_wrong": "Pas tout à fait.",
         "empty": "Cet exercice n'a pas de réponses acceptées."
       },
       "word_tiles": {
@@ -1217,7 +1217,7 @@
         "scrambled_done": "Toutes les tuiles sont placées.",
         "hint_show": "Besoin d'un indice ?",
         "result_correct": "Correct !",
-        "result_wrong": "Pas tout à fait. L'ordre attendu était : {answer}",
+        "result_wrong": "Pas tout à fait.",
         "empty": "Cet exercice de tuiles n'a pas de tuiles."
       }
     },

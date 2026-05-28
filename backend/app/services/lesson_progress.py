@@ -157,12 +157,20 @@ def upsert_progress(
     results = _decode_results(row)
     if step_result is not None:
         step_id = step_result["step_id"]
-        results[step_id] = {
+        merged: dict[str, Any] = {
             "correct": int(step_result.get("correct", 0)),
             "total": int(step_result.get("total", 0)),
             "attempts": int(step_result.get("attempts", 1)),
             "completed_at": now.isoformat(),
         }
+        # Phase 52C / v1.35.0: optional user_answer field that the
+        # lesson-summary diff display reads. Persisted only when the
+        # client sent one (free-text + word-tiles) — matching +
+        # picture-choice leave it absent.
+        user_answer = step_result.get("user_answer")
+        if user_answer is not None:
+            merged["user_answer"] = str(user_answer)
+        results[step_id] = merged
         row.step_results = json.dumps(results, sort_keys=True)
         row.score_correct, row.score_total = _recompute_score(results)
 

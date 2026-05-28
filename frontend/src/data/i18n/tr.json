@@ -1205,7 +1205,7 @@
         "input_label": "Senin cevabın",
         "hint_show": "İpucu ister misin?",
         "result_correct": "Doğru!",
-        "result_wrong": "Pek değil. Beklenen cevap: {answer}",
+        "result_wrong": "Pek değil.",
         "empty": "Bu serbest metin alıştırmasının kabul edilen cevabı yok."
       },
       "word_tiles": {
@@ -1217,7 +1217,7 @@
         "scrambled_done": "Tüm kutucuklar yerleştirildi.",
         "hint_show": "İpucu ister misin?",
         "result_correct": "Doğru!",
-        "result_wrong": "Pek değil. Beklenen sıra: {answer}",
+        "result_wrong": "Pek değil.",
         "empty": "Bu kelime kutucukları alıştırmasında kutucuk yok."
       }
     },

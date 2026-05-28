@@ -354,10 +354,14 @@ describe("LessonPage: ready state rendering", () => {
         fireEvent.click(screen.getByTestId("matching-right-0"));
         fireEvent.click(screen.getByTestId("matching-submit"));
         await waitFor(() => {
+            // Phase 52C / v1.35.0 — recordStepResult now carries
+            // an optional user_answer; matching exercises don't
+            // emit one so it lands as null.
             expect(recordStepResult).toHaveBeenCalledWith({
                 step_id: "ex-1",
                 correct: 1,
                 total: 1,
+                user_answer: null,
             });
         });
     });

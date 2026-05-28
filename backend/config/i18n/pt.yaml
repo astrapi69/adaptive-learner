@@ -1109,7 +1109,7 @@ lesson:
       input_label: "A tua resposta"
       hint_show: "Precisas de uma dica?"
       result_correct: "Correto!"
-      result_wrong: "Quase. A resposta esperada era: {answer}"
+      result_wrong: "Quase."
       empty: "Este exercício não tem respostas aceitas."
     word_tiles:
       submit: "Verificar resposta"
@@ -1120,7 +1120,7 @@ lesson:
       scrambled_done: "Todas as peças colocadas."
       hint_show: "Precisas de uma dica?"
       result_correct: "Correto!"
-      result_wrong: "Quase. A ordem esperada era: {answer}"
+      result_wrong: "Quase."
       empty: "Este exercício de peças não tem peças."
   summary:
     heading: "Terminado"
