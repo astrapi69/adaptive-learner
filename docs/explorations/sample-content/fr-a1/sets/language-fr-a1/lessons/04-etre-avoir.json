@@ -316,6 +316,28 @@
           {"left": "I am a student", "right": "être"}
         ]
       }
+    },
+    {
+      "id": "ex-cloze-avoir-amie",
+      "type": "exercise",
+      "title": "Cloze: avoir vs être (Phase 52H / v1.35.0)",
+      "exercise": {
+        "id": "ex-cloze-avoir-amie",
+        "type": "cloze",
+        "prompt": "Fill in the right form of *avoir* or *être*.",
+        "card_ids": ["avoir-a"],
+        "sentence": "Elle ___ une amie.",
+        "blanks": [
+          {
+            "accept": ["a"],
+            "hint": "*avoir* present, 3rd person singular",
+            "placeholder": "?"
+          }
+        ],
+        "cloze_mode": "type",
+        "distractors": ["est", "as", "ont"],
+        "hint": "*Elle a une amie* = *She has a friend* — possession uses *avoir*. *Elle est une amie* would mean *She IS a friend* (identity, using *être*), which is grammatically valid but a different sentence."
+      }
     }
   ]
 }

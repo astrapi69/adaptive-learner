@@ -9,7 +9,7 @@
 # Schema reference: ContentManifest in
 # plugins/adaptive-learner-plugin-content-loader/
 #   adaptive_learner_content_loader/models.py.
-schema_version: '1.0'
+schema_version: '1.1'
 name: Adaptive Learner Pilot Content
 description: >-
   Pilot lesson set ecosystem accompanying the v1.27.0
@@ -20,7 +20,7 @@ sets:
     title: French A1 (Beginner)
     language: fr
     level: A1
-    version: '1.1.0'
+    version: '1.2.0'
     lesson_count: 10
     domain: language
     description: >-

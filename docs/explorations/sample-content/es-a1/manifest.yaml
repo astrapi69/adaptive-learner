@@ -4,7 +4,7 @@
 # Sister manifest to ``fr-a1/manifest.yaml``. Both manifests
 # can be bundled side-by-side into the GH-Pages build (Phase
 # 51D) or hosted from separate sources in a content repo.
-schema_version: '1.0'
+schema_version: '1.1'
 name: Adaptive Learner Pilot Content — Spanish A1
 description: >-
   Spanish A1 pilot set, sister to the French A1 set shipped
@@ -16,7 +16,7 @@ sets:
     title: Español A1 (Principiante)
     language: es
     level: A1
-    version: '1.0.0'
+    version: '1.1.0'
     lesson_count: 5
     domain: language
     description: >-

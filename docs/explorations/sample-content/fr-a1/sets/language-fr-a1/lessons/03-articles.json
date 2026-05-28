@@ -289,6 +289,28 @@
         "hint": "Definite plural is *les*. The other options have grammar errors.",
         "distractors": ["Je vois des enfants.", "Je vois un enfants.", "Je vois l'enfants."]
       }
+    },
+    {
+      "id": "ex-cloze-indef-chat",
+      "type": "exercise",
+      "title": "Cloze: indefinite article (Phase 52H / v1.35.0)",
+      "exercise": {
+        "id": "ex-cloze-indef-chat",
+        "type": "cloze",
+        "prompt": "Fill in the indefinite article.",
+        "card_ids": ["art-un", "noun-chat"],
+        "sentence": "Je vois ___ chat dans le jardin.",
+        "blanks": [
+          {
+            "accept": ["un"],
+            "hint": "indefinite article, masculine singular",
+            "placeholder": "?"
+          }
+        ],
+        "cloze_mode": "type",
+        "distractors": ["le", "la", "les"],
+        "hint": "*un* is the masculine indefinite article — *the* would be definite (*le*); a feminine indefinite is *une*."
+      }
     }
   ]
 }

@@ -301,6 +301,28 @@
         "tiles": ["Es", "alta", "y", "está", "feliz"],
         "hint": "Two clauses. First *es* (tall = characteristic), then *está* (happy = current feeling)."
       }
+    },
+    {
+      "id": "ex-cloze-ser-soy",
+      "type": "exercise",
+      "title": "Cloze: identity → ser (Phase 52H / v1.35.0)",
+      "exercise": {
+        "id": "ex-cloze-ser-soy",
+        "type": "cloze",
+        "prompt": "Fill in the right form of *ser* or *estar*.",
+        "card_ids": ["ser-soy"],
+        "sentence": "Yo ___ estudiante.",
+        "blanks": [
+          {
+            "accept": ["soy"],
+            "hint": "*ser* present, 1st person singular",
+            "placeholder": "?"
+          }
+        ],
+        "cloze_mode": "type",
+        "distractors": ["estoy", "es", "está"],
+        "hint": "Being a student is an identity / role, so *ser* (→ *soy*) — not *estar* (→ *estoy*), which is for temporary states / locations."
+      }
     }
   ]
 }

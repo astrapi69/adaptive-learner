@@ -5,7 +5,7 @@
 # the lesson filename list (``metadata.lessons``). Adding a
 # new lesson is a two-line PR: add the JSON file under
 # ``lessons/`` and append its filename here.
-schema_version: '1.0'
+schema_version: '1.1'
 name: French A1 (Beginner)
 description: >-
   Ten-lesson A1-level French course: greetings, numbers,
@@ -18,7 +18,7 @@ sets:
     title: French A1 (Beginner)
     language: fr
     level: A1
-    version: '1.1.0'
+    version: '1.2.0'
     lesson_count: 10
     domain: language
     description: >-
