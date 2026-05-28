@@ -1219,6 +1219,17 @@
         "result_correct": "Correto!",
         "result_wrong": "Quase.",
         "empty": "Este exercício de peças não tem peças."
+      },
+      "cloze": {
+        "submit": "Verificar respostas",
+        "retry": "Tentar de novo",
+        "hint_show": "Precisas de uma dica?",
+        "sentence_label": "Frase com lacunas",
+        "blank_label": "Lacuna {n}",
+        "select_placeholder": "Escolher…",
+        "result_correct": "Tudo certo!",
+        "result_partial": "{correct} de {total} corretas.",
+        "empty": "Este exercício de lacunas não tem lacunas."
       }
     },
     "summary": {

@@ -147,3 +147,32 @@ export function deriveWordTilesAttempt(
         correct: isCorrect,
     };
 }
+
+/** CLOZE: fan-out one attempt per blank (Phase 52D / v1.35.0 /
+ *  P-127). Note the plural name — cloze emits MULTIPLE attempts
+ *  per exercise, one per blank, so element-level mastery
+ *  granularity matches the granularity of the wrong-answer
+ *  signal. element_key per blank = ``blank.accept[0]`` (the
+ *  canonical of THAT blank), so a user who fluently fills
+ *  blank A but consistently misses blank B gets per-blank
+ *  mastery tracking — the cloze generator (52E) can then
+ *  target blank B specifically. */
+export function deriveClozeAttempts(
+    exercise: ContentLessonExercise,
+    ctx: AttemptContext,
+    perBlankInputs: readonly string[],
+    perBlankCorrect: readonly boolean[],
+): ElementAttempt[] {
+    const blanks = exercise.blanks ?? [];
+    return blanks.map((blank, i) => {
+        const canonical = blank.accept[0] ?? "";
+        return {
+            ..._baseAttempt(exercise, ctx),
+            element_key: canonical,
+            element_type: "vocabulary",
+            user_answer: perBlankInputs[i] ?? "",
+            correct_answer: canonical,
+            correct: perBlankCorrect[i] ?? false,
+        };
+    });
+}

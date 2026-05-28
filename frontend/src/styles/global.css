@@ -2726,6 +2726,146 @@ select:focus {
   color: var(--danger, #ef4444);
 }
 
+/* Phase 52D / v1.35.0 / P-127 / F-111 — ClozeExercise. The
+   sentence wraps naturally on narrow viewports; each blank's
+   <input> / <select> renders inline with the surrounding text.
+   Per-blank correctness colours land via data-result on the
+   wrapper span so the focus ring + background flip together. */
+.cloze-exercise {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cloze-prompt {
+  margin: 0;
+  font-weight: 500;
+}
+
+.cloze-sentence {
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  font-size: 1.0625rem;
+  line-height: 1.8;
+}
+
+.cloze-segment {
+  display: inline;
+}
+
+.cloze-blank-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  margin: 0 4px;
+  vertical-align: baseline;
+}
+
+.cloze-blank-input,
+.cloze-blank-select {
+  min-height: 44px;
+  min-width: 80px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--fg);
+  font-size: 1rem;
+  font-family: var(--font-sans);
+}
+
+.cloze-blank-input:focus,
+.cloze-blank-select:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-color: var(--accent);
+}
+
+.cloze-blank-input:disabled,
+.cloze-blank-select:disabled {
+  opacity: 0.85;
+  cursor: default;
+}
+
+.cloze-blank-wrapper.is-correct .cloze-blank-input,
+.cloze-blank-wrapper.is-correct .cloze-blank-select {
+  border-color: var(--success);
+  background: color-mix(in srgb, var(--success) 14%, var(--surface));
+}
+
+.cloze-blank-wrapper.is-wrong .cloze-blank-input,
+.cloze-blank-wrapper.is-wrong .cloze-blank-select {
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 14%, var(--surface));
+}
+
+.cloze-blank-hint {
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+.cloze-hint-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cloze-hint-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.cloze-hint-toggle:hover {
+  text-decoration: underline;
+}
+
+.cloze-hint {
+  margin: 0;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+}
+
+.cloze-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.cloze-result {
+  margin: 0;
+  display: inline-flex;
+  gap: var(--space-1);
+  align-items: center;
+  font-weight: 500;
+}
+
+.cloze-result[data-result="correct"] {
+  color: var(--success);
+}
+
+.cloze-result[data-result="wrong"] {
+  color: var(--danger);
+}
+
+.cloze-diff-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex-basis: 100%;
+}
+
 .nav-links {
   display: flex;
   gap: var(--space-1);

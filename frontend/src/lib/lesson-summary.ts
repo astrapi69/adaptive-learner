@@ -79,6 +79,9 @@ export function computeStars(correct: number, total: number): StarRating {
  *    picture_choice → the correct image's label
  *    free_text      → ``exercise.accept[0]`` (canonical first)
  *    word_tiles     → ``exercise.tiles.join(" ")``
+ *    cloze          → sentence with each ``___`` filled by
+ *                     the blank's canonical accept[0]
+ *                     (Phase 52D / v1.35.0)
  *
  *  Returns "" when the type-specific content is missing
  *  (defensive — the schema validator already rejects this
@@ -106,6 +109,21 @@ export function deriveCanonicalAnswer(
         case "word_tiles": {
             const tiles = exercise.tiles ?? [];
             return tiles.join(" ");
+        }
+        case "cloze": {
+            // Phase 52D / v1.35.0 — reconstruct the sentence
+            // with every blank filled by its canonical. Powers
+            // the LessonSummary diff display the same way
+            // FreeText + WordTiles do.
+            const sentence = exercise.sentence ?? "";
+            const blanks = exercise.blanks ?? [];
+            const segments = sentence.split("___");
+            let out = segments[0] ?? "";
+            for (let i = 0; i < blanks.length; i++) {
+                out += blanks[i].accept[0] ?? "";
+                out += segments[i + 1] ?? "";
+            }
+            return out;
         }
     }
 }

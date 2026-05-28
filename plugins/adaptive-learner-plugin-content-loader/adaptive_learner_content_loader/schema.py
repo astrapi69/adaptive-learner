@@ -47,7 +47,7 @@ from __future__ import annotations
 
 import re
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -59,9 +59,11 @@ _SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 class ExerciseType(str, Enum):
     """Closed enum of exercise types the loader knows about.
 
-    EXP-001 + EXP-006: the four types ship in Phase 43-45.
-    Adding a fifth type (cloze, ordering, drag-image-pair,
-    etc.) requires a minor schema_version bump and a new
+    EXP-001 + EXP-006: the four base types ship in Phase 43-45.
+    Phase 52D / v1.35.0 added CLOZE (fill-in-the-blank with
+    ``___`` markers) — see the schema_version bump in
+    ``models.py``. Adding a sixth type (ordering, drag-image-
+    pair, etc.) requires a minor schema_version bump and a new
     enum value plus its renderer.
     """
 
@@ -69,6 +71,7 @@ class ExerciseType(str, Enum):
     PICTURE_CHOICE = "picture_choice"
     FREE_TEXT = "free_text"
     WORD_TILES = "word_tiles"
+    CLOZE = "cloze"
 
 
 class StepType(str, Enum):
@@ -139,6 +142,51 @@ class CardTokenRole(BaseModel):
     role: TokenRole = Field(
         ...,
         description="Grammatical role of this token in the card.",
+    )
+
+
+class ClozeBlank(BaseModel):
+    """One blank inside a cloze exercise's ``sentence`` (Phase 52D /
+    v1.35.0 / P-127).
+
+    Marker-based convention: the sentence carries visible ``___``
+    tokens; ``blanks[i]`` provides the metadata for the i-th
+    marker (left-to-right). The validator enforces
+    ``sentence.count("___") == len(blanks)`` so the i↔i mapping
+    is unambiguous at render time.
+
+    ``accept`` carries the per-blank canonical + acceptable
+    variants — the renderer reuses FreeText's ``isFreeTextCorrect``
+    matcher (NFC-normalised + Levenshtein <= 1) so authors only
+    need to enumerate semantic variants (gendered article,
+    capitalisation, et cetera), not typos.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    accept: list[str] = Field(
+        ...,
+        description=(
+            "Accepted answers for this blank. First entry is the "
+            "canonical (shown after a wrong attempt). Same shape "
+            "as FREE_TEXT.accept."
+        ),
+        min_length=1,
+    )
+    hint: str | None = Field(
+        default=None,
+        description=(
+            "Optional per-blank hint. Surfaced inline next to this specific blank, not lesson-wide."
+        ),
+        max_length=200,
+    )
+    placeholder: str | None = Field(
+        default=None,
+        description=(
+            "Optional placeholder text shown inside the input "
+            "(``type`` mode) before the user starts typing."
+        ),
+        max_length=40,
     )
 
 
@@ -359,6 +407,34 @@ class Exercise(BaseModel):
         ),
         max_length=1000,
     )
+    sentence: str | None = Field(
+        default=None,
+        description=(
+            "CLOZE: the cloze sentence with visible ``___`` "
+            "markers at each blank position. The renderer "
+            "splits on the markers + interleaves the per-blank "
+            "input control. Phase 52D / v1.35.0."
+        ),
+        max_length=1000,
+    )
+    blanks: list[ClozeBlank] | None = Field(
+        default=None,
+        description=(
+            "CLOZE: per-marker metadata in left-to-right order. "
+            "``len(blanks) == sentence.count('___')`` enforced "
+            "at validation time. Phase 52D / v1.35.0."
+        ),
+    )
+    cloze_mode: Literal["type", "select"] | None = Field(
+        default=None,
+        description=(
+            "CLOZE: ``type`` renders an ``<input>`` per blank, "
+            "``select`` renders a ``<select>`` per blank with "
+            "options from ``distractors``. Defaults to "
+            "``type`` when omitted on a CLOZE exercise. "
+            "Phase 52D / v1.35.0."
+        ),
+    )
 
     @field_validator("id")
     @classmethod
@@ -432,6 +508,24 @@ class Exercise(BaseModel):
                         raise ValueError(
                             "accept_orderings entries must use every tile index exactly once"
                         )
+
+        elif type_ is ExerciseType.CLOZE:
+            # Phase 52D / v1.35.0 / P-127 — marker-based blanks.
+            if not self.sentence:
+                raise ValueError("CLOZE exercise requires non-empty 'sentence'")
+            if not self.blanks:
+                raise ValueError("CLOZE exercise requires non-empty 'blanks'")
+            marker_count = self.sentence.count("___")
+            if marker_count != len(self.blanks):
+                raise ValueError(
+                    f"CLOZE marker count mismatch: sentence has "
+                    f"{marker_count} '___' markers but blanks has "
+                    f"{len(self.blanks)} entries"
+                )
+            # ``select`` mode requires a non-empty distractor pool
+            # to populate the per-blank ``<select>`` options.
+            if self.cloze_mode == "select" and not self.distractors:
+                raise ValueError("CLOZE with cloze_mode='select' requires non-empty 'distractors'")
 
         return self
 

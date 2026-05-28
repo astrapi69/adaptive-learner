@@ -1219,6 +1219,17 @@
         "result_correct": "Correct!",
         "result_wrong": "Not quite.",
         "empty": "This word-tiles exercise has no tiles."
+      },
+      "cloze": {
+        "submit": "Check answers",
+        "retry": "Try again",
+        "hint_show": "Need a hint?",
+        "sentence_label": "Cloze sentence",
+        "blank_label": "Blank {n}",
+        "select_placeholder": "Choose…",
+        "result_correct": "All correct!",
+        "result_partial": "{correct} of {total} correct.",
+        "empty": "This cloze exercise has no blanks."
       }
     },
     "summary": {

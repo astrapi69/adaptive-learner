@@ -1124,6 +1124,16 @@ lesson:
       result_correct: "Correct !"
       result_wrong: "Pas tout à fait."
       empty: "Cet exercice de tuiles n'a pas de tuiles."
+    cloze:
+      submit: "Vérifier les réponses"
+      retry: "Réessayer"
+      hint_show: "Besoin d'un indice ?"
+      sentence_label: "Phrase à trous"
+      blank_label: "Trou {n}"
+      select_placeholder: "Choisir…"
+      result_correct: "Tout est correct !"
+      result_partial: "{correct} sur {total} corrects."
+      empty: "Cet exercice à trous n'a pas de trous."
   summary:
     heading: "Terminé"
     aria_label: "Résumé de la leçon"

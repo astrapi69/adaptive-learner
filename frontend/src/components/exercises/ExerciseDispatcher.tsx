@@ -20,6 +20,7 @@ import type {
     ContentLessonStep,
     ElementAttempt,
 } from "../../storage/types";
+import ClozeExercise from "./ClozeExercise";
 import FreeTextExercise from "./FreeTextExercise";
 import MatchingExercise from "./MatchingExercise";
 import PictureChoiceExercise from "./PictureChoiceExercise";
@@ -30,6 +31,7 @@ export const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "picture_choice",
     "free_text",
     "word_tiles",
+    "cloze",
 ]);
 
 export interface ExerciseDispatcherProps {
@@ -97,6 +99,18 @@ export function ExerciseDispatcher({
     if (ex.type === "word_tiles") {
         return (
             <WordTilesExercise
+                exercise={ex}
+                setId={setId}
+                lessonId={lessonId}
+                onComplete={(scored) => {
+                    void onComplete(scored);
+                }}
+            />
+        );
+    }
+    if (ex.type === "cloze") {
+        return (
+            <ClozeExercise
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}

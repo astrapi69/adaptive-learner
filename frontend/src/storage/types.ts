@@ -252,9 +252,22 @@ export interface ContentLessonStep {
     exercise?: ContentLessonExercise | null;
 }
 
+/** Phase 52D / v1.35.0 / P-127 — one blank inside a CLOZE
+ * exercise's ``sentence``. Mirror of ``schema.ClozeBlank``. */
+export interface ContentLessonClozeBlank {
+    accept: string[];
+    hint?: string | null;
+    placeholder?: string | null;
+}
+
 export interface ContentLessonExercise {
     id: string;
-    type: "matching" | "picture_choice" | "free_text" | "word_tiles";
+    type:
+        | "matching"
+        | "picture_choice"
+        | "free_text"
+        | "word_tiles"
+        | "cloze";
     prompt: string;
     card_ids: string[];
     pairs?: Array<{left: string; right: string}> | null;
@@ -266,6 +279,17 @@ export interface ContentLessonExercise {
     accept_orderings?: number[][] | null;
     distractors: string[];
     hint?: string | null;
+    /** Phase 52D / v1.35.0 — CLOZE: sentence with visible ``___``
+     *  markers at each blank position. */
+    sentence?: string | null;
+    /** Phase 52D / v1.35.0 — CLOZE: per-marker metadata in
+     *  left-to-right order. ``blanks.length === sentence
+     *  .count("___")`` enforced upstream. */
+    blanks?: ContentLessonClozeBlank[] | null;
+    /** Phase 52D / v1.35.0 — CLOZE: render mode. Default
+     *  ``"type"`` when omitted. ``"select"`` requires
+     *  non-empty ``distractors``. */
+    cloze_mode?: "type" | "select" | null;
 }
 
 /** Phase 52I / v1.35.0 / P-130 — closed grammatical-role enum

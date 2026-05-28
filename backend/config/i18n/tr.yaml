@@ -1122,6 +1122,16 @@ lesson:
       result_correct: "Doğru!"
       result_wrong: "Pek değil."
       empty: "Bu kelime kutucukları alıştırmasında kutucuk yok."
+    cloze:
+      submit: "Cevapları kontrol et"
+      retry: "Tekrar dene"
+      hint_show: "İpucu ister misin?"
+      sentence_label: "Boşluk doldurma cümlesi"
+      blank_label: "Boşluk {n}"
+      select_placeholder: "Seç…"
+      result_correct: "Hepsi doğru!"
+      result_partial: "{correct} / {total} doğru."
+      empty: "Bu boşluk doldurma alıştırmasının boşluğu yok."
   summary:
     heading: "Tamamladın"
     aria_label: "Ders özeti"

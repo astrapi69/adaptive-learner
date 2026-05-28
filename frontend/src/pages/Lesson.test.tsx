@@ -305,18 +305,19 @@ describe("LessonPage: ready state rendering", () => {
         // Defensive regression-pin: if a future schema_version
         // ships a new ExerciseType and a lesson lands in the
         // cache before its renderer exists, the placeholder
-        // must fire so the user can skip the step. We simulate
-        // a future "cloze" type by casting the runtime string;
+        // must fire so the user can skip the step. v1.35.0
+        // shipped cloze (Phase 52D), so we simulate a still-
+        // future "ordering" type by casting the runtime string;
         // TypeScript's compile-time union doesn't include it.
         _renderWithStep({
             id: "ex-future",
-            type: "cloze" as unknown as ContentLessonExercise["type"],
-            prompt: "Fill in the blank.",
+            type: "ordering" as unknown as ContentLessonExercise["type"],
+            prompt: "Put these words in order.",
             card_ids: [],
             distractors: [],
         });
         expect(
-            screen.getByTestId("lesson-exercise-placeholder-cloze"),
+            screen.getByTestId("lesson-exercise-placeholder-ordering"),
         ).toBeInTheDocument();
     });
 

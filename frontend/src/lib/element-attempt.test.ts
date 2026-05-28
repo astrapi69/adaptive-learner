@@ -12,6 +12,7 @@
 import {describe, expect, it} from "vitest";
 
 import {
+    deriveClozeAttempts,
     deriveFreeTextAttempt,
     deriveMatchingAttempts,
     derivePictureChoiceAttempt,
@@ -251,5 +252,100 @@ describe("deriveWordTilesAttempt", () => {
         const a = deriveWordTilesAttempt(broken, CTX, [], false);
         expect(a.element_key).toBe("");
         expect(a.user_answer).toBe("");
+    });
+});
+
+// --- CLOZE (Phase 52D / v1.35.0 / P-127) ----------------------------------
+
+describe("deriveClozeAttempts", () => {
+    const exercise: ContentLessonExercise = {
+        id: "ex-cloze",
+        type: "cloze",
+        prompt: "Fill in",
+        card_ids: [],
+        sentence: "J'ai ___ ami et ___ amie.",
+        blanks: [
+            {accept: ["un"]},
+            {accept: ["une"]},
+        ],
+        distractors: [],
+    };
+
+    it("emits one ElementAttempt per blank in order", () => {
+        const attempts = deriveClozeAttempts(
+            exercise,
+            CTX,
+            ["un", "une"],
+            [true, true],
+        );
+        expect(attempts).toHaveLength(2);
+        expect(attempts[0].element_key).toBe("un");
+        expect(attempts[1].element_key).toBe("une");
+    });
+
+    it("element_key = blank's canonical (accept[0])", () => {
+        const ex2: ContentLessonExercise = {
+            ...exercise,
+            blanks: [{accept: ["un", "Un", "UN"]}],
+            sentence: "Je vois ___ chat.",
+        };
+        const attempts = deriveClozeAttempts(ex2, CTX, ["un"], [true]);
+        expect(attempts[0].element_key).toBe("un");
+    });
+
+    it("propagates correctness per blank from perBlankCorrect", () => {
+        const attempts = deriveClozeAttempts(
+            exercise,
+            CTX,
+            ["un", "le"],
+            [true, false],
+        );
+        expect(attempts[0].correct).toBe(true);
+        expect(attempts[1].correct).toBe(false);
+    });
+
+    it("propagates user_answer per blank", () => {
+        const attempts = deriveClozeAttempts(
+            exercise,
+            CTX,
+            ["x", "y"],
+            [false, false],
+        );
+        expect(attempts[0].user_answer).toBe("x");
+        expect(attempts[1].user_answer).toBe("y");
+    });
+
+    it("element_type defaults to vocabulary", () => {
+        const attempts = deriveClozeAttempts(
+            exercise,
+            CTX,
+            ["un", "une"],
+            [true, true],
+        );
+        expect(attempts[0].element_type).toBe("vocabulary");
+        expect(attempts[1].element_type).toBe("vocabulary");
+    });
+
+    it("defensively returns empty when blanks is missing", () => {
+        const broken: ContentLessonExercise = {
+            ...exercise,
+            blanks: null,
+        };
+        const attempts = deriveClozeAttempts(broken, CTX, [], []);
+        expect(attempts).toEqual([]);
+    });
+
+    it("fills missing per-blank input with empty string", () => {
+        // perBlankInputs shorter than blanks (partial fill, shouldn't
+        // happen in practice because the renderer waits for all
+        // blanks, but pin the defensive behaviour).
+        const attempts = deriveClozeAttempts(
+            exercise,
+            CTX,
+            ["un"],
+            [true],
+        );
+        expect(attempts[1].user_answer).toBe("");
+        expect(attempts[1].correct).toBe(false);
     });
 });

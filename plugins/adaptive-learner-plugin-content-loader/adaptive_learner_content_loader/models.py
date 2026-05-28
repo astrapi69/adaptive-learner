@@ -39,7 +39,19 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-CURRENT_SCHEMA_VERSION = "1.0"
+CURRENT_SCHEMA_VERSION = "1.1"
+# v1.0 → v1.1 (Phase 52D / v1.35.0 / P-127):
+#   - ExerciseType gained the CLOZE = "cloze" variant + the
+#     ``sentence`` / ``blanks`` / ``cloze_mode`` fields on
+#     ``Exercise`` to back it.
+#   - Card gained the optional ``token_roles`` field (Phase 52I
+#     / P-130) for the cloze generator's role-aware blank
+#     selection.
+# Bump is MINOR — ``is_supported_schema_version`` does a major-
+# version match so v1.1 lessons still load on v1.0 apps at the
+# manifest level. Failure surfaces per-exercise when a 1.0 app
+# encounters a ``cloze`` step (closed-enum rejection by
+# Pydantic), which is the intended clean break.
 
 # BCP-47 subset: lowercase 2-3 letter primary tag plus an
 # optional ``-`` separator + region/script tag. Permissive

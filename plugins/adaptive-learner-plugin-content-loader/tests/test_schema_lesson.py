@@ -14,6 +14,7 @@ import pytest
 from adaptive_learner_content_loader.schema import (
     Card,
     CardTokenRole,
+    ClozeBlank,
     Exercise,
     ExerciseType,
     Lesson,
@@ -65,10 +66,15 @@ class TestExerciseTypeEnum:
         assert ExerciseType("picture_choice") is ExerciseType.PICTURE_CHOICE
         assert ExerciseType("free_text") is ExerciseType.FREE_TEXT
         assert ExerciseType("word_tiles") is ExerciseType.WORD_TILES
+        # Phase 52D / v1.35.0 — schema 1.0 → 1.1 added CLOZE.
+        assert ExerciseType("cloze") is ExerciseType.CLOZE
 
     def test_unknown_value_rejected(self) -> None:
+        # Future-release candidates that have NOT yet landed.
+        # Phase 52D ships CLOZE; ``ordering`` and
+        # ``drag_image_pair`` would each be a future minor bump.
         with pytest.raises(ValueError):
-            ExerciseType("cloze")
+            ExerciseType("ordering")
 
 
 # --- TokenRole (closed enum, Phase 52I / P-130) -------------------------
@@ -369,6 +375,125 @@ class TestWordTilesExercise:
             _exercise_tiles(accept_orderings=[[0, 1, 5]])
 
 
+def _exercise_cloze(**overrides: object) -> Exercise:
+    defaults: dict[str, object] = {
+        "id": "ex-cloze-1",
+        "type": ExerciseType.CLOZE,
+        "prompt": "Fill in the article.",
+        "sentence": "Je vois ___ chat dans le jardin.",
+        "blanks": [
+            {
+                "accept": ["un", "Un"],
+                "hint": "indefinite article",
+                "placeholder": "?",
+            }
+        ],
+    }
+    defaults.update(overrides)
+    return Exercise(**defaults)
+
+
+class TestClozeBlank:
+    """Pin the per-blank metadata model (Phase 52D / P-127)."""
+
+    def test_minimal_blank(self) -> None:
+        blank = ClozeBlank(accept=["un"])
+        assert blank.accept == ["un"]
+        assert blank.hint is None
+        assert blank.placeholder is None
+
+    def test_accept_must_be_non_empty(self) -> None:
+        with pytest.raises(ValidationError):
+            ClozeBlank(accept=[])
+
+    def test_extras_forbidden(self) -> None:
+        with pytest.raises(ValidationError):
+            ClozeBlank.model_validate({"accept": ["un"], "footnote": "nope"})
+
+
+class TestClozeExercise:
+    """Pin the v1.1 CLOZE exercise type (Phase 52D / P-127, F-111)."""
+
+    def test_valid_single_blank(self) -> None:
+        ex = _exercise_cloze()
+        assert ex.type is ExerciseType.CLOZE
+        assert ex.sentence == "Je vois ___ chat dans le jardin."
+        assert ex.blanks is not None and len(ex.blanks) == 1
+        assert ex.blanks[0].accept == ["un", "Un"]
+
+    def test_sentence_required(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_cloze(sentence=None)
+
+    def test_blanks_required(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_cloze(blanks=None)
+
+    def test_marker_count_must_equal_blanks_length(self) -> None:
+        # Two markers but one blank — rejected.
+        with pytest.raises(ValidationError):
+            _exercise_cloze(
+                sentence="J'ai ___ ami et ___ amie.",
+                blanks=[{"accept": ["un"]}],
+            )
+        # One marker but two blanks — rejected.
+        with pytest.raises(ValidationError):
+            _exercise_cloze(
+                sentence="J'ai ___ ami.",
+                blanks=[
+                    {"accept": ["un"]},
+                    {"accept": ["une"]},
+                ],
+            )
+
+    def test_multiple_blanks_in_order(self) -> None:
+        ex = _exercise_cloze(
+            sentence="J'ai ___ ami et ___ amie.",
+            blanks=[
+                {"accept": ["un"]},
+                {"accept": ["une"]},
+            ],
+        )
+        assert ex.blanks is not None and len(ex.blanks) == 2
+        assert ex.blanks[0].accept == ["un"]
+        assert ex.blanks[1].accept == ["une"]
+
+    def test_cloze_mode_optional_defaults_to_none(self) -> None:
+        ex = _exercise_cloze()
+        # Default is None — renderer treats absence as "type".
+        assert ex.cloze_mode is None
+
+    def test_cloze_mode_type_accepted(self) -> None:
+        ex = _exercise_cloze(cloze_mode="type")
+        assert ex.cloze_mode == "type"
+
+    def test_cloze_mode_select_requires_distractors(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_cloze(cloze_mode="select")
+        # With distractors, select is fine.
+        ex = _exercise_cloze(
+            cloze_mode="select",
+            distractors=["le", "la", "les"],
+        )
+        assert ex.cloze_mode == "select"
+        assert ex.distractors == ["le", "la", "les"]
+
+    def test_cloze_mode_rejects_unknown_string(self) -> None:
+        # Literal["type", "select"] rejects anything else.
+        with pytest.raises(ValidationError):
+            _exercise_cloze(cloze_mode="dropdown")
+
+    def test_json_roundtrip(self) -> None:
+        ex = _exercise_cloze(
+            cloze_mode="select",
+            distractors=["le", "la"],
+            hint="article indéfini",
+        )
+        payload = ex.model_dump(mode="json")
+        rebuilt = Exercise.model_validate(payload)
+        assert rebuilt == ex
+
+
 class TestExerciseCommon:
     def test_id_must_be_slug(self) -> None:
         with pytest.raises(ValidationError):
@@ -621,8 +746,9 @@ class TestLessonSchemaExport:
 
     def test_exercise_schema_lists_type_enum(self) -> None:
         schema = exercise_schema()
-        # The type field discriminates the four ExerciseType
-        # values; the JSON schema surfaces them as an enum.
+        # The type field discriminates the ExerciseType values;
+        # the JSON schema surfaces them as an enum. Phase 52D /
+        # v1.35.0 added CLOZE.
         type_schema = schema["properties"]["type"]
         if "$ref" in type_schema:
             ref_name = type_schema["$ref"].rsplit("/", 1)[-1]
@@ -632,6 +758,7 @@ class TestLessonSchemaExport:
             "picture_choice",
             "free_text",
             "word_tiles",
+            "cloze",
         }
 
     def test_lesson_step_schema_lists_step_type_enum(self) -> None:

@@ -1124,6 +1124,16 @@ lesson:
       result_correct: "¡Correcto!"
       result_wrong: "Casi."
       empty: "Este ejercicio de fichas no tiene fichas."
+    cloze:
+      submit: "Comprobar respuestas"
+      retry: "Intentar de nuevo"
+      hint_show: "¿Necesitas una pista?"
+      sentence_label: "Frase con huecos"
+      blank_label: "Hueco {n}"
+      select_placeholder: "Elegir…"
+      result_correct: "¡Todo correcto!"
+      result_partial: "{correct} de {total} correctos."
+      empty: "Este ejercicio de huecos no tiene huecos."
   summary:
     heading: "Terminaste"
     aria_label: "Resumen de la lección"

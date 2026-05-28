@@ -1127,6 +1127,16 @@ lesson:
       result_correct: "Richtig!"
       result_wrong: "Nicht ganz."
       empty: "Diese Wortkachel-Übung hat keine Kacheln."
+    cloze:
+      submit: "Antworten prüfen"
+      retry: "Erneut versuchen"
+      hint_show: "Tipp anzeigen?"
+      sentence_label: "Lückentext"
+      blank_label: "Lücke {n}"
+      select_placeholder: "Auswählen…"
+      result_correct: "Alles richtig!"
+      result_partial: "{correct} von {total} richtig."
+      empty: "Diese Lückentext-Übung hat keine Lücken."
   summary:
     heading: "Geschafft"
     aria_label: "Lektions-Zusammenfassung"

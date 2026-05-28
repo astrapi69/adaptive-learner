@@ -1122,6 +1122,16 @@ lesson:
       result_correct: "正解です！"
       result_wrong: "惜しい。"
       empty: "この単語タイル演習にはタイルがありません。"
+    cloze:
+      submit: "答えを確認"
+      retry: "もう一度"
+      hint_show: "ヒントが必要ですか？"
+      sentence_label: "穴埋め文"
+      blank_label: "空欄 {n}"
+      select_placeholder: "選んでください…"
+      result_correct: "すべて正解！"
+      result_partial: "{total}個中{correct}個正解。"
+      empty: "この穴埋め演習には空欄がありません。"
   summary:
     heading: "完了"
     aria_label: "レッスンのまとめ"

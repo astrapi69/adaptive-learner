@@ -1124,6 +1124,16 @@ lesson:
       result_correct: "Σωστά!"
       result_wrong: "Όχι ακριβώς."
       empty: "Αυτή η άσκηση πλακέτας δεν έχει πλακέτες."
+    cloze:
+      submit: "Έλεγχος απαντήσεων"
+      retry: "Δοκίμασε ξανά"
+      hint_show: "Χρειάζεσαι υπόδειξη;"
+      sentence_label: "Πρόταση με κενά"
+      blank_label: "Κενό {n}"
+      select_placeholder: "Επίλεξε…"
+      result_correct: "Όλα σωστά!"
+      result_partial: "{correct} από {total} σωστά."
+      empty: "Αυτή η άσκηση συμπλήρωσης κενών δεν έχει κενά."
   summary:
     heading: "Τελείωσες"
     aria_label: "Σύνοψη μαθήματος"
