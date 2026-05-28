@@ -171,21 +171,43 @@ describe("PictureChoiceExercise: text fallback on image error", () => {
         ).toMatch(/is-text-fallback/);
     });
 
-    it("renders text-only when no asset AND no legacy resolver", () => {
+    it("renders a placeholder SVG when no asset AND no legacy resolver (Phase 54D)", () => {
         render(
             <PictureChoiceExercise
                 exercise={EXERCISE}
                 onComplete={vi.fn()}
             />,
         );
-        // Every tile lands on the text-fallback branch since
+        // Every tile lands on the placeholder fallback since
         // useAsset returns error: true (the default mock) and
-        // no legacyResolveSrc is supplied.
+        // no legacyResolveSrc is supplied. The tile renders
+        // an <img> whose src is a data: URI.
         for (let i = 0; i < 4; i++) {
-            expect(
-                screen.getByTestId(`picture-choice-${i}`).className,
-            ).toMatch(/is-text-fallback/);
+            const tile = screen.getByTestId(`picture-choice-${i}`);
+            expect(tile.className).toMatch(/is-placeholder/);
+            const img = tile.querySelector("img");
+            expect(img?.getAttribute("src")).toMatch(
+                /^data:image\/svg\+xml/,
+            );
         }
+    });
+
+    it("placeholder falls back to text-only when the SVG <img> also errors", () => {
+        render(
+            <PictureChoiceExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+            />,
+        );
+        const tile1 = screen.getByTestId("picture-choice-1");
+        const img1 = tile1.querySelector("img");
+        expect(img1).toBeInTheDocument();
+        act(() => {
+            fireEvent.error(img1!);
+        });
+        expect(
+            screen.getByTestId("picture-choice-1").className,
+        ).toMatch(/is-text-fallback/);
     });
 
     it("renders skeleton while the asset resolver is loading", () => {

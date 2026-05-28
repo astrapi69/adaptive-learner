@@ -36,6 +36,7 @@ import {useMemo, useState} from "react";
 
 import {useAsset} from "../../hooks/useAsset";
 import {useI18n} from "../../hooks/useI18n";
+import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
 import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
 import type {
     ContentLessonExercise,
@@ -274,12 +275,26 @@ function PictureChoiceTile({
     // corrupt / unsupported. Same flag as v1.28.0.
     const [imgFailed, setImgFailed] = useState(false);
 
+    // Resolution chain (Phase 54D):
+    //   1. authored asset bytes (asset cache → blob URL)
+    //   2. legacy resolveImageSrc callback (parent-provided)
+    //   3. placeholder SVG keyed off the label
+    //   4. text-only (no <img>) — final fallback
     let imgSrc: string | null = null;
+    let isPlaceholder = false;
     if (asset.url && !imgFailed) {
         imgSrc = asset.url;
     } else if (legacyResolveSrc && !imgFailed) {
         const resolved = legacyResolveSrc(choice.src);
         if (resolved && resolved !== choice.src) imgSrc = resolved;
+    }
+    // Last-mile placeholder: only kicks in when both above
+    // branches missed AND the asset resolver isn't loading
+    // (we don't want to flash a placeholder over a still-
+    // loading real image).
+    if (imgSrc === null && !asset.loading && !imgFailed) {
+        imgSrc = generatePlaceholderSvg(choice.label);
+        isPlaceholder = true;
     }
 
     const showAsCorrect = submitted && choice.isCorrect;
@@ -294,7 +309,9 @@ function PictureChoiceTile({
                 showAsCorrect ? " is-correct" : ""
             }${showAsWrong ? " is-wrong" : ""}${
                 useTextFallback ? " is-text-fallback" : ""
-            }${isLoading ? " is-loading" : ""}`}
+            }${isLoading ? " is-loading" : ""}${
+                isPlaceholder ? " is-placeholder" : ""
+            }`}
             onClick={onSelect}
             aria-pressed={isSelected}
             disabled={submitted}
