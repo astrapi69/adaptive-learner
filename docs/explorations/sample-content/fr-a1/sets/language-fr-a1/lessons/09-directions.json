@@ -1,0 +1,283 @@
+{
+  "id": "09-directions",
+  "title": "Les directions",
+  "description": "Asking for and giving directions: prepositions, direction verbs, common landmarks.",
+  "estimated_minutes": 13,
+  "cards": [
+    {
+      "id": "dir-droite",
+      "front": "à droite",
+      "back": "to the right / on the right",
+      "notes": "Always with **à**. *Tournez à droite* — turn right. The opposite is *à gauche*.",
+      "tags": ["direction"]
+    },
+    {
+      "id": "dir-gauche",
+      "front": "à gauche",
+      "back": "to the left / on the left",
+      "tags": ["direction"]
+    },
+    {
+      "id": "dir-tout-droit",
+      "front": "tout droit",
+      "back": "straight ahead",
+      "notes": "Two words. Note the spelling — *tout* (straight) without the **e**, *droit* without the **e** either. Both invariable in this fixed phrase.",
+      "tags": ["direction"]
+    },
+    {
+      "id": "dir-pres-de",
+      "front": "près de",
+      "back": "near (to)",
+      "notes": "Followed by **de** + noun: *près de la gare* (near the station). *De* contracts with *le* / *les*: **près du** marché, **près des** boutiques.",
+      "tags": ["preposition", "location"]
+    },
+    {
+      "id": "dir-loin-de",
+      "front": "loin de",
+      "back": "far (from)",
+      "notes": "Same construction as *près de*: **loin du** centre, **loin des** magasins.",
+      "tags": ["preposition", "location"]
+    },
+    {
+      "id": "dir-en-face-de",
+      "front": "en face de",
+      "back": "opposite / across from",
+      "notes": "*La poste est en face de la gare* — the post office is across from the station.",
+      "tags": ["preposition", "location"]
+    },
+    {
+      "id": "dir-a-cote-de",
+      "front": "à côté de",
+      "back": "next to / beside",
+      "tags": ["preposition", "location"]
+    },
+    {
+      "id": "verb-aller",
+      "front": "aller",
+      "back": "to go",
+      "notes": "Irregular: *je vais*, *tu vas*, *il/elle va*, *nous allons*, *vous allez*, *ils/elles vont*. Used for both location movement and the near-future construction (*aller* + infinitive = going to).",
+      "tags": ["verb", "irregular"]
+    },
+    {
+      "id": "verb-tourner",
+      "front": "tourner",
+      "back": "to turn",
+      "notes": "Regular -er verb. Imperative form (giving instructions): *tourne* (informal) / *tournez* (formal/plural).",
+      "tags": ["verb"]
+    },
+    {
+      "id": "verb-prendre",
+      "front": "prendre",
+      "back": "to take",
+      "notes": "Irregular: *je prends*, *tu prends*, *il prend*, *nous prenons*, *vous prenez*, *ils prennent*. *Prenez la première rue à droite* — take the first street on the right.",
+      "tags": ["verb", "irregular"]
+    },
+    {
+      "id": "loc-rue",
+      "front": "la rue",
+      "back": "the street",
+      "tags": ["location", "feminine"]
+    },
+    {
+      "id": "loc-avenue",
+      "front": "l'avenue",
+      "back": "the avenue",
+      "notes": "Starts with a vowel — elision. Wider than a *rue*, usually with trees down the middle in classic city design.",
+      "tags": ["location", "feminine", "vowel-start"]
+    },
+    {
+      "id": "loc-gare",
+      "front": "la gare",
+      "back": "the train station",
+      "notes": "Specifically for trains. Buses use *la gare routière* or just *la station*.",
+      "tags": ["location", "feminine"]
+    },
+    {
+      "id": "loc-poste",
+      "front": "la poste",
+      "back": "the post office",
+      "notes": "**Le poste** (m.) is something else entirely — a TV / radio set, or a job position. Gender disambiguates.",
+      "tags": ["location", "feminine"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Asking for directions",
+      "body": "# Directions in French\n\nGetting lost in a French-speaking country is normal — and asking for help is a great way to practice. The basic ask:\n\n- *Excusez-moi, où est **la gare**, s'il vous plaît ?* — Excuse me, where is the station, please?\n- *Excusez-moi, je cherche **le musée**.* — Excuse me, I'm looking for the museum.\n\nThis lesson covers what comes BACK in the answer: location prepositions (right, left, near, opposite), direction verbs (go, turn, take), and common landmarks. By the end you'll be able to follow a basic spoken direction."
+    },
+    {
+      "id": "step-prepositions",
+      "type": "theory",
+      "title": "Location prepositions",
+      "body": "## Where things are\n\n| French | English | Example |\n|---|---|---|\n| à droite (de) | to the right (of) | *à droite de la poste* |\n| à gauche (de) | to the left (of) | *à gauche de la rue* |\n| tout droit | straight ahead | *Continuez tout droit.* |\n| près de | near | *près de la gare* |\n| loin de | far from | *loin du centre* |\n| en face de | opposite | *en face de l'hôtel* |\n| à côté de | next to | *à côté du café* |\n\nThe four with **de** at the end contract with the article: **de + le → du**, **de + les → des**.\n\n- *près **du** parc* (parc is m.) — near the park\n- *à côté **des** boutiques* — next to the shops\n- *en face **de la** poste* (la, no contraction) — opposite the post office"
+    },
+    {
+      "id": "ex-match-prepositions",
+      "type": "exercise",
+      "title": "Match prepositions",
+      "exercise": {
+        "id": "ex-match-prepositions",
+        "type": "matching",
+        "prompt": "Match each French location word with its English meaning.",
+        "card_ids": ["dir-droite", "dir-gauche", "dir-tout-droit", "dir-pres-de", "dir-en-face-de", "dir-a-cote-de"],
+        "pairs": [
+          {"left": "à droite", "right": "right"},
+          {"left": "à gauche", "right": "left"},
+          {"left": "tout droit", "right": "straight"},
+          {"left": "près de", "right": "near"},
+          {"left": "en face de", "right": "opposite"},
+          {"left": "à côté de", "right": "next to"}
+        ]
+      }
+    },
+    {
+      "id": "ex-pick-direction",
+      "type": "exercise",
+      "title": "Reading a direction",
+      "exercise": {
+        "id": "ex-pick-direction",
+        "type": "picture_choice",
+        "prompt": "*La poste est à droite de la gare.* What does this mean?",
+        "card_ids": ["dir-droite", "loc-gare", "loc-poste"],
+        "images": [
+          {
+            "src": "assets/img/map-right.png",
+            "label": "The post office is to the right of the station.",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/map-left.png",
+            "label": "The post office is to the left of the station."
+          },
+          {
+            "src": "assets/img/map-far.png",
+            "label": "The post office is far from the station."
+          },
+          {
+            "src": "assets/img/map-next.png",
+            "label": "The post office is next to the station."
+          }
+        ],
+        "hint": "*à droite de* — to the right of.",
+        "distractors": ["The post office is to the left of the station.", "The post office is far from the station.", "The post office is next to the station."]
+      }
+    },
+    {
+      "id": "step-verbs",
+      "type": "theory",
+      "title": "Direction verbs",
+      "body": "## Verbs for getting around\n\nThree key verbs:\n\n**aller** (to go) — irregular\n- *Vous **allez** tout droit.* — Go straight.\n- *Je **vais** à la gare.* — I'm going to the station.\n\n**tourner** (to turn) — regular -er\n- *Tournez à droite.* — Turn right. (formal/plural imperative)\n- *Tourne à gauche.* — Turn left. (informal imperative)\n\n**prendre** (to take) — irregular\n- *Prenez la première rue à droite.* — Take the first street on the right.\n- *Je prends le bus.* — I'm taking the bus.\n\nDirections are usually given in the **vous** imperative — strangers asking strangers. The verb drops the subject pronoun: *Tournez* (not *Vous tournez*)."
+    },
+    {
+      "id": "ex-free-tournez",
+      "type": "exercise",
+      "title": "Turn right",
+      "exercise": {
+        "id": "ex-free-tournez",
+        "type": "free_text",
+        "prompt": "Tell someone (formally) to *turn right*.",
+        "card_ids": ["verb-tourner", "dir-droite"],
+        "accept": ["Tournez à droite.", "Tournez à droite", "tournez à droite"],
+        "hint": "Imperative *vous* form: drop the pronoun, keep the *-ez* ending.",
+        "distractors": ["Tourner à droite.", "Tu tournes à droite.", "Tournez droite."]
+      }
+    },
+    {
+      "id": "ex-tile-go-straight",
+      "type": "exercise",
+      "title": "Build: go straight then turn left",
+      "exercise": {
+        "id": "ex-tile-go-straight",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *Go straight, then turn left.*",
+        "card_ids": ["verb-aller", "dir-tout-droit", "verb-tourner", "dir-gauche"],
+        "tiles": ["Allez", "tout", "droit", ",", "puis", "tournez", "à", "gauche"],
+        "hint": "Imperative *Allez* (go), then *puis* (then), then imperative *Tournez*."
+      }
+    },
+    {
+      "id": "step-asking",
+      "type": "theory",
+      "title": "Asking — phrases to memorise",
+      "body": "## Stock asking phrases\n\nThese four cover most situations:\n\n- ***Excusez-moi*** — Excuse me (always start with this when stopping a stranger)\n- ***Où est ___ ?*** — Where is ___?\n- ***Comment aller à ___ ?*** — How do I get to ___? (lit. *how to go to*)\n- ***Je cherche ___*** — I'm looking for ___\n\nFull example:\n\n- *Excusez-moi, où est la poste, s'il vous plaît ?* — Excuse me, where is the post office, please?\n\nFrench listeners will appreciate the *Excusez-moi* opener — it's the politeness signal that you respect them stopping for you. Skip it and you sound rude even with the rest of the sentence intact."
+    },
+    {
+      "id": "ex-match-asking",
+      "type": "exercise",
+      "title": "Match the question",
+      "exercise": {
+        "id": "ex-match-asking",
+        "type": "matching",
+        "prompt": "Match each French phrase with its English meaning.",
+        "card_ids": ["loc-gare", "loc-poste", "loc-rue"],
+        "pairs": [
+          {"left": "Où est la gare ?", "right": "Where is the station?"},
+          {"left": "Je cherche la poste.", "right": "I'm looking for the post office."},
+          {"left": "Comment aller à la rue Victor Hugo ?", "right": "How do I get to Victor Hugo street?"},
+          {"left": "Excusez-moi.", "right": "Excuse me."}
+        ]
+      }
+    },
+    {
+      "id": "ex-free-asking-station",
+      "type": "exercise",
+      "title": "Ask for the station",
+      "exercise": {
+        "id": "ex-free-asking-station",
+        "type": "free_text",
+        "prompt": "Politely ask where the train station is. (Translate: *Excuse me, where is the station, please?*)",
+        "card_ids": ["loc-gare"],
+        "accept": ["Excusez-moi, où est la gare, s'il vous plaît ?", "Excusez-moi, où est la gare, s'il vous plaît?", "Excusez-moi, où est la gare, s'il vous plaît."],
+        "hint": "Three parts: politeness opener + the question + polite ending. French puts a space before *?* — but most input methods accept either way.",
+        "distractors": ["Où est la gare ?", "Excusez-moi, la gare ?", "Je voudrais la gare."]
+      }
+    },
+    {
+      "id": "ex-pick-take-street",
+      "type": "exercise",
+      "title": "Take the first street",
+      "exercise": {
+        "id": "ex-pick-take-street",
+        "type": "picture_choice",
+        "prompt": "Which sentence means *Take the first street on the right*?",
+        "card_ids": ["verb-prendre", "loc-rue", "dir-droite"],
+        "images": [
+          {
+            "src": "assets/img/street-corner.png",
+            "label": "Prenez la première rue à droite.",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/street-fork.png",
+            "label": "Tournez la première rue à droite."
+          },
+          {
+            "src": "assets/img/street-end.png",
+            "label": "Allez la première rue à droite."
+          },
+          {
+            "src": "assets/img/street-bridge.png",
+            "label": "Prenez la première rue à gauche."
+          }
+        ],
+        "hint": "*Prenez* (take) + the street + direction.",
+        "distractors": ["Tournez la première rue à droite.", "Allez la première rue à droite.", "Prenez la première rue à gauche."]
+      }
+    },
+    {
+      "id": "ex-tile-near-post",
+      "type": "exercise",
+      "title": "Build: near the post office",
+      "exercise": {
+        "id": "ex-tile-near-post",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *The station is near the post office.*",
+        "card_ids": ["loc-gare", "loc-poste", "dir-pres-de"],
+        "tiles": ["La", "gare", "est", "près", "de", "la", "poste"],
+        "hint": "Subject + *est* + preposition phrase. No contraction needed (*de la*, not *du*)."
+      }
+    }
+  ]
+}

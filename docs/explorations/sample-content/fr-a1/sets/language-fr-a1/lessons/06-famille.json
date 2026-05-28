@@ -1,0 +1,250 @@
+{
+  "id": "06-famille",
+  "title": "La famille",
+  "description": "Family vocabulary + possessive adjectives (mon, ma, mes).",
+  "estimated_minutes": 12,
+  "cards": [
+    {
+      "id": "fam-pere",
+      "front": "le père",
+      "back": "the father",
+      "tags": ["family", "masculine"]
+    },
+    {
+      "id": "fam-mere",
+      "front": "la mère",
+      "back": "the mother",
+      "tags": ["family", "feminine"]
+    },
+    {
+      "id": "fam-frere",
+      "front": "le frère",
+      "back": "the brother",
+      "tags": ["family", "masculine"]
+    },
+    {
+      "id": "fam-soeur",
+      "front": "la sœur",
+      "back": "the sister",
+      "notes": "Note the **œ** ligature — it's one letter, pronounced /œ/ (no English equivalent; like the eu in *peur*).",
+      "tags": ["family", "feminine"]
+    },
+    {
+      "id": "fam-fils",
+      "front": "le fils",
+      "back": "the son",
+      "notes": "Pronounced **\"feece\"** — silent l, the s is voiced. Watch for the spelling, which doesn't reflect the sound.",
+      "tags": ["family", "masculine"]
+    },
+    {
+      "id": "fam-fille",
+      "front": "la fille",
+      "back": "the daughter / the girl",
+      "notes": "Same word for *daughter* and *girl* — context decides.",
+      "tags": ["family", "feminine"]
+    },
+    {
+      "id": "fam-oncle",
+      "front": "l'oncle",
+      "back": "the uncle",
+      "notes": "Starts with a vowel — elided. *l'oncle*, not *le oncle*.",
+      "tags": ["family", "masculine", "vowel-start"]
+    },
+    {
+      "id": "fam-tante",
+      "front": "la tante",
+      "back": "the aunt",
+      "tags": ["family", "feminine"]
+    },
+    {
+      "id": "fam-parents",
+      "front": "les parents",
+      "back": "the parents",
+      "notes": "Always plural in this sense. Also means *relatives* in some contexts (*mes parents éloignés* — my distant relatives).",
+      "tags": ["family", "plural"]
+    },
+    {
+      "id": "poss-mon",
+      "front": "mon",
+      "back": "my (m. sg.)",
+      "notes": "Used before masculine singular nouns: *mon père*, *mon frère*. ALSO used before any feminine noun that starts with a vowel: *mon amie* (not *ma amie*). The elision rule from Lesson 03 strikes again.",
+      "tags": ["possessive"]
+    },
+    {
+      "id": "poss-ma",
+      "front": "ma",
+      "back": "my (f. sg.)",
+      "notes": "Used before feminine singular nouns that start with a CONSONANT: *ma mère*, *ma sœur*, *ma tante*. Before a vowel, switches to *mon*.",
+      "tags": ["possessive"]
+    },
+    {
+      "id": "poss-mes",
+      "front": "mes",
+      "back": "my (pl.)",
+      "notes": "Same form for masculine and feminine plurals: *mes parents*, *mes sœurs*.",
+      "tags": ["possessive", "plural"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "The family tree",
+      "body": "# La famille — family vocabulary\n\nFamily words come in matched gender pairs, just like in English (father / mother, son / daughter). French adds the same article system you learned in Lesson 03:\n\n- *le père* — the father\n- *la mère* — the mother\n- *les parents* — the parents (always plural)\n- *le frère* / *la sœur* — brother / sister\n- *le fils* / *la fille* — son / daughter\n- *l'oncle* / *la tante* — uncle / aunt (note the elision on *oncle*)\n\nThis lesson adds **possessive adjectives** (*mon*, *ma*, *mes* — my) so you can talk about YOUR family, not just family in the abstract."
+    },
+    {
+      "id": "ex-match-family",
+      "type": "exercise",
+      "title": "Match family members",
+      "exercise": {
+        "id": "ex-match-family",
+        "type": "matching",
+        "prompt": "Match each French family word to its English meaning.",
+        "card_ids": ["fam-pere", "fam-mere", "fam-frere", "fam-soeur", "fam-oncle", "fam-tante"],
+        "pairs": [
+          {"left": "le père", "right": "father"},
+          {"left": "la mère", "right": "mother"},
+          {"left": "le frère", "right": "brother"},
+          {"left": "la sœur", "right": "sister"},
+          {"left": "l'oncle", "right": "uncle"},
+          {"left": "la tante", "right": "aunt"}
+        ]
+      }
+    },
+    {
+      "id": "step-possessives",
+      "type": "theory",
+      "title": "Mon, ma, mes — my",
+      "body": "## Possessive adjectives\n\nFrench possessives agree with the **thing owned**, not with the owner. \"My father\" uses *mon* because *père* is masculine — even if a woman says it.\n\n| Form | When |\n|---|---|\n| **mon** | m. singular: *mon père*, *mon frère*, *mon livre* |\n| **ma** | f. singular, consonant start: *ma mère*, *ma sœur*, *ma maison* |\n| **mes** | any plural: *mes parents*, *mes sœurs* |\n\nKey trap: before a feminine noun starting with a **vowel**, French uses **mon** instead of *ma* — because *ma amie* would be ugly to pronounce. So:\n\n- *mon amie* (my friend, f.) — NOT *ma amie*\n- *mon école* (my school, f.) — NOT *ma école*\n\nSame rule as the article elision in Lesson 03, just applied to the possessive."
+    },
+    {
+      "id": "ex-free-mon-pere",
+      "type": "exercise",
+      "title": "My father",
+      "exercise": {
+        "id": "ex-free-mon-pere",
+        "type": "free_text",
+        "prompt": "Translate: *my father*.",
+        "card_ids": ["poss-mon", "fam-pere"],
+        "accept": ["mon père", "Mon père", "mon pere"],
+        "hint": "Possessive agrees with the noun's gender.",
+        "distractors": ["ma père", "mes père", "le père"]
+      }
+    },
+    {
+      "id": "ex-free-ma-soeur",
+      "type": "exercise",
+      "title": "My sister",
+      "exercise": {
+        "id": "ex-free-ma-soeur",
+        "type": "free_text",
+        "prompt": "Translate: *my sister*.",
+        "card_ids": ["poss-ma", "fam-soeur"],
+        "accept": ["ma sœur", "ma soeur", "Ma sœur"],
+        "hint": "Feminine, consonant start. Use ma.",
+        "distractors": ["mon sœur", "mes sœur", "la sœur"]
+      }
+    },
+    {
+      "id": "ex-pick-mon-amie",
+      "type": "exercise",
+      "title": "The vowel trap",
+      "exercise": {
+        "id": "ex-pick-mon-amie",
+        "type": "picture_choice",
+        "prompt": "*amie* (friend, f.) starts with a vowel. Which possessive is correct?",
+        "card_ids": ["poss-mon"],
+        "images": [
+          {
+            "src": "assets/img/friend-girl.png",
+            "label": "ma amie"
+          },
+          {
+            "src": "assets/img/friend-bench.png",
+            "label": "mon amie",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/friend-cafe.png",
+            "label": "mes amie"
+          },
+          {
+            "src": "assets/img/friend-park.png",
+            "label": "m'amie"
+          },
+          {
+            "src": "assets/img/friend-window.png",
+            "label": "l'amie"
+          }
+        ],
+        "hint": "Feminine + vowel start → use the masculine-shape *mon* to avoid the awkward *ma amie*.",
+        "distractors": ["ma amie", "mes amie", "m'amie"]
+      }
+    },
+    {
+      "id": "step-relationships",
+      "type": "theory",
+      "title": "Describing relationships",
+      "body": "## Putting it together\n\nWith family words + possessives + the verbs from Lesson 04, you can describe your family in real sentences:\n\n- *J'ai **un frère et deux sœurs**.* — I have one brother and two sisters.\n- ***Mon père est** médecin.* — My father is a doctor.\n- ***Ma sœur a** dix ans.* — My sister is 10.\n- ***Mes parents habitent** à Lyon.* — My parents live in Lyon.\n- ***Mon oncle est** français.* — My uncle is French.\n\nNotice the verbs you already know: *avoir* for possession (one brother), *être* for identity (a doctor), *habiter* for location.\n\nBuilding sentences out of pieces you've already learned is how A1 starts feeling fluent."
+    },
+    {
+      "id": "ex-tile-family-sentence",
+      "type": "exercise",
+      "title": "Build: I have two brothers",
+      "exercise": {
+        "id": "ex-tile-family-sentence",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean *I have two brothers and one sister*.",
+        "card_ids": ["fam-frere", "fam-soeur"],
+        "tiles": ["J'", "ai", "deux", "frères", "et", "une", "sœur"],
+        "hint": "Plural brothers, singular sister. Indefinite article for *one sister*."
+      }
+    },
+    {
+      "id": "ex-free-mes-parents",
+      "type": "exercise",
+      "title": "My parents",
+      "exercise": {
+        "id": "ex-free-mes-parents",
+        "type": "free_text",
+        "prompt": "Translate: *my parents*.",
+        "card_ids": ["poss-mes", "fam-parents"],
+        "accept": ["mes parents", "Mes parents", "mes Parents"],
+        "hint": "Plural — use the plural possessive.",
+        "distractors": ["mon parents", "ma parents", "les parents"]
+      }
+    },
+    {
+      "id": "ex-match-possessives",
+      "type": "exercise",
+      "title": "Match possessive to noun",
+      "exercise": {
+        "id": "ex-match-possessives",
+        "type": "matching",
+        "prompt": "Match each noun with the correct possessive form of *my*.",
+        "card_ids": ["poss-mon", "poss-ma", "poss-mes"],
+        "pairs": [
+          {"left": "père", "right": "mon"},
+          {"left": "mère", "right": "ma"},
+          {"left": "parents", "right": "mes"},
+          {"left": "oncle", "right": "mon"},
+          {"left": "tante", "right": "ma"},
+          {"left": "sœurs", "right": "mes"}
+        ]
+      }
+    },
+    {
+      "id": "ex-tile-mon-frere",
+      "type": "exercise",
+      "title": "Build: My brother is a teacher",
+      "exercise": {
+        "id": "ex-tile-mon-frere",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean *My brother is a teacher*. (Remember: no article before a profession.)",
+        "card_ids": ["fam-frere", "poss-mon"],
+        "tiles": ["Mon", "frère", "est", "professeur"],
+        "hint": "Possessive + noun + être + profession (no article)."
+      }
+    }
+  ]
+}

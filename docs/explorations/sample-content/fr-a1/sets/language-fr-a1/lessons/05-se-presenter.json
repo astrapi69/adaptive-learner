@@ -1,0 +1,248 @@
+{
+  "id": "05-se-presenter",
+  "title": "Se présenter",
+  "description": "Introducing yourself: name, age, nationality, profession. Uses être + avoir from Lesson 04.",
+  "estimated_minutes": 12,
+  "cards": [
+    {
+      "id": "phrase-je-mappelle",
+      "front": "Je m'appelle…",
+      "back": "My name is… (lit. *I call myself*)",
+      "notes": "Reflexive verb. The *m'* is the elided form of *me* (myself). *Je m'appelle Marie* — I call myself Marie.",
+      "tags": ["greeting", "introduction"]
+    },
+    {
+      "id": "phrase-jai-ans",
+      "front": "J'ai … ans.",
+      "back": "I am … years old. (lit. *I have … years*)",
+      "notes": "French uses *avoir* for age. Never *Je suis 25 ans* — that's the English calque most learners produce first.",
+      "tags": ["age", "introduction"]
+    },
+    {
+      "id": "phrase-je-suis",
+      "front": "Je suis…",
+      "back": "I am… (nationality / profession / identity)",
+      "tags": ["introduction", "identity"]
+    },
+    {
+      "id": "phrase-jhabite-a",
+      "front": "J'habite à…",
+      "back": "I live in… (city)",
+      "notes": "*à* + city: *J'habite à Paris*. For countries it's *en* (feminine) or *au* (masculine): *en France*, *au Canada*.",
+      "tags": ["introduction", "location"]
+    },
+    {
+      "id": "nat-francais-m",
+      "front": "français",
+      "back": "French (m.)",
+      "notes": "Lowercase as an adjective: *Je suis français*. Capitalized only as a noun: *un Français* (a French person).",
+      "tags": ["nationality", "masculine"]
+    },
+    {
+      "id": "nat-francaise-f",
+      "front": "française",
+      "back": "French (f.)",
+      "notes": "Add **-e** for feminine: *Je suis française*. Most nationalities follow this pattern.",
+      "tags": ["nationality", "feminine"]
+    },
+    {
+      "id": "nat-allemand",
+      "front": "allemand / allemande",
+      "back": "German",
+      "tags": ["nationality"]
+    },
+    {
+      "id": "nat-espagnol",
+      "front": "espagnol / espagnole",
+      "back": "Spanish",
+      "tags": ["nationality"]
+    },
+    {
+      "id": "nat-anglais",
+      "front": "anglais / anglaise",
+      "back": "English",
+      "notes": "Note: *anglais* covers England specifically. For \"British\" use *britannique* (invariable — same form m/f).",
+      "tags": ["nationality"]
+    },
+    {
+      "id": "prof-etudiant",
+      "front": "étudiant / étudiante",
+      "back": "student",
+      "notes": "When stating a profession with *être*, French DROPS the article: *Je suis étudiant* — not *un étudiant*.",
+      "tags": ["profession"]
+    },
+    {
+      "id": "prof-professeur",
+      "front": "professeur",
+      "back": "teacher / professor",
+      "notes": "Traditionally invariable: *un professeur* for any gender. *Une professeure* (with an extra **-e**) is increasingly accepted but still feels new.",
+      "tags": ["profession"]
+    },
+    {
+      "id": "prof-medecin",
+      "front": "médecin",
+      "back": "doctor",
+      "tags": ["profession"]
+    },
+    {
+      "id": "phrase-enchante",
+      "front": "Enchanté(e).",
+      "back": "Nice to meet you. (lit. *enchanted*)",
+      "notes": "Add the silent **-e** in writing if you're feminine: *Enchantée*. Sounds the same either way.",
+      "tags": ["greeting", "politeness"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "The four pieces of an introduction",
+      "body": "# Introducing yourself in French\n\nA full A1 introduction has four pieces, and you can do all four with verbs you already know from Lesson 04 (*être* and *avoir*).\n\n1. **Name** — *Je m'appelle ___* (I call myself ___)\n2. **Age** — *J'ai ___ ans* (I have ___ years)\n3. **Nationality** — *Je suis ___* (I am ___)\n4. **Profession** — *Je suis ___* (I am ___)\n\nEnd with *Enchanté(e)* — \"nice to meet you.\"\n\nMost everyday introductions are shorter — just name + maybe profession. But knowing the full pattern means you can also UNDERSTAND it when someone introduces themselves to you."
+    },
+    {
+      "id": "step-name",
+      "type": "theory",
+      "title": "Saying your name",
+      "body": "## Je m'appelle\n\nThis is a **reflexive** verb: *s'appeler* — to call oneself.\n\n- *Je **m'**appelle Marie.* — My name is Marie.\n- *Tu **t'**appelles comment ?* — What's your name? (informal)\n- *Vous **vous** appelez comment ?* — What's your name? (formal/plural)\n- *Il / Elle **s'**appelle…* — His / her name is…\n\nThe *me / te / se* forms agree with the subject and elide before a vowel (*m'appelle*, *t'appelles*, *s'appelle*).\n\nAt A1, you really only need the first-person form: **Je m'appelle ___**. Memorise it as one chunk; the grammar will click later."
+    },
+    {
+      "id": "ex-free-name",
+      "type": "exercise",
+      "title": "Saying your name",
+      "exercise": {
+        "id": "ex-free-name",
+        "type": "free_text",
+        "prompt": "Translate: *My name is Marie.*",
+        "card_ids": ["phrase-je-mappelle"],
+        "accept": ["Je m'appelle Marie.", "Je m'appelle Marie", "je m'appelle marie"],
+        "hint": "Reflexive form, with elision: *m'* not *me*.",
+        "distractors": ["Je suis Marie.", "J'appelle Marie.", "Je me appelle Marie."]
+      }
+    },
+    {
+      "id": "step-age",
+      "type": "theory",
+      "title": "Saying your age — with *avoir*",
+      "body": "## J'ai … ans\n\nFrench uses **avoir** (to have) for age, never *être*. Literally you say *I have twenty-five years*.\n\n- *J'**ai** vingt-cinq ans.* — I am 25 years old.\n- *Tu **as** quel âge ?* — How old are you? (informal)\n- *Vous **avez** quel âge ?* — How old are you? (formal)\n- *Elle **a** trente ans.* — She is 30.\n\nNumbers 1-10 came in Lesson 02. Numbers 20-100 follow patterns but aren't drilled here; for now, just know the construction: *J'ai [number] ans*."
+    },
+    {
+      "id": "ex-match-age",
+      "type": "exercise",
+      "title": "Match the age phrases",
+      "exercise": {
+        "id": "ex-match-age",
+        "type": "matching",
+        "prompt": "Match each French phrase with its English translation.",
+        "card_ids": ["phrase-jai-ans"],
+        "pairs": [
+          {"left": "J'ai dix ans.", "right": "I am 10."},
+          {"left": "Tu as quel âge ?", "right": "How old are you?"},
+          {"left": "Elle a cinq ans.", "right": "She is 5."},
+          {"left": "Nous avons trente ans.", "right": "We are 30."}
+        ]
+      }
+    },
+    {
+      "id": "step-nationality",
+      "type": "theory",
+      "title": "Nationality",
+      "body": "## Saying your nationality\n\nUse **être** + adjective. The adjective agrees with you (m. or f.).\n\n| English | m. | f. |\n|---|---|---|\n| French | français | française |\n| German | allemand | allemande |\n| Spanish | espagnol | espagnole |\n| English | anglais | anglaise |\n| Italian | italien | italienne |\n\nMost nationalities add **-e** for feminine. A few double the final consonant (italien → italienne, canadien → canadienne).\n\n**Lowercase** as an adjective: *Je suis française*. **Capitalized** only as a noun: *un Français habite ici* (a French person lives here)."
+    },
+    {
+      "id": "ex-pick-nationality",
+      "type": "exercise",
+      "title": "Feminine nationality",
+      "exercise": {
+        "id": "ex-pick-nationality",
+        "type": "picture_choice",
+        "prompt": "A woman saying she's German says…",
+        "card_ids": ["nat-allemand"],
+        "images": [
+          {
+            "src": "assets/img/germany-flag.png",
+            "label": "Je suis allemand."
+          },
+          {
+            "src": "assets/img/germany-map.png",
+            "label": "Je suis allemande.",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/berlin.png",
+            "label": "Je suis Allemagne."
+          },
+          {
+            "src": "assets/img/europe.png",
+            "label": "J'ai allemand."
+          }
+        ],
+        "hint": "Adjective agrees: feminine adds -e.",
+        "distractors": ["Je suis allemand.", "Je suis Allemagne.", "J'ai allemand."]
+      }
+    },
+    {
+      "id": "step-profession",
+      "type": "theory",
+      "title": "Profession — no article!",
+      "body": "## Saying what you do\n\nWith **être** + a profession, French **drops the article**:\n\n- *Je suis **étudiant**.* — I am a student. (NOT *un étudiant*)\n- *Elle est **médecin**.* — She is a doctor.\n- *Tu es **professeur** ?* — Are you a teacher?\n\nThis is one of the few times French is more compact than English. Don't add *un* / *une* / *des* unless you're describing the person further:\n\n- *Je suis un bon étudiant.* — I am a good student. (description → article reappears)\n- *C'est un médecin célèbre.* — He's a famous doctor."
+    },
+    {
+      "id": "ex-free-profession",
+      "type": "exercise",
+      "title": "Saying your profession",
+      "exercise": {
+        "id": "ex-free-profession",
+        "type": "free_text",
+        "prompt": "A woman saying *I am a student* writes:",
+        "card_ids": ["prof-etudiant"],
+        "accept": ["Je suis étudiante.", "Je suis étudiante", "je suis étudiante"],
+        "hint": "Profession after *être* — drop the article. Feminine form adds -e.",
+        "distractors": ["Je suis une étudiante.", "Je suis étudiant.", "J'ai étudiante."]
+      }
+    },
+    {
+      "id": "ex-tile-introduction",
+      "type": "exercise",
+      "title": "Build a full introduction",
+      "exercise": {
+        "id": "ex-tile-introduction",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *My name is Paul and I am French.*",
+        "card_ids": ["phrase-je-mappelle", "nat-francais-m"],
+        "tiles": ["Je", "m'appelle", "Paul", "et", "je", "suis", "français"],
+        "hint": "Two clauses joined by *et* (and)."
+      }
+    },
+    {
+      "id": "ex-match-questions",
+      "type": "exercise",
+      "title": "Match question to topic",
+      "exercise": {
+        "id": "ex-match-questions",
+        "type": "matching",
+        "prompt": "Match each question to what it asks about.",
+        "card_ids": ["phrase-je-mappelle", "phrase-jai-ans", "phrase-je-suis", "phrase-jhabite-a"],
+        "pairs": [
+          {"left": "Tu t'appelles comment ?", "right": "name"},
+          {"left": "Tu as quel âge ?", "right": "age"},
+          {"left": "Tu es de quelle nationalité ?", "right": "nationality"},
+          {"left": "Tu habites où ?", "right": "city"}
+        ]
+      }
+    },
+    {
+      "id": "ex-free-enchante",
+      "type": "exercise",
+      "title": "Polite reply",
+      "exercise": {
+        "id": "ex-free-enchante",
+        "type": "free_text",
+        "prompt": "Someone has just introduced themselves. As a man, you reply:",
+        "card_ids": ["phrase-enchante"],
+        "accept": ["Enchanté.", "Enchanté", "enchanté"],
+        "hint": "One word. The masculine form (no extra -e in writing).",
+        "distractors": ["Enchantée.", "Bonjour.", "Merci."]
+      }
+    }
+  ]
+}

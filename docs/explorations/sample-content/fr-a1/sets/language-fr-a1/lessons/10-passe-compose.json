@@ -1,0 +1,266 @@
+{
+  "id": "10-passe-compose",
+  "title": "Le passé composé — introduction",
+  "description": "The basic French past tense: avoir + past participle, for regular -er verbs.",
+  "estimated_minutes": 14,
+  "cards": [
+    {
+      "id": "verb-parler",
+      "front": "parler",
+      "back": "to speak",
+      "notes": "Regular **-er** verb. Past participle: **parlé** (just swap -er for -é). Sounds the same as the infinitive — context disambiguates.",
+      "tags": ["verb", "regular-er"]
+    },
+    {
+      "id": "verb-manger",
+      "front": "manger",
+      "back": "to eat",
+      "notes": "Past participle: **mangé**. (Same pattern: -er → -é.)",
+      "tags": ["verb", "regular-er"]
+    },
+    {
+      "id": "verb-regarder",
+      "front": "regarder",
+      "back": "to watch / look at",
+      "notes": "Past participle: **regardé**. *J'ai regardé un film* — I watched a movie.",
+      "tags": ["verb", "regular-er"]
+    },
+    {
+      "id": "verb-ecouter",
+      "front": "écouter",
+      "back": "to listen (to)",
+      "notes": "Past participle: **écouté**. Starts with a vowel — elision: *j'ai écouté*.",
+      "tags": ["verb", "regular-er"]
+    },
+    {
+      "id": "verb-habiter",
+      "front": "habiter",
+      "back": "to live (in)",
+      "notes": "Past participle: **habité**. The **h** is silent — elision applies: *j'ai habité*.",
+      "tags": ["verb", "regular-er"]
+    },
+    {
+      "id": "verb-acheter",
+      "front": "acheter",
+      "back": "to buy",
+      "notes": "Past participle: **acheté**. *J'ai acheté du pain* — I bought some bread.",
+      "tags": ["verb", "regular-er"]
+    },
+    {
+      "id": "verb-travailler",
+      "front": "travailler",
+      "back": "to work",
+      "notes": "Past participle: **travaillé**. *Hier j'ai travaillé* — yesterday I worked.",
+      "tags": ["verb", "regular-er"]
+    },
+    {
+      "id": "verb-aimer",
+      "front": "aimer",
+      "back": "to like / love",
+      "notes": "Past participle: **aimé**. *J'ai aimé ce film* — I liked this movie.",
+      "tags": ["verb", "regular-er"]
+    },
+    {
+      "id": "pp-parle",
+      "front": "parlé",
+      "back": "spoken (past participle of parler)",
+      "tags": ["participle"]
+    },
+    {
+      "id": "pp-mange",
+      "front": "mangé",
+      "back": "eaten (past participle of manger)",
+      "tags": ["participle"]
+    },
+    {
+      "id": "phr-hier",
+      "front": "hier",
+      "back": "yesterday",
+      "notes": "Common time marker that pairs with the passé composé: *Hier j'ai mangé une pizza* — yesterday I ate a pizza.",
+      "tags": ["time"]
+    },
+    {
+      "id": "phr-ce-matin",
+      "front": "ce matin",
+      "back": "this morning",
+      "notes": "Another past-time marker. Also: *ce soir* (this evening), *la semaine dernière* (last week).",
+      "tags": ["time"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Talking about the past",
+      "body": "# Le passé composé\n\nFrench has several past tenses. The most common — the one you'll use in everyday speech — is the **passé composé**. It covers both *I spoke* AND *I have spoken* in English; French doesn't make that distinction.\n\nThe formula has two pieces:\n\n> **avoir** (conjugated for the subject) + **past participle**\n\n- *J'**ai parlé** français.* — I spoke French.\n- *Tu **as mangé** ?* — Have you eaten? / Did you eat?\n- *Elle **a regardé** un film.* — She watched a movie.\n- *Nous **avons travaillé** hier.* — We worked yesterday.\n\nLesson 04 covered the present tense of *avoir*. You already know it — half the work is done.\n\nThis lesson sticks to **regular -er verbs**. They're the largest group in French (≈90% of all verbs) and they form their past participle the same easy way every time."
+    },
+    {
+      "id": "step-formation",
+      "type": "theory",
+      "title": "Making the past participle",
+      "body": "## Regular -er verbs: drop the -er, add -é\n\n| Infinitive | Past participle |\n|---|---|\n| parl**er** (to speak) | parl**é** |\n| mang**er** (to eat) | mang**é** |\n| regard**er** (to watch) | regard**é** |\n| écout**er** (to listen) | écout**é** |\n| habit**er** (to live) | habit**é** |\n| achet**er** (to buy) | achet**é** |\n\nThat's it. Every regular -er verb works this way.\n\nPronunciation trap: **parler** and **parlé** sound identical (both \"par-LAY\"). You hear which one is meant from context — is there an *ai*/*as*/*a* in front? Then it's the participle.\n\n- *Je parle français.* — I speak French. (present, no avoir)\n- *J'ai parlé français.* — I spoke French. (passé composé)"
+    },
+    {
+      "id": "ex-match-participles",
+      "type": "exercise",
+      "title": "Match infinitive to participle",
+      "exercise": {
+        "id": "ex-match-participles",
+        "type": "matching",
+        "prompt": "Match each infinitive with its past participle.",
+        "card_ids": ["verb-parler", "verb-manger", "verb-regarder", "verb-ecouter", "verb-habiter", "verb-acheter"],
+        "pairs": [
+          {"left": "parler", "right": "parlé"},
+          {"left": "manger", "right": "mangé"},
+          {"left": "regarder", "right": "regardé"},
+          {"left": "écouter", "right": "écouté"},
+          {"left": "habiter", "right": "habité"},
+          {"left": "acheter", "right": "acheté"}
+        ]
+      }
+    },
+    {
+      "id": "ex-free-pp-travaille",
+      "type": "exercise",
+      "title": "Form the participle",
+      "exercise": {
+        "id": "ex-free-pp-travaille",
+        "type": "free_text",
+        "prompt": "What is the past participle of **travailler** (to work)?",
+        "card_ids": ["verb-travailler"],
+        "accept": ["travaillé", "Travaillé", "travaille"],
+        "hint": "Drop -er, add -é. The result has the same accent pattern as *parlé*, *mangé*.",
+        "distractors": ["travailler", "travaillai", "travaillait"]
+      }
+    },
+    {
+      "id": "step-full-form",
+      "type": "theory",
+      "title": "Putting it together",
+      "body": "## The full conjugation\n\nUsing **parler** (parlé) as the example:\n\n| Subject | avoir | + parlé |\n|---|---|---|\n| je | **ai** | j'ai parlé |\n| tu | **as** | tu as parlé |\n| il / elle | **a** | il a parlé |\n| nous | **avons** | nous avons parlé |\n| vous | **avez** | vous avez parlé |\n| ils / elles | **ont** | ils ont parlé |\n\nSwap *parlé* for any other -er participle: *mangé*, *regardé*, *écouté*, *acheté*, *habité*, *travaillé*, *aimé*, ...\n\n**Word order** in a statement: subject + avoir + past participle + rest. The past participle stays right after *avoir* — nothing slips in between.\n\n- *J'**ai bien** mangé.* — I ate well. (*bien* before the participle)\n- *Elle **n'a pas** travaillé.* — She didn't work. (negation around *a*)"
+    },
+    {
+      "id": "ex-free-jai-mange",
+      "type": "exercise",
+      "title": "I ate yesterday",
+      "exercise": {
+        "id": "ex-free-jai-mange",
+        "type": "free_text",
+        "prompt": "Translate: *I ate yesterday.* (Use the passé composé. Word order: subject + avoir + participle + time.)",
+        "card_ids": ["verb-manger", "pp-mange", "phr-hier"],
+        "accept": ["J'ai mangé hier.", "J'ai mangé hier", "j'ai mangé hier"],
+        "hint": "*J'ai* + past participle of *manger* + *hier*.",
+        "distractors": ["Je mange hier.", "J'ai mange hier.", "Je suis mangé hier."]
+      }
+    },
+    {
+      "id": "ex-tile-she-watched",
+      "type": "exercise",
+      "title": "Build: She watched a film",
+      "exercise": {
+        "id": "ex-tile-she-watched",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *She watched a film yesterday.*",
+        "card_ids": ["verb-regarder", "phr-hier"],
+        "tiles": ["Elle", "a", "regardé", "un", "film", "hier"],
+        "hint": "Subject + form of *avoir* + participle + object + time marker."
+      }
+    },
+    {
+      "id": "step-elision-recap",
+      "type": "theory",
+      "title": "Elision with avoir",
+      "body": "## Don't forget the elisions\n\nThree elisions to watch for in the passé composé:\n\n1. **Je → J'** before *ai*: always *j'ai*, never *je ai*.\n2. **Past participles starting with a vowel** trigger liaison from *a* / *ont* / etc. — pronunciation only, spelling unchanged. *Il a écouté* → spoken as \"il a-z-écouté\" (rough).\n3. **Negation** wraps *avoir*, not the whole verb: *Je **n'ai pas** parlé*, not *Je n'ai pas parlé*. The *n'* elides before *ai*.\n\nFor A1: just say *J'ai parlé*, *Je n'ai pas parlé* (positive vs negative). The other patterns come later but it's worth recognising them in the wild."
+    },
+    {
+      "id": "ex-pick-negation",
+      "type": "exercise",
+      "title": "Negative passé composé",
+      "exercise": {
+        "id": "ex-pick-negation",
+        "type": "picture_choice",
+        "prompt": "How do you say *I did not eat*?",
+        "card_ids": ["verb-manger"],
+        "images": [
+          {
+            "src": "assets/img/empty-plate-1.png",
+            "label": "Je ne mange pas."
+          },
+          {
+            "src": "assets/img/empty-plate-2.png",
+            "label": "Je n'ai pas mangé.",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/empty-plate-3.png",
+            "label": "J'ai pas mangé."
+          },
+          {
+            "src": "assets/img/empty-plate-4.png",
+            "label": "Je n'ai mangé pas."
+          }
+        ],
+        "hint": "Negation wraps *avoir* (the conjugated verb): *ne ... pas* around *ai*.",
+        "distractors": ["Je ne mange pas.", "J'ai pas mangé.", "Je n'ai mangé pas."]
+      }
+    },
+    {
+      "id": "ex-free-we-listened",
+      "type": "exercise",
+      "title": "We listened to music",
+      "exercise": {
+        "id": "ex-free-we-listened",
+        "type": "free_text",
+        "prompt": "Translate: *We listened to music this morning.*",
+        "card_ids": ["verb-ecouter", "phr-ce-matin"],
+        "accept": ["Nous avons écouté de la musique ce matin.", "Nous avons écouté de la musique ce matin", "nous avons écouté de la musique ce matin"],
+        "hint": "*Nous avons* + écouté + *de la musique* + *ce matin*.",
+        "distractors": ["Nous écoutons de la musique ce matin.", "Nous avons écouter de la musique ce matin.", "Nous sommes écouté de la musique ce matin."]
+      }
+    },
+    {
+      "id": "ex-match-time-markers",
+      "type": "exercise",
+      "title": "Match time markers",
+      "exercise": {
+        "id": "ex-match-time-markers",
+        "type": "matching",
+        "prompt": "Match each French time expression with its English meaning.",
+        "card_ids": ["phr-hier", "phr-ce-matin"],
+        "pairs": [
+          {"left": "hier", "right": "yesterday"},
+          {"left": "ce matin", "right": "this morning"},
+          {"left": "ce soir", "right": "this evening"},
+          {"left": "la semaine dernière", "right": "last week"}
+        ]
+      }
+    },
+    {
+      "id": "ex-tile-i-bought",
+      "type": "exercise",
+      "title": "Build: I bought a book",
+      "exercise": {
+        "id": "ex-tile-i-bought",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *I bought a book yesterday.*",
+        "card_ids": ["verb-acheter", "phr-hier"],
+        "tiles": ["J'", "ai", "acheté", "un", "livre", "hier"],
+        "hint": "Subject (elided) + avoir + participle + object + time."
+      }
+    },
+    {
+      "id": "ex-free-they-liked",
+      "type": "exercise",
+      "title": "They liked",
+      "exercise": {
+        "id": "ex-free-they-liked",
+        "type": "free_text",
+        "prompt": "Translate: *They liked the film.* (Use masculine *they*. Past tense, passé composé.)",
+        "card_ids": ["verb-aimer"],
+        "accept": ["Ils ont aimé le film.", "Ils ont aimé le film", "ils ont aimé le film"],
+        "hint": "Plural masculine *ils* + *ont* (have) + past participle.",
+        "distractors": ["Ils aiment le film.", "Ils ont aimer le film.", "Ils sont aimé le film."]
+      }
+    }
+  ]
+}

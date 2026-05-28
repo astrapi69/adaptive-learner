@@ -1,0 +1,273 @@
+{
+  "id": "07-couleurs-vetements",
+  "title": "Les couleurs et les vêtements",
+  "description": "Color vocabulary + clothing + the color-agreement rule.",
+  "estimated_minutes": 13,
+  "cards": [
+    {
+      "id": "col-rouge",
+      "front": "rouge",
+      "back": "red",
+      "notes": "**Invariable** — same form for masculine and feminine: *un livre rouge*, *une chaise rouge*. The plural just adds **-s**: *des livres rouges*.",
+      "tags": ["color", "invariable"]
+    },
+    {
+      "id": "col-bleu",
+      "front": "bleu / bleue",
+      "back": "blue",
+      "notes": "Agrees normally: *bleu* (m.), *bleue* (f.), *bleus* / *bleues* (pl.).",
+      "tags": ["color"]
+    },
+    {
+      "id": "col-vert",
+      "front": "vert / verte",
+      "back": "green",
+      "notes": "Add a **-e** AND pronounce the **t** in the feminine: *vert* sounds like \"vehr\", *verte* like \"vehrt\".",
+      "tags": ["color"]
+    },
+    {
+      "id": "col-noir",
+      "front": "noir / noire",
+      "back": "black",
+      "tags": ["color"]
+    },
+    {
+      "id": "col-blanc",
+      "front": "blanc / blanche",
+      "back": "white",
+      "notes": "Irregular feminine — **blanche** (not *blance*). Same pattern: *franc / franche*, *sec / sèche*.",
+      "tags": ["color", "irregular"]
+    },
+    {
+      "id": "col-jaune",
+      "front": "jaune",
+      "back": "yellow",
+      "notes": "Already ends in **-e** — invariable for gender. Only plural adds **-s**.",
+      "tags": ["color", "invariable"]
+    },
+    {
+      "id": "col-orange",
+      "front": "orange",
+      "back": "orange",
+      "notes": "Comes from the fruit, treated as **invariable in both number AND gender**: *des chaises orange*, never *oranges*. Same for *marron* (brown).",
+      "tags": ["color", "invariable"]
+    },
+    {
+      "id": "vet-chemise",
+      "front": "la chemise",
+      "back": "the shirt",
+      "tags": ["clothing", "feminine"]
+    },
+    {
+      "id": "vet-pantalon",
+      "front": "le pantalon",
+      "back": "the trousers / pants",
+      "notes": "**Singular** in French even though English says \"pants\" (plural). One pair = one *pantalon*.",
+      "tags": ["clothing", "masculine"]
+    },
+    {
+      "id": "vet-robe",
+      "front": "la robe",
+      "back": "the dress",
+      "tags": ["clothing", "feminine"]
+    },
+    {
+      "id": "vet-veste",
+      "front": "la veste",
+      "back": "the jacket",
+      "tags": ["clothing", "feminine"]
+    },
+    {
+      "id": "vet-chaussures",
+      "front": "les chaussures",
+      "back": "the shoes",
+      "notes": "Usually **plural** — like *les lunettes* (glasses). One shoe = *une chaussure* (rare in practice).",
+      "tags": ["clothing", "plural", "feminine"]
+    },
+    {
+      "id": "vet-chapeau",
+      "front": "le chapeau",
+      "back": "the hat",
+      "notes": "Plural: *les chapeaux*. Words ending in **-eau** add **-x** in the plural (not -s).",
+      "tags": ["clothing", "masculine"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Color agreement — the rule that traps everyone",
+      "body": "# Colors in French\n\nIn French, **colors are adjectives**, and adjectives **agree** with the noun they describe — gender AND number. This is the rule learners forget most often.\n\n- *un chat noir* — a black cat (m. sg.)\n- *une chaise noire* — a black chair (f. sg., adds -e)\n- *des chats noirs* — black cats (m. pl., adds -s)\n- *des chaises noires* — black chairs (f. pl., adds -es)\n\nAdjectives normally follow the noun (unlike English): *un chat **noir***, not *un noir chat*.\n\nThis lesson also covers a few **invariable** colors (*rouge*, *jaune*, *orange*) that break this rule — but the rule still applies to most colors."
+    },
+    {
+      "id": "step-agreement",
+      "type": "theory",
+      "title": "The standard pattern",
+      "body": "## Standard adjective agreement\n\n| Color | m. sg. | f. sg. | m. pl. | f. pl. |\n|---|---|---|---|---|\n| black | noir | noire | noirs | noires |\n| green | vert | verte | verts | vertes |\n| blue | bleu | bleue | bleus | bleues |\n\nThe rules:\n- **f. sg.** — add **-e**\n- **m. pl.** — add **-s**\n- **f. pl.** — add **-es** (i.e., -e + -s)\n- **m. sg.** — base form (no ending)\n\nIf the masculine form already ends in **-e**, the feminine doesn't add another one: *rouge* stays *rouge* for both genders. We'll see that in the next step."
+    },
+    {
+      "id": "ex-match-agreement",
+      "type": "exercise",
+      "title": "Match the agreement",
+      "exercise": {
+        "id": "ex-match-agreement",
+        "type": "matching",
+        "prompt": "Match each French phrase with the correct form.",
+        "card_ids": ["col-noir", "col-vert"],
+        "pairs": [
+          {"left": "un chat ___ (black)", "right": "noir"},
+          {"left": "une chaise ___ (black)", "right": "noire"},
+          {"left": "des chats ___ (black)", "right": "noirs"},
+          {"left": "des chaises ___ (black)", "right": "noires"}
+        ]
+      }
+    },
+    {
+      "id": "step-invariable",
+      "type": "theory",
+      "title": "Invariable colors",
+      "body": "## Colors that don't change for gender\n\nThree groups break the standard agreement:\n\n**Colors ending in -e** (like *rouge*, *jaune*) — only the **plural** changes:\n- *un livre rouge*, *une chaise rouge*, *des livres rouges*, *des chaises rouges*\n\n**Colors named after objects** (*orange*, *marron*, *citron*, *kaki*) — **completely invariable**, never add -e or -s:\n- *un livre orange*, *une chaise orange*, *des livres orange*, *des chaises orange*\n\n**Irregular feminine: *blanc* → *blanche*** — not all m-sg-consonant colors take the standard pattern. *Blanc* drops the -c and adds -che. Memorise this one as an exception.\n\nWhen in doubt with a less common color, look it up — but the patterns above cover the A1 set."
+    },
+    {
+      "id": "ex-free-blanche",
+      "type": "exercise",
+      "title": "Irregular: white",
+      "exercise": {
+        "id": "ex-free-blanche",
+        "type": "free_text",
+        "prompt": "Translate *a white shirt*. (*chemise* is feminine.)",
+        "card_ids": ["col-blanc", "vet-chemise"],
+        "accept": ["une chemise blanche", "Une chemise blanche", "une chemise Blanche"],
+        "hint": "Irregular feminine: *blanc* → *blanche*.",
+        "distractors": ["une chemise blanc", "une chemise blance", "un chemise blanche"]
+      }
+    },
+    {
+      "id": "ex-pick-orange",
+      "type": "exercise",
+      "title": "Invariable color",
+      "exercise": {
+        "id": "ex-pick-orange",
+        "type": "picture_choice",
+        "prompt": "How would you write *orange shoes*? (*chaussures* is feminine plural.)",
+        "card_ids": ["col-orange", "vet-chaussures"],
+        "images": [
+          {
+            "src": "assets/img/shoes-1.png",
+            "label": "des chaussures oranges"
+          },
+          {
+            "src": "assets/img/shoes-2.png",
+            "label": "des chaussures orange",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/shoes-3.png",
+            "label": "des chaussure orange"
+          },
+          {
+            "src": "assets/img/shoes-4.png",
+            "label": "des chaussures orangs"
+          }
+        ],
+        "hint": "*Orange* is invariable — never adds -s or -e.",
+        "distractors": ["des chaussures oranges", "des chaussure orange", "des chaussures orangs"]
+      }
+    },
+    {
+      "id": "step-clothing",
+      "type": "theory",
+      "title": "Clothing vocabulary",
+      "body": "## Common clothes\n\n| French | English | Gender / Number |\n|---|---|---|\n| la chemise | shirt | f. |\n| le pantalon | trousers | m., **singular** |\n| la robe | dress | f. |\n| la veste | jacket | f. |\n| les chaussures | shoes | f., **plural** |\n| le chapeau | hat | m. (pl. **chapeaux**) |\n\nNumber traps:\n- ***le pantalon*** — singular in French (one pair = one item)\n- ***les chaussures*** — always plural\n- ***le chapeau*** — plural is *les chapeaux* (-eau → -eaux)\n\nNow combine clothes with colors: *une chemise verte*, *un pantalon noir*, *des chaussures rouges*. Agreement applies, every time."
+    },
+    {
+      "id": "ex-free-robe-rouge",
+      "type": "exercise",
+      "title": "A red dress",
+      "exercise": {
+        "id": "ex-free-robe-rouge",
+        "type": "free_text",
+        "prompt": "Translate *a red dress*.",
+        "card_ids": ["col-rouge", "vet-robe"],
+        "accept": ["une robe rouge", "Une robe rouge", "une Robe rouge"],
+        "hint": "*Rouge* is invariable for gender — same form m/f.",
+        "distractors": ["une robe rouges", "un robe rouge", "une robe rougee"]
+      }
+    },
+    {
+      "id": "ex-tile-pantalon",
+      "type": "exercise",
+      "title": "Build: black trousers",
+      "exercise": {
+        "id": "ex-tile-pantalon",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean *I have black trousers*. (Remember: *pantalon* is singular!)",
+        "card_ids": ["col-noir", "vet-pantalon"],
+        "tiles": ["J'", "ai", "un", "pantalon", "noir"],
+        "hint": "Singular *pantalon*. Color follows the noun and agrees (m. sg. → no ending)."
+      }
+    },
+    {
+      "id": "ex-match-plurals",
+      "type": "exercise",
+      "title": "Plural agreement",
+      "exercise": {
+        "id": "ex-match-plurals",
+        "type": "matching",
+        "prompt": "Match each phrase with its correct plural form.",
+        "card_ids": ["col-vert", "col-bleu", "col-noir", "col-blanc"],
+        "pairs": [
+          {"left": "des chaises (vert)", "right": "vertes"},
+          {"left": "des livres (bleu)", "right": "bleus"},
+          {"left": "des robes (noir)", "right": "noires"},
+          {"left": "des chemises (blanc)", "right": "blanches"}
+        ]
+      }
+    },
+    {
+      "id": "ex-pick-chapeaux",
+      "type": "exercise",
+      "title": "Plural of chapeau",
+      "exercise": {
+        "id": "ex-pick-chapeaux",
+        "type": "picture_choice",
+        "prompt": "How do you write the plural of *un chapeau bleu* (a blue hat)?",
+        "card_ids": ["vet-chapeau", "col-bleu"],
+        "images": [
+          {
+            "src": "assets/img/hats-1.png",
+            "label": "des chapeaus bleus"
+          },
+          {
+            "src": "assets/img/hats-2.png",
+            "label": "des chapeaux bleus",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/hats-3.png",
+            "label": "des chapeaux bleues"
+          },
+          {
+            "src": "assets/img/hats-4.png",
+            "label": "des chapeau bleus"
+          }
+        ],
+        "hint": "Words ending in -eau take -x in the plural, not -s.",
+        "distractors": ["des chapeaus bleus", "des chapeaux bleues", "des chapeau bleus"]
+      }
+    },
+    {
+      "id": "ex-tile-veste-blanche",
+      "type": "exercise",
+      "title": "Build: a white jacket",
+      "exercise": {
+        "id": "ex-tile-veste-blanche",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean *I have a white jacket*.",
+        "card_ids": ["col-blanc", "vet-veste"],
+        "tiles": ["J'", "ai", "une", "veste", "blanche"],
+        "hint": "Feminine noun → irregular feminine color *blanche*."
+      }
+    }
+  ]
+}

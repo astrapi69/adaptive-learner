@@ -1,0 +1,271 @@
+{
+  "id": "08-au-restaurant",
+  "title": "Au restaurant",
+  "description": "Ordering, polite expressions, basic menu vocabulary.",
+  "estimated_minutes": 12,
+  "cards": [
+    {
+      "id": "phr-je-voudrais",
+      "front": "Je voudrais…",
+      "back": "I would like… (polite)",
+      "notes": "**Standard polite order**. Conditional of *vouloir*, but treat it as a fixed phrase at A1. Always more polite than *Je veux* (I want), which sounds blunt to French ears.",
+      "tags": ["politeness", "ordering"]
+    },
+    {
+      "id": "phr-sil-vous-plait",
+      "front": "s'il vous plaît",
+      "back": "please (formal / plural)",
+      "notes": "Literally *if it pleases you*. Always written with the apostrophe. Often abbreviated **SVP** in text messages or signs.",
+      "tags": ["politeness"]
+    },
+    {
+      "id": "phr-merci",
+      "front": "merci",
+      "back": "thank you",
+      "notes": "Adding **beaucoup** intensifies: *merci beaucoup* (thanks a lot). The reply is *de rien* (you're welcome — lit. *of nothing*) or *je vous en prie* (very formal).",
+      "tags": ["politeness"]
+    },
+    {
+      "id": "phr-addition",
+      "front": "L'addition, s'il vous plaît.",
+      "back": "The bill, please.",
+      "notes": "The standard way to ask for the check. **L'addition** means *the bill* in restaurants — never *la facture* (which is for invoices / utilities).",
+      "tags": ["restaurant", "phrase"]
+    },
+    {
+      "id": "phr-bon-appetit",
+      "front": "Bon appétit !",
+      "back": "Enjoy your meal!",
+      "notes": "Said by staff serving food, AND by table companions before eating. There's no real English equivalent — \"enjoy\" is closest. Always with the exclamation mark.",
+      "tags": ["politeness", "restaurant"]
+    },
+    {
+      "id": "food-pain",
+      "front": "le pain",
+      "back": "the bread",
+      "notes": "On the table by default in most French restaurants — refills are free. *Du pain* (some bread) if you want more.",
+      "tags": ["food", "masculine"]
+    },
+    {
+      "id": "food-eau",
+      "front": "l'eau",
+      "back": "the water",
+      "notes": "Already met in Lesson 03. *Une carafe d'eau* (a jug of tap water) is a free, polite request.",
+      "tags": ["drink", "feminine", "vowel-start"]
+    },
+    {
+      "id": "food-vin",
+      "front": "le vin",
+      "back": "the wine",
+      "notes": "*Un verre de vin* (a glass of wine). Watch the **vin** / **vingt** (twenty) pair — same pronunciation, totally different meanings; context decides.",
+      "tags": ["drink", "masculine"]
+    },
+    {
+      "id": "food-cafe",
+      "front": "le café",
+      "back": "the coffee",
+      "notes": "A small espresso by default in France. Ask for *un café allongé* (Americano-style) or *un café au lait* (with milk) if you want something different.",
+      "tags": ["drink", "masculine"]
+    },
+    {
+      "id": "food-poulet",
+      "front": "le poulet",
+      "back": "the chicken",
+      "tags": ["food", "masculine"]
+    },
+    {
+      "id": "food-poisson",
+      "front": "le poisson",
+      "back": "the fish",
+      "notes": "Don't confuse with **le poison** (one s) — that's poison. One letter, big difference.",
+      "tags": ["food", "masculine"]
+    },
+    {
+      "id": "food-salade",
+      "front": "la salade",
+      "back": "the salad",
+      "tags": ["food", "feminine"]
+    },
+    {
+      "id": "food-fromage",
+      "front": "le fromage",
+      "back": "the cheese",
+      "notes": "France produces ~1,000 varieties. *Un plateau de fromages* (a cheese platter) often comes between the main course and dessert.",
+      "tags": ["food", "masculine"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Eating out in France",
+      "body": "# Au restaurant\n\nFrench restaurant culture has its own rhythm — staff greet you, you sit, the *carte* (menu) arrives, and there's no rush. This lesson covers the language pieces you'll need:\n\n- **Polite phrases**: *je voudrais*, *s'il vous plaît*, *merci*\n- **Ordering and asking for the bill**\n- **Common food vocabulary** for menu reading\n\nA few cultural notes:\n- Service is **included** in the price (look for *service compris* on the menu). Tipping is optional; rounding up is appreciated but not required.\n- **L'addition** doesn't appear at the table on its own — you have to ask for it.\n- **Bread + tap water** are usually free. Ask: *Une carafe d'eau, s'il vous plaît.*"
+    },
+    {
+      "id": "step-polite",
+      "type": "theory",
+      "title": "Polite ordering",
+      "body": "## The polite request pattern\n\n| French | English |\n|---|---|\n| Je voudrais ___ | I would like ___ |\n| ___, s'il vous plaît | ___, please |\n| Merci (beaucoup) | Thank you (very much) |\n| De rien / Je vous en prie | You're welcome |\n\n**Je voudrais** is the conditional of *vouloir* — at A1 it's a fixed polite formula. Pair it with the article you learned in Lesson 03:\n\n- *Je voudrais **un café**, s'il vous plaît.*\n- *Je voudrais **une salade**, s'il vous plaît.*\n- *Je voudrais **du pain**, s'il vous plaît.* (some bread — partitive article)\n\nAt A1 you don't need to master the partitive (*du / de la / des*) — knowing it exists is enough."
+    },
+    {
+      "id": "ex-free-je-voudrais",
+      "type": "exercise",
+      "title": "Order a coffee",
+      "exercise": {
+        "id": "ex-free-je-voudrais",
+        "type": "free_text",
+        "prompt": "Order a coffee politely. Translate: *I would like a coffee, please.*",
+        "card_ids": ["phr-je-voudrais", "food-cafe", "phr-sil-vous-plait"],
+        "accept": ["Je voudrais un café, s'il vous plaît.", "Je voudrais un café s'il vous plaît", "je voudrais un café, s'il vous plaît"],
+        "hint": "*Je voudrais* + indefinite article + noun + *s'il vous plaît*.",
+        "distractors": ["Je veux café.", "J'ai un café.", "Je voudrais le café."]
+      }
+    },
+    {
+      "id": "step-menu",
+      "type": "theory",
+      "title": "Menu vocabulary",
+      "body": "## Food and drink basics\n\n| French | English |\n|---|---|\n| le pain | bread |\n| l'eau | water |\n| le vin | wine |\n| le café | coffee |\n| le poulet | chicken |\n| le poisson | fish |\n| la salade | salad |\n| le fromage | cheese |\n\nLook-alikes to watch:\n- **vin** (wine) vs **vingt** (twenty) — same sound, different meaning\n- **poisson** (fish) vs **poison** (poison) — one s makes the difference\n- **dessert** (dessert) vs **désert** (desert, the dry land) — one s vs two\n\nAt A1, you can read most menu items just by recognising these core words plus the adjectives from Lesson 07 (color, but also *grillé* — grilled, *frais* — fresh)."
+    },
+    {
+      "id": "ex-match-food",
+      "type": "exercise",
+      "title": "Match food vocabulary",
+      "exercise": {
+        "id": "ex-match-food",
+        "type": "matching",
+        "prompt": "Match each French menu word with its English meaning.",
+        "card_ids": ["food-pain", "food-vin", "food-poulet", "food-poisson", "food-fromage", "food-salade"],
+        "pairs": [
+          {"left": "le pain", "right": "bread"},
+          {"left": "le vin", "right": "wine"},
+          {"left": "le poulet", "right": "chicken"},
+          {"left": "le poisson", "right": "fish"},
+          {"left": "le fromage", "right": "cheese"},
+          {"left": "la salade", "right": "salad"}
+        ]
+      }
+    },
+    {
+      "id": "ex-pick-poisson",
+      "type": "exercise",
+      "title": "Don't order poison",
+      "exercise": {
+        "id": "ex-pick-poisson",
+        "type": "picture_choice",
+        "prompt": "Which spelling means *fish* (the food)?",
+        "card_ids": ["food-poisson"],
+        "images": [
+          {
+            "src": "assets/img/fish-plate.png",
+            "label": "le poison"
+          },
+          {
+            "src": "assets/img/fish-grilled.png",
+            "label": "le poisson",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/fish-soup.png",
+            "label": "le posion"
+          },
+          {
+            "src": "assets/img/fish-meal.png",
+            "label": "le poissons"
+          }
+        ],
+        "hint": "Double s. One s means *poison*.",
+        "distractors": ["le poison", "le posion", "le poissons"]
+      }
+    },
+    {
+      "id": "ex-tile-water",
+      "type": "exercise",
+      "title": "Ask for water",
+      "exercise": {
+        "id": "ex-tile-water",
+        "type": "word_tiles",
+        "prompt": "Arrange the tiles to ask for a jug of tap water politely.",
+        "card_ids": ["food-eau", "phr-sil-vous-plait"],
+        "tiles": ["Une", "carafe", "d'", "eau", ",", "s'il", "vous", "plaît"],
+        "hint": "*Une carafe d'eau* (a jug of water), then the polite formula."
+      }
+    },
+    {
+      "id": "ex-free-addition",
+      "type": "exercise",
+      "title": "Ask for the bill",
+      "exercise": {
+        "id": "ex-free-addition",
+        "type": "free_text",
+        "prompt": "Politely ask for the bill.",
+        "card_ids": ["phr-addition"],
+        "accept": ["L'addition, s'il vous plaît.", "L'addition s'il vous plaît", "l'addition, s'il vous plaît"],
+        "hint": "Definite article (the specific bill for your table), comma, polite formula.",
+        "distractors": ["La facture, s'il vous plaît.", "L'addition merci.", "Le pain, s'il vous plaît."]
+      }
+    },
+    {
+      "id": "ex-pick-bon-appetit",
+      "type": "exercise",
+      "title": "When food arrives",
+      "exercise": {
+        "id": "ex-pick-bon-appetit",
+        "type": "picture_choice",
+        "prompt": "The waiter sets your plate down and says…",
+        "card_ids": ["phr-bon-appetit"],
+        "images": [
+          {
+            "src": "assets/img/waiter-plate.png",
+            "label": "Bon appétit !",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/empty-table.png",
+            "label": "L'addition !"
+          },
+          {
+            "src": "assets/img/cheese-plate.png",
+            "label": "Bonjour !"
+          },
+          {
+            "src": "assets/img/wine-glass.png",
+            "label": "Merci !"
+          }
+        ],
+        "hint": "Said specifically before someone starts eating.",
+        "distractors": ["L'addition !", "Bonjour !", "Merci !"]
+      }
+    },
+    {
+      "id": "ex-match-phrases",
+      "type": "exercise",
+      "title": "Match phrase to situation",
+      "exercise": {
+        "id": "ex-match-phrases",
+        "type": "matching",
+        "prompt": "Match each French phrase with when you'd use it.",
+        "card_ids": ["phr-je-voudrais", "phr-addition", "phr-bon-appetit", "phr-merci"],
+        "pairs": [
+          {"left": "Je voudrais…", "right": "ordering"},
+          {"left": "L'addition, s'il vous plaît", "right": "leaving"},
+          {"left": "Bon appétit !", "right": "before eating"},
+          {"left": "Merci beaucoup", "right": "thanking the server"}
+        ]
+      }
+    },
+    {
+      "id": "ex-tile-glass-wine",
+      "type": "exercise",
+      "title": "Order a glass of wine",
+      "exercise": {
+        "id": "ex-tile-glass-wine",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *I would like a glass of wine, please.*",
+        "card_ids": ["phr-je-voudrais", "food-vin"],
+        "tiles": ["Je", "voudrais", "un", "verre", "de", "vin", ",", "s'il", "vous", "plaît"],
+        "hint": "*Un verre de vin* — a glass of wine. *De* (not *du*) when an indefinite quantity follows *un verre*."
+      }
+    }
+  ]
+}
