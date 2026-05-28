@@ -250,6 +250,7 @@
   },
   "session": {
     "title": "Session d'apprentissage",
+    "topic_label": "Sujet",
     "in_progress": "Session en cours",
     "send_message": "Envoyer le message",
     "message_placeholder": "Ecris ta reponse...",
@@ -1157,6 +1158,7 @@
   },
   "lesson": {
     "page_title": "Leçon",
+    "set_label": "Cours",
     "loading": "Chargement de la leçon…",
     "not_cached_body": "Cette leçon n'est pas encore téléchargée. Ouvre l'explorateur de contenu et télécharge d'abord le set.",
     "progress": {

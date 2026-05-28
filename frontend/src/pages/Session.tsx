@@ -20,6 +20,7 @@ import type {AvailableModel} from "../storage/types";
 import {notify} from "../utils/notify";
 import type {LearningMethod} from "../lib/constants";
 import type {
+    LearningProject,
     LearningSession,
     SessionMessageExchangeResult,
     StepEvaluationVerdict,
@@ -67,6 +68,7 @@ export default function Session() {
     const online = useOnlineStatus();
 
     const [session, setSession] = useState<LearningSession | null>(null);
+    const [project, setProject] = useState<LearningProject | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [loading, setLoading] = useState(true);
     const [startError, setStartError] = useState<string | null>(null);
@@ -89,6 +91,29 @@ export default function Session() {
     // "Moving to: …" toast on an applied transition.
     const [stepEvaluation, setStepEvaluation] =
         useState<StepEvaluationVerdict | null>(null);
+
+    // Fetch the project once we know the session's project_id —
+    // drives the topic line in the header (Phase 51 bugfix). The
+    // header degrades gracefully if the fetch fails; the rest of
+    // the page does not depend on this state.
+    useEffect(() => {
+        if (!session?.project_id) {
+            setProject(null);
+            return;
+        }
+        let cancelled = false;
+        getStorage()
+            .projects.get(session.project_id)
+            .then((row) => {
+                if (!cancelled) setProject(row);
+            })
+            .catch(() => {
+                /* silent — header just omits the topic line. */
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [session?.project_id]);
 
     // Resolve the active model whenever userSettings changes. The
     // model id always renders; the human name + context window come
@@ -615,6 +640,17 @@ export default function Session() {
                         )}
                     </div>
                 </div>
+                {project?.topic && (
+                    <p
+                        className="session-header-topic"
+                        data-testid="session-header-topic"
+                    >
+                        <span className="session-header-topic-label">
+                            {t("session.topic_label", "Topic")}:
+                        </span>
+                        {project.topic}
+                    </p>
+                )}
                 <CycleProgress
                     currentStep={session.cycle_step}
                     evaluationReason={

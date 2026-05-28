@@ -233,6 +233,7 @@ review:
   pronunciation_quick_start: Telaffuz Alıştırması
 session:
   title: Öğrenme oturumu
+  topic_label: "Konu"
   in_progress: Oturum devam ediyor
   send_message: Mesaj gönder
   message_placeholder: Cevabını yaz…
@@ -1066,6 +1067,7 @@ repo:
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
   page_title: "Ders"
+  set_label: "Set"
   loading: "Ders yükleniyor…"
   not_cached_body: "Bu ders henüz indirilmemiş. İçerik tarayıcısını aç ve önce seti indir."
   progress:

@@ -233,6 +233,7 @@ review:
   pronunciation_quick_start: Aussprachetraining
 session:
   title: Lern-Session
+  topic_label: "Thema"
   in_progress: Session läuft
   send_message: Nachricht senden
   message_placeholder: Schreibe deine Antwort …
@@ -1071,6 +1072,7 @@ repo:
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
   page_title: "Lektion"
+  set_label: "Lernset"
   loading: "Lektion wird geladen…"
   not_cached_body: "Diese Lektion ist noch nicht heruntergeladen. Öffne den Inhalts-Browser und lade das Set zuerst herunter."
   progress:

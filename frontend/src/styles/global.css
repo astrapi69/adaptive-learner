@@ -967,6 +967,17 @@ select:focus {
   font-size: 1.5rem;
 }
 
+.session-header-topic {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--fg-muted);
+}
+
+.session-header-topic-label {
+  font-weight: 500;
+  margin-right: var(--space-1);
+}
+
 .cycle-progress {
   display: flex;
   flex-direction: column;
@@ -1916,6 +1927,17 @@ select:focus {
 
 .lesson-header h1 {
   margin: var(--space-2) 0 0 0;
+}
+
+.lesson-header-set {
+  margin: var(--space-2) 0 0 0;
+  font-size: 0.9rem;
+  color: var(--fg-muted);
+}
+
+.lesson-header-set-label {
+  font-weight: 500;
+  margin-right: var(--space-1);
 }
 
 .lesson-back-btn {

@@ -233,6 +233,7 @@ review:
   pronunciation_quick_start: Εξάσκηση Προφοράς
 session:
   title: Συνεδρία μάθησης
+  topic_label: "Θέμα"
   in_progress: Συνεδρία σε εξέλιξη
   send_message: Αποστολή μηνύματος
   message_placeholder: Γράψε την απάντησή σου...
@@ -1068,6 +1069,7 @@ repo:
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
   page_title: "Μάθημα"
+  set_label: "Σετ"
   loading: "Φόρτωση μαθήματος…"
   not_cached_body: "Αυτό το μάθημα δεν έχει ληφθεί ακόμα. Άνοιξε τον περιηγητή περιεχομένου και κατέβασε πρώτα το σύνολο."
   progress:

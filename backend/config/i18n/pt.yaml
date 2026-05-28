@@ -233,6 +233,7 @@ review:
   pronunciation_quick_start: Prática de Pronúncia
 session:
   title: Sessão de aprendizado
+  topic_label: "Tópico"
   in_progress: Sessão em andamento
   send_message: Enviar mensagem
   message_placeholder: Escreva sua resposta…
@@ -1066,6 +1067,7 @@ repo:
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
   page_title: "Lição"
+  set_label: "Conjunto"
   loading: "A carregar a lição…"
   not_cached_body: "Esta lição ainda não foi transferida. Abre o explorador de conteúdo e transfere primeiro o conjunto."
   progress:

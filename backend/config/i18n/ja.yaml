@@ -233,6 +233,7 @@ review:
   pronunciation_quick_start: 発音練習
 session:
   title: 学習セッション
+  topic_label: "トピック"
   in_progress: セッション進行中
   send_message: メッセージを送信
   message_placeholder: 返信を入力…
@@ -1066,6 +1067,7 @@ repo:
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
   page_title: "レッスン"
+  set_label: "セット"
   loading: "レッスンを読み込み中…"
   not_cached_body: "このレッスンはまだダウンロードされていません。コンテンツブラウザを開いてセットをダウンロードしてください。"
   progress:

@@ -250,6 +250,7 @@
   },
   "session": {
     "title": "Öğrenme oturumu",
+    "topic_label": "Konu",
     "in_progress": "Oturum devam ediyor",
     "send_message": "Mesaj gönder",
     "message_placeholder": "Cevabını yaz…",
@@ -1157,6 +1158,7 @@
   },
   "lesson": {
     "page_title": "Ders",
+    "set_label": "Set",
     "loading": "Ders yükleniyor…",
     "not_cached_body": "Bu ders henüz indirilmemiş. İçerik tarayıcısını aç ve önce seti indir.",
     "progress": {

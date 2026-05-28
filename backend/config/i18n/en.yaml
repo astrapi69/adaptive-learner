@@ -233,6 +233,7 @@ review:
   pronunciation_quick_start: Pronunciation Practice
 session:
   title: Learning session
+  topic_label: "Topic"
   in_progress: Session in progress
   send_message: Send message
   message_placeholder: Write your reply…
@@ -1077,6 +1078,7 @@ repo:
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
   page_title: "Lesson"
+  set_label: "Set"
   loading: "Loading lesson…"
   not_cached_body: "This lesson isn't downloaded yet. Open the content browser and download the set first."
   progress:

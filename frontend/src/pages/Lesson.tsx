@@ -135,6 +135,33 @@ export default function LessonPage() {
         };
     }, [source, setId, filename]);
 
+    // Phase 51 bugfix — resolve the set's display title so the
+    // header can show context above the lesson title
+    // ("Set: Français A1 — Beginner" → "Les articles"). Looks up
+    // via listSets + filter; degrades silently if the set isn't
+    // in the discovered list (header just omits the line).
+    const [setTitle, setSetTitle] = useState<string | null>(null);
+    useEffect(() => {
+        if (!setId) {
+            setSetTitle(null);
+            return;
+        }
+        let cancelled = false;
+        void (async () => {
+            try {
+                const list = await getStorage().contentLoader.listSets();
+                if (cancelled) return;
+                const match = list.sets.find((s) => s.id === setId);
+                setSetTitle(match?.title ?? null);
+            } catch {
+                if (!cancelled) setSetTitle(null);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [setId]);
+
     if (!source || !setId || !filename) {
         return (
             <main
@@ -248,6 +275,17 @@ export default function LessonPage() {
                     <BookOpen size={16} aria-hidden="true" />
                     {t("lesson.action.back_to_browser", "Back to content browser")}
                 </button>
+                {setTitle && (
+                    <p
+                        className="lesson-header-set"
+                        data-testid="lesson-header-set"
+                    >
+                        <span className="lesson-header-set-label">
+                            {t("lesson.set_label", "Set")}:
+                        </span>
+                        {setTitle}
+                    </p>
+                )}
                 <h1>{lesson.title}</h1>
                 {lesson.description && (
                     <p className="lesson-description">{lesson.description}</p>

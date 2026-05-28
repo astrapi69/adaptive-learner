@@ -250,6 +250,7 @@
   },
   "session": {
     "title": "Lern-Session",
+    "topic_label": "Thema",
     "in_progress": "Session läuft",
     "send_message": "Nachricht senden",
     "message_placeholder": "Schreibe deine Antwort …",
@@ -1157,6 +1158,7 @@
   },
   "lesson": {
     "page_title": "Lektion",
+    "set_label": "Lernset",
     "loading": "Lektion wird geladen…",
     "not_cached_body": "Diese Lektion ist noch nicht heruntergeladen. Öffne den Inhalts-Browser und lade das Set zuerst herunter.",
     "progress": {
