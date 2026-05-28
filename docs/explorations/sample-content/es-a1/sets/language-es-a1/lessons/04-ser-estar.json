@@ -9,52 +9,117 @@
       "front": "yo soy",
       "back": "I am (ser)",
       "notes": "First person singular of *ser*. Use for identity / characteristics / origin.",
-      "tags": ["verb", "ser", "present"],
+      "tags": [
+        "verb",
+        "ser",
+        "present"
+      ],
       "token_roles": [
-        {"token": "soy", "role": "verb"}
+        {
+          "token": "soy",
+          "role": "verb"
+        }
       ]
     },
     {
       "id": "ser-eres",
       "front": "tú eres",
       "back": "you are (informal sg., ser)",
-      "tags": ["verb", "ser", "present"]
+      "tags": [
+        "verb",
+        "ser",
+        "present"
+      ],
+      "token_roles": [
+        {
+          "token": "eres",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "ser-es",
       "front": "él / ella es",
       "back": "he / she / it is (ser)",
       "notes": "Same form for *usted es* (formal you). Spanish drops the subject pronoun whenever it's clear from context — *Es alto* is fine for *He is tall*.",
-      "tags": ["verb", "ser", "present"]
+      "tags": [
+        "verb",
+        "ser",
+        "present"
+      ],
+      "token_roles": [
+        {
+          "token": "es",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "ser-somos",
       "front": "nosotros somos",
       "back": "we are (ser)",
-      "tags": ["verb", "ser", "present"]
+      "tags": [
+        "verb",
+        "ser",
+        "present"
+      ],
+      "token_roles": [
+        {
+          "token": "somos",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "ser-sois",
       "front": "vosotros sois",
       "back": "you are (informal pl., Spain only)",
       "notes": "*Vosotros* + *sois* is the informal plural \"you\" — only used in Spain. Latin America uses *ustedes son* for all plural \"you\".",
-      "tags": ["verb", "ser", "present", "spain-only"]
+      "tags": [
+        "verb",
+        "ser",
+        "present",
+        "spain-only"
+      ],
+      "token_roles": [
+        {
+          "token": "sois",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "ser-son",
       "front": "ellos / ellas son",
       "back": "they are (ser)",
       "notes": "Same form for *ustedes son* (you, plural — formal in Spain, all-purpose in Latin America).",
-      "tags": ["verb", "ser", "present"]
+      "tags": [
+        "verb",
+        "ser",
+        "present"
+      ],
+      "token_roles": [
+        {
+          "token": "son",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "estar-estoy",
       "front": "yo estoy",
       "back": "I am (estar)",
       "notes": "First person of *estar*. Use for location / temporary state / feelings.",
-      "tags": ["verb", "estar", "present"],
+      "tags": [
+        "verb",
+        "estar",
+        "present"
+      ],
       "token_roles": [
-        {"token": "estoy", "role": "verb"}
+        {
+          "token": "estoy",
+          "role": "verb"
+        }
       ]
     },
     {
@@ -62,47 +127,104 @@
       "front": "tú estás",
       "back": "you are (informal sg., estar)",
       "notes": "Mandatory accent on **á**. *Estas* without accent means *these* (feminine plural demonstrative) — totally different word.",
-      "tags": ["verb", "estar", "present"]
+      "tags": [
+        "verb",
+        "estar",
+        "present"
+      ],
+      "token_roles": [
+        {
+          "token": "estás",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "estar-esta",
       "front": "él / ella está",
       "back": "he / she / it is (estar)",
       "notes": "Accent on **á**. *Esta* without accent means *this* (feminine).",
-      "tags": ["verb", "estar", "present"]
+      "tags": [
+        "verb",
+        "estar",
+        "present"
+      ],
+      "token_roles": [
+        {
+          "token": "está",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "estar-estamos",
       "front": "nosotros estamos",
       "back": "we are (estar)",
-      "tags": ["verb", "estar", "present"]
+      "tags": [
+        "verb",
+        "estar",
+        "present"
+      ],
+      "token_roles": [
+        {
+          "token": "estamos",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "estar-estais",
       "front": "vosotros estáis",
       "back": "you are (informal pl., Spain only, estar)",
-      "tags": ["verb", "estar", "present", "spain-only"]
+      "tags": [
+        "verb",
+        "estar",
+        "present",
+        "spain-only"
+      ],
+      "token_roles": [
+        {
+          "token": "estáis",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "estar-estan",
       "front": "ellos / ellas están",
       "back": "they are (estar)",
       "notes": "Accent on **á**.",
-      "tags": ["verb", "estar", "present"]
+      "tags": [
+        "verb",
+        "estar",
+        "present"
+      ],
+      "token_roles": [
+        {
+          "token": "están",
+          "role": "verb"
+        }
+      ]
     },
     {
       "id": "phr-soy-estudiante",
       "front": "Soy estudiante.",
       "back": "I am a student. (identity → ser)",
       "notes": "Spanish drops the article before a profession — same rule as French. *Soy estudiante*, never *Soy un estudiante*.",
-      "tags": ["example", "ser"]
+      "tags": [
+        "example",
+        "ser"
+      ]
     },
     {
       "id": "phr-estoy-cansado",
       "front": "Estoy cansado.",
       "back": "I am tired. (temporary state → estar)",
       "notes": "*Cansado* (m.) / *cansada* (f.) — adjective agrees with the speaker's gender. Tiredness is temporary, so *estar*.",
-      "tags": ["example", "estar"]
+      "tags": [
+        "example",
+        "estar"
+      ]
     }
   ],
   "steps": [
@@ -126,13 +248,34 @@
         "id": "ex-match-ser",
         "type": "matching",
         "prompt": "Match each pronoun with its form of *ser*.",
-        "card_ids": ["ser-soy", "ser-eres", "ser-es", "ser-somos", "ser-son"],
+        "card_ids": [
+          "ser-soy",
+          "ser-eres",
+          "ser-es",
+          "ser-somos",
+          "ser-son"
+        ],
         "pairs": [
-          {"left": "yo", "right": "soy"},
-          {"left": "tú", "right": "eres"},
-          {"left": "él", "right": "es"},
-          {"left": "nosotros", "right": "somos"},
-          {"left": "ellos", "right": "son"}
+          {
+            "left": "yo",
+            "right": "soy"
+          },
+          {
+            "left": "tú",
+            "right": "eres"
+          },
+          {
+            "left": "él",
+            "right": "es"
+          },
+          {
+            "left": "nosotros",
+            "right": "somos"
+          },
+          {
+            "left": "ellos",
+            "right": "son"
+          }
         ]
       }
     },
@@ -150,13 +293,34 @@
         "id": "ex-match-estar",
         "type": "matching",
         "prompt": "Match each pronoun with its form of *estar*.",
-        "card_ids": ["estar-estoy", "estar-estas", "estar-esta", "estar-estamos", "estar-estan"],
+        "card_ids": [
+          "estar-estoy",
+          "estar-estas",
+          "estar-esta",
+          "estar-estamos",
+          "estar-estan"
+        ],
         "pairs": [
-          {"left": "yo", "right": "estoy"},
-          {"left": "tú", "right": "estás"},
-          {"left": "ella", "right": "está"},
-          {"left": "nosotros", "right": "estamos"},
-          {"left": "ellos", "right": "están"}
+          {
+            "left": "yo",
+            "right": "estoy"
+          },
+          {
+            "left": "tú",
+            "right": "estás"
+          },
+          {
+            "left": "ella",
+            "right": "está"
+          },
+          {
+            "left": "nosotros",
+            "right": "estamos"
+          },
+          {
+            "left": "ellos",
+            "right": "están"
+          }
         ]
       }
     },
@@ -174,7 +338,10 @@
         "id": "ex-pick-soy",
         "type": "picture_choice",
         "prompt": "Pick the correct form: *I am a doctor.*",
-        "card_ids": ["ser-soy", "phr-soy-estudiante"],
+        "card_ids": [
+          "ser-soy",
+          "phr-soy-estudiante"
+        ],
         "images": [
           {
             "src": "assets/img/doctor-1.png",
@@ -195,7 +362,11 @@
           }
         ],
         "hint": "Profession is identity → ser. No article in front.",
-        "distractors": ["Estoy médico.", "Soy un médico.", "Yo es médico."]
+        "distractors": [
+          "Estoy médico.",
+          "Soy un médico.",
+          "Yo es médico."
+        ]
       }
     },
     {
@@ -206,7 +377,10 @@
         "id": "ex-pick-estoy",
         "type": "picture_choice",
         "prompt": "Pick the correct form: *I am tired.* (Speaker is male.)",
-        "card_ids": ["estar-estoy", "phr-estoy-cansado"],
+        "card_ids": [
+          "estar-estoy",
+          "phr-estoy-cansado"
+        ],
         "images": [
           {
             "src": "assets/img/tired-1.png",
@@ -227,7 +401,11 @@
           }
         ],
         "hint": "Temporary state → estar. Masculine speaker → cansado (not cansada).",
-        "distractors": ["Soy cansado.", "Estoy cansada.", "Yo estoy cansa."]
+        "distractors": [
+          "Soy cansado.",
+          "Estoy cansada.",
+          "Yo estoy cansa."
+        ]
       }
     },
     {
@@ -238,10 +416,20 @@
         "id": "ex-free-location",
         "type": "free_text",
         "prompt": "Translate: *The book is on the table.* (Use the location rule.)",
-        "card_ids": ["estar-esta"],
-        "accept": ["El libro está en la mesa.", "El libro está en la mesa", "el libro está en la mesa"],
+        "card_ids": [
+          "estar-esta"
+        ],
+        "accept": [
+          "El libro está en la mesa.",
+          "El libro está en la mesa",
+          "el libro está en la mesa"
+        ],
         "hint": "Location is always *estar*, even when the location is fixed. *Está* with an accent.",
-        "distractors": ["El libro es en la mesa.", "El libro estoy en la mesa.", "El libro está en el mesa."]
+        "distractors": [
+          "El libro es en la mesa.",
+          "El libro estoy en la mesa.",
+          "El libro está en el mesa."
+        ]
       }
     },
     {
@@ -252,10 +440,21 @@
         "id": "ex-free-nationality",
         "type": "free_text",
         "prompt": "Translate: *She is Spanish.* (Use the identity rule.)",
-        "card_ids": ["ser-es"],
-        "accept": ["Es española.", "Es española", "es española", "Ella es española."],
+        "card_ids": [
+          "ser-es"
+        ],
+        "accept": [
+          "Es española.",
+          "Es española",
+          "es española",
+          "Ella es española."
+        ],
         "hint": "Nationality is identity → ser. Subject pronoun *ella* is optional. Spanish drops it when context is clear.",
-        "distractors": ["Está española.", "Es Española.", "Es españolo."]
+        "distractors": [
+          "Está española.",
+          "Es Española.",
+          "Es españolo."
+        ]
       }
     },
     {
@@ -266,13 +465,31 @@
         "id": "ex-match-decisions",
         "type": "matching",
         "prompt": "Match each sentence with the correct verb.",
-        "card_ids": ["ser-es", "estar-esta"],
+        "card_ids": [
+          "ser-es",
+          "estar-esta"
+        ],
         "pairs": [
-          {"left": "She ___ a teacher.", "right": "es (ser)"},
-          {"left": "She ___ in Madrid right now.", "right": "está (estar)"},
-          {"left": "He ___ American.", "right": "es (ser)"},
-          {"left": "The soup ___ hot.", "right": "está (estar)"},
-          {"left": "It ___ 5 o'clock.", "right": "es (ser)"}
+          {
+            "left": "She ___ a teacher.",
+            "right": "es (ser)"
+          },
+          {
+            "left": "She ___ in Madrid right now.",
+            "right": "está (estar)"
+          },
+          {
+            "left": "He ___ American.",
+            "right": "es (ser)"
+          },
+          {
+            "left": "The soup ___ hot.",
+            "right": "está (estar)"
+          },
+          {
+            "left": "It ___ 5 o'clock.",
+            "right": "es (ser)"
+          }
         ]
       }
     },
@@ -284,8 +501,20 @@
         "id": "ex-tile-soy-de",
         "type": "word_tiles",
         "prompt": "Arrange to mean: *I'm from Spain, and I'm in Madrid.* (Use ser for origin, estar for current location.)",
-        "card_ids": ["ser-soy", "estar-estoy"],
-        "tiles": ["Soy", "de", "España", ",", "y", "estoy", "en", "Madrid"],
+        "card_ids": [
+          "ser-soy",
+          "estar-estoy"
+        ],
+        "tiles": [
+          "Soy",
+          "de",
+          "España",
+          ",",
+          "y",
+          "estoy",
+          "en",
+          "Madrid"
+        ],
         "hint": "Two clauses: origin (ser) + location (estar)."
       }
     },
@@ -297,8 +526,17 @@
         "id": "ex-tile-she-tall",
         "type": "word_tiles",
         "prompt": "Arrange to mean: *She is tall and is happy.* (Characteristic → ser, feeling → estar.)",
-        "card_ids": ["ser-es", "estar-esta"],
-        "tiles": ["Es", "alta", "y", "está", "feliz"],
+        "card_ids": [
+          "ser-es",
+          "estar-esta"
+        ],
+        "tiles": [
+          "Es",
+          "alta",
+          "y",
+          "está",
+          "feliz"
+        ],
         "hint": "Two clauses. First *es* (tall = characteristic), then *está* (happy = current feeling)."
       }
     },
@@ -310,17 +548,25 @@
         "id": "ex-cloze-ser-soy",
         "type": "cloze",
         "prompt": "Fill in the right form of *ser* or *estar*.",
-        "card_ids": ["ser-soy"],
+        "card_ids": [
+          "ser-soy"
+        ],
         "sentence": "Yo ___ estudiante.",
         "blanks": [
           {
-            "accept": ["soy"],
+            "accept": [
+              "soy"
+            ],
             "hint": "*ser* present, 1st person singular",
             "placeholder": "?"
           }
         ],
         "cloze_mode": "type",
-        "distractors": ["estoy", "es", "está"],
+        "distractors": [
+          "estoy",
+          "es",
+          "está"
+        ],
         "hint": "Being a student is an identity / role, so *ser* (→ *soy*) — not *estar* (→ *estoy*), which is for temporary states / locations."
       }
     }

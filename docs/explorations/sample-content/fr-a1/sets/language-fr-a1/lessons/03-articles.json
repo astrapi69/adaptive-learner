@@ -19,21 +19,30 @@
       "front": "la",
       "back": "the (feminine singular)",
       "notes": "Used before consonant-starting feminine nouns: **la chaise**, **la maison**, **la fille**.",
-      "tags": ["article", "definite"]
+      "tags": ["article", "definite"],
+      "token_roles": [
+        {"token": "la", "role": "article"}
+      ]
     },
     {
       "id": "art-l-elided",
       "front": "l'",
       "back": "the (before a vowel or silent h)",
       "notes": "Elided form of *le* / *la* before words starting with a vowel sound: **l'eau**, **l'enfant**, **l'homme** (silent h). NOT **le eau** — the elision is mandatory.",
-      "tags": ["article", "definite", "elision"]
+      "tags": ["article", "definite", "elision"],
+      "token_roles": [
+        {"token": "l'", "role": "article"}
+      ]
     },
     {
       "id": "art-les",
       "front": "les",
       "back": "the (plural — both genders)",
       "notes": "Same form for masculine and feminine plurals: **les chats**, **les chaises**, **les enfants**. Pronounce the s with a /z/ liaison before a vowel: *les_z_enfants*.",
-      "tags": ["article", "definite", "plural"]
+      "tags": ["article", "definite", "plural"],
+      "token_roles": [
+        {"token": "les", "role": "article"}
+      ]
     },
     {
       "id": "art-un",
@@ -50,33 +59,48 @@
       "front": "une",
       "back": "a / an (feminine singular)",
       "notes": "Indefinite version of *la*. **une chaise** = a chair. Final e makes the n audible (unlike *un*).",
-      "tags": ["article", "indefinite"]
+      "tags": ["article", "indefinite"],
+      "token_roles": [
+        {"token": "une", "role": "article"}
+      ]
     },
     {
       "id": "art-des",
       "front": "des",
       "back": "some / -- (plural)",
       "notes": "Indefinite plural — used where English drops the article entirely. **J'ai des amis** = I have friends (not *I have some friends*). Same for both genders.",
-      "tags": ["article", "indefinite", "plural"]
+      "tags": ["article", "indefinite", "plural"],
+      "token_roles": [
+        {"token": "des", "role": "article"}
+      ]
     },
     {
       "id": "noun-chat",
       "front": "chat",
       "back": "cat (masculine)",
-      "tags": ["noun", "masculine"]
+      "tags": ["noun", "masculine"],
+      "token_roles": [
+        {"token": "chat", "role": "noun"}
+      ]
     },
     {
       "id": "noun-chaise",
       "front": "chaise",
       "back": "chair (feminine)",
-      "tags": ["noun", "feminine"]
+      "tags": ["noun", "feminine"],
+      "token_roles": [
+        {"token": "chaise", "role": "noun"}
+      ]
     },
     {
       "id": "noun-livre",
       "front": "livre",
       "back": "book (masculine)",
       "notes": "Don't confuse with **la livre** (the pound — weight or currency). Same spelling, different gender, different meaning.",
-      "tags": ["noun", "masculine"]
+      "tags": ["noun", "masculine"],
+      "token_roles": [
+        {"token": "livre", "role": "noun"}
+      ]
     },
     {
       "id": "noun-maison",

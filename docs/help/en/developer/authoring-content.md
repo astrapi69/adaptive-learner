@@ -321,6 +321,49 @@ Closed enum of roles: `article` / `verb` / `noun` / `adjective`
 / `preposition` / `gender_marker` / `tense_marker`. Adding a
 role is a minor schema_version bump — don't extend in place.
 
+### Annotations that help the adaptive lesson generator (v1.36.0+)
+
+The Phase 53 adaptive lesson generator
+(`/adaptive-lesson/:setId`, F-114) recombines authored
+exercises to drill the learner's specific weaknesses. The
+generator works without any extra annotations, but two
+fields make it materially smarter:
+
+1. **Broader `token_roles` coverage on cards.** The generator
+   uses `token_roles` to:
+   - Pick semantically-meaningful blanks when generating
+     cloze variants from errors (covered already in v1.35.0)
+   - Classify errors as `article_gender` / `verb_conjugation`
+     for the Dashboard "Focus areas" chips (53E)
+   - Find ALTERNATIVE exercises that test the same element
+     when the user got the original wrong (53D variation
+     logic — finds candidates whose card has a matching
+     `token_roles` entry)
+
+   Add a `token_roles` entry to EVERY card that teaches a
+   discrete grammatical unit — articles, conjugated verb
+   forms, gendered nouns. The cost is one extra JSON entry
+   per card; the payoff is much richer adaptive generation.
+
+2. **Card-level grammar tags (`tags: ["article", "masculine"]`,
+   etc.)** are read by the error classifier as a fallback
+   when `token_roles` is absent. They don't replace
+   `token_roles` — they're a low-effort halfway annotation.
+
+What we DON'T need yet (deferred to a future schema bump):
+
+- `related_cards` cross-references between cards in different
+  lessons
+- Per-exercise difficulty ratings (the generator estimates
+  difficulty from `exercise.type` today)
+- Per-card example sentences in `notes` parseable as
+  alternative cloze contexts (the cloze generator uses
+  `front` only)
+
+When in doubt: add `token_roles` to every card teaching a
+grammatical token. That's the single highest-leverage
+authoring habit for the adaptive system.
+
 ## Quality checklist
 
 Before opening a PR for a new lesson, verify:

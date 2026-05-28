@@ -327,6 +327,53 @@ Geschlossene Enum von Rollen: `article` / `verb` / `noun` /
 Eine Rolle hinzuzufügen ist ein Minor-Schema-Version-Bump —
 nicht inline erweitern.
 
+### Annotationen für den adaptiven Lektions-Generator (v1.36.0+)
+
+Der adaptive Lektions-Generator aus Phase 53
+(`/adaptive-lesson/:setId`, F-114) kombiniert die vorhandenen
+Übungen neu, um die spezifischen Schwächen der Lernenden
+gezielt zu adressieren. Der Generator funktioniert ohne
+zusätzliche Annotationen, zwei Felder machen ihn jedoch
+deutlich smarter:
+
+1. **Breitere `token_roles`-Abdeckung auf Karten.** Der
+   Generator nutzt `token_roles`, um:
+   - Semantisch sinnvolle Lücken zu wählen, wenn aus Fehlern
+     Cloze-Varianten erzeugt werden (bereits in v1.35.0)
+   - Fehler als `article_gender` / `verb_conjugation` zu
+     klassifizieren, für die "Übungsschwerpunkt"-Chips im
+     Dashboard (53E)
+   - ALTERNATIVE Übungen zu finden, die dasselbe Element
+     testen, wenn die ursprüngliche Übung falsch war (53D
+     Variations-Logik — findet Kandidaten, deren Karte einen
+     passenden `token_roles`-Eintrag hat)
+
+   Füge JEDEN Karten, die eine eigene grammatische Einheit
+   lehrt (Artikel, konjugierte Verbformen, geschlechtsbezogene
+   Substantive), einen `token_roles`-Eintrag hinzu. Kosten:
+   ein zusätzlicher JSON-Eintrag pro Karte; Nutzen: deutlich
+   reichhaltigere adaptive Generierung.
+
+2. **Karten-Tags wie `tags: ["article", "masculine"]`** werden
+   vom Fehler-Klassifizierer als Fallback gelesen, wenn
+   `token_roles` fehlt. Sie ersetzen nicht `token_roles` — sie
+   sind eine günstige Halbweg-Annotation.
+
+Was wir noch NICHT brauchen (auf einen zukünftigen Schema-Bump
+verschoben):
+
+- `related_cards`-Querverweise zwischen Karten aus
+  verschiedenen Lektionen
+- Schwierigkeits-Ratings pro Übung (der Generator schätzt
+  Schwierigkeit aktuell aus `exercise.type` ab)
+- Pro-Karte Beispielsätze in `notes`, parsebar als
+  alternative Cloze-Kontexte (der Cloze-Generator nutzt
+  ausschließlich `front`)
+
+Faustregel: füge `token_roles` zu jeder Karte hinzu, die einen
+grammatischen Token lehrt. Das ist die mit Abstand
+wirkungsvollste Autoren-Gewohnheit für das adaptive System.
+
 ## Qualitäts-Checkliste
 
 Vor dem PR für eine neue Lektion prüfen:
