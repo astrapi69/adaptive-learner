@@ -277,3 +277,120 @@ def test_download_unknown_set_returns_404(client: TestClient) -> None:
             f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/no-such-set/download",
         )
     assert r.status_code == 404
+
+
+# --- GET /sets/.../assets/{asset_path} (Phase 54F / v1.37.0) -----------
+
+
+# Repo manifest with one declared asset that the mock
+# transport will serve.
+REPO_MANIFEST_WITH_ASSETS = textwrap.dedent(
+    """
+    schema_version: '1.0'
+    name: Adaptive Learner Pilot
+    sets:
+      - id: language-fr-a1
+        title: French A1
+        language: fr
+        level: A1
+        version: '1.0.0'
+        lesson_count: 1
+        domain: language
+        tags: [beginner]
+        assets:
+          - path: img/cover.png
+            size_kb: 1
+    """,
+).strip()
+
+
+# A tiny binary payload that's safe to mock as raw bytes
+# through the existing string-shaped transport (Phase 54F
+# only needs to verify the proxy path; the fetch_bytes path
+# is exercised by the service tests).
+FAKE_PNG = b"\x89PNG\r\n\x1a\n" + b"FAKE_PIXEL_DATA"
+
+
+def test_asset_route_mounted(client: TestClient) -> None:
+    paths = {r.path for r in app.routes if hasattr(r, "path")}
+    assert (
+        "/api/plugins/content-loader/sets/{source_slug}/{set_id}/assets/{asset_path:path}"
+        in paths
+    )
+
+
+def test_get_asset_uncached_set_returns_404(client: TestClient) -> None:
+    # Without ever calling /download, no version is cached.
+    r = client.get(
+        f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/assets/img/cover.png",
+    )
+    assert r.status_code == 404
+
+
+def test_get_asset_after_download(client: TestClient) -> None:
+    """End-to-end: download a set that declares an asset, then
+    hit the proxy endpoint and verify the bytes + headers."""
+    # Mock both the manifest fetch + the asset fetch via the
+    # shared transport.
+    def handler(request: httpx.Request) -> httpx.Response:
+        path = request.url.path
+        text_routes = {
+            f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST_WITH_ASSETS,
+            f"/{SOURCE}/main/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": (
+                LESSON_JSON
+            ),
+        }
+        binary_routes = {
+            f"/{SOURCE}/main/sets/{SET_ID}/assets/img/cover.png": FAKE_PNG,
+        }
+        if path in text_routes:
+            return httpx.Response(200, text=text_routes[path])
+        if path in binary_routes:
+            return httpx.Response(200, content=binary_routes[path])
+        return httpx.Response(404, text=f"unmocked: {path}")
+
+    with _install_mock_transport(httpx.MockTransport(handler)):
+        download = client.post(
+            f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/download",
+        )
+    assert download.status_code == 200, download.text
+
+    # Proxy fetch — works without any further network calls.
+    r = client.get(
+        f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/assets/img/cover.png",
+    )
+    assert r.status_code == 200
+    assert r.content == FAKE_PNG
+    assert r.headers["content-type"].startswith("image/png")
+    # Versioned cache layout → immutable browser caching.
+    assert "immutable" in r.headers.get("cache-control", "")
+
+
+def test_get_asset_unknown_path_returns_404(
+    client: TestClient,
+) -> None:
+    """Set IS cached, but the requested asset path was never
+    bundled — 404 (not 500). The frontend's resolver treats
+    this identically to a Dexie miss → placeholder SVG."""
+    def handler(request: httpx.Request) -> httpx.Response:
+        path = request.url.path
+        text_routes = {
+            f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
+            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": (
+                LESSON_JSON
+            ),
+        }
+        if path in text_routes:
+            return httpx.Response(200, text=text_routes[path])
+        return httpx.Response(404, text=f"unmocked: {path}")
+
+    with _install_mock_transport(httpx.MockTransport(handler)):
+        client.post(
+            f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/download",
+        )
+    r = client.get(
+        f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/assets/img/missing.png",
+    )
+    assert r.status_code == 404

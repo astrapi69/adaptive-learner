@@ -25,6 +25,7 @@ from __future__ import annotations
 import logging
 
 from fastapi import APIRouter
+from fastapi.responses import Response
 from pydantic import BaseModel
 
 from app.exceptions import (
@@ -35,6 +36,7 @@ from app.exceptions import (
 from app.paths import get_cache_dir
 
 from . import config_resolver
+from .cache import latest_cached_version, read_asset
 from .exceptions import (
     ContentAuthError,
     ContentFetchError,
@@ -49,6 +51,21 @@ from .service import (
     SetEntry,
     parse_source_refs_from_settings,
 )
+
+
+# Phase 54F — MIME types for the asset proxy. The whitelist
+# matches the ContentSetAsset path validator's extension
+# allowlist 1:1. Anything not in this map gets ``image/*`` or
+# ``application/octet-stream`` as a defensive fallback (the
+# manifest validator would reject unknown extensions
+# upstream, so the fallback is dead code in practice).
+_ASSET_MIME_TYPES: dict[str, str] = {
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".webp": "image/webp",
+    ".svg": "image/svg+xml",
+}
 
 logger = logging.getLogger(__name__)
 
@@ -258,3 +275,69 @@ async def get_lesson(
         return service.get_lesson(source, set_id, filename)
     except ContentLoaderError as err:
         raise _wrap_loader_error(err) from err
+
+
+def _mime_for_asset(asset_path: str) -> str:
+    """Pick a Content-Type from the asset path's extension.
+    Defaults to ``application/octet-stream`` for unknown
+    extensions (the manifest validator already rejects those
+    upstream so this fallback is defensive)."""
+    lower = asset_path.lower()
+    for ext, mime in _ASSET_MIME_TYPES.items():
+        if lower.endswith(ext):
+            return mime
+    return "application/octet-stream"
+
+
+@router.get(
+    "/sets/{source_slug}/{set_id}/assets/{asset_path:path}",
+    responses={
+        200: {"content": {"image/*": {}}},
+        404: {"description": "Asset not cached"},
+    },
+)
+async def get_asset(
+    source_slug: str,
+    set_id: str,
+    asset_path: str,
+) -> Response:
+    """Phase 54F / v1.37.0 — serve a cached asset by relative
+    path.
+
+    The path-traversal guard lives inside ``cache.read_asset``
+    (resolve + startswith check). 404 responses are explicit
+    so the frontend resolver can treat them identically to
+    DexieStorage's null return — graceful fallback to
+    placeholder SVG / text-only.
+
+    ``Cache-Control: public, max-age=31536000, immutable``:
+    the cache layout is versioned (``v{version}/assets/...``)
+    so an asset URL never changes its bytes within one cycle.
+    Browsers can hold onto the response forever; the URL
+    itself flips when the set version bumps.
+    """
+    service = _build_service()
+    source = _unslugify_source(source_slug)
+    version = latest_cached_version(service.cache_root, source, set_id)
+    if version is None:
+        raise NotFoundError(
+            f"Set {source}/{set_id} is not cached. "
+            "Download the set first.",
+        )
+    try:
+        payload = read_asset(
+            service.cache_root, source, set_id, version, asset_path,
+        )
+    except ContentNotFoundError as err:
+        # Map to backend's NotFoundError so the global
+        # exception handler returns HTTP 404 with the right
+        # detail shape (instead of leaking the plugin-typed
+        # error).
+        raise NotFoundError(err.detail) from err
+    return Response(
+        content=payload,
+        media_type=_mime_for_asset(asset_path),
+        headers={
+            "Cache-Control": "public, max-age=31536000, immutable",
+        },
+    )
