@@ -332,6 +332,15 @@ function PictureChoiceTile({
                     alt={choice.label}
                     onError={() => setImgFailed(true)}
                     loading="lazy"
+                    /* Phase 54G — intrinsic dimensions match
+                     * the placeholder SVG viewBox (100×100) so
+                     * the browser reserves the tile's box
+                     * BEFORE the image loads. CSS responsively
+                     * scales via max-width / max-height; the
+                     * width attribute is the layout-stability
+                     * hint, not the final render size. */
+                    width={100}
+                    height={100}
                 />
             )}
             <span className="picture-tile-label">{choice.label}</span>

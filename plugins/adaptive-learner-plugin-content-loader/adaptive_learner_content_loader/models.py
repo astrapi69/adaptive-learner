@@ -94,6 +94,13 @@ _IMAGE_EXTENSIONS = frozenset({".png", ".jpg", ".jpeg", ".webp", ".svg"})
 # reasonable PNG / WebP for a learning-exercise tile.
 MAX_ASSET_SIZE_KB = 500
 
+# Per-set soft limit (Phase 54G / v1.37.0). The set-level
+# validator warns above this threshold but doesn't reject —
+# content authors get a clear signal to revisit their
+# compression without blocking publication. 10 MiB covers a
+# generous 20-50 tiles depending on format.
+SET_ASSETS_SOFT_LIMIT_KB = 10 * 1024  # 10 MiB
+
 
 class ContentSetAsset(BaseModel):
     """One bundled binary asset (image, audio) declared in the
@@ -310,6 +317,59 @@ class ContentSet(BaseModel):
                     "(lowercase letters / digits / hyphens)"
                 )
         return value
+
+    def assets_total_kb(self) -> int:
+        """Sum of declared ``size_kb`` across every bundled
+        asset (Phase 54G / v1.37.0). Used by the set-level
+        soft-limit warning + the content-authoring docs."""
+        return sum(asset.size_kb for asset in self.assets)
+
+
+def check_set_assets_size(
+    content_set: ContentSet,
+    soft_limit_kb: int = SET_ASSETS_SOFT_LIMIT_KB,
+) -> list[str]:
+    """Return zero-or-more advisory warnings for a set's
+    asset footprint (Phase 54G / v1.37.0).
+
+    Does NOT raise — the manifest still validates with a
+    warning. Downloaders + content-authoring CI hook
+    surface the list to the operator (or the author).
+
+    Warning categories (current set):
+      - per-asset cap: enforced by the field validator
+        (reject), so this helper doesn't repeat it
+      - per-set soft cap: ``assets_total_kb >
+        soft_limit_kb`` adds one entry
+      - asset-count sanity: ``len(assets) > 100`` adds one
+        entry (a learning set with 100+ images is almost
+        certainly wrong; the validator stays quiet about
+        the hard ``max_length=500`` but a soft check at
+        100 catches typos like "100 copies of cat.png"
+        early)
+    """
+    warnings: list[str] = []
+    total = content_set.assets_total_kb()
+    if total > soft_limit_kb:
+        warnings.append(
+            (
+                f"Set {content_set.id!r} declares "
+                f"{total} KiB of assets, above the "
+                f"{soft_limit_kb} KiB soft limit. "
+                "Consider WebP for photos / SVG for icons "
+                "to compress further."
+            ),
+        )
+    if len(content_set.assets) > 100:
+        warnings.append(
+            (
+                f"Set {content_set.id!r} declares "
+                f"{len(content_set.assets)} assets — "
+                "100+ is unusual for a learning set. "
+                "Double-check for duplicate manifest entries."
+            ),
+        )
+    return warnings
 
 
 class ContentManifest(BaseModel):

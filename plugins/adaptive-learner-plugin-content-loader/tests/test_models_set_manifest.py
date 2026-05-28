@@ -20,9 +20,11 @@ from pydantic import ValidationError
 from adaptive_learner_content_loader.models import (
     CURRENT_SCHEMA_VERSION,
     MAX_ASSET_SIZE_KB,
+    SET_ASSETS_SOFT_LIMIT_KB,
     ContentManifest,
     ContentSet,
     ContentSetAsset,
+    check_set_assets_size,
     is_supported_schema_version,
 )
 from adaptive_learner_content_loader.schema_export import (
@@ -190,6 +192,81 @@ class TestContentSetAsset:
         asset = ContentSetAsset(path="img/x.png", size_kb=10)
         with pytest.raises(ValidationError):
             asset.size_kb = 999  # type: ignore[misc]
+
+
+class TestCheckSetAssetsSize:
+    """Phase 54G / v1.37.0 — set-level soft-limit advisory."""
+
+    def _set_with_assets(
+        self, paths_and_sizes: list[tuple[str, int]],
+    ) -> ContentSet:
+        return ContentSet(
+            id="language-fr-a1",
+            title="French A1",
+            language="fr",
+            level="A1",
+            version="1.0.0",
+            lesson_count=10,
+            assets=[
+                {"path": p, "size_kb": s} for p, s in paths_and_sizes
+            ],
+        )
+
+    def test_no_warning_when_under_soft_limit(self) -> None:
+        s = self._set_with_assets([
+            ("img/a.png", 45),
+            ("img/b.png", 60),
+        ])
+        assert check_set_assets_size(s) == []
+
+    def test_assets_total_kb_sums_declared_sizes(self) -> None:
+        s = self._set_with_assets([
+            ("img/a.png", 45),
+            ("img/b.png", 60),
+            ("img/c.png", 25),
+        ])
+        assert s.assets_total_kb() == 130
+
+    def test_warns_above_soft_limit(self) -> None:
+        # Use a TINY soft limit so we don't have to declare
+        # 10 MiB of fake assets — the helper accepts a custom
+        # threshold for exactly this case.
+        s = self._set_with_assets([
+            ("img/a.png", 100),
+            ("img/b.png", 100),
+        ])
+        warnings = check_set_assets_size(s, soft_limit_kb=150)
+        assert len(warnings) == 1
+        assert "200 KiB" in warnings[0]
+        assert "150 KiB" in warnings[0]
+
+    def test_no_warning_at_exact_soft_limit(self) -> None:
+        s = self._set_with_assets([("img/a.png", 100)])
+        # 100 KiB == limit → not strictly above, no warning.
+        assert check_set_assets_size(s, soft_limit_kb=100) == []
+
+    def test_does_not_raise_on_oversize(self) -> None:
+        """Soft limit ≠ hard limit. The validator warns, the
+        set still passes."""
+        s = self._set_with_assets([
+            ("img/a.png", 250),
+            ("img/b.png", 250),
+        ])
+        # No exception, even at 500 KiB declared / 100 KiB
+        # soft limit.
+        check_set_assets_size(s, soft_limit_kb=100)
+
+    def test_warns_on_excessive_asset_count(self) -> None:
+        # Each asset is 1 KiB → well under any size limit.
+        # The asset-count check is independent.
+        paths = [("img/a-{}.png".format(i), 1) for i in range(101)]
+        s = self._set_with_assets(paths)
+        warnings = check_set_assets_size(s)
+        assert any("101 assets" in w for w in warnings)
+
+    def test_default_soft_limit_uses_constant(self) -> None:
+        # Constant lookup, not hard-coded — sanity check.
+        assert SET_ASSETS_SOFT_LIMIT_KB == 10 * 1024
 
 
 # --- ContentManifest ----------------------------------------------------

@@ -38,7 +38,7 @@ from .exceptions import (
 )
 from .github_adapter import GitHubRawAdapter
 from .manifest_parser import parse_manifest_yaml
-from .models import ContentManifest, ContentSet
+from .models import ContentManifest, ContentSet, check_set_assets_size
 from .schema import Lesson
 
 logger = logging.getLogger(__name__)
@@ -366,6 +366,16 @@ class ContentLoaderService:
             # manifest entry doesn't fail the whole
             # download — the frontend falls back to text-
             # only display for missing images.
+            # Pre-download advisory: log per-set soft-limit
+            # warnings so authors get a single clean signal
+            # without surfacing a noisy per-asset log line.
+            for warning in check_set_assets_size(target_set):
+                logger.warning(
+                    "Asset advisory for %s/%s: %s",
+                    source,
+                    set_id,
+                    warning,
+                )
             assets: dict[str, bytes] = {}
             for asset_entry in target_set.assets:
                 upstream_path = f"sets/{set_id}/assets/{asset_entry.path}"
