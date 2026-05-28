@@ -40,6 +40,7 @@
 import type {
     ContentLesson,
     ContentLessonStep,
+    ElementError,
 } from "../../storage/types";
 
 import type {ExerciseCandidate} from "./exercise-pool";
@@ -104,6 +105,20 @@ export interface GenerateOpts {
      *  uniqueness. Pass a pinned value in tests to keep
      *  output deterministic. */
     now: string;
+    /** Per-element source ``ElementError`` rows. When supplied
+     *  the variation logic (Phase 53D / P-138) consults the
+     *  source error to:
+     *    1. Filter out literal-replay candidates whose
+     *       ``(source_lesson_id, exercise.id)`` matches the
+     *       error's recorded exercise (avoid same-exercise
+     *       repeat — the user already saw it fail).
+     *    2. Score same-exercise_type candidates lower per the
+     *       ``variation_factor`` weight (prefer a shape change
+     *       over a re-run of the same form).
+     *  Omit to disable variation entirely (every candidate is
+     *  in scope; tied candidates fall through to the type-mix
+     *  deficit rule alone). */
+    errorsByElementKey?: ReadonlyMap<string, ElementError>;
 }
 
 function _resolveConfig(
@@ -139,28 +154,46 @@ function _groupByElement(
  *  largest deficit (target - current). Ties broken by lower
  *  difficulty estimate, then by exercise.id alphabetical for
  *  cross-runtime determinism. Returns null when ``candidates``
- *  is empty. */
+ *  is empty.
+ *
+ *  When ``sourceError`` is non-null AND ``variationFactor`` is
+ *  in (0, 1], same-exercise_type candidates are penalised by
+ *  ``variationFactor`` units of deficit so the picker prefers
+ *  a shape change over a re-run. The penalty is a soft signal
+ *  — a candidate with a huge mix deficit still wins over a
+ *  shape-changed candidate with a small deficit. At
+ *  ``variationFactor === 0`` the penalty is zero and the
+ *  picker behaves identically to the 53C baseline. */
 function _pickByMixDeficit(
     candidates: readonly ExerciseCandidate[],
     typeCounts: Map<string, number>,
     targets: Map<string, number>,
+    sourceType: string | null,
+    variationFactor: number,
 ): ExerciseCandidate | null {
     if (candidates.length === 0) return null;
     let best: ExerciseCandidate | null = null;
-    let bestKey: [number, number, string] | null = null;
+    let bestKey: [number, number, number, string] | null = null;
     for (const cand of candidates) {
         const current = typeCounts.get(cand.exercise_type) ?? 0;
         const target = targets.get(cand.exercise_type) ?? 0;
         const deficit = target - current;
-        const sortKey: [number, number, string] = [
-            -deficit,
+        const sameSourceType =
+            sourceType !== null && cand.exercise_type === sourceType;
+        const variationPenalty = sameSourceType ? variationFactor : 0;
+        // Sort tuple (ascending):
+        //   1. -(deficit - variationPenalty)  => largest effective deficit wins
+        //   2. is_generated last (prefer authored unless variation pushes us)
+        //   3. difficulty_estimate            => easier first per ascending intuition
+        //   4. exercise.id alphabetical       => parity tie-break
+        const effectiveDeficit = deficit - variationPenalty;
+        const sortKey: [number, number, number, string] = [
+            -effectiveDeficit,
+            cand.is_generated ? 1 : 0,
             cand.difficulty_estimate,
             cand.exercise.id,
         ];
-        if (
-            bestKey === null ||
-            _tupleLt(sortKey, bestKey)
-        ) {
+        if (bestKey === null || _tupleLt(sortKey, bestKey)) {
             best = cand;
             bestKey = sortKey;
         }
@@ -168,13 +201,52 @@ function _pickByMixDeficit(
     return best;
 }
 
+/** Heuristic: infer the source exercise's type by looking at
+ *  the candidates that share the source's exercise.id. When
+ *  none matches (the source exercise wasn't pooled), return
+ *  null and the variation penalty doesn't fire. */
+function _sourceExerciseType(
+    sourceError: ElementError | null,
+    candidates: readonly ExerciseCandidate[],
+): string | null {
+    if (sourceError === null) return null;
+    for (const cand of candidates) {
+        if (
+            !cand.is_generated &&
+            cand.source_lesson_id === sourceError.lesson_id &&
+            cand.exercise.id === sourceError.exercise_id
+        ) {
+            return cand.exercise_type;
+        }
+    }
+    return null;
+}
+
 function _tupleLt(
-    a: [number, number, string],
-    b: [number, number, string],
+    a: [number, number, number, string],
+    b: [number, number, number, string],
 ): boolean {
     if (a[0] !== b[0]) return a[0] < b[0];
     if (a[1] !== b[1]) return a[1] < b[1];
-    return a[2] < b[2];
+    if (a[2] !== b[2]) return a[2] < b[2];
+    return a[3] < b[3];
+}
+
+/** Filter out the candidate that LITERALLY replays the source
+ *  error (same lesson + same exercise.id). Generated cloze
+ *  candidates have a synthetic exercise.id so they survive
+ *  this filter. */
+function _filterReplays(
+    candidates: readonly ExerciseCandidate[],
+    sourceError: ElementError | null,
+): ExerciseCandidate[] {
+    if (sourceError === null) return [...candidates];
+    return candidates.filter(
+        (c) =>
+            c.is_generated ||
+            c.source_lesson_id !== sourceError.lesson_id ||
+            c.exercise.id !== sourceError.exercise_id,
+    );
 }
 
 /** Build the target-count map: per type, what fraction of
@@ -195,6 +267,7 @@ function _selectCandidates(
     prioritized: readonly PrioritizedElement[],
     pool: readonly ExerciseCandidate[],
     config: GeneratorConfig,
+    errorsByElementKey: ReadonlyMap<string, ElementError> | undefined,
 ): ExerciseCandidate[] {
     const grouped = _groupByElement(pool);
     const targets = _buildTargets(config);
@@ -211,14 +284,30 @@ function _selectCandidates(
         for (const target of prioritized) {
             if (selected.length >= config.max_exercises) break;
             const groupKey = target.element_key;
-            const candidates = grouped.get(groupKey) ?? [];
-            if (candidates.length === 0) continue;
+            const raw = grouped.get(groupKey) ?? [];
+            if (raw.length === 0) continue;
+            const sourceError = errorsByElementKey?.get(groupKey) ?? null;
+            // Capture the source exercise's type BEFORE filtering
+            // it out — the variation penalty consults it. Once
+            // filtered, the source candidate isn't visible to
+            // _sourceExerciseType anymore.
+            const sourceType = _sourceExerciseType(sourceError, raw);
+            // Variation: strip literal-replay candidates of the
+            // source error. Generated cloze candidates survive
+            // (they carry a synthetic id).
+            const variationFiltered = _filterReplays(raw, sourceError);
             const used = usedByElement.get(groupKey) ?? new Set<string>();
-            const available = candidates.filter(
+            const available = variationFiltered.filter(
                 (c) => !used.has(`${c.source_lesson_id}::${c.exercise.id}`),
             );
             if (available.length === 0) continue;
-            const pick = _pickByMixDeficit(available, typeCounts, targets);
+            const pick = _pickByMixDeficit(
+                available,
+                typeCounts,
+                targets,
+                sourceType,
+                config.variation_factor,
+            );
             if (!pick) continue;
             selected.push(pick);
             used.add(`${pick.source_lesson_id}::${pick.exercise.id}`);
@@ -330,6 +419,7 @@ export function generateAdaptiveLesson(
         analysis.prioritized_elements,
         pool,
         config,
+        opts.errorsByElementKey,
     );
     const sorted = _sortByDifficulty(selected, config.difficulty_curve);
     const steps: ContentLessonStep[] = [];

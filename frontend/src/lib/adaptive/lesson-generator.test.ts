@@ -10,6 +10,7 @@ import type {
     ContentLessonCard,
     ContentLessonExercise,
     ContentLessonStep,
+    ElementError,
 } from "../../storage/types";
 
 import type {ExerciseCandidate} from "./exercise-pool";
@@ -435,6 +436,244 @@ describe("generateAdaptiveLesson — theory step from clusters", () => {
             now: NOW,
         });
         expect(lesson.steps.find((s) => s.type === "theory")).toBeUndefined();
+    });
+});
+
+function makeError(
+    element_key: string,
+    overrides: Partial<ElementError> = {},
+): ElementError {
+    return {
+        id: `err-${element_key}`,
+        user_id: "u1",
+        set_id: overrides.set_id ?? "S",
+        lesson_id: overrides.lesson_id ?? "01.json",
+        exercise_id: overrides.exercise_id ?? "ex-source",
+        element_key,
+        element_type: "vocabulary",
+        user_answer: "wrong",
+        correct_answer: element_key,
+        error_count: 1,
+        correct_streak: 0,
+        last_error_at: NOW,
+        last_attempt_at: NOW,
+        mastered: false,
+        mastered_at: null,
+        created_at: NOW,
+        updated_at: NOW,
+    };
+}
+
+describe("generateAdaptiveLesson — variation logic (Phase 53D)", () => {
+    it("never replays the source error's exact (lesson, exercise) candidate", () => {
+        const analysis = analysisFor([makePrioritized("merci")]);
+        const error = makeError("merci", {
+            lesson_id: "01.json",
+            exercise_id: "ex-source",
+        });
+        const pool: ExerciseCandidate[] = [
+            // Literal source — should be filtered.
+            makeCandidate({
+                element_key: "merci",
+                exercise_id: "ex-source",
+                lesson_id: "01.json",
+                exercise_type: "free_text",
+            }),
+            // Alternative — should be picked.
+            makeCandidate({
+                element_key: "merci",
+                exercise_id: "ex-alt",
+                lesson_id: "02.json",
+                exercise_type: "matching",
+            }),
+        ];
+        const lesson = generateAdaptiveLesson(analysis, pool, {
+            lessons: new Map(),
+            title: "Adaptive",
+            set_id: "S",
+            now: NOW,
+            errorsByElementKey: new Map([["merci", error]]),
+            config: {max_exercises: 1},
+        });
+        const ids = lesson.steps
+            .filter((s) => s.type === "exercise")
+            .map((s) => s.exercise!.id);
+        expect(ids).toEqual(["ex-alt"]);
+    });
+
+    it("prefers a different exercise_type than the source error when variation_factor is high", () => {
+        const analysis = analysisFor([makePrioritized("merci")]);
+        const error = makeError("merci", {
+            lesson_id: "01.json",
+            exercise_id: "ex-source",
+        });
+        // Pool has the source (free_text — should be filtered)
+        // AND TWO alternatives: same-type free_text and a
+        // different-type matching. At variation_factor=1.0,
+        // matching should win because the variation penalty
+        // outweighs the type-mix tie.
+        const pool: ExerciseCandidate[] = [
+            // Source — filtered out
+            makeCandidate({
+                element_key: "merci",
+                exercise_id: "ex-source",
+                lesson_id: "01.json",
+                exercise_type: "free_text",
+            }),
+            // Same-type alternative
+            makeCandidate({
+                element_key: "merci",
+                exercise_id: "ex-ft-alt",
+                lesson_id: "02.json",
+                exercise_type: "free_text",
+            }),
+            // Different-type alternative
+            makeCandidate({
+                element_key: "merci",
+                exercise_id: "ex-mat-alt",
+                lesson_id: "02.json",
+                exercise_type: "matching",
+            }),
+        ];
+        const lesson = generateAdaptiveLesson(analysis, pool, {
+            lessons: new Map(),
+            title: "Adaptive",
+            set_id: "S",
+            now: NOW,
+            errorsByElementKey: new Map([["merci", error]]),
+            config: {
+                max_exercises: 1,
+                variation_factor: 1.0,
+                exercise_type_mix: {
+                    matching: 0.5,
+                    picture_choice: 0,
+                    free_text: 0.5,
+                    word_tiles: 0,
+                    cloze: 0,
+                },
+            },
+        });
+        const ids = lesson.steps
+            .filter((s) => s.type === "exercise")
+            .map((s) => s.exercise!.id);
+        expect(ids).toEqual(["ex-mat-alt"]);
+    });
+
+    it("variation_factor=0 disables the type-deviation penalty", () => {
+        // Same setup as the previous test, but with
+        // variation_factor=0. Without the variation penalty,
+        // the type-mix deficit alone decides — both types tied
+        // at 0.5 share. The same-type free_text alternative
+        // would be picked if alphabetical id is the tie-break,
+        // but the literal-replay filter still applies. So we
+        // expect 'ex-ft-alt' (alphabetically before
+        // 'ex-mat-alt').
+        const analysis = analysisFor([makePrioritized("merci")]);
+        const error = makeError("merci", {
+            exercise_id: "ex-source",
+            lesson_id: "01.json",
+        });
+        const pool: ExerciseCandidate[] = [
+            makeCandidate({
+                element_key: "merci",
+                exercise_id: "ex-source",
+                lesson_id: "01.json",
+                exercise_type: "free_text",
+            }),
+            makeCandidate({
+                element_key: "merci",
+                exercise_id: "ex-ft-alt",
+                lesson_id: "02.json",
+                exercise_type: "free_text",
+            }),
+            makeCandidate({
+                element_key: "merci",
+                exercise_id: "ex-mat-alt",
+                lesson_id: "02.json",
+                exercise_type: "matching",
+            }),
+        ];
+        const lesson = generateAdaptiveLesson(analysis, pool, {
+            lessons: new Map(),
+            title: "Adaptive",
+            set_id: "S",
+            now: NOW,
+            errorsByElementKey: new Map([["merci", error]]),
+            config: {
+                max_exercises: 1,
+                variation_factor: 0,
+                exercise_type_mix: {
+                    matching: 0.5,
+                    picture_choice: 0,
+                    free_text: 0.5,
+                    word_tiles: 0,
+                    cloze: 0,
+                },
+            },
+        });
+        const ids = lesson.steps
+            .filter((s) => s.type === "exercise")
+            .map((s) => s.exercise!.id);
+        // Both candidates tied on deficit; tie-breaks: difficulty
+        // (both 3) then id alphabetical ('ex-ft-alt' < 'ex-mat-alt').
+        expect(ids).toEqual(["ex-ft-alt"]);
+    });
+
+    it("same element across iterations produces different exercise types", () => {
+        // The cycling-iteration logic in 53C combined with the
+        // variation preference in 53D should produce a varied
+        // set of types when the pool offers multiple types for
+        // one element.
+        const analysis = analysisFor([makePrioritized("merci")]);
+        const error = makeError("merci", {exercise_id: "ex-source"});
+        const types: ContentLessonExercise["type"][] = [
+            "matching",
+            "free_text",
+            "cloze",
+            "word_tiles",
+        ];
+        const pool: ExerciseCandidate[] = [
+            // Source (filtered)
+            makeCandidate({
+                element_key: "merci",
+                exercise_id: "ex-source",
+                exercise_type: "free_text",
+            }),
+            ...types.map((t, i) =>
+                makeCandidate({
+                    element_key: "merci",
+                    exercise_id: `ex-${t}-${i}`,
+                    exercise_type: t,
+                    lesson_id: `${i}.json`,
+                }),
+            ),
+        ];
+        const lesson = generateAdaptiveLesson(analysis, pool, {
+            lessons: new Map(),
+            title: "Adaptive",
+            set_id: "S",
+            now: NOW,
+            errorsByElementKey: new Map([["merci", error]]),
+            config: {
+                max_exercises: 3,
+                variation_factor: 0.7,
+                exercise_type_mix: {
+                    matching: 0.25,
+                    picture_choice: 0,
+                    free_text: 0.25,
+                    word_tiles: 0.25,
+                    cloze: 0.25,
+                },
+            },
+        });
+        const selectedTypes = new Set(
+            lesson.steps
+                .filter((s) => s.type === "exercise")
+                .map((s) => s.exercise!.type),
+        );
+        // At least 2 distinct types — the picker shouldn't
+        // repeat one type for all 3 slots.
+        expect(selectedTypes.size).toBeGreaterThanOrEqual(2);
     });
 });
 
