@@ -9,13 +9,44 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.32.0** (Phase 49 — Learning Repo
-  Storage Abstraction). Closes PHASE-42-STORAGE-ABSTRACTION-01,
-  open since v1.26.1: the Learning Repository feature now
-  works in BOTH storage modes. GitHub-Pages visitors at
-  ``https://astrapi69.github.io/adaptive-learner/`` get the
-  full render + ZIP download surface client-side instead of
-  the v1.26.1 "only available in server mode" placeholder.
+- **Current state:** **v1.33.0** (Phase 50 — Dexie-Mode
+  Lesson-XP Parity + i18n Repo-Key Fix + Bibliogon-Residue
+  Cleanup). Closes D-DEXIE-GAMIFICATION (open as a deferred-
+  on-purpose gap since v1.31.0): Dexie-mode users at
+  ``https://astrapi69.github.io/adaptive-learner/`` now earn
+  lesson-XP + lesson-badges identical to API-mode users. TS
+  port of ``compute_stars`` + ``calculate_lesson_session_xp``
+  + ``current_streak_days`` + ``is_first_attempt`` from the
+  Python xp_service under ``frontend/src/lib/gamification/``,
+  wired through ``DexieStorage.lessonProgress.upsert`` so the
+  in_progress→completed transition fires the award + badge
+  evaluator. Cross-language parity-test methodology proven in
+  Phase 49F applied a second time — both the lesson-XP rule
+  and the streak/first-attempt helpers pinned to shared JSON
+  goldens under ``tests/fixtures/lesson-xp-parity/``, **passed
+  on the first run** byte-identically. 4 new lesson badges
+  added to ``BUNDLED_BADGES`` (catalog now 28 entries).
+  Also fixes a silent i18n bug since v1.26.0: the
+  Learning Repository's 23 ``repo.action.*`` /
+  ``repo.settings.toast.*`` / etc. dotted-path keys were
+  stored as flat YAML and never resolved — every catalog
+  fell through to the English fallback for ~6 release cycles.
+  All 8 catalogs restructured; new Vitest regression-pin
+  walks every dotted path the frontend calls and asserts
+  resolution. Also: ``.claude/rules/`` swept of Bibliogon
+  residue inherited from the fork (architecture.md rewritten
+  end-to-end; lessons-learned.md 3415 → 1610 lines / 53%
+  reduction; coding-standards + code-hygiene + quality-checks
+  + release-workflow + ai-workflow + prompts/audit.md all
+  cleaned of Book/Chapter/Pandoc/manuscripta/audiobook/KDP
+  references). 14 atomic commits + 1 release commit; every
+  individually green through the full gate chain.
+  v1.32.0 = Phase 49 (Learning Repo Storage Abstraction).
+  Closed PHASE-42-STORAGE-ABSTRACTION-01, open since v1.26.1:
+  the Learning Repository feature now works in BOTH storage
+  modes. GitHub-Pages visitors get the full render + ZIP
+  download surface client-side instead of the v1.26.1 "only
+  available in server mode" placeholder.
   Ports the Python renderer (~957 LOC across 10 modules) to
   TypeScript under ``frontend/src/lib/learning-repo/`` — 4
   meta-file renderers + topic-folder generator + RenderContext
@@ -122,7 +153,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.32.0.md](changelog/releases/v1.32.0.md)
+  [changelog/releases/v1.33.0.md](changelog/releases/v1.33.0.md)
   for the per-release detail and `git log --oneline` for
   the feature history across Phases 1–42.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
@@ -300,8 +331,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.32.0 baseline:** backend 1005 (+1 skipped) + plugins
-  839 + Vitest 1874 = **3718 tests** (+1 skipped). E2E
+- **v1.33.0 baseline:** backend 1002 (+1 skipped) + plugins
+  850 + Vitest 1895 = **3747 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (18 specs incl. /content + /lesson + /review +
