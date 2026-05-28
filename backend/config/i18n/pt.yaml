@@ -199,11 +199,23 @@ dashboard:
   card_recent_sessions: Sessões recentes
   card_spaced: Prática espaçada
   card_review_queue: Para rever
+  card_focus_areas: Áreas de foco
   review_queue:
     loading: "A carregar…"
     elements: "elemento(s) para rever"
     overdue: "em atraso — começa aqui"
     open: "Abrir sessão de revisão"
+  focus_areas:
+    loading: "A analisar os teus erros…"
+    subtitle: "Os teus desafios:"
+    errors: "erros"
+    mastery_progress: "Progresso de domínio"
+    cta: "Iniciar lição adaptativa"
+    tag:
+      article_gender: "Género do artigo"
+      spelling_accent: "Ortografia e acentos"
+      verb_conjugation: "Conjugação verbal"
+      word_order: "Ordem das palavras"
 review:
   page_title: "Revisão"
   session_title: "Sessão de revisão"

@@ -211,11 +211,25 @@
     "card_recent_sessions": "Son oturumlar",
     "card_spaced": "Aralıklı pratik",
     "card_review_queue": "Tekrar için",
+    "card_focus_areas": "Odak alanları",
     "review_queue": {
       "loading": "Yükleniyor…",
       "elements": "tekrar için öğe(ler)",
       "overdue": "gecikmiş — buradan başla",
       "open": "Tekrar oturumu aç"
+    },
+    "focus_areas": {
+      "loading": "Hataların inceleniyor…",
+      "subtitle": "Zorluk alanların:",
+      "errors": "hata",
+      "mastery_progress": "Ustalık ilerlemesi",
+      "cta": "Uyarlanabilir derse başla",
+      "tag": {
+        "article_gender": "Artikel cinsiyeti",
+        "spelling_accent": "İmla ve aksanlar",
+        "verb_conjugation": "Fiil çekimi",
+        "word_order": "Kelime sırası"
+      }
     }
   },
   "review": {

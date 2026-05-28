@@ -199,11 +199,23 @@ dashboard:
   card_recent_sessions: Recent sessions
   card_spaced: Práctica espaciada
   card_review_queue: Para repasar
+  card_focus_areas: Áreas de enfoque
   review_queue:
     loading: "Cargando…"
     elements: "elemento(s) para repasar"
     overdue: "atrasados — empieza aquí"
     open: "Abrir sesión de repaso"
+  focus_areas:
+    loading: "Analizando tus errores…"
+    subtitle: "Tus áreas de desafío:"
+    errors: "errores"
+    mastery_progress: "Progreso de dominio"
+    cta: "Iniciar lección adaptativa"
+    tag:
+      article_gender: "Género del artículo"
+      spelling_accent: "Ortografía y acentos"
+      verb_conjugation: "Conjugación verbal"
+      word_order: "Orden de palabras"
 review:
   page_title: "Repaso"
   session_title: "Sesión de repaso"

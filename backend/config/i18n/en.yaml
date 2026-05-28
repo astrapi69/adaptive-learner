@@ -199,11 +199,23 @@ dashboard:
   card_recent_sessions: Recent sessions
   card_spaced: Spaced practice
   card_review_queue: Due for review
+  card_focus_areas: Focus areas
   review_queue:
     loading: "Loading…"
     elements: "element(s) due for review"
     overdue: "overdue — start here"
     open: "Open review session"
+  focus_areas:
+    loading: "Analyzing your errors…"
+    subtitle: "Your challenge areas:"
+    errors: "errors"
+    mastery_progress: "Mastery progress"
+    cta: "Start adaptive lesson"
+    tag:
+      article_gender: "Article gender"
+      spelling_accent: "Spelling & accents"
+      verb_conjugation: "Verb conjugation"
+      word_order: "Word order"
 review:
   page_title: "Review"
   session_title: "Review session"

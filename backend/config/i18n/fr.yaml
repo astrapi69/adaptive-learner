@@ -199,11 +199,23 @@ dashboard:
   card_recent_sessions: Recent sessions
   card_spaced: Pratique espacee
   card_review_queue: À réviser
+  card_focus_areas: Points d'attention
   review_queue:
     loading: "Chargement…"
     elements: "élément(s) à réviser"
     overdue: "en retard — commence ici"
     open: "Ouvrir la session de révision"
+  focus_areas:
+    loading: "Analyse de tes erreurs…"
+    subtitle: "Tes défis :"
+    errors: "erreurs"
+    mastery_progress: "Progression de maîtrise"
+    cta: "Démarrer une leçon adaptative"
+    tag:
+      article_gender: "Genre des articles"
+      spelling_accent: "Orthographe et accents"
+      verb_conjugation: "Conjugaison verbale"
+      word_order: "Ordre des mots"
 review:
   page_title: "Révision"
   session_title: "Session de révision"

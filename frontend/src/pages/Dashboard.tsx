@@ -5,6 +5,7 @@ import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import DashboardFilterBar from "../components/DashboardFilterBar";
 import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
+import FocusAreasCard from "../components/dashboard/FocusAreasCard";
 import LearningRepoWidget from "../components/dashboard/LearningRepoWidget";
 import ReviewQueueCard from "../components/dashboard/ReviewQueueCard";
 import MethodDistribution from "../components/MethodDistribution";
@@ -376,6 +377,7 @@ export default function Dashboard() {
                     <SpacedRecommendations cards={spaced} />
                 </article>
 
+                {userId && <FocusAreasCard userId={userId} />}
                 {userId && <ReviewQueueCard userId={userId} />}
 
                 <article className="dashboard-card dashboard-card-wide">

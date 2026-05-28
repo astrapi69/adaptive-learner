@@ -211,11 +211,25 @@
     "card_recent_sessions": "Recent sessions",
     "card_spaced": "Διανεμημένη εξάσκηση",
     "card_review_queue": "Προς επανάληψη",
+    "card_focus_areas": "Σημεία εστίασης",
     "review_queue": {
       "loading": "Φόρτωση…",
       "elements": "στοιχείο(α) προς επανάληψη",
       "overdue": "εκπρόθεσμα — ξεκίνα από εδώ",
       "open": "Άνοιγμα συνεδρίας επανάληψης"
+    },
+    "focus_areas": {
+      "loading": "Ανάλυση των λαθών σου…",
+      "subtitle": "Οι προκλήσεις σου:",
+      "errors": "λάθη",
+      "mastery_progress": "Πρόοδος κατάκτησης",
+      "cta": "Έναρξη προσαρμοστικού μαθήματος",
+      "tag": {
+        "article_gender": "Γένος άρθρου",
+        "spelling_accent": "Ορθογραφία και τόνοι",
+        "verb_conjugation": "Κλίση ρημάτων",
+        "word_order": "Σειρά λέξεων"
+      }
     }
   },
   "review": {

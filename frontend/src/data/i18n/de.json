@@ -211,11 +211,25 @@
     "card_recent_sessions": "Letzte Sessions",
     "card_spaced": "Geplante Übung",
     "card_review_queue": "Zur Wiederholung",
+    "card_focus_areas": "Übungsschwerpunkt",
     "review_queue": {
       "loading": "Wird geladen…",
       "elements": "Element(e) zur Wiederholung",
       "overdue": "überfällig — hier starten",
       "open": "Wiederholungssitzung öffnen"
+    },
+    "focus_areas": {
+      "loading": "Deine Fehler werden analysiert…",
+      "subtitle": "Deine Herausforderungen:",
+      "errors": "Fehler",
+      "mastery_progress": "Beherrschungs-Fortschritt",
+      "cta": "Adaptive Lektion starten",
+      "tag": {
+        "article_gender": "Artikel (Geschlecht)",
+        "spelling_accent": "Rechtschreibung & Akzente",
+        "verb_conjugation": "Verbkonjugation",
+        "word_order": "Wortstellung"
+      }
     }
   },
   "review": {
