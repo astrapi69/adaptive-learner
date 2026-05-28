@@ -15,7 +15,7 @@
 
 $ErrorActionPreference = "Stop"
 
-$Version = if ($env:ADAPTIVE_LEARNER_VERSION) { $env:ADAPTIVE_LEARNER_VERSION } else { "v1.35.0" }
+$Version = if ($env:ADAPTIVE_LEARNER_VERSION) { $env:ADAPTIVE_LEARNER_VERSION } else { "v1.36.0" }
 $Repo = "astrapi69/adaptive-learner"
 $InstallDir = if ($env:ADAPTIVE_LEARNER_DIR) { $env:ADAPTIVE_LEARNER_DIR } else { Join-Path $HOME "adaptive-learner" }
 

@@ -232,9 +232,7 @@ def analyze_errors(
     always produces the same output. The caller supplies
     ``now`` so tests stay deterministic; production routes
     pass ``datetime.now(UTC)``."""
-    active = [
-        e for e in element_errors if not e.mastered and e.error_count > 0
-    ]
+    active = [e for e in element_errors if not e.mastered and e.error_count > 0]
     prioritized = [_prioritize(e, now) for e in active]
     prioritized = _compare_prioritized(prioritized)
     clusters = _detect_clusters(active)

@@ -9,15 +9,44 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.35.0** (Phase 52 — EXP-007
-  Token-Diff + Cloze Exercise Type). Wires token-level
-  visual feedback into every existing exercise feedback
-  surface, adds a fifth exercise type (Cloze /
-  fill-in-the-blank) that auto-generates from a learner's
-  specific mistakes, ships a lesson-end correction round
-  that drills exactly the words the learner missed, and
-  extends review sessions to vary the shape (cloze for
-  free-text + word-tiles errors) instead of pure replay.
+- **Current state:** **v1.36.0** (Phase 53 — EXP-013
+  Adaptive Lesson Generation). THE core promise of the
+  application: the system now ADAPTS to the learner. Reads
+  the per-element error history, identifies weakness
+  patterns, classifies them in language-specific terms
+  (article_gender / spelling_accent / verb_conjugation /
+  word_order), and synthesises a personalised lesson on
+  demand — all rule-based, deterministic, no AI calls, fully
+  client-side so the GitHub Pages deployment works without
+  an API key. New ``/adaptive-lesson/:setId`` route takes
+  ``ElementError[]`` + cached content + the user's learning
+  profile and emits a synthetic ``ContentLesson`` the
+  existing viewer renders unmodified, with transparency
+  display before the lesson (focus areas + source error
+  count) and improvement indicator after (+N mastered this
+  session). Dashboard gets a new FocusAreasCard widget
+  showing the user's top focus elements + a "Start adaptive
+  lesson" CTA. Six new TypeScript modules in
+  ``frontend/src/lib/adaptive/`` (analyzer + pool builder
+  + lesson generator + variation + classifier + types),
+  Python parity for the analyzer pinned by JSON goldens.
+  AI-augmented generation (EXP-013 Stufe 3 / P-150-P-152)
+  deferred to a future phase; the rule-based pipeline is
+  sufficient for the headline promise. Closes P-133, P-134,
+  P-137, P-138, P-139, F-114, F-115, F-116, Q-114, Q-115,
+  Q-116, D-110 (with P-140 tag persistence and the EXP-013
+  Stufe 3 AI work split off as explicitly-deferred
+  follow-ups). 10 atomic sub-phase commits + 1 release;
+  every individually green through the full gate chain.
+  v1.35.0 = Phase 52 (EXP-007 Token-Diff + Cloze Exercise
+  Type). Wires token-level visual feedback into every
+  existing exercise feedback surface, adds a fifth exercise
+  type (Cloze / fill-in-the-blank) that auto-generates from
+  a learner's specific mistakes, ships a lesson-end
+  correction round that drills exactly the words the
+  learner missed, and extends review sessions to vary the
+  shape (cloze for free-text + word-tiles errors) instead
+  of pure replay.
   Closes P-126 / P-127 / P-128 / P-130 / F-111 / F-112 /
   F-113 / Q-110 / Q-111 / Q-112 from the EXP-007 task list.
   Schema 1.0 → 1.1: ExerciseType gains CLOZE; new
@@ -221,9 +250,9 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.34.0.md](changelog/releases/v1.34.0.md)
+  [changelog/releases/v1.36.0.md](changelog/releases/v1.36.0.md)
   for the per-release detail and `git log --oneline` for
-  the feature history across Phases 1–42.
+  the feature history across Phases 1–53.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
@@ -399,15 +428,15 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.35.0 baseline:** backend 1002 (+1 skipped) + plugins
-  908 + Vitest 1978 = **3888 tests** (+1 skipped). E2E
+- **v1.36.0 baseline:** backend 1010 (+1 skipped) + plugins
+  908 + Vitest 2069 = **3987 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
-  gate** (18 specs incl. /content + /lesson + /review +
-  the Phase 49 Learning Repository surface that now
-  renders client-side) runs via `make test-dexie-smoke`;
-  aggregated into `make release-test` so a red gate
-  blocks the tag.
+  gate** (19 specs incl. /content + /lesson + /review +
+  /adaptive-lesson + the Phase 49 Learning Repository
+  surface that renders client-side) runs via
+  `make test-dexie-smoke`; aggregated into
+  `make release-test` so a red gate blocks the tag.
 
 ## Test isolation
 
