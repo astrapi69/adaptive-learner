@@ -9,9 +9,45 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.36.0** (Phase 53 — EXP-013
-  Adaptive Lesson Generation). THE core promise of the
-  application: the system now ADAPTS to the learner. Reads
+- **Current state:** **v1.37.0** (Phase 54 — Asset
+  Fetching for Picture Choice Exercises). Picture Choice
+  exercises stop being text-only: lesson sets can now ship
+  binary images via a manifest-declared ``assets/``
+  directory, with deterministic placeholder SVGs
+  (multilingual colour swatches + large numerals + avatar
+  fallback) as a backup for color / number / unknown
+  labels, and a text-only fallback as the final safety
+  net. Three modes — API, Dexie, and the GitHub Pages
+  offline build — all support images end-to-end. New
+  ``ContentSetAsset`` Pydantic model with strict path +
+  extension + size validators (≤ 500 KiB per asset; soft
+  warning for set total > 10 MiB; whitelist:
+  ``.png/.jpg/.jpeg/.webp/.svg``, no GIF, no BMP). New
+  Python ``cache.read_asset`` + service-layer asset fetch
+  alongside lesson JSON. New TypeScript ``getAsset``
+  namespace on ``IStorageService`` (ApiStorage → backend
+  proxy; DexieStorage → IndexedDB blob via existing
+  ``contentSetFiles`` table, no Dexie schema bump). New
+  process-wide ref-counted blob URL resolver +
+  ``useAsset`` hook with full lifecycle management
+  (``URL.revokeObjectURL`` on final unmount, in-flight
+  de-duplication for parallel resolves). New
+  ``PictureChoiceTile`` sub-component with the 4-layer
+  resolution chain (authored asset → legacy callback →
+  placeholder SVG → text-only). New backend endpoint
+  ``GET /api/plugins/content-loader/sets/{src}/{id}/assets/{path:path}``
+  with immutable Cache-Control headers (versioned cache
+  layout makes the URLs stable). Pilot content needs zero
+  JSON changes — existing ``assets/img/...`` references
+  fall through gracefully, and colour / number lessons get
+  proper rendering from the placeholder generator
+  automatically. Content-authoring guide extended in EN +
+  DE with full asset format / sizing / placement
+  documentation. 8 atomic sub-phase commits + 1 release;
+  every individually green through the full gate chain.
+  v1.36.0 = Phase 53 (EXP-013 Adaptive Lesson Generation).
+  THE core promise of the application: the system now
+  ADAPTS to the learner. Reads
   the per-element error history, identifies weakness
   patterns, classifies them in language-specific terms
   (article_gender / spelling_accent / verb_conjugation /
@@ -250,9 +286,9 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.36.0.md](changelog/releases/v1.36.0.md)
+  [changelog/releases/v1.37.0.md](changelog/releases/v1.37.0.md)
   for the per-release detail and `git log --oneline` for
-  the feature history across Phases 1–53.
+  the feature history across Phases 1–54.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
@@ -428,8 +464,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.36.0 baseline:** backend 1010 (+1 skipped) + plugins
-  908 + Vitest 2069 = **3987 tests** (+1 skipped). E2E
+- **v1.37.0 baseline:** backend 1014 (+1 skipped) + plugins
+  928 + Vitest 2136 = **4078 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (19 specs incl. /content + /lesson + /review +
