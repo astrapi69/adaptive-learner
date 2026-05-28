@@ -1177,6 +1177,44 @@ export const api = {
                 `/plugins/content-loader/sets/${encodeURIComponent(slug)}/${encodeURIComponent(setId)}/lessons/${encodeURIComponent(filename)}`,
             );
         },
+        /** GET /api/plugins/content-loader/sets/{src}/{id}/assets/{asset_path}
+         *
+         *  Phase 54 / v1.37.0 — returns the raw asset bytes as a
+         *  Blob, OR ``null`` on 404 so the caller can fall back
+         *  to a placeholder. The endpoint is added in Phase 54F;
+         *  ApiStorage.contentLoader.getAsset delegates here. */
+        getAsset: async (
+            source: string,
+            setId: string,
+            assetPath: string,
+        ): Promise<Blob | null> => {
+            const slug = source.replace(/\//g, "--");
+            // assetPath contains forward slashes (e.g. "img/x.png")
+            // and we want them preserved in the URL — encode each
+            // segment individually so a literal "/" stays as "/".
+            const encodedAssetPath = assetPath
+                .split("/")
+                .map(encodeURIComponent)
+                .join("/");
+            const url = `/api/plugins/content-loader/sets/${encodeURIComponent(slug)}/${encodeURIComponent(setId)}/assets/${encodedAssetPath}`;
+            try {
+                const response = await fetch(url);
+                if (response.status === 404) return null;
+                if (!response.ok) {
+                    throw new Error(
+                        `Asset fetch failed: ${response.status} ${response.statusText}`,
+                    );
+                }
+                return await response.blob();
+            } catch (err) {
+                // Network failure mirrors the 404 surface — the
+                // resolver hook falls back to placeholder /
+                // text-only so a flaky connection doesn't break
+                // PictureChoice exercises.
+                console.warn("getAsset failed", url, err);
+                return null;
+            }
+        },
     },
 
     // --- Pronunciation Practice (v1.18.0 / Phase 31C) -------------------

@@ -96,6 +96,7 @@ import {ApiError} from "../api/client";
 import {computeContentHash} from "../chat_import/content-hash";
 import {
     downloadSetDexie,
+    getAssetDexie,
     getLessonDexie,
     listLessonsDexie,
     listSetsDexie,
@@ -2128,6 +2129,13 @@ export const dexieStorage: IStorageService = {
         listLessons: (source, setId) => listLessonsDexie(source, setId),
         getLesson: (source, setId, filename) =>
             getLessonDexie(source, setId, filename),
+        /** Phase 54 / v1.37.0 — read a cached asset blob from
+         *  IndexedDB. Returns null when the set isn't cached
+         *  OR the asset wasn't bundled with the download; the
+         *  asset resolver hook (54B) interprets null as
+         *  "fall back to placeholder SVG / text-only". */
+        getAsset: (source, setId, assetPath) =>
+            getAssetDexie(source, setId, assetPath),
     },
 
     // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —

@@ -71,6 +71,96 @@ _VERSION_RE = re.compile(
 # Used for both set_id and source identifiers.
 _SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
+# Asset path: a relative path inside the set's ``assets/``
+# subdirectory. No leading slash, no ``..``, only forward
+# slashes, lowercase letters / digits / hyphens / underscores
+# / dots as path segments. The path-traversal check is
+# strict — the loader appends this to a Path() so any
+# upward navigation would break the cache-isolation
+# invariant.
+_ASSET_PATH_RE = re.compile(
+    r"^(?!/)(?!.*\.\.(?:/|$))[A-Za-z0-9_.\-]+(/[A-Za-z0-9_.\-]+)*$",
+)
+
+# Accepted image extensions for Phase 54. The frontend's
+# ``<img>`` element renders all of these natively; ``.gif`` /
+# ``.bmp`` are deliberately excluded (poor compression +
+# accessibility for animated GIFs).
+_IMAGE_EXTENSIONS = frozenset({".png", ".jpg", ".jpeg", ".webp", ".svg"})
+
+# Per-asset hard limit. Manifest validator rejects assets
+# whose declared ``size_kb`` exceeds this; matches the
+# v1.37.0 content-authoring guidance. 500 KiB covers any
+# reasonable PNG / WebP for a learning-exercise tile.
+MAX_ASSET_SIZE_KB = 500
+
+
+class ContentSetAsset(BaseModel):
+    """One bundled binary asset (image, audio) declared in the
+    set manifest (Phase 54 / v1.37.0).
+
+    The declaration drives:
+      - the downloader (fetch_asset per ``path`` alongside the
+        lesson JSON)
+      - the cache writer (store under ``assets/{path}``)
+      - the size validator (reject ``size_kb > MAX_ASSET_SIZE_KB``)
+
+    Optional everywhere — sets without any assets simply
+    omit the ``assets`` list. The current PictureChoice
+    component falls back to text-only when the resolver
+    can't produce a blob URL, so authored content without
+    assets stays playable.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    path: str = Field(
+        ...,
+        description=(
+            "Relative path inside the set's ``assets/`` "
+            "directory. Example: ``img/sunrise.png`` resolves "
+            "to ``{cache_root}/.../assets/img/sunrise.png``. "
+            "No leading slash, no ``..`` segments — the path "
+            "is appended to a Path() and any upward "
+            "navigation would escape the cache isolation."
+        ),
+        min_length=1,
+        max_length=300,
+    )
+    size_kb: int = Field(
+        ...,
+        description=(
+            "Declared file size in KiB (used by the validator "
+            "+ the downloader's progress reporting). The "
+            "downloader rejects assets whose actual byte "
+            "length exceeds ``size_kb * 1024`` by more than "
+            "10 percent — keeps content authors honest."
+        ),
+        ge=1,
+        le=MAX_ASSET_SIZE_KB,
+    )
+
+    @field_validator("path")
+    @classmethod
+    def _valid_path(cls, value: str) -> str:
+        if not _ASSET_PATH_RE.fullmatch(value):
+            raise ValueError(
+                "path must be a relative slug-safe path "
+                "(no leading slash, no '..' segments, "
+                "only letters / digits / hyphens / underscores / dots)",
+            )
+        # Image-extension whitelist for the v1.37.0 cut.
+        # Audio is allowed (.mp3 / .wav / .ogg) when the
+        # audio-asset story lands; the next-phase whitelist
+        # bump will be a one-line change.
+        suffix = value.rsplit(".", 1)[-1].lower()
+        if "." not in value or f".{suffix}" not in _IMAGE_EXTENSIONS:
+            raise ValueError(
+                f"asset path must end in one of "
+                f"{sorted(_IMAGE_EXTENSIONS)}",
+            )
+        return value
+
 
 class ContentSet(BaseModel):
     """One downloadable lesson set inside a ContentManifest.
@@ -162,6 +252,21 @@ class ContentSet(BaseModel):
             "Surfaced in the Set Browser as filter chips."
         ),
         max_length=20,
+    )
+    assets: list[ContentSetAsset] = Field(
+        default_factory=list,
+        description=(
+            "Phase 54 / v1.37.0 — optional list of binary assets "
+            "(images, audio) the set bundles. Each entry "
+            "declares a relative path inside ``assets/`` and the "
+            "expected size in KiB. The downloader fetches every "
+            "declared asset alongside the lesson JSON; the cache "
+            "stores them under "
+            "``{cache_root}/.../v{version}/assets/{path}``. The "
+            "manifest validator rejects assets exceeding the "
+            "per-file size limit (default 500 KiB)."
+        ),
+        max_length=500,
     )
 
     @field_validator("id")

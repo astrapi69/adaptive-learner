@@ -258,6 +258,53 @@ def read_lesson(
     return parse_lesson_json(lesson_path.read_text(encoding="utf-8"))
 
 
+def read_asset(
+    cache_root: Path,
+    source: str,
+    set_id: str,
+    version: str,
+    asset_path: str,
+) -> bytes:
+    """Read a single cached asset by relative path (Phase 54 /
+    v1.37.0).
+
+    ``asset_path`` is the same relative path declared in the
+    set manifest's ``assets[*].path`` (e.g. ``img/sunrise.png``).
+    The function resolves it under
+    ``{cache_root}/.../v{version}/assets/`` and reads the raw
+    bytes.
+
+    Path-traversal guard: resolves the final path and asserts
+    it stays under the set's cache directory. A relative
+    ``..`` segment that slips past the manifest validator
+    can't escape — the resolve check rejects it.
+
+    Raises ``ContentNotFoundError`` if the file is missing.
+    """
+    set_dir = cache_path_for_set(cache_root, source, set_id, version)
+    asset_root = set_dir / "assets"
+    target = (asset_root / asset_path).resolve()
+    # Defense-in-depth: the manifest validator (P-?, 54G)
+    # already rejects ``..`` segments in declared paths, but
+    # the read path stays the canonical place to also
+    # enforce the invariant — Python file IO has bitten this
+    # project once before (see ``.claude/rules/architecture.md``
+    # plugin-ZIP path-traversal note).
+    if not str(target).startswith(str(asset_root.resolve())):
+        raise ContentNotFoundError(
+            f"Asset path escapes the cache root: {asset_path!r}",
+        )
+    if not target.is_file():
+        raise ContentNotFoundError(
+            (
+                f"No cached asset "
+                f"{asset_path} in {source}/{set_id}@v{version}"
+            ),
+            detail=f"Looked at: {target}",
+        )
+    return target.read_bytes()
+
+
 def prune_old_versions(
     cache_root: Path,
     source: str,

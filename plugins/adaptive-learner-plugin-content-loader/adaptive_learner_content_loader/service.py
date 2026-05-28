@@ -77,6 +77,38 @@ class SetEntry:
     update_available: bool
 
 
+def _validate_asset_size(
+    path: str,
+    declared_size_kb: int,
+    actual_bytes: int,
+) -> None:
+    """Reject assets whose actual size exceeds the declared
+    ``size_kb`` by more than 10% (Phase 54G / v1.37.0).
+
+    Keeps content authors honest: a 50 KiB declaration that
+    ships a 500 KiB image is rejected at download time, so
+    the asset never reaches the cache or the client. The 10%
+    tolerance covers rounding (declared KiB → actual bytes is
+    a sub-KiB approximation) without letting wildly stale
+    manifests through.
+
+    Raises ``ContentSchemaError`` rather than a generic
+    exception so the global handler maps it to HTTP 400 —
+    same shape the manifest validator uses.
+    """
+    declared_bytes = declared_size_kb * 1024
+    limit = int(declared_bytes * 1.10)
+    if actual_bytes > limit:
+        raise ContentSchemaError(
+            (
+                f"Asset {path!r} actual size {actual_bytes} bytes "
+                f"exceeds declared {declared_size_kb} KiB + 10% "
+                f"tolerance ({limit} bytes). Update the manifest "
+                f"size_kb or shrink the asset."
+            ),
+        )
+
+
 def _set_manifest_path(set_id: str) -> str:
     # Convention used by the pilot content repo: each set has
     # its OWN manifest fragment shipping the lesson list, plus
@@ -328,6 +360,38 @@ class ContentLoaderService:
                 )
                 lessons[filename] = text
 
+            # Phase 54 / v1.37.0: fetch declared assets
+            # alongside lessons. Assets that 404 on the
+            # upstream are logged + skipped so a stale
+            # manifest entry doesn't fail the whole
+            # download — the frontend falls back to text-
+            # only display for missing images.
+            assets: dict[str, bytes] = {}
+            for asset_entry in target_set.assets:
+                upstream_path = f"sets/{set_id}/assets/{asset_entry.path}"
+                try:
+                    payload = await self._adapter.fetch_bytes(
+                        source,
+                        branch,
+                        upstream_path,
+                        client=client,
+                    )
+                except ContentNotFoundError:
+                    logger.warning(
+                        "Asset %s declared by %s/%s manifest missing "
+                        "upstream — skipping (frontend will text-fallback)",
+                        asset_entry.path,
+                        source,
+                        set_id,
+                    )
+                    continue
+                _validate_asset_size(
+                    asset_entry.path,
+                    asset_entry.size_kb,
+                    len(payload),
+                )
+                assets[asset_entry.path] = payload
+
             # Materialise atomically.
             store_set(
                 self.cache_root,
@@ -336,6 +400,7 @@ class ContentLoaderService:
                 target_set.version,
                 manifest_yaml=set_manifest_text,
                 lessons=lessons,
+                assets=assets if assets else None,
             )
             return SetEntry(
                 source=source,

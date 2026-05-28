@@ -19,6 +19,7 @@ from adaptive_learner_content_loader.cache import (
     latest_cached_version,
     list_cached_versions,
     prune_old_versions,
+    read_asset,
     read_lesson,
     read_manifest,
     reconcile_set_version,
@@ -205,6 +206,62 @@ class TestReadCache:
     def test_read_manifest_missing(self, tmp_path: Path) -> None:
         with pytest.raises(ContentNotFoundError):
             read_manifest(tmp_path, SOURCE, SET_ID, VERSION)
+
+    def test_read_asset_round_trip(self, tmp_path: Path) -> None:
+        """Phase 54A / v1.37.0 — store_set + read_asset
+        round-trip on a binary blob keeps bytes intact."""
+        png_bytes = b"\x89PNG\r\n\x1a\n" + b"FAKE_PNG_PAYLOAD"
+        store_set(
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            VERSION,
+            manifest_yaml=VALID_MANIFEST,
+            lessons={"01-greetings.json": VALID_LESSON},
+            assets={"img/cover.png": png_bytes},
+        )
+        out = read_asset(
+            tmp_path, SOURCE, SET_ID, VERSION, "img/cover.png",
+        )
+        assert out == png_bytes
+
+    def test_read_asset_missing(self, tmp_path: Path) -> None:
+        store_set(
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            VERSION,
+            manifest_yaml=VALID_MANIFEST,
+            lessons={"01-greetings.json": VALID_LESSON},
+        )
+        with pytest.raises(ContentNotFoundError):
+            read_asset(
+                tmp_path, SOURCE, SET_ID, VERSION, "img/missing.png",
+            )
+
+    def test_read_asset_path_traversal_blocked(
+        self, tmp_path: Path,
+    ) -> None:
+        """``..`` segments in an asset path are rejected at read
+        time, even if a future bug ever let one past the manifest
+        validator. Phase 54A / v1.37.0."""
+        store_set(
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            VERSION,
+            manifest_yaml=VALID_MANIFEST,
+            lessons={"01-greetings.json": VALID_LESSON},
+            assets={"img/cover.png": b"SAFE"},
+        )
+        with pytest.raises(ContentNotFoundError):
+            read_asset(
+                tmp_path,
+                SOURCE,
+                SET_ID,
+                VERSION,
+                "../../../etc/passwd",
+            )
 
     def test_read_lesson(self, tmp_path: Path) -> None:
         store_set(

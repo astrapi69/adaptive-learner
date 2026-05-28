@@ -16,9 +16,11 @@ import {beforeEach, describe, expect, it, vi, type Mock} from "vitest";
 
 import {
     downloadSetDexie,
+    getAssetDexie,
     getLessonDexie,
     listLessonsDexie,
     listSetsDexie,
+    mimeTypeForAssetPath,
 } from "./content-loader-dexie";
 import {_resetDbForTests, getDb} from "./db";
 
@@ -309,5 +311,120 @@ describe("Dexie content-loader: listLessons + getLesson", () => {
         await expect(
             getLessonDexie(SOURCE, SET_ID, "no-such.json"),
         ).rejects.toThrow(/not found/);
+    });
+});
+
+describe("mimeTypeForAssetPath", () => {
+    it.each([
+        ["img/cover.png", "image/png"],
+        ["img/scene.jpg", "image/jpeg"],
+        ["img/scene.jpeg", "image/jpeg"],
+        ["img/scene.webp", "image/webp"],
+        ["img/icon.svg", "image/svg+xml"],
+        ["audio/x.mp3", "application/octet-stream"],
+    ])("maps %s → %s", (path, expected) => {
+        expect(mimeTypeForAssetPath(path)).toBe(expected);
+    });
+});
+
+describe("Dexie content-loader: assets (Phase 54 / v1.37.0)", () => {
+    // Repo manifest with one declared asset on the set.
+    const REPO_MANIFEST_WITH_ASSETS = `
+schema_version: '1.0'
+name: Adaptive Learner Pilot
+sets:
+  - id: language-fr-a1
+    title: French A1
+    language: fr
+    level: A1
+    version: '1.0.0'
+    lesson_count: 1
+    domain: language
+    tags: [beginner]
+    assets:
+      - path: img/cover.png
+        size_kb: 1
+`.trim();
+
+    const PNG_BODY = "\x89PNG\r\n\x1a\nFAKE_PIXEL_DATA";
+
+    it("fetches + caches declared assets during downloadSet", async () => {
+        installFetchMock({
+            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST_WITH_ASSETS,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+                LESSON_JSON,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/assets/img/cover.png`]:
+                PNG_BODY,
+        });
+        await downloadSetDexie(SOURCE, SET_ID, [
+            {source: SOURCE, branch: BRANCH},
+        ]);
+        const db = getDb();
+        const files = await db.contentSetFiles.toArray();
+        const filenames = files.map((f) => f.filename).sort();
+        expect(filenames).toContain("assets/img/cover.png");
+    });
+
+    it("getAssetDexie returns a Blob with the right MIME", async () => {
+        installFetchMock({
+            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST_WITH_ASSETS,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+                LESSON_JSON,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/assets/img/cover.png`]:
+                PNG_BODY,
+        });
+        await downloadSetDexie(SOURCE, SET_ID, [
+            {source: SOURCE, branch: BRANCH},
+        ]);
+        const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
+        expect(blob).not.toBeNull();
+        expect(blob!.type).toBe("image/png");
+        expect(blob!.size).toBeGreaterThan(0);
+    });
+
+    it("getAssetDexie returns null for an uncached set", async () => {
+        const blob = await getAssetDexie(
+            SOURCE,
+            "nonexistent-set",
+            "img/cover.png",
+        );
+        expect(blob).toBeNull();
+    });
+
+    it("getAssetDexie returns null when the asset wasn't bundled", async () => {
+        // Download the set with NO assets, then try to read one.
+        installFetchMock({
+            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+                LESSON_JSON,
+        });
+        await downloadSetDexie(SOURCE, SET_ID, [
+            {source: SOURCE, branch: BRANCH},
+        ]);
+        const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
+        expect(blob).toBeNull();
+    });
+
+    it("download tolerates a 404 on a declared asset (graceful skip)", async () => {
+        installFetchMock({
+            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST_WITH_ASSETS,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+                LESSON_JSON,
+            // assets/img/cover.png → 404 (mock returns null)
+            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/assets/img/cover.png`]: null,
+        });
+        // download succeeds even though one declared asset is
+        // missing on the upstream — frontend will text-fallback
+        // when it tries to render it.
+        const entry = await downloadSetDexie(SOURCE, SET_ID, [
+            {source: SOURCE, branch: BRANCH},
+        ]);
+        expect(entry.cached_version).toBe("1.0.0");
+        const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
+        expect(blob).toBeNull();
     });
 });

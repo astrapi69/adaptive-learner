@@ -353,6 +353,26 @@ export interface IContentLoaderNamespace {
         setId: string,
         filename: string,
     ): Promise<ContentLesson>;
+    /** Phase 54 / v1.37.0 — fetch one cached asset by relative
+     *  path (e.g. ``img/sunrise.png``). Returns ``null`` when
+     *  the asset isn't cached so the asset resolver hook can
+     *  fall back to a placeholder SVG or text-only display
+     *  without throwing.
+     *
+     *  ApiStorage routes to the backend proxy endpoint added in
+     *  Phase 54F; DexieStorage reads the asset bytes out of
+     *  IndexedDB (stored as part of ``contentSetFiles`` during
+     *  ``downloadSet``).
+     *
+     *  The caller is responsible for ``URL.createObjectURL``
+     *  on the returned Blob and the matching
+     *  ``URL.revokeObjectURL`` on component unmount. The
+     *  ``useAsset`` hook in Phase 54B handles that contract. */
+    getAsset(
+        source: string,
+        setId: string,
+        assetPath: string,
+    ): Promise<Blob | null>;
 }
 
 

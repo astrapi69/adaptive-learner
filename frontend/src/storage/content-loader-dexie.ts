@@ -108,6 +108,76 @@ async function fetchText(url: string): Promise<string> {
     return response.text();
 }
 
+/** Phase 54 / v1.37.0 — fetch raw bytes for an asset.
+ *  Returns null on 404 so the download orchestrator can skip
+ *  missing assets instead of failing the whole set download. */
+async function fetchBytesOptional(url: string): Promise<ArrayBuffer | null> {
+    const response = await fetch(url);
+    if (response.status === 404) return null;
+    if (!response.ok) {
+        const err: Error & {status?: number} = new Error(
+            `Upstream HTTP ${response.status} for ${url}`,
+        );
+        err.status = response.status;
+        throw err;
+    }
+    return response.arrayBuffer();
+}
+
+/** Convert ArrayBuffer → base64 in chunks to avoid the call-stack
+ *  overflow ``btoa(String.fromCharCode(...new Uint8Array(buf)))``
+ *  hits on large blobs in some engines. */
+function arrayBufferToBase64(buf: ArrayBuffer): string {
+    const bytes = new Uint8Array(buf);
+    const CHUNK = 0x8000;
+    let binary = "";
+    for (let i = 0; i < bytes.length; i += CHUNK) {
+        const slice = bytes.subarray(i, i + CHUNK);
+        binary += String.fromCharCode.apply(
+            null,
+            Array.from(slice) as unknown as number[],
+        );
+    }
+    return btoa(binary);
+}
+
+/** Convert base64 → Uint8Array (the inverse of the above). */
+function base64ToBytes(b64: string): Uint8Array {
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+}
+
+/** Guess MIME type from an asset path's extension. The Dexie
+ *  store keeps the bytes only; the resolver hook needs the
+ *  MIME to instantiate the Blob with a sensible default.
+ *  Phase 54B / v1.37.0. */
+export function mimeTypeForAssetPath(path: string): string {
+    const dot = path.lastIndexOf(".");
+    const ext = dot >= 0 ? path.slice(dot + 1).toLowerCase() : "";
+    switch (ext) {
+        case "png":
+            return "image/png";
+        case "jpg":
+        case "jpeg":
+            return "image/jpeg";
+        case "webp":
+            return "image/webp";
+        case "svg":
+            return "image/svg+xml";
+        default:
+            return "application/octet-stream";
+    }
+}
+
+interface ParsedSetAsset {
+    path: string;
+    size_kb: number;
+}
+
 interface ParsedSet {
     id: string;
     title: string;
@@ -119,6 +189,8 @@ interface ParsedSet {
     description?: string | null;
     tags?: string[];
     cover_image?: string | null;
+    /** Phase 54 / v1.37.0 — declared assets bundled with the set. */
+    assets?: ParsedSetAsset[];
 }
 
 interface ParsedManifest {
@@ -304,6 +376,27 @@ export async function downloadSetDexie(
         );
     }
 
+    // Phase 54 / v1.37.0 — fetch declared assets alongside
+    // the lessons. Assets that 404 upstream are dropped
+    // silently so a stale manifest entry doesn't fail the
+    // whole set download; the frontend falls back to a
+    // placeholder SVG / text-only display for missing
+    // images. Asset bytes get base64-encoded so they fit in
+    // the existing ``contentSetFiles.body`` text column —
+    // no Dexie schema bump needed.
+    const assetBodies: Record<string, string> = {};
+    for (const asset of target.assets ?? []) {
+        const buf = await fetchBytesOptional(
+            rawUrl(
+                src.source,
+                src.branch,
+                `sets/${setId}/assets/${asset.path}`,
+            ),
+        );
+        if (buf === null) continue;
+        assetBodies[asset.path] = arrayBufferToBase64(buf);
+    }
+
     // Persist atomically — Dexie transaction over both tables.
     const db = getDb();
     const setPk = cacheKey(source, setId, target.version);
@@ -339,6 +432,20 @@ export async function downloadSetDexie(
                     filename: `lessons/${filename}`,
                     body,
                     encoding: "text",
+                });
+            }
+            // Phase 54 — store binary asset bodies as base64
+            // under ``assets/{rel_path}`` filenames so the
+            // getAsset lookup is a single keyed read. The
+            // ``encoding: "base64"`` flag tells the reader
+            // (getAssetDexie below) to decode + wrap in a Blob.
+            for (const [relPath, b64] of Object.entries(assetBodies)) {
+                files.push({
+                    id: fileKey(setPk, `assets/${relPath}`),
+                    set_pk: setPk,
+                    filename: `assets/${relPath}`,
+                    body: b64,
+                    encoding: "base64",
                 });
             }
             files.push({
@@ -411,4 +518,45 @@ export async function getLessonDexie(
     }
     const parsed: unknown = JSON.parse(file.body);
     return parsed as ContentLesson;
+}
+
+/** Phase 54 / v1.37.0 — read a cached asset by relative path
+ *  (e.g. ``img/sunrise.png``). Returns null when the set isn't
+ *  cached or the asset wasn't bundled with the download (the
+ *  resolver hook then falls back to a placeholder SVG /
+ *  text-only display).
+ *
+ *  Assets are stored base64-encoded in ``contentSetFiles.body``
+ *  alongside the lessons; this function decodes them and wraps
+ *  the bytes in a Blob with the MIME type inferred from the
+ *  path extension. The caller (asset resolver) is responsible
+ *  for ``URL.createObjectURL`` + ``URL.revokeObjectURL``. */
+export async function getAssetDexie(
+    source: string,
+    setId: string,
+    assetPath: string,
+): Promise<Blob | null> {
+    const cached = await latestCachedRow(source, setId);
+    if (!cached) return null;
+    const db = getDb();
+    const file = await db.contentSetFiles.get(
+        fileKey(cached.id, `assets/${assetPath}`),
+    );
+    if (!file) return null;
+    if (file.encoding !== "base64") {
+        // Defensive: the download orchestrator always writes
+        // assets with ``encoding: "base64"``; an unknown
+        // encoding means the row was written by a future
+        // version we don't understand. Falling back to null is
+        // safer than guessing.
+        return null;
+    }
+    const bytes = base64ToBytes(file.body);
+    // Cast through ArrayBuffer because the Blob constructor's
+    // BlobPart type wants an ArrayBuffer-backed view, not a
+    // generic ArrayBufferLike (SharedArrayBuffer would not
+    // round-trip through atob anyway).
+    return new Blob([bytes.buffer as ArrayBuffer], {
+        type: mimeTypeForAssetPath(assetPath),
+    });
 }

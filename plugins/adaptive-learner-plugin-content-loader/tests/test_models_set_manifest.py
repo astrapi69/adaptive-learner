@@ -19,8 +19,10 @@ from pydantic import ValidationError
 
 from adaptive_learner_content_loader.models import (
     CURRENT_SCHEMA_VERSION,
+    MAX_ASSET_SIZE_KB,
     ContentManifest,
     ContentSet,
+    ContentSetAsset,
     is_supported_schema_version,
 )
 from adaptive_learner_content_loader.schema_export import (
@@ -119,6 +121,75 @@ class TestContentSetValidators:
         s = _valid_set()
         with pytest.raises(ValidationError):
             s.title = "Tampered"  # type: ignore[misc]
+
+    def test_assets_default_empty(self) -> None:
+        """Phase 54A / v1.37.0 — ContentSet.assets defaults
+        to an empty list so existing manifests (no ``assets``
+        key) keep validating."""
+        assert _valid_set().assets == []
+
+    def test_accepts_valid_assets(self) -> None:
+        s = _valid_set(
+            assets=[
+                {"path": "img/cover.png", "size_kb": 45},
+                {"path": "img/scene_1.webp", "size_kb": 120},
+            ],
+        )
+        assert len(s.assets) == 2
+        assert s.assets[0].path == "img/cover.png"
+        assert s.assets[1].size_kb == 120
+
+    def test_rejects_too_large_asset(self) -> None:
+        with pytest.raises(ValidationError):
+            _valid_set(
+                assets=[
+                    {
+                        "path": "img/huge.png",
+                        "size_kb": MAX_ASSET_SIZE_KB + 1,
+                    },
+                ],
+            )
+
+
+class TestContentSetAsset:
+    def test_minimal_valid(self) -> None:
+        asset = ContentSetAsset(path="img/x.png", size_kb=10)
+        assert asset.path == "img/x.png"
+
+    def test_rejects_absolute_path(self) -> None:
+        with pytest.raises(ValidationError):
+            ContentSetAsset(path="/etc/passwd", size_kb=10)
+
+    def test_rejects_parent_dir_traversal(self) -> None:
+        with pytest.raises(ValidationError):
+            ContentSetAsset(path="../escape.png", size_kb=10)
+        with pytest.raises(ValidationError):
+            ContentSetAsset(path="img/../escape.png", size_kb=10)
+
+    def test_rejects_unsupported_extension(self) -> None:
+        with pytest.raises(ValidationError):
+            ContentSetAsset(path="audio/x.mp3", size_kb=10)
+        with pytest.raises(ValidationError):
+            ContentSetAsset(path="img/animated.gif", size_kb=10)
+
+    def test_accepts_supported_extensions(self) -> None:
+        for ext in ("png", "jpg", "jpeg", "webp", "svg"):
+            asset = ContentSetAsset(
+                path=f"img/x.{ext}",
+                size_kb=10,
+            )
+            assert asset.path.endswith(ext)
+
+    def test_rejects_size_at_zero_or_below(self) -> None:
+        with pytest.raises(ValidationError):
+            ContentSetAsset(path="img/x.png", size_kb=0)
+        with pytest.raises(ValidationError):
+            ContentSetAsset(path="img/x.png", size_kb=-1)
+
+    def test_frozen(self) -> None:
+        asset = ContentSetAsset(path="img/x.png", size_kb=10)
+        with pytest.raises(ValidationError):
+            asset.size_kb = 999  # type: ignore[misc]
 
 
 # --- ContentManifest ----------------------------------------------------

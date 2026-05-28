@@ -278,6 +278,13 @@ export const apiStorage: IStorageService = {
             api.contentLoader.listLessons(source, setId),
         getLesson: (source, setId, filename) =>
             api.contentLoader.getLesson(source, setId, filename),
+        /** Phase 54 / v1.37.0 — fetch one cached asset.
+         *  Delegates to ``api.contentLoader.getAsset`` which
+         *  hits the backend proxy endpoint (54F). Returns null
+         *  on 404 so the resolver can fall through to a
+         *  placeholder SVG / text-only display. */
+        getAsset: (source, setId, assetPath) =>
+            api.contentLoader.getAsset(source, setId, assetPath),
     },
 
     // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —
