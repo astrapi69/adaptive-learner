@@ -35,22 +35,56 @@ import {getDb} from "./db";
 import type {ContentSetRow, ContentSetFileRow} from "./db";
 
 const RAW_BASE = "https://raw.githubusercontent.com";
+const BUNDLED_PREFIX = "bundled:";
 
 /**
- * Canonical pilot source. Reads from
- * ``astrapi69/adaptive-learner-content @ main`` —
- * the public repo seeded by Phase 43 commit 8 (``D-106``).
+ * Default content sources, tried in order:
+ *
+ * 1. **Bundled pilots** (Phase 51D / v1.34.0) — fr-a1 + es-a1
+ *    shipped as static assets under ``frontend/public/content/``
+ *    via the ``copy-bundled-content.mjs`` build hook. Work
+ *    offline + on GH Pages with zero external repo. First-time
+ *    visitors see lessons immediately.
+ * 2. **Upstream content repo** — the canonical pilot at
+ *    ``astrapi69/adaptive-learner-content @ main``. Tried after
+ *    the bundled sources so the bundle is fastest by default,
+ *    but the upstream picks up any newer or community-added
+ *    sets the bundle hasn't shipped yet.
+ *
+ * Sources are consulted in order; the first source that
+ * publishes a manifest for a given set_id wins. A bundled
+ * source that doesn't exist (dev mode without the build step)
+ * fails gracefully and the next source is tried.
  */
 const DEFAULT_SOURCES: ContentSetSource[] = [
+    {source: `${BUNDLED_PREFIX}fr-a1`, branch: ""},
+    {source: `${BUNDLED_PREFIX}es-a1`, branch: ""},
     {source: "astrapi69/adaptive-learner-content", branch: "main"},
 ];
 
 function slugifySource(source: string): string {
-    return source.replace(/\//g, "--");
+    return source.replace(/[/:]/g, "--");
 }
 
+/**
+ * Resolve a content source + relative path to a fetchable URL.
+ *
+ * - **GitHub sources**: ``{owner}/{repo} @ {branch}`` →
+ *   ``https://raw.githubusercontent.com/{owner}/{repo}/{branch}/{path}``
+ * - **Bundled sources**: ``bundled:{key}`` → ``{BASE_URL}content/{key}/{path}``
+ *   resolved via the Vite static-asset pipeline. ``BASE_URL`` is
+ *   ``/`` by default and ``/adaptive-learner/`` for the GH-Pages
+ *   build (driven by the ``VITE_BASE`` env var). Branch is
+ *   ignored for bundled sources.
+ */
 function rawUrl(source: string, branch: string, path: string): string {
     const safePath = path.replace(/^\/+/, "");
+    if (source.startsWith(BUNDLED_PREFIX)) {
+        const key = source.slice(BUNDLED_PREFIX.length);
+        const basePath = import.meta.env.BASE_URL ?? "/";
+        const normalisedBase = basePath.endsWith("/") ? basePath : `${basePath}/`;
+        return `${normalisedBase}content/${key}/${safePath}`;
+    }
     return `${RAW_BASE}/${source}/${branch}/${safePath}`;
 }
 

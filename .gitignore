@@ -101,3 +101,9 @@ tmp/
 # Pre-commit's end-of-file-fixer would otherwise endlessly modify the
 # lock file, turning CI red on every push.
 /.claude/scheduled_tasks.lock
+
+# Phase 51D — bundled pilot content copied into the Vite build
+# at predev / prebuild time. Canonical source is
+# docs/explorations/sample-content/. Regenerated via
+# frontend/scripts/copy-bundled-content.mjs.
+frontend/public/content/

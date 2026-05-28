@@ -116,6 +116,29 @@ describe("Dexie content-loader: listSets", () => {
         expect(entry.update_available).toBe(false);
     });
 
+    it("resolves bundled: sources to /content/{key}/... (Phase 51D)", async () => {
+        // Bundled-source URL contract: source ``bundled:fr-a1``
+        // + path ``manifest.yaml`` MUST fetch from
+        // ``/content/fr-a1/manifest.yaml`` (the Vite
+        // static-asset path produced by copy-bundled-content.mjs
+        // at predev/prebuild). Branch is ignored.
+        const mock = installFetchMock({
+            "/content/fr-a1/manifest.yaml": REPO_MANIFEST,
+        });
+        const result = await listSetsDexie([
+            {source: "bundled:fr-a1", branch: ""},
+        ]);
+        expect(result.sets).toHaveLength(1);
+        expect(result.sets[0].id).toBe(SET_ID);
+        // Confirm the fetch went to the bundled path, not the
+        // GitHub raw URL.
+        const calls = mock.mock.calls.map((c) => String(c[0]));
+        expect(calls.some((u) => u.includes("/content/fr-a1/manifest.yaml")))
+            .toBe(true);
+        expect(calls.some((u) => u.includes("raw.githubusercontent.com")))
+            .toBe(false);
+    });
+
     it("degrades to cached sets when upstream is unreachable", async () => {
         // Seed a cached row, then make the manifest fetch
         // return 404 — the result must surface the cached

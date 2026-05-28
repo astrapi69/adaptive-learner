@@ -5,7 +5,10 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "copy:content": "node scripts/copy-bundled-content.mjs",
+    "predev": "node scripts/copy-bundled-content.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/copy-bundled-content.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
