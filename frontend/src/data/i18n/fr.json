@@ -1232,6 +1232,15 @@
         "empty": "Cet exercice à trous n'a pas de trous."
       }
     },
+    "correction": {
+      "title": "Tour de correction",
+      "subtitle": "Quelques exercices rapides sur les mots que tu as ratés.",
+      "skip": "Passer",
+      "next": "Suivant",
+      "complete_heading": "Tour de correction terminé",
+      "improvement": "{n} éléments améliorés.",
+      "improvement_singular": "{n} élément amélioré."
+    },
     "summary": {
       "heading": "Terminé",
       "aria_label": "Résumé de la leçon",

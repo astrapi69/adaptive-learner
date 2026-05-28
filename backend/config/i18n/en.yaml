@@ -1159,6 +1159,14 @@ lesson:
     repeat: "Repeat lesson"
     restart: "Start over"
     back_to_browser: "Back to content browser"
+  correction:
+    title: "Correction round"
+    subtitle: "A few quick drills on the words you missed."
+    skip: "Skip"
+    next: "Next"
+    complete_heading: "Correction round complete"
+    improvement: "{n} elements improved."
+    improvement_singular: "{n} element improved."
   error:
     load_failed: "Could not load lesson."
     missing_params: "No lesson selected. Browse content sets to pick one."

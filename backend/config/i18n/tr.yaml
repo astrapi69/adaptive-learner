@@ -1132,6 +1132,14 @@ lesson:
       result_correct: "Hepsi doğru!"
       result_partial: "{correct} / {total} doğru."
       empty: "Bu boşluk doldurma alıştırmasının boşluğu yok."
+  correction:
+    title: "Düzeltme turu"
+    subtitle: "Yanlış yaptığın kelimeler için birkaç hızlı alıştırma."
+    skip: "Geç"
+    next: "İleri"
+    complete_heading: "Düzeltme turu tamamlandı"
+    improvement: "{n} öğe geliştirildi."
+    improvement_singular: "{n} öğe geliştirildi."
   summary:
     heading: "Tamamladın"
     aria_label: "Ders özeti"

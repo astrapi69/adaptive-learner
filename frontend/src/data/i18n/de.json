@@ -1232,6 +1232,15 @@
         "empty": "Diese Lückentext-Übung hat keine Lücken."
       }
     },
+    "correction": {
+      "title": "Korrektur-Runde",
+      "subtitle": "Ein paar schnelle Übungen zu den Wörtern, die du verwechselt hast.",
+      "skip": "Überspringen",
+      "next": "Weiter",
+      "complete_heading": "Korrektur-Runde abgeschlossen",
+      "improvement": "{n} Elemente verbessert.",
+      "improvement_singular": "{n} Element verbessert."
+    },
     "summary": {
       "heading": "Geschafft",
       "aria_label": "Lektions-Zusammenfassung",

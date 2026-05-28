@@ -1232,6 +1232,15 @@
         "empty": "この穴埋め演習には空欄がありません。"
       }
     },
+    "correction": {
+      "title": "修正ラウンド",
+      "subtitle": "間違えた単語の練習を少しだけ。",
+      "skip": "スキップ",
+      "next": "次へ",
+      "complete_heading": "修正ラウンド完了",
+      "improvement": "{n}個の要素が改善されました。",
+      "improvement_singular": "{n}個の要素が改善されました。"
+    },
     "summary": {
       "heading": "完了",
       "aria_label": "レッスンのまとめ",

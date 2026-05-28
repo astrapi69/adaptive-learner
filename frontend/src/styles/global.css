@@ -2072,6 +2072,74 @@ select:focus {
   gap: 4px;
 }
 
+/* Phase 52F / v1.35.0 / P-128 + F-113 — Correction round block.
+   Sits between the score / breakdown section and the action button
+   row. Self-hides when the lesson was a perfect score or when no
+   cloze can be generated from the user's mistakes, so this CSS is
+   only relevant in the wrong-attempt path. */
+.lesson-correction-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--warning) 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--warning) 24%, var(--border));
+  margin-top: var(--space-3);
+}
+
+.lesson-correction-block-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.lesson-correction-block-header h3 {
+  margin: 0;
+  font-size: 1.0625rem;
+  color: var(--fg);
+}
+
+.lesson-correction-block-progress {
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+  font-weight: 400;
+}
+
+.lesson-correction-block-subtitle {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--fg-muted);
+}
+
+.lesson-correction-block-skip {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 4px 10px;
+  border: none;
+  background: none;
+  color: var(--fg-muted);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.lesson-correction-block-skip:hover {
+  color: var(--fg);
+  text-decoration: underline;
+}
+
+.lesson-correction-block-complete {
+  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+  border-color: color-mix(in srgb, var(--success) 32%, var(--border));
+}
+
+.lesson-correction-block-complete h3 {
+  margin: 0;
+  font-size: 1.0625rem;
+}
+
 .lesson-summary-actions {
   display: flex;
   flex-wrap: wrap;

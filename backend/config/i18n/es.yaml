@@ -1134,6 +1134,14 @@ lesson:
       result_correct: "¡Todo correcto!"
       result_partial: "{correct} de {total} correctos."
       empty: "Este ejercicio de huecos no tiene huecos."
+  correction:
+    title: "Ronda de corrección"
+    subtitle: "Algunos ejercicios rápidos con las palabras que fallaste."
+    skip: "Saltar"
+    next: "Siguiente"
+    complete_heading: "Ronda de corrección completa"
+    improvement: "{n} elementos mejorados."
+    improvement_singular: "{n} elemento mejorado."
   summary:
     heading: "Terminaste"
     aria_label: "Resumen de la lección"

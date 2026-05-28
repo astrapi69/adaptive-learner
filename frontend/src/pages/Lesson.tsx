@@ -39,6 +39,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+import CorrectionBlock from "../components/exercises/CorrectionBlock";
 import DiffHighlight from "../components/exercises/DiffHighlight";
 import {ExerciseDispatcher} from "../components/exercises/ExerciseDispatcher";
 import {useI18n} from "../hooks/useI18n";
@@ -330,6 +331,9 @@ export default function LessonPage() {
                     lesson={lesson}
                     progress={progress}
                     nextLessonFilename={nextLessonFilename}
+                    userId={learnerUserId ?? ""}
+                    setId={setId}
+                    lessonFilename={filename}
                     onMarkComplete={async () => {
                         await markCompleted();
                     }}
@@ -531,6 +535,14 @@ interface LessonSummaryProps {
      *  there is no successor (last lesson OR list not yet
      *  fetched). When null, the "Next lesson" button hides. */
     nextLessonFilename: string | null;
+    /** Phase 52F / v1.35.0 — user + set + lesson identifiers
+     *  forwarded to the CorrectionBlock so it can load
+     *  ElementError rows and persist new ElementAttempt rows
+     *  against the same SRS keys. ``userId`` empty disables
+     *  the block (anonymous lesson runs have no SRS history). */
+    userId: string;
+    setId: string;
+    lessonFilename: string;
     onMarkComplete: () => Promise<void> | void;
     onNextLesson: () => void;
     onRepeat: () => void;
@@ -541,6 +553,9 @@ function LessonSummary({
     lesson,
     progress,
     nextLessonFilename,
+    userId,
+    setId,
+    lessonFilename,
     onMarkComplete,
     onNextLesson,
     onRepeat,
@@ -727,6 +742,31 @@ function LessonSummary({
                         })}
                     </ul>
                 </section>
+            )}
+
+            {/* Phase 52F / v1.35.0 — correction round. Self-hides
+                when the lesson was a perfect score, when no
+                ElementError rows exist for it, OR when no cloze
+                can be generated from the available errors. Users
+                can skip; the Next-lesson button below stays
+                visible throughout. */}
+            {progress && userId && (
+                <CorrectionBlock
+                    lesson={lesson}
+                    progress={progress}
+                    userId={userId}
+                    setId={setId}
+                    lessonFilename={lessonFilename}
+                    onComplete={() => {
+                        // Best-effort improvement counter is rendered
+                        // inside CorrectionBlock's "complete" surface;
+                        // nothing further needed at the parent level.
+                    }}
+                    onSkip={() => {
+                        // Skip is purely a UI dismissal — the action
+                        // row below was always visible.
+                    }}
+                />
             )}
 
             <div className="lesson-summary-actions">

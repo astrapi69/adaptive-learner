@@ -1232,6 +1232,15 @@
         "empty": "Este exercício de lacunas não tem lacunas."
       }
     },
+    "correction": {
+      "title": "Ronda de correção",
+      "subtitle": "Alguns exercícios rápidos com as palavras que falhaste.",
+      "skip": "Saltar",
+      "next": "Seguinte",
+      "complete_heading": "Ronda de correção completa",
+      "improvement": "{n} elementos melhorados.",
+      "improvement_singular": "{n} elemento melhorado."
+    },
     "summary": {
       "heading": "Terminado",
       "aria_label": "Resumo da lição",
