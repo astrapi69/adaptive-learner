@@ -9,10 +9,43 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.33.0** (Phase 50 — Dexie-Mode
-  Lesson-XP Parity + i18n Repo-Key Fix + Bibliogon-Residue
-  Cleanup). Closes D-DEXIE-GAMIFICATION (open as a deferred-
-  on-purpose gap since v1.31.0): Dexie-mode users at
+- **Current state:** **v1.34.0** (Phase 51 — Content
+  Expansion: French A1 + Spanish A1 + GH-Pages bundling).
+  First release where Adaptive Learner ships a real
+  learning experience out of the box: 15 A1-level language
+  lessons across two pairs, bundled into the GitHub Pages
+  build so first-time visitors see lessons immediately
+  without any external content repo. v1.27.0 (Phase 43)
+  shipped the content-loader infrastructure; v1.34.0 fills
+  it with real pedagogically-progressive content.
+  Phase 51A: 8 new French A1 lessons (3-10): articles,
+  être/avoir, self-introduction, family, colors+clothing,
+  restaurant, directions, passé composé. Phase 51B: 5 new
+  Spanish A1 lessons covering greetings/intro, numbers+time,
+  articles+gender, ser/estar (the A1 challenge with a worked
+  decision rule), restaurant. All 15 lessons use 3-5 theory
+  steps + 8-12 exercises mixing all 4 exercise types per
+  lesson; new parametrized pytest at
+  ``test_pilot_content.py`` discovers + validates every JSON
+  file via glob. Phase 51C: content-authoring guide in EN+DE
+  under ``docs/help/{en,de}/developer/authoring-content.md``,
+  wired into _meta.yaml + mkdocs.yml. Phase 51D: build-time
+  bundling via ``copy-bundled-content.mjs`` (predev /
+  prebuild npm hook) + new ``bundled:`` source-prefix
+  handling in ``content-loader-dexie.ts``. GH-Pages now
+  works fully offline; canonical content stays in
+  ``docs/explorations/sample-content/``. Plus a bugfix:
+  session + lesson headers now show topic / set context
+  (``Topic: ${project.topic}`` line in Session.tsx,
+  ``Set: ${setTitle}`` line in Lesson.tsx) — multi-tab
+  learners can finally tell at a glance which project /
+  which set is open in each tab. 6 atomic content + bugfix
+  commits + 1 release + 1 post-release; every individually
+  green through the full gate chain.
+  v1.33.0 = Phase 50 (Dexie-Mode Lesson-XP Parity + i18n
+  Repo-Key Fix + Bibliogon-Residue Cleanup). Closed
+  D-DEXIE-GAMIFICATION (open as a deferred-on-purpose gap
+  since v1.31.0): Dexie-mode users at
   ``https://astrapi69.github.io/adaptive-learner/`` now earn
   lesson-XP + lesson-badges identical to API-mode users. TS
   port of ``compute_stars`` + ``calculate_lesson_session_xp``
@@ -153,7 +186,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.33.0.md](changelog/releases/v1.33.0.md)
+  [changelog/releases/v1.34.0.md](changelog/releases/v1.34.0.md)
   for the per-release detail and `git log --oneline` for
   the feature history across Phases 1–42.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
@@ -331,8 +364,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.33.0 baseline:** backend 1002 (+1 skipped) + plugins
-  850 + Vitest 1895 = **3747 tests** (+1 skipped). E2E
+- **v1.34.0 baseline:** backend 1002 (+1 skipped) + plugins
+  881 + Vitest 1896 = **3779 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (18 specs incl. /content + /lesson + /review +
