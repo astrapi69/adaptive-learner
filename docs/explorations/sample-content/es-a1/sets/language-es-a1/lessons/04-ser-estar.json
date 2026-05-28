@@ -1,0 +1,300 @@
+{
+  "id": "04-ser-estar",
+  "title": "Ser y estar",
+  "description": "The two Spanish verbs for \"to be\" — and the rule that tells you which one to use.",
+  "estimated_minutes": 15,
+  "cards": [
+    {
+      "id": "ser-soy",
+      "front": "yo soy",
+      "back": "I am (ser)",
+      "notes": "First person singular of *ser*. Use for identity / characteristics / origin.",
+      "tags": ["verb", "ser", "present"]
+    },
+    {
+      "id": "ser-eres",
+      "front": "tú eres",
+      "back": "you are (informal sg., ser)",
+      "tags": ["verb", "ser", "present"]
+    },
+    {
+      "id": "ser-es",
+      "front": "él / ella es",
+      "back": "he / she / it is (ser)",
+      "notes": "Same form for *usted es* (formal you). Spanish drops the subject pronoun whenever it's clear from context — *Es alto* is fine for *He is tall*.",
+      "tags": ["verb", "ser", "present"]
+    },
+    {
+      "id": "ser-somos",
+      "front": "nosotros somos",
+      "back": "we are (ser)",
+      "tags": ["verb", "ser", "present"]
+    },
+    {
+      "id": "ser-sois",
+      "front": "vosotros sois",
+      "back": "you are (informal pl., Spain only)",
+      "notes": "*Vosotros* + *sois* is the informal plural \"you\" — only used in Spain. Latin America uses *ustedes son* for all plural \"you\".",
+      "tags": ["verb", "ser", "present", "spain-only"]
+    },
+    {
+      "id": "ser-son",
+      "front": "ellos / ellas son",
+      "back": "they are (ser)",
+      "notes": "Same form for *ustedes son* (you, plural — formal in Spain, all-purpose in Latin America).",
+      "tags": ["verb", "ser", "present"]
+    },
+    {
+      "id": "estar-estoy",
+      "front": "yo estoy",
+      "back": "I am (estar)",
+      "notes": "First person of *estar*. Use for location / temporary state / feelings.",
+      "tags": ["verb", "estar", "present"]
+    },
+    {
+      "id": "estar-estas",
+      "front": "tú estás",
+      "back": "you are (informal sg., estar)",
+      "notes": "Mandatory accent on **á**. *Estas* without accent means *these* (feminine plural demonstrative) — totally different word.",
+      "tags": ["verb", "estar", "present"]
+    },
+    {
+      "id": "estar-esta",
+      "front": "él / ella está",
+      "back": "he / she / it is (estar)",
+      "notes": "Accent on **á**. *Esta* without accent means *this* (feminine).",
+      "tags": ["verb", "estar", "present"]
+    },
+    {
+      "id": "estar-estamos",
+      "front": "nosotros estamos",
+      "back": "we are (estar)",
+      "tags": ["verb", "estar", "present"]
+    },
+    {
+      "id": "estar-estais",
+      "front": "vosotros estáis",
+      "back": "you are (informal pl., Spain only, estar)",
+      "tags": ["verb", "estar", "present", "spain-only"]
+    },
+    {
+      "id": "estar-estan",
+      "front": "ellos / ellas están",
+      "back": "they are (estar)",
+      "notes": "Accent on **á**.",
+      "tags": ["verb", "estar", "present"]
+    },
+    {
+      "id": "phr-soy-estudiante",
+      "front": "Soy estudiante.",
+      "back": "I am a student. (identity → ser)",
+      "notes": "Spanish drops the article before a profession — same rule as French. *Soy estudiante*, never *Soy un estudiante*.",
+      "tags": ["example", "ser"]
+    },
+    {
+      "id": "phr-estoy-cansado",
+      "front": "Estoy cansado.",
+      "back": "I am tired. (temporary state → estar)",
+      "notes": "*Cansado* (m.) / *cansada* (f.) — adjective agrees with the speaker's gender. Tiredness is temporary, so *estar*.",
+      "tags": ["example", "estar"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Two verbs for \"to be\"",
+      "body": "# Ser y estar — the A1 challenge\n\nEnglish has one verb \"to be\". Spanish has two: **ser** and **estar**. Picking the wrong one is the single most common mistake A1 learners make in Spanish, and getting it right is the single biggest level-up.\n\nThe core rule:\n\n- **ser** — for things that ARE (identity, characteristics, origin, time)\n- **estar** — for things that ARE RIGHT NOW (location, temporary state, feelings)\n\nFamous contrast:\n\n- *Mi hermana **es** alta.* — My sister is tall. (characteristic — she's a tall person)\n- *El plato **está** caliente.* — The plate is hot. (state — it just came out of the oven)\n\nBoth use \"is\" in English. Spanish forces you to pick which one. This lesson gives you the conjugation tables for both verbs and a decisive rule for picking between them."
+    },
+    {
+      "id": "step-ser",
+      "type": "theory",
+      "title": "Ser — present tense",
+      "body": "## Conjugating *ser*\n\n| Subject | Form |\n|---|---|\n| yo | **soy** |\n| tú | **eres** |\n| él / ella / usted | **es** |\n| nosotros | **somos** |\n| vosotros (Spain) | **sois** |\n| ellos / ellas / ustedes | **son** |\n\n**When to use ser** — five contexts:\n\n1. **Identity**: *Soy María.* — I am María.\n2. **Profession**: *Es médico.* — He is a doctor. (no article!)\n3. **Nationality / origin**: *Eres de Colombia.* — You are from Colombia.\n4. **Time / date**: *Son las tres.* — It's 3 o'clock. (Lesson 02!)\n5. **Inherent characteristics**: *El cielo es azul.* — The sky is blue.\n\nIdentity is the keyword — anything that is part of WHO or WHAT something fundamentally is uses *ser*."
+    },
+    {
+      "id": "ex-match-ser",
+      "type": "exercise",
+      "title": "Match ser forms",
+      "exercise": {
+        "id": "ex-match-ser",
+        "type": "matching",
+        "prompt": "Match each pronoun with its form of *ser*.",
+        "card_ids": ["ser-soy", "ser-eres", "ser-es", "ser-somos", "ser-son"],
+        "pairs": [
+          {"left": "yo", "right": "soy"},
+          {"left": "tú", "right": "eres"},
+          {"left": "él", "right": "es"},
+          {"left": "nosotros", "right": "somos"},
+          {"left": "ellos", "right": "son"}
+        ]
+      }
+    },
+    {
+      "id": "step-estar",
+      "type": "theory",
+      "title": "Estar — present tense",
+      "body": "## Conjugating *estar*\n\n| Subject | Form |\n|---|---|\n| yo | **estoy** |\n| tú | **estás** |\n| él / ella / usted | **está** |\n| nosotros | **estamos** |\n| vosotros (Spain) | **estáis** |\n| ellos / ellas / ustedes | **están** |\n\nNote the **accents** on *estás* / *está* / *estáis* / *están*. They mark the stressed syllable and are mandatory in writing.\n\n**When to use estar** — three contexts:\n\n1. **Location**: *Estoy en casa.* — I am at home. (where you are, even permanently)\n2. **Temporary state**: *Está cansado.* — He is tired. (right now, will pass)\n3. **Feelings / current condition**: *Estamos felices.* — We are happy. (mood)\n\n**Location is always estar**, even for things that don't move: *Madrid está en España.* — Madrid is in Spain. (Yes, Madrid won't relocate — but it's still *estar* because the verb is asking *where*, not *what*.)"
+    },
+    {
+      "id": "ex-match-estar",
+      "type": "exercise",
+      "title": "Match estar forms",
+      "exercise": {
+        "id": "ex-match-estar",
+        "type": "matching",
+        "prompt": "Match each pronoun with its form of *estar*.",
+        "card_ids": ["estar-estoy", "estar-estas", "estar-esta", "estar-estamos", "estar-estan"],
+        "pairs": [
+          {"left": "yo", "right": "estoy"},
+          {"left": "tú", "right": "estás"},
+          {"left": "ella", "right": "está"},
+          {"left": "nosotros", "right": "estamos"},
+          {"left": "ellos", "right": "están"}
+        ]
+      }
+    },
+    {
+      "id": "step-decision-rule",
+      "type": "theory",
+      "title": "The decision rule",
+      "body": "## When you don't know which one to use\n\nAsk yourself ONE question: **\"Could this change?\"**\n\n- **Cannot change** (identity, nationality, profession, intrinsic property) → **ser**\n- **Could change** (location, feeling, current state) → **estar**\n\nApply it:\n\n| Sentence | Could it change? | Verb |\n|---|---|---|\n| She is Spanish | No | **es** (*Es española*) |\n| She is sick | Yes | **está** (*Está enferma*) |\n| The book is interesting | No (it always is) | **es** (*Es interesante*) |\n| The book is on the table | Yes (you could move it) | **está** (*Está en la mesa*) |\n| It's Monday | No (today's Monday is Monday) | **es** (*Es lunes*) |\n| I'm tired | Yes | **estoy** (*Estoy cansado*) |\n\nLocation is always *estar* even when the location is permanent — that's the one rule you memorise as an exception. Everything else follows the \"could-this-change\" test."
+    },
+    {
+      "id": "ex-pick-soy",
+      "type": "exercise",
+      "title": "Identity → ser",
+      "exercise": {
+        "id": "ex-pick-soy",
+        "type": "picture_choice",
+        "prompt": "Pick the correct form: *I am a doctor.*",
+        "card_ids": ["ser-soy", "phr-soy-estudiante"],
+        "images": [
+          {
+            "src": "assets/img/doctor-1.png",
+            "label": "Estoy médico."
+          },
+          {
+            "src": "assets/img/doctor-2.png",
+            "label": "Soy médico.",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/doctor-3.png",
+            "label": "Soy un médico."
+          },
+          {
+            "src": "assets/img/doctor-4.png",
+            "label": "Yo es médico."
+          }
+        ],
+        "hint": "Profession is identity → ser. No article in front.",
+        "distractors": ["Estoy médico.", "Soy un médico.", "Yo es médico."]
+      }
+    },
+    {
+      "id": "ex-pick-estoy",
+      "type": "exercise",
+      "title": "Feeling → estar",
+      "exercise": {
+        "id": "ex-pick-estoy",
+        "type": "picture_choice",
+        "prompt": "Pick the correct form: *I am tired.* (Speaker is male.)",
+        "card_ids": ["estar-estoy", "phr-estoy-cansado"],
+        "images": [
+          {
+            "src": "assets/img/tired-1.png",
+            "label": "Soy cansado."
+          },
+          {
+            "src": "assets/img/tired-2.png",
+            "label": "Estoy cansado.",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/tired-3.png",
+            "label": "Estoy cansada."
+          },
+          {
+            "src": "assets/img/tired-4.png",
+            "label": "Yo estoy cansa."
+          }
+        ],
+        "hint": "Temporary state → estar. Masculine speaker → cansado (not cansada).",
+        "distractors": ["Soy cansado.", "Estoy cansada.", "Yo estoy cansa."]
+      }
+    },
+    {
+      "id": "ex-free-location",
+      "type": "exercise",
+      "title": "Location → estar",
+      "exercise": {
+        "id": "ex-free-location",
+        "type": "free_text",
+        "prompt": "Translate: *The book is on the table.* (Use the location rule.)",
+        "card_ids": ["estar-esta"],
+        "accept": ["El libro está en la mesa.", "El libro está en la mesa", "el libro está en la mesa"],
+        "hint": "Location is always *estar*, even when the location is fixed. *Está* with an accent.",
+        "distractors": ["El libro es en la mesa.", "El libro estoy en la mesa.", "El libro está en el mesa."]
+      }
+    },
+    {
+      "id": "ex-free-nationality",
+      "type": "exercise",
+      "title": "Nationality → ser",
+      "exercise": {
+        "id": "ex-free-nationality",
+        "type": "free_text",
+        "prompt": "Translate: *She is Spanish.* (Use the identity rule.)",
+        "card_ids": ["ser-es"],
+        "accept": ["Es española.", "Es española", "es española", "Ella es española."],
+        "hint": "Nationality is identity → ser. Subject pronoun *ella* is optional. Spanish drops it when context is clear.",
+        "distractors": ["Está española.", "Es Española.", "Es españolo."]
+      }
+    },
+    {
+      "id": "ex-match-decisions",
+      "type": "exercise",
+      "title": "Ser or estar?",
+      "exercise": {
+        "id": "ex-match-decisions",
+        "type": "matching",
+        "prompt": "Match each sentence with the correct verb.",
+        "card_ids": ["ser-es", "estar-esta"],
+        "pairs": [
+          {"left": "She ___ a teacher.", "right": "es (ser)"},
+          {"left": "She ___ in Madrid right now.", "right": "está (estar)"},
+          {"left": "He ___ American.", "right": "es (ser)"},
+          {"left": "The soup ___ hot.", "right": "está (estar)"},
+          {"left": "It ___ 5 o'clock.", "right": "es (ser)"}
+        ]
+      }
+    },
+    {
+      "id": "ex-tile-soy-de",
+      "type": "exercise",
+      "title": "Build: I'm from Spain and I'm in Madrid",
+      "exercise": {
+        "id": "ex-tile-soy-de",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *I'm from Spain, and I'm in Madrid.* (Use ser for origin, estar for current location.)",
+        "card_ids": ["ser-soy", "estar-estoy"],
+        "tiles": ["Soy", "de", "España", ",", "y", "estoy", "en", "Madrid"],
+        "hint": "Two clauses: origin (ser) + location (estar)."
+      }
+    },
+    {
+      "id": "ex-tile-she-tall",
+      "type": "exercise",
+      "title": "Build: She is tall and is happy",
+      "exercise": {
+        "id": "ex-tile-she-tall",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *She is tall and is happy.* (Characteristic → ser, feeling → estar.)",
+        "card_ids": ["ser-es", "estar-esta"],
+        "tiles": ["Es", "alta", "y", "está", "feliz"],
+        "hint": "Two clauses. First *es* (tall = characteristic), then *está* (happy = current feeling)."
+      }
+    }
+  ]
+}

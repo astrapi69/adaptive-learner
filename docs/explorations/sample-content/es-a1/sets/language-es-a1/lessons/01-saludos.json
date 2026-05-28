@@ -1,0 +1,276 @@
+{
+  "id": "01-saludos",
+  "title": "Saludos y presentaciones",
+  "description": "Spanish greetings, basic introductions, and the inverted punctuation marks ¡ and ¿.",
+  "estimated_minutes": 12,
+  "cards": [
+    {
+      "id": "saludo-hola",
+      "front": "Hola",
+      "back": "Hello / Hi",
+      "notes": "All-purpose greeting, any time of day, any formality. The silent **h** is the most common pronunciation trap for English speakers: *Hola* sounds like \"OH-la\", never \"HOH-la\".",
+      "tags": ["greeting"]
+    },
+    {
+      "id": "saludo-buenos-dias",
+      "front": "Buenos días",
+      "back": "Good morning",
+      "notes": "Used until lunchtime (roughly 1-2pm in Spain). *Buenos* (m. pl.) because *días* is masculine plural.",
+      "tags": ["greeting", "morning"]
+    },
+    {
+      "id": "saludo-buenas-tardes",
+      "front": "Buenas tardes",
+      "back": "Good afternoon",
+      "notes": "Used from early afternoon until sundown. *Buenas* (f. pl.) because *tardes* is feminine.",
+      "tags": ["greeting", "afternoon"]
+    },
+    {
+      "id": "saludo-buenas-noches",
+      "front": "Buenas noches",
+      "back": "Good evening / Good night",
+      "notes": "Covers both \"good evening\" (greeting after dark) AND \"good night\" (when leaving for bed). Context disambiguates.",
+      "tags": ["greeting", "evening"]
+    },
+    {
+      "id": "saludo-adios",
+      "front": "Adiós",
+      "back": "Goodbye",
+      "notes": "Standard farewell. The accent on **ó** is mandatory — *adios* without it is a spelling error.",
+      "tags": ["farewell"]
+    },
+    {
+      "id": "saludo-hasta-luego",
+      "front": "Hasta luego",
+      "back": "See you later",
+      "notes": "Literally *until later*. Very common — more casual than *adiós*. Variants: *hasta mañana* (until tomorrow), *hasta pronto* (see you soon).",
+      "tags": ["farewell"]
+    },
+    {
+      "id": "phr-como-estas",
+      "front": "¿Cómo estás?",
+      "back": "How are you? (informal)",
+      "notes": "Always bookended with ¿ ... ?. The accent on **Cómo** marks the question word (vs *como* without the accent, which means *as* / *like*).",
+      "tags": ["question"]
+    },
+    {
+      "id": "phr-bien-gracias",
+      "front": "Bien, gracias.",
+      "back": "Fine, thanks.",
+      "notes": "Standard reply. Add *¿y tú?* (and you?) to bounce the question back.",
+      "tags": ["politeness"]
+    },
+    {
+      "id": "phr-me-llamo",
+      "front": "Me llamo…",
+      "back": "My name is… (lit. *I call myself*)",
+      "notes": "Reflexive: *me* is the reflexive pronoun, *llamo* is the conjugated verb. *Me llamo Ana* — I call myself Ana.",
+      "tags": ["introduction"]
+    },
+    {
+      "id": "phr-mucho-gusto",
+      "front": "Mucho gusto.",
+      "back": "Nice to meet you.",
+      "notes": "Literally *much pleasure*. Said after an introduction. The reply is *Igualmente* (likewise) or *el gusto es mío* (the pleasure is mine).",
+      "tags": ["politeness", "introduction"]
+    },
+    {
+      "id": "phr-de-donde-eres",
+      "front": "¿De dónde eres?",
+      "back": "Where are you from? (informal)",
+      "notes": "Uses *ser* — origin is permanent. Answer: *Soy de + [place]* (I am from + place).",
+      "tags": ["question", "origin"]
+    },
+    {
+      "id": "phr-soy-de",
+      "front": "Soy de…",
+      "back": "I am from… (place / country)",
+      "notes": "Uses *soy* (1st person of *ser*). *Soy de España* — I'm from Spain. Note Spain uses *de* directly, no article.",
+      "tags": ["introduction", "origin"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Greetings in Spanish",
+      "body": "# Saludos\n\nSpanish has time-of-day-specific greetings, like French, but the choice is less strict than in some other languages. **Hola** works any time. Add a time-specific greeting and you sound more polite or more formal.\n\n- **Hola** — Hi (all-purpose, any time)\n- **Buenos días** — Good morning (until lunch)\n- **Buenas tardes** — Good afternoon\n- **Buenas noches** — Good evening / Good night\n\nA few cultural notes:\n- Spain switches to *buenas tardes* after lunch (around 2pm), not after noon. Greeting someone with *buenos días* at 1pm is still correct.\n- Latin America has regional variations: *¿Qué tal?* (informal hi/how) is very common in some countries, less in others.\n- *Buenas noches* covers both arrival (good evening) and departure (good night). One word, two situations."
+    },
+    {
+      "id": "step-punctuation",
+      "type": "theory",
+      "title": "¡ and ¿ — inverted punctuation",
+      "body": "## Spanish punctuation\n\nSpanish puts an **inverted** exclamation or question mark at the START of an exclamation or question, in addition to the normal one at the end:\n\n- ¡Hola! — Hi!\n- ¿Cómo estás? — How are you?\n- ¡Buenos días! — Good morning!\n- ¿De dónde eres? — Where are you from?\n\nThe inverted marks let the reader know how to intone the sentence from the very first word. They're mandatory in formal writing; in casual chat (WhatsApp, text messages) many native speakers drop them.\n\nOn most keyboards: ¡ is **Alt + 1** (or AltGr + 1 on Windows international), ¿ is **Alt + ?**. Spanish-layout keyboards have dedicated keys."
+    },
+    {
+      "id": "ex-match-greetings",
+      "type": "exercise",
+      "title": "Match greetings to time of day",
+      "exercise": {
+        "id": "ex-match-greetings",
+        "type": "matching",
+        "prompt": "Match each Spanish greeting with when you'd use it.",
+        "card_ids": ["saludo-hola", "saludo-buenos-dias", "saludo-buenas-tardes", "saludo-buenas-noches"],
+        "pairs": [
+          {"left": "Hola", "right": "any time"},
+          {"left": "Buenos días", "right": "morning"},
+          {"left": "Buenas tardes", "right": "afternoon"},
+          {"left": "Buenas noches", "right": "evening / night"}
+        ]
+      }
+    },
+    {
+      "id": "ex-pick-evening",
+      "type": "exercise",
+      "title": "Pick the evening greeting",
+      "exercise": {
+        "id": "ex-pick-evening",
+        "type": "picture_choice",
+        "prompt": "You arrive at a dinner at 8 PM. Which greeting do you use?",
+        "card_ids": ["saludo-buenas-noches"],
+        "images": [
+          {
+            "src": "assets/img/morning-coffee.png",
+            "label": "Buenos días"
+          },
+          {
+            "src": "assets/img/afternoon-park.png",
+            "label": "Buenas tardes"
+          },
+          {
+            "src": "assets/img/dinner-table.png",
+            "label": "Buenas noches",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/late-night.png",
+            "label": "Adiós"
+          }
+        ],
+        "hint": "8 PM is squarely in evening territory.",
+        "distractors": ["Buenos días", "Buenas tardes", "Adiós"]
+      }
+    },
+    {
+      "id": "step-introducing",
+      "type": "theory",
+      "title": "Introducing yourself",
+      "body": "## A basic introduction\n\nThree pieces cover most first meetings:\n\n1. **Name**: *Me llamo + [name]* — My name is + [name] (lit. *I call myself*)\n2. **Origin**: *Soy de + [place]* — I'm from + [place]\n3. **Closing politeness**: *Mucho gusto* — Nice to meet you\n\nFull example:\n\n- *Hola, me llamo Ana. Soy de Madrid. Mucho gusto.*\n- *Hi, my name is Ana. I'm from Madrid. Nice to meet you.*\n\nThe other person typically replies with *Igualmente* (likewise) or *el gusto es mío* (the pleasure is mine).\n\n*Me llamo* is a reflexive verb — the *me* is *yourself*, the *llamo* is the conjugated *call*. At A1, treat it as a fixed phrase; the grammar shows up in detail later."
+    },
+    {
+      "id": "ex-free-me-llamo",
+      "type": "exercise",
+      "title": "Say your name",
+      "exercise": {
+        "id": "ex-free-me-llamo",
+        "type": "free_text",
+        "prompt": "Translate: *My name is Carlos.*",
+        "card_ids": ["phr-me-llamo"],
+        "accept": ["Me llamo Carlos.", "Me llamo Carlos", "me llamo carlos"],
+        "hint": "Reflexive verb: *me* + *llamo* + name.",
+        "distractors": ["Soy Carlos.", "Mi nombre Carlos.", "Yo llamo Carlos."]
+      }
+    },
+    {
+      "id": "ex-tile-introduction",
+      "type": "exercise",
+      "title": "Build an introduction",
+      "exercise": {
+        "id": "ex-tile-introduction",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *Hello, my name is Ana, and I'm from Madrid.*",
+        "card_ids": ["saludo-hola", "phr-me-llamo", "phr-soy-de"],
+        "tiles": ["Hola", ",", "me", "llamo", "Ana", "y", "soy", "de", "Madrid"],
+        "hint": "Two clauses joined by *y* (and). Comma after the greeting."
+      }
+    },
+    {
+      "id": "step-how-are-you",
+      "type": "theory",
+      "title": "Asking how someone is",
+      "body": "## ¿Cómo estás?\n\nThe most common follow-up to a greeting:\n\n- ***¿Cómo estás?*** — How are you? (informal, one person)\n- ***¿Cómo está usted?*** — How are you? (formal, one person)\n- ***¿Cómo estáis?*** — How are you? (informal plural, Spain only)\n- ***¿Cómo están?*** — How are you? (plural; also formal singular in Latin America)\n\nUses **estar** (to be), not **ser** — because how you're doing is temporary, not part of your identity. You'll learn the *ser* vs *estar* distinction in detail in Lesson 04.\n\nStandard replies:\n\n- *Bien, gracias.* — Fine, thanks.\n- *Muy bien.* — Very well.\n- *Más o menos.* — So-so.\n- *Mal.* — Bad (be ready for a follow-up if you say this!)\n\nThen bounce it back: *¿Y tú?* (informal) or *¿Y usted?* (formal)."
+    },
+    {
+      "id": "ex-free-como-estas",
+      "type": "exercise",
+      "title": "How are you?",
+      "exercise": {
+        "id": "ex-free-como-estas",
+        "type": "free_text",
+        "prompt": "Ask informally: *How are you?* (Include the inverted question mark.)",
+        "card_ids": ["phr-como-estas"],
+        "accept": ["¿Cómo estás?", "¿Cómo estás", "¿cómo estás?"],
+        "hint": "Inverted ¿ at the start, accented ó in *Cómo*, regular ? at the end.",
+        "distractors": ["¿Como estas?", "Cómo estás?", "¿Como está?"]
+      }
+    },
+    {
+      "id": "ex-match-replies",
+      "type": "exercise",
+      "title": "Match replies",
+      "exercise": {
+        "id": "ex-match-replies",
+        "type": "matching",
+        "prompt": "Match each Spanish reply to its English meaning.",
+        "card_ids": ["phr-bien-gracias"],
+        "pairs": [
+          {"left": "Bien, gracias.", "right": "Fine, thanks."},
+          {"left": "Muy bien.", "right": "Very well."},
+          {"left": "Más o menos.", "right": "So-so."},
+          {"left": "¿Y tú?", "right": "And you?"}
+        ]
+      }
+    },
+    {
+      "id": "step-farewells",
+      "type": "theory",
+      "title": "Saying goodbye",
+      "body": "## Farewells\n\n- **Adiós** — Goodbye (standard)\n- **Hasta luego** — See you later (very common, casual)\n- **Hasta mañana** — See you tomorrow\n- **Hasta pronto** — See you soon\n- **Chao** / **Chau** — Bye (informal, more common in Latin America; borrowed from Italian *ciao*)\n- **Nos vemos** — See you (literally *we see ourselves*)\n\nSpanish speakers often combine these: *Adiós, hasta luego.* is perfectly natural — it's not redundant the way \"goodbye, see you later\" feels in English."
+    },
+    {
+      "id": "ex-pick-farewell",
+      "type": "exercise",
+      "title": "Pick the right farewell",
+      "exercise": {
+        "id": "ex-pick-farewell",
+        "type": "picture_choice",
+        "prompt": "You're leaving a meeting and you'll see this person tomorrow. Which is most natural?",
+        "card_ids": ["saludo-hasta-luego"],
+        "images": [
+          {
+            "src": "assets/img/office-leaving.png",
+            "label": "Hasta mañana",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/airport.png",
+            "label": "Adiós"
+          },
+          {
+            "src": "assets/img/door-closing.png",
+            "label": "Hola"
+          },
+          {
+            "src": "assets/img/walking-away.png",
+            "label": "Mucho gusto"
+          }
+        ],
+        "hint": "*Until tomorrow* — when you know you'll see them tomorrow.",
+        "distractors": ["Adiós", "Hola", "Mucho gusto"]
+      }
+    },
+    {
+      "id": "ex-tile-full-conversation",
+      "type": "exercise",
+      "title": "Build a mini-conversation",
+      "exercise": {
+        "id": "ex-tile-full-conversation",
+        "type": "word_tiles",
+        "prompt": "Arrange to ask informally: *Hi! How are you?*",
+        "card_ids": ["saludo-hola", "phr-como-estas"],
+        "tiles": ["¡", "Hola", "!", "¿", "Cómo", "estás", "?"],
+        "hint": "Greeting wrapped in ¡ ... !, then question wrapped in ¿ ... ?."
+      }
+    }
+  ]
+}

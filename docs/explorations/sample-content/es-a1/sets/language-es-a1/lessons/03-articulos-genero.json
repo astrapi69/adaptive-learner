@@ -1,0 +1,284 @@
+{
+  "id": "03-articulos-genero",
+  "title": "Los artículos y el género",
+  "description": "Spanish articles (el/la/los/las, un/una/unos/unas) and the -o/-a gender rule.",
+  "estimated_minutes": 12,
+  "cards": [
+    {
+      "id": "art-el",
+      "front": "el",
+      "back": "the (m. sg.)",
+      "notes": "Used before masculine singular nouns: *el libro*, *el chico*, *el perro*.",
+      "tags": ["article", "definite"]
+    },
+    {
+      "id": "art-la",
+      "front": "la",
+      "back": "the (f. sg.)",
+      "notes": "Used before feminine singular nouns: *la casa*, *la chica*, *la mesa*. Spanish doesn't elide before vowels the way French does — *la amiga*, not *l'amiga*.",
+      "tags": ["article", "definite"]
+    },
+    {
+      "id": "art-los",
+      "front": "los",
+      "back": "the (m. pl. or mixed)",
+      "notes": "Used for masculine or mixed-gender plurals: *los libros*, *los chicos* (boys, or boys+girls). One man in a group of women makes the group *los*.",
+      "tags": ["article", "definite", "plural"]
+    },
+    {
+      "id": "art-las",
+      "front": "las",
+      "back": "the (f. pl.)",
+      "notes": "Only for all-feminine plurals: *las casas*, *las chicas*.",
+      "tags": ["article", "definite", "plural"]
+    },
+    {
+      "id": "art-un",
+      "front": "un",
+      "back": "a / an (m. sg.)",
+      "notes": "Indefinite m. sg.: *un libro* (a book). Don't confuse with the number *uno* (one) — *un* is the shortened article form before a noun.",
+      "tags": ["article", "indefinite"]
+    },
+    {
+      "id": "art-una",
+      "front": "una",
+      "back": "a / an (f. sg.)",
+      "notes": "Indefinite f. sg.: *una casa* (a house).",
+      "tags": ["article", "indefinite"]
+    },
+    {
+      "id": "art-unos",
+      "front": "unos",
+      "back": "some (m. pl. or mixed)",
+      "notes": "Approximate plural — *unos libros* (some books, around several). Optional in most plurals; *libros* alone often suffices.",
+      "tags": ["article", "indefinite", "plural"]
+    },
+    {
+      "id": "art-unas",
+      "front": "unas",
+      "back": "some (f. pl.)",
+      "tags": ["article", "indefinite", "plural"]
+    },
+    {
+      "id": "noun-libro",
+      "front": "libro",
+      "back": "book (m.)",
+      "notes": "Ends in **-o** → masculine. Reliable pattern.",
+      "tags": ["noun", "masculine"]
+    },
+    {
+      "id": "noun-casa",
+      "front": "casa",
+      "back": "house (f.)",
+      "notes": "Ends in **-a** → feminine. Reliable pattern.",
+      "tags": ["noun", "feminine"]
+    },
+    {
+      "id": "noun-mesa",
+      "front": "mesa",
+      "back": "table (f.)",
+      "tags": ["noun", "feminine"]
+    },
+    {
+      "id": "noun-coche",
+      "front": "coche",
+      "back": "car (m.)",
+      "notes": "Ends in **-e** — gender unpredictable from the ending. Memorise as masculine. (Latin American Spanish often uses *carro* — also masculine.)",
+      "tags": ["noun", "masculine", "exception"]
+    },
+    {
+      "id": "noun-mano",
+      "front": "mano",
+      "back": "hand (f.)",
+      "notes": "**Common exception**: ends in -o but is feminine. *la mano*, *las manos*. There's a small set of these (also *la foto*, *la radio*) — memorise as exceptions.",
+      "tags": ["noun", "feminine", "exception"]
+    },
+    {
+      "id": "noun-dia",
+      "front": "día",
+      "back": "day (m.)",
+      "notes": "**Common exception**: ends in -a but is masculine. *el día*, *los días*. Pair with *el mapa* (m.), *el problema* (m.) — Greek-origin words ending in -a are typically masculine.",
+      "tags": ["noun", "masculine", "exception"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Gender in Spanish",
+      "body": "# El género\n\nLike French, Spanish nouns have **gender**: every noun is either masculine or feminine, and the articles + adjectives that go with it must match. Unlike French, Spanish gives you a reliable rule for most nouns:\n\n- Nouns ending in **-o** are usually **masculine**: *libro*, *chico*, *coche*\n- Nouns ending in **-a** are usually **feminine**: *casa*, *chica*, *mesa*\n\nThis is the single biggest grammar win Spanish has over French — you can guess the gender of ~85% of nouns just from the last letter.\n\nThe exceptions exist (we'll cover them) but they're a small, learnable list. For now, train your reflex: see -o → say *el*. See -a → say *la*."
+    },
+    {
+      "id": "step-definite",
+      "type": "theory",
+      "title": "Definite articles — el, la, los, las",
+      "body": "## The four forms of \"the\"\n\n| | masculine | feminine |\n|---|---|---|\n| singular | **el** | **la** |\n| plural | **los** | **las** |\n\n- *el libro* — the book (m. sg.)\n- *la casa* — the house (f. sg.)\n- *los libros* — the books (m. pl.)\n- *las casas* — the houses (f. pl.)\n\n**Key difference from French**: Spanish DOESN'T elide before vowels. *la amiga* (the friend, f.), NOT *l'amiga*. Spanish keeps the article visible — easier to read out loud.\n\nMixed-gender plurals use **los**: *los chicos* covers a group of boys + girls. One man in a group of 20 women is still grammatically *los amigos*. (Modern Spanish has informal alternatives like *les amigues* but they're not at A1 level.)"
+    },
+    {
+      "id": "ex-match-definite",
+      "type": "exercise",
+      "title": "Match the article",
+      "exercise": {
+        "id": "ex-match-definite",
+        "type": "matching",
+        "prompt": "Match each noun with its definite article.",
+        "card_ids": ["noun-libro", "noun-casa", "noun-mesa", "noun-coche"],
+        "pairs": [
+          {"left": "libro", "right": "el"},
+          {"left": "casa", "right": "la"},
+          {"left": "mesa", "right": "la"},
+          {"left": "coche", "right": "el"}
+        ]
+      }
+    },
+    {
+      "id": "ex-free-el-libro",
+      "type": "exercise",
+      "title": "Definite article — libro",
+      "exercise": {
+        "id": "ex-free-el-libro",
+        "type": "free_text",
+        "prompt": "Type the correct definite article for **libro** (book).",
+        "card_ids": ["art-el", "noun-libro"],
+        "accept": ["el", "El", "EL"],
+        "hint": "Ends in -o → masculine.",
+        "distractors": ["la", "los", "un"]
+      }
+    },
+    {
+      "id": "step-indefinite",
+      "type": "theory",
+      "title": "Indefinite articles — un, una, unos, unas",
+      "body": "## The four forms of \"a / some\"\n\n| | masculine | feminine |\n|---|---|---|\n| singular | **un** | **una** |\n| plural | **unos** | **unas** |\n\n- *un libro* — a book\n- *una casa* — a house\n- *unos libros* — some books (a few)\n- *unas casas* — some houses (a few)\n\n**Tip on the plurals**: in Spanish, *unos / unas* are OPTIONAL in many sentences. *Tengo libros* (I have books) is more idiomatic than *Tengo unos libros* (I have some books). Use *unos / unas* when you specifically want to say *some* (around several, not many).\n\nDifference from French: Spanish DOESN'T have a mandatory plural indefinite the way French does with *des*. French *J'ai des amigos* (mandatory); Spanish *Tengo amigos* (no article needed)."
+    },
+    {
+      "id": "ex-pick-una",
+      "type": "exercise",
+      "title": "Indefinite — una casa",
+      "exercise": {
+        "id": "ex-pick-una",
+        "type": "picture_choice",
+        "prompt": "Pick the correct indefinite article for **casa** (house).",
+        "card_ids": ["art-una", "noun-casa"],
+        "images": [
+          {
+            "src": "assets/img/house-1.png",
+            "label": "un casa"
+          },
+          {
+            "src": "assets/img/house-2.png",
+            "label": "una casa",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/house-3.png",
+            "label": "unos casa"
+          },
+          {
+            "src": "assets/img/house-4.png",
+            "label": "el casa"
+          }
+        ],
+        "hint": "Feminine singular indefinite is *una*.",
+        "distractors": ["un casa", "unos casa", "el casa"]
+      }
+    },
+    {
+      "id": "step-exceptions",
+      "type": "theory",
+      "title": "Exceptions to memorise",
+      "body": "## The -o/-a rule isn't universal\n\nA small set of nouns breaks the pattern. The two most important at A1:\n\n**Nouns ending in -a that are masculine** (often Greek origin):\n- ***el día*** — the day\n- ***el mapa*** — the map\n- ***el problema*** — the problem\n- ***el tema*** — the topic / theme\n\n**Nouns ending in -o that are feminine**:\n- ***la mano*** — the hand\n- ***la foto*** — the photo (short for *fotografía*)\n- ***la moto*** — the motorbike (short for *motocicleta*)\n- ***la radio*** — the radio\n\n**Nouns ending in -e** (gender unpredictable):\n- *el coche* — the car (m.)\n- *el perro* — the dog (m.) — wait, that's -o, not -e. Let me pick a real -e example.\n- *el café* — the coffee (m.)\n- *la noche* — the night (f.)\n- *la clase* — the class (f.)\n\nFor -e nouns, you have to learn the gender along with the noun. There's no shortcut."
+    },
+    {
+      "id": "ex-free-la-mano",
+      "type": "exercise",
+      "title": "Exception — la mano",
+      "exercise": {
+        "id": "ex-free-la-mano",
+        "type": "free_text",
+        "prompt": "Type the definite article for **mano** (hand). Watch out — this is an exception.",
+        "card_ids": ["art-la", "noun-mano"],
+        "accept": ["la", "La", "LA"],
+        "hint": "Ends in -o but is feminine. *La mano*.",
+        "distractors": ["el", "los", "un"]
+      }
+    },
+    {
+      "id": "ex-free-el-dia",
+      "type": "exercise",
+      "title": "Exception — el día",
+      "exercise": {
+        "id": "ex-free-el-dia",
+        "type": "free_text",
+        "prompt": "Type the definite article for **día** (day). Another exception.",
+        "card_ids": ["art-el", "noun-dia"],
+        "accept": ["el", "El", "EL"],
+        "hint": "Ends in -a but is masculine. *El día*.",
+        "distractors": ["la", "los", "una"]
+      }
+    },
+    {
+      "id": "ex-match-plurals",
+      "type": "exercise",
+      "title": "Plural articles",
+      "exercise": {
+        "id": "ex-match-plurals",
+        "type": "matching",
+        "prompt": "Match each noun with its definite plural article (los or las).",
+        "card_ids": ["noun-libro", "noun-casa", "noun-mesa", "noun-coche", "noun-mano"],
+        "pairs": [
+          {"left": "libros", "right": "los"},
+          {"left": "casas", "right": "las"},
+          {"left": "mesas", "right": "las"},
+          {"left": "coches", "right": "los"},
+          {"left": "manos", "right": "las"}
+        ]
+      }
+    },
+    {
+      "id": "ex-tile-mixed",
+      "type": "exercise",
+      "title": "Build: The book and the house",
+      "exercise": {
+        "id": "ex-tile-mixed",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean *The book and the house*.",
+        "card_ids": ["art-el", "art-la", "noun-libro", "noun-casa"],
+        "tiles": ["El", "libro", "y", "la", "casa"],
+        "hint": "*El + libro* (m.), *la + casa* (f.), joined by *y*."
+      }
+    },
+    {
+      "id": "ex-pick-plural",
+      "type": "exercise",
+      "title": "Plural exception",
+      "exercise": {
+        "id": "ex-pick-plural",
+        "type": "picture_choice",
+        "prompt": "*Las manos limpias* means…",
+        "card_ids": ["noun-mano", "art-las"],
+        "images": [
+          {
+            "src": "assets/img/hands-1.png",
+            "label": "The clean hands.",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/hands-2.png",
+            "label": "The clean man."
+          },
+          {
+            "src": "assets/img/hands-3.png",
+            "label": "The clean houses."
+          },
+          {
+            "src": "assets/img/hands-4.png",
+            "label": "The clean tables."
+          }
+        ],
+        "hint": "*Las* is feminine plural. *Manos* is *hands* (feminine exception, ends in -o).",
+        "distractors": ["The clean man.", "The clean houses.", "The clean tables."]
+      }
+    }
+  ]
+}

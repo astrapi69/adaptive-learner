@@ -1,0 +1,283 @@
+{
+  "id": "05-restaurante",
+  "title": "En el restaurante",
+  "description": "Ordering food, polite expressions, and using ser/estar with food vocabulary.",
+  "estimated_minutes": 12,
+  "cards": [
+    {
+      "id": "phr-quisiera",
+      "front": "Quisiera…",
+      "back": "I would like… (polite)",
+      "notes": "Conditional of *querer*. The polite version of *Quiero* (I want), which sounds blunt in service contexts. Treat as a fixed phrase at A1.",
+      "tags": ["politeness", "ordering"]
+    },
+    {
+      "id": "phr-por-favor",
+      "front": "por favor",
+      "back": "please",
+      "notes": "Goes at the end of the request, like English: *Un café, por favor*. Don't overuse — Spanish is direct; one *por favor* per request is enough.",
+      "tags": ["politeness"]
+    },
+    {
+      "id": "phr-gracias",
+      "front": "gracias",
+      "back": "thank you",
+      "notes": "Intensifier: *muchas gracias* (thanks very much). Reply: *de nada* (you're welcome — lit. *of nothing*).",
+      "tags": ["politeness"]
+    },
+    {
+      "id": "phr-la-cuenta",
+      "front": "La cuenta, por favor.",
+      "back": "The bill, please.",
+      "notes": "The standard way to ask for the check. *La cuenta* uses *la* — feminine noun. Don't confuse with *el cuento* (the story) — different word.",
+      "tags": ["restaurant", "phrase"]
+    },
+    {
+      "id": "phr-buen-provecho",
+      "front": "¡Buen provecho!",
+      "back": "Enjoy your meal!",
+      "notes": "Same role as French *Bon appétit*. Said by staff serving food AND by companions before eating. Always with exclamation marks.",
+      "tags": ["politeness", "restaurant"]
+    },
+    {
+      "id": "food-pan",
+      "front": "el pan",
+      "back": "the bread",
+      "tags": ["food", "masculine"]
+    },
+    {
+      "id": "food-agua",
+      "front": "el agua",
+      "back": "the water",
+      "notes": "Tricky exception: *agua* is **feminine** (ends in -a), but takes ***el*** in the singular to avoid the harsh *la a-* sound. Becomes *las aguas* (regular) in the plural and *agua fría* (regular feminine agreement) for adjectives. Same trick: *el águila* (the eagle), *el hambre* (the hunger).",
+      "tags": ["drink", "feminine", "exception"]
+    },
+    {
+      "id": "food-vino",
+      "front": "el vino",
+      "back": "the wine",
+      "notes": "Distinguish from *el vinto* (doesn't exist — common typo). *Un vaso de vino* (a glass of wine) or *una copa de vino* (a wine glass — for stemmed glasses).",
+      "tags": ["drink", "masculine"]
+    },
+    {
+      "id": "food-cafe",
+      "front": "el café",
+      "back": "the coffee",
+      "notes": "Default order in Spain is a *café solo* (espresso). Other common types: *café con leche* (with milk), *café cortado* (espresso with a splash of milk).",
+      "tags": ["drink", "masculine"]
+    },
+    {
+      "id": "food-pollo",
+      "front": "el pollo",
+      "back": "the chicken",
+      "tags": ["food", "masculine"]
+    },
+    {
+      "id": "food-pescado",
+      "front": "el pescado",
+      "back": "the fish (as food)",
+      "notes": "Specifically fish-as-food (after being caught). Live fish is *el pez* (plural *los peces*). Menu always uses *pescado*.",
+      "tags": ["food", "masculine"]
+    },
+    {
+      "id": "food-ensalada",
+      "front": "la ensalada",
+      "back": "the salad",
+      "tags": ["food", "feminine"]
+    },
+    {
+      "id": "food-queso",
+      "front": "el queso",
+      "back": "the cheese",
+      "tags": ["food", "masculine"]
+    },
+    {
+      "id": "phr-esta-bueno",
+      "front": "Está bueno.",
+      "back": "It's good / tasty. (right now)",
+      "notes": "Uses ***estar*** — describing the food's CURRENT state (it tastes good as you eat it). *Es bueno* (with ser) would mean *the food is good for you / nutritious* — totally different meaning. Classic ser/estar trap, perfect chance to revise Lesson 04.",
+      "tags": ["food", "estar"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Eating out in Spain (or anywhere Spanish-speaking)",
+      "body": "# En el restaurante\n\nSpanish-speaking restaurant culture has its own rhythm — and the politeness patterns are slightly different from what English speakers expect.\n\nThis lesson covers:\n- **Polite ordering phrases**: *quisiera*, *por favor*, *gracias*\n- **The bill** and **wishing someone a good meal**\n- **Common menu vocabulary**\n- **A bonus** ser/estar revision with food (*Está bueno* vs *Es bueno*)\n\nCultural notes:\n- Service is included; tipping is optional (5-10% if service was great).\n- **¡Buen provecho!** is said before eating, by waiters AND by people sharing a table.\n- *Café* defaults to espresso. Specify if you want something else.\n- *Agua del grifo* (tap water) is usually free; *agua mineral* (bottled) is charged."
+    },
+    {
+      "id": "step-polite",
+      "type": "theory",
+      "title": "Polite ordering",
+      "body": "## The polite request pattern\n\n| Spanish | English |\n|---|---|\n| Quisiera ___ | I would like ___ |\n| ___, por favor | ___, please |\n| Gracias / Muchas gracias | Thanks / Thanks a lot |\n| De nada | You're welcome |\n\n**Quisiera** is the conditional of *querer*. At A1 you can treat it as a fixed polite formula. Pair it with the article + noun:\n\n- *Quisiera **un café**, por favor.*\n- *Quisiera **una ensalada**, por favor.*\n- *Quisiera **el menú**, por favor.* (the menu — specific one)\n\nNote: *Quiero* (I want) is grammatically correct but sounds blunt to service staff. Stick with *Quisiera* in restaurants."
+    },
+    {
+      "id": "ex-free-quisiera",
+      "type": "exercise",
+      "title": "Order a coffee politely",
+      "exercise": {
+        "id": "ex-free-quisiera",
+        "type": "free_text",
+        "prompt": "Translate: *I would like a coffee, please.*",
+        "card_ids": ["phr-quisiera", "food-cafe", "phr-por-favor"],
+        "accept": ["Quisiera un café, por favor.", "Quisiera un café por favor", "quisiera un café, por favor"],
+        "hint": "*Quisiera* + indefinite article + noun + *por favor*.",
+        "distractors": ["Quiero café.", "Yo quisiera el café.", "Tengo un café."]
+      }
+    },
+    {
+      "id": "step-menu",
+      "type": "theory",
+      "title": "Menu basics",
+      "body": "## Food and drink vocabulary\n\n| Spanish | English | Note |\n|---|---|---|\n| el pan | bread | m. |\n| **el** agua | water | *el* despite being f. — see below |\n| el vino | wine | m. |\n| el café | coffee | m. |\n| el pollo | chicken | m. |\n| el pescado | fish (food) | m. — live fish is *el pez* |\n| la ensalada | salad | f. |\n| el queso | cheese | m. |\n\n**The *agua* trick**: *agua* is feminine (*agua fría* — cold water, feminine agreement on the adjective), but takes ***el*** in the singular to avoid the harsh *la a-a-* sound. The same trick applies to other feminine nouns that START with a stressed -a sound: *el águila* (the eagle), *el hambre* (the hunger).\n\nIn the plural it returns to feminine: *las aguas frías* (the cold waters)."
+    },
+    {
+      "id": "ex-match-food",
+      "type": "exercise",
+      "title": "Match food vocabulary",
+      "exercise": {
+        "id": "ex-match-food",
+        "type": "matching",
+        "prompt": "Match each Spanish menu word with its English meaning.",
+        "card_ids": ["food-pan", "food-vino", "food-pollo", "food-pescado", "food-queso", "food-ensalada"],
+        "pairs": [
+          {"left": "el pan", "right": "bread"},
+          {"left": "el vino", "right": "wine"},
+          {"left": "el pollo", "right": "chicken"},
+          {"left": "el pescado", "right": "fish"},
+          {"left": "el queso", "right": "cheese"},
+          {"left": "la ensalada", "right": "salad"}
+        ]
+      }
+    },
+    {
+      "id": "ex-pick-agua",
+      "type": "exercise",
+      "title": "El agua — the exception",
+      "exercise": {
+        "id": "ex-pick-agua",
+        "type": "picture_choice",
+        "prompt": "How do you write *the water* in Spanish?",
+        "card_ids": ["food-agua"],
+        "images": [
+          {
+            "src": "assets/img/water-1.png",
+            "label": "la agua"
+          },
+          {
+            "src": "assets/img/water-2.png",
+            "label": "el agua",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/water-3.png",
+            "label": "lo agua"
+          },
+          {
+            "src": "assets/img/water-4.png",
+            "label": "el água"
+          }
+        ],
+        "hint": "Feminine noun but takes *el* in the singular because it starts with a stressed -a.",
+        "distractors": ["la agua", "lo agua", "el água"]
+      }
+    },
+    {
+      "id": "step-ser-estar-food",
+      "type": "theory",
+      "title": "Bonus — ser vs estar with food",
+      "body": "## ¡Está bueno! vs Es bueno\n\nFood is the classic battleground for *ser* vs *estar*. The contrast is sharp:\n\n- ***El pescado es bueno.*** — Fish is good (for you, nutritionally — *general* statement). This is the dietary-advice meaning. Identity / general truth → **ser**.\n- ***El pescado está bueno.*** — The fish is good / tasty (RIGHT NOW, on this plate, you're eating it). State / opinion in the moment → **estar**.\n\nIf you say *El vino es bueno*, you sound like you're writing a sommelier review (*Wine is a good drink*). If you say *El vino está bueno*, you're complimenting the wine you're drinking RIGHT NOW.\n\nThe shortcut: when you want to compliment the food at the table, use ***está***, not *es*. Even native English speakers learn this contrast slowly; recognising it is half the work."
+    },
+    {
+      "id": "ex-pick-esta-bueno",
+      "type": "exercise",
+      "title": "Compliment the food",
+      "exercise": {
+        "id": "ex-pick-esta-bueno",
+        "type": "picture_choice",
+        "prompt": "You're at the table, you taste the soup, and it's great. You say…",
+        "card_ids": ["phr-esta-bueno"],
+        "images": [
+          {
+            "src": "assets/img/soup-1.png",
+            "label": "Es buena.",
+            "is_correct": "false"
+          },
+          {
+            "src": "assets/img/soup-2.png",
+            "label": "Está buena.",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/soup-3.png",
+            "label": "Es bueno."
+          },
+          {
+            "src": "assets/img/soup-4.png",
+            "label": "Estoy buena."
+          }
+        ],
+        "hint": "Current state, this specific soup → estar. Soup (*sopa*) is feminine → buena (feminine).",
+        "distractors": ["Es buena.", "Es bueno.", "Estoy buena."]
+      }
+    },
+    {
+      "id": "ex-free-la-cuenta",
+      "type": "exercise",
+      "title": "Ask for the bill",
+      "exercise": {
+        "id": "ex-free-la-cuenta",
+        "type": "free_text",
+        "prompt": "Politely ask for the bill.",
+        "card_ids": ["phr-la-cuenta"],
+        "accept": ["La cuenta, por favor.", "La cuenta, por favor", "la cuenta, por favor"],
+        "hint": "Definite article + noun + *por favor*. *La cuenta* — feminine.",
+        "distractors": ["El cuenta, por favor.", "La cuento, por favor.", "La factura, por favor."]
+      }
+    },
+    {
+      "id": "ex-tile-glass-water",
+      "type": "exercise",
+      "title": "Order a glass of water",
+      "exercise": {
+        "id": "ex-tile-glass-water",
+        "type": "word_tiles",
+        "prompt": "Arrange to ask: *I would like a glass of water, please.*",
+        "card_ids": ["phr-quisiera", "food-agua"],
+        "tiles": ["Quisiera", "un", "vaso", "de", "agua", ",", "por", "favor"],
+        "hint": "*Quisiera* + *un vaso de agua* + *por favor*. Note: *agua* drops the article (no *el*) after *de*."
+      }
+    },
+    {
+      "id": "ex-match-phrases",
+      "type": "exercise",
+      "title": "Match phrase to moment",
+      "exercise": {
+        "id": "ex-match-phrases",
+        "type": "matching",
+        "prompt": "Match each Spanish phrase with when you'd use it.",
+        "card_ids": ["phr-quisiera", "phr-la-cuenta", "phr-buen-provecho", "phr-gracias"],
+        "pairs": [
+          {"left": "Quisiera…", "right": "ordering"},
+          {"left": "La cuenta, por favor", "right": "leaving"},
+          {"left": "¡Buen provecho!", "right": "before eating"},
+          {"left": "Muchas gracias", "right": "thanking the server"}
+        ]
+      }
+    },
+    {
+      "id": "ex-tile-order-fish",
+      "type": "exercise",
+      "title": "Order a salad and fish",
+      "exercise": {
+        "id": "ex-tile-order-fish",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean: *I would like a salad and the fish, please.*",
+        "card_ids": ["phr-quisiera", "food-ensalada", "food-pescado"],
+        "tiles": ["Quisiera", "una", "ensalada", "y", "el", "pescado", ",", "por", "favor"],
+        "hint": "Indefinite *una* for salad (any salad), definite *el* for the fish (specific menu item)."
+      }
+    }
+  ]
+}

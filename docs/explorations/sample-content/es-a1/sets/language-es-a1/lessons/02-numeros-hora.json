@@ -1,0 +1,222 @@
+{
+  "id": "02-numeros-hora",
+  "title": "Los números y la hora",
+  "description": "Numbers 1-20, days of the week, and telling the time.",
+  "estimated_minutes": 14,
+  "cards": [
+    {"id": "n-1", "front": "uno", "back": "one", "notes": "Shortens to **un** before a masculine noun: *un libro* (a book). Stays *uno* when standing alone or before a feminine noun (then *una*).", "tags": ["number"]},
+    {"id": "n-2", "front": "dos", "back": "two", "tags": ["number"]},
+    {"id": "n-3", "front": "tres", "back": "three", "tags": ["number"]},
+    {"id": "n-4", "front": "cuatro", "back": "four", "tags": ["number"]},
+    {"id": "n-5", "front": "cinco", "back": "five", "tags": ["number"]},
+    {"id": "n-6", "front": "seis", "back": "six", "tags": ["number"]},
+    {"id": "n-7", "front": "siete", "back": "seven", "tags": ["number"]},
+    {"id": "n-8", "front": "ocho", "back": "eight", "tags": ["number"]},
+    {"id": "n-9", "front": "nueve", "back": "nine", "tags": ["number"]},
+    {"id": "n-10", "front": "diez", "back": "ten", "tags": ["number"]},
+    {"id": "n-11", "front": "once", "back": "eleven", "tags": ["number", "teen"]},
+    {"id": "n-12", "front": "doce", "back": "twelve", "tags": ["number", "teen"]},
+    {"id": "n-13", "front": "trece", "back": "thirteen", "tags": ["number", "teen"]},
+    {"id": "n-14", "front": "catorce", "back": "fourteen", "tags": ["number", "teen"]},
+    {"id": "n-15", "front": "quince", "back": "fifteen", "notes": "Last of the single-word teens. From 16 on, you'll see **dieciséis**, **diecisiete**, etc. — *diez + y + N* contracted into a single word.", "tags": ["number", "teen"]},
+    {"id": "n-20", "front": "veinte", "back": "twenty", "tags": ["number"]},
+    {"id": "dia-lunes", "front": "lunes", "back": "Monday", "notes": "Days of the week are masculine and **lowercase** in Spanish (unlike English). Same form for singular and plural: *el lunes* (Monday), *los lunes* (Mondays).", "tags": ["day"]},
+    {"id": "dia-martes", "front": "martes", "back": "Tuesday", "tags": ["day"]},
+    {"id": "phr-que-hora-es", "front": "¿Qué hora es?", "back": "What time is it?", "notes": "The standard way to ask. Literally *what hour is it?*. Reply with *Es la una* / *Son las...* (see below).", "tags": ["time", "question"]},
+    {"id": "phr-es-la-una", "front": "Es la una.", "back": "It's one o'clock.", "notes": "**Singular** verb for 1:00 only: *Es* (is). For all other hours, use the plural *Son* — see below.", "tags": ["time"]},
+    {"id": "phr-son-las", "front": "Son las…", "back": "It's … o'clock (any hour except 1)", "notes": "Plural verb because Spanish treats 2+ hours as plural. *Son las dos* (it's 2), *Son las cinco* (it's 5), *Son las once* (it's 11).", "tags": ["time"]}
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Numbers 1-15",
+      "body": "# Numbers 1 to 15\n\nSpanish numbers follow patterns that pay off the moment you learn them — once you know 1-15 + 20, you can build 16-99 from pieces.\n\n| Number | Word |\n|---|---|\n| 1 | uno |\n| 2 | dos |\n| 3 | tres |\n| 4 | cuatro |\n| 5 | cinco |\n| 6 | seis |\n| 7 | siete |\n| 8 | ocho |\n| 9 | nueve |\n| 10 | diez |\n| 11 | once |\n| 12 | doce |\n| 13 | trece |\n| 14 | catorce |\n| 15 | quince |\n\nAll single words. Easier than English (no compound words yet) and easier than French (no irregular *soixante-dix* / *quatre-vingts* trickery)."
+    },
+    {
+      "id": "ex-match-numbers-low",
+      "type": "exercise",
+      "title": "Match 1-5",
+      "exercise": {
+        "id": "ex-match-numbers-low",
+        "type": "matching",
+        "prompt": "Match each Spanish number with its English equivalent.",
+        "card_ids": ["n-1", "n-2", "n-3", "n-4", "n-5"],
+        "pairs": [
+          {"left": "uno", "right": "one"},
+          {"left": "dos", "right": "two"},
+          {"left": "tres", "right": "three"},
+          {"left": "cuatro", "right": "four"},
+          {"left": "cinco", "right": "five"}
+        ]
+      }
+    },
+    {
+      "id": "ex-free-seven",
+      "type": "exercise",
+      "title": "Type the number 7",
+      "exercise": {
+        "id": "ex-free-seven",
+        "type": "free_text",
+        "prompt": "Type the Spanish word for **7**.",
+        "card_ids": ["n-7"],
+        "accept": ["siete", "Siete", "SIETE"],
+        "hint": "Five letters, two syllables.",
+        "distractors": ["seis", "ocho", "nueve"]
+      }
+    },
+    {
+      "id": "step-teens-and-beyond",
+      "type": "theory",
+      "title": "From 16 onward — compounded numbers",
+      "body": "## 16 to 20\n\nThe pattern shifts at 16: numbers become **single-word compounds** of *diez* + *y* + the unit.\n\n| Number | Word | Built from |\n|---|---|---|\n| 16 | dieciséis | *diez y seis* |\n| 17 | diecisiete | *diez y siete* |\n| 18 | dieciocho | *diez y ocho* |\n| 19 | diecinueve | *diez y nueve* |\n| 20 | veinte | (single word) |\n\nThe **accent on dieciséis** is mandatory — it marks the stressed syllable. None of the others (17-19) need accents.\n\nFrom 21 onward you'll see the same pattern with *veinte* (21 = veintiuno, 22 = veintidós, ...) but those come in a later lesson."
+    },
+    {
+      "id": "ex-pick-teen",
+      "type": "exercise",
+      "title": "Spot the 18",
+      "exercise": {
+        "id": "ex-pick-teen",
+        "type": "picture_choice",
+        "prompt": "Which is the Spanish word for **18**?",
+        "card_ids": ["n-10"],
+        "images": [
+          {
+            "src": "assets/img/eighteen-cake.png",
+            "label": "dieciséis"
+          },
+          {
+            "src": "assets/img/eighteen-candles.png",
+            "label": "diecisiete"
+          },
+          {
+            "src": "assets/img/eighteen-badge.png",
+            "label": "dieciocho",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/eighteen-celebration.png",
+            "label": "diecinueve"
+          }
+        ],
+        "hint": "Diez + y + ocho, contracted.",
+        "distractors": ["dieciséis", "diecisiete", "diecinueve"]
+      }
+    },
+    {
+      "id": "ex-tile-fifteen",
+      "type": "exercise",
+      "title": "Build a counting sequence",
+      "exercise": {
+        "id": "ex-tile-fifteen",
+        "type": "word_tiles",
+        "prompt": "Arrange the numbers 13-15 in counting order.",
+        "card_ids": ["n-13", "n-14", "n-15"],
+        "tiles": ["trece", "catorce", "quince"],
+        "hint": "Thirteen, fourteen, fifteen."
+      }
+    },
+    {
+      "id": "step-days",
+      "type": "theory",
+      "title": "Days of the week",
+      "body": "## Los días de la semana\n\n| Spanish | English |\n|---|---|\n| lunes | Monday |\n| martes | Tuesday |\n| miércoles | Wednesday |\n| jueves | Thursday |\n| viernes | Friday |\n| sábado | Saturday |\n| domingo | Sunday |\n\nThree quirks to know:\n\n1. **Lowercase**: days of the week are NOT capitalised in Spanish (unlike English). *lunes*, not *Lunes*.\n2. **Masculine**: *el lunes*, *el martes*, *el miércoles* — all masculine, all use *el* (the).\n3. **Same form, singular + plural**: *el lunes* (Monday), *los lunes* (Mondays). Only *sábado* and *domingo* add an **-s** in the plural (*los sábados*, *los domingos*).\n\n*El lunes voy al cine* — On Monday I'm going to the cinema. Spanish uses the article (*el*) where English uses the preposition (*on*)."
+    },
+    {
+      "id": "step-time",
+      "type": "theory",
+      "title": "Telling time",
+      "body": "## ¿Qué hora es?\n\nAsk the time with **¿Qué hora es?** (literally *what hour is it?*).\n\nReply uses a quirky verb form:\n\n- **1:00** — *Es la una.* (singular *es*, because one hour = one)\n- **2:00 and above** — *Son las + [number].* (plural *son*, because 2+ hours = plural)\n\n| Time | Spanish |\n|---|---|\n| 1:00 | Es la una. |\n| 2:00 | Son las dos. |\n| 3:00 | Son las tres. |\n| 5:00 | Son las cinco. |\n| 12:00 | Son las doce. |\n\nFor *am* / *pm*:\n- **de la mañana** — in the morning (1am - 12pm)\n- **de la tarde** — in the afternoon (12pm - 8pm)\n- **de la noche** — at night (8pm - 12am)\n\n*Son las nueve de la mañana* — It's 9 in the morning. *Son las nueve de la noche* — It's 9 PM."
+    },
+    {
+      "id": "ex-free-time-one",
+      "type": "exercise",
+      "title": "Say 1:00",
+      "exercise": {
+        "id": "ex-free-time-one",
+        "type": "free_text",
+        "prompt": "Translate *It's one o'clock.*",
+        "card_ids": ["phr-es-la-una"],
+        "accept": ["Es la una.", "Es la una", "es la una"],
+        "hint": "**Singular** form because there's only one hour. Don't say *Son las una* — that's a learner's classic mistake.",
+        "distractors": ["Son las una.", "Es las una.", "Son la una."]
+      }
+    },
+    {
+      "id": "ex-free-time-five",
+      "type": "exercise",
+      "title": "Say 5:00",
+      "exercise": {
+        "id": "ex-free-time-five",
+        "type": "free_text",
+        "prompt": "Translate *It's five o'clock.*",
+        "card_ids": ["phr-son-las", "n-5"],
+        "accept": ["Son las cinco.", "Son las cinco", "son las cinco"],
+        "hint": "Plural form — 5 hours = plural. *Son las + número*.",
+        "distractors": ["Es la cinco.", "Son las cincos.", "Son los cinco."]
+      }
+    },
+    {
+      "id": "ex-match-time-pieces",
+      "type": "exercise",
+      "title": "Match time of day",
+      "exercise": {
+        "id": "ex-match-time-pieces",
+        "type": "matching",
+        "prompt": "Match each Spanish time-of-day phrase with its English meaning.",
+        "card_ids": ["phr-son-las"],
+        "pairs": [
+          {"left": "de la mañana", "right": "in the morning"},
+          {"left": "de la tarde", "right": "in the afternoon"},
+          {"left": "de la noche", "right": "at night"},
+          {"left": "del mediodía", "right": "at midday"}
+        ]
+      }
+    },
+    {
+      "id": "ex-tile-time-pm",
+      "type": "exercise",
+      "title": "Build: It's 3pm",
+      "exercise": {
+        "id": "ex-tile-time-pm",
+        "type": "word_tiles",
+        "prompt": "Arrange to mean *It's three in the afternoon.*",
+        "card_ids": ["phr-son-las", "n-3"],
+        "tiles": ["Son", "las", "tres", "de", "la", "tarde"],
+        "hint": "*Son las* + number + *de la* + time-of-day."
+      }
+    },
+    {
+      "id": "ex-pick-day",
+      "type": "exercise",
+      "title": "Days lowercase",
+      "exercise": {
+        "id": "ex-pick-day",
+        "type": "picture_choice",
+        "prompt": "How should *Monday* be written in Spanish?",
+        "card_ids": ["dia-lunes"],
+        "images": [
+          {
+            "src": "assets/img/calendar-mon.png",
+            "label": "Lunes"
+          },
+          {
+            "src": "assets/img/calendar-week.png",
+            "label": "lunes",
+            "is_correct": "true"
+          },
+          {
+            "src": "assets/img/calendar-flip.png",
+            "label": "LUNES"
+          },
+          {
+            "src": "assets/img/calendar-month.png",
+            "label": "Lúnes"
+          }
+        ],
+        "hint": "Spanish days of the week are NOT capitalised.",
+        "distractors": ["Lunes", "LUNES", "Lúnes"]
+      }
+    }
+  ]
+}
