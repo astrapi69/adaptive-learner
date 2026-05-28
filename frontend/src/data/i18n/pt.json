@@ -232,6 +232,30 @@
       }
     }
   },
+  "adaptive": {
+    "page_title": "Lição adaptativa",
+    "session_title": "Lição adaptativa",
+    "loading": "A analisar os teus erros…",
+    "empty_body": "Nada para adaptar ainda — pratica uma lição para acumular dados.",
+    "not_cached_body": "Este conjunto ainda não foi descarregado. Abre o navegador de conteúdo para o descarregar primeiro.",
+    "back_to_dashboard": "Voltar ao Painel",
+    "transparency": {
+      "focus_prefix": "Esta lição foca-se em:",
+      "tag_none": "os teus elementos mais fracos",
+      "errors_line": "Com base em {n} erro(s) ativo(s)"
+    },
+    "summary": {
+      "aria_label": "Resumo da lição adaptativa",
+      "heading": "Lição adaptativa concluída",
+      "score": "Pontuação",
+      "mastered_delta": "Melhoria: +{n} elemento(s) dominado(s) nesta sessão!",
+      "note": "As pontuações dos elementos foram atualizadas. A tua próxima lição adaptativa irá focar nos elementos que ainda precisam de trabalho."
+    },
+    "error": {
+      "missing_params": "Nenhum conjunto de conteúdo selecionado.",
+      "load_failed": "Não foi possível gerar a lição adaptativa."
+    }
+  },
   "review": {
     "page_title": "Revisão",
     "session_title": "Sessão de revisão",

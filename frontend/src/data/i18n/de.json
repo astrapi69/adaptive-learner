@@ -232,6 +232,30 @@
       }
     }
   },
+  "adaptive": {
+    "page_title": "Adaptive Lektion",
+    "session_title": "Adaptive Lektion",
+    "loading": "Deine Fehler werden analysiert…",
+    "empty_body": "Noch nichts zum Anpassen — übe zuerst eine Lektion, um Daten aufzubauen.",
+    "not_cached_body": "Dieses Set ist noch nicht heruntergeladen. Öffne den Inhaltsbrowser, um es zuerst zu laden.",
+    "back_to_dashboard": "Zurück zum Dashboard",
+    "transparency": {
+      "focus_prefix": "Diese Lektion konzentriert sich auf:",
+      "tag_none": "deine schwächsten Elemente",
+      "errors_line": "Basierend auf {n} aktiven Fehler(n)"
+    },
+    "summary": {
+      "aria_label": "Zusammenfassung der adaptiven Lektion",
+      "heading": "Adaptive Lektion abgeschlossen",
+      "score": "Punktzahl",
+      "mastered_delta": "Verbesserung: +{n} Element(e) in dieser Sitzung gemeistert!",
+      "note": "Element-Bewertungen wurden aktualisiert. Deine nächste adaptive Lektion wird die Elemente fokussieren, die noch Übung brauchen."
+    },
+    "error": {
+      "missing_params": "Kein Inhalts-Set ausgewählt.",
+      "load_failed": "Adaptive Lektion konnte nicht erstellt werden."
+    }
+  },
   "review": {
     "page_title": "Wiederholung",
     "session_title": "Wiederholungssitzung",

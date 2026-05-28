@@ -232,6 +232,30 @@
       }
     }
   },
+  "adaptive": {
+    "page_title": "Adaptive Lesson",
+    "session_title": "Adaptive lesson",
+    "loading": "Analyzing your errors…",
+    "empty_body": "Nothing to adapt yet — practice a lesson to build up data.",
+    "not_cached_body": "This set isn't downloaded yet. Open the content browser to download it first.",
+    "back_to_dashboard": "Back to Dashboard",
+    "transparency": {
+      "focus_prefix": "This lesson focuses on:",
+      "tag_none": "your weakest elements",
+      "errors_line": "Based on {n} active error(s)"
+    },
+    "summary": {
+      "aria_label": "Adaptive lesson summary",
+      "heading": "Adaptive lesson complete",
+      "score": "Score",
+      "mastered_delta": "Improvement: +{n} element(s) mastered this session!",
+      "note": "Element scores have been updated. Your next adaptive lesson will target the elements that still need work."
+    },
+    "error": {
+      "missing_params": "No content set selected.",
+      "load_failed": "Could not generate adaptive lesson."
+    }
+  },
   "review": {
     "page_title": "Review",
     "session_title": "Review session",

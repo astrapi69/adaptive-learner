@@ -232,6 +232,30 @@
       }
     }
   },
+  "adaptive": {
+    "page_title": "Leçon adaptative",
+    "session_title": "Leçon adaptative",
+    "loading": "Analyse de tes erreurs…",
+    "empty_body": "Rien à adapter pour l'instant — fais d'abord une leçon pour accumuler des données.",
+    "not_cached_body": "Cet ensemble n'est pas encore téléchargé. Ouvre le navigateur de contenu pour le télécharger d'abord.",
+    "back_to_dashboard": "Retour au Tableau de bord",
+    "transparency": {
+      "focus_prefix": "Cette leçon se concentre sur :",
+      "tag_none": "tes éléments les plus faibles",
+      "errors_line": "Basé sur {n} erreur(s) active(s)"
+    },
+    "summary": {
+      "aria_label": "Résumé de la leçon adaptative",
+      "heading": "Leçon adaptative terminée",
+      "score": "Score",
+      "mastered_delta": "Progrès : +{n} élément(s) maîtrisé(s) dans cette session !",
+      "note": "Les scores d'éléments ont été mis à jour. Ta prochaine leçon adaptative ciblera les éléments qui nécessitent encore du travail."
+    },
+    "error": {
+      "missing_params": "Aucun ensemble de contenu sélectionné.",
+      "load_failed": "Impossible de générer la leçon adaptative."
+    }
+  },
   "review": {
     "page_title": "Révision",
     "session_title": "Session de révision",

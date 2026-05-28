@@ -216,6 +216,26 @@ dashboard:
       spelling_accent: "İmla ve aksanlar"
       verb_conjugation: "Fiil çekimi"
       word_order: "Kelime sırası"
+adaptive:
+  page_title: "Uyarlanabilir ders"
+  session_title: "Uyarlanabilir ders"
+  loading: "Hataların inceleniyor…"
+  empty_body: "Henüz uyarlanacak bir şey yok — veri biriktirmek için önce bir derse çalış."
+  not_cached_body: "Bu set henüz indirilmedi. Önce indirmek için içerik tarayıcısını aç."
+  back_to_dashboard: "Panele Dön"
+  transparency:
+    focus_prefix: "Bu ders şuna odaklanıyor:"
+    tag_none: "en zayıf öğelerin"
+    errors_line: "{n} aktif hataya dayalı"
+  summary:
+    aria_label: "Uyarlanabilir ders özeti"
+    heading: "Uyarlanabilir ders tamamlandı"
+    score: "Puan"
+    mastered_delta: "İlerleme: bu oturumda +{n} öğe ustalaşıldı!"
+    note: "Öğe puanları güncellendi. Bir sonraki uyarlanabilir dersin hâlâ çalışılması gereken öğelere odaklanacak."
+  error:
+    missing_params: "Hiçbir içerik seti seçilmedi."
+    load_failed: "Uyarlanabilir ders oluşturulamadı."
 review:
   page_title: "Tekrar"
   session_title: "Tekrar oturumu"
