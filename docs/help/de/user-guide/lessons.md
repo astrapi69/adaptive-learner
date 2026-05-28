@@ -131,19 +131,77 @@ Elemente, mit denen du am meisten kämpfst, nach oben.
 ## Wiederholungssitzungen
 
 Eine Wiederholungssitzung unter `/review/:setId`
-synthetisiert eine **Mini-Lektion im Flug** aus den obersten
-Einträgen deiner Warteschlange. Sie spielt die **genau
-gleichen Übungen** wieder ab, bei denen du ursprünglich
-gescheitert bist — keine KI-Generierung, keine
-Karteikarten, keine erfundenen Inhalte. Wenn du ein Wort in
-einer Zuordnungsübung verfehlt hast, machst du diese
-Zuordnungsübung erneut (mit frischer Mischung, damit es
-kein reines Muskelgedächtnis ist).
+synthetisiert eine **Mini-Lektion im Flug** aus den
+obersten Einträgen deiner Warteschlange. Gemischte
+Strategie seit **v1.35.0**:
 
-Wenn du eine Wiederholungssitzung abschließt, läuft dieselbe
-Bewertungs- + Sterne- + Element-Verfolgungs-Maschinerie.
-Meistere 50 Elemente durch Wiederholungen und du verdienst
-das Abzeichen **Wiederholungsmeister**.
+- Hast du ein Wort ursprünglich in einer **Zuordnungs**-
+  oder **Bild-Auswahl**-Übung verfehlt, machst du genau
+  diese Übung erneut (mit frischer Mischung — kein reines
+  Muskelgedächtnis).
+- Hast du etwas in **Freitext** oder **Wortkacheln**
+  verfehlt, versucht die Wiederholung, eine **Lückentext**-
+  Übung zu erzeugen, die exakt das verfehlte Wort
+  anvisiert. Dasselbe Wissen in anderer Form —
+  Flexibilität wird trainiert, nicht nur das Wiederholen
+  eines speziellen Übungsformats.
+- Falls für ein Element kein sauberer Lückentext gebaut
+  werden kann (z. B. wenn der Original-Prompt die Antwort
+  nicht im Satz enthielt), spielt die Wiederholung
+  geräuschlos die Originalübung ab. Du bekommst nie einen
+  kaputten oder leeren Schritt.
+
+Wenn du eine Wiederholungssitzung abschließt, läuft
+dieselbe Bewertungs- + Sterne- + Element-Verfolgungs-
+Maschinerie. Meistere 50 Elemente durch Wiederholungen und
+du verdienst das Abzeichen **Wiederholungsmeister**.
+
+## Korrektur-Runde am Lektionsende
+
+Neu in **v1.35.0**: Wenn du eine Lektion mit Fehlern
+abschließt, zeigt die Zusammenfassungsseite eine kleine
+**Korrektur-Runde** zwischen deinem Punktestand und dem
+"Nächste Lektion"-Button. Sie nimmt bis zu fünf konkrete
+Fehler aus dieser Lektion und bietet jeden als frischen
+Lückentext an, der genau das verfehlte Wort / den
+verfehlten Artikel anvisiert.
+
+- **Jederzeit überspringbar.** Der "Nächste Lektion"-
+  Button bleibt sichtbar — die Korrektur-Runde ist
+  freiwillige Übung, kein Gate.
+- **Erscheint nur, wenn es etwas zu korrigieren gibt.**
+  Lektionen mit perfektem Punktestand überspringen sie
+  vollständig. Lektionen, deren Fehler sich nicht zu einem
+  sauberen Lückentext umformen lassen (selten), ebenfalls.
+- **Jeder abgeschlossene Lückentext zählt zur
+  Beherrschung.** Die Korrektur-Runde schreibt dieselben
+  Element-Verfolgungs-Datensätze wie die Hauptlektion;
+  dein Streak auf diesen Elementen rückt Richtung
+  3-richtig-Beherrschungsschwelle.
+
+Am Ende erscheint eine kurze "{n} Elemente verbessert"-
+Zeile, damit du den Effekt deiner zusätzlichen Übung
+siehst.
+
+## Visuelles Diff-Feedback
+
+Ebenfalls neu in **v1.35.0**: Falsche Freitext- und
+Wortkachel-Antworten zeigen jetzt eine **Token-genaue
+Diff** zwischen deiner Eingabe und der kanonischen
+Antwort. Drei Farben, nie nur Farbe allein:
+
+- **Rot durchgestrichen** — was du geschrieben hast und
+  nicht hingehört (mit einem ×-Marker für Screenreader
+  und farbenblinde Nutzer:innen).
+- **Grün** — was die kanonische Antwort enthält und du
+  übersehen hast (mit einem +-Marker).
+- **Gelb** mit Pfeil → — ein leicht falsches Wort,
+  dargestellt als `dein-wort` → `erwartet`.
+
+Dieselbe Diff erscheint in der Zusammenfassung der
+Lektion in der Aufschlüsselung jeder Übung — für jede
+Freitext- oder Wortkachel-Antwort, deren Nutzer-Eingabe
+der v1.35.0+-Speicher kennt.
 
 ---
 

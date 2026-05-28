@@ -367,3 +367,85 @@ refactors than the v1.31.0 scope allows.
 - ``e2e/dexie/dexie-mode.spec.ts`` — the release gate that
   prevents Dexie-mode regressions (lessons spec at
   ``/lesson/...``, review spec at ``/review/...``).
+
+---
+
+## Token-diff + cloze + correction round (v1.35.0 / Phase 52)
+
+Three layered additions that turn passive replay into active
+learning:
+
+**Token-diff + DiffHighlight** — Free-text and word-tiles
+wrong answers now render `<DiffHighlight tokens={tokenDiff(
+input, canonical)} />` inline below the result paragraph.
+The lesson summary's per-exercise breakdown shows the same
+diff for free-text + word-tiles when the v1.35.0+ stored
+`user_answer` is available (older rows fall back to the
+canonical-only line). Algorithm in
+`frontend/src/lib/exercises/token-diff.ts` — pure word-
+level LCS, NFC normalized, case + accent sensitive.
+
+**Cloze exercise type (schema 1.1)** — fifth ExerciseType:
+fill-in-the-blank with visible `___` markers. Two render
+modes: `type` (default, `<input>`) and `select`
+(`<select>` with options from `distractors`). Per-blank SRS
+fan-out via `deriveClozeAttempts` — one ElementAttempt per
+blank, so per-blank mastery tracking lights up cleanly.
+Renderer at
+`frontend/src/components/exercises/ClozeExercise.tsx`;
+schema in
+`plugins/adaptive-learner-plugin-content-loader/
+adaptive_learner_content_loader/schema.py`.
+
+**Cloze generator** — `generateClozeFromError(error,
+sourceExercise, sourceCard)` synthesises a cloze step from
+an ElementError. Algorithm:
+
+1. If `sourceCard.token_roles` has an entry whose
+   `token === error.correct_answer`, blank that token in
+   `sourceCard.front`.
+2. Otherwise, if `sourceCard.front` literally contains
+   `error.correct_answer` exactly once, blank it.
+3. Otherwise, if the source is free_text and its prompt
+   contains the answer exactly once, blank it.
+4. Otherwise return null — caller falls back to replay.
+
+Deterministic: same inputs → byte-identical output. No AI,
+no randomness, no async. Distractors carry
+`error.user_answer` first (when different from correct),
+then `sourceExercise.distractors` filtered + deduped. Code
+at `frontend/src/lib/exercises/cloze-generator.ts`.
+
+**Lesson-end correction round** —
+`<CorrectionBlock />` mounts inside `LessonSummary` between
+the score / breakdown and the action buttons. On mount, it
+reads ElementError rows for the just-finished lesson,
+generates a cloze for each non-mastered failure (cap 5),
+and walks the user through them. Each completed cloze
+writes fresh ElementAttempt rows against the same
+element_key the original failure was recorded against, so
+SRS streak + mastery advances. Self-hides on perfect score
+/ no errors / no cloze constructable. Code at
+`frontend/src/components/exercises/CorrectionBlock.tsx`.
+
+**Cloze in review sessions (Phase 52G)** —
+`synthesizeReviewLesson`'s per-item branch
+(`_buildReviewStep`) now picks:
+
+- free_text or word_tiles source → try cloze, fall back to
+  replay
+- matching, picture_choice, cloze → always replay
+
+Decision criteria documented in
+`frontend/src/lib/review-lesson.ts`. Replay step ids start
+with `review-`; generated cloze step ids start with
+`review-cloze-` for traceability.
+
+**Token-roles on cards (Phase 52I)** — optional
+`token_roles: list[{token, role}]` annotation on Card with
+a closed enum of grammatical roles (article / verb / noun
+/ adjective / preposition / gender_marker /
+tense_marker). The generator uses these to pick a
+semantically-meaningful blank instead of relying on
+substring matching. Adding a role is a minor
+schema_version bump — keep the enum closed.

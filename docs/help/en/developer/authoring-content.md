@@ -254,12 +254,79 @@ If multiple word orders are correct, add `accept_orderings`:
 
 Each ordering is a permutation of the tile indices.
 
+### cloze (Phase 52 / v1.35.0 — schema 1.1)
+
+Fill-in-the-blank with visible `___` markers in the sentence.
+Each `___` corresponds to one entry in `blanks[]` (left-to-right
+mapping; the loader enforces `sentence.count("___") ==
+len(blanks)`).
+
+```json
+{
+  "id": "ex-id",
+  "type": "cloze",
+  "prompt": "Fill in the indefinite article.",
+  "card_ids": ["art-un", "noun-chat"],
+  "sentence": "Je vois ___ chat dans le jardin.",
+  "blanks": [
+    {
+      "accept": ["un"],
+      "hint": "masculine indefinite article",
+      "placeholder": "?"
+    }
+  ],
+  "cloze_mode": "type",
+  "distractors": ["le", "la", "les"],
+  "hint": "*un* is the masculine indefinite article."
+}
+```
+
+**Render modes** — set per exercise via `cloze_mode`:
+
+- `"type"` (default when omitted): an `<input>` per blank.
+  Validated with the same NFC + Levenshtein-≤-1 matcher
+  free-text uses, so authors only need to enumerate semantic
+  variants (not typos).
+- `"select"`: a `<select>` per blank. Options drawn from
+  `accept[0]` + the exercise's `distractors`, shuffled per
+  blank by a stable seed. **Requires non-empty `distractors`**
+  — the schema validator rejects `cloze_mode: "select"`
+  exercises without them.
+
+**Multi-blank cloze** is supported: every `___` in the sentence
+maps to the next entry in `blanks`, in order. Each blank can
+have its own hint + placeholder + accept list. Element-level
+SRS fans out one ElementAttempt per blank, so a learner who
+fluently fills blank A but consistently misses blank B gets
+per-blank mastery tracking.
+
+**Token-roles on cards (Phase 52I / v1.35.0)** — optional
+metadata on Card that lets the runtime cloze generator (review
+sessions + the lesson-end correction round) target a
+semantically-meaningful blank:
+
+```json
+{
+  "id": "art-un",
+  "front": "un chat",
+  "back": "a cat",
+  "tags": ["article"],
+  "token_roles": [
+    {"token": "un", "role": "article"}
+  ]
+}
+```
+
+Closed enum of roles: `article` / `verb` / `noun` / `adjective`
+/ `preposition` / `gender_marker` / `tense_marker`. Adding a
+role is a minor schema_version bump — don't extend in place.
+
 ## Quality checklist
 
 Before opening a PR for a new lesson, verify:
 
 - [ ] **3-5 theory steps** + **8-12 exercises** per lesson
-- [ ] **All 4 exercise types** represented (matching, picture-choice, free-text, word-tiles)
+- [ ] **At least 3 exercise types** represented (matching, picture-choice, free-text, word-tiles, or cloze — cloze ships in v1.35.0+)
 - [ ] **Theory steps ≤ 200 words** each
 - [ ] **Free-text exercises**: ≥ 3 accept variants + ≥ 3 distractors
 - [ ] **Word-tiles**: ≥ 3 tiles per exercise

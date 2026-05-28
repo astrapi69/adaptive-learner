@@ -117,16 +117,71 @@ to the top.
 
 A review session at `/review/:setId` synthesises a
 **mini-lesson on the fly** from the top items in your
-queue. It re-plays the exact exercises you originally
-failed — no AI generation, no flashcards, no
-made-up content. If you missed a word in a matching
-exercise, you'll re-do that matching exercise (with
-fresh shuffling so it's not pure muscle memory).
+queue. Mixed strategy as of **v1.35.0**:
+
+- If you originally missed a word in a **matching** or
+  **picture-choice** exercise, you'll re-do that exercise
+  (with fresh shuffling, so it's not pure muscle memory).
+- If you missed something in **free-text** or **word-tiles**,
+  the review tries to generate a **cloze** ("fill the
+  blank") that targets exactly the word you got wrong.
+  Same knowledge in a different shape — your flexibility
+  gets exercised, not just your recall of one specific
+  exercise format.
+- If cloze generation can't construct a clean blank for
+  that item (e.g. the source prompt didn't carry the
+  answer inline), the review silently falls back to
+  replaying the original. You never see a broken or
+  empty step.
 
 When you finish a review session, the same scoring + star
 rating + element-tracking machinery runs. Master 50
 elements through reviews and you earn the **Review Master**
 badge.
+
+## Correction round at the end of every lesson
+
+New in **v1.35.0**: when you finish a lesson that had any
+wrong answers, the summary page shows a small **correction
+round** between your score and the "Next lesson" button.
+It picks up to five of your specific mistakes from this
+lesson and offers each as a fresh cloze targeted at the
+exact word or article you missed.
+
+- **You can skip at any time.** The "Next lesson" button
+  stays visible throughout — the correction round is opt-in
+  practice, not a gate.
+- **It only appears when there's something to correct.**
+  Perfect-score lessons skip it entirely. Lessons whose
+  mistakes can't be turned into a clean cloze (rare) also
+  skip.
+- **Each completed cloze counts toward mastery.** The
+  correction round writes the same element-tracking rows
+  as the main lesson; your streak on those specific
+  elements advances toward the 3-correct mastery
+  threshold.
+
+A short "{n} elements improved" line surfaces at the end of
+the round, so you can see the dent your extra practice made.
+
+## Visual diff feedback
+
+Also new in **v1.35.0**: wrong free-text and word-tiles
+answers now show a **token-level diff** between what you
+wrote and the canonical answer. Three colours, never just
+colour-only:
+
+- **Red strikethrough** — what you wrote that doesn't
+  belong (with an × marker for screen readers and
+  colourblind users).
+- **Green** — what the canonical includes that you missed
+  (with a + marker).
+- **Amber** with an arrow → — a word you got slightly
+  wrong, shown as `you-wrote` → `expected`.
+
+The same diff appears on the lesson summary's per-exercise
+breakdown rows for any free-text or word-tiles attempt the
+v1.35.0+ store has the user-answer for.
 
 ---
 

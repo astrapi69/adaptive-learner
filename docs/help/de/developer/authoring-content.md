@@ -258,12 +258,81 @@ Falls mehrere Wortreihenfolgen korrekt sind, ergänze
 
 Jede Reihenfolge ist eine Permutation der Tile-Indizes.
 
+### cloze (Phase 52 / v1.35.0 — Schema 1.1)
+
+Lückentext mit sichtbaren `___`-Markern im Satz. Jeder `___`
+entspricht einem Eintrag in `blanks[]` (Zuordnung von links nach
+rechts; der Loader prüft `sentence.count("___") ==
+len(blanks)`).
+
+```json
+{
+  "id": "ex-id",
+  "type": "cloze",
+  "prompt": "Setze den unbestimmten Artikel ein.",
+  "card_ids": ["art-un", "noun-chat"],
+  "sentence": "Je vois ___ chat dans le jardin.",
+  "blanks": [
+    {
+      "accept": ["un"],
+      "hint": "männlicher unbestimmter Artikel",
+      "placeholder": "?"
+    }
+  ],
+  "cloze_mode": "type",
+  "distractors": ["le", "la", "les"],
+  "hint": "*un* ist der männliche unbestimmte Artikel."
+}
+```
+
+**Render-Modi** — pro Übung über `cloze_mode` gesetzt:
+
+- `"type"` (Standard, wenn nicht gesetzt): pro Lücke ein
+  `<input>`. Validiert mit demselben NFC + Levenshtein-≤-1-
+  Matcher wie free-text, sodass Autorinnen nur semantische
+  Varianten auflisten müssen (keine Tippfehler).
+- `"select"`: pro Lücke ein `<select>`. Optionen aus
+  `accept[0]` + `distractors` der Übung, pro Lücke mit
+  stabilem Seed gemischt. **Erfordert nicht-leere
+  `distractors`** — der Schema-Validator weist
+  `cloze_mode: "select"` ohne sie ab.
+
+**Mehrere Lücken pro Cloze** sind unterstützt: jeder `___` im
+Satz wird der Reihe nach auf den nächsten Eintrag in `blanks`
+abgebildet. Jede Lücke kann eigenen Hint + Placeholder +
+Accept-Liste haben. Das Element-SRS fächert pro Lücke einen
+ElementAttempt auf — wer Lücke A fließend füllt, aber Lücke B
+ständig verfehlt, bekommt eine lückengranulare Mastery-
+Verfolgung.
+
+**Token-Rollen auf Cards (Phase 52I / v1.35.0)** — optionale
+Card-Metadaten, mit denen der Cloze-Generator zur Laufzeit
+(Review-Sessions + die Korrektur-Runde am Lektionsende) eine
+semantisch bedeutsame Lücke wählen kann:
+
+```json
+{
+  "id": "art-un",
+  "front": "un chat",
+  "back": "eine Katze",
+  "tags": ["article"],
+  "token_roles": [
+    {"token": "un", "role": "article"}
+  ]
+}
+```
+
+Geschlossene Enum von Rollen: `article` / `verb` / `noun` /
+`adjective` / `preposition` / `gender_marker` / `tense_marker`.
+Eine Rolle hinzuzufügen ist ein Minor-Schema-Version-Bump —
+nicht inline erweitern.
+
 ## Qualitäts-Checkliste
 
 Vor dem PR für eine neue Lektion prüfen:
 
 - [ ] **3-5 Theorie-Schritte** + **8-12 Übungen** pro Lektion
-- [ ] **Alle 4 Übungstypen** vertreten (matching, picture-choice, free-text, word-tiles)
+- [ ] **Mindestens 3 Übungstypen** vertreten (matching, picture-choice, free-text, word-tiles oder cloze — cloze ab v1.35.0)
 - [ ] **Theorie-Schritte ≤ 200 Wörter** je Schritt
 - [ ] **Free-Text-Übungen**: ≥ 3 Akzept-Varianten + ≥ 3 Distraktoren
 - [ ] **Word-Tiles**: ≥ 3 Kacheln je Übung
