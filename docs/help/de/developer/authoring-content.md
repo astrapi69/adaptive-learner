@@ -374,6 +374,124 @@ Faustregel: füge `token_roles` zu jeder Karte hinzu, die einen
 grammatischen Token lehrt. Das ist die mit Abstand
 wirkungsvollste Autoren-Gewohnheit für das adaptive System.
 
+## Assets (Bilder, die ein Set mitbringt) — v1.37.0+
+
+Picture-Choice-Übungen und Karten-Cover-Bilder kommen aus
+zwei Quellen:
+1. **Autoren-Asset-Dateien**, im Set-Manifest deklariert und
+   neben dem Lektions-JSON ausgeliefert
+2. **Platzhalter-SVGs**, vom Runtime erzeugt, wenn kein
+   Asset existiert (Farbtafeln für Farbwörter, große Ziffern
+   für Zahlen, Avatar-Stil für alles andere)
+
+Wenn du ein Set ohne Assets veröffentlichst, funktioniert
+Picture-Choice trotzdem — der Platzhalter-SVG-Generator deckt
+Farben + Zahlen automatisch ab und fällt für alles andere auf
+einen deterministischen Avatar zurück.
+
+### Verzeichnis-Layout
+
+Innerhalb des Set-Verzeichnisses liegen Assets unter
+`assets/`:
+
+```
+sets/
+  language-fr-a1/
+    manifest.yaml
+    lessons/
+      01-greetings.json
+      02-numbers.json
+      ...
+    assets/
+      img/
+        chat.png
+        chien.png
+        oiseau.png
+```
+
+### Manifest-Deklaration
+
+Jedes Asset muss im Set-Manifest deklariert werden, damit der
+Downloader weiß, was er holen soll:
+
+```yaml
+sets:
+  - id: language-fr-a1
+    title: French A1
+    language: fr
+    level: A1
+    version: '1.0.0'
+    lesson_count: 10
+    assets:
+      - path: img/chat.png
+        size_kb: 45
+      - path: img/chien.png
+        size_kb: 38
+```
+
+Der `path` ist relativ zum `assets/`-Verzeichnis des Sets
+(NICHT zum Lektions-JSON). Im Lektions-JSON referenzieren
+Picture-Choice-Übungen Assets MIT dem `assets/`-Präfix:
+
+```json
+{
+  "type": "picture_choice",
+  "prompt": "Welches ist 'chat'?",
+  "images": [
+    {"src": "assets/img/chat.png", "label": "Katze", "is_correct": "true"},
+    {"src": "assets/img/chien.png", "label": "Hund"}
+  ]
+}
+```
+
+Das Frontend entfernt den `assets/`-Präfix automatisch beim
+Aufruf des Asset-Resolvers, sodass das Lektions-JSON in der
+für Autoren intuitiven Form bleibt.
+
+### Größen- + Format-Limits
+
+- **Pro-Asset-Limit**: 500 KiB. Der Manifest-Validator weist
+  Assets ab, deren deklariertes `size_kb` dieses Limit
+  überschreitet. Der Downloader weist auch Assets ab, deren
+  tatsächliche Bytegröße die Deklaration um mehr als 10%
+  überschreitet — hält das Manifest ehrlich.
+- **Pro-Set Soft-Limit**: 10 MiB Gesamtgröße. Der Validator
+  warnt, lehnt aber nicht ab.
+- **Akzeptierte Formate**: `.png` / `.jpg` / `.jpeg` /
+  `.webp` / `.svg`. Kein GIF (animierte Inhalte lenken ab),
+  kein BMP (keine Kompression). Für Fotos bevorzugt WebP —
+  deutlich kleiner als PNG bei vergleichbarer Qualität. Für
+  Icons + Diagramme bevorzugt SVG — skaliert sauber + winzige
+  Dateigröße.
+
+### Größen-Empfehlungen
+
+Picture-Choice-Kacheln werden bis maximal 150x150 px auf dem
+Desktop und 100x100 px auf Mobile gerendert (`object-fit:
+contain`). Quellbilder mit 300x300 px liefern auf Retina-
+Bildschirmen das beste Ergebnis ohne unnötigen Datenbedarf.
+PNGs über 150 KiB sehen selten besser aus als ein gut
+komprimiertes WebP halber Größe.
+
+### Wann der Runtime-Platzhalter ausreicht
+
+Drei Lektionsarten, bei denen der Runtime-Platzhalter so gut
+ist, dass Autoren-Bilder keinen Lerngewinn bringen:
+
+- **Farb-Lektionen** (`rouge` / `rojo` / `rot` / `red`): der
+  Platzhalter-Generator erzeugt eine farbige Hex-Kachel
+  passend zum Farbnamen. Autoren-Kacheln sind redundant.
+- **Zahlen-Lektionen** (`7` / `42` / `1492`): der Platzhalter
+  rendert die Ziffern groß + zentriert. Autoren-Bilder hätten
+  nur bei nicht-arabischen Ziffernsystemen Sinn.
+- **Abstrakte Konzepte** ohne offensichtliche visuelle
+  Darstellung (`patience`, `liberté`): der Avatar-Platzhalter
+  liefert einen klaren visuellen Anker, ohne eine umstrittene
+  Icon-Wahl zu erzwingen.
+
+Für alles andere (Tiere, Objekte, Essen, Orte, Körperteile)
+helfen Autoren-Bilder messbar bei Erkennen + Erinnern.
+
 ## Qualitäts-Checkliste
 
 Vor dem PR für eine neue Lektion prüfen:
