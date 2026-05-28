@@ -114,4 +114,49 @@ describe("SessionChat", () => {
         expect(node.textContent).toContain("partial reply so");
         expect(node.textContent).toContain("▍"); // ▍
     });
+
+    // v1.35.0 UX-fix — assistant messages render as Markdown.
+    it("renders assistant messages as Markdown (bold + lists + tables) — UX-fix v1.35.0", () => {
+        const messages: ChatMessage[] = [
+            {
+                id: "u",
+                role: "user",
+                content: "**not bold for users** because they typed it",
+            },
+            {
+                id: "a",
+                role: "assistant",
+                content:
+                    "Here is **bold**, a list:\n\n- one\n- two\n\n| col1 | col2 |\n| --- | --- |\n| a | b |",
+            },
+        ];
+        render(<SessionChat messages={messages} onSend={() => {}} />);
+
+        // Assistant bubble produced HTML elements from Markdown.
+        const assistantBubble = screen.getByTestId(
+            "chat-message-content-markdown",
+        );
+        // **bold** → <strong>bold</strong>
+        expect(
+            assistantBubble.querySelector("strong"),
+        ).toHaveTextContent("bold");
+        // - one + - two → <ul> with <li> children
+        const list = assistantBubble.querySelector("ul");
+        expect(list).not.toBeNull();
+        expect(list!.querySelectorAll("li")).toHaveLength(2);
+        // GFM table → <table> wrapped in a scrollable container.
+        const tableWrapper = assistantBubble.querySelector(
+            ".chat-message-table-wrapper",
+        );
+        expect(tableWrapper).not.toBeNull();
+        expect(tableWrapper!.querySelector("table")).not.toBeNull();
+
+        // USER bubble preserves the raw asterisks as plain text — no Markdown
+        // parsing is applied (user typed it, show it as typed).
+        const userBubble = screen.getByTestId("chat-message-user");
+        expect(userBubble.querySelector("strong")).toBeNull();
+        expect(userBubble.textContent).toContain(
+            "**not bold for users**",
+        );
+    });
 });

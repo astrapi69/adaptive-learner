@@ -1,4 +1,6 @@
 import {useEffect, useRef, useState, type FormEvent} from "react";
+import Markdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
@@ -162,17 +164,56 @@ export default function SessionChat({
                                     : `chat-message-${msg.role}`
                             }
                         >
-                            <pre className="chat-message-content">
-                                {msg.content}
-                                {msg.streaming && (
-                                    <span
-                                        className="chat-message-cursor"
-                                        aria-hidden="true"
+                            {/* v1.35.0 / UX-fix — assistant
+                                messages render as Markdown
+                                (bold, lists, tables, code with
+                                the same react-markdown + remark-
+                                gfm pipeline HelpDrawer +
+                                LessonViewer use). User messages
+                                stay as-typed in a <pre> so the
+                                user sees their input verbatim.
+                                Streaming bubbles render Markdown
+                                progressively; react-markdown
+                                renders partial trees cleanly. */}
+                            {msg.role === "assistant" ? (
+                                <div
+                                    className="chat-message-content chat-message-content-markdown"
+                                    data-testid="chat-message-content-markdown"
+                                >
+                                    <Markdown
+                                        remarkPlugins={[remarkGfm]}
+                                        components={{
+                                            table: ({node: _n, ...tableProps}) => (
+                                                <div className="chat-message-table-wrapper">
+                                                    <table {...tableProps} />
+                                                </div>
+                                            ),
+                                        }}
                                     >
-                                        ▍
-                                    </span>
-                                )}
-                            </pre>
+                                        {msg.content}
+                                    </Markdown>
+                                    {msg.streaming && (
+                                        <span
+                                            className="chat-message-cursor"
+                                            aria-hidden="true"
+                                        >
+                                            ▍
+                                        </span>
+                                    )}
+                                </div>
+                            ) : (
+                                <pre className="chat-message-content">
+                                    {msg.content}
+                                    {msg.streaming && (
+                                        <span
+                                            className="chat-message-cursor"
+                                            aria-hidden="true"
+                                        >
+                                            ▍
+                                        </span>
+                                    )}
+                                </pre>
+                            )}
                             {/* v1.18.0 / Phase 31A — TTS on assistant
                                 bubbles only. The button hides itself
                                 when speechSynthesis is unavailable or
