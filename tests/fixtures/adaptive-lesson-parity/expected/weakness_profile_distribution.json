@@ -1,0 +1,73 @@
+{
+  "active_elements": 2,
+  "error_clusters": [],
+  "prioritized_elements": [
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "g1",
+      "element_type": "grammar_rule",
+      "error_count": 8,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-28T00:00:00+00:00",
+      "last_error_at": "2026-05-28T00:00:00+00:00",
+      "lesson_id": "L1",
+      "priority_score": 8.0,
+      "recency_weight": 1.0,
+      "set_id": "S",
+      "user_answer": "x"
+    },
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "v1",
+      "element_type": "vocabulary",
+      "error_count": 2,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-28T00:00:00+00:00",
+      "last_error_at": "2026-05-28T00:00:00+00:00",
+      "lesson_id": "L2",
+      "priority_score": 2.0,
+      "recency_weight": 1.0,
+      "set_id": "S",
+      "user_answer": "x"
+    }
+  ],
+  "suggested_focus": [
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "g1",
+      "element_type": "grammar_rule",
+      "error_count": 8,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-28T00:00:00+00:00",
+      "last_error_at": "2026-05-28T00:00:00+00:00",
+      "lesson_id": "L1",
+      "priority_score": 8.0,
+      "recency_weight": 1.0,
+      "set_id": "S",
+      "user_answer": "x"
+    },
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "v1",
+      "element_type": "vocabulary",
+      "error_count": 2,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-28T00:00:00+00:00",
+      "last_error_at": "2026-05-28T00:00:00+00:00",
+      "lesson_id": "L2",
+      "priority_score": 2.0,
+      "recency_weight": 1.0,
+      "set_id": "S",
+      "user_answer": "x"
+    }
+  ],
+  "total_errors": 10,
+  "weakness_profile": {
+    "grammar_rule": 0.8,
+    "vocabulary": 0.2
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "active_elements": 4,
+  "error_clusters": [
+    {
+      "cluster_type": "element_type",
+      "element_keys": [
+        "lastweek",
+        "older",
+        "today",
+        "yesterday"
+      ],
+      "error_count_total": 4,
+      "key": "vocabulary"
+    },
+    {
+      "cluster_type": "lesson",
+      "element_keys": [
+        "lastweek",
+        "older",
+        "today",
+        "yesterday"
+      ],
+      "error_count_total": 4,
+      "key": "L"
+    }
+  ],
+  "prioritized_elements": [
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "today",
+      "element_type": "vocabulary",
+      "error_count": 1,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-28T08:00:00+00:00",
+      "last_error_at": "2026-05-28T08:00:00+00:00",
+      "lesson_id": "L",
+      "priority_score": 1.0,
+      "recency_weight": 1.0,
+      "set_id": "S",
+      "user_answer": "x"
+    },
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "yesterday",
+      "element_type": "vocabulary",
+      "error_count": 1,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-27T08:00:00+00:00",
+      "last_error_at": "2026-05-27T08:00:00+00:00",
+      "lesson_id": "L",
+      "priority_score": 0.8,
+      "recency_weight": 0.8,
+      "set_id": "S",
+      "user_answer": "x"
+    },
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "lastweek",
+      "element_type": "vocabulary",
+      "error_count": 1,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-25T12:00:00+00:00",
+      "last_error_at": "2026-05-25T12:00:00+00:00",
+      "lesson_id": "L",
+      "priority_score": 0.5,
+      "recency_weight": 0.5,
+      "set_id": "S",
+      "user_answer": "x"
+    },
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "older",
+      "element_type": "vocabulary",
+      "error_count": 1,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-10T12:00:00+00:00",
+      "last_error_at": "2026-05-10T12:00:00+00:00",
+      "lesson_id": "L",
+      "priority_score": 0.3,
+      "recency_weight": 0.3,
+      "set_id": "S",
+      "user_answer": "x"
+    }
+  ],
+  "suggested_focus": [
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "today",
+      "element_type": "vocabulary",
+      "error_count": 1,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-28T08:00:00+00:00",
+      "last_error_at": "2026-05-28T08:00:00+00:00",
+      "lesson_id": "L",
+      "priority_score": 1.0,
+      "recency_weight": 1.0,
+      "set_id": "S",
+      "user_answer": "x"
+    },
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "yesterday",
+      "element_type": "vocabulary",
+      "error_count": 1,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-27T08:00:00+00:00",
+      "last_error_at": "2026-05-27T08:00:00+00:00",
+      "lesson_id": "L",
+      "priority_score": 0.8,
+      "recency_weight": 0.8,
+      "set_id": "S",
+      "user_answer": "x"
+    },
+    {
+      "correct_answer": "y",
+      "correct_streak": 0,
+      "element_key": "lastweek",
+      "element_type": "vocabulary",
+      "error_count": 1,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-25T12:00:00+00:00",
+      "last_error_at": "2026-05-25T12:00:00+00:00",
+      "lesson_id": "L",
+      "priority_score": 0.5,
+      "recency_weight": 0.5,
+      "set_id": "S",
+      "user_answer": "x"
+    }
+  ],
+  "total_errors": 4,
+  "weakness_profile": {
+    "vocabulary": 1.0
+  }
+}

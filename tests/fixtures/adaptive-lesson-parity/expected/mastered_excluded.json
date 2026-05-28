@@ -1,0 +1,42 @@
+{
+  "active_elements": 1,
+  "error_clusters": [],
+  "prioritized_elements": [
+    {
+      "correct_answer": "v",
+      "correct_streak": 0,
+      "element_key": "active-elem",
+      "element_type": "vocabulary",
+      "error_count": 2,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-28T00:00:00+00:00",
+      "last_error_at": "2026-05-28T00:00:00+00:00",
+      "lesson_id": "L",
+      "priority_score": 2.0,
+      "recency_weight": 1.0,
+      "set_id": "S",
+      "user_answer": "u"
+    }
+  ],
+  "suggested_focus": [
+    {
+      "correct_answer": "v",
+      "correct_streak": 0,
+      "element_key": "active-elem",
+      "element_type": "vocabulary",
+      "error_count": 2,
+      "exercise_id": "EX",
+      "last_attempt_at": "2026-05-28T00:00:00+00:00",
+      "last_error_at": "2026-05-28T00:00:00+00:00",
+      "lesson_id": "L",
+      "priority_score": 2.0,
+      "recency_weight": 1.0,
+      "set_id": "S",
+      "user_answer": "u"
+    }
+  ],
+  "total_errors": 2,
+  "weakness_profile": {
+    "vocabulary": 1.0
+  }
+}
