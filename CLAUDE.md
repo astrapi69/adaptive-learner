@@ -9,15 +9,50 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.34.0** (Phase 51 — Content
-  Expansion: French A1 + Spanish A1 + GH-Pages bundling).
-  First release where Adaptive Learner ships a real
-  learning experience out of the box: 15 A1-level language
-  lessons across two pairs, bundled into the GitHub Pages
-  build so first-time visitors see lessons immediately
-  without any external content repo. v1.27.0 (Phase 43)
-  shipped the content-loader infrastructure; v1.34.0 fills
-  it with real pedagogically-progressive content.
+- **Current state:** **v1.35.0** (Phase 52 — EXP-007
+  Token-Diff + Cloze Exercise Type). Wires token-level
+  visual feedback into every existing exercise feedback
+  surface, adds a fifth exercise type (Cloze /
+  fill-in-the-blank) that auto-generates from a learner's
+  specific mistakes, ships a lesson-end correction round
+  that drills exactly the words the learner missed, and
+  extends review sessions to vary the shape (cloze for
+  free-text + word-tiles errors) instead of pure replay.
+  Closes P-126 / P-127 / P-128 / P-130 / F-111 / F-112 /
+  F-113 / Q-110 / Q-111 / Q-112 from the EXP-007 task list.
+  Schema 1.0 → 1.1: ExerciseType gains CLOZE; new
+  ``sentence`` / ``blanks`` / ``cloze_mode`` fields on
+  Exercise (marker-based with visible ``___`` tokens, two
+  render modes ``"type"`` + ``"select"``, per-blank SRS
+  fan-out via ``deriveClozeAttempts``); optional
+  ``token_roles`` annotation on Card with a closed enum of
+  seven grammatical roles (article / verb / noun / adjective
+  / preposition / gender_marker / tense_marker) for the
+  cloze generator's role-aware blank selection. The
+  generator (``generateClozeFromError``, deterministic + no
+  AI) is consumed by both the correction round at lesson
+  end AND ``synthesizeReviewLesson``'s per-item branch
+  (free_text + word_tiles → cloze, matching + picture_choice
+  → replay, generator failure → replay). LessonStepResult
+  gains optional ``user_answer`` so the lesson summary's
+  per-exercise breakdown renders the same token-diff as the
+  inline wrong-answer surface. Plus one folded-in
+  UX-critical bugfix: AI session bubbles now render Markdown
+  via the existing react-markdown + remark-gfm pipeline
+  (the HelpDrawer + LessonViewer pipeline) — pre-fix they
+  rendered raw asterisks for ``**bold**``, raw pipes for
+  tables, etc. 10 atomic sub-phase commits + 1 release +
+  1 post-release; every individually green through the full
+  gate chain.
+  v1.34.0 = Phase 51 (Content Expansion: French A1 + Spanish
+  A1 + GH-Pages bundling). First release where Adaptive
+  Learner ships a real learning experience out of the box:
+  15 A1-level language lessons across two pairs, bundled
+  into the GitHub Pages build so first-time visitors see
+  lessons immediately without any external content repo.
+  v1.27.0 (Phase 43) shipped the content-loader
+  infrastructure; v1.34.0 filled it with real pedagogically-
+  progressive content.
   Phase 51A: 8 new French A1 lessons (3-10): articles,
   être/avoir, self-introduction, family, colors+clothing,
   restaurant, directions, passé composé. Phase 51B: 5 new
@@ -364,8 +399,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.34.0 baseline:** backend 1002 (+1 skipped) + plugins
-  881 + Vitest 1896 = **3779 tests** (+1 skipped). E2E
+- **v1.35.0 baseline:** backend 1002 (+1 skipped) + plugins
+  908 + Vitest 1978 = **3888 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (18 specs incl. /content + /lesson + /review +
