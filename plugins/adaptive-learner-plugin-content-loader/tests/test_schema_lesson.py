@@ -11,15 +11,15 @@ in this module.
 from __future__ import annotations
 
 import pytest
-from pydantic import ValidationError
-
 from adaptive_learner_content_loader.schema import (
     Card,
+    CardTokenRole,
     Exercise,
     ExerciseType,
     Lesson,
     LessonStep,
     StepType,
+    TokenRole,
     dict_to_lesson,
     lesson_to_dict,
 )
@@ -30,7 +30,7 @@ from adaptive_learner_content_loader.schema_export import (
     lesson_step_schema,
     write_schemas,
 )
-
+from pydantic import ValidationError
 
 # --- Card ----------------------------------------------------------------
 
@@ -69,6 +69,136 @@ class TestExerciseTypeEnum:
     def test_unknown_value_rejected(self) -> None:
         with pytest.raises(ValueError):
             ExerciseType("cloze")
+
+
+# --- TokenRole (closed enum, Phase 52I / P-130) -------------------------
+
+
+class TestTokenRoleEnum:
+    """Pin the closed grammatical-role enum.
+
+    Adding a role is a minor schema_version bump; rejecting
+    unknown values here surfaces typos in pilot content at
+    validation time, not at runtime when the cloze generator
+    silently skips them.
+    """
+
+    def test_known_values(self) -> None:
+        assert TokenRole("article") is TokenRole.ARTICLE
+        assert TokenRole("verb") is TokenRole.VERB
+        assert TokenRole("noun") is TokenRole.NOUN
+        assert TokenRole("adjective") is TokenRole.ADJECTIVE
+        assert TokenRole("preposition") is TokenRole.PREPOSITION
+        assert TokenRole("gender_marker") is TokenRole.GENDER_MARKER
+        assert TokenRole("tense_marker") is TokenRole.TENSE_MARKER
+
+    def test_unknown_value_rejected(self) -> None:
+        # ``pronoun`` is documented as a future-release extension —
+        # 52I ships the seven roles only, this typo-of-tomorrow MUST
+        # fail today.
+        with pytest.raises(ValueError):
+            TokenRole("pronoun")
+
+
+class TestCardTokenRole:
+    """Pin the ``{token, role}`` annotation model."""
+
+    def test_minimal_annotation(self) -> None:
+        annotation = CardTokenRole(token="le", role=TokenRole.ARTICLE)
+        assert annotation.token == "le"
+        assert annotation.role is TokenRole.ARTICLE
+
+    def test_role_accepts_string_value(self) -> None:
+        # JSON deserialisation always lands the role as a string.
+        annotation = CardTokenRole.model_validate({"token": "soy", "role": "verb"})
+        assert annotation.role is TokenRole.VERB
+
+    def test_unknown_role_rejected_at_model_level(self) -> None:
+        with pytest.raises(ValidationError):
+            CardTokenRole.model_validate({"token": "x", "role": "auxiliary"})
+
+    def test_empty_token_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            CardTokenRole(token="", role=TokenRole.NOUN)
+
+    def test_extra_fields_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            CardTokenRole.model_validate({"token": "le", "role": "article", "comment": "nope"})
+
+    def test_frozen(self) -> None:
+        annotation = CardTokenRole(token="le", role=TokenRole.ARTICLE)
+        with pytest.raises(ValidationError):
+            annotation.token = "la"  # type: ignore[misc]
+
+
+class TestCardTokenRolesField:
+    """Pin the optional ``Card.token_roles`` field (P-130)."""
+
+    def test_card_without_token_roles_is_valid(self) -> None:
+        # Old content (v1.0 cards) keeps validating; the field is optional.
+        card = Card(id="bonjour", front="Bonjour", back="Hello")
+        assert card.token_roles is None
+
+    def test_card_with_token_roles_validates(self) -> None:
+        card = Card(
+            id="art-le",
+            front="le",
+            back="the (masculine singular)",
+            token_roles=[CardTokenRole(token="le", role=TokenRole.ARTICLE)],
+        )
+        assert card.token_roles is not None
+        assert len(card.token_roles) == 1
+        assert card.token_roles[0].role is TokenRole.ARTICLE
+
+    def test_card_with_multiple_token_roles(self) -> None:
+        card = Card(
+            id="phr-soy-estudiante",
+            front="Soy estudiante.",
+            back="I am a student.",
+            token_roles=[
+                CardTokenRole(token="Soy", role=TokenRole.VERB),
+                CardTokenRole(token="estudiante", role=TokenRole.NOUN),
+            ],
+        )
+        assert len(card.token_roles or []) == 2
+
+    def test_card_token_roles_from_json(self) -> None:
+        # The pilot lessons store token_roles as JSON; round-trip must work.
+        card = Card.model_validate(
+            {
+                "id": "ser-soy",
+                "front": "yo soy",
+                "back": "I am (ser)",
+                "tags": ["verb"],
+                "token_roles": [{"token": "soy", "role": "verb"}],
+            }
+        )
+        assert card.token_roles is not None
+        assert card.token_roles[0].token == "soy"
+
+    def test_card_with_invalid_role_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            Card.model_validate(
+                {
+                    "id": "ser-soy",
+                    "front": "yo soy",
+                    "back": "I am",
+                    "token_roles": [{"token": "soy", "role": "auxiliary"}],
+                }
+            )
+
+    def test_card_token_roles_max_length(self) -> None:
+        # The schema caps at 10 entries to keep the JSON files compact.
+        too_many = [{"token": f"t{idx}", "role": "noun"} for idx in range(11)]
+        with pytest.raises(ValidationError):
+            Card.model_validate(
+                {
+                    "id": "x",
+                    "front": "x",
+                    "back": "x",
+                    "token_roles": too_many,
+                }
+            )
 
 
 # --- Exercise: type-specific validation --------------------------------
@@ -159,9 +289,7 @@ class TestPictureChoiceExercise:
             _exercise_picture(images=None)
         with pytest.raises(ValidationError):
             _exercise_picture(
-                images=[
-                    {"src": "a.png", "label": "A", "is_correct": "true"}
-                ],
+                images=[{"src": "a.png", "label": "A", "is_correct": "true"}],
             )
 
     def test_exactly_one_correct(self) -> None:

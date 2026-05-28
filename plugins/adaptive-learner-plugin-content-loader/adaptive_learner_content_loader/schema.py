@@ -83,6 +83,65 @@ class StepType(str, Enum):
     EXERCISE = "exercise"
 
 
+class TokenRole(str, Enum):
+    """Closed enum of grammatical roles a card token can carry.
+
+    Phase 52I / v1.35.0 / P-130. Annotates individual tokens
+    inside a card's ``front`` so the v1.35.0+ cloze generator
+    can pick a semantically-meaningful blank instead of a
+    position-based one. Optional field on Card — old content
+    without token_roles still validates and the generator
+    falls back to a positional heuristic.
+
+    Closed enum to keep author input disciplined. Adding a
+    role (e.g. ``pronoun``, ``conjunction``, ``auxiliary``)
+    is a minor schema_version bump — extending an open enum
+    silently would let typos masquerade as valid roles and
+    the generator would skip them without warning.
+    """
+
+    ARTICLE = "article"
+    VERB = "verb"
+    NOUN = "noun"
+    ADJECTIVE = "adjective"
+    PREPOSITION = "preposition"
+    GENDER_MARKER = "gender_marker"
+    TENSE_MARKER = "tense_marker"
+
+
+class CardTokenRole(BaseModel):
+    """One ``token → role`` annotation on a card.
+
+    Phase 52I / v1.35.0 / P-130. The cloze generator looks up
+    its target blank by matching ``token`` against the
+    ``ElementError.element_key`` — when a role is present, the
+    generator can pick a same-role distractor pool instead of
+    a position-based heuristic.
+
+    The ``token`` is a verbatim slice of the card's ``front``;
+    no whitespace normalisation, so authors can annotate even
+    sub-word morphemes (an accent-bearing letter, an article
+    contraction) if a future generator needs it.
+    """
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    token: str = Field(
+        ...,
+        description=(
+            "Verbatim slice of the card's ``front``. The "
+            "generator matches this against the wrong-answer "
+            "key recorded by the SRS layer."
+        ),
+        min_length=1,
+        max_length=120,
+    )
+    role: TokenRole = Field(
+        ...,
+        description="Grammatical role of this token in the card.",
+    )
+
+
 class Card(BaseModel):
     """The smallest learnable unit (Phase 43 / 2B-lesson).
 
@@ -113,8 +172,7 @@ class Card(BaseModel):
     front: str = Field(
         ...,
         description=(
-            "What the learner sees first. Typically the "
-            "target-language term (e.g. 'Bonjour')."
+            "What the learner sees first. Typically the target-language term (e.g. 'Bonjour')."
         ),
         min_length=1,
         max_length=500,
@@ -157,11 +215,21 @@ class Card(BaseModel):
     )
     tags: list[str] = Field(
         default_factory=list,
-        description=(
-            "Slug-safe tags for SRS filtering "
-            "('greeting', 'verb-present', 'irregular')."
-        ),
+        description=("Slug-safe tags for SRS filtering ('greeting', 'verb-present', 'irregular')."),
         max_length=20,
+    )
+    token_roles: list[CardTokenRole] | None = Field(
+        default=None,
+        description=(
+            "Phase 52I / v1.35.0 / P-130. Optional list of "
+            "``{token, role}`` annotations on the card's "
+            "``front``. The cloze generator (52E) uses these to "
+            "pick a semantically-meaningful blank when "
+            "available; absent annotations fall through to a "
+            "position-based heuristic so old content keeps "
+            "working unchanged."
+        ),
+        max_length=10,
     )
 
     @field_validator("id")
@@ -180,9 +248,7 @@ class Card(BaseModel):
     def _slug_tags(cls, value: list[str]) -> list[str]:
         for tag in value:
             if not _SLUG_RE.fullmatch(tag):
-                raise ValueError(
-                    f"tag '{tag}' must be slug-safe"
-                )
+                raise ValueError(f"tag '{tag}' must be slug-safe")
         return value
 
 
@@ -298,9 +364,7 @@ class Exercise(BaseModel):
     @classmethod
     def _slug_id(cls, value: str) -> str:
         if not _SLUG_RE.fullmatch(value):
-            raise ValueError(
-                "Exercise id must be slug-safe"
-            )
+            raise ValueError("Exercise id must be slug-safe")
         return value
 
     @field_validator("card_ids")
@@ -308,13 +372,11 @@ class Exercise(BaseModel):
     def _slug_card_ids(cls, value: list[str]) -> list[str]:
         for cid in value:
             if not _SLUG_RE.fullmatch(cid):
-                raise ValueError(
-                    f"card_id '{cid}' must be slug-safe"
-                )
+                raise ValueError(f"card_id '{cid}' must be slug-safe")
         return value
 
     @model_validator(mode="after")
-    def _enforce_type_specific_fields(self) -> "Exercise":
+    def _enforce_type_specific_fields(self) -> Exercise:
         """Each ExerciseType requires a specific field set.
 
         Wrong-field-for-type combos (e.g. a MATCHING exercise
@@ -325,55 +387,35 @@ class Exercise(BaseModel):
 
         if type_ is ExerciseType.MATCHING:
             if not self.pairs:
-                raise ValueError(
-                    "MATCHING exercise requires non-empty 'pairs'"
-                )
+                raise ValueError("MATCHING exercise requires non-empty 'pairs'")
             for pair in self.pairs:
                 if set(pair.keys()) != {"left", "right"}:
-                    raise ValueError(
-                        "MATCHING pair must have exactly "
-                        "'left' and 'right' keys"
-                    )
+                    raise ValueError("MATCHING pair must have exactly 'left' and 'right' keys")
 
         elif type_ is ExerciseType.PICTURE_CHOICE:
             if not self.images or len(self.images) < 2:
-                raise ValueError(
-                    "PICTURE_CHOICE requires at least 2 'images'"
-                )
-            correct_count = sum(
-                1
-                for img in self.images
-                if img.get("is_correct") == "true"
-            )
+                raise ValueError("PICTURE_CHOICE requires at least 2 'images'")
+            correct_count = sum(1 for img in self.images if img.get("is_correct") == "true")
             if correct_count != 1:
                 raise ValueError(
-                    "PICTURE_CHOICE must have exactly one "
-                    "image marked 'is_correct': 'true'"
+                    "PICTURE_CHOICE must have exactly one image marked 'is_correct': 'true'"
                 )
             for img in self.images:
                 allowed = {"src", "label", "is_correct"}
                 if not set(img.keys()) <= allowed:
                     raise ValueError(
-                        "PICTURE_CHOICE image keys must be a "
-                        "subset of {src, label, is_correct}"
+                        "PICTURE_CHOICE image keys must be a subset of {src, label, is_correct}"
                     )
                 if "src" not in img or "label" not in img:
-                    raise ValueError(
-                        "PICTURE_CHOICE image requires 'src' "
-                        "and 'label'"
-                    )
+                    raise ValueError("PICTURE_CHOICE image requires 'src' and 'label'")
 
         elif type_ is ExerciseType.FREE_TEXT:
             if not self.accept:
-                raise ValueError(
-                    "FREE_TEXT exercise requires non-empty 'accept'"
-                )
+                raise ValueError("FREE_TEXT exercise requires non-empty 'accept'")
 
         elif type_ is ExerciseType.WORD_TILES:
             if not self.tiles or len(self.tiles) < 2:
-                raise ValueError(
-                    "WORD_TILES requires at least 2 'tiles'"
-                )
+                raise ValueError("WORD_TILES requires at least 2 'tiles'")
             # accept_orderings (when present) must permute
             # the tile index range.
             if self.accept_orderings:
@@ -388,8 +430,7 @@ class Exercise(BaseModel):
                         )
                     if set(ordering) != valid_indices:
                         raise ValueError(
-                            "accept_orderings entries must "
-                            "use every tile index exactly once"
+                            "accept_orderings entries must use every tile index exactly once"
                         )
 
         return self
@@ -419,8 +460,7 @@ class LessonStep(BaseModel):
     title: str | None = Field(
         default=None,
         description=(
-            "Optional step title. Shown in the progress bar / "
-            "step list (Phase 44 viewer)."
+            "Optional step title. Shown in the progress bar / step list (Phase 44 viewer)."
         ),
         max_length=200,
     )
@@ -440,31 +480,22 @@ class LessonStep(BaseModel):
     @classmethod
     def _slug_id(cls, value: str) -> str:
         if not _SLUG_RE.fullmatch(value):
-            raise ValueError(
-                "LessonStep id must be slug-safe"
-            )
+            raise ValueError("LessonStep id must be slug-safe")
         return value
 
     @model_validator(mode="after")
-    def _enforce_type_payload(self) -> "LessonStep":
+    def _enforce_type_payload(self) -> LessonStep:
         if self.type is StepType.THEORY:
             if not self.body:
-                raise ValueError(
-                    "THEORY step requires non-empty 'body'"
-                )
+                raise ValueError("THEORY step requires non-empty 'body'")
             if self.exercise is not None:
-                raise ValueError(
-                    "THEORY step must not carry 'exercise'"
-                )
+                raise ValueError("THEORY step must not carry 'exercise'")
         else:  # EXERCISE
             if self.exercise is None:
-                raise ValueError(
-                    "EXERCISE step requires 'exercise' payload"
-                )
+                raise ValueError("EXERCISE step requires 'exercise' payload")
             if self.body is not None:
                 raise ValueError(
-                    "EXERCISE step must not carry 'body' "
-                    "(use the exercise's prompt instead)"
+                    "EXERCISE step must not carry 'body' (use the exercise's prompt instead)"
                 )
         return self
 
@@ -525,8 +556,7 @@ class Lesson(BaseModel):
     steps: list[LessonStep] = Field(
         ...,
         description=(
-            "Ordered sequence of theory + exercise steps. "
-            "Must contain at least one step."
+            "Ordered sequence of theory + exercise steps. Must contain at least one step."
         ),
         min_length=1,
     )
@@ -535,9 +565,7 @@ class Lesson(BaseModel):
     @classmethod
     def _slug_id(cls, value: str) -> str:
         if not _SLUG_RE.fullmatch(value):
-            raise ValueError(
-                "Lesson id must be slug-safe"
-            )
+            raise ValueError("Lesson id must be slug-safe")
         return value
 
     @field_validator("cards")
@@ -546,9 +574,7 @@ class Lesson(BaseModel):
         seen: set[str] = set()
         for card in value:
             if card.id in seen:
-                raise ValueError(
-                    f"duplicate card id '{card.id}' in lesson"
-                )
+                raise ValueError(f"duplicate card id '{card.id}' in lesson")
             seen.add(card.id)
         return value
 
@@ -558,14 +584,12 @@ class Lesson(BaseModel):
         seen: set[str] = set()
         for step in value:
             if step.id in seen:
-                raise ValueError(
-                    f"duplicate step id '{step.id}' in lesson"
-                )
+                raise ValueError(f"duplicate step id '{step.id}' in lesson")
             seen.add(step.id)
         return value
 
     @model_validator(mode="after")
-    def _referential_integrity(self) -> "Lesson":
+    def _referential_integrity(self) -> Lesson:
         """Every exercise.card_ids reference must resolve."""
         known_card_ids = {c.id for c in self.cards}
         for step in self.steps:

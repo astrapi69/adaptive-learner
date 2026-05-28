@@ -268,6 +268,24 @@ export interface ContentLessonExercise {
     hint?: string | null;
 }
 
+/** Phase 52I / v1.35.0 / P-130 — closed grammatical-role enum
+ * mirror. Annotates tokens inside a card's ``front`` so the
+ * cloze generator can pick a semantically-meaningful blank.
+ * Adding a role is a minor schema bump. */
+export type ContentLessonCardTokenRoleName =
+    | "article"
+    | "verb"
+    | "noun"
+    | "adjective"
+    | "preposition"
+    | "gender_marker"
+    | "tense_marker";
+
+export interface ContentLessonCardTokenRole {
+    token: string;
+    role: ContentLessonCardTokenRoleName;
+}
+
 export interface ContentLessonCard {
     id: string;
     front: string;
@@ -276,6 +294,10 @@ export interface ContentLessonCard {
     image?: string | null;
     audio?: string | null;
     tags: string[];
+    /** Phase 52I / v1.35.0 / P-130 — optional token-role
+     * annotations on ``front``. Absent → cloze generator
+     * falls back to a positional heuristic. */
+    token_roles?: ContentLessonCardTokenRole[] | null;
 }
 
 export interface ContentLesson {

@@ -9,7 +9,10 @@
       "front": "yo soy",
       "back": "I am (ser)",
       "notes": "First person singular of *ser*. Use for identity / characteristics / origin.",
-      "tags": ["verb", "ser", "present"]
+      "tags": ["verb", "ser", "present"],
+      "token_roles": [
+        {"token": "soy", "role": "verb"}
+      ]
     },
     {
       "id": "ser-eres",
@@ -49,7 +52,10 @@
       "front": "yo estoy",
       "back": "I am (estar)",
       "notes": "First person of *estar*. Use for location / temporary state / feelings.",
-      "tags": ["verb", "estar", "present"]
+      "tags": ["verb", "estar", "present"],
+      "token_roles": [
+        {"token": "estoy", "role": "verb"}
+      ]
     },
     {
       "id": "estar-estas",

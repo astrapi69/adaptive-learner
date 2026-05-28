@@ -9,7 +9,10 @@
       "front": "le",
       "back": "the (masculine singular)",
       "notes": "Used before consonant-starting masculine nouns: **le chat**, **le livre**, **le garçon**.",
-      "tags": ["article", "definite"]
+      "tags": ["article", "definite"],
+      "token_roles": [
+        {"token": "le", "role": "article"}
+      ]
     },
     {
       "id": "art-la",
@@ -37,7 +40,10 @@
       "front": "un",
       "back": "a / an (masculine singular)",
       "notes": "Indefinite version of *le*. **un chat** = a cat (one of many). Final n is nasal, not pronounced like English n.",
-      "tags": ["article", "indefinite"]
+      "tags": ["article", "indefinite"],
+      "token_roles": [
+        {"token": "un", "role": "article"}
+      ]
     },
     {
       "id": "art-une",
