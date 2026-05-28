@@ -129,6 +129,10 @@ navigation:
           en: i18n
         slug: developer/i18n
       - title:
+          de: Lektionsinhalte erstellen
+          en: Authoring lesson content
+        slug: developer/authoring-content
+      - title:
           de: Release-Prozess
           en: Release workflow
         slug: developer/release

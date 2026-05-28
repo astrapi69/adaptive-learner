@@ -70,6 +70,7 @@ plugins:
             Lektionen + SRS: Lessons + SRS
             KI-Integration: AI integration
             Testen: Testing
+            Lektionsinhalte erstellen: Authoring lesson content
             Release-Prozess: Release workflow
             API-Referenz: API reference
             Übersicht: Overview
@@ -125,6 +126,7 @@ nav:
   - Testen: de/developer/testing.md
   - Deployment: de/developer/deployment.md
   - i18n: de/developer/i18n.md
+  - Lektionsinhalte erstellen: de/developer/authoring-content.md
   - Release-Prozess: de/developer/release.md
 - API-Referenz:
   - Übersicht: de/api/overview.md
