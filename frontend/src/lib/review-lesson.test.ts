@@ -236,3 +236,160 @@ describe("synthesizeReviewLesson: degraded cases", () => {
         expect(out.estimated_minutes).toBeGreaterThanOrEqual(1);
     });
 });
+
+// --- Phase 52G: cloze in review sessions ----------------------------------
+
+function _lessonWithFreeText(
+    lessonId: string,
+    exerciseId: string,
+    accept: string[],
+    prompt: string,
+): ContentLesson {
+    return {
+        id: lessonId,
+        title: lessonId,
+        description: null,
+        estimated_minutes: 10,
+        cards: [
+            {
+                id: "card-1",
+                front: accept[0],
+                back: "translation",
+                tags: [],
+            },
+        ],
+        steps: [
+            {
+                id: `step-${exerciseId}`,
+                type: "exercise",
+                title: null,
+                exercise: {
+                    id: exerciseId,
+                    type: "free_text",
+                    prompt,
+                    card_ids: ["card-1"],
+                    accept,
+                    distractors: ["wrong-1", "wrong-2"],
+                },
+            },
+        ],
+    };
+}
+
+describe("synthesizeReviewLesson: Phase 52G cloze branch", () => {
+    it("generates a cloze step for a free_text source when the front matches element_key", () => {
+        const lesson = _lessonWithFreeText(
+            "L-ft",
+            "ex-ft",
+            ["un"],
+            "Translate the article",
+        );
+        const queue: ReviewQueueItem[] = [
+            makeQueueItem({
+                lesson_id: "L-ft",
+                exercise_id: "ex-ft",
+                element_key: "un",
+                correct_answer: "un",
+                user_answer: "le",
+            }),
+        ];
+        const cache = new Map([["L-ft", lesson]]);
+        const out = synthesizeReviewLesson(queue, cache, {
+            title: "Review",
+        });
+        expect(out.steps).toHaveLength(1);
+        // Cloze step has the gen-cloze-prefixed step id.
+        expect(out.steps[0].id.startsWith("review-cloze-L-ft-")).toBe(
+            true,
+        );
+        // Underlying exercise is a cloze.
+        expect(out.steps[0].exercise?.type).toBe("cloze");
+        expect(out.steps[0].exercise?.sentence).toBeDefined();
+    });
+
+    it("falls back to replay when cloze generation returns null", () => {
+        // Source card front doesn't contain the element_key, and the
+        // prompt doesn't either → generator returns null → replay.
+        const lesson = _lessonWithFreeText(
+            "L-ft-fail",
+            "ex-ft-fail",
+            ["bonjour"],
+            "Say hi",
+        );
+        // Force the card front + prompt to not contain element_key.
+        lesson.cards[0].front = "no-match";
+        const queue: ReviewQueueItem[] = [
+            makeQueueItem({
+                lesson_id: "L-ft-fail",
+                exercise_id: "ex-ft-fail",
+                element_key: "bonjour",
+                correct_answer: "bonjour",
+            }),
+        ];
+        const cache = new Map([["L-ft-fail", lesson]]);
+        const out = synthesizeReviewLesson(queue, cache, {
+            title: "Review",
+        });
+        expect(out.steps).toHaveLength(1);
+        // Replay step id has the plain ``review-`` prefix.
+        expect(
+            out.steps[0].id.startsWith("review-L-ft-fail-"),
+        ).toBe(true);
+        // Underlying exercise stays free_text (replay, not cloze).
+        expect(out.steps[0].exercise?.type).toBe("free_text");
+    });
+
+    it("never attempts cloze generation for matching", () => {
+        // Default makeLesson uses matching — confirm step is a plain
+        // replay with NO cloze id prefix.
+        const queue: ReviewQueueItem[] = [
+            makeQueueItem({
+                lesson_id: "L1",
+                exercise_id: "ex-a",
+                element_key: "merci",
+            }),
+        ];
+        const cache = new Map([["L1", makeLesson("L1", ["ex-a"])]]);
+        const out = synthesizeReviewLesson(queue, cache, {
+            title: "Review",
+        });
+        expect(out.steps).toHaveLength(1);
+        expect(out.steps[0].exercise?.type).toBe("matching");
+        expect(out.steps[0].id.startsWith("review-cloze-")).toBe(
+            false,
+        );
+    });
+
+    it("mixed queue → mixed step shapes (cloze for free_text, replay for matching)", () => {
+        const ftLesson = _lessonWithFreeText(
+            "L-ft",
+            "ex-ft",
+            ["un"],
+            "Article",
+        );
+        const queue: ReviewQueueItem[] = [
+            makeQueueItem({
+                lesson_id: "L-ft",
+                exercise_id: "ex-ft",
+                element_key: "un",
+                correct_answer: "un",
+            }),
+            makeQueueItem({
+                id: "row-2",
+                lesson_id: "L1",
+                exercise_id: "ex-a",
+                element_key: "merci",
+            }),
+        ];
+        const cache = new Map([
+            ["L-ft", ftLesson],
+            ["L1", makeLesson("L1", ["ex-a"])],
+        ]);
+        const out = synthesizeReviewLesson(queue, cache, {
+            title: "Review",
+        });
+        expect(out.steps).toHaveLength(2);
+        expect(out.steps[0].exercise?.type).toBe("cloze");
+        expect(out.steps[1].exercise?.type).toBe("matching");
+    });
+});

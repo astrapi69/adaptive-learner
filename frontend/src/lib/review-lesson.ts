@@ -1,5 +1,5 @@
 /**
- * synthesizeReviewLesson (Phase 46D / C14 / P-129).
+ * synthesizeReviewLesson (Phase 46D / C14 / P-129; Phase 52G upgrade).
  *
  * Builds an in-memory ``ContentLesson`` from an SRS review
  * queue + the cached lesson payloads the elements came
@@ -7,10 +7,23 @@
  * the same way it renders a real cached lesson — no
  * special-case rendering needed.
  *
- * Per Phase 46 D3: review = replay the original exercises.
- * No new exercise types, no AI generation, no cloze. v1
- * keeps it simple. Variation + generation earns its own
- * phase later.
+ * Phase 46 D3 originally specced "review = replay the original
+ * exercises, no new types, no AI". Phase 52G partially relaxes
+ * that: per source exercise type:
+ *
+ *   - ``free_text`` or ``word_tiles`` → try to generate a Cloze
+ *     via ``generateClozeFromError``. On success, emit the cloze
+ *     step (shape-change: tests the same knowledge but in a
+ *     different form, exercising the user's flexibility). On
+ *     generator failure (returns null), fall through to replay
+ *     so the review never serves a broken step.
+ *   - ``matching`` or ``picture_choice`` → always replay original.
+ *     Generating a cloze from a recognition exercise would
+ *     change the cognitive demand; replay is the right call.
+ *   - ``cloze`` (Phase 52D content) → always replay original.
+ *     Re-generating cloze from cloze adds no signal.
+ *
+ * The cloze generator is deterministic + offline; no AI call.
  *
  * Selection:
  * - Queue is already sorted (overdue → error_count desc →
@@ -35,10 +48,13 @@
  *   preserving queue order. No theory steps.
  */
 
+import {generateClozeFromError} from "./exercises/cloze-generator";
 import type {
     ContentLesson,
+    ContentLessonCard,
     ContentLessonExercise,
     ContentLessonStep,
+    ElementError,
     ReviewQueueItem,
 } from "../storage/types";
 
@@ -72,6 +88,104 @@ function _findExercise(
     return null;
 }
 
+/** Find the source card for an SRS review item. Prefers an exact
+ *  front-string match against ``element_key`` (the canonical the
+ *  generator targets) and falls back to substring then to the
+ *  first card the source exercise references. Returns null when
+ *  the source exercise has no card_ids. */
+function _findSourceCard(
+    lesson: ContentLesson | undefined,
+    exercise: ContentLessonExercise,
+    elementKey: string,
+): ContentLessonCard | null {
+    if (!lesson) return null;
+    const exact = lesson.cards.find(
+        (c) =>
+            exercise.card_ids.includes(c.id) && c.front === elementKey,
+    );
+    if (exact) return exact;
+    const substr = lesson.cards.find(
+        (c) =>
+            exercise.card_ids.includes(c.id) &&
+            c.front.includes(elementKey),
+    );
+    if (substr) return substr;
+    const firstRef = lesson.cards.find((c) =>
+        exercise.card_ids.includes(c.id),
+    );
+    return firstRef ?? null;
+}
+
+/** Adapter: ReviewQueueItem already carries every SRS field the
+ *  cloze generator needs, but the generator's API is typed on
+ *  ``ElementError`` (the persisted shape) so this wraps the queue
+ *  item with the missing mastered/created/updated fields. Pure
+ *  shape transform — no IO. */
+function _itemToError(item: ReviewQueueItem): ElementError {
+    return {
+        id: item.id,
+        user_id: item.user_id,
+        set_id: item.set_id,
+        lesson_id: item.lesson_id,
+        exercise_id: item.exercise_id,
+        element_key: item.element_key,
+        element_type: item.element_type,
+        user_answer: item.user_answer,
+        correct_answer: item.correct_answer,
+        error_count: item.error_count,
+        correct_streak: item.correct_streak,
+        last_error_at: item.last_error_at,
+        last_attempt_at: item.last_attempt_at,
+        mastered: false,
+        mastered_at: null,
+        created_at: item.last_attempt_at,
+        updated_at: item.last_attempt_at,
+    };
+}
+
+/** Per-item branch (Phase 52G / Decision 5):
+ *  - free_text or word_tiles → try generating a cloze
+ *  - else (or generator returns null) → replay original
+ *  Returns null only when the source exercise itself cannot be
+ *  located in the cached lesson (the existing C14 semantics
+ *  for "lesson evicted from cache"). */
+export function _buildReviewStep(
+    item: ReviewQueueItem,
+    sourceLesson: ContentLesson | undefined,
+): ContentLessonStep | null {
+    const exercise = _findExercise(sourceLesson, item.exercise_id);
+    if (exercise === null) return null;
+
+    if (exercise.type === "free_text" || exercise.type === "word_tiles") {
+        const sourceCard = _findSourceCard(
+            sourceLesson,
+            exercise,
+            item.element_key,
+        );
+        const generated = generateClozeFromError({
+            error: _itemToError(item),
+            sourceExercise: exercise,
+            sourceCard,
+        });
+        if (generated !== null) {
+            return {
+                id: `review-cloze-${item.lesson_id}-${item.exercise_id}-${item.element_key}`,
+                type: "exercise",
+                title: null,
+                exercise: generated,
+            };
+        }
+        // Fall through to replay on generator failure.
+    }
+
+    return {
+        id: `review-${item.lesson_id}-${item.exercise_id}-${item.element_key}`,
+        type: "exercise",
+        title: null,
+        exercise,
+    };
+}
+
 /** Synthesise a review-mode ``ContentLesson`` from the
  *  prioritised queue + the cached lesson bundle.
  *
@@ -90,20 +204,18 @@ export function synthesizeReviewLesson(
     const top = queue.slice(0, limit);
     const steps: ContentLessonStep[] = [];
     for (const item of top) {
-        const exercise = _findExercise(
+        // Per-item branch is delegated to ``_buildReviewStep`` so the
+        // free_text/word_tiles → cloze logic (Phase 52G) stays out
+        // of the queue-walking loop. Returns null only when the
+        // source exercise can't be resolved (lesson evicted from
+        // cache); that case is silently dropped — same as the
+        // pre-52G behaviour.
+        const step = _buildReviewStep(
+            item,
             cachedLessons.get(item.lesson_id),
-            item.exercise_id,
         );
-        if (exercise === null) continue;
-        steps.push({
-            // Stable step id derived from the source lesson +
-            // exercise + element so two review sessions over
-            // the same elements produce diffable step lists.
-            id: `review-${item.lesson_id}-${item.exercise_id}-${item.element_key}`,
-            type: "exercise",
-            title: null,
-            exercise,
-        });
+        if (step === null) continue;
+        steps.push(step);
     }
     const setId = top[0]?.set_id ?? "";
     return {
