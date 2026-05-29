@@ -2930,9 +2930,21 @@ select:focus {
   background: var(--surface-2);
 }
 
+/* Selected state must be OBVIOUS, not subtle (UX bugfix): thick
+   accent border + tint + slight scale + a glow box-shadow (the glow
+   doubles as the touch affordance since :hover doesn't exist on
+   touch) + a gentle attention pulse. */
 .matching-tile.is-selected {
-  border-color: var(--accent);
+  border: 3px solid var(--accent);
   background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  transform: scale(1.02);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+  animation: matching-pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes matching-pulse {
+  from { opacity: 0.8; }
+  to { opacity: 1; }
 }
 
 .matching-tile.is-paired {
@@ -2949,6 +2961,13 @@ select:focus {
 .matching-tile.is-wrong {
   border-color: var(--danger, #ef4444);
   background: color-mix(in srgb, var(--danger, #ef4444) 12%, var(--surface));
+  animation: matching-shake 0.2s ease-in-out;
+}
+
+@keyframes matching-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
 @keyframes matching-flash {
@@ -2958,6 +2977,61 @@ select:focus {
 
 .matching-tile.is-flash {
   animation: matching-flash 600ms ease;
+}
+
+/* Instructions + first-pair flow hint (UX bugfix). */
+.matching-instructions {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+}
+
+.matching-flow-hint {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  border: 1px dashed var(--accent);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.matching-flow-hint-arrow {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Per-column wrapper so each column can carry a visible header. */
+.matching-column-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.matching-column-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+}
+
+/* prefers-reduced-motion: no pulse / shake / flash / scale; state
+   changes are instant but still visually obvious via colour + border. */
+@media (prefers-reduced-motion: reduce) {
+  .matching-tile.is-selected {
+    transform: none;
+    animation: none;
+  }
+  .matching-tile.is-wrong,
+  .matching-tile.is-flash {
+    animation: none;
+  }
 }
 
 .matching-tile:disabled {

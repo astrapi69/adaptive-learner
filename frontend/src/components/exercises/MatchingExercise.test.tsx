@@ -55,6 +55,33 @@ describe("MatchingExercise: pair lifecycle", () => {
         expect(screen.getByTestId("matching-right")).toBeInTheDocument();
     });
 
+    it("shows instructions + visible column headers (UX bugfix)", () => {
+        render(
+            <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
+        );
+        expect(
+            screen.getByTestId("matching-instructions"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("matching-left-header"),
+        ).toHaveTextContent("Term");
+        expect(
+            screen.getByTestId("matching-right-header"),
+        ).toHaveTextContent("Translation");
+    });
+
+    it("hides the first-pair flow hint once a pair is made", () => {
+        render(
+            <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
+        );
+        expect(screen.getByTestId("matching-flow-hint")).toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        expect(
+            screen.queryByTestId("matching-flow-hint"),
+        ).not.toBeInTheDocument();
+    });
+
     it("counter increments on each tap-pair", () => {
         render(
             <MatchingExercise

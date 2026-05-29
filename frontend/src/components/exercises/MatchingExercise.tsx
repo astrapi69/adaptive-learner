@@ -90,6 +90,11 @@ export default function MatchingExercise({
 }: MatchingExerciseProps) {
     const {t} = useI18n();
     const pairs = exercise.pairs ?? [];
+    const leftLabel = t("lesson.exercise.matching.left_label", "Term");
+    const rightLabel = t(
+        "lesson.exercise.matching.right_label",
+        "Translation",
+    );
 
     // Stable seed per-mount so reshuffling on every render
     // doesn't move the right column under the user.
@@ -238,16 +243,49 @@ export default function MatchingExercise({
                     .replace("{total}", String(pairs.length))}
             </p>
 
-            <div className="matching-columns">
-                <ul
-                    className="matching-column matching-column-left"
-                    data-testid="matching-left"
-                    aria-label={t(
-                        "lesson.exercise.matching.left_label",
-                        "Terms",
-                    )}
+            <p
+                className="matching-instructions"
+                data-testid="matching-instructions"
+            >
+                {t(
+                    "lesson.exercise.matching.instructions",
+                    "Select an item on the left, then its matching translation on the right.",
+                )}
+            </p>
+
+            {/* First-pair flow hint: disappears once the learner has
+                made their first pair (they understand the mechanic). */}
+            {matches.size === 0 && !submitted && (
+                <p
+                    className="matching-flow-hint"
+                    data-testid="matching-flow-hint"
                 >
-                    {leftTiles.map((tile) => {
+                    <span className="matching-flow-hint-left">
+                        {leftLabel}
+                    </span>
+                    <span className="matching-flow-hint-arrow" aria-hidden="true">
+                        &rarr;
+                    </span>
+                    <span className="matching-flow-hint-right">
+                        {rightLabel}
+                    </span>
+                </p>
+            )}
+
+            <div className="matching-columns">
+                <div className="matching-column-wrap">
+                    <div
+                        className="matching-column-header"
+                        data-testid="matching-left-header"
+                    >
+                        {leftLabel}
+                    </div>
+                    <ul
+                        className="matching-column matching-column-left"
+                        data-testid="matching-left"
+                        aria-label={leftLabel}
+                    >
+                        {leftTiles.map((tile) => {
                         const isSelected = selectedLeft === tile.index;
                         const isPaired = matches.has(tile.index);
                         const isCorrect =
@@ -284,16 +322,21 @@ export default function MatchingExercise({
                             </li>
                         );
                     })}
-                </ul>
-                <ul
-                    className="matching-column matching-column-right"
-                    data-testid="matching-right"
-                    aria-label={t(
-                        "lesson.exercise.matching.right_label",
-                        "Definitions",
-                    )}
-                >
-                    {rightTiles.map((tile) => {
+                    </ul>
+                </div>
+                <div className="matching-column-wrap">
+                    <div
+                        className="matching-column-header"
+                        data-testid="matching-right-header"
+                    >
+                        {rightLabel}
+                    </div>
+                    <ul
+                        className="matching-column matching-column-right"
+                        data-testid="matching-right"
+                        aria-label={rightLabel}
+                    >
+                        {rightTiles.map((tile) => {
                         const isPaired = pairedRightIndices.has(
                             tile.originalIndex,
                         );
@@ -320,7 +363,8 @@ export default function MatchingExercise({
                             </li>
                         );
                     })}
-                </ul>
+                    </ul>
+                </div>
             </div>
 
             <div className="matching-actions">

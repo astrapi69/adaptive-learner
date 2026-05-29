@@ -1163,8 +1163,9 @@ lesson:
       retry: "Intentar de nuevo"
       counter: "{matched} / {total} emparejados"
       result: "Puntuación: {correct} / {total}"
-      left_label: "Términos"
-      right_label: "Definiciones"
+      instructions: "Selecciona un elemento a la izquierda y luego su traducción a la derecha."
+      left_label: "Término"
+      right_label: "Traducción"
       empty: "Este ejercicio no tiene pares."
     picture:
       submit: "Comprobar respuesta"

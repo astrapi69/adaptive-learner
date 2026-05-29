@@ -1163,8 +1163,9 @@ lesson:
       retry: "Réessayer"
       counter: "{matched} / {total} appariés"
       result: "Score : {correct} / {total}"
-      left_label: "Termes"
-      right_label: "Définitions"
+      instructions: "Sélectionnez un élément à gauche, puis sa traduction à droite."
+      left_label: "Terme"
+      right_label: "Traduction"
       empty: "Cet exercice n'a pas de paires."
     picture:
       submit: "Vérifier la réponse"

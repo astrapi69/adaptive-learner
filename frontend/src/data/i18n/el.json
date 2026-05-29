@@ -1261,8 +1261,9 @@
         "retry": "Δοκίμασε ξανά",
         "counter": "{matched} / {total} αντιστοιχήθηκαν",
         "result": "Βαθμολογία: {correct} / {total}",
-        "left_label": "Όροι",
-        "right_label": "Ορισμοί",
+        "instructions": "Επίλεξε ένα στοιχείο αριστερά και μετά τη μετάφρασή του δεξιά.",
+        "left_label": "Όρος",
+        "right_label": "Μετάφραση",
         "empty": "Αυτή η άσκηση δεν περιέχει ζεύγη."
       },
       "picture": {

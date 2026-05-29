@@ -1261,8 +1261,9 @@
         "retry": "Erneut versuchen",
         "counter": "{matched} / {total} zugeordnet",
         "result": "Punktzahl: {correct} / {total}",
-        "left_label": "Begriffe",
-        "right_label": "Definitionen",
+        "instructions": "Wähle links ein Element, dann rechts die passende Übersetzung.",
+        "left_label": "Begriff",
+        "right_label": "Übersetzung",
         "empty": "Diese Zuordnungs-Übung hat keine Paare."
       },
       "picture": {

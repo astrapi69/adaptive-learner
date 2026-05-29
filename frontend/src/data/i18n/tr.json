@@ -1261,8 +1261,9 @@
         "retry": "Tekrar dene",
         "counter": "{total} eşleşmeden {matched}",
         "result": "Puan: {correct} / {total}",
-        "left_label": "Terimler",
-        "right_label": "Tanımlar",
+        "instructions": "Soldan bir öğe seç, ardından sağdan eşleşen çevirisini seç.",
+        "left_label": "Terim",
+        "right_label": "Çeviri",
         "empty": "Bu alıştırmada eşleşme yok."
       },
       "picture": {

@@ -1261,8 +1261,9 @@
         "retry": "Try again",
         "counter": "{matched} / {total} paired",
         "result": "Score: {correct} / {total}",
-        "left_label": "Terms",
-        "right_label": "Definitions",
+        "instructions": "Select an item on the left, then its matching translation on the right.",
+        "left_label": "Term",
+        "right_label": "Translation",
         "empty": "This matching exercise has no pairs."
       },
       "picture": {

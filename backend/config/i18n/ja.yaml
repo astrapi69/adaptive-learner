@@ -1161,8 +1161,9 @@ lesson:
       retry: "もう一度"
       counter: "{matched} / {total} 組ペア完了"
       result: "スコア: {correct} / {total}"
+      instructions: "左の項目を選び、次に右で対応する訳を選びます。"
       left_label: "用語"
-      right_label: "意味"
+      right_label: "訳"
       empty: "このマッチング演習にはペアがありません。"
     picture:
       submit: "答えを確認"

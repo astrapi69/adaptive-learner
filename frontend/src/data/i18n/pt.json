@@ -1261,8 +1261,9 @@
         "retry": "Tentar de novo",
         "counter": "{matched} / {total} emparelhados",
         "result": "Pontuação: {correct} / {total}",
-        "left_label": "Termos",
-        "right_label": "Definições",
+        "instructions": "Selecione um item à esquerda e depois a tradução correspondente à direita.",
+        "left_label": "Termo",
+        "right_label": "Tradução",
         "empty": "Este exercício não tem pares."
       },
       "picture": {
