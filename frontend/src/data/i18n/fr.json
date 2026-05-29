@@ -1382,6 +1382,28 @@
     }
   },
   "content": {
+    "save_lesson": {
+      "button": "Enregistrer comme leçon hors ligne",
+      "modal_title": "Enregistrer comme leçon hors ligne",
+      "title_label": "Titre de la leçon",
+      "summary": "{exercises} exercices · {theory} étapes de théorie · ~{minutes} min",
+      "theory_only": "Pas assez de vocabulaire pour des exercices. Importez une conversation plus longue pour plus de matériel.",
+      "save": "Enregistrer",
+      "saved": "Enregistré dans Mes leçons.",
+      "failed": "Impossible d'enregistrer la leçon."
+    },
+    "lesson_gen": {
+      "fallback_title": "Leçon importée",
+      "focus": "Point clé",
+      "topics": "Thèmes",
+      "strengths": "Ce que vous savez déjà",
+      "weaknesses": "Ce sur quoi nous allons travailler",
+      "errors": "Erreurs fréquentes",
+      "match_prompt": "Associez chaque mot à sa traduction.",
+      "free_prompt": "Traduisez : {word}",
+      "cloze_prompt": "Complétez le mot manquant.",
+      "tiles_prompt": "Remettez les mots dans l'ordre pour former la phrase ({word})."
+    },
     "page_title": "Sets de contenu",
     "intro": "Sets de leçons préfabriqués utilisables sans clé API. Les téléchargements sont mis en cache localement et fonctionnent hors-ligne après la première récupération.",
     "sources": "Sources",

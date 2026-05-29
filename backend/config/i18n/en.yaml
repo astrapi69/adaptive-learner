@@ -1281,6 +1281,26 @@ lesson:
     missing_params: "No lesson selected. Browse content sets to pick one."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  save_lesson:
+    button: "Save as Offline Lesson"
+    modal_title: "Save as offline lesson"
+    title_label: "Lesson title"
+    summary: "{exercises} exercises · {theory} theory steps · ~{minutes} min"
+    theory_only: "Not enough vocabulary for exercises. Import a longer chat for more practice material."
+    save: "Save"
+    saved: "Saved to My Lessons."
+    failed: "Could not save the lesson."
+  lesson_gen:
+    fallback_title: "Imported lesson"
+    focus: "Focus"
+    topics: "Topics"
+    strengths: "What you already know"
+    weaknesses: "What we will work on"
+    errors: "Common mistakes"
+    match_prompt: "Match each word with its translation."
+    free_prompt: "Translate: {word}"
+    cloze_prompt: "Fill in the missing word."
+    tiles_prompt: "Arrange the words into the sentence ({word})."
   page_title: "Content sets"
   intro: "Pre-built lesson sets you can use without an API key. Downloads are cached locally and work offline after the first fetch."
   sources: "Sources"

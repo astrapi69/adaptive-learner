@@ -1382,6 +1382,28 @@
     }
   },
   "content": {
+    "save_lesson": {
+      "button": "Guardar como lección sin conexión",
+      "modal_title": "Guardar como lección sin conexión",
+      "title_label": "Título de la lección",
+      "summary": "{exercises} ejercicios · {theory} pasos de teoría · ~{minutes} min",
+      "theory_only": "No hay suficiente vocabulario para ejercicios. Importa un chat más largo para más material de práctica.",
+      "save": "Guardar",
+      "saved": "Guardado en Mis lecciones.",
+      "failed": "No se pudo guardar la lección."
+    },
+    "lesson_gen": {
+      "fallback_title": "Lección importada",
+      "focus": "Enfoque",
+      "topics": "Temas",
+      "strengths": "Lo que ya sabes",
+      "weaknesses": "En lo que trabajaremos",
+      "errors": "Errores comunes",
+      "match_prompt": "Relaciona cada palabra con su traducción.",
+      "free_prompt": "Traduce: {word}",
+      "cloze_prompt": "Completa la palabra que falta.",
+      "tiles_prompt": "Ordena las palabras para formar la frase ({word})."
+    },
     "page_title": "Sets de contenido",
     "intro": "Sets de lecciones prediseñados que puedes usar sin clave API. Las descargas se almacenan localmente y funcionan sin conexión tras la primera descarga.",
     "sources": "Fuentes",

@@ -1270,6 +1270,26 @@ lesson:
     missing_params: "Ders seçilmedi. İçerik tarayıcısından bir tane seç."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  save_lesson:
+    button: "Çevrimdışı ders olarak kaydet"
+    modal_title: "Çevrimdışı ders olarak kaydet"
+    title_label: "Ders başlığı"
+    summary: "{exercises} alıştırma · {theory} teori adımı · ~{minutes} dk"
+    theory_only: "Alıştırmalar için yeterli kelime yok. Daha fazla alıştırma malzemesi için daha uzun bir sohbet içe aktarın."
+    save: "Kaydet"
+    saved: "Derslerim'e kaydedildi."
+    failed: "Ders kaydedilemedi."
+  lesson_gen:
+    fallback_title: "İçe aktarılan ders"
+    focus: "Odak"
+    topics: "Konular"
+    strengths: "Zaten bildiklerin"
+    weaknesses: "Üzerinde çalışacaklarımız"
+    errors: "Sık yapılan hatalar"
+    match_prompt: "Her kelimeyi çevirisiyle eşleştir."
+    free_prompt: "Çevir: {word}"
+    cloze_prompt: "Eksik kelimeyi doldur."
+    tiles_prompt: "Kelimeleri cümle oluşturacak şekilde sırala ({word})."
   page_title: "İçerik setleri"
   intro: "API anahtarı olmadan kullanabileceğiniz hazır ders setleri. İndirmeler yerel olarak önbelleğe alınır ve ilk indirmeden sonra çevrimdışı çalışır."
   sources: "Kaynaklar"
