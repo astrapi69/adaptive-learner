@@ -2463,7 +2463,7 @@ select:focus {
   display: flex;
   gap: 6px;
   margin: var(--space-3) 0;
-  color: #fbbf24;
+  color: var(--star);
 }
 
 .lesson-summary-star {
@@ -2532,7 +2532,7 @@ select:focus {
 }
 
 .lesson-summary-breakdown-row.is-correct {
-  border-left-color: #10b981;
+  border-left-color: var(--exercise-correct);
 }
 
 .lesson-summary-breakdown-row.is-wrong {
@@ -2570,9 +2570,9 @@ select:focus {
    entirely; the static gold colour still reads as "earned". */
 @keyframes lesson-summary-celebrate {
   0%   { transform: scale(1);   filter: drop-shadow(0 0 0 transparent); }
-  20%  { transform: scale(1.3); filter: drop-shadow(0 0 6px #fbbf24); }
-  40%  { transform: scale(1);   filter: drop-shadow(0 0 2px #fbbf24); }
-  60%  { transform: scale(1.15); filter: drop-shadow(0 0 4px #fbbf24); }
+  20%  { transform: scale(1.3); filter: drop-shadow(0 0 6px var(--star)); }
+  40%  { transform: scale(1);   filter: drop-shadow(0 0 2px var(--star)); }
+  60%  { transform: scale(1.15); filter: drop-shadow(0 0 4px var(--star)); }
   100% { transform: scale(1);   filter: drop-shadow(0 0 0 transparent); }
 }
 
@@ -2712,7 +2712,7 @@ select:focus {
   border-left-color: var(--success);
 }
 .milestone-overlay[data-milestone-type="badge"] {
-  border-left-color: #fbbf24;
+  border-left-color: var(--star);
 }
 
 .milestone-overlay-icon {
@@ -2727,7 +2727,7 @@ select:focus {
   color: var(--success);
 }
 .milestone-overlay[data-milestone-type="badge"] .milestone-overlay-icon {
-  color: #fbbf24;
+  color: var(--star);
 }
 
 .milestone-overlay-text {
@@ -3009,10 +3009,10 @@ select:focus {
    doubles as the touch affordance since :hover doesn't exist on
    touch) + a gentle attention pulse. */
 .matching-tile.is-selected {
-  border: 3px solid var(--accent);
-  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+  border: 3px solid var(--exercise-selected);
+  background: color-mix(in srgb, var(--exercise-selected) 15%, var(--surface));
   transform: scale(1.02);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--exercise-selected) 30%, transparent);
   animation: matching-pulse 0.5s ease-in-out infinite alternate;
 }
 
@@ -3023,18 +3023,19 @@ select:focus {
 
 .matching-tile.is-paired {
   border-style: dashed;
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  border-color: var(--exercise-matched);
+  background: color-mix(in srgb, var(--exercise-matched) 12%, var(--surface));
 }
 
 .matching-tile.is-correct {
-  border-color: #10b981;
-  background: color-mix(in srgb, #10b981 18%, var(--surface));
+  border-color: var(--exercise-correct);
+  background: color-mix(in srgb, var(--exercise-correct) 18%, var(--surface));
   color: var(--fg);
 }
 
 .matching-tile.is-wrong {
-  border-color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  border-color: var(--exercise-wrong);
+  background: color-mix(in srgb, var(--exercise-wrong) 12%, var(--surface));
   animation: matching-shake 0.2s ease-in-out;
 }
 
@@ -3046,7 +3047,7 @@ select:focus {
 
 @keyframes matching-flash {
   0%, 100% { background: var(--surface); }
-  50% { background: color-mix(in srgb, var(--danger) 25%, var(--surface)); }
+  50% { background: color-mix(in srgb, var(--exercise-wrong) 25%, var(--surface)); }
 }
 
 .matching-tile.is-flash {
@@ -3198,18 +3199,18 @@ select:focus {
 }
 
 .picture-tile.is-selected {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-color: var(--exercise-selected);
+  background: color-mix(in srgb, var(--exercise-selected) 12%, var(--surface));
 }
 
 .picture-tile.is-correct {
-  border-color: #10b981;
-  background: color-mix(in srgb, #10b981 18%, var(--surface));
+  border-color: var(--exercise-correct);
+  background: color-mix(in srgb, var(--exercise-correct) 18%, var(--surface));
 }
 
 .picture-tile.is-wrong {
-  border-color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  border-color: var(--exercise-wrong);
+  background: color-mix(in srgb, var(--exercise-wrong) 12%, var(--surface));
 }
 
 .picture-tile-badge {
@@ -3227,11 +3228,11 @@ select:focus {
 }
 
 .picture-tile-badge-correct {
-  color: #10b981;
+  color: var(--exercise-correct);
 }
 
 .picture-tile-badge-wrong {
-  color: var(--danger);
+  color: var(--exercise-wrong);
 }
 
 .picture-actions {
@@ -3247,11 +3248,11 @@ select:focus {
 }
 
 .picture-result[data-result="correct"] {
-  color: #10b981;
+  color: var(--exercise-correct);
 }
 
 .picture-result[data-result="wrong"] {
-  color: var(--danger);
+  color: var(--exercise-wrong);
 }
 
 @media (max-width: 600px) {
@@ -3345,11 +3346,11 @@ select:focus {
 }
 
 .free-text-result[data-result="correct"] {
-  color: #10b981;
+  color: var(--exercise-correct);
 }
 
 .free-text-result[data-result="wrong"] {
-  color: var(--danger);
+  color: var(--exercise-wrong);
 }
 
 /* Phase 45 / EXP-002 / 3F — WordTilesExercise. Two stacked
@@ -3431,13 +3432,13 @@ select:focus {
 }
 
 .word-tile.is-correct {
-  border-color: #10b981;
-  background: color-mix(in srgb, #10b981 18%, var(--surface));
+  border-color: var(--exercise-correct);
+  background: color-mix(in srgb, var(--exercise-correct) 18%, var(--surface));
 }
 
 .word-tile.is-wrong {
-  border-color: var(--danger);
-  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
+  border-color: var(--exercise-wrong);
+  background: color-mix(in srgb, var(--exercise-wrong) 12%, var(--surface));
 }
 
 .word-tile:disabled {
@@ -3547,7 +3548,7 @@ select:focus {
 }
 
 .word-tiles-result[data-result="correct"] {
-  color: #10b981;
+  color: var(--exercise-correct);
 }
 
 .word-tiles-result[data-result="wrong"] {
@@ -6134,17 +6135,17 @@ select:focus {
 /* Gold badges get a subtle golden glow (Phase 57). Reduced-motion
    keeps a static glow; no pulse. */
 .badge-card.is-earned[data-tier="gold"] {
-  border-color: #b8860b;
-  box-shadow: 0 0 10px color-mix(in srgb, #ffd700 45%, transparent);
+  border-color: var(--star);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--star) 45%, transparent);
   animation: badge-gold-glow 2s ease-in-out infinite alternate;
 }
 
 @keyframes badge-gold-glow {
   from {
-    box-shadow: 0 0 6px color-mix(in srgb, #ffd700 30%, transparent);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--star) 30%, transparent);
   }
   to {
-    box-shadow: 0 0 14px color-mix(in srgb, #ffd700 60%, transparent);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--star) 60%, transparent);
   }
 }
 
