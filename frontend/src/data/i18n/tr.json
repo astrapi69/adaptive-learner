@@ -1383,6 +1383,9 @@
   },
   "content": {
     "my_lessons": {
+      "export_set": "Set olarak dışa aktar",
+      "share": "Toplulukla paylaş",
+      "exported": "Ders dışa aktarıldı.",
       "title": "Derslerim",
       "downloaded_title": "İndirilen setler",
       "empty": "İlk dersini oluşturmak için bir sohbet içe aktar ve analiz et.",

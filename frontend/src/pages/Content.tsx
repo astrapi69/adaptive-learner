@@ -32,10 +32,25 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useI18n } from "../hooks/useI18n";
+import {
+  buildContentSetZip,
+  communityIssueUrl,
+  contentSetFileName,
+  downloadLessonJson,
+  triggerDownload,
+  type ExportSetMeta,
+} from "../lib/content/lesson-export";
 import { getStorage } from "../storage";
 import { USER_GENERATED_SOURCE } from "../storage/types";
-import type { ContentSetEntry, ContentSetSource } from "../storage/types";
+import type {
+  ContentLesson,
+  ContentSetEntry,
+  ContentSetSource,
+} from "../storage/types";
 import { notify } from "../utils/notify";
+
+/** Community contribution target repo (manual maintainer review). */
+const COMMUNITY_REPO = "astrapi69/adaptive-learner-content";
 
 type DownloadState = "idle" | "downloading" | "done" | "error";
 
@@ -149,6 +164,70 @@ export default function ContentPage() {
     } finally {
       setDeleting(false);
     }
+  };
+
+  // Phase 59D — export + community sharing.
+  const exportMeta = (entry: ContentSetEntry): ExportSetMeta => ({
+    set_id: entry.id,
+    title: entry.title,
+    language: entry.language,
+    level: entry.level,
+    description: entry.description,
+  });
+
+  const fetchSetLessons = async (
+    entry: ContentSetEntry,
+  ): Promise<ContentLesson[]> => {
+    const listing = await getStorage().contentLoader.listLessons(
+      entry.source,
+      entry.id,
+    );
+    return Promise.all(
+      listing.lessons.map((f) =>
+        getStorage().contentLoader.getLesson(entry.source, entry.id, f),
+      ),
+    );
+  };
+
+  const handleExportJson = async (entry: ContentSetEntry) => {
+    try {
+      const lessons = await fetchSetLessons(entry);
+      if (lessons.length === 1) {
+        downloadLessonJson(lessons[0]);
+      } else {
+        const blob = await buildContentSetZip(exportMeta(entry), lessons);
+        triggerDownload(blob, contentSetFileName(entry.title));
+      }
+      notify.success(t("content.my_lessons.exported", "Lesson exported."));
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`,
+      );
+    }
+  };
+
+  const handleExportSet = async (entry: ContentSetEntry) => {
+    try {
+      const lessons = await fetchSetLessons(entry);
+      const blob = await buildContentSetZip(exportMeta(entry), lessons);
+      triggerDownload(blob, contentSetFileName(entry.title));
+      notify.success(t("content.my_lessons.exported", "Lesson exported."));
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`,
+      );
+    }
+  };
+
+  const handleShare = (entry: ContentSetEntry) => {
+    const url = communityIssueUrl(
+      COMMUNITY_REPO,
+      exportMeta(entry),
+      entry.lesson_count,
+    );
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const handleDownload = async (entry: ContentSetEntry) => {
@@ -292,6 +371,32 @@ export default function ContentPage() {
                       {t("content.my_lessons.edit", "Edit")}
                     </button>
                   )}
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => void handleExportJson(entry)}
+                    data-testid={`my-lesson-${entry.id}-export`}
+                  >
+                    <Download size={14} aria-hidden="true" />
+                    {t("content.my_lessons.export", "Export")}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => void handleExportSet(entry)}
+                    data-testid={`my-lesson-${entry.id}-export-set`}
+                  >
+                    <FolderOpen size={14} aria-hidden="true" />
+                    {t("content.my_lessons.export_set", "Export as set")}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => handleShare(entry)}
+                    data-testid={`my-lesson-${entry.id}-share`}
+                  >
+                    {t("content.my_lessons.share", "Share with Community")}
+                  </button>
                   <button
                     type="button"
                     className="btn btn-secondary"

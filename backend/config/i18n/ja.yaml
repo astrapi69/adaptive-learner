@@ -1271,6 +1271,9 @@ lesson:
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   my_lessons:
+    export_set: "セットとしてエクスポート"
+    share: "コミュニティで共有"
+    exported: "レッスンをエクスポートしました。"
     title: "マイレッスン"
     downloaded_title: "ダウンロード済みセット"
     empty: "チャットをインポートして分析し、最初のレッスンを作成しましょう。"

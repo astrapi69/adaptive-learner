@@ -1383,6 +1383,9 @@
   },
   "content": {
     "my_lessons": {
+      "export_set": "Exportar como conjunto",
+      "share": "Compartir con la comunidad",
+      "exported": "Lección exportada.",
       "title": "Mis lecciones",
       "downloaded_title": "Conjuntos descargados",
       "empty": "Importa un chat y analízalo para crear tu primera lección.",

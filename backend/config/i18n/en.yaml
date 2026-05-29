@@ -1282,6 +1282,9 @@ lesson:
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   my_lessons:
+    export_set: "Export as set"
+    share: "Share with Community"
+    exported: "Lesson exported."
     title: "My Lessons"
     downloaded_title: "Downloaded sets"
     empty: "Import a chat and analyze it to create your first lesson."

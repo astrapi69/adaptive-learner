@@ -1273,6 +1273,9 @@ lesson:
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   my_lessons:
+    export_set: "Εξαγωγή ως σύνολο"
+    share: "Κοινοποίηση στην κοινότητα"
+    exported: "Το μάθημα εξήχθη."
     title: "Τα μαθήματά μου"
     downloaded_title: "Ληφθέντα σύνολα"
     empty: "Εισαγάγετε μια συνομιλία και αναλύστε την για να δημιουργήσετε το πρώτο σας μάθημα."

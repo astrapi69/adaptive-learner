@@ -1383,6 +1383,9 @@
   },
   "content": {
     "my_lessons": {
+      "export_set": "Exporter comme ensemble",
+      "share": "Partager avec la communauté",
+      "exported": "Leçon exportée.",
       "title": "Mes leçons",
       "downloaded_title": "Ensembles téléchargés",
       "empty": "Importez une conversation et analysez-la pour créer votre première leçon.",
