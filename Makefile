@@ -406,6 +406,14 @@ sync-mkdocs-nav: ## Regenerate mkdocs.yml nav blocks from docs/help/_meta.yaml
 verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-friendly)
 	cd docs && poetry run python ../scripts/generate_mkdocs_nav.py --check
 
+# --- Documentation verification (drift detection) ---
+
+verify-docs: ## Verify documentation for drift (version/counts/features/help/i18n/themes; stdlib only)
+	@python3 scripts/verify_docs.py
+
+verify-docs-fix: ## Best-effort auto-fix of mechanical docs drift (version badges, counts, i18n sync)
+	@python3 scripts/verify_docs.py --fix
+
 # --- Plugin lockfile discipline ---
 
 lock-all-plugins: ## Re-lock every plugin's poetry.lock (after a shared-dep pin bump)
