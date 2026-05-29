@@ -56,6 +56,19 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
+- [ ] **DEP-MYPY-2-01**: Upgrade mypy 1.x -> 2.0 (held back in the
+  v1.41.0 dep sweep — caret ``^1.20`` caps it). Major version;
+  needs a dedicated migration session (new/renamed error classes,
+  stricter defaults). Not urgent. Bump the pin in
+  ``backend/pyproject.toml`` + every ``plugins/*/pyproject.toml``,
+  re-lock, then fix the fallout under ``poetry run mypy app/``.
+- [ ] **DEP-ANTHROPIC-105-01**: Upgrade the ai-anthropic plugin's
+  ``anthropic`` SDK 0.55 -> 0.105 (held back in v1.41.0; out of the
+  ``^0.55`` caret). A 50-version 0.x jump: the plugin's tests MOCK
+  the SDK, so a green suite would NOT prove ``messages.create`` still
+  works. Schedule a dedicated session that exercises a REAL API call
+  (live key) before bumping the pin + lock.
+
 - [ ] **BACKUP-DIR-EXPORT-01**: Best-effort "Save backup to
   disk" feature for Dexie-mode users. Originally scoped as
   Phase 41C (auto-backup to
