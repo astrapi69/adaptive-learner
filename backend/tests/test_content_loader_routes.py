@@ -313,8 +313,7 @@ FAKE_PNG = b"\x89PNG\r\n\x1a\n" + b"FAKE_PIXEL_DATA"
 def test_asset_route_mounted(client: TestClient) -> None:
     paths = {r.path for r in app.routes if hasattr(r, "path")}
     assert (
-        "/api/plugins/content-loader/sets/{source_slug}/{set_id}/assets/{asset_path:path}"
-        in paths
+        "/api/plugins/content-loader/sets/{source_slug}/{set_id}/assets/{asset_path:path}" in paths
     )
 
 
@@ -329,6 +328,7 @@ def test_get_asset_uncached_set_returns_404(client: TestClient) -> None:
 def test_get_asset_after_download(client: TestClient) -> None:
     """End-to-end: download a set that declares an asset, then
     hit the proxy endpoint and verify the bytes + headers."""
+
     # Mock both the manifest fetch + the asset fetch via the
     # shared transport.
     def handler(request: httpx.Request) -> httpx.Response:
@@ -336,9 +336,7 @@ def test_get_asset_after_download(client: TestClient) -> None:
         text_routes = {
             f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST_WITH_ASSETS,
             f"/{SOURCE}/main/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
-            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": (
-                LESSON_JSON
-            ),
+            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": (LESSON_JSON),
         }
         binary_routes = {
             f"/{SOURCE}/main/sets/{SET_ID}/assets/img/cover.png": FAKE_PNG,
@@ -372,14 +370,13 @@ def test_get_asset_unknown_path_returns_404(
     """Set IS cached, but the requested asset path was never
     bundled — 404 (not 500). The frontend's resolver treats
     this identically to a Dexie miss → placeholder SVG."""
+
     def handler(request: httpx.Request) -> httpx.Response:
         path = request.url.path
         text_routes = {
             f"/{SOURCE}/main/manifest.yaml": REPO_MANIFEST,
             f"/{SOURCE}/main/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
-            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": (
-                LESSON_JSON
-            ),
+            f"/{SOURCE}/main/sets/{SET_ID}/lessons/01-greetings.json": (LESSON_JSON),
         }
         if path in text_routes:
             return httpx.Response(200, text=text_routes[path])
@@ -393,3 +390,86 @@ def test_get_asset_unknown_path_returns_404(
         f"/api/plugins/content-loader/sets/{SOURCE_SLUG}/{SET_ID}/assets/img/missing.png",
     )
     assert r.status_code == 404
+
+
+# --- Phase 59B/C / v1.42.0 — user-generated sets (My Lessons) --------------
+
+
+def _user_lesson_payload(set_id: str = "conv-route") -> dict:
+    """Build a schema-valid lesson dict via the generator."""
+    from adaptive_learner_content_loader.analysis_to_lesson import (
+        generate_lesson_from_analysis,
+    )
+
+    lesson = generate_lesson_from_analysis(
+        {
+            "topic": "Route test",
+            "summary": "x",
+            "vocabulary": [
+                {"word": "a", "translation": "b", "example": "a c"},
+                {"word": "d", "translation": "e", "example": "d f"},
+                {"word": "g", "translation": "h"},
+                {"word": "i", "translation": "j"},
+            ],
+        },
+        lesson_id=set_id,
+    )
+    return lesson.model_dump(mode="json")
+
+
+def test_save_user_set_then_list_play_delete(client: TestClient) -> None:
+    lesson = _user_lesson_payload()
+    body = {
+        "set_id": "conv-route",
+        "title": "Route test",
+        "language": "en",
+        "level": "beginner",
+        "origin": "analysis",
+        "lessons": [lesson],
+    }
+    r = client.post("/api/plugins/content-loader/user-sets", json=body)
+    assert r.status_code == 200, r.text
+    entry = r.json()
+    assert entry["source"] == "user-generated"
+    assert entry["id"] == "conv-route"
+    assert entry["domain"] == "analysis"
+
+    # Appears in /sets under the user-generated source.
+    r = client.get("/api/plugins/content-loader/sets")
+    assert any(
+        s["id"] == "conv-route" and s["source"] == "user-generated" for s in r.json()["sets"]
+    ), r.text
+
+    # Lessons listable + playable (re-validates as Lesson).
+    r = client.get(
+        "/api/plugins/content-loader/sets/user-generated/conv-route/lessons",
+    )
+    assert r.status_code == 200, r.text
+    filenames = r.json()["lessons"]
+    assert filenames, r.text
+    r = client.get(
+        f"/api/plugins/content-loader/sets/user-generated/conv-route/lessons/{filenames[0]}",
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["id"] == lesson["id"]
+
+    # Delete removes it.
+    r = client.delete("/api/plugins/content-loader/sets/user-generated/conv-route")
+    assert r.status_code == 204, r.text
+    r = client.get(
+        "/api/plugins/content-loader/sets/user-generated/conv-route/lessons",
+    )
+    assert r.status_code == 404
+
+
+def test_save_user_set_rejects_bad_set_id(client: TestClient) -> None:
+    body = {
+        "set_id": "Not A Slug",
+        "title": "t",
+        "language": "en",
+        "level": "beginner",
+        "origin": "analysis",
+        "lessons": [_user_lesson_payload("conv-x")],
+    }
+    r = client.post("/api/plugins/content-loader/user-sets", json=body)
+    assert r.status_code in (400, 422), r.text

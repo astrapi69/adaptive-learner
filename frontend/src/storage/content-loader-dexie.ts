@@ -22,18 +22,20 @@
  * deployment reads from the bundled default.
  */
 
-import {parse as parseYaml} from "yaml";
+import { parse as parseYaml } from "yaml";
 
 import type {
-    ContentLesson,
-    ContentLessonList,
-    ContentSetEntry,
-    ContentSetSource,
-    ContentSetsList,
+  ContentLesson,
+  ContentLessonList,
+  ContentSetEntry,
+  ContentSetSource,
+  ContentSetsList,
+  SaveUserSetInput,
 } from "./types";
-import {isDevMode} from "../hooks/useDevMode";
-import {getDb} from "./db";
-import type {ContentSetRow, ContentSetFileRow} from "./db";
+import { USER_GENERATED_SOURCE } from "./types";
+import { isDevMode } from "../hooks/useDevMode";
+import { getDb } from "./db";
+import type { ContentSetRow, ContentSetFileRow } from "./db";
 
 const RAW_BASE = "https://raw.githubusercontent.com";
 const BUNDLED_PREFIX = "bundled:";
@@ -58,13 +60,13 @@ const BUNDLED_PREFIX = "bundled:";
  * fails gracefully and the next source is tried.
  */
 const DEFAULT_SOURCES: ContentSetSource[] = [
-    {source: `${BUNDLED_PREFIX}fr-a1`, branch: ""},
-    {source: `${BUNDLED_PREFIX}es-a1`, branch: ""},
-    {source: "astrapi69/adaptive-learner-content", branch: "main"},
+  { source: `${BUNDLED_PREFIX}fr-a1`, branch: "" },
+  { source: `${BUNDLED_PREFIX}es-a1`, branch: "" },
+  { source: "astrapi69/adaptive-learner-content", branch: "main" },
 ];
 
 function slugifySource(source: string): string {
-    return source.replace(/[/:]/g, "--");
+  return source.replace(/[/:]/g, "--");
 }
 
 /**
@@ -79,77 +81,77 @@ function slugifySource(source: string): string {
  *   ignored for bundled sources.
  */
 function rawUrl(source: string, branch: string, path: string): string {
-    const safePath = path.replace(/^\/+/, "");
-    if (source.startsWith(BUNDLED_PREFIX)) {
-        const key = source.slice(BUNDLED_PREFIX.length);
-        const basePath = import.meta.env.BASE_URL ?? "/";
-        const normalisedBase = basePath.endsWith("/") ? basePath : `${basePath}/`;
-        return `${normalisedBase}content/${key}/${safePath}`;
-    }
-    return `${RAW_BASE}/${source}/${branch}/${safePath}`;
+  const safePath = path.replace(/^\/+/, "");
+  if (source.startsWith(BUNDLED_PREFIX)) {
+    const key = source.slice(BUNDLED_PREFIX.length);
+    const basePath = import.meta.env.BASE_URL ?? "/";
+    const normalisedBase = basePath.endsWith("/") ? basePath : `${basePath}/`;
+    return `${normalisedBase}content/${key}/${safePath}`;
+  }
+  return `${RAW_BASE}/${source}/${branch}/${safePath}`;
 }
 
 function cacheKey(source: string, setId: string, version: string): string {
-    return `${slugifySource(source)}/${setId}/${version}`;
+  return `${slugifySource(source)}/${setId}/${version}`;
 }
 
 function fileKey(setPk: string, filename: string): string {
-    return `${setPk}#${filename}`;
+  return `${setPk}#${filename}`;
 }
 
 async function fetchText(url: string): Promise<string> {
-    const response = await fetch(url);
-    if (!response.ok) {
-        const err: Error & {status?: number} = new Error(
-            `Upstream HTTP ${response.status} for ${url}`,
-        );
-        err.status = response.status;
-        throw err;
-    }
-    return response.text();
+  const response = await fetch(url);
+  if (!response.ok) {
+    const err: Error & { status?: number } = new Error(
+      `Upstream HTTP ${response.status} for ${url}`,
+    );
+    err.status = response.status;
+    throw err;
+  }
+  return response.text();
 }
 
 /** Phase 54 / v1.37.0 — fetch raw bytes for an asset.
  *  Returns null on 404 so the download orchestrator can skip
  *  missing assets instead of failing the whole set download. */
 async function fetchBytesOptional(url: string): Promise<ArrayBuffer | null> {
-    const response = await fetch(url);
-    if (response.status === 404) return null;
-    if (!response.ok) {
-        const err: Error & {status?: number} = new Error(
-            `Upstream HTTP ${response.status} for ${url}`,
-        );
-        err.status = response.status;
-        throw err;
-    }
-    return response.arrayBuffer();
+  const response = await fetch(url);
+  if (response.status === 404) return null;
+  if (!response.ok) {
+    const err: Error & { status?: number } = new Error(
+      `Upstream HTTP ${response.status} for ${url}`,
+    );
+    err.status = response.status;
+    throw err;
+  }
+  return response.arrayBuffer();
 }
 
 /** Convert ArrayBuffer → base64 in chunks to avoid the call-stack
  *  overflow ``btoa(String.fromCharCode(...new Uint8Array(buf)))``
  *  hits on large blobs in some engines. */
 function arrayBufferToBase64(buf: ArrayBuffer): string {
-    const bytes = new Uint8Array(buf);
-    const CHUNK = 0x8000;
-    let binary = "";
-    for (let i = 0; i < bytes.length; i += CHUNK) {
-        const slice = bytes.subarray(i, i + CHUNK);
-        binary += String.fromCharCode.apply(
-            null,
-            Array.from(slice) as unknown as number[],
-        );
-    }
-    return btoa(binary);
+  const bytes = new Uint8Array(buf);
+  const CHUNK = 0x8000;
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += CHUNK) {
+    const slice = bytes.subarray(i, i + CHUNK);
+    binary += String.fromCharCode.apply(
+      null,
+      Array.from(slice) as unknown as number[],
+    );
+  }
+  return btoa(binary);
 }
 
 /** Convert base64 → Uint8Array (the inverse of the above). */
 function base64ToBytes(b64: string): Uint8Array {
-    const binary = atob(b64);
-    const bytes = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
-    }
-    return bytes;
+  const binary = atob(b64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
 }
 
 /** Guess MIME type from an asset path's extension. The Dexie
@@ -157,374 +159,367 @@ function base64ToBytes(b64: string): Uint8Array {
  *  MIME to instantiate the Blob with a sensible default.
  *  Phase 54B / v1.37.0. */
 export function mimeTypeForAssetPath(path: string): string {
-    const dot = path.lastIndexOf(".");
-    const ext = dot >= 0 ? path.slice(dot + 1).toLowerCase() : "";
-    switch (ext) {
-        case "png":
-            return "image/png";
-        case "jpg":
-        case "jpeg":
-            return "image/jpeg";
-        case "webp":
-            return "image/webp";
-        case "svg":
-            return "image/svg+xml";
-        default:
-            return "application/octet-stream";
-    }
+  const dot = path.lastIndexOf(".");
+  const ext = dot >= 0 ? path.slice(dot + 1).toLowerCase() : "";
+  switch (ext) {
+    case "png":
+      return "image/png";
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "webp":
+      return "image/webp";
+    case "svg":
+      return "image/svg+xml";
+    default:
+      return "application/octet-stream";
+  }
 }
 
 interface ParsedSetAsset {
-    path: string;
-    size_kb: number;
+  path: string;
+  size_kb: number;
 }
 
 interface ParsedSet {
-    id: string;
-    title: string;
-    language: string;
-    level: string;
-    version: string;
-    lesson_count: number;
-    domain?: string;
-    description?: string | null;
-    tags?: string[];
-    cover_image?: string | null;
-    /** Phase 54 / v1.37.0 — declared assets bundled with the set. */
-    assets?: ParsedSetAsset[];
+  id: string;
+  title: string;
+  language: string;
+  level: string;
+  version: string;
+  lesson_count: number;
+  domain?: string;
+  description?: string | null;
+  tags?: string[];
+  cover_image?: string | null;
+  /** Phase 54 / v1.37.0 — declared assets bundled with the set. */
+  assets?: ParsedSetAsset[];
 }
 
 interface ParsedManifest {
-    schema_version?: string;
-    name?: string;
-    description?: string | null;
-    sets?: ParsedSet[];
-    metadata?: Record<string, unknown>;
+  schema_version?: string;
+  name?: string;
+  description?: string | null;
+  sets?: ParsedSet[];
+  metadata?: Record<string, unknown>;
 }
 
 function asContentSetEntry(
-    src: ContentSetSource,
-    parsed: ParsedSet,
-    cachedVersion: string | null,
+  src: ContentSetSource,
+  parsed: ParsedSet,
+  cachedVersion: string | null,
 ): ContentSetEntry {
-    const updateAvailable =
-        cachedVersion !== null && cachedVersion !== parsed.version;
-    return {
-        source: src.source,
-        branch: src.branch,
-        id: parsed.id,
-        title: parsed.title,
-        language: parsed.language,
-        level: parsed.level,
-        domain: parsed.domain ?? "language",
-        version: parsed.version,
-        lesson_count: parsed.lesson_count,
-        description: parsed.description ?? null,
-        tags: parsed.tags ?? [],
-        cover_image: parsed.cover_image ?? null,
-        cached_version: cachedVersion,
-        update_available: updateAvailable,
-    };
+  const updateAvailable =
+    cachedVersion !== null && cachedVersion !== parsed.version;
+  return {
+    source: src.source,
+    branch: src.branch,
+    id: parsed.id,
+    title: parsed.title,
+    language: parsed.language,
+    level: parsed.level,
+    domain: parsed.domain ?? "language",
+    version: parsed.version,
+    lesson_count: parsed.lesson_count,
+    description: parsed.description ?? null,
+    tags: parsed.tags ?? [],
+    cover_image: parsed.cover_image ?? null,
+    cached_version: cachedVersion,
+    update_available: updateAvailable,
+  };
 }
 
-async function rowToCachedEntry(
-    row: ContentSetRow,
-): Promise<ContentSetEntry> {
-    let tags: string[] = [];
-    try {
-        const parsed: unknown = JSON.parse(row.tags || "[]");
-        if (Array.isArray(parsed)) {
-            tags = parsed.filter((x): x is string => typeof x === "string");
-        }
-    } catch {
-        /* malformed JSON in the tags column — fall through */
+async function rowToCachedEntry(row: ContentSetRow): Promise<ContentSetEntry> {
+  let tags: string[] = [];
+  try {
+    const parsed: unknown = JSON.parse(row.tags || "[]");
+    if (Array.isArray(parsed)) {
+      tags = parsed.filter((x): x is string => typeof x === "string");
     }
-    return {
-        source: row.source,
-        branch: row.branch,
-        id: row.set_id,
-        title: row.title,
-        language: row.language,
-        level: row.level,
-        domain: row.domain,
-        version: row.version,
-        lesson_count: row.lesson_count,
-        description: row.description,
-        tags,
-        cover_image: row.cover_image,
-        cached_version: row.version,
-        update_available: false,
-    };
+  } catch {
+    /* malformed JSON in the tags column — fall through */
+  }
+  return {
+    source: row.source,
+    branch: row.branch,
+    id: row.set_id,
+    title: row.title,
+    language: row.language,
+    level: row.level,
+    domain: row.domain,
+    version: row.version,
+    lesson_count: row.lesson_count,
+    description: row.description,
+    tags,
+    cover_image: row.cover_image,
+    cached_version: row.version,
+    update_available: false,
+  };
 }
 
 async function latestCachedRow(
-    source: string,
-    setId: string,
+  source: string,
+  setId: string,
 ): Promise<ContentSetRow | null> {
-    const db = getDb();
-    const rows = await db.contentSets
-        .where("set_id")
-        .equals(setId)
-        .filter((r) => r.source === source)
-        .toArray();
-    if (rows.length === 0) return null;
-    rows.sort((a, b) => (a.version < b.version ? -1 : 1));
-    return rows[rows.length - 1];
+  const db = getDb();
+  const rows = await db.contentSets
+    .where("set_id")
+    .equals(setId)
+    .filter((r) => r.source === source)
+    .toArray();
+  if (rows.length === 0) return null;
+  rows.sort((a, b) => (a.version < b.version ? -1 : 1));
+  return rows[rows.length - 1];
 }
 
 export async function listSetsDexie(
-    sources: ContentSetSource[] = DEFAULT_SOURCES,
+  sources: ContentSetSource[] = DEFAULT_SOURCES,
 ): Promise<ContentSetsList> {
-    const entries: ContentSetEntry[] = [];
-    for (const src of sources) {
-        let manifest: ParsedManifest | null = null;
-        try {
-            const text = await fetchText(
-                rawUrl(src.source, src.branch, "manifest.yaml"),
-            );
-            manifest = (parseYaml(text) ?? null) as ParsedManifest | null;
-        } catch (err) {
-            // Upstream offline / 404 / network failure: fall
-            // back to whatever this source has cached so the
-            // Set Browser stays usable on a flaky connection.
-            const db = getDb();
-            const cached = await db.contentSets
-                .where("source")
-                .equals(src.source)
-                .toArray();
-            for (const row of cached) {
-                entries.push(await rowToCachedEntry(row));
-            }
-            // Expected for the not-yet-published upstream content repo
-            // (the bundled pilots already loaded above). Only surface
-            // the diagnostic in Developer Mode so production users don't
-            // see repeated warnings for a graceful, by-design fallback.
-            if (isDevMode()) {
-                // eslint-disable-next-line no-console
-                console.warn(
-                    `content-loader: upstream ${src.source}@${src.branch} unreachable, surfacing cached only`,
-                    err,
-                );
-            }
-            continue;
-        }
-        if (!manifest || !Array.isArray(manifest.sets)) continue;
-        for (const parsed of manifest.sets) {
-            const cached = await latestCachedRow(src.source, parsed.id);
-            entries.push(
-                asContentSetEntry(
-                    src,
-                    parsed,
-                    cached ? cached.version : null,
-                ),
-            );
-        }
+  const entries: ContentSetEntry[] = [];
+  for (const src of sources) {
+    let manifest: ParsedManifest | null = null;
+    try {
+      const text = await fetchText(
+        rawUrl(src.source, src.branch, "manifest.yaml"),
+      );
+      manifest = (parseYaml(text) ?? null) as ParsedManifest | null;
+    } catch (err) {
+      // Upstream offline / 404 / network failure: fall
+      // back to whatever this source has cached so the
+      // Set Browser stays usable on a flaky connection.
+      const db = getDb();
+      const cached = await db.contentSets
+        .where("source")
+        .equals(src.source)
+        .toArray();
+      for (const row of cached) {
+        entries.push(await rowToCachedEntry(row));
+      }
+      // Expected for the not-yet-published upstream content repo
+      // (the bundled pilots already loaded above). Only surface
+      // the diagnostic in Developer Mode so production users don't
+      // see repeated warnings for a graceful, by-design fallback.
+      if (isDevMode()) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `content-loader: upstream ${src.source}@${src.branch} unreachable, surfacing cached only`,
+          err,
+        );
+      }
+      continue;
     }
-    return {sets: entries, sources};
+    if (!manifest || !Array.isArray(manifest.sets)) continue;
+    for (const parsed of manifest.sets) {
+      const cached = await latestCachedRow(src.source, parsed.id);
+      entries.push(
+        asContentSetEntry(src, parsed, cached ? cached.version : null),
+      );
+    }
+  }
+  // Phase 59B — user-generated sets ("My Lessons") aren't an
+  // upstream source; surface them from IndexedDB directly.
+  const db = getDb();
+  const userRows = await db.contentSets
+    .where("source")
+    .equals(USER_GENERATED_SOURCE)
+    .toArray();
+  for (const row of userRows) {
+    entries.push(await rowToCachedEntry(row));
+  }
+  return { sets: entries, sources };
 }
 
 export async function downloadSetDexie(
-    source: string,
-    setId: string,
-    sources: ContentSetSource[] = DEFAULT_SOURCES,
+  source: string,
+  setId: string,
+  sources: ContentSetSource[] = DEFAULT_SOURCES,
 ): Promise<ContentSetEntry> {
-    const src =
-        sources.find((s) => s.source === source) ?? {source, branch: "main"};
+  const src = sources.find((s) => s.source === source) ?? {
+    source,
+    branch: "main",
+  };
 
-    // Repo manifest → find the target set entry.
-    const repoText = await fetchText(
-        rawUrl(src.source, src.branch, "manifest.yaml"),
+  // Repo manifest → find the target set entry.
+  const repoText = await fetchText(
+    rawUrl(src.source, src.branch, "manifest.yaml"),
+  );
+  const repoManifest = parseYaml(repoText) as ParsedManifest;
+  const target = (repoManifest.sets ?? []).find((s) => s.id === setId);
+  if (!target) {
+    const err: Error & { status?: number } = new Error(
+      `Set ${setId} not advertised by ${source}`,
     );
-    const repoManifest = parseYaml(repoText) as ParsedManifest;
-    const target = (repoManifest.sets ?? []).find((s) => s.id === setId);
-    if (!target) {
-        const err: Error & {status?: number} = new Error(
-            `Set ${setId} not advertised by ${source}`,
-        );
-        err.status = 404;
-        throw err;
-    }
+    err.status = 404;
+    throw err;
+  }
 
-    // Reconcile: idempotent re-download.
-    const cached = await latestCachedRow(source, setId);
-    if (cached && cached.version === target.version) {
-        return asContentSetEntry(src, target, cached.version);
-    }
+  // Reconcile: idempotent re-download.
+  const cached = await latestCachedRow(source, setId);
+  if (cached && cached.version === target.version) {
+    return asContentSetEntry(src, target, cached.version);
+  }
 
-    // Set manifest → lesson filename list.
-    const setManifestText = await fetchText(
-        rawUrl(src.source, src.branch, `sets/${setId}/manifest.yaml`),
+  // Set manifest → lesson filename list.
+  const setManifestText = await fetchText(
+    rawUrl(src.source, src.branch, `sets/${setId}/manifest.yaml`),
+  );
+  const setManifest = parseYaml(setManifestText) as ParsedManifest;
+  let lessonFilenames: string[];
+  const metaLessons = setManifest.metadata?.lessons;
+  if (
+    Array.isArray(metaLessons) &&
+    metaLessons.every((x) => typeof x === "string")
+  ) {
+    lessonFilenames = metaLessons as string[];
+  } else {
+    // Fallback: conventional NN.json indices from 1..count.
+    lessonFilenames = [];
+    for (let i = 1; i <= target.lesson_count; i++) {
+      lessonFilenames.push(`${String(i).padStart(2, "0")}.json`);
+    }
+  }
+
+  // Fetch every lesson.
+  const lessonBodies: Record<string, string> = {};
+  for (const filename of lessonFilenames) {
+    lessonBodies[filename] = await fetchText(
+      rawUrl(src.source, src.branch, `sets/${setId}/lessons/${filename}`),
     );
-    const setManifest = parseYaml(setManifestText) as ParsedManifest;
-    let lessonFilenames: string[];
-    const metaLessons = setManifest.metadata?.lessons;
-    if (
-        Array.isArray(metaLessons) &&
-        metaLessons.every((x) => typeof x === "string")
-    ) {
-        lessonFilenames = metaLessons as string[];
-    } else {
-        // Fallback: conventional NN.json indices from 1..count.
-        lessonFilenames = [];
-        for (let i = 1; i <= target.lesson_count; i++) {
-            lessonFilenames.push(`${String(i).padStart(2, "0")}.json`);
-        }
-    }
+  }
 
-    // Fetch every lesson.
-    const lessonBodies: Record<string, string> = {};
-    for (const filename of lessonFilenames) {
-        lessonBodies[filename] = await fetchText(
-            rawUrl(
-                src.source,
-                src.branch,
-                `sets/${setId}/lessons/${filename}`,
-            ),
-        );
-    }
-
-    // Phase 54 / v1.37.0 — fetch declared assets alongside
-    // the lessons. Assets that 404 upstream are dropped
-    // silently so a stale manifest entry doesn't fail the
-    // whole set download; the frontend falls back to a
-    // placeholder SVG / text-only display for missing
-    // images. Asset bytes get base64-encoded so they fit in
-    // the existing ``contentSetFiles.body`` text column —
-    // no Dexie schema bump needed.
-    const assetBodies: Record<string, string> = {};
-    for (const asset of target.assets ?? []) {
-        const buf = await fetchBytesOptional(
-            rawUrl(
-                src.source,
-                src.branch,
-                `sets/${setId}/assets/${asset.path}`,
-            ),
-        );
-        if (buf === null) continue;
-        assetBodies[asset.path] = arrayBufferToBase64(buf);
-    }
-
-    // Persist atomically — Dexie transaction over both tables.
-    const db = getDb();
-    const setPk = cacheKey(source, setId, target.version);
-    await db.transaction(
-        "rw",
-        db.contentSets,
-        db.contentSetFiles,
-        async () => {
-            const row: ContentSetRow = {
-                id: setPk,
-                source,
-                branch: src.branch,
-                set_id: setId,
-                version: target.version,
-                title: target.title,
-                language: target.language,
-                level: target.level,
-                domain: target.domain ?? "language",
-                lesson_count: target.lesson_count,
-                description: target.description ?? null,
-                tags: JSON.stringify(target.tags ?? []),
-                cover_image: target.cover_image ?? null,
-                downloaded_at: new Date().toISOString(),
-                manifest_yaml: setManifestText,
-            };
-            await db.contentSets.put(row);
-
-            const files: ContentSetFileRow[] = [];
-            for (const [filename, body] of Object.entries(lessonBodies)) {
-                files.push({
-                    id: fileKey(setPk, `lessons/${filename}`),
-                    set_pk: setPk,
-                    filename: `lessons/${filename}`,
-                    body,
-                    encoding: "text",
-                });
-            }
-            // Phase 54 — store binary asset bodies as base64
-            // under ``assets/{rel_path}`` filenames so the
-            // getAsset lookup is a single keyed read. The
-            // ``encoding: "base64"`` flag tells the reader
-            // (getAssetDexie below) to decode + wrap in a Blob.
-            for (const [relPath, b64] of Object.entries(assetBodies)) {
-                files.push({
-                    id: fileKey(setPk, `assets/${relPath}`),
-                    set_pk: setPk,
-                    filename: `assets/${relPath}`,
-                    body: b64,
-                    encoding: "base64",
-                });
-            }
-            files.push({
-                id: fileKey(setPk, "manifest.yaml"),
-                set_pk: setPk,
-                filename: "manifest.yaml",
-                body: setManifestText,
-                encoding: "text",
-            });
-            await db.contentSetFiles.bulkPut(files);
-        },
+  // Phase 54 / v1.37.0 — fetch declared assets alongside
+  // the lessons. Assets that 404 upstream are dropped
+  // silently so a stale manifest entry doesn't fail the
+  // whole set download; the frontend falls back to a
+  // placeholder SVG / text-only display for missing
+  // images. Asset bytes get base64-encoded so they fit in
+  // the existing ``contentSetFiles.body`` text column —
+  // no Dexie schema bump needed.
+  const assetBodies: Record<string, string> = {};
+  for (const asset of target.assets ?? []) {
+    const buf = await fetchBytesOptional(
+      rawUrl(src.source, src.branch, `sets/${setId}/assets/${asset.path}`),
     );
+    if (buf === null) continue;
+    assetBodies[asset.path] = arrayBufferToBase64(buf);
+  }
 
-    return asContentSetEntry(src, target, target.version);
+  // Persist atomically — Dexie transaction over both tables.
+  const db = getDb();
+  const setPk = cacheKey(source, setId, target.version);
+  await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
+    const row: ContentSetRow = {
+      id: setPk,
+      source,
+      branch: src.branch,
+      set_id: setId,
+      version: target.version,
+      title: target.title,
+      language: target.language,
+      level: target.level,
+      domain: target.domain ?? "language",
+      lesson_count: target.lesson_count,
+      description: target.description ?? null,
+      tags: JSON.stringify(target.tags ?? []),
+      cover_image: target.cover_image ?? null,
+      downloaded_at: new Date().toISOString(),
+      manifest_yaml: setManifestText,
+    };
+    await db.contentSets.put(row);
+
+    const files: ContentSetFileRow[] = [];
+    for (const [filename, body] of Object.entries(lessonBodies)) {
+      files.push({
+        id: fileKey(setPk, `lessons/${filename}`),
+        set_pk: setPk,
+        filename: `lessons/${filename}`,
+        body,
+        encoding: "text",
+      });
+    }
+    // Phase 54 — store binary asset bodies as base64
+    // under ``assets/{rel_path}`` filenames so the
+    // getAsset lookup is a single keyed read. The
+    // ``encoding: "base64"`` flag tells the reader
+    // (getAssetDexie below) to decode + wrap in a Blob.
+    for (const [relPath, b64] of Object.entries(assetBodies)) {
+      files.push({
+        id: fileKey(setPk, `assets/${relPath}`),
+        set_pk: setPk,
+        filename: `assets/${relPath}`,
+        body: b64,
+        encoding: "base64",
+      });
+    }
+    files.push({
+      id: fileKey(setPk, "manifest.yaml"),
+      set_pk: setPk,
+      filename: "manifest.yaml",
+      body: setManifestText,
+      encoding: "text",
+    });
+    await db.contentSetFiles.bulkPut(files);
+  });
+
+  return asContentSetEntry(src, target, target.version);
 }
 
 export async function listLessonsDexie(
-    source: string,
-    setId: string,
+  source: string,
+  setId: string,
 ): Promise<ContentLessonList> {
-    const cached = await latestCachedRow(source, setId);
-    if (!cached) {
-        const err: Error & {status?: number} = new Error(
-            `Set ${source}/${setId} is not cached.`,
-        );
-        err.status = 404;
-        throw err;
-    }
-    const db = getDb();
-    const files = await db.contentSetFiles
-        .where("set_pk")
-        .equals(cached.id)
-        .toArray();
-    const lessons = files
-        .map((f) => f.filename)
-        .filter((name) => name.startsWith("lessons/"))
-        .map((name) => name.slice("lessons/".length))
-        .sort();
-    return {
-        set_id: setId,
-        source,
-        version: cached.version,
-        lessons,
-    };
+  const cached = await latestCachedRow(source, setId);
+  if (!cached) {
+    const err: Error & { status?: number } = new Error(
+      `Set ${source}/${setId} is not cached.`,
+    );
+    err.status = 404;
+    throw err;
+  }
+  const db = getDb();
+  const files = await db.contentSetFiles
+    .where("set_pk")
+    .equals(cached.id)
+    .toArray();
+  const lessons = files
+    .map((f) => f.filename)
+    .filter((name) => name.startsWith("lessons/"))
+    .map((name) => name.slice("lessons/".length))
+    .sort();
+  return {
+    set_id: setId,
+    source,
+    version: cached.version,
+    lessons,
+  };
 }
 
 export async function getLessonDexie(
-    source: string,
-    setId: string,
-    filename: string,
+  source: string,
+  setId: string,
+  filename: string,
 ): Promise<ContentLesson> {
-    const cached = await latestCachedRow(source, setId);
-    if (!cached) {
-        const err: Error & {status?: number} = new Error(
-            `Set ${source}/${setId} is not cached.`,
-        );
-        err.status = 404;
-        throw err;
-    }
-    const db = getDb();
-    const file = await db.contentSetFiles.get(
-        fileKey(cached.id, `lessons/${filename}`),
+  const cached = await latestCachedRow(source, setId);
+  if (!cached) {
+    const err: Error & { status?: number } = new Error(
+      `Set ${source}/${setId} is not cached.`,
     );
-    if (!file) {
-        const err: Error & {status?: number} = new Error(
-            `Lesson ${filename} not found in ${source}/${setId}`,
-        );
-        err.status = 404;
-        throw err;
-    }
-    const parsed: unknown = JSON.parse(file.body);
-    return parsed as ContentLesson;
+    err.status = 404;
+    throw err;
+  }
+  const db = getDb();
+  const file = await db.contentSetFiles.get(
+    fileKey(cached.id, `lessons/${filename}`),
+  );
+  if (!file) {
+    const err: Error & { status?: number } = new Error(
+      `Lesson ${filename} not found in ${source}/${setId}`,
+    );
+    err.status = 404;
+    throw err;
+  }
+  const parsed: unknown = JSON.parse(file.body);
+  return parsed as ContentLesson;
 }
 
 /** Phase 54 / v1.37.0 — read a cached asset by relative path
@@ -539,31 +534,108 @@ export async function getLessonDexie(
  *  path extension. The caller (asset resolver) is responsible
  *  for ``URL.createObjectURL`` + ``URL.revokeObjectURL``. */
 export async function getAssetDexie(
-    source: string,
-    setId: string,
-    assetPath: string,
+  source: string,
+  setId: string,
+  assetPath: string,
 ): Promise<Blob | null> {
-    const cached = await latestCachedRow(source, setId);
-    if (!cached) return null;
-    const db = getDb();
-    const file = await db.contentSetFiles.get(
-        fileKey(cached.id, `assets/${assetPath}`),
-    );
-    if (!file) return null;
-    if (file.encoding !== "base64") {
-        // Defensive: the download orchestrator always writes
-        // assets with ``encoding: "base64"``; an unknown
-        // encoding means the row was written by a future
-        // version we don't understand. Falling back to null is
-        // safer than guessing.
-        return null;
-    }
-    const bytes = base64ToBytes(file.body);
-    // Cast through ArrayBuffer because the Blob constructor's
-    // BlobPart type wants an ArrayBuffer-backed view, not a
-    // generic ArrayBufferLike (SharedArrayBuffer would not
-    // round-trip through atob anyway).
-    return new Blob([bytes.buffer as ArrayBuffer], {
-        type: mimeTypeForAssetPath(assetPath),
-    });
+  const cached = await latestCachedRow(source, setId);
+  if (!cached) return null;
+  const db = getDb();
+  const file = await db.contentSetFiles.get(
+    fileKey(cached.id, `assets/${assetPath}`),
+  );
+  if (!file) return null;
+  if (file.encoding !== "base64") {
+    // Defensive: the download orchestrator always writes
+    // assets with ``encoding: "base64"``; an unknown
+    // encoding means the row was written by a future
+    // version we don't understand. Falling back to null is
+    // safer than guessing.
+    return null;
+  }
+  const bytes = base64ToBytes(file.body);
+  // Cast through ArrayBuffer because the Blob constructor's
+  // BlobPart type wants an ArrayBuffer-backed view, not a
+  // generic ArrayBufferLike (SharedArrayBuffer would not
+  // round-trip through atob anyway).
+  return new Blob([bytes.buffer as ArrayBuffer], {
+    type: mimeTypeForAssetPath(assetPath),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Phase 59B / v1.42.0 — user-generated sets (My Lessons)
+// ---------------------------------------------------------------------------
+
+/** User-generated sets carry a single, fixed version: re-saving an
+ *  edited lesson overwrites in place rather than accumulating
+ *  versions (the cache-version machinery is for upstream updates).
+ *  Matches the backend's ``USER_SET_VERSION``. */
+const USER_SET_VERSION = "1.0.0";
+
+/** Persist a user-generated set into the same Dexie tables as
+ *  downloaded sets. Overwrites any prior set with the same
+ *  ``set_id`` under the user-generated source. */
+export async function saveUserSetDexie(
+  input: SaveUserSetInput,
+  now: string,
+): Promise<ContentSetEntry> {
+  const db = getDb();
+  const setPk = cacheKey(USER_GENERATED_SOURCE, input.set_id, USER_SET_VERSION);
+  const row: ContentSetRow = {
+    id: setPk,
+    source: USER_GENERATED_SOURCE,
+    branch: "",
+    set_id: input.set_id,
+    version: USER_SET_VERSION,
+    title: input.title,
+    language: input.language,
+    level: input.level,
+    domain: input.origin,
+    lesson_count: input.lessons.length,
+    description: input.description ?? null,
+    tags: "[]",
+    cover_image: null,
+    downloaded_at: now,
+    manifest_yaml: "",
+  };
+  const files: ContentSetFileRow[] = input.lessons.map((lesson) => ({
+    id: fileKey(setPk, `lessons/${lesson.id}.json`),
+    set_pk: setPk,
+    filename: `lessons/${lesson.id}.json`,
+    body: JSON.stringify(lesson),
+    encoding: "text",
+  }));
+  await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
+    await _purgeSetRows(USER_GENERATED_SOURCE, input.set_id);
+    await db.contentSets.put(row);
+    await db.contentSetFiles.bulkPut(files);
+  });
+  return rowToCachedEntry(row);
+}
+
+/** Delete every cached row (set + files) for a source/set_id pair. */
+export async function deleteSetDexie(
+  source: string,
+  setId: string,
+): Promise<void> {
+  const db = getDb();
+  await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
+    await _purgeSetRows(source, setId);
+  });
+}
+
+/** Internal: remove the set rows + their files. Must run inside an
+ *  existing ``rw`` transaction on both tables. */
+async function _purgeSetRows(source: string, setId: string): Promise<void> {
+  const db = getDb();
+  const rows = await db.contentSets
+    .where("set_id")
+    .equals(setId)
+    .filter((r) => r.source === source)
+    .toArray();
+  for (const existing of rows) {
+    await db.contentSetFiles.where("set_pk").equals(existing.id).delete();
+    await db.contentSets.delete(existing.id);
+  }
 }
