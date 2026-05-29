@@ -1,0 +1,73 @@
+/*
+ * Phase 58D — High-contrast theme. Accessibility-first: maximum
+ * readability, black / white / saturated-signal colors, no decorative
+ * tones. Borders carry separation (the shadow tokens become white
+ * hairline rings so card edges stay visible without soft shadows).
+ * Color tokens ONLY (see theme-light.css).
+ */
+
+[data-theme="high-contrast"] {
+  /* Backgrounds */
+  --bg-primary: #000000;
+  --bg-secondary: #000000;
+  --bg-surface: #0a0a0a;
+  --bg-elevated: #141414;
+  --bg-overlay: rgba(0, 0, 0, 0.85);
+
+  /* Text — pure white for body, slightly dimmed for muted (still AA+) */
+  --fg-primary: #ffffff;
+  --fg-secondary: #ffffff;
+  --fg-muted: #e6e6e6;
+  --fg-inverse: #000000;
+
+  /* Borders — visible white edges; accent border is high-vis yellow */
+  --border-primary: #ffffff;
+  --border-subtle: #b3b3b3;
+  --border-accent: #ffff00;
+
+  /* Interactive surfaces */
+  --interactive-bg: #1a1a1a;
+  --interactive-hover: #333333;
+  --interactive-active: #4d4d4d;
+  --interactive-disabled: #1a1a1a;
+
+  /* Accent — high-vis yellow on black (#000 on #ff0 = 19.6:1) */
+  --accent: #ffff00;
+  --accent-hover: #ffff66;
+  --accent-fg: #000000;
+  --accent-subtle: rgba(255, 255, 0, 0.2);
+  --accent-rgb: 255, 255, 0;
+
+  /* Status — bright saturated signals */
+  --success: #00ff7f;
+  --success-bg: rgba(0, 255, 127, 0.2);
+  --error: #ff6b6b;
+  --error-bg: rgba(255, 0, 0, 0.25);
+  --warning: #ffd400;
+  --warning-bg: rgba(255, 212, 0, 0.2);
+  --info: #66d9ff;
+  --info-bg: rgba(102, 217, 255, 0.2);
+
+  /* Exercise feedback */
+  --exercise-correct: #00ff7f;
+  --exercise-wrong: #ff6b6b;
+  --exercise-selected: #ffff00;
+  --exercise-matched: #00ffff;
+
+  /* Achievement gold */
+  --star: #ffd400;
+
+  /* Chart series — maximally distinct, all high-vis on black */
+  --chart-1: #66d9ff;
+  --chart-2: #ff66ff;
+  --chart-3: #ff6b6b;
+  --chart-4: #00ff7f;
+  --chart-5: #ffd400;
+  --chart-6: #ffffff;
+
+  /* Shadows become white hairline rings so cards separate without
+   * soft shadows (which vanish on pure black). */
+  --shadow-card: 0 0 0 1px #ffffff;
+  --shadow-elevated: 0 0 0 2px #ffffff;
+  --shadow-md: 0 0 0 1px #ffffff;
+}

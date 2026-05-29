@@ -14,98 +14,32 @@
  */
 
 /* ================================================================
- * Phase 58B — complete semantic CSS variable system.
+ * Phase 58D — multi-theme system.
  *
- * Canonical semantic tokens are declared per theme. ``:root`` holds
- * the light values; ``[data-theme="dark"]`` (and the per-theme files
- * added in Phase 58D) override the SAME canonical names. EVERY theme
- * defines the FULL set — there is no light-fallthrough.
+ * The CANONICAL color tokens (backgrounds / text / borders /
+ * interactive / accent / status / exercise / chart / star / shadows)
+ * live in styles/themes/theme-*.css, one block per ``data-theme``
+ * value. Each theme defines the FULL set — there is no
+ * light-fallthrough (enforced by styles/themes/themes.test.ts). The
+ * theme files are imported from main.tsx, light first.
  *
- * Legacy aliases (--bg, --surface, --fg, --danger, ...) live at the
- * end of ``:root`` and resolve THROUGH the canonical tokens, so they
- * track the active theme automatically and pre-58B rules keep
- * working. Do NOT introduce new rules against the legacy names;
- * reach for the semantic names instead.
+ * This block holds only the THEME-AGNOSTIC tokens (spacing / radius /
+ * fonts / the brand method palette) plus the LEGACY aliases. The
+ * aliases resolve THROUGH the canonical tokens, so pre-58B rules track
+ * the active theme automatically. Do NOT add new rules against the
+ * legacy names — reach for the semantic names instead.
  * ============================================================== */
 
 :root {
-  /* Backgrounds */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f5f7fb;
-  --bg-surface: #ffffff;
-  --bg-elevated: #f8fafc;
-  --bg-overlay: rgba(15, 23, 42, 0.45);
-
-  /* Text */
-  --fg-primary: #1a1a1a;
-  --fg-secondary: #475569;
-  --fg-muted: #64748b;
-  --fg-inverse: #ffffff;
-
-  /* Borders */
-  --border-primary: #e2e8f0;
-  --border-subtle: #eef2f7;
-  --border-accent: #cbd5e1;
-
-  /* Interactive surfaces (buttons / toggles / list rows) */
-  --interactive-bg: #f1f5f9;
-  --interactive-hover: #e2e8f0;
-  --interactive-active: #cbd5e1;
-  --interactive-disabled: #e2e8f0;
-
-  /* Brand + accent (matches the PWA manifest theme_color + favicon).
-   *
-   * Phase 39 C5 (WCAG 2.1 SC 1.4.3): --accent darkened from
-   * #6366f1 to #4f46e5 to bring the primary-button text-on-
-   * background contrast over the 4.5:1 AA threshold. Old
-   * --accent value at 4.47:1 → new value at 6.29:1. Dark theme
-   * passes at 5.32:1. */
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-fg: #ffffff;
-  --accent-subtle: rgba(79, 70, 229, 0.1);
-  --accent-rgb: 79, 70, 229;
-
-  /* Status: strong (text / icon / border) + bg (subtle tint) pairs.
-   * Strong values meet AA as text on the page background. */
-  --success: #15803d;
-  --success-bg: #dcfce7;
-  --error: #dc2626;
-  --error-bg: #fee2e2;
-  --warning: #b45309;
-  --warning-bg: #fef3c7;
-  --info: #1d4ed8;
-  --info-bg: #dbeafe;
-
-  /* Exercise feedback */
-  --exercise-correct: #16a34a;
-  --exercise-wrong: #dc2626;
-  --exercise-selected: #4f46e5;
-  --exercise-matched: #0d9488;
-
-  /* Chart series — Recharts reads these via a JS-side var lookup
-   * (see frontend/src/lib/chartTheme.ts). */
-  --chart-1: #3b82f6;
-  --chart-2: #8b5cf6;
-  --chart-3: #ef4444;
-  --chart-4: #10b981;
-  --chart-5: #f59e0b;
-  --chart-6: #6366f1;
-
   /* Method palette — single source of truth shared with
-   * frontend/src/lib/constants.ts. Charts, badges and dashboard
-   * tiles read these tokens. */
+   * frontend/src/lib/constants.ts. Brand identity: the same across
+   * every theme (charts read --chart-* instead). */
   --method-deductive: #3b82f6;
   --method-inductive: #8b5cf6;
   --method-error_based: #ef4444;
   --method-dialogic: #10b981;
   --method-contextual: #f59e0b;
   --method-ai_adaptive: #6366f1;
-
-  /* Shadows */
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
-  --shadow-elevated: 0 4px 12px rgba(15, 23, 42, 0.08), 0 24px 48px rgba(15, 23, 42, 0.1);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
 
   /* Layout tokens */
   --space-1: 0.25rem;
@@ -128,7 +62,7 @@
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 
   /* --------------------------------------------------------------
-   * Legacy aliases. Resolve through the canonical tokens above so
+   * Legacy aliases. Resolve through the canonical theme tokens so
    * they follow the active theme. Kept so pre-58B CSS stays valid;
    * prefer the semantic names in new code.
    * -------------------------------------------------------------- */
@@ -145,68 +79,6 @@
   --text-muted: var(--fg-muted);
   --muted: var(--fg-muted);
   --danger: var(--error);
-}
-
-[data-theme="dark"] {
-  /* Backgrounds */
-  --bg-primary: #0f0f10;
-  --bg-secondary: #16161a;
-  --bg-surface: #1c1c20;
-  --bg-elevated: #232328;
-  --bg-overlay: rgba(0, 0, 0, 0.6);
-
-  /* Text */
-  --fg-primary: #ececec;
-  --fg-secondary: #cbd5e1;
-  --fg-muted: #94a3b8;
-  --fg-inverse: #0f0f10;
-
-  /* Borders */
-  --border-primary: #2a2a30;
-  --border-subtle: #232328;
-  --border-accent: #3a3a42;
-
-  /* Interactive surfaces */
-  --interactive-bg: #232328;
-  --interactive-hover: #2a2a30;
-  --interactive-active: #3a3a42;
-  --interactive-disabled: #232328;
-
-  /* Accent */
-  --accent: #818cf8;
-  --accent-hover: #a5b4fc;
-  --accent-fg: #1e1b4b;
-  --accent-subtle: rgba(129, 140, 248, 0.15);
-  --accent-rgb: 129, 140, 248;
-
-  /* Status */
-  --success: #4ade80;
-  --success-bg: rgba(34, 197, 94, 0.15);
-  --error: #f87171;
-  --error-bg: rgba(239, 68, 68, 0.15);
-  --warning: #fbbf24;
-  --warning-bg: rgba(245, 158, 11, 0.18);
-  --info: #60a5fa;
-  --info-bg: rgba(59, 130, 246, 0.18);
-
-  /* Exercise feedback (brightened for dark surfaces) */
-  --exercise-correct: #4ade80;
-  --exercise-wrong: #f87171;
-  --exercise-selected: #818cf8;
-  --exercise-matched: #2dd4bf;
-
-  /* Chart series (brightened for dark backgrounds) */
-  --chart-1: #60a5fa;
-  --chart-2: #a78bfa;
-  --chart-3: #f87171;
-  --chart-4: #34d399;
-  --chart-5: #fbbf24;
-  --chart-6: #818cf8;
-
-  /* Shadows */
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.5), 0 24px 48px rgba(0, 0, 0, 0.55);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
 }
 
 * {

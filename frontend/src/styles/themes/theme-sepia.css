@@ -1,0 +1,70 @@
+/*
+ * Phase 58D — Sepia theme. Warm paper tones, book-like, comfortable
+ * for long reading. A light-family theme. Color tokens ONLY (see
+ * theme-light.css).
+ */
+
+[data-theme="sepia"] {
+  /* Backgrounds — aged paper */
+  --bg-primary: #f4ecd8;
+  --bg-secondary: #ece2c9;
+  --bg-surface: #faf3e0;
+  --bg-elevated: #fff8e8;
+  --bg-overlay: rgba(60, 45, 25, 0.45);
+
+  /* Text — dark brown ink */
+  --fg-primary: #3b2f1e;
+  --fg-secondary: #5c4a33;
+  --fg-muted: #6a5a40;
+  --fg-inverse: #faf3e0;
+
+  /* Borders */
+  --border-primary: #d8c9a8;
+  --border-subtle: #e6dcc2;
+  --border-accent: #c2ad82;
+
+  /* Interactive surfaces */
+  --interactive-bg: #ece2c9;
+  --interactive-hover: #e0d4b6;
+  --interactive-active: #d2c29c;
+  --interactive-disabled: #ece2c9;
+
+  /* Accent — warm sienna (#faf3e0 cream on #9a5b2d) */
+  --accent: #9a5b2d;
+  --accent-hover: #7e4a24;
+  --accent-fg: #faf3e0;
+  --accent-subtle: rgba(154, 91, 45, 0.12);
+  --accent-rgb: 154, 91, 45;
+
+  /* Status — muted, paper-friendly, dark enough for text on paper */
+  --success: #4f6f25;
+  --success-bg: #e3ead0;
+  --error: #993325;
+  --error-bg: #f0dcd4;
+  --warning: #8a5e16;
+  --warning-bg: #f2e6c8;
+  --info: #355283;
+  --info-bg: #dce5f0;
+
+  /* Exercise feedback */
+  --exercise-correct: #4f6f25;
+  --exercise-wrong: #993325;
+  --exercise-selected: #9a5b2d;
+  --exercise-matched: #2d7d6e;
+
+  /* Achievement gold */
+  --star: #b8860b;
+
+  /* Chart series */
+  --chart-1: #355283;
+  --chart-2: #6b4f8c;
+  --chart-3: #993325;
+  --chart-4: #4f6f25;
+  --chart-5: #8a5e16;
+  --chart-6: #2d7d6e;
+
+  /* Shadows — warm brown, subtle */
+  --shadow-card: 0 1px 2px rgba(80, 60, 30, 0.08), 0 8px 24px rgba(80, 60, 30, 0.1);
+  --shadow-elevated: 0 4px 12px rgba(80, 60, 30, 0.12), 0 24px 48px rgba(80, 60, 30, 0.14);
+  --shadow-md: 0 4px 12px rgba(80, 60, 30, 0.12);
+}

@@ -1,0 +1,80 @@
+/*
+ * Phase 58D — Light theme (the default).
+ *
+ * Color tokens ONLY. Shared tokens (spacing / radius / fonts / method
+ * palette / legacy aliases) live in styles/global.css :root. Every
+ * theme file MUST define this exact same set of canonical color tokens
+ * (enforced by styles/themes/themes.test.ts) — there is no
+ * light-fallthrough.
+ *
+ * ``:root`` carries the values so a document with no data-theme renders
+ * light; ``[data-theme="light"]`` is the explicit selection. All other
+ * theme files are imported AFTER this one so the active theme wins the
+ * equal-specificity tie against ``:root``.
+ */
+
+:root,
+[data-theme="light"] {
+  /* Backgrounds */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f7fb;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f8fafc;
+  --bg-overlay: rgba(15, 23, 42, 0.45);
+
+  /* Text */
+  --fg-primary: #1a1a1a;
+  --fg-secondary: #475569;
+  --fg-muted: #64748b;
+  --fg-inverse: #ffffff;
+
+  /* Borders */
+  --border-primary: #e2e8f0;
+  --border-subtle: #eef2f7;
+  --border-accent: #cbd5e1;
+
+  /* Interactive surfaces */
+  --interactive-bg: #f1f5f9;
+  --interactive-hover: #e2e8f0;
+  --interactive-active: #cbd5e1;
+  --interactive-disabled: #e2e8f0;
+
+  /* Accent (WCAG: #4f46e5 = 6.29:1 on white) */
+  --accent: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-fg: #ffffff;
+  --accent-subtle: rgba(79, 70, 229, 0.1);
+  --accent-rgb: 79, 70, 229;
+
+  /* Status */
+  --success: #15803d;
+  --success-bg: #dcfce7;
+  --error: #dc2626;
+  --error-bg: #fee2e2;
+  --warning: #b45309;
+  --warning-bg: #fef3c7;
+  --info: #1d4ed8;
+  --info-bg: #dbeafe;
+
+  /* Exercise feedback */
+  --exercise-correct: #16a34a;
+  --exercise-wrong: #dc2626;
+  --exercise-selected: #4f46e5;
+  --exercise-matched: #0d9488;
+
+  /* Achievement gold (stars / celebration) */
+  --star: #f59e0b;
+
+  /* Chart series */
+  --chart-1: #3b82f6;
+  --chart-2: #8b5cf6;
+  --chart-3: #ef4444;
+  --chart-4: #10b981;
+  --chart-5: #f59e0b;
+  --chart-6: #6366f1;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-elevated: 0 4px 12px rgba(15, 23, 42, 0.08), 0 24px 48px rgba(15, 23, 42, 0.1);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
+}

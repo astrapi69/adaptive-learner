@@ -1,0 +1,70 @@
+/*
+ * Phase 58D — Ocean theme. Deep-blue tones, calm, easy on the eyes at
+ * night. A dark-family theme. Color tokens ONLY (see theme-light.css
+ * for the contract).
+ */
+
+[data-theme="ocean"] {
+  /* Backgrounds */
+  --bg-primary: #0b1f33;
+  --bg-secondary: #0e2740;
+  --bg-surface: #123150;
+  --bg-elevated: #173a5e;
+  --bg-overlay: rgba(2, 12, 24, 0.65);
+
+  /* Text */
+  --fg-primary: #e6f0fa;
+  --fg-secondary: #b8d2ea;
+  --fg-muted: #8fb0cf;
+  --fg-inverse: #0b1f33;
+
+  /* Borders */
+  --border-primary: #1d4368;
+  --border-subtle: #163450;
+  --border-accent: #2a5a86;
+
+  /* Interactive surfaces */
+  --interactive-bg: #15395a;
+  --interactive-hover: #1d4368;
+  --interactive-active: #2a5a86;
+  --interactive-disabled: #15395a;
+
+  /* Accent (#04263b on #38bdf8 sky = high contrast) */
+  --accent: #38bdf8;
+  --accent-hover: #7dd3fc;
+  --accent-fg: #04263b;
+  --accent-subtle: rgba(56, 189, 248, 0.16);
+  --accent-rgb: 56, 189, 248;
+
+  /* Status */
+  --success: #34d399;
+  --success-bg: rgba(16, 185, 129, 0.2);
+  --error: #fb7185;
+  --error-bg: rgba(244, 63, 94, 0.2);
+  --warning: #fbbf24;
+  --warning-bg: rgba(245, 158, 11, 0.2);
+  --info: #60a5fa;
+  --info-bg: rgba(59, 130, 246, 0.2);
+
+  /* Exercise feedback */
+  --exercise-correct: #34d399;
+  --exercise-wrong: #fb7185;
+  --exercise-selected: #38bdf8;
+  --exercise-matched: #2dd4bf;
+
+  /* Achievement gold */
+  --star: #fbbf24;
+
+  /* Chart series */
+  --chart-1: #38bdf8;
+  --chart-2: #818cf8;
+  --chart-3: #fb7185;
+  --chart-4: #34d399;
+  --chart-5: #fbbf24;
+  --chart-6: #22d3ee;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.55), 0 24px 48px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}

@@ -1,0 +1,69 @@
+/*
+ * Phase 58D — Forest theme. Green / brown earthy tones, warm. A
+ * dark-family theme. Color tokens ONLY (see theme-light.css).
+ */
+
+[data-theme="forest"] {
+  /* Backgrounds */
+  --bg-primary: #14201a;
+  --bg-secondary: #1a2a22;
+  --bg-surface: #1f322a;
+  --bg-elevated: #263d33;
+  --bg-overlay: rgba(8, 16, 12, 0.65);
+
+  /* Text */
+  --fg-primary: #eef3ec;
+  --fg-secondary: #cad8c5;
+  --fg-muted: #a3b89d;
+  --fg-inverse: #14201a;
+
+  /* Borders */
+  --border-primary: #2c4438;
+  --border-subtle: #223529;
+  --border-accent: #3c5c4a;
+
+  /* Interactive surfaces */
+  --interactive-bg: #233a2e;
+  --interactive-hover: #2c4438;
+  --interactive-active: #3c5c4a;
+  --interactive-disabled: #233a2e;
+
+  /* Accent — warm amber against the greens (#2a1c08 on #e0a458) */
+  --accent: #e0a458;
+  --accent-hover: #eab676;
+  --accent-fg: #2a1c08;
+  --accent-subtle: rgba(224, 164, 88, 0.16);
+  --accent-rgb: 224, 164, 88;
+
+  /* Status */
+  --success: #86efac;
+  --success-bg: rgba(34, 197, 94, 0.2);
+  --error: #fca5a5;
+  --error-bg: rgba(239, 68, 68, 0.2);
+  --warning: #fcd34d;
+  --warning-bg: rgba(245, 158, 11, 0.2);
+  --info: #93c5fd;
+  --info-bg: rgba(59, 130, 246, 0.2);
+
+  /* Exercise feedback */
+  --exercise-correct: #86efac;
+  --exercise-wrong: #fca5a5;
+  --exercise-selected: #e0a458;
+  --exercise-matched: #5eead4;
+
+  /* Achievement gold */
+  --star: #fcd34d;
+
+  /* Chart series */
+  --chart-1: #84cc16;
+  --chart-2: #e0a458;
+  --chart-3: #fca5a5;
+  --chart-4: #86efac;
+  --chart-5: #fcd34d;
+  --chart-6: #5eead4;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.45), 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.55), 0 24px 48px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+}

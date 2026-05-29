@@ -1,0 +1,72 @@
+/*
+ * Phase 58D — Dark theme.
+ *
+ * Color tokens ONLY (see theme-light.css for the contract). Imported
+ * after theme-light.css so it wins the equal-specificity tie against
+ * ``:root`` when ``data-theme="dark"`` is active.
+ */
+
+[data-theme="dark"] {
+  /* Backgrounds */
+  --bg-primary: #0f0f10;
+  --bg-secondary: #16161a;
+  --bg-surface: #1c1c20;
+  --bg-elevated: #232328;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Text */
+  --fg-primary: #ececec;
+  --fg-secondary: #cbd5e1;
+  --fg-muted: #94a3b8;
+  --fg-inverse: #0f0f10;
+
+  /* Borders */
+  --border-primary: #2a2a30;
+  --border-subtle: #232328;
+  --border-accent: #3a3a42;
+
+  /* Interactive surfaces */
+  --interactive-bg: #232328;
+  --interactive-hover: #2a2a30;
+  --interactive-active: #3a3a42;
+  --interactive-disabled: #232328;
+
+  /* Accent (#1e1b4b on #818cf8 = 5.32:1) */
+  --accent: #818cf8;
+  --accent-hover: #a5b4fc;
+  --accent-fg: #1e1b4b;
+  --accent-subtle: rgba(129, 140, 248, 0.15);
+  --accent-rgb: 129, 140, 248;
+
+  /* Status (brightened for dark surfaces) */
+  --success: #4ade80;
+  --success-bg: rgba(34, 197, 94, 0.15);
+  --error: #f87171;
+  --error-bg: rgba(239, 68, 68, 0.15);
+  --warning: #fbbf24;
+  --warning-bg: rgba(245, 158, 11, 0.18);
+  --info: #60a5fa;
+  --info-bg: rgba(59, 130, 246, 0.18);
+
+  /* Exercise feedback (brightened for dark surfaces) */
+  --exercise-correct: #4ade80;
+  --exercise-wrong: #f87171;
+  --exercise-selected: #818cf8;
+  --exercise-matched: #2dd4bf;
+
+  /* Achievement gold */
+  --star: #fbbf24;
+
+  /* Chart series (brightened for dark backgrounds) */
+  --chart-1: #60a5fa;
+  --chart-2: #a78bfa;
+  --chart-3: #f87171;
+  --chart-4: #34d399;
+  --chart-5: #fbbf24;
+  --chart-6: #818cf8;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.5), 0 24px 48px rgba(0, 0, 0, 0.55);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+}

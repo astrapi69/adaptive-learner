@@ -2,6 +2,14 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import {BrowserRouter} from "react-router-dom";
 import App from "./App";
+// Theme files first (light before the rest so the active theme wins the
+// equal-specificity tie against :root), then the shared global sheet.
+import "./styles/themes/theme-light.css";
+import "./styles/themes/theme-dark.css";
+import "./styles/themes/theme-ocean.css";
+import "./styles/themes/theme-forest.css";
+import "./styles/themes/theme-high-contrast.css";
+import "./styles/themes/theme-sepia.css";
 import "./styles/global.css";
 
 /**
