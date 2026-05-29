@@ -1356,5 +1356,97 @@
     "mastery": "¡{n} elementos dominados!",
     "badge": "¡Insignia conseguida!",
     "view_all_badges": "Toca para ver todas las insignias"
+  },
+  "missions": {
+    "templates": {
+      "complete-1-lesson": {
+        "title": "Completa una lección",
+        "description": "Termina 1 lección hoy."
+      },
+      "complete-2-lessons": {
+        "title": "Completa dos lecciones",
+        "description": "Termina 2 lecciones hoy."
+      },
+      "complete-3-lessons": {
+        "title": "Completa tres lecciones",
+        "description": "Termina 3 lecciones hoy."
+      },
+      "score-2-stars": {
+        "title": "Consigue 2 estrellas",
+        "description": "Logra al menos 2 estrellas en una lección."
+      },
+      "score-3-stars": {
+        "title": "Consigue 3 estrellas",
+        "description": "Logra 3 estrellas perfectas en una lección."
+      },
+      "try-new-set": {
+        "title": "Prueba un set nuevo",
+        "description": "Empieza una lección en un set que no hayas abierto."
+      },
+      "review-5-elements": {
+        "title": "Repasa 5 elementos",
+        "description": "Repasa 5 elementos hoy."
+      },
+      "review-10-elements": {
+        "title": "Repasa 10 elementos",
+        "description": "Repasa 10 elementos hoy."
+      },
+      "complete-review-session": {
+        "title": "Termina un repaso",
+        "description": "Completa una sesión de repaso."
+      },
+      "review-overdue": {
+        "title": "Repasa lo atrasado",
+        "description": "Repasa todos los elementos atrasados."
+      },
+      "master-1-element": {
+        "title": "Domina un elemento",
+        "description": "Domina 1 elemento hoy."
+      },
+      "master-3-elements": {
+        "title": "Domina tres elementos",
+        "description": "Domina 3 elementos hoy."
+      },
+      "master-5-elements": {
+        "title": "Domina cinco elementos",
+        "description": "Domina 5 elementos hoy."
+      },
+      "zero-errors-lesson": {
+        "title": "Lección impecable",
+        "description": "Termina una lección sin errores."
+      },
+      "try-adaptive-lesson": {
+        "title": "Prueba una lección adaptativa",
+        "description": "Empieza una lección adaptativa."
+      },
+      "use-cloze": {
+        "title": "Resuelve 5 ejercicios de huecos",
+        "description": "Completa 5 ejercicios de rellenar huecos."
+      },
+      "use-all-types": {
+        "title": "Usa todos los tipos",
+        "description": "Usa los 5 tipos de ejercicio hoy."
+      },
+      "learn-15-minutes": {
+        "title": "Aprende 15 minutos",
+        "description": "Dedica al menos 15 minutos a aprender."
+      },
+      "learn-30-minutes": {
+        "title": "Aprende 30 minutos",
+        "description": "Dedica al menos 30 minutos a aprender."
+      },
+      "keep-streak": {
+        "title": "Mantén tu racha",
+        "description": "Mantén tu racha viva hoy."
+      },
+      "extend-streak-7": {
+        "title": "Alcanza una racha de 7 días",
+        "description": "Construye una racha de 7 días."
+      },
+      "weekend-learner": {
+        "title": "Estudiante de fin de semana",
+        "description": "Aprende el fin de semana."
+      }
+    }
   }
 }

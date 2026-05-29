@@ -1252,3 +1252,71 @@ milestone:
   mastery: "{n} Elements Mastered!"
   badge: "Badge earned!"
   view_all_badges: "Tap to view all badges"
+missions:
+  templates:
+    complete-1-lesson:
+      title: "Complete a lesson"
+      description: "Finish 1 lesson today."
+    complete-2-lessons:
+      title: "Complete two lessons"
+      description: "Finish 2 lessons today."
+    complete-3-lessons:
+      title: "Complete three lessons"
+      description: "Finish 3 lessons today."
+    score-2-stars:
+      title: "Earn 2 stars"
+      description: "Score at least 2 stars in a lesson."
+    score-3-stars:
+      title: "Earn 3 stars"
+      description: "Score a perfect 3 stars in a lesson."
+    try-new-set:
+      title: "Try a new set"
+      description: "Start a lesson in a set you haven't opened."
+    review-5-elements:
+      title: "Review 5 elements"
+      description: "Review 5 elements today."
+    review-10-elements:
+      title: "Review 10 elements"
+      description: "Review 10 elements today."
+    complete-review-session:
+      title: "Finish a review"
+      description: "Complete a review session."
+    review-overdue:
+      title: "Clear overdue reviews"
+      description: "Review every overdue element."
+    master-1-element:
+      title: "Master an element"
+      description: "Master 1 element today."
+    master-3-elements:
+      title: "Master three elements"
+      description: "Master 3 elements today."
+    master-5-elements:
+      title: "Master five elements"
+      description: "Master 5 elements today."
+    zero-errors-lesson:
+      title: "Flawless lesson"
+      description: "Finish a lesson with no mistakes."
+    try-adaptive-lesson:
+      title: "Try an adaptive lesson"
+      description: "Start an adaptive lesson."
+    use-cloze:
+      title: "Solve 5 cloze exercises"
+      description: "Complete 5 fill-in-the-blank exercises."
+    use-all-types:
+      title: "Use every exercise type"
+      description: "Use all 5 exercise types today."
+    learn-15-minutes:
+      title: "Learn 15 minutes"
+      description: "Spend at least 15 minutes learning."
+    learn-30-minutes:
+      title: "Learn 30 minutes"
+      description: "Spend at least 30 minutes learning."
+    keep-streak:
+      title: "Keep your streak"
+      description: "Keep your streak alive today."
+    extend-streak-7:
+      title: "Reach a 7-day streak"
+      description: "Build a 7-day learning streak."
+    weekend-learner:
+      title: "Weekend learner"
+      description: "Learn on the weekend."

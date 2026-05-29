@@ -1243,3 +1243,72 @@ milestone:
   mastery: "{n} éléments maîtrisés !"
   badge: "Badge obtenu !"
   view_all_badges: "Touchez pour voir tous les badges"
+missions:
+  # pending native review
+  templates:
+    complete-1-lesson:
+      title: "Termine une leçon"
+      description: "Termine 1 leçon aujourd'hui."
+    complete-2-lessons:
+      title: "Termine deux leçons"
+      description: "Termine 2 leçons aujourd'hui."
+    complete-3-lessons:
+      title: "Termine trois leçons"
+      description: "Termine 3 leçons aujourd'hui."
+    score-2-stars:
+      title: "Obtiens 2 étoiles"
+      description: "Obtiens au moins 2 étoiles dans une leçon."
+    score-3-stars:
+      title: "Obtiens 3 étoiles"
+      description: "Obtiens 3 étoiles parfaites dans une leçon."
+    try-new-set:
+      title: "Essaie un nouveau set"
+      description: "Commence une leçon dans un set non ouvert."
+    review-5-elements:
+      title: "Révise 5 éléments"
+      description: "Révise 5 éléments aujourd'hui."
+    review-10-elements:
+      title: "Révise 10 éléments"
+      description: "Révise 10 éléments aujourd'hui."
+    complete-review-session:
+      title: "Termine une révision"
+      description: "Termine une session de révision."
+    review-overdue:
+      title: "Rattrape les révisions"
+      description: "Révise tous les éléments en retard."
+    master-1-element:
+      title: "Maîtrise un élément"
+      description: "Maîtrise 1 élément aujourd'hui."
+    master-3-elements:
+      title: "Maîtrise trois éléments"
+      description: "Maîtrise 3 éléments aujourd'hui."
+    master-5-elements:
+      title: "Maîtrise cinq éléments"
+      description: "Maîtrise 5 éléments aujourd'hui."
+    zero-errors-lesson:
+      title: "Leçon sans faute"
+      description: "Termine une leçon sans erreur."
+    try-adaptive-lesson:
+      title: "Essaie une leçon adaptative"
+      description: "Commence une leçon adaptative."
+    use-cloze:
+      title: "Résous 5 exercices à trous"
+      description: "Termine 5 exercices à trous."
+    use-all-types:
+      title: "Utilise tous les types"
+      description: "Utilise les 5 types d'exercice aujourd'hui."
+    learn-15-minutes:
+      title: "Apprends 15 minutes"
+      description: "Passe au moins 15 minutes à apprendre."
+    learn-30-minutes:
+      title: "Apprends 30 minutes"
+      description: "Passe au moins 30 minutes à apprendre."
+    keep-streak:
+      title: "Garde ta série"
+      description: "Garde ta série en vie aujourd'hui."
+    extend-streak-7:
+      title: "Atteins une série de 7 jours"
+      description: "Construis une série de 7 jours."
+    weekend-learner:
+      title: "Apprenant du week-end"
+      description: "Apprends le week-end."

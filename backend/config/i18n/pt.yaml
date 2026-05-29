@@ -1241,3 +1241,72 @@ milestone:
   mastery: "{n} elementos dominados!"
   badge: "Emblema conquistado!"
   view_all_badges: "Toque para ver todos os emblemas"
+missions:
+  # pending native review
+  templates:
+    complete-1-lesson:
+      title: "Conclua uma lição"
+      description: "Termine 1 lição hoje."
+    complete-2-lessons:
+      title: "Conclua duas lições"
+      description: "Termine 2 lições hoje."
+    complete-3-lessons:
+      title: "Conclua três lições"
+      description: "Termine 3 lições hoje."
+    score-2-stars:
+      title: "Ganhe 2 estrelas"
+      description: "Consiga pelo menos 2 estrelas numa lição."
+    score-3-stars:
+      title: "Ganhe 3 estrelas"
+      description: "Consiga 3 estrelas perfeitas numa lição."
+    try-new-set:
+      title: "Experimente um novo conjunto"
+      description: "Inicie uma lição num conjunto não aberto."
+    review-5-elements:
+      title: "Revise 5 elementos"
+      description: "Revise 5 elementos hoje."
+    review-10-elements:
+      title: "Revise 10 elementos"
+      description: "Revise 10 elementos hoje."
+    complete-review-session:
+      title: "Termine uma revisão"
+      description: "Conclua uma sessão de revisão."
+    review-overdue:
+      title: "Recupere os atrasados"
+      description: "Revise todos os elementos atrasados."
+    master-1-element:
+      title: "Domine um elemento"
+      description: "Domine 1 elemento hoje."
+    master-3-elements:
+      title: "Domine três elementos"
+      description: "Domine 3 elementos hoje."
+    master-5-elements:
+      title: "Domine cinco elementos"
+      description: "Domine 5 elementos hoje."
+    zero-errors-lesson:
+      title: "Lição impecável"
+      description: "Termine uma lição sem erros."
+    try-adaptive-lesson:
+      title: "Experimente uma lição adaptativa"
+      description: "Inicie uma lição adaptativa."
+    use-cloze:
+      title: "Resolva 5 exercícios de lacunas"
+      description: "Conclua 5 exercícios de preencher lacunas."
+    use-all-types:
+      title: "Use todos os tipos"
+      description: "Use os 5 tipos de exercício hoje."
+    learn-15-minutes:
+      title: "Aprenda 15 minutos"
+      description: "Dedique pelo menos 15 minutos a aprender."
+    learn-30-minutes:
+      title: "Aprenda 30 minutos"
+      description: "Dedique pelo menos 30 minutos a aprender."
+    keep-streak:
+      title: "Mantenha a sua sequência"
+      description: "Mantenha a sua sequência viva hoje."
+    extend-streak-7:
+      title: "Alcance uma sequência de 7 dias"
+      description: "Construa uma sequência de 7 dias."
+    weekend-learner:
+      title: "Aprendiz de fim de semana"
+      description: "Aprenda no fim de semana."

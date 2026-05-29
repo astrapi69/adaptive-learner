@@ -1356,5 +1356,97 @@
     "mastery": "{n}要素をマスター!",
     "badge": "バッジ獲得!",
     "view_all_badges": "タップしてすべてのバッジを見る"
+  },
+  "missions": {
+    "templates": {
+      "complete-1-lesson": {
+        "title": "レッスンを1つ完了",
+        "description": "今日レッスンを1つ終える。"
+      },
+      "complete-2-lessons": {
+        "title": "レッスンを2つ完了",
+        "description": "今日レッスンを2つ終える。"
+      },
+      "complete-3-lessons": {
+        "title": "レッスンを3つ完了",
+        "description": "今日レッスンを3つ終える。"
+      },
+      "score-2-stars": {
+        "title": "星2つを獲得",
+        "description": "レッスンで星を2つ以上獲得する。"
+      },
+      "score-3-stars": {
+        "title": "星3つを獲得",
+        "description": "レッスンで満点の星3つを獲得する。"
+      },
+      "try-new-set": {
+        "title": "新しいセットを試す",
+        "description": "開いていないセットでレッスンを始める。"
+      },
+      "review-5-elements": {
+        "title": "5要素を復習",
+        "description": "今日5要素を復習する。"
+      },
+      "review-10-elements": {
+        "title": "10要素を復習",
+        "description": "今日10要素を復習する。"
+      },
+      "complete-review-session": {
+        "title": "復習を完了",
+        "description": "復習セッションを完了する。"
+      },
+      "review-overdue": {
+        "title": "期限切れを片付ける",
+        "description": "期限切れの要素をすべて復習する。"
+      },
+      "master-1-element": {
+        "title": "1要素をマスター",
+        "description": "今日1要素をマスターする。"
+      },
+      "master-3-elements": {
+        "title": "3要素をマスター",
+        "description": "今日3要素をマスターする。"
+      },
+      "master-5-elements": {
+        "title": "5要素をマスター",
+        "description": "今日5要素をマスターする。"
+      },
+      "zero-errors-lesson": {
+        "title": "ノーミスのレッスン",
+        "description": "ミスなしでレッスンを終える。"
+      },
+      "try-adaptive-lesson": {
+        "title": "適応レッスンを試す",
+        "description": "適応レッスンを始める。"
+      },
+      "use-cloze": {
+        "title": "穴埋めを5問解く",
+        "description": "穴埋め問題を5問解く。"
+      },
+      "use-all-types": {
+        "title": "全タイプを使う",
+        "description": "今日5種類すべての問題を使う。"
+      },
+      "learn-15-minutes": {
+        "title": "15分学ぶ",
+        "description": "少なくとも15分学習する。"
+      },
+      "learn-30-minutes": {
+        "title": "30分学ぶ",
+        "description": "少なくとも30分学習する。"
+      },
+      "keep-streak": {
+        "title": "連続記録を維持",
+        "description": "今日連続記録を維持する。"
+      },
+      "extend-streak-7": {
+        "title": "7日連続を達成",
+        "description": "7日間の学習連続記録を作る。"
+      },
+      "weekend-learner": {
+        "title": "週末の学習者",
+        "description": "週末に学習する。"
+      }
+    }
   }
 }

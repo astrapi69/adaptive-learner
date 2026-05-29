@@ -1241,3 +1241,72 @@ milestone:
   mastery: "{n} öğe ustalaşıldı!"
   badge: "Rozet kazanıldı!"
   view_all_badges: "Tüm rozetleri görmek için dokun"
+missions:
+  # pending native review
+  templates:
+    complete-1-lesson:
+      title: "Bir ders tamamla"
+      description: "Bugün 1 ders bitir."
+    complete-2-lessons:
+      title: "İki ders tamamla"
+      description: "Bugün 2 ders bitir."
+    complete-3-lessons:
+      title: "Üç ders tamamla"
+      description: "Bugün 3 ders bitir."
+    score-2-stars:
+      title: "2 yıldız kazan"
+      description: "Bir derste en az 2 yıldız al."
+    score-3-stars:
+      title: "3 yıldız kazan"
+      description: "Bir derste tam 3 yıldız al."
+    try-new-set:
+      title: "Yeni bir set dene"
+      description: "Açmadığın bir sette derse başla."
+    review-5-elements:
+      title: "5 öğe tekrarla"
+      description: "Bugün 5 öğe tekrarla."
+    review-10-elements:
+      title: "10 öğe tekrarla"
+      description: "Bugün 10 öğe tekrarla."
+    complete-review-session:
+      title: "Bir tekrar bitir"
+      description: "Bir tekrar oturumunu tamamla."
+    review-overdue:
+      title: "Gecikenleri tamamla"
+      description: "Tüm geciken öğeleri tekrarla."
+    master-1-element:
+      title: "Bir öğeyi ustalaş"
+      description: "Bugün 1 öğede ustalaş."
+    master-3-elements:
+      title: "Üç öğeyi ustalaş"
+      description: "Bugün 3 öğede ustalaş."
+    master-5-elements:
+      title: "Beş öğeyi ustalaş"
+      description: "Bugün 5 öğede ustalaş."
+    zero-errors-lesson:
+      title: "Hatasız ders"
+      description: "Bir dersi hatasız bitir."
+    try-adaptive-lesson:
+      title: "Uyarlanır ders dene"
+      description: "Bir uyarlanır derse başla."
+    use-cloze:
+      title: "5 boşluk doldurma çöz"
+      description: "5 boşluk doldurma alıştırması tamamla."
+    use-all-types:
+      title: "Tüm türleri kullan"
+      description: "Bugün 5 alıştırma türünü de kullan."
+    learn-15-minutes:
+      title: "15 dakika öğren"
+      description: "En az 15 dakika öğrenmeye ayır."
+    learn-30-minutes:
+      title: "30 dakika öğren"
+      description: "En az 30 dakika öğrenmeye ayır."
+    keep-streak:
+      title: "Serini koru"
+      description: "Bugün serini canlı tut."
+    extend-streak-7:
+      title: "7 günlük seriye ulaş"
+      description: "7 günlük bir öğrenme serisi kur."
+    weekend-learner:
+      title: "Hafta sonu öğrencisi"
+      description: "Hafta sonu öğren."

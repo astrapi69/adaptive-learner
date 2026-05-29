@@ -1356,5 +1356,97 @@
     "mastery": "{n} Elemente gemeistert!",
     "badge": "Abzeichen erhalten!",
     "view_all_badges": "Tippen, um alle Abzeichen zu sehen"
+  },
+  "missions": {
+    "templates": {
+      "complete-1-lesson": {
+        "title": "Eine Lektion abschließen",
+        "description": "Schließe heute 1 Lektion ab."
+      },
+      "complete-2-lessons": {
+        "title": "Zwei Lektionen abschließen",
+        "description": "Schließe heute 2 Lektionen ab."
+      },
+      "complete-3-lessons": {
+        "title": "Drei Lektionen abschließen",
+        "description": "Schließe heute 3 Lektionen ab."
+      },
+      "score-2-stars": {
+        "title": "2 Sterne erreichen",
+        "description": "Erreiche mindestens 2 Sterne in einer Lektion."
+      },
+      "score-3-stars": {
+        "title": "3 Sterne erreichen",
+        "description": "Erreiche volle 3 Sterne in einer Lektion."
+      },
+      "try-new-set": {
+        "title": "Neues Set ausprobieren",
+        "description": "Starte eine Lektion in einem neuen Set."
+      },
+      "review-5-elements": {
+        "title": "5 Elemente wiederholen",
+        "description": "Wiederhole heute 5 Elemente."
+      },
+      "review-10-elements": {
+        "title": "10 Elemente wiederholen",
+        "description": "Wiederhole heute 10 Elemente."
+      },
+      "complete-review-session": {
+        "title": "Wiederholung abschließen",
+        "description": "Schließe eine Wiederholungs-Session ab."
+      },
+      "review-overdue": {
+        "title": "Überfällige aufholen",
+        "description": "Wiederhole alle überfälligen Elemente."
+      },
+      "master-1-element": {
+        "title": "Ein Element meistern",
+        "description": "Meistere heute 1 Element."
+      },
+      "master-3-elements": {
+        "title": "Drei Elemente meistern",
+        "description": "Meistere heute 3 Elemente."
+      },
+      "master-5-elements": {
+        "title": "Fünf Elemente meistern",
+        "description": "Meistere heute 5 Elemente."
+      },
+      "zero-errors-lesson": {
+        "title": "Fehlerfreie Lektion",
+        "description": "Schließe eine Lektion ohne Fehler ab."
+      },
+      "try-adaptive-lesson": {
+        "title": "Adaptive Lektion testen",
+        "description": "Starte eine adaptive Lektion."
+      },
+      "use-cloze": {
+        "title": "5 Lückentexte lösen",
+        "description": "Löse 5 Lückentext-Übungen."
+      },
+      "use-all-types": {
+        "title": "Alle Übungstypen nutzen",
+        "description": "Nutze heute alle 5 Übungstypen."
+      },
+      "learn-15-minutes": {
+        "title": "15 Minuten lernen",
+        "description": "Lerne mindestens 15 Minuten."
+      },
+      "learn-30-minutes": {
+        "title": "30 Minuten lernen",
+        "description": "Lerne mindestens 30 Minuten."
+      },
+      "keep-streak": {
+        "title": "Serie halten",
+        "description": "Halte heute deine Serie aufrecht."
+      },
+      "extend-streak-7": {
+        "title": "7-Tage-Serie erreichen",
+        "description": "Baue eine 7-Tage-Lernserie auf."
+      },
+      "weekend-learner": {
+        "title": "Wochenend-Lerner",
+        "description": "Lerne am Wochenende."
+      }
+    }
   }
 }
