@@ -14,6 +14,7 @@
 
 import Dexie, {type EntityTable} from "dexie";
 
+import {BUNDLED_BADGES} from "./badges-data";
 import type {AIProvider, LearningMethod, MessageRole, SessionStatus} from "../lib/constants";
 
 // ---- Row shapes (mirror backend Pydantic Out-schemas) -----------------
@@ -930,12 +931,18 @@ export class AdaptiveLearnerDB extends Dexie {
         //      static ``base_tier`` (dynamic badges start at "bronze")
         //      + ``updated_at`` = earned_at.
         // Mirrors the Alembic 0022 backfill so both modes converge.
-        // BUNDLED_BADGES is imported dynamically to avoid a static
-        // import cycle (badges.ts -> db.ts).
+        // BUNDLED_BADGES is statically imported from badges-data.ts (a
+        // pure-data module with no db.ts dependency, so no import
+        // cycle). It MUST NOT be a dynamic ``await import()`` here: a
+        // native dynamic import escapes Dexie's promise-zone tracking,
+        // so the IndexedDB upgrade transaction auto-commits during the
+        // await and the subsequent tx.table(...) throws "The
+        // transaction has finished" (surfaced as DatabaseClosedError),
+        // which broke the v1.40.0 schema-v21 upgrade for every existing
+        // Dexie user.
         this.version(21)
             .stores({})
             .upgrade(async (tx) => {
-                const {BUNDLED_BADGES} = await import("./badges");
                 const specByKey = new Map(
                     BUNDLED_BADGES.map((b) => [b.key, b]),
                 );
