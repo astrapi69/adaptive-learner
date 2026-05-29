@@ -38,6 +38,7 @@ import type {
     ContentLessonExercise,
     ElementAttempt,
 } from "../../storage/types";
+import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
 
 /** Levenshtein edit distance between ``a`` and ``b``.
@@ -243,7 +244,7 @@ export default function FreeTextExercise({
                 ) : (
                     <>
                         <p
-                            className={`free-text-result${
+                            className={`free-text-result answer-feedback${
                                 isCorrect ? " is-correct" : " is-wrong"
                             }`}
                             data-testid="free-text-result"
@@ -278,6 +279,7 @@ export default function FreeTextExercise({
                                 />
                             </div>
                         )}
+                        <AnswerCelebration isCorrect={isCorrect} />
                         <button
                             type="button"
                             className="btn"

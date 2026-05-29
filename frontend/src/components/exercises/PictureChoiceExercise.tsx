@@ -42,6 +42,7 @@ import type {
     ContentLessonExercise,
     ElementAttempt,
 } from "../../storage/types";
+import AnswerCelebration from "./AnswerCelebration";
 
 export interface PictureChoiceExerciseProps {
     exercise: ContentLessonExercise;
@@ -202,7 +203,11 @@ export default function PictureChoiceExercise({
                 ) : (
                     <>
                         <p
-                            className="picture-result"
+                            className={`picture-result answer-feedback${
+                                result && result.correct > 0
+                                    ? " is-correct"
+                                    : " is-wrong"
+                            }`}
                             data-testid="picture-result"
                             data-result={
                                 result && result.correct > 0
@@ -220,6 +225,9 @@ export default function PictureChoiceExercise({
                                       "Not quite — the highlighted tile is the right answer.",
                                   )}
                         </p>
+                        <AnswerCelebration
+                            isCorrect={!!result && result.correct > 0}
+                        />
                         <button
                             type="button"
                             className="btn"

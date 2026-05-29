@@ -33,6 +33,7 @@ import type {
     ContentLessonExercise,
     ElementAttempt,
 } from "../../storage/types";
+import AnswerCelebration from "./AnswerCelebration";
 
 export interface MatchingExerciseProps {
     exercise: ContentLessonExercise;
@@ -175,6 +176,8 @@ export default function MatchingExercise({
     };
 
     const allPaired = matches.size === pairs.length;
+    const matchingAllCorrect =
+        result !== null && result.total > 0 && result.correct === result.total;
 
     const handleSubmit = () => {
         let correct = 0;
@@ -334,8 +337,13 @@ export default function MatchingExercise({
                 ) : (
                     <>
                         <p
-                            className="matching-result"
+                            className={`matching-result answer-feedback${
+                                matchingAllCorrect ? " is-correct" : " is-wrong"
+                            }`}
                             data-testid="matching-result"
+                            data-result={
+                                matchingAllCorrect ? "correct" : "wrong"
+                            }
                         >
                             {t(
                                 "lesson.exercise.matching.result",
@@ -350,6 +358,7 @@ export default function MatchingExercise({
                                     String(result?.total ?? 0),
                                 )}
                         </p>
+                        <AnswerCelebration isCorrect={matchingAllCorrect} />
                         <button
                             type="button"
                             className="btn"

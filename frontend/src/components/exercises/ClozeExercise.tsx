@@ -36,6 +36,7 @@ import type {
     ContentLessonExercise,
     ElementAttempt,
 } from "../../storage/types";
+import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
 import {isFreeTextCorrect} from "./FreeTextExercise";
 
@@ -332,7 +333,7 @@ export default function ClozeExercise({
                 ) : (
                     <>
                         <p
-                            className={`cloze-result${
+                            className={`cloze-result answer-feedback${
                                 isAllCorrect
                                     ? " is-correct"
                                     : " is-wrong"
@@ -387,6 +388,7 @@ export default function ClozeExercise({
                                 )}
                             </div>
                         )}
+                        <AnswerCelebration isCorrect={isAllCorrect} />
                         <button
                             type="button"
                             className="btn"

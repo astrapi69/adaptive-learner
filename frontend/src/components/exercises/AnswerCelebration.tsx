@@ -1,0 +1,69 @@
+/**
+ * AnswerCelebration (EXP-008 / Phase 55B).
+ *
+ * The single reusable home for the NEW per-answer micro-feedback
+ * that every exercise renderer shares:
+ *   - haptic pulse on a correct answer (correct only),
+ *   - a short praise phrase below the answer, gated by the
+ *     effective feedback intensity + frequency control.
+ *
+ * The information-carrying feedback (correct/wrong colour, icon,
+ * token-diff) stays in each exercise component; this adds only
+ * the supplementary delight, so a "subtle" intensity (or
+ * ``prefers-reduced-motion``) simply renders nothing here.
+ *
+ * Centralising it here means later sub-phases (sound in 55F, the
+ * celebration bus in 55G) extend ONE component, not five.
+ *
+ * The effect is guarded with a ref so React's dev/StrictMode
+ * double-effect-mount cannot fire the haptic or advance the
+ * phrase cycle twice (see lessons-learned).
+ */
+
+import {useEffect, useRef, useState} from "react";
+
+import {useFeedbackIntensity} from "../../hooks/useFeedbackIntensity";
+import {useI18n} from "../../hooks/useI18n";
+import {
+    nextCorrectAnswerIndex,
+    shouldPraiseCorrect,
+} from "../../lib/feedback/feedbackPref";
+import {fireHaptic} from "../../lib/feedback/haptic";
+import {nextPraise} from "../../lib/praise/phrase-picker";
+
+export interface AnswerCelebrationProps {
+    /** Whether the submitted answer was correct. */
+    isCorrect: boolean;
+}
+
+export default function AnswerCelebration({
+    isCorrect,
+}: AnswerCelebrationProps) {
+    const {lang} = useI18n();
+    const intensity = useFeedbackIntensity();
+    const [phrase, setPhrase] = useState<string | null>(null);
+    const fired = useRef(false);
+
+    useEffect(() => {
+        if (!isCorrect || fired.current) return;
+        fired.current = true;
+        fireHaptic();
+        const index = nextCorrectAnswerIndex();
+        if (shouldPraiseCorrect(intensity, index)) {
+            const picked = nextPraise("correct_answer", lang);
+            if (picked) setPhrase(picked.phrase);
+        }
+    }, [isCorrect, intensity, lang]);
+
+    if (!isCorrect || phrase === null) return null;
+
+    return (
+        <p
+            className="answer-feedback-praise"
+            data-testid="answer-praise"
+            role="status"
+        >
+            {phrase}
+        </p>
+    );
+}

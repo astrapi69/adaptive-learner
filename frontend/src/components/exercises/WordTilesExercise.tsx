@@ -35,6 +35,7 @@ import type {
     ContentLessonExercise,
     ElementAttempt,
 } from "../../storage/types";
+import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
 
 export interface WordTilesExerciseProps {
@@ -328,7 +329,7 @@ export default function WordTilesExercise({
                 ) : (
                     <>
                         <p
-                            className={`word-tiles-result${
+                            className={`word-tiles-result answer-feedback${
                                 isCorrect ? " is-correct" : " is-wrong"
                             }`}
                             data-testid="word-tiles-result"
@@ -366,6 +367,7 @@ export default function WordTilesExercise({
                                 />
                             </div>
                         )}
+                        <AnswerCelebration isCorrect={isCorrect} />
                         <button
                             type="button"
                             className="btn"
