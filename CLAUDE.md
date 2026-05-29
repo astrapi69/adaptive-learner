@@ -9,7 +9,42 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.39.0** (Phase 56 — EXP-010
+- **Current state:** **v1.40.0** (Phase 57 — Badge Tiers
+  + Badge Gallery; the EXP-010 follow-up deferred from
+  v1.39.0). All 28 badge keys are kept (no merge/removal)
+  and gain a **bronze/silver/gold** tier. Two shapes:
+  **static visual tiers** (sibling families render as one
+  progression — ``sessions_10/50/100`` → bronze/silver/gold,
+  ``level_5/10/25``, ``streak_3/7/30/100``; each keeps its
+  row) and **dynamic tiers** (``lessons_10`` 10/50/100 +
+  ``review_master`` 50/200/500 climb in place — high-water
+  mark, never demote — awarding the XP **delta** per step,
+  double-award-guarded). Identical evaluation in both
+  storage modes, pinned by a cross-language parity golden
+  (``tests/fixtures/badge-tier-parity/``). New tier-coloured
+  **SVG generator** (``frontend/src/lib/badges/badge-svg.ts``:
+  ~10 geometric glyphs × bronze/silver/gold/locked, inline
+  data URIs, offline). New **BadgeGallery** drawer
+  (``frontend/src/components/badges/``: filter + sort +
+  expand-to-tier-breakdown; locked badges stay greyed but
+  visible), opened from Settings > Gamification + the
+  enhanced **Dashboard badge widget** (recent tier mini-icons
+  + next-badge pointer). Tier upgrades **celebrate** via the
+  v1.38.0 bus (silver chime / gold chord + glow,
+  ``badge_tier_upgrade`` event, reduced-motion-safe). DB:
+  ``UserBadge.tier`` + ``updated_at`` + ``Badge.base_tier`` +
+  ``tier_thresholds``; Alembic ``0022`` (column add + static
+  backfill); Dexie **v21**; ``user_badges`` sync promoted
+  append-only → MUTABLE (monotonic tier). New
+  ``gamification.tier.*`` + ``gamification.gallery.*`` i18n in
+  8 langs. Closes P-158, D-127, F-129, Q-122. Also folds in a
+  Matching-exercise UX fix (obvious selected state,
+  instructions, column headers, wrong-pair shake, 8-lang
+  strings). 7 atomic sub-phase commits (6 feature + 1 fix);
+  every individually green through ``make test`` +
+  ``npm run build`` + Vitest + ``make test-dexie-smoke``.
+  **28 badges** in the catalog.
+  v1.39.0 = Phase 56 (EXP-010
   Missionen und Plaketten, the active-motivation layer;
   shipped the missions subset, badge tiers deferred to
   v1.40.0). Daily missions: up to 3 deterministic,
@@ -359,9 +394,9 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.39.0.md](changelog/releases/v1.39.0.md)
+  [changelog/releases/v1.40.0.md](changelog/releases/v1.40.0.md)
   for the per-release detail and `git log --oneline` for
-  the feature history across Phases 1–56.
+  the feature history across Phases 1–57.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
@@ -538,8 +573,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.39.0 baseline:** backend 1020 (+1 skipped) + plugins
-  942 + Vitest 2295 = **4257 tests** (+1 skipped). E2E
+- **v1.40.0 baseline:** backend 1025 (+1 skipped) + plugins
+  950 + Vitest 2346 = **4321 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (19 specs incl. /content + /lesson + /review +
