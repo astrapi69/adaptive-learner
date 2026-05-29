@@ -1573,6 +1573,103 @@ select:focus {
   gap: var(--space-5);
 }
 
+/* EXP-010 / Phase 56F — daily missions widget */
+.mission-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.mission-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+}
+
+.mission-row[data-completed="true"] .mission-title {
+  text-decoration: line-through;
+  color: var(--fg-muted);
+}
+
+.mission-icon {
+  display: flex;
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
+.mission-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mission-title {
+  font-weight: 500;
+}
+
+.mission-progressbar {
+  position: relative;
+  height: 18px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.mission-progressfill {
+  height: 100%;
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  transition: width 0.4s ease;
+}
+
+.mission-progresslabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+
+.mission-xp {
+  flex: 0 0 auto;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--warning);
+}
+
+.mission-done-icon {
+  flex: 0 0 auto;
+  color: var(--success);
+}
+
+.daily-missions-alldone {
+  margin-top: var(--space-2);
+  font-weight: 600;
+  color: var(--success);
+  text-align: center;
+}
+
+.daily-missions-tomorrow {
+  margin-top: var(--space-1);
+  font-size: 0.8rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mission-progressfill {
+    transition: none;
+  }
+}
+
 /* EXP-010 / Phase 56M — Settings tab bar */
 .settings-tabs {
   display: flex;

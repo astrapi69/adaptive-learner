@@ -1250,6 +1250,10 @@ milestone:
   badge: "バッジ獲得!"
   view_all_badges: "タップしてすべてのバッジを見る"
 missions:
+  card_title: "今日のミッション"
+  card_all_done: "すべてのミッション達成!"
+  card_tomorrow: "明日新しいミッション。"
+  card_empty: "今日はミッションがありません。"
   # pending native review
   templates:
     complete-1-lesson:

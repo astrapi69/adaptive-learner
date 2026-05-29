@@ -18,6 +18,7 @@ import SpacedRecommendations from "../components/SpacedRecommendations";
 import ToolRecommendations from "../components/ToolRecommendations";
 import XPWidget from "../components/XPWidget";
 import BadgeShowcase from "../components/BadgeShowcase";
+import DailyMissionsCard from "../components/DailyMissionsCard";
 import StreakCalendar from "../components/StreakCalendar";
 import StreakWidget from "../components/StreakWidget";
 import {ApiError} from "../api/client";
@@ -335,6 +336,12 @@ export default function Dashboard() {
                     <StreakWidget state={streakState} />
                     <StreakCalendar entries={heatmap} />
                 </article>
+
+                {userId && (
+                    <article className="dashboard-card dashboard-card-wide">
+                        <DailyMissionsCard userId={userId} />
+                    </article>
+                )}
 
                 <article className="dashboard-card dashboard-card-wide">
                     <h2 className="dashboard-card-title">

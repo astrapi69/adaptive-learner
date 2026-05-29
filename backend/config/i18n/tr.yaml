@@ -1250,6 +1250,10 @@ milestone:
   badge: "Rozet kazanıldı!"
   view_all_badges: "Tüm rozetleri görmek için dokun"
 missions:
+  card_title: "Bugünün görevleri"
+  card_all_done: "Tüm görevler tamamlandı!"
+  card_tomorrow: "Yarın yeni görevler."
+  card_empty: "Bugün görev yok."
   # pending native review
   templates:
     complete-1-lesson:

@@ -1252,6 +1252,10 @@ milestone:
   badge: "Κερδίσατε σήμα!"
   view_all_badges: "Πατήστε για να δείτε όλα τα σήματα"
 missions:
+  card_title: "Σημερινές αποστολές"
+  card_all_done: "Όλες οι αποστολές ολοκληρώθηκαν!"
+  card_tomorrow: "Νέες αποστολές αύριο."
+  card_empty: "Καμία αποστολή σήμερα."
   # pending native review
   templates:
     complete-1-lesson:

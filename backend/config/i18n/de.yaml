@@ -1255,6 +1255,10 @@ milestone:
   badge: "Abzeichen erhalten!"
   view_all_badges: "Tippen, um alle Abzeichen zu sehen"
 missions:
+  card_title: "Heutige Missionen"
+  card_all_done: "Alle Missionen erledigt!"
+  card_tomorrow: "Morgen neue Missionen."
+  card_empty: "Heute keine Missionen."
   templates:
     complete-1-lesson:
       title: "Eine Lektion abschließen"

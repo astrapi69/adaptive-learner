@@ -1366,6 +1366,10 @@
     "view_all_badges": "Touchez pour voir tous les badges"
   },
   "missions": {
+    "card_title": "Missions du jour",
+    "card_all_done": "Toutes les missions accomplies !",
+    "card_tomorrow": "Nouvelles missions demain.",
+    "card_empty": "Pas de missions aujourd'hui.",
     "templates": {
       "complete-1-lesson": {
         "title": "Termine une leçon",

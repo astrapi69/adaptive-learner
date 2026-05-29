@@ -1261,6 +1261,10 @@ milestone:
   badge: "Badge earned!"
   view_all_badges: "Tap to view all badges"
 missions:
+  card_title: "Today's missions"
+  card_all_done: "All missions done!"
+  card_tomorrow: "New missions tomorrow."
+  card_empty: "No missions today."
   templates:
     complete-1-lesson:
       title: "Complete a lesson"

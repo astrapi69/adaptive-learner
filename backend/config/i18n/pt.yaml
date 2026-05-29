@@ -1250,6 +1250,10 @@ milestone:
   badge: "Emblema conquistado!"
   view_all_badges: "Toque para ver todos os emblemas"
 missions:
+  card_title: "Missões de hoje"
+  card_all_done: "Todas as missões concluídas!"
+  card_tomorrow: "Novas missões amanhã."
+  card_empty: "Sem missões hoje."
   # pending native review
   templates:
     complete-1-lesson:

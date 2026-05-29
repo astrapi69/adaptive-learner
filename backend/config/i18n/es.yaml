@@ -1252,6 +1252,10 @@ milestone:
   badge: "¡Insignia conseguida!"
   view_all_badges: "Toca para ver todas las insignias"
 missions:
+  card_title: "Misiones de hoy"
+  card_all_done: "¡Todas las misiones completadas!"
+  card_tomorrow: "Nuevas misiones mañana."
+  card_empty: "Hoy no hay misiones."
   # pending native review
   templates:
     complete-1-lesson:
