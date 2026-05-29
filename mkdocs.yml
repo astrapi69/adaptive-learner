@@ -58,6 +58,7 @@ plugins:
             Lektionen und Wiederholungen: Lessons and reviews
             Fortschritt: Progress
             Einstellungen: Settings
+            Lob und Belohnungen: Praise and celebrations
             Konzept: Concept
             Philosophie: Philosophy
             Die sechs Methoden: The six methods
@@ -70,6 +71,7 @@ plugins:
             Lektionen + SRS: Lessons + SRS
             KI-Integration: AI integration
             Testen: Testing
+            Belohnungs-Schicht: Celebration layer
             Lektionsinhalte erstellen: Authoring lesson content
             Release-Prozess: Release workflow
             API-Referenz: API reference
@@ -109,6 +111,7 @@ nav:
   - Curriculum: de/user-guide/curriculum.md
   - Fortschritt: de/user-guide/progress.md
   - Einstellungen: de/user-guide/settings.md
+  - Lob und Belohnungen: de/user-guide/celebrations.md
   - FAQ: de/user-guide/faq.md
 - Konzept:
   - Philosophie: de/concept/philosophy.md
@@ -124,6 +127,7 @@ nav:
   - Lektionen + SRS: de/developer/lessons-and-srs.md
   - KI-Integration: de/developer/ai-integration.md
   - Testen: de/developer/testing.md
+  - Belohnungs-Schicht: de/developer/celebrations.md
   - Deployment: de/developer/deployment.md
   - i18n: de/developer/i18n.md
   - Lektionsinhalte erstellen: de/developer/authoring-content.md

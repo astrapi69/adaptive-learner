@@ -59,6 +59,10 @@ navigation:
           en: Settings
         slug: user-guide/settings
       - title:
+          de: Lob und Belohnungen
+          en: Praise and celebrations
+        slug: user-guide/celebrations
+      - title:
           de: FAQ
           en: FAQ
         slug: user-guide/faq
@@ -120,6 +124,10 @@ navigation:
           de: Testen
           en: Testing
         slug: developer/testing
+      - title:
+          de: Belohnungs-Schicht
+          en: Celebration layer
+        slug: developer/celebrations
       - title:
           de: Deployment
           en: Deployment

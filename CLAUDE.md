@@ -9,7 +9,41 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.37.0** (Phase 54 — Asset
+- **Current state:** **v1.38.0** (Phase 55 — EXP-008 Lob
+  und Celebration, the emotional layer). Everything
+  mechanical already worked (error tracking, adaptive
+  lessons, XP/badges) but the moment of success felt flat;
+  v1.38.0 adds earned, scaled micro-feedback. New
+  ``backend/config/praise/{8 langs}.yaml`` phrase catalogs
+  (``make sync-praise`` → ``frontend/src/data/praise/``)
+  with a no-repeat session phrase-picker. Shared
+  ``AnswerCelebration`` across all 5 exercise types (haptic
+  + intensity-gated praise + CSS pulse/flash/icon
+  animations; wrong answers show the diff, never criticism).
+  Lesson summary counts the score up, shows a per-star
+  message, and on a perfect run adds a dynamic praise phrase
+  + CSS-only confetti (30 particles, no canvas/library).
+  Milestone overlays (streak 7/30/100, mastery 50/100/500,
+  level-up) via a de-duplicating ``celebrationQueue`` +
+  globally-mounted ``MilestoneHost`` (sequential, auto-
+  dismiss). Settings > Interface gains a 3-level
+  **Feedback Intensity** control (subtle/normal/
+  enthusiastic, live, ``useFeedbackIntensity``) and a
+  **Sounds** toggle + volume + Test (six runtime-synthesized
+  Web Audio effects, zero audio files, OFF by default, lazy
+  AudioContext). ``celebration-bus.ts`` is the decoupled
+  dispatch (sound + subscribers + ``celebrate*`` milestone
+  helpers); ``celebration-stats.ts`` snapshots gamification
+  at lesson completion and celebrates milestones + new
+  badges. "Best streak" reuses the maintained
+  ``longest_streak_days`` (no migration). Full
+  ``prefers-reduced-motion`` path (all animations off,
+  effective intensity forced to subtle). All frontend-only,
+  works in both storage modes. 8 atomic sub-phase commits +
+  1 release; every individually green through
+  ``make test`` + ``npm run build`` + Vitest +
+  ``make test-dexie-smoke``.
+  v1.37.0 = Phase 54 (Asset
   Fetching for Picture Choice Exercises). Picture Choice
   exercises stop being text-only: lesson sets can now ship
   binary images via a manifest-declared ``assets/``
@@ -286,9 +320,9 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.37.0.md](changelog/releases/v1.37.0.md)
+  [changelog/releases/v1.38.0.md](changelog/releases/v1.38.0.md)
   for the per-release detail and `git log --oneline` for
-  the feature history across Phases 1–54.
+  the feature history across Phases 1–55.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
@@ -464,8 +498,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.37.0 baseline:** backend 1014 (+1 skipped) + plugins
-  928 + Vitest 2136 = **4078 tests** (+1 skipped). E2E
+- **v1.38.0 baseline:** backend 1014 (+1 skipped) + plugins
+  928 + Vitest 2239 = **4181 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (19 specs incl. /content + /lesson + /review +
