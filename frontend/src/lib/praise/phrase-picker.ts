@@ -23,7 +23,8 @@ export type PraiseCategory =
     | "lesson_complete"
     | "streak_milestone"
     | "mastery"
-    | "improvement";
+    | "improvement"
+    | "mission_complete";
 
 export interface PraisePhrase {
     key: string;

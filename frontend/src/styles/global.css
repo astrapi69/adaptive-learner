@@ -1640,6 +1640,10 @@ select:focus {
 }
 
 /* EXP-010 / Phase 56F — daily missions widget */
+.daily-missions {
+  position: relative;
+}
+
 .mission-list {
   list-style: none;
   margin: 0;

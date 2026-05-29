@@ -108,3 +108,16 @@ categories:
       text: "En hausse !"
     - key: im_08
       text: "Plus affûté !"
+  mission_complete:
+    - key: mc_01
+      text: "Mission accomplie !"
+    - key: mc_02
+      text: "Mission réussie !"
+    - key: mc_03
+      text: "Objectif du jour atteint !"
+    - key: mc_04
+      text: "Mission réussie haut la main !"
+    - key: mc_05
+      text: "Une de faite !"
+    - key: mc_06
+      text: "Objectif atteint !"

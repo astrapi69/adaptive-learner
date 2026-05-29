@@ -108,3 +108,16 @@ categories:
       text: "Subindo!"
     - key: im_08
       text: "Mais afiado agora!"
+  mission_complete:
+    - key: mc_01
+      text: "Missão concluída!"
+    - key: mc_02
+      text: "Missão cumprida!"
+    - key: mc_03
+      text: "Meta do dia alcançada!"
+    - key: mc_04
+      text: "Missão arrasada!"
+    - key: mc_05
+      text: "Uma a menos!"
+    - key: mc_06
+      text: "Objetivo alcançado!"

@@ -107,3 +107,16 @@ categories:
       text: "Climbing!"
     - key: im_08
       text: "Sharper now!"
+  mission_complete:
+    - key: mc_01
+      text: "Mission complete!"
+    - key: mc_02
+      text: "Mission accomplished!"
+    - key: mc_03
+      text: "Daily goal cleared!"
+    - key: mc_04
+      text: "Nailed that mission!"
+    - key: mc_05
+      text: "One down!"
+    - key: mc_06
+      text: "Goal reached!"

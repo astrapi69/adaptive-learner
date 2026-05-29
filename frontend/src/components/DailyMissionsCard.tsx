@@ -27,13 +27,17 @@ import {
 import {useEffect, useState} from "react";
 
 import {useI18n} from "../hooks/useI18n";
+import {allowsConfetti, effectiveIntensity} from "../lib/feedback/feedbackPref";
 import {
     MISSION_PREF_CHANGE_EVENT,
     readMissionPrefs,
 } from "../lib/missionPref";
 import {localTodayIso} from "../lib/missions/schedule";
 import type {DailyMission} from "../lib/missions/types";
+import {celebrateMissions} from "../lib/praise/celebration-bus";
 import {getStorage} from "../storage";
+import {notify} from "../utils/notify";
+import Confetti from "./feedback/Confetti";
 
 const ICONS: Record<string, LucideIcon> = {
     "book-open": BookOpen,
@@ -58,6 +62,7 @@ export default function DailyMissionsCard({userId}: DailyMissionsCardProps) {
     const [enabled, setEnabled] = useState<boolean>(
         () => readMissionPrefs().enabled,
     );
+    const [burst, setBurst] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -74,7 +79,22 @@ export default function DailyMissionsCard({userId}: DailyMissionsCardProps) {
                     difficultyMix: prefs.difficultyMix,
                     todayIso: localTodayIso(lang),
                 });
-                if (!cancelled) setMissions(result.missions);
+                if (cancelled) return;
+                setMissions(result.missions);
+                // Celebrate missions that newly completed since the
+                // last evaluation: sound + praise + all-clear burst.
+                const allComplete =
+                    result.missions.length > 0 &&
+                    result.missions.every((m) => m.completed);
+                const {praise, allClear} = celebrateMissions({
+                    newlyCompletedCount: result.newlyCompleted.length,
+                    allComplete,
+                    lang,
+                });
+                if (praise) notify.success(praise);
+                if (allClear && allowsConfetti(effectiveIntensity())) {
+                    setBurst(true);
+                }
             } catch {
                 if (!cancelled) setMissions([]);
             }
@@ -97,6 +117,7 @@ export default function DailyMissionsCard({userId}: DailyMissionsCardProps) {
 
     return (
         <div className="daily-missions" data-testid="daily-missions">
+            {burst && <Confetti onDone={() => setBurst(false)} />}
             <h2 className="dashboard-card-title">
                 {t("missions.card_title", "Today's missions")}
             </h2>

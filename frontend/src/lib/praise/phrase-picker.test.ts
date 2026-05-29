@@ -20,6 +20,7 @@ const CATEGORIES: PraiseCategory[] = [
     "streak_milestone",
     "mastery",
     "improvement",
+    "mission_complete",
 ];
 
 describe("phrase-picker — pools", () => {

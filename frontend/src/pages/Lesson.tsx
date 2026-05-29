@@ -54,7 +54,7 @@ import {
 import {allowsConfetti} from "../lib/feedback/feedbackPref";
 import {tokenDiff} from "../lib/exercises/token-diff";
 import {localTodayIso} from "../lib/missions/schedule";
-import {emitCelebration} from "../lib/praise/celebration-bus";
+import {celebrateMissions, emitCelebration} from "../lib/praise/celebration-bus";
 import {nextPraise} from "../lib/praise/phrase-picker";
 import {
     parseStepAnchor,
@@ -366,8 +366,19 @@ export default function LessonPage() {
                         // complete (+ award their bonus XP). Best-effort.
                         if (userId) {
                             try {
-                                await getStorage().missions.getDaily(userId, {
-                                    todayIso: localTodayIso(lang),
+                                const r =
+                                    await getStorage().missions.getDaily(
+                                        userId,
+                                        {todayIso: localTodayIso(lang)},
+                                    );
+                                const allComplete =
+                                    r.missions.length > 0 &&
+                                    r.missions.every((m) => m.completed);
+                                celebrateMissions({
+                                    newlyCompletedCount:
+                                        r.newlyCompleted.length,
+                                    allComplete,
+                                    lang,
                                 });
                             } catch {
                                 /* missions are supplementary */

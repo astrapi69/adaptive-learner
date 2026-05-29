@@ -30,6 +30,7 @@ import {
     type Milestone,
     type MilestoneSnapshot,
 } from "../feedback/milestones";
+import {nextPraise} from "./phrase-picker";
 
 export type CelebrationType =
     | "answer_correct"
@@ -40,7 +41,9 @@ export type CelebrationType =
     | "badge_earned"
     | "level_up"
     | "streak_milestone"
-    | "mastery";
+    | "mastery"
+    | "mission_complete"
+    | "all_missions_complete";
 
 export interface CelebrationEvent {
     type: CelebrationType;
@@ -62,6 +65,8 @@ const SOUND_MAP: Partial<Record<CelebrationType, SoundName>> = {
     level_up: "level_up",
     streak_milestone: "star_earned",
     mastery: "star_earned",
+    mission_complete: "badge_earned",
+    all_missions_complete: "level_up",
 };
 
 /** Subscribe to celebration events. Returns an unsubscribe. */
@@ -118,6 +123,32 @@ export function celebrateMilestonesFromSnapshots(
         celebrateMilestone(milestone);
     }
     return milestones;
+}
+
+/**
+ * Celebrate mission completions (EXP-010 / Phase 56J). Plays the
+ * mission sound, plays the bigger "all-clear" sound when every
+ * mission for the day is done, and (unless intensity is "subtle")
+ * returns a "mission_complete" praise phrase for the caller to
+ * surface. No-op + null when nothing newly completed.
+ */
+export function celebrateMissions(opts: {
+    newlyCompletedCount: number;
+    allComplete: boolean;
+    lang: string;
+}): {praise: string | null; allClear: boolean} {
+    if (opts.newlyCompletedCount <= 0) {
+        return {praise: null, allClear: false};
+    }
+    emitCelebration({type: "mission_complete"});
+    if (opts.allComplete) {
+        emitCelebration({type: "all_missions_complete"});
+    }
+    let praise: string | null = null;
+    if (effectiveIntensity() !== "subtle") {
+        praise = nextPraise("mission_complete", opts.lang)?.phrase ?? null;
+    }
+    return {praise, allClear: opts.allComplete};
 }
 
 /** Celebrate a newly-earned badge (overlay + jingle). */

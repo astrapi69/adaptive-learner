@@ -108,3 +108,16 @@ categories:
       text: "Yükseliyor!"
     - key: im_08
       text: "Artık daha keskin!"
+  mission_complete:
+    - key: mc_01
+      text: "Görev tamamlandı!"
+    - key: mc_02
+      text: "Görev başarıldı!"
+    - key: mc_03
+      text: "Günlük hedef tutturuldu!"
+    - key: mc_04
+      text: "Görevi kaptın!"
+    - key: mc_05
+      text: "Biri tamam!"
+    - key: mc_06
+      text: "Hedefe ulaşıldı!"

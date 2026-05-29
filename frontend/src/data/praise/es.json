@@ -206,6 +206,32 @@
         "key": "im_08",
         "text": "¡Más afilado ahora!"
       }
+    ],
+    "mission_complete": [
+      {
+        "key": "mc_01",
+        "text": "¡Misión completada!"
+      },
+      {
+        "key": "mc_02",
+        "text": "¡Misión cumplida!"
+      },
+      {
+        "key": "mc_03",
+        "text": "¡Objetivo del día logrado!"
+      },
+      {
+        "key": "mc_04",
+        "text": "¡Misión clavada!"
+      },
+      {
+        "key": "mc_05",
+        "text": "¡Una menos!"
+      },
+      {
+        "key": "mc_06",
+        "text": "¡Meta alcanzada!"
+      }
     ]
   }
 }

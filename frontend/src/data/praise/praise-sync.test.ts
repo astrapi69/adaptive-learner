@@ -30,6 +30,7 @@ const CATEGORIES = [
     "streak_milestone",
     "mastery",
     "improvement",
+    "mission_complete",
 ] as const;
 
 // Minimum phrase counts per the Phase 55A spec.
@@ -39,6 +40,7 @@ const MIN_COUNTS: Record<(typeof CATEGORIES)[number], number> = {
     streak_milestone: 8,
     mastery: 8,
     improvement: 8,
+    mission_complete: 6,
 };
 
 interface Phrase {

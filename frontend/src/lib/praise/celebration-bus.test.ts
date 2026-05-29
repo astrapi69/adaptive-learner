@@ -17,6 +17,7 @@ vi.mock("../audio/sound-effects", () => ({
 import {
     celebrateBadge,
     celebrateMilestonesFromSnapshots,
+    celebrateMissions,
     emitCelebration,
     subscribeCelebration,
 } from "./celebration-bus";
@@ -92,5 +93,51 @@ describe("milestone helpers", () => {
         celebrateBadge("streak_3_days", "Consistent", "3 days running");
         expect(milestoneQueueLength()).toBe(1);
         expect(playSound).toHaveBeenCalledWith("badge_earned");
+    });
+});
+
+describe("celebrateMissions", () => {
+    it("no-ops when nothing newly completed", () => {
+        setFeedbackIntensity("normal");
+        const r = celebrateMissions({
+            newlyCompletedCount: 0,
+            allComplete: false,
+            lang: "en",
+        });
+        expect(r).toEqual({praise: null, allClear: false});
+        expect(playSound).not.toHaveBeenCalled();
+    });
+
+    it("plays the mission sound + returns a praise phrase (normal)", () => {
+        setFeedbackIntensity("normal");
+        const r = celebrateMissions({
+            newlyCompletedCount: 1,
+            allComplete: false,
+            lang: "en",
+        });
+        expect(playSound).toHaveBeenCalledWith("badge_earned");
+        expect(r.praise).toBeTruthy();
+        expect(r.allClear).toBe(false);
+    });
+
+    it("fires the all-clear sound + flag when every mission is done", () => {
+        setFeedbackIntensity("normal");
+        const r = celebrateMissions({
+            newlyCompletedCount: 2,
+            allComplete: true,
+            lang: "en",
+        });
+        expect(playSound).toHaveBeenCalledWith("level_up");
+        expect(r.allClear).toBe(true);
+    });
+
+    it("suppresses the praise phrase under subtle intensity", () => {
+        setFeedbackIntensity("subtle");
+        const r = celebrateMissions({
+            newlyCompletedCount: 1,
+            allComplete: false,
+            lang: "en",
+        });
+        expect(r.praise).toBeNull();
     });
 });
