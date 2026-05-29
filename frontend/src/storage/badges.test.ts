@@ -157,7 +157,7 @@ describe("evaluateBadgesForUser", () => {
             status: "completed",
             imported_conversation_id: null,
         });
-        const newly = await evaluateBadgesForUser(userId);
+        const newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).toContain("first_session");
     });
 
@@ -201,8 +201,8 @@ describe("evaluateBadgesForUser", () => {
             status: "completed",
             imported_conversation_id: null,
         });
-        const first = await evaluateBadgesForUser(userId);
-        const second = await evaluateBadgesForUser(userId);
+        const first = (await evaluateBadgesForUser(userId)).earned;
+        const second = (await evaluateBadgesForUser(userId)).earned;
         expect(first).toContain("first_session");
         expect(second).not.toContain("first_session");
     });
@@ -281,7 +281,7 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
                 completed: true,
             }),
         );
-        const newly = await evaluateBadgesForUser(userId);
+        const newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).toContain("first_lesson");
         expect(newly).not.toContain("lessons_10");
     });
@@ -295,7 +295,7 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
                 completed: false,
             }),
         );
-        const newly = await evaluateBadgesForUser(userId);
+        const newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).not.toContain("first_lesson");
     });
 
@@ -311,7 +311,7 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
                 }),
             );
         }
-        let newly = await evaluateBadgesForUser(userId);
+        let newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).not.toContain("lessons_10");
         await db.lessonProgress.put(
             buildLessonProgress(userId, 10, {
@@ -320,7 +320,7 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
                 completed: true,
             }),
         );
-        newly = await evaluateBadgesForUser(userId);
+        newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).toContain("lessons_10");
     });
 
@@ -337,7 +337,7 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
                 }),
             );
         }
-        let newly = await evaluateBadgesForUser(userId);
+        let newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).not.toContain("three_star_streak");
         // Third 3-star lesson — predicate fires.
         await db.lessonProgress.put(
@@ -347,7 +347,7 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
                 completed: true,
             }),
         );
-        newly = await evaluateBadgesForUser(userId);
+        newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).toContain("three_star_streak");
     });
 
@@ -377,7 +377,7 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
                 completed: true,
             }),
         );
-        const newly = await evaluateBadgesForUser(userId);
+        const newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).not.toContain("three_star_streak");
     });
 
@@ -405,7 +405,7 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
                 updated_at: nowIso(),
             });
         }
-        const newly = await evaluateBadgesForUser(userId);
+        const newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).toContain("review_master");
     });
 
@@ -433,7 +433,7 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
                 updated_at: nowIso(),
             });
         }
-        const newly = await evaluateBadgesForUser(userId);
+        const newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).not.toContain("review_master");
     });
 });
@@ -448,6 +448,8 @@ describe("badge tiers — listBadgesWithProgress + evaluate (Phase 57)", () => {
         await db.userBadges.clear();
         await db.learningSessions.clear();
         await db.learningProjects.clear();
+        await db.lessonProgress.clear();
+        await db.userXp.clear();
     });
 
     it("a locked badge previews its base tier; dynamic exposes thresholds", async () => {
@@ -488,11 +490,63 @@ describe("badge tiers — listBadgesWithProgress + evaluate (Phase 57)", () => {
             status: "completed",
             imported_conversation_id: null,
         });
-        const newly = await evaluateBadgesForUser(userId);
+        const newly = (await evaluateBadgesForUser(userId)).earned;
         expect(newly).toContain("first_session");
         const earned = await db.userBadges.where({user_id: userId}).toArray();
         const row = earned[0];
         expect(row.tier).toBe("bronze");
         expect(row.updated_at).toBeTruthy();
+    });
+
+    it("dynamic lessons_10 climbs bronze->silver + awards XP delta (parity w/ backend)", async () => {
+        const userId = await seedUser();
+        const db = getDb();
+        // 10 completed lessons -> first earn at bronze, +50 XP.
+        for (let i = 1; i <= 10; i++) {
+            await db.lessonProgress.put(
+                buildLessonProgress(userId, i, {
+                    correct: 5,
+                    total: 10,
+                    completed: true,
+                }),
+            );
+        }
+        let res = await evaluateBadgesForUser(userId);
+        expect(res.earned).toContain("lessons_10");
+        expect(res.upgrades).toContainEqual({
+            key: "lessons_10",
+            old_tier: null,
+            new_tier: "bronze",
+            xp_awarded: 50,
+        });
+        expect((await db.userXp.where({user_id: userId}).first())?.total_xp).toBe(
+            50,
+        );
+        // 50 completed lessons -> upgrade to silver, delta +100.
+        for (let i = 11; i <= 50; i++) {
+            await db.lessonProgress.put(
+                buildLessonProgress(userId, i, {
+                    correct: 5,
+                    total: 10,
+                    completed: true,
+                }),
+            );
+        }
+        res = await evaluateBadgesForUser(userId);
+        expect(res.earned).not.toContain("lessons_10");
+        expect(res.upgrades).toContainEqual({
+            key: "lessons_10",
+            old_tier: "bronze",
+            new_tier: "silver",
+            xp_awarded: 100,
+        });
+        expect((await db.userXp.where({user_id: userId}).first())?.total_xp).toBe(
+            150,
+        );
+        // Re-evaluate at silver (still <100 lessons) -> no further upgrade.
+        res = await evaluateBadgesForUser(userId);
+        expect(
+            res.upgrades.find((u) => u.key === "lessons_10"),
+        ).toBeUndefined();
     });
 });

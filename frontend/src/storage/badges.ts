@@ -10,8 +10,12 @@
 
 import {getDb, newId, nowIso} from "./db";
 import type {BadgeRow, UserBadgeRow} from "./db";
-import {computeLevel} from "./gamification";
-import type {BadgeWithProgress} from "./types";
+import {computeLevel, persistXP} from "./gamification";
+import type {
+    BadgeEvaluationResult,
+    BadgeTierUpgrade,
+    BadgeWithProgress,
+} from "./types";
 
 /**
  * Catalog mirror of ``badges.yaml``. MUST stay in lockstep with
@@ -512,45 +516,139 @@ const EVALUATORS: Record<string, Evaluator> = {
     review_master: async (uid) => (await masteredElementsCount(uid)) >= 50,
 };
 
+// --- Tier evaluation (Phase 57 / v1.40.0) ---------------------------------
+// Mirrors the Python ``badge_service`` tier logic; a cross-language
+// golden (tests/fixtures/badge-tier-parity/) pins evaluateBadgeTier +
+// tierUpgradeXp byte-identically.
+
+export const TIER_ORDER = ["bronze", "silver", "gold"] as const;
+
+type TierThresholds = Record<string, {threshold: number; xp_bonus: number}>;
+
+/** DYNAMIC badge metrics — key -> count. MUST match the Python
+ *  ``_TIER_METRICS`` and the keys carrying ``tier_thresholds`` in
+ *  BUNDLED_BADGES. */
+const DYNAMIC_TIER_METRICS: Record<
+    string,
+    (userId: string) => Promise<number>
+> = {
+    lessons_10: completedLessonCount,
+    review_master: masteredElementsCount,
+};
+
+/** Highest tier whose threshold ``value`` meets, else null. */
+export function evaluateBadgeTier(
+    value: number,
+    thresholds: TierThresholds,
+): string | null {
+    let earned: string | null = null;
+    for (const tier of TIER_ORDER) {
+        const spec = thresholds[tier];
+        if (spec !== undefined && value >= spec.threshold) earned = tier;
+    }
+    return earned;
+}
+
+/** XP delta for old -> new tier (cumulative xp_bonus totals). */
+export function tierUpgradeXp(
+    oldTier: string | null,
+    newTier: string,
+    thresholds: TierThresholds,
+): number {
+    const newTotal = thresholds[newTier].xp_bonus;
+    const oldTotal = oldTier ? thresholds[oldTier].xp_bonus : 0;
+    return Math.max(0, newTotal - oldTotal);
+}
+
+function tierIndex(tier: string | null | undefined): number {
+    if (!tier) return -1;
+    return (TIER_ORDER as readonly string[]).indexOf(tier);
+}
+
 /**
- * Run every evaluator + insert newly-earned ``user_badges``
- * rows. Returns the list of badge KEYS earned this call.
+ * Run every evaluator; insert newly-earned rows + climb dynamic-badge
+ * tiers in place (high-water mark, never demote), awarding the XP
+ * delta on each transition. Returns the newly-earned keys + the tier
+ * upgrades (for the celebration bus). Mirrors the Python
+ * ``evaluate_user``.
  */
 export async function evaluateBadgesForUser(
     userId: string,
-): Promise<string[]> {
+): Promise<BadgeEvaluationResult> {
     const catalog = await ensureCatalogSeeded();
     const db = getDb();
     const earnedRows = await db.userBadges.where({user_id: userId}).toArray();
-    const earnedBadgeIds = new Set(earnedRows.map((r) => r.badge_id));
-    const newlyEarned: string[] = [];
+    const rowByBadgeId = new Map(earnedRows.map((r) => [r.badge_id, r]));
+    const earned: string[] = [];
+    const upgrades: BadgeTierUpgrade[] = [];
     for (const [key, predicate] of Object.entries(EVALUATORS)) {
         const badge = catalog.get(key);
         if (!badge) continue;
-        if (earnedBadgeIds.has(badge.id)) continue;
+        const existing = rowByBadgeId.get(badge.id);
+        const metricFn = DYNAMIC_TIER_METRICS[key];
+        const thresholds = badge.tier_thresholds ?? null;
         try {
-            if (await predicate(userId)) {
-                const now = nowIso();
-                const row: UserBadgeRow = {
-                    id: newId(),
-                    user_id: userId,
-                    badge_id: badge.id,
-                    // Initial tier = the badge's fixed base tier (static
-                    // siblings keep it; dynamic badges start "bronze" and
-                    // upgrade via 57B's tier evaluation).
-                    tier: badge.base_tier ?? "bronze",
-                    earned_at: now,
-                    updated_at: now,
-                };
-                await db.userBadges.put(row);
-                newlyEarned.push(key);
+            if (metricFn && thresholds) {
+                const value = await metricFn(userId);
+                const target = evaluateBadgeTier(value, thresholds);
+                if (target === null) continue;
+                if (!existing) {
+                    const now = nowIso();
+                    const row: UserBadgeRow = {
+                        id: newId(),
+                        user_id: userId,
+                        badge_id: badge.id,
+                        tier: target,
+                        earned_at: now,
+                        updated_at: now,
+                    };
+                    await db.userBadges.put(row);
+                    const xp = tierUpgradeXp(null, target, thresholds);
+                    earned.push(key);
+                    upgrades.push({
+                        key,
+                        old_tier: null,
+                        new_tier: target,
+                        xp_awarded: xp,
+                    });
+                    if (xp > 0) await persistXP(userId, xp);
+                } else if (tierIndex(target) > tierIndex(existing.tier)) {
+                    const old = existing.tier ?? "bronze";
+                    await db.userBadges.update(existing.id, {
+                        tier: target,
+                        updated_at: nowIso(),
+                    });
+                    const xp = tierUpgradeXp(old, target, thresholds);
+                    upgrades.push({
+                        key,
+                        old_tier: old,
+                        new_tier: target,
+                        xp_awarded: xp,
+                    });
+                    if (xp > 0) await persistXP(userId, xp);
+                }
+            } else {
+                if (existing) continue;
+                if (await predicate(userId)) {
+                    const now = nowIso();
+                    const row: UserBadgeRow = {
+                        id: newId(),
+                        user_id: userId,
+                        badge_id: badge.id,
+                        tier: badge.base_tier ?? "bronze",
+                        earned_at: now,
+                        updated_at: now,
+                    };
+                    await db.userBadges.put(row);
+                    earned.push(key);
+                }
             }
         } catch (err) {
             // eslint-disable-next-line no-console
             console.warn(`Badge evaluator ${key} threw`, err);
         }
     }
-    return newlyEarned;
+    return {earned, upgrades};
 }
 
 /** Catalog + per-user earn state for the dashboard showcase. */

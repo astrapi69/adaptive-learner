@@ -1,0 +1,37 @@
+{
+  "_doc": "Shared parity fixture for the badge-tier rule (Phase 57 / v1.40.0 / P-158). Both implementations (Python in adaptive_learner_gamification.badge_service: evaluate_badge_tier + tier_upgrade_xp; TypeScript in frontend/src/storage/badges.ts: evaluateBadgeTier + tierUpgradeXp) consume this input and must agree on the expected_tier / expected_xp inline. See plugins/adaptive-learner-plugin-gamification/tests/test_badge_tier.py and frontend/src/lib/gamification/badge-tier.parity.test.ts.",
+  "_lessons_thresholds": {
+    "bronze": {"threshold": 10, "xp_bonus": 50},
+    "silver": {"threshold": 50, "xp_bonus": 150},
+    "gold": {"threshold": 100, "xp_bonus": 300}
+  },
+  "_review_thresholds": {
+    "bronze": {"threshold": 50, "xp_bonus": 50},
+    "silver": {"threshold": 200, "xp_bonus": 150},
+    "gold": {"threshold": 500, "xp_bonus": 300}
+  },
+  "evaluate_tier_cases": [
+    {"name": "lessons_below_bronze", "thresholds_ref": "_lessons_thresholds", "value": 9, "expected_tier": null},
+    {"name": "lessons_exact_bronze", "thresholds_ref": "_lessons_thresholds", "value": 10, "expected_tier": "bronze"},
+    {"name": "lessons_mid_bronze", "thresholds_ref": "_lessons_thresholds", "value": 49, "expected_tier": "bronze"},
+    {"name": "lessons_exact_silver", "thresholds_ref": "_lessons_thresholds", "value": 50, "expected_tier": "silver"},
+    {"name": "lessons_mid_silver", "thresholds_ref": "_lessons_thresholds", "value": 99, "expected_tier": "silver"},
+    {"name": "lessons_exact_gold", "thresholds_ref": "_lessons_thresholds", "value": 100, "expected_tier": "gold"},
+    {"name": "lessons_above_gold", "thresholds_ref": "_lessons_thresholds", "value": 1000, "expected_tier": "gold"},
+    {"name": "lessons_zero", "thresholds_ref": "_lessons_thresholds", "value": 0, "expected_tier": null},
+    {"name": "review_below_bronze", "thresholds_ref": "_review_thresholds", "value": 49, "expected_tier": null},
+    {"name": "review_exact_bronze", "thresholds_ref": "_review_thresholds", "value": 50, "expected_tier": "bronze"},
+    {"name": "review_exact_silver", "thresholds_ref": "_review_thresholds", "value": 200, "expected_tier": "silver"},
+    {"name": "review_exact_gold", "thresholds_ref": "_review_thresholds", "value": 500, "expected_tier": "gold"}
+  ],
+  "upgrade_xp_cases": [
+    {"name": "first_earn_bronze", "thresholds_ref": "_lessons_thresholds", "old_tier": null, "new_tier": "bronze", "expected_xp": 50},
+    {"name": "bronze_to_silver", "thresholds_ref": "_lessons_thresholds", "old_tier": "bronze", "new_tier": "silver", "expected_xp": 100},
+    {"name": "silver_to_gold", "thresholds_ref": "_lessons_thresholds", "old_tier": "silver", "new_tier": "gold", "expected_xp": 150},
+    {"name": "first_earn_silver_direct", "thresholds_ref": "_lessons_thresholds", "old_tier": null, "new_tier": "silver", "expected_xp": 150},
+    {"name": "first_earn_gold_direct", "thresholds_ref": "_lessons_thresholds", "old_tier": null, "new_tier": "gold", "expected_xp": 300},
+    {"name": "bronze_to_gold_skip", "thresholds_ref": "_lessons_thresholds", "old_tier": "bronze", "new_tier": "gold", "expected_xp": 250},
+    {"name": "same_tier_noop", "thresholds_ref": "_lessons_thresholds", "old_tier": "gold", "new_tier": "gold", "expected_xp": 0},
+    {"name": "review_bronze_to_silver", "thresholds_ref": "_review_thresholds", "old_tier": "bronze", "new_tier": "silver", "expected_xp": 100}
+  ]
+}

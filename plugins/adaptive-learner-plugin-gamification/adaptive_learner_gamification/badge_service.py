@@ -25,6 +25,7 @@ from __future__ import annotations
 import json
 import logging
 from collections.abc import Callable
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -328,31 +329,121 @@ def evaluator_keys() -> set[str]:
 
 
 # ---------------------------------------------------------------------------
+# Tier evaluation (Phase 57 / v1.40.0)
+# ---------------------------------------------------------------------------
+
+_TIER_ORDER: tuple[str, ...] = ("bronze", "silver", "gold")
+
+# DYNAMIC badges: key -> metric function returning an int the tier
+# thresholds compare against. Only siblingless count badges climb
+# tiers in place; everything else is a static/flat badge handled by
+# the boolean ``_EVALUATORS`` path. MUST match the keys carrying a
+# ``tiers:`` block in badges.yaml (a test pins the agreement).
+_TIER_METRICS: dict[str, Callable[[Any, str], int]] = {
+    "lessons_10": _completed_lesson_count,
+    "review_master": _mastered_elements_count,
+}
+
+
+def dynamic_tier_keys() -> set[str]:
+    """Catalog keys whose single row upgrades through tiers."""
+    return set(_TIER_METRICS.keys())
+
+
+def _tier_index(tier: str | None) -> int:
+    """Ordinal of a tier (bronze=0 < silver=1 < gold=2); -1 if None."""
+    return _TIER_ORDER.index(tier) if tier in _TIER_ORDER else -1
+
+
+def evaluate_badge_tier(value: int, thresholds: dict[str, dict[str, int]]) -> str | None:
+    """Highest tier whose ``threshold`` ``value`` meets, else None.
+
+    ``thresholds`` is the decoded ``{tier: {threshold, xp_bonus}}``
+    map. Returns the top satisfied tier so a brand-new earn can land
+    directly at silver/gold when the metric already exceeds it.
+    """
+    earned: str | None = None
+    for tier in _TIER_ORDER:
+        spec = thresholds.get(tier)
+        if spec is not None and value >= spec["threshold"]:
+            earned = tier
+    return earned
+
+
+def tier_upgrade_xp(
+    old_tier: str | None,
+    new_tier: str,
+    thresholds: dict[str, dict[str, int]],
+) -> int:
+    """XP to award when moving ``old_tier`` -> ``new_tier``.
+
+    ``xp_bonus`` values are cumulative totals, so the award is the
+    DELTA (e.g. bronze->silver awards ``silver - bronze``; a direct
+    bronze-skipping first earn at silver awards the full silver
+    total). Prevents XP inflation on re-evaluation: the high-water
+    ``tier`` column means no further award once a tier is held.
+    """
+    new_total = thresholds[new_tier]["xp_bonus"]
+    old_total = thresholds[old_tier]["xp_bonus"] if old_tier else 0
+    return max(0, new_total - old_total)
+
+
+@dataclass
+class TierUpgrade:
+    """A badge tier transition produced by an evaluation pass."""
+
+    key: str
+    old_tier: str | None
+    new_tier: str
+    xp_awarded: int
+
+
+@dataclass
+class BadgeEvalResult:
+    """Outcome of :func:`evaluate_user`.
+
+    ``earned`` = badge keys that went from absent to present this call
+    (includes a dynamic badge's first earn). ``upgrades`` = every tier
+    transition (first earn of a dynamic badge AND already-held dynamic
+    badges climbing), for the celebration bus.
+    """
+
+    earned: list[str] = field(default_factory=list)
+    upgrades: list[TierUpgrade] = field(default_factory=list)
+
+
+# ---------------------------------------------------------------------------
 # Evaluation entry point
 # ---------------------------------------------------------------------------
 
 
-def evaluate_user(db: Session, user_id: str) -> list[str]:
-    """Run every evaluator against the user; insert newly-earned rows.
+def evaluate_user(db: Session, user_id: str) -> BadgeEvalResult:
+    """Run every evaluator against the user; insert/upgrade rows.
 
-    Returns the list of badge KEYS earned in this call. Existing
-    earns are NOT re-inserted (unique constraint on
+    Returns a :class:`BadgeEvalResult` with newly-earned keys AND tier
+    upgrades. Static/flat badges insert once at their fixed base tier;
+    dynamic badges (lessons_10, review_master) earn at the highest
+    satisfied tier and climb (high-water mark, never demote) on later
+    passes, awarding the XP delta on each transition. Existing earns
+    are NOT re-inserted (unique constraint on
     ``(user_id, badge_id)`` would catch it anyway, but we skip
     explicitly to avoid the DB error path).
     """
     from app.models import Badge, UserBadge
 
-    earned_in_this_call: list[str] = []
+    from . import xp_service
+
+    result = BadgeEvalResult()
     # Map key -> Badge for the catalog (single query). We need
     # ``base_tier`` so a newly-earned static sibling (sessions_50 =
-    # silver, ...) records its fixed tier rather than the column
-    # default. Dynamic badges start at their base ("bronze") and the
-    # 57B tier evaluator upgrades them.
+    # silver, ...) records its fixed tier, and ``tier_thresholds`` for
+    # the dynamic-tier path.
     catalog = {b.key: b for b in db.query(Badge).all()}
-    # Already-earned badge_ids for this user (one query).
-    already_earned = {
-        row.badge_id for row in db.query(UserBadge).filter(UserBadge.user_id == user_id).all()
+    # Already-earned rows for this user, keyed by badge_id (one query).
+    earned_rows = {
+        row.badge_id: row for row in db.query(UserBadge).filter(UserBadge.user_id == user_id).all()
     }
+    dirty = False
     for key, predicate in _EVALUATORS.items():
         badge = catalog.get(key)
         if badge is None:
@@ -360,26 +451,63 @@ def evaluate_user(db: Session, user_id: str) -> list[str]:
             # seeding. Just log and continue.
             logger.debug("evaluate_user: catalog missing badge key %r", key)
             continue
-        if badge.id in already_earned:
-            continue
+        existing = earned_rows.get(badge.id)
+        metric_fn = _TIER_METRICS.get(key)
+        thresholds = json.loads(badge.tier_thresholds) if badge.tier_thresholds else None
         try:
-            if predicate(db, user_id):
-                db.add(
-                    UserBadge(
-                        user_id=user_id,
-                        badge_id=badge.id,
-                        tier=badge.base_tier,
+            if metric_fn is not None and thresholds is not None:
+                # DYNAMIC badge: compute the metric, derive the target
+                # tier, then earn-at-tier or high-water upgrade.
+                value = metric_fn(db, user_id)
+                target = evaluate_badge_tier(value, thresholds)
+                if target is None:
+                    continue
+                if existing is None:
+                    db.add(UserBadge(user_id=user_id, badge_id=badge.id, tier=target))
+                    xp = tier_upgrade_xp(None, target, thresholds)
+                    result.earned.append(key)
+                    result.upgrades.append(TierUpgrade(key, None, target, xp))
+                    dirty = True
+                elif _tier_index(target) > _tier_index(existing.tier):
+                    old = existing.tier
+                    existing.tier = target  # onupdate bumps updated_at
+                    xp = tier_upgrade_xp(old, target, thresholds)
+                    result.upgrades.append(TierUpgrade(key, old, target, xp))
+                    dirty = True
+            else:
+                # STATIC / flat badge: boolean predicate, record at the
+                # badge's fixed base tier.
+                if existing is not None:
+                    continue
+                if predicate(db, user_id):
+                    db.add(
+                        UserBadge(
+                            user_id=user_id,
+                            badge_id=badge.id,
+                            tier=badge.base_tier,
+                        )
                     )
-                )
-                earned_in_this_call.append(key)
+                    result.earned.append(key)
+                    dirty = True
         except Exception:  # noqa: BLE001
             logger.exception(
                 "Badge evaluator for %r raised — skipping this evaluation.",
                 key,
             )
-    if earned_in_this_call:
+    if dirty:
         db.commit()
-    return earned_in_this_call
+    # Award tier-upgrade XP after the badge rows commit. ``award_xp_flat``
+    # manages its own commit; the high-water ``tier`` already persisted
+    # guards against re-award on a later evaluation (Q-122).
+    for upgrade in result.upgrades:
+        if upgrade.xp_awarded > 0:
+            xp_service.award_xp_flat(
+                db,
+                user_id=user_id,
+                amount=upgrade.xp_awarded,
+                reason="badge_tier_upgrade",
+            )
+    return result
 
 
 # ---------------------------------------------------------------------------

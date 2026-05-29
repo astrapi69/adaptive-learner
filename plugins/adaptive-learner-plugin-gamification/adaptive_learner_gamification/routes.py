@@ -113,8 +113,19 @@ def trigger_badge_evaluation(user_id: str, db: Session = Depends(get_db)) -> dic
     assessment flows when a non-session action might unlock a
     badge (e.g. "Three providers configured")."""
     _ensure_user(db, user_id)
-    earned = badge_service.evaluate_user(db, user_id)
-    return {"earned": earned}
+    evaluation = badge_service.evaluate_user(db, user_id)
+    return {
+        "earned": evaluation.earned,
+        "upgrades": [
+            {
+                "key": up.key,
+                "old_tier": up.old_tier,
+                "new_tier": up.new_tier,
+                "xp_awarded": up.xp_awarded,
+            }
+            for up in evaluation.upgrades
+        ],
+    }
 
 
 # --- Streaks (Phase 29C) ---------------------------------------------------

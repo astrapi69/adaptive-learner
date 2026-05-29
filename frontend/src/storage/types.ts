@@ -998,6 +998,22 @@ export interface BadgeWithProgress {
     progress: string | null;
 }
 
+/** A badge tier transition (Phase 57 / v1.40.0). ``old_tier`` is null
+ *  on a dynamic badge's first earn. Drives the celebration bus. */
+export interface BadgeTierUpgrade {
+    key: string;
+    old_tier: string | null;
+    new_tier: string;
+    xp_awarded: number;
+}
+
+/** Result of an evaluation pass: newly-earned badge keys + tier
+ *  upgrades. Shared shape across ApiStorage + DexieStorage. */
+export interface BadgeEvaluationResult {
+    earned: string[];
+    upgrades: BadgeTierUpgrade[];
+}
+
 export interface StreakStateOut {
     user_id: string;
     current_streak_days: number;
@@ -1018,7 +1034,7 @@ export interface IGamificationNamespace {
     awardAssessment(userId: string): Promise<XPAwardResult>;
     awardImport(userId: string): Promise<XPAwardResult>;
     listBadges(userId: string): Promise<BadgeWithProgress[]>;
-    evaluateBadges(userId: string): Promise<{earned: string[]}>;
+    evaluateBadges(userId: string): Promise<BadgeEvaluationResult>;
     getStreak(userId: string): Promise<StreakStateOut>;
     getStreakHeatmap(userId: string, days?: number): Promise<HeatmapEntryOut[]>;
     setWeekendMode(userId: string, enabled: boolean): Promise<StreakStateOut>;

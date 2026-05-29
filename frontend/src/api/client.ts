@@ -1316,7 +1316,7 @@ export const api = {
                 `/plugins/gamification/badges/${encodeURIComponent(userId)}`,
             ),
         evaluateBadges: (userId: string) =>
-            apiCall<{earned: string[]}>(
+            apiCall<import("../storage/types").BadgeEvaluationResult>(
                 `/plugins/gamification/badges/${encodeURIComponent(userId)}/evaluate`,
                 {method: "POST", body: {}},
             ),

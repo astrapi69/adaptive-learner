@@ -1963,10 +1963,7 @@ export const dexieStorage: IStorageService = {
             return award;
         },
         listBadges: (userId) => listBadgesWithProgress(userId),
-        evaluateBadges: async (userId) => {
-            const earned = await evaluateBadgesForUser(userId);
-            return {earned};
-        },
+        evaluateBadges: (userId) => evaluateBadgesForUser(userId),
         getStreak: (userId) => getStreakState(userId),
         getStreakHeatmap: (userId, days) => calendarHeatmap(userId, days ?? 365),
         setWeekendMode: (userId, enabled) =>

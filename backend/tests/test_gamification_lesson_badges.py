@@ -271,3 +271,102 @@ def test_review_master_isolated_per_user(client: TestClient) -> None:
 
     assert _badge(client, user_a, "review_master")["earned"] is True
     assert _badge(client, user_b, "review_master")["earned"] is False
+
+
+# --- Tier upgrades (Phase 57 / v1.40.0) -----------------------------------
+
+
+def _seed_mastered_range(user_id: str, start: int, stop: int) -> None:
+    """Insert mastered ElementError rows with indices [start, stop) so
+    cumulative seeding doesn't collide on the element key."""
+    db = SessionLocal()
+    try:
+        now = datetime.now(UTC)
+        for i in range(start, stop):
+            db.add(
+                ElementError(
+                    user_id=user_id,
+                    set_id="seed-set",
+                    lesson_id="seed-lesson",
+                    exercise_id=f"ex-{i:04d}",
+                    element_key=f"elem-{i:04d}",
+                    element_type="vocabulary",
+                    user_answer="",
+                    correct_answer="",
+                    error_count=3,
+                    correct_streak=3,
+                    last_error_at=now - timedelta(days=2),
+                    last_attempt_at=now,
+                    mastered=True,
+                    mastered_at=now,
+                    created_at=now,
+                    updated_at=now,
+                )
+            )
+        db.commit()
+    finally:
+        db.close()
+
+
+def _evaluate_full(client: TestClient, user_id: str) -> dict:
+    r = client.post(f"/api/plugins/gamification/badges/{user_id}/evaluate")
+    assert r.status_code == 200, r.text
+    return r.json()
+
+
+def _review_upgrade(body: dict) -> dict | None:
+    for up in body["upgrades"]:
+        if up["key"] == "review_master":
+            return up
+    return None
+
+
+def _xp_total(client: TestClient, user_id: str) -> int:
+    return client.get(f"/api/plugins/gamification/xp/{user_id}").json()["total_xp"]
+
+
+def test_review_master_tier_climbs_and_awards_xp_delta(
+    client: TestClient,
+) -> None:
+    """review_master (dynamic: 50/200/500) climbs bronze->silver->gold
+    as mastery grows, awarding the cumulative-total DELTA on each step,
+    and never re-awards once a tier is held (Q-122 / high-water mark)."""
+    user_id = _make_user(client, "rm-tier")
+
+    # 50 mastered -> first earn at bronze, +50 XP.
+    _seed_mastered_range(user_id, 0, 50)
+    body = _evaluate_full(client, user_id)
+    assert "review_master" in body["earned"]
+    up = _review_upgrade(body)
+    assert up == {
+        "key": "review_master",
+        "old_tier": None,
+        "new_tier": "bronze",
+        "xp_awarded": 50,
+    }
+    assert _xp_total(client, user_id) == 50
+
+    # 200 mastered -> upgrade to silver, delta +100 (150 - 50).
+    _seed_mastered_range(user_id, 50, 200)
+    body = _evaluate_full(client, user_id)
+    up = _review_upgrade(body)
+    assert up is not None
+    assert up["old_tier"] == "bronze" and up["new_tier"] == "silver"
+    assert up["xp_awarded"] == 100
+    assert _xp_total(client, user_id) == 150
+    # Not a NEW earn — only an upgrade.
+    assert "review_master" not in body["earned"]
+
+    # 500 mastered -> upgrade to gold, delta +150 (300 - 150).
+    _seed_mastered_range(user_id, 200, 500)
+    body = _evaluate_full(client, user_id)
+    up = _review_upgrade(body)
+    assert up is not None
+    assert up["new_tier"] == "gold" and up["xp_awarded"] == 150
+    assert _xp_total(client, user_id) == 300
+
+    # Re-evaluate at gold -> no further upgrade, no further XP.
+    body = _evaluate_full(client, user_id)
+    assert _review_upgrade(body) is None
+    assert _xp_total(client, user_id) == 300
+    assert _badge(client, user_id, "review_master")["tier"] == "gold"
