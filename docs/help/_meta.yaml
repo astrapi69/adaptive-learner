@@ -117,6 +117,10 @@ navigation:
           en: Storage layer
         slug: developer/storage-layer
       - title:
+          de: Theme-System
+          en: Theme system
+        slug: developer/themes
+      - title:
           de: Lektionen + SRS
           en: Lessons + SRS
         slug: developer/lessons-and-srs

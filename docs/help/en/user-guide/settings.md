@@ -133,13 +133,33 @@ Three toggles (since v1.18.0):
 The Voice section hides itself when neither Web Speech API
 side (synth nor recognition) is supported by the browser.
 
+## Appearance (Phase 58 / v1.41.0)
+
+The **Theme** picker under *General > Appearance* offers six
+themes plus an automatic mode:
+
+- **Light** - the default, bright and high-contrast.
+- **Dark** - dimmed surfaces for low-light use.
+- **Ocean** - deep blue tones, calm and easy on the eyes at night.
+- **Forest** - warm green and amber earthy tones.
+- **High Contrast** - accessibility-first: black, white, and bold
+  signal colors, with crisp card edges. Use this if you need maximum
+  readability.
+- **Sepia** - warm paper tones, comfortable for long reading.
+- **Auto (System)** - follows your operating system's light/dark
+  setting and switches automatically when the system does.
+
+Pick a theme from its preview card; the change applies instantly with
+no reload, and your choice is remembered across visits. Every theme is
+designed to meet WCAG 2.1 AA contrast, so text, charts, badges, and
+exercise feedback stay readable in all of them.
+
 ## Interface
 
-Theme picker (5 palettes × light/dark = 10 variants),
-density, and the **Gestures toggle** (since v1.10.0,
-default ON for touch-capable devices). Gestures cover
-Assessment swipe navigation, Curriculum topic
-swipe-to-reveal, and Session cycle peek.
+The **Gestures toggle** (since v1.10.0, default ON for touch-capable
+devices) covers Assessment swipe navigation, Curriculum topic
+swipe-to-reveal, and Session cycle peek. Also here: button tooltips and
+Developer Mode.
 
 ## Gamification
 

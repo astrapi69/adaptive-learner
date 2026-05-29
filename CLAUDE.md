@@ -9,7 +9,45 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.40.0** (Phase 57 — Badge Tiers
+- **Current state:** **v1.41.0** (Phase 58 — UX/UI Audit +
+  Multi-Theme System). Full dark-mode audit
+  (``docs/audits/ux-theme-audit-2026-05-29.md``) then a
+  complete **semantic CSS variable system**: the canonical
+  token set (backgrounds / text / borders / interactive /
+  accent / status pairs / exercise feedback / charts / star /
+  shadows) is defined per theme in
+  ``frontend/src/styles/themes/theme-*.css`` — **6 themes**
+  (light, dark, **ocean**, **forest**, **high-contrast**,
+  **sepia**) + an **auto** mode following the OS. Fixed the F1
+  audit class (~10 tokens were referenced but never defined,
+  rendering light hex in dark mode). ``global.css`` keeps only
+  theme-agnostic tokens + legacy aliases (resolve through the
+  canonical tokens). ``lib/themes.ts`` registry + reworked
+  ``useTheme`` (choice persisted under ``adaptive-learner.theme``,
+  one-time migration from the old hyphen key, live OS-follow);
+  **pre-paint script** in ``index.html`` (no flash);
+  **ThemePicker** (Settings > General > Appearance, preview
+  cards, instant swap). Charts recolor via
+  ``lib/chartTheme.ts`` + ``useChartTheme`` (Recharts can't read
+  CSS vars in SVG attrs). All 5 exercise types + celebration +
+  stars + badge-tier use ``--exercise-*`` / ``--star``. New
+  ``ui.themes.*`` + ``settings.theme*`` i18n in 8 langs. Pins:
+  ``themes.test.ts`` (every theme defines the same token set),
+  ``contrast.test.ts`` (WCAG 2.1 AA across all 6 themes),
+  ``no-hardcoded-colors.test.ts`` (component styles). Folds in:
+  the **58I accessibility re-audit**
+  (``docs/audits/wcag-2026-05-29.md`` — Content download
+  ``aria-live``, global ``:focus-visible`` baseline; axe already
+  dev-wired), a **Dexie v21 upgrade bugfix** (a dynamic
+  ``import()`` inside the IndexedDB upgrade transaction finished
+  it early → ``DatabaseClosedError`` on /import for every v1.40.0
+  upgrade; ``BUNDLED_BADGES`` extracted to ``badges-data.ts`` and
+  static-imported), a content-loader warn-gate, and an in-range
+  dependency sweep (backend lock; mypy 2.0 + anthropic 0.105
+  held). 11 atomic sub-phase commits; green through
+  ``make test`` + ``npm run build`` + Vitest +
+  ``make test-dexie-smoke``.
+  v1.40.0 = Phase 57 (Badge Tiers
   + Badge Gallery; the EXP-010 follow-up deferred from
   v1.39.0). All 28 badge keys are kept (no merge/removal)
   and gain a **bronze/silver/gold** tier. Two shapes:
@@ -394,7 +432,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.40.0.md](changelog/releases/v1.40.0.md)
+  [changelog/releases/v1.41.0.md](changelog/releases/v1.41.0.md)
   for the per-release detail and `git log --oneline` for
   the feature history across Phases 1–57.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
@@ -561,8 +599,10 @@ adaptive-learner/
 - Python: type hints, snake_case, Pydantic v2, SQLAlchemy 2.0
   mapped columns.
 - TypeScript: strict mode, no `any` without comment.
-- CSS: custom properties, dark mode via `[data-theme="dark"]`,
-  5 themes × light/dark.
+- CSS: custom properties; 6 self-contained themes via
+  `[data-theme]` (light/dark/ocean/forest/high-contrast/sepia)
+  + auto. Canonical tokens in `styles/themes/theme-*.css`; every
+  theme defines the full set. No hardcoded colors in components.
 - Commits: English, conventional (feat/fix/refactor/docs).
 - E2E: `data-testid` selectors only.
 - **Secrets**: never in committed config. Three-layer chain:
@@ -573,8 +613,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.40.0 baseline:** backend 1025 (+1 skipped) + plugins
-  950 + Vitest 2346 = **4321 tests** (+1 skipped). E2E
+- **v1.41.0 baseline:** backend 1025 (+1 skipped) + plugins
+  950 + Vitest 2500 = **4475 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (19 specs incl. /content + /lesson + /review +
