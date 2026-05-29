@@ -772,6 +772,25 @@
       "depth": "Profondeur",
       "polyglot": "Polyglotte"
     },
+    "tier": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or",
+      "locked": "Verrouillé"
+    },
+    "gallery": {
+      "title": "Badges",
+      "count": "{earned} / {total} obtenus",
+      "filter_all": "Tous",
+      "sort_label": "Trier par",
+      "sort_recent": "Obtenus récemment",
+      "sort_progress": "Progression vers le niveau suivant",
+      "sort_category": "Catégorie",
+      "locked_hint": "Continue à apprendre pour débloquer ce badge.",
+      "next_tier": "{current} / {target} jusqu'à {tier}",
+      "tiers_heading": "Niveaux",
+      "view_all": "Voir tous les badges"
+    },
     "badges": {
       "first_session": {
         "name": "Première Session",

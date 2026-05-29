@@ -25,7 +25,9 @@ import {
 } from "../lib/gamificationPref";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
+import type {BadgeWithProgress} from "../storage/types";
 import {notify} from "../utils/notify";
+import BadgeGallery from "./badges/BadgeGallery";
 
 export default function GamificationSettingsSection() {
     const {t} = useI18n();
@@ -34,7 +36,21 @@ export default function GamificationSettingsSection() {
     const [loadingStreak, setLoadingStreak] = useState(true);
     const [confirmCount, setConfirmCount] = useState(0);
     const [resetting, setResetting] = useState(false);
+    const [galleryOpen, setGalleryOpen] = useState(false);
+    const [badges, setBadges] = useState<BadgeWithProgress[] | null>(null);
     const userId = readLearnerState().userId;
+
+    const handleOpenGallery = async () => {
+        setGalleryOpen(true);
+        if (badges === null && userId) {
+            try {
+                setBadges(await getStorage().gamification.listBadges(userId));
+            } catch {
+                /* non-fatal; the gallery shows an empty grid */
+                setBadges([]);
+            }
+        }
+    };
 
     useEffect(() => {
         let cancelled = false;
@@ -174,6 +190,28 @@ export default function GamificationSettingsSection() {
                     onChange={(e) => handleBadgeToggle(e.target.checked)}
                 />
             </label>
+
+            <div className="form-row">
+                <span className="form-label-stack">
+                    <span className="form-label">
+                        {t("gamification.gallery.title", "Badges")}
+                    </span>
+                </span>
+                <button
+                    type="button"
+                    className="btn"
+                    data-testid="settings-view-all-badges"
+                    onClick={handleOpenGallery}
+                >
+                    {t("gamification.gallery.view_all", "View all badges")}
+                </button>
+            </div>
+
+            <BadgeGallery
+                open={galleryOpen}
+                onClose={() => setGalleryOpen(false)}
+                badges={badges}
+            />
 
             <label className="form-row form-row-toggle">
                 <span className="form-label-stack">

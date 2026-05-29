@@ -722,6 +722,23 @@ gamification:
     method_explorer: メソッド探求
     depth: 深さ
     polyglot: ポリグロット
+  tier:
+    bronze: ブロンズ
+    silver: シルバー
+    gold: ゴールド
+    locked: ロック中
+  gallery:
+    title: バッジ
+    count: "{total} 個中 {earned} 個獲得"
+    filter_all: すべて
+    sort_label: 並べ替え
+    sort_recent: 最近獲得した順
+    sort_progress: 次のランクへの進捗
+    sort_category: カテゴリ
+    locked_hint: 学習を続けるとこのバッジが解除されます。
+    next_tier: "{tier} まで {current} / {target}"
+    tiers_heading: ランク
+    view_all: すべてのバッジを表示
   badges:
     first_session:
       name: 初めてのセッション

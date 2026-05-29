@@ -722,6 +722,23 @@ gamification:
     method_explorer: Method Explorer
     depth: Depth
     polyglot: Polyglot
+  tier:
+    bronze: Bronze
+    silver: Silver
+    gold: Gold
+    locked: Locked
+  gallery:
+    title: Badges
+    count: "{earned} / {total} earned"
+    filter_all: All
+    sort_label: "Sort by"
+    sort_recent: Recently earned
+    sort_progress: Progress to next tier
+    sort_category: Category
+    locked_hint: Keep learning to unlock this badge.
+    next_tier: "{current} / {target} to {tier}"
+    tiers_heading: Tiers
+    view_all: View all badges
   badges:
     first_session:
       name: First Session

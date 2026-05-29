@@ -722,6 +722,23 @@ gamification:
     method_explorer: Methoden-Entdecker
     depth: Tiefe
     polyglot: Polyglott
+  tier:
+    bronze: Bronze
+    silver: Silber
+    gold: Gold
+    locked: Gesperrt
+  gallery:
+    title: Plaketten
+    count: "{earned} / {total} erreicht"
+    filter_all: Alle
+    sort_label: Sortieren nach
+    sort_recent: Zuletzt erreicht
+    sort_progress: Fortschritt zur nächsten Stufe
+    sort_category: Kategorie
+    locked_hint: Lerne weiter, um diese Plakette freizuschalten.
+    next_tier: "{current} / {target} bis {tier}"
+    tiers_heading: Stufen
+    view_all: Alle Plaketten anzeigen
   badges:
     first_session:
       name: Erste Sitzung

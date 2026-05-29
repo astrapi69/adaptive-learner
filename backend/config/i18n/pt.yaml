@@ -722,6 +722,23 @@ gamification:
     method_explorer: Explorador de Métodos
     depth: Profundidade
     polyglot: Poliglota
+  tier:
+    bronze: Bronze
+    silver: Prata
+    gold: Ouro
+    locked: Bloqueado
+  gallery:
+    title: Medalhas
+    count: "{earned} / {total} conquistadas"
+    filter_all: Todas
+    sort_label: Ordenar por
+    sort_recent: Conquistadas recentemente
+    sort_progress: Progresso até o próximo nível
+    sort_category: Categoria
+    locked_hint: Siga aprendendo para desbloquear esta medalha.
+    next_tier: "{current} / {target} até {tier}"
+    tiers_heading: Níveis
+    view_all: Ver todas as medalhas
   badges:
     first_session:
       name: Primeira Sessão

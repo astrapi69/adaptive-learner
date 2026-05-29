@@ -722,6 +722,23 @@ gamification:
     method_explorer: Explorador de Métodos
     depth: Profundidad
     polyglot: Políglota
+  tier:
+    bronze: Bronce
+    silver: Plata
+    gold: Oro
+    locked: Bloqueado
+  gallery:
+    title: Insignias
+    count: "{earned} / {total} conseguidas"
+    filter_all: Todas
+    sort_label: Ordenar por
+    sort_recent: Conseguidas recientemente
+    sort_progress: Progreso al siguiente nivel
+    sort_category: Categoría
+    locked_hint: Sigue aprendiendo para desbloquear esta insignia.
+    next_tier: "{current} / {target} hasta {tier}"
+    tiers_heading: Niveles
+    view_all: Ver todas las insignias
   badges:
     first_session:
       name: Primera Sesión

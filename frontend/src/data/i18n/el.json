@@ -772,6 +772,25 @@
       "depth": "Βάθος",
       "polyglot": "Πολύγλωσσος"
     },
+    "tier": {
+      "bronze": "Χάλκινο",
+      "silver": "Ασημένιο",
+      "gold": "Χρυσό",
+      "locked": "Κλειδωμένο"
+    },
+    "gallery": {
+      "title": "Διακριτικά",
+      "count": "{earned} / {total} κερδισμένα",
+      "filter_all": "Όλα",
+      "sort_label": "Ταξινόμηση κατά",
+      "sort_recent": "Πρόσφατα κερδισμένα",
+      "sort_progress": "Πρόοδος προς το επόμενο επίπεδο",
+      "sort_category": "Κατηγορία",
+      "locked_hint": "Συνέχισε να μαθαίνεις για να ξεκλειδώσεις αυτό το διακριτικό.",
+      "next_tier": "{current} / {target} έως {tier}",
+      "tiers_heading": "Επίπεδα",
+      "view_all": "Δες όλα τα διακριτικά"
+    },
     "badges": {
       "first_session": {
         "name": "Πρώτη Συνεδρία",

@@ -722,6 +722,23 @@ gamification:
     method_explorer: Yöntem Kâşifi
     depth: Derinlik
     polyglot: Çok Dilli
+  tier:
+    bronze: Bronz
+    silver: Gümüş
+    gold: Altın
+    locked: Kilitli
+  gallery:
+    title: Rozetler
+    count: "{earned} / {total} kazanıldı"
+    filter_all: Tümü
+    sort_label: Sıralama ölçütü
+    sort_recent: Son kazanılanlar
+    sort_progress: Sonraki seviyeye ilerleme
+    sort_category: Kategori
+    locked_hint: Bu rozeti açmak için öğrenmeye devam et.
+    next_tier: "{tier} için {current} / {target}"
+    tiers_heading: Seviyeler
+    view_all: Tüm rozetleri gör
   badges:
     first_session:
       name: İlk Oturum
