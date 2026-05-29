@@ -32,7 +32,7 @@ import {
     RotateCcw,
     Star,
 } from "lucide-react";
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import Markdown from "react-markdown";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -49,6 +49,7 @@ import {useI18n} from "../hooks/useI18n";
 import {useLesson} from "../hooks/useLesson";
 import {allowsConfetti} from "../lib/feedback/feedbackPref";
 import {tokenDiff} from "../lib/exercises/token-diff";
+import {emitCelebration} from "../lib/praise/celebration-bus";
 import {nextPraise} from "../lib/praise/phrase-picker";
 import {
     parseStepAnchor,
@@ -610,6 +611,20 @@ function LessonSummary({
             ENCOURAGE_FALLBACK[stars],
         );
     });
+
+    // Fire the lesson-complete celebration sounds once on mount.
+    // The star chime + confetti sparkle only on a perfect run.
+    const celebrationFired = useRef(false);
+    useEffect(() => {
+        if (celebrationFired.current) return;
+        celebrationFired.current = true;
+        emitCelebration({type: "lesson_complete", payload: {stars}});
+        if (stars === 3) {
+            emitCelebration({type: "stars_earned"});
+            if (celebrateConfetti) emitCelebration({type: "confetti"});
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <section

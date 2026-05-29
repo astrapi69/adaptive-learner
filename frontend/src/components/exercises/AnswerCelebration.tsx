@@ -29,6 +29,7 @@ import {
     shouldPraiseCorrect,
 } from "../../lib/feedback/feedbackPref";
 import {fireHaptic} from "../../lib/feedback/haptic";
+import {emitCelebration} from "../../lib/praise/celebration-bus";
 import {nextPraise} from "../../lib/praise/phrase-picker";
 
 export interface AnswerCelebrationProps {
@@ -45,8 +46,14 @@ export default function AnswerCelebration({
     const fired = useRef(false);
 
     useEffect(() => {
-        if (!isCorrect || fired.current) return;
+        if (fired.current) return;
         fired.current = true;
+        // Route through the bus so the sound layer reacts
+        // (sound self-gates on the sound preference).
+        emitCelebration({
+            type: isCorrect ? "answer_correct" : "answer_wrong",
+        });
+        if (!isCorrect) return;
         fireHaptic();
         const index = nextCorrectAnswerIndex();
         if (shouldPraiseCorrect(intensity, index)) {
