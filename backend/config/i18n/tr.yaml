@@ -318,6 +318,14 @@ settings:
   section_api_keys: API anahtarları
   section_danger: Hesap
   section_ui: Arayüz
+  tab_general: "Genel"
+  tab_ai: "Yapay zeka"
+  tab_learning: "Öğrenme"
+  tab_plugins: "Eklentiler"
+  tab_data: "Veri"
+  tab_help: "Yardım"
+  tabs_aria: "Ayar bölümleri"
+  section_feedback: "Geri bildirim"
   gestures: Kaydırma Hareketleri
   gestures_description: Değerlendirme, Oturum ve Müfredat'ta gezinmek için kaydır.
   button_tooltips: Buton ipuçlarını göster

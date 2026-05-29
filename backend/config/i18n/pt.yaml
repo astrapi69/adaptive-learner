@@ -318,6 +318,14 @@ settings:
   section_api_keys: Chaves de API
   section_danger: Conta
   section_ui: Interface
+  tab_general: "Geral"
+  tab_ai: "IA"
+  tab_learning: "Aprendizagem"
+  tab_plugins: "Plugins"
+  tab_data: "Dados"
+  tab_help: "Ajuda"
+  tabs_aria: "Seções de configurações"
+  section_feedback: "Feedback"
   gestures: Gestos de deslizar
   gestures_description: Deslize para navegar na Avaliação, Sessão e Currículo.
   button_tooltips: Mostrar dicas dos botões

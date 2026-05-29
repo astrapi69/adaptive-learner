@@ -318,6 +318,14 @@ settings:
   section_api_keys: Cles API
   section_danger: Compte
   section_ui: Interface
+  tab_general: "Général"
+  tab_ai: "IA"
+  tab_learning: "Apprentissage"
+  tab_plugins: "Extensions"
+  tab_data: "Données"
+  tab_help: "Aide"
+  tabs_aria: "Sections des paramètres"
+  section_feedback: "Retour"
   gestures: Swipe Gestures
   gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
   button_tooltips: Show button tooltips

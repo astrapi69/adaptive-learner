@@ -318,6 +318,14 @@ settings:
   section_api_keys: API keys
   section_danger: Account
   section_ui: Interface
+  tab_general: "General"
+  tab_ai: "AI"
+  tab_learning: "Learning"
+  tab_plugins: "Plugins"
+  tab_data: "Data"
+  tab_help: "Help"
+  tabs_aria: "Settings sections"
+  section_feedback: "Feedback"
   gestures: Swipe Gestures
   gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
   button_tooltips: Show button tooltips

@@ -1573,6 +1573,42 @@ select:focus {
   gap: var(--space-5);
 }
 
+/* EXP-010 / Phase 56M — Settings tab bar */
+.settings-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-2);
+}
+
+.settings-tab {
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  color: var(--fg-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.settings-tab:hover {
+  background: var(--surface-2);
+  color: var(--fg);
+}
+
+.settings-tab.is-active {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+}
+
+.settings-tabpanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
 .settings-page h1 {
   margin: 0;
   font-size: 1.75rem;

@@ -108,6 +108,41 @@ describe("Settings page", () => {
         expect(screen.getByTestId("api-key-row-gemini")).toBeInTheDocument();
     });
 
+    it("renders the tab bar with General active by default", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        expect(screen.getByTestId("settings-tabs")).toBeInTheDocument();
+        expect(
+            screen.getByTestId("settings-tab-general"),
+        ).toHaveAttribute("aria-selected", "true");
+        // General panel sections are visible; AI panel is hidden.
+        expect(screen.getByTestId("settings-section-ui")).toBeVisible();
+        expect(
+            screen.getByTestId("settings-model-overrides"),
+        ).not.toBeVisible();
+    });
+
+    it("switching tabs reveals that tab's panel", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings();
+        await screen.findByTestId("settings");
+        fireEvent.click(screen.getByTestId("settings-tab-ai"));
+        expect(
+            screen.getByTestId("settings-tab-ai"),
+        ).toHaveAttribute("aria-selected", "true");
+        expect(
+            screen.getByTestId("settings-model-overrides"),
+        ).toBeVisible();
+        // The General Interface section is now hidden.
+        expect(screen.getByTestId("settings-section-ui")).not.toBeVisible();
+        // Learning panel hosts the feedback section.
+        fireEvent.click(screen.getByTestId("settings-tab-learning"));
+        expect(
+            screen.getByTestId("settings-section-feedback"),
+        ).toBeVisible();
+    });
+
     it("changing the language calls update + flips i18n provider", async () => {
         apiGet.mockResolvedValue(BASE);
         apiUpdate.mockResolvedValue({...BASE, language: "en"});

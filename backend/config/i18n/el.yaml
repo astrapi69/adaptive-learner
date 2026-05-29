@@ -318,6 +318,14 @@ settings:
   section_api_keys: Κλειδιά API
   section_danger: Λογαριασμός
   section_ui: Interface
+  tab_general: "Γενικά"
+  tab_ai: "ΤΝ"
+  tab_learning: "Μάθηση"
+  tab_plugins: "Πρόσθετα"
+  tab_data: "Δεδομένα"
+  tab_help: "Βοήθεια"
+  tabs_aria: "Ενότητες ρυθμίσεων"
+  section_feedback: "Ανατροφοδότηση"
   gestures: Swipe Gestures
   gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
   button_tooltips: Show button tooltips

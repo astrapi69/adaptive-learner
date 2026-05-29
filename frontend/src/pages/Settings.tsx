@@ -56,10 +56,36 @@ import type {UserSettings} from "../types";
  *
  * Pre-condition: user_id in localStorage; missing redirects to
  * /onboarding.
+ *
+ * v1.39.0 / Phase 56M — tabbed layout (Bibliogon pattern). Every
+ * panel stays MOUNTED (inactive ones use the ``hidden`` attribute)
+ * so deep links + existing data-testid assertions keep working;
+ * the tab bar just controls which group is visible, for
+ * discoverability.
  */
+const SETTINGS_TABS = [
+    "general",
+    "ai",
+    "learning",
+    "plugins",
+    "data",
+    "help",
+] as const;
+type SettingsTab = (typeof SETTINGS_TABS)[number];
+
+const SETTINGS_TAB_LABELS: Record<SettingsTab, {key: string; fallback: string}> = {
+    general: {key: "settings.tab_general", fallback: "General"},
+    ai: {key: "settings.tab_ai", fallback: "AI"},
+    learning: {key: "settings.tab_learning", fallback: "Learning"},
+    plugins: {key: "settings.tab_plugins", fallback: "Plugins"},
+    data: {key: "settings.tab_data", fallback: "Data"},
+    help: {key: "settings.tab_help", fallback: "Help"},
+};
+
 export default function Settings() {
     const {t, lang, setLang} = useI18n();
     const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState<SettingsTab>("general");
 
     const [settings, setSettings] = useState<UserSettings | null>(null);
     const [loadError, setLoadError] = useState<string | null>(null);
@@ -308,9 +334,38 @@ export default function Settings() {
                 <h1>{t("settings.title", "Settings")}</h1>
             </header>
 
+            <nav
+                className="settings-tabs"
+                role="tablist"
+                aria-label={t("settings.tabs_aria", "Settings sections")}
+                data-testid="settings-tabs"
+            >
+                {SETTINGS_TABS.map((tab) => (
+                    <button
+                        key={tab}
+                        type="button"
+                        role="tab"
+                        aria-selected={activeTab === tab}
+                        className={`settings-tab${
+                            activeTab === tab ? " is-active" : ""
+                        }`}
+                        data-testid={`settings-tab-${tab}`}
+                        onClick={() => setActiveTab(tab)}
+                    >
+                        {t(
+                            SETTINGS_TAB_LABELS[tab].key,
+                            SETTINGS_TAB_LABELS[tab].fallback,
+                        )}
+                    </button>
+                ))}
+            </nav>
+
             <HelpBrowser />
 
-            <section className="settings-section">
+            <section
+                className="settings-section"
+                hidden={activeTab !== "general"}
+            >
                 <h2 className="settings-section-title">
                     {t("settings.section_language", "Language")}
                 </h2>
@@ -336,6 +391,7 @@ export default function Settings() {
             <section
                 className="settings-section"
                 data-testid="settings-section-ui"
+                hidden={activeTab !== "general"}
             >
                 <h2 className="settings-section-title">
                     {t("settings.section_ui", "Interface")}
@@ -409,11 +465,12 @@ export default function Settings() {
                         }
                     />
                 </label>
-                <FeedbackIntensityControl />
-                <SoundSettingsControl />
             </section>
 
-            <section className="settings-section">
+            <section
+                className="settings-section"
+                hidden={activeTab !== "ai"}
+            >
                 <h2 className="settings-section-title">
                     {t("settings.section_provider", "AI provider")}
                 </h2>
@@ -439,6 +496,7 @@ export default function Settings() {
             <section
                 className="settings-section"
                 data-testid="settings-model-overrides"
+                hidden={activeTab !== "ai"}
             >
                 <h2 className="settings-section-title">
                     {t("settings.section_model_overrides", "Model overrides")}
@@ -537,7 +595,10 @@ export default function Settings() {
                 })}
             </section>
 
-            <section className="settings-section">
+            <section
+                className="settings-section"
+                hidden={activeTab !== "ai"}
+            >
                 <h2 className="settings-section-title">
                     {t("settings.section_api_keys", "API keys")}
                 </h2>
@@ -664,6 +725,7 @@ export default function Settings() {
             <section
                 className="settings-section"
                 data-testid="settings-storage-mode"
+                hidden={activeTab !== "general"}
             >
                 <h2 className="settings-section-title">
                     {t("settings.section_storage_mode", "Storage mode")}
@@ -749,14 +811,59 @@ export default function Settings() {
                 )}
             </section>
 
-            <GamificationSettingsSection />
-            <LearningRepoSettingsSection />
-            <VoiceSettingsSection />
-            <SyncSection />
-            <BackupSection />
-            <ExportSection />
-            <AboutTab />
-            <DangerZoneSection />
+            {/* --- Learning tab ----------------------------------- */}
+            <div
+                className="settings-tabpanel"
+                role="tabpanel"
+                hidden={activeTab !== "learning"}
+                data-testid="settings-panel-learning"
+            >
+                <section
+                    className="settings-section"
+                    data-testid="settings-section-feedback"
+                >
+                    <h2 className="settings-section-title">
+                        {t("settings.section_feedback", "Feedback")}
+                    </h2>
+                    <FeedbackIntensityControl />
+                    <SoundSettingsControl />
+                </section>
+                <VoiceSettingsSection />
+            </div>
+
+            {/* --- Plugins tab ------------------------------------ */}
+            <div
+                className="settings-tabpanel"
+                role="tabpanel"
+                hidden={activeTab !== "plugins"}
+                data-testid="settings-panel-plugins"
+            >
+                <GamificationSettingsSection />
+                <LearningRepoSettingsSection />
+            </div>
+
+            {/* --- Data tab --------------------------------------- */}
+            <div
+                className="settings-tabpanel"
+                role="tabpanel"
+                hidden={activeTab !== "data"}
+                data-testid="settings-panel-data"
+            >
+                <SyncSection />
+                <BackupSection />
+                <ExportSection />
+                <DangerZoneSection />
+            </div>
+
+            {/* --- Help tab --------------------------------------- */}
+            <div
+                className="settings-tabpanel"
+                role="tabpanel"
+                hidden={activeTab !== "help"}
+                data-testid="settings-panel-help"
+            >
+                <AboutTab />
+            </div>
         </main>
     );
 }
