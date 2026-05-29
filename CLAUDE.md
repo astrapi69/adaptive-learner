@@ -614,7 +614,7 @@ adaptive-learner/
 
 - `make test` must stay green after every change.
 - **v1.41.0 baseline:** backend 1025 (+1 skipped) + plugins
-  950 + Vitest 2500 = **4475 tests** (+1 skipped). E2E
+  950 + Vitest 2503 = **4478 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (19 specs incl. /content + /lesson + /review +
