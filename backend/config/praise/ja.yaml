@@ -1,0 +1,110 @@
+# Praise phrases (ja) - EXP-008 / Phase 55A.
+# Authoring surface. Bundled to frontend/src/data/praise/ via
+# `make sync-praise`. Keys must stay parallel across all 8 langs
+# (the phrase-picker tracks used phrases by key).
+# pending native review
+language: ja
+categories:
+  correct_answer:
+    - key: ca_01
+      text: "正解!"
+    - key: ca_02
+      text: "その通り!"
+    - key: ca_03
+      text: "完璧!"
+    - key: ca_04
+      text: "そうです!"
+    - key: ca_05
+      text: "ぴったり!"
+    - key: ca_06
+      text: "できた!"
+    - key: ca_07
+      text: "よくできました!"
+    - key: ca_08
+      text: "はい!"
+    - key: ca_09
+      text: "すばらしい!"
+    - key: ca_10
+      text: "まさにそれ!"
+    - key: ca_11
+      text: "つかんだ!"
+    - key: ca_12
+      text: "優秀!"
+    - key: ca_13
+      text: "鋭い!"
+    - key: ca_14
+      text: "大当たり!"
+    - key: ca_15
+      text: "とても良い!"
+  lesson_complete:
+    - key: lc_01
+      text: "レッスン完了!"
+    - key: lc_02
+      text: "よくできました!"
+    - key: lc_03
+      text: "お見事!"
+    - key: lc_04
+      text: "やりましたね!"
+    - key: lc_05
+      text: "すばらしい働き!"
+    - key: lc_06
+      text: "レッスン制覇!"
+    - key: lc_07
+      text: "完了!"
+    - key: lc_08
+      text: "良い努力!"
+    - key: lc_09
+      text: "任務完了!"
+    - key: lc_10
+      text: "次へ!"
+  streak_milestone:
+    - key: sm_01
+      text: "{n}日連続!"
+    - key: sm_02
+      text: "その調子!"
+    - key: sm_03
+      text: "連続記録継続中!"
+    - key: sm_04
+      text: "波に乗ってる!"
+    - key: sm_05
+      text: "毎日コツコツ!"
+    - key: sm_06
+      text: "継続は力なり!"
+    - key: sm_07
+      text: "{n}日連続記録!"
+    - key: sm_08
+      text: "止まらない!"
+  mastery:
+    - key: ma_01
+      text: "マスター!"
+    - key: ma_02
+      text: "これはもう身についた!"
+    - key: ma_03
+      text: "完全に理解!"
+    - key: ma_04
+      text: "完全習得!"
+    - key: ma_05
+      text: "永遠に定着!"
+    - key: ma_06
+      text: "卒業!"
+    - key: ma_07
+      text: "岩のように堅固!"
+    - key: ma_08
+      text: "これは定着!"
+  improvement:
+    - key: im_01
+      text: "前回より良い!"
+    - key: im_02
+      text: "進歩!"
+    - key: im_03
+      text: "前進中!"
+    - key: im_04
+      text: "上達してる!"
+    - key: im_05
+      text: "一歩ずつ!"
+    - key: im_06
+      text: "前より近い!"
+    - key: im_07
+      text: "上昇中!"
+    - key: im_08
+      text: "より鋭く!"

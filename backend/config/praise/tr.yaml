@@ -1,0 +1,110 @@
+# Praise phrases (tr) - EXP-008 / Phase 55A.
+# Authoring surface. Bundled to frontend/src/data/praise/ via
+# `make sync-praise`. Keys must stay parallel across all 8 langs
+# (the phrase-picker tracks used phrases by key).
+# pending native review
+language: tr
+categories:
+  correct_answer:
+    - key: ca_01
+      text: "Doğru!"
+    - key: ca_02
+      text: "Tam isabet!"
+    - key: ca_03
+      text: "Mükemmel!"
+    - key: ca_04
+      text: "Aynen öyle!"
+    - key: ca_05
+      text: "Tam üstüne!"
+    - key: ca_06
+      text: "Başardın!"
+    - key: ca_07
+      text: "Aferin!"
+    - key: ca_08
+      text: "Evet!"
+    - key: ca_09
+      text: "Harika!"
+    - key: ca_10
+      text: "İşte böyle!"
+    - key: ca_11
+      text: "Yakaladın!"
+    - key: ca_12
+      text: "Süper!"
+    - key: ca_13
+      text: "Keskin!"
+    - key: ca_14
+      text: "Tam on ikiden!"
+    - key: ca_15
+      text: "Çok iyi!"
+  lesson_complete:
+    - key: lc_01
+      text: "Ders tamamlandı!"
+    - key: lc_02
+      text: "Aferin!"
+    - key: lc_03
+      text: "Güzel iş!"
+    - key: lc_04
+      text: "Başardın!"
+    - key: lc_05
+      text: "Harika iş!"
+    - key: lc_06
+      text: "Ders fethedildi!"
+    - key: lc_07
+      text: "Tamamlandı!"
+    - key: lc_08
+      text: "İyi çaba!"
+    - key: lc_09
+      text: "Görev tamam!"
+    - key: lc_10
+      text: "Devam!"
+  streak_milestone:
+    - key: sm_01
+      text: "Üst üste {n} gün!"
+    - key: sm_02
+      text: "Devam et!"
+    - key: sm_03
+      text: "Seri sürüyor!"
+    - key: sm_04
+      text: "Hız kesmiyorsun!"
+    - key: sm_05
+      text: "Gün gün!"
+    - key: sm_06
+      text: "Düzen kazandırır!"
+    - key: sm_07
+      text: "{n} günlük seri!"
+    - key: sm_08
+      text: "Durdurulamaz!"
+  mastery:
+    - key: ma_01
+      text: "Fethedildi!"
+    - key: ma_02
+      text: "Bu artık senin!"
+    - key: ma_03
+      text: "Buna hakimsin!"
+    - key: ma_04
+      text: "Tamamen öğrenildi!"
+    - key: ma_05
+      text: "Sonsuza dek!"
+    - key: ma_06
+      text: "Mezun oldun!"
+    - key: ma_07
+      text: "Kaya gibi sağlam!"
+    - key: ma_08
+      text: "Bu kalıcı!"
+  improvement:
+    - key: im_01
+      text: "Geçen seferden daha iyi!"
+    - key: im_02
+      text: "İlerleme!"
+    - key: im_03
+      text: "İleri gidiyor!"
+    - key: im_04
+      text: "Gelişiyorsun!"
+    - key: im_05
+      text: "Adım adım!"
+    - key: im_06
+      text: "Öncekinden daha yakın!"
+    - key: im_07
+      text: "Yükseliyor!"
+    - key: im_08
+      text: "Artık daha keskin!"

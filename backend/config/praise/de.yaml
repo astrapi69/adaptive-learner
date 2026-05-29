@@ -1,0 +1,109 @@
+# Praise phrases (de) - EXP-008 / Phase 55A.
+# Authoring surface. Bundled to frontend/src/data/praise/ via
+# `make sync-praise`. Keys must stay parallel across all 8 langs
+# (the phrase-picker tracks used phrases by key).
+language: de
+categories:
+  correct_answer:
+    - key: ca_01
+      text: "Richtig!"
+    - key: ca_02
+      text: "Genau!"
+    - key: ca_03
+      text: "Perfekt!"
+    - key: ca_04
+      text: "Stimmt!"
+    - key: ca_05
+      text: "Korrekt!"
+    - key: ca_06
+      text: "Sitzt!"
+    - key: ca_07
+      text: "Sehr gut!"
+    - key: ca_08
+      text: "Ja!"
+    - key: ca_09
+      text: "Klasse!"
+    - key: ca_10
+      text: "Genau so!"
+    - key: ca_11
+      text: "Hast du!"
+    - key: ca_12
+      text: "Ausgezeichnet!"
+    - key: ca_13
+      text: "Treffer!"
+    - key: ca_14
+      text: "Goldrichtig!"
+    - key: ca_15
+      text: "Bestens!"
+  lesson_complete:
+    - key: lc_01
+      text: "Lektion geschafft!"
+    - key: lc_02
+      text: "Gut gemacht!"
+    - key: lc_03
+      text: "Stark gemacht!"
+    - key: lc_04
+      text: "Du hast es!"
+    - key: lc_05
+      text: "Tolle Arbeit!"
+    - key: lc_06
+      text: "Lektion gemeistert!"
+    - key: lc_07
+      text: "Geschafft!"
+    - key: lc_08
+      text: "Saubere Leistung!"
+    - key: lc_09
+      text: "Ziel erreicht!"
+    - key: lc_10
+      text: "Weiter so!"
+  streak_milestone:
+    - key: sm_01
+      text: "{n} Tage am Stück!"
+    - key: sm_02
+      text: "Drangeblieben!"
+    - key: sm_03
+      text: "Serie hält!"
+    - key: sm_04
+      text: "Im Lauf!"
+    - key: sm_05
+      text: "Tag für Tag!"
+    - key: sm_06
+      text: "Dranbleiben lohnt sich!"
+    - key: sm_07
+      text: "{n}-Tage-Serie!"
+    - key: sm_08
+      text: "Nicht zu stoppen!"
+  mastery:
+    - key: ma_01
+      text: "Gemeistert!"
+    - key: ma_02
+      text: "Dieses Element sitzt!"
+    - key: ma_03
+      text: "Das kannst du!"
+    - key: ma_04
+      text: "Voll gelernt!"
+    - key: ma_05
+      text: "Für immer drin!"
+    - key: ma_06
+      text: "Abgeschlossen!"
+    - key: ma_07
+      text: "Bombenfest!"
+    - key: ma_08
+      text: "Das bleibt!"
+  improvement:
+    - key: im_01
+      text: "Besser als letztes Mal!"
+    - key: im_02
+      text: "Fortschritt!"
+    - key: im_03
+      text: "Es geht voran!"
+    - key: im_04
+      text: "Du wirst besser!"
+    - key: im_05
+      text: "Schritt für Schritt!"
+    - key: im_06
+      text: "Näher dran als zuvor!"
+    - key: im_07
+      text: "Aufwärts!"
+    - key: im_08
+      text: "Schärfer jetzt!"

@@ -1,0 +1,109 @@
+# Praise phrases (en) - EXP-008 / Phase 55A.
+# Authoring surface. Bundled to frontend/src/data/praise/ via
+# `make sync-praise`. Keys must stay parallel across all 8 langs
+# (the phrase-picker tracks used phrases by key).
+language: en
+categories:
+  correct_answer:
+    - key: ca_01
+      text: "Correct!"
+    - key: ca_02
+      text: "Exactly!"
+    - key: ca_03
+      text: "Perfect!"
+    - key: ca_04
+      text: "That's right!"
+    - key: ca_05
+      text: "Spot on!"
+    - key: ca_06
+      text: "Nailed it!"
+    - key: ca_07
+      text: "Well done!"
+    - key: ca_08
+      text: "Yes!"
+    - key: ca_09
+      text: "Brilliant!"
+    - key: ca_10
+      text: "Right on!"
+    - key: ca_11
+      text: "You got it!"
+    - key: ca_12
+      text: "Excellent!"
+    - key: ca_13
+      text: "Sharp!"
+    - key: ca_14
+      text: "Bang on!"
+    - key: ca_15
+      text: "Just right!"
+  lesson_complete:
+    - key: lc_01
+      text: "Lesson complete!"
+    - key: lc_02
+      text: "Well done!"
+    - key: lc_03
+      text: "Nicely done!"
+    - key: lc_04
+      text: "You made it!"
+    - key: lc_05
+      text: "Great work!"
+    - key: lc_06
+      text: "Lesson cleared!"
+    - key: lc_07
+      text: "That's a wrap!"
+    - key: lc_08
+      text: "Solid effort!"
+    - key: lc_09
+      text: "Mission accomplished!"
+    - key: lc_10
+      text: "Onwards!"
+  streak_milestone:
+    - key: sm_01
+      text: "{n} days in a row!"
+    - key: sm_02
+      text: "Keeping it up!"
+    - key: sm_03
+      text: "Streak alive!"
+    - key: sm_04
+      text: "On a roll!"
+    - key: sm_05
+      text: "Day after day!"
+    - key: sm_06
+      text: "Consistency pays off!"
+    - key: sm_07
+      text: "{n}-day streak!"
+    - key: sm_08
+      text: "Unstoppable!"
+  mastery:
+    - key: ma_01
+      text: "Mastered!"
+    - key: ma_02
+      text: "This one's locked in!"
+    - key: ma_03
+      text: "You own this!"
+    - key: ma_04
+      text: "Fully learned!"
+    - key: ma_05
+      text: "Got it for good!"
+    - key: ma_06
+      text: "Graduated!"
+    - key: ma_07
+      text: "Solid as a rock!"
+    - key: ma_08
+      text: "This one sticks!"
+  improvement:
+    - key: im_01
+      text: "Better than last time!"
+    - key: im_02
+      text: "Progress!"
+    - key: im_03
+      text: "Moving forward!"
+    - key: im_04
+      text: "You're improving!"
+    - key: im_05
+      text: "Step by step!"
+    - key: im_06
+      text: "Closer than before!"
+    - key: im_07
+      text: "Climbing!"
+    - key: im_08
+      text: "Sharper now!"

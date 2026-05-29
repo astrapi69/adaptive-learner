@@ -1,0 +1,211 @@
+{
+  "language": "fr",
+  "categories": {
+    "correct_answer": [
+      {
+        "key": "ca_01",
+        "text": "Correct !"
+      },
+      {
+        "key": "ca_02",
+        "text": "Exactement !"
+      },
+      {
+        "key": "ca_03",
+        "text": "Parfait !"
+      },
+      {
+        "key": "ca_04",
+        "text": "C'est ça !"
+      },
+      {
+        "key": "ca_05",
+        "text": "Pile poil !"
+      },
+      {
+        "key": "ca_06",
+        "text": "Réussi !"
+      },
+      {
+        "key": "ca_07",
+        "text": "Bien joué !"
+      },
+      {
+        "key": "ca_08",
+        "text": "Oui !"
+      },
+      {
+        "key": "ca_09",
+        "text": "Génial !"
+      },
+      {
+        "key": "ca_10",
+        "text": "Tout à fait !"
+      },
+      {
+        "key": "ca_11",
+        "text": "Tu l'as !"
+      },
+      {
+        "key": "ca_12",
+        "text": "Excellent !"
+      },
+      {
+        "key": "ca_13",
+        "text": "Vif !"
+      },
+      {
+        "key": "ca_14",
+        "text": "Dans le mille !"
+      },
+      {
+        "key": "ca_15",
+        "text": "Très bien !"
+      }
+    ],
+    "lesson_complete": [
+      {
+        "key": "lc_01",
+        "text": "Leçon terminée !"
+      },
+      {
+        "key": "lc_02",
+        "text": "Bien joué !"
+      },
+      {
+        "key": "lc_03",
+        "text": "Beau travail !"
+      },
+      {
+        "key": "lc_04",
+        "text": "Tu y es arrivé !"
+      },
+      {
+        "key": "lc_05",
+        "text": "Excellent travail !"
+      },
+      {
+        "key": "lc_06",
+        "text": "Leçon maîtrisée !"
+      },
+      {
+        "key": "lc_07",
+        "text": "Terminé !"
+      },
+      {
+        "key": "lc_08",
+        "text": "Bel effort !"
+      },
+      {
+        "key": "lc_09",
+        "text": "Mission accomplie !"
+      },
+      {
+        "key": "lc_10",
+        "text": "En avant !"
+      }
+    ],
+    "streak_milestone": [
+      {
+        "key": "sm_01",
+        "text": "{n} jours d'affilée !"
+      },
+      {
+        "key": "sm_02",
+        "text": "Continue !"
+      },
+      {
+        "key": "sm_03",
+        "text": "Série en cours !"
+      },
+      {
+        "key": "sm_04",
+        "text": "Sur ta lancée !"
+      },
+      {
+        "key": "sm_05",
+        "text": "Jour après jour !"
+      },
+      {
+        "key": "sm_06",
+        "text": "La régularité paie !"
+      },
+      {
+        "key": "sm_07",
+        "text": "Série de {n} jours !"
+      },
+      {
+        "key": "sm_08",
+        "text": "Inarrêtable !"
+      }
+    ],
+    "mastery": [
+      {
+        "key": "ma_01",
+        "text": "Maîtrisé !"
+      },
+      {
+        "key": "ma_02",
+        "text": "Celui-ci est acquis !"
+      },
+      {
+        "key": "ma_03",
+        "text": "Tu maîtrises !"
+      },
+      {
+        "key": "ma_04",
+        "text": "Appris à fond !"
+      },
+      {
+        "key": "ma_05",
+        "text": "Pour de bon !"
+      },
+      {
+        "key": "ma_06",
+        "text": "Diplômé !"
+      },
+      {
+        "key": "ma_07",
+        "text": "Solide comme un roc !"
+      },
+      {
+        "key": "ma_08",
+        "text": "Ça reste !"
+      }
+    ],
+    "improvement": [
+      {
+        "key": "im_01",
+        "text": "Mieux que la dernière fois !"
+      },
+      {
+        "key": "im_02",
+        "text": "Progrès !"
+      },
+      {
+        "key": "im_03",
+        "text": "Ça avance !"
+      },
+      {
+        "key": "im_04",
+        "text": "Tu progresses !"
+      },
+      {
+        "key": "im_05",
+        "text": "Pas à pas !"
+      },
+      {
+        "key": "im_06",
+        "text": "Plus près qu'avant !"
+      },
+      {
+        "key": "im_07",
+        "text": "En hausse !"
+      },
+      {
+        "key": "im_08",
+        "text": "Plus affûté !"
+      }
+    ]
+  }
+}

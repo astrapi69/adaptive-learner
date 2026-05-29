@@ -1,0 +1,211 @@
+{
+  "language": "es",
+  "categories": {
+    "correct_answer": [
+      {
+        "key": "ca_01",
+        "text": "¡Correcto!"
+      },
+      {
+        "key": "ca_02",
+        "text": "¡Exacto!"
+      },
+      {
+        "key": "ca_03",
+        "text": "¡Perfecto!"
+      },
+      {
+        "key": "ca_04",
+        "text": "¡Eso es!"
+      },
+      {
+        "key": "ca_05",
+        "text": "¡Justo!"
+      },
+      {
+        "key": "ca_06",
+        "text": "¡Lo lograste!"
+      },
+      {
+        "key": "ca_07",
+        "text": "¡Bien hecho!"
+      },
+      {
+        "key": "ca_08",
+        "text": "¡Sí!"
+      },
+      {
+        "key": "ca_09",
+        "text": "¡Genial!"
+      },
+      {
+        "key": "ca_10",
+        "text": "¡Así es!"
+      },
+      {
+        "key": "ca_11",
+        "text": "¡Lo tienes!"
+      },
+      {
+        "key": "ca_12",
+        "text": "¡Excelente!"
+      },
+      {
+        "key": "ca_13",
+        "text": "¡Agudo!"
+      },
+      {
+        "key": "ca_14",
+        "text": "¡Clavado!"
+      },
+      {
+        "key": "ca_15",
+        "text": "¡Muy bien!"
+      }
+    ],
+    "lesson_complete": [
+      {
+        "key": "lc_01",
+        "text": "¡Lección completada!"
+      },
+      {
+        "key": "lc_02",
+        "text": "¡Bien hecho!"
+      },
+      {
+        "key": "lc_03",
+        "text": "¡Muy bien!"
+      },
+      {
+        "key": "lc_04",
+        "text": "¡Lo conseguiste!"
+      },
+      {
+        "key": "lc_05",
+        "text": "¡Gran trabajo!"
+      },
+      {
+        "key": "lc_06",
+        "text": "¡Lección superada!"
+      },
+      {
+        "key": "lc_07",
+        "text": "¡Listo!"
+      },
+      {
+        "key": "lc_08",
+        "text": "¡Buen esfuerzo!"
+      },
+      {
+        "key": "lc_09",
+        "text": "¡Misión cumplida!"
+      },
+      {
+        "key": "lc_10",
+        "text": "¡Adelante!"
+      }
+    ],
+    "streak_milestone": [
+      {
+        "key": "sm_01",
+        "text": "¡{n} días seguidos!"
+      },
+      {
+        "key": "sm_02",
+        "text": "¡Sigue así!"
+      },
+      {
+        "key": "sm_03",
+        "text": "¡Racha viva!"
+      },
+      {
+        "key": "sm_04",
+        "text": "¡En racha!"
+      },
+      {
+        "key": "sm_05",
+        "text": "¡Día tras día!"
+      },
+      {
+        "key": "sm_06",
+        "text": "¡La constancia paga!"
+      },
+      {
+        "key": "sm_07",
+        "text": "¡Racha de {n} días!"
+      },
+      {
+        "key": "sm_08",
+        "text": "¡Imparable!"
+      }
+    ],
+    "mastery": [
+      {
+        "key": "ma_01",
+        "text": "¡Dominado!"
+      },
+      {
+        "key": "ma_02",
+        "text": "¡Esto ya es tuyo!"
+      },
+      {
+        "key": "ma_03",
+        "text": "¡Lo dominas!"
+      },
+      {
+        "key": "ma_04",
+        "text": "¡Aprendido por completo!"
+      },
+      {
+        "key": "ma_05",
+        "text": "¡Para siempre!"
+      },
+      {
+        "key": "ma_06",
+        "text": "¡Graduado!"
+      },
+      {
+        "key": "ma_07",
+        "text": "¡Firme como una roca!"
+      },
+      {
+        "key": "ma_08",
+        "text": "¡Esto se queda!"
+      }
+    ],
+    "improvement": [
+      {
+        "key": "im_01",
+        "text": "¡Mejor que la última vez!"
+      },
+      {
+        "key": "im_02",
+        "text": "¡Progreso!"
+      },
+      {
+        "key": "im_03",
+        "text": "¡Avanzando!"
+      },
+      {
+        "key": "im_04",
+        "text": "¡Estás mejorando!"
+      },
+      {
+        "key": "im_05",
+        "text": "¡Paso a paso!"
+      },
+      {
+        "key": "im_06",
+        "text": "¡Más cerca que antes!"
+      },
+      {
+        "key": "im_07",
+        "text": "¡Subiendo!"
+      },
+      {
+        "key": "im_08",
+        "text": "¡Más afilado ahora!"
+      }
+    ]
+  }
+}

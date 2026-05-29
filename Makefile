@@ -27,7 +27,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       sync-i18n sync-plugin-config \
+       sync-i18n sync-plugin-config sync-praise \
        lock-all-plugins verify-plugin-locks \
        release-state release-outdated release-test release-build \
        release-discover release-tag release-publish \
@@ -364,6 +364,9 @@ sync-plugin-config: ## Regenerate frontend/src/data/plugin-config/*.json from ba
 
 sync-help: ## Regenerate frontend/src/data/help/*.json from backend/config/help YAML files (Phase 38)
 	@python3 scripts/sync_help_to_frontend.py
+
+sync-praise: ## Regenerate frontend/src/data/praise/*.json from backend/config/praise/*.yaml (EXP-008 / Phase 55A)
+	@python3 scripts/sync_praise_to_frontend.py
 
 # --- Production (Docker) ---
 

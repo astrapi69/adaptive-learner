@@ -1,0 +1,211 @@
+{
+  "language": "pt",
+  "categories": {
+    "correct_answer": [
+      {
+        "key": "ca_01",
+        "text": "Correto!"
+      },
+      {
+        "key": "ca_02",
+        "text": "Exato!"
+      },
+      {
+        "key": "ca_03",
+        "text": "Perfeito!"
+      },
+      {
+        "key": "ca_04",
+        "text": "É isso!"
+      },
+      {
+        "key": "ca_05",
+        "text": "Em cheio!"
+      },
+      {
+        "key": "ca_06",
+        "text": "Acertou!"
+      },
+      {
+        "key": "ca_07",
+        "text": "Bem feito!"
+      },
+      {
+        "key": "ca_08",
+        "text": "Sim!"
+      },
+      {
+        "key": "ca_09",
+        "text": "Ótimo!"
+      },
+      {
+        "key": "ca_10",
+        "text": "Isso mesmo!"
+      },
+      {
+        "key": "ca_11",
+        "text": "Conseguiu!"
+      },
+      {
+        "key": "ca_12",
+        "text": "Excelente!"
+      },
+      {
+        "key": "ca_13",
+        "text": "Afiado!"
+      },
+      {
+        "key": "ca_14",
+        "text": "Na mosca!"
+      },
+      {
+        "key": "ca_15",
+        "text": "Muito bem!"
+      }
+    ],
+    "lesson_complete": [
+      {
+        "key": "lc_01",
+        "text": "Lição concluída!"
+      },
+      {
+        "key": "lc_02",
+        "text": "Bem feito!"
+      },
+      {
+        "key": "lc_03",
+        "text": "Belo trabalho!"
+      },
+      {
+        "key": "lc_04",
+        "text": "Você conseguiu!"
+      },
+      {
+        "key": "lc_05",
+        "text": "Ótimo trabalho!"
+      },
+      {
+        "key": "lc_06",
+        "text": "Lição dominada!"
+      },
+      {
+        "key": "lc_07",
+        "text": "Concluído!"
+      },
+      {
+        "key": "lc_08",
+        "text": "Bom esforço!"
+      },
+      {
+        "key": "lc_09",
+        "text": "Missão cumprida!"
+      },
+      {
+        "key": "lc_10",
+        "text": "Em frente!"
+      }
+    ],
+    "streak_milestone": [
+      {
+        "key": "sm_01",
+        "text": "{n} dias seguidos!"
+      },
+      {
+        "key": "sm_02",
+        "text": "Continue assim!"
+      },
+      {
+        "key": "sm_03",
+        "text": "Sequência viva!"
+      },
+      {
+        "key": "sm_04",
+        "text": "Embalado!"
+      },
+      {
+        "key": "sm_05",
+        "text": "Dia após dia!"
+      },
+      {
+        "key": "sm_06",
+        "text": "A constância compensa!"
+      },
+      {
+        "key": "sm_07",
+        "text": "Sequência de {n} dias!"
+      },
+      {
+        "key": "sm_08",
+        "text": "Imparável!"
+      }
+    ],
+    "mastery": [
+      {
+        "key": "ma_01",
+        "text": "Dominado!"
+      },
+      {
+        "key": "ma_02",
+        "text": "Este já é seu!"
+      },
+      {
+        "key": "ma_03",
+        "text": "Você domina!"
+      },
+      {
+        "key": "ma_04",
+        "text": "Aprendido por completo!"
+      },
+      {
+        "key": "ma_05",
+        "text": "Para sempre!"
+      },
+      {
+        "key": "ma_06",
+        "text": "Formado!"
+      },
+      {
+        "key": "ma_07",
+        "text": "Firme como uma rocha!"
+      },
+      {
+        "key": "ma_08",
+        "text": "Isto fica!"
+      }
+    ],
+    "improvement": [
+      {
+        "key": "im_01",
+        "text": "Melhor que da última vez!"
+      },
+      {
+        "key": "im_02",
+        "text": "Progresso!"
+      },
+      {
+        "key": "im_03",
+        "text": "Avançando!"
+      },
+      {
+        "key": "im_04",
+        "text": "Você está melhorando!"
+      },
+      {
+        "key": "im_05",
+        "text": "Passo a passo!"
+      },
+      {
+        "key": "im_06",
+        "text": "Mais perto que antes!"
+      },
+      {
+        "key": "im_07",
+        "text": "Subindo!"
+      },
+      {
+        "key": "im_08",
+        "text": "Mais afiado agora!"
+      }
+    ]
+  }
+}
