@@ -23,6 +23,7 @@
 import {
     celebrateBadge,
     celebrateMilestonesFromSnapshots,
+    celebrateTierUpgrade,
 } from "../praise/celebration-bus";
 import type {MilestoneSnapshot} from "./milestones";
 import {getStorage} from "../../storage";
@@ -30,6 +31,10 @@ import type {BadgeWithProgress} from "../../storage/types";
 
 export interface CelebrationSnapshot extends MilestoneSnapshot {
     earnedBadgeKeys: string[];
+    /** Earned badge key -> its tier, so a tier UPGRADE (already
+     *  earned, tier climbed) can be detected across snapshots
+     *  (Phase 57 / v1.40.0). */
+    badgeTiers: Record<string, string>;
 }
 
 const EMPTY: CelebrationSnapshot = {
@@ -37,7 +42,10 @@ const EMPTY: CelebrationSnapshot = {
     streakDays: 0,
     masteredCount: 0,
     earnedBadgeKeys: [],
+    badgeTiers: {},
 };
+
+const TIER_RANK: Record<string, number> = {bronze: 0, silver: 1, gold: 2};
 
 /** Snapshot the gamification state that milestone detection
  *  needs. Returns an empty snapshot for an anonymous run or when
@@ -54,13 +62,15 @@ export async function captureCelebrationSnapshot(
             storage.elementErrors.list(userId, {includeMastered: true}),
             storage.gamification.listBadges(userId),
         ]);
+        const earned = badges.filter((b) => b.earned);
         return {
             level: state?.level ?? 0,
             streakDays: streak?.current_streak_days ?? 0,
             masteredCount: errors.filter((e) => e.mastered).length,
-            earnedBadgeKeys: badges
-                .filter((b) => b.earned)
-                .map((b) => b.key),
+            earnedBadgeKeys: earned.map((b) => b.key),
+            badgeTiers: Object.fromEntries(
+                earned.map((b) => [b.key, b.tier]),
+            ),
         };
     } catch {
         return {...EMPTY};
@@ -80,6 +90,14 @@ export async function celebrateProgressSince(
         name: string;
         description: string;
     },
+    /** Resolve the (i18n) overlay text for a tier UPGRADE — badge name
+     *  + the reached-tier message. Optional: when omitted, tier
+     *  upgrades still fire their sound + event but the overlay reuses
+     *  the badge name with no tier word (Phase 57). */
+    resolveTierUpgrade?: (
+        badge: BadgeWithProgress,
+        newTier: string,
+    ) => {name: string; message: string},
 ): Promise<void> {
     if (!userId) return;
     const after = await captureCelebrationSnapshot(userId);
@@ -90,8 +108,26 @@ export async function celebrateProgressSince(
         const badges = await getStorage().gamification.listBadges(userId);
         for (const badge of badges) {
             if (badge.earned && !beforeBadges.has(badge.key)) {
+                // Brand-new earn -> badge_earned celebration.
                 const {name, description} = resolveBadge(badge);
                 celebrateBadge(badge.key, name, description);
+            } else if (badge.earned && beforeBadges.has(badge.key)) {
+                // Already earned -> celebrate a tier CLIMB (silver/gold).
+                const prevTier = before.badgeTiers[badge.key];
+                const rankNow = TIER_RANK[badge.tier] ?? 0;
+                const rankBefore = TIER_RANK[prevTier] ?? 0;
+                if (prevTier && rankNow > rankBefore) {
+                    const resolved = resolveTierUpgrade
+                        ? resolveTierUpgrade(badge, badge.tier)
+                        : {name: resolveBadge(badge).name, message: ""};
+                    celebrateTierUpgrade({
+                        key: badge.key,
+                        oldTier: prevTier,
+                        newTier: badge.tier,
+                        name: resolved.name,
+                        message: resolved.message,
+                    });
+                }
             }
         }
     } catch {

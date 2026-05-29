@@ -6002,6 +6002,29 @@ select:focus {
   opacity: 0.7;
 }
 
+/* Gold badges get a subtle golden glow (Phase 57). Reduced-motion
+   keeps a static glow; no pulse. */
+.badge-card.is-earned[data-tier="gold"] {
+  border-color: #b8860b;
+  box-shadow: 0 0 10px color-mix(in srgb, #ffd700 45%, transparent);
+  animation: badge-gold-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes badge-gold-glow {
+  from {
+    box-shadow: 0 0 6px color-mix(in srgb, #ffd700 30%, transparent);
+  }
+  to {
+    box-shadow: 0 0 14px color-mix(in srgb, #ffd700 60%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .badge-card.is-earned[data-tier="gold"] {
+    animation: none;
+  }
+}
+
 .badge-card-main {
   background: none;
   border: none;

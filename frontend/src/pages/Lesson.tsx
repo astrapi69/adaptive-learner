@@ -360,6 +360,13 @@ export default function LessonPage() {
                                 name: t(badge.name_key, badge.key),
                                 description: t(badge.description_key, ""),
                             }),
+                            (badge, newTier) => ({
+                                name: t(badge.name_key, badge.key),
+                                message: t(
+                                    `gamification.tier.${newTier}`,
+                                    newTier,
+                                ),
+                            }),
                         );
                         // Refresh daily missions so any whose progress
                         // the just-completed lesson advanced flip to

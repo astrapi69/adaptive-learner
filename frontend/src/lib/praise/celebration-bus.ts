@@ -43,7 +43,8 @@ export type CelebrationType =
     | "streak_milestone"
     | "mastery"
     | "mission_complete"
-    | "all_missions_complete";
+    | "all_missions_complete"
+    | "badge_tier_upgrade";
 
 export interface CelebrationEvent {
     type: CelebrationType;
@@ -158,4 +159,45 @@ export function celebrateBadge(
     description: string,
 ): void {
     celebrateMilestone(badgeMilestone(badgeId, name, description));
+}
+
+/**
+ * Celebrate a badge TIER upgrade (Phase 57 / v1.40.0). Scaled by the
+ * reached tier: silver gets an ascending chime, gold the triumphant
+ * level-up chord. Sounds are self-gated by the sound preference; the
+ * overlay is gated on the feedback intensity (subtle / reduced-motion
+ * shows no overlay — but the sound + event still fire). The
+ * ``badge_tier_upgrade`` event carries the transition for any
+ * subscriber (e.g. a confetti host on gold).
+ */
+export function celebrateTierUpgrade(opts: {
+    key: string;
+    oldTier: string | null;
+    newTier: string;
+    /** Pre-resolved (i18n) badge name + tier message for the overlay. */
+    name: string;
+    message: string;
+}): void {
+    // Tier-scaled sound (NOT in SOUND_MAP, so emit below won't double).
+    playSound(opts.newTier === "gold" ? "level_up" : "star_earned");
+    if (allowsMilestones(effectiveIntensity())) {
+        enqueueMilestone({
+            // Tier in the id so a silver then a gold upgrade don't
+            // de-dupe against each other or the original earn.
+            id: `badge-tier-${opts.key}-${opts.newTier}`,
+            type: "badge",
+            value: 0,
+            badgeId: opts.key,
+            badgeName: opts.name,
+            badgeDescription: opts.message,
+        });
+    }
+    emitCelebration({
+        type: "badge_tier_upgrade",
+        payload: {
+            badge_key: opts.key,
+            old_tier: opts.oldTier,
+            new_tier: opts.newTier,
+        },
+    });
 }

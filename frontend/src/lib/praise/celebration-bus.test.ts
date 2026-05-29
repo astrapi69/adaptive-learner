@@ -18,6 +18,7 @@ import {
     celebrateBadge,
     celebrateMilestonesFromSnapshots,
     celebrateMissions,
+    celebrateTierUpgrade,
     emitCelebration,
     subscribeCelebration,
 } from "./celebration-bus";
@@ -139,5 +140,60 @@ describe("celebrateMissions", () => {
             lang: "en",
         });
         expect(r.praise).toBeNull();
+    });
+});
+
+describe("celebrateTierUpgrade (Phase 57)", () => {
+    it("silver upgrade plays the ascending chime + emits the event", () => {
+        setFeedbackIntensity("enthusiastic");
+        const events: string[] = [];
+        const unsub = subscribeCelebration((e) => {
+            if (e.type === "badge_tier_upgrade") {
+                events.push(String(e.payload?.new_tier));
+            }
+        });
+        celebrateTierUpgrade({
+            key: "lessons_10",
+            oldTier: "bronze",
+            newTier: "silver",
+            name: "Lessons",
+            message: "Silver",
+        });
+        expect(playSound).toHaveBeenCalledWith("star_earned");
+        expect(events).toEqual(["silver"]);
+        expect(milestoneQueueLength()).toBe(1);
+        unsub();
+    });
+
+    it("gold upgrade plays the triumphant level-up chord", () => {
+        setFeedbackIntensity("enthusiastic");
+        celebrateTierUpgrade({
+            key: "review_master",
+            oldTier: "silver",
+            newTier: "gold",
+            name: "Review",
+            message: "Gold",
+        });
+        expect(playSound).toHaveBeenCalledWith("level_up");
+        expect(milestoneQueueLength()).toBe(1);
+    });
+
+    it("subtle intensity: sound + event still fire but no overlay queued", () => {
+        setFeedbackIntensity("subtle");
+        let fired = false;
+        const unsub = subscribeCelebration((e) => {
+            if (e.type === "badge_tier_upgrade") fired = true;
+        });
+        celebrateTierUpgrade({
+            key: "lessons_10",
+            oldTier: "bronze",
+            newTier: "silver",
+            name: "Lessons",
+            message: "Silver",
+        });
+        expect(playSound).toHaveBeenCalledWith("star_earned");
+        expect(fired).toBe(true);
+        expect(milestoneQueueLength()).toBe(0);
+        unsub();
     });
 });
