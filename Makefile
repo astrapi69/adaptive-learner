@@ -27,6 +27,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
+       verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        lock-all-plugins verify-plugin-locks \
        release-state release-outdated release-test release-build \
