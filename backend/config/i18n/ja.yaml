@@ -326,6 +326,18 @@ settings:
   tab_help: "ヘルプ"
   tabs_aria: "設定セクション"
   section_feedback: "フィードバック"
+  missions_title: "デイリーミッション"
+  missions_enabled: "デイリーミッション"
+  missions_enabled_hint: "毎日、達成可能な目標をダッシュボードに表示します。任意 - なくてもアプリは同じように動作します。"
+  missions_count: "1日のミッション数"
+  missions_difficulty: "難易度の構成"
+  missions_difficulty_balanced: "バランス"
+  missions_difficulty_easy: "やさしい"
+  missions_difficulty_challenging: "高難度"
+  missions_reset: "今日のミッションをリセット"
+  missions_reset_confirm: "確認"
+  missions_reset_done: "今日のミッションを再生成しました。"
+  missions_reset_failed: "ミッションをリセットできませんでした。"
   gestures: スワイプジェスチャー
   gestures_description: 評価、セッション、カリキュラムをスワイプして移動します。
   button_tooltips: ボタンのツールチップを表示

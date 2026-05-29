@@ -326,6 +326,18 @@ settings:
   tab_help: "Yardım"
   tabs_aria: "Ayar bölümleri"
   section_feedback: "Geri bildirim"
+  missions_title: "Günlük görevler"
+  missions_enabled: "Günlük görevler"
+  missions_enabled_hint: "Her gün panoda birkaç ulaşılabilir hedef gösterir. İsteğe bağlı - uygulama bunlarsız da aynı çalışır."
+  missions_count: "Günlük görev sayısı"
+  missions_difficulty: "Zorluk karışımı"
+  missions_difficulty_balanced: "Dengeli"
+  missions_difficulty_easy: "Kolay"
+  missions_difficulty_challenging: "Zorlu"
+  missions_reset: "Bugünün görevlerini sıfırla"
+  missions_reset_confirm: "Onayla"
+  missions_reset_done: "Bugünün görevleri yenilendi."
+  missions_reset_failed: "Görevler sıfırlanamadı."
   gestures: Kaydırma Hareketleri
   gestures_description: Değerlendirme, Oturum ve Müfredat'ta gezinmek için kaydır.
   button_tooltips: Buton ipuçlarını göster

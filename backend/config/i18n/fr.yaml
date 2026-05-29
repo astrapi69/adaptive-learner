@@ -326,6 +326,18 @@ settings:
   tab_help: "Aide"
   tabs_aria: "Sections des paramètres"
   section_feedback: "Retour"
+  missions_title: "Missions quotidiennes"
+  missions_enabled: "Missions quotidiennes"
+  missions_enabled_hint: "Affiche chaque jour quelques objectifs atteignables sur le tableau de bord. Facultatif : l'app fonctionne sans."
+  missions_count: "Missions par jour"
+  missions_difficulty: "Mélange de difficulté"
+  missions_difficulty_balanced: "Équilibré"
+  missions_difficulty_easy: "Facile"
+  missions_difficulty_challenging: "Exigeant"
+  missions_reset: "Réinitialiser les missions du jour"
+  missions_reset_confirm: "Confirmer"
+  missions_reset_done: "Missions du jour régénérées."
+  missions_reset_failed: "Impossible de réinitialiser les missions."
   gestures: Swipe Gestures
   gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
   button_tooltips: Show button tooltips

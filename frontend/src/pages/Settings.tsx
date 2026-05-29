@@ -9,6 +9,7 @@ import ExportSection from "../components/ExportSection";
 import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import LearningRepoSettingsSection from "../components/LearningRepoSettingsSection";
+import MissionSettingsControl from "../components/MissionSettingsControl";
 import SoundSettingsControl from "../components/SoundSettingsControl";
 import HelpBrowser from "../components/help/HelpBrowser";
 import {
@@ -828,6 +829,7 @@ export default function Settings() {
                     <FeedbackIntensityControl />
                     <SoundSettingsControl />
                 </section>
+                <MissionSettingsControl />
                 <VoiceSettingsSection />
             </div>
 
