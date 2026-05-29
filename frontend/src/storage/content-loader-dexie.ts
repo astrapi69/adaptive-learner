@@ -31,6 +31,7 @@ import type {
     ContentSetSource,
     ContentSetsList,
 } from "./types";
+import {isDevMode} from "../hooks/useDevMode";
 import {getDb} from "./db";
 import type {ContentSetRow, ContentSetFileRow} from "./db";
 
@@ -294,11 +295,17 @@ export async function listSetsDexie(
             for (const row of cached) {
                 entries.push(await rowToCachedEntry(row));
             }
-            // eslint-disable-next-line no-console
-            console.warn(
-                `content-loader: upstream ${src.source}@${src.branch} unreachable, surfacing cached only`,
-                err,
-            );
+            // Expected for the not-yet-published upstream content repo
+            // (the bundled pilots already loaded above). Only surface
+            // the diagnostic in Developer Mode so production users don't
+            // see repeated warnings for a graceful, by-design fallback.
+            if (isDevMode()) {
+                // eslint-disable-next-line no-console
+                console.warn(
+                    `content-loader: upstream ${src.source}@${src.branch} unreachable, surfacing cached only`,
+                    err,
+                );
+            }
             continue;
         }
         if (!manifest || !Array.isArray(manifest.sets)) continue;
