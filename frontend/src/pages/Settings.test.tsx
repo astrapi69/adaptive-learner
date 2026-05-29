@@ -161,6 +161,31 @@ describe("Settings page", () => {
     expect(screen.getByTestId("settings-help-section")).toBeVisible();
   });
 
+  it("splits Help (glossary) and About into separate tabs", async () => {
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    await screen.findByTestId("settings");
+    // Help tab: glossary visible, About panel hidden.
+    fireEvent.click(screen.getByTestId("settings-tab-help"));
+    expect(screen.getByTestId("settings-help-section")).toBeVisible();
+    expect(screen.getByTestId("settings-panel-about")).not.toBeVisible();
+    // About tab: About panel visible, glossary hidden.
+    fireEvent.click(screen.getByTestId("settings-tab-about"));
+    expect(screen.getByTestId("settings-panel-about")).toBeVisible();
+    expect(screen.getByTestId("settings-help-section")).not.toBeVisible();
+  });
+
+  it("moves the swipe-gesture toggle to the Learning tab", async () => {
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    await screen.findByTestId("settings");
+    // Not on the General tab anymore.
+    expect(screen.getByTestId("settings-gestures-toggle")).not.toBeVisible();
+    // Visible on the Learning tab.
+    fireEvent.click(screen.getByTestId("settings-tab-learning"));
+    expect(screen.getByTestId("settings-gestures-toggle")).toBeVisible();
+  });
+
   it("opens the tab from the ?tab= URL param (deep link)", async () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings("/settings?tab=data");
@@ -504,12 +529,14 @@ describe("Settings — gesture toggle (Phase 23E)", () => {
     vi.restoreAllMocks();
   });
 
-  it("renders the gesture toggle in the Interface section", async () => {
+  it("renders the gesture toggle in the Learning tab", async () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
-    expect(screen.getByTestId("settings-section-ui")).toBeInTheDocument();
+    // The toggle lives in the Learning panel (moved from General/Interface).
     expect(screen.getByTestId("settings-gestures-toggle")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("settings-tab-learning"));
+    expect(screen.getByTestId("settings-gestures-toggle")).toBeVisible();
   });
 
   it("flipping the toggle persists the new value", async () => {

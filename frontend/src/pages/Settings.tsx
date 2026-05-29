@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
 import AboutTab from "../components/about/AboutTab";
+import IdentitySection from "../components/about/IdentitySection";
 import BackupSection from "../components/BackupSection";
 import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
@@ -73,6 +74,7 @@ const SETTINGS_TABS = [
   "plugins",
   "data",
   "help",
+  "about",
 ] as const;
 type SettingsTab = (typeof SETTINGS_TABS)[number];
 
@@ -90,6 +92,7 @@ const SETTINGS_TAB_LABELS: Record<
   plugins: { key: "settings.tab_plugins", fallback: "Plugins" },
   data: { key: "settings.tab_data", fallback: "Data" },
   help: { key: "settings.tab_help", fallback: "Help" },
+  about: { key: "settings.tab_about", fallback: "About" },
 };
 
 export default function Settings() {
@@ -428,25 +431,6 @@ export default function Settings() {
         <h2 className="settings-section-title">
           {t("settings.section_ui", "Interface")}
         </h2>
-        <label className="form-row form-row-toggle">
-          <span className="form-label-stack">
-            <span className="form-label">
-              {t("settings.gestures", "Swipe Gestures")}
-            </span>
-            <span className="form-hint">
-              {t(
-                "settings.gestures_description",
-                "Swipe to navigate in Assessment, Session, and Curriculum.",
-              )}
-            </span>
-          </span>
-          <input
-            type="checkbox"
-            data-testid="settings-gestures-toggle"
-            checked={gesturesOn}
-            onChange={(e) => handleGesturesToggle(e.target.checked)}
-          />
-        </label>
         <label className="form-row form-row-toggle">
           <span className="form-label-stack">
             <span className="form-label">
@@ -833,6 +817,30 @@ export default function Settings() {
         </section>
         <MissionSettingsControl />
         <VoiceSettingsSection />
+        <section className="settings-section">
+          <h2 className="settings-section-title">
+            {t("settings.section_interaction", "Interaction")}
+          </h2>
+          <label className="form-row form-row-toggle">
+            <span className="form-label-stack">
+              <span className="form-label">
+                {t("settings.gestures", "Swipe Gestures")}
+              </span>
+              <span className="form-hint">
+                {t(
+                  "settings.gestures_description",
+                  "Swipe to navigate in Assessment, Session, and Curriculum.",
+                )}
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              data-testid="settings-gestures-toggle"
+              checked={gesturesOn}
+              onChange={(e) => handleGesturesToggle(e.target.checked)}
+            />
+          </label>
+        </section>
       </div>
 
       {/* --- Plugins tab ------------------------------------ */}
@@ -856,10 +864,11 @@ export default function Settings() {
         <SyncSection />
         <BackupSection />
         <ExportSection />
+        {resolveStorageMode() === "api" && <IdentitySection t={t} />}
         <DangerZoneSection />
       </div>
 
-      {/* --- Help tab --------------------------------------- */}
+      {/* --- Help tab (glossary / article browser) ---------- */}
       <div
         className="settings-tabpanel"
         role="tabpanel"
@@ -867,6 +876,15 @@ export default function Settings() {
         data-testid="settings-panel-help"
       >
         <HelpBrowser />
+      </div>
+
+      {/* --- About tab (version / system / credits / license) */}
+      <div
+        className="settings-tabpanel"
+        role="tabpanel"
+        hidden={activeTab !== "about"}
+        data-testid="settings-panel-about"
+      >
         <AboutTab />
       </div>
     </main>
