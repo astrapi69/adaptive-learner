@@ -789,7 +789,8 @@
       "locked_hint": "学習を続けるとこのバッジが解除されます。",
       "next_tier": "{tier} まで {current} / {target}",
       "tiers_heading": "ランク",
-      "view_all": "すべてのバッジを表示"
+      "view_all": "すべてのバッジを表示",
+      "next_badge": "次のバッジ"
     },
     "badges": {
       "first_session": {

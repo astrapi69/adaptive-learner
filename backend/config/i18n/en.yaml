@@ -739,6 +739,7 @@ gamification:
     next_tier: "{current} / {target} to {tier}"
     tiers_heading: Tiers
     view_all: View all badges
+    next_badge: Next badge
   badges:
     first_session:
       name: First Session

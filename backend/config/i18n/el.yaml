@@ -739,6 +739,7 @@ gamification:
     next_tier: "{current} / {target} έως {tier}"
     tiers_heading: Επίπεδα
     view_all: Δες όλα τα διακριτικά
+    next_badge: Επόμενο διακριτικό
   badges:
     first_session:
       name: Πρώτη Συνεδρία

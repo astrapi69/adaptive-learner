@@ -789,7 +789,8 @@
       "locked_hint": "Keep learning to unlock this badge.",
       "next_tier": "{current} / {target} to {tier}",
       "tiers_heading": "Tiers",
-      "view_all": "View all badges"
+      "view_all": "View all badges",
+      "next_badge": "Next badge"
     },
     "badges": {
       "first_session": {

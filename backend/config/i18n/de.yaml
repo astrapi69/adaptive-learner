@@ -739,6 +739,7 @@ gamification:
     next_tier: "{current} / {target} bis {tier}"
     tiers_heading: Stufen
     view_all: Alle Plaketten anzeigen
+    next_badge: Nächste Plakette
   badges:
     first_session:
       name: Erste Sitzung

@@ -789,7 +789,8 @@
       "locked_hint": "Siga aprendendo para desbloquear esta medalha.",
       "next_tier": "{current} / {target} até {tier}",
       "tiers_heading": "Níveis",
-      "view_all": "Ver todas as medalhas"
+      "view_all": "Ver todas as medalhas",
+      "next_badge": "Próxima medalha"
     },
     "badges": {
       "first_session": {

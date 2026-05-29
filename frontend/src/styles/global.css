@@ -6106,3 +6106,70 @@ select:focus {
   text-align: right;
   color: var(--fg-muted);
 }
+
+/* Dashboard badge widget (Phase 57 / 57F). */
+.badge-widget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-start;
+}
+
+.badge-widget-count {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--fg);
+  padding: 0;
+}
+
+.badge-widget-recent {
+  display: flex;
+  gap: 8px;
+}
+
+.badge-widget-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: 0;
+}
+
+.badge-widget-empty {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 0.8125rem;
+}
+
+.badge-widget-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  cursor: pointer;
+  color: var(--fg);
+}
+
+.badge-widget-next-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.badge-widget-next-label {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+}
+
+.badge-widget-next-name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}

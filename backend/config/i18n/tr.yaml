@@ -739,6 +739,7 @@ gamification:
     next_tier: "{tier} için {current} / {target}"
     tiers_heading: Seviyeler
     view_all: Tüm rozetleri gör
+    next_badge: Sonraki rozet
   badges:
     first_session:
       name: İlk Oturum

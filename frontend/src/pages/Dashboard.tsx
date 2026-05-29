@@ -17,7 +17,7 @@ import SessionCounter from "../components/SessionCounter";
 import SpacedRecommendations from "../components/SpacedRecommendations";
 import ToolRecommendations from "../components/ToolRecommendations";
 import XPWidget from "../components/XPWidget";
-import BadgeShowcase from "../components/BadgeShowcase";
+import DashboardBadgeWidget from "../components/badges/DashboardBadgeWidget";
 import DailyMissionsCard from "../components/DailyMissionsCard";
 import StreakCalendar from "../components/StreakCalendar";
 import StreakWidget from "../components/StreakWidget";
@@ -347,7 +347,7 @@ export default function Dashboard() {
                     <h2 className="dashboard-card-title">
                         {t("gamification.card_badges", "Badges")}
                     </h2>
-                    <BadgeShowcase badges={badges} />
+                    <DashboardBadgeWidget badges={badges} />
                 </article>
 
                 <article className="dashboard-card dashboard-card-wide">

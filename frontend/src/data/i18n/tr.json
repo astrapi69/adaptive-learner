@@ -789,7 +789,8 @@
       "locked_hint": "Bu rozeti açmak için öğrenmeye devam et.",
       "next_tier": "{tier} için {current} / {target}",
       "tiers_heading": "Seviyeler",
-      "view_all": "Tüm rozetleri gör"
+      "view_all": "Tüm rozetleri gör",
+      "next_badge": "Sonraki rozet"
     },
     "badges": {
       "first_session": {

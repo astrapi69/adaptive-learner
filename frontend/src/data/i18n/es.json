@@ -789,7 +789,8 @@
       "locked_hint": "Sigue aprendiendo para desbloquear esta insignia.",
       "next_tier": "{current} / {target} hasta {tier}",
       "tiers_heading": "Niveles",
-      "view_all": "Ver todas las insignias"
+      "view_all": "Ver todas las insignias",
+      "next_badge": "Siguiente insignia"
     },
     "badges": {
       "first_session": {
