@@ -47,6 +47,10 @@ import {useCountUp} from "../hooks/useCountUp";
 import {useFeedbackIntensity} from "../hooks/useFeedbackIntensity";
 import {useI18n} from "../hooks/useI18n";
 import {useLesson} from "../hooks/useLesson";
+import {
+    captureCelebrationSnapshot,
+    celebrateProgressSince,
+} from "../lib/feedback/celebration-stats";
 import {allowsConfetti} from "../lib/feedback/feedbackPref";
 import {tokenDiff} from "../lib/exercises/token-diff";
 import {emitCelebration} from "../lib/praise/celebration-bus";
@@ -341,7 +345,21 @@ export default function LessonPage() {
                     setId={setId}
                     lessonFilename={filename}
                     onMarkComplete={async () => {
+                        // Snapshot gamification before completion so
+                        // any milestone / badge crossed by the award
+                        // can be detected + celebrated afterwards.
+                        const userId = learnerUserId ?? "";
+                        const before =
+                            await captureCelebrationSnapshot(userId);
                         await markCompleted();
+                        await celebrateProgressSince(
+                            userId,
+                            before,
+                            (badge) => ({
+                                name: t(badge.name_key, badge.key),
+                                description: t(badge.description_key, ""),
+                            }),
+                        );
                     }}
                     onNextLesson={() => {
                         if (nextLessonFilename) {

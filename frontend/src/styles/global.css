@@ -2643,6 +2643,11 @@ select:focus {
   color: var(--fg-muted);
 }
 
+/* Phase 55H — current streak at the all-time best */
+.streak-widget__value[data-at-best="true"] {
+  color: var(--warning);
+}
+
 @media (max-width: 600px) {
   .lesson-nav {
     flex-direction: column;

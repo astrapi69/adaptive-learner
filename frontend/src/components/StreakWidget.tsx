@@ -18,6 +18,12 @@ export default function StreakWidget({state}: StreakWidgetProps) {
     if (!state) {
         return null;
     }
+    // "Best streak ever" is the maintained longest streak. When the
+    // current streak equals it (and is non-zero) the learner is at
+    // their personal best right now - highlight it (EXP-008 / P-144).
+    const atPersonalBest =
+        state.current_streak_days > 0 &&
+        state.current_streak_days >= state.longest_streak_days;
     return (
         <div className="streak-widget" data-testid="streak-widget">
             <div className="streak-widget__cell">
@@ -27,6 +33,7 @@ export default function StreakWidget({state}: StreakWidgetProps) {
                 <span
                     className="streak-widget__value"
                     data-testid="streak-widget-current"
+                    data-at-best={atPersonalBest ? "true" : "false"}
                 >
                     {state.current_streak_days}
                 </span>
