@@ -1233,3 +1233,9 @@ content:
     list_failed: "Could not load content sets."
     download_failed: "Could not download the set."
     open_failed: "Could not open the lesson."
+milestone:
+  streak: "{n}-Day Streak!"
+  level_up: "Level {n} reached!"
+  mastery: "{n} Elements Mastered!"
+  badge: "Badge earned!"
+  view_all_badges: "Tap to view all badges"

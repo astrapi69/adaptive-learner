@@ -1336,5 +1336,12 @@
       "download_failed": "セットをダウンロードできませんでした。",
       "open_failed": "レッスンを開けませんでした。"
     }
+  },
+  "milestone": {
+    "streak": "{n}日連続記録!",
+    "level_up": "レベル{n}に到達!",
+    "mastery": "{n}要素をマスター!",
+    "badge": "バッジ獲得!",
+    "view_all_badges": "タップしてすべてのバッジを見る"
   }
 }

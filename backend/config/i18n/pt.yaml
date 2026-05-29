@@ -1222,3 +1222,9 @@ content:
     list_failed: "Não foi possível carregar os conjuntos de conteúdo."
     download_failed: "Não foi possível transferir o conjunto."
     open_failed: "Não foi possível abrir a lição."
+milestone:
+  streak: "Sequência de {n} dias!"
+  level_up: "Nível {n} alcançado!"
+  mastery: "{n} elementos dominados!"
+  badge: "Emblema conquistado!"
+  view_all_badges: "Toque para ver todos os emblemas"

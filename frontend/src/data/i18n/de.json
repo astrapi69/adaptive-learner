@@ -1336,5 +1336,12 @@
       "download_failed": "Set konnte nicht heruntergeladen werden.",
       "open_failed": "Lektion konnte nicht geöffnet werden."
     }
+  },
+  "milestone": {
+    "streak": "{n}-Tage-Serie!",
+    "level_up": "Level {n} erreicht!",
+    "mastery": "{n} Elemente gemeistert!",
+    "badge": "Abzeichen erhalten!",
+    "view_all_badges": "Tippen, um alle Abzeichen zu sehen"
   }
 }

@@ -1224,3 +1224,9 @@ content:
     list_failed: "No se pudieron cargar los sets de contenido."
     download_failed: "No se pudo descargar el set."
     open_failed: "No se pudo abrir la lección."
+milestone:
+  streak: "¡Racha de {n} días!"
+  level_up: "¡Nivel {n} alcanzado!"
+  mastery: "¡{n} elementos dominados!"
+  badge: "¡Insignia conseguida!"
+  view_all_badges: "Toca para ver todas las insignias"

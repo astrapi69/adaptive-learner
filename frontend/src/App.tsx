@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 import type {ApiError} from "./api/client";
 import ErrorBoundary from "./components/ErrorBoundary";
+import MilestoneHost from "./components/feedback/MilestoneHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
@@ -153,6 +154,7 @@ export default function App() {
                     </Routes>
                 </Suspense>
                 <InstallPrompt />
+                <MilestoneHost />
                 <Suspense fallback={null}>
                     <EventRecorderSetup />
                 </Suspense>

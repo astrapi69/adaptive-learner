@@ -1336,5 +1336,12 @@
       "download_failed": "Set indirilemedi.",
       "open_failed": "Ders açılamadı."
     }
+  },
+  "milestone": {
+    "streak": "{n} günlük seri!",
+    "level_up": "Seviye {n}'e ulaşıldı!",
+    "mastery": "{n} öğe ustalaşıldı!",
+    "badge": "Rozet kazanıldı!",
+    "view_all_badges": "Tüm rozetleri görmek için dokun"
   }
 }
