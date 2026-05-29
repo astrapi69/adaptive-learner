@@ -222,9 +222,9 @@ export default function Dashboard() {
                     style={{
                         margin: "0 0 1rem 0",
                         padding: "0.75rem 1rem",
-                        background: "var(--info-bg, #e3f2fd)",
-                        color: "var(--info, #0d47a1)",
-                        border: "1px solid var(--info, #1976d2)",
+                        background: "var(--info-bg)",
+                        color: "var(--info)",
+                        border: "1px solid var(--info)",
                         borderRadius: "var(--radius-md, 6px)",
                         display: "flex",
                         alignItems: "center",

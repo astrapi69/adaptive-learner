@@ -352,8 +352,8 @@ function PairedView({
                                     aria-hidden="true"
                                     style={{
                                         color: h.success
-                                            ? "var(--success, #2e7d32)"
-                                            : "var(--danger, #c62828)",
+                                            ? "var(--success)"
+                                            : "var(--danger)",
                                     }}
                                 >
                                     {h.success ? "✓" : "✕"}

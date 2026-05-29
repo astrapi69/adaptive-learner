@@ -184,7 +184,7 @@ export default function SyncConflictDialog({
             style={{
                 position: "fixed",
                 inset: 0,
-                background: "rgba(0, 0, 0, 0.5)",
+                background: "var(--bg-overlay)",
                 zIndex: 1000,
                 display: "flex",
                 alignItems: "center",
@@ -413,7 +413,7 @@ function ColumnCard({
                                     display: "inline",
                                     margin: 0,
                                     background: differs
-                                        ? "rgba(255, 165, 0, 0.15)"
+                                        ? "color-mix(in srgb, var(--warning) 15%, transparent)"
                                         : undefined,
                                     padding: differs ? "0 2px" : undefined,
                                     borderRadius: 2,

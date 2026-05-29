@@ -13,34 +13,84 @@
  * values.
  */
 
+/* ================================================================
+ * Phase 58B — complete semantic CSS variable system.
+ *
+ * Canonical semantic tokens are declared per theme. ``:root`` holds
+ * the light values; ``[data-theme="dark"]`` (and the per-theme files
+ * added in Phase 58D) override the SAME canonical names. EVERY theme
+ * defines the FULL set — there is no light-fallthrough.
+ *
+ * Legacy aliases (--bg, --surface, --fg, --danger, ...) live at the
+ * end of ``:root`` and resolve THROUGH the canonical tokens, so they
+ * track the active theme automatically and pre-58B rules keep
+ * working. Do NOT introduce new rules against the legacy names;
+ * reach for the semantic names instead.
+ * ============================================================== */
+
 :root {
-  /* Neutrals (light) */
-  --bg: #ffffff;
-  --bg-alt: #f5f7fb;
-  --surface: #ffffff;
-  --surface-2: #f8fafc;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --fg: #1a1a1a;
+  /* Backgrounds */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f7fb;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f8fafc;
+  --bg-overlay: rgba(15, 23, 42, 0.45);
+
+  /* Text */
+  --fg-primary: #1a1a1a;
+  --fg-secondary: #475569;
   --fg-muted: #64748b;
-  --fg-inverted: #ffffff;
+  --fg-inverse: #ffffff;
+
+  /* Borders */
+  --border-primary: #e2e8f0;
+  --border-subtle: #eef2f7;
+  --border-accent: #cbd5e1;
+
+  /* Interactive surfaces (buttons / toggles / list rows) */
+  --interactive-bg: #f1f5f9;
+  --interactive-hover: #e2e8f0;
+  --interactive-active: #cbd5e1;
+  --interactive-disabled: #e2e8f0;
 
   /* Brand + accent (matches the PWA manifest theme_color + favicon).
    *
    * Phase 39 C5 (WCAG 2.1 SC 1.4.3): --accent darkened from
    * #6366f1 to #4f46e5 to bring the primary-button text-on-
    * background contrast over the 4.5:1 AA threshold. Old
-   * --accent value at 4.47:1 → new value at 6.29:1. The hover
-   * shade moves one more step darker to keep the visual delta.
-   * Dark theme already passes (5.32:1) and stays unchanged. */
+   * --accent value at 4.47:1 → new value at 6.29:1. Dark theme
+   * passes at 5.32:1. */
   --accent: #4f46e5;
   --accent-hover: #4338ca;
   --accent-fg: #ffffff;
+  --accent-subtle: rgba(79, 70, 229, 0.1);
+  --accent-rgb: 79, 70, 229;
 
-  /* Semantic status colours */
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
+  /* Status: strong (text / icon / border) + bg (subtle tint) pairs.
+   * Strong values meet AA as text on the page background. */
+  --success: #15803d;
+  --success-bg: #dcfce7;
+  --error: #dc2626;
+  --error-bg: #fee2e2;
+  --warning: #b45309;
+  --warning-bg: #fef3c7;
+  --info: #1d4ed8;
+  --info-bg: #dbeafe;
+
+  /* Exercise feedback */
+  --exercise-correct: #16a34a;
+  --exercise-wrong: #dc2626;
+  --exercise-selected: #4f46e5;
+  --exercise-matched: #0d9488;
+
+  /* Chart series — Recharts reads these via a JS-side var lookup
+   * (see frontend/src/lib/chartTheme.ts). */
+  --chart-1: #3b82f6;
+  --chart-2: #8b5cf6;
+  --chart-3: #ef4444;
+  --chart-4: #10b981;
+  --chart-5: #f59e0b;
+  --chart-6: #6366f1;
 
   /* Method palette — single source of truth shared with
    * frontend/src/lib/constants.ts. Charts, badges and dashboard
@@ -51,6 +101,11 @@
   --method-dialogic: #10b981;
   --method-contextual: #f59e0b;
   --method-ai_adaptive: #6366f1;
+
+  /* Shadows */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+  --shadow-elevated: 0 4px 12px rgba(15, 23, 42, 0.08), 0 24px 48px rgba(15, 23, 42, 0.1);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.1);
 
   /* Layout tokens */
   --space-1: 0.25rem;
@@ -64,31 +119,94 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
-
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
-  --shadow-elevated: 0 4px 12px rgba(15, 23, 42, 0.08), 0 24px 48px rgba(15, 23, 42, 0.1);
+  --radius-1: var(--radius-sm);
+  --radius-2: var(--radius-md);
 
   --font-sans:
     system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
     sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* --------------------------------------------------------------
+   * Legacy aliases. Resolve through the canonical tokens above so
+   * they follow the active theme. Kept so pre-58B CSS stays valid;
+   * prefer the semantic names in new code.
+   * -------------------------------------------------------------- */
+  --bg: var(--bg-primary);
+  --bg-alt: var(--bg-secondary);
+  --surface: var(--bg-surface);
+  --surface-2: var(--bg-elevated);
+  --surface-3: var(--interactive-active);
+  --border: var(--border-primary);
+  --border-strong: var(--border-accent);
+  --fg: var(--fg-primary);
+  --fg-inverted: var(--fg-inverse);
+  --text: var(--fg-primary);
+  --text-muted: var(--fg-muted);
+  --muted: var(--fg-muted);
+  --danger: var(--error);
 }
 
 [data-theme="dark"] {
-  --bg: #0f0f10;
-  --bg-alt: #16161a;
-  --surface: #1c1c20;
-  --surface-2: #232328;
-  --border: #2a2a30;
-  --border-strong: #3a3a42;
-  --fg: #ececec;
+  /* Backgrounds */
+  --bg-primary: #0f0f10;
+  --bg-secondary: #16161a;
+  --bg-surface: #1c1c20;
+  --bg-elevated: #232328;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Text */
+  --fg-primary: #ececec;
+  --fg-secondary: #cbd5e1;
   --fg-muted: #94a3b8;
-  --fg-inverted: #0f0f10;
+  --fg-inverse: #0f0f10;
+
+  /* Borders */
+  --border-primary: #2a2a30;
+  --border-subtle: #232328;
+  --border-accent: #3a3a42;
+
+  /* Interactive surfaces */
+  --interactive-bg: #232328;
+  --interactive-hover: #2a2a30;
+  --interactive-active: #3a3a42;
+  --interactive-disabled: #232328;
+
+  /* Accent */
   --accent: #818cf8;
   --accent-hover: #a5b4fc;
   --accent-fg: #1e1b4b;
+  --accent-subtle: rgba(129, 140, 248, 0.15);
+  --accent-rgb: 129, 140, 248;
+
+  /* Status */
+  --success: #4ade80;
+  --success-bg: rgba(34, 197, 94, 0.15);
+  --error: #f87171;
+  --error-bg: rgba(239, 68, 68, 0.15);
+  --warning: #fbbf24;
+  --warning-bg: rgba(245, 158, 11, 0.18);
+  --info: #60a5fa;
+  --info-bg: rgba(59, 130, 246, 0.18);
+
+  /* Exercise feedback (brightened for dark surfaces) */
+  --exercise-correct: #4ade80;
+  --exercise-wrong: #f87171;
+  --exercise-selected: #818cf8;
+  --exercise-matched: #2dd4bf;
+
+  /* Chart series (brightened for dark backgrounds) */
+  --chart-1: #60a5fa;
+  --chart-2: #a78bfa;
+  --chart-3: #f87171;
+  --chart-4: #34d399;
+  --chart-5: #fbbf24;
+  --chart-6: #818cf8;
+
+  /* Shadows */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.45);
   --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.5), 0 24px 48px rgba(0, 0, 0, 0.55);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
 }
 
 * {
@@ -995,10 +1113,10 @@ select:focus {
   flex-direction: column;
   gap: 0.25rem;
   padding: var(--space-3);
-  background: var(--surface, #ffffff);
-  border: 1px solid var(--border, #d4d4d8);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md, 6px);
-  box-shadow: var(--shadow-card, 0 4px 12px rgba(0, 0, 0, 0.15));
+  box-shadow: var(--shadow-card);
   text-align: left;
   font: inherit;
   color: inherit;
@@ -1013,7 +1131,7 @@ select:focus {
 
 .cycle-peek-description {
   font-size: 0.875rem;
-  color: var(--text-muted, #6b7280);
+  color: var(--text-muted);
 }
 
 @keyframes cycle-peek-fade {
@@ -1205,7 +1323,7 @@ select:focus {
 .qr-success-checkmark {
   display: inline-block;
   font-size: 3rem;
-  color: var(--success, #2e7d32);
+  color: var(--success);
   animation: qr-success-pop 320ms ease-out 0s 1;
 }
 
@@ -1818,7 +1936,7 @@ select:focus {
   gap: var(--space-3);
   padding: var(--space-3);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-md);
   cursor: pointer;
 }
 
@@ -2041,7 +2159,7 @@ select:focus {
   margin-left: var(--space-2);
   padding: 2px 6px;
   border-radius: var(--radius-sm);
-  background: var(--danger, #ef4444);
+  background: var(--danger);
   color: #fff;
   font-size: 0.7rem;
   font-weight: 700;
@@ -2546,7 +2664,7 @@ select:focus {
 }
 
 .lesson-summary-breakdown-row.is-wrong {
-  border-left-color: var(--danger, #ef4444);
+  border-left-color: var(--danger);
 }
 
 .lesson-summary-breakdown-row.is-unattempted {
@@ -2959,8 +3077,8 @@ select:focus {
 }
 
 .matching-tile.is-wrong {
-  border-color: var(--danger, #ef4444);
-  background: color-mix(in srgb, var(--danger, #ef4444) 12%, var(--surface));
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
   animation: matching-shake 0.2s ease-in-out;
 }
 
@@ -2972,7 +3090,7 @@ select:focus {
 
 @keyframes matching-flash {
   0%, 100% { background: var(--surface); }
-  50% { background: color-mix(in srgb, var(--danger, #ef4444) 25%, var(--surface)); }
+  50% { background: color-mix(in srgb, var(--danger) 25%, var(--surface)); }
 }
 
 .matching-tile.is-flash {
@@ -3134,8 +3252,8 @@ select:focus {
 }
 
 .picture-tile.is-wrong {
-  border-color: var(--danger, #ef4444);
-  background: color-mix(in srgb, var(--danger, #ef4444) 12%, var(--surface));
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
 }
 
 .picture-tile-badge {
@@ -3157,7 +3275,7 @@ select:focus {
 }
 
 .picture-tile-badge-wrong {
-  color: var(--danger, #ef4444);
+  color: var(--danger);
 }
 
 .picture-actions {
@@ -3177,7 +3295,7 @@ select:focus {
 }
 
 .picture-result[data-result="wrong"] {
-  color: var(--danger, #ef4444);
+  color: var(--danger);
 }
 
 @media (max-width: 600px) {
@@ -3275,7 +3393,7 @@ select:focus {
 }
 
 .free-text-result[data-result="wrong"] {
-  color: var(--danger, #ef4444);
+  color: var(--danger);
 }
 
 /* Phase 45 / EXP-002 / 3F — WordTilesExercise. Two stacked
@@ -3362,8 +3480,8 @@ select:focus {
 }
 
 .word-tile.is-wrong {
-  border-color: var(--danger, #ef4444);
-  background: color-mix(in srgb, var(--danger, #ef4444) 12%, var(--surface));
+  border-color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 12%, var(--surface));
 }
 
 .word-tile:disabled {
@@ -3477,7 +3595,7 @@ select:focus {
 }
 
 .word-tiles-result[data-result="wrong"] {
-  color: var(--danger, #ef4444);
+  color: var(--danger);
 }
 
 /* Phase 52D / v1.35.0 / P-127 / F-111 — ClozeExercise. The
@@ -3672,12 +3790,12 @@ select:focus {
 }
 
 .nav-online-indicator.is-offline .nav-online-dot {
-  background: var(--danger, #ef4444);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger, #ef4444) 20%, transparent);
+  background: var(--danger);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger) 20%, transparent);
 }
 
 .nav-online-indicator.is-offline .nav-online-label {
-  color: var(--danger, #ef4444);
+  color: var(--danger);
 }
 
 .nav-theme-toggle {
@@ -4571,7 +4689,7 @@ select:focus {
 
 /* ---- Auto-loop cycle transition card (Phase 17C) ----------------- */
 .chat-transition-card {
-    border: 2px dashed var(--accent, #6366f1);
+    border: 2px dashed var(--accent);
     background: var(--surface-2, var(--surface));
     border-radius: var(--radius-2);
     padding: var(--space-3);
@@ -4584,7 +4702,7 @@ select:focus {
 }
 .chat-transition-badge {
     display: inline-block;
-    background: var(--accent, #6366f1);
+    background: var(--accent);
     color: white;
     font-weight: 600;
     border-radius: var(--radius-1);
@@ -4606,7 +4724,7 @@ select:focus {
 /* ---- Multi-cycle session summary (Phase 17D) -------------------- */
 .cycle-counter-badge {
     display: inline-block;
-    background: var(--accent, #6366f1);
+    background: var(--accent);
     color: white;
     font-weight: 600;
     border-radius: var(--radius-1);
@@ -4651,10 +4769,10 @@ select:focus {
     flex: 1 1 auto;
     min-width: 0;
     padding: var(--space-2);
-    border: 1px solid var(--border, #ccc);
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm, 4px);
-    background: var(--surface, #fff);
-    color: var(--text, #111);
+    background: var(--surface);
+    color: var(--text);
 }
 .model-picker-toggle {
     padding: var(--space-1) var(--space-2);
@@ -4667,14 +4785,14 @@ select:focus {
     gap: var(--space-2);
     margin-top: var(--space-2);
     padding: var(--space-1) var(--space-2);
-    background: var(--surface-2, #f3f3f3);
+    background: var(--surface-2);
     border-radius: var(--radius-sm, 4px);
 }
 .model-picker-context {
     font-size: 0.8rem;
     padding: 2px 6px;
-    background: var(--accent, #6366f1);
-    color: var(--accent-fg, #fff);
+    background: var(--accent);
+    color: var(--accent-fg);
     border-radius: 8px;
 }
 .model-picker-default-hint {
@@ -4682,7 +4800,7 @@ select:focus {
     font-size: 0.85rem;
 }
 .model-picker-default-hint code {
-    background: var(--surface-2, #f3f3f3);
+    background: var(--surface-2);
     padding: 1px 4px;
     border-radius: 3px;
     font-size: 0.8rem;
@@ -4695,10 +4813,10 @@ select:focus {
     margin-top: var(--space-1);
     max-height: 360px;
     overflow-y: auto;
-    background: var(--surface, #fff);
-    border: 1px solid var(--border, #ccc);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm, 4px);
-    box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
+    box-shadow: var(--shadow-md);
     z-index: 100;
 }
 .model-picker-group-title {
@@ -4706,9 +4824,9 @@ select:focus {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--muted, #666);
-    background: var(--surface-2, #f5f5f5);
-    border-bottom: 1px solid var(--border, #eee);
+    color: var(--muted);
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
 }
 .model-picker-row {
     display: grid;
@@ -4721,17 +4839,17 @@ select:focus {
     padding: var(--space-2);
     background: transparent;
     border: none;
-    border-bottom: 1px solid var(--border, #eee);
+    border-bottom: 1px solid var(--border);
     text-align: left;
     cursor: pointer;
-    color: var(--text, #111);
+    color: var(--text);
 }
 .model-picker-row:hover,
 .model-picker-row:focus {
-    background: var(--surface-2, #f5f5f5);
+    background: var(--surface-2);
 }
 .model-picker-row.is-selected {
-    background: var(--accent-subtle, rgba(99, 102, 241, 0.1));
+    background: var(--accent-subtle);
 }
 .model-picker-row-name {
     grid-area: name;
@@ -4746,15 +4864,15 @@ select:focus {
     grid-area: context;
     font-size: 0.75rem;
     padding: 2px 6px;
-    background: var(--accent, #6366f1);
-    color: var(--accent-fg, #fff);
+    background: var(--accent);
+    color: var(--accent-fg);
     border-radius: 8px;
     align-self: start;
 }
 .model-picker-loading,
 .model-picker-empty {
     padding: var(--space-3);
-    color: var(--muted, #666);
+    color: var(--muted);
     text-align: center;
 }
 .model-picker-error {
@@ -4776,7 +4894,7 @@ select:focus {
 .backup-compare-section {
     margin-top: var(--space-4);
     padding-top: var(--space-3);
-    border-top: 1px solid var(--border, #eee);
+    border-top: 1px solid var(--border);
 }
 .backup-compare-pickers {
     display: flex;
@@ -4793,16 +4911,16 @@ select:focus {
 }
 .backup-compare-slot-label {
     font-size: 0.85rem;
-    color: var(--muted, #666);
+    color: var(--muted);
 }
 .backup-compare-error {
-    color: var(--danger, #ef4444);
+    color: var(--danger);
     margin: var(--space-2) 0;
 }
 .backup-compare-loading {
     padding: var(--space-3);
     text-align: center;
-    color: var(--muted, #666);
+    color: var(--muted);
 }
 
 .backup-compare {
@@ -4814,7 +4932,7 @@ select:focus {
     align-items: center;
     gap: var(--space-2);
     padding: var(--space-2);
-    background: var(--surface-2, #f5f5f5);
+    background: var(--surface-2);
     border-radius: var(--radius-sm, 4px);
     margin-bottom: var(--space-3);
 }
@@ -4825,7 +4943,7 @@ select:focus {
 }
 .backup-compare-arrow {
     font-size: 1.2rem;
-    color: var(--muted, #666);
+    color: var(--muted);
 }
 .backup-compare-totals {
     margin-left: auto;
@@ -4842,20 +4960,20 @@ select:focus {
     font-family: var(--font-mono, monospace);
 }
 .diff-chip-added {
-    background: var(--success, #10b981);
+    background: var(--success);
     color: white;
 }
 .diff-chip-removed {
-    background: var(--danger, #ef4444);
+    background: var(--danger);
     color: white;
 }
 .diff-chip-changed {
-    background: var(--warning, #f59e0b);
+    background: var(--warning);
     color: white;
 }
 .diff-chip-unchanged {
-    background: var(--surface-2, #e5e5e5);
-    color: var(--muted, #555);
+    background: var(--surface-2);
+    color: var(--muted);
 }
 .diff-marker {
     display: inline-block;
@@ -4865,13 +4983,13 @@ select:focus {
     font-weight: 600;
 }
 .diff-marker-added {
-    color: var(--success, #10b981);
+    color: var(--success);
 }
 .diff-marker-removed {
-    color: var(--danger, #ef4444);
+    color: var(--danger);
 }
 .diff-marker-changed {
-    color: var(--warning, #f59e0b);
+    color: var(--warning);
 }
 
 .backup-compare-controls {
@@ -4897,7 +5015,7 @@ select:focus {
     gap: var(--space-1);
 }
 .backup-compare-table-card {
-    border: 1px solid var(--border, #eee);
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm, 4px);
     overflow: hidden;
 }
@@ -4912,10 +5030,10 @@ select:focus {
     text-align: left;
     cursor: pointer;
     font-size: 0.95rem;
-    color: var(--text, #111);
+    color: var(--text);
 }
 .backup-compare-table-head:hover {
-    background: var(--surface-2, #f5f5f5);
+    background: var(--surface-2);
 }
 .backup-compare-table-name {
     font-weight: 500;
@@ -4927,11 +5045,11 @@ select:focus {
 }
 .backup-compare-toggle-icon {
     margin-left: auto;
-    color: var(--muted, #888);
+    color: var(--muted);
 }
 .backup-compare-table-body {
     padding: var(--space-2);
-    border-top: 1px solid var(--border, #eee);
+    border-top: 1px solid var(--border);
 }
 .backup-compare-section h4 {
     margin: var(--space-2) 0 var(--space-1);
@@ -4954,7 +5072,7 @@ select:focus {
     text-align: left;
     cursor: pointer;
     width: 100%;
-    color: var(--text, #111);
+    color: var(--text);
     font-family: var(--font-mono, monospace);
 }
 .backup-compare-field-table {
@@ -4966,19 +5084,19 @@ select:focus {
 .backup-compare-field-table th,
 .backup-compare-field-table td {
     padding: 2px 6px;
-    border: 1px solid var(--border, #eee);
+    border: 1px solid var(--border);
     vertical-align: top;
 }
 .backup-compare-field-table th {
-    background: var(--surface-2, #f5f5f5);
+    background: var(--surface-2);
     text-align: left;
 }
 .diff-value-old {
-    color: var(--danger, #ef4444);
+    color: var(--danger);
     word-break: break-all;
 }
 .diff-value-new {
-    color: var(--success, #10b981);
+    color: var(--success);
     word-break: break-all;
 }
 
@@ -4989,23 +5107,23 @@ select:focus {
  * (below). Uses CSS variables so the active theme's surface,
  * border and accent flow through unchanged. */
 .rich-text-editor {
-    border: 1px solid var(--border, #e2e8f0);
+    border: 1px solid var(--border);
     border-radius: var(--radius-md, 8px);
-    background: var(--surface, #ffffff);
+    background: var(--surface);
     overflow: hidden;
 }
 
 .rich-text-editor .rich-text-prosemirror {
     padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
     min-height: var(--rich-text-min-height, 140px);
-    color: var(--fg, #1a1a1a);
+    color: var(--fg);
     font-family: var(--font-sans);
     line-height: 1.55;
     outline: none;
 }
 
 .rich-text-editor .rich-text-prosemirror:focus-visible {
-    outline: 2px solid var(--accent, #6366f1);
+    outline: 2px solid var(--accent);
     outline-offset: -2px;
 }
 
@@ -5057,15 +5175,15 @@ select:focus {
 }
 
 .rich-text-prosemirror blockquote {
-    border-left: 3px solid var(--border-strong, #cbd5e1);
-    color: var(--fg-muted, #64748b);
+    border-left: 3px solid var(--border-strong);
+    color: var(--fg-muted);
     margin: 0.4em 0;
     padding: 0.1em 0 0.1em 0.8em;
 }
 
 .rich-text-prosemirror code {
-    background: var(--surface-2, #f8fafc);
-    border: 1px solid var(--border, #e2e8f0);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     border-radius: 3px;
     padding: 0 0.25em;
     font-family: var(--font-mono);
@@ -5073,9 +5191,9 @@ select:focus {
 }
 
 .rich-text-prosemirror pre {
-    background: var(--surface-2, #f8fafc);
-    color: var(--fg, #1a1a1a);
-    border: 1px solid var(--border, #e2e8f0);
+    background: var(--surface-2);
+    color: var(--fg);
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm, 4px);
     padding: 0.75em 1em;
     overflow-x: auto;
@@ -5090,7 +5208,7 @@ select:focus {
 }
 
 .rich-text-prosemirror a {
-    color: var(--accent, #6366f1);
+    color: var(--accent);
     text-decoration: underline;
     text-underline-offset: 0.2em;
 }
@@ -5115,12 +5233,12 @@ select:focus {
 }
 .rich-text-prosemirror th,
 .rich-text-prosemirror td {
-    border: 1px solid var(--border, #e2e8f0);
+    border: 1px solid var(--border);
     padding: 0.3em 0.5em;
     vertical-align: top;
 }
 .rich-text-prosemirror th {
-    background: var(--surface-2, #f8fafc);
+    background: var(--surface-2);
     font-weight: 600;
 }
 
@@ -5131,14 +5249,14 @@ select:focus {
 .rich-text-prosemirror p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
     float: left;
-    color: var(--fg-muted, #64748b);
+    color: var(--fg-muted);
     pointer-events: none;
     height: 0;
 }
 
 .rich-text-prosemirror .has-focus {
     border-radius: 2px;
-    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent, #6366f1) 20%, transparent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
 /* === Editor toolbar ==================================================== */
@@ -5150,10 +5268,10 @@ select:focus {
     align-items: center;
     gap: 4px;
     padding: 6px 8px;
-    border: 1px solid var(--border, #e2e8f0);
+    border: 1px solid var(--border);
     border-bottom: none;
     border-radius: var(--radius-md, 8px) var(--radius-md, 8px) 0 0;
-    background: var(--surface-2, #f8fafc);
+    background: var(--surface-2);
     scrollbar-width: thin;
 }
 
@@ -5176,7 +5294,7 @@ select:focus {
     display: inline-block;
     width: 1px;
     height: 22px;
-    background: var(--border-strong, #cbd5e1);
+    background: var(--border-strong);
     margin: 0 4px;
     flex-shrink: 0;
 }
@@ -5191,7 +5309,7 @@ select:focus {
     border: 1px solid transparent;
     border-radius: var(--radius-sm, 4px);
     background: transparent;
-    color: var(--fg, #1a1a1a);
+    color: var(--fg);
     cursor: pointer;
     font-size: 0.875rem;
     line-height: 1;
@@ -5199,7 +5317,7 @@ select:focus {
 }
 
 .editor-toolbar-btn:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--fg, #1a1a1a) 8%, transparent);
+    background: color-mix(in srgb, var(--fg) 8%, transparent);
 }
 
 .editor-toolbar-btn:disabled {
@@ -5208,13 +5326,13 @@ select:focus {
 }
 
 .editor-toolbar-btn.is-active {
-    background: color-mix(in srgb, var(--accent, #6366f1) 15%, transparent);
-    border-color: color-mix(in srgb, var(--accent, #6366f1) 30%, transparent);
-    color: var(--accent, #6366f1);
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    color: var(--accent);
 }
 
 .editor-toolbar-btn:focus-visible {
-    outline: 2px solid var(--accent, #6366f1);
+    outline: 2px solid var(--accent);
     outline-offset: 1px;
 }
 
@@ -5240,7 +5358,7 @@ select:focus {
 .editor-character-count {
     display: flex;
     justify-content: flex-end;
-    color: var(--fg-muted, #64748b);
+    color: var(--fg-muted);
     font-size: 0.75rem;
     padding: 4px 8px;
 }
@@ -5261,11 +5379,11 @@ select:focus {
  * sits flush below the commit row it belongs to. */
 .commit-notes-row > td {
     padding: 0 var(--space-3, 0.75rem) var(--space-3, 0.75rem);
-    background: var(--surface-2, #f8fafc);
+    background: var(--surface-2);
     border-top: none;
 }
 .commit-notes-row .rich-text-editor {
-    background: var(--surface, #ffffff);
+    background: var(--surface);
 }
 
 /* === Code block (Phase 27D — lowlight syntax highlighting) ============ */
@@ -5274,9 +5392,9 @@ select:focus {
  * carries the toolbar (language selector + copy button) and
  * the ``<pre><code>`` ProseMirror renders into. */
 .rich-text-prosemirror .code-block-view {
-    border: 1px solid var(--border, #e2e8f0);
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm, 4px);
-    background: var(--surface-2, #f8fafc);
+    background: var(--surface-2);
     margin: 0.4em 0;
     overflow: hidden;
 }
@@ -5286,24 +5404,24 @@ select:focus {
     align-items: center;
     gap: 6px;
     padding: 4px 8px;
-    background: color-mix(in srgb, var(--fg, #1a1a1a) 6%, transparent);
-    border-bottom: 1px solid var(--border, #e2e8f0);
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
+    border-bottom: 1px solid var(--border);
     font-size: 0.75rem;
 }
 
 .code-block-view-language {
     height: 24px;
     padding: 0 4px;
-    border: 1px solid var(--border, #e2e8f0);
+    border: 1px solid var(--border);
     border-radius: 3px;
-    background: var(--surface, #ffffff);
-    color: var(--fg, #1a1a1a);
+    background: var(--surface);
+    color: var(--fg);
     font-size: 0.75rem;
     font-family: var(--font-mono);
     cursor: pointer;
 }
 .code-block-view-language:focus-visible {
-    outline: 2px solid var(--accent, #6366f1);
+    outline: 2px solid var(--accent);
     outline-offset: 1px;
 }
 
@@ -5311,18 +5429,18 @@ select:focus {
     margin-left: auto;
     height: 24px;
     padding: 0 8px;
-    border: 1px solid var(--border, #e2e8f0);
+    border: 1px solid var(--border);
     border-radius: 3px;
-    background: var(--surface, #ffffff);
-    color: var(--fg, #1a1a1a);
+    background: var(--surface);
+    color: var(--fg);
     font-size: 0.75rem;
     cursor: pointer;
 }
 .code-block-view-copy:hover {
-    background: color-mix(in srgb, var(--fg, #1a1a1a) 6%, transparent);
+    background: color-mix(in srgb, var(--fg) 6%, transparent);
 }
 .code-block-view-copy:focus-visible {
-    outline: 2px solid var(--accent, #6366f1);
+    outline: 2px solid var(--accent);
     outline-offset: 1px;
 }
 
@@ -5330,7 +5448,7 @@ select:focus {
     margin: 0;
     border: none;
     border-radius: 0;
-    background: var(--surface, #ffffff);
+    background: var(--surface);
 }
 
 /* highlight.js token theme — light. Covers the common token
@@ -5408,8 +5526,8 @@ select:focus {
 /* --- Gamification (Phase 29A) ------------------------------------ */
 
 .xp-widget {
-    background: var(--bg-elevated, #f8fafc);
-    border: 1px solid var(--border, #e2e8f0);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px 16px;
     display: flex;
@@ -5418,7 +5536,7 @@ select:focus {
 }
 .xp-widget--empty {
     text-align: center;
-    color: var(--text-muted, #94a3b8);
+    color: var(--text-muted);
 }
 .xp-widget__header {
     display: flex;
@@ -5431,12 +5549,12 @@ select:focus {
     color: var(--accent);
 }
 .xp-widget__total {
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 .xp-widget__bar {
     height: 8px;
     border-radius: 4px;
-    background: var(--border, #e2e8f0);
+    background: var(--border);
     overflow: hidden;
 }
 .xp-widget__bar-fill {
@@ -5446,7 +5564,7 @@ select:focus {
 }
 .xp-widget__footer {
     font-size: 0.8rem;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 
 .xp-notification {
@@ -5499,7 +5617,7 @@ select:focus {
 }
 .badge-showcase__summary {
     font-size: 0.9rem;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
     font-weight: 500;
 }
 .badge-showcase__category {
@@ -5509,7 +5627,7 @@ select:focus {
 }
 .badge-showcase__category-title {
     font-size: 0.95rem;
-    color: var(--text, #1e293b);
+    color: var(--text);
     margin: 0;
 }
 .badge-showcase__grid {
@@ -5526,8 +5644,8 @@ select:focus {
     gap: 4px;
     padding: 12px;
     border-radius: 8px;
-    background: var(--bg-elevated, #f8fafc);
-    border: 1px solid var(--border, #e2e8f0);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
     transition: filter 200ms;
 }
 .badge-tile--locked {
@@ -5540,11 +5658,11 @@ select:focus {
 }
 .badge-tile__name {
     font-weight: 600;
-    color: var(--text, #1e293b);
+    color: var(--text);
 }
 .badge-tile__description {
     font-size: 0.78rem;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 .badge-tile__earned-at {
     font-size: 0.72rem;
@@ -5571,7 +5689,7 @@ select:focus {
 }
 .streak-widget__label {
     font-size: 0.75rem;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 .streak-widget__value {
     font-size: 1.5rem;
@@ -5593,10 +5711,10 @@ select:focus {
     width: 12px;
     height: 12px;
     border-radius: 2px;
-    background: var(--border, #e2e8f0);
+    background: var(--border);
 }
 .streak-cell--empty { visibility: hidden; }
-.streak-cell--tier-0 { background: var(--border, #e2e8f0); }
+.streak-cell--tier-0 { background: var(--border); }
 .streak-cell--tier-1 { background: color-mix(in srgb, var(--accent) 25%, transparent); }
 .streak-cell--tier-2 { background: color-mix(in srgb, var(--accent) 50%, transparent); }
 .streak-cell--tier-3 { background: color-mix(in srgb, var(--accent) 75%, transparent); }
@@ -5614,15 +5732,15 @@ select:focus {
     gap: 16px;
     align-items: end;
     padding: 12px 16px;
-    background: var(--bg-elevated, #f8fafc);
-    border: 1px solid var(--border, #e2e8f0);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
     border-radius: 8px;
     margin-bottom: 16px;
 }
 .anki-toolbar__summary {
     margin-left: auto;
     font-size: 0.9rem;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 .anki-card-list {
     list-style: none;
@@ -5632,8 +5750,8 @@ select:focus {
     gap: 12px;
 }
 .anki-card {
-    background: var(--bg-elevated, #f8fafc);
-    border: 1px solid var(--border, #e2e8f0);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 16px;
     display: grid;
@@ -5641,22 +5759,22 @@ select:focus {
 }
 .anki-card--accepted {
     border-color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 5%, var(--bg-elevated, #f8fafc));
+    background: color-mix(in srgb, var(--accent) 5%, var(--bg-elevated));
 }
 .anki-card__type {
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 .anki-card__front {
     font-weight: 600;
     font-size: 1.05rem;
-    color: var(--text, #1e293b);
+    color: var(--text);
     white-space: pre-wrap;
 }
 .anki-card__back {
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
     font-size: 0.95rem;
     white-space: pre-wrap;
 }
@@ -5669,8 +5787,8 @@ select:focus {
     font-size: 0.75rem;
     padding: 2px 8px;
     border-radius: 999px;
-    background: var(--border, #e2e8f0);
-    color: var(--text-muted, #64748b);
+    background: var(--border);
+    color: var(--text-muted);
 }
 .anki-card__actions {
     display: flex;
@@ -5685,17 +5803,17 @@ select:focus {
     align-items: center;
     gap: 6px;
     padding: 4px 10px;
-    border: 1px solid var(--border, #e2e8f0);
+    border: 1px solid var(--border);
     border-radius: 6px;
     background: transparent;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
     font-size: 0.85rem;
     cursor: pointer;
     transition: background 150ms, color 150ms;
 }
 .speech-button:hover {
-    background: var(--bg-elevated, #f8fafc);
-    color: var(--text, #1e293b);
+    background: var(--bg-elevated);
+    color: var(--text);
 }
 .speech-button--speaking {
     background: color-mix(in srgb, var(--accent) 15%, transparent);
@@ -5724,16 +5842,16 @@ select:focus {
     justify-content: center;
     width: 36px;
     height: 36px;
-    border: 1px solid var(--border, #e2e8f0);
+    border: 1px solid var(--border);
     border-radius: 999px;
     background: transparent;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
     cursor: pointer;
     transition: background 150ms, color 150ms, transform 150ms;
 }
 .mic-button:hover {
-    background: var(--bg-elevated, #f8fafc);
-    color: var(--text, #1e293b);
+    background: var(--bg-elevated);
+    color: var(--text);
 }
 .mic-button--listening {
     background: var(--accent);
@@ -5769,8 +5887,8 @@ select:focus {
     gap: 16px;
 }
 .pronunciation-card {
-    background: var(--bg-elevated, #f8fafc);
-    border: 1px solid var(--border, #e2e8f0);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 16px;
     display: flex;
@@ -5787,12 +5905,12 @@ select:focus {
     font-size: 0.78rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 .pronunciation-card__target {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--text, #1e293b);
+    color: var(--text);
     line-height: 1.4;
 }
 .pronunciation-verdict {
@@ -5817,11 +5935,11 @@ select:focus {
 }
 .pronunciation-verdict__feedback {
     margin: 0;
-    color: var(--text, #1e293b);
+    color: var(--text);
 }
 .pronunciation-verdict__sounds {
     font-size: 0.85rem;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
     margin: 4px 0 0 0;
 }
 .dashboard-pronunciation-quick-start {
@@ -5849,8 +5967,8 @@ select:focus {
 }
 .notebooklm-question {
     padding: 12px 14px;
-    background: var(--bg-elevated, #f8fafc);
-    border: 1px solid var(--border, #e2e8f0);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
     border-radius: 8px;
 }
 .notebooklm-question__meta {
@@ -5860,7 +5978,7 @@ select:focus {
     align-items: center;
     margin-bottom: 6px;
     font-size: 0.8rem;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 .notebooklm-question__topic {
     font-style: italic;
@@ -5871,11 +5989,11 @@ select:focus {
 }
 .notebooklm-question__q {
     margin: 4px 0;
-    color: var(--text, #1e293b);
+    color: var(--text);
 }
 .notebooklm-question__a {
     margin: 4px 0;
-    color: var(--text-muted, #64748b);
+    color: var(--text-muted);
 }
 .notebooklm-question__actions {
     margin-top: 6px;
@@ -5925,7 +6043,7 @@ select:focus {
 
 .help-term:hover,
 .help-term:focus-within {
-    background-color: color-mix(in srgb, var(--accent, #6366f1) 10%, transparent);
+    background-color: color-mix(in srgb, var(--accent) 10%, transparent);
 }
 
 /* ============================================================

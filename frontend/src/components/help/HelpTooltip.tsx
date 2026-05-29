@@ -140,7 +140,7 @@ export default function HelpTooltip({
                             padding: 0,
                             background: "none",
                             border: "none",
-                            color: "var(--accent, #6366f1)",
+                            color: "var(--accent)",
                             cursor: "pointer",
                             fontSize: "0.8125rem",
                             fontWeight: 500,

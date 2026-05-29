@@ -64,7 +64,7 @@ export default function ApiKeyRequiredNotice({
                 style={{
                     margin: "0 0 0.5rem 0",
                     fontSize: "0.875rem",
-                    color: "var(--warning, #ed6c02)",
+                    color: "var(--warning)",
                     display: "flex",
                     alignItems: "center",
                     gap: "0.4rem",
@@ -77,7 +77,7 @@ export default function ApiKeyRequiredNotice({
                     data-testid="api-key-required-link"
                     style={{
                         marginLeft: "auto",
-                        color: "var(--accent, #6366f1)",
+                        color: "var(--accent)",
                     }}
                 >
                     {settingsLabel} →
@@ -93,9 +93,9 @@ export default function ApiKeyRequiredNotice({
             style={{
                 margin: "0 0 0.75rem 0",
                 padding: "0.6rem 0.9rem",
-                background: "var(--warning-bg, #fff3cd)",
-                color: "var(--warning, #856404)",
-                border: "1px solid var(--warning, #ed6c02)",
+                background: "var(--warning-bg)",
+                color: "var(--warning)",
+                border: "1px solid var(--warning)",
                 borderRadius: "var(--radius-md, 6px)",
                 display: "flex",
                 alignItems: "flex-start",
@@ -121,7 +121,7 @@ export default function ApiKeyRequiredNotice({
                         to={settingsHref}
                         data-testid="api-key-required-link"
                         style={{
-                            color: "var(--accent, #6366f1)",
+                            color: "var(--accent)",
                             fontWeight: 600,
                             textDecoration: "underline",
                         }}

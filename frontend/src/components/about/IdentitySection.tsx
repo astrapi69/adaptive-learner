@@ -67,7 +67,7 @@ export default function IdentitySection({t}: Props) {
                 <p
                     data-testid="about-identity-error"
                     role="alert"
-                    style={{color: "var(--danger, #c00)"}}
+                    style={{color: "var(--danger)"}}
                 >
                     {t("about.identity_error", "Could not load identity status:")}{" "}
                     {error}
@@ -88,7 +88,7 @@ export default function IdentitySection({t}: Props) {
                         {status.exists ? (
                             <span
                                 data-testid="about-identity-status-active"
-                                style={{color: "var(--success, #0a6e2e)"}}
+                                style={{color: "var(--success)"}}
                             >
                                 {t("about.identity_status_active", "Active")}
                             </span>

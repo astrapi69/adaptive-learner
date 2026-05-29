@@ -138,7 +138,7 @@ export default function QRImageUpload({
                     style={{
                         marginTop: "0.5rem",
                         fontSize: "0.85rem",
-                        color: "var(--danger, #c62828)",
+                        color: "var(--danger)",
                     }}
                     data-testid="qr-image-upload-invalid"
                     role="status"
@@ -152,7 +152,7 @@ export default function QRImageUpload({
                     style={{
                         marginTop: "0.5rem",
                         fontSize: "0.85rem",
-                        color: "var(--danger, #c62828)",
+                        color: "var(--danger)",
                     }}
                     data-testid="qr-image-upload-failed"
                     role="status"

@@ -43,23 +43,28 @@ function readToken(selector: string, name: string): string {
     return match[1];
 }
 
+// Phase 58B renamed the canonical tokens (--bg -> --bg-primary,
+// --surface -> --bg-surface, --fg -> --fg-primary, --surface-2 ->
+// --bg-elevated, --bg-alt -> --bg-secondary). The legacy names still
+// exist as aliases but resolve to ``var(...)`` (no hex), so the
+// contrast pin reads the canonical hex declarations directly.
 const light = {
-    bg: readToken(":root", "bg"),
-    bgAlt: readToken(":root", "bg-alt"),
-    surface: readToken(":root", "surface"),
-    surface2: readToken(":root", "surface-2"),
-    fg: readToken(":root", "fg"),
+    bg: readToken(":root", "bg-primary"),
+    bgAlt: readToken(":root", "bg-secondary"),
+    surface: readToken(":root", "bg-surface"),
+    surface2: readToken(":root", "bg-elevated"),
+    fg: readToken(":root", "fg-primary"),
     fgMuted: readToken(":root", "fg-muted"),
     accent: readToken(":root", "accent"),
     accentFg: readToken(":root", "accent-fg"),
 };
 
 const dark = {
-    bg: readToken('[data-theme="dark"]', "bg"),
-    bgAlt: readToken('[data-theme="dark"]', "bg-alt"),
-    surface: readToken('[data-theme="dark"]', "surface"),
-    surface2: readToken('[data-theme="dark"]', "surface-2"),
-    fg: readToken('[data-theme="dark"]', "fg"),
+    bg: readToken('[data-theme="dark"]', "bg-primary"),
+    bgAlt: readToken('[data-theme="dark"]', "bg-secondary"),
+    surface: readToken('[data-theme="dark"]', "bg-surface"),
+    surface2: readToken('[data-theme="dark"]', "bg-elevated"),
+    fg: readToken('[data-theme="dark"]', "fg-primary"),
     fgMuted: readToken('[data-theme="dark"]', "fg-muted"),
     accent: readToken('[data-theme="dark"]', "accent"),
     accentFg: readToken('[data-theme="dark"]', "accent-fg"),

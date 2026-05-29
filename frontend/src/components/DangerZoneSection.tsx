@@ -148,7 +148,7 @@ export default function DangerZoneSection() {
         >
             <h2
                 className="settings-section-title"
-                style={{color: "var(--danger, #c00)"}}
+                style={{color: "var(--danger)"}}
             >
                 {t("settings.danger_zone_heading", "Danger Zone")}
             </h2>
@@ -210,7 +210,7 @@ export default function DangerZoneSection() {
                         <h3
                             id="danger-zone-modal-title"
                             className="modal-title"
-                            style={{color: "var(--danger, #c00)"}}
+                            style={{color: "var(--danger)"}}
                         >
                             ⚠️{" "}
                             {t(
@@ -315,7 +315,7 @@ export default function DangerZoneSection() {
 }
 
 const dangerSectionStyle: React.CSSProperties = {
-    border: "2px solid var(--danger, #c00)",
+    border: "2px solid var(--danger)",
     borderRadius: 8,
     padding: 16,
     marginTop: "2rem",
@@ -333,7 +333,7 @@ const backupOfferStyle: React.CSSProperties = {
 };
 
 const dangerButtonStyle: React.CSSProperties = {
-    background: "var(--danger, #c00)",
+    background: "var(--danger)",
     color: "white",
     border: "none",
     padding: "0.5rem 1rem",
@@ -344,6 +344,6 @@ const dangerButtonStyle: React.CSSProperties = {
 
 const dangerButtonDisabledStyle: React.CSSProperties = {
     ...dangerButtonStyle,
-    background: "var(--surface-3, #ccc)",
+    background: "var(--surface-3)",
     cursor: "not-allowed",
 };

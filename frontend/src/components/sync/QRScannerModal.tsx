@@ -101,8 +101,8 @@ export default function QRScannerModal({
         >
             <div
                 style={{
-                    background: "var(--surface, #fff)",
-                    color: "var(--text, #000)",
+                    background: "var(--surface)",
+                    color: "var(--text)",
                     borderRadius: 8,
                     padding: "1rem",
                     maxWidth: 480,
@@ -128,7 +128,7 @@ export default function QRScannerModal({
                         border: 0,
                         fontSize: "1.5rem",
                         cursor: "pointer",
-                        color: "var(--text, #000)",
+                        color: "var(--text)",
                         lineHeight: 1,
                     }}
                 >
@@ -184,7 +184,7 @@ export default function QRScannerModal({
                                 style={{
                                     marginTop: "0.75rem",
                                     fontSize: "0.85rem",
-                                    color: "var(--danger, #c62828)",
+                                    color: "var(--danger)",
                                 }}
                                 data-testid="qr-scanner-invalid-hint"
                                 role="status"
@@ -197,7 +197,7 @@ export default function QRScannerModal({
                             style={{
                                 marginTop: "1rem",
                                 paddingTop: "0.75rem",
-                                borderTop: "1px solid var(--border, #ddd)",
+                                borderTop: "1px solid var(--border)",
                             }}
                         >
                             <p
@@ -288,7 +288,7 @@ function ErrorPanel({
             <div
                 style={{
                     paddingTop: "0.75rem",
-                    borderTop: "1px solid var(--border, #ddd)",
+                    borderTop: "1px solid var(--border)",
                 }}
             >
                 <p

@@ -590,8 +590,8 @@ export default function ImportDetail({
                     {analysis.fallback_used && (
                         <p
                             style={{
-                                background: "var(--warning-bg, #fff3cd)",
-                                color: "var(--warning, #856404)",
+                                background: "var(--warning-bg)",
+                                color: "var(--warning)",
                                 padding: "0.5rem 0.75rem",
                                 borderRadius: 4,
                             }}
@@ -817,9 +817,9 @@ function Card({
     children: React.ReactNode;
 }) {
     const toneStyles: Record<typeof tone, React.CSSProperties> = {
-        ok: {borderColor: "var(--success, #2e7d32)"},
-        bad: {borderColor: "var(--danger, #c62828)"},
-        warn: {borderColor: "var(--warning, #ed6c02)"},
+        ok: {borderColor: "var(--success)"},
+        bad: {borderColor: "var(--danger)"},
+        warn: {borderColor: "var(--warning)"},
         default: {},
     };
     return (

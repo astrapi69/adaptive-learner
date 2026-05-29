@@ -73,7 +73,7 @@ export default function AboutTab() {
                 <p
                     data-testid="about-error"
                     role="alert"
-                    style={{color: "var(--danger, #c00)", padding: "1rem 0"}}
+                    style={{color: "var(--danger)", padding: "1rem 0"}}
                 >
                     {t("about.load_failed", "Could not load system info:")}{" "}
                     {error}
