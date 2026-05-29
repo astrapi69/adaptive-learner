@@ -268,6 +268,24 @@ export const apiStorage: IStorageService = {
             api.elementErrors.reviewQueue(userId, opts),
     },
 
+    // --- Daily missions (EXP-010 / Phase 56) -----------------------------
+    missions: {
+        getDaily: async (userId, opts) => {
+            const wire = await api.missions.getDaily(userId, opts);
+            return {
+                missions: wire.missions,
+                newlyCompleted: wire.newly_completed,
+            };
+        },
+        regenerate: async (userId, opts) => {
+            const wire = await api.missions.regenerate(userId, opts);
+            return {
+                missions: wire.missions,
+                newlyCompleted: wire.newly_completed,
+            };
+        },
+    },
+
     // --- Content-Loader (Phase 43 / EXP-002) -----------------------------
 
     contentLoader: {

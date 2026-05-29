@@ -36,6 +36,10 @@ import {
 import {evaluateBadgesForUser, listBadgesWithProgress} from "./badges";
 import {awardXPFlat, awardXPForSession, getXPState} from "./gamification";
 import {
+    getDailyMissionsDexie,
+    regenerateDailyMissionsDexie,
+} from "./missions-dexie";
+import {
     calendarHeatmap,
     getStreakState,
     setWeekendMode as setWeekendModeStorage,
@@ -2115,6 +2119,13 @@ export const dexieStorage: IStorageService = {
             recordElementAttemptsDexie(userId, attempts),
         reviewQueue: (userId, opts) =>
             computeReviewQueueDexie(userId, opts),
+    },
+
+    // --- Daily missions (EXP-010 / Phase 56) -----------------------------
+    missions: {
+        getDaily: (userId, opts) => getDailyMissionsDexie(userId, opts),
+        regenerate: (userId, opts) =>
+            regenerateDailyMissionsDexie(userId, opts),
     },
 
     // --- Content-Loader (Phase 43 / EXP-002) -----------------------------

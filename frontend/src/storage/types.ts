@@ -543,6 +543,39 @@ export interface IElementErrorsNamespace {
     ): Promise<ReviewQueueItem[]>;
 }
 
+// EXP-010 / Phase 56 — daily missions. ``getDaily`` assigns the
+// day's missions on first call (deterministic) and re-evaluates
+// live progress on every call; ``regenerate`` reshuffles today's
+// set (Settings reset). Both work in API + Dexie mode.
+export interface IMissionsNamespace {
+    getDaily(
+        userId: string,
+        options?: MissionDailyOptions,
+    ): Promise<MissionDailyResult>;
+    regenerate(
+        userId: string,
+        options?: MissionDailyOptions,
+    ): Promise<MissionDailyResult>;
+}
+
+export interface MissionDailyOptions {
+    count?: number;
+    difficultyMix?: import("../lib/missions/types").DifficultyMix;
+    todayIso?: string;
+}
+
+export interface MissionDailyResult {
+    missions: import("../lib/missions/types").DailyMission[];
+    newlyCompleted: import("../lib/missions/types").DailyMission[];
+}
+
+/** Wire shape from the backend (snake_case ``newly_completed``);
+ *  ApiStorage maps it to the camelCase ``MissionDailyResult``. */
+export interface MissionDailyResultWire {
+    missions: import("../lib/missions/types").DailyMission[];
+    newly_completed: import("../lib/missions/types").DailyMission[];
+}
+
 export interface IToolsNamespace {
     recommendations(projectId: string, lang: string): Promise<ToolRecommendation[]>;
     spaced(projectId: string, lang: string): Promise<SpacedRecommendation[]>;
@@ -1059,6 +1092,7 @@ export interface IStorageService {
     elementErrors: IElementErrorsNamespace;
     pluginSettings: IPluginSettingsNamespace;
     learningRepo: ILearningRepoNamespace;
+    missions: IMissionsNamespace;
 
     /**
      * Phase 41F Danger Zone reset. Wipes every piece of learner

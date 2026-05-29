@@ -58,3 +58,62 @@ def test_difficulty_buckets_have_entries():
     assert by_diff.get("easy", 0) >= 1
     assert by_diff.get("medium", 0) >= 1
     assert by_diff.get("hard", 0) >= 1
+
+
+# --- Generator (EXP-010 / Phase 56C) -------------------------------------
+
+from adaptive_learner_missions.generator import (  # noqa: E402
+    SUPPORTED_CHECK_FUNCTIONS,
+    assign_daily_missions,
+    eligible_categories,
+)
+
+_VETERAN = dict(lessons_completed=60, has_errors=True, is_weekend=False)
+_NEW = dict(lessons_completed=0, has_errors=False, is_weekend=False)
+
+
+def test_eligible_categories_new_vs_active():
+    assert eligible_categories(lessons_completed=0, has_errors=False) == {
+        "learning",
+        "exploration",
+    }
+    active = eligible_categories(lessons_completed=5, has_errors=True)
+    assert {"review", "mastery"}.issubset(active)
+    no_err = eligible_categories(lessons_completed=5, has_errors=False)
+    assert "review" not in no_err and "mastery" not in no_err
+
+
+def test_assignment_is_deterministic():
+    a = assign_daily_missions("u1", "2026-05-29", **_VETERAN)
+    b = assign_daily_missions("u1", "2026-05-29", **_VETERAN)
+    assert [t.id for t in a] == [t.id for t in b]
+
+
+def test_balanced_mix_one_per_difficulty():
+    picks = assign_daily_missions("u1", "2026-05-29", **_VETERAN)
+    assert sorted(t.difficulty.value for t in picks) == ["easy", "hard", "medium"]
+
+
+def test_only_supported_checks_assigned():
+    for u in ("u1", "u2", "u3", "u4"):
+        for t in assign_daily_missions(u, "2026-05-29", **_VETERAN):
+            assert t.check_function in SUPPORTED_CHECK_FUNCTIONS
+
+
+def test_new_user_only_learning_exploration():
+    for t in assign_daily_missions("new", "2026-05-29", **_NEW):
+        assert t.category.value in {"learning", "exploration"}
+
+
+def test_no_back_to_back_repeats():
+    y = assign_daily_missions("u1", "2026-05-28", **_VETERAN)
+    today = assign_daily_missions(
+        "u1", "2026-05-29", **_VETERAN, exclude_ids=tuple(t.id for t in y)
+    )
+    assert not ({t.id for t in today} & {t.id for t in y})
+
+
+def test_count_respected():
+    for n in (1, 2, 3):
+        picks = assign_daily_missions("u1", "2026-05-29", **_VETERAN, count=n)
+        assert len(picks) == n

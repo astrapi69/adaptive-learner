@@ -1147,6 +1147,48 @@ export const api = {
         },
     },
 
+    // --- Missions plugin (EXP-010 / Phase 56) ---------------------------
+
+    missions: {
+        getDaily: (
+            userId: string,
+            opts: import("../storage/types").MissionDailyOptions = {},
+        ) => {
+            const params = new URLSearchParams();
+            if (opts.count !== undefined) params.set("count", String(opts.count));
+            if (opts.difficultyMix !== undefined) {
+                params.set("difficulty_mix", opts.difficultyMix);
+            }
+            if (opts.todayIso !== undefined) params.set("today", opts.todayIso);
+            const qs = params.toString();
+            const path = qs
+                ? `/plugins/missions/today/${encodeURIComponent(userId)}?${qs}`
+                : `/plugins/missions/today/${encodeURIComponent(userId)}`;
+            return apiCall<import("../storage/types").MissionDailyResultWire>(
+                path,
+            );
+        },
+        regenerate: (
+            userId: string,
+            opts: import("../storage/types").MissionDailyOptions = {},
+        ) => {
+            const params = new URLSearchParams();
+            if (opts.count !== undefined) params.set("count", String(opts.count));
+            if (opts.difficultyMix !== undefined) {
+                params.set("difficulty_mix", opts.difficultyMix);
+            }
+            if (opts.todayIso !== undefined) params.set("today", opts.todayIso);
+            const qs = params.toString();
+            const path = qs
+                ? `/plugins/missions/regenerate/${encodeURIComponent(userId)}?${qs}`
+                : `/plugins/missions/regenerate/${encodeURIComponent(userId)}`;
+            return apiCall<import("../storage/types").MissionDailyResultWire>(
+                path,
+                {method: "POST"},
+            );
+        },
+    },
+
     // --- Content-Loader plugin (Phase 43 / EXP-002) ---------------------
 
     contentLoader: {
