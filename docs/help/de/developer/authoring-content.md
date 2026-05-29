@@ -591,3 +591,35 @@ kanonischen Referenzen:
 Beide folgen den in diesem Leitfaden beschriebenen Konventionen.
 Eine vollständige Lektion durchzulesen ist der schnellste Weg,
 die Struktur zu verinnerlichen.
+
+---
+
+## Weg zur Community-Beteiligung (v1.42.0)
+
+Du musst Lektionen nicht von Grund auf von Hand erstellen. Der
+schnellste Weg, etwas beizutragen, ist, **eine Lektion in der App
+zu erstellen und zu teilen**:
+
+1. Importiere einen Chat und analysiere ihn, dann **Als
+   Offline-Lektion speichern** (oder beende eine adaptive Lektion
+   und **Diese Lektion speichern?**). Die Lektion erscheint unter
+   **Meine Lektionen** im Set-Browser.
+2. Klicke bei „Meine Lektionen" auf **Als Content-Set
+   exportieren**, um ein Content-Set als `.zip` herunterzuladen
+   (Manifest + Lektionen). Exporte enthalten nur den
+   Lektionsinhalt — keinen Fortschritt, keine Fehlerhistorie,
+   nichts Persönliches.
+3. Klicke auf **Für die Community bereitstellen**, um ein
+   vorausgefülltes GitHub-Issue im Inhalts-Repository zu öffnen.
+   Hänge die exportierte `.zip` an.
+4. Ein Maintainer prüft die Lektion, bringt das Manifest (id,
+   title, language, level, tags) in Einklang mit den obigen
+   Konventionen und fügt sie unter `sets/` hinzu. Nach dem Merge
+   können alle sie aus dem Set-Browser herunterladen.
+
+Das ist der soziale Weg: Die Prüfung ist **manuell** (ein
+Maintainer kuratiert jede Ergänzung — nichts wird automatisch
+veröffentlicht), und der gesamte Ablauf braucht nur GitHub.
+Erzeugte Lektionen werden bereits gegen das Schema validiert, sodass
+eine beigetragene Lektion meist nur etwas Manifest-Feinschliff
+braucht.

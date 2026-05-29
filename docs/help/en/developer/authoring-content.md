@@ -576,3 +576,31 @@ references:
 Both follow the conventions described in this guide. Reading
 one full lesson end-to-end before authoring your own is the
 fastest way to internalise the structure.
+
+---
+
+## Community contribution pathway (v1.42.0)
+
+You don't have to hand-author lessons from scratch. The fastest
+way to contribute is to **create a lesson in the app and share
+it**:
+
+1. Import a chat and analyse it, then **Save as Offline Lesson**
+   (or finish an adaptive lesson and **Save this lesson?**). The
+   lesson appears under **My Lessons** in the Set Browser.
+2. From My Lessons, click **Export as set** to download a
+   content-set `.zip` (manifest + lessons). Exports contain only
+   the lesson content — no progress, no error history, nothing
+   personal.
+3. Click **Share with Community** to open a pre-filled GitHub
+   issue on the content repo. Attach the exported `.zip`.
+4. A maintainer reviews the lesson, tidies the manifest (id,
+   title, language, level, tags) to match the conventions above,
+   and adds it under `sets/`. Once merged, everyone can download
+   it from the Set Browser.
+
+This is the social path: review is **manual** (a maintainer
+curates every addition — nothing is auto-published), and the
+whole flow needs only GitHub. Generated lessons already validate
+against the schema, so a contributed lesson usually needs only
+manifest polish before it ships.

@@ -56,6 +56,7 @@ plugins:
             Lerntyp-Test: Assessment
             Lern-Session: Learning session
             Lektionen und Wiederholungen: Lessons and reviews
+            Meine Lektionen: My Lessons
             Fortschritt: Progress
             Einstellungen: Settings
             Lob und Belohnungen: Praise and celebrations
@@ -109,6 +110,7 @@ nav:
   - Lerntyp-Test: de/user-guide/assessment.md
   - Lern-Session: de/user-guide/learning-session.md
   - Lektionen und Wiederholungen: de/user-guide/lessons.md
+  - Meine Lektionen: de/user-guide/my-lessons.md
   - Dashboard: de/user-guide/dashboard.md
   - Curriculum: de/user-guide/curriculum.md
   - Fortschritt: de/user-guide/progress.md

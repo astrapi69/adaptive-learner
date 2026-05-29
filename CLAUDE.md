@@ -9,7 +9,38 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.41.0** (Phase 58 — UX/UI Audit +
+- **Current state:** **v1.42.0** (Phase 59 —
+  Analysis-to-Lesson Converter + Community Content Sharing).
+  Turns a chat-import analysis into a complete, replayable
+  **offline lesson** and adds a backend-free sharing loop.
+  New ``frontend/src/lib/content/`` modules:
+  ``analysis-to-lesson.ts`` (deterministic, offline generator —
+  theory from topic/summary/subtopics/strengths/weaknesses/
+  error_patterns/suggested_curriculum; matching + free-text +
+  cloze + word-tiles from ``vocabulary[]``; quality scales with
+  vocab; <4 vocab → theory-only; Python mirror
+  ``content-loader/analysis_to_lesson.py`` for API mode),
+  ``lesson-export.ts`` (standalone lesson JSON, content-set ZIP
+  via JSZip, pre-filled GitHub-issue community pathway — zero
+  user data in exports), ``lesson-import.ts`` (validate + import
+  ``.json``/``.zip``, schema-checked before save),
+  ``adaptive-snapshot.ts`` (snapshot an adaptive lesson to a
+  self-contained, slug-safe, replayable set). New
+  ``IStorageService.contentLoader.saveUserSet`` + ``deleteSet``
+  persist user-generated lessons into the SAME cache as
+  downloaded sets (``source: "user-generated"``; Dexie
+  IndexedDB + API filesystem cache; backend ``POST /user-sets``
+  + ``DELETE /sets/{src}/{id}``; no new tables). New
+  **"My Lessons"** section in ``/content`` (Play/Edit/Delete/
+  Export/Share + empty state), a **"Save as Offline Lesson"**
+  modal on ``/import/{id}``, an **Import Lesson** modal, and a
+  **"Save this lesson?"** button on the adaptive-lesson summary.
+  Generated lessons validate against schema v1.1 (no special
+  "generated" schema) and play in the unmodified viewer. New
+  ``content.*`` i18n in 8 langs. 9 atomic sub-phase commits;
+  green through ``make test`` + ``npm run build`` + Vitest +
+  ``make test-dexie-smoke``.
+  v1.41.0 = Phase 58 (UX/UI Audit +
   Multi-Theme System). Full dark-mode audit
   (``docs/audits/ux-theme-audit-2026-05-29.md``) then a
   complete **semantic CSS variable system**: the canonical
@@ -613,8 +644,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.41.0 baseline:** backend 1025 (+1 skipped) + plugins
-  950 + Vitest 2503 = **4478 tests** (+1 skipped). E2E
+- **v1.42.0 baseline:** backend 1027 (+1 skipped) + plugins
+  970 + Vitest 2559 = **4556 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (19 specs incl. /content + /lesson + /review +
