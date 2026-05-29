@@ -531,6 +531,63 @@ def check_mkdocs(report: Report) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Check: help docs coverage  (parity FAIL, route mapping WARN)
+# ---------------------------------------------------------------------------
+
+ROUTE_RE = re.compile(r'path="([^"]+)"')
+# Routes that intentionally have no dedicated help page.
+_ROUTE_NO_HELP = {"/", "*"}
+
+
+def _help_slugs(lang: str) -> set[str]:
+    base = REPO / "docs" / "help" / lang
+    if not base.exists():
+        return set()
+    return {p.relative_to(base).with_suffix("").as_posix() for p in base.rglob("*.md")}
+
+
+def check_help_coverage(report: Report) -> None:
+    en = _help_slugs("en")
+    de = _help_slugs("de")
+    if not en and not de:
+        report.warn("help-coverage", "no help pages found under docs/help/{en,de}")
+        return
+
+    # i18n parity: every help page must exist in both languages.
+    only_en = sorted(en - de)
+    only_de = sorted(de - en)
+    if only_en:
+        report.fail("help-coverage", f"{len(only_en)} EN help page(s) with no DE counterpart: {', '.join(only_en[:8])}")
+    if only_de:
+        report.fail("help-coverage", f"{len(only_de)} DE help page(s) with no EN counterpart: {', '.join(only_de[:8])}")
+
+    # Route coverage (heuristic): every navigable route should be
+    # describable from some help page. Many routes legitimately have
+    # none, so this is a single advisory line, not a per-route FAIL.
+    app = REPO / "frontend" / "src" / "App.tsx"
+    if not app.exists():
+        return
+    slug_blob = " ".join(en | de)
+    uncovered: list[str] = []
+    for route in ROUTE_RE.findall(read(app)):
+        if route in _ROUTE_NO_HELP:
+            continue
+        # The last static (non-param) segment is the route's identity.
+        segments = [s for s in route.split("/") if s and not s.startswith(":")]
+        if not segments:
+            continue
+        keyword = segments[-1]
+        if keyword not in slug_blob:
+            uncovered.append(route)
+    if uncovered:
+        report.warn(
+            "help-coverage",
+            "routes with no obvious help page (heuristic; some may not need one): "
+            + ", ".join(sorted(set(uncovered))),
+        )
+
+
+# ---------------------------------------------------------------------------
 # Registry + runner
 # ---------------------------------------------------------------------------
 
@@ -542,6 +599,7 @@ CHECKS = {
     "stale-dates": lambda r, o: check_stale_dates(r),
     "themes": lambda r, o: check_themes(r),
     "mkdocs": lambda r, o: check_mkdocs(r),
+    "help-coverage": lambda r, o: check_help_coverage(r),
 }
 
 
