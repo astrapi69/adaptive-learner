@@ -1382,6 +1382,21 @@
     }
   },
   "content": {
+    "my_lessons": {
+      "title": "Derslerim",
+      "downloaded_title": "İndirilen setler",
+      "empty": "İlk dersini oluşturmak için bir sohbet içe aktar ve analiz et.",
+      "from_analysis": "analizden",
+      "from_adaptive": "uyarlanabilir dersten",
+      "from_imported": "içe aktarıldı",
+      "play": "Oyna",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "export": "Dışa aktar",
+      "delete_confirm": "Bu ders silinsin mi? Bu geri alınamaz.",
+      "deleted": "Ders silindi.",
+      "delete_failed": "Ders silinemedi."
+    },
     "save_lesson": {
       "button": "Çevrimdışı ders olarak kaydet",
       "modal_title": "Çevrimdışı ders olarak kaydet",

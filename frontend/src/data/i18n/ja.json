@@ -1382,6 +1382,21 @@
     }
   },
   "content": {
+    "my_lessons": {
+      "title": "マイレッスン",
+      "downloaded_title": "ダウンロード済みセット",
+      "empty": "チャットをインポートして分析し、最初のレッスンを作成しましょう。",
+      "from_analysis": "分析から",
+      "from_adaptive": "適応レッスンから",
+      "from_imported": "インポート済み",
+      "play": "プレイ",
+      "edit": "編集",
+      "delete": "削除",
+      "export": "エクスポート",
+      "delete_confirm": "このレッスンを削除しますか？元に戻せません。",
+      "deleted": "レッスンを削除しました。",
+      "delete_failed": "レッスンを削除できませんでした。"
+    },
     "save_lesson": {
       "button": "オフラインレッスンとして保存",
       "modal_title": "オフラインレッスンとして保存",

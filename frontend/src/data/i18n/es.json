@@ -1382,6 +1382,21 @@
     }
   },
   "content": {
+    "my_lessons": {
+      "title": "Mis lecciones",
+      "downloaded_title": "Conjuntos descargados",
+      "empty": "Importa un chat y analízalo para crear tu primera lección.",
+      "from_analysis": "de análisis",
+      "from_adaptive": "de lección adaptativa",
+      "from_imported": "importada",
+      "play": "Jugar",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "export": "Exportar",
+      "delete_confirm": "¿Eliminar esta lección? Esto no se puede deshacer.",
+      "deleted": "Lección eliminada.",
+      "delete_failed": "No se pudo eliminar la lección."
+    },
     "save_lesson": {
       "button": "Guardar como lección sin conexión",
       "modal_title": "Guardar como lección sin conexión",

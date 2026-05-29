@@ -1382,6 +1382,21 @@
     }
   },
   "content": {
+    "my_lessons": {
+      "title": "Meine Lektionen",
+      "downloaded_title": "Heruntergeladene Sets",
+      "empty": "Importiere einen Chat und analysiere ihn, um deine erste Lektion zu erstellen.",
+      "from_analysis": "aus Analyse",
+      "from_adaptive": "aus adaptiver Lektion",
+      "from_imported": "importiert",
+      "play": "Spielen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "export": "Exportieren",
+      "delete_confirm": "Diese Lektion löschen? Das kann nicht rückgängig gemacht werden.",
+      "deleted": "Lektion gelöscht.",
+      "delete_failed": "Die Lektion konnte nicht gelöscht werden."
+    },
     "save_lesson": {
       "button": "Als Offline-Lektion speichern",
       "modal_title": "Als Offline-Lektion speichern",

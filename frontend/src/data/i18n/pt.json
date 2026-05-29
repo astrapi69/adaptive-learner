@@ -1382,6 +1382,21 @@
     }
   },
   "content": {
+    "my_lessons": {
+      "title": "Minhas lições",
+      "downloaded_title": "Conjuntos baixados",
+      "empty": "Importe uma conversa e analise-a para criar sua primeira lição.",
+      "from_analysis": "de análise",
+      "from_adaptive": "de lição adaptativa",
+      "from_imported": "importada",
+      "play": "Jogar",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "export": "Exportar",
+      "delete_confirm": "Excluir esta lição? Isso não pode ser desfeito.",
+      "deleted": "Lição excluída.",
+      "delete_failed": "Não foi possível excluir a lição."
+    },
     "save_lesson": {
       "button": "Salvar como lição offline",
       "modal_title": "Salvar como lição offline",

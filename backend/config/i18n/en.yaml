@@ -1281,6 +1281,20 @@ lesson:
     missing_params: "No lesson selected. Browse content sets to pick one."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  my_lessons:
+    title: "My Lessons"
+    downloaded_title: "Downloaded sets"
+    empty: "Import a chat and analyze it to create your first lesson."
+    from_analysis: "from analysis"
+    from_adaptive: "from adaptive lesson"
+    from_imported: "imported"
+    play: "Play"
+    edit: "Edit"
+    delete: "Delete"
+    export: "Export"
+    delete_confirm: "Delete this lesson? This cannot be undone."
+    deleted: "Lesson deleted."
+    delete_failed: "Could not delete the lesson."
   save_lesson:
     button: "Save as Offline Lesson"
     modal_title: "Save as offline lesson"

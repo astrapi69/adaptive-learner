@@ -1382,6 +1382,21 @@
     }
   },
   "content": {
+    "my_lessons": {
+      "title": "Mes leçons",
+      "downloaded_title": "Ensembles téléchargés",
+      "empty": "Importez une conversation et analysez-la pour créer votre première leçon.",
+      "from_analysis": "depuis l'analyse",
+      "from_adaptive": "depuis une leçon adaptative",
+      "from_imported": "importée",
+      "play": "Jouer",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "export": "Exporter",
+      "delete_confirm": "Supprimer cette leçon ? Cette action est irréversible.",
+      "deleted": "Leçon supprimée.",
+      "delete_failed": "Impossible de supprimer la leçon."
+    },
     "save_lesson": {
       "button": "Enregistrer comme leçon hors ligne",
       "modal_title": "Enregistrer comme leçon hors ligne",
