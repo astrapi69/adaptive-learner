@@ -456,6 +456,8 @@ TABLES: dict[str, TableSpec] = {
             "description_key",
             "icon",
             "category",
+            "base_tier",
+            "tier_thresholds",
             "created_at",
             "updated_at",
         ),
@@ -464,14 +466,17 @@ TABLES: dict[str, TableSpec] = {
         order=24,
         scope="global",
     ),
-    # v1.16.0 / Phase 29B — earned-badge record. APPEND-ONLY:
-    # earning a badge is an insert; un-earning is not a supported
-    # operation. Unique on (user_id, badge_id).
+    # v1.16.0 / Phase 29B — earned-badge record. Unique on
+    # (user_id, badge_id). v1.40.0 / Phase 57: MUTABLE (was
+    # append-only) — a dynamic badge's ``tier`` climbs in place
+    # (bronze -> silver -> gold). Tier is a HIGH-WATER MARK that never
+    # demotes, so last-write-wins on ``updated_at`` is safe: the newer
+    # write always carries the higher (or equal) tier.
     "user_badges": TableSpec(
         model=UserBadge,
-        columns=("id", "user_id", "badge_id", "earned_at"),
-        timestamp_field="earned_at",
-        append_only=True,
+        columns=("id", "user_id", "badge_id", "tier", "earned_at", "updated_at"),
+        timestamp_field="updated_at",
+        append_only=False,
         order=25,
         scope="direct",
     ),

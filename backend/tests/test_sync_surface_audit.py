@@ -68,6 +68,10 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # + progress (progress bumps, completed flips, xp_awarded
         # guards the bonus).
         "user_missions",
+        # v1.40.0 / Phase 57: earned-badge record, promoted from
+        # append-only — a dynamic badge's ``tier`` climbs in place
+        # (high-water mark, never demotes; LWW on ``updated_at`` safe).
+        "user_badges",
     }
 )
 
@@ -86,8 +90,6 @@ EXPECTED_APPEND_ONLY: frozenset[str] = frozenset(
         # v1.9.0 / Phase 22A: M:N taxonomy associations.
         "project_subjects",
         "project_tags",
-        # v1.16.0 / Phase 29B: earned-badge record.
-        "user_badges",
     }
 )
 
@@ -113,8 +115,7 @@ def test_every_sqlalchemy_model_table_is_in_the_sync_surface():
         f"(potential data-loss on device switch): {sorted(missing_from_sync)}"
     )
     assert not extra_in_sync, (
-        f"Tables in the sync surface but no SQLAlchemy model: "
-        f"{sorted(extra_in_sync)}"
+        f"Tables in the sync surface but no SQLAlchemy model: {sorted(extra_in_sync)}"
     )
 
 
@@ -122,9 +123,7 @@ def test_sync_table_count_matches_model_count():
     """Belt-and-braces check on top of the symmetric-difference
     test above — a single-number assertion that's easier to read
     on a CI failure."""
-    declared = {
-        name for name in Base.metadata.tables.keys() if name != "alembic_version"
-    }
+    declared = {name for name in Base.metadata.tables.keys() if name != "alembic_version"}
     assert len(TABLES) == len(declared), (
         f"TABLES has {len(TABLES)} entries; SQLAlchemy declares "
         f"{len(declared)} tables. Likely cause: a model was added "
@@ -160,8 +159,7 @@ def test_every_table_spec_references_a_real_sqlalchemy_model():
             f"with __tablename__={model_table!r}; expected {name!r}."
         )
         assert model_table in declared_models, (
-            f"TABLES[{name!r}].model.__tablename__={model_table!r} "
-            f"is not in Base.metadata.tables."
+            f"TABLES[{name!r}].model.__tablename__={model_table!r} is not in Base.metadata.tables."
         )
 
 

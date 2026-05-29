@@ -14,6 +14,18 @@
 #   - method_explorer   Cross-method exploration.
 #   - depth             Multi-cycle / total-session counts.
 #   - polyglot          Multi-language / multi-provider use.
+#
+# Tiers (Phase 57 / v1.40.0). Two shapes:
+#   - ``base_tier`` (bronze | silver | gold): a badge's FIXED visual
+#     tier. Defaults to ``bronze`` when omitted. The sibling families
+#     (sessions_10/50/100, level_5/10/25, streak_3/7/30/100) use it to
+#     render as one bronze->silver->gold progression while staying
+#     separate keys. Static; never upgrades.
+#   - ``tiers`` (bronze/silver/gold each {threshold, xp_bonus}): a
+#     DYNAMIC badge whose single earned row climbs tiers as a metric
+#     grows (high-water mark, never demotes), awarding the XP delta on
+#     upgrade. Only siblingless count badges use this. thresholds and
+#     xp_bonus MUST both increase bronze < silver < gold.
 
 badges:
   # --- Getting Started ----------------------------------------
@@ -44,16 +56,19 @@ badges:
     description_key: gamification.badges.streak_7_days.description
     icon: flame
     category: consistency
+    base_tier: silver
   - key: streak_30_days
     name_key: gamification.badges.streak_30_days.name
     description_key: gamification.badges.streak_30_days.description
     icon: flame
     category: consistency
+    base_tier: gold
   - key: streak_100_days
     name_key: gamification.badges.streak_100_days.name
     description_key: gamification.badges.streak_100_days.description
     icon: flame
     category: consistency
+    base_tier: gold
 
   # --- Method Explorer ----------------------------------------
   - key: all_six_methods
@@ -108,11 +123,13 @@ badges:
     description_key: gamification.badges.sessions_50.description
     icon: book
     category: depth
+    base_tier: silver
   - key: sessions_100
     name_key: gamification.badges.sessions_100.name
     description_key: gamification.badges.sessions_100.description
     icon: book
     category: depth
+    base_tier: gold
   - key: level_5
     name_key: gamification.badges.level_5.name
     description_key: gamification.badges.level_5.description
@@ -123,11 +140,13 @@ badges:
     description_key: gamification.badges.level_10.description
     icon: star
     category: depth
+    base_tier: silver
   - key: level_25
     name_key: gamification.badges.level_25.name
     description_key: gamification.badges.level_25.description
     icon: star
     category: depth
+    base_tier: gold
 
   # --- Polyglot -----------------------------------------------
   - key: two_languages
@@ -161,6 +180,12 @@ badges:
     description_key: gamification.badges.lessons_10.description
     icon: book-open
     category: depth
+    # DYNAMIC: one row climbs bronze -> silver -> gold as the completed-
+    # lesson count grows. Awards the XP delta on each upgrade.
+    tiers:
+      bronze: {threshold: 10, xp_bonus: 50}
+      silver: {threshold: 50, xp_bonus: 150}
+      gold: {threshold: 100, xp_bonus: 300}
   - key: three_star_streak
     name_key: gamification.badges.three_star_streak.name
     description_key: gamification.badges.three_star_streak.description
@@ -171,3 +196,8 @@ badges:
     description_key: gamification.badges.review_master.description
     icon: repeat
     category: depth
+    # DYNAMIC: one row climbs as the mastered-element count grows.
+    tiers:
+      bronze: {threshold: 50, xp_bonus: 50}
+      silver: {threshold: 200, xp_bonus: 150}
+      gold: {threshold: 500, xp_bonus: 300}

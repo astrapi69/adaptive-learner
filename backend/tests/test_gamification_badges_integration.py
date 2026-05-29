@@ -107,12 +107,77 @@ def test_every_yaml_badge_has_an_evaluator() -> None:
     evaluators = badge_service.evaluator_keys()
     missing_evaluator = catalog - evaluators
     extra_evaluator = evaluators - catalog
-    assert not missing_evaluator, (
-        f"YAML keys with no evaluator: {sorted(missing_evaluator)}"
-    )
-    assert not extra_evaluator, (
-        f"Evaluators with no YAML entry: {sorted(extra_evaluator)}"
-    )
+    assert not missing_evaluator, f"YAML keys with no evaluator: {sorted(missing_evaluator)}"
+    assert not extra_evaluator, f"Evaluators with no YAML entry: {sorted(extra_evaluator)}"
+
+
+# --- Tier metadata (Phase 57 / v1.40.0) -----------------------------------
+
+
+def test_seed_persists_tier_metadata(client: TestClient) -> None:
+    """The seeder writes ``base_tier`` for every badge + decodable
+    ``tier_thresholds`` for the dynamic badges (NULL otherwise)."""
+    import json
+
+    db = SessionLocal()
+    try:
+        by_key = {b.key: b for b in db.query(Badge).all()}
+        # Static sibling families carry their fixed visual tier.
+        assert by_key["sessions_50"].base_tier == "silver"
+        assert by_key["sessions_100"].base_tier == "gold"
+        assert by_key["level_10"].base_tier == "silver"
+        assert by_key["level_25"].base_tier == "gold"
+        assert by_key["streak_7_days"].base_tier == "silver"
+        assert by_key["streak_30_days"].base_tier == "gold"
+        assert by_key["streak_100_days"].base_tier == "gold"
+        # Flat / dynamic badges start at bronze.
+        assert by_key["first_session"].base_tier == "bronze"
+        assert by_key["lessons_10"].base_tier == "bronze"
+        # Dynamic badges carry decodable thresholds; static ones don't.
+        assert by_key["first_session"].tier_thresholds is None
+        assert by_key["sessions_50"].tier_thresholds is None
+        lessons = json.loads(by_key["lessons_10"].tier_thresholds)
+        assert lessons["bronze"]["threshold"] == 10
+        assert lessons["silver"]["threshold"] == 50
+        assert lessons["gold"]["threshold"] == 100
+        review = json.loads(by_key["review_master"].tier_thresholds)
+        assert review["gold"]["threshold"] == 500
+    finally:
+        db.close()
+
+
+def test_new_earn_records_badge_base_tier(client: TestClient) -> None:
+    """A freshly earned badge records its catalog ``base_tier`` on the
+    UserBadge row (bronze for first_session)."""
+    user_id, project_id = _make_user_and_project(client)
+    _run_one_session(client, project_id)
+    client.post(f"/api/plugins/gamification/badges/{user_id}/evaluate")
+    db = SessionLocal()
+    try:
+        first = db.query(Badge).filter(Badge.key == "first_session").first()
+        row = (
+            db.query(UserBadge)
+            .filter(UserBadge.user_id == user_id, UserBadge.badge_id == first.id)
+            .first()
+        )
+        assert row is not None
+        assert row.tier == "bronze"
+        assert row.updated_at is not None
+    finally:
+        db.close()
+
+
+def test_list_badges_endpoint_exposes_tier_fields(client: TestClient) -> None:
+    user_id, _ = _make_user_and_project(client)
+    body = client.get(f"/api/plugins/gamification/badges/{user_id}").json()
+    by_key = {e["key"]: e for e in body}
+    # Locked badge previews its base tier.
+    assert by_key["sessions_100"]["base_tier"] == "gold"
+    assert by_key["sessions_100"]["tier"] == "gold"
+    assert by_key["sessions_100"]["tier_thresholds"] is None
+    # Dynamic badge exposes thresholds; locked tier is the base.
+    assert by_key["lessons_10"]["tier"] == "bronze"
+    assert by_key["lessons_10"]["tier_thresholds"]["silver"]["threshold"] == 50
 
 
 # --- Endpoint contract ----------------------------------------------------
@@ -153,9 +218,7 @@ def test_first_session_badge_lands_on_session_complete(
 ) -> None:
     user_id, project_id = _make_user_and_project(client)
     _run_one_session(client, project_id)
-    body = client.get(
-        f"/api/plugins/gamification/badges/{user_id}"
-    ).json()
+    body = client.get(f"/api/plugins/gamification/badges/{user_id}").json()
     first_session = next(b for b in body if b["key"] == "first_session")
     assert first_session["earned"] is True
     assert first_session["earned_at"] is not None
@@ -172,9 +235,7 @@ def test_repeated_session_does_not_double_award(client: TestClient) -> None:
     try:
         # Even with two completed sessions, only one ``first_session``
         # row exists.
-        first_session_badge = (
-            db.query(Badge).filter(Badge.key == "first_session").one()
-        )
+        first_session_badge = db.query(Badge).filter(Badge.key == "first_session").one()
         rows = (
             db.query(UserBadge)
             .filter(UserBadge.user_id == user_id)

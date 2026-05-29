@@ -984,6 +984,15 @@ export interface BadgeWithProgress {
     description_key: string;
     icon: string;
     category: string;
+    // Phase 57 / v1.40.0. ``tier`` is the user's earned tier when
+    // earned, else the badge's locked ``base_tier``. ``tier_thresholds``
+    // drives the next-tier progress bar for DYNAMIC badges.
+    base_tier: string;
+    tier: string;
+    tier_thresholds: Record<
+        string,
+        {threshold: number; xp_bonus: number}
+    > | null;
     earned: boolean;
     earned_at: string | null;
     progress: string | null;

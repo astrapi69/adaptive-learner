@@ -297,16 +297,29 @@ export interface BadgeRow {
     description_key: string;
     icon: string;
     category: string;
+    // Phase 57 / v1.40.0. Fixed visual tier; DYNAMIC-badge thresholds
+    // ({tier: {threshold, xp_bonus}}) or null for static/flat badges.
+    base_tier?: string;
+    tier_thresholds?: Record<
+        string,
+        {threshold: number; xp_bonus: number}
+    > | null;
     created_at: string;
     updated_at: string;
 }
 
-/** Earned-badge record (Phase 29B). Unique on (user_id, badge_id). */
+/**
+ * Earned-badge record (Phase 29B). Unique on (user_id, badge_id).
+ * Phase 57 / v1.40.0: ``tier`` (high-water mark, never demotes) +
+ * ``updated_at`` (advances on tier upgrade for sync LWW).
+ */
 export interface UserBadgeRow {
     id: string;
     user_id: string;
     badge_id: string;
+    tier?: string;
     earned_at: string;
+    updated_at?: string;
 }
 
 /** AI-generated study question (Phase 32B / v1.19.0). */
@@ -905,6 +918,58 @@ export class AdaptiveLearnerDB extends Dexie {
             userMissions:
                 "id, user_id, [user_id+assigned_date], assigned_date, template_id",
         });
+        // Schema v21 — Phase 57 / v1.40.0: badge tiers. No index
+        // changes (the new fields are non-indexed), but we bump so the
+        // upgrade backfills existing rows in place:
+        //   1. catalog ``badges`` rows get ``base_tier`` +
+        //      ``tier_thresholds`` from BUNDLED_BADGES (the seeder only
+        //      INSERTS missing rows, never updates existing ones, so an
+        //      upgrade-in-place user would otherwise keep tier-less
+        //      catalog rows);
+        //   2. every ``userBadges`` row gets ``tier`` = its badge's
+        //      static ``base_tier`` (dynamic badges start at "bronze")
+        //      + ``updated_at`` = earned_at.
+        // Mirrors the Alembic 0022 backfill so both modes converge.
+        // BUNDLED_BADGES is imported dynamically to avoid a static
+        // import cycle (badges.ts -> db.ts).
+        this.version(21)
+            .stores({})
+            .upgrade(async (tx) => {
+                const {BUNDLED_BADGES} = await import("./badges");
+                const specByKey = new Map(
+                    BUNDLED_BADGES.map((b) => [b.key, b]),
+                );
+                await tx
+                    .table("badges")
+                    .toCollection()
+                    .modify((row: Record<string, unknown>) => {
+                        const spec = specByKey.get(row.key as string);
+                        if (spec) {
+                            row.base_tier = spec.base_tier ?? "bronze";
+                            row.tier_thresholds = spec.tier_thresholds ?? null;
+                        }
+                    });
+                const badges = await tx.table("badges").toArray();
+                const baseTierById = new Map<string, string>(
+                    badges.map((b: Record<string, unknown>) => [
+                        b.id as string,
+                        (b.base_tier as string) ?? "bronze",
+                    ]),
+                );
+                await tx
+                    .table("userBadges")
+                    .toCollection()
+                    .modify((row: Record<string, unknown>) => {
+                        if (!row.tier) {
+                            row.tier =
+                                baseTierById.get(row.badge_id as string) ??
+                                "bronze";
+                        }
+                        if (!row.updated_at) {
+                            row.updated_at = row.earned_at;
+                        }
+                    });
+            });
     }
 }
 

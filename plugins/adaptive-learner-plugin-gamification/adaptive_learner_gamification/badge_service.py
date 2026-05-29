@@ -22,6 +22,7 @@ the two drift.
 
 from __future__ import annotations
 
+import json
 import logging
 from collections.abc import Callable
 from pathlib import Path
@@ -44,7 +45,7 @@ def _badges_yaml_path() -> Path:
     return Path(__file__).resolve().parent / "badges.yaml"
 
 
-def load_catalog_from_yaml() -> list[dict[str, str]]:
+def load_catalog_from_yaml() -> list[dict[str, Any]]:
     """Read ``badges.yaml`` and return the badge dict list.
 
     Raises FileNotFoundError if the bundle is broken; the route
@@ -75,11 +76,14 @@ def seed_catalog(db: Session) -> int:
     for entry in catalog:
         key = entry["key"]
         existing = db.query(Badge).filter(Badge.key == key).first()
+        tiers = entry.get("tiers")
         fields = {
             "name_key": entry["name_key"],
             "description_key": entry["description_key"],
             "icon": entry.get("icon", ""),
             "category": entry.get("category", "general"),
+            "base_tier": entry.get("base_tier", "bronze"),
+            "tier_thresholds": json.dumps(tiers, sort_keys=True) if tiers else None,
         }
         if existing is None:
             db.add(Badge(key=key, **fields))
@@ -170,31 +174,20 @@ def _user_level(db: Session, user_id: str) -> int:
 def _has_assessment(db: Session, user_id: str) -> bool:
     from app.models import LearningProfile
 
-    return (
-        db.query(LearningProfile)
-        .filter(LearningProfile.user_id == user_id)
-        .first()
-        is not None
-    )
+    return db.query(LearningProfile).filter(LearningProfile.user_id == user_id).first() is not None
 
 
 def _import_count(db: Session, user_id: str) -> int:
     from app.models import ImportedConversation
 
-    return (
-        db.query(ImportedConversation)
-        .filter(ImportedConversation.user_id == user_id)
-        .count()
-    )
+    return db.query(ImportedConversation).filter(ImportedConversation.user_id == user_id).count()
 
 
 def _provider_count(db: Session, user_id: str) -> int:
     """How many providers the user has configured an API key for."""
     from app.models import UserSettings
 
-    settings = (
-        db.query(UserSettings).filter(UserSettings.user_id == user_id).first()
-    )
+    settings = db.query(UserSettings).filter(UserSettings.user_id == user_id).first()
     if settings is None:
         return 0
     return sum(
@@ -228,9 +221,7 @@ def _completed_lesson_count(db: Session, user_id: str) -> int:
     )
 
 
-def _last_n_lessons_all_three_star(
-    db: Session, user_id: str, *, n: int = 3
-) -> bool:
+def _last_n_lessons_all_three_star(db: Session, user_id: str, *, n: int = 3) -> bool:
     """True iff the last ``n`` completed lessons all earned 3 stars.
 
     Reads the user's most-recently-completed LessonProgress rows
@@ -253,10 +244,7 @@ def _last_n_lessons_all_three_star(
     )
     if len(rows) < n:
         return False
-    return all(
-        xp_service.compute_stars(row.score_correct, row.score_total) == 3
-        for row in rows
-    )
+    return all(xp_service.compute_stars(row.score_correct, row.score_total) == 3 for row in rows)
 
 
 def _mastered_elements_count(db: Session, user_id: str) -> int:
@@ -290,9 +278,7 @@ def _languages_used(db: Session, user_id: str) -> int:
     user = db.get(User, user_id)
     if user and user.language:
         langs.add(user.language)
-    settings = (
-        db.query(UserSettings).filter(UserSettings.user_id == user_id).first()
-    )
+    settings = db.query(UserSettings).filter(UserSettings.user_id == user_id).first()
     if settings and settings.language:
         langs.add(settings.language)
     rows = db.query(Curriculum.language).filter(Curriculum.user_id == user_id).all()
@@ -331,9 +317,7 @@ _EVALUATORS: dict[str, Callable[[Any, str], bool]] = {
     # --- Content lessons (Phase 46E.2 / v1.31.0) -----------------
     "first_lesson": lambda db, uid: _completed_lesson_count(db, uid) >= 1,
     "lessons_10": lambda db, uid: _completed_lesson_count(db, uid) >= 10,
-    "three_star_streak": lambda db, uid: _last_n_lessons_all_three_star(
-        db, uid, n=3
-    ),
+    "three_star_streak": lambda db, uid: _last_n_lessons_all_three_star(db, uid, n=3),
     "review_master": lambda db, uid: _mastered_elements_count(db, uid) >= 50,
 }
 
@@ -359,25 +343,34 @@ def evaluate_user(db: Session, user_id: str) -> list[str]:
     from app.models import Badge, UserBadge
 
     earned_in_this_call: list[str] = []
-    # Map key -> badge_id for the catalog (single query).
-    catalog = {b.key: b.id for b in db.query(Badge).all()}
+    # Map key -> Badge for the catalog (single query). We need
+    # ``base_tier`` so a newly-earned static sibling (sessions_50 =
+    # silver, ...) records its fixed tier rather than the column
+    # default. Dynamic badges start at their base ("bronze") and the
+    # 57B tier evaluator upgrades them.
+    catalog = {b.key: b for b in db.query(Badge).all()}
     # Already-earned badge_ids for this user (one query).
     already_earned = {
-        row.badge_id
-        for row in db.query(UserBadge).filter(UserBadge.user_id == user_id).all()
+        row.badge_id for row in db.query(UserBadge).filter(UserBadge.user_id == user_id).all()
     }
     for key, predicate in _EVALUATORS.items():
-        badge_id = catalog.get(key)
-        if badge_id is None:
+        badge = catalog.get(key)
+        if badge is None:
             # Catalog row missing — happens in tests that skip
             # seeding. Just log and continue.
             logger.debug("evaluate_user: catalog missing badge key %r", key)
             continue
-        if badge_id in already_earned:
+        if badge.id in already_earned:
             continue
         try:
             if predicate(db, user_id):
-                db.add(UserBadge(user_id=user_id, badge_id=badge_id))
+                db.add(
+                    UserBadge(
+                        user_id=user_id,
+                        badge_id=badge.id,
+                        tier=badge.base_tier,
+                    )
+                )
                 earned_in_this_call.append(key)
         except Exception:  # noqa: BLE001
             logger.exception(
@@ -402,17 +395,18 @@ def list_badges_with_progress(db: Session, user_id: str) -> list[dict[str, Any]]
     """
     from app.models import Badge, UserBadge
 
-    badges = (
-        db.query(Badge).order_by(Badge.category.asc(), Badge.key.asc()).all()
-    )
+    badges = db.query(Badge).order_by(Badge.category.asc(), Badge.key.asc()).all()
     earned_map: dict[str, Any] = {}
-    for row in (
-        db.query(UserBadge).filter(UserBadge.user_id == user_id).all()
-    ):
-        earned_map[row.badge_id] = row.earned_at
+    for row in db.query(UserBadge).filter(UserBadge.user_id == user_id).all():
+        earned_map[row.badge_id] = row
     out: list[dict[str, Any]] = []
     for badge in badges:
-        earned_at = earned_map.get(badge.id)
+        earned_row = earned_map.get(badge.id)
+        earned_at = earned_row.earned_at if earned_row else None
+        # The user's tier is their earned tier when earned, else the
+        # badge's locked/base tier (so the gallery can preview a locked
+        # badge in its starting palette).
+        tier = earned_row.tier if earned_row else badge.base_tier
         out.append(
             {
                 "key": badge.key,
@@ -420,6 +414,11 @@ def list_badges_with_progress(db: Session, user_id: str) -> list[dict[str, Any]]
                 "description_key": badge.description_key,
                 "icon": badge.icon,
                 "category": badge.category,
+                "base_tier": badge.base_tier,
+                "tier": tier,
+                "tier_thresholds": (
+                    json.loads(badge.tier_thresholds) if badge.tier_thresholds else None
+                ),
                 "earned": earned_at is not None,
                 "earned_at": earned_at.isoformat() if earned_at else None,
                 "progress": None,

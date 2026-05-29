@@ -58,6 +58,48 @@ describe("BUNDLED_BADGES", () => {
             ]),
         );
     });
+
+    // --- Tiers (Phase 57 / v1.40.0). Mirrors the Python
+    // test_badge_yaml tier checks so the two catalogs stay lockstep.
+    it("carries the static sibling base_tier map (mirrors badges.yaml)", () => {
+        const byKey = new Map(BUNDLED_BADGES.map((b) => [b.key, b]));
+        const nonBronze = Object.fromEntries(
+            BUNDLED_BADGES.filter(
+                (b) => (b.base_tier ?? "bronze") !== "bronze",
+            ).map((b) => [b.key, b.base_tier]),
+        );
+        expect(nonBronze).toEqual({
+            sessions_50: "silver",
+            sessions_100: "gold",
+            level_10: "silver",
+            level_25: "gold",
+            streak_7_days: "silver",
+            streak_30_days: "gold",
+            streak_100_days: "gold",
+        });
+        // Flat badges default to bronze (omitted == bronze).
+        expect(byKey.get("first_session")?.base_tier ?? "bronze").toBe(
+            "bronze",
+        );
+    });
+
+    it("only the dynamic badges carry tier_thresholds, strictly increasing", () => {
+        const withTiers = BUNDLED_BADGES.filter((b) => b.tier_thresholds).map(
+            (b) => b.key,
+        );
+        expect(new Set(withTiers)).toEqual(
+            new Set(["lessons_10", "review_master"]),
+        );
+        for (const b of BUNDLED_BADGES) {
+            if (!b.tier_thresholds) continue;
+            const t = b.tier_thresholds;
+            expect(Object.keys(t).sort()).toEqual(["bronze", "gold", "silver"]);
+            expect(t.bronze.threshold).toBeLessThan(t.silver.threshold);
+            expect(t.silver.threshold).toBeLessThan(t.gold.threshold);
+            expect(t.bronze.xp_bonus).toBeLessThan(t.silver.xp_bonus);
+            expect(t.silver.xp_bonus).toBeLessThan(t.gold.xp_bonus);
+        }
+    });
 });
 
 describe("listBadgesWithProgress", () => {
@@ -393,5 +435,64 @@ describe("evaluateBadgesForUser (lesson badges, Phase 50E)", () => {
         }
         const newly = await evaluateBadgesForUser(userId);
         expect(newly).not.toContain("review_master");
+    });
+});
+
+describe("badge tiers — listBadgesWithProgress + evaluate (Phase 57)", () => {
+    // This describe EARNS badges, so it clears the tables it touches
+    // up front (the file-level IDBFactory swap doesn't reliably wipe,
+    // same workaround the lesson-badge describe uses) and is placed
+    // last so an earned-badge leak can't reach a no-clear test.
+    beforeEach(async () => {
+        const db = getDb();
+        await db.userBadges.clear();
+        await db.learningSessions.clear();
+        await db.learningProjects.clear();
+    });
+
+    it("a locked badge previews its base tier; dynamic exposes thresholds", async () => {
+        const userId = await seedUser();
+        const out = await listBadgesWithProgress(userId);
+        const byKey = new Map(out.map((e) => [e.key, e]));
+        const sessions100 = byKey.get("sessions_100")!;
+        expect(sessions100.base_tier).toBe("gold");
+        expect(sessions100.tier).toBe("gold"); // locked -> previews base
+        expect(sessions100.tier_thresholds).toBeNull();
+        const lessons10 = byKey.get("lessons_10")!;
+        expect(lessons10.tier).toBe("bronze");
+        expect(lessons10.tier_thresholds?.silver.threshold).toBe(50);
+    });
+
+    it("records the badge's base_tier + updated_at on the earned row", async () => {
+        const userId = await seedUser();
+        const db = getDb();
+        await db.learningProjects.put({
+            id: "p1",
+            user_id: userId,
+            topic: "T",
+            goal: "G",
+            timeframe: "1w",
+            daily_minutes: 30,
+            current_problem: null,
+            active: true,
+            created_at: nowIso(),
+            updated_at: nowIso(),
+        });
+        await db.learningSessions.put({
+            id: "s1",
+            project_id: "p1",
+            method: "deductive",
+            started_at: nowIso(),
+            ended_at: nowIso(),
+            cycle_step: 3,
+            status: "completed",
+            imported_conversation_id: null,
+        });
+        const newly = await evaluateBadgesForUser(userId);
+        expect(newly).toContain("first_session");
+        const earned = await db.userBadges.where({user_id: userId}).toArray();
+        const row = earned[0];
+        expect(row.tier).toBe("bronze");
+        expect(row.updated_at).toBeTruthy();
     });
 });

@@ -54,9 +54,7 @@ def award_assessment(user_id: str, db: Session = Depends(get_db)) -> dict[str, A
     repeated calls require an intentional re-assessment.
     """
     _ensure_user(db, user_id)
-    award = xp_service.award_xp_flat(
-        db, user_id=user_id, amount=100, reason="assessment_complete"
-    )
+    award = xp_service.award_xp_flat(db, user_id=user_id, amount=100, reason="assessment_complete")
     # Re-evaluate badges (first_assessment + any level-up triggers).
     badge_service.evaluate_user(db, user_id)
     return award.to_dict()
@@ -66,9 +64,7 @@ def award_assessment(user_id: str, db: Session = Depends(get_db)) -> dict[str, A
 def award_import(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
     """Award 75 XP for importing + analyzing a conversation."""
     _ensure_user(db, user_id)
-    award = xp_service.award_xp_flat(
-        db, user_id=user_id, amount=75, reason="conversation_imported"
-    )
+    award = xp_service.award_xp_flat(db, user_id=user_id, amount=75, reason="conversation_imported")
     badge_service.evaluate_user(db, user_id)
     return award.to_dict()
 
@@ -77,9 +73,7 @@ def award_import(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
 
 
 @router.get("/badges/{user_id}")
-def list_user_badges(
-    user_id: str, db: Session = Depends(get_db)
-) -> list[dict[str, Any]]:
+def list_user_badges(user_id: str, db: Session = Depends(get_db)) -> list[dict[str, Any]]:
     """Catalog + per-user earn state for the dashboard showcase.
 
     Returns every catalog badge with ``earned``/``earned_at``
@@ -94,11 +88,11 @@ def list_user_badges(
 def list_badge_catalog(db: Session = Depends(get_db)) -> list[dict[str, Any]]:
     """Public catalog — no user context. For the marketing surface
     and Settings preview."""
+    import json
+
     from app.models import Badge
 
-    rows = (
-        db.query(Badge).order_by(Badge.category.asc(), Badge.key.asc()).all()
-    )
+    rows = db.query(Badge).order_by(Badge.category.asc(), Badge.key.asc()).all()
     return [
         {
             "key": r.key,
@@ -106,15 +100,15 @@ def list_badge_catalog(db: Session = Depends(get_db)) -> list[dict[str, Any]]:
             "description_key": r.description_key,
             "icon": r.icon,
             "category": r.category,
+            "base_tier": r.base_tier,
+            "tier_thresholds": (json.loads(r.tier_thresholds) if r.tier_thresholds else None),
         }
         for r in rows
     ]
 
 
 @router.post("/badges/{user_id}/evaluate")
-def trigger_badge_evaluation(
-    user_id: str, db: Session = Depends(get_db)
-) -> dict[str, Any]:
+def trigger_badge_evaluation(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
     """Force a badge re-evaluation. Used by Settings + the import +
     assessment flows when a non-session action might unlock a
     badge (e.g. "Three providers configured")."""
@@ -166,9 +160,7 @@ def set_weekend_mode(
 
 
 @router.post("/reset/{user_id}")
-def reset_progress(
-    user_id: str, db: Session = Depends(get_db)
-) -> dict[str, Any]:
+def reset_progress(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
     """Destructive reset of XP / badges / streak state for one user.
 
     Wipes ``user_xp``, ``user_badges``, ``user_streaks`` rows; the
@@ -181,15 +173,9 @@ def reset_progress(
     from app.models import UserBadge, UserStreak, UserXP
 
     _ensure_user(db, user_id)
-    xp_deleted = (
-        db.query(UserXP).filter(UserXP.user_id == user_id).delete()
-    )
-    badges_deleted = (
-        db.query(UserBadge).filter(UserBadge.user_id == user_id).delete()
-    )
-    streak_deleted = (
-        db.query(UserStreak).filter(UserStreak.user_id == user_id).delete()
-    )
+    xp_deleted = db.query(UserXP).filter(UserXP.user_id == user_id).delete()
+    badges_deleted = db.query(UserBadge).filter(UserBadge.user_id == user_id).delete()
+    streak_deleted = db.query(UserStreak).filter(UserStreak.user_id == user_id).delete()
     db.commit()
     return {
         "xp_deleted": int(xp_deleted),
@@ -211,7 +197,5 @@ def manual_award(
     permitted so the Settings "Reset XP" button has an API path.
     """
     _ensure_user(db, user_id)
-    award = xp_service.award_xp_flat(
-        db, user_id=user_id, amount=body.amount, reason=body.reason
-    )
+    award = xp_service.award_xp_flat(db, user_id=user_id, amount=body.amount, reason=body.reason)
     return award.to_dict()

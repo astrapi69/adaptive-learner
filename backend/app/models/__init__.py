@@ -1036,6 +1036,16 @@ class Badge(Base):
     description_key: Mapped[str] = mapped_column(String(200), nullable=False)
     icon: Mapped[str] = mapped_column(String(50), nullable=False, default="")
     category: Mapped[str] = mapped_column(String(50), nullable=False, default="general")
+    # Tier metadata (Phase 57 / v1.40.0). ``base_tier`` is the badge's
+    # fixed visual tier ("bronze" | "silver" | "gold"); for static
+    # sibling badges (sessions_50 = silver, ...) it never changes, and
+    # for dynamic badges (lessons_10, review_master) it is the starting
+    # tier ("bronze"). ``tier_thresholds`` is a JSON object
+    # ``{bronze|silver|gold: {threshold, xp_bonus}}`` for DYNAMIC badges
+    # whose single UserBadge row upgrades as a metric grows; ``None`` for
+    # static/flat badges. Seeded from badges.yaml.
+    base_tier: Mapped[str] = mapped_column(String(10), nullable=False, default="bronze")
+    tier_thresholds: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_utcnow
     )
@@ -1228,9 +1238,18 @@ class UserStreak(Base):
 class UserBadge(Base):
     """Earned-badge record (Phase 29B).
 
-    APPEND-ONLY: once a user earns a badge, the row stays. Unique
-    on ``(user_id, badge_id)`` so the evaluator can't double-award
-    the same badge.
+    The row is inserted once on first earn and stays forever (no
+    un-earn). Unique on ``(user_id, badge_id)`` so the evaluator can't
+    double-award the same badge.
+
+    Phase 57 / v1.40.0 adds ``tier`` ("bronze" | "silver" | "gold") and
+    ``updated_at``. For STATIC sibling badges the tier equals the
+    badge's fixed ``base_tier`` and never changes. For DYNAMIC badges
+    (lessons_10, review_master) the tier is a HIGH-WATER MARK that
+    climbs bronze -> silver -> gold as the metric grows and NEVER
+    demotes; ``updated_at`` advances on each upgrade so sync
+    last-write-wins stays correct (the table is now mutable, not
+    append-only).
     """
 
     __tablename__ = "user_badges"
@@ -1249,14 +1268,18 @@ class UserBadge(Base):
         nullable=False,
         index=True,
     )
+    tier: Mapped[str] = mapped_column(String(10), nullable=False, default="bronze")
     earned_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow
     )
 
     def __repr__(self) -> str:
         return (
             f"<UserBadge user={self.user_id!r} badge={self.badge_id!r} "
-            f"earned_at={self.earned_at!r}>"
+            f"tier={self.tier!r} earned_at={self.earned_at!r}>"
         )
 
 

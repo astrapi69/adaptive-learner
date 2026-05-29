@@ -911,8 +911,10 @@ describe("SYNC_TABLES — surface audit", () => {
                 // v1.9.0 / Phase 22A — M:N association rows.
                 "project_subjects",
                 "project_tags",
-                // v1.16.0 / Phase 29B — earned-badge record.
-                "user_badges",
+                // NOTE: user_badges was append-only through v1.39.0;
+                // v1.40.0 / Phase 57 promoted it to MUTABLE (a dynamic
+                // badge's tier climbs in place, high-water mark), so it
+                // is no longer in this list.
             ].sort(),
         );
     });

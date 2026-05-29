@@ -23,6 +23,10 @@ export const BUNDLED_BADGES: ReadonlyArray<{
     description_key: string;
     icon: string;
     category: string;
+    // Phase 57 / v1.40.0. ``base_tier`` defaults to "bronze" when
+    // omitted. ``tier_thresholds`` is set only for DYNAMIC badges.
+    base_tier?: string;
+    tier_thresholds?: Record<string, {threshold: number; xp_bonus: number}>;
 }> = [
     // Getting Started
     {
@@ -60,6 +64,7 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         description_key: "gamification.badges.streak_7_days.description",
         icon: "flame",
         category: "consistency",
+        base_tier: "silver",
     },
     {
         key: "streak_30_days",
@@ -67,6 +72,7 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         description_key: "gamification.badges.streak_30_days.description",
         icon: "flame",
         category: "consistency",
+        base_tier: "gold",
     },
     {
         key: "streak_100_days",
@@ -74,6 +80,7 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         description_key: "gamification.badges.streak_100_days.description",
         icon: "flame",
         category: "consistency",
+        base_tier: "gold",
     },
     // Method Explorer
     {
@@ -147,6 +154,7 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         description_key: "gamification.badges.sessions_50.description",
         icon: "book",
         category: "depth",
+        base_tier: "silver",
     },
     {
         key: "sessions_100",
@@ -154,6 +162,7 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         description_key: "gamification.badges.sessions_100.description",
         icon: "book",
         category: "depth",
+        base_tier: "gold",
     },
     {
         key: "level_5",
@@ -168,6 +177,7 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         description_key: "gamification.badges.level_10.description",
         icon: "star",
         category: "depth",
+        base_tier: "silver",
     },
     {
         key: "level_25",
@@ -175,6 +185,7 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         description_key: "gamification.badges.level_25.description",
         icon: "star",
         category: "depth",
+        base_tier: "gold",
     },
     // Polyglot
     {
@@ -216,6 +227,11 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         description_key: "gamification.badges.lessons_10.description",
         icon: "book-open",
         category: "depth",
+        tier_thresholds: {
+            bronze: {threshold: 10, xp_bonus: 50},
+            silver: {threshold: 50, xp_bonus: 150},
+            gold: {threshold: 100, xp_bonus: 300},
+        },
     },
     {
         key: "three_star_streak",
@@ -230,6 +246,11 @@ export const BUNDLED_BADGES: ReadonlyArray<{
         description_key: "gamification.badges.review_master.description",
         icon: "repeat",
         category: "depth",
+        tier_thresholds: {
+            bronze: {threshold: 50, xp_bonus: 50},
+            silver: {threshold: 200, xp_bonus: 150},
+            gold: {threshold: 500, xp_bonus: 300},
+        },
     },
 ];
 
@@ -252,6 +273,8 @@ async function ensureCatalogSeeded(): Promise<Map<string, BadgeRow>> {
             description_key: spec.description_key,
             icon: spec.icon,
             category: spec.category,
+            base_tier: spec.base_tier ?? "bronze",
+            tier_thresholds: spec.tier_thresholds ?? null,
             created_at: now,
             updated_at: now,
         };
@@ -507,11 +530,17 @@ export async function evaluateBadgesForUser(
         if (earnedBadgeIds.has(badge.id)) continue;
         try {
             if (await predicate(userId)) {
+                const now = nowIso();
                 const row: UserBadgeRow = {
                     id: newId(),
                     user_id: userId,
                     badge_id: badge.id,
-                    earned_at: nowIso(),
+                    // Initial tier = the badge's fixed base tier (static
+                    // siblings keep it; dynamic badges start "bronze" and
+                    // upgrade via 57B's tier evaluation).
+                    tier: badge.base_tier ?? "bronze",
+                    earned_at: now,
+                    updated_at: now,
                 };
                 await db.userBadges.put(row);
                 newlyEarned.push(key);
@@ -531,21 +560,27 @@ export async function listBadgesWithProgress(
     const catalog = await ensureCatalogSeeded();
     const db = getDb();
     const earned = await db.userBadges.where({user_id: userId}).toArray();
-    const earnedMap = new Map(earned.map((r) => [r.badge_id, r.earned_at]));
+    const earnedMap = new Map(earned.map((r) => [r.badge_id, r]));
     const out: BadgeWithProgress[] = [];
     for (const badge of Array.from(catalog.values()).sort((a, b) => {
         const c = a.category.localeCompare(b.category);
         return c !== 0 ? c : a.key.localeCompare(b.key);
     })) {
-        const earnedAt = earnedMap.get(badge.id);
+        const earnedRow = earnedMap.get(badge.id);
+        const baseTier = badge.base_tier ?? "bronze";
+        // Earned tier when earned, else the badge's locked base tier.
+        const tier = earnedRow?.tier ?? baseTier;
         out.push({
             key: badge.key,
             name_key: badge.name_key,
             description_key: badge.description_key,
             icon: badge.icon,
             category: badge.category,
-            earned: earnedAt !== undefined,
-            earned_at: earnedAt ?? null,
+            base_tier: baseTier,
+            tier,
+            tier_thresholds: badge.tier_thresholds ?? null,
+            earned: earnedRow !== undefined,
+            earned_at: earnedRow?.earned_at ?? null,
             progress: null,
         });
     }

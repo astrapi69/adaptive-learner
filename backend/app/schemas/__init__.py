@@ -1079,7 +1079,7 @@ class XPAwardOut(BaseModel):
 
 
 class BadgeOut(BaseModel):
-    """Catalog entry (Phase 29B)."""
+    """Catalog entry (Phase 29B; tier fields Phase 57 / v1.40.0)."""
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -1089,17 +1089,31 @@ class BadgeOut(BaseModel):
     description_key: str
     icon: str
     category: str
+    # Fixed visual tier (bronze | silver | gold). Phase 57.
+    base_tier: str = "bronze"
+    # DYNAMIC-badge thresholds {tier: {threshold, xp_bonus}} or None.
+    # Stored as a JSON string on the model; the validator decodes it.
+    tier_thresholds: dict[str, dict[str, int]] | None = None
+
+    @field_validator("tier_thresholds", mode="before")
+    @classmethod
+    def _decode_thresholds(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            return json.loads(value)
+        return value
 
 
 class UserBadgeOut(BaseModel):
-    """Earned-badge record (Phase 29B)."""
+    """Earned-badge record (Phase 29B; tier Phase 57 / v1.40.0)."""
 
     model_config = ConfigDict(from_attributes=True)
 
     id: str
     user_id: str
     badge_id: str
+    tier: str = "bronze"
     earned_at: datetime
+    updated_at: datetime | None = None
 
 
 class BadgeWithProgressOut(BaseModel):
@@ -1118,6 +1132,12 @@ class BadgeWithProgressOut(BaseModel):
     description_key: str
     icon: str
     category: str
+    # Phase 57 / v1.40.0. ``tier`` is the user's earned tier when
+    # earned, else the badge's locked ``base_tier``. ``tier_thresholds``
+    # is set for DYNAMIC badges (drives the next-tier progress bar).
+    base_tier: str = "bronze"
+    tier: str = "bronze"
+    tier_thresholds: dict[str, dict[str, int]] | None = None
     earned: bool
     earned_at: datetime | None = None
     progress: str | None = None

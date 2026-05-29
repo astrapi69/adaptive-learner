@@ -351,12 +351,17 @@ const SYNC_TABLES: SyncTable[] = [
         appendOnly: false,
     },
     {
-        // v1.16.0 / Phase 29B — earned-badge record. APPEND-ONLY:
-        // earning is an insert; un-earning isn't supported.
+        // v1.16.0 / Phase 29B — earned-badge record. v1.40.0 /
+        // Phase 57: MUTABLE (was append-only) — a dynamic badge's
+        // ``tier`` climbs in place (high-water mark, never demotes), so
+        // last-write-wins on ``updated_at`` is safe (the newer write
+        // always carries the higher-or-equal tier). The v21 Dexie
+        // upgrade back-fills ``updated_at = earned_at`` for pre-tier
+        // rows.
         name: "user_badges",
         dexieTable: "userBadges",
-        timestampField: "earned_at",
-        appendOnly: true,
+        timestampField: "updated_at",
+        appendOnly: false,
     },
     {
         // v1.16.0 / Phase 29C — per-user streak state singleton.
