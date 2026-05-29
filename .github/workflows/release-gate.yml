@@ -85,3 +85,15 @@ jobs:
         run: |
           chmod +x scripts/sync_versions.py
           python3 scripts/sync_versions.py --check
+
+      - name: Install PyYAML (docs nav-sync check)
+        run: pip install pyyaml
+
+      - name: Verify documentation discipline
+        # Full docs gate at tag time: drift verifier (version/counts/
+        # plugins/themes/mkdocs-orphans/help-parity/i18n) + the
+        # _meta.yaml <-> mkdocs.yml nav-sync check. Stale docs at a
+        # tag are exactly the v0.30.0 drift class this prevents.
+        run: |
+          python3 scripts/verify_docs.py
+          python3 scripts/generate_mkdocs_nav.py --check

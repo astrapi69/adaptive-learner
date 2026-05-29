@@ -493,6 +493,9 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo "=== Frontend npm run test (vitest) ==="
 	@cd frontend && npm run test
 	@echo ""
+	@echo "=== Documentation drift gate (verify-docs-discipline) ==="
+	@$(MAKE) verify-docs-discipline
+	@echo ""
 	@echo "=== Subsystem lock-step (sync-versions --check) ==="
 	@$(MAKE) sync-versions-check
 	@echo ""
