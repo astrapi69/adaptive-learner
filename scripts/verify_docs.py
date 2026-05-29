@@ -482,6 +482,55 @@ def check_themes(report: Report) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Check: mkdocs nav orphans + dead links  (FAIL)
+# ---------------------------------------------------------------------------
+
+# mkdocs.yml's docs_dir is docs/help; the nav references the German
+# variant (de/<slug>.md). mkdocs-static-i18n maps de->en, so the en/
+# tree is an i18n mirror, not separately listed. We therefore check
+# the de/ tree against the nav references.
+NAV_REF_RE = re.compile(r"(de/[\w./-]+\.md)")
+
+
+def check_mkdocs(report: Report) -> None:
+    mkdocs = REPO / "mkdocs.yml"
+    help_dir = REPO / "docs" / "help"
+    if not mkdocs.exists():
+        report.warn("mkdocs", "mkdocs.yml not found")
+        return
+    de_dir = help_dir / "de"
+    if not de_dir.exists():
+        report.warn("mkdocs", "docs/help/de not found")
+        return
+
+    referenced = set(NAV_REF_RE.findall(read(mkdocs)))
+    actual = {f"de/{p.relative_to(de_dir).as_posix()}" for p in de_dir.rglob("*.md")}
+
+    # Orphans: help pages on disk that no nav entry points to. They are
+    # silently unreachable from the side nav (mkdocs --strict logs this
+    # only at INFO and does NOT fail).
+    orphans = sorted(actual - referenced)
+    if orphans:
+        report.fail(
+            "mkdocs",
+            f"{len(orphans)} help page(s) on disk but not in mkdocs.yml nav: "
+            + ", ".join(orphans[:10])
+            + (" ..." if len(orphans) > 10 else "")
+            + " (add to docs/help/_meta.yaml + run make sync-mkdocs-nav)",
+        )
+
+    # Dead links: nav entries pointing at files that do not exist.
+    dead = sorted(referenced - actual)
+    if dead:
+        report.fail(
+            "mkdocs",
+            f"{len(dead)} mkdocs.yml nav entr(y/ies) point to missing file(s): "
+            + ", ".join(dead[:10])
+            + (" ..." if len(dead) > 10 else ""),
+        )
+
+
+# ---------------------------------------------------------------------------
 # Registry + runner
 # ---------------------------------------------------------------------------
 
@@ -492,6 +541,7 @@ CHECKS = {
     "feature-completeness": lambda r, o: check_feature_completeness(r),
     "stale-dates": lambda r, o: check_stale_dates(r),
     "themes": lambda r, o: check_themes(r),
+    "mkdocs": lambda r, o: check_mkdocs(r),
 }
 
 

@@ -414,6 +414,13 @@ verify-docs: ## Verify documentation for drift (version/counts/features/help/i18
 verify-docs-fix: ## Best-effort auto-fix of mechanical docs drift (version badges, counts, i18n sync)
 	@python3 scripts/verify_docs.py --fix
 
+check-mkdocs-orphans: ## List help .md files orphaned from / dangling in mkdocs.yml nav
+	@python3 scripts/verify_docs.py --check mkdocs
+
+verify-docs-discipline: ## Full docs gate: drift verifier + mkdocs nav sync (release-blocking)
+	@$(MAKE) verify-docs
+	@$(MAKE) verify-mkdocs-nav
+
 # --- Plugin lockfile discipline ---
 
 lock-all-plugins: ## Re-lock every plugin's poetry.lock (after a shared-dep pin bump)
