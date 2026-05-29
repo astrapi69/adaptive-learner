@@ -9,8 +9,13 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.42.0** (Phase 59 —
-  Analysis-to-Lesson Converter + Community Content Sharing).
+- **Current state:** **v1.42.1** (patch — fixes the
+  Save-as-Offline-Lesson 422 in API mode: ``saveUserSet`` was
+  double-encoding its POST body; plus a Settings tab reorg —
+  Help and About split into separate tabs, swipe-gesture moved
+  to Learning, identity section moved to Data. No settings lost
+  or duplicated). v1.42.0 = **Phase 59 —
+  Analysis-to-Lesson Converter + Community Content Sharing**.
   Turns a chat-import analysis into a complete, replayable
   **offline lesson** and adds a backend-free sharing loop.
   New ``frontend/src/lib/content/`` modules:
