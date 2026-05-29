@@ -35,7 +35,6 @@ from fastapi.testclient import TestClient
 
 from app.main import app, manager
 
-
 SOURCE = "astrapi69/adaptive-learner-content"
 SOURCE_SLUG = "astrapi69--adaptive-learner-content"
 SET_ID = "language-fr-a1"

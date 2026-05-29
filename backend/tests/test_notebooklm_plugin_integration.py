@@ -20,7 +20,7 @@ from fastapi.testclient import TestClient
 
 from app.database import SessionLocal
 from app.main import app, manager
-from app.models import StudyQuestion, UserSettings
+from app.models import UserSettings
 
 
 @pytest.fixture()

@@ -31,10 +31,11 @@ Conventions:
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 
 from sqlalchemy import (
     Boolean,
+    Date,
     DateTime,
     Float,
     ForeignKey,
@@ -1491,6 +1492,60 @@ class ElementError(Base):
         )
 
 
+class UserMission(Base):
+    """A daily mission assigned to a user (EXP-010 / Phase 56).
+
+    The mission CATALOG (``MissionTemplate``) is static config
+    loaded from ``config/plugins/missions.yaml`` - only the
+    per-user, per-day assignment + progress lives here, the one
+    new tracking table the feature adds. ``template_id`` references
+    a catalog entry by its string id; ``assigned_date`` is the day
+    the mission was handed out (deterministic assignment seeded by
+    ``user_id`` + date). ``xp_awarded`` guards against
+    double-awarding the completion bonus.
+    """
+
+    __tablename__ = "user_missions"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "template_id",
+            "assigned_date",
+            name="uq_user_missions_user_template_date",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    template_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    assigned_date: Mapped[date] = mapped_column(Date, nullable=False, index=True)
+    progress: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    completed: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    xp_awarded: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
+        onupdate=_utcnow,
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<UserMission user={self.user_id!r} "
+            f"template={self.template_id!r} date={self.assigned_date} "
+            f"progress={self.progress} completed={self.completed}>"
+        )
+
+
 __all__ = [
     "Base",
     "User",
@@ -1520,4 +1575,6 @@ __all__ = [
     "AnkiCardSuggestion",
     "StudyQuestion",
     "LessonProgress",
+    "ElementError",
+    "UserMission",
 ]

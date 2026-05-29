@@ -19,9 +19,9 @@ Pins:
 from __future__ import annotations
 
 import pytest
+from adaptive_learner_gamification import badge_service
 from fastapi.testclient import TestClient
 
-from adaptive_learner_gamification import badge_service
 from app.database import SessionLocal
 from app.main import app
 from app.models import Badge, UserBadge

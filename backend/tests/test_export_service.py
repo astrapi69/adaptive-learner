@@ -48,7 +48,6 @@ from app.services.export_service import (
     build_session_detail,
 )
 
-
 # ---- Fixtures --------------------------------------------------------------
 
 

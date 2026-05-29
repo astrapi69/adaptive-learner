@@ -27,8 +27,8 @@ from app.models import (
     LearningProfile,
     LearningProject,
     LearningSession,
-    Lesson,
     LearningTopic,
+    Lesson,
     ProgressCommit,
     SessionMessage,
     SessionRating,
@@ -46,7 +46,6 @@ from app.services.backup_service import (
     restore_backup,
 )
 from tests.router_test_client import make_client
-
 
 # ---- Fixtures --------------------------------------------------------------
 

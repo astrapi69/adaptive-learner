@@ -17,12 +17,12 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 import pytest
+from adaptive_learner_gamification import streak_service
 from fastapi.testclient import TestClient
 
-from adaptive_learner_gamification import streak_service
 from app.database import SessionLocal
 from app.main import app
-from app.models import LearningProject, LearningSession, User, UserStreak
+from app.models import LearningProject, LearningSession
 
 
 @pytest.fixture()

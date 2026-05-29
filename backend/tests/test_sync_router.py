@@ -10,7 +10,7 @@ same process.
 from __future__ import annotations
 
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
@@ -151,7 +151,7 @@ def test_push_append_only_is_idempotent(client: TestClient):
 def test_push_mutable_accept_remote_when_local_untouched(client: TestClient):
     user_id = _make_user(client)
     project = _make_project(client, user_id, topic="Original")
-    far_future = (datetime.now(timezone.utc) + timedelta(days=1)).isoformat()
+    far_future = (datetime.now(UTC) + timedelta(days=1)).isoformat()
     resp = client.post(
         "/api/sync/push",
         json={
@@ -242,7 +242,7 @@ def test_pull_returns_all_when_since_is_null(client: TestClient):
 def test_pull_filters_by_since_timestamp(client: TestClient):
     user_id = _make_user(client)
     _make_project(client, user_id, topic="First")
-    cutoff = datetime.now(timezone.utc).isoformat()
+    cutoff = datetime.now(UTC).isoformat()
     time.sleep(0.01)  # ensure later row has a strictly-greater timestamp
     _make_project(client, user_id, topic="Second")
     resp = client.post(

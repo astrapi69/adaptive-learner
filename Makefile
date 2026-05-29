@@ -21,13 +21,13 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test test-backend test-frontend test-plugins test-plugin-assessment \
        test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini \
        test-plugin-session test-plugin-tracking \
-       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-e2e test-e2e-ui test-dexie-smoke \
+       test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke \
        test-coverage test-coverage-backend test-coverage-frontend \
        check-types check-types-backend check-types-frontend \
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       sync-i18n sync-plugin-config sync-praise \
+       sync-i18n sync-plugin-config sync-praise sync-missions \
        lock-all-plugins verify-plugin-locks \
        release-state release-outdated release-test release-build \
        release-discover release-tag release-publish \
@@ -201,7 +201,7 @@ test-backend: ## Run backend tests
 # per-plugin pytest run uses that same env via its absolute Python
 # binary; the plugin doesn't need its own poetry env / lock.
 
-test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini test-plugin-session test-plugin-tracking test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader ## Run every plugin's own test suite (incl. content-loader v1.27.0)
+test-plugins: test-plugin-assessment test-plugin-ai-anthropic test-plugin-ai-openai test-plugin-ai-gemini test-plugin-session test-plugin-tracking test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions ## Run every plugin's own test suite (incl. content-loader v1.27.0)
 	@echo ""
 	@echo "=== All plugin tests complete ==="
 
@@ -270,6 +270,11 @@ test-plugin-content-loader: ## content-loader plugin: downloads + caches lesson 
 	@echo ""
 	@echo "=== Plugin: content-loader ==="
 	cd plugins/adaptive-learner-plugin-content-loader && $(PLUGIN_PYTHON) -m pytest tests/ -q
+
+test-plugin-missions: ## missions plugin: daily mission catalog + generator (EXP-010 / Phase 56)
+	@echo ""
+	@echo "=== Plugin: missions ==="
+	cd plugins/adaptive-learner-plugin-missions && $(PLUGIN_PYTHON) -m pytest tests/ -q
 
 # --- Coverage (heavy, opt-in; CI runs this on every push) ---
 
@@ -367,6 +372,9 @@ sync-help: ## Regenerate frontend/src/data/help/*.json from backend/config/help 
 
 sync-praise: ## Regenerate frontend/src/data/praise/*.json from backend/config/praise/*.yaml (EXP-008 / Phase 55A)
 	@python3 scripts/sync_praise_to_frontend.py
+
+sync-missions: ## Regenerate frontend/src/data/missions/templates.json from the missions plugin catalog (EXP-010 / Phase 56)
+	@python3 scripts/sync_missions_to_frontend.py
 
 # --- Production (Docker) ---
 

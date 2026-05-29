@@ -66,6 +66,8 @@ EXPECTED_TABLES = {
     "lesson_progress",
     # v1.30.0 / Phase 46B / P-129 — element-level error tracking
     "element_errors",
+    # v1.39.0 / Phase 56 / EXP-010 — daily mission assignment
+    "user_missions",
 }
 
 

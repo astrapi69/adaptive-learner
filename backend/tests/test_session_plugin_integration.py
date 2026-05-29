@@ -1487,6 +1487,7 @@ def test_message_warns_and_falls_back_when_model_not_in_cache(
     the route falls back to ai_orchestration.DEFAULT_MODELS and
     sets model_warning."""
     from adaptive_learner_session import ai_orchestration
+
     from app.schemas import AIProvider
     from app.services import model_discovery
 

@@ -194,8 +194,9 @@ def test_overdue_items_come_before_non_overdue(user_id: str) -> None:
         # (>1d ago) but leaves the second within its interval.
         # Both have last_attempt_at near "now"; nudge the first
         # via direct DB update.
-        from app.models import ElementError
         from sqlalchemy import select
+
+        from app.models import ElementError
 
         row = db.execute(
             select(ElementError).where(

@@ -34,7 +34,7 @@ def test_compute_content_hash_pins_canonical_shape():
     joined by '\\n', SHA-256 hex. Title is NOT in the input."""
     msgs = [_Msg("USER", "  what is induction?  "), _Msg("Assistant", "examples to rule.\n")]
     expected = hashlib.sha256(
-        "user:what is induction?\nassistant:examples to rule.".encode("utf-8")
+        b"user:what is induction?\nassistant:examples to rule."
     ).hexdigest()
     assert compute_content_hash(msgs) == expected
 

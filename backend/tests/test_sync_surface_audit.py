@@ -27,7 +27,6 @@ from app.services.sync_service import (
     TABLES,
 )
 
-
 # Expected sync-surface classification per the Phase 21 + 22 spec.
 EXPECTED_MUTABLE: frozenset[str] = frozenset(
     {
@@ -65,6 +64,10 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # tracking (correct_streak grows, error_count
         # accumulates, mastered flips at threshold).
         "element_errors",
+        # v1.39.0 / Phase 56 / EXP-010: daily mission assignment
+        # + progress (progress bumps, completed flips, xp_awarded
+        # guards the bonus).
+        "user_missions",
     }
 )
 

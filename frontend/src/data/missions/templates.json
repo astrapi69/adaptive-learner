@@ -1,0 +1,246 @@
+{
+  "templates": [
+    {
+      "id": "complete-1-lesson",
+      "title_key": "missions.templates.complete-1-lesson.title",
+      "description_key": "missions.templates.complete-1-lesson.description",
+      "category": "learning",
+      "target_value": 1,
+      "difficulty": "easy",
+      "xp_reward": 20,
+      "icon": "book-open",
+      "check_function": "lessons_completed_today"
+    },
+    {
+      "id": "complete-2-lessons",
+      "title_key": "missions.templates.complete-2-lessons.title",
+      "description_key": "missions.templates.complete-2-lessons.description",
+      "category": "learning",
+      "target_value": 2,
+      "difficulty": "medium",
+      "xp_reward": 40,
+      "icon": "book-open",
+      "check_function": "lessons_completed_today"
+    },
+    {
+      "id": "complete-3-lessons",
+      "title_key": "missions.templates.complete-3-lessons.title",
+      "description_key": "missions.templates.complete-3-lessons.description",
+      "category": "learning",
+      "target_value": 3,
+      "difficulty": "hard",
+      "xp_reward": 60,
+      "icon": "book-open",
+      "check_function": "lessons_completed_today"
+    },
+    {
+      "id": "score-2-stars",
+      "title_key": "missions.templates.score-2-stars.title",
+      "description_key": "missions.templates.score-2-stars.description",
+      "category": "learning",
+      "target_value": 1,
+      "difficulty": "easy",
+      "xp_reward": 25,
+      "icon": "star",
+      "check_function": "lessons_min_2_stars_today"
+    },
+    {
+      "id": "score-3-stars",
+      "title_key": "missions.templates.score-3-stars.title",
+      "description_key": "missions.templates.score-3-stars.description",
+      "category": "learning",
+      "target_value": 1,
+      "difficulty": "medium",
+      "xp_reward": 50,
+      "icon": "star",
+      "check_function": "lessons_min_3_stars_today"
+    },
+    {
+      "id": "try-new-set",
+      "title_key": "missions.templates.try-new-set.title",
+      "description_key": "missions.templates.try-new-set.description",
+      "category": "learning",
+      "target_value": 1,
+      "difficulty": "medium",
+      "xp_reward": 30,
+      "icon": "compass",
+      "check_function": "new_sets_started_today"
+    },
+    {
+      "id": "review-5-elements",
+      "title_key": "missions.templates.review-5-elements.title",
+      "description_key": "missions.templates.review-5-elements.description",
+      "category": "review",
+      "target_value": 5,
+      "difficulty": "easy",
+      "xp_reward": 20,
+      "icon": "repeat",
+      "check_function": "elements_reviewed_today"
+    },
+    {
+      "id": "review-10-elements",
+      "title_key": "missions.templates.review-10-elements.title",
+      "description_key": "missions.templates.review-10-elements.description",
+      "category": "review",
+      "target_value": 10,
+      "difficulty": "medium",
+      "xp_reward": 35,
+      "icon": "repeat",
+      "check_function": "elements_reviewed_today"
+    },
+    {
+      "id": "complete-review-session",
+      "title_key": "missions.templates.complete-review-session.title",
+      "description_key": "missions.templates.complete-review-session.description",
+      "category": "review",
+      "target_value": 1,
+      "difficulty": "easy",
+      "xp_reward": 25,
+      "icon": "list-checks",
+      "check_function": "review_sessions_completed_today"
+    },
+    {
+      "id": "review-overdue",
+      "title_key": "missions.templates.review-overdue.title",
+      "description_key": "missions.templates.review-overdue.description",
+      "category": "review",
+      "target_value": 1,
+      "difficulty": "hard",
+      "xp_reward": 50,
+      "icon": "alarm-clock",
+      "check_function": "overdue_cleared_today"
+    },
+    {
+      "id": "master-1-element",
+      "title_key": "missions.templates.master-1-element.title",
+      "description_key": "missions.templates.master-1-element.description",
+      "category": "mastery",
+      "target_value": 1,
+      "difficulty": "easy",
+      "xp_reward": 30,
+      "icon": "award",
+      "check_function": "elements_mastered_today"
+    },
+    {
+      "id": "master-3-elements",
+      "title_key": "missions.templates.master-3-elements.title",
+      "description_key": "missions.templates.master-3-elements.description",
+      "category": "mastery",
+      "target_value": 3,
+      "difficulty": "medium",
+      "xp_reward": 60,
+      "icon": "award",
+      "check_function": "elements_mastered_today"
+    },
+    {
+      "id": "master-5-elements",
+      "title_key": "missions.templates.master-5-elements.title",
+      "description_key": "missions.templates.master-5-elements.description",
+      "category": "mastery",
+      "target_value": 5,
+      "difficulty": "hard",
+      "xp_reward": 100,
+      "icon": "award",
+      "check_function": "elements_mastered_today"
+    },
+    {
+      "id": "zero-errors-lesson",
+      "title_key": "missions.templates.zero-errors-lesson.title",
+      "description_key": "missions.templates.zero-errors-lesson.description",
+      "category": "mastery",
+      "target_value": 1,
+      "difficulty": "hard",
+      "xp_reward": 75,
+      "icon": "shield-check",
+      "check_function": "perfect_lessons_today"
+    },
+    {
+      "id": "try-adaptive-lesson",
+      "title_key": "missions.templates.try-adaptive-lesson.title",
+      "description_key": "missions.templates.try-adaptive-lesson.description",
+      "category": "exploration",
+      "target_value": 1,
+      "difficulty": "medium",
+      "xp_reward": 40,
+      "icon": "sparkles",
+      "check_function": "adaptive_lessons_started_today"
+    },
+    {
+      "id": "use-cloze",
+      "title_key": "missions.templates.use-cloze.title",
+      "description_key": "missions.templates.use-cloze.description",
+      "category": "exploration",
+      "target_value": 5,
+      "difficulty": "easy",
+      "xp_reward": 20,
+      "icon": "pencil",
+      "check_function": "cloze_exercises_today"
+    },
+    {
+      "id": "use-all-types",
+      "title_key": "missions.templates.use-all-types.title",
+      "description_key": "missions.templates.use-all-types.description",
+      "category": "exploration",
+      "target_value": 5,
+      "difficulty": "hard",
+      "xp_reward": 60,
+      "icon": "shapes",
+      "check_function": "exercise_types_used_today"
+    },
+    {
+      "id": "learn-15-minutes",
+      "title_key": "missions.templates.learn-15-minutes.title",
+      "description_key": "missions.templates.learn-15-minutes.description",
+      "category": "exploration",
+      "target_value": 15,
+      "difficulty": "easy",
+      "xp_reward": 20,
+      "icon": "clock",
+      "check_function": "minutes_learned_today"
+    },
+    {
+      "id": "learn-30-minutes",
+      "title_key": "missions.templates.learn-30-minutes.title",
+      "description_key": "missions.templates.learn-30-minutes.description",
+      "category": "exploration",
+      "target_value": 30,
+      "difficulty": "medium",
+      "xp_reward": 40,
+      "icon": "clock",
+      "check_function": "minutes_learned_today"
+    },
+    {
+      "id": "keep-streak",
+      "title_key": "missions.templates.keep-streak.title",
+      "description_key": "missions.templates.keep-streak.description",
+      "category": "streak",
+      "target_value": 1,
+      "difficulty": "easy",
+      "xp_reward": 15,
+      "icon": "flame",
+      "check_function": "streak_kept_today"
+    },
+    {
+      "id": "extend-streak-7",
+      "title_key": "missions.templates.extend-streak-7.title",
+      "description_key": "missions.templates.extend-streak-7.description",
+      "category": "streak",
+      "target_value": 7,
+      "difficulty": "hard",
+      "xp_reward": 80,
+      "icon": "flame",
+      "check_function": "current_streak_days"
+    },
+    {
+      "id": "weekend-learner",
+      "title_key": "missions.templates.weekend-learner.title",
+      "description_key": "missions.templates.weekend-learner.description",
+      "category": "streak",
+      "target_value": 1,
+      "difficulty": "medium",
+      "xp_reward": 30,
+      "icon": "calendar",
+      "check_function": "weekend_learning_today"
+    }
+  ]
+}

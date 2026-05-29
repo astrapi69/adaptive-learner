@@ -18,8 +18,8 @@ from __future__ import annotations
 
 import os
 import sys
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 import pytest
 import yaml
@@ -34,7 +34,6 @@ from app.services.secrets_template import (
     audit_permissions,
     ensure_template_exists,
 )
-
 
 # ---------------------------------------------------------------------------
 # Fixtures

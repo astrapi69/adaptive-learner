@@ -36,6 +36,7 @@ plugins:
     - notebooklm
     - learning-repo
     - content-loader
+    - missions
   entry_point_group: adaptive_learner.plugins
 ui:
   title: Adaptive Learner

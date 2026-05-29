@@ -559,6 +559,22 @@ export interface PluginSettingsRow {
     updated_at: string;
 }
 
+/** EXP-010 / Phase 56 — a daily mission assigned to a user.
+ *  Mirrors the backend ``UserMission`` model + the sync surface.
+ *  ``assigned_date`` is a ``YYYY-MM-DD`` string. */
+export interface UserMissionRow {
+    id: string;
+    user_id: string;
+    template_id: string;
+    assigned_date: string;
+    progress: number;
+    completed: boolean;
+    completed_at: string | null;
+    xp_awarded: boolean;
+    created_at: string;
+    updated_at: string;
+}
+
 // ---- Dexie database ---------------------------------------------------
 
 export class AdaptiveLearnerDB extends Dexie {
@@ -609,6 +625,10 @@ export class AdaptiveLearnerDB extends Dexie {
     // a missing row fall back to the bundled YAML defaults
     // at ``frontend/src/data/plugin-config/{name}.json``.
     pluginSettings!: EntityTable<PluginSettingsRow, "name">;
+    // EXP-010 / Phase 56 — daily missions. One row per
+    // {user_id, template_id, assigned_date}; indexes support the
+    // per-user "today" query + the assigned_date scan.
+    userMissions!: EntityTable<UserMissionRow, "id">;
 
     constructor(name = "adaptive-learner") {
         super(name);
@@ -875,6 +895,15 @@ export class AdaptiveLearnerDB extends Dexie {
         // get-by-name + upsert, never a multi-row scan.
         this.version(19).stores({
             pluginSettings: "&name",
+        });
+        // Schema v20 — EXP-010 / Phase 56: daily missions.
+        // Indexes: ``user_id`` + ``[user_id+assigned_date]`` for
+        // the per-user "today" query, ``assigned_date`` for the
+        // midnight-rollover scan, ``template_id`` for repeat
+        // avoidance across days.
+        this.version(20).stores({
+            userMissions:
+                "id, user_id, [user_id+assigned_date], assigned_date, template_id",
         });
     }
 }

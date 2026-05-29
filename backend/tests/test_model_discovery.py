@@ -10,7 +10,7 @@ from __future__ import annotations
 import httpx
 import pytest
 
-from app.exceptions import ExternalServiceError, ValidationError
+from app.exceptions import ExternalServiceError
 from app.schemas import AIProvider
 from app.services import model_discovery
 

@@ -13,7 +13,6 @@ from sqlalchemy import text
 
 from app.database import (
     AsyncSessionLocal,
-    DATABASE_URL,
     SessionLocal,
     _async_database_url,
     async_engine,

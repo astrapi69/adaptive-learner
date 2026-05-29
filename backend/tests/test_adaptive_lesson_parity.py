@@ -28,8 +28,8 @@ import pytest
 
 from app.services.adaptive_lesson import (
     ElementErrorInput,
-    analyze_errors,
     analysis_to_dict,
+    analyze_errors,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
