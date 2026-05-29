@@ -314,6 +314,12 @@ settings:
   title: Einstellungen
   help_intro: "Durchsuche das integrierte Glossar. Klicke auf einen Eintrag, um den vollständigen Artikel zu öffnen."
   section_language: Sprache
+  mode_title: "Modus"
+  mode_solo: "Solo-Modus"
+  mode_solo_desc: "Lerne für dich selbst. Alle Funktionen verfügbar."
+  mode_multiplayer: "Mehrspieler-Modus"
+  mode_multiplayer_desc: "Ranglisten, Turniere, Freunde. Kommt in einer zukünftigen Version."
+  mode_coming_soon: "Kommt bald"
   section_provider: KI-Anbieter
   section_api_keys: API-Keys
   section_danger: Konto

@@ -314,6 +314,12 @@ settings:
   title: 設定
   help_intro: "アプリ内の用語集を閲覧・検索できます。各エントリをクリックすると詳しい記事が開きます。"
   section_language: 言語
+  mode_title: "モード"
+  mode_solo: "ソロモード"
+  mode_solo_desc: "自分のために学ぶ。すべての機能が利用可能。"
+  mode_multiplayer: "マルチプレイヤーモード"
+  mode_multiplayer_desc: "ランキング、トーナメント、フレンド。将来のバージョンで登場。"
+  mode_coming_soon: "近日公開"
   section_provider: AI プロバイダー
   section_api_keys: API キー
   section_danger: アカウント

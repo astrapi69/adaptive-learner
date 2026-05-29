@@ -10,6 +10,7 @@ import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import LearningRepoSettingsSection from "../components/LearningRepoSettingsSection";
 import MissionSettingsControl from "../components/MissionSettingsControl";
+import ModeIndicator from "../components/ModeIndicator";
 import SoundSettingsControl from "../components/SoundSettingsControl";
 import HelpBrowser from "../components/help/HelpBrowser";
 import {
@@ -811,6 +812,10 @@ export default function Settings() {
                     </ul>
                 )}
             </section>
+
+            <div hidden={activeTab !== "general"}>
+                <ModeIndicator />
+            </div>
 
             {/* --- Learning tab ----------------------------------- */}
             <div

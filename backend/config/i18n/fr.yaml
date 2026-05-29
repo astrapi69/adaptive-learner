@@ -314,6 +314,12 @@ settings:
   title: Parametres
   help_intro: "Browse and search the in-app glossary. Click any entry for the full article."
   section_language: Langue
+  mode_title: "Mode"
+  mode_solo: "Mode solo"
+  mode_solo_desc: "Apprends pour toi. Toutes les fonctionnalités disponibles."
+  mode_multiplayer: "Mode multijoueur"
+  mode_multiplayer_desc: "Classements, tournois, amis. À venir dans une version future."
+  mode_coming_soon: "Bientôt"
   section_provider: Fournisseur IA
   section_api_keys: Cles API
   section_danger: Compte

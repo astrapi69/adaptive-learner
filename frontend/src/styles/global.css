@@ -1573,6 +1573,72 @@ select:focus {
   gap: var(--space-5);
 }
 
+/* EXP-010 / Phase 56L — Solo / Multiplayer mode indicator */
+.mode-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.mode-card {
+  flex: 1 1 14rem;
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+.mode-card.is-active {
+  border-color: var(--accent);
+}
+
+.mode-card.is-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mode-card-icon {
+  display: flex;
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
+.mode-card.is-disabled .mode-card-icon {
+  color: var(--fg-muted);
+}
+
+.mode-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mode-card-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 600;
+}
+
+.mode-card-badge {
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--fg-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mode-card-desc {
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
 /* EXP-010 / Phase 56F — daily missions widget */
 .mission-list {
   list-style: none;
