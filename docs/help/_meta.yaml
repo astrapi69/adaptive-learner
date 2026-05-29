@@ -63,6 +63,10 @@ navigation:
           en: Praise and celebrations
         slug: user-guide/celebrations
       - title:
+          de: Tägliche Missionen
+          en: Daily missions
+        slug: user-guide/missions
+      - title:
           de: FAQ
           en: FAQ
         slug: user-guide/faq
@@ -128,6 +132,10 @@ navigation:
           de: Belohnungs-Schicht
           en: Celebration layer
         slug: developer/celebrations
+      - title:
+          de: Tägliche Missionen
+          en: Daily missions
+        slug: developer/missions
       - title:
           de: Deployment
           en: Deployment

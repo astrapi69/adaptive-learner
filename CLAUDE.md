@@ -9,7 +9,46 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.38.0** (Phase 55 — EXP-008 Lob
+- **Current state:** **v1.39.0** (Phase 56 — EXP-010
+  Missionen und Plaketten, the active-motivation layer;
+  shipped the missions subset, badge tiers deferred to
+  v1.40.0). Daily missions: up to 3 deterministic,
+  adaptive, achievable goals per day on the Dashboard,
+  evaluated live against EXISTING data (LessonProgress /
+  ElementError / streak) — no new tracking beyond one
+  ``UserMission`` table. New ``missions`` plugin (13th):
+  ``MissionTemplate`` Pydantic catalog (22 templates / 5
+  categories in ``templates.yaml``, ``make sync-missions``
+  → frontend bundle), seeded-PRNG adaptive generator
+  (new/active/veteran eligibility, one pick per difficulty
+  slot, no back-to-back repeats) + progress evaluator —
+  both TS (Dexie, primary GH-Pages path) and Python (API
+  mode, ``GET /today`` + ``POST /regenerate``). Only checks
+  computable from existing data are assignable
+  (``SUPPORTED_CHECK_FUNCTIONS``; 5 catalog entries stay
+  un-assigned until tracking exists). Completion awards the
+  template's bonus XP once (``xp_awarded`` guard, both
+  modes) + fires the v1.38.0 celebration bus
+  (``mission_complete`` + ``all_missions_complete`` sounds +
+  a new ``mission_complete`` praise category + confetti
+  all-clear). ``DailyMissionsCard`` dashboard widget;
+  ``MissionSettingsControl`` (on/off, count 1-3, difficulty
+  mix, reset) in the reorganized **tabbed Settings** page
+  (Bibliogon pattern: General / AI / Learning / Plugins /
+  Data / Help — all panels stay mounted, inactive ones
+  ``hidden``, so deep links + testids keep working). New
+  visual-only **Solo / Multiplayer mode indicator**
+  (coming-soon, no infrastructure). Timezone-aware
+  local-midnight rollover (uncompleted missions expire, NO
+  penalty) + streak-joker. ``UserMission`` model + Alembic
+  0021 + Dexie v20 + sync surface (MUTABLE) + a new
+  ``missions`` ``IStorageService`` namespace (Dexie + Api).
+  **Deferred to v1.40.0 / Phase 57:** badge tiers
+  (bronze/silver/gold, EXP-010 56E) + the badge-gallery
+  drawer (56G). 11 atomic sub-phase commits; every
+  individually green through ``make test`` + ``npm run
+  build`` + Vitest + ``make test-dexie-smoke``.
+  v1.38.0 = Phase 55 (EXP-008 Lob
   und Celebration, the emotional layer). Everything
   mechanical already worked (error tracking, adaptive
   lessons, XP/badges) but the moment of success felt flat;
@@ -320,9 +359,9 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   backstops the architecture-rule "every non-INTERNAL
   setting MUST be UI-editable". v1.25.0 = Phase 41
   identity persistence + Danger Zone. See
-  [changelog/releases/v1.38.0.md](changelog/releases/v1.38.0.md)
+  [changelog/releases/v1.39.0.md](changelog/releases/v1.39.0.md)
   for the per-release detail and `git log --oneline` for
-  the feature history across Phases 1–55.
+  the feature history across Phases 1–56.
 - **API reference:** FastAPI OpenAPI at `/api/docs` + `/openapi.json`
 - **Configuration:** [docs/configuration.md](docs/configuration.md)
   (three-layer chain: env > `~/.config/adaptive_learner/secrets.yaml`
@@ -415,7 +454,7 @@ default path).
 
 ## Data model
 
-**28 SQLAlchemy models** in `backend/app/models/__init__.py`:
+**29 SQLAlchemy models** in `backend/app/models/__init__.py`:
 
 User, UserSettings, LearningProject, LearningProfile,
 Curriculum, LearningTopic, Lesson, LearningSession,
@@ -423,13 +462,13 @@ SessionMessage, SessionRating, SessionNote, ProgressCommit,
 StepEvaluation, MethodSwitch, ImportedConversation,
 ImportedMessage, Subject, Tag, ProjectSubject, ProjectTag,
 UserXP, Badge, UserBadge, UserStreak, AnkiCardSuggestion,
-StudyQuestion, LessonProgress, ElementError.
+StudyQuestion, LessonProgress, ElementError, UserMission.
 
 Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Sync
-surface: 30 tables. Full spec in
+surface: 31 tables. Full spec in
 [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md).
 
-## Plugins (12 shipped)
+## Plugins (13 shipped)
 
 All under `plugins/`. Routes mounted at `/api/plugins/<name>/*`.
 
@@ -447,6 +486,7 @@ All under `plugins/`. Routes mounted at `/api/plugins/<name>/*`.
 | notebooklm | /questions CRUD, /generate/{session,project}, /study-guide/{id} | Active-recall questions + study guide + ZIP export |
 | learning-repo | /render/{id}, /export-zip/{id}, /persist/{id} | Article-3 Git-backed Learning Repository (Markdown artefacts + opt-in `git commit` + `cycle-N-mastered` tags) |
 | content-loader | /sets, /sets/{src}/{id}/download, /sets/{src}/{id}/lessons[/{filename}] | EXP-002 — downloads structured lesson sets from public GitHub repos, caches locally (FS + Dexie). Foundation of the v1.27.0 no-API-key path. |
+| missions | /templates, /today/{user_id}, /regenerate/{user_id} | EXP-010 — daily missions: deterministic adaptive per-user/per-day goals (static catalog) evaluated against existing data; `UserMission` is the only new table. |
 
 All 10 hooks live in `backend/app/hookspecs.py`:
 `get_assessment_questions`, `calculate_profile`,
@@ -498,8 +538,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.38.0 baseline:** backend 1014 (+1 skipped) + plugins
-  928 + Vitest 2239 = **4181 tests** (+1 skipped). E2E
+- **v1.39.0 baseline:** backend 1020 (+1 skipped) + plugins
+  942 + Vitest 2295 = **4257 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (19 specs incl. /content + /lesson + /review +

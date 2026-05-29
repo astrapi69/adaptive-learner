@@ -59,6 +59,7 @@ plugins:
             Fortschritt: Progress
             Einstellungen: Settings
             Lob und Belohnungen: Praise and celebrations
+            Tägliche Missionen: Daily missions
             Konzept: Concept
             Philosophie: Philosophy
             Die sechs Methoden: The six methods
@@ -112,6 +113,7 @@ nav:
   - Fortschritt: de/user-guide/progress.md
   - Einstellungen: de/user-guide/settings.md
   - Lob und Belohnungen: de/user-guide/celebrations.md
+  - Tägliche Missionen: de/user-guide/missions.md
   - FAQ: de/user-guide/faq.md
 - Konzept:
   - Philosophie: de/concept/philosophy.md
@@ -128,6 +130,7 @@ nav:
   - KI-Integration: de/developer/ai-integration.md
   - Testen: de/developer/testing.md
   - Belohnungs-Schicht: de/developer/celebrations.md
+  - Tägliche Missionen: de/developer/missions.md
   - Deployment: de/developer/deployment.md
   - i18n: de/developer/i18n.md
   - Lektionsinhalte erstellen: de/developer/authoring-content.md
