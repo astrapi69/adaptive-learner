@@ -1202,6 +1202,10 @@ lesson:
       result_wrong: "Pek değil."
       empty: "Bu serbest metin alıştırmasının kabul edilen cevabı yok."
     word_tiles:
+      instructions: "Kutucukları doğru sıraya diz. Yerleştirmek için dokun; yeniden sıralamak için okları kullan veya sürükle."
+      reorder_aria: "Kutucuk {tile}, konum {n}/{total}. Yeniden sıralamak için ok tuşları, kaldırmak için Enter."
+      move_left: "Sola taşı"
+      move_right: "Sağa taşı"
       submit: "Cevabı kontrol et"
       retry: "Tekrar dene"
       answer_label: "Senin cevabın"

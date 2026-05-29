@@ -1307,6 +1307,10 @@
         "empty": "Diese Freitext-Übung hat keine akzeptierten Antworten."
       },
       "word_tiles": {
+        "instructions": "Bring die Kacheln in die richtige Reihenfolge. Tippe zum Platzieren; nutze die Pfeile oder ziehe zum Umordnen.",
+        "reorder_aria": "Kachel {tile}, Position {n} von {total}. Pfeiltasten zum Umordnen, Enter zum Entfernen.",
+        "move_left": "Nach links",
+        "move_right": "Nach rechts",
         "submit": "Antwort prüfen",
         "retry": "Erneut versuchen",
         "answer_label": "Deine Antwort",

@@ -423,3 +423,100 @@ describe("WordTilesExercise: edge cases", () => {
         expect(placedSlots[0].getAttribute("data-tile-index")).toBe("0");
     });
 });
+
+describe("WordTilesExercise: reorder within answer (UX bugfix)", () => {
+    function tileIndexAt(slot: number): string | null {
+        return screen
+            .getByTestId(`word-tile-placed-${slot}`)
+            .getAttribute("data-tile-index");
+    }
+
+    function placeCanonical(count: number) {
+        for (let i = 0; i < count; i++) {
+            fireEvent.click(screen.getByTestId(`word-tile-scrambled-${i}`));
+        }
+    }
+
+    it("renders the reorder instructions", () => {
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE_MULTI_ORDER}
+                onComplete={vi.fn()}
+            />,
+        );
+        expect(
+            screen.getByTestId("word-tiles-instructions"),
+        ).toBeInTheDocument();
+    });
+
+    it("move-right swaps a placed tile with the next one", () => {
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE_MULTI_ORDER}
+                onComplete={vi.fn()}
+            />,
+        );
+        placeCanonical(4); // placed = [0,1,2,3]
+        expect(tileIndexAt(0)).toBe("0");
+        expect(tileIndexAt(1)).toBe("1");
+        fireEvent.click(screen.getByTestId("word-tile-move-right-0"));
+        // placed = [1,0,2,3]
+        expect(tileIndexAt(0)).toBe("1");
+        expect(tileIndexAt(1)).toBe("0");
+    });
+
+    it("keyboard ArrowLeft moves a placed tile toward the front", () => {
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE_MULTI_ORDER}
+                onComplete={vi.fn()}
+            />,
+        );
+        placeCanonical(4); // [0,1,2,3]
+        fireEvent.keyDown(screen.getByTestId("word-tile-placed-2"), {
+            key: "ArrowLeft",
+        });
+        // tile at slot 2 (index 2) moves to slot 1 -> [0,2,1,3]
+        expect(tileIndexAt(1)).toBe("2");
+        expect(tileIndexAt(2)).toBe("1");
+    });
+
+    it("move arrows are bounded at the ends", () => {
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE_MULTI_ORDER}
+                onComplete={vi.fn()}
+            />,
+        );
+        placeCanonical(4);
+        expect(
+            (screen.getByTestId("word-tile-move-left-0") as HTMLButtonElement)
+                .disabled,
+        ).toBe(true);
+        expect(
+            (
+                screen.getByTestId(
+                    "word-tile-move-right-3",
+                ) as HTMLButtonElement
+            ).disabled,
+        ).toBe(true);
+    });
+
+    it("reorder produces a different submitted score (order matters)", () => {
+        const onComplete = vi.fn();
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE_MULTI_ORDER}
+                onComplete={onComplete}
+            />,
+        );
+        placeCanonical(4); // [0,1,2,3] == canonical -> correct
+        // Reorder to a wrong order: move slot 0 right twice -> [1,2,0,3].
+        fireEvent.click(screen.getByTestId("word-tile-move-right-0"));
+        fireEvent.click(screen.getByTestId("word-tile-move-right-1"));
+        fireEvent.click(screen.getByTestId("word-tiles-submit"));
+        expect(onComplete).toHaveBeenCalledWith(
+            expect.objectContaining({correct: 0, total: 1}),
+        );
+    });
+});

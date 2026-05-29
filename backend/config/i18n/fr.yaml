@@ -1204,6 +1204,10 @@ lesson:
       result_wrong: "Pas tout à fait."
       empty: "Cet exercice n'a pas de réponses acceptées."
     word_tiles:
+      instructions: "Mets les tuiles dans l'ordre. Touche pour placer ; utilise les flèches ou glisse pour réordonner."
+      reorder_aria: "Tuile {tile}, position {n} sur {total}. Flèches pour réordonner, Entrée pour retirer."
+      move_left: "Déplacer à gauche"
+      move_right: "Déplacer à droite"
       submit: "Vérifier la réponse"
       retry: "Réessayer"
       answer_label: "Ta réponse"

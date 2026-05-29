@@ -1307,6 +1307,10 @@
         "empty": "この自由記述演習には受け付ける答えがありません。"
       },
       "word_tiles": {
+        "instructions": "タイルを正しい順序に並べます。タップで配置し、矢印またはドラッグで並べ替えます。",
+        "reorder_aria": "タイル {tile}、{total} 個中 {n} 番目。矢印キーで並べ替え、Enter で削除。",
+        "move_left": "左へ移動",
+        "move_right": "右へ移動",
         "submit": "答えを確認",
         "retry": "もう一度",
         "answer_label": "あなたの答え",

@@ -1213,6 +1213,10 @@ lesson:
       result_wrong: "Not quite."
       empty: "This free-text exercise has no accepted answers."
     word_tiles:
+      instructions: "Arrange the tiles in order. Tap to place; use the arrows or drag to reorder."
+      reorder_aria: "Tile {tile}, position {n} of {total}. Arrow keys to reorder, Enter to remove."
+      move_left: "Move left"
+      move_right: "Move right"
       submit: "Check answer"
       retry: "Try again"
       answer_label: "Your answer"

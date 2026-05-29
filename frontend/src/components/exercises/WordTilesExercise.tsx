@@ -25,8 +25,8 @@
  * the touch surface large and works on every browser.
  */
 
-import {Check, RotateCcw, X} from "lucide-react";
-import {useMemo, useState} from "react";
+import {Check, ChevronLeft, ChevronRight, RotateCcw, X} from "lucide-react";
+import {useEffect, useMemo, useRef, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {deriveWordTilesAttempt} from "../../lib/element-attempt";
@@ -131,6 +131,22 @@ export default function WordTilesExercise({
         total: number;
     } | null>(null);
     const [showHint, setShowHint] = useState(false);
+    // Reorder-within-answer state (UX bugfix): the slot currently being
+    // dragged, and the slot to re-focus after a keyboard/arrow move so
+    // focus follows the tile to its new position.
+    const [dragSlot, setDragSlot] = useState<number | null>(null);
+    const [focusSlot, setFocusSlot] = useState<number | null>(null);
+    const placedListRef = useRef<HTMLUListElement>(null);
+
+    // After a reorder, return focus to the moved tile at its new slot.
+    useEffect(() => {
+        if (focusSlot === null) return;
+        const btn = placedListRef.current?.querySelector<HTMLButtonElement>(
+            `[data-slot="${focusSlot}"]`,
+        );
+        btn?.focus();
+        setFocusSlot(null);
+    }, [focusSlot, placed]);
 
     if (tiles.length === 0) {
         return (
@@ -156,6 +172,33 @@ export default function WordTilesExercise({
     const handleReturn = (index: number) => {
         if (submitted) return;
         setPlaced(placed.filter((i) => i !== index));
+    };
+
+    /** Move the placed tile at ``from`` to position ``to`` (splice
+     *  insert, so it works for both arrow ±1 and drag-to-position).
+     *  Refocuses the moved tile at its new slot for keyboard users. */
+    const reorder = (from: number, to: number) => {
+        if (submitted) return;
+        if (to < 0 || to >= placed.length || from === to) return;
+        const next = [...placed];
+        const [moved] = next.splice(from, 1);
+        next.splice(to, 0, moved);
+        setPlaced(next);
+        setFocusSlot(to);
+    };
+
+    const handleTileKeyDown = (
+        slot: number,
+        e: React.KeyboardEvent<HTMLButtonElement>,
+    ) => {
+        if (submitted) return;
+        if (e.key === "ArrowLeft") {
+            e.preventDefault();
+            reorder(slot, slot - 1);
+        } else if (e.key === "ArrowRight") {
+            e.preventDefault();
+            reorder(slot, slot + 1);
+        }
     };
 
     const handleSubmit = () => {
@@ -203,6 +246,16 @@ export default function WordTilesExercise({
                 {exercise.prompt}
             </p>
 
+            <p
+                className="word-tiles-instructions"
+                data-testid="word-tiles-instructions"
+            >
+                {t(
+                    "lesson.exercise.word_tiles.instructions",
+                    "Arrange the tiles in order. Tap to place; use the arrows or drag to reorder.",
+                )}
+            </p>
+
             <div
                 className="word-tiles-answer-row"
                 data-testid="word-tiles-answer-row"
@@ -223,9 +276,51 @@ export default function WordTilesExercise({
                         )}
                     </p>
                 ) : (
-                    <ul className="word-tiles-list word-tiles-list-placed">
+                    <ul
+                        className="word-tiles-list word-tiles-list-placed"
+                        ref={placedListRef}
+                    >
                         {placed.map((tileIndex, slotIndex) => (
-                            <li key={tileIndex}>
+                            <li
+                                key={tileIndex}
+                                className={`word-tile-slot${
+                                    dragSlot === slotIndex ? " is-dragging" : ""
+                                }`}
+                                draggable={!submitted}
+                                onDragStart={() => {
+                                    if (!submitted) setDragSlot(slotIndex);
+                                }}
+                                onDragOver={(e) => {
+                                    if (!submitted && dragSlot !== null) {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                onDrop={() => {
+                                    if (dragSlot !== null) {
+                                        reorder(dragSlot, slotIndex);
+                                    }
+                                    setDragSlot(null);
+                                }}
+                                onDragEnd={() => setDragSlot(null)}
+                            >
+                                {!submitted && (
+                                    <button
+                                        type="button"
+                                        className="word-tile-move word-tile-move-left"
+                                        onClick={() =>
+                                            reorder(slotIndex, slotIndex - 1)
+                                        }
+                                        disabled={slotIndex === 0}
+                                        tabIndex={-1}
+                                        aria-label={t(
+                                            "lesson.exercise.word_tiles.move_left",
+                                            "Move left",
+                                        )}
+                                        data-testid={`word-tile-move-left-${slotIndex}`}
+                                    >
+                                        <ChevronLeft size={14} aria-hidden="true" />
+                                    </button>
+                                )}
                                 <button
                                     type="button"
                                     className={`word-tile word-tile-placed${
@@ -238,12 +333,47 @@ export default function WordTilesExercise({
                                             : ""
                                     }`}
                                     onClick={() => handleReturn(tileIndex)}
+                                    onKeyDown={(e) =>
+                                        handleTileKeyDown(slotIndex, e)
+                                    }
                                     disabled={submitted}
                                     data-testid={`word-tile-placed-${slotIndex}`}
                                     data-tile-index={tileIndex}
+                                    data-slot={slotIndex}
+                                    aria-label={t(
+                                        "lesson.exercise.word_tiles.reorder_aria",
+                                        "Tile {tile}, position {n} of {total}. Arrow keys to reorder, Enter to remove.",
+                                    )
+                                        .replace("{tile}", tiles[tileIndex])
+                                        .replace("{n}", String(slotIndex + 1))
+                                        .replace(
+                                            "{total}",
+                                            String(placed.length),
+                                        )}
                                 >
                                     {tiles[tileIndex]}
                                 </button>
+                                {!submitted && (
+                                    <button
+                                        type="button"
+                                        className="word-tile-move word-tile-move-right"
+                                        onClick={() =>
+                                            reorder(slotIndex, slotIndex + 1)
+                                        }
+                                        disabled={slotIndex === placed.length - 1}
+                                        tabIndex={-1}
+                                        aria-label={t(
+                                            "lesson.exercise.word_tiles.move_right",
+                                            "Move right",
+                                        )}
+                                        data-testid={`word-tile-move-right-${slotIndex}`}
+                                    >
+                                        <ChevronRight
+                                            size={14}
+                                            aria-hidden="true"
+                                        />
+                                    </button>
+                                )}
                             </li>
                         ))}
                     </ul>

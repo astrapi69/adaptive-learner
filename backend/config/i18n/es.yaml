@@ -1204,6 +1204,10 @@ lesson:
       result_wrong: "Casi."
       empty: "Este ejercicio no tiene respuestas aceptadas."
     word_tiles:
+      instructions: "Ordena las fichas. Toca para colocar; usa las flechas o arrastra para reordenar."
+      reorder_aria: "Ficha {tile}, posición {n} de {total}. Flechas para reordenar, Enter para quitar."
+      move_left: "Mover a la izquierda"
+      move_right: "Mover a la derecha"
       submit: "Comprobar respuesta"
       retry: "Intentar de nuevo"
       answer_label: "Tu respuesta"

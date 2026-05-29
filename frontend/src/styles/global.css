@@ -3370,6 +3370,61 @@ select:focus {
   cursor: not-allowed;
 }
 
+/* Reorder-within-answer (UX bugfix): each placed tile is a slot with
+   move-arrow buttons + native drag. */
+.word-tile-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  cursor: grab;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.word-tile-slot.is-dragging {
+  cursor: grabbing;
+  transform: scale(1.05);
+  box-shadow: var(--shadow-elevated);
+  opacity: 0.85;
+}
+
+.word-tile-move {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  min-height: 44px;
+  padding: 0 2px;
+  border: none;
+  background: none;
+  color: var(--fg-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.word-tile-move:hover:not(:disabled) {
+  color: var(--accent);
+  background: var(--surface-2);
+}
+
+.word-tile-move:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.word-tiles-instructions {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--fg-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-tile-slot,
+  .word-tile-slot.is-dragging {
+    transition: none;
+    transform: none;
+  }
+}
+
 .word-tiles-hint-row {
   display: flex;
   align-items: center;
