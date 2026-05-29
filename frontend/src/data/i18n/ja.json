@@ -1382,6 +1382,16 @@
     }
   },
   "content": {
+    "import_lesson": {
+      "button": "レッスンをインポート",
+      "modal_title": "レッスンをインポート",
+      "choose_file": ".json または .zip ファイルを選択",
+      "invalid": "無効なファイル",
+      "preview": "{title} · {lang} · {lessons}レッスン · {exercises}演習",
+      "import": "インポート",
+      "imported": "レッスンをインポートしました。",
+      "failed": "レッスンをインポートできませんでした。"
+    },
     "my_lessons": {
       "export_set": "セットとしてエクスポート",
       "share": "コミュニティで共有",

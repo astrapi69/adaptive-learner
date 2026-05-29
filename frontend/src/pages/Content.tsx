@@ -31,6 +31,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import ImportLessonModal from "../components/content/ImportLessonModal";
 import { useI18n } from "../hooks/useI18n";
 import {
   buildContentSetZip,
@@ -69,6 +70,8 @@ export default function ContentPage() {
     null,
   );
   const [deleting, setDeleting] = useState(false);
+  // Phase 59E — import-lesson modal.
+  const [showImport, setShowImport] = useState(false);
 
   const loadSets = useCallback(async () => {
     try {
@@ -319,7 +322,17 @@ export default function ContentPage() {
         className="content-section content-my-lessons"
         data-testid="content-my-lessons"
       >
-        <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
+        <div className="content-section-head">
+          <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => setShowImport(true)}
+            data-testid="content-import-lesson"
+          >
+            {t("content.import_lesson.button", "Import Lesson")}
+          </button>
+        </div>
         {userSets.length === 0 ? (
           <p className="content-empty" data-testid="content-my-lessons-empty">
             {t(
@@ -542,6 +555,15 @@ export default function ContentPage() {
           })}
         </ul>
       )}
+
+      <ImportLessonModal
+        open={showImport}
+        onCancel={() => setShowImport(false)}
+        onImported={() => {
+          setShowImport(false);
+          void loadSets();
+        }}
+      />
 
       {deleteTarget && (
         <div className="modal-overlay" data-testid="my-lesson-delete-modal">

@@ -1270,6 +1270,15 @@ lesson:
     missing_params: "Nenhuma lição selecionada. Escolhe uma no explorador de conteúdo."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  import_lesson:
+    button: "Importar lição"
+    modal_title: "Importar uma lição"
+    choose_file: "Escolha um arquivo .json ou .zip"
+    invalid: "Arquivo inválido"
+    preview: "{title} · {lang} · {lessons} lições · {exercises} exercícios"
+    import: "Importar"
+    imported: "Lição importada."
+    failed: "Não foi possível importar a lição."
   my_lessons:
     export_set: "Exportar como conjunto"
     share: "Compartilhar com a comunidade"

@@ -1270,6 +1270,15 @@ lesson:
     missing_params: "Ders seçilmedi. İçerik tarayıcısından bir tane seç."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  import_lesson:
+    button: "Ders içe aktar"
+    modal_title: "Bir ders içe aktar"
+    choose_file: ".json veya .zip dosyası seç"
+    invalid: "Geçersiz dosya"
+    preview: "{title} · {lang} · {lessons} ders · {exercises} alıştırma"
+    import: "İçe aktar"
+    imported: "Ders içe aktarıldı."
+    failed: "Ders içe aktarılamadı."
   my_lessons:
     export_set: "Set olarak dışa aktar"
     share: "Toplulukla paylaş"

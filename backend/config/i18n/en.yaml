@@ -1281,6 +1281,15 @@ lesson:
     missing_params: "No lesson selected. Browse content sets to pick one."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  import_lesson:
+    button: "Import Lesson"
+    modal_title: "Import a lesson"
+    choose_file: "Choose a .json or .zip file"
+    invalid: "Invalid file"
+    preview: "{title} · {lang} · {lessons} lessons · {exercises} exercises"
+    import: "Import"
+    imported: "Lesson imported."
+    failed: "Could not import the lesson."
   my_lessons:
     export_set: "Export as set"
     share: "Share with Community"

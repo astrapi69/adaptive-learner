@@ -1382,6 +1382,16 @@
     }
   },
   "content": {
+    "import_lesson": {
+      "button": "Εισαγωγή μαθήματος",
+      "modal_title": "Εισαγωγή μαθήματος",
+      "choose_file": "Επιλέξτε αρχείο .json ή .zip",
+      "invalid": "Μη έγκυρο αρχείο",
+      "preview": "{title} · {lang} · {lessons} μαθήματα · {exercises} ασκήσεις",
+      "import": "Εισαγωγή",
+      "imported": "Το μάθημα εισήχθη.",
+      "failed": "Δεν ήταν δυνατή η εισαγωγή του μαθήματος."
+    },
     "my_lessons": {
       "export_set": "Εξαγωγή ως σύνολο",
       "share": "Κοινοποίηση στην κοινότητα",

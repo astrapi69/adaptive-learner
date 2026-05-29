@@ -1382,6 +1382,16 @@
     }
   },
   "content": {
+    "import_lesson": {
+      "button": "Lektion importieren",
+      "modal_title": "Lektion importieren",
+      "choose_file": "Wähle eine .json- oder .zip-Datei",
+      "invalid": "Ungültige Datei",
+      "preview": "{title} · {lang} · {lessons} Lektionen · {exercises} Übungen",
+      "import": "Importieren",
+      "imported": "Lektion importiert.",
+      "failed": "Die Lektion konnte nicht importiert werden."
+    },
     "my_lessons": {
       "export_set": "Als Content-Set exportieren",
       "share": "Für die Community bereitstellen",

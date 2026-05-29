@@ -295,6 +295,15 @@ describe("Content — My Lessons (Phase 59C)", () => {
     );
   });
 
+  it("opens the import-lesson modal from the Import button", async () => {
+    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
+    renderPage();
+    await screen.findByTestId("content-page");
+    expect(screen.queryByTestId("import-lesson-modal")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("content-import-lesson"));
+    expect(screen.getByTestId("import-lesson-modal")).toBeInTheDocument();
+  });
+
   it("Share with Community opens a pre-filled GitHub issue", async () => {
     listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
     const openSpy = vi.fn();
