@@ -2407,6 +2407,83 @@ select:focus {
   }
 }
 
+/* =============================================================
+   EXP-008 / Phase 55C — celebration screen: confetti + message
+   -------------------------------------------------------------
+   Confetti is CSS-only (30 falling/rotating particles), GPU
+   accelerated (transform + opacity), and contained inside the
+   summary card. The Confetti component renders nothing under
+   prefers-reduced-motion; these rules also hard-hide it as a
+   belt-and-braces guard. The headline message warms to the
+   accent colour on a perfect (3-star) run.
+   =============================================================*/
+.lesson-summary {
+  position: relative;
+}
+
+.lesson-summary-message {
+  margin: var(--space-2) 0 var(--space-3);
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.lesson-summary-message[data-stars="3"] {
+  color: var(--accent);
+}
+
+.confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -14px;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: confetti-fall var(--confetti-duration, 2000ms) ease-in
+    var(--confetti-delay, 0ms) 1 forwards;
+}
+
+.confetti-piece.is-round {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translate3d(0, -14px, 0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(
+        var(--confetti-drift, 0),
+        420px,
+        0
+      )
+      rotate(var(--confetti-rotate, 360deg));
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+  .confetti-piece {
+    animation: none;
+  }
+}
+
 @media (max-width: 600px) {
   .lesson-nav {
     flex-direction: column;

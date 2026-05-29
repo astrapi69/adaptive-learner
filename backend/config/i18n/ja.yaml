@@ -1188,6 +1188,10 @@ lesson:
     repeat: "レッスンを繰り返す"
     restart: "最初からやり直す"
     back_to_browser: "コンテンツブラウザに戻る"
+    encourage_0: "練習あるのみ!"
+    encourage_1: "良いスタート、その調子!"
+    encourage_2: "もう少しで満点!"
+    encourage_3: "満点!"
   error:
     load_failed: "レッスンを読み込めませんでした。"
     missing_params: "レッスンが選択されていません。コンテンツブラウザから選んでください。"

@@ -42,9 +42,14 @@ import remarkGfm from "remark-gfm";
 import CorrectionBlock from "../components/exercises/CorrectionBlock";
 import DiffHighlight from "../components/exercises/DiffHighlight";
 import {ExerciseDispatcher} from "../components/exercises/ExerciseDispatcher";
+import Confetti from "../components/feedback/Confetti";
+import {useCountUp} from "../hooks/useCountUp";
+import {useFeedbackIntensity} from "../hooks/useFeedbackIntensity";
 import {useI18n} from "../hooks/useI18n";
 import {useLesson} from "../hooks/useLesson";
+import {allowsConfetti} from "../lib/feedback/feedbackPref";
 import {tokenDiff} from "../lib/exercises/token-diff";
+import {nextPraise} from "../lib/praise/phrase-picker";
 import {
     parseStepAnchor,
     rewriteAnchors,
@@ -562,7 +567,8 @@ function LessonSummary({
     onRepeat,
     onExit,
 }: LessonSummaryProps) {
-    const {t} = useI18n();
+    const {t, lang} = useI18n();
+    const intensity = useFeedbackIntensity();
     const correct = progress?.score_correct ?? 0;
     const total = progress?.score_total ?? 0;
     const seconds = progress?.time_spent_seconds ?? 0;
@@ -576,6 +582,35 @@ function LessonSummary({
         [lesson, progress],
     );
 
+    // Count the score percentage up from 0 (instant under
+    // "subtle" / reduced motion - see useCountUp).
+    const animatedPct = useCountUp(scorePct, 1000, intensity !== "subtle");
+
+    // Confetti only on a perfect (3-star) lesson, and only when
+    // the intensity allows it. Self-dismisses after the burst.
+    const celebrateConfetti = stars === 3 && allowsConfetti(intensity);
+    const [showConfetti, setShowConfetti] = useState(celebrateConfetti);
+
+    // The headline message: a "lesson_complete" praise phrase on a
+    // perfect run (when phrases are allowed), otherwise the
+    // per-star encouraging message. Picked once on mount.
+    const ENCOURAGE_FALLBACK: Record<StarRating, string> = {
+        0: "Practice makes perfect!",
+        1: "Good start - keep going!",
+        2: "Almost perfect!",
+        3: "Perfect score!",
+    };
+    const [celebrateMessage] = useState<string>(() => {
+        if (stars === 3 && intensity !== "subtle") {
+            const picked = nextPraise("lesson_complete", lang);
+            if (picked) return picked.phrase;
+        }
+        return t(
+            `lesson.summary.encourage_${stars}`,
+            ENCOURAGE_FALLBACK[stars],
+        );
+    });
+
     return (
         <section
             className={`lesson-summary${stars === 3 ? " is-celebrating" : ""}`}
@@ -583,6 +618,9 @@ function LessonSummary({
             data-stars={String(stars)}
             aria-label={t("lesson.summary.aria_label", "Lesson summary")}
         >
+            {celebrateConfetti && showConfetti && (
+                <Confetti onDone={() => setShowConfetti(false)} />
+            )}
             <h2>
                 {isCompleted ? (
                     <CheckCircle2 size={20} aria-hidden="true" />
@@ -617,6 +655,14 @@ function LessonSummary({
                 })}
             </div>
 
+            <p
+                className="lesson-summary-message"
+                data-testid="lesson-summary-message"
+                data-stars={String(stars)}
+            >
+                {celebrateMessage}
+            </p>
+
             <div
                 className="lesson-summary-score-bar"
                 role="progressbar"
@@ -631,7 +677,7 @@ function LessonSummary({
             >
                 <div
                     className="lesson-summary-score-fill"
-                    style={{width: `${scorePct}%`}}
+                    style={{width: `${animatedPct}%`}}
                 />
                 <span className="lesson-summary-score-label">
                     <strong>
@@ -640,7 +686,10 @@ function LessonSummary({
                     <span data-testid="lesson-summary-score">
                         {correct} / {total}
                     </span>{" "}
-                    ({scorePct}%)
+                    (<span data-testid="lesson-summary-score-pct">
+                        {animatedPct}
+                    </span>
+                    %)
                 </span>
             </div>
 

@@ -1285,7 +1285,11 @@
       "next_lesson": "Next lesson",
       "repeat": "Repeat lesson",
       "restart": "Start over",
-      "back_to_browser": "Back to content browser"
+      "back_to_browser": "Back to content browser",
+      "encourage_0": "Practice makes perfect!",
+      "encourage_1": "Good start - keep going!",
+      "encourage_2": "Almost perfect!",
+      "encourage_3": "Perfect score!"
     },
     "correction": {
       "title": "Correction round",

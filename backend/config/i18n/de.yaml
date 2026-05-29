@@ -1193,6 +1193,10 @@ lesson:
     repeat: "Lektion wiederholen"
     restart: "Neu beginnen"
     back_to_browser: "Zurück zur Inhaltsübersicht"
+    encourage_0: "Übung macht den Meister!"
+    encourage_1: "Guter Anfang - bleib dran!"
+    encourage_2: "Fast perfekt!"
+    encourage_3: "Volle Punktzahl!"
   error:
     load_failed: "Lektion konnte nicht geladen werden."
     missing_params: "Keine Lektion ausgewählt. Wähle eine aus der Inhaltsübersicht."

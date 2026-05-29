@@ -1294,7 +1294,11 @@
       "next_lesson": "Lección siguiente",
       "repeat": "Repetir lección",
       "restart": "Empezar de nuevo",
-      "back_to_browser": "Volver al explorador de contenido"
+      "back_to_browser": "Volver al explorador de contenido",
+      "encourage_0": "¡La práctica hace al maestro!",
+      "encourage_1": "¡Buen comienzo, sigue así!",
+      "encourage_2": "¡Casi perfecto!",
+      "encourage_3": "¡Puntuación perfecta!"
     },
     "error": {
       "load_failed": "No se pudo cargar la lección.",

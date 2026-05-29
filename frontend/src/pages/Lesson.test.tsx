@@ -404,6 +404,24 @@ describe("LessonPage: ready state rendering", () => {
         expect(summary.className).toContain("is-celebrating");
     });
 
+    it("summary fires confetti + a celebration message on a perfect run", () => {
+        _ready(2, {...PROGRESS, score_correct: 4, score_total: 4});
+        renderAtPath(VALID_PATH);
+        expect(screen.getByTestId("confetti")).toBeInTheDocument();
+        const message = screen.getByTestId("lesson-summary-message");
+        expect(message).toHaveAttribute("data-stars", "3");
+        expect(message.textContent?.trim().length).toBeGreaterThan(0);
+    });
+
+    it("summary shows no confetti below 3 stars but still shows a message", () => {
+        _ready(2, {...PROGRESS, score_correct: 1, score_total: 4});
+        renderAtPath(VALID_PATH);
+        expect(screen.queryByTestId("confetti")).not.toBeInTheDocument();
+        const message = screen.getByTestId("lesson-summary-message");
+        expect(message).toHaveAttribute("data-stars", "0");
+        expect(message.textContent?.trim().length).toBeGreaterThan(0);
+    });
+
     it("summary surfaces 0 stars below 50% (no celebration)", () => {
         _ready(2, {...PROGRESS, score_correct: 1, score_total: 4});
         renderAtPath(VALID_PATH);

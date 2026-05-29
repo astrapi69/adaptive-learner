@@ -1190,6 +1190,10 @@ lesson:
     repeat: "Recommencer la leçon"
     restart: "Recommencer"
     back_to_browser: "Retour à l'explorateur de contenu"
+    encourage_0: "C'est en forgeant qu'on devient forgeron !"
+    encourage_1: "Bon début, continue !"
+    encourage_2: "Presque parfait !"
+    encourage_3: "Score parfait !"
   error:
     load_failed: "Impossible de charger la leçon."
     missing_params: "Aucune leçon sélectionnée. Choisis-en une dans l'explorateur de contenu."

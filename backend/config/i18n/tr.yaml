@@ -1188,6 +1188,10 @@ lesson:
     repeat: "Dersi tekrarla"
     restart: "Baştan başla"
     back_to_browser: "İçerik tarayıcısına dön"
+    encourage_0: "Pratik mükemmelleştirir!"
+    encourage_1: "İyi başlangıç - devam et!"
+    encourage_2: "Neredeyse mükemmel!"
+    encourage_3: "Tam puan!"
   error:
     load_failed: "Ders yüklenemedi."
     missing_params: "Ders seçilmedi. İçerik tarayıcısından bir tane seç."

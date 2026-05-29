@@ -1188,6 +1188,10 @@ lesson:
     repeat: "Repetir lição"
     restart: "Recomeçar"
     back_to_browser: "Voltar ao explorador de conteúdo"
+    encourage_0: "A prática leva à perfeição!"
+    encourage_1: "Bom começo - continue!"
+    encourage_2: "Quase perfeito!"
+    encourage_3: "Pontuação perfeita!"
   error:
     load_failed: "Não foi possível carregar a lição."
     missing_params: "Nenhuma lição selecionada. Escolhe uma no explorador de conteúdo."
