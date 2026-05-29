@@ -1258,7 +1258,9 @@ export const api = {
     saveUserSet: (input: import("../storage/types").SaveUserSetInput) =>
       apiCall<import("../storage/types").ContentSetEntry>(
         "/plugins/content-loader/user-sets",
-        { method: "POST", body: JSON.stringify(input) },
+        // apiCall JSON.stringifies the body itself — pass the raw
+        // object (double-stringify would 422 the Pydantic body).
+        { method: "POST", body: input },
       ),
     /** DELETE /api/plugins/content-loader/sets/{src}/{id} —
      *  Phase 59C / v1.42.0. */
