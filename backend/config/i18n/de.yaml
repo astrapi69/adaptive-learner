@@ -324,6 +324,15 @@ settings:
   button_tooltips_description: "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv."
   developer_mode: Entwicklermodus
   developer_mode_description: "Zeigt vollständige technische Details (Statuscode, Endpunkt, Stack-Trace) in Fehlermeldungen. Bei aktivem Modus erscheint ein 'DEV'-Hinweis in der Navigationsleiste. Standardmäßig aus; nur zum Debugging einschalten."
+  feedback_intensity: "Feedback-Intensität"
+  feedback_intensity_description: "Wie ausgiebig die App deinen Fortschritt feiert."
+  feedback_intensity_subtle: "Dezent"
+  feedback_intensity_subtle_desc: "Nur die Richtig/Falsch-Farbe. Keine Phrasen, kein Konfetti, keine Meilenstein-Einblendungen."
+  feedback_intensity_normal: "Normal"
+  feedback_intensity_normal_desc: "Animationen, Lob-Phrasen und Konfetti bei voller Punktzahl."
+  feedback_intensity_enthusiastic: "Ausführlich"
+  feedback_intensity_enthusiastic_desc: "Alles, plus Meilenstein-Einblendungen und Lob bei jeder richtigen Antwort."
+  feedback_intensity_reduced_motion_hint: "In deinem System ist 'Bewegung reduzieren' aktiv, daher bleibt das Feedback unabhängig von dieser Einstellung dezent."
   section_storage_mode: Speicher-Modus
   storage_mode_help: Waehle, wo deine Daten liegen. Lokal speichert alles in diesem Browser; Server verbindet sich mit dem AdaptiveLearner-Backend.
   storage_mode_api: Server

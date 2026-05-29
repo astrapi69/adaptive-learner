@@ -324,6 +324,15 @@ settings:
   button_tooltips_description: "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de ecrã permanecem ativas independentemente."
   developer_mode: Modo desenvolvedor
   developer_mode_description: "Mostra todos os detalhes técnicos (código de estado, endpoint, rastreio) nas notificações de erro. Aparece uma etiqueta 'DEV' na barra de navegação enquanto estiver ativo. Desativado por defeito; ativar apenas para depuração."
+  feedback_intensity: "Intensidade do feedback"
+  feedback_intensity_description: "Com quanta efusividade o app celebra o seu progresso."
+  feedback_intensity_subtle: "Discreto"
+  feedback_intensity_subtle_desc: "Apenas a cor de certo/errado. Sem frases, confete ou avisos de marcos."
+  feedback_intensity_normal: "Normal"
+  feedback_intensity_normal_desc: "Animações, frases de elogio e confete em pontuação perfeita."
+  feedback_intensity_enthusiastic: "Entusiasmado"
+  feedback_intensity_enthusiastic_desc: "Tudo, mais avisos de marcos e elogio a cada resposta correta."
+  feedback_intensity_reduced_motion_hint: "Seu sistema está com 'reduzir movimento' ativo, então o feedback permanece discreto."
   section_storage_mode: Modo de armazenamento
   storage_mode_help: Escolha onde seus dados ficam. O modo Local mantém tudo neste navegador; o modo Servidor se comunica com o backend do AdaptiveLearner.
   storage_mode_api: Servidor

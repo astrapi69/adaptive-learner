@@ -6,6 +6,7 @@ import AboutTab from "../components/about/AboutTab";
 import BackupSection from "../components/BackupSection";
 import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
+import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import LearningRepoSettingsSection from "../components/LearningRepoSettingsSection";
 import HelpBrowser from "../components/help/HelpBrowser";
@@ -407,6 +408,7 @@ export default function Settings() {
                         }
                     />
                 </label>
+                <FeedbackIntensityControl />
             </section>
 
             <section className="settings-section">

@@ -324,6 +324,15 @@ settings:
   button_tooltips_description: "アイコンボタンにカーソルを合わせたとき、その機能を説明するツールチップを表示します。スクリーンリーダー用のラベルは、この設定に関わらず常に有効です。"
   developer_mode: 開発者モード
   developer_mode_description: "エラー通知に技術的な詳細（ステータスコード、エンドポイント、スタックトレース）をすべて表示します。有効中はナビゲーションバーに 'DEV' バッジが表示されます。既定は無効。デバッグ用にのみ有効化してください。"
+  feedback_intensity: "フィードバックの強さ"
+  feedback_intensity_description: "アプリがあなたの進歩をどれだけ盛大に祝うか。"
+  feedback_intensity_subtle: "控えめ"
+  feedback_intensity_subtle_desc: "正誤の色のみ。フレーズ、紙吹雪、マイルストーン表示なし。"
+  feedback_intensity_normal: "標準"
+  feedback_intensity_normal_desc: "アニメーション、称賛フレーズ、満点での紙吹雪。"
+  feedback_intensity_enthusiastic: "にぎやか"
+  feedback_intensity_enthusiastic_desc: "すべて、さらにマイルストーン表示と正解ごとの称賛。"
+  feedback_intensity_reduced_motion_hint: "システムで「視差効果を減らす」が有効なため、この設定に関わらずフィードバックは控えめになります。"
   section_storage_mode: ストレージモード
   storage_mode_help: データの保存場所を選択してください。ローカルモードはすべてをこの ブラウザに保存します。サーバーモードは AdaptiveLearner のバックエンドと 通信します。
   storage_mode_api: サーバー

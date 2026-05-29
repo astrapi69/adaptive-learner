@@ -324,6 +324,15 @@ settings:
   button_tooltips_description: "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless."
   developer_mode: Developer Mode
   developer_mode_description: "Show full technical detail (status code, endpoint, stack trace) in error toasts. A 'DEV' badge appears in the navigation bar while this is on. Off by default; opt-in for debugging."
+  feedback_intensity: "Feedback Intensity"
+  feedback_intensity_description: "How loudly the app celebrates your progress."
+  feedback_intensity_subtle: "Subtle"
+  feedback_intensity_subtle_desc: "Only the correct/wrong colour. No phrases, confetti, or milestone overlays."
+  feedback_intensity_normal: "Normal"
+  feedback_intensity_normal_desc: "Animations, praise phrases, and confetti on a perfect score."
+  feedback_intensity_enthusiastic: "Enthusiastic"
+  feedback_intensity_enthusiastic_desc: "Everything, plus milestone overlays and praise on every correct answer."
+  feedback_intensity_reduced_motion_hint: "Reduced-motion is on in your system, so feedback is kept subtle regardless of this setting."
   section_storage_mode: Storage mode
   storage_mode_help: Choose where your data lives. Local mode keeps everything in this browser; Server mode talks to the AdaptiveLearner backend.
   storage_mode_api: Server

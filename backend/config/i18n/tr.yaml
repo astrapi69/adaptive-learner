@@ -324,6 +324,15 @@ settings:
   button_tooltips_description: "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır."
   developer_mode: Geliştirici Modu
   developer_mode_description: "Hata bildirimlerinde tüm teknik ayrıntıları (durum kodu, uç nokta, yığın izi) gösterir. Etkinken gezinme çubuğunda 'DEV' rozeti görünür. Varsayılan olarak kapalı; yalnızca hata ayıklama için açın."
+  feedback_intensity: "Geri bildirim yoğunluğu"
+  feedback_intensity_description: "Uygulamanın ilerlemeni ne kadar coşkuyla kutladığı."
+  feedback_intensity_subtle: "Sade"
+  feedback_intensity_subtle_desc: "Yalnızca doğru/yanlış rengi. İfade, konfeti veya kilometre taşı bildirimi yok."
+  feedback_intensity_normal: "Normal"
+  feedback_intensity_normal_desc: "Animasyonlar, övgü ifadeleri ve tam puanda konfeti."
+  feedback_intensity_enthusiastic: "Coşkulu"
+  feedback_intensity_enthusiastic_desc: "Her şey, ayrıca kilometre taşı bildirimleri ve her doğru yanıtta övgü."
+  feedback_intensity_reduced_motion_hint: "Sisteminde 'hareketi azalt' açık, bu yüzden geri bildirim bu ayardan bağımsız olarak sade kalır."
   section_storage_mode: Depolama modu
   storage_mode_help: Verilerinin nerede yaşayacağını seç. Yerel mod her şeyi bu tarayıcıda tutar; Sunucu modu AdaptiveLearner arka uçuyla iletişim kurar.
   storage_mode_api: Sunucu

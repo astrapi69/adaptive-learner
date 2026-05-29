@@ -2581,6 +2581,43 @@ select:focus {
   }
 }
 
+/* =============================================================
+   EXP-008 / Phase 55E — feedback intensity control
+   =============================================================*/
+.form-row-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feedback-intensity-options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.feedback-intensity-option {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.feedback-intensity-option input[type="radio"] {
+  margin-top: 4px;
+  flex: 0 0 auto;
+}
+
+.feedback-intensity-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 @media (max-width: 600px) {
   .lesson-nav {
     flex-direction: column;
