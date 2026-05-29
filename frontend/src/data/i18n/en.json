@@ -1382,6 +1382,9 @@
     }
   },
   "content": {
+    "save_adaptive": {
+      "button": "Save this lesson?"
+    },
     "import_lesson": {
       "button": "Import Lesson",
       "modal_title": "Import a lesson",

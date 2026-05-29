@@ -1272,6 +1272,8 @@ lesson:
     missing_params: "Aucune leçon sélectionnée. Choisis-en une dans l'explorateur de contenu."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  save_adaptive:
+    button: "Enregistrer cette leçon ?"
   import_lesson:
     button: "Importer une leçon"
     modal_title: "Importer une leçon"

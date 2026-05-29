@@ -1382,6 +1382,9 @@
     }
   },
   "content": {
+    "save_adaptive": {
+      "button": "Αποθήκευση αυτού του μαθήματος;"
+    },
     "import_lesson": {
       "button": "Εισαγωγή μαθήματος",
       "modal_title": "Εισαγωγή μαθήματος",

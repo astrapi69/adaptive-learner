@@ -1281,6 +1281,8 @@ lesson:
     missing_params: "No lesson selected. Browse content sets to pick one."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  save_adaptive:
+    button: "Save this lesson?"
   import_lesson:
     button: "Import Lesson"
     modal_title: "Import a lesson"

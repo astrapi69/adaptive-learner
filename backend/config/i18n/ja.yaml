@@ -1270,6 +1270,8 @@ lesson:
     missing_params: "レッスンが選択されていません。コンテンツブラウザから選んでください。"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  save_adaptive:
+    button: "このレッスンを保存しますか？"
   import_lesson:
     button: "レッスンをインポート"
     modal_title: "レッスンをインポート"

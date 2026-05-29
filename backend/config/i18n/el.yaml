@@ -1272,6 +1272,8 @@ lesson:
     missing_params: "Δεν έχει επιλεγεί μάθημα. Διάλεξε ένα από τον περιηγητή περιεχομένου."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  save_adaptive:
+    button: "Αποθήκευση αυτού του μαθήματος;"
   import_lesson:
     button: "Εισαγωγή μαθήματος"
     modal_title: "Εισαγωγή μαθήματος"

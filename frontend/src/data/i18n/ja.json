@@ -1382,6 +1382,9 @@
     }
   },
   "content": {
+    "save_adaptive": {
+      "button": "このレッスンを保存しますか？"
+    },
     "import_lesson": {
       "button": "レッスンをインポート",
       "modal_title": "レッスンをインポート",

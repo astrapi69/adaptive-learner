@@ -1382,6 +1382,9 @@
     }
   },
   "content": {
+    "save_adaptive": {
+      "button": "Bu dersi kaydet?"
+    },
     "import_lesson": {
       "button": "Ders içe aktar",
       "modal_title": "Bir ders içe aktar",

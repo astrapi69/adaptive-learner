@@ -1270,6 +1270,8 @@ lesson:
     missing_params: "Nenhuma lição selecionada. Escolhe uma no explorador de conteúdo."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  save_adaptive:
+    button: "Salvar esta lição?"
   import_lesson:
     button: "Importar lição"
     modal_title: "Importar uma lição"

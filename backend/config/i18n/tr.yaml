@@ -1270,6 +1270,8 @@ lesson:
     missing_params: "Ders seçilmedi. İçerik tarayıcısından bir tane seç."
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  save_adaptive:
+    button: "Bu dersi kaydet?"
   import_lesson:
     button: "Ders içe aktar"
     modal_title: "Bir ders içe aktar"
