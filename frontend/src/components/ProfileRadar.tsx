@@ -7,6 +7,7 @@ import {
     ResponsiveContainer,
 } from "recharts";
 
+import {useChartTheme} from "../hooks/useChartTheme";
 import {useI18n} from "../hooks/useI18n";
 import {LEARNING_METHODS, METHOD_COLORS} from "../lib/constants";
 import type {LearningProfile} from "../types";
@@ -33,6 +34,7 @@ interface ProfileRadarProps {
  */
 export default function ProfileRadar({profile, height = 320}: ProfileRadarProps) {
     const {t} = useI18n();
+    const chart = useChartTheme();
     const data = LEARNING_METHODS.map((method) => ({
         method,
         label: t(`methods.${method}.label`, method),
@@ -92,18 +94,20 @@ export default function ProfileRadar({profile, height = 320}: ProfileRadarProps)
                     outerRadius="75%"
                     data={data}
                 >
-                    <PolarGrid />
-                    <PolarAngleAxis dataKey="label" />
+                    <PolarGrid stroke={chart.grid} />
+                    <PolarAngleAxis dataKey="label" tick={{fill: chart.axis}} />
                     <PolarRadiusAxis
                         angle={90}
                         domain={[0, 1]}
                         tickCount={5}
+                        stroke={chart.axis}
+                        tick={{fill: chart.axis}}
                     />
                     <Radar
                         name="profile"
                         dataKey="value"
-                        stroke={METHOD_COLORS[profile.dominant_method] ?? "#6366f1"}
-                        fill={METHOD_COLORS[profile.dominant_method] ?? "#6366f1"}
+                        stroke={METHOD_COLORS[profile.dominant_method] ?? chart.accent}
+                        fill={METHOD_COLORS[profile.dominant_method] ?? chart.accent}
                         fillOpacity={0.32}
                     />
                 </RadarChart>

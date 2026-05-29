@@ -9,7 +9,9 @@ import {
     YAxis,
 } from "recharts";
 
+import {useChartTheme} from "../hooks/useChartTheme";
 import {useI18n} from "../hooks/useI18n";
+import {tooltipContentStyle} from "../lib/chartTheme";
 import type {TrackingSummary} from "../types";
 import ChartSummary from "./charts/ChartSummary";
 
@@ -35,6 +37,7 @@ interface TimelinePoint {
  */
 export default function ProgressTimeline({summary, height = 240}: ProgressTimelineProps) {
     const {t} = useI18n();
+    const chart = useChartTheme();
     if (!summary || summary.recent_understanding.length === 0) {
         return (
             <div className="chart-tile" data-testid="progress-timeline-empty">
@@ -92,16 +95,21 @@ export default function ProgressTimeline({summary, height = 240}: ProgressTimeli
                 initialDimension={{width: 100, height: 100}}
             >
                 <LineChart data={points} margin={{top: 12, right: 24, bottom: 12, left: 0}}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="index" />
-                    <YAxis domain={[0, 1]} tickCount={6} />
-                    <Tooltip />
+                    <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
+                    <XAxis dataKey="index" stroke={chart.axis} tick={{fill: chart.axis}} />
+                    <YAxis
+                        domain={[0, 1]}
+                        tickCount={6}
+                        stroke={chart.axis}
+                        tick={{fill: chart.axis}}
+                    />
+                    <Tooltip contentStyle={tooltipContentStyle(chart)} />
                     <Legend />
                     <Line
                         type="monotone"
                         dataKey="understanding"
                         name={t("progress.commit_understanding", "Understanding")}
-                        stroke="#10b981"
+                        stroke={chart.success}
                         strokeWidth={2}
                         dot={{r: 3}}
                     />
@@ -109,7 +117,7 @@ export default function ProgressTimeline({summary, height = 240}: ProgressTimeli
                         type="monotone"
                         dataKey="stress"
                         name={t("progress.commit_stress", "Stress")}
-                        stroke="#ef4444"
+                        stroke={chart.error}
                         strokeWidth={2}
                         dot={{r: 3}}
                     />

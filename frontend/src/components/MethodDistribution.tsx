@@ -9,7 +9,9 @@ import {
     YAxis,
 } from "recharts";
 
+import {useChartTheme} from "../hooks/useChartTheme";
 import {useI18n} from "../hooks/useI18n";
+import {tooltipContentStyle} from "../lib/chartTheme";
 import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
 import type {TrackingSummary} from "../types";
 import ChartSummary from "./charts/ChartSummary";
@@ -42,6 +44,7 @@ interface BarDatum {
  */
 export default function MethodDistribution({summary, height = 240}: MethodDistributionProps) {
     const {t} = useI18n();
+    const chart = useChartTheme();
     if (!summary || summary.total_sessions === 0) {
         return (
             <div className="chart-tile" data-testid="method-distribution-empty">
@@ -98,10 +101,19 @@ export default function MethodDistribution({summary, height = 240}: MethodDistri
                 initialDimension={{width: 100, height: 100}}
             >
                 <BarChart data={data} margin={{top: 12, right: 16, bottom: 12, left: 0}}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="label" interval={0} angle={-20} textAnchor="end" height={56} />
-                    <YAxis allowDecimals={false} />
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chart.grid} />
+                    <XAxis
+                        dataKey="label"
+                        interval={0}
+                        angle={-20}
+                        textAnchor="end"
+                        height={56}
+                        stroke={chart.axis}
+                        tick={{fill: chart.axis}}
+                    />
+                    <YAxis allowDecimals={false} stroke={chart.axis} tick={{fill: chart.axis}} />
                     <Tooltip
+                        contentStyle={tooltipContentStyle(chart)}
                         // Tooltip is informational only; the
                         // chart's primary metric (count) shows on
                         // the Y axis. The bar payload carries the
