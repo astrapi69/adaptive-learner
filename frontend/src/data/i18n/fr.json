@@ -1382,6 +1382,59 @@
     }
   },
   "content": {
+    "save_adaptive": {
+      "button": "Enregistrer cette leçon ?"
+    },
+    "import_lesson": {
+      "button": "Importer une leçon",
+      "modal_title": "Importer une leçon",
+      "choose_file": "Choisissez un fichier .json ou .zip",
+      "invalid": "Fichier non valide",
+      "preview": "{title} · {lang} · {lessons} leçons · {exercises} exercices",
+      "import": "Importer",
+      "imported": "Leçon importée.",
+      "failed": "Impossible d'importer la leçon."
+    },
+    "my_lessons": {
+      "export_set": "Exporter comme ensemble",
+      "share": "Partager avec la communauté",
+      "exported": "Leçon exportée.",
+      "title": "Mes leçons",
+      "downloaded_title": "Ensembles téléchargés",
+      "empty": "Importez une conversation et analysez-la pour créer votre première leçon.",
+      "from_analysis": "depuis l'analyse",
+      "from_adaptive": "depuis une leçon adaptative",
+      "from_imported": "importée",
+      "play": "Jouer",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "export": "Exporter",
+      "delete_confirm": "Supprimer cette leçon ? Cette action est irréversible.",
+      "deleted": "Leçon supprimée.",
+      "delete_failed": "Impossible de supprimer la leçon."
+    },
+    "save_lesson": {
+      "button": "Enregistrer comme leçon hors ligne",
+      "modal_title": "Enregistrer comme leçon hors ligne",
+      "title_label": "Titre de la leçon",
+      "summary": "{exercises} exercices · {steps} étapes de théorie · ~{minutes} min",
+      "theory_only": "Pas assez de vocabulaire pour des exercices. Importez une conversation plus longue pour plus de matériel.",
+      "save": "Enregistrer",
+      "saved": "Enregistré dans Mes leçons.",
+      "failed": "Impossible d'enregistrer la leçon."
+    },
+    "lesson_gen": {
+      "fallback_title": "Leçon importée",
+      "focus": "Point clé",
+      "topics": "Thèmes",
+      "strengths": "Ce que vous savez déjà",
+      "weaknesses": "Ce sur quoi nous allons travailler",
+      "errors": "Erreurs fréquentes",
+      "match_prompt": "Associez chaque mot à sa traduction.",
+      "free_prompt": "Traduisez : {word}",
+      "cloze_prompt": "Complétez le mot manquant.",
+      "tiles_prompt": "Remettez les mots dans l'ordre pour former la phrase ({word})."
+    },
     "page_title": "Sets de contenu",
     "intro": "Sets de leçons préfabriqués utilisables sans clé API. Les téléchargements sont mis en cache localement et fonctionnent hors-ligne après la première récupération.",
     "sources": "Sources",

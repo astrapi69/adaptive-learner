@@ -14,10 +14,12 @@ storage namespace) is thin glue.
 from __future__ import annotations
 
 import logging
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
 import httpx
+import yaml
 
 from .cache import (
     cache_path_for_set,
@@ -44,6 +46,13 @@ from .schema import Lesson
 logger = logging.getLogger(__name__)
 
 MANIFEST_FILENAME = "manifest.yaml"
+
+# Phase 59B / v1.42.0 — user-generated sets ("My Lessons") live in
+# the same cache as downloaded sets, under this synthetic source.
+USER_GENERATED_SOURCE = "user-generated"
+# Single fixed (semver-valid) version: re-saving an edited lesson
+# overwrites in place rather than accumulating cache versions.
+USER_SET_VERSION = "1.0.0"
 
 
 @dataclass(frozen=True)
@@ -140,15 +149,10 @@ def _lesson_filenames_for_set(
             f"Set {set_id!r} not advertised in its own manifest",
         )
     metadata_lessons = set_manifest.metadata.get("lessons")
-    if isinstance(metadata_lessons, list) and all(
-        isinstance(x, str) for x in metadata_lessons
-    ):
+    if isinstance(metadata_lessons, list) and all(isinstance(x, str) for x in metadata_lessons):
         return list(metadata_lessons)
     # Conventional fallback: zero-padded indices.
-    return [
-        f"{i:02d}.json"
-        for i in range(1, matched.lesson_count + 1)
-    ]
+    return [f"{i:02d}.json" for i in range(1, matched.lesson_count + 1)]
 
 
 class ContentLoaderService:
@@ -168,7 +172,8 @@ class ContentLoaderService:
         self.cache_root = cache_root
         self.sources = sources or []
         self._adapter = GitHubRawAdapter(
-            token=token, timeout_seconds=timeout_seconds,
+            token=token,
+            timeout_seconds=timeout_seconds,
         )
         self.cache_root.mkdir(parents=True, exist_ok=True)
 
@@ -201,7 +206,8 @@ class ContentLoaderService:
             for source_ref in self.sources:
                 try:
                     manifest = await self.fetch_repo_manifest(
-                        source_ref, client=client,
+                        source_ref,
+                        client=client,
                     )
                 except ContentLoaderError as err:
                     logger.warning(
@@ -233,6 +239,13 @@ class ContentLoaderService:
                             update_available=update_available,
                         ),
                     )
+        # Phase 59B — user-generated sets ("My Lessons") aren't an
+        # upstream source; surface every cached one directly.
+        entries.extend(
+            self._cached_entries_for_source(
+                SourceRef(source=USER_GENERATED_SOURCE, branch=""),
+            ),
+        )
         return entries
 
     def _cached_entries_for_source(
@@ -346,7 +359,8 @@ class ContentLoaderService:
             )
             set_manifest = parse_manifest_yaml(set_manifest_text)
             lesson_filenames = _lesson_filenames_for_set(
-                set_manifest, set_id,
+                set_manifest,
+                set_id,
             )
 
             # Fetch every lesson file.
@@ -441,7 +455,11 @@ class ContentLoaderService:
                     f"Set {source}/{set_id} is not cached",
                 )
         return read_lesson(
-            self.cache_root, source, set_id, version, lesson_filename,
+            self.cache_root,
+            source,
+            set_id,
+            version,
+            lesson_filename,
         )
 
     def list_cached_lesson_filenames(
@@ -456,10 +474,7 @@ class ContentLoaderService:
             version = latest_cached_version(self.cache_root, source, set_id)
             if version is None:
                 return []
-        lessons_dir = (
-            cache_path_for_set(self.cache_root, source, set_id, version)
-            / "lessons"
-        )
+        lessons_dir = cache_path_for_set(self.cache_root, source, set_id, version) / "lessons"
         if not lessons_dir.is_dir():
             return []
         return sorted(p.name for p in lessons_dir.iterdir() if p.is_file())
@@ -473,6 +488,81 @@ class ContentLoaderService:
         if version is None:
             return latest_cached_version(self.cache_root, source, set_id) is not None
         return is_set_cached(self.cache_root, source, set_id, version)
+
+    def save_user_set(
+        self,
+        *,
+        set_id: str,
+        title: str,
+        language: str,
+        level: str,
+        origin: str,
+        lessons: list[Lesson],
+        description: str | None = None,
+    ) -> SetEntry:
+        """Persist a user-generated set into the cache (Phase 59B).
+
+        Stored under the ``user-generated`` source with a single
+        fixed version so re-saving an edited lesson overwrites in
+        place. The cached ``manifest.yaml`` is a one-entry
+        ``ContentManifest`` so ``list_sets`` / ``read_manifest``
+        render it exactly like a downloaded set. Returns the stored
+        ``SetEntry``.
+        """
+        content_set = ContentSet(
+            id=set_id,
+            title=title,
+            language=language,
+            level=level,
+            version=USER_SET_VERSION,
+            lesson_count=len(lessons),
+            domain=origin,
+            description=description,
+            tags=[],
+            assets=[],
+        )
+        manifest = ContentManifest(
+            schema_version="1.1",
+            name=title,
+            description=description,
+            sets=[content_set],
+            metadata={"author": "user", "origin": origin},
+        )
+        manifest_yaml = yaml.safe_dump(
+            manifest.model_dump(mode="json", exclude_none=True),
+            allow_unicode=True,
+            sort_keys=False,
+        )
+        lesson_files = {f"{lesson.id}.json": lesson.model_dump_json() for lesson in lessons}
+        # Overwrite: store_set is idempotent, so drop the existing
+        # set dir first or a re-save would keep the stale lesson.
+        self._remove_set_dir(USER_GENERATED_SOURCE, set_id)
+        store_set(
+            self.cache_root,
+            USER_GENERATED_SOURCE,
+            set_id,
+            USER_SET_VERSION,
+            manifest_yaml=manifest_yaml,
+            lessons=lesson_files,
+        )
+        return SetEntry(
+            source=USER_GENERATED_SOURCE,
+            branch="",
+            set=content_set,
+            cached_version=USER_SET_VERSION,
+            update_available=False,
+        )
+
+    def delete_set(self, source: str, set_id: str) -> None:
+        """Remove a cached set (all versions). Idempotent (Phase 59C)."""
+        self._remove_set_dir(source, set_id)
+
+    def _remove_set_dir(self, source: str, set_id: str) -> None:
+        # The set-id dir is the parent of any version dir; derive it
+        # via cache_path_for_set so the path scheme stays in one place.
+        set_root = cache_path_for_set(self.cache_root, source, set_id, "0").parent
+        if set_root.exists():
+            shutil.rmtree(set_root)
 
 
 def parse_source_refs_from_settings(

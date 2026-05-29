@@ -23,10 +23,12 @@ backend.
 from __future__ import annotations
 
 import logging
+from typing import Literal
 
 from fastapi import APIRouter
 from fastapi.responses import Response
 from pydantic import BaseModel
+from pydantic import ValidationError as PydanticValidationError
 
 from app.exceptions import (
     ExternalServiceError,
@@ -185,10 +187,7 @@ async def list_sets() -> SetsListResponse:
         raise _wrap_loader_error(err) from err
     return SetsListResponse(
         sets=[SetEntryResponse.from_entry(e) for e in entries],
-        sources=[
-            {"source": ref.source, "branch": ref.branch}
-            for ref in service.sources
-        ],
+        sources=[{"source": ref.source, "branch": ref.branch} for ref in service.sources],
     )
 
 
@@ -206,11 +205,7 @@ async def download_set(
     # 'main' if the source wasn't pre-registered (the user
     # may add a one-off source by URL later).
     branch = next(
-        (
-            ref.branch
-            for ref in service.sources
-            if ref.source == source
-        ),
+        (ref.branch for ref in service.sources if ref.source == source),
         "main",
     )
     try:
@@ -240,15 +235,16 @@ async def list_set_lessons(
     filenames = service.list_cached_lesson_filenames(source, set_id)
     if not filenames and not service.has_cached_set(source, set_id):
         raise NotFoundError(
-            f"Set {source}/{set_id} is not cached. "
-            "Download the set before listing its lessons.",
+            f"Set {source}/{set_id} is not cached. Download the set before listing its lessons.",
         )
     version_field = None
     try:
         from .cache import latest_cached_version
 
         version_field = latest_cached_version(
-            service.cache_root, source, set_id,
+            service.cache_root,
+            source,
+            set_id,
         )
     except Exception:  # pragma: no cover - defensive
         version_field = None
@@ -321,12 +317,15 @@ async def get_asset(
     version = latest_cached_version(service.cache_root, source, set_id)
     if version is None:
         raise NotFoundError(
-            f"Set {source}/{set_id} is not cached. "
-            "Download the set first.",
+            f"Set {source}/{set_id} is not cached. Download the set first.",
         )
     try:
         payload = read_asset(
-            service.cache_root, source, set_id, version, asset_path,
+            service.cache_root,
+            source,
+            set_id,
+            version,
+            asset_path,
         )
     except ContentNotFoundError as err:
         # Map to backend's NotFoundError so the global
@@ -341,3 +340,53 @@ async def get_asset(
             "Cache-Control": "public, max-age=31536000, immutable",
         },
     )
+
+
+# --- Phase 59B/C / v1.42.0 — user-generated sets (My Lessons) ---------------
+
+
+class SaveUserSetRequest(BaseModel):
+    """Wire shape for saving a user-generated set. ``lessons`` are
+    full, schema-valid lessons (FastAPI validates them as ``Lesson``
+    before the handler runs)."""
+
+    set_id: str
+    title: str
+    language: str
+    level: str
+    origin: Literal["analysis", "adaptive", "imported"] = "analysis"
+    description: str | None = None
+    lessons: list[Lesson]
+
+
+@router.post("/user-sets", response_model=SetEntryResponse)
+async def save_user_set(body: SaveUserSetRequest) -> SetEntryResponse:
+    """Persist a user-generated set into the cache (same place as
+    downloaded sets, ``source: "user-generated"``)."""
+    service = _build_service()
+    try:
+        entry = service.save_user_set(
+            set_id=body.set_id,
+            title=body.title,
+            language=body.language,
+            level=body.level,
+            origin=body.origin,
+            lessons=body.lessons,
+            description=body.description,
+        )
+    except PydanticValidationError as err:
+        # ContentSet/ContentManifest construction rejected the input
+        # (e.g. non-slug set_id, non-BCP47 language). Surface as 400.
+        raise ValidationError(f"Invalid user set: {err}") from err
+    except ContentLoaderError as err:
+        raise _wrap_loader_error(err) from err
+    return SetEntryResponse.from_entry(entry)
+
+
+@router.delete("/sets/{source_slug}/{set_id}", status_code=204)
+async def delete_set(source_slug: str, set_id: str) -> Response:
+    """Delete a cached set (used by My Lessons). Idempotent."""
+    service = _build_service()
+    source = _unslugify_source(source_slug)
+    service.delete_set(source, set_id)
+    return Response(status_code=204)

@@ -1382,6 +1382,59 @@
     }
   },
   "content": {
+    "save_adaptive": {
+      "button": "Salvar esta lição?"
+    },
+    "import_lesson": {
+      "button": "Importar lição",
+      "modal_title": "Importar uma lição",
+      "choose_file": "Escolha um arquivo .json ou .zip",
+      "invalid": "Arquivo inválido",
+      "preview": "{title} · {lang} · {lessons} lições · {exercises} exercícios",
+      "import": "Importar",
+      "imported": "Lição importada.",
+      "failed": "Não foi possível importar a lição."
+    },
+    "my_lessons": {
+      "export_set": "Exportar como conjunto",
+      "share": "Compartilhar com a comunidade",
+      "exported": "Lição exportada.",
+      "title": "Minhas lições",
+      "downloaded_title": "Conjuntos baixados",
+      "empty": "Importe uma conversa e analise-a para criar sua primeira lição.",
+      "from_analysis": "de análise",
+      "from_adaptive": "de lição adaptativa",
+      "from_imported": "importada",
+      "play": "Jogar",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "export": "Exportar",
+      "delete_confirm": "Excluir esta lição? Isso não pode ser desfeito.",
+      "deleted": "Lição excluída.",
+      "delete_failed": "Não foi possível excluir a lição."
+    },
+    "save_lesson": {
+      "button": "Salvar como lição offline",
+      "modal_title": "Salvar como lição offline",
+      "title_label": "Título da lição",
+      "summary": "{exercises} exercícios · {steps} etapas de teoria · ~{minutes} min",
+      "theory_only": "Vocabulário insuficiente para exercícios. Importe uma conversa mais longa para mais material de prática.",
+      "save": "Salvar",
+      "saved": "Salvo em Minhas lições.",
+      "failed": "Não foi possível salvar a lição."
+    },
+    "lesson_gen": {
+      "fallback_title": "Lição importada",
+      "focus": "Foco",
+      "topics": "Tópicos",
+      "strengths": "O que você já sabe",
+      "weaknesses": "No que vamos trabalhar",
+      "errors": "Erros comuns",
+      "match_prompt": "Associe cada palavra à sua tradução.",
+      "free_prompt": "Traduza: {word}",
+      "cloze_prompt": "Complete a palavra que falta.",
+      "tiles_prompt": "Organize as palavras para formar a frase ({word})."
+    },
     "page_title": "Conjuntos de conteúdo",
     "intro": "Conjuntos de lições pré-construídos que podes usar sem chave API. Os downloads são armazenados localmente e funcionam offline após a primeira transferência.",
     "sources": "Fontes",
