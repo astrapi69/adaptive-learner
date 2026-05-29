@@ -333,6 +333,10 @@ settings:
   feedback_intensity_enthusiastic: "Ausführlich"
   feedback_intensity_enthusiastic_desc: "Alles, plus Meilenstein-Einblendungen und Lob bei jeder richtigen Antwort."
   feedback_intensity_reduced_motion_hint: "In deinem System ist 'Bewegung reduzieren' aktiv, daher bleibt das Feedback unabhängig von dieser Einstellung dezent."
+  sounds: "Töne"
+  sounds_description: "Kurze synthetische Klänge bei richtigen Antworten, Sternen und Meilensteinen. Standardmäßig aus; Töne enthalten nie Informationen, die nicht auch sichtbar sind."
+  sounds_volume: "Lautstärke"
+  sounds_test: "Test"
   section_storage_mode: Speicher-Modus
   storage_mode_help: Waehle, wo deine Daten liegen. Lokal speichert alles in diesem Browser; Server verbindet sich mit dem AdaptiveLearner-Backend.
   storage_mode_api: Server

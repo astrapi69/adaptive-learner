@@ -2618,6 +2618,31 @@ select:focus {
   gap: 2px;
 }
 
+/* Phase 55F — sound volume row */
+.form-row-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-1);
+}
+
+.sounds-volume-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sounds-volume-row input[type="range"] {
+  flex: 1 1 auto;
+}
+
+.sounds-volume-value {
+  min-width: 3.5ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+}
+
 @media (max-width: 600px) {
   .lesson-nav {
     flex-direction: column;

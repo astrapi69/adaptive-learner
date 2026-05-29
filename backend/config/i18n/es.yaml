@@ -333,6 +333,10 @@ settings:
   feedback_intensity_enthusiastic: "Entusiasta"
   feedback_intensity_enthusiastic_desc: "Todo, además de avisos de hitos y elogio en cada respuesta correcta."
   feedback_intensity_reduced_motion_hint: "Tu sistema tiene activado 'reducir movimiento', así que el feedback se mantiene discreto."
+  sounds: "Sonidos"
+  sounds_description: "Reproduce breves sonidos sintetizados en aciertos, estrellas e hitos. Desactivado por defecto; los sonidos nunca aportan información que no se muestre también."
+  sounds_volume: "Volumen"
+  sounds_test: "Probar"
   section_storage_mode: Modo de almacenamiento
   storage_mode_help: Elige donde viven tus datos. El modo local guarda todo en este navegador; el modo Servidor habla con el backend de AdaptiveLearner.
   storage_mode_api: Servidor

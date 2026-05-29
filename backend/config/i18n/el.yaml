@@ -333,6 +333,10 @@ settings:
   feedback_intensity_enthusiastic: "Ενθουσιώδες"
   feedback_intensity_enthusiastic_desc: "Τα πάντα, συν ειδοποιήσεις οροσήμων και επιβράβευση σε κάθε σωστή απάντηση."
   feedback_intensity_reduced_motion_hint: "Στο σύστημά σας είναι ενεργή η μειωμένη κίνηση, οπότε η ανατροφοδότηση παραμένει διακριτική."
+  sounds: "Ήχοι"
+  sounds_description: "Αναπαραγωγή σύντομων συνθετικών ήχων σε σωστές απαντήσεις, αστέρια και ορόσημα. Απενεργοποιημένο από προεπιλογή· οι ήχοι δεν μεταφέρουν ποτέ πληροφορίες που δεν εμφανίζονται και οπτικά."
+  sounds_volume: "Ένταση"
+  sounds_test: "Δοκιμή"
   section_storage_mode: Λειτουργία αποθήκευσης
   storage_mode_help: Διάλεξε πού ζουν τα δεδομένα σου. Η τοπική λειτουργία κρατά τα πάντα σε αυτόν τον περιηγητή· η λειτουργία Server μιλά με το backend του AdaptiveLearner.
   storage_mode_api: Server

@@ -9,6 +9,7 @@ import ExportSection from "../components/ExportSection";
 import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import LearningRepoSettingsSection from "../components/LearningRepoSettingsSection";
+import SoundSettingsControl from "../components/SoundSettingsControl";
 import HelpBrowser from "../components/help/HelpBrowser";
 import {
     setButtonTooltipsEnabled,
@@ -409,6 +410,7 @@ export default function Settings() {
                     />
                 </label>
                 <FeedbackIntensityControl />
+                <SoundSettingsControl />
             </section>
 
             <section className="settings-section">
