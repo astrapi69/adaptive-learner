@@ -1595,7 +1595,7 @@ select:focus {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.45);
+  background: var(--bg-overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2195,9 +2195,9 @@ select:focus {
 }
 
 .nav-mode-badge-ai-augmented {
-  background: color-mix(in srgb, #10b981 15%, var(--surface));
-  color: #10b981;
-  border-color: color-mix(in srgb, #10b981 30%, var(--border));
+  background: color-mix(in srgb, var(--success) 15%, var(--surface));
+  color: var(--success);
+  border-color: color-mix(in srgb, var(--success) 30%, var(--border));
 }
 
 .nav-mode-badge:hover {
@@ -2304,7 +2304,7 @@ select:focus {
 }
 
 .content-set-cached {
-  color: #10b981;
+  color: var(--success);
   font-weight: 600;
 }
 
@@ -3785,8 +3785,8 @@ select:focus {
 .nav-online-indicator.is-online .nav-online-dot {
   /* Sit calmly. Green dot drawn from theme palette so dark mode
      inherits a darker shade automatically. */
-  background: #10b981;
-  box-shadow: 0 0 0 2px color-mix(in srgb, #10b981 20%, transparent);
+  background: var(--success);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--success) 20%, transparent);
 }
 
 .nav-online-indicator.is-offline .nav-online-dot {
@@ -5926,8 +5926,8 @@ select:focus {
     border-color: var(--accent);
 }
 .pronunciation-verdict--miss {
-    background: color-mix(in srgb, #f59e0b 8%, transparent);
-    border-color: #f59e0b;
+    background: color-mix(in srgb, var(--warning) 12%, transparent);
+    border-color: var(--warning);
 }
 .pronunciation-verdict__score {
     font-size: 1.05rem;
@@ -6009,16 +6009,16 @@ select:focus {
     text-transform: uppercase;
 }
 .badge--easy {
-    background: color-mix(in srgb, #22c55e 15%, transparent);
-    color: #16a34a;
+    background: color-mix(in srgb, var(--success) 15%, transparent);
+    color: var(--success);
 }
 .badge--medium {
-    background: color-mix(in srgb, #f59e0b 15%, transparent);
-    color: #b45309;
+    background: color-mix(in srgb, var(--warning) 15%, transparent);
+    color: var(--warning);
 }
 .badge--hard {
-    background: color-mix(in srgb, #ef4444 15%, transparent);
-    color: #b91c1c;
+    background: color-mix(in srgb, var(--error) 15%, transparent);
+    color: var(--error);
 }
 
 /* Phase 38D — bump the help icon's hit area on small
