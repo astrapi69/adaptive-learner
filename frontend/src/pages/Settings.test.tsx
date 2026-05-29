@@ -65,9 +65,9 @@ const BASE: UserSettings = {
     updated_at: "2026-05-18T00:00:00Z",
 };
 
-function renderSettings() {
+function renderSettings(initialEntry = "/settings") {
     return render(
-        <MemoryRouter>
+        <MemoryRouter initialEntries={[initialEntry]}>
             <Settings />
         </MemoryRouter>,
     );
@@ -141,6 +141,29 @@ describe("Settings page", () => {
         expect(
             screen.getByTestId("settings-section-feedback"),
         ).toBeVisible();
+    });
+
+    it("opens the tab from the ?tab= URL param (deep link)", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings("/settings?tab=data");
+        await screen.findByTestId("settings");
+        expect(screen.getByTestId("settings-tab-data")).toHaveAttribute(
+            "aria-selected",
+            "true",
+        );
+        expect(screen.getByTestId("settings-panel-data")).toBeVisible();
+        // General sections are hidden when a deep link opens another tab.
+        expect(screen.getByTestId("settings-section-ui")).not.toBeVisible();
+    });
+
+    it("falls back to General for an unknown ?tab= value", async () => {
+        apiGet.mockResolvedValue(BASE);
+        renderSettings("/settings?tab=bogus");
+        await screen.findByTestId("settings");
+        expect(screen.getByTestId("settings-tab-general")).toHaveAttribute(
+            "aria-selected",
+            "true",
+        );
     });
 
     it("changing the language calls update + flips i18n provider", async () => {

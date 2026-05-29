@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 
 import {ApiError} from "../api/client";
 import AboutTab from "../components/about/AboutTab";
@@ -76,6 +76,10 @@ const SETTINGS_TABS = [
 ] as const;
 type SettingsTab = (typeof SETTINGS_TABS)[number];
 
+function isSettingsTab(value: string | null): value is SettingsTab {
+    return value !== null && (SETTINGS_TABS as readonly string[]).includes(value);
+}
+
 const SETTINGS_TAB_LABELS: Record<SettingsTab, {key: string; fallback: string}> = {
     general: {key: "settings.tab_general", fallback: "General"},
     ai: {key: "settings.tab_ai", fallback: "AI"},
@@ -88,7 +92,22 @@ const SETTINGS_TAB_LABELS: Record<SettingsTab, {key: string; fallback: string}> 
 export default function Settings() {
     const {t, lang, setLang} = useI18n();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<SettingsTab>("general");
+    // Tab state lives in the URL (?tab=general) so deep links + browser
+    // back/forward work and a refresh keeps the open tab. Default + any
+    // unknown value falls back to "general".
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab: SettingsTab = isSettingsTab(searchParams.get("tab"))
+        ? (searchParams.get("tab") as SettingsTab)
+        : "general";
+    const setActiveTab = (tab: SettingsTab) => {
+        setSearchParams(
+            (prev) => {
+                prev.set("tab", tab);
+                return prev;
+            },
+            {replace: true},
+        );
+    };
 
     const [settings, setSettings] = useState<UserSettings | null>(null);
     const [loadError, setLoadError] = useState<string | null>(null);

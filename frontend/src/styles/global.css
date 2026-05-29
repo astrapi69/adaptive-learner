@@ -109,6 +109,17 @@ a:hover {
   text-decoration: underline;
 }
 
+/* The HTML ``hidden`` attribute must always win. An element-level
+ * ``display:`` declaration (e.g. ``.settings-section { display: flex }``)
+ * is an author rule and beats the UA ``[hidden] { display: none }`` at
+ * equal specificity, which silently defeated the tabbed Settings page
+ * (every panel rendered at once, flat-scroll). ``!important`` here
+ * restores the attribute's meaning for every component that toggles
+ * ``hidden`` (tab panels, conditional rows, ...). */
+[hidden] {
+  display: none !important;
+}
+
 /* Phase 58I — global keyboard-focus baseline. ``:where()`` keeps the
  * specificity at 0 so any component's own focus style still wins; this
  * only guarantees that EVERY interactive element shows a visible ring
