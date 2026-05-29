@@ -275,6 +275,28 @@ export default function ContentPage() {
                                     )}
                                 </div>
                                 <div className="content-set-action">
+                                    {/* Phase 58I a11y: announce download
+                                        status changes to screen readers
+                                        (the button text alone isn't
+                                        re-announced; errors surface via
+                                        the toast's own live region). */}
+                                    <span
+                                        className="sr-only"
+                                        role="status"
+                                        aria-live="polite"
+                                        data-testid={`content-set-${entry.id}-status`}
+                                    >
+                                        {downloadState === "downloading"
+                                            ? t("content.status.downloading", "Downloading…")
+                                            : isCached && !entry.update_available
+                                              ? t("content.status.ready", "Ready")
+                                              : entry.update_available
+                                                ? t(
+                                                      "content.status.update_available",
+                                                      "Update available",
+                                                  )
+                                                : ""}
+                                    </span>
                                     {isCached && (
                                         <button
                                             type="button"

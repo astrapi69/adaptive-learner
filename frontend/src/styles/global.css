@@ -109,6 +109,28 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Phase 58I — global keyboard-focus baseline. ``:where()`` keeps the
+ * specificity at 0 so any component's own focus style still wins; this
+ * only guarantees that EVERY interactive element shows a visible ring
+ * in EVERY theme (--accent resolves per theme: indigo / sky / amber /
+ * yellow / sienna), so nothing relies on a missing per-component rule. */
+:where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [tabindex],
+    [role="button"],
+    [role="tab"],
+    [role="radio"],
+    [role="link"]
+  ):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* ----------------------------------------------------------------
  * Accessibility utilities (Phase 39, WCAG 2.1 AA).
  *
