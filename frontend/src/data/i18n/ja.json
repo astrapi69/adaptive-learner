@@ -349,6 +349,9 @@
     "section_api_keys": "API キー",
     "section_danger": "アカウント",
     "section_ui": "インターフェース",
+    "section_appearance": "外観",
+    "theme": "テーマ",
+    "theme_description": "アプリの見た目を選びます。自動はシステムのライト/ダーク設定に従います。",
     "tab_general": "一般",
     "tab_ai": "AI",
     "tab_learning": "学習",
@@ -1004,6 +1007,15 @@
     "guide_failed": "学習ガイドを生成できませんでした。"
   },
   "ui": {
+    "themes": {
+      "light": "ライト",
+      "dark": "ダーク",
+      "ocean": "オーシャン",
+      "forest": "フォレスト",
+      "high-contrast": "ハイコントラスト",
+      "sepia": "セピア",
+      "auto": "自動（システム）"
+    },
     "errors": {
       "bad_request": "リクエストを処理できませんでした。",
       "forbidden": "アクセスが拒否されました。設定を確認してください。",

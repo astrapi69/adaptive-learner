@@ -324,6 +324,9 @@ settings:
   section_api_keys: Κλειδιά API
   section_danger: Λογαριασμός
   section_ui: Interface
+  section_appearance: "Εμφάνιση"
+  theme: "Θέμα"
+  theme_description: "Επίλεξε πώς φαίνεται η εφαρμογή. Το αυτόματο ακολουθεί τη ρύθμιση φωτεινό/σκούρο του συστήματος."
   tab_general: "Γενικά"
   tab_ai: "ΤΝ"
   tab_learning: "Μάθηση"
@@ -919,6 +922,14 @@ notebooklm:
   guide_failed: Δεν δημιουργήθηκε ο οδηγός μελέτης.
 
 ui:
+  themes:
+    light: "Φωτεινό"
+    dark: "Σκούρο"
+    ocean: "Ωκεανός"
+    forest: "Δάσος"
+    high-contrast: "Υψηλή αντίθεση"
+    sepia: "Σέπια"
+    auto: "Αυτόματο (σύστημα)"
   errors:
     bad_request: "Δεν ήταν δυνατή η επεξεργασία του αιτήματος."
     forbidden: "Άρνηση πρόσβασης. Έλεγξε τις ρυθμίσεις σου."

@@ -349,6 +349,9 @@
     "section_api_keys": "API anahtarları",
     "section_danger": "Hesap",
     "section_ui": "Arayüz",
+    "section_appearance": "Gorunum",
+    "theme": "Tema",
+    "theme_description": "Uygulamanin nasil gorunecegini secin. Otomatik, sisteminizin acik/koyu ayarini izler.",
     "tab_general": "Genel",
     "tab_ai": "Yapay zeka",
     "tab_learning": "Öğrenme",
@@ -1004,6 +1007,15 @@
     "guide_failed": "Çalışma kılavuzu oluşturulamadı."
   },
   "ui": {
+    "themes": {
+      "light": "Acik",
+      "dark": "Koyu",
+      "ocean": "Okyanus",
+      "forest": "Orman",
+      "high-contrast": "Yuksek Kontrast",
+      "sepia": "Sepya",
+      "auto": "Otomatik (Sistem)"
+    },
     "errors": {
       "bad_request": "İstek işlenemedi.",
       "forbidden": "Erişim reddedildi. Lütfen ayarlarını kontrol et.",

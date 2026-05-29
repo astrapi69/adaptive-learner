@@ -324,6 +324,9 @@ settings:
   section_api_keys: API keys
   section_danger: Account
   section_ui: Interface
+  section_appearance: "Appearance"
+  theme: "Theme"
+  theme_description: "Choose how the app looks. Auto follows your system light/dark setting."
   tab_general: "General"
   tab_ai: "AI"
   tab_learning: "Learning"
@@ -919,6 +922,14 @@ notebooklm:
   guide_failed: Could not generate the study guide.
 
 ui:
+  themes:
+    light: "Light"
+    dark: "Dark"
+    ocean: "Ocean"
+    forest: "Forest"
+    high-contrast: "High Contrast"
+    sepia: "Sepia"
+    auto: "Auto (System)"
   # DEV-MODE-FRIENDLY-ERRORS-01 — status-code-mapped friendly
   # toast strings. Shown in place of HTTP details when
   # Developer Mode is off (default). Dev mode bypasses these

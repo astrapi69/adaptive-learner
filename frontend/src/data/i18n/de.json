@@ -349,6 +349,9 @@
     "section_api_keys": "API-Keys",
     "section_danger": "Konto",
     "section_ui": "Oberfläche",
+    "section_appearance": "Darstellung",
+    "theme": "Farbschema",
+    "theme_description": "Lege fest, wie die App aussieht. Automatisch folgt der Hell-/Dunkel-Einstellung deines Systems.",
     "tab_general": "Allgemein",
     "tab_ai": "KI",
     "tab_learning": "Lernen",
@@ -1004,6 +1007,15 @@
     "guide_failed": "Lernleitfaden konnte nicht erstellt werden."
   },
   "ui": {
+    "themes": {
+      "light": "Hell",
+      "dark": "Dunkel",
+      "ocean": "Ozean",
+      "forest": "Wald",
+      "high-contrast": "Hoher Kontrast",
+      "sepia": "Sepia",
+      "auto": "Automatisch (System)"
+    },
     "errors": {
       "bad_request": "Die Anfrage konnte nicht verarbeitet werden.",
       "forbidden": "Zugriff verweigert. Bitte prüfe deine Einstellungen.",

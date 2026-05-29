@@ -349,6 +349,9 @@
     "section_api_keys": "Cles API",
     "section_danger": "Compte",
     "section_ui": "Interface",
+    "section_appearance": "Apparence",
+    "theme": "Theme",
+    "theme_description": "Choisissez l'apparence de l'application. Auto suit le reglage clair/sombre du systeme.",
     "tab_general": "Général",
     "tab_ai": "IA",
     "tab_learning": "Apprentissage",
@@ -1004,6 +1007,15 @@
     "guide_failed": "Impossible de générer le guide d'étude."
   },
   "ui": {
+    "themes": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "ocean": "Ocean",
+      "forest": "Foret",
+      "high-contrast": "Contraste eleve",
+      "sepia": "Sepia",
+      "auto": "Auto (systeme)"
+    },
     "errors": {
       "bad_request": "La requête n'a pas pu être traitée.",
       "forbidden": "Accès refusé. Vérifie tes paramètres.",

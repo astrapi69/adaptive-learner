@@ -324,6 +324,9 @@ settings:
   section_api_keys: Chaves de API
   section_danger: Conta
   section_ui: Interface
+  section_appearance: "Aparencia"
+  theme: "Tema"
+  theme_description: "Escolha a aparencia do aplicativo. Automatico segue a configuracao clara/escura do sistema."
   tab_general: "Geral"
   tab_ai: "IA"
   tab_learning: "Aprendizagem"
@@ -919,6 +922,14 @@ notebooklm:
   guide_failed: Não foi possível gerar o guia de estudo.
 
 ui:
+  themes:
+    light: "Claro"
+    dark: "Escuro"
+    ocean: "Oceano"
+    forest: "Floresta"
+    high-contrast: "Alto contraste"
+    sepia: "Sepia"
+    auto: "Automatico (sistema)"
   errors:
     bad_request: "Não foi possível processar o pedido."
     forbidden: "Acesso negado. Verifica as tuas definições."

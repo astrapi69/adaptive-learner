@@ -16,6 +16,31 @@
     <link rel="apple-touch-icon" href="/icon-192.svg"/>
     <title>Adaptive Learner</title>
     <!-- Fonts are bundled locally in public/fonts/ (no CDN dependency) -->
+    <!-- Phase 58E: apply the saved theme BEFORE first paint to avoid a
+         flash of the wrong theme. Mirrors the resolution in
+         src/hooks/useTheme.ts (dotted key + legacy migration + auto). -->
+    <script>
+      (function () {
+        try {
+          var valid = ["light", "dark", "ocean", "forest", "high-contrast", "sepia"];
+          var choice = localStorage.getItem("adaptive-learner.theme");
+          if (choice === null) {
+            var legacy = localStorage.getItem("adaptive-learner-theme");
+            if (legacy === "light" || legacy === "dark") choice = legacy;
+          }
+          var resolved =
+            choice && valid.indexOf(choice) !== -1
+              ? choice
+              : window.matchMedia &&
+                  window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.setAttribute("data-theme", resolved);
+        } catch (e) {
+          /* localStorage blocked -> fall through to the default light theme */
+        }
+      })();
+    </script>
 </head>
 <body>
 <div id="root"></div>

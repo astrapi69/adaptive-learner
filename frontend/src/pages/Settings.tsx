@@ -21,6 +21,7 @@ import {setDevModeEnabled, useDevMode} from "../hooks/useDevMode";
 import VoiceSettingsSection from "../components/VoiceSettingsSection";
 import {ModelPicker} from "../components/ModelPicker";
 import SyncSection from "../components/SyncSection";
+import ThemePicker from "../components/ThemePicker";
 import {DEFAULT_MODELS} from "../storage/ai-providers";
 import {useI18n} from "../hooks/useI18n";
 import {
@@ -363,6 +364,17 @@ export default function Settings() {
             </nav>
 
             <HelpBrowser />
+
+            <section
+                className="settings-section"
+                data-testid="settings-section-appearance"
+                hidden={activeTab !== "general"}
+            >
+                <h2 className="settings-section-title">
+                    {t("settings.section_appearance", "Appearance")}
+                </h2>
+                <ThemePicker />
+            </section>
 
             <section
                 className="settings-section"
