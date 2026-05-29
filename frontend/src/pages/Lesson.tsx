@@ -53,6 +53,7 @@ import {
 } from "../lib/feedback/celebration-stats";
 import {allowsConfetti} from "../lib/feedback/feedbackPref";
 import {tokenDiff} from "../lib/exercises/token-diff";
+import {localTodayIso} from "../lib/missions/schedule";
 import {emitCelebration} from "../lib/praise/celebration-bus";
 import {nextPraise} from "../lib/praise/phrase-picker";
 import {
@@ -81,7 +82,7 @@ interface UrlParams {
 export default function LessonPage() {
     const params = useParams<UrlParams>();
     const navigate = useNavigate();
-    const {t} = useI18n();
+    const {t, lang} = useI18n();
 
     const source = useMemo(
         () => (params.setSlug ?? "").replace(/--/g, "/"),
@@ -360,6 +361,18 @@ export default function LessonPage() {
                                 description: t(badge.description_key, ""),
                             }),
                         );
+                        // Refresh daily missions so any whose progress
+                        // the just-completed lesson advanced flip to
+                        // complete (+ award their bonus XP). Best-effort.
+                        if (userId) {
+                            try {
+                                await getStorage().missions.getDaily(userId, {
+                                    todayIso: localTodayIso(lang),
+                                });
+                            } catch {
+                                /* missions are supplementary */
+                            }
+                        }
                     }}
                     onNextLesson={() => {
                         if (nextLessonFilename) {

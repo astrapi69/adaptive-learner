@@ -112,6 +112,31 @@ describe("getDailyMissionsDexie", () => {
         expect(second.newlyCompleted).toHaveLength(0);
     });
 
+    it("awards mission XP once on completion (idempotent)", async () => {
+        await seedCompletedLesson("fr-a1", 10, 10, TODAY);
+        const first = await getDailyMissionsDexie(USER, {
+            todayIso: TODAY,
+            difficultyMix: "easy",
+        });
+        const completed = first.missions.filter((m) => m.completed);
+        expect(completed.length).toBeGreaterThan(0);
+        const expectedXp = completed.reduce(
+            (sum, m) => sum + m.template.xp_reward,
+            0,
+        );
+        const xpAfterFirst =
+            (await getDb().userXp.where({user_id: USER}).first())?.total_xp ?? 0;
+        expect(xpAfterFirst).toBe(expectedXp);
+        // Second refresh must NOT double-award.
+        await getDailyMissionsDexie(USER, {
+            todayIso: TODAY,
+            difficultyMix: "easy",
+        });
+        const xpAfterSecond =
+            (await getDb().userXp.where({user_id: USER}).first())?.total_xp ?? 0;
+        expect(xpAfterSecond).toBe(expectedXp);
+    });
+
     it("regenerate reshuffles today's missions", async () => {
         await getDailyMissionsDexie(USER, {todayIso: TODAY});
         const {missions} = await regenerateDailyMissionsDexie(USER, {

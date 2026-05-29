@@ -65,3 +65,45 @@ def test_regenerate_reassigns(client: TestClient):
     resp = client.post(f"/api/plugins/missions/regenerate/{user_id}")
     assert resp.status_code == 200
     assert len(resp.json()["missions"]) == 3
+
+
+def test_completed_lesson_advances_a_mission_and_awards_xp(client: TestClient):
+    from datetime import UTC, datetime
+
+    from app.database import SessionLocal
+    from app.models import LessonProgress
+
+    user_id = _make_user(client)
+    now = datetime.now(UTC)
+    db = SessionLocal()
+    try:
+        db.add(
+            LessonProgress(
+                user_id=user_id,
+                source="bundled:test",
+                set_id="fr-a1",
+                lesson_filename="lesson-01.json",
+                status="completed",
+                step_results="{}",
+                score_correct=10,
+                score_total=10,
+                time_spent_seconds=600,
+                started_at=now,
+                updated_at=now,
+                completed_at=now,
+            )
+        )
+        db.commit()
+    finally:
+        db.close()
+
+    today = now.date().isoformat()
+    body = client.get(
+        f"/api/plugins/missions/today/{user_id}?difficulty_mix=easy&today={today}"
+    ).json()
+    completed = [m for m in body["missions"] if m["completed"]]
+    assert completed, "a lesson-based mission should have completed"
+
+    # The completion bonus XP landed.
+    xp = client.get(f"/api/plugins/gamification/xp/{user_id}").json()
+    assert xp["total_xp"] > 0

@@ -227,6 +227,24 @@ def get_daily(
             dm = _to_daily(row)
             if dm:
                 newly_completed.append(dm)
+        # Award the bonus XP once per completed mission (idempotent
+        # via xp_awarded). Lazy import keeps the missions plugin's
+        # own env free of a hard gamification dependency.
+        if row.completed and not row.xp_awarded and template.xp_reward > 0:
+            try:
+                from adaptive_learner_gamification.xp_service import (
+                    award_xp_flat,
+                )
+
+                award_xp_flat(
+                    db,
+                    user_id=user_id,
+                    amount=template.xp_reward,
+                    reason=f"mission:{template.id}",
+                )
+                row.xp_awarded = True
+            except Exception:  # noqa: BLE001 - XP is supplementary
+                pass
     db.commit()
 
     missions = [dm for r in rows if (dm := _to_daily(r)) is not None]

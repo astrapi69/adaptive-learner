@@ -12,6 +12,7 @@
  */
 
 import {computeStars} from "../lib/gamification/lesson-xp";
+import {awardXPFlat} from "./gamification";
 import {assignDailyMissions} from "../lib/missions/generator";
 import {evaluateProgress} from "../lib/missions/progress";
 import type {
@@ -238,6 +239,21 @@ export async function getDailyMissionsDexie(
             row.completed_at = now;
             const dm = toDailyMission(row);
             if (dm) newlyCompleted.push(dm);
+        }
+        // Award the bonus XP exactly once per completed mission
+        // (idempotent via the xp_awarded guard; covers this call's
+        // flip and any earlier completion left un-awarded).
+        if (row.completed && !row.xp_awarded && template.xp_reward > 0) {
+            try {
+                await awardXPFlat(
+                    userId,
+                    template.xp_reward,
+                    `mission:${template.id}`,
+                );
+                row.xp_awarded = true;
+            } catch {
+                /* leave xp_awarded false to retry on the next refresh */
+            }
         }
         row.updated_at = now;
         await db.userMissions.put(row);
