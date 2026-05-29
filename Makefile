@@ -27,7 +27,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
-       verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline \
+       verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        lock-all-plugins verify-plugin-locks \
        release-state release-outdated release-test release-build \
@@ -422,6 +422,12 @@ verify-docs-discipline: ## Full docs gate: drift verifier + mkdocs nav sync (rel
 	@$(MAKE) verify-docs
 	@$(MAKE) verify-mkdocs-nav
 
+docs-checklist: ## Print the post-release docs to-do list. Usage: make docs-checklist VERSION=X.Y.Z
+ifndef VERSION
+	$(error VERSION is required, e.g. make docs-checklist VERSION=1.41.0)
+endif
+	@python3 scripts/generate_docs_checklist.py $(VERSION)
+
 # --- Plugin lockfile discipline ---
 
 lock-all-plugins: ## Re-lock every plugin's poetry.lock (after a shared-dep pin bump)
@@ -544,6 +550,9 @@ endif
 	@git push origin main
 	@echo "=== Pushing tag v$(VERSION) ==="
 	@git push origin v$(VERSION)
+	@echo ""
+	@echo "=== Post-release documentation checklist ==="
+	@python3 scripts/generate_docs_checklist.py $(VERSION) || true
 	@echo ""
 	@echo "Tag pushed. Next: make release-publish VERSION=$(VERSION)"
 
