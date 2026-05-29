@@ -1,7 +1,7 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.21.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-2634%20green-brightgreen)](#tests)
+[![Version](https://img.shields.io/badge/version-v1.41.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-4478%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
@@ -123,7 +123,7 @@ Full documentation (German default at `/docs/`, English at
 
 - **XP + levels** with an exponential curve, streak multipliers
   on session completion, first-method bonuses.
-- **24 badges** across 5 categories (getting started,
+- **28 tiered badges** across 5 categories (getting started,
   consistency, method explorer, depth, polyglot), seeded from
   YAML on first start.
 - **Streak heatmap** (GitHub-style, last 365 days) with
@@ -263,7 +263,7 @@ Full setup walkthrough lives at
 
 ## Plugins shipped
 
-10 plugins, all under `plugins/`. Routes mounted at
+13 plugins, all under `plugins/`. Routes mounted at
 `/api/plugins/<name>/*`.
 
 | Plugin | Routes | Purpose |
@@ -275,15 +275,18 @@ Full setup walkthrough lives at
 | session | /start, /{id}/message, /message/stream, /rate, /end, /switch, /pronunciation/* | 7-step cycles, dual-prompt eval, streaming, auto-loop, pronunciation judge |
 | tracking | /progress/{id}, /commits/{id} | Per-project aggregates + step-evaluation insights |
 | tools | /recommendations/{id}, /spaced/{id} | Method-tailored tool list + spaced practice |
-| gamification | /xp/*, /badges/*, /streak/*, /reset | XP + 24 badges + streak heatmap |
+| gamification | /xp/*, /badges/*, /streak/*, /reset | XP + 28 tiered badges + streak heatmap |
 | anki | /cards CRUD, /extract/{session,conversation}, /mark-exported | AI-extracted flashcards + .apkg export |
 | notebooklm | /questions CRUD, /generate/{session,project}, /study-guide/{id} | Active-recall questions + study guide + ZIP export |
+| learning-repo | /render/{id}, /export-zip/{id}, /persist/{id} | Git-backed Learning Repository (Markdown artefacts + opt-in commit) |
+| content-loader | /sets, /sets/{src}/{id}/download, /sets/{src}/{id}/lessons | Downloads structured lesson sets from public GitHub repos; caches locally |
+| missions | /templates, /today/{user_id}, /regenerate/{user_id} | Daily adaptive missions evaluated against existing data |
 
 ## Useful make targets
 
 ```bash
 make dev               # backend (18001) + frontend (15174)
-make test              # backend + plugins + Vitest (2634 tests)
+make test              # backend + plugins + Vitest (4478 tests)
 make test-coverage     # opt-in coverage (CI runs it nightly)
 make sync-versions     # propagate version across 18 files
 make sync-i18n         # backend YAML → frontend JSON bundles

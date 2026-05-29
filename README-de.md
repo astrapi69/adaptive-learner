@@ -1,7 +1,7 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.21.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-2634%20grün-brightgreen)](#tests)
+[![Version](https://img.shields.io/badge/version-v1.41.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-4478%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
@@ -128,7 +128,7 @@ Englisch unter `/docs/en/`):
 
 - **XP + Level** mit Exponentialkurve, Streak-Multiplikatoren
   pro abgeschlossener Sitzung, First-Method-Boni.
-- **24 Abzeichen** in 5 Kategorien (Einstieg, Konsistenz,
+- **28 abgestufte Abzeichen** in 5 Kategorien (Einstieg, Konsistenz,
   Methoden-Entdecker, Tiefe, Polyglott), beim ersten Start
   aus YAML geseedet.
 - **Streak-Heatmap** (GitHub-Stil, letzte 365 Tage) mit
@@ -273,7 +273,7 @@ Vollständige Setup-Anleitung unter
 
 ## Ausgelieferte Plugins
 
-10 Plugins, alle unter `plugins/`. Routen werden unter
+13 Plugins, alle unter `plugins/`. Routen werden unter
 `/api/plugins/<name>/*` eingebunden.
 
 | Plugin | Routen | Zweck |
@@ -285,15 +285,18 @@ Vollständige Setup-Anleitung unter
 | session | /start, /{id}/message, /message/stream, /rate, /end, /switch, /pronunciation/* | 7-Schritt-Zyklen, Dual-Prompt-Eval, Streaming, Auto-Loop, Aussprache-Bewertung |
 | tracking | /progress/{id}, /commits/{id} | Pro-Projekt-Aggregate + Schritt-Evaluations-Insights |
 | tools | /recommendations/{id}, /spaced/{id} | Methoden-bezogene Tool-Liste + Spaced-Practice |
-| gamification | /xp/*, /badges/*, /streak/*, /reset | XP + 24 Abzeichen + Streak-Heatmap |
+| gamification | /xp/*, /badges/*, /streak/*, /reset | XP + 28 abgestufte Abzeichen + Streak-Heatmap |
 | anki | /cards CRUD, /extract/{session,conversation}, /mark-exported | KI-extrahierte Karteikarten + .apkg-Export |
 | notebooklm | /questions CRUD, /generate/{session,project}, /study-guide/{id} | Aktive-Recall-Fragen + Studienführer + ZIP-Export |
+| learning-repo | /render/{id}, /export-zip/{id}, /persist/{id} | Git-gestütztes Lern-Repository (Markdown-Artefakte + optionaler Commit) |
+| content-loader | /sets, /sets/{src}/{id}/download, /sets/{src}/{id}/lessons | Lädt strukturierte Lektionssets aus öffentlichen GitHub-Repos; lokal gecacht |
+| missions | /templates, /today/{user_id}, /regenerate/{user_id} | Tägliche adaptive Missionen, gegen vorhandene Daten ausgewertet |
 
 ## Nützliche Make-Targets
 
 ```bash
 make dev               # Backend (18001) + Frontend (15174)
-make test              # Backend + Plugins + Vitest (2634 Tests)
+make test              # Backend + Plugins + Vitest (4478 Tests)
 make test-coverage     # Opt-In-Coverage (CI nachts)
 make sync-versions     # Version über 18 Dateien propagieren
 make sync-i18n         # Backend-YAML → Frontend-JSON-Bundles
