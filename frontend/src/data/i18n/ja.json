@@ -1417,7 +1417,7 @@
       "button": "オフラインレッスンとして保存",
       "modal_title": "オフラインレッスンとして保存",
       "title_label": "レッスンのタイトル",
-      "summary": "演習{exercises}個 · 理論ステップ{theory}個 · 約{minutes}分",
+      "summary": "演習{exercises}個 · 理論ステップ{steps}個 · 約{minutes}分",
       "theory_only": "演習に必要な語彙が足りません。練習素材を増やすには、より長いチャットをインポートしてください。",
       "save": "保存",
       "saved": "「マイレッスン」に保存しました。",

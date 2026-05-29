@@ -1417,7 +1417,7 @@
       "button": "Guardar como lección sin conexión",
       "modal_title": "Guardar como lección sin conexión",
       "title_label": "Título de la lección",
-      "summary": "{exercises} ejercicios · {theory} pasos de teoría · ~{minutes} min",
+      "summary": "{exercises} ejercicios · {steps} pasos de teoría · ~{minutes} min",
       "theory_only": "No hay suficiente vocabulario para ejercicios. Importa un chat más largo para más material de práctica.",
       "save": "Guardar",
       "saved": "Guardado en Mis lecciones.",

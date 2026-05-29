@@ -1417,7 +1417,7 @@
       "button": "Enregistrer comme leçon hors ligne",
       "modal_title": "Enregistrer comme leçon hors ligne",
       "title_label": "Titre de la leçon",
-      "summary": "{exercises} exercices · {theory} étapes de théorie · ~{minutes} min",
+      "summary": "{exercises} exercices · {steps} étapes de théorie · ~{minutes} min",
       "theory_only": "Pas assez de vocabulaire pour des exercices. Importez une conversation plus longue pour plus de matériel.",
       "save": "Enregistrer",
       "saved": "Enregistré dans Mes leçons.",

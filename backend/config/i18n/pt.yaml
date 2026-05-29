@@ -1302,7 +1302,7 @@ content:
     button: "Salvar como lição offline"
     modal_title: "Salvar como lição offline"
     title_label: "Título da lição"
-    summary: "{exercises} exercícios · {theory} etapas de teoria · ~{minutes} min"
+    summary: "{exercises} exercícios · {steps} etapas de teoria · ~{minutes} min"
     theory_only: "Vocabulário insuficiente para exercícios. Importe uma conversa mais longa para mais material de prática."
     save: "Salvar"
     saved: "Salvo em Minhas lições."

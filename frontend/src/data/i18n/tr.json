@@ -1417,7 +1417,7 @@
       "button": "Çevrimdışı ders olarak kaydet",
       "modal_title": "Çevrimdışı ders olarak kaydet",
       "title_label": "Ders başlığı",
-      "summary": "{exercises} alıştırma · {theory} teori adımı · ~{minutes} dk",
+      "summary": "{exercises} alıştırma · {steps} teori adımı · ~{minutes} dk",
       "theory_only": "Alıştırmalar için yeterli kelime yok. Daha fazla alıştırma malzemesi için daha uzun bir sohbet içe aktarın.",
       "save": "Kaydet",
       "saved": "Derslerim'e kaydedildi.",

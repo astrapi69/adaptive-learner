@@ -1417,7 +1417,7 @@
       "button": "Als Offline-Lektion speichern",
       "modal_title": "Als Offline-Lektion speichern",
       "title_label": "Titel der Lektion",
-      "summary": "{exercises} Übungen · {theory} Theorie-Schritte · ~{minutes} Min.",
+      "summary": "{exercises} Übungen · {steps} Theorie-Schritte · ~{minutes} Min.",
       "theory_only": "Nicht genug Vokabeln für Übungen. Importiere einen längeren Chat für mehr Übungsmaterial.",
       "save": "Speichern",
       "saved": "In „Meine Lektionen“ gespeichert.",

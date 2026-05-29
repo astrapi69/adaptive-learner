@@ -1313,7 +1313,7 @@ content:
     button: "Save as Offline Lesson"
     modal_title: "Save as offline lesson"
     title_label: "Lesson title"
-    summary: "{exercises} exercises · {theory} theory steps · ~{minutes} min"
+    summary: "{exercises} exercises · {steps} theory steps · ~{minutes} min"
     theory_only: "Not enough vocabulary for exercises. Import a longer chat for more practice material."
     save: "Save"
     saved: "Saved to My Lessons."

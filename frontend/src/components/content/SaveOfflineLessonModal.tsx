@@ -109,7 +109,7 @@ export default function SaveOfflineLessonModal({
     "{exercises} exercises · {theory} theory steps · ~{minutes} min",
   )
     .replace("{exercises}", String(summary.exercises))
-    .replace("{theory}", String(summary.theorySteps))
+    .replace("{steps}", String(summary.theorySteps))
     .replace("{minutes}", String(summary.estimatedMinutes));
 
   return (
