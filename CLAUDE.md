@@ -9,12 +9,28 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.42.1** (patch — fixes the
-  Save-as-Offline-Lesson 422 in API mode: ``saveUserSet`` was
-  double-encoding its POST body; plus a Settings tab reorg —
-  Help and About split into separate tabs, swipe-gesture moved
-  to Learning, identity section moved to Data. No settings lost
-  or duplicated). v1.42.0 = **Phase 59 —
+- **Current state:** **v1.43.0** (minor - the official
+  ``astrapi69/adaptive-learner-content`` content repo now
+  exists and is validated end-to-end, bringing the Content
+  Browser online with it. Same-id sets are deduped across the
+  bundled offline content and the GitHub repo (higher version
+  wins; on a tie GitHub is preferred over the build-time-frozen
+  bundle; when GitHub is unreachable only the bundled/cached
+  entry survives, so the offline fallback stays intact). A
+  Bundled/GitHub source badge renders on each downloaded set
+  card, and Share with Community is re-enabled now the repo
+  exists. Shared dedupe helpers per storage mode -
+  ``dedupeContentEntries`` / ``compareVersions`` in
+  ``content-loader-dexie.ts`` (Dexie); ``_dedupe_content_entries``
+  / ``_compare_versions`` in the content-loader ``service.py``
+  (API). Also folds in a documentation-verification system
+  (``scripts/verify_docs.py`` + ``make verify-docs-discipline``
+  + ``generate_docs_checklist.py``) that gates releases and CI
+  on README/ROADMAP/CLAUDE.md currency. v1.42.1 = patch - fixed
+  the Save-as-Offline-Lesson 422 in API mode (``saveUserSet``
+  double-encoded its POST body) plus a Settings tab reorg
+  (Help/About split, swipe-gesture to Learning, identity to
+  Data). v1.42.0 = **Phase 59 —
   Analysis-to-Lesson Converter + Community Content Sharing**.
   Turns a chat-import analysis into a complete, replayable
   **offline lesson** and adds a backend-free sharing loop.
@@ -649,8 +665,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.42.0 baseline:** backend 1027 (+1 skipped) + plugins
-  970 + Vitest 2559 = **4556 tests** (+1 skipped). E2E
+- **v1.43.0 baseline:** backend 1027 (+1 skipped) + plugins
+  975 + Vitest 2568 = **4570 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (19 specs incl. /content + /lesson + /review +
