@@ -184,9 +184,3 @@ export function nextCorrectAnswerIndex(): number {
 export function resetCorrectAnswerCount(): void {
     _correctAnswerCount = 0;
 }
-
-export const FEEDBACK_PREF_KEYS = {
-    intensity: KEY_INTENSITY,
-    soundEnabled: KEY_SOUND_ENABLED,
-    soundVolume: KEY_SOUND_VOLUME,
-} as const;

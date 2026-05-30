@@ -79,8 +79,6 @@ export const THEMES: readonly ThemeMeta[] = [
 
 export const THEME_IDS: readonly ThemeId[] = THEMES.map((meta) => meta.id);
 
-export const DEFAULT_THEME: ThemeId = "light";
-
 export function isKnownTheme(value: string): value is ThemeId {
     return THEMES.some((meta) => meta.id === value);
 }

@@ -101,18 +101,6 @@ def verify_token(token: str) -> PairingToken | None:
         return existing
 
 
-def peek_token(token: str) -> PairingToken | None:
-    """Look up a token without consuming it. Returns None on
-    miss/expiry. Test-only — production code uses
-    :func:`verify_token`."""
-    with _lock:
-        _purge_expired_locked()
-        existing = _store.get(token)
-        if existing is None or _now() >= existing.expires_at:
-            return None
-        return existing
-
-
 def _purge_expired_locked() -> None:
     """Drop expired tokens. Caller holds ``_lock``."""
     now = _now()
@@ -137,6 +125,5 @@ __all__ = [
     "PairingToken",
     "_reset_for_tests",
     "generate_token",
-    "peek_token",
     "verify_token",
 ]
