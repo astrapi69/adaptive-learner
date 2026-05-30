@@ -50,7 +50,13 @@ describe("findSimilarSets", () => {
     entry({ id: "es-a1-from-de", title: "Begrüßung", source_language: "de", target_language: "es", level: "A1" }),
   ];
 
-  it("flags a same-pair same-level set with a diacritic-insensitive title match", () => {
+  // T-1 (Phase 61 audit): this pure-function assertion is green in
+  // every normal run but flaked once under full-suite parallel
+  // `--coverage` (a v8 coverage-instrumentation / worker-scheduling
+  // race, not a logic bug — normaliseTitle has no shared state). A
+  // retry quarantines the coverage-only flake without single-
+  // threading the whole suite.
+  it("flags a same-pair same-level set with a diacritic-insensitive title match", { retry: 2 }, () => {
     const hits = findSimilarSets(query, candidates);
     expect(hits.map((h) => h.id)).toEqual(["fr-a1-from-de"]);
   });
