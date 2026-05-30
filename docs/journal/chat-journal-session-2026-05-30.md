@@ -214,3 +214,51 @@ restructure, German content, CI workflow) made locally, **unpushed**
 - Tag: `v1.44.0` created **locally, not pushed** (the maintainer
   pushes the tag + the external content-repo commits + publishes
   the GitHub release).
+
+---
+
+## Phase 61 / v1.45.0 — Quality Sweep
+
+Audit-first (docs/audits/2026-05-30-phase61-quality-audit.md) then fixes,
+in the maintainer's order: security → coverage → architecture →
+performance → dead code → deps → release.
+
+- **Security P2:** read_lesson path-traversal guard (mirrors read_asset).
+- **Coverage:** missions plugin 14→41; ApiStorage delegation 45%→100%
+  (auto-mock Proxy over the api client); config_overlay 51%→90%; 3
+  interactive Dexie E2E journeys (lesson playthrough across all 5
+  exercise types, Content Browser tree+filter, adaptive lesson) — all
+  validated via the dexie gate (now 23 specs).
+- **Architecture:** SyncSection raw fetch → api.sync.generatePairToken
+  (ApiError); /import/:id added to the Dexie gate; CLAUDE/backlog
+  "31 tables" → 29 (verified via ALL_SYNC_TABLES).
+- **Performance:** export_service N+1 → one IN() query; html5-qrcode
+  React.lazy (376 KB split out of the Settings chunk).
+- **Dead code:** peek_token, DEFAULT_THEME, FEEDBACK_PREF_KEYS, and the
+  ProjectTaxonomy/SubjectBrowser/TagManager cluster (+ tests). Kept
+  CEFR_LEVELS/treePlacement — now used by Phase 60/61.
+- **Tree-placement fold-in:** placement preview + duplicate detection +
+  conflicting-marker language heuristic (replaced the false-positive-
+  prone absence heuristic the adversarial review caught) + CEFR/word-
+  count warnings + enriched GitHub issue; content-repo CI enforces the
+  sets/{src}/{tgt-level} dir.
+- **Deps:** minor/patch applied (frontend react-router 7.16 / vite
+  8.0.14 / dexie 4.4.3 / lucide 1.17 / @types/react 19.2.15; backend
+  uvicorn 0.48 / platformdirs 4.10). Majors + launcher deps held.
+
+### Adversarial review (multi-agent workflow)
+4 dimensions: i18n parity ✓, both storage modes ✓, CI-catches-misfile ✓,
+heuristic false-positive FAIL → fixed (positive conflicting-marker
+detection) + re-verified against all 4 bundled sets.
+
+### Red-CI fix
+CI pre-commit job was red since v1.44.0: ruff-format nits in the C5b
+backend files (ruff *check* passes; ruff *format* flags them). pre-commit
+wasn't installed in the env. Installed the hook + ran pre-commit
+--all-files (green) + committed the format fix.
+
+### Session summary
+- Tests: backend 1047 (+1 skipped) + plugins 1031 + Vitest 2624 = 4702;
+  dexie gate 23; ruff/mypy clean; pre-commit green; verify-docs 0 FAIL;
+  npm build green.
+- Both repos to be pushed; tag v1.45.0.

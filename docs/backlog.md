@@ -17,14 +17,15 @@ tool into a full learning platform with downloadable content
 sets, interactive exercises, and dual-mode operation
 (Content-only + AI-augmented).
 
-State: **post v1.44.0 (Phase 60 — content language pairs +
-source-language Content Browser tree + German-source pilot sets
-+ two-layer content validation (rule-based + opt-in AI) +
-content-repo CI).** Phase history through Phase 60 +
+State: **post v1.45.0 (Phase 61 — quality sweep: security P2,
+coverage (missions 41, ApiStorage 100%, config_overlay 90%, 3
+interactive Dexie E2E journeys), architecture + performance
+fixes, dead-code removal, tree-placement + duplicate detection,
+minor/patch deps).** Phase history through Phase 61 +
 per-release notes live in
-[changelog/releases/](../changelog/releases/). 31 tables on
+[changelog/releases/](../changelog/releases/). 29 tables on
 the sync surface. 13 plugins, 29 SQLAlchemy models,
-1035 (+1 skipped) + 1003 + 2616 = 4654 tests green
+1047 (+1 skipped) + 1031 + 2624 = 4702 tests green
 (+1 skipped). Closed in this release line: BL-04 (QR scan,
 v1.7.0), BL-05/06 (sync gaps, v1.8.0), BL-07 (subjects/tags,
 v1.9.0), BL-08 (gestures, v1.10.0), BL-09 (model picker,

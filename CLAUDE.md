@@ -9,7 +9,30 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.44.0** (minor - **Phase 60 —
+- **Current state:** **v1.45.0** (minor - **Phase 61 — Quality
+  Sweep**. Audit-first pass (``docs/audits/2026-05-30-phase61-
+  quality-audit.md``) then fixes: security P2 (``read_lesson``
+  path-traversal guard), coverage (missions plugin 14→41,
+  ApiStorage delegation 45%→100%, ``config_overlay`` 51%→90%,
+  + 3 interactive Dexie E2E journeys: lesson playthrough across
+  all 5 exercise types, Content Browser tree+filter, adaptive
+  lesson), architecture (SyncSection routes through the api
+  client → ``ApiError``; ``/import/:id`` in the Dexie gate),
+  performance (export N+1 → one ``IN`` query; ``html5-qrcode``
+  ``React.lazy`` out of the Settings chunk), dead-code removal
+  (``peek_token``, ``DEFAULT_THEME``, ``FEEDBACK_PREF_KEYS``,
+  the ProjectTaxonomy/SubjectBrowser/TagManager cluster), and
+  the tree-placement verification + duplicate detection folded
+  into the Phase 60 share pipeline (placement preview,
+  conflicting-marker language heuristic, CEFR/word-count
+  warnings, similar-title duplicate warning, enriched GitHub
+  issue; content-repo CI now enforces the
+  ``sets/{src}/{tgt-level}`` directory). Minor/patch deps
+  applied (frontend react-router 7.16 / vite 8.0.14 / dexie
+  4.4.3 / lucide 1.17; backend uvicorn 0.48 / platformdirs
+  4.10); majors (anthropic, mypy, tiptap 3, vitejs-react 6,
+  types-node 25, sql.js) + launcher deps held for dedicated
+  sessions. v1.44.0 = **Phase 60 —
   Content Validation Pipeline + Language-Pair Tree**. Content
   sets now declare a language PAIR: ``target_language`` (what
   the learner LEARNS) + ``source_language`` (what they SPEAK -
@@ -699,12 +722,14 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.44.0 baseline:** backend 1035 (+1 skipped) + plugins
-  1003 + Vitest 2616 = **4654 tests** (+1 skipped). E2E
+- **v1.45.0 baseline:** backend 1047 (+1 skipped) + plugins
+  1031 + Vitest 2624 = **4702 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
-  gate** (19 specs incl. /content + /lesson + /review +
-  /adaptive-lesson + the Phase 49 Learning Repository
+  gate** (23 specs incl. the Phase 61 interactive journeys —
+  full lesson playthrough across all 5 exercise types,
+  Content Browser tree + language filter, adaptive lesson —
+  plus /import/:id and the Phase 49 Learning Repository
   surface that renders client-side) runs via
   `make test-dexie-smoke`; aggregated into
   `make release-test` so a red gate blocks the tag.
