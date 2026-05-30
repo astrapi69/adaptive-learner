@@ -18,7 +18,7 @@
  * loading states.
  */
 
-import {useEffect, useRef, useState} from "react";
+import {lazy, Suspense, useEffect, useRef, useState} from "react";
 import QRCode from "qrcode";
 
 import {api, ApiError} from "../api/client";
@@ -38,7 +38,10 @@ import {
 } from "../storage/sync-engine";
 import {notify} from "../utils/notify";
 import SyncConflictDialog from "./SyncConflictDialog";
-import QRScannerModal from "./sync/QRScannerModal";
+// Phase 61 C4 — lazy-load the QR scanner modal so ``html5-qrcode``
+// (~542 KB) is split out of the Settings chunk and only fetched when
+// the user actually opens the scanner.
+const QRScannerModal = lazy(() => import("./sync/QRScannerModal"));
 
 const DEFAULT_BACKEND_PORT = 18001;
 
@@ -226,12 +229,16 @@ export default function SyncSection() {
                 />
             )}
 
-            <QRScannerModal
-                open={scannerOpen}
-                onScan={handleScannedUri}
-                onClose={() => setScannerOpen(false)}
-                t={t}
-            />
+            {scannerOpen && (
+                <Suspense fallback={null}>
+                    <QRScannerModal
+                        open={scannerOpen}
+                        onScan={handleScannedUri}
+                        onClose={() => setScannerOpen(false)}
+                        t={t}
+                    />
+                </Suspense>
+            )}
 
             {conflicts !== null && (
                 <SyncConflictDialog

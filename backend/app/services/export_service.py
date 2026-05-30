@@ -245,14 +245,23 @@ def _recent_sessions(
         p.id: p.topic
         for p in db.query(LearningProject).filter(LearningProject.id.in_(project_ids)).all()
     }
+    # Pre-fetch the latest rating per session in ONE query (was an
+    # N+1: a per-session SessionRating query inside the loop). Rows
+    # come back newest-first, so the first seen per session_id is the
+    # latest — ``setdefault`` keeps it.
+    session_ids = [s.id for s in sessions]
+    rating_by_session: dict[str, SessionRating] = {}
+    if session_ids:
+        for r in (
+            db.query(SessionRating)
+            .filter(SessionRating.session_id.in_(session_ids))
+            .order_by(SessionRating.created_at.desc())
+            .all()
+        ):
+            rating_by_session.setdefault(r.session_id, r)
     out: list[dict[str, Any]] = []
     for s in sessions:
-        rating = (
-            db.query(SessionRating)
-            .filter(SessionRating.session_id == s.id)
-            .order_by(SessionRating.created_at.desc())
-            .first()
-        )
+        rating = rating_by_session.get(s.id)
         duration = _duration_minutes(s.started_at, s.ended_at)
         out.append(
             {

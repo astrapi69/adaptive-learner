@@ -10,7 +10,7 @@
 import "fake-indexeddb/auto";
 
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import {render, screen, fireEvent} from "@testing-library/react";
+import {render, screen, fireEvent, waitFor} from "@testing-library/react";
 
 import SyncSection from "./SyncSection";
 import {I18nProvider} from "../hooks/useI18n";
@@ -190,19 +190,22 @@ describe("SyncSection — QR scanner integration (Dexie / phone)", () => {
         expect(details.open).toBe(false);
     });
 
-    it("clicking 'Scan QR Code' opens the modal overlay", () => {
+    it("clicking 'Scan QR Code' opens the modal overlay", async () => {
         renderSection();
         // No modal in the DOM until the button is clicked.
         expect(screen.queryByTestId("qr-scanner-modal")).toBeNull();
         fireEvent.click(screen.getByTestId("sync-scan-button"));
-        expect(screen.getByTestId("qr-scanner-modal")).toBeTruthy();
+        // The modal is React.lazy'd (html5-qrcode chunk) — await its mount.
+        expect(await screen.findByTestId("qr-scanner-modal")).toBeTruthy();
     });
 
-    it("modal close button removes the overlay (no zombie camera mount)", () => {
+    it("modal close button removes the overlay (no zombie camera mount)", async () => {
         renderSection();
         fireEvent.click(screen.getByTestId("sync-scan-button"));
-        expect(screen.getByTestId("qr-scanner-modal")).toBeTruthy();
+        await screen.findByTestId("qr-scanner-modal");
         fireEvent.click(screen.getByTestId("qr-scanner-close"));
-        expect(screen.queryByTestId("qr-scanner-modal")).toBeNull();
+        await waitFor(() =>
+            expect(screen.queryByTestId("qr-scanner-modal")).toBeNull(),
+        );
     });
 });
