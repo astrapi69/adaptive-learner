@@ -229,6 +229,58 @@ function asContentSetEntry(
   };
 }
 
+/** Numeric semver compare. Returns >0 if a>b, <0 if a<b, 0 if equal. */
+function compareVersions(a: string, b: string): number {
+  const pa = String(a ?? "")
+    .split(".")
+    .map((n) => parseInt(n, 10) || 0);
+  const pb = String(b ?? "")
+    .split(".")
+    .map((n) => parseInt(n, 10) || 0);
+  const len = Math.max(pa.length, pb.length);
+  for (let i = 0; i < len; i++) {
+    const diff = (pa[i] ?? 0) - (pb[i] ?? 0);
+    if (diff !== 0) return diff > 0 ? 1 : -1;
+  }
+  return 0;
+}
+
+function isBundledSource(source: string): boolean {
+  return source.startsWith(BUNDLED_PREFIX);
+}
+
+/**
+ * Dedupe content sets that the same ``id`` advertises from more
+ * than one source (a bundled pilot + the external repo). Keeps the
+ * higher version; on a version tie prefers the external (GitHub)
+ * copy, which is likelier to be current. When the external source
+ * is unreachable only the bundled entry is present, so bundled wins
+ * by default and the offline fallback stays intact. The winning
+ * entry carries its own ``source``, so the UI badge reflects where
+ * the surfaced version came from.
+ */
+function dedupeContentEntries(entries: ContentSetEntry[]): ContentSetEntry[] {
+  const winners = new Map<string, ContentSetEntry>();
+  for (const entry of entries) {
+    const current = winners.get(entry.id);
+    if (!current) {
+      winners.set(entry.id, entry);
+      continue;
+    }
+    const cmp = compareVersions(entry.version, current.version);
+    if (cmp > 0) {
+      winners.set(entry.id, entry);
+    } else if (
+      cmp === 0 &&
+      isBundledSource(current.source) &&
+      !isBundledSource(entry.source)
+    ) {
+      winners.set(entry.id, entry);
+    }
+  }
+  return [...winners.values()];
+}
+
 async function rowToCachedEntry(row: ContentSetRow): Promise<ContentSetEntry> {
   let tags: string[] = [];
   try {
@@ -316,6 +368,10 @@ export async function listSetsDexie(
       );
     }
   }
+  // Collapse same-id sets advertised by more than one source
+  // (bundled pilot + external repo) to a single row before the
+  // user-generated lessons (which carry unique ids) are appended.
+  const deduped = dedupeContentEntries(entries);
   // Phase 59B — user-generated sets ("My Lessons") aren't an
   // upstream source; surface them from IndexedDB directly.
   const db = getDb();
@@ -324,9 +380,9 @@ export async function listSetsDexie(
     .equals(USER_GENERATED_SOURCE)
     .toArray();
   for (const row of userRows) {
-    entries.push(await rowToCachedEntry(row));
+    deduped.push(await rowToCachedEntry(row));
   }
-  return { sets: entries, sources };
+  return { sets: deduped, sources };
 }
 
 export async function downloadSetDexie(

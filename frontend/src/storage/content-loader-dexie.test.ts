@@ -12,17 +12,17 @@
  */
 
 import "fake-indexeddb/auto";
-import {beforeEach, describe, expect, it, vi, type Mock} from "vitest";
+import { beforeEach, describe, expect, it, vi, type Mock } from "vitest";
 
 import {
-    downloadSetDexie,
-    getAssetDexie,
-    getLessonDexie,
-    listLessonsDexie,
-    listSetsDexie,
-    mimeTypeForAssetPath,
+  downloadSetDexie,
+  getAssetDexie,
+  getLessonDexie,
+  listLessonsDexie,
+  listSetsDexie,
+  mimeTypeForAssetPath,
 } from "./content-loader-dexie";
-import {_resetDbForTests, getDb} from "./db";
+import { _resetDbForTests, getDb } from "./db";
 
 const SOURCE = "astrapi69/adaptive-learner-content";
 const BRANCH = "main";
@@ -58,278 +58,320 @@ metadata:
 `.trim();
 
 const LESSON_JSON = JSON.stringify({
-    id: "01-greetings",
-    title: "Greetings",
-    cards: [{id: "bonjour", front: "Bonjour", back: "Hello"}],
-    steps: [
-        {
-            id: "intro",
-            type: "theory",
-            body: "# Greetings\n\nA few common phrases.",
-        },
-    ],
+  id: "01-greetings",
+  title: "Greetings",
+  cards: [{ id: "bonjour", front: "Bonjour", back: "Hello" }],
+  steps: [
+    {
+      id: "intro",
+      type: "theory",
+      body: "# Greetings\n\nA few common phrases.",
+    },
+  ],
 });
 
-function installFetchMock(
-    routes: Record<string, string | null>,
-): Mock {
-    const mock = vi.fn(async (input: RequestInfo | URL) => {
-        const url = String(input);
-        for (const [path, body] of Object.entries(routes)) {
-            if (url.endsWith(path)) {
-                if (body === null) {
-                    return new Response("not found", {status: 404});
-                }
-                return new Response(body, {status: 200});
-            }
+function installFetchMock(routes: Record<string, string | null>): Mock {
+  const mock = vi.fn(async (input: RequestInfo | URL) => {
+    const url = String(input);
+    for (const [path, body] of Object.entries(routes)) {
+      if (url.endsWith(path)) {
+        if (body === null) {
+          return new Response("not found", { status: 404 });
         }
-        return new Response(`unmocked: ${url}`, {status: 404});
-    });
-    globalThis.fetch = mock as unknown as typeof fetch;
-    return mock;
+        return new Response(body, { status: 200 });
+      }
+    }
+    return new Response(`unmocked: ${url}`, { status: 404 });
+  });
+  globalThis.fetch = mock as unknown as typeof fetch;
+  return mock;
 }
 
 beforeEach(async () => {
-    // Drop the Dexie database explicitly so every test starts
-    // from an empty IndexedDB. ``_resetDbForTests`` only closes
-    // the connection — it does not wipe the data, and the
-    // fake-indexeddb engine persists across resets.
-    const db = getDb();
-    try {
-        await db.contentSets.clear();
-        await db.contentSetFiles.clear();
-    } catch {
-        /* fresh DB — nothing to clear */
-    }
-    await _resetDbForTests();
+  // Drop the Dexie database explicitly so every test starts
+  // from an empty IndexedDB. ``_resetDbForTests`` only closes
+  // the connection — it does not wipe the data, and the
+  // fake-indexeddb engine persists across resets.
+  const db = getDb();
+  try {
+    await db.contentSets.clear();
+    await db.contentSetFiles.clear();
+  } catch {
+    /* fresh DB — nothing to clear */
+  }
+  await _resetDbForTests();
 });
 
 describe("Dexie content-loader: listSets", () => {
-    it("surfaces upstream sets when manifest fetch succeeds", async () => {
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
-        });
-        const result = await listSetsDexie([{source: SOURCE, branch: BRANCH}]);
-        expect(result.sets).toHaveLength(1);
-        const entry = result.sets[0];
-        expect(entry.id).toBe(SET_ID);
-        expect(entry.language).toBe("fr");
-        expect(entry.cached_version).toBeNull();
-        expect(entry.update_available).toBe(false);
+  it("surfaces upstream sets when manifest fetch succeeds", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+    });
+    const result = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+    expect(result.sets).toHaveLength(1);
+    const entry = result.sets[0];
+    expect(entry.id).toBe(SET_ID);
+    expect(entry.language).toBe("fr");
+    expect(entry.cached_version).toBeNull();
+    expect(entry.update_available).toBe(false);
+  });
+
+  it("resolves bundled: sources to /content/{key}/... (Phase 51D)", async () => {
+    // Bundled-source URL contract: source ``bundled:fr-a1``
+    // + path ``manifest.yaml`` MUST fetch from
+    // ``/content/fr-a1/manifest.yaml`` (the Vite
+    // static-asset path produced by copy-bundled-content.mjs
+    // at predev/prebuild). Branch is ignored.
+    const mock = installFetchMock({
+      "/content/fr-a1/manifest.yaml": REPO_MANIFEST,
+    });
+    const result = await listSetsDexie([
+      { source: "bundled:fr-a1", branch: "" },
+    ]);
+    expect(result.sets).toHaveLength(1);
+    expect(result.sets[0].id).toBe(SET_ID);
+    // Confirm the fetch went to the bundled path, not the
+    // GitHub raw URL.
+    const calls = mock.mock.calls.map((c) => String(c[0]));
+    expect(calls.some((u) => u.includes("/content/fr-a1/manifest.yaml"))).toBe(
+      true,
+    );
+    expect(calls.some((u) => u.includes("raw.githubusercontent.com"))).toBe(
+      false,
+    );
+  });
+
+  it("dedupes a set advertised by bundled + external, higher version wins", async () => {
+    const githubManifest = REPO_MANIFEST.replace(
+      "version: '1.0.0'",
+      "version: '1.2.0'",
+    );
+    installFetchMock({
+      "/content/fr-a1/manifest.yaml": REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: githubManifest,
+    });
+    const result = await listSetsDexie([
+      { source: "bundled:fr-a1", branch: "" },
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    // One row, not two — the external 1.2.0 beats bundled 1.0.0.
+    expect(result.sets).toHaveLength(1);
+    expect(result.sets[0].id).toBe(SET_ID);
+    expect(result.sets[0].version).toBe("1.2.0");
+    expect(result.sets[0].source).toBe(SOURCE);
+  });
+
+  it("dedupes on a version tie by preferring the external source", async () => {
+    installFetchMock({
+      "/content/fr-a1/manifest.yaml": REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+    });
+    const result = await listSetsDexie([
+      { source: "bundled:fr-a1", branch: "" },
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(result.sets).toHaveLength(1);
+    expect(result.sets[0].source).toBe(SOURCE);
+  });
+
+  it("keeps the bundled set when the external source is unreachable", async () => {
+    installFetchMock({
+      "/content/fr-a1/manifest.yaml": REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: null,
+    });
+    const result = await listSetsDexie([
+      { source: "bundled:fr-a1", branch: "" },
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(result.sets).toHaveLength(1);
+    expect(result.sets[0].source).toBe("bundled:fr-a1");
+  });
+
+  it("degrades to cached sets when upstream is unreachable", async () => {
+    // Seed a cached row, then make the manifest fetch
+    // return 404 — the result must surface the cached
+    // entry only.
+    const db = getDb();
+    await db.contentSets.put({
+      id: `astrapi69--adaptive-learner-content/${SET_ID}/1.0.0`,
+      source: SOURCE,
+      branch: BRANCH,
+      set_id: SET_ID,
+      version: "1.0.0",
+      title: "French A1",
+      language: "fr",
+      level: "A1",
+      domain: "language",
+      lesson_count: 1,
+      description: null,
+      tags: "[]",
+      cover_image: null,
+      downloaded_at: "2026-05-26T00:00:00Z",
+      manifest_yaml: SET_MANIFEST,
     });
 
-    it("resolves bundled: sources to /content/{key}/... (Phase 51D)", async () => {
-        // Bundled-source URL contract: source ``bundled:fr-a1``
-        // + path ``manifest.yaml`` MUST fetch from
-        // ``/content/fr-a1/manifest.yaml`` (the Vite
-        // static-asset path produced by copy-bundled-content.mjs
-        // at predev/prebuild). Branch is ignored.
-        const mock = installFetchMock({
-            "/content/fr-a1/manifest.yaml": REPO_MANIFEST,
-        });
-        const result = await listSetsDexie([
-            {source: "bundled:fr-a1", branch: ""},
-        ]);
-        expect(result.sets).toHaveLength(1);
-        expect(result.sets[0].id).toBe(SET_ID);
-        // Confirm the fetch went to the bundled path, not the
-        // GitHub raw URL.
-        const calls = mock.mock.calls.map((c) => String(c[0]));
-        expect(calls.some((u) => u.includes("/content/fr-a1/manifest.yaml")))
-            .toBe(true);
-        expect(calls.some((u) => u.includes("raw.githubusercontent.com")))
-            .toBe(false);
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: null,
     });
+    const result = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+    expect(result.sets).toHaveLength(1);
+    expect(result.sets[0].cached_version).toBe("1.0.0");
+  });
 
-    it("degrades to cached sets when upstream is unreachable", async () => {
-        // Seed a cached row, then make the manifest fetch
-        // return 404 — the result must surface the cached
-        // entry only.
-        const db = getDb();
-        await db.contentSets.put({
-            id: `astrapi69--adaptive-learner-content/${SET_ID}/1.0.0`,
-            source: SOURCE,
-            branch: BRANCH,
-            set_id: SET_ID,
-            version: "1.0.0",
-            title: "French A1",
-            language: "fr",
-            level: "A1",
-            domain: "language",
-            lesson_count: 1,
-            description: null,
-            tags: "[]",
-            cover_image: null,
-            downloaded_at: "2026-05-26T00:00:00Z",
-            manifest_yaml: SET_MANIFEST,
-        });
-
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: null,
-        });
-        const result = await listSetsDexie([{source: SOURCE, branch: BRANCH}]);
-        expect(result.sets).toHaveLength(1);
-        expect(result.sets[0].cached_version).toBe("1.0.0");
+  it("marks update_available when cached < upstream", async () => {
+    const db = getDb();
+    await db.contentSets.put({
+      id: `astrapi69--adaptive-learner-content/${SET_ID}/0.9.0`,
+      source: SOURCE,
+      branch: BRANCH,
+      set_id: SET_ID,
+      version: "0.9.0",
+      title: "French A1",
+      language: "fr",
+      level: "A1",
+      domain: "language",
+      lesson_count: 1,
+      description: null,
+      tags: "[]",
+      cover_image: null,
+      downloaded_at: "2026-05-26T00:00:00Z",
+      manifest_yaml: SET_MANIFEST,
     });
-
-    it("marks update_available when cached < upstream", async () => {
-        const db = getDb();
-        await db.contentSets.put({
-            id: `astrapi69--adaptive-learner-content/${SET_ID}/0.9.0`,
-            source: SOURCE,
-            branch: BRANCH,
-            set_id: SET_ID,
-            version: "0.9.0",
-            title: "French A1",
-            language: "fr",
-            level: "A1",
-            domain: "language",
-            lesson_count: 1,
-            description: null,
-            tags: "[]",
-            cover_image: null,
-            downloaded_at: "2026-05-26T00:00:00Z",
-            manifest_yaml: SET_MANIFEST,
-        });
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
-        });
-        const result = await listSetsDexie([{source: SOURCE, branch: BRANCH}]);
-        expect(result.sets[0].cached_version).toBe("0.9.0");
-        expect(result.sets[0].update_available).toBe(true);
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
     });
+    const result = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+    expect(result.sets[0].cached_version).toBe("0.9.0");
+    expect(result.sets[0].update_available).toBe(true);
+  });
 });
 
 describe("Dexie content-loader: downloadSet", () => {
-    it("caches the set + lesson files after a full download", async () => {
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
-                LESSON_JSON,
-        });
-        const entry = await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        expect(entry.cached_version).toBe("1.0.0");
-        expect(entry.update_available).toBe(false);
-
-        const db = getDb();
-        const rows = await db.contentSets.toArray();
-        expect(rows).toHaveLength(1);
-        const files = await db.contentSetFiles.toArray();
-        const filenames = files.map((f) => f.filename).sort();
-        expect(filenames).toContain("lessons/01-greetings.json");
-        expect(filenames).toContain("manifest.yaml");
+  it("caches the set + lesson files after a full download", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
     });
+    const entry = await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(entry.cached_version).toBe("1.0.0");
+    expect(entry.update_available).toBe(false);
 
-    it("is idempotent when the cache matches the upstream version", async () => {
-        const fetchMock = installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
-                LESSON_JSON,
-        });
-        await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        const callsBefore = fetchMock.mock.calls.length;
-        const entry = await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        expect(entry.cached_version).toBe("1.0.0");
-        // The second call fetches ONLY the repo manifest to
-        // reconcile versions; it skips the set manifest and
-        // lesson files.
-        const callsAfter = fetchMock.mock.calls.length;
-        expect(callsAfter - callsBefore).toBe(1);
-    });
+    const db = getDb();
+    const rows = await db.contentSets.toArray();
+    expect(rows).toHaveLength(1);
+    const files = await db.contentSetFiles.toArray();
+    const filenames = files.map((f) => f.filename).sort();
+    expect(filenames).toContain("lessons/01-greetings.json");
+    expect(filenames).toContain("manifest.yaml");
+  });
 
-    it("404s when the set id is not in the upstream manifest", async () => {
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
-        });
-        await expect(
-            downloadSetDexie(SOURCE, "no-such-set", [
-                {source: SOURCE, branch: BRANCH},
-            ]),
-        ).rejects.toThrow(/no-such-set/);
+  it("is idempotent when the cache matches the upstream version", async () => {
+    const fetchMock = installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
     });
+    await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    const callsBefore = fetchMock.mock.calls.length;
+    const entry = await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(entry.cached_version).toBe("1.0.0");
+    // The second call fetches ONLY the repo manifest to
+    // reconcile versions; it skips the set manifest and
+    // lesson files.
+    const callsAfter = fetchMock.mock.calls.length;
+    expect(callsAfter - callsBefore).toBe(1);
+  });
+
+  it("404s when the set id is not in the upstream manifest", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+    });
+    await expect(
+      downloadSetDexie(SOURCE, "no-such-set", [
+        { source: SOURCE, branch: BRANCH },
+      ]),
+    ).rejects.toThrow(/no-such-set/);
+  });
 });
 
 describe("Dexie content-loader: listLessons + getLesson", () => {
-    it("returns the lesson list after download", async () => {
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
-                LESSON_JSON,
-        });
-        await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        const listing = await listLessonsDexie(SOURCE, SET_ID);
-        expect(listing.lessons).toEqual(["01-greetings.json"]);
-        expect(listing.version).toBe("1.0.0");
+  it("returns the lesson list after download", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
     });
+    await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    const listing = await listLessonsDexie(SOURCE, SET_ID);
+    expect(listing.lessons).toEqual(["01-greetings.json"]);
+    expect(listing.version).toBe("1.0.0");
+  });
 
-    it("404s on uncached set", async () => {
-        await expect(listLessonsDexie(SOURCE, SET_ID)).rejects.toThrow(
-            /not cached/,
-        );
-    });
+  it("404s on uncached set", async () => {
+    await expect(listLessonsDexie(SOURCE, SET_ID)).rejects.toThrow(
+      /not cached/,
+    );
+  });
 
-    it("reads the lesson back from the cache", async () => {
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
-                LESSON_JSON,
-        });
-        await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        const lesson = await getLessonDexie(
-            SOURCE,
-            SET_ID,
-            "01-greetings.json",
-        );
-        expect(lesson.id).toBe("01-greetings");
-        expect(lesson.title).toBe("Greetings");
+  it("reads the lesson back from the cache", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
     });
+    await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    const lesson = await getLessonDexie(SOURCE, SET_ID, "01-greetings.json");
+    expect(lesson.id).toBe("01-greetings");
+    expect(lesson.title).toBe("Greetings");
+  });
 
-    it("404s on unknown lesson filename", async () => {
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
-                LESSON_JSON,
-        });
-        await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        await expect(
-            getLessonDexie(SOURCE, SET_ID, "no-such.json"),
-        ).rejects.toThrow(/not found/);
+  it("404s on unknown lesson filename", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
     });
+    await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    await expect(
+      getLessonDexie(SOURCE, SET_ID, "no-such.json"),
+    ).rejects.toThrow(/not found/);
+  });
 });
 
 describe("mimeTypeForAssetPath", () => {
-    it.each([
-        ["img/cover.png", "image/png"],
-        ["img/scene.jpg", "image/jpeg"],
-        ["img/scene.jpeg", "image/jpeg"],
-        ["img/scene.webp", "image/webp"],
-        ["img/icon.svg", "image/svg+xml"],
-        ["audio/x.mp3", "application/octet-stream"],
-    ])("maps %s → %s", (path, expected) => {
-        expect(mimeTypeForAssetPath(path)).toBe(expected);
-    });
+  it.each([
+    ["img/cover.png", "image/png"],
+    ["img/scene.jpg", "image/jpeg"],
+    ["img/scene.jpeg", "image/jpeg"],
+    ["img/scene.webp", "image/webp"],
+    ["img/icon.svg", "image/svg+xml"],
+    ["audio/x.mp3", "application/octet-stream"],
+  ])("maps %s → %s", (path, expected) => {
+    expect(mimeTypeForAssetPath(path)).toBe(expected);
+  });
 });
 
 describe("Dexie content-loader: assets (Phase 54 / v1.37.0)", () => {
-    // Repo manifest with one declared asset on the set.
-    const REPO_MANIFEST_WITH_ASSETS = `
+  // Repo manifest with one declared asset on the set.
+  const REPO_MANIFEST_WITH_ASSETS = `
 schema_version: '1.0'
 name: Adaptive Learner Pilot
 sets:
@@ -346,85 +388,83 @@ sets:
         size_kb: 1
 `.trim();
 
-    const PNG_BODY = "\x89PNG\r\n\x1a\nFAKE_PIXEL_DATA";
+  const PNG_BODY = "\x89PNG\r\n\x1a\nFAKE_PIXEL_DATA";
 
-    it("fetches + caches declared assets during downloadSet", async () => {
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST_WITH_ASSETS,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
-                LESSON_JSON,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/assets/img/cover.png`]:
-                PNG_BODY,
-        });
-        await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        const db = getDb();
-        const files = await db.contentSetFiles.toArray();
-        const filenames = files.map((f) => f.filename).sort();
-        expect(filenames).toContain("assets/img/cover.png");
+  it("fetches + caches declared assets during downloadSet", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST_WITH_ASSETS,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/assets/img/cover.png`]: PNG_BODY,
     });
+    await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    const db = getDb();
+    const files = await db.contentSetFiles.toArray();
+    const filenames = files.map((f) => f.filename).sort();
+    expect(filenames).toContain("assets/img/cover.png");
+  });
 
-    it("getAssetDexie returns a Blob with the right MIME", async () => {
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST_WITH_ASSETS,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
-                LESSON_JSON,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/assets/img/cover.png`]:
-                PNG_BODY,
-        });
-        await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
-        expect(blob).not.toBeNull();
-        expect(blob!.type).toBe("image/png");
-        expect(blob!.size).toBeGreaterThan(0);
+  it("getAssetDexie returns a Blob with the right MIME", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST_WITH_ASSETS,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/assets/img/cover.png`]: PNG_BODY,
     });
+    await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
+    expect(blob).not.toBeNull();
+    expect(blob!.type).toBe("image/png");
+    expect(blob!.size).toBeGreaterThan(0);
+  });
 
-    it("getAssetDexie returns null for an uncached set", async () => {
-        const blob = await getAssetDexie(
-            SOURCE,
-            "nonexistent-set",
-            "img/cover.png",
-        );
-        expect(blob).toBeNull();
-    });
+  it("getAssetDexie returns null for an uncached set", async () => {
+    const blob = await getAssetDexie(
+      SOURCE,
+      "nonexistent-set",
+      "img/cover.png",
+    );
+    expect(blob).toBeNull();
+  });
 
-    it("getAssetDexie returns null when the asset wasn't bundled", async () => {
-        // Download the set with NO assets, then try to read one.
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
-                LESSON_JSON,
-        });
-        await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
-        expect(blob).toBeNull();
+  it("getAssetDexie returns null when the asset wasn't bundled", async () => {
+    // Download the set with NO assets, then try to read one.
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
     });
+    await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
+    expect(blob).toBeNull();
+  });
 
-    it("download tolerates a 404 on a declared asset (graceful skip)", async () => {
-        installFetchMock({
-            [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST_WITH_ASSETS,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
-                LESSON_JSON,
-            // assets/img/cover.png → 404 (mock returns null)
-            [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/assets/img/cover.png`]: null,
-        });
-        // download succeeds even though one declared asset is
-        // missing on the upstream — frontend will text-fallback
-        // when it tries to render it.
-        const entry = await downloadSetDexie(SOURCE, SET_ID, [
-            {source: SOURCE, branch: BRANCH},
-        ]);
-        expect(entry.cached_version).toBe("1.0.0");
-        const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
-        expect(blob).toBeNull();
+  it("download tolerates a 404 on a declared asset (graceful skip)", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST_WITH_ASSETS,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+      // assets/img/cover.png → 404 (mock returns null)
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/assets/img/cover.png`]: null,
     });
+    // download succeeds even though one declared asset is
+    // missing on the upstream — frontend will text-fallback
+    // when it tries to render it.
+    const entry = await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(entry.cached_version).toBe("1.0.0");
+    const blob = await getAssetDexie(SOURCE, SET_ID, "img/cover.png");
+    expect(blob).toBeNull();
+  });
 });

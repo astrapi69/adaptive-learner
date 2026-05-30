@@ -457,7 +457,17 @@ export default function ContentPage() {
                 data-testid={`content-set-${entry.id}`}
               >
                 <div className="content-set-meta">
-                  <h2>{entry.title}</h2>
+                  <h2>
+                    {entry.title}
+                    <span
+                      className="content-set-source"
+                      data-testid={`content-set-${entry.id}-source`}
+                    >
+                      {entry.source.startsWith("bundled:")
+                        ? t("content.source.bundled", "Bundled")
+                        : t("content.source.github", "GitHub")}
+                    </span>
+                  </h2>
                   <p className="content-set-tags">
                     <span>
                       {entry.language.toUpperCase()}

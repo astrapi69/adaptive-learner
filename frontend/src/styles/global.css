@@ -2208,6 +2208,21 @@ select:focus {
   margin: 0 0 6px 0;
 }
 
+.content-set-source {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  background: var(--bg-secondary);
+  vertical-align: middle;
+}
+
 .content-set-cached {
   color: var(--success);
   font-weight: 600;

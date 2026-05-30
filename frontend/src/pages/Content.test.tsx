@@ -179,6 +179,30 @@ describe("ContentPage", () => {
     });
   });
 
+  it("shows a GitHub source badge for an external set", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [SAMPLE_ENTRY],
+      sources: [{ source: SAMPLE_ENTRY.source, branch: "main" }],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    expect(
+      screen.getByTestId("content-set-language-fr-a1-source"),
+    ).toHaveTextContent(/GitHub/i);
+  });
+
+  it("shows a Bundled source badge for a bundled set", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [{ ...SAMPLE_ENTRY, source: "bundled:fr-a1" }],
+      sources: [{ source: "bundled:fr-a1", branch: "" }],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    expect(
+      screen.getByTestId("content-set-language-fr-a1-source"),
+    ).toHaveTextContent(/Bundled/i);
+  });
+
   it("renders the empty state when no sets are available", async () => {
     listSetsMock.mockResolvedValue({ sets: [], sources: [] });
     renderPage();

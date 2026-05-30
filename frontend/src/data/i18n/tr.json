@@ -1443,6 +1443,10 @@
     "lessons": "ders",
     "loading": "İçerik setleri yükleniyor…",
     "empty": "Henüz mevcut set yok. Bağlantınızı kontrol edip yenileyin veya Ayarlar'dan bir kaynak yapılandırın.",
+    "source": {
+      "bundled": "Dahili",
+      "github": "GitHub"
+    },
     "status": {
       "ready": "Hazır",
       "update_available": "Güncelleme var",

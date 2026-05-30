@@ -1337,6 +1337,9 @@ content:
   lessons: "lessons"
   loading: "Loading content sets…"
   empty: "No content sets available yet. Check your network connection and refresh, or configure a source in Settings."
+  source:
+    bundled: "Bundled"
+    github: "GitHub"
   status:
     ready: "Ready"
     update_available: "Update available"

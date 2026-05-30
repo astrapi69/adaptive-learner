@@ -1328,6 +1328,9 @@ content:
   lessons: "leçons"
   loading: "Chargement des sets de contenu…"
   empty: "Aucun set disponible pour l'instant. Vérifie ta connexion et rafraîchis, ou configure une source dans les Paramètres."
+  source:
+    bundled: "Inclus"
+    github: "GitHub"
   status:
     ready: "Prêt"
     update_available: "Mise à jour disponible"

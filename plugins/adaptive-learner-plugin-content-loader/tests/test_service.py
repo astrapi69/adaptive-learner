@@ -272,6 +272,91 @@ class TestListSets:
         assert entries[0].cached_version == "1.0.0"
 
 
+# --- dedupe across sources --------------------------------------------
+
+
+def _set_entry(source: str, set_id: str, version: str):
+    from adaptive_learner_content_loader.models import ContentSet
+    from adaptive_learner_content_loader.service import SetEntry
+
+    return SetEntry(
+        source=source,
+        branch="main",
+        set=ContentSet(
+            id=set_id,
+            title=set_id,
+            language="fr",
+            level="A1",
+            version=version,
+            lesson_count=1,
+        ),
+        cached_version=None,
+        update_available=False,
+    )
+
+
+class TestDedupeContentEntries:
+    def test_compare_versions(self) -> None:
+        from adaptive_learner_content_loader.service import _compare_versions
+
+        assert _compare_versions("1.2.0", "1.1.9") > 0
+        assert _compare_versions("1.0.0", "1.0.1") < 0
+        assert _compare_versions("1.0.0", "1.0.0") == 0
+        assert _compare_versions("1.0", "1.0.0") == 0
+        assert _compare_versions("2.0.0", "1.9.9") > 0
+
+    def test_higher_version_wins(self) -> None:
+        from adaptive_learner_content_loader.service import (
+            _dedupe_content_entries,
+        )
+
+        entries = [
+            _set_entry("bundled:fr-a1", "language-fr-a1", "1.0.0"),
+            _set_entry("astrapi69/adaptive-learner-content", "language-fr-a1", "1.2.0"),
+        ]
+        result = _dedupe_content_entries(entries)
+        assert len(result) == 1
+        assert result[0].set.version == "1.2.0"
+        assert result[0].source == "astrapi69/adaptive-learner-content"
+
+    def test_tie_prefers_external_over_bundled(self) -> None:
+        from adaptive_learner_content_loader.service import (
+            _dedupe_content_entries,
+        )
+
+        # Bundled listed first (as in DEFAULT order), external second.
+        entries = [
+            _set_entry("bundled:fr-a1", "language-fr-a1", "1.0.0"),
+            _set_entry("astrapi69/adaptive-learner-content", "language-fr-a1", "1.0.0"),
+        ]
+        result = _dedupe_content_entries(entries)
+        assert len(result) == 1
+        assert result[0].source == "astrapi69/adaptive-learner-content"
+
+    def test_bundled_only_survives_when_external_absent(self) -> None:
+        # Offline fallback: external unreachable, only bundled present.
+        from adaptive_learner_content_loader.service import (
+            _dedupe_content_entries,
+        )
+
+        entries = [_set_entry("bundled:fr-a1", "language-fr-a1", "1.0.0")]
+        result = _dedupe_content_entries(entries)
+        assert len(result) == 1
+        assert result[0].source == "bundled:fr-a1"
+
+    def test_distinct_ids_all_kept(self) -> None:
+        from adaptive_learner_content_loader.service import (
+            _dedupe_content_entries,
+        )
+
+        entries = [
+            _set_entry("bundled:fr-a1", "language-fr-a1", "1.0.0"),
+            _set_entry("bundled:es-a1", "language-es-a1", "1.0.0"),
+        ]
+        result = _dedupe_content_entries(entries)
+        assert {e.set.id for e in result} == {"language-fr-a1", "language-es-a1"}
+
+
 # --- download_set -----------------------------------------------------
 
 

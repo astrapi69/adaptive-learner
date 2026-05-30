@@ -1331,6 +1331,9 @@ content:
   lessons: "Lektionen"
   loading: "Inhalte werden geladen…"
   empty: "Noch keine Inhalte verfügbar. Prüfe deine Verbindung und aktualisiere die Seite, oder richte eine Quelle in den Einstellungen ein."
+  source:
+    bundled: "Mitgeliefert"
+    github: "GitHub"
   status:
     ready: "Bereit"
     update_available: "Aktualisierung verfügbar"

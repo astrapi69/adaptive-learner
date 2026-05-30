@@ -86,6 +86,49 @@ class SetEntry:
     update_available: bool
 
 
+BUNDLED_SOURCE_PREFIX = "bundled:"
+
+
+def _compare_versions(a: str, b: str) -> int:
+    """Numeric semver compare: >0 if a>b, <0 if a<b, 0 if equal."""
+    parts_a = [int(p) if p.isdigit() else 0 for p in str(a or "").split(".")]
+    parts_b = [int(p) if p.isdigit() else 0 for p in str(b or "").split(".")]
+    length = max(len(parts_a), len(parts_b))
+    parts_a += [0] * (length - len(parts_a))
+    parts_b += [0] * (length - len(parts_b))
+    for left, right in zip(parts_a, parts_b):
+        if left != right:
+            return 1 if left > right else -1
+    return 0
+
+
+def _dedupe_content_entries(entries: list[SetEntry]) -> list[SetEntry]:
+    """Collapse same-``set.id`` rows advertised by multiple sources.
+
+    Keeps the higher version; on a version tie prefers a
+    non-bundled (external) source over a bundled one, then the
+    first source consulted. When the external source is offline
+    only its cached / the bundled entry survives, so the offline
+    fallback stays intact.
+    """
+    winners: dict[str, SetEntry] = {}
+    for entry in entries:
+        current = winners.get(entry.set.id)
+        if current is None:
+            winners[entry.set.id] = entry
+            continue
+        comparison = _compare_versions(entry.set.version, current.set.version)
+        if comparison > 0:
+            winners[entry.set.id] = entry
+        elif (
+            comparison == 0
+            and current.source.startswith(BUNDLED_SOURCE_PREFIX)
+            and not entry.source.startswith(BUNDLED_SOURCE_PREFIX)
+        ):
+            winners[entry.set.id] = entry
+    return list(winners.values())
+
+
 def _validate_asset_size(
     path: str,
     declared_size_kb: int,
@@ -239,14 +282,17 @@ class ContentLoaderService:
                             update_available=update_available,
                         ),
                     )
+        # Collapse same-id sets advertised by more than one source
+        # before the user-generated lessons (unique ids) are added.
+        deduped = _dedupe_content_entries(entries)
         # Phase 59B — user-generated sets ("My Lessons") aren't an
         # upstream source; surface every cached one directly.
-        entries.extend(
+        deduped.extend(
             self._cached_entries_for_source(
                 SourceRef(source=USER_GENERATED_SOURCE, branch=""),
             ),
         )
-        return entries
+        return deduped
 
     def _cached_entries_for_source(
         self,

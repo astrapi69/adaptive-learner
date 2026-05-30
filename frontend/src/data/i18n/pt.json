@@ -1443,6 +1443,10 @@
     "lessons": "lições",
     "loading": "A carregar conjuntos de conteúdo…",
     "empty": "Ainda não há conjuntos disponíveis. Verifica a tua ligação e atualiza, ou configura uma fonte em Definições.",
+    "source": {
+      "bundled": "Incluído",
+      "github": "GitHub"
+    },
     "status": {
       "ready": "Pronto",
       "update_available": "Atualização disponível",
