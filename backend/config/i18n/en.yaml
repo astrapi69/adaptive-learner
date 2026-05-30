@@ -216,6 +216,7 @@ dashboard:
       spelling_accent: "Spelling & accents"
       verb_conjugation: "Verb conjugation"
       word_order: "Word order"
+    mastery_split: 'Receptive: {receptive} · Productive: {productive}'
 adaptive:
   page_title: "Adaptive Lesson"
   session_title: "Adaptive lesson"
@@ -448,6 +449,14 @@ settings:
     title: Additional source languages
     hint: Languages you also speak. Lessons written for these source languages appear in your main content list.
     app_language: app language
+  direction:
+    title: Preferred exercise direction
+    hint: How adaptive lessons balance recognising (target -> your language) vs producing (your language -> target). Producing is harder; Automatic introduces it once recognition is solid.
+    label: Direction
+    auto: Automatic
+    receptive_first: Recognise first
+    productive_focus: Produce
+    balanced: Balanced
 methods:
   deductive:
     label: Deductive
@@ -1269,6 +1278,9 @@ lesson:
       picture_choice:
         receptive: Pick the matching meaning
         productive: Pick the matching picture
+    direction:
+      receptive_hint: Recognise the meaning
+      productive_hint: Produce the answer
   summary:
     heading: "You finished"
     aria_label: "Lesson summary"

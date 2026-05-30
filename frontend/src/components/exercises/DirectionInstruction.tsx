@@ -9,9 +9,12 @@
  * columns).
  */
 
+import {Eye, Pencil} from "lucide-react";
+
 import {useI18n} from "../../hooks/useI18n";
 import {
   instructionKey,
+  isProductive,
   resolveConcreteDirection,
 } from "../../lib/exercises/direction";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -50,9 +53,20 @@ export default function DirectionInstruction({
   // the choice tiles, which a ``picture-choice-...`` instruction id
   // would shadow. See lessons-learned "prefix testid overmatch".
   const testid = `direction-instruction-${exercise.type}`;
+  const productive = isProductive(direction);
+  // Subtle icon hint: eye = recognise (receptive), pencil = produce.
+  const Icon = productive ? Pencil : Eye;
+  const tooltip = productive
+    ? t("lesson.exercise.direction.productive_hint", "Produce the answer")
+    : t("lesson.exercise.direction.receptive_hint", "Recognise the meaning");
   return (
-    <p className="exercise-direction-instruction" data-testid={testid}>
-      {t(instructionKey(exercise.type, direction), fallback)}
+    <p
+      className="exercise-direction-instruction"
+      data-testid={testid}
+      title={tooltip}
+    >
+      <Icon size={14} aria-hidden="true" />
+      <span>{t(instructionKey(exercise.type, direction), fallback)}</span>
     </p>
   );
 }

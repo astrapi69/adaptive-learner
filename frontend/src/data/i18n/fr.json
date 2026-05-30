@@ -229,7 +229,8 @@
         "spelling_accent": "Orthographe et accents",
         "verb_conjugation": "Conjugaison verbale",
         "word_order": "Ordre des mots"
-      }
+      },
+      "mastery_split": "Réceptif : {receptive} · Productif : {productive}"
     }
   },
   "adaptive": {
@@ -473,6 +474,15 @@
       "title": "Langues source supplémentaires",
       "hint": "Langues que vous parlez aussi. Les leçons écrites pour ces langues source apparaissent dans votre liste principale.",
       "app_language": "langue de l'app"
+    },
+    "direction": {
+      "title": "Direction d'exercice préférée",
+      "hint": "Comment les leçons adaptatives équilibrent reconnaître (langue cible -> votre langue) et produire (votre langue -> cible). Produire est plus difficile ; Automatique l'introduit une fois la reconnaissance solide.",
+      "label": "Direction",
+      "auto": "Automatique",
+      "receptive_first": "Reconnaître d'abord",
+      "productive_focus": "Produire",
+      "balanced": "Équilibré"
     }
   },
   "methods": {
@@ -1371,6 +1381,10 @@
           "receptive": "Choisissez le sens correct",
           "productive": "Choisissez la bonne image"
         }
+      },
+      "direction": {
+        "receptive_hint": "Reconnaître le sens",
+        "productive_hint": "Produire la réponse"
       }
     },
     "correction": {

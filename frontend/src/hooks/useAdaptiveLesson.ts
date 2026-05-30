@@ -46,6 +46,7 @@ import {focusAreaTags} from "../lib/adaptive/error-classifier";
 import {generateAdaptiveLesson} from "../lib/adaptive/lesson-generator";
 import type {ErrorTag} from "../lib/adaptive/error-classifier";
 import type {ErrorAnalysis} from "../lib/adaptive/types";
+import {readDirectionStrategy} from "../lib/learning/directionPref";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import type {
@@ -207,7 +208,15 @@ export function useAdaptiveLesson(
                     set_id: setId,
                     now: new Date().toISOString(),
                     errorsByElementKey,
-                    config: limit ? {max_exercises: limit} : undefined,
+                    // EXP-018 / Phase 62: ALL rows (both directions,
+                    // incl. mastered) so the auto strategy can see
+                    // which elements are recognition-solid; plus the
+                    // user's preferred direction strategy.
+                    elementErrors: errors,
+                    config: {
+                        direction_strategy: readDirectionStrategy(),
+                        ...(limit ? {max_exercises: limit} : {}),
+                    },
                 });
 
                 if (generated.steps.length === 0) {

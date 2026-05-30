@@ -34,6 +34,7 @@ import {Link} from "react-router-dom";
 import {analyzeErrors} from "../../lib/adaptive/error-analyzer";
 import {focusAreaTags} from "../../lib/adaptive/error-classifier";
 import type {ErrorTag} from "../../lib/adaptive/error-classifier";
+import {masteryCounts, type MasteryCounts} from "../../lib/srs/mastery";
 import type {PrioritizedElement} from "../../lib/adaptive/types";
 import {useI18n} from "../../hooks/useI18n";
 import {getStorage} from "../../storage";
@@ -69,6 +70,8 @@ interface ResolvedState {
     tags: ErrorTag[];
     totalErrors: number;
     targetSetId: string;
+    /** EXP-018 / Phase 62 — receptive vs productive mastery split. */
+    mastery: MasteryCounts;
 }
 
 export default function FocusAreasCard({userId}: FocusAreasCardProps) {
@@ -101,6 +104,7 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
                     tags,
                     totalErrors: analysis.total_errors,
                     targetSetId,
+                    mastery: masteryCounts(errors),
                 });
             } catch {
                 if (!cancelled) setState("empty");
@@ -141,6 +145,22 @@ export default function FocusAreasCard({userId}: FocusAreasCardProps) {
             <h2 className="dashboard-card-title">
                 {t("dashboard.card_focus_areas", "Focus areas")}
             </h2>
+            {(state.mastery.receptive > 0 || state.mastery.productive > 0) && (
+                <p
+                    className="muted focus-areas-mastery-split"
+                    data-testid="focus-areas-mastery-split"
+                >
+                    {t(
+                        "dashboard.focus_areas.mastery_split",
+                        "Receptive: {receptive} · Productive: {productive}",
+                    )
+                        .replace("{receptive}", String(state.mastery.receptive))
+                        .replace(
+                            "{productive}",
+                            String(state.mastery.productive),
+                        )}
+                </p>
+            )}
             {state.tags.length > 0 && (
                 <p
                     className="muted focus-areas-tags"

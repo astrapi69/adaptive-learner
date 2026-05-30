@@ -216,6 +216,7 @@ dashboard:
       spelling_accent: "綴りとアクセント"
       verb_conjugation: "動詞の活用"
       word_order: "語順"
+    mastery_split: '認識: {receptive} · 産出: {productive}'
 adaptive:
   page_title: "アダプティブレッスン"
   session_title: "アダプティブレッスン"
@@ -448,6 +449,14 @@ settings:
     title: 追加の出発言語
     hint: あなたが話せる他の言語。これらの出発言語向けのレッスンがメインの一覧に表示されます。
     app_language: アプリの言語
+  direction:
+    title: 優先する練習の方向
+    hint: 適応レッスンが認識（対象言語→あなたの言語）と産出（あなたの言語→対象言語）をどうバランスするか。産出はより難しく、自動は認識が定着してから導入します。
+    label: 方向
+    auto: 自動
+    receptive_first: まず認識
+    productive_focus: 産出
+    balanced: バランス
 methods:
   deductive:
     label: 演繹的
@@ -1258,6 +1267,9 @@ lesson:
       picture_choice:
         receptive: 正しい意味を選ぶ
         productive: 正しい画像を選ぶ
+    direction:
+      receptive_hint: 意味を認識する
+      productive_hint: 答えを産出する
   correction:
     title: "修正ラウンド"
     subtitle: "間違えた単語の練習を少しだけ。"

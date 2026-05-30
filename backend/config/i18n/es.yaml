@@ -216,6 +216,7 @@ dashboard:
       spelling_accent: "Ortografía y acentos"
       verb_conjugation: "Conjugación verbal"
       word_order: "Orden de palabras"
+    mastery_split: 'Receptivo: {receptive} · Productivo: {productive}'
 adaptive:
   page_title: "Lección adaptativa"
   session_title: "Lección adaptativa"
@@ -448,6 +449,14 @@ settings:
     title: Idiomas de origen adicionales
     hint: Idiomas que también hablas. Las lecciones escritas para estos idiomas de origen aparecen en tu lista principal.
     app_language: idioma de la app
+  direction:
+    title: Dirección de ejercicio preferida
+    hint: Cómo las lecciones adaptativas equilibran reconocer (idioma de destino -> tu idioma) y producir (tu idioma -> destino). Producir es más difícil; Automático lo introduce cuando el reconocimiento es sólido.
+    label: Dirección
+    auto: Automático
+    receptive_first: Reconocer primero
+    productive_focus: Producir
+    balanced: Equilibrado
 methods:
   deductive:
     label: Deductivo
@@ -1260,6 +1269,9 @@ lesson:
       picture_choice:
         receptive: Elige el significado correcto
         productive: Elige la imagen correcta
+    direction:
+      receptive_hint: Reconocer el significado
+      productive_hint: Producir la respuesta
   correction:
     title: "Ronda de corrección"
     subtitle: "Algunos ejercicios rápidos con las palabras que fallaste."

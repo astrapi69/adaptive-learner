@@ -229,7 +229,8 @@
         "spelling_accent": "Rechtschreibung & Akzente",
         "verb_conjugation": "Verbkonjugation",
         "word_order": "Wortstellung"
-      }
+      },
+      "mastery_split": "Rezeptiv: {receptive} · Produktiv: {productive}"
     }
   },
   "adaptive": {
@@ -473,6 +474,15 @@
       "title": "Weitere Ausgangssprachen",
       "hint": "Sprachen, die du auch sprichst. Lektionen für diese Ausgangssprachen erscheinen in deiner Hauptliste.",
       "app_language": "App-Sprache"
+    },
+    "direction": {
+      "title": "Bevorzugte Übungsrichtung",
+      "hint": "Wie adaptive Lektionen Erkennen (Zielsprache -> deine Sprache) und Produzieren (deine Sprache -> Zielsprache) ausbalancieren. Produzieren ist schwerer; Automatisch führt es ein, sobald das Erkennen sitzt.",
+      "label": "Richtung",
+      "auto": "Automatisch",
+      "receptive_first": "Zuerst erkennen",
+      "productive_focus": "Produzieren",
+      "balanced": "Ausgeglichen"
     }
   },
   "methods": {
@@ -1371,6 +1381,10 @@
           "receptive": "Wähle die passende Bedeutung",
           "productive": "Wähle das passende Bild"
         }
+      },
+      "direction": {
+        "receptive_hint": "Bedeutung erkennen",
+        "productive_hint": "Antwort produzieren"
       }
     },
     "correction": {

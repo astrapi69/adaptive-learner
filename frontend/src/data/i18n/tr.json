@@ -229,7 +229,8 @@
         "spelling_accent": "İmla ve aksanlar",
         "verb_conjugation": "Fiil çekimi",
         "word_order": "Kelime sırası"
-      }
+      },
+      "mastery_split": "Tanıma: {receptive} · Üretim: {productive}"
     }
   },
   "adaptive": {
@@ -473,6 +474,15 @@
       "title": "Ek kaynak diller",
       "hint": "Ayrıca konuştuğunuz diller. Bu kaynak diller için yazılan dersler ana listenizde görünür.",
       "app_language": "uygulama dili"
+    },
+    "direction": {
+      "title": "Tercih edilen alıştırma yönü",
+      "hint": "Uyarlanabilir derslerin tanımayı (hedef dil -> sizin diliniz) ve üretmeyi (sizin diliniz -> hedef) nasıl dengelediği. Üretmek daha zordur; Otomatik, tanıma sağlamlaştığında bunu devreye sokar.",
+      "label": "Yön",
+      "auto": "Otomatik",
+      "receptive_first": "Önce tanıma",
+      "productive_focus": "Üretme",
+      "balanced": "Dengeli"
     }
   },
   "methods": {
@@ -1371,6 +1381,10 @@
           "receptive": "Doğru anlamı seç",
           "productive": "Doğru resmi seç"
         }
+      },
+      "direction": {
+        "receptive_hint": "Anlamı tanı",
+        "productive_hint": "Cevabı üret"
       }
     },
     "correction": {

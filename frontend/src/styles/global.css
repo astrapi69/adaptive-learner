@@ -3302,8 +3302,12 @@ select:focus {
 }
 
 /* EXP-018 / Phase 62 — subtle per-direction instruction line under
-   an exercise prompt (receptive vs productive). */
+   an exercise prompt (receptive vs productive), with an eye/pencil
+   icon hint. */
 .exercise-direction-instruction {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
   margin: 0.25rem 0 0.75rem;
   font-size: 0.8125rem;
   font-style: italic;

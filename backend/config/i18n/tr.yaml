@@ -216,6 +216,7 @@ dashboard:
       spelling_accent: "İmla ve aksanlar"
       verb_conjugation: "Fiil çekimi"
       word_order: "Kelime sırası"
+    mastery_split: 'Tanıma: {receptive} · Üretim: {productive}'
 adaptive:
   page_title: "Uyarlanabilir ders"
   session_title: "Uyarlanabilir ders"
@@ -448,6 +449,14 @@ settings:
     title: Ek kaynak diller
     hint: Ayrıca konuştuğunuz diller. Bu kaynak diller için yazılan dersler ana listenizde görünür.
     app_language: uygulama dili
+  direction:
+    title: Tercih edilen alıştırma yönü
+    hint: Uyarlanabilir derslerin tanımayı (hedef dil -> sizin diliniz) ve üretmeyi (sizin diliniz -> hedef) nasıl dengelediği. Üretmek daha zordur; Otomatik, tanıma sağlamlaştığında bunu devreye sokar.
+    label: Yön
+    auto: Otomatik
+    receptive_first: Önce tanıma
+    productive_focus: Üretme
+    balanced: Dengeli
 methods:
   deductive:
     label: Tümdengelimsel
@@ -1258,6 +1267,9 @@ lesson:
       picture_choice:
         receptive: Doğru anlamı seç
         productive: Doğru resmi seç
+    direction:
+      receptive_hint: Anlamı tanı
+      productive_hint: Cevabı üret
   correction:
     title: "Düzeltme turu"
     subtitle: "Yanlış yaptığın kelimeler için birkaç hızlı alıştırma."

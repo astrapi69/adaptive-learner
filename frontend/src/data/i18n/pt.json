@@ -229,7 +229,8 @@
         "spelling_accent": "Ortografia e acentos",
         "verb_conjugation": "Conjugação verbal",
         "word_order": "Ordem das palavras"
-      }
+      },
+      "mastery_split": "Receptivo: {receptive} · Produtivo: {productive}"
     }
   },
   "adaptive": {
@@ -473,6 +474,15 @@
       "title": "Idiomas de origem adicionais",
       "hint": "Idiomas que você também fala. As lições escritas para esses idiomas de origem aparecem na sua lista principal.",
       "app_language": "idioma do app"
+    },
+    "direction": {
+      "title": "Direção de exercício preferida",
+      "hint": "Como as lições adaptativas equilibram reconhecer (idioma de destino -> seu idioma) e produzir (seu idioma -> destino). Produzir é mais difícil; Automático o introduz quando o reconhecimento está sólido.",
+      "label": "Direção",
+      "auto": "Automático",
+      "receptive_first": "Reconhecer primeiro",
+      "productive_focus": "Produzir",
+      "balanced": "Equilibrado"
     }
   },
   "methods": {
@@ -1371,6 +1381,10 @@
           "receptive": "Escolha o significado correto",
           "productive": "Escolha a imagem correta"
         }
+      },
+      "direction": {
+        "receptive_hint": "Reconhecer o significado",
+        "productive_hint": "Produzir a resposta"
       }
     },
     "correction": {

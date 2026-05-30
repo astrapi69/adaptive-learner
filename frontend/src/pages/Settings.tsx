@@ -9,6 +9,7 @@ import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
 import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
+import DirectionStrategyControl from "../components/DirectionStrategyControl";
 import LearningRepoSettingsSection from "../components/LearningRepoSettingsSection";
 import MissionSettingsControl from "../components/MissionSettingsControl";
 import SourceLanguagesControl from "../components/SourceLanguagesControl";
@@ -818,6 +819,7 @@ export default function Settings() {
         </section>
         <MissionSettingsControl />
         <SourceLanguagesControl />
+        <DirectionStrategyControl />
         <VoiceSettingsSection />
         <section className="settings-section">
           <h2 className="settings-section-title">
