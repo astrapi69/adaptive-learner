@@ -1,0 +1,32 @@
+# Content validation (Phase 60 / v1.44.0, D-108).
+#
+# Runs the self-contained validator on every pull request (and on
+# pushes to main) so no broken or low-quality lesson set can land:
+# schema, language-pair consistency, source-language directory
+# structure, and the quality minimums. This is the second of the
+# two validation layers — the Adaptive Learner app runs the same
+# checks client-side before a community share.
+name: Validate content
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Coerce Node-runtime actions onto Node 24 as a safety net for any
+# action still defaulting to the deprecated Node 20 runtime.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install validator dependencies
+        run: pip install "pyyaml>=6,<7"
+      - name: Validate content tree
+        run: python scripts/validate_content.py
