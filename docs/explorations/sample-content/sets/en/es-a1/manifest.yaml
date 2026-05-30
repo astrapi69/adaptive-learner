@@ -13,6 +13,7 @@ description: >-
 sets:
   - id: es-a1-from-en
     title: Spanish A1 (for English speakers)
+    title_native: Español A1
     target_language: es
     source_language: en
     level: A1

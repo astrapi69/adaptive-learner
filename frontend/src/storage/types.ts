@@ -221,7 +221,12 @@ export interface ContentSetEntry {
   source: string;
   branch: string;
   id: string;
+  /** Title in the learner's SOURCE language (what they read in
+   *  the browser, e.g. "Französisch A1 für Deutschsprachige"). */
   title: string;
+  /** Optional title in the TARGET language (native script, e.g.
+   *  "Français A1"), shown as a secondary label. */
+  title_native?: string | null;
   /** Legacy alias for {@link target_language} — kept so existing
    *  UI reading ``entry.language`` stays correct (Phase 60 /
    *  v1.44.0). Always equal to ``target_language``. */
@@ -423,6 +428,8 @@ export interface SaveUserSetInput {
    *  with the same id overwrites. */
   set_id: string;
   title: string;
+  /** Optional title in the target language (native script). */
+  title_native?: string | null;
   /** Legacy: the target language. When ``target_language`` is
    *  omitted the storage layer falls back to this. */
   language: string;

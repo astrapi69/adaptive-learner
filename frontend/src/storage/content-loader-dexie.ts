@@ -190,6 +190,8 @@ interface ParsedSetAsset {
 interface ParsedSet {
   id: string;
   title: string;
+  /** Optional title in the target language (native script). */
+  title_native?: string;
   /** Legacy pre-v1.2 key — the target language. Accepted as an
    *  alias for ``target_language``. */
   language?: string;
@@ -255,6 +257,7 @@ function asContentSetEntry(
     branch: src.branch,
     id: parsed.id,
     title: parsed.title,
+    title_native: parsed.title_native ?? null,
     language: target,
     target_language: target,
     source_language: source,
@@ -339,6 +342,7 @@ async function rowToCachedEntry(row: ContentSetRow): Promise<ContentSetEntry> {
     branch: row.branch,
     id: row.set_id,
     title: row.title,
+    title_native: row.title_native ?? null,
     language: target,
     target_language: target,
     source_language: source,
@@ -519,6 +523,7 @@ export async function downloadSetDexie(
       set_id: setId,
       version: target.version,
       title: target.title,
+      title_native: target.title_native ?? null,
       language: pair.target,
       target_language: pair.target,
       source_language: pair.source,
@@ -697,6 +702,7 @@ export async function saveUserSetDexie(
     set_id: input.set_id,
     version: USER_SET_VERSION,
     title: input.title,
+    title_native: input.title_native ?? null,
     language: targetLanguage,
     target_language: targetLanguage,
     source_language: sourceLanguage,

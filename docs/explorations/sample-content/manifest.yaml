@@ -25,6 +25,7 @@ description: >-
 sets:
   - id: fr-a1-from-en
     title: French A1 (for English speakers)
+    title_native: Français A1
     target_language: fr
     source_language: en
     level: A1
@@ -44,6 +45,7 @@ sets:
       - everyday
   - id: es-a1-from-en
     title: Spanish A1 (for English speakers)
+    title_native: Español A1
     target_language: es
     source_language: en
     level: A1
@@ -58,6 +60,40 @@ sets:
     tags:
       - beginner
       - travel
+      - everyday
+  - id: fr-a1-from-de
+    title: Französisch A1 (für Deutschsprachige)
+    title_native: Français A1
+    target_language: fr
+    source_language: de
+    level: A1
+    path: sets/de/fr-a1
+    version: '1.0.0'
+    lesson_count: 3
+    domain: language
+    description: >-
+      Französisch für Deutschsprachige: A1-Einstieg mit
+      Begrüßung, Zahlen und Artikeln. Erklärungen und
+      Übersetzungen auf Deutsch.
+    tags:
+      - beginner
+      - everyday
+  - id: es-a1-from-de
+    title: Spanisch A1 (für Deutschsprachige)
+    title_native: Español A1
+    target_language: es
+    source_language: de
+    level: A1
+    path: sets/de/es-a1
+    version: '1.0.0'
+    lesson_count: 3
+    domain: language
+    description: >-
+      Spanisch für Deutschsprachige: A1-Einstieg mit Begrüßung,
+      Zahlen und der ser/estar-Unterscheidung. Erklärungen und
+      Übersetzungen auf Deutsch.
+    tags:
+      - beginner
       - everyday
 metadata:
   author: Asterios Raptis

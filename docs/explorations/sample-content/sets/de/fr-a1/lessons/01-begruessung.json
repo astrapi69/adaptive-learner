@@ -1,0 +1,132 @@
+{
+  "id": "01-begruessung",
+  "title": "Begrüßung",
+  "description": "Grundlegende französische Begrüßungen und Verabschiedungen — auf Deutsch erklärt.",
+  "target_language": "fr",
+  "source_language": "de",
+  "estimated_minutes": 10,
+  "cards": [
+    {
+      "id": "bonjour",
+      "front": "Bonjour",
+      "back": "Guten Tag / Hallo",
+      "notes": "Wird tagsüber in formellen und informellen Situationen verwendet.",
+      "tags": ["begruessung", "tag"]
+    },
+    {
+      "id": "bonsoir",
+      "front": "Bonsoir",
+      "back": "Guten Abend",
+      "notes": "Am Abend verwendet, sowohl zur Begrüßung als auch zur Verabschiedung.",
+      "tags": ["begruessung", "abend"]
+    },
+    {
+      "id": "salut",
+      "front": "Salut",
+      "back": "Hallo / Tschüss (informell)",
+      "notes": "Nur unter Freunden und Familie — nicht gegenüber Fremden oder in formellen Situationen.",
+      "tags": ["begruessung", "informell"]
+    },
+    {
+      "id": "merci",
+      "front": "Merci",
+      "back": "Danke",
+      "notes": "Mit 'beaucoup' wird es stärker: 'Merci beaucoup' = Vielen Dank.",
+      "tags": ["hoeflichkeit"]
+    },
+    {
+      "id": "au-revoir",
+      "front": "Au revoir",
+      "back": "Auf Wiedersehen",
+      "notes": "Standard-Verabschiedung, formell wie informell.",
+      "tags": ["verabschiedung"]
+    }
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Warum Begrüßungen wichtig sind",
+      "body": "# Begrüßungen auf Französisch\n\nFranzösischsprachige verwenden je nach Tageszeit und Förmlichkeit unterschiedliche Begrüßungen. Das richtig zu treffen ist der erste Schritt, um natürlich zu klingen — **Bonjour** am Abend oder **Salut** zu einer fremden Person zu sagen wirkt unpassend.\n\nDiese Lektion behandelt fünf alltägliche Begrüßungen und Verabschiedungen."
+    },
+    {
+      "id": "step-formell",
+      "type": "theory",
+      "title": "Formell oder informell",
+      "body": "## Formell und informell\n\n- **Bonjour / Bonsoir / Au revoir** — passen in jeder Situation. Im Zweifel diese verwenden.\n- **Salut** — nur informell. Für Freunde, Familie, Gleichaltrige. Nie gegenüber Fremden oder Kundschaft.\n\n*Tipp*: In Frankreich sagt man **Bonjour**, wenn man einen kleinen Laden oder eine Bäckerei betritt — es wegzulassen wirkt unhöflich."
+    },
+    {
+      "id": "ex-match-begruessung",
+      "type": "exercise",
+      "title": "Begrüßungen zuordnen",
+      "exercise": {
+        "id": "ex-match-begruessung",
+        "type": "matching",
+        "prompt": "Ordne jeder französischen Begrüßung die deutsche Übersetzung zu.",
+        "card_ids": ["bonjour", "bonsoir", "salut", "au-revoir"],
+        "pairs": [
+          {"left": "Bonjour", "right": "Guten Tag / Hallo"},
+          {"left": "Bonsoir", "right": "Guten Abend"},
+          {"left": "Salut", "right": "Hallo / Tschüss (informell)"},
+          {"left": "Au revoir", "right": "Auf Wiedersehen"}
+        ]
+      }
+    },
+    {
+      "id": "ex-free-merci",
+      "type": "exercise",
+      "title": "Auf Französisch tippen",
+      "exercise": {
+        "id": "ex-free-merci",
+        "type": "free_text",
+        "prompt": "Wie sagt man 'Danke' auf Französisch?",
+        "card_ids": ["merci"],
+        "accept": ["Merci", "merci", "Merci."],
+        "hint": "Beginnt mit M.",
+        "distractors": ["Bonjour", "Salut", "Au revoir"]
+      }
+    },
+    {
+      "id": "ex-tile-aurevoir",
+      "type": "exercise",
+      "title": "Die Verabschiedung zusammensetzen",
+      "exercise": {
+        "id": "ex-tile-aurevoir",
+        "type": "word_tiles",
+        "prompt": "Setze die Kacheln zur üblichen Verabschiedung zusammen.",
+        "card_ids": ["au-revoir"],
+        "tiles": ["Au", "revoir"],
+        "hint": "Zwei kurze Wörter; das erste ist zwei Buchstaben lang."
+      }
+    },
+    {
+      "id": "ex-free-bonjour",
+      "type": "exercise",
+      "title": "Tagsüber begrüßen",
+      "exercise": {
+        "id": "ex-free-bonjour",
+        "type": "free_text",
+        "prompt": "Wie begrüßt man jemanden tagsüber auf Französisch?",
+        "card_ids": ["bonjour"],
+        "accept": ["Bonjour", "bonjour", "Bonjour."],
+        "hint": "Beginnt mit B, sieben Buchstaben.",
+        "distractors": ["Bonsoir", "Salut", "Au revoir"]
+      }
+    },
+    {
+      "id": "ex-cloze-salut",
+      "type": "exercise",
+      "title": "Lücke füllen",
+      "exercise": {
+        "id": "ex-cloze-salut",
+        "type": "cloze",
+        "prompt": "Ergänze die informelle Begrüßung unter Freunden.",
+        "card_ids": ["salut"],
+        "sentence": "___ , ça va ?",
+        "blanks": [{"accept": ["Salut", "salut"]}],
+        "cloze_mode": "type",
+        "hint": "Informell, beginnt mit S."
+      }
+    }
+  ]
+}

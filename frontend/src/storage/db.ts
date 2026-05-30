@@ -384,6 +384,10 @@ export interface ContentSetRow {
      *  Set Browser renders cached + upstream sets the same
      *  way. */
     title: string;
+    /** Optional title in the target language (native script).
+     *  Added in v1.44.0; optional so no migration backfill is
+     *  needed (reads default to null). */
+    title_native?: string | null;
     /** Legacy alias for ``target_language`` — kept for the
      *  Set Browser's existing reads. Always equals
      *  ``target_language`` for rows written at v22+. */

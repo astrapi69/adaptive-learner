@@ -132,6 +132,7 @@ class SetEntryResponse(BaseModel):
     branch: str
     id: str
     title: str
+    title_native: str | None
     # ``language`` mirrors ``target_language`` for pre-v1.44.0
     # frontend builds that still read it; new clients use the
     # explicit pair fields.
@@ -155,6 +156,7 @@ class SetEntryResponse(BaseModel):
             branch=entry.branch,
             id=entry.set.id,
             title=entry.set.title,
+            title_native=entry.set.title_native,
             language=entry.set.target_language,
             target_language=entry.set.target_language,
             source_language=entry.set.source_language,
@@ -359,6 +361,7 @@ class SaveUserSetRequest(BaseModel):
 
     set_id: str
     title: str
+    title_native: str | None = None
     target_language: str
     source_language: str = "en"
     level: str
@@ -388,6 +391,7 @@ async def save_user_set(body: SaveUserSetRequest) -> SetEntryResponse:
         entry = service.save_user_set(
             set_id=body.set_id,
             title=body.title,
+            title_native=body.title_native,
             target_language=body.target_language,
             source_language=body.source_language,
             level=body.level,

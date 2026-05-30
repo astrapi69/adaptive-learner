@@ -1,0 +1,106 @@
+{
+  "id": "02-zahlen",
+  "title": "Zahlen 1-10",
+  "description": "Die ersten zehn Zahlen auf Spanisch — auf Deutsch erklärt.",
+  "target_language": "es",
+  "source_language": "de",
+  "estimated_minutes": 10,
+  "cards": [
+    {"id": "n-1", "front": "uno", "back": "eins", "tags": ["zahl"]},
+    {"id": "n-2", "front": "dos", "back": "zwei", "tags": ["zahl"]},
+    {"id": "n-3", "front": "tres", "back": "drei", "tags": ["zahl"]},
+    {"id": "n-4", "front": "cuatro", "back": "vier", "tags": ["zahl"]},
+    {"id": "n-5", "front": "cinco", "back": "fünf", "tags": ["zahl"]},
+    {"id": "n-6", "front": "seis", "back": "sechs", "tags": ["zahl"]},
+    {"id": "n-7", "front": "siete", "back": "sieben", "tags": ["zahl"]},
+    {"id": "n-8", "front": "ocho", "back": "acht", "tags": ["zahl"]},
+    {"id": "n-9", "front": "nueve", "back": "neun", "tags": ["zahl"]},
+    {"id": "n-10", "front": "diez", "back": "zehn", "tags": ["zahl"]}
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Zahlen 1 bis 10",
+      "body": "# Zahlen auf Spanisch\n\nDie ersten zehn Zahlen brauchst du für Uhrzeit, Preise und zum Zählen.\n\n| ES | DE |\n|----|----|\n| uno | eins |\n| dos | zwei |\n| tres | drei |\n| cuatro | vier |\n| cinco | fünf |\n| seis | sechs |\n| siete | sieben |\n| ocho | acht |\n| nueve | neun |\n| diez | zehn |\n\n**uno** wird vor einem männlichen Substantiv zu **un** (z. B. *un libro* = ein Buch)."
+    },
+    {
+      "id": "ex-match-niedrig",
+      "type": "exercise",
+      "title": "1-5 zuordnen",
+      "exercise": {
+        "id": "ex-match-niedrig",
+        "type": "matching",
+        "prompt": "Ordne die spanischen Zahlen 1 bis 5 ihrer deutschen Entsprechung zu.",
+        "card_ids": ["n-1", "n-2", "n-3", "n-4", "n-5"],
+        "pairs": [
+          {"left": "uno", "right": "eins"},
+          {"left": "dos", "right": "zwei"},
+          {"left": "tres", "right": "drei"},
+          {"left": "cuatro", "right": "vier"},
+          {"left": "cinco", "right": "fünf"}
+        ]
+      }
+    },
+    {
+      "id": "ex-match-hoch",
+      "type": "exercise",
+      "title": "6-10 zuordnen",
+      "exercise": {
+        "id": "ex-match-hoch",
+        "type": "matching",
+        "prompt": "Ordne die spanischen Zahlen 6 bis 10 ihrer deutschen Entsprechung zu.",
+        "card_ids": ["n-6", "n-7", "n-8", "n-9", "n-10"],
+        "pairs": [
+          {"left": "seis", "right": "sechs"},
+          {"left": "siete", "right": "sieben"},
+          {"left": "ocho", "right": "acht"},
+          {"left": "nueve", "right": "neun"},
+          {"left": "diez", "right": "zehn"}
+        ]
+      }
+    },
+    {
+      "id": "ex-free-cinco",
+      "type": "exercise",
+      "title": "Die Zahl tippen",
+      "exercise": {
+        "id": "ex-free-cinco",
+        "type": "free_text",
+        "prompt": "Tippe das spanische Wort für die Zahl 5.",
+        "card_ids": ["n-5"],
+        "accept": ["cinco", "Cinco"],
+        "hint": "Fünf Buchstaben, beginnt mit C.",
+        "distractors": ["seis", "cuatro", "siete"]
+      }
+    },
+    {
+      "id": "ex-tile-zaehlen",
+      "type": "exercise",
+      "title": "In Reihenfolge bringen: 1-3",
+      "exercise": {
+        "id": "ex-tile-zaehlen",
+        "type": "word_tiles",
+        "prompt": "Bringe die Kacheln in die Zählreihenfolge von eins bis drei.",
+        "card_ids": ["n-1", "n-2", "n-3"],
+        "tiles": ["uno", "dos", "tres"],
+        "hint": "Gleiche Reihenfolge wie im Deutschen."
+      }
+    },
+    {
+      "id": "ex-cloze-siete",
+      "type": "exercise",
+      "title": "Lücke füllen",
+      "exercise": {
+        "id": "ex-cloze-siete",
+        "type": "cloze",
+        "prompt": "Ergänze die fehlende Zahl (sieben).",
+        "card_ids": ["n-7"],
+        "sentence": "Una semana tiene ___ días.",
+        "blanks": [{"accept": ["siete"]}],
+        "cloze_mode": "type",
+        "hint": "Eine Woche hat sieben Tage."
+      }
+    }
+  ]
+}

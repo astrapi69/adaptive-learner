@@ -1,0 +1,34 @@
+# Französisch A1 (für Deutschsprachige) — Set-Manifest
+# (Phase 60 / v1.44.0).
+#
+# Die ersten muttersprachlich deutschen Lektionen: Französisch
+# lernen, mit Erklärungen und Übersetzungen auf Deutsch. Der
+# Content-Loader liest ``metadata.lessons`` für die Dateiliste.
+schema_version: '1.2'
+name: Französisch A1 (für Deutschsprachige)
+description: >-
+  Französisch A1 für Deutschsprachige: Begrüßung, Zahlen und
+  Artikel. Karten-Rückseiten, Notizen und Theorie auf Deutsch.
+sets:
+  - id: fr-a1-from-de
+    title: Französisch A1 (für Deutschsprachige)
+    title_native: Französisch A1 (für Deutschsprachige)
+    target_language: fr
+    source_language: de
+    level: A1
+    path: sets/de/fr-a1
+    version: '1.0.0'
+    lesson_count: 3
+    domain: language
+    description: >-
+      Drei A1-Lektionen Französisch, auf Deutsch erklärt.
+    tags:
+      - beginner
+      - everyday
+metadata:
+  author: Asterios Raptis
+  license: CC-BY-SA-4.0
+  lessons:
+    - 01-begruessung.json
+    - 02-zahlen.json
+    - 03-artikel.json

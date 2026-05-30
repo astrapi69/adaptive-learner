@@ -104,6 +104,21 @@
       }
     },
     {
+      "id": "ex-cloze-bonjour",
+      "type": "exercise",
+      "title": "Fill in the daytime greeting",
+      "exercise": {
+        "id": "ex-cloze-bonjour",
+        "type": "cloze",
+        "prompt": "Complete the daytime greeting.",
+        "card_ids": ["bonjour"],
+        "sentence": "___ , comment allez-vous ?",
+        "blanks": [{"accept": ["Bonjour", "bonjour"]}],
+        "cloze_mode": "type",
+        "hint": "Daytime greeting, starts with B."
+      }
+    },
+    {
       "id": "ex-pick-evening",
       "type": "exercise",
       "title": "Pick the evening greeting",

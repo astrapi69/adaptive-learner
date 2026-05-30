@@ -1,0 +1,34 @@
+# Spanisch A1 (für Deutschsprachige) — Set-Manifest
+# (Phase 60 / v1.44.0).
+#
+# Spanisch lernen, mit Erklärungen und Übersetzungen auf Deutsch.
+# Der Content-Loader liest ``metadata.lessons`` für die Dateiliste.
+schema_version: '1.2'
+name: Spanisch A1 (für Deutschsprachige)
+description: >-
+  Spanisch A1 für Deutschsprachige: Begrüßung, Zahlen und die
+  ser/estar-Unterscheidung. Karten-Rückseiten, Notizen und
+  Theorie auf Deutsch.
+sets:
+  - id: es-a1-from-de
+    title: Spanisch A1 (für Deutschsprachige)
+    title_native: Español A1 (para germanohablantes)
+    target_language: es
+    source_language: de
+    level: A1
+    path: sets/de/es-a1
+    version: '1.0.0'
+    lesson_count: 3
+    domain: language
+    description: >-
+      Drei A1-Lektionen Spanisch, auf Deutsch erklärt.
+    tags:
+      - beginner
+      - everyday
+metadata:
+  author: Asterios Raptis
+  license: CC-BY-SA-4.0
+  lessons:
+    - 01-begruessung.json
+    - 02-zahlen.json
+    - 03-ser-estar.json

@@ -545,6 +545,7 @@ class ContentLoaderService:
         origin: str,
         lessons: list[Lesson],
         source_language: str = "en",
+        title_native: str | None = None,
         description: str | None = None,
     ) -> SetEntry:
         """Persist a user-generated set into the cache (Phase 59B).
@@ -559,6 +560,7 @@ class ContentLoaderService:
         content_set = ContentSet(
             id=set_id,
             title=title,
+            title_native=title_native,
             target_language=target_language,
             source_language=source_language,
             level=level,

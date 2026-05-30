@@ -1,0 +1,112 @@
+{
+  "id": "02-zahlen",
+  "title": "Zahlen 1-10",
+  "description": "Die ersten zehn Zahlen auf Französisch — auf Deutsch erklärt.",
+  "target_language": "fr",
+  "source_language": "de",
+  "estimated_minutes": 10,
+  "cards": [
+    {"id": "n-1", "front": "un", "back": "eins", "tags": ["zahl"]},
+    {"id": "n-2", "front": "deux", "back": "zwei", "tags": ["zahl"]},
+    {"id": "n-3", "front": "trois", "back": "drei", "tags": ["zahl"]},
+    {"id": "n-4", "front": "quatre", "back": "vier", "tags": ["zahl"]},
+    {"id": "n-5", "front": "cinq", "back": "fünf", "tags": ["zahl"]},
+    {"id": "n-6", "front": "six", "back": "sechs", "tags": ["zahl"]},
+    {"id": "n-7", "front": "sept", "back": "sieben", "tags": ["zahl"]},
+    {"id": "n-8", "front": "huit", "back": "acht", "tags": ["zahl"]},
+    {"id": "n-9", "front": "neuf", "back": "neun", "tags": ["zahl"]},
+    {"id": "n-10", "front": "dix", "back": "zehn", "tags": ["zahl"]}
+  ],
+  "steps": [
+    {
+      "id": "intro",
+      "type": "theory",
+      "title": "Zahlen 1 bis 10",
+      "body": "# Zahlen auf Französisch\n\nDie ersten zehn Zahlen sind ein alltäglicher Baustein — du brauchst sie für Uhrzeit, Preise, Adressen, Telefonnummern und zum Zählen.\n\n| FR | DE |\n|----|----|\n| un | eins |\n| deux | zwei |\n| trois | drei |\n| quatre | vier |\n| cinq | fünf |\n| six | sechs |\n| sept | sieben |\n| huit | acht |\n| neuf | neun |\n| dix | zehn |\n\nBeachte die stummen Endbuchstaben: **deux**, **trois**, **six**, **dix** enden meist mit einem nicht gesprochenen Konsonanten."
+    },
+    {
+      "id": "ex-match-zahlen-niedrig",
+      "type": "exercise",
+      "title": "1-5 zuordnen",
+      "exercise": {
+        "id": "ex-match-zahlen-niedrig",
+        "type": "matching",
+        "prompt": "Ordne die französischen Zahlen 1 bis 5 ihrer deutschen Entsprechung zu.",
+        "card_ids": ["n-1", "n-2", "n-3", "n-4", "n-5"],
+        "pairs": [
+          {"left": "un", "right": "eins"},
+          {"left": "deux", "right": "zwei"},
+          {"left": "trois", "right": "drei"},
+          {"left": "quatre", "right": "vier"},
+          {"left": "cinq", "right": "fünf"}
+        ]
+      }
+    },
+    {
+      "id": "ex-match-zahlen-hoch",
+      "type": "exercise",
+      "title": "6-10 zuordnen",
+      "exercise": {
+        "id": "ex-match-zahlen-hoch",
+        "type": "matching",
+        "prompt": "Ordne die französischen Zahlen 6 bis 10 ihrer deutschen Entsprechung zu.",
+        "card_ids": ["n-6", "n-7", "n-8", "n-9", "n-10"],
+        "pairs": [
+          {"left": "six", "right": "sechs"},
+          {"left": "sept", "right": "sieben"},
+          {"left": "huit", "right": "acht"},
+          {"left": "neuf", "right": "neun"},
+          {"left": "dix", "right": "zehn"}
+        ]
+      }
+    },
+    {
+      "id": "step-aussprache",
+      "type": "theory",
+      "title": "Aussprache-Tipps",
+      "body": "## Ein paar Stolperfallen\n\n- **Six** und **dix** enden allein gesprochen auf /s/, das /s/ verschwindet aber vor einem Konsonanten.\n- **Neuf** endet auf /f/, außer in **neuf ans** (neun Jahre) und **neuf heures** (neun Uhr), wo es zu /v/ wird.\n- **Huit** behält sein stummes **h** — im Französischen gibt es kein gehauchtes H."
+    },
+    {
+      "id": "ex-free-fuenf",
+      "type": "exercise",
+      "title": "Die Zahl tippen",
+      "exercise": {
+        "id": "ex-free-fuenf",
+        "type": "free_text",
+        "prompt": "Tippe das französische Wort für die Zahl 5.",
+        "card_ids": ["n-5"],
+        "accept": ["cinq", "Cinq"],
+        "hint": "Vier Buchstaben, beginnt mit C.",
+        "distractors": ["six", "sept", "quatre"]
+      }
+    },
+    {
+      "id": "ex-tile-zaehlen",
+      "type": "exercise",
+      "title": "In Reihenfolge bringen: 1-3",
+      "exercise": {
+        "id": "ex-tile-zaehlen",
+        "type": "word_tiles",
+        "prompt": "Bringe die Kacheln in die Zählreihenfolge von eins bis drei.",
+        "card_ids": ["n-1", "n-2", "n-3"],
+        "tiles": ["un", "deux", "trois"],
+        "hint": "Gleiche Reihenfolge wie im Deutschen: eins, zwei, drei."
+      }
+    },
+    {
+      "id": "ex-cloze-sept",
+      "type": "exercise",
+      "title": "Lücke füllen",
+      "exercise": {
+        "id": "ex-cloze-sept",
+        "type": "cloze",
+        "prompt": "Ergänze die fehlende Zahl (sieben).",
+        "card_ids": ["n-7"],
+        "sentence": "Il y a ___ jours dans une semaine.",
+        "blanks": [{"accept": ["sept"]}],
+        "cloze_mode": "type",
+        "hint": "Eine Woche hat sieben Tage."
+      }
+    }
+  ]
+}

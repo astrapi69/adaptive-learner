@@ -15,6 +15,7 @@ description: >-
 sets:
   - id: fr-a1-from-en
     title: French A1 (for English speakers)
+    title_native: Français A1
     target_language: fr
     source_language: en
     level: A1

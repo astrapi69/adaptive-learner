@@ -214,8 +214,23 @@ class ContentSet(BaseModel):
     )
     title: str = Field(
         ...,
-        description="Human-readable title shown in the Set Browser.",
+        description=(
+            "Human-readable title shown in the Set Browser, in the "
+            "learner's SOURCE language (e.g. 'Französisch A1 für "
+            "Deutschsprachige' for a fr-from-de set)."
+        ),
         min_length=1,
+        max_length=200,
+    )
+    title_native: str | None = Field(
+        default=None,
+        description=(
+            "Phase 60 / v1.44.0 — optional title in the TARGET "
+            "language (e.g. 'Français A1' for a French set). Shown "
+            "as a secondary native-script label alongside ``title``. "
+            "The community-share validator requires it for shareable "
+            "sets; bundled/legacy sets may omit it."
+        ),
         max_length=200,
     )
     target_language: str = Field(
