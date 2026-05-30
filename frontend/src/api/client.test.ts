@@ -540,3 +540,20 @@ describe("api.contentLoader.saveUserSet", () => {
     expect(call.headers?.["Content-Type"]).toBe("application/json");
   });
 });
+
+describe("api.sync.generatePairToken (Phase 61 C2)", () => {
+  it("POSTs the user id to /api/sync/pair/generate and returns the token", async () => {
+    nextResponse = () =>
+      jsonResponse({ token: "tok-1", user_id: "u1", expires_at: "2026-05-30T12:00:00Z" });
+    const out = await api.sync.generatePairToken("u1");
+    expect(calls[0].url).toBe("/api/sync/pair/generate");
+    expect(calls[0].method).toBe("POST");
+    expect(calls[0].body).toEqual({ user_id: "u1" });
+    expect(out.token).toBe("tok-1");
+  });
+
+  it("throws ApiError (not a bare Error) on a failure response", async () => {
+    nextResponse = () => jsonResponse({ detail: "pairing disabled" }, { status: 409 });
+    await expect(api.sync.generatePairToken("u1")).rejects.toBeInstanceOf(ApiError);
+  });
+});

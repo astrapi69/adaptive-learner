@@ -1283,6 +1283,20 @@ export const api = {
       }),
   },
 
+  // --- Sync pairing (server-only) -------------------------------------
+
+  sync: {
+    /** POST /api/sync/pair/generate — issue a short-lived pairing
+     *  token for the QR handshake. Routed through the central client
+     *  (Phase 61 C2) so failures surface as ``ApiError``, not a bare
+     *  ``Error``. */
+    generatePairToken: (userId: string) =>
+      apiCall<{ token: string; user_id: string; expires_at: string }>(
+        "/sync/pair/generate",
+        { method: "POST", body: { user_id: userId } },
+      ),
+  },
+
   // --- Pronunciation Practice (v1.18.0 / Phase 31C) -------------------
 
   pronunciation: {

@@ -21,7 +21,7 @@
 import {useEffect, useRef, useState} from "react";
 import QRCode from "qrcode";
 
-import {ApiError} from "../api/client";
+import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {resolveStorageMode} from "../storage";
@@ -393,20 +393,9 @@ function DesktopUnpairedView({
         }
         setBusy(true);
         try {
-            const response = await fetch("/api/sync/pair/generate", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({user_id: userId}),
-            });
-            if (!response.ok) {
-                const detail = (await response.json().catch(() => ({})))?.detail ?? `HTTP ${response.status}`;
-                throw new Error(detail);
-            }
-            const body = (await response.json()) as {
-                token: string;
-                user_id: string;
-                expires_at: string;
-            };
+            // Phase 61 C2 — route through the central api client so a
+            // failure surfaces as ApiError (was a raw fetch + bare Error).
+            const body = await api.sync.generatePairToken(userId);
             const uri = buildPairingUri({host, port, token: body.token});
             const dataUrl = await QRCode.toDataURL(uri, {
                 width: 256,

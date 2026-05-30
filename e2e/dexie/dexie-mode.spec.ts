@@ -189,6 +189,19 @@ const ROUTES: RouteCase[] = [
         ],
     },
     {
+        // Phase 61 C2 — ImportDetail was nav-reachable but unwalked.
+        // With no cached conversation it shows its error/empty state
+        // (or redirects to the import list) — never an error toast.
+        name: "ImportDetail (no cached conversation)",
+        path: "/import/nonexistent-conversation",
+        expectedTestIds: [
+            "page-import-detail",
+            "import-detail-error",
+            "page-import",
+            "onboarding",
+        ],
+    },
+    {
         name: "NotFound",
         path: "/this-route-does-not-exist",
         expectedTestIds: ["not-found"],

@@ -624,7 +624,7 @@ UserXP, Badge, UserBadge, UserStreak, AnkiCardSuggestion,
 StudyQuestion, LessonProgress, ElementError, UserMission.
 
 Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Sync
-surface: 31 tables. Full spec in
+surface: 29 tables (`sync_service.ALL_SYNC_TABLES`). Full spec in
 [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md).
 
 ## Plugins (13 shipped)
