@@ -98,6 +98,42 @@ body,
 
 #root {
   overflow-y: auto;
+  /* EXP-018 follow-up P0 — clip horizontal overflow at the app
+     container too, so a single too-wide child can never produce a
+     left/right swipe on mobile. ``overflow-x`` ONLY on the
+     viewport + app container, NEVER an explicit ``overflow``
+     (which would also kill the vertical scroll #root provides;
+     see lessons-learned "viewport containers vs app container"). */
+  overflow-x: hidden;
+}
+
+/* P0 mobile responsiveness — stop horizontal page scroll. The
+   element-level regression spec (e2e/dexie/no-horizontal-scroll)
+   still catches the ROOT causes; these are the guard rails. */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+svg {
+  max-width: 100%;
+}
+
+pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+code {
+  overflow-wrap: break-word;
 }
 
 a {
