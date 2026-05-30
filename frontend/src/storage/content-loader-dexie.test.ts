@@ -308,6 +308,58 @@ describe("Dexie content-loader: downloadSet", () => {
     expect(filenames).toContain("manifest.yaml");
   });
 
+  it("fetches from the set's `path` (source-language tree)", async () => {
+    // Phase 60: a set declaring ``path: sets/de/fr-a1`` is
+    // downloaded from that directory, not ``sets/{id}``.
+    const PAIR_ID = "fr-a1-from-de";
+    const repoManifest = `
+schema_version: '1.2'
+name: Adaptive Learner Content
+sets:
+  - id: fr-a1-from-de
+    title: Französisch A1
+    target_language: fr
+    source_language: de
+    level: A1
+    path: sets/de/fr-a1
+    version: '1.0.0'
+    lesson_count: 1
+    domain: language
+`.trim();
+    const setManifest = `
+schema_version: '1.2'
+name: Französisch A1
+sets:
+  - id: fr-a1-from-de
+    title: Französisch A1
+    target_language: fr
+    source_language: de
+    level: A1
+    path: sets/de/fr-a1
+    version: '1.0.0'
+    lesson_count: 1
+metadata:
+  lessons:
+    - 01-begruessung.json
+`.trim();
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: repoManifest,
+      [`/${SOURCE}/${BRANCH}/sets/de/fr-a1/manifest.yaml`]: setManifest,
+      [`/${SOURCE}/${BRANCH}/sets/de/fr-a1/lessons/01-begruessung.json`]:
+        LESSON_JSON,
+    });
+    const entry = await downloadSetDexie(SOURCE, PAIR_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(entry.cached_version).toBe("1.0.0");
+    expect(entry.source_language).toBe("de");
+    const db = getDb();
+    const files = await db.contentSetFiles.toArray();
+    expect(files.map((f) => f.filename)).toContain(
+      "lessons/01-begruessung.json",
+    );
+  });
+
   it("is idempotent when the cache matches the upstream version", async () => {
     const fetchMock = installFetchMock({
       [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,

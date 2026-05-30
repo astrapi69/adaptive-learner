@@ -1,0 +1,44 @@
+# French A1 (for English speakers) — set manifest
+# (Phase 60 / v1.44.0; lessons authored in Phase 51 / v1.34.0).
+#
+# The Content-Loader fetches this once per download to learn the
+# lesson filename list (``metadata.lessons``). Adding a lesson is
+# a two-line PR: add the JSON under ``lessons/`` and append its
+# filename here, then bump ``lesson_count`` in the root manifest.
+schema_version: '1.2'
+name: French A1 (for English speakers)
+description: >-
+  Ten-lesson A1-level French course explained in English:
+  greetings, numbers, articles, être + avoir, self-
+  introduction, family, colors + clothing, restaurant,
+  directions, and an introduction to the passé composé.
+sets:
+  - id: fr-a1-from-en
+    title: French A1 (for English speakers)
+    target_language: fr
+    source_language: en
+    level: A1
+    path: sets/en/fr-a1
+    version: '1.2.0'
+    lesson_count: 10
+    domain: language
+    description: >-
+      Ten lessons covering A1 essentials, explained in English.
+    tags:
+      - beginner
+      - travel
+      - everyday
+metadata:
+  author: Asterios Raptis
+  license: CC-BY-SA-4.0
+  lessons:
+    - 01-greetings.json
+    - 02-numbers.json
+    - 03-articles.json
+    - 04-etre-avoir.json
+    - 05-se-presenter.json
+    - 06-famille.json
+    - 07-couleurs-vetements.json
+    - 08-au-restaurant.json
+    - 09-directions.json
+    - 10-passe-compose.json

@@ -1,0 +1,65 @@
+# Adaptive Learner content repository — root manifest
+# (Phase 60 / v1.44.0).
+#
+# Canonical mirror of the public ``astrapi69/adaptive-learner-content``
+# repo. Bundled verbatim into the GH-Pages build (see
+# ``frontend/scripts/copy-bundled-content.mjs``) so first-time
+# visitors get lessons offline, and re-fetched live from GitHub
+# when a backend / network is available (higher version wins; on
+# a tie GitHub is preferred, the bundled copy survives offline).
+#
+# Phase 60 reorganised the tree by SOURCE language: every set
+# declares the language the learner is LEARNING (target_language)
+# AND the language the explanations are written in
+# (source_language). The set id encodes the pair
+# (``fr-a1-from-en``) and ``path`` points at the source-language
+# directory (``sets/en/fr-a1``). The loader reads ``path``; it
+# does not parse the id.
+schema_version: '1.2'
+name: Adaptive Learner Official Content
+description: >-
+  Official lesson sets for Adaptive Learner, organised by
+  source language. Pilot release: French A1 and Spanish A1 for
+  English speakers (sets/en) and for German speakers (sets/de).
+  Community contributions arrive via pull request.
+sets:
+  - id: fr-a1-from-en
+    title: French A1 (for English speakers)
+    target_language: fr
+    source_language: en
+    level: A1
+    path: sets/en/fr-a1
+    version: '1.2.0'
+    lesson_count: 10
+    domain: language
+    description: >-
+      Ten lessons of A1-level French explained in English:
+      greetings, numbers, articles, être/avoir, self-
+      introduction, family, colors + clothing, restaurant,
+      directions, and the passé composé. Roughly two hours
+      total.
+    tags:
+      - beginner
+      - travel
+      - everyday
+  - id: es-a1-from-en
+    title: Spanish A1 (for English speakers)
+    target_language: es
+    source_language: en
+    level: A1
+    path: sets/en/es-a1
+    version: '1.1.0'
+    lesson_count: 5
+    domain: language
+    description: >-
+      Five lessons covering A1 Spanish explained in English,
+      with the ser/estar challenge treated as the central A1
+      grammar topic. Runs ~70 minutes total.
+    tags:
+      - beginner
+      - travel
+      - everyday
+metadata:
+  author: Asterios Raptis
+  license: CC-BY-SA-4.0
+  homepage: https://github.com/astrapi69/adaptive-learner-content

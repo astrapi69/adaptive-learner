@@ -60,8 +60,14 @@ const BUNDLED_PREFIX = "bundled:";
  * fails gracefully and the next source is tried.
  */
 const DEFAULT_SOURCES: ContentSetSource[] = [
-  { source: `${BUNDLED_PREFIX}fr-a1`, branch: "" },
-  { source: `${BUNDLED_PREFIX}es-a1`, branch: "" },
+  // Phase 60 / v1.44.0 — the bundled content is a single tree
+  // mirroring the external repo (root manifest + source-language
+  // ``sets/{src}/{tgt-level}/`` hierarchy), copied verbatim to
+  // ``public/content/adaptive-learner-content/`` by
+  // ``copy-bundled-content.mjs``. One bundled source, same tree
+  // as GitHub, so same-id sets dedupe cleanly (GitHub wins on a
+  // tie; the bundle survives offline).
+  { source: `${BUNDLED_PREFIX}adaptive-learner-content`, branch: "" },
   { source: "astrapi69/adaptive-learner-content", branch: "main" },
 ];
 
@@ -201,6 +207,16 @@ interface ParsedSet {
   cover_image?: string | null;
   /** Phase 54 / v1.37.0 — declared assets bundled with the set. */
   assets?: ParsedSetAsset[];
+  /** Phase 60 / v1.44.0 — repo-relative dir for the set's files
+   *  (source-language tree, e.g. ``sets/de/fr-a1``). Falls back
+   *  to ``sets/{id}`` when omitted. */
+  path?: string;
+}
+
+/** Repo-relative base dir for a set's manifest / lessons /
+ *  assets. Mirrors the backend ``ContentSet.base_path``. */
+function setBasePath(parsed: { id: string; path?: string }): string {
+  return parsed.path ?? `sets/${parsed.id}`;
 }
 
 /** Resolve the language pair from a parsed manifest set,
@@ -444,9 +460,11 @@ export async function downloadSetDexie(
     return asContentSetEntry(src, target, cached.version);
   }
 
-  // Set manifest → lesson filename list.
+  // Set manifest → lesson filename list. Honours the
+  // source-language tree via the set's ``path`` field.
+  const basePath = setBasePath(target);
   const setManifestText = await fetchText(
-    rawUrl(src.source, src.branch, `sets/${setId}/manifest.yaml`),
+    rawUrl(src.source, src.branch, `${basePath}/manifest.yaml`),
   );
   const setManifest = parseYaml(setManifestText) as ParsedManifest;
   let lessonFilenames: string[];
@@ -468,7 +486,7 @@ export async function downloadSetDexie(
   const lessonBodies: Record<string, string> = {};
   for (const filename of lessonFilenames) {
     lessonBodies[filename] = await fetchText(
-      rawUrl(src.source, src.branch, `sets/${setId}/lessons/${filename}`),
+      rawUrl(src.source, src.branch, `${basePath}/lessons/${filename}`),
     );
   }
 
@@ -483,7 +501,7 @@ export async function downloadSetDexie(
   const assetBodies: Record<string, string> = {};
   for (const asset of target.assets ?? []) {
     const buf = await fetchBytesOptional(
-      rawUrl(src.source, src.branch, `sets/${setId}/assets/${asset.path}`),
+      rawUrl(src.source, src.branch, `${basePath}/assets/${asset.path}`),
     );
     if (buf === null) continue;
     assetBodies[asset.path] = arrayBufferToBase64(buf);

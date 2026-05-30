@@ -13,9 +13,15 @@
  * is gitignored — the canonical source stays in
  * ``docs/explorations/``.
  *
- * Sources are read from a constant below; adding a new set
- * is a one-line PR here + creating the directory under
- * ``docs/explorations/sample-content/``.
+ * Phase 60 / v1.44.0: the canonical sample content is now a
+ * single repo tree (root ``manifest.yaml`` + a source-language
+ * ``sets/{src}/{tgt-level}/`` hierarchy) that mirrors the public
+ * ``astrapi69/adaptive-learner-content`` repo 1:1. The whole tree
+ * is copied to ``public/content/adaptive-learner-content/`` so
+ * the bundled source key ``bundled:adaptive-learner-content``
+ * resolves to ``/content/adaptive-learner-content/manifest.yaml``
+ * — the GH-Pages build reflects exactly the same tree as the
+ * external repo (DEFAULT_SOURCES in content-loader-dexie.ts).
  */
 import {cpSync, existsSync, mkdirSync, rmSync} from "node:fs";
 import {dirname, join, resolve} from "node:path";
@@ -29,7 +35,12 @@ const REPO_ROOT = resolve(FRONTEND_ROOT, "..");
 const SRC_BASE = resolve(REPO_ROOT, "docs", "explorations", "sample-content");
 const DEST_BASE = resolve(FRONTEND_ROOT, "public", "content");
 
-const BUNDLED_SETS = ["fr-a1", "es-a1"];
+// Bundled source key (see DEFAULT_SOURCES in
+// content-loader-dexie.ts: ``bundled:adaptive-learner-content``).
+// The whole sample-content tree is copied under this directory so
+// the loader's bundled URL resolution
+// (``/content/<key>/manifest.yaml``) finds the root manifest.
+const BUNDLED_REPO_KEY = "adaptive-learner-content";
 
 function log(msg) {
     console.log(`[copy-bundled-content] ${msg}`);
@@ -48,19 +59,16 @@ function main() {
     }
     mkdirSync(DEST_BASE, {recursive: true});
 
-    let copied = 0;
-    for (const setKey of BUNDLED_SETS) {
-        const src = join(SRC_BASE, setKey);
-        const dest = join(DEST_BASE, setKey);
-        if (!existsSync(src)) {
-            log(`SKIP: ${setKey} (not in source tree)`);
-            continue;
-        }
-        cpSync(src, dest, {recursive: true});
-        copied += 1;
-        log(`copied: ${setKey}/`);
+    const rootManifest = join(SRC_BASE, "manifest.yaml");
+    if (!existsSync(rootManifest)) {
+        log(`SKIP: no root manifest.yaml in ${SRC_BASE}`);
+        return 0;
     }
-    log(`done: ${copied}/${BUNDLED_SETS.length} sets bundled to public/content/`);
+
+    // Copy the entire tree (root manifest + sets/) verbatim.
+    const dest = join(DEST_BASE, BUNDLED_REPO_KEY);
+    cpSync(SRC_BASE, dest, {recursive: true});
+    log(`copied content tree to public/content/${BUNDLED_REPO_KEY}/`);
     return 0;
 }
 

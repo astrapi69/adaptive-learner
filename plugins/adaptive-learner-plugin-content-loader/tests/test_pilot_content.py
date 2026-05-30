@@ -1,11 +1,13 @@
-"""Pilot content schema validation (Phase 51 / v1.34.0).
+"""Pilot content schema validation (Phase 51 / v1.34.0;
+source-language tree since Phase 60 / v1.44.0).
 
 Every lesson JSON file under
-``docs/explorations/sample-content/*/sets/*/lessons/`` must
-parse cleanly against the v1.0 lesson schema. A broken JSON
-file in the pilot directory is a release blocker — the same
-files are bundled into the GH-Pages build (Phase 51D) and
-loaded by the Content-Loader at runtime.
+``docs/explorations/sample-content/sets/{src}/{tgt-level}/lessons/``
+must parse cleanly against the lesson schema, and every
+manifest must parse against the manifest schema. A broken file
+in the pilot directory is a release blocker — the same tree is
+bundled into the GH-Pages build and loaded by the Content-Loader
+at runtime.
 
 Parametrized across every discovered lesson file so the
 failure message names exactly which file broke. Adding a new
@@ -20,6 +22,7 @@ from pathlib import Path
 
 import pytest
 
+from adaptive_learner_content_loader.manifest_parser import parse_manifest_yaml
 from adaptive_learner_content_loader.schema import dict_to_lesson
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -29,22 +32,51 @@ PILOT_ROOT = REPO_ROOT / "docs" / "explorations" / "sample-content"
 def _discover_lesson_files() -> list[Path]:
     """Find every lesson JSON shipped in the pilot tree.
 
-    Pattern: ``sample-content/{set-dir}/sets/{set-id}/lessons/NN-slug.json``.
+    Pattern (Phase 60): ``sample-content/sets/{src}/{tgt-level}/lessons/NN-slug.json``.
     Sorted for deterministic test ordering.
     """
-    return sorted(PILOT_ROOT.glob("*/sets/*/lessons/*.json"))
+    return sorted(PILOT_ROOT.glob("sets/*/*/lessons/*.json"))
+
+
+def _discover_manifest_files() -> list[Path]:
+    """Find the root manifest + every per-set manifest."""
+    return sorted(PILOT_ROOT.glob("**/manifest.yaml"))
 
 
 def _file_id(path: Path) -> str:
     """Compact id for pytest's parametrize display.
 
-    Trims the absolute path down to ``{set-dir}/{filename}`` so the
-    failure line names the file in a recognisable form.
+    Trims to ``{src}/{tgt-level}/{filename}`` so the failure line
+    names the file in a recognisable form.
     """
-    return f"{path.parent.parent.parent.name}/{path.name}"
+    return f"{path.parent.parent.parent.name}/{path.parent.parent.name}/{path.name}"
 
 
 LESSON_FILES = _discover_lesson_files()
+MANIFEST_FILES = _discover_manifest_files()
+
+
+@pytest.mark.parametrize(
+    "path",
+    MANIFEST_FILES,
+    ids=lambda p: str(p.relative_to(PILOT_ROOT)),
+)
+def test_pilot_manifest_validates(path: Path) -> None:
+    """Every manifest (root + per-set) parses + validates, and
+    each set declares the v1.2 language pair + a ``path`` that
+    resolves to an existing directory under the pilot tree."""
+    manifest = parse_manifest_yaml(path.read_text(encoding="utf-8"))
+    for content_set in manifest.sets:
+        assert content_set.target_language, f"{path}: {content_set.id} missing target_language"
+        assert content_set.source_language, f"{path}: {content_set.id} missing source_language"
+        # The declared ``path`` (when present) must point at a real
+        # directory relative to the repo root that holds the set.
+        if content_set.path is not None:
+            resolved = PILOT_ROOT / content_set.path
+            assert resolved.is_dir(), (
+                f"{path}: {content_set.id} path '{content_set.path}' "
+                "does not resolve to a directory under the pilot tree"
+            )
 
 
 @pytest.mark.parametrize("path", LESSON_FILES, ids=_file_id)

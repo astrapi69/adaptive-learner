@@ -390,6 +390,68 @@ class TestDownloadSet:
             service.list_cached_lesson_filenames(SOURCE, SET_ID),
         ) == ["01-greetings.json", "02-numbers.json"]
 
+    async def test_download_honours_path_field(self, tmp_path: Path) -> None:
+        # Phase 60: a set declaring ``path: sets/de/fr-a1`` is
+        # fetched from that directory, NOT the legacy
+        # ``sets/{id}`` convention.
+        pair_id = "fr-a1-from-de"
+        repo_manifest = textwrap.dedent(
+            """
+            schema_version: '1.2'
+            name: Adaptive Learner Content
+            sets:
+              - id: fr-a1-from-de
+                title: Französisch A1
+                target_language: fr
+                source_language: de
+                level: A1
+                path: sets/de/fr-a1
+                version: '1.0.0'
+                lesson_count: 1
+                domain: language
+            """
+        ).strip()
+        set_manifest = textwrap.dedent(
+            """
+            schema_version: '1.2'
+            name: Französisch A1
+            sets:
+              - id: fr-a1-from-de
+                title: Französisch A1
+                target_language: fr
+                source_language: de
+                level: A1
+                path: sets/de/fr-a1
+                version: '1.0.0'
+                lesson_count: 1
+            metadata:
+              lessons:
+                - 01-begruessung.json
+            """
+        ).strip()
+        transport = _make_mock_transport(
+            {
+                f"/{SOURCE}/{BRANCH}/manifest.yaml": repo_manifest,
+                f"/{SOURCE}/{BRANCH}/sets/de/fr-a1/manifest.yaml": set_manifest,
+                f"/{SOURCE}/{BRANCH}/sets/de/fr-a1/lessons/01-begruessung.json": _make_lesson(
+                    "01-begruessung",
+                    "Begrüßung",
+                ),
+            },
+        )
+        service = ContentLoaderService(
+            cache_root=tmp_path,
+            sources=[SourceRef(source=SOURCE, branch=BRANCH)],
+        )
+        with _install_mock(transport):
+            entry = await service.download_set(SOURCE, BRANCH, pair_id)
+        assert entry.cached_version == "1.0.0"
+        assert entry.set.source_language == "de"
+        assert is_set_cached(tmp_path, SOURCE, pair_id, "1.0.0")
+        assert service.list_cached_lesson_filenames(SOURCE, pair_id) == [
+            "01-begruessung.json",
+        ]
+
     async def test_skip_when_cache_matches(self, tmp_path: Path) -> None:
         from adaptive_learner_content_loader.cache import store_set
 

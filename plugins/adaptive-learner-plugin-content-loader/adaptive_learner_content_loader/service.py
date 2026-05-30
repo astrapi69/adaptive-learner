@@ -166,16 +166,6 @@ def _validate_asset_size(
         )
 
 
-def _set_manifest_path(set_id: str) -> str:
-    # Convention used by the pilot content repo: each set has
-    # its OWN manifest fragment shipping the lesson list, plus
-    # the top-level repo manifest catalogues every set. The
-    # top-level manifest is the only file the loader fetches
-    # when listing sets; per-set manifests are fetched only at
-    # download time.
-    return f"sets/{set_id}/manifest.yaml"
-
-
 def _lesson_filenames_for_set(
     set_manifest: ContentManifest,
     set_id: str,
@@ -401,11 +391,16 @@ class ContentLoaderService:
             # Clean any leftover tmp dir from a prior crash.
             cleanup_tmp_dirs(self.cache_root, source, set_id)
 
+            # Repo-relative base dir for this set's files. Honours
+            # the source-language tree (``sets/de/fr-a1``) via the
+            # set's ``path`` field; falls back to ``sets/{id}``.
+            base_path = target_set.base_path
+
             # Fetch the set's own manifest (lesson list).
             set_manifest_text = await self._adapter.fetch_text(
                 source,
                 branch,
-                _set_manifest_path(set_id),
+                f"{base_path}/manifest.yaml",
                 client=client,
             )
             set_manifest = parse_manifest_yaml(set_manifest_text)
@@ -420,7 +415,7 @@ class ContentLoaderService:
                 text = await self._adapter.fetch_text(
                     source,
                     branch,
-                    f"sets/{set_id}/lessons/{filename}",
+                    f"{base_path}/lessons/{filename}",
                     client=client,
                 )
                 lessons[filename] = text
@@ -443,7 +438,7 @@ class ContentLoaderService:
                 )
             assets: dict[str, bytes] = {}
             for asset_entry in target_set.assets:
-                upstream_path = f"sets/{set_id}/assets/{asset_entry.path}"
+                upstream_path = f"{base_path}/assets/{asset_entry.path}"
                 try:
                     payload = await self._adapter.fetch_bytes(
                         source,

@@ -82,6 +82,14 @@ _VERSION_RE = re.compile(
 # Used for both set_id and source identifiers.
 _SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
+# Repo-relative directory for a set's files (Phase 60 / v1.44.0).
+# Slug-safe segments joined by ``/`` (e.g. ``sets/de/fr-a1``). No
+# leading/trailing slash, no ``..`` — the loader appends lesson /
+# asset paths to this so any traversal would escape the set.
+_SET_DIR_RE = re.compile(
+    r"^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*)*$",
+)
+
 # Asset path: a relative path inside the set's ``assets/``
 # subdirectory. No leading slash, no ``..``, only forward
 # slashes, lowercase letters / digits / hyphens / underscores
@@ -279,6 +287,20 @@ class ContentSet(BaseModel):
             "base URL by the GitHub adapter."
         ),
     )
+    path: str | None = Field(
+        default=None,
+        description=(
+            "Phase 60 / v1.44.0 — repo-relative directory where "
+            "the set's own ``manifest.yaml`` + ``lessons/`` + "
+            "``assets/`` live. Enables the source-language tree "
+            "(e.g. ``sets/de/fr-a1`` for a French-for-German set "
+            "while the id stays the flat slug ``fr-a1-from-de``). "
+            "When omitted the loader falls back to the legacy "
+            "``sets/{id}`` convention. No leading/trailing slash, "
+            "no ``..`` segments."
+        ),
+        max_length=300,
+    )
     tags: list[str] = Field(
         default_factory=list,
         description=(
@@ -342,6 +364,18 @@ class ContentSet(BaseModel):
             )
         return value
 
+    @field_validator("path")
+    @classmethod
+    def _safe_path(cls, value: str | None) -> str | None:
+        if value is None:
+            return value
+        if not _SET_DIR_RE.fullmatch(value):
+            raise ValueError(
+                "path must be a relative slug-safe directory "
+                "(no leading/trailing slash, no '..' segments)"
+            )
+        return value
+
     @field_validator("version")
     @classmethod
     def _semver_version(cls, value: str) -> str:
@@ -374,6 +408,18 @@ class ContentSet(BaseModel):
         ``target_language`` / ``source_language`` only.
         """
         return self.target_language
+
+    @property
+    def base_path(self) -> str:
+        """Repo-relative directory holding this set's files.
+
+        Returns the explicit ``path`` when declared (the
+        source-language tree, e.g. ``sets/de/fr-a1``), else the
+        legacy ``sets/{id}`` convention. The loader joins
+        ``manifest.yaml`` / ``lessons/{file}`` / ``assets/{path}``
+        onto this.
+        """
+        return self.path or f"sets/{self.id}"
 
     def assets_total_kb(self) -> int:
         """Sum of declared ``size_kb`` across every bundled

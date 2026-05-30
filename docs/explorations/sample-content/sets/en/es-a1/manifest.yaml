@@ -1,0 +1,39 @@
+# Spanish A1 (for English speakers) — set manifest
+# (Phase 60 / v1.44.0; lessons authored in Phase 51 / v1.34.0).
+#
+# The Content-Loader reads ``metadata.lessons`` for the lesson
+# filename list.
+schema_version: '1.2'
+name: Spanish A1 (for English speakers)
+description: >-
+  Five-lesson A1-level Spanish course explained in English:
+  greetings + inverted punctuation, numbers + telling the time,
+  articles + the -o/-a gender rule, the ser/estar distinction
+  (the A1 challenge), and ordering at a restaurant.
+sets:
+  - id: es-a1-from-en
+    title: Spanish A1 (for English speakers)
+    target_language: es
+    source_language: en
+    level: A1
+    path: sets/en/es-a1
+    version: '1.1.0'
+    lesson_count: 5
+    domain: language
+    description: >-
+      Pilot Spanish set covering the A1 essentials, explained
+      in English, with ser/estar treated as the central A1
+      challenge.
+    tags:
+      - beginner
+      - travel
+      - everyday
+metadata:
+  author: Asterios Raptis
+  license: CC-BY-SA-4.0
+  lessons:
+    - 01-saludos.json
+    - 02-numeros-hora.json
+    - 03-articulos-genero.json
+    - 04-ser-estar.json
+    - 05-restaurante.json
