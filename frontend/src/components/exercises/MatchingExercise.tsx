@@ -250,7 +250,7 @@ export default function MatchingExercise({
 
             <p
                 className="exercise-direction-instruction"
-                data-testid="matching-direction-instruction"
+                data-testid="direction-instruction-matching"
             >
                 {instruction}
             </p>

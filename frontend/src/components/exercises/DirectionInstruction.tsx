@@ -43,7 +43,13 @@ export default function DirectionInstruction({
     direction === "source_to_target"
       ? fallbacks.productive
       : fallbacks.receptive;
-  const testid = `${exercise.type.replace(/_/g, "-")}-direction-instruction`;
+  // Distinct ``direction-instruction-`` prefix (NOT
+  // ``${type}-...``) so the testid never collides with an
+  // exercise's own prefix selectors — e.g. the picture-choice
+  // playthrough uses ``[data-testid^="picture-choice-"]`` to find
+  // the choice tiles, which a ``picture-choice-...`` instruction id
+  // would shadow. See lessons-learned "prefix testid overmatch".
+  const testid = `direction-instruction-${exercise.type}`;
   return (
     <p className="exercise-direction-instruction" data-testid={testid}>
       {t(instructionKey(exercise.type, direction), fallback)}
