@@ -80,9 +80,7 @@ def build_validation_messages(
                                 "id": (step.get("exercise") or {}).get("id"),
                                 "type": (step.get("exercise") or {}).get("type"),
                                 "prompt": (step.get("exercise") or {}).get("prompt"),
-                                "distractors": (step.get("exercise") or {}).get(
-                                    "distractors"
-                                ),
+                                "distractors": (step.get("exercise") or {}).get("distractors"),
                             }
                             if step.get("exercise")
                             else None

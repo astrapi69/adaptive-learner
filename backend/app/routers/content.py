@@ -79,9 +79,7 @@ def validate_lesson(
     try:
         provider_enum = AIProvider(provider_key)
     except ValueError as exc:
-        raise ValidationError(
-            f"User {body.user_id!r} has no valid active AI provider."
-        ) from exc
+        raise ValidationError(f"User {body.user_id!r} has no valid active AI provider.") from exc
 
     api_key, _source = settings_service.resolve_api_key(db, body.user_id, provider_enum)
     if not api_key:
