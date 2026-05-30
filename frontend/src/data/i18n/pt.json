@@ -1510,8 +1510,8 @@
       "missing_distractors": "Lição '{lesson}': o exercício '{exercise}' precisa de distratores (opções erradas).",
       "non_cefr_level": "O nível '{level}' não é uma faixa CEFR (A1-C2).",
       "level_too_complex": "Lição '{lesson}': o texto tem em média {avg} palavras por lado, alto para o nível {level} (cerca de {cap} esperadas).",
-      "source_language_heuristic": "Os versos dos cartões não parecem estar em '{lang}' (nenhum caractere característico encontrado).",
-      "target_language_heuristic": "As frentes dos cartões não parecem estar em '{lang}' (nenhum caractere característico encontrado)."
+      "source_language_heuristic": "Os versos contêm caracteres próprios de {found}, mas o idioma de origem é '{lang}'.",
+      "target_language_heuristic": "As frentes contêm caracteres próprios de {found}, mas o idioma de destino é '{lang}'."
     },
     "ai_validation": {
       "intro": "Uma IA pode também verificar a exatidão da tradução, a gramática e a adequação ao nível.",

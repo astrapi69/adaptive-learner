@@ -70,18 +70,57 @@ const MAX_AVG_WORDS_PER_SIDE: Record<string, number> = {
   b2: 30,
 };
 
-// Signature diacritics / characters per Latin-script language. A
-// set whose source (or target) is one of these but whose text
-// shows NONE of its signature characters anywhere is *probably*
-// mislabelled — emitted as a WARNING (never a hard block), because
-// absence is only weak evidence (e.g. "Hallo" has no umlaut).
-const LANGUAGE_SIGNATURE: Record<string, RegExp> = {
-  de: /[äöüßÄÖÜ]/,
-  fr: /[àâçéèêëîïôûùüœæ]/i,
-  es: /[ñáíóúü¿¡]/i,
-  pt: /[ãõçáâàéêíóôú]/i,
-  it: /[àèéìíîòóùú]/i,
-};
+// Characters that strongly indicate ONE specific supported
+// language. Used for POSITIVE cross-language detection: a marker
+// belonging to a language OTHER than the declared one is evidence
+// of mislabelling. ABSENCE is never evidence — diacritic-free text
+// is completely normal (French "Bonjour, un, le" has no accents),
+// so we only warn when a conflicting marker is actually present.
+// Only highly-exclusive markers are listed (shared accents like
+// é/à/ç span fr/es/pt/it and would false-positive).
+// Non-Latin SCRIPT markers — unambiguous and safe to check on BOTH
+// sides: nobody quotes Japanese/Greek inside German prose about
+// French, so their presence where another language is declared is
+// strong evidence of mislabelling.
+const NON_LATIN_MARKERS: { lang: string; re: RegExp }[] = [
+  { lang: "el", re: /[Ͱ-Ͽἀ-῿]/ },
+  { lang: "ja", re: /[぀-ヿ一-鿿]/ },
+  { lang: "ru", re: /[Ѐ-ӿ]/ },
+  { lang: "ar", re: /[؀-ۿ]/ },
+  { lang: "ko", re: /[가-힯]/ },
+];
+
+// Latin-script EXCLUSIVE markers — only checked on the TARGET FRONT
+// (pure target-language vocab). They are NOT checked on the source
+// back/notes: explanatory prose in the source language legitimately
+// QUOTES the target language (an English note about Spanish contains
+// ñ / ¿), which would false-positive. Shared accents (é/à/ç) are
+// omitted entirely — they span fr/es/pt/it.
+const LATIN_MARKERS: { lang: string; re: RegExp }[] = [
+  { lang: "de", re: /ß/ },
+  { lang: "es", re: /[ñ¿¡]/ },
+  { lang: "tr", re: /[ığş]/i },
+];
+
+/** Return the base code of a language whose marker appears in
+ *  ``text`` but differs from ``expected`` — positive evidence of the
+ *  wrong language. ``includeLatin`` adds the Latin-marker set (used
+ *  for the target front only). ``null`` when nothing conflicts
+ *  (including diacritic-free text in the expected language). */
+function conflictingLanguage(
+  text: string,
+  expected: string,
+  includeLatin: boolean,
+): string | null {
+  const exp = base(expected);
+  const markers = includeLatin
+    ? [...NON_LATIN_MARKERS, ...LATIN_MARKERS]
+    : NON_LATIN_MARKERS;
+  for (const { lang, re } of markers) {
+    if (lang !== exp && re.test(text)) return lang;
+  }
+  return null;
+}
 
 function base(code: string): string {
   return (code || "").split("-")[0].toLowerCase();
@@ -162,11 +201,13 @@ function validateMeta(
 /**
  * Set-level language heuristic (Phase 61). Aggregates ALL card
  * `back`/`notes` text (should be the source language) and all
- * `front` text (should be the target language). For Latin-script
- * languages with signature diacritics, if a side has a meaningful
- * amount of text but shows NONE of the expected signature
- * characters, emit a WARNING — absence is weak evidence, so this
- * never blocks sharing.
+ * `front` text (should be the target language) and warns only when
+ * a marker EXCLUSIVE to a different supported language is present
+ * (e.g. Spanish ñ in a set labelled German, or Greek script where
+ * French is expected). Positive evidence only — absence of the
+ * expected language's diacritics is NOT flagged, because legitimate
+ * short A1 vocab is routinely diacritic-free. Always a WARNING,
+ * never a hard block.
  */
 function validateLanguageHeuristics(
   meta: ValidationMeta,
@@ -185,14 +226,20 @@ function validateLanguageHeuristics(
     text: string,
     lang: string,
     code: string,
+    includeLatin: boolean,
   ): void => {
-    const sig = LANGUAGE_SIGNATURE[base(lang)];
-    // Only meaningful with enough text to expect a signature char.
-    if (sig && text.trim().length >= 40 && !sig.test(text))
-      warnings.push({ code, params: { lang: base(lang) } });
+    // Warn only on POSITIVE evidence: a marker for a DIFFERENT
+    // language is present. Never warn on absence (diacritic-free
+    // A1 vocab is normal). Latin markers are checked only on the
+    // target front, never on the source back/notes (which quote
+    // the target language).
+    const found = conflictingLanguage(text, lang, includeLatin);
+    if (found) warnings.push({ code, params: { lang: base(lang), found } });
   };
-  checkSide(backText, meta.source_language, "source_language_heuristic");
-  checkSide(frontText, meta.target_language, "target_language_heuristic");
+  // Source side = back + notes (prose): non-Latin scripts only.
+  checkSide(backText, meta.source_language, "source_language_heuristic", false);
+  // Target side = front (pure vocab): Latin markers + non-Latin.
+  checkSide(frontText, meta.target_language, "target_language_heuristic", true);
 }
 
 function validateLesson(

@@ -1390,8 +1390,8 @@ content:
     missing_distractors: "Lektion '{lesson}': Übung '{exercise}' braucht Ablenker (falsche Optionen)."
     non_cefr_level: Niveau '{level}' ist keine CEFR-Stufe (A1-C2).
     level_too_complex: "Lektion '{lesson}': Text hat im Schnitt {avg} Wörter pro Seite, viel für Niveau {level} (etwa {cap} erwartet)."
-    source_language_heuristic: Kartenrückseiten scheinen nicht auf '{lang}' zu sein (keine typischen Zeichen gefunden).
-    target_language_heuristic: Kartenvorderseiten scheinen nicht auf '{lang}' zu sein (keine typischen Zeichen gefunden).
+    source_language_heuristic: Kartenrückseiten enthalten {found}-typische Zeichen, aber die Ausgangssprache ist '{lang}'.
+    target_language_heuristic: Kartenvorderseiten enthalten {found}-typische Zeichen, aber die Zielsprache ist '{lang}'.
   ai_validation:
     intro: Eine KI kann zusätzlich Übersetzungsgenauigkeit, Grammatik und Niveau prüfen.
     privacy: Der Inhalt deiner Lektion wird an {provider} gesendet. Keine persönlichen Daten werden übermittelt.

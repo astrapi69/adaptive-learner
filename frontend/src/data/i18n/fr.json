@@ -1510,8 +1510,8 @@
       "missing_distractors": "Leçon '{lesson}' : l'exercice '{exercise}' nécessite des distracteurs (mauvaises options).",
       "non_cefr_level": "Le niveau '{level}' n'est pas une échelle CECR (A1-C2).",
       "level_too_complex": "Leçon '{lesson}' : le texte fait en moyenne {avg} mots par côté, élevé pour le niveau {level} (environ {cap} attendus).",
-      "source_language_heuristic": "Le verso des cartes ne semble pas être en '{lang}' (aucun caractère caractéristique trouvé).",
-      "target_language_heuristic": "Le recto des cartes ne semble pas être en '{lang}' (aucun caractère caractéristique trouvé)."
+      "source_language_heuristic": "Le verso des cartes contient des caractères propres à {found}, mais la langue source est '{lang}'.",
+      "target_language_heuristic": "Le recto des cartes contient des caractères propres à {found}, mais la langue cible est '{lang}'."
     },
     "ai_validation": {
       "intro": "Une IA peut en plus vérifier l'exactitude des traductions, la grammaire et le niveau.",

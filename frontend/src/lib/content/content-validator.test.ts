@@ -185,22 +185,22 @@ describe("treePlacement", () => {
   });
 });
 
-// A lesson whose German backs are LONG (>10 words/side avg) and
-// contain NO umlauts — exercises the level + source heuristics.
-function wordyAsciiGermanLesson(): ContentLesson {
+// A lesson whose backs are LONG (>10 words/side avg) — exercises
+// the level word-count proxy.
+function wordyGermanLesson(): ContentLesson {
   const l = goodLesson();
   l.cards = l.cards.map((c, i) => ({
     ...c,
-    back: `Dies ist eine ausfuehrliche deutsche Erklaerung Nummer ${i} ohne Umlaute mit vielen Woertern`,
+    back: `Dies ist eine ausführliche deutsche Erklärung Nummer ${i} mit vielen Wörtern`,
   }));
   return l;
 }
 
 describe("validateSetForSharing — warnings (non-blocking)", () => {
   it("warnings never flip ok to false", () => {
-    const r = validateSetForSharing(META, [wordyAsciiGermanLesson()]);
+    const r = validateSetForSharing(META, [wordyGermanLesson()]);
     expect(r.ok).toBe(true);
-    expect(r.warnings.length).toBeGreaterThan(0);
+    expect(r.warnings.length).toBeGreaterThan(0); // level_too_complex
   });
 
   it("warns when the level is not a CEFR band", () => {
@@ -210,20 +210,54 @@ describe("validateSetForSharing — warnings (non-blocking)", () => {
   });
 
   it("warns when A1 card text is too long for the level", () => {
-    expect(warnCodes(META, [wordyAsciiGermanLesson()])).toContain(
+    expect(warnCodes(META, [wordyGermanLesson()])).toContain(
       "level_too_complex",
     );
   });
 
-  it("warns when German backs show no umlauts (source heuristic)", () => {
-    expect(warnCodes(META, [wordyAsciiGermanLesson()])).toContain(
-      "source_language_heuristic",
-    );
+  // Regression pin for the Phase 61 review FAIL: correctly-labelled
+  // French content whose early lessons are diacritic-free (greetings,
+  // numbers, articles) must NOT trip the target-language heuristic.
+  it("does NOT flag diacritic-free but correct target content (de/fr-a1 case)", () => {
+    const lesson = goodLesson(); // fronts: Bonjour, Merci, Salut (no accents)
+    const codes = warnCodes(META, [lesson]);
+    expect(codes).not.toContain("target_language_heuristic");
+    expect(codes).not.toContain("source_language_heuristic");
   });
 
-  it("does NOT warn when German backs contain umlauts", () => {
-    const l = wordyAsciiGermanLesson();
-    l.cards[0].back = "Schön, dich zu sehen — das ist eine grüßende Erklärung über Umlaute";
-    expect(warnCodes(META, [l])).not.toContain("source_language_heuristic");
+  it("flags a non-Latin script on the source back (Japanese in a German source)", () => {
+    const l = goodLesson();
+    l.cards[0].back = "これはドイツ語ではありません"; // Japanese in a de-source set
+    expect(warnCodes(META, [l])).toContain("source_language_heuristic");
+  });
+
+  it("does NOT flag Latin source quoting the target language (ñ in an English note about Spanish)", () => {
+    // The es-a1-from-en false positive: English source notes quote
+    // Spanish (ñ/¿). Latin markers are NOT checked on the source side.
+    const l = goodLesson();
+    l.cards[0].back = "child (from the Spanish 'niño', note the ñ)";
+    expect(
+      warnCodes({ ...META, source_language: "en", target_language: "es" }, [l]),
+    ).not.toContain("source_language_heuristic");
+  });
+
+  it("flags a CONFLICTING marker: German ß on a French-target front", () => {
+    const l = goodLesson();
+    l.cards[0].front = "Straße"; // German ß where French is expected
+    expect(warnCodes(META, [l])).toContain("target_language_heuristic");
+  });
+
+  it("flags a non-Latin script mismatch (Greek where French expected)", () => {
+    const l = goodLesson();
+    l.cards[0].front = "Καλημέρα";
+    expect(warnCodes(META, [l])).toContain("target_language_heuristic");
+  });
+
+  it("does NOT flag the expected target's own marker (Spanish ñ on a Spanish front)", () => {
+    const l = goodLesson();
+    l.cards[0].front = "el niño"; // ñ is Spanish's own marker
+    expect(
+      warnCodes({ ...META, target_language: "es" }, [l]),
+    ).not.toContain("target_language_heuristic");
   });
 });

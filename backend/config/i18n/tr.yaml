@@ -1385,8 +1385,8 @@ content:
     missing_distractors: "'{lesson}' dersi: '{exercise}' alıştırması çeldirici (yanlış seçenek) gerektirir."
     non_cefr_level: "'{level}' seviyesi bir CEFR bandı değil (A1-C2)."
     level_too_complex: "'{lesson}' dersi: metin yüzde ortalama {avg} kelime, {level} seviyesi için yüksek (yaklaşık {cap} beklenir)."
-    source_language_heuristic: Kart arka yüzleri '{lang}' dilinde görünmüyor (karakteristik karakter bulunamadı).
-    target_language_heuristic: Kart ön yüzleri '{lang}' dilinde görünmüyor (karakteristik karakter bulunamadı).
+    source_language_heuristic: Kart arka yüzleri {found} diline özgü karakterler içeriyor, ancak kaynak dil '{lang}'.
+    target_language_heuristic: Kart ön yüzleri {found} diline özgü karakterler içeriyor, ancak hedef dil '{lang}'.
   ai_validation:
     intro: Bir yapay zekâ ayrıca çeviri doğruluğunu, dil bilgisini ve seviye uygunluğunu kontrol edebilir.
     privacy: Dersinizin içeriği {provider} sağlayıcısına gönderilecek. Hiçbir kişisel veri iletilmez.

@@ -1396,8 +1396,8 @@ content:
     missing_distractors: "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options)."
     non_cefr_level: Level '{level}' is not a CEFR band (A1-C2).
     level_too_complex: "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected)."
-    source_language_heuristic: Card backs don't appear to be in '{lang}' (no characteristic characters found).
-    target_language_heuristic: Card fronts don't appear to be in '{lang}' (no characteristic characters found).
+    source_language_heuristic: Card backs contain {found}-specific characters but the source language is '{lang}'.
+    target_language_heuristic: Card fronts contain {found}-specific characters but the target language is '{lang}'.
   ai_validation:
     intro: An AI can additionally check translation accuracy, grammar and level fit.
     privacy: Your lesson content will be sent to {provider}. No personal data is transmitted.
