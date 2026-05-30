@@ -27,7 +27,7 @@ from typing import Literal
 
 from fastapi import APIRouter
 from fastapi.responses import Response
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 from pydantic import ValidationError as PydanticValidationError
 
 from app.exceptions import (
@@ -132,7 +132,12 @@ class SetEntryResponse(BaseModel):
     branch: str
     id: str
     title: str
+    # ``language`` mirrors ``target_language`` for pre-v1.44.0
+    # frontend builds that still read it; new clients use the
+    # explicit pair fields.
     language: str
+    target_language: str
+    source_language: str
     level: str
     domain: str
     version: str
@@ -150,7 +155,9 @@ class SetEntryResponse(BaseModel):
             branch=entry.branch,
             id=entry.set.id,
             title=entry.set.title,
-            language=entry.set.language,
+            language=entry.set.target_language,
+            target_language=entry.set.target_language,
+            source_language=entry.set.source_language,
             level=entry.set.level,
             domain=entry.set.domain,
             version=entry.set.version,
@@ -352,11 +359,24 @@ class SaveUserSetRequest(BaseModel):
 
     set_id: str
     title: str
-    language: str
+    target_language: str
+    source_language: str = "en"
     level: str
     origin: Literal["analysis", "adaptive", "imported"] = "analysis"
     description: str | None = None
     lessons: list[Lesson]
+
+    @model_validator(mode="before")
+    @classmethod
+    def _accept_language_alias(cls, data: object) -> object:
+        """Map the pre-v1.44.0 ``language`` key to
+        ``target_language`` so older frontend builds keep
+        working against the new endpoint shape."""
+        if isinstance(data, dict) and "language" in data:
+            data = dict(data)
+            legacy = data.pop("language")
+            data.setdefault("target_language", legacy)
+        return data
 
 
 @router.post("/user-sets", response_model=SetEntryResponse)
@@ -368,7 +388,8 @@ async def save_user_set(body: SaveUserSetRequest) -> SetEntryResponse:
         entry = service.save_user_set(
             set_id=body.set_id,
             title=body.title,
-            language=body.language,
+            target_language=body.target_language,
+            source_language=body.source_language,
             level=body.level,
             origin=body.origin,
             lessons=body.lessons,

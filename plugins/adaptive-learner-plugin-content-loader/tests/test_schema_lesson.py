@@ -722,6 +722,28 @@ class TestLesson:
         revived = dict_to_lesson(payload)
         assert revived == original
 
+    def test_language_pair_optional_defaults_none(self) -> None:
+        # Pre-v1.2 lessons omit the pair fields entirely; the
+        # parent set is authoritative.
+        lesson = _minimal_lesson()
+        assert lesson.target_language is None
+        assert lesson.source_language is None
+
+    def test_language_pair_round_trip(self) -> None:
+        # A standalone exported lesson can carry its own pair.
+        payload = lesson_to_dict(_minimal_lesson())
+        payload["target_language"] = "fr"
+        payload["source_language"] = "de"
+        revived = dict_to_lesson(payload)
+        assert revived.target_language == "fr"
+        assert revived.source_language == "de"
+
+    def test_language_pair_must_be_bcp47(self) -> None:
+        payload = lesson_to_dict(_minimal_lesson())
+        payload["source_language"] = "deutsch"
+        with pytest.raises(ValidationError):
+            dict_to_lesson(payload)
+
 
 # --- Schema export -----------------------------------------------------
 

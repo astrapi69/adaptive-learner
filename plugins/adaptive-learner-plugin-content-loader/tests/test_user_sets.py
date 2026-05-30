@@ -42,7 +42,7 @@ def test_save_user_set_returns_entry(tmp_path: Path) -> None:
     entry = service.save_user_set(
         set_id="conv-1",
         title="Spanish travel vocabulary",
-        language="es",
+        target_language="es",
         level="beginner",
         origin="analysis",
         lessons=[lesson],
@@ -52,6 +52,33 @@ def test_save_user_set_returns_entry(tmp_path: Path) -> None:
     assert entry.set.domain == "analysis"
     assert entry.set.lesson_count == 1
     assert entry.cached_version == USER_SET_VERSION
+    # source_language defaults to "en" when not provided.
+    assert entry.set.target_language == "es"
+    assert entry.set.source_language == "en"
+
+
+def test_save_user_set_persists_source_language(tmp_path: Path) -> None:
+    service = _service(tmp_path)
+    entry = service.save_user_set(
+        set_id="conv-de",
+        title="Französisch A1",
+        target_language="fr",
+        source_language="de",
+        level="A1",
+        origin="analysis",
+        lessons=[_lesson()],
+    )
+    assert entry.set.target_language == "fr"
+    assert entry.set.source_language == "de"
+    # And it survives the manifest YAML serialise/parse round-trip
+    # (proves the pair fields are written to the cached manifest).
+    from adaptive_learner_content_loader.cache import read_manifest
+
+    manifest = read_manifest(
+        service.cache_root, USER_GENERATED_SOURCE, "conv-de", USER_SET_VERSION
+    )
+    assert manifest.sets[0].target_language == "fr"
+    assert manifest.sets[0].source_language == "de"
 
 
 def test_saved_set_is_listed_and_playable(tmp_path: Path) -> None:
@@ -60,7 +87,7 @@ def test_saved_set_is_listed_and_playable(tmp_path: Path) -> None:
     service.save_user_set(
         set_id="conv-1",
         title="Spanish travel vocabulary",
-        language="es",
+        target_language="es",
         level="beginner",
         origin="analysis",
         lessons=[lesson],
@@ -81,7 +108,7 @@ def test_resave_overwrites_in_place(tmp_path: Path) -> None:
     service.save_user_set(
         set_id="conv-1",
         title="Old title",
-        language="es",
+        target_language="es",
         level="beginner",
         origin="analysis",
         lessons=[_lesson()],
@@ -89,7 +116,7 @@ def test_resave_overwrites_in_place(tmp_path: Path) -> None:
     entry = service.save_user_set(
         set_id="conv-1",
         title="New title",
-        language="es",
+        target_language="es",
         level="beginner",
         origin="analysis",
         lessons=[_lesson()],
@@ -107,7 +134,7 @@ def test_delete_set_removes_it(tmp_path: Path) -> None:
     service.save_user_set(
         set_id="conv-1",
         title="t",
-        language="es",
+        target_language="es",
         level="beginner",
         origin="analysis",
         lessons=[_lesson()],
@@ -129,7 +156,7 @@ async def test_list_sets_includes_user_generated(tmp_path: Path) -> None:
     service.save_user_set(
         set_id="conv-1",
         title="T",
-        language="es",
+        target_language="es",
         level="beginner",
         origin="analysis",
         lessons=[_lesson()],
@@ -144,7 +171,7 @@ def test_save_rejects_non_slug_set_id(tmp_path: Path) -> None:
         service.save_user_set(
             set_id="Not A Slug",
             title="t",
-            language="es",
+            target_language="es",
             level="beginner",
             origin="analysis",
             lessons=[_lesson()],

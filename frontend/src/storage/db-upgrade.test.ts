@@ -55,10 +55,13 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
         });
         legacy.close();
 
-        // Open at v21 -> runs the upgrade. Must NOT throw.
+        // Open at the latest version -> runs every upgrade
+        // (incl. the v21 badge-tier backfill). Must NOT throw.
         const db = new AdaptiveLearnerDB(NAME);
         await db.open();
-        expect(db.verno).toBe(21);
+        // verno tracks the latest declared schema version; bump
+        // this when a new this.version(N) is added to db.ts.
+        expect(db.verno).toBe(22);
 
         const badge = (await db.table("badges").get("b1")) as Record<string, unknown>;
         expect(badge.base_tier).toBeTruthy();
@@ -66,6 +69,50 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
         const ub = (await db.table("userBadges").get("ub1")) as Record<string, unknown>;
         expect(ub.tier).toBeTruthy();
         expect(ub.updated_at).toBe("2026-01-01T00:00:00Z");
+        db.close();
+    });
+
+    it("backfills the language pair on contentSets during the v22 upgrade", async () => {
+        // Distinct DB name: reusing the suite-wide NAME collides
+        // with the badge test's "adaptive-learner" DB under the
+        // per-test IDBFactory swap and confuses Dexie's schema
+        // cache, so the v22 upgrade callback observes a stale
+        // (empty) store.
+        const PAIR_NAME = "adaptive-learner-pair-upgrade";
+        const legacy = new Dexie(PAIR_NAME);
+        legacy.version(21).stores({
+            contentSets: "id, source, set_id, version, downloaded_at",
+        });
+        await legacy.open();
+        await legacy.table("contentSets").put({
+            id: "src/language-fr-a1/1.0.0",
+            source: "astrapi69/adaptive-learner-content",
+            branch: "main",
+            set_id: "language-fr-a1",
+            version: "1.0.0",
+            title: "French A1",
+            language: "fr",
+            level: "A1",
+            domain: "language",
+            lesson_count: 10,
+            description: null,
+            tags: "[]",
+            cover_image: null,
+            downloaded_at: "2026-05-30T00:00:00Z",
+            manifest_yaml: "",
+        });
+        legacy.close();
+
+        const db = new AdaptiveLearnerDB(PAIR_NAME);
+        await db.open();
+        expect(db.verno).toBe(22);
+        const row = (await db
+            .table("contentSets")
+            .get("src/language-fr-a1/1.0.0")) as Record<string, unknown>;
+        // target backfilled from the legacy ``language`` field,
+        // source defaulted to English (pilot explanation language).
+        expect(row.target_language).toBe("fr");
+        expect(row.source_language).toBe("en");
         db.close();
     });
 

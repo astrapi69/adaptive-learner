@@ -177,7 +177,9 @@ def test_list_sets_surfaces_upstream(client: TestClient) -> None:
     matching = [s for s in body["sets"] if s["id"] == SET_ID]
     assert matching, body
     entry = matching[0]
-    assert entry["language"] == "fr"
+    assert entry["language"] == "fr"  # legacy alias = target
+    assert entry["target_language"] == "fr"
+    assert entry["source_language"] == "en"  # pilot default
     assert entry["level"] == "A1"
     assert entry["cached_version"] is None
     assert entry["update_available"] is False
@@ -460,6 +462,25 @@ def test_save_user_set_then_list_play_delete(client: TestClient) -> None:
         "/api/plugins/content-loader/sets/user-generated/conv-route/lessons",
     )
     assert r.status_code == 404
+
+
+def test_save_user_set_with_language_pair(client: TestClient) -> None:
+    lesson = _user_lesson_payload("conv-de")
+    body = {
+        "set_id": "conv-de",
+        "title": "Französisch A1",
+        "target_language": "fr",
+        "source_language": "de",
+        "level": "A1",
+        "origin": "analysis",
+        "lessons": [lesson],
+    }
+    r = client.post("/api/plugins/content-loader/user-sets", json=body)
+    assert r.status_code == 200, r.text
+    entry = r.json()
+    assert entry["target_language"] == "fr"
+    assert entry["source_language"] == "de"
+    assert entry["language"] == "fr"  # legacy alias mirrors target
 
 
 def test_save_user_set_rejects_bad_set_id(client: TestClient) -> None:

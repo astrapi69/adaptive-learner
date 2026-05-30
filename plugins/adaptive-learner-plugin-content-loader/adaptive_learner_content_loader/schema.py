@@ -55,6 +55,13 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 # ContentSet.tags. Used for lesson_id, card_id, step ids.
 _SLUG_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 
+# BCP-47 subset — kept in sync with ``models.py``. Used for the
+# optional language-pair fields on ``Lesson`` (Phase 60 /
+# v1.44.0). The set-level fields are authoritative; the lesson
+# copies are optional and let an exported standalone lesson
+# carry its own language pair.
+_LANGUAGE_RE = re.compile(r"^[a-z]{2,3}(-[A-Za-z0-9]{2,8})?$")
+
 
 class ExerciseType(str, Enum):
     """Closed enum of exercise types the loader knows about.
@@ -633,6 +640,25 @@ class Lesson(BaseModel):
         description="Optional 1-2 sentence summary.",
         max_length=500,
     )
+    target_language: str | None = Field(
+        default=None,
+        description=(
+            "Optional BCP-47 code of the language taught "
+            "(Phase 60 / v1.44.0). Mirrors the parent set's "
+            "``target_language``; lets an exported standalone "
+            "lesson carry its own pair. Absent on pre-v1.2 "
+            "lessons — the parent set is authoritative."
+        ),
+    )
+    source_language: str | None = Field(
+        default=None,
+        description=(
+            "Optional BCP-47 code of the language the learner "
+            "already speaks (the language the card ``back`` / "
+            "notes / theory are written in). Absent on pre-v1.2 "
+            "lessons."
+        ),
+    )
     estimated_minutes: int = Field(
         default=10,
         description=(
@@ -660,6 +686,16 @@ class Lesson(BaseModel):
     def _slug_id(cls, value: str) -> str:
         if not _SLUG_RE.fullmatch(value):
             raise ValueError("Lesson id must be slug-safe")
+        return value
+
+    @field_validator("target_language", "source_language")
+    @classmethod
+    def _bcp47_language(cls, value: str | None) -> str | None:
+        if value is not None and not _LANGUAGE_RE.fullmatch(value):
+            raise ValueError(
+                "language codes must be BCP-47 "
+                "(e.g. 'fr', 'de-AT', 'zh-Hans')"
+            )
         return value
 
     @field_validator("cards")

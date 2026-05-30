@@ -384,7 +384,18 @@ export interface ContentSetRow {
      *  Set Browser renders cached + upstream sets the same
      *  way. */
     title: string;
+    /** Legacy alias for ``target_language`` — kept for the
+     *  Set Browser's existing reads. Always equals
+     *  ``target_language`` for rows written at v22+. */
     language: string;
+    /** Phase 60 / v1.44.0 — BCP-47 code of the language the
+     *  learner is LEARNING. Backfilled from ``language`` for
+     *  rows written before the schema-v22 upgrade. */
+    target_language: string;
+    /** Phase 60 / v1.44.0 — BCP-47 code of the language the
+     *  learner already SPEAKS. Backfilled to ``"en"`` for
+     *  pre-v22 rows. */
+    source_language: string;
     level: string;
     domain: string;
     lesson_count: number;
@@ -974,6 +985,29 @@ export class AdaptiveLearnerDB extends Dexie {
                         }
                         if (!row.updated_at) {
                             row.updated_at = row.earned_at;
+                        }
+                    });
+            });
+        // Schema v22 — Phase 60 / v1.44.0: language-pair fields on
+        // ``contentSets``. No index changes (the new fields are
+        // non-indexed). Backfill in place so existing downloaded /
+        // user-generated set rows gain ``target_language`` (= the
+        // old ``language``) + ``source_language`` (= "en", the
+        // pilot explanation language). Mirrors the backend
+        // ContentSet model's read-alias + "en" default so both
+        // storage modes converge.
+        this.version(22)
+            .stores({})
+            .upgrade(async (tx) => {
+                await tx
+                    .table("contentSets")
+                    .toCollection()
+                    .modify((row: Record<string, unknown>) => {
+                        if (!row.target_language) {
+                            row.target_language = row.language;
+                        }
+                        if (!row.source_language) {
+                            row.source_language = "en";
                         }
                     });
             });

@@ -68,7 +68,8 @@ class TestContentSetValidators:
             _valid_set(id="trailing-hyphen-")
 
     def test_language_must_be_bcp47(self) -> None:
-        # Valid shapes
+        # Valid shapes (legacy ``language`` alias maps to
+        # ``target_language``, which carries the validator).
         _valid_set(language="fr")
         _valid_set(language="de-AT")
         _valid_set(language="zh-Hans")
@@ -79,6 +80,55 @@ class TestContentSetValidators:
             _valid_set(language="en_US")  # underscore, not hyphen
         with pytest.raises(ValidationError):
             _valid_set(language="F")
+
+    def test_language_alias_maps_to_target_language(self) -> None:
+        # Pre-v1.2 ``language`` key is accepted and mapped to
+        # ``target_language`` (backward compat).
+        s = _valid_set(language="fr")
+        assert s.target_language == "fr"
+        # The read property mirrors target_language for old
+        # call sites still reading ``set.language``.
+        assert s.language == "fr"
+
+    def test_source_language_defaults_to_en(self) -> None:
+        # Pre-v1.2 content omits source_language entirely; it
+        # defaults to English (the pilot explanation language).
+        s = _valid_set(language="fr")
+        assert s.source_language == "en"
+
+    def test_explicit_language_pair(self) -> None:
+        # New v1.2 content declares both directions explicitly.
+        s = _valid_set(target_language="fr", source_language="de")
+        assert s.target_language == "fr"
+        assert s.source_language == "de"
+        assert s.language == "fr"  # property still tracks target
+
+    def test_target_language_wins_when_both_keys_present(self) -> None:
+        # Defensive: if a manifest carries both the legacy alias
+        # and the explicit field, the explicit field wins.
+        s = ContentSet.model_validate(
+            {
+                "id": "fr-a1-from-de",
+                "title": "French A1",
+                "language": "es",  # legacy alias, should be dropped
+                "target_language": "fr",
+                "source_language": "de",
+                "level": "A1",
+                "version": "1.0.0",
+                "lesson_count": 10,
+            }
+        )
+        assert s.target_language == "fr"
+
+    def test_source_language_must_be_bcp47(self) -> None:
+        with pytest.raises(ValidationError):
+            _valid_set(target_language="fr", source_language="deutsch")
+
+    def test_dump_emits_pair_not_legacy_language(self) -> None:
+        dumped = _valid_set(target_language="fr", source_language="de").model_dump()
+        assert dumped["target_language"] == "fr"
+        assert dumped["source_language"] == "de"
+        assert "language" not in dumped
 
     def test_version_must_be_semver(self) -> None:
         # Permissive — these all pass
@@ -386,11 +436,16 @@ class TestSchemaExport:
         assert {
             "id",
             "title",
-            "language",
+            "target_language",
             "level",
             "version",
             "lesson_count",
         } <= required
+        # ``source_language`` has a default ("en") so it is NOT
+        # required, and the legacy ``language`` is a read alias /
+        # property, not a serialised field.
+        assert "source_language" not in required
+        assert "language" not in schema["properties"]
 
     def test_write_schemas_creates_manifest_and_set(self, tmp_path: Path) -> None:
         # Lesson / card / exercise / step schemas land in

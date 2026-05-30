@@ -184,7 +184,14 @@ interface ParsedSetAsset {
 interface ParsedSet {
   id: string;
   title: string;
-  language: string;
+  /** Legacy pre-v1.2 key — the target language. Accepted as an
+   *  alias for ``target_language``. */
+  language?: string;
+  /** Phase 60 / v1.44.0 — the language the learner is LEARNING. */
+  target_language?: string;
+  /** Phase 60 / v1.44.0 — the language the learner already
+   *  SPEAKS (card backs / notes / theory). Defaults to "en". */
+  source_language?: string;
   level: string;
   version: string;
   lesson_count: number;
@@ -194,6 +201,21 @@ interface ParsedSet {
   cover_image?: string | null;
   /** Phase 54 / v1.37.0 — declared assets bundled with the set. */
   assets?: ParsedSetAsset[];
+}
+
+/** Resolve the language pair from a parsed manifest set,
+ *  honouring the pre-v1.2 ``language`` alias and the "en"
+ *  default for ``source_language`` (mirrors the backend
+ *  ContentSet model). */
+function resolveLanguagePair(parsed: {
+  language?: string;
+  target_language?: string;
+  source_language?: string;
+}): { target: string; source: string } {
+  return {
+    target: parsed.target_language ?? parsed.language ?? "",
+    source: parsed.source_language ?? "en",
+  };
 }
 
 interface ParsedManifest {
@@ -211,12 +233,15 @@ function asContentSetEntry(
 ): ContentSetEntry {
   const updateAvailable =
     cachedVersion !== null && cachedVersion !== parsed.version;
+  const { target, source } = resolveLanguagePair(parsed);
   return {
     source: src.source,
     branch: src.branch,
     id: parsed.id,
     title: parsed.title,
-    language: parsed.language,
+    language: target,
+    target_language: target,
+    source_language: source,
     level: parsed.level,
     domain: parsed.domain ?? "language",
     version: parsed.version,
@@ -291,12 +316,16 @@ async function rowToCachedEntry(row: ContentSetRow): Promise<ContentSetEntry> {
   } catch {
     /* malformed JSON in the tags column — fall through */
   }
+  const target = row.target_language ?? row.language;
+  const source = row.source_language ?? "en";
   return {
     source: row.source,
     branch: row.branch,
     id: row.set_id,
     title: row.title,
-    language: row.language,
+    language: target,
+    target_language: target,
+    source_language: source,
     level: row.level,
     domain: row.domain,
     version: row.version,
@@ -463,6 +492,7 @@ export async function downloadSetDexie(
   // Persist atomically — Dexie transaction over both tables.
   const db = getDb();
   const setPk = cacheKey(source, setId, target.version);
+  const pair = resolveLanguagePair(target);
   await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
     const row: ContentSetRow = {
       id: setPk,
@@ -471,7 +501,9 @@ export async function downloadSetDexie(
       set_id: setId,
       version: target.version,
       title: target.title,
-      language: target.language,
+      language: pair.target,
+      target_language: pair.target,
+      source_language: pair.source,
       level: target.level,
       domain: target.domain ?? "language",
       lesson_count: target.lesson_count,
@@ -638,6 +670,8 @@ export async function saveUserSetDexie(
 ): Promise<ContentSetEntry> {
   const db = getDb();
   const setPk = cacheKey(USER_GENERATED_SOURCE, input.set_id, USER_SET_VERSION);
+  const targetLanguage = input.target_language ?? input.language;
+  const sourceLanguage = input.source_language ?? "en";
   const row: ContentSetRow = {
     id: setPk,
     source: USER_GENERATED_SOURCE,
@@ -645,7 +679,9 @@ export async function saveUserSetDexie(
     set_id: input.set_id,
     version: USER_SET_VERSION,
     title: input.title,
-    language: input.language,
+    language: targetLanguage,
+    target_language: targetLanguage,
+    source_language: sourceLanguage,
     level: input.level,
     domain: input.origin,
     lesson_count: input.lessons.length,

@@ -222,7 +222,16 @@ export interface ContentSetEntry {
   branch: string;
   id: string;
   title: string;
+  /** Legacy alias for {@link target_language} — kept so existing
+   *  UI reading ``entry.language`` stays correct (Phase 60 /
+   *  v1.44.0). Always equal to ``target_language``. */
   language: string;
+  /** BCP-47 code of the language the learner is LEARNING. */
+  target_language: string;
+  /** BCP-47 code of the language the learner ALREADY SPEAKS
+   *  (the language the card backs / notes / theory are written
+   *  in). Defaults to ``"en"`` for pre-v1.44.0 content. */
+  source_language: string;
   level: string;
   domain: string;
   version: string;
@@ -335,6 +344,14 @@ export interface ContentLesson {
   id: string;
   title: string;
   description?: string | null;
+  /** Optional BCP-47 code of the language taught (Phase 60 /
+   *  v1.44.0). The parent set is authoritative; this lets an
+   *  exported standalone lesson carry its own pair. */
+  target_language?: string | null;
+  /** Optional BCP-47 code of the language the learner already
+   *  speaks (the language the card backs / notes / theory are
+   *  written in). */
+  source_language?: string | null;
   estimated_minutes: number;
   cards: ContentLessonCard[];
   steps: ContentLessonStep[];
@@ -406,7 +423,15 @@ export interface SaveUserSetInput {
    *  with the same id overwrites. */
   set_id: string;
   title: string;
+  /** Legacy: the target language. When ``target_language`` is
+   *  omitted the storage layer falls back to this. */
   language: string;
+  /** BCP-47 code of the language taught. Defaults to
+   *  ``language`` when omitted. */
+  target_language?: string;
+  /** BCP-47 code of the language the learner already speaks.
+   *  Defaults to ``"en"`` when omitted. */
+  source_language?: string;
   level: string;
   origin: UserLessonOrigin;
   description?: string | null;

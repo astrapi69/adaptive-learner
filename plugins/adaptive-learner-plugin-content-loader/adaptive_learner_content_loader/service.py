@@ -40,7 +40,12 @@ from .exceptions import (
 )
 from .github_adapter import GitHubRawAdapter
 from .manifest_parser import parse_manifest_yaml
-from .models import ContentManifest, ContentSet, check_set_assets_size
+from .models import (
+    CURRENT_SCHEMA_VERSION,
+    ContentManifest,
+    ContentSet,
+    check_set_assets_size,
+)
 from .schema import Lesson
 
 logger = logging.getLogger(__name__)
@@ -540,10 +545,11 @@ class ContentLoaderService:
         *,
         set_id: str,
         title: str,
-        language: str,
+        target_language: str,
         level: str,
         origin: str,
         lessons: list[Lesson],
+        source_language: str = "en",
         description: str | None = None,
     ) -> SetEntry:
         """Persist a user-generated set into the cache (Phase 59B).
@@ -558,7 +564,8 @@ class ContentLoaderService:
         content_set = ContentSet(
             id=set_id,
             title=title,
-            language=language,
+            target_language=target_language,
+            source_language=source_language,
             level=level,
             version=USER_SET_VERSION,
             lesson_count=len(lessons),
@@ -568,7 +575,7 @@ class ContentLoaderService:
             assets=[],
         )
         manifest = ContentManifest(
-            schema_version="1.1",
+            schema_version=CURRENT_SCHEMA_VERSION,
             name=title,
             description=description,
             sets=[content_set],

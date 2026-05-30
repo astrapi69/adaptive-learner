@@ -187,6 +187,41 @@ describe("Dexie content-loader: listSets", () => {
     expect(result.sets[0].source).toBe("bundled:fr-a1");
   });
 
+  it("resolves the legacy `language` key as the target, defaulting source to en", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+    });
+    const result = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+    expect(result.sets).toHaveLength(1);
+    expect(result.sets[0].target_language).toBe("fr");
+    expect(result.sets[0].source_language).toBe("en");
+    // Legacy alias still mirrors the target.
+    expect(result.sets[0].language).toBe("fr");
+  });
+
+  it("reads an explicit target/source language pair", async () => {
+    const PAIR_MANIFEST = `
+schema_version: '1.2'
+name: Französisch A1
+sets:
+  - id: fr-a1-from-de
+    title: Französisch A1
+    target_language: fr
+    source_language: de
+    level: A1
+    version: '1.0.0'
+    lesson_count: 1
+    domain: language
+`.trim();
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: PAIR_MANIFEST,
+    });
+    const result = await listSetsDexie([{ source: SOURCE, branch: BRANCH }]);
+    expect(result.sets).toHaveLength(1);
+    expect(result.sets[0].target_language).toBe("fr");
+    expect(result.sets[0].source_language).toBe("de");
+  });
+
   it("degrades to cached sets when upstream is unreachable", async () => {
     // Seed a cached row, then make the manifest fetch
     // return 404 — the result must surface the cached
@@ -200,6 +235,8 @@ describe("Dexie content-loader: listSets", () => {
       version: "1.0.0",
       title: "French A1",
       language: "fr",
+      target_language: "fr",
+      source_language: "en",
       level: "A1",
       domain: "language",
       lesson_count: 1,
@@ -228,6 +265,8 @@ describe("Dexie content-loader: listSets", () => {
       version: "0.9.0",
       title: "French A1",
       language: "fr",
+      target_language: "fr",
+      source_language: "en",
       level: "A1",
       domain: "language",
       lesson_count: 1,

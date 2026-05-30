@@ -37,9 +37,9 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-CURRENT_SCHEMA_VERSION = "1.1"
+CURRENT_SCHEMA_VERSION = "1.2"
 # v1.0 → v1.1 (Phase 52D / v1.35.0 / P-127):
 #   - ExerciseType gained the CLOZE = "cloze" variant + the
 #     ``sentence`` / ``blanks`` / ``cloze_mode`` fields on
@@ -47,9 +47,20 @@ CURRENT_SCHEMA_VERSION = "1.1"
 #   - Card gained the optional ``token_roles`` field (Phase 52I
 #     / P-130) for the cloze generator's role-aware blank
 #     selection.
+# v1.1 → v1.2 (Phase 60 / v1.44.0):
+#   - ``ContentSet`` (and ``Lesson``) gained the language-PAIR
+#     fields. The old single ``language`` field is renamed to
+#     ``target_language`` (what the learner is LEARNING) and a
+#     new ``source_language`` field (what the learner ALREADY
+#     SPEAKS) is added. ``language`` stays accepted as a read
+#     alias for ``target_language`` so pre-v1.2 content loads
+#     unchanged; ``source_language`` defaults to ``"en"`` when
+#     a pre-v1.2 manifest omits it (the pilot content was all
+#     authored with English explanations). A ``language`` read
+#     property keeps existing ``set.language`` call sites green.
 # Bump is MINOR — ``is_supported_schema_version`` does a major-
-# version match so v1.1 lessons still load on v1.0 apps at the
-# manifest level. Failure surfaces per-exercise when a 1.0 app
+# version match so v1.x lessons still load on older v1.x apps at
+# the manifest level. Failure surfaces per-exercise when a 1.0 app
 # encounters a ``cloze`` step (closed-enum rejection by
 # Pydantic), which is the intended clean break.
 
@@ -183,10 +194,12 @@ class ContentSet(BaseModel):
         ...,
         description=(
             "Slug-safe identifier, unique within the manifest. "
-            "Convention: ``{domain}-{language}-{level}`` for "
-            "language sets (e.g. ``language-fr-a1``). The "
-            "loader does NOT parse this — it's free-form per "
-            "the EXP-005 domain-agnostic stance."
+            "Convention (Phase 60 / v1.44.0): "
+            "``{target}-{level}-from-{source}`` for language "
+            "sets (e.g. ``fr-a1-from-de``). Pre-v1.2 ids like "
+            "``language-fr-a1`` still load — the loader does "
+            "NOT parse this, it's free-form per the EXP-005 "
+            "domain-agnostic stance."
         ),
         min_length=1,
         max_length=120,
@@ -197,12 +210,26 @@ class ContentSet(BaseModel):
         min_length=1,
         max_length=200,
     )
-    language: str = Field(
+    target_language: str = Field(
         ...,
         description=(
-            "BCP-47 language code of the set's CONTENT (not "
-            "the UI). The UI language stays under user "
-            "control via the existing i18n system."
+            "BCP-47 code of the language the learner is "
+            "LEARNING (the set's CONTENT language). Renamed "
+            "from ``language`` in v1.2; the old key is still "
+            "accepted as a read alias. The UI language stays "
+            "under user control via the existing i18n system."
+        ),
+    )
+    source_language: str = Field(
+        default="en",
+        description=(
+            "BCP-47 code of the language the learner ALREADY "
+            "SPEAKS — the language the card ``back`` fields, "
+            "notes and theory text are written in. A 'French "
+            "A1 for German speakers' set has "
+            "``target_language: fr`` + ``source_language: de``. "
+            "Defaults to ``en`` for pre-v1.2 content (the pilot "
+            "sets were authored with English explanations)."
         ),
     )
     level: str = Field(
@@ -276,6 +303,24 @@ class ContentSet(BaseModel):
         max_length=500,
     )
 
+    @model_validator(mode="before")
+    @classmethod
+    def _accept_language_alias(cls, data: Any) -> Any:
+        """Accept the pre-v1.2 ``language`` key as an alias for
+        ``target_language`` so old manifests load unchanged.
+
+        Runs before field validation (and before the
+        ``extra="forbid"`` check), so the legacy ``language``
+        key is mapped/dropped instead of rejected as extra. When
+        both keys are present, ``target_language`` wins and the
+        alias is discarded.
+        """
+        if isinstance(data, dict) and "language" in data:
+            data = dict(data)
+            legacy = data.pop("language")
+            data.setdefault("target_language", legacy)
+        return data
+
     @field_validator("id")
     @classmethod
     def _slug_id(cls, value: str) -> str:
@@ -287,12 +332,12 @@ class ContentSet(BaseModel):
             )
         return value
 
-    @field_validator("language")
+    @field_validator("target_language", "source_language")
     @classmethod
     def _bcp47_language(cls, value: str) -> str:
         if not _LANGUAGE_RE.fullmatch(value):
             raise ValueError(
-                "language must be a BCP-47 code "
+                "language codes must be BCP-47 "
                 "(e.g. 'fr', 'de-AT', 'zh-Hans')"
             )
         return value
@@ -317,6 +362,18 @@ class ContentSet(BaseModel):
                     "(lowercase letters / digits / hyphens)"
                 )
         return value
+
+    @property
+    def language(self) -> str:
+        """Backward-compat read alias for ``target_language``.
+
+        Pre-v1.2 code (and any consumer still reading
+        ``set.language``) keeps working — the canonical field is
+        ``target_language`` but this returns the same value.
+        Not a serialised field; ``model_dump`` emits
+        ``target_language`` / ``source_language`` only.
+        """
+        return self.target_language
 
     def assets_total_kb(self) -> int:
         """Sum of declared ``size_kb`` across every bundled
