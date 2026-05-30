@@ -103,8 +103,9 @@ tmp/
 /.claude/scheduled_tasks.lock
 
 # Phase 51D — bundled pilot content copied into the Vite build
-# at predev / prebuild time. Canonical source is
-# docs/explorations/sample-content/. Regenerated via
+# at predev / prebuild time. Source is a checkout of the
+# astrapi69/adaptive-learner-content repo (ADAPTIVE_LEARNER_CONTENT_DIR
+# or the sibling ../adaptive-learner-content). Regenerated via
 # frontend/scripts/copy-bundled-content.mjs.
 frontend/public/content/
 

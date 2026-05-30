@@ -44,6 +44,18 @@ jobs:
         with:
           fetch-depth: 0  # full history for git-revision-date plugin in mkdocs
 
+      # Phase 62 (EXP-018 follow-up): the lesson content lives in the
+      # separate astrapi69/adaptive-learner-content repo. Check it out
+      # so copy-bundled-content.mjs can bundle it into the static site
+      # (offline-first). Without this step the build fails open and the
+      # deployed site ships with no bundled content.
+      - name: Check out content repo
+        uses: actions/checkout@v5
+        with:
+          repository: astrapi69/adaptive-learner-content
+          path: adaptive-learner-content
+          ref: main
+
       - uses: actions/setup-node@v5
         with:
           node-version: "24"
@@ -66,6 +78,11 @@ jobs:
       - name: Build frontend
         working-directory: frontend
         run: npm run build
+        env:
+          # Point the bundled-content script at the content-repo
+          # checkout (above). Absolute path so it resolves
+          # independent of the frontend working-directory.
+          ADAPTIVE_LEARNER_CONTENT_DIR: ${{ github.workspace }}/adaptive-learner-content
 
       # The default SPA-router fallback for GH Pages is to copy
       # index.html to 404.html. Without it, any direct hit on a

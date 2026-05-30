@@ -1,27 +1,34 @@
 /**
  * Build-time content bundling (Phase 51D / v1.34.0).
  *
- * Copies the canonical pilot content sets under
- * ``docs/explorations/sample-content/`` into the Vite build's
- * ``public/content/`` directory so the GH-Pages-shape build
- * ships the pilot lessons as static assets. No external repo
- * required — first-time visitors see lessons immediately.
+ * Copies the canonical pilot content sets into the Vite build's
+ * ``public/content/`` directory so the GH-Pages-shape build ships
+ * the pilot lessons as static assets — first-time visitors see
+ * lessons immediately, fully offline.
  *
- * Runs as a ``predev`` / ``prebuild`` npm hook, so the dev
- * server + the production build both pick up the latest
- * content with zero manual steps. The destination directory
- * is gitignored — the canonical source stays in
- * ``docs/explorations/``.
+ * Runs as a ``predev`` / ``prebuild`` npm hook, so the dev server +
+ * the production build both pick up the latest content with zero
+ * manual steps. The destination directory is gitignored.
  *
- * Phase 60 / v1.44.0: the canonical sample content is now a
- * single repo tree (root ``manifest.yaml`` + a source-language
- * ``sets/{src}/{tgt-level}/`` hierarchy) that mirrors the public
- * ``astrapi69/adaptive-learner-content`` repo 1:1. The whole tree
- * is copied to ``public/content/adaptive-learner-content/`` so
+ * Phase 62 (EXP-018 follow-up): the lesson content NO LONGER lives
+ * in the app repo. It is sourced from a checkout of the
+ * ``astrapi69/adaptive-learner-content`` repo, resolved as:
+ *   1. ``ADAPTIVE_LEARNER_CONTENT_DIR`` env var, if set (CI points
+ *      this at a content-repo checkout — see deploy-gh-pages.yml);
+ *   2. otherwise the sibling checkout ``../adaptive-learner-content``
+ *      next to the app repo (the local-dev convention).
+ * When neither resolves (no content checkout present), the script
+ * FAILS OPEN — it logs a SKIP and the build proceeds with no
+ * bundled content (the deployed site then falls back to fetching
+ * sets from GitHub at runtime). This is a deliberate convenience
+ * layer, not a hard build dependency.
+ *
+ * The canonical tree is a single repo (root ``manifest.yaml`` + a
+ * source-language ``sets/{src}/{tgt-level}/`` hierarchy). The whole
+ * tree is copied to ``public/content/adaptive-learner-content/`` so
  * the bundled source key ``bundled:adaptive-learner-content``
  * resolves to ``/content/adaptive-learner-content/manifest.yaml``
- * — the GH-Pages build reflects exactly the same tree as the
- * external repo (DEFAULT_SOURCES in content-loader-dexie.ts).
+ * (DEFAULT_SOURCES in content-loader-dexie.ts).
  */
 import {cpSync, existsSync, mkdirSync, rmSync} from "node:fs";
 import {dirname, join, resolve} from "node:path";
@@ -32,7 +39,12 @@ const __dirname = dirname(__filename);
 
 const FRONTEND_ROOT = resolve(__dirname, "..");
 const REPO_ROOT = resolve(FRONTEND_ROOT, "..");
-const SRC_BASE = resolve(REPO_ROOT, "docs", "explorations", "sample-content");
+// Content repo source: env override first, then the sibling
+// checkout next to the app repo. The content lives in
+// ``astrapi69/adaptive-learner-content``, NOT in this repo.
+const SRC_BASE = process.env.ADAPTIVE_LEARNER_CONTENT_DIR
+    ? resolve(process.env.ADAPTIVE_LEARNER_CONTENT_DIR)
+    : resolve(REPO_ROOT, "..", "adaptive-learner-content");
 const DEST_BASE = resolve(FRONTEND_ROOT, "public", "content");
 
 // Bundled source key (see DEFAULT_SOURCES in
@@ -48,7 +60,12 @@ function log(msg) {
 
 function main() {
     if (!existsSync(SRC_BASE)) {
-        log(`SKIP: ${SRC_BASE} not found (expected during isolated frontend tests).`);
+        log(
+            `SKIP: content checkout not found at ${SRC_BASE}. ` +
+                `Set ADAPTIVE_LEARNER_CONTENT_DIR or check out ` +
+                `adaptive-learner-content next to this repo. ` +
+                `Build proceeds without bundled content (runtime GitHub fetch).`,
+        );
         return 0;
     }
 
