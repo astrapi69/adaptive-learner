@@ -2,7 +2,11 @@ import { useState } from "react";
 
 import { useI18n } from "../../hooks/useI18n";
 import {
+  cefrFromAnalysisLevel,
+  detectTargetLanguage,
   generateLessonFromAnalysis,
+  isShareableLesson,
+  MIN_SHAREABLE_EXERCISES,
   slugify,
   summarizeGeneratedLesson,
   type AnalysisLessonLabels,
@@ -11,6 +15,26 @@ import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import type { ConversationAnalysisResult } from "../../types/domain";
 import { notify } from "../../utils/notify";
+
+/** Curated language options for the source/target pickers. Names are
+ *  English; the BCP-47 code is what gets stored. */
+const LANGUAGE_OPTIONS: ReadonlyArray<{code: string; name: string}> = [
+  {code: "en", name: "English"},
+  {code: "de", name: "German"},
+  {code: "fr", name: "French"},
+  {code: "es", name: "Spanish"},
+  {code: "it", name: "Italian"},
+  {code: "pt", name: "Portuguese"},
+  {code: "el", name: "Greek"},
+  {code: "tr", name: "Turkish"},
+  {code: "ja", name: "Japanese"},
+  {code: "zh", name: "Chinese"},
+  {code: "ru", name: "Russian"},
+  {code: "nl", name: "Dutch"},
+  {code: "ar", name: "Arabic"},
+];
+
+const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 
 interface SaveOfflineLessonModalProps {
   open: boolean;
@@ -74,6 +98,27 @@ export default function SaveOfflineLessonModal({
   const summary = summarizeGeneratedLesson(baseLesson);
 
   const [title, setTitle] = useState(baseLesson.title || conversationTitle);
+  // EXP-018 follow-up bugfix: the saved set MUST carry a real
+  // language PAIR (source != target), a CEFR level, and a
+  // title_native — otherwise the sharing validator rejects it. The
+  // learner SPEAKS the app language (source); the TARGET is guessed
+  // from the topic and confirmed by the user.
+  const appLang = (language || "en").split("-")[0];
+  const detectedTarget = detectTargetLanguage(analysis.topic);
+  const defaultTarget =
+    detectedTarget && detectedTarget !== appLang
+      ? detectedTarget
+      : appLang === "en"
+        ? "fr"
+        : "en";
+  const [sourceLang, setSourceLang] = useState(appLang);
+  const [targetLang, setTargetLang] = useState(defaultTarget);
+  const [level, setLevel] = useState<string>(
+    cefrFromAnalysisLevel(analysis.user_level),
+  );
+  const [titleNative, setTitleNative] = useState(
+    baseLesson.title || conversationTitle,
+  );
   const [saving, setSaving] = useState(false);
 
   if (!open) return null;
@@ -86,8 +131,11 @@ export default function SaveOfflineLessonModal({
       const entry = await getStorage().contentLoader.saveUserSet({
         set_id: setId,
         title: finalTitle,
-        language: language || "en",
-        level: analysis.user_level ?? "beginner",
+        title_native: titleNative.trim() || finalTitle,
+        language: targetLang,
+        target_language: targetLang,
+        source_language: sourceLang,
+        level,
         origin: "analysis",
         description: baseLesson.description,
         lessons: [lesson],
@@ -111,6 +159,14 @@ export default function SaveOfflineLessonModal({
     .replace("{exercises}", String(summary.exercises))
     .replace("{steps}", String(summary.theorySteps))
     .replace("{minutes}", String(summary.estimatedMinutes));
+
+  // EXP-018 follow-up bugfix: the Save-as-Lesson flow must NEVER
+  // produce an unshareable lesson. Gate the Save button on the same
+  // minimums the sharing validator enforces (>= 5 exercises across
+  // >= 2 types) AND a distinct language pair.
+  const shareable = isShareableLesson(summary);
+  const sameLanguage = sourceLang === targetLang;
+  const canSave = shareable && !sameLanguage && title.trim().length > 0;
 
   return (
     <div className="modal-overlay" data-testid="save-offline-lesson-modal">
@@ -136,17 +192,93 @@ export default function SaveOfflineLessonModal({
             autoFocus
           />
         </label>
+        <label className="form-row">
+          <span className="form-label">
+            {t("content.save_lesson.title_native_label", "Title in target language")}
+          </span>
+          <input
+            type="text"
+            data-testid="save-lesson-title-native-input"
+            value={titleNative}
+            onChange={(e) => setTitleNative(e.target.value)}
+            disabled={saving}
+          />
+        </label>
+        <div className="form-row form-row-inline">
+          <label className="form-field">
+            <span className="form-label">
+              {t("content.save_lesson.target_lang_label", "Language learned")}
+            </span>
+            <select
+              data-testid="save-lesson-target-lang"
+              value={targetLang}
+              onChange={(e) => setTargetLang(e.target.value)}
+              disabled={saving}
+            >
+              {LANGUAGE_OPTIONS.map((o) => (
+                <option key={o.code} value={o.code}>
+                  {o.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="form-field">
+            <span className="form-label">
+              {t("content.save_lesson.source_lang_label", "Your language")}
+            </span>
+            <select
+              data-testid="save-lesson-source-lang"
+              value={sourceLang}
+              onChange={(e) => setSourceLang(e.target.value)}
+              disabled={saving}
+            >
+              {LANGUAGE_OPTIONS.map((o) => (
+                <option key={o.code} value={o.code}>
+                  {o.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="form-field">
+            <span className="form-label">
+              {t("content.save_lesson.level_label", "Level")}
+            </span>
+            <select
+              data-testid="save-lesson-level"
+              value={level}
+              onChange={(e) => setLevel(e.target.value)}
+              disabled={saving}
+            >
+              {CEFR_LEVELS.map((lvl) => (
+                <option key={lvl} value={lvl}>
+                  {lvl}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <p className="form-hint" data-testid="save-lesson-summary">
           {summaryText}
         </p>
-        {summary.theoryOnly && (
+        {!shareable && (
           <p
             className="form-hint form-hint-warning"
-            data-testid="save-lesson-theory-only"
+            data-testid="save-lesson-not-enough-data"
           >
             {t(
-              "content.save_lesson.theory_only",
-              "Not enough vocabulary for exercises. Import a longer chat for more practice material.",
+              "content.save_lesson.not_enough_data",
+              "Not enough vocabulary for a full lesson (need at least {min} exercises). Import a longer chat for more practice material.",
+            ).replace("{min}", String(MIN_SHAREABLE_EXERCISES))}
+          </p>
+        )}
+        {sameLanguage && (
+          <p
+            className="form-hint form-hint-warning"
+            data-testid="save-lesson-same-language"
+          >
+            {t(
+              "content.save_lesson.same_language",
+              "The language learned and your language must be different.",
             )}
           </p>
         )}
@@ -165,7 +297,7 @@ export default function SaveOfflineLessonModal({
             className="btn btn-primary"
             data-testid="save-lesson-save"
             onClick={save}
-            disabled={saving || title.trim().length === 0}
+            disabled={saving || !canSave}
           >
             {saving
               ? t("common.loading", "Loading…")

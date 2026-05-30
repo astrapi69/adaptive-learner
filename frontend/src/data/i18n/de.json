@@ -1448,7 +1448,13 @@
       "theory_only": "Nicht genug Vokabeln für Übungen. Importiere einen längeren Chat für mehr Übungsmaterial.",
       "save": "Speichern",
       "saved": "In „Meine Lektionen“ gespeichert.",
-      "failed": "Die Lektion konnte nicht gespeichert werden."
+      "failed": "Die Lektion konnte nicht gespeichert werden.",
+      "title_native_label": "Titel in der Zielsprache",
+      "target_lang_label": "Gelernte Sprache",
+      "source_lang_label": "Deine Sprache",
+      "level_label": "Niveau",
+      "not_enough_data": "Nicht genug Vokabeln für eine vollständige Lektion (mindestens {min} Übungen nötig). Importiere einen längeren Chat für mehr Übungsmaterial.",
+      "same_language": "Die gelernte Sprache und deine Sprache müssen unterschiedlich sein."
     },
     "lesson_gen": {
       "fallback_title": "Importierte Lektion",

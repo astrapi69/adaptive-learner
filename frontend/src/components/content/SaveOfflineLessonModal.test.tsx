@@ -130,14 +130,35 @@ describe("SaveOfflineLessonModal", () => {
     expect(arg.title).toBe("My custom title");
   });
 
-  it("shows the theory-only note when vocabulary is too small", () => {
+  it("passes a distinct language pair, CEFR level, and title_native (EXP-018 fix)", async () => {
+    saveUserSet.mockResolvedValue({});
+    renderModal({ analysis: { ...ANALYSIS, user_level: "intermediate" } });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("save-lesson-save"));
+    });
+    await waitFor(() => expect(saveUserSet).toHaveBeenCalled());
+    const arg = saveUserSet.mock.calls[0][0] as Record<string, unknown>;
+    expect(arg.target_language).toBeTruthy();
+    expect(arg.source_language).toBeTruthy();
+    expect(arg.target_language).not.toBe(arg.source_language);
+    expect(["A1", "A2", "B1", "B2", "C1", "C2"]).toContain(arg.level);
+    expect(arg.level).toBe("B1"); // intermediate -> B1
+    expect(arg.title_native).toBeTruthy();
+  });
+
+  it("blocks saving when vocabulary is too small for a shareable lesson", () => {
     renderModal({
       analysis: {
-        topic: "T",
+        topic: "French grammar",
         summary: "s",
         vocabulary: [{ word: "a", translation: "b" }],
       },
     });
-    expect(screen.getByTestId("save-lesson-theory-only")).toBeInTheDocument();
+    // Not enough data → warning shown AND the Save button disabled,
+    // so the flow can't produce an unshareable lesson (EXP-018 fix).
+    expect(
+      screen.getByTestId("save-lesson-not-enough-data"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("save-lesson-save")).toBeDisabled();
   });
 });

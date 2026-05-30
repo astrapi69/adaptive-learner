@@ -1328,6 +1328,12 @@ content:
     save: "Kaydet"
     saved: "Derslerim'e kaydedildi."
     failed: "Ders kaydedilemedi."
+    title_native_label: Hedef dildeki başlık
+    target_lang_label: Öğrenilen dil
+    source_lang_label: Sizin diliniz
+    level_label: Seviye
+    not_enough_data: Tam bir ders için yeterli kelime yok (en az {min} alıştırma gerekli). Daha fazla alıştırma materyali için daha uzun bir sohbet içe aktarın.
+    same_language: Öğrenilen dil ile sizin diliniz farklı olmalıdır.
   lesson_gen:
     fallback_title: "İçe aktarılan ders"
     focus: "Odak"

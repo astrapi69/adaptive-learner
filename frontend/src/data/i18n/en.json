@@ -1448,7 +1448,13 @@
       "theory_only": "Not enough vocabulary for exercises. Import a longer chat for more practice material.",
       "save": "Save",
       "saved": "Saved to My Lessons.",
-      "failed": "Could not save the lesson."
+      "failed": "Could not save the lesson.",
+      "title_native_label": "Title in target language",
+      "target_lang_label": "Language learned",
+      "source_lang_label": "Your language",
+      "level_label": "Level",
+      "not_enough_data": "Not enough vocabulary for a full lesson (need at least {min} exercises). Import a longer chat for more practice material.",
+      "same_language": "The language learned and your language must be different."
     },
     "lesson_gen": {
       "fallback_title": "Imported lesson",

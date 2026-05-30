@@ -1448,7 +1448,13 @@
       "theory_only": "Vocabulário insuficiente para exercícios. Importe uma conversa mais longa para mais material de prática.",
       "save": "Salvar",
       "saved": "Salvo em Minhas lições.",
-      "failed": "Não foi possível salvar a lição."
+      "failed": "Não foi possível salvar a lição.",
+      "title_native_label": "Título no idioma de destino",
+      "target_lang_label": "Idioma aprendido",
+      "source_lang_label": "Seu idioma",
+      "level_label": "Nível",
+      "not_enough_data": "Vocabulário insuficiente para uma lição completa (são necessários pelo menos {min} exercícios). Importe uma conversa mais longa para mais material.",
+      "same_language": "O idioma aprendido e o seu idioma devem ser diferentes."
     },
     "lesson_gen": {
       "fallback_title": "Lição importada",

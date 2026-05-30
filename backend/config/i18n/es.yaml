@@ -1330,6 +1330,12 @@ content:
     save: "Guardar"
     saved: "Guardado en Mis lecciones."
     failed: "No se pudo guardar la lección."
+    title_native_label: Título en el idioma de destino
+    target_lang_label: Idioma aprendido
+    source_lang_label: Tu idioma
+    level_label: Nivel
+    not_enough_data: No hay suficiente vocabulario para una lección completa (se necesitan al menos {min} ejercicios). Importa un chat más largo para más material de práctica.
+    same_language: El idioma aprendido y tu idioma deben ser diferentes.
   lesson_gen:
     fallback_title: "Lección importada"
     focus: "Enfoque"
