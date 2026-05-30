@@ -1,6 +1,6 @@
 # Adaptive Learner Roadmap
 
-Current state: **v1.41.0 released 2026-05-29 (Phase 58 / UX-UI Audit + Multi-Theme System).** 1025 (+1 skipped) backend + 950 plugin + 2503 Vitest = 4478 tests green (+1 skipped). 17 Playwright smoke spec files run separately; the Dexie-mode release gate (19 specs) runs via `make test-dexie-smoke`.
+Current state: **v1.42.1 released 2026-05-29 (Phase 59 / Analysis-to-Lesson Converter + Community Content Sharing; v1.42.1 patch).** 1027 (+1 skipped) backend + 970 plugin + 2559 Vitest = 4556 tests green (+1 skipped). 17 Playwright smoke spec files run separately; the Dexie-mode release gate (19 specs) runs via `make test-dexie-smoke`.
 
 ## Phase history (completed)
 
