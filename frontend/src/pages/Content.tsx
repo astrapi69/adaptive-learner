@@ -53,6 +53,13 @@ import { notify } from "../utils/notify";
 /** Community contribution target repo (manual maintainer review). */
 const COMMUNITY_REPO = "astrapi69/adaptive-learner-content";
 
+/** "Share with Community" opens a GitHub issue on COMMUNITY_REPO.
+ *  That repo does not exist yet, so the button is gated off to avoid
+ *  sending users to a 404. Flip to true once the content repo is
+ *  created. Export (JSON / ZIP) stays available — it's a local
+ *  download and doesn't depend on the repo. */
+const COMMUNITY_SHARING_ENABLED = false;
+
 type DownloadState = "idle" | "downloading" | "done" | "error";
 
 export default function ContentPage() {
@@ -402,14 +409,16 @@ export default function ContentPage() {
                     <FolderOpen size={14} aria-hidden="true" />
                     {t("content.my_lessons.export_set", "Export as set")}
                   </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => handleShare(entry)}
-                    data-testid={`my-lesson-${entry.id}-share`}
-                  >
-                    {t("content.my_lessons.share", "Share with Community")}
-                  </button>
+                  {COMMUNITY_SHARING_ENABLED && (
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => handleShare(entry)}
+                      data-testid={`my-lesson-${entry.id}-share`}
+                    >
+                      {t("content.my_lessons.share", "Share with Community")}
+                    </button>
+                  )}
                   <button
                     type="button"
                     className="btn btn-secondary"

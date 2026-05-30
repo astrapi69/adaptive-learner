@@ -251,9 +251,11 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(
       screen.getByTestId("my-lesson-analysis-conv-1-export-set"),
     ).toBeInTheDocument();
+    // "Share with Community" is gated off until the content repo
+    // exists (avoids sending users to a 404).
     expect(
-      screen.getByTestId("my-lesson-analysis-conv-1-share"),
-    ).toBeInTheDocument();
+      screen.queryByTestId("my-lesson-analysis-conv-1-share"),
+    ).not.toBeInTheDocument();
     // The downloaded set renders in the other section.
     expect(
       screen.getByTestId("content-set-language-fr-a1"),
@@ -304,21 +306,21 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(screen.getByTestId("import-lesson-modal")).toBeInTheDocument();
   });
 
-  it("Share with Community opens a pre-filled GitHub issue", async () => {
+  it("hides Share with Community until the content repo exists", async () => {
+    // The community repo (astrapi69/adaptive-learner-content) does not
+    // exist yet, so the Share button is gated off to avoid a 404.
+    // Export (JSON / ZIP) stays available — local downloads.
     listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
-    const openSpy = vi.fn();
-    vi.stubGlobal("open", openSpy);
     renderPage();
     await screen.findByTestId("content-page");
-    fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
-    expect(openSpy).toHaveBeenCalled();
-    const url = openSpy.mock.calls[0][0] as string;
-    expect(url).toContain(
-      "github.com/astrapi69/adaptive-learner-content/issues/new",
-    );
-    expect(new URL(url).searchParams.get("title")).toContain(
-      "My Spanish lesson",
-    );
-    vi.unstubAllGlobals();
+    expect(
+      screen.queryByTestId("my-lesson-analysis-conv-1-share"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByTestId("my-lesson-analysis-conv-1-export"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("my-lesson-analysis-conv-1-export-set"),
+    ).toBeInTheDocument();
   });
 });
