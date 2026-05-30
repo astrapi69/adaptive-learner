@@ -1483,6 +1483,31 @@
       "other_sources": "Otros idiomas de origen",
       "for_speakers": "Para hablantes de {lang}",
       "no_primary": "Aún no hay conjuntos para tu idioma. Explora otros idiomas de origen abajo."
+    },
+    "validation": {
+      "title": "Control de calidad",
+      "checking": "Comprobando tu lección…",
+      "intro": "Antes de compartir, se comprueba que tu lección esté completa y tenga un par de idiomas válido.",
+      "passed": "Control de calidad superado. Lista para compartir con la comunidad.",
+      "failed": "Corrige estos problemas antes de compartir:",
+      "continue": "Continuar a GitHub",
+      "cancel": "Cerrar",
+      "no_lessons": "El conjunto no tiene lecciones.",
+      "missing_target_language": "Falta el idioma de destino (el que se enseña).",
+      "missing_source_language": "Falta el idioma de origen (el de las explicaciones).",
+      "invalid_target_language": "El idioma de destino '{code}' no es un código ISO de 2 letras.",
+      "invalid_source_language": "El idioma de origen '{code}' no es un código ISO de 2 letras.",
+      "same_source_target": "El idioma de origen y de destino son el mismo ('{code}').",
+      "missing_title": "Falta el título.",
+      "missing_title_native": "Falta el título en el idioma de destino.",
+      "lesson_too_few_exercises": "La lección '{lesson}' tiene {count} ejercicios; se requieren al menos {min}.",
+      "lesson_too_few_types": "La lección '{lesson}' usa {count} tipo(s) de ejercicio; se requieren al menos {min}.",
+      "lesson_no_theory": "La lección '{lesson}' no tiene paso de teoría.",
+      "empty_card": "Lección '{lesson}': la tarjeta '{card}' tiene el anverso o reverso vacío.",
+      "back_language_mismatch": "Lección '{lesson}': el reverso de la tarjeta '{card}' no parece estar en {source}.",
+      "free_text_too_few_accepts": "Lección '{lesson}': el ejercicio de texto libre '{exercise}' necesita al menos {min} respuestas aceptadas.",
+      "matching_too_few_pairs": "Lección '{lesson}': el ejercicio de emparejar '{exercise}' necesita al menos {min} pares.",
+      "missing_distractors": "Lección '{lesson}': el ejercicio '{exercise}' necesita distractores (opciones incorrectas)."
     }
   },
   "milestone": {

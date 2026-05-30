@@ -1361,6 +1361,30 @@ content:
     other_sources: Άλλες γλώσσες προέλευσης
     for_speakers: Για ομιλητές {lang}
     no_primary: Δεν υπάρχουν ακόμη σύνολα για τη γλώσσα σου. Δες άλλες γλώσσες προέλευσης παρακάτω.
+  validation:
+    title: Έλεγχος ποιότητας
+    checking: Έλεγχος του μαθήματός σου…
+    intro: Πριν τον διαμοιρασμό, το μάθημα ελέγχεται για πληρότητα και έγκυρο ζεύγος γλωσσών.
+    passed: Ο έλεγχος ποιότητας πέρασε. Έτοιμο για διαμοιρασμό με την κοινότητα.
+    failed: 'Διόρθωσε αυτά πριν τον διαμοιρασμό:'
+    continue: Συνέχεια στο GitHub
+    cancel: Κλείσιμο
+    no_lessons: Το σύνολο δεν έχει μαθήματα.
+    missing_target_language: Λείπει η γλώσσα-στόχος (η γλώσσα που διδάσκεται).
+    missing_source_language: Λείπει η γλώσσα προέλευσης (η γλώσσα των εξηγήσεων).
+    invalid_target_language: Η γλώσσα-στόχος '{code}' δεν είναι κωδικός ISO δύο γραμμάτων.
+    invalid_source_language: Η γλώσσα προέλευσης '{code}' δεν είναι κωδικός ISO δύο γραμμάτων.
+    same_source_target: Η γλώσσα προέλευσης και στόχου είναι ίδια ('{code}').
+    missing_title: Λείπει ο τίτλος.
+    missing_title_native: Λείπει ο τίτλος στη γλώσσα-στόχο.
+    lesson_too_few_exercises: Το μάθημα '{lesson}' έχει {count} ασκήσεις· απαιτούνται τουλάχιστον {min}.
+    lesson_too_few_types: Το μάθημα '{lesson}' χρησιμοποιεί {count} τύπο(υς) άσκησης· απαιτούνται τουλάχιστον {min}.
+    lesson_no_theory: Το μάθημα '{lesson}' δεν έχει βήμα θεωρίας.
+    empty_card: "Μάθημα '{lesson}': η κάρτα '{card}' έχει κενή εμπρός ή πίσω όψη."
+    back_language_mismatch: "Μάθημα '{lesson}': η πίσω όψη της κάρτας '{card}' δεν μοιάζει με {source}."
+    free_text_too_few_accepts: "Μάθημα '{lesson}': η άσκηση ελεύθερου κειμένου '{exercise}' χρειάζεται τουλάχιστον {min} αποδεκτές απαντήσεις."
+    matching_too_few_pairs: "Μάθημα '{lesson}': η άσκηση αντιστοίχισης '{exercise}' χρειάζεται τουλάχιστον {min} ζεύγη."
+    missing_distractors: "Μάθημα '{lesson}': η άσκηση '{exercise}' χρειάζεται περισπαστικά (λάθος επιλογές)."
 milestone:
   streak: "Σερί {n} ημερών!"
   level_up: "Φτάσατε στο επίπεδο {n}!"

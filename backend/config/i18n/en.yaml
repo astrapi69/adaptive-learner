@@ -1370,6 +1370,30 @@ content:
     other_sources: Other source languages
     for_speakers: For {lang} speakers
     no_primary: No sets for your language yet. Browse other source languages below.
+  validation:
+    title: Quality check
+    checking: Checking your lesson…
+    intro: Before sharing, your lesson is checked for completeness and a valid language pair.
+    passed: Quality check passed. Ready to share with the community.
+    failed: 'Fix these issues before sharing:'
+    continue: Continue to GitHub
+    cancel: Close
+    no_lessons: The set has no lessons.
+    missing_target_language: Missing target language (the language being taught).
+    missing_source_language: Missing source language (the language of the explanations).
+    invalid_target_language: Target language '{code}' is not a 2-letter ISO code.
+    invalid_source_language: Source language '{code}' is not a 2-letter ISO code.
+    same_source_target: Source and target language are the same ('{code}').
+    missing_title: Missing title.
+    missing_title_native: Missing native title (the title in the target language).
+    lesson_too_few_exercises: Lesson '{lesson}' has {count} exercises; at least {min} are required.
+    lesson_too_few_types: Lesson '{lesson}' uses {count} exercise type(s); at least {min} are required.
+    lesson_no_theory: Lesson '{lesson}' has no theory step.
+    empty_card: "Lesson '{lesson}': card '{card}' has an empty front or back."
+    back_language_mismatch: "Lesson '{lesson}': card '{card}' back does not look like {source}."
+    free_text_too_few_accepts: "Lesson '{lesson}': free-text exercise '{exercise}' needs at least {min} accepted answers."
+    matching_too_few_pairs: "Lesson '{lesson}': matching exercise '{exercise}' needs at least {min} pairs."
+    missing_distractors: "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options)."
 milestone:
   streak: "{n}-Day Streak!"
   level_up: "Level {n} reached!"

@@ -1364,6 +1364,30 @@ content:
     other_sources: Andere Ausgangssprachen
     for_speakers: Für {lang}sprachige
     no_primary: Noch keine Sets für deine Sprache. Sieh dir unten andere Ausgangssprachen an.
+  validation:
+    title: Qualitätsprüfung
+    checking: Lektion wird geprüft…
+    intro: Vor dem Teilen wird deine Lektion auf Vollständigkeit und ein gültiges Sprachpaar geprüft.
+    passed: Qualitätsprüfung bestanden. Bereit zum Teilen mit der Community.
+    failed: 'Behebe diese Punkte vor dem Teilen:'
+    continue: Weiter zu GitHub
+    cancel: Schließen
+    no_lessons: Das Set enthält keine Lektionen.
+    missing_target_language: Zielsprache fehlt (die gelernte Sprache).
+    missing_source_language: Ausgangssprache fehlt (die Sprache der Erklärungen).
+    invalid_target_language: Zielsprache '{code}' ist kein zweibuchstabiger ISO-Code.
+    invalid_source_language: Ausgangssprache '{code}' ist kein zweibuchstabiger ISO-Code.
+    same_source_target: Ausgangs- und Zielsprache sind identisch ('{code}').
+    missing_title: Titel fehlt.
+    missing_title_native: Titel in der Zielsprache fehlt.
+    lesson_too_few_exercises: Lektion '{lesson}' hat {count} Übungen; mindestens {min} sind nötig.
+    lesson_too_few_types: Lektion '{lesson}' nutzt {count} Übungstyp(en); mindestens {min} sind nötig.
+    lesson_no_theory: Lektion '{lesson}' hat keinen Theorieschritt.
+    empty_card: "Lektion '{lesson}': Karte '{card}' hat eine leere Vorder- oder Rückseite."
+    back_language_mismatch: "Lektion '{lesson}': Rückseite von Karte '{card}' sieht nicht nach {source} aus."
+    free_text_too_few_accepts: "Lektion '{lesson}': Freitext-Übung '{exercise}' braucht mindestens {min} akzeptierte Antworten."
+    matching_too_few_pairs: "Lektion '{lesson}': Zuordnungsübung '{exercise}' braucht mindestens {min} Paare."
+    missing_distractors: "Lektion '{lesson}': Übung '{exercise}' braucht Ablenker (falsche Optionen)."
 milestone:
   streak: "{n}-Tage-Serie!"
   level_up: "Level {n} erreicht!"

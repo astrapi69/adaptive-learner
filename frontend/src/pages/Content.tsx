@@ -43,6 +43,11 @@ import {
 } from "../lib/content/content-tree";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
+  validateSetForSharing,
+  type ValidationIssue,
+  type ValidationResult,
+} from "../lib/content/content-validator";
+import {
   buildContentSetZip,
   communityIssueUrl,
   contentSetFileName,
@@ -98,6 +103,10 @@ export default function ContentPage() {
     setCollapsed((prev) => ({ ...prev, [nodeId]: !prev[nodeId] }));
   // "Other source languages" section is collapsed by default.
   const [otherExpanded, setOtherExpanded] = useState(false);
+  // Phase 60 — community-share validation gate.
+  const [shareTarget, setShareTarget] = useState<ContentSetEntry | null>(null);
+  const [shareResult, setShareResult] = useState<ValidationResult | null>(null);
+  const [shareChecking, setShareChecking] = useState(false);
 
   const loadSets = useCallback(async () => {
     try {
@@ -250,13 +259,58 @@ export default function ContentPage() {
     }
   };
 
-  const handleShare = (entry: ContentSetEntry) => {
+  // Phase 60 — gate "Share with Community" behind the client-side
+  // validation pipeline. Fetch the set's lessons, validate schema +
+  // language pair + quality minimums, and only let the user proceed
+  // to the GitHub issue when the set passes.
+  const handleShare = async (entry: ContentSetEntry) => {
+    setShareTarget(entry);
+    setShareResult(null);
+    setShareChecking(true);
+    try {
+      const lessons = await fetchSetLessons(entry);
+      const result = validateSetForSharing(
+        {
+          title: entry.title,
+          title_native: entry.title_native,
+          target_language: entry.target_language,
+          source_language: entry.source_language,
+          level: entry.level,
+        },
+        lessons,
+      );
+      setShareResult(result);
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.error.open_failed", "Could not open the lesson.")} ${detail}`,
+      );
+      setShareTarget(null);
+    } finally {
+      setShareChecking(false);
+    }
+  };
+
+  const handleShareContinue = () => {
+    if (!shareTarget) return;
     const url = communityIssueUrl(
       COMMUNITY_REPO,
-      exportMeta(entry),
-      entry.lesson_count,
+      exportMeta(shareTarget),
+      shareTarget.lesson_count,
     );
     window.open(url, "_blank", "noopener,noreferrer");
+    setShareTarget(null);
+    setShareResult(null);
+  };
+
+  // Localise a validation issue, interpolating its params into the
+  // ``content.validation.{code}`` message.
+  const validationMessage = (issue: ValidationIssue): string => {
+    let msg = t(`content.validation.${issue.code}`, issue.code);
+    for (const [k, v] of Object.entries(issue.params ?? {})) {
+      msg = msg.replace(`{${k}}`, String(v));
+    }
+    return msg;
   };
 
   const handleDownload = async (entry: ContentSetEntry) => {
@@ -616,7 +670,7 @@ export default function ContentPage() {
                     <button
                       type="button"
                       className="btn btn-secondary"
-                      onClick={() => handleShare(entry)}
+                      onClick={() => void handleShare(entry)}
                       data-testid={`my-lesson-${entry.id}-share`}
                     >
                       {t("content.my_lessons.share", "Share with Community")}
@@ -741,6 +795,76 @@ export default function ContentPage() {
           void loadSets();
         }}
       />
+
+      {shareTarget && (
+        <div className="modal-overlay" data-testid="content-share-modal">
+          <div
+            className="modal-card"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="share-modal-title"
+          >
+            <h2 id="share-modal-title" className="modal-title">
+              {t("content.validation.title", "Quality check")}
+            </h2>
+            {shareChecking || !shareResult ? (
+              <p data-testid="content-share-checking">
+                {t("content.validation.checking", "Checking your lesson…")}
+              </p>
+            ) : shareResult.ok ? (
+              <p
+                className="content-share-passed"
+                data-testid="content-share-passed"
+              >
+                {t(
+                  "content.validation.passed",
+                  "Quality check passed. Ready to share with the community.",
+                )}
+              </p>
+            ) : (
+              <>
+                <p className="content-share-failed">
+                  {t(
+                    "content.validation.failed",
+                    "Fix these issues before sharing:",
+                  )}
+                </p>
+                <ul
+                  className="content-share-issues"
+                  data-testid="content-share-issues"
+                >
+                  {shareResult.issues.map((issue, i) => (
+                    <li key={`${issue.code}-${i}`}>{validationMessage(issue)}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <div className="form-actions">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  setShareTarget(null);
+                  setShareResult(null);
+                }}
+                data-testid="content-share-cancel"
+              >
+                {t("content.validation.cancel", "Close")}
+              </button>
+              {shareResult?.ok && (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleShareContinue}
+                  data-testid="content-share-continue"
+                >
+                  {t("content.validation.continue", "Continue to GitHub")}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {deleteTarget && (
         <div className="modal-overlay" data-testid="my-lesson-delete-modal">

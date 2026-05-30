@@ -2294,6 +2294,26 @@ select:focus {
   gap: var(--space-1);
 }
 
+.content-share-passed {
+  color: var(--success, var(--fg));
+  font-weight: 600;
+}
+
+.content-share-failed {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.content-share-issues {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-4);
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
 .content-set-tags {
   display: flex;
   flex-wrap: wrap;

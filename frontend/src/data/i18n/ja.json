@@ -1483,6 +1483,31 @@
       "other_sources": "他の出発言語",
       "for_speakers": "{lang}話者向け",
       "no_primary": "あなたの言語のセットはまだありません。下の他の出発言語をご覧ください。"
+    },
+    "validation": {
+      "title": "品質チェック",
+      "checking": "レッスンを確認しています…",
+      "intro": "共有する前に、レッスンの完成度と有効な言語ペアを確認します。",
+      "passed": "品質チェックに合格しました。コミュニティと共有できます。",
+      "failed": "共有する前に次の問題を修正してください:",
+      "continue": "GitHub に進む",
+      "cancel": "閉じる",
+      "no_lessons": "セットにレッスンがありません。",
+      "missing_target_language": "対象言語（学習する言語）がありません。",
+      "missing_source_language": "出発言語（説明の言語）がありません。",
+      "invalid_target_language": "対象言語 '{code}' は2文字のISOコードではありません。",
+      "invalid_source_language": "出発言語 '{code}' は2文字のISOコードではありません。",
+      "same_source_target": "出発言語と対象言語が同じです（'{code}'）。",
+      "missing_title": "タイトルがありません。",
+      "missing_title_native": "対象言語のタイトルがありません。",
+      "lesson_too_few_exercises": "レッスン '{lesson}' の演習は {count} 個です。最低 {min} 個必要です。",
+      "lesson_too_few_types": "レッスン '{lesson}' は演習タイプを {count} 種類使用しています。最低 {min} 種類必要です。",
+      "lesson_no_theory": "レッスン '{lesson}' に理論ステップがありません。",
+      "empty_card": "レッスン '{lesson}': カード '{card}' の表または裏が空です。",
+      "back_language_mismatch": "レッスン '{lesson}': カード '{card}' の裏面が {source} に見えません。",
+      "free_text_too_few_accepts": "レッスン '{lesson}': 自由記述演習 '{exercise}' には最低 {min} 個の正解が必要です。",
+      "matching_too_few_pairs": "レッスン '{lesson}': マッチング演習 '{exercise}' には最低 {min} 組必要です。",
+      "missing_distractors": "レッスン '{lesson}': 演習 '{exercise}' には誤答選択肢が必要です。"
     }
   },
   "milestone": {

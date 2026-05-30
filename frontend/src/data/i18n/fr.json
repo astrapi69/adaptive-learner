@@ -1483,6 +1483,31 @@
       "other_sources": "Autres langues source",
       "for_speakers": "Pour les locuteurs de {lang}",
       "no_primary": "Pas encore d'ensembles pour votre langue. Parcourez d'autres langues source ci-dessous."
+    },
+    "validation": {
+      "title": "Contrôle qualité",
+      "checking": "Vérification de votre leçon…",
+      "intro": "Avant le partage, votre leçon est vérifiée pour son exhaustivité et une paire de langues valide.",
+      "passed": "Contrôle qualité réussi. Prête à partager avec la communauté.",
+      "failed": "Corrigez ces problèmes avant de partager :",
+      "continue": "Continuer vers GitHub",
+      "cancel": "Fermer",
+      "no_lessons": "L'ensemble n'a aucune leçon.",
+      "missing_target_language": "Langue cible manquante (la langue enseignée).",
+      "missing_source_language": "Langue source manquante (la langue des explications).",
+      "invalid_target_language": "La langue cible '{code}' n'est pas un code ISO à 2 lettres.",
+      "invalid_source_language": "La langue source '{code}' n'est pas un code ISO à 2 lettres.",
+      "same_source_target": "Les langues source et cible sont identiques ('{code}').",
+      "missing_title": "Titre manquant.",
+      "missing_title_native": "Titre dans la langue cible manquant.",
+      "lesson_too_few_exercises": "La leçon '{lesson}' a {count} exercices ; au moins {min} sont requis.",
+      "lesson_too_few_types": "La leçon '{lesson}' utilise {count} type(s) d'exercice ; au moins {min} sont requis.",
+      "lesson_no_theory": "La leçon '{lesson}' n'a aucune étape de théorie.",
+      "empty_card": "Leçon '{lesson}' : la carte '{card}' a un recto ou un verso vide.",
+      "back_language_mismatch": "Leçon '{lesson}' : le verso de la carte '{card}' ne ressemble pas à {source}.",
+      "free_text_too_few_accepts": "Leçon '{lesson}' : l'exercice de texte libre '{exercise}' nécessite au moins {min} réponses acceptées.",
+      "matching_too_few_pairs": "Leçon '{lesson}' : l'exercice d'association '{exercise}' nécessite au moins {min} paires.",
+      "missing_distractors": "Leçon '{lesson}' : l'exercice '{exercise}' nécessite des distracteurs (mauvaises options)."
     }
   },
   "milestone": {

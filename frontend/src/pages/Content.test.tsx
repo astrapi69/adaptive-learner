@@ -30,6 +30,7 @@ const listSetsMock = vi.fn();
 const downloadSetMock = vi.fn();
 const deleteSetMock = vi.fn();
 const listLessonsMock = vi.fn();
+const getLessonMock = vi.fn();
 
 vi.mock("../storage", () => ({
   getStorage: () => ({
@@ -37,11 +38,59 @@ vi.mock("../storage", () => ({
       listSets: listSetsMock,
       downloadSet: downloadSetMock,
       listLessons: listLessonsMock,
-      getLesson: vi.fn(),
+      getLesson: getLessonMock,
       deleteSet: deleteSetMock,
     },
   }),
 }));
+
+// A schema-valid, quality-passing lesson for the share-flow tests.
+function shareableLesson() {
+  return {
+    id: "01-lektion",
+    title: "Lektion",
+    estimated_minutes: 10,
+    cards: [
+      { id: "c1", front: "Bonjour", back: "Guten Tag", tags: [] },
+      { id: "c2", front: "Merci", back: "Danke", tags: [] },
+      { id: "c3", front: "Salut", back: "Hallo", tags: [] },
+    ],
+    steps: [
+      { id: "intro", type: "theory", body: "# Theorie" },
+      {
+        id: "m",
+        type: "exercise",
+        exercise: {
+          id: "m",
+          type: "matching",
+          prompt: "Zuordnen",
+          card_ids: ["c1", "c2", "c3"],
+          pairs: [
+            { left: "Bonjour", right: "Guten Tag" },
+            { left: "Merci", right: "Danke" },
+            { left: "Salut", right: "Hallo" },
+          ],
+          distractors: [],
+        },
+      },
+      {
+        id: "f",
+        type: "exercise",
+        exercise: {
+          id: "f",
+          type: "free_text",
+          prompt: "Tippe",
+          card_ids: ["c1"],
+          accept: ["Bonjour", "bonjour"],
+          distractors: ["Salut", "Merci"],
+        },
+      },
+      { id: "t1", type: "exercise", exercise: { id: "t1", type: "word_tiles", prompt: "x", card_ids: ["c1"], tiles: ["Bon", "jour"], distractors: [] } },
+      { id: "t2", type: "exercise", exercise: { id: "t2", type: "word_tiles", prompt: "x", card_ids: ["c2"], tiles: ["Mer", "ci"], distractors: [] } },
+      { id: "t3", type: "exercise", exercise: { id: "t3", type: "word_tiles", prompt: "x", card_ids: ["c3"], tiles: ["Sa", "lut"], distractors: [] } },
+    ],
+  };
+}
 
 vi.mock("../utils/notify", () => ({
   notify: {
@@ -310,6 +359,7 @@ describe("Content — My Lessons (Phase 59C)", () => {
     listSetsMock.mockReset();
     deleteSetMock.mockReset();
     listLessonsMock.mockReset();
+    getLessonMock.mockReset();
   });
 
   it("shows the My Lessons empty state when there are no user sets", async () => {
@@ -403,13 +453,49 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(screen.getByTestId("import-lesson-modal")).toBeInTheDocument();
   });
 
-  it("Share with Community opens a pre-filled GitHub issue", async () => {
+  it("Share runs the validator and blocks an invalid set (no GitHub issue)", async () => {
+    // USER_ENTRY has no title_native and a single trivial lesson →
+    // validation fails, so the modal lists issues and never opens
+    // the GitHub issue.
     listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
+    listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
+    getLessonMock.mockResolvedValue({
+      id: "01",
+      title: "x",
+      estimated_minutes: 10,
+      cards: [{ id: "c", front: "a", back: "b", tags: [] }],
+      steps: [{ id: "s", type: "theory", body: "x" }],
+    });
     const openSpy = vi.fn();
     vi.stubGlobal("open", openSpy);
     renderPage();
     await screen.findByTestId("content-page");
-    fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
+    });
+    await screen.findByTestId("content-share-modal");
+    await waitFor(() =>
+      expect(screen.getByTestId("content-share-issues")).toBeInTheDocument(),
+    );
+    expect(screen.queryByTestId("content-share-continue")).not.toBeInTheDocument();
+    expect(openSpy).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it("Share opens a pre-filled GitHub issue after the set passes validation", async () => {
+    const valid = { ...USER_ENTRY, title_native: "Español A1" };
+    listSetsMock.mockResolvedValue({ sets: [valid], sources: [] });
+    listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
+    getLessonMock.mockResolvedValue(shareableLesson());
+    const openSpy = vi.fn();
+    vi.stubGlobal("open", openSpy);
+    renderPage();
+    await screen.findByTestId("content-page");
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
+    });
+    await screen.findByTestId("content-share-passed");
+    fireEvent.click(screen.getByTestId("content-share-continue"));
     expect(openSpy).toHaveBeenCalled();
     const url = openSpy.mock.calls[0][0] as string;
     expect(url).toContain(

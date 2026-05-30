@@ -1483,6 +1483,31 @@
       "other_sources": "Diğer kaynak diller",
       "for_speakers": "{lang} konuşanlar için",
       "no_primary": "Diliniz için henüz set yok. Aşağıdan diğer kaynak dillere göz atın."
+    },
+    "validation": {
+      "title": "Kalite kontrolü",
+      "checking": "Dersiniz kontrol ediliyor…",
+      "intro": "Paylaşmadan önce dersiniz eksiksizlik ve geçerli bir dil çifti açısından kontrol edilir.",
+      "passed": "Kalite kontrolü geçildi. Toplulukla paylaşmaya hazır.",
+      "failed": "Paylaşmadan önce şunları düzeltin:",
+      "continue": "GitHub'a devam et",
+      "cancel": "Kapat",
+      "no_lessons": "Sette ders yok.",
+      "missing_target_language": "Hedef dil eksik (öğretilen dil).",
+      "missing_source_language": "Kaynak dil eksik (açıklamaların dili).",
+      "invalid_target_language": "Hedef dil '{code}' 2 harfli bir ISO kodu değil.",
+      "invalid_source_language": "Kaynak dil '{code}' 2 harfli bir ISO kodu değil.",
+      "same_source_target": "Kaynak ve hedef dil aynı ('{code}').",
+      "missing_title": "Başlık eksik.",
+      "missing_title_native": "Hedef dildeki başlık eksik.",
+      "lesson_too_few_exercises": "'{lesson}' dersinde {count} alıştırma var; en az {min} gerekir.",
+      "lesson_too_few_types": "'{lesson}' dersi {count} alıştırma türü kullanıyor; en az {min} gerekir.",
+      "lesson_no_theory": "'{lesson}' dersinde teori adımı yok.",
+      "empty_card": "'{lesson}' dersi: '{card}' kartının ön veya arka yüzü boş.",
+      "back_language_mismatch": "'{lesson}' dersi: '{card}' kartının arka yüzü {source} gibi görünmüyor.",
+      "free_text_too_few_accepts": "'{lesson}' dersi: serbest metin alıştırması '{exercise}' en az {min} kabul edilen yanıt gerektirir.",
+      "matching_too_few_pairs": "'{lesson}' dersi: eşleştirme alıştırması '{exercise}' en az {min} çift gerektirir.",
+      "missing_distractors": "'{lesson}' dersi: '{exercise}' alıştırması çeldirici (yanlış seçenek) gerektirir."
     }
   },
   "milestone": {
