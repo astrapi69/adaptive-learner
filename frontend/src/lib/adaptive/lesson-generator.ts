@@ -43,10 +43,24 @@ import type {
     ElementError,
 } from "../../storage/types";
 
+import type {ConcreteDirection} from "../exercises/direction";
 import type {ExerciseCandidate} from "./exercise-pool";
 import type {ErrorAnalysis, PrioritizedElement} from "./types";
 
 export type DifficultyCurve = "ascending" | "descending" | "mixed";
+
+/** EXP-018 / Phase 62 — how the adaptive generator picks each
+ *  exercise's drill direction:
+ *    - ``auto``: per-element — receptive until recognition is solid,
+ *      then productive (the pedagogically-correct progression).
+ *    - ``receptive_first``: everything receptive (beginners).
+ *    - ``productive_focus``: everything productive (advanced).
+ *    - ``balanced``: alternate receptive / productive. */
+export type DirectionStrategy =
+    | "auto"
+    | "receptive_first"
+    | "productive_focus"
+    | "balanced";
 
 export interface ExerciseTypeMix {
     matching: number;
@@ -70,6 +84,10 @@ export interface GeneratorConfig {
      *  variation_factor 0, every iteration picks the same
      *  candidate per element; at 1, it always rotates). */
     variation_factor: number;
+    /** EXP-018 / Phase 62 — drill-direction strategy. Default
+     *  ``auto``. Fed from the user's "Preferred exercise direction"
+     *  setting (62G). */
+    direction_strategy: DirectionStrategy;
 }
 
 export const DEFAULT_GENERATOR_CONFIG: GeneratorConfig = {
@@ -83,6 +101,7 @@ export const DEFAULT_GENERATOR_CONFIG: GeneratorConfig = {
     },
     difficulty_curve: "ascending",
     variation_factor: 0.7,
+    direction_strategy: "auto",
 };
 
 export interface GenerateOpts {
@@ -119,6 +138,14 @@ export interface GenerateOpts {
      *  in scope; tied candidates fall through to the type-mix
      *  deficit rule alone). */
     errorsByElementKey?: ReadonlyMap<string, ElementError>;
+    /** EXP-018 / Phase 62 — ALL per-direction ElementError rows for
+     *  the user (both receptive + productive). The ``auto`` direction
+     *  strategy reads these to decide, per element, whether to drill
+     *  receptively (recognition not yet solid) or productively
+     *  (recognition solid, production still open). Omit → the auto
+     *  strategy treats every element as "not yet mastered" and drills
+     *  receptively. */
+    elementErrors?: readonly ElementError[];
 }
 
 function _resolveConfig(
@@ -408,6 +435,61 @@ function _exerciseStep(
     };
 }
 
+interface ElementDirectionState {
+    receptiveMastered: boolean;
+    productiveMastered: boolean;
+}
+
+/** Fold the per-direction ElementError rows into a per-element
+ *  mastery snapshot the ``auto`` strategy reads. */
+function _directionStateByElement(
+    errors: readonly ElementError[],
+): Map<string, ElementDirectionState> {
+    const out = new Map<string, ElementDirectionState>();
+    for (const err of errors) {
+        const state = out.get(err.element_key) ?? {
+            receptiveMastered: false,
+            productiveMastered: false,
+        };
+        if (err.mastered) {
+            if (err.direction === "source_to_target") {
+                state.productiveMastered = true;
+            } else {
+                state.receptiveMastered = true;
+            }
+        }
+        out.set(err.element_key, state);
+    }
+    return out;
+}
+
+/** EXP-018 / Phase 62: pick a generated exercise's drill direction.
+ *
+ *  ``auto`` per-element progression: drill RECEPTIVELY until
+ *  recognition is solid, then PRODUCTIVELY (production is harder and
+ *  is introduced only after recognition). Across a lesson this
+ *  naturally yields the spec's global shift (beginners ~all
+ *  receptive; advanced ~all productive) without a separate quota. */
+export function chooseExerciseDirection(
+    elementKey: string,
+    index: number,
+    strategy: DirectionStrategy,
+    stateByElement: Map<string, ElementDirectionState>,
+): ConcreteDirection {
+    if (strategy === "receptive_first") return "target_to_source";
+    if (strategy === "productive_focus") return "source_to_target";
+    if (strategy === "balanced") {
+        return index % 2 === 0 ? "target_to_source" : "source_to_target";
+    }
+    // auto:
+    const state = stateByElement.get(elementKey);
+    if (!state || !state.receptiveMastered) return "target_to_source";
+    // Recognition solid → shift to production (whether or not
+    // production is already mastered — a mastered pair gets a rare
+    // productive review).
+    return "source_to_target";
+}
+
 /** Synthesise the adaptive lesson. */
 export function generateAdaptiveLesson(
     analysis: ErrorAnalysis,
@@ -422,10 +504,29 @@ export function generateAdaptiveLesson(
         opts.errorsByElementKey,
     );
     const sorted = _sortByDifficulty(selected, config.difficulty_curve);
+    const stateByElement = _directionStateByElement(opts.elementErrors ?? []);
     const steps: ContentLessonStep[] = [];
     const theory = _theoryStepForCluster(analysis, opts.lessons);
     if (theory) steps.push(theory);
-    sorted.forEach((cand, idx) => steps.push(_exerciseStep(cand, idx)));
+    sorted.forEach((cand, idx) => {
+        // Cloze is in-context; direction does not apply (EXP-018 62C).
+        if (cand.exercise_type === "cloze") {
+            steps.push(_exerciseStep(cand, idx));
+            return;
+        }
+        const direction = chooseExerciseDirection(
+            cand.element_key,
+            idx,
+            config.direction_strategy,
+            stateByElement,
+        );
+        steps.push(
+            _exerciseStep(
+                {...cand, exercise: {...cand.exercise, direction}},
+                idx,
+            ),
+        );
+    });
     return {
         id: `adaptive-${opts.set_id}-${opts.now}`,
         title: opts.title,

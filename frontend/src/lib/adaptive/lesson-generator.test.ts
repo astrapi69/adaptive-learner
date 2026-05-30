@@ -15,6 +15,7 @@ import type {
 
 import type {ExerciseCandidate} from "./exercise-pool";
 import {
+    chooseExerciseDirection,
     DEFAULT_GENERATOR_CONFIG,
     generateAdaptiveLesson,
 } from "./lesson-generator";
@@ -710,5 +711,84 @@ describe("generateAdaptiveLesson — determinism", () => {
         const l2 = generateAdaptiveLesson(analysis, pool, opts);
         expect(l1.id).toBe(l2.id);
         expect(l1.steps.map((s) => s.id)).toEqual(l2.steps.map((s) => s.id));
+    });
+});
+
+describe("EXP-018 / Phase 62: direction strategy", () => {
+    const emptyState = new Map();
+
+    it("receptive_first always returns receptive", () => {
+        expect(chooseExerciseDirection("k", 0, "receptive_first", emptyState)).toBe(
+            "target_to_source",
+        );
+        expect(chooseExerciseDirection("k", 1, "receptive_first", emptyState)).toBe(
+            "target_to_source",
+        );
+    });
+
+    it("productive_focus always returns productive", () => {
+        expect(
+            chooseExerciseDirection("k", 0, "productive_focus", emptyState),
+        ).toBe("source_to_target");
+    });
+
+    it("balanced alternates by index", () => {
+        expect(chooseExerciseDirection("k", 0, "balanced", emptyState)).toBe(
+            "target_to_source",
+        );
+        expect(chooseExerciseDirection("k", 1, "balanced", emptyState)).toBe(
+            "source_to_target",
+        );
+    });
+
+    it("auto drills receptively until recognition is solid", () => {
+        // No state → not mastered receptively → receptive.
+        expect(chooseExerciseDirection("k", 0, "auto", emptyState)).toBe(
+            "target_to_source",
+        );
+        // Receptive mastered → shift to production.
+        const state = new Map([
+            ["k", {receptiveMastered: true, productiveMastered: false}],
+        ]);
+        expect(chooseExerciseDirection("k", 0, "auto", state)).toBe(
+            "source_to_target",
+        );
+    });
+
+    it("stamps direction onto generated exercises (productive_focus)", () => {
+        const analysis = analysisFor([makePrioritized("merci")]);
+        const pool: ExerciseCandidate[] = [
+            makeCandidate({element_key: "merci", exercise_id: "ex-1"}),
+        ];
+        const lesson = generateAdaptiveLesson(analysis, pool, {
+            lessons: new Map(),
+            title: "Adaptive",
+            set_id: "language-fr-a1",
+            now: NOW,
+            config: {direction_strategy: "productive_focus"},
+        });
+        const exSteps = lesson.steps.filter((s) => s.type === "exercise");
+        expect(exSteps.length).toBeGreaterThan(0);
+        for (const step of exSteps) {
+            expect(step.exercise?.direction).toBe("source_to_target");
+        }
+    });
+
+    it("default strategy (auto) drills receptive for a fresh learner", () => {
+        const analysis = analysisFor([makePrioritized("merci")]);
+        const pool: ExerciseCandidate[] = [
+            makeCandidate({element_key: "merci", exercise_id: "ex-1"}),
+        ];
+        const lesson = generateAdaptiveLesson(analysis, pool, {
+            lessons: new Map(),
+            title: "Adaptive",
+            set_id: "language-fr-a1",
+            now: NOW,
+            // no elementErrors → nothing mastered → receptive
+        });
+        const exSteps = lesson.steps.filter((s) => s.type === "exercise");
+        for (const step of exSteps) {
+            expect(step.exercise?.direction).toBe("target_to_source");
+        }
     });
 });
