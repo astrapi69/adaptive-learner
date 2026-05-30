@@ -4,16 +4,86 @@
   "description": "The first ten numbers in French.",
   "estimated_minutes": 10,
   "cards": [
-    {"id": "n-1", "front": "un", "back": "one", "tags": ["number"]},
-    {"id": "n-2", "front": "deux", "back": "two", "tags": ["number"]},
-    {"id": "n-3", "front": "trois", "back": "three", "tags": ["number"]},
-    {"id": "n-4", "front": "quatre", "back": "four", "tags": ["number"]},
-    {"id": "n-5", "front": "cinq", "back": "five", "tags": ["number"]},
-    {"id": "n-6", "front": "six", "back": "six", "tags": ["number"]},
-    {"id": "n-7", "front": "sept", "back": "seven", "tags": ["number"]},
-    {"id": "n-8", "front": "huit", "back": "eight", "tags": ["number"]},
-    {"id": "n-9", "front": "neuf", "back": "nine", "tags": ["number"]},
-    {"id": "n-10", "front": "dix", "back": "ten", "tags": ["number"]}
+    {
+      "id": "n-1",
+      "front": "un",
+      "back": "one",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-2",
+      "front": "deux",
+      "back": "two",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-3",
+      "front": "trois",
+      "back": "three",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-4",
+      "front": "quatre",
+      "back": "four",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-5",
+      "front": "cinq",
+      "back": "five",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-6",
+      "front": "six",
+      "back": "six",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-7",
+      "front": "sept",
+      "back": "seven",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-8",
+      "front": "huit",
+      "back": "eight",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-9",
+      "front": "neuf",
+      "back": "nine",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-10",
+      "front": "dix",
+      "back": "ten",
+      "tags": [
+        "number"
+      ]
+    }
   ],
   "steps": [
     {
@@ -30,14 +100,36 @@
         "id": "ex-match-numbers-low",
         "type": "matching",
         "prompt": "Match the French numbers 1 through 5 to their English equivalents.",
-        "card_ids": ["n-1", "n-2", "n-3", "n-4", "n-5"],
+        "card_ids": [
+          "n-1",
+          "n-2",
+          "n-3",
+          "n-4",
+          "n-5"
+        ],
         "pairs": [
-          {"left": "un", "right": "one"},
-          {"left": "deux", "right": "two"},
-          {"left": "trois", "right": "three"},
-          {"left": "quatre", "right": "four"},
-          {"left": "cinq", "right": "five"}
-        ]
+          {
+            "left": "un",
+            "right": "one"
+          },
+          {
+            "left": "deux",
+            "right": "two"
+          },
+          {
+            "left": "trois",
+            "right": "three"
+          },
+          {
+            "left": "quatre",
+            "right": "four"
+          },
+          {
+            "left": "cinq",
+            "right": "five"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -48,14 +140,36 @@
         "id": "ex-match-numbers-high",
         "type": "matching",
         "prompt": "Match the French numbers 6 through 10 to their English equivalents.",
-        "card_ids": ["n-6", "n-7", "n-8", "n-9", "n-10"],
+        "card_ids": [
+          "n-6",
+          "n-7",
+          "n-8",
+          "n-9",
+          "n-10"
+        ],
         "pairs": [
-          {"left": "six", "right": "six"},
-          {"left": "sept", "right": "seven"},
-          {"left": "huit", "right": "eight"},
-          {"left": "neuf", "right": "nine"},
-          {"left": "dix", "right": "ten"}
-        ]
+          {
+            "left": "six",
+            "right": "six"
+          },
+          {
+            "left": "sept",
+            "right": "seven"
+          },
+          {
+            "left": "huit",
+            "right": "eight"
+          },
+          {
+            "left": "neuf",
+            "right": "nine"
+          },
+          {
+            "left": "dix",
+            "right": "ten"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -72,10 +186,20 @@
         "id": "ex-free-five",
         "type": "free_text",
         "prompt": "Type the French word for the number 5.",
-        "card_ids": ["n-5"],
-        "accept": ["cinq", "Cinq"],
+        "card_ids": [
+          "n-5"
+        ],
+        "accept": [
+          "cinq",
+          "Cinq"
+        ],
         "hint": "Four letters, starts with C.",
-        "distractors": ["six", "sept", "quatre"]
+        "distractors": [
+          "six",
+          "sept",
+          "quatre"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -86,9 +210,18 @@
         "id": "ex-tile-counting",
         "type": "word_tiles",
         "prompt": "Arrange the tiles in counting order from one to three.",
-        "card_ids": ["n-1", "n-2", "n-3"],
-        "tiles": ["un", "deux", "trois"],
-        "hint": "Same order as in English: one, two, three."
+        "card_ids": [
+          "n-1",
+          "n-2",
+          "n-3"
+        ],
+        "tiles": [
+          "un",
+          "deux",
+          "trois"
+        ],
+        "hint": "Same order as in English: one, two, three.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -99,7 +232,9 @@
         "id": "ex-pick-seven",
         "type": "picture_choice",
         "prompt": "Which image shows seven items?",
-        "card_ids": ["n-7"],
+        "card_ids": [
+          "n-7"
+        ],
         "images": [
           {
             "src": "assets/img/five-stars.png",
@@ -120,7 +255,12 @@
           }
         ],
         "hint": "Count the items in each image.",
-        "distractors": ["cinq", "six", "huit"]
+        "distractors": [
+          "cinq",
+          "six",
+          "huit"
+        ],
+        "direction": "target_to_source"
       }
     }
   ]

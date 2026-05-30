@@ -6,15 +6,83 @@
   "source_language": "de",
   "estimated_minutes": 12,
   "cards": [
-    {"id": "art-le", "front": "le", "back": "der/die/das (männlich Singular)", "notes": "Bestimmter Artikel vor männlichen Substantiven.", "tags": ["artikel"]},
-    {"id": "art-la", "front": "la", "back": "der/die/das (weiblich Singular)", "notes": "Bestimmter Artikel vor weiblichen Substantiven.", "tags": ["artikel"]},
-    {"id": "art-l", "front": "l'", "back": "der/die/das (vor Vokal oder stummem h)", "notes": "le/la werden vor einem Vokal zu l' verkürzt.", "tags": ["artikel"]},
-    {"id": "art-les", "front": "les", "back": "die (Plural, beide Geschlechter)", "tags": ["artikel"]},
-    {"id": "art-un", "front": "un", "back": "ein (männlich)", "tags": ["artikel"]},
-    {"id": "art-une", "front": "une", "back": "eine (weiblich)", "tags": ["artikel"]},
-    {"id": "noun-chat", "front": "chat", "back": "Katze (männlich)", "notes": "le chat = die Katze (im Französischen männlich).", "tags": ["substantiv"]},
-    {"id": "noun-maison", "front": "maison", "back": "Haus (weiblich)", "notes": "la maison = das Haus (im Französischen weiblich).", "tags": ["substantiv"]},
-    {"id": "noun-enfant", "front": "enfant", "back": "Kind (beide Geschlechter)", "tags": ["substantiv"]}
+    {
+      "id": "art-le",
+      "front": "le",
+      "back": "der/die/das (männlich Singular)",
+      "notes": "Bestimmter Artikel vor männlichen Substantiven.",
+      "tags": [
+        "artikel"
+      ]
+    },
+    {
+      "id": "art-la",
+      "front": "la",
+      "back": "der/die/das (weiblich Singular)",
+      "notes": "Bestimmter Artikel vor weiblichen Substantiven.",
+      "tags": [
+        "artikel"
+      ]
+    },
+    {
+      "id": "art-l",
+      "front": "l'",
+      "back": "der/die/das (vor Vokal oder stummem h)",
+      "notes": "le/la werden vor einem Vokal zu l' verkürzt.",
+      "tags": [
+        "artikel"
+      ]
+    },
+    {
+      "id": "art-les",
+      "front": "les",
+      "back": "die (Plural, beide Geschlechter)",
+      "tags": [
+        "artikel"
+      ]
+    },
+    {
+      "id": "art-un",
+      "front": "un",
+      "back": "ein (männlich)",
+      "tags": [
+        "artikel"
+      ]
+    },
+    {
+      "id": "art-une",
+      "front": "une",
+      "back": "eine (weiblich)",
+      "tags": [
+        "artikel"
+      ]
+    },
+    {
+      "id": "noun-chat",
+      "front": "chat",
+      "back": "Katze (männlich)",
+      "notes": "le chat = die Katze (im Französischen männlich).",
+      "tags": [
+        "substantiv"
+      ]
+    },
+    {
+      "id": "noun-maison",
+      "front": "maison",
+      "back": "Haus (weiblich)",
+      "notes": "la maison = das Haus (im Französischen weiblich).",
+      "tags": [
+        "substantiv"
+      ]
+    },
+    {
+      "id": "noun-enfant",
+      "front": "enfant",
+      "back": "Kind (beide Geschlechter)",
+      "tags": [
+        "substantiv"
+      ]
+    }
   ],
   "steps": [
     {
@@ -37,13 +105,31 @@
         "id": "ex-match-bestimmt",
         "type": "matching",
         "prompt": "Ordne jeden bestimmten Artikel seiner Verwendung zu.",
-        "card_ids": ["art-le", "art-la", "art-l", "art-les"],
+        "card_ids": [
+          "art-le",
+          "art-la",
+          "art-l",
+          "art-les"
+        ],
         "pairs": [
-          {"left": "le", "right": "männlich Singular"},
-          {"left": "la", "right": "weiblich Singular"},
-          {"left": "l'", "right": "vor einem Vokal"},
-          {"left": "les", "right": "Plural"}
-        ]
+          {
+            "left": "le",
+            "right": "männlich Singular"
+          },
+          {
+            "left": "la",
+            "right": "weiblich Singular"
+          },
+          {
+            "left": "l'",
+            "right": "vor einem Vokal"
+          },
+          {
+            "left": "les",
+            "right": "Plural"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -54,10 +140,21 @@
         "id": "ex-free-chat",
         "type": "free_text",
         "prompt": "Schreibe 'die Katze' auf Französisch (Artikel + chat).",
-        "card_ids": ["noun-chat", "art-le"],
-        "accept": ["le chat", "Le chat"],
+        "card_ids": [
+          "noun-chat",
+          "art-le"
+        ],
+        "accept": [
+          "le chat",
+          "Le chat"
+        ],
         "hint": "chat ist männlich.",
-        "distractors": ["la chat", "les chat", "une chat"]
+        "distractors": [
+          "la chat",
+          "les chat",
+          "une chat"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -74,10 +171,21 @@
         "id": "ex-free-maison",
         "type": "free_text",
         "prompt": "Schreibe 'ein Haus' auf Französisch (Artikel + maison).",
-        "card_ids": ["noun-maison", "art-une"],
-        "accept": ["une maison", "Une maison"],
+        "card_ids": [
+          "noun-maison",
+          "art-une"
+        ],
+        "accept": [
+          "une maison",
+          "Une maison"
+        ],
         "hint": "maison ist weiblich.",
-        "distractors": ["un maison", "le maison", "des maison"]
+        "distractors": [
+          "un maison",
+          "le maison",
+          "des maison"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -88,9 +196,16 @@
         "id": "ex-tile-le-chat",
         "type": "word_tiles",
         "prompt": "Setze die Kacheln zu 'die Katze' (Artikel + Substantiv) zusammen.",
-        "card_ids": ["art-le", "noun-chat"],
-        "tiles": ["le", "chat"],
-        "hint": "chat ist männlich → le."
+        "card_ids": [
+          "art-le",
+          "noun-chat"
+        ],
+        "tiles": [
+          "le",
+          "chat"
+        ],
+        "hint": "chat ist männlich → le.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -101,9 +216,19 @@
         "id": "ex-cloze-enfant",
         "type": "cloze",
         "prompt": "Ergänze den bestimmten Artikel vor 'enfant' (beginnt mit Vokal).",
-        "card_ids": ["art-l", "noun-enfant"],
+        "card_ids": [
+          "art-l",
+          "noun-enfant"
+        ],
         "sentence": "___ enfant joue.",
-        "blanks": [{"accept": ["l'", "L'"]}],
+        "blanks": [
+          {
+            "accept": [
+              "l'",
+              "L'"
+            ]
+          }
+        ],
         "cloze_mode": "type",
         "hint": "Vor einem Vokal wird le/la verkürzt."
       }

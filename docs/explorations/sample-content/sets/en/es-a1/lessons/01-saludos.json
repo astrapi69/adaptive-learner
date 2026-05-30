@@ -9,84 +9,114 @@
       "front": "Hola",
       "back": "Hello / Hi",
       "notes": "All-purpose greeting, any time of day, any formality. The silent **h** is the most common pronunciation trap for English speakers: *Hola* sounds like \"OH-la\", never \"HOH-la\".",
-      "tags": ["greeting"]
+      "tags": [
+        "greeting"
+      ]
     },
     {
       "id": "saludo-buenos-dias",
       "front": "Buenos días",
       "back": "Good morning",
       "notes": "Used until lunchtime (roughly 1-2pm in Spain). *Buenos* (m. pl.) because *días* is masculine plural.",
-      "tags": ["greeting", "morning"]
+      "tags": [
+        "greeting",
+        "morning"
+      ]
     },
     {
       "id": "saludo-buenas-tardes",
       "front": "Buenas tardes",
       "back": "Good afternoon",
       "notes": "Used from early afternoon until sundown. *Buenas* (f. pl.) because *tardes* is feminine.",
-      "tags": ["greeting", "afternoon"]
+      "tags": [
+        "greeting",
+        "afternoon"
+      ]
     },
     {
       "id": "saludo-buenas-noches",
       "front": "Buenas noches",
       "back": "Good evening / Good night",
       "notes": "Covers both \"good evening\" (greeting after dark) AND \"good night\" (when leaving for bed). Context disambiguates.",
-      "tags": ["greeting", "evening"]
+      "tags": [
+        "greeting",
+        "evening"
+      ]
     },
     {
       "id": "saludo-adios",
       "front": "Adiós",
       "back": "Goodbye",
       "notes": "Standard farewell. The accent on **ó** is mandatory — *adios* without it is a spelling error.",
-      "tags": ["farewell"]
+      "tags": [
+        "farewell"
+      ]
     },
     {
       "id": "saludo-hasta-luego",
       "front": "Hasta luego",
       "back": "See you later",
       "notes": "Literally *until later*. Very common — more casual than *adiós*. Variants: *hasta mañana* (until tomorrow), *hasta pronto* (see you soon).",
-      "tags": ["farewell"]
+      "tags": [
+        "farewell"
+      ]
     },
     {
       "id": "phr-como-estas",
       "front": "¿Cómo estás?",
       "back": "How are you? (informal)",
       "notes": "Always bookended with ¿ ... ?. The accent on **Cómo** marks the question word (vs *como* without the accent, which means *as* / *like*).",
-      "tags": ["question"]
+      "tags": [
+        "question"
+      ]
     },
     {
       "id": "phr-bien-gracias",
       "front": "Bien, gracias.",
       "back": "Fine, thanks.",
       "notes": "Standard reply. Add *¿y tú?* (and you?) to bounce the question back.",
-      "tags": ["politeness"]
+      "tags": [
+        "politeness"
+      ]
     },
     {
       "id": "phr-me-llamo",
       "front": "Me llamo…",
       "back": "My name is… (lit. *I call myself*)",
       "notes": "Reflexive: *me* is the reflexive pronoun, *llamo* is the conjugated verb. *Me llamo Ana* — I call myself Ana.",
-      "tags": ["introduction"]
+      "tags": [
+        "introduction"
+      ]
     },
     {
       "id": "phr-mucho-gusto",
       "front": "Mucho gusto.",
       "back": "Nice to meet you.",
       "notes": "Literally *much pleasure*. Said after an introduction. The reply is *Igualmente* (likewise) or *el gusto es mío* (the pleasure is mine).",
-      "tags": ["politeness", "introduction"]
+      "tags": [
+        "politeness",
+        "introduction"
+      ]
     },
     {
       "id": "phr-de-donde-eres",
       "front": "¿De dónde eres?",
       "back": "Where are you from? (informal)",
       "notes": "Uses *ser* — origin is permanent. Answer: *Soy de + [place]* (I am from + place).",
-      "tags": ["question", "origin"]
+      "tags": [
+        "question",
+        "origin"
+      ]
     },
     {
       "id": "phr-soy-de",
       "front": "Soy de…",
       "back": "I am from… (place / country)",
       "notes": "Uses *soy* (1st person of *ser*). *Soy de España* — I'm from Spain. Note Spain uses *de* directly, no article.",
-      "tags": ["introduction", "origin"]
+      "tags": [
+        "introduction",
+        "origin"
+      ]
     }
   ],
   "steps": [
@@ -110,13 +140,31 @@
         "id": "ex-match-greetings",
         "type": "matching",
         "prompt": "Match each Spanish greeting with when you'd use it.",
-        "card_ids": ["saludo-hola", "saludo-buenos-dias", "saludo-buenas-tardes", "saludo-buenas-noches"],
+        "card_ids": [
+          "saludo-hola",
+          "saludo-buenos-dias",
+          "saludo-buenas-tardes",
+          "saludo-buenas-noches"
+        ],
         "pairs": [
-          {"left": "Hola", "right": "any time"},
-          {"left": "Buenos días", "right": "morning"},
-          {"left": "Buenas tardes", "right": "afternoon"},
-          {"left": "Buenas noches", "right": "evening / night"}
-        ]
+          {
+            "left": "Hola",
+            "right": "any time"
+          },
+          {
+            "left": "Buenos días",
+            "right": "morning"
+          },
+          {
+            "left": "Buenas tardes",
+            "right": "afternoon"
+          },
+          {
+            "left": "Buenas noches",
+            "right": "evening / night"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -127,7 +175,9 @@
         "id": "ex-pick-evening",
         "type": "picture_choice",
         "prompt": "You arrive at a dinner at 8 PM. Which greeting do you use?",
-        "card_ids": ["saludo-buenas-noches"],
+        "card_ids": [
+          "saludo-buenas-noches"
+        ],
         "images": [
           {
             "src": "assets/img/morning-coffee.png",
@@ -148,7 +198,12 @@
           }
         ],
         "hint": "8 PM is squarely in evening territory.",
-        "distractors": ["Buenos días", "Buenas tardes", "Adiós"]
+        "distractors": [
+          "Buenos días",
+          "Buenas tardes",
+          "Adiós"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -165,10 +220,21 @@
         "id": "ex-free-me-llamo",
         "type": "free_text",
         "prompt": "Translate: *My name is Carlos.*",
-        "card_ids": ["phr-me-llamo"],
-        "accept": ["Me llamo Carlos.", "Me llamo Carlos", "me llamo carlos"],
+        "card_ids": [
+          "phr-me-llamo"
+        ],
+        "accept": [
+          "Me llamo Carlos.",
+          "Me llamo Carlos",
+          "me llamo carlos"
+        ],
         "hint": "Reflexive verb: *me* + *llamo* + name.",
-        "distractors": ["Soy Carlos.", "Mi nombre Carlos.", "Yo llamo Carlos."]
+        "distractors": [
+          "Soy Carlos.",
+          "Mi nombre Carlos.",
+          "Yo llamo Carlos."
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -179,9 +245,24 @@
         "id": "ex-tile-introduction",
         "type": "word_tiles",
         "prompt": "Arrange to mean: *Hello, my name is Ana, and I'm from Madrid.*",
-        "card_ids": ["saludo-hola", "phr-me-llamo", "phr-soy-de"],
-        "tiles": ["Hola", ",", "me", "llamo", "Ana", "y", "soy", "de", "Madrid"],
-        "hint": "Two clauses joined by *y* (and). Comma after the greeting."
+        "card_ids": [
+          "saludo-hola",
+          "phr-me-llamo",
+          "phr-soy-de"
+        ],
+        "tiles": [
+          "Hola",
+          ",",
+          "me",
+          "llamo",
+          "Ana",
+          "y",
+          "soy",
+          "de",
+          "Madrid"
+        ],
+        "hint": "Two clauses joined by *y* (and). Comma after the greeting.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -198,10 +279,21 @@
         "id": "ex-free-como-estas",
         "type": "free_text",
         "prompt": "Ask informally: *How are you?* (Include the inverted question mark.)",
-        "card_ids": ["phr-como-estas"],
-        "accept": ["¿Cómo estás?", "¿Cómo estás", "¿cómo estás?"],
+        "card_ids": [
+          "phr-como-estas"
+        ],
+        "accept": [
+          "¿Cómo estás?",
+          "¿Cómo estás",
+          "¿cómo estás?"
+        ],
         "hint": "Inverted ¿ at the start, accented ó in *Cómo*, regular ? at the end.",
-        "distractors": ["¿Como estas?", "Cómo estás?", "¿Como está?"]
+        "distractors": [
+          "¿Como estas?",
+          "Cómo estás?",
+          "¿Como está?"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -212,13 +304,28 @@
         "id": "ex-match-replies",
         "type": "matching",
         "prompt": "Match each Spanish reply to its English meaning.",
-        "card_ids": ["phr-bien-gracias"],
+        "card_ids": [
+          "phr-bien-gracias"
+        ],
         "pairs": [
-          {"left": "Bien, gracias.", "right": "Fine, thanks."},
-          {"left": "Muy bien.", "right": "Very well."},
-          {"left": "Más o menos.", "right": "So-so."},
-          {"left": "¿Y tú?", "right": "And you?"}
-        ]
+          {
+            "left": "Bien, gracias.",
+            "right": "Fine, thanks."
+          },
+          {
+            "left": "Muy bien.",
+            "right": "Very well."
+          },
+          {
+            "left": "Más o menos.",
+            "right": "So-so."
+          },
+          {
+            "left": "¿Y tú?",
+            "right": "And you?"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -235,7 +342,9 @@
         "id": "ex-pick-farewell",
         "type": "picture_choice",
         "prompt": "You're leaving a meeting and you'll see this person tomorrow. Which is most natural?",
-        "card_ids": ["saludo-hasta-luego"],
+        "card_ids": [
+          "saludo-hasta-luego"
+        ],
         "images": [
           {
             "src": "assets/img/office-leaving.png",
@@ -256,7 +365,12 @@
           }
         ],
         "hint": "*Until tomorrow* — when you know you'll see them tomorrow.",
-        "distractors": ["Adiós", "Hola", "Mucho gusto"]
+        "distractors": [
+          "Adiós",
+          "Hola",
+          "Mucho gusto"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -267,9 +381,21 @@
         "id": "ex-tile-full-conversation",
         "type": "word_tiles",
         "prompt": "Arrange to ask informally: *Hi! How are you?*",
-        "card_ids": ["saludo-hola", "phr-como-estas"],
-        "tiles": ["¡", "Hola", "!", "¿", "Cómo", "estás", "?"],
-        "hint": "Greeting wrapped in ¡ ... !, then question wrapped in ¿ ... ?."
+        "card_ids": [
+          "saludo-hola",
+          "phr-como-estas"
+        ],
+        "tiles": [
+          "¡",
+          "Hola",
+          "!",
+          "¿",
+          "Cómo",
+          "estás",
+          "?"
+        ],
+        "hint": "Greeting wrapped in ¡ ... !, then question wrapped in ¿ ... ?.",
+        "direction": "target_to_source"
       }
     }
   ]

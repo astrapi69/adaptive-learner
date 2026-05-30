@@ -9,87 +9,120 @@
       "front": "Je m'appelle…",
       "back": "My name is… (lit. *I call myself*)",
       "notes": "Reflexive verb. The *m'* is the elided form of *me* (myself). *Je m'appelle Marie* — I call myself Marie.",
-      "tags": ["greeting", "introduction"]
+      "tags": [
+        "greeting",
+        "introduction"
+      ]
     },
     {
       "id": "phrase-jai-ans",
       "front": "J'ai … ans.",
       "back": "I am … years old. (lit. *I have … years*)",
       "notes": "French uses *avoir* for age. Never *Je suis 25 ans* — that's the English calque most learners produce first.",
-      "tags": ["age", "introduction"]
+      "tags": [
+        "age",
+        "introduction"
+      ]
     },
     {
       "id": "phrase-je-suis",
       "front": "Je suis…",
       "back": "I am… (nationality / profession / identity)",
-      "tags": ["introduction", "identity"]
+      "tags": [
+        "introduction",
+        "identity"
+      ]
     },
     {
       "id": "phrase-jhabite-a",
       "front": "J'habite à…",
       "back": "I live in… (city)",
       "notes": "*à* + city: *J'habite à Paris*. For countries it's *en* (feminine) or *au* (masculine): *en France*, *au Canada*.",
-      "tags": ["introduction", "location"]
+      "tags": [
+        "introduction",
+        "location"
+      ]
     },
     {
       "id": "nat-francais-m",
       "front": "français",
       "back": "French (m.)",
       "notes": "Lowercase as an adjective: *Je suis français*. Capitalized only as a noun: *un Français* (a French person).",
-      "tags": ["nationality", "masculine"]
+      "tags": [
+        "nationality",
+        "masculine"
+      ]
     },
     {
       "id": "nat-francaise-f",
       "front": "française",
       "back": "French (f.)",
       "notes": "Add **-e** for feminine: *Je suis française*. Most nationalities follow this pattern.",
-      "tags": ["nationality", "feminine"]
+      "tags": [
+        "nationality",
+        "feminine"
+      ]
     },
     {
       "id": "nat-allemand",
       "front": "allemand / allemande",
       "back": "German",
-      "tags": ["nationality"]
+      "tags": [
+        "nationality"
+      ]
     },
     {
       "id": "nat-espagnol",
       "front": "espagnol / espagnole",
       "back": "Spanish",
-      "tags": ["nationality"]
+      "tags": [
+        "nationality"
+      ]
     },
     {
       "id": "nat-anglais",
       "front": "anglais / anglaise",
       "back": "English",
       "notes": "Note: *anglais* covers England specifically. For \"British\" use *britannique* (invariable — same form m/f).",
-      "tags": ["nationality"]
+      "tags": [
+        "nationality"
+      ]
     },
     {
       "id": "prof-etudiant",
       "front": "étudiant / étudiante",
       "back": "student",
       "notes": "When stating a profession with *être*, French DROPS the article: *Je suis étudiant* — not *un étudiant*.",
-      "tags": ["profession"]
+      "tags": [
+        "profession"
+      ]
     },
     {
       "id": "prof-professeur",
       "front": "professeur",
       "back": "teacher / professor",
       "notes": "Traditionally invariable: *un professeur* for any gender. *Une professeure* (with an extra **-e**) is increasingly accepted but still feels new.",
-      "tags": ["profession"]
+      "tags": [
+        "profession"
+      ]
     },
     {
       "id": "prof-medecin",
       "front": "médecin",
       "back": "doctor",
-      "tags": ["profession"]
+      "tags": [
+        "profession"
+      ]
     },
     {
       "id": "phrase-enchante",
       "front": "Enchanté(e).",
       "back": "Nice to meet you. (lit. *enchanted*)",
       "notes": "Add the silent **-e** in writing if you're feminine: *Enchantée*. Sounds the same either way.",
-      "tags": ["greeting", "politeness"]
+      "tags": [
+        "greeting",
+        "politeness"
+      ]
     }
   ],
   "steps": [
@@ -113,10 +146,21 @@
         "id": "ex-free-name",
         "type": "free_text",
         "prompt": "Translate: *My name is Marie.*",
-        "card_ids": ["phrase-je-mappelle"],
-        "accept": ["Je m'appelle Marie.", "Je m'appelle Marie", "je m'appelle marie"],
+        "card_ids": [
+          "phrase-je-mappelle"
+        ],
+        "accept": [
+          "Je m'appelle Marie.",
+          "Je m'appelle Marie",
+          "je m'appelle marie"
+        ],
         "hint": "Reflexive form, with elision: *m'* not *me*.",
-        "distractors": ["Je suis Marie.", "J'appelle Marie.", "Je me appelle Marie."]
+        "distractors": [
+          "Je suis Marie.",
+          "J'appelle Marie.",
+          "Je me appelle Marie."
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -133,13 +177,28 @@
         "id": "ex-match-age",
         "type": "matching",
         "prompt": "Match each French phrase with its English translation.",
-        "card_ids": ["phrase-jai-ans"],
+        "card_ids": [
+          "phrase-jai-ans"
+        ],
         "pairs": [
-          {"left": "J'ai dix ans.", "right": "I am 10."},
-          {"left": "Tu as quel âge ?", "right": "How old are you?"},
-          {"left": "Elle a cinq ans.", "right": "She is 5."},
-          {"left": "Nous avons trente ans.", "right": "We are 30."}
-        ]
+          {
+            "left": "J'ai dix ans.",
+            "right": "I am 10."
+          },
+          {
+            "left": "Tu as quel âge ?",
+            "right": "How old are you?"
+          },
+          {
+            "left": "Elle a cinq ans.",
+            "right": "She is 5."
+          },
+          {
+            "left": "Nous avons trente ans.",
+            "right": "We are 30."
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -156,7 +215,9 @@
         "id": "ex-pick-nationality",
         "type": "picture_choice",
         "prompt": "A woman saying she's German says…",
-        "card_ids": ["nat-allemand"],
+        "card_ids": [
+          "nat-allemand"
+        ],
         "images": [
           {
             "src": "assets/img/germany-flag.png",
@@ -177,7 +238,12 @@
           }
         ],
         "hint": "Adjective agrees: feminine adds -e.",
-        "distractors": ["Je suis allemand.", "Je suis Allemagne.", "J'ai allemand."]
+        "distractors": [
+          "Je suis allemand.",
+          "Je suis Allemagne.",
+          "J'ai allemand."
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -194,10 +260,21 @@
         "id": "ex-free-profession",
         "type": "free_text",
         "prompt": "A woman saying *I am a student* writes:",
-        "card_ids": ["prof-etudiant"],
-        "accept": ["Je suis étudiante.", "Je suis étudiante", "je suis étudiante"],
+        "card_ids": [
+          "prof-etudiant"
+        ],
+        "accept": [
+          "Je suis étudiante.",
+          "Je suis étudiante",
+          "je suis étudiante"
+        ],
         "hint": "Profession after *être* — drop the article. Feminine form adds -e.",
-        "distractors": ["Je suis une étudiante.", "Je suis étudiant.", "J'ai étudiante."]
+        "distractors": [
+          "Je suis une étudiante.",
+          "Je suis étudiant.",
+          "J'ai étudiante."
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -208,9 +285,21 @@
         "id": "ex-tile-introduction",
         "type": "word_tiles",
         "prompt": "Arrange to mean: *My name is Paul and I am French.*",
-        "card_ids": ["phrase-je-mappelle", "nat-francais-m"],
-        "tiles": ["Je", "m'appelle", "Paul", "et", "je", "suis", "français"],
-        "hint": "Two clauses joined by *et* (and)."
+        "card_ids": [
+          "phrase-je-mappelle",
+          "nat-francais-m"
+        ],
+        "tiles": [
+          "Je",
+          "m'appelle",
+          "Paul",
+          "et",
+          "je",
+          "suis",
+          "français"
+        ],
+        "hint": "Two clauses joined by *et* (and).",
+        "direction": "target_to_source"
       }
     },
     {
@@ -221,13 +310,31 @@
         "id": "ex-match-questions",
         "type": "matching",
         "prompt": "Match each question to what it asks about.",
-        "card_ids": ["phrase-je-mappelle", "phrase-jai-ans", "phrase-je-suis", "phrase-jhabite-a"],
+        "card_ids": [
+          "phrase-je-mappelle",
+          "phrase-jai-ans",
+          "phrase-je-suis",
+          "phrase-jhabite-a"
+        ],
         "pairs": [
-          {"left": "Tu t'appelles comment ?", "right": "name"},
-          {"left": "Tu as quel âge ?", "right": "age"},
-          {"left": "Tu es de quelle nationalité ?", "right": "nationality"},
-          {"left": "Tu habites où ?", "right": "city"}
-        ]
+          {
+            "left": "Tu t'appelles comment ?",
+            "right": "name"
+          },
+          {
+            "left": "Tu as quel âge ?",
+            "right": "age"
+          },
+          {
+            "left": "Tu es de quelle nationalité ?",
+            "right": "nationality"
+          },
+          {
+            "left": "Tu habites où ?",
+            "right": "city"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -238,10 +345,21 @@
         "id": "ex-free-enchante",
         "type": "free_text",
         "prompt": "Someone has just introduced themselves. As a man, you reply:",
-        "card_ids": ["phrase-enchante"],
-        "accept": ["Enchanté.", "Enchanté", "enchanté"],
+        "card_ids": [
+          "phrase-enchante"
+        ],
+        "accept": [
+          "Enchanté.",
+          "Enchanté",
+          "enchanté"
+        ],
         "hint": "One word. The masculine form (no extra -e in writing).",
-        "distractors": ["Enchantée.", "Bonjour.", "Merci."]
+        "distractors": [
+          "Enchantée.",
+          "Bonjour.",
+          "Merci."
+        ],
+        "direction": "target_to_source"
       }
     }
   ]

@@ -6,16 +6,86 @@
   "source_language": "de",
   "estimated_minutes": 10,
   "cards": [
-    {"id": "n-1", "front": "un", "back": "eins", "tags": ["zahl"]},
-    {"id": "n-2", "front": "deux", "back": "zwei", "tags": ["zahl"]},
-    {"id": "n-3", "front": "trois", "back": "drei", "tags": ["zahl"]},
-    {"id": "n-4", "front": "quatre", "back": "vier", "tags": ["zahl"]},
-    {"id": "n-5", "front": "cinq", "back": "fünf", "tags": ["zahl"]},
-    {"id": "n-6", "front": "six", "back": "sechs", "tags": ["zahl"]},
-    {"id": "n-7", "front": "sept", "back": "sieben", "tags": ["zahl"]},
-    {"id": "n-8", "front": "huit", "back": "acht", "tags": ["zahl"]},
-    {"id": "n-9", "front": "neuf", "back": "neun", "tags": ["zahl"]},
-    {"id": "n-10", "front": "dix", "back": "zehn", "tags": ["zahl"]}
+    {
+      "id": "n-1",
+      "front": "un",
+      "back": "eins",
+      "tags": [
+        "zahl"
+      ]
+    },
+    {
+      "id": "n-2",
+      "front": "deux",
+      "back": "zwei",
+      "tags": [
+        "zahl"
+      ]
+    },
+    {
+      "id": "n-3",
+      "front": "trois",
+      "back": "drei",
+      "tags": [
+        "zahl"
+      ]
+    },
+    {
+      "id": "n-4",
+      "front": "quatre",
+      "back": "vier",
+      "tags": [
+        "zahl"
+      ]
+    },
+    {
+      "id": "n-5",
+      "front": "cinq",
+      "back": "fünf",
+      "tags": [
+        "zahl"
+      ]
+    },
+    {
+      "id": "n-6",
+      "front": "six",
+      "back": "sechs",
+      "tags": [
+        "zahl"
+      ]
+    },
+    {
+      "id": "n-7",
+      "front": "sept",
+      "back": "sieben",
+      "tags": [
+        "zahl"
+      ]
+    },
+    {
+      "id": "n-8",
+      "front": "huit",
+      "back": "acht",
+      "tags": [
+        "zahl"
+      ]
+    },
+    {
+      "id": "n-9",
+      "front": "neuf",
+      "back": "neun",
+      "tags": [
+        "zahl"
+      ]
+    },
+    {
+      "id": "n-10",
+      "front": "dix",
+      "back": "zehn",
+      "tags": [
+        "zahl"
+      ]
+    }
   ],
   "steps": [
     {
@@ -32,14 +102,36 @@
         "id": "ex-match-zahlen-niedrig",
         "type": "matching",
         "prompt": "Ordne die französischen Zahlen 1 bis 5 ihrer deutschen Entsprechung zu.",
-        "card_ids": ["n-1", "n-2", "n-3", "n-4", "n-5"],
+        "card_ids": [
+          "n-1",
+          "n-2",
+          "n-3",
+          "n-4",
+          "n-5"
+        ],
         "pairs": [
-          {"left": "un", "right": "eins"},
-          {"left": "deux", "right": "zwei"},
-          {"left": "trois", "right": "drei"},
-          {"left": "quatre", "right": "vier"},
-          {"left": "cinq", "right": "fünf"}
-        ]
+          {
+            "left": "un",
+            "right": "eins"
+          },
+          {
+            "left": "deux",
+            "right": "zwei"
+          },
+          {
+            "left": "trois",
+            "right": "drei"
+          },
+          {
+            "left": "quatre",
+            "right": "vier"
+          },
+          {
+            "left": "cinq",
+            "right": "fünf"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -50,14 +142,36 @@
         "id": "ex-match-zahlen-hoch",
         "type": "matching",
         "prompt": "Ordne die französischen Zahlen 6 bis 10 ihrer deutschen Entsprechung zu.",
-        "card_ids": ["n-6", "n-7", "n-8", "n-9", "n-10"],
+        "card_ids": [
+          "n-6",
+          "n-7",
+          "n-8",
+          "n-9",
+          "n-10"
+        ],
         "pairs": [
-          {"left": "six", "right": "sechs"},
-          {"left": "sept", "right": "sieben"},
-          {"left": "huit", "right": "acht"},
-          {"left": "neuf", "right": "neun"},
-          {"left": "dix", "right": "zehn"}
-        ]
+          {
+            "left": "six",
+            "right": "sechs"
+          },
+          {
+            "left": "sept",
+            "right": "sieben"
+          },
+          {
+            "left": "huit",
+            "right": "acht"
+          },
+          {
+            "left": "neuf",
+            "right": "neun"
+          },
+          {
+            "left": "dix",
+            "right": "zehn"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -74,10 +188,20 @@
         "id": "ex-free-fuenf",
         "type": "free_text",
         "prompt": "Tippe das französische Wort für die Zahl 5.",
-        "card_ids": ["n-5"],
-        "accept": ["cinq", "Cinq"],
+        "card_ids": [
+          "n-5"
+        ],
+        "accept": [
+          "cinq",
+          "Cinq"
+        ],
         "hint": "Vier Buchstaben, beginnt mit C.",
-        "distractors": ["six", "sept", "quatre"]
+        "distractors": [
+          "six",
+          "sept",
+          "quatre"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -88,9 +212,18 @@
         "id": "ex-tile-zaehlen",
         "type": "word_tiles",
         "prompt": "Bringe die Kacheln in die Zählreihenfolge von eins bis drei.",
-        "card_ids": ["n-1", "n-2", "n-3"],
-        "tiles": ["un", "deux", "trois"],
-        "hint": "Gleiche Reihenfolge wie im Deutschen: eins, zwei, drei."
+        "card_ids": [
+          "n-1",
+          "n-2",
+          "n-3"
+        ],
+        "tiles": [
+          "un",
+          "deux",
+          "trois"
+        ],
+        "hint": "Gleiche Reihenfolge wie im Deutschen: eins, zwei, drei.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -101,9 +234,17 @@
         "id": "ex-cloze-sept",
         "type": "cloze",
         "prompt": "Ergänze die fehlende Zahl (sieben).",
-        "card_ids": ["n-7"],
+        "card_ids": [
+          "n-7"
+        ],
         "sentence": "Il y a ___ jours dans une semaine.",
-        "blanks": [{"accept": ["sept"]}],
+        "blanks": [
+          {
+            "accept": [
+              "sept"
+            ]
+          }
+        ],
         "cloze_mode": "type",
         "hint": "Eine Woche hat sieben Tage."
       }

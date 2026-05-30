@@ -6,14 +6,72 @@
   "source_language": "de",
   "estimated_minutes": 14,
   "cards": [
-    {"id": "soy", "front": "yo soy", "back": "ich bin (ser)", "notes": "ser für dauerhafte Eigenschaften und Identität.", "tags": ["ser"]},
-    {"id": "eres", "front": "tú eres", "back": "du bist (ser)", "tags": ["ser"]},
-    {"id": "es", "front": "él/ella es", "back": "er/sie ist (ser)", "tags": ["ser"]},
-    {"id": "estoy", "front": "yo estoy", "back": "ich bin (estar)", "notes": "estar für Zustände und Orte.", "tags": ["estar"]},
-    {"id": "estas", "front": "tú estás", "back": "du bist (estar)", "tags": ["estar"]},
-    {"id": "esta", "front": "él/ella está", "back": "er/sie ist (estar)", "tags": ["estar"]},
-    {"id": "soy-estudiante", "front": "Soy estudiante.", "back": "Ich bin Studentin/Student. (Identität → ser)", "tags": ["beispiel"]},
-    {"id": "estoy-cansado", "front": "Estoy cansado.", "back": "Ich bin müde. (vorübergehender Zustand → estar)", "tags": ["beispiel"]}
+    {
+      "id": "soy",
+      "front": "yo soy",
+      "back": "ich bin (ser)",
+      "notes": "ser für dauerhafte Eigenschaften und Identität.",
+      "tags": [
+        "ser"
+      ]
+    },
+    {
+      "id": "eres",
+      "front": "tú eres",
+      "back": "du bist (ser)",
+      "tags": [
+        "ser"
+      ]
+    },
+    {
+      "id": "es",
+      "front": "él/ella es",
+      "back": "er/sie ist (ser)",
+      "tags": [
+        "ser"
+      ]
+    },
+    {
+      "id": "estoy",
+      "front": "yo estoy",
+      "back": "ich bin (estar)",
+      "notes": "estar für Zustände und Orte.",
+      "tags": [
+        "estar"
+      ]
+    },
+    {
+      "id": "estas",
+      "front": "tú estás",
+      "back": "du bist (estar)",
+      "tags": [
+        "estar"
+      ]
+    },
+    {
+      "id": "esta",
+      "front": "él/ella está",
+      "back": "er/sie ist (estar)",
+      "tags": [
+        "estar"
+      ]
+    },
+    {
+      "id": "soy-estudiante",
+      "front": "Soy estudiante.",
+      "back": "Ich bin Studentin/Student. (Identität → ser)",
+      "tags": [
+        "beispiel"
+      ]
+    },
+    {
+      "id": "estoy-cansado",
+      "front": "Estoy cansado.",
+      "back": "Ich bin müde. (vorübergehender Zustand → estar)",
+      "tags": [
+        "beispiel"
+      ]
+    }
   ],
   "steps": [
     {
@@ -36,12 +94,26 @@
         "id": "ex-match-ser",
         "type": "matching",
         "prompt": "Ordne die ser-Formen ihrer deutschen Bedeutung zu.",
-        "card_ids": ["soy", "eres", "es"],
+        "card_ids": [
+          "soy",
+          "eres",
+          "es"
+        ],
         "pairs": [
-          {"left": "yo soy", "right": "ich bin"},
-          {"left": "tú eres", "right": "du bist"},
-          {"left": "él/ella es", "right": "er/sie ist"}
-        ]
+          {
+            "left": "yo soy",
+            "right": "ich bin"
+          },
+          {
+            "left": "tú eres",
+            "right": "du bist"
+          },
+          {
+            "left": "él/ella es",
+            "right": "er/sie ist"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -58,12 +130,26 @@
         "id": "ex-match-estar",
         "type": "matching",
         "prompt": "Ordne die estar-Formen ihrer deutschen Bedeutung zu.",
-        "card_ids": ["estoy", "estas", "esta"],
+        "card_ids": [
+          "estoy",
+          "estas",
+          "esta"
+        ],
         "pairs": [
-          {"left": "yo estoy", "right": "ich bin"},
-          {"left": "tú estás", "right": "du bist"},
-          {"left": "él/ella está", "right": "er/sie ist"}
-        ]
+          {
+            "left": "yo estoy",
+            "right": "ich bin"
+          },
+          {
+            "left": "tú estás",
+            "right": "du bist"
+          },
+          {
+            "left": "él/ella está",
+            "right": "er/sie ist"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -74,10 +160,21 @@
         "id": "ex-free-identitaet",
         "type": "free_text",
         "prompt": "'Ich bin Studentin' (Identität): yo ___ estudiante. Tippe die fehlende Form.",
-        "card_ids": ["soy", "soy-estudiante"],
-        "accept": ["soy", "Soy"],
+        "card_ids": [
+          "soy",
+          "soy-estudiante"
+        ],
+        "accept": [
+          "soy",
+          "Soy"
+        ],
         "hint": "Identität ist dauerhaft → ser.",
-        "distractors": ["estoy", "es", "está"]
+        "distractors": [
+          "estoy",
+          "es",
+          "está"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -88,9 +185,16 @@
         "id": "ex-tile-soy-estudiante",
         "type": "word_tiles",
         "prompt": "Setze den Satz 'Ich bin Studentin' (Identität → ser) zusammen.",
-        "card_ids": ["soy", "soy-estudiante"],
-        "tiles": ["Soy", "estudiante"],
-        "hint": "Identität → ser → soy."
+        "card_ids": [
+          "soy",
+          "soy-estudiante"
+        ],
+        "tiles": [
+          "Soy",
+          "estudiante"
+        ],
+        "hint": "Identität → ser → soy.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -101,9 +205,19 @@
         "id": "ex-cloze-zustand",
         "type": "cloze",
         "prompt": "'Ich bin müde' ist ein vorübergehender Zustand — ergänze die richtige Form.",
-        "card_ids": ["estoy", "estoy-cansado"],
+        "card_ids": [
+          "estoy",
+          "estoy-cansado"
+        ],
         "sentence": "Yo ___ cansado.",
-        "blanks": [{"accept": ["estoy", "Estoy"]}],
+        "blanks": [
+          {
+            "accept": [
+              "estoy",
+              "Estoy"
+            ]
+          }
+        ],
         "cloze_mode": "type",
         "hint": "Zustand → estar."
       }

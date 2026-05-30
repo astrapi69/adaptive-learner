@@ -6,12 +6,57 @@
   "source_language": "de",
   "estimated_minutes": 10,
   "cards": [
-    {"id": "hola", "front": "Hola", "back": "Hallo", "notes": "Universelle Begrüßung, jederzeit passend.", "tags": ["begruessung"]},
-    {"id": "buenos-dias", "front": "Buenos días", "back": "Guten Morgen / Guten Tag", "notes": "Vormittags bis zum Mittagessen.", "tags": ["begruessung"]},
-    {"id": "buenas-tardes", "front": "Buenas tardes", "back": "Guten Nachmittag", "notes": "Vom Nachmittag bis zum Einbruch der Dunkelheit.", "tags": ["begruessung"]},
-    {"id": "buenas-noches", "front": "Buenas noches", "back": "Guten Abend / Gute Nacht", "tags": ["begruessung"]},
-    {"id": "adios", "front": "Adiós", "back": "Auf Wiedersehen", "tags": ["verabschiedung"]},
-    {"id": "gracias", "front": "Gracias", "back": "Danke", "tags": ["hoeflichkeit"]}
+    {
+      "id": "hola",
+      "front": "Hola",
+      "back": "Hallo",
+      "notes": "Universelle Begrüßung, jederzeit passend.",
+      "tags": [
+        "begruessung"
+      ]
+    },
+    {
+      "id": "buenos-dias",
+      "front": "Buenos días",
+      "back": "Guten Morgen / Guten Tag",
+      "notes": "Vormittags bis zum Mittagessen.",
+      "tags": [
+        "begruessung"
+      ]
+    },
+    {
+      "id": "buenas-tardes",
+      "front": "Buenas tardes",
+      "back": "Guten Nachmittag",
+      "notes": "Vom Nachmittag bis zum Einbruch der Dunkelheit.",
+      "tags": [
+        "begruessung"
+      ]
+    },
+    {
+      "id": "buenas-noches",
+      "front": "Buenas noches",
+      "back": "Guten Abend / Gute Nacht",
+      "tags": [
+        "begruessung"
+      ]
+    },
+    {
+      "id": "adios",
+      "front": "Adiós",
+      "back": "Auf Wiedersehen",
+      "tags": [
+        "verabschiedung"
+      ]
+    },
+    {
+      "id": "gracias",
+      "front": "Gracias",
+      "back": "Danke",
+      "tags": [
+        "hoeflichkeit"
+      ]
+    }
   ],
   "steps": [
     {
@@ -34,13 +79,31 @@
         "id": "ex-match-begruessung",
         "type": "matching",
         "prompt": "Ordne jeder spanischen Begrüßung die deutsche Übersetzung zu.",
-        "card_ids": ["hola", "buenos-dias", "buenas-tardes", "adios"],
+        "card_ids": [
+          "hola",
+          "buenos-dias",
+          "buenas-tardes",
+          "adios"
+        ],
         "pairs": [
-          {"left": "Hola", "right": "Hallo"},
-          {"left": "Buenos días", "right": "Guten Morgen / Guten Tag"},
-          {"left": "Buenas tardes", "right": "Guten Nachmittag"},
-          {"left": "Adiós", "right": "Auf Wiedersehen"}
-        ]
+          {
+            "left": "Hola",
+            "right": "Hallo"
+          },
+          {
+            "left": "Buenos días",
+            "right": "Guten Morgen / Guten Tag"
+          },
+          {
+            "left": "Buenas tardes",
+            "right": "Guten Nachmittag"
+          },
+          {
+            "left": "Adiós",
+            "right": "Auf Wiedersehen"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -51,10 +114,20 @@
         "id": "ex-free-hola",
         "type": "free_text",
         "prompt": "Wie sagt man 'Hallo' auf Spanisch?",
-        "card_ids": ["hola"],
-        "accept": ["Hola", "hola"],
+        "card_ids": [
+          "hola"
+        ],
+        "accept": [
+          "Hola",
+          "hola"
+        ],
         "hint": "Vier Buchstaben, das H ist stumm.",
-        "distractors": ["Adiós", "Gracias", "Buenos días"]
+        "distractors": [
+          "Adiós",
+          "Gracias",
+          "Buenos días"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -65,10 +138,20 @@
         "id": "ex-free-gracias",
         "type": "free_text",
         "prompt": "Wie sagt man 'Danke' auf Spanisch?",
-        "card_ids": ["gracias"],
-        "accept": ["Gracias", "gracias"],
+        "card_ids": [
+          "gracias"
+        ],
+        "accept": [
+          "Gracias",
+          "gracias"
+        ],
         "hint": "Beginnt mit G.",
-        "distractors": ["Hola", "Adiós", "Buenas noches"]
+        "distractors": [
+          "Hola",
+          "Adiós",
+          "Buenas noches"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -79,9 +162,15 @@
         "id": "ex-tile-buenas-noches",
         "type": "word_tiles",
         "prompt": "Setze die Kacheln zum Abend-/Nachtgruß zusammen.",
-        "card_ids": ["buenas-noches"],
-        "tiles": ["Buenas", "noches"],
-        "hint": "Beide Wörter stehen im Plural."
+        "card_ids": [
+          "buenas-noches"
+        ],
+        "tiles": [
+          "Buenas",
+          "noches"
+        ],
+        "hint": "Beide Wörter stehen im Plural.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -92,9 +181,24 @@
         "id": "ex-cloze-buenos-dias",
         "type": "cloze",
         "prompt": "Ergänze den Morgengruß (zwei Wörter, Plural).",
-        "card_ids": ["buenos-dias"],
+        "card_ids": [
+          "buenos-dias"
+        ],
         "sentence": "___ ___ , señora.",
-        "blanks": [{"accept": ["Buenos", "buenos"]}, {"accept": ["días", "dias"]}],
+        "blanks": [
+          {
+            "accept": [
+              "Buenos",
+              "buenos"
+            ]
+          },
+          {
+            "accept": [
+              "días",
+              "dias"
+            ]
+          }
+        ],
         "cloze_mode": "type",
         "hint": "Wörtlich 'gute Tage'."
       }

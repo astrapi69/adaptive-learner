@@ -9,132 +9,208 @@
       "front": "je",
       "back": "I",
       "notes": "Elides to **j'** before a vowel: *j'ai*, *j'aime*, *j'écoute*.",
-      "tags": ["pronoun", "subject"]
+      "tags": [
+        "pronoun",
+        "subject"
+      ]
     },
     {
       "id": "pron-tu",
       "front": "tu",
       "back": "you (informal singular)",
       "notes": "Used with friends, family, kids, peers. NEVER for a stranger or a customer — that's *vous*.",
-      "tags": ["pronoun", "subject", "informal"]
+      "tags": [
+        "pronoun",
+        "subject",
+        "informal"
+      ]
     },
     {
       "id": "pron-il",
       "front": "il",
       "back": "he / it (m.)",
       "notes": "Also used for masculine objects: *le livre — il est rouge* (the book — it is red).",
-      "tags": ["pronoun", "subject"]
+      "tags": [
+        "pronoun",
+        "subject"
+      ]
     },
     {
       "id": "pron-elle",
       "front": "elle",
       "back": "she / it (f.)",
       "notes": "Also used for feminine objects: *la chaise — elle est verte*.",
-      "tags": ["pronoun", "subject"]
+      "tags": [
+        "pronoun",
+        "subject"
+      ]
     },
     {
       "id": "pron-nous",
       "front": "nous",
       "back": "we",
       "notes": "In casual speech, often replaced by *on* (*on est* = we are). At A1, stick with *nous*.",
-      "tags": ["pronoun", "subject"]
+      "tags": [
+        "pronoun",
+        "subject"
+      ]
     },
     {
       "id": "pron-vous",
       "front": "vous",
       "back": "you (formal or plural)",
       "notes": "Two uses: (1) formal singular (one stranger, one professor), (2) plural (multiple people, any formality). The verb form is the same.",
-      "tags": ["pronoun", "subject", "formal"]
+      "tags": [
+        "pronoun",
+        "subject",
+        "formal"
+      ]
     },
     {
       "id": "pron-ils",
       "front": "ils",
       "back": "they (m. or mixed)",
       "notes": "Used for groups of all men or mixed men+women. Even one man in a group of women makes the group *ils*.",
-      "tags": ["pronoun", "subject", "plural"]
+      "tags": [
+        "pronoun",
+        "subject",
+        "plural"
+      ]
     },
     {
       "id": "pron-elles",
       "front": "elles",
       "back": "they (f. — all women / all feminine)",
       "notes": "Only when every member of the group is feminine.",
-      "tags": ["pronoun", "subject", "plural"]
+      "tags": [
+        "pronoun",
+        "subject",
+        "plural"
+      ]
     },
     {
       "id": "etre-suis",
       "front": "je suis",
       "back": "I am",
-      "tags": ["verb", "etre", "present"]
+      "tags": [
+        "verb",
+        "etre",
+        "present"
+      ]
     },
     {
       "id": "etre-es",
       "front": "tu es",
       "back": "you are (informal sg.)",
-      "tags": ["verb", "etre", "present"]
+      "tags": [
+        "verb",
+        "etre",
+        "present"
+      ]
     },
     {
       "id": "etre-est",
       "front": "il/elle est",
       "back": "he/she/it is",
-      "tags": ["verb", "etre", "present"]
+      "tags": [
+        "verb",
+        "etre",
+        "present"
+      ]
     },
     {
       "id": "etre-sommes",
       "front": "nous sommes",
       "back": "we are",
-      "tags": ["verb", "etre", "present"]
+      "tags": [
+        "verb",
+        "etre",
+        "present"
+      ]
     },
     {
       "id": "etre-etes",
       "front": "vous êtes",
       "back": "you are (formal / pl.)",
       "notes": "Note the circumflex on the ê — it's a hint that an old s used to be there (compare English *est*).",
-      "tags": ["verb", "etre", "present"]
+      "tags": [
+        "verb",
+        "etre",
+        "present"
+      ]
     },
     {
       "id": "etre-sont",
       "front": "ils/elles sont",
       "back": "they are",
-      "tags": ["verb", "etre", "present"]
+      "tags": [
+        "verb",
+        "etre",
+        "present"
+      ]
     },
     {
       "id": "avoir-ai",
       "front": "j'ai",
       "back": "I have",
       "notes": "Elided: *je ai* never happens; always **j'ai**.",
-      "tags": ["verb", "avoir", "present"]
+      "tags": [
+        "verb",
+        "avoir",
+        "present"
+      ]
     },
     {
       "id": "avoir-as",
       "front": "tu as",
       "back": "you have (informal sg.)",
-      "tags": ["verb", "avoir", "present"]
+      "tags": [
+        "verb",
+        "avoir",
+        "present"
+      ]
     },
     {
       "id": "avoir-a",
       "front": "il/elle a",
       "back": "he/she/it has",
       "notes": "No accent. *il a* (he has) vs *il à* (which doesn't exist as a sentence — *à* is a preposition).",
-      "tags": ["verb", "avoir", "present"]
+      "tags": [
+        "verb",
+        "avoir",
+        "present"
+      ]
     },
     {
       "id": "avoir-avons",
       "front": "nous avons",
       "back": "we have",
-      "tags": ["verb", "avoir", "present"]
+      "tags": [
+        "verb",
+        "avoir",
+        "present"
+      ]
     },
     {
       "id": "avoir-avez",
       "front": "vous avez",
       "back": "you have (formal / pl.)",
-      "tags": ["verb", "avoir", "present"]
+      "tags": [
+        "verb",
+        "avoir",
+        "present"
+      ]
     },
     {
       "id": "avoir-ont",
       "front": "ils/elles ont",
       "back": "they have",
       "notes": "Don't confuse with *sont* (they are). One letter, totally different meaning.",
-      "tags": ["verb", "avoir", "present"]
+      "tags": [
+        "verb",
+        "avoir",
+        "present"
+      ]
     }
   ],
   "steps": [
@@ -158,15 +234,41 @@
         "id": "ex-match-etre",
         "type": "matching",
         "prompt": "Match each subject pronoun with the correct form of *être*.",
-        "card_ids": ["etre-suis", "etre-es", "etre-est", "etre-sommes", "etre-etes", "etre-sont"],
+        "card_ids": [
+          "etre-suis",
+          "etre-es",
+          "etre-est",
+          "etre-sommes",
+          "etre-etes",
+          "etre-sont"
+        ],
         "pairs": [
-          {"left": "je", "right": "suis"},
-          {"left": "tu", "right": "es"},
-          {"left": "il", "right": "est"},
-          {"left": "nous", "right": "sommes"},
-          {"left": "vous", "right": "êtes"},
-          {"left": "ils", "right": "sont"}
-        ]
+          {
+            "left": "je",
+            "right": "suis"
+          },
+          {
+            "left": "tu",
+            "right": "es"
+          },
+          {
+            "left": "il",
+            "right": "est"
+          },
+          {
+            "left": "nous",
+            "right": "sommes"
+          },
+          {
+            "left": "vous",
+            "right": "êtes"
+          },
+          {
+            "left": "ils",
+            "right": "sont"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -177,10 +279,21 @@
         "id": "ex-free-etre-vous",
         "type": "free_text",
         "prompt": "Type the form of *être* that goes with **vous**.",
-        "card_ids": ["etre-etes"],
-        "accept": ["êtes", "Êtes", "etes"],
+        "card_ids": [
+          "etre-etes"
+        ],
+        "accept": [
+          "êtes",
+          "Êtes",
+          "etes"
+        ],
         "hint": "Has a circumflex. Sounds like \"ett\".",
-        "distractors": ["est", "sommes", "sont"]
+        "distractors": [
+          "est",
+          "sommes",
+          "sont"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -197,15 +310,41 @@
         "id": "ex-match-avoir",
         "type": "matching",
         "prompt": "Match each subject pronoun with the correct form of *avoir*.",
-        "card_ids": ["avoir-ai", "avoir-as", "avoir-a", "avoir-avons", "avoir-avez", "avoir-ont"],
+        "card_ids": [
+          "avoir-ai",
+          "avoir-as",
+          "avoir-a",
+          "avoir-avons",
+          "avoir-avez",
+          "avoir-ont"
+        ],
         "pairs": [
-          {"left": "j'", "right": "ai"},
-          {"left": "tu", "right": "as"},
-          {"left": "elle", "right": "a"},
-          {"left": "nous", "right": "avons"},
-          {"left": "vous", "right": "avez"},
-          {"left": "ils", "right": "ont"}
-        ]
+          {
+            "left": "j'",
+            "right": "ai"
+          },
+          {
+            "left": "tu",
+            "right": "as"
+          },
+          {
+            "left": "elle",
+            "right": "a"
+          },
+          {
+            "left": "nous",
+            "right": "avons"
+          },
+          {
+            "left": "vous",
+            "right": "avez"
+          },
+          {
+            "left": "ils",
+            "right": "ont"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -216,10 +355,21 @@
         "id": "ex-free-avoir-nous",
         "type": "free_text",
         "prompt": "Type the form of *avoir* that goes with **nous**.",
-        "card_ids": ["avoir-avons"],
-        "accept": ["avons", "Avons", "AVONS"],
+        "card_ids": [
+          "avoir-avons"
+        ],
+        "accept": [
+          "avons",
+          "Avons",
+          "AVONS"
+        ],
         "hint": "Three syllables: a-vons.",
-        "distractors": ["avez", "ont", "ai"]
+        "distractors": [
+          "avez",
+          "ont",
+          "ai"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -236,7 +386,10 @@
         "id": "ex-pick-vous",
         "type": "picture_choice",
         "prompt": "You are addressing your professor in class. Which pronoun do you use?",
-        "card_ids": ["pron-tu", "pron-vous"],
+        "card_ids": [
+          "pron-tu",
+          "pron-vous"
+        ],
         "images": [
           {
             "src": "assets/img/teacher.png",
@@ -257,7 +410,12 @@
           }
         ],
         "hint": "Professors get the formal form, even if they're young.",
-        "distractors": ["tu", "il", "nous"]
+        "distractors": [
+          "tu",
+          "il",
+          "nous"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -268,9 +426,16 @@
         "id": "ex-tile-je-suis",
         "type": "word_tiles",
         "prompt": "Arrange the tiles to mean *I am French* (using masculine form).",
-        "card_ids": ["etre-suis"],
-        "tiles": ["Je", "suis", "français"],
-        "hint": "Subject + être + adjective. Same order as English."
+        "card_ids": [
+          "etre-suis"
+        ],
+        "tiles": [
+          "Je",
+          "suis",
+          "français"
+        ],
+        "hint": "Subject + être + adjective. Same order as English.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -281,9 +446,16 @@
         "id": "ex-tile-jai-faim",
         "type": "word_tiles",
         "prompt": "Arrange the tiles to mean *I am hungry*. (Hint: French uses *avoir*, not *être*, for hunger.)",
-        "card_ids": ["avoir-ai"],
-        "tiles": ["J'", "ai", "faim"],
-        "hint": "Literally *I have hunger* — French uses avoir for hunger / thirst / age."
+        "card_ids": [
+          "avoir-ai"
+        ],
+        "tiles": [
+          "J'",
+          "ai",
+          "faim"
+        ],
+        "hint": "Literally *I have hunger* — French uses avoir for hunger / thirst / age.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -294,10 +466,21 @@
         "id": "ex-free-age",
         "type": "free_text",
         "prompt": "Translate *I am 25 years old.* into French. (Hint: French uses *avoir* for age. Write out the number as a single word: *vingt-cinq*.)",
-        "card_ids": ["avoir-ai"],
-        "accept": ["J'ai vingt-cinq ans.", "J'ai vingt-cinq ans", "j'ai vingt-cinq ans"],
+        "card_ids": [
+          "avoir-ai"
+        ],
+        "accept": [
+          "J'ai vingt-cinq ans.",
+          "J'ai vingt-cinq ans",
+          "j'ai vingt-cinq ans"
+        ],
         "hint": "Start with *J'ai* (I have), then the number, then *ans* (years).",
-        "distractors": ["Je suis vingt-cinq.", "Je suis vingt-cinq ans.", "J'ai vingt-cinq."]
+        "distractors": [
+          "Je suis vingt-cinq.",
+          "Je suis vingt-cinq ans.",
+          "J'ai vingt-cinq."
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -308,13 +491,29 @@
         "id": "ex-match-be-vs-have",
         "type": "matching",
         "prompt": "Match each English phrase to the French verb it uses.",
-        "card_ids": ["etre-suis", "avoir-ai"],
+        "card_ids": [
+          "etre-suis",
+          "avoir-ai"
+        ],
         "pairs": [
-          {"left": "I am tall", "right": "être"},
-          {"left": "I am hungry", "right": "avoir"},
-          {"left": "I am 30", "right": "avoir"},
-          {"left": "I am a student", "right": "être"}
-        ]
+          {
+            "left": "I am tall",
+            "right": "être"
+          },
+          {
+            "left": "I am hungry",
+            "right": "avoir"
+          },
+          {
+            "left": "I am 30",
+            "right": "avoir"
+          },
+          {
+            "left": "I am a student",
+            "right": "être"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -325,17 +524,25 @@
         "id": "ex-cloze-avoir-amie",
         "type": "cloze",
         "prompt": "Fill in the right form of *avoir* or *être*.",
-        "card_ids": ["avoir-a"],
+        "card_ids": [
+          "avoir-a"
+        ],
         "sentence": "Elle ___ une amie.",
         "blanks": [
           {
-            "accept": ["a"],
+            "accept": [
+              "a"
+            ],
             "hint": "*avoir* present, 3rd person singular",
             "placeholder": "?"
           }
         ],
         "cloze_mode": "type",
-        "distractors": ["est", "as", "ont"],
+        "distractors": [
+          "est",
+          "as",
+          "ont"
+        ],
         "hint": "*Elle a une amie* = *She has a friend* — possession uses *avoir*. *Elle est une amie* would mean *She IS a friend* (identity, using *être*), which is grammatically valid but a different sentence."
       }
     }

@@ -9,82 +9,114 @@
       "front": "parler",
       "back": "to speak",
       "notes": "Regular **-er** verb. Past participle: **parlé** (just swap -er for -é). Sounds the same as the infinitive — context disambiguates.",
-      "tags": ["verb", "regular-er"]
+      "tags": [
+        "verb",
+        "regular-er"
+      ]
     },
     {
       "id": "verb-manger",
       "front": "manger",
       "back": "to eat",
       "notes": "Past participle: **mangé**. (Same pattern: -er → -é.)",
-      "tags": ["verb", "regular-er"]
+      "tags": [
+        "verb",
+        "regular-er"
+      ]
     },
     {
       "id": "verb-regarder",
       "front": "regarder",
       "back": "to watch / look at",
       "notes": "Past participle: **regardé**. *J'ai regardé un film* — I watched a movie.",
-      "tags": ["verb", "regular-er"]
+      "tags": [
+        "verb",
+        "regular-er"
+      ]
     },
     {
       "id": "verb-ecouter",
       "front": "écouter",
       "back": "to listen (to)",
       "notes": "Past participle: **écouté**. Starts with a vowel — elision: *j'ai écouté*.",
-      "tags": ["verb", "regular-er"]
+      "tags": [
+        "verb",
+        "regular-er"
+      ]
     },
     {
       "id": "verb-habiter",
       "front": "habiter",
       "back": "to live (in)",
       "notes": "Past participle: **habité**. The **h** is silent — elision applies: *j'ai habité*.",
-      "tags": ["verb", "regular-er"]
+      "tags": [
+        "verb",
+        "regular-er"
+      ]
     },
     {
       "id": "verb-acheter",
       "front": "acheter",
       "back": "to buy",
       "notes": "Past participle: **acheté**. *J'ai acheté du pain* — I bought some bread.",
-      "tags": ["verb", "regular-er"]
+      "tags": [
+        "verb",
+        "regular-er"
+      ]
     },
     {
       "id": "verb-travailler",
       "front": "travailler",
       "back": "to work",
       "notes": "Past participle: **travaillé**. *Hier j'ai travaillé* — yesterday I worked.",
-      "tags": ["verb", "regular-er"]
+      "tags": [
+        "verb",
+        "regular-er"
+      ]
     },
     {
       "id": "verb-aimer",
       "front": "aimer",
       "back": "to like / love",
       "notes": "Past participle: **aimé**. *J'ai aimé ce film* — I liked this movie.",
-      "tags": ["verb", "regular-er"]
+      "tags": [
+        "verb",
+        "regular-er"
+      ]
     },
     {
       "id": "pp-parle",
       "front": "parlé",
       "back": "spoken (past participle of parler)",
-      "tags": ["participle"]
+      "tags": [
+        "participle"
+      ]
     },
     {
       "id": "pp-mange",
       "front": "mangé",
       "back": "eaten (past participle of manger)",
-      "tags": ["participle"]
+      "tags": [
+        "participle"
+      ]
     },
     {
       "id": "phr-hier",
       "front": "hier",
       "back": "yesterday",
       "notes": "Common time marker that pairs with the passé composé: *Hier j'ai mangé une pizza* — yesterday I ate a pizza.",
-      "tags": ["time"]
+      "tags": [
+        "time"
+      ]
     },
     {
       "id": "phr-ce-matin",
       "front": "ce matin",
       "back": "this morning",
       "notes": "Another past-time marker. Also: *ce soir* (this evening), *la semaine dernière* (last week).",
-      "tags": ["time"]
+      "tags": [
+        "time"
+      ]
     }
   ],
   "steps": [
@@ -108,15 +140,41 @@
         "id": "ex-match-participles",
         "type": "matching",
         "prompt": "Match each infinitive with its past participle.",
-        "card_ids": ["verb-parler", "verb-manger", "verb-regarder", "verb-ecouter", "verb-habiter", "verb-acheter"],
+        "card_ids": [
+          "verb-parler",
+          "verb-manger",
+          "verb-regarder",
+          "verb-ecouter",
+          "verb-habiter",
+          "verb-acheter"
+        ],
         "pairs": [
-          {"left": "parler", "right": "parlé"},
-          {"left": "manger", "right": "mangé"},
-          {"left": "regarder", "right": "regardé"},
-          {"left": "écouter", "right": "écouté"},
-          {"left": "habiter", "right": "habité"},
-          {"left": "acheter", "right": "acheté"}
-        ]
+          {
+            "left": "parler",
+            "right": "parlé"
+          },
+          {
+            "left": "manger",
+            "right": "mangé"
+          },
+          {
+            "left": "regarder",
+            "right": "regardé"
+          },
+          {
+            "left": "écouter",
+            "right": "écouté"
+          },
+          {
+            "left": "habiter",
+            "right": "habité"
+          },
+          {
+            "left": "acheter",
+            "right": "acheté"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -127,10 +185,21 @@
         "id": "ex-free-pp-travaille",
         "type": "free_text",
         "prompt": "What is the past participle of **travailler** (to work)?",
-        "card_ids": ["verb-travailler"],
-        "accept": ["travaillé", "Travaillé", "travaille"],
+        "card_ids": [
+          "verb-travailler"
+        ],
+        "accept": [
+          "travaillé",
+          "Travaillé",
+          "travaille"
+        ],
         "hint": "Drop -er, add -é. The result has the same accent pattern as *parlé*, *mangé*.",
-        "distractors": ["travailler", "travaillai", "travaillait"]
+        "distractors": [
+          "travailler",
+          "travaillai",
+          "travaillait"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -147,10 +216,23 @@
         "id": "ex-free-jai-mange",
         "type": "free_text",
         "prompt": "Translate: *I ate yesterday.* (Use the passé composé. Word order: subject + avoir + participle + time.)",
-        "card_ids": ["verb-manger", "pp-mange", "phr-hier"],
-        "accept": ["J'ai mangé hier.", "J'ai mangé hier", "j'ai mangé hier"],
+        "card_ids": [
+          "verb-manger",
+          "pp-mange",
+          "phr-hier"
+        ],
+        "accept": [
+          "J'ai mangé hier.",
+          "J'ai mangé hier",
+          "j'ai mangé hier"
+        ],
         "hint": "*J'ai* + past participle of *manger* + *hier*.",
-        "distractors": ["Je mange hier.", "J'ai mange hier.", "Je suis mangé hier."]
+        "distractors": [
+          "Je mange hier.",
+          "J'ai mange hier.",
+          "Je suis mangé hier."
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -161,9 +243,20 @@
         "id": "ex-tile-she-watched",
         "type": "word_tiles",
         "prompt": "Arrange to mean: *She watched a film yesterday.*",
-        "card_ids": ["verb-regarder", "phr-hier"],
-        "tiles": ["Elle", "a", "regardé", "un", "film", "hier"],
-        "hint": "Subject + form of *avoir* + participle + object + time marker."
+        "card_ids": [
+          "verb-regarder",
+          "phr-hier"
+        ],
+        "tiles": [
+          "Elle",
+          "a",
+          "regardé",
+          "un",
+          "film",
+          "hier"
+        ],
+        "hint": "Subject + form of *avoir* + participle + object + time marker.",
+        "direction": "source_to_target"
       }
     },
     {
@@ -180,7 +273,9 @@
         "id": "ex-pick-negation",
         "type": "picture_choice",
         "prompt": "How do you say *I did not eat*?",
-        "card_ids": ["verb-manger"],
+        "card_ids": [
+          "verb-manger"
+        ],
         "images": [
           {
             "src": "assets/img/empty-plate-1.png",
@@ -201,7 +296,12 @@
           }
         ],
         "hint": "Negation wraps *avoir* (the conjugated verb): *ne ... pas* around *ai*.",
-        "distractors": ["Je ne mange pas.", "J'ai pas mangé.", "Je n'ai mangé pas."]
+        "distractors": [
+          "Je ne mange pas.",
+          "J'ai pas mangé.",
+          "Je n'ai mangé pas."
+        ],
+        "direction": "source_to_target"
       }
     },
     {
@@ -212,10 +312,22 @@
         "id": "ex-free-we-listened",
         "type": "free_text",
         "prompt": "Translate: *We listened to music this morning.*",
-        "card_ids": ["verb-ecouter", "phr-ce-matin"],
-        "accept": ["Nous avons écouté de la musique ce matin.", "Nous avons écouté de la musique ce matin", "nous avons écouté de la musique ce matin"],
+        "card_ids": [
+          "verb-ecouter",
+          "phr-ce-matin"
+        ],
+        "accept": [
+          "Nous avons écouté de la musique ce matin.",
+          "Nous avons écouté de la musique ce matin",
+          "nous avons écouté de la musique ce matin"
+        ],
         "hint": "*Nous avons* + écouté + *de la musique* + *ce matin*.",
-        "distractors": ["Nous écoutons de la musique ce matin.", "Nous avons écouter de la musique ce matin.", "Nous sommes écouté de la musique ce matin."]
+        "distractors": [
+          "Nous écoutons de la musique ce matin.",
+          "Nous avons écouter de la musique ce matin.",
+          "Nous sommes écouté de la musique ce matin."
+        ],
+        "direction": "source_to_target"
       }
     },
     {
@@ -226,13 +338,29 @@
         "id": "ex-match-time-markers",
         "type": "matching",
         "prompt": "Match each French time expression with its English meaning.",
-        "card_ids": ["phr-hier", "phr-ce-matin"],
+        "card_ids": [
+          "phr-hier",
+          "phr-ce-matin"
+        ],
         "pairs": [
-          {"left": "hier", "right": "yesterday"},
-          {"left": "ce matin", "right": "this morning"},
-          {"left": "ce soir", "right": "this evening"},
-          {"left": "la semaine dernière", "right": "last week"}
-        ]
+          {
+            "left": "hier",
+            "right": "yesterday"
+          },
+          {
+            "left": "ce matin",
+            "right": "this morning"
+          },
+          {
+            "left": "ce soir",
+            "right": "this evening"
+          },
+          {
+            "left": "la semaine dernière",
+            "right": "last week"
+          }
+        ],
+        "direction": "source_to_target"
       }
     },
     {
@@ -243,9 +371,20 @@
         "id": "ex-tile-i-bought",
         "type": "word_tiles",
         "prompt": "Arrange to mean: *I bought a book yesterday.*",
-        "card_ids": ["verb-acheter", "phr-hier"],
-        "tiles": ["J'", "ai", "acheté", "un", "livre", "hier"],
-        "hint": "Subject (elided) + avoir + participle + object + time."
+        "card_ids": [
+          "verb-acheter",
+          "phr-hier"
+        ],
+        "tiles": [
+          "J'",
+          "ai",
+          "acheté",
+          "un",
+          "livre",
+          "hier"
+        ],
+        "hint": "Subject (elided) + avoir + participle + object + time.",
+        "direction": "source_to_target"
       }
     },
     {
@@ -256,10 +395,21 @@
         "id": "ex-free-they-liked",
         "type": "free_text",
         "prompt": "Translate: *They liked the film.* (Use masculine *they*. Past tense, passé composé.)",
-        "card_ids": ["verb-aimer"],
-        "accept": ["Ils ont aimé le film.", "Ils ont aimé le film", "ils ont aimé le film"],
+        "card_ids": [
+          "verb-aimer"
+        ],
+        "accept": [
+          "Ils ont aimé le film.",
+          "Ils ont aimé le film",
+          "ils ont aimé le film"
+        ],
         "hint": "Plural masculine *ils* + *ont* (have) + past participle.",
-        "distractors": ["Ils aiment le film.", "Ils ont aimer le film.", "Ils sont aimé le film."]
+        "distractors": [
+          "Ils aiment le film.",
+          "Ils ont aimer le film.",
+          "Ils sont aimé le film."
+        ],
+        "direction": "source_to_target"
       }
     }
   ]

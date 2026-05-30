@@ -9,9 +9,15 @@
       "front": "le",
       "back": "the (masculine singular)",
       "notes": "Used before consonant-starting masculine nouns: **le chat**, **le livre**, **le garçon**.",
-      "tags": ["article", "definite"],
+      "tags": [
+        "article",
+        "definite"
+      ],
       "token_roles": [
-        {"token": "le", "role": "article"}
+        {
+          "token": "le",
+          "role": "article"
+        }
       ]
     },
     {
@@ -19,9 +25,15 @@
       "front": "la",
       "back": "the (feminine singular)",
       "notes": "Used before consonant-starting feminine nouns: **la chaise**, **la maison**, **la fille**.",
-      "tags": ["article", "definite"],
+      "tags": [
+        "article",
+        "definite"
+      ],
       "token_roles": [
-        {"token": "la", "role": "article"}
+        {
+          "token": "la",
+          "role": "article"
+        }
       ]
     },
     {
@@ -29,9 +41,16 @@
       "front": "l'",
       "back": "the (before a vowel or silent h)",
       "notes": "Elided form of *le* / *la* before words starting with a vowel sound: **l'eau**, **l'enfant**, **l'homme** (silent h). NOT **le eau** — the elision is mandatory.",
-      "tags": ["article", "definite", "elision"],
+      "tags": [
+        "article",
+        "definite",
+        "elision"
+      ],
       "token_roles": [
-        {"token": "l'", "role": "article"}
+        {
+          "token": "l'",
+          "role": "article"
+        }
       ]
     },
     {
@@ -39,9 +58,16 @@
       "front": "les",
       "back": "the (plural — both genders)",
       "notes": "Same form for masculine and feminine plurals: **les chats**, **les chaises**, **les enfants**. Pronounce the s with a /z/ liaison before a vowel: *les_z_enfants*.",
-      "tags": ["article", "definite", "plural"],
+      "tags": [
+        "article",
+        "definite",
+        "plural"
+      ],
       "token_roles": [
-        {"token": "les", "role": "article"}
+        {
+          "token": "les",
+          "role": "article"
+        }
       ]
     },
     {
@@ -49,9 +75,15 @@
       "front": "un",
       "back": "a / an (masculine singular)",
       "notes": "Indefinite version of *le*. **un chat** = a cat (one of many). Final n is nasal, not pronounced like English n.",
-      "tags": ["article", "indefinite"],
+      "tags": [
+        "article",
+        "indefinite"
+      ],
       "token_roles": [
-        {"token": "un", "role": "article"}
+        {
+          "token": "un",
+          "role": "article"
+        }
       ]
     },
     {
@@ -59,9 +91,15 @@
       "front": "une",
       "back": "a / an (feminine singular)",
       "notes": "Indefinite version of *la*. **une chaise** = a chair. Final e makes the n audible (unlike *un*).",
-      "tags": ["article", "indefinite"],
+      "tags": [
+        "article",
+        "indefinite"
+      ],
       "token_roles": [
-        {"token": "une", "role": "article"}
+        {
+          "token": "une",
+          "role": "article"
+        }
       ]
     },
     {
@@ -69,27 +107,46 @@
       "front": "des",
       "back": "some / -- (plural)",
       "notes": "Indefinite plural — used where English drops the article entirely. **J'ai des amis** = I have friends (not *I have some friends*). Same for both genders.",
-      "tags": ["article", "indefinite", "plural"],
+      "tags": [
+        "article",
+        "indefinite",
+        "plural"
+      ],
       "token_roles": [
-        {"token": "des", "role": "article"}
+        {
+          "token": "des",
+          "role": "article"
+        }
       ]
     },
     {
       "id": "noun-chat",
       "front": "chat",
       "back": "cat (masculine)",
-      "tags": ["noun", "masculine"],
+      "tags": [
+        "noun",
+        "masculine"
+      ],
       "token_roles": [
-        {"token": "chat", "role": "noun"}
+        {
+          "token": "chat",
+          "role": "noun"
+        }
       ]
     },
     {
       "id": "noun-chaise",
       "front": "chaise",
       "back": "chair (feminine)",
-      "tags": ["noun", "feminine"],
+      "tags": [
+        "noun",
+        "feminine"
+      ],
       "token_roles": [
-        {"token": "chaise", "role": "noun"}
+        {
+          "token": "chaise",
+          "role": "noun"
+        }
       ]
     },
     {
@@ -97,30 +154,47 @@
       "front": "livre",
       "back": "book (masculine)",
       "notes": "Don't confuse with **la livre** (the pound — weight or currency). Same spelling, different gender, different meaning.",
-      "tags": ["noun", "masculine"],
+      "tags": [
+        "noun",
+        "masculine"
+      ],
       "token_roles": [
-        {"token": "livre", "role": "noun"}
+        {
+          "token": "livre",
+          "role": "noun"
+        }
       ]
     },
     {
       "id": "noun-maison",
       "front": "maison",
       "back": "house (feminine)",
-      "tags": ["noun", "feminine"]
+      "tags": [
+        "noun",
+        "feminine"
+      ]
     },
     {
       "id": "noun-eau",
       "front": "eau",
       "back": "water (feminine)",
       "notes": "Starts with a vowel — definite form is **l'eau**, not *la eau*.",
-      "tags": ["noun", "feminine", "vowel-start"]
+      "tags": [
+        "noun",
+        "feminine",
+        "vowel-start"
+      ]
     },
     {
       "id": "noun-enfant",
       "front": "enfant",
       "back": "child (both genders)",
       "notes": "Unusual: same spelling for masculine and feminine. The article tells the gender: **l'enfant** is elided; **un enfant** (a boy) vs **une enfant** (a girl).",
-      "tags": ["noun", "common-gender", "vowel-start"]
+      "tags": [
+        "noun",
+        "common-gender",
+        "vowel-start"
+      ]
     }
   ],
   "steps": [
@@ -144,13 +218,31 @@
         "id": "ex-match-definite",
         "type": "matching",
         "prompt": "Match each French noun with its correct definite article (le, la, or les).",
-        "card_ids": ["noun-chat", "noun-chaise", "noun-livre", "noun-maison"],
+        "card_ids": [
+          "noun-chat",
+          "noun-chaise",
+          "noun-livre",
+          "noun-maison"
+        ],
         "pairs": [
-          {"left": "chat", "right": "le"},
-          {"left": "chaise", "right": "la"},
-          {"left": "livre", "right": "le"},
-          {"left": "maison", "right": "la"}
-        ]
+          {
+            "left": "chat",
+            "right": "le"
+          },
+          {
+            "left": "chaise",
+            "right": "la"
+          },
+          {
+            "left": "livre",
+            "right": "le"
+          },
+          {
+            "left": "maison",
+            "right": "la"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -161,10 +253,22 @@
         "id": "ex-free-chat",
         "type": "free_text",
         "prompt": "Type the correct definite article for **chat** (the cat).",
-        "card_ids": ["art-le", "noun-chat"],
-        "accept": ["le", "Le", "LE"],
+        "card_ids": [
+          "art-le",
+          "noun-chat"
+        ],
+        "accept": [
+          "le",
+          "Le",
+          "LE"
+        ],
         "hint": "Chat is masculine, singular, starts with a consonant.",
-        "distractors": ["la", "les", "l'"]
+        "distractors": [
+          "la",
+          "les",
+          "l'"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -181,7 +285,10 @@
         "id": "ex-pick-elision",
         "type": "picture_choice",
         "prompt": "**eau** (water) is feminine. Which is the correct definite form?",
-        "card_ids": ["art-l-elided", "noun-eau"],
+        "card_ids": [
+          "art-l-elided",
+          "noun-eau"
+        ],
         "images": [
           {
             "src": "assets/img/water-glass.png",
@@ -202,7 +309,12 @@
           }
         ],
         "hint": "Eau starts with a vowel — the article elides.",
-        "distractors": ["la eau", "le eau", "les eau"]
+        "distractors": [
+          "la eau",
+          "le eau",
+          "les eau"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -213,10 +325,22 @@
         "id": "ex-free-enfant",
         "type": "free_text",
         "prompt": "Type the correct definite article (with apostrophe if needed) for **enfant** (child).",
-        "card_ids": ["art-l-elided", "noun-enfant"],
-        "accept": ["l'", "L'", "l ' "],
+        "card_ids": [
+          "art-l-elided",
+          "noun-enfant"
+        ],
+        "accept": [
+          "l'",
+          "L'",
+          "l ' "
+        ],
         "hint": "Enfant starts with a vowel — elide.",
-        "distractors": ["le", "la", "les"]
+        "distractors": [
+          "le",
+          "la",
+          "les"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -233,12 +357,26 @@
         "id": "ex-match-def-indef",
         "type": "matching",
         "prompt": "Match each definite article with its indefinite counterpart.",
-        "card_ids": ["art-le", "art-la", "art-les"],
+        "card_ids": [
+          "art-le",
+          "art-la",
+          "art-les"
+        ],
         "pairs": [
-          {"left": "le", "right": "un"},
-          {"left": "la", "right": "une"},
-          {"left": "les", "right": "des"}
-        ]
+          {
+            "left": "le",
+            "right": "un"
+          },
+          {
+            "left": "la",
+            "right": "une"
+          },
+          {
+            "left": "les",
+            "right": "des"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -249,10 +387,22 @@
         "id": "ex-free-maison",
         "type": "free_text",
         "prompt": "Type the indefinite article for **maison** (house).",
-        "card_ids": ["art-une", "noun-maison"],
-        "accept": ["une", "Une", "UNE"],
+        "card_ids": [
+          "art-une",
+          "noun-maison"
+        ],
+        "accept": [
+          "une",
+          "Une",
+          "UNE"
+        ],
         "hint": "Maison is feminine.",
-        "distractors": ["un", "des", "la"]
+        "distractors": [
+          "un",
+          "des",
+          "la"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -263,9 +413,18 @@
         "id": "ex-tile-sentence",
         "type": "word_tiles",
         "prompt": "Arrange the tiles to form: *I see a cat*.",
-        "card_ids": ["art-un", "noun-chat"],
-        "tiles": ["Je", "vois", "un", "chat"],
-        "hint": "Same word order as English: subject, verb, article, noun."
+        "card_ids": [
+          "art-un",
+          "noun-chat"
+        ],
+        "tiles": [
+          "Je",
+          "vois",
+          "un",
+          "chat"
+        ],
+        "hint": "Same word order as English: subject, verb, article, noun.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -276,10 +435,21 @@
         "id": "ex-free-des-amis",
         "type": "free_text",
         "prompt": "Translate to French: *I have ___ friends here.* (Fill the article — French requires it even though English doesn't.)",
-        "card_ids": ["art-des"],
-        "accept": ["des", "Des", "DES"],
+        "card_ids": [
+          "art-des"
+        ],
+        "accept": [
+          "des",
+          "Des",
+          "DES"
+        ],
         "hint": "Plural, indefinite. The article that English silently drops.",
-        "distractors": ["les", "un", "une"]
+        "distractors": [
+          "les",
+          "un",
+          "une"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -290,7 +460,10 @@
         "id": "ex-pick-plural",
         "type": "picture_choice",
         "prompt": "Which sentence means *I see the children* (a specific group, definite)?",
-        "card_ids": ["art-les", "noun-enfant"],
+        "card_ids": [
+          "art-les",
+          "noun-enfant"
+        ],
         "images": [
           {
             "src": "assets/img/children-park.png",
@@ -311,7 +484,12 @@
           }
         ],
         "hint": "Definite plural is *les*. The other options have grammar errors.",
-        "distractors": ["Je vois des enfants.", "Je vois un enfants.", "Je vois l'enfants."]
+        "distractors": [
+          "Je vois des enfants.",
+          "Je vois un enfants.",
+          "Je vois l'enfants."
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -322,17 +500,26 @@
         "id": "ex-cloze-indef-chat",
         "type": "cloze",
         "prompt": "Fill in the indefinite article.",
-        "card_ids": ["art-un", "noun-chat"],
+        "card_ids": [
+          "art-un",
+          "noun-chat"
+        ],
         "sentence": "Je vois ___ chat dans le jardin.",
         "blanks": [
           {
-            "accept": ["un"],
+            "accept": [
+              "un"
+            ],
             "hint": "indefinite article, masculine singular",
             "placeholder": "?"
           }
         ],
         "cloze_mode": "type",
-        "distractors": ["le", "la", "les"],
+        "distractors": [
+          "le",
+          "la",
+          "les"
+        ],
         "hint": "*un* is the masculine indefinite article — *the* would be definite (*le*); a feminine indefinite is *une*."
       }
     }

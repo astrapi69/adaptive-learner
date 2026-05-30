@@ -4,27 +4,186 @@
   "description": "Numbers 1-20, days of the week, and telling the time.",
   "estimated_minutes": 14,
   "cards": [
-    {"id": "n-1", "front": "uno", "back": "one", "notes": "Shortens to **un** before a masculine noun: *un libro* (a book). Stays *uno* when standing alone or before a feminine noun (then *una*).", "tags": ["number"]},
-    {"id": "n-2", "front": "dos", "back": "two", "tags": ["number"]},
-    {"id": "n-3", "front": "tres", "back": "three", "tags": ["number"]},
-    {"id": "n-4", "front": "cuatro", "back": "four", "tags": ["number"]},
-    {"id": "n-5", "front": "cinco", "back": "five", "tags": ["number"]},
-    {"id": "n-6", "front": "seis", "back": "six", "tags": ["number"]},
-    {"id": "n-7", "front": "siete", "back": "seven", "tags": ["number"]},
-    {"id": "n-8", "front": "ocho", "back": "eight", "tags": ["number"]},
-    {"id": "n-9", "front": "nueve", "back": "nine", "tags": ["number"]},
-    {"id": "n-10", "front": "diez", "back": "ten", "tags": ["number"]},
-    {"id": "n-11", "front": "once", "back": "eleven", "tags": ["number", "teen"]},
-    {"id": "n-12", "front": "doce", "back": "twelve", "tags": ["number", "teen"]},
-    {"id": "n-13", "front": "trece", "back": "thirteen", "tags": ["number", "teen"]},
-    {"id": "n-14", "front": "catorce", "back": "fourteen", "tags": ["number", "teen"]},
-    {"id": "n-15", "front": "quince", "back": "fifteen", "notes": "Last of the single-word teens. From 16 on, you'll see **dieciséis**, **diecisiete**, etc. — *diez + y + N* contracted into a single word.", "tags": ["number", "teen"]},
-    {"id": "n-20", "front": "veinte", "back": "twenty", "tags": ["number"]},
-    {"id": "dia-lunes", "front": "lunes", "back": "Monday", "notes": "Days of the week are masculine and **lowercase** in Spanish (unlike English). Same form for singular and plural: *el lunes* (Monday), *los lunes* (Mondays).", "tags": ["day"]},
-    {"id": "dia-martes", "front": "martes", "back": "Tuesday", "tags": ["day"]},
-    {"id": "phr-que-hora-es", "front": "¿Qué hora es?", "back": "What time is it?", "notes": "The standard way to ask. Literally *what hour is it?*. Reply with *Es la una* / *Son las...* (see below).", "tags": ["time", "question"]},
-    {"id": "phr-es-la-una", "front": "Es la una.", "back": "It's one o'clock.", "notes": "**Singular** verb for 1:00 only: *Es* (is). For all other hours, use the plural *Son* — see below.", "tags": ["time"]},
-    {"id": "phr-son-las", "front": "Son las…", "back": "It's … o'clock (any hour except 1)", "notes": "Plural verb because Spanish treats 2+ hours as plural. *Son las dos* (it's 2), *Son las cinco* (it's 5), *Son las once* (it's 11).", "tags": ["time"]}
+    {
+      "id": "n-1",
+      "front": "uno",
+      "back": "one",
+      "notes": "Shortens to **un** before a masculine noun: *un libro* (a book). Stays *uno* when standing alone or before a feminine noun (then *una*).",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-2",
+      "front": "dos",
+      "back": "two",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-3",
+      "front": "tres",
+      "back": "three",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-4",
+      "front": "cuatro",
+      "back": "four",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-5",
+      "front": "cinco",
+      "back": "five",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-6",
+      "front": "seis",
+      "back": "six",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-7",
+      "front": "siete",
+      "back": "seven",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-8",
+      "front": "ocho",
+      "back": "eight",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-9",
+      "front": "nueve",
+      "back": "nine",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-10",
+      "front": "diez",
+      "back": "ten",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "n-11",
+      "front": "once",
+      "back": "eleven",
+      "tags": [
+        "number",
+        "teen"
+      ]
+    },
+    {
+      "id": "n-12",
+      "front": "doce",
+      "back": "twelve",
+      "tags": [
+        "number",
+        "teen"
+      ]
+    },
+    {
+      "id": "n-13",
+      "front": "trece",
+      "back": "thirteen",
+      "tags": [
+        "number",
+        "teen"
+      ]
+    },
+    {
+      "id": "n-14",
+      "front": "catorce",
+      "back": "fourteen",
+      "tags": [
+        "number",
+        "teen"
+      ]
+    },
+    {
+      "id": "n-15",
+      "front": "quince",
+      "back": "fifteen",
+      "notes": "Last of the single-word teens. From 16 on, you'll see **dieciséis**, **diecisiete**, etc. — *diez + y + N* contracted into a single word.",
+      "tags": [
+        "number",
+        "teen"
+      ]
+    },
+    {
+      "id": "n-20",
+      "front": "veinte",
+      "back": "twenty",
+      "tags": [
+        "number"
+      ]
+    },
+    {
+      "id": "dia-lunes",
+      "front": "lunes",
+      "back": "Monday",
+      "notes": "Days of the week are masculine and **lowercase** in Spanish (unlike English). Same form for singular and plural: *el lunes* (Monday), *los lunes* (Mondays).",
+      "tags": [
+        "day"
+      ]
+    },
+    {
+      "id": "dia-martes",
+      "front": "martes",
+      "back": "Tuesday",
+      "tags": [
+        "day"
+      ]
+    },
+    {
+      "id": "phr-que-hora-es",
+      "front": "¿Qué hora es?",
+      "back": "What time is it?",
+      "notes": "The standard way to ask. Literally *what hour is it?*. Reply with *Es la una* / *Son las...* (see below).",
+      "tags": [
+        "time",
+        "question"
+      ]
+    },
+    {
+      "id": "phr-es-la-una",
+      "front": "Es la una.",
+      "back": "It's one o'clock.",
+      "notes": "**Singular** verb for 1:00 only: *Es* (is). For all other hours, use the plural *Son* — see below.",
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "id": "phr-son-las",
+      "front": "Son las…",
+      "back": "It's … o'clock (any hour except 1)",
+      "notes": "Plural verb because Spanish treats 2+ hours as plural. *Son las dos* (it's 2), *Son las cinco* (it's 5), *Son las once* (it's 11).",
+      "tags": [
+        "time"
+      ]
+    }
   ],
   "steps": [
     {
@@ -41,14 +200,36 @@
         "id": "ex-match-numbers-low",
         "type": "matching",
         "prompt": "Match each Spanish number with its English equivalent.",
-        "card_ids": ["n-1", "n-2", "n-3", "n-4", "n-5"],
+        "card_ids": [
+          "n-1",
+          "n-2",
+          "n-3",
+          "n-4",
+          "n-5"
+        ],
         "pairs": [
-          {"left": "uno", "right": "one"},
-          {"left": "dos", "right": "two"},
-          {"left": "tres", "right": "three"},
-          {"left": "cuatro", "right": "four"},
-          {"left": "cinco", "right": "five"}
-        ]
+          {
+            "left": "uno",
+            "right": "one"
+          },
+          {
+            "left": "dos",
+            "right": "two"
+          },
+          {
+            "left": "tres",
+            "right": "three"
+          },
+          {
+            "left": "cuatro",
+            "right": "four"
+          },
+          {
+            "left": "cinco",
+            "right": "five"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -59,10 +240,21 @@
         "id": "ex-free-seven",
         "type": "free_text",
         "prompt": "Type the Spanish word for **7**.",
-        "card_ids": ["n-7"],
-        "accept": ["siete", "Siete", "SIETE"],
+        "card_ids": [
+          "n-7"
+        ],
+        "accept": [
+          "siete",
+          "Siete",
+          "SIETE"
+        ],
         "hint": "Five letters, two syllables.",
-        "distractors": ["seis", "ocho", "nueve"]
+        "distractors": [
+          "seis",
+          "ocho",
+          "nueve"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -79,7 +271,9 @@
         "id": "ex-pick-teen",
         "type": "picture_choice",
         "prompt": "Which is the Spanish word for **18**?",
-        "card_ids": ["n-10"],
+        "card_ids": [
+          "n-10"
+        ],
         "images": [
           {
             "src": "assets/img/eighteen-cake.png",
@@ -100,7 +294,12 @@
           }
         ],
         "hint": "Diez + y + ocho, contracted.",
-        "distractors": ["dieciséis", "diecisiete", "diecinueve"]
+        "distractors": [
+          "dieciséis",
+          "diecisiete",
+          "diecinueve"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -111,9 +310,18 @@
         "id": "ex-tile-fifteen",
         "type": "word_tiles",
         "prompt": "Arrange the numbers 13-15 in counting order.",
-        "card_ids": ["n-13", "n-14", "n-15"],
-        "tiles": ["trece", "catorce", "quince"],
-        "hint": "Thirteen, fourteen, fifteen."
+        "card_ids": [
+          "n-13",
+          "n-14",
+          "n-15"
+        ],
+        "tiles": [
+          "trece",
+          "catorce",
+          "quince"
+        ],
+        "hint": "Thirteen, fourteen, fifteen.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -136,10 +344,21 @@
         "id": "ex-free-time-one",
         "type": "free_text",
         "prompt": "Translate *It's one o'clock.*",
-        "card_ids": ["phr-es-la-una"],
-        "accept": ["Es la una.", "Es la una", "es la una"],
+        "card_ids": [
+          "phr-es-la-una"
+        ],
+        "accept": [
+          "Es la una.",
+          "Es la una",
+          "es la una"
+        ],
         "hint": "**Singular** form because there's only one hour. Don't say *Son las una* — that's a learner's classic mistake.",
-        "distractors": ["Son las una.", "Es las una.", "Son la una."]
+        "distractors": [
+          "Son las una.",
+          "Es las una.",
+          "Son la una."
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -150,10 +369,22 @@
         "id": "ex-free-time-five",
         "type": "free_text",
         "prompt": "Translate *It's five o'clock.*",
-        "card_ids": ["phr-son-las", "n-5"],
-        "accept": ["Son las cinco.", "Son las cinco", "son las cinco"],
+        "card_ids": [
+          "phr-son-las",
+          "n-5"
+        ],
+        "accept": [
+          "Son las cinco.",
+          "Son las cinco",
+          "son las cinco"
+        ],
         "hint": "Plural form — 5 hours = plural. *Son las + número*.",
-        "distractors": ["Es la cinco.", "Son las cincos.", "Son los cinco."]
+        "distractors": [
+          "Es la cinco.",
+          "Son las cincos.",
+          "Son los cinco."
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -164,13 +395,28 @@
         "id": "ex-match-time-pieces",
         "type": "matching",
         "prompt": "Match each Spanish time-of-day phrase with its English meaning.",
-        "card_ids": ["phr-son-las"],
+        "card_ids": [
+          "phr-son-las"
+        ],
         "pairs": [
-          {"left": "de la mañana", "right": "in the morning"},
-          {"left": "de la tarde", "right": "in the afternoon"},
-          {"left": "de la noche", "right": "at night"},
-          {"left": "del mediodía", "right": "at midday"}
-        ]
+          {
+            "left": "de la mañana",
+            "right": "in the morning"
+          },
+          {
+            "left": "de la tarde",
+            "right": "in the afternoon"
+          },
+          {
+            "left": "de la noche",
+            "right": "at night"
+          },
+          {
+            "left": "del mediodía",
+            "right": "at midday"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -181,9 +427,20 @@
         "id": "ex-tile-time-pm",
         "type": "word_tiles",
         "prompt": "Arrange to mean *It's three in the afternoon.*",
-        "card_ids": ["phr-son-las", "n-3"],
-        "tiles": ["Son", "las", "tres", "de", "la", "tarde"],
-        "hint": "*Son las* + number + *de la* + time-of-day."
+        "card_ids": [
+          "phr-son-las",
+          "n-3"
+        ],
+        "tiles": [
+          "Son",
+          "las",
+          "tres",
+          "de",
+          "la",
+          "tarde"
+        ],
+        "hint": "*Son las* + number + *de la* + time-of-day.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -194,7 +451,9 @@
         "id": "ex-pick-day",
         "type": "picture_choice",
         "prompt": "How should *Monday* be written in Spanish?",
-        "card_ids": ["dia-lunes"],
+        "card_ids": [
+          "dia-lunes"
+        ],
         "images": [
           {
             "src": "assets/img/calendar-mon.png",
@@ -215,7 +474,12 @@
           }
         ],
         "hint": "Spanish days of the week are NOT capitalised.",
-        "distractors": ["Lunes", "LUNES", "Lúnes"]
+        "distractors": [
+          "Lunes",
+          "LUNES",
+          "Lúnes"
+        ],
+        "direction": "target_to_source"
       }
     }
   ]

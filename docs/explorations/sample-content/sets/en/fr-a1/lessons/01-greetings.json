@@ -9,35 +9,48 @@
       "front": "Bonjour",
       "back": "Hello / Good morning",
       "notes": "Used in formal and informal contexts during the daytime.",
-      "tags": ["greeting", "daytime"]
+      "tags": [
+        "greeting",
+        "daytime"
+      ]
     },
     {
       "id": "bonsoir",
       "front": "Bonsoir",
       "back": "Good evening",
       "notes": "Used in the evening, both as a greeting and a farewell.",
-      "tags": ["greeting", "evening"]
+      "tags": [
+        "greeting",
+        "evening"
+      ]
     },
     {
       "id": "salut",
       "front": "Salut",
       "back": "Hi / Bye (informal)",
       "notes": "Informal — use with friends and family, not with strangers or in formal settings.",
-      "tags": ["greeting", "informal"]
+      "tags": [
+        "greeting",
+        "informal"
+      ]
     },
     {
       "id": "merci",
       "front": "Merci",
       "back": "Thank you",
       "notes": "Polite acknowledgement. Add 'beaucoup' (a lot) for emphasis: 'Merci beaucoup'.",
-      "tags": ["politeness"]
+      "tags": [
+        "politeness"
+      ]
     },
     {
       "id": "au-revoir",
       "front": "Au revoir",
       "back": "Goodbye",
       "notes": "Standard farewell, formal and informal both work.",
-      "tags": ["farewell"]
+      "tags": [
+        "farewell"
+      ]
     }
   ],
   "steps": [
@@ -61,13 +74,31 @@
         "id": "ex-match-greetings",
         "type": "matching",
         "prompt": "Match each French greeting with its English translation.",
-        "card_ids": ["bonjour", "bonsoir", "salut", "au-revoir"],
+        "card_ids": [
+          "bonjour",
+          "bonsoir",
+          "salut",
+          "au-revoir"
+        ],
         "pairs": [
-          {"left": "Bonjour", "right": "Hello / Good morning"},
-          {"left": "Bonsoir", "right": "Good evening"},
-          {"left": "Salut", "right": "Hi / Bye (informal)"},
-          {"left": "Au revoir", "right": "Goodbye"}
-        ]
+          {
+            "left": "Bonjour",
+            "right": "Hello / Good morning"
+          },
+          {
+            "left": "Bonsoir",
+            "right": "Good evening"
+          },
+          {
+            "left": "Salut",
+            "right": "Hi / Bye (informal)"
+          },
+          {
+            "left": "Au revoir",
+            "right": "Goodbye"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -84,10 +115,21 @@
         "id": "ex-free-thanks",
         "type": "free_text",
         "prompt": "How do you say 'Thank you' in French?",
-        "card_ids": ["merci"],
-        "accept": ["Merci", "merci", "Merci."],
+        "card_ids": [
+          "merci"
+        ],
+        "accept": [
+          "Merci",
+          "merci",
+          "Merci."
+        ],
         "hint": "It starts with M.",
-        "distractors": ["Bonjour", "Salut", "Au revoir"]
+        "distractors": [
+          "Bonjour",
+          "Salut",
+          "Au revoir"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -98,9 +140,15 @@
         "id": "ex-tile-aurevoir",
         "type": "word_tiles",
         "prompt": "Arrange the tiles to spell the standard farewell.",
-        "card_ids": ["au-revoir"],
-        "tiles": ["Au", "revoir"],
-        "hint": "Two short words; the first is two letters long."
+        "card_ids": [
+          "au-revoir"
+        ],
+        "tiles": [
+          "Au",
+          "revoir"
+        ],
+        "hint": "Two short words; the first is two letters long.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -111,9 +159,18 @@
         "id": "ex-cloze-bonjour",
         "type": "cloze",
         "prompt": "Complete the daytime greeting.",
-        "card_ids": ["bonjour"],
+        "card_ids": [
+          "bonjour"
+        ],
         "sentence": "___ , comment allez-vous ?",
-        "blanks": [{"accept": ["Bonjour", "bonjour"]}],
+        "blanks": [
+          {
+            "accept": [
+              "Bonjour",
+              "bonjour"
+            ]
+          }
+        ],
         "cloze_mode": "type",
         "hint": "Daytime greeting, starts with B."
       }
@@ -126,7 +183,9 @@
         "id": "ex-pick-evening",
         "type": "picture_choice",
         "prompt": "You arrive at a friend's house at 8 PM. Which greeting do you use?",
-        "card_ids": ["bonsoir"],
+        "card_ids": [
+          "bonsoir"
+        ],
         "images": [
           {
             "src": "assets/img/sunrise.png",
@@ -147,7 +206,12 @@
           }
         ],
         "hint": "What part of the day is 8 PM?",
-        "distractors": ["Bonjour", "Salut", "Au revoir"]
+        "distractors": [
+          "Bonjour",
+          "Salut",
+          "Au revoir"
+        ],
+        "direction": "target_to_source"
       }
     }
   ]

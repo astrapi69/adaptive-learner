@@ -8,81 +8,116 @@
       "id": "fam-pere",
       "front": "le père",
       "back": "the father",
-      "tags": ["family", "masculine"]
+      "tags": [
+        "family",
+        "masculine"
+      ]
     },
     {
       "id": "fam-mere",
       "front": "la mère",
       "back": "the mother",
-      "tags": ["family", "feminine"]
+      "tags": [
+        "family",
+        "feminine"
+      ]
     },
     {
       "id": "fam-frere",
       "front": "le frère",
       "back": "the brother",
-      "tags": ["family", "masculine"]
+      "tags": [
+        "family",
+        "masculine"
+      ]
     },
     {
       "id": "fam-soeur",
       "front": "la sœur",
       "back": "the sister",
       "notes": "Note the **œ** ligature — it's one letter, pronounced /œ/ (no English equivalent; like the eu in *peur*).",
-      "tags": ["family", "feminine"]
+      "tags": [
+        "family",
+        "feminine"
+      ]
     },
     {
       "id": "fam-fils",
       "front": "le fils",
       "back": "the son",
       "notes": "Pronounced **\"feece\"** — silent l, the s is voiced. Watch for the spelling, which doesn't reflect the sound.",
-      "tags": ["family", "masculine"]
+      "tags": [
+        "family",
+        "masculine"
+      ]
     },
     {
       "id": "fam-fille",
       "front": "la fille",
       "back": "the daughter / the girl",
       "notes": "Same word for *daughter* and *girl* — context decides.",
-      "tags": ["family", "feminine"]
+      "tags": [
+        "family",
+        "feminine"
+      ]
     },
     {
       "id": "fam-oncle",
       "front": "l'oncle",
       "back": "the uncle",
       "notes": "Starts with a vowel — elided. *l'oncle*, not *le oncle*.",
-      "tags": ["family", "masculine", "vowel-start"]
+      "tags": [
+        "family",
+        "masculine",
+        "vowel-start"
+      ]
     },
     {
       "id": "fam-tante",
       "front": "la tante",
       "back": "the aunt",
-      "tags": ["family", "feminine"]
+      "tags": [
+        "family",
+        "feminine"
+      ]
     },
     {
       "id": "fam-parents",
       "front": "les parents",
       "back": "the parents",
       "notes": "Always plural in this sense. Also means *relatives* in some contexts (*mes parents éloignés* — my distant relatives).",
-      "tags": ["family", "plural"]
+      "tags": [
+        "family",
+        "plural"
+      ]
     },
     {
       "id": "poss-mon",
       "front": "mon",
       "back": "my (m. sg.)",
       "notes": "Used before masculine singular nouns: *mon père*, *mon frère*. ALSO used before any feminine noun that starts with a vowel: *mon amie* (not *ma amie*). The elision rule from Lesson 03 strikes again.",
-      "tags": ["possessive"]
+      "tags": [
+        "possessive"
+      ]
     },
     {
       "id": "poss-ma",
       "front": "ma",
       "back": "my (f. sg.)",
       "notes": "Used before feminine singular nouns that start with a CONSONANT: *ma mère*, *ma sœur*, *ma tante*. Before a vowel, switches to *mon*.",
-      "tags": ["possessive"]
+      "tags": [
+        "possessive"
+      ]
     },
     {
       "id": "poss-mes",
       "front": "mes",
       "back": "my (pl.)",
       "notes": "Same form for masculine and feminine plurals: *mes parents*, *mes sœurs*.",
-      "tags": ["possessive", "plural"]
+      "tags": [
+        "possessive",
+        "plural"
+      ]
     }
   ],
   "steps": [
@@ -100,15 +135,41 @@
         "id": "ex-match-family",
         "type": "matching",
         "prompt": "Match each French family word to its English meaning.",
-        "card_ids": ["fam-pere", "fam-mere", "fam-frere", "fam-soeur", "fam-oncle", "fam-tante"],
+        "card_ids": [
+          "fam-pere",
+          "fam-mere",
+          "fam-frere",
+          "fam-soeur",
+          "fam-oncle",
+          "fam-tante"
+        ],
         "pairs": [
-          {"left": "le père", "right": "father"},
-          {"left": "la mère", "right": "mother"},
-          {"left": "le frère", "right": "brother"},
-          {"left": "la sœur", "right": "sister"},
-          {"left": "l'oncle", "right": "uncle"},
-          {"left": "la tante", "right": "aunt"}
-        ]
+          {
+            "left": "le père",
+            "right": "father"
+          },
+          {
+            "left": "la mère",
+            "right": "mother"
+          },
+          {
+            "left": "le frère",
+            "right": "brother"
+          },
+          {
+            "left": "la sœur",
+            "right": "sister"
+          },
+          {
+            "left": "l'oncle",
+            "right": "uncle"
+          },
+          {
+            "left": "la tante",
+            "right": "aunt"
+          }
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -125,10 +186,22 @@
         "id": "ex-free-mon-pere",
         "type": "free_text",
         "prompt": "Translate: *my father*.",
-        "card_ids": ["poss-mon", "fam-pere"],
-        "accept": ["mon père", "Mon père", "mon pere"],
+        "card_ids": [
+          "poss-mon",
+          "fam-pere"
+        ],
+        "accept": [
+          "mon père",
+          "Mon père",
+          "mon pere"
+        ],
         "hint": "Possessive agrees with the noun's gender.",
-        "distractors": ["ma père", "mes père", "le père"]
+        "distractors": [
+          "ma père",
+          "mes père",
+          "le père"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -139,10 +212,22 @@
         "id": "ex-free-ma-soeur",
         "type": "free_text",
         "prompt": "Translate: *my sister*.",
-        "card_ids": ["poss-ma", "fam-soeur"],
-        "accept": ["ma sœur", "ma soeur", "Ma sœur"],
+        "card_ids": [
+          "poss-ma",
+          "fam-soeur"
+        ],
+        "accept": [
+          "ma sœur",
+          "ma soeur",
+          "Ma sœur"
+        ],
         "hint": "Feminine, consonant start. Use ma.",
-        "distractors": ["mon sœur", "mes sœur", "la sœur"]
+        "distractors": [
+          "mon sœur",
+          "mes sœur",
+          "la sœur"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -153,7 +238,9 @@
         "id": "ex-pick-mon-amie",
         "type": "picture_choice",
         "prompt": "*amie* (friend, f.) starts with a vowel. Which possessive is correct?",
-        "card_ids": ["poss-mon"],
+        "card_ids": [
+          "poss-mon"
+        ],
         "images": [
           {
             "src": "assets/img/friend-girl.png",
@@ -178,7 +265,12 @@
           }
         ],
         "hint": "Feminine + vowel start → use the masculine-shape *mon* to avoid the awkward *ma amie*.",
-        "distractors": ["ma amie", "mes amie", "m'amie"]
+        "distractors": [
+          "ma amie",
+          "mes amie",
+          "m'amie"
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -195,9 +287,21 @@
         "id": "ex-tile-family-sentence",
         "type": "word_tiles",
         "prompt": "Arrange to mean *I have two brothers and one sister*.",
-        "card_ids": ["fam-frere", "fam-soeur"],
-        "tiles": ["J'", "ai", "deux", "frères", "et", "une", "sœur"],
-        "hint": "Plural brothers, singular sister. Indefinite article for *one sister*."
+        "card_ids": [
+          "fam-frere",
+          "fam-soeur"
+        ],
+        "tiles": [
+          "J'",
+          "ai",
+          "deux",
+          "frères",
+          "et",
+          "une",
+          "sœur"
+        ],
+        "hint": "Plural brothers, singular sister. Indefinite article for *one sister*.",
+        "direction": "target_to_source"
       }
     },
     {
@@ -208,10 +312,22 @@
         "id": "ex-free-mes-parents",
         "type": "free_text",
         "prompt": "Translate: *my parents*.",
-        "card_ids": ["poss-mes", "fam-parents"],
-        "accept": ["mes parents", "Mes parents", "mes Parents"],
+        "card_ids": [
+          "poss-mes",
+          "fam-parents"
+        ],
+        "accept": [
+          "mes parents",
+          "Mes parents",
+          "mes Parents"
+        ],
         "hint": "Plural — use the plural possessive.",
-        "distractors": ["mon parents", "ma parents", "les parents"]
+        "distractors": [
+          "mon parents",
+          "ma parents",
+          "les parents"
+        ],
+        "direction": "source_to_target"
       }
     },
     {
@@ -222,15 +338,38 @@
         "id": "ex-match-possessives",
         "type": "matching",
         "prompt": "Match each noun with the correct possessive form of *my*.",
-        "card_ids": ["poss-mon", "poss-ma", "poss-mes"],
+        "card_ids": [
+          "poss-mon",
+          "poss-ma",
+          "poss-mes"
+        ],
         "pairs": [
-          {"left": "père", "right": "mon"},
-          {"left": "mère", "right": "ma"},
-          {"left": "parents", "right": "mes"},
-          {"left": "oncle", "right": "mon"},
-          {"left": "tante", "right": "ma"},
-          {"left": "sœurs", "right": "mes"}
-        ]
+          {
+            "left": "père",
+            "right": "mon"
+          },
+          {
+            "left": "mère",
+            "right": "ma"
+          },
+          {
+            "left": "parents",
+            "right": "mes"
+          },
+          {
+            "left": "oncle",
+            "right": "mon"
+          },
+          {
+            "left": "tante",
+            "right": "ma"
+          },
+          {
+            "left": "sœurs",
+            "right": "mes"
+          }
+        ],
+        "direction": "source_to_target"
       }
     },
     {
@@ -241,9 +380,18 @@
         "id": "ex-tile-mon-frere",
         "type": "word_tiles",
         "prompt": "Arrange to mean *My brother is a teacher*. (Remember: no article before a profession.)",
-        "card_ids": ["fam-frere", "poss-mon"],
-        "tiles": ["Mon", "frère", "est", "professeur"],
-        "hint": "Possessive + noun + être + profession (no article)."
+        "card_ids": [
+          "fam-frere",
+          "poss-mon"
+        ],
+        "tiles": [
+          "Mon",
+          "frère",
+          "est",
+          "professeur"
+        ],
+        "hint": "Possessive + noun + être + profession (no article).",
+        "direction": "source_to_target"
       }
     }
   ]

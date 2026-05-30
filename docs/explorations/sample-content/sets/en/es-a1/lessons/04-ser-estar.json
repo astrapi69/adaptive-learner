@@ -276,7 +276,8 @@
             "left": "ellos",
             "right": "son"
           }
-        ]
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -321,7 +322,8 @@
             "left": "ellos",
             "right": "están"
           }
-        ]
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -366,7 +368,8 @@
           "Estoy médico.",
           "Soy un médico.",
           "Yo es médico."
-        ]
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -405,7 +408,8 @@
           "Soy cansado.",
           "Estoy cansada.",
           "Yo estoy cansa."
-        ]
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -429,7 +433,8 @@
           "El libro es en la mesa.",
           "El libro estoy en la mesa.",
           "El libro está en el mesa."
-        ]
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -454,7 +459,8 @@
           "Está española.",
           "Es Española.",
           "Es españolo."
-        ]
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -490,7 +496,8 @@
             "left": "It ___ 5 o'clock.",
             "right": "es (ser)"
           }
-        ]
+        ],
+        "direction": "target_to_source"
       }
     },
     {
@@ -515,7 +522,8 @@
           "en",
           "Madrid"
         ],
-        "hint": "Two clauses: origin (ser) + location (estar)."
+        "hint": "Two clauses: origin (ser) + location (estar).",
+        "direction": "target_to_source"
       }
     },
     {
@@ -537,7 +545,8 @@
           "está",
           "feliz"
         ],
-        "hint": "Two clauses. First *es* (tall = characteristic), then *está* (happy = current feeling)."
+        "hint": "Two clauses. First *es* (tall = characteristic), then *está* (happy = current feeling).",
+        "direction": "target_to_source"
       }
     },
     {
