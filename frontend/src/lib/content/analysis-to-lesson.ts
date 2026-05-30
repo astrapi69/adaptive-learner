@@ -118,6 +118,111 @@ export interface GeneratedLessonSummary {
 }
 
 // ---------------------------------------------------------------------------
+// Language-pair + level derivation (EXP-018 follow-up bugfix)
+// ---------------------------------------------------------------------------
+
+/** Sharing-validator minimums (mirror of ``content-validator.ts``).
+ *  A saved analysis lesson must clear these to be shareable; the
+ *  Save-as-Lesson modal gates on them so the flow never produces an
+ *  unshareable lesson. */
+export const MIN_SHAREABLE_EXERCISES = 5;
+export const MIN_SHAREABLE_EXERCISE_TYPES = 2;
+
+/** Map of language NAME fragments (English + native + common
+ *  adjective forms) to BCP-47 codes, used to guess the TARGET
+ *  language from a free-text analysis topic. Order matters only for
+ *  readability; matching is substring, longest-key-first. */
+const LANGUAGE_NAME_TO_CODE: ReadonlyArray<[string, string]> = [
+  ["französisch", "fr"],
+  ["française", "fr"],
+  ["francais", "fr"],
+  ["français", "fr"],
+  ["french", "fr"],
+  ["spanisch", "es"],
+  ["español", "es"],
+  ["espanol", "es"],
+  ["spanish", "es"],
+  ["deutsch", "de"],
+  ["allemand", "de"],
+  ["alemán", "de"],
+  ["german", "de"],
+  ["englisch", "en"],
+  ["anglais", "en"],
+  ["inglés", "en"],
+  ["english", "en"],
+  ["italienisch", "it"],
+  ["italiano", "it"],
+  ["italian", "it"],
+  ["portugiesisch", "pt"],
+  ["português", "pt"],
+  ["portuguese", "pt"],
+  ["griechisch", "el"],
+  ["greek", "el"],
+  ["türkçe", "tr"],
+  ["türkisch", "tr"],
+  ["turkish", "tr"],
+  ["japanisch", "ja"],
+  ["japanese", "ja"],
+  ["日本語", "ja"],
+  ["mandarin", "zh"],
+  ["chinese", "zh"],
+  ["中文", "zh"],
+  ["russisch", "ru"],
+  ["russian", "ru"],
+  ["русский", "ru"],
+  ["niederländisch", "nl"],
+  ["dutch", "nl"],
+  ["arabisch", "ar"],
+  ["arabic", "ar"],
+  ["العربية", "ar"],
+];
+
+/** Best-effort guess of the TARGET (learned) language from an
+ *  analysis topic, e.g. "French Grammar" -> "fr",
+ *  "Grammaire française" -> "fr". Returns null when no known
+ *  language name is present (the caller then asks the user). */
+export function detectTargetLanguage(topic: string | undefined): string | null {
+  if (!topic) return null;
+  const hay = topic.toLowerCase();
+  // Longest key first so "français" wins before a hypothetical "fr".
+  const sorted = [...LANGUAGE_NAME_TO_CODE].sort(
+    (a, b) => b[0].length - a[0].length,
+  );
+  for (const [name, code] of sorted) {
+    if (hay.includes(name)) return code;
+  }
+  return null;
+}
+
+/** Map an analysis ``user_level`` (beginner/intermediate/advanced)
+ *  to a CEFR level the content system accepts. */
+export function cefrFromAnalysisLevel(
+  level: "beginner" | "intermediate" | "advanced" | undefined,
+): string {
+  switch (level) {
+    case "advanced":
+      return "C1";
+    case "intermediate":
+      return "B1";
+    case "beginner":
+    default:
+      return "A1";
+  }
+}
+
+/** True when a generated lesson clears the sharing-validator
+ *  minimums (>= 5 exercises across >= 2 types). The Save-as-Lesson
+ *  modal gates the Save button on this so a theory-only / tiny
+ *  analysis can't be saved as an unshareable lesson. */
+export function isShareableLesson(summary: GeneratedLessonSummary): boolean {
+  return (
+    summary.exercises >= MIN_SHAREABLE_EXERCISES &&
+    Object.keys(summary.exerciseTypeCounts).length >=
+      MIN_SHAREABLE_EXERCISE_TYPES
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Slug + text helpers
 // ---------------------------------------------------------------------------
 

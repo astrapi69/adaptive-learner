@@ -1,7 +1,10 @@
 import { describe, it, expect } from "vitest";
 
 import {
+  cefrFromAnalysisLevel,
+  detectTargetLanguage,
   generateLessonFromAnalysis,
+  isShareableLesson,
   summarizeGeneratedLesson,
   validateGeneratedLesson,
   slugify,
@@ -252,5 +255,58 @@ describe("slugify", () => {
   });
   it("returns empty for unsluggable input", () => {
     expect(slugify("!!!")).toBe("");
+  });
+});
+
+describe("EXP-018 fix: language pair + CEFR + shareability helpers", () => {
+  it("detects the target language from common topic phrasings", () => {
+    expect(detectTargetLanguage("French Grammar")).toBe("fr");
+    expect(detectTargetLanguage("Grammaire française")).toBe("fr");
+    expect(detectTargetLanguage("Spanish travel vocabulary")).toBe("es");
+    expect(detectTargetLanguage("Deutsch lernen")).toBe("de");
+    expect(detectTargetLanguage("日本語の文法")).toBe("ja");
+    expect(detectTargetLanguage("Cooking tips")).toBeNull();
+    expect(detectTargetLanguage(undefined)).toBeNull();
+  });
+
+  it("maps analysis levels to CEFR", () => {
+    expect(cefrFromAnalysisLevel("beginner")).toBe("A1");
+    expect(cefrFromAnalysisLevel("intermediate")).toBe("B1");
+    expect(cefrFromAnalysisLevel("advanced")).toBe("C1");
+    expect(cefrFromAnalysisLevel(undefined)).toBe("A1");
+  });
+
+  it("isShareableLesson requires >= 5 exercises across >= 2 types", () => {
+    expect(
+      isShareableLesson({
+        theorySteps: 1,
+        exercises: 0,
+        exerciseTypeCounts: {},
+        estimatedMinutes: 1,
+        vocabularyCount: 1,
+        theoryOnly: true,
+      }),
+    ).toBe(false);
+    expect(
+      isShareableLesson({
+        theorySteps: 1,
+        exercises: 5,
+        exerciseTypeCounts: { matching: 1, free_text: 4 },
+        estimatedMinutes: 8,
+        vocabularyCount: 4,
+        theoryOnly: false,
+      }),
+    ).toBe(true);
+    // 5 exercises but only ONE type → not shareable.
+    expect(
+      isShareableLesson({
+        theorySteps: 1,
+        exercises: 5,
+        exerciseTypeCounts: { free_text: 5 },
+        estimatedMinutes: 8,
+        vocabularyCount: 5,
+        theoryOnly: false,
+      }),
+    ).toBe(false);
   });
 });
