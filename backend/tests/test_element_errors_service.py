@@ -25,6 +25,7 @@ head) then talks to the service via ``SessionLocal`` directly
 from __future__ import annotations
 
 from collections.abc import Iterator
+from typing import Literal
 
 import pytest
 from fastapi.testclient import TestClient
@@ -64,6 +65,7 @@ def _attempt(
     lesson_id: str = "01-greetings.json",
     exercise_id: str = "ex-thanks",
     element_key: str = "merci",
+    direction: Literal["source_to_target", "target_to_source"] = "target_to_source",
     element_type: str = "vocabulary",
     user_answer: str = "",
     correct_answer: str = "Merci",
@@ -74,6 +76,7 @@ def _attempt(
         lesson_id=lesson_id,
         exercise_id=exercise_id,
         element_key=element_key,
+        direction=direction,
         element_type=element_type,
         user_answer=user_answer,
         correct_answer=correct_answer,
@@ -101,7 +104,9 @@ def test_no_row_then_correct_creates_fresh_row_with_streak_1(
     db = SessionLocal()
     try:
         row = record_attempt(
-            db, user_id, _attempt(correct=True, user_answer="merci"),
+            db,
+            user_id,
+            _attempt(correct=True, user_answer="merci"),
         )
         db.commit()
         assert row.error_count == 0
@@ -120,7 +125,9 @@ def test_no_row_then_wrong_creates_fresh_row_with_error_1(
     db = SessionLocal()
     try:
         row = record_attempt(
-            db, user_id, _attempt(correct=False, user_answer="bonjour"),
+            db,
+            user_id,
+            _attempt(correct=False, user_answer="bonjour"),
         )
         db.commit()
         assert row.error_count == 1
@@ -169,7 +176,6 @@ def test_correct_streak_grows(user_id: str) -> None:
         db.commit()
         assert row.correct_streak == MASTERY_THRESHOLD - 1
         assert row.mastered is False
-
 
     finally:
         db.close()
@@ -263,7 +269,9 @@ def test_different_element_keys_get_separate_rows(user_id: str) -> None:
     try:
         record_attempt(db, user_id, _attempt(element_key="merci", correct=False))
         record_attempt(
-            db, user_id, _attempt(element_key="bonjour", correct=False),
+            db,
+            user_id,
+            _attempt(element_key="bonjour", correct=False),
         )
         db.commit()
         all_rows = list_for_user(db, user_id)
@@ -303,7 +311,8 @@ def test_same_element_different_lesson_gets_separate_rows(
 
 def test_different_users_isolated(user_id: str, client: TestClient) -> None:
     other = client.post(
-        "/api/users", json={"name": "Other", "language": "en"},
+        "/api/users",
+        json={"name": "Other", "language": "en"},
     )
     assert other.status_code in (200, 201)
     other_id = other.json()["id"]
@@ -404,5 +413,89 @@ def test_list_for_user_can_exclude_mastered(user_id: str) -> None:
         assert len(all_rows) == 2
         assert len(active_only) == 1
         assert active_only[0].element_key == "bonjour"
+    finally:
+        db.close()
+
+
+# --- EXP-018 / Phase 62: direction-aware tracking --------------------------
+
+
+def test_two_directions_are_independent_rows(user_id: str) -> None:
+    """Same element_key, two directions → two distinct rows, each
+    with its own error/streak state."""
+    db = SessionLocal()
+    try:
+        receptive = record_attempt(
+            db, user_id, _attempt(direction="target_to_source", correct=True)
+        )
+        productive = record_attempt(
+            db, user_id, _attempt(direction="source_to_target", correct=False)
+        )
+        db.commit()
+        assert receptive.id != productive.id
+        assert receptive.direction == "target_to_source"
+        assert productive.direction == "source_to_target"
+        assert receptive.correct_streak == 1
+        assert receptive.error_count == 0
+        assert productive.correct_streak == 0
+        assert productive.error_count == 1
+        rows = list_for_user(db, user_id)
+        assert len(rows) == 2
+    finally:
+        db.close()
+
+
+def test_mastering_receptive_does_not_master_productive(user_id: str) -> None:
+    """Three correct receptive attempts master the receptive row only;
+    the productive row stays unmastered."""
+    db = SessionLocal()
+    try:
+        for _ in range(MASTERY_THRESHOLD):
+            record_attempt(db, user_id, _attempt(direction="target_to_source", correct=True))
+        record_attempt(db, user_id, _attempt(direction="source_to_target", correct=True))
+        db.commit()
+        rows = {r.direction: r for r in list_for_user(db, user_id)}
+        assert rows["target_to_source"].mastered is True
+        assert rows["source_to_target"].mastered is False
+    finally:
+        db.close()
+
+
+def test_is_fully_mastered_requires_both_directions(user_id: str) -> None:
+    from app.services.element_errors import is_fully_mastered
+
+    db = SessionLocal()
+    try:
+        # Master receptive only.
+        for _ in range(MASTERY_THRESHOLD):
+            record_attempt(db, user_id, _attempt(direction="target_to_source", correct=True))
+        db.commit()
+        rows = list_for_user(db, user_id)
+        assert is_fully_mastered(rows) is False  # productive missing
+
+        # Now master productive too.
+        for _ in range(MASTERY_THRESHOLD):
+            record_attempt(db, user_id, _attempt(direction="source_to_target", correct=True))
+        db.commit()
+        rows = list_for_user(db, user_id)
+        assert is_fully_mastered(rows) is True
+    finally:
+        db.close()
+
+
+def test_direction_defaults_to_receptive_when_omitted(user_id: str) -> None:
+    """An attempt with no explicit direction records receptive."""
+    db = SessionLocal()
+    try:
+        attempt = ElementAttemptIn(
+            set_id="s",
+            lesson_id="l",
+            exercise_id="e",
+            element_key="k",
+            correct=True,
+        )
+        row = record_attempt(db, user_id, attempt)
+        db.commit()
+        assert row.direction == "target_to_source"
     finally:
         db.close()

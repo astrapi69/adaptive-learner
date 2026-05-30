@@ -575,6 +575,12 @@ export interface ElementAttempt {
   lesson_id: string;
   exercise_id: string;
   element_key: string;
+  /** EXP-018 / Phase 62 — concrete drill direction this attempt
+   *  belongs to. A recorded attempt is always one of the two
+   *  concrete directions (the exercise-level ``"both"`` /
+   *  ``"random"`` are resolved before recording). Omitted =
+   *  receptive (``"target_to_source"``), the pre-62 default. */
+  direction?: "source_to_target" | "target_to_source";
   element_type?: string;
   user_answer?: string;
   correct_answer?: string;
@@ -593,6 +599,11 @@ export interface ElementError {
   lesson_id: string;
   exercise_id: string;
   element_key: string;
+  /** EXP-018 / Phase 62 — drill direction this row tracks. Always
+   *  present from the backend and DexieStorage (defaulted to
+   *  ``"target_to_source"``); optional in the type so pre-62 test
+   *  fixtures that predate the field still type-check. */
+  direction?: string;
   element_type: string;
   user_answer: string;
   correct_answer: string;
@@ -617,6 +628,10 @@ export interface ReviewQueueItem {
   lesson_id: string;
   exercise_id: string;
   element_key: string;
+  /** EXP-018 / Phase 62 — drill direction of this queue item.
+   *  The same element can appear twice (once per direction).
+   *  Always present at runtime; optional for pre-62 fixtures. */
+  direction?: string;
   element_type: string;
   user_answer: string;
   correct_answer: string;

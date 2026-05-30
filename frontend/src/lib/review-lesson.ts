@@ -129,6 +129,7 @@ function _itemToError(item: ReviewQueueItem): ElementError {
         lesson_id: item.lesson_id,
         exercise_id: item.exercise_id,
         element_key: item.element_key,
+        direction: item.direction,
         element_type: item.element_type,
         user_answer: item.user_answer,
         correct_answer: item.correct_answer,

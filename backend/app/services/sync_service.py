@@ -594,6 +594,7 @@ TABLES: dict[str, TableSpec] = {
             "lesson_id",
             "exercise_id",
             "element_key",
+            "direction",
             "element_type",
             "user_answer",
             "correct_answer",

@@ -1434,7 +1434,11 @@ class ElementError(Base):
             "lesson_id",
             "exercise_id",
             "element_key",
-            name="uq_element_errors_user_element",
+            # EXP-018 / Phase 62: direction is part of the identity.
+            # A card can have one receptive row + one productive row,
+            # each with independent error_count / streak / mastery.
+            "direction",
+            name="uq_element_errors_user_element_direction",
         ),
     )
 
@@ -1452,6 +1456,17 @@ class ElementError(Base):
     lesson_id: Mapped[str] = mapped_column(String(200), nullable=False)
     exercise_id: Mapped[str] = mapped_column(String(120), nullable=False)
     element_key: Mapped[str] = mapped_column(String(500), nullable=False)
+    # EXP-018 / Phase 62: drill direction this row tracks.
+    # "target_to_source" (receptive, default — matches the pre-62
+    # implicit behaviour) | "source_to_target" (productive). A card
+    # can have BOTH rows; each masters independently. "fully
+    # mastered" = both directions mastered.
+    direction: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+        default="target_to_source",
+        server_default="target_to_source",
+    )
     # "vocabulary" | "grammar_rule" | "concept" — derived
     # heuristically from the exercise type at recording time.
     element_type: Mapped[str] = mapped_column(

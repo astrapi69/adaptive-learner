@@ -459,10 +459,12 @@ export interface LessonProgressRow {
  * mastery tracking. Dexie schema v18.
  *
  * Composite primary key
- * ``{user_id}#{set_id}#{lesson_id}#{exercise_id}#{element_key}``
+ * ``{user_id}#{set_id}#{lesson_id}#{exercise_id}#{element_key}#{direction}``
  * mirrors the backend's UNIQUE constraint so a duplicate
  * upsert through either storage backend converges on the
- * same row.
+ * same row. EXP-018 / Phase 62 added ``direction`` as the
+ * sixth key segment so a card's receptive and productive
+ * rows stay independent.
  *
  * The mastered-flag + correct_streak + error_count semantics
  * mirror ``app.services.element_errors``. The DexieStorage
@@ -478,6 +480,12 @@ export interface ElementErrorRow {
     lesson_id: string;
     exercise_id: string;
     element_key: string;
+    /** EXP-018 / Phase 62 — drill direction this row tracks.
+     *  ``"target_to_source"`` (receptive) | ``"source_to_target"``
+     *  (productive). Part of the composite ``id``. Always written
+     *  by the adapter + the v23 backfill; optional in the type so
+     *  pre-62 fixtures still type-check. */
+    direction?: string;
     element_type: string;
     user_answer: string;
     correct_answer: string;
@@ -1014,6 +1022,31 @@ export class AdaptiveLearnerDB extends Dexie {
                             row.source_language = "en";
                         }
                     });
+            });
+        // Schema v23 — EXP-018 / Phase 62 / v1.46.0: direction-aware
+        // ``elementErrors``. Every pre-62 row was recorded receptively,
+        // so it gets ``direction = "target_to_source"``. The composite
+        // primary ``id`` grows a sixth ``#{direction}`` segment, so the
+        // row must be RE-KEYED (delete + re-add) — ``.modify()`` cannot
+        // change the keyPath value. New receptive upserts would
+        // otherwise compute the new id and orphan the old row, losing
+        // its error/streak/mastery history. No index changes
+        // (``direction`` is filtered in memory by the review queue).
+        this.version(23)
+            .stores({})
+            .upgrade(async (tx) => {
+                const table = tx.table("elementErrors");
+                const rows = await table.toArray();
+                for (const row of rows as Record<string, unknown>[]) {
+                    if (row.direction) {
+                        continue;
+                    }
+                    const oldId = row.id as string;
+                    row.direction = "target_to_source";
+                    row.id = `${oldId}#target_to_source`;
+                    await table.delete(oldId);
+                    await table.put(row);
+                }
             });
     }
 }

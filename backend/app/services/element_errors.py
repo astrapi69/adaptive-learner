@@ -35,6 +35,7 @@ can call it directly without HTTP.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import UTC, datetime
 
 from sqlalchemy import select
@@ -68,6 +69,9 @@ def _find_row(
         ElementError.lesson_id == attempt.lesson_id,
         ElementError.exercise_id == attempt.exercise_id,
         ElementError.element_key == attempt.element_key,
+        # EXP-018 / Phase 62: a card's receptive and productive
+        # rows are distinct identities; never collapse them.
+        ElementError.direction == attempt.direction,
     )
     return db.execute(stmt).scalar_one_or_none()
 
@@ -94,6 +98,7 @@ def record_attempt(
             lesson_id=attempt.lesson_id,
             exercise_id=attempt.exercise_id,
             element_key=attempt.element_key,
+            direction=attempt.direction,
             element_type=attempt.element_type,
             user_answer=attempt.user_answer,
             correct_answer=attempt.correct_answer,
@@ -177,3 +182,26 @@ def list_for_user(
         stmt = stmt.where(ElementError.mastered.is_(False))
     stmt = stmt.order_by(ElementError.updated_at.desc())
     return list(db.execute(stmt).scalars().all())
+
+
+def is_fully_mastered(rows: Iterable[ElementError]) -> bool:
+    """EXP-018 / Phase 62: a card is FULLY mastered only when BOTH
+    its receptive (``target_to_source``) and productive
+    (``source_to_target``) rows exist AND are mastered.
+
+    ``rows`` are the per-direction ElementError rows for ONE element
+    (same set / lesson / exercise / element_key, differing
+    ``direction``). A card that has only ever been drilled
+    receptively is NOT fully mastered — production was never
+    demonstrated. This is why the dashboard reports the receptive
+    and productive mastery counts separately.
+    """
+    by_direction = {row.direction: row for row in rows}
+    receptive = by_direction.get("target_to_source")
+    productive = by_direction.get("source_to_target")
+    return bool(
+        receptive is not None
+        and receptive.mastered
+        and productive is not None
+        and productive.mastered
+    )

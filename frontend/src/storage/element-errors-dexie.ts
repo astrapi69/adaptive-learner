@@ -27,6 +27,13 @@ import type {
  *  intrinsic to the SRS semantics, not a config knob. */
 export const MASTERY_THRESHOLD = 3;
 
+/** EXP-018 / Phase 62: a recorded attempt is always a concrete
+ *  direction. Fall back to receptive (the pre-62 implicit
+ *  behaviour) when the caller omits it. */
+function directionOf(attempt: ElementAttempt): string {
+    return attempt.direction ?? "target_to_source";
+}
+
 function rowKey(userId: string, attempt: ElementAttempt): string {
     return [
         userId,
@@ -34,6 +41,10 @@ function rowKey(userId: string, attempt: ElementAttempt): string {
         attempt.lesson_id,
         attempt.exercise_id,
         attempt.element_key,
+        // EXP-018 / Phase 62: sixth segment keeps the receptive and
+        // productive rows of one card distinct. Mirrors the backend
+        // UNIQUE(user, set, lesson, exercise, element_key, direction).
+        directionOf(attempt),
     ].join("#");
 }
 
@@ -45,6 +56,7 @@ function rowToWire(row: ElementErrorRow): ElementError {
         lesson_id: row.lesson_id,
         exercise_id: row.exercise_id,
         element_key: row.element_key,
+        direction: row.direction ?? "target_to_source",
         element_type: row.element_type,
         user_answer: row.user_answer,
         correct_answer: row.correct_answer,
@@ -74,6 +86,7 @@ function applyTransition(
             lesson_id: attempt.lesson_id,
             exercise_id: attempt.exercise_id,
             element_key: attempt.element_key,
+            direction: directionOf(attempt),
             element_type: attempt.element_type ?? "vocabulary",
             user_answer: attempt.user_answer ?? "",
             correct_answer: attempt.correct_answer ?? "",
@@ -201,6 +214,7 @@ function _projectReviewItem(
         lesson_id: row.lesson_id,
         exercise_id: row.exercise_id,
         element_key: row.element_key,
+        direction: row.direction ?? "target_to_source",
         element_type: row.element_type,
         user_answer: row.user_answer,
         correct_answer: row.correct_answer,

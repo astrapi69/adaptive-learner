@@ -96,6 +96,7 @@ class ReviewQueueItem:
     lesson_id: str
     exercise_id: str
     element_key: str
+    direction: str
     element_type: str
     user_answer: str
     correct_answer: str
@@ -118,6 +119,7 @@ def _project(row: ElementError, now: datetime) -> ReviewQueueItem:
         lesson_id=row.lesson_id,
         exercise_id=row.exercise_id,
         element_key=row.element_key,
+        direction=row.direction,
         element_type=row.element_type,
         user_answer=row.user_answer,
         correct_answer=row.correct_answer,

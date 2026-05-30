@@ -366,3 +366,47 @@ describe("Dexie elementErrors: computeReviewQueueDexie", () => {
         expect(aQueue[0].set_id).toBe("set-a");
     });
 });
+
+describe("Dexie elementErrors: EXP-018 direction-awareness", () => {
+    it("records two independent rows for the two directions", async () => {
+        await recordElementAttemptsDexie(USER, [
+            attempt({direction: "target_to_source", correct: true}),
+            attempt({direction: "source_to_target", correct: false}),
+        ]);
+        const rows = await listElementErrorsDexie(USER);
+        expect(rows).toHaveLength(2);
+        const byDir = Object.fromEntries(rows.map((r) => [r.direction, r]));
+        expect(byDir.target_to_source.correct_streak).toBe(1);
+        expect(byDir.target_to_source.error_count).toBe(0);
+        expect(byDir.source_to_target.error_count).toBe(1);
+    });
+
+    it("masters each direction independently", async () => {
+        for (let i = 0; i < MASTERY_THRESHOLD; i++) {
+            await recordElementAttemptsDexie(USER, [
+                attempt({direction: "target_to_source", correct: true}),
+            ]);
+        }
+        await recordElementAttemptsDexie(USER, [
+            attempt({direction: "source_to_target", correct: true}),
+        ]);
+        const rows = await listElementErrorsDexie(USER);
+        const byDir = Object.fromEntries(rows.map((r) => [r.direction, r]));
+        expect(byDir.target_to_source.mastered).toBe(true);
+        expect(byDir.source_to_target.mastered).toBe(false);
+    });
+
+    it("defaults to receptive when direction omitted", async () => {
+        const [row] = await recordElementAttemptsDexie(USER, [
+            attempt({correct: true}),
+        ]);
+        expect(row.direction).toBe("target_to_source");
+    });
+
+    it("the composite id includes the direction segment", async () => {
+        const [row] = await recordElementAttemptsDexie(USER, [
+            attempt({direction: "source_to_target", correct: true}),
+        ]);
+        expect(row.id.endsWith("#source_to_target")).toBe(true);
+    });
+});

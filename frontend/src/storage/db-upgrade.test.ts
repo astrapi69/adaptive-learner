@@ -61,7 +61,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
         await db.open();
         // verno tracks the latest declared schema version; bump
         // this when a new this.version(N) is added to db.ts.
-        expect(db.verno).toBe(22);
+        expect(db.verno).toBe(23);
 
         const badge = (await db.table("badges").get("b1")) as Record<string, unknown>;
         expect(badge.base_tier).toBeTruthy();
@@ -105,7 +105,7 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
 
         const db = new AdaptiveLearnerDB(PAIR_NAME);
         await db.open();
-        expect(db.verno).toBe(22);
+        expect(db.verno).toBe(23);
         const row = (await db
             .table("contentSets")
             .get("src/language-fr-a1/1.0.0")) as Record<string, unknown>;
@@ -113,6 +113,58 @@ describe("Dexie v21 upgrade (badge tiers)", () => {
         // source defaulted to English (pilot explanation language).
         expect(row.target_language).toBe("fr");
         expect(row.source_language).toBe("en");
+        db.close();
+    });
+
+    it("re-keys elementErrors with the direction segment during the v23 upgrade", async () => {
+        // EXP-018 / Phase 62: the composite id grows a sixth
+        // ``#{direction}`` segment, so a pre-62 row must be deleted
+        // and re-added under the new id (not modified in place).
+        const DIR_NAME = "adaptive-learner-direction-upgrade";
+        const legacy = new Dexie(DIR_NAME);
+        legacy.version(22).stores({
+            elementErrors: "id, user_id, [user_id+set_id], mastered, updated_at",
+        });
+        await legacy.open();
+        await legacy.table("elementErrors").put({
+            id: "u1#set#lesson#ex#merci",
+            user_id: "u1",
+            set_id: "set",
+            lesson_id: "lesson",
+            exercise_id: "ex",
+            element_key: "merci",
+            element_type: "vocabulary",
+            user_answer: "",
+            correct_answer: "Merci",
+            error_count: 2,
+            correct_streak: 1,
+            last_error_at: null,
+            last_attempt_at: "2026-05-30T00:00:00Z",
+            mastered: false,
+            mastered_at: null,
+            created_at: "2026-05-30T00:00:00Z",
+            updated_at: "2026-05-30T00:00:00Z",
+        });
+        legacy.close();
+
+        const db = new AdaptiveLearnerDB(DIR_NAME);
+        await db.open();
+        expect(db.verno).toBe(23);
+        // Old id is gone; the row was re-keyed under the new id.
+        const oldRow = await db
+            .table("elementErrors")
+            .get("u1#set#lesson#ex#merci");
+        expect(oldRow).toBeUndefined();
+        const newRow = (await db
+            .table("elementErrors")
+            .get("u1#set#lesson#ex#merci#target_to_source")) as Record<
+            string,
+            unknown
+        >;
+        expect(newRow).toBeDefined();
+        expect(newRow.direction).toBe("target_to_source");
+        // History preserved across the re-key.
+        expect(newRow.error_count).toBe(2);
         db.close();
     });
 

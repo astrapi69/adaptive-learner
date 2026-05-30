@@ -37,7 +37,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from enum import Enum
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
@@ -1269,6 +1269,18 @@ class ElementAttemptIn(BaseModel):
     lesson_id: str = Field(..., min_length=1, max_length=200)
     exercise_id: str = Field(..., min_length=1, max_length=120)
     element_key: str = Field(..., min_length=1, max_length=500)
+    direction: Literal["source_to_target", "target_to_source"] = Field(
+        default="target_to_source",
+        description=(
+            "EXP-018 / Phase 62: which drill direction this attempt "
+            "belongs to. ``target_to_source`` (receptive, default) "
+            "or ``source_to_target`` (productive). Keyed into the "
+            "element-error identity so the two directions master "
+            "independently. ``both`` / ``random`` are exercise-level "
+            "authoring values; a recorded attempt is always one of "
+            "the two concrete directions."
+        ),
+    )
     element_type: str = Field(
         default="vocabulary",
         min_length=1,
@@ -1315,6 +1327,7 @@ class ElementErrorOut(BaseModel):
     lesson_id: str
     exercise_id: str
     element_key: str
+    direction: str
     element_type: str
     user_answer: str
     correct_answer: str
@@ -1342,6 +1355,7 @@ class ReviewQueueItemOut(BaseModel):
     lesson_id: str
     exercise_id: str
     element_key: str
+    direction: str
     element_type: str
     user_answer: str
     correct_answer: str
