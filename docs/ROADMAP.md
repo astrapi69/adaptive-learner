@@ -47,6 +47,26 @@ Current state: **v1.45.0 released 2026-05-30 (Phase 61 — quality sweep: securi
 | 40 | v1.24.1 | Release-Automation Hardening — Bibliogon's 4-Tier model adopted: package-lock propagation, open-set version-literal discovery, advisory WARN wiring, aggregate `make release-*` targets, 4-Tier architecture documentation, plugin refactor unblocking the verify chain. No user-visible runtime changes. |
 | 41 | v1.25.0 | Identity Persistence + Browser-Wipe Recovery + Danger Zone — `~/.config/adaptive_learner/identity.yaml` writes on user / project / language changes. Frontend Landing flow recovers from disk (API mode) or IndexedDB (Dexie mode) after a `localStorage` wipe. Settings > About > Identity status panel surfaces the resolved identity. Settings > Danger Zone ships a three-step typed-confirm reset: `POST /api/reset` truncates every table and scrubs `ai.*` from `secrets.yaml` while preserving the Fernet `secret_key`. 13 new i18n keys across 8 catalogs. Two new backend endpoints. Six atomic commits. |
 | **42** | **v1.26.0** | **Git-Backed Learning Repository (BL-30)** — new `learning-repo` plugin emits per-project Markdown artefacts (`README.md`, `LEARNING_STATS.md`, `CHEATSHEET.md`, `ROADMAP.md` + numbered topic folders) from existing DB state via three endpoints (render JSON, export-zip, persist-to-git). Opt-in `git init` + commit-on-render with semantic subject `Cycle N — U X/10, T Y/10`; tags `cycle-{N}-mastered` on Article-1 § 8 exit threshold (Understanding ≥ 9/10 AND Transfer ≥ 8/10 stable over 2 cycles). New core endpoint `/api/plugin-settings/{plugin_name}` (GET + PATCH) closes the architecture-rule gap on UI-editable plugin settings. New `SessionNote.kind` column (`"note"` / `"meta_learning"`) is the Article-3 "Meta-Learning Insight" slot. Frontend ships `/projects/:projectId/learning-repo` page + Dashboard widget + Settings panel. i18n `repo.*` block in all 8 catalogs (DE+EN native, 6 AI-translated). Seven atomic commits per the BL-30 plan; implements Asterios Raptis' *Von Theorie zur Praxis* Article 3 pattern.** |
+| 43 | v1.27.0 | **Content-Loader Plugin** (2026-05-26) — `/content` downloads structured lesson sets from public GitHub repos and caches them locally (filesystem + IndexedDB); Pydantic lesson schema v1.0; Dexie v16 + Set Browser. EXP-002/EXP-005 foundation, the first no-API-key path. |
+| 44 | v1.28.0 | **Lesson Viewer + Matching + Picture-Choice** (2026-05-26) — new `/lesson` route + the first two exercise renderers; `LessonProgress` model + Alembic 0018 + Dexie v17. EXP-002 Sprint 3 A-D. |
+| 45 | v1.29.0 | **Free-Text + Word-Tiles Exercises** (2026-05-27) — the viewer now ships every exercise type the v1.0 schema knows; frontend-only. EXP-002 Sprint 3 E-F. |
+| 46A-D | v1.30.0 | **Element-Level Error Tracking + SRS Review** (2026-05-27) — per-element `ElementError`, mastery at 3-consecutive-correct, SRS scheduler (1d/3d/7d), `/review/:setId` + Dashboard widget; Alembic 0019 + Dexie v18. EXP-007/P-129. |
+| 46E-G | v1.31.0 | **Gamification Integration + LessonProgress↔LearningSession Unification** (2026-05-27) — `kind="content"` pseudo-project, lesson-XP rule, 4 new badges incl. `review_master`. |
+| 49 | v1.32.0 | **Learning-Repo Storage Abstraction** (2026-05-27) — ports the ~957-LOC Python renderer to TypeScript so the Learning Repository works in Dexie mode; 2 new `IStorageService` namespaces; Dexie v19. Closes the v1.26.1 server-only gap. (Phases 47-48 were never assigned.) |
+| 50 | v1.33.0 | **Dexie-Mode Lesson-XP Parity + i18n Repo-Key Fix** (2026-05-28) — Dexie-mode users earn lesson-XP/badges byte-identical to API mode (cross-language parity goldens); fixes 23 unresolved `repo.*` i18n keys; `.claude/rules` Bibliogon-residue cleanup. |
+| 51 | v1.34.0 | **Content Expansion: French A1 + Spanish A1 + GH-Pages bundling** (2026-05-28) — 15 A1 lessons bundled into the static build so first-time visitors see content offline; authoring guide EN+DE. |
+| 52 | v1.35.0 | **Token-Diff + Cloze Exercise** (2026-05-28) — token-level feedback on every surface; a 5th exercise type (Cloze, auto-generated from the learner's mistakes); end-of-lesson correction round; schema 1.0→1.1. EXP-007. |
+| 53 | v1.36.0 | **Adaptive Lesson Generation** (2026-05-28) — rule-based, deterministic, client-side: reads per-element error history, classifies weaknesses, synthesises a personalised lesson the existing viewer renders unmodified; `/adaptive-lesson/:setId` + Dashboard FocusAreasCard. EXP-013. |
+| 54 | v1.37.0 | **Asset Fetching for Picture-Choice** (2026-05-28) — lesson sets ship binary images via a manifest-declared `assets/` dir; deterministic placeholder SVGs + text-only fallback; works in API / Dexie / GH-Pages. |
+| 55 | v1.38.0 | **Praise + Celebration** (2026-05-29) — earned, scaled micro-feedback: 8-lang praise catalogs, shared `AnswerCelebration`, milestone overlays, CSS-only confetti, Feedback-Intensity + Sounds settings, full reduced-motion path. EXP-008. |
+| 56 | v1.39.0 | **Daily Missions** (2026-05-29) — up to 3 deterministic, adaptive goals/day on the Dashboard, evaluated against existing data; new `missions` plugin (13th) + `UserMission` + Alembic 0021 + Dexie v20. EXP-010. |
+| 57 | v1.40.0 | **Badge Tiers + Badge Gallery** (2026-05-29) — all 28 badges gain bronze/silver/gold (static siblings + dynamic high-water-mark); tier-coloured SVG generator; BadgeGallery drawer; Alembic 0022 + Dexie v21. |
+| 58 | v1.41.0 | **UX/UI Audit + Multi-Theme System** (2026-05-29) — semantic CSS-variable token set across 6 themes (light/dark/ocean/forest/high-contrast/sepia) + auto; ThemePicker; Recharts recolouring; WCAG re-audit; Dexie v21 upgrade bugfix. |
+| 59 | v1.42.0 | **Analysis-to-Lesson Converter + Community Sharing** (2026-05-29) — turns a chat-import analysis into a replayable offline lesson; backend-free export/import/share loop; "My Lessons" in `/content`; `saveUserSet`/`deleteSet` namespace. |
+| — | v1.42.1 | **Patch** (2026-05-29) — fixes the Save-as-Offline-Lesson 422 in API mode; Settings tab reorg (Help/About split, identity moved to Data). |
+| — | v1.43.0 | **Content Repo Online** (2026-05-30) — the official `astrapi69/adaptive-learner-content` repo exists + is validated end-to-end; same-id sets deduped across bundle + GitHub (higher version wins); Bundled/GitHub source badge; Share re-enabled; docs-verification system gates releases + CI. |
+| 60 | v1.44.0 | **Content Validation Pipeline + Language-Pair Tree** (2026-05-30) — content sets declare a language PAIR (target + source); `sets/{source}/{target-level}/` tree; schema 1.1→1.2 + Dexie v22; client-side validator gates Share + opt-in AI review; content-repo CI. |
+| 61 | v1.45.0 | **Quality Sweep** (2026-05-30) — audit-first, then fixes: security P2 (`read_lesson` guard), coverage (missions 14→41, ApiStorage 100%, config_overlay 90%, 3 interactive Dexie E2E journeys), architecture + performance fixes, dead-code removal, tree-placement + duplicate detection in the share pipeline, minor/patch deps. |
 
 Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list. Per-release notes live in [changelog/releases/](../changelog/releases/).
 
@@ -54,23 +74,33 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phases (planned)
 
-**Phase 43 candidate** — no committed item yet. The post-BL-30
-backlog (see [backlog.md](backlog.md)) carries several P2 / P3
-candidates but none are pulled forward; the next phase is set
-in the v1.26.0 → v1.27.0 review.
+**Phase 62 candidate — v1.46.0: remaining UX polish from manual
+testing.** Two UX items surfaced in manual testing of the lesson
+viewer:
 
-Known follow-ups to BL-30 that may shape Phase 43:
+- **Matching-exercise visibility bug.** The selected/paired state
+  in the Matching exercise is hard to read in some themes. (v1.38.0
+  already shipped a Matching UX pass — selected state, instructions,
+  column headers, wrong-pair shake — so this is the residual
+  visibility follow-up, not the whole exercise.)
+- **Word-Tiles drag-to-reorder.** Word-Tiles currently builds the
+  answer by tap-to-append; drag-to-reorder is the requested
+  interaction upgrade. @dnd-kit is the sanctioned DnD library
+  (see coding-standards.md).
+
+Known longer-horizon follow-ups (no committed phase):
 
 - **Per-topic-folder triplet** (`concepts.md` / `tasks.md` /
-  `solutions.md`). Article 3's "Drei-Datei-Prinzip" — folders
-  currently ship only the stub README. Becomes a phase when a
-  user actually wants the deeper structure.
-- **Method-experiment git branches**. Article 3's "branches
-  as method experiments" — short-lived git branches per
-  learning method to support A/B comparisons. Trigger: a user
-  reports wanting to compare two methods on the same topic.
-- **GitHub-push automation for `learning-repo`**. Trigger:
-  user demand for a "share my learning repo publicly" flow.
+  `solutions.md`) for the Learning Repository — Article 3's
+  "Drei-Datei-Prinzip"; folders currently ship only the stub
+  README. Trigger: a user wants the deeper structure.
+- **Method-experiment git branches** + **GitHub-push automation**
+  for `learning-repo`. Trigger: user demand for method A/B
+  comparison or a "share my learning repo publicly" flow.
+- **EXP-013 Stufe 3 — AI-augmented adaptive generation.** The
+  Phase 53 rule-based pipeline is sufficient for the headline
+  promise; the AI-augmented layer (P-150..P-152) was explicitly
+  deferred.
 
 Other deferred work:
 
