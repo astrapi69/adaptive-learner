@@ -103,6 +103,17 @@ def validate_structure(content_set: dict, errors: list[str]) -> None:
         errors.append(
             f"set {sid}: path source dir '{parts[1]}' != source_language '{source}'"
         )
+    # The target+level directory name must match the metadata, so a
+    # set's file location is derivable from (and consistent with) its
+    # declared target_language + level.
+    target = base_lang(content_set.get("target_language", ""))
+    level = (content_set.get("level", "") or "").strip().lower()
+    expected_dir = f"{target}-{level}"
+    if target and level and parts[2] != expected_dir:
+        errors.append(
+            f"set {sid}: path target dir '{parts[2]}' != expected "
+            f"'{expected_dir}' (from target_language '{target}' + level '{level}')"
+        )
     if not (REPO_ROOT / path).is_dir():
         errors.append(f"set {sid}: path '{path}' is not a directory")
 

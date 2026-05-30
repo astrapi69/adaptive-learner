@@ -1507,7 +1507,11 @@
       "back_language_mismatch": "Lección '{lesson}': el reverso de la tarjeta '{card}' no parece estar en {source}.",
       "free_text_too_few_accepts": "Lección '{lesson}': el ejercicio de texto libre '{exercise}' necesita al menos {min} respuestas aceptadas.",
       "matching_too_few_pairs": "Lección '{lesson}': el ejercicio de emparejar '{exercise}' necesita al menos {min} pares.",
-      "missing_distractors": "Lección '{lesson}': el ejercicio '{exercise}' necesita distractores (opciones incorrectas)."
+      "missing_distractors": "Lección '{lesson}': el ejercicio '{exercise}' necesita distractores (opciones incorrectas).",
+      "non_cefr_level": "El nivel '{level}' no es una banda CEFR (A1-C2).",
+      "level_too_complex": "Lección '{lesson}': el texto promedia {avg} palabras por lado, alto para el nivel {level} (se esperan unas {cap}).",
+      "source_language_heuristic": "Los reversos de las tarjetas no parecen estar en '{lang}' (no se hallaron caracteres característicos).",
+      "target_language_heuristic": "Los anversos de las tarjetas no parecen estar en '{lang}' (no se hallaron caracteres característicos)."
     },
     "ai_validation": {
       "intro": "Una IA puede comprobar además la precisión de la traducción, la gramática y el nivel.",
@@ -1523,6 +1527,10 @@
       "applied": "aplicado",
       "fix_applied": "Sugerencia aplicada.",
       "fix_failed": "No se pudo aplicar la sugerencia."
+    },
+    "placement": {
+      "lands_under": "Tu lección se ubicará en",
+      "duplicate": "Ya existe una lección similar: {title}. ¿Compartir de todos modos?"
     }
   },
   "milestone": {

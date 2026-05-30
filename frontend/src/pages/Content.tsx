@@ -43,10 +43,12 @@ import {
 } from "../lib/content/content-tree";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
+  treePlacement,
   validateSetForSharing,
   type ValidationIssue,
   type ValidationResult,
 } from "../lib/content/content-validator";
+import { findSimilarSets } from "../lib/content/duplicate-detection";
 import type { AiValidationResult } from "../lib/content/ai-content-validator";
 import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
 import { readLearnerState } from "../lib/learnerState";
@@ -400,11 +402,30 @@ export default function ContentPage() {
     const aiSummary = aiResult
       ? `AI-validated: yes, quality_score: ${aiResult.quality_score.toFixed(2)}`
       : undefined;
+    const placement = treePlacement({
+      title: shareTarget.title,
+      title_native: shareTarget.title_native,
+      target_language: shareTarget.target_language,
+      source_language: shareTarget.source_language,
+      level: shareTarget.level,
+    });
+    const cardCount = shareLessons.reduce((n, l) => n + l.cards.length, 0);
+    const exerciseCount = shareLessons.reduce(
+      (n, l) => n + l.steps.filter((s) => s.type === "exercise").length,
+      0,
+    );
     const url = communityIssueUrl(
       COMMUNITY_REPO,
       exportMeta(shareTarget),
       shareTarget.lesson_count,
-      aiSummary,
+      {
+        sourceLanguage: placement.source,
+        targetLanguage: placement.target,
+        placement: placement.path,
+        exerciseCount,
+        cardCount,
+        aiSummary,
+      },
     );
     window.open(url, "_blank", "noopener,noreferrer");
     closeShareModal();
@@ -1014,6 +1035,68 @@ export default function ContentPage() {
                   ))}
                 </ul>
               </>
+            )}
+
+            {/* Phase 61 — tree-placement preview + warnings + dup
+                detection (shown once the check has run). */}
+            {shareResult && shareTarget && (
+              <div
+                className="content-share-extra"
+                data-testid="content-share-placement"
+              >
+                <p className="content-share-placement-line">
+                  {t("content.placement.lands_under", "Your lesson lands under")}:{" "}
+                  <strong>
+                    {shareTarget.source_language.toUpperCase()} →{" "}
+                    {shareTarget.target_language.toUpperCase()} → {shareTarget.level}
+                  </strong>
+                </p>
+                <code className="content-share-placement-path">
+                  {
+                    treePlacement({
+                      title: shareTarget.title,
+                      title_native: shareTarget.title_native,
+                      target_language: shareTarget.target_language,
+                      source_language: shareTarget.source_language,
+                      level: shareTarget.level,
+                    }).path
+                  }
+                  /lessons/
+                </code>
+                {(() => {
+                  const dups = findSimilarSets(
+                    {
+                      id: shareTarget.id,
+                      title: shareTarget.title,
+                      source_language: shareTarget.source_language,
+                      target_language: shareTarget.target_language,
+                      level: shareTarget.level,
+                    },
+                    downloadedSets,
+                  );
+                  return dups.length > 0 ? (
+                    <p
+                      className="content-share-warning"
+                      data-testid="content-share-duplicate"
+                    >
+                      {t(
+                        "content.placement.duplicate",
+                        "A similar lesson already exists: {title}. Share anyway?",
+                      ).replace("{title}", dups[0].title)}
+                    </p>
+                  ) : null;
+                })()}
+                {shareResult.warnings.length > 0 && (
+                  <ul
+                    className="content-share-warnings"
+                    data-testid="content-share-warnings"
+                  >
+                    {shareResult.warnings.map((w, i) => (
+                      <li key={`${w.code}-${i}`}>{validationMessage(w)}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
 
             {/* Phase 60 C5b — opt-in AI review (only after the

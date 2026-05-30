@@ -1383,6 +1383,10 @@ content:
     free_text_too_few_accepts: "レッスン '{lesson}': 自由記述演習 '{exercise}' には最低 {min} 個の正解が必要です。"
     matching_too_few_pairs: "レッスン '{lesson}': マッチング演習 '{exercise}' には最低 {min} 組必要です。"
     missing_distractors: "レッスン '{lesson}': 演習 '{exercise}' には誤答選択肢が必要です。"
+    non_cefr_level: レベル '{level}' は CEFR の区分（A1〜C2）ではありません。
+    level_too_complex: "レッスン '{lesson}': 片面あたり平均 {avg} 語で、レベル {level} には多めです（目安は約 {cap} 語）。"
+    source_language_heuristic: カードの裏面が '{lang}' ではないようです（特徴的な文字が見つかりません）。
+    target_language_heuristic: カードの表面が '{lang}' ではないようです（特徴的な文字が見つかりません）。
   ai_validation:
     intro: AIは翻訳の正確さ、文法、レベルの適切さも確認できます。
     privacy: レッスンの内容は {provider} に送信されます。個人データは送信されません。
@@ -1397,6 +1401,9 @@ content:
     applied: 適用済み
     fix_applied: 提案を適用しました。
     fix_failed: 提案を適用できませんでした。
+  placement:
+    lands_under: あなたのレッスンの配置先
+    duplicate: '類似のレッスンが既に存在します: {title}。それでも共有しますか？'
 milestone:
   streak: "{n}日連続記録!"
   level_up: "レベル{n}に到達!"

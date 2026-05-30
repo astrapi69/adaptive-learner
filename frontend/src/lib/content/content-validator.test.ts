@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { ContentLesson } from "../../storage/types";
 import {
   QUALITY,
+  treePlacement,
   validateSetForSharing,
   type ValidationMeta,
 } from "./content-validator";
@@ -166,5 +167,63 @@ describe("validateSetForSharing", () => {
 
   it("exposes the quality thresholds", () => {
     expect(QUALITY.minExercisesPerLesson).toBe(5);
+  });
+});
+
+function warnCodes(meta: ValidationMeta, lessons: ContentLesson[]): string[] {
+  return validateSetForSharing(meta, lessons).warnings.map((w) => w.code);
+}
+
+describe("treePlacement", () => {
+  it("builds the source-language tree path", () => {
+    expect(treePlacement(META)).toEqual({
+      source: "de",
+      target: "fr",
+      level: "A1",
+      path: "sets/de/fr-a1",
+    });
+  });
+});
+
+// A lesson whose German backs are LONG (>10 words/side avg) and
+// contain NO umlauts — exercises the level + source heuristics.
+function wordyAsciiGermanLesson(): ContentLesson {
+  const l = goodLesson();
+  l.cards = l.cards.map((c, i) => ({
+    ...c,
+    back: `Dies ist eine ausfuehrliche deutsche Erklaerung Nummer ${i} ohne Umlaute mit vielen Woertern`,
+  }));
+  return l;
+}
+
+describe("validateSetForSharing — warnings (non-blocking)", () => {
+  it("warnings never flip ok to false", () => {
+    const r = validateSetForSharing(META, [wordyAsciiGermanLesson()]);
+    expect(r.ok).toBe(true);
+    expect(r.warnings.length).toBeGreaterThan(0);
+  });
+
+  it("warns when the level is not a CEFR band", () => {
+    expect(warnCodes({ ...META, level: "beginner" }, [goodLesson()])).toContain(
+      "non_cefr_level",
+    );
+  });
+
+  it("warns when A1 card text is too long for the level", () => {
+    expect(warnCodes(META, [wordyAsciiGermanLesson()])).toContain(
+      "level_too_complex",
+    );
+  });
+
+  it("warns when German backs show no umlauts (source heuristic)", () => {
+    expect(warnCodes(META, [wordyAsciiGermanLesson()])).toContain(
+      "source_language_heuristic",
+    );
+  });
+
+  it("does NOT warn when German backs contain umlauts", () => {
+    const l = wordyAsciiGermanLesson();
+    l.cards[0].back = "Schön, dich zu sehen — das ist eine grüßende Erklärung über Umlaute";
+    expect(warnCodes(META, [l])).not.toContain("source_language_heuristic");
   });
 });

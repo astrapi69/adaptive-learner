@@ -1507,7 +1507,11 @@
       "back_language_mismatch": "Lesson '{lesson}': card '{card}' back does not look like {source}.",
       "free_text_too_few_accepts": "Lesson '{lesson}': free-text exercise '{exercise}' needs at least {min} accepted answers.",
       "matching_too_few_pairs": "Lesson '{lesson}': matching exercise '{exercise}' needs at least {min} pairs.",
-      "missing_distractors": "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options)."
+      "missing_distractors": "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options).",
+      "non_cefr_level": "Level '{level}' is not a CEFR band (A1-C2).",
+      "level_too_complex": "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected).",
+      "source_language_heuristic": "Card backs don't appear to be in '{lang}' (no characteristic characters found).",
+      "target_language_heuristic": "Card fronts don't appear to be in '{lang}' (no characteristic characters found)."
     },
     "ai_validation": {
       "intro": "An AI can additionally check translation accuracy, grammar and level fit.",
@@ -1523,6 +1527,10 @@
       "applied": "applied",
       "fix_applied": "Suggestion applied.",
       "fix_failed": "Could not apply the suggestion."
+    },
+    "placement": {
+      "lands_under": "Your lesson lands under",
+      "duplicate": "A similar lesson already exists: {title}. Share anyway?"
     }
   },
   "milestone": {

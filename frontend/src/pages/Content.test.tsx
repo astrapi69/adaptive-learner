@@ -512,6 +512,10 @@ describe("Content — My Lessons (Phase 59C)", () => {
       fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
     });
     await screen.findByTestId("content-share-passed");
+    // Phase 61 — the tree-placement preview is shown.
+    expect(screen.getByTestId("content-share-placement")).toHaveTextContent(
+      "sets/de/es-beginner",
+    );
     fireEvent.click(screen.getByTestId("content-share-continue"));
     expect(openSpy).toHaveBeenCalled();
     const url = openSpy.mock.calls[0][0] as string;
@@ -521,7 +525,39 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(new URL(url).searchParams.get("title")).toContain(
       "My Spanish lesson",
     );
+    // Phase 61 — the issue body carries the placement + metadata.
+    const body = new URL(url).searchParams.get("body") ?? "";
+    expect(body).toContain("sets/de/es-beginner");
+    expect(body).toContain("schema ✓");
     vi.unstubAllGlobals();
+  });
+
+  it("warns when a similar lesson already exists for the same pair + level", async () => {
+    const valid = { ...USER_ENTRY, title_native: "Español A1" };
+    // A downloaded set with the same de->es / beginner pair and a
+    // near-identical title triggers the duplicate warning.
+    const existing = {
+      ...SAMPLE_ENTRY,
+      source: "astrapi69/adaptive-learner-content",
+      id: "es-beginner-from-de",
+      title: "My Spanish Lesson",
+      target_language: "es",
+      source_language: "de",
+      level: "beginner",
+      cached_version: "1.0.0",
+    };
+    listSetsMock.mockResolvedValue({ sets: [valid, existing], sources: [] });
+    listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
+    getLessonMock.mockResolvedValue(shareableLesson());
+    renderPage();
+    await screen.findByTestId("content-page");
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
+    });
+    await screen.findByTestId("content-share-passed");
+    expect(screen.getByTestId("content-share-duplicate")).toHaveTextContent(
+      "My Spanish Lesson",
+    );
   });
 
   it("offers opt-in AI validation when a key is present and surfaces the result", async () => {

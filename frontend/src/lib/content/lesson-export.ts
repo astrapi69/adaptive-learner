@@ -93,6 +93,21 @@ export function contentSetFileName(title: string): string {
   return `${slug}-set.zip`;
 }
 
+/** Phase 61 — extra context for the community issue so the
+ *  maintainer sees, at a glance, where the lesson lands in the
+ *  source-language tree and how it scored in validation. */
+export interface CommunityIssueDetails {
+  sourceLanguage: string;
+  targetLanguage: string;
+  /** Repo-relative directory the set lands in (``sets/de/fr-a1``). */
+  placement: string;
+  exerciseCount: number;
+  cardCount: number;
+  /** e.g. "AI-validated: yes, quality_score: 0.85" — omitted when
+   *  the user didn't run the AI review. */
+  aiSummary?: string;
+}
+
 /** Build a pre-filled GitHub issue URL for the community contribution
  *  pathway. The maintainer reviews + adds the lesson to the official
  *  content repo manually (no auto-publish). */
@@ -100,19 +115,39 @@ export function communityIssueUrl(
   repo: string,
   meta: ExportSetMeta,
   lessonCount: number,
-  /** Optional AI-validation summary (Phase 60 / v1.44.0) appended to
-   *  the issue body so the maintainer sees the lesson was AI-checked,
-   *  e.g. "AI-validated: yes, quality_score: 0.85". */
-  aiSummary?: string,
+  details?: CommunityIssueDetails,
 ): string {
   const title = `New lesson: ${meta.title} (${meta.language} ${meta.level})`;
+  const lines: string[] = [];
+  if (details) {
+    // Tree placement first — the maintainer's primary question.
+    lines.push(
+      `**Placement:** \`${details.placement}/\` (${details.sourceLanguage} → ${details.targetLanguage}, ${meta.level})`,
+      "",
+      "| Field | Value |",
+      "|---|---|",
+      `| Title | ${meta.title} |`,
+      `| Source language | ${details.sourceLanguage} |`,
+      `| Target language | ${details.targetLanguage} |`,
+      `| Level | ${meta.level} |`,
+      `| Lessons | ${lessonCount} |`,
+      `| Cards | ${details.cardCount} |`,
+      `| Exercises | ${details.exerciseCount} |`,
+      "",
+      `**Validation:** schema ✓ · quality ✓${details.aiSummary ? ` · ${details.aiSummary}` : ""}`,
+    );
+    if (meta.description) lines.push("", `**Description:** ${meta.description}`);
+  } else {
+    lines.push(
+      `**Title:** ${meta.title}`,
+      `**Language:** ${meta.language}`,
+      `**Level:** ${meta.level}`,
+      `**Lessons:** ${lessonCount}`,
+      meta.description ? `**Description:** ${meta.description}` : "",
+    );
+  }
   const body = [
-    `**Title:** ${meta.title}`,
-    `**Language:** ${meta.language}`,
-    `**Level:** ${meta.level}`,
-    `**Lessons:** ${lessonCount}`,
-    meta.description ? `**Description:** ${meta.description}` : "",
-    aiSummary ? `**${aiSummary}**` : "",
+    ...lines,
     "",
     "I created this lesson from my own learning and would like to share it.",
     "",
@@ -121,9 +156,7 @@ export function communityIssueUrl(
     "2. Maintainer: review the lesson, then add it to the content repo under `sets/`.",
     "",
     "_Exported from Adaptive Learner — My Lessons > Share with Community._",
-  ]
-    .filter((line) => line !== null)
-    .join("\n");
+  ].join("\n");
   const params = new URLSearchParams({ title, body });
   return `https://github.com/${repo}/issues/new?${params.toString()}`;
 }

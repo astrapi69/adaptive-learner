@@ -31,8 +31,16 @@ export interface ValidationIssue {
 }
 
 export interface ValidationResult {
+  /** True when there are no blocking ``issues`` (warnings do NOT
+   *  affect this — the user can share past warnings). */
   ok: boolean;
+  /** Blocking problems: schema / language pair / quality minimums.
+   *  Any entry here means the set cannot be shared. */
   issues: ValidationIssue[];
+  /** Non-blocking advisories: language-heuristic mismatches, CEFR /
+   *  word-count level hints. Surfaced yellow; sharing stays
+   *  enabled. */
+  warnings: ValidationIssue[];
 }
 
 /** Quality minimums. Below any of these = cannot share. */
@@ -49,8 +57,55 @@ export const QUALITY = {
 // must use a plain 2-letter code so the tree groups cleanly.
 const ISO_639_1 = /^[a-z]{2}$/;
 
+/** CEFR levels a community language set is expected to declare. */
+export const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
+
+/** Average words-per-card-side above which a level looks too hard
+ *  for the declared CEFR band (a coarse proxy — the AI review
+ *  judges level fit properly). A1/A2 should stay short. */
+const MAX_AVG_WORDS_PER_SIDE: Record<string, number> = {
+  a1: 10,
+  a2: 14,
+  b1: 20,
+  b2: 30,
+};
+
+// Signature diacritics / characters per Latin-script language. A
+// set whose source (or target) is one of these but whose text
+// shows NONE of its signature characters anywhere is *probably*
+// mislabelled — emitted as a WARNING (never a hard block), because
+// absence is only weak evidence (e.g. "Hallo" has no umlaut).
+const LANGUAGE_SIGNATURE: Record<string, RegExp> = {
+  de: /[äöüßÄÖÜ]/,
+  fr: /[àâçéèêëîïôûùüœæ]/i,
+  es: /[ñáíóúü¿¡]/i,
+  pt: /[ãõçáâàéêíóôú]/i,
+  it: /[àèéìíîòóùú]/i,
+};
+
 function base(code: string): string {
   return (code || "").split("-")[0].toLowerCase();
+}
+
+/**
+ * Where a set lands in the source-language tree, for the share
+ * preview. Returns the breadcrumb codes + the repo-relative path.
+ */
+export function treePlacement(meta: ValidationMeta): {
+  source: string;
+  target: string;
+  level: string;
+  path: string;
+} {
+  const source = base(meta.source_language) || "??";
+  const target = base(meta.target_language) || "??";
+  const level = (meta.level || "").trim();
+  return {
+    source,
+    target,
+    level,
+    path: `sets/${source}/${target}-${level.toLowerCase()}`,
+  };
 }
 
 // Scripts we CAN tell apart from Latin. For a non-Latin source
@@ -73,7 +128,11 @@ function backLooksLikeSource(text: string, sourceLang: string): boolean {
   return range.test(text);
 }
 
-function validateMeta(meta: ValidationMeta, issues: ValidationIssue[]): void {
+function validateMeta(
+  meta: ValidationMeta,
+  issues: ValidationIssue[],
+  warnings: ValidationIssue[],
+): void {
   const target = base(meta.target_language);
   const source = base(meta.source_language);
 
@@ -92,12 +151,55 @@ function validateMeta(meta: ValidationMeta, issues: ValidationIssue[]): void {
     issues.push({ code: "missing_title" });
   if (!meta.title_native || !meta.title_native.trim())
     issues.push({ code: "missing_title_native" });
+
+  // CEFR level: a warning (not a hard block — non-language domains
+  // legitimately use other scales like "beginner").
+  const level = (meta.level || "").trim().toUpperCase();
+  if (!(CEFR_LEVELS as readonly string[]).includes(level))
+    warnings.push({ code: "non_cefr_level", params: { level: meta.level } });
+}
+
+/**
+ * Set-level language heuristic (Phase 61). Aggregates ALL card
+ * `back`/`notes` text (should be the source language) and all
+ * `front` text (should be the target language). For Latin-script
+ * languages with signature diacritics, if a side has a meaningful
+ * amount of text but shows NONE of the expected signature
+ * characters, emit a WARNING — absence is weak evidence, so this
+ * never blocks sharing.
+ */
+function validateLanguageHeuristics(
+  meta: ValidationMeta,
+  lessons: ContentLesson[],
+  warnings: ValidationIssue[],
+): void {
+  let backText = "";
+  let frontText = "";
+  for (const lesson of lessons) {
+    for (const card of lesson.cards) {
+      backText += " " + (card.back ?? "") + " " + (card.notes ?? "");
+      frontText += " " + (card.front ?? "");
+    }
+  }
+  const checkSide = (
+    text: string,
+    lang: string,
+    code: string,
+  ): void => {
+    const sig = LANGUAGE_SIGNATURE[base(lang)];
+    // Only meaningful with enough text to expect a signature char.
+    if (sig && text.trim().length >= 40 && !sig.test(text))
+      warnings.push({ code, params: { lang: base(lang) } });
+  };
+  checkSide(backText, meta.source_language, "source_language_heuristic");
+  checkSide(frontText, meta.target_language, "target_language_heuristic");
 }
 
 function validateLesson(
   lesson: ContentLesson,
   meta: ValidationMeta,
   issues: ValidationIssue[],
+  warnings: ValidationIssue[],
 ): void {
   const id = lesson.id;
   const exercises = lesson.steps
@@ -105,6 +207,27 @@ function validateLesson(
     .map((s) => s.exercise!);
   const theoryCount = lesson.steps.filter((s) => s.type === "theory").length;
   const types = new Set(exercises.map((e) => e.type));
+
+  // Word-count proxy for level fit: average words per card side.
+  const level = (meta.level || "").trim().toLowerCase();
+  const cap = MAX_AVG_WORDS_PER_SIDE[level];
+  if (cap !== undefined && lesson.cards.length > 0) {
+    // Average words per side, computed PER side (front vs back)
+    // because the target-language front is naturally short and
+    // would otherwise mask a wordy source-language back.
+    const wordsOf = (s: string | null | undefined) =>
+      s && s.trim() ? s.trim().split(/\s+/).length : 0;
+    const frontAvg =
+      lesson.cards.reduce((n, c) => n + wordsOf(c.front), 0) / lesson.cards.length;
+    const backAvg =
+      lesson.cards.reduce((n, c) => n + wordsOf(c.back), 0) / lesson.cards.length;
+    const avg = Math.max(frontAvg, backAvg);
+    if (avg > cap)
+      warnings.push({
+        code: "level_too_complex",
+        params: { lesson: id, level: meta.level, avg: avg.toFixed(1), cap },
+      });
+  }
 
   if (exercises.length < QUALITY.minExercisesPerLesson)
     issues.push({
@@ -172,12 +295,14 @@ export function validateSetForSharing(
   lessons: ContentLesson[],
 ): ValidationResult {
   const issues: ValidationIssue[] = [];
-  validateMeta(meta, issues);
+  const warnings: ValidationIssue[] = [];
+  validateMeta(meta, issues, warnings);
   if (lessons.length === 0) {
     issues.push({ code: "no_lessons" });
   }
   for (const lesson of lessons) {
-    validateLesson(lesson, meta, issues);
+    validateLesson(lesson, meta, issues, warnings);
   }
-  return { ok: issues.length === 0, issues };
+  validateLanguageHeuristics(meta, lessons, warnings);
+  return { ok: issues.length === 0, issues, warnings };
 }

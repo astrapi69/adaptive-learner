@@ -1507,7 +1507,11 @@
       "back_language_mismatch": "Lição '{lesson}': o verso do cartão '{card}' não parece estar em {source}.",
       "free_text_too_few_accepts": "Lição '{lesson}': o exercício de texto livre '{exercise}' precisa de pelo menos {min} respostas aceites.",
       "matching_too_few_pairs": "Lição '{lesson}': o exercício de correspondência '{exercise}' precisa de pelo menos {min} pares.",
-      "missing_distractors": "Lição '{lesson}': o exercício '{exercise}' precisa de distratores (opções erradas)."
+      "missing_distractors": "Lição '{lesson}': o exercício '{exercise}' precisa de distratores (opções erradas).",
+      "non_cefr_level": "O nível '{level}' não é uma faixa CEFR (A1-C2).",
+      "level_too_complex": "Lição '{lesson}': o texto tem em média {avg} palavras por lado, alto para o nível {level} (cerca de {cap} esperadas).",
+      "source_language_heuristic": "Os versos dos cartões não parecem estar em '{lang}' (nenhum caractere característico encontrado).",
+      "target_language_heuristic": "As frentes dos cartões não parecem estar em '{lang}' (nenhum caractere característico encontrado)."
     },
     "ai_validation": {
       "intro": "Uma IA pode também verificar a exatidão da tradução, a gramática e a adequação ao nível.",
@@ -1523,6 +1527,10 @@
       "applied": "aplicado",
       "fix_applied": "Sugestão aplicada.",
       "fix_failed": "Não foi possível aplicar a sugestão."
+    },
+    "placement": {
+      "lands_under": "A sua lição será colocada em",
+      "duplicate": "Já existe uma lição semelhante: {title}. Partilhar mesmo assim?"
     }
   },
   "milestone": {
