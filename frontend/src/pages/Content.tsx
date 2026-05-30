@@ -54,11 +54,10 @@ import { notify } from "../utils/notify";
 const COMMUNITY_REPO = "astrapi69/adaptive-learner-content";
 
 /** "Share with Community" opens a GitHub issue on COMMUNITY_REPO.
- *  That repo does not exist yet, so the button is gated off to avoid
- *  sending users to a 404. Flip to true once the content repo is
- *  created. Export (JSON / ZIP) stays available — it's a local
- *  download and doesn't depend on the repo. */
-const COMMUNITY_SHARING_ENABLED = false;
+ *  Enabled now that the content repo exists; set false to gate the
+ *  button off again (e.g. if the repo is unavailable). Export (JSON /
+ *  ZIP) is independent of this — it's a local download. */
+const COMMUNITY_SHARING_ENABLED = true;
 
 type DownloadState = "idle" | "downloading" | "done" | "error";
 
