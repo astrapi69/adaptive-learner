@@ -116,15 +116,6 @@ tiebreaker.
   bundles do not currently fail any test. Trigger: a user
   reports the help drawer reading awkwardly in one of the
   six languages, OR a translator volunteers a pass.
-- [ ] **BL-23**: Fix get_or_create_settings race condition —
-  concurrent GET requests cause UNIQUE constraint violation
-  under React strict-mode double-effect. Add
-  SELECT ... FOR UPDATE or use INSERT ... ON CONFLICT DO
-  NOTHING.
-- [ ] **BL-24**: Fix page.route GET matcher for
-  /api/imports/{id} in E2E — current workaround uses
-  waitForRequest on POST instead of asserting detail-page
-  cards.
 - [ ] **PLUGINFORGE-LIFECYCLE-UI-01**: Consume v0.9.0
   lifecycle visibility in Settings → Plugins. Backend half
   SHIPPED 2026-05-23: ``GET /api/plugins/inspect/{name}`` +
