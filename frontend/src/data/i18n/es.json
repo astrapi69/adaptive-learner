@@ -1508,6 +1508,21 @@
       "free_text_too_few_accepts": "Lección '{lesson}': el ejercicio de texto libre '{exercise}' necesita al menos {min} respuestas aceptadas.",
       "matching_too_few_pairs": "Lección '{lesson}': el ejercicio de emparejar '{exercise}' necesita al menos {min} pares.",
       "missing_distractors": "Lección '{lesson}': el ejercicio '{exercise}' necesita distractores (opciones incorrectas)."
+    },
+    "ai_validation": {
+      "intro": "Una IA puede comprobar además la precisión de la traducción, la gramática y el nivel.",
+      "privacy": "El contenido de tu lección se enviará a {provider}. No se transmiten datos personales.",
+      "consent": "Ejecutar validación con IA",
+      "run": "Comprobar con IA",
+      "running": "La IA está revisando tu lección…",
+      "ai_passed": "Revisión de IA: se ve bien.",
+      "ai_review": "Revisión de IA: sugerencias abajo.",
+      "score": "puntuación",
+      "failed": "Revisión de IA no disponible. Puedes compartir igualmente: el control de calidad se superó.",
+      "auto_fix": "Aplicar",
+      "applied": "aplicado",
+      "fix_applied": "Sugerencia aplicada.",
+      "fix_failed": "No se pudo aplicar la sugerencia."
     }
   },
   "milestone": {

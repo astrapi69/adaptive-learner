@@ -303,6 +303,9 @@ export const apiStorage: IStorageService = {
      *  sets). */
     saveUserSet: (input) => api.contentLoader.saveUserSet(input),
     deleteSet: (source, setId) => api.contentLoader.deleteSet(source, setId),
+    /** Phase 60 / v1.44.0 — opt-in AI content review (backend
+     *  resolves the AI key server-side). */
+    aiValidate: (input) => api.contentLoader.aiValidate(input),
   },
 
   // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —

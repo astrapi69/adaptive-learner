@@ -1383,6 +1383,20 @@ content:
     free_text_too_few_accepts: "Lição '{lesson}': o exercício de texto livre '{exercise}' precisa de pelo menos {min} respostas aceites."
     matching_too_few_pairs: "Lição '{lesson}': o exercício de correspondência '{exercise}' precisa de pelo menos {min} pares."
     missing_distractors: "Lição '{lesson}': o exercício '{exercise}' precisa de distratores (opções erradas)."
+  ai_validation:
+    intro: Uma IA pode também verificar a exatidão da tradução, a gramática e a adequação ao nível.
+    privacy: O conteúdo da sua lição será enviado para {provider}. Nenhum dado pessoal é transmitido.
+    consent: Executar validação por IA
+    run: Verificar com IA
+    running: A IA está a rever a sua lição…
+    ai_passed: 'Revisão de IA: parece bem.'
+    ai_review: 'Revisão de IA: sugestões abaixo.'
+    score: pontuação
+    failed: Revisão de IA indisponível. Pode partilhar mesmo assim — a verificação de qualidade passou.
+    auto_fix: Aplicar
+    applied: aplicado
+    fix_applied: Sugestão aplicada.
+    fix_failed: Não foi possível aplicar a sugestão.
 milestone:
   streak: "Sequência de {n} dias!"
   level_up: "Nível {n} alcançado!"

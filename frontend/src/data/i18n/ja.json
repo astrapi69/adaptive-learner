@@ -1508,6 +1508,21 @@
       "free_text_too_few_accepts": "レッスン '{lesson}': 自由記述演習 '{exercise}' には最低 {min} 個の正解が必要です。",
       "matching_too_few_pairs": "レッスン '{lesson}': マッチング演習 '{exercise}' には最低 {min} 組必要です。",
       "missing_distractors": "レッスン '{lesson}': 演習 '{exercise}' には誤答選択肢が必要です。"
+    },
+    "ai_validation": {
+      "intro": "AIは翻訳の正確さ、文法、レベルの適切さも確認できます。",
+      "privacy": "レッスンの内容は {provider} に送信されます。個人データは送信されません。",
+      "consent": "AI検証を実行",
+      "run": "AIで確認",
+      "running": "AIがレッスンを確認しています…",
+      "ai_passed": "AIレビュー: 問題なさそうです。",
+      "ai_review": "AIレビュー: 下記の提案。",
+      "score": "スコア",
+      "failed": "AIレビューは利用できません。品質チェックは合格しているので、そのまま共有できます。",
+      "auto_fix": "適用",
+      "applied": "適用済み",
+      "fix_applied": "提案を適用しました。",
+      "fix_failed": "提案を適用できませんでした。"
     }
   },
   "milestone": {

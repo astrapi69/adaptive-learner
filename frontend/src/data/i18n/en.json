@@ -1508,6 +1508,21 @@
       "free_text_too_few_accepts": "Lesson '{lesson}': free-text exercise '{exercise}' needs at least {min} accepted answers.",
       "matching_too_few_pairs": "Lesson '{lesson}': matching exercise '{exercise}' needs at least {min} pairs.",
       "missing_distractors": "Lesson '{lesson}': exercise '{exercise}' needs distractors (wrong options)."
+    },
+    "ai_validation": {
+      "intro": "An AI can additionally check translation accuracy, grammar and level fit.",
+      "privacy": "Your lesson content will be sent to {provider}. No personal data is transmitted.",
+      "consent": "Run AI validation",
+      "run": "Check with AI",
+      "running": "AI is reviewing your lesson…",
+      "ai_passed": "AI review: looks good.",
+      "ai_review": "AI review: suggestions below.",
+      "score": "score",
+      "failed": "AI review unavailable. You can still share — the quality check passed.",
+      "auto_fix": "Apply",
+      "applied": "applied",
+      "fix_applied": "Suggestion applied.",
+      "fix_failed": "Could not apply the suggestion."
     }
   },
   "milestone": {

@@ -31,6 +31,7 @@ const downloadSetMock = vi.fn();
 const deleteSetMock = vi.fn();
 const listLessonsMock = vi.fn();
 const getLessonMock = vi.fn();
+const aiValidateMock = vi.fn();
 
 vi.mock("../storage", () => ({
   getStorage: () => ({
@@ -40,8 +41,24 @@ vi.mock("../storage", () => ({
       listLessons: listLessonsMock,
       getLesson: getLessonMock,
       deleteSet: deleteSetMock,
+      aiValidate: aiValidateMock,
     },
   }),
+}));
+
+// Default: no API key (so the AI section is hidden); the AI-flow
+// test overrides this to expose the opt-in step.
+const apiKeyStatusMock = vi.fn(() => ({
+  ready: true,
+  hasKey: false,
+  activeProvider: null as string | null,
+  refresh: vi.fn(),
+}));
+vi.mock("../hooks/useApiKeyStatus", () => ({
+  useApiKeyStatus: () => apiKeyStatusMock(),
+}));
+vi.mock("../lib/learnerState", () => ({
+  readLearnerState: () => ({ userId: "u1" }),
 }));
 
 // A schema-valid, quality-passing lesson for the share-flow tests.
@@ -505,5 +522,56 @@ describe("Content — My Lessons (Phase 59C)", () => {
       "My Spanish lesson",
     );
     vi.unstubAllGlobals();
+  });
+
+  it("offers opt-in AI validation when a key is present and surfaces the result", async () => {
+    apiKeyStatusMock.mockReturnValue({
+      ready: true,
+      hasKey: true,
+      activeProvider: "anthropic",
+      refresh: vi.fn(),
+    });
+    const valid = { ...USER_ENTRY, title_native: "Español A1" };
+    listSetsMock.mockResolvedValue({ sets: [valid], sources: [] });
+    listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
+    getLessonMock.mockResolvedValue(shareableLesson());
+    aiValidateMock.mockResolvedValue({
+      overall: "review_needed",
+      translation_issues: [
+        { card_id: "c1", issue: "schould be Guten Morgen", suggestion: "Guten Morgen" },
+      ],
+      distractor_issues: [],
+      grammar_issues: [],
+      level_issues: [],
+      cultural_flags: [],
+      quality_score: 0.78,
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
+    });
+    await screen.findByTestId("content-share-passed");
+    // The opt-in AI section is offered (key present).
+    expect(screen.getByTestId("content-ai-validation")).toBeInTheDocument();
+    const runBtn = screen.getByTestId("content-ai-run");
+    // Disabled until the user consents.
+    expect(runBtn).toBeDisabled();
+    fireEvent.click(screen.getByTestId("content-ai-consent"));
+    expect(runBtn).not.toBeDisabled();
+    await act(async () => {
+      fireEvent.click(runBtn);
+    });
+    await screen.findByTestId("content-ai-result");
+    expect(aiValidateMock).toHaveBeenCalled();
+    expect(screen.getByTestId("content-ai-issues")).toHaveTextContent(
+      "Guten Morgen",
+    );
+    apiKeyStatusMock.mockReturnValue({
+      ready: true,
+      hasKey: false,
+      activeProvider: null,
+      refresh: vi.fn(),
+    });
   });
 });

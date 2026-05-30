@@ -1385,6 +1385,20 @@ content:
     free_text_too_few_accepts: "Leçon '{lesson}' : l'exercice de texte libre '{exercise}' nécessite au moins {min} réponses acceptées."
     matching_too_few_pairs: "Leçon '{lesson}' : l'exercice d'association '{exercise}' nécessite au moins {min} paires."
     missing_distractors: "Leçon '{lesson}' : l'exercice '{exercise}' nécessite des distracteurs (mauvaises options)."
+  ai_validation:
+    intro: Une IA peut en plus vérifier l'exactitude des traductions, la grammaire et le niveau.
+    privacy: Le contenu de votre leçon sera envoyé à {provider}. Aucune donnée personnelle n'est transmise.
+    consent: Lancer la validation par IA
+    run: Vérifier avec l'IA
+    running: L'IA examine votre leçon…
+    ai_passed: 'Revue IA : tout semble correct.'
+    ai_review: 'Revue IA : suggestions ci-dessous.'
+    score: score
+    failed: 'Revue IA indisponible. Vous pouvez quand même partager : le contrôle qualité est passé.'
+    auto_fix: Appliquer
+    applied: appliqué
+    fix_applied: Suggestion appliquée.
+    fix_failed: Impossible d'appliquer la suggestion.
 milestone:
   streak: "Série de {n} jours !"
   level_up: "Niveau {n} atteint !"

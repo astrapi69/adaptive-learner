@@ -1508,6 +1508,21 @@
       "free_text_too_few_accepts": "Lektion '{lesson}': Freitext-Übung '{exercise}' braucht mindestens {min} akzeptierte Antworten.",
       "matching_too_few_pairs": "Lektion '{lesson}': Zuordnungsübung '{exercise}' braucht mindestens {min} Paare.",
       "missing_distractors": "Lektion '{lesson}': Übung '{exercise}' braucht Ablenker (falsche Optionen)."
+    },
+    "ai_validation": {
+      "intro": "Eine KI kann zusätzlich Übersetzungsgenauigkeit, Grammatik und Niveau prüfen.",
+      "privacy": "Der Inhalt deiner Lektion wird an {provider} gesendet. Keine persönlichen Daten werden übermittelt.",
+      "consent": "KI-Validierung durchführen",
+      "run": "Mit KI prüfen",
+      "running": "Die KI prüft deine Lektion…",
+      "ai_passed": "KI-Prüfung: sieht gut aus.",
+      "ai_review": "KI-Prüfung: Vorschläge unten.",
+      "score": "Bewertung",
+      "failed": "KI-Prüfung nicht verfügbar. Du kannst trotzdem teilen — die Qualitätsprüfung wurde bestanden.",
+      "auto_fix": "Übernehmen",
+      "applied": "übernommen",
+      "fix_applied": "Vorschlag übernommen.",
+      "fix_failed": "Vorschlag konnte nicht übernommen werden."
     }
   },
   "milestone": {

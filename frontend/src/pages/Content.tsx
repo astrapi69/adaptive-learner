@@ -47,6 +47,9 @@ import {
   type ValidationIssue,
   type ValidationResult,
 } from "../lib/content/content-validator";
+import type { AiValidationResult } from "../lib/content/ai-content-validator";
+import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
+import { readLearnerState } from "../lib/learnerState";
 import {
   buildContentSetZip,
   communityIssueUrl,
@@ -107,6 +110,15 @@ export default function ContentPage() {
   const [shareTarget, setShareTarget] = useState<ContentSetEntry | null>(null);
   const [shareResult, setShareResult] = useState<ValidationResult | null>(null);
   const [shareChecking, setShareChecking] = useState(false);
+  // Phase 60 C5b — opt-in AI validation layer.
+  const [shareLessons, setShareLessons] = useState<ContentLesson[]>([]);
+  const [aiConsent, setAiConsent] = useState(false);
+  const [aiRunning, setAiRunning] = useState(false);
+  const [aiResult, setAiResult] = useState<AiValidationResult | null>(null);
+  // Keys of AI suggestions the user has auto-applied (so the button
+  // flips to "applied" and isn't re-run).
+  const [appliedFixes, setAppliedFixes] = useState<Set<string>>(new Set());
+  const { hasKey, activeProvider } = useApiKeyStatus();
 
   const loadSets = useCallback(async () => {
     try {
@@ -263,12 +275,75 @@ export default function ContentPage() {
   // validation pipeline. Fetch the set's lessons, validate schema +
   // language pair + quality minimums, and only let the user proceed
   // to the GitHub issue when the set passes.
+  const closeShareModal = () => {
+    setShareTarget(null);
+    setShareResult(null);
+    setShareLessons([]);
+    setAiConsent(false);
+    setAiResult(null);
+    setAiRunning(false);
+    setAppliedFixes(new Set());
+  };
+
+  // Phase 60 C5b — auto-fix one AI suggestion: apply the correction
+  // to the in-memory lessons, re-save the set, and mark it applied.
+  // Only translation (card back) + grammar (theory body) corrections
+  // have a concrete target; distractor/level issues stay advisory.
+  const applyAutoFix = async (
+    fixKey: string,
+    kind: "card" | "step",
+    targetId: string,
+    text: string,
+  ) => {
+    if (!shareTarget || !text) return;
+    const next: ContentLesson[] = shareLessons.map((lesson) => ({
+      ...lesson,
+      cards:
+        kind === "card"
+          ? lesson.cards.map((c) =>
+              c.id === targetId ? { ...c, back: text } : c,
+            )
+          : lesson.cards,
+      steps:
+        kind === "step"
+          ? lesson.steps.map((s) =>
+              s.id === targetId ? { ...s, body: text } : s,
+            )
+          : lesson.steps,
+    }));
+    try {
+      await getStorage().contentLoader.saveUserSet({
+        set_id: shareTarget.id,
+        title: shareTarget.title,
+        title_native: shareTarget.title_native,
+        language: shareTarget.target_language,
+        target_language: shareTarget.target_language,
+        source_language: shareTarget.source_language,
+        level: shareTarget.level,
+        origin: shareTarget.domain as "analysis" | "adaptive" | "imported",
+        lessons: next,
+      });
+      setShareLessons(next);
+      setAppliedFixes((prev) => new Set(prev).add(fixKey));
+      notify.success(t("content.ai_validation.fix_applied", "Suggestion applied."));
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.error(
+        `${t("content.ai_validation.fix_failed", "Could not apply the suggestion.")} ${detail}`,
+      );
+    }
+  };
+
   const handleShare = async (entry: ContentSetEntry) => {
     setShareTarget(entry);
     setShareResult(null);
+    setShareLessons([]);
+    setAiConsent(false);
+    setAiResult(null);
     setShareChecking(true);
     try {
       const lessons = await fetchSetLessons(entry);
+      setShareLessons(lessons);
       const result = validateSetForSharing(
         {
           title: entry.title,
@@ -291,16 +366,48 @@ export default function ContentPage() {
     }
   };
 
+  // Phase 60 C5b — opt-in AI review. Failure is NON-fatal: the
+  // rule-based pass already qualifies the set for sharing.
+  const handleRunAiValidation = async () => {
+    if (!shareTarget) return;
+    const userId = readLearnerState().userId;
+    if (!userId) return;
+    setAiRunning(true);
+    setAiResult(null);
+    try {
+      const result = await getStorage().contentLoader.aiValidate({
+        user_id: userId,
+        title: shareTarget.title,
+        title_native: shareTarget.title_native,
+        target_language: shareTarget.target_language,
+        source_language: shareTarget.source_language,
+        level: shareTarget.level,
+        lessons: shareLessons,
+      });
+      setAiResult(result);
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      notify.warning(
+        `${t("content.ai_validation.failed", "AI review unavailable. You can still share — the quality check passed.")} ${detail}`,
+      );
+    } finally {
+      setAiRunning(false);
+    }
+  };
+
   const handleShareContinue = () => {
     if (!shareTarget) return;
+    const aiSummary = aiResult
+      ? `AI-validated: yes, quality_score: ${aiResult.quality_score.toFixed(2)}`
+      : undefined;
     const url = communityIssueUrl(
       COMMUNITY_REPO,
       exportMeta(shareTarget),
       shareTarget.lesson_count,
+      aiSummary,
     );
     window.open(url, "_blank", "noopener,noreferrer");
-    setShareTarget(null);
-    setShareResult(null);
+    closeShareModal();
   };
 
   // Localise a validation issue, interpolating its params into the
@@ -311,6 +418,75 @@ export default function ContentPage() {
       msg = msg.replace(`{${k}}`, String(v));
     }
     return msg;
+  };
+
+  // Phase 60 C5b — render the AI review's issue groups. Translation
+  // + grammar issues carry a concrete correction, so they get an
+  // "Apply" auto-fix button; distractor + level + cultural items are
+  // advisory only.
+  const renderAiIssues = () => {
+    if (!aiResult) return null;
+    const fixBtn = (
+      fixKey: string,
+      kind: "card" | "step",
+      targetId: string,
+      text: string,
+    ) =>
+      text ? (
+        appliedFixes.has(fixKey) ? (
+          <span className="content-ai-applied">
+            {t("content.ai_validation.applied", "applied")}
+          </span>
+        ) : (
+          <button
+            type="button"
+            className="btn btn-secondary content-ai-fix"
+            onClick={() => void applyAutoFix(fixKey, kind, targetId, text)}
+            data-testid={`content-ai-fix-${fixKey}`}
+          >
+            {t("content.ai_validation.auto_fix", "Apply")}
+          </button>
+        )
+      ) : null;
+    return (
+      <ul className="content-ai-issues" data-testid="content-ai-issues">
+        {aiResult.translation_issues.map((it, i) => (
+          <li key={`tr-${i}`} className="content-ai-issue content-ai-issue-warn">
+            <span>
+              {it.card_id}: {it.issue}
+              {it.suggestion && ` → ${it.suggestion}`}
+            </span>
+            {fixBtn(`tr-${it.card_id}-${i}`, "card", it.card_id, it.suggestion)}
+          </li>
+        ))}
+        {aiResult.grammar_issues.map((it, i) => (
+          <li key={`gr-${i}`} className="content-ai-issue content-ai-issue-warn">
+            <span>
+              {it.step_id}: {it.issue}
+              {it.correction && ` → ${it.correction}`}
+            </span>
+            {fixBtn(`gr-${it.step_id}-${i}`, "step", it.step_id, it.correction)}
+          </li>
+        ))}
+        {aiResult.distractor_issues.map((it, i) => (
+          <li key={`di-${i}`} className="content-ai-issue">
+            {it.exercise_id}: {it.issue}
+            {it.suggestion && ` → ${it.suggestion}`}
+          </li>
+        ))}
+        {aiResult.level_issues.map((it, i) => (
+          <li key={`lv-${i}`} className="content-ai-issue">
+            {it.item}: {it.issue}
+            {it.suggestion && ` → ${it.suggestion}`}
+          </li>
+        ))}
+        {aiResult.cultural_flags.map((flag, i) => (
+          <li key={`cf-${i}`} className="content-ai-issue content-ai-issue-flag">
+            {flag}
+          </li>
+        ))}
+      </ul>
+    );
   };
 
   const handleDownload = async (entry: ContentSetEntry) => {
@@ -839,14 +1015,82 @@ export default function ContentPage() {
                 </ul>
               </>
             )}
+
+            {/* Phase 60 C5b — opt-in AI review (only after the
+                rule-based gate passes AND a key is available). */}
+            {shareResult?.ok && hasKey && (
+              <section
+                className="content-ai-validation"
+                data-testid="content-ai-validation"
+              >
+                {!aiResult && !aiRunning && (
+                  <>
+                    <p className="content-ai-intro">
+                      {t(
+                        "content.ai_validation.intro",
+                        "An AI can additionally check translation accuracy, grammar and level fit.",
+                      )}
+                    </p>
+                    <p className="content-ai-privacy">
+                      {t(
+                        "content.ai_validation.privacy",
+                        "Your lesson content will be sent to {provider}. No personal data is transmitted.",
+                      ).replace("{provider}", activeProvider ?? "the AI provider")}
+                    </p>
+                    <label className="form-row form-row-toggle">
+                      <span className="form-label">
+                        {t("content.ai_validation.consent", "Run AI validation")}
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={aiConsent}
+                        onChange={(e) => setAiConsent(e.target.checked)}
+                        data-testid="content-ai-consent"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      disabled={!aiConsent}
+                      onClick={() => void handleRunAiValidation()}
+                      data-testid="content-ai-run"
+                    >
+                      {t("content.ai_validation.run", "Check with AI")}
+                    </button>
+                  </>
+                )}
+                {aiRunning && (
+                  <p data-testid="content-ai-running">
+                    {t("content.ai_validation.running", "AI is reviewing your lesson…")}
+                  </p>
+                )}
+                {aiResult && (
+                  <div data-testid="content-ai-result">
+                    <p
+                      className={
+                        aiResult.overall === "pass"
+                          ? "content-share-passed"
+                          : "content-share-failed"
+                      }
+                    >
+                      {aiResult.overall === "pass"
+                        ? t("content.ai_validation.ai_passed", "AI review: looks good.")
+                        : t("content.ai_validation.ai_review", "AI review: suggestions below.")}
+                      {" "}
+                      ({t("content.ai_validation.score", "score")}:{" "}
+                      {aiResult.quality_score.toFixed(2)})
+                    </p>
+                    {renderAiIssues()}
+                  </div>
+                )}
+              </section>
+            )}
+
             <div className="form-actions">
               <button
                 type="button"
                 className="btn btn-secondary"
-                onClick={() => {
-                  setShareTarget(null);
-                  setShareResult(null);
-                }}
+                onClick={closeShareModal}
                 data-testid="content-share-cancel"
               >
                 {t("content.validation.cancel", "Close")}

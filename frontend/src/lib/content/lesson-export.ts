@@ -100,6 +100,10 @@ export function communityIssueUrl(
   repo: string,
   meta: ExportSetMeta,
   lessonCount: number,
+  /** Optional AI-validation summary (Phase 60 / v1.44.0) appended to
+   *  the issue body so the maintainer sees the lesson was AI-checked,
+   *  e.g. "AI-validated: yes, quality_score: 0.85". */
+  aiSummary?: string,
 ): string {
   const title = `New lesson: ${meta.title} (${meta.language} ${meta.level})`;
   const body = [
@@ -108,6 +112,7 @@ export function communityIssueUrl(
     `**Level:** ${meta.level}`,
     `**Lessons:** ${lessonCount}`,
     meta.description ? `**Description:** ${meta.description}` : "",
+    aiSummary ? `**${aiSummary}**` : "",
     "",
     "I created this lesson from my own learning and would like to share it.",
     "",

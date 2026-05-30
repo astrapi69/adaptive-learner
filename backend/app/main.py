@@ -39,6 +39,7 @@ from app.exceptions import AdaptiveLearnerError, NotFoundError
 from app.hookspecs import AdaptiveLearnerHookSpec
 from app.logging_config import setup_logging
 from app.routers.backup import router as backup_router
+from app.routers.content import router as content_router
 from app.routers.curriculum import (
     curricula_router,
     lessons_router,
@@ -518,6 +519,7 @@ app.include_router(projects_taxonomy_router, prefix="/api")
 app.include_router(sync_router, prefix="/api")
 app.include_router(system_router, prefix="/api")
 app.include_router(backup_router, prefix="/api")
+app.include_router(content_router, prefix="/api")
 app.include_router(export_router, prefix="/api")
 app.include_router(help_router, prefix="/api")
 

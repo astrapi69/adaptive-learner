@@ -103,6 +103,7 @@ import {
 import { ApiError } from "../api/client";
 import { computeContentHash } from "../chat_import/content-hash";
 import {
+  aiValidateDexie,
   deleteSetDexie,
   downloadSetDexie,
   getAssetDexie,
@@ -2120,6 +2121,7 @@ export const dexieStorage: IStorageService = {
      *  downloaded sets. */
     saveUserSet: (input) => saveUserSetDexie(input, new Date().toISOString()),
     deleteSet: (source, setId) => deleteSetDexie(source, setId),
+    aiValidate: (input) => aiValidateDexie(input),
   },
 
   // Phase 49 / v1.32.0 (PHASE-42-STORAGE-ABSTRACTION-01) —

@@ -1508,6 +1508,21 @@
       "free_text_too_few_accepts": "'{lesson}' dersi: serbest metin alıştırması '{exercise}' en az {min} kabul edilen yanıt gerektirir.",
       "matching_too_few_pairs": "'{lesson}' dersi: eşleştirme alıştırması '{exercise}' en az {min} çift gerektirir.",
       "missing_distractors": "'{lesson}' dersi: '{exercise}' alıştırması çeldirici (yanlış seçenek) gerektirir."
+    },
+    "ai_validation": {
+      "intro": "Bir yapay zekâ ayrıca çeviri doğruluğunu, dil bilgisini ve seviye uygunluğunu kontrol edebilir.",
+      "privacy": "Dersinizin içeriği {provider} sağlayıcısına gönderilecek. Hiçbir kişisel veri iletilmez.",
+      "consent": "Yapay zekâ doğrulamasını çalıştır",
+      "run": "Yapay zekâ ile kontrol et",
+      "running": "Yapay zekâ dersinizi inceliyor…",
+      "ai_passed": "Yapay zekâ incelemesi: iyi görünüyor.",
+      "ai_review": "Yapay zekâ incelemesi: öneriler aşağıda.",
+      "score": "puan",
+      "failed": "Yapay zekâ incelemesi kullanılamıyor. Yine de paylaşabilirsiniz — kalite kontrolü geçti.",
+      "auto_fix": "Uygula",
+      "applied": "uygulandı",
+      "fix_applied": "Öneri uygulandı.",
+      "fix_failed": "Öneri uygulanamadı."
     }
   },
   "milestone": {

@@ -1271,6 +1271,16 @@ export const api = {
         { method: "DELETE" },
       );
     },
+    /** POST /api/content/validate-lesson — Phase 60 / v1.44.0.
+     *  Opt-in AI content review; the backend resolves the AI key
+     *  server-side and returns the structured result. */
+    aiValidate: (input: import("../storage/types").AiValidateInput) =>
+      apiCall<
+        import("../lib/content/ai-content-validator").AiValidationResult
+      >("/content/validate-lesson", {
+        method: "POST",
+        body: input,
+      }),
   },
 
   // --- Pronunciation Practice (v1.18.0 / Phase 31C) -------------------

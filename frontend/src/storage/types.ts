@@ -21,6 +21,7 @@
  */
 
 import type { AIProvider, LearningMethod } from "../lib/constants";
+import type { AiValidationResult } from "../lib/content/ai-content-validator";
 import type {
   ApiKeySetBody,
   CurriculumCreateBody,
@@ -413,6 +414,28 @@ export interface IContentLoaderNamespace {
   /** Phase 59C / v1.42.0 — delete a cached set (used by My Lessons
    *  to remove a user-generated lesson). Idempotent. */
   deleteSet(source: string, setId: string): Promise<void>;
+  /** Phase 60 / v1.44.0 — OPT-IN AI content validation. Sends the
+   *  lesson content to the user's configured AI provider and
+   *  returns a structured review (translation / distractor /
+   *  grammar / level issues + a quality score). Dexie mode calls
+   *  the provider browser-direct; API mode routes through the
+   *  backend (which resolves the key server-side). Supplementary
+   *  to the rule-based gate — callers treat a thrown error as
+   *  non-fatal. */
+  aiValidate(input: AiValidateInput): Promise<AiValidationResult>;
+}
+
+/** Input for the opt-in AI content validation (Phase 60). */
+export interface AiValidateInput {
+  /** Resolves the AI provider + key (server-side in API mode,
+   *  IndexedDB settings in Dexie mode). */
+  user_id: string;
+  title: string;
+  title_native?: string | null;
+  target_language: string;
+  source_language: string;
+  level: string;
+  lessons: ContentLesson[];
 }
 
 /** Phase 59B / v1.42.0 — the source marker for user-generated sets.
