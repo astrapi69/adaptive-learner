@@ -29,6 +29,10 @@ import {useEffect, useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
+import {
+    instructionKey,
+    resolveConcreteDirection,
+} from "../../lib/exercises/direction";
 import type {
     ContentLessonExercise,
     ElementAttempt,
@@ -90,10 +94,24 @@ export default function MatchingExercise({
 }: MatchingExerciseProps) {
     const {t} = useI18n();
     const pairs = exercise.pairs ?? [];
-    const leftLabel = t("lesson.exercise.matching.left_label", "Term");
-    const rightLabel = t(
-        "lesson.exercise.matching.right_label",
-        "Translation",
+    // EXP-018 / Phase 62: a productive drill shows the source-language
+    // column on the left (the learner produces the target). Receptive
+    // keeps the authored orientation (target left, source right). Only
+    // the DISPLAYED label flips — pair indices (and thus scoring) are
+    // unchanged, so pair i still matches right i.
+    const direction = resolveConcreteDirection(exercise.direction, exercise.id);
+    const productive = direction === "source_to_target";
+    const leftLabel = productive
+        ? t("lesson.exercise.matching.left_label_productive", "Meaning")
+        : t("lesson.exercise.matching.left_label", "Term");
+    const rightLabel = productive
+        ? t("lesson.exercise.matching.right_label_productive", "Term")
+        : t("lesson.exercise.matching.right_label", "Translation");
+    const instruction = t(
+        instructionKey("matching", direction),
+        productive
+            ? "Match the pairs (Translation)"
+            : "Match the pairs (Recognition)",
     );
 
     // Stable seed per-mount so reshuffling on every render
@@ -106,18 +124,18 @@ export default function MatchingExercise({
         () =>
             pairs.map((p, i) => ({
                 index: i,
-                label: p.left,
+                label: productive ? p.right : p.left,
             })),
-        [pairs],
+        [pairs, productive],
     );
 
     const rightTiles: RightTile[] = useMemo(() => {
         const indexed = pairs.map((p, i) => ({
             originalIndex: i,
-            label: p.right,
+            label: productive ? p.left : p.right,
         }));
         return _shuffle(indexed, shuffleSeed);
-    }, [pairs, shuffleSeed]);
+    }, [pairs, shuffleSeed, productive]);
 
     /** Currently-selected left index (waiting for a right
      *  click to complete the pair). null when nothing is
@@ -228,6 +246,13 @@ export default function MatchingExercise({
                 data-testid="matching-prompt"
             >
                 {exercise.prompt}
+            </p>
+
+            <p
+                className="exercise-direction-instruction"
+                data-testid="matching-direction-instruction"
+            >
+                {instruction}
             </p>
 
             <p

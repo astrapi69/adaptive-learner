@@ -1303,7 +1303,9 @@
         "instructions": "Select an item on the left, then its matching translation on the right.",
         "left_label": "Term",
         "right_label": "Translation",
-        "empty": "This matching exercise has no pairs."
+        "empty": "This matching exercise has no pairs.",
+        "left_label_productive": "Meaning",
+        "right_label_productive": "Term"
       },
       "picture": {
         "submit": "Check answer",
@@ -1351,6 +1353,24 @@
         "result_correct": "All correct!",
         "result_partial": "{correct} of {total} correct.",
         "empty": "This cloze exercise has no blanks."
+      },
+      "instruction": {
+        "matching": {
+          "receptive": "Match the pairs (Recognition)",
+          "productive": "Match the pairs (Translation)"
+        },
+        "free_text": {
+          "receptive": "What does this mean?",
+          "productive": "Translate:"
+        },
+        "word_tiles": {
+          "receptive": "Build the translation",
+          "productive": "Build the sentence"
+        },
+        "picture_choice": {
+          "receptive": "Pick the matching meaning",
+          "productive": "Pick the matching picture"
+        }
       }
     },
     "summary": {

@@ -40,6 +40,7 @@ import type {
 } from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
+import DirectionInstruction from "./DirectionInstruction";
 
 /** Levenshtein edit distance between ``a`` and ``b``.
  *  Two-row DP variant: O(m*n) time, O(n) space. The free-
@@ -180,6 +181,8 @@ export default function FreeTextExercise({
             >
                 {exercise.prompt}
             </p>
+
+            <DirectionInstruction exercise={exercise} />
 
             <input
                 type="text"

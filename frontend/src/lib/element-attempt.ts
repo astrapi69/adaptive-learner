@@ -27,6 +27,7 @@
  *   - word_tiles with 1 tile (edge case) → "vocabulary"
  */
 
+import {resolveConcreteDirection} from "./exercises/direction";
 import type {ContentLessonExercise, ElementAttempt} from "../storage/types";
 
 export interface AttemptContext {
@@ -39,11 +40,16 @@ export interface AttemptContext {
 function _baseAttempt(
     exercise: ContentLessonExercise,
     ctx: AttemptContext,
-): Pick<ElementAttempt, "set_id" | "lesson_id" | "exercise_id"> {
+): Pick<ElementAttempt, "set_id" | "lesson_id" | "exercise_id" | "direction"> {
     return {
         set_id: ctx.setId,
         lesson_id: ctx.lessonId,
         exercise_id: exercise.id,
+        // EXP-018 / Phase 62: stamp the exercise's concrete drill
+        // direction on every attempt so the SRS layer tracks
+        // receptive vs productive mastery independently. Resolved
+        // centrally here so all five exercise types agree.
+        direction: resolveConcreteDirection(exercise.direction, exercise.id),
     };
 }
 

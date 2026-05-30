@@ -1303,7 +1303,9 @@
         "instructions": "Soldan bir öğe seç, ardından sağdan eşleşen çevirisini seç.",
         "left_label": "Terim",
         "right_label": "Çeviri",
-        "empty": "Bu alıştırmada eşleşme yok."
+        "empty": "Bu alıştırmada eşleşme yok.",
+        "left_label_productive": "Anlam",
+        "right_label_productive": "Terim"
       },
       "picture": {
         "submit": "Cevabı kontrol et",
@@ -1351,6 +1353,24 @@
         "result_correct": "Hepsi doğru!",
         "result_partial": "{correct} / {total} doğru.",
         "empty": "Bu boşluk doldurma alıştırmasının boşluğu yok."
+      },
+      "instruction": {
+        "matching": {
+          "receptive": "Çiftleri eşleştir (Tanıma)",
+          "productive": "Çiftleri eşleştir (Çeviri)"
+        },
+        "free_text": {
+          "receptive": "Bu ne anlama geliyor?",
+          "productive": "Çevir:"
+        },
+        "word_tiles": {
+          "receptive": "Çeviriyi oluştur",
+          "productive": "Cümleyi oluştur"
+        },
+        "picture_choice": {
+          "receptive": "Doğru anlamı seç",
+          "productive": "Doğru resmi seç"
+        }
       }
     },
     "correction": {

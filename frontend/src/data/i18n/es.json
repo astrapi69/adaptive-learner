@@ -1303,7 +1303,9 @@
         "instructions": "Selecciona un elemento a la izquierda y luego su traducción a la derecha.",
         "left_label": "Término",
         "right_label": "Traducción",
-        "empty": "Este ejercicio no tiene pares."
+        "empty": "Este ejercicio no tiene pares.",
+        "left_label_productive": "Significado",
+        "right_label_productive": "Término"
       },
       "picture": {
         "submit": "Comprobar respuesta",
@@ -1351,6 +1353,24 @@
         "result_correct": "¡Todo correcto!",
         "result_partial": "{correct} de {total} correctos.",
         "empty": "Este ejercicio de huecos no tiene huecos."
+      },
+      "instruction": {
+        "matching": {
+          "receptive": "Une las parejas (Reconocer)",
+          "productive": "Une las parejas (Traducir)"
+        },
+        "free_text": {
+          "receptive": "¿Qué significa esto?",
+          "productive": "Traduce:"
+        },
+        "word_tiles": {
+          "receptive": "Construye la traducción",
+          "productive": "Construye la frase"
+        },
+        "picture_choice": {
+          "receptive": "Elige el significado correcto",
+          "productive": "Elige la imagen correcta"
+        }
       }
     },
     "correction": {

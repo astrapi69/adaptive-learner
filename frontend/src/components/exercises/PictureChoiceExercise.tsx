@@ -43,6 +43,7 @@ import type {
     ElementAttempt,
 } from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
+import DirectionInstruction from "./DirectionInstruction";
 
 export interface PictureChoiceExerciseProps {
     exercise: ContentLessonExercise;
@@ -162,6 +163,8 @@ export default function PictureChoiceExercise({
             >
                 {exercise.prompt}
             </p>
+
+            <DirectionInstruction exercise={exercise} />
 
             <ul
                 className="picture-grid"

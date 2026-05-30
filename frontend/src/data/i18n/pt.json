@@ -1303,7 +1303,9 @@
         "instructions": "Selecione um item à esquerda e depois a tradução correspondente à direita.",
         "left_label": "Termo",
         "right_label": "Tradução",
-        "empty": "Este exercício não tem pares."
+        "empty": "Este exercício não tem pares.",
+        "left_label_productive": "Significado",
+        "right_label_productive": "Termo"
       },
       "picture": {
         "submit": "Verificar resposta",
@@ -1351,6 +1353,24 @@
         "result_correct": "Tudo certo!",
         "result_partial": "{correct} de {total} corretas.",
         "empty": "Este exercício de lacunas não tem lacunas."
+      },
+      "instruction": {
+        "matching": {
+          "receptive": "Una os pares (Reconhecer)",
+          "productive": "Una os pares (Traduzir)"
+        },
+        "free_text": {
+          "receptive": "O que significa isto?",
+          "productive": "Traduza:"
+        },
+        "word_tiles": {
+          "receptive": "Monte a tradução",
+          "productive": "Monte a frase"
+        },
+        "picture_choice": {
+          "receptive": "Escolha o significado correto",
+          "productive": "Escolha a imagem correta"
+        }
       }
     },
     "correction": {

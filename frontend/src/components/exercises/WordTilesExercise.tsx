@@ -37,6 +37,7 @@ import type {
 } from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
+import DirectionInstruction from "./DirectionInstruction";
 
 export interface WordTilesExerciseProps {
     exercise: ContentLessonExercise;
@@ -245,6 +246,8 @@ export default function WordTilesExercise({
             >
                 {exercise.prompt}
             </p>
+
+            <DirectionInstruction exercise={exercise} />
 
             <p
                 className="word-tiles-instructions"

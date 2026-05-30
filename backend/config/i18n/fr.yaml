@@ -1202,6 +1202,8 @@ lesson:
       left_label: "Terme"
       right_label: "Traduction"
       empty: "Cet exercice n'a pas de paires."
+      left_label_productive: Sens
+      right_label_productive: Terme
     picture:
       submit: "Vérifier la réponse"
       retry: "Réessayer"
@@ -1245,6 +1247,19 @@ lesson:
       result_correct: "Tout est correct !"
       result_partial: "{correct} sur {total} corrects."
       empty: "Cet exercice à trous n'a pas de trous."
+    instruction:
+      matching:
+        receptive: Associez les paires (Reconnaître)
+        productive: Associez les paires (Traduire)
+      free_text:
+        receptive: Que signifie ceci ?
+        productive: 'Traduisez :'
+      word_tiles:
+        receptive: Composez la traduction
+        productive: Composez la phrase
+      picture_choice:
+        receptive: Choisissez le sens correct
+        productive: Choisissez la bonne image
   correction:
     title: "Tour de correction"
     subtitle: "Quelques exercices rapides sur les mots que tu as ratés."

@@ -1211,6 +1211,8 @@ lesson:
       left_label: "Term"
       right_label: "Translation"
       empty: "This matching exercise has no pairs."
+      left_label_productive: Meaning
+      right_label_productive: Term
     picture:
       submit: "Check answer"
       retry: "Try again"
@@ -1254,6 +1256,19 @@ lesson:
       result_correct: "All correct!"
       result_partial: "{correct} of {total} correct."
       empty: "This cloze exercise has no blanks."
+    instruction:
+      matching:
+        receptive: Match the pairs (Recognition)
+        productive: Match the pairs (Translation)
+      free_text:
+        receptive: What does this mean?
+        productive: 'Translate:'
+      word_tiles:
+        receptive: Build the translation
+        productive: Build the sentence
+      picture_choice:
+        receptive: Pick the matching meaning
+        productive: Pick the matching picture
   summary:
     heading: "You finished"
     aria_label: "Lesson summary"

@@ -1200,6 +1200,8 @@ lesson:
       left_label: "Termo"
       right_label: "Tradução"
       empty: "Este exercício não tem pares."
+      left_label_productive: Significado
+      right_label_productive: Termo
     picture:
       submit: "Verificar resposta"
       retry: "Tentar de novo"
@@ -1243,6 +1245,19 @@ lesson:
       result_correct: "Tudo certo!"
       result_partial: "{correct} de {total} corretas."
       empty: "Este exercício de lacunas não tem lacunas."
+    instruction:
+      matching:
+        receptive: Una os pares (Reconhecer)
+        productive: Una os pares (Traduzir)
+      free_text:
+        receptive: O que significa isto?
+        productive: 'Traduza:'
+      word_tiles:
+        receptive: Monte a tradução
+        productive: Monte a frase
+      picture_choice:
+        receptive: Escolha o significado correto
+        productive: Escolha a imagem correta
   correction:
     title: "Ronda de correção"
     subtitle: "Alguns exercícios rápidos com as palavras que falhaste."

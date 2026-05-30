@@ -1303,7 +1303,9 @@
         "instructions": "Επίλεξε ένα στοιχείο αριστερά και μετά τη μετάφρασή του δεξιά.",
         "left_label": "Όρος",
         "right_label": "Μετάφραση",
-        "empty": "Αυτή η άσκηση δεν περιέχει ζεύγη."
+        "empty": "Αυτή η άσκηση δεν περιέχει ζεύγη.",
+        "left_label_productive": "Σημασία",
+        "right_label_productive": "Όρος"
       },
       "picture": {
         "submit": "Έλεγχος απάντησης",
@@ -1351,6 +1353,24 @@
         "result_correct": "Όλα σωστά!",
         "result_partial": "{correct} από {total} σωστά.",
         "empty": "Αυτή η άσκηση συμπλήρωσης κενών δεν έχει κενά."
+      },
+      "instruction": {
+        "matching": {
+          "receptive": "Αντιστοιχίστε τα ζεύγη (Αναγνώριση)",
+          "productive": "Αντιστοιχίστε τα ζεύγη (Μετάφραση)"
+        },
+        "free_text": {
+          "receptive": "Τι σημαίνει αυτό;",
+          "productive": "Μεταφράστε:"
+        },
+        "word_tiles": {
+          "receptive": "Σχηματίστε τη μετάφραση",
+          "productive": "Σχηματίστε την πρόταση"
+        },
+        "picture_choice": {
+          "receptive": "Επιλέξτε τη σωστή σημασία",
+          "productive": "Επιλέξτε τη σωστή εικόνα"
+        }
       }
     },
     "correction": {

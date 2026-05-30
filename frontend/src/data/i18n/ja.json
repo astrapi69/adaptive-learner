@@ -1303,7 +1303,9 @@
         "instructions": "左の項目を選び、次に右で対応する訳を選びます。",
         "left_label": "用語",
         "right_label": "訳",
-        "empty": "このマッチング演習にはペアがありません。"
+        "empty": "このマッチング演習にはペアがありません。",
+        "left_label_productive": "意味",
+        "right_label_productive": "用語"
       },
       "picture": {
         "submit": "答えを確認",
@@ -1351,6 +1353,24 @@
         "result_correct": "すべて正解！",
         "result_partial": "{total}個中{correct}個正解。",
         "empty": "この穴埋め演習には空欄がありません。"
+      },
+      "instruction": {
+        "matching": {
+          "receptive": "ペアを結ぶ（認識）",
+          "productive": "ペアを結ぶ（翻訳）"
+        },
+        "free_text": {
+          "receptive": "これはどういう意味ですか？",
+          "productive": "翻訳してください："
+        },
+        "word_tiles": {
+          "receptive": "訳を組み立てる",
+          "productive": "文を組み立てる"
+        },
+        "picture_choice": {
+          "receptive": "正しい意味を選ぶ",
+          "productive": "正しい画像を選ぶ"
+        }
       }
     },
     "correction": {

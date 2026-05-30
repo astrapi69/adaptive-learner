@@ -3301,6 +3301,15 @@ select:focus {
   color: var(--fg-muted);
 }
 
+/* EXP-018 / Phase 62 — subtle per-direction instruction line under
+   an exercise prompt (receptive vs productive). */
+.exercise-direction-instruction {
+  margin: 0.25rem 0 0.75rem;
+  font-size: 0.8125rem;
+  font-style: italic;
+  color: var(--fg-muted);
+}
+
 .matching-flow-hint {
   margin: 0;
   display: inline-flex;
