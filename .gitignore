@@ -107,3 +107,6 @@ tmp/
 # docs/explorations/sample-content/. Regenerated via
 # frontend/scripts/copy-bundled-content.mjs.
 frontend/public/content/
+
+# Coverage reports are generated locally (make test-coverage), never committed.
+docs/audits/coverage/
