@@ -9,7 +9,14 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.45.0** (minor - **Phase 61 — Quality
+- **Current state:** **v1.45.1** (patch - docs-sync: ROADMAP
+  phase-history table refreshed through Phase 61 (was 19 phases
+  behind), a cross-language badge-catalog parity golden
+  (``tests/fixtures/badge-catalog/catalog.json`` pins
+  ``badges.yaml`` <-> ``badges-data.ts`` so API-mode and
+  Dexie-mode catalogs cannot drift), and BL-23 (settings race)
+  + BL-24 (E2E GET matcher) archived as already-shipped; no
+  runtime change. v1.45.0 = minor - **Phase 61 — Quality
   Sweep**. Audit-first pass (``docs/audits/2026-05-30-phase61-
   quality-audit.md``) then fixes: security P2 (``read_lesson``
   path-traversal guard), coverage (missions plugin 14→41,

@@ -1,6 +1,6 @@
 # Adaptive Learner Roadmap
 
-Current state: **v1.45.0 released 2026-05-30 (Phase 61 — quality sweep: security P2 read_lesson guard, coverage (missions 14→41, ApiStorage 45→100%, config_overlay 51→90%, 3 interactive Dexie E2E journeys), architecture (SyncSection→api client, /import/:id in the gate), performance (export N+1, html5-qrcode lazy), dead-code removal, tree-placement + duplicate detection in the share pipeline, minor/patch deps).** 1047 (+1 skipped) backend + 1031 plugin + 2624 Vitest = 4702 tests green (+1 skipped). 17 Playwright smoke spec files run separately; the Dexie-mode release gate (23 specs) runs via `make test-dexie-smoke`.
+Current state: **v1.45.1 released 2026-05-30 (patch / docs-sync: this phase-history table refreshed through Phase 61, cross-language badge-catalog parity golden, BL-23 + BL-24 archived as already-shipped; no runtime change).** Prior: **v1.45.0 (Phase 61 — quality sweep: security P2 read_lesson guard, coverage (missions 14→41, ApiStorage 45→100%, config_overlay 51→90%, 3 interactive Dexie E2E journeys), architecture (SyncSection→api client, /import/:id in the gate), performance (export N+1, html5-qrcode lazy), dead-code removal, tree-placement + duplicate detection in the share pipeline, minor/patch deps).** 1047 (+1 skipped) backend + 1031 plugin + 2624 Vitest = 4702 tests green (+1 skipped). 17 Playwright smoke spec files run separately; the Dexie-mode release gate (23 specs) runs via `make test-dexie-smoke`.
 
 ## Phase history (completed)
 
