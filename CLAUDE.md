@@ -9,7 +9,40 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.45.1** (patch - docs-sync: ROADMAP
+- **Current state:** **v1.46.0** (minor - **Phase 62 — EXP-018
+  Exercise Direction (Receptive vs Productive)**. Every exercise
+  now carries an optional ``direction`` (``target_to_source`` =
+  receptive/recognise, default; ``source_to_target`` =
+  productive/produce; ``both``/``random``); schema stays 1.2
+  (additive). The SRS tracks mastery PER DIRECTION:
+  ``ElementError`` gains a ``direction`` column + the per-element
+  unique constraint grows to include it (Alembic 0023 + Dexie
+  v23 re-keys existing rows to receptive), so a card has
+  independent receptive + productive rows and is "fully mastered"
+  only when BOTH are (``is_fully_mastered`` /
+  ``isFullyMastered``). Renderers are direction-aware via
+  ``resolveConcreteDirection`` + ``resolveDirectionDisplay`` (the
+  exercise-data-centric approach — Matching flips its columns,
+  all non-cloze renderers show an eye/pencil instruction hint;
+  cloze is in-context and skips direction); attempts stamp their
+  concrete direction centrally in ``element-attempt.ts``. The
+  review queue weights productive errors 1.2x and carries the
+  direction into the synthesised review; the adaptive generator
+  gains a ``direction_strategy`` (auto/receptive_first/
+  productive_focus/balanced, default auto — receptive until
+  recognition is solid, then productive) fed by a new Settings >
+  Learning "Preferred exercise direction" control; the Dashboard
+  FocusAreasCard shows a receptive/productive mastery split.
+  Pilot lessons gained a progressive direction (1-5 receptive,
+  6-8 mixed, 9-10 mostly productive). Also folds in a **P0
+  fix** (analysis-to-lesson Save flow now sets a real language
+  pair + ``title_native`` + CEFR level and gates Save on a
+  shareable lesson — 5 validator-caught bugs) and a **content
+  migration**: lesson content moved OUT of the app repo into
+  ``astrapi69/adaptive-learner-content``; the build sources it via
+  ``ADAPTIVE_LEARNER_CONTENT_DIR`` (default sibling checkout) and
+  the GH-Pages deploy checks the content repo out (CI-verified
+  bundling). v1.45.1 = patch - docs-sync: ROADMAP
   phase-history table refreshed through Phase 61 (was 19 phases
   behind), a cross-language badge-catalog parity golden
   (``tests/fixtures/badge-catalog/catalog.json`` pins

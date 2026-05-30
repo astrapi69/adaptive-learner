@@ -17,14 +17,15 @@ tool into a full learning platform with downloadable content
 sets, interactive exercises, and dual-mode operation
 (Content-only + AI-augmented).
 
-State: **post v1.45.1 (patch / docs-sync: ROADMAP refreshed
-through Phase 61, cross-language badge-catalog parity golden,
-BL-23 + BL-24 archived as already-shipped).** Prior: **v1.45.0
-(Phase 61 — quality sweep: security P2, coverage (missions 41,
-ApiStorage 100%, config_overlay 90%, 3 interactive Dexie E2E
-journeys), architecture + performance fixes, dead-code removal,
-tree-placement + duplicate detection, minor/patch deps).**
-Phase history through Phase 61 +
+State: **post v1.46.0 (Phase 62 — EXP-018 Exercise Direction:
+receptive vs productive per-direction SRS, direction-aware
+renderers + review weighting + adaptive strategy + Settings
+control + dashboard split; folds in a P0 analysis-to-lesson
+Save fix and the lesson-content migration into the
+adaptive-learner-content repo).** Prior: **v1.45.1 (docs-sync:
+ROADMAP refreshed through Phase 61, badge-catalog parity golden,
+BL-23 + BL-24 archived).**
+Phase history through Phase 62 +
 per-release notes live in
 [changelog/releases/](../changelog/releases/). 29 tables on
 the sync surface. 13 plugins, 29 SQLAlchemy models,

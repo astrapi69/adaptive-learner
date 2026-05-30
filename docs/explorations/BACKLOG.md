@@ -221,7 +221,7 @@ Ziel: Das Kern-Versprechen "Adaptive Learning" einlösen. Community-Strukturen a
 
 Stufe 1 (Fundament) und Stufe 2 (Renderer) sind die Pflicht; Stufe 3
 (Scheduling/Adaption) und Stufe 4 (Inhalt/UI/Doku) bauen darauf auf.
-Geplant als Phase 62 / v1.46.0.
+**Geliefert in Phase 62 / v1.46.0** (alle Stufen).
 
 | ID    | Task                                                       | EXP |
 | ----- | ---------------------------------------------------------- | --- |

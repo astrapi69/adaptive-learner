@@ -359,6 +359,36 @@ Geschlossene Enum von Rollen: `article` / `verb` / `noun` /
 Eine Rolle hinzuzufügen ist ein Minor-Schema-Version-Bump —
 nicht inline erweitern.
 
+## Übungsrichtung (v1.46.0 / EXP-018)
+
+Jede Übung akzeptiert ein optionales Feld `direction`, das angibt,
+in welche Richtung die Lernenden die Karte üben:
+
+- `target_to_source` (Standard) — REZEPTIV: die Zielsprache wird
+  gezeigt, die Quellsprache wird erkannt (leichter).
+- `source_to_target` — PRODUKTIV: die Quellsprache wird gezeigt,
+  die Zielsprache wird produziert (schwerer).
+- `both` / `random` — überlässt dem Renderer / adaptiven Generator
+  die Wahl einer konkreten Richtung pro Versuch.
+
+```json
+{
+  "type": "matching",
+  "direction": "source_to_target",
+  "card_ids": ["bonjour"],
+  "pairs": [{ "left": "Bonjour", "right": "Guten Tag" }]
+}
+```
+
+Das Feld ist additiv — das Schema bleibt bei Version 1.2, und
+Lektionen ohne `direction` verhalten sich genau wie zuvor
+(rezeptiv). Das SRS verfolgt die Beherrschung pro Richtung: eine
+rezeptiv gemeisterte Karte ist noch nicht produktiv gemeistert.
+Cloze-Übungen sind kontextgebunden und ignorieren `direction`. Für
+eine Schwierigkeitsprogression hält man frühe Lektionen rezeptiv
+und führt `source_to_target` in späteren Lektionen ein (genau das
+macht der gebündelte Pilot-Inhalt).
+
 ### Annotationen für den adaptiven Lektions-Generator (v1.36.0+)
 
 Der adaptive Lektions-Generator aus Phase 53

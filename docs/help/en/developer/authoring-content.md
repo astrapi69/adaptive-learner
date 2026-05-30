@@ -351,6 +351,35 @@ Closed enum of roles: `article` / `verb` / `noun` / `adjective`
 / `preposition` / `gender_marker` / `tense_marker`. Adding a
 role is a minor schema_version bump — don't extend in place.
 
+## Exercise direction (v1.46.0 / EXP-018)
+
+Every exercise accepts an optional `direction` field that says
+which way the learner drills the card:
+
+- `target_to_source` (default) — RECEPTIVE: the learner is shown
+  the target language and recognises the source language (easier).
+- `source_to_target` — PRODUCTIVE: the learner is shown the source
+  language and produces the target (harder).
+- `both` / `random` — let the renderer / adaptive generator pick a
+  concrete direction per attempt.
+
+```json
+{
+  "type": "matching",
+  "direction": "source_to_target",
+  "card_ids": ["bonjour"],
+  "pairs": [{ "left": "Bonjour", "right": "Guten Tag" }]
+}
+```
+
+The field is additive — the schema stays at version 1.2 and
+lessons without `direction` behave exactly as before (receptive).
+The SRS tracks mastery per direction, so a card mastered
+receptively is not yet mastered productively. Cloze exercises are
+in-context and ignore `direction`. For a difficulty progression,
+keep early lessons receptive and introduce `source_to_target` in
+later lessons (the bundled pilot content does exactly this).
+
 ### Annotations that help the adaptive lesson generator (v1.36.0+)
 
 The Phase 53 adaptive lesson generator

@@ -1,6 +1,6 @@
 # Adaptive Learner Roadmap
 
-Current state: **v1.45.1 released 2026-05-30 (patch / docs-sync: this phase-history table refreshed through Phase 61, cross-language badge-catalog parity golden, BL-23 + BL-24 archived as already-shipped; no runtime change).** Prior: **v1.45.0 (Phase 61 — quality sweep: security P2 read_lesson guard, coverage (missions 14→41, ApiStorage 45→100%, config_overlay 51→90%, 3 interactive Dexie E2E journeys), architecture (SyncSection→api client, /import/:id in the gate), performance (export N+1, html5-qrcode lazy), dead-code removal, tree-placement + duplicate detection in the share pipeline, minor/patch deps).** 1047 (+1 skipped) backend + 1031 plugin + 2624 Vitest = 4702 tests green (+1 skipped). 17 Playwright smoke spec files run separately; the Dexie-mode release gate (23 specs) runs via `make test-dexie-smoke`.
+Current state: **v1.46.0 released 2026-05-30 (Phase 62 — EXP-018 Exercise Direction: every exercise carries a receptive/productive direction, SRS tracks mastery per direction (Alembic 0023 + Dexie v23), direction-aware renderers + review weighting + adaptive direction-strategy + Settings control + dashboard split; folds in a P0 analysis-to-lesson Save fix and the lesson-content migration out of the app repo into adaptive-learner-content).** Prior: **v1.45.1 (patch / docs-sync: phase-history refreshed through Phase 61, cross-language badge-catalog parity golden, BL-23 + BL-24 archived).** Earlier: **v1.45.0 (Phase 61 — quality sweep: security P2 read_lesson guard, coverage (missions 14→41, ApiStorage 45→100%, config_overlay 51→90%, 3 interactive Dexie E2E journeys), architecture (SyncSection→api client, /import/:id in the gate), performance (export N+1, html5-qrcode lazy), dead-code removal, tree-placement + duplicate detection in the share pipeline, minor/patch deps).** 1047 (+1 skipped) backend + 1031 plugin + 2624 Vitest = 4702 tests green (+1 skipped). 17 Playwright smoke spec files run separately; the Dexie-mode release gate (23 specs) runs via `make test-dexie-smoke`.
 
 ## Phase history (completed)
 
@@ -67,6 +67,8 @@ Current state: **v1.45.1 released 2026-05-30 (patch / docs-sync: this phase-hist
 | — | v1.43.0 | **Content Repo Online** (2026-05-30) — the official `astrapi69/adaptive-learner-content` repo exists + is validated end-to-end; same-id sets deduped across bundle + GitHub (higher version wins); Bundled/GitHub source badge; Share re-enabled; docs-verification system gates releases + CI. |
 | 60 | v1.44.0 | **Content Validation Pipeline + Language-Pair Tree** (2026-05-30) — content sets declare a language PAIR (target + source); `sets/{source}/{target-level}/` tree; schema 1.1→1.2 + Dexie v22; client-side validator gates Share + opt-in AI review; content-repo CI. |
 | 61 | v1.45.0 | **Quality Sweep** (2026-05-30) — audit-first, then fixes: security P2 (`read_lesson` guard), coverage (missions 14→41, ApiStorage 100%, config_overlay 90%, 3 interactive Dexie E2E journeys), architecture + performance fixes, dead-code removal, tree-placement + duplicate detection in the share pipeline, minor/patch deps. |
+| — | v1.45.1 | **Patch / docs-sync** (2026-05-30) — this phase-history table refreshed through Phase 61; cross-language badge-catalog parity golden (`tests/fixtures/badge-catalog/`); BL-23 + BL-24 archived as already-shipped. No runtime change. |
+| 62 | v1.46.0 | **EXP-018 Exercise Direction (Receptive vs Productive)** (2026-05-30) — every exercise carries an optional `direction` (schema stays 1.2); SRS tracks mastery PER direction (Alembic 0023 + Dexie v23 re-key; "fully mastered" needs both); direction-aware renderers (Matching column flip + eye/pencil instruction hint; cloze exempt) via `resolveDirectionDisplay`; review queue weights productive 1.2x; adaptive `direction_strategy` (auto/receptive_first/productive_focus/balanced) + Settings control + Dashboard mastery split; pilot lessons progressive direction. Folds in a P0 analysis-to-lesson Save fix (language pair + CEFR + title_native + shareable-gate) and the lesson-content migration out of the app repo into `astrapi69/adaptive-learner-content` (build sources it via `ADAPTIVE_LEARNER_CONTENT_DIR` + GH-Pages content-repo checkout). |
 
 Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list. Per-release notes live in [changelog/releases/](../changelog/releases/).
 
@@ -74,9 +76,10 @@ Annotated tags + GitHub Releases ship same-day; see `git tag` for the full list.
 
 ## Next phases (planned)
 
-**Phase 62 candidate — v1.46.0: remaining UX polish from manual
-testing.** Two UX items surfaced in manual testing of the lesson
-viewer:
+**Phase 63 candidate — remaining UX polish from manual testing.**
+(Phase 62 shipped EXP-018 Exercise Direction instead; these two
+viewer UX items remain.) Two UX items surfaced in manual testing
+of the lesson viewer:
 
 - **Matching-exercise visibility bug.** The selected/paired state
   in the Matching exercise is hard to read in some themes. (v1.38.0
