@@ -410,3 +410,30 @@ describe("Dexie elementErrors: EXP-018 direction-awareness", () => {
         expect(row.id.endsWith("#source_to_target")).toBe(true);
     });
 });
+
+describe("Dexie review queue: EXP-018 productive weighting", () => {
+    it("ranks a productive error above a receptive one with equal count", async () => {
+        // Two distinct elements, each wrong twice, different directions.
+        for (let i = 0; i < 2; i++) {
+            await recordElementAttemptsDexie(USER, [
+                attempt({
+                    element_key: "recep",
+                    direction: "target_to_source",
+                    correct: false,
+                }),
+                attempt({
+                    element_key: "prod",
+                    direction: "source_to_target",
+                    correct: false,
+                }),
+            ]);
+        }
+        // Far-future clock so both are overdue and compete on priority.
+        const queue = await computeReviewQueueDexie(USER, {
+            nowIso: "2030-01-01T00:00:00.000Z",
+        });
+        expect(queue[0].direction).toBe("source_to_target");
+        expect(queue[0].element_key).toBe("prod");
+        expect(queue[0].error_count).toBe(queue[1].error_count);
+    });
+});

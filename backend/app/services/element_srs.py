@@ -132,8 +132,20 @@ def _project(row: ElementError, now: datetime) -> ReviewQueueItem:
     )
 
 
-def _sort_key(item: ReviewQueueItem) -> tuple[int, int, int]:
-    """Sort: overdue first (0 beats 1), then error_count
+# EXP-018 / Phase 62: productive (source_to_target) drills are harder
+# and need more practice, so their error weight is scaled up. A
+# productive error with the same raw count ranks above a receptive one.
+_PRODUCTIVE_WEIGHT = 1.2
+
+
+def _priority_score(item: ReviewQueueItem) -> float:
+    """Weighted error count — productive errors count for more."""
+    weight = _PRODUCTIVE_WEIGHT if item.direction == "source_to_target" else 1.0
+    return item.error_count * weight
+
+
+def _sort_key(item: ReviewQueueItem) -> tuple[int, float, int]:
+    """Sort: overdue first (0 beats 1), then weighted priority
     desc (negated), then last_error_at desc (negated via
     min-datetime fallback). Stable tie-break by id at the
     caller if needed."""
@@ -141,14 +153,12 @@ def _sort_key(item: ReviewQueueItem) -> tuple[int, int, int]:
     last_err_for_sort = item.last_error_at or datetime.min.replace(
         tzinfo=UTC,
     )
-    # tuples sort lexicographically — desc by negating ints,
-    # desc by negating timestamp via subtraction from a
-    # max-like sentinel. Simpler: use a sortable negative
-    # delta as int (microseconds since epoch).
+    # tuples sort lexicographically — desc by negating values,
+    # desc by negating timestamp via microseconds since epoch.
     last_err_us = int(
         _ensure_utc(last_err_for_sort).timestamp() * 1_000_000,
     )
-    return (overdue_bucket, -item.error_count, -last_err_us)
+    return (overdue_bucket, -_priority_score(item), -last_err_us)
 
 
 def compute_review_queue(

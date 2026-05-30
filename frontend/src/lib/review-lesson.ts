@@ -157,6 +157,14 @@ export function _buildReviewStep(
     const exercise = _findExercise(sourceLesson, item.exercise_id);
     if (exercise === null) return null;
 
+    // EXP-018 / Phase 62: the review drills the SAME direction the
+    // error was recorded under (a productive error reviews
+    // productively), so the per-direction SRS loop stays coherent.
+    const dir: "source_to_target" | "target_to_source" =
+        item.direction === "source_to_target"
+            ? "source_to_target"
+            : "target_to_source";
+
     if (exercise.type === "free_text" || exercise.type === "word_tiles") {
         const sourceCard = _findSourceCard(
             sourceLesson,
@@ -173,7 +181,7 @@ export function _buildReviewStep(
                 id: `review-cloze-${item.lesson_id}-${item.exercise_id}-${item.element_key}`,
                 type: "exercise",
                 title: null,
-                exercise: generated,
+                exercise: {...generated, direction: dir},
             };
         }
         // Fall through to replay on generator failure.
@@ -183,7 +191,7 @@ export function _buildReviewStep(
         id: `review-${item.lesson_id}-${item.exercise_id}-${item.element_key}`,
         type: "exercise",
         title: null,
-        exercise,
+        exercise: {...exercise, direction: dir},
     };
 }
 

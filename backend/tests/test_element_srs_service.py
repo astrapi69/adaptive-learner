@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from datetime import UTC, datetime, timedelta
+from typing import Literal
 
 import pytest
 from fastapi.testclient import TestClient
@@ -38,7 +39,8 @@ def client() -> Iterator[TestClient]:
 @pytest.fixture()
 def user_id(client: TestClient) -> str:
     r = client.post(
-        "/api/users", json={"name": "SRSTest", "language": "en"},
+        "/api/users",
+        json={"name": "SRSTest", "language": "en"},
     )
     assert r.status_code in (200, 201), r.text
     return r.json()["id"]
@@ -50,6 +52,7 @@ def _attempt(
     lesson_id: str = "01-greetings.json",
     exercise_id: str = "ex-thanks",
     element_key: str = "merci",
+    direction: Literal["source_to_target", "target_to_source"] = "target_to_source",
     correct: bool,
 ) -> ElementAttemptIn:
     return ElementAttemptIn(
@@ -57,6 +60,7 @@ def _attempt(
         lesson_id=lesson_id,
         exercise_id=exercise_id,
         element_key=element_key,
+        direction=direction,
         element_type="vocabulary",
         user_answer="",
         correct_answer="Merci",
@@ -107,7 +111,9 @@ def test_mastered_elements_excluded(user_id: str) -> None:
     try:
         for _ in range(3):
             element_errors_service.record_attempt(
-                db, user_id, _attempt(correct=True),
+                db,
+                user_id,
+                _attempt(correct=True),
             )
         db.commit()
         assert compute_review_queue(db, user_id) == []
@@ -119,7 +125,9 @@ def test_active_element_appears_in_queue(user_id: str) -> None:
     db = SessionLocal()
     try:
         element_errors_service.record_attempt(
-            db, user_id, _attempt(correct=False),
+            db,
+            user_id,
+            _attempt(correct=False),
         )
         db.commit()
         queue = compute_review_queue(db, user_id)
@@ -137,7 +145,9 @@ def test_suggested_review_is_last_attempt_plus_interval(
     db = SessionLocal()
     try:
         row = element_errors_service.record_attempt(
-            db, user_id, _attempt(correct=False),
+            db,
+            user_id,
+            _attempt(correct=False),
         )
         db.commit()
         queue = compute_review_queue(db, user_id)
@@ -161,7 +171,9 @@ def test_overdue_flag_against_injected_clock(user_id: str) -> None:
     db = SessionLocal()
     try:
         element_errors_service.record_attempt(
-            db, user_id, _attempt(correct=False),
+            db,
+            user_id,
+            _attempt(correct=False),
         )
         db.commit()
         # Inject a clock 2 days in the future — the 1-day
@@ -184,10 +196,14 @@ def test_overdue_items_come_before_non_overdue(user_id: str) -> None:
     db = SessionLocal()
     try:
         element_errors_service.record_attempt(
-            db, user_id, _attempt(element_key="overdue-one", correct=False),
+            db,
+            user_id,
+            _attempt(element_key="overdue-one", correct=False),
         )
         element_errors_service.record_attempt(
-            db, user_id, _attempt(element_key="fresh-one", correct=False),
+            db,
+            user_id,
+            _attempt(element_key="fresh-one", correct=False),
         )
         db.commit()
         # Inject a clock that makes the FIRST element overdue
@@ -221,10 +237,14 @@ def test_higher_error_count_wins_among_overdue(user_id: str) -> None:
         # 'high' gets 3 errors; 'low' gets 1.
         for _ in range(3):
             element_errors_service.record_attempt(
-                db, user_id, _attempt(element_key="high", correct=False),
+                db,
+                user_id,
+                _attempt(element_key="high", correct=False),
             )
         element_errors_service.record_attempt(
-            db, user_id, _attempt(element_key="low", correct=False),
+            db,
+            user_id,
+            _attempt(element_key="low", correct=False),
         )
         db.commit()
         # Push both into the overdue bucket.
@@ -249,10 +269,14 @@ def test_set_id_filter_scopes_the_queue(user_id: str) -> None:
     db = SessionLocal()
     try:
         element_errors_service.record_attempt(
-            db, user_id, _attempt(set_id="set-a", correct=False),
+            db,
+            user_id,
+            _attempt(set_id="set-a", correct=False),
         )
         element_errors_service.record_attempt(
-            db, user_id, _attempt(set_id="set-b", correct=False),
+            db,
+            user_id,
+            _attempt(set_id="set-b", correct=False),
         )
         db.commit()
         a_queue = compute_review_queue(db, user_id, set_id="set-a")
@@ -268,7 +292,9 @@ def test_returned_items_are_review_queue_items(user_id: str) -> None:
     db = SessionLocal()
     try:
         element_errors_service.record_attempt(
-            db, user_id, _attempt(correct=False),
+            db,
+            user_id,
+            _attempt(correct=False),
         )
         db.commit()
         queue = compute_review_queue(db, user_id)
@@ -291,5 +317,68 @@ def test_returned_items_are_review_queue_items(user_id: str) -> None:
             "overdue",
         ):
             assert hasattr(queue[0], fld), fld
+    finally:
+        db.close()
+
+
+# --- EXP-018 / Phase 62: productive-priority weighting ---------------------
+
+
+def test_productive_error_outranks_receptive_with_equal_count(user_id: str) -> None:
+    """Two elements, same raw error_count, but the productive one is
+    weighted 1.2x and must come first in the overdue bucket."""
+    from app.models import ElementError
+
+    db = SessionLocal()
+    try:
+        for _ in range(2):
+            element_errors_service.record_attempt(
+                db,
+                user_id,
+                _attempt(
+                    element_key="recep",
+                    direction="target_to_source",
+                    correct=False,
+                ),
+            )
+            element_errors_service.record_attempt(
+                db,
+                user_id,
+                _attempt(
+                    element_key="prod",
+                    direction="source_to_target",
+                    correct=False,
+                ),
+            )
+        db.commit()
+        for row in db.query(ElementError).all():
+            row.last_attempt_at = datetime.now(UTC) - timedelta(days=10)
+        db.commit()
+        queue = compute_review_queue(db, user_id)
+        assert [q.direction for q in queue][0] == "source_to_target"
+        assert queue[0].element_key == "prod"
+        assert queue[0].error_count == queue[1].error_count == 2
+
+    finally:
+        db.close()
+
+
+def test_same_element_both_directions_appear_twice(user_id: str) -> None:
+    """A card wrong in both directions yields two queue items."""
+    db = SessionLocal()
+    try:
+        element_errors_service.record_attempt(
+            db, user_id, _attempt(direction="target_to_source", correct=False)
+        )
+        element_errors_service.record_attempt(
+            db, user_id, _attempt(direction="source_to_target", correct=False)
+        )
+        db.commit()
+        queue = compute_review_queue(db, user_id)
+        assert len(queue) == 2
+        assert {q.direction for q in queue} == {
+            "target_to_source",
+            "source_to_target",
+        }
     finally:
         db.close()

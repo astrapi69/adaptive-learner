@@ -254,16 +254,30 @@ export async function computeReviewQueueDexie(
     }
     rows = rows.filter((r) => !r.mastered);
     const items = rows.map((r) => _projectReviewItem(r, nowIso));
-    // Sort: overdue first → error_count desc → last_error_at desc.
+    // Sort: overdue first → weighted priority desc → last_error_at
+    // desc. EXP-018 / Phase 62: productive errors are weighted 1.2x
+    // (harder, needs more practice). Mirrors the backend
+    // ``element_srs._sort_key``.
     items.sort((a, b) => {
         if (a.overdue !== b.overdue) return a.overdue ? -1 : 1;
-        if (a.error_count !== b.error_count) {
-            return b.error_count - a.error_count;
-        }
+        const pa = _priorityScore(a);
+        const pb = _priorityScore(b);
+        if (pa !== pb) return pb - pa;
         const lhs = a.last_error_at ?? "";
         const rhs = b.last_error_at ?? "";
         if (lhs === rhs) return 0;
         return lhs < rhs ? 1 : -1;
     });
     return items;
+}
+
+/** EXP-018 / Phase 62: productive (source_to_target) drills are
+ *  harder, so their error count is weighted up. Mirrors the backend
+ *  ``element_srs._PRODUCTIVE_WEIGHT``. */
+export const PRODUCTIVE_WEIGHT = 1.2;
+
+function _priorityScore(item: ReviewQueueItem): number {
+    const weight =
+        item.direction === "source_to_target" ? PRODUCTIVE_WEIGHT : 1.0;
+    return item.error_count * weight;
 }

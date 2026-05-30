@@ -393,3 +393,36 @@ describe("synthesizeReviewLesson: Phase 52G cloze branch", () => {
         expect(out.steps[1].exercise?.type).toBe("matching");
     });
 });
+
+describe("synthesizeReviewLesson: EXP-018 direction carry", () => {
+    it("stamps the queue item's direction onto the replayed exercise", () => {
+        const cache = new Map([
+            ["01-greetings.json", makeLesson("01-greetings.json", ["ex-a"])],
+        ]);
+        const queue = [
+            makeQueueItem({
+                exercise_id: "ex-a",
+                direction: "source_to_target",
+            }),
+        ];
+        const out = synthesizeReviewLesson(queue, cache, {
+            title: "Review",
+        });
+        expect(out.steps).toHaveLength(1);
+        expect(out.steps[0].exercise?.direction).toBe("source_to_target");
+    });
+
+    it("defaults a receptive queue item to target_to_source", () => {
+        const cache = new Map([
+            ["01-greetings.json", makeLesson("01-greetings.json", ["ex-a"])],
+        ]);
+        const queue = [
+            makeQueueItem({
+                exercise_id: "ex-a",
+                direction: "target_to_source",
+            }),
+        ];
+        const out = synthesizeReviewLesson(queue, cache, {title: "Review"});
+        expect(out.steps[0].exercise?.direction).toBe("target_to_source");
+    });
+});
