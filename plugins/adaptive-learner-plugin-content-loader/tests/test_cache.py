@@ -277,6 +277,26 @@ class TestReadCache:
         )
         assert lesson.id == "01-greetings"
 
+    def test_read_lesson_path_traversal_blocked(self, tmp_path: Path) -> None:
+        """``..`` segments in a lesson filename are rejected at read
+        time (Phase 61 security P2 — same guard as read_asset)."""
+        store_set(
+            tmp_path,
+            SOURCE,
+            SET_ID,
+            VERSION,
+            manifest_yaml=VALID_MANIFEST,
+            lessons={"01-greetings.json": VALID_LESSON},
+        )
+        with pytest.raises(ContentNotFoundError):
+            read_lesson(
+                tmp_path,
+                SOURCE,
+                SET_ID,
+                VERSION,
+                "../../../etc/passwd",
+            )
+
     def test_read_lesson_missing(self, tmp_path: Path) -> None:
         store_set(
             tmp_path,

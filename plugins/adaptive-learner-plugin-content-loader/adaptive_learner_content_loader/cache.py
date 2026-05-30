@@ -242,11 +242,18 @@ def read_lesson(
     Raises ``ContentNotFoundError`` if the file is missing,
     ``ContentSchemaError`` on validation failure.
     """
-    lesson_path = (
-        cache_path_for_set(cache_root, source, set_id, version)
-        / "lessons"
-        / lesson_filename
-    )
+    lessons_root = cache_path_for_set(cache_root, source, set_id, version) / "lessons"
+    lesson_path = (lessons_root / lesson_filename).resolve()
+    # Path-traversal guard (mirrors ``read_asset``): a ``..`` or
+    # absolute segment that slips past the route's ``{filename}``
+    # converter must not escape the set's ``lessons/`` directory.
+    # Defense-in-depth — the JSON-parse gate downstream would also
+    # reject non-lesson files, but the read path is the canonical
+    # place to enforce the cache-isolation invariant.
+    if not str(lesson_path).startswith(str(lessons_root.resolve())):
+        raise ContentNotFoundError(
+            f"Lesson path escapes the cache root: {lesson_filename!r}",
+        )
     if not lesson_path.is_file():
         raise ContentNotFoundError(
             (
