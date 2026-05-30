@@ -26,25 +26,55 @@ A set has three layers:
    one JSON file per lesson, validated against schema v1.0
    on every download.
 
-The two pilot sets that ship with Adaptive Learner (FR A1 + ES
-A1) live at `docs/explorations/sample-content/{fr,es}-a1/` and
-are good templates to copy.
+The pilot sets that ship with Adaptive Learner live at
+`docs/explorations/sample-content/` and are good templates to copy.
+
+## Language pairs (v1.44.0)
+
+Every content set declares the language PAIR it teaches:
+
+- **`target_language`** — what the learner is LEARNING (e.g. `fr`).
+- **`source_language`** — what the learner ALREADY SPEAKS, i.e. the
+  language the card **`back`** fields, **`notes`**, and **theory**
+  text are written in (e.g. `de`).
+
+This is what makes "French for English speakers" a *different* set
+from "French for German speakers": same target (`fr`), different
+source (`en` vs `de`), different explanation language. A learner
+only sees sets whose `source_language` matches a language they
+speak (their app language, plus any extras opted into in
+Settings → Learning).
+
+Set ids encode the pair as `{target}-{level}-from-{source}`
+(e.g. `fr-a1-from-de`), and each set declares a **`path`** pointing
+at its source-language directory (`sets/de/fr-a1`). A set also
+carries **`title`** (in the source language, what the learner reads)
+and **`title_native`** (in the target language, shown as a
+secondary label).
+
+Both codes must be 2-letter ISO 639-1, and `source_language` must
+differ from `target_language`. Pre-v1.2 sets without these fields
+still load: the old `language` key is accepted as `target_language`
+and `source_language` defaults to `en`.
 
 ## File-system layout
 
+The tree is organised by SOURCE language, then target+level:
+
 ```
 my-content-repo/
-  manifest.yaml               # root: lists every set
+  manifest.yaml               # root: lists every set (with path + pair)
   sets/
-    language-en-b1/           # one directory per set
-      manifest.yaml           # set: lists the lessons
-      lessons/
-        01-intro.json
-        02-articles.json
+    de/                       # source language: German
+      fr-a1/                  # target French, level A1  -> id fr-a1-from-de
+        manifest.yaml         # set: lists the lessons
+        lessons/
+          01-begruessung.json
+          ...
+        assets/               # optional images / audio
+    en/                       # source language: English
+      fr-a1/                  # -> id fr-a1-from-en
         ...
-      assets/
-        img/                  # optional images for picture-choice
-        audio/                # optional TTS recordings
 ```
 
 ## Manifest format
@@ -496,6 +526,33 @@ Before opening a PR for a new lesson, verify:
 - [ ] **Cultural accuracy**: real-world usage, not textbook-only phrases
 - [ ] **Schema validation**: the lesson loads cleanly via `dict_to_lesson()` (see Local testing)
 - [ ] **Card-id integrity**: every `exercise.card_ids[i]` exists in the lesson's `cards[]`
+- [ ] **Language pair**: `target_language` + `source_language` set (ISO 639-1, different), `title_native` present
+
+## Validation (two layers, v1.44.0)
+
+Content is gated by two validation layers that run the SAME checks:
+
+1. **In-app, before sharing.** When a learner shares a lesson via
+   *My Lessons → Share with Community*, a rule-based check runs
+   first (always, no AI needed). It enforces the **minimums** below;
+   a set under any of them cannot be shared. If it passes AND an AI
+   key is configured, the learner can OPT IN to a supplementary AI
+   review (translation accuracy, distractor plausibility, grammar,
+   level fit, cultural sensitivity, naturalness). The AI step is
+   never automatic, requires explicit consent (lesson content is
+   sent to the configured provider), and never blocks sharing — the
+   rule-based pass is the gate.
+2. **In the content repo's CI.** A pull request to
+   `astrapi69/adaptive-learner-content` runs `scripts/validate_content.py`
+   (mirrored in `docs/ci/adaptive-learner-content/`), which re-checks
+   every set with the same rules so a manual PR can't bypass the gate.
+
+**Quality minimums (hard gate):** ≥ 5 exercises per lesson, ≥ 2
+exercise types, ≥ 1 theory step, free-text ≥ 2 accepted answers +
+distractors, matching ≥ 3 pairs, picture-choice distractors, no
+empty card front/back, and (for non-Latin source scripts) card
+backs in the source script. These are minimums, not targets — the
+checklist above asks for more.
 
 ## Local testing
 

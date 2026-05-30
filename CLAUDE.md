@@ -9,10 +9,44 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.43.0** (minor - the official
-  ``astrapi69/adaptive-learner-content`` content repo now
-  exists and is validated end-to-end, bringing the Content
-  Browser online with it. Same-id sets are deduped across the
+- **Current state:** **v1.44.0** (minor - **Phase 60 —
+  Content Validation Pipeline + Language-Pair Tree**. Content
+  sets now declare a language PAIR: ``target_language`` (what
+  the learner LEARNS) + ``source_language`` (what they SPEAK -
+  the language card backs / notes / theory are written in), so
+  "French for English speakers" is a different set from "French
+  for German speakers". Schema 1.1 → 1.2 (backward compatible:
+  the old ``language`` key is a read alias for
+  ``target_language``; ``source_language`` defaults to ``en``;
+  optional ``title_native`` = target-language title; optional
+  ``path`` = repo-relative source-language dir). Bundled +
+  external content reorganised into a ``sets/{source}/{target-
+  level}/`` tree mirrored 1:1 (single bundled source
+  ``bundled:adaptive-learner-content``); the loader resolves a
+  set's files via its ``path`` (Python ``ContentSet.base_path``
+  + TS ``setBasePath``), Dexie schema **v22** backfills the pair
+  on cached rows. The /content Set Browser became a source →
+  target → level **tree** filtered by the learner's app language
+  (+ opt-in extra source languages, Settings → Learning); other
+  source languages collapse under "Other source languages". New
+  **German-source** pilot sets (``de/fr-a1`` + ``de/es-a1``).
+  TWO-LAYER content validation: a client-side
+  ``content-validator.ts`` (schema + language pair + quality
+  minimums — ≥5 exercises, ≥2 types, ≥1 theory, free-text ≥2
+  accepts + distractors, matching ≥3 pairs, no empty cards)
+  gates *Share with Community*, plus an OPT-IN AI review
+  (``ai-content-validator.ts``, both modes; backend
+  ``POST /api/content/validate-lesson``) for translation /
+  grammar / level / cultural accuracy with per-suggestion
+  auto-fix - AI never blocks sharing. The content repo gains a
+  CI workflow (``docs/ci/adaptive-learner-content/`` mirror:
+  ``validate_content.py`` + ``validate-content.yml``) running
+  the same checks on every PR. New ``content.tree.*`` /
+  ``content.validation.*`` / ``content.ai_validation.*`` /
+  ``settings.source_languages.*`` i18n in 8 langs. v1.43.0 =
+  the official ``astrapi69/adaptive-learner-content`` content
+  repo now exists and is validated end-to-end, bringing the
+  Content Browser online with it. Same-id sets are deduped across the
   bundled offline content and the GitHub repo (higher version
   wins; on a tie GitHub is preferred over the build-time-frozen
   bundle; when GitHub is unreachable only the bundled/cached
@@ -665,8 +699,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.43.0 baseline:** backend 1027 (+1 skipped) + plugins
-  975 + Vitest 2568 = **4570 tests** (+1 skipped). E2E
+- **v1.44.0 baseline:** backend 1035 (+1 skipped) + plugins
+  1003 + Vitest 2616 = **4654 tests** (+1 skipped). E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (19 specs incl. /content + /lesson + /review +

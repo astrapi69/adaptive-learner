@@ -25,25 +25,57 @@ Ein Set hat drei Ebenen:
    eine JSON-Datei pro Lektion, bei jedem Download gegen Schema
    v1.0 validiert.
 
-Die beiden mit Adaptive Learner ausgelieferten Pilot-Sets (FR A1
-+ ES A1) liegen unter `docs/explorations/sample-content/{fr,es}-a1/`
-und eignen sich gut als Vorlage.
+Die mit Adaptive Learner ausgelieferten Pilot-Sets liegen unter
+`docs/explorations/sample-content/` und eignen sich gut als Vorlage.
+
+## Sprachpaare (v1.44.0)
+
+Jedes Content-Set deklariert das Sprach-PAAR, das es vermittelt:
+
+- **`target_language`** — was der Lernende LERNT (z. B. `fr`).
+- **`source_language`** — was der Lernende bereits SPRICHT, also die
+  Sprache, in der die Karten-**`back`**-Felder, **`notes`** und der
+  **Theorie**-Text geschrieben sind (z. B. `de`).
+
+Genau das macht "Französisch für Englischsprachige" zu einem
+*anderen* Set als "Französisch für Deutschsprachige": gleiches Ziel
+(`fr`), andere Ausgangssprache (`en` vs. `de`), andere
+Erklärsprache. Ein Lernender sieht nur Sets, deren
+`source_language` zu einer von ihm gesprochenen Sprache passt
+(App-Sprache plus optionale Zusatzsprachen in Einstellungen →
+Lernen).
+
+Set-IDs kodieren das Paar als `{ziel}-{niveau}-from-{quelle}`
+(z. B. `fr-a1-from-de`), und jedes Set deklariert einen **`path`**,
+der auf sein Ausgangssprach-Verzeichnis zeigt (`sets/de/fr-a1`).
+Ein Set trägt außerdem **`title`** (in der Ausgangssprache, was der
+Lernende liest) und **`title_native`** (in der Zielsprache, als
+Zweittitel).
+
+Beide Codes müssen ISO-639-1 (zwei Buchstaben) sein, und
+`source_language` muss sich von `target_language` unterscheiden.
+Sets vor v1.2 ohne diese Felder laden weiterhin: der alte
+`language`-Schlüssel wird als `target_language` akzeptiert, und
+`source_language` fällt auf `en` zurück.
 
 ## Verzeichnislayout
 
+Der Baum ist nach AUSGANGSSPRACHE, dann Ziel+Niveau organisiert:
+
 ```
 mein-content-repo/
-  manifest.yaml               # Root: listet jedes Set
+  manifest.yaml               # Root: listet jedes Set (mit path + Paar)
   sets/
-    language-en-b1/           # ein Verzeichnis pro Set
-      manifest.yaml           # Set: listet die Lektionen
-      lessons/
-        01-intro.json
-        02-articles.json
+    de/                       # Ausgangssprache: Deutsch
+      fr-a1/                  # Ziel Französisch, Niveau A1  -> ID fr-a1-from-de
+        manifest.yaml         # Set: listet die Lektionen
+        lessons/
+          01-begruessung.json
+          ...
+        assets/               # optionale Bilder / Audio
+    en/                       # Ausgangssprache: Englisch
+      fr-a1/                  # -> ID fr-a1-from-en
         ...
-      assets/
-        img/                  # optionale Bilder für picture-choice
-        audio/                # optionale TTS-Aufnahmen
 ```
 
 ## Manifest-Format
@@ -508,6 +540,37 @@ Vor dem PR für eine neue Lektion prüfen:
 - [ ] **Kulturelle Genauigkeit**: realer Sprachgebrauch, nicht nur Lehrbuch-Floskeln
 - [ ] **Schema-Validierung**: die Lektion lädt sauber via `dict_to_lesson()` (siehe Lokales Testen)
 - [ ] **Card-ID-Integrität**: jedes `exercise.card_ids[i]` existiert in `cards[]` der Lektion
+- [ ] **Sprachpaar**: `target_language` + `source_language` gesetzt (ISO 639-1, verschieden), `title_native` vorhanden
+
+## Validierung (zwei Ebenen, v1.44.0)
+
+Inhalte werden durch zwei Validierungsebenen mit den GLEICHEN
+Prüfungen abgesichert:
+
+1. **In der App, vor dem Teilen.** Beim Teilen über *Meine
+   Lektionen → Für die Community bereitstellen* läuft zuerst eine
+   regelbasierte Prüfung (immer, ohne KI). Sie erzwingt die
+   **Mindestwerte** unten; ein Set darunter kann nicht geteilt
+   werden. Besteht es und ist ein KI-Schlüssel konfiguriert, kann
+   der Lernende OPTIONAL eine ergänzende KI-Prüfung starten
+   (Übersetzungsgenauigkeit, Distraktor-Plausibilität, Grammatik,
+   Niveau, kulturelle Sensibilität, Natürlichkeit). Der KI-Schritt
+   ist nie automatisch, erfordert ausdrückliche Zustimmung (der
+   Lektionsinhalt wird an den konfigurierten Anbieter gesendet) und
+   blockiert das Teilen nie — die regelbasierte Prüfung ist das Tor.
+2. **In der CI des Content-Repos.** Ein Pull Request an
+   `astrapi69/adaptive-learner-content` führt
+   `scripts/validate_content.py` aus (gespiegelt unter
+   `docs/ci/adaptive-learner-content/`) und prüft jedes Set mit
+   denselben Regeln, damit ein manueller PR das Tor nicht umgeht.
+
+**Qualitäts-Mindestwerte (hartes Tor):** ≥ 5 Übungen pro Lektion,
+≥ 2 Übungstypen, ≥ 1 Theorie-Schritt, Free-Text ≥ 2 akzeptierte
+Antworten + Distraktoren, Matching ≥ 3 Paare, Picture-Choice mit
+Distraktoren, keine leeren Karten-Vorder-/Rückseiten und (bei
+nicht-lateinischen Ausgangsschriften) Karten-Rückseiten in der
+Ausgangsschrift. Das sind Mindestwerte, keine Ziele — die
+Checkliste oben verlangt mehr.
 
 ## Lokales Testen
 

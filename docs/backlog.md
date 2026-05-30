@@ -17,13 +17,14 @@ tool into a full learning platform with downloadable content
 sets, interactive exercises, and dual-mode operation
 (Content-only + AI-augmented).
 
-State: **post v1.43.0 (cross-source set dedupe + Bundled/GitHub
-source badge + Share-with-Community re-enabled + docs-verification
-system).** Phase history through Phase 59 +
+State: **post v1.44.0 (Phase 60 — content language pairs +
+source-language Content Browser tree + German-source pilot sets
++ two-layer content validation (rule-based + opt-in AI) +
+content-repo CI).** Phase history through Phase 60 +
 per-release notes live in
 [changelog/releases/](../changelog/releases/). 31 tables on
 the sync surface. 13 plugins, 29 SQLAlchemy models,
-1027 (+1 skipped) + 975 + 2568 = 4570 tests green
+1035 (+1 skipped) + 1003 + 2616 = 4654 tests green
 (+1 skipped). Closed in this release line: BL-04 (QR scan,
 v1.7.0), BL-05/06 (sync gaps, v1.8.0), BL-07 (subjects/tags,
 v1.9.0), BL-08 (gestures, v1.10.0), BL-09 (model picker,

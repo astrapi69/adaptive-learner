@@ -1,6 +1,6 @@
 # Adaptive Learner Roadmap
 
-Current state: **v1.43.0 released 2026-05-30 (cross-source set dedupe + Bundled/GitHub source badge + Share-with-Community re-enabled now the content repo exists; plus a documentation-verification system).** 1027 (+1 skipped) backend + 975 plugin + 2568 Vitest = 4570 tests green (+1 skipped). 17 Playwright smoke spec files run separately; the Dexie-mode release gate (19 specs) runs via `make test-dexie-smoke`.
+Current state: **v1.44.0 released 2026-05-30 (Phase 60 — content language pairs (source/target language) + source-language Content Browser tree + German-source pilot sets + two-layer content validation (rule-based gate + opt-in AI review) + content-repo CI).** 1035 (+1 skipped) backend + 1003 plugin + 2616 Vitest = 4654 tests green (+1 skipped). 17 Playwright smoke spec files run separately; the Dexie-mode release gate (19 specs) runs via `make test-dexie-smoke`.
 
 ## Phase history (completed)
 

@@ -162,3 +162,55 @@
 - Open follow-up: confirm the CI launcher-build jobs went green on
   the v1.43.0 tag (local PyInstaller could not run - launcher venv
   install blocked in this environment).
+
+---
+
+## Phase 60 / v1.44.0 — Content Validation Pipeline + Language-Pair Tree
+
+Built the content language-pair system end to end across the app
+and the external content repo, in atomic green sub-phase commits.
+
+- **C1 — schema**: `ContentSet`/`Lesson` gain `target_language` +
+  `source_language` (schema 1.1 -> 1.2). `language` kept as a read
+  alias (`model_validator(before)` + a `language` property);
+  `source_language` defaults to `en`. Threaded through routes, the
+  Dexie loader, TS types + Dexie schema **v22** (in-place backfill).
+- **C2 — migration**: bundled + external content reorganised into a
+  `sets/{source}/{target-level}/` tree (new ids `fr-a1-from-en`,
+  etc.). Added an optional `path` field + `base_path`/`setBasePath`
+  so the loader finds a set's files without parsing the id. Single
+  bundled source `bundled:adaptive-learner-content` mirrors the
+  external repo 1:1; `copy-bundled-content.mjs` + `DEFAULT_SOURCES`
+  updated.
+- **C3 — German content** + `title_native`: new `de/fr-a1` +
+  `de/es-a1` pilot sets (French/Spanish A1 explained in German);
+  brought `en/fr-a1/01-greetings` to 5 exercises so all bundled
+  content clears the share minimums.
+- **C4 — Content Browser tree**: source -> target -> level tree,
+  ranked by app language + opt-in extra source languages
+  (`useSourceLanguages` + a Settings control), "other source
+  languages" collapsed. `content-tree.ts` + `language-names.ts`
+  (Intl.DisplayNames).
+- **C5 — rule-based validator**: `content-validator.ts` gates Share
+  (schema + language pair + quality minimums). `validate_content.py`
+  + `validate-content.yml` (C6) re-run the same checks in the
+  content repo's CI (mirrored under `docs/ci/`).
+- **C5b — opt-in AI review**: `ai-content-validator.ts` + the core
+  route `POST /api/content/validate-lesson`; consent + privacy
+  notice, per-suggestion auto-fix, AI summary into the GitHub issue.
+  Never automatic, never blocks sharing.
+- All `content.tree.*` / `content.validation.*` /
+  `content.ai_validation.*` / `settings.source_languages.*` i18n in
+  8 langs.
+
+External `adaptive-learner-content` repo: 3 commits (EN
+restructure, German content, CI workflow) made locally, **unpushed**
+— the maintainer pushes them so the live tree matches the new ids.
+
+### Session summary
+- Tests: backend 1035 (+1 skipped), plugins 1003, Vitest 2616 =
+  **4654**; dexie-smoke 19; ruff app/ + mypy app/ clean;
+  verify-docs-discipline 0 FAIL; npm build + poetry-free gate chain green.
+- Tag: `v1.44.0` created **locally, not pushed** (the maintainer
+  pushes the tag + the external content-repo commits + publishes
+  the GitHub release).
