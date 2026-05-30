@@ -300,17 +300,21 @@ cd backend && poetry run ruff check app/ && poetry run mypy app/
 cd backend && poetry run pre-commit run --all-files
 
 # Docs discipline (MANDATORY since v0.30.0+ MKDOCS-DISCIPLINE-01).
-# Two checks aggregated by `make verify-docs-discipline`:
-#   1. verify-mkdocs-nav: mkdocs.yml is in sync with
+# `make verify-docs-discipline` aggregates two layers:
+#   1. verify-docs (scripts/verify_docs.py): the stdlib drift
+#      verifier. FAIL gates: version badges/headers vs canonical
+#      pyproject, plugin counts vs disk, theme-token parity, mkdocs
+#      orphans + dead links, en<->de help-page parity. WARN signals:
+#      test counts, README feature mentions, stale dates, i18n key
+#      drift. Orphan detection is filesystem-based (every help page
+#      on disk must have a nav entry; every nav entry must resolve).
+#   2. verify-mkdocs-nav: mkdocs.yml is in sync with
 #      docs/help/_meta.yaml (single source of truth for help-page
 #      nav). Drift is the failure mode that produced the v0.30.0
 #      docs+i18n drift audit findings.
-#   2. check-mkdocs-orphans: adversarial grep on `mkdocs build
-#      --strict` output for the INFO-level "not included in the
-#      'nav' configuration" message that --strict ignores by
-#      default. The two pages that sat orphan for two release
-#      cycles (articles/bulk-export, install/docker-desktop)
-#      would now be caught here.
+# Full reference: docs/development/docs-verification.md. After tagging,
+# `make release-tag` prints the post-release docs checklist
+# (scripts/generate_docs_checklist.py) for the changelog's features.
 make verify-docs-discipline
 
 # Launcher build smoke (MANDATORY for any release that touches

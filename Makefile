@@ -27,6 +27,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
        docs-install docs-build docs-serve sync-mkdocs-nav verify-mkdocs-nav \
+       verify-docs verify-docs-fix check-mkdocs-orphans verify-docs-discipline docs-checklist \
        sync-i18n sync-plugin-config sync-praise sync-missions \
        lock-all-plugins verify-plugin-locks \
        release-state release-outdated release-test release-build \
@@ -406,6 +407,27 @@ sync-mkdocs-nav: ## Regenerate mkdocs.yml nav blocks from docs/help/_meta.yaml
 verify-mkdocs-nav: ## Check mkdocs.yml is in sync with docs/help/_meta.yaml (CI-friendly)
 	cd docs && poetry run python ../scripts/generate_mkdocs_nav.py --check
 
+# --- Documentation verification (drift detection) ---
+
+verify-docs: ## Verify documentation for drift (version/counts/features/help/i18n/themes; stdlib only)
+	@python3 scripts/verify_docs.py
+
+verify-docs-fix: ## Best-effort auto-fix of mechanical docs drift (version badges, counts, i18n sync)
+	@python3 scripts/verify_docs.py --fix
+
+check-mkdocs-orphans: ## List help .md files orphaned from / dangling in mkdocs.yml nav
+	@python3 scripts/verify_docs.py --check mkdocs
+
+verify-docs-discipline: ## Full docs gate: drift verifier + mkdocs nav sync (release-blocking)
+	@$(MAKE) verify-docs
+	@$(MAKE) verify-mkdocs-nav
+
+docs-checklist: ## Print the post-release docs to-do list. Usage: make docs-checklist VERSION=X.Y.Z
+ifndef VERSION
+	$(error VERSION is required, e.g. make docs-checklist VERSION=1.41.0)
+endif
+	@python3 scripts/generate_docs_checklist.py $(VERSION)
+
 # --- Plugin lockfile discipline ---
 
 lock-all-plugins: ## Re-lock every plugin's poetry.lock (after a shared-dep pin bump)
@@ -477,6 +499,9 @@ release-test: ## Aggregate pre-tag test gate (release-workflow.md Step 5)
 	@echo "=== Frontend npm run test (vitest) ==="
 	@cd frontend && npm run test
 	@echo ""
+	@echo "=== Documentation drift gate (verify-docs-discipline) ==="
+	@$(MAKE) verify-docs-discipline
+	@echo ""
 	@echo "=== Subsystem lock-step (sync-versions --check) ==="
 	@$(MAKE) sync-versions-check
 	@echo ""
@@ -525,6 +550,9 @@ endif
 	@git push origin main
 	@echo "=== Pushing tag v$(VERSION) ==="
 	@git push origin v$(VERSION)
+	@echo ""
+	@echo "=== Post-release documentation checklist ==="
+	@python3 scripts/generate_docs_checklist.py $(VERSION) || true
 	@echo ""
 	@echo "Tag pushed. Next: make release-publish VERSION=$(VERSION)"
 

@@ -166,3 +166,21 @@ jobs:
       - name: mypy
         working-directory: backend
         run: poetry run mypy app/
+
+  docs-verification:
+    name: Docs drift verifier
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      # verify_docs.py is stdlib-only; PyYAML is needed only for the
+      # _meta.yaml <-> mkdocs.yml nav-sync check below.
+      - name: Install PyYAML
+        run: pip install pyyaml
+      - name: Verify documentation for drift
+        run: python3 scripts/verify_docs.py
+      - name: Verify mkdocs nav is in sync with _meta.yaml
+        run: python3 scripts/generate_mkdocs_nav.py --check
