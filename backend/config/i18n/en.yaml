@@ -444,6 +444,10 @@ settings:
     stt_lang_help: 'Leave empty to use the project / UI language. Format: BCP-47 (e.g. en-US, es-ES).'
     pronunciation_enabled: Pronunciation Practice
     pronunciation_enabled_help: Surfaces a 'Pronunciation Practice' button on language-learning project dashboards.
+  source_languages:
+    title: Additional source languages
+    hint: Languages you also speak. Lessons written for these source languages appear in your main content list.
+    app_language: app language
 methods:
   deductive:
     label: Deductive
@@ -1359,6 +1363,13 @@ content:
     list_failed: "Could not load content sets."
     download_failed: "Could not download the set."
     open_failed: "Could not open the lesson."
+  tree:
+    i_speak: I speak
+    learn: Learn {lang}
+    sets: sets
+    other_sources: Other source languages
+    for_speakers: For {lang} speakers
+    no_primary: No sets for your language yet. Browse other source languages below.
 milestone:
   streak: "{n}-Day Streak!"
   level_up: "Level {n} reached!"

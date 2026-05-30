@@ -54,12 +54,18 @@ vi.mock("../utils/notify", () => ({
 
 import ContentPage from "./Content";
 
+// source_language "de" matches the i18n fallback app language
+// (the test renders without an I18nProvider, so useI18n().lang is
+// "de") — so this set lands in the expanded primary tree.
 const SAMPLE_ENTRY = {
   source: "astrapi69/adaptive-learner-content",
   branch: "main",
   id: "language-fr-a1",
   title: "French A1",
+  title_native: null,
   language: "fr",
+  target_language: "fr",
+  source_language: "de",
   level: "A1",
   domain: "language",
   version: "1.0.0",
@@ -213,12 +219,81 @@ describe("ContentPage", () => {
   });
 });
 
+describe("Content — language-pair tree (Phase 60)", () => {
+  beforeEach(() => {
+    listSetsMock.mockReset();
+  });
+
+  const EN_ENTRY = {
+    ...SAMPLE_ENTRY,
+    id: "fr-a1-from-en",
+    source_language: "en",
+    target_language: "fr",
+    cached_version: "1.0.0",
+  };
+
+  it("renders the source-language tree with an 'I speak' heading", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [{ ...SAMPLE_ENTRY, cached_version: "1.0.0" }],
+      sources: [],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    expect(screen.getByTestId("content-tree")).toBeInTheDocument();
+    expect(screen.getByTestId("content-source-primary")).toBeInTheDocument();
+    // de-source set is in the expanded primary tree → visible.
+    expect(
+      screen.getByTestId("content-set-language-fr-a1"),
+    ).toBeInTheDocument();
+  });
+
+  it("puts a non-matching source language under the collapsed 'other' section", async () => {
+    // App language is "de"; this set is en-source → "other",
+    // collapsed by default so the row is NOT rendered yet.
+    listSetsMock.mockResolvedValue({ sets: [EN_ENTRY], sources: [] });
+    renderPage();
+    await screen.findByTestId("content-page");
+    expect(screen.getByTestId("content-source-other")).toBeInTheDocument();
+    expect(
+      screen.queryByTestId("content-set-fr-a1-from-en"),
+    ).not.toBeInTheDocument();
+    // Expanding the section reveals the en-source set.
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("content-other-toggle"));
+    });
+    expect(
+      screen.getByTestId("content-set-fr-a1-from-en"),
+    ).toBeInTheDocument();
+  });
+
+  it("collapses a primary target group when its toggle is clicked", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [{ ...SAMPLE_ENTRY, cached_version: "1.0.0" }],
+      sources: [],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    expect(
+      screen.getByTestId("content-set-language-fr-a1"),
+    ).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("content-target-de/fr-toggle"));
+    });
+    expect(
+      screen.queryByTestId("content-set-language-fr-a1"),
+    ).not.toBeInTheDocument();
+  });
+});
+
 const USER_ENTRY = {
   source: "user-generated",
   branch: "",
   id: "analysis-conv-1",
   title: "My Spanish lesson",
+  title_native: null,
   language: "es",
+  target_language: "es",
+  source_language: "de",
   level: "beginner",
   domain: "analysis",
   version: "1.0.0",

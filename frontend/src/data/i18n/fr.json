@@ -468,6 +468,11 @@
       "stt_lang_help": "Vide = langue projet/UI. Format : BCP-47 (fr-FR).",
       "pronunciation_enabled": "Pratique de Prononciation",
       "pronunciation_enabled_help": "Affiche un bouton sur les projets de langues."
+    },
+    "source_languages": {
+      "title": "Langues source supplémentaires",
+      "hint": "Langues que vous parlez aussi. Les leçons écrites pour ces langues source apparaissent dans votre liste principale.",
+      "app_language": "langue de l'app"
     }
   },
   "methods": {
@@ -1470,6 +1475,14 @@
       "list_failed": "Impossible de charger les sets de contenu.",
       "download_failed": "Impossible de télécharger le set.",
       "open_failed": "Impossible d'ouvrir la leçon."
+    },
+    "tree": {
+      "i_speak": "Je parle",
+      "learn": "Apprendre {lang}",
+      "sets": "ensembles",
+      "other_sources": "Autres langues source",
+      "for_speakers": "Pour les locuteurs de {lang}",
+      "no_primary": "Pas encore d'ensembles pour votre langue. Parcourez d'autres langues source ci-dessous."
     }
   },
   "milestone": {

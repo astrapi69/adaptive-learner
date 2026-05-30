@@ -468,6 +468,11 @@
       "stt_lang_help": "Vazio = idioma do projeto/UI. Formato: BCP-47 (pt-BR).",
       "pronunciation_enabled": "Prática de Pronúncia",
       "pronunciation_enabled_help": "Mostra um botão em projetos de idiomas."
+    },
+    "source_languages": {
+      "title": "Idiomas de origem adicionais",
+      "hint": "Idiomas que você também fala. As lições escritas para esses idiomas de origem aparecem na sua lista principal.",
+      "app_language": "idioma do app"
     }
   },
   "methods": {
@@ -1470,6 +1475,14 @@
       "list_failed": "Não foi possível carregar os conjuntos de conteúdo.",
       "download_failed": "Não foi possível transferir o conjunto.",
       "open_failed": "Não foi possível abrir a lição."
+    },
+    "tree": {
+      "i_speak": "Eu falo",
+      "learn": "Aprender {lang}",
+      "sets": "conjuntos",
+      "other_sources": "Outros idiomas de origem",
+      "for_speakers": "Para falantes de {lang}",
+      "no_primary": "Ainda não há conjuntos para o seu idioma. Veja outros idiomas de origem abaixo."
     }
   },
   "milestone": {

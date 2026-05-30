@@ -468,6 +468,11 @@
       "stt_lang_help": "Boş = proje/UI dili. Biçim: BCP-47 (tr-TR).",
       "pronunciation_enabled": "Telaffuz Alıştırması",
       "pronunciation_enabled_help": "Dil öğrenme projelerinde bir düğme gösterir."
+    },
+    "source_languages": {
+      "title": "Ek kaynak diller",
+      "hint": "Ayrıca konuştuğunuz diller. Bu kaynak diller için yazılan dersler ana listenizde görünür.",
+      "app_language": "uygulama dili"
     }
   },
   "methods": {
@@ -1470,6 +1475,14 @@
       "list_failed": "İçerik setleri yüklenemedi.",
       "download_failed": "Set indirilemedi.",
       "open_failed": "Ders açılamadı."
+    },
+    "tree": {
+      "i_speak": "Konuştuğum dil",
+      "learn": "{lang} öğren",
+      "sets": "set",
+      "other_sources": "Diğer kaynak diller",
+      "for_speakers": "{lang} konuşanlar için",
+      "no_primary": "Diliniz için henüz set yok. Aşağıdan diğer kaynak dillere göz atın."
     }
   },
   "milestone": {

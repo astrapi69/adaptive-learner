@@ -444,6 +444,10 @@ settings:
     stt_lang_help: 'Leer lassen für Projekt-/UI-Sprache. Format: BCP-47 (z.B. de-DE).'
     pronunciation_enabled: Aussprachetraining
     pronunciation_enabled_help: Zeigt einen Schalter „Aussprachetraining" auf Dashboards von Sprach-Lernprojekten.
+  source_languages:
+    title: Weitere Ausgangssprachen
+    hint: Sprachen, die du auch sprichst. Lektionen für diese Ausgangssprachen erscheinen in deiner Hauptliste.
+    app_language: App-Sprache
 methods:
   deductive:
     label: Deduktiv
@@ -1353,6 +1357,13 @@ content:
     list_failed: "Inhalte konnten nicht geladen werden."
     download_failed: "Set konnte nicht heruntergeladen werden."
     open_failed: "Lektion konnte nicht geöffnet werden."
+  tree:
+    i_speak: Ich spreche
+    learn: '{lang} lernen'
+    sets: Sets
+    other_sources: Andere Ausgangssprachen
+    for_speakers: Für {lang}sprachige
+    no_primary: Noch keine Sets für deine Sprache. Sieh dir unten andere Ausgangssprachen an.
 milestone:
   streak: "{n}-Tage-Serie!"
   level_up: "Level {n} erreicht!"

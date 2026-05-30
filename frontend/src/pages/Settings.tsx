@@ -11,6 +11,7 @@ import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import LearningRepoSettingsSection from "../components/LearningRepoSettingsSection";
 import MissionSettingsControl from "../components/MissionSettingsControl";
+import SourceLanguagesControl from "../components/SourceLanguagesControl";
 import ModeIndicator from "../components/ModeIndicator";
 import SoundSettingsControl from "../components/SoundSettingsControl";
 import HelpBrowser from "../components/help/HelpBrowser";
@@ -816,6 +817,7 @@ export default function Settings() {
           <SoundSettingsControl />
         </section>
         <MissionSettingsControl />
+        <SourceLanguagesControl />
         <VoiceSettingsSection />
         <section className="settings-section">
           <h2 className="settings-section-title">

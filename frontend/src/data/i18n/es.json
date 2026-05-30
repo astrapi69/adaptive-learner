@@ -468,6 +468,11 @@
       "stt_lang_help": "Vacío = idioma del proyecto/UI. Formato: BCP-47 (es-ES).",
       "pronunciation_enabled": "Práctica de Pronunciación",
       "pronunciation_enabled_help": "Muestra un botón en proyectos de idiomas."
+    },
+    "source_languages": {
+      "title": "Idiomas de origen adicionales",
+      "hint": "Idiomas que también hablas. Las lecciones escritas para estos idiomas de origen aparecen en tu lista principal.",
+      "app_language": "idioma de la app"
     }
   },
   "methods": {
@@ -1470,6 +1475,14 @@
       "list_failed": "No se pudieron cargar los sets de contenido.",
       "download_failed": "No se pudo descargar el set.",
       "open_failed": "No se pudo abrir la lección."
+    },
+    "tree": {
+      "i_speak": "Hablo",
+      "learn": "Aprender {lang}",
+      "sets": "conjuntos",
+      "other_sources": "Otros idiomas de origen",
+      "for_speakers": "Para hablantes de {lang}",
+      "no_primary": "Aún no hay conjuntos para tu idioma. Explora otros idiomas de origen abajo."
     }
   },
   "milestone": {

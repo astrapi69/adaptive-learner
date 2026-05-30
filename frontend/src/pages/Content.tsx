@@ -21,6 +21,8 @@
 
 import {
   BookOpen,
+  ChevronDown,
+  ChevronRight,
   Download,
   FolderOpen,
   Pencil,
@@ -33,6 +35,13 @@ import { useNavigate } from "react-router-dom";
 
 import ImportLessonModal from "../components/content/ImportLessonModal";
 import { useI18n } from "../hooks/useI18n";
+import { useSourceLanguages } from "../hooks/useSourceLanguages";
+import {
+  buildContentTree,
+  type SourceGroup,
+  type TargetGroup,
+} from "../lib/content/content-tree";
+import { languageDisplayName } from "../lib/content/language-names";
 import {
   buildContentSetZip,
   communityIssueUrl,
@@ -62,7 +71,7 @@ const COMMUNITY_SHARING_ENABLED = true;
 type DownloadState = "idle" | "downloading" | "done" | "error";
 
 export default function ContentPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
   const [sets, setSets] = useState<ContentSetEntry[]>([]);
   const [sources, setSources] = useState<ContentSetSource[]>([]);
@@ -78,6 +87,17 @@ export default function ContentPage() {
   const [deleting, setDeleting] = useState(false);
   // Phase 59E — import-lesson modal.
   const [showImport, setShowImport] = useState(false);
+  // Phase 60 — source-language tree: the learner's active source
+  // languages (app language + opted-in extras) rank the tree.
+  const { active: activeSources } = useSourceLanguages();
+  // Collapsed/expanded state per tree node (keyed by node id).
+  // Primary target groups default open; the "other source
+  // languages" section defaults collapsed.
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const toggleNode = (nodeId: string) =>
+    setCollapsed((prev) => ({ ...prev, [nodeId]: !prev[nodeId] }));
+  // "Other source languages" section is collapsed by default.
+  const [otherExpanded, setOtherExpanded] = useState(false);
 
   const loadSets = useCallback(async () => {
     try {
@@ -291,6 +311,190 @@ export default function ContentPage() {
     return t("content.my_lessons.from_analysis", "from analysis");
   };
 
+  // Phase 60 — group downloaded sets into the source -> target ->
+  // level tree, ranked by the learner's active source languages.
+  const tree = buildContentTree(downloadedSets, activeSources);
+
+  const renderSetRow = (entry: ContentSetEntry) => {
+    const key = setKey(entry);
+    const downloadState = perSetState[key] ?? "idle";
+    const isCached = entry.cached_version !== null;
+    return (
+      <li
+        key={key}
+        className="content-set-row"
+        data-testid={`content-set-${entry.id}`}
+      >
+        <div className="content-set-meta">
+          <h4>
+            {entry.title}
+            {entry.title_native && entry.title_native !== entry.title && (
+              <span className="content-set-native"> · {entry.title_native}</span>
+            )}
+            <span
+              className="content-set-source"
+              data-testid={`content-set-${entry.id}-source`}
+            >
+              {entry.source.startsWith("bundled:")
+                ? t("content.source.bundled", "Bundled")
+                : t("content.source.github", "GitHub")}
+            </span>
+          </h4>
+          <p className="content-set-tags">
+            <span>
+              {entry.source_language.toUpperCase()}
+              {"→"}
+              {entry.target_language.toUpperCase()}
+              {" · "}
+              {entry.level}
+              {" · "}
+              {entry.lesson_count} {t("content.lessons", "lessons")}
+            </span>
+            {isCached && (
+              <span
+                className="content-set-cached"
+                data-testid={`content-set-${entry.id}-cached`}
+              >
+                {t("content.status.ready", "Ready")} ({entry.cached_version})
+              </span>
+            )}
+            {entry.update_available && (
+              <span
+                className="content-set-update"
+                data-testid={`content-set-${entry.id}-update`}
+              >
+                {t("content.status.update_available", "Update available")}
+              </span>
+            )}
+          </p>
+          {entry.description && (
+            <p className="content-set-desc">{entry.description}</p>
+          )}
+        </div>
+        <div className="content-set-action">
+          <span
+            className="sr-only"
+            role="status"
+            aria-live="polite"
+            data-testid={`content-set-${entry.id}-status`}
+          >
+            {downloadState === "downloading"
+              ? t("content.status.downloading", "Downloading…")
+              : isCached && !entry.update_available
+                ? t("content.status.ready", "Ready")
+                : entry.update_available
+                  ? t("content.status.update_available", "Update available")
+                  : ""}
+          </span>
+          {isCached && (
+            <button
+              type="button"
+              className="btn btn-primary content-set-open-btn"
+              onClick={() => handleOpenLesson(entry)}
+              data-testid={`content-set-${entry.id}-open`}
+            >
+              <BookOpen size={14} aria-hidden="true" />
+              {t("content.action.open", "Open")}
+            </button>
+          )}
+          <button
+            type="button"
+            className="btn content-set-download-btn"
+            onClick={() => handleDownload(entry)}
+            disabled={
+              downloadState === "downloading" ||
+              (isCached && !entry.update_available)
+            }
+            data-testid={`content-set-${entry.id}-action`}
+          >
+            {downloadState === "downloading" ? (
+              <>
+                <Download size={14} aria-hidden="true" />
+                {t("content.status.downloading", "Downloading…")}
+              </>
+            ) : isCached && !entry.update_available ? (
+              <>
+                <FolderOpen size={14} aria-hidden="true" />
+                {t("content.action.installed", "Installed")}
+              </>
+            ) : entry.update_available ? (
+              <>
+                <Download size={14} aria-hidden="true" />
+                {t("content.action.update", "Update")}
+              </>
+            ) : (
+              <>
+                <Download size={14} aria-hidden="true" />
+                {t("content.action.download", "Download")}
+              </>
+            )}
+          </button>
+        </div>
+      </li>
+    );
+  };
+
+  const renderTargetGroup = (sourceLang: string, group: TargetGroup) => {
+    const nodeId = `${sourceLang}/${group.targetLanguage}`;
+    // Primary target groups default open; collapse only when the
+    // user explicitly toggled this node closed.
+    const isCollapsed = collapsed[nodeId] === true;
+    const targetName = languageDisplayName(group.targetLanguage, lang);
+    return (
+      <div
+        key={nodeId}
+        className="content-target-group"
+        data-testid={`content-target-${nodeId}`}
+      >
+        <button
+          type="button"
+          className="content-tree-toggle"
+          onClick={() => toggleNode(nodeId)}
+          aria-expanded={!isCollapsed}
+          data-testid={`content-target-${nodeId}-toggle`}
+        >
+          {isCollapsed ? (
+            <ChevronRight size={16} aria-hidden="true" />
+          ) : (
+            <ChevronDown size={16} aria-hidden="true" />
+          )}
+          <span className="content-tree-label">
+            {t("content.tree.learn", "Learn {lang}").replace(
+              "{lang}",
+              targetName,
+            )}{" "}
+            ({group.targetLanguage.toUpperCase()})
+          </span>
+          <span className="content-tree-count">
+            {group.setCount} {t("content.tree.sets", "sets")}
+          </span>
+        </button>
+        {!isCollapsed && (
+          <div className="content-target-body">
+            {group.levels.map((levelGroup) => (
+              <div
+                key={levelGroup.level}
+                className="content-level-group"
+                data-testid={`content-level-${nodeId}-${levelGroup.level}`}
+              >
+                <h3 className="content-level-title">
+                  {levelGroup.level} · {levelGroup.sets.length}{" "}
+                  {t("content.lessons", "lessons")}
+                </h3>
+                <ul className="content-set-list">
+                  {levelGroup.sets.map((entry) => renderSetRow(entry))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderSourceTargets = (group: SourceGroup) =>
+    group.targets.map((target) => renderTargetGroup(group.sourceLanguage, target));
+
   return (
     <main id="main" className="page content-page" data-testid="content-page">
       <header className="content-header">
@@ -445,133 +649,88 @@ export default function ContentPage() {
           )}
         </p>
       ) : (
-        <ul className="content-set-list" data-testid="content-set-list">
-          {downloadedSets.map((entry) => {
-            const key = setKey(entry);
-            const downloadState = perSetState[key] ?? "idle";
-            const isCached = entry.cached_version !== null;
-            return (
-              <li
-                key={key}
-                className="content-set-row"
-                data-testid={`content-set-${entry.id}`}
+        <div className="content-tree" data-testid="content-tree">
+          {/* Primary: the source language(s) the learner speaks. */}
+          {tree.primary.length > 0 && (
+            <section
+              className="content-source-primary"
+              data-testid="content-source-primary"
+            >
+              <h2 className="content-source-heading">
+                {t("content.tree.i_speak", "I speak")}:{" "}
+                {tree.primary
+                  .map((g) => languageDisplayName(g.sourceLanguage, lang))
+                  .join(", ")}
+              </h2>
+              {tree.primary.map((group) => (
+                <div
+                  key={group.sourceLanguage}
+                  data-testid={`content-source-${group.sourceLanguage}`}
+                >
+                  {tree.primary.length > 1 && (
+                    <h3 className="content-source-sub">
+                      {languageDisplayName(group.sourceLanguage, lang)}
+                    </h3>
+                  )}
+                  {renderSourceTargets(group)}
+                </div>
+              ))}
+            </section>
+          )}
+
+          {tree.primary.length === 0 && (
+            <p className="content-empty" data-testid="content-no-primary">
+              {t(
+                "content.tree.no_primary",
+                "No sets for your language yet. Browse other source languages below.",
+              )}
+            </p>
+          )}
+
+          {/* Other source languages — collapsed by default. */}
+          {tree.other.length > 0 && (
+            <section
+              className="content-source-other"
+              data-testid="content-source-other"
+            >
+              <button
+                type="button"
+                className="content-tree-toggle content-other-toggle"
+                onClick={() => setOtherExpanded((v) => !v)}
+                aria-expanded={otherExpanded}
+                data-testid="content-other-toggle"
               >
-                <div className="content-set-meta">
-                  <h2>
-                    {entry.title}
-                    <span
-                      className="content-set-source"
-                      data-testid={`content-set-${entry.id}-source`}
+                {otherExpanded ? (
+                  <ChevronDown size={16} aria-hidden="true" />
+                ) : (
+                  <ChevronRight size={16} aria-hidden="true" />
+                )}
+                <span className="content-tree-label">
+                  {t("content.tree.other_sources", "Other source languages")}
+                </span>
+                <span className="content-tree-count">{tree.other.length}</span>
+              </button>
+              {otherExpanded && (
+                <div className="content-other-body">
+                  {tree.other.map((group) => (
+                    <div
+                      key={group.sourceLanguage}
+                      data-testid={`content-source-${group.sourceLanguage}`}
                     >
-                      {entry.source.startsWith("bundled:")
-                        ? t("content.source.bundled", "Bundled")
-                        : t("content.source.github", "GitHub")}
-                    </span>
-                  </h2>
-                  <p className="content-set-tags">
-                    <span>
-                      {entry.language.toUpperCase()}
-                      {" · "}
-                      {entry.level}
-                      {" · "}
-                      {entry.lesson_count} {t("content.lessons", "lessons")}
-                    </span>
-                    {isCached && (
-                      <span
-                        className="content-set-cached"
-                        data-testid={`content-set-${entry.id}-cached`}
-                      >
-                        {t("content.status.ready", "Ready")} (
-                        {entry.cached_version})
-                      </span>
-                    )}
-                    {entry.update_available && (
-                      <span
-                        className="content-set-update"
-                        data-testid={`content-set-${entry.id}-update`}
-                      >
-                        {t(
-                          "content.status.update_available",
-                          "Update available",
+                      <h3 className="content-source-sub">
+                        {t("content.tree.for_speakers", "For {lang} speakers").replace(
+                          "{lang}",
+                          languageDisplayName(group.sourceLanguage, lang),
                         )}
-                      </span>
-                    )}
-                  </p>
-                  {entry.description && (
-                    <p className="content-set-desc">{entry.description}</p>
-                  )}
+                      </h3>
+                      {renderSourceTargets(group)}
+                    </div>
+                  ))}
                 </div>
-                <div className="content-set-action">
-                  {/* Phase 58I a11y: announce download
-                                        status changes to screen readers
-                                        (the button text alone isn't
-                                        re-announced; errors surface via
-                                        the toast's own live region). */}
-                  <span
-                    className="sr-only"
-                    role="status"
-                    aria-live="polite"
-                    data-testid={`content-set-${entry.id}-status`}
-                  >
-                    {downloadState === "downloading"
-                      ? t("content.status.downloading", "Downloading…")
-                      : isCached && !entry.update_available
-                        ? t("content.status.ready", "Ready")
-                        : entry.update_available
-                          ? t(
-                              "content.status.update_available",
-                              "Update available",
-                            )
-                          : ""}
-                  </span>
-                  {isCached && (
-                    <button
-                      type="button"
-                      className="btn btn-primary content-set-open-btn"
-                      onClick={() => handleOpenLesson(entry)}
-                      data-testid={`content-set-${entry.id}-open`}
-                    >
-                      <BookOpen size={14} aria-hidden="true" />
-                      {t("content.action.open", "Open")}
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    className="btn content-set-download-btn"
-                    onClick={() => handleDownload(entry)}
-                    disabled={
-                      downloadState === "downloading" ||
-                      (isCached && !entry.update_available)
-                    }
-                    data-testid={`content-set-${entry.id}-action`}
-                  >
-                    {downloadState === "downloading" ? (
-                      <>
-                        <Download size={14} aria-hidden="true" />
-                        {t("content.status.downloading", "Downloading…")}
-                      </>
-                    ) : isCached && !entry.update_available ? (
-                      <>
-                        <FolderOpen size={14} aria-hidden="true" />
-                        {t("content.action.installed", "Installed")}
-                      </>
-                    ) : entry.update_available ? (
-                      <>
-                        <Download size={14} aria-hidden="true" />
-                        {t("content.action.update", "Update")}
-                      </>
-                    ) : (
-                      <>
-                        <Download size={14} aria-hidden="true" />
-                        {t("content.action.download", "Download")}
-                      </>
-                    )}
-                  </button>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+              )}
+            </section>
+          )}
+        </div>
       )}
 
       <ImportLessonModal

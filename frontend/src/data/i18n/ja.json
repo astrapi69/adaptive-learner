@@ -468,6 +468,11 @@
       "stt_lang_help": "空 = プロジェクト/UI言語。形式: BCP-47 (ja-JP)。",
       "pronunciation_enabled": "発音練習",
       "pronunciation_enabled_help": "言語学習プロジェクトのダッシュボードに発音練習ボタンを表示します。"
+    },
+    "source_languages": {
+      "title": "追加の出発言語",
+      "hint": "あなたが話せる他の言語。これらの出発言語向けのレッスンがメインの一覧に表示されます。",
+      "app_language": "アプリの言語"
     }
   },
   "methods": {
@@ -1470,6 +1475,14 @@
       "list_failed": "コンテンツセットを読み込めませんでした。",
       "download_failed": "セットをダウンロードできませんでした。",
       "open_failed": "レッスンを開けませんでした。"
+    },
+    "tree": {
+      "i_speak": "使用言語",
+      "learn": "{lang}を学ぶ",
+      "sets": "セット",
+      "other_sources": "他の出発言語",
+      "for_speakers": "{lang}話者向け",
+      "no_primary": "あなたの言語のセットはまだありません。下の他の出発言語をご覧ください。"
     }
   },
   "milestone": {

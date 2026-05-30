@@ -2194,9 +2194,104 @@ select:focus {
   min-width: 0;
 }
 
-.content-set-meta h2 {
+.content-set-meta h2,
+.content-set-meta h4 {
   margin: 0 0 4px 0;
   font-size: 1.125rem;
+  font-weight: 600;
+}
+
+/* Phase 60 — source -> target -> level content tree. */
+.content-tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.content-source-heading {
+  margin: 0 0 var(--space-2) 0;
+  font-size: 1.25rem;
+  color: var(--fg);
+}
+
+.content-source-sub {
+  margin: var(--space-2) 0;
+  font-size: 1rem;
+  color: var(--fg-muted);
+}
+
+.content-source-native {
+  color: var(--fg-muted);
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.content-tree-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--fg);
+  cursor: pointer;
+  font-size: 1rem;
+  text-align: left;
+}
+
+.content-tree-toggle:hover {
+  background: var(--surface-hover, var(--surface));
+}
+
+.content-tree-label {
+  flex: 1 1 auto;
+  font-weight: 600;
+}
+
+.content-tree-count {
+  color: var(--fg-muted);
+  font-size: 0.8125rem;
+}
+
+.content-target-group {
+  margin-bottom: var(--space-3);
+}
+
+.content-target-body {
+  padding: var(--space-2) 0 0 var(--space-3);
+}
+
+.content-level-group {
+  margin-bottom: var(--space-3);
+}
+
+.content-level-title {
+  margin: var(--space-2) 0;
+  font-size: 0.9rem;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.content-set-native {
+  color: var(--fg-muted);
+  font-weight: 400;
+}
+
+.content-other-toggle {
+  margin-top: var(--space-3);
+}
+
+.content-other-body {
+  padding-left: var(--space-3);
+}
+
+.settings-source-languages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 .content-set-tags {

@@ -444,6 +444,10 @@ settings:
     stt_lang_help: 'Κενό = γλώσσα έργου/UI. Μορφή: BCP-47 (el-GR).'
     pronunciation_enabled: Εξάσκηση Προφοράς
     pronunciation_enabled_help: Εμφανίζει κουμπί σε έργα γλωσσών.
+  source_languages:
+    title: Επιπλέον γλώσσες προέλευσης
+    hint: Γλώσσες που επίσης μιλάς. Τα μαθήματα για αυτές τις γλώσσες προέλευσης εμφανίζονται στην κύρια λίστα σου.
+    app_language: γλώσσα εφαρμογής
 methods:
   deductive:
     label: Επαγωγική (από γενικό)
@@ -1350,6 +1354,13 @@ content:
     list_failed: "Αδυναμία φόρτωσης συνόλων περιεχομένου."
     download_failed: "Αδυναμία λήψης του συνόλου."
     open_failed: "Δεν ήταν δυνατό το άνοιγμα του μαθήματος."
+  tree:
+    i_speak: Μιλάω
+    learn: Μάθετε {lang}
+    sets: σύνολα
+    other_sources: Άλλες γλώσσες προέλευσης
+    for_speakers: Για ομιλητές {lang}
+    no_primary: Δεν υπάρχουν ακόμη σύνολα για τη γλώσσα σου. Δες άλλες γλώσσες προέλευσης παρακάτω.
 milestone:
   streak: "Σερί {n} ημερών!"
   level_up: "Φτάσατε στο επίπεδο {n}!"
