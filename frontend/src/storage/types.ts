@@ -289,11 +289,26 @@ export interface ContentLessonClozeBlank {
   placeholder?: string | null;
 }
 
+/** EXP-018 / Phase 62 / v1.46.0 — drill direction. Mirror of the
+ *  Python ``Exercise.direction`` Literal. ``target_to_source``
+ *  (default) is receptive (show target, recognise source);
+ *  ``source_to_target`` is productive (show source, produce
+ *  target). ``both`` / ``random`` defer the choice to the
+ *  renderer / adaptive generator. */
+export type ContentExerciseDirection =
+  | "source_to_target"
+  | "target_to_source"
+  | "both"
+  | "random";
+
 export interface ContentLessonExercise {
   id: string;
   type: "matching" | "picture_choice" | "free_text" | "word_tiles" | "cloze";
   prompt: string;
   card_ids: string[];
+  /** EXP-018 / Phase 62 — drill direction; defaults to
+   *  ``"target_to_source"`` (receptive) when omitted. */
+  direction?: ContentExerciseDirection | null;
   pairs?: Array<{ left: string; right: string }> | null;
   images?: Array<{ src: string; label: string; is_correct?: string }> | null;
   accept?: string[] | null;

@@ -261,6 +261,50 @@ def _exercise_tiles(**overrides: object) -> Exercise:
     return Exercise(**defaults)
 
 
+class TestExerciseDirection:
+    """EXP-018 / Phase 62 — the optional ``direction`` field."""
+
+    def test_defaults_to_receptive(self) -> None:
+        """Omitting direction yields target_to_source (backward compatible)."""
+        assert _exercise_matching().direction == "target_to_source"
+        assert _exercise_free().direction == "target_to_source"
+
+    @pytest.mark.parametrize(
+        "direction",
+        ["source_to_target", "target_to_source", "both", "random"],
+    )
+    def test_all_four_values_valid(self, direction: str) -> None:
+        assert _exercise_free(direction=direction).direction == direction
+
+    def test_invalid_direction_rejected(self) -> None:
+        with pytest.raises(ValidationError):
+            _exercise_free(direction="sideways")
+
+    def test_direction_round_trips_from_json(self) -> None:
+        ex = Exercise.model_validate(
+            {
+                "id": "ex-dir-1",
+                "type": "free_text",
+                "prompt": "Translate 'Hello'.",
+                "accept": ["Bonjour"],
+                "direction": "source_to_target",
+            }
+        )
+        assert ex.direction == "source_to_target"
+
+    def test_direction_in_exported_json_schema(self) -> None:
+        """The dynamically-derived JSON Schema includes direction."""
+        schema = Exercise.model_json_schema()
+        assert "direction" in schema["properties"]
+        enum = schema["properties"]["direction"].get("enum")
+        assert set(enum or []) == {
+            "source_to_target",
+            "target_to_source",
+            "both",
+            "random",
+        }
+
+
 class TestMatchingExercise:
     def test_valid(self) -> None:
         ex = _exercise_matching()

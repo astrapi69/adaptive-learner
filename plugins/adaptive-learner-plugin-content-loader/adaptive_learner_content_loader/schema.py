@@ -344,6 +344,20 @@ class Exercise(BaseModel):
         ),
         max_length=50,
     )
+    direction: Literal["source_to_target", "target_to_source", "both", "random"] = Field(
+        default="target_to_source",
+        description=(
+            "EXP-018 / Phase 62 / v1.46.0: which way the card is "
+            "drilled. ``target_to_source`` (default) shows the "
+            "target language and asks the learner to recognise the "
+            "source language (RECEPTIVE, easier). "
+            "``source_to_target`` shows the source and asks the "
+            "learner to produce the target (PRODUCTIVE, harder). "
+            "``both`` / ``random`` let the renderer or the adaptive "
+            "generator pick per attempt. Additive + optional; "
+            "schema_version stays 1.2. Cloze ignores it (in-context)."
+        ),
+    )
 
     # --- Type-specific fields. Validator below enforces
     # which fields are required per ``type``. Empty / null
@@ -692,10 +706,7 @@ class Lesson(BaseModel):
     @classmethod
     def _bcp47_language(cls, value: str | None) -> str | None:
         if value is not None and not _LANGUAGE_RE.fullmatch(value):
-            raise ValueError(
-                "language codes must be BCP-47 "
-                "(e.g. 'fr', 'de-AT', 'zh-Hans')"
-            )
+            raise ValueError("language codes must be BCP-47 (e.g. 'fr', 'de-AT', 'zh-Hans')")
         return value
 
     @field_validator("cards")
