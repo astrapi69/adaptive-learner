@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-05-26
-**Anzahl EXPs:** 17
+**Stand:** 2026-05-30
+**Anzahl EXPs:** 18
 
 ## Kategorisierung
 
@@ -32,6 +32,7 @@
 | 015 | Kinder-Variante                             | Vision       | 5     | Mittel    | Phase 1 stabil     |
 | 016 | Test-Strategie (automatisiert)              | Querschnitt  | laufend | Sehr hoch | -                |
 | 017 | Manuelle Tests                              | Querschnitt  | laufend | Hoch      | 016                |
+| 018 | Übungsrichtung - Rezeptiv vs. Produktiv     | Feature      | 2     | Hoch      | 001, 006, 013      |
 
 ## Phasen-Definition
 

@@ -217,6 +217,23 @@ Ziel: Das Kern-Versprechen "Adaptive Learning" einlösen. Community-Strukturen a
 | P-152 | AI-generierte Übungs-Variationen für neue Kontexte         | 013 |
 | F-125 | Detail-Ansicht mit AI-Erklärungen (optional aufrufbar)     | 013 |
 
+## Übungsrichtung - Rezeptiv vs. Produktiv (EXP-018)
+
+Stufe 1 (Fundament) und Stufe 2 (Renderer) sind die Pflicht; Stufe 3
+(Scheduling/Adaption) und Stufe 4 (Inhalt/UI/Doku) bauen darauf auf.
+Geplant als Phase 62 / v1.46.0.
+
+| ID    | Task                                                       | EXP |
+| ----- | ---------------------------------------------------------- | --- |
+| P-167 | `direction`-Feld auf Exercise-Schema (4 Werte, Default rezeptiv, additiv 1.2) | 018 |
+| P-168 | `ElementError` pro Richtung: Spalte + Composite-Uniqueness + Migration + Backfill + Sync | 018 |
+| F-146 | `resolveCardDisplay()` + richtungsbewusste Anzeige in allen 5 Renderern (Cloze ausgenommen) | 018 |
+| P-169 | Richtungsbewusste Review-Queue mit Produktiv-Gewichtung (1,2x) + Mastery-Filter | 018 |
+| P-170 | Adaptiver Generator: `direction_strategy` (auto/receptive_first/productive_focus/balanced) | 018 |
+| D-140 | Pilot-Lektionen: progressive Richtung (rezeptiv -> produktiv) + Content-Repo-Spiegelung | 018 |
+| F-147 | Richtungs-Indikator (Auge/Stift), Split-Statistiken, Einstellung "Bevorzugte Übungsrichtung" | 018 |
+| D-141 | Doku + Hilfe-Glossar-Eintrag "Übungsrichtung" + Authoring-Guide (`direction`-Feld) | 018 |
+
 ---
 
 # Phase 3: Gamification (mit Augenmaß)
