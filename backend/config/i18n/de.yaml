@@ -1222,6 +1222,7 @@ lesson:
       empty: "Diese Zuordnungs-Übung hat keine Paare."
       left_label_productive: Bedeutung
       right_label_productive: Begriff
+      selected_sr: "Ausgewählt: {label}"
     picture:
       submit: "Antwort prüfen"
       retry: "Erneut versuchen"

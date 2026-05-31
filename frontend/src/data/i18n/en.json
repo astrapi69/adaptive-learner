@@ -1323,7 +1323,8 @@
         "right_label": "Translation",
         "empty": "This matching exercise has no pairs.",
         "left_label_productive": "Meaning",
-        "right_label_productive": "Term"
+        "right_label_productive": "Term",
+        "selected_sr": "Selected: {label}"
       },
       "picture": {
         "submit": "Check answer",

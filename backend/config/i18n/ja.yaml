@@ -1217,6 +1217,7 @@ lesson:
       empty: "このマッチング演習にはペアがありません。"
       left_label_productive: 意味
       right_label_productive: 用語
+      selected_sr: "選択中: {label}"
     picture:
       submit: "答えを確認"
       retry: "もう一度"

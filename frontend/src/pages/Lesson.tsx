@@ -500,6 +500,8 @@ export default function LessonPage() {
                             setId={setId}
                             lessonId={filename}
                             source={source}
+                            targetLanguage={lesson.target_language}
+                            sourceLanguage={lesson.source_language}
                             onComplete={async (scored) => {
                                 if (!step!.exercise) return;
                                 // Flip to the "Weiter" phase the moment

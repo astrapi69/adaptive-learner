@@ -54,6 +54,11 @@ export interface ExerciseDispatcherProps extends ControlledExerciseProps {
      *  cache. Optional; review / adaptive sessions pass
      *  empty and accept the text-only fallback. */
     source?: string;
+    /** UX bugfix — the lesson's BCP-47 language pair, forwarded to
+     *  MatchingExercise so its column headers can name the actual
+     *  languages. Optional; only the matching renderer reads them. */
+    targetLanguage?: string | null;
+    sourceLanguage?: string | null;
     onComplete: (result: ExerciseScored) => Promise<void>;
 }
 
@@ -68,6 +73,8 @@ function ExerciseDispatcher(
         setId,
         lessonId,
         source = "",
+        targetLanguage = null,
+        sourceLanguage = null,
         onComplete,
         controlled = false,
         onInteraction,
@@ -96,6 +103,8 @@ function ExerciseDispatcher(
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
+                targetLanguage={targetLanguage}
+                sourceLanguage={sourceLanguage}
                 {...shared}
             />
         );

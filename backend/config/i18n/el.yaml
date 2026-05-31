@@ -1219,6 +1219,7 @@ lesson:
       empty: "Αυτή η άσκηση δεν περιέχει ζεύγη."
       left_label_productive: Σημασία
       right_label_productive: Όρος
+      selected_sr: "Επιλέχθηκε: {label}"
     picture:
       submit: "Έλεγχος απάντησης"
       retry: "Δοκίμασε ξανά"

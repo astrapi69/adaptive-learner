@@ -1217,6 +1217,7 @@ lesson:
       empty: "Bu alıştırmada eşleşme yok."
       left_label_productive: Anlam
       right_label_productive: Terim
+      selected_sr: "Seçildi: {label}"
     picture:
       submit: "Cevabı kontrol et"
       retry: "Tekrar dene"

@@ -1323,7 +1323,8 @@
         "right_label": "Tradução",
         "empty": "Este exercício não tem pares.",
         "left_label_productive": "Significado",
-        "right_label_productive": "Termo"
+        "right_label_productive": "Termo",
+        "selected_sr": "Selecionado: {label}"
       },
       "picture": {
         "submit": "Verificar resposta",

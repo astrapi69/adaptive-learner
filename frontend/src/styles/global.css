@@ -3303,6 +3303,13 @@ select:focus {
   background: color-mix(in srgb, var(--exercise-matched) 12%, var(--surface));
 }
 
+/* Dim a paired-but-not-yet-graded tile so the remaining UNpaired
+   pairs stand out (UX bugfix). The :not() guard keeps the
+   post-submit green / red feedback at full opacity. */
+.matching-tile.is-paired:not(.is-correct):not(.is-wrong) {
+  opacity: 0.6;
+}
+
 .matching-tile.is-correct {
   border-color: var(--exercise-correct);
   background: color-mix(in srgb, var(--exercise-correct) 18%, var(--surface));

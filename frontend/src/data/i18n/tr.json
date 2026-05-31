@@ -1323,7 +1323,8 @@
         "right_label": "Çeviri",
         "empty": "Bu alıştırmada eşleşme yok.",
         "left_label_productive": "Anlam",
-        "right_label_productive": "Terim"
+        "right_label_productive": "Terim",
+        "selected_sr": "Seçildi: {label}"
       },
       "picture": {
         "submit": "Cevabı kontrol et",

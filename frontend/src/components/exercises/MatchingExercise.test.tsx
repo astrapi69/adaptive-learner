@@ -212,3 +212,66 @@ describe("MatchingExercise: edge cases", () => {
         expect(screen.getByTestId("matching-empty")).toBeInTheDocument();
     });
 });
+
+describe("MatchingExercise: selection visibility + language labels + a11y (UX bugfix)", () => {
+    it("selecting a left tile marks it is-selected + aria-pressed", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        const tile = screen.getByTestId("matching-left-0");
+        expect(tile).toHaveAttribute("aria-pressed", "false");
+        fireEvent.click(tile);
+        expect(tile.className).toContain("is-selected");
+        expect(tile).toHaveAttribute("aria-pressed", "true");
+        // Sibling left tiles are not selected.
+        expect(screen.getByTestId("matching-left-1")).toHaveAttribute(
+            "aria-pressed",
+            "false",
+        );
+    });
+
+    it("announces the current selection to screen readers", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        const status = screen.getByTestId("matching-sr-status");
+        expect(status).toHaveTextContent("");
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        expect(status).toHaveTextContent(/Bonjour/);
+    });
+
+    it("a paired tile gets the is-paired class", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        expect(screen.getByTestId("matching-left-0").className).toContain(
+            "is-paired",
+        );
+    });
+
+    it("column headers show language NAMES when the pair is known", () => {
+        render(
+            <MatchingExercise
+                exercise={EXERCISE}
+                targetLanguage="fr"
+                sourceLanguage="en"
+                onComplete={vi.fn()}
+            />,
+        );
+        // Receptive default: left = target (fr), right = source (en).
+        // The exact localised name depends on the UI language; the
+        // contract is only that the generic fallbacks are replaced.
+        const left = screen.getByTestId("matching-left-header");
+        const right = screen.getByTestId("matching-right-header");
+        expect(left).not.toHaveTextContent("Term");
+        expect(right).not.toHaveTextContent("Translation");
+        expect(left.textContent?.length ?? 0).toBeGreaterThan(0);
+        expect(right.textContent?.length ?? 0).toBeGreaterThan(0);
+    });
+
+    it("falls back to generic labels when the language pair is unknown", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        expect(screen.getByTestId("matching-left-header")).toHaveTextContent(
+            "Term",
+        );
+        expect(
+            screen.getByTestId("matching-right-header"),
+        ).toHaveTextContent("Translation");
+    });
+});

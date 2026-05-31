@@ -1323,7 +1323,8 @@
         "right_label": "Traduction",
         "empty": "Cet exercice n'a pas de paires.",
         "left_label_productive": "Sens",
-        "right_label_productive": "Terme"
+        "right_label_productive": "Terme",
+        "selected_sr": "Sélectionné : {label}"
       },
       "picture": {
         "submit": "Vérifier la réponse",

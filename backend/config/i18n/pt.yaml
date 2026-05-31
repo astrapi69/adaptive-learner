@@ -1217,6 +1217,7 @@ lesson:
       empty: "Este exercício não tem pares."
       left_label_productive: Significado
       right_label_productive: Termo
+      selected_sr: "Selecionado: {label}"
     picture:
       submit: "Verificar resposta"
       retry: "Tentar de novo"

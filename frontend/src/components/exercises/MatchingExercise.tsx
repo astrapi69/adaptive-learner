@@ -57,6 +57,34 @@ export interface MatchingExerciseProps extends ControlledExerciseProps {
      *  outcome AND a per-pair ``attempts`` list the viewer
      *  passes to ``elementErrors.recordBulk`` (Phase 46B). */
     onComplete: (result: ExerciseScored) => void;
+    /** UX bugfix — BCP-47 codes of the lesson's language pair.
+     *  When provided, the column headers show the actual
+     *  language NAMES (e.g. "Français" / "Deutsch") instead of
+     *  the generic "Term" / "Translation". Optional; the
+     *  Review + AdaptiveLesson pages omit them and keep the
+     *  generic labels. */
+    targetLanguage?: string | null;
+    sourceLanguage?: string | null;
+}
+
+/** Localised display name for a BCP-47 language code, in the
+ *  learner's UI language (e.g. ``("fr", "de")`` -> "Französisch").
+ *  Returns null when the code is missing or unresolvable so the
+ *  caller can fall back to a generic label. */
+function _languageName(
+    code: string | null | undefined,
+    uiLang: string,
+): string | null {
+    if (!code) return null;
+    try {
+        const name = new Intl.DisplayNames([uiLang], {
+            type: "language",
+        }).of(code);
+        // ``of`` echoes the code back when it can't resolve it.
+        return name && name !== code ? name : null;
+    } catch {
+        return null;
+    }
 }
 
 /** Count pairs whose left index matches its right originalIndex. */
@@ -106,10 +134,12 @@ function MatchingExercise(
         controlled = false,
         onInteraction,
         reviewed = null,
+        targetLanguage = null,
+        sourceLanguage = null,
     }: MatchingExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
-    const {t} = useI18n();
+    const {t, lang} = useI18n();
     const pairs = exercise.pairs ?? [];
     const reviewedMatching =
         reviewed?.kind === "matching" ? reviewed : null;
@@ -120,12 +150,25 @@ function MatchingExercise(
     // unchanged, so pair i still matches right i.
     const direction = resolveConcreteDirection(exercise.direction, exercise.id);
     const productive = direction === "source_to_target";
-    const leftLabel = productive
-        ? t("lesson.exercise.matching.left_label_productive", "Meaning")
-        : t("lesson.exercise.matching.left_label", "Term");
-    const rightLabel = productive
-        ? t("lesson.exercise.matching.right_label_productive", "Term")
-        : t("lesson.exercise.matching.right_label", "Translation");
+    // Each column header names the LANGUAGE of the words shown in
+    // it, when the lesson's language pair is known. Receptive keeps
+    // the authored orientation (target words left, source right);
+    // productive flips it. Falls back to the generic Term /
+    // Translation labels when no language info is available.
+    const targetName = _languageName(targetLanguage, lang);
+    const sourceName = _languageName(sourceLanguage, lang);
+    const leftLangName = productive ? sourceName : targetName;
+    const rightLangName = productive ? targetName : sourceName;
+    const leftLabel =
+        leftLangName ??
+        (productive
+            ? t("lesson.exercise.matching.left_label_productive", "Meaning")
+            : t("lesson.exercise.matching.left_label", "Term"));
+    const rightLabel =
+        rightLangName ??
+        (productive
+            ? t("lesson.exercise.matching.right_label_productive", "Term")
+            : t("lesson.exercise.matching.right_label", "Translation"));
     const instruction = t(
         instructionKey("matching", direction),
         productive
@@ -312,6 +355,24 @@ function MatchingExercise(
                     .replace("{matched}", String(matches.size))
                     .replace("{total}", String(pairs.length))}
             </p>
+
+            {/* UX bugfix — announce the current selection to screen
+                readers (the visual highlight is not conveyed otherwise). */}
+            <span
+                className="sr-only"
+                aria-live="polite"
+                data-testid="matching-sr-status"
+            >
+                {selectedLeft !== null
+                    ? t(
+                          "lesson.exercise.matching.selected_sr",
+                          "Selected: {label}",
+                      ).replace(
+                          "{label}",
+                          leftTiles[selectedLeft]?.label ?? "",
+                      )
+                    : ""}
+            </span>
 
             <p
                 className="matching-instructions"
