@@ -2470,6 +2470,12 @@ select:focus {
   display: flex;
   align-items: flex-start;
   flex-shrink: 0;
+  /* Phase 59C / My Lessons: 5-6 action buttons per card (Play,
+     Edit, Export, Export-as-set, Share, Delete). Without wrap +
+     gap they overflow the row and get clipped by the v1.46.0
+     ``overflow-x: hidden`` guard rails on html/body/#root. */
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .content-set-download-btn {
