@@ -25,7 +25,8 @@
  */
 
 import {Check, RotateCcw, X} from "lucide-react";
-import {useEffect, useMemo, useState} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
+import type {Ref} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
@@ -33,13 +34,15 @@ import {
     instructionKey,
     resolveConcreteDirection,
 } from "../../lib/exercises/direction";
-import type {
-    ContentLessonExercise,
-    ElementAttempt,
-} from "../../storage/types";
+import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
+import type {
+    ControlledExerciseProps,
+    ExerciseHandle,
+    ExerciseScored,
+} from "./exercise-control";
 
-export interface MatchingExerciseProps {
+export interface MatchingExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
     /** Content-set id + lesson id — Phase 46B context the
      *  exercise needs to derive per-element attempts for the
@@ -53,11 +56,19 @@ export interface MatchingExerciseProps {
      *  should record the result. Receives the scored
      *  outcome AND a per-pair ``attempts`` list the viewer
      *  passes to ``elementErrors.recordBulk`` (Phase 46B). */
-    onComplete: (result: {
-        correct: number;
-        total: number;
-        attempts: ElementAttempt[];
-    }) => void;
+    onComplete: (result: ExerciseScored) => void;
+}
+
+/** Count pairs whose left index matches its right originalIndex. */
+function _scoreMatches(
+    matches: ReadonlyMap<number, number>,
+    total: number,
+): {correct: number; total: number} {
+    let correct = 0;
+    for (const [leftIdx, rightOriginal] of matches) {
+        if (leftIdx === rightOriginal) correct += 1;
+    }
+    return {correct, total};
 }
 
 interface LeftTile {
@@ -86,14 +97,22 @@ function _shuffle<T>(items: readonly T[], seed: string): T[] {
     return out;
 }
 
-export default function MatchingExercise({
-    exercise,
-    setId = "",
-    lessonId = "",
-    onComplete,
-}: MatchingExerciseProps) {
+function MatchingExercise(
+    {
+        exercise,
+        setId = "",
+        lessonId = "",
+        onComplete,
+        controlled = false,
+        onInteraction,
+        reviewed = null,
+    }: MatchingExerciseProps,
+    ref: Ref<ExerciseHandle>,
+) {
     const {t} = useI18n();
     const pairs = exercise.pairs ?? [];
+    const reviewedMatching =
+        reviewed?.kind === "matching" ? reviewed : null;
     // EXP-018 / Phase 62: a productive drill shows the source-language
     // column on the left (the learner produces the target). Receptive
     // keeps the authored orientation (target left, source right). Only
@@ -143,11 +162,20 @@ export default function MatchingExercise({
     const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
     /** Map from left index → right's originalIndex. */
     const [matches, setMatches] = useState<Map<number, number>>(
-        () => new Map(),
+        () =>
+            reviewedMatching
+                ? new Map(reviewedMatching.matches)
+                : new Map(),
     );
-    const [submitted, setSubmitted] = useState(false);
+    const [submitted, setSubmitted] = useState(reviewedMatching != null);
     const [result, setResult] = useState<{correct: number; total: number} | null>(
-        null,
+        () =>
+            reviewedMatching
+                ? _scoreMatches(
+                      new Map(reviewedMatching.matches),
+                      pairs.length,
+                  )
+                : null,
     );
     /** Wrong-flash trigger for visual feedback. */
     const [wrongFlash, setWrongFlash] = useState<{
@@ -203,20 +231,37 @@ export default function MatchingExercise({
         result !== null && result.total > 0 && result.correct === result.total;
 
     const handleSubmit = () => {
-        let correct = 0;
-        for (const [leftIdx, rightOriginal] of matches) {
-            if (leftIdx === rightOriginal) correct += 1;
-        }
+        if (submitted || !allPaired) return;
+        const {correct} = _scoreMatches(matches, pairs.length);
         const attempts = deriveMatchingAttempts(
             exercise,
             {setId, lessonId},
             matches,
         );
-        const scored = {correct, total: pairs.length, attempts};
+        const scored: ExerciseScored = {
+            correct,
+            total: pairs.length,
+            attempts,
+            raw_answer: {
+                kind: "matching",
+                matches: [...matches.entries()],
+            },
+        };
         setResult({correct, total: pairs.length});
         setSubmitted(true);
         onComplete(scored);
     };
+
+    // Controlled (Lesson) mode: the parent drives ``submit`` via
+    // this ref + enables its shared "Prüfen" button off the
+    // ``onInteraction`` signal below.
+    useImperativeHandle(ref, () => ({submit: handleSubmit}));
+
+    useEffect(() => {
+        if (!controlled || reviewedMatching || submitted) return;
+        onInteraction?.(allPaired);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [controlled, allPaired, submitted, reviewedMatching]);
 
     const handleReset = () => {
         setMatches(new Map());
@@ -393,7 +438,7 @@ export default function MatchingExercise({
             </div>
 
             <div className="matching-actions">
-                {!submitted ? (
+                {!submitted && !controlled && (
                     <button
                         type="button"
                         className="btn btn-primary"
@@ -403,7 +448,8 @@ export default function MatchingExercise({
                     >
                         {t("lesson.exercise.matching.submit", "Check answers")}
                     </button>
-                ) : (
+                )}
+                {submitted && (
                     <>
                         <p
                             className={`matching-result answer-feedback${
@@ -428,21 +474,25 @@ export default function MatchingExercise({
                                 )}
                         </p>
                         <AnswerCelebration isCorrect={matchingAllCorrect} />
-                        <button
-                            type="button"
-                            className="btn"
-                            onClick={handleReset}
-                            data-testid="matching-retry"
-                        >
-                            <RotateCcw size={14} aria-hidden="true" />
-                            {t(
-                                "lesson.exercise.matching.retry",
-                                "Try again",
-                            )}
-                        </button>
+                        {!controlled && (
+                            <button
+                                type="button"
+                                className="btn"
+                                onClick={handleReset}
+                                data-testid="matching-retry"
+                            >
+                                <RotateCcw size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.matching.retry",
+                                    "Try again",
+                                )}
+                            </button>
+                        )}
                     </>
                 )}
             </div>
         </section>
     );
 }
+
+export default forwardRef(MatchingExercise);

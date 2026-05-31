@@ -1302,6 +1302,11 @@
       "back_to_browser": "Volver al explorador de contenido",
       "open_browser": "Abrir explorador de contenido"
     },
+    "button": {
+      "check": "Comprobar",
+      "next": "Siguiente",
+      "check_disabled_hint": "Responde primero al ejercicio"
+    },
     "exercise": {
       "loading": "Cargando ejercicio…",
       "coming_soon": "Este tipo de ejercicio ({type}) llegará en una versión futura. Salta al siguiente paso.",

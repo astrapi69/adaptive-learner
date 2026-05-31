@@ -28,19 +28,21 @@
  */
 
 import {Check, RotateCcw, X} from "lucide-react";
-import type {KeyboardEvent} from "react";
-import {useState} from "react";
+import type {KeyboardEvent, Ref} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {deriveFreeTextAttempt} from "../../lib/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
-import type {
-    ContentLessonExercise,
-    ElementAttempt,
-} from "../../storage/types";
+import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
 import DirectionInstruction from "./DirectionInstruction";
+import type {
+    ControlledExerciseProps,
+    ExerciseHandle,
+    ExerciseScored,
+} from "./exercise-control";
 
 /** Levenshtein edit distance between ``a`` and ``b``.
  *  Two-row DP variant: O(m*n) time, O(n) space. The free-
@@ -92,7 +94,7 @@ export function isFreeTextCorrect(
     return false;
 }
 
-export interface FreeTextExerciseProps {
+export interface FreeTextExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
     /** Phase 46B context for the element-attempt deriver.
      *  Optional in unit tests; required in production. */
@@ -100,41 +102,46 @@ export interface FreeTextExerciseProps {
     lessonId?: string;
     /** Called on submit with the score (0 or 1 correct of 1
      *  total) plus the single-attempt SRS payload. */
-    onComplete: (result: {
-        correct: number;
-        total: number;
-        attempts: ElementAttempt[];
-    }) => void;
+    onComplete: (result: ExerciseScored) => void;
 }
 
-export default function FreeTextExercise({
-    exercise,
-    setId = "",
-    lessonId = "",
-    onComplete,
-}: FreeTextExerciseProps) {
+function FreeTextExercise(
+    {
+        exercise,
+        setId = "",
+        lessonId = "",
+        onComplete,
+        controlled = false,
+        onInteraction,
+        reviewed = null,
+    }: FreeTextExerciseProps,
+    ref: Ref<ExerciseHandle>,
+) {
     const {t} = useI18n();
     const accept = exercise.accept ?? [];
     const canonical = accept[0] ?? "";
+    const reviewedFreeText =
+        reviewed?.kind === "free_text" ? reviewed : null;
 
-    const [input, setInput] = useState("");
-    const [submitted, setSubmitted] = useState(false);
+    const [input, setInput] = useState(reviewedFreeText?.input ?? "");
+    const [submitted, setSubmitted] = useState(reviewedFreeText != null);
     const [result, setResult] = useState<{
         correct: number;
         total: number;
-    } | null>(null);
+    } | null>(() =>
+        reviewedFreeText
+            ? {
+                  correct: isFreeTextCorrect(
+                      reviewedFreeText.input,
+                      accept,
+                  )
+                      ? 1
+                      : 0,
+                  total: 1,
+              }
+            : null,
+    );
     const [showHint, setShowHint] = useState(false);
-
-    if (accept.length === 0) {
-        return (
-            <div data-testid="free-text-empty">
-                {t(
-                    "lesson.exercise.free_text.empty",
-                    "This free-text exercise has no accepted answers.",
-                )}
-            </div>
-        );
-    }
 
     const trimmed = input.trim();
     const isInputEmpty = trimmed === "";
@@ -149,7 +156,12 @@ export default function FreeTextExercise({
             input,
             isCorrect,
         );
-        const scored = {correct, total: 1, attempts: [attempt]};
+        const scored: ExerciseScored = {
+            correct,
+            total: 1,
+            attempts: [attempt],
+            raw_answer: {kind: "free_text", input},
+        };
         setResult({correct, total: 1});
         setSubmitted(true);
         onComplete(scored);
@@ -167,6 +179,25 @@ export default function FreeTextExercise({
             handleSubmit();
         }
     };
+
+    useImperativeHandle(ref, () => ({submit: handleSubmit}));
+
+    useEffect(() => {
+        if (!controlled || reviewedFreeText || submitted) return;
+        onInteraction?.(!isInputEmpty);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [controlled, isInputEmpty, submitted, reviewedFreeText]);
+
+    if (accept.length === 0) {
+        return (
+            <div data-testid="free-text-empty">
+                {t(
+                    "lesson.exercise.free_text.empty",
+                    "This free-text exercise has no accepted answers.",
+                )}
+            </div>
+        );
+    }
 
     const isCorrect = result !== null && result.correct > 0;
 
@@ -231,7 +262,7 @@ export default function FreeTextExercise({
             )}
 
             <div className="free-text-actions">
-                {!submitted ? (
+                {!submitted && !controlled && (
                     <button
                         type="button"
                         className="btn btn-primary"
@@ -244,7 +275,8 @@ export default function FreeTextExercise({
                             "Check answer",
                         )}
                     </button>
-                ) : (
+                )}
+                {submitted && (
                     <>
                         <p
                             className={`free-text-result answer-feedback${
@@ -283,21 +315,25 @@ export default function FreeTextExercise({
                             </div>
                         )}
                         <AnswerCelebration isCorrect={isCorrect} />
-                        <button
-                            type="button"
-                            className="btn"
-                            onClick={handleReset}
-                            data-testid="free-text-retry"
-                        >
-                            <RotateCcw size={14} aria-hidden="true" />
-                            {t(
-                                "lesson.exercise.free_text.retry",
-                                "Try again",
-                            )}
-                        </button>
+                        {!controlled && (
+                            <button
+                                type="button"
+                                className="btn"
+                                onClick={handleReset}
+                                data-testid="free-text-retry"
+                            >
+                                <RotateCcw size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.free_text.retry",
+                                    "Try again",
+                                )}
+                            </button>
+                        )}
                     </>
                 )}
             </div>
         </section>
     );
 }
+
+export default forwardRef(FreeTextExercise);

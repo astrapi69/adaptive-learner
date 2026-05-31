@@ -1197,6 +1197,10 @@ lesson:
     finish: "Terminar lição"
     back_to_browser: "Voltar ao explorador de conteúdo"
     open_browser: "Abrir explorador de conteúdo"
+  button:
+    check: "Verificar"
+    next: "Próximo"
+    check_disabled_hint: "Responda primeiro ao exercício"
   exercise:
     loading: "A carregar o exercício…"
     coming_soon: "Este tipo de exercício ({type}) chegará numa versão futura. Passa para o próximo passo."

@@ -14,13 +14,20 @@
  * any runtime type outside the closed union.
  */
 
+import {forwardRef} from "react";
+import type {Ref} from "react";
+
 import {useI18n} from "../../hooks/useI18n";
 import type {
     ContentLessonExercise,
     ContentLessonStep,
-    ElementAttempt,
 } from "../../storage/types";
 import ClozeExercise from "./ClozeExercise";
+import type {
+    ControlledExerciseProps,
+    ExerciseHandle,
+    ExerciseScored,
+} from "./exercise-control";
 import FreeTextExercise from "./FreeTextExercise";
 import MatchingExercise from "./MatchingExercise";
 import PictureChoiceExercise from "./PictureChoiceExercise";
@@ -34,7 +41,7 @@ export const SUPPORTED_EXERCISE_TYPES: ReadonlySet<string> = new Set([
     "cloze",
 ]);
 
-export interface ExerciseDispatcherProps {
+export interface ExerciseDispatcherProps extends ControlledExerciseProps {
     step: ContentLessonStep;
     /** Phase 46B context propagated to each exercise so the
      *  element-attempt deriver can stamp set_id + lesson_id
@@ -47,89 +54,102 @@ export interface ExerciseDispatcherProps {
      *  cache. Optional; review / adaptive sessions pass
      *  empty and accept the text-only fallback. */
     source?: string;
-    onComplete: (result: {
-        correct: number;
-        total: number;
-        attempts: ElementAttempt[];
-    }) => Promise<void>;
+    onComplete: (result: ExerciseScored) => Promise<void>;
 }
 
-export function ExerciseDispatcher({
-    step,
-    setId,
-    lessonId,
-    source = "",
-    onComplete,
-}: ExerciseDispatcherProps) {
+/** Forwards a ref to the active exercise so the controlled
+ *  (Lesson) parent can drive the shared "Prüfen" button.
+ *  ``controlled`` / ``onInteraction`` / ``reviewed`` are
+ *  optional + default off, so the Review + AdaptiveLesson
+ *  pages keep each exercise's self-contained behaviour. */
+function ExerciseDispatcher(
+    {
+        step,
+        setId,
+        lessonId,
+        source = "",
+        onComplete,
+        controlled = false,
+        onInteraction,
+        reviewed = null,
+    }: ExerciseDispatcherProps,
+    ref: Ref<ExerciseHandle>,
+) {
     const ex: ContentLessonExercise | null = step.exercise ?? null;
     if (ex === null) return <ExerciseStepPlaceholder step={step} />;
     const supported = SUPPORTED_EXERCISE_TYPES.has(ex.type);
     if (!supported) {
         return <ExerciseStepPlaceholder step={step} />;
     }
+    const shared = {
+        controlled,
+        onInteraction,
+        reviewed,
+        onComplete: (scored: ExerciseScored) => {
+            void onComplete(scored);
+        },
+    };
     if (ex.type === "matching") {
         return (
             <MatchingExercise
+                ref={ref}
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
-                onComplete={(scored) => {
-                    void onComplete(scored);
-                }}
+                {...shared}
             />
         );
     }
     if (ex.type === "picture_choice") {
         return (
             <PictureChoiceExercise
+                ref={ref}
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
                 source={source}
-                onComplete={(scored) => {
-                    void onComplete(scored);
-                }}
+                {...shared}
             />
         );
     }
     if (ex.type === "free_text") {
         return (
             <FreeTextExercise
+                ref={ref}
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
-                onComplete={(scored) => {
-                    void onComplete(scored);
-                }}
+                {...shared}
             />
         );
     }
     if (ex.type === "word_tiles") {
         return (
             <WordTilesExercise
+                ref={ref}
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
-                onComplete={(scored) => {
-                    void onComplete(scored);
-                }}
+                {...shared}
             />
         );
     }
     if (ex.type === "cloze") {
         return (
             <ClozeExercise
+                ref={ref}
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
-                onComplete={(scored) => {
-                    void onComplete(scored);
-                }}
+                {...shared}
             />
         );
     }
     return <ExerciseStepPlaceholder step={step} />;
 }
+
+const ForwardedExerciseDispatcher = forwardRef(ExerciseDispatcher);
+export {ForwardedExerciseDispatcher as ExerciseDispatcher};
 
 export function ExerciseStepPlaceholder({
     step,

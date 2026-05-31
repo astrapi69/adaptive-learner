@@ -27,20 +27,23 @@
  */
 
 import {Check, RotateCcw, X} from "lucide-react";
-import {useMemo, useState} from "react";
+import type {Ref} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {deriveClozeAttempts} from "../../lib/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
-import type {
-    ContentLessonExercise,
-    ElementAttempt,
-} from "../../storage/types";
+import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
+import type {
+    ControlledExerciseProps,
+    ExerciseHandle,
+    ExerciseScored,
+} from "./exercise-control";
 import {isFreeTextCorrect} from "./FreeTextExercise";
 
-export interface ClozeExerciseProps {
+export interface ClozeExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
     /** Phase 46B context for the element-attempt deriver.
      *  Optional in unit tests; required in production. */
@@ -48,11 +51,7 @@ export interface ClozeExerciseProps {
     lessonId?: string;
     /** Called on submit with the score (sum of correct blanks
      *  of total blanks) + the per-blank SRS attempts. */
-    onComplete: (result: {
-        correct: number;
-        total: number;
-        attempts: ElementAttempt[];
-    }) => void;
+    onComplete: (result: ExerciseScored) => void;
 }
 
 /** Split the cloze sentence on ``___`` markers. The returned
@@ -76,23 +75,39 @@ function _shuffle<T>(items: readonly T[], seed: string): T[] {
     return out;
 }
 
-export default function ClozeExercise({
-    exercise,
-    setId = "",
-    lessonId = "",
-    onComplete,
-}: ClozeExerciseProps) {
+function ClozeExercise(
+    {
+        exercise,
+        setId = "",
+        lessonId = "",
+        onComplete,
+        controlled = false,
+        onInteraction,
+        reviewed = null,
+    }: ClozeExerciseProps,
+    ref: Ref<ExerciseHandle>,
+) {
     const {t} = useI18n();
     const sentence = exercise.sentence ?? "";
     const blanks = exercise.blanks ?? [];
     const mode: "type" | "select" = exercise.cloze_mode ?? "type";
+    const reviewedCloze = reviewed?.kind === "cloze" ? reviewed : null;
 
-    const [inputs, setInputs] = useState<string[]>(
-        () => blanks.map(() => ""),
+    const [inputs, setInputs] = useState<string[]>(() =>
+        reviewedCloze
+            ? blanks.map((_, i) => reviewedCloze.inputs[i] ?? "")
+            : blanks.map(() => ""),
     );
-    const [submitted, setSubmitted] = useState(false);
-    const [perBlankCorrect, setPerBlankCorrect] = useState<boolean[]>(
-        () => blanks.map(() => false),
+    const [submitted, setSubmitted] = useState(reviewedCloze != null);
+    const [perBlankCorrect, setPerBlankCorrect] = useState<boolean[]>(() =>
+        reviewedCloze
+            ? blanks.map((blank, i) =>
+                  isFreeTextCorrect(
+                      reviewedCloze.inputs[i] ?? "",
+                      blank.accept,
+                  ),
+              )
+            : blanks.map(() => false),
     );
     const [showHint, setShowHint] = useState(false);
 
@@ -112,19 +127,9 @@ export default function ClozeExercise({
         });
     }, [exercise.id, exercise.distractors, blanks, mode]);
 
-    if (sentence === "" || blanks.length === 0) {
-        return (
-            <div data-testid="cloze-empty">
-                {t(
-                    "lesson.exercise.cloze.empty",
-                    "This cloze exercise has no blanks.",
-                )}
-            </div>
-        );
-    }
-
     const segments = _splitOnMarkers(sentence);
-    const allFilled = inputs.every((s) => s.trim() !== "");
+    const allFilled =
+        inputs.length > 0 && inputs.every((s) => s.trim() !== "");
 
     const handleChange = (idx: number, value: string) => {
         if (submitted) return;
@@ -147,11 +152,13 @@ export default function ClozeExercise({
         );
         setPerBlankCorrect(perCorrect);
         setSubmitted(true);
-        onComplete({
+        const scored: ExerciseScored = {
             correct: correctCount,
             total: blanks.length,
             attempts,
-        });
+            raw_answer: {kind: "cloze", inputs: [...inputs]},
+        };
+        onComplete(scored);
     };
 
     const handleReset = () => {
@@ -159,6 +166,25 @@ export default function ClozeExercise({
         setPerBlankCorrect(blanks.map(() => false));
         setSubmitted(false);
     };
+
+    useImperativeHandle(ref, () => ({submit: handleSubmit}));
+
+    useEffect(() => {
+        if (!controlled || reviewedCloze || submitted) return;
+        onInteraction?.(allFilled);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [controlled, allFilled, submitted, reviewedCloze]);
+
+    if (sentence === "" || blanks.length === 0) {
+        return (
+            <div data-testid="cloze-empty">
+                {t(
+                    "lesson.exercise.cloze.empty",
+                    "This cloze exercise has no blanks.",
+                )}
+            </div>
+        );
+    }
 
     const correctCount = perBlankCorrect.filter(Boolean).length;
     const isAllCorrect = submitted && correctCount === blanks.length;
@@ -317,7 +343,7 @@ export default function ClozeExercise({
             )}
 
             <div className="cloze-actions">
-                {!submitted ? (
+                {!submitted && !controlled && (
                     <button
                         type="button"
                         className="btn btn-primary"
@@ -330,7 +356,8 @@ export default function ClozeExercise({
                             "Check answers",
                         )}
                     </button>
-                ) : (
+                )}
+                {submitted && (
                     <>
                         <p
                             className={`cloze-result answer-feedback${
@@ -389,21 +416,25 @@ export default function ClozeExercise({
                             </div>
                         )}
                         <AnswerCelebration isCorrect={isAllCorrect} />
-                        <button
-                            type="button"
-                            className="btn"
-                            onClick={handleReset}
-                            data-testid="cloze-retry"
-                        >
-                            <RotateCcw size={14} aria-hidden="true" />
-                            {t(
-                                "lesson.exercise.cloze.retry",
-                                "Try again",
-                            )}
-                        </button>
+                        {!controlled && (
+                            <button
+                                type="button"
+                                className="btn"
+                                onClick={handleReset}
+                                data-testid="cloze-retry"
+                            >
+                                <RotateCcw size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.cloze.retry",
+                                    "Try again",
+                                )}
+                            </button>
+                        )}
                     </>
                 )}
             </div>
         </section>
     );
 }
+
+export default forwardRef(ClozeExercise);

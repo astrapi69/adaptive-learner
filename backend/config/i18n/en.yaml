@@ -1208,6 +1208,10 @@ lesson:
     finish: "Finish lesson"
     back_to_browser: "Back to content browser"
     open_browser: "Open content browser"
+  button:
+    check: "Check"
+    next: "Next"
+    check_disabled_hint: "Answer the exercise first"
   exercise:
     loading: "Exercise loading…"
     coming_soon: "This exercise type ({type}) ships in a future version. Skip to the next step."

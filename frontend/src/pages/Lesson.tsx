@@ -41,7 +41,11 @@ import remarkGfm from "remark-gfm";
 
 import CorrectionBlock from "../components/exercises/CorrectionBlock";
 import DiffHighlight from "../components/exercises/DiffHighlight";
-import {ExerciseDispatcher} from "../components/exercises/ExerciseDispatcher";
+import {
+    ExerciseDispatcher,
+    SUPPORTED_EXERCISE_TYPES,
+} from "../components/exercises/ExerciseDispatcher";
+import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import Confetti from "../components/feedback/Confetti";
 import {useCountUp} from "../hooks/useCountUp";
 import {useFeedbackIntensity} from "../hooks/useFeedbackIntensity";
@@ -110,6 +114,30 @@ export default function LessonPage() {
     // on mount; useLesson already reads it for the progress
     // path but doesn't expose it.
     const learnerUserId = useMemo(() => readLearnerState().userId, []);
+
+    // BUG P1 / Problem 1 — two-phase "Prüfen" → "Weiter" button.
+    // The active exercise reports whether its answer is checkable
+    // (``answerable``) so the shared button can enable; the parent
+    // drives evaluation through ``exerciseRef`` on the "Prüfen"
+    // click; ``checked`` flips once the answer is graded so the
+    // next click advances. All three reset whenever the step
+    // changes (so a fresh exercise starts at "Prüfen" disabled).
+    const exerciseRef = useRef<ExerciseHandle>(null);
+    const [answerable, setAnswerable] = useState(false);
+    const [checked, setChecked] = useState(false);
+    // Reset the two-phase state the instant the step changes.
+    // A render-phase reset (the React "adjust state on prop
+    // change" pattern) runs BEFORE the freshly-mounted child's
+    // ``onInteraction`` effect, so an exercise that is answerable
+    // on mount is not clobbered back to disabled — unlike an
+    // effect, whose parent-after-child ordering would lose that
+    // first signal.
+    const prevStepIndexRef = useRef(currentStepIndex);
+    if (prevStepIndexRef.current !== currentStepIndex) {
+        prevStepIndexRef.current = currentStepIndex;
+        setAnswerable(false);
+        setChecked(false);
+    }
 
     // Phase 46A — fetch the set's lesson list so the summary
     // screen's "Next lesson" button knows whether there's a
@@ -265,6 +293,16 @@ export default function LessonPage() {
     const totalSteps = lesson.steps.length;
     const isSummary = currentStepIndex >= totalSteps;
     const step = isSummary ? null : lesson.steps[currentStepIndex];
+    // An exercise step gates the two-phase button; theory steps
+    // (and any unsupported/placeholder exercise type) keep the
+    // plain always-enabled "Next" button so the user is never
+    // stuck on a step they can't "check".
+    const isExerciseStep =
+        step !== null &&
+        step.type !== "theory" &&
+        step.exercise != null &&
+        SUPPORTED_EXERCISE_TYPES.has(step.exercise.type);
+    const isLastStep = currentStepIndex + 1 === totalSteps;
     const progressPct = totalSteps === 0
         ? 100
         : Math.round((currentStepIndex / totalSteps) * 100);
@@ -404,6 +442,7 @@ export default function LessonPage() {
                 />
             ) : (
                 <article
+                    key={step!.id}
                     className="lesson-step"
                     data-testid={`lesson-step-${step!.id}`}
                     data-step-type={step!.type}
@@ -419,12 +458,18 @@ export default function LessonPage() {
                         />
                     ) : (
                         <ExerciseDispatcher
+                            ref={exerciseRef}
+                            controlled
+                            onInteraction={setAnswerable}
                             step={step!}
                             setId={setId}
                             lessonId={filename}
                             source={source}
                             onComplete={async (scored) => {
                                 if (!step!.exercise) return;
+                                // Flip to the "Weiter" phase the moment
+                                // the answer is graded (Problem 1).
+                                setChecked(true);
                                 // Phase 52C / v1.35.0 — persist the
                                 // user's text-form answer when the
                                 // exercise type carries a coherent
@@ -499,22 +544,41 @@ export default function LessonPage() {
                     <ArrowLeft size={14} aria-hidden="true" />
                     {t("lesson.action.prev", "Previous")}
                 </button>
-                {!isSummary && (
-                    <button
-                        type="button"
-                        className="btn btn-primary lesson-nav-next"
-                        onClick={goNext}
-                        data-testid="lesson-next"
-                    >
-                        {currentStepIndex + 1 === totalSteps
-                            ? t(
-                                  "lesson.action.finish",
-                                  "Finish lesson",
-                              )
-                            : t("lesson.action.next", "Next")}
-                        <ArrowRight size={14} aria-hidden="true" />
-                    </button>
-                )}
+                {!isSummary &&
+                    (isExerciseStep && !checked ? (
+                        <button
+                            type="button"
+                            className="btn btn-primary lesson-nav-check"
+                            onClick={() => exerciseRef.current?.submit()}
+                            disabled={!answerable}
+                            title={
+                                !answerable
+                                    ? t(
+                                          "lesson.button.check_disabled_hint",
+                                          "Answer the exercise first",
+                                      )
+                                    : undefined
+                            }
+                            data-testid="lesson-check"
+                        >
+                            {t("lesson.button.check", "Check")}
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            className="btn btn-primary lesson-nav-next"
+                            onClick={goNext}
+                            data-testid="lesson-next"
+                        >
+                            {isLastStep
+                                ? t(
+                                      "lesson.action.finish",
+                                      "Finish lesson",
+                                  )
+                                : t("lesson.button.next", "Next")}
+                            <ArrowRight size={14} aria-hidden="true" />
+                        </button>
+                    ))}
             </nav>
         </main>
     );

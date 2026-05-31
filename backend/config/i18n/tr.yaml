@@ -1197,6 +1197,10 @@ lesson:
     finish: "Dersi bitir"
     back_to_browser: "İçerik tarayıcısına dön"
     open_browser: "İçerik tarayıcısını aç"
+  button:
+    check: "Kontrol et"
+    next: "İleri"
+    check_disabled_hint: "Önce alıştırmayı yanıtla"
   exercise:
     loading: "Alıştırma yükleniyor…"
     coming_soon: "Bu alıştırma türü ({type}) sonraki sürümlerde gelecek. Bir sonraki adıma geç."

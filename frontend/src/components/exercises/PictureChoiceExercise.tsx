@@ -32,20 +32,23 @@
  */
 
 import {Check, RotateCcw, X} from "lucide-react";
-import {useMemo, useState} from "react";
+import type {Ref} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
 
 import {useAsset} from "../../hooks/useAsset";
 import {useI18n} from "../../hooks/useI18n";
 import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
 import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
-import type {
-    ContentLessonExercise,
-    ElementAttempt,
-} from "../../storage/types";
+import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DirectionInstruction from "./DirectionInstruction";
+import type {
+    ControlledExerciseProps,
+    ExerciseHandle,
+    ExerciseScored,
+} from "./exercise-control";
 
-export interface PictureChoiceExerciseProps {
+export interface PictureChoiceExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
     /** Phase 46B context for the element-attempt deriver.
      *  Optional in unit tests; required in production. */
@@ -57,11 +60,7 @@ export interface PictureChoiceExerciseProps {
     source?: string;
     /** Called on submit with the score (0 or 1 correct of 1
      *  total) plus the single-attempt SRS payload. */
-    onComplete: (result: {
-        correct: number;
-        total: number;
-        attempts: ElementAttempt[];
-    }) => void;
+    onComplete: (result: ExerciseScored) => void;
     /** Optional base path the parent prepends to each image
      *  ``src``. When absent the component uses the asset
      *  resolver alone; when present, the resolver's null
@@ -99,22 +98,78 @@ function _normalizeAssetPath(raw: string): string {
     return raw;
 }
 
-export default function PictureChoiceExercise({
-    exercise,
-    setId = "",
-    lessonId = "",
-    source = "",
-    onComplete,
-    resolveImageSrc,
-}: PictureChoiceExerciseProps) {
+function PictureChoiceExercise(
+    {
+        exercise,
+        setId = "",
+        lessonId = "",
+        source = "",
+        onComplete,
+        resolveImageSrc,
+        controlled = false,
+        onInteraction,
+        reviewed = null,
+    }: PictureChoiceExerciseProps,
+    ref: Ref<ExerciseHandle>,
+) {
     const {t} = useI18n();
     const choices = useMemo(() => _parseChoices(exercise.images), [exercise.images]);
+    const reviewedPicture =
+        reviewed?.kind === "picture_choice" ? reviewed : null;
 
-    const [selected, setSelected] = useState<number | null>(null);
-    const [submitted, setSubmitted] = useState(false);
-    const [result, setResult] = useState<{correct: number; total: number} | null>(
-        null,
+    const [selected, setSelected] = useState<number | null>(
+        reviewedPicture?.selected ?? null,
     );
+    const [submitted, setSubmitted] = useState(reviewedPicture != null);
+    const [result, setResult] = useState<{correct: number; total: number} | null>(
+        () =>
+            reviewedPicture
+                ? {
+                      correct: choices[reviewedPicture.selected]?.isCorrect
+                          ? 1
+                          : 0,
+                      total: 1,
+                  }
+                : null,
+    );
+
+    const handleSelect = (index: number) => {
+        if (submitted) return;
+        setSelected(index);
+    };
+
+    const handleSubmit = () => {
+        if (selected === null || submitted) return;
+        const correct = choices[selected].isCorrect ? 1 : 0;
+        const attempt = derivePictureChoiceAttempt(
+            exercise,
+            {setId, lessonId},
+            selected,
+        );
+        const scored: ExerciseScored = {
+            correct,
+            total: 1,
+            attempts: [attempt],
+            raw_answer: {kind: "picture_choice", selected},
+        };
+        setResult({correct, total: 1});
+        setSubmitted(true);
+        onComplete(scored);
+    };
+
+    const handleReset = () => {
+        setSelected(null);
+        setSubmitted(false);
+        setResult(null);
+    };
+
+    useImperativeHandle(ref, () => ({submit: handleSubmit}));
+
+    useEffect(() => {
+        if (!controlled || reviewedPicture || submitted) return;
+        onInteraction?.(selected !== null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [controlled, selected, submitted, reviewedPicture]);
 
     if (choices.length === 0) {
         return (
@@ -126,31 +181,6 @@ export default function PictureChoiceExercise({
             </div>
         );
     }
-
-    const handleSelect = (index: number) => {
-        if (submitted) return;
-        setSelected(index);
-    };
-
-    const handleSubmit = () => {
-        if (selected === null) return;
-        const correct = choices[selected].isCorrect ? 1 : 0;
-        const attempt = derivePictureChoiceAttempt(
-            exercise,
-            {setId, lessonId},
-            selected,
-        );
-        const scored = {correct, total: 1, attempts: [attempt]};
-        setResult({correct, total: 1});
-        setSubmitted(true);
-        onComplete(scored);
-    };
-
-    const handleReset = () => {
-        setSelected(null);
-        setSubmitted(false);
-        setResult(null);
-    };
 
     return (
         <section
@@ -190,7 +220,7 @@ export default function PictureChoiceExercise({
             </ul>
 
             <div className="picture-actions">
-                {!submitted ? (
+                {!submitted && !controlled && (
                     <button
                         type="button"
                         className="btn btn-primary"
@@ -203,7 +233,8 @@ export default function PictureChoiceExercise({
                             "Check answer",
                         )}
                     </button>
-                ) : (
+                )}
+                {submitted && (
                     <>
                         <p
                             className={`picture-result answer-feedback${
@@ -231,24 +262,28 @@ export default function PictureChoiceExercise({
                         <AnswerCelebration
                             isCorrect={!!result && result.correct > 0}
                         />
-                        <button
-                            type="button"
-                            className="btn"
-                            onClick={handleReset}
-                            data-testid="picture-retry"
-                        >
-                            <RotateCcw size={14} aria-hidden="true" />
-                            {t(
-                                "lesson.exercise.picture.retry",
-                                "Try again",
-                            )}
-                        </button>
+                        {!controlled && (
+                            <button
+                                type="button"
+                                className="btn"
+                                onClick={handleReset}
+                                data-testid="picture-retry"
+                            >
+                                <RotateCcw size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.picture.retry",
+                                    "Try again",
+                                )}
+                            </button>
+                        )}
                     </>
                 )}
             </div>
         </section>
     );
 }
+
+export default forwardRef(PictureChoiceExercise);
 
 interface PictureChoiceTileProps {
     choice: Choice;

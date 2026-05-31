@@ -1302,6 +1302,11 @@
       "back_to_browser": "Zurück zur Inhaltsübersicht",
       "open_browser": "Inhalts-Browser öffnen"
     },
+    "button": {
+      "check": "Prüfen",
+      "next": "Weiter",
+      "check_disabled_hint": "Beantworte die Aufgabe zuerst"
+    },
     "exercise": {
       "loading": "Übung wird geladen…",
       "coming_soon": "Dieser Übungstyp ({type}) folgt in einer späteren Version. Springe zum nächsten Schritt.",

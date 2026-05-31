@@ -26,20 +26,23 @@
  */
 
 import {Check, ChevronLeft, ChevronRight, RotateCcw, X} from "lucide-react";
-import {useEffect, useMemo, useRef, useState} from "react";
+import type {Ref} from "react";
+import {forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {deriveWordTilesAttempt} from "../../lib/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
-import type {
-    ContentLessonExercise,
-    ElementAttempt,
-} from "../../storage/types";
+import type {ContentLessonExercise} from "../../storage/types";
 import AnswerCelebration from "./AnswerCelebration";
 import DiffHighlight from "./DiffHighlight";
 import DirectionInstruction from "./DirectionInstruction";
+import type {
+    ControlledExerciseProps,
+    ExerciseHandle,
+    ExerciseScored,
+} from "./exercise-control";
 
-export interface WordTilesExerciseProps {
+export interface WordTilesExerciseProps extends ControlledExerciseProps {
     exercise: ContentLessonExercise;
     /** Phase 46B context for the element-attempt deriver.
      *  Optional in unit tests; required in production. */
@@ -47,11 +50,7 @@ export interface WordTilesExerciseProps {
     lessonId?: string;
     /** Called on submit with the score (0 or 1 correct of 1
      *  total) plus the single-attempt SRS payload. */
-    onComplete: (result: {
-        correct: number;
-        total: number;
-        attempts: ElementAttempt[];
-    }) => void;
+    onComplete: (result: ExerciseScored) => void;
 }
 
 /** Deterministic Fisher-Yates shuffle keyed by ``seed`` so
@@ -98,15 +97,23 @@ function _arraysEqual(
     return true;
 }
 
-export default function WordTilesExercise({
-    exercise,
-    setId = "",
-    lessonId = "",
-    onComplete,
-}: WordTilesExerciseProps) {
+function WordTilesExercise(
+    {
+        exercise,
+        setId = "",
+        lessonId = "",
+        onComplete,
+        controlled = false,
+        onInteraction,
+        reviewed = null,
+    }: WordTilesExerciseProps,
+    ref: Ref<ExerciseHandle>,
+) {
     const {t} = useI18n();
     const tiles = exercise.tiles ?? [];
     const acceptOrderings = exercise.accept_orderings;
+    const reviewedWordTiles =
+        reviewed?.kind === "word_tiles" ? reviewed : null;
 
     // Stable seed per-mount so the scrambled bar doesn't
     // re-shuffle on every render.
@@ -125,12 +132,27 @@ export default function WordTilesExercise({
 
     /** Indices of tiles the user has placed, in the order
      *  they tapped them. */
-    const [placed, setPlaced] = useState<number[]>([]);
-    const [submitted, setSubmitted] = useState(false);
+    const [placed, setPlaced] = useState<number[]>(
+        reviewedWordTiles ? [...reviewedWordTiles.placed] : [],
+    );
+    const [submitted, setSubmitted] = useState(reviewedWordTiles != null);
     const [result, setResult] = useState<{
         correct: number;
         total: number;
-    } | null>(null);
+    } | null>(() =>
+        reviewedWordTiles
+            ? {
+                  correct: isWordTilesCorrect(
+                      reviewedWordTiles.placed,
+                      tiles.length,
+                      acceptOrderings,
+                  )
+                      ? 1
+                      : 0,
+                  total: 1,
+              }
+            : null,
+    );
     const [showHint, setShowHint] = useState(false);
     // Reorder-within-answer state (UX bugfix): the slot currently being
     // dragged, and the slot to re-focus after a keyboard/arrow move so
@@ -148,17 +170,6 @@ export default function WordTilesExercise({
         btn?.focus();
         setFocusSlot(null);
     }, [focusSlot, placed]);
-
-    if (tiles.length === 0) {
-        return (
-            <div data-testid="word-tiles-empty">
-                {t(
-                    "lesson.exercise.word_tiles.empty",
-                    "This word-tiles exercise has no tiles.",
-                )}
-            </div>
-        );
-    }
 
     const placedSet = new Set(placed);
     const scrambledIndices = displayOrder.filter((i) => !placedSet.has(i));
@@ -216,7 +227,12 @@ export default function WordTilesExercise({
             placed,
             isCorrect,
         );
-        const scored = {correct, total: 1, attempts: [attempt]};
+        const scored: ExerciseScored = {
+            correct,
+            total: 1,
+            attempts: [attempt],
+            raw_answer: {kind: "word_tiles", placed: [...placed]},
+        };
         setResult({correct, total: 1});
         setSubmitted(true);
         onComplete(scored);
@@ -227,6 +243,25 @@ export default function WordTilesExercise({
         setSubmitted(false);
         setResult(null);
     };
+
+    useImperativeHandle(ref, () => ({submit: handleSubmit}));
+
+    useEffect(() => {
+        if (!controlled || reviewedWordTiles || submitted) return;
+        onInteraction?.(allPlaced);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [controlled, allPlaced, submitted, reviewedWordTiles]);
+
+    if (tiles.length === 0) {
+        return (
+            <div data-testid="word-tiles-empty">
+                {t(
+                    "lesson.exercise.word_tiles.empty",
+                    "This word-tiles exercise has no tiles.",
+                )}
+            </div>
+        );
+    }
 
     const isCorrect = result !== null && result.correct > 0;
 
@@ -446,7 +481,7 @@ export default function WordTilesExercise({
             )}
 
             <div className="word-tiles-actions">
-                {!submitted ? (
+                {!submitted && !controlled && (
                     <button
                         type="button"
                         className="btn btn-primary"
@@ -459,7 +494,8 @@ export default function WordTilesExercise({
                             "Check answer",
                         )}
                     </button>
-                ) : (
+                )}
+                {submitted && (
                     <>
                         <p
                             className={`word-tiles-result answer-feedback${
@@ -501,21 +537,25 @@ export default function WordTilesExercise({
                             </div>
                         )}
                         <AnswerCelebration isCorrect={isCorrect} />
-                        <button
-                            type="button"
-                            className="btn"
-                            onClick={handleReset}
-                            data-testid="word-tiles-retry"
-                        >
-                            <RotateCcw size={14} aria-hidden="true" />
-                            {t(
-                                "lesson.exercise.word_tiles.retry",
-                                "Try again",
-                            )}
-                        </button>
+                        {!controlled && (
+                            <button
+                                type="button"
+                                className="btn"
+                                onClick={handleReset}
+                                data-testid="word-tiles-retry"
+                            >
+                                <RotateCcw size={14} aria-hidden="true" />
+                                {t(
+                                    "lesson.exercise.word_tiles.retry",
+                                    "Try again",
+                                )}
+                            </button>
+                        )}
                     </>
                 )}
             </div>
         </section>
     );
 }
+
+export default forwardRef(WordTilesExercise);

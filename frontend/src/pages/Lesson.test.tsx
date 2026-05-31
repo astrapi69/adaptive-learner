@@ -351,9 +351,17 @@ describe("LessonPage: ready state rendering", () => {
             refresh: vi.fn(),
         });
         renderAtPath(VALID_PATH);
+        // BUG P1 — the exercise no longer carries its own submit
+        // button in the Lesson (controlled) flow; the shared
+        // "Prüfen" button drives evaluation. It is disabled until
+        // the answer is checkable, then grades on click.
+        expect(screen.queryByTestId("matching-submit")).toBeNull();
+        const checkBtn = screen.getByTestId("lesson-check");
+        expect(checkBtn).toBeDisabled();
         fireEvent.click(screen.getByTestId("matching-left-0"));
         fireEvent.click(screen.getByTestId("matching-right-0"));
-        fireEvent.click(screen.getByTestId("matching-submit"));
+        await waitFor(() => expect(checkBtn).not.toBeDisabled());
+        fireEvent.click(checkBtn);
         await waitFor(() => {
             // Phase 52C / v1.35.0 — recordStepResult now carries
             // an optional user_answer; matching exercises don't
@@ -365,6 +373,10 @@ describe("LessonPage: ready state rendering", () => {
                 user_answer: null,
             });
         });
+        // After grading, the button advances (Problem 1 phase 2).
+        await waitFor(() =>
+            expect(screen.getByTestId("lesson-next")).toBeInTheDocument(),
+        );
     });
 
     it("renders the summary view at index past last step", () => {
@@ -590,12 +602,17 @@ describe("LessonPage: ready state rendering", () => {
         expect(screen.getByTestId("lesson-prev")).toBeDisabled();
     });
 
-    it("Next button reads 'Finish' on the last step", () => {
+    it("Next button reads 'Finish' on the last step", async () => {
         _ready(1);
         renderAtPath(VALID_PATH);
-        expect(screen.getByTestId("lesson-next")).toHaveTextContent(
-            /Finish/i,
-        );
+        // The last step is an exercise, so the shared button
+        // starts in the "Check" phase; once graded it advances
+        // and reads "Finish".
+        const checkBtn = await screen.findByTestId("lesson-check");
+        await waitFor(() => expect(checkBtn).not.toBeDisabled());
+        fireEvent.click(checkBtn);
+        const nextBtn = await screen.findByTestId("lesson-next");
+        expect(nextBtn).toHaveTextContent(/Finish/i);
     });
 
     it("calls goNext when Next is clicked", () => {
