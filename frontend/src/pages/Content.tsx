@@ -55,6 +55,7 @@ import { readLearnerState } from "../lib/learnerState";
 import {
   buildContentSetZip,
   communityIssueUrl,
+  communityPrUrl,
   contentSetFileName,
   downloadLessonJson,
   triggerDownload,
@@ -71,6 +72,7 @@ import { notify } from "../utils/notify";
 
 /** Community contribution target repo (manual maintainer review). */
 const COMMUNITY_REPO = "astrapi69/adaptive-learner-content";
+const COMMUNITY_BRANCH = "main";
 
 /** "Share with Community" opens a GitHub issue on COMMUNITY_REPO.
  *  Enabled now that the content repo exists; set false to gate the
@@ -421,20 +423,42 @@ export default function ContentPage() {
       shareResult && !shareResult.ok
         ? shareResult.issues.map((issue) => validationMessage(issue))
         : undefined;
-    const url = communityIssueUrl(
-      COMMUNITY_REPO,
-      exportMeta(shareTarget),
-      shareTarget.lesson_count,
-      {
-        sourceLanguage: placement.source,
-        targetLanguage: placement.target,
+    // PR fast lane: single-lesson, no quality findings, JSON fits
+    // into the new-file URL. Opens the GitHub Web new-file editor
+    // pre-filled with the path + JSON; GitHub auto-forks + offers
+    // PR for non-collaborators. No auth required.
+    const canUsePrPath =
+      shareLessons.length === 1 &&
+      (!validationIssues || validationIssues.length === 0);
+    let url: string | null = null;
+    if (canUsePrPath) {
+      url = communityPrUrl({
+        repo: COMMUNITY_REPO,
+        branch: COMMUNITY_BRANCH,
         placement: placement.path,
-        exerciseCount,
-        cardCount,
-        aiSummary,
-        validationIssues,
-      },
-    );
+        lesson: shareLessons[0],
+      });
+    }
+    // Fall back to the Issue path when the PR fast lane is not
+    // applicable (multi-lesson set, acknowledged findings, or the
+    // URL would be too long for the new-file editor). The Issue
+    // carries the validation findings + a ZIP attachment hint.
+    if (!url) {
+      url = communityIssueUrl(
+        COMMUNITY_REPO,
+        exportMeta(shareTarget),
+        shareTarget.lesson_count,
+        {
+          sourceLanguage: placement.source,
+          targetLanguage: placement.target,
+          placement: placement.path,
+          exerciseCount,
+          cardCount,
+          aiSummary,
+          validationIssues,
+        },
+      );
+    }
     window.open(url, "_blank", "noopener,noreferrer");
     closeShareModal();
   };
@@ -1199,12 +1223,17 @@ export default function ContentPage() {
                   onClick={handleShareContinue}
                   data-testid="content-share-continue"
                 >
-                  {shareResult.ok
-                    ? t("content.validation.continue", "Continue to GitHub")
-                    : t(
-                        "content.validation.continue_with_warnings",
-                        "Share anyway",
-                      )}
+                  {shareResult.ok && shareLessons.length === 1
+                    ? t(
+                        "content.validation.open_pr",
+                        "Open PR draft on GitHub",
+                      )
+                    : shareResult.ok
+                      ? t("content.validation.continue", "Continue to GitHub")
+                      : t(
+                          "content.validation.continue_with_warnings",
+                          "Share anyway",
+                        )}
                 </button>
               )}
             </div>

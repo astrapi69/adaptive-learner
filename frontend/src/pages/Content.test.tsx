@@ -510,7 +510,10 @@ describe("Content — My Lessons (Phase 59C)", () => {
     vi.unstubAllGlobals();
   });
 
-  it("Share opens a pre-filled GitHub issue after the set passes validation", async () => {
+  it("Share opens the GitHub Web new-file PR editor for a clean single-lesson set", async () => {
+    // PR fast lane: single-lesson, passed validation, fits the
+    // length cap → the new-file editor opens with filename + JSON
+    // pre-filled, GitHub auto-forks for non-collaborators.
     const valid = { ...USER_ENTRY, title_native: "Español A1" };
     listSetsMock.mockResolvedValue({ sets: [valid], sources: [] });
     listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
@@ -527,19 +530,22 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(screen.getByTestId("content-share-placement")).toHaveTextContent(
       "sets/de/es-beginner",
     );
+    // Button label reflects the PR-fast-lane path.
+    expect(screen.getByTestId("content-share-continue")).toHaveTextContent(
+      /pr|draft/i,
+    );
     fireEvent.click(screen.getByTestId("content-share-continue"));
     expect(openSpy).toHaveBeenCalled();
     const url = openSpy.mock.calls[0][0] as string;
-    expect(url).toContain(
-      "github.com/astrapi69/adaptive-learner-content/issues/new",
+    expect(url).toMatch(
+      /github\.com\/astrapi69\/adaptive-learner-content\/new\/main\?/,
     );
-    expect(new URL(url).searchParams.get("title")).toContain(
-      "My Spanish lesson",
-    );
-    // Phase 61 — the issue body carries the placement + metadata.
-    const body = new URL(url).searchParams.get("body") ?? "";
-    expect(body).toContain("sets/de/es-beginner");
-    expect(body).toContain("schema ✓");
+    const qs = new URL(url).searchParams;
+    expect(qs.get("filename")).toContain("sets/de/es-beginner/lessons/");
+    // The pre-filled JSON contains the lesson content.
+    const value = qs.get("value") ?? "";
+    expect(value).toContain('"title"');
+    expect(value).toContain('"cards"');
     vi.unstubAllGlobals();
   });
 

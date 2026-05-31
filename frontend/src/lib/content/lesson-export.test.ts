@@ -6,6 +6,8 @@ import {
   buildContentSetZip,
   buildManifestYaml,
   communityIssueUrl,
+  communityPrUrl,
+  MAX_PR_URL_LENGTH,
   contentSetFileName,
   lessonFileName,
   lessonJson,
@@ -147,5 +149,50 @@ describe("communityIssueUrl", () => {
     expect(body).toContain("Quality-check findings (acknowledged by author):");
     expect(body).toContain("- Lesson has 0 exercises");
     expect(body).toContain("- Source and target language are identical");
+  });
+});
+
+describe("communityPrUrl", () => {
+  // A minimal lesson — the JSON stays small so it fits comfortably
+  // under MAX_PR_URL_LENGTH.
+  const LESSON = {
+    id: "01",
+    title: "Greetings",
+    estimated_minutes: 10,
+    cards: [{ id: "c1", front: "hello", back: "hola", tags: [] }],
+    steps: [{ id: "s1", type: "theory" as const, body: "Hola = hello." }],
+  };
+
+  it("builds a GitHub Web new-file URL with filename + value", () => {
+    const url = communityPrUrl({
+      repo: "astrapi69/adaptive-learner-content",
+      branch: "main",
+      placement: "sets/en/es-a1",
+      lesson: LESSON,
+    });
+    expect(url).not.toBeNull();
+    expect(url).toMatch(
+      /^https:\/\/github\.com\/astrapi69\/adaptive-learner-content\/new\/main\?/,
+    );
+    const qs = new URL(url!).searchParams;
+    expect(qs.get("filename")).toBe(
+      "sets/en/es-a1/lessons/greetings-lesson.json",
+    );
+    const value = qs.get("value") ?? "";
+    expect(value).toContain('"id": "01"');
+    expect(value).toContain('"title": "Greetings"');
+  });
+
+  it("returns null when the encoded URL would exceed the length cap", () => {
+    // Pump the lesson body so its JSON pushes the URL past
+    // MAX_PR_URL_LENGTH.
+    const big = "x".repeat(MAX_PR_URL_LENGTH * 2);
+    const url = communityPrUrl({
+      repo: "o/r",
+      branch: "main",
+      placement: "sets/en/es-a1",
+      lesson: { ...LESSON, steps: [{ id: "s1", type: "theory", body: big }] },
+    });
+    expect(url).toBeNull();
   });
 });

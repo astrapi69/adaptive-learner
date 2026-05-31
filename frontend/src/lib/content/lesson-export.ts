@@ -174,6 +174,48 @@ export function communityIssueUrl(
   return `https://github.com/${repo}/issues/new?${params.toString()}`;
 }
 
+/** Conservative URL-length cap for the GitHub Web new-file editor.
+ *  GitHub itself accepts more, but mobile browsers and a few
+ *  proxies/servers refuse much beyond this. When the JSON would
+ *  push the URL over this, callers should fall back to the
+ *  Issue + attachment path. */
+export const MAX_PR_URL_LENGTH = 8000;
+
+/** Shape the GitHub Web new-file editor expects. */
+export interface CommunityPrUrlArgs {
+  /** ``owner/repo``. */
+  repo: string;
+  /** Default branch of the content repo (``main`` for the official
+   *  one; configurable so docs/tests can pin a different branch). */
+  branch: string;
+  /** Repo-relative directory like ``sets/de/de-b1`` from
+   *  ``treePlacement(...).path``. The function appends
+   *  ``/lessons/{filename}``. */
+  placement: string;
+  /** The lesson to ship. Its title drives the filename slug; its
+   *  full JSON shape lands in ``?value=``. */
+  lesson: ContentLesson;
+}
+
+/** Build the GitHub Web "new file" URL that opens a commit editor
+ *  with the file path + JSON content pre-filled. The user clicks
+ *  "Commit changes", GitHub auto-forks for non-collaborators and
+ *  opens the PR draft — zero auth required.
+ *
+ *  Returns ``null`` when the URL would exceed ``MAX_PR_URL_LENGTH``,
+ *  signalling the caller to fall back to ``communityIssueUrl``.
+ *  Otherwise returns the ready-to-open URL.
+ */
+export function communityPrUrl(args: CommunityPrUrlArgs): string | null {
+  const { repo, branch, placement, lesson } = args;
+  const filename = `${placement}/lessons/${lessonFileName(lesson.title)}`;
+  const value = lessonJson(lesson);
+  const params = new URLSearchParams({ filename, value });
+  const url = `https://github.com/${repo}/new/${branch}?${params.toString()}`;
+  if (url.length > MAX_PR_URL_LENGTH) return null;
+  return url;
+}
+
 /** Trigger a browser download for a blob. The only DOM-touching part;
  *  kept out of the pure builders so those stay unit-testable. */
 export function triggerDownload(blob: Blob, filename: string): void {
