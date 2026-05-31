@@ -470,10 +470,12 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(screen.getByTestId("import-lesson-modal")).toBeInTheDocument();
   });
 
-  it("Share runs the validator and blocks an invalid set (no GitHub issue)", async () => {
+  it("Share lists rule-check issues but still offers a share-anyway path", async () => {
     // USER_ENTRY has no title_native and a single trivial lesson →
-    // validation fails, so the modal lists issues and never opens
-    // the GitHub issue.
+    // rule-based validation flags issues. Policy (post-CSS-fix
+    // follow-up): the rule check is informational, the user can
+    // share anyway, and the issues land in the GitHub-issue body so
+    // the maintainer sees what the author acknowledged.
     listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
     listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
     getLessonMock.mockResolvedValue({
@@ -494,8 +496,17 @@ describe("Content — My Lessons (Phase 59C)", () => {
     await waitFor(() =>
       expect(screen.getByTestId("content-share-issues")).toBeInTheDocument(),
     );
-    expect(screen.queryByTestId("content-share-continue")).not.toBeInTheDocument();
-    expect(openSpy).not.toHaveBeenCalled();
+    // The failure banner explains that share-anyway is allowed.
+    expect(screen.getByTestId("content-share-failed")).toBeInTheDocument();
+    // Continue button is present, labelled "Share anyway".
+    const continueBtn = screen.getByTestId("content-share-continue");
+    expect(continueBtn).toHaveTextContent(/anyway|trotzdem/i);
+    fireEvent.click(continueBtn);
+    expect(openSpy).toHaveBeenCalled();
+    const url = openSpy.mock.calls[0][0] as string;
+    const body = new URL(url).searchParams.get("body") ?? "";
+    expect(body).toContain("⚠ shared with warnings");
+    expect(body).toContain("Quality-check findings");
     vi.unstubAllGlobals();
   });
 

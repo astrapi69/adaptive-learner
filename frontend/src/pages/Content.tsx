@@ -414,6 +414,13 @@ export default function ContentPage() {
       (n, l) => n + l.steps.filter((s) => s.type === "exercise").length,
       0,
     );
+    // Rule-based check is informational: if it failed and the user
+    // chose to share anyway, surface the findings in the issue body
+    // so the maintainer sees what the author acknowledged.
+    const validationIssues =
+      shareResult && !shareResult.ok
+        ? shareResult.issues.map((issue) => validationMessage(issue))
+        : undefined;
     const url = communityIssueUrl(
       COMMUNITY_REPO,
       exportMeta(shareTarget),
@@ -425,6 +432,7 @@ export default function ContentPage() {
         exerciseCount,
         cardCount,
         aiSummary,
+        validationIssues,
       },
     );
     window.open(url, "_blank", "noopener,noreferrer");
@@ -1020,10 +1028,13 @@ export default function ContentPage() {
               </p>
             ) : (
               <>
-                <p className="content-share-failed">
+                <p
+                  className="content-share-failed"
+                  data-testid="content-share-failed"
+                >
                   {t(
-                    "content.validation.failed",
-                    "Fix these issues before sharing:",
+                    "content.validation.failed_share_anyway",
+                    "Quality check found issues. You can share anyway — reviewers will see the findings noted in the issue.",
                   )}
                 </p>
                 <ul
@@ -1099,9 +1110,12 @@ export default function ContentPage() {
               </div>
             )}
 
-            {/* Phase 60 C5b — opt-in AI review (only after the
-                rule-based gate passes AND a key is available). */}
-            {shareResult?.ok && hasKey && (
+            {/* Phase 60 C5b — opt-in AI review. The rule-based gate
+                is informational (not blocking) so the AI section is
+                available even when the rule-based check failed —
+                the AI often gives more actionable feedback than the
+                generic "needs ≥5 exercises" rule. */}
+            {shareResult && hasKey && (
               <section
                 className="content-ai-validation"
                 data-testid="content-ai-validation"
@@ -1178,14 +1192,19 @@ export default function ContentPage() {
               >
                 {t("content.validation.cancel", "Close")}
               </button>
-              {shareResult?.ok && (
+              {shareResult && (
                 <button
                   type="button"
                   className="btn btn-primary"
                   onClick={handleShareContinue}
                   data-testid="content-share-continue"
                 >
-                  {t("content.validation.continue", "Continue to GitHub")}
+                  {shareResult.ok
+                    ? t("content.validation.continue", "Continue to GitHub")
+                    : t(
+                        "content.validation.continue_with_warnings",
+                        "Share anyway",
+                      )}
                 </button>
               )}
             </div>

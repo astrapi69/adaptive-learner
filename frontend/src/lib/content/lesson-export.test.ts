@@ -116,4 +116,36 @@ describe("communityIssueUrl", () => {
     expect(qs.get("body")).toContain("Spanish travel");
     expect(qs.get("body")).toContain("Maintainer");
   });
+
+  it("stamps validation ✓ when no issues were acknowledged", () => {
+    const url = communityIssueUrl("o/r", META, 1, {
+      sourceLanguage: "en",
+      targetLanguage: "es",
+      placement: "sets/en/es-beginner",
+      exerciseCount: 6,
+      cardCount: 12,
+    });
+    const body = new URL(url).searchParams.get("body") ?? "";
+    expect(body).toContain("schema ✓ · quality ✓");
+    expect(body).not.toContain("shared with warnings");
+  });
+
+  it("surfaces acknowledged quality findings so the maintainer sees them", () => {
+    const url = communityIssueUrl("o/r", META, 1, {
+      sourceLanguage: "en",
+      targetLanguage: "es",
+      placement: "sets/en/es-beginner",
+      exerciseCount: 0,
+      cardCount: 3,
+      validationIssues: [
+        "Lesson has 0 exercises; at least 5 are required.",
+        "Source and target language are identical.",
+      ],
+    });
+    const body = new URL(url).searchParams.get("body") ?? "";
+    expect(body).toContain("⚠ shared with warnings");
+    expect(body).toContain("Quality-check findings (acknowledged by author):");
+    expect(body).toContain("- Lesson has 0 exercises");
+    expect(body).toContain("- Source and target language are identical");
+  });
 });

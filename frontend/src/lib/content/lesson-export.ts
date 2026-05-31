@@ -106,6 +106,11 @@ export interface CommunityIssueDetails {
   /** e.g. "AI-validated: yes, quality_score: 0.85" — omitted when
    *  the user didn't run the AI review. */
   aiSummary?: string;
+  /** Rule-based validation issues the user acknowledged before
+   *  sharing anyway. Rendered in the issue body so the maintainer
+   *  sees what the rule-based check flagged; absent when the
+   *  check passed. */
+  validationIssues?: string[];
 }
 
 /** Build a pre-filled GitHub issue URL for the community contribution
@@ -134,8 +139,16 @@ export function communityIssueUrl(
       `| Cards | ${details.cardCount} |`,
       `| Exercises | ${details.exerciseCount} |`,
       "",
-      `**Validation:** schema ✓ · quality ✓${details.aiSummary ? ` · ${details.aiSummary}` : ""}`,
+      details.validationIssues && details.validationIssues.length > 0
+        ? `**Validation:** ⚠ shared with warnings${details.aiSummary ? ` · ${details.aiSummary}` : ""}`
+        : `**Validation:** schema ✓ · quality ✓${details.aiSummary ? ` · ${details.aiSummary}` : ""}`,
     );
+    if (details.validationIssues && details.validationIssues.length > 0) {
+      lines.push("", "**Quality-check findings (acknowledged by author):**");
+      for (const issue of details.validationIssues) {
+        lines.push(`- ${issue}`);
+      }
+    }
     if (meta.description) lines.push("", `**Description:** ${meta.description}`);
   } else {
     lines.push(
