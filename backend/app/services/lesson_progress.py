@@ -170,6 +170,13 @@ def upsert_progress(
         user_answer = step_result.get("user_answer")
         if user_answer is not None:
             merged["user_answer"] = str(user_answer)
+        # BUG P1 / Problem 2: the raw answer (a type-discriminated
+        # dict) persisted verbatim so a revisited step re-renders
+        # its exact locked visual. Stored only when the client
+        # sent one (every freshly-graded step does).
+        raw_answer = step_result.get("raw_answer")
+        if isinstance(raw_answer, dict):
+            merged["raw_answer"] = raw_answer
         results[step_id] = merged
         row.step_results = json.dumps(results, sort_keys=True)
         row.score_correct, row.score_total = _recompute_score(results)

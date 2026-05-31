@@ -1307,6 +1307,9 @@
       "next": "Weiter",
       "check_disabled_hint": "Beantworte die Aufgabe zuerst"
     },
+    "reviewed": {
+      "completed": "Abgeschlossen"
+    },
     "exercise": {
       "loading": "Übung wird geladen…",
       "coming_soon": "Dieser Übungstyp ({type}) folgt in einer späteren Version. Springe zum nächsten Schritt.",

@@ -131,6 +131,11 @@ export async function upsertLessonProgressDexie(
         if (body.step_result.user_answer != null) {
             storedResult.user_answer = body.step_result.user_answer;
         }
+        // BUG P1 / Problem 2 — persist the raw answer so a
+        // revisited step re-renders its exact locked visual.
+        if (body.step_result.raw_answer != null) {
+            storedResult.raw_answer = body.step_result.raw_answer;
+        }
         row.step_results = {
             ...row.step_results,
             [body.step_result.step_id]: storedResult,

@@ -1207,6 +1207,16 @@ class StepResultIn(BaseModel):
             "round-trip."
         ),
     )
+    raw_answer: dict[str, Any] | None = Field(
+        default=None,
+        description=(
+            "BUG P1 / Problem 2. The raw user answer "
+            "(type-discriminated by a ``kind`` field), persisted "
+            "verbatim in the step_results JSON so a revisited "
+            "(locked) step re-renders its exact post-check visual "
+            "instead of a fresh, re-answerable exercise."
+        ),
+    )
 
 
 class LessonProgressUpsert(BaseModel):

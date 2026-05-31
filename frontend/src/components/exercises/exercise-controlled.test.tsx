@@ -272,3 +272,101 @@ describe("controlled mode: interaction toggles answerable + submit grades", () =
         });
     });
 });
+
+describe("reviewed mode: locked post-check visual (Problem 2)", () => {
+    it("matching reconstructs the result, no submit + no re-answer", () => {
+        const onComplete = vi.fn();
+        render(
+            <MatchingExercise
+                exercise={MATCHING}
+                controlled
+                reviewed={{
+                    kind: "matching",
+                    matches: [
+                        [0, 0],
+                        [1, 1],
+                    ],
+                }}
+                onComplete={onComplete}
+            />,
+        );
+        // Shows the graded result, not a fresh exercise.
+        const result = screen.getByTestId("matching-result");
+        expect(result).toHaveAttribute("data-result", "correct");
+        expect(screen.queryByTestId("matching-submit")).toBeNull();
+        // The right tiles are locked (cannot be re-answered).
+        expect(screen.getByTestId("matching-right-0")).toBeDisabled();
+    });
+
+    it("picture_choice reconstructs the result", () => {
+        render(
+            <PictureChoiceExercise
+                exercise={PICTURE}
+                controlled
+                reviewed={{kind: "picture_choice", selected: 0}}
+                onComplete={vi.fn()}
+            />,
+        );
+        expect(screen.getByTestId("picture-result")).toHaveAttribute(
+            "data-result",
+            "correct",
+        );
+        expect(screen.queryByTestId("picture-submit")).toBeNull();
+        expect(screen.getByTestId("picture-choice-0")).toBeDisabled();
+    });
+
+    it("free_text reconstructs the answer + result, input locked", () => {
+        render(
+            <FreeTextExercise
+                exercise={FREE_TEXT}
+                controlled
+                reviewed={{kind: "free_text", input: "hola"}}
+                onComplete={vi.fn()}
+            />,
+        );
+        expect(screen.getByTestId("free-text-result")).toHaveAttribute(
+            "data-result",
+            "correct",
+        );
+        const input = screen.getByTestId("free-text-input");
+        expect(input).toHaveValue("hola");
+        expect(input).toBeDisabled();
+        expect(screen.queryByTestId("free-text-submit")).toBeNull();
+    });
+
+    it("word_tiles reconstructs the placed order + result", () => {
+        render(
+            <WordTilesExercise
+                exercise={WORD_TILES}
+                controlled
+                reviewed={{kind: "word_tiles", placed: [0, 1]}}
+                onComplete={vi.fn()}
+            />,
+        );
+        expect(screen.getByTestId("word-tiles-result")).toHaveAttribute(
+            "data-result",
+            "correct",
+        );
+        expect(screen.queryByTestId("word-tiles-submit")).toBeNull();
+        expect(screen.getByTestId("word-tile-placed-0")).toBeDisabled();
+    });
+
+    it("cloze reconstructs the blanks + result, inputs locked", () => {
+        render(
+            <ClozeExercise
+                exercise={CLOZE}
+                controlled
+                reviewed={{kind: "cloze", inputs: ["hablo"]}}
+                onComplete={vi.fn()}
+            />,
+        );
+        expect(screen.getByTestId("cloze-result")).toHaveAttribute(
+            "data-result",
+            "correct",
+        );
+        const input = screen.getByTestId("cloze-input-0");
+        expect(input).toHaveValue("hablo");
+        expect(input).toBeDisabled();
+        expect(screen.queryByTestId("cloze-submit")).toBeNull();
+    });
+});

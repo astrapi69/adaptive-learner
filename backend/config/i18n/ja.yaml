@@ -1201,6 +1201,8 @@ lesson:
     check: "確認"
     next: "次へ"
     check_disabled_hint: "先に問題に答えてください"
+  reviewed:
+    completed: "完了"
   exercise:
     loading: "演習を読み込み中…"
     coming_soon: "この演習タイプ ({type}) は将来のバージョンで対応予定です。次のステップへ進んでください。"

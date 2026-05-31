@@ -15,22 +15,23 @@ import { expect, test, type Page } from "@playwright/test";
 
 const SET_ID = "fr-a1-from-de"; // German-source set: in the primary tree
 
+// Plays the REGULAR Lesson page (which runs exercises in the
+// two-phase / controlled mode), answering wrong to seed element
+// errors. There is no per-exercise submit button here: the shared
+// "Check" (lesson-check) button grades, then lesson-next advances.
 async function answerWrongAndAdvance(page: Page, maxSteps: number): Promise<void> {
   for (let i = 0; i < maxSteps; i++) {
     if (await page.getByTestId("lesson-summary").count()) break;
     if (await page.getByTestId("free-text-exercise").count()) {
       await page.getByTestId("free-text-input").fill("zzz");
-      await page.getByTestId("free-text-submit").click();
     } else if (await page.getByTestId("cloze-exercise").count()) {
       const inputs = page.locator('[data-testid^="cloze-input-"]');
       const n = await inputs.count();
       for (let j = 0; j < n; j++) await inputs.nth(j).fill("zzz");
-      await page.getByTestId("cloze-submit").click();
     } else if (await page.getByTestId("word-tiles-exercise").count()) {
       const scrambled = page.locator('[data-testid^="word-tile-scrambled-"]');
       let g = 0;
       while ((await scrambled.count()) > 0 && g++ < 12) await scrambled.first().click();
-      await page.getByTestId("word-tiles-submit").click();
     } else if (await page.getByTestId("matching-exercise").count()) {
       // Pair left-i with right-i (shuffled originals -> wrong pairs).
       const n = await page.getByTestId(/^matching-left-\d+$/).count();
@@ -38,13 +39,20 @@ async function answerWrongAndAdvance(page: Page, maxSteps: number): Promise<void
         await page.getByTestId(`matching-left-${k}`).click();
         await page.getByTestId(`matching-right-${k}`).click();
       }
-      await page.getByTestId("matching-submit").click();
+    }
+    // Two-phase: grade an exercise step via the shared Check button
+    // (enabled once answered) before advancing; theory steps go
+    // straight to Next.
+    const check = page.getByTestId("lesson-check");
+    if (await check.count()) {
+      await expect(check).toBeEnabled({ timeout: 5000 });
+      await check.click();
     }
     const next = page.getByTestId("lesson-next");
     if ((await next.count()) && (await next.isEnabled().catch(() => false))) {
       await next.click();
     }
-    await page.waitForTimeout(120);
+    await page.waitForTimeout(80);
   }
 }
 

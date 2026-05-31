@@ -74,6 +74,8 @@ import {getStorage} from "../storage";
 import type {
     ContentLessonExercise,
     ContentLessonStep,
+    LessonStepResultStored,
+    RawAnswer,
 } from "../storage/types";
 
 interface UrlParams {
@@ -125,18 +127,39 @@ export default function LessonPage() {
     const exerciseRef = useRef<ExerciseHandle>(null);
     const [answerable, setAnswerable] = useState(false);
     const [checked, setChecked] = useState(false);
-    // Reset the two-phase state the instant the step changes.
+    // BUG P1 / Problem 2 — when a step is ENTERED with a result
+    // already stored, it renders locked (reviewed) so the learner
+    // cannot re-answer it. ``reviewedRaw`` carries the persisted
+    // answer for an exact reconstruction; ``enteredReviewed`` with
+    // a null ``reviewedRaw`` is a pre-feature legacy row that gets
+    // the compact fallback panel instead.
+    const [enteredReviewed, setEnteredReviewed] = useState(false);
+    const [reviewedRaw, setReviewedRaw] = useState<RawAnswer | null>(null);
+    // Reset the per-step state the instant the step changes.
     // A render-phase reset (the React "adjust state on prop
     // change" pattern) runs BEFORE the freshly-mounted child's
     // ``onInteraction`` effect, so an exercise that is answerable
     // on mount is not clobbered back to disabled — unlike an
     // effect, whose parent-after-child ordering would lose that
-    // first signal.
-    const prevStepIndexRef = useRef(currentStepIndex);
+    // first signal. ``progress`` updating mid-step (after a check)
+    // does NOT re-run this, so the just-graded step keeps its live
+    // feedback instead of flipping into the locked view.
+    // -1 sentinel so the FIRST render also computes the reviewed
+    // state (a step entered directly on a completed step, e.g. a
+    // resume / deep-link, renders locked — not just steps reached
+    // by in-session navigation).
+    const prevStepIndexRef = useRef(-1);
     if (prevStepIndexRef.current !== currentStepIndex) {
         prevStepIndexRef.current = currentStepIndex;
+        const steps = lesson?.steps;
+        const stored =
+            steps && currentStepIndex < steps.length
+                ? progress?.step_results?.[steps[currentStepIndex].id]
+                : undefined;
         setAnswerable(false);
         setChecked(false);
+        setEnteredReviewed(stored != null);
+        setReviewedRaw(stored?.raw_answer ?? null);
     }
 
     // Phase 46A — fetch the set's lesson list so the summary
@@ -456,11 +479,23 @@ export default function LessonPage() {
                             }
                             onAnchorClick={goToStepById}
                         />
+                    ) : enteredReviewed &&
+                      reviewedRaw === null &&
+                      step!.exercise != null ? (
+                        // Legacy revisit: the step was completed before
+                        // raw answers were persisted, so reconstruct
+                        // nothing — show a compact locked "completed"
+                        // panel so the learner cannot re-answer it.
+                        <ReviewedFallbackPanel
+                            exercise={step!.exercise}
+                            stored={progress?.step_results?.[step!.id]}
+                        />
                     ) : (
                         <ExerciseDispatcher
                             ref={exerciseRef}
                             controlled
                             onInteraction={setAnswerable}
+                            reviewed={reviewedRaw}
                             step={step!}
                             setId={setId}
                             lessonId={filename}
@@ -497,6 +532,10 @@ export default function LessonPage() {
                                     correct: scored.correct,
                                     total: scored.total,
                                     user_answer: stepUserAnswer,
+                                    // BUG P1 / Problem 2 — persist the
+                                    // raw answer so a revisit re-renders
+                                    // the exact locked visual.
+                                    raw_answer: scored.raw_answer ?? null,
                                 });
                                 // Phase 46B — persist per-element
                                 // attempts alongside the per-step
@@ -545,7 +584,7 @@ export default function LessonPage() {
                     {t("lesson.action.prev", "Previous")}
                 </button>
                 {!isSummary &&
-                    (isExerciseStep && !checked ? (
+                    (isExerciseStep && !checked && !enteredReviewed ? (
                         <button
                             type="button"
                             className="btn btn-primary lesson-nav-check"
@@ -647,6 +686,45 @@ function TheoryStep({
     );
 }
 
+
+interface ReviewedFallbackPanelProps {
+    exercise: ContentLessonExercise;
+    stored: LessonStepResultStored | undefined;
+}
+
+/** Compact locked view for a step completed BEFORE raw answers
+ *  were persisted (BUG P1 / Problem 2 legacy path). New
+ *  completions reconstruct the exact exercise visual via the
+ *  ``reviewed`` prop; this fallback only shows the prompt + the
+ *  stored score so the learner cannot re-answer it. */
+function ReviewedFallbackPanel({
+    exercise,
+    stored,
+}: ReviewedFallbackPanelProps) {
+    const {t} = useI18n();
+    const correct = stored?.correct ?? 0;
+    const total = stored?.total ?? 0;
+    const allCorrect = total > 0 && correct === total;
+    return (
+        <section
+            className="lesson-reviewed-fallback"
+            data-testid="lesson-reviewed-fallback"
+        >
+            <p className="lesson-reviewed-prompt">{exercise.prompt}</p>
+            <p
+                className={`lesson-reviewed-status answer-feedback${
+                    allCorrect ? " is-correct" : " is-wrong"
+                }`}
+                data-testid="lesson-reviewed-status"
+                data-result={allCorrect ? "correct" : "wrong"}
+            >
+                <CheckCircle2 size={16} aria-hidden="true" />
+                {t("lesson.reviewed.completed", "Completed")} —{" "}
+                {t("lesson.summary.score", "Score")}: {correct} / {total}
+            </p>
+        </section>
+    );
+}
 
 interface LessonSummaryProps {
     lesson: import("../storage/types").ContentLesson;

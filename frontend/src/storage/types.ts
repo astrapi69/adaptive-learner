@@ -488,6 +488,23 @@ export interface SaveUserSetInput {
 
 // --- LessonProgress (Phase 44 / EXP-002 / P-109) ---------------------------
 
+/**
+ * The raw user answer for an exercise, persisted alongside the
+ * step score so a revisited (locked) step can re-render the
+ * exact post-check visual without redoing the exercise
+ * (BUG P1 / Problem 2). Discriminated by exercise type.
+ *
+ * Lives in the storage layer because it is a persistence shape;
+ * ``components/exercises/exercise-control`` re-exports it for the
+ * renderers.
+ */
+export type RawAnswer =
+  | {kind: "matching"; matches: [number, number][]}
+  | {kind: "picture_choice"; selected: number}
+  | {kind: "free_text"; input: string}
+  | {kind: "word_tiles"; placed: number[]}
+  | {kind: "cloze"; inputs: string[]};
+
 export interface LessonStepResult {
   step_id: string;
   correct: number;
@@ -498,6 +515,10 @@ export interface LessonStepResult {
    *  it; matching + picture-choice leave it undefined. Powers
    *  the lesson-summary token-diff display. */
   user_answer?: string | null;
+  /** BUG P1 / Problem 2 — the raw user answer, persisted so a
+   *  revisited (locked) step re-renders the exact post-check
+   *  visual instead of a fresh re-answerable exercise. */
+  raw_answer?: RawAnswer | null;
 }
 
 export interface LessonProgressUpsertBody {
@@ -522,6 +543,11 @@ export interface LessonStepResultStored {
    *  Old rows without this field surface as ``undefined`` and the
    *  summary falls back to the canonical-answer-only line. */
   user_answer?: string | null;
+  /** BUG P1 / Problem 2 — see ``LessonStepResult.raw_answer``.
+   *  Old rows (completed before this shipped) lack it; the
+   *  viewer falls back to a compact "completed" panel for those
+   *  on revisit instead of an exact reconstruction. */
+  raw_answer?: RawAnswer | null;
 }
 
 export interface LessonProgress {

@@ -371,12 +371,108 @@ describe("LessonPage: ready state rendering", () => {
                 correct: 1,
                 total: 1,
                 user_answer: null,
+                // BUG P1 / Problem 2 — the raw answer is persisted
+                // so a revisit can re-render the locked visual.
+                raw_answer: {kind: "matching", matches: [[0, 0]]},
             });
         });
         // After grading, the button advances (Problem 1 phase 2).
         await waitFor(() =>
             expect(screen.getByTestId("lesson-next")).toBeInTheDocument(),
         );
+    });
+
+    it("revisiting a completed exercise step renders it locked + Weiter (Problem 2)", () => {
+        const lessonWithPairs = {
+            ...LESSON,
+            steps: [
+                LESSON.steps[0],
+                {
+                    ...LESSON.steps[1],
+                    exercise: {
+                        ...LESSON.steps[1].exercise!,
+                        pairs: [
+                            {left: "A", right: "1"},
+                            {left: "B", right: "2"},
+                        ],
+                    },
+                },
+            ],
+        };
+        useLessonMock.mockReturnValue({
+            status: "ready",
+            lesson: lessonWithPairs,
+            progress: {
+                ...PROGRESS,
+                step_results: {
+                    "ex-1": {
+                        correct: 2,
+                        total: 2,
+                        attempts: 1,
+                        completed_at: "2026-05-26T00:00:00Z",
+                        raw_answer: {
+                            kind: "matching",
+                            matches: [
+                                [0, 0],
+                                [1, 1],
+                            ],
+                        },
+                    },
+                },
+            },
+            currentStepIndex: 1,
+            error: null,
+            goNext: vi.fn(),
+            goPrev: vi.fn(),
+            goToStep: vi.fn(),
+            goToStepById: vi.fn(),
+            recordStepResult: vi.fn(),
+            markCompleted: vi.fn(),
+            refresh: vi.fn(),
+        });
+        renderAtPath(VALID_PATH);
+        // The completed step renders its locked result, not a
+        // fresh, re-answerable exercise.
+        expect(screen.getByTestId("matching-result")).toHaveAttribute(
+            "data-result",
+            "correct",
+        );
+        // The button skips the "Check" phase and advances directly.
+        expect(screen.queryByTestId("lesson-check")).toBeNull();
+        expect(screen.getByTestId("lesson-next")).toBeInTheDocument();
+    });
+
+    it("legacy completed step (no raw_answer) shows the fallback panel", () => {
+        useLessonMock.mockReturnValue({
+            status: "ready",
+            lesson: LESSON,
+            progress: {
+                ...PROGRESS,
+                step_results: {
+                    "ex-1": {
+                        correct: 1,
+                        total: 1,
+                        attempts: 1,
+                        completed_at: "2026-05-26T00:00:00Z",
+                    },
+                },
+            },
+            currentStepIndex: 1,
+            error: null,
+            goNext: vi.fn(),
+            goPrev: vi.fn(),
+            goToStep: vi.fn(),
+            goToStepById: vi.fn(),
+            recordStepResult: vi.fn(),
+            markCompleted: vi.fn(),
+            refresh: vi.fn(),
+        });
+        renderAtPath(VALID_PATH);
+        expect(
+            screen.getByTestId("lesson-reviewed-fallback"),
+        ).toBeInTheDocument();
+        expect(screen.queryByTestId("lesson-check")).toBeNull();
+        expect(screen.getByTestId("lesson-next")).toBeInTheDocument();
     });
 
     it("renders the summary view at index past last step", () => {

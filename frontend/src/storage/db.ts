@@ -444,6 +444,11 @@ export interface LessonProgressRow {
              *  in storage/types.ts. Free-text + word-tiles populate
              *  this; matching + picture-choice leave it absent. */
             user_answer?: string | null;
+            /** BUG P1 / Problem 2 — the persisted raw answer
+             *  (type-discriminated), used to re-render a revisited
+             *  step's exact locked visual. See ``RawAnswer`` in
+             *  storage/types.ts. Absent on pre-feature rows. */
+            raw_answer?: import("./types").RawAnswer | null;
         }
     >;
     score_correct: number;

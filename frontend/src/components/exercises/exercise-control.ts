@@ -21,7 +21,12 @@
  * re-answer.
  */
 
-import type {ElementAttempt} from "../../storage/types";
+import type {ElementAttempt, RawAnswer} from "../../storage/types";
+
+// ``RawAnswer`` is defined in the storage layer (it is a
+// persistence shape); re-exported here so the renderers can
+// import it alongside the rest of the control contract.
+export type {RawAnswer};
 
 /** Imperative handle the controlled parent uses to drive the
  *  shared "Check" button. */
@@ -31,17 +36,6 @@ export interface ExerciseHandle {
      *  submitted / reviewed. */
     submit: () => void;
 }
-
-/** The raw user answer, persisted alongside the step score so
- *  a revisited (locked) step can re-render the exact
- *  post-check visual without redoing the exercise.
- *  Discriminated by exercise type. */
-export type RawAnswer =
-    | {kind: "matching"; matches: [number, number][]}
-    | {kind: "picture_choice"; selected: number}
-    | {kind: "free_text"; input: string}
-    | {kind: "word_tiles"; placed: number[]}
-    | {kind: "cloze"; inputs: string[]};
 
 /** The scored outcome an exercise reports on submit. Extends
  *  the original ``{correct, total, attempts}`` shape with the

@@ -1307,6 +1307,9 @@
       "next": "İleri",
       "check_disabled_hint": "Önce alıştırmayı yanıtla"
     },
+    "reviewed": {
+      "completed": "Tamamlandı"
+    },
     "exercise": {
       "loading": "Alıştırma yükleniyor…",
       "coming_soon": "Bu alıştırma türü ({type}) sonraki sürümlerde gelecek. Bir sonraki adıma geç.",

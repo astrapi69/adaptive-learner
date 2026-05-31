@@ -1203,6 +1203,8 @@ lesson:
     check: "Έλεγχος"
     next: "Επόμενο"
     check_disabled_hint: "Απάντησε πρώτα στην άσκηση"
+  reviewed:
+    completed: "Ολοκληρώθηκε"
   exercise:
     loading: "Φόρτωση άσκησης…"
     coming_soon: "Αυτός ο τύπος άσκησης ({type}) έρχεται σε μελλοντική έκδοση. Προχώρα στο επόμενο βήμα."

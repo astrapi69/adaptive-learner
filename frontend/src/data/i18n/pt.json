@@ -1307,6 +1307,9 @@
       "next": "Próximo",
       "check_disabled_hint": "Responda primeiro ao exercício"
     },
+    "reviewed": {
+      "completed": "Concluído"
+    },
     "exercise": {
       "loading": "A carregar o exercício…",
       "coming_soon": "Este tipo de exercício ({type}) chegará numa versão futura. Passa para o próximo passo.",

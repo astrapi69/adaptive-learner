@@ -108,6 +108,53 @@ def test_upsert_creates_new_row(client: TestClient) -> None:
     assert body["completed_at"] is None
 
 
+def test_upsert_round_trips_raw_answer(client: TestClient) -> None:
+    """BUG P1 / Problem 2 — the raw answer persists verbatim so a
+    revisited step can re-render its exact locked visual."""
+    user_id = _make_user(client)
+    raw = {"kind": "cloze", "inputs": ["hablo"]}
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "step_result": {
+                "step_id": "ex-cloze",
+                "correct": 1,
+                "total": 1,
+                "raw_answer": raw,
+            },
+        },
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["step_results"]["ex-cloze"]["raw_answer"] == raw
+    # Re-read confirms it survives the JSON encode/decode round-trip.
+    g = client.get(
+        f"/api/users/{user_id}/lesson-progress/"
+        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}"
+    )
+    assert g.status_code == 200, g.text
+    assert g.json()["step_results"]["ex-cloze"]["raw_answer"] == raw
+
+
+def test_upsert_omits_raw_answer_when_absent(client: TestClient) -> None:
+    """A step recorded without a raw answer (legacy shape) stores
+    no ``raw_answer`` key."""
+    user_id = _make_user(client)
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "step_result": {"step_id": "s1", "correct": 1, "total": 1},
+        },
+    )
+    assert r.status_code == 200, r.text
+    assert "raw_answer" not in r.json()["step_results"]["s1"]
+
+
 def test_upsert_merges_multiple_steps(client: TestClient) -> None:
     user_id = _make_user(client)
     # Step 1: matching, 4/4

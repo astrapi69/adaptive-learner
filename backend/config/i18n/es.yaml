@@ -1203,6 +1203,8 @@ lesson:
     check: "Comprobar"
     next: "Siguiente"
     check_disabled_hint: "Responde primero al ejercicio"
+  reviewed:
+    completed: "Completado"
   exercise:
     loading: "Cargando ejercicio…"
     coming_soon: "Este tipo de ejercicio ({type}) llegará en una versión futura. Salta al siguiente paso."

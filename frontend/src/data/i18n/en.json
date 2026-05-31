@@ -1307,6 +1307,9 @@
       "next": "Next",
       "check_disabled_hint": "Answer the exercise first"
     },
+    "reviewed": {
+      "completed": "Completed"
+    },
     "exercise": {
       "loading": "Exercise loading…",
       "coming_soon": "This exercise type ({type}) ships in a future version. Skip to the next step.",

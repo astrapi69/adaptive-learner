@@ -14,14 +14,17 @@ import { expect, test, type Page } from "@playwright/test";
 
 const SET_ID = "fr-a1-from-en";
 
-/** Advance the lesson one step: answer whatever exercise is on
- *  screen (any answer — we just need to submit + advance), then
- *  click Next. Returns the exercise type seen, or "theory"/"none". */
-async function step(page: Page): Promise<string> {
+/** Answer whatever exercise is on screen (any answer — coverage,
+ *  not correctness). The Lesson page runs the exercises in
+ *  CONTROLLED mode, so there is no per-exercise submit button:
+ *  the shared "Prüfen" (lesson-check) button grades, then
+ *  lesson-next advances. This helper only answers; the loop
+ *  drives the two-phase button. Returns the exercise type seen,
+ *  or "theory"/"none". */
+async function answer(page: Page): Promise<string> {
   // free-text
   if (await page.getByTestId("free-text-exercise").count()) {
     await page.getByTestId("free-text-input").fill("Bonjour");
-    await page.getByTestId("free-text-submit").click();
     return "free_text";
   }
   // cloze (one or more blanks)
@@ -29,7 +32,6 @@ async function step(page: Page): Promise<string> {
     const inputs = page.locator('[data-testid^="cloze-input-"]');
     const n = await inputs.count();
     for (let i = 0; i < n; i++) await inputs.nth(i).fill("Bonjour");
-    await page.getByTestId("cloze-submit").click();
     return "cloze";
   }
   // word-tiles: click each scrambled tile until none remain
@@ -39,19 +41,17 @@ async function step(page: Page): Promise<string> {
     while ((await scrambled.count()) > 0 && guard++ < 12) {
       await scrambled.first().click();
     }
-    await page.getByTestId("word-tiles-submit").click();
     return "word_tiles";
   }
   // picture-choice: pick the first choice
   if (await page.getByTestId("picture-exercise").count()) {
     await page.locator('[data-testid^="picture-choice-"]').first().click();
-    await page.getByTestId("picture-submit").click();
     return "picture_choice";
   }
   // matching: pair each left tile with the right whose original
   // index matches its position. Both testids run 0..n-1 (the
   // `-header` testids are excluded by the numeric regex). Pairing
-  // every left enables submit (correctness is checked after).
+  // every left enables the shared Check button.
   if (await page.getByTestId("matching-exercise").count()) {
     const lefts = page.getByTestId(/^matching-left-\d+$/);
     const n = await lefts.count();
@@ -59,7 +59,6 @@ async function step(page: Page): Promise<string> {
       await page.getByTestId(`matching-left-${i}`).click();
       await page.getByTestId(`matching-right-${i}`).click();
     }
-    await page.getByTestId("matching-submit").click();
     return "matching";
   }
   return "theory";
@@ -90,18 +89,22 @@ test.describe("Lesson playthrough — all 5 exercise types", () => {
 
     // Walk the lesson. Cap iterations; break on the summary.
     const seen = new Set<string>();
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 40; i++) {
       if (await page.getByTestId("lesson-summary").count()) break;
-      const kind = await step(page);
+      const kind = await answer(page);
       if (kind !== "theory" && kind !== "none") seen.add(kind);
-      // Advance if a Next button is present + enabled.
-      const next = page.getByTestId("lesson-next");
-      if (await next.count()) {
-        if (await next.isEnabled().catch(() => false)) {
-          await next.click();
-        }
+      // Two-phase button: an exercise step must be graded via the
+      // shared "Check" button (enabled once answered) before it
+      // advances; a theory step shows "Next" directly.
+      const check = page.getByTestId("lesson-check");
+      if (await check.count()) {
+        await expect(check).toBeEnabled({ timeout: 5000 });
+        await check.click();
       }
-      await page.waitForTimeout(120);
+      const next = page.getByTestId("lesson-next");
+      await expect(next).toBeVisible({ timeout: 5000 });
+      await next.click();
+      await page.waitForTimeout(80);
     }
 
     // Reached the scored summary.

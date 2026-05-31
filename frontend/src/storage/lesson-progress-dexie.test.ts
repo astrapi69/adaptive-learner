@@ -122,6 +122,46 @@ describe("Dexie lessonProgress: upsert", () => {
         expect(row.step_results["step-1"].attempts).toBe(2);
     });
 
+    it("round-trips the raw_answer (BUG P1 / Problem 2)", async () => {
+        await upsertLessonProgressDexie(USER, {
+            source: SOURCE,
+            set_id: SET_ID,
+            lesson_filename: LESSON,
+            step_result: {
+                step_id: "ex-cloze",
+                correct: 1,
+                total: 1,
+                raw_answer: {kind: "cloze", inputs: ["hablo"]},
+            },
+        });
+        const row = await getLessonProgressDexie(
+            USER,
+            SOURCE,
+            SET_ID,
+            LESSON,
+        );
+        expect(row!.step_results["ex-cloze"].raw_answer).toEqual({
+            kind: "cloze",
+            inputs: ["hablo"],
+        });
+    });
+
+    it("omits raw_answer when none is provided (legacy shape)", async () => {
+        await upsertLessonProgressDexie(USER, {
+            source: SOURCE,
+            set_id: SET_ID,
+            lesson_filename: LESSON,
+            step_result: {step_id: "step-1", correct: 1, total: 1},
+        });
+        const row = await getLessonProgressDexie(
+            USER,
+            SOURCE,
+            SET_ID,
+            LESSON,
+        );
+        expect(row!.step_results["step-1"].raw_answer).toBeUndefined();
+    });
+
     it("flips status to completed on mark_completed", async () => {
         await upsertLessonProgressDexie(USER, {
             source: SOURCE,
