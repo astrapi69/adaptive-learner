@@ -161,12 +161,16 @@ export default function SaveOfflineLessonModal({
     .replace("{minutes}", String(summary.estimatedMinutes));
 
   // EXP-018 follow-up bugfix: the Save-as-Lesson flow must NEVER
-  // produce an unshareable lesson. Gate the Save button on the same
+  // produce an unshareable lesson — gate the Save button on the same
   // minimums the sharing validator enforces (>= 5 exercises across
-  // >= 2 types) AND a distinct language pair.
+  // >= 2 types). A same-language pair is NOT a hard block: a grammar
+  // or native-language study lesson (German grammar for German
+  // speakers) is a legitimate offline lesson. It only affects the
+  // language-pair tree placement when shared, so we surface it as an
+  // informational hint, not a gate.
   const shareable = isShareableLesson(summary);
   const sameLanguage = sourceLang === targetLang;
-  const canSave = shareable && !sameLanguage && title.trim().length > 0;
+  const canSave = shareable && title.trim().length > 0;
 
   return (
     <div className="modal-overlay" data-testid="save-offline-lesson-modal">
@@ -273,12 +277,12 @@ export default function SaveOfflineLessonModal({
         )}
         {sameLanguage && (
           <p
-            className="form-hint form-hint-warning"
+            className="form-hint"
             data-testid="save-lesson-same-language"
           >
             {t(
-              "content.save_lesson.same_language",
-              "The language learned and your language must be different.",
+              "content.save_lesson.same_language_hint",
+              "Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
             )}
           </p>
         )}

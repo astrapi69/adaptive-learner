@@ -161,4 +161,34 @@ describe("SaveOfflineLessonModal", () => {
     ).toBeInTheDocument();
     expect(screen.getByTestId("save-lesson-save")).toBeDisabled();
   });
+
+  it("allows saving a same-language lesson (grammar / native study)", async () => {
+    // German grammar for German speakers is a legitimate offline
+    // lesson. Setting source == target shows an informational hint
+    // but must NOT disable Save (bugfix: same-language was a hard
+    // block, defeating native-language grammar lessons).
+    saveUserSet.mockResolvedValue({});
+    renderModal();
+    fireEvent.change(screen.getByTestId("save-lesson-target-lang"), {
+      target: { value: "de" },
+    });
+    fireEvent.change(screen.getByTestId("save-lesson-source-lang"), {
+      target: { value: "de" },
+    });
+    // The hint is shown...
+    expect(
+      screen.getByTestId("save-lesson-same-language"),
+    ).toBeInTheDocument();
+    // ...but the Save button is NOT disabled (the lesson still has
+    // enough exercises from the default ANALYSIS fixture).
+    const saveBtn = screen.getByTestId("save-lesson-save");
+    expect(saveBtn).not.toBeDisabled();
+    await act(async () => {
+      fireEvent.click(saveBtn);
+    });
+    await waitFor(() => expect(saveUserSet).toHaveBeenCalled());
+    const arg = saveUserSet.mock.calls[0][0] as Record<string, unknown>;
+    expect(arg.source_language).toBe("de");
+    expect(arg.target_language).toBe("de");
+  });
 });
