@@ -1,0 +1,25 @@
+[
+  {
+    "id": "fr-a1-01",
+    "title": "Les articles",
+    "estimated_minutes": 15,
+    "step_ids": [
+      "s1",
+      "s2",
+      "s3",
+      "s4",
+      "s5",
+      "s6",
+      "s7",
+      "s8"
+    ],
+    "card_ids": [
+      "c1",
+      "c2",
+      "c3",
+      "c4",
+      "c5",
+      "c6"
+    ]
+  }
+]

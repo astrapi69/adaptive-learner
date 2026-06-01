@@ -1,0 +1,34 @@
+[
+  {
+    "id": "fr-a1-01-part-1",
+    "title": "Les articles — Part 1 of 2",
+    "estimated_minutes": 8,
+    "step_ids": [
+      "s1",
+      "s2",
+      "s3",
+      "s4"
+    ],
+    "card_ids": [
+      "c1",
+      "c2"
+    ]
+  },
+  {
+    "id": "fr-a1-01-part-2",
+    "title": "Les articles — Part 2 of 2",
+    "estimated_minutes": 8,
+    "step_ids": [
+      "s5",
+      "s6",
+      "s7",
+      "s8"
+    ],
+    "card_ids": [
+      "c3",
+      "c4",
+      "c5",
+      "c6"
+    ]
+  }
+]

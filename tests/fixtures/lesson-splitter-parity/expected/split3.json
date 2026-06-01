@@ -1,0 +1,43 @@
+[
+  {
+    "id": "fr-a1-01-part-1",
+    "title": "Les articles — Part 1 of 3",
+    "estimated_minutes": 6,
+    "step_ids": [
+      "s1",
+      "s2",
+      "s3"
+    ],
+    "card_ids": [
+      "c1",
+      "c2"
+    ]
+  },
+  {
+    "id": "fr-a1-01-part-2",
+    "title": "Les articles — Part 2 of 3",
+    "estimated_minutes": 6,
+    "step_ids": [
+      "s4",
+      "s5",
+      "s6"
+    ],
+    "card_ids": [
+      "c3",
+      "c4"
+    ]
+  },
+  {
+    "id": "fr-a1-01-part-3",
+    "title": "Les articles — Part 3 of 3",
+    "estimated_minutes": 4,
+    "step_ids": [
+      "s7",
+      "s8"
+    ],
+    "card_ids": [
+      "c5",
+      "c6"
+    ]
+  }
+]

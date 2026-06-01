@@ -1,0 +1,116 @@
+{
+  "id": "fr-a1-01",
+  "title": "Les articles",
+  "description": "French A1 articles",
+  "target_language": "fr",
+  "source_language": "en",
+  "estimated_minutes": 15,
+  "cards": [
+    {"id": "c1", "front": "un", "back": "a (m)"},
+    {"id": "c2", "front": "une", "back": "a (f)"},
+    {"id": "c3", "front": "le", "back": "the (m)"},
+    {"id": "c4", "front": "la", "back": "the (f)"},
+    {"id": "c5", "front": "les", "back": "the (pl)"},
+    {"id": "c6", "front": "des", "back": "some (pl)"}
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "type": "theory",
+      "title": "Introduction",
+      "body": "French has two genders.",
+      "exercise": null
+    },
+    {
+      "id": "s2",
+      "type": "exercise",
+      "title": null,
+      "body": null,
+      "exercise": {
+        "id": "e2",
+        "type": "matching",
+        "prompt": "Match the articles",
+        "card_ids": ["c1", "c2"],
+        "pairs": [{"left": "un", "right": "a (m)"}, {"left": "une", "right": "a (f)"}],
+        "distractors": []
+      }
+    },
+    {
+      "id": "s3",
+      "type": "exercise",
+      "title": null,
+      "body": null,
+      "exercise": {
+        "id": "e3",
+        "type": "free_text",
+        "prompt": "Translate: a (masculine)",
+        "card_ids": ["c1"],
+        "accept": ["un"],
+        "distractors": []
+      }
+    },
+    {
+      "id": "s4",
+      "type": "theory",
+      "title": "Definite articles",
+      "body": "Le and la become l' before a vowel.",
+      "exercise": null
+    },
+    {
+      "id": "s5",
+      "type": "exercise",
+      "title": null,
+      "body": null,
+      "exercise": {
+        "id": "e5",
+        "type": "matching",
+        "prompt": "Match definite articles",
+        "card_ids": ["c3", "c4"],
+        "pairs": [{"left": "le", "right": "the (m)"}, {"left": "la", "right": "the (f)"}],
+        "distractors": []
+      }
+    },
+    {
+      "id": "s6",
+      "type": "exercise",
+      "title": null,
+      "body": null,
+      "exercise": {
+        "id": "e6",
+        "type": "free_text",
+        "prompt": "Translate: the (masculine)",
+        "card_ids": ["c3"],
+        "accept": ["le"],
+        "distractors": []
+      }
+    },
+    {
+      "id": "s7",
+      "type": "exercise",
+      "title": null,
+      "body": null,
+      "exercise": {
+        "id": "e7",
+        "type": "word_tiles",
+        "prompt": "Build: the plural",
+        "card_ids": ["c5"],
+        "tiles": ["les", "la", "le"],
+        "distractors": []
+      }
+    },
+    {
+      "id": "s8",
+      "type": "exercise",
+      "title": null,
+      "body": null,
+      "exercise": {
+        "id": "e8",
+        "type": "free_text",
+        "prompt": "Translate: some",
+        "card_ids": ["c6"],
+        "accept": ["des"],
+        "distractors": []
+      }
+    }
+  ]
+}
