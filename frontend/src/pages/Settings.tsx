@@ -659,7 +659,7 @@ export default function Settings() {
                   {source === "secrets_yaml"
                     ? t(
                         "settings.api_key_external_hint_file",
-                        "This key is configured in ~/.config/adaptive-learner/secrets.yaml. Edit the file to change it.",
+                        "This key is configured in ~/.config/adaptive_learner/secrets.yaml. Edit the file to change it.",
                       )
                     : t(
                         "settings.api_key_external_hint_env",

@@ -423,7 +423,7 @@
     "api_key_source_env": "Cle depuis: variable d'environnement",
     "api_key_source_settings": "Cle depuis: Parametres",
     "api_key_source_none": "Aucune cle configuree",
-    "api_key_external_hint_file": "Cette cle est configuree dans ~/.config/adaptive-learner/secrets.yaml. Modifie le fichier pour la changer.",
+    "api_key_external_hint_file": "Cette cle est configuree dans ~/.config/adaptive_learner/secrets.yaml. Modifie le fichier pour la changer.",
     "api_key_external_hint_env": "Cette cle est configuree via la variable d'environnement ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.",
     "section_model_overrides": "Surcharges de modele",
     "model_overrides_hint": "Laisse vide pour utiliser le modele par defaut de chaque fournisseur. Une valeur non vide remplace la valeur par defaut lors du chat.",

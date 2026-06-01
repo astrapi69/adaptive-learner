@@ -423,7 +423,7 @@
     "api_key_source_env": "キーの出所: 環境変数",
     "api_key_source_settings": "キーの出所: 設定",
     "api_key_source_none": "キーが設定されていません",
-    "api_key_external_hint_file": "このキーは ~/.config/adaptive-learner/secrets.yaml で設定されています。変更するにはファイルを編集してください。",
+    "api_key_external_hint_file": "このキーは ~/.config/adaptive_learner/secrets.yaml で設定されています。変更するにはファイルを編集してください。",
     "api_key_external_hint_env": "このキーは ADAPTIVE_LEARNER_{PROVIDER}_API_KEY 環境変数で設定されています。",
     "section_model_overrides": "モデルの上書き",
     "model_overrides_hint": "各プロバイダーのデフォルトモデルを使う場合は空のままにしてください。 空でない値はチャット時にデフォルトを置き換えます。",

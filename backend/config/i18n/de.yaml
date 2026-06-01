@@ -399,7 +399,7 @@ settings:
   api_key_source_env: "Schlüssel aus: Umgebungsvariable"
   api_key_source_settings: "Schlüssel aus: Einstellungen"
   api_key_source_none: Kein Schlüssel konfiguriert
-  api_key_external_hint_file: Dieser Schlüssel wird in ~/.config/adaptive-learner/secrets.yaml konfiguriert. Bearbeite die Datei, um ihn zu ändern.
+  api_key_external_hint_file: Dieser Schlüssel wird in ~/.config/adaptive_learner/secrets.yaml konfiguriert. Bearbeite die Datei, um ihn zu ändern.
   api_key_external_hint_env: Dieser Schlüssel wird über die Umgebungsvariable ADAPTIVE_LEARNER_{PROVIDER}_API_KEY konfiguriert.
   section_model_overrides: Modellüberschreibungen
   model_overrides_hint: Leer lassen, um das Standardmodell pro Anbieter zu nutzen. Ein nicht-leerer Wert ersetzt das Standardmodell beim Chat.
