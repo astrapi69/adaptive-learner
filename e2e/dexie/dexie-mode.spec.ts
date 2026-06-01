@@ -91,6 +91,11 @@ const ROUTES: RouteCase[] = [
         expectedTestIds: ["page-import"],
     },
     {
+        name: "Create Lesson (Phase 65 / EXP-021)",
+        path: "/create-lesson",
+        expectedTestIds: ["create-lesson-page"],
+    },
+    {
         name: "Anki (redirects to Onboarding without userId)",
         path: "/anki",
         expectedTestIds: ["anki-page", "onboarding"],

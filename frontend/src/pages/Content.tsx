@@ -820,6 +820,14 @@ export default function ContentPage() {
           <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
           <button
             type="button"
+            className="btn btn-primary"
+            onClick={() => navigate("/create-lesson")}
+            data-testid="content-create-lesson"
+          >
+            + {t("content.create_lesson.button", "Create New Lesson")}
+          </button>
+          <button
+            type="button"
             className="btn btn-secondary"
             onClick={() => setShowImport(true)}
             data-testid="content-import-lesson"

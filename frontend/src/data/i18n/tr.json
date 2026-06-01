@@ -1520,6 +1520,9 @@
     "save_adaptive": {
       "button": "Bu dersi kaydet?"
     },
+    "create_lesson": {
+      "button": "Yeni ders oluştur"
+    },
     "import_lesson": {
       "button": "Ders içe aktar",
       "modal_title": "Bir ders içe aktar",
@@ -1822,6 +1825,126 @@
       "weekend-learner": {
         "title": "Hafta sonu öğrencisi",
         "description": "Hafta sonu öğren."
+      }
+    }
+  },
+  "create_lesson": {
+    "title": "Ders oluştur",
+    "step_of": "Adım {current} / {total}",
+    "step_pending": "Bu adım bir sonraki güncellemede geliyor.",
+    "nav_label": "Sihirbaz gezinmesi",
+    "cancel": "İptal",
+    "back": "Geri",
+    "next": "İleri",
+    "cancel_confirm_title": "Bu ders iptal edilsin mi?",
+    "cancel_confirm_body": "Kaydedilmemiş dersiniz kaybolacak.",
+    "cancel_keep": "Düzenlemeye devam et",
+    "cancel_discard": "İptal et",
+    "meta": {
+      "heading": "Ders ayrıntıları",
+      "title_label": "Başlık",
+      "title_placeholder": "Dersim",
+      "title_required": "Başlık gerekli.",
+      "title_native_label": "Hedef dildeki başlık",
+      "target_lang_label": "Öğrenilen dil",
+      "source_lang_label": "Sizin diliniz",
+      "level_label": "Seviye",
+      "same_language": "Öğrenilen dil, sizin dilinizden farklı olmalıdır.",
+      "description_label": "Konu / açıklama",
+      "author_label": "Yazar adı"
+    },
+    "cards": {
+      "heading": "Kelime kartları ekle",
+      "front_label": "Ön yüz (öğrenilen)",
+      "back_label": "Arka yüz (sizin diliniz)",
+      "notes_label": "Notlar (isteğe bağlı)",
+      "image_label": "Görsel referansı (isteğe bağlı)",
+      "add": "Kart ekle",
+      "import_csv": "CSV içe aktar",
+      "csv_hint": "Satırları ön, arka, notlar olarak yapıştırın (virgül veya sekme ile ayrılmış). Örnek: Bonjour, Guten Tag, Resmi selamlama",
+      "csv_preview": "{total} satırın {valid} tanesi hazır",
+      "csv_add": "{n} kart ekle",
+      "count": "{n} kart",
+      "min_hint": "Alıştırmalar için {n} kart gerekli",
+      "min_to_advance": "Devam etmek için en az {n} kart ekleyin.",
+      "clear_all": "Tümünü temizle",
+      "clear_confirm_title": "Tüm kartlar kaldırılsın mı?",
+      "edit": "Kartı düzenle",
+      "delete": "Kartı sil",
+      "drag": "Yeniden sıralamak için sürükleyin",
+      "save_edit": "Kaydet"
+    },
+    "draft": {
+      "title": "Taslak bulundu",
+      "body": "Tamamlanmamış bir dersiniz var. Kaldığınız yerden devam edin veya yeniden başlayın?",
+      "start_fresh": "Yeniden başla",
+      "continue": "Devam et"
+    },
+    "exercises": {
+      "heading": "Alıştırma oluştur",
+      "count_label": "Alıştırma sayısı",
+      "types_label": "Alıştırma türleri",
+      "direction_label": "Yön",
+      "generate": "Alıştırmaları otomatik oluştur",
+      "regenerate": "Yeniden oluştur",
+      "count": "{n} alıştırma",
+      "min_hint": "{n} alıştırma gerekli",
+      "min_to_advance": "Devam etmek için en az {n} alıştırma oluşturun.",
+      "drag": "Yeniden sıralamak için sürükleyin",
+      "delete": "Alıştırmayı sil",
+      "type": {
+        "matching": "Eşleştirme",
+        "free_text": "Serbest metin",
+        "cloze": "Boşluk doldurma",
+        "word_tiles": "Kelime parçaları",
+        "picture_choice": "Resim seçimi"
+      },
+      "dir": {
+        "auto": "Otomatik",
+        "receptive": "Alımlayıcı",
+        "productive": "Üretici",
+        "balanced": "Dengeli"
+      }
+    },
+    "review": {
+      "heading": "İncele ve kaydet",
+      "title": "Başlık",
+      "pair": "Diller",
+      "cards": "Kartlar",
+      "exercises": "Alıştırmalar",
+      "check_hasTitle": "Bir başlığı var",
+      "check_languagePair": "Dil çifti geçerli",
+      "check_enoughCards": "En az 4 kart",
+      "check_enoughExercises": "En az 5 alıştırma",
+      "check_enoughTypes": "En az 2 alıştırma türü",
+      "check_schemaValid": "Geçerli ders yapısı"
+    },
+    "save": {
+      "saved": "Ders kaydedildi!",
+      "failed": "Ders kaydedilemedi.",
+      "save_local": "Yerel olarak kaydet",
+      "save_share": "Kaydet ve paylaş",
+      "play": "Dersi oynat",
+      "create_another": "Başka bir ders oluştur",
+      "to_browser": "İçerik tarayıcısına"
+    },
+    "templates": {
+      "heading": "Bir şablonla başla",
+      "blank": {
+        "title": "Boş ders",
+        "desc": "Yalnızca üst veri — kartları kendiniz ekleyin."
+      },
+      "vocabulary": {
+        "title": "Kelime listesi",
+        "desc": "10 kart yuvası, eşleştirme + serbest metin."
+      },
+      "grammar": {
+        "title": "Dilbilgisi dersi",
+        "desc": "5 kart yuvası, boşluk doldurmalı karışık alıştırmalar."
+      },
+      "conversation": {
+        "title": "Konuşma alıştırması",
+        "desc": "5 kart yuvası, kelime parçaları + boşluk doldurma."
       }
     }
   }

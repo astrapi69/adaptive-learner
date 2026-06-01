@@ -1520,6 +1520,9 @@
     "save_adaptive": {
       "button": "Save this lesson?"
     },
+    "create_lesson": {
+      "button": "Create New Lesson"
+    },
     "import_lesson": {
       "button": "Import Lesson",
       "modal_title": "Import a lesson",
@@ -1822,6 +1825,126 @@
       "weekend-learner": {
         "title": "Weekend learner",
         "description": "Learn on the weekend."
+      }
+    }
+  },
+  "create_lesson": {
+    "title": "Create a lesson",
+    "step_of": "Step {current} of {total}",
+    "step_pending": "This step is coming in the next update.",
+    "nav_label": "Wizard navigation",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "cancel_confirm_title": "Discard this lesson?",
+    "cancel_confirm_body": "Your unsaved lesson will be lost.",
+    "cancel_keep": "Keep editing",
+    "cancel_discard": "Discard",
+    "meta": {
+      "heading": "Lesson details",
+      "title_label": "Title",
+      "title_placeholder": "My Lesson",
+      "title_required": "A title is required.",
+      "title_native_label": "Title in target language",
+      "target_lang_label": "Language learned",
+      "source_lang_label": "Your language",
+      "level_label": "Level",
+      "same_language": "The language learned must differ from your language.",
+      "description_label": "Topic / description",
+      "author_label": "Author name"
+    },
+    "cards": {
+      "heading": "Add vocabulary cards",
+      "front_label": "Front (learned)",
+      "back_label": "Back (your language)",
+      "notes_label": "Notes (optional)",
+      "image_label": "Image reference (optional)",
+      "add": "Add card",
+      "import_csv": "Import CSV",
+      "csv_hint": "Paste rows as front, back, notes (comma- or tab-separated). Example: Bonjour, Guten Tag, Formal greeting",
+      "csv_preview": "{valid} of {total} rows ready",
+      "csv_add": "Add {n} cards",
+      "count": "{n} cards",
+      "min_hint": "{n} cards needed for exercises",
+      "min_to_advance": "Add at least {n} cards to continue.",
+      "clear_all": "Clear all",
+      "clear_confirm_title": "Remove all cards?",
+      "edit": "Edit card",
+      "delete": "Delete card",
+      "drag": "Drag to reorder",
+      "save_edit": "Save"
+    },
+    "draft": {
+      "title": "Draft found",
+      "body": "You have an unfinished lesson. Continue where you left off or start fresh?",
+      "start_fresh": "Start fresh",
+      "continue": "Continue"
+    },
+    "exercises": {
+      "heading": "Generate exercises",
+      "count_label": "Number of exercises",
+      "types_label": "Exercise types",
+      "direction_label": "Direction",
+      "generate": "Auto-generate exercises",
+      "regenerate": "Regenerate",
+      "count": "{n} exercises",
+      "min_hint": "{n} exercises needed",
+      "min_to_advance": "Generate at least {n} exercises to continue.",
+      "drag": "Drag to reorder",
+      "delete": "Delete exercise",
+      "type": {
+        "matching": "Matching",
+        "free_text": "Free text",
+        "cloze": "Cloze",
+        "word_tiles": "Word tiles",
+        "picture_choice": "Picture choice"
+      },
+      "dir": {
+        "auto": "Auto",
+        "receptive": "Receptive",
+        "productive": "Productive",
+        "balanced": "Balanced"
+      }
+    },
+    "review": {
+      "heading": "Review and save",
+      "title": "Title",
+      "pair": "Languages",
+      "cards": "Cards",
+      "exercises": "Exercises",
+      "check_hasTitle": "Has a title",
+      "check_languagePair": "Language pair is valid",
+      "check_enoughCards": "At least 4 cards",
+      "check_enoughExercises": "At least 5 exercises",
+      "check_enoughTypes": "At least 2 exercise types",
+      "check_schemaValid": "Valid lesson structure"
+    },
+    "save": {
+      "saved": "Lesson saved!",
+      "failed": "Could not save the lesson.",
+      "save_local": "Save locally",
+      "save_share": "Save and share",
+      "play": "Play lesson",
+      "create_another": "Create another lesson",
+      "to_browser": "To Content Browser"
+    },
+    "templates": {
+      "heading": "Start from a template",
+      "blank": {
+        "title": "Blank Lesson",
+        "desc": "Just metadata — add cards yourself."
+      },
+      "vocabulary": {
+        "title": "Vocabulary List",
+        "desc": "10 card slots, matching + free text."
+      },
+      "grammar": {
+        "title": "Grammar Lesson",
+        "desc": "5 card slots, mixed exercises with cloze."
+      },
+      "conversation": {
+        "title": "Conversation Practice",
+        "desc": "5 card slots, word tiles + cloze."
       }
     }
   }

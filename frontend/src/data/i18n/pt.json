@@ -1520,6 +1520,9 @@
     "save_adaptive": {
       "button": "Salvar esta lição?"
     },
+    "create_lesson": {
+      "button": "Criar nova lição"
+    },
     "import_lesson": {
       "button": "Importar lição",
       "modal_title": "Importar uma lição",
@@ -1822,6 +1825,126 @@
       "weekend-learner": {
         "title": "Aprendiz de fim de semana",
         "description": "Aprenda no fim de semana."
+      }
+    }
+  },
+  "create_lesson": {
+    "title": "Criar uma lição",
+    "step_of": "Passo {current} de {total}",
+    "step_pending": "Este passo chega na próxima atualização.",
+    "nav_label": "Navegação do assistente",
+    "cancel": "Cancelar",
+    "back": "Voltar",
+    "next": "Avançar",
+    "cancel_confirm_title": "Descartar esta lição?",
+    "cancel_confirm_body": "A sua lição não guardada será perdida.",
+    "cancel_keep": "Continuar a editar",
+    "cancel_discard": "Descartar",
+    "meta": {
+      "heading": "Detalhes da lição",
+      "title_label": "Título",
+      "title_placeholder": "Minha lição",
+      "title_required": "Um título é obrigatório.",
+      "title_native_label": "Título no idioma de destino",
+      "target_lang_label": "Idioma aprendido",
+      "source_lang_label": "O seu idioma",
+      "level_label": "Nível",
+      "same_language": "O idioma aprendido deve ser diferente do seu idioma.",
+      "description_label": "Tema / descrição",
+      "author_label": "Nome do autor"
+    },
+    "cards": {
+      "heading": "Adicionar cartões de vocabulário",
+      "front_label": "Frente (aprendido)",
+      "back_label": "Verso (o seu idioma)",
+      "notes_label": "Notas (opcional)",
+      "image_label": "Referência de imagem (opcional)",
+      "add": "Adicionar cartão",
+      "import_csv": "Importar CSV",
+      "csv_hint": "Cole linhas como frente, verso, notas (separadas por vírgula ou tabulação). Exemplo: Bonjour, Guten Tag, Saudação formal",
+      "csv_preview": "{valid} de {total} linhas prontas",
+      "csv_add": "Adicionar {n} cartões",
+      "count": "{n} cartões",
+      "min_hint": "{n} cartões necessários para exercícios",
+      "min_to_advance": "Adicione pelo menos {n} cartões para continuar.",
+      "clear_all": "Limpar tudo",
+      "clear_confirm_title": "Remover todos os cartões?",
+      "edit": "Editar cartão",
+      "delete": "Eliminar cartão",
+      "drag": "Arraste para reordenar",
+      "save_edit": "Guardar"
+    },
+    "draft": {
+      "title": "Rascunho encontrado",
+      "body": "Tem uma lição não terminada. Continuar de onde parou ou começar de novo?",
+      "start_fresh": "Começar de novo",
+      "continue": "Continuar"
+    },
+    "exercises": {
+      "heading": "Gerar exercícios",
+      "count_label": "Número de exercícios",
+      "types_label": "Tipos de exercício",
+      "direction_label": "Direção",
+      "generate": "Gerar exercícios automaticamente",
+      "regenerate": "Regenerar",
+      "count": "{n} exercícios",
+      "min_hint": "{n} exercícios necessários",
+      "min_to_advance": "Gere pelo menos {n} exercícios para continuar.",
+      "drag": "Arraste para reordenar",
+      "delete": "Eliminar exercício",
+      "type": {
+        "matching": "Correspondência",
+        "free_text": "Texto livre",
+        "cloze": "Cloze",
+        "word_tiles": "Peças de palavras",
+        "picture_choice": "Escolha de imagem"
+      },
+      "dir": {
+        "auto": "Automático",
+        "receptive": "Recetivo",
+        "productive": "Produtivo",
+        "balanced": "Equilibrado"
+      }
+    },
+    "review": {
+      "heading": "Rever e guardar",
+      "title": "Título",
+      "pair": "Idiomas",
+      "cards": "Cartões",
+      "exercises": "Exercícios",
+      "check_hasTitle": "Tem um título",
+      "check_languagePair": "O par de idiomas é válido",
+      "check_enoughCards": "Pelo menos 4 cartões",
+      "check_enoughExercises": "Pelo menos 5 exercícios",
+      "check_enoughTypes": "Pelo menos 2 tipos de exercício",
+      "check_schemaValid": "Estrutura de lição válida"
+    },
+    "save": {
+      "saved": "Lição guardada!",
+      "failed": "Não foi possível guardar a lição.",
+      "save_local": "Guardar localmente",
+      "save_share": "Guardar e partilhar",
+      "play": "Reproduzir lição",
+      "create_another": "Criar outra lição",
+      "to_browser": "Para o navegador de conteúdo"
+    },
+    "templates": {
+      "heading": "Começar a partir de um modelo",
+      "blank": {
+        "title": "Lição em branco",
+        "desc": "Apenas metadados — adicione os cartões."
+      },
+      "vocabulary": {
+        "title": "Lista de vocabulário",
+        "desc": "10 espaços de cartão, correspondência + texto livre."
+      },
+      "grammar": {
+        "title": "Lição de gramática",
+        "desc": "5 espaços de cartão, exercícios mistos com cloze."
+      },
+      "conversation": {
+        "title": "Prática de conversação",
+        "desc": "5 espaços de cartão, peças de palavras + cloze."
       }
     }
   }

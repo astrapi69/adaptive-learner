@@ -699,10 +699,12 @@ exposes core (users / projects / settings with `key_source_*` /
 backup / export / sync / system) + plugin routes (assessment /
 session with streaming + pronunciation / tracking / tools /
 imports / curriculum / lessons / anki / gamification /
-notebooklm). Frontend renders 13 routes via React Router:
+notebooklm). Frontend renders its routes via React Router:
 Landing, Onboarding, Assessment, Dashboard, Session, Curriculum,
 Progress, Settings, Import, ImportDetail, Anki, Pronunciation,
-NotFound.
+Content, Lesson, Review, AdaptiveLesson, LearningRepo,
+CreateLesson (Phase 65 / EXP-021 — the standalone 4-step Lesson
+Creator at ``/create-lesson``), NotFound.
 
 **Dual storage** (since v0.7.0): `IStorageService` interface with
 two implementations. `ApiStorage` talks to the FastAPI backend
