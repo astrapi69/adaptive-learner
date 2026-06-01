@@ -17,13 +17,20 @@ tool into a full learning platform with downloadable content
 sets, interactive exercises, and dual-mode operation
 (Content-only + AI-augmented).
 
-State: **post v1.48.0 (Phase 64 — Community Sharing UX + Smart
-Lesson Organization: four-step share wizard with placement
-engine, duplicate/variation/supplement detection, author credit,
-contribution history + Community Contributor recognition, and
-Missing-Lessons gap suggestions; content schema 1.2 -> 1.3
-additive. Merges Smart Next-Step Suggestions after lesson
-completion + the EXP-021 Lesson-Creator exploration).** Prior:
+State: **post v1.49.0 (Phase 65 — API-key UX + Community Sharing
+via PR + Analysis loading: API-key format validation + live Test
+button + rollback/restore cache (`ApiKeyBackup`, Alembic 0025,
+Dexie v24), stable `secret.key` Fernet source + UI-editable
+secrets.yaml keys; community sharing opens a GitHub pull request;
+chat-import Analyze loading indicator with real Cancel; friendly
+voice/mic errors. Plus, unreleased on main: native help
+translations in 6 languages — HELP-CONTENT-TRANSLATIONS-01).**
+Prior: **v1.48.0 (Phase 64 — Community Sharing UX + Smart Lesson
+Organization: four-step share wizard, placement engine,
+duplicate/variation detection, author credit, contribution
+history, Missing-Lessons suggestions; content schema 1.2 -> 1.3;
+merges Smart Next-Step Suggestions after lesson completion +
+EXP-021 Lesson-Creator exploration).** Earlier:
 **v1.47.0 (Phase 63 — Lesson Flow Control: pause/abandon/resume +
 autosave + auto-resume, paused-lessons widget, lesson splitter;
 Word Tiles @dnd-kit reorder, mobile overflow fixes, backend CSP
@@ -102,27 +109,6 @@ tiebreaker.
   losing data after a full browser-data clear in Dexie mode
   + at least one request for "can I export a JSON I keep
   somewhere".
-- [ ] **HELP-CONTENT-TRANSLATIONS-01**: Translate the 22-entry
-  help glossary content (``backend/config/help/*.yaml``) for
-  ES / FR / EL / PT / TR / JA. Currently EN-passthrough — the
-  bundles for these six languages are byte-identical copies of
-  the EN authoring files with only the ``language`` field
-  stamped to match the target locale. Each entry is a
-  ``short`` (1-2 sentences) + ``long`` (200-500 words
-  Markdown), so the full scope is ~22 × 6 × 2 ≈ 264 distinct
-  text blobs (~10k words of educational content per
-  language). PT / TR / JA need native-speaker review; ES /
-  FR / EL can ride the EN passthrough until enough demand
-  surfaces to invest in translation. The ``ui.help.*``
-  catalog keys (button labels, dialog chrome) are NOT part of
-  this item — those are short UI strings and were translated
-  inline with the relevant Phase 38 commits. The Phase 26
-  ``test_i18n_translation_audit`` only scans
-  ``backend/config/i18n/*.yaml``, NOT
-  ``backend/config/help/*.yaml``, so the passthrough
-  bundles do not currently fail any test. Trigger: a user
-  reports the help drawer reading awkwardly in one of the
-  six languages, OR a translator volunteers a pass.
 - [ ] **PLUGINFORGE-LIFECYCLE-UI-01**: Consume v0.9.0
   lifecycle visibility in Settings → Plugins. Backend half
   SHIPPED 2026-05-23: ``GET /api/plugins/inspect/{name}`` +
