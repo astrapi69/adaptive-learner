@@ -6784,3 +6784,148 @@ select:focus {
   font-size: 0.875rem;
   font-weight: 500;
 }
+
+/* ---------------------------------------------------------------
+   Import-page analysis loading indicator
+   (feature/analysis-loading-indicator).
+
+   The chat analysis is a single awaited POST, so the progress is
+   indeterminate (a sliding bar) with timed, faked phase labels.
+   On success the bar fills to 100% (.is-done) for a brief "Done!"
+   flash, then the results section fades in. All animations are
+   suppressed under prefers-reduced-motion (the text changes carry
+   the state on their own).
+   --------------------------------------------------------------- */
+
+/* Inline button spinner — shown while analysing. */
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  vertical-align: -2px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: btn-spinner-rotate 0.7s linear infinite;
+}
+
+@keyframes btn-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.analysis-progress {
+  margin-top: 1rem;
+  max-width: 420px;
+}
+
+.analysis-progress-bar {
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.analysis-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+}
+
+/* Indeterminate: a short fill slides back and forth. */
+.analysis-progress-bar.is-indeterminate .analysis-progress-fill {
+  width: 40%;
+  animation: analysis-progress-slide 1.2s ease-in-out infinite;
+}
+
+/* Done: the fill snaps to a full, settled bar. */
+.analysis-progress-bar.is-done .analysis-progress-fill {
+  width: 100%;
+  transition: width 0.3s ease;
+}
+
+@keyframes analysis-progress-slide {
+  0% {
+    left: -40%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.analysis-progress-label {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.analysis-progress-eta {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.analysis-cancel-link {
+  margin-top: 0.35rem;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.analysis-cancel-link:hover {
+  opacity: 0.8;
+}
+
+.analysis-error {
+  margin-top: 1rem;
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--danger) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--danger) 32%, var(--border));
+  color: var(--danger);
+  font-size: 0.9rem;
+  max-width: 420px;
+}
+
+/* Results reveal — a gentle fade + slide when the analysis lands. */
+.analysis-results-reveal {
+  animation: analysis-results-fade-in 0.4s ease both;
+}
+
+@keyframes analysis-results-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-spinner {
+    display: none;
+  }
+  .analysis-progress-bar.is-indeterminate .analysis-progress-fill {
+    /* Static partial fill instead of the sliding animation. */
+    animation: none;
+    left: 0;
+    width: 100%;
+    opacity: 0.5;
+  }
+  .analysis-results-reveal {
+    animation: none;
+  }
+}

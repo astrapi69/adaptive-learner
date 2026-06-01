@@ -67,6 +67,13 @@ import:
   analysis_fallback: L'analyse s'est executee mais la reponse de l'IA n'a pas pu etre analysee proprement.
   analysis_fallback_long: La reponse de l'IA n'a pas pu etre parsee comme JSON structure. Le resume ci-dessous est un fallback.
   analysis_error: Impossible d'analyser la conversation.
+  analysis_failed: "L'analyse a échoué. Veuillez réessayer."
+  analysis_phase_1: "Étape 1/3 : Lecture du chat…"
+  analysis_phase_2: "Étape 2/3 : Analyse du contenu…"
+  analysis_phase_3: "Étape 3/3 : Préparation des résultats…"
+  analysis_eta: "L'analyse prend environ 15 à 30 secondes…"
+  analysis_done: "Terminé !"
+  analysis_cancel: "Annuler"
   analysis_save_error: Impossible de sauvegarder le resultat de l'analyse.
   back_to_list: Retour aux imports
   create_curriculum: Creer un programme

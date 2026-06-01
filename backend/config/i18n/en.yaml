@@ -67,6 +67,13 @@ import:
   analysis_fallback: Analysis ran but the AI response could not be parsed cleanly.
   analysis_fallback_long: The AI response was not parseable as structured JSON. The summary below is a fallback.
   analysis_error: Could not analyze the conversation.
+  analysis_failed: "Analysis failed. Please try again."
+  analysis_phase_1: "Step 1/3: Reading chat…"
+  analysis_phase_2: "Step 2/3: Analyzing content…"
+  analysis_phase_3: "Step 3/3: Preparing results…"
+  analysis_eta: "Analysis takes approximately 15-30 seconds…"
+  analysis_done: "Done!"
+  analysis_cancel: "Cancel"
   analysis_save_error: Could not save the analysis result.
   back_to_list: Back to imports
   create_curriculum: Create curriculum

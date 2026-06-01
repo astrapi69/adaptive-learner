@@ -19,7 +19,7 @@
  *   - Suggested curriculum lessons (with priority)
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
@@ -84,8 +84,47 @@ export default function ImportDetail({
   const [startingSession, setStartingSession] = useState(false);
   // Phase 59B — "Save as Offline Lesson" preview modal.
   const [showSaveLesson, setShowSaveLesson] = useState(false);
+  // Analysis loading UX (HELP-CONTENT unrelated — analysis-loading
+  // -indicator). A single awaited POST drives the analysis, so the
+  // progress is indeterminate with timed, faked phase labels that
+  // make the wait feel intentional. ``analysisDone`` flips on for a
+  // brief 100% "Done!" flash before the results reveal; the
+  // AbortController behind ``abortRef`` powers the Cancel link; a
+  // failure surfaces inline (``analysisError``) rather than as a raw
+  // toast.
+  const [analysisPhase, setAnalysisPhase] = useState(0);
+  const [analysisDone, setAnalysisDone] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const go = (path: string) => (onNavigate ? onNavigate(path) : navigate(path));
+
+  // Timed, faked phase advance while analysing (the API is a single
+  // call with no real progress). Cleared if the run ends / unmounts.
+  useEffect(() => {
+    if (!analyzing) {
+      setAnalysisPhase(0);
+      return;
+    }
+    setAnalysisPhase(0);
+    const t1 = setTimeout(() => setAnalysisPhase(1), 4000);
+    const t2 = setTimeout(() => setAnalysisPhase(2), 9000);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [analyzing]);
+
+  // Abort any in-flight analysis on unmount.
+  useEffect(() => {
+    return () => abortRef.current?.abort();
+  }, []);
+
+  function cancelAnalysis() {
+    abortRef.current?.abort();
+    setAnalyzing(false);
+    setAnalysisError(null);
+  }
 
   useEffect(() => {
     if (!conversationId) return;
@@ -139,7 +178,11 @@ export default function ImportDetail({
       notify.error(t("import.no_user", "No active user."));
       return;
     }
+    setAnalysisError(null);
+    setAnalysisDone(false);
     setAnalyzing(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
     try {
       const settings = await getStorage().settings.get(userId);
       const provider = settings.active_provider as AIProvider;
@@ -177,10 +220,16 @@ export default function ImportDetail({
         })),
         title: detail.title,
         lang,
+        signal: controller.signal,
       });
+      if (controller.signal.aborted) return;
       const updated = await getStorage().imports.saveAnalysis(detail.id, {
         analysis_result: result,
       });
+      // Success transition: fill to 100% + a brief "Done!" flash
+      // before the results section reveals (fades in via CSS).
+      setAnalysisDone(true);
+      await new Promise((resolve) => setTimeout(resolve, 500));
       setDetail(updated);
       if (result.fallback_used) {
         notify.warning(
@@ -189,17 +238,23 @@ export default function ImportDetail({
             "Analysis ran but the AI response could not be parsed cleanly.",
           ),
         );
-      } else {
-        notify.success(t("import.analysis_ready", "Analysis ready."));
       }
     } catch (err) {
-      const msg =
-        err instanceof ApiError
-          ? err.detail
-          : t("import.analysis_error", "Could not analyze the conversation.");
-      notify.error(msg);
+      // A user-initiated cancel aborts silently — no error surface.
+      if (
+        controller.signal.aborted ||
+        (err instanceof DOMException && err.name === "AbortError")
+      ) {
+        return;
+      }
+      // Friendly inline message (NOT a raw error toast).
+      setAnalysisError(
+        t("import.analysis_failed", "Analysis failed. Please try again."),
+      );
     } finally {
+      if (abortRef.current === controller) abortRef.current = null;
       setAnalyzing(false);
+      setAnalysisDone(false);
     }
   }
 
@@ -393,6 +448,13 @@ export default function ImportDetail({
             }
             data-testid="analyze-button"
           >
+            {analyzing && (
+              <span
+                className="btn-spinner"
+                data-testid="analyze-spinner"
+                aria-hidden="true"
+              />
+            )}
             {analyzing
               ? t("import.analyzing", "Analyzing…")
               : analysis
@@ -526,10 +588,77 @@ export default function ImportDetail({
             </button>
           )}
         </div>
+
+        {analyzing && (
+          <div
+            className="analysis-progress"
+            data-testid="analysis-progress"
+            role="status"
+            aria-live="polite"
+          >
+            <div
+              className={`analysis-progress-bar${
+                analysisDone ? " is-done" : " is-indeterminate"
+              }`}
+            >
+              <div className="analysis-progress-fill" />
+            </div>
+            <p
+              className="analysis-progress-label"
+              data-testid="analysis-progress-label"
+            >
+              {analysisDone
+                ? t("import.analysis_done", "Done!")
+                : analysisPhase === 0
+                  ? t(
+                      "import.analysis_phase_1",
+                      "Step 1/3: Reading chat…",
+                    )
+                  : analysisPhase === 1
+                    ? t(
+                        "import.analysis_phase_2",
+                        "Step 2/3: Analyzing content…",
+                      )
+                    : t(
+                        "import.analysis_phase_3",
+                        "Step 3/3: Preparing results…",
+                      )}
+            </p>
+            {!analysisDone && (
+              <p className="analysis-progress-eta">
+                {t(
+                  "import.analysis_eta",
+                  "Analysis takes approximately 15-30 seconds…",
+                )}
+              </p>
+            )}
+            {!analysisDone && (
+              <button
+                type="button"
+                className="analysis-cancel-link"
+                onClick={cancelAnalysis}
+                data-testid="analysis-cancel"
+              >
+                {t("import.analysis_cancel", "Cancel")}
+              </button>
+            )}
+          </div>
+        )}
+
+        {analysisError && !analyzing && (
+          <p
+            className="analysis-error"
+            role="alert"
+            data-testid="analysis-error"
+          >
+            {analysisError}
+          </p>
+        )}
       </header>
 
       {analysis && (
         <section
+          className="analysis-results-reveal"
           style={{ marginBottom: "2rem" }}
           data-testid="analysis-results"
         >

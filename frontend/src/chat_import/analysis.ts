@@ -213,6 +213,13 @@ export interface AnalysisOptions {
      * language. Unknown codes fall back to English. Default "en".
      */
     lang?: string;
+    /**
+     * Optional abort signal. When the caller aborts (e.g. the
+     * import page's Cancel button), the in-flight provider fetch
+     * rejects with an ``AbortError`` that propagates out of
+     * ``analyzeConversation`` so the caller can reset its UI.
+     */
+    signal?: AbortSignal;
 }
 
 /**
@@ -546,8 +553,18 @@ export async function analyzeConversation(
                     {role: "user", content: userContent},
                 ],
                 maxTokens: 1500,
+                signal: opts.signal,
             });
         } catch (err) {
+            // A user-initiated abort must propagate so the caller
+            // can reset its UI — do NOT collapse it into the
+            // deterministic fallback like a provider error.
+            if (
+                opts.signal?.aborted ||
+                (err instanceof DOMException && err.name === "AbortError")
+            ) {
+                throw err;
+            }
             // Surface the provider error message as part of the
             // fallback so the user knows what went wrong.
             const detail =
