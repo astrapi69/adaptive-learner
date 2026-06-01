@@ -9,7 +9,32 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.48.0** (minor - **Phase 64 —
+- **Current state:** **v1.49.0** (minor - **Phase 65 — API-key
+  UX + Community Sharing via PR + Analysis loading**). API keys
+  get instant **format validation** (prefix + length per
+  provider, green/red + checkmark, Save gated), a live **Test**
+  button (backend ``POST /settings/{user}/test-api-key`` +
+  browser-direct in Dexie; classifies ok/invalid/rate_limit/
+  network), and a **rollback cache** (new ``ApiKeyBackup`` model
+  + Alembic 0025 + Dexie v24 + sync surface): Save auto-tests
+  first, a working key is saved + backed up, a failing key
+  triggers Keep old / Save anyway / Restore. ``secret.key`` is
+  now the stable Fernet key source (keys survive restarts) and
+  secrets.yaml keys are UI-editable (path corrected to
+  ``~/.config/adaptive_learner/secrets.yaml``). **Community
+  sharing now opens a GitHub PULL REQUEST** (not an issue): the
+  lesson JSON lands at ``sets/{src}/{tgt-level}/lessons/
+  {nn}-{slug}.json`` and the content-repo CI validates it
+  (``communityPrUrl`` + ``communityUploadUrl`` + ``buildPrBody``;
+  small lessons pre-fill the create-file editor, large ones
+  download + upload-page). The chat-import **Analyze** action
+  gets a **loading indicator** (phased progress + estimate +
+  spinner + real Cancel via AbortSignal + friendly inline
+  error). Voice dictation shows **friendly mic errors**
+  (no-device / offline / permission) instead of raw Web Speech
+  codes. Both storage modes; full i18n in 8 langs. **30
+  SQLAlchemy models** (added ``ApiKeyBackup``).
+  v1.48.0 = minor - **Phase 64 —
   Community Sharing UX + Smart Lesson Organization**, with
   **Smart Next-Step Suggestions** after lesson completion.
   Sharing a lesson is now a four-step wizard: a smart
@@ -721,18 +746,19 @@ default path).
 
 ## Data model
 
-**29 SQLAlchemy models** in `backend/app/models/__init__.py`:
+**30 SQLAlchemy models** in `backend/app/models/__init__.py`:
 
-User, UserSettings, LearningProject, LearningProfile,
-Curriculum, LearningTopic, Lesson, LearningSession,
-SessionMessage, SessionRating, SessionNote, ProgressCommit,
-StepEvaluation, MethodSwitch, ImportedConversation,
-ImportedMessage, Subject, Tag, ProjectSubject, ProjectTag,
-UserXP, Badge, UserBadge, UserStreak, AnkiCardSuggestion,
-StudyQuestion, LessonProgress, ElementError, UserMission.
+User, UserSettings, ApiKeyBackup, LearningProject,
+LearningProfile, Curriculum, LearningTopic, Lesson,
+LearningSession, SessionMessage, SessionRating, SessionNote,
+ProgressCommit, StepEvaluation, MethodSwitch,
+ImportedConversation, ImportedMessage, Subject, Tag,
+ProjectSubject, ProjectTag, UserXP, Badge, UserBadge,
+UserStreak, AnkiCardSuggestion, StudyQuestion, LessonProgress,
+ElementError, UserMission.
 
 Mirrored Pydantic v2 schemas in `backend/app/schemas/`. Sync
-surface: 29 tables (`sync_service.ALL_SYNC_TABLES`). Full spec in
+surface: 30 tables (`sync_service.ALL_SYNC_TABLES`). Full spec in
 [docs/adaptive-learner-project-reference.md](docs/adaptive-learner-project-reference.md).
 
 ## Plugins (13 shipped)
