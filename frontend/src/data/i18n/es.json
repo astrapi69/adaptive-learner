@@ -212,6 +212,7 @@
     "card_spaced": "Práctica espaciada",
     "card_review_queue": "Para repasar",
     "card_focus_areas": "Áreas de enfoque",
+    "card_paused_lessons": "Continuar aprendiendo",
     "review_queue": {
       "loading": "Cargando…",
       "elements": "elemento(s) para repasar",
@@ -483,6 +484,22 @@
       "receptive_first": "Reconocer primero",
       "productive_focus": "Producir",
       "balanced": "Equilibrado"
+    },
+    "paused_retention": {
+      "title": "Retención de lecciones pausadas",
+      "hint": "Las lecciones pausadas más antiguas que este período se abandonan automáticamente. Se conservan hasta 10 lecciones pausadas independientemente de su antigüedad.",
+      "label": "Conservar lecciones pausadas por",
+      "7_days": "7 días",
+      "14_days": "14 días",
+      "30_days": "30 días",
+      "60_days": "60 días",
+      "never": "Nunca"
+    },
+    "max_lesson_size": {
+      "title": "Tamaño máximo de lección",
+      "hint": "Al guardar un análisis de chat largo como lección sin conexión, las lecciones con más pasos que este número se dividen automáticamente en varias partes.",
+      "label": "Pasos por parte",
+      "range_hint": "(predeterminado {default}, rango {min}–{max})"
     }
   },
   "methods": {
@@ -1429,6 +1446,25 @@
     "error": {
       "load_failed": "No se pudo cargar la lección.",
       "missing_params": "Ninguna lección seleccionada. Elige una en el explorador de contenido."
+    },
+    "exit": {
+      "title": "¿Salir de la lección?",
+      "body": "Elige cómo salir: pausa para volver después, abandona para descartar el intento, o quédate.",
+      "continue": "Seguir aprendiendo",
+      "pause": "Pausar",
+      "abandon": "Abandonar",
+      "abandon_confirm_title": "¿Descartar respuestas anteriores?",
+      "abandon_confirm_body": "Las respuestas anteriores se descartarán. Lo que ya aprendiste (progreso de dominio) se conserva.",
+      "confirm_cancel": "Volver a las opciones",
+      "abandon_confirm_ok": "Sí, descartar",
+      "paused_toast": "Lección pausada. Puedes reanudarla en cualquier momento.",
+      "abandoned_toast": "Lección abandonada."
+    },
+    "resume": {
+      "heading": "¿Reanudar lección?",
+      "body": "Pausaste \"{title}\". ¿Te gustaría continuar donde lo dejaste o empezar de nuevo?",
+      "action_resume": "Continuar",
+      "action_restart": "Empezar de nuevo"
     }
   },
   "content": {
@@ -1467,7 +1503,7 @@
       "button": "Guardar como lección sin conexión",
       "modal_title": "Guardar como lección sin conexión",
       "title_label": "Título de la lección",
-      "summary": "{exercises} ejercicios · {steps} pasos de teoría · ~{minutes} min",
+      "summary": "{exercises} ejercicios · {theory} pasos de teoría · ~{minutes} min",
       "theory_only": "No hay suficiente vocabulario para ejercicios. Importa un chat más largo para más material de práctica.",
       "save": "Guardar",
       "saved": "Guardado en Mis lecciones.",
@@ -1477,7 +1513,9 @@
       "source_lang_label": "Tu idioma",
       "level_label": "Nivel",
       "not_enough_data": "No hay suficiente vocabulario para una lección completa (se necesitan al menos {min} ejercicios). Importa un chat más largo para más material de práctica.",
-      "same_language": "El idioma aprendido y tu idioma deben ser diferentes."
+      "same_language": "El idioma aprendido y tu idioma deben ser diferentes.",
+      "same_language_hint": "El idioma aprendido y tu idioma son iguales — válido para una lección de gramática o en lengua materna. Al compartirla, aparecerá en la rama del mismo idioma del árbol de contenido.",
+      "split_notice": "Esta lección tiene {steps} pasos y se guardará en {parts} partes (máx. {max} pasos cada una)."
     },
     "lesson_gen": {
       "fallback_title": "Lección importada",

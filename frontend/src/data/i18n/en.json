@@ -212,6 +212,7 @@
     "card_spaced": "Spaced practice",
     "card_review_queue": "Due for review",
     "card_focus_areas": "Focus areas",
+    "card_paused_lessons": "Continue learning",
     "review_queue": {
       "loading": "Loading…",
       "elements": "element(s) due for review",
@@ -483,6 +484,22 @@
       "receptive_first": "Recognise first",
       "productive_focus": "Produce",
       "balanced": "Balanced"
+    },
+    "paused_retention": {
+      "title": "Paused lesson retention",
+      "hint": "Paused lessons older than this are automatically abandoned. Up to 10 paused lessons are kept regardless of age.",
+      "label": "Keep paused lessons for",
+      "7_days": "7 days",
+      "14_days": "14 days",
+      "30_days": "30 days",
+      "60_days": "60 days",
+      "never": "Never"
+    },
+    "max_lesson_size": {
+      "title": "Maximum lesson size",
+      "hint": "When saving a long chat analysis as an offline lesson, lessons with more than this many steps are automatically split into multiple parts.",
+      "label": "Steps per part",
+      "range_hint": "(default {default}, range {min}–{max})"
     }
   },
   "methods": {
@@ -1429,6 +1446,25 @@
     "error": {
       "load_failed": "Could not load lesson.",
       "missing_params": "No lesson selected. Browse content sets to pick one."
+    },
+    "exit": {
+      "title": "Leave the lesson?",
+      "body": "Choose how to leave: pause to come back later, abandon to discard the attempt, or stay.",
+      "continue": "Keep learning",
+      "pause": "Pause",
+      "abandon": "Abandon",
+      "abandon_confirm_title": "Discard previous answers?",
+      "abandon_confirm_body": "Previous answers will be discarded. What you already learned (mastery progress) stays.",
+      "confirm_cancel": "Back to options",
+      "abandon_confirm_ok": "Yes, discard",
+      "paused_toast": "Lesson paused. You can resume anytime.",
+      "abandoned_toast": "Lesson abandoned."
+    },
+    "resume": {
+      "heading": "Resume lesson?",
+      "body": "You paused \"{title}\". Would you like to continue where you left off or start over?",
+      "action_resume": "Continue",
+      "action_restart": "Start over"
     }
   },
   "content": {
@@ -1467,7 +1503,7 @@
       "button": "Save as Offline Lesson",
       "modal_title": "Save as offline lesson",
       "title_label": "Lesson title",
-      "summary": "{exercises} exercises · {steps} theory steps · ~{minutes} min",
+      "summary": "{exercises} exercises · {theory} theory steps · ~{minutes} min",
       "theory_only": "Not enough vocabulary for exercises. Import a longer chat for more practice material.",
       "save": "Save",
       "saved": "Saved to My Lessons.",
@@ -1477,7 +1513,9 @@
       "source_lang_label": "Your language",
       "level_label": "Level",
       "not_enough_data": "Not enough vocabulary for a full lesson (need at least {min} exercises). Import a longer chat for more practice material.",
-      "same_language": "The language learned and your language must be different."
+      "same_language": "The language learned and your language must be different.",
+      "same_language_hint": "Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
+      "split_notice": "This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each)."
     },
     "lesson_gen": {
       "fallback_title": "Imported lesson",

@@ -85,6 +85,12 @@ EN_ALLOWED_TOKENS = {
     "liberapay",
     "ko-fi",
     "kofi",
+    # i18n interpolation placeholders — never English content.
+    "{theory}",
+    "{exercises}",
+    "{minutes}",
+    "{steps}",
+    "{theory_steps}",
     # Short technical abbreviations (md, ai, qr, ip, url, api,
     # pwa, txt, pdf, yz) are intentionally NOT in this set — they
     # are too short to substring-replace safely and the EN_MARKERS

@@ -200,6 +200,7 @@ dashboard:
   card_spaced: Aralıklı pratik
   card_review_queue: Tekrar için
   card_focus_areas: Odak alanları
+  card_paused_lessons: Öğrenmeye devam et
   review_queue:
     loading: "Yükleniyor…"
     elements: "tekrar için öğe(ler)"
@@ -457,6 +458,20 @@ settings:
     receptive_first: Önce tanıma
     productive_focus: Üretme
     balanced: Dengeli
+  paused_retention:
+    title: Duraklatılmış ders saklama süresi
+    hint: "Bu süreden daha eski duraklatılmış dersler otomatik olarak terk edilir. Yaşa bakılmaksızın en fazla 10 duraklatılmış ders saklanır."
+    label: Duraklatılmış dersleri şu süre boyunca sakla
+    7_days: "7 gün"
+    14_days: "14 gün"
+    30_days: "30 gün"
+    60_days: "60 gün"
+    never: Hiçbir zaman
+  max_lesson_size:
+    title: Maksimum ders boyutu
+    hint: "Uzun bir sohbet analizini çevrimdışı ders olarak kaydederken, bu sayıdan fazla adıma sahip dersler otomatik olarak birden fazla parçaya bölünür."
+    label: Bölüm başına adım sayısı
+    range_hint: "(varsayılan {default}, aralık {min}–{max})"
 methods:
   deductive:
     label: Tümdengelimsel
@@ -1308,6 +1323,23 @@ lesson:
   error:
     load_failed: "Ders yüklenemedi."
     missing_params: "Ders seçilmedi. İçerik tarayıcısından bir tane seç."
+  exit:
+    title: "Dersten çıkılsın mı?"
+    body: "Çıkış şeklinizi seçin: daha sonra geri dönmek için duraklatın, girişimi iptal etmek için terk edin veya kalın."
+    continue: "Öğrenmeye devam et"
+    pause: "Duraklat"
+    abandon: "Terk et"
+    abandon_confirm_title: "Önceki yanıtlar silinsin mi?"
+    abandon_confirm_body: "Önceki yanıtlar silinecektir. Zaten öğrendikleriniz (ustalık ilerlemesi) korunur."
+    confirm_cancel: "Seçeneklere geri dön"
+    abandon_confirm_ok: "Evet, sil"
+    paused_toast: "Ders duraklatıldı. İstediğiniz zaman devam edebilirsiniz."
+    abandoned_toast: "Ders terk edildi."
+  resume:
+    heading: "Ders devam ettirilsin mi?"
+    body: '"{title}" dersini duraklatttınız. Kaldığınız yerden devam etmek veya baştan başlamak ister misiniz?'
+    action_resume: "Devam et"
+    action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   save_adaptive:
@@ -1342,7 +1374,7 @@ content:
     button: "Çevrimdışı ders olarak kaydet"
     modal_title: "Çevrimdışı ders olarak kaydet"
     title_label: "Ders başlığı"
-    summary: "{exercises} alıştırma · {steps} teori adımı · ~{minutes} dk"
+    summary: "{exercises} alıştırma · {theory} teori adımı · ~{minutes} dk"
     theory_only: "Alıştırmalar için yeterli kelime yok. Daha fazla alıştırma malzemesi için daha uzun bir sohbet içe aktarın."
     save: "Kaydet"
     saved: "Derslerim'e kaydedildi."
@@ -1353,6 +1385,8 @@ content:
     level_label: Seviye
     not_enough_data: Tam bir ders için yeterli kelime yok (en az {min} alıştırma gerekli). Daha fazla alıştırma materyali için daha uzun bir sohbet içe aktarın.
     same_language: Öğrenilen dil ile sizin diliniz farklı olmalıdır.
+    same_language_hint: "Öğrenilen dil ve diliniz aynı — dilbilgisi veya anadil dersi için uygundur. Paylaşıldığında içerik ağacının aynı dil dalına yerleşir."
+    split_notice: "Bu dersin {steps} adımı var ve {parts} parça olarak kaydedilecektir (bölüm başına en fazla {max} adım)."
   lesson_gen:
     fallback_title: "İçe aktarılan ders"
     focus: "Odak"

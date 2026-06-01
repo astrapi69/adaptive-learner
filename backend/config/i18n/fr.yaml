@@ -200,6 +200,7 @@ dashboard:
   card_spaced: Pratique espacee
   card_review_queue: À réviser
   card_focus_areas: Points d'attention
+  card_paused_lessons: Continuer à apprendre
   review_queue:
     loading: "Chargement…"
     elements: "élément(s) à réviser"
@@ -457,6 +458,20 @@ settings:
     receptive_first: Reconnaître d'abord
     productive_focus: Produire
     balanced: Équilibré
+  paused_retention:
+    title: Conservation des leçons en pause
+    hint: "Les leçons en pause plus anciennes que cette période sont automatiquement abandonnées. Jusqu'à 10 leçons en pause sont conservées quel que soit leur âge."
+    label: Conserver les leçons en pause pendant
+    7_days: "7 jours"
+    14_days: "14 jours"
+    30_days: "30 jours"
+    60_days: "60 jours"
+    never: Jamais
+  max_lesson_size:
+    title: Taille maximale de leçon
+    hint: "Lors de l'enregistrement d'une longue analyse de chat comme leçon hors ligne, les leçons avec plus d'étapes que ce nombre sont automatiquement divisées en plusieurs parties."
+    label: Étapes par partie
+    range_hint: "(défaut {default}, plage {min}–{max})"
 methods:
   deductive:
     label: Deductif
@@ -1310,6 +1325,23 @@ lesson:
   error:
     load_failed: "Impossible de charger la leçon."
     missing_params: "Aucune leçon sélectionnée. Choisis-en une dans l'explorateur de contenu."
+  exit:
+    title: "Quitter la leçon ?"
+    body: "Choisissez comment partir : mettez en pause pour revenir plus tard, abandonnez pour annuler la tentative, ou restez."
+    continue: "Continuer à apprendre"
+    pause: "Mettre en pause"
+    abandon: "Abandonner"
+    abandon_confirm_title: "Supprimer les réponses précédentes ?"
+    abandon_confirm_body: "Les réponses précédentes seront supprimées. Ce que vous avez déjà appris (progression de maîtrise) est conservé."
+    confirm_cancel: "Retour aux options"
+    abandon_confirm_ok: "Oui, supprimer"
+    paused_toast: "Leçon mise en pause. Vous pouvez reprendre à tout moment."
+    abandoned_toast: "Leçon abandonnée."
+  resume:
+    heading: "Reprendre la leçon ?"
+    body: 'Vous avez mis en pause "{title}". Voulez-vous continuer là où vous vous êtes arrêté ou recommencer ?'
+    action_resume: "Continuer"
+    action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   save_adaptive:
@@ -1344,7 +1376,7 @@ content:
     button: "Enregistrer comme leçon hors ligne"
     modal_title: "Enregistrer comme leçon hors ligne"
     title_label: "Titre de la leçon"
-    summary: "{exercises} exercices · {steps} étapes de théorie · ~{minutes} min"
+    summary: "{exercises} exercices · {theory} étapes de théorie · ~{minutes} min"
     theory_only: "Pas assez de vocabulaire pour des exercices. Importez une conversation plus longue pour plus de matériel."
     save: "Enregistrer"
     saved: "Enregistré dans Mes leçons."
@@ -1355,6 +1387,8 @@ content:
     level_label: Niveau
     not_enough_data: Pas assez de vocabulaire pour une leçon complète (au moins {min} exercices nécessaires). Importez une conversation plus longue pour plus de matériel.
     same_language: La langue apprise et votre langue doivent être différentes.
+    same_language_hint: "La langue apprise et votre langue sont identiques — parfait pour une leçon de grammaire ou en langue maternelle. Lors du partage, elle apparaît dans la branche de même langue de l'arbre de contenu."
+    split_notice: "Cette leçon contient {steps} étapes et sera enregistrée en {parts} parties (max. {max} étapes chacune)."
   lesson_gen:
     fallback_title: "Leçon importée"
     focus: "Point clé"

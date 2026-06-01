@@ -200,6 +200,7 @@ dashboard:
   card_spaced: Prática espaçada
   card_review_queue: Para rever
   card_focus_areas: Áreas de foco
+  card_paused_lessons: Continuar aprendendo
   review_queue:
     loading: "A carregar…"
     elements: "elemento(s) para rever"
@@ -457,6 +458,20 @@ settings:
     receptive_first: Reconhecer primeiro
     productive_focus: Produzir
     balanced: Equilibrado
+  paused_retention:
+    title: Retenção de aulas pausadas
+    hint: "As aulas pausadas mais antigas que este período são automaticamente abandonadas. Até 10 aulas pausadas são mantidas independentemente da idade."
+    label: Manter aulas pausadas por
+    7_days: "7 dias"
+    14_days: "14 dias"
+    30_days: "30 dias"
+    60_days: "60 dias"
+    never: Nunca
+  max_lesson_size:
+    title: Tamanho máximo de aula
+    hint: "Ao salvar uma longa análise de chat como aula offline, as aulas com mais etapas que este número são automaticamente divididas em várias partes."
+    label: Etapas por parte
+    range_hint: "(padrão {default}, intervalo {min}–{max})"
 methods:
   deductive:
     label: Dedutivo
@@ -1308,6 +1323,23 @@ lesson:
   error:
     load_failed: "Não foi possível carregar a lição."
     missing_params: "Nenhuma lição selecionada. Escolhe uma no explorador de conteúdo."
+  exit:
+    title: "Sair da aula?"
+    body: "Escolha como sair: pause para voltar mais tarde, abandone para descartar a tentativa, ou fique."
+    continue: "Continuar aprendendo"
+    pause: "Pausar"
+    abandon: "Abandonar"
+    abandon_confirm_title: "Descartar respostas anteriores?"
+    abandon_confirm_body: "As respostas anteriores serão descartadas. O que você já aprendeu (progresso de domínio) é mantido."
+    confirm_cancel: "Voltar às opções"
+    abandon_confirm_ok: "Sim, descartar"
+    paused_toast: "Aula pausada. Você pode retomar a qualquer momento."
+    abandoned_toast: "Aula abandonada."
+  resume:
+    heading: "Retomar aula?"
+    body: 'Você pausou "{title}". Gostaria de continuar de onde parou ou começar novamente?'
+    action_resume: "Continuar"
+    action_restart: "Recomeçar"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
   save_adaptive:
@@ -1342,7 +1374,7 @@ content:
     button: "Salvar como lição offline"
     modal_title: "Salvar como lição offline"
     title_label: "Título da lição"
-    summary: "{exercises} exercícios · {steps} etapas de teoria · ~{minutes} min"
+    summary: "{exercises} exercícios · {theory} etapas de teoria · ~{minutes} min"
     theory_only: "Vocabulário insuficiente para exercícios. Importe uma conversa mais longa para mais material de prática."
     save: "Salvar"
     saved: "Salvo em Minhas lições."
@@ -1353,6 +1385,8 @@ content:
     level_label: Nível
     not_enough_data: Vocabulário insuficiente para uma lição completa (são necessários pelo menos {min} exercícios). Importe uma conversa mais longa para mais material.
     same_language: O idioma aprendido e o seu idioma devem ser diferentes.
+    same_language_hint: "O idioma aprendido e seu idioma são os mesmos — ótimo para uma aula de gramática ou no idioma nativo. Ao compartilhar, aparece no ramo do mesmo idioma da árvore de conteúdo."
+    split_notice: "Esta aula tem {steps} etapas e será salva em {parts} partes (máx. {max} etapas cada)."
   lesson_gen:
     fallback_title: "Lição importada"
     focus: "Foco"

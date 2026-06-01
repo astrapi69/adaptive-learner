@@ -212,6 +212,7 @@
     "card_spaced": "Geplante Übung",
     "card_review_queue": "Zur Wiederholung",
     "card_focus_areas": "Übungsschwerpunkt",
+    "card_paused_lessons": "Weiterlernen",
     "review_queue": {
       "loading": "Wird geladen…",
       "elements": "Element(e) zur Wiederholung",
@@ -483,6 +484,22 @@
       "receptive_first": "Zuerst erkennen",
       "productive_focus": "Produzieren",
       "balanced": "Ausgeglichen"
+    },
+    "paused_retention": {
+      "title": "Pausierte Lektionen aufbewahren",
+      "hint": "Pausierte Lektionen, die älter als dieser Zeitraum sind, werden automatisch aufgegeben. Bis zu 10 pausierte Lektionen werden unabhängig vom Alter behalten.",
+      "label": "Pausierte Lektionen behalten für",
+      "7_days": "7 Tage",
+      "14_days": "14 Tage",
+      "30_days": "30 Tage",
+      "60_days": "60 Tage",
+      "never": "Nie"
+    },
+    "max_lesson_size": {
+      "title": "Maximale Lektionsgröße",
+      "hint": "Wenn eine lange Chat-Analyse als Offline-Lektion gespeichert wird, werden Lektionen mit mehr als dieser Anzahl an Schritten automatisch in mehrere Teile aufgeteilt.",
+      "label": "Schritte pro Teil",
+      "range_hint": "(Standard {default}, Bereich {min}–{max})"
     }
   },
   "methods": {
@@ -1429,6 +1446,25 @@
     "error": {
       "load_failed": "Lektion konnte nicht geladen werden.",
       "missing_params": "Keine Lektion ausgewählt. Wähle eine aus der Inhaltsübersicht."
+    },
+    "exit": {
+      "title": "Lektion verlassen?",
+      "body": "Wähle, wie du die Lektion verlässt: Pausiere, um später weiterzumachen, verlasse sie, um den Versuch abzubrechen, oder bleibe.",
+      "continue": "Weiterlernen",
+      "pause": "Pausieren",
+      "abandon": "Aufgeben",
+      "abandon_confirm_title": "Bisherige Antworten verwerfen?",
+      "abandon_confirm_body": "Bisherige Antworten werden verworfen. Was du bereits gelernt hast (Lernfortschritt) bleibt erhalten.",
+      "confirm_cancel": "Zurück zu den Optionen",
+      "abandon_confirm_ok": "Ja, verwerfen",
+      "paused_toast": "Lektion pausiert. Du kannst jederzeit weitermachen.",
+      "abandoned_toast": "Lektion aufgegeben."
+    },
+    "resume": {
+      "heading": "Lektion fortsetzen?",
+      "body": "Du hast \"{title}\" pausiert. Möchtest du dort weitermachen, wo du aufgehört hast, oder neu starten?",
+      "action_resume": "Weiter",
+      "action_restart": "Neu starten"
     }
   },
   "content": {
@@ -1467,7 +1503,7 @@
       "button": "Als Offline-Lektion speichern",
       "modal_title": "Als Offline-Lektion speichern",
       "title_label": "Titel der Lektion",
-      "summary": "{exercises} Übungen · {steps} Theorie-Schritte · ~{minutes} Min.",
+      "summary": "{exercises} Übungen · {theory} Theorie-Schritte · ~{minutes} Min.",
       "theory_only": "Nicht genug Vokabeln für Übungen. Importiere einen längeren Chat für mehr Übungsmaterial.",
       "save": "Speichern",
       "saved": "In „Meine Lektionen“ gespeichert.",
@@ -1477,7 +1513,9 @@
       "source_lang_label": "Deine Sprache",
       "level_label": "Niveau",
       "not_enough_data": "Nicht genug Vokabeln für eine vollständige Lektion (mindestens {min} Übungen nötig). Importiere einen längeren Chat für mehr Übungsmaterial.",
-      "same_language": "Die gelernte Sprache und deine Sprache müssen unterschiedlich sein."
+      "same_language": "Die gelernte Sprache und deine Sprache müssen unterschiedlich sein.",
+      "same_language_hint": "Die Lernsprache und deine Sprache sind identisch — das ist in Ordnung für eine Grammatik- oder Muttersprachen-Lektion. Beim Teilen landet sie im gleichsprachigen Zweig des Inhaltsbaums.",
+      "split_notice": "Diese Lektion hat {steps} Schritte und wird als {parts} Teile gespeichert (max. {max} Schritte pro Teil)."
     },
     "lesson_gen": {
       "fallback_title": "Importierte Lektion",

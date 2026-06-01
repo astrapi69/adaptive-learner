@@ -11,6 +11,8 @@ import {
   summarizeGeneratedLesson,
   type AnalysisLessonLabels,
 } from "../../lib/content/analysis-to-lesson";
+import {splitLesson} from "../../lib/content/lesson-splitter";
+import {readMaxLessonSize} from "../../lib/learning/maxLessonSizePref";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import type { ConversationAnalysisResult } from "../../types/domain";
@@ -121,13 +123,21 @@ export default function SaveOfflineLessonModal({
   );
   const [saving, setSaving] = useState(false);
 
+  // Phase 63H/I: read the user's max-lesson-size pref and compute
+  // parts so the modal can preview the split before saving.
+  const maxStepsPerPart = readMaxLessonSize();
+  const lessonParts = splitLesson(baseLesson, {maxStepsPerPart});
+
   if (!open) return null;
 
   async function save() {
     setSaving(true);
     try {
       const finalTitle = title.trim() || baseLesson.title;
-      const lesson = { ...baseLesson, title: finalTitle };
+      const parts = splitLesson(
+        {...baseLesson, title: finalTitle},
+        {maxStepsPerPart},
+      );
       const entry = await getStorage().contentLoader.saveUserSet({
         set_id: setId,
         title: finalTitle,
@@ -138,7 +148,7 @@ export default function SaveOfflineLessonModal({
         level,
         origin: "analysis",
         description: baseLesson.description,
-        lessons: [lesson],
+        lessons: parts,
       });
       notify.success(t("content.save_lesson.saved", "Saved to My Lessons."));
       onSaved(entry);
@@ -157,7 +167,7 @@ export default function SaveOfflineLessonModal({
     "{exercises} exercises · {theory} theory steps · ~{minutes} min",
   )
     .replace("{exercises}", String(summary.exercises))
-    .replace("{steps}", String(summary.theorySteps))
+    .replace("{theory}", String(summary.theorySteps))
     .replace("{minutes}", String(summary.estimatedMinutes));
 
   // EXP-018 follow-up bugfix: the Save-as-Lesson flow must NEVER
@@ -284,6 +294,20 @@ export default function SaveOfflineLessonModal({
               "content.save_lesson.same_language_hint",
               "Learned and your language are the same — fine for a grammar or native-language lesson. When shared, it lands in the same-language branch of the content tree.",
             )}
+          </p>
+        )}
+        {lessonParts.length > 1 && (
+          <p
+            className="form-hint"
+            data-testid="save-lesson-split-notice"
+          >
+            {t(
+              "content.save_lesson.split_notice",
+              "This lesson has {steps} steps and will be saved as {parts} parts (max {max} steps each).",
+            )
+              .replace("{steps}", String(baseLesson.steps.length))
+              .replace("{parts}", String(lessonParts.length))
+              .replace("{max}", String(maxStepsPerPart))}
           </p>
         )}
         <div className="form-actions">
