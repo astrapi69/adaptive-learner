@@ -1,276 +1,254 @@
-# Adaptive Learner — Help glossary: App features (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: App features (Japanese).
+# Translation: AI-generated, pending native review
 
 category: features
 language: ja
 entries:
   - key: feature_method_switch
-    title: Method Switch
-    short: "The system recommends a different method when you stagnate — you decide whether to switch."
+    title: メソッド切り替え
+    short: "停滞しているときにシステムが別のメソッドを推奨します。切り替えるかどうかはあなたが決めます。"
     long: |
-      ## What is the method switch?
+      ## メソッド切り替えとは何か？
 
-      If your learning sessions stagnate in a method or
-      produce high stress, Adaptive Learner suggests a method
-      switch. You see the suggestion as a banner above the
-      session chat — you can accept, decline, or defer.
+      学習セッションがあるメソッドで停滞したり、高いストレスを
+      生んでいる場合、Adaptive Learner はメソッド切り替えを提案します。
+      セッションチャットの上部にバナーとして提案が表示され、
+      承認・拒否・延期を選択できます。
 
-      ## When the suggestion fires
+      ## 提案が発動する条件
 
-      Three conditions must hold simultaneously:
+      三つの条件が同時に満たされる必要があります。
 
-      - **At least 3 sessions** in the current method.
-      - **Average stress > 3** (on the 1-5 scale) in the last
-        3 ratings.
-      - **Method fit < 3** in the last 3 ratings.
+      - **現在のメソッドで少なくとも 3 セッション**実施済み。
+      - 直近 3 回の評価で**平均ストレス > 3**（1〜5 のスケール）。
+      - 直近 3 回の評価で**メソッド適合度 < 3**。
 
-      Stagnation detection alone is not enough: brief
-      difficulties in an otherwise fitting method are normal
-      and pass. Only the combination of duration + stress +
-      low fit triggers the suggestion.
+      停滞の検出だけでは不十分です。
+      それ以外は合っているメソッドでの一時的な困難は正常であり、
+      解消されます。期間・ストレス・低い適合度の組み合わせだけが
+      提案をトリガーします。
 
-      ## How the system decides
+      ## システムがどのように決定するか
 
-      The ``recommend_method_switch`` hook in the session
-      plugin compares your learning profile to your current
-      trajectory and suggests the method with the highest
-      expected fit. If the top-2 methods are close, you see
-      both as options.
+      セッションプラグインの `recommend_method_switch` フックが
+      あなたの学習プロフィールと現在の軌跡を比較し、
+      最も高い適合度が期待されるメソッドを提案します。
+      上位 2 つのメソッドが近い場合は、両方が選択肢として表示されます。
 
-      ## You decide
+      ## あなたが決める
 
-      The system recommends; you choose. Accepting the switch
-      saves it as a ``MethodSwitch`` audit entry (a trail for
-      your profile). Declining does nothing — the suggestion
-      reappears at the earliest after 3 more sessions.
+      システムが推奨し、あなたが選択します。切り替えを承認すると、
+      `MethodSwitch` 監査エントリとして保存されます（プロフィールの
+      履歴）。拒否しても何も変わりません。提案は最短で
+      3 セッション後に再び表示されます。
 
-      ## Why not automatic?
+      ## 自動でない理由
 
-      Method switches are a big change in the learning
-      experience. An automatic switch would break learning
-      continuity and could fire during a difficult but
-      productive phase. You know your context better than the
-      system does.
+      メソッド切り替えは学習体験の大きな変化です。自動切り替えは
+      学習の連続性を壊し、困難ではあっても生産的なフェーズ中に
+      発動する可能性があります。システムよりも、あなたの方が
+      自分のコンテキストをよく知っています。
 
   - key: feature_auto_loop
-    title: Auto-Loop
-    short: "After step 7, a new cycle with fresh content starts automatically."
+    title: オートループ
+    short: "ステップ 7 の後、新しいコンテンツで新しいサイクルが自動的に開始されます。"
     long: |
-      ## What is the auto-loop?
+      ## オートループとは何か？
 
-      When you complete step 7 (integrate), the session can
-      automatically start a new cycle on the next topic from
-      your curriculum — without you pressing a "next cycle"
-      button.
+      ステップ 7（統合）を完了すると、セッションはカリキュラムの
+      次のトピックで自動的に新しいサイクルを開始できます。
+      「次のサイクル」ボタンを押す必要がありません。
 
-      ## How the next topic is chosen
+      ## 次のトピックの選び方
 
-      - **If a curriculum exists**: the next topic in the
-        hierarchical order.
-      - **If no curriculum exists**: the AI generates a
-        suitable follow-up topic based on the current
-        trajectory.
-      - **If spaced-repetition cards are due**: they are
-        prioritized before new content.
+      - **カリキュラムがある場合**：階層順序の次のトピック。
+      - **カリキュラムがない場合**：AI が現在の軌跡に基づいて
+        適切なフォローアップトピックを生成する。
+      - **間隔反復のカードが期限切れの場合**：新しいコンテンツより
+        優先される。
 
-      ## Cycle counter
+      ## サイクルカウンター
 
-      Every session shows a cycle counter ("3/5"). When
-      max_cycles is reached (default: 5), auto-loop pauses
-      and asks whether you want to continue. This protects
-      against runaway sessions.
+      すべてのセッションにサイクルカウンター（「3/5」）が表示されます。
+      `max_cycles` に達すると（デフォルト：5）、オートループが
+      一時停止し、続けるかどうかを尋ねます。
+      暴走するセッションを防ぐためです。
 
-      ## How to interrupt the auto-loop
+      ## オートループを中断する方法
 
-      - **Submit a rating**: after each cycle, you get the
-        three sliders (understanding, stress, method fit). If
-        stress > 3, the system suggests a break.
-      - **"End session" button**: clickable at any time.
-      - **Accept a method switch**: breaks the current loop
-        and starts a new one with the new method.
+      - **評価を提出する**：各サイクル後に三つのスライダー
+        （理解度・ストレス・メソッド適合度）が表示されます。
+        ストレスが 3 を超えると、システムが休憩を提案します。
+      - **「セッション終了」ボタン**：いつでもクリック可能。
+      - **メソッド切り替えを承認する**：現在のループを終了し、
+        新しいメソッドで新しいループを開始します。
 
-      ## When auto-loop is most valuable
+      ## オートループが最も有効な場面
 
-      For language learning with small topic units, where
-      "start a new session" overhead slows learning down. For
-      coding, auto-loop is often less useful because topic
-      transitions are larger.
+      「新しいセッションを開始する」という手間が学習を遅らせる、
+      小さなトピックユニットでの語学学習。コーディングでは、
+      トピックの移行が大きいため、オートループはあまり有用でない
+      ことが多いです。
 
   - key: feature_spaced_repetition
-    title: Spaced Repetition
-    short: "Time-optimized review based on your learning history."
+    title: 間隔反復
+    short: "あなたの学習履歴に基づいた時間最適化されたレビューです。"
     long: |
-      ## What is spaced repetition?
+      ## 間隔反復とは何か？
 
-      Spaced repetition is the technique of placing reviews at
-      increasing intervals. It uses the forgetting-curve
-      effect: each successfully recalled item lasts longer
-      next time.
+      間隔反復は、増加する間隔でレビューを配置するテクニックです。
+      忘却曲線の効果を利用します。正常に想起されるたびに、
+      次回はより長く持続します。
 
-      ## The band system in Adaptive Learner
+      ## Adaptive Learner のバンドシステム
 
-      Six due-date bands:
+      六つの期限バンド：
 
-      - **Today** — new cards + day-of reviews.
-      - **+1d** — learned yesterday, review today.
-      - **+3d** — reviewed three days ago, review today.
-      - **+7d** — one week ago.
-      - **+14d** — two weeks ago.
-      - **+30d** — one month ago.
+      - **今日** — 新しいカード + 当日のレビュー。
+      - **+1d** — 昨日学習、今日レビュー。
+      - **+3d** — 3 日前にレビュー済み、今日レビュー。
+      - **+7d** — 1 週間前。
+      - **+14d** — 2 週間前。
+      - **+30d** — 1 ヶ月前。
 
-      Once a card passes four reviews successfully, it is
-      marked "stable" and leaves the active list — but stays
-      in the system for occasional refresher checks.
+      カードが 4 回のレビューを正常に通過すると「安定」と
+      マークされ、アクティブリストから外れます。
+      ただし、定期的な再確認のためシステムに残ります。
 
-      ## How history feeds in
+      ## 履歴の反映方法
 
-      A "successful review" is not just a click. The system
-      evaluates:
+      「成功したレビュー」は単なるクリックではありません。
+      システムが評価します。
 
-      - **Confidence during the review session** (from the
-        dual-prompt evaluator).
-      - **Response time** vs your average.
-      - **Error count** in the current cycle.
+      - **レビューセッション中の信頼度**（デュアルプロンプト評価器から）。
+      - **応答時間**と平均の比較。
+      - **現在のサイクルでの誤りの数**。
 
-      At low confidence, the card slips back to an earlier
-      band rather than advancing.
+      信頼度が低い場合、カードは進む代わりに以前のバンドに
+      戻されます。
 
-      ## Connection to Anki
+      ## Anki との連携
 
-      With the Anki plugin active, you can export cards
-      directly to the Anki format. The system translates the
-      bands into Anki schedules — no progress is lost in the
-      transition.
+      Anki プラグインが有効な場合、カードを直接 Anki フォーマットで
+      エクスポートできます。システムはバンドを Anki のスケジュールに
+      変換します。移行しても進捗は失われません。
 
-      ## When the system recommends reviews
+      ## システムがレビューを推奨するタイミング
 
-      The dashboard's "Spaced Recommendations" panel shows
-      today's due cards. You can step through them
-      individually or have the system place them at the start
-      of your next regular session — before new content. The
-      system prioritizes cards with the highest forgetting
-      risk.
+      ダッシュボードの「スペース推奨」パネルに今日の期限カードが
+      表示されます。個別にステップスルーすることも、次の通常セッションの
+      開始時（新しいコンテンツの前）にシステムに配置させることもできます。
+      忘却リスクが最も高いカードが優先されます。
 
   - key: feature_conversation_analysis
-    title: Conversation Analysis / Import
-    short: "Analyze existing chat histories and extract concrete learning artifacts from them."
+    title: 会話分析・インポート
+    short: "既存のチャット履歴を分析し、具体的な学習成果物を抽出します。"
     long: |
-      ## What is conversation analysis?
+      ## 会話分析とは何か？
 
-      Adaptive Learner can analyze existing chats from
-      ChatGPT, Claude or Gemini and extract learning content
-      from them. You import the transcript once — the system
-      reads it, structures it, and turns it into a usable
-      learning artifact.
+      Adaptive Learner は ChatGPT、Claude、または Gemini からの
+      既存のチャットを分析し、学習コンテンツを抽出できます。
+      トランスクリプトを一度インポートすると、システムが読み取り、
+      構造化し、使用可能な学習成果物に変換します。
 
-      ## What gets extracted
+      ## 何が抽出されるか
 
-      - **Concepts** — terms and ideas discussed in the chat.
-      - **Knowledge gaps** — points where you asked follow-ups
-        or made mistakes.
-      - **Errors** — concrete misconceptions visible in the
-        chat.
-      - **Vocabulary / terminology** — domain words
-        (especially relevant for language learning or
-        specialized fields).
+      - **コンセプト** — チャット内で議論された用語とアイデア。
+      - **知識のギャップ** — フォローアップを聞いたり間違いを
+        犯したポイント。
+      - **誤り** — チャットで見えた具体的な誤解。
+      - **語彙・専門用語** — ドメイン固有の言葉
+        （語学学習や専門分野に特に関連）。
 
-      ## How the import works
+      ## インポートの仕組み
 
-      1. Export your chat from ChatGPT, Claude or Gemini as
-        Markdown or JSON.
-      2. Upload the file into Adaptive Learner (drag-and-drop
-        or file picker).
-      3. The system detects the format automatically and
-        stores the messages.
-      4. Trigger the analysis — the AI reads the chat in your
-        learning language and produces the structured
-        breakdown.
+      1. ChatGPT、Claude、または Gemini からチャットを
+        Markdown または JSON でエクスポートする。
+      2. ファイルを Adaptive Learner にアップロードする
+        （ドラッグ＆ドロップまたはファイル選択）。
+      3. システムが形式を自動的に検出し、メッセージを保存する。
+      4. 分析をトリガーする。AI があなたの学習言語でチャットを
+        読み、構造化された内訳を作成する。
 
-      ## What you can do next
+      ## 次にできること
 
-      Three actions follow from the analysis:
+      分析から三つのアクションが続きます。
 
-      - **"Create curriculum"** — the extracted concepts feed
-        into a hierarchical curriculum.
-      - **"Start session"** — a session that starts directly
-        from the detected knowledge gaps.
-      - **"Generate Anki cards"** — flashcards from the
-        concepts and vocabulary.
+      - **「カリキュラムを作成」** — 抽出されたコンセプトが
+        階層的なカリキュラムに反映される。
+      - **「セッションを開始」** — 検出された知識のギャップから
+        直接開始するセッション。
+      - **「Anki カードを生成」** — コンセプトと語彙から
+        フラッシュカードを作成する。
 
-      ## Duplicates
+      ## 重複
 
-      If you import the same chat twice, the system detects it
-      via the content hash and offers to navigate to the
-      existing analysis instead of creating a copy.
+      同じチャットを二度インポートすると、システムはコンテンツの
+      ハッシュでそれを検出し、コピーを作成する代わりに
+      既存の分析に移動するよう提案します。
 
-      ## Privacy
+      ## プライバシー
 
-      Chat contents go ONLY to your active AI provider (the
-      one you configured in settings). The system sends
-      nothing to a central server. When you delete the chat,
-      the contents are gone.
+      チャットのコンテンツはあなたがアクティブな AI プロバイダー
+      （設定で設定したもの）にのみ送信されます。システムは
+      中央サーバーには何も送信しません。チャットを削除すると
+      コンテンツも消えます。
 
   - key: feature_gamification
-    title: Gamification (XP, Badges, Streaks)
-    short: "Progress system with experience points, badges and streaks — motivation without gimmickry."
+    title: ゲーミフィケーション（XP、バッジ、ストリーク）
+    short: "経験値、バッジ、ストリークによる進捗システム。見せかけなしのモチベーション管理です。"
     long: |
-      ## What is the gamification layer?
+      ## ゲーミフィケーション層とは何か？
 
-      Three mechanics make learning progress visible and
-      rewarding:
+      三つのメカニズムが学習の進捗を可視化し、報いるものにします。
 
-      - **XP (experience points)** — for every completed
-        session, every method switch, every
-        spaced-repetition card. Levels rise with XP.
-      - **Badges** — for thematic milestones ("first
-        session", "10 sessions in a method", "30-day streak",
-        ...).
-      - **Streaks** — daily learning runs. They expire 24
-        hours without a session — with three "streak freezes"
-        per month as emergency pauses.
+      - **XP（経験値）** — 完了したすべてのセッション、
+        すべてのメソッド切り替え、すべての間隔反復カードに対して。
+        XP とともにレベルが上昇します。
+      - **バッジ** — テーマ別のマイルストーン（「最初のセッション」、
+        「あるメソッドで 10 セッション」、「30 日ストリーク」など）。
+      - **ストリーク** — 毎日の学習の連続。セッションなしで
+        24 時間経過すると切れます。緊急停止として月 3 回の
+        「ストリークフリーズ」があります。
 
-      ## How XP is earned
+      ## XP の獲得方法
 
-      Different actions yield different XP values:
+      異なるアクションで異なる XP 値が得られます。
 
-      - **Submit a rated session**: 50 XP.
-      - **Reach step 7 (integrate)**: +25 XP bonus.
-      - **Accept a method switch**: 10 XP (you made a
-        deliberate learning decision).
-      - **Spaced-repetition card with confidence > 80%**:
-        5 XP.
-      - **Anki export of a set**: 20 XP.
+      - **評価付きセッションの提出**：50 XP。
+      - **ステップ 7（統合）到達**：+25 XP ボーナス。
+      - **メソッド切り替えの承認**：10 XP（意識的な学習上の
+        決断をした）。
+      - **信頼度 80% 以上の間隔反復カード**：5 XP。
+      - **セットの Anki エクスポート**：20 XP。
 
-      Levels scale with a square-root function (level n =
-      sqrt(XP / 100)) — early levels move quickly, higher
-      levels need longer breath.
+      レベルは平方根関数でスケールします（レベル n = sqrt(XP / 100)）。
+      初期のレベルは早く上がり、高いレベルはより長い時間が必要です。
 
-      ## Badges are not coercive
+      ## バッジは強制しない
 
-      Badge criteria are not UI-load-bearing — you do *not*
-      need a single badge to use the app productively. They
-      are a mirror, not a target. If you start to feel like
-      you are learning for badges rather than for yourself,
-      disable the display in settings.
+      バッジの条件は UI に依存するものではありません。
+      アプリを生産的に使うために単一のバッジも必要ではありません。
+      バッジは目標ではなく、鏡です。バッジのために学んでいると
+      感じ始めたら、設定で表示を無効にしてください。
 
-      ## Streak freezes
+      ## ストリークフリーズ
 
-      Three streak freezes per month. If you miss a day, a
-      freeze automatically protects your streak. Explicitly
-      designed as a "sick day" or "travel day" allowance, not
-      as an exception mechanism for laziness.
+      月に 3 回のストリークフリーズ。1 日を逃した場合、
+      フリーズが自動的にストリークを保護します。
+      明示的に「病気の日」や「旅行の日」の許可として設計されており、
+      怠惰な例外として設計されたものではありません。
 
-      ## Why this works without gimmicks
+      ## 見せかけなしで機能する理由
 
-      Learning research shows: extrinsic reward can destroy
-      intrinsic motivation ("overjustification effect").
-      Adaptive Learner relies on the mechanics being a
-      **mirror** of progress, not an incentive system. No
-      leaderboards, no social features, no point-sharing —
-      the data stays with you.
+      学習研究が示しています。外発的報酬は内発的動機を破壊する
+      可能性があります（「過剰理由付け効果」）。Adaptive Learner は
+      メカニズムがインセンティブシステムではなく、進捗の**鏡**で
+      あることに依存しています。リーダーボードなし、ソーシャル機能なし、
+      ポイント共有なし。データはあなたとともにあります。
 
-      ## Reset
+      ## リセット
 
-      If the gamification values no longer match your
-      situation (e.g. fresh start after a long break), you
-      can reset them in settings. Curriculum, sessions, and
-      ratings are preserved.
+      ゲーミフィケーションの値が状況に合わなくなった場合
+      （例：長い休憩後の新しいスタート）、設定でリセットできます。
+      カリキュラム、セッション、評価は保持されます。

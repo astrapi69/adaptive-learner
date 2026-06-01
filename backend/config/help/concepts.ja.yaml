@@ -1,4 +1,5 @@
-# Adaptive Learner — Help glossary: Core concepts (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: Core concepts (Japanese).
+# Translation: AI-generated, pending native review
 #
 # Per entry:
 #   key:    stable ID (snake_case, used in URLs)
@@ -13,197 +14,193 @@ category: concepts
 language: ja
 entries:
   - key: curriculum
-    title: Curriculum
-    short: "A structured learning plan that ties goals, content, methods and assessment together."
+    title: カリキュラム
+    short: "目標、コンテンツ、学習メソッド、評価を統合した体系的な学習計画です。"
     long: |
-      ## What is a curriculum?
+      ## カリキュラムとは何か？
 
-      In education, a curriculum (plural: curricula) is a
-      structured plan and systematic concept for how learning
-      and teaching happen.
+      教育において、カリキュラム（複数形：curricula）とは、
+      学習と指導がどのように行われるかを体系的に定めた
+      構造化された計画です。
 
-      ## Four core questions
+      ## 四つの核心的な問い
 
-      Every curriculum answers four central questions:
+      すべてのカリキュラムは、次の四つの中心的な問いに答えます。
 
-      - **Learning goals (why?)** — Which competencies should be
-        acquired?
-      - **Learning content (what?)** — Which topics will be
-        covered?
-      - **Methodology and didactics (how?)** — Which teaching and
-        learning forms will be used?
-      - **Evaluation (how well?)** — How will learning success be
-        measured?
+      - **学習目標（なぜ学ぶのか？）** — どのような能力を
+        習得すべきか？
+      - **学習内容（何を学ぶのか？）** — どのトピックを
+        扱うのか？
+      - **方法論と教授法（どのように学ぶのか？）** — どの
+        指導・学習形式を使うのか？
+      - **評価（どの程度習得できたか？）** — 学習の成果を
+        どのように測定するのか？
 
-      ## Difference from a syllabus
+      ## シラバスとの違い
 
-      A curriculum puts the learner and their competency acquisition
-      at the center (outcome orientation), not just a rigid list of
-      subject areas. A syllabus documents **what** should be taught;
-      a curriculum also describes **why** and **how** — and measures
-      **what was actually learned**.
+      カリキュラムは、単なる教科領域の一覧ではなく、
+      学習者とその能力習得（アウトカム指向）を中心に据えます。
+      シラバスは**何を**教えるかを文書化しますが、
+      カリキュラムはさらに**なぜ**・**どのように**を説明し、
+      **実際に何が学ばれたか**を測定します。
 
-      ## Four dimensions
+      ## 四つの次元
 
-      Curriculum research distinguishes four manifestations:
+      カリキュラム研究では、四つの現れ方を区別します。
 
-      - **Intended curriculum** — the documented target.
-      - **Implemented curriculum** — what is actually taught.
-      - **Achieved curriculum** — what learners actually
-        understand.
-      - **Hidden curriculum** — implicit learning that happens
-        alongside (study habits, attitudes, social norms).
+      - **意図されたカリキュラム** — 文書化された目標。
+      - **実施されたカリキュラム** — 実際に教えられること。
+      - **達成されたカリキュラム** — 学習者が実際に
+        理解したこと。
+      - **隠れたカリキュラム** — 学習習慣・態度・社会規範など、
+        意識せずに起きる暗黙の学習。
 
-      ## In Adaptive Learner
+      ## Adaptive Learner での使われ方
 
-      In Adaptive Learner, a curriculum is your personal learning
-      plan for a topic. It organizes learning topics hierarchically
-      and ties them to lessons. You define the goals, content and
-      methods — the system supports the evaluation through
-      tracking, the learning profile and AI feedback after each
-      step.
+      Adaptive Learner において、カリキュラムはあるトピックに
+      関するあなた個人の学習計画です。学習トピックを階層的に
+      整理し、レッスンと結び付けます。目標・内容・メソッドは
+      あなたが定め、システムはトラッキング、学習プロフィール、
+      各ステップ後の AI フィードバックを通じて評価をサポートします。
 
-      Unlike a printed curriculum, this one adapts continuously:
-      when a method-switch recommendation appears, it is the
-      implemented curriculum reacting to the achieved one.
+      印刷されたカリキュラムとは異なり、これは継続的に適応します。
+      メソッド切り替えの推奨が表示されるとき、それは
+      実施されたカリキュラムが達成されたカリキュラムに
+      反応している瞬間です。
 
   - key: learning_project
-    title: Learning Project
-    short: "Your concrete learning effort with topic, goal, timeframe and daily learning time."
+    title: 学習プロジェクト
+    short: "トピック、目標、期間、毎日の学習時間を含む、具体的な学習の取り組みです。"
     long: |
-      ## What is a learning project?
+      ## 学習プロジェクトとは何か？
 
-      A learning project bundles everything that belongs to a
-      learning effort: the topic, your goal, the timeframe, and
-      your daily learning time. It is the bracket around your
-      sessions, your curriculum and your learning profile.
+      学習プロジェクトは、ある学習の取り組みに属するすべてのものを
+      まとめます。トピック、目標、期間、毎日の学習時間などです。
+      セッション、カリキュラム、学習プロフィールを束ねる
+      フレームワークです。
 
-      ## Why these four fields?
+      ## なぜこの四つのフィールドが必要か？
 
-      - **Topic** — what you want to learn (e.g., "Spanish for
-        travel", "Python basics", "C major piano scale").
-        Concrete and bounded, not too broad.
-      - **Goal** — what you want to be able to do at the end.
-        Concrete goals ("order food at a restaurant") produce
-        better AI prompts than vague ones ("learn Spanish").
-      - **Timeframe** — by when. Affects how aggressively the
-        system schedules repetitions and when the method-switch
-        recommendation appears.
-      - **Daily learning time** — how many minutes per day you
-        can invest. Drives the spaced-repetition recommendations
-        and session length.
+      - **トピック** — 学びたいこと（例：「旅行のためのスペイン語」、
+        「Python 基礎」、「ピアノのハ長調スケール」）。
+        具体的で範囲が絞られていること。広すぎないこと。
+      - **目標** — 最終的に何ができるようになりたいか。
+        具体的な目標（「レストランで料理を注文する」）は、
+        漠然としたもの（「スペイン語を学ぶ」）よりも
+        優れた AI プロンプトを生成します。
+      - **期間** — いつまでに達成するか。システムが繰り返し
+        学習のスケジュールをどの程度積極的に組むか、
+        メソッド切り替えの推奨をいつ表示するかに影響します。
+      - **毎日の学習時間** — 1 日に投資できる分数。
+        間隔反復の推奨とセッション時間を決めます。
 
-      ## Why concrete goals matter
+      ## 具体的な目標が重要な理由
 
-      Learning research is clear: SMART goals (specific,
-      measurable, attractive, realistic, time-bound) double
-      learning success compared to vague intentions. Adaptive
-      Learner translates your goal into the AI's system prompt;
-      the more concrete you are, the sharper the generated
-      exercises.
+      学習研究は明確です。SMART な目標（具体的・測定可能・
+      魅力的・現実的・期限付き）は、漠然とした意図と比べて
+      学習成果を二倍にします。Adaptive Learner はあなたの目標を
+      AI のシステムプロンプトに変換します。より具体的であるほど、
+      生成される演習はより鋭いものになります。
 
-      ## In Adaptive Learner
+      ## Adaptive Learner での使われ方
 
-      You can have several learning projects in parallel. Each
-      session belongs to exactly one project; your progress
-      (XP, badges, streak) is tracked per project. When you
-      change the timeframe, the system automatically adjusts the
-      repetition cadence — a tight timeframe staggers
-      repetitions more densely.
+      複数の学習プロジェクトを並行して持つことができます。
+      各セッションはちょうど一つのプロジェクトに属します。
+      進捗（XP、バッジ、ストリーク）はプロジェクトごとに
+      追跡されます。期間を変更すると、システムは自動的に
+      繰り返しのペースを調整します。期間が短ければ、
+      繰り返しはより密に配置されます。
 
   - key: learning_profile
-    title: Learning Profile
-    short: "Your personal strength profile across six learning methods, derived from the assessment test."
+    title: 学習プロフィール
+    short: "アセスメントテストから導かれた、六つの学習メソッドにわたるあなた個人の強みプロフィールです。"
     long: |
-      ## What is the learning profile?
+      ## 学習プロフィールとは何か？
 
-      The learning profile shows how well each of the six
-      Adaptive Learner methods suits you. It comes from your
-      answers in the assessment test (12 questions) and is
-      visualized as a radar chart.
+      学習プロフィールは、Adaptive Learner の六つのメソッドが
+      それぞれどの程度あなたに合っているかを示します。
+      アセスメントテスト（12 問）の回答から算出され、
+      レーダーチャートとして可視化されます。
 
-      ## The six axes
+      ## 六つの軸
 
-      Each axis is a method with a weight between 0 and 100:
+      各軸は 0 から 100 の重みを持つメソッドです。
 
-      - **Deductive** — learn the rule, then apply it.
-      - **Inductive** — see examples, derive the rule yourself.
-      - **Error-based** — make mistakes deliberately, then
-        understand why.
-      - **Dialogic** — learn through conversation.
-      - **Contextual** — learn in simulated everyday situations.
-      - **AI-adaptive** — the system picks automatically.
+      - **演繹的** — ルールを学んでから適用する。
+      - **帰納的** — 例を見て、自分でルールを導き出す。
+      - **誤り活用型** — わざと間違えてから、その理由を理解する。
+      - **対話型** — 会話を通じて学ぶ。
+      - **文脈的** — 模擬された日常場面の中で学ぶ。
+      - **AI アダプティブ** — システムが自動的に選択する。
 
-      ## It is a profile, not a label
+      ## ラベルではなく、プロフィールである
 
-      Nobody is "a deductive learner". Every learner has a
-      weighted pattern across all six methods. A profile with
-      high inductive and dialogic weights does not mean
-      deductive will not work for you — it means the other two
-      typically get you to learning success faster.
+      誰も「演繹的な学習者」ではありません。すべての学習者は
+      六つのメソッドにわたる重み付きパターンを持っています。
+      帰納的と対話的の重みが高いプロフィールは、
+      演繹的があなたに向いていないという意味ではなく、
+      他の二つが通常より早く学習成果に導くという意味です。
 
-      ## Changes over time
+      ## 時間とともに変化する
 
-      The learning profile is not carved in stone. With every
-      completed learning cycle and every method switch, the
-      system adjusts its recommendations. You can re-take the
-      assessment test at any time — typically useful every
-      3-6 months, or after a major topic change.
+      学習プロフィールは固定されていません。学習サイクルが
+      完了するたびに、またメソッドを切り替えるたびに、
+      システムは推奨を調整します。アセスメントテストは
+      いつでも再受験できます。一般に 3〜6 ヶ月ごと、
+      または大きなトピック変更後に有用です。
 
-      ## In Adaptive Learner
+      ## Adaptive Learner での使われ方
 
-      The profile drives the dashboard view and session
-      recommendations. If you start a session without specifying
-      a method, the system picks the method with the highest
-      weight in your profile.
+      プロフィールはダッシュボードの表示とセッションの
+      推奨を決定します。メソッドを指定せずにセッションを
+      開始すると、システムはプロフィール内で最も重みの高い
+      メソッドを選択します。
 
   - key: learning_session
-    title: Learning Session
-    short: "An AI-driven learning unit that follows the 7-step cycle."
+    title: 学習セッション
+    short: "7 ステップサイクルに従った AI 主導の学習ユニットです。"
     long: |
-      ## What is a learning session?
+      ## 学習セッションとは何か？
 
-      A learning session is a continuous learning unit on one
-      topic, driven by the 7-step cycle (input, attempt, error,
-      feedback, adapt, repeat, integrate). The AI plays the
-      teacher role; you drive the dialog.
+      学習セッションは、7 ステップサイクル（入力・試行・誤り・
+      フィードバック・適応・繰り返し・統合）に沿って進む、
+      一つのトピックに集中した継続的な学習ユニットです。
+      AI が教師の役割を担い、あなたが対話を主導します。
 
-      ## What makes a session different from a chat?
+      ## セッションが通常のチャットと異なる点
 
-      In a session the **dual-prompt evaluator** runs alongside:
-      after every answer, a second AI instance judges your
-      understanding (0-100% confidence) and decides whether you
-      are ready for the next step. A regular chat has no such
-      corrective.
+      セッションでは**デュアルプロンプト評価器**が並行して
+      動作しています。あなたの回答ごとに、二番目の AI インスタンスが
+      あなたの理解度（信頼度 0〜100%）を評価し、次のステップに
+      進む準備ができているかどうかを判断します。通常のチャットには
+      このような修正機能がありません。
 
-      ## Streaming
+      ## ストリーミング
 
-      The AI's answers appear word by word (Server-Sent Events)
-      so you do not wait for the full reply. You can interrupt
-      at any time and ask follow-ups — the session runs until
-      you end it or the cycle completes.
+      AI の回答は単語ごとに表示されます（Server-Sent Events）。
+      完全な返答を待つ必要はありません。いつでも中断して
+      追加の質問ができます。セッションはあなたが終了するか、
+      サイクルが完了するまで続きます。
 
-      ## When should I end a session?
+      ## いつセッションを終了すべきか？
 
-      - After step 7 (integrate), when the learning cycle is
-        complete.
-      - When the system recommends a method switch and you
-        accept the recommendation.
-      - When your **stress** rating has been above 4 in the
-        last few ratings — a break is more productive than
-        pushing through.
+      - ステップ 7（統合）後、学習サイクルが完了したとき。
+      - システムがメソッド切り替えを推奨し、あなたがそれを
+        承認したとき。
+      - 直近の数回の評価で**ストレス**が 4 を超え続けているとき。
+        無理に続けるより休憩の方が効果的です。
 
-      ## Ratings carry forward
+      ## 評価は次に引き継がれる
 
-      Every session ends with three sliders (understanding,
-      stress, method fit, each 1-5). These values feed into
-      your learning profile and shape future recommendations:
-      sustained high stress plus low method fit triggers the
-      method-switch recommendation.
+      すべてのセッションは三つのスライダー（理解度・ストレス・
+      メソッド適合度、各 1〜5）で締めくくられます。これらの値は
+      学習プロフィールに反映され、将来の推奨を形成します。
+      持続的な高ストレスと低いメソッド適合度がメソッド切り替えの
+      推奨のトリガーになります。
 
-      ## In Adaptive Learner
+      ## Adaptive Learner での使われ方
 
-      A session belongs to exactly one learning project. You
-      can have only one active session at a time; this prevents
-      topic mixing and shields the method-switch logic from
-      noise.
+      セッションはちょうど一つの学習プロジェクトに属します。
+      同時にアクティブにできるセッションは一つだけです。
+      これによりトピックの混在を防ぎ、メソッド切り替えロジックを
+      ノイズから守ります。
