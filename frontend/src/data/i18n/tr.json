@@ -1300,6 +1300,7 @@
     }
   },
   "lesson": {
+    "contributed_by": "{name} tarafından katkıda bulunuldu",
     "page_title": "Ders",
     "set_label": "Set",
     "loading": "Ders yükleniyor…",
@@ -1618,6 +1619,56 @@
     "placement": {
       "lands_under": "Dersiniz şuraya yerleşecek",
       "duplicate": "Benzer bir ders zaten var: {title}. Yine de paylaşılsın mı?"
+    },
+    "wizard": {
+      "title": "Toplulukla paylaş",
+      "step_label": "Adım {n} / {total}",
+      "lands_under": "Dersiniz şuraya yerleşecek",
+      "new_set": "Yeni set! Buraya katkıda bulunan ilk kişi sizsiniz.",
+      "next_to_existing": "Bu sette mevcut {count} dersin yanına.",
+      "summary_counts": "{lessons} ders, {exercises} alıştırma, {cards} kart, ~{minutes} dk",
+      "checking": "Benzer dersler kontrol ediliyor…",
+      "no_duplicates": "Tekrar bulunamadı. Dersiniz benzersiz!",
+      "near_duplicate": "Bu ders zaten var: \"{title}\".",
+      "similar_found": "Benzer ders bulundu: \"{title}\".",
+      "overlap": "{total} karttan {cards} tanesi ortak, {ex} eşleşen alıştırma.",
+      "diff_cards": "Kartlar: {m}/{t} ortak",
+      "diff_exercises": "Alıştırmalar: {m}/{t} ortak",
+      "suggest_new_only": "Yalnızca yeni alıştırmaları öner",
+      "share_as_variation": "Yine de paylaş - bir varyasyon olarak",
+      "share_full": "Yine de tüm dersi paylaş",
+      "variation_note_placeholder": "Sizin sürümünüz nasıl farklı? (isteğe bağlı)",
+      "show_differences": "Farklılıkları göster",
+      "ready_to_share": "Her şey hazır. Dersinizi toplulukla paylaşalım mı?",
+      "share_button": "Paylaş",
+      "thanks": "Paylaştığınız için teşekkürler! Katkınız diğer öğrenenlere yardımcı oluyor.",
+      "submitted": "Dersiniz öneri olarak gönderildi. Bir yönetici inceleyecek.",
+      "view_submission": "Gönderinizi GitHub''da görüntüleyin",
+      "done": "Tamam",
+      "back": "Geri",
+      "next": "Devam"
+    },
+    "contributions": {
+      "title": "Katkılarım",
+      "count": "Topluluğa {n} ders katkıda bulundunuz.",
+      "contributor": "Topluluk Katkıcısı - {n} ders paylaşıldı!",
+      "view": "Görüntüle",
+      "status_submitted": "gönderildi",
+      "status_accepted": "kabul edildi",
+      "status_rejected": "reddedildi"
+    },
+    "gaps": {
+      "title": "Eksik Dersler",
+      "intro": "Topluluk kütüphanesinde birkaç boşluk var. Birini doldurmaya yardım eder misiniz?",
+      "next_level": "{source} konuşanlar için {target} dersleri var, ancak {level} henüz yok.",
+      "missing_pair": "{source} konuşanlar için {target} {level} henüz yok.",
+      "help": "Yardım edebilir misiniz?"
+    },
+    "credit": {
+      "name_label": "Adınız (isteğe bağlı)",
+      "name_placeholder": "ör. Maria S.",
+      "show_name": "Adı derste göster",
+      "privacy": "Adınız derste ve GitHub konusunda gösterilecek."
     }
   },
   "milestone": {

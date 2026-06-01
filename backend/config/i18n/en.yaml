@@ -1207,6 +1207,7 @@ repo:
       save: "Could not save settings"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
+  contributed_by: Contributed by {name}
   page_title: "Lesson"
   set_label: "Set"
   loading: "Loading lesson…"
@@ -1489,6 +1490,52 @@ content:
   placement:
     lands_under: Your lesson lands under
     duplicate: 'A similar lesson already exists: {title}. Share anyway?'
+  wizard:
+    title: Share with the community
+    step_label: Step {n} of {total}
+    lands_under: Your lesson lands under
+    new_set: New set! You're the first to contribute here.
+    next_to_existing: Next to {count} existing lesson(s) in this set.
+    summary_counts: '{lessons} lesson(s), {exercises} exercises, {cards} cards, ~{minutes} min'
+    checking: Checking for similar lessons…
+    no_duplicates: No duplicates found. Your lesson is unique!
+    near_duplicate: 'This lesson already exists: "{title}".'
+    similar_found: 'Similar lesson found: "{title}".'
+    overlap: '{cards} of {total} cards in common, {ex} matching exercises.'
+    diff_cards: 'Cards: {m}/{t} shared'
+    diff_exercises: 'Exercises: {m}/{t} shared'
+    suggest_new_only: Suggest only the new exercises
+    share_as_variation: Share anyway - as a variation
+    share_full: Share the full lesson anyway
+    variation_note_placeholder: How does your version differ? (optional)
+    show_differences: Show differences
+    ready_to_share: Everything's ready. Share your lesson with the community?
+    share_button: Share
+    thanks: Thanks for sharing! Your contribution helps other learners.
+    submitted: Your lesson was submitted as a suggestion. A maintainer will review it.
+    view_submission: View your submission on GitHub
+    done: Done
+    back: Back
+    next: Continue
+  contributions:
+    title: My Contributions
+    count: You've contributed {n} lesson(s) to the community.
+    contributor: Community Contributor - {n} lessons shared!
+    view: View
+    status_submitted: submitted
+    status_accepted: accepted
+    status_rejected: rejected
+  gaps:
+    title: Missing Lessons
+    intro: The community library has a few gaps. Can you help fill one?
+    next_level: '{target} for {source} speakers has lessons, but {level} doesn''t exist yet.'
+    missing_pair: '{target} {level} for {source} speakers doesn''t exist yet.'
+    help: Can you help?
+  credit:
+    name_label: Your name (optional)
+    name_placeholder: e.g. Maria S.
+    show_name: Show name in lesson
+    privacy: Your name will be shown in the lesson and the GitHub issue.
 milestone:
   streak: "{n}-Day Streak!"
   level_up: "Level {n} reached!"

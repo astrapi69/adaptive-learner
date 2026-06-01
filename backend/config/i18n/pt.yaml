@@ -1196,6 +1196,7 @@ repo:
       save: "Não foi possível salvar as definições"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
+  contributed_by: Contribuído por {name}
   page_title: "Lição"
   set_label: "Conjunto"
   loading: "A carregar a lição…"
@@ -1478,6 +1479,52 @@ content:
   placement:
     lands_under: A sua lição será colocada em
     duplicate: 'Já existe uma lição semelhante: {title}. Partilhar mesmo assim?'
+  wizard:
+    title: Partilhar com a comunidade
+    step_label: Passo {n} de {total}
+    lands_under: A sua lição será colocada em
+    new_set: Novo conjunto! É o primeiro a contribuir aqui.
+    next_to_existing: Junto a {count} lição(ões) existente(s) neste conjunto.
+    summary_counts: '{lessons} lição(ões), {exercises} exercícios, {cards} cartões, ~{minutes} min'
+    checking: A procurar lições semelhantes…
+    no_duplicates: Nenhum duplicado encontrado. A sua lição é única!
+    near_duplicate: 'Esta lição já existe: "{title}".'
+    similar_found: 'Lição semelhante encontrada: "{title}".'
+    overlap: '{cards} de {total} cartões em comum, {ex} exercícios correspondentes.'
+    diff_cards: 'Cartões: {m}/{t} partilhados'
+    diff_exercises: 'Exercícios: {m}/{t} partilhados'
+    suggest_new_only: Sugerir apenas os novos exercícios
+    share_as_variation: Partilhar mesmo assim - como uma variação
+    share_full: Partilhar a lição completa mesmo assim
+    variation_note_placeholder: Em que difere a sua versão? (opcional)
+    show_differences: Mostrar diferenças
+    ready_to_share: Está tudo pronto. Partilhar a sua lição com a comunidade?
+    share_button: Partilhar
+    thanks: Obrigado por partilhar! A sua contribuição ajuda outros estudantes.
+    submitted: A sua lição foi submetida como sugestão. Um responsável irá revê-la.
+    view_submission: Ver a sua submissão no GitHub
+    done: Concluído
+    back: Voltar
+    next: Continuar
+  contributions:
+    title: As Minhas Contribuições
+    count: Contribuiu com {n} lição(ões) para a comunidade.
+    contributor: Contribuidor da Comunidade - {n} lições partilhadas!
+    view: Ver
+    status_submitted: submetida
+    status_accepted: aceite
+    status_rejected: rejeitada
+  gaps:
+    title: Lições em Falta
+    intro: A biblioteca da comunidade tem algumas lacunas. Pode ajudar a preencher uma?
+    next_level: '{target} para falantes de {source} tem lições, mas {level} ainda não existe.'
+    missing_pair: '{target} {level} para falantes de {source} ainda não existe.'
+    help: Pode ajudar?
+  credit:
+    name_label: O seu nome (opcional)
+    name_placeholder: ex. Maria S.
+    show_name: Mostrar nome na lição
+    privacy: O seu nome será mostrado na lição e no issue do GitHub.
 milestone:
   streak: "Sequência de {n} dias!"
   level_up: "Nível {n} alcançado!"

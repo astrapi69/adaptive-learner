@@ -723,3 +723,62 @@ veröffentlicht), und der gesamte Ablauf braucht nur GitHub.
 Erzeugte Lektionen werden bereits gegen das Schema validiert, sodass
 eine beigetragene Lektion meist nur etwas Manifest-Feinschliff
 braucht.
+
+## Teilen-Assistent, Variationen und Autoren-Credit (Phase 64)
+
+Eine Lektion aus **Meine Lektionen** zu teilen öffnet einen
+vierstufigen Assistenten, statt direkt zu GitHub zu springen:
+
+1. **Vorschau + Platzierung.** Die App berechnet genau, wo die
+   Lektion im Baum landet (`sets/{quelle}/{ziel}-{niveau}/`) und
+   einen automatisch nummerierten Dateinamen
+   (`{nn}-{slug}.json`, die nächste Nummer nach den bestehenden
+   Lektionen). Ein ganz neues Paar + Niveau zeigt *"Neues Set! Du
+   bist der Erste."*
+2. **Duplikat-Prüfung.** Die Lektion wird mit den bereits in
+   diesem Pfad vorhandenen Lektionen verglichen (Karten- und
+   Übungs-Überschneidung — beratend, niemals blockierend). Wenn
+   etwas Ähnliches existiert, kannst du:
+   - **Als Variation teilen** — die Lektion wird mit
+     `variation_of: "{original_id}"` plus einer optionalen
+     `variation_note` markiert ("Wie unterscheidet sich deine
+     Version?").
+   - **Nur die neuen Übungen vorschlagen** (bei Beinahe-
+     Duplikaten) — der Assistent extrahiert genau die Übungen,
+     die dem Original fehlen, samt der zugehörigen Karten, als
+     Ergänzungs-Variation.
+3. **Qualitäts-Zusammenfassung.** Die Befunde des regelbasierten
+   Validators (plus die optionale KI-Prüfung); Warnungen werden
+   angezeigt, blockieren aber nie.
+4. **Teilen + Feiern.** Ein Klick öffnet den GitHub-PR/-Issue,
+   und die App bedankt sich mit einer kleinen Feier.
+
+### Variations- und Credit-Felder (Schema 1.3, alle optional)
+
+```json
+{
+  "variation_of": "10-passe-compose",
+  "variation_note": "Mehr Übungen zur Angleichung",
+  "contributed_by": "Maria S.",
+  "contributed_at": "2026-06-01T14:30:00Z"
+}
+```
+
+Alle vier sind additiv und optional; Lektionen ohne sie
+verhalten sich genau wie zuvor. `contributed_by` wird gesetzt,
+wenn der Autor beim Teilen den Credit aktiviert (ein Feld *"Dein
+Name (optional)"*, das lokal für das nächste Mal gemerkt wird).
+Ist es vorhanden, zeigt der Viewer eine dezente Zeile
+*"Bereitgestellt von {name}"* unter dem Titel, und der
+GitHub-Issue führt den Autor in seiner Metadaten-Tabelle auf.
+
+### Beitrags-Historie und Lücken
+
+Geteilte Lektionen werden lokal gemerkt (kein Konto nötig) unter
+**Meine Beiträge** mit einem Zähler und einer
+*Community-Beitragende*-Auszeichnung ab fünf geteilten Lektionen.
+Der Set-Browser zeigt außerdem **Fehlende Lektionen** —
+ermutigende Vorschläge für das nächste CEFR-Niveau eines
+bestehenden Paars oder eine Zielsprache, die für eine
+Ausgangssprache existiert, für eine andere aber fehlt ("Kannst du
+helfen?").

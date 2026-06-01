@@ -1201,6 +1201,7 @@ repo:
       save: "Einstellungen konnten nicht gespeichert werden"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
+  contributed_by: Bereitgestellt von {name}
   page_title: "Lektion"
   set_label: "Lernset"
   loading: "Lektion wird geladen…"
@@ -1483,6 +1484,52 @@ content:
   placement:
     lands_under: Deine Lektion wird eingeordnet unter
     duplicate: 'Eine ähnliche Lektion existiert bereits: {title}. Trotzdem teilen?'
+  wizard:
+    title: Mit der Community teilen
+    step_label: Schritt {n} von {total}
+    lands_under: Deine Lektion wird eingeordnet unter
+    new_set: Neues Set! Du bist der Erste, der hier beiträgt.
+    next_to_existing: Neben {count} bestehenden Lektionen in diesem Set.
+    summary_counts: '{lessons} Lektion(en), {exercises} Übungen, {cards} Karten, ~{minutes} Min'
+    checking: Prüfe auf ähnliche Lektionen…
+    no_duplicates: Keine Duplikate gefunden. Deine Lektion ist einzigartig!
+    near_duplicate: 'Diese Lektion existiert bereits: "{title}".'
+    similar_found: 'Ähnliche Lektion gefunden: "{title}".'
+    overlap: '{cards} von {total} Karten gemeinsam, {ex} gleiche Übungen.'
+    diff_cards: 'Karten: {m}/{t} gemeinsam'
+    diff_exercises: 'Übungen: {m}/{t} gemeinsam'
+    suggest_new_only: Nur die neuen Übungen vorschlagen
+    share_as_variation: Trotzdem teilen - als Variation
+    share_full: Trotzdem die komplette Lektion teilen
+    variation_note_placeholder: Wie unterscheidet sich deine Version? (optional)
+    show_differences: Unterschiede anzeigen
+    ready_to_share: Alles bereit. Deine Lektion mit der Community teilen?
+    share_button: Teilen
+    thanks: Danke fürs Teilen! Dein Beitrag hilft anderen Lernenden.
+    submitted: Deine Lektion wurde als Vorschlag eingereicht. Ein Maintainer wird sie prüfen.
+    view_submission: Deinen Beitrag auf GitHub ansehen
+    done: Fertig
+    back: Zurück
+    next: Weiter
+  contributions:
+    title: Meine Beiträge
+    count: Du hast {n} Lektion(en) zur Community beigetragen.
+    contributor: Community-Beitragende - {n} Lektionen geteilt!
+    view: Ansehen
+    status_submitted: eingereicht
+    status_accepted: aufgenommen
+    status_rejected: abgelehnt
+  gaps:
+    title: Fehlende Lektionen
+    intro: In der Community-Bibliothek gibt es ein paar Lücken. Kannst du eine füllen?
+    next_level: '{target} für {source}-Sprechende hat Lektionen, aber {level} fehlt noch.'
+    missing_pair: '{target} {level} für {source}-Sprechende gibt es noch nicht.'
+    help: Kannst du helfen?
+  credit:
+    name_label: Dein Name (optional)
+    name_placeholder: z.B. Maria S.
+    show_name: Namen in der Lektion anzeigen
+    privacy: Dein Name wird in der Lektion und im GitHub-Issue angezeigt.
 milestone:
   streak: "{n}-Tage-Serie!"
   level_up: "Level {n} erreicht!"

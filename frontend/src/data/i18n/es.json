@@ -1300,6 +1300,7 @@
     }
   },
   "lesson": {
+    "contributed_by": "Contribuido por {name}",
     "page_title": "Lección",
     "set_label": "Curso",
     "loading": "Cargando lección…",
@@ -1618,6 +1619,56 @@
     "placement": {
       "lands_under": "Tu lección se ubicará en",
       "duplicate": "Ya existe una lección similar: {title}. ¿Compartir de todos modos?"
+    },
+    "wizard": {
+      "title": "Compartir con la comunidad",
+      "step_label": "Paso {n} de {total}",
+      "lands_under": "Tu lección se ubicará en",
+      "new_set": "¡Set nuevo! Eres la primera persona en contribuir aquí.",
+      "next_to_existing": "Junto a {count} lección(es) existente(s) en este set.",
+      "summary_counts": "{lessons} lección(es), {exercises} ejercicios, {cards} tarjetas, ~{minutes} min",
+      "checking": "Buscando lecciones similares…",
+      "no_duplicates": "No se encontraron duplicados. ¡Tu lección es única!",
+      "near_duplicate": "Esta lección ya existe: \"{title}\".",
+      "similar_found": "Se encontró una lección similar: \"{title}\".",
+      "overlap": "{cards} de {total} tarjetas en común, {ex} ejercicios coincidentes.",
+      "diff_cards": "Tarjetas: {m}/{t} compartidas",
+      "diff_exercises": "Ejercicios: {m}/{t} compartidos",
+      "suggest_new_only": "Sugerir solo los ejercicios nuevos",
+      "share_as_variation": "Compartir de todos modos, como variación",
+      "share_full": "Compartir la lección completa de todos modos",
+      "variation_note_placeholder": "¿En qué se diferencia tu versión? (opcional)",
+      "show_differences": "Mostrar diferencias",
+      "ready_to_share": "Todo listo. ¿Compartir tu lección con la comunidad?",
+      "share_button": "Compartir",
+      "thanks": "¡Gracias por compartir! Tu contribución ayuda a otras personas que aprenden.",
+      "submitted": "Tu lección se envió como sugerencia. Una persona responsable la revisará.",
+      "view_submission": "Ver tu envío en GitHub",
+      "done": "Listo",
+      "back": "Atrás",
+      "next": "Continuar"
+    },
+    "contributions": {
+      "title": "Mis contribuciones",
+      "count": "Has contribuido con {n} lección(es) a la comunidad.",
+      "contributor": "Colaborador/a de la comunidad: ¡{n} lecciones compartidas!",
+      "view": "Ver",
+      "status_submitted": "enviada",
+      "status_accepted": "aceptada",
+      "status_rejected": "rechazada"
+    },
+    "gaps": {
+      "title": "Lecciones faltantes",
+      "intro": "La biblioteca de la comunidad tiene algunos huecos. ¿Puedes ayudar a cubrir uno?",
+      "next_level": "{target} para hablantes de {source} tiene lecciones, pero {level} aún no existe.",
+      "missing_pair": "{target} {level} para hablantes de {source} aún no existe.",
+      "help": "¿Puedes ayudar?"
+    },
+    "credit": {
+      "name_label": "Tu nombre (opcional)",
+      "name_placeholder": "p. ej. María S.",
+      "show_name": "Mostrar el nombre en la lección",
+      "privacy": "Tu nombre se mostrará en la lección y en la incidencia de GitHub."
     }
   },
   "milestone": {

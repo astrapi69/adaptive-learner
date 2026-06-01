@@ -1196,6 +1196,7 @@ repo:
       save: "設定を保存できませんでした"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
+  contributed_by: '{name}さんによる貢献'
   page_title: "レッスン"
   set_label: "セット"
   loading: "レッスンを読み込み中…"
@@ -1478,6 +1479,52 @@ content:
   placement:
     lands_under: あなたのレッスンの配置先
     duplicate: '類似のレッスンが既に存在します: {title}。それでも共有しますか？'
+  wizard:
+    title: コミュニティと共有する
+    step_label: ステップ {n} / {total}
+    lands_under: あなたのレッスンの配置先
+    new_set: 新しいセットです! ここで最初に貢献するのはあなたです。
+    next_to_existing: このセットには既に{count}件のレッスンがあります。
+    summary_counts: '{lessons}件のレッスン、{exercises}個の演習、{cards}枚のカード、約{minutes}分'
+    checking: 類似のレッスンを確認しています…
+    no_duplicates: 重複は見つかりませんでした。あなたのレッスンはユニークです!
+    near_duplicate: 'このレッスンは既に存在します: 「{title}」。'
+    similar_found: '類似のレッスンが見つかりました: 「{title}」。'
+    overlap: '{total}枚中{cards}枚のカードが共通し、{ex}個の演習が一致します。'
+    diff_cards: 'カード: {t}枚中{m}枚が共通'
+    diff_exercises: '演習: {t}個中{m}個が共通'
+    suggest_new_only: 新しい演習のみを提案する
+    share_as_variation: それでも共有する - バリエーションとして
+    share_full: それでもレッスン全体を共有する
+    variation_note_placeholder: あなたのバージョンはどのように異なりますか? (任意)
+    show_differences: 違いを表示する
+    ready_to_share: すべて準備が整いました。あなたのレッスンをコミュニティと共有しますか?
+    share_button: 共有する
+    thanks: 共有していただきありがとうございます! あなたの貢献は他の学習者の助けになります。
+    submitted: あなたのレッスンは提案として送信されました。メンテナーが確認します。
+    view_submission: GitHubで送信内容を表示する
+    done: 完了
+    back: 戻る
+    next: 続ける
+  contributions:
+    title: 私の貢献
+    count: あなたはコミュニティに{n}件のレッスンを貢献しました。
+    contributor: コミュニティ貢献者 - {n}件のレッスンを共有しました!
+    view: 表示
+    status_submitted: 送信済み
+    status_accepted: 承認済み
+    status_rejected: 却下
+  gaps:
+    title: 不足しているレッスン
+    intro: コミュニティライブラリにはいくつかの空白があります。一つを埋めるのを手伝ってもらえますか?
+    next_level: '{source}話者向けの{target}にはレッスンがありますが、{level}はまだ存在しません。'
+    missing_pair: '{source}話者向けの{target} {level}はまだ存在しません。'
+    help: 手伝ってもらえますか?
+  credit:
+    name_label: あなたの名前 (任意)
+    name_placeholder: '例: Maria S.'
+    show_name: レッスンに名前を表示する
+    privacy: あなたの名前はレッスンとGitHubのissueに表示されます。
 milestone:
   streak: "{n}日連続記録!"
   level_up: "レベル{n}に到達!"

@@ -695,3 +695,55 @@ curates every addition — nothing is auto-published), and the
 whole flow needs only GitHub. Generated lessons already validate
 against the schema, so a contributed lesson usually needs only
 manifest polish before it ships.
+
+## Sharing wizard, variations and author credit (Phase 64)
+
+Sharing a lesson from **My Lessons** opens a four-step wizard
+instead of jumping straight to GitHub:
+
+1. **Preview + placement.** The app computes exactly where the
+   lesson lands in the tree (`sets/{source}/{target}-{level}/`)
+   and an auto-numbered filename (`{nn}-{slug}.json`, the next
+   number after the existing lessons). A brand-new pair + level
+   shows *"New set! You're the first."*
+2. **Duplicate check.** The lesson is compared against the
+   lessons already in that tree path by card overlap and exercise
+   overlap (advisory — it never blocks). If something similar
+   exists you can:
+   - **Share as a variation** — the lesson is tagged
+     `variation_of: "{original_id}"` plus an optional
+     `variation_note` ("how does your version differ?").
+   - **Suggest only the new exercises** (near-duplicates) — the
+     wizard extracts just the exercises the original lacks, plus
+     the cards they reference, as a supplement variation.
+3. **Quality summary.** The rule-based validator findings (plus
+   the optional AI review); warnings are shown but never block.
+4. **Share + celebrate.** One click opens the GitHub PR/issue and
+   the app thanks you with a small celebration.
+
+### Variation + credit fields (schema 1.3, all optional)
+
+```json
+{
+  "variation_of": "10-passe-compose",
+  "variation_note": "More exercises on agreement",
+  "contributed_by": "Maria S.",
+  "contributed_at": "2026-06-01T14:30:00Z"
+}
+```
+
+All four are additive and optional; lessons without them behave
+exactly as before. `contributed_by` is set when the author opts
+in to credit while sharing (a *"Your name (optional)"* field that
+is remembered locally for next time). When present, the viewer
+shows a muted *"Contributed by {name}"* line under the title and
+the GitHub issue lists the author in its metadata table.
+
+### Contribution history and gaps
+
+Shared lessons are remembered locally (no account needed) under
+**My Contributions** with a counter and a *Community Contributor*
+recognition at five shares. The Set Browser also surfaces
+**Missing Lessons** — encouraging suggestions for the next CEFR
+level of an existing pair, or a target taught for one source
+language but missing for another ("Can you help?").
