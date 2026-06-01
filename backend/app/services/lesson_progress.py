@@ -132,11 +132,12 @@ def upsert_progress(
     mark_paused: bool = False,
     mark_abandoned: bool = False,
     mark_resumed: bool = False,
+    mark_restarted: bool = False,
 ) -> dict[str, Any]:
     """Merge a step result + optional lifecycle flag into the
     user's progress row. Creates the row on first call.
 
-    Lifecycle flags (Phase 63A):
+    Lifecycle flags (Phase 63A/C):
 
     - ``mark_paused`` flips ``status`` to ``paused`` and stamps
       ``paused_at``. ``step_results`` stay intact for the resume.
@@ -146,19 +147,29 @@ def upsert_progress(
       table — what was learned stays learned).
     - ``mark_resumed`` flips a ``paused`` row back to
       ``in_progress`` and clears ``paused_at``.
+    - ``mark_restarted`` (Phase 63C) clears ``step_results`` and
+      resets ``status`` to ``in_progress`` from any prior state.
+      Used by the resume-dialog "Start Over" path.
 
-    At most one of the four ``mark_*`` flags may be true per
+    At most one of the five ``mark_*`` flags may be true per
     call; a ``ValidationError`` is raised otherwise.
     """
     flag_count = sum(
         1
-        for f in (mark_completed, mark_paused, mark_abandoned, mark_resumed)
+        for f in (
+            mark_completed,
+            mark_paused,
+            mark_abandoned,
+            mark_resumed,
+            mark_restarted,
+        )
         if f
     )
     if flag_count > 1:
         raise ValidationError(
             "At most one of mark_completed / mark_paused / "
-            "mark_abandoned / mark_resumed may be true per call."
+            "mark_abandoned / mark_resumed / mark_restarted "
+            "may be true per call."
         )
     _ensure_user(db, user_id)
     row = _find_row(db, user_id, source, set_id, lesson_filename)
@@ -239,6 +250,15 @@ def upsert_progress(
     elif mark_resumed and row.status == "paused":
         row.status = "in_progress"
         row.paused_at = None
+    elif mark_restarted:
+        # Phase 63C — "Start Over" from the resume dialog.
+        # Unconditional reset regardless of prior status.
+        row.status = "in_progress"
+        row.step_results = "{}"
+        row.score_correct = 0
+        row.score_total = 0
+        row.paused_at = None
+        row.abandoned_at = None
 
     row.updated_at = now
     db.commit()

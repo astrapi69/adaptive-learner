@@ -539,6 +539,10 @@ export interface LessonProgressUpsertBody {
    *  clear ``paused_at`` so the viewer can resume from the saved
    *  ``step_results``. */
   mark_resumed?: boolean;
+  /** Phase 63C — discard ``step_results`` + score and reset
+   *  ``status`` to ``in_progress`` from any prior state. Used by
+   *  the resume-dialog "Start Over" path. */
+  mark_restarted?: boolean;
 }
 
 /**

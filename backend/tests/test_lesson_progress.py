@@ -466,3 +466,42 @@ def test_completed_clears_paused_and_abandoned_stamps(
     assert body["completed_at"] is not None
     assert body["paused_at"] is None
     assert body["abandoned_at"] is None
+
+
+def test_mark_restarted_resets_to_in_progress_and_clears_step_results(
+    client: TestClient,
+) -> None:
+    """Phase 63C — 'Start Over' from the resume dialog.
+    mark_restarted must reset status to in_progress, clear
+    step_results / score, and clear any lifecycle timestamps
+    regardless of the prior status."""
+    user_id = _make_user(client)
+    _upsert_step(client, user_id, "ex-1")
+    # Pause the lesson first.
+    client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_paused": True,
+        },
+    )
+    # Now restart.
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_restarted": True,
+        },
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["status"] == "in_progress"
+    assert body["step_results"] == {}
+    assert body["score_correct"] == 0
+    assert body["score_total"] == 0
+    assert body["paused_at"] is None
+    assert body["abandoned_at"] is None

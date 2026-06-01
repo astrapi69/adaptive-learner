@@ -1268,6 +1268,15 @@ class LessonProgressUpsert(BaseModel):
             "``in_progress`` and clear ``paused_at``."
         ),
     )
+    mark_restarted: bool = Field(
+        default=False,
+        description=(
+            "Phase 63C — discard step_results + score and reset "
+            "``status`` to ``in_progress`` regardless of the prior "
+            "state. Used by the 'Start Over' path in the resume "
+            "dialog. Clears ``paused_at`` and ``abandoned_at``."
+        ),
+    )
 
 
 class LessonProgressOut(BaseModel):

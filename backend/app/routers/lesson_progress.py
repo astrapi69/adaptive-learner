@@ -91,5 +91,6 @@ def upsert_lesson_progress(
         mark_paused=payload.mark_paused,
         mark_abandoned=payload.mark_abandoned,
         mark_resumed=payload.mark_resumed,
+        mark_restarted=payload.mark_restarted,
     )
     return LessonProgressOut.model_validate(row)

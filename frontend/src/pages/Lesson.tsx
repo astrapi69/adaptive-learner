@@ -40,6 +40,7 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
 import LessonExitDialog from "../components/lesson/LessonExitDialog";
+import LessonResumeDialog from "../components/lesson/LessonResumeDialog";
 import CorrectionBlock from "../components/exercises/CorrectionBlock";
 import {notify} from "../utils/notify";
 import DiffHighlight from "../components/exercises/DiffHighlight";
@@ -113,6 +114,8 @@ export default function LessonPage() {
         markCompleted,
         markPaused,
         markAbandoned,
+        markResumed,
+        markRestarted,
     } = useLesson({source, setId, lessonFilename: filename});
 
     // Phase 63B — back-button intercept + browser-close
@@ -126,6 +129,28 @@ export default function LessonPage() {
     // first upsert lands; we still allow an explicit pause from
     // the dialog because it will create the row on the way.
     const isInProgress = progress === null || progress.status === "in_progress";
+
+    // Phase 63C — resume prompt. Shown once when the lesson is
+    // loaded and the stored progress is in the ``paused`` state.
+    // The user must choose before interacting with the step view.
+    const [resumeChoiceMade, setResumeChoiceMade] = useState(false);
+    const showResumePrompt =
+        status === "ready" &&
+        progress?.status === "paused" &&
+        !resumeChoiceMade;
+
+    const handleResume = async () => {
+        await markResumed();
+        setResumeChoiceMade(true);
+        // currentStepIndex is already at the right position
+        // (fetchInitial computed it from step_results on load).
+    };
+
+    const handleStartOver = async () => {
+        await markRestarted();
+        setResumeChoiceMade(true);
+        goToStep(0);
+    };
 
     useEffect(() => {
         if (!isInProgress) return;
@@ -444,6 +469,16 @@ export default function LessonPage() {
                     <p className="lesson-description">{lesson.description}</p>
                 )}
             </header>
+
+            {/* Phase 63C — resume prompt overlays the step view.
+                The user must choose before they can interact with
+                the lesson content. */}
+            <LessonResumeDialog
+                open={showResumePrompt}
+                lessonTitle={lesson?.title ?? ""}
+                onResume={() => void handleResume()}
+                onStartOver={() => void handleStartOver()}
+            />
 
             <div
                 className="lesson-progress-bar"

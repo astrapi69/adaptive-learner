@@ -77,6 +77,10 @@ export interface UseLessonResult {
     /** Phase 63C — flip a paused row back to in_progress so
      *  the viewer can replay from the saved step_results. */
     markResumed: () => Promise<void>;
+    /** Phase 63C — discard step_results + score and reset to
+     *  in_progress (the resume-dialog "Start Over" path).
+     *  Caller must also call goToStep(0) to reset the position. */
+    markRestarted: () => Promise<void>;
     /** Force-reload the lesson + progress (Set Browser
      *  navigated here mid-download). */
     refresh: () => void;
@@ -283,7 +287,11 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
     // correct status / timestamp / step_results invariants.
     const _markLifecycle = useCallback(
         async (
-            flag: "mark_paused" | "mark_abandoned" | "mark_resumed",
+            flag:
+                | "mark_paused"
+                | "mark_abandoned"
+                | "mark_resumed"
+                | "mark_restarted",
         ) => {
             if (!userId || lesson === null) return;
             const timeDelta = _consumeStepTime();
@@ -325,6 +333,10 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         () => _markLifecycle("mark_resumed"),
         [_markLifecycle],
     );
+    const markRestarted = useCallback(
+        () => _markLifecycle("mark_restarted"),
+        [_markLifecycle],
+    );
 
     return {
         status,
@@ -341,6 +353,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         markPaused,
         markAbandoned,
         markResumed,
+        markRestarted,
         refresh,
     };
 }

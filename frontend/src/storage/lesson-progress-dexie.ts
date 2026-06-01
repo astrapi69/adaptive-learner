@@ -106,19 +106,20 @@ export async function upsertLessonProgressDexie(
     const key = rowKey(userId, body.source, body.set_id, body.lesson_filename);
     const now = new Date().toISOString();
 
-    // Phase 63A — guard the one-hot lifecycle flag invariant.
-    // At most one of mark_completed / mark_paused / mark_abandoned /
-    // mark_resumed may be set; multiple flags is a programming
-    // error in the caller.
+    // Phase 63A/C — guard the one-hot lifecycle flag invariant.
+    // At most one of the five mark_* flags may be set; multiple
+    // flags is a programming error in the caller.
     const lifecycleCount =
         (body.mark_completed ? 1 : 0) +
         (body.mark_paused ? 1 : 0) +
         (body.mark_abandoned ? 1 : 0) +
-        (body.mark_resumed ? 1 : 0);
+        (body.mark_resumed ? 1 : 0) +
+        (body.mark_restarted ? 1 : 0);
     if (lifecycleCount > 1) {
         throw new Error(
             "At most one of mark_completed / mark_paused / " +
-                "mark_abandoned / mark_resumed may be true per call.",
+                "mark_abandoned / mark_resumed / mark_restarted " +
+                "may be true per call.",
         );
     }
 
@@ -207,6 +208,15 @@ export async function upsertLessonProgressDexie(
     } else if (body.mark_resumed && row.status === "paused") {
         row.status = "in_progress";
         row.paused_at = null;
+    } else if (body.mark_restarted) {
+        // Phase 63C — "Start Over" from the resume dialog.
+        // Unconditional reset to fresh in_progress state.
+        row.status = "in_progress";
+        row.step_results = {};
+        row.score_correct = 0;
+        row.score_total = 0;
+        row.paused_at = null;
+        row.abandoned_at = null;
     }
 
     row.updated_at = now;
