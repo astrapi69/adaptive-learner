@@ -384,6 +384,12 @@ export interface ContentLesson {
   /** Phase 64B — the author's short note on how this variation
    *  differs from the original ("Mehr Übungen zum Präteritum"). */
   variation_note?: string | null;
+  /** Phase 64C-2 (schema 1.3, additive) — optional author credit set
+   *  when the learner opts in while sharing. Shown as a subtle credit
+   *  line in the viewer + in the GitHub submission. */
+  contributed_by?: string | null;
+  /** ISO-8601 timestamp the lesson was contributed. */
+  contributed_at?: string | null;
 }
 
 /**

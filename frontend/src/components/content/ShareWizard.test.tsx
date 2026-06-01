@@ -9,7 +9,7 @@
 
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import ShareWizard from "./ShareWizard";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";
@@ -97,6 +97,11 @@ function renderWizard(over: Partial<React.ComponentProps<typeof ShareWizard>> = 
   return { onShared, onClose, openUrl, props };
 }
 
+beforeEach(() => {
+  // Isolate the remembered author name between tests.
+  localStorage.clear();
+});
+
 describe("ShareWizard: placement (step 1)", () => {
   it("shows the tree placement and a new-set message when no set exists", () => {
     renderWizard();
@@ -181,5 +186,43 @@ describe("ShareWizard: share + celebration (step 4)", () => {
       "href",
       expect.stringContaining("github.com"),
     );
+  });
+});
+
+describe("ShareWizard: author credit (64C-2)", () => {
+  it("stamps the credit onto the shared lesson and remembers the name", async () => {
+    const { openUrl } = renderWizard();
+    // Enter a name in step 1; the show-name toggle auto-checks.
+    fireEvent.change(screen.getByTestId("share-wizard-author-name"), {
+      target: { value: "Maria S." },
+    });
+    expect(screen.getByTestId("share-wizard-author-show")).toBeChecked();
+    // 1 -> 2 -> 3 -> 4 -> share
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    await screen.findByTestId("share-wizard-step-2");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+
+    const url = openUrl.mock.calls[0][0] as string;
+    const value = new URL(url).searchParams.get("value") ?? "";
+    expect(value).toContain("contributed_by");
+    expect(value).toContain("Maria S.");
+    // Name remembered for next time.
+    expect(localStorage.getItem("adaptive-learner.contributor-name")).toBe(
+      "Maria S.",
+    );
+  });
+
+  it("omits the credit when no name is entered", async () => {
+    const { openUrl } = renderWizard();
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    await screen.findByTestId("share-wizard-step-2");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+    const url = openUrl.mock.calls[0][0] as string;
+    const value = new URL(url).searchParams.get("value") ?? "";
+    expect(value).not.toContain("contributed_by");
   });
 });

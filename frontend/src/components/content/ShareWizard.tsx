@@ -29,6 +29,10 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 
 import { useI18n } from "../../hooks/useI18n";
+import {
+  readContributorName,
+  writeContributorName,
+} from "../../lib/content/contribution-history";
 import type {
   ValidationIssue,
   ValidationResult,
@@ -107,6 +111,9 @@ export default function ShareWizard({
   const [note, setNote] = useState("");
   const [showDiff, setShowDiff] = useState(false);
   const [sharedUrl, setSharedUrl] = useState<string | null>(null);
+  // Phase 64C-2 — optional author credit, remembered across shares.
+  const [authorName, setAuthorName] = useState(() => readContributorName());
+  const [showName, setShowName] = useState(() => readContributorName() !== "");
 
   const primary = lessons[0] ?? null;
   const singleLesson = lessons.length === 1 && primary != null;
@@ -172,6 +179,16 @@ export default function ShareWizard({
         if (supplement) lessonToShip = supplement;
       }
     }
+    // Phase 64C-2 — stamp the author credit onto the shipped lesson
+    // (serialised in the PR fast lane) when the user opted in.
+    const credited = showName && authorName.trim().length > 0;
+    if (credited && lessonToShip) {
+      lessonToShip = {
+        ...lessonToShip,
+        contributed_by: authorName.trim(),
+        contributed_at: new Date().toISOString(),
+      };
+    }
     const meta: ExportSetMeta = {
       set_id: entry.id,
       title: entry.title,
@@ -201,12 +218,15 @@ export default function ShareWizard({
         exerciseCount,
         cardCount,
         validationIssues,
+        author: credited ? authorName.trim() : undefined,
       });
     }
     return url;
   }
 
   function doShare(): void {
+    // Remember the name for next time (or clear it if blanked).
+    writeContributorName(authorName);
     const url = buildShareUrl();
     (openUrl ?? defaultOpen)(url);
     setSharedUrl(url);
@@ -286,6 +306,50 @@ export default function ShareWizard({
                 >
                   {t("content.wizard.next_to_existing", "Next to {count} existing lesson(s) in this set.")
                     .replace("{count}", String(placement.existingLessonCount))}
+                </p>
+              )}
+            </div>
+
+            {/* Phase 64C-2 — optional author credit. */}
+            <div
+              className="share-wizard-author"
+              data-testid="share-wizard-author"
+            >
+              <label className="form-row">
+                <span className="form-label">
+                  {t("content.credit.name_label", "Your name (optional)")}
+                </span>
+                <input
+                  type="text"
+                  className="share-wizard-author-name"
+                  placeholder={t("content.credit.name_placeholder", "e.g. Maria S.")}
+                  value={authorName}
+                  onChange={(e) => {
+                    setAuthorName(e.target.value);
+                    if (e.target.value.trim() && !showName) setShowName(true);
+                  }}
+                  data-testid="share-wizard-author-name"
+                />
+              </label>
+              {authorName.trim() && (
+                <label className="form-row form-row-toggle">
+                  <span className="form-label">
+                    {t("content.credit.show_name", "Show name in lesson")}
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={showName}
+                    onChange={(e) => setShowName(e.target.checked)}
+                    data-testid="share-wizard-author-show"
+                  />
+                </label>
+              )}
+              {authorName.trim() && showName && (
+                <p className="share-wizard-author-privacy">
+                  {t(
+                    "content.credit.privacy",
+                    "Your name will be shown in the lesson and the GitHub issue.",
+                  )}
                 </p>
               )}
             </div>

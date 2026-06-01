@@ -17,6 +17,7 @@
  */
 
 const STORAGE_KEY = "adaptive-learner.contributions";
+const NAME_KEY = "adaptive-learner.contributor-name";
 
 /** Threshold for the local "Community Contributor" recognition. */
 export const CONTRIBUTOR_THRESHOLD = 5;
@@ -102,6 +103,31 @@ export function contributionCount(storage?: Storage): number {
  *  {@link CONTRIBUTOR_THRESHOLD} lessons. */
 export function isCommunityContributor(storage?: Storage): boolean {
   return contributionCount(storage) >= CONTRIBUTOR_THRESHOLD;
+}
+
+/** The remembered author name for credit (Phase 64C-2), so the user
+ *  doesn't retype it on every share. Empty string when unset. */
+export function readContributorName(storage?: Storage): string {
+  const s = resolveStorage(storage);
+  if (!s) return "";
+  try {
+    return s.getItem(NAME_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+/** Persist (or clear, when blank) the remembered author name. */
+export function writeContributorName(name: string, storage?: Storage): void {
+  const s = resolveStorage(storage);
+  if (!s) return;
+  try {
+    const trimmed = name.trim();
+    if (trimmed) s.setItem(NAME_KEY, trimmed);
+    else s.removeItem(NAME_KEY);
+  } catch {
+    /* ignore */
+  }
 }
 
 /** Remove all history (Settings/testing convenience). */

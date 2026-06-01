@@ -475,6 +475,17 @@ export default function LessonPage() {
                     </p>
                 )}
                 <h1>{lesson.title}</h1>
+                {lesson.contributed_by && (
+                    <p
+                        className="lesson-credit"
+                        data-testid="lesson-credit"
+                    >
+                        {t(
+                            "lesson.contributed_by",
+                            "Contributed by {name}",
+                        ).replace("{name}", lesson.contributed_by)}
+                    </p>
+                )}
                 {lesson.description && (
                     <p className="lesson-description">{lesson.description}</p>
                 )}

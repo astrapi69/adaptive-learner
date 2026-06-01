@@ -10,7 +10,9 @@ import {
   contributionCount,
   isCommunityContributor,
   listContributions,
+  readContributorName,
   recordContribution,
+  writeContributorName,
   type SharedContribution,
 } from "./contribution-history";
 
@@ -122,5 +124,22 @@ describe("resilience", () => {
     recordContribution(contribution(), storage);
     clearContributions(storage);
     expect(contributionCount(storage)).toBe(0);
+  });
+});
+
+describe("contributor name (Phase 64C-2)", () => {
+  it("remembers and reads back a trimmed name", () => {
+    writeContributorName("  Maria S.  ", storage);
+    expect(readContributorName(storage)).toBe("Maria S.");
+  });
+
+  it("returns empty when unset", () => {
+    expect(readContributorName(storage)).toBe("");
+  });
+
+  it("clears the name when written blank", () => {
+    writeContributorName("Maria", storage);
+    writeContributorName("   ", storage);
+    expect(readContributorName(storage)).toBe("");
   });
 });

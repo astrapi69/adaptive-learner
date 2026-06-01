@@ -111,6 +111,9 @@ export interface CommunityIssueDetails {
    *  sees what the rule-based check flagged; absent when the
    *  check passed. */
   validationIssues?: string[];
+  /** Optional author credit (Phase 64C-2), shown in the metadata
+   *  table when the user opted to add their name. */
+  author?: string;
 }
 
 /** Build a pre-filled GitHub issue URL for the community contribution
@@ -138,6 +141,7 @@ export function communityIssueUrl(
       `| Lessons | ${lessonCount} |`,
       `| Cards | ${details.cardCount} |`,
       `| Exercises | ${details.exerciseCount} |`,
+      ...(details.author ? [`| Contributed by | ${details.author} |`] : []),
       "",
       details.validationIssues && details.validationIssues.length > 0
         ? `**Validation:** ⚠ shared with warnings${details.aiSummary ? ` · ${details.aiSummary}` : ""}`
