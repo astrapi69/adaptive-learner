@@ -606,7 +606,7 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     expect(screen.getByTestId("api-key-input-anthropic")).not.toBeDisabled();
   });
 
-  it("renders 'Key from: secrets.yaml' badge + disables Save when externally managed", async () => {
+  it("renders 'Key from: secrets.yaml' badge + keeps the field EDITABLE (app writes the file)", async () => {
     apiGet.mockResolvedValue({
       ...BASE,
       has_anthropic_key: false,
@@ -617,11 +617,34 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(
       /secrets\.yaml/,
     );
-    expect(screen.getByTestId("api-key-external-anthropic")).toHaveTextContent(
+    // Informational note (not the read-only "externally managed" env hint).
+    expect(
+      screen.queryByTestId("api-key-external-anthropic"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("api-key-info-anthropic")).toHaveTextContent(
       /secrets\.yaml/,
     );
-    expect(screen.getByTestId("api-key-save-anthropic")).toBeDisabled();
-    expect(screen.getByTestId("api-key-input-anthropic")).toBeDisabled();
+    // Field stays editable so the user can overwrite the stored key.
+    expect(screen.getByTestId("api-key-input-anthropic")).not.toBeDisabled();
+    // Save enables once the draft is non-empty.
+    const input = screen.getByTestId(
+      "api-key-input-anthropic",
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "sk-new" } });
+    expect(screen.getByTestId("api-key-save-anthropic")).not.toBeDisabled();
+  });
+
+  it("shows the Remove button for a secrets.yaml key (editable source)", async () => {
+    apiGet.mockResolvedValue({
+      ...BASE,
+      has_anthropic_key: true,
+      key_source_anthropic: "secrets_yaml",
+    });
+    renderSettings();
+    await screen.findByTestId("settings");
+    expect(
+      screen.getByTestId("api-key-delete-anthropic"),
+    ).toBeInTheDocument();
   });
 
   it("renders 'Key from: environment' badge + env-var hint when externally managed", async () => {
@@ -663,16 +686,14 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     ).toBeInTheDocument();
   });
 
-  it("hides the Remove button when externally managed (even if has_*_key is true)", async () => {
-    // Edge: the DB column had a key from a previous UI
-    // configuration, but secrets.yaml has overridden it.
-    // Removing the DB column would have no user-visible
-    // effect (the resolver still picks the yaml key), so we
-    // hide the Remove button to avoid the confusing dance.
+  it("hides the Remove button when externally managed via env var (even if has_*_key is true)", async () => {
+    // An env-var-sourced key cannot be removed from the UI — the
+    // user must unset the environment variable. The Remove button
+    // is hidden to avoid a no-op that wouldn't change the resolver.
     apiGet.mockResolvedValue({
       ...BASE,
       has_anthropic_key: true,
-      key_source_anthropic: "secrets_yaml",
+      key_source_anthropic: "env",
     });
     renderSettings();
     await screen.findByTestId("settings");

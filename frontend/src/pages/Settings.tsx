@@ -594,14 +594,15 @@ export default function Settings() {
         {AI_PROVIDERS.map((provider) => {
           const has = settings[`has_${provider}_key`] as boolean;
           const isActive = settings.active_provider === provider;
-          // Phase 34 (v1.20.0) — when the key is sourced
-          // from secrets.yaml or an env var, the UI is
-          // read-only. The Save / Remove buttons are
-          // disabled and an info banner points the user
-          // at the externally-managed file.
+          // Only an env-var-sourced key is truly read-only from
+          // the UI: the user must change the environment, not the
+          // app. A ``secrets.yaml`` key IS editable now that the
+          // app writes to that file — saving overwrites it,
+          // removing clears it. ``settings`` (DB) and ``none``
+          // were always editable.
           const source = settings[`key_source_${provider}`];
-          const externallyManaged =
-            source === "secrets_yaml" || source === "env";
+          const externallyManaged = source === "env";
+          const fromSecretsFile = source === "secrets_yaml";
           return (
             <div
               key={provider}
@@ -656,15 +657,21 @@ export default function Settings() {
                   className="api-key-external-hint"
                   data-testid={`api-key-external-${provider}`}
                 >
-                  {source === "secrets_yaml"
-                    ? t(
-                        "settings.api_key_external_hint_file",
-                        "This key is configured in ~/.config/adaptive_learner/secrets.yaml. Edit the file to change it.",
-                      )
-                    : t(
-                        "settings.api_key_external_hint_env",
-                        "This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.",
-                      ).replace("{PROVIDER}", provider.toUpperCase())}
+                  {t(
+                    "settings.api_key_external_hint_env",
+                    "This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.",
+                  ).replace("{PROVIDER}", provider.toUpperCase())}
+                </p>
+              )}
+              {fromSecretsFile && (
+                <p
+                  className="api-key-source-file-hint"
+                  data-testid={`api-key-info-${provider}`}
+                >
+                  {t(
+                    "settings.api_key_external_hint_file",
+                    "Stored in ~/.config/adaptive_learner/secrets.yaml. Saving here overwrites it.",
+                  )}
                 </p>
               )}
               {isActive && !has && !externallyManaged && (
@@ -682,7 +689,14 @@ export default function Settings() {
                 <input
                   data-testid={`api-key-input-${provider}`}
                   type="password"
-                  placeholder={t("settings.api_key_placeholder", "Paste here…")}
+                  placeholder={
+                    has && !externallyManaged
+                      ? t(
+                          "settings.api_key_placeholder_replace",
+                          "Paste a new key to replace the stored one…",
+                        )
+                      : t("settings.api_key_placeholder", "Paste here…")
+                  }
                   aria-label={`${t("settings.api_key_label", "API key")} (${provider})`}
                   autoComplete="off"
                   value={keyDrafts[provider]}
