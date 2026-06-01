@@ -9,7 +9,34 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.47.0** (minor - **Phase 63 — Lesson
+- **Current state:** **v1.48.0** (minor - **Phase 64 —
+  Community Sharing UX + Smart Lesson Organization**, with
+  **Smart Next-Step Suggestions** after lesson completion.
+  Sharing a lesson is now a four-step wizard: a smart
+  **placement engine** (auto tree path + auto-numbered
+  ``{nn}-{slug}.json`` filename + "you're the first" new-set
+  detection + content auto-detection), an advisory
+  **duplicate/variation/supplement** scan (lesson-level card +
+  exercise overlap; share as a ``variation_of`` or extract only
+  the new exercises), the quality summary, then share + a
+  confetti celebration. Optional **author credit**
+  (``contributed_by`` / ``contributed_at``, remembered locally,
+  shown as a muted viewer credit line + in the GitHub issue). A
+  local **contribution history** ("My Contributions" +
+  "Community Contributor" at 5 shares, localStorage — no Dexie
+  bump) and encouraging **Missing-Lessons** gap suggestions.
+  Content schema 1.2 -> 1.3 (additive ``variation_of`` /
+  ``variation_note`` / ``contributed_by`` / ``contributed_at``).
+  New ``placement-engine.ts`` / ``gap-detector.ts`` /
+  ``contribution-history.ts`` + lesson-level detection in
+  ``duplicate-detection.ts`` + the ``ShareWizard`` component, all
+  Vitest-covered. **Smart Next-Step Suggestions** (merged from
+  ``feature/smart-next-steps``): the lesson summary proposes a
+  sensible next step (adaptive lesson from errors, review queue,
+  next lesson in set / set complete, resume awareness) via
+  ``useNextStepSuggestions`` + a themed card. EXP-021 documents a
+  future standalone Lesson Creator. Full i18n in 8 languages.
+  v1.47.0 = minor - **Phase 63 — Lesson
   Flow Control**. Lessons are no longer all-or-nothing: they can
   be paused, abandoned and resumed. ``LessonProgress`` gains
   ``paused``/``abandoned`` states + ``paused_at``/``abandoned_at``
