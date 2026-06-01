@@ -213,6 +213,32 @@ export interface AnalysisOptions {
      * language. Unknown codes fall back to English. Default "en".
      */
     lang?: string;
+    /**
+     * Optional AbortSignal — cancels the in-flight provider call.
+     * When aborted, :func:`analyzeConversation` re-throws the
+     * ``AbortError`` instead of collapsing to the deterministic
+     * fallback, so the caller can distinguish "user cancelled"
+     * from "the AI response was unparseable".
+     */
+    signal?: AbortSignal;
+    /**
+     * Optional progress callback. Fires once per chunk as each
+     * chunk's analysis completes, with the 1-based index of the
+     * chunk just finished and the total chunk count. Lets the UI
+     * show real per-segment progress on long, multi-chunk
+     * transcripts (single-chunk analyses just report ``1 / 1``).
+     */
+    onProgress?: (completed: number, total: number) => void;
+}
+
+/** True when ``err`` is a fetch/AbortController abort. */
+function isAbortError(err: unknown): boolean {
+    return (
+        (typeof DOMException !== "undefined" &&
+            err instanceof DOMException &&
+            err.name === "AbortError") ||
+        (err instanceof Error && err.name === "AbortError")
+    );
 }
 
 /**
@@ -533,7 +559,8 @@ export async function analyzeConversation(
         return deterministicFallback(opts.title);
     }
     const chunkResults: ConversationAnalysisResult[] = [];
-    for (const chunk of chunks) {
+    for (let i = 0; i < chunks.length; i++) {
+        const chunk = chunks[i];
         const userContent = buildAnalysisUserContent(chunk, opts.title);
         let raw: string;
         try {
@@ -546,8 +573,15 @@ export async function analyzeConversation(
                     {role: "user", content: userContent},
                 ],
                 maxTokens: 1500,
+                signal: opts.signal,
             });
         } catch (err) {
+            // A user-triggered cancel is NOT a parse failure — let it
+            // propagate so the caller returns to the pre-analysis
+            // state instead of saving a misleading fallback result.
+            if (isAbortError(err) || opts.signal?.aborted) {
+                throw err;
+            }
             // Surface the provider error message as part of the
             // fallback so the user knows what went wrong.
             const detail =
@@ -555,6 +589,7 @@ export async function analyzeConversation(
             const fb = deterministicFallback(opts.title);
             fb.summary = `${fb.summary} (provider: ${detail})`;
             chunkResults.push(fb);
+            opts.onProgress?.(i + 1, chunks.length);
             continue;
         }
         const parsed = parseAnalysisResponse(raw);
@@ -563,6 +598,7 @@ export async function analyzeConversation(
         } else {
             chunkResults.push(deterministicFallback(opts.title));
         }
+        opts.onProgress?.(i + 1, chunks.length);
     }
     let merged = chunkResults[0];
     for (let i = 1; i < chunkResults.length; i++) {

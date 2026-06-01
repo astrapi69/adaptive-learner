@@ -67,6 +67,13 @@ import:
   analysis_fallback: 分析は実行されましたが、AI の応答をきれいに解析できませんでした。
   analysis_fallback_long: AI の応答は構造化された JSON として解析できませんでした。下の要約は フォールバックです。
   analysis_error: 会話を分析できませんでした。
+  analysis_phase_reading: "ステップ1/3: チャットを読み込み中…"
+  analysis_phase_analyzing: "ステップ2/3: 内容を分析中…"
+  analysis_phase_preparing: "ステップ3/3: 結果を準備中…"
+  analysis_estimate: "分析には約15〜30秒かかります…"
+  analysis_done: "完了！"
+  analysis_cancel: "キャンセル"
+  analysis_failed_inline: "分析に失敗しました。もう一度お試しください。"
   analysis_save_error: 分析結果を保存できませんでした。
   back_to_list: インポート一覧に戻る
   create_curriculum: カリキュラムを作成

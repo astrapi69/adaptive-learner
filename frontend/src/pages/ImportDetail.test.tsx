@@ -5,7 +5,7 @@
 import "fake-indexeddb/auto";
 
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
-import {render, screen, waitFor} from "@testing-library/react";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 
 import ImportDetail from "./ImportDetail";
@@ -13,11 +13,15 @@ import {I18nProvider} from "../hooks/useI18n";
 import {_resetDbForTests} from "../storage/db";
 import {dexieStorage} from "../storage/dexie-storage";
 import {_resetStorageCacheForTests} from "../storage";
+import {_resetApiKeyStatusCacheForTests} from "../hooks/useApiKeyStatus";
+import {aiComplete} from "../storage/ai-providers";
 
 vi.mock("../storage/ai-providers", () => ({
     aiComplete: vi.fn(),
     resolveModel: vi.fn(() => "test-model"),
 }));
+
+const mockAiComplete = vi.mocked(aiComplete);
 
 vi.mock("../utils/notify", () => ({
     notify: {
@@ -31,6 +35,8 @@ vi.mock("../utils/notify", () => ({
 beforeEach(async () => {
     await _resetDbForTests();
     _resetStorageCacheForTests();
+    _resetApiKeyStatusCacheForTests();
+    mockAiComplete.mockReset();
     localStorage.clear();
     localStorage.setItem("adaptive-learner.storage_mode", "dexie");
     const {IDBFactory} = await import("fake-indexeddb");
@@ -70,6 +76,28 @@ async function setup(analyzed = false) {
         });
     }
     return conv;
+}
+
+/**
+ * Seed a user WITH an active-provider API key so the Analyze
+ * button enables and ``runAnalysis`` proceeds past the key gate.
+ * Returns the conversation (not yet analyzed).
+ */
+async function setupWithKey() {
+    const user = await dexieStorage.users.create({name: "A"});
+    localStorage.setItem("adaptive-learner.user_id", user.id);
+    await dexieStorage.settings.setApiKey(user.id, {
+        provider: "anthropic",
+        key: "test-key",
+    });
+    return dexieStorage.imports.create(user.id, {
+        source: "manual",
+        title: "Test conversation",
+        messages: [
+            {role: "user", content: "Question one"},
+            {role: "assistant", content: "Answer one"},
+        ],
+    });
 }
 
 function renderDetail(conversationId: string) {
@@ -153,5 +181,110 @@ describe("ImportDetail page", () => {
                 screen.getByTestId("analysis-fallback-notice"),
             ).toBeTruthy();
         });
+    });
+
+    it("shows the loading indicator + spinner while analysis runs", async () => {
+        const conv = await setupWithKey();
+        // aiComplete never resolves within the test window — keeps
+        // the loading state on screen for assertions.
+        mockAiComplete.mockReturnValue(new Promise<string>(() => {}));
+        renderDetail(conv.id);
+        const button = await waitFor(() => {
+            const b = screen.getByTestId(
+                "analyze-button",
+            ) as HTMLButtonElement;
+            expect(b.disabled).toBe(false);
+            return b;
+        });
+        fireEvent.click(button);
+        await waitFor(() => {
+            expect(screen.getByTestId("analysis-loading")).toBeTruthy();
+        });
+        expect(screen.getByTestId("analyze-spinner")).toBeTruthy();
+        expect(screen.getByTestId("cancel-analysis-button")).toBeTruthy();
+        // "1/3" is locale-independent (both EN "Step 1/3" and DE
+        // "Schritt 1/3"); the I18nProvider default locale varies.
+        expect(screen.getByTestId("analysis-phase").textContent).toContain(
+            "1/3",
+        );
+        expect(
+            (screen.getByTestId("analyze-button") as HTMLButtonElement)
+                .disabled,
+        ).toBe(true);
+    });
+
+    it("cancel aborts the analysis and returns to the pre-analysis state", async () => {
+        const conv = await setupWithKey();
+        // Reject with an AbortError as soon as the signal fires.
+        mockAiComplete.mockImplementation(
+            (opts) =>
+                new Promise<string>((_resolve, reject) => {
+                    opts.signal?.addEventListener("abort", () => {
+                        reject(new DOMException("aborted", "AbortError"));
+                    });
+                }),
+        );
+        renderDetail(conv.id);
+        const button = await waitFor(() => {
+            const b = screen.getByTestId(
+                "analyze-button",
+            ) as HTMLButtonElement;
+            expect(b.disabled).toBe(false);
+            return b;
+        });
+        fireEvent.click(button);
+        const cancel = await waitFor(() =>
+            screen.getByTestId("cancel-analysis-button"),
+        );
+        fireEvent.click(cancel);
+        // Loading panel disappears, no results, no inline error,
+        // button is enabled again.
+        await waitFor(() => {
+            expect(screen.queryByTestId("analysis-loading")).toBeNull();
+        });
+        expect(screen.queryByTestId("analysis-results")).toBeNull();
+        expect(screen.queryByTestId("analysis-error-inline")).toBeNull();
+        expect(
+            (screen.getByTestId("analyze-button") as HTMLButtonElement)
+                .disabled,
+        ).toBe(false);
+    });
+
+    it("shows a friendly inline error when the analysis throws", async () => {
+        const conv = await setupWithKey();
+        mockAiComplete.mockResolvedValue(
+            JSON.stringify({topic: "T", summary: "S"}),
+        );
+        // Force the persist step to throw so runAnalysis hits the
+        // inline-error branch (provider parse failures collapse to a
+        // fallback instead and are covered separately).
+        const saveSpy = vi
+            .spyOn(dexieStorage.imports, "saveAnalysis")
+            .mockRejectedValue(new Error("disk full"));
+        renderDetail(conv.id);
+        const button = await waitFor(() => {
+            const b = screen.getByTestId(
+                "analyze-button",
+            ) as HTMLButtonElement;
+            expect(b.disabled).toBe(false);
+            return b;
+        });
+        fireEvent.click(button);
+        await waitFor(() => {
+            expect(screen.getByTestId("analysis-error-inline")).toBeTruthy();
+        });
+        // Locale-agnostic: a non-empty friendly message is present
+        // (exact wording depends on the I18nProvider default locale).
+        expect(
+            (screen.getByTestId("analysis-error-inline").textContent ?? "")
+                .length,
+        ).toBeGreaterThan(0);
+        // Button re-enabled, loading panel gone.
+        expect(screen.queryByTestId("analysis-loading")).toBeNull();
+        expect(
+            (screen.getByTestId("analyze-button") as HTMLButtonElement)
+                .disabled,
+        ).toBe(false);
+        saveSpy.mockRestore();
     });
 });

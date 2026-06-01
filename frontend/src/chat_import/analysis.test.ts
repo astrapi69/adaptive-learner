@@ -329,6 +329,39 @@ describe("analyzeConversation", () => {
         expect(result.fallback_used).toBe(true);
         expect(mockedAiComplete).not.toHaveBeenCalled();
     });
+
+    it("re-throws an AbortError instead of collapsing to a fallback", async () => {
+        mockedAiComplete.mockRejectedValueOnce(
+            new DOMException("aborted", "AbortError"),
+        );
+        const controller = new AbortController();
+        controller.abort();
+        await expect(
+            analyzeConversation({
+                provider: "anthropic",
+                apiKey: "fake",
+                modelOverride: null,
+                messages: [{role: "user", content: "Q"}],
+                signal: controller.signal,
+            }),
+        ).rejects.toThrow();
+    });
+
+    it("reports per-chunk progress via onProgress", async () => {
+        mockedAiComplete.mockResolvedValue(validJson);
+        const ticks: Array<[number, number]> = [];
+        await analyzeConversation({
+            provider: "anthropic",
+            apiKey: "fake",
+            modelOverride: null,
+            messages: [
+                {role: "user", content: "Q"},
+                {role: "assistant", content: "A"},
+            ],
+            onProgress: (done, total) => ticks.push([done, total]),
+        });
+        expect(ticks).toEqual([[1, 1]]);
+    });
 });
 
 describe("deterministicFallback", () => {

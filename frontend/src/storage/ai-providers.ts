@@ -67,6 +67,12 @@ interface AiCompleteOptions {
      * to ``1024`` for the chat reply.
      */
     maxTokens?: number;
+    /**
+     * Optional AbortSignal — aborts the underlying ``fetch``. Used
+     * by the import-page "Cancel" control so a long analysis can be
+     * stopped without burning the rest of the provider call.
+     */
+    signal?: AbortSignal;
 }
 
 /**
@@ -78,11 +84,29 @@ export async function aiComplete(opts: AiCompleteOptions): Promise<string> {
     const maxTokens = opts.maxTokens ?? 1024;
     switch (opts.provider) {
         case "anthropic":
-            return anthropicComplete(opts.model, opts.apiKey, opts.messages, maxTokens);
+            return anthropicComplete(
+                opts.model,
+                opts.apiKey,
+                opts.messages,
+                maxTokens,
+                opts.signal,
+            );
         case "openai":
-            return openaiComplete(opts.model, opts.apiKey, opts.messages, maxTokens);
+            return openaiComplete(
+                opts.model,
+                opts.apiKey,
+                opts.messages,
+                maxTokens,
+                opts.signal,
+            );
         case "gemini":
-            return geminiComplete(opts.model, opts.apiKey, opts.messages, maxTokens);
+            return geminiComplete(
+                opts.model,
+                opts.apiKey,
+                opts.messages,
+                maxTokens,
+                opts.signal,
+            );
     }
 }
 
@@ -98,6 +122,7 @@ async function anthropicComplete(
     apiKey: string,
     messages: ChatMessage[],
     maxTokens: number,
+    signal?: AbortSignal,
 ): Promise<string> {
     // Anthropic separates ``system`` from ``messages``. Pull the
     // first system message out (the prompt orchestrator only
@@ -122,6 +147,7 @@ async function anthropicComplete(
             "anthropic-dangerous-direct-browser-access": "true",
         },
         body: JSON.stringify(body),
+        signal,
     });
     const json = (await response.json().catch(() => ({}))) as AnthropicResponse;
     if (!response.ok) {
@@ -147,6 +173,7 @@ async function openaiComplete(
     apiKey: string,
     messages: ChatMessage[],
     maxTokens: number,
+    signal?: AbortSignal,
 ): Promise<string> {
     const body = {
         model,
@@ -160,6 +187,7 @@ async function openaiComplete(
             Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify(body),
+        signal,
     });
     const json = (await response.json().catch(() => ({}))) as OpenAiResponse;
     if (!response.ok) {
@@ -188,6 +216,7 @@ async function geminiComplete(
     apiKey: string,
     messages: ChatMessage[],
     maxTokens: number,
+    signal?: AbortSignal,
 ): Promise<string> {
     // Gemini doesn't have a separate system field; we fold any
     // ``system`` messages into the first ``user`` part. Roles map
@@ -212,6 +241,7 @@ async function geminiComplete(
             contents,
             generationConfig: {maxOutputTokens: maxTokens},
         }),
+        signal,
     });
     const json = (await response.json().catch(() => ({}))) as GeminiResponse;
     if (!response.ok) {
