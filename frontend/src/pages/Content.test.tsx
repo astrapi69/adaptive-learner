@@ -640,4 +640,34 @@ describe("Content — My Lessons (Phase 59C)", () => {
       refresh: vi.fn(),
     });
   });
+
+  it("records a contribution and shows My Contributions after sharing", async () => {
+    localStorage.clear();
+    const valid = { ...USER_ENTRY, title_native: "Español A1" };
+    listSetsMock.mockResolvedValue({ sets: [valid], sources: [] });
+    listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
+    getLessonMock.mockResolvedValue(shareableLesson());
+    const openSpy = vi.fn();
+    vi.stubGlobal("open", openSpy);
+    renderPage();
+    await screen.findByTestId("content-page");
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
+    });
+    await screen.findByTestId("share-wizard-step-1");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    await screen.findByTestId("share-wizard-unique");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+    // The page now shows the local contribution history.
+    expect(
+      await screen.findByTestId("content-my-contributions"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("content-contributions-count"),
+    ).toHaveTextContent("1");
+    vi.unstubAllGlobals();
+    localStorage.clear();
+  });
 });

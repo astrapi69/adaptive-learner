@@ -49,6 +49,12 @@ import {
 } from "../lib/content/content-validator";
 import type { AiValidationResult } from "../lib/content/ai-content-validator";
 import ShareWizard from "../components/content/ShareWizard";
+import {
+  CONTRIBUTOR_THRESHOLD,
+  listContributions,
+  recordContribution,
+  type SharedContribution,
+} from "../lib/content/contribution-history";
 import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
 import { readLearnerState } from "../lib/learnerState";
 import {
@@ -121,6 +127,11 @@ export default function ContentPage() {
   const [shareExistingFilenames, setShareExistingFilenames] = useState<
     string[]
   >([]);
+  // Phase 64D — local contribution history (localStorage; no server).
+  const [contributions, setContributions] = useState<SharedContribution[]>([]);
+  useEffect(() => {
+    setContributions(listContributions());
+  }, []);
   // Keys of AI suggestions the user has auto-applied (so the button
   // flips to "applied" and isn't re-run).
   const [appliedFixes, setAppliedFixes] = useState<Set<string>>(new Set());
@@ -908,6 +919,56 @@ export default function ContentPage() {
         )}
       </section>
 
+      {/* Phase 64D — My Contributions (local sharing history). */}
+      {contributions.length > 0 && (
+        <section
+          className="content-section content-my-contributions"
+          data-testid="content-my-contributions"
+        >
+          <h2>{t("content.contributions.title", "My Contributions")}</h2>
+          <p data-testid="content-contributions-count">
+            {t(
+              "content.contributions.count",
+              "You've contributed {n} lesson(s) to the community.",
+            ).replace("{n}", String(contributions.length))}
+          </p>
+          {contributions.length >= CONTRIBUTOR_THRESHOLD && (
+            <p
+              className="content-contributor-badge"
+              data-testid="content-contributor-badge"
+            >
+              {t(
+                "content.contributions.contributor",
+                "Community Contributor — {n} lessons shared!",
+              ).replace("{n}", String(contributions.length))}
+            </p>
+          )}
+          <ul
+            className="content-contributions-list"
+            data-testid="content-contributions-list"
+          >
+            {contributions.map((c) => (
+              <li key={c.github_url} className="content-contribution-row">
+                <span className="content-contribution-title">{c.title}</span>
+                <span className="content-contribution-date">
+                  {c.shared_at.slice(0, 10)}
+                </span>
+                <span className="content-contribution-status">
+                  {t(`content.contributions.status_${c.status}`, c.status)}
+                </span>
+                <a
+                  href={c.github_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t("content.contributions.view", "View")}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <h2 className="content-section-title">
         {t("content.my_lessons.downloaded_title", "Downloaded sets")}
       </h2>
@@ -1024,7 +1085,16 @@ export default function ContentPage() {
           validationMessage={validationMessage}
           repo={COMMUNITY_REPO}
           branch={COMMUNITY_BRANCH}
-          onShared={() => {}}
+          onShared={(url, title) => {
+            recordContribution({
+              lesson_id: shareTarget.id,
+              title,
+              shared_at: new Date().toISOString(),
+              github_url: url,
+              status: "submitted",
+            });
+            setContributions(listContributions());
+          }}
           onClose={closeShareModal}
           aiSection={
             shareResult && hasKey ? (
