@@ -53,6 +53,14 @@ import type {
   ConversationAnalysisResult,
   VocabularyEntry,
 } from "../../types/domain";
+import {
+  buildCloze,
+  buildFreeText,
+  buildMatching,
+  buildWordTiles,
+  selectExercises,
+  type GeneratorCard,
+} from "./exercise-generator";
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -363,153 +371,6 @@ function buildTheorySteps(
 }
 
 // ---------------------------------------------------------------------------
-// Exercises
-// ---------------------------------------------------------------------------
-
-function acceptVariants(translation: string): string[] {
-  const trimmed = translation.trim();
-  return uniq([trimmed, trimmed.toLowerCase()]).filter(Boolean);
-}
-
-function matchingExercises(
-  vocabulary: VocabularyEntry[],
-  groupSize: number,
-  prompt: string,
-): ContentLessonExercise[] {
-  const out: ContentLessonExercise[] = [];
-  for (let start = 0; start < vocabulary.length; start += groupSize) {
-    const slice = vocabulary.slice(start, start + groupSize);
-    if (slice.length < 2) break; // a 1-pair matching is degenerate
-    const groupIndex = out.length;
-    out.push({
-      id: `ex-match-${groupIndex}`,
-      type: "matching",
-      prompt: clampLen(prompt, 1000),
-      card_ids: slice.map((_, i) => vocabCardId(start + i)),
-      pairs: slice.map((entry) => ({
-        left: entry.word.trim(),
-        right: entry.translation.trim(),
-      })),
-      distractors: [],
-    });
-  }
-  return out;
-}
-
-function freeTextExercises(
-  vocabulary: VocabularyEntry[],
-  promptTemplate: string,
-): ContentLessonExercise[] {
-  return vocabulary.map((entry, i) => ({
-    id: `ex-free-${i}`,
-    type: "free_text",
-    prompt: clampLen(promptTemplate.replace("{word}", entry.word.trim()), 1000),
-    card_ids: [vocabCardId(i)],
-    accept: acceptVariants(entry.translation),
-    distractors: [],
-  }));
-}
-
-/** Blank the first whole-string occurrence of ``word`` in
- *  ``example`` with a single ``___`` marker. Returns null when the
- *  word is absent or appears more than once (the cloze schema needs
- *  exactly one marker per blank). */
-function blankExample(example: string, word: string): string | null {
-  const trimmed = example.trim();
-  const target = word.trim();
-  if (!trimmed || !target) return null;
-  const first = trimmed.indexOf(target);
-  if (first === -1) return null;
-  if (trimmed.indexOf(target, first + target.length) !== -1) return null;
-  return trimmed.slice(0, first) + "___" + trimmed.slice(first + target.length);
-}
-
-function clozeExercises(
-  vocabulary: VocabularyEntry[],
-  prompt: string,
-): ContentLessonExercise[] {
-  const out: ContentLessonExercise[] = [];
-  vocabulary.forEach((entry, i) => {
-    if (!entry.example) return;
-    const sentence = blankExample(entry.example, entry.word);
-    if (!sentence) return;
-    out.push({
-      id: `ex-cloze-${i}`,
-      type: "cloze",
-      prompt,
-      card_ids: [vocabCardId(i)],
-      sentence,
-      blanks: [{ accept: acceptVariants(entry.word) }],
-      cloze_mode: "type",
-      distractors: [],
-    });
-  });
-  return out;
-}
-
-function wordTilesExercises(
-  vocabulary: VocabularyEntry[],
-  promptTemplate: string,
-): ContentLessonExercise[] {
-  const out: ContentLessonExercise[] = [];
-  vocabulary.forEach((entry, i) => {
-    if (!entry.example) return;
-    const tiles = entry.example.trim().split(/\s+/).filter(Boolean);
-    if (tiles.length < 2) return;
-    out.push({
-      id: `ex-tiles-${i}`,
-      type: "word_tiles",
-      prompt: clampLen(
-        promptTemplate.replace("{word}", entry.word.trim()),
-        1000,
-      ),
-      card_ids: [vocabCardId(i)],
-      // Tiles are in correct order; the viewer shuffles for
-      // display and accepts the canonical order (no
-      // accept_orderings needed, matching authored lessons).
-      tiles,
-      distractors: [],
-    });
-  });
-  return out;
-}
-
-const TYPE_RANK: Record<string, number> = {
-  matching: 0,
-  free_text: 1,
-  cloze: 2,
-  word_tiles: 3,
-};
-
-/** Round-robin across the buckets (preserves type variety under the
- *  cap), then order the selection easy -> hard for a difficulty
- *  progression. */
-function selectExercises(
-  buckets: ContentLessonExercise[][],
-  max: number,
-): ContentLessonExercise[] {
-  const selected: ContentLessonExercise[] = [];
-  let drained = false;
-  let round = 0;
-  while (selected.length < max && !drained) {
-    drained = true;
-    for (const bucket of buckets) {
-      if (selected.length >= max) break;
-      if (round < bucket.length) {
-        selected.push(bucket[round]);
-        drained = false;
-      }
-    }
-    round += 1;
-  }
-  return selected.sort(
-    (a, b) =>
-      (TYPE_RANK[a.type] ?? 9) - (TYPE_RANK[b.type] ?? 9) ||
-      (a.id < b.id ? -1 : 1),
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Generator
 // ---------------------------------------------------------------------------
 
@@ -558,15 +419,19 @@ export function generateLessonFromAnalysis(
 
   const exerciseSteps: ContentLessonStep[] = [];
   if (vocabulary.length >= config.minVocabForExercises) {
+    // Normalise vocabulary to the shared generator's card shape. The
+    // ``vocab-${i}`` ids match ``buildCards`` so card_ids resolve.
+    const genCards: GeneratorCard[] = vocabulary.map((entry, i) => ({
+      id: vocabCardId(i),
+      front: entry.word,
+      back: entry.translation,
+      example: entry.example,
+    }));
     const buckets = [
-      matchingExercises(
-        vocabulary,
-        config.matchingGroupSize,
-        labels.matchingPrompt,
-      ),
-      freeTextExercises(vocabulary, labels.freeTextPrompt),
-      clozeExercises(vocabulary, labels.clozePrompt),
-      wordTilesExercises(vocabulary, labels.wordTilesPrompt),
+      buildMatching(genCards, config.matchingGroupSize, labels.matchingPrompt),
+      buildFreeText(genCards, labels.freeTextPrompt),
+      buildCloze(genCards, labels.clozePrompt),
+      buildWordTiles(genCards, labels.wordTilesPrompt),
     ];
     const chosen = selectExercises(buckets, config.maxExercises);
     chosen.forEach((exercise, i) => {

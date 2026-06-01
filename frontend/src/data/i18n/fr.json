@@ -1876,6 +1876,32 @@
       "body": "Vous avez une leçon inachevée. Reprendre où vous en étiez ou recommencer ?",
       "start_fresh": "Recommencer",
       "continue": "Continuer"
+    },
+    "exercises": {
+      "heading": "Générer des exercices",
+      "count_label": "Nombre d'exercices",
+      "types_label": "Types d'exercices",
+      "direction_label": "Direction",
+      "generate": "Générer les exercices automatiquement",
+      "regenerate": "Régénérer",
+      "count": "{n} exercices",
+      "min_hint": "{n} exercices nécessaires",
+      "min_to_advance": "Générez au moins {n} exercices pour continuer.",
+      "drag": "Glisser pour réorganiser",
+      "delete": "Supprimer l'exercice",
+      "type": {
+        "matching": "Association",
+        "free_text": "Texte libre",
+        "cloze": "Texte à trous",
+        "word_tiles": "Tuiles de mots",
+        "picture_choice": "Choix d'image"
+      },
+      "dir": {
+        "auto": "Auto",
+        "receptive": "Réceptif",
+        "productive": "Productif",
+        "balanced": "Équilibré"
+      }
     }
   }
 }

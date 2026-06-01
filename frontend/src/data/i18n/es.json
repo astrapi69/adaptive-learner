@@ -1876,6 +1876,32 @@
       "body": "Tienes una lección sin terminar. ¿Continuar donde lo dejaste o empezar de nuevo?",
       "start_fresh": "Empezar de nuevo",
       "continue": "Continuar"
+    },
+    "exercises": {
+      "heading": "Generar ejercicios",
+      "count_label": "Número de ejercicios",
+      "types_label": "Tipos de ejercicio",
+      "direction_label": "Dirección",
+      "generate": "Generar ejercicios automáticamente",
+      "regenerate": "Regenerar",
+      "count": "{n} ejercicios",
+      "min_hint": "Se necesitan {n} ejercicios",
+      "min_to_advance": "Genera al menos {n} ejercicios para continuar.",
+      "drag": "Arrastra para reordenar",
+      "delete": "Eliminar ejercicio",
+      "type": {
+        "matching": "Emparejar",
+        "free_text": "Texto libre",
+        "cloze": "Cloze",
+        "word_tiles": "Fichas de palabras",
+        "picture_choice": "Elección de imagen"
+      },
+      "dir": {
+        "auto": "Automático",
+        "receptive": "Receptivo",
+        "productive": "Productivo",
+        "balanced": "Equilibrado"
+      }
     }
   }
 }

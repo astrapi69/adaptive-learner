@@ -1876,6 +1876,32 @@
       "body": "Tem uma lição não terminada. Continuar de onde parou ou começar de novo?",
       "start_fresh": "Começar de novo",
       "continue": "Continuar"
+    },
+    "exercises": {
+      "heading": "Gerar exercícios",
+      "count_label": "Número de exercícios",
+      "types_label": "Tipos de exercício",
+      "direction_label": "Direção",
+      "generate": "Gerar exercícios automaticamente",
+      "regenerate": "Regenerar",
+      "count": "{n} exercícios",
+      "min_hint": "{n} exercícios necessários",
+      "min_to_advance": "Gere pelo menos {n} exercícios para continuar.",
+      "drag": "Arraste para reordenar",
+      "delete": "Eliminar exercício",
+      "type": {
+        "matching": "Correspondência",
+        "free_text": "Texto livre",
+        "cloze": "Cloze",
+        "word_tiles": "Peças de palavras",
+        "picture_choice": "Escolha de imagem"
+      },
+      "dir": {
+        "auto": "Automático",
+        "receptive": "Recetivo",
+        "productive": "Produtivo",
+        "balanced": "Equilibrado"
+      }
     }
   }
 }

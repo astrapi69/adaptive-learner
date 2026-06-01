@@ -27,6 +27,15 @@ import {
 } from "../lib/content/language-options";
 import {readContributorName} from "../lib/content/contribution-history";
 import CardEditor, {MIN_CARDS} from "../components/create-lesson/CardEditor";
+import ExerciseGenerator, {
+    MIN_EXERCISES,
+} from "../components/create-lesson/ExerciseGenerator";
+import {
+    DEFAULT_EXERCISE_GEN_CONFIG,
+    generateExercises,
+    type ExerciseGenConfig,
+    type GeneratorCard,
+} from "../lib/content/exercise-generator";
 import {
     clearLessonDraft,
     draftHasContent,
@@ -37,6 +46,7 @@ import {
     type LessonDraft,
     type LessonMeta,
 } from "../lib/content/lesson-draft";
+import type {ContentLessonExercise} from "../storage/types";
 
 const TOTAL_STEPS = 4;
 const DRAFT_AUTOSAVE_MS = 10_000;
@@ -69,8 +79,13 @@ export default function CreateLesson() {
         defaultMeta((lang || "en").split("-")[0]),
     );
     const [cards, setCards] = useState<LessonCardDraft[]>([]);
+    const [exercises, setExercises] = useState<ContentLessonExercise[]>([]);
+    const [genConfig, setGenConfig] = useState<ExerciseGenConfig>(
+        DEFAULT_EXERCISE_GEN_CONFIG,
+    );
     const [showError, setShowError] = useState(false);
     const [cardError, setCardError] = useState(false);
+    const [exerciseError, setExerciseError] = useState(false);
     const [confirmCancel, setConfirmCancel] = useState(false);
     // Draft restore: a saved draft with content prompts continue-or-fresh
     // before any edits. Held until the user chooses.
@@ -129,7 +144,26 @@ export default function CreateLesson() {
             }
             setCardError(false);
         }
+        if (step === 3) {
+            if (exercises.length < MIN_EXERCISES) {
+                setExerciseError(true);
+                return;
+            }
+            setExerciseError(false);
+        }
         setStep((s) => Math.min(TOTAL_STEPS, s + 1));
+    }
+
+    function generateLessonExercises() {
+        const genCards: GeneratorCard[] = cards.map((c) => ({
+            id: c.id,
+            front: c.front,
+            back: c.back,
+            example: c.notes,
+            image: c.image,
+        }));
+        setExercises(generateExercises(genCards, genConfig));
+        setExerciseError(false);
     }
 
     // --- card handlers (Step 2) ---
@@ -385,7 +419,36 @@ export default function CreateLesson() {
                 </>
             )}
 
-            {step > 2 && (
+            {step === 3 && (
+                <>
+                    <ExerciseGenerator
+                        exercises={exercises}
+                        config={genConfig}
+                        onConfigChange={setGenConfig}
+                        onGenerate={generateLessonExercises}
+                        onReorder={setExercises}
+                        onDelete={(id) =>
+                            setExercises((prev) =>
+                                prev.filter((e) => e.id !== id),
+                            )
+                        }
+                    />
+                    {exerciseError && exercises.length < MIN_EXERCISES && (
+                        <p
+                            className="form-hint form-hint-warning"
+                            data-testid="create-lesson-exercise-error"
+                            role="alert"
+                        >
+                            {t(
+                                "create_lesson.exercises.min_to_advance",
+                                "Generate at least {n} exercises to continue.",
+                            ).replace("{n}", String(MIN_EXERCISES))}
+                        </p>
+                    )}
+                </>
+            )}
+
+            {step > 3 && (
                 <section
                     className="create-lesson-step"
                     data-testid={`create-lesson-step-${step}`}

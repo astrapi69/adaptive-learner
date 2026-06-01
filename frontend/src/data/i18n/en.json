@@ -1876,6 +1876,32 @@
       "body": "You have an unfinished lesson. Continue where you left off or start fresh?",
       "start_fresh": "Start fresh",
       "continue": "Continue"
+    },
+    "exercises": {
+      "heading": "Generate exercises",
+      "count_label": "Number of exercises",
+      "types_label": "Exercise types",
+      "direction_label": "Direction",
+      "generate": "Auto-generate exercises",
+      "regenerate": "Regenerate",
+      "count": "{n} exercises",
+      "min_hint": "{n} exercises needed",
+      "min_to_advance": "Generate at least {n} exercises to continue.",
+      "drag": "Drag to reorder",
+      "delete": "Delete exercise",
+      "type": {
+        "matching": "Matching",
+        "free_text": "Free text",
+        "cloze": "Cloze",
+        "word_tiles": "Word tiles",
+        "picture_choice": "Picture choice"
+      },
+      "dir": {
+        "auto": "Auto",
+        "receptive": "Receptive",
+        "productive": "Productive",
+        "balanced": "Balanced"
+      }
     }
   }
 }

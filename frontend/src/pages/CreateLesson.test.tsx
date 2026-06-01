@@ -147,6 +147,28 @@ describe("CreateLesson — card step gate + draft", () => {
         expect(screen.getByTestId("create-lesson-step-3")).toBeInTheDocument();
     });
 
+    it("generates exercises and gates step 4 on a minimum of 5", () => {
+        toStep2();
+        addCard("Bonjour", "Hallo");
+        addCard("Merci", "Danke");
+        addCard("Oui", "Ja");
+        addCard("Non", "Nein");
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 3
+        expect(screen.getByTestId("create-lesson-step-3")).toBeInTheDocument();
+        // No exercises yet → Next blocked.
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(
+            screen.getByTestId("create-lesson-exercise-error"),
+        ).toBeInTheDocument();
+        // Auto-generate, then advance to step 4.
+        fireEvent.click(screen.getByTestId("exercise-generate"));
+        expect(
+            Number(screen.getByTestId("exercise-list-count").textContent?.match(/\d+/)?.[0]),
+        ).toBeGreaterThanOrEqual(5);
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(screen.getByTestId("create-lesson-step-4")).toBeInTheDocument();
+    });
+
     it("offers to restore a saved draft and continues it", () => {
         localStorage.setItem(
             "adaptive-learner.lesson-draft",
