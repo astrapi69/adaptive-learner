@@ -139,6 +139,13 @@ export interface ApiKeyTestResult {
   kind: ApiKeyTestKind;
 }
 
+/** Metadata about a stored last-known-good key backup (Phase 65).
+ *  Never carries the key itself. */
+export interface ApiKeyBackupInfo {
+  has: boolean;
+  tested_at: string | null;
+}
+
 export interface ISettingsNamespace {
   get(userId: string): Promise<UserSettings>;
   update(userId: string, body: SettingsPatchBody): Promise<UserSettings>;
@@ -156,6 +163,26 @@ export interface ISettingsNamespace {
     userId: string,
     body: { provider: AIProvider; key?: string },
   ): Promise<ApiKeyTestResult>;
+  /**
+   * Phase 65 — rollback cache. ``backupApiKey`` caches a tested-good
+   * key as the last-known-good backup (called by the save flow after
+   * a successful test); ``getApiKeyBackup`` returns its metadata (no
+   * key); ``restoreApiKeyBackup`` restores it as the active key.
+   * Both modes: ApiStorage hits the backend (Fernet-encrypted DB row),
+   * DexieStorage uses an IndexedDB table.
+   */
+  backupApiKey(
+    userId: string,
+    body: { provider: AIProvider; key: string },
+  ): Promise<UserSettings>;
+  getApiKeyBackup(
+    userId: string,
+    provider: AIProvider,
+  ): Promise<ApiKeyBackupInfo>;
+  restoreApiKeyBackup(
+    userId: string,
+    provider: AIProvider,
+  ): Promise<UserSettings>;
   /**
    * v1.11.0 / Phase 24 — provider model discovery. Returns
    * the chat-capable models the user has access to from the

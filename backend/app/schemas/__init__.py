@@ -246,6 +246,23 @@ class ApiKeyTestOut(BaseModel):
     kind: str
 
 
+class ApiKeyBackupBody(BaseModel):
+    """POST body for ``/api/settings/{user_id}/api-key-backup`` — caches
+    a tested-good key as the last-known-good backup for ``provider``."""
+
+    provider: AIProvider
+    key: str = Field(min_length=1)
+
+
+class ApiKeyBackupInfoOut(BaseModel):
+    """Metadata about a stored backup — never the key itself. ``has``
+    is false when no backup exists; ``tested_at`` is the ISO timestamp
+    of the last successful test."""
+
+    has: bool
+    tested_at: datetime | None = None
+
+
 class AvailableModelOut(BaseModel):
     """One row returned by ``GET /api/settings/{user_id}/available-models``.
 

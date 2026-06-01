@@ -43,6 +43,7 @@ from sqlalchemy.orm import Session
 from app.exceptions import NotFoundError, ValidationError
 from app.models import (
     AnkiCardSuggestion,
+    ApiKeyBackup,
     Badge,
     Curriculum,
     ElementError,
@@ -629,6 +630,27 @@ TABLES: dict[str, TableSpec] = {
         timestamp_field="updated_at",
         append_only=False,
         order=31,
+        scope="direct",
+    ),
+    # Phase 65 — API-key rollback cache. MUTABLE: one row per
+    # (user, provider), overwritten on each successful key save.
+    # Direct user scope. Carries Fernet ciphertext (same scheme as
+    # UserSettings.api_key_*, which is already synced).
+    "api_key_backups": TableSpec(
+        model=ApiKeyBackup,
+        columns=(
+            "id",
+            "user_id",
+            "provider",
+            "encrypted_key",
+            "tested_at",
+            "works",
+            "created_at",
+            "updated_at",
+        ),
+        timestamp_field="updated_at",
+        append_only=False,
+        order=32,
         scope="direct",
     ),
 }

@@ -72,6 +72,9 @@ EXPECTED_MUTABLE: frozenset[str] = frozenset(
         # append-only — a dynamic badge's ``tier`` climbs in place
         # (high-water mark, never demotes; LWW on ``updated_at`` safe).
         "user_badges",
+        # Phase 65: API-key rollback cache — one row per
+        # (user, provider), overwritten on each successful save.
+        "api_key_backups",
     }
 )
 

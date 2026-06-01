@@ -178,6 +178,7 @@ import type {
   UserSettings,
 } from "../types/domain";
 import type {
+  ApiKeyBackupInfo,
   ApiKeyTestResult,
   AvailableModel,
   IStorageService,
@@ -724,6 +725,52 @@ export const dexieStorage: IStorageService = {
         // reached the provider — treat as a connectivity failure.
         return { success: false, kind: "network" };
       }
+    },
+    async backupApiKey(
+      userId: string,
+      body: { provider: AIProvider; key: string },
+    ): Promise<UserSettings> {
+      const db = getDb();
+      const user = await requireRow(db.users, userId, "User");
+      const row = await ensureSettings(db, userId, user.language);
+      await db.apiKeyBackups.put({
+        id: `${userId}#${body.provider}`,
+        user_id: userId,
+        provider: body.provider,
+        key: body.key,
+        tested_at: nowIso(),
+        works: true,
+      });
+      return rowToSettings(row);
+    },
+    async getApiKeyBackup(
+      userId: string,
+      provider: AIProvider,
+    ): Promise<ApiKeyBackupInfo> {
+      const db = getDb();
+      const backup = await db.apiKeyBackups.get(`${userId}#${provider}`);
+      if (!backup) return { has: false, tested_at: null };
+      return { has: true, tested_at: backup.tested_at };
+    },
+    async restoreApiKeyBackup(
+      userId: string,
+      provider: AIProvider,
+    ): Promise<UserSettings> {
+      const db = getDb();
+      const backup = await db.apiKeyBackups.get(`${userId}#${provider}`);
+      if (!backup) {
+        throw new ApiError(404, "No API-key backup for this provider");
+      }
+      const user = await requireRow(db.users, userId, "User");
+      const row = await ensureSettings(db, userId, user.language);
+      const field = `api_key_${provider}` as const;
+      const updated: UserSettingsRow = {
+        ...row,
+        [field]: backup.key,
+        updated_at: nowIso(),
+      };
+      await db.userSettings.put(updated);
+      return rowToSettings(updated);
     },
   },
 

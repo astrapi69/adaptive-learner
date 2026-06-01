@@ -542,6 +542,26 @@ export const api = {
         { method: "POST", body },
       ),
 
+    /** Phase 65 — rollback cache: store a tested-good key as the
+     *  last-known-good backup. */
+    backupApiKey: (
+      userId: string,
+      body: { provider: AIProvider; key: string },
+    ) =>
+      apiCall<UserSettings>(
+        `/settings/${encodeURIComponent(userId)}/api-key-backup`,
+        { method: "POST", body },
+      ),
+    getApiKeyBackup: (userId: string, provider: AIProvider) =>
+      apiCall<{ has: boolean; tested_at: string | null }>(
+        `/settings/${encodeURIComponent(userId)}/api-key-backup/${encodeURIComponent(provider)}`,
+      ),
+    restoreApiKeyBackup: (userId: string, provider: AIProvider) =>
+      apiCall<UserSettings>(
+        `/settings/${encodeURIComponent(userId)}/api-key-backup/${encodeURIComponent(provider)}/restore`,
+        { method: "POST" },
+      ),
+
     /**
      * Placeholder for app-wide config (default language, etc.).
      * Phase 1A skeleton has no backing endpoint, so the

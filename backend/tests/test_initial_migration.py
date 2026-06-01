@@ -68,6 +68,8 @@ EXPECTED_TABLES = {
     "element_errors",
     # v1.39.0 / Phase 56 / EXP-010 — daily mission assignment
     "user_missions",
+    # Phase 65 — API-key rollback cache.
+    "api_key_backups",
 }
 
 

@@ -66,6 +66,11 @@ export const apiStorage: IStorageService = {
         kind: result.kind as ApiKeyTestResult["kind"],
       };
     },
+    backupApiKey: (userId, body) => api.settings.backupApiKey(userId, body),
+    getApiKeyBackup: (userId, provider) =>
+      api.settings.getApiKeyBackup(userId, provider),
+    restoreApiKeyBackup: (userId, provider) =>
+      api.settings.restoreApiKeyBackup(userId, provider),
   },
 
   assessment: {

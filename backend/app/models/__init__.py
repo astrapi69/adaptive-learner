@@ -1600,10 +1600,65 @@ class UserMission(Base):
         )
 
 
+class ApiKeyBackup(Base):
+    """Last-known-good API key per (user, provider) (Phase 65).
+
+    A local safety net for the revised key-save flow: when a key is
+    successfully tested, its ciphertext is cached here so that if the
+    user later overwrites it with a non-working key they can restore
+    the last working one in a click. Exactly ONE row per
+    (user, provider) - the save flow overwrites it. NOT part of the
+    cross-device sync surface: a key backup is a per-install safety
+    net, not shared state.
+    """
+
+    __tablename__ = "api_key_backups"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "provider",
+            name="uq_api_key_backups_user_provider",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_new_id)
+    user_id: Mapped[str] = mapped_column(
+        String(36),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    provider: Mapped[str] = mapped_column(String(50), nullable=False)
+    # Fernet ciphertext (same scheme as UserSettings.api_key_*).
+    encrypted_key: Mapped[str] = mapped_column(Text, nullable=False)
+    tested_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+    # True when the cached key passed its test (always true today -
+    # we only back up tested-good keys - kept for future use).
+    works: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=_utcnow
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        default=_utcnow,
+        onupdate=_utcnow,
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"<ApiKeyBackup user={self.user_id!r} "
+            f"provider={self.provider!r} tested_at={self.tested_at}>"
+        )
+
+
 __all__ = [
     "Base",
     "User",
     "UserSettings",
+    "ApiKeyBackup",
     "LearningProject",
     "LearningProfile",
     "Curriculum",
