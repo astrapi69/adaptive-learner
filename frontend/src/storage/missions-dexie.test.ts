@@ -54,6 +54,8 @@ async function seedCompletedLesson(
         started_at: `${completedAt}T09:00:00.000Z`,
         updated_at: `${completedAt}T09:10:00.000Z`,
         completed_at: `${completedAt}T09:10:00.000Z`,
+        paused_at: null,
+        abandoned_at: null,
     });
 }
 

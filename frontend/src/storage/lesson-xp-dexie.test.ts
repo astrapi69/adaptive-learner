@@ -97,6 +97,8 @@ function buildCompletedProgress(opts: {
         started_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
         completed_at: new Date().toISOString(),
+        paused_at: null,
+        abandoned_at: null,
     };
 }
 

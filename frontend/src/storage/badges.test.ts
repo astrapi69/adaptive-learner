@@ -231,6 +231,8 @@ function buildLessonProgress(
     started_at: string;
     updated_at: string;
     completed_at: string | null;
+    paused_at: string | null;
+    abandoned_at: string | null;
 } {
     const ts = `2026-05-${String(20 + index).padStart(2, "0")}T10:00:00Z`;
     return {
@@ -254,6 +256,8 @@ function buildLessonProgress(
         started_at: ts,
         updated_at: ts,
         completed_at: opts.completed ? ts : null,
+        paused_at: null,
+        abandoned_at: null,
     };
 }
 

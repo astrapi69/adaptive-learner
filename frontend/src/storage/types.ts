@@ -528,6 +528,17 @@ export interface LessonProgressUpsertBody {
   step_result?: LessonStepResult;
   time_spent_seconds_delta?: number;
   mark_completed?: boolean;
+  /** Phase 63A — flip the row to ``paused`` and stamp
+   *  ``paused_at``. ``step_results`` stay intact for the resume. */
+  mark_paused?: boolean;
+  /** Phase 63A — flip the row to ``abandoned`` and stamp
+   *  ``abandoned_at``. ``step_results`` are cleared; ElementErrors
+   *  from completed steps stay in their own table. */
+  mark_abandoned?: boolean;
+  /** Phase 63C — flip a ``paused`` row back to ``in_progress`` and
+   *  clear ``paused_at`` so the viewer can resume from the saved
+   *  ``step_results``. */
+  mark_resumed?: boolean;
 }
 
 /**
@@ -556,7 +567,8 @@ export interface LessonProgress {
   source: string;
   set_id: string;
   lesson_filename: string;
-  status: "in_progress" | "completed";
+  /** Phase 63A — lifecycle widened from in_progress|completed. */
+  status: "in_progress" | "paused" | "abandoned" | "completed";
   /** Map of step_id → result. Parsed JSON; never a string. */
   step_results: Record<string, LessonStepResultStored>;
   score_correct: number;
@@ -565,6 +577,10 @@ export interface LessonProgress {
   started_at: string;
   updated_at: string;
   completed_at: string | null;
+  /** Phase 63A — set on pause, cleared on resume + completion. */
+  paused_at: string | null;
+  /** Phase 63A — set on abandon, cleared on completion. */
+  abandoned_at: string | null;
 }
 
 /**

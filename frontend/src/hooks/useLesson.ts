@@ -67,6 +67,16 @@ export interface UseLessonResult {
     recordStepResult: (result: LessonStepResult) => Promise<void>;
     /** Flip status to completed (lesson-summary screen). */
     markCompleted: () => Promise<void>;
+    /** Phase 63A — pause the attempt; step_results stay intact
+     *  for the resume. Toast + navigate are the caller's job. */
+    markPaused: () => Promise<void>;
+    /** Phase 63A — abandon the attempt; step_results are
+     *  cleared. ElementErrors stay (what was learned stays
+     *  learned). */
+    markAbandoned: () => Promise<void>;
+    /** Phase 63C — flip a paused row back to in_progress so
+     *  the viewer can replay from the saved step_results. */
+    markResumed: () => Promise<void>;
     /** Force-reload the lesson + progress (Set Browser
      *  navigated here mid-download). */
     refresh: () => void;
@@ -267,6 +277,55 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         _consumeStepTime,
     ]);
 
+    // Phase 63A — shared transition writer for pause / abandon /
+    // resume. Each just sets one flag; the backend service + Dexie
+    // mirror enforce the same one-flag-per-call rule and the
+    // correct status / timestamp / step_results invariants.
+    const _markLifecycle = useCallback(
+        async (
+            flag: "mark_paused" | "mark_abandoned" | "mark_resumed",
+        ) => {
+            if (!userId || lesson === null) return;
+            const timeDelta = _consumeStepTime();
+            try {
+                const updated =
+                    await getStorage().lessonProgress.upsert(userId, {
+                        source,
+                        set_id: setId,
+                        lesson_filename: lessonFilename,
+                        time_spent_seconds_delta: timeDelta,
+                        [flag]: true,
+                    });
+                setProgress(updated);
+            } catch (err) {
+                setError(
+                    err instanceof Error ? err.message : String(err),
+                );
+            }
+        },
+        [
+            userId,
+            source,
+            setId,
+            lessonFilename,
+            lesson,
+            _consumeStepTime,
+        ],
+    );
+
+    const markPaused = useCallback(
+        () => _markLifecycle("mark_paused"),
+        [_markLifecycle],
+    );
+    const markAbandoned = useCallback(
+        () => _markLifecycle("mark_abandoned"),
+        [_markLifecycle],
+    );
+    const markResumed = useCallback(
+        () => _markLifecycle("mark_resumed"),
+        [_markLifecycle],
+    );
+
     return {
         status,
         lesson,
@@ -279,6 +338,9 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         goToStepById,
         recordStepResult,
         markCompleted,
+        markPaused,
+        markAbandoned,
+        markResumed,
         refresh,
     };
 }

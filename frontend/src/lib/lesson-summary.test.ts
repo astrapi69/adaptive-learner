@@ -269,6 +269,8 @@ describe("buildExerciseBreakdown", () => {
         started_at: "2026-05-27T00:00:00Z",
         updated_at: "2026-05-27T00:00:00Z",
         completed_at: null,
+        paused_at: null,
+        abandoned_at: null,
     };
 
     it("returns exactly one entry per exercise step, in lesson order", () => {

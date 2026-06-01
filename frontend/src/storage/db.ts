@@ -432,7 +432,8 @@ export interface LessonProgressRow {
     source: string;
     set_id: string;
     lesson_filename: string;
-    status: "in_progress" | "completed";
+    /** Phase 63A — widened from in_progress|completed. */
+    status: "in_progress" | "paused" | "abandoned" | "completed";
     step_results: Record<
         string,
         {
@@ -457,6 +458,10 @@ export interface LessonProgressRow {
     started_at: string;
     updated_at: string;
     completed_at: string | null;
+    /** Phase 63A — set on pause, cleared on resume + completion. */
+    paused_at: string | null;
+    /** Phase 63A — set on abandon, cleared on completion. */
+    abandoned_at: string | null;
 }
 
 /**

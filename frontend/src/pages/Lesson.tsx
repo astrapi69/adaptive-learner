@@ -39,7 +39,9 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+import LessonExitDialog from "../components/lesson/LessonExitDialog";
 import CorrectionBlock from "../components/exercises/CorrectionBlock";
+import {notify} from "../utils/notify";
 import DiffHighlight from "../components/exercises/DiffHighlight";
 import {
     ExerciseDispatcher,
@@ -109,7 +111,67 @@ export default function LessonPage() {
         goToStepById,
         recordStepResult,
         markCompleted,
+        markPaused,
+        markAbandoned,
     } = useLesson({source, setId, lessonFilename: filename});
+
+    // Phase 63B — back-button intercept + browser-close
+    // auto-pause. The dialog gives the user explicit pause /
+    // abandon / continue paths; the lifecycle handlers below
+    // also auto-pause when the tab is hidden or the window
+    // unloads while the lesson is still in progress.
+    const [exitOpen, setExitOpen] = useState(false);
+    // ``status === "in_progress"`` is the only state where an
+    // auto-pause makes sense. ``progress`` is null until the
+    // first upsert lands; we still allow an explicit pause from
+    // the dialog because it will create the row on the way.
+    const isInProgress = progress === null || progress.status === "in_progress";
+
+    useEffect(() => {
+        if (!isInProgress) return;
+        // Auto-pause when the tab goes background or the page
+        // unloads. ``visibilitychange`` covers iOS Safari +
+        // Chrome backgrounding; ``beforeunload`` covers tab
+        // close + navigation away.
+        const autoPause = () => {
+            // Fire-and-forget — the page is going away and we
+            // cannot await the round-trip. Dexie persists
+            // synchronously; ApiStorage may not flush in time,
+            // but the next visit will see the saved step
+            // results either way.
+            void markPaused();
+        };
+        const onVisibility = () => {
+            if (document.visibilityState === "hidden") autoPause();
+        };
+        document.addEventListener("visibilitychange", onVisibility);
+        window.addEventListener("beforeunload", autoPause);
+        return () => {
+            document.removeEventListener("visibilitychange", onVisibility);
+            window.removeEventListener("beforeunload", autoPause);
+        };
+    }, [isInProgress, markPaused]);
+
+    const handlePauseFromDialog = async () => {
+        await markPaused();
+        setExitOpen(false);
+        notify.info(
+            t(
+                "lesson.exit.paused_toast",
+                "Lesson paused. You can resume anytime.",
+            ),
+        );
+        navigate("/content");
+    };
+
+    const handleAbandonFromDialog = async () => {
+        await markAbandoned();
+        setExitOpen(false);
+        notify.info(
+            t("lesson.exit.abandoned_toast", "Lesson abandoned."),
+        );
+        navigate("/content");
+    };
 
     // Phase 46B — userId for the elementErrors.recordBulk
     // call inside ExerciseDispatcher's onComplete. Read once
@@ -340,7 +402,17 @@ export default function LessonPage() {
                 <button
                     type="button"
                     className="lesson-back-btn"
-                    onClick={() => navigate("/content")}
+                    onClick={() => {
+                        // Phase 63B — only intercept while the
+                        // lesson is in progress. Completed /
+                        // abandoned rows behave like before and
+                        // navigate straight away.
+                        if (isInProgress) {
+                            setExitOpen(true);
+                        } else {
+                            navigate("/content");
+                        }
+                    }}
                     data-testid="lesson-back-btn"
                     aria-label={t(
                         "lesson.action.back_to_browser",
@@ -350,6 +422,12 @@ export default function LessonPage() {
                     <BookOpen size={16} aria-hidden="true" />
                     {t("lesson.action.back_to_browser", "Back to content browser")}
                 </button>
+                <LessonExitDialog
+                    open={exitOpen}
+                    onContinue={() => setExitOpen(false)}
+                    onPause={() => void handlePauseFromDialog()}
+                    onAbandon={() => void handleAbandonFromDialog()}
+                />
                 {setTitle && (
                     <p
                         className="lesson-header-set"

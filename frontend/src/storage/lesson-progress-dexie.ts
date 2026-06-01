@@ -49,6 +49,13 @@ function rowToWire(row: LessonProgressRow): LessonProgress {
         started_at: row.started_at,
         updated_at: row.updated_at,
         completed_at: row.completed_at,
+        // Phase 63A — coalesce undefined → null so pre-Phase-63
+        // Dexie rows present the same wire shape as freshly
+        // written ones. Dexie does not require a schema bump for
+        // non-indexed nullable fields; old rows simply return
+        // undefined here.
+        paused_at: row.paused_at ?? null,
+        abandoned_at: row.abandoned_at ?? null,
     };
 }
 
@@ -99,6 +106,22 @@ export async function upsertLessonProgressDexie(
     const key = rowKey(userId, body.source, body.set_id, body.lesson_filename);
     const now = new Date().toISOString();
 
+    // Phase 63A — guard the one-hot lifecycle flag invariant.
+    // At most one of mark_completed / mark_paused / mark_abandoned /
+    // mark_resumed may be set; multiple flags is a programming
+    // error in the caller.
+    const lifecycleCount =
+        (body.mark_completed ? 1 : 0) +
+        (body.mark_paused ? 1 : 0) +
+        (body.mark_abandoned ? 1 : 0) +
+        (body.mark_resumed ? 1 : 0);
+    if (lifecycleCount > 1) {
+        throw new Error(
+            "At most one of mark_completed / mark_paused / " +
+                "mark_abandoned / mark_resumed may be true per call.",
+        );
+    }
+
     const existing = await db.lessonProgress.get(key);
     const row: LessonProgressRow = existing
         ? {...existing}
@@ -116,6 +139,8 @@ export async function upsertLessonProgressDexie(
               started_at: now,
               updated_at: now,
               completed_at: null,
+              paused_at: null,
+              abandoned_at: null,
           };
 
     if (body.step_result) {
@@ -152,6 +177,36 @@ export async function upsertLessonProgressDexie(
     if (body.mark_completed && row.status !== "completed") {
         row.status = "completed";
         row.completed_at = now;
+        // Terminal state — clear pending pause/abandon stamps so
+        // the row's status is one-hot. Mirror of the backend
+        // service behaviour (Phase 63A).
+        row.paused_at = null;
+        row.abandoned_at = null;
+    }
+
+    // Phase 63A — pause / abandon / resume transitions. Mirror
+    // backend ``upsert_progress`` behaviour 1:1 so a row written by
+    // either storage mode looks the same to the other.
+    if (
+        body.mark_paused &&
+        row.status !== "paused" &&
+        row.status !== "completed" &&
+        row.status !== "abandoned"
+    ) {
+        row.status = "paused";
+        row.paused_at = now;
+    } else if (body.mark_abandoned && row.status !== "abandoned") {
+        row.status = "abandoned";
+        row.abandoned_at = now;
+        row.paused_at = null;
+        // Discard the in-flight attempt; ElementErrors live in
+        // their own table and are intentionally untouched.
+        row.step_results = {};
+        row.score_correct = 0;
+        row.score_total = 0;
+    } else if (body.mark_resumed && row.status === "paused") {
+        row.status = "in_progress";
+        row.paused_at = null;
     }
 
     row.updated_at = now;

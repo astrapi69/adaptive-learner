@@ -115,6 +115,8 @@ function _progress(
         started_at: "2026-05-27T11:59:00Z",
         updated_at: "2026-05-27T12:00:00Z",
         completed_at: null,
+        paused_at: null,
+        abandoned_at: null,
         ...overrides,
     };
 }
