@@ -21,7 +21,7 @@ from app.database import SessionLocal
 from app.models import UserSettings
 from app.routers.settings import router as settings_router
 from app.routers.users import router as users_router
-from app.schemas import AIProvider
+from app.services import secrets_service
 from app.services import settings as settings_service
 from tests.router_test_client import make_client
 
@@ -191,9 +191,10 @@ def test_patch_with_empty_body_is_200_no_op(client: TestClient):
 
 
 def test_post_api_key_stores_ciphertext_not_plaintext(client: TestClient):
-    """SECURITY: the DB row must hold a Fernet ciphertext, not the
-    user's plaintext key. Sentinel string makes the assertion
-    unambiguous."""
+    """SECURITY: secrets.yaml must hold a Fernet ciphertext, not the
+    user's plaintext key. Sentinel string makes it unambiguous."""
+    import yaml
+
     user_id = _make_user(client)
     plaintext = "sk-anthropic-LEAKED-IF-YOU-SEE-THIS"
     resp = client.post(
@@ -201,14 +202,20 @@ def test_post_api_key_stores_ciphertext_not_plaintext(client: TestClient):
         json={"provider": "anthropic", "key": plaintext},
     )
     assert resp.status_code == 200
-    # Read the row directly. The api_key_anthropic column must be
-    # non-empty and must NOT equal the plaintext.
+    # The raw secrets.yaml must NOT contain the plaintext anywhere; the
+    # value lives encrypted under ai.anthropic.api_key_encrypted.
+    raw = secrets_service.secrets_path().read_text(encoding="utf-8")
+    assert plaintext not in raw
+    block = yaml.safe_load(raw)["ai"]["anthropic"]
+    assert block.get("api_key_encrypted")
+    assert plaintext not in block["api_key_encrypted"]
+    # And it round-trips back to the original plaintext.
+    assert secrets_service.read_api_key("anthropic") == plaintext
+    # The DB column is NOT used as the write target anymore.
     db = SessionLocal()
     try:
         row = db.query(UserSettings).filter_by(user_id=user_id).one()
-        assert row.api_key_anthropic is not None
-        assert row.api_key_anthropic != plaintext
-        assert plaintext not in row.api_key_anthropic
+        assert row.api_key_anthropic is None
     finally:
         db.close()
 
@@ -238,12 +245,7 @@ def test_post_api_key_round_trip_via_service(client: TestClient):
         json={"provider": "openai", "key": plaintext},
     )
     assert resp.status_code == 200
-    db = SessionLocal()
-    try:
-        recovered = settings_service.get_decrypted_api_key(db, user_id, AIProvider.OPENAI)
-        assert recovered == plaintext
-    finally:
-        db.close()
+    assert secrets_service.read_api_key("openai") == plaintext
 
 
 def test_post_api_key_each_provider_writes_correct_column(client: TestClient):
@@ -261,16 +263,9 @@ def test_post_api_key_each_provider_writes_correct_column(client: TestClient):
     assert body["has_anthropic_key"] is True
     assert body["has_openai_key"] is True
     assert body["has_gemini_key"] is True
-    db = SessionLocal()
-    try:
-        recovered_a = settings_service.get_decrypted_api_key(db, user_id, AIProvider.ANTHROPIC)
-        recovered_o = settings_service.get_decrypted_api_key(db, user_id, AIProvider.OPENAI)
-        recovered_g = settings_service.get_decrypted_api_key(db, user_id, AIProvider.GEMINI)
-        assert recovered_a == "ant-key"
-        assert recovered_o == "oai-key"
-        assert recovered_g == "gem-key"
-    finally:
-        db.close()
+    assert secrets_service.read_api_key("anthropic") == "ant-key"
+    assert secrets_service.read_api_key("openai") == "oai-key"
+    assert secrets_service.read_api_key("gemini") == "gem-key"
 
 
 def test_post_api_key_unknown_user_404(client: TestClient):
@@ -311,11 +306,7 @@ def test_post_api_key_replaces_existing_value(client: TestClient):
         f"/api/settings/{user_id}/api-key",
         json={"provider": "anthropic", "key": "second"},
     )
-    db = SessionLocal()
-    try:
-        assert settings_service.get_decrypted_api_key(db, user_id, AIProvider.ANTHROPIC) == "second"
-    finally:
-        db.close()
+    assert secrets_service.read_api_key("anthropic") == "second"
 
 
 # --- DELETE api-key --------------------------------------------------------

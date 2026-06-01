@@ -91,14 +91,18 @@ DEFAULT_FRONTEND_PORT = 15174
 
 
 def _get_user_override_path() -> Path:
-    """User-home secrets-override file path (XDG-conformant)."""
-    if sys.platform == "win32":
-        appdata = os.environ.get("APPDATA")
-        base = Path(appdata) if appdata else Path.home() / "AppData" / "Roaming"
-        return base / "adaptive_learner" / "secrets.yaml"
-    xdg_config = os.environ.get("XDG_CONFIG_HOME")
-    base = Path(xdg_config) if xdg_config else Path.home() / ".config"
-    return base / "adaptive_learner" / "secrets.yaml"
+    """Path to the ``secrets.yaml`` overlay.
+
+    Single source of truth: resolved via :func:`app.paths.get_config_dir`
+    so the production path (platformdirs / XDG) AND the
+    ``ADAPTIVE_LEARNER_CONFIG_DIR`` test override agree everywhere the
+    secrets file is read or written (layered config, the key resolver,
+    ``secrets_service``, ``reset_service``). The previous hand-rolled
+    XDG/APPDATA duplication is gone.
+    """
+    from app.paths import get_config_dir
+
+    return get_config_dir() / "secrets.yaml"
 
 
 def _deep_merge(base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
@@ -422,6 +426,21 @@ async def lifespan(app: FastAPI):
     # POST /api/settings/.../api-key call hours later. See
     # app.services.crypto.validate_at_startup.
     crypto_service.validate_at_startup()
+
+    # v1.48.x — migrate legacy DB-encrypted API keys into secrets.yaml,
+    # re-encrypted under the now-stable machine-local secret.key. Keys
+    # encrypted under a lost (volatile) key are cleared so the user
+    # re-enters them once. Best-effort: a migration hiccup must not
+    # block startup.
+    try:
+        from app.database import SessionLocal as _KeySessionLocal
+        from app.services import secrets_service
+
+        secrets_service.warn_if_permissions_too_open()
+        with _KeySessionLocal() as _key_db:
+            secrets_service.migrate_db_keys(_key_db)
+    except Exception:  # noqa: BLE001
+        logger.exception("API-key migration to secrets.yaml failed; continuing.")
 
     # v1.9.0 / Phase 22B — pre-seed the global Subject taxonomy.
     # Idempotent: subsequent runs are no-ops because the loader

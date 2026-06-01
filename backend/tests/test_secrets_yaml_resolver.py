@@ -50,18 +50,14 @@ def db() -> Iterator:
 
 
 @pytest.fixture()
-def fake_secrets_path(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> Iterator[Path]:
-    """Redirect ``_get_user_override_path`` to a tmp file so the
-    resolver reads from the test-controlled yaml.
+def fake_secrets_path(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Path]:
+    """Point the config dir at a tmp dir so EVERY secrets.yaml access
+    (the layered resolver AND ``secrets_service``) reads the
+    test-controlled file — the single ``get_config_dir`` source of
+    truth, never the real ``~/.config``.
     """
-    path = tmp_path / "secrets.yaml"
-    monkeypatch.setattr(
-        "app.main._get_user_override_path",
-        lambda: path,
-    )
-    yield path
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CONFIG_DIR", str(tmp_path))
+    yield tmp_path / "secrets.yaml"
 
 
 @pytest.fixture()
@@ -99,9 +95,7 @@ def test_resolve_api_key_env_wins(
     the DB column."""
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
     monkeypatch.setenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", "env-key")
-    key, source = settings_service.resolve_api_key(
-        db, user_with_db_key.id, AIProvider.ANTHROPIC
-    )
+    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
     assert key == "env-key"
     assert source is ApiKeySource.ENV
 
@@ -115,9 +109,7 @@ def test_resolve_api_key_secrets_yaml_wins_over_db(
     """secrets.yaml beats the DB-encrypted column when env is empty."""
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
-    key, source = settings_service.resolve_api_key(
-        db, user_with_db_key.id, AIProvider.ANTHROPIC
-    )
+    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
     assert key == "yaml-key"
     assert source is ApiKeySource.SECRETS_YAML
 
@@ -132,9 +124,7 @@ def test_resolve_api_key_db_when_no_env_no_yaml(
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
     # fake_secrets_path file does not exist; loader returns {}.
     assert not fake_secrets_path.exists()
-    key, source = settings_service.resolve_api_key(
-        db, user_with_db_key.id, AIProvider.ANTHROPIC
-    )
+    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
     assert key == "db-key-anthropic"
     assert source is ApiKeySource.SETTINGS
 
@@ -148,9 +138,7 @@ def test_resolve_api_key_none_when_nothing_set(
     db.commit()
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
     assert not fake_secrets_path.exists()
-    key, source = settings_service.resolve_api_key(
-        db, user.id, AIProvider.ANTHROPIC
-    )
+    key, source = settings_service.resolve_api_key(db, user.id, AIProvider.ANTHROPIC)
     assert key is None
     assert source is ApiKeySource.NONE
 
@@ -166,9 +154,7 @@ def test_env_equals_yaml_attributed_to_yaml(
     ``_hydrate_env_from_config`` populated the env at startup."""
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "same-key"}}})
     monkeypatch.setenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", "same-key")
-    key, source = settings_service.resolve_api_key(
-        db, user_with_db_key.id, AIProvider.ANTHROPIC
-    )
+    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
     assert key == "same-key"
     assert source is ApiKeySource.SECRETS_YAML
 
@@ -182,9 +168,7 @@ def test_env_differs_from_yaml_attributed_to_env(
     """env set directly (different value) -> ENV wins, source ENV."""
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
     monkeypatch.setenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", "shell-key")
-    key, source = settings_service.resolve_api_key(
-        db, user_with_db_key.id, AIProvider.ANTHROPIC
-    )
+    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
     assert key == "shell-key"
     assert source is ApiKeySource.ENV
 
@@ -201,9 +185,7 @@ def test_other_providers_unaffected_by_anthropic_yaml(
     monkeypatch.delenv("ADAPTIVE_LEARNER_GEMINI_API_KEY", raising=False)
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
     for provider in (AIProvider.OPENAI, AIProvider.GEMINI):
-        key, source = settings_service.resolve_api_key(
-            db, user_with_db_key.id, provider
-        )
+        key, source = settings_service.resolve_api_key(db, user_with_db_key.id, provider)
         assert key is None
         assert source is ApiKeySource.NONE
 
@@ -218,9 +200,7 @@ def test_resolve_api_key_blank_yaml_value_falls_through(
     "not set" so we fall through to the DB."""
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "   "}}})
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
-    key, source = settings_service.resolve_api_key(
-        db, user_with_db_key.id, AIProvider.ANTHROPIC
-    )
+    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
     assert key == "db-key-anthropic"
     assert source is ApiKeySource.SETTINGS
 
@@ -239,9 +219,7 @@ def test_resolve_default_model_env_wins(
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"default_model": "yaml-model"}}})
     monkeypatch.setenv("ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL", "env-model")
     assert (
-        settings_service.resolve_default_model(
-            db, user_with_db_key.id, AIProvider.ANTHROPIC
-        )
+        settings_service.resolve_default_model(db, user_with_db_key.id, AIProvider.ANTHROPIC)
         == "env-model"
     )
 
@@ -258,14 +236,10 @@ def test_resolve_default_model_yaml_beats_ui_override(
     settings = settings_service.get_or_create_settings(db, user_with_db_key.id)
     settings.model_override_anthropic = "ui-model"
     db.commit()
-    _write_yaml(
-        fake_secrets_path, {"ai": {"anthropic": {"default_model": "yaml-model"}}}
-    )
+    _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"default_model": "yaml-model"}}})
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL", raising=False)
     assert (
-        settings_service.resolve_default_model(
-            db, user_with_db_key.id, AIProvider.ANTHROPIC
-        )
+        settings_service.resolve_default_model(db, user_with_db_key.id, AIProvider.ANTHROPIC)
         == "yaml-model"
     )
 
@@ -282,9 +256,7 @@ def test_resolve_default_model_ui_override_when_no_env_no_yaml(
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL", raising=False)
     assert not fake_secrets_path.exists()
     assert (
-        settings_service.resolve_default_model(
-            db, user_with_db_key.id, AIProvider.ANTHROPIC
-        )
+        settings_service.resolve_default_model(db, user_with_db_key.id, AIProvider.ANTHROPIC)
         == "ui-model"
     )
 
@@ -298,9 +270,7 @@ def test_resolve_default_model_none_when_nothing_set(
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL", raising=False)
     assert not fake_secrets_path.exists()
     assert (
-        settings_service.resolve_default_model(
-            db, user_with_db_key.id, AIProvider.ANTHROPIC
-        )
+        settings_service.resolve_default_model(db, user_with_db_key.id, AIProvider.ANTHROPIC)
         is None
     )
 
@@ -321,13 +291,9 @@ def test_detect_api_key_source_matches_resolver(
     resolve_api_key returns at the same instant."""
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
-    _, source = settings_service.resolve_api_key(
-        db, user_with_db_key.id, AIProvider.ANTHROPIC
-    )
+    _, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
     assert (
-        settings_service.detect_api_key_source(
-            db, user_with_db_key.id, AIProvider.ANTHROPIC
-        )
+        settings_service.detect_api_key_source(db, user_with_db_key.id, AIProvider.ANTHROPIC)
         == source
     )
 
@@ -390,9 +356,7 @@ def test_template_no_op_when_file_exists(tmp_path: Path) -> None:
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="POSIX-only chmod semantics")
-def test_audit_warns_on_world_readable(
-    tmp_path: Path, caplog: pytest.LogCaptureFixture
-) -> None:
+def test_audit_warns_on_world_readable(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     path = tmp_path / "secrets.yaml"
     path.write_text("anything: at all\n", encoding="utf-8")
     os.chmod(path, 0o644)
@@ -402,9 +366,7 @@ def test_audit_warns_on_world_readable(
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="POSIX-only chmod semantics")
-def test_audit_quiet_on_0600(
-    tmp_path: Path, caplog: pytest.LogCaptureFixture
-) -> None:
+def test_audit_quiet_on_0600(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
     path = tmp_path / "secrets.yaml"
     path.write_text("anything: at all\n", encoding="utf-8")
     os.chmod(path, 0o600)

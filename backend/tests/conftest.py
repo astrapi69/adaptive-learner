@@ -212,3 +212,30 @@ def setup_db() -> None:
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
+
+
+@pytest.fixture(autouse=True)
+def _isolate_secrets_files() -> None:
+    """Reset the file-based secret stores between tests.
+
+    API keys now live in ``secrets.yaml`` (encrypted) and the Fernet
+    key in ``secret.key``, both under the session-shared temp config
+    dir. Without this, a key one test writes would leak into the next.
+    Resolved fresh each side so tests that point
+    ``ADAPTIVE_LEARNER_CONFIG_DIR`` at their own ``tmp_path`` are
+    cleaned at their own location.
+    """
+
+    def _clear() -> None:
+        from app.services import crypto, secrets_service
+
+        for path in (secrets_service.secrets_path(), crypto.secret_key_path()):
+            try:
+                path.unlink()
+            except (OSError, FileNotFoundError):
+                pass
+        crypto.reset_fernet_cache()
+
+    _clear()
+    yield
+    _clear()

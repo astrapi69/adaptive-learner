@@ -23,7 +23,7 @@ from sqlalchemy.orm import Session
 from app.exceptions import NotFoundError, ValidationError
 from app.models import User, UserSettings
 from app.schemas import AIProvider, ApiKeySetBody, ApiKeySource, SettingsPatchBody
-from app.services import crypto
+from app.services import crypto, secrets_service
 
 # Column name lookup so the router doesn't have to switch on the
 # provider enum. Keeping the map here (vs deriving from f-strings)
@@ -121,13 +121,17 @@ def update_settings(db: Session, user_id: str, payload: SettingsPatchBody) -> Us
 
 
 def set_api_key(db: Session, user_id: str, payload: ApiKeySetBody) -> UserSettings:
-    """Encrypt + store the plaintext API key for the given provider."""
+    """Persist the API key to ``secrets.yaml``, Fernet-encrypted under
+    the machine-local stable key.
+
+    secrets.yaml is the primary store now (it survives restarts; the
+    old DB-encrypted-under-a-volatile-key path lost keys on restart).
+    The DB column is no longer written; it remains only a read
+    fallback for not-yet-migrated legacy keys. Returns the settings
+    row so the router can build the response (the source will resolve
+    to ``secrets.yaml``)."""
     settings = get_or_create_settings(db, user_id)
-    column = _column_for(payload.provider)
-    ciphertext = crypto.encrypt_api_key(payload.key)
-    setattr(settings, column, ciphertext)
-    db.commit()
-    db.refresh(settings)
+    secrets_service.write_api_key(payload.provider.value, payload.key)
     return settings
 
 
@@ -139,6 +143,9 @@ def delete_api_key(db: Session, user_id: str, provider: AIProvider) -> UserSetti
     so the user sees the "key removed" toast either way.
     """
     settings = get_or_create_settings(db, user_id)
+    # Clear from BOTH the secrets.yaml store (primary) and the legacy
+    # DB column, so a delete is total regardless of where the key lived.
+    secrets_service.clear_api_key(provider.value)
     column = _column_for(provider)
     setattr(settings, column, None)
     db.commit()
@@ -226,9 +233,7 @@ def detect_api_key_source(db: Session, user_id: str, provider: AIProvider) -> Ap
     """
     env_var = _PROVIDER_ENV_VARS.get(provider)
     env_value = os.environ.get(env_var) if env_var else None
-    yaml_block = _read_secrets_yaml_block(provider)
-    yaml_value = yaml_block.get("api_key") if isinstance(yaml_block, dict) else None
-    yaml_value = yaml_value.strip() if isinstance(yaml_value, str) else None
+    yaml_value = secrets_service.read_api_key(provider.value)
 
     if env_value:
         if yaml_value and env_value.strip() == yaml_value:
@@ -264,9 +269,7 @@ def resolve_api_key(
     """
     env_var = _PROVIDER_ENV_VARS.get(provider)
     env_value = os.environ.get(env_var, "").strip() if env_var else ""
-    yaml_block = _read_secrets_yaml_block(provider)
-    yaml_value = yaml_block.get("api_key") if isinstance(yaml_block, dict) else None
-    yaml_value = yaml_value.strip() if isinstance(yaml_value, str) else ""
+    yaml_value = secrets_service.read_api_key(provider.value) or ""
 
     if env_value:
         # Heuristic for source attribution — see

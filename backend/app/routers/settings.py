@@ -26,6 +26,7 @@ from app.database import get_db
 from app.schemas import (
     AIProvider,
     ApiKeySetBody,
+    ApiKeySource,
     AvailableModelOut,
     SettingsPatchBody,
     UserSettingsOut,
@@ -46,15 +47,17 @@ def _build_settings_out(db: Session, settings) -> UserSettingsOut:
     POST /api-key, or DELETE /api-key/{provider}.
     """
     out = UserSettingsOut.model_validate(settings)
-    out.key_source_anthropic = settings_service.detect_api_key_source(
-        db, settings.user_id, AIProvider.ANTHROPIC
-    )
-    out.key_source_openai = settings_service.detect_api_key_source(
-        db, settings.user_id, AIProvider.OPENAI
-    )
-    out.key_source_gemini = settings_service.detect_api_key_source(
-        db, settings.user_id, AIProvider.GEMINI
-    )
+    # The key now lives in secrets.yaml (env > yaml > DB), so the
+    # has_<provider>_key flags + source must come from the resolver,
+    # not just the DB column (which model_validate read).
+    for provider, source_attr, has_attr in (
+        (AIProvider.ANTHROPIC, "key_source_anthropic", "has_anthropic_key"),
+        (AIProvider.OPENAI, "key_source_openai", "has_openai_key"),
+        (AIProvider.GEMINI, "key_source_gemini", "has_gemini_key"),
+    ):
+        source = settings_service.detect_api_key_source(db, settings.user_id, provider)
+        setattr(out, source_attr, source)
+        setattr(out, has_attr, source != ApiKeySource.NONE)
     return out
 
 

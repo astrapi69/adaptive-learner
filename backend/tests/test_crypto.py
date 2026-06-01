@@ -118,14 +118,17 @@ def test_validate_at_startup_succeeds_with_env_set():
     validate_at_startup()
 
 
-def test_get_fernet_raises_on_missing_env_var(monkeypatch, restore_fernet_cache):
+def test_get_fernet_generates_key_file_when_env_unset(tmp_path, monkeypatch, restore_fernet_cache):
+    """With no env var, get_fernet generates + uses a persistent
+    secret.key file (the stable-key fix) instead of raising."""
+    from app.services.crypto import secret_key_path
+
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CONFIG_DIR", str(tmp_path))
     monkeypatch.delenv(ENV_VAR, raising=False)
     reset_fernet_cache()
-    with pytest.raises(CryptoConfigurationError) as exc:
-        get_fernet()
-    # Message must point the user at the fix, not just say "missing".
-    assert ENV_VAR in str(exc.value)
-    assert "Fernet.generate_key" in str(exc.value)
+    instance = get_fernet()
+    assert isinstance(instance, Fernet)
+    assert secret_key_path().is_file()
 
 
 def test_get_fernet_raises_on_malformed_key(monkeypatch, restore_fernet_cache):
@@ -136,8 +139,15 @@ def test_get_fernet_raises_on_malformed_key(monkeypatch, restore_fernet_cache):
     assert ENV_VAR in str(exc.value)
 
 
-def test_validate_at_startup_propagates_missing_key(monkeypatch, restore_fernet_cache):
+def test_validate_at_startup_generates_key_when_env_unset(
+    tmp_path, monkeypatch, restore_fernet_cache
+):
+    """Startup now generates the persistent key file when no env var
+    is set, rather than failing hard."""
+    from app.services.crypto import secret_key_path
+
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CONFIG_DIR", str(tmp_path))
     monkeypatch.delenv(ENV_VAR, raising=False)
     reset_fernet_cache()
-    with pytest.raises(CryptoConfigurationError):
-        validate_at_startup()
+    validate_at_startup()  # must not raise
+    assert secret_key_path().is_file()
