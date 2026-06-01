@@ -1747,3 +1747,17 @@ create_lesson:
     play: "レッスンを再生"
     create_another: "別のレッスンを作成"
     to_browser: "コンテンツブラウザへ"
+  templates:
+    heading: "テンプレートから開始"
+    blank:
+      title: "空のレッスン"
+      desc: "メタデータのみ — カードは自分で追加します。"
+    vocabulary:
+      title: "単語リスト"
+      desc: "10枚のカード枠、マッチング + 自由記述。"
+    grammar:
+      title: "文法レッスン"
+      desc: "5枚のカード枠、穴埋めを含む混合演習。"
+    conversation:
+      title: "会話練習"
+      desc: "5枚のカード枠、単語タイル + 穴埋め。"

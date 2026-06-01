@@ -1749,3 +1749,17 @@ create_lesson:
     play: "Reproducir lección"
     create_another: "Crear otra lección"
     to_browser: "Al explorador de contenido"
+  templates:
+    heading: "Empezar con una plantilla"
+    blank:
+      title: "Lección en blanco"
+      desc: "Solo metadatos: añade las tarjetas tú mismo."
+    vocabulary:
+      title: "Lista de vocabulario"
+      desc: "10 espacios de tarjeta, emparejar + texto libre."
+    grammar:
+      title: "Lección de gramática"
+      desc: "5 espacios de tarjeta, ejercicios mixtos con cloze."
+    conversation:
+      title: "Práctica de conversación"
+      desc: "5 espacios de tarjeta, fichas de palabras + cloze."

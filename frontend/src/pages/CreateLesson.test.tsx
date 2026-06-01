@@ -140,6 +140,16 @@ describe("CreateLesson — card step gate + draft", () => {
         fireEvent.click(screen.getByTestId("card-add-button"));
     }
 
+    it("pre-fills cards from a template", () => {
+        renderPage();
+        fireEvent.click(screen.getByTestId("template-vocabulary"));
+        fireEvent.change(screen.getByTestId("create-lesson-title"), {
+            target: {value: "Vocab lesson"},
+        });
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(screen.getByTestId("card-count").textContent).toContain("10");
+    });
+
     it("blocks step 3 until at least 4 cards exist", () => {
         toStep2();
         expect(screen.getByTestId("create-lesson-step-2")).toBeInTheDocument();

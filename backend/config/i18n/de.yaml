@@ -1751,3 +1751,17 @@ create_lesson:
     play: "Lektion spielen"
     create_another: "Neue Lektion erstellen"
     to_browser: "Zum Content Browser"
+  templates:
+    heading: "Mit Vorlage starten"
+    blank:
+      title: "Leere Lektion"
+      desc: "Nur Metadaten — Karten selbst hinzufügen."
+    vocabulary:
+      title: "Vokabel-Liste"
+      desc: "10 Kartenplätze, Zuordnung + Freitext."
+    grammar:
+      title: "Grammatik-Lektion"
+      desc: "5 Kartenplätze, gemischte Übungen mit Lückentext."
+    conversation:
+      title: "Konversations-Übung"
+      desc: "5 Kartenplätze, Wort-Kacheln + Lückentext."

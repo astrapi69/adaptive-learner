@@ -1927,6 +1927,25 @@
       "play": "Lancer la leçon",
       "create_another": "Créer une autre leçon",
       "to_browser": "Vers le navigateur de contenu"
+    },
+    "templates": {
+      "heading": "Partir d'un modèle",
+      "blank": {
+        "title": "Leçon vierge",
+        "desc": "Métadonnées uniquement — ajoutez les cartes vous-même."
+      },
+      "vocabulary": {
+        "title": "Liste de vocabulaire",
+        "desc": "10 emplacements de carte, association + texte libre."
+      },
+      "grammar": {
+        "title": "Leçon de grammaire",
+        "desc": "5 emplacements de carte, exercices mixtes avec texte à trous."
+      },
+      "conversation": {
+        "title": "Pratique de conversation",
+        "desc": "5 emplacements de carte, tuiles de mots + texte à trous."
+      }
     }
   }
 }

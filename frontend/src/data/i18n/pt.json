@@ -1927,6 +1927,25 @@
       "play": "Reproduzir lição",
       "create_another": "Criar outra lição",
       "to_browser": "Para o navegador de conteúdo"
+    },
+    "templates": {
+      "heading": "Começar a partir de um modelo",
+      "blank": {
+        "title": "Lição em branco",
+        "desc": "Apenas metadados — adicione os cartões."
+      },
+      "vocabulary": {
+        "title": "Lista de vocabulário",
+        "desc": "10 espaços de cartão, correspondência + texto livre."
+      },
+      "grammar": {
+        "title": "Lição de gramática",
+        "desc": "5 espaços de cartão, exercícios mistos com cloze."
+      },
+      "conversation": {
+        "title": "Prática de conversação",
+        "desc": "5 espaços de cartão, peças de palavras + cloze."
+      }
     }
   }
 }

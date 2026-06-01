@@ -1927,6 +1927,25 @@
       "play": "Play lesson",
       "create_another": "Create another lesson",
       "to_browser": "To Content Browser"
+    },
+    "templates": {
+      "heading": "Start from a template",
+      "blank": {
+        "title": "Blank Lesson",
+        "desc": "Just metadata — add cards yourself."
+      },
+      "vocabulary": {
+        "title": "Vocabulary List",
+        "desc": "10 card slots, matching + free text."
+      },
+      "grammar": {
+        "title": "Grammar Lesson",
+        "desc": "5 card slots, mixed exercises with cloze."
+      },
+      "conversation": {
+        "title": "Conversation Practice",
+        "desc": "5 card slots, word tiles + cloze."
+      }
     }
   }
 }

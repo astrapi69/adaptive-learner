@@ -1747,3 +1747,17 @@ create_lesson:
     play: "Dersi oynat"
     create_another: "Başka bir ders oluştur"
     to_browser: "İçerik tarayıcısına"
+  templates:
+    heading: "Bir şablonla başla"
+    blank:
+      title: "Boş ders"
+      desc: "Yalnızca üst veri — kartları kendiniz ekleyin."
+    vocabulary:
+      title: "Kelime listesi"
+      desc: "10 kart yuvası, eşleştirme + serbest metin."
+    grammar:
+      title: "Dilbilgisi dersi"
+      desc: "5 kart yuvası, boşluk doldurmalı karışık alıştırmalar."
+    conversation:
+      title: "Konuşma alıştırması"
+      desc: "5 kart yuvası, kelime parçaları + boşluk doldurma."

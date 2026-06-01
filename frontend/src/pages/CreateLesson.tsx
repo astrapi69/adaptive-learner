@@ -55,6 +55,11 @@ import {
 } from "../lib/content/draft-to-lesson";
 import {getStorage} from "../storage";
 import {notify} from "../utils/notify";
+import {
+    applyTemplate,
+    LESSON_TEMPLATE_KEYS,
+    type LessonTemplateKey,
+} from "../lib/content/lesson-templates";
 import type {ContentLessonExercise, ContentSetEntry} from "../storage/types";
 
 const TOTAL_STEPS = 4;
@@ -164,6 +169,12 @@ export default function CreateLesson() {
             setExerciseError(false);
         }
         setStep((s) => Math.min(TOTAL_STEPS, s + 1));
+    }
+
+    function applyLessonTemplate(key: LessonTemplateKey) {
+        const {cards: tplCards, config} = applyTemplate(key);
+        setCards(tplCards);
+        setGenConfig(config);
     }
 
     function generateLessonExercises() {
@@ -307,6 +318,42 @@ export default function CreateLesson() {
                     aria-label={t("create_lesson.meta.heading", "Lesson details")}
                 >
                     <h2>{t("create_lesson.meta.heading", "Lesson details")}</h2>
+
+                    <div
+                        className="create-lesson-templates"
+                        data-testid="create-lesson-templates"
+                    >
+                        <p className="form-label">
+                            {t(
+                                "create_lesson.templates.heading",
+                                "Start from a template",
+                            )}
+                        </p>
+                        <div className="template-cards">
+                            {LESSON_TEMPLATE_KEYS.map((key) => (
+                                <button
+                                    type="button"
+                                    key={key}
+                                    className="template-card"
+                                    data-testid={`template-${key}`}
+                                    onClick={() => applyLessonTemplate(key)}
+                                >
+                                    <span className="template-card-title">
+                                        {t(
+                                            `create_lesson.templates.${key}.title`,
+                                            key,
+                                        )}
+                                    </span>
+                                    <span className="template-card-desc muted">
+                                        {t(
+                                            `create_lesson.templates.${key}.desc`,
+                                            "",
+                                        )}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
 
                     <label className="form-row">
                         <span className="form-label">
