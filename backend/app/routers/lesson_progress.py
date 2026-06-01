@@ -88,5 +88,8 @@ def upsert_lesson_progress(
         step_result=step_result,
         time_spent_seconds_delta=payload.time_spent_seconds_delta,
         mark_completed=payload.mark_completed,
+        mark_paused=payload.mark_paused,
+        mark_abandoned=payload.mark_abandoned,
+        mark_resumed=payload.mark_resumed,
     )
     return LessonProgressOut.model_validate(row)

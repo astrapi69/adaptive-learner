@@ -23,7 +23,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from app.exceptions import NotFoundError
+from app.exceptions import NotFoundError, ValidationError
 from app.models import LessonProgress, User
 
 logger = logging.getLogger(__name__)
@@ -129,9 +129,37 @@ def upsert_progress(
     step_result: dict[str, Any] | None = None,
     time_spent_seconds_delta: int = 0,
     mark_completed: bool = False,
+    mark_paused: bool = False,
+    mark_abandoned: bool = False,
+    mark_resumed: bool = False,
 ) -> dict[str, Any]:
-    """Merge a step result + optional completion flag into the
-    user's progress row. Creates the row on first call."""
+    """Merge a step result + optional lifecycle flag into the
+    user's progress row. Creates the row on first call.
+
+    Lifecycle flags (Phase 63A):
+
+    - ``mark_paused`` flips ``status`` to ``paused`` and stamps
+      ``paused_at``. ``step_results`` stay intact for the resume.
+    - ``mark_abandoned`` flips ``status`` to ``abandoned``,
+      stamps ``abandoned_at``, and clears ``step_results``
+      (ElementErrors from completed steps stay in their own
+      table — what was learned stays learned).
+    - ``mark_resumed`` flips a ``paused`` row back to
+      ``in_progress`` and clears ``paused_at``.
+
+    At most one of the four ``mark_*`` flags may be true per
+    call; a ``ValidationError`` is raised otherwise.
+    """
+    flag_count = sum(
+        1
+        for f in (mark_completed, mark_paused, mark_abandoned, mark_resumed)
+        if f
+    )
+    if flag_count > 1:
+        raise ValidationError(
+            "At most one of mark_completed / mark_paused / "
+            "mark_abandoned / mark_resumed may be true per call."
+        )
     _ensure_user(db, user_id)
     row = _find_row(db, user_id, source, set_id, lesson_filename)
     now = _utcnow()
@@ -188,7 +216,29 @@ def upsert_progress(
     if mark_completed and row.status != "completed":
         row.status = "completed"
         row.completed_at = now
+        # A completion clears any pending pause/abandon stamps so
+        # the row's terminal state is unambiguous.
+        row.paused_at = None
+        row.abandoned_at = None
         just_completed = True
+
+    # Phase 63A — pause / abandon / resume transitions.
+    if mark_paused and row.status not in ("paused", "completed", "abandoned"):
+        row.status = "paused"
+        row.paused_at = now
+    elif mark_abandoned and row.status != "abandoned":
+        row.status = "abandoned"
+        row.abandoned_at = now
+        row.paused_at = None
+        # Discard the in-flight attempt. ElementErrors are kept
+        # because they live in a separate table — what was learned
+        # stays learned.
+        row.step_results = "{}"
+        row.score_correct = 0
+        row.score_total = 0
+    elif mark_resumed and row.status == "paused":
+        row.status = "in_progress"
+        row.paused_at = None
 
     row.updated_at = now
     db.commit()
@@ -244,4 +294,6 @@ def _row_to_wire(row: LessonProgress) -> dict[str, Any]:
         "started_at": row.started_at,
         "updated_at": row.updated_at,
         "completed_at": row.completed_at,
+        "paused_at": row.paused_at,
+        "abandoned_at": row.abandoned_at,
     }

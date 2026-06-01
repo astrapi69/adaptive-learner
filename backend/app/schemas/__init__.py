@@ -1225,6 +1225,12 @@ class LessonProgressUpsert(BaseModel):
     The viewer calls this every time a step completes; the
     server merges the new ``step_result`` into the existing
     JSON map and recomputes the aggregate score.
+
+    Phase 63 widens the upsert body with the lifecycle controls
+    (``mark_paused``, ``mark_abandoned``, ``mark_resumed``) so
+    every transition flows through the same endpoint the viewer
+    already uses for step completion. At most one of the four
+    ``mark_*`` flags may be true per call.
     """
 
     source: str = Field(..., min_length=1, max_length=200)
@@ -1237,6 +1243,29 @@ class LessonProgressUpsert(BaseModel):
         description=(
             "Set to true on the lesson-summary screen. Flips "
             "``status`` to ``completed`` + stamps ``completed_at``."
+        ),
+    )
+    mark_paused: bool = Field(
+        default=False,
+        description=(
+            "Phase 63A — flip ``status`` to ``paused`` and stamp "
+            "``paused_at``. step_results stay intact for the resume."
+        ),
+    )
+    mark_abandoned: bool = Field(
+        default=False,
+        description=(
+            "Phase 63A — flip ``status`` to ``abandoned`` and stamp "
+            "``abandoned_at``. step_results are cleared; ElementErrors "
+            "from completed steps stay (what was learned stays "
+            "learned)."
+        ),
+    )
+    mark_resumed: bool = Field(
+        default=False,
+        description=(
+            "Phase 63C — flip a ``paused`` row back to "
+            "``in_progress`` and clear ``paused_at``."
         ),
     )
 
@@ -1256,7 +1285,8 @@ class LessonProgressOut(BaseModel):
     source: str
     set_id: str
     lesson_filename: str
-    status: str  # "in_progress" | "completed"
+    # "in_progress" | "paused" | "abandoned" | "completed"
+    status: str
     step_results: dict[str, Any]
     score_correct: int
     score_total: int
@@ -1264,6 +1294,8 @@ class LessonProgressOut(BaseModel):
     started_at: datetime
     updated_at: datetime
     completed_at: datetime | None = None
+    paused_at: datetime | None = None
+    abandoned_at: datetime | None = None
 
 
 # --- ElementError (Phase 46B / EXP-007 / P-129) ----------------------------

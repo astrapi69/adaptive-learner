@@ -1331,7 +1331,10 @@ class LessonProgress(Base):
         String(200),
         nullable=False,
     )
-    # ``in_progress`` | ``completed``
+    # ``in_progress`` | ``paused`` | ``abandoned`` | ``completed``
+    # (Phase 63A widened from in_progress/completed-only). Free
+    # string; transitions live in the service + frontend lifecycle
+    # hook, not in a DB constraint.
     status: Mapped[str] = mapped_column(
         String(20),
         nullable=False,
@@ -1376,6 +1379,19 @@ class LessonProgress(Base):
         onupdate=_utcnow,
     )
     completed_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    # Phase 63A / EXP-020 — lesson lifecycle timestamps.
+    # ``paused_at`` is set when the user explicitly pauses (or the
+    # auto-pause fires on browser close); cleared on resume.
+    # ``abandoned_at`` is set when the user discards the attempt or
+    # the 30-day cleanup job retires a stale paused row.
+    paused_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+    )
+    abandoned_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
     )

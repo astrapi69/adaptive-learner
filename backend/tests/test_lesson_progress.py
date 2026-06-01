@@ -321,3 +321,148 @@ def test_list_returns_every_user_lesson(client: TestClient) -> None:
     listed = r.json()
     filenames = {row["lesson_filename"] for row in listed}
     assert filenames == {"01-greetings.json", "02-numbers.json"}
+
+
+# --- Phase 63A — lesson lifecycle (pause / abandon / resume) -----------------
+
+
+def _upsert_step(client: TestClient, user_id: str, step_id: str) -> None:
+    client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "step_result": {"step_id": step_id, "correct": 1, "total": 1},
+        },
+    )
+
+
+def test_mark_paused_stamps_paused_at_and_keeps_step_results(
+    client: TestClient,
+) -> None:
+    user_id = _make_user(client)
+    _upsert_step(client, user_id, "ex-1")
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_paused": True,
+        },
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["status"] == "paused"
+    assert body["paused_at"] is not None
+    assert body["abandoned_at"] is None
+    # Step result survives the pause — the resume needs it.
+    assert "ex-1" in body["step_results"]
+    assert body["score_correct"] == 1
+
+
+def test_mark_abandoned_clears_step_results_and_stamps_abandoned_at(
+    client: TestClient,
+) -> None:
+    user_id = _make_user(client)
+    _upsert_step(client, user_id, "ex-1")
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_abandoned": True,
+        },
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["status"] == "abandoned"
+    assert body["abandoned_at"] is not None
+    # The attempt is discarded — but ElementErrors from completed
+    # steps live in their own table and are not touched here.
+    assert body["step_results"] == {}
+    assert body["score_correct"] == 0
+    assert body["score_total"] == 0
+
+
+def test_mark_resumed_flips_paused_back_to_in_progress(
+    client: TestClient,
+) -> None:
+    user_id = _make_user(client)
+    _upsert_step(client, user_id, "ex-1")
+    client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_paused": True,
+        },
+    )
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_resumed": True,
+        },
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["status"] == "in_progress"
+    assert body["paused_at"] is None
+    # Step result still there — that's the whole point of resume.
+    assert "ex-1" in body["step_results"]
+
+
+def test_at_most_one_lifecycle_flag_per_call(client: TestClient) -> None:
+    user_id = _make_user(client)
+    _upsert_step(client, user_id, "ex-1")
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_paused": True,
+            "mark_abandoned": True,
+        },
+    )
+    assert r.status_code == 400, r.text
+
+
+def test_completed_clears_paused_and_abandoned_stamps(
+    client: TestClient,
+) -> None:
+    """A completion is a terminal state — pending pause/abandon
+    stamps must not linger alongside ``completed`` so the row's
+    status is unambiguous."""
+    user_id = _make_user(client)
+    _upsert_step(client, user_id, "ex-1")
+    client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_paused": True,
+        },
+    )
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_completed": True,
+        },
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body["status"] == "completed"
+    assert body["completed_at"] is not None
+    assert body["paused_at"] is None
+    assert body["abandoned_at"] is None
