@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-05-30
-**Anzahl EXPs:** 18
+**Stand:** 2026-06-01
+**Anzahl EXPs:** 19
 
 ## Kategorisierung
 
@@ -33,6 +33,7 @@
 | 016 | Test-Strategie (automatisiert)              | Querschnitt  | laufend | Sehr hoch | -                |
 | 017 | Manuelle Tests                              | Querschnitt  | laufend | Hoch      | 016                |
 | 018 | Übungsrichtung - Rezeptiv vs. Produktiv     | Feature      | 2     | Hoch      | 001, 006, 013      |
+| 020 | Lektions-Flusssteuerung (Prüfen/Weiter)     | Feature      | 2     | Hoch      | 001, 003, 006      |
 
 ## Phasen-Definition
 
