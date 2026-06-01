@@ -9,7 +9,25 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.46.0** (minor - **Phase 62 — EXP-018
+- **Current state:** **v1.47.0** (minor - **Phase 63 — Lesson
+  Flow Control**. Lessons are no longer all-or-nothing: they can
+  be paused, abandoned and resumed. ``LessonProgress`` gains
+  ``paused``/``abandoned`` states + ``paused_at``/``abandoned_at``
+  timestamps (Alembic + Dexie, both modes); a back-button exit
+  dialog offers Pause/Abandon/Continue and a resume-or-start-over
+  dialog greets a paused lesson; 30s autosave + auto-resume on
+  tab return; a Dashboard ``PausedLessonsCard``; a lesson
+  splitter for oversized imports (configurable 5-20 exercises,
+  TS+Python cross-language parity test); a paused-lesson
+  retention sweep + Settings control. Folds in Word Tiles
+  touch-capable drag-to-reorder (``@dnd-kit`` replacing native
+  HTML5 drag, which never fired on touch), mobile
+  horizontal-scroll fixes (3 overflow sources + a 320/375/414
+  regression spec), lower-friction community sharing (GitHub web
+  PR editor + informational validator), and a backend
+  CSP/security-header middleware (Phase 61 audit P3 — strict
+  ``default-src 'none'`` for the API, CDN-aware policy for the
+  Swagger paths). v1.46.0 = minor - **Phase 62 — EXP-018
   Exercise Direction (Receptive vs Productive)**. Every exercise
   now carries an optional ``direction`` (``target_to_source`` =
   receptive/recognise, default; ``source_to_target`` =
