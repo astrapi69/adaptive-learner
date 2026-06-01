@@ -1,4 +1,5 @@
-# Adaptive Learner — Help glossary: Core concepts (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: Core concepts (Portuguese).
+# Translation: AI-generated, pending native review
 #
 # Per entry:
 #   key:    stable ID (snake_case, used in URLs)
@@ -13,197 +14,206 @@ category: concepts
 language: pt
 entries:
   - key: curriculum
-    title: Curriculum
-    short: "A structured learning plan that ties goals, content, methods and assessment together."
+    title: Currículo
+    short: "Um plano de aprendizagem estruturado que interliga objetivos, conteúdos, métodos e avaliação."
     long: |
-      ## What is a curriculum?
+      ## O que é um currículo?
 
-      In education, a curriculum (plural: curricula) is a
-      structured plan and systematic concept for how learning
-      and teaching happen.
+      Na educação, um currículo (plural: currículos) é um plano
+      estruturado e um conceito sistemático que define como a
+      aprendizagem e o ensino acontecem.
 
-      ## Four core questions
+      ## Quatro perguntas centrais
 
-      Every curriculum answers four central questions:
+      Todo currículo responde a quatro perguntas fundamentais:
 
-      - **Learning goals (why?)** — Which competencies should be
-        acquired?
-      - **Learning content (what?)** — Which topics will be
-        covered?
-      - **Methodology and didactics (how?)** — Which teaching and
-        learning forms will be used?
-      - **Evaluation (how well?)** — How will learning success be
-        measured?
+      - **Objetivos de aprendizagem (porquê?)** — Quais competências
+        devem ser adquiridas?
+      - **Conteúdo de aprendizagem (o quê?)** — Quais tópicos serão
+        abordados?
+      - **Metodologia e didática (como?)** — Quais formas de ensino e
+        aprendizagem serão utilizadas?
+      - **Avaliação (quão bem?)** — Como será medido o sucesso da
+        aprendizagem?
 
-      ## Difference from a syllabus
+      ## Diferença de um programa de estudos
 
-      A curriculum puts the learner and their competency acquisition
-      at the center (outcome orientation), not just a rigid list of
-      subject areas. A syllabus documents **what** should be taught;
-      a curriculum also describes **why** and **how** — and measures
-      **what was actually learned**.
+      Um currículo coloca o aprendente e a sua aquisição de
+      competências no centro (orientação para resultados), não
+      apenas uma lista rígida de áreas temáticas. Um programa de
+      estudos documenta **o quê** deve ser ensinado; um currículo
+      também descreve o **porquê** e o **como** — e mede **o que
+      foi realmente aprendido**.
 
-      ## Four dimensions
+      ## Quatro dimensões
 
-      Curriculum research distinguishes four manifestations:
+      A investigação sobre currículos distingue quatro manifestações:
 
-      - **Intended curriculum** — the documented target.
-      - **Implemented curriculum** — what is actually taught.
-      - **Achieved curriculum** — what learners actually
-        understand.
-      - **Hidden curriculum** — implicit learning that happens
-        alongside (study habits, attitudes, social norms).
+      - **Currículo pretendido** — o objetivo documentado.
+      - **Currículo implementado** — o que é realmente ensinado.
+      - **Currículo realizado** — o que os aprendentes realmente
+        compreendem.
+      - **Currículo oculto** — a aprendizagem implícita que acontece
+        paralelamente (hábitos de estudo, atitudes, normas sociais).
 
-      ## In Adaptive Learner
+      ## No Adaptive Learner
 
-      In Adaptive Learner, a curriculum is your personal learning
-      plan for a topic. It organizes learning topics hierarchically
-      and ties them to lessons. You define the goals, content and
-      methods — the system supports the evaluation through
-      tracking, the learning profile and AI feedback after each
-      step.
+      No Adaptive Learner, um currículo é o seu plano de
+      aprendizagem pessoal para um tópico. Ele organiza os tópicos
+      de forma hierárquica e liga-os a lições. Você define os
+      objetivos, o conteúdo e os métodos — o sistema apoia a
+      avaliação através do rastreamento, do perfil de aprendizagem
+      e do feedback da IA após cada passo.
 
-      Unlike a printed curriculum, this one adapts continuously:
-      when a method-switch recommendation appears, it is the
-      implemented curriculum reacting to the achieved one.
+      Ao contrário de um currículo impresso, este adapta-se
+      continuamente: quando surge uma recomendação de mudança de
+      método, é o currículo implementado a reagir ao currículo
+      realizado.
 
   - key: learning_project
-    title: Learning Project
-    short: "Your concrete learning effort with topic, goal, timeframe and daily learning time."
+    title: Projeto de Aprendizagem
+    short: "O seu esforço de aprendizagem concreto com tópico, objetivo, prazo e tempo diário de estudo."
     long: |
-      ## What is a learning project?
+      ## O que é um projeto de aprendizagem?
 
-      A learning project bundles everything that belongs to a
-      learning effort: the topic, your goal, the timeframe, and
-      your daily learning time. It is the bracket around your
-      sessions, your curriculum and your learning profile.
+      Um projeto de aprendizagem agrupa tudo o que pertence a um
+      esforço de aprendizagem: o tópico, o seu objetivo, o prazo
+      e o seu tempo diário de estudo. É o enquadramento das suas
+      sessões, do seu currículo e do seu perfil de aprendizagem.
 
-      ## Why these four fields?
+      ## Porquê estes quatro campos?
 
-      - **Topic** — what you want to learn (e.g., "Spanish for
-        travel", "Python basics", "C major piano scale").
-        Concrete and bounded, not too broad.
-      - **Goal** — what you want to be able to do at the end.
-        Concrete goals ("order food at a restaurant") produce
-        better AI prompts than vague ones ("learn Spanish").
-      - **Timeframe** — by when. Affects how aggressively the
-        system schedules repetitions and when the method-switch
-        recommendation appears.
-      - **Daily learning time** — how many minutes per day you
-        can invest. Drives the spaced-repetition recommendations
-        and session length.
+      - **Tópico** — o que quer aprender (ex.: "Espanhol para
+        viagens", "Noções básicas de Python", "Escala de dó maior
+        no piano"). Concreto e delimitado, não demasiado abrangente.
+      - **Objetivo** — o que quer ser capaz de fazer no final.
+        Objetivos concretos ("pedir comida num restaurante") produzem
+        prompts de IA melhores do que objetivos vagos ("aprender
+        espanhol").
+      - **Prazo** — até quando. Afeta a agressividade com que o
+        sistema agenda repetições e quando surge a recomendação de
+        mudança de método.
+      - **Tempo diário de estudo** — quantos minutos por dia pode
+        investir. Orienta as recomendações de repetição espaçada e a
+        duração da sessão.
 
-      ## Why concrete goals matter
+      ## Porque é que objetivos concretos são importantes
 
-      Learning research is clear: SMART goals (specific,
-      measurable, attractive, realistic, time-bound) double
-      learning success compared to vague intentions. Adaptive
-      Learner translates your goal into the AI's system prompt;
-      the more concrete you are, the sharper the generated
-      exercises.
+      A investigação em aprendizagem é clara: objetivos SMART
+      (específicos, mensuráveis, atraentes, realistas,
+      temporalmente definidos) duplicam o sucesso da aprendizagem
+      em comparação com intenções vagas. O Adaptive Learner
+      traduz o seu objetivo para o prompt do sistema da IA; quanto
+      mais concreto for, mais precisos serão os exercícios gerados.
 
-      ## In Adaptive Learner
+      ## No Adaptive Learner
 
-      You can have several learning projects in parallel. Each
-      session belongs to exactly one project; your progress
-      (XP, badges, streak) is tracked per project. When you
-      change the timeframe, the system automatically adjusts the
-      repetition cadence — a tight timeframe staggers
-      repetitions more densely.
+      Pode ter vários projetos de aprendizagem em paralelo. Cada
+      sessão pertence exatamente a um projeto; o seu progresso
+      (XP, emblemas, sequência) é registado por projeto. Quando
+      altera o prazo, o sistema ajusta automaticamente a cadência
+      de repetição — um prazo curto escalona as repetições de
+      forma mais densa.
 
   - key: learning_profile
-    title: Learning Profile
-    short: "Your personal strength profile across six learning methods, derived from the assessment test."
+    title: Perfil de Aprendizagem
+    short: "O seu perfil pessoal de pontos fortes nos seis métodos de aprendizagem, derivado do teste de avaliação."
     long: |
-      ## What is the learning profile?
+      ## O que é o perfil de aprendizagem?
 
-      The learning profile shows how well each of the six
-      Adaptive Learner methods suits you. It comes from your
-      answers in the assessment test (12 questions) and is
-      visualized as a radar chart.
+      O perfil de aprendizagem mostra quão bem cada um dos seis
+      métodos do Adaptive Learner se adequa a si. Provém das suas
+      respostas no teste de avaliação (12 perguntas) e é
+      visualizado como um gráfico de radar.
 
-      ## The six axes
+      ## Os seis eixos
 
-      Each axis is a method with a weight between 0 and 100:
+      Cada eixo é um método com um peso entre 0 e 100:
 
-      - **Deductive** — learn the rule, then apply it.
-      - **Inductive** — see examples, derive the rule yourself.
-      - **Error-based** — make mistakes deliberately, then
-        understand why.
-      - **Dialogic** — learn through conversation.
-      - **Contextual** — learn in simulated everyday situations.
-      - **AI-adaptive** — the system picks automatically.
+      - **Dedutivo** — aprender a regra e depois aplicá-la.
+      - **Indutivo** — ver exemplos e derivar a regra por si próprio.
+      - **Baseado em erros** — cometer erros deliberadamente e depois
+        compreender porquê.
+      - **Dialógico** — aprender através da conversa.
+      - **Contextual** — aprender em situações quotidianas
+        simuladas.
+      - **Adaptativo por IA** — o sistema escolhe automaticamente.
 
-      ## It is a profile, not a label
+      ## É um perfil, não um rótulo
 
-      Nobody is "a deductive learner". Every learner has a
-      weighted pattern across all six methods. A profile with
-      high inductive and dialogic weights does not mean
-      deductive will not work for you — it means the other two
-      typically get you to learning success faster.
+      Ninguém é "um aprendente dedutivo". Cada aprendente tem um
+      padrão ponderado ao longo dos seis métodos. Um perfil com
+      pesos elevados em indutivo e dialógico não significa que o
+      dedutivo não funcionará para si — significa que os outros
+      dois tipicamente o levam ao sucesso de aprendizagem mais
+      rapidamente.
 
-      ## Changes over time
+      ## Evolução ao longo do tempo
 
-      The learning profile is not carved in stone. With every
-      completed learning cycle and every method switch, the
-      system adjusts its recommendations. You can re-take the
-      assessment test at any time — typically useful every
-      3-6 months, or after a major topic change.
+      O perfil de aprendizagem não está gravado em pedra. Com
+      cada ciclo de aprendizagem concluído e cada mudança de
+      método, o sistema ajusta as suas recomendações. Pode
+      repetir o teste de avaliação a qualquer momento —
+      tipicamente útil a cada 3-6 meses, ou após uma grande
+      mudança de tópico.
 
-      ## In Adaptive Learner
+      ## No Adaptive Learner
 
-      The profile drives the dashboard view and session
-      recommendations. If you start a session without specifying
-      a method, the system picks the method with the highest
-      weight in your profile.
+      O perfil orienta a vista do painel e as recomendações de
+      sessão. Se iniciar uma sessão sem especificar um método, o
+      sistema escolhe o método com o peso mais elevado no seu
+      perfil.
 
   - key: learning_session
-    title: Learning Session
-    short: "An AI-driven learning unit that follows the 7-step cycle."
+    title: Sessão de Aprendizagem
+    short: "Uma unidade de aprendizagem guiada por IA que segue o ciclo de 7 passos."
     long: |
-      ## What is a learning session?
+      ## O que é uma sessão de aprendizagem?
 
-      A learning session is a continuous learning unit on one
-      topic, driven by the 7-step cycle (input, attempt, error,
-      feedback, adapt, repeat, integrate). The AI plays the
-      teacher role; you drive the dialog.
+      Uma sessão de aprendizagem é uma unidade de aprendizagem
+      contínua sobre um tópico, conduzida pelo ciclo de 7 passos
+      (input, tentativa, erro, feedback, adaptação, repetição,
+      integração). A IA desempenha o papel de professor; você
+      conduz o diálogo.
 
-      ## What makes a session different from a chat?
+      ## O que distingue uma sessão de uma conversa?
 
-      In a session the **dual-prompt evaluator** runs alongside:
-      after every answer, a second AI instance judges your
-      understanding (0-100% confidence) and decides whether you
-      are ready for the next step. A regular chat has no such
-      corrective.
+      Numa sessão, o **avaliador de duplo prompt** funciona em
+      paralelo: após cada resposta, uma segunda instância da IA
+      avalia a sua compreensão (confiança de 0-100%) e decide
+      se está pronto para o próximo passo. Uma conversa normal
+      não tem esse mecanismo corretivo.
 
       ## Streaming
 
-      The AI's answers appear word by word (Server-Sent Events)
-      so you do not wait for the full reply. You can interrupt
-      at any time and ask follow-ups — the session runs until
-      you end it or the cycle completes.
+      As respostas da IA aparecem palavra a palavra
+      (Server-Sent Events) para que não espere pela resposta
+      completa. Pode interromper a qualquer momento e fazer
+      perguntas adicionais — a sessão decorre até que a encerre
+      ou o ciclo se complete.
 
-      ## When should I end a session?
+      ## Quando devo encerrar uma sessão?
 
-      - After step 7 (integrate), when the learning cycle is
-        complete.
-      - When the system recommends a method switch and you
-        accept the recommendation.
-      - When your **stress** rating has been above 4 in the
-        last few ratings — a break is more productive than
-        pushing through.
+      - Após o passo 7 (integração), quando o ciclo de
+        aprendizagem está completo.
+      - Quando o sistema recomenda uma mudança de método e
+        você aceita a recomendação.
+      - Quando a sua avaliação de **stress** esteve acima de 4
+        nas últimas avaliações — uma pausa é mais produtiva do
+        que continuar a forçar.
 
-      ## Ratings carry forward
+      ## As avaliações têm impacto futuro
 
-      Every session ends with three sliders (understanding,
-      stress, method fit, each 1-5). These values feed into
-      your learning profile and shape future recommendations:
-      sustained high stress plus low method fit triggers the
-      method-switch recommendation.
+      Cada sessão termina com três barras deslizantes
+      (compreensão, stress, adequação do método, cada uma de
+      1-5). Estes valores alimentam o seu perfil de
+      aprendizagem e moldam recomendações futuras: stress
+      elevado sustentado mais baixa adequação do método
+      desencadeia a recomendação de mudança de método.
 
-      ## In Adaptive Learner
+      ## No Adaptive Learner
 
-      A session belongs to exactly one learning project. You
-      can have only one active session at a time; this prevents
-      topic mixing and shields the method-switch logic from
-      noise.
+      Uma sessão pertence exatamente a um projeto de
+      aprendizagem. Só pode ter uma sessão ativa de cada vez;
+      isto impede a mistura de tópicos e protege a lógica de
+      mudança de método de ruído.

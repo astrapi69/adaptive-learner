@@ -1,284 +1,288 @@
-# Adaptive Learner — Help glossary: 7 cycle steps (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: 7 cycle steps (Portuguese).
+# Translation: AI-generated, pending native review
 
 category: steps
 language: pt
 entries:
   - key: step_input
     title: 1. Input
-    short: "You receive new material — explanation, example or question from the AI."
+    short: "Recebe material novo — explicação, exemplo ou pergunta da IA."
     long: |
-      ## Step 1: Input
+      ## Passo 1: Input
 
-      Every learning cycle starts with input. The AI presents
-      the material: an explanation, an example, an open
-      question or a situation — depending on the selected
-      method.
+      Cada ciclo de aprendizagem começa com input. A IA
+      apresenta o material: uma explicação, um exemplo, uma
+      pergunta aberta ou uma situação — dependendo do método
+      selecionado.
 
-      ## What the AI does
+      ## O que a IA faz
 
-      - **In deductive**: explains the rule.
-      - **In inductive**: shows examples.
-      - **In error-based**: presents a problem with a trap.
-      - **In dialogic**: opens the conversation with a
-        question.
-      - **In contextual**: sketches the scenario.
+      - **No dedutivo**: explica a regra.
+      - **No indutivo**: mostra exemplos.
+      - **No baseado em erros**: apresenta um problema com
+        uma armadilha.
+      - **No dialógico**: abre a conversa com uma pergunta.
+      - **No contextual**: esboça o cenário.
 
-      ## What you do
+      ## O que você faz
 
-      Read attentively. Ask questions when something is
-      unclear — the session is a dialog, not a lecture. If you
-      find the AI's confidence too high, stay with it: some
-      explanations only land on the second read.
+      Leia com atenção. Faça perguntas quando algo não estiver
+      claro — a sessão é um diálogo, não uma palestra. Se achar
+      que a confiança da IA está demasiado alta, persevere:
+      algumas explicações só fazem sentido na segunda leitura.
 
-      ## What the dual-prompt evaluator does
+      ## O que o avaliador de duplo prompt faz
 
-      It is running quietly. It observes your reaction (or
-      lack thereof) and assesses whether you absorbed the
-      material. Active scoring begins in step 2 (attempt).
+      Está a funcionar silenciosamente. Observa a sua reação
+      (ou a ausência dela) e avalia se absorveu o material.
+      A pontuação ativa começa no passo 2 (tentativa).
 
-      ## What happens if you race through this step
+      ## O que acontece se acelerar este passo
 
-      The most common beginner mistake: jumping to "action"
-      without processing the input. The system spots this from
-      low confidence on subsequent attempts — and sends you
-      back to step 1.
+      O erro mais comum de principiantes: saltar para a
+      "ação" sem processar o input. O sistema deteta isso
+      a partir de confiança baixa em tentativas subsequentes
+      — e manda-o de volta ao passo 1.
 
   - key: step_attempt
-    title: 2. Attempt
-    short: "You apply what you learned to a concrete task or question."
+    title: 2. Tentativa
+    short: "Aplica o que aprendeu a uma tarefa ou pergunta concreta."
     long: |
-      ## Step 2: Attempt
+      ## Passo 2: Tentativa
 
-      You get an application of the material and try to solve
-      it. First answer, first example, first concrete
-      application of the rule.
+      Recebe uma aplicação do material e tenta resolvê-la.
+      Primeira resposta, primeiro exemplo, primeira aplicação
+      concreta da regra.
 
-      ## What the AI does
+      ## O que a IA faz
 
-      The AI gives you a clearly scoped task. For language:
-      translate a sentence. For code: write a function. For
-      music: practice a chord change. Difficulty is
-      deliberately low — the first attempt should be
-      achievable.
+      A IA dá-lhe uma tarefa claramente delimitada. Para
+      línguas: traduza uma frase. Para código: escreva uma
+      função. Para música: pratique uma mudança de acorde.
+      A dificuldade é deliberadamente baixa — a primeira
+      tentativa deve ser realizável.
 
-      ## What you do
+      ## O que você faz
 
-      Try it. Even if you are unsure. An incomplete or
-      mistaken answer is more valuable than a refusal because
-      it gives the evaluator material to work with.
+      Tente. Mesmo que não tenha a certeza. Uma resposta
+      incompleta ou errada é mais valiosa do que uma recusa
+      porque dá ao avaliador material com que trabalhar.
 
-      ## Dual-prompt evaluator
+      ## Avaliador de duplo prompt
 
-      It activates here. It reads your answer and assigns a
-      confidence score (0-100%). At high confidence you skip
-      straight to step 5 (adapt), bypassing error analysis. At
-      low confidence the path goes through step 3 (error) and
-      step 4 (feedback).
+      Ativa-se aqui. Lê a sua resposta e atribui uma pontuação
+      de confiança (0-100%). Com confiança elevada, avança
+      diretamente para o passo 5 (adaptação), ignorando a
+      análise de erros. Com confiança baixa, o caminho passa
+      pelo passo 3 (erro) e pelo passo 4 (feedback).
 
-      ## Tip: do not stall
+      ## Dica: não se bloqueie
 
-      If you have no approach after 30 seconds, tell the AI
-      ("I do not know where to start"). The AI gives you a
-      hint instead of the full solution — and the evaluator
-      does not count this as a failed attempt.
+      Se não tiver nenhuma abordagem após 30 segundos, diga-o
+      à IA ("Não sei por onde começar"). A IA dá-lhe uma
+      dica em vez da solução completa — e o avaliador não
+      conta isso como uma tentativa falhada.
 
   - key: step_error
-    title: 3. Error
-    short: "A mistake or misconception becomes visible."
+    title: 3. Erro
+    short: "Um engano ou equívoco torna-se visível."
     long: |
-      ## Step 3: Error
+      ## Passo 3: Erro
 
-      If your attempt in step 2 did not reach the target, the
-      cycle passes through this step. The error is named — not
-      judged, just marked as a learning opportunity.
+      Se a sua tentativa no passo 2 não atingiu o objetivo,
+      o ciclo passa por este passo. O erro é nomeado — não
+      julgado, apenas assinalado como uma oportunidade de
+      aprendizagem.
 
-      ## What the AI does
+      ## O que a IA faz
 
-      It shows you where the error is, without immediately
-      correcting it. The point: you should *see* the error,
-      not just *hear that something was wrong*. That
-      distinction determines whether you repeat the error.
+      Mostra-lhe onde está o erro, sem o corrigir imediatamente.
+      O ponto crucial: deve *ver* o erro, não apenas *ouvir
+      que algo estava errado*. Essa distinção determina se
+      vai repetir o erro.
 
-      ## What you do
+      ## O que você faz
 
-      Trace the error. If you can correct it yourself, do so.
-      If not, signal that to the AI ("I do not understand
-      where the error is") — the next step (feedback) exists
-      to clarify.
+      Rastreie o erro. Se conseguir corrigi-lo por si próprio,
+      faça-o. Se não, sinalize-o à IA ("Não percebo onde está
+      o erro") — o próximo passo (feedback) existe para
+      esclarecer.
 
-      ## When no error appears
+      ## Quando não aparece nenhum erro
 
-      At high confidence in step 2, the cycle skips this step.
-      The system notes it and raises difficulty in the next
-      cycle — you should be challenged, not bored.
+      Com confiança elevada no passo 2, o ciclo salta este
+      passo. O sistema regista-o e aumenta a dificuldade no
+      próximo ciclo — deve ser desafiado, não entediado.
 
-      ## In error-based (method)
+      ## No baseado em erros (método)
 
-      If you chose this method, step 3 is the cycle's main
-      step. The AI deliberately leads you into typical traps
-      — see the methods glossary.
+      Se escolheu este método, o passo 3 é o passo principal
+      do ciclo. A IA conduz-o deliberadamente para armadilhas
+      típicas — consulte o glossário de métodos.
 
   - key: step_feedback
     title: 4. Feedback
-    short: "The AI explains why something works or does not work."
+    short: "A IA explica porquê algo funciona ou não funciona."
     long: |
-      ## Step 4: Feedback
+      ## Passo 4: Feedback
 
-      Here comes the explanation. The AI describes the
-      principle behind your error or correct answer — ideally
-      so that you can transfer the principle to other cases.
+      Aqui vem a explicação. A IA descreve o princípio por
+      trás do seu erro ou da sua resposta correta —
+      idealmente de forma que possa transferir o princípio
+      para outros casos.
 
-      ## What good feedback contains
+      ## O que é um bom feedback
 
-      - **What happened** (description of the observation).
-      - **Why it happened** (explanation of the principle).
-      - **How to do it differently next time** (concrete
-        action guidance).
+      - **O que aconteceu** (descrição da observação).
+      - **Porquê aconteceu** (explicação do princípio).
+      - **Como fazer de forma diferente da próxima vez**
+        (orientação de ação concreta).
 
-      Without (3), feedback evaporates. With (3), a correction
-      becomes a transferable rule.
+      Sem (3), o feedback evapora-se. Com (3), uma correção
+      torna-se uma regra transferível.
 
-      ## What you do
+      ## O que você faz
 
-      Read, follow, ask back. If feedback has not clicked yet,
-      say so. The AI is patient — it will explain the
-      principle in another variant. Better understood twice
-      than echoed once.
+      Leia, siga, pergunte de volta. Se o feedback ainda não
+      ficou claro, diga-o. A IA tem paciência — explicará
+      o princípio noutra variante. Melhor compreendido duas
+      vezes do que ecoado uma vez.
 
-      ## Dual-prompt evaluator
+      ## Avaliador de duplo prompt
 
-      It reads your reaction to the feedback. If you say "Ah,
-      now I understand" (or equivalent), confidence rises and
-      you proceed. If you still sound confused, the evaluator
-      pulls the cycle back to step 1 (input) with a new
-      explanation approach.
+      Lê a sua reação ao feedback. Se disser "Ah, agora
+      percebo" (ou equivalente), a confiança sobe e avança.
+      Se ainda parecer confuso, o avaliador puxa o ciclo de
+      volta para o passo 1 (input) com uma nova abordagem de
+      explicação.
 
-      ## Also on correct answers
+      ## Também em respostas corretas
 
-      Feedback is not only for errors. When you solved
-      something correctly, the AI still explains the
-      principle behind it — so the success becomes
-      transferable.
+      O feedback não é apenas para erros. Quando resolveu
+      algo corretamente, a IA ainda assim explica o princípio
+      por trás disso — para que o sucesso se torne
+      transferível.
 
   - key: step_adapt
-    title: 5. Adapt
-    short: "You adjust your strategy or understanding based on the feedback."
+    title: 5. Adaptação
+    short: "Ajusta a sua estratégia ou compreensão com base no feedback."
     long: |
-      ## Step 5: Adapt
+      ## Passo 5: Adaptação
 
-      You take what you learned from the feedback and adjust
-      your approach. Not just intellectually ("yes, now I
-      understand"), but operationally ("next time I will do it
-      differently").
+      Pega no que aprendeu com o feedback e ajusta a sua
+      abordagem. Não apenas intelectualmente ("sim, agora
+      percebo"), mas operacionalmente ("da próxima vez farei
+      de forma diferente").
 
-      ## What happens here concretely
+      ## O que acontece aqui concretamente
 
-      - **For language**: you rephrase. Instead of the wrong
-        construction you use the corrected one.
-      - **For code**: you restructure the function with the
-        understood principle.
-      - **For math**: you solve a variant using the corrected
-        solution path.
+      - **Para línguas**: reformula. Em vez da construção
+        errada, usa a correta.
+      - **Para código**: reestrutura a função com o princípio
+        compreendido.
+      - **Para matemática**: resolve uma variante usando o
+        caminho de solução corrigido.
 
-      ## What the AI does
+      ## O que a IA faz
 
-      It gives you a *new* task — not the old one with the
-      known solution, but a variation that demands the
-      understood principle in a new context.
+      Dá-lhe uma tarefa *nova* — não a antiga com a solução
+      conhecida, mas uma variação que exige o princípio
+      compreendido num novo contexto.
 
-      ## Why this step matters
+      ## Porquê este passo é importante
 
-      Understanding without adaptation evaporates. If you only
-      "echo" the feedback but do not build it into your
-      approach, you will repeat the error next time. Step 5
-      forces operational activation.
+      A compreensão sem adaptação evapora-se. Se apenas
+      "ecoa" o feedback mas não o incorpora na sua abordagem,
+      vai repetir o erro da próxima vez. O passo 5 força a
+      ativação operacional.
 
-      ## Dual-prompt evaluator
+      ## Avaliador de duplo prompt
 
-      Here it evaluates learning transfer. A successful
-      adaptation in a new variation is the best signal that
-      learning stuck — confidence typically rises above 80%.
+      Aqui avalia a transferência de aprendizagem. Uma
+      adaptação bem-sucedida numa nova variação é o melhor
+      sinal de que a aprendizagem ficou — a confiança
+      tipicamente sobe acima de 80%.
 
   - key: step_repeat
-    title: 6. Repeat
-    short: "You practice with variations until what you learned is fluent."
+    title: 6. Repetição
+    short: "Pratica com variações até que o que aprendeu fique fluente."
     long: |
-      ## Step 6: Repeat
+      ## Passo 6: Repetição
 
-      You get more variations of the task. Not identical
-      repetition (that just leads to memorization), but
-      variation: same core, different context, different
-      difficulty.
+      Recebe mais variações da tarefa. Não repetição idêntica
+      (que apenas leva à memorização), mas variação: mesmo
+      núcleo, contexto diferente, dificuldade diferente.
 
-      ## What the AI does
+      ## O que a IA faz
 
-      It generates tasks that test the same principle in
-      different guises. For language: different vocabulary,
-      different sentence structure, same grammar. For code:
-      different data, same algorithmic structure.
+      Gera tarefas que testam o mesmo princípio em formas
+      diferentes. Para línguas: vocabulário diferente,
+      estrutura frásica diferente, mesma gramática. Para
+      código: dados diferentes, mesma estrutura algorítmica.
 
-      ## Why variation, not repetition
+      ## Porquê variação e não repetição
 
-      Research on **interleaved practice** shows: blocked
-      practice (all tasks on the same topic in a row) creates
-      illusion of competence. Interleaved practice (related
-      tasks with variation) creates transferable knowledge.
+      A investigação sobre **prática intercalada** mostra:
+      a prática em bloco (todas as tarefas sobre o mesmo
+      tópico seguidas) cria ilusão de competência. A prática
+      intercalada (tarefas relacionadas com variação) cria
+      conhecimento transferível.
 
-      ## When the step ends
+      ## Quando o passo termina
 
-      Once the dual-prompt evaluator sees three variations in
-      a row with confidence > 80%, you proceed to step 7. If
-      confidence fluctuates, the cycle stays in step 6 —
-      until stability is reached.
+      Assim que o avaliador de duplo prompt vê três variações
+      seguidas com confiança > 80%, avança para o passo 7.
+      Se a confiança flutuar, o ciclo permanece no passo 6
+      — até que a estabilidade seja atingida.
 
-      ## Connection to spaced repetition
+      ## Ligação à repetição espaçada
 
-      What you solve successfully in step 6 enters the
-      spaced-repetition system. The system schedules reviews
-      at 1 day, 3 days, 7 days, 14 days, 30 days — so the
-      learning sticks long-term.
+      O que resolve com sucesso no passo 6 entra no sistema
+      de repetição espaçada. O sistema agenda revisões em
+      1 dia, 3 dias, 7 dias, 14 dias, 30 dias — para que a
+      aprendizagem fique a longo prazo.
 
   - key: step_integrate
-    title: 7. Integrate
-    short: "You connect what you learned to other knowledge or a real application."
+    title: 7. Integração
+    short: "Liga o que aprendeu a outros conhecimentos ou a uma aplicação real."
     long: |
-      ## Step 7: Integrate
+      ## Passo 7: Integração
 
-      The learning cycle ends with you placing the new
-      learning into a larger context. Not in isolation
-      ("today I learned this") but connected to what you
-      already knew.
+      O ciclo de aprendizagem termina com a colocação da nova
+      aprendizagem num contexto mais amplo. Não de forma
+      isolada ("hoje aprendi isto") mas ligada ao que já sabia.
 
-      ## What the AI does
+      ## O que a IA faz
 
-      It challenges you to link the new content to other
-      concepts or apply it in a real scenario:
+      Desafia-o a ligar o novo conteúdo a outros conceitos ou
+      a aplicá-lo num cenário real:
 
-      - **Language**: use the tense in a free conversation.
-      - **Code**: apply the new technique in a larger project.
-      - **Theory**: combine the concept with one of your own
-        questions.
+      - **Línguas**: usar o tempo verbal numa conversa livre.
+      - **Código**: aplicar a nova técnica num projeto maior.
+      - **Teoria**: combinar o conceito com uma das suas
+        próprias perguntas.
 
-      ## What you do
+      ## O que você faz
 
-      Articulate the required link. Find your own examples.
-      Reach the point where you can say: "I can do this now —
-      not because I memorized it, but because I can deploy
-      it."
+      Articule a ligação exigida. Encontre os seus próprios
+      exemplos. Chegue ao ponto onde pode dizer: "Consigo
+      fazer isto agora — não porque memorizei, mas porque
+      posso usá-lo."
 
-      ## What happens after step 7
+      ## O que acontece após o passo 7
 
-      The cycle is complete. Three options:
+      O ciclo está completo. Três opções:
 
-      - **End the session** and rate it (understanding /
-        stress / method fit).
-      - **Auto-loop**: a new cycle with a new topic starts
-        automatically.
-      - **Method switch**: at low method fit the system
-        recommends a method change for the next cycle.
+      - **Terminar a sessão** e avaliá-la (compreensão /
+        stress / adequação do método).
+      - **Auto-loop**: um novo ciclo com um novo tópico
+        começa automaticamente.
+      - **Mudança de método**: com baixa adequação do método,
+        o sistema recomenda uma mudança de método para o
+        próximo ciclo.
 
-      ## Why the system closes here
+      ## Porquê o sistema fecha aqui
 
-      Integration is the only robust test that learning
-      worked. Memorized content fails in step 7; understood
-      knowledge thrives here.
+      A integração é o único teste robusto de que a
+      aprendizagem funcionou. O conteúdo memorizado falha no
+      passo 7; o conhecimento compreendido prospera aqui.
