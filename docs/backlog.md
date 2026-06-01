@@ -17,16 +17,18 @@ tool into a full learning platform with downloadable content
 sets, interactive exercises, and dual-mode operation
 (Content-only + AI-augmented).
 
-State: **post v1.47.0 (Phase 63 — Lesson Flow Control:
-pause/abandon/resume + 30s autosave + auto-resume, Dashboard
-paused-lessons widget, lesson splitter for oversized imports,
-retention sweep; folds in Word Tiles @dnd-kit touch reorder,
-mobile horizontal-scroll fixes, lower-friction sharing, and a
-backend CSP/security-header pass).** Prior: **v1.46.0 (Phase 62
-— EXP-018 Exercise Direction: per-direction SRS, direction-aware
-renderers + adaptive strategy; P0 Save fix + content migration
-into adaptive-learner-content).**
-Phase history through Phase 63 +
+State: **post v1.48.0 (Phase 64 — Community Sharing UX + Smart
+Lesson Organization: four-step share wizard with placement
+engine, duplicate/variation/supplement detection, author credit,
+contribution history + Community Contributor recognition, and
+Missing-Lessons gap suggestions; content schema 1.2 -> 1.3
+additive. Merges Smart Next-Step Suggestions after lesson
+completion + the EXP-021 Lesson-Creator exploration).** Prior:
+**v1.47.0 (Phase 63 — Lesson Flow Control: pause/abandon/resume +
+autosave + auto-resume, paused-lessons widget, lesson splitter;
+Word Tiles @dnd-kit reorder, mobile overflow fixes, backend CSP
+pass).**
+Phase history through Phase 64 +
 per-release notes live in
 [changelog/releases/](../changelog/releases/). 29 tables on
 the sync surface. 13 plugins, 29 SQLAlchemy models,
