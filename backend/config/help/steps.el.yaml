@@ -1,284 +1,287 @@
-# Adaptive Learner — Help glossary: 7 cycle steps (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: 7 cycle steps (Greek).
 
 category: steps
 language: el
 entries:
   - key: step_input
-    title: 1. Input
-    short: "You receive new material — explanation, example or question from the AI."
+    title: 1. Εισαγωγή
+    short: "Λαμβάνεις νέο υλικό — εξήγηση, παράδειγμα ή ερώτηση από την ΤΝ."
     long: |
-      ## Step 1: Input
+      ## Βήμα 1: Εισαγωγή
 
-      Every learning cycle starts with input. The AI presents
-      the material: an explanation, an example, an open
-      question or a situation — depending on the selected
-      method.
+      Κάθε μαθησιακός κύκλος ξεκινά με εισαγωγή. Η ΤΝ παρουσιάζει
+      το υλικό: μια εξήγηση, ένα παράδειγμα, μια ανοιχτή ερώτηση
+      ή μια κατάσταση — ανάλογα με την επιλεγμένη μέθοδο.
 
-      ## What the AI does
+      ## Τι κάνει η ΤΝ
 
-      - **In deductive**: explains the rule.
-      - **In inductive**: shows examples.
-      - **In error-based**: presents a problem with a trap.
-      - **In dialogic**: opens the conversation with a
-        question.
-      - **In contextual**: sketches the scenario.
+      - **Σε παραγωγική**: εξηγεί τον κανόνα.
+      - **Σε επαγωγική**: δείχνει παραδείγματα.
+      - **Σε βασισμένη στο λάθος**: παρουσιάζει πρόβλημα με
+        παγίδα.
+      - **Σε διαλογική**: ανοίγει τη συνομιλία με ερώτηση.
+      - **Σε πλαισιακή**: σκιαγραφεί το σενάριο.
 
-      ## What you do
+      ## Τι κάνεις εσύ
 
-      Read attentively. Ask questions when something is
-      unclear — the session is a dialog, not a lecture. If you
-      find the AI's confidence too high, stay with it: some
-      explanations only land on the second read.
+      Διαβάζεις προσεκτικά. Κάνεις ερωτήσεις όταν κάτι είναι
+      ασαφές — η συνεδρία είναι διάλογος, όχι διάλεξη. Αν
+      νομίζεις ότι η ΤΝ προχωρά πολύ γρήγορα, παράμεινε: κάποιες
+      εξηγήσεις χρειάζονται δεύτερη ανάγνωση.
 
-      ## What the dual-prompt evaluator does
+      ## Τι κάνει ο αξιολογητής διπλής προτροπής
 
-      It is running quietly. It observes your reaction (or
-      lack thereof) and assesses whether you absorbed the
-      material. Active scoring begins in step 2 (attempt).
+      Τρέχει αθόρυβα. Παρατηρεί την αντίδρασή σου (ή την έλλειψή
+      της) και εκτιμά αν απορρόφησες το υλικό. Η ενεργή βαθμολόγηση
+      ξεκινά στο βήμα 2 (απόπειρα).
 
-      ## What happens if you race through this step
+      ## Τι γίνεται αν τρέξεις μέσα από αυτό το βήμα
 
-      The most common beginner mistake: jumping to "action"
-      without processing the input. The system spots this from
-      low confidence on subsequent attempts — and sends you
-      back to step 1.
+      Το πιο συνηθισμένο λάθος αρχαρίων: πηδάς στη "δράση" χωρίς
+      να επεξεργαστείς την εισαγωγή. Το σύστημα το εντοπίζει από
+      χαμηλή εμπιστοσύνη σε επακόλουθες απόπειρες — και σε
+      επαναφέρει στο βήμα 1.
 
   - key: step_attempt
-    title: 2. Attempt
-    short: "You apply what you learned to a concrete task or question."
+    title: 2. Απόπειρα
+    short: "Εφαρμόζεις αυτό που έμαθες σε μια συγκεκριμένη εργασία ή ερώτηση."
     long: |
-      ## Step 2: Attempt
+      ## Βήμα 2: Απόπειρα
 
-      You get an application of the material and try to solve
-      it. First answer, first example, first concrete
-      application of the rule.
+      Λαμβάνεις μια εφαρμογή του υλικού και προσπαθείς να την
+      επιλύσεις. Πρώτη απάντηση, πρώτο παράδειγμα, πρώτη
+      συγκεκριμένη εφαρμογή του κανόνα.
 
-      ## What the AI does
+      ## Τι κάνει η ΤΝ
 
-      The AI gives you a clearly scoped task. For language:
-      translate a sentence. For code: write a function. For
-      music: practice a chord change. Difficulty is
-      deliberately low — the first attempt should be
-      achievable.
+      Σου δίνει μια καθορισμένη εργασία. Για γλώσσα: μετάφρασε
+      μια πρόταση. Για κώδικα: γράψε μια συνάρτηση. Για μουσική:
+      εξάσκησε μια αλλαγή συγχορδίας. Η δυσκολία είναι σκόπιμα
+      χαμηλή — η πρώτη απόπειρα πρέπει να είναι εφικτή.
 
-      ## What you do
+      ## Τι κάνεις εσύ
 
-      Try it. Even if you are unsure. An incomplete or
-      mistaken answer is more valuable than a refusal because
-      it gives the evaluator material to work with.
+      Προσπάθησε. Ακόμα κι αν δεν είσαι σίγουρος. Μια ατελής ή
+      λανθασμένη απάντηση αξίζει περισσότερο από μια άρνηση,
+      γιατί δίνει στον αξιολογητή υλικό για δουλειά.
 
-      ## Dual-prompt evaluator
+      ## Αξιολογητής διπλής προτροπής
 
-      It activates here. It reads your answer and assigns a
-      confidence score (0-100%). At high confidence you skip
-      straight to step 5 (adapt), bypassing error analysis. At
-      low confidence the path goes through step 3 (error) and
-      step 4 (feedback).
+      Ενεργοποιείται εδώ. Διαβάζει την απάντησή σου και αποδίδει
+      βαθμολογία εμπιστοσύνης (0-100%). Σε υψηλή εμπιστοσύνη
+      παρακάμπτεις κατευθείαν στο βήμα 5 (προσαρμογή),
+      παραλείποντας την ανάλυση λαθών. Σε χαμηλή εμπιστοσύνη η
+      πορεία περνά από το βήμα 3 (λάθος) και το βήμα 4
+      (ανατροφοδότηση).
 
-      ## Tip: do not stall
+      ## Συμβουλή: μην αδρανείς
 
-      If you have no approach after 30 seconds, tell the AI
-      ("I do not know where to start"). The AI gives you a
-      hint instead of the full solution — and the evaluator
-      does not count this as a failed attempt.
+      Αν δεν έχεις προσέγγιση μετά από 30 δευτερόλεπτα, πες το
+      στην ΤΝ ("Δεν ξέρω από πού να ξεκινήσω"). Η ΤΝ σου δίνει
+      μια υπόδειξη αντί για την πλήρη λύση — και ο αξιολογητής
+      δεν το μετράει ως αποτυχημένη απόπειρα.
 
   - key: step_error
-    title: 3. Error
-    short: "A mistake or misconception becomes visible."
+    title: 3. Λάθος
+    short: "Ένα σφάλμα ή παρανόηση γίνεται ορατό."
     long: |
-      ## Step 3: Error
+      ## Βήμα 3: Λάθος
 
-      If your attempt in step 2 did not reach the target, the
-      cycle passes through this step. The error is named — not
-      judged, just marked as a learning opportunity.
+      Αν η απόπειρά σου στο βήμα 2 δεν έφτασε τον στόχο, ο
+      κύκλος περνά από αυτό το βήμα. Το λάθος ονομάζεται — δεν
+      κρίνεται, απλώς σημειώνεται ως ευκαιρία μάθησης.
 
-      ## What the AI does
+      ## Τι κάνει η ΤΝ
 
-      It shows you where the error is, without immediately
-      correcting it. The point: you should *see* the error,
-      not just *hear that something was wrong*. That
-      distinction determines whether you repeat the error.
+      Σου δείχνει πού βρίσκεται το λάθος, χωρίς να το διορθώσει
+      αμέσως. Το νόημα: πρέπει να *δεις* το λάθος, όχι απλώς να
+      *ακούσεις ότι κάτι ήταν λάθος*. Αυτή η διάκριση καθορίζει
+      αν θα επαναλάβεις το λάθος.
 
-      ## What you do
+      ## Τι κάνεις εσύ
 
-      Trace the error. If you can correct it yourself, do so.
-      If not, signal that to the AI ("I do not understand
-      where the error is") — the next step (feedback) exists
-      to clarify.
+      Ανίχνευσε το λάθος. Αν μπορείς να το διορθώσεις μόνος σου,
+      κάνε το. Αν όχι, σήμανε το στην ΤΝ ("Δεν καταλαβαίνω πού
+      είναι το λάθος") — το επόμενο βήμα (ανατροφοδότηση) υπάρχει
+      για να το αποσαφηνίσει.
 
-      ## When no error appears
+      ## Όταν δεν εμφανίζεται λάθος
 
-      At high confidence in step 2, the cycle skips this step.
-      The system notes it and raises difficulty in the next
-      cycle — you should be challenged, not bored.
+      Σε υψηλή εμπιστοσύνη στο βήμα 2, ο κύκλος παρακάμπτει αυτό
+      το βήμα. Το σύστημα το σημειώνει και αυξάνει τη δυσκολία
+      στον επόμενο κύκλο — πρέπει να αντιμετωπίζεις προκλήσεις,
+      όχι να βαριέσαι.
 
-      ## In error-based (method)
+      ## Στη μέθοδο βασισμένη στο λάθος
 
-      If you chose this method, step 3 is the cycle's main
-      step. The AI deliberately leads you into typical traps
-      — see the methods glossary.
+      Αν επέλεξες αυτή τη μέθοδο, το βήμα 3 είναι το κύριο βήμα
+      του κύκλου. Η ΤΝ σε οδηγεί σκόπιμα σε τυπικές παγίδες —
+      δες το γλωσσάρι μεθόδων.
 
   - key: step_feedback
-    title: 4. Feedback
-    short: "The AI explains why something works or does not work."
+    title: 4. Ανατροφοδότηση
+    short: "Η ΤΝ εξηγεί γιατί κάτι λειτουργεί ή δεν λειτουργεί."
     long: |
-      ## Step 4: Feedback
+      ## Βήμα 4: Ανατροφοδότηση
 
-      Here comes the explanation. The AI describes the
-      principle behind your error or correct answer — ideally
-      so that you can transfer the principle to other cases.
+      Εδώ έρχεται η εξήγηση. Η ΤΝ περιγράφει την αρχή πίσω από
+      το λάθος σου ή τη σωστή απάντηση — ιδανικά ώστε να μπορείς
+      να μεταφέρεις την αρχή σε άλλες περιπτώσεις.
 
-      ## What good feedback contains
+      ## Τι περιέχει η καλή ανατροφοδότηση
 
-      - **What happened** (description of the observation).
-      - **Why it happened** (explanation of the principle).
-      - **How to do it differently next time** (concrete
-        action guidance).
+      - **Τι συνέβη** (περιγραφή της παρατήρησης).
+      - **Γιατί συνέβη** (εξήγηση της αρχής).
+      - **Πώς να το κάνεις διαφορετικά την επόμενη φορά**
+        (συγκεκριμένη καθοδήγηση δράσης).
 
-      Without (3), feedback evaporates. With (3), a correction
-      becomes a transferable rule.
+      Χωρίς το (3), η ανατροφοδότηση εξατμίζεται. Με το (3),
+      μια διόρθωση γίνεται μεταφέρσιμος κανόνας.
 
-      ## What you do
+      ## Τι κάνεις εσύ
 
-      Read, follow, ask back. If feedback has not clicked yet,
-      say so. The AI is patient — it will explain the
-      principle in another variant. Better understood twice
-      than echoed once.
+      Διαβάζεις, παρακολουθείς, ρωτάς πίσω. Αν η ανατροφοδότηση
+      δεν έχει "κάνει κλικ" ακόμα, πες το. Η ΤΝ είναι υπομονετική
+      — θα εξηγήσει την αρχή σε άλλη παραλλαγή. Καλύτερα να
+      κατανοηθεί δύο φορές παρά να ηχηθεί μία.
 
-      ## Dual-prompt evaluator
+      ## Αξιολογητής διπλής προτροπής
 
-      It reads your reaction to the feedback. If you say "Ah,
-      now I understand" (or equivalent), confidence rises and
-      you proceed. If you still sound confused, the evaluator
-      pulls the cycle back to step 1 (input) with a new
-      explanation approach.
+      Διαβάζει την αντίδρασή σου στην ανατροφοδότηση. Αν πεις
+      "Α, τώρα καταλαβαίνω" (ή ισοδύναμο), η εμπιστοσύνη
+      αυξάνεται και προχωράς. Αν φαίνεσαι ακόμα μπερδεμένος,
+      ο αξιολογητής τραβά τον κύκλο πίσω στο βήμα 1 (εισαγωγή)
+      με μια νέα προσέγγιση εξήγησης.
 
-      ## Also on correct answers
+      ## Επίσης για σωστές απαντήσεις
 
-      Feedback is not only for errors. When you solved
-      something correctly, the AI still explains the
-      principle behind it — so the success becomes
-      transferable.
+      Η ανατροφοδότηση δεν είναι μόνο για λάθη. Όταν λύσεις
+      κάτι σωστά, η ΤΝ εξακολουθεί να εξηγεί την αρχή πίσω από
+      αυτό — ώστε η επιτυχία να γίνει μεταφέρσιμη.
 
   - key: step_adapt
-    title: 5. Adapt
-    short: "You adjust your strategy or understanding based on the feedback."
+    title: 5. Προσαρμογή
+    short: "Προσαρμόζεις τη στρατηγική ή την κατανόησή σου με βάση την ανατροφοδότηση."
     long: |
-      ## Step 5: Adapt
+      ## Βήμα 5: Προσαρμογή
 
-      You take what you learned from the feedback and adjust
-      your approach. Not just intellectually ("yes, now I
-      understand"), but operationally ("next time I will do it
-      differently").
+      Παίρνεις αυτό που έμαθες από την ανατροφοδότηση και
+      προσαρμόζεις την προσέγγισή σου. Όχι μόνο διανοητικά
+      ("ναι, τώρα καταλαβαίνω"), αλλά λειτουργικά ("την επόμενη
+      φορά θα το κάνω διαφορετικά").
 
-      ## What happens here concretely
+      ## Τι συμβαίνει εδώ συγκεκριμένα
 
-      - **For language**: you rephrase. Instead of the wrong
-        construction you use the corrected one.
-      - **For code**: you restructure the function with the
-        understood principle.
-      - **For math**: you solve a variant using the corrected
-        solution path.
+      - **Για γλώσσα**: αναδιατυπώνεις. Αντί για τη λάθος
+        κατασκευή χρησιμοποιείς τη διορθωμένη.
+      - **Για κώδικα**: αναδομείς τη συνάρτηση με την κατανοητή
+        αρχή.
+      - **Για μαθηματικά**: επιλύεις μια παραλλαγή
+        χρησιμοποιώντας τον διορθωμένο τρόπο επίλυσης.
 
-      ## What the AI does
+      ## Τι κάνει η ΤΝ
 
-      It gives you a *new* task — not the old one with the
-      known solution, but a variation that demands the
-      understood principle in a new context.
+      Σου δίνει μια *νέα* εργασία — όχι την παλιά με τη γνωστή
+      λύση, αλλά μια παραλλαγή που απαιτεί την κατανοητή αρχή
+      σε νέο πλαίσιο.
 
-      ## Why this step matters
+      ## Γιατί έχει σημασία αυτό το βήμα
 
-      Understanding without adaptation evaporates. If you only
-      "echo" the feedback but do not build it into your
-      approach, you will repeat the error next time. Step 5
-      forces operational activation.
+      Η κατανόηση χωρίς προσαρμογή εξατμίζεται. Αν απλώς
+      "ηχείς" την ανατροφοδότηση χωρίς να την ενσωματώσεις
+      στην προσέγγισή σου, θα επαναλάβεις το λάθος την επόμενη
+      φορά. Το βήμα 5 αναγκάζει σε λειτουργική ενεργοποίηση.
 
-      ## Dual-prompt evaluator
+      ## Αξιολογητής διπλής προτροπής
 
-      Here it evaluates learning transfer. A successful
-      adaptation in a new variation is the best signal that
-      learning stuck — confidence typically rises above 80%.
+      Εδώ αξιολογεί τη μεταφορά μάθησης. Μια επιτυχημένη
+      προσαρμογή σε νέα παραλλαγή είναι το καλύτερο σήμα ότι
+      η μάθηση έμεινε — η εμπιστοσύνη συνήθως ανεβαίνει πάνω
+      από 80%.
 
   - key: step_repeat
-    title: 6. Repeat
-    short: "You practice with variations until what you learned is fluent."
+    title: 6. Επανάληψη
+    short: "Εξασκείσαι με παραλλαγές μέχρι αυτό που έμαθες να γίνει ρευστό."
     long: |
-      ## Step 6: Repeat
+      ## Βήμα 6: Επανάληψη
 
-      You get more variations of the task. Not identical
-      repetition (that just leads to memorization), but
-      variation: same core, different context, different
-      difficulty.
+      Λαμβάνεις περισσότερες παραλλαγές της εργασίας. Όχι
+      ταυτόσημη επανάληψη (αυτό οδηγεί απλώς σε απομνημόνευση),
+      αλλά παραλλαγή: ίδιος πυρήνας, διαφορετικό πλαίσιο,
+      διαφορετική δυσκολία.
 
-      ## What the AI does
+      ## Τι κάνει η ΤΝ
 
-      It generates tasks that test the same principle in
-      different guises. For language: different vocabulary,
-      different sentence structure, same grammar. For code:
-      different data, same algorithmic structure.
+      Παράγει εργασίες που ελέγχουν την ίδια αρχή με διαφορετικές
+      μορφές. Για γλώσσα: διαφορετικό λεξιλόγιο, διαφορετική
+      δομή πρότασης, ίδια γραμματική. Για κώδικα: διαφορετικά
+      δεδομένα, ίδια αλγοριθμική δομή.
 
-      ## Why variation, not repetition
+      ## Γιατί παραλλαγή, όχι επανάληψη
 
-      Research on **interleaved practice** shows: blocked
-      practice (all tasks on the same topic in a row) creates
-      illusion of competence. Interleaved practice (related
-      tasks with variation) creates transferable knowledge.
+      Η έρευνα για την **interleaved practice** δείχνει: η
+      αποκλειστική εξάσκηση (όλες οι εργασίες για το ίδιο θέμα
+      στη σειρά) δημιουργεί ψευδαίσθηση ικανότητας. Η
+      interleaved εξάσκηση (σχετικές εργασίες με παραλλαγή)
+      δημιουργεί μεταφέρσιμη γνώση.
 
-      ## When the step ends
+      ## Πότε τελειώνει το βήμα
 
-      Once the dual-prompt evaluator sees three variations in
-      a row with confidence > 80%, you proceed to step 7. If
-      confidence fluctuates, the cycle stays in step 6 —
-      until stability is reached.
+      Μόλις ο αξιολογητής διπλής προτροπής δει τρεις συνεχόμενες
+      παραλλαγές με εμπιστοσύνη > 80%, προχωράς στο βήμα 7. Αν
+      η εμπιστοσύνη κυμαίνεται, ο κύκλος παραμένει στο βήμα 6 —
+      μέχρι να επιτευχθεί σταθερότητα.
 
-      ## Connection to spaced repetition
+      ## Σύνδεση με αραιωμένη επανάληψη
 
-      What you solve successfully in step 6 enters the
-      spaced-repetition system. The system schedules reviews
-      at 1 day, 3 days, 7 days, 14 days, 30 days — so the
-      learning sticks long-term.
+      Αυτό που επιλύεις επιτυχώς στο βήμα 6 εισέρχεται στο
+      σύστημα αραιωμένης επανάληψης (SRS). Το σύστημα
+      προγραμματίζει επαναλήψεις σε 1 ημέρα, 3 ημέρες, 7
+      ημέρες, 14 ημέρες, 30 ημέρες — ώστε η μάθηση να παραμένει
+      μακροπρόθεσμα.
 
   - key: step_integrate
-    title: 7. Integrate
-    short: "You connect what you learned to other knowledge or a real application."
+    title: 7. Ενσωμάτωση
+    short: "Συνδέεις αυτό που έμαθες με άλλες γνώσεις ή μια πραγματική εφαρμογή."
     long: |
-      ## Step 7: Integrate
+      ## Βήμα 7: Ενσωμάτωση
 
-      The learning cycle ends with you placing the new
-      learning into a larger context. Not in isolation
-      ("today I learned this") but connected to what you
-      already knew.
+      Ο μαθησιακός κύκλος τελειώνει με εσένα να τοποθετείς τη
+      νέα μάθηση σε ένα ευρύτερο πλαίσιο. Όχι σε απομόνωση
+      ("σήμερα έμαθα αυτό") αλλά συνδεδεμένο με αυτά που ήδη
+      γνώριζες.
 
-      ## What the AI does
+      ## Τι κάνει η ΤΝ
 
-      It challenges you to link the new content to other
-      concepts or apply it in a real scenario:
+      Σε προκαλεί να συνδέσεις το νέο περιεχόμενο με άλλες
+      έννοιες ή να το εφαρμόσεις σε ένα πραγματικό σενάριο:
 
-      - **Language**: use the tense in a free conversation.
-      - **Code**: apply the new technique in a larger project.
-      - **Theory**: combine the concept with one of your own
-        questions.
+      - **Γλώσσα**: χρησιμοποίησε τον χρόνο σε ελεύθερη
+        συνομιλία.
+      - **Κώδικας**: εφάρμοσε τη νέα τεχνική σε ένα μεγαλύτερο
+        έργο.
+      - **Θεωρία**: συνδύασε την έννοια με μια δική σου ερώτηση.
 
-      ## What you do
+      ## Τι κάνεις εσύ
 
-      Articulate the required link. Find your own examples.
-      Reach the point where you can say: "I can do this now —
-      not because I memorized it, but because I can deploy
-      it."
+      Διατύπωσε τον απαιτούμενο σύνδεσμο. Βρες δικά σου
+      παραδείγματα. Φτάσε στο σημείο να μπορείς να πεις: "Μπορώ
+      να το κάνω αυτό τώρα — όχι γιατί το απομνημόνευσα, αλλά
+      γιατί μπορώ να το αξιοποιήσω."
 
-      ## What happens after step 7
+      ## Τι γίνεται μετά το βήμα 7
 
-      The cycle is complete. Three options:
+      Ο κύκλος ολοκληρώθηκε. Τρεις επιλογές:
 
-      - **End the session** and rate it (understanding /
-        stress / method fit).
-      - **Auto-loop**: a new cycle with a new topic starts
-        automatically.
-      - **Method switch**: at low method fit the system
-        recommends a method change for the next cycle.
+      - **Τερμάτισε τη συνεδρία** και βαθμολόγησέ τη
+        (κατανόηση / στρες / καταλληλότητα μεθόδου).
+      - **Auto-loop**: ένας νέος κύκλος με νέο θέμα ξεκινά
+        αυτόματα.
+      - **Αλλαγή μεθόδου**: σε χαμηλή καταλληλότητα μεθόδου το
+        σύστημα συστήνει αλλαγή μεθόδου για τον επόμενο κύκλο.
 
-      ## Why the system closes here
+      ## Γιατί το σύστημα κλείνει εδώ
 
-      Integration is the only robust test that learning
-      worked. Memorized content fails in step 7; understood
-      knowledge thrives here.
+      Η ενσωμάτωση είναι η μόνη στιβαρή δοκιμή ότι η μάθηση
+      λειτούργησε. Το απομνημονευμένο περιεχόμενο αποτυγχάνει
+      στο βήμα 7· η κατανοητή γνώση ευδοκιμεί εδώ.

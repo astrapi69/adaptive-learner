@@ -1,262 +1,273 @@
-# Adaptive Learner — Help glossary: Learning methods (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: Learning methods (Greek).
 
 category: methods
 language: el
 entries:
   - key: method_deductive
-    title: Deductive
-    short: "Learn the rule first, then apply it to concrete examples."
+    title: Παραγωγική
+    short: "Μαθαίνεις πρώτα τον κανόνα και μετά τον εφαρμόζεις σε συγκεκριμένα παραδείγματα."
     long: |
-      ## Deductive method
+      ## Παραγωγική μέθοδος
 
-      The AI explains a rule or concept; you then practice it
-      with examples. Top-down: from the general to the specific.
+      Η ΤΝ εξηγεί έναν κανόνα ή μια έννοια· εσύ μετά τον
+      εξασκείς με παραδείγματα. Από πάνω προς τα κάτω: από το
+      γενικό στο ειδικό.
 
-      ## When it works well
+      ## Πότε λειτουργεί καλά
 
-      - **Structured topics** with clear rules (grammar, math
-        formulas, programming syntax).
-      - **You have prior knowledge** the rule can attach to.
-      - **You prefer clarity**: you want to know what's correct
-        before you try something.
+      - **Δομημένα θέματα** με σαφείς κανόνες (γραμματική,
+        μαθηματικοί τύποι, σύνταξη προγραμματισμού).
+      - **Έχεις προϋπάρχουσες γνώσεις** στις οποίες μπορεί να
+        αγκιστρωθεί ο κανόνας.
+      - **Προτιμάς τη σαφήνεια**: θέλεις να ξέρεις τι είναι
+        σωστό πριν δοκιμάσεις κάτι.
 
-      ## How a session flows
+      ## Πώς εξελίσσεται μια συνεδρία
 
-      1. AI explains the rule with a brief example.
-      2. You get a practice exercise.
-      3. You solve it; AI gives feedback.
-      4. On understanding: a new task at higher complexity.
-      5. On mistakes: AI refines the explanation.
+      1. Η ΤΝ εξηγεί τον κανόνα με ένα σύντομο παράδειγμα.
+      2. Σου δίνεται μια άσκηση εξάσκησης.
+      3. Την επιλύεις· η ΤΝ δίνει ανατροφοδότηση.
+      4. Σε κατανόηση: νέα εργασία σε υψηλότερη πολυπλοκότητα.
+      5. Σε λάθη: η ΤΝ βελτιώνει την εξήγηση.
 
-      ## Typical AI prompts
+      ## Τυπικές προτροπές ΤΝ
 
-      The system prompts for this method emphasize clarity and
-      step-by-step build-up. The AI is instructed to state the
-      rule *before* moving to application.
+      Οι προτροπές συστήματος για αυτή τη μέθοδο δίνουν έμφαση
+      στη σαφήνεια και τη βαθμιαία οικοδόμηση. Η ΤΝ λαμβάνει
+      οδηγία να αναφέρει τον κανόνα *πριν* προχωρήσει στην
+      εφαρμογή.
 
-      ## When the system may switch away
+      ## Πότε το σύστημα μπορεί να αλλάξει μέθοδο
 
-      If your **stress** rating rises over several sessions and
-      you feel like you are "learning rules without
-      understanding them", the system recommends switching to a
-      more practice-driven method (inductive, contextual or
-      dialogic). You always have the final say on the switch.
+      Αν η βαθμολογία **στρες** σου αυξάνεται κατά τη διάρκεια
+      πολλών συνεδριών και νιώθεις ότι "μαθαίνεις κανόνες χωρίς
+      να τους καταλαβαίνεις", το σύστημα συστήνει μετάβαση σε
+      μια πιο πρακτική μέθοδο (επαγωγική, πλαισιακή ή διαλογική).
+      Εσύ πάντα έχεις τον τελευταίο λόγο για την αλλαγή.
 
   - key: method_inductive
-    title: Inductive
-    short: "See examples first, derive the rule yourself."
+    title: Επαγωγική
+    short: "Βλέπεις πρώτα παραδείγματα και συνάγεις τον κανόνα μόνος σου."
     long: |
-      ## Inductive method
+      ## Επαγωγική μέθοδος
 
-      The AI presents examples; you recognize the pattern and
-      formulate the rule yourself. Bottom-up: from the concrete
-      to the general.
+      Η ΤΝ παρουσιάζει παραδείγματα· εσύ αναγνωρίζεις το πρότυπο
+      και διατυπώνεις τον κανόνα μόνος σου. Από κάτω προς τα
+      πάνω: από το συγκεκριμένο στο γενικό.
 
-      ## When it works well
+      ## Πότε λειτουργεί καλά
 
-      - **Pattern-recognition topics** like grammar in context,
-        music scales, statistical concepts.
-      - **You learn by discovery** rather than memorizing rules.
-      - **Examples are plentiful** — the AI has material that
-        makes the rule visible.
+      - **Θέματα αναγνώρισης προτύπων** όπως γραμματική σε
+        πλαίσιο, μουσικές κλίμακες, στατιστικές έννοιες.
+      - **Μαθαίνεις μέσα από ανακάλυψη** αντί να απομνημονεύεις
+        κανόνες.
+      - **Τα παραδείγματα είναι άφθονα** — η ΤΝ έχει υλικό που
+        κάνει τον κανόνα ορατό.
 
-      ## How a session flows
+      ## Πώς εξελίσσεται μια συνεδρία
 
-      1. AI shows 3-5 examples of a phenomenon.
-      2. Question: "What pattern do you see?"
-      3. You formulate a hypothesis.
-      4. AI confirms, corrects or shows more examples.
-      5. On the correct rule: AI states it formally.
+      1. Η ΤΝ δείχνει 3-5 παραδείγματα ενός φαινομένου.
+      2. Ερώτηση: "Ποιο πρότυπο βλέπεις;"
+      3. Διατυπώνεις μια υπόθεση.
+      4. Η ΤΝ επιβεβαιώνει, διορθώνει ή δείχνει περισσότερα
+         παραδείγματα.
+      5. Στον σωστό κανόνα: η ΤΝ τον διατυπώνει επίσημα.
 
-      ## Why this goes deeper
+      ## Γιατί αυτό πάει βαθύτερα
 
-      Research shows self-discovered rules stick longer than
-      repeated ones. The inductive path takes longer, but the
-      understanding sits deeper.
+      Η έρευνα δείχνει ότι οι κανόνες που ανακαλύπτεις μόνος σου
+      παραμένουν περισσότερο από τους επαναλαμβανόμενους. Η
+      επαγωγική οδός παίρνει περισσότερο χρόνο, αλλά η κατανόηση
+      εδράζεται βαθύτερα.
 
-      ## When it becomes hard
+      ## Πότε γίνεται δύσκολο
 
-      If patterns are too complex or your background is too
-      thin, inductive learning can frustrate. The system reads
-      this from low confidence values and may switch to
-      deductive.
+      Αν τα πρότυπα είναι πολύ σύνθετα ή το υπόβαθρό σου είναι
+      πολύ αδύναμο, η επαγωγική μάθηση μπορεί να φέρει απογοήτευση.
+      Το σύστημα το διαβάζει από χαμηλές τιμές εμπιστοσύνης και
+      μπορεί να αλλάξει σε παραγωγική.
 
   - key: method_error_based
-    title: Error-Based
-    short: "Make mistakes deliberately, then understand why they happen."
+    title: Βασισμένη στο Λάθος
+    short: "Κάνεις λάθη σκόπιμα και μετά καταλαβαίνεις γιατί συμβαίνουν."
     long: |
-      ## Error-based method
+      ## Μέθοδος βασισμένη στο λάθος
 
-      The AI deliberately guides you into common mistakes — and
-      then back out together. Errors are not avoided but used as
-      learning opportunities.
+      Η ΤΝ σε καθοδηγεί σκόπιμα σε συνήθη λάθη — και μετά βγαίνεις
+      μαζί της από αυτά. Τα λάθη δεν αποφεύγονται αλλά
+      χρησιμοποιούνται ως ευκαιρίες μάθησης.
 
-      ## Why deliberate errors work
+      ## Γιατί τα σκόπιμα λάθη λειτουργούν
 
-      Research on **productive failure** shows that errors you
-      make yourself and then understand create more robust
-      mental models than errors you avoid.
+      Η έρευνα για την **παραγωγική αποτυχία** δείχνει ότι τα
+      λάθη που κάνεις μόνος σου και μετά κατανοείς δημιουργούν
+      πιο στιβαρά νοητικά μοντέλα από τα λάθη που αποφεύγεις.
 
-      The method is NOT punitive: this is not about shame, it is
-      about clarity. An understood error is more valuable than
-      a randomly correct answer.
+      Η μέθοδος δεν είναι τιμωρητική: δεν πρόκειται για ντροπή,
+      αλλά για σαφήνεια. Ένα κατανοητό λάθος αξίζει περισσότερο
+      από μια τυχαία σωστή απάντηση.
 
-      ## How the AI implements it
+      ## Πώς το υλοποιεί η ΤΝ
 
-      1. AI presents a problem with traps.
-      2. You solve it — and often step into the trap.
-      3. AI shows you the error and explains the underlying
-        misconception.
-      4. You solve a variant without repeating the error.
-      5. AI generalizes the principle.
+      1. Η ΤΝ παρουσιάζει ένα πρόβλημα με παγίδες.
+      2. Το επιλύεις — και συχνά πέφτεις στην παγίδα.
+      3. Η ΤΝ σου δείχνει το λάθος και εξηγεί την υποκείμενη
+         παρανόηση.
+      4. Επιλύεις μια παραλλαγή χωρίς να επαναλάβεις το λάθος.
+      5. Η ΤΝ γενικεύει την αρχή.
 
-      ## When this method fits
+      ## Πότε ταιριάζει αυτή η μέθοδος
 
-      - **Topics with classic error sources** (false friends in
-        languages, off-by-one in code, sign errors in math).
-      - **You are not stress-prone** when making mistakes.
-      - **You have basic knowledge** — errors from total
-        ignorance teach little.
+      - **Θέματα με κλασικές πηγές λαθών** (ψευδόφιλα στις
+        γλώσσες, off-by-one στον κώδικα, λάθη προσήμου στα
+        μαθηματικά).
+      - **Δεν σε επηρεάζει το στρες** όταν κάνεις λάθη.
+      - **Έχεις βασικές γνώσεις** — λάθη από πλήρη άγνοια
+        διδάσκουν λίγα.
 
-      ## Caution at high stress
+      ## Προσοχή σε υψηλό στρες
 
-      If your stress rating exceeds 3 in a session, the system
-      switches to dialogic or deductive — this method needs
-      mental calm to be productive.
+      Αν η βαθμολογία στρες σου υπερβεί το 3 σε μια συνεδρία,
+      το σύστημα αλλάζει σε διαλογική ή παραγωγική — αυτή η
+      μέθοδος χρειάζεται ψυχική ηρεμία για να αποδίδει.
 
   - key: method_dialogic
-    title: Dialogic
-    short: "Learn through conversation with the AI in a low-pressure setting."
+    title: Διαλογική
+    short: "Μαθαίνεις μέσα από συνομιλία με την ΤΝ χωρίς πίεση."
     long: |
-      ## Dialogic method
+      ## Διαλογική μέθοδος
 
-      You learn through conversation: no rigid exercises, no
-      right/wrong answers, just a flexible dialog about the
-      topic. The AI follows up, deepens, encourages.
+      Μαθαίνεις μέσα από συνομιλία: χωρίς άκαμπτες ασκήσεις,
+      χωρίς σωστές/λάθος απαντήσεις, μόνο ένας ευέλικτος διάλογος
+      για το θέμα. Η ΤΝ παρακολουθεί, εμβαθύνει, ενθαρρύνει.
 
-      ## When it works
+      ## Πότε λειτουργεί
 
-      - **High-stress situations** where exam anxiety or speech
-        inhibition block learning.
-      - **Pure reinforcement**: you explain to the AI what you
-        understood.
-      - **Complex topics** you want to explore before
-        committing to a structured solution.
+      - **Καταστάσεις υψηλού στρες** όπου το άγχος εξετάσεων ή
+        η αναστολή ομιλίας εμποδίζουν τη μάθηση.
+      - **Καθαρή ενίσχυση**: εξηγείς στην ΤΝ τι κατάλαβες.
+      - **Σύνθετα θέματα** που θέλεις να εξερευνήσεις πριν
+        δεσμευτείς σε μια δομημένη λύση.
 
-      ## How a session flows
+      ## Πώς εξελίσσεται μια συνεδρία
 
-      No fixed steps. You start with a question, an assumption
-      or a concept. The AI continues the conversation, asks
-      follow-ups, suggests related concepts, gives examples.
-      You can switch topics at any time — unlike deductive or
-      inductive, where the system keeps you on track.
+      Δεν υπάρχουν σταθερά βήματα. Ξεκινάς με μια ερώτηση, μια
+      υπόθεση ή μια έννοια. Η ΤΝ συνεχίζει τη συνομιλία, κάνει
+      ερωτήσεις παρακολούθησης, προτείνει σχετικές έννοιες, δίνει
+      παραδείγματα. Μπορείς να αλλάζεις θέμα ανά πάσα στιγμή —
+      σε αντίθεση με παραγωγική ή επαγωγική, όπου το σύστημα σε
+      κρατά στην πορεία.
 
-      ## What the AI does
+      ## Τι κάνει η ΤΝ
 
-      - **Low pressure**: no judgmental tone.
-      - **Motivational**: progress is highlighted, but not
-        artificially.
-      - **Adaptive**: matches complexity to your fluency and
-        energy.
+      - **Χαμηλή πίεση**: χωρίς κριτικό τόνο.
+      - **Παρακίνηση**: η πρόοδος αναδεικνύεται, αλλά όχι
+        τεχνητά.
+      - **Προσαρμοστικότητα**: αντιστοιχίζει την πολυπλοκότητα
+        στη ρευστότητά σου και την ενέργειά σου.
 
-      ## What the dual-prompt evaluator does
+      ## Τι κάνει ο αξιολογητής διπλής προτροπής
 
-      Confidence evaluation still runs, but more tolerantly —
-      step progression is allowed at 50% confidence (vs the
-      usual 70%). The method is explicitly for exploration, not
-      testing.
+      Η αξιολόγηση εμπιστοσύνης τρέχει ακόμα, αλλά πιο ανεκτικά —
+      η πρόοδος βήματος επιτρέπεται στο 50% εμπιστοσύνης (έναντι
+      του συνήθους 70%). Η μέθοδος είναι ρητά για εξερεύνηση,
+      όχι για εξέταση.
 
   - key: method_contextual
-    title: Contextual
-    short: "Learn in simulated real-world situations."
+    title: Πλαισιακή
+    short: "Μαθαίνεις σε προσομοιωμένες πραγματικές καταστάσεις."
     long: |
-      ## Contextual method
+      ## Πλαισιακή μέθοδος
 
-      The AI simulates a concrete situation — restaurant, job
-      interview, coding interview — and you solve the task
-      inside it. Learning happens in the application context,
-      not abstractly.
+      Η ΤΝ προσομοιώνει μια συγκεκριμένη κατάσταση — εστιατόριο,
+      συνέντευξη για δουλειά, συνέντευξη κώδικα — και εσύ επιλύεις
+      την εργασία μέσα σε αυτήν. Η μάθηση γίνεται στο πλαίσιο
+      εφαρμογής, όχι αφηρημένα.
 
-      ## Why context makes the difference
+      ## Γιατί το πλαίσιο κάνει τη διαφορά
 
-      Research on **situated cognition** shows that knowledge
-      learned in context transfers better to practice. What you
-      learned at the restaurant table, you can apply at the
-      restaurant table — abstract knowledge often will not.
+      Η έρευνα για τη **situated cognition** δείχνει ότι η γνώση
+      που αποκτάται σε πλαίσιο μεταφέρεται καλύτερα στην πράξη.
+      Αυτό που έμαθες στο τραπέζι του εστιατορίου, μπορείς να το
+      εφαρμόσεις στο τραπέζι του εστιατορίου — η αφηρημένη γνώση
+      συχνά δεν μεταφέρεται.
 
-      The method especially helps with the **transfer problem**:
-      "I know the rule, but in a real conversation I cannot
-      access it."
+      Η μέθοδος βοηθά ιδιαίτερα με το **πρόβλημα μεταφοράς**:
+      "Ξέρω τον κανόνα, αλλά σε μια πραγματική συνομιλία δεν
+      μπορώ να τον χρησιμοποιήσω."
 
-      ## Examples for language
+      ## Παραδείγματα για γλώσσα
 
-      - "You're at a cafe in Madrid. Order three different tapas
-        and ask for the house recommendation."
-      - "You're asking for directions to the train station; the
-        passerby answers in a dialect — how do you respond?"
+      - "Είσαι σε ένα καφέ στη Μαδρίτη. Παράγγειλε τρία
+        διαφορετικά tapas και ρώτα για τη σύσταση του σεφ."
+      - "Ζητάς οδηγίες για τον σιδηροδρομικό σταθμό· ο
+        περαστικός απαντά σε διάλεκτο — πώς αντιδράς;"
 
-      ## Examples for code
+      ## Παραδείγματα για κώδικα
 
-      - "Code review: you receive this PR. What do you tell the
-        junior dev?"
-      - "Production bug scenario: logs show X. How do you
-        debug?"
+      - "Code review: λαμβάνεις αυτό το PR. Τι λες στον junior
+        dev;"
+      - "Σενάριο bug παραγωγής: τα logs δείχνουν X. Πώς
+        κάνεις debug;"
 
-      ## When it fits
+      ## Πότε ταιριάζει
 
-      - **When your goal is applied** ("Spanish for travel" fits
-        better than "Spanish for the exam").
-      - **After the first basics** — context only works once
-        the building blocks are in place.
-      - **When preparing for a specific situation** (job
-        interview next week).
+      - **Όταν ο στόχος σου είναι εφαρμοσμένος** ("Ισπανικά για
+        ταξίδια" ταιριάζει καλύτερα από "Ισπανικά για τις
+        εξετάσεις").
+      - **Μετά τα πρώτα βασικά** — το πλαίσιο λειτουργεί μόνο
+        αφού τα δομικά στοιχεία έχουν εδραιωθεί.
+      - **Όταν προετοιμάζεσαι για συγκεκριμένη κατάσταση**
+        (συνέντευξη εργασίας την επόμενη εβδομάδα).
 
-      ## When it fits less well
+      ## Πότε ταιριάζει λιγότερο
 
-      For pure exam topics (memorizing fact lists), deductive
-      or spaced repetition is usually more efficient.
+      Για καθαρά θέματα εξετάσεων (απομνημόνευση λιστών γεγονότων),
+      η παραγωγική μέθοδος ή η αραιωμένη επανάληψη είναι συνήθως
+      πιο αποδοτικά.
 
   - key: method_ai_adaptive
-    title: AI-Adaptive
-    short: "The system automatically picks the best method based on your history."
+    title: ΤΝ-Προσαρμοστική
+    short: "Το σύστημα επιλέγει αυτόματα την καλύτερη μέθοδο βάσει του ιστορικού σου."
     long: |
-      ## AI-adaptive method
+      ## ΤΝ-προσαρμοστική μέθοδος
 
-      You let the system choose the method. After every step it
-      evaluates your progress (confidence value), your stress,
-      and your method fit, then decides which method to start
-      the next learning cycle with.
+      Αφήνεις το σύστημα να επιλέξει τη μέθοδο. Μετά από κάθε
+      βήμα αξιολογεί την πρόοδό σου (τιμή εμπιστοσύνης), το
+      στρες σου και την καταλληλότητα μεθόδου, και μετά αποφασίζει
+      με ποια μέθοδο θα ξεκινήσει τον επόμενο μαθησιακό κύκλο.
 
-      ## How the system decides
+      ## Πώς αποφασίζει το σύστημα
 
-      Three data sources feed the choice:
+      Τρεις πηγές δεδομένων τροφοδοτούν την επιλογή:
 
-      - **Learning profile**: the weights from your assessment.
-        Methods with higher weights get preference.
-      - **Session history**: which methods led to fast progress
-        in your last 5-10 sessions?
-      - **Current stress level**: at high stress, the system
-        switches to less demanding methods (dialogic,
-        contextual).
+      - **Μαθησιακό προφίλ**: τα βάρη από την αξιολόγησή σου.
+        Μέθοδοι με υψηλότερα βάρη έχουν προτεραιότητα.
+      - **Ιστορικό συνεδριών**: ποιες μέθοδοι οδήγησαν σε ταχεία
+        πρόοδο στις τελευταίες 5-10 συνεδρίες σου;
+      - **Τρέχον επίπεδο στρες**: σε υψηλό στρες, το σύστημα
+        αλλάζει σε λιγότερο απαιτητικές μεθόδους (διαλογική,
+        πλαισιακή).
 
-      ## Dual-prompt evaluation
+      ## Αξιολόγηση διπλής προτροπής
 
-      Unlike fixed methods, a second AI instance evaluates your
-      answers after every step and signals to the first AI:
-      "continue as is", "switch method", "repeat step".
+      Σε αντίθεση με σταθερές μεθόδους, μια δεύτερη περίπτωση ΤΝ
+      αξιολογεί τις απαντήσεις σου μετά από κάθε βήμα και σηματοδοτεί
+      στην πρώτη ΤΝ: "συνέχισε ως έχει", "άλλαξε μέθοδο", "επανέλαβε
+      βήμα".
 
-      ## When it is ideal
+      ## Πότε είναι ιδανική
 
-      - **You are new to Adaptive Learner** and have not yet
-        experienced the methods first-hand.
-      - **You change topics often** — the system recalibrates
-        per project.
-      - **You like being surprised** — the AI mixes methods
-        deliberately.
+      - **Είσαι νέος στο Adaptive Learner** και δεν έχεις ακόμα
+        δοκιμάσει τις μεθόδους από πρώτο χέρι.
+      - **Αλλάζεις θέματα συχνά** — το σύστημα επαναβαθμονομεί
+        ανά έργο.
+      - **Σου αρέσουν οι εκπλήξεις** — η ΤΝ αναμιγνύει μεθόδους
+        σκόπιμα.
 
-      ## You always have the final say
+      ## Εσύ έχεις πάντα τον τελευταίο λόγο
 
-      If the system suggests a switch, you can decline. If a
-      suggested method does not fit, you end the session and
-      start with another. AI-adaptive is a recommendation
-      system, not a constraint.
+      Αν το σύστημα προτείνει αλλαγή, μπορείς να την αρνηθείς.
+      Αν μια προτεινόμενη μέθοδος δεν σου ταιριάζει, τερματίζεις
+      τη συνεδρία και ξεκινάς με άλλη. Η ΤΝ-προσαρμοστική είναι
+      ένα σύστημα συστάσεων, όχι ένας περιορισμός.
