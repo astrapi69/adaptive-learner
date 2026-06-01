@@ -938,6 +938,8 @@ voice:
   stop_listening: Parar ditado
   mic_permission_denied: Acesso ao microfone negado.
   mic_error: Erro de reconhecimento de voz.
+  mic_no_device: "Nenhum microfone encontrado. Conecte um e tente novamente."
+  mic_network: "O reconhecimento de voz está offline. Verifique sua conexão com a internet."
 pronunciation:
   title: Prática de Pronúncia
   intro: Gere uma frase, diga-a em voz alta e receba feedback imediato.

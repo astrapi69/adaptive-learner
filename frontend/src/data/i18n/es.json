@@ -1026,7 +1026,9 @@
     "start_listening": "Iniciar dictado",
     "stop_listening": "Detener dictado",
     "mic_permission_denied": "Acceso al micrófono denegado.",
-    "mic_error": "Error de reconocimiento de voz."
+    "mic_error": "Error de reconocimiento de voz.",
+    "mic_no_device": "No se encontró ningún micrófono. Conecta uno e inténtalo de nuevo.",
+    "mic_network": "El reconocimiento de voz está sin conexión. Comprueba tu conexión a internet."
   },
   "pronunciation": {
     "title": "Práctica de Pronunciación",

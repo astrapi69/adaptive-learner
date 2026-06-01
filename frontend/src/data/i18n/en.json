@@ -1026,7 +1026,9 @@
     "start_listening": "Start dictation",
     "stop_listening": "Stop listening",
     "mic_permission_denied": "Microphone access denied.",
-    "mic_error": "Speech recognition error."
+    "mic_error": "Speech recognition error.",
+    "mic_no_device": "No microphone found. Connect one and try again.",
+    "mic_network": "Speech recognition is offline. Check your internet connection."
   },
   "pronunciation": {
     "title": "Pronunciation Practice",

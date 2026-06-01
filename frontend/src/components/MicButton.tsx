@@ -77,17 +77,42 @@ export default function MicButton({
             onInterim: (text) => onTranscript(text, false),
             onFinal: (text) => onTranscript(text, true),
             onError: (code) => {
-                if (code === "not-allowed") {
+                // Map the Web Speech API error code to a friendly,
+                // actionable message. ``no-speech`` / ``aborted`` are
+                // benign (the user said nothing or stopped) — stay
+                // silent. Never surface the raw code to the user.
+                if (code === "no-speech" || code === "aborted") {
+                    // benign — no toast.
+                } else if (
+                    code === "not-allowed" ||
+                    code === "service-not-allowed"
+                ) {
                     notify.error(
                         t(
                             "voice.mic_permission_denied",
-                            "Microphone access denied.",
+                            "Microphone access denied. Allow microphone access in your browser to dictate.",
                         ),
                     );
-                } else if (code !== "no-speech" && code !== "aborted") {
+                } else if (code === "audio-capture") {
                     notify.error(
-                        t("voice.mic_error", "Speech recognition error.") +
-                            ` (${code})`,
+                        t(
+                            "voice.mic_no_device",
+                            "No microphone found. Connect one and try again.",
+                        ),
+                    );
+                } else if (code === "network") {
+                    notify.error(
+                        t(
+                            "voice.mic_network",
+                            "Speech recognition is offline. Check your internet connection.",
+                        ),
+                    );
+                } else {
+                    notify.error(
+                        t(
+                            "voice.mic_error",
+                            "Speech recognition didn't work. Please try again.",
+                        ),
                     );
                 }
                 setListening(false);
