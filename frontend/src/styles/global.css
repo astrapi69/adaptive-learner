@@ -6848,3 +6848,27 @@ select:focus {
   font-size: 0.8rem;
   color: var(--fg-muted);
 }
+
+.api-key-rollback {
+  margin: 0.5rem 0 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--warning);
+  border-radius: 8px;
+  background: var(--warning-bg);
+}
+
+.api-key-rollback-message {
+  margin: 0 0 0.6rem;
+  color: var(--fg-primary);
+}
+
+.api-key-rollback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.api-key-restore-link {
+  margin-top: 0.4rem;
+}

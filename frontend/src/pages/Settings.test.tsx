@@ -24,6 +24,10 @@ const apiGet = vi.fn();
 const apiUpdate = vi.fn();
 const apiSetKey = vi.fn();
 const apiDeleteKey = vi.fn();
+const apiTestKey = vi.fn();
+const apiBackupKey = vi.fn();
+const apiGetBackup = vi.fn();
+const apiRestoreBackup = vi.fn();
 vi.mock("../api/client", async () => {
   const actual =
     await vi.importActual<typeof import("../api/client")>("../api/client");
@@ -37,6 +41,10 @@ vi.mock("../api/client", async () => {
         update: (...args: unknown[]) => apiUpdate(...args),
         setApiKey: (...args: unknown[]) => apiSetKey(...args),
         deleteApiKey: (...args: unknown[]) => apiDeleteKey(...args),
+        testApiKey: (...args: unknown[]) => apiTestKey(...args),
+        backupApiKey: (...args: unknown[]) => apiBackupKey(...args),
+        getApiKeyBackup: (...args: unknown[]) => apiGetBackup(...args),
+        restoreApiKeyBackup: (...args: unknown[]) => apiRestoreBackup(...args),
       },
     },
   };
@@ -90,6 +98,16 @@ describe("Settings page", () => {
     apiUpdate.mockReset();
     apiSetKey.mockReset();
     apiDeleteKey.mockReset();
+    apiTestKey.mockReset();
+    apiBackupKey.mockReset();
+    apiGetBackup.mockReset();
+    apiRestoreBackup.mockReset();
+    // C4 defaults: a key tests OK and a backup roundtrips. Tests that
+    // exercise the failure path override apiTestKey per-test.
+    apiTestKey.mockResolvedValue({ success: true, kind: "ok" });
+    apiBackupKey.mockResolvedValue(BASE);
+    apiGetBackup.mockResolvedValue({ has: false, tested_at: null });
+    apiRestoreBackup.mockResolvedValue(BASE);
     toastSuccess.mockReset();
     toastError.mockReset();
     localStorage.clear();
