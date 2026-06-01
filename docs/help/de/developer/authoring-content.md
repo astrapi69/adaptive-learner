@@ -25,8 +25,11 @@ Ein Set hat drei Ebenen:
    eine JSON-Datei pro Lektion, bei jedem Download gegen Schema
    v1.0 validiert.
 
-Die mit Adaptive Learner ausgelieferten Pilot-Sets liegen unter
-`docs/explorations/sample-content/` und eignen sich gut als Vorlage.
+Die mit Adaptive Learner ausgelieferten Pilot-Sets liegen im separaten
+Content-Repo [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
+(als Geschwister-Checkout `../adaptive-learner-content` ausgecheckt und
+vom Build über `frontend/scripts/copy-bundled-content.mjs` gebündelt)
+und eignen sich gut als Vorlage.
 
 ## Sprachpaare (v1.44.0)
 
@@ -612,24 +615,27 @@ cd plugins/adaptive-learner-plugin-content-loader
 poetry run python -c "
 import json, sys
 from adaptive_learner_content_loader.schema import dict_to_lesson
-path = 'docs/explorations/sample-content/fr-a1/sets/language-fr-a1/lessons/01-greetings.json'
+path = '../adaptive-learner-content/sets/en/fr-a1/lessons/01-greetings.json'
 with open(path) as f:
     lesson = dict_to_lesson(json.load(f))
 print(f'OK: {lesson.id} — {len(lesson.cards)} Cards, {len(lesson.steps)} Steps')
 "
 ```
 
-Alle Lektionen im Pilot-Tree auf einmal validieren:
+Alle Lektionen eines Content-Repos auf einmal validieren — mit dem
+Validator des Content-Repos (dasselbe Skript, das dessen CI bei jedem
+PR ausführt):
 
 ```bash
-cd plugins/adaptive-learner-plugin-content-loader
-poetry run pytest tests/test_pilot_content.py -v
+cd ../adaptive-learner-content
+python3 scripts/validate_content.py
 ```
 
-Dieser parametrisierte Test findet jede JSON-Datei unter
-`docs/explorations/sample-content/*/sets/*/lessons/` und
-validiert sie gegen das Schema. Neue Lektionen werden
-automatisch erkannt — keine Test-Änderung nötig.
+Er findet jedes Set unter `sets/{source}/{target-level}/` und prüft das
+Schema plus die Qualitäts-Mindestwerte (≥5 Übungen, ≥2 Übungstypen, ≥1
+Theorieschritt, Freitext-Akzepte + Distraktoren, Matching-Paare, keine
+leeren Karten, Karten-ID-Integrität). Neue Lektionen werden automatisch
+erkannt — keine Test-Änderung nötig.
 
 ## PR-Workflow
 
@@ -676,10 +682,11 @@ Lektion. Halte dich an die dokumentierten Felder.
 Die beiden mit Adaptive Learner ausgelieferten Sets sind die
 kanonischen Referenzen:
 
-- `docs/explorations/sample-content/fr-a1/` — Französisch A1
-  (10 Lektionen, ~2 Stunden Gesamtinhalt)
-- `docs/explorations/sample-content/es-a1/` — Spanisch A1
-  (5 Lektionen, ~70 Minuten Gesamtinhalt)
+- `sets/en/fr-a1/` — Französisch A1 für Englischsprachige (10
+  Lektionen, ~2 Stunden); `sets/de/fr-a1/` ist das deutschsprachige
+  Pilot-Set.
+- `sets/en/es-a1/` + `sets/de/es-a1/` — Spanisch A1 (15 Lektionen je
+  Quellsprache), im `adaptive-learner-content`-Repo.
 
 Beide folgen den in diesem Leitfaden beschriebenen Konventionen.
 Eine vollständige Lektion durchzulesen ist der schnellste Weg,
