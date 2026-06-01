@@ -98,12 +98,20 @@ def test_decrypt_garbage_raises_typed_error():
         decrypt_api_key("not-a-valid-fernet-token")
 
 
-def test_decrypt_with_rotated_key_raises_typed_error(monkeypatch, restore_fernet_cache):
+def test_decrypt_with_rotated_key_raises_typed_error(tmp_path, monkeypatch, restore_fernet_cache):
     """Encrypting under one key then decrypting under another must
     raise :class:`CryptoDecryptionError` (not a low-level
-    ``InvalidToken`` leak)."""
+    ``InvalidToken`` leak). The key now lives in secret.key, so a
+    rotation means rewriting that file."""
+    from app.services.crypto import secret_key_path
+
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CONFIG_DIR", str(tmp_path))
+    monkeypatch.delenv(ENV_VAR, raising=False)
+    reset_fernet_cache()
     original_ciphertext = encrypt_api_key("rotated-secret")
-    monkeypatch.setenv(ENV_VAR, Fernet.generate_key().decode("utf-8"))
+    # Rotate the persistent key file -> the old ciphertext no longer
+    # decrypts (env changes alone can no longer rotate the key).
+    secret_key_path().write_text(Fernet.generate_key().decode("utf-8"), encoding="utf-8")
     reset_fernet_cache()
     with pytest.raises(CryptoDecryptionError):
         decrypt_api_key(original_ciphertext)

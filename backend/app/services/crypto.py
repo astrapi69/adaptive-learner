@@ -94,24 +94,44 @@ def secret_key_path() -> Path:
 
 
 def _read_or_create_key_file() -> str:
-    """Return the machine-local Fernet key, generating it once.
+    """Return the machine-local Fernet key, creating ``secret.key`` on
+    first use.
 
-    The key lives in a persistent file (``secret.key``, 0o600) so it
-    survives restarts — the fix for "API keys lost on restart", which
-    happened whenever the key came from a value that changed between
-    boots. Generate-once: an existing file is NEVER overwritten;
-    deleting it loses the keys it protected (the user must re-enter),
-    which is the documented + acceptable failure mode.
+    The FILE is the source of truth, so encrypted data survives
+    restarts independent of any env var — the real fix for "API keys
+    lost on restart". Resolution:
+
+    1. The file already exists -> read it. The env var is intentionally
+       ignored here, so a changed ``ADAPTIVE_LEARNER_SECRET_KEY`` can't
+       orphan ciphertext that the file's key can still decrypt.
+    2. No file yet -> SEED it from ``ADAPTIVE_LEARNER_SECRET_KEY`` when
+       that env var is set (so data already encrypted under the env key
+       stays decryptable across the upgrade), otherwise GENERATE a fresh
+       key. Either way it is PERSISTED to ``secret.key`` (0o600 in a
+       0o700 dir) so it is stable from now on.
+
+    Generate-once: an existing file is never overwritten; deleting it
+    loses the keys it protected (documented, acceptable).
+
+    If the file cannot be written but the env var IS set, the env key
+    is used in-memory with a WARNING (read-only FS / locked-down
+    container) instead of crashing — the operator then owns keeping the
+    env value stable.
     """
     path = secret_key_path()
     if path.is_file():
         try:
-            return path.read_text(encoding="utf-8").strip()
+            content = path.read_text(encoding="utf-8").strip()
         except OSError as exc:
             raise CryptoConfigurationError(
                 f"Could not read the secret key file at {path}: {exc}."
             ) from exc
-    key = Fernet.generate_key().decode("utf-8")
+        if content:
+            return content
+        # An empty file is treated as absent and re-created below.
+
+    env_value = os.environ.get(ENV_VAR, "").strip()
+    key = env_value or Fernet.generate_key().decode("utf-8")
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -121,38 +141,38 @@ def _read_or_create_key_file() -> str:
         path.write_text(key, encoding="utf-8")
         path.chmod(0o600)
     except OSError as exc:
+        if env_value:
+            logger.warning(
+                "Could not persist the secret key to %s: %s. Falling back "
+                "to %s in-memory; it MUST stay stable across restarts or "
+                "stored keys become unreadable.",
+                path,
+                exc,
+                ENV_VAR,
+            )
+            return env_value
         raise CryptoConfigurationError(
             f"Could not create the secret key file at {path}: {exc}."
         ) from exc
-    logger.info("Generated a new machine-local encryption key at %s", path)
+    logger.info(
+        "%s the machine-local encryption key at %s",
+        "Persisted env-provided" if env_value else "Generated",
+        path,
+    )
     return key
-
-
-def _resolve_key_material() -> str:
-    """Resolve the Fernet key string. Priority (first hit wins):
-
-    1. ``ADAPTIVE_LEARNER_SECRET_KEY`` env var — for Docker / CI /
-       explicit deployments that manage the key themselves.
-    2. The machine-local ``secret.key`` file — generated once and
-       read on every subsequent start (the desktop default).
-    """
-    env_value = os.environ.get(ENV_VAR, "").strip()
-    if env_value:
-        return env_value
-    return _read_or_create_key_file()
 
 
 @lru_cache(maxsize=1)
 def get_fernet() -> Fernet:
     """Return the process-wide Fernet instance.
 
-    First call resolves the key (env var, else the persistent
-    ``secret.key`` file — generated once) and validates it;
-    subsequent calls are cache hits. Raises
-    :class:`CryptoConfigurationError` on a malformed key value or an
-    unreadable / unwritable key file.
+    First call resolves the key from the persistent ``secret.key``
+    file (created on first use — seeded from ``ADAPTIVE_LEARNER_SECRET_KEY``
+    if set, else generated) and validates it; subsequent calls are
+    cache hits. Raises :class:`CryptoConfigurationError` on a malformed
+    key value or an unwritable key file (when no env fallback exists).
     """
-    key = _resolve_key_material()
+    key = _read_or_create_key_file()
     try:
         return Fernet(key.encode("utf-8"))
     except (ValueError, TypeError) as exc:

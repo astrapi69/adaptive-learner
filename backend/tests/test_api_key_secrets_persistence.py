@@ -278,3 +278,43 @@ def test_settings_save_and_reload_api_key():
     assert body["key_source_anthropic"] == "secrets_yaml"
     assert body["has_anthropic_key"] is True
     assert secrets_service.read_api_key("anthropic") == "sk-e2e-persist"
+
+
+# --- the real-world bug: env var set -> secret.key was never created --------
+
+
+def test_secret_key_created_even_when_env_set(tmp_path, monkeypatch):
+    """The exact reported bug: ADAPTIVE_LEARNER_SECRET_KEY was set (e.g.
+    by `make dev`), so secret.key was never written and persistence
+    still hinged on the env value's stability. It must now be created,
+    seeded FROM the env value so existing ciphertext stays decryptable."""
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CONFIG_DIR", str(tmp_path))
+    env_key = Fernet.generate_key().decode("utf-8")
+    monkeypatch.setenv("ADAPTIVE_LEARNER_SECRET_KEY", env_key)
+    crypto.reset_fernet_cache()
+
+    crypto.get_fernet()
+
+    path = crypto.secret_key_path()
+    assert path.is_file()
+    assert path.stat().st_mode & 0o777 == 0o600
+    # Seeded from the env value (not a fresh random key) so anything
+    # already encrypted under the env key remains readable.
+    assert path.read_text(encoding="utf-8").strip() == env_key
+    crypto.reset_fernet_cache()
+
+
+def test_key_survives_env_var_disappearing(tmp_path, monkeypatch):
+    """Strongest proof the bug is fixed: encrypt with the env var set,
+    then restart with the env var GONE (the original failure mode) and
+    confirm the key is still readable because secret.key persisted it."""
+    monkeypatch.setenv("ADAPTIVE_LEARNER_CONFIG_DIR", str(tmp_path))
+    env_key = Fernet.generate_key().decode("utf-8")
+    monkeypatch.setenv("ADAPTIVE_LEARNER_SECRET_KEY", env_key)
+    crypto.reset_fernet_cache()
+    secrets_service.write_api_key("anthropic", "sk-keep")
+
+    # Restart with the env var removed -> previously this orphaned the key.
+    monkeypatch.delenv("ADAPTIVE_LEARNER_SECRET_KEY", raising=False)
+    crypto.reset_fernet_cache()
+    assert secrets_service.read_api_key("anthropic") == "sk-keep"
