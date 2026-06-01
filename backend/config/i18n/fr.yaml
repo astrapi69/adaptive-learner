@@ -1295,6 +1295,22 @@ lesson:
     direction:
       receptive_hint: Reconnaître le sens
       productive_hint: Produire la réponse
+  next_step:
+    title: "Et ensuite ?"
+    next_lesson: "Leçon suivante"
+    start: "Commencer"
+    resume: "Reprendre"
+    resume_detail: "Étape {step} sur {total}"
+    adaptive: "Leçon adaptative"
+    adaptive_focus: "Focus sur : {topic}"
+    adaptive_errors: "{count} erreurs dans cette leçon"
+    review: "Révision"
+    review_due: "{count} éléments à revoir"
+    set_complete: "Ensemble terminé !"
+    set_complete_detail: "Les {count} leçons de {set} sont terminées !"
+    try_set: "Pourquoi pas : {set}"
+    view_set: "Voir l'ensemble"
+    focus_vocabulary: "Vocabulaire"
   correction:
     title: "Tour de correction"
     subtitle: "Quelques exercices rapides sur les mots que tu as ratés."

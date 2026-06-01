@@ -670,7 +670,7 @@ describe("LessonPage: ready state rendering", () => {
         ).not.toBeInTheDocument();
     });
 
-    it("Next lesson button shows + is wired when the set has a successor", async () => {
+    it("Next lesson surfaces in the smart card when the set has a successor", async () => {
         listLessonsMock.mockResolvedValue({
             set_id: "language-fr-a1",
             source: "astrapi69/adaptive-learner-content",
@@ -679,17 +679,15 @@ describe("LessonPage: ready state rendering", () => {
         });
         _ready(2);
         renderAtPath(VALID_PATH);
-        // The button appears once listLessons resolves.
-        const nextBtn = await screen.findByTestId("lesson-summary-next");
-        expect(nextBtn).toBeInTheDocument();
-        expect(nextBtn).not.toBeDisabled();
-        // Clicking it triggers a route change that unmounts the
-        // summary, so we don't post-assert the button — the
-        // contract pinned here is "the button surfaces AND has
-        // a click handler that doesn't throw on activation".
-        await act(async () => {
-            fireEvent.click(nextBtn);
-        });
+        // Phase 64 — the next-lesson action now lives inside the
+        // NextStepSuggestions card as a router Link to the
+        // successor; the standalone fallback button stays hidden.
+        const cta = await screen.findByTestId("next-step-cta-next");
+        expect(cta).toBeInTheDocument();
+        expect(cta.getAttribute("href")).toContain("02-numbers.json");
+        expect(
+            screen.queryByTestId("lesson-summary-next"),
+        ).not.toBeInTheDocument();
     });
 
     it("disables Previous on step 0", () => {

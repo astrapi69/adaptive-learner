@@ -1414,6 +1414,23 @@
         "productive_hint": "答えを産出する"
       }
     },
+    "next_step": {
+      "title": "次は何をしますか？",
+      "next_lesson": "次のレッスン",
+      "start": "開始",
+      "resume": "再開",
+      "resume_detail": "ステップ {step} / {total}",
+      "adaptive": "アダプティブレッスン",
+      "adaptive_focus": "重点: {topic}",
+      "adaptive_errors": "このレッスンで {count} 件の誤り",
+      "review": "復習",
+      "review_due": "{count} 項目が期限です",
+      "set_complete": "セット完了！",
+      "set_complete_detail": "{set} の {count} レッスンをすべて完了しました！",
+      "try_set": "こちらはいかがですか: {set}",
+      "view_set": "セットを見る",
+      "focus_vocabulary": "語彙"
+    },
     "correction": {
       "title": "修正ラウンド",
       "subtitle": "間違えた単語の練習を少しだけ。",

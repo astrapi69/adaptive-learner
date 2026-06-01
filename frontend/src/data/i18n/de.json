@@ -1414,6 +1414,23 @@
         "productive_hint": "Antwort produzieren"
       }
     },
+    "next_step": {
+      "title": "Was möchtest du als nächstes?",
+      "next_lesson": "Nächste Lektion",
+      "start": "Starten",
+      "resume": "Fortsetzen",
+      "resume_detail": "Aufgabe {step} von {total}",
+      "adaptive": "Adaptive Lektion",
+      "adaptive_focus": "Fokus auf: {topic}",
+      "adaptive_errors": "{count} Fehler in dieser Lektion",
+      "review": "Wiederholung",
+      "review_due": "{count} Elemente fällig",
+      "set_complete": "Set abgeschlossen!",
+      "set_complete_detail": "Alle {count} Lektionen in {set} geschafft!",
+      "try_set": "Wie wäre es mit: {set}",
+      "view_set": "Set ansehen",
+      "focus_vocabulary": "Vokabeln"
+    },
     "correction": {
       "title": "Korrektur-Runde",
       "subtitle": "Ein paar schnelle Übungen zu den Wörtern, die du verwechselt hast.",
