@@ -55,6 +55,7 @@ import {
   recordContribution,
   type SharedContribution,
 } from "../lib/content/contribution-history";
+import { detectGaps } from "../lib/content/gap-detector";
 import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
 import { readLearnerState } from "../lib/learnerState";
 import {
@@ -968,6 +969,58 @@ export default function ContentPage() {
           </ul>
         </section>
       )}
+
+      {/* Phase 64E — encouraging gap suggestions ("Can you help?"). */}
+      {(() => {
+        const gaps = detectGaps(downloadedSets).slice(0, 5);
+        if (gaps.length === 0) return null;
+        return (
+          <section
+            className="content-section content-gaps"
+            data-testid="content-gaps"
+          >
+            <h2>{t("content.gaps.title", "Missing Lessons")}</h2>
+            <p className="content-gaps-intro">
+              {t(
+                "content.gaps.intro",
+                "The community library has a few gaps. Can you help fill one?",
+              )}
+            </p>
+            <ul className="content-gaps-list" data-testid="content-gaps-list">
+              {gaps.map((gap, i) => (
+                <li
+                  key={`${gap.kind}-${gap.source}-${gap.target}-${gap.level}-${i}`}
+                  className="content-gap-row"
+                >
+                  <span>
+                    {(gap.kind === "next_level"
+                      ? t(
+                          "content.gaps.next_level",
+                          "{target} for {source} speakers has lessons, but {level} doesn't exist yet.",
+                        )
+                      : t(
+                          "content.gaps.missing_pair",
+                          "{target} {level} for {source} speakers doesn't exist yet.",
+                        )
+                    )
+                      .replace("{target}", languageDisplayName(gap.target, lang))
+                      .replace("{source}", languageDisplayName(gap.source, lang))
+                      .replace("{level}", gap.level)}
+                  </span>{" "}
+                  <a
+                    href={`https://github.com/${COMMUNITY_REPO}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="content-gap-help"
+                  >
+                    {t("content.gaps.help", "Can you help?")}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })()}
 
       <h2 className="content-section-title">
         {t("content.my_lessons.downloaded_title", "Downloaded sets")}
