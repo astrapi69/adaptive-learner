@@ -307,7 +307,9 @@ export function generateExercises(
     const selected = selectExercises(buckets, Math.max(1, config.count));
     return selected.map((ex, i) => ({
         ...ex,
-        id: `ex-${i + 1}-${ex.type}`,
+        // Slug-safe id (the lesson schema requires ``[a-z0-9-]`` step
+        // + exercise ids), so the type's underscore becomes a hyphen.
+        id: `ex-${i + 1}-${ex.type.replace(/_/g, "-")}`,
         direction: directionFor(config.direction, i) ?? ex.direction ?? null,
     }));
 }
