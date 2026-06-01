@@ -20,11 +20,45 @@
  * ``onComplete({correct: 0|1, total: 1})``. Parent (Lesson
  * viewer) persists via ``recordStepResult``.
  *
+ * Reordering placed tiles (UX) — three coexisting paths:
+ *   - **Pointer/touch drag** via @dnd-kit (PointerSensor with
+ *     a 5px activation distance). This is the primary mobile
+ *     affordance; native HTML5 drag does NOT fire on touch
+ *     devices, which is why @dnd-kit replaced it. A tap that
+ *     never crosses 5px is NOT a drag, so tap-to-remove is
+ *     preserved; a 5px+ drag reorders and suppresses the click.
+ *   - **Arrow buttons** (◀ ▶) on each placed tile — secondary
+ *     affordance, always visible for touch, out of the tab
+ *     order (tabIndex=-1).
+ *   - **Keyboard**: focus a placed tile, Left/Right arrows
+ *     reorder it immediately (focus follows the tile); Enter
+ *     removes it. We deliberately do NOT use @dnd-kit's
+ *     KeyboardSensor: it requires a Space/Enter "pick up"
+ *     mode that collides with Enter-to-remove on a <button>.
+ *     The immediate-move handler is more discoverable and is
+ *     already pinned by tests.
+ *
  * Mobile-first: scrambled bar wraps, each tile is 44px
- * min-height. No drag-and-drop library — tap-to-place keeps
- * the touch surface large and works on every browser.
+ * min-height.
  */
 
+import {
+    DndContext,
+    DragOverlay,
+    PointerSensor,
+    closestCenter,
+    useSensor,
+    useSensors,
+    type DragEndEvent,
+    type DragStartEvent,
+} from "@dnd-kit/core";
+import {
+    SortableContext,
+    arrayMove,
+    rectSortingStrategy,
+    useSortable,
+} from "@dnd-kit/sortable";
+import {CSS} from "@dnd-kit/utilities";
 import {Check, ChevronLeft, ChevronRight, RotateCcw, X} from "lucide-react";
 import type {Ref} from "react";
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
@@ -97,6 +131,149 @@ function _arraysEqual(
     return true;
 }
 
+/** Apply a @dnd-kit drag-end to the placed-index sequence.
+ *  ``activeId`` / ``overId`` are the stringified tile indices
+ *  used as sortable item ids. Returns a NEW array (a copy when
+ *  the move is a no-op). Pure + exported so the drag-reorder
+ *  contract can be unit-tested without simulating pointer
+ *  events (happy-dom pointer drag is unreliable — see
+ *  lessons-learned "Radix DropdownMenu + happy-dom"). */
+export function applyDragReorder(
+    placed: readonly number[],
+    activeId: string,
+    overId: string,
+): number[] {
+    const oldIndex = placed.findIndex((i) => String(i) === activeId);
+    const newIndex = placed.findIndex((i) => String(i) === overId);
+    if (oldIndex === -1 || newIndex === -1 || oldIndex === newIndex) {
+        return [...placed];
+    }
+    return arrayMove([...placed], oldIndex, newIndex);
+}
+
+/** True when the user has asked the OS to minimise motion. Guarded
+ *  for happy-dom / older environments where matchMedia is absent. */
+function _prefersReducedMotion(): boolean {
+    if (typeof window === "undefined" || !window.matchMedia) return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+interface PlacedTileProps {
+    tileIndex: number;
+    slotIndex: number;
+    label: string;
+    total: number;
+    submitted: boolean;
+    isCorrect: boolean;
+    reduceMotion: boolean;
+    t: (key: string, fallback: string) => string;
+    onRemove: (tileIndex: number) => void;
+    onMove: (from: number, to: number) => void;
+    onKeyReorder: (
+        slot: number,
+        e: React.KeyboardEvent<HTMLButtonElement>,
+    ) => void;
+}
+
+/** One placed tile = a @dnd-kit sortable item. The tile button
+ *  itself is the drag activator (whole-tile drag, no separate
+ *  handle); the ◀ ▶ arrow buttons are plain clicks that do not
+ *  start a drag. */
+function PlacedTile({
+    tileIndex,
+    slotIndex,
+    label,
+    total,
+    submitted,
+    isCorrect,
+    reduceMotion,
+    t,
+    onRemove,
+    onMove,
+    onKeyReorder,
+}: PlacedTileProps) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({id: String(tileIndex), disabled: submitted});
+
+    const style: React.CSSProperties = {
+        transform: CSS.Transform.toString(transform),
+        transition: reduceMotion ? undefined : transition,
+        // The DragOverlay renders the floating copy, so dim the
+        // in-flow original while it is being dragged.
+        opacity: isDragging ? 0.4 : undefined,
+    };
+
+    return (
+        <li
+            ref={setNodeRef}
+            style={style}
+            className={`word-tile-slot${isDragging ? " is-dragging" : ""}`}
+        >
+            {!submitted && (
+                <button
+                    type="button"
+                    className="word-tile-move word-tile-move-left"
+                    onClick={() => onMove(slotIndex, slotIndex - 1)}
+                    disabled={slotIndex === 0}
+                    tabIndex={-1}
+                    aria-label={t(
+                        "lesson.exercise.word_tiles.move_left",
+                        "Move left",
+                    )}
+                    data-testid={`word-tile-move-left-${slotIndex}`}
+                >
+                    <ChevronLeft size={14} aria-hidden="true" />
+                </button>
+            )}
+            <button
+                type="button"
+                {...attributes}
+                {...listeners}
+                className={`word-tile word-tile-placed${
+                    submitted && isCorrect ? " is-correct" : ""
+                }${submitted && !isCorrect ? " is-wrong" : ""}`}
+                onClick={() => onRemove(tileIndex)}
+                onKeyDown={(e) => onKeyReorder(slotIndex, e)}
+                disabled={submitted}
+                data-testid={`word-tile-placed-${slotIndex}`}
+                data-tile-index={tileIndex}
+                data-slot={slotIndex}
+                aria-label={t(
+                    "lesson.exercise.word_tiles.reorder_aria",
+                    "Tile {tile}, position {n} of {total}. Drag or use arrow keys to reorder, Enter to remove.",
+                )
+                    .replace("{tile}", label)
+                    .replace("{n}", String(slotIndex + 1))
+                    .replace("{total}", String(total))}
+            >
+                {label}
+            </button>
+            {!submitted && (
+                <button
+                    type="button"
+                    className="word-tile-move word-tile-move-right"
+                    onClick={() => onMove(slotIndex, slotIndex + 1)}
+                    disabled={slotIndex === total - 1}
+                    tabIndex={-1}
+                    aria-label={t(
+                        "lesson.exercise.word_tiles.move_right",
+                        "Move right",
+                    )}
+                    data-testid={`word-tile-move-right-${slotIndex}`}
+                >
+                    <ChevronRight size={14} aria-hidden="true" />
+                </button>
+            )}
+        </li>
+    );
+}
+
 function WordTilesExercise(
     {
         exercise,
@@ -154,12 +331,22 @@ function WordTilesExercise(
             : null,
     );
     const [showHint, setShowHint] = useState(false);
-    // Reorder-within-answer state (UX bugfix): the slot currently being
-    // dragged, and the slot to re-focus after a keyboard/arrow move so
-    // focus follows the tile to its new position.
-    const [dragSlot, setDragSlot] = useState<number | null>(null);
+    // The tile index currently being pointer-dragged (drives the
+    // floating DragOverlay copy). null when no drag is active.
+    const [activeId, setActiveId] = useState<number | null>(null);
+    // The slot to re-focus after a keyboard/arrow move so focus
+    // follows the tile to its new position.
     const [focusSlot, setFocusSlot] = useState<number | null>(null);
     const placedListRef = useRef<HTMLUListElement>(null);
+
+    const reduceMotion = useMemo(() => _prefersReducedMotion(), []);
+
+    // PointerSensor handles mouse + touch with no polyfill. The 5px
+    // activation distance means a tap (no movement) stays a click
+    // (tap-to-remove); a drag of 5px+ starts the reorder.
+    const sensors = useSensors(
+        useSensor(PointerSensor, {activationConstraint: {distance: 5}}),
+    );
 
     // After a reorder, return focus to the moved tile at its new slot.
     useEffect(() => {
@@ -211,6 +398,21 @@ function WordTilesExercise(
             e.preventDefault();
             reorder(slot, slot + 1);
         }
+    };
+
+    const handleDragStart = (event: DragStartEvent) => {
+        if (submitted) return;
+        setActiveId(Number(event.active.id));
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        setActiveId(null);
+        if (submitted) return;
+        const {active, over} = event;
+        if (!over || active.id === over.id) return;
+        setPlaced((prev) =>
+            applyDragReorder(prev, String(active.id), String(over.id)),
+        );
     };
 
     const handleSubmit = () => {
@@ -290,133 +492,88 @@ function WordTilesExercise(
             >
                 {t(
                     "lesson.exercise.word_tiles.instructions",
-                    "Arrange the tiles in order. Tap to place; use the arrows or drag to reorder.",
+                    "Arrange the tiles in order. Tap to place; drag a placed tile (or use the arrows) to reorder.",
                 )}
             </p>
 
-            <div
-                className="word-tiles-answer-row"
-                data-testid="word-tiles-answer-row"
-                aria-label={t(
-                    "lesson.exercise.word_tiles.answer_label",
-                    "Your answer",
-                )}
-                aria-live="polite"
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                onDragCancel={() => setActiveId(null)}
             >
-                {placed.length === 0 ? (
-                    <p
-                        className="word-tiles-answer-empty"
-                        data-testid="word-tiles-answer-empty"
-                    >
-                        {t(
-                            "lesson.exercise.word_tiles.answer_placeholder",
-                            "Tap tiles below to build your answer",
-                        )}
-                    </p>
-                ) : (
-                    <ul
-                        className="word-tiles-list word-tiles-list-placed"
-                        ref={placedListRef}
-                    >
-                        {placed.map((tileIndex, slotIndex) => (
-                            <li
-                                key={tileIndex}
-                                className={`word-tile-slot${
-                                    dragSlot === slotIndex ? " is-dragging" : ""
-                                }`}
-                                draggable={!submitted}
-                                onDragStart={() => {
-                                    if (!submitted) setDragSlot(slotIndex);
-                                }}
-                                onDragOver={(e) => {
-                                    if (!submitted && dragSlot !== null) {
-                                        e.preventDefault();
-                                    }
-                                }}
-                                onDrop={() => {
-                                    if (dragSlot !== null) {
-                                        reorder(dragSlot, slotIndex);
-                                    }
-                                    setDragSlot(null);
-                                }}
-                                onDragEnd={() => setDragSlot(null)}
+                <div
+                    className="word-tiles-answer-row"
+                    data-testid="word-tiles-answer-row"
+                    aria-label={t(
+                        "lesson.exercise.word_tiles.answer_label",
+                        "Your answer",
+                    )}
+                    aria-live="polite"
+                >
+                    {placed.length === 0 ? (
+                        <p
+                            className="word-tiles-answer-empty"
+                            data-testid="word-tiles-answer-empty"
+                        >
+                            {t(
+                                "lesson.exercise.word_tiles.answer_placeholder",
+                                "Tap tiles below to build your answer",
+                            )}
+                        </p>
+                    ) : (
+                        <SortableContext
+                            items={placed.map((i) => String(i))}
+                            strategy={rectSortingStrategy}
+                        >
+                            <ul
+                                className="word-tiles-list word-tiles-list-placed"
+                                ref={placedListRef}
                             >
-                                {!submitted && (
-                                    <button
-                                        type="button"
-                                        className="word-tile-move word-tile-move-left"
-                                        onClick={() =>
-                                            reorder(slotIndex, slotIndex - 1)
-                                        }
-                                        disabled={slotIndex === 0}
-                                        tabIndex={-1}
-                                        aria-label={t(
-                                            "lesson.exercise.word_tiles.move_left",
-                                            "Move left",
-                                        )}
-                                        data-testid={`word-tile-move-left-${slotIndex}`}
-                                    >
-                                        <ChevronLeft size={14} aria-hidden="true" />
-                                    </button>
-                                )}
-                                <button
-                                    type="button"
-                                    className={`word-tile word-tile-placed${
-                                        submitted && isCorrect
-                                            ? " is-correct"
-                                            : ""
-                                    }${
-                                        submitted && !isCorrect
-                                            ? " is-wrong"
-                                            : ""
-                                    }`}
-                                    onClick={() => handleReturn(tileIndex)}
-                                    onKeyDown={(e) =>
-                                        handleTileKeyDown(slotIndex, e)
-                                    }
-                                    disabled={submitted}
-                                    data-testid={`word-tile-placed-${slotIndex}`}
-                                    data-tile-index={tileIndex}
-                                    data-slot={slotIndex}
-                                    aria-label={t(
-                                        "lesson.exercise.word_tiles.reorder_aria",
-                                        "Tile {tile}, position {n} of {total}. Arrow keys to reorder, Enter to remove.",
-                                    )
-                                        .replace("{tile}", tiles[tileIndex])
-                                        .replace("{n}", String(slotIndex + 1))
-                                        .replace(
-                                            "{total}",
-                                            String(placed.length),
-                                        )}
-                                >
-                                    {tiles[tileIndex]}
-                                </button>
-                                {!submitted && (
-                                    <button
-                                        type="button"
-                                        className="word-tile-move word-tile-move-right"
-                                        onClick={() =>
-                                            reorder(slotIndex, slotIndex + 1)
-                                        }
-                                        disabled={slotIndex === placed.length - 1}
-                                        tabIndex={-1}
-                                        aria-label={t(
-                                            "lesson.exercise.word_tiles.move_right",
-                                            "Move right",
-                                        )}
-                                        data-testid={`word-tile-move-right-${slotIndex}`}
-                                    >
-                                        <ChevronRight
-                                            size={14}
-                                            aria-hidden="true"
-                                        />
-                                    </button>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+                                {placed.map((tileIndex, slotIndex) => (
+                                    <PlacedTile
+                                        key={tileIndex}
+                                        tileIndex={tileIndex}
+                                        slotIndex={slotIndex}
+                                        label={tiles[tileIndex]}
+                                        total={placed.length}
+                                        submitted={submitted}
+                                        isCorrect={isCorrect}
+                                        reduceMotion={reduceMotion}
+                                        t={t}
+                                        onRemove={handleReturn}
+                                        onMove={reorder}
+                                        onKeyReorder={handleTileKeyDown}
+                                    />
+                                ))}
+                            </ul>
+                        </SortableContext>
+                    )}
+                </div>
+
+                <DragOverlay>
+                    {activeId !== null ? (
+                        <div
+                            className="word-tile word-tile-placed"
+                            data-testid="word-tile-drag-overlay"
+                            style={{
+                                cursor: "grabbing",
+                                ...(reduceMotion
+                                    ? {}
+                                    : {
+                                          transform: "scale(1.05)",
+                                          boxShadow:
+                                              "0 4px 12px rgba(0,0,0,0.2)",
+                                          opacity: 0.95,
+                                      }),
+                            }}
+                        >
+                            {tiles[activeId]}
+                        </div>
+                    ) : null}
+                </DragOverlay>
+            </DndContext>
 
             <div
                 className="word-tiles-scrambled-row"

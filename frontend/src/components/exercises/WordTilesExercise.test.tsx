@@ -33,6 +33,7 @@ import {fireEvent, render, screen} from "@testing-library/react";
 import {describe, expect, it, vi} from "vitest";
 
 import WordTilesExercise, {
+    applyDragReorder,
     isWordTilesCorrect,
 } from "./WordTilesExercise";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -518,5 +519,97 @@ describe("WordTilesExercise: reorder within answer (UX bugfix)", () => {
         expect(onComplete).toHaveBeenCalledWith(
             expect.objectContaining({correct: 0, total: 1}),
         );
+    });
+});
+
+describe("applyDragReorder (pointer/touch drag contract)", () => {
+    // @dnd-kit replaced native HTML5 drag (which never fired on touch).
+    // The pointer/touch drag path resolves to this pure helper on
+    // drag-end; simulating real pointer drag in happy-dom is
+    // unreliable (see lessons-learned "Radix DropdownMenu +
+    // happy-dom"), so the reorder contract is pinned here directly.
+    // ``placed`` holds tile indices; sortable ids are their strings.
+
+    it("drags a tile from position 0 to position 2", () => {
+        // placed = [3,1,2,0]; drag the tile with index 3 (slot 0) onto
+        // the tile with index 2 (slot 2) -> [1,2,3,0].
+        expect(applyDragReorder([3, 1, 2, 0], "3", "2")).toEqual([
+            1, 2, 3, 0,
+        ]);
+    });
+
+    it("drags a tile backward (later slot onto an earlier one)", () => {
+        // placed = [0,1,2,3]; drag index 3 (slot 3) onto index 1
+        // (slot 1) -> [0,3,1,2].
+        expect(applyDragReorder([0, 1, 2, 3], "3", "1")).toEqual([
+            0, 3, 1, 2,
+        ]);
+    });
+
+    it("is a no-op (returns a copy) when active === over", () => {
+        const placed = [0, 1, 2];
+        const next = applyDragReorder(placed, "1", "1");
+        expect(next).toEqual([0, 1, 2]);
+        expect(next).not.toBe(placed); // fresh array, never mutated
+    });
+
+    it("is a no-op when an id is not currently placed (defensive)", () => {
+        expect(applyDragReorder([0, 1, 2], "9", "1")).toEqual([0, 1, 2]);
+        expect(applyDragReorder([0, 1, 2], "0", "9")).toEqual([0, 1, 2]);
+    });
+
+    it("never mutates the input array", () => {
+        const placed = [2, 0, 1];
+        const snapshot = [...placed];
+        applyDragReorder(placed, "2", "1");
+        expect(placed).toEqual(snapshot);
+    });
+});
+
+describe("WordTilesExercise: @dnd-kit sortable rendering", () => {
+    function placeCanonical(count: number) {
+        for (let i = 0; i < count; i++) {
+            fireEvent.click(screen.getByTestId(`word-tile-scrambled-${i}`));
+        }
+    }
+
+    it("mounts cleanly inside DndContext with no floating overlay at rest", () => {
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE_MULTI_ORDER}
+                onComplete={vi.fn()}
+            />,
+        );
+        placeCanonical(4);
+        // The DragOverlay only renders its floating copy mid-drag.
+        expect(
+            screen.queryByTestId("word-tile-drag-overlay"),
+        ).not.toBeInTheDocument();
+        // Each placed tile is a sortable item — @dnd-kit marks the
+        // activator with aria-roledescription="sortable".
+        const placedTile = screen.getByTestId("word-tile-placed-0");
+        expect(placedTile).toHaveAttribute(
+            "aria-roledescription",
+            "sortable",
+        );
+    });
+
+    it("tap (click, no pointer drag) still removes a placed tile", () => {
+        // 5px activation distance means a plain click is never a drag,
+        // so the existing tap-to-remove contract is preserved.
+        render(
+            <WordTilesExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+            />,
+        );
+        fireEvent.click(screen.getByTestId("word-tile-scrambled-0"));
+        fireEvent.click(screen.getByTestId("word-tile-placed-0"));
+        expect(
+            screen.queryByTestId("word-tile-placed-0"),
+        ).not.toBeInTheDocument();
+        expect(
+            screen.getByTestId("word-tile-scrambled-0"),
+        ).toBeInTheDocument();
     });
 });
