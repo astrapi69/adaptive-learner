@@ -1652,3 +1652,28 @@ missions:
     weekend-learner:
       title: "週末の学習者"
       description: "週末に学習する。"
+
+create_lesson:
+  title: "レッスンを作成"
+  step_of: "ステップ {current} / {total}"
+  step_pending: "このステップは次回のアップデートで追加されます。"
+  nav_label: "ウィザードナビゲーション"
+  cancel: "キャンセル"
+  back: "戻る"
+  next: "次へ"
+  cancel_confirm_title: "このレッスンを破棄しますか？"
+  cancel_confirm_body: "保存していないレッスンは失われます。"
+  cancel_keep: "編集を続ける"
+  cancel_discard: "破棄"
+  meta:
+    heading: "レッスンの詳細"
+    title_label: "タイトル"
+    title_placeholder: "マイレッスン"
+    title_required: "タイトルは必須です。"
+    title_native_label: "対象言語でのタイトル"
+    target_lang_label: "学習する言語"
+    source_lang_label: "あなたの言語"
+    level_label: "レベル"
+    same_language: "学習する言語はあなたの言語と異なる必要があります。"
+    description_label: "トピック / 説明"
+    author_label: "著者名"

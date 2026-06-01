@@ -1824,5 +1824,31 @@
         "description": "Μάθε το Σαββατοκύριακο."
       }
     }
+  },
+  "create_lesson": {
+    "title": "Δημιουργία μαθήματος",
+    "step_of": "Βήμα {current} από {total}",
+    "step_pending": "Αυτό το βήμα έρχεται στην επόμενη ενημέρωση.",
+    "nav_label": "Πλοήγηση οδηγού",
+    "cancel": "Άκυρο",
+    "back": "Πίσω",
+    "next": "Επόμενο",
+    "cancel_confirm_title": "Απόρριψη αυτού του μαθήματος;",
+    "cancel_confirm_body": "Το μη αποθηκευμένο μάθημά σας θα χαθεί.",
+    "cancel_keep": "Συνέχεια επεξεργασίας",
+    "cancel_discard": "Απόρριψη",
+    "meta": {
+      "heading": "Λεπτομέρειες μαθήματος",
+      "title_label": "Τίτλος",
+      "title_placeholder": "Το μάθημά μου",
+      "title_required": "Απαιτείται τίτλος.",
+      "title_native_label": "Τίτλος στη γλώσσα-στόχο",
+      "target_lang_label": "Γλώσσα που μαθαίνετε",
+      "source_lang_label": "Η γλώσσα σας",
+      "level_label": "Επίπεδο",
+      "same_language": "Η γλώσσα που μαθαίνετε πρέπει να διαφέρει από τη γλώσσα σας.",
+      "description_label": "Θέμα / περιγραφή",
+      "author_label": "Όνομα συγγραφέα"
+    }
   }
 }

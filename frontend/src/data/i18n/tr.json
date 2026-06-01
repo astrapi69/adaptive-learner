@@ -1824,5 +1824,31 @@
         "description": "Hafta sonu öğren."
       }
     }
+  },
+  "create_lesson": {
+    "title": "Ders oluştur",
+    "step_of": "Adım {current} / {total}",
+    "step_pending": "Bu adım bir sonraki güncellemede geliyor.",
+    "nav_label": "Sihirbaz gezinmesi",
+    "cancel": "İptal",
+    "back": "Geri",
+    "next": "İleri",
+    "cancel_confirm_title": "Bu ders iptal edilsin mi?",
+    "cancel_confirm_body": "Kaydedilmemiş dersiniz kaybolacak.",
+    "cancel_keep": "Düzenlemeye devam et",
+    "cancel_discard": "İptal et",
+    "meta": {
+      "heading": "Ders ayrıntıları",
+      "title_label": "Başlık",
+      "title_placeholder": "Dersim",
+      "title_required": "Başlık gerekli.",
+      "title_native_label": "Hedef dildeki başlık",
+      "target_lang_label": "Öğrenilen dil",
+      "source_lang_label": "Sizin diliniz",
+      "level_label": "Seviye",
+      "same_language": "Öğrenilen dil, sizin dilinizden farklı olmalıdır.",
+      "description_label": "Konu / açıklama",
+      "author_label": "Yazar adı"
+    }
   }
 }

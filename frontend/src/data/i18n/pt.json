@@ -1824,5 +1824,31 @@
         "description": "Aprenda no fim de semana."
       }
     }
+  },
+  "create_lesson": {
+    "title": "Criar uma lição",
+    "step_of": "Passo {current} de {total}",
+    "step_pending": "Este passo chega na próxima atualização.",
+    "nav_label": "Navegação do assistente",
+    "cancel": "Cancelar",
+    "back": "Voltar",
+    "next": "Avançar",
+    "cancel_confirm_title": "Descartar esta lição?",
+    "cancel_confirm_body": "A sua lição não guardada será perdida.",
+    "cancel_keep": "Continuar a editar",
+    "cancel_discard": "Descartar",
+    "meta": {
+      "heading": "Detalhes da lição",
+      "title_label": "Título",
+      "title_placeholder": "Minha lição",
+      "title_required": "Um título é obrigatório.",
+      "title_native_label": "Título no idioma de destino",
+      "target_lang_label": "Idioma aprendido",
+      "source_lang_label": "O seu idioma",
+      "level_label": "Nível",
+      "same_language": "O idioma aprendido deve ser diferente do seu idioma.",
+      "description_label": "Tema / descrição",
+      "author_label": "Nome do autor"
+    }
   }
 }

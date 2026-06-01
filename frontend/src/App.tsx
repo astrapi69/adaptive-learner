@@ -21,6 +21,7 @@ import SkipToContent from "./components/SkipToContent";
 const AnkiPage = lazy(() => import("./pages/Anki"));
 const Assessment = lazy(() => import("./pages/Assessment"));
 const ContentPage = lazy(() => import("./pages/Content"));
+const CreateLesson = lazy(() => import("./pages/CreateLesson"));
 const Curriculum = lazy(() => import("./pages/Curriculum"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const LessonPage = lazy(() => import("./pages/Lesson"));
@@ -129,6 +130,10 @@ export default function App() {
                         />
                         <Route path="/anki" element={<AnkiPage />} />
                         <Route path="/content" element={<ContentPage />} />
+                        <Route
+                            path="/create-lesson"
+                            element={<CreateLesson />}
+                        />
                         <Route
                             path="/lesson/:setSlug/:setId/:filename"
                             element={<LessonPage />}

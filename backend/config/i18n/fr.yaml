@@ -1654,3 +1654,28 @@ missions:
     weekend-learner:
       title: "Apprenant du week-end"
       description: "Apprends le week-end."
+
+create_lesson:
+  title: "Créer une leçon"
+  step_of: "Étape {current} sur {total}"
+  step_pending: "Cette étape arrive dans la prochaine mise à jour."
+  nav_label: "Navigation de l'assistant"
+  cancel: "Annuler"
+  back: "Retour"
+  next: "Suivant"
+  cancel_confirm_title: "Abandonner cette leçon ?"
+  cancel_confirm_body: "Votre leçon non enregistrée sera perdue."
+  cancel_keep: "Continuer l'édition"
+  cancel_discard: "Abandonner"
+  meta:
+    heading: "Détails de la leçon"
+    title_label: "Titre"
+    title_placeholder: "Ma leçon"
+    title_required: "Un titre est requis."
+    title_native_label: "Titre dans la langue cible"
+    target_lang_label: "Langue apprise"
+    source_lang_label: "Votre langue"
+    level_label: "Niveau"
+    same_language: "La langue apprise doit être différente de votre langue."
+    description_label: "Thème / description"
+    author_label: "Nom de l'auteur"

@@ -1656,3 +1656,28 @@ missions:
     weekend-learner:
       title: "Wochenend-Lerner"
       description: "Lerne am Wochenende."
+
+create_lesson:
+  title: "Lektion erstellen"
+  step_of: "Schritt {current} von {total}"
+  step_pending: "Dieser Schritt kommt im nächsten Update."
+  nav_label: "Assistent-Navigation"
+  cancel: "Abbrechen"
+  back: "Zurück"
+  next: "Weiter"
+  cancel_confirm_title: "Lektion verwerfen?"
+  cancel_confirm_body: "Deine nicht gespeicherte Lektion geht verloren."
+  cancel_keep: "Weiter bearbeiten"
+  cancel_discard: "Verwerfen"
+  meta:
+    heading: "Lektionsdetails"
+    title_label: "Titel"
+    title_placeholder: "Meine Lektion"
+    title_required: "Ein Titel ist erforderlich."
+    title_native_label: "Titel in der Zielsprache"
+    target_lang_label: "Gelernte Sprache"
+    source_lang_label: "Deine Sprache"
+    level_label: "Niveau"
+    same_language: "Die gelernte Sprache muss sich von deiner Sprache unterscheiden."
+    description_label: "Thema / Beschreibung"
+    author_label: "Autorenname"

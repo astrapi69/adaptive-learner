@@ -12,31 +12,12 @@ import {
   type AnalysisLessonLabels,
 } from "../../lib/content/analysis-to-lesson";
 import {splitLesson} from "../../lib/content/lesson-splitter";
+import {CEFR_LEVELS, LANGUAGE_OPTIONS} from "../../lib/content/language-options";
 import {readMaxLessonSize} from "../../lib/learning/maxLessonSizePref";
 import { getStorage } from "../../storage";
 import type { ContentSetEntry } from "../../storage/types";
 import type { ConversationAnalysisResult } from "../../types/domain";
 import { notify } from "../../utils/notify";
-
-/** Curated language options for the source/target pickers. Names are
- *  English; the BCP-47 code is what gets stored. */
-const LANGUAGE_OPTIONS: ReadonlyArray<{code: string; name: string}> = [
-  {code: "en", name: "English"},
-  {code: "de", name: "German"},
-  {code: "fr", name: "French"},
-  {code: "es", name: "Spanish"},
-  {code: "it", name: "Italian"},
-  {code: "pt", name: "Portuguese"},
-  {code: "el", name: "Greek"},
-  {code: "tr", name: "Turkish"},
-  {code: "ja", name: "Japanese"},
-  {code: "zh", name: "Chinese"},
-  {code: "ru", name: "Russian"},
-  {code: "nl", name: "Dutch"},
-  {code: "ar", name: "Arabic"},
-];
-
-const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"] as const;
 
 interface SaveOfflineLessonModalProps {
   open: boolean;

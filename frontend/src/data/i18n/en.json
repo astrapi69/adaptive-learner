@@ -1824,5 +1824,31 @@
         "description": "Learn on the weekend."
       }
     }
+  },
+  "create_lesson": {
+    "title": "Create a lesson",
+    "step_of": "Step {current} of {total}",
+    "step_pending": "This step is coming in the next update.",
+    "nav_label": "Wizard navigation",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "cancel_confirm_title": "Discard this lesson?",
+    "cancel_confirm_body": "Your unsaved lesson will be lost.",
+    "cancel_keep": "Keep editing",
+    "cancel_discard": "Discard",
+    "meta": {
+      "heading": "Lesson details",
+      "title_label": "Title",
+      "title_placeholder": "My Lesson",
+      "title_required": "A title is required.",
+      "title_native_label": "Title in target language",
+      "target_lang_label": "Language learned",
+      "source_lang_label": "Your language",
+      "level_label": "Level",
+      "same_language": "The language learned must differ from your language.",
+      "description_label": "Topic / description",
+      "author_label": "Author name"
+    }
   }
 }
