@@ -563,8 +563,7 @@ function WordTilesExercise(
                                     ? {}
                                     : {
                                           transform: "scale(1.05)",
-                                          boxShadow:
-                                              "0 4px 12px rgba(0,0,0,0.2)",
+                                          boxShadow: "var(--shadow-elevated)",
                                           opacity: 0.95,
                                       }),
                             }}
