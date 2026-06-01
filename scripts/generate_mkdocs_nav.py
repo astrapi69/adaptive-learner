@@ -18,11 +18,16 @@ marker-bounded blocks:
   because ``index.md`` is not in ``_meta.yaml`` (landing page
   contract differs from help-page contract).
 
-- ``# AUTO-GENERATED-NAV-TRANSLATIONS-START`` ...
-  ``# AUTO-GENERATED-NAV-TRANSLATIONS-END`` inside the
-  ``nav_translations:`` block. Identity mappings (DE label == EN
-  label) are omitted because mkdocs-static-i18n leaves untranslated
-  keys as-is.
+- ``# AUTO-GENERATED-LANGUAGES-START`` ...
+  ``# AUTO-GENERATED-LANGUAGES-END`` inside the i18n plugin's
+  ``languages:`` list. The whole locale list is generated from
+  ``_meta.yaml``'s ``languages:`` entries: one ``- locale:`` block
+  per language (``name`` + ``build: true``, ``default: true`` for
+  the default locale), and a ``nav_translations:`` map per
+  non-default locale carrying the DE-label -> target-label pairs.
+  Identity mappings (DE label == target label) are omitted because
+  mkdocs-static-i18n leaves untranslated keys as the source (DE)
+  label, which is correct when the two languages share the term.
 
 Modes:
   generate (default): regenerate the marker blocks in-place.
@@ -47,11 +52,11 @@ NAV_START = (
     "(do not edit; regenerate via make sync-mkdocs-nav)"
 )
 NAV_END = "# AUTO-GENERATED-NAV-END"
-TR_START = (
-    "# AUTO-GENERATED-NAV-TRANSLATIONS-START "
+LANG_START = (
+    "# AUTO-GENERATED-LANGUAGES-START "
     "(do not edit; regenerate via make sync-mkdocs-nav)"
 )
-TR_END = "# AUTO-GENERATED-NAV-TRANSLATIONS-END"
+LANG_END = "# AUTO-GENERATED-LANGUAGES-END"
 
 
 def _load_meta() -> dict:
@@ -86,36 +91,60 @@ def _generate_nav_lines(meta: dict) -> list[str]:
     return lines
 
 
-def _generate_translation_lines(meta: dict, indent: str = "            ") -> list[str]:
-    """Render the nav_translations: map.
+def _generate_translation_lines(
+    meta: dict, lang_code: str, indent: str
+) -> list[str]:
+    """Render the nav_translations: map for one target locale.
 
     Walks every nav item (top-level + recursive children), collects
-    DE → EN pairs, deduplicates, and emits only entries where DE !=
-    EN. Identity mappings (e.g. "EPUB: EPUB") are dropped because
-    mkdocs-static-i18n leaves untranslated keys as-is.
+    DE -> ``lang_code`` pairs, deduplicates by DE label, and emits
+    only entries where the two labels differ. Identity mappings are
+    dropped because mkdocs-static-i18n leaves untranslated keys as the
+    source (DE) label.
 
-    ``indent`` controls the leading whitespace of each emitted line
-    — should match the YAML indent depth of the ``nav_translations:``
-    block in mkdocs.yml. Defaults to 12 spaces (per-locale nested
-    config under the i18n plugin).
+    ``indent`` controls the leading whitespace of each emitted line —
+    matches the YAML depth of the per-locale ``nav_translations:``
+    entries (12 spaces).
     """
     seen: dict[str, str] = {}
 
     def walk(items: list[dict]) -> None:
         for item in items:
             de = item["title"]["de"]
-            en = item["title"]["en"]
-            if de != en and de not in seen:
-                seen[de] = en
-            children = item.get("children") or []
-            walk(children)
+            target = item["title"].get(lang_code, de)
+            if de != target and de not in seen:
+                seen[de] = target
+            walk(item.get("children") or [])
 
     walk(meta["navigation"])
+    return [f"{indent}{de}: {target}" for de, target in seen.items()]
 
-    # Stable order: insertion order preserves the _meta.yaml walk
-    # ordering, which matches the source of truth and produces a
-    # readable diff on regeneration.
-    return [f"{indent}{de}: {en}" for de, en in seen.items()]
+
+def _generate_languages_block(meta: dict, indent: str = "        ") -> list[str]:
+    """Render the full i18n ``languages:`` list from _meta.yaml.
+
+    One ``- locale:`` block per language. The default locale gets
+    ``default: true`` and no nav_translations (its labels are the
+    source); every other locale gets a ``nav_translations:`` map (when
+    it has any non-identity entries). ``indent`` is the column of the
+    ``- locale`` items (8 spaces under ``languages:``).
+    """
+    prop = indent + "  "  # locale properties (10 spaces)
+    entry = indent + "    "  # nav_translations entries (12 spaces)
+    lines: list[str] = []
+    for lang in meta["languages"]:
+        code = lang["code"]
+        lines.append(f"{indent}- locale: {code}")
+        lines.append(f"{prop}name: {lang['name']}")
+        if lang.get("default"):
+            lines.append(f"{prop}default: true")
+        lines.append(f"{prop}build: true")
+        if not lang.get("default"):
+            pairs = _generate_translation_lines(meta, code, entry)
+            if pairs:
+                lines.append(f"{prop}nav_translations:")
+                lines.extend(pairs)
+    return lines
 
 
 def _replace_block(
@@ -157,15 +186,14 @@ def _build_new_mkdocs_yml() -> str:
     current = MKDOCS_PATH.read_text(encoding="utf-8")
 
     nav_body = "\n".join(_generate_nav_lines(meta))
-    tr_body = "\n".join(_generate_translation_lines(meta))
+    lang_body = "\n".join(_generate_languages_block(meta))
 
     # The nav: block is at column 0 (top-level YAML key, items start
-    # with "- "). The nav_translations: block sits inside the i18n
-    # plugin's per-locale config (12 spaces under the EN locale
-    # entry).
+    # with "- "). The languages: list lives inside the i18n plugin;
+    # its locale items are at 8 spaces.
     new_text = _replace_block(current, NAV_START, NAV_END, nav_body, indent="")
     new_text = _replace_block(
-        new_text, TR_START, TR_END, tr_body, indent="            "
+        new_text, LANG_START, LANG_END, lang_body, indent="        "
     )
     return new_text
 

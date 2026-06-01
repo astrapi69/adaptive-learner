@@ -42,6 +42,7 @@ plugins:
   - i18n:
       docs_structure: folder
       languages:
+        # AUTO-GENERATED-LANGUAGES-START (do not edit; regenerate via make sync-mkdocs-nav)
         - locale: de
           name: Deutsch
           default: true
@@ -50,7 +51,6 @@ plugins:
           name: English
           build: true
           nav_translations:
-            # AUTO-GENERATED-NAV-TRANSLATIONS-START (do not edit; regenerate via make sync-mkdocs-nav)
             Benutzerhandbuch: User Guide
             Erste Schritte: Getting started
             Lerntyp-Test: Assessment
@@ -82,7 +82,257 @@ plugins:
             Core-Endpoints: Core endpoints
             Plugin-Endpoints: Plugin endpoints
             Modelle: Models
-            # AUTO-GENERATED-NAV-TRANSLATIONS-END
+        - locale: es
+          name: Español
+          build: true
+          nav_translations:
+            Benutzerhandbuch: Guía del usuario
+            Erste Schritte: Primeros pasos
+            Onboarding: Introducción
+            Lerntyp-Test: Evaluación
+            Lern-Session: Sesión de aprendizaje
+            Lektionen und Wiederholungen: Lecciones y repasos
+            Meine Lektionen: Mis lecciones
+            Dashboard: Panel
+            Curriculum: Currículo
+            Fortschritt: Progreso
+            Einstellungen: Configuración
+            Lob und Belohnungen: Elogios y celebraciones
+            Tägliche Missionen: Misiones diarias
+            FAQ: Preguntas frecuentes
+            Konzept: Concepto
+            Philosophie: Filosofía
+            Die sechs Methoden: Los seis métodos
+            Der Sieben-Schritt-Zyklus: El ciclo de siete pasos
+            Tracking: Seguimiento
+            Werkzeuge: Herramientas
+            Entwickler-Dokumentation: Documentación para desarrolladores
+            Architektur: Arquitectura
+            Setup: Configuración inicial
+            Plugin-Leitfaden: Guía de plugins
+            Storage-Layer: Capa de almacenamiento
+            Theme-System: Sistema de temas
+            Lektionen + SRS: Lecciones + SRS
+            KI-Integration: Integración de IA
+            Testen: Pruebas
+            Belohnungs-Schicht: Capa de celebración
+            Deployment: Despliegue
+            Lektionsinhalte erstellen: Crear contenido de lecciones
+            Release-Prozess: Flujo de publicación
+            API-Referenz: Referencia de la API
+            Übersicht: Visión general
+            Core-Endpoints: Endpoints principales
+            Plugin-Endpoints: Endpoints de plugins
+            Modelle: Modelos
+        - locale: fr
+          name: Français
+          build: true
+          nav_translations:
+            Benutzerhandbuch: Guide de l'utilisateur
+            Erste Schritte: Premiers pas
+            Onboarding: Intégration
+            Lerntyp-Test: Évaluation
+            Lern-Session: Session d'apprentissage
+            Lektionen und Wiederholungen: Leçons et révisions
+            Meine Lektionen: Mes leçons
+            Dashboard: Tableau de bord
+            Fortschritt: Progression
+            Einstellungen: Paramètres
+            Lob und Belohnungen: Encouragements et célébrations
+            Tägliche Missionen: Missions quotidiennes
+            Konzept: Concept
+            Die sechs Methoden: Les six méthodes
+            Der Sieben-Schritt-Zyklus: Le cycle en sept étapes
+            Tracking: Suivi
+            Werkzeuge: Outils
+            Entwickler-Dokumentation: Documentation développeur
+            Architektur: Architecture
+            Setup: Installation
+            Plugin-Leitfaden: Guide des plugins
+            Storage-Layer: Couche de stockage
+            Theme-System: Système de thèmes
+            Lektionen + SRS: Leçons + SRS
+            KI-Integration: Intégration de l'IA
+            Testen: Tests
+            Belohnungs-Schicht: Couche de célébration
+            Deployment: Déploiement
+            Lektionsinhalte erstellen: Création de contenu de leçon
+            Release-Prozess: Processus de publication
+            API-Referenz: Référence de l'API
+            Übersicht: Vue d'ensemble
+            Core-Endpoints: Endpoints principaux
+            Plugin-Endpoints: Endpoints des plugins
+            Modelle: Modèles
+        - locale: el
+          name: Ελληνικά
+          build: true
+          nav_translations:
+            Benutzerhandbuch: Οδηγός χρήσης
+            Erste Schritte: Ξεκινώντας
+            Onboarding: Εισαγωγή
+            Lerntyp-Test: Αξιολόγηση
+            Lern-Session: Συνεδρία μάθησης
+            Lektionen und Wiederholungen: Μαθήματα και επαναλήψεις
+            Meine Lektionen: Τα μαθήματά μου
+            Dashboard: Πίνακας ελέγχου
+            Curriculum: Πρόγραμμα σπουδών
+            Fortschritt: Πρόοδος
+            Einstellungen: Ρυθμίσεις
+            Lob und Belohnungen: Έπαινος και γιορτές
+            Tägliche Missionen: Καθημερινές αποστολές
+            FAQ: Συχνές ερωτήσεις
+            Konzept: Έννοια
+            Philosophie: Φιλοσοφία
+            Die sechs Methoden: Οι έξι μέθοδοι
+            Der Sieben-Schritt-Zyklus: Ο κύκλος επτά βημάτων
+            Tracking: Παρακολούθηση
+            Werkzeuge: Εργαλεία
+            Entwickler-Dokumentation: Τεκμηρίωση προγραμματιστή
+            Architektur: Αρχιτεκτονική
+            Setup: Εγκατάσταση
+            Plugin-Leitfaden: Οδηγός προσθέτων
+            Storage-Layer: Επίπεδο αποθήκευσης
+            Theme-System: Σύστημα θεμάτων
+            Lektionen + SRS: Μαθήματα + SRS
+            KI-Integration: Ενσωμάτωση AI
+            Testen: Δοκιμές
+            Belohnungs-Schicht: Επίπεδο γιορτής
+            Deployment: Ανάπτυξη
+            Lektionsinhalte erstellen: Δημιουργία περιεχομένου μαθημάτων
+            Release-Prozess: Ροή έκδοσης
+            API-Referenz: Αναφορά API
+            Übersicht: Επισκόπηση
+            Core-Endpoints: Βασικά endpoints
+            Plugin-Endpoints: Endpoints προσθέτων
+            Modelle: Μοντέλα
+        - locale: pt
+          name: Português
+          build: true
+          nav_translations:
+            Benutzerhandbuch: Guia do usuário
+            Erste Schritte: Primeiros passos
+            Onboarding: Integração
+            Lerntyp-Test: Avaliação
+            Lern-Session: Sessão de aprendizagem
+            Lektionen und Wiederholungen: Lições e revisões
+            Meine Lektionen: Minhas lições
+            Dashboard: Painel
+            Curriculum: Currículo
+            Fortschritt: Progresso
+            Einstellungen: Configurações
+            Lob und Belohnungen: Elogios e celebrações
+            Tägliche Missionen: Missões diárias
+            FAQ: Perguntas frequentes
+            Konzept: Conceito
+            Philosophie: Filosofia
+            Die sechs Methoden: Os seis métodos
+            Der Sieben-Schritt-Zyklus: O ciclo de sete passos
+            Tracking: Acompanhamento
+            Werkzeuge: Ferramentas
+            Entwickler-Dokumentation: Documentação do desenvolvedor
+            Architektur: Arquitetura
+            Setup: Configuração
+            Plugin-Leitfaden: Guia de plugins
+            Storage-Layer: Camada de armazenamento
+            Theme-System: Sistema de temas
+            Lektionen + SRS: Lições + SRS
+            KI-Integration: Integração de IA
+            Testen: Testes
+            Belohnungs-Schicht: Camada de celebração
+            Deployment: Implantação
+            Lektionsinhalte erstellen: Criar conteúdo de lições
+            Release-Prozess: Fluxo de lançamento
+            API-Referenz: Referência da API
+            Übersicht: Visão geral
+            Core-Endpoints: Endpoints principais
+            Plugin-Endpoints: Endpoints de plugins
+            Modelle: Modelos
+        - locale: tr
+          name: Türkçe
+          build: true
+          nav_translations:
+            Benutzerhandbuch: Kullanıcı kılavuzu
+            Erste Schritte: Başlarken
+            Onboarding: Başlangıç kurulumu
+            Lerntyp-Test: Değerlendirme
+            Lern-Session: Öğrenme oturumu
+            Lektionen und Wiederholungen: Dersler ve tekrarlar
+            Meine Lektionen: Derslerim
+            Dashboard: Panel
+            Curriculum: Müfredat
+            Fortschritt: İlerleme
+            Einstellungen: Ayarlar
+            Lob und Belohnungen: Övgü ve kutlamalar
+            Tägliche Missionen: Günlük görevler
+            FAQ: SSS
+            Konzept: Kavram
+            Philosophie: Felsefe
+            Die sechs Methoden: Altı yöntem
+            Der Sieben-Schritt-Zyklus: Yedi adımlı döngü
+            Tracking: Takip
+            Werkzeuge: Araçlar
+            Entwickler-Dokumentation: Geliştirici belgeleri
+            Architektur: Mimari
+            Setup: Kurulum
+            Plugin-Leitfaden: Eklenti kılavuzu
+            Storage-Layer: Depolama katmanı
+            Theme-System: Tema sistemi
+            Lektionen + SRS: Dersler + SRS
+            KI-Integration: Yapay zekâ entegrasyonu
+            Testen: Test
+            Belohnungs-Schicht: Kutlama katmanı
+            Deployment: Dağıtım
+            Lektionsinhalte erstellen: Ders içeriği oluşturma
+            Release-Prozess: Yayın süreci
+            API-Referenz: API başvurusu
+            Übersicht: Genel bakış
+            Core-Endpoints: Temel endpoint'ler
+            Plugin-Endpoints: Eklenti endpoint'leri
+            Modelle: Modeller
+        - locale: ja
+          name: 日本語
+          build: true
+          nav_translations:
+            Benutzerhandbuch: ユーザーガイド
+            Erste Schritte: はじめに
+            Onboarding: オンボーディング
+            Lerntyp-Test: 評価
+            Lern-Session: 学習セッション
+            Lektionen und Wiederholungen: レッスンと復習
+            Meine Lektionen: マイレッスン
+            Dashboard: ダッシュボード
+            Curriculum: カリキュラム
+            Fortschritt: 進捗
+            Einstellungen: 設定
+            Lob und Belohnungen: 称賛とお祝い
+            Tägliche Missionen: デイリーミッション
+            FAQ: よくある質問
+            Konzept: コンセプト
+            Philosophie: 理念
+            Die sechs Methoden: 6つのメソッド
+            Der Sieben-Schritt-Zyklus: 7ステップのサイクル
+            Tracking: トラッキング
+            Werkzeuge: ツール
+            Entwickler-Dokumentation: 開発者ドキュメント
+            Architektur: アーキテクチャ
+            Setup: セットアップ
+            Plugin-Leitfaden: プラグインガイド
+            Storage-Layer: ストレージレイヤー
+            Theme-System: テーマシステム
+            Lektionen + SRS: レッスン + SRS
+            KI-Integration: AI統合
+            Testen: テスト
+            Belohnungs-Schicht: お祝いレイヤー
+            Deployment: デプロイ
+            Lektionsinhalte erstellen: レッスンコンテンツの作成
+            Release-Prozess: リリースワークフロー
+            API-Referenz: APIリファレンス
+            Übersicht: 概要
+            Core-Endpoints: コアエンドポイント
+            Plugin-Endpoints: プラグインエンドポイント
+            Modelle: モデル
+            Hooks: フック
+        # AUTO-GENERATED-LANGUAGES-END
 markdown_extensions:
   - admonition
   - attr_list
