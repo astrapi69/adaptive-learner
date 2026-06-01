@@ -2762,6 +2762,149 @@ select:focus {
   margin-top: var(--space-3);
 }
 
+/* Phase 64 — Smart Next-Step Suggestions. A prioritised stack of
+   cards below the summary; the primary card (driven by the star
+   rating via primaryAction) carries the accent tint, the rest are
+   subtle. All colours come from theme tokens so the cards read
+   correctly across every theme variant. Cards slide up with a
+   200ms stagger (inline animation-delay); prefers-reduced-motion
+   suppresses both the class (component side) and the animation
+   (here, as a belt-and-suspenders). */
+.lesson-next-step {
+  margin-top: var(--space-4);
+}
+
+.lesson-next-step-title {
+  font-size: 1.0625rem;
+  margin: 0 0 var(--space-3) 0;
+  color: var(--fg);
+}
+
+.lesson-next-step-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.lesson-next-step-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.lesson-next-step-card.is-primary {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+}
+
+.lesson-next-step-card.is-secondary {
+  background: var(--surface-2);
+}
+
+.lesson-next-step-card.is-complete {
+  border-color: color-mix(in srgb, var(--success) 32%, var(--border));
+  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+}
+
+.lesson-next-step-card.is-animated {
+  animation: lesson-next-step-slide-up 0.3s ease both;
+}
+
+@keyframes lesson-next-step-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lesson-next-step-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+}
+
+.lesson-next-step-card.is-complete .lesson-next-step-card-icon {
+  color: var(--success);
+  background: color-mix(in srgb, var(--success) 14%, var(--surface));
+}
+
+.lesson-next-step-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.lesson-next-step-card-kicker {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+}
+
+.lesson-next-step-card-title {
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.lesson-next-step-card-sub {
+  font-size: 0.875rem;
+  color: var(--fg-muted);
+}
+
+.lesson-next-step-card .btn {
+  flex: 0 0 auto;
+  min-height: 44px;
+}
+
+/* Demoted secondary navigation below the smart cards. */
+.lesson-summary-secondary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.lesson-summary-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 6px 4px;
+  border: none;
+  background: none;
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.lesson-summary-link:hover {
+  color: var(--fg);
+  text-decoration: underline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-next-step-card.is-animated {
+    animation: none;
+  }
+}
+
 /* Phase 46A / C3 — star row + score bar + per-exercise
    breakdown + celebration animation. The star colour stays
    inside the gold-ish range across all 10 theme variants;
@@ -3254,6 +3397,15 @@ select:focus {
   }
   .lesson-summary-breakdown-score {
     grid-column: 1 / -1;
+  }
+  /* Phase 64 — stack the suggestion cards vertically with a
+     full-width CTA so the 44px touch target spans the row. */
+  .lesson-next-step-card {
+    flex-wrap: wrap;
+  }
+  .lesson-next-step-card .btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
