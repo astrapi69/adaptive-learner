@@ -19,7 +19,7 @@
  *   - Suggested curriculum lessons (with priority)
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
@@ -47,6 +47,31 @@ interface ImportDetailProps {
   onNavigate?: (path: string) => void;
 }
 
+/**
+ * Fake-progress phase model for the analysis loading panel. The
+ * provider call is a single opaque request (no streaming
+ * progress), so we cycle through three labelled steps on a timer
+ * to make the wait feel intentional rather than frozen. The phase
+ * advances every ``ANALYSIS_PHASE_INTERVAL_MS`` and caps at the
+ * last step until the real call resolves.
+ */
+const ANALYSIS_PHASES = [
+  "analysis_phase_reading",
+  "analysis_phase_analyzing",
+  "analysis_phase_preparing",
+] as const;
+/** English fallbacks, parallel to ANALYSIS_PHASES (for the t() default). */
+const ANALYSIS_PHASE_FALLBACKS = [
+  "Step 1/3: Reading chat…",
+  "Step 2/3: Analyzing content…",
+  "Step 3/3: Preparing results…",
+];
+const ANALYSIS_PHASE_INTERVAL_MS = 4000;
+/** Phase-driven progress-bar fill (percent), indexed by phase. */
+const ANALYSIS_PHASE_PROGRESS = [20, 60, 90];
+/** How long the "Done!" flash lingers before results fade in. */
+const ANALYSIS_DONE_FLASH_MS = 500;
+
 export default function ImportDetail({
   conversationIdOverride,
   onNavigate,
@@ -66,6 +91,17 @@ export default function ImportDetail({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
+  // Loading-indicator state for the analysis run (this branch):
+  //   - analysisPhase: index into ANALYSIS_PHASES (timed fake
+  //     progress, capped at the last step).
+  //   - analysisDone: brief "Done!" flash before results fade in.
+  //   - analysisError: friendly inline message on failure (NOT a
+  //     raw toast); the button re-enables so the user can retry.
+  const [analysisPhase, setAnalysisPhase] = useState(0);
+  const [analysisDone, setAnalysisDone] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+  const phaseTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [creatingCurriculum, setCreatingCurriculum] = useState(false);
   const [extractingAnki, setExtractingAnki] = useState(false);
   // Phase 36 Bug 3 — track the curriculum already generated from
@@ -132,6 +168,30 @@ export default function ImportDetail({
     };
   }, [conversationId, t]);
 
+  // Abort any in-flight analysis + clear the phase timer if the
+  // user navigates away mid-run (otherwise the fetch keeps going
+  // and the interval leaks).
+  useEffect(() => {
+    return () => {
+      abortRef.current?.abort();
+      if (phaseTimerRef.current !== null) {
+        clearInterval(phaseTimerRef.current);
+        phaseTimerRef.current = null;
+      }
+    };
+  }, []);
+
+  function stopPhaseTimer() {
+    if (phaseTimerRef.current !== null) {
+      clearInterval(phaseTimerRef.current);
+      phaseTimerRef.current = null;
+    }
+  }
+
+  function cancelAnalysis() {
+    abortRef.current?.abort();
+  }
+
   async function runAnalysis() {
     if (!detail || analyzing) return;
     const { userId } = readLearnerState();
@@ -139,7 +199,17 @@ export default function ImportDetail({
       notify.error(t("import.no_user", "No active user."));
       return;
     }
+    setAnalysisError(null);
+    setAnalysisDone(false);
+    setAnalysisPhase(0);
     setAnalyzing(true);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    // Timed fake-progress: advance through the labelled phases,
+    // capping at the last one until the real call resolves.
+    phaseTimerRef.current = setInterval(() => {
+      setAnalysisPhase((p) => Math.min(p + 1, ANALYSIS_PHASES.length - 1));
+    }, ANALYSIS_PHASE_INTERVAL_MS);
     try {
       const settings = await getStorage().settings.get(userId);
       const provider = settings.active_provider as AIProvider;
@@ -177,11 +247,16 @@ export default function ImportDetail({
         })),
         title: detail.title,
         lang,
+        signal: controller.signal,
       });
       const updated = await getStorage().imports.saveAnalysis(detail.id, {
         analysis_result: result,
       });
-      setDetail(updated);
+      // Success transition: stop the ticker, fill the bar, flash
+      // "Done!" briefly, then reveal the (fade-in) results.
+      stopPhaseTimer();
+      setAnalysisPhase(ANALYSIS_PHASES.length - 1);
+      setAnalysisDone(true);
       if (result.fallback_used) {
         notify.warning(
           t(
@@ -192,14 +267,31 @@ export default function ImportDetail({
       } else {
         notify.success(t("import.analysis_ready", "Analysis ready."));
       }
+      await new Promise((resolve) =>
+        setTimeout(resolve, ANALYSIS_DONE_FLASH_MS),
+      );
+      setDetail(updated);
     } catch (err) {
-      const msg =
+      // A user-triggered cancel returns silently to the
+      // pre-analysis state — no error message, no toast.
+      if (controller.signal.aborted) {
+        return;
+      }
+      // Friendly INLINE error (not a raw toast). The button
+      // re-enables in the finally block so the user can retry.
+      setAnalysisError(
         err instanceof ApiError
           ? err.detail
-          : t("import.analysis_error", "Could not analyze the conversation.");
-      notify.error(msg);
+          : t(
+              "import.analysis_failed_inline",
+              "Analysis failed. Please try again.",
+            ),
+      );
     } finally {
+      stopPhaseTimer();
+      if (abortRef.current === controller) abortRef.current = null;
       setAnalyzing(false);
+      setAnalysisDone(false);
     }
   }
 
@@ -393,6 +485,13 @@ export default function ImportDetail({
             }
             data-testid="analyze-button"
           >
+            {analyzing && (
+              <span
+                className="btn-spinner"
+                data-testid="analyze-spinner"
+                aria-hidden="true"
+              />
+            )}
             {analyzing
               ? t("import.analyzing", "Analyzing…")
               : analysis
@@ -528,9 +627,74 @@ export default function ImportDetail({
         </div>
       </header>
 
+      {analyzing && (
+        <section
+          className="analysis-loading"
+          data-testid="analysis-loading"
+          aria-live="polite"
+          aria-busy="true"
+        >
+          <p className="analysis-loading-phase" data-testid="analysis-phase">
+            {analysisDone
+              ? t("import.analysis_done", "Done!")
+              : t(
+                  `import.${ANALYSIS_PHASES[analysisPhase]}`,
+                  ANALYSIS_PHASE_FALLBACKS[analysisPhase],
+                )}
+          </p>
+          <div
+            className="analysis-progress-track"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={
+              analysisDone ? 100 : ANALYSIS_PHASE_PROGRESS[analysisPhase]
+            }
+          >
+            <div
+              className="analysis-progress-fill"
+              style={{
+                width: `${
+                  analysisDone ? 100 : ANALYSIS_PHASE_PROGRESS[analysisPhase]
+                }%`,
+              }}
+            />
+          </div>
+          {!analysisDone && (
+            <p className="analysis-loading-estimate">
+              {t(
+                "import.analysis_estimate",
+                "Analysis takes approximately 15-30 seconds…",
+              )}
+            </p>
+          )}
+          {!analysisDone && (
+            <button
+              type="button"
+              className="analysis-cancel-link"
+              data-testid="cancel-analysis-button"
+              onClick={cancelAnalysis}
+            >
+              {t("import.analysis_cancel", "Cancel")}
+            </button>
+          )}
+        </section>
+      )}
+
+      {!analyzing && analysisError && (
+        <section
+          className="analysis-error-inline"
+          data-testid="analysis-error-inline"
+          aria-live="assertive"
+        >
+          <p>{analysisError}</p>
+        </section>
+      )}
+
       {analysis && (
         <section
           style={{ marginBottom: "2rem" }}
+          className="analysis-results-fade-in"
           data-testid="analysis-results"
         >
           <h2>
