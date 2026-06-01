@@ -55,6 +55,30 @@ const AUTH_ROUTES: ReadonlyArray<{ name: string; path: string; waitId: string }>
 
 const SETTINGS_TABS = ["general", "ai", "learning", "plugins", "data", "help", "about"] as const;
 
+/**
+ * Wait for layout to settle before measuring widths. This spec's whole
+ * job is measuring element boxes, so a fixed sleep is the wrong tool:
+ * it can fire before web fonts swap in (font metrics change text width
+ * and can introduce/remove an overflow) or before the post-load paint.
+ * Awaiting ``document.fonts.ready`` plus a double rAF waits for the
+ * actual conditions instead of guessing a duration — strictly more
+ * reliable than ``waitForTimeout`` and usually faster.
+ */
+async function settleLayout(page: Page): Promise<void> {
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        const done = () =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+        if (document.fonts && document.fonts.status !== "loaded") {
+          document.fonts.ready.then(done, done);
+        } else {
+          done();
+        }
+      }),
+  );
+}
+
 async function offenders(page: Page, vw: number): Promise<string[]> {
   return page.evaluate((viewport) => {
     // An element inside a genuine scroll / clip container (or a
@@ -114,7 +138,7 @@ test.describe("No horizontal scroll — public routes", () => {
       test(`${route.name} @ ${width}px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 720 });
         await page.goto(route.path);
-        await page.waitForTimeout(400);
+        await settleLayout(page);
         await assertNoOverflow(page, route.path, width);
       });
     }
@@ -131,7 +155,7 @@ test.describe("No horizontal scroll — authenticated pages (onboard first)", ()
       for (const route of AUTH_ROUTES) {
         await page.goto(route.path);
         await page.locator(`[data-testid="${route.waitId}"]`).first().waitFor({ timeout: 12000 }).catch(() => {});
-        await page.waitForTimeout(400);
+        await settleLayout(page);
         await assertNoOverflow(page, route.name, width);
       }
 
@@ -143,7 +167,7 @@ test.describe("No horizontal scroll — authenticated pages (onboard first)", ()
         const btn = page.getByTestId(`settings-tab-${tab}`);
         if (await btn.count()) {
           await btn.click();
-          await page.waitForTimeout(150);
+          await settleLayout(page);
           await assertNoOverflow(page, `Settings:${tab}`, width);
         }
       }
@@ -154,13 +178,13 @@ test.describe("No horizontal scroll — authenticated pages (onboard first)", ()
       const plugins = page.getByTestId("settings-tab-plugins");
       if (await plugins.count()) {
         await plugins.click();
-        await page.waitForTimeout(150);
+        await settleLayout(page);
         const viewAll = page.getByTestId("settings-view-all-badges");
         if (await viewAll.count()) {
           await viewAll.scrollIntoViewIfNeeded().catch(() => {});
           await viewAll.click().catch(() => {});
           if (await page.getByTestId("badge-gallery").count()) {
-            await page.waitForTimeout(250);
+            await settleLayout(page);
             await assertNoOverflow(page, "BadgeGallery", width);
           }
         }
