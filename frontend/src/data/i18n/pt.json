@@ -1413,6 +1413,23 @@
         "productive_hint": "Produzir a resposta"
       }
     },
+    "next_step": {
+      "title": "O que vem a seguir?",
+      "next_lesson": "Próxima lição",
+      "start": "Começar",
+      "resume": "Retomar",
+      "resume_detail": "Passo {step} de {total}",
+      "adaptive": "Lição adaptativa",
+      "adaptive_focus": "Foco em: {topic}",
+      "adaptive_errors": "{count} erros nesta lição",
+      "review": "Revisão",
+      "review_due": "{count} elementos pendentes",
+      "set_complete": "Conjunto concluído!",
+      "set_complete_detail": "Todas as {count} lições de {set} concluídas!",
+      "try_set": "Que tal: {set}",
+      "view_set": "Ver conjunto",
+      "focus_vocabulary": "Vocabulário"
+    },
     "correction": {
       "title": "Ronda de correção",
       "subtitle": "Alguns exercícios rápidos com as palavras que falhaste.",

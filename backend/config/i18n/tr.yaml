@@ -1292,6 +1292,22 @@ lesson:
     direction:
       receptive_hint: Anlamı tanı
       productive_hint: Cevabı üret
+  next_step:
+    title: "Sırada ne var?"
+    next_lesson: "Sonraki ders"
+    start: "Başla"
+    resume: "Devam et"
+    resume_detail: "Adım {step} / {total}"
+    adaptive: "Uyarlanabilir ders"
+    adaptive_focus: "Odak: {topic}"
+    adaptive_errors: "Bu derste {count} hata"
+    review: "Tekrar"
+    review_due: "{count} öğe tekrar için hazır"
+    set_complete: "Set tamamlandı!"
+    set_complete_detail: "{set} setindeki {count} dersin tümü tamamlandı!"
+    try_set: "Şuna ne dersin: {set}"
+    view_set: "Seti görüntüle"
+    focus_vocabulary: "Kelime bilgisi"
   correction:
     title: "Düzeltme turu"
     subtitle: "Yanlış yaptığın kelimeler için birkaç hızlı alıştırma."

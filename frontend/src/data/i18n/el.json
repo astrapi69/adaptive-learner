@@ -1413,6 +1413,23 @@
         "productive_hint": "Παραγωγή απάντησης"
       }
     },
+    "next_step": {
+      "title": "Τι ακολουθεί;",
+      "next_lesson": "Επόμενο μάθημα",
+      "start": "Έναρξη",
+      "resume": "Συνέχεια",
+      "resume_detail": "Βήμα {step} από {total}",
+      "adaptive": "Προσαρμοστικό μάθημα",
+      "adaptive_focus": "Εστίαση σε: {topic}",
+      "adaptive_errors": "{count} λάθη σε αυτό το μάθημα",
+      "review": "Επανάληψη",
+      "review_due": "{count} στοιχεία προς επανάληψη",
+      "set_complete": "Το σετ ολοκληρώθηκε!",
+      "set_complete_detail": "Όλα τα {count} μαθήματα στο {set} ολοκληρώθηκαν!",
+      "try_set": "Τι λες για: {set}",
+      "view_set": "Προβολή σετ",
+      "focus_vocabulary": "Λεξιλόγιο"
+    },
     "correction": {
       "title": "Γύρος διόρθωσης",
       "subtitle": "Μερικές γρήγορες ασκήσεις στις λέξεις που έχασες.",
