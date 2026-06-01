@@ -997,7 +997,9 @@
     "start_listening": "Dikteyi başlat",
     "stop_listening": "Dikteyi durdur",
     "mic_permission_denied": "Mikrofon erişimi reddedildi.",
-    "mic_error": "Konuşma tanıma hatası."
+    "mic_error": "Konuşma tanıma hatası.",
+    "mic_no_device": "Mikrofon bulunamadı. Bir tane bağlayıp tekrar deneyin.",
+    "mic_network": "Konuşma tanıma çevrimdışı. İnternet bağlantını kontrol et."
   },
   "pronunciation": {
     "title": "Telaffuz Alıştırması",

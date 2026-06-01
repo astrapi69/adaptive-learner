@@ -11,6 +11,16 @@ import {beforeEach, describe, expect, it, vi} from "vitest";
 import {I18nProvider} from "../hooks/useI18n";
 import {VOICE_PREF_KEYS} from "../lib/voice/voicePref";
 
+const notifyError = vi.fn();
+vi.mock("../utils/notify", () => ({
+    notify: {
+        error: (...args: unknown[]) => notifyError(...args),
+        success: vi.fn(),
+        warning: vi.fn(),
+        info: vi.fn(),
+    },
+}));
+
 import MicButton from "./MicButton";
 
 interface MockRec {
@@ -63,6 +73,7 @@ function unmount(): void {
 beforeEach(() => {
     localStorage.clear();
     unmount();
+    notifyError.mockReset();
 });
 
 describe("MicButton visibility gates", () => {
@@ -157,6 +168,38 @@ describe("MicButton click toggle + transcript", () => {
             ],
         });
         expect(onTranscript).toHaveBeenCalledWith("Hola mundo", true);
+    });
+
+    it("shows a friendly message for audio-capture (no raw error code)", () => {
+        mountRec();
+        render(
+            <I18nProvider>
+                <MicButton onTranscript={() => {}} testId="t1" />
+            </I18nProvider>,
+        );
+        fireEvent.click(screen.getByTestId("mic-button-t1"));
+        act(() => {
+            instances[0].onerror?.({error: "audio-capture"});
+        });
+        expect(notifyError).toHaveBeenCalledTimes(1);
+        const msg = String(notifyError.mock.calls[0][0]);
+        // Friendly, and never the raw Web Speech error code.
+        expect(msg).not.toContain("audio-capture");
+        expect(msg.length).toBeGreaterThan(0);
+    });
+
+    it("stays silent on benign no-speech / aborted errors", () => {
+        mountRec();
+        render(
+            <I18nProvider>
+                <MicButton onTranscript={() => {}} testId="t1" />
+            </I18nProvider>,
+        );
+        fireEvent.click(screen.getByTestId("mic-button-t1"));
+        act(() => {
+            instances[0].onerror?.({error: "no-speech"});
+        });
+        expect(notifyError).not.toHaveBeenCalled();
     });
 
     it("resets to idle when recogniser fires onend", () => {

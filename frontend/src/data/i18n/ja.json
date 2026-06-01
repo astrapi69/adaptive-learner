@@ -997,7 +997,9 @@
     "start_listening": "音声入力開始",
     "stop_listening": "音声入力停止",
     "mic_permission_denied": "マイクへのアクセスが拒否されました。",
-    "mic_error": "音声認識エラー。"
+    "mic_error": "音声認識エラー。",
+    "mic_no_device": "マイクが見つかりません。接続してもう一度お試しください。",
+    "mic_network": "音声認識はオフラインです。インターネット接続を確認してください。"
   },
   "pronunciation": {
     "title": "発音練習",

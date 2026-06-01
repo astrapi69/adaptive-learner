@@ -911,6 +911,8 @@ voice:
   stop_listening: Diktat stoppen
   mic_permission_denied: Mikrofon-Zugriff verweigert.
   mic_error: Spracherkennungsfehler.
+  mic_no_device: "Kein Mikrofon gefunden. Schließe eines an und versuche es erneut."
+  mic_network: "Spracherkennung ist offline. Prüfe deine Internetverbindung."
 pronunciation:
   title: Aussprachetraining
   intro: Generiere einen Satz, sprich ihn laut und erhalte sofortiges Feedback.
