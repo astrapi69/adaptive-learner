@@ -132,6 +132,15 @@ pre {
   max-width: 100%;
 }
 
+/* Inline code: wrap long unbroken tokens (URLs, identifiers) so a
+   single ``code`` span can't push the line past the viewport. The
+   gentle ``overflow-wrap`` only breaks when a word would overflow,
+   leaving ``pre > code`` (which scrolls via the rule above)
+   untouched in practice. */
+code {
+  overflow-wrap: break-word;
+}
+
 code {
   overflow-wrap: break-word;
 }
@@ -745,6 +754,14 @@ select:focus {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  /* P0 mobile — a grid item defaults to ``min-width: auto`` (=
+     min-content), so a wide child (the Recharts radar SVG) would
+     floor the cell at its rendered width and overflow the
+     viewport. ``min-width: 0`` lets the cell shrink to the grid
+     track; the chart's ResponsiveContainer then re-measures and
+     scales down responsively (the radar stays visible on mobile,
+     it just gets smaller). */
+  min-width: 0;
 }
 
 .dashboard-card-wide {
@@ -1003,12 +1020,17 @@ select:focus {
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
+  /* P0 mobile — let the provider chips drop below the title
+     instead of overflowing to the right at 320px. */
+  flex-wrap: wrap;
 }
 
 .session-header-chips {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .provider-chip {
@@ -1947,6 +1969,10 @@ select:focus {
   justify-content: space-between;
   align-items: center;
   gap: var(--space-3);
+  /* P0 mobile — provider name + Active/status/source badges must
+     wrap on a narrow column instead of pushing the trailing
+     ``api-key-source`` badge past the viewport. */
+  flex-wrap: wrap;
 }
 
 .api-key-row-input {
@@ -2007,6 +2033,7 @@ select:focus {
   border-radius: var(--radius-sm);
   background: var(--surface-2);
   color: var(--text-muted);
+  overflow-wrap: break-word;
 }
 .api-key-source-secrets_yaml,
 .api-key-source-env {
