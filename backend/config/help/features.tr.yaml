@@ -1,276 +1,273 @@
-# Adaptive Learner — Help glossary: App features (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: App features (Turkish).
+# Translation: AI-generated, pending native review
 
 category: features
 language: tr
 entries:
   - key: feature_method_switch
-    title: Method Switch
-    short: "The system recommends a different method when you stagnate — you decide whether to switch."
+    title: Yöntem Değişikliği
+    short: "Durduğunuzda sistem farklı bir yöntem önerir — geçiş kararı size aittir."
     long: |
-      ## What is the method switch?
+      ## Yöntem değişikliği nedir?
 
-      If your learning sessions stagnate in a method or
-      produce high stress, Adaptive Learner suggests a method
-      switch. You see the suggestion as a banner above the
-      session chat — you can accept, decline, or defer.
+      Öğrenme oturumlarınız bir yöntemde durağanlaşır veya
+      yüksek strese neden olursa Adaptive Learner bir yöntem
+      değişikliği önerir. Öneriyi oturum sohbetinin üzerindeki
+      bir başlık olarak görürsünüz — kabul edebilir, reddedebilir
+      veya erteleyebilirsiniz.
 
-      ## When the suggestion fires
+      ## Öneri ne zaman çıkar
 
-      Three conditions must hold simultaneously:
+      Üç koşulun aynı anda sağlanması gerekir:
 
-      - **At least 3 sessions** in the current method.
-      - **Average stress > 3** (on the 1-5 scale) in the last
-        3 ratings.
-      - **Method fit < 3** in the last 3 ratings.
+      - Mevcut yöntemde **en az 3 oturum**.
+      - Son 3 değerlendirmede **ortalama stres > 3** (1-5
+        ölçeğinde).
+      - Son 3 değerlendirmede **yönteme uyum < 3**.
 
-      Stagnation detection alone is not enough: brief
-      difficulties in an otherwise fitting method are normal
-      and pass. Only the combination of duration + stress +
-      low fit triggers the suggestion.
+      Yalnızca durağanlaşma yeterli değildir: aksi takdirde
+      uygun bir yöntemdeki kısa süreli güçlükler de tetikler.
+      Yalnızca süre + stres + düşük uyumun birleşimi öneriyi
+      başlatır.
 
-      ## How the system decides
+      ## Sistem nasıl karar verir
 
-      The ``recommend_method_switch`` hook in the session
-      plugin compares your learning profile to your current
-      trajectory and suggests the method with the highest
-      expected fit. If the top-2 methods are close, you see
-      both as options.
+      Oturum eklentisindeki ``recommend_method_switch`` kancası
+      öğrenme profilinizi mevcut yörüngenizle karşılaştırır ve
+      en yüksek beklenen uyuma sahip yöntemi önerir. İlk iki
+      yöntem birbirine yakınsa her ikisini de seçenek olarak
+      görürsünüz.
 
-      ## You decide
+      ## Siz karar verirsiniz
 
-      The system recommends; you choose. Accepting the switch
-      saves it as a ``MethodSwitch`` audit entry (a trail for
-      your profile). Declining does nothing — the suggestion
-      reappears at the earliest after 3 more sessions.
+      Sistem önerir; siz seçersiniz. Değişikliği kabul etmek,
+      profiliniz için bir denetim kaydı olarak bir
+      ``MethodSwitch`` girişi oluşturur. Reddetmek hiçbir
+      şeyi değiştirmez — öneri en erken 3 oturum daha sonra
+      yeniden çıkar.
 
-      ## Why not automatic?
+      ## Neden otomatik değil?
 
-      Method switches are a big change in the learning
-      experience. An automatic switch would break learning
-      continuity and could fire during a difficult but
-      productive phase. You know your context better than the
-      system does.
+      Yöntem değişiklikleri, öğrenme deneyiminde büyük bir
+      değişikliktir. Otomatik bir değişiklik öğrenme sürekliliğini
+      bozabilir ve zor ama verimli bir aşamada tetiklenebilir.
+      Kendi bağlamınızı sistemden daha iyi bilirsiniz.
 
   - key: feature_auto_loop
-    title: Auto-Loop
-    short: "After step 7, a new cycle with fresh content starts automatically."
+    title: Otomatik Döngü
+    short: "Adım 7'nin ardından, yeni içerikle yeni bir döngü otomatik olarak başlar."
     long: |
-      ## What is the auto-loop?
+      ## Otomatik döngü nedir?
 
-      When you complete step 7 (integrate), the session can
-      automatically start a new cycle on the next topic from
-      your curriculum — without you pressing a "next cycle"
-      button.
+      7. adımı (bütünleştirme) tamamladığınızda oturum,
+      müfredatınızdaki bir sonraki konuyla yeni bir döngüyü
+      otomatik olarak başlatabilir — "sonraki döngü" düğmesine
+      basmanıza gerek kalmadan.
 
-      ## How the next topic is chosen
+      ## Bir sonraki konu nasıl seçilir
 
-      - **If a curriculum exists**: the next topic in the
-        hierarchical order.
-      - **If no curriculum exists**: the AI generates a
-        suitable follow-up topic based on the current
-        trajectory.
-      - **If spaced-repetition cards are due**: they are
-        prioritized before new content.
+      - **Müfredat varsa**: hiyerarşik sıradaki bir sonraki konu.
+      - **Müfredat yoksa**: yapay zeka mevcut yörüngeye göre
+        uygun bir devam konusu üretir.
+      - **Aralıklı tekrar kartları vadesi gelmişse**: yeni
+        içerikten önce bunlar önceliklendirilir.
 
-      ## Cycle counter
+      ## Döngü sayacı
 
-      Every session shows a cycle counter ("3/5"). When
-      max_cycles is reached (default: 5), auto-loop pauses
-      and asks whether you want to continue. This protects
-      against runaway sessions.
+      Her oturum bir döngü sayacı gösterir ("3/5"). max_cycles
+      sınırına ulaşıldığında (varsayılan: 5), otomatik döngü
+      duraklar ve devam etmek isteyip istemediğinizi sorar.
+      Bu, denetimsiz uzayan oturumları önler.
 
-      ## How to interrupt the auto-loop
+      ## Otomatik döngüyü nasıl keserim
 
-      - **Submit a rating**: after each cycle, you get the
-        three sliders (understanding, stress, method fit). If
-        stress > 3, the system suggests a break.
-      - **"End session" button**: clickable at any time.
-      - **Accept a method switch**: breaks the current loop
-        and starts a new one with the new method.
+      - **Değerlendirme gönderin**: her döngünün ardından üç
+        kaydırıcıyı (anlama, stres, yönteme uyum) alırsınız.
+        Stres > 3 ise sistem bir mola önerir.
+      - **"Oturumu sonlandır" düğmesi**: her zaman tıklanabilir.
+      - **Yöntem değişikliğini kabul edin**: mevcut döngüyü
+        keser ve yeni yöntemle yenisini başlatır.
 
-      ## When auto-loop is most valuable
+      ## Otomatik döngü en çok ne zaman değerlidir
 
-      For language learning with small topic units, where
-      "start a new session" overhead slows learning down. For
-      coding, auto-loop is often less useful because topic
-      transitions are larger.
+      Küçük konu birimlerinin olduğu dil öğreniminde, "yeni
+      oturum başlat" ek yükünün öğrenmeyi yavaşlattığı
+      durumlarda. Kodlamada, konu geçişleri daha büyük
+      olduğundan otomatik döngü genellikle daha az kullanışlıdır.
 
   - key: feature_spaced_repetition
-    title: Spaced Repetition
-    short: "Time-optimized review based on your learning history."
+    title: Aralıklı Tekrar
+    short: "Öğrenme geçmişinize dayalı, zamanlama açısından optimize edilmiş inceleme."
     long: |
-      ## What is spaced repetition?
+      ## Aralıklı tekrar nedir?
 
-      Spaced repetition is the technique of placing reviews at
-      increasing intervals. It uses the forgetting-curve
-      effect: each successfully recalled item lasts longer
-      next time.
+      Aralıklı tekrar, incelemeleri artan aralıklarla
+      programlama tekniğidir. Unutma eğrisi etkisini kullanır:
+      başarıyla hatırlanan her öğe, bir sonraki seferinde daha
+      uzun süre akılda kalır.
 
-      ## The band system in Adaptive Learner
+      ## Adaptive Learner'daki bant sistemi
 
-      Six due-date bands:
+      Altı vade bandı:
 
-      - **Today** — new cards + day-of reviews.
-      - **+1d** — learned yesterday, review today.
-      - **+3d** — reviewed three days ago, review today.
-      - **+7d** — one week ago.
-      - **+14d** — two weeks ago.
-      - **+30d** — one month ago.
+      - **Bugün** — yeni kartlar + günlük incelemeler.
+      - **+1g** — dün öğrenildi, bugün incele.
+      - **+3g** — üç gün önce incelendi, bugün incele.
+      - **+7g** — bir hafta önce.
+      - **+14g** — iki hafta önce.
+      - **+30g** — bir ay önce.
 
-      Once a card passes four reviews successfully, it is
-      marked "stable" and leaves the active list — but stays
-      in the system for occasional refresher checks.
+      Bir kart dört incelemeyi başarıyla geçtiğinde "kararlı"
+      olarak işaretlenir ve aktif listeden çıkar — ancak ara
+      sıra yenileme kontrolleri için sistemde kalır.
 
-      ## How history feeds in
+      ## Geçmiş nasıl beslenir
 
-      A "successful review" is not just a click. The system
-      evaluates:
+      "Başarılı inceleme" yalnızca bir tıklama değildir.
+      Sistem şunları değerlendirir:
 
-      - **Confidence during the review session** (from the
-        dual-prompt evaluator).
-      - **Response time** vs your average.
-      - **Error count** in the current cycle.
+      - **İnceleme oturumu sırasındaki güven** (çift istem
+        değerlendiricisinden).
+      - **Yanıt süresi** kendi ortalamanıza göre.
+      - **Mevcut döngüdeki hata sayısı**.
 
-      At low confidence, the card slips back to an earlier
-      band rather than advancing.
+      Düşük güvende kart ilerlemek yerine önceki bir banda
+      geri düşer.
 
-      ## Connection to Anki
+      ## Anki ile bağlantı
 
-      With the Anki plugin active, you can export cards
-      directly to the Anki format. The system translates the
-      bands into Anki schedules — no progress is lost in the
-      transition.
+      Anki eklentisi etkinleştirildiğinde kartları doğrudan
+      Anki formatına aktarabilirsiniz. Sistem bantları Anki
+      programlarına çevirir — geçiş sırasında hiç ilerleme
+      kaybolmaz.
 
-      ## When the system recommends reviews
+      ## Sistem incelemeleri ne zaman önerir
 
-      The dashboard's "Spaced Recommendations" panel shows
-      today's due cards. You can step through them
-      individually or have the system place them at the start
-      of your next regular session — before new content. The
-      system prioritizes cards with the highest forgetting
-      risk.
+      Kontrol panelinin "Aralıklı Öneriler" paneli, bugün
+      vadesi gelen kartları gösterir. Bunları tek tek
+      inceleyebilir veya sistemin bunları bir sonraki düzenli
+      oturumunuzun başına — yeni içerikten önce — yerleştirmesini
+      sağlayabilirsiniz. Sistem, en yüksek unutma riskine sahip
+      kartları önceliklendirir.
 
   - key: feature_conversation_analysis
-    title: Conversation Analysis / Import
-    short: "Analyze existing chat histories and extract concrete learning artifacts from them."
+    title: Konuşma Analizi / İçe Aktarma
+    short: "Mevcut sohbet geçmişlerini analiz edin ve bunlardan somut öğrenme materyalleri çıkarın."
     long: |
-      ## What is conversation analysis?
+      ## Konuşma analizi nedir?
 
-      Adaptive Learner can analyze existing chats from
-      ChatGPT, Claude or Gemini and extract learning content
-      from them. You import the transcript once — the system
-      reads it, structures it, and turns it into a usable
-      learning artifact.
+      Adaptive Learner, ChatGPT, Claude veya Gemini'den
+      mevcut sohbetleri analiz edebilir ve bunlardan öğrenme
+      içeriği çıkarabilir. Dökümü bir kez içe aktarırsınız —
+      sistem okur, yapılandırır ve kullanılabilir bir öğrenme
+      materyaline dönüştürür.
 
-      ## What gets extracted
+      ## Ne çıkarılır
 
-      - **Concepts** — terms and ideas discussed in the chat.
-      - **Knowledge gaps** — points where you asked follow-ups
-        or made mistakes.
-      - **Errors** — concrete misconceptions visible in the
-        chat.
-      - **Vocabulary / terminology** — domain words
-        (especially relevant for language learning or
-        specialized fields).
+      - **Kavramlar** — sohbette tartışılan terimler ve fikirler.
+      - **Bilgi boşlukları** — takip soruları sorduğunuz veya
+        hata yaptığınız noktalar.
+      - **Hatalar** — sohbette görünür olan somut yanlış
+        anlamalar.
+      - **Kelime dağarcığı / terminoloji** — alan sözcükleri
+        (özellikle dil öğrenimi veya uzmanlaşmış alanlar için
+        ilgili).
 
-      ## How the import works
+      ## İçe aktarma nasıl çalışır
 
-      1. Export your chat from ChatGPT, Claude or Gemini as
-        Markdown or JSON.
-      2. Upload the file into Adaptive Learner (drag-and-drop
-        or file picker).
-      3. The system detects the format automatically and
-        stores the messages.
-      4. Trigger the analysis — the AI reads the chat in your
-        learning language and produces the structured
-        breakdown.
+      1. Sohbetinizi ChatGPT, Claude veya Gemini'den Markdown
+         veya JSON olarak dışa aktarın.
+      2. Dosyayı Adaptive Learner'a yükleyin (sürükle-bırak
+         veya dosya seçici).
+      3. Sistem formatı otomatik olarak algılar ve mesajları
+         depolar.
+      4. Analizi başlatın — yapay zeka sohbeti öğrenme dilinizde
+         okur ve yapılandırılmış özeti üretir.
 
-      ## What you can do next
+      ## Sonra ne yapabilirsiniz
 
-      Three actions follow from the analysis:
+      Analizden üç eylem izler:
 
-      - **"Create curriculum"** — the extracted concepts feed
-        into a hierarchical curriculum.
-      - **"Start session"** — a session that starts directly
-        from the detected knowledge gaps.
-      - **"Generate Anki cards"** — flashcards from the
-        concepts and vocabulary.
+      - **"Müfredat oluştur"** — çıkarılan kavramlar hiyerarşik
+        bir müfredatı besler.
+      - **"Oturum başlat"** — tespit edilen bilgi boşluklarından
+        doğrudan başlayan bir oturum.
+      - **"Anki kartları oluştur"** — kavramlar ve kelime
+        dağarcığından flash kartlar.
 
-      ## Duplicates
+      ## Yinelemeler
 
-      If you import the same chat twice, the system detects it
-      via the content hash and offers to navigate to the
-      existing analysis instead of creating a copy.
+      Aynı sohbeti iki kez içe aktarırsanız sistem bunu içerik
+      özeti üzerinden algılar ve kopya oluşturmak yerine mevcut
+      analize gitmeyi önerir.
 
-      ## Privacy
+      ## Gizlilik
 
-      Chat contents go ONLY to your active AI provider (the
-      one you configured in settings). The system sends
-      nothing to a central server. When you delete the chat,
-      the contents are gone.
+      Sohbet içerikleri YALNIZCA etkin yapay zeka sağlayıcınıza
+      (ayarlarda yapılandırdığınız) gönderilir. Sistem merkezi
+      bir sunucuya hiçbir şey göndermez. Sohbeti sildiğinizde
+      içerikler de gider.
 
   - key: feature_gamification
-    title: Gamification (XP, Badges, Streaks)
-    short: "Progress system with experience points, badges and streaks — motivation without gimmickry."
+    title: Oyunlaştırma (XP, Rozetler, Seriler)
+    short: "Deneyim puanları, rozetler ve serilerle ilerleme sistemi — numara olmadan motivasyon."
     long: |
-      ## What is the gamification layer?
+      ## Oyunlaştırma katmanı nedir?
 
-      Three mechanics make learning progress visible and
-      rewarding:
+      Üç mekanik, öğrenme ilerlemesini görünür ve ödüllendirici
+      kılar:
 
-      - **XP (experience points)** — for every completed
-        session, every method switch, every
-        spaced-repetition card. Levels rise with XP.
-      - **Badges** — for thematic milestones ("first
-        session", "10 sessions in a method", "30-day streak",
+      - **XP (deneyim puanları)** — tamamlanan her oturum,
+        her yöntem değişikliği, her aralıklı tekrar kartı için.
+        Seviyeler XP ile yükselir.
+      - **Rozetler** — tematik kilometre taşları için ("ilk
+        oturum", "bir yöntemde 10 oturum", "30 günlük seri",
         ...).
-      - **Streaks** — daily learning runs. They expire 24
-        hours without a session — with three "streak freezes"
-        per month as emergency pauses.
+      - **Seriler** — günlük öğrenme dizileri. Oturumsuz 24
+        saatte sona erer — ayda üç "seri dondurma" acil durum
+        molası olarak.
 
-      ## How XP is earned
+      ## XP nasıl kazanılır
 
-      Different actions yield different XP values:
+      Farklı eylemler farklı XP değerleri verir:
 
-      - **Submit a rated session**: 50 XP.
-      - **Reach step 7 (integrate)**: +25 XP bonus.
-      - **Accept a method switch**: 10 XP (you made a
-        deliberate learning decision).
-      - **Spaced-repetition card with confidence > 80%**:
-        5 XP.
-      - **Anki export of a set**: 20 XP.
+      - **Değerlendirmeli oturum gönderin**: 50 XP.
+      - **Adım 7'ye ulaşın (bütünleştirme)**: +25 XP bonusu.
+      - **Yöntem değişikliğini kabul edin**: 10 XP (bilinçli
+        bir öğrenme kararı aldınız).
+      - **Güveni > %80 olan aralıklı tekrar kartı**: 5 XP.
+      - **Bir set Anki dışa aktarımı**: 20 XP.
 
-      Levels scale with a square-root function (level n =
-      sqrt(XP / 100)) — early levels move quickly, higher
-      levels need longer breath.
+      Seviyeler karekök fonksiyonuyla ölçeklenir (n seviyesi =
+      sqrt(XP / 100)) — erken seviyeler hızlı yükselir, yüksek
+      seviyeler daha uzun soluk ister.
 
-      ## Badges are not coercive
+      ## Rozetler zorlayıcı değildir
 
-      Badge criteria are not UI-load-bearing — you do *not*
-      need a single badge to use the app productively. They
-      are a mirror, not a target. If you start to feel like
-      you are learning for badges rather than for yourself,
-      disable the display in settings.
+      Rozet kriterleri UI'da zorunlu değildir — uygulamayı
+      verimli kullanmak için tek bir rozete ihtiyaç *yoktur*.
+      Bunlar bir hedef değil, bir ayna. Kendiniz için değil
+      rozetler için öğrendiğinizi hissetmeye başlarsanız
+      görüntülemeyi ayarlardan devre dışı bırakın.
 
-      ## Streak freezes
+      ## Seri dondurma
 
-      Three streak freezes per month. If you miss a day, a
-      freeze automatically protects your streak. Explicitly
-      designed as a "sick day" or "travel day" allowance, not
-      as an exception mechanism for laziness.
+      Ayda üç seri dondurma. Bir gün kaçırırsanız dondurma
+      otomatik olarak serinizi korur. Açıkça "hasta günü" veya
+      "seyahat günü" payı olarak tasarlanmıştır, tembellik için
+      bir istisna mekanizması olarak değil.
 
-      ## Why this works without gimmicks
+      ## Bu neden numara olmadan çalışır
 
-      Learning research shows: extrinsic reward can destroy
-      intrinsic motivation ("overjustification effect").
-      Adaptive Learner relies on the mechanics being a
-      **mirror** of progress, not an incentive system. No
-      leaderboards, no social features, no point-sharing —
-      the data stays with you.
+      Öğrenme araştırmaları açıktır: dışsal ödül içsel motivasyonu
+      yok edebilir ("aşırı gerekçelendirme etkisi"). Adaptive
+      Learner, mekaniklerin bir teşvik sistemi değil, ilerlemenin
+      bir **aynası** olmasına dayanır. Lider tablosu yok, sosyal
+      özellik yok, puan paylaşımı yok — veriler sizde kalır.
 
-      ## Reset
+      ## Sıfırlama
 
-      If the gamification values no longer match your
-      situation (e.g. fresh start after a long break), you
-      can reset them in settings. Curriculum, sessions, and
-      ratings are preserved.
+      Oyunlaştırma değerleri artık durumunuzla örtüşmüyorsa
+      (ör. uzun bir aradan sonra taze başlangıç), ayarlardan
+      sıfırlayabilirsiniz. Müfredat, oturumlar ve değerlendirmeler
+      korunur.

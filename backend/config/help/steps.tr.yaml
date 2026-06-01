@@ -1,284 +1,279 @@
-# Adaptive Learner — Help glossary: 7 cycle steps (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: 7 cycle steps (Turkish).
+# Translation: AI-generated, pending native review
 
 category: steps
 language: tr
 entries:
   - key: step_input
-    title: 1. Input
-    short: "You receive new material — explanation, example or question from the AI."
+    title: 1. Girdi
+    short: "Yeni materyal alırsınız — yapay zekadan açıklama, örnek veya soru."
     long: |
-      ## Step 1: Input
+      ## Adım 1: Girdi
 
-      Every learning cycle starts with input. The AI presents
-      the material: an explanation, an example, an open
-      question or a situation — depending on the selected
-      method.
+      Her öğrenme döngüsü girdiyle başlar. Yapay zeka
+      materyali sunar: seçilen yönteme bağlı olarak bir
+      açıklama, bir örnek, açık uçlu bir soru veya bir durum.
 
-      ## What the AI does
+      ## Yapay zeka ne yapar
 
-      - **In deductive**: explains the rule.
-      - **In inductive**: shows examples.
-      - **In error-based**: presents a problem with a trap.
-      - **In dialogic**: opens the conversation with a
-        question.
-      - **In contextual**: sketches the scenario.
+      - **Tümdengelimli**: kuralı açıklar.
+      - **Tümevarımlı**: örnekler gösterir.
+      - **Hata temelli**: tuzaklı bir problem sunar.
+      - **Diyalogsal**: bir soruyla konuşmayı başlatır.
+      - **Bağlamsal**: senaryonun taslağını çizer.
 
-      ## What you do
+      ## Siz ne yaparsınız
 
-      Read attentively. Ask questions when something is
-      unclear — the session is a dialog, not a lecture. If you
-      find the AI's confidence too high, stay with it: some
-      explanations only land on the second read.
+      Dikkatle okuyun. Anlaşılmayan bir şey varsa sorun —
+      oturum bir ders değil, bir diyalogdur. Yapay zekanın
+      güvenini çok yüksek buluyorsanız devam edin: bazı
+      açıklamalar ancak ikinci okumada yerleşir.
 
-      ## What the dual-prompt evaluator does
+      ## Çift istem değerlendiricisi ne yapar
 
-      It is running quietly. It observes your reaction (or
-      lack thereof) and assesses whether you absorbed the
-      material. Active scoring begins in step 2 (attempt).
+      Sessizce çalışır. Tepkinizi (veya tepkisizliğinizi)
+      gözlemler ve materyali özümseyip özümsemediğinizi
+      değerlendirir. Aktif puanlama 2. adımda (deneme)
+      başlar.
 
-      ## What happens if you race through this step
+      ## Bu adımı hızlı geçerseniz ne olur
 
-      The most common beginner mistake: jumping to "action"
-      without processing the input. The system spots this from
-      low confidence on subsequent attempts — and sends you
-      back to step 1.
+      En yaygın başlangıç hatası: girdiyi işlemeden "eyleme"
+      geçmek. Sistem bunu sonraki denemelerdeki düşük güven
+      değerlerinden tespit eder — ve sizi 1. adıma geri gönderir.
 
   - key: step_attempt
-    title: 2. Attempt
-    short: "You apply what you learned to a concrete task or question."
+    title: 2. Deneme
+    short: "Öğrendiklerinizi somut bir görev veya soruya uygularsınız."
     long: |
-      ## Step 2: Attempt
+      ## Adım 2: Deneme
 
-      You get an application of the material and try to solve
-      it. First answer, first example, first concrete
-      application of the rule.
+      Materyalin uygulamasını alırsınız ve çözmeye
+      çalışırsınız. İlk yanıt, ilk örnek, kuralın ilk somut
+      uygulaması.
 
-      ## What the AI does
+      ## Yapay zeka ne yapar
 
-      The AI gives you a clearly scoped task. For language:
-      translate a sentence. For code: write a function. For
-      music: practice a chord change. Difficulty is
-      deliberately low — the first attempt should be
-      achievable.
+      Yapay zeka size açıkça kapsamlı bir görev verir. Dil için:
+      bir cümleyi çevirin. Kod için: bir fonksiyon yazın. Müzik
+      için: bir akor geçişi pratik yapın. Zorluk kasıtlı olarak
+      düşüktür — ilk deneme başarılabilir olmalıdır.
 
-      ## What you do
+      ## Siz ne yaparsınız
 
-      Try it. Even if you are unsure. An incomplete or
-      mistaken answer is more valuable than a refusal because
-      it gives the evaluator material to work with.
+      Deneyin. Emin olmasanız bile. Eksik veya hatalı bir yanıt,
+      değerlendiriciye çalışacak materyal sağladığından
+      reddetmekten daha değerlidir.
 
-      ## Dual-prompt evaluator
+      ## Çift istem değerlendiricisi
 
-      It activates here. It reads your answer and assigns a
-      confidence score (0-100%). At high confidence you skip
-      straight to step 5 (adapt), bypassing error analysis. At
-      low confidence the path goes through step 3 (error) and
-      step 4 (feedback).
+      Burada devreye girer. Yanıtınızı okur ve bir güven puanı
+      atar (%0-100). Yüksek güvende 5. adıma (uyum) atlarsınız,
+      hata analizi atlanır. Düşük güvende yol, 3. adım (hata)
+      ve 4. adım (geri bildirim) üzerinden geçer.
 
-      ## Tip: do not stall
+      ## İpucu: takılı kalmayın
 
-      If you have no approach after 30 seconds, tell the AI
-      ("I do not know where to start"). The AI gives you a
-      hint instead of the full solution — and the evaluator
-      does not count this as a failed attempt.
+      30 saniye sonra hâlâ bir yaklaşımınız yoksa yapay zekaya
+      söyleyin ("Nereden başlayacağımı bilmiyorum"). Yapay zeka
+      tam çözüm yerine bir ipucu verir — değerlendirici de bunu
+      başarısız bir deneme saymaz.
 
   - key: step_error
-    title: 3. Error
-    short: "A mistake or misconception becomes visible."
+    title: 3. Hata
+    short: "Bir hata veya yanlış anlama görünür hale gelir."
     long: |
-      ## Step 3: Error
+      ## Adım 3: Hata
 
-      If your attempt in step 2 did not reach the target, the
-      cycle passes through this step. The error is named — not
-      judged, just marked as a learning opportunity.
+      2. adımdaki denemeniz hedefe ulaşmadıysa döngü bu
+      adımdan geçer. Hata isimlendirilir — yargılanmaz, yalnızca
+      bir öğrenme fırsatı olarak işaretlenir.
 
-      ## What the AI does
+      ## Yapay zeka ne yapar
 
-      It shows you where the error is, without immediately
-      correcting it. The point: you should *see* the error,
-      not just *hear that something was wrong*. That
-      distinction determines whether you repeat the error.
+      Hatanın nerede olduğunu hemen düzeltmeksizin gösterir.
+      Amaç: hatayı *yalnızca duyduğunuz* değil, *gördüğünüz*
+      olmasıdır. Bu ayrım, hatayı tekrarlayıp tekrarlamayacağınızı
+      belirler.
 
-      ## What you do
+      ## Siz ne yaparsınız
 
-      Trace the error. If you can correct it yourself, do so.
-      If not, signal that to the AI ("I do not understand
-      where the error is") — the next step (feedback) exists
-      to clarify.
+      Hatayı izleyin. Kendiniz düzeltebiliyorsanız düzeltin.
+      Düzeltemiyorsanız bunu yapay zekaya bildirin ("Hatanın
+      nerede olduğunu anlamıyorum") — bir sonraki adım (geri
+      bildirim) bunu açıklamak için vardır.
 
-      ## When no error appears
+      ## Hata görünmediğinde
 
-      At high confidence in step 2, the cycle skips this step.
-      The system notes it and raises difficulty in the next
-      cycle — you should be challenged, not bored.
+      2. adımda güven yüksekse döngü bu adımı atlar. Sistem
+      bunu kaydeder ve bir sonraki döngüde zorluğu artırır —
+      sıkılmamanız, zorlanmanız gerekir.
 
-      ## In error-based (method)
+      ## Hata temelli yöntemde
 
-      If you chose this method, step 3 is the cycle's main
-      step. The AI deliberately leads you into typical traps
-      — see the methods glossary.
+      Bu yöntemi seçtiyseniz 3. adım döngünün ana adımıdır.
+      Yapay zeka sizi kasıtlı olarak tipik tuzaklara yönlendirir
+      — yöntemler sözlüğüne bakın.
 
   - key: step_feedback
-    title: 4. Feedback
-    short: "The AI explains why something works or does not work."
+    title: 4. Geri Bildirim
+    short: "Yapay zeka bir şeyin neden işe yarayıp yaramadığını açıklar."
     long: |
-      ## Step 4: Feedback
+      ## Adım 4: Geri bildirim
 
-      Here comes the explanation. The AI describes the
-      principle behind your error or correct answer — ideally
-      so that you can transfer the principle to other cases.
+      İşte açıklama gelir. Yapay zeka hatanızın veya doğru
+      yanıtınızın arkasındaki ilkeyi tanımlar — ideal olarak
+      ilkeyi başka durumlara da aktarabilecek biçimde.
 
-      ## What good feedback contains
+      ## İyi bir geri bildirim ne içerir
 
-      - **What happened** (description of the observation).
-      - **Why it happened** (explanation of the principle).
-      - **How to do it differently next time** (concrete
-        action guidance).
+      - **Ne olduğu** (gözlemin tanımı).
+      - **Neden olduğu** (ilkenin açıklaması).
+      - **Bir dahaki seferde nasıl yapılacağı** (somut eylem
+        rehberliği).
 
-      Without (3), feedback evaporates. With (3), a correction
-      becomes a transferable rule.
+      (3.) olmadan geri bildirim uçup gider. (3.) ile birlikte
+      bir düzeltme, aktarılabilir bir kurala dönüşür.
 
-      ## What you do
+      ## Siz ne yaparsınız
 
-      Read, follow, ask back. If feedback has not clicked yet,
-      say so. The AI is patient — it will explain the
-      principle in another variant. Better understood twice
-      than echoed once.
+      Okuyun, takip edin, geri sorun. Geri bildirim henüz
+      yerleşmediyse söyleyin. Yapay zeka sabırlıdır — ilkeyi
+      başka bir biçimde açıklayacaktır. Bir kez ezberlenmektense
+      iki kez anlaşılması daha iyidir.
 
-      ## Dual-prompt evaluator
+      ## Çift istem değerlendiricisi
 
-      It reads your reaction to the feedback. If you say "Ah,
-      now I understand" (or equivalent), confidence rises and
-      you proceed. If you still sound confused, the evaluator
-      pulls the cycle back to step 1 (input) with a new
-      explanation approach.
+      Geri bildirimine tepkinizi okur. "Ah, şimdi anladım"
+      (veya eşdeğeri) diyorsanız güven yükselir ve ilerlersiniz.
+      Hâlâ kafanız karışık görünüyorsa değerlendirici döngüyü
+      yeni bir açıklama yaklaşımıyla 1. adıma (girdi) geri çeker.
 
-      ## Also on correct answers
+      ## Doğru yanıtlarda da
 
-      Feedback is not only for errors. When you solved
-      something correctly, the AI still explains the
-      principle behind it — so the success becomes
-      transferable.
+      Geri bildirim yalnızca hatalar için değildir. Bir şeyi
+      doğru çözdüğünüzde de yapay zeka arkasındaki ilkeyi
+      açıklar — böylece başarı aktarılabilir hale gelir.
 
   - key: step_adapt
-    title: 5. Adapt
-    short: "You adjust your strategy or understanding based on the feedback."
+    title: 5. Uyum
+    short: "Geri bildirimi temel alarak stratejinizi veya anlayışınızı ayarlarsınız."
     long: |
-      ## Step 5: Adapt
+      ## Adım 5: Uyum
 
-      You take what you learned from the feedback and adjust
-      your approach. Not just intellectually ("yes, now I
-      understand"), but operationally ("next time I will do it
-      differently").
+      Geri bildirimden öğrendiklerinizi alır ve yaklaşımınızı
+      ayarlarsınız. Yalnızca zihinsel olarak ("evet, şimdi
+      anlıyorum") değil, işlevsel olarak ("bir dahaki seferde
+      farklı yapacağım").
 
-      ## What happens here concretely
+      ## Burada somut olarak ne olur
 
-      - **For language**: you rephrase. Instead of the wrong
-        construction you use the corrected one.
-      - **For code**: you restructure the function with the
-        understood principle.
-      - **For math**: you solve a variant using the corrected
-        solution path.
+      - **Dil için**: yeniden ifade edersiniz. Yanlış yapı
+        yerine düzeltilmiş olanı kullanırsınız.
+      - **Kod için**: anlaşılan ilkeyle fonksiyonu yeniden
+        yapılandırırsınız.
+      - **Matematik için**: düzeltilmiş çözüm yolunu
+        kullanarak bir varyantı çözersiniz.
 
-      ## What the AI does
+      ## Yapay zeka ne yapar
 
-      It gives you a *new* task — not the old one with the
-      known solution, but a variation that demands the
-      understood principle in a new context.
+      Size *yeni* bir görev verir — bilinen çözümlü eskisi
+      değil, anlaşılan ilkeyi yeni bir bağlamda talep eden
+      bir varyasyon.
 
-      ## Why this step matters
+      ## Bu adım neden önemlidir
 
-      Understanding without adaptation evaporates. If you only
-      "echo" the feedback but do not build it into your
-      approach, you will repeat the error next time. Step 5
-      forces operational activation.
+      Uyum olmaksızın anlayış uçup gider. Geri bildirimi
+      yalnızca "tekrarlayıp" yaklaşımınıza entegre etmezseniz
+      bir dahaki seferde hatayı yinelersiniz. 5. adım işlevsel
+      aktivasyonu zorlar.
 
-      ## Dual-prompt evaluator
+      ## Çift istem değerlendiricisi
 
-      Here it evaluates learning transfer. A successful
-      adaptation in a new variation is the best signal that
-      learning stuck — confidence typically rises above 80%.
+      Burada öğrenme aktarımını değerlendirir. Yeni bir
+      varyasyondaki başarılı uyum, öğrenmenin yerleştiğinin
+      en iyi sinyalidir — güven tipik olarak %80'in üzerine
+      çıkar.
 
   - key: step_repeat
-    title: 6. Repeat
-    short: "You practice with variations until what you learned is fluent."
+    title: 6. Tekrar
+    short: "Öğrendikleriniz akıcı hale gelene kadar varyasyonlarla pratik yaparsınız."
     long: |
-      ## Step 6: Repeat
+      ## Adım 6: Tekrar
 
-      You get more variations of the task. Not identical
-      repetition (that just leads to memorization), but
-      variation: same core, different context, different
-      difficulty.
+      Görevin daha fazla varyasyonunu alırsınız. Özdeş
+      tekrar değil (bu yalnızca ezberemeye yol açar), varyasyon:
+      aynı öz, farklı bağlam, farklı zorluk.
 
-      ## What the AI does
+      ## Yapay zeka ne yapar
 
-      It generates tasks that test the same principle in
-      different guises. For language: different vocabulary,
-      different sentence structure, same grammar. For code:
-      different data, same algorithmic structure.
+      Aynı ilkeyi farklı biçimlerde test eden görevler üretir.
+      Dil için: farklı kelime dağarcığı, farklı cümle yapısı,
+      aynı dilbilgisi. Kod için: farklı veriler, aynı
+      algoritmik yapı.
 
-      ## Why variation, not repetition
+      ## Neden tekrar değil varyasyon
 
-      Research on **interleaved practice** shows: blocked
-      practice (all tasks on the same topic in a row) creates
-      illusion of competence. Interleaved practice (related
-      tasks with variation) creates transferable knowledge.
+      **Serpiştirilmiş pratik** üzerine yapılan araştırmalar
+      göstermektedir: bloklanmış pratik (aynı konuda üst üste
+      tüm görevler) yetkinlik yanılsaması yaratır. Serpiştirilmiş
+      pratik (varyasyonlu ilişkili görevler) aktarılabilir bilgi
+      oluşturur.
 
-      ## When the step ends
+      ## Adım ne zaman sona erer
 
-      Once the dual-prompt evaluator sees three variations in
-      a row with confidence > 80%, you proceed to step 7. If
-      confidence fluctuates, the cycle stays in step 6 —
-      until stability is reached.
+      Çift istem değerlendiricisi arka arkaya üç varyasyonda
+      %80'in üzerinde güven gördüğünde 7. adıma geçersiniz.
+      Güven dalgalanırsa döngü 6. adımda kalır — istikrar
+      sağlanana kadar.
 
-      ## Connection to spaced repetition
+      ## Aralıklı tekrarla bağlantı
 
-      What you solve successfully in step 6 enters the
-      spaced-repetition system. The system schedules reviews
-      at 1 day, 3 days, 7 days, 14 days, 30 days — so the
-      learning sticks long-term.
+      6. adımda başarıyla çözdükleriniz aralıklı tekrar
+      sistemine girer. Sistem incelemeleri 1 gün, 3 gün,
+      7 gün, 14 gün, 30 gün aralıklarıyla programlar —
+      böylece öğrenme uzun vadede kalıcı olur.
 
   - key: step_integrate
-    title: 7. Integrate
-    short: "You connect what you learned to other knowledge or a real application."
+    title: 7. Bütünleştirme
+    short: "Öğrendiklerinizi diğer bilgilerle veya gerçek bir uygulamayla ilişkilendirirsiniz."
     long: |
-      ## Step 7: Integrate
+      ## Adım 7: Bütünleştirme
 
-      The learning cycle ends with you placing the new
-      learning into a larger context. Not in isolation
-      ("today I learned this") but connected to what you
-      already knew.
+      Öğrenme döngüsü, yeni öğrendiklerinizi daha büyük bir
+      bağlama yerleştirmenizle sona erer. Yalıtılmış olarak
+      değil ("bugün bunu öğrendim"), halihazırda bildiklerinizle
+      bağlantılı biçimde.
 
-      ## What the AI does
+      ## Yapay zeka ne yapar
 
-      It challenges you to link the new content to other
-      concepts or apply it in a real scenario:
+      Yeni içeriği başka kavramlarla ilişkilendirmenizi veya
+      gerçek bir senaryoda uygulamanızı ister:
 
-      - **Language**: use the tense in a free conversation.
-      - **Code**: apply the new technique in a larger project.
-      - **Theory**: combine the concept with one of your own
-        questions.
+      - **Dil**: zamanı serbest bir konuşmada kullanın.
+      - **Kod**: yeni tekniği daha büyük bir projede uygulayın.
+      - **Teori**: kavramı kendi sorularınızdan biriyle
+        birleştirin.
 
-      ## What you do
+      ## Siz ne yaparsınız
 
-      Articulate the required link. Find your own examples.
-      Reach the point where you can say: "I can do this now —
-      not because I memorized it, but because I can deploy
-      it."
+      Gerekli bağlantıyı ifade edin. Kendi örneklerinizi
+      bulun. "Bunu artık yapabiliyorum — ezberledim için değil,
+      kullanabildiğim için" diyebileceğiniz noktaya ulaşın.
 
-      ## What happens after step 7
+      ## Adım 7'nin ardından ne olur
 
-      The cycle is complete. Three options:
+      Döngü tamamlanır. Üç seçenek:
 
-      - **End the session** and rate it (understanding /
-        stress / method fit).
-      - **Auto-loop**: a new cycle with a new topic starts
-        automatically.
-      - **Method switch**: at low method fit the system
-        recommends a method change for the next cycle.
+      - **Oturumu sonlandırın** ve değerlendirin (anlama /
+        stres / yönteme uyum).
+      - **Otomatik döngü**: yeni bir konuyla yeni bir döngü
+        otomatik olarak başlar.
+      - **Yöntem değişikliği**: düşük yönteme uyum durumunda
+        sistem bir sonraki döngü için yöntem değişikliği önerir.
 
-      ## Why the system closes here
+      ## Sistem neden burada kapanır
 
-      Integration is the only robust test that learning
-      worked. Memorized content fails in step 7; understood
-      knowledge thrives here.
+      Bütünleştirme, öğrenmenin işe yarayıp yaramadığının tek
+      sağlam testidir. Ezberlenmiş içerik 7. adımda başarısız
+      olur; anlaşılmış bilgi ise burada gelişir.
