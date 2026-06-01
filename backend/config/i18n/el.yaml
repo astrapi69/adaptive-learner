@@ -1543,11 +1543,14 @@ content:
     share_full: Μοιραστείτε όλο το μάθημα ούτως ή άλλως
     variation_note_placeholder: Σε τι διαφέρει η έκδοσή σας; (προαιρετικό)
     show_differences: Εμφάνιση διαφορών
-    ready_to_share: Όλα είναι έτοιμα. Να μοιραστείτε το μάθημά σας με την κοινότητα;
+    ready_to_share: "Όλα έτοιμα. Κοινοποίηση του μαθήματος ως pull request;"
     share_button: Μοιραστείτε
     thanks: Ευχαριστούμε που μοιραστήκατε! Η συνεισφορά σας βοηθά άλλους μαθητές.
-    submitted: Το μάθημά σας υποβλήθηκε ως πρόταση. Ένας συντηρητής θα το εξετάσει.
-    view_submission: Δείτε την υποβολή σας στο GitHub
+    submitted: "Άνοιξε ένα pull request στο GitHub με το μάθημά σου προσυμπληρωμένο. Ελέγξτε το και κάντε κλικ στο \"Create pull request\" - το CI του αποθετηρίου περιεχομένου το επικυρώνει αυτόματα."
+    view_submission: "Άνοιγμα του pull request στο GitHub"
+    upload_instructions: "Το αρχείο του μαθήματός σου κατέβηκε. Στη σελίδα GitHub που μόλις άνοιξε, σύρετε το αρχείο στην περιοχή μεταφόρτωσης και κάντε κλικ στο \"Propose changes\" - το GitHub δημιουργεί το pull request για εσάς."
+    copy_pr_body: "Αντιγραφή περιγραφής pull request"
+    copy_pr_body_done: "Αντιγράφηκε!"
     done: Έτοιμο
     back: Πίσω
     next: Συνέχεια
@@ -1569,7 +1572,7 @@ content:
     name_label: Το όνομά σας (προαιρετικό)
     name_placeholder: π.χ. Μαρία Σ.
     show_name: Εμφάνιση ονόματος στο μάθημα
-    privacy: Το όνομά σας θα εμφανιστεί στο μάθημα και στο ζήτημα του GitHub.
+    privacy: "Το όνομά σας θα εμφανίζεται στο μάθημα και στο pull request."
 milestone:
   streak: "Σερί {n} ημερών!"
   level_up: "Φτάσατε στο επίπεδο {n}!"

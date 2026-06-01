@@ -1685,11 +1685,14 @@
       "share_full": "それでもレッスン全体を共有する",
       "variation_note_placeholder": "あなたのバージョンはどのように異なりますか? (任意)",
       "show_differences": "違いを表示する",
-      "ready_to_share": "すべて準備が整いました。あなたのレッスンをコミュニティと共有しますか?",
+      "ready_to_share": "準備完了。レッスンをプルリクエストとして共有しますか？",
       "share_button": "共有する",
       "thanks": "共有していただきありがとうございます! あなたの貢献は他の学習者の助けになります。",
-      "submitted": "あなたのレッスンは提案として送信されました。メンテナーが確認します。",
-      "view_submission": "GitHubで送信内容を表示する",
+      "submitted": "GitHub にレッスンが入力済みのプルリクエストが開きました。確認して「Create pull request」をクリックしてください。コンテンツリポジトリの CI が自動で検証します。",
+      "view_submission": "GitHub でプルリクエストを開く",
+      "upload_instructions": "レッスンファイルがダウンロードされました。開いた GitHub ページでファイルをアップロード領域にドラッグし、「Propose changes」をクリックしてください。GitHub がプルリクエストを作成します。",
+      "copy_pr_body": "プルリクエストの説明をコピー",
+      "copy_pr_body_done": "コピーしました！",
       "done": "完了",
       "back": "戻る",
       "next": "続ける"
@@ -1714,7 +1717,7 @@
       "name_label": "あなたの名前 (任意)",
       "name_placeholder": "例: Maria S.",
       "show_name": "レッスンに名前を表示する",
-      "privacy": "あなたの名前はレッスンとGitHubのissueに表示されます。"
+      "privacy": "あなたの名前はレッスンとプルリクエストに表示されます。"
     }
   },
   "milestone": {

@@ -683,11 +683,13 @@ it**:
    content-set `.zip` (manifest + lessons). Exports contain only
    the lesson content — no progress, no error history, nothing
    personal.
-3. Click **Share with Community** to open a pre-filled GitHub
-   issue on the content repo. Attach the exported `.zip`.
-4. A maintainer reviews the lesson, tidies the manifest (id,
-   title, language, level, tags) to match the conventions above,
-   and adds it under `sets/`. Once merged, everyone can download
+3. Click **Share with Community** to open a pre-filled **pull
+   request** on the content repo — the lesson JSON is committed at
+   its correct tree path, no `.zip` attachment needed.
+4. The repo's CI validates the PR automatically; a maintainer
+   reviews the lesson, tidies the manifest (id, title, language,
+   level, tags) to match the conventions above, and merges it
+   under `sets/`. Once merged, everyone can download
    it from the Set Browser.
 
 This is the social path: review is **manual** (a maintainer
@@ -718,8 +720,9 @@ instead of jumping straight to GitHub:
      the cards they reference, as a supplement variation.
 3. **Quality summary.** The rule-based validator findings (plus
    the optional AI review); warnings are shown but never block.
-4. **Share + celebrate.** One click opens the GitHub PR/issue and
-   the app thanks you with a small celebration.
+4. **Share + celebrate.** One click opens the GitHub pull request
+   (create-file editor for small lessons, upload page for large
+   ones) and the app thanks you with a small celebration.
 
 ### Variation + credit fields (schema 1.3, all optional)
 
@@ -737,7 +740,7 @@ exactly as before. `contributed_by` is set when the author opts
 in to credit while sharing (a *"Your name (optional)"* field that
 is remembered locally for next time). When present, the viewer
 shows a muted *"Contributed by {name}"* line under the title and
-the GitHub issue lists the author in its metadata table.
+the pull-request body lists the author in its metadata table.
 
 ### Contribution history and gaps
 

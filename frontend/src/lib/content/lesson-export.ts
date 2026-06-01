@@ -1,13 +1,22 @@
 /**
- * Lesson export + sharing (Phase 59D / v1.42.0).
+ * Lesson export + sharing (Phase 59D / v1.42.0; PR pathway Phase 65).
  *
  * Turns a user-generated lesson (or set) into shareable artefacts:
  *
  *   - a standalone lesson JSON file (schema v1.1, plays independently)
  *   - a full content-set ZIP (manifest.yaml + lessons/) that another
  *     user can import OR that can be submitted to the content repo
- *   - a pre-filled GitHub issue URL for the community contribution
- *     pathway (manual maintainer review — no auto-publish)
+ *   - a pre-filled GitHub PULL REQUEST pathway (NOT an issue): the
+ *     lesson JSON lands at the correct path in the content tree, the
+ *     repo's CI validation runs automatically, and the maintainer
+ *     just reviews + merges. Two flavours (Option C hybrid):
+ *       * small lessons fit in a GitHub "create new file" URL
+ *         (``communityPrUrl``) — the commit message + description
+ *         pre-fill the PR title + body; GitHub auto-forks for
+ *         non-collaborators. Zero auth, zero token.
+ *       * large lessons overflow the URL, so the caller downloads
+ *         the JSON and opens the repo's "upload files" page
+ *         (``communityUploadUrl``); the user drag-drops the file.
  *
  * Exported artefacts contain ZERO user data: only the clean lesson
  * content (no error history, no progress, no user id). The pure
@@ -93,96 +102,85 @@ export function contentSetFileName(title: string): string {
   return `${slug}-set.zip`;
 }
 
-/** Phase 61 — extra context for the community issue so the
- *  maintainer sees, at a glance, where the lesson lands in the
- *  source-language tree and how it scored in validation. */
-export interface CommunityIssueDetails {
+/** Context for the community pull request: where the lesson lands in
+ *  the source-language tree, how it scored in validation, and the
+ *  metadata the maintainer needs to review + merge. */
+export interface CommunityPrDetails {
+  title: string;
   sourceLanguage: string;
   targetLanguage: string;
-  /** Repo-relative directory the set lands in (``sets/de/fr-a1``). */
-  placement: string;
+  level: string;
+  /** Repo-relative FILE path the lesson lands at, e.g.
+   *  ``sets/de/fr-a1/lessons/16-konjugation.json``. */
+  filePath: string;
   exerciseCount: number;
   cardCount: number;
+  lessonCount: number;
   /** e.g. "AI-validated: yes, quality_score: 0.85" — omitted when
    *  the user didn't run the AI review. */
   aiSummary?: string;
   /** Rule-based validation issues the user acknowledged before
-   *  sharing anyway. Rendered in the issue body so the maintainer
-   *  sees what the rule-based check flagged; absent when the
-   *  check passed. */
+   *  sharing anyway. Absent when the check passed. */
   validationIssues?: string[];
-  /** Optional author credit (Phase 64C-2), shown in the metadata
-   *  table when the user opted to add their name. */
+  /** Optional author credit (Phase 64C-2). */
   author?: string;
+  /** Optional lesson description. */
+  description?: string | null;
 }
 
-/** Build a pre-filled GitHub issue URL for the community contribution
- *  pathway. The maintainer reviews + adds the lesson to the official
- *  content repo manually (no auto-publish). */
-export function communityIssueUrl(
-  repo: string,
-  meta: ExportSetMeta,
-  lessonCount: number,
-  details?: CommunityIssueDetails,
-): string {
-  const title = `New lesson: ${meta.title} (${meta.language} ${meta.level})`;
-  const lines: string[] = [];
-  if (details) {
-    // Tree placement first — the maintainer's primary question.
-    lines.push(
-      `**Placement:** \`${details.placement}/\` (${details.sourceLanguage} → ${details.targetLanguage}, ${meta.level})`,
-      "",
-      "| Field | Value |",
-      "|---|---|",
-      `| Title | ${meta.title} |`,
-      `| Source language | ${details.sourceLanguage} |`,
-      `| Target language | ${details.targetLanguage} |`,
-      `| Level | ${meta.level} |`,
-      `| Lessons | ${lessonCount} |`,
-      `| Cards | ${details.cardCount} |`,
-      `| Exercises | ${details.exerciseCount} |`,
-      ...(details.author ? [`| Contributed by | ${details.author} |`] : []),
-      "",
-      details.validationIssues && details.validationIssues.length > 0
-        ? `**Validation:** ⚠ shared with warnings${details.aiSummary ? ` · ${details.aiSummary}` : ""}`
-        : `**Validation:** schema ✓ · quality ✓${details.aiSummary ? ` · ${details.aiSummary}` : ""}`,
-    );
-    if (details.validationIssues && details.validationIssues.length > 0) {
-      lines.push("", "**Quality-check findings (acknowledged by author):**");
-      for (const issue of details.validationIssues) {
-        lines.push(`- ${issue}`);
-      }
+/** PR title for a community lesson contribution:
+ *  ``content: {title} ({source}->{target} {level})``. */
+export function buildPrTitle(details: CommunityPrDetails): string {
+  return `content: ${details.title} (${details.sourceLanguage}->${details.targetLanguage} ${details.level})`;
+}
+
+/** Build the Markdown PR body (the maintainer-facing summary). Used
+ *  both as the ``description=`` param on the create-file URL (so the
+ *  PR body pre-fills) and as the "copy this into the PR description"
+ *  text on the large-lesson upload path. */
+export function buildPrBody(details: CommunityPrDetails): string {
+  const lines: string[] = [
+    "## New lesson",
+    "",
+    "| Field | Value |",
+    "|---|---|",
+    `| Title | ${details.title} |`,
+    `| Source language | ${details.sourceLanguage} |`,
+    `| Target language | ${details.targetLanguage} |`,
+    `| Level | ${details.level} |`,
+    `| Lessons | ${details.lessonCount} |`,
+    `| Cards | ${details.cardCount} |`,
+    `| Exercises | ${details.exerciseCount} |`,
+    ...(details.author ? [`| Contributed by | ${details.author} |`] : []),
+    "",
+    `**Placement:** \`${details.filePath}\``,
+    "",
+    details.validationIssues && details.validationIssues.length > 0
+      ? `**Validation:** ⚠ shared with warnings${details.aiSummary ? ` · ${details.aiSummary}` : ""}`
+      : `**Validation:** schema 1.2 ✓ · quality ✓${details.aiSummary ? ` · ${details.aiSummary}` : ""}`,
+  ];
+  if (details.validationIssues && details.validationIssues.length > 0) {
+    lines.push("", "**Quality-check findings (acknowledged by author):**");
+    for (const issue of details.validationIssues) {
+      lines.push(`- ${issue}`);
     }
-    if (meta.description) lines.push("", `**Description:** ${meta.description}`);
-  } else {
-    lines.push(
-      `**Title:** ${meta.title}`,
-      `**Language:** ${meta.language}`,
-      `**Level:** ${meta.level}`,
-      `**Lessons:** ${lessonCount}`,
-      meta.description ? `**Description:** ${meta.description}` : "",
-    );
   }
-  const body = [
-    ...lines,
+  if (details.description) {
+    lines.push("", `**Description:** ${details.description}`);
+  }
+  lines.push(
     "",
-    "I created this lesson from my own learning and would like to share it.",
-    "",
-    "**How to contribute it:**",
-    "1. I'll attach the exported content-set ZIP (or paste the lesson JSON) below.",
-    "2. Maintainer: review the lesson, then add it to the content repo under `sets/`.",
-    "",
-    "_Exported from Adaptive Learner — My Lessons > Share with Community._",
-  ].join("\n");
-  const params = new URLSearchParams({ title, body });
-  return `https://github.com/${repo}/issues/new?${params.toString()}`;
+    "_Created with Adaptive Learner — My Lessons > Share with Community._",
+    "_The content-repo CI validation runs automatically on this PR._",
+  );
+  return lines.join("\n");
 }
 
 /** Conservative URL-length cap for the GitHub Web new-file editor.
  *  GitHub itself accepts more, but mobile browsers and a few
- *  proxies/servers refuse much beyond this. When the JSON would
- *  push the URL over this, callers should fall back to the
- *  Issue + attachment path. */
+ *  proxies/servers refuse much beyond this. When the JSON (plus the
+ *  pre-filled PR title + body) would push the URL over this, callers
+ *  fall back to the download + upload-page path. */
 export const MAX_PR_URL_LENGTH = 8000;
 
 /** Shape the GitHub Web new-file editor expects. */
@@ -192,32 +190,54 @@ export interface CommunityPrUrlArgs {
   /** Default branch of the content repo (``main`` for the official
    *  one; configurable so docs/tests can pin a different branch). */
   branch: string;
-  /** Repo-relative directory like ``sets/de/de-b1`` from
-   *  ``treePlacement(...).path``. The function appends
-   *  ``/lessons/{filename}``. */
-  placement: string;
-  /** The lesson to ship. Its title drives the filename slug; its
-   *  full JSON shape lands in ``?value=``. */
+  /** Repo-relative FILE path the lesson lands at, e.g.
+   *  ``sets/de/fr-a1/lessons/16-konjugation.json`` — built by the
+   *  caller from the placement engine (auto-numbered, slugged). */
+  filePath: string;
+  /** The lesson to ship; its full JSON lands in ``?value=``. */
   lesson: ContentLesson;
+  /** Pre-fills the commit message + PR title. */
+  prTitle: string;
+  /** Pre-fills the commit description + PR body (Markdown). */
+  prBody: string;
 }
 
 /** Build the GitHub Web "new file" URL that opens a commit editor
- *  with the file path + JSON content pre-filled. The user clicks
- *  "Commit changes", GitHub auto-forks for non-collaborators and
- *  opens the PR draft — zero auth required.
+ *  with the file path + JSON content pre-filled, plus the commit
+ *  message + description (which seed the PR title + body). The user
+ *  clicks "Propose new file"; GitHub auto-forks for non-collaborators
+ *  and opens the PR draft — zero auth, zero token.
  *
  *  Returns ``null`` when the URL would exceed ``MAX_PR_URL_LENGTH``,
- *  signalling the caller to fall back to ``communityIssueUrl``.
- *  Otherwise returns the ready-to-open URL.
+ *  signalling the caller to fall back to the upload-page path.
  */
 export function communityPrUrl(args: CommunityPrUrlArgs): string | null {
-  const { repo, branch, placement, lesson } = args;
-  const filename = `${placement}/lessons/${lessonFileName(lesson.title)}`;
-  const value = lessonJson(lesson);
-  const params = new URLSearchParams({ filename, value });
+  const { repo, branch, filePath, lesson, prTitle, prBody } = args;
+  const params = new URLSearchParams({
+    filename: filePath,
+    value: lessonJson(lesson),
+    message: prTitle,
+    description: prBody,
+  });
   const url = `https://github.com/${repo}/new/${branch}?${params.toString()}`;
   if (url.length > MAX_PR_URL_LENGTH) return null;
   return url;
+}
+
+/** GitHub Web "upload files" page for the lesson's target directory.
+ *  Used on the large-lesson path: the caller downloads the JSON, then
+ *  opens this so the user drag-drops the file. GitHub auto-forks +
+ *  opens a PR on "Propose changes". No URL-length limit (the file
+ *  content is uploaded, not URL-encoded).
+ *
+ *  ``dir`` is the repo-relative directory, e.g. ``sets/de/fr-a1/lessons``.
+ */
+export function communityUploadUrl(
+  repo: string,
+  branch: string,
+  dir: string,
+): string {
+  return `https://github.com/${repo}/upload/${branch}/${dir}`;
 }
 
 /** Trigger a browser download for a blob. The only DOM-touching part;
@@ -233,8 +253,14 @@ export function triggerDownload(blob: Blob, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
-/** Convenience: download a single lesson as JSON. */
-export function downloadLessonJson(lesson: ContentLesson): void {
+/** Convenience: download a single lesson as JSON. ``filename``
+ *  overrides the default ``{slug}-lesson.json`` — the share flow
+ *  passes the placement-engine filename (``{nn}-{slug}.json``) so the
+ *  downloaded file matches the path the maintainer expects. */
+export function downloadLessonJson(
+  lesson: ContentLesson,
+  filename?: string,
+): void {
   const blob = new Blob([lessonJson(lesson)], { type: "application/json" });
-  triggerDownload(blob, lessonFileName(lesson.title));
+  triggerDownload(blob, filename ?? lessonFileName(lesson.title));
 }

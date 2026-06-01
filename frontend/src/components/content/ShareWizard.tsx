@@ -12,13 +12,16 @@
  *      new exercises" when something similar exists.
  *   3. Quality summary (the existing rule-based validator + optional
  *      AI review, passed in as a node) — warnings never block.
- *   4. One-click share + a celebration (confetti + thank-you + a link
- *      to the created GitHub issue / PR).
+ *   4. One-click share as a PULL REQUEST + a celebration (confetti +
+ *      thank-you + a link to the opened PR). Small lessons use a
+ *      pre-filled GitHub create-file URL (the PR title + body seed
+ *      from the commit); large / multi-lesson sets download the
+ *      JSON and open the repo's upload page (drag-drop → PR).
  *
  * The wizard owns the share ACTION (it has the loaded candidate
  * lessons needed for variation/supplement), reusing computePlacement
  * (64A), detectDuplicate / markAsVariation / extractSupplement (64B),
- * communityPrUrl / communityIssueUrl, and the v1.38.0 celebration bus.
+ * communityPrUrl / communityUploadUrl, and the v1.38.0 celebration bus.
  * It calls back onShared(url) so the page can record the contribution
  * (64D). Duplicate/variation/supplement apply to the single-lesson
  * case (the common path for user-generated sets); a multi-lesson set
@@ -44,11 +47,17 @@ import {
   type DuplicateResult,
 } from "../../lib/content/duplicate-detection";
 import {
-  communityIssueUrl,
+  buildPrBody,
+  buildPrTitle,
   communityPrUrl,
-  type ExportSetMeta,
+  communityUploadUrl,
+  downloadLessonJson,
+  type CommunityPrDetails,
 } from "../../lib/content/lesson-export";
-import { computePlacement } from "../../lib/content/placement-engine";
+import {
+  computePlacement,
+  suggestFilename,
+} from "../../lib/content/placement-engine";
 import { emitCelebration } from "../../lib/praise/celebration-bus";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";
 
@@ -75,10 +84,14 @@ export interface ShareWizardProps {
   onClose: () => void;
   /** Test seam; defaults to window.open in a new tab. */
   openUrl?: (url: string) => void;
+  /** Test seam; defaults to downloadLessonJson (DOM download). */
+  downloadLesson?: (lesson: ContentLesson, filename: string) => void;
 }
 
 type Step = 1 | 2 | 3 | 4;
 type ShareMode = "full" | "variation" | "supplement";
+/** Which GitHub flow the share used (drives the step-4 copy). */
+type ShareMethod = "pr" | "upload";
 
 const TOTAL_STEPS = 4;
 
@@ -101,6 +114,7 @@ export default function ShareWizard({
   onShared,
   onClose,
   openUrl,
+  downloadLesson,
 }: ShareWizardProps) {
   const { t } = useI18n();
   const [step, setStep] = useState<Step>(1);
@@ -111,6 +125,12 @@ export default function ShareWizard({
   const [note, setNote] = useState("");
   const [showDiff, setShowDiff] = useState(false);
   const [sharedUrl, setSharedUrl] = useState<string | null>(null);
+  // Which GitHub flow ran (PR create-file URL vs upload page) + the
+  // generated PR body, surfaced on step 4 (the upload path can't
+  // pre-fill the body, so we offer a copy button).
+  const [shareMethod, setShareMethod] = useState<ShareMethod | null>(null);
+  const [prBody, setPrBody] = useState("");
+  const [copied, setCopied] = useState(false);
   // Phase 64C-2 — optional author credit, remembered across shares.
   const [authorName, setAuthorName] = useState(() => readContributorName());
   const [showName, setShowName] = useState(() => readContributorName() !== "");
@@ -164,11 +184,14 @@ export default function ShareWizard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
-  function buildShareUrl(): string {
-    let lessonToShip = primary;
+  /** Apply the variation/supplement choice (single-lesson only) and
+   *  the optional author credit, returning the lesson(s) to ship. */
+  function computeShippedLessons(author?: string): ContentLesson[] {
+    let shipped: ContentLesson[] = lessons;
     if (singleLesson && primary && dup?.match) {
+      let ship = primary;
       if (mode === "variation") {
-        lessonToShip = markAsVariation(primary, dup.match.candidateId, note);
+        ship = markAsVariation(primary, dup.match.candidateId, note);
       } else if (mode === "supplement") {
         const original = candidates.find(
           (c) => c.id === dup.match!.candidateId,
@@ -176,62 +199,101 @@ export default function ShareWizard({
         const supplement = original
           ? extractSupplement(primary, original, note)
           : null;
-        if (supplement) lessonToShip = supplement;
+        if (supplement) ship = supplement;
       }
+      shipped = [ship];
     }
-    // Phase 64C-2 — stamp the author credit onto the shipped lesson
-    // (serialised in the PR fast lane) when the user opted in.
-    const credited = showName && authorName.trim().length > 0;
-    if (credited && lessonToShip) {
-      lessonToShip = {
-        ...lessonToShip,
-        contributed_by: authorName.trim(),
-        contributed_at: new Date().toISOString(),
-      };
+    if (author) {
+      const stampedAt = new Date().toISOString();
+      shipped = shipped.map((l) => ({
+        ...l,
+        contributed_by: author,
+        contributed_at: stampedAt,
+      }));
     }
-    const meta: ExportSetMeta = {
-      set_id: entry.id,
-      title: entry.title,
-      language: entry.target_language,
-      level: entry.level,
-      description: entry.description,
-    };
-    const validationIssues =
-      validation && !validation.ok
-        ? validation.issues.map(validationMessage)
-        : undefined;
-    // PR fast lane: one lesson, no acknowledged findings, JSON fits.
-    let url: string | null = null;
-    if (singleLesson && lessonToShip && validation?.ok) {
-      url = communityPrUrl({
-        repo,
-        branch,
-        placement: placement.path,
-        lesson: lessonToShip,
-      });
-    }
-    if (!url) {
-      url = communityIssueUrl(repo, meta, lessons.length, {
-        sourceLanguage: placement.source,
-        targetLanguage: placement.target,
-        placement: placement.path,
-        exerciseCount,
-        cardCount,
-        validationIssues,
-        author: credited ? authorName.trim() : undefined,
-      });
-    }
-    return url;
+    return shipped;
   }
 
   function doShare(): void {
     // Remember the name for next time (or clear it if blanked).
     writeContributorName(authorName);
-    const url = buildShareUrl();
+    const author =
+      showName && authorName.trim().length > 0 ? authorName.trim() : undefined;
+    const shipped = computeShippedLessons(author);
+    const primaryShip = shipped[0] ?? null;
+
+    const filePath = `${placement.path}/lessons/${placement.filename}`;
+    const details: CommunityPrDetails = {
+      title: entry.title,
+      sourceLanguage: placement.source,
+      targetLanguage: placement.target,
+      level: placement.level,
+      filePath,
+      exerciseCount,
+      cardCount,
+      lessonCount: lessons.length,
+      author,
+      description: entry.description,
+      validationIssues:
+        validation && !validation.ok
+          ? validation.issues.map(validationMessage)
+          : undefined,
+    };
+    const prTitle = buildPrTitle(details);
+    const body = buildPrBody(details);
+    setPrBody(body);
+
+    // Fast lane: a single lesson whose JSON + pre-filled PR title/body
+    // fit in a GitHub create-file URL. GitHub opens the commit editor
+    // pre-filled and creates the PR (auto-forking) on "Propose".
+    let url: string | null = null;
+    if (singleLesson && primaryShip) {
+      url = communityPrUrl({
+        repo,
+        branch,
+        filePath,
+        lesson: primaryShip,
+        prTitle,
+        prBody: body,
+      });
+    }
+
+    let method: ShareMethod;
+    if (url) {
+      method = "pr";
+    } else {
+      // Upload path: download the lesson file(s) under their correct
+      // tree filenames, then open the repo's upload page so the user
+      // drag-drops them (the PR body can't pre-fill here — step 4
+      // offers a copy button).
+      method = "upload";
+      const download = downloadLesson ?? downloadLessonJson;
+      shipped.forEach((lesson, i) => {
+        const filename =
+          singleLesson && i === 0
+            ? placement.filename
+            : suggestFilename(placement.number + i, lesson.title);
+        download(lesson, filename);
+      });
+      url = communityUploadUrl(repo, branch, `${placement.path}/lessons`);
+    }
+
+    setShareMethod(method);
     (openUrl ?? defaultOpen)(url);
     setSharedUrl(url);
     onShared(url, entry.title);
     emitCelebration({ type: "confetti" });
+  }
+
+  async function copyPrBody(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(prBody);
+      setCopied(true);
+    } catch {
+      // Clipboard blocked (insecure context / permissions): leave the
+      // body visible in the textarea so the user can select + copy.
+      setCopied(false);
+    }
   }
 
   const stepLabel = t("content.wizard.step_label", "Step {n} of {total}")
@@ -348,7 +410,7 @@ export default function ShareWizard({
                 <p className="share-wizard-author-privacy">
                   {t(
                     "content.credit.privacy",
-                    "Your name will be shown in the lesson and the GitHub issue.",
+                    "Your name will be shown in the lesson and the pull request.",
                   )}
                 </p>
               )}
@@ -483,7 +545,7 @@ export default function ShareWizard({
                   className="content-share-failed"
                   data-testid="share-wizard-quality-issues"
                 >
-                  {t("content.validation.failed_share_anyway", "Quality check found issues. You can share anyway — reviewers will see the findings noted in the issue.")}
+                  {t("content.validation.failed_share_anyway", "Quality check found issues. You can share anyway — reviewers will see the findings noted in the pull request.")}
                 </p>
                 <ul className="content-share-issues">
                   {validation.issues.map((issue, i) => (
@@ -503,7 +565,7 @@ export default function ShareWizard({
           </section>
         )}
 
-        {/* Step 4 — Share + celebration */}
+        {/* Step 4 — Share as a pull request + celebration */}
         {step === 4 && (
           <section data-testid="share-wizard-step-4">
             {sharedUrl ? (
@@ -514,22 +576,49 @@ export default function ShareWizard({
                 <p className="share-wizard-thanks">
                   {t("content.wizard.thanks", "Thanks for sharing! Your contribution helps other learners.")}
                 </p>
-                <p>
-                  {t("content.wizard.submitted", "Your lesson was submitted as a suggestion. A maintainer will review it.")}
-                </p>
+                {shareMethod === "upload" ? (
+                  <>
+                    <p data-testid="share-wizard-upload-instructions">
+                      {t("content.wizard.upload_instructions", "Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click \"Propose changes\" — GitHub creates the pull request for you.")}
+                    </p>
+                    <div className="share-wizard-copy-body">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={copyPrBody}
+                        data-testid="share-wizard-copy-pr-body"
+                      >
+                        {copied
+                          ? t("content.wizard.copy_pr_body_done", "Copied!")
+                          : t("content.wizard.copy_pr_body", "Copy pull-request description")}
+                      </button>
+                      <textarea
+                        className="share-wizard-pr-body"
+                        data-testid="share-wizard-pr-body"
+                        readOnly
+                        rows={6}
+                        value={prBody}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <p data-testid="share-wizard-pr-instructions">
+                    {t("content.wizard.submitted", "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" — the content-repo CI validates it automatically.")}
+                  </p>
+                )}
                 <a
                   href={sharedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  data-testid="share-wizard-issue-link"
+                  data-testid="share-wizard-pr-link"
                 >
-                  {t("content.wizard.view_submission", "View your submission on GitHub")}
+                  {t("content.wizard.view_submission", "Open the pull request on GitHub")}
                 </a>
               </div>
             ) : (
               <div data-testid="share-wizard-confirm">
                 <p>
-                  {t("content.wizard.ready_to_share", "Everything's ready. Share your lesson with the community?")}
+                  {t("content.wizard.ready_to_share", "Everything's ready. Share your lesson as a pull request?")}
                 </p>
                 <button
                   type="button"

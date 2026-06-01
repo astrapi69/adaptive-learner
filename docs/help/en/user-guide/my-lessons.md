@@ -66,10 +66,15 @@ Each My Lesson can be shared, with no account and no server:
 - **Export** — download the lesson as a single `.json` file.
 - **Export as set** — download a content-set `.zip` (manifest +
   lessons).
-- **Share with Community** — opens a pre-filled GitHub issue on the
-  official content repository. Attach the exported file; a maintainer
-  reviews it and may add it to the official content so everyone can
-  download it.
+- **Share with Community** — opens a pre-filled **pull request** on
+  the official content repository. The lesson JSON lands at the
+  correct path in the content tree and the repository's validation
+  runs automatically; a maintainer reviews and merges it so everyone
+  can download it. Small lessons open straight in GitHub's create-file
+  editor (the PR title and description are pre-filled); larger lessons
+  download the file first and open GitHub's upload page so you drag it
+  in. No account token is needed — GitHub creates the fork and the
+  pull request for you.
 
 Exported files contain only the lesson content — no progress, no
 error history, nothing personal.

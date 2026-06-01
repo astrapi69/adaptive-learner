@@ -474,7 +474,7 @@ describe("Content — My Lessons (Phase 59C)", () => {
     // USER_ENTRY: no title_native + a trivial lesson -> rule check
     // flags issues. The wizard's quality step is informational; the
     // user can still reach the share step, and the findings land in
-    // the GitHub issue body.
+    // the pull-request body (the create-file ``description`` param).
     listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
     listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
     getLessonMock.mockResolvedValue({
@@ -503,7 +503,11 @@ describe("Content — My Lessons (Phase 59C)", () => {
     fireEvent.click(screen.getByTestId("share-wizard-share"));
     expect(openSpy).toHaveBeenCalled();
     const url = openSpy.mock.calls[0][0] as string;
-    const body = new URL(url).searchParams.get("body") ?? "";
+    // Small flagged lesson still uses the PR fast lane; the findings
+    // ride in the pre-filled PR body (``description`` param), not an
+    // issue body.
+    expect(url).toContain("/new/main?");
+    const body = new URL(url).searchParams.get("description") ?? "";
     expect(body).toContain("⚠ shared with warnings");
     expect(body).toContain("Quality-check findings");
     // Celebration shown after sharing.

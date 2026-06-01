@@ -182,10 +182,51 @@ describe("ShareWizard: share + celebration (step 4)", () => {
     );
     expect(emitCelebration).toHaveBeenCalledWith({ type: "confetti" });
     expect(screen.getByTestId("share-wizard-celebration")).toBeInTheDocument();
-    expect(screen.getByTestId("share-wizard-issue-link")).toHaveAttribute(
+    // Small single lesson -> PR fast lane: create-file URL + PR-link.
+    expect(openUrl.mock.calls[0][0]).toContain("/new/main?");
+    expect(
+      screen.getByTestId("share-wizard-pr-instructions"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("share-wizard-pr-link")).toHaveAttribute(
       "href",
       expect.stringContaining("github.com"),
     );
+  });
+
+  it("falls back to the upload page (download + drag-drop) for an oversized lesson", () => {
+    const downloadLesson = vi.fn();
+    // A body large enough to push the create-file URL past the cap.
+    const big = "x".repeat(20000);
+    const oversized: ContentLesson = {
+      id: "big",
+      title: "Big Lesson",
+      estimated_minutes: 10,
+      cards: [{ id: "big-c0", front: "f", back: "b", tags: [] }],
+      steps: [{ id: "big-s", type: "theory", body: big }],
+    };
+    const { openUrl } = renderWizard({
+      lessons: [oversized],
+      downloadLesson,
+    });
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+
+    // Upload page opened, file downloaded with the placement name.
+    expect(openUrl.mock.calls[0][0]).toContain("/upload/main/");
+    expect(downloadLesson).toHaveBeenCalledTimes(1);
+    expect(
+      screen.getByTestId("share-wizard-upload-instructions"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("share-wizard-copy-pr-body"),
+    ).toBeInTheDocument();
+    // The PR body is available to copy.
+    expect(
+      (screen.getByTestId("share-wizard-pr-body") as HTMLTextAreaElement)
+        .value,
+    ).toContain("New lesson");
   });
 });
 

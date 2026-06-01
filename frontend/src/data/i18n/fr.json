@@ -1685,11 +1685,14 @@
       "share_full": "Partager quand même la leçon complète",
       "variation_note_placeholder": "En quoi votre version diffère-t-elle ? (facultatif)",
       "show_differences": "Afficher les différences",
-      "ready_to_share": "Tout est prêt. Partager votre leçon avec la communauté ?",
+      "ready_to_share": "Tout est pret. Partager ta lecon sous forme de pull request ?",
       "share_button": "Partager",
       "thanks": "Merci d''avoir partagé ! Votre contribution aide d''autres apprenants.",
-      "submitted": "Votre leçon a été soumise en tant que suggestion. Un mainteneur l''examinera.",
-      "view_submission": "Voir votre soumission sur GitHub",
+      "submitted": "Une pull request a ete ouverte sur GitHub avec ta lecon pre-remplie. Verifie-la et clique sur « Create pull request » - la CI du depot de contenu la valide automatiquement.",
+      "view_submission": "Ouvrir la pull request sur GitHub",
+      "upload_instructions": "Le fichier de ta lecon a ete telecharge. Sur la page GitHub qui vient de s'ouvrir, glisse le fichier dans la zone d'envoi et clique sur « Propose changes » - GitHub cree la pull request pour toi.",
+      "copy_pr_body": "Copier la description de la pull request",
+      "copy_pr_body_done": "Copie !",
       "done": "Terminé",
       "back": "Retour",
       "next": "Continuer"
@@ -1714,7 +1717,7 @@
       "name_label": "Votre nom (facultatif)",
       "name_placeholder": "par ex. Maria S.",
       "show_name": "Afficher le nom dans la leçon",
-      "privacy": "Votre nom sera affiché dans la leçon et dans le ticket GitHub."
+      "privacy": "Ton nom sera affiche dans la lecon et dans la pull request."
     }
   },
   "milestone": {
