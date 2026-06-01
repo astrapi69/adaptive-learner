@@ -43,19 +43,16 @@ import {
 } from "../lib/content/content-tree";
 import { languageDisplayName } from "../lib/content/language-names";
 import {
-  treePlacement,
   validateSetForSharing,
   type ValidationIssue,
   type ValidationResult,
 } from "../lib/content/content-validator";
-import { findSimilarSets } from "../lib/content/duplicate-detection";
 import type { AiValidationResult } from "../lib/content/ai-content-validator";
+import ShareWizard from "../components/content/ShareWizard";
 import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
 import { readLearnerState } from "../lib/learnerState";
 import {
   buildContentSetZip,
-  communityIssueUrl,
-  communityPrUrl,
   contentSetFileName,
   downloadLessonJson,
   triggerDownload,
@@ -119,6 +116,11 @@ export default function ContentPage() {
   const [aiConsent, setAiConsent] = useState(false);
   const [aiRunning, setAiRunning] = useState(false);
   const [aiResult, setAiResult] = useState<AiValidationResult | null>(null);
+  // Phase 64C — filenames already in the matching published set, for the
+  // wizard's placement auto-numbering (empty => brand-new set).
+  const [shareExistingFilenames, setShareExistingFilenames] = useState<
+    string[]
+  >([]);
   // Keys of AI suggestions the user has auto-applied (so the button
   // flips to "applied" and isn't re-run).
   const [appliedFixes, setAppliedFixes] = useState<Set<string>>(new Set());
@@ -243,6 +245,38 @@ export default function ContentPage() {
     );
   };
 
+  // Phase 64C — published sets in the SAME language pair + level as
+  // ``entry`` (excluding user-generated drafts + the set itself). Used
+  // for the wizard's placement (auto-numbering) and duplicate scan.
+  const samePairLevelSets = (entry: ContentSetEntry): ContentSetEntry[] => {
+    const baseOf = (code: string) => (code || "").split("-")[0].toLowerCase();
+    return sets.filter(
+      (s) =>
+        s.source !== USER_GENERATED_SOURCE &&
+        s.id !== entry.id &&
+        baseOf(s.source_language) === baseOf(entry.source_language) &&
+        baseOf(s.target_language) === baseOf(entry.target_language) &&
+        (s.level || "").toLowerCase() === (entry.level || "").toLowerCase(),
+    );
+  };
+
+  // Load every lesson of the published sets that share the entry's pair
+  // + level — the candidate pool for the wizard's lesson-level
+  // duplicate scan. Best-effort: a set that fails to load is skipped.
+  const loadSimilarLessonsFor = async (
+    entry: ContentSetEntry,
+  ): Promise<ContentLesson[]> => {
+    const pool: ContentLesson[] = [];
+    for (const candidate of samePairLevelSets(entry)) {
+      try {
+        pool.push(...(await fetchSetLessons(candidate)));
+      } catch {
+        /* skip a set we cannot load; the scan stays advisory */
+      }
+    }
+    return pool;
+  };
+
   const handleExportJson = async (entry: ContentSetEntry) => {
     try {
       const lessons = await fetchSetLessons(entry);
@@ -287,6 +321,7 @@ export default function ContentPage() {
     setAiResult(null);
     setAiRunning(false);
     setAppliedFixes(new Set());
+    setShareExistingFilenames([]);
   };
 
   // Phase 60 C5b — auto-fix one AI suggestion: apply the correction
@@ -348,6 +383,22 @@ export default function ContentPage() {
     try {
       const lessons = await fetchSetLessons(entry);
       setShareLessons(lessons);
+      // Placement auto-numbering needs the filenames already in the
+      // matching published set (if one exists); best-effort.
+      const matches = samePairLevelSets(entry);
+      if (matches.length > 0) {
+        try {
+          const listing = await getStorage().contentLoader.listLessons(
+            matches[0].source,
+            matches[0].id,
+          );
+          setShareExistingFilenames(listing.lessons);
+        } catch {
+          setShareExistingFilenames([]);
+        }
+      } else {
+        setShareExistingFilenames([]);
+      }
       const result = validateSetForSharing(
         {
           title: entry.title,
@@ -397,70 +448,6 @@ export default function ContentPage() {
     } finally {
       setAiRunning(false);
     }
-  };
-
-  const handleShareContinue = () => {
-    if (!shareTarget) return;
-    const aiSummary = aiResult
-      ? `AI-validated: yes, quality_score: ${aiResult.quality_score.toFixed(2)}`
-      : undefined;
-    const placement = treePlacement({
-      title: shareTarget.title,
-      title_native: shareTarget.title_native,
-      target_language: shareTarget.target_language,
-      source_language: shareTarget.source_language,
-      level: shareTarget.level,
-    });
-    const cardCount = shareLessons.reduce((n, l) => n + l.cards.length, 0);
-    const exerciseCount = shareLessons.reduce(
-      (n, l) => n + l.steps.filter((s) => s.type === "exercise").length,
-      0,
-    );
-    // Rule-based check is informational: if it failed and the user
-    // chose to share anyway, surface the findings in the issue body
-    // so the maintainer sees what the author acknowledged.
-    const validationIssues =
-      shareResult && !shareResult.ok
-        ? shareResult.issues.map((issue) => validationMessage(issue))
-        : undefined;
-    // PR fast lane: single-lesson, no quality findings, JSON fits
-    // into the new-file URL. Opens the GitHub Web new-file editor
-    // pre-filled with the path + JSON; GitHub auto-forks + offers
-    // PR for non-collaborators. No auth required.
-    const canUsePrPath =
-      shareLessons.length === 1 &&
-      (!validationIssues || validationIssues.length === 0);
-    let url: string | null = null;
-    if (canUsePrPath) {
-      url = communityPrUrl({
-        repo: COMMUNITY_REPO,
-        branch: COMMUNITY_BRANCH,
-        placement: placement.path,
-        lesson: shareLessons[0],
-      });
-    }
-    // Fall back to the Issue path when the PR fast lane is not
-    // applicable (multi-lesson set, acknowledged findings, or the
-    // URL would be too long for the new-file editor). The Issue
-    // carries the validation findings + a ZIP attachment hint.
-    if (!url) {
-      url = communityIssueUrl(
-        COMMUNITY_REPO,
-        exportMeta(shareTarget),
-        shareTarget.lesson_count,
-        {
-          sourceLanguage: placement.source,
-          targetLanguage: placement.target,
-          placement: placement.path,
-          exerciseCount,
-          cardCount,
-          aiSummary,
-          validationIssues,
-        },
-      );
-    }
-    window.open(url, "_blank", "noopener,noreferrer");
-    closeShareModal();
   };
 
   // Localise a validation issue, interpolating its params into the
@@ -1026,120 +1013,21 @@ export default function ContentPage() {
       />
 
       {shareTarget && (
-        <div className="modal-overlay" data-testid="content-share-modal">
-          <div
-            className="modal-card"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="share-modal-title"
-          >
-            <h2 id="share-modal-title" className="modal-title">
-              {t("content.validation.title", "Quality check")}
-            </h2>
-            {shareChecking || !shareResult ? (
-              <p data-testid="content-share-checking">
-                {t("content.validation.checking", "Checking your lesson…")}
-              </p>
-            ) : shareResult.ok ? (
-              <p
-                className="content-share-passed"
-                data-testid="content-share-passed"
-              >
-                {t(
-                  "content.validation.passed",
-                  "Quality check passed. Ready to share with the community.",
-                )}
-              </p>
-            ) : (
-              <>
-                <p
-                  className="content-share-failed"
-                  data-testid="content-share-failed"
-                >
-                  {t(
-                    "content.validation.failed_share_anyway",
-                    "Quality check found issues. You can share anyway — reviewers will see the findings noted in the issue.",
-                  )}
-                </p>
-                <ul
-                  className="content-share-issues"
-                  data-testid="content-share-issues"
-                >
-                  {shareResult.issues.map((issue, i) => (
-                    <li key={`${issue.code}-${i}`}>{validationMessage(issue)}</li>
-                  ))}
-                </ul>
-              </>
-            )}
-
-            {/* Phase 61 — tree-placement preview + warnings + dup
-                detection (shown once the check has run). */}
-            {shareResult && shareTarget && (
-              <div
-                className="content-share-extra"
-                data-testid="content-share-placement"
-              >
-                <p className="content-share-placement-line">
-                  {t("content.placement.lands_under", "Your lesson lands under")}:{" "}
-                  <strong>
-                    {shareTarget.source_language.toUpperCase()} →{" "}
-                    {shareTarget.target_language.toUpperCase()} → {shareTarget.level}
-                  </strong>
-                </p>
-                <code className="content-share-placement-path">
-                  {
-                    treePlacement({
-                      title: shareTarget.title,
-                      title_native: shareTarget.title_native,
-                      target_language: shareTarget.target_language,
-                      source_language: shareTarget.source_language,
-                      level: shareTarget.level,
-                    }).path
-                  }
-                  /lessons/
-                </code>
-                {(() => {
-                  const dups = findSimilarSets(
-                    {
-                      id: shareTarget.id,
-                      title: shareTarget.title,
-                      source_language: shareTarget.source_language,
-                      target_language: shareTarget.target_language,
-                      level: shareTarget.level,
-                    },
-                    downloadedSets,
-                  );
-                  return dups.length > 0 ? (
-                    <p
-                      className="content-share-warning"
-                      data-testid="content-share-duplicate"
-                    >
-                      {t(
-                        "content.placement.duplicate",
-                        "A similar lesson already exists: {title}. Share anyway?",
-                      ).replace("{title}", dups[0].title)}
-                    </p>
-                  ) : null;
-                })()}
-                {shareResult.warnings.length > 0 && (
-                  <ul
-                    className="content-share-warnings"
-                    data-testid="content-share-warnings"
-                  >
-                    {shareResult.warnings.map((w, i) => (
-                      <li key={`${w.code}-${i}`}>{validationMessage(w)}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
-
-            {/* Phase 60 C5b — opt-in AI review. The rule-based gate
-                is informational (not blocking) so the AI section is
-                available even when the rule-based check failed —
-                the AI often gives more actionable feedback than the
-                generic "needs ≥5 exercises" rule. */}
-            {shareResult && hasKey && (
+        <ShareWizard
+          entry={shareTarget}
+          lessons={shareLessons}
+          validation={shareResult}
+          checking={shareChecking}
+          knownSets={downloadedSets}
+          existingFilenames={shareExistingFilenames}
+          loadSimilarLessons={() => loadSimilarLessonsFor(shareTarget)}
+          validationMessage={validationMessage}
+          repo={COMMUNITY_REPO}
+          branch={COMMUNITY_BRANCH}
+          onShared={() => {}}
+          onClose={closeShareModal}
+          aiSection={
+            shareResult && hasKey ? (
               <section
                 className="content-ai-validation"
                 data-testid="content-ai-validation"
@@ -1205,40 +1093,9 @@ export default function ContentPage() {
                   </div>
                 )}
               </section>
-            )}
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={closeShareModal}
-                data-testid="content-share-cancel"
-              >
-                {t("content.validation.cancel", "Close")}
-              </button>
-              {shareResult && (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleShareContinue}
-                  data-testid="content-share-continue"
-                >
-                  {shareResult.ok && shareLessons.length === 1
-                    ? t(
-                        "content.validation.open_pr",
-                        "Open PR draft on GitHub",
-                      )
-                    : shareResult.ok
-                      ? t("content.validation.continue", "Continue to GitHub")
-                      : t(
-                          "content.validation.continue_with_warnings",
-                          "Share anyway",
-                        )}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+            ) : null
+          }
+        />
       )}
 
       {deleteTarget && (

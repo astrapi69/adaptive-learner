@@ -470,12 +470,11 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(screen.getByTestId("import-lesson-modal")).toBeInTheDocument();
   });
 
-  it("Share lists rule-check issues but still offers a share-anyway path", async () => {
-    // USER_ENTRY has no title_native and a single trivial lesson →
-    // rule-based validation flags issues. Policy (post-CSS-fix
-    // follow-up): the rule check is informational, the user can
-    // share anyway, and the issues land in the GitHub-issue body so
-    // the maintainer sees what the author acknowledged.
+  it("walks the wizard and shares a flagged lesson anyway", async () => {
+    // USER_ENTRY: no title_native + a trivial lesson -> rule check
+    // flags issues. The wizard's quality step is informational; the
+    // user can still reach the share step, and the findings land in
+    // the GitHub issue body.
     listSetsMock.mockResolvedValue({ sets: [USER_ENTRY], sources: [] });
     listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
     getLessonMock.mockResolvedValue({
@@ -492,28 +491,27 @@ describe("Content — My Lessons (Phase 59C)", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
     });
-    await screen.findByTestId("content-share-modal");
-    await waitFor(() =>
-      expect(screen.getByTestId("content-share-issues")).toBeInTheDocument(),
-    );
-    // The failure banner explains that share-anyway is allowed.
-    expect(screen.getByTestId("content-share-failed")).toBeInTheDocument();
-    // Continue button is present, labelled "Share anyway".
-    const continueBtn = screen.getByTestId("content-share-continue");
-    expect(continueBtn).toHaveTextContent(/anyway|trotzdem/i);
-    fireEvent.click(continueBtn);
+    await screen.findByTestId("share-wizard-step-1");
+    // Step 1 -> 2: no published set in this pair -> unique.
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    await screen.findByTestId("share-wizard-unique");
+    // Step 2 -> 3: quality issues, but share-anyway is allowed.
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    expect(screen.getByTestId("share-wizard-quality-issues")).toBeInTheDocument();
+    // Step 3 -> 4 -> share.
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
     expect(openSpy).toHaveBeenCalled();
     const url = openSpy.mock.calls[0][0] as string;
     const body = new URL(url).searchParams.get("body") ?? "";
     expect(body).toContain("⚠ shared with warnings");
     expect(body).toContain("Quality-check findings");
+    // Celebration shown after sharing.
+    expect(screen.getByTestId("share-wizard-celebration")).toBeInTheDocument();
     vi.unstubAllGlobals();
   });
 
-  it("Share opens the GitHub Web new-file PR editor for a clean single-lesson set", async () => {
-    // PR fast lane: single-lesson, passed validation, fits the
-    // length cap → the new-file editor opens with filename + JSON
-    // pre-filled, GitHub auto-forks for non-collaborators.
+  it("auto-computes placement and opens the PR fast lane for a clean lesson", async () => {
     const valid = { ...USER_ENTRY, title_native: "Español A1" };
     listSetsMock.mockResolvedValue({ sets: [valid], sources: [] });
     listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
@@ -525,34 +523,33 @@ describe("Content — My Lessons (Phase 59C)", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
     });
-    await screen.findByTestId("content-share-passed");
-    // Phase 61 — the tree-placement preview is shown.
-    expect(screen.getByTestId("content-share-placement")).toHaveTextContent(
+    await screen.findByTestId("share-wizard-step-1");
+    // Step 1 shows the auto-computed placement.
+    expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
       "sets/de/es-beginner",
     );
-    // Button label reflects the PR-fast-lane path.
-    expect(screen.getByTestId("content-share-continue")).toHaveTextContent(
-      /pr|draft/i,
-    );
-    fireEvent.click(screen.getByTestId("content-share-continue"));
-    expect(openSpy).toHaveBeenCalled();
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    await screen.findByTestId("share-wizard-unique");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    expect(screen.getByTestId("share-wizard-quality-ok")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
     const url = openSpy.mock.calls[0][0] as string;
     expect(url).toMatch(
       /github\.com\/astrapi69\/adaptive-learner-content\/new\/main\?/,
     );
     const qs = new URL(url).searchParams;
     expect(qs.get("filename")).toContain("sets/de/es-beginner/lessons/");
-    // The pre-filled JSON contains the lesson content.
     const value = qs.get("value") ?? "";
     expect(value).toContain('"title"');
     expect(value).toContain('"cards"');
     vi.unstubAllGlobals();
   });
 
-  it("warns when a similar lesson already exists for the same pair + level", async () => {
+  it("detects a near-duplicate lesson during the wizard scan", async () => {
     const valid = { ...USER_ENTRY, title_native: "Español A1" };
-    // A downloaded set with the same de->es / beginner pair and a
-    // near-identical title triggers the duplicate warning.
+    // A published set in the same de->es / beginner pair whose lesson
+    // shares the same cards triggers the lesson-level duplicate scan.
     const existing = {
       ...SAMPLE_ENTRY,
       source: "astrapi69/adaptive-learner-content",
@@ -565,19 +562,33 @@ describe("Content — My Lessons (Phase 59C)", () => {
     };
     listSetsMock.mockResolvedValue({ sets: [valid, existing], sources: [] });
     listLessonsMock.mockResolvedValue({ lessons: ["01.json"] });
-    getLessonMock.mockResolvedValue(shareableLesson());
+    // The candidate lesson has the SAME cards but a DIFFERENT id (as
+    // an independently-authored lesson would) so the lesson-level scan
+    // sees a near-duplicate rather than self-matching it away.
+    getLessonMock.mockImplementation((_source: string, setId: string) =>
+      Promise.resolve(
+        setId === "es-beginner-from-de"
+          ? { ...shareableLesson(), id: "existing-lesson" }
+          : shareableLesson(),
+      ),
+    );
     renderPage();
     await screen.findByTestId("content-page");
     await act(async () => {
       fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
     });
-    await screen.findByTestId("content-share-passed");
-    expect(screen.getByTestId("content-share-duplicate")).toHaveTextContent(
-      "My Spanish Lesson",
-    );
+    await screen.findByTestId("share-wizard-step-1");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    expect(
+      await screen.findByTestId("share-wizard-duplicate"),
+    ).toBeInTheDocument();
+    // Near-duplicate (identical cards) offers the supplement option.
+    expect(
+      screen.getByTestId("share-wizard-mode-supplement"),
+    ).toBeInTheDocument();
   });
 
-  it("offers opt-in AI validation when a key is present and surfaces the result", async () => {
+  it("offers opt-in AI validation in the quality step", async () => {
     apiKeyStatusMock.mockReturnValue({
       ready: true,
       hasKey: true,
@@ -604,11 +615,13 @@ describe("Content — My Lessons (Phase 59C)", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
     });
-    await screen.findByTestId("content-share-passed");
-    // The opt-in AI section is offered (key present).
+    await screen.findByTestId("share-wizard-step-1");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    await screen.findByTestId("share-wizard-unique");
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    // AI section lives in the quality step (key present).
     expect(screen.getByTestId("content-ai-validation")).toBeInTheDocument();
     const runBtn = screen.getByTestId("content-ai-run");
-    // Disabled until the user consents.
     expect(runBtn).toBeDisabled();
     fireEvent.click(screen.getByTestId("content-ai-consent"));
     expect(runBtn).not.toBeDisabled();
