@@ -10,7 +10,7 @@ middleware have been removed. What remains:
 - PluginForge bootstrap (manager + hookspecs registration +
   discover-and-mount during lifespan).
 - Filesystem isolation (data-dir migration + production marker).
-- Global exception handler + CORS.
+- Global exception handler + CORS + security headers (CSP et al.).
 - Minimal endpoints: ``/api/health``, ``/api/i18n/{lang}``,
   ``/api/plugins/manifests``, ``/api/plugins/health``,
   ``/api/plugins/errors``.
@@ -490,6 +490,44 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
+
+# Security headers (defense-in-depth; Phase 61 audit P3 "no CSP header
+# anywhere"). The backend is API-only -- it serves JSON, never an SPA --
+# so a strict, deny-everything CSP is safe for normal responses (CSP on
+# a JSON response does not constrain the separate page that fetched it;
+# it only hardens the rare case of a response being opened directly in a
+# browser). The DEBUG-only Swagger / ReDoc UI is the one exception: it is
+# real HTML that loads scripts + styles from a CDN and inline, so those
+# paths get a relaxed policy instead of the strict default.
+_DOCS_PATHS = frozenset({"/api/docs", "/api/redoc", "/openapi.json"})
+_STRICT_CSP = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
+_DOCS_CSP = (
+    "default-src 'self'; "
+    "script-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; "
+    "style-src 'self' https://cdn.jsdelivr.net 'unsafe-inline'; "
+    "img-src 'self' https://fastapi.tiangolo.com data:; "
+    "font-src 'self' https://cdn.jsdelivr.net; "
+    "frame-ancestors 'none'"
+)
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    """Attach defense-in-depth security headers to every response.
+
+    Uses ``setdefault`` so a route that intentionally sets one of these
+    (e.g. a future framable embed) is never clobbered. The CSP is the
+    strict API policy except on the Swagger / ReDoc / OpenAPI paths,
+    which need a CDN-aware policy to render.
+    """
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    csp = _DOCS_CSP if request.url.path in _DOCS_PATHS else _STRICT_CSP
+    response.headers.setdefault("Content-Security-Policy", csp)
+    return response
+
 
 # Phase 1C core routers. Mounted directly here (not via the plugin
 # manager) — these are the foundation every plugin builds on. New

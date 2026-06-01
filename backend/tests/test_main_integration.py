@@ -56,6 +56,41 @@ def test_infrastructure_endpoints_still_mounted(client: TestClient):
     assert client.get("/api/plugins/errors").status_code == 200
 
 
+def test_security_headers_on_api_response(client: TestClient):
+    """Phase 61 audit P3: every response carries defense-in-depth
+    security headers, and a normal API (JSON) response gets the strict
+    deny-everything CSP."""
+    resp = client.get("/api/health")
+    assert resp.status_code == 200
+    assert resp.headers["X-Content-Type-Options"] == "nosniff"
+    assert resp.headers["X-Frame-Options"] == "DENY"
+    assert resp.headers["Referrer-Policy"] == "no-referrer"
+    csp = resp.headers["Content-Security-Policy"]
+    assert "default-src 'none'" in csp
+    assert "frame-ancestors 'none'" in csp
+
+
+def test_security_headers_present_on_error_response(client: TestClient):
+    """The middleware wraps the global exception handler too: a 404
+    still carries the headers (a bare error response is the easiest
+    place to forget them)."""
+    resp = client.get("/api/plugins/inspect/nonexistent-plugin")
+    assert resp.status_code == 404
+    assert resp.headers["X-Content-Type-Options"] == "nosniff"
+    assert "default-src 'none'" in resp.headers["Content-Security-Policy"]
+
+
+def test_openapi_schema_gets_relaxed_csp(client: TestClient):
+    """The OpenAPI / Swagger paths serve real HTML+JS from a CDN, so
+    they must NOT get the strict 'none' CSP (which would blank Swagger
+    UI). They get the CDN-aware policy instead."""
+    resp = client.get("/openapi.json")
+    assert resp.status_code == 200
+    csp = resp.headers["Content-Security-Policy"]
+    assert "cdn.jsdelivr.net" in csp
+    assert "default-src 'none'" not in csp
+
+
 def test_plugin_inspect_returns_lifecycle_metadata(client: TestClient):
     """PLUGINFORGE-LIFECYCLE-UI-01: ``/api/plugins/inspect/{name}``
     surfaces the v0.9.0 lifecycle visibility (activated_at, source,
