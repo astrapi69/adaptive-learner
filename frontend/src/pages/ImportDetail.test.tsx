@@ -215,13 +215,21 @@ describe("ImportDetail page", () => {
 
     it("cancel aborts the analysis and returns to the pre-analysis state", async () => {
         const conv = await setupWithKey();
-        // Reject with an AbortError as soon as the signal fires.
+        // Reject with an AbortError when the signal fires. Mirror real
+        // fetch: if the signal is ALREADY aborted by the time the call
+        // is made (the cancel click can land before runAnalysis reaches
+        // aiComplete), reject immediately — an "abort" listener added
+        // after the fact would never fire and the promise would hang.
         mockAiComplete.mockImplementation(
             (opts) =>
                 new Promise<string>((_resolve, reject) => {
-                    opts.signal?.addEventListener("abort", () => {
+                    const fail = () =>
                         reject(new DOMException("aborted", "AbortError"));
-                    });
+                    if (opts.signal?.aborted) {
+                        fail();
+                        return;
+                    }
+                    opts.signal?.addEventListener("abort", fail);
                 }),
         );
         renderDetail(conv.id);
@@ -238,10 +246,16 @@ describe("ImportDetail page", () => {
         );
         fireEvent.click(cancel);
         // Loading panel disappears, no results, no inline error,
-        // button is enabled again.
-        await waitFor(() => {
-            expect(screen.queryByTestId("analysis-loading")).toBeNull();
-        });
+        // button is enabled again. A generous timeout keeps this
+        // deterministic under heavy parallel-suite CPU load (the
+        // abort -> reject -> re-render chain is fast but can exceed
+        // the 1s default when the machine is saturated).
+        await waitFor(
+            () => {
+                expect(screen.queryByTestId("analysis-loading")).toBeNull();
+            },
+            {timeout: 5000},
+        );
         expect(screen.queryByTestId("analysis-results")).toBeNull();
         expect(screen.queryByTestId("analysis-error-inline")).toBeNull();
         expect(
