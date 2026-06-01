@@ -10,7 +10,7 @@
  */
 
 import { api } from "../api/client";
-import type { IStorageService } from "./types";
+import type { ApiKeyTestResult, IStorageService } from "./types";
 
 export const apiStorage: IStorageService = {
   mode: "api",
@@ -59,6 +59,13 @@ export const apiStorage: IStorageService = {
     getApp: () => api.settings.getApp(),
     getAvailableModels: (userId, provider) =>
       api.settings.getAvailableModels(userId, provider),
+    testApiKey: async (userId, body) => {
+      const result = await api.settings.testApiKey(userId, body);
+      return {
+        success: result.success,
+        kind: result.kind as ApiKeyTestResult["kind"],
+      };
+    },
   },
 
   assessment: {

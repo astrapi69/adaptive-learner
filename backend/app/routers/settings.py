@@ -27,11 +27,13 @@ from app.schemas import (
     AIProvider,
     ApiKeySetBody,
     ApiKeySource,
+    ApiKeyTestBody,
+    ApiKeyTestOut,
     AvailableModelOut,
     SettingsPatchBody,
     UserSettingsOut,
 )
-from app.services import model_discovery
+from app.services import api_key_test, model_discovery
 from app.services import settings as settings_service
 
 router = APIRouter(prefix="/settings", tags=["settings"])
@@ -91,6 +93,22 @@ def delete_api_key(
     db: Session = Depends(get_db),
 ) -> UserSettingsOut:
     return _build_settings_out(db, settings_service.delete_api_key(db, user_id, provider))
+
+
+@router.post("/{user_id}/test-api-key", response_model=ApiKeyTestOut)
+def test_api_key(
+    user_id: str,
+    payload: ApiKeyTestBody,
+    db: Session = Depends(get_db),
+) -> ApiKeyTestOut:
+    # Test the caller-supplied key when given (the pre-save check),
+    # otherwise resolve the user's configured key (env > secrets.yaml
+    # > DB) and test that. Never saves anything.
+    key = payload.key
+    if not key:
+        key, _source = settings_service.resolve_api_key(db, user_id, payload.provider)
+    result = api_key_test.test_api_key(payload.provider, key)
+    return ApiKeyTestOut(success=result.success, kind=result.kind)
 
 
 @router.get(

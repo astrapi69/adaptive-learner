@@ -36,6 +36,7 @@ import {
   type AIProvider,
 } from "../lib/constants";
 import { API_KEY_PREFIX, isValidApiKeyFormat } from "../lib/apiKeyFormat";
+import type { ApiKeyTestResult } from "../storage/types";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
 import { readLearnerState, setLanguage } from "../lib/learnerState";
 import {
@@ -166,6 +167,11 @@ export default function Settings() {
     gemini: "",
   });
   const [busy, setBusy] = useState<string | null>(null);
+  // C2 — last live-test outcome per provider (null = not tested this
+  // session). Drives the inline result line under the key row.
+  const [testResults, setTestResults] = useState<
+    Record<AIProvider, ApiKeyTestResult | null>
+  >({ anthropic: null, openai: null, gemini: null });
 
   // Phase 10F: storage-mode toggle. ``currentMode`` reflects
   // what's active *right now* (snapshot at mount). ``pendingMode``
@@ -280,6 +286,31 @@ export default function Settings() {
     } catch (err) {
       const detail = err instanceof ApiError ? err.detail : t("common.error");
       notify.error(detail);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  // C2 — live-test a key. Tests the in-progress draft when present,
+  // otherwise the currently-stored key. Does not save.
+  const handleTestKey = async (provider: AIProvider) => {
+    if (!settings || busy) return;
+    const draft = keyDrafts[provider].trim();
+    setBusy(`test-${provider}`);
+    setTestResults((prev) => ({ ...prev, [provider]: null }));
+    try {
+      const result = await getStorage().settings.testApiKey(settings.user_id, {
+        provider,
+        key: draft.length > 0 ? draft : undefined,
+      });
+      setTestResults((prev) => ({ ...prev, [provider]: result }));
+    } catch {
+      // A thrown call (rather than a classified result) is itself a
+      // connectivity problem — surface it as the network outcome.
+      setTestResults((prev) => ({
+        ...prev,
+        [provider]: { success: false, kind: "network" },
+      }));
     } finally {
       setBusy(null);
     }
@@ -747,6 +778,22 @@ export default function Settings() {
                 >
                   {t("settings.api_key_set", "Save key")}
                 </button>
+                {(has || formatState === "valid") && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-testid={`api-key-test-${provider}`}
+                    onClick={() => handleTestKey(provider)}
+                    disabled={busy === `test-${provider}`}
+                  >
+                    {busy === `test-${provider}` && (
+                      <span className="btn-spinner" aria-hidden="true" />
+                    )}
+                    {busy === `test-${provider}`
+                      ? t("settings.api_key.testing", "Testing…")
+                      : t("settings.api_key.test", "Test")}
+                  </button>
+                )}
                 {has && !externallyManaged && (
                   <button
                     type="button"
@@ -759,6 +806,29 @@ export default function Settings() {
                   </button>
                 )}
               </div>
+              {testResults[provider] && (
+                <p
+                  className={`api-key-test-result ${
+                    testResults[provider]!.kind === "ok"
+                      ? "is-ok"
+                      : testResults[provider]!.kind === "invalid"
+                        ? "is-invalid"
+                        : "is-warning"
+                  }`}
+                  data-testid={`api-key-test-result-${provider}`}
+                  role="status"
+                >
+                  {testResults[provider]!.kind === "ok"
+                    ? `✓ ${t("settings.api_key.test_success", "Key works!")}`
+                    : testResults[provider]!.kind === "invalid"
+                      ? `✗ ${t("settings.api_key.test_invalid", "Key invalid or expired.")}`
+                      : testResults[provider]!.kind === "rate_limit"
+                        ? `⚠ ${t("settings.api_key.test_rate_limit", "Rate limit hit. Try later.")}`
+                        : testResults[provider]!.kind === "no_key"
+                          ? `⚠ ${t("settings.api_key.test_no_key", "No key to test.")}`
+                          : `⚠ ${t("settings.api_key.test_network", "Connection failed. Check your internet connection.")}`}
+                </p>
+              )}
               {formatState === "invalid" && (
                 <p
                   className="api-key-format-error"

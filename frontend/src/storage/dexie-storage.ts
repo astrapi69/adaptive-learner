@@ -177,7 +177,12 @@ import type {
   User,
   UserSettings,
 } from "../types/domain";
-import type { AvailableModel, IStorageService } from "./types";
+import type {
+  ApiKeyTestResult,
+  AvailableModel,
+  IStorageService,
+} from "./types";
+import { aiComplete, resolveModel } from "./ai-providers";
 
 // ---- Row <-> wire mappers --------------------------------------------
 
@@ -678,6 +683,47 @@ export const dexieStorage: IStorageService = {
         context_window: m.context_window,
         description: m.description,
       }));
+    },
+    async testApiKey(
+      userId: string,
+      body: { provider: AIProvider; key?: string },
+    ): Promise<ApiKeyTestResult> {
+      const { provider } = body;
+      let key = body.key;
+      if (!key) {
+        const db = getDb();
+        const user = await requireRow(db.users, userId, "User");
+        const row = await ensureSettings(db, userId, user.language);
+        const field = `api_key_${provider}` as const;
+        const stored = (row as unknown as Record<string, unknown>)[field];
+        key = typeof stored === "string" ? stored : undefined;
+      }
+      if (!key || key.trim().length === 0) {
+        return { success: false, kind: "no_key" };
+      }
+      try {
+        await aiComplete({
+          provider,
+          model: resolveModel(provider, null),
+          apiKey: key,
+          messages: [{ role: "user", content: "Hi" }],
+          maxTokens: 1,
+        });
+        return { success: true, kind: "ok" };
+      } catch (err) {
+        if (err instanceof ApiError) {
+          if (err.status === 401 || err.status === 403) {
+            return { success: false, kind: "invalid" };
+          }
+          if (err.status === 429) {
+            return { success: false, kind: "rate_limit" };
+          }
+          return { success: false, kind: "error" };
+        }
+        // A thrown fetch (no ApiError) means the request never
+        // reached the provider — treat as a connectivity failure.
+        return { success: false, kind: "network" };
+      }
     },
   },
 

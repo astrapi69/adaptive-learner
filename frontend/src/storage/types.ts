@@ -124,12 +124,38 @@ export interface AvailableModel {
   description: string | null;
 }
 
+/** Outcome of a live API-key test (Phase 65). ``kind`` is a stable
+ *  machine code the UI maps to a localized message. */
+export type ApiKeyTestKind =
+  | "ok"
+  | "invalid"
+  | "rate_limit"
+  | "network"
+  | "error"
+  | "no_key";
+
+export interface ApiKeyTestResult {
+  success: boolean;
+  kind: ApiKeyTestKind;
+}
+
 export interface ISettingsNamespace {
   get(userId: string): Promise<UserSettings>;
   update(userId: string, body: SettingsPatchBody): Promise<UserSettings>;
   setApiKey(userId: string, body: ApiKeySetBody): Promise<UserSettings>;
   deleteApiKey(userId: string, provider: AIProvider): Promise<UserSettings>;
   getApp(): Promise<Record<string, unknown>>;
+  /**
+   * Phase 65 — live API-key test. Fires a minimal provider call and
+   * classifies the result. When ``key`` is given, tests THAT key
+   * (pre-save); otherwise tests the currently-stored key. Never
+   * saves. Both modes: ApiStorage hits the backend endpoint,
+   * DexieStorage calls the provider browser-direct.
+   */
+  testApiKey(
+    userId: string,
+    body: { provider: AIProvider; key?: string },
+  ): Promise<ApiKeyTestResult>;
   /**
    * v1.11.0 / Phase 24 — provider model discovery. Returns
    * the chat-capable models the user has access to from the
