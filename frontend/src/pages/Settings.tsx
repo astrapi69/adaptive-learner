@@ -10,6 +10,7 @@ import ExportSection from "../components/ExportSection";
 import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import DirectionStrategyControl from "../components/DirectionStrategyControl";
+import PausedLessonsRetentionControl from "../components/PausedLessonsRetentionControl";
 import LearningRepoSettingsSection from "../components/LearningRepoSettingsSection";
 import MissionSettingsControl from "../components/MissionSettingsControl";
 import SourceLanguagesControl from "../components/SourceLanguagesControl";
@@ -820,6 +821,7 @@ export default function Settings() {
         <MissionSettingsControl />
         <SourceLanguagesControl />
         <DirectionStrategyControl />
+        <PausedLessonsRetentionControl />
         <VoiceSettingsSection />
         <section className="settings-section">
           <h2 className="settings-section-title">

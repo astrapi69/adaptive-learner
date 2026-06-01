@@ -7,6 +7,11 @@
  * first (up to 5). Navigating to a paused lesson triggers
  * the Phase 63C resume-or-start-over prompt automatically.
  *
+ * Phase 63F: on each load, abandoned lessons that are older
+ * than the retention preference AND excess lessons beyond
+ * ``MAX_PAUSED`` (oldest first) are automatically abandoned
+ * so stale entries don't pile up indefinitely.
+ *
  * Hidden entirely when there are no paused lessons (common
  * case for most users most of the time).
  *
@@ -19,6 +24,10 @@ import {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 
 import {useI18n} from "../../hooks/useI18n";
+import {
+    MAX_PAUSED,
+    readRetentionDays,
+} from "../../lib/learning/pausedRetentionPref";
 import {getStorage} from "../../storage";
 import type {LessonProgress} from "../../storage/types";
 
@@ -70,14 +79,57 @@ export default function PausedLessonsCard({
             try {
                 const all = await getStorage().lessonProgress.list(userId);
                 if (cancelled) return;
-                const filtered = all
+
+                // Phase 63F — auto-abandon stale / excess paused
+                // lessons. Fire-and-forget; failures don't block
+                // the display of the surviving entries.
+                const retentionDays = readRetentionDays();
+                const allPaused = all
                     .filter((p) => p.status === "paused")
-                    .sort((a, b) => {
-                        // Most recently paused first; null → end.
-                        const at = (p: LessonProgress) =>
-                            p.paused_at ?? "";
-                        return at(b) > at(a) ? 1 : -1;
-                    })
+                    .sort((a, b) =>
+                        (a.paused_at ?? "") < (b.paused_at ?? "") ? -1 : 1,
+                    );
+                const cutoffMs =
+                    retentionDays > 0
+                        ? Date.now() - retentionDays * 86_400_000
+                        : null;
+                const toAbandon = new Set<string>();
+                // Oldest excess entries first.
+                allPaused
+                    .slice(0, Math.max(0, allPaused.length - MAX_PAUSED))
+                    .forEach((p) => toAbandon.add(p.id));
+                // Entries older than the retention cutoff.
+                if (cutoffMs !== null) {
+                    allPaused.forEach((p) => {
+                        if (
+                            p.paused_at &&
+                            new Date(p.paused_at).getTime() < cutoffMs
+                        ) {
+                            toAbandon.add(p.id);
+                        }
+                    });
+                }
+                if (toAbandon.size > 0) {
+                    const storage = getStorage();
+                    void Promise.allSettled(
+                        allPaused
+                            .filter((p) => toAbandon.has(p.id))
+                            .map((p) =>
+                                storage.lessonProgress.upsert(userId, {
+                                    source: p.source,
+                                    set_id: p.set_id,
+                                    lesson_filename: p.lesson_filename,
+                                    mark_abandoned: true,
+                                }),
+                            ),
+                    );
+                }
+
+                const filtered = allPaused
+                    .filter((p) => !toAbandon.has(p.id))
+                    .sort((a, b) =>
+                        (a.paused_at ?? "") > (b.paused_at ?? "") ? -1 : 1,
+                    )
                     .slice(0, MAX_SHOWN);
                 setPaused(filtered);
             } catch {
