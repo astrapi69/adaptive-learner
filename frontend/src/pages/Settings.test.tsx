@@ -24,6 +24,10 @@ const apiGet = vi.fn();
 const apiUpdate = vi.fn();
 const apiSetKey = vi.fn();
 const apiDeleteKey = vi.fn();
+const apiTestKey = vi.fn();
+const apiBackupKey = vi.fn();
+const apiGetBackup = vi.fn();
+const apiRestoreBackup = vi.fn();
 vi.mock("../api/client", async () => {
   const actual =
     await vi.importActual<typeof import("../api/client")>("../api/client");
@@ -37,6 +41,10 @@ vi.mock("../api/client", async () => {
         update: (...args: unknown[]) => apiUpdate(...args),
         setApiKey: (...args: unknown[]) => apiSetKey(...args),
         deleteApiKey: (...args: unknown[]) => apiDeleteKey(...args),
+        testApiKey: (...args: unknown[]) => apiTestKey(...args),
+        backupApiKey: (...args: unknown[]) => apiBackupKey(...args),
+        getApiKeyBackup: (...args: unknown[]) => apiGetBackup(...args),
+        restoreApiKeyBackup: (...args: unknown[]) => apiRestoreBackup(...args),
       },
     },
   };
@@ -71,6 +79,10 @@ const BASE: UserSettings = {
   updated_at: "2026-05-18T00:00:00Z",
 };
 
+// A format-valid Anthropic key (sk-ant- prefix, >= 90 chars) so the
+// C1 format gate lets Save enable.
+const VALID_ANTHROPIC_KEY = "sk-ant-" + "a".repeat(95);
+
 function renderSettings(initialEntry = "/settings") {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
@@ -86,6 +98,16 @@ describe("Settings page", () => {
     apiUpdate.mockReset();
     apiSetKey.mockReset();
     apiDeleteKey.mockReset();
+    apiTestKey.mockReset();
+    apiBackupKey.mockReset();
+    apiGetBackup.mockReset();
+    apiRestoreBackup.mockReset();
+    // C4 defaults: a key tests OK and a backup roundtrips. Tests that
+    // exercise the failure path override apiTestKey per-test.
+    apiTestKey.mockResolvedValue({ success: true, kind: "ok" });
+    apiBackupKey.mockResolvedValue(BASE);
+    apiGetBackup.mockResolvedValue({ has: false, tested_at: null });
+    apiRestoreBackup.mockResolvedValue(BASE);
     toastSuccess.mockReset();
     toastError.mockReset();
     localStorage.clear();
@@ -242,18 +264,28 @@ describe("Settings page", () => {
     });
   });
 
-  it("Save key is disabled until the draft is non-empty", async () => {
+  it("Save key is disabled until the draft is a valid-format key", async () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
     const save = screen.getByTestId(
       "api-key-save-anthropic",
     ) as HTMLButtonElement;
+    const input = screen.getByTestId("api-key-input-anthropic");
+    // Empty -> disabled.
     expect(save.disabled).toBe(true);
-    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
-      target: { value: "sk-xxx" },
-    });
+    // Wrong format -> still disabled + a format error is shown.
+    fireEvent.change(input, { target: { value: "sk-xxx" } });
+    expect(save.disabled).toBe(true);
+    expect(
+      screen.getByTestId("api-key-format-error-anthropic"),
+    ).toBeInTheDocument();
+    // Valid format -> enabled + checkmark.
+    fireEvent.change(input, { target: { value: VALID_ANTHROPIC_KEY } });
     expect(save.disabled).toBe(false);
+    expect(
+      screen.getByTestId("api-key-format-ok-anthropic"),
+    ).toBeInTheDocument();
   });
 
   it("Save key posts the encrypted-write body and clears the draft", async () => {
@@ -262,7 +294,7 @@ describe("Settings page", () => {
     renderSettings();
     await screen.findByTestId("settings");
     fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
-      target: { value: "sk-xxx" },
+      target: { value: VALID_ANTHROPIC_KEY },
     });
     await act(async () => {
       fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
@@ -270,7 +302,7 @@ describe("Settings page", () => {
     await waitFor(() => {
       expect(apiSetKey).toHaveBeenCalledWith("u-1", {
         provider: "anthropic",
-        key: "sk-xxx",
+        key: VALID_ANTHROPIC_KEY,
       });
     });
     // After success the status flips to "set" and a Delete
@@ -606,7 +638,7 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     expect(screen.getByTestId("api-key-input-anthropic")).not.toBeDisabled();
   });
 
-  it("renders 'Key from: secrets.yaml' badge + disables Save when externally managed", async () => {
+  it("renders 'Key from: secrets.yaml' badge + keeps the field EDITABLE (app writes the file)", async () => {
     apiGet.mockResolvedValue({
       ...BASE,
       has_anthropic_key: false,
@@ -617,11 +649,34 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(
       /secrets\.yaml/,
     );
-    expect(screen.getByTestId("api-key-external-anthropic")).toHaveTextContent(
+    // Informational note (not the read-only "externally managed" env hint).
+    expect(
+      screen.queryByTestId("api-key-external-anthropic"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByTestId("api-key-info-anthropic")).toHaveTextContent(
       /secrets\.yaml/,
     );
-    expect(screen.getByTestId("api-key-save-anthropic")).toBeDisabled();
-    expect(screen.getByTestId("api-key-input-anthropic")).toBeDisabled();
+    // Field stays editable so the user can overwrite the stored key.
+    expect(screen.getByTestId("api-key-input-anthropic")).not.toBeDisabled();
+    // Save enables once the draft is non-empty.
+    const input = screen.getByTestId(
+      "api-key-input-anthropic",
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: VALID_ANTHROPIC_KEY } });
+    expect(screen.getByTestId("api-key-save-anthropic")).not.toBeDisabled();
+  });
+
+  it("shows the Remove button for a secrets.yaml key (editable source)", async () => {
+    apiGet.mockResolvedValue({
+      ...BASE,
+      has_anthropic_key: true,
+      key_source_anthropic: "secrets_yaml",
+    });
+    renderSettings();
+    await screen.findByTestId("settings");
+    expect(
+      screen.getByTestId("api-key-delete-anthropic"),
+    ).toBeInTheDocument();
   });
 
   it("renders 'Key from: environment' badge + env-var hint when externally managed", async () => {
@@ -663,16 +718,14 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     ).toBeInTheDocument();
   });
 
-  it("hides the Remove button when externally managed (even if has_*_key is true)", async () => {
-    // Edge: the DB column had a key from a previous UI
-    // configuration, but secrets.yaml has overridden it.
-    // Removing the DB column would have no user-visible
-    // effect (the resolver still picks the yaml key), so we
-    // hide the Remove button to avoid the confusing dance.
+  it("hides the Remove button when externally managed via env var (even if has_*_key is true)", async () => {
+    // An env-var-sourced key cannot be removed from the UI — the
+    // user must unset the environment variable. The Remove button
+    // is hidden to avoid a no-op that wouldn't change the resolver.
     apiGet.mockResolvedValue({
       ...BASE,
       has_anthropic_key: true,
-      key_source_anthropic: "secrets_yaml",
+      key_source_anthropic: "env",
     });
     renderSettings();
     await screen.findByTestId("settings");
@@ -688,5 +741,133 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     expect(screen.getByTestId("api-key-source-anthropic")).toHaveTextContent(
       /No key/,
     );
+  });
+});
+
+describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
+  beforeEach(() => {
+    apiGet.mockReset();
+    apiSetKey.mockReset();
+    apiTestKey.mockReset();
+    apiBackupKey.mockReset();
+    apiGetBackup.mockReset();
+    apiRestoreBackup.mockReset();
+    apiBackupKey.mockResolvedValue(BASE);
+    apiGetBackup.mockResolvedValue({ has: false, tested_at: null });
+    apiRestoreBackup.mockResolvedValue({ ...BASE, has_anthropic_key: true });
+    toastSuccess.mockReset();
+    localStorage.clear();
+    localStorage.setItem("adaptive-learner.user_id", "u-1");
+  });
+
+  it("Test button shows a success result", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: true, kind: "ok" });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-test-anthropic"));
+    });
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("api-key-test-result-anthropic"),
+      ).toHaveTextContent(/works/i);
+    });
+  });
+
+  it("auto-tests on Save and shows the rollback panel when the key fails", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: false, kind: "invalid" });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
+    });
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("api-key-rollback-anthropic"),
+      ).toBeInTheDocument();
+    });
+    // Failing key was NOT saved (we tested before overwriting).
+    expect(apiSetKey).not.toHaveBeenCalled();
+    expect(apiBackupKey).not.toHaveBeenCalled();
+  });
+
+  it("a successful Save persists the key AND backs it up", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: true, kind: "ok" });
+    apiSetKey.mockResolvedValue({ ...BASE, has_anthropic_key: true });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
+    });
+    await waitFor(() => {
+      expect(apiSetKey).toHaveBeenCalled();
+    });
+    expect(apiBackupKey).toHaveBeenCalledWith("u-1", {
+      provider: "anthropic",
+      key: VALID_ANTHROPIC_KEY,
+    });
+  });
+
+  it("'Save anyway' persists the failing key WITHOUT backing it up", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: false, kind: "invalid" });
+    apiSetKey.mockResolvedValue({ ...BASE, has_anthropic_key: true });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
+    });
+    await screen.findByTestId("api-key-rollback-anthropic");
+    await act(async () => {
+      fireEvent.click(
+        screen.getByTestId("api-key-rollback-save-anyway-anthropic"),
+      );
+    });
+    await waitFor(() => {
+      expect(apiSetKey).toHaveBeenCalled();
+    });
+    // A failed key must never become the last-known-good backup.
+    expect(apiBackupKey).not.toHaveBeenCalled();
+  });
+
+  it("offers Restore in the rollback panel when a backup exists, and restores it", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: false, kind: "invalid" });
+    apiGetBackup.mockResolvedValue({
+      has: true,
+      tested_at: "2026-06-01T00:00:00Z",
+    });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
+    });
+    const restore = await screen.findByTestId("api-key-restore-anthropic");
+    // The restore re-tests after restoring; let that pass.
+    apiTestKey.mockResolvedValue({ success: true, kind: "ok" });
+    await act(async () => {
+      fireEvent.click(restore);
+    });
+    await waitFor(() => {
+      expect(apiRestoreBackup).toHaveBeenCalledWith("u-1", "anthropic");
+    });
   });
 });

@@ -385,6 +385,25 @@ settings:
   provider_gemini: Google Gemini
   api_key_label: Chave de API
   api_key_placeholder: Cole aqui…
+  api_key_placeholder_replace: "Cole uma nova chave para substituir a armazenada…"
+  api_key:
+    test: "Testar"
+    testing: "Testando…"
+    test_success: "A chave funciona!"
+    test_invalid: "Chave inválida ou expirada."
+    test_network: "Falha na conexão. Verifique sua internet."
+    test_rate_limit: "Limite de uso atingido. Tente mais tarde."
+    test_no_key: "Nenhuma chave para testar."
+    format_invalid: "Formato inválido."
+    rollback_warning: "A nova chave não funciona. Manter a antiga?"
+    rollback_keep_old: "Manter a antiga"
+    rollback_save_anyway: "Salvar mesmo assim"
+    rollback_cancel: "Cancelar"
+    rollback_restore: "Restaurar a última chave que funcionou"
+    format_hint:
+      anthropic: "Começa com sk-ant-"
+      openai: "Começa com sk-"
+      gemini: "Começa com AI"
   api_key_saved: Chave salva
   api_key_missing: Não definida
   api_key_set: Salvar chave
@@ -399,7 +418,7 @@ settings:
   api_key_source_env: "Chave de: variável de ambiente"
   api_key_source_settings: "Chave de: Configurações"
   api_key_source_none: Nenhuma chave configurada
-  api_key_external_hint_file: Esta chave está configurada em ~/.config/adaptive-learner/secrets.yaml. Edite o arquivo para alterá-la.
+  api_key_external_hint_file: "Armazenada em ~/.config/adaptive_learner/secrets.yaml. Salvar aqui a substitui."
   api_key_external_hint_env: Esta chave é configurada pela variável de ambiente ADAPTIVE_LEARNER_{PROVIDER}_API_KEY.
   section_model_overrides: Substituições de modelo
   model_overrides_hint: Deixe em branco para usar o modelo padrão de cada provedor. Um valor não vazio substitui o padrão durante o chat.
@@ -526,6 +545,7 @@ toast:
   session_ended: Sessão encerrada.
   rating_saved: Avaliação salva.
   api_key_saved: Chave de API salva.
+  api_key_restored: "A última chave que funcionou foi restaurada."
   api_key_deleted: Chave de API removida.
   method_switched: Método trocado.
 install:

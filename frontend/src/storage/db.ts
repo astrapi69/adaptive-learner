@@ -48,6 +48,19 @@ export interface UserSettingsRow {
     updated_at: string;
 }
 
+/** Phase 65 — last-known-good API-key backup (rollback cache).
+ *  One row per (user_id, provider); ``id`` is ``{user_id}#{provider}``
+ *  so the upsert converges. The key is stored as-is (Dexie data is
+ *  browser-local, like the cleartext keys on UserSettingsRow). */
+export interface ApiKeyBackupRow {
+    id: string;
+    user_id: string;
+    provider: AIProvider;
+    key: string;
+    tested_at: string;
+    works: boolean;
+}
+
 export interface LearningProjectRow {
     id: string;
     user_id: string;
@@ -627,6 +640,8 @@ export interface UserMissionRow {
 export class AdaptiveLearnerDB extends Dexie {
     users!: EntityTable<UserRow, "id">;
     userSettings!: EntityTable<UserSettingsRow, "id">;
+    // Phase 65 — API-key rollback cache (one row per user+provider).
+    apiKeyBackups!: EntityTable<ApiKeyBackupRow, "id">;
     learningProjects!: EntityTable<LearningProjectRow, "id">;
     learningProfiles!: EntityTable<LearningProfileRow, "id">;
     curricula!: EntityTable<CurriculumRow, "id">;
@@ -1058,6 +1073,10 @@ export class AdaptiveLearnerDB extends Dexie {
                     await table.put(row);
                 }
             });
+        // Phase 65 — additive: the API-key rollback-cache table.
+        this.version(24).stores({
+            apiKeyBackups: "id, user_id, provider",
+        });
     }
 }
 

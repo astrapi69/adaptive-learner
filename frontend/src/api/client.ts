@@ -527,6 +527,42 @@ export const api = {
       ),
 
     /**
+     * Phase 65 — live API-key test. Fires a minimal completion at
+     * the provider and returns ``{success, kind}`` (kind: ok /
+     * invalid / rate_limit / network / error / no_key). When
+     * ``key`` is omitted the backend tests the configured key.
+     * Does NOT save anything.
+     */
+    testApiKey: (
+      userId: string,
+      body: { provider: AIProvider; key?: string },
+    ) =>
+      apiCall<{ success: boolean; kind: string }>(
+        `/settings/${encodeURIComponent(userId)}/test-api-key`,
+        { method: "POST", body },
+      ),
+
+    /** Phase 65 — rollback cache: store a tested-good key as the
+     *  last-known-good backup. */
+    backupApiKey: (
+      userId: string,
+      body: { provider: AIProvider; key: string },
+    ) =>
+      apiCall<UserSettings>(
+        `/settings/${encodeURIComponent(userId)}/api-key-backup`,
+        { method: "POST", body },
+      ),
+    getApiKeyBackup: (userId: string, provider: AIProvider) =>
+      apiCall<{ has: boolean; tested_at: string | null }>(
+        `/settings/${encodeURIComponent(userId)}/api-key-backup/${encodeURIComponent(provider)}`,
+      ),
+    restoreApiKeyBackup: (userId: string, provider: AIProvider) =>
+      apiCall<UserSettings>(
+        `/settings/${encodeURIComponent(userId)}/api-key-backup/${encodeURIComponent(provider)}/restore`,
+        { method: "POST" },
+      ),
+
+    /**
      * Placeholder for app-wide config (default language, etc.).
      * Phase 1A skeleton has no backing endpoint, so the
      * I18n provider falls back to its hardcoded default

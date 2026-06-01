@@ -21,7 +21,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.exceptions import NotFoundError, ValidationError
-from app.models import User, UserSettings
+from app.models import ApiKeyBackup, User, UserSettings
 from app.schemas import AIProvider, ApiKeySetBody, ApiKeySource, SettingsPatchBody
 from app.services import crypto, secrets_service
 
@@ -150,6 +150,65 @@ def delete_api_key(db: Session, user_id: str, provider: AIProvider) -> UserSetti
     setattr(settings, column, None)
     db.commit()
     db.refresh(settings)
+    return settings
+
+
+def backup_api_key(db: Session, user_id: str, provider: AIProvider, key: str) -> None:
+    """Cache ``key`` as the last-known-good backup for (user, provider).
+
+    Called by the save flow ONLY after the key tested successfully.
+    Fernet-encrypts the key and upserts the single per-(user, provider)
+    ApiKeyBackup row.
+    """
+    existing = (
+        db.query(ApiKeyBackup)
+        .filter(
+            ApiKeyBackup.user_id == user_id,
+            ApiKeyBackup.provider == provider.value,
+        )
+        .one_or_none()
+    )
+    ciphertext = crypto.encrypt_api_key(key)
+    if existing is None:
+        db.add(
+            ApiKeyBackup(
+                user_id=user_id,
+                provider=provider.value,
+                encrypted_key=ciphertext,
+                works=True,
+            )
+        )
+    else:
+        existing.encrypted_key = ciphertext
+        existing.works = True
+    db.commit()
+
+
+def get_api_key_backup(db: Session, user_id: str, provider: AIProvider) -> ApiKeyBackup | None:
+    """Return the backup row for (user, provider), or ``None``."""
+    return (
+        db.query(ApiKeyBackup)
+        .filter(
+            ApiKeyBackup.user_id == user_id,
+            ApiKeyBackup.provider == provider.value,
+        )
+        .one_or_none()
+    )
+
+
+def restore_api_key_backup(db: Session, user_id: str, provider: AIProvider) -> UserSettings:
+    """Restore the cached last-known-good key as the active key.
+
+    Decrypts the backup and writes it through the normal save path
+    (secrets.yaml). Raises :class:`NotFoundError` when no backup
+    exists for the provider.
+    """
+    backup = get_api_key_backup(db, user_id, provider)
+    if backup is None:
+        raise NotFoundError(f"No API-key backup for provider {provider.value}")
+    plaintext = crypto.decrypt_api_key(backup.encrypted_key)
+    settings = get_or_create_settings(db, user_id)
+    secrets_service.write_api_key(provider.value, plaintext)
     return settings
 
 

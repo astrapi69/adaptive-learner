@@ -217,6 +217,52 @@ class ApiKeySetBody(BaseModel):
     key: str = Field(min_length=1)
 
 
+class ApiKeyTestBody(BaseModel):
+    """POST body for ``/api/settings/{user_id}/test-api-key``.
+
+    When ``key`` is given the endpoint tests THAT key (the
+    pre-save check); when it is omitted the endpoint resolves the
+    user's currently-configured key for ``provider`` (env >
+    secrets.yaml > DB) and tests that. Neither path saves anything.
+    """
+
+    provider: AIProvider
+    key: str | None = None
+
+
+class ApiKeyTestOut(BaseModel):
+    """Result of a live API-key test. ``kind`` is a stable machine
+    code the frontend maps to a localized message:
+
+      - ``ok``         — the provider accepted the key.
+      - ``invalid``    — 401 / 403 (bad or expired key).
+      - ``rate_limit`` — 429 (key works but is throttled).
+      - ``network``    — could not reach the provider.
+      - ``error``      — any other non-success response.
+      - ``no_key``     — no key was provided and none is configured.
+    """
+
+    success: bool
+    kind: str
+
+
+class ApiKeyBackupBody(BaseModel):
+    """POST body for ``/api/settings/{user_id}/api-key-backup`` — caches
+    a tested-good key as the last-known-good backup for ``provider``."""
+
+    provider: AIProvider
+    key: str = Field(min_length=1)
+
+
+class ApiKeyBackupInfoOut(BaseModel):
+    """Metadata about a stored backup — never the key itself. ``has``
+    is false when no backup exists; ``tested_at`` is the ISO timestamp
+    of the last successful test."""
+
+    has: bool
+    tested_at: datetime | None = None
+
+
 class AvailableModelOut(BaseModel):
     """One row returned by ``GET /api/settings/{user_id}/available-models``.
 
@@ -1264,8 +1310,7 @@ class LessonProgressUpsert(BaseModel):
     mark_resumed: bool = Field(
         default=False,
         description=(
-            "Phase 63C — flip a ``paused`` row back to "
-            "``in_progress`` and clear ``paused_at``."
+            "Phase 63C — flip a ``paused`` row back to ``in_progress`` and clear ``paused_at``."
         ),
     )
     mark_restarted: bool = Field(

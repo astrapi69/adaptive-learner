@@ -831,3 +831,62 @@ describe("DexieStorage taxonomy (Phase 22C)", () => {
         });
     });
 });
+
+describe("DexieStorage API-key test + rollback backup (Phase 65)", () => {
+    it("testApiKey returns no_key when nothing is stored or provided", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        const result = await dexieStorage.settings.testApiKey(user.id, {
+            provider: "anthropic",
+        });
+        expect(result).toEqual({success: false, kind: "no_key"});
+    });
+
+    it("backs up + reports + restores the last-known-good key", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        // No backup initially.
+        expect(
+            await dexieStorage.settings.getApiKeyBackup(user.id, "anthropic"),
+        ).toEqual({has: false, tested_at: null});
+        // Back one up.
+        await dexieStorage.settings.backupApiKey(user.id, {
+            provider: "anthropic",
+            key: "sk-ant-working-key",
+        });
+        const info = await dexieStorage.settings.getApiKeyBackup(
+            user.id,
+            "anthropic",
+        );
+        expect(info.has).toBe(true);
+        expect(info.tested_at).toBeTruthy();
+        // Restore writes it into the active settings.
+        const restored = await dexieStorage.settings.restoreApiKeyBackup(
+            user.id,
+            "anthropic",
+        );
+        expect(restored.has_anthropic_key).toBe(true);
+    });
+
+    it("keeps a single backup row per provider (overwrite)", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        await dexieStorage.settings.backupApiKey(user.id, {
+            provider: "openai",
+            key: "sk-first",
+        });
+        await dexieStorage.settings.backupApiKey(user.id, {
+            provider: "openai",
+            key: "sk-second",
+        });
+        const rows = await getDb()
+            .apiKeyBackups.where("user_id")
+            .equals(user.id)
+            .toArray();
+        expect(rows.filter((r) => r.provider === "openai")).toHaveLength(1);
+    });
+
+    it("restoreApiKeyBackup throws ApiError 404 when no backup exists", async () => {
+        const user = await dexieStorage.users.create({name: "A"});
+        await expect(
+            dexieStorage.settings.restoreApiKeyBackup(user.id, "gemini"),
+        ).rejects.toBeInstanceOf(ApiError);
+    });
+});

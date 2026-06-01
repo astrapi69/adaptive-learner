@@ -25,13 +25,17 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import (
     AIProvider,
+    ApiKeyBackupBody,
+    ApiKeyBackupInfoOut,
     ApiKeySetBody,
     ApiKeySource,
+    ApiKeyTestBody,
+    ApiKeyTestOut,
     AvailableModelOut,
     SettingsPatchBody,
     UserSettingsOut,
 )
-from app.services import model_discovery
+from app.services import api_key_test, model_discovery
 from app.services import settings as settings_service
 
 router = APIRouter(prefix="/settings", tags=["settings"])
@@ -91,6 +95,62 @@ def delete_api_key(
     db: Session = Depends(get_db),
 ) -> UserSettingsOut:
     return _build_settings_out(db, settings_service.delete_api_key(db, user_id, provider))
+
+
+@router.post("/{user_id}/test-api-key", response_model=ApiKeyTestOut)
+def test_api_key(
+    user_id: str,
+    payload: ApiKeyTestBody,
+    db: Session = Depends(get_db),
+) -> ApiKeyTestOut:
+    # Test the caller-supplied key when given (the pre-save check),
+    # otherwise resolve the user's configured key (env > secrets.yaml
+    # > DB) and test that. Never saves anything.
+    key = payload.key
+    if not key:
+        key, _source = settings_service.resolve_api_key(db, user_id, payload.provider)
+    result = api_key_test.test_api_key(payload.provider, key)
+    return ApiKeyTestOut(success=result.success, kind=result.kind)
+
+
+@router.post("/{user_id}/api-key-backup", response_model=UserSettingsOut)
+def backup_api_key(
+    user_id: str,
+    payload: ApiKeyBackupBody,
+    db: Session = Depends(get_db),
+) -> UserSettingsOut:
+    # Cache a tested-good key as the last-known-good backup. The
+    # caller (save flow) invokes this only after a successful test.
+    settings_service.backup_api_key(db, user_id, payload.provider, payload.key)
+    return _build_settings_out(db, settings_service.get_or_create_settings(db, user_id))
+
+
+@router.get(
+    "/{user_id}/api-key-backup/{provider}",
+    response_model=ApiKeyBackupInfoOut,
+)
+def get_api_key_backup_info(
+    user_id: str,
+    provider: AIProvider,
+    db: Session = Depends(get_db),
+) -> ApiKeyBackupInfoOut:
+    backup = settings_service.get_api_key_backup(db, user_id, provider)
+    if backup is None:
+        return ApiKeyBackupInfoOut(has=False, tested_at=None)
+    return ApiKeyBackupInfoOut(has=True, tested_at=backup.tested_at)
+
+
+@router.post(
+    "/{user_id}/api-key-backup/{provider}/restore",
+    response_model=UserSettingsOut,
+)
+def restore_api_key_backup(
+    user_id: str,
+    provider: AIProvider,
+    db: Session = Depends(get_db),
+) -> UserSettingsOut:
+    # NotFoundError (no backup) maps to 404 via the global handler.
+    return _build_settings_out(db, settings_service.restore_api_key_backup(db, user_id, provider))
 
 
 @router.get(

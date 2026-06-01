@@ -35,6 +35,8 @@ import {
   SUPPORTED_LANGUAGES,
   type AIProvider,
 } from "../lib/constants";
+import { API_KEY_PREFIX, isValidApiKeyFormat } from "../lib/apiKeyFormat";
+import type { ApiKeyTestResult } from "../storage/types";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
 import { readLearnerState, setLanguage } from "../lib/learnerState";
 import {
@@ -165,6 +167,23 @@ export default function Settings() {
     gemini: "",
   });
   const [busy, setBusy] = useState<string | null>(null);
+  // C2 — last live-test outcome per provider (null = not tested this
+  // session). Drives the inline result line under the key row.
+  const [testResults, setTestResults] = useState<
+    Record<AIProvider, ApiKeyTestResult | null>
+  >({ anthropic: null, openai: null, gemini: null });
+  // C4 — when an auto-test on save fails, this holds the provider +
+  // failure kind so the inline rollback panel (keep old / save anyway
+  // / cancel) renders for that provider.
+  const [rollbackPrompt, setRollbackPrompt] = useState<{
+    provider: AIProvider;
+    kind: ApiKeyTestResult["kind"];
+  } | null>(null);
+  // C4 — whether a last-known-good backup exists per provider (drives
+  // the "restore last working key" affordance). Loaded after settings.
+  const [backupAvailable, setBackupAvailable] = useState<
+    Record<AIProvider, boolean>
+  >({ anthropic: false, openai: false, gemini: false });
 
   // Phase 10F: storage-mode toggle. ``currentMode`` reflects
   // what's active *right now* (snapshot at mount). ``pendingMode``
@@ -263,22 +282,135 @@ export default function Settings() {
     }
   };
 
+  // C4 — persist a key (no test). Backs up the key as last-known-good
+  // only when ``backup`` is true (i.e. it passed its test).
+  const persistKey = async (
+    provider: AIProvider,
+    key: string,
+    backup: boolean,
+  ) => {
+    const updated = await getStorage().settings.setApiKey(settings!.user_id, {
+      provider,
+      key,
+    });
+    if (backup) {
+      await getStorage().settings.backupApiKey(settings!.user_id, {
+        provider,
+        key,
+      });
+      setBackupAvailable((prev) => ({ ...prev, [provider]: true }));
+    }
+    setSettings(updated);
+    setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
+    notify.success(t("toast.api_key_saved", "API key saved."));
+  };
+
+  // C4 — revised save flow: auto-test the new key BEFORE overwriting.
+  // Passes -> save + back up. Fails -> rollback panel (the old key is
+  // untouched because we tested without saving).
   const handleSaveKey = async (provider: AIProvider) => {
     if (!settings || busy) return;
     const key = keyDrafts[provider].trim();
     if (key.length === 0) return;
     setBusy(`save-${provider}`);
+    setRollbackPrompt(null);
     try {
-      const updated = await getStorage().settings.setApiKey(settings.user_id, {
+      const test = await getStorage().settings.testApiKey(settings.user_id, {
         provider,
         key,
       });
-      setSettings(updated);
-      setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
-      notify.success(t("toast.api_key_saved", "API key saved."));
+      setTestResults((prev) => ({ ...prev, [provider]: test }));
+      if (test.success) {
+        await persistKey(provider, key, true);
+      } else {
+        // Surface keep-old / save-anyway / cancel. If a backup
+        // exists, the panel also offers restore.
+        const info = await getStorage()
+          .settings.getApiKeyBackup(settings.user_id, provider)
+          .catch(() => ({ has: false, tested_at: null }));
+        setBackupAvailable((prev) => ({ ...prev, [provider]: info.has }));
+        setRollbackPrompt({ provider, kind: test.kind });
+      }
     } catch (err) {
       const detail = err instanceof ApiError ? err.detail : t("common.error");
       notify.error(detail);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const handleSaveAnyway = async (provider: AIProvider) => {
+    if (!settings || busy) return;
+    const key = keyDrafts[provider].trim();
+    if (key.length === 0) return;
+    setBusy(`save-${provider}`);
+    try {
+      // No backup — the key failed its test, so it must not become
+      // the last-known-good.
+      await persistKey(provider, key, false);
+      setRollbackPrompt(null);
+    } catch (err) {
+      const detail = err instanceof ApiError ? err.detail : t("common.error");
+      notify.error(detail);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  // Discard the draft, keep the currently-active key.
+  const handleKeepOldKey = (provider: AIProvider) => {
+    setRollbackPrompt(null);
+    setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
+  };
+
+  // Dismiss the panel but keep the draft so the user can fix a typo.
+  const handleDismissRollback = () => setRollbackPrompt(null);
+
+  const handleRestoreBackup = async (provider: AIProvider) => {
+    if (!settings || busy) return;
+    setBusy(`restore-${provider}`);
+    setRollbackPrompt(null);
+    try {
+      const updated = await getStorage().settings.restoreApiKeyBackup(
+        settings.user_id,
+        provider,
+      );
+      setSettings(updated);
+      setKeyDrafts((prev) => ({ ...prev, [provider]: "" }));
+      // Confirm the restored key still works.
+      const test = await getStorage().settings.testApiKey(settings.user_id, {
+        provider,
+      });
+      setTestResults((prev) => ({ ...prev, [provider]: test }));
+      notify.success(t("toast.api_key_restored", "Last working key restored."));
+    } catch (err) {
+      const detail = err instanceof ApiError ? err.detail : t("common.error");
+      notify.error(detail);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  // C2 — live-test a key. Tests the in-progress draft when present,
+  // otherwise the currently-stored key. Does not save.
+  const handleTestKey = async (provider: AIProvider) => {
+    if (!settings || busy) return;
+    const draft = keyDrafts[provider].trim();
+    setBusy(`test-${provider}`);
+    setTestResults((prev) => ({ ...prev, [provider]: null }));
+    try {
+      const result = await getStorage().settings.testApiKey(settings.user_id, {
+        provider,
+        key: draft.length > 0 ? draft : undefined,
+      });
+      setTestResults((prev) => ({ ...prev, [provider]: result }));
+    } catch {
+      // A thrown call (rather than a classified result) is itself a
+      // connectivity problem — surface it as the network outcome.
+      setTestResults((prev) => ({
+        ...prev,
+        [provider]: { success: false, kind: "network" },
+      }));
     } finally {
       setBusy(null);
     }
@@ -594,14 +726,26 @@ export default function Settings() {
         {AI_PROVIDERS.map((provider) => {
           const has = settings[`has_${provider}_key`] as boolean;
           const isActive = settings.active_provider === provider;
-          // Phase 34 (v1.20.0) — when the key is sourced
-          // from secrets.yaml or an env var, the UI is
-          // read-only. The Save / Remove buttons are
-          // disabled and an info banner points the user
-          // at the externally-managed file.
+          // Only an env-var-sourced key is truly read-only from
+          // the UI: the user must change the environment, not the
+          // app. A ``secrets.yaml`` key IS editable now that the
+          // app writes to that file — saving overwrites it,
+          // removing clears it. ``settings`` (DB) and ``none``
+          // were always editable.
           const source = settings[`key_source_${provider}`];
-          const externallyManaged =
-            source === "secrets_yaml" || source === "env";
+          const externallyManaged = source === "env";
+          const fromSecretsFile = source === "secrets_yaml";
+          // C1 — instant format validation. ``empty`` = nothing typed
+          // yet (no feedback); ``valid`` / ``invalid`` drive the border
+          // colour, the inline hint, and the Save gate.
+          const draft = keyDrafts[provider];
+          const draftTrimmed = draft.trim();
+          const formatState: "empty" | "valid" | "invalid" =
+            draftTrimmed.length === 0
+              ? "empty"
+              : isValidApiKeyFormat(provider, draft)
+                ? "valid"
+                : "invalid";
           return (
             <div
               key={provider}
@@ -656,15 +800,21 @@ export default function Settings() {
                   className="api-key-external-hint"
                   data-testid={`api-key-external-${provider}`}
                 >
-                  {source === "secrets_yaml"
-                    ? t(
-                        "settings.api_key_external_hint_file",
-                        "This key is configured in ~/.config/adaptive-learner/secrets.yaml. Edit the file to change it.",
-                      )
-                    : t(
-                        "settings.api_key_external_hint_env",
-                        "This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.",
-                      ).replace("{PROVIDER}", provider.toUpperCase())}
+                  {t(
+                    "settings.api_key_external_hint_env",
+                    "This key is configured via the ADAPTIVE_LEARNER_{PROVIDER}_API_KEY environment variable.",
+                  ).replace("{PROVIDER}", provider.toUpperCase())}
+                </p>
+              )}
+              {fromSecretsFile && (
+                <p
+                  className="api-key-source-file-hint"
+                  data-testid={`api-key-info-${provider}`}
+                >
+                  {t(
+                    "settings.api_key_external_hint_file",
+                    "Stored in ~/.config/adaptive_learner/secrets.yaml. Saving here overwrites it.",
+                  )}
                 </p>
               )}
               {isActive && !has && !externallyManaged && (
@@ -679,21 +829,42 @@ export default function Settings() {
                 </p>
               )}
               <div className="api-key-row-input">
-                <input
-                  data-testid={`api-key-input-${provider}`}
-                  type="password"
-                  placeholder={t("settings.api_key_placeholder", "Paste here…")}
-                  aria-label={`${t("settings.api_key_label", "API key")} (${provider})`}
-                  autoComplete="off"
-                  value={keyDrafts[provider]}
-                  onChange={(e) =>
-                    setKeyDrafts((prev) => ({
-                      ...prev,
-                      [provider]: e.target.value,
-                    }))
-                  }
-                  disabled={busy === `save-${provider}` || externallyManaged}
-                />
+                <span
+                  className={`api-key-input-wrap api-key-format-${formatState}`}
+                >
+                  <input
+                    data-testid={`api-key-input-${provider}`}
+                    type="password"
+                    placeholder={
+                      has && !externallyManaged
+                        ? t(
+                            "settings.api_key_placeholder_replace",
+                            "Paste a new key to replace the stored one…",
+                          )
+                        : t("settings.api_key_placeholder", "Paste here…")
+                    }
+                    aria-label={`${t("settings.api_key_label", "API key")} (${provider})`}
+                    aria-invalid={formatState === "invalid"}
+                    autoComplete="off"
+                    value={keyDrafts[provider]}
+                    onChange={(e) =>
+                      setKeyDrafts((prev) => ({
+                        ...prev,
+                        [provider]: e.target.value,
+                      }))
+                    }
+                    disabled={busy === `save-${provider}` || externallyManaged}
+                  />
+                  {formatState === "valid" && (
+                    <span
+                      className="api-key-format-check"
+                      data-testid={`api-key-format-ok-${provider}`}
+                      aria-hidden="true"
+                    >
+                      ✓
+                    </span>
+                  )}
+                </span>
                 <button
                   type="button"
                   className="btn btn-primary"
@@ -701,12 +872,28 @@ export default function Settings() {
                   onClick={() => handleSaveKey(provider)}
                   disabled={
                     busy === `save-${provider}` ||
-                    keyDrafts[provider].trim().length === 0 ||
+                    formatState !== "valid" ||
                     externallyManaged
                   }
                 >
                   {t("settings.api_key_set", "Save key")}
                 </button>
+                {(has || formatState === "valid") && (
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-testid={`api-key-test-${provider}`}
+                    onClick={() => handleTestKey(provider)}
+                    disabled={busy === `test-${provider}`}
+                  >
+                    {busy === `test-${provider}` && (
+                      <span className="btn-spinner" aria-hidden="true" />
+                    )}
+                    {busy === `test-${provider}`
+                      ? t("settings.api_key.testing", "Testing…")
+                      : t("settings.api_key.test", "Test")}
+                  </button>
+                )}
                 {has && !externallyManaged && (
                   <button
                     type="button"
@@ -719,6 +906,117 @@ export default function Settings() {
                   </button>
                 )}
               </div>
+              {testResults[provider] && (
+                <p
+                  className={`api-key-test-result ${
+                    testResults[provider]!.kind === "ok"
+                      ? "is-ok"
+                      : testResults[provider]!.kind === "invalid"
+                        ? "is-invalid"
+                        : "is-warning"
+                  }`}
+                  data-testid={`api-key-test-result-${provider}`}
+                  role="status"
+                >
+                  {testResults[provider]!.kind === "ok"
+                    ? `✓ ${t("settings.api_key.test_success", "Key works!")}`
+                    : testResults[provider]!.kind === "invalid"
+                      ? `✗ ${t("settings.api_key.test_invalid", "Key invalid or expired.")}`
+                      : testResults[provider]!.kind === "rate_limit"
+                        ? `⚠ ${t("settings.api_key.test_rate_limit", "Rate limit hit. Try later.")}`
+                        : testResults[provider]!.kind === "no_key"
+                          ? `⚠ ${t("settings.api_key.test_no_key", "No key to test.")}`
+                          : `⚠ ${t("settings.api_key.test_network", "Connection failed. Check your internet connection.")}`}
+                </p>
+              )}
+              {formatState === "invalid" && (
+                <p
+                  className="api-key-format-error"
+                  data-testid={`api-key-format-error-${provider}`}
+                >
+                  {t("settings.api_key.format_invalid", "Invalid format.")}{" "}
+                  {t(
+                    `settings.api_key.format_hint.${provider}`,
+                    `Starts with ${API_KEY_PREFIX[provider]}`,
+                  )}
+                </p>
+              )}
+              {rollbackPrompt?.provider === provider && (
+                <div
+                  className="api-key-rollback"
+                  data-testid={`api-key-rollback-${provider}`}
+                  role="alertdialog"
+                  aria-label={t(
+                    "settings.api_key.rollback_warning",
+                    "The new key doesn't work. Keep the old key?",
+                  )}
+                >
+                  <p className="api-key-rollback-message">
+                    {t(
+                      "settings.api_key.rollback_warning",
+                      "The new key doesn't work. Keep the old key?",
+                    )}
+                  </p>
+                  <div className="api-key-rollback-actions">
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      data-testid={`api-key-rollback-keep-${provider}`}
+                      onClick={() => handleKeepOldKey(provider)}
+                    >
+                      {t("settings.api_key.rollback_keep_old", "Keep old key")}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      data-testid={`api-key-rollback-save-anyway-${provider}`}
+                      onClick={() => handleSaveAnyway(provider)}
+                      disabled={busy === `save-${provider}`}
+                    >
+                      {t("settings.api_key.rollback_save_anyway", "Save anyway")}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-link"
+                      data-testid={`api-key-rollback-cancel-${provider}`}
+                      onClick={handleDismissRollback}
+                    >
+                      {t("settings.api_key.rollback_cancel", "Cancel")}
+                    </button>
+                    {backupAvailable[provider] && (
+                      <button
+                        type="button"
+                        className="btn btn-link"
+                        data-testid={`api-key-restore-${provider}`}
+                        onClick={() => handleRestoreBackup(provider)}
+                        disabled={busy === `restore-${provider}`}
+                      >
+                        {t(
+                          "settings.api_key.rollback_restore",
+                          "Restore last working key",
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+              {backupAvailable[provider] &&
+                rollbackPrompt?.provider !== provider &&
+                testResults[provider] &&
+                !testResults[provider]!.success && (
+                  <button
+                    type="button"
+                    className="btn btn-link api-key-restore-link"
+                    data-testid={`api-key-restore-link-${provider}`}
+                    onClick={() => handleRestoreBackup(provider)}
+                    disabled={busy === `restore-${provider}`}
+                  >
+                    {t(
+                      "settings.api_key.rollback_restore",
+                      "Restore last working key",
+                    )}
+                  </button>
+                )}
             </div>
           );
         })}
