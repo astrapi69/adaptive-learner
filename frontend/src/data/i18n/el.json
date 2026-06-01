@@ -411,6 +411,26 @@
     "api_key_label": "Κλειδί API",
     "api_key_placeholder": "Επικόλληση εδώ...",
     "api_key_placeholder_replace": "Επικολλήστε νέο κλειδί για να αντικαταστήσετε το αποθηκευμένο…",
+    "api_key": {
+      "test": "Δοκιμή",
+      "testing": "Δοκιμή…",
+      "test_success": "Το κλειδί λειτουργεί!",
+      "test_invalid": "Μη έγκυρο ή ληγμένο κλειδί.",
+      "test_network": "Η σύνδεση απέτυχε. Ελέγξτε τη σύνδεσή σας.",
+      "test_rate_limit": "Συμπληρώθηκε το όριο. Δοκιμάστε αργότερα.",
+      "test_no_key": "Δεν υπάρχει κλειδί για δοκιμή.",
+      "format_invalid": "Μη έγκυρη μορφή.",
+      "rollback_warning": "Το νέο κλειδί δεν λειτουργεί. Διατήρηση του παλιού;",
+      "rollback_keep_old": "Διατήρηση παλιού",
+      "rollback_save_anyway": "Αποθήκευση ούτως ή άλλως",
+      "rollback_cancel": "Άκυρο",
+      "rollback_restore": "Επαναφορά τελευταίου λειτουργικού κλειδιού",
+      "format_hint": {
+        "anthropic": "Ξεκινά με sk-ant-",
+        "openai": "Ξεκινά με sk-",
+        "gemini": "Ξεκινά με AI"
+      }
+    },
     "api_key_saved": "Το κλειδί αποθηκεύτηκε",
     "api_key_missing": "Δεν έχει οριστεί",
     "api_key_set": "Αποθήκευση κλειδιού",
@@ -573,6 +593,7 @@
     "session_ended": "Η συνεδρία τερματίστηκε.",
     "rating_saved": "Η αξιολόγηση αποθηκεύτηκε.",
     "api_key_saved": "Το κλειδί API αποθηκεύτηκε.",
+    "api_key_restored": "Το τελευταίο λειτουργικό κλειδί επαναφέρθηκε.",
     "api_key_deleted": "Το κλειδί API αφαιρέθηκε.",
     "method_switched": "Η μέθοδος άλλαξε."
   },

@@ -411,6 +411,26 @@
     "api_key_label": "Clave API",
     "api_key_placeholder": "Pegar aqui...",
     "api_key_placeholder_replace": "Pega una clave nueva para reemplazar la guardada…",
+    "api_key": {
+      "test": "Probar",
+      "testing": "Probando…",
+      "test_success": "¡La clave funciona!",
+      "test_invalid": "Clave no válida o caducada.",
+      "test_network": "Conexión fallida. Comprueba tu conexión a internet.",
+      "test_rate_limit": "Límite de uso alcanzado. Inténtalo más tarde.",
+      "test_no_key": "No hay clave para probar.",
+      "format_invalid": "Formato no válido.",
+      "rollback_warning": "La nueva clave no funciona. ¿Mantener la anterior?",
+      "rollback_keep_old": "Mantener la anterior",
+      "rollback_save_anyway": "Guardar de todos modos",
+      "rollback_cancel": "Cancelar",
+      "rollback_restore": "Restaurar la última clave que funcionó",
+      "format_hint": {
+        "anthropic": "Empieza con sk-ant-",
+        "openai": "Empieza con sk-",
+        "gemini": "Empieza con AI"
+      }
+    },
     "api_key_saved": "Clave almacenada",
     "api_key_missing": "No configurada",
     "api_key_set": "Guardar clave",
@@ -573,6 +593,7 @@
     "session_ended": "Sesion terminada.",
     "rating_saved": "Valoracion guardada.",
     "api_key_saved": "Clave API guardada.",
+    "api_key_restored": "Se restauró la última clave que funcionó.",
     "api_key_deleted": "Clave API eliminada.",
     "method_switched": "Metodo cambiado."
   },

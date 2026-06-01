@@ -386,6 +386,24 @@ settings:
   api_key_label: API キー
   api_key_placeholder: ここに貼り付け…
   api_key_placeholder_replace: "保存済みのキーを置き換える新しいキーを貼り付けてください…"
+  api_key:
+    test: "テスト"
+    testing: "テスト中…"
+    test_success: "キーは有効です！"
+    test_invalid: "キーが無効または期限切れです。"
+    test_network: "接続に失敗しました。インターネット接続を確認してください。"
+    test_rate_limit: "レート制限に達しました。後でお試しください。"
+    test_no_key: "テストするキーがありません。"
+    format_invalid: "形式が無効です。"
+    rollback_warning: "新しいキーが機能しません。古いキーを保持しますか？"
+    rollback_keep_old: "古いキーを保持"
+    rollback_save_anyway: "それでも保存"
+    rollback_cancel: "キャンセル"
+    rollback_restore: "最後に動作したキーを復元"
+    format_hint:
+      anthropic: "sk-ant- で始まります"
+      openai: "sk- で始まります"
+      gemini: "AI で始まります"
   api_key_saved: キーを保存しました
   api_key_missing: 未設定
   api_key_set: キーを保存
@@ -527,6 +545,7 @@ toast:
   session_ended: セッションを終了しました。
   rating_saved: 評価を保存しました。
   api_key_saved: API キーを保存しました。
+  api_key_restored: "最後に動作したキーを復元しました。"
   api_key_deleted: API キーを削除しました。
   method_switched: 方法を切り替えました。
 install:

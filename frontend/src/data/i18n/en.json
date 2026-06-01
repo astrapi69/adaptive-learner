@@ -411,6 +411,26 @@
     "api_key_label": "API key",
     "api_key_placeholder": "Paste here…",
     "api_key_placeholder_replace": "Paste a new key to replace the stored one…",
+    "api_key": {
+      "test": "Test",
+      "testing": "Testing…",
+      "test_success": "Key works!",
+      "test_invalid": "Key invalid or expired.",
+      "test_network": "Connection failed. Check your internet connection.",
+      "test_rate_limit": "Rate limit hit. Try later.",
+      "test_no_key": "No key to test.",
+      "format_invalid": "Invalid format.",
+      "rollback_warning": "The new key doesn't work. Keep the old key?",
+      "rollback_keep_old": "Keep old key",
+      "rollback_save_anyway": "Save anyway",
+      "rollback_cancel": "Cancel",
+      "rollback_restore": "Restore last working key",
+      "format_hint": {
+        "anthropic": "Starts with sk-ant-",
+        "openai": "Starts with sk-",
+        "gemini": "Starts with AI"
+      }
+    },
     "api_key_saved": "Key stored",
     "api_key_missing": "Not set",
     "api_key_set": "Save key",
@@ -573,6 +593,7 @@
     "session_ended": "Session ended.",
     "rating_saved": "Rating saved.",
     "api_key_saved": "API key saved.",
+    "api_key_restored": "Last working key restored.",
     "api_key_deleted": "API key removed.",
     "method_switched": "Method switched."
   },

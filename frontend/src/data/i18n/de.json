@@ -411,6 +411,26 @@
     "api_key_label": "API-Key",
     "api_key_placeholder": "Hier einfügen …",
     "api_key_placeholder_replace": "Neuen Schlüssel einfügen, um den gespeicherten zu ersetzen …",
+    "api_key": {
+      "test": "Testen",
+      "testing": "Teste…",
+      "test_success": "Schlüssel funktioniert!",
+      "test_invalid": "Schlüssel ungültig oder abgelaufen.",
+      "test_network": "Verbindung fehlgeschlagen. Prüfe deine Internetverbindung.",
+      "test_rate_limit": "Rate-Limit erreicht. Versuche es später.",
+      "test_no_key": "Kein Schlüssel zum Testen.",
+      "format_invalid": "Ungültiges Format.",
+      "rollback_warning": "Der neue Schlüssel funktioniert nicht. Alten Schlüssel behalten?",
+      "rollback_keep_old": "Alten behalten",
+      "rollback_save_anyway": "Trotzdem speichern",
+      "rollback_cancel": "Abbrechen",
+      "rollback_restore": "Letzten funktionierenden Schlüssel wiederherstellen",
+      "format_hint": {
+        "anthropic": "Beginnt mit sk-ant-",
+        "openai": "Beginnt mit sk-",
+        "gemini": "Beginnt mit AI"
+      }
+    },
     "api_key_saved": "Key gespeichert",
     "api_key_missing": "Nicht gesetzt",
     "api_key_set": "Key speichern",
@@ -573,6 +593,7 @@
     "session_ended": "Session beendet.",
     "rating_saved": "Bewertung gespeichert.",
     "api_key_saved": "API-Key gespeichert.",
+    "api_key_restored": "Letzter funktionierender Schlüssel wiederhergestellt.",
     "api_key_deleted": "API-Key entfernt.",
     "method_switched": "Methode gewechselt."
   },

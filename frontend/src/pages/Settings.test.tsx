@@ -743,3 +743,131 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     );
   });
 });
+
+describe("Settings — API-key test, rollback + restore (Phase 65)", () => {
+  beforeEach(() => {
+    apiGet.mockReset();
+    apiSetKey.mockReset();
+    apiTestKey.mockReset();
+    apiBackupKey.mockReset();
+    apiGetBackup.mockReset();
+    apiRestoreBackup.mockReset();
+    apiBackupKey.mockResolvedValue(BASE);
+    apiGetBackup.mockResolvedValue({ has: false, tested_at: null });
+    apiRestoreBackup.mockResolvedValue({ ...BASE, has_anthropic_key: true });
+    toastSuccess.mockReset();
+    localStorage.clear();
+    localStorage.setItem("adaptive-learner.user_id", "u-1");
+  });
+
+  it("Test button shows a success result", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: true, kind: "ok" });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-test-anthropic"));
+    });
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("api-key-test-result-anthropic"),
+      ).toHaveTextContent(/works/i);
+    });
+  });
+
+  it("auto-tests on Save and shows the rollback panel when the key fails", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: false, kind: "invalid" });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
+    });
+    await waitFor(() => {
+      expect(
+        screen.getByTestId("api-key-rollback-anthropic"),
+      ).toBeInTheDocument();
+    });
+    // Failing key was NOT saved (we tested before overwriting).
+    expect(apiSetKey).not.toHaveBeenCalled();
+    expect(apiBackupKey).not.toHaveBeenCalled();
+  });
+
+  it("a successful Save persists the key AND backs it up", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: true, kind: "ok" });
+    apiSetKey.mockResolvedValue({ ...BASE, has_anthropic_key: true });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
+    });
+    await waitFor(() => {
+      expect(apiSetKey).toHaveBeenCalled();
+    });
+    expect(apiBackupKey).toHaveBeenCalledWith("u-1", {
+      provider: "anthropic",
+      key: VALID_ANTHROPIC_KEY,
+    });
+  });
+
+  it("'Save anyway' persists the failing key WITHOUT backing it up", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: false, kind: "invalid" });
+    apiSetKey.mockResolvedValue({ ...BASE, has_anthropic_key: true });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
+    });
+    await screen.findByTestId("api-key-rollback-anthropic");
+    await act(async () => {
+      fireEvent.click(
+        screen.getByTestId("api-key-rollback-save-anyway-anthropic"),
+      );
+    });
+    await waitFor(() => {
+      expect(apiSetKey).toHaveBeenCalled();
+    });
+    // A failed key must never become the last-known-good backup.
+    expect(apiBackupKey).not.toHaveBeenCalled();
+  });
+
+  it("offers Restore in the rollback panel when a backup exists, and restores it", async () => {
+    apiGet.mockResolvedValue(BASE);
+    apiTestKey.mockResolvedValue({ success: false, kind: "invalid" });
+    apiGetBackup.mockResolvedValue({
+      has: true,
+      tested_at: "2026-06-01T00:00:00Z",
+    });
+    renderSettings();
+    await screen.findByTestId("settings");
+    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
+      target: { value: VALID_ANTHROPIC_KEY },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
+    });
+    const restore = await screen.findByTestId("api-key-restore-anthropic");
+    // The restore re-tests after restoring; let that pass.
+    apiTestKey.mockResolvedValue({ success: true, kind: "ok" });
+    await act(async () => {
+      fireEvent.click(restore);
+    });
+    await waitFor(() => {
+      expect(apiRestoreBackup).toHaveBeenCalledWith("u-1", "anthropic");
+    });
+  });
+});
