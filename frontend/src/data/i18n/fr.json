@@ -1520,6 +1520,9 @@
     "save_adaptive": {
       "button": "Enregistrer cette leçon ?"
     },
+    "create_lesson": {
+      "button": "Créer une nouvelle leçon"
+    },
     "import_lesson": {
       "button": "Importer une leçon",
       "modal_title": "Importer une leçon",

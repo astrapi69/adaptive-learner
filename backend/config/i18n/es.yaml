@@ -1392,6 +1392,8 @@ lesson:
 content:
   save_adaptive:
     button: "¿Guardar esta lección?"
+  create_lesson:
+    button: "Crear nueva lección"
   import_lesson:
     button: "Importar lección"
     modal_title: "Importar una lección"

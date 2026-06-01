@@ -1520,6 +1520,9 @@
     "save_adaptive": {
       "button": "Αποθήκευση αυτού του μαθήματος;"
     },
+    "create_lesson": {
+      "button": "Δημιουργία νέου μαθήματος"
+    },
     "import_lesson": {
       "button": "Εισαγωγή μαθήματος",
       "modal_title": "Εισαγωγή μαθήματος",

@@ -1520,6 +1520,9 @@
     "save_adaptive": {
       "button": "このレッスンを保存しますか？"
     },
+    "create_lesson": {
+      "button": "新しいレッスンを作成"
+    },
     "import_lesson": {
       "button": "レッスンをインポート",
       "modal_title": "レッスンをインポート",

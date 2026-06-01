@@ -1520,6 +1520,9 @@
     "save_adaptive": {
       "button": "Bu dersi kaydet?"
     },
+    "create_lesson": {
+      "button": "Yeni ders oluştur"
+    },
     "import_lesson": {
       "button": "Ders içe aktar",
       "modal_title": "Bir ders içe aktar",

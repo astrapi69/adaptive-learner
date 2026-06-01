@@ -1401,6 +1401,8 @@ lesson:
 content:
   save_adaptive:
     button: "Save this lesson?"
+  create_lesson:
+    button: "Create New Lesson"
   import_lesson:
     button: "Import Lesson"
     modal_title: "Import a lesson"
