@@ -116,6 +116,7 @@ export default function LessonPage() {
         markAbandoned,
         markResumed,
         markRestarted,
+        autosave,
     } = useLesson({source, setId, lessonFilename: filename});
 
     // Phase 63B — back-button intercept + browser-close
@@ -152,30 +153,39 @@ export default function LessonPage() {
         goToStep(0);
     };
 
+    // Phase 63B + 63E — auto-pause on hide, auto-resume on return.
+    // ``autoSuspendedRef`` tracks whether THIS effect fired a pause
+    // so the return-visible handler can reverse it without showing
+    // the resume dialog (brief tab-switch case).
+    const autoSuspendedRef = useRef(false);
     useEffect(() => {
         if (!isInProgress) return;
-        // Auto-pause when the tab goes background or the page
-        // unloads. ``visibilitychange`` covers iOS Safari +
-        // Chrome backgrounding; ``beforeunload`` covers tab
-        // close + navigation away.
-        const autoPause = () => {
-            // Fire-and-forget — the page is going away and we
-            // cannot await the round-trip. Dexie persists
-            // synchronously; ApiStorage may not flush in time,
-            // but the next visit will see the saved step
-            // results either way.
-            void markPaused();
-        };
         const onVisibility = () => {
-            if (document.visibilityState === "hidden") autoPause();
+            if (document.visibilityState === "hidden") {
+                autoSuspendedRef.current = true;
+                void markPaused();
+            } else if (autoSuspendedRef.current) {
+                autoSuspendedRef.current = false;
+                void markResumed();
+            }
         };
+        const onUnload = () => void markPaused();
         document.addEventListener("visibilitychange", onVisibility);
-        window.addEventListener("beforeunload", autoPause);
+        window.addEventListener("beforeunload", onUnload);
         return () => {
             document.removeEventListener("visibilitychange", onVisibility);
-            window.removeEventListener("beforeunload", autoPause);
+            window.removeEventListener("beforeunload", onUnload);
         };
-    }, [isInProgress, markPaused]);
+    }, [isInProgress, markPaused, markResumed]);
+
+    // Phase 63E — 30-second autosave interval. Flushes accumulated
+    // time to storage without changing lesson status so the
+    // summary shows accurate time even on long theory steps.
+    useEffect(() => {
+        if (status !== "ready" || !isInProgress) return;
+        const id = setInterval(() => void autosave(), 30_000);
+        return () => clearInterval(id);
+    }, [status, isInProgress, autosave]);
 
     const handlePauseFromDialog = async () => {
         await markPaused();

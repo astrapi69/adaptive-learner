@@ -81,6 +81,10 @@ export interface UseLessonResult {
      *  in_progress (the resume-dialog "Start Over" path).
      *  Caller must also call goToStep(0) to reset the position. */
     markRestarted: () => Promise<void>;
+    /** Phase 63E — flush accumulated time to storage without
+     *  changing status. Safe to call on any interval; no-op when
+     *  userId or lesson is missing. Failures are non-fatal. */
+    autosave: () => Promise<void>;
     /** Force-reload the lesson + progress (Set Browser
      *  navigated here mid-download). */
     refresh: () => void;
@@ -338,6 +342,27 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         [_markLifecycle],
     );
 
+    // Phase 63E — periodic time flush. Consumes the step-entry
+    // timer (same as _consumeStepTime) so the subsequent
+    // recordStepResult only charges the time since the last flush,
+    // preventing double-counting.
+    const autosave = useCallback(async () => {
+        if (!userId || lesson === null) return;
+        const delta = _consumeStepTime();
+        if (delta < 1) return;
+        try {
+            await getStorage().lessonProgress.upsert(userId, {
+                source,
+                set_id: setId,
+                lesson_filename: lessonFilename,
+                time_spent_seconds_delta: delta,
+            });
+        } catch {
+            // Non-fatal — next interval or step-result write will
+            // pick up the accumulated time.
+        }
+    }, [userId, source, setId, lessonFilename, lesson, _consumeStepTime]);
+
     return {
         status,
         lesson,
@@ -354,6 +379,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
         markAbandoned,
         markResumed,
         markRestarted,
+        autosave,
         refresh,
     };
 }
