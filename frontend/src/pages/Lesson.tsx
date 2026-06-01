@@ -41,6 +41,8 @@ import remarkGfm from "remark-gfm";
 
 import LessonExitDialog from "../components/lesson/LessonExitDialog";
 import LessonResumeDialog from "../components/lesson/LessonResumeDialog";
+import NextStepSuggestions from "../components/lesson/NextStepSuggestions";
+import {useNextStepSuggestions} from "../hooks/useNextStepSuggestions";
 import CorrectionBlock from "../components/exercises/CorrectionBlock";
 import {notify} from "../utils/notify";
 import DiffHighlight from "../components/exercises/DiffHighlight";
@@ -77,6 +79,7 @@ import {getStorage} from "../storage";
 import type {
     ContentLessonExercise,
     ContentLessonStep,
+    ElementError,
     LessonStepResultStored,
     RawAnswer,
 } from "../storage/types";
@@ -528,6 +531,8 @@ export default function LessonPage() {
                     nextLessonFilename={nextLessonFilename}
                     userId={learnerUserId ?? ""}
                     setId={setId}
+                    source={source}
+                    setSlug={params.setSlug ?? ""}
                     lessonFilename={filename}
                     onMarkComplete={async () => {
                         // Snapshot gamification before completion so
@@ -865,6 +870,10 @@ interface LessonSummaryProps {
      *  the block (anonymous lesson runs have no SRS history). */
     userId: string;
     setId: string;
+    /** Resolved set source path (slug with ``--`` → ``/``). */
+    source: string;
+    /** Raw route slug (``--``-encoded), for the next-lesson href. */
+    setSlug: string;
     lessonFilename: string;
     onMarkComplete: () => Promise<void> | void;
     onNextLesson: () => void;
@@ -878,6 +887,8 @@ function LessonSummary({
     nextLessonFilename,
     userId,
     setId,
+    source,
+    setSlug,
     lessonFilename,
     onMarkComplete,
     onNextLesson,
@@ -898,6 +909,46 @@ function LessonSummary({
         () => buildExerciseBreakdown(lesson, progress),
         [lesson, progress],
     );
+
+    // Phase 64 — Smart Next-Step Suggestions. Load this lesson's
+    // ElementError rows (lesson_id === filename) so the adaptive
+    // suggestion can count + classify the run's mistakes, then
+    // derive the full suggestion set. Reads are guarded so the
+    // summary still renders if storage is unreachable; the
+    // demoted action links below remain a working exit.
+    const [sessionErrors, setSessionErrors] = useState<ElementError[]>([]);
+    useEffect(() => {
+        if (!userId) {
+            setSessionErrors([]);
+            return;
+        }
+        let cancelled = false;
+        void (async () => {
+            try {
+                const errs = await getStorage().elementErrors.list(userId, {
+                    setId,
+                });
+                if (cancelled) return;
+                setSessionErrors(
+                    errs.filter((e) => e.lesson_id === lessonFilename),
+                );
+            } catch {
+                if (!cancelled) setSessionErrors([]);
+            }
+        })();
+        return () => {
+            cancelled = true;
+        };
+    }, [userId, setId, lessonFilename]);
+
+    const suggestions = useNextStepSuggestions({
+        source,
+        setId,
+        lessonFilename,
+        userId,
+        stars,
+        sessionErrors,
+    });
 
     // Count the score percentage up from 0 (instant under
     // "subtle" / reduced motion - see useCountUp).
@@ -1150,8 +1201,11 @@ function LessonSummary({
                 />
             )}
 
-            <div className="lesson-summary-actions">
-                {!isCompleted && (
+            {/* Completion is a distinct action from navigation, so
+                it keeps its own prominent button above the smart
+                suggestion cards. */}
+            {!isCompleted && (
+                <div className="lesson-summary-actions">
                     <button
                         type="button"
                         className="btn btn-primary"
@@ -1165,11 +1219,26 @@ function LessonSummary({
                             "Mark as complete",
                         )}
                     </button>
-                )}
-                {nextLessonFilename && (
+                </div>
+            )}
+
+            {/* Phase 64 — Smart Next-Step Suggestions. The primary
+                navigation surface; the standalone Next button below
+                is only a graceful-degradation fallback. */}
+            <NextStepSuggestions
+                suggestions={suggestions}
+                setId={setId}
+                setSlug={setSlug}
+            />
+
+            <div className="lesson-summary-secondary-actions">
+                {/* Fallback Next link — only when the smart card is
+                    not surfacing a successor (hook still loading or a
+                    storage read failed) but one exists. */}
+                {!suggestions.nextLesson.available && nextLessonFilename && (
                     <button
                         type="button"
-                        className="btn btn-primary"
+                        className="lesson-summary-link"
                         onClick={onNextLesson}
                         data-testid="lesson-summary-next"
                     >
@@ -1179,7 +1248,7 @@ function LessonSummary({
                 )}
                 <button
                     type="button"
-                    className="btn"
+                    className="lesson-summary-link"
                     onClick={onRepeat}
                     data-testid="lesson-summary-repeat"
                 >
@@ -1188,7 +1257,7 @@ function LessonSummary({
                 </button>
                 <button
                     type="button"
-                    className="btn"
+                    className="lesson-summary-link"
                     onClick={onExit}
                     data-testid="lesson-summary-exit"
                 >
