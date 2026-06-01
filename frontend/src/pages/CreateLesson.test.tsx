@@ -108,3 +108,72 @@ describe("CreateLesson — metadata step", () => {
         expect(navigateMock).toHaveBeenCalledWith("/content");
     });
 });
+
+describe("CreateLesson — card step gate + draft", () => {
+    function toStep2() {
+        renderPage();
+        fireEvent.change(screen.getByTestId("create-lesson-title"), {
+            target: {value: "My French Basics"},
+        });
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+    }
+
+    function addCard(front: string, back: string) {
+        fireEvent.change(screen.getByTestId("card-front-input"), {
+            target: {value: front},
+        });
+        fireEvent.change(screen.getByTestId("card-back-input"), {
+            target: {value: back},
+        });
+        fireEvent.click(screen.getByTestId("card-add-button"));
+    }
+
+    it("blocks step 3 until at least 4 cards exist", () => {
+        toStep2();
+        expect(screen.getByTestId("create-lesson-step-2")).toBeInTheDocument();
+        // 0 cards → Next blocked.
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(
+            screen.getByTestId("create-lesson-card-error"),
+        ).toBeInTheDocument();
+        expect(screen.getByTestId("create-lesson-step-2")).toBeInTheDocument();
+        // Add 4 cards → Next advances to step 3.
+        addCard("Bonjour", "Hallo");
+        addCard("Merci", "Danke");
+        addCard("Oui", "Ja");
+        addCard("Non", "Nein");
+        expect(screen.getByTestId("card-count").textContent).toContain("4");
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(screen.getByTestId("create-lesson-step-3")).toBeInTheDocument();
+    });
+
+    it("offers to restore a saved draft and continues it", () => {
+        localStorage.setItem(
+            "adaptive-learner.lesson-draft",
+            JSON.stringify({
+                schema: 1,
+                step: 1,
+                meta: {
+                    title: "Saved draft lesson",
+                    titleNative: "",
+                    sourceLanguage: "de",
+                    targetLanguage: "fr",
+                    level: "A1",
+                    description: "",
+                    author: "",
+                },
+                cards: [],
+                updatedAt: "2026-06-01T00:00:00Z",
+            }),
+        );
+        renderPage();
+        expect(
+            screen.getByTestId("create-lesson-draft-prompt"),
+        ).toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("create-lesson-draft-continue"));
+        expect(
+            (screen.getByTestId("create-lesson-title") as HTMLInputElement)
+                .value,
+        ).toBe("Saved draft lesson");
+    });
+});

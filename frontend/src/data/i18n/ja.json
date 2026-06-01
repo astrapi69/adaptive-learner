@@ -1849,6 +1849,33 @@
       "same_language": "学習する言語はあなたの言語と異なる必要があります。",
       "description_label": "トピック / 説明",
       "author_label": "著者名"
+    },
+    "cards": {
+      "heading": "単語カードを追加",
+      "front_label": "表（学習対象）",
+      "back_label": "裏（あなたの言語）",
+      "notes_label": "メモ（任意）",
+      "image_label": "画像参照（任意）",
+      "add": "カードを追加",
+      "import_csv": "CSVをインポート",
+      "csv_hint": "表、裏、メモの行を貼り付けます（カンマまたはタブ区切り）。例: Bonjour, Guten Tag, 丁寧なあいさつ",
+      "csv_preview": "{total} 行中 {valid} 行が準備完了",
+      "csv_add": "{n} 枚のカードを追加",
+      "count": "{n} 枚のカード",
+      "min_hint": "演習には {n} 枚のカードが必要です",
+      "min_to_advance": "続けるには少なくとも {n} 枚のカードを追加してください。",
+      "clear_all": "すべて消去",
+      "clear_confirm_title": "すべてのカードを削除しますか？",
+      "edit": "カードを編集",
+      "delete": "カードを削除",
+      "drag": "ドラッグして並べ替え",
+      "save_edit": "保存"
+    },
+    "draft": {
+      "title": "下書きが見つかりました",
+      "body": "未完成のレッスンがあります。続きから再開しますか、それとも最初から始めますか？",
+      "start_fresh": "最初から",
+      "continue": "続ける"
     }
   }
 }

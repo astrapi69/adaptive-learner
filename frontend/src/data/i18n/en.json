@@ -1849,6 +1849,33 @@
       "same_language": "The language learned must differ from your language.",
       "description_label": "Topic / description",
       "author_label": "Author name"
+    },
+    "cards": {
+      "heading": "Add vocabulary cards",
+      "front_label": "Front (learned)",
+      "back_label": "Back (your language)",
+      "notes_label": "Notes (optional)",
+      "image_label": "Image reference (optional)",
+      "add": "Add card",
+      "import_csv": "Import CSV",
+      "csv_hint": "Paste rows as front, back, notes (comma- or tab-separated). Example: Bonjour, Guten Tag, Formal greeting",
+      "csv_preview": "{valid} of {total} rows ready",
+      "csv_add": "Add {n} cards",
+      "count": "{n} cards",
+      "min_hint": "{n} cards needed for exercises",
+      "min_to_advance": "Add at least {n} cards to continue.",
+      "clear_all": "Clear all",
+      "clear_confirm_title": "Remove all cards?",
+      "edit": "Edit card",
+      "delete": "Delete card",
+      "drag": "Drag to reorder",
+      "save_edit": "Save"
+    },
+    "draft": {
+      "title": "Draft found",
+      "body": "You have an unfinished lesson. Continue where you left off or start fresh?",
+      "start_fresh": "Start fresh",
+      "continue": "Continue"
     }
   }
 }

@@ -17,7 +17,7 @@
  * 65B-65D. Storage-mode-agnostic (works in API + Dexie modes).
  */
 
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {useI18n} from "../hooks/useI18n";
@@ -26,18 +26,20 @@ import {
     LANGUAGE_OPTIONS,
 } from "../lib/content/language-options";
 import {readContributorName} from "../lib/content/contribution-history";
-
-export interface LessonMeta {
-    title: string;
-    titleNative: string;
-    sourceLanguage: string;
-    targetLanguage: string;
-    level: string;
-    description: string;
-    author: string;
-}
+import CardEditor, {MIN_CARDS} from "../components/create-lesson/CardEditor";
+import {
+    clearLessonDraft,
+    draftHasContent,
+    loadLessonDraft,
+    newCardId,
+    saveLessonDraft,
+    type LessonCardDraft,
+    type LessonDraft,
+    type LessonMeta,
+} from "../lib/content/lesson-draft";
 
 const TOTAL_STEPS = 4;
+const DRAFT_AUTOSAVE_MS = 10_000;
 
 /** Build the default metadata, seeding source language from the
  *  app language and target from the first differing option. */
@@ -66,8 +68,33 @@ export default function CreateLesson() {
     const [meta, setMeta] = useState<LessonMeta>(() =>
         defaultMeta((lang || "en").split("-")[0]),
     );
+    const [cards, setCards] = useState<LessonCardDraft[]>([]);
     const [showError, setShowError] = useState(false);
+    const [cardError, setCardError] = useState(false);
     const [confirmCancel, setConfirmCancel] = useState(false);
+    // Draft restore: a saved draft with content prompts continue-or-fresh
+    // before any edits. Held until the user chooses.
+    const [pendingDraft, setPendingDraft] = useState<LessonDraft | null>(null);
+
+    // On mount: surface a restorable draft (don't auto-apply).
+    useEffect(() => {
+        const draft = loadLessonDraft();
+        if (draftHasContent(draft)) setPendingDraft(draft);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Phase 65B — autosave the draft every 10s while editing. Skipped
+    // while the restore prompt is open (we haven't applied a choice yet).
+    const stateRef = useRef({step, meta, cards});
+    stateRef.current = {step, meta, cards};
+    useEffect(() => {
+        if (pendingDraft) return;
+        const id = setInterval(() => {
+            const {step: s, meta: m, cards: c} = stateRef.current;
+            saveLessonDraft({schema: 1, step: s, meta: m, cards: c, updatedAt: ""});
+        }, DRAFT_AUTOSAVE_MS);
+        return () => clearInterval(id);
+    }, [pendingDraft]);
 
     const titleMissing = meta.title.trim().length === 0;
     const sameLanguage = meta.sourceLanguage === meta.targetLanguage;
@@ -95,7 +122,50 @@ export default function CreateLesson() {
             }
             setShowError(false);
         }
+        if (step === 2) {
+            if (cards.length < MIN_CARDS) {
+                setCardError(true);
+                return;
+            }
+            setCardError(false);
+        }
         setStep((s) => Math.min(TOTAL_STEPS, s + 1));
+    }
+
+    // --- card handlers (Step 2) ---
+    function addCard(c: {front: string; back: string; notes: string; image: string}) {
+        setCards((prev) => [...prev, {id: newCardId(), ...c}]);
+    }
+    function updateCard(id: string, patch: Partial<LessonCardDraft>) {
+        setCards((prev) =>
+            prev.map((card) => (card.id === id ? {...card, ...patch} : card)),
+        );
+    }
+    function deleteCard(id: string) {
+        setCards((prev) => prev.filter((card) => card.id !== id));
+    }
+    function importCards(rows: {front: string; back: string; notes: string}[]) {
+        setCards((prev) => [
+            ...prev,
+            ...rows.map((r) => ({id: newCardId(), image: "", ...r})),
+        ]);
+    }
+
+    function discard() {
+        clearLessonDraft();
+        navigate("/content");
+    }
+
+    function applyDraft(draft: LessonDraft) {
+        setMeta(draft.meta);
+        setCards(draft.cards);
+        setStep(draft.step >= 1 && draft.step <= TOTAL_STEPS ? draft.step : 1);
+        setPendingDraft(null);
+    }
+
+    function startFresh() {
+        clearLessonDraft();
+        setPendingDraft(null);
     }
 
     function handleBack() {
@@ -289,7 +359,33 @@ export default function CreateLesson() {
                 </section>
             )}
 
-            {step > 1 && (
+            {step === 2 && (
+                <>
+                    <CardEditor
+                        cards={cards}
+                        onAdd={addCard}
+                        onUpdate={updateCard}
+                        onDelete={deleteCard}
+                        onReorder={setCards}
+                        onClearAll={() => setCards([])}
+                        onImport={importCards}
+                    />
+                    {cardError && cards.length < MIN_CARDS && (
+                        <p
+                            className="form-hint form-hint-warning"
+                            data-testid="create-lesson-card-error"
+                            role="alert"
+                        >
+                            {t(
+                                "create_lesson.cards.min_to_advance",
+                                "Add at least {n} cards to continue.",
+                            ).replace("{n}", String(MIN_CARDS))}
+                        </p>
+                    )}
+                </>
+            )}
+
+            {step > 2 && (
                 <section
                     className="create-lesson-step"
                     data-testid={`create-lesson-step-${step}`}
@@ -384,9 +480,63 @@ export default function CreateLesson() {
                                 type="button"
                                 className="btn btn-primary"
                                 data-testid="create-lesson-cancel-discard"
-                                onClick={() => navigate("/content")}
+                                onClick={discard}
                             >
                                 {t("create_lesson.cancel_discard", "Discard")}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {pendingDraft && (
+                <div
+                    className="modal-overlay"
+                    data-testid="create-lesson-draft-prompt"
+                >
+                    <div
+                        className="modal-card"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="create-lesson-draft-title"
+                    >
+                        <h2
+                            id="create-lesson-draft-title"
+                            className="modal-title"
+                        >
+                            {t(
+                                "create_lesson.draft.title",
+                                "Draft found",
+                            )}
+                        </h2>
+                        <p>
+                            {t(
+                                "create_lesson.draft.body",
+                                "You have an unfinished lesson. Continue where you left off or start fresh?",
+                            )}
+                        </p>
+                        <div className="form-actions">
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                data-testid="create-lesson-draft-fresh"
+                                onClick={startFresh}
+                            >
+                                {t(
+                                    "create_lesson.draft.start_fresh",
+                                    "Start fresh",
+                                )}
+                            </button>
+                            <button
+                                type="button"
+                                className="btn btn-primary"
+                                data-testid="create-lesson-draft-continue"
+                                onClick={() => applyDraft(pendingDraft)}
+                            >
+                                {t(
+                                    "create_lesson.draft.continue",
+                                    "Continue",
+                                )}
                             </button>
                         </div>
                     </div>

@@ -1849,6 +1849,33 @@
       "same_language": "O idioma aprendido deve ser diferente do seu idioma.",
       "description_label": "Tema / descrição",
       "author_label": "Nome do autor"
+    },
+    "cards": {
+      "heading": "Adicionar cartões de vocabulário",
+      "front_label": "Frente (aprendido)",
+      "back_label": "Verso (o seu idioma)",
+      "notes_label": "Notas (opcional)",
+      "image_label": "Referência de imagem (opcional)",
+      "add": "Adicionar cartão",
+      "import_csv": "Importar CSV",
+      "csv_hint": "Cole linhas como frente, verso, notas (separadas por vírgula ou tabulação). Exemplo: Bonjour, Guten Tag, Saudação formal",
+      "csv_preview": "{valid} de {total} linhas prontas",
+      "csv_add": "Adicionar {n} cartões",
+      "count": "{n} cartões",
+      "min_hint": "{n} cartões necessários para exercícios",
+      "min_to_advance": "Adicione pelo menos {n} cartões para continuar.",
+      "clear_all": "Limpar tudo",
+      "clear_confirm_title": "Remover todos os cartões?",
+      "edit": "Editar cartão",
+      "delete": "Eliminar cartão",
+      "drag": "Arraste para reordenar",
+      "save_edit": "Guardar"
+    },
+    "draft": {
+      "title": "Rascunho encontrado",
+      "body": "Tem uma lição não terminada. Continuar de onde parou ou começar de novo?",
+      "start_fresh": "Começar de novo",
+      "continue": "Continuar"
     }
   }
 }

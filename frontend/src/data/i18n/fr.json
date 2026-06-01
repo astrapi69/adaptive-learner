@@ -1849,6 +1849,33 @@
       "same_language": "La langue apprise doit être différente de votre langue.",
       "description_label": "Thème / description",
       "author_label": "Nom de l'auteur"
+    },
+    "cards": {
+      "heading": "Ajouter des cartes de vocabulaire",
+      "front_label": "Recto (appris)",
+      "back_label": "Verso (votre langue)",
+      "notes_label": "Notes (facultatif)",
+      "image_label": "Référence d'image (facultatif)",
+      "add": "Ajouter une carte",
+      "import_csv": "Importer CSV",
+      "csv_hint": "Collez des lignes recto, verso, notes (séparées par virgule ou tabulation). Exemple : Bonjour, Guten Tag, Salutation formelle",
+      "csv_preview": "{valid} sur {total} lignes prêtes",
+      "csv_add": "Ajouter {n} cartes",
+      "count": "{n} cartes",
+      "min_hint": "{n} cartes nécessaires pour les exercices",
+      "min_to_advance": "Ajoutez au moins {n} cartes pour continuer.",
+      "clear_all": "Tout effacer",
+      "clear_confirm_title": "Supprimer toutes les cartes ?",
+      "edit": "Modifier la carte",
+      "delete": "Supprimer la carte",
+      "drag": "Glisser pour réorganiser",
+      "save_edit": "Enregistrer"
+    },
+    "draft": {
+      "title": "Brouillon trouvé",
+      "body": "Vous avez une leçon inachevée. Reprendre où vous en étiez ou recommencer ?",
+      "start_fresh": "Recommencer",
+      "continue": "Continuer"
     }
   }
 }

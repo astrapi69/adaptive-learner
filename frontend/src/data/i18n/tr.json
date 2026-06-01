@@ -1849,6 +1849,33 @@
       "same_language": "Öğrenilen dil, sizin dilinizden farklı olmalıdır.",
       "description_label": "Konu / açıklama",
       "author_label": "Yazar adı"
+    },
+    "cards": {
+      "heading": "Kelime kartları ekle",
+      "front_label": "Ön yüz (öğrenilen)",
+      "back_label": "Arka yüz (sizin diliniz)",
+      "notes_label": "Notlar (isteğe bağlı)",
+      "image_label": "Görsel referansı (isteğe bağlı)",
+      "add": "Kart ekle",
+      "import_csv": "CSV içe aktar",
+      "csv_hint": "Satırları ön, arka, notlar olarak yapıştırın (virgül veya sekme ile ayrılmış). Örnek: Bonjour, Guten Tag, Resmi selamlama",
+      "csv_preview": "{total} satırın {valid} tanesi hazır",
+      "csv_add": "{n} kart ekle",
+      "count": "{n} kart",
+      "min_hint": "Alıştırmalar için {n} kart gerekli",
+      "min_to_advance": "Devam etmek için en az {n} kart ekleyin.",
+      "clear_all": "Tümünü temizle",
+      "clear_confirm_title": "Tüm kartlar kaldırılsın mı?",
+      "edit": "Kartı düzenle",
+      "delete": "Kartı sil",
+      "drag": "Yeniden sıralamak için sürükleyin",
+      "save_edit": "Kaydet"
+    },
+    "draft": {
+      "title": "Taslak bulundu",
+      "body": "Tamamlanmamış bir dersiniz var. Kaldığınız yerden devam edin veya yeniden başlayın?",
+      "start_fresh": "Yeniden başla",
+      "continue": "Devam et"
     }
   }
 }
