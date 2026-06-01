@@ -1902,6 +1902,28 @@
         "productive": "Produktiv",
         "balanced": "Ausgewogen"
       }
+    },
+    "review": {
+      "heading": "Überprüfen und speichern",
+      "title": "Titel",
+      "pair": "Sprachen",
+      "cards": "Karten",
+      "exercises": "Übungen",
+      "check_hasTitle": "Hat einen Titel",
+      "check_languagePair": "Sprachpaar ist gültig",
+      "check_enoughCards": "Mindestens 4 Karten",
+      "check_enoughExercises": "Mindestens 5 Übungen",
+      "check_enoughTypes": "Mindestens 2 Übungstypen",
+      "check_schemaValid": "Gültige Lektionsstruktur"
+    },
+    "save": {
+      "saved": "Lektion gespeichert!",
+      "failed": "Lektion konnte nicht gespeichert werden.",
+      "save_local": "Lokal speichern",
+      "save_share": "Speichern und teilen",
+      "play": "Lektion spielen",
+      "create_another": "Neue Lektion erstellen",
+      "to_browser": "Zum Content Browser"
     }
   }
 }

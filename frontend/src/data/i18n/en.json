@@ -1902,6 +1902,28 @@
         "productive": "Productive",
         "balanced": "Balanced"
       }
+    },
+    "review": {
+      "heading": "Review and save",
+      "title": "Title",
+      "pair": "Languages",
+      "cards": "Cards",
+      "exercises": "Exercises",
+      "check_hasTitle": "Has a title",
+      "check_languagePair": "Language pair is valid",
+      "check_enoughCards": "At least 4 cards",
+      "check_enoughExercises": "At least 5 exercises",
+      "check_enoughTypes": "At least 2 exercise types",
+      "check_schemaValid": "Valid lesson structure"
+    },
+    "save": {
+      "saved": "Lesson saved!",
+      "failed": "Could not save the lesson.",
+      "save_local": "Save locally",
+      "save_share": "Save and share",
+      "play": "Play lesson",
+      "create_another": "Create another lesson",
+      "to_browser": "To Content Browser"
     }
   }
 }

@@ -46,7 +46,16 @@ import {
     type LessonDraft,
     type LessonMeta,
 } from "../lib/content/lesson-draft";
-import type {ContentLessonExercise} from "../storage/types";
+import {
+    allChecksPass,
+    buildLessonFromDraft,
+    buildUserSetInput,
+    checkDraft,
+    type DraftValidationChecks,
+} from "../lib/content/draft-to-lesson";
+import {getStorage} from "../storage";
+import {notify} from "../utils/notify";
+import type {ContentLessonExercise, ContentSetEntry} from "../storage/types";
 
 const TOTAL_STEPS = 4;
 const DRAFT_AUTOSAVE_MS = 10_000;
@@ -86,6 +95,9 @@ export default function CreateLesson() {
     const [showError, setShowError] = useState(false);
     const [cardError, setCardError] = useState(false);
     const [exerciseError, setExerciseError] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [savedEntry, setSavedEntry] = useState<ContentSetEntry | null>(null);
+    const [savedLessonId, setSavedLessonId] = useState("");
     const [confirmCancel, setConfirmCancel] = useState(false);
     // Draft restore: a saved draft with content prompts continue-or-fresh
     // before any edits. Held until the user chooses.
@@ -164,6 +176,62 @@ export default function CreateLesson() {
         }));
         setExercises(generateExercises(genCards, genConfig));
         setExerciseError(false);
+    }
+
+    // --- Step 4: save + share ---
+    const draftChecks = useMemo<DraftValidationChecks>(
+        () => checkDraft({meta, cards, exercises}),
+        [meta, cards, exercises],
+    );
+
+    async function saveLocally(): Promise<ContentSetEntry | null> {
+        if (saving) return null;
+        setSaving(true);
+        try {
+            const lesson = buildLessonFromDraft({meta, cards, exercises});
+            const input = buildUserSetInput({meta, cards, exercises}, lesson);
+            const entry = await getStorage().contentLoader.saveUserSet(input);
+            clearLessonDraft();
+            setSavedLessonId(lesson.id);
+            setSavedEntry(entry);
+            notify.success(t("create_lesson.save.saved", "Lesson saved!"));
+            return entry;
+        } catch (err) {
+            notify.error(
+                `${t("create_lesson.save.failed", "Could not save the lesson.")} ${
+                    err instanceof Error ? err.message : ""
+                }`,
+            );
+            return null;
+        } finally {
+            setSaving(false);
+        }
+    }
+
+    async function saveAndShare() {
+        const entry = await saveLocally();
+        if (entry) navigate(`/content?share=${encodeURIComponent(entry.id)}`);
+    }
+
+    function createAnother() {
+        clearLessonDraft();
+        setMeta(defaultMeta((lang || "en").split("-")[0]));
+        setCards([]);
+        setExercises([]);
+        setGenConfig(DEFAULT_EXERCISE_GEN_CONFIG);
+        setSavedEntry(null);
+        setSavedLessonId("");
+        setStep(1);
+    }
+
+    function playSaved() {
+        if (!savedEntry) return;
+        const slug = savedEntry.source.replace(/\//g, "--");
+        navigate(
+            `/lesson/${encodeURIComponent(slug)}/${encodeURIComponent(
+                savedEntry.id,
+            )}/${encodeURIComponent(`${savedLessonId}.json`)}`,
+        );
     }
 
     // --- card handlers (Step 2) ---
@@ -448,25 +516,132 @@ export default function CreateLesson() {
                 </>
             )}
 
-            {step > 3 && (
+            {step === 4 && !savedEntry && (
                 <section
                     className="create-lesson-step"
-                    data-testid={`create-lesson-step-${step}`}
+                    data-testid="create-lesson-step-4"
+                    aria-label={t("create_lesson.review.heading", "Review and save")}
                 >
-                    <h2>
-                        {t("create_lesson.step_of", "Step {current} of {total}")
-                            .replace("{current}", String(step))
-                            .replace("{total}", String(TOTAL_STEPS))}
-                    </h2>
-                    <p className="muted" data-testid="create-lesson-step-pending">
-                        {t(
-                            "create_lesson.step_pending",
-                            "This step is coming in the next update.",
-                        )}
-                    </p>
+                    <h2>{t("create_lesson.review.heading", "Review and save")}</h2>
+                    <ul
+                        className="create-lesson-summary"
+                        data-testid="create-lesson-summary"
+                    >
+                        <li>
+                            {t("create_lesson.review.title", "Title")}:{" "}
+                            <strong>{meta.title}</strong>
+                        </li>
+                        <li>
+                            {t("create_lesson.review.pair", "Languages")}:{" "}
+                            {meta.sourceLanguage} → {meta.targetLanguage} ·{" "}
+                            {meta.level}
+                        </li>
+                        <li>
+                            {t("create_lesson.review.cards", "Cards")}:{" "}
+                            {cards.length}
+                        </li>
+                        <li>
+                            {t("create_lesson.review.exercises", "Exercises")}:{" "}
+                            {exercises.length}
+                        </li>
+                    </ul>
+                    <ul
+                        className="create-lesson-checklist"
+                        data-testid="create-lesson-checklist"
+                    >
+                        {(
+                            [
+                                ["hasTitle", "Has a title"],
+                                ["languagePair", "Language pair is valid"],
+                                ["enoughCards", "At least 4 cards"],
+                                ["enoughExercises", "At least 5 exercises"],
+                                ["enoughTypes", "At least 2 exercise types"],
+                                ["schemaValid", "Valid lesson structure"],
+                            ] as Array<[keyof DraftValidationChecks, string]>
+                        ).map(([key, fallback]) => {
+                            const pass = draftChecks[key];
+                            return (
+                                <li
+                                    key={key}
+                                    data-testid={`check-${key}`}
+                                    data-pass={pass ? "true" : "false"}
+                                    className={
+                                        pass ? "check-pass" : "check-fail"
+                                    }
+                                >
+                                    {pass ? "✓" : "✗"}{" "}
+                                    {t(`create_lesson.review.check_${key}`, fallback)}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                    <div className="form-actions">
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            data-testid="create-lesson-save-local"
+                            disabled={!allChecksPass(draftChecks) || saving}
+                            onClick={() => void saveLocally()}
+                        >
+                            {saving
+                                ? t("common.loading", "Loading…")
+                                : t("create_lesson.save.save_local", "Save locally")}
+                        </button>
+                        <button
+                            type="button"
+                            className="btn"
+                            data-testid="create-lesson-save-share"
+                            disabled={!allChecksPass(draftChecks) || saving}
+                            onClick={() => void saveAndShare()}
+                        >
+                            {t("create_lesson.save.save_share", "Save and share")}
+                        </button>
+                    </div>
                 </section>
             )}
 
+            {savedEntry && (
+                <section
+                    className="create-lesson-step"
+                    data-testid="create-lesson-saved"
+                >
+                    <h2>{t("create_lesson.save.saved", "Lesson saved!")}</h2>
+                    <div className="form-actions">
+                        <button
+                            type="button"
+                            className="btn btn-primary"
+                            data-testid="create-lesson-play"
+                            onClick={playSaved}
+                        >
+                            {t("create_lesson.save.play", "Play lesson")}
+                        </button>
+                        <button
+                            type="button"
+                            className="btn"
+                            data-testid="create-lesson-create-another"
+                            onClick={createAnother}
+                        >
+                            {t(
+                                "create_lesson.save.create_another",
+                                "Create another lesson",
+                            )}
+                        </button>
+                        <button
+                            type="button"
+                            className="btn"
+                            data-testid="create-lesson-to-browser"
+                            onClick={() => navigate("/content")}
+                        >
+                            {t(
+                                "create_lesson.save.to_browser",
+                                "To Content Browser",
+                            )}
+                        </button>
+                    </div>
+                </section>
+            )}
+
+            {!savedEntry && (
             <nav className="create-lesson-nav" aria-label={t(
                 "create_lesson.nav_label",
                 "Wizard navigation",
@@ -500,6 +675,7 @@ export default function CreateLesson() {
                     </button>
                 )}
             </nav>
+            )}
 
             {confirmCancel && (
                 <div

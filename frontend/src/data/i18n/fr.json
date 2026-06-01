@@ -1902,6 +1902,28 @@
         "productive": "Productif",
         "balanced": "Équilibré"
       }
+    },
+    "review": {
+      "heading": "Vérifier et enregistrer",
+      "title": "Titre",
+      "pair": "Langues",
+      "cards": "Cartes",
+      "exercises": "Exercices",
+      "check_hasTitle": "A un titre",
+      "check_languagePair": "La paire de langues est valide",
+      "check_enoughCards": "Au moins 4 cartes",
+      "check_enoughExercises": "Au moins 5 exercices",
+      "check_enoughTypes": "Au moins 2 types d'exercices",
+      "check_schemaValid": "Structure de leçon valide"
+    },
+    "save": {
+      "saved": "Leçon enregistrée !",
+      "failed": "Impossible d'enregistrer la leçon.",
+      "save_local": "Enregistrer localement",
+      "save_share": "Enregistrer et partager",
+      "play": "Lancer la leçon",
+      "create_another": "Créer une autre leçon",
+      "to_browser": "Vers le navigateur de contenu"
     }
   }
 }

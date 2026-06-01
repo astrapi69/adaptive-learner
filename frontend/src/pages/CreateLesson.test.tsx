@@ -7,7 +7,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {fireEvent, render, screen} from "@testing-library/react";
+import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -15,6 +15,18 @@ const navigateMock = vi.fn();
 vi.mock("react-router-dom", async (orig) => ({
     ...(await orig<typeof import("react-router-dom")>()),
     useNavigate: () => navigateMock,
+}));
+
+const saveUserSetMock = vi.fn(async (input: {set_id: string; title: string}) => ({
+    id: input.set_id,
+    source: "user-generated",
+    title: input.title,
+}));
+vi.mock("../storage", () => ({
+    getStorage: () => ({contentLoader: {saveUserSet: saveUserSetMock}}),
+}));
+vi.mock("../utils/notify", () => ({
+    notify: {success: vi.fn(), error: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
 
 import CreateLesson from "./CreateLesson";
@@ -167,6 +179,29 @@ describe("CreateLesson — card step gate + draft", () => {
         ).toBeGreaterThanOrEqual(5);
         fireEvent.click(screen.getByTestId("create-lesson-next"));
         expect(screen.getByTestId("create-lesson-step-4")).toBeInTheDocument();
+    });
+
+    it("saves the lesson locally and shows the next-step panel", async () => {
+        saveUserSetMock.mockClear();
+        toStep2();
+        addCard("Bonjour", "Hallo");
+        addCard("Merci", "Danke");
+        addCard("Oui", "Ja");
+        addCard("Non", "Nein");
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 3
+        fireEvent.click(screen.getByTestId("exercise-generate"));
+        fireEvent.click(screen.getByTestId("create-lesson-next")); // → step 4
+        expect(screen.getByTestId("create-lesson-step-4")).toBeInTheDocument();
+        const saveBtn = screen.getByTestId("create-lesson-save-local");
+        expect(saveBtn).not.toBeDisabled();
+        fireEvent.click(saveBtn);
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("create-lesson-saved"),
+            ).toBeInTheDocument(),
+        );
+        expect(saveUserSetMock).toHaveBeenCalled();
+        expect(screen.getByTestId("create-lesson-play")).toBeInTheDocument();
     });
 
     it("offers to restore a saved draft and continues it", () => {

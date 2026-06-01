@@ -1902,6 +1902,28 @@
         "productive": "Productivo",
         "balanced": "Equilibrado"
       }
+    },
+    "review": {
+      "heading": "Revisar y guardar",
+      "title": "Título",
+      "pair": "Idiomas",
+      "cards": "Tarjetas",
+      "exercises": "Ejercicios",
+      "check_hasTitle": "Tiene un título",
+      "check_languagePair": "El par de idiomas es válido",
+      "check_enoughCards": "Al menos 4 tarjetas",
+      "check_enoughExercises": "Al menos 5 ejercicios",
+      "check_enoughTypes": "Al menos 2 tipos de ejercicio",
+      "check_schemaValid": "Estructura de lección válida"
+    },
+    "save": {
+      "saved": "¡Lección guardada!",
+      "failed": "No se pudo guardar la lección.",
+      "save_local": "Guardar localmente",
+      "save_share": "Guardar y compartir",
+      "play": "Reproducir lección",
+      "create_another": "Crear otra lección",
+      "to_browser": "Al explorador de contenido"
     }
   }
 }
