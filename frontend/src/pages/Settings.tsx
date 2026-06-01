@@ -35,6 +35,7 @@ import {
   SUPPORTED_LANGUAGES,
   type AIProvider,
 } from "../lib/constants";
+import { API_KEY_PREFIX, isValidApiKeyFormat } from "../lib/apiKeyFormat";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
 import { readLearnerState, setLanguage } from "../lib/learnerState";
 import {
@@ -603,6 +604,17 @@ export default function Settings() {
           const source = settings[`key_source_${provider}`];
           const externallyManaged = source === "env";
           const fromSecretsFile = source === "secrets_yaml";
+          // C1 — instant format validation. ``empty`` = nothing typed
+          // yet (no feedback); ``valid`` / ``invalid`` drive the border
+          // colour, the inline hint, and the Save gate.
+          const draft = keyDrafts[provider];
+          const draftTrimmed = draft.trim();
+          const formatState: "empty" | "valid" | "invalid" =
+            draftTrimmed.length === 0
+              ? "empty"
+              : isValidApiKeyFormat(provider, draft)
+                ? "valid"
+                : "invalid";
           return (
             <div
               key={provider}
@@ -686,28 +698,42 @@ export default function Settings() {
                 </p>
               )}
               <div className="api-key-row-input">
-                <input
-                  data-testid={`api-key-input-${provider}`}
-                  type="password"
-                  placeholder={
-                    has && !externallyManaged
-                      ? t(
-                          "settings.api_key_placeholder_replace",
-                          "Paste a new key to replace the stored one…",
-                        )
-                      : t("settings.api_key_placeholder", "Paste here…")
-                  }
-                  aria-label={`${t("settings.api_key_label", "API key")} (${provider})`}
-                  autoComplete="off"
-                  value={keyDrafts[provider]}
-                  onChange={(e) =>
-                    setKeyDrafts((prev) => ({
-                      ...prev,
-                      [provider]: e.target.value,
-                    }))
-                  }
-                  disabled={busy === `save-${provider}` || externallyManaged}
-                />
+                <span
+                  className={`api-key-input-wrap api-key-format-${formatState}`}
+                >
+                  <input
+                    data-testid={`api-key-input-${provider}`}
+                    type="password"
+                    placeholder={
+                      has && !externallyManaged
+                        ? t(
+                            "settings.api_key_placeholder_replace",
+                            "Paste a new key to replace the stored one…",
+                          )
+                        : t("settings.api_key_placeholder", "Paste here…")
+                    }
+                    aria-label={`${t("settings.api_key_label", "API key")} (${provider})`}
+                    aria-invalid={formatState === "invalid"}
+                    autoComplete="off"
+                    value={keyDrafts[provider]}
+                    onChange={(e) =>
+                      setKeyDrafts((prev) => ({
+                        ...prev,
+                        [provider]: e.target.value,
+                      }))
+                    }
+                    disabled={busy === `save-${provider}` || externallyManaged}
+                  />
+                  {formatState === "valid" && (
+                    <span
+                      className="api-key-format-check"
+                      data-testid={`api-key-format-ok-${provider}`}
+                      aria-hidden="true"
+                    >
+                      ✓
+                    </span>
+                  )}
+                </span>
                 <button
                   type="button"
                   className="btn btn-primary"
@@ -715,7 +741,7 @@ export default function Settings() {
                   onClick={() => handleSaveKey(provider)}
                   disabled={
                     busy === `save-${provider}` ||
-                    keyDrafts[provider].trim().length === 0 ||
+                    formatState !== "valid" ||
                     externallyManaged
                   }
                 >
@@ -733,6 +759,18 @@ export default function Settings() {
                   </button>
                 )}
               </div>
+              {formatState === "invalid" && (
+                <p
+                  className="api-key-format-error"
+                  data-testid={`api-key-format-error-${provider}`}
+                >
+                  {t("settings.api_key.format_invalid", "Invalid format.")}{" "}
+                  {t(
+                    `settings.api_key.format_hint.${provider}`,
+                    `Starts with ${API_KEY_PREFIX[provider]}`,
+                  )}
+                </p>
+              )}
             </div>
           );
         })}

@@ -71,6 +71,10 @@ const BASE: UserSettings = {
   updated_at: "2026-05-18T00:00:00Z",
 };
 
+// A format-valid Anthropic key (sk-ant- prefix, >= 90 chars) so the
+// C1 format gate lets Save enable.
+const VALID_ANTHROPIC_KEY = "sk-ant-" + "a".repeat(95);
+
 function renderSettings(initialEntry = "/settings") {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
@@ -242,18 +246,28 @@ describe("Settings page", () => {
     });
   });
 
-  it("Save key is disabled until the draft is non-empty", async () => {
+  it("Save key is disabled until the draft is a valid-format key", async () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();
     await screen.findByTestId("settings");
     const save = screen.getByTestId(
       "api-key-save-anthropic",
     ) as HTMLButtonElement;
+    const input = screen.getByTestId("api-key-input-anthropic");
+    // Empty -> disabled.
     expect(save.disabled).toBe(true);
-    fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
-      target: { value: "sk-xxx" },
-    });
+    // Wrong format -> still disabled + a format error is shown.
+    fireEvent.change(input, { target: { value: "sk-xxx" } });
+    expect(save.disabled).toBe(true);
+    expect(
+      screen.getByTestId("api-key-format-error-anthropic"),
+    ).toBeInTheDocument();
+    // Valid format -> enabled + checkmark.
+    fireEvent.change(input, { target: { value: VALID_ANTHROPIC_KEY } });
     expect(save.disabled).toBe(false);
+    expect(
+      screen.getByTestId("api-key-format-ok-anthropic"),
+    ).toBeInTheDocument();
   });
 
   it("Save key posts the encrypted-write body and clears the draft", async () => {
@@ -262,7 +276,7 @@ describe("Settings page", () => {
     renderSettings();
     await screen.findByTestId("settings");
     fireEvent.change(screen.getByTestId("api-key-input-anthropic"), {
-      target: { value: "sk-xxx" },
+      target: { value: VALID_ANTHROPIC_KEY },
     });
     await act(async () => {
       fireEvent.click(screen.getByTestId("api-key-save-anthropic"));
@@ -270,7 +284,7 @@ describe("Settings page", () => {
     await waitFor(() => {
       expect(apiSetKey).toHaveBeenCalledWith("u-1", {
         provider: "anthropic",
-        key: "sk-xxx",
+        key: VALID_ANTHROPIC_KEY,
       });
     });
     // After success the status flips to "set" and a Delete
@@ -630,7 +644,7 @@ describe("Settings — per-provider key source (Phase 34)", () => {
     const input = screen.getByTestId(
       "api-key-input-anthropic",
     ) as HTMLInputElement;
-    fireEvent.change(input, { target: { value: "sk-new" } });
+    fireEvent.change(input, { target: { value: VALID_ANTHROPIC_KEY } });
     expect(screen.getByTestId("api-key-save-anthropic")).not.toBeDisabled();
   });
 

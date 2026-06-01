@@ -6784,3 +6784,67 @@ select:focus {
   font-size: 0.875rem;
   font-weight: 500;
 }
+
+/* ==============================================================
+ * API-key format validation + test (Settings > AI). Instant
+ * red/green border + checkmark on the input, an inline format
+ * hint, and the test-result line. Theme-token driven.
+ * ============================================================== */
+
+.api-key-input-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 1;
+}
+
+.api-key-input-wrap input {
+  width: 100%;
+}
+
+.api-key-format-valid input {
+  border-color: var(--success);
+}
+
+.api-key-format-invalid input {
+  border-color: var(--error);
+}
+
+.api-key-format-check {
+  position: absolute;
+  right: 0.5rem;
+  color: var(--success);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.api-key-format-error {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: var(--error);
+}
+
+.api-key-test-result {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.api-key-test-result.is-ok {
+  color: var(--success);
+}
+
+.api-key-test-result.is-invalid {
+  color: var(--error);
+}
+
+.api-key-test-result.is-warning {
+  color: var(--warning);
+}
+
+.api-key-last-test {
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+}
