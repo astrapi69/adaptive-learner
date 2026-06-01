@@ -8,7 +8,12 @@
  * loaded set list (no extra fetch).
  */
 
-import type { ContentSetEntry } from "../../storage/types";
+import type {
+  ContentLesson,
+  ContentLessonExercise,
+  ContentLessonStep,
+  ContentSetEntry,
+} from "../../storage/types";
 
 function baseLang(code: string): string {
   return (code || "").split("-")[0].toLowerCase();
@@ -84,4 +89,229 @@ export function findSimilarSets(
     if (!cTitle) return false;
     return cTitle === qTitle || levenshtein(cTitle, qTitle) < 3;
   });
+}
+
+// ---------------------------------------------------------------------------
+// Lesson-level duplicate / variation detection (Phase 64B).
+//
+// findSimilarSets (above) warns about near-duplicate SETS by title. This
+// layer compares a single lesson being shared against the individual
+// lessons already in the target set, by CARD overlap + EXERCISE overlap, so
+// the user can choose to share it as a VARIATION or extract only the
+// genuinely-new exercises as a supplement. Pure; originals are never
+// mutated (comparison uses normalised copies, never edits).
+// ---------------------------------------------------------------------------
+
+/** A query lesson whose cards are >= 90% present in a candidate is a
+ *  near-duplicate; >= 70% is "similar". */
+export const NEAR_DUPLICATE_CARD_OVERLAP = 0.9;
+export const SIMILAR_CARD_OVERLAP = 0.7;
+
+export type DuplicateTier = "none" | "similar" | "near_duplicate";
+
+/** Canonical comparison key for a card: normalised front + back, so
+ *  "Bonjour"/"Hello" matches "bonjour"/"hello" and "Begrüßung" matches
+ *  "Begruessung". The card object is never mutated. */
+export function cardKey(card: { front: string; back: string }): string {
+  return `${normaliseTitle(card.front)}|${normaliseTitle(card.back)}`;
+}
+
+function exerciseSteps(lesson: ContentLesson): ContentLessonExercise[] {
+  return lesson.steps
+    .filter((step) => step.type === "exercise" && step.exercise)
+    .map((step) => step.exercise as ContentLessonExercise);
+}
+
+function cardKeyMap(lesson: ContentLesson): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const card of lesson.cards) map.set(card.id, cardKey(card));
+  return map;
+}
+
+/** Cross-lesson exercise signature: its type + the sorted set of card
+ *  KEYS it targets (resolving the lesson-local card_ids through the
+ *  lesson's own cards). Comparable between independently-authored
+ *  lessons, whose raw card_ids never match. */
+function exerciseSignature(
+  exercise: ContentLessonExercise,
+  cardKeyById: Map<string, string>,
+): string {
+  const keys = (exercise.card_ids || [])
+    .map((id) => cardKeyById.get(id))
+    .filter((key): key is string => Boolean(key))
+    .sort();
+  return `${exercise.type}#${keys.join("|")}`;
+}
+
+export interface LessonComparison {
+  candidateId: string;
+  candidateTitle: string;
+  /** 0..1: share of the query lesson's cards present in the candidate. */
+  cardOverlap: number;
+  matchedCards: number;
+  totalQueryCards: number;
+  /** 0..1: share of the query lesson's exercises with a structural twin
+   *  (same type + same targeted card keys) in the candidate. */
+  exerciseOverlap: number;
+  matchedExercises: number;
+  totalQueryExercises: number;
+  /** Levenshtein distance of the normalised titles (0 = identical). */
+  titleDistance: number;
+}
+
+/** Compare the query lesson against one candidate. Pure. */
+export function compareLessons(
+  query: ContentLesson,
+  candidate: ContentLesson,
+): LessonComparison {
+  const candidateCardKeys = new Set(candidate.cards.map(cardKey));
+  const queryCardKeys = query.cards.map(cardKey);
+  const matchedCards = queryCardKeys.filter((key) =>
+    candidateCardKeys.has(key),
+  ).length;
+  const totalQueryCards = queryCardKeys.length;
+
+  const candidateKeyById = cardKeyMap(candidate);
+  const candidateSigs = new Set(
+    exerciseSteps(candidate).map((ex) =>
+      exerciseSignature(ex, candidateKeyById),
+    ),
+  );
+  const queryKeyById = cardKeyMap(query);
+  const querySigs = exerciseSteps(query).map((ex) =>
+    exerciseSignature(ex, queryKeyById),
+  );
+  const matchedExercises = querySigs.filter((sig) =>
+    candidateSigs.has(sig),
+  ).length;
+  const totalQueryExercises = querySigs.length;
+
+  return {
+    candidateId: candidate.id,
+    candidateTitle: candidate.title,
+    cardOverlap: totalQueryCards ? matchedCards / totalQueryCards : 0,
+    matchedCards,
+    totalQueryCards,
+    exerciseOverlap: totalQueryExercises
+      ? matchedExercises / totalQueryExercises
+      : 0,
+    matchedExercises,
+    totalQueryExercises,
+    titleDistance: levenshtein(
+      normaliseTitle(query.title),
+      normaliseTitle(candidate.title),
+    ),
+  };
+}
+
+export interface DuplicateResult {
+  tier: DuplicateTier;
+  /** Best-matching candidate (highest card overlap); null when the
+   *  tier is "none" or there are no candidates. */
+  match: LessonComparison | null;
+  /** Every comparison, sorted by card overlap desc — feeds the
+   *  "show differences" view. */
+  comparisons: LessonComparison[];
+}
+
+export interface DetectDuplicateOptions {
+  nearThreshold?: number;
+  similarThreshold?: number;
+}
+
+/**
+ * Classify a lesson against the lessons already in its target set.
+ * Advisory only — the caller may always share regardless. NEAR-
+ * DUPLICATE at >= 90% card overlap, SIMILAR at >= 70%, else NONE.
+ */
+export function detectDuplicate(
+  query: ContentLesson,
+  candidates: readonly ContentLesson[],
+  options: DetectDuplicateOptions = {},
+): DuplicateResult {
+  const near = options.nearThreshold ?? NEAR_DUPLICATE_CARD_OVERLAP;
+  const similar = options.similarThreshold ?? SIMILAR_CARD_OVERLAP;
+  const comparisons = candidates
+    .filter((candidate) => candidate.id !== query.id)
+    .map((candidate) => compareLessons(query, candidate))
+    .sort(
+      (a, b) =>
+        b.cardOverlap - a.cardOverlap ||
+        b.exerciseOverlap - a.exerciseOverlap,
+    );
+  const best = comparisons[0] ?? null;
+  let tier: DuplicateTier = "none";
+  if (best) {
+    if (best.cardOverlap >= near) tier = "near_duplicate";
+    else if (best.cardOverlap >= similar) tier = "similar";
+  }
+  return { tier, match: tier === "none" ? null : best, comparisons };
+}
+
+/** Return a NEW lesson tagged as a variation of ``originalId``. The
+ *  input lesson is not mutated. */
+export function markAsVariation(
+  lesson: ContentLesson,
+  originalId: string,
+  note?: string,
+): ContentLesson {
+  return {
+    ...lesson,
+    variation_of: originalId,
+    variation_note: note?.trim() ? note.trim() : null,
+  };
+}
+
+/**
+ * Build a supplement lesson holding ONLY the exercises in ``query`` that
+ * do not already exist in ``original`` (same type + same targeted card
+ * keys = "already exists"), plus the cards those new exercises reference.
+ * Tagged as a variation of the original. Returns null when there is
+ * nothing new to contribute. Neither input is mutated.
+ */
+export function extractSupplement(
+  query: ContentLesson,
+  original: ContentLesson,
+  note?: string,
+): ContentLesson | null {
+  const originalKeyById = cardKeyMap(original);
+  const originalSigs = new Set(
+    exerciseSteps(original).map((ex) =>
+      exerciseSignature(ex, originalKeyById),
+    ),
+  );
+  const queryKeyById = cardKeyMap(query);
+  const newExerciseSteps: ContentLessonStep[] = query.steps.filter(
+    (step) =>
+      step.type === "exercise" &&
+      step.exercise != null &&
+      !originalSigs.has(exerciseSignature(step.exercise, queryKeyById)),
+  );
+  if (newExerciseSteps.length === 0) return null;
+
+  const neededCardIds = new Set<string>();
+  for (const step of newExerciseSteps) {
+    for (const id of step.exercise?.card_ids || []) neededCardIds.add(id);
+  }
+  const cards = query.cards.filter((card) => neededCardIds.has(card.id));
+  const totalQueryExercises = Math.max(1, exerciseSteps(query).length);
+
+  return {
+    id: `${query.id}-supplement`,
+    title: query.title,
+    description: query.description ?? null,
+    target_language: query.target_language ?? null,
+    source_language: query.source_language ?? null,
+    estimated_minutes: Math.max(
+      1,
+      Math.round(
+        (query.estimated_minutes || 0) *
+          (newExerciseSteps.length / totalQueryExercises),
+      ),
+    ),
+    cards,
+    steps: newExerciseSteps,
+    variation_of: original.id,
+    variation_note: note?.trim() ? note.trim() : null,
+  };
 }

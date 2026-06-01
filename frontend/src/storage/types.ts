@@ -376,6 +376,14 @@ export interface ContentLesson {
   estimated_minutes: number;
   cards: ContentLessonCard[];
   steps: ContentLessonStep[];
+  /** Phase 64B / content schema 1.3 (additive) — when set, this
+   *  lesson is a community VARIATION of another lesson (same topic,
+   *  different exercises or perspective). Holds the original
+   *  lesson's id. Absent for ordinary lessons. */
+  variation_of?: string | null;
+  /** Phase 64B — the author's short note on how this variation
+   *  differs from the original ("Mehr Übungen zum Präteritum"). */
+  variation_note?: string | null;
 }
 
 /**
