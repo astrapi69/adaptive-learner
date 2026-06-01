@@ -1514,11 +1514,14 @@ content:
     share_full: Yine de tüm dersi paylaş
     variation_note_placeholder: Sizin sürümünüz nasıl farklı? (isteğe bağlı)
     show_differences: Farklılıkları göster
-    ready_to_share: Her şey hazır. Dersinizi toplulukla paylaşalım mı?
+    ready_to_share: "Her şey hazır. Dersini pull request olarak paylaş?"
     share_button: Paylaş
     thanks: Paylaştığınız için teşekkürler! Katkınız diğer öğrenenlere yardımcı oluyor.
-    submitted: Dersiniz öneri olarak gönderildi. Bir yönetici inceleyecek.
-    view_submission: Gönderinizi GitHub''da görüntüleyin
+    submitted: "GitHub'da dersinizin önceden doldurulduğu bir pull request açıldı. İnceleyin ve \"Create pull request\" düğmesine tıklayın - içerik deposunun CI'si otomatik olarak doğrular."
+    view_submission: "Pull request'i GitHub'da aç"
+    upload_instructions: "Ders dosyanız indirildi. Az önce açılan GitHub sayfasında dosyayı yükleme alanına sürükleyin ve \"Propose changes\" düğmesine tıklayın - GitHub pull request'i sizin için oluşturur."
+    copy_pr_body: "Pull request açıklamasını kopyala"
+    copy_pr_body_done: "Kopyalandı!"
     done: Tamam
     back: Geri
     next: Devam
@@ -1540,7 +1543,7 @@ content:
     name_label: Adınız (isteğe bağlı)
     name_placeholder: ör. Maria S.
     show_name: Adı derste göster
-    privacy: Adınız derste ve GitHub konusunda gösterilecek.
+    privacy: "Adınız derste ve pull request'te gösterilecek."
 milestone:
   streak: "{n} günlük seri!"
   level_up: "Seviye {n}'e ulaşıldı!"

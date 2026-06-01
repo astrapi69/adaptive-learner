@@ -78,10 +78,12 @@ import { notify } from "../utils/notify";
 const COMMUNITY_REPO = "astrapi69/adaptive-learner-content";
 const COMMUNITY_BRANCH = "main";
 
-/** "Share with Community" opens a GitHub issue on COMMUNITY_REPO.
- *  Enabled now that the content repo exists; set false to gate the
- *  button off again (e.g. if the repo is unavailable). Export (JSON /
- *  ZIP) is independent of this — it's a local download. */
+/** "Share with Community" opens a GitHub pull request against
+ *  COMMUNITY_REPO (the lesson JSON lands at the correct tree path and
+ *  the repo CI validates it automatically). Enabled now that the
+ *  content repo exists; set false to gate the button off again (e.g.
+ *  if the repo is unavailable). Export (JSON / ZIP) is independent of
+ *  this — it's a local download. */
 const COMMUNITY_SHARING_ENABLED = true;
 
 type DownloadState = "idle" | "downloading" | "done" | "error";
@@ -323,8 +325,8 @@ export default function ContentPage() {
 
   // Phase 60 — gate "Share with Community" behind the client-side
   // validation pipeline. Fetch the set's lessons, validate schema +
-  // language pair + quality minimums, and only let the user proceed
-  // to the GitHub issue when the set passes.
+  // language pair + quality minimums; warnings never block (the
+  // wizard shares as a pull request either way).
   const closeShareModal = () => {
     setShareTarget(null);
     setShareResult(null);

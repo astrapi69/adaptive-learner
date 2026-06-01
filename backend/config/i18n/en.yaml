@@ -1525,11 +1525,14 @@ content:
     share_full: Share the full lesson anyway
     variation_note_placeholder: How does your version differ? (optional)
     show_differences: Show differences
-    ready_to_share: Everything's ready. Share your lesson with the community?
+    ready_to_share: "Everything's ready. Share your lesson as a pull request?"
     share_button: Share
     thanks: Thanks for sharing! Your contribution helps other learners.
-    submitted: Your lesson was submitted as a suggestion. A maintainer will review it.
-    view_submission: View your submission on GitHub
+    submitted: "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" - the content-repo CI validates it automatically."
+    view_submission: "Open the pull request on GitHub"
+    upload_instructions: "Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click \"Propose changes\" - GitHub creates the pull request for you."
+    copy_pr_body: "Copy pull-request description"
+    copy_pr_body_done: "Copied!"
     done: Done
     back: Back
     next: Continue
@@ -1551,7 +1554,7 @@ content:
     name_label: Your name (optional)
     name_placeholder: e.g. Maria S.
     show_name: Show name in lesson
-    privacy: Your name will be shown in the lesson and the GitHub issue.
+    privacy: "Your name will be shown in the lesson and the pull request."
 milestone:
   streak: "{n}-Day Streak!"
   level_up: "Level {n} reached!"

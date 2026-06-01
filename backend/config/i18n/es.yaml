@@ -1516,11 +1516,14 @@ content:
     share_full: Compartir la lección completa de todos modos
     variation_note_placeholder: ¿En qué se diferencia tu versión? (opcional)
     show_differences: Mostrar diferencias
-    ready_to_share: Todo listo. ¿Compartir tu lección con la comunidad?
+    ready_to_share: "Todo listo. ¿Compartir tu lección como pull request?"
     share_button: Compartir
     thanks: ¡Gracias por compartir! Tu contribución ayuda a otras personas que aprenden.
-    submitted: Tu lección se envió como sugerencia. Una persona responsable la revisará.
-    view_submission: Ver tu envío en GitHub
+    submitted: "Se abrió un pull request en GitHub con tu lección rellenada. Revísalo y haz clic en \"Create pull request\"; la CI del repositorio de contenido lo valida automáticamente."
+    view_submission: "Abrir el pull request en GitHub"
+    upload_instructions: "Se descargó el archivo de tu lección. En la página de GitHub que se acaba de abrir, arrastra el archivo al área de carga y haz clic en \"Propose changes\"; GitHub crea el pull request por ti."
+    copy_pr_body: "Copiar la descripción del pull request"
+    copy_pr_body_done: "¡Copiado!"
     done: Listo
     back: Atrás
     next: Continuar
@@ -1542,7 +1545,7 @@ content:
     name_label: Tu nombre (opcional)
     name_placeholder: p. ej. María S.
     show_name: Mostrar el nombre en la lección
-    privacy: Tu nombre se mostrará en la lección y en la incidencia de GitHub.
+    privacy: "Tu nombre se mostrará en la lección y en el pull request."
 milestone:
   streak: "¡Racha de {n} días!"
   level_up: "¡Nivel {n} alcanzado!"

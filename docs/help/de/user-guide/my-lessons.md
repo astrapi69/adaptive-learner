@@ -71,11 +71,16 @@ Jede eigene Lektion lässt sich teilen — ohne Konto und ohne Server:
   herunterladen.
 - **Als Content-Set exportieren** — ein Content-Set als `.zip`
   herunterladen (Manifest + Lektionen).
-- **Für die Community bereitstellen** — öffnet ein vorausgefülltes
-  GitHub-Issue im offiziellen Inhalts-Repository. Hänge die
-  exportierte Datei an; ein Maintainer prüft sie und nimmt sie ggf.
-  in die offiziellen Inhalte auf, sodass alle sie herunterladen
-  können.
+- **Für die Community bereitstellen** — öffnet einen vorausgefüllten
+  **Pull Request** im offiziellen Inhalts-Repository. Die Lektions-JSON
+  landet am richtigen Pfad im Inhaltsbaum und die Validierung des
+  Repositorys läuft automatisch; ein Maintainer prüft den PR und führt
+  ihn zusammen, sodass alle die Lektion herunterladen können. Kleine
+  Lektionen öffnen direkt den Datei-Editor von GitHub (PR-Titel und
+  -Beschreibung sind vorausgefüllt); größere Lektionen werden zuerst
+  heruntergeladen und öffnen die Upload-Seite von GitHub, auf die du
+  die Datei ziehst. Es ist kein Token nötig — GitHub erstellt den Fork
+  und den Pull Request für dich.
 
 Exportierte Dateien enthalten nur den Lektionsinhalt — keinen
 Fortschritt, keine Fehlerhistorie, nichts Persönliches.

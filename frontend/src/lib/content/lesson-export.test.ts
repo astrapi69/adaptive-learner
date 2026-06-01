@@ -5,12 +5,15 @@ import { generateLessonFromAnalysis } from "./analysis-to-lesson";
 import {
   buildContentSetZip,
   buildManifestYaml,
-  communityIssueUrl,
+  buildPrBody,
+  buildPrTitle,
   communityPrUrl,
+  communityUploadUrl,
   MAX_PR_URL_LENGTH,
   contentSetFileName,
   lessonFileName,
   lessonJson,
+  type CommunityPrDetails,
 } from "./lesson-export";
 import type { ConversationAnalysisResult } from "../../types/domain";
 
@@ -103,52 +106,66 @@ describe("buildContentSetZip", () => {
   });
 });
 
-describe("communityIssueUrl", () => {
-  it("builds a pre-filled GitHub issue URL", () => {
-    const url = communityIssueUrl(
-      "astrapi69/adaptive-learner-content",
-      META,
-      1,
+const PR_DETAILS: CommunityPrDetails = {
+  title: "Spanish travel",
+  sourceLanguage: "en",
+  targetLanguage: "es",
+  level: "A1",
+  filePath: "sets/en/es-a1/lessons/16-spanish-travel.json",
+  exerciseCount: 6,
+  cardCount: 12,
+  lessonCount: 1,
+};
+
+describe("buildPrTitle", () => {
+  it("formats as 'content: {title} ({source}->{target} {level})'", () => {
+    expect(buildPrTitle(PR_DETAILS)).toBe(
+      "content: Spanish travel (en->es A1)",
     );
-    expect(url).toMatch(
-      /^https:\/\/github\.com\/astrapi69\/adaptive-learner-content\/issues\/new\?/,
-    );
-    const qs = new URL(url).searchParams;
-    expect(qs.get("title")).toBe("New lesson: Spanish travel (es beginner)");
-    expect(qs.get("body")).toContain("Spanish travel");
-    expect(qs.get("body")).toContain("Maintainer");
+  });
+});
+
+describe("buildPrBody", () => {
+  it("includes the metadata table, placement path, and validation line", () => {
+    const body = buildPrBody(PR_DETAILS);
+    expect(body).toContain("| Title | Spanish travel |");
+    expect(body).toContain("| Source language | en |");
+    expect(body).toContain("| Target language | es |");
+    expect(body).toContain("sets/en/es-a1/lessons/16-spanish-travel.json");
+    expect(body).toContain("schema 1.2 ✓ · quality ✓");
+    expect(body).not.toContain("Contributed by");
   });
 
-  it("stamps validation ✓ when no issues were acknowledged", () => {
-    const url = communityIssueUrl("o/r", META, 1, {
-      sourceLanguage: "en",
-      targetLanguage: "es",
-      placement: "sets/en/es-beginner",
-      exerciseCount: 6,
-      cardCount: 12,
-    });
-    const body = new URL(url).searchParams.get("body") ?? "";
-    expect(body).toContain("schema ✓ · quality ✓");
-    expect(body).not.toContain("shared with warnings");
+  it("adds the author row when an author is given", () => {
+    const body = buildPrBody({ ...PR_DETAILS, author: "Maria S." });
+    expect(body).toContain("| Contributed by | Maria S. |");
   });
 
-  it("surfaces acknowledged quality findings so the maintainer sees them", () => {
-    const url = communityIssueUrl("o/r", META, 1, {
-      sourceLanguage: "en",
-      targetLanguage: "es",
-      placement: "sets/en/es-beginner",
-      exerciseCount: 0,
-      cardCount: 3,
+  it("surfaces acknowledged quality findings", () => {
+    const body = buildPrBody({
+      ...PR_DETAILS,
       validationIssues: [
         "Lesson has 0 exercises; at least 5 are required.",
         "Source and target language are identical.",
       ],
     });
-    const body = new URL(url).searchParams.get("body") ?? "";
     expect(body).toContain("⚠ shared with warnings");
     expect(body).toContain("Quality-check findings (acknowledged by author):");
     expect(body).toContain("- Lesson has 0 exercises");
-    expect(body).toContain("- Source and target language are identical");
+  });
+});
+
+describe("communityUploadUrl", () => {
+  it("points at the repo's upload page for the lessons directory", () => {
+    expect(
+      communityUploadUrl(
+        "astrapi69/adaptive-learner-content",
+        "main",
+        "sets/en/es-a1/lessons",
+      ),
+    ).toBe(
+      "https://github.com/astrapi69/adaptive-learner-content/upload/main/sets/en/es-a1/lessons",
+    );
   });
 });
 
@@ -163,21 +180,26 @@ describe("communityPrUrl", () => {
     steps: [{ id: "s1", type: "theory" as const, body: "Hola = hello." }],
   };
 
-  it("builds a GitHub Web new-file URL with filename + value", () => {
+  it("builds a create-file PR URL with the placement path + pre-filled title/body", () => {
     const url = communityPrUrl({
       repo: "astrapi69/adaptive-learner-content",
       branch: "main",
-      placement: "sets/en/es-a1",
+      filePath: "sets/en/es-a1/lessons/16-greetings.json",
       lesson: LESSON,
+      prTitle: "content: Greetings (en->es A1)",
+      prBody: "## New lesson\n...",
     });
     expect(url).not.toBeNull();
     expect(url).toMatch(
       /^https:\/\/github\.com\/astrapi69\/adaptive-learner-content\/new\/main\?/,
     );
     const qs = new URL(url!).searchParams;
+    // Auto-numbered placement path (NOT the title-derived filename).
     expect(qs.get("filename")).toBe(
-      "sets/en/es-a1/lessons/greetings-lesson.json",
+      "sets/en/es-a1/lessons/16-greetings.json",
     );
+    expect(qs.get("message")).toBe("content: Greetings (en->es A1)");
+    expect(qs.get("description")).toContain("New lesson");
     const value = qs.get("value") ?? "";
     expect(value).toContain('"id": "01"');
     expect(value).toContain('"title": "Greetings"');
@@ -190,8 +212,10 @@ describe("communityPrUrl", () => {
     const url = communityPrUrl({
       repo: "o/r",
       branch: "main",
-      placement: "sets/en/es-a1",
+      filePath: "sets/en/es-a1/lessons/16-greetings.json",
       lesson: { ...LESSON, steps: [{ id: "s1", type: "theory", body: big }] },
+      prTitle: "content: Greetings (en->es A1)",
+      prBody: "## New lesson",
     });
     expect(url).toBeNull();
   });

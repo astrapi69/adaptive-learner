@@ -1656,11 +1656,14 @@
       "share_full": "Partilhar a lição completa mesmo assim",
       "variation_note_placeholder": "Em que difere a sua versão? (opcional)",
       "show_differences": "Mostrar diferenças",
-      "ready_to_share": "Está tudo pronto. Partilhar a sua lição com a comunidade?",
+      "ready_to_share": "Tudo pronto. Compartilhar sua lição como pull request?",
       "share_button": "Partilhar",
       "thanks": "Obrigado por partilhar! A sua contribuição ajuda outros estudantes.",
-      "submitted": "A sua lição foi submetida como sugestão. Um responsável irá revê-la.",
-      "view_submission": "Ver a sua submissão no GitHub",
+      "submitted": "Um pull request foi aberto no GitHub com sua lição pré-preenchida. Revise e clique em \"Create pull request\" - a CI do repositório de conteúdo o valida automaticamente.",
+      "view_submission": "Abrir o pull request no GitHub",
+      "upload_instructions": "O arquivo da sua lição foi baixado. Na página do GitHub que acabou de abrir, arraste o arquivo para a área de upload e clique em \"Propose changes\" - o GitHub cria o pull request para você.",
+      "copy_pr_body": "Copiar a descrição do pull request",
+      "copy_pr_body_done": "Copiado!",
       "done": "Concluído",
       "back": "Voltar",
       "next": "Continuar"
@@ -1685,7 +1688,7 @@
       "name_label": "O seu nome (opcional)",
       "name_placeholder": "ex. Maria S.",
       "show_name": "Mostrar nome na lição",
-      "privacy": "O seu nome será mostrado na lição e no issue do GitHub."
+      "privacy": "Seu nome será exibido na lição e no pull request."
     }
   },
   "milestone": {

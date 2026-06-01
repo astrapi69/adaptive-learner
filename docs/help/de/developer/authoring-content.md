@@ -709,12 +709,14 @@ zu erstellen und zu teilen**:
    (Manifest + Lektionen). Exporte enthalten nur den
    Lektionsinhalt — keinen Fortschritt, keine Fehlerhistorie,
    nichts Persönliches.
-3. Klicke auf **Für die Community bereitstellen**, um ein
-   vorausgefülltes GitHub-Issue im Inhalts-Repository zu öffnen.
-   Hänge die exportierte `.zip` an.
-4. Ein Maintainer prüft die Lektion, bringt das Manifest (id,
-   title, language, level, tags) in Einklang mit den obigen
-   Konventionen und fügt sie unter `sets/` hinzu. Nach dem Merge
+3. Klicke auf **Für die Community bereitstellen**, um einen
+   vorausgefüllten **Pull Request** im Inhalts-Repository zu öffnen
+   — die Lektions-JSON wird am richtigen Pfad im Baum committet,
+   kein `.zip`-Anhang nötig.
+4. Die CI des Repos validiert den PR automatisch; ein Maintainer
+   prüft die Lektion, bringt das Manifest (id, title, language,
+   level, tags) in Einklang mit den obigen Konventionen und führt
+   ihn unter `sets/` zusammen. Nach dem Merge
    können alle sie aus dem Set-Browser herunterladen.
 
 Das ist der soziale Weg: Die Prüfung ist **manuell** (ein
@@ -750,7 +752,8 @@ vierstufigen Assistenten, statt direkt zu GitHub zu springen:
 3. **Qualitäts-Zusammenfassung.** Die Befunde des regelbasierten
    Validators (plus die optionale KI-Prüfung); Warnungen werden
    angezeigt, blockieren aber nie.
-4. **Teilen + Feiern.** Ein Klick öffnet den GitHub-PR/-Issue,
+4. **Teilen + Feiern.** Ein Klick öffnet den GitHub-Pull-Request
+   (Datei-Editor bei kleinen Lektionen, Upload-Seite bei großen),
    und die App bedankt sich mit einer kleinen Feier.
 
 ### Variations- und Credit-Felder (Schema 1.3, alle optional)
@@ -770,7 +773,7 @@ wenn der Autor beim Teilen den Credit aktiviert (ein Feld *"Dein
 Name (optional)"*, das lokal für das nächste Mal gemerkt wird).
 Ist es vorhanden, zeigt der Viewer eine dezente Zeile
 *"Bereitgestellt von {name}"* unter dem Titel, und der
-GitHub-Issue führt den Autor in seiner Metadaten-Tabelle auf.
+Pull-Request-Text führt den Autor in seiner Metadaten-Tabelle auf.
 
 ### Beitrags-Historie und Lücken
 
