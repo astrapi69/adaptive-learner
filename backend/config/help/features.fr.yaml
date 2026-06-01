@@ -1,276 +1,273 @@
-# Adaptive Learner — Help glossary: App features (English passthrough — translation pending).
+# Adaptive Learner — Glossaire d'aide : Fonctionnalités de l'application (French)
 
 category: features
 language: fr
 entries:
   - key: feature_method_switch
-    title: Method Switch
-    short: "The system recommends a different method when you stagnate — you decide whether to switch."
+    title: Changement de méthode
+    short: "Le système recommande une méthode différente quand vous stagnez — vous décidez si vous changez."
     long: |
-      ## What is the method switch?
+      ## Qu'est-ce que le changement de méthode ?
 
-      If your learning sessions stagnate in a method or
-      produce high stress, Adaptive Learner suggests a method
-      switch. You see the suggestion as a banner above the
-      session chat — you can accept, decline, or defer.
+      Si vos sessions d'apprentissage stagnent dans une méthode ou
+      génèrent un stress élevé, Adaptive Learner suggère un changement
+      de méthode. Vous voyez la suggestion sous forme de bannière
+      au-dessus du chat de la session — vous pouvez accepter, refuser
+      ou reporter.
 
-      ## When the suggestion fires
+      ## Quand la suggestion se déclenche
 
-      Three conditions must hold simultaneously:
+      Trois conditions doivent être réunies simultanément :
 
-      - **At least 3 sessions** in the current method.
-      - **Average stress > 3** (on the 1-5 scale) in the last
-        3 ratings.
-      - **Method fit < 3** in the last 3 ratings.
+      - **Au moins 3 sessions** dans la méthode actuelle.
+      - **Stress moyen > 3** (sur l'échelle de 1 à 5) dans les
+        3 dernières évaluations.
+      - **Adéquation de la méthode < 3** dans les 3 dernières
+        évaluations.
 
-      Stagnation detection alone is not enough: brief
-      difficulties in an otherwise fitting method are normal
-      and pass. Only the combination of duration + stress +
-      low fit triggers the suggestion.
+      La détection de stagnation seule ne suffit pas : des difficultés
+      brèves dans une méthode par ailleurs adaptée sont normales et
+      passent. Seule la combinaison durée + stress + faible adéquation
+      déclenche la suggestion.
 
-      ## How the system decides
+      ## Comment le système décide
 
-      The ``recommend_method_switch`` hook in the session
-      plugin compares your learning profile to your current
-      trajectory and suggests the method with the highest
-      expected fit. If the top-2 methods are close, you see
-      both as options.
+      Le hook ``recommend_method_switch`` dans le plugin de session
+      compare votre profil d'apprentissage à votre trajectoire actuelle
+      et suggère la méthode avec l'adéquation attendue la plus élevée.
+      Si les deux meilleures méthodes sont proches, vous voyez les deux
+      comme options.
 
-      ## You decide
+      ## Vous décidez
 
-      The system recommends; you choose. Accepting the switch
-      saves it as a ``MethodSwitch`` audit entry (a trail for
-      your profile). Declining does nothing — the suggestion
-      reappears at the earliest after 3 more sessions.
+      Le système recommande ; vous choisissez. Accepter le changement
+      l'enregistre comme entrée d'audit ``MethodSwitch`` (une trace
+      pour votre profil). Refuser ne fait rien — la suggestion réapparaît
+      au plus tôt après 3 sessions supplémentaires.
 
-      ## Why not automatic?
+      ## Pourquoi pas automatique ?
 
-      Method switches are a big change in the learning
-      experience. An automatic switch would break learning
-      continuity and could fire during a difficult but
-      productive phase. You know your context better than the
-      system does.
+      Les changements de méthode constituent un grand changement dans
+      l'expérience d'apprentissage. Un changement automatique briserait
+      la continuité de l'apprentissage et pourrait se déclencher pendant
+      une phase difficile mais productive. Vous connaissez votre contexte
+      mieux que le système.
 
   - key: feature_auto_loop
-    title: Auto-Loop
-    short: "After step 7, a new cycle with fresh content starts automatically."
+    title: Auto-boucle
+    short: "Après l'étape 7, un nouveau cycle avec du contenu nouveau démarre automatiquement."
     long: |
-      ## What is the auto-loop?
+      ## Qu'est-ce que l'auto-boucle ?
 
-      When you complete step 7 (integrate), the session can
-      automatically start a new cycle on the next topic from
-      your curriculum — without you pressing a "next cycle"
-      button.
+      Lorsque vous complétez l'étape 7 (integrate), la session peut
+      automatiquement démarrer un nouveau cycle sur le sujet suivant
+      de votre curriculum — sans que vous ayez à appuyer sur un bouton
+      « cycle suivant ».
 
-      ## How the next topic is chosen
+      ## Comment le sujet suivant est choisi
 
-      - **If a curriculum exists**: the next topic in the
-        hierarchical order.
-      - **If no curriculum exists**: the AI generates a
-        suitable follow-up topic based on the current
-        trajectory.
-      - **If spaced-repetition cards are due**: they are
-        prioritized before new content.
+      - **Si un curriculum existe** : le sujet suivant dans l'ordre
+        hiérarchique.
+      - **Si aucun curriculum n'existe** : l'IA génère un sujet de
+        suivi adapté en fonction de la trajectoire actuelle.
+      - **Si des cartes de répétition espacée sont dues** : elles sont
+        prioritaires avant le nouveau contenu.
 
-      ## Cycle counter
+      ## Compteur de cycles
 
-      Every session shows a cycle counter ("3/5"). When
-      max_cycles is reached (default: 5), auto-loop pauses
-      and asks whether you want to continue. This protects
-      against runaway sessions.
+      Chaque session affiche un compteur de cycles (« 3/5 »). Quand
+      max_cycles est atteint (défaut : 5), l'auto-boucle s'arrête et
+      demande si vous souhaitez continuer. Cela protège contre les
+      sessions interminables.
 
-      ## How to interrupt the auto-loop
+      ## Comment interrompre l'auto-boucle
 
-      - **Submit a rating**: after each cycle, you get the
-        three sliders (understanding, stress, method fit). If
-        stress > 3, the system suggests a break.
-      - **"End session" button**: clickable at any time.
-      - **Accept a method switch**: breaks the current loop
-        and starts a new one with the new method.
+      - **Soumettre une évaluation** : après chaque cycle, vous obtenez
+        les trois curseurs (compréhension, stress, adéquation). Si le
+        stress est > 3, le système suggère une pause.
+      - **Bouton « Terminer la session »** : cliquable à tout moment.
+      - **Accepter un changement de méthode** : brise la boucle actuelle
+        et en démarre une nouvelle avec la nouvelle méthode.
 
-      ## When auto-loop is most valuable
+      ## Quand l'auto-boucle est la plus utile
 
-      For language learning with small topic units, where
-      "start a new session" overhead slows learning down. For
-      coding, auto-loop is often less useful because topic
-      transitions are larger.
+      Pour l'apprentissage des langues avec de petites unités thématiques,
+      où le coût de « démarrer une nouvelle session » ralentit l'apprentissage.
+      Pour le code, l'auto-boucle est souvent moins utile car les transitions
+      de sujet sont plus importantes.
 
   - key: feature_spaced_repetition
-    title: Spaced Repetition
-    short: "Time-optimized review based on your learning history."
+    title: Répétition espacée
+    short: "Révisions optimisées dans le temps en fonction de votre historique d'apprentissage."
     long: |
-      ## What is spaced repetition?
+      ## Qu'est-ce que la répétition espacée ?
 
-      Spaced repetition is the technique of placing reviews at
-      increasing intervals. It uses the forgetting-curve
-      effect: each successfully recalled item lasts longer
-      next time.
+      La répétition espacée est la technique consistant à planifier
+      les révisions à intervalles croissants. Elle exploite l'effet
+      de courbe d'oubli : chaque élément rappelé avec succès dure plus
+      longtemps lors de la prochaine répétition.
 
-      ## The band system in Adaptive Learner
+      ## Le système de bandes dans Adaptive Learner
 
-      Six due-date bands:
+      Six bandes d'échéance :
 
-      - **Today** — new cards + day-of reviews.
-      - **+1d** — learned yesterday, review today.
-      - **+3d** — reviewed three days ago, review today.
-      - **+7d** — one week ago.
-      - **+14d** — two weeks ago.
-      - **+30d** — one month ago.
+      - **Aujourd'hui** — nouvelles cartes + révisions du jour.
+      - **+1j** — appris hier, révision aujourd'hui.
+      - **+3j** — révisé il y a trois jours, révision aujourd'hui.
+      - **+7j** — il y a une semaine.
+      - **+14j** — il y a deux semaines.
+      - **+30j** — il y a un mois.
 
-      Once a card passes four reviews successfully, it is
-      marked "stable" and leaves the active list — but stays
-      in the system for occasional refresher checks.
+      Une fois qu'une carte passe quatre révisions avec succès,
+      elle est marquée « stable » et quitte la liste active — mais
+      reste dans le système pour des vérifications occasionnelles.
 
-      ## How history feeds in
+      ## Comment l'historique est pris en compte
 
-      A "successful review" is not just a click. The system
-      evaluates:
+      Une « révision réussie » n'est pas qu'un simple clic. Le système
+      évalue :
 
-      - **Confidence during the review session** (from the
-        dual-prompt evaluator).
-      - **Response time** vs your average.
-      - **Error count** in the current cycle.
+      - **La confiance pendant la session de révision** (d'après
+        l'évaluateur à double invite).
+      - **Le temps de réponse** par rapport à votre moyenne.
+      - **Le nombre d'erreurs** dans le cycle actuel.
 
-      At low confidence, the card slips back to an earlier
-      band rather than advancing.
+      En cas de faible confiance, la carte revient à une bande
+      antérieure plutôt que d'avancer.
 
-      ## Connection to Anki
+      ## Lien avec Anki
 
-      With the Anki plugin active, you can export cards
-      directly to the Anki format. The system translates the
-      bands into Anki schedules — no progress is lost in the
+      Avec le plugin Anki actif, vous pouvez exporter des cartes
+      directement au format Anki. Le système traduit les bandes en
+      planifications Anki — aucun progrès n'est perdu dans la
       transition.
 
-      ## When the system recommends reviews
+      ## Quand le système recommande des révisions
 
-      The dashboard's "Spaced Recommendations" panel shows
-      today's due cards. You can step through them
-      individually or have the system place them at the start
-      of your next regular session — before new content. The
-      system prioritizes cards with the highest forgetting
-      risk.
+      Le panneau « Recommandations espacées » du tableau de bord
+      affiche les cartes dues aujourd'hui. Vous pouvez les parcourir
+      individuellement ou demander au système de les placer au début
+      de votre prochaine session régulière — avant le nouveau contenu.
+      Le système priorise les cartes avec le risque d'oubli le plus
+      élevé.
 
   - key: feature_conversation_analysis
-    title: Conversation Analysis / Import
-    short: "Analyze existing chat histories and extract concrete learning artifacts from them."
+    title: Analyse de conversation / Import
+    short: "Analyser des historiques de chat existants et en extraire des artefacts d'apprentissage concrets."
     long: |
-      ## What is conversation analysis?
+      ## Qu'est-ce que l'analyse de conversation ?
 
-      Adaptive Learner can analyze existing chats from
-      ChatGPT, Claude or Gemini and extract learning content
-      from them. You import the transcript once — the system
-      reads it, structures it, and turns it into a usable
-      learning artifact.
+      Adaptive Learner peut analyser des chats existants de ChatGPT,
+      Claude ou Gemini et en extraire du contenu d'apprentissage. Vous
+      importez la transcription une fois — le système la lit, la structure
+      et la transforme en artefact d'apprentissage utilisable.
 
-      ## What gets extracted
+      ## Ce qui est extrait
 
-      - **Concepts** — terms and ideas discussed in the chat.
-      - **Knowledge gaps** — points where you asked follow-ups
-        or made mistakes.
-      - **Errors** — concrete misconceptions visible in the
-        chat.
-      - **Vocabulary / terminology** — domain words
-        (especially relevant for language learning or
-        specialized fields).
+      - **Concepts** — termes et idées abordés dans le chat.
+      - **Lacunes de connaissances** — points où vous avez posé des
+        questions complémentaires ou fait des erreurs.
+      - **Erreurs** — malentendus concrets visibles dans le chat.
+      - **Vocabulaire / terminologie** — mots du domaine (particulièrement
+        pertinents pour l'apprentissage des langues ou des domaines
+        spécialisés).
 
-      ## How the import works
+      ## Comment fonctionne l'import
 
-      1. Export your chat from ChatGPT, Claude or Gemini as
-        Markdown or JSON.
-      2. Upload the file into Adaptive Learner (drag-and-drop
-        or file picker).
-      3. The system detects the format automatically and
-        stores the messages.
-      4. Trigger the analysis — the AI reads the chat in your
-        learning language and produces the structured
-        breakdown.
+      1. Exportez votre chat depuis ChatGPT, Claude ou Gemini en
+         Markdown ou JSON.
+      2. Téléversez le fichier dans Adaptive Learner (glisser-déposer
+         ou sélecteur de fichier).
+      3. Le système détecte le format automatiquement et stocke
+         les messages.
+      4. Déclenchez l'analyse — l'IA lit le chat dans votre langue
+         d'apprentissage et produit le découpage structuré.
 
-      ## What you can do next
+      ## Ce que vous pouvez faire ensuite
 
-      Three actions follow from the analysis:
+      Trois actions découlent de l'analyse :
 
-      - **"Create curriculum"** — the extracted concepts feed
-        into a hierarchical curriculum.
-      - **"Start session"** — a session that starts directly
-        from the detected knowledge gaps.
-      - **"Generate Anki cards"** — flashcards from the
-        concepts and vocabulary.
+      - **« Créer un curriculum »** — les concepts extraits alimentent
+        un curriculum hiérarchique.
+      - **« Démarrer une session »** — une session qui commence
+        directement à partir des lacunes de connaissances détectées.
+      - **« Générer des cartes Anki »** — flashcards à partir des
+        concepts et du vocabulaire.
 
-      ## Duplicates
+      ## Doublons
 
-      If you import the same chat twice, the system detects it
-      via the content hash and offers to navigate to the
-      existing analysis instead of creating a copy.
+      Si vous importez le même chat deux fois, le système le détecte
+      via le hachage du contenu et propose d'accéder à l'analyse
+      existante plutôt que de créer un doublon.
 
-      ## Privacy
+      ## Confidentialité
 
-      Chat contents go ONLY to your active AI provider (the
-      one you configured in settings). The system sends
-      nothing to a central server. When you delete the chat,
-      the contents are gone.
+      Le contenu des chats est envoyé UNIQUEMENT à votre fournisseur
+      IA actif (celui configuré dans les paramètres). Le système
+      n'envoie rien à un serveur central. Quand vous supprimez le
+      chat, le contenu disparaît.
 
   - key: feature_gamification
-    title: Gamification (XP, Badges, Streaks)
-    short: "Progress system with experience points, badges and streaks — motivation without gimmickry."
+    title: Gamification (XP, badges, séries)
+    short: "Système de progression avec points d'expérience, badges et séries — motivation sans gadgets."
     long: |
-      ## What is the gamification layer?
+      ## Qu'est-ce que la couche de gamification ?
 
-      Three mechanics make learning progress visible and
-      rewarding:
+      Trois mécaniques rendent la progression de l'apprentissage
+      visible et gratifiante :
 
-      - **XP (experience points)** — for every completed
-        session, every method switch, every
-        spaced-repetition card. Levels rise with XP.
-      - **Badges** — for thematic milestones ("first
-        session", "10 sessions in a method", "30-day streak",
-        ...).
-      - **Streaks** — daily learning runs. They expire 24
-        hours without a session — with three "streak freezes"
-        per month as emergency pauses.
+      - **XP (points d'expérience)** — pour chaque session complétée,
+        chaque changement de méthode, chaque carte de répétition
+        espacée. Le niveau augmente avec les XP.
+      - **Badges** — pour des jalons thématiques (« première session »,
+        « 10 sessions dans une méthode », « série de 30 jours », ...).
+      - **Séries** — séquences d'apprentissage quotidiennes. Elles
+        expirent après 24 heures sans session — avec trois « gels de
+        série » par mois comme pauses d'urgence.
 
-      ## How XP is earned
+      ## Comment les XP sont gagnés
 
-      Different actions yield different XP values:
+      Différentes actions donnent différentes valeurs de XP :
 
-      - **Submit a rated session**: 50 XP.
-      - **Reach step 7 (integrate)**: +25 XP bonus.
-      - **Accept a method switch**: 10 XP (you made a
-        deliberate learning decision).
-      - **Spaced-repetition card with confidence > 80%**:
-        5 XP.
-      - **Anki export of a set**: 20 XP.
+      - **Soumettre une session évaluée** : 50 XP.
+      - **Atteindre l'étape 7 (integrate)** : +25 XP de bonus.
+      - **Accepter un changement de méthode** : 10 XP (vous avez
+        pris une décision d'apprentissage délibérée).
+      - **Carte de répétition espacée avec confiance > 80 %** : 5 XP.
+      - **Export Anki d'un jeu** : 20 XP.
 
-      Levels scale with a square-root function (level n =
-      sqrt(XP / 100)) — early levels move quickly, higher
-      levels need longer breath.
+      Les niveaux s'échelonnent avec une fonction racine carrée
+      (niveau n = sqrt(XP / 100)) — les premiers niveaux progressent
+      rapidement, les niveaux supérieurs demandent plus de souffle.
 
-      ## Badges are not coercive
+      ## Les badges ne sont pas coercitifs
 
-      Badge criteria are not UI-load-bearing — you do *not*
-      need a single badge to use the app productively. They
-      are a mirror, not a target. If you start to feel like
-      you are learning for badges rather than for yourself,
-      disable the display in settings.
+      Les critères de badge ne sont pas liés à l'interface — vous
+      n'avez *pas* besoin d'un seul badge pour utiliser l'application
+      de manière productive. Ce sont des miroirs, pas des cibles. Si
+      vous commencez à avoir l'impression d'apprendre pour les badges
+      plutôt que pour vous-même, désactivez l'affichage dans les
+      paramètres.
 
-      ## Streak freezes
+      ## Gels de série
 
-      Three streak freezes per month. If you miss a day, a
-      freeze automatically protects your streak. Explicitly
-      designed as a "sick day" or "travel day" allowance, not
-      as an exception mechanism for laziness.
+      Trois gels de série par mois. Si vous manquez un jour, un gel
+      protège automatiquement votre série. Conçus explicitement comme
+      une journée de maladie ou de voyage, pas comme un mécanisme
+      d'exception pour la paresse.
 
-      ## Why this works without gimmicks
+      ## Pourquoi ça fonctionne sans gadgets
 
-      Learning research shows: extrinsic reward can destroy
-      intrinsic motivation ("overjustification effect").
-      Adaptive Learner relies on the mechanics being a
-      **mirror** of progress, not an incentive system. No
-      leaderboards, no social features, no point-sharing —
-      the data stays with you.
+      La recherche en apprentissage montre : la récompense extrinsèque
+      peut détruire la motivation intrinsèque (« effet de surjustification »).
+      Adaptive Learner s'appuie sur le fait que les mécaniques soient
+      un **miroir** de la progression, pas un système d'incitation.
+      Pas de classements, pas de fonctionnalités sociales, pas de
+      partage de points — les données restent avec vous.
 
-      ## Reset
+      ## Réinitialisation
 
-      If the gamification values no longer match your
-      situation (e.g. fresh start after a long break), you
-      can reset them in settings. Curriculum, sessions, and
-      ratings are preserved.
+      Si les valeurs de gamification ne correspondent plus à votre
+      situation (par ex. nouveau départ après une longue pause),
+      vous pouvez les réinitialiser dans les paramètres. Le curriculum,
+      les sessions et les évaluations sont préservés.

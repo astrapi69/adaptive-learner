@@ -1,262 +1,257 @@
-# Adaptive Learner — Help glossary: Learning methods (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: Learning methods (Japanese).
+# Translation: AI-generated, pending native review
 
 category: methods
 language: ja
 entries:
   - key: method_deductive
-    title: Deductive
-    short: "Learn the rule first, then apply it to concrete examples."
+    title: 演繹的メソッド
+    short: "まずルールを学び、それを具体的な例に適用します。"
     long: |
-      ## Deductive method
+      ## 演繹的メソッド
 
-      The AI explains a rule or concept; you then practice it
-      with examples. Top-down: from the general to the specific.
+      AI がルールや概念を説明し、あなたはそれを例を使って
+      練習します。一般から特殊へのトップダウンアプローチです。
 
-      ## When it works well
+      ## 効果的な場面
 
-      - **Structured topics** with clear rules (grammar, math
-        formulas, programming syntax).
-      - **You have prior knowledge** the rule can attach to.
-      - **You prefer clarity**: you want to know what's correct
-        before you try something.
+      - **明確なルールを持つ構造的なトピック**（文法、数式、
+        プログラミングの構文など）。
+      - **既存の知識がある場合**：ルールを結び付けられる
+        前提知識があるとき。
+      - **明確さを好む場合**：試す前に何が正しいかを
+        知りたいとき。
 
-      ## How a session flows
+      ## セッションの流れ
 
-      1. AI explains the rule with a brief example.
-      2. You get a practice exercise.
-      3. You solve it; AI gives feedback.
-      4. On understanding: a new task at higher complexity.
-      5. On mistakes: AI refines the explanation.
+      1. AI が簡単な例を用いてルールを説明する。
+      2. 練習問題が提示される。
+      3. あなたが解く。AI がフィードバックを与える。
+      4. 理解できた場合：より高い複雑さの新しいタスク。
+      5. 間違えた場合：AI が説明を洗練する。
 
-      ## Typical AI prompts
+      ## 典型的な AI プロンプト
 
-      The system prompts for this method emphasize clarity and
-      step-by-step build-up. The AI is instructed to state the
-      rule *before* moving to application.
+      このメソッドのシステムプロンプトは、明確さと段階的な
+      積み上げを重視します。AI はアプリケーションに移る
+      *前に*ルールを述べるよう指示されます。
 
-      ## When the system may switch away
+      ## システムが切り替えを推奨する場合
 
-      If your **stress** rating rises over several sessions and
-      you feel like you are "learning rules without
-      understanding them", the system recommends switching to a
-      more practice-driven method (inductive, contextual or
-      dialogic). You always have the final say on the switch.
+      数回のセッションにわたって**ストレス**評価が上昇し、
+      「ルールを理解せずに暗記している」と感じる場合、
+      システムはより実践的なメソッド（帰納的・文脈的・
+      対話的）への切り替えを推奨します。切り替えの最終決定権は
+      常にあなたにあります。
 
   - key: method_inductive
-    title: Inductive
-    short: "See examples first, derive the rule yourself."
+    title: 帰納的メソッド
+    short: "まず例を見て、自分でルールを導き出します。"
     long: |
-      ## Inductive method
+      ## 帰納的メソッド
 
-      The AI presents examples; you recognize the pattern and
-      formulate the rule yourself. Bottom-up: from the concrete
-      to the general.
+      AI が例を提示し、あなたがパターンを認識して自分で
+      ルールを定式化します。具体から一般へのボトムアップ
+      アプローチです。
 
-      ## When it works well
+      ## 効果的な場面
 
-      - **Pattern-recognition topics** like grammar in context,
-        music scales, statistical concepts.
-      - **You learn by discovery** rather than memorizing rules.
-      - **Examples are plentiful** — the AI has material that
-        makes the rule visible.
+      - **パターン認識が必要なトピック**（文脈における文法、
+        音楽のスケール、統計的概念など）。
+      - **発見によって学ぶタイプ**：ルールを暗記するのではなく。
+      - **例が豊富な場合**：AI がルールを可視化できる素材がある。
 
-      ## How a session flows
+      ## セッションの流れ
 
-      1. AI shows 3-5 examples of a phenomenon.
-      2. Question: "What pattern do you see?"
-      3. You formulate a hypothesis.
-      4. AI confirms, corrects or shows more examples.
-      5. On the correct rule: AI states it formally.
+      1. AI がある現象の 3〜5 の例を示す。
+      2. 問いかけ：「どのようなパターンが見えますか？」
+      3. あなたが仮説を立てる。
+      4. AI が確認、修正、または例を追加で示す。
+      5. 正しいルールが出たら：AI がそれを正式に述べる。
 
-      ## Why this goes deeper
+      ## より深い理解につながる理由
 
-      Research shows self-discovered rules stick longer than
-      repeated ones. The inductive path takes longer, but the
-      understanding sits deeper.
+      研究によると、自分で発見したルールは教えられたものより
+      長く定着します。帰納的なアプローチは時間がかかりますが、
+      理解はより深くなります。
 
-      ## When it becomes hard
+      ## 難しくなる場面
 
-      If patterns are too complex or your background is too
-      thin, inductive learning can frustrate. The system reads
-      this from low confidence values and may switch to
-      deductive.
+      パターンが複雑すぎる、または背景知識が不足している場合、
+      帰納的学習はフラストレーションにつながることがあります。
+      システムは低い信頼度値からこれを読み取り、演繹的に
+      切り替える可能性があります。
 
   - key: method_error_based
-    title: Error-Based
-    short: "Make mistakes deliberately, then understand why they happen."
+    title: 誤り活用型メソッド
+    short: "わざと間違えてから、なぜそうなるかを理解します。"
     long: |
-      ## Error-based method
+      ## 誤り活用型メソッド
 
-      The AI deliberately guides you into common mistakes — and
-      then back out together. Errors are not avoided but used as
-      learning opportunities.
+      AI があえてよくある間違いへと誘導し、そこから一緒に
+      抜け出します。誤りは避けるものではなく、学習の機会として
+      使われます。
 
-      ## Why deliberate errors work
+      ## 意図的な誤りが効果的な理由
 
-      Research on **productive failure** shows that errors you
-      make yourself and then understand create more robust
-      mental models than errors you avoid.
+      **生産的な失敗**に関する研究では、自分で犯した誤りを
+      理解することで、回避した誤りよりも強固なメンタルモデルが
+      形成されることが示されています。
 
-      The method is NOT punitive: this is not about shame, it is
-      about clarity. An understood error is more valuable than
-      a randomly correct answer.
+      このメソッドは罰則的ではありません。恥をかかせることでなく、
+      明確にすることが目的です。理解された誤りは、
+      偶然正解するよりも価値があります。
 
-      ## How the AI implements it
+      ## AI の実装方法
 
-      1. AI presents a problem with traps.
-      2. You solve it — and often step into the trap.
-      3. AI shows you the error and explains the underlying
-        misconception.
-      4. You solve a variant without repeating the error.
-      5. AI generalizes the principle.
+      1. AI がトラップのある問題を提示する。
+      2. あなたが解く。多くの場合、トラップにはまる。
+      3. AI が誤りを示し、根底にある誤解を説明する。
+      4. あなたが誤りを繰り返さずにバリエーションを解く。
+      5. AI が原則を一般化する。
 
-      ## When this method fits
+      ## このメソッドが合う場面
 
-      - **Topics with classic error sources** (false friends in
-        languages, off-by-one in code, sign errors in math).
-      - **You are not stress-prone** when making mistakes.
-      - **You have basic knowledge** — errors from total
-        ignorance teach little.
+      - **典型的な誤りのパターンがあるトピック**（語学での
+        フォールスフレンド、コードのオフバイワン、数学の符号の
+        誤りなど）。
+      - **間違えてもストレスを感じにくい場合**。
+      - **基本的な知識がある場合**：完全な無知からの誤りは
+        ほとんど教えてくれません。
 
-      ## Caution at high stress
+      ## 高ストレスへの注意
 
-      If your stress rating exceeds 3 in a session, the system
-      switches to dialogic or deductive — this method needs
-      mental calm to be productive.
+      セッション中のストレス評価が 3 を超えた場合、システムは
+      対話型または演繹的に切り替えます。このメソッドが生産的で
+      あるためには、精神的な落ち着きが必要です。
 
   - key: method_dialogic
-    title: Dialogic
-    short: "Learn through conversation with the AI in a low-pressure setting."
+    title: 対話型メソッド
+    short: "プレッシャーのない環境で AI との対話を通じて学びます。"
     long: |
-      ## Dialogic method
+      ## 対話型メソッド
 
-      You learn through conversation: no rigid exercises, no
-      right/wrong answers, just a flexible dialog about the
-      topic. The AI follows up, deepens, encourages.
+      対話によって学びます。固定の演習も、正誤の回答もなく、
+      トピックについての柔軟な対話だけです。AI がフォローアップし、
+      深め、励まします。
 
-      ## When it works
+      ## 効果的な場面
 
-      - **High-stress situations** where exam anxiety or speech
-        inhibition block learning.
-      - **Pure reinforcement**: you explain to the AI what you
-        understood.
-      - **Complex topics** you want to explore before
-        committing to a structured solution.
+      - **ストレスの高い状況**：試験への不安や発話の抑制が
+        学習を妨げているとき。
+      - **純粋な強化**：AI に理解したことを説明するとき。
+      - **複雑なトピック**：構造化された解決策を決める前に
+        探求したいとき。
 
-      ## How a session flows
+      ## セッションの流れ
 
-      No fixed steps. You start with a question, an assumption
-      or a concept. The AI continues the conversation, asks
-      follow-ups, suggests related concepts, gives examples.
-      You can switch topics at any time — unlike deductive or
-      inductive, where the system keeps you on track.
+      固定のステップはありません。あなたが質問、前提、
+      または概念から始めます。AI が会話を続け、フォローアップを
+      問い、関連する概念を提案し、例を示します。
+      演繹的や帰納的とは異なり、いつでもトピックを変えられます。
 
-      ## What the AI does
+      ## AI がすること
 
-      - **Low pressure**: no judgmental tone.
-      - **Motivational**: progress is highlighted, but not
-        artificially.
-      - **Adaptive**: matches complexity to your fluency and
-        energy.
+      - **低プレッシャー**：判断的なトーンなし。
+      - **動機付け**：進捗は強調されるが、人工的ではない。
+      - **適応的**：あなたの流暢さとエネルギーに合わせた複雑さ。
 
-      ## What the dual-prompt evaluator does
+      ## デュアルプロンプト評価器がすること
 
-      Confidence evaluation still runs, but more tolerantly —
-      step progression is allowed at 50% confidence (vs the
-      usual 70%). The method is explicitly for exploration, not
-      testing.
+      信頼度の評価は引き続き実行されますが、より許容度が高くなります。
+      ステップの進行は 50% の信頼度で許可されます（通常の 70% と比較して）。
+      このメソッドは明示的に探求のためのものであり、
+      テストのためではありません。
 
   - key: method_contextual
-    title: Contextual
-    short: "Learn in simulated real-world situations."
+    title: 文脈的メソッド
+    short: "模擬された実際の状況の中で学びます。"
     long: |
-      ## Contextual method
+      ## 文脈的メソッド
 
-      The AI simulates a concrete situation — restaurant, job
-      interview, coding interview — and you solve the task
-      inside it. Learning happens in the application context,
-      not abstractly.
+      AI が具体的な状況（レストラン、就職面接、コーディング面接など）を
+      シミュレートし、あなたはその中でタスクを解決します。
+      抽象的にではなく、応用の文脈の中で学習が起きます。
 
-      ## Why context makes the difference
+      ## 文脈が違いを生む理由
 
-      Research on **situated cognition** shows that knowledge
-      learned in context transfers better to practice. What you
-      learned at the restaurant table, you can apply at the
-      restaurant table — abstract knowledge often will not.
+      **状況認知**に関する研究では、文脈の中で学んだ知識は
+      実践への転移が優れていることが示されています。
+      レストランのテーブルで学んだことは、レストランで使えます。
+      抽象的な知識はしばしばそうではありません。
 
-      The method especially helps with the **transfer problem**:
-      "I know the rule, but in a real conversation I cannot
-      access it."
+      このメソッドは特に**転移問題**に役立ちます。
+      「ルールは知っているが、実際の会話では使えない」という
+      問題です。
 
-      ## Examples for language
+      ## 語学での例
 
-      - "You're at a cafe in Madrid. Order three different tapas
-        and ask for the house recommendation."
-      - "You're asking for directions to the train station; the
-        passerby answers in a dialect — how do you respond?"
+      - 「マドリードのカフェにいます。三種類のタパスを注文して、
+        おすすめの料理を聞いてください。」
+      - 「駅への道を尋ねています。通行人が方言で答えます。
+        どう返事をしますか？」
 
-      ## Examples for code
+      ## コーディングでの例
 
-      - "Code review: you receive this PR. What do you tell the
-        junior dev?"
-      - "Production bug scenario: logs show X. How do you
-        debug?"
+      - 「コードレビュー：この PR を受け取りました。
+        新人開発者に何を伝えますか？」
+      - 「本番環境のバグのシナリオ：ログに X が表示されています。
+        どうデバッグしますか？」
 
-      ## When it fits
+      ## 合う場面
 
-      - **When your goal is applied** ("Spanish for travel" fits
-        better than "Spanish for the exam").
-      - **After the first basics** — context only works once
-        the building blocks are in place.
-      - **When preparing for a specific situation** (job
-        interview next week).
+      - **目標が応用的な場合**（「旅行のためのスペイン語」は
+        「試験のためのスペイン語」より適しています）。
+      - **基礎を習得した後**：文脈は基礎が整ってからしか
+        機能しません。
+      - **特定の状況への準備中**（来週の就職面接など）。
 
-      ## When it fits less well
+      ## あまり向かない場面
 
-      For pure exam topics (memorizing fact lists), deductive
-      or spaced repetition is usually more efficient.
+      純粋な試験トピック（事実の一覧を暗記する）には、
+      演繹的または間隔反復の方が通常より効率的です。
 
   - key: method_ai_adaptive
-    title: AI-Adaptive
-    short: "The system automatically picks the best method based on your history."
+    title: AI アダプティブメソッド
+    short: "システムがあなたの学習履歴に基づいて最適なメソッドを自動的に選択します。"
     long: |
-      ## AI-adaptive method
+      ## AI アダプティブメソッド
 
-      You let the system choose the method. After every step it
-      evaluates your progress (confidence value), your stress,
-      and your method fit, then decides which method to start
-      the next learning cycle with.
+      システムにメソッドの選択を委ねます。ステップごとに
+      あなたの進捗（信頼度値）、ストレス、メソッド適合度を
+      評価し、次の学習サイクルをどのメソッドで始めるかを
+      決定します。
 
-      ## How the system decides
+      ## システムがどのように決定するか
 
-      Three data sources feed the choice:
+      三つのデータソースが選択に影響します。
 
-      - **Learning profile**: the weights from your assessment.
-        Methods with higher weights get preference.
-      - **Session history**: which methods led to fast progress
-        in your last 5-10 sessions?
-      - **Current stress level**: at high stress, the system
-        switches to less demanding methods (dialogic,
-        contextual).
+      - **学習プロフィール**：アセスメントから得た重み。
+        重みの高いメソッドが優先されます。
+      - **セッション履歴**：直近 5〜10 セッションで、
+        どのメソッドが速い進捗につながりましたか？
+      - **現在のストレスレベル**：高ストレス時、システムは
+        より要求の低いメソッド（対話的・文脈的）に切り替えます。
 
-      ## Dual-prompt evaluation
+      ## デュアルプロンプト評価
 
-      Unlike fixed methods, a second AI instance evaluates your
-      answers after every step and signals to the first AI:
-      "continue as is", "switch method", "repeat step".
+      固定のメソッドとは異なり、二番目の AI インスタンスが
+      ステップごとにあなたの回答を評価し、最初の AI に
+      「そのまま続ける」「メソッドを切り替える」「ステップを
+      繰り返す」とシグナルを送ります。
 
-      ## When it is ideal
+      ## 理想的な場面
 
-      - **You are new to Adaptive Learner** and have not yet
-        experienced the methods first-hand.
-      - **You change topics often** — the system recalibrates
-        per project.
-      - **You like being surprised** — the AI mixes methods
-        deliberately.
+      - **Adaptive Learner を始めたばかりで**、メソッドを
+        直接体験していないとき。
+      - **頻繁にトピックを変える場合**：システムは
+        プロジェクトごとに再調整します。
+      - **サプライズが好きな場合**：AI が意図的にメソッドを
+        ミックスします。
 
-      ## You always have the final say
+      ## 最終決定権は常にあなたに
 
-      If the system suggests a switch, you can decline. If a
-      suggested method does not fit, you end the session and
-      start with another. AI-adaptive is a recommendation
-      system, not a constraint.
+      システムが切り替えを提案しても、断ることができます。
+      提案されたメソッドが合わない場合は、セッションを終了して
+      別のメソッドで開始できます。AI アダプティブは
+      推奨システムであり、制約ではありません。

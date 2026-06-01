@@ -1,262 +1,273 @@
-# Adaptive Learner — Help glossary: Learning methods (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: Learning methods (Turkish).
+# Translation: AI-generated, pending native review
 
 category: methods
 language: tr
 entries:
   - key: method_deductive
-    title: Deductive
-    short: "Learn the rule first, then apply it to concrete examples."
+    title: Tümdengelimli
+    short: "Önce kuralı öğren, ardından somut örneklere uygula."
     long: |
-      ## Deductive method
+      ## Tümdengelimli yöntem
 
-      The AI explains a rule or concept; you then practice it
-      with examples. Top-down: from the general to the specific.
+      Yapay zeka bir kural veya kavramı açıklar; ardından
+      örneklerle pratik yaparsınız. Yukarıdan aşağıya: genelden
+      özele doğru.
 
-      ## When it works well
+      ## Ne zaman iyi çalışır
 
-      - **Structured topics** with clear rules (grammar, math
-        formulas, programming syntax).
-      - **You have prior knowledge** the rule can attach to.
-      - **You prefer clarity**: you want to know what's correct
-        before you try something.
+      - **Yapılandırılmış konular**: net kuralların olduğu
+        dilbilgisi, matematik formülleri, programlama sözdizimi.
+      - **Ön bilginiz varsa** kuralın bağlanabileceği bir temel
+        mevcuttur.
+      - **Netliği tercih ediyorsanız**: bir şeyi denemeden önce
+        doğrunun ne olduğunu bilmek istiyorsunuz.
 
-      ## How a session flows
+      ## Oturum nasıl ilerler
 
-      1. AI explains the rule with a brief example.
-      2. You get a practice exercise.
-      3. You solve it; AI gives feedback.
-      4. On understanding: a new task at higher complexity.
-      5. On mistakes: AI refines the explanation.
+      1. Yapay zeka kuralı kısa bir örnekle açıklar.
+      2. Bir alıştırma egzersizi verilir.
+      3. Çözersiniz; yapay zeka geri bildirim verir.
+      4. Anlayışta: daha yüksek karmaşıklıkta yeni bir görev.
+      5. Hatalarda: yapay zeka açıklamayı geliştirir.
 
-      ## Typical AI prompts
+      ## Tipik yapay zeka istemleri
 
-      The system prompts for this method emphasize clarity and
-      step-by-step build-up. The AI is instructed to state the
-      rule *before* moving to application.
+      Bu yönteme ait sistem istemleri netlik ve adım adım
+      ilerlemeyi vurgular. Yapay zekaya, uygulamaya geçmeden
+      *önce* kuralı ifade etmesi yönünde talimat verilir.
 
-      ## When the system may switch away
+      ## Sistem ne zaman yöntem değiştirebilir
 
-      If your **stress** rating rises over several sessions and
-      you feel like you are "learning rules without
-      understanding them", the system recommends switching to a
-      more practice-driven method (inductive, contextual or
-      dialogic). You always have the final say on the switch.
+      Birkaç oturum boyunca **stres** puanınız yükselir ve
+      "kuralları anlamamış gibi ezberliyor" hissine kapılırsanız
+      sistem daha pratik odaklı bir yönteme geçmeyi önerir
+      (tümevarımlı, bağlamsal veya diyalogsal). Değişim
+      kararı her zaman size aittir.
 
   - key: method_inductive
-    title: Inductive
-    short: "See examples first, derive the rule yourself."
+    title: Tümevarımlı
+    short: "Önce örnekleri gör, kuralı kendin çıkar."
     long: |
-      ## Inductive method
+      ## Tümevarımlı yöntem
 
-      The AI presents examples; you recognize the pattern and
-      formulate the rule yourself. Bottom-up: from the concrete
-      to the general.
+      Yapay zeka örnekler sunar; siz örüntüyü fark ederek
+      kuralı kendiniz formüle edersiniz. Aşağıdan yukarıya:
+      somuttan genele doğru.
 
-      ## When it works well
+      ## Ne zaman iyi çalışır
 
-      - **Pattern-recognition topics** like grammar in context,
-        music scales, statistical concepts.
-      - **You learn by discovery** rather than memorizing rules.
-      - **Examples are plentiful** — the AI has material that
-        makes the rule visible.
+      - **Örüntü tanıma konuları**: bağlam içinde dilbilgisi,
+        müzik gamları, istatistik kavramları.
+      - **Keşfederek öğreniyorsanız**, kural ezberlemek yerine.
+      - **Örnekler boldur** — yapay zekanın kuralı görünür kılacak
+        materyali mevcuttur.
 
-      ## How a session flows
+      ## Oturum nasıl ilerler
 
-      1. AI shows 3-5 examples of a phenomenon.
-      2. Question: "What pattern do you see?"
-      3. You formulate a hypothesis.
-      4. AI confirms, corrects or shows more examples.
-      5. On the correct rule: AI states it formally.
+      1. Yapay zeka bir olguya ait 3-5 örnek gösterir.
+      2. Soru: "Hangi örüntüyü görüyorsunuz?"
+      3. Bir hipotez formüle edersiniz.
+      4. Yapay zeka onaylar, düzeltir veya daha fazla örnek gösterir.
+      5. Doğru kurala ulaştığınızda: yapay zeka onu resmi olarak
+         ifade eder.
 
-      ## Why this goes deeper
+      ## Neden daha derin yerleşir
 
-      Research shows self-discovered rules stick longer than
-      repeated ones. The inductive path takes longer, but the
-      understanding sits deeper.
+      Araştırmalar, kendi keşfettiğiniz kuralların
+      tekrarlananlardan daha uzun süre akılda kaldığını
+      göstermektedir. Tümevarımlı yol daha uzun sürer, ama
+      anlayış daha derine işler.
 
-      ## When it becomes hard
+      ## Ne zaman zorlaşır
 
-      If patterns are too complex or your background is too
-      thin, inductive learning can frustrate. The system reads
-      this from low confidence values and may switch to
-      deductive.
+      Örüntüler çok karmaşık veya arka planınız çok zayıfsa
+      tümevarımlı öğrenme hayal kırıklığına yol açabilir.
+      Sistem bunu düşük güven değerlerinden okur ve
+      tümdengelimli yönteme geçebilir.
 
   - key: method_error_based
-    title: Error-Based
-    short: "Make mistakes deliberately, then understand why they happen."
+    title: Hata Temelli
+    short: "Kasıtlı hata yap, ardından bunların neden oluştuğunu anla."
     long: |
-      ## Error-based method
+      ## Hata temelli yöntem
 
-      The AI deliberately guides you into common mistakes — and
-      then back out together. Errors are not avoided but used as
-      learning opportunities.
+      Yapay zeka sizi kasıtlı olarak yaygın hatalara yönlendirir
+      — ardından birlikte geri dönersiniz. Hatalar önlenmez,
+      öğrenme fırsatı olarak kullanılır.
 
-      ## Why deliberate errors work
+      ## Kasıtlı hatalar neden işe yarar
 
-      Research on **productive failure** shows that errors you
-      make yourself and then understand create more robust
-      mental models than errors you avoid.
+      **Verimli başarısızlık** üzerine yapılan araştırmalar,
+      kendi yaptığınız ve ardından anladığınız hataların,
+      kaçındığınız hatalardan daha sağlam zihinsel modeller
+      oluşturduğunu göstermektedir.
 
-      The method is NOT punitive: this is not about shame, it is
-      about clarity. An understood error is more valuable than
-      a randomly correct answer.
+      Bu yöntem CEZALANDIRICI değildir: mesele utanç değil,
+      netliktir. Anlaşılmış bir hata, rastgele doğru bir
+      yanıttan daha değerlidir.
 
-      ## How the AI implements it
+      ## Yapay zeka bunu nasıl uygular
 
-      1. AI presents a problem with traps.
-      2. You solve it — and often step into the trap.
-      3. AI shows you the error and explains the underlying
-        misconception.
-      4. You solve a variant without repeating the error.
-      5. AI generalizes the principle.
+      1. Yapay zeka tuzaklar içeren bir problem sunar.
+      2. Çözersiniz — ve çoğunlukla tuzağa düşersiniz.
+      3. Yapay zeka hatayı gösterir ve altındaki yanlış
+         anlamayı açıklar.
+      4. Hatayı tekrarlamadan bir varyantı çözersiniz.
+      5. Yapay zeka ilkeyi geneller.
 
-      ## When this method fits
+      ## Bu yöntem ne zaman uygundur
 
-      - **Topics with classic error sources** (false friends in
-        languages, off-by-one in code, sign errors in math).
-      - **You are not stress-prone** when making mistakes.
-      - **You have basic knowledge** — errors from total
-        ignorance teach little.
+      - **Klasik hata kaynaklarının olduğu konular** (dillerde
+        yanlış eşdeğerler, kodda sınır hataları, matematikte
+        işaret hataları).
+      - **Hata yapma konusunda strese girmiyorsanız**.
+      - **Temel bilginiz varsa** — tamamen bilgisizlikten
+        kaynaklanan hatalar az şey öğretir.
 
-      ## Caution at high stress
+      ## Yüksek strese dikkat
 
-      If your stress rating exceeds 3 in a session, the system
-      switches to dialogic or deductive — this method needs
-      mental calm to be productive.
+      Bir oturumda stres puanınız 3'ü aşarsa sistem diyalogsal
+      veya tümdengelimli yönteme geçer — bu yöntemin verimli
+      olabilmesi için zihinsel dinginlik gerekir.
 
   - key: method_dialogic
-    title: Dialogic
-    short: "Learn through conversation with the AI in a low-pressure setting."
+    title: Diyalogsal
+    short: "Yapay zeka ile baskısız bir ortamda konuşarak öğren."
     long: |
-      ## Dialogic method
+      ## Diyalogsal yöntem
 
-      You learn through conversation: no rigid exercises, no
-      right/wrong answers, just a flexible dialog about the
-      topic. The AI follows up, deepens, encourages.
+      Konuşarak öğrenirsiniz: katı alıştırmalar yok, doğru/yanlış
+      yanıtlar yok, sadece konu hakkında esnek bir diyalog.
+      Yapay zeka soruları takip eder, derinleştirir, cesaretlendirir.
 
-      ## When it works
+      ## Ne zaman işe yarar
 
-      - **High-stress situations** where exam anxiety or speech
-        inhibition block learning.
-      - **Pure reinforcement**: you explain to the AI what you
-        understood.
-      - **Complex topics** you want to explore before
-        committing to a structured solution.
+      - **Yüksek stres durumlarında**: sınav kaygısı veya
+        konuşma çekingenliğinin öğrenmeyi engellediği
+        durumlarda.
+      - **Saf pekiştirme**: yapay zekaya anladıklarınızı
+        açıklarsınız.
+      - **Yapılandırılmış bir çözüme bağlanmadan önce
+        keşfetmek istediğiniz karmaşık konular**.
 
-      ## How a session flows
+      ## Oturum nasıl ilerler
 
-      No fixed steps. You start with a question, an assumption
-      or a concept. The AI continues the conversation, asks
-      follow-ups, suggests related concepts, gives examples.
-      You can switch topics at any time — unlike deductive or
-      inductive, where the system keeps you on track.
+      Sabit adımlar yoktur. Bir soruyla, bir varsayımla veya
+      bir kavramla başlarsınız. Yapay zeka konuşmayı sürdürür,
+      takip soruları sorar, ilgili kavramlar önerir, örnekler
+      verir. İstediğiniz zaman konu değiştirebilirsiniz —
+      tümdengelimli veya tümevarımlı yöntemden farklı olarak
+      sistem sizi belirli bir rotada tutmaz.
 
-      ## What the AI does
+      ## Yapay zeka ne yapar
 
-      - **Low pressure**: no judgmental tone.
-      - **Motivational**: progress is highlighted, but not
-        artificially.
-      - **Adaptive**: matches complexity to your fluency and
-        energy.
+      - **Düşük baskı**: yargılayıcı bir ton yok.
+      - **Motive edici**: ilerleme vurgulanır, ama yapay
+        biçimde değil.
+      - **Uyumlu**: karmaşıklığı akıcılığınıza ve enerjinize
+        göre ayarlar.
 
-      ## What the dual-prompt evaluator does
+      ## Çift istem değerlendiricisi ne yapar
 
-      Confidence evaluation still runs, but more tolerantly —
-      step progression is allowed at 50% confidence (vs the
-      usual 70%). The method is explicitly for exploration, not
-      testing.
+      Güven değerlendirmesi hâlâ çalışır, ancak daha toleranslı
+      biçimde — adım ilerlemesine %50 güvende izin verilir
+      (normal %70'e karşılık). Bu yöntem açıkça keşif içindir,
+      sınav için değil.
 
   - key: method_contextual
-    title: Contextual
-    short: "Learn in simulated real-world situations."
+    title: Bağlamsal
+    short: "Simüle edilmiş gerçek yaşam durumlarında öğren."
     long: |
-      ## Contextual method
+      ## Bağlamsal yöntem
 
-      The AI simulates a concrete situation — restaurant, job
-      interview, coding interview — and you solve the task
-      inside it. Learning happens in the application context,
-      not abstractly.
+      Yapay zeka somut bir durum simüle eder — restoran, iş
+      görüşmesi, kodlama mülakatı — ve görevi bu bağlam içinde
+      çözersiniz. Öğrenme, soyut olarak değil, uygulama
+      bağlamında gerçekleşir.
 
-      ## Why context makes the difference
+      ## Bağlam neden fark yaratır
 
-      Research on **situated cognition** shows that knowledge
-      learned in context transfers better to practice. What you
-      learned at the restaurant table, you can apply at the
-      restaurant table — abstract knowledge often will not.
+      **Yerleşik biliş** üzerine yapılan araştırmalar, bağlamda
+      öğrenilen bilginin pratiğe daha iyi aktarıldığını
+      göstermektedir. Restoran masasında öğrendiklerinizi
+      restoran masasında uygulayabilirsiniz — soyut bilgi
+      genellikle bunu sağlayamaz.
 
-      The method especially helps with the **transfer problem**:
-      "I know the rule, but in a real conversation I cannot
-      access it."
+      Bu yöntem özellikle **aktarım sorununa** yardımcı olur:
+      "Kuralı biliyorum, ama gerçek bir konuşmada erişemiyorum."
 
-      ## Examples for language
+      ## Dil için örnekler
 
-      - "You're at a cafe in Madrid. Order three different tapas
-        and ask for the house recommendation."
-      - "You're asking for directions to the train station; the
-        passerby answers in a dialect — how do you respond?"
+      - "Madrid'de bir kaftedesiniz. Üç farklı tapas sipariş
+        edin ve ev tavsiyesini sorun."
+      - "Tren garına yol tarifi istiyorsunuz; yoldan geçen
+        bir lehçeyle yanıt veriyor — nasıl karşılık verirsiniz?"
 
-      ## Examples for code
+      ## Kod için örnekler
 
-      - "Code review: you receive this PR. What do you tell the
-        junior dev?"
-      - "Production bug scenario: logs show X. How do you
-        debug?"
+      - "Kod incelemesi: bu PR'ı aldınız. Junior geliştiriciyle
+        ne paylaşırsınız?"
+      - "Prodüksiyon hatası senaryosu: loglar X'i gösteriyor.
+        Nasıl hata ayıklarsınız?"
 
-      ## When it fits
+      ## Ne zaman uygundur
 
-      - **When your goal is applied** ("Spanish for travel" fits
-        better than "Spanish for the exam").
-      - **After the first basics** — context only works once
-        the building blocks are in place.
-      - **When preparing for a specific situation** (job
-        interview next week).
+      - **Hedefiniz uygulamalı olduğunda** ("seyahat için
+        İspanyolca", "sınav için İspanyolca"dan daha iyi
+        uyar).
+      - **İlk temel bilgilerden sonra** — bağlam yalnızca
+        yapı taşları yerli yerindeyken çalışır.
+      - **Belirli bir duruma hazırlanırken** (önümüzdeki
+        hafta iş görüşmesi).
 
-      ## When it fits less well
+      ## Ne zaman daha az uygundur
 
-      For pure exam topics (memorizing fact lists), deductive
-      or spaced repetition is usually more efficient.
+      Salt sınav konuları (gerçek listelerini ezberlemek) için
+      tümdengelimli yöntem veya aralıklı tekrar genellikle
+      daha verimlidir.
 
   - key: method_ai_adaptive
-    title: AI-Adaptive
-    short: "The system automatically picks the best method based on your history."
+    title: Yapay Zeka Uyumlu
+    short: "Sistem, geçmişinize dayanarak en uygun yöntemi otomatik olarak seçer."
     long: |
-      ## AI-adaptive method
+      ## Yapay zeka uyumlu yöntem
 
-      You let the system choose the method. After every step it
-      evaluates your progress (confidence value), your stress,
-      and your method fit, then decides which method to start
-      the next learning cycle with.
+      Sisteme yöntem seçimini bırakırsınız. Her adımdan sonra
+      sistem ilerlemenizi (güven değeri), stresinizi ve yönteme
+      uyumunuzu değerlendirir; ardından bir sonraki öğrenme
+      döngüsünü hangi yöntemle başlatacağına karar verir.
 
-      ## How the system decides
+      ## Sistem nasıl karar verir
 
-      Three data sources feed the choice:
+      Üç veri kaynağı seçimi besler:
 
-      - **Learning profile**: the weights from your assessment.
-        Methods with higher weights get preference.
-      - **Session history**: which methods led to fast progress
-        in your last 5-10 sessions?
-      - **Current stress level**: at high stress, the system
-        switches to less demanding methods (dialogic,
-        contextual).
+      - **Öğrenme profili**: değerlendirmenizdeki ağırlıklar.
+        Daha yüksek ağırlıklı yöntemler öncelik alır.
+      - **Oturum geçmişi**: son 5-10 oturumunuzda hangi
+        yöntemler hızlı ilerlemeye yol açtı?
+      - **Mevcut stres düzeyi**: yüksek stres durumunda sistem
+        daha az zorlu yöntemlere geçer (diyalogsal, bağlamsal).
 
-      ## Dual-prompt evaluation
+      ## Çift istem değerlendirmesi
 
-      Unlike fixed methods, a second AI instance evaluates your
-      answers after every step and signals to the first AI:
-      "continue as is", "switch method", "repeat step".
+      Sabit yöntemlerden farklı olarak, ikinci bir yapay zeka
+      örneği her adımdan sonra yanıtlarınızı değerlendirir ve
+      birinci yapay zekaya sinyal verir: "devam et", "yöntem
+      değiştir", "adımı tekrar et".
 
-      ## When it is ideal
+      ## Ne zaman idealdir
 
-      - **You are new to Adaptive Learner** and have not yet
-        experienced the methods first-hand.
-      - **You change topics often** — the system recalibrates
-        per project.
-      - **You like being surprised** — the AI mixes methods
-        deliberately.
+      - **Adaptive Learner'a yeniyseniz** ve yöntemleri
+        henüz bizzat deneyimlemediyseniz.
+      - **Konuyu sık değiştiriyorsanız** — sistem her proje
+        için yeniden kalibre olur.
+      - **Sürprizleri seviyorsanız** — yapay zeka yöntemleri
+        kasıtlı olarak karıştırır.
 
-      ## You always have the final say
+      ## Son söz her zaman sizin
 
-      If the system suggests a switch, you can decline. If a
-      suggested method does not fit, you end the session and
-      start with another. AI-adaptive is a recommendation
-      system, not a constraint.
+      Sistem bir değişiklik önerirse reddedebilirsiniz. Önerilen
+      yöntem uymuyorsa oturumu sonlandırıp başka biriyle
+      başlayabilirsiniz. Yapay zeka uyumlu yöntem bir öneri
+      sistemidir, bir kısıtlama değil.

@@ -1,4 +1,5 @@
-# Adaptive Learner — Help glossary: Core concepts (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: Core concepts (Turkish).
+# Translation: AI-generated, pending native review
 #
 # Per entry:
 #   key:    stable ID (snake_case, used in URLs)
@@ -6,204 +7,213 @@
 #   short:  1-2 sentences. Appears in the tooltip popover.
 #   long:   Markdown. 200-500 words. Appears in the help drawer.
 #
-# Edits land in ``frontend/src/data/help/concepts.en.json`` via
+# Edits land in ``frontend/src/data/help/concepts.tr.json`` via
 # ``make sync-help``.
 
 category: concepts
 language: tr
 entries:
   - key: curriculum
-    title: Curriculum
-    short: "A structured learning plan that ties goals, content, methods and assessment together."
+    title: Müfredat
+    short: "Hedefleri, içeriği, yöntemleri ve değerlendirmeyi bir araya getiren yapılandırılmış bir öğrenme planı."
     long: |
-      ## What is a curriculum?
+      ## Müfredat nedir?
 
-      In education, a curriculum (plural: curricula) is a
-      structured plan and systematic concept for how learning
-      and teaching happen.
+      Eğitimde müfredat (çoğul: müfredatlar), öğrenme ve
+      öğretmenin nasıl gerçekleşeceğine ilişkin yapılandırılmış
+      bir plan ve sistematik bir kavramdır.
 
-      ## Four core questions
+      ## Dört temel soru
 
-      Every curriculum answers four central questions:
+      Her müfredat dört merkezi soruyu yanıtlar:
 
-      - **Learning goals (why?)** — Which competencies should be
-        acquired?
-      - **Learning content (what?)** — Which topics will be
-        covered?
-      - **Methodology and didactics (how?)** — Which teaching and
-        learning forms will be used?
-      - **Evaluation (how well?)** — How will learning success be
-        measured?
+      - **Öğrenme hedefleri (neden?)** — Hangi yetkinlikler
+        kazanılmalıdır?
+      - **Öğrenme içeriği (ne?)** — Hangi konular ele alınacaktır?
+      - **Yöntem ve didaktik (nasıl?)** — Hangi öğretim ve
+        öğrenme biçimleri kullanılacaktır?
+      - **Değerlendirme (ne kadar iyi?)** — Öğrenme başarısı
+        nasıl ölçülecektir?
 
-      ## Difference from a syllabus
+      ## Müfredat ile ders programı arasındaki fark
 
-      A curriculum puts the learner and their competency acquisition
-      at the center (outcome orientation), not just a rigid list of
-      subject areas. A syllabus documents **what** should be taught;
-      a curriculum also describes **why** and **how** — and measures
-      **what was actually learned**.
+      Müfredat, konu alanlarının katı bir listesini değil,
+      öğrenciyi ve onun yetkinlik kazanımını merkeze alır (çıktı
+      odaklılık). Ders programı **neyin** öğretileceğini belgeler;
+      müfredat ise **neden** ve **nasıl** sorularını da yanıtlar
+      — ve **gerçekte neyin öğrenildiğini** ölçer.
 
-      ## Four dimensions
+      ## Dört boyut
 
-      Curriculum research distinguishes four manifestations:
+      Müfredat araştırması dört tezahürü birbirinden ayırt eder:
 
-      - **Intended curriculum** — the documented target.
-      - **Implemented curriculum** — what is actually taught.
-      - **Achieved curriculum** — what learners actually
-        understand.
-      - **Hidden curriculum** — implicit learning that happens
-        alongside (study habits, attitudes, social norms).
+      - **Planlanan müfredat** — belgelenen hedef.
+      - **Uygulanan müfredat** — gerçekte öğretilenler.
+      - **Kazanılan müfredat** — öğrencilerin gerçekte
+        anladıkları.
+      - **Gizli müfredat** — bunların yanı sıra gerçekleşen
+        örtük öğrenme (çalışma alışkanlıkları, tutumlar, sosyal
+        normlar).
 
-      ## In Adaptive Learner
+      ## Adaptive Learner'da
 
-      In Adaptive Learner, a curriculum is your personal learning
-      plan for a topic. It organizes learning topics hierarchically
-      and ties them to lessons. You define the goals, content and
-      methods — the system supports the evaluation through
-      tracking, the learning profile and AI feedback after each
-      step.
+      Adaptive Learner'da müfredat, bir konu için kişisel öğrenme
+      planınızdır. Öğrenme konularını hiyerarşik olarak düzenler
+      ve bunları derslere bağlar. Hedefleri, içeriği ve yöntemleri
+      siz belirlersiniz — sistem ise izleme, öğrenme profili ve
+      her adımdan sonra gelen yapay zeka geri bildirimleri
+      aracılığıyla değerlendirmeyi destekler.
 
-      Unlike a printed curriculum, this one adapts continuously:
-      when a method-switch recommendation appears, it is the
-      implemented curriculum reacting to the achieved one.
+      Basılı bir müfredattan farklı olarak bu müfredat sürekli
+      uyum sağlar: bir yöntem değiştirme önerisi belirdiğinde,
+      bu, uygulanan müfredatın kazanılan müfredata tepki
+      vermesidir.
 
   - key: learning_project
-    title: Learning Project
-    short: "Your concrete learning effort with topic, goal, timeframe and daily learning time."
+    title: Öğrenme Projesi
+    short: "Konu, hedef, zaman çerçevesi ve günlük öğrenme süresiyle somut öğrenme çabanız."
     long: |
-      ## What is a learning project?
+      ## Öğrenme projesi nedir?
 
-      A learning project bundles everything that belongs to a
-      learning effort: the topic, your goal, the timeframe, and
-      your daily learning time. It is the bracket around your
-      sessions, your curriculum and your learning profile.
+      Bir öğrenme projesi, bir öğrenme çabasına ait her şeyi
+      bir araya getirir: konu, hedefiniz, zaman çerçevesi ve
+      günlük öğrenme süreniz. Oturumlarınızın, müfredatınızın
+      ve öğrenme profilinizin etrafındaki kapsayıcıdır.
 
-      ## Why these four fields?
+      ## Neden bu dört alan?
 
-      - **Topic** — what you want to learn (e.g., "Spanish for
-        travel", "Python basics", "C major piano scale").
-        Concrete and bounded, not too broad.
-      - **Goal** — what you want to be able to do at the end.
-        Concrete goals ("order food at a restaurant") produce
-        better AI prompts than vague ones ("learn Spanish").
-      - **Timeframe** — by when. Affects how aggressively the
-        system schedules repetitions and when the method-switch
-        recommendation appears.
-      - **Daily learning time** — how many minutes per day you
-        can invest. Drives the spaced-repetition recommendations
-        and session length.
+      - **Konu** — ne öğrenmek istediğiniz (ör. "seyahat için
+        İspanyolca", "Python temelleri", "Do majör piyano
+        gamı"). Somut ve sınırlandırılmış, çok geniş değil.
+      - **Hedef** — sonunda ne yapmayı istediğiniz. Somut
+        hedefler ("restoranda yemek sipariş etmek"), belirsiz
+        hedeflere ("İspanyolca öğrenmek") kıyasla daha iyi
+        yapay zeka istemleri üretir.
+      - **Zaman çerçevesi** — ne zamana kadar. Sistemin
+        tekrarları ne kadar agresif programlayacağını ve
+        yöntem değiştirme önerisinin ne zaman çıkacağını
+        etkiler.
+      - **Günlük öğrenme süresi** — her gün kaç dakika
+        ayırabilirsiniz. Aralıklı tekrar önerilerini ve
+        oturum uzunluğunu belirler.
 
-      ## Why concrete goals matter
+      ## Somut hedefler neden önemlidir
 
-      Learning research is clear: SMART goals (specific,
-      measurable, attractive, realistic, time-bound) double
-      learning success compared to vague intentions. Adaptive
-      Learner translates your goal into the AI's system prompt;
-      the more concrete you are, the sharper the generated
-      exercises.
+      Öğrenme araştırmaları açıktır: SMART hedefler (özgül,
+      ölçülebilir, çekici, gerçekçi, zamana bağlı), belirsiz
+      niyetlere kıyasla öğrenme başarısını iki katına
+      çıkarır. Adaptive Learner hedefinizi yapay zekanın
+      sistem istemine çevirir; ne kadar somut olursanız
+      üretilen alıştırmalar o kadar keskin olur.
 
-      ## In Adaptive Learner
+      ## Adaptive Learner'da
 
-      You can have several learning projects in parallel. Each
-      session belongs to exactly one project; your progress
-      (XP, badges, streak) is tracked per project. When you
-      change the timeframe, the system automatically adjusts the
-      repetition cadence — a tight timeframe staggers
-      repetitions more densely.
+      Birden fazla öğrenme projesini paralel olarak
+      yürütebilirsiniz. Her oturum tam olarak bir projeye
+      aittir; ilerlemeniz (XP, rozetler, seri) proje bazında
+      izlenir. Zaman çerçevesini değiştirdiğinizde sistem
+      otomatik olarak tekrar sıklığını ayarlar — dar bir zaman
+      çerçevesi tekrarları daha yoğun aralıklarla programlar.
 
   - key: learning_profile
-    title: Learning Profile
-    short: "Your personal strength profile across six learning methods, derived from the assessment test."
+    title: Öğrenme Profili
+    short: "Değerlendirme testinden türetilen, altı öğrenme yöntemindeki kişisel güçler profiliniz."
     long: |
-      ## What is the learning profile?
+      ## Öğrenme profili nedir?
 
-      The learning profile shows how well each of the six
-      Adaptive Learner methods suits you. It comes from your
-      answers in the assessment test (12 questions) and is
-      visualized as a radar chart.
+      Öğrenme profili, Adaptive Learner'ın altı yönteminin her
+      birinin size ne ölçüde uyduğunu gösterir. Değerlendirme
+      testindeki (12 soru) yanıtlarınızdan elde edilir ve bir
+      radar grafiği olarak görselleştirilir.
 
-      ## The six axes
+      ## Altı eksen
 
-      Each axis is a method with a weight between 0 and 100:
+      Her eksen, 0 ile 100 arasında bir ağırlığa sahip bir
+      yöntemdir:
 
-      - **Deductive** — learn the rule, then apply it.
-      - **Inductive** — see examples, derive the rule yourself.
-      - **Error-based** — make mistakes deliberately, then
-        understand why.
-      - **Dialogic** — learn through conversation.
-      - **Contextual** — learn in simulated everyday situations.
-      - **AI-adaptive** — the system picks automatically.
+      - **Tümdengelimli** — önce kuralı öğren, sonra uygula.
+      - **Tümevarımlı** — örnekleri gör, kuralı kendin çıkar.
+      - **Hata temelli** — kasıtlı hata yap, ardından nedenini
+        anla.
+      - **Diyalogsal** — konuşarak öğren.
+      - **Bağlamsal** — simüle edilmiş günlük yaşam
+        durumlarında öğren.
+      - **Yapay zeka uyumlu** — sistem otomatik olarak seçer.
 
-      ## It is a profile, not a label
+      ## Bu bir profil, etiket değil
 
-      Nobody is "a deductive learner". Every learner has a
-      weighted pattern across all six methods. A profile with
-      high inductive and dialogic weights does not mean
-      deductive will not work for you — it means the other two
-      typically get you to learning success faster.
+      Kimse "tümdengelimli bir öğrenci" değildir. Her öğrenci,
+      altı yöntemin tamamında ağırlıklı bir örüntüye sahiptir.
+      Yüksek tümevarımlı ve diyalogsal ağırlığa sahip bir profil,
+      tümdengelimli yöntemin sizin için işe yaramayacağı anlamına
+      gelmez — diğer ikisinin sizi öğrenme başarısına genellikle
+      daha hızlı ulaştırdığı anlamına gelir.
 
-      ## Changes over time
+      ## Zaman içinde değişim
 
-      The learning profile is not carved in stone. With every
-      completed learning cycle and every method switch, the
-      system adjusts its recommendations. You can re-take the
-      assessment test at any time — typically useful every
-      3-6 months, or after a major topic change.
+      Öğrenme profili değişmez değildir. Tamamlanan her öğrenme
+      döngüsü ve her yöntem değişikliğiyle sistem önerilerini
+      günceller. Değerlendirme testini istediğiniz zaman
+      yeniden yapabilirsiniz — genellikle her 3-6 ayda bir veya
+      büyük bir konu değişikliğinin ardından faydalıdır.
 
-      ## In Adaptive Learner
+      ## Adaptive Learner'da
 
-      The profile drives the dashboard view and session
-      recommendations. If you start a session without specifying
-      a method, the system picks the method with the highest
-      weight in your profile.
+      Profil, kontrol paneli görünümünü ve oturum önerilerini
+      yönlendirir. Bir yöntem belirtmeden oturum başlatırsanız,
+      sistem profilinizdeki en yüksek ağırlığa sahip yöntemi
+      seçer.
 
   - key: learning_session
-    title: Learning Session
-    short: "An AI-driven learning unit that follows the 7-step cycle."
+    title: Öğrenme Oturumu
+    short: "7 adımlı döngüyü izleyen, yapay zeka destekli bir öğrenme birimi."
     long: |
-      ## What is a learning session?
+      ## Öğrenme oturumu nedir?
 
-      A learning session is a continuous learning unit on one
-      topic, driven by the 7-step cycle (input, attempt, error,
-      feedback, adapt, repeat, integrate). The AI plays the
-      teacher role; you drive the dialog.
+      Bir öğrenme oturumu, 7 adımlı döngüye (girdi, deneme,
+      hata, geri bildirim, uyum, tekrar, bütünleştirme)
+      dayanan, tek bir konuda kesintisiz bir öğrenme birimidir.
+      Yapay zeka öğretmen rolünü üstlenir; diyalogu siz
+      yönlendirirsiniz.
 
-      ## What makes a session different from a chat?
+      ## Oturum sıradan bir sohbetten nasıl farklıdır?
 
-      In a session the **dual-prompt evaluator** runs alongside:
-      after every answer, a second AI instance judges your
-      understanding (0-100% confidence) and decides whether you
-      are ready for the next step. A regular chat has no such
-      corrective.
+      Oturumda **çift istem değerlendiricisi** arka planda
+      çalışır: her yanıttan sonra ikinci bir yapay zeka örneği
+      anlayışınızı değerlendirir (%0-100 güven) ve bir sonraki
+      adıma geçmeye hazır olup olmadığınıza karar verir.
+      Sıradan bir sohbetin böyle bir düzeltici mekanizması
+      yoktur.
 
-      ## Streaming
+      ## Akış (Streaming)
 
-      The AI's answers appear word by word (Server-Sent Events)
-      so you do not wait for the full reply. You can interrupt
-      at any time and ask follow-ups — the session runs until
-      you end it or the cycle completes.
+      Yapay zekanın yanıtları kelime kelime görünür (Sunucu
+      Gönderimli Olaylar) — böylece tam yanıt için beklemeniz
+      gerekmez. İstediğiniz zaman müdahale edebilir ve ek
+      sorular sorabilirsiniz. Oturum, siz sonlandırana veya
+      döngü tamamlanana kadar devam eder.
 
-      ## When should I end a session?
+      ## Oturumu ne zaman sonlandırmalıyım?
 
-      - After step 7 (integrate), when the learning cycle is
-        complete.
-      - When the system recommends a method switch and you
-        accept the recommendation.
-      - When your **stress** rating has been above 4 in the
-        last few ratings — a break is more productive than
-        pushing through.
+      - Adım 7'nin (bütünleştirme) ardından, öğrenme döngüsü
+        tamamlandığında.
+      - Sistem bir yöntem değişikliği önerdiğinde ve siz bunu
+        kabul ettiğinizde.
+      - Son birkaç değerlendirmede **stres** puanınız 4'ün
+        üzerinde kaldıysa — bir mola, ısrarcı olmaktan daha
+        üreticidir.
 
-      ## Ratings carry forward
+      ## Değerlendirmeler ileriye taşınır
 
-      Every session ends with three sliders (understanding,
-      stress, method fit, each 1-5). These values feed into
-      your learning profile and shape future recommendations:
-      sustained high stress plus low method fit triggers the
-      method-switch recommendation.
+      Her oturum üç kaydırıcıyla (anlama, stres, yönteme
+      uyum; her biri 1-5) sona erer. Bu değerler öğrenme
+      profilinizi besler ve gelecekteki önerileri şekillendirir:
+      sürekli yüksek stres ile düşük yönteme uyum birlikteliği,
+      yöntem değiştirme önerisini tetikler.
 
-      ## In Adaptive Learner
+      ## Adaptive Learner'da
 
-      A session belongs to exactly one learning project. You
-      can have only one active session at a time; this prevents
-      topic mixing and shields the method-switch logic from
-      noise.
+      Bir oturum tam olarak bir öğrenme projesine aittir. Aynı
+      anda yalnızca bir aktif oturumunuz olabilir; bu, konu
+      karışmasını önler ve yöntem değiştirme mantığını
+      gürültüden korur.

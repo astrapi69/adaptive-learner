@@ -1,4 +1,4 @@
-# Adaptive Learner — Help glossary: Core concepts (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: Core concepts (Greek).
 #
 # Per entry:
 #   key:    stable ID (snake_case, used in URLs)
@@ -6,204 +6,207 @@
 #   short:  1-2 sentences. Appears in the tooltip popover.
 #   long:   Markdown. 200-500 words. Appears in the help drawer.
 #
-# Edits land in ``frontend/src/data/help/concepts.en.json`` via
+# Edits land in ``frontend/src/data/help/concepts.el.json`` via
 # ``make sync-help``.
 
 category: concepts
 language: el
 entries:
   - key: curriculum
-    title: Curriculum
-    short: "A structured learning plan that ties goals, content, methods and assessment together."
+    title: Πρόγραμμα Σπουδών
+    short: "Ένα δομημένο σχέδιο μάθησης που συνδέει στόχους, περιεχόμενο, μεθόδους και αξιολόγηση."
     long: |
-      ## What is a curriculum?
+      ## Τι είναι το πρόγραμμα σπουδών;
 
-      In education, a curriculum (plural: curricula) is a
-      structured plan and systematic concept for how learning
-      and teaching happen.
+      Στην εκπαίδευση, ένα πρόγραμμα σπουδών (πληθ.: curricula) είναι
+      ένα δομημένο σχέδιο και συστηματική αντίληψη για το πώς
+      λειτουργεί η μάθηση και η διδασκαλία.
 
-      ## Four core questions
+      ## Τέσσερις κεντρικές ερωτήσεις
 
-      Every curriculum answers four central questions:
+      Κάθε πρόγραμμα σπουδών απαντά σε τέσσερα βασικά ερωτήματα:
 
-      - **Learning goals (why?)** — Which competencies should be
-        acquired?
-      - **Learning content (what?)** — Which topics will be
-        covered?
-      - **Methodology and didactics (how?)** — Which teaching and
-        learning forms will be used?
-      - **Evaluation (how well?)** — How will learning success be
-        measured?
+      - **Στόχοι μάθησης (γιατί;)** — Ποιες ικανότητες πρέπει να
+        αποκτηθούν;
+      - **Περιεχόμενο μάθησης (τι;)** — Ποια θέματα θα καλυφθούν;
+      - **Μεθοδολογία και διδακτική (πώς;)** — Ποιες μορφές
+        διδασκαλίας και μάθησης θα χρησιμοποιηθούν;
+      - **Αξιολόγηση (πόσο καλά;)** — Πώς θα μετρηθεί η μαθησιακή
+        επιτυχία;
 
-      ## Difference from a syllabus
+      ## Διαφορά από τη διδακτέα ύλη
 
-      A curriculum puts the learner and their competency acquisition
-      at the center (outcome orientation), not just a rigid list of
-      subject areas. A syllabus documents **what** should be taught;
-      a curriculum also describes **why** and **how** — and measures
-      **what was actually learned**.
+      Το πρόγραμμα σπουδών τοποθετεί στο κέντρο τον μαθητή και
+      την απόκτηση ικανοτήτων (προσανατολισμός στα αποτελέσματα),
+      όχι απλώς μια άκαμπτη λίστα θεματικών ενοτήτων. Μια διδακτέα
+      ύλη τεκμηριώνει **τι** πρέπει να διδαχθεί· ένα πρόγραμμα
+      σπουδών περιγράφει επίσης **γιατί** και **πώς** — και μετράει
+      **τι μαθεύτηκε πραγματικά**.
 
-      ## Four dimensions
+      ## Τέσσερις διαστάσεις
 
-      Curriculum research distinguishes four manifestations:
+      Η έρευνα για τα προγράμματα σπουδών διακρίνει τέσσερις
+      εκφάνσεις:
 
-      - **Intended curriculum** — the documented target.
-      - **Implemented curriculum** — what is actually taught.
-      - **Achieved curriculum** — what learners actually
-        understand.
-      - **Hidden curriculum** — implicit learning that happens
-        alongside (study habits, attitudes, social norms).
+      - **Σχεδιασμένο πρόγραμμα** — ο τεκμηριωμένος στόχος.
+      - **Εφαρμοζόμενο πρόγραμμα** — αυτό που διδάσκεται πραγματικά.
+      - **Επιτευχθέν πρόγραμμα** — αυτό που κατανοούν πραγματικά
+        οι μαθητές.
+      - **Κρυφό πρόγραμμα** — η σιωπηρή μάθηση που συμβαίνει
+        παράλληλα (μελετητικές συνήθειες, στάσεις, κοινωνικά πρότυπα).
 
-      ## In Adaptive Learner
+      ## Στο Adaptive Learner
 
-      In Adaptive Learner, a curriculum is your personal learning
-      plan for a topic. It organizes learning topics hierarchically
-      and ties them to lessons. You define the goals, content and
-      methods — the system supports the evaluation through
-      tracking, the learning profile and AI feedback after each
-      step.
+      Στο Adaptive Learner, το πρόγραμμα σπουδών είναι το προσωπικό
+      σου σχέδιο μάθησης για ένα θέμα. Οργανώνει τις θεματικές
+      ενότητες ιεραρχικά και τις συνδέει με μαθήματα. Εσύ ορίζεις
+      τους στόχους, το περιεχόμενο και τις μεθόδους — το σύστημα
+      υποστηρίζει την αξιολόγηση μέσω παρακολούθησης, του μαθησιακού
+      προφίλ και της ανατροφοδότησης ΤΝ μετά κάθε βήμα.
 
-      Unlike a printed curriculum, this one adapts continuously:
-      when a method-switch recommendation appears, it is the
-      implemented curriculum reacting to the achieved one.
+      Σε αντίθεση με ένα έντυπο πρόγραμμα σπουδών, αυτό προσαρμόζεται
+      συνεχώς: όταν εμφανίζεται πρόταση αλλαγής μεθόδου, το
+      εφαρμοζόμενο πρόγραμμα αντιδρά στο επιτευχθέν.
 
   - key: learning_project
-    title: Learning Project
-    short: "Your concrete learning effort with topic, goal, timeframe and daily learning time."
+    title: Έργο Μάθησης
+    short: "Η συγκεκριμένη μαθησιακή σου προσπάθεια με θέμα, στόχο, χρονοδιάγραμμα και ημερήσιο χρόνο μελέτης."
     long: |
-      ## What is a learning project?
+      ## Τι είναι ένα έργο μάθησης;
 
-      A learning project bundles everything that belongs to a
-      learning effort: the topic, your goal, the timeframe, and
-      your daily learning time. It is the bracket around your
-      sessions, your curriculum and your learning profile.
+      Ένα έργο μάθησης συγκεντρώνει όλα όσα ανήκουν σε μια
+      μαθησιακή προσπάθεια: το θέμα, τον στόχο σου, το χρονοδιάγραμμα
+      και τον ημερήσιο χρόνο μάθησης. Είναι η αγκύλη γύρω από τις
+      συνεδρίες, το πρόγραμμα σπουδών και το μαθησιακό σου προφίλ.
 
-      ## Why these four fields?
+      ## Γιατί αυτά τα τέσσερα πεδία;
 
-      - **Topic** — what you want to learn (e.g., "Spanish for
-        travel", "Python basics", "C major piano scale").
-        Concrete and bounded, not too broad.
-      - **Goal** — what you want to be able to do at the end.
-        Concrete goals ("order food at a restaurant") produce
-        better AI prompts than vague ones ("learn Spanish").
-      - **Timeframe** — by when. Affects how aggressively the
-        system schedules repetitions and when the method-switch
-        recommendation appears.
-      - **Daily learning time** — how many minutes per day you
-        can invest. Drives the spaced-repetition recommendations
-        and session length.
+      - **Θέμα** — τι θέλεις να μάθεις (π.χ. "Ισπανικά για ταξίδια",
+        "βασικά Python", "κλίμακα ντο μείζονος στο πιάνο"). Συγκεκριμένο
+        και οριοθετημένο, όχι πολύ ευρύ.
+      - **Στόχος** — τι θέλεις να μπορείς να κάνεις στο τέλος.
+        Συγκεκριμένοι στόχοι ("να παραγγείλω φαγητό σε εστιατόριο")
+        παράγουν καλύτερες προτροπές ΤΝ από ασαφείς ("να μάθω Ισπανικά").
+      - **Χρονοδιάγραμμα** — μέχρι πότε. Επηρεάζει πόσο επιθετικά το
+        σύστημα προγραμματίζει επαναλήψεις και πότε εμφανίζεται η
+        πρόταση αλλαγής μεθόδου.
+      - **Ημερήσιος χρόνος μάθησης** — πόσα λεπτά ημερησίως μπορείς
+        να αφιερώσεις. Καθοδηγεί τις προτάσεις αραιωμένης επανάληψης
+        και τη διάρκεια συνεδρίας.
 
-      ## Why concrete goals matter
+      ## Γιατί έχει σημασία η συγκεκριμενοποίηση στόχων
 
-      Learning research is clear: SMART goals (specific,
-      measurable, attractive, realistic, time-bound) double
-      learning success compared to vague intentions. Adaptive
-      Learner translates your goal into the AI's system prompt;
-      the more concrete you are, the sharper the generated
-      exercises.
+      Η εκπαιδευτική έρευνα είναι σαφής: SMART στόχοι (συγκεκριμένοι,
+      μετρήσιμοι, ελκυστικοί, ρεαλιστικοί, χρονικά περιορισμένοι)
+      διπλασιάζουν την επιτυχία μάθησης σε σύγκριση με ασαφείς
+      προθέσεις. Το Adaptive Learner μεταφράζει τον στόχο σου στην
+      προτροπή συστήματος της ΤΝ· όσο πιο συγκεκριμένος είσαι, τόσο
+      πιο αιχμηρές οι παραγόμενες ασκήσεις.
 
-      ## In Adaptive Learner
+      ## Στο Adaptive Learner
 
-      You can have several learning projects in parallel. Each
-      session belongs to exactly one project; your progress
-      (XP, badges, streak) is tracked per project. When you
-      change the timeframe, the system automatically adjusts the
-      repetition cadence — a tight timeframe staggers
-      repetitions more densely.
+      Μπορείς να έχεις πολλά έργα μάθησης παράλληλα. Κάθε συνεδρία
+      ανήκει σε ακριβώς ένα έργο· η πρόοδός σου (XP, σήματα, σερί)
+      παρακολουθείται ανά έργο. Όταν αλλάξεις το χρονοδιάγραμμα, το
+      σύστημα προσαρμόζει αυτόματα τον ρυθμό επαναλήψεων — ένα σφιχτό
+      χρονοδιάγραμμα κατανέμει τις επαναλήψεις πιο πυκνά.
 
   - key: learning_profile
-    title: Learning Profile
-    short: "Your personal strength profile across six learning methods, derived from the assessment test."
+    title: Μαθησιακό Προφίλ
+    short: "Το προσωπικό σου προφίλ ισχύος στις έξι μεθόδους μάθησης, που προκύπτει από το τεστ αξιολόγησης."
     long: |
-      ## What is the learning profile?
+      ## Τι είναι το μαθησιακό προφίλ;
 
-      The learning profile shows how well each of the six
-      Adaptive Learner methods suits you. It comes from your
-      answers in the assessment test (12 questions) and is
-      visualized as a radar chart.
+      Το μαθησιακό προφίλ δείχνει πόσο καλά σου ταιριάζει κάθε μία
+      από τις έξι μεθόδους του Adaptive Learner. Προκύπτει από τις
+      απαντήσεις σου στο τεστ αξιολόγησης (12 ερωτήσεις) και
+      οπτικοποιείται ως γράφημα ραντάρ.
 
-      ## The six axes
+      ## Οι έξι άξονες
 
-      Each axis is a method with a weight between 0 and 100:
+      Κάθε άξονας είναι μια μέθοδος με βάρος από 0 έως 100:
 
-      - **Deductive** — learn the rule, then apply it.
-      - **Inductive** — see examples, derive the rule yourself.
-      - **Error-based** — make mistakes deliberately, then
-        understand why.
-      - **Dialogic** — learn through conversation.
-      - **Contextual** — learn in simulated everyday situations.
-      - **AI-adaptive** — the system picks automatically.
+      - **Παραγωγική** — μαθαίνεις τον κανόνα και μετά τον εφαρμόζεις.
+      - **Επαγωγική** — βλέπεις παραδείγματα, συνάγεις τον κανόνα μόνος σου.
+      - **Βασισμένη στο λάθος** — κάνεις λάθη σκόπιμα και μετά
+        καταλαβαίνεις γιατί.
+      - **Διαλογική** — μαθαίνεις μέσα από συνομιλία.
+      - **Πλαισιακή** — μαθαίνεις σε προσομοιωμένες καθημερινές
+        καταστάσεις.
+      - **ΤΝ-προσαρμοστική** — το σύστημα επιλέγει αυτόματα.
 
-      ## It is a profile, not a label
+      ## Είναι προφίλ, όχι ετικέτα
 
-      Nobody is "a deductive learner". Every learner has a
-      weighted pattern across all six methods. A profile with
-      high inductive and dialogic weights does not mean
-      deductive will not work for you — it means the other two
-      typically get you to learning success faster.
+      Κανείς δεν είναι "παραγωγικός μαθητής". Κάθε μαθητής έχει ένα
+      σταθμισμένο πρότυπο σε όλες τις έξι μεθόδους. Ένα προφίλ με
+      υψηλά βάρη στην επαγωγική και διαλογική μέθοδο δεν σημαίνει
+      ότι η παραγωγική δεν λειτουργεί για σένα — σημαίνει ότι οι
+      άλλες δύο συνήθως σε οδηγούν γρηγορότερα στη μαθησιακή επιτυχία.
 
-      ## Changes over time
+      ## Αλλαγές με την πάροδο του χρόνου
 
-      The learning profile is not carved in stone. With every
-      completed learning cycle and every method switch, the
-      system adjusts its recommendations. You can re-take the
-      assessment test at any time — typically useful every
-      3-6 months, or after a major topic change.
+      Το μαθησιακό προφίλ δεν είναι λαξευτό στην πέτρα. Με κάθε
+      ολοκληρωμένο μαθησιακό κύκλο και κάθε αλλαγή μεθόδου, το
+      σύστημα προσαρμόζει τις συστάσεις του. Μπορείς να επαναλάβεις
+      το τεστ αξιολόγησης ανά πάσα στιγμή — συνήθως χρήσιμο κάθε
+      3-6 μήνες ή μετά από σημαντική αλλαγή θέματος.
 
-      ## In Adaptive Learner
+      ## Στο Adaptive Learner
 
-      The profile drives the dashboard view and session
-      recommendations. If you start a session without specifying
-      a method, the system picks the method with the highest
-      weight in your profile.
+      Το προφίλ καθοδηγεί την προβολή του ταμπλό και τις συστάσεις
+      συνεδρίας. Αν ξεκινήσεις συνεδρία χωρίς να ορίσεις μέθοδο,
+      το σύστημα επιλέγει τη μέθοδο με το υψηλότερο βάρος στο
+      προφίλ σου.
 
   - key: learning_session
-    title: Learning Session
-    short: "An AI-driven learning unit that follows the 7-step cycle."
+    title: Μαθησιακή Συνεδρία
+    short: "Μια μαθησιακή ενότητα με ΤΝ που ακολουθεί τον κύκλο 7 βημάτων."
     long: |
-      ## What is a learning session?
+      ## Τι είναι μια μαθησιακή συνεδρία;
 
-      A learning session is a continuous learning unit on one
-      topic, driven by the 7-step cycle (input, attempt, error,
-      feedback, adapt, repeat, integrate). The AI plays the
-      teacher role; you drive the dialog.
+      Μια μαθησιακή συνεδρία είναι μια συνεχής μαθησιακή ενότητα σε
+      ένα θέμα, καθοδηγούμενη από τον κύκλο 7 βημάτων (εισαγωγή,
+      απόπειρα, λάθος, ανατροφοδότηση, προσαρμογή, επανάληψη,
+      ενσωμάτωση). Η ΤΝ παίζει τον ρόλο του δασκάλου· εσύ κατευθύνεις
+      τον διάλογο.
 
-      ## What makes a session different from a chat?
+      ## Τι κάνει τη συνεδρία διαφορετική από μια συνομιλία;
 
-      In a session the **dual-prompt evaluator** runs alongside:
-      after every answer, a second AI instance judges your
-      understanding (0-100% confidence) and decides whether you
-      are ready for the next step. A regular chat has no such
-      corrective.
+      Σε μια συνεδρία ο **αξιολογητής διπλής προτροπής** τρέχει
+      παράλληλα: μετά από κάθε απάντηση, μια δεύτερη περίπτωση ΤΝ
+      κρίνει την κατανόησή σου (εμπιστοσύνη 0-100%) και αποφασίζει
+      αν είσαι έτοιμος για το επόμενο βήμα. Μια τυπική συνομιλία
+      δεν έχει τέτοια διορθωτική λειτουργία.
 
       ## Streaming
 
-      The AI's answers appear word by word (Server-Sent Events)
-      so you do not wait for the full reply. You can interrupt
-      at any time and ask follow-ups — the session runs until
-      you end it or the cycle completes.
+      Οι απαντήσεις της ΤΝ εμφανίζονται λέξη-λέξη (Server-Sent
+      Events), ώστε να μην περιμένεις την πλήρη απάντηση. Μπορείς
+      να διακόψεις ανά πάσα στιγμή και να κάνεις συμπληρωματικές
+      ερωτήσεις — η συνεδρία τρέχει μέχρι να τη τερματίσεις ή να
+      ολοκληρωθεί ο κύκλος.
 
-      ## When should I end a session?
+      ## Πότε πρέπει να τερματίσω μια συνεδρία;
 
-      - After step 7 (integrate), when the learning cycle is
-        complete.
-      - When the system recommends a method switch and you
-        accept the recommendation.
-      - When your **stress** rating has been above 4 in the
-        last few ratings — a break is more productive than
-        pushing through.
+      - Μετά το βήμα 7 (ενσωμάτωση), όταν ο μαθησιακός κύκλος
+        ολοκληρωθεί.
+      - Όταν το σύστημα συστήνει αλλαγή μεθόδου και αποδέχεσαι
+        τη σύσταση.
+      - Όταν η βαθμολογία **στρες** σου ήταν πάνω από 4 στις
+        τελευταίες αξιολογήσεις — ένα διάλειμμα είναι πιο παραγωγικό
+        από το να συνεχίζεις.
 
-      ## Ratings carry forward
+      ## Οι αξιολογήσεις αφήνουν αποτύπωμα
 
-      Every session ends with three sliders (understanding,
-      stress, method fit, each 1-5). These values feed into
-      your learning profile and shape future recommendations:
-      sustained high stress plus low method fit triggers the
-      method-switch recommendation.
+      Κάθε συνεδρία τελειώνει με τρεις ρυθμιστές (κατανόηση, στρες,
+      καταλληλότητα μεθόδου, καθένας από 1-5). Αυτές οι τιμές
+      τροφοδοτούν το μαθησιακό σου προφίλ και διαμορφώνουν μελλοντικές
+      συστάσεις: συνεχής υψηλό στρες συν χαμηλή καταλληλότητα μεθόδου
+      ενεργοποιεί την πρόταση αλλαγής μεθόδου.
 
-      ## In Adaptive Learner
+      ## Στο Adaptive Learner
 
-      A session belongs to exactly one learning project. You
-      can have only one active session at a time; this prevents
-      topic mixing and shields the method-switch logic from
-      noise.
+      Μια συνεδρία ανήκει σε ακριβώς ένα έργο μάθησης. Μπορείς να
+      έχεις μόνο μία ενεργή συνεδρία κάθε φορά· αυτό αποτρέπει την
+      ανάμειξη θεμάτων και προστατεύει τη λογική αλλαγής μεθόδου
+      από θόρυβο.

@@ -1,276 +1,283 @@
-# Adaptive Learner — Help glossary: App features (English passthrough — translation pending).
+# Adaptive Learner — Help glossary: App features (Greek).
 
 category: features
 language: el
 entries:
   - key: feature_method_switch
-    title: Method Switch
-    short: "The system recommends a different method when you stagnate — you decide whether to switch."
+    title: Αλλαγή Μεθόδου
+    short: "Το σύστημα συστήνει διαφορετική μέθοδο όταν στασιμεύεις — εσύ αποφασίζεις αν θα αλλάξεις."
     long: |
-      ## What is the method switch?
+      ## Τι είναι η αλλαγή μεθόδου;
 
-      If your learning sessions stagnate in a method or
-      produce high stress, Adaptive Learner suggests a method
-      switch. You see the suggestion as a banner above the
-      session chat — you can accept, decline, or defer.
+      Αν οι μαθησιακές σου συνεδρίες στασιμεύουν σε μια μέθοδο
+      ή παράγουν υψηλό στρες, το Adaptive Learner προτείνει
+      αλλαγή μεθόδου. Βλέπεις την πρόταση ως banner πάνω από
+      τη συνομιλία συνεδρίας — μπορείς να την αποδεχτείς, να
+      την αρνηθείς ή να την αναβάλεις.
 
-      ## When the suggestion fires
+      ## Πότε ενεργοποιείται η πρόταση
 
-      Three conditions must hold simultaneously:
+      Τρεις συνθήκες πρέπει να ισχύουν ταυτόχρονα:
 
-      - **At least 3 sessions** in the current method.
-      - **Average stress > 3** (on the 1-5 scale) in the last
-        3 ratings.
-      - **Method fit < 3** in the last 3 ratings.
+      - **Τουλάχιστον 3 συνεδρίες** στην τρέχουσα μέθοδο.
+      - **Μέσο στρες > 3** (στην κλίμακα 1-5) στις τελευταίες
+        3 αξιολογήσεις.
+      - **Καταλληλότητα μεθόδου < 3** στις τελευταίες
+        3 αξιολογήσεις.
 
-      Stagnation detection alone is not enough: brief
-      difficulties in an otherwise fitting method are normal
-      and pass. Only the combination of duration + stress +
-      low fit triggers the suggestion.
+      Η ανίχνευση στασιμότητας από μόνη της δεν αρκεί: σύντομες
+      δυσκολίες σε μια κατά τα άλλα κατάλληλη μέθοδο είναι
+      φυσιολογικές και παρέρχονται. Μόνο ο συνδυασμός διάρκειας
+      + στρες + χαμηλής καταλληλότητας ενεργοποιεί την πρόταση.
 
-      ## How the system decides
+      ## Πώς αποφασίζει το σύστημα
 
-      The ``recommend_method_switch`` hook in the session
-      plugin compares your learning profile to your current
-      trajectory and suggests the method with the highest
-      expected fit. If the top-2 methods are close, you see
-      both as options.
+      Το hook ``recommend_method_switch`` στο plugin συνεδρίας
+      συγκρίνει το μαθησιακό σου προφίλ με την τρέχουσα
+      πορεία σου και προτείνει τη μέθοδο με την υψηλότερη
+      αναμενόμενη καταλληλότητα. Αν οι 2 κορυφαίες μέθοδοι
+      είναι κοντά, βλέπεις και τις δύο ως επιλογές.
 
-      ## You decide
+      ## Εσύ αποφασίζεις
 
-      The system recommends; you choose. Accepting the switch
-      saves it as a ``MethodSwitch`` audit entry (a trail for
-      your profile). Declining does nothing — the suggestion
-      reappears at the earliest after 3 more sessions.
+      Το σύστημα συστήνει· εσύ επιλέγεις. Η αποδοχή της αλλαγής
+      αποθηκεύεται ως καταχώρηση ελέγχου ``MethodSwitch`` (μια
+      ίχνη για το προφίλ σου). Η άρνηση δεν κάνει τίποτα — η
+      πρόταση επανεμφανίζεται νωρίτερα μετά από 3 ακόμα
+      συνεδρίες.
 
-      ## Why not automatic?
+      ## Γιατί όχι αυτόματα;
 
-      Method switches are a big change in the learning
-      experience. An automatic switch would break learning
-      continuity and could fire during a difficult but
-      productive phase. You know your context better than the
-      system does.
+      Οι αλλαγές μεθόδου είναι μεγάλη αλλαγή στη μαθησιακή
+      εμπειρία. Μια αυτόματη αλλαγή θα έσπαγε τη μαθησιακή
+      συνέχεια και θα μπορούσε να ενεργοποιηθεί κατά τη
+      διάρκεια μιας δύσκολης αλλά παραγωγικής φάσης. Εσύ
+      γνωρίζεις καλύτερα το πλαίσιό σου από ό,τι το σύστημα.
 
   - key: feature_auto_loop
     title: Auto-Loop
-    short: "After step 7, a new cycle with fresh content starts automatically."
+    short: "Μετά το βήμα 7, ένας νέος κύκλος με νέο περιεχόμενο ξεκινά αυτόματα."
     long: |
-      ## What is the auto-loop?
+      ## Τι είναι το auto-loop;
 
-      When you complete step 7 (integrate), the session can
-      automatically start a new cycle on the next topic from
-      your curriculum — without you pressing a "next cycle"
-      button.
+      Όταν ολοκληρώσεις το βήμα 7 (ενσωμάτωση), η συνεδρία
+      μπορεί να ξεκινήσει αυτόματα νέο κύκλο στο επόμενο θέμα
+      από το πρόγραμμα σπουδών σου — χωρίς να πατήσεις κουμπί
+      "επόμενος κύκλος".
 
-      ## How the next topic is chosen
+      ## Πώς επιλέγεται το επόμενο θέμα
 
-      - **If a curriculum exists**: the next topic in the
-        hierarchical order.
-      - **If no curriculum exists**: the AI generates a
-        suitable follow-up topic based on the current
-        trajectory.
-      - **If spaced-repetition cards are due**: they are
-        prioritized before new content.
+      - **Αν υπάρχει πρόγραμμα σπουδών**: το επόμενο θέμα
+        στην ιεραρχική σειρά.
+      - **Αν δεν υπάρχει πρόγραμμα σπουδών**: η ΤΝ παράγει
+        κατάλληλο θέμα συνέχειας βάσει της τρέχουσας πορείας.
+      - **Αν υπάρχουν ληξιπρόθεσμες κάρτες αραιωμένης
+        επανάληψης**: δίνεται προτεραιότητα σε αυτές πριν
+        από νέο περιεχόμενο.
 
-      ## Cycle counter
+      ## Μετρητής κύκλων
 
-      Every session shows a cycle counter ("3/5"). When
-      max_cycles is reached (default: 5), auto-loop pauses
-      and asks whether you want to continue. This protects
-      against runaway sessions.
+      Κάθε συνεδρία δείχνει μετρητή κύκλων ("3/5"). Όταν
+      φτάσει το max_cycles (προεπιλογή: 5), το auto-loop
+      παύει και ρωτά αν θέλεις να συνεχίσεις. Αυτό προστατεύει
+      από ανεξέλεγκτες συνεδρίες.
 
-      ## How to interrupt the auto-loop
+      ## Πώς να διακόψεις το auto-loop
 
-      - **Submit a rating**: after each cycle, you get the
-        three sliders (understanding, stress, method fit). If
-        stress > 3, the system suggests a break.
-      - **"End session" button**: clickable at any time.
-      - **Accept a method switch**: breaks the current loop
-        and starts a new one with the new method.
+      - **Υποβολή αξιολόγησης**: μετά από κάθε κύκλο, λαμβάνεις
+        τους τρεις ρυθμιστές (κατανόηση, στρες, καταλληλότητα
+        μεθόδου). Αν στρες > 3, το σύστημα προτείνει διάλειμμα.
+      - **Κουμπί "Τερματισμός συνεδρίας"**: πατήσιμο ανά πάσα
+        στιγμή.
+      - **Αποδοχή αλλαγής μεθόδου**: σπάει τον τρέχοντα βρόχο
+        και ξεκινά νέο με τη νέα μέθοδο.
 
-      ## When auto-loop is most valuable
+      ## Πότε το auto-loop είναι πιο πολύτιμο
 
-      For language learning with small topic units, where
-      "start a new session" overhead slows learning down. For
-      coding, auto-loop is often less useful because topic
-      transitions are larger.
+      Για εκμάθηση γλώσσας με μικρές θεματικές ενότητες, όπου
+      το "έναρξη νέας συνεδρίας" επιβαρύνει τη μάθηση. Για
+      κώδικα, το auto-loop είναι συχνά λιγότερο χρήσιμο επειδή
+      οι μεταβάσεις θέματος είναι μεγαλύτερες.
 
   - key: feature_spaced_repetition
-    title: Spaced Repetition
-    short: "Time-optimized review based on your learning history."
+    title: Αραιωμένη Επανάληψη
+    short: "Χρονικά βελτιστοποιημένη επανεξέταση βάσει του μαθησιακού σου ιστορικού."
     long: |
-      ## What is spaced repetition?
+      ## Τι είναι η αραιωμένη επανάληψη;
 
-      Spaced repetition is the technique of placing reviews at
-      increasing intervals. It uses the forgetting-curve
-      effect: each successfully recalled item lasts longer
-      next time.
+      Η αραιωμένη επανάληψη (SRS) είναι η τεχνική τοποθέτησης
+      επαναλήψεων σε αυξανόμενα διαστήματα. Χρησιμοποιεί το
+      αποτέλεσμα της καμπύλης λήθης: κάθε επιτυχώς ανακληθέν
+      στοιχείο διαρκεί περισσότερο την επόμενη φορά.
 
-      ## The band system in Adaptive Learner
+      ## Το σύστημα ζωνών στο Adaptive Learner
 
-      Six due-date bands:
+      Έξι ζώνες ημερομηνίας λήξης:
 
-      - **Today** — new cards + day-of reviews.
-      - **+1d** — learned yesterday, review today.
-      - **+3d** — reviewed three days ago, review today.
-      - **+7d** — one week ago.
-      - **+14d** — two weeks ago.
-      - **+30d** — one month ago.
+      - **Σήμερα** — νέες κάρτες + επαναλήψεις της ημέρας.
+      - **+1ημ** — μαθεύτηκε χθες, επανάληψη σήμερα.
+      - **+3ημ** — επαναλήφθηκε τρεις ημέρες πριν, επανάληψη
+        σήμερα.
+      - **+7ημ** — μια εβδομάδα πριν.
+      - **+14ημ** — δύο εβδομάδες πριν.
+      - **+30ημ** — ένας μήνας πριν.
 
-      Once a card passes four reviews successfully, it is
-      marked "stable" and leaves the active list — but stays
-      in the system for occasional refresher checks.
+      Μόλις μια κάρτα περάσει τέσσερις επαναλήψεις επιτυχώς,
+      σημαίνεται ως "σταθερή" και εξέρχεται από την ενεργή
+      λίστα — αλλά παραμένει στο σύστημα για περιστασιακούς
+      ελέγχους ανανέωσης.
 
-      ## How history feeds in
+      ## Πώς τροφοδοτεί το ιστορικό
 
-      A "successful review" is not just a click. The system
-      evaluates:
+      Μια "επιτυχής επανάληψη" δεν είναι απλώς ένα κλικ. Το
+      σύστημα αξιολογεί:
 
-      - **Confidence during the review session** (from the
-        dual-prompt evaluator).
-      - **Response time** vs your average.
-      - **Error count** in the current cycle.
+      - **Εμπιστοσύνη κατά τη συνεδρία επανάληψης** (από τον
+        αξιολογητή διπλής προτροπής).
+      - **Χρόνος απόκρισης** σε σχέση με τον μέσο σου.
+      - **Αριθμός λαθών** στον τρέχοντα κύκλο.
 
-      At low confidence, the card slips back to an earlier
-      band rather than advancing.
+      Σε χαμηλή εμπιστοσύνη, η κάρτα γλιστράει πίσω σε
+      προγενέστερη ζώνη αντί να προωθείται.
 
-      ## Connection to Anki
+      ## Σύνδεση με το Anki
 
-      With the Anki plugin active, you can export cards
-      directly to the Anki format. The system translates the
-      bands into Anki schedules — no progress is lost in the
-      transition.
+      Με ενεργό το plugin Anki, μπορείς να εξάγεις κάρτες
+      απευθείας σε μορφή Anki. Το σύστημα μεταφράζει τις ζώνες
+      σε χρονοπρογράμματα Anki — καμία πρόοδος δεν χάνεται
+      στη μετάβαση.
 
-      ## When the system recommends reviews
+      ## Πότε το σύστημα συστήνει επαναλήψεις
 
-      The dashboard's "Spaced Recommendations" panel shows
-      today's due cards. You can step through them
-      individually or have the system place them at the start
-      of your next regular session — before new content. The
-      system prioritizes cards with the highest forgetting
-      risk.
+      Ο πίνακας "Αραιωμένες Συστάσεις" στο ταμπλό δείχνει τις
+      σημερινές ληξιπρόθεσμες κάρτες. Μπορείς να τις διατρέξεις
+      μεμονωμένα ή να ζητήσεις από το σύστημα να τις τοποθετήσει
+      στην αρχή της επόμενης τακτικής συνεδρίας σου — πριν από
+      νέο περιεχόμενο. Το σύστημα δίνει προτεραιότητα στις
+      κάρτες με τον υψηλότερο κίνδυνο λήθης.
 
   - key: feature_conversation_analysis
-    title: Conversation Analysis / Import
-    short: "Analyze existing chat histories and extract concrete learning artifacts from them."
+    title: Ανάλυση Συνομιλίας / Εισαγωγή
+    short: "Ανάλυση υπαρχόντων ιστορικών συνομιλιών και εξαγωγή συγκεκριμένων μαθησιακών τεχνουργημάτων από αυτά."
     long: |
-      ## What is conversation analysis?
+      ## Τι είναι η ανάλυση συνομιλίας;
 
-      Adaptive Learner can analyze existing chats from
-      ChatGPT, Claude or Gemini and extract learning content
-      from them. You import the transcript once — the system
-      reads it, structures it, and turns it into a usable
-      learning artifact.
+      Το Adaptive Learner μπορεί να αναλύσει υπάρχουσες
+      συνομιλίες από ChatGPT, Claude ή Gemini και να εξαγάγει
+      μαθησιακό περιεχόμενο από αυτές. Εισάγεις μία φορά το
+      αντίγραφο — το σύστημα το διαβάζει, το δομεί και το μετατρέπει
+      σε χρήσιμο μαθησιακό τεχνούργημα.
 
-      ## What gets extracted
+      ## Τι εξάγεται
 
-      - **Concepts** — terms and ideas discussed in the chat.
-      - **Knowledge gaps** — points where you asked follow-ups
-        or made mistakes.
-      - **Errors** — concrete misconceptions visible in the
-        chat.
-      - **Vocabulary / terminology** — domain words
-        (especially relevant for language learning or
-        specialized fields).
+      - **Έννοιες** — όροι και ιδέες που συζητήθηκαν στη
+        συνομιλία.
+      - **Κενά γνώσης** — σημεία όπου έκανες ερωτήσεις
+        παρακολούθησης ή κάνεις λάθη.
+      - **Λάθη** — συγκεκριμένες παρανοήσεις ορατές στη
+        συνομιλία.
+      - **Λεξιλόγιο / ορολογία** — λέξεις πεδίου (ιδιαίτερα
+        σχετικές για εκμάθηση γλώσσας ή εξειδικευμένα πεδία).
 
-      ## How the import works
+      ## Πώς λειτουργεί η εισαγωγή
 
-      1. Export your chat from ChatGPT, Claude or Gemini as
-        Markdown or JSON.
-      2. Upload the file into Adaptive Learner (drag-and-drop
-        or file picker).
-      3. The system detects the format automatically and
-        stores the messages.
-      4. Trigger the analysis — the AI reads the chat in your
-        learning language and produces the structured
-        breakdown.
+      1. Εξαγωγή της συνομιλίας σου από ChatGPT, Claude ή
+         Gemini ως Markdown ή JSON.
+      2. Ανέβασμα του αρχείου στο Adaptive Learner (σύρσιμο
+         ή επιλογή αρχείου).
+      3. Το σύστημα ανιχνεύει αυτόματα τη μορφή και αποθηκεύει
+         τα μηνύματα.
+      4. Ενεργοποίηση της ανάλυσης — η ΤΝ διαβάζει τη συνομιλία
+         στη γλώσσα μάθησής σου και παράγει τη δομημένη ανάλυση.
 
-      ## What you can do next
+      ## Τι μπορείς να κάνεις στη συνέχεια
 
-      Three actions follow from the analysis:
+      Τρεις ενέργειες απορρέουν από την ανάλυση:
 
-      - **"Create curriculum"** — the extracted concepts feed
-        into a hierarchical curriculum.
-      - **"Start session"** — a session that starts directly
-        from the detected knowledge gaps.
-      - **"Generate Anki cards"** — flashcards from the
-        concepts and vocabulary.
+      - **"Δημιουργία προγράμματος σπουδών"** — οι εξαχθείσες
+        έννοιες τροφοδοτούν ένα ιεραρχικό πρόγραμμα σπουδών.
+      - **"Έναρξη συνεδρίας"** — μια συνεδρία που ξεκινά απευθείας
+        από τα ανιχνευμένα κενά γνώσης.
+      - **"Δημιουργία καρτών Anki"** — κάρτες flashcard από τις
+        έννοιες και το λεξιλόγιο.
 
-      ## Duplicates
+      ## Διπλότυπα
 
-      If you import the same chat twice, the system detects it
-      via the content hash and offers to navigate to the
-      existing analysis instead of creating a copy.
+      Αν εισαγάγεις την ίδια συνομιλία δύο φορές, το σύστημα
+      το εντοπίζει μέσω του hash περιεχομένου και προσφέρει
+      πλοήγηση στην υπάρχουσα ανάλυση αντί για δημιουργία
+      αντιγράφου.
 
-      ## Privacy
+      ## Απόρρητο
 
-      Chat contents go ONLY to your active AI provider (the
-      one you configured in settings). The system sends
-      nothing to a central server. When you delete the chat,
-      the contents are gone.
+      Τα περιεχόμενα συνομιλίας πηγαίνουν ΜΟΝΟ στον ενεργό
+      πάροχο ΤΝ σου (αυτόν που ρύθμισες στις ρυθμίσεις). Το
+      σύστημα δεν στέλνει τίποτα σε κεντρικό διακομιστή. Όταν
+      διαγράψεις τη συνομιλία, τα περιεχόμενα εξαφανίζονται.
 
   - key: feature_gamification
-    title: Gamification (XP, Badges, Streaks)
-    short: "Progress system with experience points, badges and streaks — motivation without gimmickry."
+    title: Gamification (XP, Σήματα, Σερί)
+    short: "Σύστημα προόδου με πόντους εμπειρίας, σήματα και σερί — παρακίνηση χωρίς τεχνάσματα."
     long: |
-      ## What is the gamification layer?
+      ## Τι είναι το επίπεδο gamification;
 
-      Three mechanics make learning progress visible and
-      rewarding:
+      Τρεις μηχανισμοί κάνουν την πρόοδο μάθησης ορατή και
+      ανταμειπτική:
 
-      - **XP (experience points)** — for every completed
-        session, every method switch, every
-        spaced-repetition card. Levels rise with XP.
-      - **Badges** — for thematic milestones ("first
-        session", "10 sessions in a method", "30-day streak",
-        ...).
-      - **Streaks** — daily learning runs. They expire 24
-        hours without a session — with three "streak freezes"
-        per month as emergency pauses.
+      - **XP (πόντοι εμπειρίας)** — για κάθε ολοκληρωμένη
+        συνεδρία, κάθε αλλαγή μεθόδου, κάθε κάρτα αραιωμένης
+        επανάληψης. Τα επίπεδα ανεβαίνουν με XP.
+      - **Σήματα** — για θεματικά ορόσημα ("πρώτη συνεδρία",
+        "10 συνεδρίες σε μια μέθοδο", "σερί 30 ημερών", ...).
+      - **Σερί** — καθημερινές μαθησιακές σειρές. Λήγουν μετά
+        24 ώρες χωρίς συνεδρία — με τρεις "παγώματα σερί"
+        ανά μήνα ως έκτακτες παύσεις.
 
-      ## How XP is earned
+      ## Πώς κερδίζεται XP
 
-      Different actions yield different XP values:
+      Διαφορετικές ενέργειες αποδίδουν διαφορετικές τιμές XP:
 
-      - **Submit a rated session**: 50 XP.
-      - **Reach step 7 (integrate)**: +25 XP bonus.
-      - **Accept a method switch**: 10 XP (you made a
-        deliberate learning decision).
-      - **Spaced-repetition card with confidence > 80%**:
+      - **Υποβολή αξιολογημένης συνεδρίας**: 50 XP.
+      - **Φτάνεις στο βήμα 7 (ενσωμάτωση)**: +25 XP μπόνους.
+      - **Αποδοχή αλλαγής μεθόδου**: 10 XP (έκανες σκόπιμη
+        μαθησιακή απόφαση).
+      - **Κάρτα αραιωμένης επανάληψης με εμπιστοσύνη > 80%**:
         5 XP.
-      - **Anki export of a set**: 20 XP.
+      - **Εξαγωγή Anki ενός συνόλου**: 20 XP.
 
-      Levels scale with a square-root function (level n =
-      sqrt(XP / 100)) — early levels move quickly, higher
-      levels need longer breath.
+      Τα επίπεδα κλιμακώνονται με συνάρτηση τετραγωνικής ρίζας
+      (επίπεδο n = sqrt(XP / 100)) — τα πρώτα επίπεδα
+      προχωράνε γρήγορα, τα υψηλότερα απαιτούν περισσότερη
+      αντοχή.
 
-      ## Badges are not coercive
+      ## Τα σήματα δεν είναι καταναγκαστικά
 
-      Badge criteria are not UI-load-bearing — you do *not*
-      need a single badge to use the app productively. They
-      are a mirror, not a target. If you start to feel like
-      you are learning for badges rather than for yourself,
-      disable the display in settings.
+      Τα κριτήρια σημάτων δεν είναι απαραίτητα στο UI — *δεν*
+      χρειάζεσαι ούτε ένα σήμα για να χρησιμοποιείς την εφαρμογή
+      παραγωγικά. Είναι ένας καθρέφτης, όχι στόχος. Αν αρχίσεις
+      να νιώθεις ότι μαθαίνεις για σήματα αντί για τον εαυτό σου,
+      απενεργοποίησε την εμφάνιση στις ρυθμίσεις.
 
-      ## Streak freezes
+      ## Παγώματα σερί
 
-      Three streak freezes per month. If you miss a day, a
-      freeze automatically protects your streak. Explicitly
-      designed as a "sick day" or "travel day" allowance, not
-      as an exception mechanism for laziness.
+      Τρία παγώματα σερί ανά μήνα. Αν χάσεις μια μέρα, ένα
+      πάγωμα προστατεύει αυτόματα το σερί σου. Σχεδιασμένο
+      ρητά ως επίδομα "ημέρας ασθένειας" ή "ημέρας ταξιδιού",
+      όχι ως μηχανισμός εξαίρεσης για τεμπελιά.
 
-      ## Why this works without gimmicks
+      ## Γιατί λειτουργεί χωρίς τεχνάσματα
 
-      Learning research shows: extrinsic reward can destroy
-      intrinsic motivation ("overjustification effect").
-      Adaptive Learner relies on the mechanics being a
-      **mirror** of progress, not an incentive system. No
-      leaderboards, no social features, no point-sharing —
-      the data stays with you.
+      Η εκπαιδευτική έρευνα δείχνει: η εξωτερική ανταμοιβή
+      μπορεί να καταστρέψει την εγγενή παρακίνηση ("φαινόμενο
+      υπεραιτιολόγησης"). Το Adaptive Learner βασίζεται στο ότι
+      οι μηχανισμοί είναι ένας **καθρέφτης** προόδου, όχι
+      σύστημα κινήτρων. Χωρίς πίνακες κατάταξης, κοινωνικά
+      χαρακτηριστικά, κοινή χρήση πόντων — τα δεδομένα
+      παραμένουν με σένα.
 
-      ## Reset
+      ## Επαναφορά
 
-      If the gamification values no longer match your
-      situation (e.g. fresh start after a long break), you
-      can reset them in settings. Curriculum, sessions, and
-      ratings are preserved.
+      Αν οι τιμές gamification δεν αντιστοιχούν πλέον στην
+      κατάστασή σου (π.χ. φρέσκια αρχή μετά από μακρά παύση),
+      μπορείς να τις επαναφέρεις στις ρυθμίσεις. Το πρόγραμμα
+      σπουδών, οι συνεδρίες και οι αξιολογήσεις διατηρούνται.

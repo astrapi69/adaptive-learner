@@ -1,262 +1,261 @@
-# Adaptive Learner — Help glossary: Learning methods (English passthrough — translation pending).
+# Adaptive Learner — Glossaire d'aide : Méthodes d'apprentissage (French)
 
 category: methods
 language: fr
 entries:
   - key: method_deductive
-    title: Deductive
-    short: "Learn the rule first, then apply it to concrete examples."
+    title: Déductive
+    short: "Apprendre d'abord la règle, puis l'appliquer à des exemples concrets."
     long: |
-      ## Deductive method
+      ## Méthode déductive
 
-      The AI explains a rule or concept; you then practice it
-      with examples. Top-down: from the general to the specific.
+      L'IA explique une règle ou un concept ; vous le pratiquez ensuite
+      avec des exemples. Du général au particulier : approche descendante.
 
-      ## When it works well
+      ## Quand elle fonctionne bien
 
-      - **Structured topics** with clear rules (grammar, math
-        formulas, programming syntax).
-      - **You have prior knowledge** the rule can attach to.
-      - **You prefer clarity**: you want to know what's correct
-        before you try something.
+      - **Sujets structurés** avec des règles claires (grammaire, formules
+        mathématiques, syntaxe de programmation).
+      - **Vous avez des connaissances préalables** auxquelles la règle peut
+        s'accrocher.
+      - **Vous préférez la clarté** : vous voulez savoir ce qui est correct
+        avant d'essayer.
 
-      ## How a session flows
+      ## Déroulement d'une session
 
-      1. AI explains the rule with a brief example.
-      2. You get a practice exercise.
-      3. You solve it; AI gives feedback.
-      4. On understanding: a new task at higher complexity.
-      5. On mistakes: AI refines the explanation.
+      1. L'IA explique la règle avec un bref exemple.
+      2. Vous recevez un exercice pratique.
+      3. Vous le résolvez ; l'IA donne un retour.
+      4. En cas de compréhension : une nouvelle tâche de complexité supérieure.
+      5. En cas d'erreur : l'IA affine l'explication.
 
-      ## Typical AI prompts
+      ## Invites IA typiques
 
-      The system prompts for this method emphasize clarity and
-      step-by-step build-up. The AI is instructed to state the
-      rule *before* moving to application.
+      Les invites système pour cette méthode mettent l'accent sur la clarté
+      et la progression par étapes. L'IA est instruite d'énoncer la règle
+      *avant* de passer à l'application.
 
-      ## When the system may switch away
+      ## Quand le système peut recommander un changement
 
-      If your **stress** rating rises over several sessions and
-      you feel like you are "learning rules without
-      understanding them", the system recommends switching to a
-      more practice-driven method (inductive, contextual or
-      dialogic). You always have the final say on the switch.
+      Si votre note de **stress** augmente sur plusieurs sessions et que
+      vous avez l'impression d'« apprendre des règles sans les comprendre »,
+      le système recommande de passer à une méthode plus axée sur la pratique
+      (inductive, contextuelle ou dialogique). Vous avez toujours le dernier
+      mot sur le changement.
 
   - key: method_inductive
     title: Inductive
-    short: "See examples first, derive the rule yourself."
+    short: "Voir d'abord des exemples, en déduire la règle soi-même."
     long: |
-      ## Inductive method
+      ## Méthode inductive
 
-      The AI presents examples; you recognize the pattern and
-      formulate the rule yourself. Bottom-up: from the concrete
-      to the general.
+      L'IA présente des exemples ; vous reconnaissez le schéma et formulez
+      la règle vous-même. Du particulier au général : approche ascendante.
 
-      ## When it works well
+      ## Quand elle fonctionne bien
 
-      - **Pattern-recognition topics** like grammar in context,
-        music scales, statistical concepts.
-      - **You learn by discovery** rather than memorizing rules.
-      - **Examples are plentiful** — the AI has material that
-        makes the rule visible.
+      - **Sujets à reconnaissance de schémas** comme la grammaire en
+        contexte, les gammes musicales, les concepts statistiques.
+      - **Vous apprenez par la découverte** plutôt qu'en mémorisant des règles.
+      - **Les exemples sont nombreux** — l'IA dispose de matériel rendant
+        la règle visible.
 
-      ## How a session flows
+      ## Déroulement d'une session
 
-      1. AI shows 3-5 examples of a phenomenon.
-      2. Question: "What pattern do you see?"
-      3. You formulate a hypothesis.
-      4. AI confirms, corrects or shows more examples.
-      5. On the correct rule: AI states it formally.
+      1. L'IA présente 3 à 5 exemples d'un phénomène.
+      2. Question : « Quel schéma voyez-vous ? »
+      3. Vous formulez une hypothèse.
+      4. L'IA confirme, corrige ou présente d'autres exemples.
+      5. Sur la règle correcte : l'IA l'énonce formellement.
 
-      ## Why this goes deeper
+      ## Pourquoi cela ancre plus profondément
 
-      Research shows self-discovered rules stick longer than
-      repeated ones. The inductive path takes longer, but the
-      understanding sits deeper.
+      La recherche montre que les règles découvertes par soi-même
+      restent plus longtemps que celles qu'on répète. Le chemin inductif
+      prend plus de temps, mais la compréhension est plus solide.
 
-      ## When it becomes hard
+      ## Quand cela devient difficile
 
-      If patterns are too complex or your background is too
-      thin, inductive learning can frustrate. The system reads
-      this from low confidence values and may switch to
-      deductive.
+      Si les schémas sont trop complexes ou si vos bases sont trop
+      insuffisantes, l'apprentissage inductif peut frustrer. Le système
+      le détecte à partir de faibles valeurs de confiance et peut
+      basculer vers la méthode déductive.
 
   - key: method_error_based
-    title: Error-Based
-    short: "Make mistakes deliberately, then understand why they happen."
+    title: Basée sur les erreurs
+    short: "Faire des erreurs délibérément, puis comprendre pourquoi elles se produisent."
     long: |
-      ## Error-based method
+      ## Méthode basée sur les erreurs
 
-      The AI deliberately guides you into common mistakes — and
-      then back out together. Errors are not avoided but used as
-      learning opportunities.
+      L'IA vous guide délibérément vers des erreurs courantes — puis
+      vous en ressortez ensemble. Les erreurs ne sont pas évitées
+      mais utilisées comme opportunités d'apprentissage.
 
-      ## Why deliberate errors work
+      ## Pourquoi les erreurs délibérées fonctionnent
 
-      Research on **productive failure** shows that errors you
-      make yourself and then understand create more robust
-      mental models than errors you avoid.
+      La recherche sur l'**échec productif** montre que les erreurs
+      que vous faites vous-même et que vous comprenez ensuite créent
+      des modèles mentaux plus robustes que les erreurs que vous évitez.
 
-      The method is NOT punitive: this is not about shame, it is
-      about clarity. An understood error is more valuable than
-      a randomly correct answer.
+      La méthode n'est PAS punitive : il ne s'agit pas de honte,
+      mais de clarté. Une erreur comprise vaut plus qu'une réponse
+      correcte par hasard.
 
-      ## How the AI implements it
+      ## Comment l'IA la met en œuvre
 
-      1. AI presents a problem with traps.
-      2. You solve it — and often step into the trap.
-      3. AI shows you the error and explains the underlying
-        misconception.
-      4. You solve a variant without repeating the error.
-      5. AI generalizes the principle.
+      1. L'IA présente un problème avec des pièges.
+      2. Vous le résolvez — et tombez souvent dans le piège.
+      3. L'IA vous montre l'erreur et explique le malentendu sous-jacent.
+      4. Vous résolvez une variante sans répéter l'erreur.
+      5. L'IA généralise le principe.
 
-      ## When this method fits
+      ## Quand cette méthode convient
 
-      - **Topics with classic error sources** (false friends in
-        languages, off-by-one in code, sign errors in math).
-      - **You are not stress-prone** when making mistakes.
-      - **You have basic knowledge** — errors from total
-        ignorance teach little.
+      - **Sujets avec des sources d'erreurs classiques** (faux amis dans
+        les langues, erreurs de décalage en code, erreurs de signe en maths).
+      - **Vous ne cédez pas au stress** quand vous faites des erreurs.
+      - **Vous avez des bases** — des erreurs liées à une ignorance totale
+        n'enseignent pas grand-chose.
 
-      ## Caution at high stress
+      ## Attention au stress élevé
 
-      If your stress rating exceeds 3 in a session, the system
-      switches to dialogic or deductive — this method needs
-      mental calm to be productive.
+      Si votre note de stress dépasse 3 lors d'une session, le système
+      bascule vers la méthode dialogique ou déductive — cette méthode
+      nécessite un calme mental pour être productive.
 
   - key: method_dialogic
-    title: Dialogic
-    short: "Learn through conversation with the AI in a low-pressure setting."
+    title: Dialogique
+    short: "Apprendre par la conversation avec l'IA dans un cadre sans pression."
     long: |
-      ## Dialogic method
+      ## Méthode dialogique
 
-      You learn through conversation: no rigid exercises, no
-      right/wrong answers, just a flexible dialog about the
-      topic. The AI follows up, deepens, encourages.
+      Vous apprenez par la conversation : pas d'exercices rigides,
+      pas de bonnes/mauvaises réponses, juste un dialogue flexible
+      sur le sujet. L'IA rebondit, approfondit, encourage.
 
-      ## When it works
+      ## Quand elle fonctionne
 
-      - **High-stress situations** where exam anxiety or speech
-        inhibition block learning.
-      - **Pure reinforcement**: you explain to the AI what you
-        understood.
-      - **Complex topics** you want to explore before
-        committing to a structured solution.
+      - **Situations de stress élevé** où l'anxiété des examens ou
+        l'inhibition de la parole bloquent l'apprentissage.
+      - **Consolidation pure** : vous expliquez à l'IA ce que vous
+        avez compris.
+      - **Sujets complexes** que vous souhaitez explorer avant de vous
+        engager sur une solution structurée.
 
-      ## How a session flows
+      ## Déroulement d'une session
 
-      No fixed steps. You start with a question, an assumption
-      or a concept. The AI continues the conversation, asks
-      follow-ups, suggests related concepts, gives examples.
-      You can switch topics at any time — unlike deductive or
-      inductive, where the system keeps you on track.
+      Pas d'étapes fixes. Vous commencez avec une question, une
+      hypothèse ou un concept. L'IA poursuit la conversation, pose
+      des questions complémentaires, suggère des concepts connexes,
+      donne des exemples. Vous pouvez changer de sujet à tout moment —
+      contrairement à la méthode déductive ou inductive, où le système
+      vous maintient sur la bonne voie.
 
-      ## What the AI does
+      ## Ce que fait l'IA
 
-      - **Low pressure**: no judgmental tone.
-      - **Motivational**: progress is highlighted, but not
-        artificially.
-      - **Adaptive**: matches complexity to your fluency and
-        energy.
+      - **Sans pression** : aucun ton de jugement.
+      - **Motivant** : les progrès sont soulignés, mais pas artificiellement.
+      - **Adaptatif** : adapte la complexité à votre aisance et à votre énergie.
 
-      ## What the dual-prompt evaluator does
+      ## Ce que fait l'évaluateur à double invite
 
-      Confidence evaluation still runs, but more tolerantly —
-      step progression is allowed at 50% confidence (vs the
-      usual 70%). The method is explicitly for exploration, not
-      testing.
+      L'évaluation de la confiance tourne toujours, mais de manière
+      plus tolérante — la progression par étapes est permise à 50 %
+      de confiance (contre 70 % habituel). Cette méthode est
+      explicitement faite pour l'exploration, pas pour le test.
 
   - key: method_contextual
-    title: Contextual
-    short: "Learn in simulated real-world situations."
+    title: Contextuelle
+    short: "Apprendre dans des situations réelles simulées."
     long: |
-      ## Contextual method
+      ## Méthode contextuelle
 
-      The AI simulates a concrete situation — restaurant, job
-      interview, coding interview — and you solve the task
-      inside it. Learning happens in the application context,
-      not abstractly.
+      L'IA simule une situation concrète — restaurant, entretien
+      d'embauche, entretien de code — et vous résolvez la tâche
+      en vous y inscrivant. L'apprentissage se fait dans le contexte
+      d'application, pas de manière abstraite.
 
-      ## Why context makes the difference
+      ## Pourquoi le contexte fait la différence
 
-      Research on **situated cognition** shows that knowledge
-      learned in context transfers better to practice. What you
-      learned at the restaurant table, you can apply at the
-      restaurant table — abstract knowledge often will not.
+      La recherche sur la **cognition située** montre que les
+      connaissances acquises en contexte se transfèrent mieux
+      dans la pratique. Ce que vous avez appris à table au restaurant,
+      vous pouvez l'appliquer au restaurant — les connaissances
+      abstraites souvent pas.
 
-      The method especially helps with the **transfer problem**:
-      "I know the rule, but in a real conversation I cannot
-      access it."
+      Cette méthode aide particulièrement avec le **problème de
+      transfert** : « Je connais la règle, mais dans une vraie
+      conversation je ne peux pas y accéder. »
 
-      ## Examples for language
+      ## Exemples pour les langues
 
-      - "You're at a cafe in Madrid. Order three different tapas
-        and ask for the house recommendation."
-      - "You're asking for directions to the train station; the
-        passerby answers in a dialect — how do you respond?"
+      - « Vous êtes dans un café à Madrid. Commandez trois tapas
+        différentes et demandez la recommandation de la maison. »
+      - « Vous demandez votre chemin pour la gare ; le passant
+        répond en dialecte — que répondez-vous ? »
 
-      ## Examples for code
+      ## Exemples pour le code
 
-      - "Code review: you receive this PR. What do you tell the
-        junior dev?"
-      - "Production bug scenario: logs show X. How do you
-        debug?"
+      - « Revue de code : vous recevez ce PR. Que dites-vous au
+        développeur junior ? »
+      - « Scénario de bug en production : les logs affichent X.
+        Comment déboguez-vous ? »
 
-      ## When it fits
+      ## Quand elle convient
 
-      - **When your goal is applied** ("Spanish for travel" fits
-        better than "Spanish for the exam").
-      - **After the first basics** — context only works once
-        the building blocks are in place.
-      - **When preparing for a specific situation** (job
-        interview next week).
+      - **Quand votre objectif est appliqué** (« Espagnol pour
+        voyager » convient mieux que « Espagnol pour l'examen »).
+      - **Après les premières bases** — le contexte ne fonctionne
+        qu'une fois les briques de base en place.
+      - **Quand vous vous préparez à une situation spécifique**
+        (entretien d'embauche la semaine prochaine).
 
-      ## When it fits less well
+      ## Quand elle convient moins
 
-      For pure exam topics (memorizing fact lists), deductive
-      or spaced repetition is usually more efficient.
+      Pour les sujets purement académiques (mémorisation de listes
+      de faits), la méthode déductive ou la répétition espacée est
+      généralement plus efficace.
 
   - key: method_ai_adaptive
-    title: AI-Adaptive
-    short: "The system automatically picks the best method based on your history."
+    title: IA adaptative
+    short: "Le système choisit automatiquement la meilleure méthode selon votre historique."
     long: |
-      ## AI-adaptive method
+      ## Méthode IA adaptative
 
-      You let the system choose the method. After every step it
-      evaluates your progress (confidence value), your stress,
-      and your method fit, then decides which method to start
-      the next learning cycle with.
+      Vous laissez le système choisir la méthode. Après chaque étape,
+      il évalue votre progression (valeur de confiance), votre stress
+      et l'adéquation de la méthode, puis décide avec quelle méthode
+      démarrer le prochain cycle d'apprentissage.
 
-      ## How the system decides
+      ## Comment le système décide
 
-      Three data sources feed the choice:
+      Trois sources de données alimentent le choix :
 
-      - **Learning profile**: the weights from your assessment.
-        Methods with higher weights get preference.
-      - **Session history**: which methods led to fast progress
-        in your last 5-10 sessions?
-      - **Current stress level**: at high stress, the system
-        switches to less demanding methods (dialogic,
-        contextual).
+      - **Profil d'apprentissage** : les pondérations de votre évaluation.
+        Les méthodes avec des pondérations plus élevées sont privilégiées.
+      - **Historique des sessions** : quelles méthodes ont conduit à des
+        progrès rapides lors de vos 5 à 10 dernières sessions ?
+      - **Niveau de stress actuel** : en cas de stress élevé, le système
+        bascule vers des méthodes moins exigeantes (dialogique, contextuelle).
 
-      ## Dual-prompt evaluation
+      ## Évaluation à double invite
 
-      Unlike fixed methods, a second AI instance evaluates your
-      answers after every step and signals to the first AI:
-      "continue as is", "switch method", "repeat step".
+      Contrairement aux méthodes fixes, une seconde instance IA évalue
+      vos réponses après chaque étape et signale à la première : « continuer
+      ainsi », « changer de méthode », « répéter l'étape ».
 
-      ## When it is ideal
+      ## Quand c'est idéal
 
-      - **You are new to Adaptive Learner** and have not yet
-        experienced the methods first-hand.
-      - **You change topics often** — the system recalibrates
-        per project.
-      - **You like being surprised** — the AI mixes methods
-        deliberately.
+      - **Vous débutez avec Adaptive Learner** et n'avez pas encore
+        expérimenté les méthodes par vous-même.
+      - **Vous changez souvent de sujet** — le système se recalibre
+        par projet.
+      - **Vous aimez être surpris** — l'IA mélange les méthodes
+        délibérément.
 
-      ## You always have the final say
+      ## Vous avez toujours le dernier mot
 
-      If the system suggests a switch, you can decline. If a
-      suggested method does not fit, you end the session and
-      start with another. AI-adaptive is a recommendation
-      system, not a constraint.
+      Si le système suggère un changement, vous pouvez refuser. Si
+      une méthode suggérée ne convient pas, vous terminez la session
+      et en démarrez une autre. La méthode IA adaptative est un
+      système de recommandation, pas une contrainte.
