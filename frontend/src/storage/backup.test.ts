@@ -63,7 +63,7 @@ describe("createDexieBackup", () => {
         expect(payload.stats.total_records).toBeGreaterThan(0);
     });
 
-    it("includes every backup table key (20 tables)", async () => {
+    it("includes every backup table key (full sync surface)", async () => {
         const {user} = await seedUser();
         const payload = await createDexieBackup(user.id, "test");
         for (const table of [
@@ -88,10 +88,63 @@ describe("createDexieBackup", () => {
             "tags",
             "project_subjects",
             "project_tags",
+            // BACKUP-DIR-EXPORT-01 — gamification / progress / SRS /
+            // missions. Before this fix, a Dexie-mode backup silently
+            // omitted all of these, losing the user's learning state.
+            "user_xp",
+            "badges",
+            "user_badges",
+            "anki_card_suggestions",
+            "study_questions",
+            "user_streaks",
+            "lesson_progress",
+            "element_errors",
+            "user_missions",
+            "api_key_backups",
         ]) {
             expect(payload.data).toHaveProperty(table);
             expect(Array.isArray(payload.data[table])).toBe(true);
         }
+    });
+
+    it("round-trips lesson progress + element errors (BACKUP-DIR-EXPORT-01)", async () => {
+        const {user} = await seedUser();
+        const db = getDb();
+        // Plant the kind of learning state that the pre-fix Dexie
+        // backup dropped on the floor.
+        await db.lessonProgress.add({
+            id: "lp-1",
+            user_id: user.id,
+            set_id: "es-a1",
+            lesson_filename: "01-greetings.json",
+            status: "completed",
+            stars: 3,
+            updated_at: "2026-06-01T10:00:00.000Z",
+        } as never);
+        await db.elementErrors.add({
+            id: "ee-1",
+            user_id: user.id,
+            element_key: "hola",
+            direction: "target_to_source",
+            error_count: 2,
+            consecutive_correct: 0,
+            updated_at: "2026-06-01T10:00:00.000Z",
+        } as never);
+
+        const payload = await createDexieBackup(user.id, "test");
+        expect(payload.data.lesson_progress).toHaveLength(1);
+        expect(payload.data.element_errors).toHaveLength(1);
+
+        // Wipe the local state, then restore from the backup.
+        await db.lessonProgress.clear();
+        await db.elementErrors.clear();
+        expect(await db.lessonProgress.count()).toBe(0);
+
+        const summary = await restoreDexieBackup(user.id, payload);
+        expect(summary.tables.lesson_progress.inserted).toBe(1);
+        expect(summary.tables.element_errors.inserted).toBe(1);
+        expect(await db.lessonProgress.get("lp-1")).toBeTruthy();
+        expect(await db.elementErrors.get("ee-1")).toBeTruthy();
     });
 
     it("excludes api_key_* fields from user_settings rows", async () => {
