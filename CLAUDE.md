@@ -9,8 +9,22 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.49.0** (minor - **Phase 65 — API-key
-  UX + Community Sharing via PR + Analysis loading**). API keys
+- **Current state:** **v1.50.0** (minor - **Lesson Creator
+  (EXP-021)** — a standalone, no-API-key way to build a complete
+  shareable lesson). New ``/create-lesson`` route +
+  ``CreateLesson.tsx`` 4-step wizard: **Metadata → Card Editor →
+  Exercise Generator → Save/Share**. Card editor has
+  drag-and-drop reorder (``@dnd-kit``) + **CSV import**;
+  exercises **auto-generate** from cards across all 5 types
+  (shared generator module) with a manual editor for advanced
+  control; **lesson templates** (Blank / Vocabulary / Grammar /
+  Conversation); **draft auto-save** to localStorage; **preview**
+  in the real LessonViewer before save; entry points in the
+  Content Browser + Dashboard; **save locally** + **share via
+  PR** (Phase 64 pipeline). Both storage modes, no migration,
+  full i18n in 8 langs.
+  v1.49.0 = minor - **Phase 65 — API-key
+  UX + Community Sharing via PR + Analysis loading**. API keys
   get instant **format validation** (prefix + length per
   provider, green/red + checkmark, Save gated), a live **Test**
   button (backend ``POST /settings/{user}/test-api-key`` +
