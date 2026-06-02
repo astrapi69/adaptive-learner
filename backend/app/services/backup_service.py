@@ -26,11 +26,14 @@ Restore semantics are MERGE, not overwrite:
   (compare ``updated_at`` / ``assessed_at``). Equal timestamps are
   treated as idempotent no-ops, not conflicts.
 
-The two extra tables this service knows about beyond
-``sync_service.TABLES`` are ``imported_conversations`` /
-``imported_messages``. Sync deliberately deferred those (the
-analysis-JSON blob has a separate design question), but backup
-must carry the full user state, so they are wired in here.
+The backup surface is exactly ``sync_service.TABLES`` (every
+table the sync layer knows). Both the export and the restore
+derive their table set from that single source, so the two
+sides can never drift again (BACKUP-API-RESTORE-01: the restore
+order had been hand-maintained and silently fell 14 tables
+behind the export, dropping gamification / lesson-progress /
+SRS-error / missions / anki / study-question / api-key-backup
+rows on every API-mode restore).
 """
 
 from __future__ import annotations
@@ -43,7 +46,7 @@ from sqlalchemy.orm import Session
 
 from app import __version__
 from app.exceptions import NotFoundError, ValidationError
-from app.models import ImportedConversation, ImportedMessage, User
+from app.models import User
 from app.services.sync_service import (
     TABLES as SYNC_TABLES,
 )
@@ -69,95 +72,14 @@ EXCLUDED_USER_SETTINGS_FIELDS: set[str] = {
 }
 
 
-# Backup-only table specs for the two tables sync defers
-# (ImportedConversation / ImportedMessage). They are append-only
-# from a backup point of view: the analysis result is immutable
-# once written and the row's identity is the UUID.
-_BACKUP_ONLY_TABLES: dict[str, TableSpec] = {
-    "imported_conversations": TableSpec(
-        model=ImportedConversation,
-        columns=(
-            "id",
-            "user_id",
-            "project_id",
-            "source",
-            "title",
-            "message_count",
-            "imported_at",
-            "analyzed",
-            "analysis_result",
-            "topic_tag",
-            "model",
-            "source_created_at",
-        ),
-        timestamp_field="imported_at",
-        append_only=True,
-        order=20,
-        scope="direct",
-    ),
-    "imported_messages": TableSpec(
-        model=ImportedMessage,
-        columns=(
-            "id",
-            "conversation_id",
-            "role",
-            "content",
-            "timestamp",
-            "order_index",
-        ),
-        timestamp_field="timestamp",
-        append_only=True,
-        order=21,
-        # Scoped via conversation -> user; resolved manually in
-        # _imported_messages_for_user below.
-        scope="via_conversation",
-    ),
-}
-
-ALL_BACKUP_TABLES: tuple[str, ...] = tuple(SYNC_TABLES.keys()) + tuple(_BACKUP_ONLY_TABLES.keys())
+# The backup surface IS the sync surface. Deriving from one source
+# is what keeps export and restore from drifting (the original
+# BACKUP-API-RESTORE-01 bug).
+ALL_BACKUP_TABLES: tuple[str, ...] = tuple(SYNC_TABLES.keys())
 
 
 def _spec(table: str) -> TableSpec:
-    if table in SYNC_TABLES:
-        return SYNC_TABLES[table]
-    return _BACKUP_ONLY_TABLES[table]
-
-
-def _serialize(table: str, row: Any) -> dict[str, Any]:
-    """Project an ORM row to a JSON-ready dict for either spec source."""
-    if table in SYNC_TABLES:
-        return serialize_row(table, row)
-    spec = _BACKUP_ONLY_TABLES[table]
-    out: dict[str, Any] = {}
-    for col in spec.columns:
-        value = getattr(row, col, None)
-        if isinstance(value, datetime):
-            value = _to_iso(value)
-        out[col] = value
-    return out
-
-
-def _imported_conversations_for_user(db: Session, user_id: str) -> list[ImportedConversation]:
-    return (
-        db.query(ImportedConversation)
-        .filter(ImportedConversation.user_id == user_id)
-        .order_by(ImportedConversation.imported_at.asc())
-        .all()
-    )
-
-
-def _imported_messages_for_user(db: Session, user_id: str) -> list[ImportedMessage]:
-    """Linear list of every imported message that belongs to one of the
-    user's conversations. Pulled in conversation+order_index order so
-    the restore path can rely on FK parents existing first.
-    """
-    return (
-        db.query(ImportedMessage)
-        .join(ImportedConversation, ImportedConversation.id == ImportedMessage.conversation_id)
-        .filter(ImportedConversation.user_id == user_id)
-        .order_by(ImportedMessage.conversation_id, ImportedMessage.order_index.asc())
-        .all()
-    )
+    return SYNC_TABLES[table]
 
 
 def _strip_excluded_fields(table: str, record: dict[str, Any]) -> dict[str, Any]:
@@ -172,14 +94,7 @@ def _gather_user_rows(db: Session, user_id: str) -> dict[str, list[dict[str, Any
     data: dict[str, list[dict[str, Any]]] = {}
     for table in SYNC_TABLES:
         rows = _scoped_query(db, table, user_id).all()
-        data[table] = [_strip_excluded_fields(table, _serialize(table, row)) for row in rows]
-    data["imported_conversations"] = [
-        _serialize("imported_conversations", row)
-        for row in _imported_conversations_for_user(db, user_id)
-    ]
-    data["imported_messages"] = [
-        _serialize("imported_messages", row) for row in _imported_messages_for_user(db, user_id)
-    ]
+        data[table] = [_strip_excluded_fields(table, serialize_row(table, row)) for row in rows]
     return data
 
 
@@ -227,15 +142,6 @@ def get_backup_stats(db: Session, user_id: str) -> dict[str, Any]:
     tables: dict[str, int] = {}
     for table in SYNC_TABLES:
         tables[table] = _scoped_query(db, table, user_id).count()
-    tables["imported_conversations"] = (
-        db.query(ImportedConversation).filter(ImportedConversation.user_id == user_id).count()
-    )
-    tables["imported_messages"] = (
-        db.query(ImportedMessage)
-        .join(ImportedConversation, ImportedConversation.id == ImportedMessage.conversation_id)
-        .filter(ImportedConversation.user_id == user_id)
-        .count()
-    )
     return {
         "user_id": user_id,
         "total_records": sum(tables.values()),
@@ -404,25 +310,13 @@ def _record_belongs_to_user(table: str, record: dict[str, Any], user_id: str) ->
     return True
 
 
-# Restore order: parents before children. Mutable parents first, then
-# append-only children, then the imports segment.
-_RESTORE_ORDER: tuple[str, ...] = (
-    "users",
-    "user_settings",
-    "learning_projects",
-    "learning_profiles",
-    "curriculums",
-    "learning_topics",
-    "lessons",
-    "learning_sessions",
-    "session_messages",
-    "session_ratings",
-    "session_notes",
-    "progress_commits",
-    "method_switches",
-    "step_evaluations",
-    "imported_conversations",
-    "imported_messages",
+# Restore order: parents before children. Derived from the SAME
+# source as the export (``sync_service.TABLES``) so the two sides
+# can never drift again (BACKUP-API-RESTORE-01). ``TableSpec.order``
+# already encodes FK dependency — lower numbers (parents) go first —
+# which is exactly the order a restore must apply rows in.
+_RESTORE_ORDER: tuple[str, ...] = tuple(
+    name for name, _spec_ in sorted(SYNC_TABLES.items(), key=lambda kv: kv[1].order)
 )
 
 
