@@ -9,7 +9,12 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.53.0** (minor — **content schema v1.3
+- **Current state:** **v1.53.1** (patch — **bug fixes**: single
+  two-phase button on the Adaptive/Review pages (was showing both
+  Pruefen + Weiter); community-PR file attachment now works for
+  all lesson sizes (create-file flow, never null); + regression
+  pins for analysis-context-on-resume and the lesson-nav
+  hamburger). v1.53.0 = minor — **content schema v1.3
   (technical content) + Python course + domain support**).
   **Schema v1.3:** Card gains optional ``code_snippet`` /
   ``code_language`` / ``expected_output`` / ``hint`` / ``difficulty``
@@ -925,8 +930,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.45.0 baseline:** backend 1047 (+1 skipped) + plugins
-  1031 + Vitest 2624 = **4702 tests** (+1 skipped). E2E
+- **v1.53.1 baseline:** backend 1125 + plugins
+  1009 + Vitest 3045 = **5179 tests**. E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (23 specs incl. the Phase 61 interactive journeys —
