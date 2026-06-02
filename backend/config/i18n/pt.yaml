@@ -1495,6 +1495,8 @@ content:
     domain_psychology: Psicologia
     domain_programming: Programação
     domain_math: Matemática
+    code_copy: "Copiar código"
+    code_output: "Saída:"
     no_primary: Ainda não há conjuntos para o seu idioma. Veja outros idiomas de origem abaixo.
   validation:
     title: Verificação de qualidade

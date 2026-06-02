@@ -1636,6 +1636,8 @@
       "domain_psychology": "Psicología",
       "domain_programming": "Programación",
       "domain_math": "Matemáticas",
+      "code_copy": "Copiar código",
+      "code_output": "Salida:",
       "no_primary": "Aún no hay conjuntos para tu idioma. Explora otros idiomas de origen abajo."
     },
     "validation": {

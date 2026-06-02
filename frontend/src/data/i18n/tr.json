@@ -1636,6 +1636,8 @@
       "domain_psychology": "Psikoloji",
       "domain_programming": "Programlama",
       "domain_math": "Matematik",
+      "code_copy": "Kodu kopyala",
+      "code_output": "Çıktı:",
       "no_primary": "Diliniz için henüz set yok. Aşağıdan diğer kaynak dillere göz atın."
     },
     "validation": {

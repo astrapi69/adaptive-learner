@@ -1506,6 +1506,8 @@ content:
     domain_psychology: Psychology
     domain_programming: Programming
     domain_math: Mathematics
+    code_copy: "Copy code"
+    code_output: "Output:"
     no_primary: No sets for your language yet. Browse other source languages below.
   validation:
     title: Quality check

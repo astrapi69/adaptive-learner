@@ -1495,6 +1495,8 @@ content:
     domain_psychology: 心理学
     domain_programming: プログラミング
     domain_math: 数学
+    code_copy: "コードをコピー"
+    code_output: "出力:"
     no_primary: あなたの言語のセットはまだありません。下の他の出発言語をご覧ください。
   validation:
     title: 品質チェック
