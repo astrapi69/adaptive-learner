@@ -235,6 +235,15 @@ export interface ImportedConversationRow {
      * ``null`` if the upgrade hasn't reached them yet.
      */
     content_hash: string | null;
+    /**
+     * v1.54.0 — language pair captured at IMPORT time and flowed
+     * through analysis -> save-as-lesson -> share. ``source_language``
+     * is the chat language (what the learner speaks); ``target_language``
+     * is what they learn. Nullable: imports created before Dexie v25
+     * carry ``null`` and fall back to the app-language default in the UI.
+     */
+    source_language: string | null;
+    target_language: string | null;
 }
 
 export interface ImportedMessageRow {
@@ -1077,6 +1086,22 @@ export class AdaptiveLearnerDB extends Dexie {
         this.version(24).stores({
             apiKeyBackups: "id, user_id, provider",
         });
+        // v1.54.0 — language pair on imported conversations (captured at
+        // import time). Non-indexed additive fields; back-fill existing
+        // rows to null so the UI applies the app-language fallback. No
+        // dynamic import in the upgrade (avoids the DatabaseClosedError
+        // trap from the v21 incident).
+        this.version(25)
+            .stores({})
+            .upgrade(async (tx) => {
+                await tx
+                    .table("importedConversations")
+                    .toCollection()
+                    .modify((row: Record<string, unknown>) => {
+                        if (!("source_language" in row)) row.source_language = null;
+                        if (!("target_language" in row)) row.target_language = null;
+                    });
+            });
     }
 }
 

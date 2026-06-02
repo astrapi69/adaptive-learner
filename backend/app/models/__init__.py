@@ -796,6 +796,14 @@ class ImportedConversation(Base):
     # created before Alembic 0014 valid; the back-fill in that
     # migration populates every existing row.
     content_hash: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    # v1.54.0 — language pair captured at IMPORT time so it flows
+    # through the whole pipeline (analysis -> save-as-lesson -> share)
+    # instead of being guessed/patched downstream. ``source_language``
+    # is what the learner SPEAKS (the chat language); ``target_language``
+    # is what they LEARN. Nullable: old imports created before this
+    # column fall back to the app-language default downstream.
+    source_language: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    target_language: Mapped[str | None] = mapped_column(String(10), nullable=True)
 
     messages: Mapped[list[ImportedMessage]] = relationship(
         back_populates="conversation",

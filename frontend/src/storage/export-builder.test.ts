@@ -251,6 +251,8 @@ describe("buildProgressReport", () => {
             model: null,
             source_created_at: null,
             content_hash: null,
+            source_language: null,
+            target_language: null,
         });
         await db.importedConversations.add({
             id: newId(),
@@ -266,6 +268,8 @@ describe("buildProgressReport", () => {
             model: null,
             source_created_at: null,
             content_hash: null,
+            source_language: null,
+            target_language: null,
         });
         const payload = await buildProgressReport(db, userId);
         expect(payload.extractions).toHaveLength(1);

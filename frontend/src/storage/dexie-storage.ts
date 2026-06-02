@@ -339,6 +339,8 @@ function rowToImportedConversation(
     source_created_at: row.source_created_at,
     analysis_result: row.analysis_result as ConversationAnalysisResult | null,
     content_hash: row.content_hash ?? null,
+    source_language: row.source_language ?? null,
+    target_language: row.target_language ?? null,
   };
 }
 
@@ -1489,6 +1491,8 @@ export const dexieStorage: IStorageService = {
         model: body.model ?? null,
         source_created_at: body.source_created_at ?? null,
         content_hash: contentHash,
+        source_language: body.source_language ?? null,
+        target_language: body.target_language ?? null,
       };
       await db.importedConversations.put(conv);
       // v1.8.0 / Phase 21D — every imported message now
@@ -1571,6 +1575,14 @@ export const dexieStorage: IStorageService = {
         topic_tag:
           body.topic_tag !== undefined ? body.topic_tag : conv.topic_tag,
         title: body.title ?? conv.title,
+        source_language:
+          body.source_language !== undefined
+            ? body.source_language
+            : conv.source_language,
+        target_language:
+          body.target_language !== undefined
+            ? body.target_language
+            : conv.target_language,
       };
       await db.importedConversations.put(updated);
       return rowToImportedConversation(updated);

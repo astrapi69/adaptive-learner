@@ -760,20 +760,26 @@ class ImportedConversationCreate(BaseModel):
     topic_tag: str | None = Field(default=None, max_length=200)
     model: str | None = Field(default=None, max_length=200)
     source_created_at: datetime | None = None
+    # v1.54.0 — language pair set at import time (source = chat
+    # language / what the learner speaks; target = what they learn).
+    source_language: str | None = Field(default=None, max_length=10)
+    target_language: str | None = Field(default=None, max_length=10)
     messages: list[ImportedMessageCreate] = Field(min_length=1)
 
 
 class ImportedConversationUpdate(BaseModel):
     """Partial update for already-imported conversations.
 
-    Only ``project_id`` + ``topic_tag`` are user-editable from the
-    UI; the analysis fields are set by the analyze endpoint, not
-    by direct PATCH from the client.
+    ``project_id`` + ``topic_tag`` + ``title`` and the v1.54.0
+    language pair are user-editable from the UI; the analysis fields
+    are set by the analyze endpoint, not by direct PATCH.
     """
 
     project_id: str | None = None
     topic_tag: str | None = Field(default=None, max_length=200)
     title: str | None = Field(default=None, min_length=1, max_length=500)
+    source_language: str | None = Field(default=None, max_length=10)
+    target_language: str | None = Field(default=None, max_length=10)
 
 
 class ImportedConversationAnalysis(BaseModel):
@@ -810,6 +816,9 @@ class ImportedConversationOut(BaseModel):
     # still detect as duplicates. Surfaced on the wire so the
     # frontend can dedupe locally too (Dexie path).
     content_hash: str | None = None
+    # v1.54.0 — language pair captured at import time, flowed downstream.
+    source_language: str | None = None
+    target_language: str | None = None
 
 
 class ImportedConversationDetail(ImportedConversationOut):

@@ -604,6 +604,14 @@ export interface ImportedConversation {
      * and Dexie schema v12).
      */
     content_hash: string | null;
+    /**
+     * v1.54.0 — language pair captured at IMPORT time and flowed
+     * downstream (analysis -> save-as-lesson -> share). ``source`` =
+     * chat language / what the learner speaks; ``target`` = what they
+     * learn. Nullable: old imports fall back to the app language.
+     */
+    source_language?: string | null;
+    target_language?: string | null;
 }
 
 export interface ImportedConversationDetail extends ImportedConversation {
@@ -617,6 +625,8 @@ export interface ImportedConversationCreateBody {
     topic_tag?: string | null;
     model?: string | null;
     source_created_at?: string | null;
+    source_language?: string | null;
+    target_language?: string | null;
     messages: Array<{
         role: "user" | "assistant" | "system";
         content: string;
@@ -628,6 +638,8 @@ export interface ImportedConversationUpdateBody {
     project_id?: string | null;
     topic_tag?: string | null;
     title?: string;
+    source_language?: string | null;
+    target_language?: string | null;
 }
 
 export interface ImportedConversationAnalysis {

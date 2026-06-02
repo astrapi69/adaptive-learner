@@ -91,6 +91,8 @@ def _to_dto(row: ImportedConversation) -> dict[str, object]:
         "source_created_at": row.source_created_at,
         "analysis_result": _deserialise_analysis(row.analysis_result),
         "content_hash": row.content_hash,
+        "source_language": row.source_language,
+        "target_language": row.target_language,
     }
     return base
 
@@ -165,6 +167,8 @@ def create_conversation(
         model=payload.model,
         source_created_at=payload.source_created_at,
         content_hash=content_hash,
+        source_language=payload.source_language,
+        target_language=payload.target_language,
     )
     db.add(conv)
     db.flush()  # so conv.id is populated for message FKs
