@@ -139,7 +139,11 @@ _BASE_PROMPT_LINES: tuple[str, ...] = (
 )
 
 
-def build_system_prompt(lang: str = "en") -> str:
+def build_system_prompt(
+    lang: str = "en",
+    source_language: str | None = None,
+    target_language: str | None = None,
+) -> str:
     """Return the analysis system prompt, localised for ``lang``.
 
     The prompt body is fixed (English instructions to the AI); a
@@ -148,10 +152,30 @@ def build_system_prompt(lang: str = "en") -> str:
     values stay English regardless of ``lang`` because the parser
     clamps against fixed identifier sets.
 
+    ``source_language`` / ``target_language`` (v1.54.0, captured at
+    import time) add a learner-context block so the AI extracts the
+    right language's content. Both optional; omitted when absent.
+
     Unknown / unsupported language codes fall back to English so a
     misconfigured user setting never breaks analysis.
     """
     name = LANGUAGE_NAMES.get((lang or "en").lower(), "English")
+    src = LANGUAGE_NAMES.get((source_language or "").lower()) if source_language else None
+    tgt = LANGUAGE_NAMES.get((target_language or "").lower()) if target_language else None
+    context = ""
+    if src and tgt and src != tgt:
+        context = (
+            "LEARNER CONTEXT:\n"
+            f"This transcript is a {src} speaker learning {tgt}. Extract the "
+            f"{tgt} learning content (vocabulary, error patterns, weaknesses) "
+            f"accordingly; the learner's own language is {src}.\n\n"
+        )
+    elif tgt:
+        context = (
+            "LEARNER CONTEXT:\n"
+            f"This transcript studies {tgt}. Extract the {tgt} learning "
+            "content accordingly.\n\n"
+        )
     directive = (
         "LANGUAGE — IMPORTANT:\n"
         f"Write all free-text string values IN {name}. This applies to:\n"
@@ -170,7 +194,7 @@ def build_system_prompt(lang: str = "en") -> str:
         "These are machine identifiers, not display text. If you\n"
         "translate them the parser breaks."
     )
-    return "\n".join(_BASE_PROMPT_LINES) + "\n\n" + directive
+    return "\n".join(_BASE_PROMPT_LINES) + "\n\n" + context + directive
 
 
 # Backward-compatible English default. Existing callers that
@@ -408,6 +432,8 @@ def analyze_conversation_with_ai(
     max_chunk_chars: int = MAX_CHUNK_CHARS,
     max_tokens: int = 1500,  # noqa: ARG001 — reserved for callers that wrap the hook directly
     lang: str = "en",
+    source_language: str | None = None,
+    target_language: str | None = None,
 ) -> dict[str, Any]:
     """End-to-end analysis. Splits the transcript if necessary,
     fires one ``ai_complete_call`` per chunk, merges the results.
@@ -424,7 +450,7 @@ def analyze_conversation_with_ai(
     The system prompt's free-text directive is localised to that
     language; the JSON schema and enum identifiers stay English.
     """
-    system_prompt = build_system_prompt(lang)
+    system_prompt = build_system_prompt(lang, source_language, target_language)
     chunks = chunk_messages(messages, max_chunk_chars)
     if not chunks:
         return deterministic_fallback(title)

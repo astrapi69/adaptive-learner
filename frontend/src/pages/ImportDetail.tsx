@@ -297,6 +297,10 @@ export default function ImportDetail({
         })),
         title: detail.title,
         lang,
+        // v1.54.0 — pass the import-time language pair so the analysis
+        // prompt knows who is learning what (sharper extraction).
+        sourceLanguage: sourceLang || detail.source_language || null,
+        targetLanguage: targetLang || detail.target_language || null,
         signal: controller.signal,
       });
       const updated = await getStorage().imports.saveAnalysis(detail.id, {

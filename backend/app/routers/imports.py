@@ -265,6 +265,9 @@ def analyze_import(
         ai_complete_call=_build_ai_caller(model=model, api_key=api_key),
         title=conv.title,
         lang=lang,
+        # v1.54.0 — import-time language pair sharpens extraction.
+        source_language=conv.source_language,
+        target_language=conv.target_language,
     )
 
     imports_service.save_analysis(

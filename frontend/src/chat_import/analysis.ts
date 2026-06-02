@@ -172,8 +172,38 @@ const BASE_PROMPT_LINES = [
  * Unknown / unsupported language codes fall back to English so a
  * misconfigured user setting never breaks analysis.
  */
-export function buildSystemPrompt(lang: string = "en"): string {
+export function buildSystemPrompt(
+    lang: string = "en",
+    sourceLanguage?: string | null,
+    targetLanguage?: string | null,
+): string {
     const name = LANGUAGE_NAMES[(lang || "en").toLowerCase()] ?? "English";
+    // v1.54.0 — language context captured at import time. Telling the
+    // model who is learning what sharpens the extraction (it knows which
+    // language the vocabulary / error patterns belong to).
+    const src = sourceLanguage
+        ? (LANGUAGE_NAMES[sourceLanguage.toLowerCase()] ?? null)
+        : null;
+    const tgt = targetLanguage
+        ? (LANGUAGE_NAMES[targetLanguage.toLowerCase()] ?? null)
+        : null;
+    const contextLines: string[] = [];
+    if (src && tgt && src !== tgt) {
+        contextLines.push(
+            "LEARNER CONTEXT:",
+            `This transcript is a ${src} speaker learning ${tgt}. Extract the ` +
+                `${tgt} learning content (vocabulary, error patterns, weaknesses) ` +
+                `accordingly; the learner's own language is ${src}.`,
+            "",
+        );
+    } else if (tgt) {
+        contextLines.push(
+            "LEARNER CONTEXT:",
+            `This transcript studies ${tgt}. Extract the ${tgt} learning ` +
+                "content accordingly.",
+            "",
+        );
+    }
     const directive = [
         "LANGUAGE — IMPORTANT:",
         `Write all free-text string values IN ${name}. This applies to:`,
@@ -194,7 +224,8 @@ export function buildSystemPrompt(lang: string = "en"): string {
         "These are machine identifiers, not display text. If you",
         "translate them the parser breaks.",
     ].join("\n");
-    return BASE_PROMPT_LINES.join("\n") + "\n\n" + directive;
+    const context = contextLines.length ? contextLines.join("\n") + "\n" : "";
+    return BASE_PROMPT_LINES.join("\n") + "\n\n" + context + directive;
 }
 
 export interface AnalysisOptions {
@@ -213,6 +244,15 @@ export interface AnalysisOptions {
      * language. Unknown codes fall back to English. Default "en".
      */
     lang?: string;
+    /**
+     * v1.54.0 — the language pair captured at import time. ``source`` is
+     * the chat language (what the learner speaks); ``target`` is what
+     * they learn. Threaded into the system prompt as learner context so
+     * the AI extracts the right language's content. Optional; when
+     * absent the prompt omits the context block.
+     */
+    sourceLanguage?: string | null;
+    targetLanguage?: string | null;
     /**
      * Optional AbortSignal — cancels the in-flight provider call.
      * When aborted, :func:`analyzeConversation` re-throws the
@@ -553,7 +593,11 @@ export async function analyzeConversation(
     opts: AnalysisOptions,
 ): Promise<ConversationAnalysisResult> {
     const maxChars = opts.maxChunkChars ?? MAX_CHUNK_CHARS;
-    const systemPrompt = buildSystemPrompt(opts.lang ?? "en");
+    const systemPrompt = buildSystemPrompt(
+        opts.lang ?? "en",
+        opts.sourceLanguage ?? null,
+        opts.targetLanguage ?? null,
+    );
     const chunks = chunkMessages(opts.messages, maxChars);
     if (chunks.length === 0) {
         return deterministicFallback(opts.title);
