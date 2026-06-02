@@ -1491,6 +1491,10 @@ content:
     sets: conjuntos
     other_sources: Outros idiomas de origem
     for_speakers: Para falantes de {lang}
+    knowledge: Conhecimento
+    domain_psychology: Psicologia
+    domain_programming: Programação
+    domain_math: Matemática
     no_primary: Ainda não há conjuntos para o seu idioma. Veja outros idiomas de origem abaixo.
   validation:
     title: Verificação de qualidade

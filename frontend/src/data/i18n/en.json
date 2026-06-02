@@ -1632,6 +1632,10 @@
       "sets": "sets",
       "other_sources": "Other source languages",
       "for_speakers": "For {lang} speakers",
+      "knowledge": "Knowledge",
+      "domain_psychology": "Psychology",
+      "domain_programming": "Programming",
+      "domain_math": "Mathematics",
       "no_primary": "No sets for your language yet. Browse other source languages below."
     },
     "validation": {

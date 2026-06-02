@@ -444,6 +444,10 @@ export interface ContentLesson {
    *  speaks (the language the card backs / notes / theory are
    *  written in). */
   source_language?: string | null;
+  /** Optional content domain (schema v1.3). Mirrors the parent
+   *  set's ``domain`` ("language" default, or "psychology" /
+   *  "programming" / ...). The parent set is authoritative. */
+  domain?: string | null;
   estimated_minutes: number;
   cards: ContentLessonCard[];
   steps: ContentLessonStep[];

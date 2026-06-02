@@ -729,6 +729,15 @@ class Lesson(BaseModel):
             "lessons."
         ),
     )
+    domain: str | None = Field(
+        default=None,
+        description=(
+            "Optional content domain (schema v1.3). Mirrors the "
+            "parent set's ``domain`` ('language' default, or "
+            "'psychology' / 'programming' / ...). Absent on "
+            "language lessons; the parent set is authoritative."
+        ),
+    )
     estimated_minutes: int = Field(
         default=10,
         description=(

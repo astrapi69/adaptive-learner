@@ -1491,6 +1491,10 @@ content:
     sets: セット
     other_sources: 他の出発言語
     for_speakers: '{lang}話者向け'
+    knowledge: 知識
+    domain_psychology: 心理学
+    domain_programming: プログラミング
+    domain_math: 数学
     no_primary: あなたの言語のセットはまだありません。下の他の出発言語をご覧ください。
   validation:
     title: 品質チェック

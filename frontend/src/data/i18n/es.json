@@ -1632,6 +1632,10 @@
       "sets": "conjuntos",
       "other_sources": "Otros idiomas de origen",
       "for_speakers": "Para hablantes de {lang}",
+      "knowledge": "Conocimiento",
+      "domain_psychology": "Psicología",
+      "domain_programming": "Programación",
+      "domain_math": "Matemáticas",
       "no_primary": "Aún no hay conjuntos para tu idioma. Explora otros idiomas de origen abajo."
     },
     "validation": {

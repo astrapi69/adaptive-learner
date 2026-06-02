@@ -1491,6 +1491,10 @@ content:
     sets: set
     other_sources: Diğer kaynak diller
     for_speakers: '{lang} konuşanlar için'
+    knowledge: Bilgi
+    domain_psychology: Psikoloji
+    domain_programming: Programlama
+    domain_math: Matematik
     no_primary: Diliniz için henüz set yok. Aşağıdan diğer kaynak dillere göz atın.
   validation:
     title: Kalite kontrolü

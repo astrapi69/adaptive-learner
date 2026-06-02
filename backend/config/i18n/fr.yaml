@@ -1493,6 +1493,10 @@ content:
     sets: ensembles
     other_sources: Autres langues source
     for_speakers: Pour les locuteurs de {lang}
+    knowledge: Savoir
+    domain_psychology: Psychologie
+    domain_programming: Programmation
+    domain_math: Mathématiques
     no_primary: Pas encore d'ensembles pour votre langue. Parcourez d'autres langues source ci-dessous.
   validation:
     title: Contrôle qualité

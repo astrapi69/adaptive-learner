@@ -42,6 +42,18 @@ export interface SourceGroup {
   setCount: number;
 }
 
+/** A non-language domain bucket (schema v1.3): all sets that teach
+ *  knowledge content (psychology, programming, ...) rather than a
+ *  language pair. Rendered under a separate "Wissen" / "Knowledge"
+ *  heading, outside the source -> target -> level language tree. */
+export interface DomainGroup {
+  /** Normalised domain tag ("psychology", "programming", ...). */
+  domain: string;
+  /** Sets in this domain, sorted by title. */
+  sets: ContentSetEntry[];
+  setCount: number;
+}
+
 export interface ContentTree {
   /** Source-language groups the learner speaks (app language +
    *  opted-in extras), in `activeSources` order. */
@@ -49,11 +61,20 @@ export interface ContentTree {
   /** Every other source language, alphabetical — rendered under a
    *  collapsed "other source languages" section. */
   other: SourceGroup[];
+  /** Non-language (domain) sets, grouped by domain, alphabetical.
+   *  Empty when the library is language-only. */
+  knowledge: DomainGroup[];
 }
 
 /** Base subtag of a BCP-47 code: "de-AT" -> "de", "FR" -> "fr". */
 export function baseLanguage(code: string): string {
   return (code || "").split("-")[0].toLowerCase();
+}
+
+/** Normalised content domain; "language" when unset. Mirrors the
+ *  content-validator + the content repo's validate_content.py. */
+export function domainOf(entry: ContentSetEntry): string {
+  return (entry.domain || "language").trim().toLowerCase();
 }
 
 /** CEFR ordering for level sort; unknown levels sort last,
@@ -120,8 +141,17 @@ export function buildContentTree(
   const active = activeSources.map(baseLanguage);
   const activeSet = new Set(active);
 
-  const bySource = new Map<string, ContentSetEntry[]>();
+  // Split language sets (the source -> target -> level tree) from
+  // non-language domain sets (the flat "Wissen" section).
+  const languageSets: ContentSetEntry[] = [];
+  const knowledgeSets: ContentSetEntry[] = [];
   for (const entry of sets) {
+    if (domainOf(entry) === "language") languageSets.push(entry);
+    else knowledgeSets.push(entry);
+  }
+
+  const bySource = new Map<string, ContentSetEntry[]>();
+  for (const entry of languageSets) {
     const key = baseLanguage(entry.source_language);
     const list = bySource.get(key) ?? [];
     list.push(entry);
@@ -153,5 +183,21 @@ export function buildContentTree(
     .sort((a, b) => a.localeCompare(b))
     .map(toGroup);
 
-  return { primary, other };
+  // Non-language domain sets, grouped by domain (alphabetical).
+  const byDomain = new Map<string, ContentSetEntry[]>();
+  for (const entry of knowledgeSets) {
+    const key = domainOf(entry);
+    const list = byDomain.get(key) ?? [];
+    list.push(entry);
+    byDomain.set(key, list);
+  }
+  const knowledge: DomainGroup[] = [...byDomain.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([domain, domainSets]) => ({
+      domain,
+      sets: [...domainSets].sort((x, y) => x.title.localeCompare(y.title)),
+      setCount: domainSets.length,
+    }));
+
+  return { primary, other, knowledge };
 }

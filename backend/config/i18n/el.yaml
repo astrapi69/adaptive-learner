@@ -1493,6 +1493,10 @@ content:
     sets: σύνολα
     other_sources: Άλλες γλώσσες προέλευσης
     for_speakers: Για ομιλητές {lang}
+    knowledge: Γνώση
+    domain_psychology: Ψυχολογία
+    domain_programming: Προγραμματισμός
+    domain_math: Μαθηματικά
     no_primary: Δεν υπάρχουν ακόμη σύνολα για τη γλώσσα σου. Δες άλλες γλώσσες προέλευσης παρακάτω.
   validation:
     title: Έλεγχος ποιότητας

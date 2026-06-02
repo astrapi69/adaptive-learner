@@ -1496,6 +1496,10 @@ content:
     sets: Sets
     other_sources: Andere Ausgangssprachen
     for_speakers: Für {lang}sprachige
+    knowledge: Wissen
+    domain_psychology: Psychologie
+    domain_programming: Programmierung
+    domain_math: Mathematik
     no_primary: Noch keine Sets für deine Sprache. Sieh dir unten andere Ausgangssprachen an.
   validation:
     title: Qualitätsprüfung
