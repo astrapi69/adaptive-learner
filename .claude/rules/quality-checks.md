@@ -349,52 +349,40 @@ Important: use Poetry for everything, no pip calls.
 
 **Purpose:** same principle as mutmut, but for TypeScript/React. Stryker Mutator is the equivalent for the JS/TS ecosystem.
 
-**Status:** to be set up (Vitest is already running, Stryker can build on it).
+**Status:** **WIRED** (vitest runner). `@stryker-mutator/core` +
+`@stryker-mutator/vitest-runner` are committed devDependencies;
+`frontend/stryker.config.json` mutates the logic layers (`src/lib`,
+`src/hooks`, `src/api`); `make stryker` / `make stryker-quick` run it;
+`.github/workflows/mutation-frontend.yml` runs it on `workflow_dispatch`
++ a gated nightly schedule. The TypeScript checker is intentionally
+omitted from the committed config (it slows runs and is brittle under
+TS 6 strict); add it later if a typed-mutant signal is wanted.
 
-**Setup:**
-```bash
-cd frontend
-npm install -D @stryker-mutator/core @stryker-mutator/vitest-runner @stryker-mutator/typescript-checker
-```
-
-**stryker.config.json:**
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/stryker-mutator/stryker/master/packages/core/schema/stryker-core.json",
-  "testRunner": "vitest",
-  "checkers": ["typescript"],
-  "tsconfigFile": "tsconfig.json",
-  "mutate": [
-    "src/api/**/*.ts",
-    "src/hooks/**/*.ts",
-    "src/components/**/*.tsx",
-    "!src/**/*.test.*",
-    "!src/**/*.spec.*",
-    "!src/test/**"
-  ],
-  "reporters": ["html", "clear-text", "progress"],
-  "htmlReporter": {
-    "fileName": "reports/mutation/index.html"
-  },
-  "thresholds": {
-    "high": 80,
-    "low": 60,
-    "break": null
-  }
-}
-```
+**Committed config:** `frontend/stryker.config.json` — vitest runner
+(`coverageAnalysis: perTest`), `thresholds.break: null` (a low score
+never fails the build; the HTML report is the deliverable),
+`reports/mutation/index.html` (gitignored).
 
 **How to run:**
 ```bash
-# Full run (slow, nightly or manual)
+# Full run — src/lib + src/hooks + src/api (slow; nightly/manual)
+make stryker
+
+# Scoped run (fast, for a single file/dir while hardening tests)
+make stryker-quick MUTATE="src/lib/apiKeyFormat.ts"
+make stryker-quick MUTATE="src/lib/lesson/**/*.ts"
+
+# Equivalent raw invocations
 cd frontend && npx stryker run
-
-# Just one directory
-cd frontend && npx stryker run --mutate "src/api/**/*.ts"
-
-# Just one file
-cd frontend && npx stryker run --mutate "src/api/client.ts"
+cd frontend && npx stryker run --mutate "src/hooks/**/*.ts"
 ```
+
+**CI:** `.github/workflows/mutation-frontend.yml`. Manual dispatch
+always runs; the nightly `schedule` is a no-op unless the repo
+variable `ENABLE_NIGHTLY_MUTATION == "true"` (Settings -> Variables).
+Per the "wired != working" rule, trigger it once via
+`workflow_dispatch` after merge and confirm the uploaded
+`frontend-mutation-report` artifact before relying on the schedule.
 
 **Test the critical frontend modules first:**
 1. `src/api/client.ts` - all API calls, error handling

@@ -1,0 +1,4 @@
+
+# Stryker mutation testing
+reports/
+.stryker-tmp/
