@@ -267,4 +267,43 @@ describe("Lesson auto-read (C3)", () => {
                 .getAttribute("aria-pressed"),
         ).toBe("true");
     });
+
+    // --- C5: follow-along highlight --------------------------------
+
+    it("shows the manual theory read-aloud button on a theory step", () => {
+        ready(0);
+        renderPage();
+        const btn = screen.getByTestId("read-aloud-theory");
+        expect(btn).toBeInTheDocument();
+        expect(btn.getAttribute("data-speaking")).toBe("false");
+    });
+
+    it("clicking the theory button reads it and swaps in the follow-along view", () => {
+        ready(0);
+        renderPage();
+        expect(screen.queryByTestId("lesson-read-along")).toBeNull();
+        fireEvent.click(screen.getByTestId("read-aloud-theory"));
+        expect(speakCalls.length).toBe(1);
+        expect(speakCalls[0].text).toContain("Bonjour means hello");
+        // The follow-along view replaces the Markdown while reading.
+        const along = screen.getByTestId("lesson-read-along");
+        expect(along).toBeInTheDocument();
+        expect(along.textContent).toContain("Bonjour means hello");
+        // The button flips to the speaking (Stop) state.
+        expect(
+            screen.getByTestId("read-aloud-theory").getAttribute(
+                "data-speaking",
+            ),
+        ).toBe("true");
+    });
+
+    it("auto-read on a theory step renders the follow-along view", () => {
+        localStorage.setItem(
+            "adaptive-learner.voice.lesson_autoread",
+            "true",
+        );
+        ready(0);
+        renderPage();
+        expect(screen.getByTestId("lesson-read-along")).toBeInTheDocument();
+    });
 });

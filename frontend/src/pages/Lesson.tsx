@@ -30,6 +30,7 @@ import {
     ChevronRight,
     Download,
     RotateCcw,
+    Square,
     Star,
     Volume2,
 } from "lucide-react";
@@ -55,13 +56,14 @@ import {
 } from "../components/exercises/ExerciseDispatcher";
 import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import Confetti from "../components/feedback/Confetti";
-import ReadAloudButton from "../components/lesson/ReadAloudButton";
+import ReadAlongText from "../components/lesson/ReadAlongText";
 import {markdownToSpeech} from "../lib/lesson/tts-text";
 import {
     READ_ALOUD_SPEEDS,
     readLessonAutoRead,
     useReadAloud,
     writeLessonAutoRead,
+    type ReadAloudController,
 } from "../hooks/useReadAloud";
 import {useCountUp} from "../hooks/useCountUp";
 import {useFeedbackIntensity} from "../hooks/useFeedbackIntensity";
@@ -302,8 +304,12 @@ export default function LessonPage() {
         if (!current) return;
         const lang = lesson.target_language ?? undefined;
         let text = "";
+        let id = `prompt-${current.id}`;
         if (current.type === "theory") {
             text = markdownToSpeech(current.body ?? "");
+            // Same id the TheoryStep checks so the follow-along
+            // highlight renders during auto-read too.
+            id = `theory-${current.id}`;
         } else if (current.exercise) {
             const {codeMode} = resolveCodeContext(
                 current.exercise,
@@ -312,7 +318,7 @@ export default function LessonPage() {
             if (!codeMode) text = current.exercise.prompt ?? "";
         }
         if (text.trim()) {
-            tts.speak(text, {lang, id: `step-${current.id}`});
+            tts.speak(text, {lang, id});
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [autoRead, currentStepIndex, lesson, showResumePrompt, tts.enabled]);
@@ -743,7 +749,9 @@ export default function LessonPage() {
                     {step!.type === "theory" ? (
                         <TheoryStep
                             body={step!.body ?? ""}
+                            stepId={step!.id}
                             ttsLang={lesson.target_language}
+                            tts={tts}
                             lessonRewriteFn={(s) =>
                                 rewriteAnchors(s, lesson)
                             }
@@ -904,15 +912,23 @@ export default function LessonPage() {
 
 interface TheoryStepProps {
     body: string;
+    /** Stable id of this theory step (keys the engine's active read). */
+    stepId: string;
     /** TTS feature C2 — lesson target language for read-aloud. */
     ttsLang?: string | null;
+    /** TTS feature C5 — the shared lesson read-aloud engine, so the
+     *  theory button drives it (manual + auto both emit boundaries)
+     *  and the follow-along highlight can track the spoken word. */
+    tts: ReadAloudController;
     lessonRewriteFn: (body: string) => string;
     onAnchorClick: (stepId: string) => void;
 }
 
 function TheoryStep({
     body,
+    stepId,
     ttsLang = null,
+    tts,
     lessonRewriteFn,
     onAnchorClick,
 }: TheoryStepProps) {
@@ -924,22 +940,62 @@ function TheoryStep({
     // Plain-text projection of the body for read-aloud (markdown
     // syntax + code blocks stripped).
     const speechText = useMemo(() => markdownToSpeech(body), [body]);
+    const utteranceId = `theory-${stepId}`;
+    const isReading = tts.speaking && tts.activeId === utteranceId;
+    const canRead = tts.enabled && !!ttsLang && speechText.length > 0;
+    const readLabel = isReading
+        ? t("lesson.tts.stop", "Stop")
+        : t("lesson.tts.read_aloud", "Read aloud");
     return (
         <div
             className="lesson-theory markdown-body"
             data-testid="lesson-theory-body"
         >
-            {ttsLang && speechText.length > 0 && (
+            {canRead && (
                 <div className="lesson-theory-tts">
-                    <ReadAloudButton
-                        text={speechText}
-                        lang={ttsLang}
-                        label={t("lesson.tts.read_aloud", "Read aloud")}
-                        testId="theory"
-                    />
+                    <button
+                        type="button"
+                        className={`read-aloud-button${
+                            isReading ? " is-speaking" : ""
+                        }`}
+                        data-testid="read-aloud-theory"
+                        data-speaking={isReading ? "true" : "false"}
+                        aria-label={readLabel}
+                        onClick={() =>
+                            isReading
+                                ? tts.stop()
+                                : tts.speak(speechText, {
+                                      lang: ttsLang ?? undefined,
+                                      id: utteranceId,
+                                  })
+                        }
+                    >
+                        <span
+                            className="read-aloud-button__icon"
+                            aria-hidden="true"
+                        >
+                            {isReading ? (
+                                <Square size={14} />
+                            ) : (
+                                <Volume2 size={14} />
+                            )}
+                        </span>
+                        <span className="read-aloud-button__label">
+                            {readLabel}
+                        </span>
+                    </button>
                 </div>
             )}
-            <Markdown
+            {/* While the engine reads this step, swap the rich Markdown
+                for a plain-text follow-along that highlights the spoken
+                word; restore Markdown when idle. */}
+            {isReading ? (
+                <ReadAlongText
+                    text={speechText}
+                    activeChar={tts.boundaryIndex}
+                />
+            ) : (
+                <Markdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}
                 components={{
@@ -986,9 +1042,10 @@ function TheoryStep({
                         );
                     },
                 }}
-            >
-                {rewritten}
-            </Markdown>
+                >
+                    {rewritten}
+                </Markdown>
+            )}
         </div>
     );
 }

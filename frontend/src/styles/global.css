@@ -6629,6 +6629,34 @@ select:focus {
     font-size: 0.8rem;
     color: var(--warning, var(--text-muted));
 }
+
+/* Follow-along read-aloud highlight (C5). The active word gets an
+   accent wash while the engine speaks it; under prefers-reduced-
+   motion the wash + transition are dropped for a static underline. */
+.lesson-read-along {
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+.lesson-read-along-word {
+    border-radius: 3px;
+    transition: background-color 120ms ease;
+}
+.lesson-read-along-word.tts-active {
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
+    color: var(--text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lesson-read-along-word {
+        transition: none;
+    }
+    .lesson-read-along-word.tts-active {
+        background: transparent;
+        text-decoration: underline;
+        text-decoration-color: var(--accent);
+        text-underline-offset: 2px;
+    }
+}
 .chat-message-actions {
     display: flex;
     justify-content: flex-end;
