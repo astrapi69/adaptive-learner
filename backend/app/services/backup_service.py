@@ -350,6 +350,15 @@ def restore_backup(
             all_errors.append(f"{table}: expected list, got {type(records).__name__}")
             continue
         summary = _restore_table(db, table, records, user_id)
+        # Flush after each table so the explicit FK-safe _RESTORE_ORDER
+        # (parents first) is what actually drives insert order. The
+        # session runs with autoflush=False and a single commit would
+        # otherwise reorder inserts by ORM relationship() topology — and
+        # the gamification / SRS / content tables are deliberately
+        # decoupled (FK columns, no relationships), so the unit-of-work
+        # has no way to know a child must follow its parent. Flushing
+        # per table in our own order sidesteps that entirely.
+        db.flush()
         per_table[table] = summary
         total_inserted += summary["inserted"]
         total_updated += summary["updated"]
