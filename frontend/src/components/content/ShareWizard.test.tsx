@@ -484,14 +484,16 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
 
   // --- BUG (recurring): source ALWAYS defaults to the app language ---
 
-  it("source defaults to the app language (de), not the saved metadata", () => {
-    // App is German; the saved lesson source happens to be "en".
+  it("inherits a valid lesson source language different from the target", () => {
+    // v1.54.0: the import pipeline sets languages correctly, so a valid
+    // source != target is TRUSTED (inherited), not overridden by the app
+    // language. (English-for-French lesson shared by a German user.)
     i18nMock.lang = "de";
     renderWizard({ entry: entry({ source_language: "en", target_language: "fr" }) });
     const source = screen.getByTestId(
       "share-wizard-edit-source",
     ) as HTMLSelectElement;
-    expect(source.value).toBe("de");
+    expect(source.value).toBe("en");
   });
 
   it("overrides an old lesson's bad 'en' source with the app language", () => {
@@ -514,11 +516,12 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
   });
 
   it("changing the languages to a valid distinct pair enables Continue", () => {
-    // Start blocked: target defaults empty because the saved target
-    // collides with the app-language source default.
+    // Old pre-pipeline lesson with source == target == "de": source
+    // falls back to the app language (de), the target collides and
+    // defaults empty -> blocked until the user picks a real target.
     i18nMock.lang = "de";
     renderWizard({
-      entry: entry({ source_language: "en", target_language: "de" }),
+      entry: entry({ source_language: "de", target_language: "de" }),
       lessons: [lesson("mine", ["word0", "word1", "word2"])],
     });
     const target = screen.getByTestId(
