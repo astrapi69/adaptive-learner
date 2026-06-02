@@ -15,10 +15,13 @@ import ShareWizard from "./ShareWizard";
 import { CEFR_LEVELS } from "../../lib/content/language-options";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";
 
+// App language is mutable per test (default "de") so the
+// source-language-default tests can assert "app language wins".
+const i18nMock = vi.hoisted(() => ({ lang: "de" }));
 vi.mock("../../hooks/useI18n", () => ({
   useI18n: () => ({
     t: (_key: string, fallback: string) => fallback,
-    lang: "en",
+    lang: i18nMock.lang,
   }),
 }));
 
@@ -137,6 +140,8 @@ function advanceToStep4() {
 beforeEach(() => {
   // Isolate the remembered author name between tests.
   localStorage.clear();
+  // Default app language for the wizard's source default.
+  i18nMock.lang = "de";
 });
 
 describe("ShareWizard: placement (step 1)", () => {
@@ -475,5 +480,72 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
       "must differ",
     );
     expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
+  });
+
+  // --- BUG (recurring): source ALWAYS defaults to the app language ---
+
+  it("source defaults to the app language (de), not the saved metadata", () => {
+    // App is German; the saved lesson source happens to be "en".
+    i18nMock.lang = "de";
+    renderWizard({ entry: entry({ source_language: "en", target_language: "fr" }) });
+    const source = screen.getByTestId(
+      "share-wizard-edit-source",
+    ) as HTMLSelectElement;
+    expect(source.value).toBe("de");
+  });
+
+  it("overrides an old lesson's bad 'en' source with the app language", () => {
+    // The exact recurring report: lesson saved with source==target=="en"
+    // from before the source-language fix; app is German. The form must
+    // show "de", never the stale "en".
+    i18nMock.lang = "de";
+    renderWizard({
+      entry: entry({
+        source_language: "en",
+        target_language: "en",
+        language: "en",
+      }),
+    });
+    const source = screen.getByTestId(
+      "share-wizard-edit-source",
+    ) as HTMLSelectElement;
+    expect(source.value).toBe("de");
+    expect(source.value).not.toBe("en");
+  });
+
+  it("changing the languages to a valid distinct pair enables Continue", () => {
+    // Start blocked: target defaults empty because the saved target
+    // collides with the app-language source default.
+    i18nMock.lang = "de";
+    renderWizard({
+      entry: entry({ source_language: "en", target_language: "de" }),
+      lessons: [lesson("mine", ["word0", "word1", "word2"])],
+    });
+    const target = screen.getByTestId(
+      "share-wizard-edit-target",
+    ) as HTMLSelectElement;
+    expect(target.value).toBe(""); // de target collides with de source -> empty
+    expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
+    // Pick a real, different target -> the gate re-runs and enables.
+    fireEvent.change(target, { target: { value: "fr" } });
+    expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
+  });
+
+  it("validation re-runs immediately on a source dropdown change", () => {
+    // Default de -> fr is valid -> enabled. Changing the SOURCE to
+    // collide must disable on the spot, and changing it away re-enables.
+    i18nMock.lang = "de";
+    renderWizard();
+    const source = screen.getByTestId(
+      "share-wizard-edit-source",
+    ) as HTMLSelectElement;
+    expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
+    fireEvent.change(source, { target: { value: "fr" } }); // == target
+    expect(screen.getByTestId("share-wizard-step1-errors")).toHaveTextContent(
+      "must differ",
+    );
+    expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
+    fireEvent.change(source, { target: { value: "es" } }); // != target
+    expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
   });
 });

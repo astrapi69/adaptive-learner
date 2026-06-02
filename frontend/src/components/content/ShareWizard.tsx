@@ -182,34 +182,33 @@ export default function ShareWizard({
   const singleLesson = lessons.length === 1 && primary != null;
 
   // BUG A/C — editable lesson metadata. Old lessons saved before the
-  // source-language fix carry bad values (source == target, a
+  // source-language fix carry bad values (a wrong "en" source, a
   // non-CEFR "imported" level, …) that the user must be able to
-  // correct here. Pre-fill with sane defaults: keep the saved value
-  // only when it is plausibly correct, otherwise fall back to the app
-  // language / content detection / an estimated level.
+  // correct here.
+  const appLang = baseLang(lang);
   const [editTitle, setEditTitle] = useState(() => entry.title || "");
-  const [editSource, setEditSource] = useState(() =>
-    isIsoLang(entry.source_language) &&
-    baseLang(entry.source_language) !== baseLang(entry.target_language)
-      ? baseLang(entry.source_language)
-      : baseLang(lang),
-  );
+  // SOURCE (the language the learner SPEAKS) ALWAYS defaults to the app
+  // language — never the saved metadata. The recurring bug was that
+  // lessons saved before the source-language fix carry source="en";
+  // reading that saved value made the wizard show "en" for a German
+  // user. The app language is the single source of truth for the
+  // default; the user can still override it via the dropdown. The rule:
+  // app language wins as the default, always.
+  const [editSource, setEditSource] = useState(appLang);
+  // TARGET (the language the learner LEARNS) keeps the saved value when
+  // it's a valid, different language; otherwise content detection;
+  // otherwise empty so the user picks it.
   const [editTarget, setEditTarget] = useState(() => {
-    const initialSource =
-      isIsoLang(entry.source_language) &&
-      baseLang(entry.source_language) !== baseLang(entry.target_language)
-        ? baseLang(entry.source_language)
-        : baseLang(lang);
     if (
       isIsoLang(entry.target_language) &&
-      baseLang(entry.target_language) !== initialSource
+      baseLang(entry.target_language) !== appLang
     )
       return baseLang(entry.target_language);
     const detected = autoDetectTargetLanguage(
       primary?.title || entry.title,
       primary?.cards ?? [],
     );
-    return detected && detected !== initialSource ? detected : "";
+    return detected && detected !== appLang ? detected : "";
   });
   const [editLevel, setEditLevel] = useState(() =>
     isCefr(entry.level)
