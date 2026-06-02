@@ -412,7 +412,25 @@ export interface ContentLessonCard {
    * annotations on ``front``. Absent → cloze generator
    * falls back to a positional heuristic. */
   token_roles?: ContentLessonCardTokenRole[] | null;
+  // --- Schema v1.2 -> v1.3: technical / programming content. All
+  // optional + backward compatible. media_type "code"/"formula" drives
+  // syntax-highlighted rendering + a monospace exercise input.
+  /** Code / formula the card teaches (Python snippet, Excel formula …). */
+  code_snippet?: string | null;
+  /** Highlighter language hint ("python", "sql", "excel", …). */
+  code_language?: string | null;
+  /** What ``code_snippet`` produces, shown in an "Output:" block. */
+  expected_output?: string | null;
+  /** Progressive hint revealed on request. */
+  hint?: string | null;
+  /** Optional 1-5 difficulty scale. */
+  difficulty?: number | null;
+  /** "text" (default when null) | "code" | "formula" | "diagram". */
+  media_type?: ContentCardMediaType | null;
 }
+
+/** Card content kind (schema v1.3). Null/absent is treated as "text". */
+export type ContentCardMediaType = "text" | "code" | "formula" | "diagram";
 
 export interface ContentLesson {
   id: string;
