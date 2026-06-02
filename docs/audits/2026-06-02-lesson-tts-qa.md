@@ -165,3 +165,25 @@ individually and each referencing the gap ID + origin commit:
 4. `test(lesson-tts): direct useReadAloud hook unit (C1g)`
 5. run `make test-dexie-smoke`, record the result (B4 / d2121196)
 6. `docs(audits): refresh current-coverage with the TTS delta (C2g)`
+
+---
+
+## 6. Fix-pass results (2026-06-02, branch `qa/lesson-tts-read-aloud`)
+
+Executed the §5 plan. Feature Vitest coverage **≈61 → 73** (+12); full
+suite **3140 green**; `tsc --noEmit` clean.
+
+| Item | Status | Evidence |
+|---|---|---|
+| **B1** onBoundary wiring | ✅ **closed** | `speech-synthesis.test.ts` +2 (positive + unset) |
+| **B2** no-voice fallback branch | ✅ **closed** | `useReadAloud.engine.test.ts` — `voiceAvailable=false` with a non-matching voice list |
+| **B3** reduced-motion pin | ✅ **closed** | `styles/lesson-tts-motion.test.ts` (+4), brace-aware reduced-motion extraction |
+| **C1g** direct hook test | ✅ **closed** | `useReadAloud.engine.test.ts` (+6): voice resolution, onBoundary→index, setSpeed re-speak, pause/resume, stop reset |
+| **B4** run Dexie smoke | ⛔ **blocked (environment)** | chromium / chrome-headless-shell downloads are network-blocked in the authoring sandbox; the spec compiles + the preview server starts (runner reaches browser launch). **Action: run `make test-dexie-smoke` in CI / a browser-enabled env before merge.** |
+| **C2g** coverage doc | ➖ **n/a → recorded here** | `docs/audits/current-coverage.md` does not exist repo-wide (the ai-workflow convention is uninstantiated); this feature's coverage delta is tracked in this audit |
+| **D1 / D2 / D3** | ⏸ **deferred** | D1 redundant (integration covers picture/word_tiles); D2 rides future Stryker adoption; D3 belt-and-suspenders (unit covers the highlight logic) |
+
+**Net:** every Tier-B regression-pin gap is closed except B4, which is
+blocked only by the sandbox's lack of a browser binary — it is wired,
+compiles, and must be run once in CI. The feature's pure core + engine
++ reduced-motion are now pinned directly rather than only via the page.
