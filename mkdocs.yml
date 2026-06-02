@@ -57,6 +57,7 @@ plugins:
             Lern-Session: Learning session
             Lektionen und Wiederholungen: Lessons and reviews
             Meine Lektionen: My Lessons
+            Lernpfad: Learning Path
             Fortschritt: Progress
             Einstellungen: Settings
             Lob und Belohnungen: Praise and celebrations
@@ -93,6 +94,7 @@ plugins:
             Lern-Session: Sesión de aprendizaje
             Lektionen und Wiederholungen: Lecciones y repasos
             Meine Lektionen: Mis lecciones
+            Lernpfad: Ruta de aprendizaje
             Dashboard: Panel
             Curriculum: Currículo
             Fortschritt: Progreso
@@ -135,6 +137,7 @@ plugins:
             Lern-Session: Session d'apprentissage
             Lektionen und Wiederholungen: Leçons et révisions
             Meine Lektionen: Mes leçons
+            Lernpfad: Parcours d'apprentissage
             Dashboard: Tableau de bord
             Fortschritt: Progression
             Einstellungen: Paramètres
@@ -174,6 +177,7 @@ plugins:
             Lern-Session: Συνεδρία μάθησης
             Lektionen und Wiederholungen: Μαθήματα και επαναλήψεις
             Meine Lektionen: Τα μαθήματά μου
+            Lernpfad: Μαθησιακή διαδρομή
             Dashboard: Πίνακας ελέγχου
             Curriculum: Πρόγραμμα σπουδών
             Fortschritt: Πρόοδος
@@ -216,6 +220,7 @@ plugins:
             Lern-Session: Sessão de aprendizagem
             Lektionen und Wiederholungen: Lições e revisões
             Meine Lektionen: Minhas lições
+            Lernpfad: Caminho de aprendizagem
             Dashboard: Painel
             Curriculum: Currículo
             Fortschritt: Progresso
@@ -258,6 +263,7 @@ plugins:
             Lern-Session: Öğrenme oturumu
             Lektionen und Wiederholungen: Dersler ve tekrarlar
             Meine Lektionen: Derslerim
+            Lernpfad: Öğrenme yolu
             Dashboard: Panel
             Curriculum: Müfredat
             Fortschritt: İlerleme
@@ -300,6 +306,7 @@ plugins:
             Lern-Session: 学習セッション
             Lektionen und Wiederholungen: レッスンと復習
             Meine Lektionen: マイレッスン
+            Lernpfad: 学習パス
             Dashboard: ダッシュボード
             Curriculum: カリキュラム
             Fortschritt: 進捗
@@ -361,6 +368,7 @@ nav:
   - Lern-Session: de/user-guide/learning-session.md
   - Lektionen und Wiederholungen: de/user-guide/lessons.md
   - Meine Lektionen: de/user-guide/my-lessons.md
+  - Lernpfad: de/user-guide/learning-path.md
   - Dashboard: de/user-guide/dashboard.md
   - Curriculum: de/user-guide/curriculum.md
   - Fortschritt: de/user-guide/progress.md

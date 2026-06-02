@@ -9,8 +9,8 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.50.0+** (post-release — **Phase 66 /
-  EXP-022 Visual Learning Path** merged to main without a tag).
+- **Current state:** **v1.51.0** (minor — **Phase 66 / EXP-022
+  Visual Learning Path** + a **Dexie backup overhaul**).
   An interactive @xyflow/react graph at ``/learning-path`` shows
   the learner's full lesson journey: set-group nodes (progress
   bar, per-direction mastery, collapsible) + lesson nodes
@@ -24,7 +24,16 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   button, Dashboard quick action. WCAG a11y: role="status" on
   loading, aria-label on all controls, React.memo on node views,
   memoized callbacks. Lazy-loaded (xyflow ~100 KB). Both storage
-  modes.
+  modes. **Backup (BACKUP-DIR-EXPORT-01):** Dexie-mode "Save to
+  disk" via the File System Access API
+  (``showSaveFilePicker`` + download fallback + cancel handling),
+  a "Your backup contains" record-count preview, and a
+  **data-loss fix** — the Dexie backup had drifted to 20 tables
+  while the backend sync surface grew to 30, silently dropping
+  every gamification / lesson-progress / SRS-error / missions /
+  anki / study-question row on export; the Dexie export now
+  covers the full 30-table surface. Filed BACKUP-API-RESTORE-01
+  (P1) for the backend ``_RESTORE_ORDER`` mirror gap.
   v1.50.0 = minor - **Lesson Creator
   (EXP-021)** — a standalone, no-API-key way to build a complete
   shareable lesson. New ``/create-lesson`` route +

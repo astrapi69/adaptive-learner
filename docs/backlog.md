@@ -17,7 +17,12 @@ tool into a full learning platform with downloadable content
 sets, interactive exercises, and dual-mode operation
 (Content-only + AI-augmented).
 
-State: **post v1.49.0 (Phase 65 — API-key UX + Community Sharing
+State: **post v1.51.0 (Phase 66 / EXP-022 — Visual Learning Path
++ Dexie backup overhaul: File System Access API save-to-disk, a
+"Your backup contains" preview, and a data-loss fix restoring the
+10 gamification/progress/SRS/missions tables the Dexie export had
+silently dropped; BACKUP-API-RESTORE-01 filed P1). Prior:
+post v1.49.0 (Phase 65 — API-key UX + Community Sharing
 via PR + Analysis loading: API-key format validation + live Test
 button + rollback/restore cache (`ApiKeyBackup`, Alembic 0025,
 Dexie v24), stable `secret.key` Fernet source + UI-editable
