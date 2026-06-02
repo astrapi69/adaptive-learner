@@ -58,6 +58,7 @@ import Confetti from "../components/feedback/Confetti";
 import ReadAloudButton from "../components/lesson/ReadAloudButton";
 import {markdownToSpeech} from "../lib/lesson/tts-text";
 import {
+    READ_ALOUD_SPEEDS,
     readLessonAutoRead,
     useReadAloud,
     writeLessonAutoRead,
@@ -612,6 +613,55 @@ export default function LessonPage() {
                         <Volume2 size={14} aria-hidden="true" />
                         {t("lesson.tts.auto_read", "Auto read-aloud")}
                     </button>
+
+                    {/* Inline speed control — only while a stream is
+                        playing (C4). Changing it restarts the current
+                        read at the new rate. */}
+                    {tts.speaking && (
+                        <div
+                            className="lesson-tts-speed"
+                            data-testid="lesson-tts-speed"
+                            role="group"
+                            aria-label={t("lesson.tts.speed", "Speed")}
+                        >
+                            <span className="lesson-tts-speed-label">
+                                {t("lesson.tts.speed", "Speed")}
+                            </span>
+                            {READ_ALOUD_SPEEDS.map((s) => (
+                                <button
+                                    key={s}
+                                    type="button"
+                                    className={`lesson-tts-speed-btn${
+                                        tts.speed === s ? " is-active" : ""
+                                    }`}
+                                    data-testid={`lesson-tts-speed-${s}`}
+                                    aria-pressed={tts.speed === s}
+                                    onClick={() => tts.setSpeed(s)}
+                                >
+                                    {s}x
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* No-voice warning — the requested language has no
+                        installed voice; playback falls back to the
+                        engine default. */}
+                    {!tts.voiceAvailable && (
+                        <span
+                            className="lesson-tts-novoice"
+                            data-testid="lesson-tts-novoice"
+                            role="status"
+                        >
+                            {t(
+                                "lesson.tts.no_voice",
+                                "No voice available for {language}",
+                            ).replace(
+                                "{language}",
+                                lesson.target_language ?? "",
+                            )}
+                        </span>
+                    )}
                 </div>
             )}
 

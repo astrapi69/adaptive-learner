@@ -124,6 +124,14 @@ export function useReadAloud(): ReadAloudController {
     const [speed, setSpeedState] = useState<ReadAloudSpeed>(() =>
         readLessonSpeed(),
     );
+    // Speed + speaking are mirrored into refs so ``setSpeed`` can read
+    // the live value and re-speak the current text immediately (the
+    // Web Speech API can't change an in-flight utterance's rate).
+    const speedRef = useRef(speed);
+    const speakingRef = useRef(false);
+    const lastRef = useRef<{text: string; request?: SpeakRequest} | null>(
+        null,
+    );
 
     useEffect(() => {
         if (!supported) return;
@@ -142,12 +150,8 @@ export function useReadAloud(): ReadAloudController {
         return () => stopRaw();
     }, []);
 
-    const setSpeed = useCallback((next: ReadAloudSpeed) => {
-        setSpeedState(next);
-        writeLessonSpeed(next);
-    }, []);
-
     const reset = useCallback(() => {
+        speakingRef.current = false;
         setSpeaking(false);
         setActiveId(null);
         setBoundaryIndex(-1);
@@ -169,6 +173,8 @@ export function useReadAloud(): ReadAloudController {
             setVoiceAvailable(
                 named !== null || voices.length === 0 || matched !== null,
             );
+            lastRef.current = {text, request};
+            speakingRef.current = true;
             setSpeaking(true);
             setActiveId(request?.id ?? null);
             setBoundaryIndex(-1);
@@ -176,8 +182,9 @@ export function useReadAloud(): ReadAloudController {
                 lang,
                 voice: matched,
                 // Inline speed multiplies the saved rate; speak() clamps
-                // the product to [0.5, 2.0].
-                rate: prefs.ttsRate * speed,
+                // the product to [0.5, 2.0]. Read from the ref so a
+                // speed change mid-playback uses the latest value.
+                rate: prefs.ttsRate * speedRef.current,
                 pitch: prefs.ttsPitch,
                 onBoundary: (event) => {
                     if (event.name === "word") {
@@ -188,11 +195,26 @@ export function useReadAloud(): ReadAloudController {
                 onError: reset,
             });
         },
-        [supported, voices, speed, reset],
+        [supported, voices, reset],
+    );
+
+    const setSpeed = useCallback(
+        (next: ReadAloudSpeed) => {
+            speedRef.current = next;
+            setSpeedState(next);
+            writeLessonSpeed(next);
+            // If a stream is currently playing, restart it from the top
+            // at the new rate (the API has no live rate change).
+            if (speakingRef.current && lastRef.current) {
+                speak(lastRef.current.text, lastRef.current.request);
+            }
+        },
+        [speak],
     );
 
     const stop = useCallback(() => {
         stopRaw();
+        lastRef.current = null;
         reset();
     }, [reset]);
 

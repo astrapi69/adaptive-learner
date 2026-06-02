@@ -6588,6 +6588,47 @@ select:focus {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
 }
+
+/* Inline speed control (C4) — shown only while a stream plays. */
+.lesson-tts-speed {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+.lesson-tts-speed-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-right: 2px;
+}
+.lesson-tts-speed-btn {
+    min-width: 2.4em;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: background 150ms, color 150ms, border-color 150ms;
+}
+.lesson-tts-speed-btn:hover {
+    background: var(--bg-elevated);
+    color: var(--text);
+}
+.lesson-tts-speed-btn.is-active {
+    background: color-mix(in srgb, var(--accent) 18%, transparent);
+    color: var(--accent);
+    border-color: var(--accent);
+    font-weight: 600;
+}
+.lesson-tts-speed-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.lesson-tts-novoice {
+    font-size: 0.8rem;
+    color: var(--warning, var(--text-muted));
+}
 .chat-message-actions {
     display: flex;
     justify-content: flex-end;

@@ -220,4 +220,51 @@ describe("Lesson auto-read (C3)", () => {
             localStorage.getItem("adaptive-learner.voice.lesson_autoread"),
         ).toBe("true");
     });
+
+    // --- C4: inline speed controls ---------------------------------
+
+    it("hides the speed control while idle (not speaking)", () => {
+        ready(0);
+        renderPage();
+        expect(screen.queryByTestId("lesson-tts-speed")).toBeNull();
+    });
+
+    it("shows the speed control while a stream is playing", () => {
+        localStorage.setItem(
+            "adaptive-learner.voice.lesson_autoread",
+            "true",
+        );
+        ready(0);
+        renderPage();
+        // Auto-read started on mount -> speaking -> speed control shows.
+        expect(screen.getByTestId("lesson-tts-speed")).toBeInTheDocument();
+        for (const s of [0.5, 0.75, 1, 1.25]) {
+            expect(
+                screen.getByTestId(`lesson-tts-speed-${s}`),
+            ).toBeInTheDocument();
+        }
+    });
+
+    it("picking a speed persists it and restarts the read at the new rate", () => {
+        localStorage.setItem(
+            "adaptive-learner.voice.lesson_autoread",
+            "true",
+        );
+        ready(0);
+        renderPage();
+        const before = speakCalls.length;
+        fireEvent.click(screen.getByTestId("lesson-tts-speed-1.25"));
+        expect(
+            localStorage.getItem("adaptive-learner.voice.lesson_speed"),
+        ).toBe("1.25");
+        // Restarted at the new rate (one extra utterance).
+        expect(speakCalls.length).toBe(before + 1);
+        const restarted = speakCalls[speakCalls.length - 1];
+        expect(restarted.rate).toBeCloseTo(1.25);
+        expect(
+            screen
+                .getByTestId("lesson-tts-speed-1.25")
+                .getAttribute("aria-pressed"),
+        ).toBe("true");
+    });
 });
