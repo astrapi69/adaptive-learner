@@ -829,6 +829,14 @@ export default function ContentPage() {
           <button
             type="button"
             className="btn btn-secondary"
+            onClick={() => navigate("/learning-path")}
+            data-testid="content-learning-path"
+          >
+            {t("nav.learning_path", "Learning Path")}
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
             onClick={() => setShowImport(true)}
             data-testid="content-import-lesson"
           >

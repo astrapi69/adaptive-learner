@@ -296,6 +296,16 @@ export default function Dashboard() {
                 {t("dashboard.create_lesson", "Create a lesson")}
             </button>
 
+            <button
+                type="button"
+                className="btn btn-secondary dashboard-learning-path"
+                onClick={() => navigate("/learning-path")}
+                data-testid="dashboard-learning-path"
+            >
+                🗺️{" "}
+                {t("nav.learning_path", "Learning Path")}
+            </button>
+
             {userId && (
                 <DashboardFilterBar
                     userId={userId}
