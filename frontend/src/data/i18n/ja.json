@@ -1953,6 +1953,7 @@
     "title": "学習パス",
     "subtitle": "現在地と次のステップ。",
     "aria_canvas": "学習パスのグラフ",
+    "reset_layout": "レイアウトをリセット",
     "node": {
       "lesson": "レッスン",
       "stars": "スター",

@@ -1953,6 +1953,7 @@
     "title": "Öğrenme yolu",
     "subtitle": "Neredesiniz ve sırada ne var.",
     "aria_canvas": "Öğrenme yolu grafiği",
+    "reset_layout": "Düzeni sıfırla",
     "node": {
       "lesson": "Ders",
       "stars": "yıldız",

@@ -1767,6 +1767,7 @@ learning_path:
   title: "Percurso de aprendizagem"
   subtitle: "Onde está e o que vem a seguir."
   aria_canvas: "Gráfico do percurso de aprendizagem"
+  reset_layout: "Repor disposição"
   node:
     lesson: "Lição"
     stars: "estrelas"

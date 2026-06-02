@@ -1769,6 +1769,7 @@ learning_path:
   title: "Διαδρομή μάθησης"
   subtitle: "Πού βρίσκεστε και τι ακολουθεί."
   aria_canvas: "Γράφημα διαδρομής μάθησης"
+  reset_layout: "Επαναφορά διάταξης"
   node:
     lesson: "Μάθημα"
     stars: "αστέρια"

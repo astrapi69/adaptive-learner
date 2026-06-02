@@ -7247,3 +7247,32 @@ select:focus {
     transition: none;
   }
 }
+
+/* Learning-path edges (66D) — theme-token stroke per state. */
+.react-flow__edge.lp-edge--completed .react-flow__edge-path {
+  stroke: var(--success);
+  stroke-width: 2;
+}
+.react-flow__edge.lp-edge--upcoming .react-flow__edge-path {
+  stroke: var(--fg-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+.react-flow__edge.lp-edge--adaptive .react-flow__edge-path {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.learning-path-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__edge.animated .react-flow__edge-path {
+    animation: none;
+  }
+}

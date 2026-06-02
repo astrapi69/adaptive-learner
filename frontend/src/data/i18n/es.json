@@ -1953,6 +1953,7 @@
     "title": "Ruta de aprendizaje",
     "subtitle": "Dónde estás y qué sigue.",
     "aria_canvas": "Gráfico de la ruta de aprendizaje",
+    "reset_layout": "Restablecer diseño",
     "node": {
       "lesson": "Lección",
       "stars": "estrellas",

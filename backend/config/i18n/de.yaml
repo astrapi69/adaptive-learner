@@ -1771,6 +1771,7 @@ learning_path:
   title: "Lernpfad"
   subtitle: "Wo du stehst und was als Nächstes kommt."
   aria_canvas: "Lernpfad-Graph"
+  reset_layout: "Layout zurücksetzen"
   node:
     lesson: "Lektion"
     stars: "Sterne"

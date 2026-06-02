@@ -1777,6 +1777,7 @@ learning_path:
   title: "Learning Path"
   subtitle: "Where you are and what comes next."
   aria_canvas: "Learning path graph"
+  reset_layout: "Reset layout"
   node:
     lesson: "Lesson"
     stars: "stars"

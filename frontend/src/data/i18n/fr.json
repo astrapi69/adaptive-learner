@@ -1953,6 +1953,7 @@
     "title": "Parcours d'apprentissage",
     "subtitle": "Où vous en êtes et ce qui suit.",
     "aria_canvas": "Graphe du parcours d'apprentissage",
+    "reset_layout": "Réinitialiser la disposition",
     "node": {
       "lesson": "Leçon",
       "stars": "étoiles",

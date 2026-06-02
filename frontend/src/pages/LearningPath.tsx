@@ -10,12 +10,15 @@
  * Lazy-loaded (xyflow is ~100 KB) via App.tsx's React.lazy.
  */
 
+import {useCallback, useMemo} from "react";
 import {
     Background,
     BackgroundVariant,
     Controls,
     MiniMap,
     ReactFlow,
+    useEdgesState,
+    useNodesState,
     type Edge,
     type Node,
 } from "@xyflow/react";
@@ -26,6 +29,16 @@ import LessonNode, {
     type LessonFlowNode,
 } from "../components/learning-path/LessonNode";
 import SetGroupNode from "../components/learning-path/SetGroupNode";
+import {
+    applyStoredPositions,
+    clearPositions,
+    layoutGraph,
+    loadPositions,
+    makeEdge,
+    savePositions,
+    snapshotPositions,
+} from "../lib/learning-path/layout";
+import {readLearnerState} from "../lib/learnerState";
 
 const nodeTypes = {lesson: LessonNode, setGroup: SetGroupNode};
 
@@ -102,14 +115,36 @@ const DEMO_NODES: Node[] = [
 ];
 
 const DEMO_EDGES: Edge[] = [
-    {id: "e1-2", source: "1", target: "2"},
-    {id: "e2-3", source: "2", target: "3"},
-    {id: "e1-4", source: "1", target: "4"},
-    {id: "e4-5", source: "4", target: "5"},
+    makeEdge("e1-2", "1", "2", "completed"),
+    makeEdge("e2-3", "2", "3", "upcoming"),
+    makeEdge("e1-4", "1", "4", "upcoming"),
+    makeEdge("e4-5", "4", "5", "adaptive"),
 ];
 
 export default function LearningPath() {
     const {t} = useI18n();
+    const userId = useMemo(() => readLearnerState().userId ?? "", []);
+    const initialNodes = useMemo(
+        () =>
+            applyStoredPositions(
+                layoutGraph(DEMO_NODES, DEMO_EDGES),
+                loadPositions(userId),
+            ),
+        [userId],
+    );
+    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+    const [edges, , onEdgesChange] = useEdgesState(DEMO_EDGES);
+
+    // Persist custom positions after a drag (per user, localStorage).
+    const persist = useCallback(
+        () => savePositions(userId, snapshotPositions(nodes)),
+        [userId, nodes],
+    );
+    const resetLayout = useCallback(() => {
+        clearPositions(userId);
+        setNodes(layoutGraph(DEMO_NODES, DEMO_EDGES));
+    }, [userId, setNodes]);
+
     return (
         <main
             id="main"
@@ -124,15 +159,28 @@ export default function LearningPath() {
                         "Where you are and what comes next.",
                     )}
                 </p>
+                <div className="learning-path-toolbar">
+                    <button
+                        type="button"
+                        className="btn btn-secondary"
+                        data-testid="learning-path-reset"
+                        onClick={resetLayout}
+                    >
+                        {t("learning_path.reset_layout", "Reset layout")}
+                    </button>
+                </div>
             </header>
             <div
                 className="learning-path-canvas"
                 data-testid="learning-path-canvas"
             >
                 <ReactFlow
-                    nodes={DEMO_NODES}
-                    edges={DEMO_EDGES}
+                    nodes={nodes}
+                    edges={edges}
                     nodeTypes={nodeTypes}
+                    onNodesChange={onNodesChange}
+                    onEdgesChange={onEdgesChange}
+                    onNodeDragStop={persist}
                     fitView
                     minZoom={0.2}
                     maxZoom={2}

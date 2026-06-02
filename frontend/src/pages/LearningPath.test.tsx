@@ -26,6 +26,8 @@ vi.mock("@xyflow/react", () => ({
     Controls: () => <div data-testid="rf-controls" />,
     MiniMap: () => <div data-testid="rf-minimap" />,
     BackgroundVariant: {Dots: "dots", Lines: "lines", Cross: "cross"},
+    useNodesState: (init: unknown[]) => [init, vi.fn(), vi.fn()],
+    useEdgesState: (init: unknown[]) => [init, vi.fn(), vi.fn()],
 }));
 
 import LearningPath from "./LearningPath";
