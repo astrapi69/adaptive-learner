@@ -303,7 +303,15 @@ def _seed_all_tables(db) -> User:
 
 def _wipe_all_tables(db) -> None:
     """Delete every backup table in reverse restore order (children
-    before parents) so FK constraints never block the wipe."""
+    before parents) so FK constraints never block the wipe.
+
+    Guarded: this helper bulk-deletes every table, so it must never run
+    against a production-marked data dir. ``assert_safe_for_destructive_use``
+    raises there (BACKUP-API-RESTORE-01 — a copied-out wipe helper hit
+    the real DB)."""
+    from app.db_guard import assert_safe_for_destructive_use
+
+    assert_safe_for_destructive_use("backup-test full-table wipe")
     for table in reversed(RESTORE_ORDER):
         db.query(SYNC_TABLES[table].model).delete()
     db.commit()
