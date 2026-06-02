@@ -70,6 +70,19 @@ interface ComparisonRow {
     incoming: number;
 }
 
+// BACKUP-DIR-EXPORT-01 — the high-signal tables surfaced in the
+// "Your backup contains" preview. Each maps a backup-table name to
+// an i18n label key; only non-zero counts are shown. The full row
+// total is rendered separately.
+const PREVIEW_TABLES: {table: string; key: string; fallback: string}[] = [
+    {table: "element_errors", key: "backup.count_element_errors", fallback: "{{n}} error entries"},
+    {table: "lesson_progress", key: "backup.count_lesson_progress", fallback: "{{n}} lesson progress"},
+    {table: "user_badges", key: "backup.count_user_badges", fallback: "{{n}} badges"},
+    {table: "learning_sessions", key: "backup.count_sessions", fallback: "{{n}} sessions"},
+    {table: "learning_projects", key: "backup.count_projects", fallback: "{{n}} projects"},
+    {table: "imported_conversations", key: "backup.count_imports", fallback: "{{n}} chat imports"},
+];
+
 function buildComparison(
     currentStats: BackupStats,
     incoming: BackupPayload,
@@ -112,6 +125,10 @@ export default function BackupSection() {
     const [restoreSummary, setRestoreSummary] = useState<RestoreSummary | null>(
         null,
     );
+    // BACKUP-DIR-EXPORT-01 — "Your backup contains" preview. Read-
+    // only row counts so the user knows what a backup will hold
+    // before they save it.
+    const [backupStats, setBackupStats] = useState<BackupStats | null>(null);
 
     // Auto-backup (Dexie mode only)
     const [autoEnabled, setAutoEnabled] = useState<boolean>(() =>
@@ -140,6 +157,32 @@ export default function BackupSection() {
         // tab in the meantime.
         setLastBackup(readLastBackup());
     }, []);
+
+    useEffect(() => {
+        // Load the row counts for the "what's in my backup" preview.
+        // Read-only; failures (offline API mode) leave the preview
+        // hidden rather than surfacing an error.
+        if (userId === null) {
+            return;
+        }
+        let cancelled = false;
+        storage.backup
+            .stats(userId)
+            .then((stats) => {
+                if (!cancelled) {
+                    setBackupStats(stats);
+                }
+            })
+            .catch(() => {
+                if (!cancelled) {
+                    setBackupStats(null);
+                }
+            });
+        return () => {
+            cancelled = true;
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userId]);
 
     useEffect(() => {
         if (storageMode !== "dexie" || userId === null) {
@@ -494,6 +537,42 @@ export default function BackupSection() {
                         "It has been more than {{days}} days since your last backup.",
                     ).replace("{{days}}", String(BACKUP_REMINDER_DAYS))}
                 </p>
+            )}
+
+            {backupStats !== null && backupStats.total_records > 0 && (
+                <div
+                    className="backup-contents"
+                    data-testid="backup-contents"
+                >
+                    <p className="backup-contents-title">
+                        {t("backup.contains_title", "Your backup contains:")}
+                    </p>
+                    <ul className="backup-contents-list">
+                        {PREVIEW_TABLES.map(({table, key, fallback}) => {
+                            const n = backupStats.tables[table] ?? 0;
+                            if (n === 0) {
+                                return null;
+                            }
+                            return (
+                                <li
+                                    key={table}
+                                    data-testid={`backup-contents-${table}`}
+                                >
+                                    {t(key, fallback).replace("{{n}}", String(n))}
+                                </li>
+                            );
+                        })}
+                        <li
+                            className="backup-contents-total"
+                            data-testid="backup-contents-total"
+                        >
+                            {t(
+                                "backup.record_count",
+                                "{{count}} records total",
+                            ).replace("{{count}}", String(backupStats.total_records))}
+                        </li>
+                    </ul>
+                </div>
             )}
 
             {pendingPayload !== null && comparison !== null && (
