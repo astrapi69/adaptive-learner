@@ -6552,6 +6552,42 @@ select:focus {
     justify-content: flex-end;
     margin-bottom: var(--space-2);
 }
+
+/* Lesson-level read-aloud controls row: auto-read toggle (C3),
+   inline speed (C4). */
+.lesson-tts-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: var(--space-2) 0;
+}
+.lesson-tts-autoread {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 150ms, color 150ms, border-color 150ms;
+}
+.lesson-tts-autoread:hover {
+    background: var(--bg-elevated);
+    color: var(--text);
+}
+.lesson-tts-autoread.is-on {
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+.lesson-tts-autoread:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
 .chat-message-actions {
     display: flex;
     justify-content: flex-end;

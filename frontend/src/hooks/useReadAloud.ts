@@ -63,6 +63,26 @@ export function writeLessonSpeed(speed: ReadAloudSpeed): void {
     }
 }
 
+const AUTO_READ_KEY = "adaptive-learner.voice.lesson_autoread";
+
+/** Whether the lesson auto-reads each step on display (C3). Off by
+ *  default — manual button clicks are the baseline. */
+export function readLessonAutoRead(): boolean {
+    try {
+        return localStorage.getItem(AUTO_READ_KEY) === "true";
+    } catch {
+        return false;
+    }
+}
+
+export function writeLessonAutoRead(on: boolean): void {
+    try {
+        localStorage.setItem(AUTO_READ_KEY, on ? "true" : "false");
+    } catch {
+        /* private mode / quota — preference just won't persist. */
+    }
+}
+
 export interface SpeakRequest {
     /** BCP-47 language code for voice selection (e.g. "es", "fr-FR"). */
     lang?: string;

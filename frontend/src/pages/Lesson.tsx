@@ -31,8 +31,9 @@ import {
     Download,
     RotateCcw,
     Star,
+    Volume2,
 } from "lucide-react";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Markdown from "react-markdown";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -49,12 +50,18 @@ import {notify} from "../utils/notify";
 import DiffHighlight from "../components/exercises/DiffHighlight";
 import {
     ExerciseDispatcher,
+    resolveCodeContext,
     SUPPORTED_EXERCISE_TYPES,
 } from "../components/exercises/ExerciseDispatcher";
 import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import Confetti from "../components/feedback/Confetti";
 import ReadAloudButton from "../components/lesson/ReadAloudButton";
 import {markdownToSpeech} from "../lib/lesson/tts-text";
+import {
+    readLessonAutoRead,
+    useReadAloud,
+    writeLessonAutoRead,
+} from "../hooks/useReadAloud";
 import {useCountUp} from "../hooks/useCountUp";
 import {useFeedbackIntensity} from "../hooks/useFeedbackIntensity";
 import {useI18n} from "../hooks/useI18n";
@@ -264,6 +271,56 @@ export default function LessonPage() {
         setEnteredReviewed(stored != null);
         setReviewedRaw(stored?.raw_answer ?? null);
     }
+
+    // TTS feature C3 — auto-read mode. The lesson-level engine reads
+    // each new step aloud on display (theory body / exercise prompt);
+    // code/formula exercises are skipped. Off by default; remembered.
+    const tts = useReadAloud();
+    const [autoRead, setAutoRead] = useState(() => readLessonAutoRead());
+    const toggleAutoRead = useCallback(() => {
+        setAutoRead((on) => {
+            const next = !on;
+            writeLessonAutoRead(next);
+            if (!next) tts.stop();
+            return next;
+        });
+    }, [tts]);
+
+    // Speak the current step when auto-read is on and the step changes.
+    // The ref guard means the effect can safely re-run on unrelated
+    // renders (the tts controller object is recreated each render)
+    // without re-speaking the same step.
+    const autoReadStepRef = useRef(-1);
+    useEffect(() => {
+        if (!autoRead || !tts.enabled || !lesson) return;
+        const total = lesson.steps.length;
+        if (currentStepIndex >= total || showResumePrompt) return;
+        if (autoReadStepRef.current === currentStepIndex) return;
+        autoReadStepRef.current = currentStepIndex;
+        const current = lesson.steps[currentStepIndex];
+        if (!current) return;
+        const lang = lesson.target_language ?? undefined;
+        let text = "";
+        if (current.type === "theory") {
+            text = markdownToSpeech(current.body ?? "");
+        } else if (current.exercise) {
+            const {codeMode} = resolveCodeContext(
+                current.exercise,
+                lesson.cards,
+            );
+            if (!codeMode) text = current.exercise.prompt ?? "";
+        }
+        if (text.trim()) {
+            tts.speak(text, {lang, id: `step-${current.id}`});
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [autoRead, currentStepIndex, lesson, showResumePrompt, tts.enabled]);
+
+    // Reset the auto-read step guard when auto-read is turned off so
+    // re-enabling it re-reads the current step.
+    useEffect(() => {
+        if (!autoRead) autoReadStepRef.current = -1;
+    }, [autoRead]);
 
     // Phase 46A — fetch the set's lesson list so the summary
     // screen's "Next lesson" button knows whether there's a
@@ -537,6 +594,26 @@ export default function LessonPage() {
                               .replace("{total}", String(totalSteps))}
                 </span>
             </div>
+
+            {!isSummary && tts.enabled && (
+                <div
+                    className="lesson-tts-controls"
+                    data-testid="lesson-tts-controls"
+                >
+                    <button
+                        type="button"
+                        className={`lesson-tts-autoread${
+                            autoRead ? " is-on" : ""
+                        }`}
+                        data-testid="lesson-tts-autoread"
+                        aria-pressed={autoRead}
+                        onClick={toggleAutoRead}
+                    >
+                        <Volume2 size={14} aria-hidden="true" />
+                        {t("lesson.tts.auto_read", "Auto read-aloud")}
+                    </button>
+                </div>
+            )}
 
             {isSummary ? (
                 <LessonSummary
