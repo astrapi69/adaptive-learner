@@ -62,7 +62,7 @@ function daysSince(iso: string | null): number | null {
 
 // Phase 41F: extracted to ``utils/backup-download.ts`` so the
 // DangerZone pre-reset backup button can produce identical files.
-import {triggerBackupDownload, backupFilename} from "../utils/backup-download";
+import {saveBackupToDisk, backupFilename} from "../utils/backup-download";
 
 interface ComparisonRow {
     table: string;
@@ -276,16 +276,29 @@ export default function BackupSection() {
         setBusy("export");
         try {
             const payload = await storage.backup.export(userId);
-            triggerBackupDownload(payload, backupFilename(userId));
+            const filename = backupFilename(userId);
+            const outcome = await saveBackupToDisk(payload, filename);
+            if (outcome.method === "cancelled") {
+                // User dismissed the OS save dialog. No file written,
+                // so do not record a "last backup" or claim success.
+                return;
+            }
             const iso = new Date().toISOString();
             writeLastBackup(iso);
             setLastBackup(iso);
             const total = payload.stats.total_records;
+            const key =
+                outcome.method === "picker"
+                    ? "backup.saved_as"
+                    : "backup.downloaded";
+            const fallback =
+                outcome.method === "picker"
+                    ? "Backup saved: {{filename}}"
+                    : "Backup downloaded: {{filename}} ({{count}} records).";
             notify.success(
-                t("backup.export_success", "Backup downloaded ({{count}} records).").replace(
-                    "{{count}}",
-                    String(total),
-                ),
+                t(key, fallback)
+                    .replace("{{filename}}", outcome.filename)
+                    .replace("{{count}}", String(total)),
             );
         } catch (err) {
             const detail = err instanceof Error ? err.message : String(err);
