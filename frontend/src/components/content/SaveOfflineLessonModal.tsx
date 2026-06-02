@@ -49,7 +49,7 @@ export default function SaveOfflineLessonModal({
   onCancel,
   onSaved,
 }: SaveOfflineLessonModalProps) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
 
   const labels: AnalysisLessonLabels = {
     fallbackTitle: t("content.lesson_gen.fallback_title", "Imported lesson"),
@@ -86,7 +86,12 @@ export default function SaveOfflineLessonModal({
   // title_native — otherwise the sharing validator rejects it. The
   // learner SPEAKS the app language (source); the TARGET is guessed
   // from the topic and confirmed by the user.
-  const appLang = (language || "en").split("-")[0];
+  // The learner SPEAKS the app language, so the source defaults to the
+  // active UI language (Settings > Language / i18n ``lang``) — NOT a
+  // hardcoded "en". The ``language`` prop (the learner's stored content
+  // language, which is often unset and coalesced to "en" upstream) is
+  // only a secondary hint. Fixes German chats landing at "en -> de".
+  const appLang = (lang || language || "en").split("-")[0];
   const detectedTarget = detectTargetLanguage(analysis.topic);
   const defaultTarget =
     detectedTarget && detectedTarget !== appLang

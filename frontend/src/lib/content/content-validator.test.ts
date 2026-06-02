@@ -96,6 +96,28 @@ describe("validateSetForSharing", () => {
     );
   });
 
+  it("allows source == target for a non-language domain", () => {
+    // Mirrors the content repo's validate_content.py: a psychology set
+    // is explained in the same language it teaches (source == target).
+    const psych: ValidationMeta = {
+      ...META,
+      target_language: "de",
+      source_language: "de",
+      domain: "psychology",
+    };
+    expect(codes(psych, [goodLesson()])).not.toContain("same_source_target");
+  });
+
+  it("still rejects source == target for the (default) language domain", () => {
+    const lang: ValidationMeta = {
+      ...META,
+      target_language: "de",
+      source_language: "de",
+      // domain omitted -> defaults to "language".
+    };
+    expect(codes(lang, [goodLesson()])).toContain("same_source_target");
+  });
+
   it("requires a valid ISO 639-1 source language", () => {
     expect(
       codes({ ...META, source_language: "deutsch" }, [goodLesson()]),

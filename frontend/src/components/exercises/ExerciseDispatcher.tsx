@@ -19,6 +19,7 @@ import type {Ref} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import type {
+    ContentLessonCard,
     ContentLessonExercise,
     ContentLessonStep,
 } from "../../storage/types";
@@ -59,7 +60,28 @@ export interface ExerciseDispatcherProps extends ControlledExerciseProps {
      *  languages. Optional; only the matching renderer reads them. */
     targetLanguage?: string | null;
     sourceLanguage?: string | null;
+    /** Schema v1.3 — the lesson's cards, so the dispatcher can read the
+     *  referenced card's ``media_type`` / ``code_language`` and switch
+     *  the free-text / cloze renderers into code mode (monospace input,
+     *  whitespace-tolerant matching). Optional; review / adaptive
+     *  sessions may pass an empty list and get the plain-text path. */
+    cards?: ContentLessonCard[];
     onComplete: (result: ExerciseScored) => Promise<void>;
+}
+
+/** Code context for an exercise: true when its FIRST referenced card is
+ *  a code/formula card (schema v1.3). Drives the code-aware renderers. */
+export function resolveCodeContext(
+    exercise: ContentLessonExercise,
+    cards: ContentLessonCard[],
+): {codeMode: boolean; codeLanguage: string | null} {
+    const firstId = exercise.card_ids?.[0];
+    const card = firstId
+        ? cards.find((c) => c.id === firstId)
+        : undefined;
+    const codeMode =
+        card?.media_type === "code" || card?.media_type === "formula";
+    return {codeMode, codeLanguage: card?.code_language ?? null};
 }
 
 /** Forwards a ref to the active exercise so the controlled
@@ -75,6 +97,7 @@ function ExerciseDispatcher(
         source = "",
         targetLanguage = null,
         sourceLanguage = null,
+        cards = [],
         onComplete,
         controlled = false,
         onInteraction,
@@ -88,6 +111,7 @@ function ExerciseDispatcher(
     if (!supported) {
         return <ExerciseStepPlaceholder step={step} />;
     }
+    const {codeMode, codeLanguage} = resolveCodeContext(ex, cards);
     const shared = {
         controlled,
         onInteraction,
@@ -128,6 +152,8 @@ function ExerciseDispatcher(
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
+                codeMode={codeMode}
+                codeLanguage={codeLanguage}
                 {...shared}
             />
         );
@@ -150,6 +176,7 @@ function ExerciseDispatcher(
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
+                codeMode={codeMode}
                 {...shared}
             />
         );

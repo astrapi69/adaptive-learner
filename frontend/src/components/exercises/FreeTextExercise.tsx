@@ -77,16 +77,29 @@ function _normalize(s: string): string {
     return s.normalize("NFC").trim().toLocaleLowerCase();
 }
 
+/** Code-answer normalization (schema v1.3). Code is CASE-sensitive,
+ *  so we keep case — but we drop ALL whitespace (so "print( 'x' )" ==
+ *  "print('x')") and unify quote styles (', ", ` -> "), the two
+ *  variations a learner shouldn't be marked wrong for. Authors can
+ *  still add explicit ``accept`` entries for cases where spacing is
+ *  semantically meaningful. */
+function _normalizeCode(s: string): string {
+    return s.replace(/\s+/g, "").replace(/['"`]/g, '"');
+}
+
 /** True iff ``input`` matches any entry of ``accept``:
  *  normalized exact match first, Levenshtein <= 1 fallback.
- *  Empty input never matches. */
+ *  Empty input never matches. In ``codeMode`` the normalizer is
+ *  whitespace-stripping + quote-unifying + case-preserving. */
 export function isFreeTextCorrect(
     input: string,
     accept: readonly string[],
+    codeMode = false,
 ): boolean {
-    const normInput = _normalize(input);
+    const norm = codeMode ? _normalizeCode : _normalize;
+    const normInput = norm(input);
     if (normInput === "") return false;
-    const normCandidates = accept.map(_normalize);
+    const normCandidates = accept.map(norm);
     if (normCandidates.includes(normInput)) return true;
     for (const cand of normCandidates) {
         if (_levenshtein(normInput, cand) <= 1) return true;
@@ -100,6 +113,12 @@ export interface FreeTextExerciseProps extends ControlledExerciseProps {
      *  Optional in unit tests; required in production. */
     setId?: string;
     lessonId?: string;
+    /** Schema v1.3 — when the referenced card is a code/formula card,
+     *  render a monospace, spellcheck-off textarea and match answers
+     *  with whitespace-tolerant, case-sensitive code normalization. */
+    codeMode?: boolean;
+    /** Highlighter language hint, surfaced as a small label. */
+    codeLanguage?: string | null;
     /** Called on submit with the score (0 or 1 correct of 1
      *  total) plus the single-attempt SRS payload. */
     onComplete: (result: ExerciseScored) => void;
@@ -110,6 +129,8 @@ function FreeTextExercise(
         exercise,
         setId = "",
         lessonId = "",
+        codeMode = false,
+        codeLanguage = null,
         onComplete,
         controlled = false,
         onInteraction,
@@ -134,6 +155,7 @@ function FreeTextExercise(
                   correct: isFreeTextCorrect(
                       reviewedFreeText.input,
                       accept,
+                      codeMode,
                   )
                       ? 1
                       : 0,
@@ -148,7 +170,7 @@ function FreeTextExercise(
 
     const handleSubmit = () => {
         if (submitted || isInputEmpty) return;
-        const isCorrect = isFreeTextCorrect(input, accept);
+        const isCorrect = isFreeTextCorrect(input, accept, codeMode);
         const correct = isCorrect ? 1 : 0;
         const attempt = deriveFreeTextAttempt(
             exercise,
@@ -173,7 +195,12 @@ function FreeTextExercise(
         setResult(null);
     };
 
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const handleKeyDown = (
+        e: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+    ) => {
+        // In code mode the input is a multi-line textarea, so Enter must
+        // insert a newline, not submit. Plain free-text submits on Enter.
+        if (codeMode) return;
         if (e.key === "Enter" && !submitted && !isInputEmpty) {
             e.preventDefault();
             handleSubmit();
@@ -215,26 +242,60 @@ function FreeTextExercise(
 
             <DirectionInstruction exercise={exercise} />
 
-            <input
-                type="text"
-                className="free-text-input"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                disabled={submitted}
-                placeholder={t(
-                    "lesson.exercise.free_text.placeholder",
-                    "Type your answer…",
-                )}
-                aria-label={t(
-                    "lesson.exercise.free_text.input_label",
-                    "Your answer",
-                )}
-                autoComplete="off"
-                autoCapitalize="off"
-                spellCheck={false}
-                data-testid="free-text-input"
-            />
+            {codeMode ? (
+                <div className="free-text-code-wrap">
+                    {codeLanguage && (
+                        <span
+                            className="free-text-code-lang"
+                            data-testid="free-text-code-lang"
+                        >
+                            {codeLanguage}
+                        </span>
+                    )}
+                    <textarea
+                        className="free-text-input free-text-input-code"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        disabled={submitted}
+                        rows={4}
+                        placeholder={t(
+                            "lesson.exercise.free_text.code_placeholder",
+                            "Type the code…",
+                        )}
+                        aria-label={t(
+                            "lesson.exercise.free_text.input_label",
+                            "Your answer",
+                        )}
+                        autoComplete="off"
+                        autoCapitalize="off"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        data-testid="free-text-input"
+                    />
+                </div>
+            ) : (
+                <input
+                    type="text"
+                    className="free-text-input"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    disabled={submitted}
+                    placeholder={t(
+                        "lesson.exercise.free_text.placeholder",
+                        "Type your answer…",
+                    )}
+                    aria-label={t(
+                        "lesson.exercise.free_text.input_label",
+                        "Your answer",
+                    )}
+                    autoComplete="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    data-testid="free-text-input"
+                />
+            )}
 
             {exercise.hint && !submitted && (
                 <div className="free-text-hint-row">

@@ -1298,6 +1298,7 @@ lesson:
       submit: "Check answer"
       retry: "Try again"
       placeholder: "Type your answer…"
+      code_placeholder: "Type the code…"
       input_label: "Your answer"
       hint_show: "Need a hint?"
       result_correct: "Correct!"
@@ -1502,6 +1503,12 @@ content:
     sets: sets
     other_sources: Other source languages
     for_speakers: For {lang} speakers
+    knowledge: Knowledge
+    domain_psychology: Psychology
+    domain_programming: Programming
+    domain_math: Mathematics
+    code_copy: "Copy code"
+    code_output: "Output:"
     no_primary: No sets for your language yet. Browse other source languages below.
   validation:
     title: Quality check
@@ -1572,6 +1579,8 @@ content:
     thanks: Thanks for sharing! Your contribution helps other learners.
     submitted: "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" - the content-repo CI validates it automatically."
     view_submission: "Open the pull request on GitHub"
+    view_upload: "Open the GitHub upload page"
+    popup_blocked: "Your browser blocked the GitHub tab. Click the link below to open it manually."
     upload_instructions: "Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click \"Propose changes\" - GitHub creates the pull request for you."
     copy_pr_body: "Copy pull-request description"
     copy_pr_body_done: "Copied!"

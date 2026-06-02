@@ -87,4 +87,56 @@ describe("buildContentTree", () => {
     const fr = tree.primary[0].targets[0];
     expect(fr.levels.map((l) => l.level)).toEqual(["A1", "beginner"]);
   });
+
+  // --- v1.3: non-language domain grouping (Sprachen vs Wissen) ---
+
+  it("routes non-language domain sets into the knowledge section", () => {
+    const mixed = [
+      entry({ id: "fr", source_language: "de", target_language: "fr" }),
+      entry({
+        id: "psych",
+        source_language: "de",
+        target_language: "de",
+        level: "intro",
+        domain: "psychology",
+        title: "Psychologie",
+      }),
+      entry({
+        id: "py",
+        source_language: "de",
+        target_language: "de",
+        level: "basics",
+        domain: "programming",
+        title: "Python Grundlagen",
+      }),
+    ];
+    const tree = buildContentTree(mixed, ["de"]);
+    // Language set stays in the source tree; domain sets do NOT.
+    expect(tree.primary[0].targets.map((t) => t.targetLanguage)).toEqual([
+      "fr",
+    ]);
+    // Knowledge groups: alphabetical by domain.
+    expect(tree.knowledge.map((g) => g.domain)).toEqual([
+      "programming",
+      "psychology",
+    ]);
+    expect(tree.knowledge[0].sets.map((s) => s.id)).toEqual(["py"]);
+  });
+
+  it("leaves knowledge empty for a language-only library", () => {
+    const tree = buildContentTree(
+      [entry({ id: "fr", source_language: "de" })],
+      ["de"],
+    );
+    expect(tree.knowledge).toEqual([]);
+  });
+
+  it("treats a missing/blank domain as 'language'", () => {
+    const tree = buildContentTree(
+      [entry({ id: "x", source_language: "de", domain: "" })],
+      ["de"],
+    );
+    expect(tree.knowledge).toEqual([]);
+    expect(tree.primary).toHaveLength(1);
+  });
 });

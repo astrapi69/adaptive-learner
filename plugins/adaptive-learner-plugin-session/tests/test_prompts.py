@@ -20,6 +20,7 @@ from adaptive_learner_session.prompts import (
     MIN_STEP,
     STEP_RANGE,
     _dominant_method,
+    build_analysis_context,
     build_prompt,
 )
 
@@ -223,3 +224,59 @@ def test_output_is_non_empty_string():
 def test_output_separates_sections_with_blank_lines():
     out = build_prompt(_project_fixture(), _profile_fixture(), "deductive", 1, "de")
     assert "\n\n" in out
+
+
+# --- Analysis context (continue-session-after-import fix) -------------------
+
+
+def _analysis_fixture() -> dict:
+    return {
+        "topic": "Spanish past tense",
+        "summary": "The learner practised the preterite.",
+        "user_level": "intermediate",
+        "strengths": ["vocabulary recall"],
+        "weaknesses": ["irregular verbs"],
+        "error_patterns": ["confuses ser/estar"],
+        "vocabulary": [
+            {"word": "tener", "translation": "to have"},
+            {"word": "hacer", "translation": "to do"},
+        ],
+        "suggested_curriculum": [{"title": "Irregular preterite drill", "priority": 1}],
+    }
+
+
+def test_analysis_context_de_includes_every_field():
+    out = build_analysis_context(_analysis_fixture(), "de")
+    assert "Spanish past tense" in out
+    assert "Zusammenfassung:" in out
+    assert "Niveau: intermediate" in out
+    assert "Stärken: vocabulary recall" in out
+    assert "Schwächen: irregular verbs" in out
+    assert "Fehlermuster: confuses ser/estar" in out
+    assert "tener" in out and "hacer" in out
+    assert "Irregular preterite drill" in out
+    # Closing instruction tells the AI to continue + reference the analysis.
+    assert "Setze die Lernsitzung fort" in out
+
+
+def test_analysis_context_en_includes_every_field():
+    out = build_analysis_context(_analysis_fixture(), "en")
+    assert 'about "Spanish past tense"' in out
+    assert "Weaknesses: irregular verbs" in out
+    assert "Vocabulary already learned:" in out
+    assert "Continue the learning session" in out
+
+
+def test_analysis_context_empty_returns_blank():
+    assert build_analysis_context({}, "de") == ""
+    assert build_analysis_context(None, "en") == ""
+    assert build_analysis_context({"strengths": [], "vocabulary": []}, "de") == ""
+
+
+def test_analysis_context_skips_missing_fields():
+    out = build_analysis_context({"topic": "Greetings"}, "en")
+    assert 'about "Greetings"' in out
+    assert "Summary:" not in out
+    assert "Weaknesses:" not in out
+    # The continue instruction is always present when there is any content.
+    assert "Continue the learning session" in out

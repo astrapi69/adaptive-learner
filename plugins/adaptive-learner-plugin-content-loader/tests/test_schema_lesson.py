@@ -206,6 +206,62 @@ class TestCardTokenRolesField:
                 }
             )
 
+    # --- v1.3: technical / programming fields ---------------------------
+
+    def test_card_without_code_fields_is_valid(self) -> None:
+        # Backward compatibility: pre-v1.3 content omits every new field.
+        card = Card(id="bonjour", front="Bonjour", back="Hello")
+        assert card.code_snippet is None
+        assert card.media_type is None
+        assert card.difficulty is None
+
+    def test_card_with_full_code_payload_validates(self) -> None:
+        card = Card.model_validate(
+            {
+                "id": "py-print",
+                "front": "print()",
+                "back": "Gibt Text auf der Konsole aus",
+                "code_snippet": "print('Hallo Welt')\nprint(42)",
+                "code_language": "python",
+                "expected_output": "Hallo Welt\n42",
+                "notes": "print() kann mehrere Argumente trennen.",
+                "hint": "Denke an die Klammern",
+                "difficulty": 1,
+                "tags": ["syntax", "output"],
+                "media_type": "code",
+            }
+        )
+        assert card.code_language == "python"
+        assert card.expected_output.startswith("Hallo Welt")
+        assert card.hint == "Denke an die Klammern"
+        assert card.difficulty == 1
+        assert card.media_type == "code"
+
+    def test_card_excel_formula_payload(self) -> None:
+        card = Card.model_validate(
+            {
+                "id": "xl-sverweis",
+                "front": "SVERWEIS / VLOOKUP",
+                "back": "Sucht einen Wert in der ersten Spalte",
+                "code_snippet": "=SVERWEIS(A2; B:D; 3; FALSCH)",
+                "code_language": "excel",
+                "media_type": "formula",
+                "difficulty": 3,
+            }
+        )
+        assert card.media_type == "formula"
+        assert card.code_snippet.startswith("=SVERWEIS")
+
+    def test_card_rejects_unknown_media_type(self) -> None:
+        with pytest.raises(ValidationError):
+            Card(id="x", front="x", back="y", media_type="video")
+
+    def test_card_rejects_out_of_range_difficulty(self) -> None:
+        with pytest.raises(ValidationError):
+            Card(id="x", front="x", back="y", difficulty=6)
+        with pytest.raises(ValidationError):
+            Card(id="x", front="x", back="y", difficulty=0)
+
 
 # --- Exercise: type-specific validation --------------------------------
 

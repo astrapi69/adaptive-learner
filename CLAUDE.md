@@ -9,8 +9,57 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.50.0+** (post-release — **Phase 66 /
-  EXP-022 Visual Learning Path** merged to main without a tag).
+- **Current state:** **v1.53.0** (minor — **content schema v1.3
+  (technical content) + Python course + domain support**).
+  **Schema v1.3:** Card gains optional ``code_snippet`` /
+  ``code_language`` / ``expected_output`` / ``hint`` / ``difficulty``
+  (1-5) / ``media_type`` (text|code|formula|diagram); all optional, so
+  pre-v1.3 lessons load unchanged (``CURRENT_SCHEMA_VERSION`` 1.2→1.3,
+  major-match support). **Domain support:** sets/lessons carry a
+  ``domain`` (default ``language``); non-language domains
+  (programming, psychology) allow source==target (both validators).
+  The Content Browser splits **Sprachen** (source→target→level tree)
+  from **Wissen** (domain groups w/ code/brain/calculator icons).
+  **Code rendering:** ``highlight.js`` (lazy) code blocks in the
+  lesson viewer — language label, copy button, ``Output:`` block,
+  mobile scroll. **Code-aware exercises:** code/formula cards drive a
+  monospace free-text textarea with whitespace/quote-tolerant
+  case-sensitive matching + monospace cloze. **Content:** new
+  **Python Grundlagen** (``de/python-basics``, 15 lessons, 123
+  code-snippet cards, domain=programming) joins the library — now
+  **7 content sets, 100 lessons** (~22h), all bundled. **Fix:**
+  analysis-to-lesson ``source_language`` defaults to the app language
+  (not ``en``); P3 follow-ups ANALYSIS-TARGET-DETECT-01 /
+  ANALYSIS-DOMAIN-SUGGEST-01 / PLACEMENT-LANG-WARN-01 filed.
+  v1.52.0 = minor — **DE→EN A1 content**
+  + **backup-restore data-integrity fixes**.
+  **Content:** a fifth A1 course — **English for German speakers**
+  (``de/en-a1``, 15 lessons) — joins ``de/es-a1``, ``de/fr-a1``,
+  ``en/es-a1``, ``en/fr-a1``: **5 content sets, 75 lessons** (~12.5h),
+  all bundled into the GitHub Pages build. DE→EN drills classic
+  false friends (become/bekommen, gift/Gift, handy/Handy,
+  chef/Chef, actual/aktuell), German-targeted distractors (missing
+  third-person -s, do-support, uncountable plurals), and a
+  progressive receptive→mixed→productive direction (EXP-018).
+  **BACKUP-API-RESTORE-01 (P1):** API-mode backup exported all 30
+  tables but ``_RESTORE_ORDER`` listed only 16 — a restore silently
+  dropped 14 tables (gamification / lesson-progress / SRS-error /
+  missions / anki / study-question / taxonomy / api-key-backup).
+  Restore order now **derives from the export source**
+  (sync surface, FK-ordered) so the two can't drift; a parity test
+  pins export==restore==sync, and a 30-table round-trip verifies
+  data survives. **Per-table flush during restore** fixes a latent
+  FK violation (single end-commit let SQLAlchemy reorder inserts by
+  ORM relationships, but the gamification/SRS/content tables are
+  FK-decoupled). **New ``app/db_guard.py``:** a process-wide guard
+  refuses full-table DELETE/DROP/TRUNCATE against a
+  production-marked data dir from any non-app process (the running
+  app opts in via ``mark_app_runtime()``). **P0 fix:** the Lesson
+  Creator's "Next" silently failed on Step 1 when a *resumed draft*
+  had source==target language; ``loadLessonDraft`` now repairs an
+  equal pair so a resumed draft is always advanceable.
+  v1.51.0 = minor - **Phase 66 / EXP-022
+  Visual Learning Path** + a **Dexie backup overhaul**.
   An interactive @xyflow/react graph at ``/learning-path`` shows
   the learner's full lesson journey: set-group nodes (progress
   bar, per-direction mastery, collapsible) + lesson nodes
@@ -24,7 +73,15 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   button, Dashboard quick action. WCAG a11y: role="status" on
   loading, aria-label on all controls, React.memo on node views,
   memoized callbacks. Lazy-loaded (xyflow ~100 KB). Both storage
-  modes.
+  modes. **Backup (BACKUP-DIR-EXPORT-01):** Dexie-mode "Save to
+  disk" via the File System Access API
+  (``showSaveFilePicker`` + download fallback + cancel handling),
+  a "Your backup contains" record-count preview, and a
+  **data-loss fix** — the Dexie backup had drifted to 20 tables
+  while the backend sync surface grew to 30, silently dropping
+  every gamification / lesson-progress / SRS-error / missions /
+  anki / study-question row on export; the Dexie export now
+  covers the full 30-table surface.
   v1.50.0 = minor - **Lesson Creator
   (EXP-021)** — a standalone, no-API-key way to build a complete
   shareable lesson. New ``/create-lesson`` route +

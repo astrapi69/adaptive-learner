@@ -1287,6 +1287,7 @@ lesson:
       submit: "Cevabı kontrol et"
       retry: "Tekrar dene"
       placeholder: "Cevabını yaz…"
+      code_placeholder: "Kodu yaz…"
       input_label: "Senin cevabın"
       hint_show: "İpucu ister misin?"
       result_correct: "Doğru!"
@@ -1491,6 +1492,12 @@ content:
     sets: set
     other_sources: Diğer kaynak diller
     for_speakers: '{lang} konuşanlar için'
+    knowledge: Bilgi
+    domain_psychology: Psikoloji
+    domain_programming: Programlama
+    domain_math: Matematik
+    code_copy: "Kodu kopyala"
+    code_output: "Çıktı:"
     no_primary: Diliniz için henüz set yok. Aşağıdan diğer kaynak dillere göz atın.
   validation:
     title: Kalite kontrolü
@@ -1561,6 +1568,8 @@ content:
     thanks: Paylaştığınız için teşekkürler! Katkınız diğer öğrenenlere yardımcı oluyor.
     submitted: "GitHub'da dersinizin önceden doldurulduğu bir pull request açıldı. İnceleyin ve \"Create pull request\" düğmesine tıklayın - içerik deposunun CI'si otomatik olarak doğrular."
     view_submission: "Pull request'i GitHub'da aç"
+    view_upload: "GitHub yükleme sayfasını aç"
+    popup_blocked: "Tarayıcın GitHub sekmesini engelledi. Manuel olarak açmak için aşağıdaki bağlantıya tıkla."
     upload_instructions: "Ders dosyanız indirildi. Az önce açılan GitHub sayfasında dosyayı yükleme alanına sürükleyin ve \"Propose changes\" düğmesine tıklayın - GitHub pull request'i sizin için oluşturur."
     copy_pr_body: "Pull request açıklamasını kopyala"
     copy_pr_body_done: "Kopyalandı!"

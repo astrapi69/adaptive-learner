@@ -259,6 +259,7 @@ export default function ReviewPage() {
                     <ExerciseDispatcher
                         step={step!}
                         setId={setId}
+                        cards={lesson?.cards ?? []}
                         lessonId={
                             // The synthesized step embeds the
                             // source lesson_id in its id —

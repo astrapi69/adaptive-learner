@@ -286,6 +286,62 @@ class Card(BaseModel):
         ),
         max_length=10,
     )
+    # --- v1.2 -> v1.3: technical / programming content (all optional,
+    # backward compatible). A card whose ``media_type`` is ``"code"`` or
+    # ``"formula"`` carries a ``code_snippet`` the viewer renders as a
+    # syntax-highlighted block with a copy button + optional output.
+    code_snippet: str | None = Field(
+        default=None,
+        description=(
+            "Optional code / formula the card teaches (e.g. a Python "
+            "snippet or an Excel formula). Rendered as a monospace, "
+            "syntax-highlighted block in the viewer."
+        ),
+        max_length=5000,
+    )
+    code_language: str | None = Field(
+        default=None,
+        description=(
+            "Highlighter language hint for ``code_snippet`` "
+            "('python', 'javascript', 'sql', 'excel', ...). Free "
+            "string; the viewer maps unknown values to plain text."
+        ),
+        max_length=30,
+    )
+    expected_output: str | None = Field(
+        default=None,
+        description="What ``code_snippet`` produces, shown in an 'Output:' block.",
+        max_length=2000,
+    )
+    hint: str | None = Field(
+        default=None,
+        description="Progressive hint, revealed on request during an exercise.",
+        max_length=1000,
+    )
+    difficulty: int | None = Field(
+        default=None,
+        description="Optional 1-5 difficulty scale (1 = easiest).",
+        ge=1,
+        le=5,
+    )
+    media_type: str | None = Field(
+        default=None,
+        description=(
+            "Card content kind: 'text' (default when null), 'code', "
+            "'formula', or 'diagram'. Drives code-aware rendering + "
+            "exercise input (monospace editor for code/formula)."
+        ),
+    )
+
+    @field_validator("media_type")
+    @classmethod
+    def _known_media_type(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        allowed = {"text", "code", "formula", "diagram"}
+        if value not in allowed:
+            raise ValueError(f"media_type must be one of {sorted(allowed)}; got {value!r}.")
+        return value
 
     @field_validator("id")
     @classmethod
@@ -671,6 +727,15 @@ class Lesson(BaseModel):
             "already speaks (the language the card ``back`` / "
             "notes / theory are written in). Absent on pre-v1.2 "
             "lessons."
+        ),
+    )
+    domain: str | None = Field(
+        default=None,
+        description=(
+            "Optional content domain (schema v1.3). Mirrors the "
+            "parent set's ``domain`` ('language' default, or "
+            "'psychology' / 'programming' / ...). Absent on "
+            "language lessons; the parent set is authoritative."
         ),
     )
     estimated_minutes: int = Field(

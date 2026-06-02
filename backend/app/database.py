@@ -83,6 +83,13 @@ def _engine_kwargs(url: str) -> dict:
 engine = create_engine(DATABASE_URL, **_engine_kwargs(DATABASE_URL))
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Guard against ad-hoc scripts / repros bulk-deleting a production
+# data dir (BACKUP-API-RESTORE-01). No-op for the running app, which
+# arms itself via app.db_guard.mark_app_runtime() in the lifespan.
+from app import db_guard  # noqa: E402
+
+db_guard.install(engine)
+
 
 def _async_database_url(url: str) -> str:
     """Translate a sync SQLAlchemy URL to its async-driver equivalent.

@@ -80,7 +80,7 @@ describe("buildManifestYaml", () => {
   it("produces a one-entry ContentManifest that re-parses", () => {
     const yaml = buildManifestYaml(META, 1);
     const parsed = parseYaml(yaml);
-    expect(parsed.schema_version).toBe("1.1");
+    expect(parsed.schema_version).toBe("1.3");
     expect(parsed.sets).toHaveLength(1);
     expect(parsed.sets[0].id).toBe("analysis-conv-1");
     expect(parsed.sets[0].language).toBe("es");
@@ -203,6 +203,19 @@ describe("communityPrUrl", () => {
     const value = qs.get("value") ?? "";
     expect(value).toContain('"id": "01"');
     expect(value).toContain('"title": "Greetings"');
+  });
+
+  it("keeps a small lesson's create-file URL under the length cap", () => {
+    const url = communityPrUrl({
+      repo: "astrapi69/adaptive-learner-content",
+      branch: "main",
+      filePath: "sets/en/es-a1/lessons/16-greetings.json",
+      lesson: LESSON,
+      prTitle: "content: Greetings (en->es A1)",
+      prBody: "## New lesson\n\nA small A1 lesson.\n",
+    });
+    expect(url).not.toBeNull();
+    expect(url!.length).toBeLessThan(MAX_PR_URL_LENGTH);
   });
 
   it("returns null when the encoded URL would exceed the length cap", () => {

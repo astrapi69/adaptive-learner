@@ -82,8 +82,10 @@ export interface ShareWizardProps {
   /** Records a successful share for the contribution history (64D). */
   onShared: (url: string, title: string) => void;
   onClose: () => void;
-  /** Test seam; defaults to window.open in a new tab. */
-  openUrl?: (url: string) => void;
+  /** Test seam; defaults to window.open in a new tab. Returns false
+   *  when the popup was blocked so the wizard can surface a manual
+   *  fallback link. */
+  openUrl?: (url: string) => boolean;
   /** Test seam; defaults to downloadLessonJson (DOM download). */
   downloadLesson?: (lesson: ContentLesson, filename: string) => void;
 }
@@ -95,8 +97,11 @@ type ShareMethod = "pr" | "upload";
 
 const TOTAL_STEPS = 4;
 
-function defaultOpen(url: string): void {
-  window.open(url, "_blank", "noopener,noreferrer");
+function defaultOpen(url: string): boolean {
+  // window.open returns null when the popup is blocked; the caller
+  // uses that to show a manual fallback link.
+  const win = window.open(url, "_blank", "noopener,noreferrer");
+  return win != null;
 }
 
 export default function ShareWizard({
@@ -125,6 +130,9 @@ export default function ShareWizard({
   const [note, setNote] = useState("");
   const [showDiff, setShowDiff] = useState(false);
   const [sharedUrl, setSharedUrl] = useState<string | null>(null);
+  // True when window.open was blocked by the popup blocker — step 4
+  // then promotes the manual "open on GitHub" link.
+  const [popupBlocked, setPopupBlocked] = useState(false);
   // Which GitHub flow ran (PR create-file URL vs upload page) + the
   // generated PR body, surfaced on step 4 (the upload path can't
   // pre-fill the body, so we offer a copy button).
@@ -262,11 +270,26 @@ export default function ShareWizard({
     if (url) {
       method = "pr";
     } else {
-      // Upload path: download the lesson file(s) under their correct
-      // tree filenames, then open the repo's upload page so the user
-      // drag-drops them (the PR body can't pre-fill here — step 4
-      // offers a copy button).
       method = "upload";
+      url = communityUploadUrl(repo, branch, `${placement.path}/lessons`);
+    }
+
+    setShareMethod(method);
+    setSharedUrl(url);
+
+    // Open the GitHub page FIRST, while the click's user-activation is
+    // still fresh. Doing the download first (an anchor click) can
+    // consume the activation and get the subsequent window.open
+    // popup-blocked — which is exactly the "file downloaded, no PR"
+    // symptom. window.open is gesture-sensitive; the download is not,
+    // so the download runs reliably afterwards.
+    const opened = (openUrl ?? defaultOpen)(url);
+    setPopupBlocked(opened === false);
+
+    if (method === "upload") {
+      // Download the lesson file(s) under their correct tree filenames
+      // so the user drag-drops them into the GitHub upload page (which
+      // can't pre-fill the PR body — step 4 offers a copy button).
       const download = downloadLesson ?? downloadLessonJson;
       shipped.forEach((lesson, i) => {
         const filename =
@@ -275,12 +298,8 @@ export default function ShareWizard({
             : suggestFilename(placement.number + i, lesson.title);
         download(lesson, filename);
       });
-      url = communityUploadUrl(repo, branch, `${placement.path}/lessons`);
     }
 
-    setShareMethod(method);
-    (openUrl ?? defaultOpen)(url);
-    setSharedUrl(url);
     onShared(url, entry.title);
     emitCelebration({ type: "confetti" });
   }
@@ -606,13 +625,34 @@ export default function ShareWizard({
                     {t("content.wizard.submitted", "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" — the content-repo CI validates it automatically.")}
                   </p>
                 )}
+                {popupBlocked && (
+                  <p
+                    className="form-hint form-hint-warning"
+                    data-testid="share-wizard-popup-blocked"
+                    role="alert"
+                  >
+                    {t(
+                      "content.wizard.popup_blocked",
+                      "Your browser blocked the GitHub tab. Click the link below to open it manually.",
+                    )}
+                  </p>
+                )}
                 <a
                   href={sharedUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className={popupBlocked ? "btn btn-primary" : undefined}
                   data-testid="share-wizard-pr-link"
                 >
-                  {t("content.wizard.view_submission", "Open the pull request on GitHub")}
+                  {shareMethod === "upload"
+                    ? t(
+                        "content.wizard.view_upload",
+                        "Open the GitHub upload page",
+                      )
+                    : t(
+                        "content.wizard.view_submission",
+                        "Open the pull request on GitHub",
+                      )}
                 </a>
               </div>
             ) : (

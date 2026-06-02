@@ -1287,6 +1287,7 @@ lesson:
       submit: "Verificar resposta"
       retry: "Tentar de novo"
       placeholder: "Escreve a tua resposta…"
+      code_placeholder: "Digite o código…"
       input_label: "A tua resposta"
       hint_show: "Precisas de uma dica?"
       result_correct: "Correto!"
@@ -1491,6 +1492,12 @@ content:
     sets: conjuntos
     other_sources: Outros idiomas de origem
     for_speakers: Para falantes de {lang}
+    knowledge: Conhecimento
+    domain_psychology: Psicologia
+    domain_programming: Programação
+    domain_math: Matemática
+    code_copy: "Copiar código"
+    code_output: "Saída:"
     no_primary: Ainda não há conjuntos para o seu idioma. Veja outros idiomas de origem abaixo.
   validation:
     title: Verificação de qualidade
@@ -1561,6 +1568,8 @@ content:
     thanks: Obrigado por partilhar! A sua contribuição ajuda outros estudantes.
     submitted: "Um pull request foi aberto no GitHub com sua lição pré-preenchida. Revise e clique em \"Create pull request\" - a CI do repositório de conteúdo o valida automaticamente."
     view_submission: "Abrir o pull request no GitHub"
+    view_upload: "Abrir a página de upload do GitHub"
+    popup_blocked: "O seu navegador bloqueou a aba do GitHub. Clique no link abaixo para abri-la manualmente."
     upload_instructions: "O arquivo da sua lição foi baixado. Na página do GitHub que acabou de abrir, arraste o arquivo para a área de upload e clique em \"Propose changes\" - o GitHub cria o pull request para você."
     copy_pr_body: "Copiar a descrição do pull request"
     copy_pr_body_done: "Copiado!"

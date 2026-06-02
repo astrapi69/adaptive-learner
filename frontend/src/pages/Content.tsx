@@ -21,10 +21,14 @@
 
 import {
   BookOpen,
+  Brain,
+  Calculator,
   ChevronDown,
   ChevronRight,
+  Code,
   Download,
   FolderOpen,
+  GraduationCap,
   Pencil,
   Play,
   RefreshCw,
@@ -779,6 +783,22 @@ export default function ContentPage() {
   const renderSourceTargets = (group: SourceGroup) =>
     group.targets.map((target) => renderTargetGroup(group.sourceLanguage, target));
 
+  // Domain icon for the knowledge ("Wissen") section. Unknown domains
+  // fall back to a graduation-cap glyph.
+  const domainIcon = (domain: string) => {
+    if (domain === "programming") return <Code size={16} aria-hidden="true" />;
+    if (domain === "psychology") return <Brain size={16} aria-hidden="true" />;
+    if (domain === "math")
+      return <Calculator size={16} aria-hidden="true" />;
+    return <GraduationCap size={16} aria-hidden="true" />;
+  };
+
+  const domainLabel = (domain: string) =>
+    t(
+      `content.tree.domain_${domain}`,
+      domain.charAt(0).toUpperCase() + domain.slice(1),
+    );
+
   return (
     <main id="main" className="page content-page" data-testid="content-page">
       <header className="content-header">
@@ -1130,6 +1150,30 @@ export default function ContentPage() {
                   ))}
                 </div>
               )}
+            </section>
+          )}
+
+          {/* v1.3 — Knowledge ("Wissen"): non-language domain sets,
+              grouped by domain with a domain-specific icon. */}
+          {tree.knowledge.length > 0 && (
+            <section
+              className="content-source-knowledge"
+              data-testid="content-knowledge"
+            >
+              <h2 className="content-source-heading">
+                {t("content.tree.knowledge", "Knowledge")}
+              </h2>
+              {tree.knowledge.map((group) => (
+                <div
+                  key={group.domain}
+                  data-testid={`content-domain-${group.domain}`}
+                >
+                  <h3 className="content-source-sub content-domain-sub">
+                    {domainIcon(group.domain)} {domainLabel(group.domain)}
+                  </h3>
+                  {group.sets.map((entry) => renderSetRow(entry))}
+                </div>
+              ))}
             </section>
           )}
         </div>

@@ -39,6 +39,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+import CodeBlock from "../components/content/CodeBlock";
 import LessonExitDialog from "../components/lesson/LessonExitDialog";
 import LessonResumeDialog from "../components/lesson/LessonResumeDialog";
 import NextStepSuggestions from "../components/lesson/NextStepSuggestions";
@@ -641,6 +642,7 @@ export default function LessonPage() {
                             source={source}
                             targetLanguage={lesson.target_language}
                             sourceLanguage={lesson.source_language}
+                            cards={lesson.cards}
                             onComplete={async (scored) => {
                                 if (!step!.exercise) return;
                                 // Flip to the "Weiter" phase the moment
@@ -794,6 +796,23 @@ function TheoryStep({
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}
                 components={{
+                    // Fenced code blocks (```python ...) render via the
+                    // syntax-highlighted CodeBlock (schema v1.3). Inline
+                    // `code` stays a plain <code>. ``pre`` is collapsed to
+                    // its children so CodeBlock's own <pre> isn't nested.
+                    pre: ({children}) => <>{children}</>,
+                    code: ({className, children}) => {
+                        const match = /language-([\w-]+)/.exec(className ?? "");
+                        if (match) {
+                            return (
+                                <CodeBlock
+                                    code={String(children ?? "")}
+                                    language={match[1]}
+                                />
+                            );
+                        }
+                        return <code className={className}>{children}</code>;
+                    },
                     a: ({href, children, ...rest}) => {
                         const stepId =
                             href !== undefined

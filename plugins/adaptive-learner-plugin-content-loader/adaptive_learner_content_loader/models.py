@@ -39,7 +39,18 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-CURRENT_SCHEMA_VERSION = "1.2"
+CURRENT_SCHEMA_VERSION = "1.3"
+# v1.2 → v1.3 (technical / programming content):
+#   - ``Card`` gained optional code fields: ``code_snippet``,
+#     ``code_language``, ``expected_output``, ``hint``,
+#     ``difficulty`` (1-5), and ``media_type`` ("text" | "code" |
+#     "formula" | "diagram"). All optional, so pre-v1.3 lessons
+#     validate unchanged.
+#   - ``Lesson`` gained an optional ``domain`` mirror of the parent
+#     set's domain. Non-language domains (psychology, programming)
+#     allow source == target (enforced in the content validator).
+#   Still a MINOR bump — major-version match means v1.2 readers load
+#   v1.3 content (they just ignore the new optional fields).
 # v1.0 → v1.1 (Phase 52D / v1.35.0 / P-127):
 #   - ExerciseType gained the CLOZE = "cloze" variant + the
 #     ``sentence`` / ``blanks`` / ``cloze_mode`` fields on

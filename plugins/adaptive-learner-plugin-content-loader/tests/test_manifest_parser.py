@@ -8,13 +8,30 @@ import json
 import textwrap
 
 import pytest
-
 from adaptive_learner_content_loader.exceptions import ContentSchemaError
 from adaptive_learner_content_loader.manifest_parser import (
     parse_lesson_json,
     parse_manifest_yaml,
 )
-from adaptive_learner_content_loader.models import CURRENT_SCHEMA_VERSION
+from adaptive_learner_content_loader.models import (
+    CURRENT_SCHEMA_VERSION,
+    is_supported_schema_version,
+)
+
+
+class TestSchemaVersion:
+    def test_current_is_1_3(self) -> None:
+        # C5: schema bumped 1.2 -> 1.3 for technical/programming content.
+        assert CURRENT_SCHEMA_VERSION == "1.3"
+
+    def test_every_1x_minor_is_supported(self) -> None:
+        for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.0.0", "1.3.2"]:
+            assert is_supported_schema_version(v), v
+
+    def test_other_majors_rejected(self) -> None:
+        assert not is_supported_schema_version("2.0")
+        assert not is_supported_schema_version("0.9")
+        assert not is_supported_schema_version("not-a-version")
 
 
 VALID_MANIFEST = textwrap.dedent(

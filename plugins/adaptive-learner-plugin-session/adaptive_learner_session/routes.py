@@ -58,6 +58,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.exceptions import NotFoundError, ValidationError
 from app.models import (
+    ImportedConversation,
     LearningProfile,
     LearningProject,
     LearningSession,
@@ -79,7 +80,13 @@ from app.schemas import (
 )
 
 from . import ai_orchestration
-from .prompts import MAX_STEP, METHODS, MIN_STEP, build_prompt
+from .prompts import (
+    MAX_STEP,
+    METHODS,
+    MIN_STEP,
+    build_analysis_context,
+    build_prompt,
+)
 from .step_evaluator import (
     EVALUATION_DEFAULT_MAX_TOKENS,
     StepEvaluation,
@@ -427,6 +434,31 @@ def _pick_initial_method(profile: LearningProfile | None, fallback: str = "deduc
 # --- POST /start -----------------------------------------------------------
 
 
+def _analysis_context_for(
+    db: Session, imported_conversation_id: str | None, lang: str
+) -> str:
+    """Render the imported conversation's analysis as a prompt addendum.
+
+    Loads ``ImportedConversation.analysis_result`` (stored as a JSON
+    string), parses it, and delegates to
+    :func:`build_analysis_context`. Returns ``""`` when there is no
+    conversation, no analysis, or the JSON is unusable, so the caller
+    can append unconditionally.
+    """
+    if not imported_conversation_id:
+        return ""
+    conv = db.get(ImportedConversation, imported_conversation_id)
+    if conv is None or not conv.analysis_result:
+        return ""
+    try:
+        parsed = json.loads(conv.analysis_result)
+    except (TypeError, json.JSONDecodeError):
+        return ""
+    if not isinstance(parsed, dict):
+        return ""
+    return build_analysis_context(parsed, lang)
+
+
 @router.post(
     "/start",
     response_model=_SessionStartOut,
@@ -488,6 +520,15 @@ def start_session(payload: _StartBody, db: Session = Depends(get_db)) -> _Sessio
         )
     except ValueError as exc:
         raise ValidationError(str(exc)) from exc
+
+    # When the session is started from an analysed chat import, fold the
+    # analysis (topic / summary / level / strengths / weaknesses / error
+    # patterns / vocabulary / suggested curriculum) into the system
+    # prompt so the AI continues with the imported context instead of
+    # starting blank.
+    analysis_block = _analysis_context_for(db, payload.imported_conversation_id, payload.lang)
+    if analysis_block:
+        prompt = f"{prompt}\n\n{analysis_block}"
 
     # v0.2.0: persist the system prompt as a real SessionMessage so
     # subsequent /message calls (where the AI orchestrator loads

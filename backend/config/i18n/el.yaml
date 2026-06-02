@@ -1289,6 +1289,7 @@ lesson:
       submit: "Έλεγχος απάντησης"
       retry: "Δοκίμασε ξανά"
       placeholder: "Γράψε την απάντησή σου…"
+      code_placeholder: "Πληκτρολόγησε τον κώδικα…"
       input_label: "Η απάντησή σου"
       hint_show: "Χρειάζεσαι υπόδειξη;"
       result_correct: "Σωστά!"
@@ -1493,6 +1494,12 @@ content:
     sets: σύνολα
     other_sources: Άλλες γλώσσες προέλευσης
     for_speakers: Για ομιλητές {lang}
+    knowledge: Γνώση
+    domain_psychology: Ψυχολογία
+    domain_programming: Προγραμματισμός
+    domain_math: Μαθηματικά
+    code_copy: "Αντιγραφή κώδικα"
+    code_output: "Έξοδος:"
     no_primary: Δεν υπάρχουν ακόμη σύνολα για τη γλώσσα σου. Δες άλλες γλώσσες προέλευσης παρακάτω.
   validation:
     title: Έλεγχος ποιότητας
@@ -1563,6 +1570,8 @@ content:
     thanks: Ευχαριστούμε που μοιραστήκατε! Η συνεισφορά σας βοηθά άλλους μαθητές.
     submitted: "Άνοιξε ένα pull request στο GitHub με το μάθημά σου προσυμπληρωμένο. Ελέγξτε το και κάντε κλικ στο \"Create pull request\" - το CI του αποθετηρίου περιεχομένου το επικυρώνει αυτόματα."
     view_submission: "Άνοιγμα του pull request στο GitHub"
+    view_upload: "Άνοιγμα της σελίδας μεταφόρτωσης στο GitHub"
+    popup_blocked: "Το πρόγραμμα περιήγησής σου απέκλεισε την καρτέλα GitHub. Κάνε κλικ στον παρακάτω σύνδεσμο για να την ανοίξεις χειροκίνητα."
     upload_instructions: "Το αρχείο του μαθήματός σου κατέβηκε. Στη σελίδα GitHub που μόλις άνοιξε, σύρετε το αρχείο στην περιοχή μεταφόρτωσης και κάντε κλικ στο \"Propose changes\" - το GitHub δημιουργεί το pull request για εσάς."
     copy_pr_body: "Αντιγραφή περιγραφής pull request"
     copy_pr_body_done: "Αντιγράφηκε!"

@@ -49,6 +49,10 @@ export interface ClozeExerciseProps extends ControlledExerciseProps {
      *  Optional in unit tests; required in production. */
     setId?: string;
     lessonId?: string;
+    /** Schema v1.3 — when the referenced card is a code/formula card,
+     *  render the cloze sentence + blanks in a monospace, no-spellcheck
+     *  style (code cloze). */
+    codeMode?: boolean;
     /** Called on submit with the score (sum of correct blanks
      *  of total blanks) + the per-blank SRS attempts. */
     onComplete: (result: ExerciseScored) => void;
@@ -80,6 +84,7 @@ function ClozeExercise(
         exercise,
         setId = "",
         lessonId = "",
+        codeMode = false,
         onComplete,
         controlled = false,
         onInteraction,
@@ -200,7 +205,7 @@ function ClozeExercise(
             </p>
 
             <p
-                className="cloze-sentence"
+                className={`cloze-sentence${codeMode ? " cloze-sentence-code" : ""}`}
                 data-testid="cloze-sentence"
                 aria-label={t(
                     "lesson.exercise.cloze.sentence_label",

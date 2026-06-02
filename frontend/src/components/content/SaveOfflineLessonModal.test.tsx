@@ -28,10 +28,12 @@ vi.mock("../../utils/notify", () => ({
   },
 }));
 
+// Mutable app language so a test can simulate a German UI.
+const i18nState = vi.hoisted(() => ({ lang: "en" }));
 vi.mock("../../hooks/useI18n", () => ({
   useI18n: () => ({
     t: (_k: string, fallback: string) => fallback,
-    lang: "en",
+    lang: i18nState.lang,
   }),
 }));
 
@@ -74,6 +76,23 @@ describe("SaveOfflineLessonModal", () => {
     saveUserSet.mockReset();
     toastSuccess.mockReset();
     toastError.mockReset();
+    i18nState.lang = "en";
+  });
+
+  it("defaults source_language to the app language, not 'en' (German UI)", () => {
+    // Regression: a German grammar chat was landing at en -> de because
+    // the source defaulted to "en" instead of the active UI language.
+    i18nState.lang = "de";
+    renderModal({
+      analysis: { topic: "Deutsche Grammatik", summary: "Faelle und Artikel." },
+      // The learner's stored content language is unset upstream and
+      // coalesces to "en" — the modal must NOT use that as the source.
+      language: "en",
+    });
+    const source = screen.getByTestId(
+      "save-lesson-source-lang",
+    ) as HTMLSelectElement;
+    expect(source.value).toBe("de");
   });
 
   it("renders nothing when closed", () => {

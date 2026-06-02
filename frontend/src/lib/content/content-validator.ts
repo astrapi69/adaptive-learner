@@ -21,6 +21,17 @@ export interface ValidationMeta {
   target_language: string;
   source_language: string;
   level: string;
+  /** Content domain. Defaults to "language". Non-language domains
+   *  (e.g. "psychology") are material explained IN the same language
+   *  they teach, so source == target is allowed. Mirrors the content
+   *  repo's ``validate_content.py`` ``set_domain`` relaxation. */
+  domain?: string | null;
+}
+
+/** Normalised content domain; "language" when unset. Mirrors
+ *  ``set_domain`` in the content repo's validate_content.py. */
+function setDomain(meta: ValidationMeta): string {
+  return (meta.domain || "language").trim().toLowerCase();
 }
 
 export interface ValidationIssue {
@@ -183,7 +194,14 @@ function validateMeta(
   else if (!ISO_639_1.test(source))
     issues.push({ code: "invalid_source_language", params: { code: source } });
 
-  if (target && source && target === source)
+  // Non-language sets are explained in (and written in) the same
+  // language they teach, so source == target is expected and allowed.
+  if (
+    target &&
+    source &&
+    target === source &&
+    setDomain(meta) === "language"
+  )
     issues.push({ code: "same_source_target", params: { code: target } });
 
   if (!meta.title || !meta.title.trim())

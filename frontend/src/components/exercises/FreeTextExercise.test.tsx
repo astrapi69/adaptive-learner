@@ -92,6 +92,41 @@ describe("isFreeTextCorrect (matcher)", () => {
     });
 });
 
+describe("isFreeTextCorrect (code mode, schema v1.3)", () => {
+    const accept = ["print('Hallo Welt')"] as const;
+
+    it("tolerates whitespace differences", () => {
+        expect(isFreeTextCorrect("print( 'Hallo Welt' )", accept, true)).toBe(
+            true,
+        );
+        expect(isFreeTextCorrect("print('Hallo Welt')", accept, true)).toBe(
+            true,
+        );
+    });
+
+    it("treats single and double quotes as equivalent", () => {
+        expect(isFreeTextCorrect('print("Hallo Welt")', accept, true)).toBe(
+            true,
+        );
+    });
+
+    it("is case-sensitive (code is)", () => {
+        // Plain mode would accept this; code mode must not.
+        expect(isFreeTextCorrect("PRINT('Hallo Welt')", accept, true)).toBe(
+            false,
+        );
+        expect(isFreeTextCorrect("PRINT('Hallo Welt')", accept, false)).toBe(
+            true,
+        );
+    });
+
+    it("rejects genuinely different code", () => {
+        expect(isFreeTextCorrect("println('Hallo Welt')", accept, true)).toBe(
+            false,
+        );
+    });
+});
+
 describe("FreeTextExercise: render", () => {
     it("renders the prompt + input + submit button", () => {
         render(
@@ -118,6 +153,31 @@ describe("FreeTextExercise: render", () => {
         );
         const submit = screen.getByTestId("free-text-submit");
         expect(submit).toBeDisabled();
+    });
+
+    it("renders a monospace textarea + language label in code mode", () => {
+        render(
+            <FreeTextExercise
+                exercise={EXERCISE}
+                codeMode
+                codeLanguage="python"
+                onComplete={vi.fn()}
+            />,
+        );
+        const input = screen.getByTestId("free-text-input");
+        expect(input.tagName).toBe("TEXTAREA");
+        expect(input).toHaveClass("free-text-input-code");
+        expect(input).toHaveAttribute("spellcheck", "false");
+        expect(screen.getByTestId("free-text-code-lang").textContent).toBe(
+            "python",
+        );
+    });
+
+    it("renders a plain text input when not in code mode", () => {
+        render(
+            <FreeTextExercise exercise={EXERCISE} onComplete={vi.fn()} />,
+        );
+        expect(screen.getByTestId("free-text-input").tagName).toBe("INPUT");
     });
 
     it("enables submit once the user types non-whitespace", () => {
