@@ -22,9 +22,14 @@
  */
 
 import {ArrowLeft, ArrowRight, BookOpen, Download} from "lucide-react";
+import {useEffect, useRef, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 
-import {ExerciseDispatcher} from "../components/exercises/ExerciseDispatcher";
+import {
+    ExerciseDispatcher,
+    SUPPORTED_EXERCISE_TYPES,
+} from "../components/exercises/ExerciseDispatcher";
+import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import {useI18n} from "../hooks/useI18n";
 import {useReviewLesson} from "../hooks/useReviewLesson";
 
@@ -54,6 +59,19 @@ export default function ReviewPage() {
         setId,
         title: t("review.session_title", "Review session"),
     });
+
+    // BUG P1 — single two-phase button (Check -> Weiter). The exercise
+    // renders in controlled mode (its internal "Prüfen"/retry buttons
+    // are hidden) and the page drives one shared button via the ref, so
+    // the exercise's submit and the page's "Weiter" never both show.
+    const exerciseRef = useRef<ExerciseHandle>(null);
+    const [checked, setChecked] = useState(false);
+    const [answerable, setAnswerable] = useState(false);
+    // Reset the two-phase button whenever the step changes.
+    useEffect(() => {
+        setChecked(false);
+        setAnswerable(false);
+    }, [currentStepIndex]);
 
     if (!setId) {
         return (
@@ -179,6 +197,11 @@ export default function ReviewPage() {
     const totalSteps = lesson.steps.length;
     const isSummary = currentStepIndex >= totalSteps;
     const step = isSummary ? null : lesson.steps[currentStepIndex];
+    const isExerciseStep =
+        step != null &&
+        step.type === "exercise" &&
+        step.exercise != null &&
+        SUPPORTED_EXERCISE_TYPES.has(step.exercise.type);
     const progressPct =
         totalSteps === 0
             ? 100
@@ -257,6 +280,10 @@ export default function ReviewPage() {
                     data-step-type={step!.type}
                 >
                     <ExerciseDispatcher
+                        key={step!.id}
+                        ref={exerciseRef}
+                        controlled
+                        onInteraction={setAnswerable}
                         step={step!}
                         setId={setId}
                         cards={lesson?.cards ?? []}
@@ -272,6 +299,9 @@ export default function ReviewPage() {
                             _extractLessonId(step!.id)
                         }
                         onComplete={async (scored) => {
+                            // Flip to the "Weiter" phase the moment the
+                            // answer is graded, then record attempts.
+                            setChecked(true);
                             await recordStepAttempts(scored.attempts);
                         }}
                     />
@@ -295,22 +325,41 @@ export default function ReviewPage() {
                     <ArrowLeft size={14} aria-hidden="true" />
                     {t("lesson.action.prev", "Previous")}
                 </button>
-                {!isSummary && (
-                    <button
-                        type="button"
-                        className="btn btn-primary lesson-nav-next"
-                        onClick={goNext}
-                        data-testid="review-next"
-                    >
-                        {currentStepIndex + 1 === totalSteps
-                            ? t(
-                                  "lesson.action.finish",
-                                  "Finish lesson",
-                              )
-                            : t("lesson.action.next", "Next")}
-                        <ArrowRight size={14} aria-hidden="true" />
-                    </button>
-                )}
+                {!isSummary &&
+                    (isExerciseStep && !checked ? (
+                        <button
+                            type="button"
+                            className="btn btn-primary lesson-nav-check"
+                            onClick={() => exerciseRef.current?.submit()}
+                            disabled={!answerable}
+                            title={
+                                !answerable
+                                    ? t(
+                                          "lesson.button.check_disabled_hint",
+                                          "Answer the exercise first",
+                                      )
+                                    : undefined
+                            }
+                            data-testid="review-check"
+                        >
+                            {t("lesson.button.check", "Check")}
+                        </button>
+                    ) : (
+                        <button
+                            type="button"
+                            className="btn btn-primary lesson-nav-next"
+                            onClick={goNext}
+                            data-testid="review-next"
+                        >
+                            {currentStepIndex + 1 === totalSteps
+                                ? t(
+                                      "lesson.action.finish",
+                                      "Finish lesson",
+                                  )
+                                : t("lesson.action.next", "Next")}
+                            <ArrowRight size={14} aria-hidden="true" />
+                        </button>
+                    ))}
             </nav>
         </main>
     );

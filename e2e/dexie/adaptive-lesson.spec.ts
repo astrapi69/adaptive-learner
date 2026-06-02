@@ -59,28 +59,30 @@ async function answerWrongAndAdvance(page: Page, maxSteps: number): Promise<void
 async function playAdaptive(page: Page, maxSteps: number): Promise<void> {
   for (let i = 0; i < maxSteps; i++) {
     if (await page.getByTestId("adaptive-lesson-summary").count()) break;
-    // Reuse the same generic answer logic; the adaptive lesson uses
-    // the identical exercise renderers.
+    // BUG P1 — the adaptive lesson now uses the SAME controlled
+    // two-phase button as the main viewer: there is no per-exercise
+    // submit button; the shared "Check" (adaptive-lesson-check) grades,
+    // then adaptive-lesson-next advances. Just provide an answer here.
     if (await page.getByTestId("free-text-exercise").count()) {
       await page.getByTestId("free-text-input").fill("zzz");
-      await page.getByTestId("free-text-submit").click();
     } else if (await page.getByTestId("cloze-exercise").count()) {
       const inputs = page.locator('[data-testid^="cloze-input-"]');
       const n = await inputs.count();
       for (let j = 0; j < n; j++) await inputs.nth(j).fill("zzz");
-      await page.getByTestId("cloze-submit").click();
     } else if (await page.getByTestId("word-tiles-exercise").count()) {
       const scrambled = page.locator('[data-testid^="word-tile-scrambled-"]');
       let g = 0;
       while ((await scrambled.count()) > 0 && g++ < 12) await scrambled.first().click();
-      await page.getByTestId("word-tiles-submit").click();
     } else if (await page.getByTestId("matching-exercise").count()) {
       const n = await page.getByTestId(/^matching-left-\d+$/).count();
       for (let k = 0; k < n; k++) {
         await page.getByTestId(`matching-left-${k}`).click();
         await page.getByTestId(`matching-right-${k}`).click();
       }
-      await page.getByTestId("matching-submit").click();
+    }
+    const check = page.getByTestId("adaptive-lesson-check");
+    if ((await check.count()) && (await check.isEnabled().catch(() => false))) {
+      await check.click();
     }
     const next = page.getByTestId("adaptive-lesson-next");
     if ((await next.count()) && (await next.isEnabled().catch(() => false))) {

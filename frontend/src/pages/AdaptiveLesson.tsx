@@ -33,11 +33,15 @@ import {
   Sparkles,
   TrendingUp,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import SaveAdaptiveLessonButton from "../components/content/SaveAdaptiveLessonButton";
-import { ExerciseDispatcher } from "../components/exercises/ExerciseDispatcher";
+import {
+  ExerciseDispatcher,
+  SUPPORTED_EXERCISE_TYPES,
+} from "../components/exercises/ExerciseDispatcher";
+import type { ExerciseHandle } from "../components/exercises/exercise-control";
 import { useI18n } from "../hooks/useI18n";
 import { useAdaptiveLesson } from "../hooks/useAdaptiveLesson";
 import type { ErrorTag } from "../lib/adaptive/error-classifier";
@@ -90,6 +94,19 @@ export default function AdaptiveLessonPage() {
 
   const totalSteps = lesson?.steps.length ?? 0;
   const isSummary = totalSteps > 0 && currentStepIndex >= totalSteps;
+
+  // BUG P1 — single two-phase button (Check -> Weiter). The exercise
+  // renders in controlled mode (its internal "Prüfen"/retry buttons are
+  // hidden) and the page drives one shared button via the ref, so the
+  // exercise's submit and the page's "Weiter" are never both visible.
+  const exerciseRef = useRef<ExerciseHandle>(null);
+  const [checked, setChecked] = useState(false);
+  const [answerable, setAnswerable] = useState(false);
+  // Reset the two-phase button whenever the step changes.
+  useEffect(() => {
+    setChecked(false);
+    setAnswerable(false);
+  }, [currentStepIndex]);
 
   // Trigger finalize the first time the user lands on the
   // summary so the mastery delta gets computed.
@@ -215,6 +232,11 @@ export default function AdaptiveLessonPage() {
   }
 
   const step = isSummary ? null : lesson.steps[currentStepIndex];
+  const isExerciseStep =
+    step != null &&
+    step.type === "exercise" &&
+    step.exercise != null &&
+    SUPPORTED_EXERCISE_TYPES.has(step.exercise.type);
   const progressPct =
     totalSteps === 0 ? 100 : Math.round((currentStepIndex / totalSteps) * 100);
 
@@ -287,11 +309,18 @@ export default function AdaptiveLessonPage() {
           data-step-type={step!.type}
         >
           <ExerciseDispatcher
+            key={step!.id}
+            ref={exerciseRef}
+            controlled
+            onInteraction={setAnswerable}
             step={step!}
             setId={setId}
             lessonId={_extractLessonIdFromStep(step!.id)}
             cards={lesson?.cards ?? []}
             onComplete={async (scored) => {
+              // Flip to the "Weiter" phase the moment the answer is
+              // graded, then record the per-element attempts.
+              setChecked(true);
               await recordStepAttempts(scored.attempts);
             }}
           />
@@ -312,19 +341,38 @@ export default function AdaptiveLessonPage() {
           <ArrowLeft size={14} aria-hidden="true" />
           {t("lesson.action.prev", "Previous")}
         </button>
-        {!isSummary && (
-          <button
-            type="button"
-            className="btn btn-primary lesson-nav-next"
-            onClick={goNext}
-            data-testid="adaptive-lesson-next"
-          >
-            {currentStepIndex + 1 === totalSteps
-              ? t("lesson.action.finish", "Finish lesson")
-              : t("lesson.action.next", "Next")}
-            <ArrowRight size={14} aria-hidden="true" />
-          </button>
-        )}
+        {!isSummary &&
+          (isExerciseStep && !checked ? (
+            <button
+              type="button"
+              className="btn btn-primary lesson-nav-check"
+              onClick={() => exerciseRef.current?.submit()}
+              disabled={!answerable}
+              title={
+                !answerable
+                  ? t(
+                      "lesson.button.check_disabled_hint",
+                      "Answer the exercise first",
+                    )
+                  : undefined
+              }
+              data-testid="adaptive-lesson-check"
+            >
+              {t("lesson.button.check", "Check")}
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-primary lesson-nav-next"
+              onClick={goNext}
+              data-testid="adaptive-lesson-next"
+            >
+              {currentStepIndex + 1 === totalSteps
+                ? t("lesson.action.finish", "Finish lesson")
+                : t("lesson.action.next", "Next")}
+              <ArrowRight size={14} aria-hidden="true" />
+            </button>
+          ))}
       </nav>
     </main>
   );
