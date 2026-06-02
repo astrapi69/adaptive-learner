@@ -25,6 +25,7 @@
     "minutes": "分"
   },
   "nav": {
+    "learning_path": "学習パス",
     "dashboard": "ダッシュボード",
     "session": "セッション",
     "curriculum": "カリキュラム",
@@ -1946,6 +1947,53 @@
         "title": "会話練習",
         "desc": "5枚のカード枠、単語タイル + 穴埋め。"
       }
+    }
+  },
+  "learning_path": {
+    "title": "学習パス",
+    "subtitle": "現在地と次のステップ。",
+    "aria_canvas": "学習パスのグラフ",
+    "reset_layout": "レイアウトをリセット",
+    "loading": "学習パスを作成中…",
+    "empty": "学習パスを見るには、まずレッスンセットをダウンロードしてください。",
+    "empty_cta": "コンテンツを見る",
+    "error": "学習パスを読み込めませんでした。",
+    "to_content": "コンテンツブラウザ",
+    "node": {
+      "lesson": "レッスン",
+      "stars": "スター",
+      "recommended": "おすすめ",
+      "locked": "ロック中",
+      "receptive_short": "受",
+      "productive_short": "産",
+      "exercises": "{n} 個の演習"
+    },
+    "group": {
+      "mastery": "受容 {r}、産出 {p} 習得済み",
+      "progress_aria": "{total} レッスン中 {completed} 完了"
+    },
+    "search_placeholder": "レッスンを検索…",
+    "filter": {
+      "status": "ステータスフィルター",
+      "direction": "方向フィルター",
+      "all": "すべて",
+      "not_started": "未開始",
+      "in_progress": "進行中",
+      "mastered": "習得済み",
+      "receptive": "受容のみ",
+      "productive": "産出のみ"
+    },
+    "stats": {
+      "title": "統計",
+      "lessons": "レッスン",
+      "receptive": "受容",
+      "productive": "産出"
+    },
+    "clusters": {
+      "toggle": "エラークラスタを表示",
+      "empty": "共通のエラーパターンはまだありません — 練習を続けましょう。",
+      "lessons": "{n} レッスン",
+      "start_adaptive": "アダプティブレッスンを開始"
     }
   }
 }

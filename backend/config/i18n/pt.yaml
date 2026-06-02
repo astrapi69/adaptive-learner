@@ -22,6 +22,7 @@ common:
   required: obrigatório
   minutes: minutos
 nav:
+  learning_path: "Percurso de aprendizagem"
   dashboard: Painel
   session: Sessão
   curriculum: Currículo
@@ -1761,3 +1762,45 @@ create_lesson:
     conversation:
       title: "Prática de conversação"
       desc: "5 espaços de cartão, peças de palavras + cloze."
+
+learning_path:
+  title: "Percurso de aprendizagem"
+  subtitle: "Onde está e o que vem a seguir."
+  aria_canvas: "Gráfico do percurso de aprendizagem"
+  reset_layout: "Repor disposição"
+  loading: "A criar o seu percurso…"
+  empty: "Descarregue primeiro um conjunto de lições para ver o seu percurso."
+  empty_cta: "Explorar conteúdo"
+  error: "Não foi possível carregar o seu percurso."
+  to_content: "Navegador de conteúdo"
+  node:
+    lesson: "Lição"
+    stars: "estrelas"
+    recommended: "Recomendado"
+    locked: "Bloqueado"
+    receptive_short: "R"
+    productive_short: "P"
+    exercises: "{n} exercícios"
+  group:
+    mastery: "{r} recetivo, {p} produtivo dominados"
+    progress_aria: "{completed} de {total} lições concluídas"
+  search_placeholder: "Pesquisar lições…"
+  filter:
+    status: "Filtro de estado"
+    direction: "Filtro de direção"
+    all: "Todos"
+    not_started: "Não iniciado"
+    in_progress: "Em curso"
+    mastered: "Dominado"
+    receptive: "Apenas recetivo"
+    productive: "Apenas produtivo"
+  stats:
+    title: "Estatísticas"
+    lessons: "Lições"
+    receptive: "Recetivo"
+    productive: "Produtivo"
+  clusters:
+    toggle: "Mostrar grupos de erros"
+    empty: "Ainda não há padrões de erro comuns — continue a praticar."
+    lessons: "{n} lições"
+    start_adaptive: "Iniciar lição adaptativa"

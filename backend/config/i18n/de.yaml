@@ -22,6 +22,7 @@ common:
   required: Pflichtfeld
   minutes: Minuten
 nav:
+  learning_path: "Lernpfad"
   dashboard: Dashboard
   session: Session
   curriculum: Curriculum
@@ -1765,3 +1766,45 @@ create_lesson:
     conversation:
       title: "Konversations-Übung"
       desc: "5 Kartenplätze, Wort-Kacheln + Lückentext."
+
+learning_path:
+  title: "Lernpfad"
+  subtitle: "Wo du stehst und was als Nächstes kommt."
+  aria_canvas: "Lernpfad-Graph"
+  reset_layout: "Layout zurücksetzen"
+  loading: "Lernpfad wird erstellt…"
+  empty: "Lade zuerst ein Lektionsset herunter, um deinen Lernpfad zu sehen."
+  empty_cta: "Inhalte durchsuchen"
+  error: "Lernpfad konnte nicht geladen werden."
+  to_content: "Content Browser"
+  node:
+    lesson: "Lektion"
+    stars: "Sterne"
+    recommended: "Empfohlen"
+    locked: "Gesperrt"
+    receptive_short: "R"
+    productive_short: "P"
+    exercises: "{n} Übungen"
+  group:
+    mastery: "{r} rezeptiv, {p} produktiv gemeistert"
+    progress_aria: "{completed} von {total} Lektionen abgeschlossen"
+  search_placeholder: "Lektionen suchen…"
+  filter:
+    status: "Statusfilter"
+    direction: "Richtungsfilter"
+    all: "Alle"
+    not_started: "Nicht gestartet"
+    in_progress: "In Arbeit"
+    mastered: "Gemeistert"
+    receptive: "Nur rezeptiv"
+    productive: "Nur produktiv"
+  stats:
+    title: "Statistik"
+    lessons: "Lektionen"
+    receptive: "Rezeptiv"
+    productive: "Produktiv"
+  clusters:
+    toggle: "Fehler-Cluster anzeigen"
+    empty: "Noch keine gemeinsamen Fehlermuster — bleib dran."
+    lessons: "{n} Lektionen"
+    start_adaptive: "Adaptive Lektion starten"

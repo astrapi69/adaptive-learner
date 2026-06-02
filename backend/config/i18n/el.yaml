@@ -22,6 +22,7 @@ common:
   required: υποχρεωτικό
   minutes: λεπτά
 nav:
+  learning_path: "Διαδρομή μάθησης"
   dashboard: Πίνακας
   session: Συνεδρία
   curriculum: Πρόγραμμα
@@ -1763,3 +1764,45 @@ create_lesson:
     conversation:
       title: "Εξάσκηση συνομιλίας"
       desc: "5 θέσεις κάρτας, πλακίδια λέξεων + συμπλήρωση κενών."
+
+learning_path:
+  title: "Διαδρομή μάθησης"
+  subtitle: "Πού βρίσκεστε και τι ακολουθεί."
+  aria_canvas: "Γράφημα διαδρομής μάθησης"
+  reset_layout: "Επαναφορά διάταξης"
+  loading: "Δημιουργία της διαδρομής μάθησης…"
+  empty: "Κατεβάστε πρώτα ένα σετ μαθημάτων για να δείτε τη διαδρομή σας."
+  empty_cta: "Περιήγηση περιεχομένου"
+  error: "Δεν ήταν δυνατή η φόρτωση της διαδρομής μάθησης."
+  to_content: "Περιηγητής περιεχομένου"
+  node:
+    lesson: "Μάθημα"
+    stars: "αστέρια"
+    recommended: "Προτεινόμενο"
+    locked: "Κλειδωμένο"
+    receptive_short: "Α"
+    productive_short: "Π"
+    exercises: "{n} ασκήσεις"
+  group:
+    mastery: "{r} δεκτικά, {p} παραγωγικά κατακτημένα"
+    progress_aria: "{completed} από {total} μαθήματα ολοκληρώθηκαν"
+  search_placeholder: "Αναζήτηση μαθημάτων…"
+  filter:
+    status: "Φίλτρο κατάστασης"
+    direction: "Φίλτρο κατεύθυνσης"
+    all: "Όλα"
+    not_started: "Δεν ξεκίνησε"
+    in_progress: "Σε εξέλιξη"
+    mastered: "Κατακτημένο"
+    receptive: "Μόνο δεκτικά"
+    productive: "Μόνο παραγωγικά"
+  stats:
+    title: "Στατιστικά"
+    lessons: "Μαθήματα"
+    receptive: "Δεκτικά"
+    productive: "Παραγωγικά"
+  clusters:
+    toggle: "Εμφάνιση ομάδων σφαλμάτων"
+    empty: "Δεν υπάρχουν ακόμη κοινά μοτίβα σφαλμάτων — συνεχίστε."
+    lessons: "{n} μαθήματα"
+    start_adaptive: "Έναρξη προσαρμοστικού μαθήματος"

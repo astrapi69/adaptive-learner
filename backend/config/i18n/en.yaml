@@ -22,6 +22,7 @@ common:
   required: required
   minutes: minutes
 nav:
+  learning_path: "Learning Path"
   dashboard: Dashboard
   session: Session
   curriculum: Curriculum
@@ -1771,3 +1772,45 @@ create_lesson:
     conversation:
       title: "Conversation Practice"
       desc: "5 card slots, word tiles + cloze."
+
+learning_path:
+  title: "Learning Path"
+  subtitle: "Where you are and what comes next."
+  aria_canvas: "Learning path graph"
+  reset_layout: "Reset layout"
+  loading: "Building your learning path…"
+  empty: "Download a lesson set first to see your learning path."
+  empty_cta: "Browse content"
+  error: "Could not load your learning path."
+  to_content: "Content Browser"
+  node:
+    lesson: "Lesson"
+    stars: "stars"
+    recommended: "Recommended"
+    locked: "Locked"
+    receptive_short: "R"
+    productive_short: "P"
+    exercises: "{n} exercises"
+  group:
+    mastery: "{r} receptive, {p} productive mastered"
+    progress_aria: "{completed} of {total} lessons completed"
+  search_placeholder: "Search lessons…"
+  filter:
+    status: "Status filter"
+    direction: "Direction filter"
+    all: "All"
+    not_started: "Not started"
+    in_progress: "In progress"
+    mastered: "Mastered"
+    receptive: "Receptive only"
+    productive: "Productive only"
+  stats:
+    title: "Stats"
+    lessons: "Lessons"
+    receptive: "Receptive"
+    productive: "Productive"
+  clusters:
+    toggle: "Show error clusters"
+    empty: "No shared error patterns yet — keep practising."
+    lessons: "{n} lessons"
+    start_adaptive: "Start adaptive lesson"

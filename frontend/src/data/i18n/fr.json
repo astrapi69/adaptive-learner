@@ -25,6 +25,7 @@
     "minutes": "minutes"
   },
   "nav": {
+    "learning_path": "Parcours d'apprentissage",
     "dashboard": "Tableau de bord",
     "session": "Session",
     "curriculum": "Programme",
@@ -1946,6 +1947,53 @@
         "title": "Pratique de conversation",
         "desc": "5 emplacements de carte, tuiles de mots + texte à trous."
       }
+    }
+  },
+  "learning_path": {
+    "title": "Parcours d'apprentissage",
+    "subtitle": "Où vous en êtes et ce qui suit.",
+    "aria_canvas": "Graphe du parcours d'apprentissage",
+    "reset_layout": "Réinitialiser la disposition",
+    "loading": "Création de votre parcours…",
+    "empty": "Téléchargez d'abord un ensemble de leçons pour voir votre parcours.",
+    "empty_cta": "Parcourir le contenu",
+    "error": "Impossible de charger votre parcours.",
+    "to_content": "Navigateur de contenu",
+    "node": {
+      "lesson": "Leçon",
+      "stars": "étoiles",
+      "recommended": "Recommandé",
+      "locked": "Verrouillé",
+      "receptive_short": "R",
+      "productive_short": "P",
+      "exercises": "{n} exercices"
+    },
+    "group": {
+      "mastery": "{r} réceptif, {p} productif maîtrisés",
+      "progress_aria": "{completed} sur {total} leçons terminées"
+    },
+    "search_placeholder": "Rechercher des leçons…",
+    "filter": {
+      "status": "Filtre d'état",
+      "direction": "Filtre de direction",
+      "all": "Tous",
+      "not_started": "Non commencé",
+      "in_progress": "En cours",
+      "mastered": "Maîtrisé",
+      "receptive": "Réceptif seulement",
+      "productive": "Productif seulement"
+    },
+    "stats": {
+      "title": "Stats",
+      "lessons": "Leçons",
+      "receptive": "Réceptif",
+      "productive": "Productif"
+    },
+    "clusters": {
+      "toggle": "Afficher les groupes d'erreurs",
+      "empty": "Pas encore de schémas d'erreurs communs — continuez.",
+      "lessons": "{n} leçons",
+      "start_adaptive": "Lancer une leçon adaptative"
     }
   }
 }

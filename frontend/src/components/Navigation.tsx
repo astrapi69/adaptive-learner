@@ -153,6 +153,13 @@ export default function Navigation() {
                     {t("nav.dashboard", "Dashboard")}
                 </NavLink>
                 <NavLink
+                    to="/learning-path"
+                    className={linkClass}
+                    data-testid="nav-learning-path"
+                >
+                    {t("nav.learning_path", "Learning Path")}
+                </NavLink>
+                <NavLink
                     to="/session"
                     className={linkClass}
                     data-testid="nav-session"

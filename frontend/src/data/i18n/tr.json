@@ -25,6 +25,7 @@
     "minutes": "dakika"
   },
   "nav": {
+    "learning_path": "Öğrenme yolu",
     "dashboard": "Pano",
     "session": "Oturum",
     "curriculum": "Müfredat",
@@ -1946,6 +1947,53 @@
         "title": "Konuşma alıştırması",
         "desc": "5 kart yuvası, kelime parçaları + boşluk doldurma."
       }
+    }
+  },
+  "learning_path": {
+    "title": "Öğrenme yolu",
+    "subtitle": "Neredesiniz ve sırada ne var.",
+    "aria_canvas": "Öğrenme yolu grafiği",
+    "reset_layout": "Düzeni sıfırla",
+    "loading": "Öğrenme yolunuz oluşturuluyor…",
+    "empty": "Yolunuzu görmek için önce bir ders seti indirin.",
+    "empty_cta": "İçeriğe göz at",
+    "error": "Öğrenme yolunuz yüklenemedi.",
+    "to_content": "İçerik tarayıcısı",
+    "node": {
+      "lesson": "Ders",
+      "stars": "yıldız",
+      "recommended": "Önerilen",
+      "locked": "Kilitli",
+      "receptive_short": "A",
+      "productive_short": "Ü",
+      "exercises": "{n} alıştırma"
+    },
+    "group": {
+      "mastery": "{r} alımlayıcı, {p} üretici ustalaşıldı",
+      "progress_aria": "{total} dersin {completed} tanesi tamamlandı"
+    },
+    "search_placeholder": "Ders ara…",
+    "filter": {
+      "status": "Durum filtresi",
+      "direction": "Yön filtresi",
+      "all": "Tümü",
+      "not_started": "Başlanmadı",
+      "in_progress": "Devam ediyor",
+      "mastered": "Ustalaşıldı",
+      "receptive": "Yalnızca alımlayıcı",
+      "productive": "Yalnızca üretici"
+    },
+    "stats": {
+      "title": "İstatistikler",
+      "lessons": "Dersler",
+      "receptive": "Alımlayıcı",
+      "productive": "Üretici"
+    },
+    "clusters": {
+      "toggle": "Hata kümelerini göster",
+      "empty": "Henüz ortak hata deseni yok — pratiğe devam edin.",
+      "lessons": "{n} ders",
+      "start_adaptive": "Uyarlanabilir ders başlat"
     }
   }
 }

@@ -6988,3 +6988,357 @@ select:focus {
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------
+   Visual Learning Path (Phase 66 / EXP-022, @xyflow/react).
+   Theme-aware: React Flow v12 reads its colours from --xy-* CSS
+   variables, which we map to the app's theme tokens so the graph
+   recolours across all themes (incl. dark) with no hardcoded hex.
+   --------------------------------------------------------------- */
+.learning-path-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  height: calc(100vh - 80px);
+  padding: var(--space-3);
+}
+
+.learning-path-header h1 {
+  margin: 0;
+}
+
+.learning-path-canvas {
+  flex: 1 1 auto;
+  min-height: 60vh;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.react-flow {
+  --xy-background-color: var(--bg);
+  --xy-node-background-color-default: var(--surface);
+  --xy-node-color-default: var(--fg);
+  --xy-node-border-default: 1px solid var(--border);
+  --xy-edge-stroke-default: var(--fg-muted);
+  --xy-edge-stroke-selected-default: var(--accent);
+  --xy-connectionline-stroke-default: var(--accent);
+  --xy-attribution-background-color-default: transparent;
+  --xy-controls-button-background-color-default: var(--surface);
+  --xy-controls-button-background-color-hover-default: var(--surface-2);
+  --xy-controls-button-color-default: var(--fg);
+  --xy-controls-button-border-color-default: var(--border);
+  --xy-minimap-background-color-default: var(--surface);
+}
+
+.react-flow__minimap-mask {
+  fill: color-mix(in srgb, var(--bg) 70%, transparent);
+}
+
+.react-flow__controls-button {
+  min-width: 28px;
+  min-height: 28px;
+}
+
+/* Lesson node (66B) — status-coloured, theme-token-driven. */
+.lesson-node {
+  position: relative;
+  width: 180px;
+  min-height: 80px;
+  padding: 8px 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.lesson-node:disabled {
+  cursor: not-allowed;
+}
+
+.lesson-node--not-started {
+  border-color: var(--border);
+  background: var(--surface-2);
+}
+.lesson-node--in-progress {
+  border-color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 10%, var(--surface));
+}
+.lesson-node--paused {
+  border-color: var(--warning);
+  border-style: dashed;
+  background: color-mix(in srgb, var(--warning) 8%, var(--surface));
+}
+.lesson-node--completed {
+  border-color: var(--success);
+  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+}
+.lesson-node--mastered {
+  border-color: var(--success);
+  background: color-mix(in srgb, var(--success) 22%, var(--surface));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--success) 40%, transparent);
+}
+.lesson-node.is-recommended {
+  border-color: var(--accent);
+  animation: lesson-node-pulse 1.6s ease-in-out infinite;
+}
+.lesson-node.is-locked {
+  opacity: 0.6;
+}
+
+@keyframes lesson-node-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+.lesson-node-title {
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+.lesson-node-stars {
+  display: flex;
+  gap: 2px;
+  color: var(--star);
+}
+.lesson-node-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  margin-top: auto;
+}
+.lesson-node-mastery {
+  display: flex;
+  gap: 3px;
+}
+.lesson-node-mastery-pill {
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+.lesson-node-mastery-pill.is-receptive {
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+  color: var(--accent);
+}
+.lesson-node-mastery-pill.is-productive {
+  background: color-mix(in srgb, var(--success) 18%, var(--surface));
+  color: var(--success);
+}
+.lesson-node-badge-xp {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 0.6rem;
+  padding: 1px 5px;
+  border-radius: 8px;
+}
+.lesson-node-badge-recommended {
+  position: absolute;
+  top: -9px;
+  left: 6px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 0.6rem;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+.lesson-node-lock {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: var(--fg-muted);
+}
+.lesson-node-handle {
+  background: var(--border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-node.is-recommended {
+    animation: none;
+  }
+}
+
+/* Set group node (66C) — header + progress + mastery, collapsible.
+   A subtle accent tint marks the group (theme-token only). */
+.set-group {
+  width: 260px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+  overflow: hidden;
+}
+.set-group.is-collapsed {
+  width: 240px;
+}
+.set-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.set-group-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.set-group-pair {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--fg-muted);
+}
+.set-group-progress {
+  position: relative;
+  height: 18px;
+  margin: 8px 10px 0;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.set-group-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  background: color-mix(in srgb, var(--success) 45%, var(--surface));
+  transition: width 0.3s ease;
+}
+.set-group-progress-label {
+  position: relative;
+  display: block;
+  text-align: center;
+  font-size: 0.7rem;
+  line-height: 18px;
+  color: var(--fg);
+}
+.set-group-mastery {
+  margin: 6px 10px 10px;
+  font-size: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .set-group-progress-fill {
+    transition: none;
+  }
+}
+
+/* Learning-path edges (66D) — theme-token stroke per state. */
+.react-flow__edge.lp-edge--completed .react-flow__edge-path {
+  stroke: var(--success);
+  stroke-width: 2;
+}
+.react-flow__edge.lp-edge--upcoming .react-flow__edge-path {
+  stroke: var(--fg-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 4;
+}
+.react-flow__edge.lp-edge--adaptive .react-flow__edge-path {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.learning-path-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Filter/search controls + stats sidebar + search highlight (66F). */
+.learning-path-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+.learning-path-search {
+  min-width: 180px;
+}
+.learning-path-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: 6px 10px;
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.85rem;
+}
+.react-flow__node.lp-faded {
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+.react-flow__node.lp-highlighted .lesson-node {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+.react-flow__node.lp-cluster .lesson-node {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 60%, transparent);
+}
+
+/* Error-cluster panel (66G). */
+.learning-path-clusters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+.learning-path-cluster {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, var(--border));
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+}
+.learning-path-cluster.is-active {
+  border-color: var(--danger);
+}
+.learning-path-cluster-label {
+  border: none;
+  background: none;
+  color: var(--fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__node.lp-faded {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__edge.animated .react-flow__edge-path {
+    animation: none;
+  }
+}

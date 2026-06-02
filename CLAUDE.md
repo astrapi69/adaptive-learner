@@ -9,8 +9,26 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.49.0** (minor - **Phase 65 — API-key
-  UX + Community Sharing via PR + Analysis loading**). API keys
+- **Current state:** **v1.49.0+** (post-release — **Phase 66 —
+  Visual Learning Path** merged to main without a tag). An
+  interactive @xyflow/react graph at ``/learning-path`` shows the
+  learner's full lesson journey: set-group nodes (progress bar,
+  per-direction mastery, collapsible) + lesson nodes (status,
+  stars 0-3, receptive/productive mastery pills, XP, recommended
+  badge, lock). Dagre auto-layout (TB) + draggable nodes with
+  per-user localStorage position persistence + Reset button.
+  Status/direction filters + full-text search (Enter navigates to
+  first match) + stats sidebar. Error-cluster panel: shared error
+  patterns (≥ 2 lessons) grouped by tag with one-click adaptive
+  lesson launch. Nav link, Content Browser button, Dashboard quick
+  action. WCAG a11y: role="status" on loading, aria-label on all
+  controls, React.memo on node views, memoized callbacks. Lazy-
+  loaded (xyflow ~100 KB). Both storage modes; no new i18n keys
+  (reuses existing tags). Phase 65 / EXP-021: standalone 4-step
+  **Lesson Creator** at ``/create-lesson`` also in this post-tag
+  block.
+  v1.49.0 = minor - **Phase 65 — API-key
+  UX + Community Sharing via PR + Analysis loading**. API keys
   get instant **format validation** (prefix + length per
   provider, green/red + checkmark, Save gated), a live **Test**
   button (backend ``POST /settings/{user}/test-api-key`` +
@@ -704,7 +722,9 @@ Landing, Onboarding, Assessment, Dashboard, Session, Curriculum,
 Progress, Settings, Import, ImportDetail, Anki, Pronunciation,
 Content, Lesson, Review, AdaptiveLesson, LearningRepo,
 CreateLesson (Phase 65 / EXP-021 — the standalone 4-step Lesson
-Creator at ``/create-lesson``), NotFound.
+Creator at ``/create-lesson``),
+LearningPath (Phase 66 / EXP-022 — interactive @xyflow/react
+graph at ``/learning-path``), NotFound.
 
 **Dual storage** (since v0.7.0): `IStorageService` interface with
 two implementations. `ApiStorage` talks to the FastAPI backend
