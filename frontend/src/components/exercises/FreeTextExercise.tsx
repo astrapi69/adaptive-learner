@@ -32,6 +32,7 @@ import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveFreeTextAttempt} from "../../lib/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -135,6 +136,7 @@ function FreeTextExercise(
         controlled = false,
         onInteraction,
         reviewed = null,
+        ttsLang = null,
     }: FreeTextExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -233,12 +235,21 @@ function FreeTextExercise(
             className="free-text-exercise"
             data-testid="free-text-exercise"
         >
-            <p
-                className="free-text-prompt"
-                data-testid="free-text-prompt"
-            >
-                {exercise.prompt}
-            </p>
+            <div className="exercise-prompt-row">
+                <p
+                    className="free-text-prompt"
+                    data-testid="free-text-prompt"
+                >
+                    {exercise.prompt}
+                </p>
+                {ttsLang && !codeMode && (
+                    <ReadAloudButton
+                        text={exercise.prompt ?? ""}
+                        lang={ttsLang}
+                        testId="free-text-prompt"
+                    />
+                )}
+            </div>
 
             <DirectionInstruction exercise={exercise} />
 

@@ -6530,6 +6530,28 @@ select:focus {
         animation: none;
     }
 }
+
+/* Prompt + its read-aloud button on one row (C2). */
+.exercise-prompt-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+.exercise-prompt-row > p {
+    flex: 1 1 auto;
+    margin: 0;
+}
+.exercise-prompt-row .read-aloud-button {
+    flex: 0 0 auto;
+    margin-top: 2px;
+}
+
+/* Read-aloud control above a theory step body (C2). */
+.lesson-theory-tts {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--space-2);
+}
 .chat-message-actions {
     display: flex;
     justify-content: flex-end;

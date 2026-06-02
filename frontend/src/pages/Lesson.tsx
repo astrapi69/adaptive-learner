@@ -53,6 +53,8 @@ import {
 } from "../components/exercises/ExerciseDispatcher";
 import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import Confetti from "../components/feedback/Confetti";
+import ReadAloudButton from "../components/lesson/ReadAloudButton";
+import {markdownToSpeech} from "../lib/lesson/tts-text";
 import {useCountUp} from "../hooks/useCountUp";
 import {useFeedbackIntensity} from "../hooks/useFeedbackIntensity";
 import {useI18n} from "../hooks/useI18n";
@@ -614,6 +616,7 @@ export default function LessonPage() {
                     {step!.type === "theory" ? (
                         <TheoryStep
                             body={step!.body ?? ""}
+                            ttsLang={lesson.target_language}
                             lessonRewriteFn={(s) =>
                                 rewriteAnchors(s, lesson)
                             }
@@ -774,24 +777,41 @@ export default function LessonPage() {
 
 interface TheoryStepProps {
     body: string;
+    /** TTS feature C2 — lesson target language for read-aloud. */
+    ttsLang?: string | null;
     lessonRewriteFn: (body: string) => string;
     onAnchorClick: (stepId: string) => void;
 }
 
 function TheoryStep({
     body,
+    ttsLang = null,
     lessonRewriteFn,
     onAnchorClick,
 }: TheoryStepProps) {
+    const {t} = useI18n();
     const rewritten = useMemo(
         () => lessonRewriteFn(body),
         [body, lessonRewriteFn],
     );
+    // Plain-text projection of the body for read-aloud (markdown
+    // syntax + code blocks stripped).
+    const speechText = useMemo(() => markdownToSpeech(body), [body]);
     return (
         <div
             className="lesson-theory markdown-body"
             data-testid="lesson-theory-body"
         >
+            {ttsLang && speechText.length > 0 && (
+                <div className="lesson-theory-tts">
+                    <ReadAloudButton
+                        text={speechText}
+                        lang={ttsLang}
+                        label={t("lesson.tts.read_aloud", "Read aloud")}
+                        testId="theory"
+                    />
+                </div>
+            )}
             <Markdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}

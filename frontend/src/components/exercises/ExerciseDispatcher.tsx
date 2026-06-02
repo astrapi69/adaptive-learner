@@ -116,6 +116,11 @@ function ExerciseDispatcher(
         controlled,
         onInteraction,
         reviewed,
+        // TTS feature C2 — language used to read the prompt aloud, and
+        // a flag so renderers suppress read-aloud on code/formula
+        // content (reading code aloud is useless).
+        ttsLang: targetLanguage,
+        codeMode,
         onComplete: (scored: ExerciseScored) => {
             void onComplete(scored);
         },
@@ -152,7 +157,6 @@ function ExerciseDispatcher(
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
-                codeMode={codeMode}
                 codeLanguage={codeLanguage}
                 {...shared}
             />
@@ -176,7 +180,6 @@ function ExerciseDispatcher(
                 exercise={ex}
                 setId={setId}
                 lessonId={lessonId}
-                codeMode={codeMode}
                 {...shared}
             />
         );

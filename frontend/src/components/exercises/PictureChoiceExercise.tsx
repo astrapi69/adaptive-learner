@@ -37,6 +37,7 @@ import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "rea
 
 import {useAsset} from "../../hooks/useAsset";
 import {useI18n} from "../../hooks/useI18n";
+import ReadAloudButton from "../lesson/ReadAloudButton";
 import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
 import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -109,6 +110,8 @@ function PictureChoiceExercise(
         controlled = false,
         onInteraction,
         reviewed = null,
+        ttsLang = null,
+        codeMode = false,
     }: PictureChoiceExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -187,12 +190,21 @@ function PictureChoiceExercise(
             className="picture-exercise"
             data-testid="picture-exercise"
         >
-            <p
-                className="picture-prompt"
-                data-testid="picture-prompt"
-            >
-                {exercise.prompt}
-            </p>
+            <div className="exercise-prompt-row">
+                <p
+                    className="picture-prompt"
+                    data-testid="picture-prompt"
+                >
+                    {exercise.prompt}
+                </p>
+                {ttsLang && !codeMode && (
+                    <ReadAloudButton
+                        text={exercise.prompt ?? ""}
+                        lang={ttsLang}
+                        testId="picture-prompt"
+                    />
+                )}
+            </div>
 
             <DirectionInstruction exercise={exercise} />
 

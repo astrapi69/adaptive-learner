@@ -65,4 +65,11 @@ export interface ControlledExerciseProps {
      *  post-check visual reconstructed from this persisted
      *  answer (Problem 2 — revisit a completed step). */
     reviewed?: RawAnswer | null;
+    /** TTS feature C2 — BCP-47 language the prompt is read aloud in
+     *  (the lesson's target language). Absent => no read-aloud. */
+    ttsLang?: string | null;
+    /** TTS feature C2 — true when this exercise teaches code/formula
+     *  content; renderers suppress read-aloud (reading code aloud is
+     *  useless). Also set independently by the code-aware renderers. */
+    codeMode?: boolean;
 }
