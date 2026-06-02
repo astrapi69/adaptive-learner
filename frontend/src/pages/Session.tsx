@@ -479,7 +479,22 @@ export default function Session() {
                 );
             }
             if (result.ai_error) {
-                notify.error(result.ai_error);
+                // Map known classifications (no AI key / no provider
+                // configured) to a friendly, localized message that
+                // tells the user how to fix it and that the lessons
+                // still work without a key. Unclassified / provider
+                // errors fall through to the raw detail.
+                const code = result.ai_error_code;
+                if (code === "no_api_key" || code === "no_provider") {
+                    notify.error(
+                        t(
+                            "session.no_api_key",
+                            "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key.",
+                        ),
+                    );
+                } else {
+                    notify.error(result.ai_error);
+                }
             }
         } catch (err) {
             // Roll back both optimistic appends + surface the

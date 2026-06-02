@@ -328,6 +328,41 @@ describe("Session page", () => {
         expect(screen.getByText("Frage")).toBeInTheDocument();
     });
 
+    it("maps the no_api_key code to a friendly toast (not the raw English detail)", async () => {
+        apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
+        apiMessage.mockResolvedValue({
+            user_message: {
+                id: "m-user",
+                session_id: "s-1",
+                role: "user",
+                content: "Frage",
+                created_at: "2026-05-18T00:01:00Z",
+            },
+            assistant_message: null,
+            ai_error: "No API key stored for provider 'anthropic'.",
+            // Dexie session-flow classifies the missing-key case so
+            // the UI can show a friendly, localized message.
+            ai_error_code: "no_api_key",
+            session: SESSION,
+        });
+        renderSession();
+        await screen.findByTestId("session");
+        fireEvent.change(screen.getByTestId("chat-input"), {
+            target: {value: "Frage"},
+        });
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("chat-send"));
+        });
+        await waitFor(() => {
+            expect(toastError).toHaveBeenCalled();
+        });
+        const shown = toastError.mock.calls[0][0] as string;
+        // The friendly message guides to Settings + reassures that
+        // lessons work without a key; it must NOT be the raw detail.
+        expect(shown).not.toBe("No API key stored for provider 'anthropic'.");
+        expect(shown).toMatch(/Settings|Einstellungen|key|Schlüssel/i);
+    });
+
     it("end session submits rating then ends + navigates", async () => {
         apiStart.mockResolvedValue({session: SESSION, system_prompt: "S"});
         apiRate.mockResolvedValue({

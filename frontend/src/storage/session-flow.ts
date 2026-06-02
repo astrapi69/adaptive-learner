@@ -232,6 +232,11 @@ interface SendMessageResult {
     user_message: SessionMessage;
     assistant_message: SessionMessage | null;
     ai_error: string | null;
+    /** Machine-readable classification of ``ai_error`` so the UI can
+     *  map known cases (no AI key configured, no provider) to a
+     *  friendly, localized message instead of surfacing the raw
+     *  English detail. ``null`` for unclassified / provider errors. */
+    ai_error_code?: "no_api_key" | "no_provider" | null;
     session: LearningSession;
     step_evaluation: StepEvaluationVerdict | null;
     /** v1.4.0 — auto-loop not yet implemented in Dexie mode; always null. */
@@ -272,12 +277,14 @@ export async function sendMessage(opts: {
         assistant: SessionMessageRow | null,
         aiError: string | null,
         stepEval: StepEvaluationVerdict | null,
+        aiErrorCode: SendMessageResult["ai_error_code"] = null,
     ): Promise<SendMessageResult> => {
         const freshSession = await db.learningSessions.get(sess.id);
         return {
             user_message: rowToMessageDto(userMsgRow),
             assistant_message: assistant ? rowToMessageDto(assistant) : null,
             ai_error: aiError,
+            ai_error_code: aiErrorCode,
             session: rowToSessionDto(freshSession ?? sess),
             step_evaluation: stepEval,
         };
@@ -297,12 +304,22 @@ export async function sendMessage(opts: {
         .equals(project.user_id)
         .first();
     if (!settings) {
-        return buildResponse(null, "No active AI provider configured.", null);
+        return buildResponse(
+            null,
+            "No active AI provider configured.",
+            null,
+            "no_provider",
+        );
     }
     const provider = settings.active_provider;
     const apiKey = settings[`api_key_${provider}`] as string | null;
     if (!apiKey) {
-        return buildResponse(null, `No API key stored for provider '${provider}'.`, null);
+        return buildResponse(
+            null,
+            `No API key stored for provider '${provider}'.`,
+            null,
+            "no_api_key",
+        );
     }
     const override = settings[`model_override_${provider}`] as string | null;
     const model = resolveModel(provider, override);
@@ -454,12 +471,14 @@ export async function sendMessageStream(
         assistant: SessionMessageRow | null,
         aiError: string | null,
         stepEval: StepEvaluationVerdict | null,
+        aiErrorCode: SendMessageResult["ai_error_code"] = null,
     ): Promise<SendMessageResult> => {
         const freshSession = await db.learningSessions.get(sess.id);
         return {
             user_message: rowToMessageDto(userMsgRow),
             assistant_message: assistant ? rowToMessageDto(assistant) : null,
             ai_error: aiError,
+            ai_error_code: aiErrorCode,
             session: rowToSessionDto(freshSession ?? sess),
             step_evaluation: stepEval,
         };
@@ -479,12 +498,22 @@ export async function sendMessageStream(
         .equals(project.user_id)
         .first();
     if (!settings) {
-        return buildResponse(null, "No active AI provider configured.", null);
+        return buildResponse(
+            null,
+            "No active AI provider configured.",
+            null,
+            "no_provider",
+        );
     }
     const provider = settings.active_provider;
     const apiKey = settings[`api_key_${provider}`] as string | null;
     if (!apiKey) {
-        return buildResponse(null, `No API key stored for provider '${provider}'.`, null);
+        return buildResponse(
+            null,
+            `No API key stored for provider '${provider}'.`,
+            null,
+            "no_api_key",
+        );
     }
     const override = settings[`model_override_${provider}`] as string | null;
     const model = resolveModel(provider, override);

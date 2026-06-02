@@ -304,6 +304,7 @@
     "message_placeholder": "Write your reply…",
     "ai_thinking": "Thinking…",
     "ai_error": "The AI provider could not reply.",
+    "no_api_key": "No AI key set. Add a key for your AI provider in Settings to chat with the tutor. Lessons and reviews work without a key.",
     "welcome_empty": "Ready to learn! Write your first message.",
     "end_session": "End session",
     "end_session_confirm": "Sure? We will close the session and ask for a rating.",

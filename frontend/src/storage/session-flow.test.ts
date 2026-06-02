@@ -359,6 +359,10 @@ describe("session.message", () => {
         });
         expect(result.assistant_message).toBeNull();
         expect(result.ai_error).toMatch(/No API key/i);
+        // BUG report — the missing-key case is classified so the UI
+        // can show a friendly localized message instead of the raw
+        // English detail.
+        expect(result.ai_error_code).toBe("no_api_key");
     });
 
     it("non-user role skips the AI step entirely", async () => {

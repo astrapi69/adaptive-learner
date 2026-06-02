@@ -237,6 +237,10 @@ export interface SessionMessageExchangeResult {
     user_message: SessionMessage;
     assistant_message: SessionMessage | null;
     ai_error: string | null;
+    /** Machine-readable classification of ``ai_error`` (Dexie session
+     *  flow) so the UI maps known cases to a friendly localized
+     *  message. ``null``/absent for unclassified or backend errors. */
+    ai_error_code?: "no_api_key" | "no_provider" | null;
     session: LearningSession;
     /** v0.5.0 — Phase 8B dual-prompt verdict (null when disabled / not reached). */
     step_evaluation: StepEvaluationVerdict | null;

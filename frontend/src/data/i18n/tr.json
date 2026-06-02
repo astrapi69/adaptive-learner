@@ -304,6 +304,7 @@
     "message_placeholder": "Cevabını yaz…",
     "ai_thinking": "Düşünüyor…",
     "ai_error": "YZ sağlayıcısı cevap veremedi.",
+    "no_api_key": "Yapay zekâ anahtarı ayarlanmadı. Eğitmenle sohbet etmek için Ayarlar'da yapay zekâ sağlayıcın için bir anahtar ekle. Dersler ve tekrarlar anahtarsız çalışır.",
     "welcome_empty": "Öğrenmeye hazır! İlk mesajını yaz.",
     "end_session": "Oturumu bitir",
     "end_session_confirm": "Emin misin? Oturumu kapatıp bir değerlendirme isteyeceğiz.",

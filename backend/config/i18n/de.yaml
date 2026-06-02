@@ -281,6 +281,7 @@ session:
   message_placeholder: Schreibe deine Antwort …
   ai_thinking: Denkt nach …
   ai_error: Die KI konnte nicht antworten.
+  no_api_key: "Kein KI-Schlüssel gesetzt. Hinterlege in den Einstellungen einen Schlüssel für deinen KI-Anbieter, um mit dem Tutor zu chatten. Lektionen und Wiederholungen funktionieren ohne Schlüssel."
   welcome_empty: "Bereit zum Lernen! Schreibe deine erste Nachricht."
   end_session: Session beenden
   end_session_confirm: Sicher? Wir können die Session beenden und bewerten.

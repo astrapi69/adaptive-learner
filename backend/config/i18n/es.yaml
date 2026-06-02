@@ -281,6 +281,7 @@ session:
   message_placeholder: Escribe tu respuesta...
   ai_thinking: Pensando...
   ai_error: El proveedor de IA no pudo responder.
+  no_api_key: "No hay clave de IA configurada. Añade una clave para tu proveedor de IA en Ajustes para chatear con el tutor. Las lecciones y los repasos funcionan sin clave."
   welcome_empty: "Ready to learn! Write your first message."
   end_session: Terminar sesion
   end_session_confirm: Seguro? Cerraremos la sesion y pediremos una valoracion.

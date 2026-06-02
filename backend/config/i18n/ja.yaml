@@ -281,6 +281,7 @@ session:
   message_placeholder: 返信を入力…
   ai_thinking: 考え中…
   ai_error: AI プロバイダーが返信できませんでした。
+  no_api_key: "AIキーが設定されていません。チューターとチャットするには、設定でAIプロバイダーのキーを追加してください。レッスンと復習はキーなしで利用できます。"
   welcome_empty: "学習を始めましょう！最初のメッセージを書いてください。"
   end_session: セッションを終了
   end_session_confirm: よろしいですか? セッションを終了して評価をお願いします。
