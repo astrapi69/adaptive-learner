@@ -103,6 +103,16 @@ navigation:
           ja: マイレッスン
         slug: user-guide/my-lessons
       - title:
+          de: Lernpfad
+          en: Learning Path
+          es: Ruta de aprendizaje
+          fr: Parcours d'apprentissage
+          el: Μαθησιακή διαδρομή
+          pt: Caminho de aprendizagem
+          tr: Öğrenme yolu
+          ja: 学習パス
+        slug: user-guide/learning-path
+      - title:
           de: Dashboard
           en: Dashboard
           es: Panel

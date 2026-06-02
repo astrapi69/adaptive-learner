@@ -70,6 +70,7 @@ EN_MARKERS = {
 # EN-passthrough.
 EN_ALLOWED_TOKENS = {
     "adaptive learner",
+    "continue",  # valid word in PT/ES/FR — not an EN passthrough
     "anthropic claude",
     "openai gpt",
     "google gemini",
