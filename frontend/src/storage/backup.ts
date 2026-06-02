@@ -188,6 +188,80 @@ const BACKUP_TABLES: Record<string, BackupTableSpec> = {
         appendOnly: true,
         scope: "via_project",
     },
+    // BACKUP-DIR-EXPORT-01 — bring the Dexie backup up to parity
+    // with the backend sync surface (``sync_service.TABLES``).
+    // Before this, a Dexie-mode (GitHub Pages) export silently
+    // dropped EVERY gamification / progress / SRS / missions row:
+    // a backup looked complete but lost the user's actual learning
+    // state. These mirror the backend specs one-for-one (all
+    // ``scope="direct"`` -> Dexie ``"user"``, mutable, ``updated_at``;
+    // ``badges`` is the GLOBAL catalog like ``subjects``).
+    user_xp: {
+        store: "userXp",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
+    badges: {
+        store: "badges",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "global",
+    },
+    user_badges: {
+        store: "userBadges",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
+    anki_card_suggestions: {
+        store: "ankiCards",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
+    study_questions: {
+        store: "studyQuestions",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
+    user_streaks: {
+        store: "userStreaks",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
+    lesson_progress: {
+        store: "lessonProgress",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
+    element_errors: {
+        store: "elementErrors",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
+    user_missions: {
+        store: "userMissions",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
+    // Phase 65 — API-key rollback cache. Carries Fernet ciphertext
+    // (same scheme as ``UserSettings.api_key_*``). The backend syncs
+    // and backs this up, so we mirror it for a "same file both
+    // directions" guarantee. Unlike the plaintext ``api_key_*``
+    // fields, the ciphertext is keyed to the install's secret and
+    // is useless without it, so it is NOT stripped on export.
+    api_key_backups: {
+        store: "apiKeyBackups",
+        timestampField: "updated_at",
+        appendOnly: false,
+        scope: "user",
+    },
 };
 
 /**
@@ -218,6 +292,20 @@ const RESTORE_ORDER: readonly string[] = [
     "tags",
     "project_subjects",
     "project_tags",
+    // BACKUP-DIR-EXPORT-01 — gamification / progress / SRS /
+    // missions. ``badges`` (the catalog) before ``user_badges``
+    // (which references a badge id); the rest are direct user-scope
+    // rows with no cross-table FK inside the backup set.
+    "user_xp",
+    "badges",
+    "user_badges",
+    "anki_card_suggestions",
+    "study_questions",
+    "user_streaks",
+    "lesson_progress",
+    "element_errors",
+    "user_missions",
+    "api_key_backups",
 ];
 
 // ---- Helpers -----------------------------------------------------------
