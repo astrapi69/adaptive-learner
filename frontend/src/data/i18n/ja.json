@@ -1706,6 +1706,8 @@
       "thanks": "共有していただきありがとうございます! あなたの貢献は他の学習者の助けになります。",
       "submitted": "GitHub にレッスンが入力済みのプルリクエストが開きました。確認して「Create pull request」をクリックしてください。コンテンツリポジトリの CI が自動で検証します。",
       "view_submission": "GitHub でプルリクエストを開く",
+      "view_upload": "GitHub のアップロードページを開く",
+      "popup_blocked": "ブラウザが GitHub のタブをブロックしました。下のリンクをクリックして手動で開いてください。",
       "upload_instructions": "レッスンファイルがダウンロードされました。開いた GitHub ページでファイルをアップロード領域にドラッグし、「Propose changes」をクリックしてください。GitHub がプルリクエストを作成します。",
       "copy_pr_body": "プルリクエストの説明をコピー",
       "copy_pr_body_done": "コピーしました！",

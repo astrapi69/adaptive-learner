@@ -1561,6 +1561,8 @@ content:
     thanks: Paylaştığınız için teşekkürler! Katkınız diğer öğrenenlere yardımcı oluyor.
     submitted: "GitHub'da dersinizin önceden doldurulduğu bir pull request açıldı. İnceleyin ve \"Create pull request\" düğmesine tıklayın - içerik deposunun CI'si otomatik olarak doğrular."
     view_submission: "Pull request'i GitHub'da aç"
+    view_upload: "GitHub yükleme sayfasını aç"
+    popup_blocked: "Tarayıcın GitHub sekmesini engelledi. Manuel olarak açmak için aşağıdaki bağlantıya tıkla."
     upload_instructions: "Ders dosyanız indirildi. Az önce açılan GitHub sayfasında dosyayı yükleme alanına sürükleyin ve \"Propose changes\" düğmesine tıklayın - GitHub pull request'i sizin için oluşturur."
     copy_pr_body: "Pull request açıklamasını kopyala"
     copy_pr_body_done: "Kopyalandı!"

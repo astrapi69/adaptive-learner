@@ -76,7 +76,10 @@ const okValidation = { ok: true, issues: [], warnings: [] };
 function renderWizard(over: Partial<React.ComponentProps<typeof ShareWizard>> = {}) {
   const onShared = vi.fn();
   const onClose = vi.fn();
-  const openUrl = vi.fn();
+  // window.open succeeds by default (returns truthy); a test overrides
+  // it to return false to exercise the popup-blocked fallback.
+  const openUrl = vi.fn((_url: string) => true);
+  const downloadLesson = vi.fn();
   const props = {
     entry: entry(),
     lessons: [lesson("mine", ["word0", "word1", "word2"])],
@@ -91,10 +94,18 @@ function renderWizard(over: Partial<React.ComponentProps<typeof ShareWizard>> = 
     onShared,
     onClose,
     openUrl,
+    downloadLesson,
     ...over,
   };
   render(<ShareWizard {...props} />);
-  return { onShared, onClose, openUrl, props };
+  // Return the EFFECTIVE download mock (an override in `over` wins).
+  return { onShared, onClose, openUrl, downloadLesson: props.downloadLesson, props };
+}
+
+function advanceToStep4() {
+  fireEvent.click(screen.getByTestId("share-wizard-next"));
+  fireEvent.click(screen.getByTestId("share-wizard-next"));
+  fireEvent.click(screen.getByTestId("share-wizard-next"));
 }
 
 beforeEach(() => {
@@ -191,6 +202,66 @@ describe("ShareWizard: share + celebration (step 4)", () => {
       "href",
       expect.stringContaining("github.com"),
     );
+  });
+
+  it("opens the GitHub create-file URL and does NOT download for a small lesson", () => {
+    // Regression (P0): a small lesson must go straight to the PR
+    // create-file URL — no download / save dialog.
+    const { openUrl, downloadLesson } = renderWizard();
+    advanceToStep4();
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+
+    expect(openUrl).toHaveBeenCalledTimes(1);
+    expect(openUrl.mock.calls[0][0]).toContain("/new/main?");
+    expect(downloadLesson).not.toHaveBeenCalled();
+    expect(
+      screen.queryByTestId("share-wizard-popup-blocked"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows a manual fallback link when the popup is blocked", () => {
+    // Regression (P0): window.open blocked -> the user must still be
+    // able to reach GitHub via a visible link.
+    const { downloadLesson } = renderWizard({ openUrl: vi.fn((_url: string) => false) });
+    advanceToStep4();
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+
+    expect(
+      screen.getByTestId("share-wizard-popup-blocked"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("share-wizard-pr-link")).toHaveAttribute(
+      "href",
+      expect.stringContaining("github.com"),
+    );
+    // PR path: still no download even when blocked.
+    expect(downloadLesson).not.toHaveBeenCalled();
+  });
+
+  it("opens GitHub BEFORE downloading on the upload path (gesture-safe order)", () => {
+    // Regression (P0): the GitHub page must open before the download
+    // consumes the user-activation, or the popup gets blocked.
+    const order: string[] = [];
+    const openUrl = vi.fn((_url: string) => {
+      order.push("open");
+      return true;
+    });
+    const downloadLesson = vi.fn(() => {
+      order.push("download");
+    });
+    const big = "x".repeat(20000);
+    const oversized: ContentLesson = {
+      id: "big",
+      title: "Big Lesson",
+      estimated_minutes: 10,
+      cards: [{ id: "big-c0", front: "f", back: "b", tags: [] }],
+      steps: [{ id: "big-s", type: "theory", body: big }],
+    };
+    renderWizard({ lessons: [oversized], openUrl, downloadLesson });
+    advanceToStep4();
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+
+    expect(openUrl.mock.calls[0][0]).toContain("/upload/main/");
+    expect(order).toEqual(["open", "download"]);
   });
 
   it("falls back to the upload page (download + drag-drop) for an oversized lesson", () => {

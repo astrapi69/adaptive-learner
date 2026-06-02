@@ -1563,6 +1563,8 @@ content:
     thanks: Merci d''avoir partagé ! Votre contribution aide d''autres apprenants.
     submitted: "Une pull request a ete ouverte sur GitHub avec ta lecon pre-remplie. Verifie-la et clique sur « Create pull request » - la CI du depot de contenu la valide automatiquement."
     view_submission: "Ouvrir la pull request sur GitHub"
+    view_upload: "Ouvrir la page d'envoi GitHub"
+    popup_blocked: "Ton navigateur a bloque l'onglet GitHub. Clique sur le lien ci-dessous pour l'ouvrir manuellement."
     upload_instructions: "Le fichier de ta lecon a ete telecharge. Sur la page GitHub qui vient de s'ouvrir, glisse le fichier dans la zone d'envoi et clique sur « Propose changes » - GitHub cree la pull request pour toi."
     copy_pr_body: "Copier la description de la pull request"
     copy_pr_body_done: "Copie !"

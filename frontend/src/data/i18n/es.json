@@ -1706,6 +1706,8 @@
       "thanks": "¡Gracias por compartir! Tu contribución ayuda a otras personas que aprenden.",
       "submitted": "Se abrió un pull request en GitHub con tu lección rellenada. Revísalo y haz clic en \"Create pull request\"; la CI del repositorio de contenido lo valida automáticamente.",
       "view_submission": "Abrir el pull request en GitHub",
+      "view_upload": "Abrir la página de subida de GitHub",
+      "popup_blocked": "Tu navegador bloqueó la pestaña de GitHub. Haz clic en el enlace de abajo para abrirla manualmente.",
       "upload_instructions": "Se descargó el archivo de tu lección. En la página de GitHub que se acaba de abrir, arrastra el archivo al área de carga y haz clic en \"Propose changes\"; GitHub crea el pull request por ti.",
       "copy_pr_body": "Copiar la descripción del pull request",
       "copy_pr_body_done": "¡Copiado!",

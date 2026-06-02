@@ -205,6 +205,19 @@ describe("communityPrUrl", () => {
     expect(value).toContain('"title": "Greetings"');
   });
 
+  it("keeps a small lesson's create-file URL under the length cap", () => {
+    const url = communityPrUrl({
+      repo: "astrapi69/adaptive-learner-content",
+      branch: "main",
+      filePath: "sets/en/es-a1/lessons/16-greetings.json",
+      lesson: LESSON,
+      prTitle: "content: Greetings (en->es A1)",
+      prBody: "## New lesson\n\nA small A1 lesson.\n",
+    });
+    expect(url).not.toBeNull();
+    expect(url!.length).toBeLessThan(MAX_PR_URL_LENGTH);
+  });
+
   it("returns null when the encoded URL would exceed the length cap", () => {
     // Pump the lesson body so its JSON pushes the URL past
     // MAX_PR_URL_LENGTH.
