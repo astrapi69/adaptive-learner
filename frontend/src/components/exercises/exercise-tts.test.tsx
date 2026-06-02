@@ -17,6 +17,8 @@ import type {ContentLessonExercise} from "../../storage/types";
 import FreeTextExercise from "./FreeTextExercise";
 import MatchingExercise from "./MatchingExercise";
 import ClozeExercise from "./ClozeExercise";
+import PictureChoiceExercise from "./PictureChoiceExercise";
+import WordTilesExercise from "./WordTilesExercise";
 
 function setMockSynth(): void {
     (globalThis as unknown as {window: typeof window}).window = {
@@ -71,6 +73,27 @@ const CLOZE: ContentLessonExercise = {
     sentence: "Yo ___ aquí.",
     blanks: [{accept: ["estoy"]}],
     cloze_mode: "type",
+    distractors: [],
+};
+
+const PICTURE: ContentLessonExercise = {
+    id: "ex-p",
+    type: "picture_choice",
+    prompt: "Pick the cat.",
+    card_ids: [],
+    images: [
+        {src: "a.svg", label: "Cat", is_correct: "true"},
+        {src: "b.svg", label: "Dog"},
+    ],
+    distractors: [],
+};
+
+const WORD_TILES: ContentLessonExercise = {
+    id: "ex-w",
+    type: "word_tiles",
+    prompt: "Order the words.",
+    card_ids: [],
+    tiles: ["yo", "hablo"],
     distractors: [],
 };
 
@@ -148,5 +171,71 @@ describe("exercise prompt read-aloud (C2)", () => {
             </I18nProvider>,
         );
         expect(screen.getByTestId("read-aloud-cloze-prompt")).toBeTruthy();
+    });
+
+    // QA D1 — picture_choice + word_tiles were previously only covered
+    // by the page integration test; pin them at the component layer too.
+    it("picture_choice surfaces a prompt speaker button with ttsLang", () => {
+        render(
+            <I18nProvider>
+                <PictureChoiceExercise
+                    exercise={PICTURE}
+                    ttsLang="es"
+                    onComplete={vi.fn()}
+                />
+            </I18nProvider>,
+        );
+        expect(
+            screen.getByTestId("read-aloud-picture-prompt"),
+        ).toBeTruthy();
+    });
+
+    it("picture_choice renders NO read-aloud without a ttsLang", () => {
+        const {container} = render(
+            <I18nProvider>
+                <PictureChoiceExercise
+                    exercise={PICTURE}
+                    onComplete={vi.fn()}
+                />
+            </I18nProvider>,
+        );
+        expect(
+            container.querySelector(
+                '[data-testid="read-aloud-picture-prompt"]',
+            ),
+        ).toBeNull();
+    });
+
+    it("word_tiles surfaces a prompt speaker button with ttsLang", () => {
+        render(
+            <I18nProvider>
+                <WordTilesExercise
+                    exercise={WORD_TILES}
+                    ttsLang="es"
+                    onComplete={vi.fn()}
+                />
+            </I18nProvider>,
+        );
+        expect(
+            screen.getByTestId("read-aloud-word-tiles-prompt"),
+        ).toBeTruthy();
+    });
+
+    it("word_tiles suppresses read-aloud for code content (codeMode)", () => {
+        const {container} = render(
+            <I18nProvider>
+                <WordTilesExercise
+                    exercise={WORD_TILES}
+                    ttsLang="es"
+                    codeMode
+                    onComplete={vi.fn()}
+                />
+            </I18nProvider>,
+        );
+        expect(
+            container.querySelector(
+                '[data-testid="read-aloud-word-tiles-prompt"]',
+            ),
+        ).toBeNull();
     });
 });
