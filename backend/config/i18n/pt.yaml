@@ -1784,3 +1784,18 @@ learning_path:
   group:
     mastery: "{r} recetivo, {p} produtivo dominados"
     progress_aria: "{completed} de {total} lições concluídas"
+  search_placeholder: "Pesquisar lições…"
+  filter:
+    status: "Filtro de estado"
+    direction: "Filtro de direção"
+    all: "Todos"
+    not_started: "Não iniciado"
+    in_progress: "Em curso"
+    mastered: "Dominado"
+    receptive: "Apenas recetivo"
+    productive: "Apenas produtivo"
+  stats:
+    title: "Estatísticas"
+    lessons: "Lições"
+    receptive: "Recetivo"
+    productive: "Produtivo"

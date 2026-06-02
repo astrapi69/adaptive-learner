@@ -1971,6 +1971,23 @@
     "group": {
       "mastery": "受容 {r}、産出 {p} 習得済み",
       "progress_aria": "{total} レッスン中 {completed} 完了"
+    },
+    "search_placeholder": "レッスンを検索…",
+    "filter": {
+      "status": "ステータスフィルター",
+      "direction": "方向フィルター",
+      "all": "すべて",
+      "not_started": "未開始",
+      "in_progress": "進行中",
+      "mastered": "習得済み",
+      "receptive": "受容のみ",
+      "productive": "産出のみ"
+    },
+    "stats": {
+      "title": "統計",
+      "lessons": "レッスン",
+      "receptive": "受容",
+      "productive": "産出"
     }
   }
 }

@@ -1971,6 +1971,23 @@
     "group": {
       "mastery": "{r} receptive, {p} productive mastered",
       "progress_aria": "{completed} of {total} lessons completed"
+    },
+    "search_placeholder": "Search lessons…",
+    "filter": {
+      "status": "Status filter",
+      "direction": "Direction filter",
+      "all": "All",
+      "not_started": "Not started",
+      "in_progress": "In progress",
+      "mastered": "Mastered",
+      "receptive": "Receptive only",
+      "productive": "Productive only"
+    },
+    "stats": {
+      "title": "Stats",
+      "lessons": "Lessons",
+      "receptive": "Receptive",
+      "productive": "Productive"
     }
   }
 }

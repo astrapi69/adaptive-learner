@@ -7271,6 +7271,41 @@ select:focus {
   align-items: center;
 }
 
+/* Filter/search controls + stats sidebar + search highlight (66F). */
+.learning-path-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+.learning-path-search {
+  min-width: 180px;
+}
+.learning-path-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  padding: 6px 10px;
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.85rem;
+}
+.react-flow__node.lp-faded {
+  opacity: 0.3;
+  transition: opacity 0.2s ease;
+}
+.react-flow__node.lp-highlighted .lesson-node {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__node.lp-faded {
+    transition: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .react-flow__edge.animated .react-flow__edge-path {
     animation: none;

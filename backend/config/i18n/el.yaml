@@ -1786,3 +1786,18 @@ learning_path:
   group:
     mastery: "{r} δεκτικά, {p} παραγωγικά κατακτημένα"
     progress_aria: "{completed} από {total} μαθήματα ολοκληρώθηκαν"
+  search_placeholder: "Αναζήτηση μαθημάτων…"
+  filter:
+    status: "Φίλτρο κατάστασης"
+    direction: "Φίλτρο κατεύθυνσης"
+    all: "Όλα"
+    not_started: "Δεν ξεκίνησε"
+    in_progress: "Σε εξέλιξη"
+    mastered: "Κατακτημένο"
+    receptive: "Μόνο δεκτικά"
+    productive: "Μόνο παραγωγικά"
+  stats:
+    title: "Στατιστικά"
+    lessons: "Μαθήματα"
+    receptive: "Δεκτικά"
+    productive: "Παραγωγικά"

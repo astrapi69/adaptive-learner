@@ -1971,6 +1971,23 @@
     "group": {
       "mastery": "{r} receptivo, {p} productivo dominados",
       "progress_aria": "{completed} de {total} lecciones completadas"
+    },
+    "search_placeholder": "Buscar lecciones…",
+    "filter": {
+      "status": "Filtro de estado",
+      "direction": "Filtro de dirección",
+      "all": "Todos",
+      "not_started": "No iniciado",
+      "in_progress": "En curso",
+      "mastered": "Dominado",
+      "receptive": "Solo receptivo",
+      "productive": "Solo productivo"
+    },
+    "stats": {
+      "title": "Estadísticas",
+      "lessons": "Lecciones",
+      "receptive": "Receptivo",
+      "productive": "Productivo"
     }
   }
 }

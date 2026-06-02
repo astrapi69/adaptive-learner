@@ -67,4 +67,23 @@ describe("LearningPath page", () => {
         expect(screen.getByTestId("reactflow-mock")).toBeInTheDocument();
         expect(screen.getByTestId("learning-path-reset")).toBeInTheDocument();
     });
+
+    it("renders the filter/search controls + stats sidebar when ready", () => {
+        useDataMock.mockReturnValue({
+            state: "ready",
+            built: {nodes: [], edges: []},
+        });
+        renderPage();
+        expect(
+            screen.getByTestId("learning-path-controls"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("learning-path-filter-status"),
+        ).toBeInTheDocument();
+        expect(
+            screen.getByTestId("learning-path-filter-direction"),
+        ).toBeInTheDocument();
+        expect(screen.getByTestId("learning-path-search")).toBeInTheDocument();
+        expect(screen.getByTestId("learning-path-stats")).toBeInTheDocument();
+    });
 });

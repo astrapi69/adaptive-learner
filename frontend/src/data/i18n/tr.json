@@ -1971,6 +1971,23 @@
     "group": {
       "mastery": "{r} alımlayıcı, {p} üretici ustalaşıldı",
       "progress_aria": "{total} dersin {completed} tanesi tamamlandı"
+    },
+    "search_placeholder": "Ders ara…",
+    "filter": {
+      "status": "Durum filtresi",
+      "direction": "Yön filtresi",
+      "all": "Tümü",
+      "not_started": "Başlanmadı",
+      "in_progress": "Devam ediyor",
+      "mastered": "Ustalaşıldı",
+      "receptive": "Yalnızca alımlayıcı",
+      "productive": "Yalnızca üretici"
+    },
+    "stats": {
+      "title": "İstatistikler",
+      "lessons": "Dersler",
+      "receptive": "Alımlayıcı",
+      "productive": "Üretici"
     }
   }
 }

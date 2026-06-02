@@ -1788,3 +1788,18 @@ learning_path:
   group:
     mastery: "{r} rezeptiv, {p} produktiv gemeistert"
     progress_aria: "{completed} von {total} Lektionen abgeschlossen"
+  search_placeholder: "Lektionen suchen…"
+  filter:
+    status: "Statusfilter"
+    direction: "Richtungsfilter"
+    all: "Alle"
+    not_started: "Nicht gestartet"
+    in_progress: "In Arbeit"
+    mastered: "Gemeistert"
+    receptive: "Nur rezeptiv"
+    productive: "Nur produktiv"
+  stats:
+    title: "Statistik"
+    lessons: "Lektionen"
+    receptive: "Rezeptiv"
+    productive: "Produktiv"
