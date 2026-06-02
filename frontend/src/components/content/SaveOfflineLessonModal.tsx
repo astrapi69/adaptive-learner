@@ -27,6 +27,15 @@ interface SaveOfflineLessonModalProps {
   conversationTitle: string;
   /** Content language for the saved set (BCP47-ish). */
   language: string;
+  /**
+   * v1.54.0 — the language pair captured at IMPORT time. When present
+   * the modal INHERITS these instead of guessing (source = chat
+   * language, target = learning language). Optional: old imports
+   * without them fall back to the previous app-language + topic-guess
+   * behaviour. The user can still edit either dropdown.
+   */
+  sourceLanguage?: string | null;
+  targetLanguage?: string | null;
   onCancel: () => void;
   onSaved: (entry: ContentSetEntry) => void;
 }
@@ -46,6 +55,8 @@ export default function SaveOfflineLessonModal({
   conversationId,
   conversationTitle,
   language,
+  sourceLanguage,
+  targetLanguage,
   onCancel,
   onSaved,
 }: SaveOfflineLessonModalProps) {
@@ -92,14 +103,23 @@ export default function SaveOfflineLessonModal({
   // language, which is often unset and coalesced to "en" upstream) is
   // only a secondary hint. Fixes German chats landing at "en -> de".
   const appLang = (lang || language || "en").split("-")[0];
+  const isIso = (c: string | null | undefined): string | null => {
+    const b = (c || "").split("-")[0].toLowerCase();
+    return /^[a-z]{2}$/.test(b) ? b : null;
+  };
+  // v1.54.0 — INHERIT the import-time pair when present (the pipeline
+  // set it at import); only guess when it's absent (old imports).
+  const inheritedSource = isIso(sourceLanguage);
+  const inheritedTarget = isIso(targetLanguage);
   const detectedTarget = detectTargetLanguage(analysis.topic);
   const defaultTarget =
-    detectedTarget && detectedTarget !== appLang
+    inheritedTarget ??
+    (detectedTarget && detectedTarget !== appLang
       ? detectedTarget
       : appLang === "en"
         ? "fr"
-        : "en";
-  const [sourceLang, setSourceLang] = useState(appLang);
+        : "en");
+  const [sourceLang, setSourceLang] = useState(inheritedSource ?? appLang);
   const [targetLang, setTargetLang] = useState(defaultTarget);
   const [level, setLevel] = useState<string>(
     cefrFromAnalysisLevel(analysis.user_level),

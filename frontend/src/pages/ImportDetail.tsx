@@ -891,6 +891,10 @@ export default function ImportDetail({
           conversationId={detail.id}
           conversationTitle={detail.title}
           language={readLearnerState().language ?? "en"}
+          // v1.54.0 — inherit the import-time language pair so the modal
+          // doesn't guess (falls back to its own guess only if absent).
+          sourceLanguage={sourceLang || detail.source_language || null}
+          targetLanguage={targetLang || detail.target_language || null}
           onCancel={() => setShowSaveLesson(false)}
           onSaved={() => {
             setShowSaveLesson(false);
