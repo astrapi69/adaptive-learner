@@ -2,6 +2,64 @@
 
 These rules come from real development and solve problems that would otherwise come back over and over.
 
+## Never run an ad-hoc script against the real `SessionLocal`
+
+Surfaced 2026-06-02 during BACKUP-API-RESTORE-01. While debugging a
+failing test, a one-off `poetry run python -c "..."` script imported a
+test helper (`_wipe_all_tables`) AND `app.database.SessionLocal`, then
+ran it. Because the script set NO environment variables, `SessionLocal`
+bound to the REAL engine pointed at the production-marked data dir
+(`~/.local/share/adaptive_learner/`, carrying `.adaptive-learner-production`).
+The helper's `DELETE FROM <every table>` + `db.commit()` wiped the DB.
+With `PRAGMA secure_delete=ON`, the freed pages were zeroed — the data
+was unrecoverable from the file. (This time it was only test data.)
+
+### Why the existing protection didn't fire
+
+The `conftest.py` tripwire (production marker -> `pytest.exit(2)`) only
+runs under pytest. An ad-hoc `python`/`poetry run python` invocation,
+a REPL, or a maintenance one-liner never loads conftest, so nothing
+stopped the write. "We have a tripwire" was true and irrelevant — it
+guarded the wrong entry point.
+
+### Rules
+
+1. **Never bind `app.database.SessionLocal` (or `engine`) in an ad-hoc
+   script without first pointing it at a throwaway dir.** Set BOTH
+   `ADAPTIVE_LEARNER_TEST=1` and `ADAPTIVE_LEARNER_DATA_DIR=$(mktemp -d)`
+   BEFORE any `app.*` import, or — better — write the check as a real
+   pytest test so conftest's isolation + tripwire apply.
+2. **A repro that mutates the DB belongs in pytest, not in `python -c`.**
+   The whole point of the test harness is the in-memory DB + the
+   tripwire. Reaching for `poetry run python` to "just check something"
+   bypasses both.
+3. **Destructive helpers must self-guard.** Any function that bulk-deletes
+   / wipes / drops calls `app.db_guard.assert_safe_for_destructive_use()`,
+   which raises on a production-marked dir.
+
+### The process-wide guard (the real fix)
+
+`app/db_guard.py` (added in this session) installs a SQLAlchemy
+`before_cursor_execute` listener on the sync engine that refuses
+full-table `DELETE` (no `WHERE`) / `DROP TABLE` / `TRUNCATE` when the
+data dir is production-marked AND the process is not the app runtime.
+The FastAPI lifespan calls `db_guard.mark_app_runtime()` so the running
+app is unaffected (and pays zero per-statement cost); scoped
+`DELETE ... WHERE ...` is never touched. Intentional maintenance sets
+`ADAPTIVE_LEARNER_ALLOW_PRODUCTION_DESTRUCTIVE=1`. This is the layer the
+conftest tripwire was missing: it guards EVERY process, not just pytest.
+
+### Pairs with
+
+- "Filesystem isolation: production data lives outside the project tree"
+  — same family. That rule covers test-vs-prod path resolution; this one
+  covers the case where a human (or assistant) hand-runs code that
+  resolves to prod anyway.
+- "Module-level caches survive test boundaries" — both are about the gap
+  between "the test harness is safe" and "this specific way of running
+  code is safe". The harness's guarantees only hold for code that runs
+  through the harness.
+
 ## Gitignored config + stale example = silent CI drift
 
 Surfaced 2026-05-23 closing
