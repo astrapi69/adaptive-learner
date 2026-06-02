@@ -181,9 +181,46 @@ suite **3140 green**; `tsc --noEmit` clean.
 | **C1g** direct hook test | ✅ **closed** | `useReadAloud.engine.test.ts` (+6): voice resolution, onBoundary→index, setSpeed re-speak, pause/resume, stop reset |
 | **B4** run Dexie smoke | ⛔ **blocked (environment)** | chromium / chrome-headless-shell downloads are network-blocked in the authoring sandbox; the spec compiles + the preview server starts (runner reaches browser launch). **Action: run `make test-dexie-smoke` in CI / a browser-enabled env before merge.** |
 | **C2g** coverage doc | ➖ **n/a → recorded here** | `docs/audits/current-coverage.md` does not exist repo-wide (the ai-workflow convention is uninstantiated); this feature's coverage delta is tracked in this audit |
-| **D1 / D2 / D3** | ⏸ **deferred** | D1 redundant (integration covers picture/word_tiles); D2 rides future Stryker adoption; D3 belt-and-suspenders (unit covers the highlight logic) |
+| **D1** picture/word_tiles prompt | ✅ **closed** | `exercise-tts.test.tsx` +4 — symmetric component coverage for picture_choice + word_tiles (render with ttsLang; word_tiles code-suppressed) |
+| **D2** mutation testing | ✅ **measured + hardened** | see §7 — Stryker run on `tts-text.ts`, score **67.86% → 70.24%** after killing the `markdownToSpeech` normalization survivors |
+| **D3** page-level highlight advance | ✅ **closed** | `Lesson.tts.test.tsx` — firing `onboundary` through the real engine moves `.tts-active` (Bonjour → hello) |
 
 **Net:** every Tier-B regression-pin gap is closed except B4, which is
 blocked only by the sandbox's lack of a browser binary — it is wired,
 compiles, and must be run once in CI. The feature's pure core + engine
-+ reduced-motion are now pinned directly rather than only via the page.
++ reduced-motion are now pinned directly rather than only via the page,
+and all three Tier-D items are closed.
+
+---
+
+## 7. Mutation testing — D2 result (Stryker, scoped)
+
+Ran Stryker (`@stryker-mutator/core` + `vitest-runner`, installed
+**ephemerally with `--no-save` — no committed dependency**) against the
+feature's densest pure-logic module, `src/lib/lesson/tts-text.ts`
+(`markdownToSpeech`, `collectTheoryRun`, `runStepForChar`,
+`theoryBlockAround`).
+
+| Run | Score | Killed | Survived |
+|---|---|---|---|
+| Before hardening | 67.86 % | 114 | 53 |
+| After hardening | **70.24 %** | 118 | 49 |
+
+The survivors that mattered were real test-quality gaps, now killed:
+the whitespace normalization in `markdownToSpeech` (per-line `trim`,
+blank-line `filter`, final `trim`) had no exact-equality assertion, and
+`collectTheoryRun`'s loop bound was untested at the array end. Added
+exact-output + all-theory-run assertions (`tts-text.test.ts` 11 → 14).
+
+Both runs are **above the quality-checks.md ≥ 60 % core target.** The
+remaining 49 survivors are predominantly inside the `markdownToSpeech`
+regex-replacement arguments (mutating a character class is usually
+equivalent or only killable with brittle assertions) — per
+quality-checks.md, trivial survivors are left rather than bloating the
+suite.
+
+**Recommendation (out of scope here):** wiring Stryker permanently
+(committed `stryker.config.json` + devDependencies + a `make stryker`
+target + nightly CI) is the repo-level follow-up `quality-checks.md`
+already calls a "separate prompt". This run is the evidence that the
+TTS pure core is mutation-solid; it did not add a standing dependency.
