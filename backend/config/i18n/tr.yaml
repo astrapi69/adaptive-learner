@@ -629,6 +629,16 @@ backup:
   restored_with_errors: '{{n}} kayıt geri yüklenemedi.'
   last_backup: 'Son yedek: {{when}}'
   reminder_overdue: Son yedeğinden bu yana {{days}} günden fazla zaman geçti.
+  saved_as: 'Yedek kaydedildi: {{filename}}'
+  downloaded: 'Yedek indirildi: {{filename}} ({{count}} kayıt).'
+  contains_title: 'Yedeğiniz şunları içeriyor:'
+  count_element_errors: '{{n}} hata kaydı'
+  count_lesson_progress: '{{n}} ders ilerlemesi'
+  count_user_badges: '{{n}} rozet'
+  count_sessions: '{{n}} oturum'
+  count_projects: '{{n}} proje'
+  count_imports: '{{n}} sohbet içe aktarımı'
+  record_count: 'Toplam {{count}} kayıt'
   auto_title: Otomatik yedek
   auto_help: Her 10 tamamlanan oturumdan sonra ya da haftada bir otomatik yedek alır.
   auto_run: Şimdi yedek al

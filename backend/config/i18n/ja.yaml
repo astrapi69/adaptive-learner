@@ -629,6 +629,16 @@ backup:
   restored_with_errors: '{{n}} 件のレコードを復元できませんでした。'
   last_backup: '最終バックアップ: {{when}}'
   reminder_overdue: 前回のバックアップから {{days}} 日以上経過しています。
+  saved_as: 'バックアップを保存しました: {{filename}}'
+  downloaded: 'バックアップをダウンロードしました: {{filename}}（{{count}} 件）。'
+  contains_title: 'バックアップに含まれる内容:'
+  count_element_errors: 'エラー項目 {{n}} 件'
+  count_lesson_progress: 'レッスンの進捗 {{n}} 件'
+  count_user_badges: 'バッジ {{n}} 個'
+  count_sessions: 'セッション {{n}} 件'
+  count_projects: 'プロジェクト {{n}} 件'
+  count_imports: 'チャットインポート {{n}} 件'
+  record_count: '合計 {{count}} 件'
   auto_title: 自動バックアップ
   auto_help: 10 セッション完了ごと、または週に 1 回自動的にバックアップします。
   auto_run: 今すぐバックアップ
