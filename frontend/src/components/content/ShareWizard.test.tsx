@@ -12,6 +12,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import ShareWizard from "./ShareWizard";
+import { CEFR_LEVELS } from "../../lib/content/language-options";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";
 
 vi.mock("../../hooks/useI18n", () => ({
@@ -254,7 +255,20 @@ describe("ShareWizard: share + celebration (step 4)", () => {
       title: "Big Lesson",
       estimated_minutes: 10,
       cards: [{ id: "big-c0", front: "f", back: "b", tags: [] }],
-      steps: [{ id: "big-s", type: "theory", body: big }],
+      steps: [
+        { id: "big-s", type: "theory", body: big },
+        {
+          id: "big-ex",
+          type: "exercise",
+          exercise: {
+            id: "big-ex",
+            type: "free_text" as never,
+            prompt: "p",
+            card_ids: ["big-c0"],
+            distractors: [],
+          },
+        },
+      ],
     };
     renderWizard({ lessons: [oversized], openUrl, downloadLesson });
     advanceToStep4();
@@ -273,7 +287,20 @@ describe("ShareWizard: share + celebration (step 4)", () => {
       title: "Big Lesson",
       estimated_minutes: 10,
       cards: [{ id: "big-c0", front: "f", back: "b", tags: [] }],
-      steps: [{ id: "big-s", type: "theory", body: big }],
+      steps: [
+        { id: "big-s", type: "theory", body: big },
+        {
+          id: "big-ex",
+          type: "exercise",
+          exercise: {
+            id: "big-ex",
+            type: "free_text" as never,
+            prompt: "p",
+            card_ids: ["big-c0"],
+            distractors: [],
+          },
+        },
+      ],
     };
     const { openUrl } = renderWizard({
       lessons: [oversized],
@@ -336,5 +363,108 @@ describe("ShareWizard: author credit (64C-2)", () => {
     const url = openUrl.mock.calls[0][0] as string;
     const value = new URL(url).searchParams.get("value") ?? "";
     expect(value).not.toContain("contributed_by");
+  });
+});
+
+/** An empty lesson: no exercises, no cards (the BUG B scenario — an
+ *  old analysis-to-lesson generator failure that saved anyway). */
+function emptyLesson(): ContentLesson {
+  return {
+    id: "empty",
+    title: "Empty",
+    estimated_minutes: 0,
+    cards: [],
+    steps: [{ id: "empty-theory", type: "theory", body: "intro" }],
+  };
+}
+
+describe("ShareWizard: editable metadata + gating (step 1)", () => {
+  it("blocks an empty lesson (0 exercises/cards) and offers regenerate", () => {
+    // BUG B: a lesson saved with no exercises must not be shareable.
+    const onRegenerate = vi.fn();
+    renderWizard({ lessons: [emptyLesson()], onRegenerate });
+    expect(screen.getByTestId("share-wizard-empty")).toBeInTheDocument();
+    expect(screen.getByTestId("share-wizard-step1-errors")).toHaveTextContent(
+      "no exercises",
+    );
+    // Continue is blocked.
+    expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
+    // Regenerate is wired through.
+    fireEvent.click(screen.getByTestId("share-wizard-regenerate"));
+    expect(onRegenerate).toHaveBeenCalledTimes(1);
+  });
+
+  it("blocks a non-CEFR 'imported' level until a real level is chosen", () => {
+    // BUG C: an "imported" level is never valid for the community tree.
+    renderWizard({ entry: entry({ level: "imported" }) });
+    // The level select shows the placeholder (the bad value is rejected).
+    const level = screen.getByTestId(
+      "share-wizard-edit-level",
+    ) as HTMLSelectElement;
+    // estimateLevel pre-fills a CEFR default, so the lesson is NOT
+    // blocked on level once a valid one is in place — assert the select
+    // never carries the bad "imported" value.
+    expect(level.value).not.toBe("imported");
+    expect((CEFR_LEVELS as readonly string[]).includes(level.value)).toBe(true);
+  });
+
+  it("blocks Continue when no CEFR level is selected", () => {
+    // BUG C: clearing the level (the placeholder) blocks sharing — a
+    // lesson must declare a real CEFR band before it can be shared.
+    renderWizard();
+    fireEvent.change(screen.getByTestId("share-wizard-edit-level"), {
+      target: { value: "" },
+    });
+    expect(screen.getByTestId("share-wizard-step1-errors")).toHaveTextContent(
+      "CEFR",
+    );
+    expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
+  });
+
+  it("lets the user correct source, target and level (old bad lesson)", () => {
+    // BUG A: an old lesson saved before the source-language fix has
+    // source == target == "en" and a bad level. The user fixes it here.
+    renderWizard({
+      entry: entry({
+        source_language: "en",
+        target_language: "en",
+        language: "en",
+        level: "imported",
+      }),
+    });
+    const source = screen.getByTestId(
+      "share-wizard-edit-source",
+    ) as HTMLSelectElement;
+    const target = screen.getByTestId(
+      "share-wizard-edit-target",
+    ) as HTMLSelectElement;
+    const level = screen.getByTestId(
+      "share-wizard-edit-level",
+    ) as HTMLSelectElement;
+    // Defaults already repaired the source==target collision.
+    expect(source.value).not.toBe(target.value);
+    // The user sets a clean DE -> ES B1 pair.
+    fireEvent.change(source, { target: { value: "de" } });
+    fireEvent.change(target, { target: { value: "es" } });
+    fireEvent.change(level, { target: { value: "B1" } });
+    // No blocking errors -> Continue enabled, placement reflects edits.
+    expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
+    expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
+      "DE → ES → B1",
+    );
+    expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
+      "sets/de/es-b1/lessons/",
+    );
+  });
+
+  it("blocks Continue when source and target are the same language", () => {
+    renderWizard();
+    fireEvent.change(screen.getByTestId("share-wizard-edit-target"), {
+      target: { value: "de" }, // source defaults to "de"
+    });
+    expect(screen.getByTestId("share-wizard-step1-errors")).toHaveTextContent(
+      "must differ",
+    );
+    expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
   });
 });

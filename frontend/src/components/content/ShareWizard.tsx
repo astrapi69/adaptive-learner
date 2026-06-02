@@ -29,16 +29,18 @@
  */
 
 import type { ReactNode } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useI18n } from "../../hooks/useI18n";
 import {
   readContributorName,
   writeContributorName,
 } from "../../lib/content/contribution-history";
-import type {
-  ValidationIssue,
-  ValidationResult,
+import {
+  validateSetForSharing,
+  type ValidationIssue,
+  type ValidationMeta,
+  type ValidationResult,
 } from "../../lib/content/content-validator";
 import {
   detectDuplicate,
@@ -46,6 +48,7 @@ import {
   markAsVariation,
   type DuplicateResult,
 } from "../../lib/content/duplicate-detection";
+import { CEFR_LEVELS, LANGUAGE_OPTIONS } from "../../lib/content/language-options";
 import {
   buildPrBody,
   buildPrTitle,
@@ -55,7 +58,9 @@ import {
   type CommunityPrDetails,
 } from "../../lib/content/lesson-export";
 import {
+  autoDetectTargetLanguage,
   computePlacement,
+  estimateLevel,
   suggestFilename,
 } from "../../lib/content/placement-engine";
 import { emitCelebration } from "../../lib/praise/celebration-bus";
@@ -81,6 +86,11 @@ export interface ShareWizardProps {
   branch: string;
   /** Records a successful share for the contribution history (64D). */
   onShared: (url: string, title: string) => void;
+  /** Re-run the lesson generator when the lesson is empty (BUG B):
+   *  e.g. jump back to the analysis import page so the user can
+   *  rebuild a real lesson. Optional — the "Regenerate" button only
+   *  renders when provided. */
+  onRegenerate?: () => void;
   onClose: () => void;
   /** Test seam; defaults to window.open in a new tab. Returns false
    *  when the popup was blocked so the wizard can surface a manual
@@ -96,6 +106,25 @@ type ShareMode = "full" | "variation" | "supplement";
 type ShareMethod = "pr" | "upload";
 
 const TOTAL_STEPS = 4;
+
+/** Base subtag of a language code ("de-DE" -> "de"), lowercased. */
+function baseLang(code: string | null | undefined): string {
+  return (code || "").split("-")[0].toLowerCase();
+}
+
+/** A plain ISO 639-1 base subtag (exactly two letters) — what the
+ *  community tree requires. */
+function isIsoLang(code: string | null | undefined): boolean {
+  return /^[a-z]{2}$/.test(baseLang(code));
+}
+
+const CEFR_SET: ReadonlySet<string> = new Set(CEFR_LEVELS as readonly string[]);
+
+/** A valid CEFR level (A1..C2), case-insensitive. "imported" and other
+ *  non-CEFR placeholders are rejected (BUG C). */
+function isCefr(level: string | null | undefined): boolean {
+  return CEFR_SET.has((level || "").trim().toUpperCase());
+}
 
 function defaultOpen(url: string): boolean {
   // window.open returns null when the popup is blocked; the caller
@@ -117,11 +146,12 @@ export default function ShareWizard({
   repo,
   branch,
   onShared,
+  onRegenerate,
   onClose,
   openUrl,
   downloadLesson,
 }: ShareWizardProps) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const [step, setStep] = useState<Step>(1);
   const [scanning, setScanning] = useState(false);
   const [dup, setDup] = useState<DuplicateResult | null>(null);
@@ -146,16 +176,41 @@ export default function ShareWizard({
   const primary = lessons[0] ?? null;
   const singleLesson = lessons.length === 1 && primary != null;
 
-  const placement = computePlacement({
-    meta: {
-      source_language: entry.source_language,
-      target_language: entry.target_language,
-      level: entry.level,
-    },
-    topic: primary?.title || entry.title,
-    existingLessonFilenames: existingFilenames,
-    knownSets,
+  // BUG A/C — editable lesson metadata. Old lessons saved before the
+  // source-language fix carry bad values (source == target, a
+  // non-CEFR "imported" level, …) that the user must be able to
+  // correct here. Pre-fill with sane defaults: keep the saved value
+  // only when it is plausibly correct, otherwise fall back to the app
+  // language / content detection / an estimated level.
+  const [editTitle, setEditTitle] = useState(() => entry.title || "");
+  const [editSource, setEditSource] = useState(() =>
+    isIsoLang(entry.source_language) &&
+    baseLang(entry.source_language) !== baseLang(entry.target_language)
+      ? baseLang(entry.source_language)
+      : baseLang(lang),
+  );
+  const [editTarget, setEditTarget] = useState(() => {
+    const initialSource =
+      isIsoLang(entry.source_language) &&
+      baseLang(entry.source_language) !== baseLang(entry.target_language)
+        ? baseLang(entry.source_language)
+        : baseLang(lang);
+    if (
+      isIsoLang(entry.target_language) &&
+      baseLang(entry.target_language) !== initialSource
+    )
+      return baseLang(entry.target_language);
+    const detected = autoDetectTargetLanguage(
+      primary?.title || entry.title,
+      primary?.cards ?? [],
+    );
+    return detected && detected !== initialSource ? detected : "";
   });
+  const [editLevel, setEditLevel] = useState(() =>
+    isCefr(entry.level)
+      ? entry.level.trim().toUpperCase()
+      : estimateLevel(primary?.cards ?? []),
+  );
 
   const cardCount = lessons.reduce((n, l) => n + l.cards.length, 0);
   const exerciseCount = lessons.reduce(
@@ -163,6 +218,78 @@ export default function ShareWizard({
     0,
   );
   const minutes = lessons.reduce((n, l) => n + (l.estimated_minutes || 0), 0);
+
+  // The corrected metadata that drives placement, validation, and the
+  // pull request — NOT the (possibly broken) saved entry values.
+  const editedMeta: ValidationMeta = {
+    title: editTitle,
+    title_native: entry.title_native,
+    source_language: editSource,
+    target_language: editTarget,
+    level: editLevel,
+  };
+
+  const placement = computePlacement({
+    meta: {
+      source_language: editSource,
+      target_language: editTarget,
+      level: editLevel,
+    },
+    topic: primary?.title || editTitle,
+    existingLessonFilenames: existingFilenames,
+    knownSets,
+  });
+
+  // Re-run the quality validator against the CORRECTED metadata so
+  // step 3 reflects what will actually be shared. Falls back to the
+  // parent-provided result while the lessons are still loading.
+  const liveValidation = useMemo(
+    () =>
+      lessons.length > 0 ? validateSetForSharing(editedMeta, lessons) : validation,
+    // editedMeta is rebuilt every render; depend on its primitives.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [editTitle, editSource, editTarget, editLevel, lessons, validation],
+  );
+
+  // BUG B — an empty lesson (0 exercises / 0 cards) must never be
+  // shareable. Only flag it once the lessons have loaded.
+  const isEmptyLesson = !checking && (exerciseCount === 0 || cardCount === 0);
+
+  // Step-1 gate: block "Continue" until the metadata is shareable.
+  const step1Errors: string[] = [];
+  if (!editTitle.trim())
+    step1Errors.push(t("content.wizard.err_title", "Add a title."));
+  if (!isIsoLang(editSource))
+    step1Errors.push(
+      t("content.wizard.err_source", "Choose the source language."),
+    );
+  if (!isIsoLang(editTarget))
+    step1Errors.push(
+      t("content.wizard.err_target", "Choose the target language."),
+    );
+  if (
+    isIsoLang(editSource) &&
+    isIsoLang(editTarget) &&
+    baseLang(editSource) === baseLang(editTarget)
+  )
+    step1Errors.push(
+      t(
+        "content.wizard.err_same_language",
+        "Source and target language must differ.",
+      ),
+    );
+  if (!isCefr(editLevel))
+    step1Errors.push(
+      t("content.wizard.err_level", "Choose a CEFR level (A1-C2)."),
+    );
+  if (isEmptyLesson)
+    step1Errors.push(
+      t(
+        "content.wizard.err_empty",
+        "This lesson has no exercises. Please recreate the lesson.",
+      ),
+    );
+  const step1Blocked = step1Errors.length > 0;
 
   // Step 2: scan once on entry. Single-lesson sets only — a
   // multi-lesson set shares whole, so there's no lesson-level dup.
@@ -211,14 +338,16 @@ export default function ShareWizard({
       }
       shipped = [ship];
     }
-    if (author) {
-      const stampedAt = new Date().toISOString();
-      shipped = shipped.map((l) => ({
-        ...l,
-        contributed_by: author,
-        contributed_at: stampedAt,
-      }));
-    }
+    // Stamp the CORRECTED languages onto the shipped file so the shared
+    // JSON matches the placement + PR metadata (BUG A), plus the
+    // optional author credit.
+    const stampedAt = author ? new Date().toISOString() : null;
+    shipped = shipped.map((l) => ({
+      ...l,
+      source_language: editSource,
+      target_language: editTarget,
+      ...(author ? { contributed_by: author, contributed_at: stampedAt } : {}),
+    }));
     return shipped;
   }
 
@@ -232,7 +361,7 @@ export default function ShareWizard({
 
     const filePath = `${placement.path}/lessons/${placement.filename}`;
     const details: CommunityPrDetails = {
-      title: entry.title,
+      title: editTitle,
       sourceLanguage: placement.source,
       targetLanguage: placement.target,
       level: placement.level,
@@ -243,8 +372,8 @@ export default function ShareWizard({
       author,
       description: entry.description,
       validationIssues:
-        validation && !validation.ok
-          ? validation.issues.map(validationMessage)
+        liveValidation && !liveValidation.ok
+          ? liveValidation.issues.map(validationMessage)
           : undefined,
     };
     const prTitle = buildPrTitle(details);
@@ -300,7 +429,7 @@ export default function ShareWizard({
       });
     }
 
-    onShared(url, entry.title);
+    onShared(url, editTitle);
     emitCelebration({ type: "confetti" });
   }
 
@@ -342,19 +471,141 @@ export default function ShareWizard({
         {/* Step 1 — Preview + placement */}
         {step === 1 && (
           <section data-testid="share-wizard-step-1">
-            <ul className="share-wizard-summary">
-              <li>
-                <strong>{entry.title}</strong>
-                {entry.title_native ? ` (${entry.title_native})` : ""}
-              </li>
-              <li>
-                {t("content.wizard.summary_counts", "{lessons} lesson(s), {exercises} exercises, {cards} cards, ~{minutes} min")
-                  .replace("{lessons}", String(lessons.length))
-                  .replace("{exercises}", String(exerciseCount))
-                  .replace("{cards}", String(cardCount))
-                  .replace("{minutes}", String(minutes))}
-              </li>
-            </ul>
+            {/* BUG B — an empty lesson is never shareable; offer to
+                rebuild it from the source analysis. */}
+            {isEmptyLesson && (
+              <div
+                className="share-wizard-empty content-share-failed"
+                data-testid="share-wizard-empty"
+                role="alert"
+              >
+                <p>
+                  {t(
+                    "content.wizard.err_empty",
+                    "This lesson has no exercises. Please recreate the lesson.",
+                  )}
+                </p>
+                {onRegenerate && (
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={onRegenerate}
+                    data-testid="share-wizard-regenerate"
+                  >
+                    {t("content.wizard.regenerate", "Regenerate")}
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* BUG A/C — editable metadata: old lessons carry bad
+                source/target/level the user must be able to fix. */}
+            <p className="share-wizard-metadata-intro">
+              {t(
+                "content.wizard.metadata_intro",
+                "Check and correct the lesson details before sharing.",
+              )}
+            </p>
+            <div
+              className="share-wizard-metadata"
+              data-testid="share-wizard-metadata"
+            >
+              <label className="form-row">
+                <span className="form-label">
+                  {t("content.wizard.edit_title", "Title")}
+                </span>
+                <input
+                  type="text"
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  data-testid="share-wizard-edit-title"
+                />
+              </label>
+              <label className="form-row">
+                <span className="form-label">
+                  {t("content.wizard.edit_source", "Source language (you speak)")}
+                </span>
+                <select
+                  value={editSource}
+                  onChange={(e) => setEditSource(e.target.value)}
+                  data-testid="share-wizard-edit-source"
+                >
+                  <option value="">
+                    {t("content.wizard.select_language", "Select a language…")}
+                  </option>
+                  {LANGUAGE_OPTIONS.map((opt) => (
+                    <option key={opt.code} value={opt.code}>
+                      {opt.name} ({opt.code})
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="form-row">
+                <span className="form-label">
+                  {t("content.wizard.edit_target", "Target language (you learn)")}
+                </span>
+                <select
+                  value={editTarget}
+                  onChange={(e) => setEditTarget(e.target.value)}
+                  data-testid="share-wizard-edit-target"
+                >
+                  <option value="">
+                    {t("content.wizard.select_language", "Select a language…")}
+                  </option>
+                  {LANGUAGE_OPTIONS.map((opt) => (
+                    <option key={opt.code} value={opt.code}>
+                      {opt.name} ({opt.code})
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="form-row">
+                <span className="form-label">
+                  {t("content.wizard.edit_level", "Level (CEFR)")}
+                </span>
+                <select
+                  value={isCefr(editLevel) ? editLevel.toUpperCase() : ""}
+                  onChange={(e) => setEditLevel(e.target.value)}
+                  data-testid="share-wizard-edit-level"
+                >
+                  <option value="">
+                    {t("content.wizard.select_level", "Select a level…")}
+                  </option>
+                  {CEFR_LEVELS.map((lvl) => (
+                    <option key={lvl} value={lvl}>
+                      {lvl}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <p className="share-wizard-counts">
+                <span data-testid="share-wizard-exercise-count">
+                  {t("content.wizard.exercises_label", "Exercises")}:{" "}
+                  {exerciseCount}
+                </span>
+                {" · "}
+                <span data-testid="share-wizard-card-count">
+                  {t("content.wizard.cards_label", "Cards")}: {cardCount}
+                </span>
+                {" · "}
+                <span>
+                  {lessons.length} {t("content.lessons", "lessons")}
+                </span>
+                {" · "}
+                <span>~{minutes} min</span>
+              </p>
+            </div>
+
+            {step1Blocked && (
+              <ul
+                className="content-share-issues share-wizard-step1-errors"
+                data-testid="share-wizard-step1-errors"
+              >
+                {step1Errors.map((err, i) => (
+                  <li key={i}>{err}</li>
+                ))}
+              </ul>
+            )}
 
             <div
               className="share-wizard-placement"
@@ -549,9 +800,9 @@ export default function ShareWizard({
         {/* Step 3 — Quality summary */}
         {step === 3 && (
           <section data-testid="share-wizard-step-3">
-            {checking || !validation ? (
+            {checking || !liveValidation ? (
               <p>{t("content.validation.checking", "Checking your lesson…")}</p>
-            ) : validation.ok ? (
+            ) : liveValidation.ok ? (
               <p
                 className="content-share-passed"
                 data-testid="share-wizard-quality-ok"
@@ -567,15 +818,15 @@ export default function ShareWizard({
                   {t("content.validation.failed_share_anyway", "Quality check found issues. You can share anyway — reviewers will see the findings noted in the pull request.")}
                 </p>
                 <ul className="content-share-issues">
-                  {validation.issues.map((issue, i) => (
+                  {liveValidation.issues.map((issue, i) => (
                     <li key={`${issue.code}-${i}`}>{validationMessage(issue)}</li>
                   ))}
                 </ul>
               </>
             )}
-            {validation && validation.warnings.length > 0 && (
+            {liveValidation && liveValidation.warnings.length > 0 && (
               <ul className="content-share-warnings">
-                {validation.warnings.map((w, i) => (
+                {liveValidation.warnings.map((w, i) => (
                   <li key={`${w.code}-${i}`}>{validationMessage(w)}</li>
                 ))}
               </ul>
@@ -699,6 +950,7 @@ export default function ShareWizard({
               type="button"
               className="btn btn-primary"
               onClick={() => setStep((s) => (s + 1) as Step)}
+              disabled={step === 1 && step1Blocked}
               data-testid="share-wizard-next"
             >
               {t("content.wizard.next", "Continue")}
