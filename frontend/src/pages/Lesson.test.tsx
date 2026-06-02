@@ -759,3 +759,163 @@ describe("LessonPage: ready state rendering", () => {
         });
     });
 });
+
+// ---------------------------------------------------------------------------
+// BUG P1 — single two-phase button per exercise step.
+//
+// Regression-pin: the Lesson (controlled) flow must render EXACTLY ONE
+// flow button — the shared two-phase "Prüfen" → "Weiter" button — and
+// NONE of the exercise renderers may surface their own internal submit
+// ("Antwort prüfen") button. This pins all 5 exercise types through the
+// real ExerciseDispatcher + real renderers (only useLesson + getStorage
+// are mocked), so a future renderer that forgets the `!controlled` gate
+// fails loudly here.
+// ---------------------------------------------------------------------------
+describe("BUG P1: exactly one two-phase button, no internal submit", () => {
+    const INTERNAL_SUBMIT_TESTIDS = [
+        "matching-submit",
+        "picture-submit",
+        "free-text-submit",
+        "word-tiles-submit",
+        "cloze-submit",
+    ];
+
+    function _mountExercise(exercise: ContentLessonExercise) {
+        const lesson = {
+            ...LESSON,
+            steps: [{id: exercise.id, type: "exercise" as const, exercise}],
+        };
+        useLessonMock.mockReturnValue({
+            status: "ready",
+            lesson,
+            progress: PROGRESS,
+            currentStepIndex: 0,
+            error: null,
+            goNext: vi.fn(),
+            goPrev: vi.fn(),
+            goToStep: vi.fn(),
+            goToStepById: vi.fn(),
+            recordStepResult: vi.fn().mockResolvedValue(undefined),
+            markCompleted: vi.fn(),
+            refresh: vi.fn(),
+        });
+        renderAtPath(VALID_PATH);
+    }
+
+    const CASES: Array<{name: string; exercise: ContentLessonExercise}> = [
+        {
+            name: "matching",
+            exercise: {
+                id: "ex-m",
+                type: "matching",
+                prompt: "Match.",
+                card_ids: [],
+                pairs: [{left: "A", right: "1"}],
+                distractors: [],
+            },
+        },
+        {
+            name: "picture_choice",
+            exercise: {
+                id: "ex-p",
+                type: "picture_choice",
+                prompt: "Pick.",
+                card_ids: [],
+                images: [
+                    {src: "a.svg", label: "Apple", is_correct: "true"},
+                    {src: "b.svg", label: "Banana"},
+                ],
+                distractors: [],
+            },
+        },
+        {
+            name: "free_text",
+            exercise: {
+                id: "ex-f",
+                type: "free_text",
+                prompt: "Translate.",
+                card_ids: [],
+                accept: ["hola"],
+                distractors: [],
+            },
+        },
+        {
+            name: "word_tiles",
+            exercise: {
+                id: "ex-w",
+                type: "word_tiles",
+                prompt: "Order.",
+                card_ids: [],
+                tiles: ["yo", "hablo"],
+                distractors: [],
+            },
+        },
+        {
+            name: "cloze",
+            exercise: {
+                id: "ex-c",
+                type: "cloze",
+                prompt: "Fill.",
+                card_ids: [],
+                sentence: "Yo ___ español.",
+                blanks: [{accept: ["hablo"]}],
+                cloze_mode: "type",
+                distractors: [],
+            },
+        },
+    ];
+
+    for (const {name, exercise} of CASES) {
+        it(`${name}: renders no internal submit button (controlled)`, () => {
+            _mountExercise(exercise);
+            for (const testid of INTERNAL_SUBMIT_TESTIDS) {
+                expect(screen.queryByTestId(testid)).toBeNull();
+            }
+        });
+
+        it(`${name}: shows exactly one flow button, in the disabled "Check" phase before answering`, () => {
+            _mountExercise(exercise);
+            // The shared two-phase button is in the "Check" phase…
+            const checkBtn = screen.getByTestId("lesson-check");
+            expect(checkBtn).toBeInTheDocument();
+            // …disabled until the answer is checkable…
+            expect(checkBtn).toBeDisabled();
+            // …and the "Next" phase of the SAME button is not yet present.
+            expect(screen.queryByTestId("lesson-next")).toBeNull();
+            // No internal submit button competes with it.
+            for (const testid of INTERNAL_SUBMIT_TESTIDS) {
+                expect(screen.queryByTestId(testid)).toBeNull();
+            }
+        });
+    }
+
+    it("free_text: the one button advances to the 'Weiter' phase after a check", async () => {
+        _mountExercise({
+            id: "ex-f",
+            type: "free_text",
+            prompt: "Translate.",
+            card_ids: [],
+            accept: ["hola"],
+            distractors: [],
+        });
+        // Phase 1 — disabled "Check"; no internal submit, no "Next".
+        const checkBtn = screen.getByTestId("lesson-check");
+        expect(checkBtn).toBeDisabled();
+        expect(screen.queryByTestId("free-text-submit")).toBeNull();
+        // Answer → the single button enables.
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value: "hola"},
+        });
+        await waitFor(() => expect(checkBtn).not.toBeDisabled());
+        // Click "Check" → the SAME button slot flips to "Next" ("Weiter").
+        fireEvent.click(checkBtn);
+        await waitFor(() =>
+            expect(screen.getByTestId("lesson-next")).toBeInTheDocument(),
+        );
+        // The "Check" phase is gone (one button, two phases — never both).
+        expect(screen.queryByTestId("lesson-check")).toBeNull();
+        // Still no internal submit button.
+        expect(screen.queryByTestId("free-text-submit")).toBeNull();
+    });
+});
+
