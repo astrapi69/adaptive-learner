@@ -630,6 +630,16 @@ backup:
   restored_with_errors: '{{n}} records could not be restored.'
   last_backup: 'Last backup: {{when}}'
   reminder_overdue: It has been more than {{days}} days since your last backup.
+  saved_as: 'Sauvegarde enregistrée : {{filename}}'
+  downloaded: 'Sauvegarde téléchargée : {{filename}} ({{count}} enregistrements).'
+  contains_title: 'Votre sauvegarde contient :'
+  count_element_errors: '{{n}} entrées d''erreur'
+  count_lesson_progress: '{{n}} progressions de leçon'
+  count_user_badges: '{{n}} badges'
+  count_sessions: '{{n}} sessions'
+  count_projects: '{{n}} projets'
+  count_imports: '{{n}} imports de chat'
+  record_count: '{{count}} enregistrements au total'
   auto_title: Auto-backup
   auto_help: Automatically back up after every 10 completed sessions or once a week.
   auto_run: Back up now

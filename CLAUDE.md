@@ -9,24 +9,37 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.49.0+** (post-release — **Phase 66 —
-  Visual Learning Path** merged to main without a tag). An
-  interactive @xyflow/react graph at ``/learning-path`` shows the
-  learner's full lesson journey: set-group nodes (progress bar,
-  per-direction mastery, collapsible) + lesson nodes (status,
-  stars 0-3, receptive/productive mastery pills, XP, recommended
-  badge, lock). Dagre auto-layout (TB) + draggable nodes with
-  per-user localStorage position persistence + Reset button.
-  Status/direction filters + full-text search (Enter navigates to
-  first match) + stats sidebar. Error-cluster panel: shared error
-  patterns (≥ 2 lessons) grouped by tag with one-click adaptive
-  lesson launch. Nav link, Content Browser button, Dashboard quick
-  action. WCAG a11y: role="status" on loading, aria-label on all
-  controls, React.memo on node views, memoized callbacks. Lazy-
-  loaded (xyflow ~100 KB). Both storage modes; no new i18n keys
-  (reuses existing tags). Phase 65 / EXP-021: standalone 4-step
-  **Lesson Creator** at ``/create-lesson`` also in this post-tag
-  block.
+- **Current state:** **v1.50.0+** (post-release — **Phase 66 /
+  EXP-022 Visual Learning Path** merged to main without a tag).
+  An interactive @xyflow/react graph at ``/learning-path`` shows
+  the learner's full lesson journey: set-group nodes (progress
+  bar, per-direction mastery, collapsible) + lesson nodes
+  (status, stars 0-3, receptive/productive mastery pills, XP,
+  recommended badge, lock). Dagre auto-layout (TB) + draggable
+  nodes with per-user localStorage position persistence + Reset
+  button. Status/direction filters + full-text search (Enter
+  navigates to first match) + stats sidebar. Error-cluster panel:
+  shared error patterns (≥ 2 lessons) grouped by tag with
+  one-click adaptive lesson launch. Nav link, Content Browser
+  button, Dashboard quick action. WCAG a11y: role="status" on
+  loading, aria-label on all controls, React.memo on node views,
+  memoized callbacks. Lazy-loaded (xyflow ~100 KB). Both storage
+  modes.
+  v1.50.0 = minor - **Lesson Creator
+  (EXP-021)** — a standalone, no-API-key way to build a complete
+  shareable lesson. New ``/create-lesson`` route +
+  ``CreateLesson.tsx`` 4-step wizard: **Metadata → Card Editor →
+  Exercise Generator → Save/Share**. Card editor has
+  drag-and-drop reorder (``@dnd-kit``) + **CSV import**;
+  exercises **auto-generate** from cards across all 5 types
+  (shared generator module) with a manual editor for advanced
+  control; **lesson templates** (Blank / Vocabulary / Grammar /
+  Conversation); **draft auto-save** to localStorage; **preview**
+  in the real LessonViewer before save; entry points in the
+  Content Browser + Dashboard; **save locally** + **share via
+  PR** (Phase 64 pipeline). Also: **native Save-to-disk backup**
+  (File System Access API + full Dexie sync-surface coverage);
+  both storage modes, no migration, full i18n in 8 langs.
   v1.49.0 = minor - **Phase 65 — API-key
   UX + Community Sharing via PR + Analysis loading**. API keys
   get instant **format validation** (prefix + length per

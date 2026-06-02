@@ -630,6 +630,16 @@ backup:
   restored_with_errors: '{{n}} Datensätze konnten nicht wiederhergestellt werden.'
   last_backup: 'Letzte Sicherung: {{when}}'
   reminder_overdue: Deine letzte Sicherung ist mehr als {{days}} Tage her.
+  saved_as: 'Sicherung gespeichert: {{filename}}'
+  downloaded: 'Sicherung heruntergeladen: {{filename}} ({{count}} Datensätze).'
+  contains_title: 'Deine Sicherung enthält:'
+  count_element_errors: '{{n}} Fehler-Einträge'
+  count_lesson_progress: '{{n}} Lektionsfortschritte'
+  count_user_badges: '{{n}} Plaketten'
+  count_sessions: '{{n}} Sitzungen'
+  count_projects: '{{n}} Projekte'
+  count_imports: '{{n}} Chat-Importe'
+  record_count: '{{count}} Datensätze gesamt'
   auto_title: Automatische Sicherung
   auto_help: Automatisch sichern nach 10 abgeschlossenen Sitzungen oder einmal pro Woche.
   auto_run: Jetzt sichern

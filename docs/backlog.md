@@ -69,6 +69,27 @@ tiebreaker.
 
 ## P1 — Architecture / Hygiene Debt
 
+- [ ] **BACKUP-API-RESTORE-01**: Backend ``_RESTORE_ORDER`` covers
+  only 18 of the 30 exported tables. ``backup_service.py``'s
+  ``_gather_user_rows`` iterates the full ``sync_service.TABLES``
+  surface on EXPORT (30 tables incl. gamification, lesson_progress,
+  element_errors, missions, subjects/tags taxonomy), but
+  ``_RESTORE_ORDER`` stops at ``imported_messages`` — so a backup
+  restored in API mode silently IGNORES every gamification /
+  progress / SRS / missions / taxonomy row in the file. The data is
+  exported but un-restorable on the API side. Surfaced while fixing
+  the Dexie-side equivalent (BACKUP-DIR-EXPORT-01, which extended
+  the Dexie ``RESTORE_ORDER`` to all 30 tables — the frontend is now
+  complete; the backend is the remaining half). Fix: extend
+  ``_RESTORE_ORDER`` to mirror the Dexie order (badges before
+  user_badges; subjects/tags before project_* M:N rows), then add a
+  full-surface export->wipe->restore roundtrip test asserting the
+  gamification/progress tables come back. Not active production data
+  loss (the rows still live in the DB; only a cross-install / post-
+  reset restore loses them), but it makes API-mode backups a partial
+  lie the same way the Dexie bug did. Low risk: ``_restore_table``
+  is generic; the new tables are direct user-scope mutable rows.
+
 ## P2 — Medium Value, Medium Effort
 
 ## P3 — Lower Value or Large Effort
@@ -86,29 +107,6 @@ tiebreaker.
   works. Schedule a dedicated session that exercises a REAL API call
   (live key) before bumping the pin + lock.
 
-- [ ] **BACKUP-DIR-EXPORT-01**: Best-effort "Save backup to
-  disk" feature for Dexie-mode users. Originally scoped as
-  Phase 41C (auto-backup to
-  ``~/.config/adaptive-learner/backup-latest.json`` via the
-  File System Access API), deferred after the Phase 41 audit
-  showed browser sandboxing makes silent writes to an
-  arbitrary user-readable path infeasible:
-  ``showSaveFilePicker()`` is always interactive,
-  ``navigator.storage.getDirectory()`` is the sandboxed
-  Origin Private File System (not visible to the user's file
-  manager), and the "persist a directory handle via
-  IndexedDB" workaround dies the moment IndexedDB is wiped —
-  exactly the failure mode this layer was supposed to
-  address. The two-layer recovery shipped in Phase 41
-  (identity.yaml + Dexie self-recovery from existing tables)
-  covers ~95% of real-world post-wipe scenarios, so the
-  follow-up is an *interactive* "Save backup to disk" Settings
-  action (different UX shape than auto-backup): user clicks,
-  ``showSaveFilePicker`` prompts, a single timestamped JSON
-  drops to their downloads folder. Trigger: a user reports
-  losing data after a full browser-data clear in Dexie mode
-  + at least one request for "can I export a JSON I keep
-  somewhere".
 - [ ] **PLUGINFORGE-LIFECYCLE-UI-01**: Consume v0.9.0
   lifecycle visibility in Settings → Plugins. Backend half
   SHIPPED 2026-05-23: ``GET /api/plugins/inspect/{name}`` +

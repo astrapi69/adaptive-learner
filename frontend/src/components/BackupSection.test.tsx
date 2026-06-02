@@ -118,6 +118,55 @@ describe("BackupSection", () => {
         createSpy.mockRestore();
     });
 
+    it("shows a 'Your backup contains' preview from the row counts", async () => {
+        vi.spyOn(getStorage().backup, "stats").mockResolvedValue({
+            user_id: SEED_USER_ID,
+            total_records: 1234,
+            tables: {
+                element_errors: 247,
+                lesson_progress: 15,
+                user_badges: 28,
+                users: 1,
+            },
+        });
+
+        renderSection();
+
+        await waitFor(() => {
+            expect(screen.getByTestId("backup-contents")).toBeInTheDocument();
+        });
+        expect(
+            screen.getByTestId("backup-contents-element_errors").textContent,
+        ).toContain("247");
+        expect(
+            screen.getByTestId("backup-contents-lesson_progress").textContent,
+        ).toContain("15");
+        expect(
+            screen.getByTestId("backup-contents-user_badges").textContent,
+        ).toContain("28");
+        expect(
+            screen.getByTestId("backup-contents-total").textContent,
+        ).toContain("1234");
+        // A zero / absent table is not listed.
+        expect(
+            screen.queryByTestId("backup-contents-learning_sessions"),
+        ).toBeNull();
+    });
+
+    it("hides the contents preview when there are no records", async () => {
+        vi.spyOn(getStorage().backup, "stats").mockResolvedValue({
+            user_id: SEED_USER_ID,
+            total_records: 0,
+            tables: {},
+        });
+        renderSection();
+        // Give the effect a tick; the preview must stay hidden.
+        await waitFor(() => {
+            expect(screen.getByTestId("settings-backup")).toBeInTheDocument();
+        });
+        expect(screen.queryByTestId("backup-contents")).toBeNull();
+    });
+
     it("shows last-backup timestamp when present in localStorage", () => {
         localStorage.setItem(
             "adaptive-learner.last_backup_at",
@@ -177,8 +226,20 @@ describe("BackupSection", () => {
     });
 
     it("rejects a file with the wrong format", async () => {
-        const statsSpy = vi.spyOn(getStorage().backup, "stats");
+        // stats() also fires on mount for the contents preview; the
+        // assertion below targets the file-change handler, so settle
+        // the mount call first, then clear the spy.
+        const statsSpy = vi.spyOn(getStorage().backup, "stats").mockResolvedValue({
+            user_id: SEED_USER_ID,
+            total_records: 0,
+            tables: {},
+        });
         renderSection();
+        await waitFor(() => {
+            expect(statsSpy).toHaveBeenCalled();
+        });
+        statsSpy.mockClear();
+
         const input = screen.getByTestId(
             "backup-file-input",
         ) as HTMLInputElement;
@@ -188,7 +249,8 @@ describe("BackupSection", () => {
         await act(async () => {
             fireEvent.change(input, {target: {files: [bad]}});
         });
-        // The stats call must NOT fire when format validation fails.
+        // The comparison stats call must NOT fire when format
+        // validation fails.
         await waitFor(() => {
             expect(statsSpy).not.toHaveBeenCalled();
         });
