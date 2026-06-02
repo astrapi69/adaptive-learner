@@ -1952,6 +1952,15 @@
   "learning_path": {
     "title": "Lernpfad",
     "subtitle": "Wo du stehst und was als Nächstes kommt.",
-    "aria_canvas": "Lernpfad-Graph"
+    "aria_canvas": "Lernpfad-Graph",
+    "node": {
+      "lesson": "Lektion",
+      "stars": "Sterne",
+      "recommended": "Empfohlen",
+      "locked": "Gesperrt",
+      "receptive_short": "R",
+      "productive_short": "P",
+      "exercises": "{n} Übungen"
+    }
   }
 }

@@ -17,19 +17,69 @@ import {
     MiniMap,
     ReactFlow,
     type Edge,
-    type Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import {useI18n} from "../hooks/useI18n";
+import LessonNode, {
+    type LessonFlowNode,
+} from "../components/learning-path/LessonNode";
 
-// Static demo graph (66A) — replaced by the real graph builder in 66E.
-const DEMO_NODES: Node[] = [
-    {id: "1", position: {x: 0, y: 0}, data: {label: "Lesson 1"}},
-    {id: "2", position: {x: 0, y: 110}, data: {label: "Lesson 2"}},
-    {id: "3", position: {x: 0, y: 220}, data: {label: "Lesson 3"}},
-    {id: "4", position: {x: 220, y: 55}, data: {label: "Lesson 4"}},
-    {id: "5", position: {x: 220, y: 165}, data: {label: "Lesson 5"}},
+const nodeTypes = {lesson: LessonNode};
+
+function demo(
+    id: string,
+    x: number,
+    y: number,
+    data: Partial<LessonFlowNode["data"]>,
+): LessonFlowNode {
+    return {
+        id,
+        type: "lesson",
+        position: {x, y},
+        data: {
+            lessonNumber: Number(id),
+            title: `Lesson ${id}`,
+            stars: 0,
+            status: "not_started",
+            receptiveMastered: false,
+            productiveMastered: false,
+            xp: 0,
+            exerciseCount: 10,
+            recommended: false,
+            locked: false,
+            setSlug: "demo",
+            setId: "demo",
+            lessonFilename: `${id}.json`,
+            ...data,
+        },
+    };
+}
+
+// Static demo graph (66B) — replaced by the real graph builder in 66E.
+const DEMO_NODES: LessonFlowNode[] = [
+    demo("1", 0, 0, {
+        title: "Les articles",
+        stars: 3,
+        status: "mastered",
+        receptiveMastered: true,
+        productiveMastered: true,
+        xp: 80,
+    }),
+    demo("2", 0, 140, {
+        title: "Être et avoir",
+        stars: 2,
+        status: "completed",
+        receptiveMastered: true,
+        xp: 50,
+    }),
+    demo("3", 0, 280, {title: "Se présenter", stars: 1, status: "in_progress"}),
+    demo("4", 260, 70, {title: "La famille", status: "paused"}),
+    demo("5", 260, 210, {
+        title: "Les couleurs",
+        status: "not_started",
+        recommended: true,
+    }),
 ];
 
 const DEMO_EDGES: Edge[] = [
@@ -63,6 +113,7 @@ export default function LearningPath() {
                 <ReactFlow
                     nodes={DEMO_NODES}
                     edges={DEMO_EDGES}
+                    nodeTypes={nodeTypes}
                     fitView
                     minZoom={0.2}
                     maxZoom={2}

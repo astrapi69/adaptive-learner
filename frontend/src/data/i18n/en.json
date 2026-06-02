@@ -1952,6 +1952,15 @@
   "learning_path": {
     "title": "Learning Path",
     "subtitle": "Where you are and what comes next.",
-    "aria_canvas": "Learning path graph"
+    "aria_canvas": "Learning path graph",
+    "node": {
+      "lesson": "Lesson",
+      "stars": "stars",
+      "recommended": "Recommended",
+      "locked": "Locked",
+      "receptive_short": "R",
+      "productive_short": "P",
+      "exercises": "{n} exercises"
+    }
   }
 }

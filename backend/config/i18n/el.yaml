@@ -1769,3 +1769,11 @@ learning_path:
   title: "Διαδρομή μάθησης"
   subtitle: "Πού βρίσκεστε και τι ακολουθεί."
   aria_canvas: "Γράφημα διαδρομής μάθησης"
+  node:
+    lesson: "Μάθημα"
+    stars: "αστέρια"
+    recommended: "Προτεινόμενο"
+    locked: "Κλειδωμένο"
+    receptive_short: "Α"
+    productive_short: "Π"
+    exercises: "{n} ασκήσεις"

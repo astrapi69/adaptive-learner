@@ -1767,3 +1767,11 @@ learning_path:
   title: "Percurso de aprendizagem"
   subtitle: "Onde está e o que vem a seguir."
   aria_canvas: "Gráfico do percurso de aprendizagem"
+  node:
+    lesson: "Lição"
+    stars: "estrelas"
+    recommended: "Recomendado"
+    locked: "Bloqueado"
+    receptive_short: "R"
+    productive_short: "P"
+    exercises: "{n} exercícios"

@@ -7040,3 +7040,136 @@ select:focus {
   min-width: 28px;
   min-height: 28px;
 }
+
+/* Lesson node (66B) — status-coloured, theme-token-driven. */
+.lesson-node {
+  position: relative;
+  width: 180px;
+  min-height: 80px;
+  padding: 8px 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.lesson-node:disabled {
+  cursor: not-allowed;
+}
+
+.lesson-node--not-started {
+  border-color: var(--border);
+  background: var(--surface-2);
+}
+.lesson-node--in-progress {
+  border-color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 10%, var(--surface));
+}
+.lesson-node--paused {
+  border-color: var(--warning);
+  border-style: dashed;
+  background: color-mix(in srgb, var(--warning) 8%, var(--surface));
+}
+.lesson-node--completed {
+  border-color: var(--success);
+  background: color-mix(in srgb, var(--success) 10%, var(--surface));
+}
+.lesson-node--mastered {
+  border-color: var(--success);
+  background: color-mix(in srgb, var(--success) 22%, var(--surface));
+  box-shadow: 0 0 10px color-mix(in srgb, var(--success) 40%, transparent);
+}
+.lesson-node.is-recommended {
+  border-color: var(--accent);
+  animation: lesson-node-pulse 1.6s ease-in-out infinite;
+}
+.lesson-node.is-locked {
+  opacity: 0.6;
+}
+
+@keyframes lesson-node-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+.lesson-node-title {
+  font-size: 0.85rem;
+  line-height: 1.2;
+}
+.lesson-node-stars {
+  display: flex;
+  gap: 2px;
+  color: var(--star);
+}
+.lesson-node-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  margin-top: auto;
+}
+.lesson-node-mastery {
+  display: flex;
+  gap: 3px;
+}
+.lesson-node-mastery-pill {
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+.lesson-node-mastery-pill.is-receptive {
+  background: color-mix(in srgb, var(--accent) 18%, var(--surface));
+  color: var(--accent);
+}
+.lesson-node-mastery-pill.is-productive {
+  background: color-mix(in srgb, var(--success) 18%, var(--surface));
+  color: var(--success);
+}
+.lesson-node-badge-xp {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 0.6rem;
+  padding: 1px 5px;
+  border-radius: 8px;
+}
+.lesson-node-badge-recommended {
+  position: absolute;
+  top: -9px;
+  left: 6px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 0.6rem;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+.lesson-node-lock {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: var(--fg-muted);
+}
+.lesson-node-handle {
+  background: var(--border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-node.is-recommended {
+    animation: none;
+  }
+}

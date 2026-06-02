@@ -1952,6 +1952,15 @@
   "learning_path": {
     "title": "学習パス",
     "subtitle": "現在地と次のステップ。",
-    "aria_canvas": "学習パスのグラフ"
+    "aria_canvas": "学習パスのグラフ",
+    "node": {
+      "lesson": "レッスン",
+      "stars": "スター",
+      "recommended": "おすすめ",
+      "locked": "ロック中",
+      "receptive_short": "受",
+      "productive_short": "産",
+      "exercises": "{n} 個の演習"
+    }
   }
 }

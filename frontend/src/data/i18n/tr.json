@@ -1952,6 +1952,15 @@
   "learning_path": {
     "title": "Öğrenme yolu",
     "subtitle": "Neredesiniz ve sırada ne var.",
-    "aria_canvas": "Öğrenme yolu grafiği"
+    "aria_canvas": "Öğrenme yolu grafiği",
+    "node": {
+      "lesson": "Ders",
+      "stars": "yıldız",
+      "recommended": "Önerilen",
+      "locked": "Kilitli",
+      "receptive_short": "A",
+      "productive_short": "Ü",
+      "exercises": "{n} alıştırma"
+    }
   }
 }
