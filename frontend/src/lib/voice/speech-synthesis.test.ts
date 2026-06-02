@@ -87,6 +87,7 @@ function mountMockSynth(initialVoices: SpeechSynthesisVoice[] = []): MockSynth {
             onstart?: () => void;
             onend?: () => void;
             onerror?: () => void;
+            onboundary?: () => void;
             constructor(text: string) {
                 this.text = text;
             }
@@ -219,6 +220,26 @@ describe("speak", () => {
         const u = speak("hello", {onEnd, onError});
         expect(u!.onend).toBe(onEnd);
         expect(u!.onerror).toBe(onError);
+    });
+
+    it("attaches the onBoundary handler (lesson read-aloud follow-along)", () => {
+        // QA B1 — the highlight (C5) + continuous auto-advance (C7)
+        // depend on this one line being wired; pin it so removing it
+        // fails the voice-lib suite, not just an indirect page test.
+        mountMockSynth();
+        const onBoundary = vi.fn();
+        const u = speak("hello world", {onBoundary});
+        expect(
+            (u as unknown as {onboundary?: unknown}).onboundary,
+        ).toBe(onBoundary);
+    });
+
+    it("leaves onBoundary unset when no handler is passed", () => {
+        mountMockSynth();
+        const u = speak("hello");
+        expect(
+            (u as unknown as {onboundary?: unknown}).onboundary,
+        ).toBeUndefined();
     });
 });
 
