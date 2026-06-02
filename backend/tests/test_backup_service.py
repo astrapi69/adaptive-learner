@@ -16,28 +16,51 @@ Covers:
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 import pytest
 from fastapi.testclient import TestClient
 
 from app.exceptions import NotFoundError, ValidationError
 from app.models import (
+    AnkiCardSuggestion,
+    ApiKeyBackup,
+    Badge,
     Curriculum,
+    ElementError,
+    ImportedConversation,
+    ImportedMessage,
     LearningProfile,
     LearningProject,
     LearningSession,
     LearningTopic,
     Lesson,
+    LessonProgress,
+    MethodSwitch,
     ProgressCommit,
+    ProjectSubject,
+    ProjectTag,
     SessionMessage,
+    SessionNote,
     SessionRating,
+    StepEvaluation,
+    StudyQuestion,
+    Subject,
+    Tag,
     User,
+    UserBadge,
+    UserMission,
     UserSettings,
+    UserStreak,
+    UserXP,
 )
 from app.routers.backup import router as backup_router
 from app.routers.users import router as users_router
 from app.services.backup_service import (
+    _RESTORE_ORDER as RESTORE_ORDER,
+)
+from app.services.backup_service import (
+    ALL_BACKUP_TABLES,
     BACKUP_FORMAT,
     BACKUP_VERSION,
     EXCLUDED_USER_SETTINGS_FIELDS,
@@ -45,6 +68,7 @@ from app.services.backup_service import (
     get_backup_stats,
     restore_backup,
 )
+from app.services.sync_service import TABLES as SYNC_TABLES
 from tests.router_test_client import make_client
 
 # ---- Fixtures --------------------------------------------------------------
@@ -122,9 +146,7 @@ def _seed_user(db) -> User:
     db.add(session)
     db.flush()
 
-    db.add(
-        SessionMessage(session_id=session.id, role="user", content="Hi")
-    )
+    db.add(SessionMessage(session_id=session.id, role="user", content="Hi"))
     db.add(
         SessionRating(
             session_id=session.id,
@@ -148,6 +170,143 @@ def _seed_user(db) -> User:
     db.commit()
     db.refresh(user)
     return user
+
+
+def _seed_all_tables(db) -> User:
+    """Insert at least one row into EVERY backup table.
+
+    The base ``_seed_user`` covers 11 tables; this fills in the
+    remaining 19 (gamification, SRS, missions, taxonomy, anki,
+    study-questions, lesson-progress, api-key-backup, the imports
+    pair, session notes, method switches, step evaluations) so a
+    full 30-table round-trip can be exercised. This is the data
+    that BACKUP-API-RESTORE-01 silently dropped on restore.
+    """
+    user = _seed_user(db)
+    project = db.query(LearningProject).filter(LearningProject.user_id == user.id).first()
+    session = db.query(LearningSession).filter(LearningSession.project_id == project.id).first()
+
+    # session_notes / method_switches / step_evaluations
+    db.add(SessionNote(session_id=session.id, content="A note I took"))
+    db.add(
+        MethodSwitch(
+            project_id=project.id,
+            from_method="deductive",
+            to_method="inductive",
+            reason="stagnation detected",
+        )
+    )
+    db.add(
+        StepEvaluation(
+            session_id=session.id,
+            from_step=1,
+            to_step=2,
+            advance=True,
+            confidence=0.9,
+            applied=True,
+        )
+    )
+
+    # imported_conversations / imported_messages
+    conversation = ImportedConversation(
+        user_id=user.id,
+        project_id=project.id,
+        source="chatgpt",
+        title="Imported chat",
+        message_count=1,
+    )
+    db.add(conversation)
+    db.flush()
+    db.add(
+        ImportedMessage(
+            conversation_id=conversation.id,
+            role="user",
+            content="What is Bayes' theorem?",
+            order_index=0,
+        )
+    )
+
+    # taxonomy: subjects (global) + tags (user) + the two M:N rows
+    subject = Subject(name="Mathematics")
+    db.add(subject)
+    tag = Tag(user_id=user.id, name="exam-prep", color="#ff0000")
+    db.add(tag)
+    db.flush()
+    db.add(ProjectSubject(project_id=project.id, subject_id=subject.id))
+    db.add(ProjectTag(project_id=project.id, tag_id=tag.id))
+
+    # gamification
+    db.add(UserXP(user_id=user.id, total_xp=100, level=2))
+    badge = Badge(
+        key="streak_7", name_key="badges.streak_7.name", description_key="badges.streak_7.desc"
+    )
+    db.add(badge)
+    db.flush()
+    db.add(UserBadge(user_id=user.id, badge_id=badge.id, tier="silver"))
+    db.add(
+        UserStreak(
+            user_id=user.id, current_streak_days=5, longest_streak_days=12, freezes_available=1
+        )
+    )
+
+    # anki + study questions
+    db.add(AnkiCardSuggestion(user_id=user.id, front="Q front", back="A back", accepted=True))
+    db.add(
+        StudyQuestion(
+            user_id=user.id,
+            project_id=project.id,
+            question="Why does the prior matter?",
+            expected_answer="It encodes belief before evidence.",
+        )
+    )
+
+    # content-loader: lesson progress + element errors
+    db.add(
+        LessonProgress(
+            user_id=user.id,
+            source="astrapi69/adaptive-learner-content",
+            set_id="fr-a1",
+            lesson_filename="01-intro.json",
+            status="completed",
+            score_correct=8,
+            score_total=10,
+        )
+    )
+    db.add(
+        ElementError(
+            user_id=user.id,
+            set_id="fr-a1",
+            lesson_id="01-intro.json",
+            exercise_id="ex-1",
+            element_key="merci",
+            error_count=2,
+            correct_streak=1,
+        )
+    )
+
+    # missions + api-key backup (Fernet ciphertext travels as-is)
+    db.add(
+        UserMission(user_id=user.id, template_id="daily_lessons_1", assigned_date=date(2026, 6, 2))
+    )
+    db.add(
+        ApiKeyBackup(
+            user_id=user.id,
+            provider="anthropic",
+            encrypted_key="gAAAAAB-ciphertext-blob",
+        )
+    )
+
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def _wipe_all_tables(db) -> None:
+    """Delete every backup table in reverse restore order (children
+    before parents) so FK constraints never block the wipe."""
+    for table in reversed(RESTORE_ORDER):
+        db.query(SYNC_TABLES[table].model).delete()
+    db.commit()
 
 
 # ---- Create-backup tests ---------------------------------------------------
@@ -354,9 +513,7 @@ def test_restore_strips_api_keys_even_if_present(db_session):
         row["active_provider"] = "gemini"
 
     restore_backup(db_session, payload)
-    settings = (
-        db_session.query(UserSettings).filter(UserSettings.user_id == user.id).first()
-    )
+    settings = db_session.query(UserSettings).filter(UserSettings.user_id == user.id).first()
     # Live keys survived; injected keys did not land.
     assert settings.api_key_anthropic == "sk-secret-anthropic"
     assert settings.api_key_openai == "sk-secret-openai"
@@ -377,9 +534,7 @@ def test_restore_rejects_non_dict(db_session):
 
 def test_restore_rejects_missing_data_segment(db_session):
     with pytest.raises(ValidationError):
-        restore_backup(
-            db_session, {"format": BACKUP_FORMAT, "version": BACKUP_VERSION}
-        )
+        restore_backup(db_session, {"format": BACKUP_FORMAT, "version": BACKUP_VERSION})
 
 
 def test_restore_rejects_missing_user_id(db_session):
@@ -449,9 +604,7 @@ def test_import_endpoint_accepts_export_roundtrip(client: TestClient):
     user_id = _make_user_via_api(client)
     export = client.get("/api/backup/export", params={"user_id": user_id})
     payload = export.json()
-    resp = client.post(
-        "/api/backup/import", params={"user_id": user_id}, json=payload
-    )
+    resp = client.post("/api/backup/import", params={"user_id": user_id}, json=payload)
     assert resp.status_code == 200, resp.text
     body = resp.json()
     assert body["user_id"] == user_id
@@ -476,3 +629,146 @@ def test_import_endpoint_rejects_missing_data_segment(client: TestClient):
         json={"format": "adaptive-learner-backup", "version": "1.2.0"},
     )
     assert resp.status_code == 400
+
+
+# ---- Full-surface parity + round-trip (BACKUP-API-RESTORE-01) ---------------
+
+
+def test_export_and_restore_cover_the_same_tables():
+    """Structural pin: the export surface and the restore surface MUST
+    be identical. This is the test that would have caught
+    BACKUP-API-RESTORE-01 — the export listed 30 tables while the
+    restore order silently covered only 16, dropping 14 on restore.
+    """
+    assert set(ALL_BACKUP_TABLES) == set(RESTORE_ORDER)
+    # No table is listed twice in the restore order.
+    assert len(RESTORE_ORDER) == len(set(RESTORE_ORDER))
+    # Both sides match the sync surface (the single source of truth).
+    assert set(ALL_BACKUP_TABLES) == set(SYNC_TABLES.keys())
+
+
+def test_restore_order_respects_fk_dependencies():
+    """Parents must precede children so inserts never violate an FK."""
+    position = {table: i for i, table in enumerate(RESTORE_ORDER)}
+
+    def precedes(parent: str, child: str) -> None:
+        assert position[parent] < position[child], f"{parent} must come before {child}"
+
+    precedes("users", "user_settings")
+    precedes("users", "learning_projects")
+    precedes("learning_projects", "learning_sessions")
+    precedes("learning_sessions", "session_messages")
+    precedes("learning_sessions", "session_notes")
+    precedes("learning_sessions", "step_evaluations")
+    precedes("curriculums", "learning_topics")
+    precedes("curriculums", "lessons")
+    precedes("imported_conversations", "imported_messages")
+    # M:N association rows after both of their parents.
+    precedes("subjects", "project_subjects")
+    precedes("learning_projects", "project_subjects")
+    precedes("tags", "project_tags")
+    precedes("learning_projects", "project_tags")
+    # The catalog before the earned-badge rows that reference it.
+    precedes("badges", "user_badges")
+
+
+def test_export_and_restore_all_thirty_tables(db_session):
+    """Round-trip the full 30-table surface: seed every table, export,
+    wipe, restore, and assert every table's row count is preserved.
+    """
+    user = _seed_all_tables(db_session)
+    payload = create_backup(db_session, user.id)
+
+    # Every backup table carries at least one seeded row.
+    before_counts = {table: len(rows) for table, rows in payload["data"].items()}
+    for table in ALL_BACKUP_TABLES:
+        assert before_counts.get(table, 0) >= 1, f"no rows exported for {table}"
+
+    _wipe_all_tables(db_session)
+    assert db_session.query(User).count() == 0
+
+    summary = restore_backup(db_session, payload)
+    assert summary["errors"] == []
+
+    # Re-export from the restored DB and compare the per-table counts.
+    after_counts = {
+        table: len(rows) for table, rows in create_backup(db_session, user.id)["data"].items()
+    }
+    assert after_counts == before_counts
+
+
+def test_round_trip_preserves_table_data_that_was_being_dropped(db_session):
+    """Spot-check the concrete tables BACKUP-API-RESTORE-01 dropped:
+    gamification, SRS, lesson-progress, and the (encrypted) api-key
+    backup all come back byte-for-byte after a wipe + restore.
+    """
+    user = _seed_all_tables(db_session)
+    payload = create_backup(db_session, user.id)
+    _wipe_all_tables(db_session)
+    restore_backup(db_session, payload)
+
+    xp = db_session.query(UserXP).filter(UserXP.user_id == user.id).one()
+    assert xp.total_xp == 100
+    assert xp.level == 2
+
+    streak = db_session.query(UserStreak).filter(UserStreak.user_id == user.id).one()
+    assert streak.current_streak_days == 5
+    assert streak.longest_streak_days == 12
+
+    badge_row = db_session.query(UserBadge).filter(UserBadge.user_id == user.id).one()
+    assert badge_row.tier == "silver"
+
+    error = db_session.query(ElementError).filter(ElementError.user_id == user.id).one()
+    assert error.element_key == "merci"
+    assert error.error_count == 2
+
+    progress = db_session.query(LessonProgress).filter(LessonProgress.user_id == user.id).one()
+    assert progress.status == "completed"
+    assert progress.score_correct == 8
+    assert progress.score_total == 10
+
+    mission = db_session.query(UserMission).filter(UserMission.user_id == user.id).one()
+    assert mission.template_id == "daily_lessons_1"
+
+    # Fernet ciphertext is opaque and useless without the install
+    # secret, so it round-trips verbatim (not stripped like the
+    # plaintext UserSettings.api_key_* fields).
+    backup_row = db_session.query(ApiKeyBackup).filter(ApiKeyBackup.user_id == user.id).one()
+    assert backup_row.encrypted_key == "gAAAAAB-ciphertext-blob"
+    assert backup_row.provider == "anthropic"
+
+
+def test_restore_skips_table_missing_from_backup(db_session):
+    """A backup JSON missing a table segment must restore the rest
+    without crashing (forward/backward-compat across app versions)."""
+    user = _seed_all_tables(db_session)
+    payload = create_backup(db_session, user.id)
+    del payload["data"]["user_missions"]
+
+    _wipe_all_tables(db_session)
+    summary = restore_backup(db_session, payload)
+
+    assert summary["errors"] == []
+    # The dropped table simply restores nothing; everything else is back.
+    assert db_session.query(UserMission).count() == 0
+    assert db_session.query(UserXP).filter(UserXP.user_id == user.id).count() == 1
+
+
+def test_restore_ignores_unknown_table_in_backup(db_session):
+    """An unknown table segment (e.g. from a newer app version) is
+    ignored rather than crashing the restore."""
+    user = _seed_all_tables(db_session)
+    payload = create_backup(db_session, user.id)
+    payload["data"]["totally_made_up_table"] = [{"id": "x1", "foo": "bar"}]
+
+    summary = restore_backup(db_session, payload)
+
+    assert summary["errors"] == []
+    assert "totally_made_up_table" not in summary["tables"]
+
+
+def test_get_backup_stats_covers_all_tables(db_session):
+    """The pre-restore stats surface must report every backup table."""
+    user = _seed_all_tables(db_session)
+    stats = get_backup_stats(db_session, user.id)
+    assert set(stats["tables"].keys()) == set(ALL_BACKUP_TABLES)
