@@ -283,6 +283,69 @@ describe("session.start", () => {
             );
         },
     );
+
+    it(
+        "carries the analysis into the AI call when the session is RESUMED",
+        async () => {
+            // BUG (P1) — "Sitzung fortsetzen": after a session created
+            // from an imported analysis is resumed (the user navigates
+            // back and sends the next message), the analysis context must
+            // still reach the provider. The system message persists, so
+            // every subsequent message's AI call must carry it in
+            // ``body.system`` — not just the very first turn.
+            const {userId, projectId} = await setupUserWithKey();
+            const conv = await dexieStorage.imports.create(userId, {
+                source: "manual",
+                title: "Analysed chat",
+                model: null,
+                source_created_at: null,
+                messages: [{role: "user", content: "hola", timestamp: null}],
+            });
+            await getDb().importedConversations.update(conv.id, {
+                analyzed: true,
+                analysis_result: {
+                    topic: "Spanish past tense",
+                    summary: "Practised the preterite.",
+                    user_level: "intermediate",
+                    strengths: ["vocabulary recall"],
+                    weaknesses: ["irregular verbs"],
+                    error_patterns: ["confuses ser/estar"],
+                    vocabulary: [{word: "tener", translation: "to have"}],
+                    suggested_curriculum: [],
+                },
+            });
+            const started = await dexieStorage.session.start({
+                project_id: projectId,
+                lang: "en",
+                imported_conversation_id: conv.id,
+            });
+
+            // Simulate the resume: a fresh session.message call (this is
+            // exactly what Session.tsx does after navigating to
+            // ?session=<id> and the learner replies).
+            chatReplies.push("Let's keep going with irregular verbs.");
+            await dexieStorage.session.message(started.session.id, {
+                role: "user",
+                content: "Ready to continue.",
+            });
+
+            // The Anthropic chat call (NOT the eval call) must carry the
+            // analysis in its top-level system field.
+            const chatCall = calls.find(
+                (c) =>
+                    c.url.includes("anthropic") &&
+                    typeof (c.body as {system?: unknown})?.system === "string" &&
+                    !(
+                        (c.body as {system: string}).system
+                    ).includes("Output ONLY a single valid JSON object"),
+            );
+            expect(chatCall).toBeDefined();
+            const system = (chatCall!.body as {system: string}).system;
+            expect(system).toContain("Spanish past tense");
+            expect(system).toContain("Weaknesses: irregular verbs");
+            expect(system).toContain("tener");
+        },
+    );
 });
 
 describe("session.message", () => {
