@@ -405,6 +405,26 @@ describe("buildSystemPrompt (Phase 36 Bug 2)", () => {
             "recommended_method enum values: deductive / inductive /",
         );
     });
+
+    // v1.54.0 — import-time learner-context block.
+    it("adds a LEARNER CONTEXT block for a distinct source/target pair", () => {
+        const prompt = buildSystemPrompt("de", "de", "fr");
+        expect(prompt).toContain("LEARNER CONTEXT");
+        expect(prompt).toContain("German speaker learning French");
+    });
+
+    it("uses single-language phrasing when source == target (domain)", () => {
+        const prompt = buildSystemPrompt("de", "de", "de");
+        expect(prompt).toContain("LEARNER CONTEXT");
+        expect(prompt).toContain("studies German");
+    });
+
+    it("omits the LEARNER CONTEXT block when no target is given", () => {
+        expect(buildSystemPrompt("de")).not.toContain("LEARNER CONTEXT");
+        expect(buildSystemPrompt("de", "de", null)).not.toContain(
+            "LEARNER CONTEXT",
+        );
+    });
 });
 
 describe("analyzeConversation lang passthrough (Phase 36 Bug 2)", () => {

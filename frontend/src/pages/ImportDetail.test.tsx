@@ -140,6 +140,60 @@ describe("ImportDetail page", () => {
         expect(screen.queryByTestId("analysis-results")).toBeNull();
     });
 
+    it("shows language pickers; source = app language, target auto-detected", async () => {
+        // C2 — languages are set at import time. Source defaults to the
+        // app language; target is auto-detected from the (French) content.
+        const user = await dexieStorage.users.create({ name: "A" });
+        localStorage.setItem("adaptive-learner.user_id", user.id);
+        const conv = await dexieStorage.imports.create(user.id, {
+            source: "manual",
+            title: "Französisch lernen",
+            messages: [
+                {
+                    role: "user",
+                    content:
+                        "Wie sage ich Hallo auf Französisch? Bonjour, merci, " +
+                        "être und avoir im passé composé.",
+                },
+                { role: "assistant", content: "Bonjour heißt Hallo, merci danke." },
+            ],
+        });
+        renderDetail(conv.id);
+        await waitFor(() => {
+            expect(screen.getByTestId("import-language-pickers")).toBeTruthy();
+        });
+        const source = screen.getByTestId(
+            "import-source-language",
+        ) as HTMLSelectElement;
+        const target = screen.getByTestId(
+            "import-target-language",
+        ) as HTMLSelectElement;
+        expect(source.value).not.toBe(""); // the app language
+        expect(target.value).toBe("fr"); // detected from the French content
+    });
+
+    it("persists a language change onto the import record", async () => {
+        const user = await dexieStorage.users.create({ name: "A" });
+        localStorage.setItem("adaptive-learner.user_id", user.id);
+        const conv = await dexieStorage.imports.create(user.id, {
+            source: "manual",
+            title: "Chat",
+            messages: [
+                { role: "user", content: "Bonjour merci passé être avoir" },
+                { role: "assistant", content: "oui" },
+            ],
+        });
+        renderDetail(conv.id);
+        const target = (await screen.findByTestId(
+            "import-target-language",
+        )) as HTMLSelectElement;
+        fireEvent.change(target, { target: { value: "es" } });
+        await waitFor(async () => {
+            const reread = await dexieStorage.imports.get(conv.id);
+            expect(reread.target_language).toBe("es");
+        });
+    });
+
     it("renders analysis results when conversation is analyzed", async () => {
         const conv = await setup(true);
         renderDetail(conv.id);

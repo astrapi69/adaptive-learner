@@ -95,6 +95,40 @@ describe("SaveOfflineLessonModal", () => {
     expect(source.value).toBe("de");
   });
 
+  it("inherits the import-time language pair when provided (no guessing)", () => {
+    // C4 — the modal must use the pair captured at import, not guess
+    // from the topic / app language.
+    i18nState.lang = "de";
+    renderModal({
+      analysis: { topic: "Etwas", summary: "x" },
+      language: "en",
+      sourceLanguage: "de",
+      targetLanguage: "fr",
+    });
+    expect(
+      (screen.getByTestId("save-lesson-source-lang") as HTMLSelectElement).value,
+    ).toBe("de");
+    expect(
+      (screen.getByTestId("save-lesson-target-lang") as HTMLSelectElement).value,
+    ).toBe("fr");
+  });
+
+  it("falls back to guessing when the import has no language pair", () => {
+    // Old import without languages -> source = app language, target =
+    // detected from the topic.
+    i18nState.lang = "de";
+    renderModal({
+      analysis: { topic: "Französisch A1", summary: "x" },
+      language: "en",
+    });
+    expect(
+      (screen.getByTestId("save-lesson-source-lang") as HTMLSelectElement).value,
+    ).toBe("de");
+    expect(
+      (screen.getByTestId("save-lesson-target-lang") as HTMLSelectElement).value,
+    ).toBe("fr");
+  });
+
   it("renders nothing when closed", () => {
     renderModal({ open: false });
     expect(
