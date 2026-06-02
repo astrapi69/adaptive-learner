@@ -1,195 +1,108 @@
-# Adaptive Learner — Latest Status Handover
+# Handover / Status Report
 
-**Generated:** 2026-06-01
-**Purpose:** single-glance project status for resuming work. Overwritten
-each session; dated journals keep point-in-time detail.
-
-> ⚠️ **READ §10 FIRST.** This working tree is being shared by two
-> agents concurrently (CC + CCW) — that caused two branch mix-ups this
-> session. Know the landmines before touching git.
-
----
+_Last updated: 2026-06-02. Overwritten on each status pass — this file is always the latest snapshot._
 
 ## 1. HEAD + version
 
-| | |
-|---|---|
-| **origin/main** | `ecace25` (`fix(crypto): always create secret.key …`) |
-| **App version** | `v1.48.0` (canonical: `backend/pyproject.toml`) |
-| **Last tag / release** | `v1.48.0` (tagged @ `f5b72f0`, GitHub release live) |
-| **Unreleased on main** | 3 feature commits since the v1.48.0 tag → candidates for **v1.48.1** |
+- **HEAD commit:** `5f9e950` — `fix(lesson): single two-phase button in adaptive + review flows (BUG P1)`
+- **Released version:** `v1.53.0` (canonical `backend/pyproject.toml` = `1.53.0`)
+- **Branch:** `main` (7 commits ahead of the `v1.53.0` tag — all unreleased, see §5)
+- The next release will be a **minor** bump (`v1.54.0`): it carries new features (compact lesson nav, editable share wizard) plus P0/P1 fixes.
 
-Unreleased-since-v1.48.0 (all on origin/main):
-- `ecace25` fix(crypto): always create secret.key (the persistent key source)
-- `b63ead5` docs(exploration): EXP-022 visual learning path
-- `7e2b2a3` fix(settings): stable Fernet key + encrypted secrets.yaml
+## 2. Test counts (freshly re-collected this session, 2026-06-02)
 
-Repos:
-- App: `astrapi69/adaptive-learner` @ `ecace25`
-- Content: `astrapi69/adaptive-learner-content` @ `6b4fc63`
+| Suite | Count | How collected |
+|---|---|---|
+| Backend (pytest) | **1125** | `cd backend && poetry run pytest --collect-only -q` |
+| Plugins (13 suites, pytest) | **1009** | per-plugin `pytest --collect-only` from the backend env |
+| Frontend (Vitest) | **3043 passed** | `cd frontend && npx vitest run` (276 files, all green) |
+| **Total** | **5177** | — |
 
----
+Per-plugin breakdown: ai-anthropic 35, ai-gemini 34, ai-openai 32, anki 20, assessment 110, content-loader 261, gamification 55, learning-repo 53, missions 41, notebooklm 27, session 219, tools 58, tracking 64.
 
-## 2. Test counts (verified this session)
+E2E (Playwright, not on the `make test` path): smoke specs + the Dexie-mode release gate (`make test-dexie-smoke`). The Dexie adaptive walker was updated this session to the controlled two-phase flow; **not re-run here** (Aster runs E2E).
 
-| Suite | Count |
-|---|---|
-| Backend (pytest) | **1083** passed (+1 skipped) |
-| Plugins (13 suites) | **997** passed |
-| Frontend Vitest | **2816** passed |
-| Dexie-mode E2E gate (`make test-dexie-smoke`) | **49** passed (~3.1 min) |
+TypeScript: `npx tsc --noEmit` clean.
 
-`make test` = backend + plugins + Vitest. E2E smoke (`e2e/smoke/`) runs
-separately. All green as of `ecace25`.
+## 3. Bug status
 
----
+### Fixed this session
+- **P0 — Share Wizard Step 1 (3 sub-bugs A/B/C)** — `17a597f`, `a93414d`.
+  - A: Step 1 metadata (title / source / target / level) is now an editable, pre-filled form; corrected values drive placement, validation, the PR body, and are stamped onto the shipped lesson file.
+  - B: empty lessons (0 exercises / 0 cards) block sharing + offer a Regenerate button (analysis sets → import page, else Lesson Creator).
+  - C: non-CEFR levels (e.g. `imported`) can never advance; required CEFR dropdown.
+  - i18n: 16 new strings in all 8 catalogs.
+- **P1 — double-button (Prüfen + Weiter visible at once)** — `5f9e950`.
+  - Root cause (NOT a stale build, contrary to the prior diagnosis in `984c4d9`): the main `Lesson.tsx` flow was already correct, but **AdaptiveLesson.tsx and Review.tsx** rendered the `ExerciseDispatcher` *uncontrolled* (internal "Antwort prüfen" submit visible) **and** their own always-on "Weiter" nav button → two buttons per exercise step.
+  - Fix: both pages now use the same controlled two-phase pattern as `Lesson.tsx` (ref + `controlled` + `onInteraction`, per-step `key`, single Check→Weiter button). New regression pins: `AdaptiveLesson.twophase.test.tsx`, `Review.twophase.test.tsx` (all 5 exercise types).
 
-## 3. THE secret.key BUG — FIXED (pending Aster's acceptance)
+### Open (priority order)
+1. **P0 — Community PR file attachment bug** (core sharing broken). NOT yet investigated this session. Next up.
+2. **UX — nav-bar hamburger in lessons.** Partially addressed by `b7de89c` (compact navigation during lessons + landscape mobile); confirm whether a hamburger is still wanted on top of the compact nav.
+3. **P1 — "Sitzung fortsetzen" analysis context** (resumed session should carry the analysis context). Open.
 
-**Symptom:** API keys "lost on restart". **Root cause:** the Fernet
-encryption key came only from `ADAPTIVE_LEARNER_SECRET_KEY`; if that
-value changed between boots, every stored ciphertext became
-undecryptable.
+## 4. Content repo status (`astrapi69/adaptive-learner-content`)
 
-**Two-commit fix (both on main):**
-- `7e2b2a3` — stable key + encrypted `secrets.yaml`: API keys stored
-  Fernet-encrypted under `ai.<provider>.api_key_encrypted`; new
-  `secrets_service.py`; `set_api_key`→yaml (not DB); startup migration
-  DB→yaml; path unified on `get_config_dir` (deleted the XDG duplicate).
-- `ecace25` — **the real fix**: the first version kept the env var as
-  *highest* priority, so on a box where `make dev` sets it (via
-  `.adaptive-learner/dev-secret.env`) `secret.key` was **never written**
-  and persistence still hinged on the env value. Now the **file is the
-  source of truth**: `get_fernet()` creates `secret.key` on first use —
-  seeded from the env value if set (so existing ciphertext stays
-  decryptable), else generated — and reads it thereafter independent of
-  the env var.
+- Local sibling checkout: `/home/astrapi69/dev/git/hub/astrapi69/adaptive-learner-content`, on `main`.
+- **7 sets, 100 lessons total:**
+  - `de/en-a1` 15 · `de/es-a1` 15 · `de/fr-a1` 15 · `de/python-basics` 15 · `de/psych-intro` 10 · `en/es-a1` 15 · `en/fr-a1` 15
+- **Open PRs: 0** (`gh pr list` on the content repo returns none).
+- Recent merges: python-basics (PR #3), psych-intro, license change to Attribution-ShareAlike 4.0.
+- Remote branches: `claude/epic-keller-0worq`, `claude/psych-intro-content`, `claude/python-basics-content` (the latter two already merged to main).
 
-**Tests:** 19 in `test_api_key_secrets_persistence.py` (incl.
-`survives_restart`, `survives_10_restarts`, `created_even_when_env_set`,
-`key_survives_env_var_disappearing`). Real `~/.config` verified
-untouched by the suite (tests use `ADAPTIVE_LEARNER_CONFIG_DIR`→tmp).
+## 5. Unreleased commits since v1.53.0
 
-**REMAINS:** Aster's manual acceptance (§7). v1.48.1 is **blocked** on
-it. Do NOT tag until Aster says "secret.key exists + key survives
-restart".
+```
+5f9e950 fix(lesson): single two-phase button in adaptive + review flows (BUG P1)
+a93414d feat(share): wire Regenerate + i18n for the editable share wizard
+17a597f fix(share): editable, validated Step 1 in the share wizard (P0)
+b7de89c feat(nav): compact navigation during lessons + landscape mobile
+ec4b79c fix(session): friendly localized toast when no AI key is configured
+0ce8139 Merge branch 'main' of http://127.0.0.1:44291/git/astrapi69/adaptive-learner
+984c4d9 test(lesson): pin single two-phase button across all 5 exercise types (BUG P1)
+```
 
----
+(7 commits; `0ce8139` is a sync merge. These accumulate toward `v1.54.0`.)
 
-## 4. Open / unreleased work
+## 6. Open feature branches
 
-| Item | Status |
-|---|---|
-| **CCW PR #1** (Smart Next-Step Suggestions) | **MERGED** into main (`0bf0689`), shipped in v1.48.0. Branch auto-deleted. |
-| **Phase 64** (Community Sharing UX, 64A–64F) | **COMPLETE**, shipped in v1.48.0 (placement engine, duplicate/variation/supplement, share wizard, author credit, contribution history, gap suggestions, 8-lang i18n). |
-| **secret.key fix** | Fixed on main (§3); **blocks v1.48.1**. |
-| **CCW `feature/analysis-loading-indicator`** | **ACTIVE** — on origin + currently checked out in this tree, with 4 **uncommitted** WIP files (see §5/§10). CCW owns it. |
-| **CCW `feature/help-translations`** | **NOT on origin** — likely CCW-local WIP; status unknown from here. |
-| **v1.48.1 release** | **BLOCKED** on Aster's secret.key acceptance, then: bump 1.48.0→1.48.1, sync-versions, changelog, CLAUDE/ROADMAP, `make release-test`, `release-tag v1.48.1`, `gh release create`. |
+**App repo (`astrapi69/adaptive-learner`):**
+- Local: `main` only.
+- Remote (besides `main`): `feature/help-translations`, `feature/learning-path`, `feature/lesson-creator`, `claude/probe-push-permission`, `claude/setup-backend-foundation-6E1lr`.
+- Note: `feature/learning-path` and `feature/lesson-creator` look superseded — Learning Path (Phase 66) and the Lesson Creator (Phase 65) already shipped on `main`. Candidates for deletion after confirming nothing unmerged remains.
 
----
+**Content repo:** see §4 (3 `claude/*` branches; 2 already merged).
 
-## 5. Branches (local + remote)
+## 7. CCW status (parallel content work: FR A2 / ES A2 / EN A2)
 
-**Remote (`origin`):**
-- `main` — `ecace25` (current)
-- `feature/analysis-loading-indicator` — CCW active
-- `claude/probe-push-permission` — stale (old probe branch; safe to delete)
-- `claude/setup-backend-foundation-6E1lr` — stale (old setup branch; safe to delete)
+- **Not yet landed or visible in this repo.** The content repo `main` has **no A2 sets** (only the A1 pairs + python-basics + psych-intro), **no open A2 PRs**, and **no A2 branches** as of content-repo HEAD `ed4c605`.
+- Interpretation: CCW's A2 generation is in progress externally and has not been pushed/PR'd yet. When it lands it will appear as `sets/{de,en}/{fr,es}-a2/` plus an app-side bump of the bundled-content snapshot.
+- _Not directly verifiable from these two repos beyond the above; treat the A2 progress detail as reported-by-user._
 
-**Local:**
-- `main` — ref may lag origin (stale; refspec pushes were used). Update with `git fetch && git branch -f main origin/main` when safe.
-- `feature/analysis-loading-indicator` — **currently checked out** (CCW's branch). Carries `ecace25`/`b63ead5` as common-with-main history (harmless; dedupes on merge) + CCW's 4 uncommitted files.
+## 8. Backlog (filed + open)
 
----
+From `docs/backlog.md` (open `- [ ]`):
+- **BACKUP-API-RESTORE-01** — listed open, but CLAUDE.md records it as fixed in v1.52.0. **Likely already closed; needs archival verification** (see lessons-learned: verify backlog vs reality).
+- **DEP-MYPY-2-01** — mypy 1.x → 2.0 (held).
+- **DEP-ANTHROPIC-105-01** — ai-anthropic anthropic SDK 0.105 (held).
+- **PLUGINFORGE-LIFECYCLE-UI-01** — consume PluginForge v0.9.0 lifecycle visibility in the UI.
+- **BL-14** PostgreSQL migration · **BL-15** JWT auth · **BL-16** multi-user · **BL-17** Stripe · **BL-19** social features (all P4/P5 future).
 
-## 6. Content repo (`astrapi69/adaptive-learner-content`)
+P3 follow-ups filed in v1.53.0 (per CLAUDE.md): **ANALYSIS-TARGET-DETECT-01**, **ANALYSIS-DOMAIN-SUGGEST-01**, **PLACEMENT-LANG-WARN-01**.
 
-- HEAD `6b4fc63` — `feat(content): fix progressive direction in es-a1 sets (EXP-018)` (CCW).
-- `843a963` — **FR A1 expanded to 15 lessons in both sources** (de + en), full parity with ES A1 (this session). Validator green on all 4 sets.
-- Pilot sets: `en/fr-a1`, `de/fr-a1`, `en/es-a1`, `de/es-a1` — all **15 lessons**.
-- CI runs `scripts/validate_content.py` on PRs.
+## 9. Next steps (priority)
 
----
+1. **P0 — Community PR file attachment bug.** Core sharing is reported broken; investigate the create-file URL / upload path end-to-end (verify the `value=` JSON actually lands, the URL-length fallback, and the download-then-upload ordering). The share action lives in `frontend/src/components/content/ShareWizard.tsx` (`doShare`) + `frontend/src/lib/content/lesson-export.ts`.
+2. **P1 — "Sitzung fortsetzen" analysis context** — resumed session must carry the analysis context.
+3. **UX — lessons hamburger** — decide if still needed after `b7de89c`'s compact nav.
+4. Cut **v1.54.0** once the P0 attachment bug is fixed (run the full release gate incl. `make test-dexie-smoke`).
+5. Housekeeping: archive BACKUP-API-RESTORE-01 if confirmed done; prune superseded `feature/*` branches.
 
-## 7. Manual acceptance for the secret.key fix (DO THIS FIRST next session)
+## 10. Lessons learned this session
 
-On the real machine (after pulling `ecace25`):
-1. Run the app (`make dev`), save an API key in **Settings > AI**.
-2. `ls -la ~/.config/adaptive_learner/secret.key` → **must exist**, mode `600`.
-3. `cat ~/.config/adaptive_learner/secrets.yaml` → shows
-   `ai.<provider>.api_key_encrypted` (Fernet ciphertext, not plaintext).
-4. Settings shows **"Key from: secrets.yaml"**.
-5. `make dev-down && make dev` → key still present + works.
-6. Stress test: `unset ADAPTIVE_LEARNER_SECRET_KEY` before a start → key
-   STILL works (proves file-independence).
-
-If all pass → **cut v1.48.1** (§4). If `secret.key` is still missing,
-check that the running process actually used the patched `crypto.py`
-and that `~/.config/adaptive_learner/` is writable.
-
----
-
-## 8. Next steps (priority order)
-
-1. **Aster: secret.key manual acceptance** (§7) — unblocks v1.48.1.
-2. **Cut v1.48.1** once accepted (secrets fix + EXP-022 are the payload).
-3. **Coordinate with CCW** on `feature/analysis-loading-indicator`
-   (uncommitted WIP in the shared tree — see §10).
-4. Optional housekeeping: delete stale remote branches
-   `claude/probe-push-permission`, `claude/setup-backend-foundation-6E1lr`.
-5. Resync local `main` ref to origin when the tree is quiet.
-
----
-
-## 9. EXP documents
-
-`docs/explorations/` + `EXP-INDEX.md` (21 EXPs):
-- **EXP-018** Exercise Direction (Receptive vs Productive) — shipped (Phase 62 / v1.46.0).
-- **EXP-019** — not present as a file (historical gap in the index).
-- **EXP-020** Lesson Flow Control (Prüfen/Weiter) — shipped (Phase 63 / v1.47.0).
-- **EXP-021** Lesson-Creator (standalone) — planned (future phase, e.g. 65).
-- **EXP-022** Visual learning path (xyflow/React Flow) — planned (CCW doc, on main).
-
----
-
-## 10. Landmines the next session MUST know
-
-1. **SHARED WORKING TREE — two agents, one checkout (biggest).** CC and
-   CCW operate on the SAME working dir + git repo. This session, the
-   tree was silently switched to CCW branches (`docs/exp-022-…`,
-   `feature/analysis-loading-indicator`) and CC's commits landed on the
-   wrong branch **twice**. CCW's uncommitted files appear/disappear in
-   `git status` unexpectedly. **Before committing: `git branch
-   --show-current`.** To push your own commit to main without disturbing
-   CCW, use a **refspec push** (`git push origin <sha>:main`) instead of
-   `git checkout main` — no branch switch, no race with CCW's concurrent
-   git ops, CCW's WIP untouched. Ideal fix: give each agent its own
-   checkout / worktree.
-2. **secrets.yaml path = `get_config_dir()` ONLY.** The old
-   `_get_user_override_path` XDG/APPDATA duplicate was deleted; all
-   secrets access (layered config, resolver, `secrets_service`,
-   `reset_service`) now resolves via `app.paths.get_config_dir`. Tests
-   isolate via `ADAPTIVE_LEARNER_CONFIG_DIR`→tmp; an autouse conftest
-   fixture clears `secret.key` + `secrets.yaml` between tests. **Never
-   write the real `~/.config` in a test.**
-3. **secret.key must ALWAYS be created.** The file is the key source;
-   the env var only *seeds* it once. If a future change reintroduces
-   env-priority, the original bug returns. `test_secret_key_created_
-   even_when_env_set` pins this.
-4. **Background-task exit codes lie.** A backgrounded `make … ; echo
-   EXIT=$?` reports the *echo's* 0 even when the gate failed. Always
-   grep the log for the real result, not the task-notification's "exit
-   code 0".
-5. **cwd drift in Bash.** A failed `cd` leaves the shell in an
-   unexpected dir; later relative paths fail. Use absolute paths or
-   `git rev-parse --show-toplevel`. `npx tsc`/`vitest` must run from
-   `frontend/`.
-6. **Version bumps + `--no-verify`.** The `plugin-lock-paired-with-
-   pyproject` pre-commit hook false-positives on version-only plugin
-   pyproject bumps (`sync-versions`); release commits use `--no-verify`.
-   Plugin poetry.lock content-hashes cover deps, not the package
-   version, so a version-only bump is a lock no-op.
-7. **Dexie-mode is part of the contract.** Every frontend feature must
-   work (or degrade gracefully) in the no-backend GH-Pages build;
-   `make test-dexie-smoke` gates it.
+- **"Stale build" was the wrong root cause for the double-button.** The prior session (`984c4d9`) pinned `Lesson.tsx` (correct) and concluded PWA cache. The real defect was in two *other* consumers (AdaptiveLesson, Review) that the pin never covered. Lesson: when a UX bug is reported again after a "no defect found" diagnosis, **enumerate every consumer of the shared component**, not just the obvious one. A regression pin that covers one of three render paths gives false confidence.
+- **The controlled-exercise contract had a documented "Review + AdaptiveLesson stay uncontrolled" intent** (`exercise-control.ts` header) that directly produced the bug — the self-contained internal button + the page's own nav button = two buttons. Aligning all three flows on the controlled pattern is the consistent fix.
+- **Per-step `key` matters in controlled mode:** without `key={step.id}` the exercise instance persists `submitted` across steps, so a fresh step would render as already-graded. Added it to both pages (matching `Lesson.tsx`).
+- **vitest cwd trap (again):** running `npx vitest run` from the repo root yields mass `setup: 0ms` / "document is not defined" failures. Always run from `frontend/`. (Hit and recovered earlier in the session.)
+- **Re-collect test numbers; don't trust CLAUDE.md baselines.** The cited baseline (4702) was stale; the real total is 5177. Plugin counts require the per-plugin loop — a combined collect from the backend env errors on per-plugin conftests and undercounts.
+- **Share-wizard editability over auto-magic:** old corrupted lessons can't be perfectly auto-repaired; the durable fix was making the fields editable + gated, with best-effort defaults, rather than guessing.
