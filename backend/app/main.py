@@ -414,9 +414,14 @@ def _log_plugin_diagnostics_post(
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting Adaptive Learner (debug=%s)", DEBUG)
+    from app import db_guard
     from app.data_dir_migration import migrate_data_dir_if_needed
     from app.paths import mark_data_dir_as_production
 
+    # This IS the sanctioned application runtime: the app may write to
+    # (and purge) its own production data dir. The db_guard only blocks
+    # destructive statements from OTHER processes (ad-hoc scripts).
+    db_guard.mark_app_runtime()
     migrate_data_dir_if_needed()
     mark_data_dir_as_production()
     init_db()
