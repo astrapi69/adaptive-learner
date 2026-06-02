@@ -32,6 +32,8 @@ import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
 import { getDb } from "../storage/db";
 import { analyzeConversation } from "../chat_import/analysis";
+import { LANGUAGE_OPTIONS } from "../lib/content/language-options";
+import { detectLearningLanguage } from "../lib/content/detect-chat-language";
 import { notify } from "../utils/notify";
 import type { AIProvider } from "../lib/constants";
 import type {
@@ -78,7 +80,7 @@ export default function ImportDetail({
 }: ImportDetailProps = {}) {
   const params = useParams<{ conversationId: string }>();
   const conversationId = conversationIdOverride ?? params.conversationId ?? "";
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const navigate = useNavigate();
   // Issue 4 — gate the AI-dependent buttons (Analyze,
   // Start Session, Extract Anki) on the active provider
@@ -121,7 +123,55 @@ export default function ImportDetail({
   // Phase 59B — "Save as Offline Lesson" preview modal.
   const [showSaveLesson, setShowSaveLesson] = useState(false);
 
+  // v1.54.0 — language pair captured at IMPORT time. Source = the chat
+  // language (what the learner speaks) defaults to the app language;
+  // target = the language being learned, auto-detected from the chat
+  // content. Both flow downstream (analysis -> save -> share) so nothing
+  // is guessed/patched later. Initialised once per loaded conversation.
+  const [sourceLang, setSourceLang] = useState("");
+  const [targetLang, setTargetLang] = useState("");
+  const langInitRef = useRef<string | null>(null);
+
   const go = (path: string) => (onNavigate ? onNavigate(path) : navigate(path));
+
+  // Initialise the language pair when the conversation loads: keep saved
+  // values when present, else app-language source + detected target.
+  useEffect(() => {
+    if (!detail || langInitRef.current === detail.id) return;
+    langInitRef.current = detail.id;
+    const app = (lang || "en").split("-")[0];
+    setSourceLang((detail.source_language || app).split("-")[0]);
+    const savedTarget = detail.target_language
+      ? detail.target_language.split("-")[0]
+      : "";
+    if (savedTarget) {
+      setTargetLang(savedTarget);
+    } else {
+      const text = detail.messages.map((m) => m.content).join("\n");
+      setTargetLang(detectLearningLanguage(text, app) ?? "");
+    }
+  }, [detail, lang]);
+
+  // Persist the chosen languages onto the import record so every
+  // downstream step (analysis, save-as-lesson, share) inherits them.
+  // Best-effort: a failed write keeps the local selection usable.
+  const persistLanguages = async (next: {
+    source?: string;
+    target?: string;
+  }): Promise<void> => {
+    if (!detail) return;
+    const source_language = next.source ?? sourceLang;
+    const target_language = next.target ?? targetLang;
+    try {
+      await getStorage().imports.update(detail.id, {
+        source_language: source_language || null,
+        target_language: target_language || null,
+      });
+      setDetail({ ...detail, source_language, target_language });
+    } catch {
+      /* non-fatal — keep the in-memory selection */
+    }
+  };
 
   useEffect(() => {
     if (!conversationId) return;
@@ -465,6 +515,64 @@ export default function ImportDetail({
             )}
           />
         )}
+        {/* v1.54.0 — set the language pair BEFORE analysis so it flows
+            through the whole pipeline. Source = chat language (app
+            default); target = detected learning language. Both editable. */}
+        <div
+          className="import-language-pickers"
+          data-testid="import-language-pickers"
+          style={{
+            display: "flex",
+            gap: "1rem",
+            marginTop: "1rem",
+            flexWrap: "wrap",
+          }}
+        >
+          <label className="form-row">
+            <span className="form-label">
+              {t("import.chat_language", "Chat language (you speak)")}
+            </span>
+            <select
+              value={sourceLang}
+              onChange={(e) => {
+                setSourceLang(e.target.value);
+                void persistLanguages({ source: e.target.value });
+              }}
+              data-testid="import-source-language"
+            >
+              <option value="">
+                {t("import.select_language", "Select a language…")}
+              </option>
+              {LANGUAGE_OPTIONS.map((opt) => (
+                <option key={opt.code} value={opt.code}>
+                  {opt.name} ({opt.code})
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="form-row">
+            <span className="form-label">
+              {t("import.learning_language", "Learning language")}
+            </span>
+            <select
+              value={targetLang}
+              onChange={(e) => {
+                setTargetLang(e.target.value);
+                void persistLanguages({ target: e.target.value });
+              }}
+              data-testid="import-target-language"
+            >
+              <option value="">
+                {t("import.select_language", "Select a language…")}
+              </option>
+              {LANGUAGE_OPTIONS.map((opt) => (
+                <option key={opt.code} value={opt.code}>
+                  {opt.name} ({opt.code})
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <div
           style={{
             display: "flex",

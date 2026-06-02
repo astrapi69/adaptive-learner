@@ -1128,6 +1128,9 @@ ui:
     new_curriculum: "Müfredat oluştur"
     new_project: "Yeni proje"
     analyze: "Analizi çalıştır"
+    chat_language: Sohbet dili (konuştuğunuz)
+    learning_language: Öğrenilen dil
+    select_language: Bir dil seçin…
     reanalyze: "Yeniden analiz et"
     method_switch_accept: "Önerilen yönteme geç"
     method_switch_dismiss: "Mevcut yöntemde kal"

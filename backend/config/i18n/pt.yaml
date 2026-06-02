@@ -1128,6 +1128,9 @@ ui:
     new_curriculum: "Criar currículo"
     new_project: "Novo projeto"
     analyze: "Executar análise"
+    chat_language: Idioma do chat (que fala)
+    learning_language: Idioma a aprender
+    select_language: Selecione um idioma…
     reanalyze: "Reanalisar"
     method_switch_accept: "Mudar para método sugerido"
     method_switch_dismiss: "Manter método atual"

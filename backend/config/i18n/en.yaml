@@ -1140,6 +1140,9 @@ ui:
     new_curriculum: "Create curriculum"
     new_project: "New project"
     analyze: "Run analysis"
+    chat_language: Chat language (you speak)
+    learning_language: Learning language
+    select_language: Select a language…
     reanalyze: "Re-run analysis"
     method_switch_accept: "Switch to suggested method"
     method_switch_dismiss: "Keep current method"
