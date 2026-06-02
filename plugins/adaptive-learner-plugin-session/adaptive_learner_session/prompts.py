@@ -635,3 +635,94 @@ def build_prompt(
             context += f" Profile hint: dominant method is {dominant} (weight {weight})."
 
     return f"{cell}\n\n{context}"
+
+
+def _str_list(value: Any) -> list[str]:
+    """Coerce an analysis field to a clean list of non-empty strings."""
+    if not isinstance(value, list):
+        return []
+    return [str(item).strip() for item in value if str(item).strip()]
+
+
+def build_analysis_context(analysis: dict[str, Any] | None, lang: str) -> str:
+    """Render an imported-chat analysis into a system-prompt addendum.
+
+    When a session is started from an analysed chat import, this block
+    is appended to the method/step system prompt so the AI continues
+    with full awareness of what the learner already covered (topic,
+    summary, level, strengths, weaknesses, error patterns, vocabulary,
+    suggested curriculum). Returns ``""`` when the analysis is missing
+    or carries nothing useful, so the caller can append unconditionally.
+    """
+    if not isinstance(analysis, dict):
+        return ""
+
+    topic = str(analysis.get("topic") or "").strip()
+    summary = str(analysis.get("summary") or "").strip()
+    level = str(analysis.get("user_level") or "").strip()
+    strengths = _str_list(analysis.get("strengths"))
+    weaknesses = _str_list(analysis.get("weaknesses"))
+    errors = _str_list(analysis.get("error_patterns"))
+    vocab = [
+        str(entry.get("word")).strip()
+        for entry in (analysis.get("vocabulary") or [])
+        if isinstance(entry, dict) and str(entry.get("word") or "").strip()
+    ]
+    curriculum = [
+        str(lesson.get("title")).strip()
+        for lesson in (analysis.get("suggested_curriculum") or [])
+        if isinstance(lesson, dict) and str(lesson.get("title") or "").strip()
+    ]
+
+    if not any([topic, summary, level, strengths, weaknesses, errors, vocab, curriculum]):
+        return ""
+
+    de = _lang_key(lang) == "de"
+    lines: list[str] = []
+    if de:
+        lines.append(
+            f'Der Benutzer hat einen Chat zum Thema "{topic or "?"}" importiert und analysiert.'
+        )
+        if summary:
+            lines.append(f"Zusammenfassung: {summary}")
+        if level:
+            lines.append(f"Niveau: {level}")
+        if strengths:
+            lines.append(f"Stärken: {', '.join(strengths)}")
+        if weaknesses:
+            lines.append(f"Schwächen: {', '.join(weaknesses)}")
+        if errors:
+            lines.append(f"Fehlermuster: {', '.join(errors)}")
+        if vocab:
+            lines.append(f"Bereits gelernte Vokabeln: {', '.join(vocab)}")
+        if curriculum:
+            lines.append(f"Empfohlene Themen: {', '.join(curriculum)}")
+        lines.append(
+            "Setze die Lernsitzung fort. Fokussiere auf die Schwächen und "
+            "Fehlermuster, beziehe dich auf die bereits gelernten Vokabeln und "
+            "eröffne deine erste Antwort, indem du dich ausdrücklich auf diese "
+            "Analyse beziehst."
+        )
+    else:
+        lines.append(f'The user imported and analysed a chat about "{topic or "?"}".')
+        if summary:
+            lines.append(f"Summary: {summary}")
+        if level:
+            lines.append(f"Level: {level}")
+        if strengths:
+            lines.append(f"Strengths: {', '.join(strengths)}")
+        if weaknesses:
+            lines.append(f"Weaknesses: {', '.join(weaknesses)}")
+        if errors:
+            lines.append(f"Error patterns: {', '.join(errors)}")
+        if vocab:
+            lines.append(f"Vocabulary already learned: {', '.join(vocab)}")
+        if curriculum:
+            lines.append(f"Suggested topics: {', '.join(curriculum)}")
+        lines.append(
+            "Continue the learning session. Focus on the weaknesses and error "
+            "patterns, reference the vocabulary already learned, and open your "
+            "first reply by explicitly referring to this analysis."
+        )
+
+    return "\n".join(lines)

@@ -209,6 +209,80 @@ describe("session.start", () => {
             expect(lookup?.id).toBe(started.session.id);
         },
     );
+
+    // --- Continue-session-after-import: analysis context injection ---
+
+    it(
+        "injects the imported analysis into the system prompt",
+        async () => {
+            const {userId, projectId} = await setupUserWithKey();
+            const conv = await dexieStorage.imports.create(userId, {
+                source: "manual",
+                title: "Analysed chat",
+                model: null,
+                source_created_at: null,
+                messages: [{role: "user", content: "hola", timestamp: null}],
+            });
+            // Attach an analysis result to the conversation row.
+            await getDb().importedConversations.update(conv.id, {
+                analyzed: true,
+                analysis_result: {
+                    topic: "Spanish past tense",
+                    summary: "Practised the preterite.",
+                    user_level: "intermediate",
+                    strengths: ["vocabulary recall"],
+                    weaknesses: ["irregular verbs"],
+                    error_patterns: ["confuses ser/estar"],
+                    vocabulary: [{word: "tener", translation: "to have"}],
+                    suggested_curriculum: [
+                        {title: "Irregular preterite drill", description: "", priority: 1},
+                    ],
+                },
+            });
+
+            const result = await dexieStorage.session.start({
+                project_id: projectId,
+                lang: "en",
+                imported_conversation_id: conv.id,
+            });
+
+            // The persisted system prompt carries the analysis context.
+            expect(result.system_prompt).toContain("Spanish past tense");
+            expect(result.system_prompt).toContain("Weaknesses: irregular verbs");
+            expect(result.system_prompt).toContain("tener");
+            expect(result.system_prompt).toContain(
+                "Continue the learning session",
+            );
+            const db = getDb();
+            const msgs = await db.sessionMessages
+                .where("session_id")
+                .equals(result.session.id)
+                .toArray();
+            expect(msgs[0].content).toContain("Spanish past tense");
+        },
+    );
+
+    it(
+        "omits the analysis block when the conversation has no analysis",
+        async () => {
+            const {userId, projectId} = await setupUserWithKey();
+            const conv = await dexieStorage.imports.create(userId, {
+                source: "manual",
+                title: "Unanalysed",
+                model: null,
+                source_created_at: null,
+                messages: [{role: "user", content: "hi", timestamp: null}],
+            });
+            const result = await dexieStorage.session.start({
+                project_id: projectId,
+                lang: "en",
+                imported_conversation_id: conv.id,
+            });
+            expect(result.system_prompt).not.toContain(
+                "Continue the learning session",
+            );
+        },
+    );
 });
 
 describe("session.message", () => {

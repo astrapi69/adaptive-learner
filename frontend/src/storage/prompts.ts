@@ -8,7 +8,11 @@
 
 import PROMPTS_RAW from "../data/session-prompts.json";
 import {LEARNING_METHODS, type LearningMethod} from "../lib/constants";
-import type {LearningProfile, LearningProject} from "../types/domain";
+import type {
+    ConversationAnalysisResult,
+    LearningProfile,
+    LearningProject,
+} from "../types/domain";
 
 interface PromptCell {
     de: string;
@@ -87,4 +91,89 @@ export function buildPrompt(
         }
     }
     return `${cell}\n\n${context}`;
+}
+
+function cleanList(value: unknown): string[] {
+    if (!Array.isArray(value)) return [];
+    return value.map((item) => String(item).trim()).filter((s) => s.length > 0);
+}
+
+/**
+ * Render an imported-chat analysis into a system-prompt addendum so a
+ * session started from an analysed import continues with full context
+ * (topic / summary / level / strengths / weaknesses / error patterns /
+ * vocabulary / suggested curriculum). Mirrors the backend
+ * ``build_analysis_context`` 1:1. Returns "" when the analysis carries
+ * nothing useful, so callers can append unconditionally.
+ */
+export function buildAnalysisContext(
+    analysis: ConversationAnalysisResult | null | undefined,
+    lang: string,
+): string {
+    if (!analysis || typeof analysis !== "object") return "";
+
+    const topic = (analysis.topic ?? "").trim();
+    const summary = (analysis.summary ?? "").trim();
+    const level = (analysis.user_level ?? "").trim();
+    const strengths = cleanList(analysis.strengths);
+    const weaknesses = cleanList(analysis.weaknesses);
+    const errors = cleanList(analysis.error_patterns);
+    const vocab = (analysis.vocabulary ?? [])
+        .map((entry) => (entry?.word ?? "").trim())
+        .filter((w) => w.length > 0);
+    const curriculum = (analysis.suggested_curriculum ?? [])
+        .map((lesson) => (lesson?.title ?? "").trim())
+        .filter((t) => t.length > 0);
+
+    if (
+        !topic &&
+        !summary &&
+        !level &&
+        strengths.length === 0 &&
+        weaknesses.length === 0 &&
+        errors.length === 0 &&
+        vocab.length === 0 &&
+        curriculum.length === 0
+    ) {
+        return "";
+    }
+
+    const lines: string[] = [];
+    if (langKey(lang) === "de") {
+        lines.push(
+            `Der Benutzer hat einen Chat zum Thema "${topic || "?"}" importiert und analysiert.`,
+        );
+        if (summary) lines.push(`Zusammenfassung: ${summary}`);
+        if (level) lines.push(`Niveau: ${level}`);
+        if (strengths.length) lines.push(`Stärken: ${strengths.join(", ")}`);
+        if (weaknesses.length) lines.push(`Schwächen: ${weaknesses.join(", ")}`);
+        if (errors.length) lines.push(`Fehlermuster: ${errors.join(", ")}`);
+        if (vocab.length)
+            lines.push(`Bereits gelernte Vokabeln: ${vocab.join(", ")}`);
+        if (curriculum.length)
+            lines.push(`Empfohlene Themen: ${curriculum.join(", ")}`);
+        lines.push(
+            "Setze die Lernsitzung fort. Fokussiere auf die Schwächen und " +
+                "Fehlermuster, beziehe dich auf die bereits gelernten Vokabeln und " +
+                "eröffne deine erste Antwort, indem du dich ausdrücklich auf diese " +
+                "Analyse beziehst.",
+        );
+    } else {
+        lines.push(`The user imported and analysed a chat about "${topic || "?"}".`);
+        if (summary) lines.push(`Summary: ${summary}`);
+        if (level) lines.push(`Level: ${level}`);
+        if (strengths.length) lines.push(`Strengths: ${strengths.join(", ")}`);
+        if (weaknesses.length) lines.push(`Weaknesses: ${weaknesses.join(", ")}`);
+        if (errors.length) lines.push(`Error patterns: ${errors.join(", ")}`);
+        if (vocab.length)
+            lines.push(`Vocabulary already learned: ${vocab.join(", ")}`);
+        if (curriculum.length)
+            lines.push(`Suggested topics: ${curriculum.join(", ")}`);
+        lines.push(
+            "Continue the learning session. Focus on the weaknesses and error " +
+                "patterns, reference the vocabulary already learned, and open your " +
+                "first reply by explicitly referring to this analysis.",
+        );
+    }
+    return lines.join("\n");
 }

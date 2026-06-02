@@ -21,11 +21,12 @@ import {
     type SessionMessageRow,
     type StepEvaluationRow,
 } from "./db";
-import {buildPrompt} from "./prompts";
+import {buildAnalysisContext, buildPrompt} from "./prompts";
 import {evaluateStep, type StepEvaluation} from "./step-evaluator";
 import {ApiError} from "../api/client";
 import {LEARNING_METHODS, type LearningMethod} from "../lib/constants";
 import type {
+    ConversationAnalysisResult,
     LearningProject,
     LearningSession,
     SessionMessage,
@@ -191,13 +192,30 @@ export async function startSession(opts: {
         created_at: project.created_at,
         updated_at: project.updated_at,
     };
-    const systemPrompt = buildPrompt(
+    let systemPrompt = buildPrompt(
         projectDto,
         profileRowToProfile(profile),
         method,
         cycleStep,
         opts.lang ?? "en",
     );
+    // When the session is started from an analysed chat import, fold the
+    // analysis into the system prompt so the AI continues with the
+    // imported context instead of starting blank. Mirrors the backend
+    // ``start_session`` analysis-context injection.
+    if (opts.importedConversationId) {
+        const conv = await db.importedConversations.get(
+            opts.importedConversationId,
+        );
+        const analysis = conv?.analysis_result as
+            | ConversationAnalysisResult
+            | null
+            | undefined;
+        const analysisBlock = buildAnalysisContext(analysis, opts.lang ?? "en");
+        if (analysisBlock) {
+            systemPrompt = `${systemPrompt}\n\n${analysisBlock}`;
+        }
+    }
     const systemMsg: SessionMessageRow = {
         id: newId(),
         session_id: sessionRow.id,
