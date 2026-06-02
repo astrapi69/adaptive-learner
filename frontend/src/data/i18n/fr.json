@@ -1733,6 +1733,7 @@
       "view_upload": "Ouvrir la page d'envoi GitHub",
       "popup_blocked": "Ton navigateur a bloque l'onglet GitHub. Clique sur le lien ci-dessous pour l'ouvrir manuellement.",
       "upload_instructions": "Le fichier de ta lecon a ete telecharge. Sur la page GitHub qui vient de s'ouvrir, glisse le fichier dans la zone d'envoi et clique sur « Propose changes » - GitHub cree la pull request pour toi.",
+      "paste_instructions": "Le fichier de ta lecon a ete telecharge et l'editeur de nouveau fichier GitHub s'est ouvert au bon emplacement. Ouvre le fichier telecharge, colle son contenu dans l'editeur, puis clique sur « Propose new file » - le titre et la description sont deja remplis.",
       "copy_pr_body": "Copier la description de la pull request",
       "copy_pr_body_done": "Copie !",
       "done": "Terminé",

@@ -1588,6 +1588,7 @@ content:
     view_upload: "Abrir a página de upload do GitHub"
     popup_blocked: "O seu navegador bloqueou a aba do GitHub. Clique no link abaixo para abri-la manualmente."
     upload_instructions: "O arquivo da sua lição foi baixado. Na página do GitHub que acabou de abrir, arraste o arquivo para a área de upload e clique em \"Propose changes\" - o GitHub cria o pull request para você."
+    paste_instructions: "O arquivo da sua lição foi baixado e o editor de novos arquivos do GitHub abriu no caminho correto. Abra o arquivo baixado, cole o conteúdo dele no editor e clique em \"Propose new file\" - o título e a descrição já estão preenchidos."
     copy_pr_body: "Copiar a descrição do pull request"
     copy_pr_body_done: "Copiado!"
     done: Concluído

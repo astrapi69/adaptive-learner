@@ -1733,6 +1733,7 @@
       "view_upload": "Abrir la página de subida de GitHub",
       "popup_blocked": "Tu navegador bloqueó la pestaña de GitHub. Haz clic en el enlace de abajo para abrirla manualmente.",
       "upload_instructions": "Se descargó el archivo de tu lección. En la página de GitHub que se acaba de abrir, arrastra el archivo al área de carga y haz clic en \"Propose changes\"; GitHub crea el pull request por ti.",
+      "paste_instructions": "Se descargó el archivo de tu lección y el editor de archivos nuevos de GitHub se abrió en la ruta correcta. Abre el archivo descargado, pega su contenido en el editor y haz clic en \"Propose new file\"; el título y la descripción ya están rellenados.",
       "copy_pr_body": "Copiar la descripción del pull request",
       "copy_pr_body_done": "¡Copiado!",
       "done": "Listo",

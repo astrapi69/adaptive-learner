@@ -202,26 +202,53 @@ export interface CommunityPrUrlArgs {
   prBody: string;
 }
 
-/** Build the GitHub Web "new file" URL that opens a commit editor
- *  with the file path + JSON content pre-filled, plus the commit
- *  message + description (which seed the PR title + body). The user
- *  clicks "Propose new file"; GitHub auto-forks for non-collaborators
- *  and opens the PR draft — zero auth, zero token.
+/** Result of building the create-file PR URL: the URL plus whether the
+ *  lesson CONTENT was pre-filled into the editor. ``prefilled: false``
+ *  means the JSON was too large to ride in the URL, so the editor opens
+ *  at the right path with the commit message/body but no content — the
+ *  caller downloads the JSON so the user pastes/attaches it. */
+export interface CommunityPrUrl {
+  url: string;
+  prefilled: boolean;
+}
+
+/** Build the GitHub Web "new file" URL that opens a commit editor at the
+ *  lesson's full tree path, with the commit message + description (which
+ *  seed the PR title + body) and — when it fits — the JSON content
+ *  pre-filled. The user clicks "Propose new file"; GitHub auto-forks for
+ *  non-collaborators and opens the PR draft — zero auth, zero token.
  *
- *  Returns ``null`` when the URL would exceed ``MAX_PR_URL_LENGTH``,
- *  signalling the caller to fall back to the upload-page path.
+ *  The create-file (``/new/``) flow is used for EVERY single lesson
+ *  (not just small ones) because, unlike the ``/upload/`` page, it
+ *  creates new nested directories — which is exactly the "you're the
+ *  first to contribute this set" case, where ``sets/{src}/{tgt-level}/
+ *  lessons/`` does not exist yet. When the JSON would push the URL past
+ *  ``MAX_PR_URL_LENGTH`` the content is omitted (``prefilled: false``)
+ *  but the path + commit metadata still pre-fill, so the file always
+ *  lands at the correct location.
  */
-export function communityPrUrl(args: CommunityPrUrlArgs): string | null {
+export function communityPrUrl(args: CommunityPrUrlArgs): CommunityPrUrl {
   const { repo, branch, filePath, lesson, prTitle, prBody } = args;
-  const params = new URLSearchParams({
+  const withValue = new URLSearchParams({
     filename: filePath,
     value: lessonJson(lesson),
     message: prTitle,
     description: prBody,
   });
-  const url = `https://github.com/${repo}/new/${branch}?${params.toString()}`;
-  if (url.length > MAX_PR_URL_LENGTH) return null;
-  return url;
+  const full = `https://github.com/${repo}/new/${branch}?${withValue.toString()}`;
+  if (full.length <= MAX_PR_URL_LENGTH) return { url: full, prefilled: true };
+  // Too large to carry the content in the URL: open the create-file
+  // editor at the right path (filename + commit message/body) WITHOUT
+  // the content. The caller downloads the JSON so the user pastes it in.
+  const noValue = new URLSearchParams({
+    filename: filePath,
+    message: prTitle,
+    description: prBody,
+  });
+  return {
+    url: `https://github.com/${repo}/new/${branch}?${noValue.toString()}`,
+    prefilled: false,
+  };
 }
 
 /** GitHub Web "upload files" page for the lesson's target directory.

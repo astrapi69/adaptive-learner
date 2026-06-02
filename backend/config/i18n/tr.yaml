@@ -1588,6 +1588,7 @@ content:
     view_upload: "GitHub yükleme sayfasını aç"
     popup_blocked: "Tarayıcın GitHub sekmesini engelledi. Manuel olarak açmak için aşağıdaki bağlantıya tıkla."
     upload_instructions: "Ders dosyanız indirildi. Az önce açılan GitHub sayfasında dosyayı yükleme alanına sürükleyin ve \"Propose changes\" düğmesine tıklayın - GitHub pull request'i sizin için oluşturur."
+    paste_instructions: "Ders dosyanız indirildi ve GitHub'ın yeni dosya düzenleyicisi doğru yolda açıldı. İndirilen dosyayı açın, içeriğini düzenleyiciye yapıştırın ve \"Propose new file\" düğmesine tıklayın - başlık ve açıklama zaten dolduruldu."
     copy_pr_body: "Pull request açıklamasını kopyala"
     copy_pr_body_done: "Kopyalandı!"
     done: Tamam

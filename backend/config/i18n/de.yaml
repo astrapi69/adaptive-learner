@@ -1593,6 +1593,7 @@ content:
     view_upload: "GitHub-Upload-Seite öffnen"
     popup_blocked: "Dein Browser hat den GitHub-Tab blockiert. Klicke auf den Link unten, um ihn manuell zu öffnen."
     upload_instructions: "Deine Lektionsdatei wurde heruntergeladen. Ziehe sie auf der gerade geöffneten GitHub-Seite in den Upload-Bereich und klicke auf \"Propose changes\" - GitHub erstellt den Pull Request für dich."
+    paste_instructions: "Deine Lektionsdatei wurde heruntergeladen und der GitHub-Editor für neue Dateien wurde am richtigen Pfad geöffnet. Öffne die heruntergeladene Datei, füge ihren Inhalt in den Editor ein und klicke auf \"Propose new file\" - Titel und Beschreibung sind bereits ausgefüllt."
     copy_pr_body: "Pull-Request-Beschreibung kopieren"
     copy_pr_body_done: "Kopiert!"
     done: Fertig

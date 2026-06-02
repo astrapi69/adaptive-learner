@@ -180,8 +180,8 @@ describe("communityPrUrl", () => {
     steps: [{ id: "s1", type: "theory" as const, body: "Hola = hello." }],
   };
 
-  it("builds a create-file PR URL with the placement path + pre-filled title/body", () => {
-    const url = communityPrUrl({
+  it("builds a create-file PR URL with the placement path + pre-filled title/body/content", () => {
+    const { url, prefilled } = communityPrUrl({
       repo: "astrapi69/adaptive-learner-content",
       branch: "main",
       filePath: "sets/en/es-a1/lessons/16-greetings.json",
@@ -189,11 +189,11 @@ describe("communityPrUrl", () => {
       prTitle: "content: Greetings (en->es A1)",
       prBody: "## New lesson\n...",
     });
-    expect(url).not.toBeNull();
+    expect(prefilled).toBe(true);
     expect(url).toMatch(
       /^https:\/\/github\.com\/astrapi69\/adaptive-learner-content\/new\/main\?/,
     );
-    const qs = new URL(url!).searchParams;
+    const qs = new URL(url).searchParams;
     // Auto-numbered placement path (NOT the title-derived filename).
     expect(qs.get("filename")).toBe(
       "sets/en/es-a1/lessons/16-greetings.json",
@@ -206,7 +206,7 @@ describe("communityPrUrl", () => {
   });
 
   it("keeps a small lesson's create-file URL under the length cap", () => {
-    const url = communityPrUrl({
+    const { url, prefilled } = communityPrUrl({
       repo: "astrapi69/adaptive-learner-content",
       branch: "main",
       filePath: "sets/en/es-a1/lessons/16-greetings.json",
@@ -214,15 +214,19 @@ describe("communityPrUrl", () => {
       prTitle: "content: Greetings (en->es A1)",
       prBody: "## New lesson\n\nA small A1 lesson.\n",
     });
-    expect(url).not.toBeNull();
-    expect(url!.length).toBeLessThan(MAX_PR_URL_LENGTH);
+    expect(prefilled).toBe(true);
+    expect(url.length).toBeLessThan(MAX_PR_URL_LENGTH);
   });
 
-  it("returns null when the encoded URL would exceed the length cap", () => {
-    // Pump the lesson body so its JSON pushes the URL past
-    // MAX_PR_URL_LENGTH.
+  it("omits the content (prefilled:false) but keeps the create-file path when too large", () => {
+    // BUG (P0): a realistic lesson's JSON exceeds the URL cap. The
+    // create-file editor must STILL open at the correct nested path
+    // (so a new set's directory gets created + the file lands there);
+    // only the content is dropped — the caller downloads it to paste.
+    // Previously this returned null and fell back to the upload page,
+    // which 404s on a not-yet-existing set directory.
     const big = "x".repeat(MAX_PR_URL_LENGTH * 2);
-    const url = communityPrUrl({
+    const { url, prefilled } = communityPrUrl({
       repo: "o/r",
       branch: "main",
       filePath: "sets/en/es-a1/lessons/16-greetings.json",
@@ -230,6 +234,13 @@ describe("communityPrUrl", () => {
       prTitle: "content: Greetings (en->es A1)",
       prBody: "## New lesson",
     });
-    expect(url).toBeNull();
+    expect(prefilled).toBe(false);
+    expect(url).toContain("https://github.com/o/r/new/main?");
+    const qs = new URL(url).searchParams;
+    expect(qs.get("filename")).toBe("sets/en/es-a1/lessons/16-greetings.json");
+    expect(qs.get("message")).toBe("content: Greetings (en->es A1)");
+    // Content was dropped — no value param.
+    expect(qs.get("value")).toBeNull();
+    expect(url.length).toBeLessThan(MAX_PR_URL_LENGTH);
   });
 });

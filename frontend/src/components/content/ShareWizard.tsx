@@ -167,6 +167,11 @@ export default function ShareWizard({
   // generated PR body, surfaced on step 4 (the upload path can't
   // pre-fill the body, so we offer a copy button).
   const [shareMethod, setShareMethod] = useState<ShareMethod | null>(null);
+  // True when the create-file editor opened with the lesson CONTENT
+  // pre-filled (small single lesson). False when the user must
+  // paste/attach the downloaded file (large lesson) or drag it into the
+  // upload page (multi-lesson set).
+  const [prefilled, setPrefilled] = useState(true);
   const [prBody, setPrBody] = useState("");
   const [copied, setCopied] = useState(false);
   // Phase 64C-2 — optional author credit, remembered across shares.
@@ -380,12 +385,19 @@ export default function ShareWizard({
     const body = buildPrBody(details);
     setPrBody(body);
 
-    // Fast lane: a single lesson whose JSON + pre-filled PR title/body
-    // fit in a GitHub create-file URL. GitHub opens the commit editor
-    // pre-filled and creates the PR (auto-forking) on "Propose".
-    let url: string | null = null;
+    // A SINGLE lesson always goes through the create-file (`/new/`)
+    // flow: it creates the new nested path (the "you're the first"
+    // case — the set's lessons/ directory doesn't exist yet) and
+    // auto-forks for non-collaborators. Content is pre-filled when it
+    // fits in the URL; otherwise only the path + commit metadata are
+    // pre-filled and we download the JSON for the user to paste. A
+    // MULTI-lesson set drag-drops several files via the upload page.
+    let method: ShareMethod;
+    let url: string;
+    let contentPrefilled: boolean;
     if (singleLesson && primaryShip) {
-      url = communityPrUrl({
+      method = "pr";
+      const pr = communityPrUrl({
         repo,
         branch,
         filePath,
@@ -393,17 +405,16 @@ export default function ShareWizard({
         prTitle,
         prBody: body,
       });
-    }
-
-    let method: ShareMethod;
-    if (url) {
-      method = "pr";
+      url = pr.url;
+      contentPrefilled = pr.prefilled;
     } else {
       method = "upload";
       url = communityUploadUrl(repo, branch, `${placement.path}/lessons`);
+      contentPrefilled = false;
     }
 
     setShareMethod(method);
+    setPrefilled(contentPrefilled);
     setSharedUrl(url);
 
     // Open the GitHub page FIRST, while the click's user-activation is
@@ -415,10 +426,12 @@ export default function ShareWizard({
     const opened = (openUrl ?? defaultOpen)(url);
     setPopupBlocked(opened === false);
 
-    if (method === "upload") {
-      // Download the lesson file(s) under their correct tree filenames
-      // so the user drag-drops them into the GitHub upload page (which
-      // can't pre-fill the PR body — step 4 offers a copy button).
+    // Download the lesson file(s) whenever the content is NOT pre-filled
+    // into the editor — the contributor needs the exact, correctly-named
+    // JSON to paste into the create-file editor (large single lesson) or
+    // drag into the upload page (multi-lesson set). Small pre-filled
+    // single lessons need no download (the editor already has the JSON).
+    if (!contentPrefilled) {
       const download = downloadLesson ?? downloadLessonJson;
       shipped.forEach((lesson, i) => {
         const filename =
@@ -846,11 +859,25 @@ export default function ShareWizard({
                 <p className="share-wizard-thanks">
                   {t("content.wizard.thanks", "Thanks for sharing! Your contribution helps other learners.")}
                 </p>
-                {shareMethod === "upload" ? (
+                {shareMethod === "pr" && prefilled ? (
+                  <p data-testid="share-wizard-pr-instructions">
+                    {t("content.wizard.submitted", "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" — the content-repo CI validates it automatically.")}
+                  </p>
+                ) : (
                   <>
-                    <p data-testid="share-wizard-upload-instructions">
-                      {t("content.wizard.upload_instructions", "Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click \"Propose changes\" — GitHub creates the pull request for you.")}
-                    </p>
+                    {shareMethod === "pr" ? (
+                      // Large single lesson: the create-file editor opened
+                      // at the right path with the title/description filled
+                      // in, but the JSON was too big to pre-fill — the user
+                      // pastes the downloaded file's contents.
+                      <p data-testid="share-wizard-paste-instructions">
+                        {t("content.wizard.paste_instructions", "Your lesson file was downloaded and GitHub's new-file editor opened at the right path. Open the downloaded file, paste its contents into the editor, then click \"Propose new file\" — the title and description are already filled in.")}
+                      </p>
+                    ) : (
+                      <p data-testid="share-wizard-upload-instructions">
+                        {t("content.wizard.upload_instructions", "Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click \"Propose changes\" — GitHub creates the pull request for you.")}
+                      </p>
+                    )}
                     <div className="share-wizard-copy-body">
                       <button
                         type="button"
@@ -871,10 +898,6 @@ export default function ShareWizard({
                       />
                     </div>
                   </>
-                ) : (
-                  <p data-testid="share-wizard-pr-instructions">
-                    {t("content.wizard.submitted", "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" — the content-repo CI validates it automatically.")}
-                  </p>
                 )}
                 {popupBlocked && (
                   <p

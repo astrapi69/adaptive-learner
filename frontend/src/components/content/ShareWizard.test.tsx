@@ -72,6 +72,31 @@ function lesson(id: string, fronts: string[]): ContentLesson {
   };
 }
 
+/** A single lesson whose JSON exceeds the create-file URL cap (a big
+ *  theory body) but is otherwise shareable (1 card + 1 exercise). */
+function oversizedLesson(): ContentLesson {
+  return {
+    id: "big",
+    title: "Big Lesson",
+    estimated_minutes: 10,
+    cards: [{ id: "big-c0", front: "f", back: "b", tags: [] }],
+    steps: [
+      { id: "big-s", type: "theory", body: "x".repeat(20000) },
+      {
+        id: "big-ex",
+        type: "exercise",
+        exercise: {
+          id: "big-ex",
+          type: "free_text" as never,
+          prompt: "p",
+          card_ids: ["big-c0"],
+          distractors: [],
+        },
+      },
+    ],
+  };
+}
+
 const okValidation = { ok: true, issues: [], warnings: [] };
 
 function renderWizard(over: Partial<React.ComponentProps<typeof ShareWizard>> = {}) {
@@ -238,7 +263,7 @@ describe("ShareWizard: share + celebration (step 4)", () => {
     expect(downloadLesson).not.toHaveBeenCalled();
   });
 
-  it("opens GitHub BEFORE downloading on the upload path (gesture-safe order)", () => {
+  it("opens GitHub BEFORE downloading (gesture-safe order)", () => {
     // Regression (P0): the GitHub page must open before the download
     // consumes the user-activation, or the popup gets blocked.
     const order: string[] = [];
@@ -249,82 +274,66 @@ describe("ShareWizard: share + celebration (step 4)", () => {
     const downloadLesson = vi.fn(() => {
       order.push("download");
     });
-    const big = "x".repeat(20000);
-    const oversized: ContentLesson = {
-      id: "big",
-      title: "Big Lesson",
-      estimated_minutes: 10,
-      cards: [{ id: "big-c0", front: "f", back: "b", tags: [] }],
-      steps: [
-        { id: "big-s", type: "theory", body: big },
-        {
-          id: "big-ex",
-          type: "exercise",
-          exercise: {
-            id: "big-ex",
-            type: "free_text" as never,
-            prompt: "p",
-            card_ids: ["big-c0"],
-            distractors: [],
-          },
-        },
-      ],
-    };
-    renderWizard({ lessons: [oversized], openUrl, downloadLesson });
+    renderWizard({ lessons: [oversizedLesson()], openUrl, downloadLesson });
     advanceToStep4();
     fireEvent.click(screen.getByTestId("share-wizard-share"));
 
-    expect(openUrl.mock.calls[0][0]).toContain("/upload/main/");
+    // Single lesson -> create-file (/new/) editor, not the upload page.
+    expect(openUrl.mock.calls[0][0]).toContain("/new/main?");
     expect(order).toEqual(["open", "download"]);
   });
 
-  it("falls back to the upload page (download + drag-drop) for an oversized lesson", () => {
+  it("single oversized lesson: create-file editor (not upload) + downloads for pasting", () => {
+    // BUG (P0): a realistic single lesson whose JSON exceeds the URL cap
+    // must still go through the create-file (/new/) flow — it creates the
+    // new nested set directory + auto-forks — NOT the upload page (which
+    // 404s on a not-yet-existing directory). The file downloads so the
+    // user pastes it into the editor.
     const downloadLesson = vi.fn();
-    // A body large enough to push the create-file URL past the cap.
-    const big = "x".repeat(20000);
-    const oversized: ContentLesson = {
-      id: "big",
-      title: "Big Lesson",
-      estimated_minutes: 10,
-      cards: [{ id: "big-c0", front: "f", back: "b", tags: [] }],
-      steps: [
-        { id: "big-s", type: "theory", body: big },
-        {
-          id: "big-ex",
-          type: "exercise",
-          exercise: {
-            id: "big-ex",
-            type: "free_text" as never,
-            prompt: "p",
-            card_ids: ["big-c0"],
-            distractors: [],
-          },
-        },
-      ],
-    };
     const { openUrl } = renderWizard({
-      lessons: [oversized],
+      lessons: [oversizedLesson()],
       downloadLesson,
     });
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
-    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    advanceToStep4();
     fireEvent.click(screen.getByTestId("share-wizard-share"));
 
-    // Upload page opened, file downloaded with the placement name.
-    expect(openUrl.mock.calls[0][0]).toContain("/upload/main/");
+    expect(openUrl.mock.calls[0][0]).toContain("/new/main?");
+    expect(openUrl.mock.calls[0][0]).not.toContain("/upload/");
     expect(downloadLesson).toHaveBeenCalledTimes(1);
+    // Not pre-filled -> paste instructions (not the small-lesson PR copy).
     expect(
-      screen.getByTestId("share-wizard-upload-instructions"),
+      screen.getByTestId("share-wizard-paste-instructions"),
     ).toBeInTheDocument();
+    expect(screen.queryByTestId("share-wizard-pr-instructions")).toBeNull();
     expect(
       screen.getByTestId("share-wizard-copy-pr-body"),
     ).toBeInTheDocument();
-    // The PR body is available to copy.
     expect(
       (screen.getByTestId("share-wizard-pr-body") as HTMLTextAreaElement)
         .value,
     ).toContain("New lesson");
+  });
+
+  it("multi-lesson set: upload page + downloads every lesson file", () => {
+    // A multi-lesson set can't be a single create-file commit, so it
+    // keeps the upload-page (drag-drop) flow and downloads each file.
+    const downloadLesson = vi.fn();
+    const { openUrl } = renderWizard({
+      entry: entry({ lesson_count: 2 }),
+      lessons: [
+        lesson("a", ["w0", "w1", "w2"]),
+        lesson("b", ["x0", "x1", "x2"]),
+      ],
+      downloadLesson,
+    });
+    advanceToStep4();
+    fireEvent.click(screen.getByTestId("share-wizard-share"));
+
+    expect(openUrl.mock.calls[0][0]).toContain("/upload/main/");
+    expect(downloadLesson).toHaveBeenCalledTimes(2);
+    expect(
+      screen.getByTestId("share-wizard-upload-instructions"),
+    ).toBeInTheDocument();
   });
 });
 

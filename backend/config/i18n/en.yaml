@@ -1599,6 +1599,7 @@ content:
     view_upload: "Open the GitHub upload page"
     popup_blocked: "Your browser blocked the GitHub tab. Click the link below to open it manually."
     upload_instructions: "Your lesson file was downloaded. On the GitHub page that just opened, drag the file into the upload area and click \"Propose changes\" - GitHub creates the pull request for you."
+    paste_instructions: "Your lesson file was downloaded and GitHub's new-file editor opened at the right path. Open the downloaded file, paste its contents into the editor, then click \"Propose new file\" - the title and description are already filled in."
     copy_pr_body: "Copy pull-request description"
     copy_pr_body_done: "Copied!"
     done: Done
