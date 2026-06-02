@@ -17,6 +17,7 @@ import {
     MiniMap,
     ReactFlow,
     type Edge,
+    type Node,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -24,8 +25,9 @@ import {useI18n} from "../hooks/useI18n";
 import LessonNode, {
     type LessonFlowNode,
 } from "../components/learning-path/LessonNode";
+import SetGroupNode from "../components/learning-path/SetGroupNode";
 
-const nodeTypes = {lesson: LessonNode};
+const nodeTypes = {lesson: LessonNode, setGroup: SetGroupNode};
 
 function demo(
     id: string,
@@ -56,8 +58,25 @@ function demo(
     };
 }
 
-// Static demo graph (66B) — replaced by the real graph builder in 66E.
-const DEMO_NODES: LessonFlowNode[] = [
+// Static demo graph (66B/66C) — replaced by the real graph builder
+// in 66E.
+const DEMO_NODES: Node[] = [
+    {
+        id: "group-fr",
+        type: "setGroup",
+        position: {x: -320, y: 0},
+        data: {
+            setId: "fr-a1",
+            title: "Français A1",
+            sourceLanguage: "de",
+            targetLanguage: "fr",
+            completed: 2,
+            total: 5,
+            receptiveMastered: 8,
+            productiveMastered: 3,
+            collapsed: false,
+        },
+    },
     demo("1", 0, 0, {
         title: "Les articles",
         stars: 3,

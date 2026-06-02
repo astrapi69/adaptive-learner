@@ -1961,6 +1961,10 @@
       "receptive_short": "R",
       "productive_short": "P",
       "exercises": "{n} Übungen"
+    },
+    "group": {
+      "mastery": "{r} rezeptiv, {p} produktiv gemeistert",
+      "progress_aria": "{completed} von {total} Lektionen abgeschlossen"
     }
   }
 }

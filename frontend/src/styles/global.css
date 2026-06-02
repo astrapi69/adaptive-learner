@@ -7173,3 +7173,77 @@ select:focus {
     animation: none;
   }
 }
+
+/* Set group node (66C) — header + progress + mastery, collapsible.
+   A subtle accent tint marks the group (theme-token only). */
+.set-group {
+  width: 260px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--accent) 5%, var(--surface));
+  overflow: hidden;
+}
+.set-group.is-collapsed {
+  width: 240px;
+}
+.set-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+  color: var(--fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.set-group-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.set-group-pair {
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--fg-muted);
+}
+.set-group-progress {
+  position: relative;
+  height: 18px;
+  margin: 8px 10px 0;
+  border-radius: 999px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.set-group-progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  background: color-mix(in srgb, var(--success) 45%, var(--surface));
+  transition: width 0.3s ease;
+}
+.set-group-progress-label {
+  position: relative;
+  display: block;
+  text-align: center;
+  font-size: 0.7rem;
+  line-height: 18px;
+  color: var(--fg);
+}
+.set-group-mastery {
+  margin: 6px 10px 10px;
+  font-size: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .set-group-progress-fill {
+    transition: none;
+  }
+}

@@ -1961,6 +1961,10 @@
       "receptive_short": "受",
       "productive_short": "産",
       "exercises": "{n} 個の演習"
+    },
+    "group": {
+      "mastery": "受容 {r}、産出 {p} 習得済み",
+      "progress_aria": "{total} レッスン中 {completed} 完了"
     }
   }
 }

@@ -46,14 +46,15 @@ describe("LearningPath page", () => {
         expect(screen.getByTestId("rf-minimap")).toBeInTheDocument();
     });
 
-    it("seeds the demo graph nodes (66A)", () => {
+    it("seeds the demo graph nodes (66B/66C)", () => {
         render(
             <MemoryRouter>
                 <LearningPath />
             </MemoryRouter>,
         );
+        // 5 lesson nodes + 1 set-group node.
         expect(
             screen.getByTestId("reactflow-mock").getAttribute("data-node-count"),
-        ).toBe("5");
+        ).toBe("6");
     });
 });

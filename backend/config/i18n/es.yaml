@@ -1777,3 +1777,6 @@ learning_path:
     receptive_short: "R"
     productive_short: "P"
     exercises: "{n} ejercicios"
+  group:
+    mastery: "{r} receptivo, {p} productivo dominados"
+    progress_aria: "{completed} de {total} lecciones completadas"

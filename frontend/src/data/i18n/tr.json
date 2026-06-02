@@ -1961,6 +1961,10 @@
       "receptive_short": "A",
       "productive_short": "Ü",
       "exercises": "{n} alıştırma"
+    },
+    "group": {
+      "mastery": "{r} alımlayıcı, {p} üretici ustalaşıldı",
+      "progress_aria": "{total} dersin {completed} tanesi tamamlandı"
     }
   }
 }

@@ -1961,6 +1961,10 @@
       "receptive_short": "Α",
       "productive_short": "Π",
       "exercises": "{n} ασκήσεις"
+    },
+    "group": {
+      "mastery": "{r} δεκτικά, {p} παραγωγικά κατακτημένα",
+      "progress_aria": "{completed} από {total} μαθήματα ολοκληρώθηκαν"
     }
   }
 }
