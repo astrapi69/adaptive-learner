@@ -8,6 +8,7 @@ import {
     collectTheoryRun,
     markdownToSpeech,
     runStepForChar,
+    theoryBlockAround,
 } from "./tts-text";
 
 describe("markdownToSpeech", () => {
@@ -83,5 +84,44 @@ describe("runStepForChar", () => {
         expect(runStepForChar(run, 6)).toBe(0); // the separator space
         expect(runStepForChar(run, 7)).toBe(1); // start of "Beta."
         expect(runStepForChar(run, 99)).toBe(1); // past end -> last step
+    });
+});
+
+describe("theoryBlockAround", () => {
+    const steps = [
+        {type: "theory", body: "A"},
+        {type: "theory", body: "B"},
+        {type: "theory", body: "C"},
+        {type: "exercise", body: null},
+        {type: "theory", body: "D"},
+    ];
+
+    it("returns the contiguous block + 1-based position for a theory step", () => {
+        expect(theoryBlockAround(steps, 1)).toEqual({
+            start: 0,
+            end: 2,
+            position: 2,
+            total: 3,
+        });
+    });
+
+    it("scans both directions from the middle of a block", () => {
+        expect(theoryBlockAround(steps, 0)).toEqual({
+            start: 0,
+            end: 2,
+            position: 1,
+            total: 3,
+        });
+        expect(theoryBlockAround(steps, 4)).toEqual({
+            start: 4,
+            end: 4,
+            position: 1,
+            total: 1,
+        });
+    });
+
+    it("returns null for a non-theory step or out-of-range index", () => {
+        expect(theoryBlockAround(steps, 3)).toBeNull();
+        expect(theoryBlockAround(steps, 99)).toBeNull();
     });
 });

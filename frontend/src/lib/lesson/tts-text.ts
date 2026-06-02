@@ -130,3 +130,37 @@ export function runStepForChar(run: TheoryRun, charIndex: number): number {
     }
     return k === -1 ? -1 : run.indices[k];
 }
+
+export interface TheoryBlock {
+    /** First + last absolute index of the contiguous theory block. */
+    start: number;
+    end: number;
+    /** 1-based position of ``index`` within the block, and the block
+     *  size — drives "Step {position} of {total} theory steps". */
+    position: number;
+    total: number;
+}
+
+/**
+ * The contiguous run of theory steps that CONTAINS ``index`` (scanning
+ * both directions), used by the read-aloud mini-player's step skip +
+ * "Step X of N theory steps" readout (TTS feature C8). Returns null
+ * when ``index`` is not a theory step.
+ */
+export function theoryBlockAround(
+    steps: TheoryRunStep[],
+    index: number,
+): TheoryBlock | null {
+    if (index < 0 || index >= steps.length) return null;
+    if (steps[index].type !== "theory") return null;
+    let start = index;
+    while (start - 1 >= 0 && steps[start - 1].type === "theory") start--;
+    let end = index;
+    while (end + 1 < steps.length && steps[end + 1].type === "theory") end++;
+    return {
+        start,
+        end,
+        position: index - start + 1,
+        total: end - start + 1,
+    };
+}

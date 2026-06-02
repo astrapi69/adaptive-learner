@@ -6657,6 +6657,64 @@ select:focus {
         text-underline-offset: 2px;
     }
 }
+
+/* Floating read-aloud mini-player (C8). */
+.lesson-tts-player {
+    position: fixed;
+    left: 50%;
+    bottom: var(--space-4);
+    transform: translateX(-50%);
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    box-shadow: var(--shadow-card);
+    max-width: calc(100vw - 2 * var(--space-4));
+}
+.lesson-tts-player-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 150ms, color 150ms, border-color 150ms;
+}
+.lesson-tts-player-btn:hover:not(:disabled) {
+    background: var(--bg-elevated);
+}
+.lesson-tts-player-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.lesson-tts-player-btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.lesson-tts-player-playpause {
+    width: 2.4rem;
+    height: 2.4rem;
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+.lesson-tts-player-pos {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    padding: 0 4px;
+}
+.lesson-tts-player-stop {
+    color: var(--text-muted);
+}
 .chat-message-actions {
     display: flex;
     justify-content: flex-end;

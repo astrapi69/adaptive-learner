@@ -1353,7 +1353,12 @@
       "speed": "Velocidad",
       "no_voice": "No hay voz disponible para {language}",
       "reading": "Leyendo…",
-      "read_all": "Leer todo"
+      "read_all": "Leer todo",
+      "play": "Reproducir",
+      "pause": "Pausar",
+      "prev_step": "Paso anterior",
+      "next_step": "Paso siguiente",
+      "step_position": "Paso {current} de {total} pasos de teoría"
     },
     "contributed_by": "Contribuido por {name}",
     "page_title": "Lección",

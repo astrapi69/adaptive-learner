@@ -27,7 +27,9 @@ import {useCallback, useEffect, useRef, useState} from "react";
 import {
     isSpeechSynthesisSupported,
     loadVoices,
+    pause as pauseRaw,
     pickVoice,
+    resume as resumeRaw,
     speak as speakRaw,
     stop as stopRaw,
 } from "../lib/voice/speech-synthesis";
@@ -101,6 +103,8 @@ export interface ReadAloudController {
      *  (playback still runs with the engine default). */
     voiceAvailable: boolean;
     speaking: boolean;
+    /** True while a stream is paused (still "speaking" to the engine). */
+    paused: boolean;
     /** The ``id`` passed to the active ``speak`` call (or null). */
     activeId: string | null;
     /** charIndex of the word the engine is currently speaking, or -1. */
@@ -108,6 +112,8 @@ export interface ReadAloudController {
     speed: ReadAloudSpeed;
     setSpeed: (speed: ReadAloudSpeed) => void;
     speak: (text: string, request?: SpeakRequest) => void;
+    pause: () => void;
+    resume: () => void;
     stop: () => void;
 }
 
@@ -118,6 +124,7 @@ export function useReadAloud(): ReadAloudController {
     const enabledRef = useRef(supported && readVoicePrefs().ttsEnabled);
     const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
     const [speaking, setSpeaking] = useState(false);
+    const [paused, setPaused] = useState(false);
     const [activeId, setActiveId] = useState<string | null>(null);
     const [boundaryIndex, setBoundaryIndex] = useState(-1);
     const [voiceAvailable, setVoiceAvailable] = useState(true);
@@ -153,6 +160,7 @@ export function useReadAloud(): ReadAloudController {
     const reset = useCallback(() => {
         speakingRef.current = false;
         setSpeaking(false);
+        setPaused(false);
         setActiveId(null);
         setBoundaryIndex(-1);
     }, []);
@@ -176,6 +184,7 @@ export function useReadAloud(): ReadAloudController {
             lastRef.current = {text, request};
             speakingRef.current = true;
             setSpeaking(true);
+            setPaused(false);
             setActiveId(request?.id ?? null);
             setBoundaryIndex(-1);
             speakRaw(text, {
@@ -212,6 +221,17 @@ export function useReadAloud(): ReadAloudController {
         [speak],
     );
 
+    const pause = useCallback(() => {
+        if (!speakingRef.current) return;
+        pauseRaw();
+        setPaused(true);
+    }, []);
+
+    const resume = useCallback(() => {
+        resumeRaw();
+        setPaused(false);
+    }, []);
+
     const stop = useCallback(() => {
         stopRaw();
         lastRef.current = null;
@@ -223,11 +243,14 @@ export function useReadAloud(): ReadAloudController {
         enabled: supported && enabledRef.current,
         voiceAvailable,
         speaking,
+        paused,
         activeId,
         boundaryIndex,
         speed,
         setSpeed,
         speak,
+        pause,
+        resume,
         stop,
     };
 }

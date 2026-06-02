@@ -57,10 +57,12 @@ import {
 import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import Confetti from "../components/feedback/Confetti";
 import ReadAlongText from "../components/lesson/ReadAlongText";
+import LessonTtsMiniPlayer from "../components/lesson/LessonTtsMiniPlayer";
 import {
     collectTheoryRun,
     markdownToSpeech,
     runStepForChar,
+    theoryBlockAround,
     type TheoryRun,
 } from "../lib/lesson/tts-text";
 import {
@@ -413,6 +415,34 @@ export default function LessonPage() {
     // Auto-advance the viewer while the continuous run plays. When the
     // engine stops, clear the run.
     const isContinuous = tts.speaking && tts.activeId === CONTINUOUS_ID;
+
+    // TTS feature C8 — mini-player step skip. Read a specific theory
+    // step (navigating to it first) so the player's prev/next re-read
+    // the right step with its follow-along highlight.
+    const readTheoryStepAt = useCallback(
+        (index: number) => {
+            if (!lesson) return;
+            const s = lesson.steps[index];
+            if (!s || s.type !== "theory") return;
+            const text = markdownToSpeech(s.body ?? "");
+            goToStep(index);
+            if (text.trim()) {
+                tts.speak(text, {
+                    lang: lesson.target_language ?? undefined,
+                    id: `theory-${s.id}`,
+                });
+            }
+        },
+        [lesson, goToStep, tts],
+    );
+    // The contiguous theory block around the current step drives the
+    // mini-player's "Step X of N" + prev/next availability.
+    const theoryBlock = useMemo(
+        () =>
+            lesson ? theoryBlockAround(lesson.steps, currentStepIndex) : null,
+        [lesson, currentStepIndex],
+    );
+
     // "Read all" is offered only on a theory step that begins a run of
     // at least two consecutive theory steps.
     const continuousAvailable = useMemo(() => {
@@ -1034,6 +1064,31 @@ export default function LessonPage() {
                         </button>
                     ))}
             </nav>
+
+            {/* Floating read-aloud mini-player (C8) — visible while the
+                engine is active; step-based skip through the theory
+                block + play/pause + stop. */}
+            {tts.speaking && (
+                <LessonTtsMiniPlayer
+                    paused={tts.paused}
+                    position={theoryBlock?.position ?? 0}
+                    total={theoryBlock?.total ?? 0}
+                    hasPrev={
+                        theoryBlock !== null &&
+                        currentStepIndex > theoryBlock.start
+                    }
+                    hasNext={
+                        theoryBlock !== null &&
+                        currentStepIndex < theoryBlock.end
+                    }
+                    onPrev={() => readTheoryStepAt(currentStepIndex - 1)}
+                    onPlayPause={() =>
+                        tts.paused ? tts.resume() : tts.pause()
+                    }
+                    onNext={() => readTheoryStepAt(currentStepIndex + 1)}
+                    onStop={() => tts.stop()}
+                />
+            )}
         </main>
     );
 }

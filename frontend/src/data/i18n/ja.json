@@ -1353,7 +1353,12 @@
       "speed": "速度",
       "no_voice": "{language} の音声がありません",
       "reading": "読み上げ中…",
-      "read_all": "すべて読み上げ"
+      "read_all": "すべて読み上げ",
+      "play": "再生",
+      "pause": "一時停止",
+      "prev_step": "前のステップ",
+      "next_step": "次のステップ",
+      "step_position": "理論ステップ {total} 中 {current}"
     },
     "contributed_by": "{name}さんによる貢献",
     "page_title": "レッスン",

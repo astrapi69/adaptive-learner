@@ -1250,6 +1250,11 @@ lesson:
     no_voice: "Aucune voix disponible pour {language}"
     reading: "Lecture…"
     read_all: "Tout lire"
+    play: "Lire"
+    pause: "Pause"
+    prev_step: "Étape précédente"
+    next_step: "Étape suivante"
+    step_position: "Étape {current} sur {total} étapes de théorie"
   contributed_by: Proposée par {name}
   page_title: "Leçon"
   set_label: "Cours"

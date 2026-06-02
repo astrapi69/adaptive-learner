@@ -412,4 +412,51 @@ describe("Lesson auto-read (C3)", () => {
         });
         expect(goToStep).toHaveBeenCalledWith(1);
     });
+
+    // --- C8: mini-player -------------------------------------------
+
+    it("hides the mini-player until a read is active", () => {
+        readyMulti(0);
+        renderPage();
+        expect(screen.queryByTestId("lesson-tts-player")).toBeNull();
+    });
+
+    it("shows the mini-player with the theory-block position while reading", () => {
+        readyMulti(0);
+        renderPage();
+        fireEvent.click(screen.getByTestId("read-aloud-theory"));
+        expect(screen.getByTestId("lesson-tts-player")).toBeInTheDocument();
+        // Step 1 of 2 theory steps (t1, t2 before the exercise).
+        expect(
+            screen.getByTestId("lesson-tts-player-pos").textContent,
+        ).toMatch(/1.*2/);
+        // First step -> no previous, has next.
+        expect(screen.getByTestId("lesson-tts-player-prev")).toBeDisabled();
+        expect(
+            screen.getByTestId("lesson-tts-player-next"),
+        ).not.toBeDisabled();
+    });
+
+    it("mini-player next re-reads the next theory step", () => {
+        const goToStep = readyMulti(0);
+        renderPage();
+        fireEvent.click(screen.getByTestId("read-aloud-theory"));
+        const before = speakCalls.length;
+        fireEvent.click(screen.getByTestId("lesson-tts-player-next"));
+        expect(goToStep).toHaveBeenCalledWith(1);
+        expect(speakCalls.length).toBe(before + 1);
+        expect(speakCalls[speakCalls.length - 1].text).toContain(
+            "Au revoir means goodbye",
+        );
+    });
+
+    it("mini-player play/pause toggles the engine pause state", () => {
+        readyMulti(0);
+        renderPage();
+        fireEvent.click(screen.getByTestId("read-aloud-theory"));
+        const playpause = screen.getByTestId("lesson-tts-player-playpause");
+        expect(playpause.getAttribute("aria-pressed")).toBe("false");
+        fireEvent.click(playpause);
+        expect(playpause.getAttribute("aria-pressed")).toBe("true");
+    });
 });

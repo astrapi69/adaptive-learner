@@ -1353,7 +1353,12 @@
       "speed": "Ταχύτητα",
       "no_voice": "Δεν υπάρχει διαθέσιμη φωνή για {language}",
       "reading": "Ανάγνωση…",
-      "read_all": "Ανάγνωση όλων"
+      "read_all": "Ανάγνωση όλων",
+      "play": "Αναπαραγωγή",
+      "pause": "Παύση",
+      "prev_step": "Προηγούμενο βήμα",
+      "next_step": "Επόμενο βήμα",
+      "step_position": "Βήμα {current} από {total} βήματα θεωρίας"
     },
     "contributed_by": "Συνεισφορά από {name}",
     "page_title": "Μάθημα",
