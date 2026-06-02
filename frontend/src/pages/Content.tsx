@@ -1210,6 +1210,15 @@ export default function ContentPage() {
             });
             setContributions(listContributions());
           }}
+          onRegenerate={() => {
+            // BUG B — rebuild an empty lesson from its source. Analysis
+            // sets jump back to their import page (re-saving overwrites
+            // the set); other origins go to the Lesson Creator.
+            const target = shareTarget;
+            closeShareModal();
+            if (target.domain === "analysis") handleEditUserSet(target);
+            else navigate("/create-lesson");
+          }}
           onClose={closeShareModal}
           aiSection={
             shareResult && hasKey ? (

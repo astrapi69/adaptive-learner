@@ -1547,6 +1547,22 @@ content:
     duplicate: 'Já existe uma lição semelhante: {title}. Partilhar mesmo assim?'
   wizard:
     title: Partilhar com a comunidade
+    metadata_intro: Verifique e corrija os detalhes da lição antes de partilhar.
+    edit_title: Título
+    edit_source: Idioma de origem (que fala)
+    edit_target: Idioma de destino (que aprende)
+    edit_level: Nível (CEFR)
+    select_language: Selecione um idioma…
+    select_level: Selecione um nível…
+    exercises_label: Exercícios
+    cards_label: Cartões
+    err_title: Adicione um título.
+    err_source: Escolha o idioma de origem.
+    err_target: Escolha o idioma de destino.
+    err_same_language: O idioma de origem e o de destino devem ser diferentes.
+    err_level: Escolha um nível CEFR (A1-C2).
+    err_empty: Esta lição não tem exercícios. Por favor, recrie a lição.
+    regenerate: Regenerar
     step_label: Passo {n} de {total}
     lands_under: A sua lição será colocada em
     new_set: Novo conjunto! É o primeiro a contribuir aqui.

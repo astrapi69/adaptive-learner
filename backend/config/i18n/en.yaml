@@ -1558,6 +1558,22 @@ content:
     duplicate: 'A similar lesson already exists: {title}. Share anyway?'
   wizard:
     title: Share with the community
+    metadata_intro: Check and correct the lesson details before sharing.
+    edit_title: Title
+    edit_source: Source language (you speak)
+    edit_target: Target language (you learn)
+    edit_level: Level (CEFR)
+    select_language: Select a language…
+    select_level: Select a level…
+    exercises_label: Exercises
+    cards_label: Cards
+    err_title: Add a title.
+    err_source: Choose the source language.
+    err_target: Choose the target language.
+    err_same_language: Source and target language must differ.
+    err_level: Choose a CEFR level (A1-C2).
+    err_empty: This lesson has no exercises. Please recreate the lesson.
+    regenerate: Regenerate
     step_label: Step {n} of {total}
     lands_under: Your lesson lands under
     new_set: New set! You're the first to contribute here.

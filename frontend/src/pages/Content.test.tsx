@@ -482,7 +482,24 @@ describe("Content — My Lessons (Phase 59C)", () => {
       title: "x",
       estimated_minutes: 10,
       cards: [{ id: "c", front: "a", back: "b", tags: [] }],
-      steps: [{ id: "s", type: "theory", body: "x" }],
+      // One exercise so it clears the new empty-lesson gate, but a
+      // single exercise / type still fails the quality minimums -> the
+      // share-anyway path stays exercised.
+      steps: [
+        { id: "s", type: "theory", body: "x" },
+        {
+          id: "ex",
+          type: "exercise",
+          exercise: {
+            id: "ex",
+            type: "free_text",
+            prompt: "p",
+            card_ids: ["c"],
+            accept: ["a"],
+            distractors: [],
+          },
+        },
+      ],
     });
     const openSpy = vi.fn();
     vi.stubGlobal("open", openSpy);
@@ -528,9 +545,11 @@ describe("Content — My Lessons (Phase 59C)", () => {
       fireEvent.click(screen.getByTestId("my-lesson-analysis-conv-1-share"));
     });
     await screen.findByTestId("share-wizard-step-1");
-    // Step 1 shows the auto-computed placement.
+    // Step 1 shows the auto-computed placement. The saved non-CEFR
+    // "beginner" level is corrected to a CEFR estimate (A1) by the
+    // editable Step-1 form (BUG C), so the placement lands under es-a1.
     expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
-      "sets/de/es-beginner",
+      "sets/de/es-a1",
     );
     fireEvent.click(screen.getByTestId("share-wizard-next"));
     await screen.findByTestId("share-wizard-unique");
@@ -543,7 +562,7 @@ describe("Content — My Lessons (Phase 59C)", () => {
       /github\.com\/astrapi69\/adaptive-learner-content\/new\/main\?/,
     );
     const qs = new URL(url).searchParams;
-    expect(qs.get("filename")).toContain("sets/de/es-beginner/lessons/");
+    expect(qs.get("filename")).toContain("sets/de/es-a1/lessons/");
     const value = qs.get("value") ?? "";
     expect(value).toContain('"title"');
     expect(value).toContain('"cards"');
