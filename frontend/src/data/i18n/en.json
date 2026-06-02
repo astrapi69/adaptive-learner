@@ -1988,6 +1988,12 @@
       "lessons": "Lessons",
       "receptive": "Receptive",
       "productive": "Productive"
+    },
+    "clusters": {
+      "toggle": "Show error clusters",
+      "empty": "No shared error patterns yet — keep practising.",
+      "lessons": "{n} lessons",
+      "start_adaptive": "Start adaptive lesson"
     }
   }
 }

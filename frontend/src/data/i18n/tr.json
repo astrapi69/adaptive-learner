@@ -1988,6 +1988,12 @@
       "lessons": "Dersler",
       "receptive": "Alımlayıcı",
       "productive": "Üretici"
+    },
+    "clusters": {
+      "toggle": "Hata kümelerini göster",
+      "empty": "Henüz ortak hata deseni yok — pratiğe devam edin.",
+      "lessons": "{n} ders",
+      "start_adaptive": "Uyarlanabilir ders başlat"
     }
   }
 }

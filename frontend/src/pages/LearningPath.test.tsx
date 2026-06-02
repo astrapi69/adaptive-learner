@@ -5,7 +5,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import {render, screen} from "@testing-library/react";
+import {fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -72,6 +72,7 @@ describe("LearningPath page", () => {
         useDataMock.mockReturnValue({
             state: "ready",
             built: {nodes: [], edges: []},
+            clusters: [],
         });
         renderPage();
         expect(
@@ -85,5 +86,33 @@ describe("LearningPath page", () => {
         ).toBeInTheDocument();
         expect(screen.getByTestId("learning-path-search")).toBeInTheDocument();
         expect(screen.getByTestId("learning-path-stats")).toBeInTheDocument();
+    });
+
+    it("toggles the error-cluster panel and lists clusters", () => {
+        useDataMock.mockReturnValue({
+            state: "ready",
+            built: {nodes: [], edges: []},
+            clusters: [
+                {
+                    tag: "article_gender",
+                    lessonKeys: ["fr-a1::03.json", "fr-a1::07.json"],
+                    errorCount: 5,
+                    setId: "fr-a1",
+                },
+            ],
+        });
+        renderPage();
+        // Hidden until toggled.
+        expect(
+            screen.queryByTestId("learning-path-clusters"),
+        ).not.toBeInTheDocument();
+        fireEvent.click(screen.getByTestId("learning-path-clusters-toggle"));
+        expect(
+            screen.getByTestId("learning-path-clusters"),
+        ).toBeInTheDocument();
+        expect(screen.getByTestId("cluster-article_gender")).toBeInTheDocument();
+        expect(
+            screen.getByTestId("cluster-adaptive-article_gender"),
+        ).toBeInTheDocument();
     });
 });

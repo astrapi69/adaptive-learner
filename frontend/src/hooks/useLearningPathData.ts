@@ -21,6 +21,10 @@ import {
     type BuiltGraph,
     type GraphSetInput,
 } from "../lib/learning-path/graph-builder";
+import {
+    buildErrorClusters,
+    type ErrorCluster,
+} from "../lib/learning-path/error-clusters";
 import {getStorage} from "../storage";
 import type {ElementError, LessonProgress} from "../storage/types";
 
@@ -57,9 +61,11 @@ function pickRecommended(
 export function useLearningPathData(userId: string): {
     state: LearningPathState;
     built: BuiltGraph | null;
+    clusters: ErrorCluster[];
 } {
     const [state, setState] = useState<LearningPathState>("loading");
     const [built, setBuilt] = useState<BuiltGraph | null>(null);
+    const [clusters, setClusters] = useState<ErrorCluster[]>([]);
 
     useEffect(() => {
         let cancelled = false;
@@ -149,6 +155,7 @@ export function useLearningPathData(userId: string): {
                         recommendedKey,
                     }),
                 );
+                setClusters(buildErrorClusters(errors));
                 setState("ready");
             } catch {
                 if (!cancelled) setState("error");
@@ -159,5 +166,5 @@ export function useLearningPathData(userId: string): {
         };
     }, [userId]);
 
-    return {state, built};
+    return {state, built, clusters};
 }

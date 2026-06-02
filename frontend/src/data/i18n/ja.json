@@ -1988,6 +1988,12 @@
       "lessons": "レッスン",
       "receptive": "受容",
       "productive": "産出"
+    },
+    "clusters": {
+      "toggle": "エラークラスタを表示",
+      "empty": "共通のエラーパターンはまだありません — 練習を続けましょう。",
+      "lessons": "{n} レッスン",
+      "start_adaptive": "アダプティブレッスンを開始"
     }
   }
 }

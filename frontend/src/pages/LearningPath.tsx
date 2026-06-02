@@ -46,13 +46,27 @@ import {
     type GraphFilters,
 } from "../lib/learning-path/filters";
 import type {LessonNodeData} from "../components/learning-path/LessonNodeView";
+import type {ErrorTag} from "../lib/adaptive/error-classifier";
 
 const nodeTypes = {lesson: LessonNode, setGroup: SetGroupNode};
+
+const CLUSTER_TAG_LABELS: Record<ErrorTag, [string, string]> = {
+    article_gender: ["dashboard.focus_areas.tag.article_gender", "Article gender"],
+    spelling_accent: [
+        "dashboard.focus_areas.tag.spelling_accent",
+        "Spelling & accents",
+    ],
+    verb_conjugation: [
+        "dashboard.focus_areas.tag.verb_conjugation",
+        "Verb conjugation",
+    ],
+    word_order: ["dashboard.focus_areas.tag.word_order", "Word order"],
+};
 
 export default function LearningPath() {
     const {t} = useI18n();
     const userId = useMemo(() => readLearnerState().userId ?? "", []);
-    const {state, built} = useLearningPathData(userId);
+    const {state, built, clusters} = useLearningPathData(userId);
 
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
@@ -83,6 +97,8 @@ export default function LearningPath() {
     const navigate = useNavigate();
     const [filters, setFilters] = useState<GraphFilters>(DEFAULT_FILTERS);
     const [statsOpen, setStatsOpen] = useState(true);
+    const [showClusters, setShowClusters] = useState(false);
+    const [selectedTag, setSelectedTag] = useState<ErrorTag | null>(null);
 
     const lessonData = useMemo(
         () =>
@@ -91,6 +107,11 @@ export default function LearningPath() {
                 .map((n) => n.data as LessonNodeData),
         [nodes],
     );
+    const selectedKeys = useMemo(() => {
+        if (!showClusters || !selectedTag) return new Set<string>();
+        const cluster = clusters.find((c) => c.tag === selectedTag);
+        return new Set(cluster?.lessonKeys ?? []);
+    }, [showClusters, selectedTag, clusters]);
     const displayedNodes = useMemo(
         () =>
             nodes.map((n) => {
@@ -99,12 +120,13 @@ export default function LearningPath() {
                 const cls = [
                     disp.faded ? "lp-faded" : "",
                     disp.highlighted ? "lp-highlighted" : "",
+                    selectedKeys.has(n.id) ? "lp-cluster" : "",
                 ]
                     .filter(Boolean)
                     .join(" ");
                 return {...n, hidden: disp.hidden, className: cls || undefined};
             }),
-        [nodes, filters],
+        [nodes, filters, selectedKeys],
     );
     const stats = useMemo(() => graphStats(lessonData), [lessonData]);
 
@@ -284,7 +306,82 @@ export default function LearningPath() {
                     >
                         {t("learning_path.stats.title", "Stats")}
                     </button>
+                    <button
+                        type="button"
+                        className="btn btn-secondary"
+                        data-testid="learning-path-clusters-toggle"
+                        aria-pressed={showClusters}
+                        onClick={() => setShowClusters((v) => !v)}
+                    >
+                        {t(
+                            "learning_path.clusters.toggle",
+                            "Show error clusters",
+                        )}
+                    </button>
                 </div>
+            )}
+
+            {state === "ready" && showClusters && (
+                <aside
+                    className="learning-path-clusters"
+                    data-testid="learning-path-clusters"
+                    aria-live="polite"
+                >
+                    {clusters.length === 0 ? (
+                        <p
+                            className="muted"
+                            data-testid="learning-path-clusters-empty"
+                        >
+                            {t(
+                                "learning_path.clusters.empty",
+                                "No shared error patterns yet — keep practising.",
+                            )}
+                        </p>
+                    ) : (
+                        clusters.map((c) => (
+                            <div
+                                key={c.tag}
+                                className={`learning-path-cluster${
+                                    selectedTag === c.tag ? " is-active" : ""
+                                }`}
+                                data-testid={`cluster-${c.tag}`}
+                            >
+                                <button
+                                    type="button"
+                                    className="learning-path-cluster-label"
+                                    onClick={() =>
+                                        setSelectedTag((prev) =>
+                                            prev === c.tag ? null : c.tag,
+                                        )
+                                    }
+                                >
+                                    {t(...CLUSTER_TAG_LABELS[c.tag])} ·{" "}
+                                    {t(
+                                        "learning_path.clusters.lessons",
+                                        "{n} lessons",
+                                    ).replace("{n}", String(c.lessonKeys.length))}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="btn btn-primary"
+                                    data-testid={`cluster-adaptive-${c.tag}`}
+                                    onClick={() =>
+                                        navigate(
+                                            `/adaptive-lesson/${encodeURIComponent(
+                                                c.setId,
+                                            )}`,
+                                        )
+                                    }
+                                >
+                                    {t(
+                                        "learning_path.clusters.start_adaptive",
+                                        "Start adaptive lesson",
+                                    )}
+                                </button>
+                            </div>
+                        ))
+                    )}
+                </aside>
             )}
 
             {state === "ready" && statsOpen && (

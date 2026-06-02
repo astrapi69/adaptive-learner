@@ -1801,3 +1801,8 @@ learning_path:
     lessons: "Leçons"
     receptive: "Réceptif"
     productive: "Productif"
+  clusters:
+    toggle: "Afficher les groupes d'erreurs"
+    empty: "Pas encore de schémas d'erreurs communs — continuez."
+    lessons: "{n} leçons"
+    start_adaptive: "Lancer une leçon adaptative"
