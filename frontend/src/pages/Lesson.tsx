@@ -642,6 +642,7 @@ export default function LessonPage() {
                             source={source}
                             targetLanguage={lesson.target_language}
                             sourceLanguage={lesson.source_language}
+                            cards={lesson.cards}
                             onComplete={async (scored) => {
                                 if (!step!.exercise) return;
                                 // Flip to the "Weiter" phase the moment

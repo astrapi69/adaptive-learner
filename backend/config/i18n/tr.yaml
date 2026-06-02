@@ -1287,6 +1287,7 @@ lesson:
       submit: "Cevabı kontrol et"
       retry: "Tekrar dene"
       placeholder: "Cevabını yaz…"
+      code_placeholder: "Kodu yaz…"
       input_label: "Senin cevabın"
       hint_show: "İpucu ister misin?"
       result_correct: "Doğru!"

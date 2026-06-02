@@ -214,6 +214,33 @@ code {
   font-size: 0.82rem;
 }
 
+/* Code-aware exercise inputs (schema v1.3). Monospace, no spellcheck. */
+.free-text-code-wrap {
+  position: relative;
+}
+.free-text-code-lang {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.5rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.free-text-input-code {
+  font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+  width: 100%;
+  resize: vertical;
+  tab-size: 2;
+}
+.cloze-sentence-code {
+  font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
+}
+
 a {
   color: var(--accent);
   text-decoration: none;

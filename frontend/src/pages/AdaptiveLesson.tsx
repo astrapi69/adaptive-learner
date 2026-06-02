@@ -290,6 +290,7 @@ export default function AdaptiveLessonPage() {
             step={step!}
             setId={setId}
             lessonId={_extractLessonIdFromStep(step!.id)}
+            cards={lesson?.cards ?? []}
             onComplete={async (scored) => {
               await recordStepAttempts(scored.attempts);
             }}

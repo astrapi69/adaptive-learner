@@ -1287,6 +1287,7 @@ lesson:
       submit: "答えを確認"
       retry: "もう一度"
       placeholder: "答えを入力…"
+      code_placeholder: "コードを入力…"
       input_label: "あなたの答え"
       hint_show: "ヒントが必要ですか？"
       result_correct: "正解です！"

@@ -1289,6 +1289,7 @@ lesson:
       submit: "Έλεγχος απάντησης"
       retry: "Δοκίμασε ξανά"
       placeholder: "Γράψε την απάντησή σου…"
+      code_placeholder: "Πληκτρολόγησε τον κώδικα…"
       input_label: "Η απάντησή σου"
       hint_show: "Χρειάζεσαι υπόδειξη;"
       result_correct: "Σωστά!"

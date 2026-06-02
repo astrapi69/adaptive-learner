@@ -84,6 +84,28 @@ describe("ClozeExercise: render (type mode default)", () => {
         expect(screen.getByTestId("cloze-input-1")).toBeInTheDocument();
     });
 
+    it("applies the monospace code class in code mode (schema v1.3)", () => {
+        render(
+            <ClozeExercise
+                exercise={SINGLE_BLANK}
+                codeMode
+                onComplete={vi.fn()}
+            />,
+        );
+        expect(screen.getByTestId("cloze-sentence")).toHaveClass(
+            "cloze-sentence-code",
+        );
+    });
+
+    it("omits the code class when not in code mode", () => {
+        render(
+            <ClozeExercise exercise={SINGLE_BLANK} onComplete={vi.fn()} />,
+        );
+        expect(screen.getByTestId("cloze-sentence")).not.toHaveClass(
+            "cloze-sentence-code",
+        );
+    });
+
     it("renders the placeholder character on the input", () => {
         render(
             <ClozeExercise

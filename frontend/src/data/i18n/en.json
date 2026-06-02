@@ -1400,6 +1400,7 @@
         "submit": "Check answer",
         "retry": "Try again",
         "placeholder": "Type your answer…",
+        "code_placeholder": "Type the code…",
         "input_label": "Your answer",
         "hint_show": "Need a hint?",
         "result_correct": "Correct!",

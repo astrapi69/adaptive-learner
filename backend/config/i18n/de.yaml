@@ -1292,6 +1292,7 @@ lesson:
       submit: "Antwort prüfen"
       retry: "Erneut versuchen"
       placeholder: "Antwort eingeben…"
+      code_placeholder: "Code eingeben…"
       input_label: "Deine Antwort"
       hint_show: "Tipp anzeigen?"
       result_correct: "Richtig!"

@@ -1289,6 +1289,7 @@ lesson:
       submit: "Vérifier la réponse"
       retry: "Réessayer"
       placeholder: "Saisis ta réponse…"
+      code_placeholder: "Saisis le code…"
       input_label: "Ta réponse"
       hint_show: "Besoin d'un indice ?"
       result_correct: "Correct !"
