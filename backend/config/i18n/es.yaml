@@ -1242,6 +1242,13 @@ repo:
       save: "No se pudieron guardar los ajustes"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
+  tts:
+    read_aloud: "Leer en voz alta"
+    stop: "Detener"
+    auto_read: "Lectura automática"
+    speed: "Velocidad"
+    no_voice: "No hay voz disponible para {language}"
+    reading: "Leyendo…"
   contributed_by: Contribuido por {name}
   page_title: "Lección"
   set_label: "Curso"

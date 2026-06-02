@@ -306,4 +306,29 @@ describe("Lesson auto-read (C3)", () => {
         renderPage();
         expect(screen.getByTestId("lesson-read-along")).toBeInTheDocument();
     });
+
+    // --- C6: keyboard shortcut -------------------------------------
+
+    it("pressing R reads the current step; pressing R again stops", () => {
+        ready(0);
+        renderPage();
+        expect(speakCalls.length).toBe(0);
+        fireEvent.keyDown(window, {key: "r"});
+        expect(speakCalls.length).toBe(1);
+        expect(speakCalls[0].text).toContain("Bonjour means hello");
+        // Now reading -> follow-along shows; a second R stops.
+        expect(screen.getByTestId("lesson-read-along")).toBeInTheDocument();
+        fireEvent.keyDown(window, {key: "r"});
+        expect(screen.queryByTestId("lesson-read-along")).toBeNull();
+    });
+
+    it("ignores R while typing in an input", () => {
+        ready(1); // exercise step with a free-text input
+        renderPage();
+        const input = screen.getByTestId("free-text-input");
+        input.focus();
+        fireEvent.keyDown(input, {key: "r"});
+        // The 'r' should type into the field, not start read-aloud.
+        expect(speakCalls.length).toBe(0);
+    });
 });

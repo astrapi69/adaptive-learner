@@ -1346,6 +1346,14 @@
     }
   },
   "lesson": {
+    "tts": {
+      "read_aloud": "Ανάγνωση φωναχτά",
+      "stop": "Διακοπή",
+      "auto_read": "Αυτόματη ανάγνωση",
+      "speed": "Ταχύτητα",
+      "no_voice": "Δεν υπάρχει διαθέσιμη φωνή για {language}",
+      "reading": "Ανάγνωση…"
+    },
     "contributed_by": "Συνεισφορά από {name}",
     "page_title": "Μάθημα",
     "set_label": "Σετ",

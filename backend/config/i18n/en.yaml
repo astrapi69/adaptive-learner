@@ -1251,6 +1251,13 @@ repo:
       save: "Could not save settings"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
+  tts:
+    read_aloud: "Read aloud"
+    stop: "Stop"
+    auto_read: "Auto read-aloud"
+    speed: "Speed"
+    no_voice: "No voice available for {language}"
+    reading: "Reading…"
   contributed_by: Contributed by {name}
   page_title: "Lesson"
   set_label: "Set"

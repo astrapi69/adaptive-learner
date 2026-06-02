@@ -1245,6 +1245,13 @@ repo:
       save: "Einstellungen konnten nicht gespeichert werden"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
+  tts:
+    read_aloud: "Vorlesen"
+    stop: "Stopp"
+    auto_read: "Automatisch vorlesen"
+    speed: "Geschwindigkeit"
+    no_voice: "Keine Stimme für {language} verfügbar"
+    reading: "Liest vor…"
   contributed_by: Bereitgestellt von {name}
   page_title: "Lektion"
   set_label: "Lernset"

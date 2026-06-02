@@ -1242,6 +1242,13 @@ repo:
       save: "Αδυναμία αποθήκευσης ρυθμίσεων"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
 lesson:
+  tts:
+    read_aloud: "Ανάγνωση φωναχτά"
+    stop: "Διακοπή"
+    auto_read: "Αυτόματη ανάγνωση"
+    speed: "Ταχύτητα"
+    no_voice: "Δεν υπάρχει διαθέσιμη φωνή για {language}"
+    reading: "Ανάγνωση…"
   contributed_by: Συνεισφορά από {name}
   page_title: "Μάθημα"
   set_label: "Σετ"

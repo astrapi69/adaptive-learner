@@ -289,6 +289,41 @@ export default function LessonPage() {
         });
     }, [tts]);
 
+    // The speech payload (text + utterance id + lang) for the current
+    // step, or null when there's nothing to read (summary, code
+    // exercise, empty). Shared by auto-read + the keyboard shortcut.
+    const currentStepSpeech = useCallback((): {
+        text: string;
+        id: string;
+        lang?: string;
+    } | null => {
+        if (!lesson) return null;
+        const current = lesson.steps[currentStepIndex];
+        if (!current) return null;
+        const lang = lesson.target_language ?? undefined;
+        if (current.type === "theory") {
+            const text = markdownToSpeech(current.body ?? "");
+            // theory-{id} matches the TheoryStep so the follow-along
+            // highlight renders for auto-read + shortcut too.
+            return text.trim()
+                ? {text, id: `theory-${current.id}`, lang}
+                : null;
+        }
+        if (current.exercise) {
+            const {codeMode} = resolveCodeContext(
+                current.exercise,
+                lesson.cards,
+            );
+            if (!codeMode) {
+                const text = current.exercise.prompt ?? "";
+                return text.trim()
+                    ? {text, id: `prompt-${current.id}`, lang}
+                    : null;
+            }
+        }
+        return null;
+    }, [lesson, currentStepIndex]);
+
     // Speak the current step when auto-read is on and the step changes.
     // The ref guard means the effect can safely re-run on unrelated
     // renders (the tts controller object is recreated each render)
@@ -296,38 +331,64 @@ export default function LessonPage() {
     const autoReadStepRef = useRef(-1);
     useEffect(() => {
         if (!autoRead || !tts.enabled || !lesson) return;
-        const total = lesson.steps.length;
-        if (currentStepIndex >= total || showResumePrompt) return;
+        if (currentStepIndex >= lesson.steps.length || showResumePrompt)
+            return;
         if (autoReadStepRef.current === currentStepIndex) return;
         autoReadStepRef.current = currentStepIndex;
-        const current = lesson.steps[currentStepIndex];
-        if (!current) return;
-        const lang = lesson.target_language ?? undefined;
-        let text = "";
-        let id = `prompt-${current.id}`;
-        if (current.type === "theory") {
-            text = markdownToSpeech(current.body ?? "");
-            // Same id the TheoryStep checks so the follow-along
-            // highlight renders during auto-read too.
-            id = `theory-${current.id}`;
-        } else if (current.exercise) {
-            const {codeMode} = resolveCodeContext(
-                current.exercise,
-                lesson.cards,
-            );
-            if (!codeMode) text = current.exercise.prompt ?? "";
-        }
-        if (text.trim()) {
-            tts.speak(text, {lang, id});
+        const payload = currentStepSpeech();
+        if (payload) {
+            tts.speak(payload.text, {lang: payload.lang, id: payload.id});
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [autoRead, currentStepIndex, lesson, showResumePrompt, tts.enabled]);
+    }, [
+        autoRead,
+        currentStepIndex,
+        lesson,
+        showResumePrompt,
+        tts.enabled,
+        currentStepSpeech,
+    ]);
 
     // Reset the auto-read step guard when auto-read is turned off so
     // re-enabling it re-reads the current step.
     useEffect(() => {
         if (!autoRead) autoReadStepRef.current = -1;
     }, [autoRead]);
+
+    // Keyboard shortcut (TTS feature, item 8): "R" toggles read-aloud
+    // of the current step. Ignored while typing in an input / textarea
+    // / contenteditable, or with a modifier held.
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key !== "r" && e.key !== "R") return;
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            const el = document.activeElement as HTMLElement | null;
+            const tag = el?.tagName;
+            if (
+                tag === "INPUT" ||
+                tag === "TEXTAREA" ||
+                tag === "SELECT" ||
+                el?.isContentEditable
+            ) {
+                return;
+            }
+            if (!tts.enabled) return;
+            e.preventDefault();
+            if (tts.speaking) {
+                tts.stop();
+                return;
+            }
+            const payload = currentStepSpeech();
+            if (payload) {
+                tts.speak(payload.text, {
+                    lang: payload.lang,
+                    id: payload.id,
+                });
+            }
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [tts, currentStepSpeech]);
 
     // Phase 46A — fetch the set's lesson list so the summary
     // screen's "Next lesson" button knows whether there's a
