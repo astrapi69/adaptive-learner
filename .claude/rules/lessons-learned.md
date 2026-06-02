@@ -1666,3 +1666,40 @@ public visitors cannot.
   Learning Repository to the storage abstraction so the
   Dexie-mode path works for real instead of merely degrading
   gracefully.
+
+## Source-language default: the app language wins, always
+
+The SOURCE language (the language the learner SPEAKS) ALWAYS defaults to
+the app language (``useI18n().lang``), NEVER the saved lesson metadata.
+The TARGET language (what they learn) keeps the saved value when it is
+valid AND different from the source, otherwise content detection,
+otherwise empty so the user picks it.
+
+This bug recurred THREE times (e0ddef6 fixed only
+``SaveOfflineLessonModal``; the ShareWizard kept a too-clever "keep the
+saved source unless it collides with the target" heuristic). Lessons
+saved before the original source-language fix carry
+``source_language: "en"``, so ANY default that reads the saved source —
+even "keep it if valid and != target" — shows "en" to a German user.
+
+### Rule
+
+When building or editing ANY content-metadata form (ShareWizard,
+SaveOfflineLessonModal, CreateLesson, the analysis-to-lesson generator),
+the source-language default is literally ``baseLang(useI18n().lang)`` —
+no conditional on the saved value. The user can still override it via the
+dropdown. Do NOT reintroduce a "keep the saved source when it looks
+valid" heuristic; that is exactly what made this recur.
+
+### Pairs with
+
+- Validation must run against the FORM STATE (the edited values), not the
+  original lesson object. The ShareWizard step-1 gate recomputes inline
+  every render from the ``editSource`` / ``editTarget`` / ``editLevel``
+  state, so a dropdown change re-validates immediately. A symptom that
+  looked like "Weiter stays disabled after changing languages" was
+  actually this source-default bug leaving the target default empty
+  (collision), not a reactivity failure.
+- Permanent fix + regression tests landed in ``ShareWizard.tsx`` at
+  commit c624bb2 (v1.53.2); the test mock app language is "de" and is
+  per-test overridable so "app language wins" is pinned.
