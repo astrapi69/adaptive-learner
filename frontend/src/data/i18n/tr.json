@@ -1954,6 +1954,11 @@
     "subtitle": "Neredesiniz ve sırada ne var.",
     "aria_canvas": "Öğrenme yolu grafiği",
     "reset_layout": "Düzeni sıfırla",
+    "loading": "Öğrenme yolunuz oluşturuluyor…",
+    "empty": "Yolunuzu görmek için önce bir ders seti indirin.",
+    "empty_cta": "İçeriğe göz at",
+    "error": "Öğrenme yolunuz yüklenemedi.",
+    "to_content": "İçerik tarayıcısı",
     "node": {
       "lesson": "Ders",
       "stars": "yıldız",

@@ -1954,6 +1954,11 @@
     "subtitle": "Dónde estás y qué sigue.",
     "aria_canvas": "Gráfico de la ruta de aprendizaje",
     "reset_layout": "Restablecer diseño",
+    "loading": "Creando tu ruta de aprendizaje…",
+    "empty": "Descarga primero un conjunto de lecciones para ver tu ruta.",
+    "empty_cta": "Explorar contenido",
+    "error": "No se pudo cargar tu ruta de aprendizaje.",
+    "to_content": "Explorador de contenido",
     "node": {
       "lesson": "Lección",
       "stars": "estrellas",

@@ -1778,6 +1778,11 @@ learning_path:
   subtitle: "Where you are and what comes next."
   aria_canvas: "Learning path graph"
   reset_layout: "Reset layout"
+  loading: "Building your learning path…"
+  empty: "Download a lesson set first to see your learning path."
+  empty_cta: "Browse content"
+  error: "Could not load your learning path."
+  to_content: "Content Browser"
   node:
     lesson: "Lesson"
     stars: "stars"

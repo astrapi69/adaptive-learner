@@ -1954,6 +1954,11 @@
     "subtitle": "Wo du stehst und was als Nächstes kommt.",
     "aria_canvas": "Lernpfad-Graph",
     "reset_layout": "Layout zurücksetzen",
+    "loading": "Lernpfad wird erstellt…",
+    "empty": "Lade zuerst ein Lektionsset herunter, um deinen Lernpfad zu sehen.",
+    "empty_cta": "Inhalte durchsuchen",
+    "error": "Lernpfad konnte nicht geladen werden.",
+    "to_content": "Content Browser",
     "node": {
       "lesson": "Lektion",
       "stars": "Sterne",

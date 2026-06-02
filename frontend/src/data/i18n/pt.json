@@ -1954,6 +1954,11 @@
     "subtitle": "Onde está e o que vem a seguir.",
     "aria_canvas": "Gráfico do percurso de aprendizagem",
     "reset_layout": "Repor disposição",
+    "loading": "A criar o seu percurso…",
+    "empty": "Descarregue primeiro um conjunto de lições para ver o seu percurso.",
+    "empty_cta": "Explorar conteúdo",
+    "error": "Não foi possível carregar o seu percurso.",
+    "to_content": "Navegador de conteúdo",
     "node": {
       "lesson": "Lição",
       "stars": "estrelas",

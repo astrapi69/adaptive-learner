@@ -1770,6 +1770,11 @@ learning_path:
   subtitle: "Où vous en êtes et ce qui suit."
   aria_canvas: "Graphe du parcours d'apprentissage"
   reset_layout: "Réinitialiser la disposition"
+  loading: "Création de votre parcours…"
+  empty: "Téléchargez d'abord un ensemble de leçons pour voir votre parcours."
+  empty_cta: "Parcourir le contenu"
+  error: "Impossible de charger votre parcours."
+  to_content: "Navigateur de contenu"
   node:
     lesson: "Leçon"
     stars: "étoiles"
