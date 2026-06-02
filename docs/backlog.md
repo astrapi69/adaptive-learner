@@ -17,7 +17,10 @@ tool into a full learning platform with downloadable content
 sets, interactive exercises, and dual-mode operation
 (Content-only + AI-augmented).
 
-State: **post v1.52.0 (DE->EN A1 content — 5 sets / 75 lessons —
+State: **post v1.53.0 (content schema v1.3 + Python course +
+domain support — 7 sets / 100 lessons; code rendering +
+code-aware exercises; analysis-to-lesson source-language fix).**
+Prior: **v1.52.0 (DE->EN A1 content — 5 sets / 75 lessons —
 + BACKUP-API-RESTORE-01 backend restore-coverage fix, production
 DB guard, and the Lesson-Creator resumed-draft P0 fix).** Prior:
 **v1.51.0 (Phase 66 / EXP-022 — Visual Learning Path

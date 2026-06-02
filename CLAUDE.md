@@ -9,8 +9,30 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.52.0** (minor — **DE→EN A1 content**
-  + **backup-restore data-integrity fixes**).
+- **Current state:** **v1.53.0** (minor — **content schema v1.3
+  (technical content) + Python course + domain support**).
+  **Schema v1.3:** Card gains optional ``code_snippet`` /
+  ``code_language`` / ``expected_output`` / ``hint`` / ``difficulty``
+  (1-5) / ``media_type`` (text|code|formula|diagram); all optional, so
+  pre-v1.3 lessons load unchanged (``CURRENT_SCHEMA_VERSION`` 1.2→1.3,
+  major-match support). **Domain support:** sets/lessons carry a
+  ``domain`` (default ``language``); non-language domains
+  (programming, psychology) allow source==target (both validators).
+  The Content Browser splits **Sprachen** (source→target→level tree)
+  from **Wissen** (domain groups w/ code/brain/calculator icons).
+  **Code rendering:** ``highlight.js`` (lazy) code blocks in the
+  lesson viewer — language label, copy button, ``Output:`` block,
+  mobile scroll. **Code-aware exercises:** code/formula cards drive a
+  monospace free-text textarea with whitespace/quote-tolerant
+  case-sensitive matching + monospace cloze. **Content:** new
+  **Python Grundlagen** (``de/python-basics``, 15 lessons, 123
+  code-snippet cards, domain=programming) joins the library — now
+  **7 content sets, 100 lessons** (~22h), all bundled. **Fix:**
+  analysis-to-lesson ``source_language`` defaults to the app language
+  (not ``en``); P3 follow-ups ANALYSIS-TARGET-DETECT-01 /
+  ANALYSIS-DOMAIN-SUGGEST-01 / PLACEMENT-LANG-WARN-01 filed.
+  v1.52.0 = minor — **DE→EN A1 content**
+  + **backup-restore data-integrity fixes**.
   **Content:** a fifth A1 course — **English for German speakers**
   (``de/en-a1``, 15 lessons) — joins ``de/es-a1``, ``de/fr-a1``,
   ``en/es-a1``, ``en/fr-a1``: **5 content sets, 75 lessons** (~12.5h),

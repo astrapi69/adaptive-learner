@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-ai-anthropic"
-version = "1.52.0"
+version = "1.53.0"
 description = "Adaptive Learner: Anthropic Claude provider for the ai_complete hook."
 authors = ["Asterios Raptis"]
 license = "MIT"
