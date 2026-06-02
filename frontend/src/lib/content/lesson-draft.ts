@@ -80,14 +80,24 @@ export function loadLessonDraft(): LessonDraft | null {
                   (c) => c && typeof c.front === "string",
               )
             : [];
+        const sourceLanguage = meta.sourceLanguage ?? "en";
+        let targetLanguage = meta.targetLanguage ?? "fr";
+        if (targetLanguage === sourceLanguage) {
+            // A stale or hand-edited draft with an EQUAL language pair
+            // would leave Step 1 permanently unadvanceable: the
+            // same-language guard never clears, so "Next" silently does
+            // nothing no matter what else the user fills in. Repair to a
+            // sane different default so a resumed draft is always usable.
+            targetLanguage = sourceLanguage === "en" ? "fr" : "en";
+        }
         return {
             schema: 1,
             step: typeof parsed.step === "number" ? parsed.step : 1,
             meta: {
                 title: meta.title ?? "",
                 titleNative: meta.titleNative ?? "",
-                sourceLanguage: meta.sourceLanguage ?? "en",
-                targetLanguage: meta.targetLanguage ?? "fr",
+                sourceLanguage,
+                targetLanguage,
                 level: meta.level ?? "A1",
                 description: meta.description ?? "",
                 author: meta.author ?? "",

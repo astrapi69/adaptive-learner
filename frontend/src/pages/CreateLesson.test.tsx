@@ -243,4 +243,46 @@ describe("CreateLesson — card step gate + draft", () => {
                 .value,
         ).toBe("Saved draft lesson");
     });
+
+    it("a resumed draft with an equal language pair can still advance", () => {
+        // P0 regression: a stale draft whose sourceLanguage ===
+        // targetLanguage left Step 1 unadvanceable — the same-language
+        // guard never cleared, so "Next" silently did nothing even with
+        // every field filled. The loader now repairs the pair so the
+        // resumed draft advances normally.
+        localStorage.setItem(
+            "adaptive-learner.lesson-draft",
+            JSON.stringify({
+                schema: 1,
+                step: 1,
+                meta: {
+                    title: "Stuck draft",
+                    titleNative: "",
+                    sourceLanguage: "de",
+                    targetLanguage: "de", // EQUAL — the stuck state
+                    level: "A1",
+                    description: "",
+                    author: "",
+                },
+                cards: [],
+                updatedAt: "2026-06-01T00:00:00Z",
+            }),
+        );
+        renderPage();
+        fireEvent.click(screen.getByTestId("create-lesson-draft-continue"));
+        // The repaired pair is no longer equal.
+        expect(
+            (
+                screen.getByTestId(
+                    "create-lesson-target-lang",
+                ) as HTMLSelectElement
+            ).value,
+        ).not.toBe("de");
+        // Weiter advances to step 2 instead of silently failing.
+        fireEvent.click(screen.getByTestId("create-lesson-next"));
+        expect(screen.getByTestId("create-lesson-step-2")).toBeInTheDocument();
+        expect(
+            screen.queryByTestId("create-lesson-same-language-error"),
+        ).not.toBeInTheDocument();
+    });
 });

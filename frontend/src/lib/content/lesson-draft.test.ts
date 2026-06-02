@@ -46,6 +46,47 @@ describe("lesson-draft", () => {
         expect(loadLessonDraft()).toBeNull();
     });
 
+    it("repairs an equal source/target language pair on load", () => {
+        // Regression: a stale draft with source === target left Step 1
+        // of the Lesson Creator permanently unadvanceable (the
+        // same-language guard never cleared, so Weiter silently did
+        // nothing). The loader now coerces target to a different code.
+        localStorage.setItem(
+            "adaptive-learner.lesson-draft",
+            JSON.stringify(
+                draft({
+                    meta: {
+                        ...draft().meta,
+                        sourceLanguage: "de",
+                        targetLanguage: "de",
+                    },
+                }),
+            ),
+        );
+        const loaded = loadLessonDraft();
+        expect(loaded?.meta.sourceLanguage).toBe("de");
+        expect(loaded?.meta.targetLanguage).not.toBe("de");
+        expect(loaded?.meta.targetLanguage).toBe("en");
+    });
+
+    it("repairs an equal en/en pair to a non-en target", () => {
+        localStorage.setItem(
+            "adaptive-learner.lesson-draft",
+            JSON.stringify(
+                draft({
+                    meta: {
+                        ...draft().meta,
+                        sourceLanguage: "en",
+                        targetLanguage: "en",
+                    },
+                }),
+            ),
+        );
+        const loaded = loadLessonDraft();
+        expect(loaded?.meta.sourceLanguage).toBe("en");
+        expect(loaded?.meta.targetLanguage).toBe("fr");
+    });
+
     it("returns null on corrupt JSON", () => {
         localStorage.setItem("adaptive-learner.lesson-draft", "{not json");
         expect(loadLessonDraft()).toBeNull();
