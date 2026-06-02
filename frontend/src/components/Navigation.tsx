@@ -7,6 +7,7 @@ import {useAppMode} from "../hooks/useAppMode";
 import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useDevMode} from "../hooks/useDevMode";
 import {useI18n} from "../hooks/useI18n";
+import {useIsLessonActive} from "../hooks/useIsLessonActive";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
 import {useTheme} from "../hooks/useTheme";
 import {readSyncConfig} from "../storage/sync-engine";
@@ -34,6 +35,11 @@ export default function Navigation() {
     const online = useOnlineStatus();
     const HIDE_ON: readonly string[] = ["/", "/onboarding", "/assessment"];
     const {pathname} = useLocation();
+    // During an active lesson the nav collapses to a minimal
+    // hamburger-only bar (the links live behind the drawer) so the
+    // lesson reclaims vertical space. CSS drives the actual layout
+    // off the ``is-lesson-compact`` modifier.
+    const lessonActive = useIsLessonActive();
     const [menuOpen, setMenuOpen] = useState(false);
     const [syncPaired, setSyncPaired] = useState<boolean>(
         () => readSyncConfig() !== null,
@@ -64,8 +70,11 @@ export default function Navigation() {
 
     return (
         <nav
-            className={`app-nav${menuOpen ? " is-menu-open" : ""}`}
+            className={`app-nav${menuOpen ? " is-menu-open" : ""}${
+                lessonActive ? " is-lesson-compact" : ""
+            }`}
             data-testid="app-nav"
+            data-lesson-compact={lessonActive ? "true" : "false"}
         >
             <NavLink to="/dashboard" className="nav-brand">
                 <img

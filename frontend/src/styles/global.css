@@ -4911,6 +4911,118 @@ select:focus {
   background: var(--surface-2);
 }
 
+/* ---------------------------------------------------------------
+   Lesson-mode + landscape-mobile compact navigation.
+
+   Two triggers collapse the top nav into a minimal hamburger-only
+   bar so the content reclaims vertical space:
+     A. .is-lesson-compact — an active lesson / review / adaptive
+        lesson, at ANY viewport width (set by useIsLessonActive).
+     B. short landscape viewports — every page.
+   In both, the links move behind the hamburger drawer; the drawer
+   itself is the same slide-down panel the <=768px breakpoint uses.
+   The links stay in the DOM (CSS-hidden) so keyboard + tests reach
+   them. Respects the existing reduced-motion catch-all.
+   --------------------------------------------------------------- */
+
+/* Trigger A — active lesson, any width. */
+.app-nav.is-lesson-compact {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-2);
+  min-height: 48px;
+}
+.app-nav.is-lesson-compact .nav-hamburger {
+  display: inline-flex;
+}
+.app-nav.is-lesson-compact .nav-links {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  flex-direction: column;
+  gap: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  margin-left: 0;
+  padding: var(--space-2);
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 60;
+}
+.app-nav.is-lesson-compact .nav-links.is-open {
+  display: flex;
+}
+.app-nav.is-lesson-compact .nav-link {
+  padding: var(--space-3) var(--space-4);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+}
+/* Minimal bar — drop the badges + indicators + brand word that
+   only add clutter during a lesson. Brand icon, hamburger, and
+   theme toggle stay. */
+.app-nav.is-lesson-compact .nav-dev-badge,
+.app-nav.is-lesson-compact .nav-mode-badge,
+.app-nav.is-lesson-compact .nav-sync-indicator,
+.app-nav.is-lesson-compact .nav-online-indicator,
+.app-nav.is-lesson-compact .nav-brand-name {
+  display: none;
+}
+
+/* Trigger B — short landscape viewport, ALL pages. */
+@media (orientation: landscape) and (max-height: 600px) {
+  .app-nav {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+    min-height: 44px;
+  }
+  .app-nav .nav-hamburger {
+    display: inline-flex;
+  }
+  .app-nav .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-card);
+    margin-left: 0;
+    padding: var(--space-2);
+    max-height: 85vh;
+    overflow-y: auto;
+    z-index: 60;
+  }
+  .app-nav .nav-links.is-open {
+    display: flex;
+  }
+  .app-nav .nav-online-label,
+  .app-nav .nav-brand-name {
+    display: none;
+  }
+
+  /* Slim the lesson page's own header so the kept title + progress
+     don't re-spend the height the compact nav just saved. */
+  .lesson-header {
+    padding-top: var(--space-2);
+    padding-bottom: var(--space-2);
+  }
+  .lesson-header h1 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  .lesson-header .lesson-description,
+  .lesson-header .lesson-credit {
+    display: none;
+  }
+}
+
 @media (max-width: 768px) {
   /* ----- Navigation: hamburger-controlled drawer -------------- */
 

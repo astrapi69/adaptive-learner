@@ -78,6 +78,39 @@ describe("Navigation", () => {
         expect(nav.className).toContain("is-menu-open");
     });
 
+    // --- lesson-mode compact nav ---------------------------------------
+
+    it("does NOT mark the nav compact on non-lesson routes", () => {
+        renderAt("/dashboard");
+        const nav = screen.getByTestId("app-nav");
+        expect(nav.className).not.toContain("is-lesson-compact");
+        expect(nav.getAttribute("data-lesson-compact")).toBe("false");
+    });
+
+    it("marks the nav compact on lesson / review / adaptive routes", () => {
+        for (const path of [
+            "/lesson/astrapi69--adaptive-learner-content/es-a1/01.json",
+            "/review/es-a1",
+            "/adaptive-lesson/es-a1",
+        ]) {
+            const {unmount} = renderAt(path);
+            const nav = screen.getByTestId("app-nav");
+            expect(nav.className).toContain("is-lesson-compact");
+            expect(nav.getAttribute("data-lesson-compact")).toBe("true");
+            unmount();
+        }
+    });
+
+    it("keeps the nav links in the DOM (behind the hamburger) in compact mode", () => {
+        // CSS hides them; the markup stays so keyboard users and the
+        // drawer toggle still reach every destination during a lesson.
+        renderAt("/lesson/astrapi69--adaptive-learner-content/es-a1/01.json");
+        expect(screen.getByTestId("nav-links")).toBeInTheDocument();
+        expect(screen.getByTestId("nav-dashboard")).toBeInTheDocument();
+        expect(screen.getByTestId("nav-settings")).toBeInTheDocument();
+        expect(screen.getByTestId("nav-hamburger")).toBeInTheDocument();
+    });
+
     // --- v0.6.0 / 9D: online indicator ---------------------------------
 
     it("renders the online indicator with role=status", () => {
