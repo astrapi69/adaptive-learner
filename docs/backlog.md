@@ -17,7 +17,10 @@ tool into a full learning platform with downloadable content
 sets, interactive exercises, and dual-mode operation
 (Content-only + AI-augmented).
 
-State: **post v1.51.0 (Phase 66 / EXP-022 — Visual Learning Path
+State: **post v1.52.0 (DE->EN A1 content — 5 sets / 75 lessons —
++ BACKUP-API-RESTORE-01 backend restore-coverage fix, production
+DB guard, and the Lesson-Creator resumed-draft P0 fix).** Prior:
+**v1.51.0 (Phase 66 / EXP-022 — Visual Learning Path
 + Dexie backup overhaul: File System Access API save-to-disk, a
 "Your backup contains" preview, and a data-loss fix restoring the
 10 gamification/progress/SRS/missions tables the Dexie export had

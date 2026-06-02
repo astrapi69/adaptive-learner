@@ -9,8 +9,35 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.51.0** (minor — **Phase 66 / EXP-022
-  Visual Learning Path** + a **Dexie backup overhaul**).
+- **Current state:** **v1.52.0** (minor — **DE→EN A1 content**
+  + **backup-restore data-integrity fixes**).
+  **Content:** a fifth A1 course — **English for German speakers**
+  (``de/en-a1``, 15 lessons) — joins ``de/es-a1``, ``de/fr-a1``,
+  ``en/es-a1``, ``en/fr-a1``: **5 content sets, 75 lessons** (~12.5h),
+  all bundled into the GitHub Pages build. DE→EN drills classic
+  false friends (become/bekommen, gift/Gift, handy/Handy,
+  chef/Chef, actual/aktuell), German-targeted distractors (missing
+  third-person -s, do-support, uncountable plurals), and a
+  progressive receptive→mixed→productive direction (EXP-018).
+  **BACKUP-API-RESTORE-01 (P1):** API-mode backup exported all 30
+  tables but ``_RESTORE_ORDER`` listed only 16 — a restore silently
+  dropped 14 tables (gamification / lesson-progress / SRS-error /
+  missions / anki / study-question / taxonomy / api-key-backup).
+  Restore order now **derives from the export source**
+  (sync surface, FK-ordered) so the two can't drift; a parity test
+  pins export==restore==sync, and a 30-table round-trip verifies
+  data survives. **Per-table flush during restore** fixes a latent
+  FK violation (single end-commit let SQLAlchemy reorder inserts by
+  ORM relationships, but the gamification/SRS/content tables are
+  FK-decoupled). **New ``app/db_guard.py``:** a process-wide guard
+  refuses full-table DELETE/DROP/TRUNCATE against a
+  production-marked data dir from any non-app process (the running
+  app opts in via ``mark_app_runtime()``). **P0 fix:** the Lesson
+  Creator's "Next" silently failed on Step 1 when a *resumed draft*
+  had source==target language; ``loadLessonDraft`` now repairs an
+  equal pair so a resumed draft is always advanceable.
+  v1.51.0 = minor - **Phase 66 / EXP-022
+  Visual Learning Path** + a **Dexie backup overhaul**.
   An interactive @xyflow/react graph at ``/learning-path`` shows
   the learner's full lesson journey: set-group nodes (progress
   bar, per-direction mastery, collapsible) + lesson nodes
@@ -32,8 +59,7 @@ configuration, gamification, voice, Anki + NotebookLM exports, PWA.
   while the backend sync surface grew to 30, silently dropping
   every gamification / lesson-progress / SRS-error / missions /
   anki / study-question row on export; the Dexie export now
-  covers the full 30-table surface. Filed BACKUP-API-RESTORE-01
-  (P1) for the backend ``_RESTORE_ORDER`` mirror gap.
+  covers the full 30-table surface.
   v1.50.0 = minor - **Lesson Creator
   (EXP-021)** — a standalone, no-API-key way to build a complete
   shareable lesson. New ``/create-lesson`` route +
