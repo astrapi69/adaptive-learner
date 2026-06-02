@@ -138,6 +138,24 @@ ecosystem triple is validated.
   need.
 - **"Force refresh" + "Opt out of offline cache" in Settings UI.**
   Power-user knobs for the SW cache.
+- **ANALYSIS-TARGET-DETECT-01.** Content-based target-language
+  detection for analysis-to-lesson. Today the target is guessed from
+  ``analysis.topic`` only; infer it from the actual card-content
+  language (e.g. card backs / vocabulary) so a German-about-German
+  grammar chat is recognised as a domain (source == target) set
+  rather than a language pair. Follow-up to the v1.52.x source-default
+  fix, which covers the 90% case (source = app language).
+- **ANALYSIS-DOMAIN-SUGGEST-01.** When analysis-to-lesson detection
+  yields source == target (e.g. German grammar for German speakers),
+  auto-suggest a non-language ``domain`` ("grammar" / "education")
+  in the save modal. The content validator already permits
+  source == target for ``domain != "language"``.
+- **PLACEMENT-LANG-WARN-01.** In the placement / save flow, warn when
+  the card content language doesn't match the chosen
+  ``source_language`` (e.g. card backs are German but source is set to
+  English): "Die Kartenrueckseiten sind auf Deutsch, aber die
+  Ausgangssprache ist Englisch. Stimmt das?" Advisory only, never a
+  hard block.
 
 ---
 
