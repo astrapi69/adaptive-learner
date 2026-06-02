@@ -100,6 +100,11 @@ export interface SpeakOptions {
     onStart?: () => void;
     onEnd?: () => void;
     onError?: (error: SpeechSynthesisErrorEvent) => void;
+    /** Fired as the engine crosses word/sentence boundaries.
+     *  Used by the lesson read-aloud highlight to follow along
+     *  (``event.charIndex`` locates the current token in ``text``).
+     *  Not all browsers/voices emit boundary events. */
+    onBoundary?: (event: SpeechSynthesisEvent) => void;
 }
 
 /**
@@ -127,6 +132,7 @@ export function speak(
     if (options.onStart) utter.onstart = options.onStart;
     if (options.onEnd) utter.onend = options.onEnd;
     if (options.onError) utter.onerror = options.onError;
+    if (options.onBoundary) utter.onboundary = options.onBoundary;
     synth.speak(utter);
     return utter;
 }

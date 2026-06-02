@@ -6470,6 +6470,66 @@ select:focus {
     font-size: 0.85rem;
     line-height: 1;
 }
+
+/* ---------------------------------------------------------------
+   Lesson read-aloud (TTS) — compact speaker-icon button.
+
+   Inline next to theory headings, exercise prompts/labels, cloze
+   sentences, and summary answers. Pulses while speaking; the pulse
+   is disabled under prefers-reduced-motion (the accent fill alone
+   still signals the active state).
+   --------------------------------------------------------------- */
+.read-aloud-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1;
+    vertical-align: middle;
+    transition: background 150ms, color 150ms, border-color 150ms;
+}
+.read-aloud-button:hover {
+    background: var(--bg-elevated);
+    color: var(--text);
+}
+.read-aloud-button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+.read-aloud-button.is-speaking {
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    color: var(--accent);
+    border-color: var(--accent);
+    animation: read-aloud-pulse 1.2s ease-in-out infinite;
+}
+.read-aloud-button__icon {
+    display: inline-flex;
+    line-height: 0;
+}
+.read-aloud-button__label {
+    font-size: 0.8rem;
+}
+
+@keyframes read-aloud-pulse {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent);
+    }
+    50% {
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 0%, transparent);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .read-aloud-button.is-speaking {
+        animation: none;
+    }
+}
 .chat-message-actions {
     display: flex;
     justify-content: flex-end;
