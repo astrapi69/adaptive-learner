@@ -22,6 +22,7 @@ common:
   required: 必須
   minutes: 分
 nav:
+  learning_path: "学習パス"
   dashboard: ダッシュボード
   session: セッション
   curriculum: カリキュラム
@@ -1761,3 +1762,8 @@ create_lesson:
     conversation:
       title: "会話練習"
       desc: "5枚のカード枠、単語タイル + 穴埋め。"
+
+learning_path:
+  title: "学習パス"
+  subtitle: "現在地と次のステップ。"
+  aria_canvas: "学習パスのグラフ"

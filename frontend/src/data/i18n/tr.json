@@ -25,6 +25,7 @@
     "minutes": "dakika"
   },
   "nav": {
+    "learning_path": "Öğrenme yolu",
     "dashboard": "Pano",
     "session": "Oturum",
     "curriculum": "Müfredat",
@@ -1947,5 +1948,10 @@
         "desc": "5 kart yuvası, kelime parçaları + boşluk doldurma."
       }
     }
+  },
+  "learning_path": {
+    "title": "Öğrenme yolu",
+    "subtitle": "Neredesiniz ve sırada ne var.",
+    "aria_canvas": "Öğrenme yolu grafiği"
   }
 }

@@ -22,6 +22,7 @@ common:
   required: υποχρεωτικό
   minutes: λεπτά
 nav:
+  learning_path: "Διαδρομή μάθησης"
   dashboard: Πίνακας
   session: Συνεδρία
   curriculum: Πρόγραμμα
@@ -1763,3 +1764,8 @@ create_lesson:
     conversation:
       title: "Εξάσκηση συνομιλίας"
       desc: "5 θέσεις κάρτας, πλακίδια λέξεων + συμπλήρωση κενών."
+
+learning_path:
+  title: "Διαδρομή μάθησης"
+  subtitle: "Πού βρίσκεστε και τι ακολουθεί."
+  aria_canvas: "Γράφημα διαδρομής μάθησης"

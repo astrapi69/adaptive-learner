@@ -22,6 +22,7 @@ common:
   required: required
   minutes: minutes
 nav:
+  learning_path: "Learning Path"
   dashboard: Dashboard
   session: Session
   curriculum: Curriculum
@@ -1771,3 +1772,8 @@ create_lesson:
     conversation:
       title: "Conversation Practice"
       desc: "5 card slots, word tiles + cloze."
+
+learning_path:
+  title: "Learning Path"
+  subtitle: "Where you are and what comes next."
+  aria_canvas: "Learning path graph"

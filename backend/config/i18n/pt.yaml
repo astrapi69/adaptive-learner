@@ -22,6 +22,7 @@ common:
   required: obrigatório
   minutes: minutos
 nav:
+  learning_path: "Percurso de aprendizagem"
   dashboard: Painel
   session: Sessão
   curriculum: Currículo
@@ -1761,3 +1762,8 @@ create_lesson:
     conversation:
       title: "Prática de conversação"
       desc: "5 espaços de cartão, peças de palavras + cloze."
+
+learning_path:
+  title: "Percurso de aprendizagem"
+  subtitle: "Onde está e o que vem a seguir."
+  aria_canvas: "Gráfico do percurso de aprendizagem"

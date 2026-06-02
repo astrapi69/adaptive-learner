@@ -22,6 +22,7 @@ common:
   required: obligatoire
   minutes: minutes
 nav:
+  learning_path: "Parcours d'apprentissage"
   dashboard: Tableau de bord
   session: Session
   curriculum: Programme
@@ -1763,3 +1764,8 @@ create_lesson:
     conversation:
       title: "Pratique de conversation"
       desc: "5 emplacements de carte, tuiles de mots + texte à trous."
+
+learning_path:
+  title: "Parcours d'apprentissage"
+  subtitle: "Où vous en êtes et ce qui suit."
+  aria_canvas: "Graphe du parcours d'apprentissage"

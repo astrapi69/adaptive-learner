@@ -25,6 +25,7 @@
     "minutes": "minutos"
   },
   "nav": {
+    "learning_path": "Ruta de aprendizaje",
     "dashboard": "Panel",
     "session": "Sesion",
     "curriculum": "Curriculo",
@@ -1947,5 +1948,10 @@
         "desc": "5 espacios de tarjeta, fichas de palabras + cloze."
       }
     }
+  },
+  "learning_path": {
+    "title": "Ruta de aprendizaje",
+    "subtitle": "Dónde estás y qué sigue.",
+    "aria_canvas": "Gráfico de la ruta de aprendizaje"
   }
 }

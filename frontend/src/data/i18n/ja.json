@@ -25,6 +25,7 @@
     "minutes": "分"
   },
   "nav": {
+    "learning_path": "学習パス",
     "dashboard": "ダッシュボード",
     "session": "セッション",
     "curriculum": "カリキュラム",
@@ -1947,5 +1948,10 @@
         "desc": "5枚のカード枠、単語タイル + 穴埋め。"
       }
     }
+  },
+  "learning_path": {
+    "title": "学習パス",
+    "subtitle": "現在地と次のステップ。",
+    "aria_canvas": "学習パスのグラフ"
   }
 }

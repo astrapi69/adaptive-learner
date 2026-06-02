@@ -22,6 +22,7 @@ common:
   required: Pflichtfeld
   minutes: Minuten
 nav:
+  learning_path: "Lernpfad"
   dashboard: Dashboard
   session: Session
   curriculum: Curriculum
@@ -1765,3 +1766,8 @@ create_lesson:
     conversation:
       title: "Konversations-Übung"
       desc: "5 Kartenplätze, Wort-Kacheln + Lückentext."
+
+learning_path:
+  title: "Lernpfad"
+  subtitle: "Wo du stehst und was als Nächstes kommt."
+  aria_canvas: "Lernpfad-Graph"
