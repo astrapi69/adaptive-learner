@@ -1252,6 +1252,7 @@ lesson:
     speed: "Geschwindigkeit"
     no_voice: "Keine Stimme für {language} verfügbar"
     reading: "Liest vor…"
+    read_all: "Alle vorlesen"
   contributed_by: Bereitgestellt von {name}
   page_title: "Lektion"
   set_label: "Lernset"

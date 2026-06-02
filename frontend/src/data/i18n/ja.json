@@ -1352,7 +1352,8 @@
       "auto_read": "自動読み上げ",
       "speed": "速度",
       "no_voice": "{language} の音声がありません",
-      "reading": "読み上げ中…"
+      "reading": "読み上げ中…",
+      "read_all": "すべて読み上げ"
     },
     "contributed_by": "{name}さんによる貢献",
     "page_title": "レッスン",

@@ -1249,6 +1249,7 @@ lesson:
     speed: "Ταχύτητα"
     no_voice: "Δεν υπάρχει διαθέσιμη φωνή για {language}"
     reading: "Ανάγνωση…"
+    read_all: "Ανάγνωση όλων"
   contributed_by: Συνεισφορά από {name}
   page_title: "Μάθημα"
   set_label: "Σετ"

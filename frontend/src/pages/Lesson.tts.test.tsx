@@ -8,7 +8,7 @@
  * by the C2 exercise-tts suite).
  */
 
-import {fireEvent, render, screen} from "@testing-library/react";
+import {act, fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -330,5 +330,86 @@ describe("Lesson auto-read (C3)", () => {
         fireEvent.keyDown(input, {key: "r"});
         // The 'r' should type into the field, not start read-aloud.
         expect(speakCalls.length).toBe(0);
+    });
+
+    // --- C7: continuous theory reading + auto-advance --------------
+
+    const MULTI_LESSON = {
+        ...LESSON,
+        steps: [
+            {
+                id: "t1",
+                type: "theory" as const,
+                body: "# Welcome\n\nBonjour means hello.",
+            },
+            {
+                id: "t2",
+                type: "theory" as const,
+                body: "Au revoir means goodbye.",
+            },
+            {
+                id: "ex-1",
+                type: "exercise" as const,
+                exercise: {
+                    id: "ex-1",
+                    type: "free_text" as const,
+                    prompt: "Say hello.",
+                    card_ids: [],
+                    accept: ["bonjour"],
+                    distractors: [],
+                },
+            },
+        ],
+    };
+
+    function readyMulti(stepIndex: number) {
+        const goToStep = vi.fn();
+        useLessonMock.mockReturnValue({
+            status: "ready",
+            lesson: MULTI_LESSON,
+            progress: PROGRESS,
+            currentStepIndex: stepIndex,
+            error: null,
+            goNext: vi.fn(),
+            goPrev: vi.fn(),
+            goToStep,
+            goToStepById: vi.fn(),
+            recordStepResult: vi.fn(),
+            markCompleted: vi.fn(),
+            refresh: vi.fn(),
+        });
+        return goToStep;
+    }
+
+    it("offers 'Read all' on a theory step that starts a run of >=2", () => {
+        readyMulti(0);
+        renderPage();
+        expect(screen.getByTestId("lesson-tts-readall")).toBeInTheDocument();
+    });
+
+    it("does NOT offer 'Read all' on the last theory step of a run", () => {
+        readyMulti(1); // followed by an exercise -> run length 1
+        renderPage();
+        expect(screen.queryByTestId("lesson-tts-readall")).toBeNull();
+    });
+
+    it("'Read all' speaks the concatenated run and auto-advances on boundary", () => {
+        const goToStep = readyMulti(0);
+        renderPage();
+        fireEvent.click(screen.getByTestId("lesson-tts-readall"));
+        expect(speakCalls.length).toBe(1);
+        const utter = speakCalls[0];
+        // One utterance carrying BOTH theory steps' text.
+        expect(utter.text).toContain("Bonjour means hello");
+        expect(utter.text).toContain("Au revoir means goodbye");
+        // Cross into the second step's text -> viewer auto-advances.
+        act(() => {
+            (
+                utter as unknown as {
+                    onboundary?: (e: {name: string; charIndex: number}) => void;
+                }
+            ).onboundary?.({name: "word", charIndex: 999});
+        });
+        expect(goToStep).toHaveBeenCalledWith(1);
     });
 });

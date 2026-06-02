@@ -1247,6 +1247,7 @@ lesson:
     speed: "Velocidade"
     no_voice: "Nenhuma voz disponível para {language}"
     reading: "Lendo…"
+    read_all: "Ler tudo"
   contributed_by: Contribuído por {name}
   page_title: "Lição"
   set_label: "Conjunto"

@@ -68,3 +68,65 @@ export function markdownToSpeech(markdown: string): string {
 
     return text.trim();
 }
+
+/** A minimal step shape for the continuous-reading scan. */
+export interface TheoryRunStep {
+    type: string;
+    body?: string | null;
+}
+
+export interface TheoryRun {
+    /** Absolute step indices in the run (consecutive theory steps). */
+    indices: number[];
+    /** The concatenated speech text fed as ONE utterance. */
+    text: string;
+    /** ``offsets[k]`` = char offset of ``indices[k]``'s segment within
+     *  ``text``, so a boundary charIndex maps back to a step. */
+    offsets: number[];
+}
+
+/** Single space between steps — a light pause without doubling the
+ *  sentence periods markdownToSpeech already inserts. */
+const RUN_SEPARATOR = " ";
+
+/**
+ * Collect the run of consecutive ``theory`` steps starting at
+ * ``startIndex`` (TTS feature C7 — continuous reading). Stops at the
+ * first non-theory step. Returns the concatenated speech text + the
+ * per-step char offsets so the viewer can auto-advance as the engine
+ * crosses each boundary. Steps whose body strips to empty are skipped
+ * but still keep the run going (a blank theory step shouldn't break a
+ * continuous read).
+ */
+export function collectTheoryRun(
+    steps: TheoryRunStep[],
+    startIndex: number,
+): TheoryRun {
+    const indices: number[] = [];
+    const segments: string[] = [];
+    for (let i = startIndex; i < steps.length; i++) {
+        if (steps[i].type !== "theory") break;
+        indices.push(i);
+        segments.push(markdownToSpeech(steps[i].body ?? ""));
+    }
+    const offsets: number[] = [];
+    let acc = "";
+    segments.forEach((seg, k) => {
+        offsets.push(acc.length);
+        acc += seg;
+        if (k < segments.length - 1) acc += RUN_SEPARATOR;
+    });
+    return {indices, text: acc, offsets};
+}
+
+/** Map a boundary charIndex back to a run step index (the highest
+ *  offset that is <= charIndex). Returns the absolute step index, or
+ *  -1 when the run is empty. */
+export function runStepForChar(run: TheoryRun, charIndex: number): number {
+    let k = -1;
+    for (let i = 0; i < run.offsets.length; i++) {
+        if (run.offsets[i] <= charIndex) k = i;
+        else break;
+    }
+    return k === -1 ? -1 : run.indices[k];
+}

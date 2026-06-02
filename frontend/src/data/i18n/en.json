@@ -1352,7 +1352,8 @@
       "auto_read": "Auto read-aloud",
       "speed": "Speed",
       "no_voice": "No voice available for {language}",
-      "reading": "Reading…"
+      "reading": "Reading…",
+      "read_all": "Read all"
     },
     "contributed_by": "Contributed by {name}",
     "page_title": "Lesson",

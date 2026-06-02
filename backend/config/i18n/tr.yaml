@@ -1247,6 +1247,7 @@ lesson:
     speed: "Hız"
     no_voice: "{language} için ses yok"
     reading: "Okunuyor…"
+    read_all: "Tümünü oku"
   contributed_by: '{name} tarafından katkıda bulunuldu'
   page_title: "Ders"
   set_label: "Set"

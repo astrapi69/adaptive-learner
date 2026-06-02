@@ -1352,7 +1352,8 @@
       "auto_read": "Lectura automática",
       "speed": "Velocidad",
       "no_voice": "No hay voz disponible para {language}",
-      "reading": "Leyendo…"
+      "reading": "Leyendo…",
+      "read_all": "Leer todo"
     },
     "contributed_by": "Contribuido por {name}",
     "page_title": "Lección",

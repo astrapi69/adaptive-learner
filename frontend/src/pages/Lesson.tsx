@@ -57,7 +57,12 @@ import {
 import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import Confetti from "../components/feedback/Confetti";
 import ReadAlongText from "../components/lesson/ReadAlongText";
-import {markdownToSpeech} from "../lib/lesson/tts-text";
+import {
+    collectTheoryRun,
+    markdownToSpeech,
+    runStepForChar,
+    type TheoryRun,
+} from "../lib/lesson/tts-text";
 import {
     READ_ALOUD_SPEEDS,
     readLessonAutoRead,
@@ -390,6 +395,48 @@ export default function LessonPage() {
         return () => window.removeEventListener("keydown", onKey);
     }, [tts, currentStepSpeech]);
 
+    // TTS feature C7 — continuous theory reading. "Read all" speaks a
+    // run of consecutive theory steps as ONE utterance and auto-
+    // advances the viewer as the engine crosses each step boundary,
+    // stopping at the first exercise.
+    const CONTINUOUS_ID = "theory-run";
+    const [theoryRun, setTheoryRun] = useState<TheoryRun | null>(null);
+    const startContinuous = useCallback(() => {
+        if (!lesson) return;
+        const run = collectTheoryRun(lesson.steps, currentStepIndex);
+        if (run.indices.length < 2 || !run.text.trim()) return;
+        setTheoryRun(run);
+        const lang = lesson.target_language ?? undefined;
+        tts.speak(run.text, {lang, id: CONTINUOUS_ID});
+    }, [lesson, currentStepIndex, tts]);
+
+    // Auto-advance the viewer while the continuous run plays. When the
+    // engine stops, clear the run.
+    const isContinuous = tts.speaking && tts.activeId === CONTINUOUS_ID;
+    // "Read all" is offered only on a theory step that begins a run of
+    // at least two consecutive theory steps.
+    const continuousAvailable = useMemo(() => {
+        if (!lesson) return false;
+        const cur = lesson.steps[currentStepIndex];
+        if (!cur || cur.type !== "theory") return false;
+        return (
+            collectTheoryRun(lesson.steps, currentStepIndex).indices.length >=
+            2
+        );
+    }, [lesson, currentStepIndex]);
+    useEffect(() => {
+        if (!theoryRun) return;
+        if (!isContinuous) {
+            setTheoryRun(null);
+            return;
+        }
+        const target = runStepForChar(theoryRun, tts.boundaryIndex);
+        if (target >= 0 && target !== currentStepIndex) {
+            goToStep(target);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tts.boundaryIndex, isContinuous, theoryRun]);
+
     // Phase 46A — fetch the set's lesson list so the summary
     // screen's "Next lesson" button knows whether there's a
     // successor + what filename to navigate to. One extra
@@ -680,6 +727,32 @@ export default function LessonPage() {
                         <Volume2 size={14} aria-hidden="true" />
                         {t("lesson.tts.auto_read", "Auto read-aloud")}
                     </button>
+
+                    {/* Continuous theory reading (C7) — reads the whole
+                        run of consecutive theory steps, auto-advancing
+                        the viewer; stops at the next exercise. */}
+                    {continuousAvailable && (
+                        <button
+                            type="button"
+                            className={`lesson-tts-autoread${
+                                isContinuous ? " is-on" : ""
+                            }`}
+                            data-testid="lesson-tts-readall"
+                            aria-pressed={isContinuous}
+                            onClick={() =>
+                                isContinuous ? tts.stop() : startContinuous()
+                            }
+                        >
+                            {isContinuous ? (
+                                <Square size={14} aria-hidden="true" />
+                            ) : (
+                                <Volume2 size={14} aria-hidden="true" />
+                            )}
+                            {isContinuous
+                                ? t("lesson.tts.stop", "Stop")
+                                : t("lesson.tts.read_all", "Read all")}
+                        </button>
+                    )}
 
                     {/* Inline speed control — only while a stream is
                         playing (C4). Changing it restarts the current
