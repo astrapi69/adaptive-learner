@@ -11,6 +11,7 @@
  * tint marks the group without a hardcoded colour.
  */
 
+import {memo} from "react";
 import {ChevronDown, ChevronRight} from "lucide-react";
 
 import {useI18n} from "../../hooks/useI18n";
@@ -33,7 +34,7 @@ export interface SetGroupNodeViewProps {
     onToggle?: () => void;
 }
 
-export function SetGroupNodeView({data, onToggle}: SetGroupNodeViewProps) {
+export const SetGroupNodeView = memo(function SetGroupNodeView({data, onToggle}: SetGroupNodeViewProps) {
     const {t} = useI18n();
     const pct =
         data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0;
@@ -49,6 +50,13 @@ export function SetGroupNodeView({data, onToggle}: SetGroupNodeViewProps) {
                 className="set-group-header"
                 data-testid={`set-group-toggle-${data.setId}`}
                 aria-expanded={!data.collapsed}
+                aria-label={t(
+                    "learning_path.group.toggle_aria",
+                    "{title} set — {completed} of {total} lessons completed",
+                )
+                    .replace("{title}", data.title)
+                    .replace("{completed}", String(data.completed))
+                    .replace("{total}", String(data.total))}
                 onClick={() => onToggle?.()}
             >
                 {data.collapsed ? (
@@ -101,4 +109,4 @@ export function SetGroupNodeView({data, onToggle}: SetGroupNodeViewProps) {
             )}
         </div>
     );
-}
+});

@@ -130,17 +130,20 @@ export default function LearningPath() {
     );
     const stats = useMemo(() => graphStats(lessonData), [lessonData]);
 
-    const onSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key !== "Enter") return;
-        const m = firstMatch(lessonData, filters.query);
-        if (m) {
-            navigate(
-                `/lesson/${encodeURIComponent(m.setSlug)}/${encodeURIComponent(
-                    m.setId,
-                )}/${encodeURIComponent(m.lessonFilename)}`,
-            );
-        }
-    };
+    const onSearchKeyDown = useCallback(
+        (e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key !== "Enter") return;
+            const m = firstMatch(lessonData, filters.query);
+            if (m) {
+                navigate(
+                    `/lesson/${encodeURIComponent(m.setSlug)}/${encodeURIComponent(
+                        m.setId,
+                    )}/${encodeURIComponent(m.lessonFilename)}`,
+                );
+            }
+        },
+        [lessonData, filters.query, navigate],
+    );
 
     return (
         <main
@@ -178,7 +181,12 @@ export default function LearningPath() {
             </header>
 
             {state === "loading" && (
-                <p className="muted" data-testid="learning-path-loading">
+                <p
+                    className="muted"
+                    data-testid="learning-path-loading"
+                    role="status"
+                    aria-live="polite"
+                >
                     {t("learning_path.loading", "Building your learning path…")}
                 </p>
             )}
@@ -287,6 +295,10 @@ export default function LearningPath() {
                         type="search"
                         data-testid="learning-path-search"
                         className="learning-path-search"
+                        aria-label={t(
+                            "learning_path.search_label",
+                            "Search lessons — press Enter to navigate to the first match",
+                        )}
                         placeholder={t(
                             "learning_path.search_placeholder",
                             "Search lessons…",
@@ -326,6 +338,10 @@ export default function LearningPath() {
                     className="learning-path-clusters"
                     data-testid="learning-path-clusters"
                     aria-live="polite"
+                    aria-label={t(
+                        "learning_path.clusters.region_label",
+                        "Error clusters panel",
+                    )}
                 >
                     {clusters.length === 0 ? (
                         <p
@@ -388,17 +404,41 @@ export default function LearningPath() {
                 <aside
                     className="learning-path-stats"
                     data-testid="learning-path-stats"
+                    aria-label={t(
+                        "learning_path.stats.region_label",
+                        "Learning path statistics",
+                    )}
                     aria-live="polite"
                 >
-                    <span data-testid="stat-lessons">
+                    <span
+                        data-testid="stat-lessons"
+                        aria-label={t(
+                            "learning_path.stats.lessons_aria",
+                            "{done} of {total} lessons completed",
+                        )
+                            .replace("{done}", String(stats.completed))
+                            .replace("{total}", String(stats.totalLessons))}
+                    >
                         {t("learning_path.stats.lessons", "Lessons")}:{" "}
                         {stats.completed}/{stats.totalLessons}
                     </span>
-                    <span data-testid="stat-receptive">
+                    <span
+                        data-testid="stat-receptive"
+                        aria-label={t(
+                            "learning_path.stats.receptive_aria",
+                            "{n} lessons receptive mastered",
+                        ).replace("{n}", String(stats.receptiveMastered))}
+                    >
                         {t("learning_path.stats.receptive", "Receptive")}:{" "}
                         {stats.receptiveMastered}
                     </span>
-                    <span data-testid="stat-productive">
+                    <span
+                        data-testid="stat-productive"
+                        aria-label={t(
+                            "learning_path.stats.productive_aria",
+                            "{n} lessons productive mastered",
+                        ).replace("{n}", String(stats.productiveMastered))}
+                    >
                         {t("learning_path.stats.productive", "Productive")}:{" "}
                         {stats.productiveMastered}
                     </span>

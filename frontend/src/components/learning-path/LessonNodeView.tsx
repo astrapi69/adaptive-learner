@@ -11,6 +11,7 @@
  * locked = a prerequisite isn't met (lock overlay, not clickable).
  */
 
+import {memo} from "react";
 import {Lock, Star} from "lucide-react";
 
 import {useI18n} from "../../hooks/useI18n";
@@ -52,17 +53,25 @@ export interface LessonNodeViewProps {
     onActivate?: () => void;
 }
 
-export function LessonNodeView({data, onActivate}: LessonNodeViewProps) {
+export const LessonNodeView = memo(function LessonNodeView({data, onActivate}: LessonNodeViewProps) {
     const {t} = useI18n();
     const statusClass = `lesson-node--${data.status.replace(/_/g, "-")}`;
+    const statusLabel = t(
+        `learning_path.status.${data.status.replace(/_/g, "_")}`,
+        data.status.replace(/_/g, " "),
+    );
     const ariaLabel =
         `${t("learning_path.node.lesson", "Lesson")} ${data.lessonNumber}: ` +
-        `${data.title}, ${data.stars}/3 ${t("learning_path.node.stars", "stars")}` +
+        `${data.title}, ${data.stars}/3 ${t("learning_path.node.stars", "stars")}, ${statusLabel}` +
         (data.recommended
             ? `, ${t("learning_path.node.recommended", "Recommended")}`
             : "") +
         (data.locked
-            ? `, ${t("learning_path.node.locked", "Locked")}`
+            ? `, ${t("learning_path.node.locked", "Locked")}` +
+              (data.lockReason ? `: ${data.lockReason}` : "")
+            : "") +
+        (data.xp > 0
+            ? `, ${data.xp} ${t("learning_path.node.xp", "XP")}`
             : "");
 
     return (
@@ -160,4 +169,4 @@ export function LessonNodeView({data, onActivate}: LessonNodeViewProps) {
             )}
         </button>
     );
-}
+});
