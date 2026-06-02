@@ -80,7 +80,7 @@ describe("buildManifestYaml", () => {
   it("produces a one-entry ContentManifest that re-parses", () => {
     const yaml = buildManifestYaml(META, 1);
     const parsed = parseYaml(yaml);
-    expect(parsed.schema_version).toBe("1.1");
+    expect(parsed.schema_version).toBe("1.3");
     expect(parsed.sets).toHaveLength(1);
     expect(parsed.sets[0].id).toBe("analysis-conv-1");
     expect(parsed.sets[0].language).toBe("es");
