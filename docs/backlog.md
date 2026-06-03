@@ -103,8 +103,27 @@ tiebreaker.
 
 ## P2 — Medium Value, Medium Effort
 
+- [ ] **PERF-HELP-GLOSSARY-LAZY-01**: `src/lib/help-glossary.ts:22`
+  eager-globs all help JSON (`../data/help/*.json`, 412 KB dir) into
+  whatever chunk consumes it; via `useButtonTooltips` / `HelpTooltip`
+  some of that reaches the always-mounted shell and lands partly in the
+  main bundle (the `help/*.el.json` etc. seen in the
+  performance-audit-2026-06-03 treemap). Convert to a lazy/non-eager
+  glob. Not a one-liner: `help-glossary` exposes a SYNCHRONOUS typed
+  lookup API, so going lazy needs an async init or a provider-level
+  preload of the active language. Measure the main-bundle delta after.
+  Filed from the 2026-06-03 performance audit (F-3).
+
 ## P3 — Lower Value or Large Effort
 
+- [ ] **PERF-EAGER-GLOBS-01**: Remaining `eager: true`
+  `import.meta.glob` sites bundle all-language data into their consuming
+  chunk. `src/lib/praise/phrase-picker.ts:45` (praise, 72 KB dir, lands
+  in the `celebration-bus` chunk) and `dexie-storage.ts:2304`
+  (plugin-config, 28 KB dir). Convert to lazy per-key loading like the
+  i18n glob fix (F-1). Low impact — praise loads during lessons,
+  plugin-config is small. Opportunistic. Filed from the 2026-06-03
+  performance audit (F-4).
 - [ ] **TTS-E2E-HEADLESS-GUARD-01**: `e2e/dexie/lesson-tts.spec.ts` fails
   the Dexie gate under headless chromium because `speechSynthesis` has no
   voices, so the `lesson-tts-autoread` toggle never flips `aria-pressed`
