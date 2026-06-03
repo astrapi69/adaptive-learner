@@ -42,6 +42,25 @@ describe("markdownToSpeech", () => {
         expect(markdownToSpeech("")).toBe("");
         expect(markdownToSpeech("```\ncode only\n```")).toBe("");
     });
+
+    // QA D2 — mutation-hardening: pin the whitespace normalization
+    // (trim per line, drop blank lines, trim the whole result) with
+    // exact-equality assertions so the trim()/filter steps can't be
+    // mutated away undetected.
+    it("normalises whitespace to exact, trimmed output", () => {
+        // Leading/trailing spaces on lines + blank lines between
+        // paragraphs collapse to single ". "-joined sentences with no
+        // stray whitespace or empty segments.
+        const out = markdownToSpeech("  Alpha line  \n\n\n   Beta line  ");
+        expect(out).toBe("Alpha line. Beta line");
+    });
+
+    it("has no leading or trailing whitespace and no empty segments", () => {
+        const out = markdownToSpeech("\n\n   Hello world   \n\n");
+        expect(out).toBe("Hello world");
+        expect(out).toBe(out.trim());
+        expect(out.split(". ")).not.toContain("");
+    });
 });
 
 describe("collectTheoryRun", () => {
@@ -68,6 +87,21 @@ describe("collectTheoryRun", () => {
         const run = collectTheoryRun(steps, 2);
         expect(run.indices).toEqual([]);
         expect(run.text).toBe("");
+    });
+
+    // QA D2 — mutation-hardening for the loop bound: a run that
+    // extends to the LAST step. With ``i <= steps.length`` the loop
+    // would read steps[length] (undefined) and throw, so this case
+    // kills that off-by-one mutant.
+    it("collects a run that reaches the end of the lesson", () => {
+        const allTheory = [
+            {type: "theory", body: "One."},
+            {type: "theory", body: "Two."},
+            {type: "theory", body: "Three."},
+        ];
+        const run = collectTheoryRun(allTheory, 0);
+        expect(run.indices).toEqual([0, 1, 2]);
+        expect(run.text).toBe("One. Two. Three.");
     });
 });
 

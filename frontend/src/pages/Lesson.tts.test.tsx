@@ -307,6 +307,53 @@ describe("Lesson auto-read (C3)", () => {
         expect(screen.getByTestId("lesson-read-along")).toBeInTheDocument();
     });
 
+    it("advances the highlighted word as the engine crosses boundaries (QA D3)", () => {
+        // Drive the real engine end to end: clicking the theory button
+        // reads the body, then firing the utterance's onboundary moves
+        // the .tts-active word — pinned at the page level (the unit test
+        // covers the tokenizer in isolation).
+        ready(0);
+        renderPage();
+        fireEvent.click(screen.getByTestId("read-aloud-theory"));
+        const utter = speakCalls[0];
+        const text = utter.text; // markdownToSpeech("# Welcome\n\nBonjour means hello.")
+        const along = screen.getByTestId("lesson-read-along");
+        // No active word before any boundary fires.
+        expect(along.querySelector('[data-active="true"]')).toBeNull();
+
+        // Fire a boundary at the start of "Bonjour".
+        const bonjourAt = text.indexOf("Bonjour");
+        expect(bonjourAt).toBeGreaterThan(-1);
+        act(() => {
+            (
+                utter as unknown as {
+                    onboundary?: (e: {name: string; charIndex: number}) => void;
+                }
+            ).onboundary?.({name: "word", charIndex: bonjourAt});
+        });
+        expect(
+            screen
+                .getByTestId("lesson-read-along")
+                .querySelector('[data-active="true"]')?.textContent,
+        ).toBe("Bonjour");
+
+        // Advance to "hello" -> the highlight moves. (The word token
+        // keeps its trailing punctuation, e.g. "hello.".)
+        const helloAt = text.indexOf("hello");
+        act(() => {
+            (
+                utter as unknown as {
+                    onboundary?: (e: {name: string; charIndex: number}) => void;
+                }
+            ).onboundary?.({name: "word", charIndex: helloAt});
+        });
+        const active = screen
+            .getByTestId("lesson-read-along")
+            .querySelector('[data-active="true"]');
+        expect(active?.textContent).toContain("hello");
+        expect(active?.textContent).not.toContain("Bonjour");
+    });
+
     // --- C6: keyboard shortcut -------------------------------------
 
     it("pressing R reads the current step; pressing R again stops", () => {
