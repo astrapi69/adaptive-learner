@@ -77,19 +77,15 @@ async function setAnthropicKey(page: Page): Promise<void> {
 test.describe("Language pipeline: import -> analyze -> save -> share", () => {
   test.use({ viewport: { width: 375, height: 720 } });
 
-  // FIXME(IMPORT-LANG-PIPELINE-SELECT-MIGRATION-01): the language
-  // pickers (import-target-language / save-lesson-*-lang / share-wizard
-  // edit-*) were migrated to shadcn (Radix) Select in the Tailwind
-  // Phase-C4 migration, so they are no longer <input> elements and the
-  // toHaveValue() assertions below fail with "Not an input element".
-  // The FEATURE works; the spec needs rewriting to drive Radix Selects
-  // (open trigger -> pick option, assert the trigger's shown value).
-  // Re-fixme'd (its state before it was activated) to keep the Dexie
-  // gate green until the spec is migrated. The deterministic inheritance
-  // contract stays covered by the C5 unit/integration suites (analysis
-  // prompt, save-modal inheritance, ImportDetail pickers + persistence,
-  // language-pipeline.test).
-  test.fixme("German speaker learning French keeps de -> fr at every step", async ({
+  // IMPORT-LANG-PIPELINE-SELECT-MIGRATION-01: the import + share-wizard
+  // language pickers were migrated to shadcn (Radix) Select in Tailwind
+  // Phase C4, so they are no longer <input> elements — toHaveValue() does
+  // not apply. This spec now drives them Radix-aware: the SelectTrigger
+  // renders the selected option's text ("German (de)") via SelectValue, so
+  // we assert the trigger's text content contains the ISO code in parens
+  // (e.g. "(fr)"). The save-as-offline modal is still a native <select>
+  // (not migrated), so its toHaveValue() assertions stay unchanged.
+  test("German speaker learning French keeps de -> fr at every step", async ({
     page,
   }) => {
     await mockProvider(page);
@@ -113,10 +109,12 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
     const source = page.getByTestId("import-source-language");
     const target = page.getByTestId("import-target-language");
     await expect(source).toBeVisible();
-    await expect(target).toHaveValue("fr");
-    // Source is the app language; assert it's a real, different code.
-    await expect(source).not.toHaveValue("");
-    await expect(source).not.toHaveValue("fr");
+    // Radix Select trigger: assert the displayed option text, which is
+    // "<name> (<code>)" — so the ISO code shows in parens.
+    await expect(target).toContainText("(fr)");
+    // Source is the app language; assert it shows a real, different code.
+    await expect(source).toContainText(/\([a-z]{2}\)/);
+    await expect(source).not.toContainText("(fr)");
 
     // 6-7. Save as offline lesson — the modal INHERITS de -> fr.
     await page.getByTestId("save-offline-lesson-button").click();
@@ -140,9 +138,10 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
 
     const editSource = page.getByTestId("share-wizard-edit-source");
     const editTarget = page.getByTestId("share-wizard-edit-target");
-    await expect(editTarget).toHaveValue("fr");
-    await expect(editSource).not.toHaveValue("fr");
-    await expect(editSource).not.toHaveValue("");
+    // Radix Select triggers — option text is "<name> (<code>)".
+    await expect(editTarget).toContainText("(fr)");
+    await expect(editSource).toContainText(/\([a-z]{2}\)/);
+    await expect(editSource).not.toContainText("(fr)");
 
     // 12-13. Placement shows the inherited pair + Continue is enabled.
     await expect(page.getByTestId("share-wizard-placement")).toContainText(
