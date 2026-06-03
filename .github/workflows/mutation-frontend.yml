@@ -1,0 +1,62 @@
+name: Mutation (Frontend)
+
+# Stryker mutation testing for the frontend logic layers
+# (src/lib + src/hooks + src/api). Mutation runs are heavy, so this
+# is NOT on the per-push critical path:
+#   - workflow_dispatch: run on demand from the Actions tab.
+#   - schedule (nightly): only fires when the repo variable
+#     ENABLE_NIGHTLY_MUTATION is set to "true" (Settings ->
+#     Secrets and variables -> Actions -> Variables). Off by
+#     default so it never silently burns CI minutes.
+#
+# IMPORTANT (lessons-learned "wired != working"): trigger this once
+# via workflow_dispatch after merging and confirm the artifact +
+# score before relying on the schedule.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 03:17 UTC daily; the job body is gated below so it is a no-op
+    # unless ENABLE_NIGHTLY_MUTATION == "true".
+    - cron: "17 3 * * *"
+
+# Coerce any straggler Node-20 JS action to Node 24 (see coverage.yml).
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  stryker:
+    name: Stryker Mutation
+    runs-on: ubuntu-latest
+    # Manual dispatch always runs; the nightly schedule only runs when
+    # the maintainer has opted in via the repo variable.
+    if: >-
+      ${{ github.event_name == 'workflow_dispatch' ||
+          vars.ENABLE_NIGHTLY_MUTATION == 'true' }}
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Run Stryker
+        working-directory: frontend
+        # thresholds.break is null in stryker.config.json, so a low
+        # score never fails the job — the report is the deliverable.
+        run: npx stryker run
+
+      - name: Upload mutation HTML report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: frontend-mutation-report
+          path: frontend/reports/mutation
+          retention-days: 14

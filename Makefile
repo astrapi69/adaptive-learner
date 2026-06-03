@@ -23,6 +23,7 @@ ADAPTIVE_LEARNER_DEV_SECRET_FILE ?= .adaptive-learner/dev-secret.env
        test-plugin-session test-plugin-tracking \
        test-plugin-tools test-plugin-gamification test-plugin-anki test-plugin-notebooklm test-plugin-learning-repo test-plugin-content-loader test-plugin-missions test-e2e test-e2e-ui test-dexie-smoke \
        test-coverage test-coverage-backend test-coverage-frontend \
+       stryker stryker-quick \
        check-types check-types-backend check-types-frontend \
        check-blockers archive-task archive-task-dry install-hooks \
        sync-versions sync-versions-dry sync-versions-check \
@@ -292,6 +293,18 @@ test-coverage-frontend: ## Frontend coverage report (coverage/)
 	@echo ""
 	@echo "=== Frontend Coverage ==="
 	cd frontend && npm run test:coverage
+
+# --- Mutation testing (Stryker) ---
+
+stryker: ## Frontend mutation testing — full src/lib + src/hooks + src/api (slow; nightly/manual)
+	@echo ""
+	@echo "=== Frontend Mutation Testing (Stryker) ==="
+	cd frontend && npx stryker run
+
+stryker-quick: ## Scoped Stryker run, e.g. make stryker-quick MUTATE="src/lib/token-diff.ts"
+	@echo ""
+	@echo "=== Frontend Mutation Testing (Stryker, scoped: $(MUTATE)) ==="
+	cd frontend && npx stryker run --mutate "$(MUTATE)"
 
 # --- Blocker / archival ---
 
