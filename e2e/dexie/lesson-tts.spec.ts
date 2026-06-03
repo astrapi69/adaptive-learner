@@ -63,9 +63,22 @@ async function injectFakeSpeech(page: Page): Promise<void> {
             addEventListener: () => {},
             removeEventListener: () => {},
         };
-        w.speechSynthesis = fakeSynth;
-        w.SpeechSynthesisUtterance =
-            FakeUtterance as unknown as typeof SpeechSynthesisUtterance;
+        // ``window.speechSynthesis`` is a read-only accessor — a plain
+        // assignment silently no-ops, leaving the REAL synth in place
+        // while ``SpeechSynthesisUtterance`` (writable) gets replaced by
+        // the fake. The real synth then rejects the fake utterance
+        // ("parameter 1 is not of type 'SpeechSynthesisUtterance'") and
+        // crashes the app. Define BOTH so the fake actually takes effect
+        // (TTS-E2E-HEADLESS-GUARD-01).
+        Object.defineProperty(window, "speechSynthesis", {
+            configurable: true,
+            value: fakeSynth,
+        });
+        Object.defineProperty(window, "SpeechSynthesisUtterance", {
+            configurable: true,
+            writable: true,
+            value: FakeUtterance as unknown as typeof SpeechSynthesisUtterance,
+        });
     });
 }
 

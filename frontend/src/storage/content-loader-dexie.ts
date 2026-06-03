@@ -637,8 +637,20 @@ export async function getLessonDexie(
     err.status = 404;
     throw err;
   }
-  const parsed: unknown = JSON.parse(file.body);
-  return parsed as ContentLesson;
+  const parsed = JSON.parse(file.body) as ContentLesson;
+  // Lessons don't carry the language pair / domain — the parent set is
+  // authoritative (see ContentLesson docs). Inject them from the cached
+  // set row so consumers that gate on them work; notably the per-theory
+  // read-aloud button (canRead requires lesson.target_language), which
+  // was silently absent in Dexie mode without this. A lesson that
+  // declares its own (e.g. an exported standalone) keeps it.
+  return {
+    ...parsed,
+    target_language:
+      parsed.target_language ?? cached.target_language ?? cached.language,
+    source_language: parsed.source_language ?? cached.source_language,
+    domain: parsed.domain ?? cached.domain,
+  };
 }
 
 /** Phase 54 / v1.37.0 — read a cached asset by relative path
