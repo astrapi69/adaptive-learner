@@ -296,11 +296,15 @@ describe("AboutTab", () => {
         await waitFor(() => {
             expect(screen.getByTestId("about-content")).toBeTruthy();
         });
-        // I18nProvider defaults to lang="de" and now loads the
-        // bundled DE catalog (Phase 29F hotfix), so the storage-
-        // mode label resolves to its DE translation.
-        expect(screen.getByTestId("about-storage-mode").textContent).toContain(
-            "Lokaler Browser-Speicher",
+        // I18nProvider defaults to lang="de" and loads the bundled DE
+        // catalog (Phase 29F hotfix), so the storage-mode label resolves
+        // to its DE translation. The catalog is now a lazily-imported
+        // per-language chunk (perf F-1, v1.56.0), so wait for the DE
+        // string to land rather than reading it synchronously.
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("about-storage-mode").textContent,
+            ).toContain("Lokaler Browser-Speicher"),
         );
         // Python row hidden in dexie mode.
         expect(screen.queryByTestId("about-python-version")).toBeNull();
