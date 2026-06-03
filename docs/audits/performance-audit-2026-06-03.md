@@ -169,8 +169,93 @@ Tailwind migration).
 
 ## Part B — Dexie query optimization
 
-_To be completed after Part A review._
+**Headline: the Dexie layer is well-architected. No quick-win fixes
+warranted on the hot paths.** Detail below.
+
+### Index coverage (current schema, v25)
+
+| Table | Index string | Verdict |
+|---|---|---|
+| `elementErrors` | `id, user_id, [user_id+set_id], mastered, updated_at` | compound index covers SRS/adaptive set-filtered reads ✓ |
+| `lessonProgress` | `id, user_id, set_id, status, updated_at` | `user_id` list + `status` (paused) covered ✓ |
+| `userBadges` | `id, user_id, badge_id, earned_at` | per-user read covered ✓ |
+| `contentSetFiles` | `id, set_pk, filename` | lesson list via `set_pk` ✓ |
+| `userMissions` | `id, user_id, [user_id+assigned_date], assigned_date, template_id` | today-query + rollover covered ✓ |
+
+No missing indexes found for the frequently-queried fields.
+
+### Hot-path read patterns — all indexed
+
+- `listElementErrorsDexie` — `[user_id+set_id]` (or `user_id`) index;
+  `includeMastered:false` is a cheap JS filter on the index-narrowed
+  set, not a full scan.
+- `listLessonProgressDexie` — `user_id` index + in-memory sort.
+- `getLessonProgressDexie` — direct `.get(compositePK)`.
+- `content-loader` lesson list — `contentSetFiles.where("set_pk")`;
+  downloads use `bulkPut` (batched), not per-file writes.
+- `learning-repo` `loadDexieContext` — sessions then ratings / notes /
+  step-evals via **`.anyOf(sessionIds)`** (4 queries total regardless
+  of session count). This is the correct anti-N+1 shape.
+- The two JS-side `.filter()` sites (`dexie-storage.ts:850`, `:1471`)
+  each run `.where().equals()` on an index FIRST, then filter the small
+  result — not anti-patterns.
+
+### B-1 (backlog) — Badge evaluation fires one query per badge
+
+`evaluateBadgesForUser` (`src/storage/badges.ts`) loads the catalog +
+the user's badge rows (2 queries), then iterates ~28 evaluators where
+~14 predicate / tier-metric helpers EACH call `getDb()` and run their
+own `.where({user_id}).toArray()` / `.count()` / `.first()`. Many read
+the **same** tables (`learningSessions`, `lessonProgress`,
+`elementErrors`, `userXp`) redundantly → ~16-30 queries per evaluation.
+
+Not on a page-load path (runs after lesson/session completion), and the
+fix is a shared pre-loaded metrics snapshot threaded through all
+predicates — a cross-cutting refactor of 14+ functions in **both**
+storage modes. Filed as a backlog item, not a quick win.
 
 ## Part C — Backend query optimization
 
-_To be completed after Part A review._
+**Headline: the backend is well-optimized. No quick-win fixes
+warranted.** Static analysis (no echo run needed — the patterns are
+unambiguous).
+
+### Findings
+
+- `selectinload` used where it matters (`imports.py:206` eager-loads
+  `ImportedConversation.messages`).
+- `tracking.list_commits` — single `outerjoin(ProgressCommit,
+  SessionRating.notes)`, no per-commit note fetch.
+- `tracking.get_progress_summary` (the dashboard aggregator) — 2
+  queries: ProgressCommit list + StepEvaluation `join` LearningSession.
+- `export_service` / `sync_service` — batched `.filter(... .in_(ids))`
+  then iterate; single query per table.
+- Session start/resume — single `.first()` lookups.
+- `content-loader` `/sets` reads the filesystem / GitHub manifest, not
+  the DB — no SQL N+1 to optimize (filesystem `iterdir` is inherent).
+
+### C-1 (backlog) — Backend badge evaluator mirrors B-1
+
+`badge_service.evaluate_user` (gamification plugin) has the identical
+shape: catalog + earned (2 queries), then ~14 of 28 predicate / metric
+functions each run `db.query(...)`, many re-scanning the same tables
+(~16-30 queries per evaluation). Same fix (shared metrics snapshot),
+same non-hot-path placement. Folded into the same backlog item as B-1
+(`BADGE-EVAL-NPLUS1-01`) so both modes are addressed together and stay
+parity-pinned.
+
+## Conclusion
+
+Two targeted bundle fixes (F-1 + F-2) removed **~213 KB gzip from every
+page load** and **~275 KB gzip from the first code lesson** — the
+single highest-leverage performance work available. The Dexie and
+backend query layers were audited and found healthy: appropriate
+indexes, batched `.anyOf()` / `.in_()` reads, joins, and `selectinload`
+where needed. The only query inefficiency (badge evaluation firing
+~per-badge queries, symmetric in both modes) is off the page-load path
+and filed as `BADGE-EVAL-NPLUS1-01` (P3) rather than rushed.
+
+C3 (Dexie) and C4 (backend) therefore carry **no code changes** — the
+audit's recommendation is to leave the healthy layers untouched and not
+manufacture churn. C5 records the verified before/after bundle numbers
+above.
