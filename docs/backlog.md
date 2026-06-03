@@ -136,6 +136,17 @@ tiebreaker.
   i18n glob fix (F-1). Low impact — praise loads during lessons,
   plugin-config is small. Opportunistic. Filed from the 2026-06-03
   performance audit (F-4).
+- [ ] **IMPORT-LANG-PIPELINE-SELECT-MIGRATION-01**: the Dexie E2E spec
+  `e2e/dexie/import-language-pipeline.spec.ts` ("German speaker learning
+  French keeps de -> fr at every step") was `test.fixme`'d at v1.56.0
+  because the Tailwind Phase-C4 migration moved the language pickers
+  (`import-target-language`, `save-lesson-*-lang`, share-wizard
+  `edit-*`) from native `<input>` to shadcn (Radix) Select, so its 8
+  `toHaveValue()` assertions fail with "Not an input element". The
+  feature works; rewrite the spec to drive Radix Selects (open trigger →
+  pick option; assert the trigger's displayed value) and un-fixme it.
+  The inheritance contract stays covered by the C5 unit/integration
+  suites meanwhile. Pairs with the now-closed TTS-E2E-HEADLESS-GUARD-01.
 - [ ] **TTS-E2E-HEADLESS-GUARD-01**: `e2e/dexie/lesson-tts.spec.ts` fails
   the Dexie gate under headless chromium because `speechSynthesis` has no
   voices, so the `lesson-tts-autoread` toggle never flips `aria-pressed`
