@@ -122,6 +122,45 @@ export default defineConfig({
                 ],
                 runtimeCaching: [
                     {
+                        // S1 (PWA hardening) — API-mode lesson + asset
+                        // caching. In API mode the viewer fetches lessons
+                        // per-request from
+                        // ``/api/plugins/content-loader/.../lessons/NN.json``
+                        // (+ ``/assets/...``); without this they only work
+                        // offline if the browser HTTP cache happens to hold
+                        // them. StaleWhileRevalidate (not CacheFirst): these
+                        // URLs are NOT version-namespaced — the set version is
+                        // a response field, not a path segment — so CacheFirst
+                        // would pin stale content after a version bump. SWR
+                        // serves the cached copy instantly (the offline win)
+                        // AND revalidates in the background, so a re-download
+                        // / new version is picked up on the next online load.
+                        // The stale-version indicator (S1 part 3) surfaces the
+                        // update to the user proactively. MUST precede the
+                        // generic ``/api/`` NetworkFirst rule below (Workbox
+                        // uses first-match) so these URLs hit this route.
+                        // (Bundled / Dexie-mode content is intentionally NOT
+                        // matched here — it already lives in IndexedDB, and
+                        // intercepting the download fetch would risk serving a
+                        // stale copy back into Dexie on re-download.)
+                        urlPattern: ({url, request}) =>
+                            request.method === "GET" &&
+                            url.pathname.includes(
+                                "/plugins/content-loader/",
+                            ) &&
+                            (/\/lessons\/[^/]+\.json$/i.test(url.pathname) ||
+                                /\/assets\//i.test(url.pathname)),
+                        handler: "StaleWhileRevalidate",
+                        options: {
+                            cacheName: "adaptive-learner-lessons",
+                            expiration: {
+                                maxEntries: 500,
+                                maxAgeSeconds: 60 * 60 * 24 * 90,
+                            },
+                            cacheableResponse: {statuses: [0, 200]},
+                        },
+                    },
+                    {
                         // Phase 9B — network-first for API GETs so
                         // returning users see cached read responses
                         // when offline. POST / PATCH / DELETE still
