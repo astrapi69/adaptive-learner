@@ -347,6 +347,27 @@
     "step_eval_stickiest_label": "Plus de temps sur :"
   },
   "settings": {
+    "tab_integrations": "Intégrations",
+    "github": {
+      "title": "Intégration GitHub",
+      "intro": "Nécessaire pour partager des leçons via une pull request. Crée un token avec l'autorisation 'repo'.",
+      "token": "Token GitHub",
+      "format_invalid": "Un token GitHub commence par 'ghp_' ou 'github_pat_'.",
+      "test": "Tester",
+      "testing": "Test en cours...",
+      "save": "Enregistrer",
+      "remove": "Supprimer",
+      "saved": "Token GitHub enregistré.",
+      "removed": "Token GitHub supprimé.",
+      "test_success": "Connecté en tant que {username}",
+      "test_invalid": "Token invalide.",
+      "test_rate_limit": "Limite de débit GitHub atteinte. Réessaie plus tard.",
+      "test_network": "Impossible de joindre GitHub.",
+      "test_no_token": "Aucun token à tester.",
+      "source_file": "Enregistré dans secrets.yaml",
+      "source_env": "Géré par variable d'environnement",
+      "source_browser": "Enregistré dans ce navigateur"
+    },
     "title": "Parametres",
     "help_intro": "Browse and search the in-app glossary. Click any entry for the full article.",
     "section_language": "Langue",
@@ -2076,5 +2097,19 @@
     "cache_clear_confirm": "Vider le cache hors ligne ?",
     "cache_clear_action": "Oui, vider",
     "cache_cleared": "Cache hors ligne vidé."
+  },
+  "share": {
+    "pr": {
+      "preparing": "Préparation du dépôt...",
+      "uploading": "Envoi de la leçon...",
+      "creating": "Création de la pull request...",
+      "success": "Pull request créée ! Ta leçon a été validée et une pull request ouverte sur GitHub, la CI du dépôt de contenu la valide automatiquement.",
+      "no_token": "Astuce : ajoute un token GitHub dans Paramètres > Intégrations pour créer la pull request automatiquement.",
+      "fallback": "Partager manuellement via GitHub",
+      "err_auth": "Ton token GitHub a été refusé. Vérifie-le dans Paramètres > Intégrations.",
+      "err_rate": "Limite de débit GitHub atteinte. Réessaie plus tard.",
+      "err_github": "GitHub a refusé la requête : {detail}",
+      "err_network": "Impossible de joindre GitHub. Vérifie ta connexion et réessaie."
+    }
   }
 }

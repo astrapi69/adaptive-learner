@@ -322,6 +322,26 @@ progress:
   step_eval_backward: Επιστροφές
   step_eval_stickiest_label: 'Περισσότερος χρόνος σε:'
 settings:
+  tab_integrations: "Ενσωματώσεις"
+  github:
+    title: "Ενσωμάτωση GitHub"
+    intro: "Απαιτείται για κοινή χρήση μαθημάτων ως pull request. Δημιούργησε ένα token με δικαίωμα 'repo'."
+    token: "Token GitHub"
+    format_invalid: "Ένα token GitHub ξεκινά με 'ghp_' ή 'github_pat_'."
+    test: "Δοκιμή"
+    testing: "Δοκιμή..."
+    save: "Αποθήκευση"
+    remove: "Αφαίρεση"
+    saved: "Το token GitHub αποθηκεύτηκε."
+    removed: "Το token GitHub αφαιρέθηκε."
+    test_success: "Συνδεδεμένος ως {username}"
+    test_invalid: "Μη έγκυρο token."
+    test_rate_limit: "Συμπληρώθηκε το όριο GitHub. Δοκίμασε αργότερα."
+    test_network: "Δεν ήταν δυνατή η σύνδεση με το GitHub."
+    test_no_token: "Δεν υπάρχει token για δοκιμή."
+    source_file: "Αποθηκεύτηκε στο secrets.yaml"
+    source_env: "Διαχειρίζεται μέσω μεταβλητής περιβάλλοντος"
+    source_browser: "Αποθηκεύτηκε σε αυτό το πρόγραμμα περιήγησης"
   title: Ρυθμίσεις
   help_intro: "Browse and search the in-app glossary. Click any entry for the full article."
   section_language: Γλώσσα
@@ -1884,3 +1904,15 @@ pwa:
   cache_clear_confirm: "Εκκαθάριση της προσωρινής μνήμης;"
   cache_clear_action: "Ναι, εκκαθάριση"
   cache_cleared: "Η προσωρινή μνήμη εκκαθαρίστηκε."
+share:
+  pr:
+    preparing: "Προετοιμασία αποθετηρίου..."
+    uploading: "Μεταφόρτωση μαθήματος..."
+    creating: "Δημιουργία pull request..."
+    success: "Το pull request δημιουργήθηκε! Το μάθημά σου υποβλήθηκε και άνοιξε ένα pull request στο GitHub, το CI του αποθετηρίου περιεχομένου το επικυρώνει αυτόματα."
+    no_token: "Συμβουλή: πρόσθεσε ένα token GitHub στις Ρυθμίσεις > Ενσωματώσεις για αυτόματη δημιουργία του pull request."
+    fallback: "Κοινή χρήση χειροκίνητα μέσω GitHub"
+    err_auth: "Το token GitHub απορρίφθηκε. Έλεγξέ το στις Ρυθμίσεις > Ενσωματώσεις."
+    err_rate: "Συμπληρώθηκε το όριο GitHub. Δοκίμασε ξανά αργότερα."
+    err_github: "Το GitHub απέρριψε το αίτημα: {detail}"
+    err_network: "Δεν ήταν δυνατή η σύνδεση με το GitHub. Έλεγξε τη σύνδεσή σου και δοκίμασε ξανά."

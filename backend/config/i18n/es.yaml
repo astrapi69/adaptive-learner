@@ -322,6 +322,26 @@ progress:
   step_eval_backward: Retrocesos
   step_eval_stickiest_label: 'Mas tiempo en:'
 settings:
+  tab_integrations: "Integraciones"
+  github:
+    title: "Integración con GitHub"
+    intro: "Necesario para compartir lecciones como pull request. Crea un token con el permiso 'repo'."
+    token: "Token de GitHub"
+    format_invalid: "Un token de GitHub empieza por 'ghp_' o 'github_pat_'."
+    test: "Probar"
+    testing: "Probando..."
+    save: "Guardar"
+    remove: "Eliminar"
+    saved: "Token de GitHub guardado."
+    removed: "Token de GitHub eliminado."
+    test_success: "Conectado como {username}"
+    test_invalid: "Token no válido."
+    test_rate_limit: "Límite de GitHub alcanzado. Inténtalo más tarde."
+    test_network: "No se pudo conectar con GitHub."
+    test_no_token: "No hay token para probar."
+    source_file: "Guardado en secrets.yaml"
+    source_env: "Gestionado por variable de entorno"
+    source_browser: "Guardado en este navegador"
   title: Ajustes
   help_intro: "Browse and search the in-app glossary. Click any entry for the full article."
   section_language: Idioma
@@ -1884,3 +1904,15 @@ pwa:
   cache_clear_confirm: "¿Vaciar la caché sin conexión?"
   cache_clear_action: "Sí, vaciar"
   cache_cleared: "Caché sin conexión vaciada."
+share:
+  pr:
+    preparing: "Preparando el repositorio..."
+    uploading: "Subiendo la lección..."
+    creating: "Creando el pull request..."
+    success: "¡Pull request creado! Tu lección se subió y se abrió un pull request en GitHub, la CI del repositorio de contenido lo valida automáticamente."
+    no_token: "Consejo: añade un token de GitHub en Ajustes > Integraciones para crear el pull request automáticamente."
+    fallback: "Compartir manualmente por GitHub"
+    err_auth: "Tu token de GitHub fue rechazado. Compruébalo en Ajustes > Integraciones."
+    err_rate: "Límite de GitHub alcanzado. Inténtalo más tarde."
+    err_github: "GitHub rechazó la solicitud: {detail}"
+    err_network: "No se pudo conectar con GitHub. Comprueba tu conexión e inténtalo de nuevo."

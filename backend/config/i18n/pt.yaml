@@ -322,6 +322,26 @@ progress:
   step_eval_backward: Transições para trás
   step_eval_stickiest_label: 'Mais tempo em:'
 settings:
+  tab_integrations: "Integrações"
+  github:
+    title: "Integração com o GitHub"
+    intro: "Necessário para partilhar lições como pull request. Cria um token com a permissão 'repo'."
+    token: "Token do GitHub"
+    format_invalid: "Um token do GitHub começa por 'ghp_' ou 'github_pat_'."
+    test: "Testar"
+    testing: "A testar..."
+    save: "Guardar"
+    remove: "Remover"
+    saved: "Token do GitHub guardado."
+    removed: "Token do GitHub removido."
+    test_success: "Ligado como {username}"
+    test_invalid: "Token inválido."
+    test_rate_limit: "Limite do GitHub atingido. Tenta mais tarde."
+    test_network: "Não foi possível contactar o GitHub."
+    test_no_token: "Não há token para testar."
+    source_file: "Guardado em secrets.yaml"
+    source_env: "Gerido por variável de ambiente"
+    source_browser: "Guardado neste navegador"
   title: Configurações
   help_intro: "Navegue e pesquise o glossário integrado. Clique em qualquer entrada para abrir o artigo completo."
   section_language: Idioma
@@ -1882,3 +1902,15 @@ pwa:
   cache_clear_confirm: "Limpar o cache off-line?"
   cache_clear_action: "Sim, limpar"
   cache_cleared: "Cache off-line limpo."
+share:
+  pr:
+    preparing: "A preparar o repositório..."
+    uploading: "A enviar a lição..."
+    creating: "A criar o pull request..."
+    success: "Pull request criado! A tua lição foi submetida e um pull request aberto no GitHub, a CI do repositório de conteúdo valida-o automaticamente."
+    no_token: "Dica: adiciona um token do GitHub em Definições > Integrações para criar o pull request automaticamente."
+    fallback: "Partilhar manualmente através do GitHub"
+    err_auth: "O teu token do GitHub foi rejeitado. Verifica-o em Definições > Integrações."
+    err_rate: "Limite do GitHub atingido. Tenta novamente mais tarde."
+    err_github: "O GitHub rejeitou o pedido: {detail}"
+    err_network: "Não foi possível contactar o GitHub. Verifica a tua ligação e tenta novamente."

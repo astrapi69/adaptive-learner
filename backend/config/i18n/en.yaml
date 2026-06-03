@@ -322,6 +322,26 @@ progress:
   step_eval_backward: Backward transitions
   step_eval_stickiest_label: 'Most time on:'
 settings:
+  tab_integrations: "Integrations"
+  github:
+    title: "GitHub Integration"
+    intro: "Needed to share lessons as a pull request. Create a token with the 'repo' permission."
+    token: "GitHub token"
+    format_invalid: "A GitHub token starts with 'ghp_' or 'github_pat_'."
+    test: "Test"
+    testing: "Testing..."
+    save: "Save"
+    remove: "Remove"
+    saved: "GitHub token saved."
+    removed: "GitHub token removed."
+    test_success: "Connected as {username}"
+    test_invalid: "Token invalid."
+    test_rate_limit: "GitHub rate limit reached. Try again later."
+    test_network: "Could not reach GitHub."
+    test_no_token: "No token to test."
+    source_file: "Stored in secrets.yaml"
+    source_env: "Managed via environment"
+    source_browser: "Stored in this browser"
   title: Settings
   help_intro: "Browse and search the in-app glossary. Click any entry for the full article."
   section_language: Language
@@ -1892,3 +1912,15 @@ pwa:
   cache_clear_confirm: "Clear the offline cache?"
   cache_clear_action: "Yes, clear"
   cache_cleared: "Offline cache cleared."
+share:
+  pr:
+    preparing: "Preparing repository..."
+    uploading: "Uploading lesson..."
+    creating: "Creating pull request..."
+    success: "Pull request created! Your lesson was committed and a pull request opened on GitHub, the content-repo CI validates it automatically."
+    no_token: "Tip: add a GitHub token in Settings > Integrations to create the pull request automatically."
+    fallback: "Share manually via GitHub instead"
+    err_auth: "Your GitHub token was rejected. Check it in Settings > Integrations."
+    err_rate: "GitHub rate limit reached. Please try again later."
+    err_github: "GitHub rejected the request: {detail}"
+    err_network: "Could not reach GitHub. Check your connection and try again."
