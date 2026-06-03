@@ -220,6 +220,26 @@ describe("computePrimaryAction", () => {
     it("last lesson + perfect + nothing → next (harmless default)", () => {
         expect(computePrimaryAction(3, false, false, false)).toBe("next");
     });
+
+    // Error replay (the exact failed exercises) outranks everything
+    // after a weak run.
+    it("0-1 stars with a replay → error_replay (over adaptive + next)", () => {
+        expect(computePrimaryAction(0, true, true, true, true)).toBe(
+            "error_replay",
+        );
+        expect(computePrimaryAction(1, true, true, false, true)).toBe(
+            "error_replay",
+        );
+    });
+    it("2-3 stars → next even when a replay is available", () => {
+        expect(computePrimaryAction(2, true, true, false, true)).toBe("next");
+        expect(computePrimaryAction(3, true, false, false, true)).toBe("next");
+    });
+    it("0-1 stars without a replay falls back to adaptive", () => {
+        expect(computePrimaryAction(1, true, true, false, false)).toBe(
+            "adaptive",
+        );
+    });
 });
 
 describe("useNextStepSuggestions", () => {
@@ -262,7 +282,30 @@ describe("useNextStepSuggestions", () => {
         expect(view.result.current.adaptiveLesson.focusTag).toBe(
             "article_gender",
         );
+        // With failed exercises, error-replay is the primary action at
+        // 0-1 stars — above the adaptive card.
         expect(view.result.current.primaryAction).toBe("adaptive");
+    });
+
+    it("exposes error replay when failed exercises were passed in", async () => {
+        const view = await renderResolved({
+            ...BASE_ARGS,
+            stars: 1,
+            failedExerciseCount: 3,
+        });
+        expect(view.result.current.errorReplay.available).toBe(true);
+        expect(view.result.current.errorReplay.errorCount).toBe(3);
+        // 0-1 stars + a replay → error_replay is the primary action.
+        expect(view.result.current.primaryAction).toBe("error_replay");
+    });
+
+    it("hides error replay when there were no failed exercises", async () => {
+        const view = await renderResolved({
+            ...BASE_ARGS,
+            stars: 3,
+            failedExerciseCount: 0,
+        });
+        expect(view.result.current.errorReplay.available).toBe(false);
     });
 
     it("hides the adaptive lesson on a perfect score (no errors)", async () => {

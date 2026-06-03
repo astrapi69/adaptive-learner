@@ -1270,6 +1270,7 @@ lesson:
     finish: "Terminar lição"
     back_to_browser: "Voltar ao explorador de conteúdo"
     open_browser: "Abrir explorador de conteúdo"
+    back_to_lesson: "Voltar à lição"
   button:
     check: "Verificar"
     next: "Próximo"
@@ -1351,6 +1352,13 @@ lesson:
     direction:
       receptive_hint: Reconhecer o significado
       productive_hint: Produzir a resposta
+  error_replay:
+    title: "Repetir erros: {lesson}"
+    heading: "Repetição concluída"
+    score: "{correct}/{total} corretos agora!"
+    done: "Voltar à lição"
+    empty: "Nada para repetir — abra isto a partir do resumo de uma lição após cometer erros."
+    summary_aria: "Resumo da repetição de erros"
   next_step:
     title: "O que vem a seguir?"
     next_lesson: "Próxima lição"
@@ -1360,6 +1368,10 @@ lesson:
     adaptive: "Lição adaptativa"
     adaptive_focus: "Foco em: {topic}"
     adaptive_errors: "{count} erros nesta lição"
+    error_replay: "Repetir erros"
+    error_replay_detail: "{count} exercícios de novo"
+    errors_corrected: "Todos os erros corrigidos!"
+    still_errors: "Ainda {count} erros. De novo?"
     review: "Revisão"
     review_due: "{count} elementos pendentes"
     set_complete: "Conjunto concluído!"

@@ -1378,7 +1378,8 @@
       "next": "Siguiente",
       "finish": "Terminar lección",
       "back_to_browser": "Volver al explorador de contenido",
-      "open_browser": "Abrir explorador de contenido"
+      "open_browser": "Abrir explorador de contenido",
+      "back_to_lesson": "Volver a la lección"
     },
     "button": {
       "check": "Comprobar",
@@ -1475,6 +1476,14 @@
         "productive_hint": "Producir la respuesta"
       }
     },
+    "error_replay": {
+      "title": "Repetir errores: {lesson}",
+      "heading": "Repetición completada",
+      "score": "¡{correct}/{total} correctos ahora!",
+      "done": "Volver a la lección",
+      "empty": "Nada que repetir: abre esto desde el resumen de una lección tras cometer errores.",
+      "summary_aria": "Resumen de repetición de errores"
+    },
     "next_step": {
       "title": "¿Qué sigue?",
       "next_lesson": "Siguiente lección",
@@ -1484,6 +1493,10 @@
       "adaptive": "Lección adaptativa",
       "adaptive_focus": "Enfoque en: {topic}",
       "adaptive_errors": "{count} errores en esta lección",
+      "error_replay": "Repetir errores",
+      "error_replay_detail": "{count} ejercicios otra vez",
+      "errors_corrected": "¡Todos los errores corregidos!",
+      "still_errors": "Aún {count} errores. ¿Otra vez?",
       "review": "Repaso",
       "review_due": "{count} elementos pendientes",
       "set_complete": "¡Conjunto completado!",

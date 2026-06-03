@@ -1270,6 +1270,7 @@ lesson:
     finish: "Dersi bitir"
     back_to_browser: "İçerik tarayıcısına dön"
     open_browser: "İçerik tarayıcısını aç"
+    back_to_lesson: "Derse dön"
   button:
     check: "Kontrol et"
     next: "İleri"
@@ -1351,6 +1352,13 @@ lesson:
     direction:
       receptive_hint: Anlamı tanı
       productive_hint: Cevabı üret
+  error_replay:
+    title: "Hataları tekrar et: {lesson}"
+    heading: "Tekrar tamamlandı"
+    score: "Şimdi {correct}/{total} doğru!"
+    done: "Derse dön"
+    empty: "Tekrar edilecek bir şey yok — bunu hatalar yaptıktan sonra bir ders özetinden aç."
+    summary_aria: "Hata tekrarı özeti"
   next_step:
     title: "Sırada ne var?"
     next_lesson: "Sonraki ders"
@@ -1360,6 +1368,10 @@ lesson:
     adaptive: "Uyarlanabilir ders"
     adaptive_focus: "Odak: {topic}"
     adaptive_errors: "Bu derste {count} hata"
+    error_replay: "Hataları tekrar et"
+    error_replay_detail: "{count} alıştırma tekrar"
+    errors_corrected: "Tüm hatalar düzeltildi!"
+    still_errors: "Hâlâ {count} hata. Tekrar?"
     review: "Tekrar"
     review_due: "{count} öğe tekrar için hazır"
     set_complete: "Set tamamlandı!"

@@ -47,7 +47,7 @@ import type {ErrorTag} from "../lib/adaptive/error-classifier";
 import {getStorage} from "../storage";
 import type {ElementError} from "../storage/types";
 
-export type PrimaryAction = "next" | "adaptive" | "review";
+export type PrimaryAction = "next" | "adaptive" | "review" | "error_replay";
 
 export interface NextStepSuggestions {
     /** True until the first round of storage reads resolves. */
@@ -61,6 +61,15 @@ export interface NextStepSuggestions {
         isPaused: boolean;
         pausedStep?: number;
         totalSteps?: number;
+    };
+    /** Replay ONLY the exercises failed in THIS lesson (the exact
+     *  same exercises, one more try) — distinct from the adaptive
+     *  card (all errors, regenerated) and the review queue (SRS,
+     *  all lessons). Available whenever this run had ≥ 1 failed
+     *  exercise; hidden on a clean run. */
+    errorReplay: {
+        available: boolean;
+        errorCount: number;
     };
     adaptiveLesson: {
         available: boolean;
@@ -101,6 +110,11 @@ export interface UseNextStepArgs {
      *  + weakness classification. Passed in (rather than fetched
      *  here) so the hook stays trivially testable. */
     sessionErrors: readonly ElementError[];
+    /** Number of exercises the learner FAILED in this run (computed
+     *  by the caller from ``lesson`` + ``step_results`` via
+     *  ``collectFailedExercises``). Drives the error-replay card +
+     *  its priority. Defaults to 0 (no replay) when omitted. */
+    failedExerciseCount?: number;
 }
 
 /** The portion of the suggestions derived from async storage
@@ -147,11 +161,12 @@ function deriveTitle(filename: string): string {
 
 /** Pick which card gets the accent-coloured primary CTA.
  *
- *   - 3 stars (perfect) → advance: "next"
- *   - 2 stars (decent)  → advance: "next"
- *   - 0-1 stars         → practice first: "adaptive" (if errors)
- *   - last lesson + errors   → "adaptive"
- *   - last lesson + no errors → "review" (if due), else "next"
+ *   - 0-1 stars + failed exercises → fix them first: "error_replay"
+ *     (the most immediate, highest-signal action after a weak run)
+ *   - 2-3 stars → advance: "next" (error replay stays a secondary
+ *     option when there are residual errors)
+ *   - last lesson → "adaptive" (if errors) / "review" (if due) / "next"
+ *   - 0-1 stars without a replay but with errors → "adaptive"
  *
  * Exported for direct unit testing.
  */
@@ -160,7 +175,11 @@ export function computePrimaryAction(
     hasNext: boolean,
     hasAdaptive: boolean,
     hasReview: boolean,
+    hasErrorReplay = false,
 ): PrimaryAction {
+    // After a weak run, retrying the exact failed exercises is the
+    // single most useful next step — it outranks everything else.
+    if (stars <= 1 && hasErrorReplay) return "error_replay";
     if (!hasNext) {
         // Last lesson in the set.
         if (hasAdaptive) return "adaptive";
@@ -174,7 +193,15 @@ export function computePrimaryAction(
 export function useNextStepSuggestions(
     args: UseNextStepArgs,
 ): NextStepSuggestions {
-    const {source, setId, lessonFilename, userId, stars, sessionErrors} = args;
+    const {
+        source,
+        setId,
+        lessonFilename,
+        userId,
+        stars,
+        sessionErrors,
+        failedExerciseCount = 0,
+    } = args;
     const [fetched, setFetched] = useState<FetchedState>(INITIAL_FETCHED);
 
     // Async storage reads — keyed ONLY on the stable identifiers so
@@ -335,10 +362,19 @@ export function useNextStepSuggestions(
         };
     }, [sessionErrors]);
 
+    const errorReplay = useMemo(
+        () => ({
+            available: failedExerciseCount > 0,
+            errorCount: failedExerciseCount,
+        }),
+        [failedExerciseCount],
+    );
+
     return useMemo<NextStepSuggestions>(
         () => ({
             loading: fetched.loading,
             nextLesson: fetched.nextLesson,
+            errorReplay,
             adaptiveLesson,
             reviewSession: fetched.reviewSession,
             setComplete: fetched.setComplete,
@@ -350,8 +386,9 @@ export function useNextStepSuggestions(
                 fetched.nextLesson.available,
                 adaptiveLesson.available,
                 fetched.reviewSession.available,
+                errorReplay.available,
             ),
         }),
-        [fetched, adaptiveLesson, stars],
+        [fetched, errorReplay, adaptiveLesson, stars],
     );
 }

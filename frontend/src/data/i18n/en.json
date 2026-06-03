@@ -1378,7 +1378,8 @@
       "next": "Next",
       "finish": "Finish lesson",
       "back_to_browser": "Back to content browser",
-      "open_browser": "Open content browser"
+      "open_browser": "Open content browser",
+      "back_to_lesson": "Back to lesson"
     },
     "button": {
       "check": "Check",
@@ -1496,6 +1497,14 @@
       "encourage_2": "Almost perfect!",
       "encourage_3": "Perfect score!"
     },
+    "error_replay": {
+      "title": "Retry errors: {lesson}",
+      "heading": "Retry complete",
+      "score": "{correct}/{total} correct now!",
+      "done": "Back to lesson",
+      "empty": "Nothing to retry — open this from a lesson summary after making some mistakes.",
+      "summary_aria": "Retry errors summary"
+    },
     "next_step": {
       "title": "What's next?",
       "next_lesson": "Next Lesson",
@@ -1505,6 +1514,10 @@
       "adaptive": "Adaptive Lesson",
       "adaptive_focus": "Focus on: {topic}",
       "adaptive_errors": "{count} errors in this lesson",
+      "error_replay": "Retry Errors",
+      "error_replay_detail": "{count} exercises again",
+      "errors_corrected": "All errors corrected!",
+      "still_errors": "Still {count} errors. Try again?",
       "review": "Review",
       "review_due": "{count} elements due",
       "set_complete": "Set Complete!",

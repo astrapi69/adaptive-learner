@@ -30,6 +30,7 @@ function makeSuggestions(
     return {
         loading: false,
         nextLesson: {available: false, isPaused: false},
+        errorReplay: {available: false, errorCount: 0},
         adaptiveLesson: {available: false, focusTag: null, errorCount: 0},
         reviewSession: {available: false, dueCount: 0},
         setComplete: false,
@@ -38,13 +39,20 @@ function makeSuggestions(
     };
 }
 
-function renderCard(suggestions: Suggestions) {
+import type {ErrorReplayPayload} from "./NextStepSuggestions";
+
+function renderCard(
+    suggestions: Suggestions,
+    errorReplay?: ErrorReplayPayload,
+) {
     return render(
         <MemoryRouter>
             <NextStepSuggestions
                 suggestions={suggestions}
                 setId="fr-a1"
                 setSlug="bundled:adaptive-learner-content"
+                lessonFilename="03-ser-estar.json"
+                errorReplay={errorReplay}
             />
         </MemoryRouter>,
     );
@@ -215,5 +223,82 @@ describe("NextStepSuggestions", () => {
         const card = screen.getByTestId("next-step-card-next");
         expect(card.className).not.toContain("is-animated");
         expect(card.getAttribute("style")).toBeFalsy();
+    });
+
+    // --- error-replay card ----------------------------------------
+
+    const PAYLOAD = {
+        exercises: [
+            {
+                id: "ex-a",
+                type: "free_text" as const,
+                prompt: "p",
+                card_ids: [],
+                accept: ["x"],
+                distractors: [],
+            },
+        ],
+        cards: [],
+        lessonTitle: "Ser/Estar",
+    };
+
+    it("shows the error-replay card when available + a payload is given", () => {
+        renderCard(
+            makeSuggestions({
+                errorReplay: {available: true, errorCount: 3},
+            }),
+            PAYLOAD,
+        );
+        const card = screen.getByTestId("next-step-card-error-replay");
+        expect(card).toBeInTheDocument();
+        // "{count} exercises again"
+        expect(card.textContent).toMatch(/3/);
+        // Links to the error-replay route.
+        const cta = screen.getByTestId("next-step-cta-error-replay");
+        expect(cta.getAttribute("href")).toContain(
+            "/error-replay/bundled:adaptive-learner-content/fr-a1/03-ser-estar.json",
+        );
+    });
+
+    it("hides the error-replay card when there's no payload (no errors)", () => {
+        renderCard(
+            makeSuggestions({
+                errorReplay: {available: true, errorCount: 3},
+            }),
+            // no payload
+        );
+        expect(
+            screen.queryByTestId("next-step-card-error-replay"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("hides the error-replay card when not available (clean run)", () => {
+        renderCard(
+            makeSuggestions({
+                nextLesson: {available: true, isPaused: false, title: "x"},
+                errorReplay: {available: false, errorCount: 0},
+            }),
+            PAYLOAD,
+        );
+        expect(
+            screen.queryByTestId("next-step-card-error-replay"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("marks error-replay primary when primaryAction is error_replay", () => {
+        renderCard(
+            makeSuggestions({
+                nextLesson: {available: true, isPaused: false, title: "x"},
+                errorReplay: {available: true, errorCount: 2},
+                primaryAction: "error_replay",
+            }),
+            PAYLOAD,
+        );
+        const card = screen.getByTestId("next-step-card-error-replay");
+        expect(card.getAttribute("data-primary")).toBe("true");
+        // The next card is demoted to secondary.
+        expect(
+            screen.getByTestId("next-step-card-next").getAttribute("data-primary"),
+        ).toBe("false");
     });
 });

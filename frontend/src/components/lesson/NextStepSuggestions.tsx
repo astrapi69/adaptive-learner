@@ -26,13 +26,26 @@
  * suppresses the animation (no ``is-animated`` class, no delay).
  */
 
-import {ArrowRight, Play, RefreshCw, Target, Trophy} from "lucide-react";
+import {ArrowRight, Play, RefreshCw, RotateCcw, Target, Trophy} from "lucide-react";
 import {Link} from "react-router-dom";
 
 import {useI18n} from "../../hooks/useI18n";
 import type {ErrorTag} from "../../lib/adaptive/error-classifier";
 import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
 import type {NextStepSuggestions as Suggestions} from "../../hooks/useNextStepSuggestions";
+import type {
+    ContentLessonCard,
+    ContentLessonExercise,
+} from "../../storage/types";
+
+/** Router-state payload handed to the ErrorReplayLesson page — the
+ *  exact failed exercises (+ the lesson's cards for code-mode +
+ *  per-element context, + the title for the header). */
+export interface ErrorReplayPayload {
+    exercises: ContentLessonExercise[];
+    cards: ContentLessonCard[];
+    lessonTitle: string;
+}
 
 /** Reuse the Dashboard FocusAreasCard tag labels so the
  *  weakness headline stays consistent across the app. */
@@ -53,14 +66,22 @@ export interface NextStepSuggestionsProps {
     suggestions: Suggestions;
     setId: string;
     /** The raw set slug from the route (``--``-encoded source),
-     *  needed to build the next-lesson href. */
+     *  needed to build the next-lesson + error-replay hrefs. */
     setSlug: string;
+    /** This lesson's filename — part of the error-replay route. */
+    lessonFilename: string;
+    /** The failed exercises (+ cards + title) handed to the
+     *  ErrorReplay page via router state. Present only when there
+     *  were errors; the error-replay card hides without it. */
+    errorReplay?: ErrorReplayPayload;
 }
 
 export default function NextStepSuggestions({
     suggestions,
     setId,
     setSlug,
+    lessonFilename,
+    errorReplay: errorReplayPayload,
 }: NextStepSuggestionsProps) {
     const {t} = useI18n();
 
@@ -68,6 +89,7 @@ export default function NextStepSuggestions({
 
     const {
         nextLesson,
+        errorReplay,
         adaptiveLesson,
         reviewSession,
         setComplete,
@@ -77,8 +99,12 @@ export default function NextStepSuggestions({
         primaryAction,
     } = suggestions;
 
+    const showErrorReplay =
+        errorReplay.available && errorReplayPayload != null;
+
     const anything =
         nextLesson.available ||
+        showErrorReplay ||
         adaptiveLesson.available ||
         reviewSession.available ||
         setComplete;
@@ -153,6 +179,50 @@ export default function NextStepSuggestions({
                     {nextLesson.isPaused
                         ? t("lesson.next_step.resume", "Resume")
                         : t("lesson.next_step.start", "Start")}
+                    <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+            </div>,
+        );
+    }
+
+    if (showErrorReplay && errorReplayPayload) {
+        const isPrimary = primaryAction === "error_replay";
+        const idx = cards.length;
+        cards.push(
+            <div
+                key="error-replay"
+                className={cardClass(
+                    "error-replay",
+                    isPrimary ? "is-primary" : "is-secondary",
+                )}
+                style={delay(idx)}
+                data-testid="next-step-card-error-replay"
+                data-primary={isPrimary ? "true" : "false"}
+            >
+                <span className="lesson-next-step-card-icon" aria-hidden="true">
+                    <RotateCcw size={20} />
+                </span>
+                <span className="lesson-next-step-card-body">
+                    <span className="lesson-next-step-card-kicker">
+                        {t("lesson.next_step.error_replay", "Retry Errors")}
+                    </span>
+                    <span className="lesson-next-step-card-title">
+                        {t(
+                            "lesson.next_step.error_replay_detail",
+                            "{count} exercises again",
+                        ).replace(
+                            "{count}",
+                            String(errorReplay.errorCount),
+                        )}
+                    </span>
+                </span>
+                <Link
+                    to={`/error-replay/${setSlug}/${setId}/${lessonFilename}`}
+                    state={errorReplayPayload}
+                    className={`btn ${isPrimary ? "btn-primary" : ""}`.trim()}
+                    data-testid="next-step-cta-error-replay"
+                >
+                    {t("lesson.next_step.start", "Start")}
                     <ArrowRight size={14} aria-hidden="true" />
                 </Link>
             </div>,
