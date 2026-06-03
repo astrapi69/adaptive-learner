@@ -11,6 +11,7 @@
  * fetch logic can short-circuit cleanly.
  */
 
+import {Progress} from "@/components/ui/progress";
 import {useI18n} from "../hooks/useI18n";
 import type {XPState} from "../storage/types";
 
@@ -46,19 +47,11 @@ export default function XPWidget({state}: XPWidgetProps) {
                     {state.total_xp} {t("gamification.xp", "XP")}
                 </span>
             </div>
-            <div
-                className="xp-widget__bar"
-                role="progressbar"
-                aria-valuenow={pct}
-                aria-valuemin={0}
-                aria-valuemax={100}
+            <Progress
+                value={pct}
+                className="my-1 h-2"
                 data-testid="xp-widget-bar"
-            >
-                <div
-                    className="xp-widget__bar-fill"
-                    style={{width: `${pct}%`}}
-                />
-            </div>
+            />
             <div className="xp-widget__footer">
                 <span data-testid="xp-widget-to-next">
                     {state.xp_to_next_level > 0
