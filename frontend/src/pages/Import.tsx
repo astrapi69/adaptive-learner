@@ -19,6 +19,7 @@ import {useEffect, useState, useRef} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {ApiError} from "../api/client";
+import {Button} from "@/components/ui/button";
 import HelpLink from "../components/help/HelpLink";
 import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
@@ -514,9 +515,8 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
                             ? `${t("import.detected_format", "Detected format")}: ${pasteFormat}`
                             : ""}
                     </small>
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         onClick={quickAnalyze}
                         disabled={!pasteText.trim() || busy}
                         data-testid="quick-analyze-button"
@@ -524,7 +524,7 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
                         {busy && busyAction === "analyze"
                             ? t("import.analyzing", "Analyzing…")
                             : t("import.analyze", "Analyze")}
-                    </button>
+                    </Button>
                 </div>
             </section>
 
@@ -653,9 +653,10 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
                                         {t("import.analyzed", "Analyzed")}
                                     </span>
                                 )}
-                                <button
+                                <Button
                                     type="button"
-                                    className="btn btn-secondary"
+                                    variant="secondary"
+                                    size="sm"
                                     onClick={(e) => handleDelete(e, c)}
                                     data-testid={`import-delete-${c.id}`}
                                     aria-label={t(
@@ -670,13 +671,9 @@ export default function Import({onNavigate}: ImportPageProps = {}) {
                                               )
                                             : undefined
                                     }
-                                    style={{
-                                        padding: "0.15rem 0.5rem",
-                                        fontSize: "0.85rem",
-                                    }}
                                 >
                                     {t("import.delete", "Delete")}
-                                </button>
+                                </Button>
                             </li>
                         ))}
                     </ul>
