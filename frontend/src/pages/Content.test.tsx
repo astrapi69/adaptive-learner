@@ -43,6 +43,12 @@ vi.mock("../storage", () => ({
       deleteSet: deleteSetMock,
       aiValidate: aiValidateMock,
     },
+    // ShareWizard reads the GitHub token status on mount to pick the
+    // automated-PR vs URL-fallback path. No token here, so these tests
+    // exercise the pre-filled-URL flow.
+    github: {
+      getStatus: async () => ({ configured: false, source: "none" }),
+    },
   }),
 }));
 
