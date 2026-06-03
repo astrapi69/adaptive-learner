@@ -105,6 +105,14 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
+- [ ] **TTS-E2E-HEADLESS-GUARD-01**: `e2e/dexie/lesson-tts.spec.ts` fails
+  the Dexie gate under headless chromium because `speechSynthesis` has no
+  voices, so the `lesson-tts-autoread` toggle never flips `aria-pressed`
+  (the read-aloud feature works in real browsers). Guard the autoread
+  assertions with a no-voices skip, or stub `speechSynthesis` in the
+  spec. Surfaced cutting v1.54.0 (3 failing tts E2E tests; not a
+  v1.54.0 regression). Also validate + unskip the `test.fixme` import
+  language-pipeline spec.
 - [ ] **DEP-MYPY-2-01**: Upgrade mypy 1.x -> 2.0 (held back in the
   v1.41.0 dep sweep — caret ``^1.20`` caps it). Major version;
   needs a dedicated migration session (new/renamed error classes,
