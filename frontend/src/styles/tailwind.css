@@ -1,0 +1,26 @@
+/*
+ * Tailwind CSS v4 entry point (Phase A — additive install).
+ *
+ * PREFLIGHT IS INTENTIONALLY NOT IMPORTED.
+ *
+ * Adaptive Learner predates Tailwind. Its global.css + per-component
+ * styles were authored against browser defaults that Tailwind's
+ * preflight reset would silently change app-wide (heading sizes, list
+ * bullets, body/fieldset margins, button font inheritance). Pulling in
+ * preflight during Phase A would alter the look of every page that
+ * touches an un-styled element. The one reset that genuinely matters
+ * everywhere — ``* { box-sizing: border-box }`` — is already declared
+ * in global.css, so utility classes and shadcn/ui components work
+ * without preflight.
+ *
+ * We therefore import ONLY the theme (design-token) and utilities
+ * layers. The cascade-layer order below also guarantees that any
+ * unlayered rule in global.css wins over Tailwind output, which keeps
+ * existing components pixel-identical. Re-introducing a scoped
+ * preflight is a deliberate Phase B+ decision, not an accident of the
+ * default import. See docs/development/tailwind-migration.md.
+ */
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
