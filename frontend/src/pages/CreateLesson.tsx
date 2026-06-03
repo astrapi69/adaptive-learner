@@ -26,6 +26,7 @@ import {
     LANGUAGE_OPTIONS,
 } from "../lib/content/language-options";
 import {readContributorName} from "../lib/content/contribution-history";
+import {Button} from "@/components/ui/button";
 import CardEditor, {MIN_CARDS} from "../components/create-lesson/CardEditor";
 import ExerciseGenerator, {
     MIN_EXERCISES,
@@ -623,9 +624,8 @@ export default function CreateLesson() {
                         })}
                     </ul>
                     <div className="form-actions">
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary"
                             data-testid="create-lesson-save-local"
                             disabled={!allChecksPass(draftChecks) || saving}
                             onClick={() => void saveLocally()}
@@ -633,16 +633,16 @@ export default function CreateLesson() {
                             {saving
                                 ? t("common.loading", "Loading…")
                                 : t("create_lesson.save.save_local", "Save locally")}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
-                            className="btn"
+                            variant="secondary"
                             data-testid="create-lesson-save-share"
                             disabled={!allChecksPass(draftChecks) || saving}
                             onClick={() => void saveAndShare()}
                         >
                             {t("create_lesson.save.save_share", "Save and share")}
-                        </button>
+                        </Button>
                     </div>
                 </section>
             )}
@@ -654,17 +654,16 @@ export default function CreateLesson() {
                 >
                     <h2>{t("create_lesson.save.saved", "Lesson saved!")}</h2>
                     <div className="form-actions">
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary"
                             data-testid="create-lesson-play"
                             onClick={playSaved}
                         >
                             {t("create_lesson.save.play", "Play lesson")}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
-                            className="btn"
+                            variant="secondary"
                             data-testid="create-lesson-create-another"
                             onClick={createAnother}
                         >
@@ -672,10 +671,10 @@ export default function CreateLesson() {
                                 "create_lesson.save.create_another",
                                 "Create another lesson",
                             )}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
-                            className="btn"
+                            variant="secondary"
                             data-testid="create-lesson-to-browser"
                             onClick={() => navigate("/content")}
                         >
@@ -683,7 +682,7 @@ export default function CreateLesson() {
                                 "create_lesson.save.to_browser",
                                 "To Content Browser",
                             )}
-                        </button>
+                        </Button>
                     </div>
                 </section>
             )}
@@ -693,33 +692,32 @@ export default function CreateLesson() {
                 "create_lesson.nav_label",
                 "Wizard navigation",
             )}>
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="outline"
                     data-testid="create-lesson-cancel"
                     onClick={handleCancel}
                 >
                     {t("create_lesson.cancel", "Cancel")}
-                </button>
+                </Button>
                 {step > 1 && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn"
+                        variant="outline"
                         data-testid="create-lesson-back"
                         onClick={handleBack}
                     >
                         {t("create_lesson.back", "Back")}
-                    </button>
+                    </Button>
                 )}
                 {step < TOTAL_STEPS && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         data-testid="create-lesson-next"
                         onClick={handleNext}
                     >
                         {t("create_lesson.next", "Next")}
-                    </button>
+                    </Button>
                 )}
             </nav>
             )}
@@ -751,9 +749,9 @@ export default function CreateLesson() {
                             )}
                         </p>
                         <div className="form-actions">
-                            <button
+                            <Button
                                 type="button"
-                                className="btn btn-secondary"
+                                variant="outline"
                                 data-testid="create-lesson-cancel-keep"
                                 onClick={() => setConfirmCancel(false)}
                             >
@@ -761,15 +759,15 @@ export default function CreateLesson() {
                                     "create_lesson.cancel_keep",
                                     "Keep editing",
                                 )}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 type="button"
-                                className="btn btn-primary"
+                                variant="destructive"
                                 data-testid="create-lesson-cancel-discard"
                                 onClick={discard}
                             >
                                 {t("create_lesson.cancel_discard", "Discard")}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -802,9 +800,9 @@ export default function CreateLesson() {
                             )}
                         </p>
                         <div className="form-actions">
-                            <button
+                            <Button
                                 type="button"
-                                className="btn btn-secondary"
+                                variant="secondary"
                                 data-testid="create-lesson-draft-fresh"
                                 onClick={startFresh}
                             >
@@ -812,10 +810,9 @@ export default function CreateLesson() {
                                     "create_lesson.draft.start_fresh",
                                     "Start fresh",
                                 )}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 type="button"
-                                className="btn btn-primary"
                                 data-testid="create-lesson-draft-continue"
                                 onClick={() => applyDraft(pendingDraft)}
                             >
@@ -823,7 +820,7 @@ export default function CreateLesson() {
                                     "create_lesson.draft.continue",
                                     "Continue",
                                 )}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
