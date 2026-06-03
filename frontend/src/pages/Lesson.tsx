@@ -41,6 +41,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+import {Button} from "@/components/ui/button";
 import CodeBlock from "../components/content/CodeBlock";
 import LessonExitDialog from "../components/lesson/LessonExitDialog";
 import LessonResumeDialog from "../components/lesson/LessonResumeDialog";
@@ -1650,9 +1651,8 @@ function LessonSummary({
                 suggestion cards. */}
             {!isCompleted && (
                 <div className="lesson-summary-actions">
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         onClick={() => {
                             void onMarkComplete();
                         }}
@@ -1662,7 +1662,7 @@ function LessonSummary({
                             "lesson.summary.mark_complete",
                             "Mark as complete",
                         )}
-                    </button>
+                    </Button>
                 </div>
             )}
 
@@ -1690,33 +1690,36 @@ function LessonSummary({
                     not surfacing a successor (hook still loading or a
                     storage read failed) but one exists. */}
                 {!suggestions.nextLesson.available && nextLessonFilename && (
-                    <button
+                    <Button
                         type="button"
-                        className="lesson-summary-link"
+                        variant="ghost"
+                        size="sm"
                         onClick={onNextLesson}
                         data-testid="lesson-summary-next"
                     >
                         {t("lesson.summary.next_lesson", "Next lesson")}
-                        <ChevronRight size={14} aria-hidden="true" />
-                    </button>
+                        <ChevronRight aria-hidden="true" />
+                    </Button>
                 )}
-                <button
+                <Button
                     type="button"
-                    className="lesson-summary-link"
+                    variant="ghost"
+                    size="sm"
                     onClick={onRepeat}
                     data-testid="lesson-summary-repeat"
                 >
-                    <RotateCcw size={14} aria-hidden="true" />
+                    <RotateCcw aria-hidden="true" />
                     {t("lesson.summary.repeat", "Repeat lesson")}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
-                    className="lesson-summary-link"
+                    variant="ghost"
+                    size="sm"
                     onClick={onExit}
                     data-testid="lesson-summary-exit"
                 >
                     {t("lesson.summary.back_to_browser", "Back to content browser")}
-                </button>
+                </Button>
             </div>
         </section>
     );

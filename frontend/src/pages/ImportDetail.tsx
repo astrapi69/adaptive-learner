@@ -23,6 +23,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
+import {Button} from "@/components/ui/button";
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import HelpLink from "../components/help/HelpLink";
 import SaveOfflineLessonModal from "../components/content/SaveOfflineLessonModal";
@@ -475,13 +476,9 @@ export default function ImportDetail({
       >
         <h1>{t("errors.not_found", "Not found.")}</h1>
         <p>{error}</p>
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={() => go("/import")}
-        >
+        <Button type="button" onClick={() => go("/import")}>
           {t("import.back_to_list", "Back to imports")}
-        </button>
+        </Button>
       </main>
     );
   }
@@ -496,15 +493,15 @@ export default function ImportDetail({
       style={{ maxWidth: 1000, margin: "0 auto", padding: "1.5rem" }}
     >
       <header style={{ marginBottom: "1.5rem" }}>
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={() => go("/import")}
-          className="btn btn-secondary"
-          style={{ marginBottom: "1rem" }}
+          className="mb-4"
           data-testid="back-to-list"
         >
           ← {t("import.back_to_list", "Back to imports")}
-        </button>
+        </Button>
         <h1 style={{ margin: 0 }}>{detail.title}</h1>
         <p style={{ margin: "0.5rem 0 0", opacity: 0.7, fontSize: "0.9rem" }}>
           {detail.source} · {detail.message_count}{" "}
@@ -585,9 +582,8 @@ export default function ImportDetail({
             flexWrap: "wrap",
           }}
         >
-          <button
+          <Button
             type="button"
-            className="btn btn-primary"
             onClick={runAnalysis}
             disabled={analyzing || !apiKey.ready || !apiKey.hasKey}
             title={
@@ -609,11 +605,11 @@ export default function ImportDetail({
               : analysis
                 ? t("import.reanalyze", "Re-analyze")
                 : t("import.analyze", "Analyze")}
-          </button>
+          </Button>
           {analysis && (analysis.suggested_curriculum?.length ?? 0) > 0 && (
-            <button
+            <Button
               type="button"
-              className="btn btn-secondary"
+              variant="secondary"
               // Phase 36 Bug 3 — when a curriculum
               // already exists for this
               // conversation, the click navigates
@@ -635,22 +631,22 @@ export default function ImportDetail({
                 : existingCurriculum
                   ? t("import.go_to_curriculum", "Go to curriculum")
                   : t("import.create_curriculum", "Create curriculum")}
-            </button>
+            </Button>
           )}
           {analysis && (
-            <button
+            <Button
               type="button"
-              className="btn btn-secondary"
+              variant="secondary"
               data-testid="save-offline-lesson-button"
               onClick={() => setShowSaveLesson(true)}
             >
               {t("content.save_lesson.button", "Save as Offline Lesson")}
-            </button>
+            </Button>
           )}
           {analysis && (
-            <button
+            <Button
               type="button"
-              className="btn btn-secondary"
+              variant="secondary"
               // Phase 36 Bug 4 — when an active
               // session for this conversation
               // already exists, the click navigates
@@ -685,12 +681,12 @@ export default function ImportDetail({
                 : activeSession
                   ? t("import.continue_session", "Continue session")
                   : t("import.start_session", "Start session")}
-            </button>
+            </Button>
           )}
           {analysis && (
-            <button
+            <Button
               type="button"
-              className="btn btn-secondary"
+              variant="secondary"
               disabled={extractingAnki || !apiKey.ready || !apiKey.hasKey}
               title={
                 apiKey.ready && !apiKey.hasKey
@@ -734,7 +730,7 @@ export default function ImportDetail({
               {extractingAnki
                 ? t("import.anki_extracting", "Extracting cards…")
                 : t("import.anki_extract", "Extract Anki cards")}
-            </button>
+            </Button>
           )}
         </div>
       </header>
