@@ -2063,5 +2063,11 @@
       "lessons": "{n} lessons",
       "start_adaptive": "Start adaptive lesson"
     }
+  },
+  "pwa": {
+    "offline_message": "You're offline. Saved content is available.",
+    "online_message": "Back online!",
+    "offline_dismiss": "Dismiss",
+    "action_unavailable": "Not available offline"
   }
 }

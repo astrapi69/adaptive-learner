@@ -37,6 +37,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useI18n } from "../../hooks/useI18n";
+import { useOnlineStatus } from "../../hooks/useOnlineStatus";
 import {
   readContributorName,
   writeContributorName,
@@ -167,6 +168,7 @@ export default function ShareWizard({
   downloadLesson,
 }: ShareWizardProps) {
   const { t, lang } = useI18n();
+  const online = useOnlineStatus();
   const [step, setStep] = useState<Step>(1);
   const [scanning, setScanning] = useState(false);
   const [dup, setDup] = useState<DuplicateResult | null>(null);
@@ -978,6 +980,12 @@ export default function ShareWizard({
                   type="button"
                   className="btn btn-primary"
                   onClick={doShare}
+                  disabled={!online}
+                  title={
+                    !online
+                      ? t("pwa.action_unavailable", "Not available offline")
+                      : undefined
+                  }
                   data-testid="share-wizard-share"
                 >
                   {t("content.wizard.share_button", "Share")}

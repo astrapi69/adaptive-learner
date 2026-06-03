@@ -2063,5 +2063,11 @@
       "lessons": "{n} lecciones",
       "start_adaptive": "Iniciar lección adaptativa"
     }
+  },
+  "pwa": {
+    "offline_message": "Estás sin conexión. El contenido guardado está disponible.",
+    "online_message": "¡De nuevo en línea!",
+    "offline_dismiss": "Cerrar",
+    "action_unavailable": "No disponible sin conexión"
   }
 }

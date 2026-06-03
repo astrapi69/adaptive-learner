@@ -2063,5 +2063,11 @@
       "lessons": "{n} ders",
       "start_adaptive": "Uyarlanabilir ders başlat"
     }
+  },
+  "pwa": {
+    "offline_message": "Çevrimdışısınız. Kaydedilen içerik kullanılabilir.",
+    "online_message": "Tekrar çevrimiçi!",
+    "offline_dismiss": "Kapat",
+    "action_unavailable": "Çevrimdışı kullanılamaz"
   }
 }

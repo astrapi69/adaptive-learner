@@ -2063,5 +2063,11 @@
       "lessons": "{n} レッスン",
       "start_adaptive": "アダプティブレッスンを開始"
     }
+  },
+  "pwa": {
+    "offline_message": "オフラインです。保存済みのコンテンツは利用できます。",
+    "online_message": "再びオンラインになりました！",
+    "offline_dismiss": "閉じる",
+    "action_unavailable": "オフラインでは利用できません"
   }
 }

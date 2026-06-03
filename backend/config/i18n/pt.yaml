@@ -1870,3 +1870,8 @@ learning_path:
     empty: "Ainda não há padrões de erro comuns — continue a praticar."
     lessons: "{n} lições"
     start_adaptive: "Iniciar lição adaptativa"
+pwa:
+  offline_message: "Você está offline. O conteúdo salvo está disponível."
+  online_message: "Online novamente!"
+  offline_dismiss: "Fechar"
+  action_unavailable: "Indisponível offline"

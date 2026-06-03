@@ -40,6 +40,7 @@ import { useNavigate } from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import ImportLessonModal from "../components/content/ImportLessonModal";
 import { useI18n } from "../hooks/useI18n";
+import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { useSourceLanguages } from "../hooks/useSourceLanguages";
 import {
   buildContentTree,
@@ -95,6 +96,7 @@ type DownloadState = "idle" | "downloading" | "done" | "error";
 
 export default function ContentPage() {
   const { t, lang } = useI18n();
+  const online = useOnlineStatus();
   const navigate = useNavigate();
   const [sets, setSets] = useState<ContentSetEntry[]>([]);
   const [sources, setSources] = useState<ContentSetSource[]>([]);
@@ -695,7 +697,13 @@ export default function ContentPage() {
             onClick={() => handleDownload(entry)}
             disabled={
               downloadState === "downloading" ||
-              (isCached && !entry.update_available)
+              (isCached && !entry.update_available) ||
+              !online
+            }
+            title={
+              !online
+                ? t("pwa.action_unavailable", "Not available offline")
+                : undefined
             }
             data-testid={`content-set-${entry.id}-action`}
           >

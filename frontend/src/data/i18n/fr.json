@@ -2063,5 +2063,11 @@
       "lessons": "{n} leçons",
       "start_adaptive": "Lancer une leçon adaptative"
     }
+  },
+  "pwa": {
+    "offline_message": "Vous êtes hors ligne. Le contenu enregistré reste disponible.",
+    "online_message": "De nouveau en ligne !",
+    "offline_dismiss": "Fermer",
+    "action_unavailable": "Indisponible hors ligne"
   }
 }

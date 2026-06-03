@@ -1874,3 +1874,8 @@ learning_path:
     empty: "Noch keine gemeinsamen Fehlermuster — bleib dran."
     lessons: "{n} Lektionen"
     start_adaptive: "Adaptive Lektion starten"
+pwa:
+  offline_message: "Du bist offline. Gespeicherte Inhalte sind verfügbar."
+  online_message: "Wieder online!"
+  offline_dismiss: "Schließen"
+  action_unavailable: "Offline nicht verfügbar"

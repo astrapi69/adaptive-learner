@@ -29,6 +29,7 @@ import HelpLink from "../components/help/HelpLink";
 import SaveOfflineLessonModal from "../components/content/SaveOfflineLessonModal";
 import { useApiKeyStatus } from "../hooks/useApiKeyStatus";
 import { useI18n } from "../hooks/useI18n";
+import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { readLearnerState } from "../lib/learnerState";
 import { getStorage } from "../storage";
 import { getDb } from "../storage/db";
@@ -82,6 +83,7 @@ export default function ImportDetail({
   const params = useParams<{ conversationId: string }>();
   const conversationId = conversationIdOverride ?? params.conversationId ?? "";
   const { t, lang } = useI18n();
+  const online = useOnlineStatus();
   const navigate = useNavigate();
   // Issue 4 — gate the AI-dependent buttons (Analyze,
   // Start Session, Extract Anki) on the active provider
@@ -585,11 +587,13 @@ export default function ImportDetail({
           <Button
             type="button"
             onClick={runAnalysis}
-            disabled={analyzing || !apiKey.ready || !apiKey.hasKey}
+            disabled={analyzing || !apiKey.ready || !apiKey.hasKey || !online}
             title={
-              apiKey.ready && !apiKey.hasKey
-                ? t("ui.api_key.required", "API key required.")
-                : undefined
+              !online
+                ? t("pwa.action_unavailable", "Not available offline")
+                : apiKey.ready && !apiKey.hasKey
+                  ? t("ui.api_key.required", "API key required.")
+                  : undefined
             }
             data-testid="analyze-button"
           >

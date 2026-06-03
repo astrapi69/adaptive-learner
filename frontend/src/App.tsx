@@ -9,6 +9,7 @@ import MilestoneHost from "./components/feedback/MilestoneHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
+import OfflineIndicator from "./components/OfflineIndicator";
 import {HelpProvider} from "./contexts/HelpContext";
 import {I18nProvider} from "./hooks/useI18n";
 import {useTheme} from "./hooks/useTheme";
@@ -116,6 +117,7 @@ export default function App() {
                 <HelpProvider>
                 <SkipToContent />
                 <Navigation />
+                <OfflineIndicator />
                 <Suspense fallback={null}>
                     <Routes>
                         <Route path="/" element={<Landing />} />
