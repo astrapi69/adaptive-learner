@@ -9,8 +9,29 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.54.0** (minor — **import-time language
-  pipeline + big content release**). Languages are captured at IMPORT
+- **Current state:** **v1.55.0** (minor — **Tailwind CSS v4 +
+  shadcn/ui foundation (Phase A) + Error Replay**). Adopts **Tailwind
+  CSS v4.3.0 + shadcn/ui** as the styling framework, installed
+  ADDITIVELY (Phase A — the migration is incremental: components
+  convert when touched, no Big Bang). Tailwind is configured CSS-first
+  (``@theme`` in ``frontend/src/styles/tailwind.css``) and CONSUMES the
+  existing 6-theme CSS variables (``bg-accent`` → ``var(--accent)``) so
+  every theme keeps working; preflight is intentionally off and all
+  Tailwind output is layered, so unlayered ``global.css`` always wins
+  and existing pages stay pixel-identical. shadcn/ui base is wired
+  (``components.json`` + ``cn()`` at ``@/lib/utils`` + ``@/*`` alias;
+  no components installed yet — the semantic-token bridge lands with
+  the first one); ``LessonStickyFooter`` is the proof-of-concept;
+  ``.claude/rules/`` + this file updated to adopt Tailwind; full guide
+  at ``docs/development/tailwind-migration.md``. Ships **Error Replay**
+  ("Fehler wiederholen" — after a lesson, retry only the exercises you
+  failed, ``/error-replay/...`` + ``error-replay.ts``) with
+  priority-aware next-step suggestions (error replay is PRIMARY at 0-1
+  stars), TTS read-aloud for lesson cards, and Stryker frontend
+  mutation testing wired (nightly, opt-in). Carries forward the 10
+  sets / 200 lessons / 3 domains content library.
+  v1.54.0 = minor — **import-time language
+  pipeline + big content release**. Languages are captured at IMPORT
   time (chat language + auto-detected learning language) and inherited
   through the whole pipeline — analysis → save-as-lesson → share — so
   nothing is guessed/patched downstream (``ImportedConversation`` gains
