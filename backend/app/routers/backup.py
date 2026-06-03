@@ -47,7 +47,11 @@ def _filename_for(user_id: str) -> str:
     return f"adaptive-learner-backup-{date}-{short}.json"
 
 
-@router.get("/export")
+@router.get(
+    "/export",
+    summary="Export a full data backup",
+    response_description=("A pretty-printed JSON backup file (Content-Disposition: attachment)."),
+)
 def export_backup(
     user_id: str,
     storage_mode: str = "api",
@@ -82,7 +86,16 @@ def backup_stats(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
     return get_backup_stats(db, user_id)
 
 
-@router.post("/import", status_code=status.HTTP_200_OK)
+@router.post(
+    "/import",
+    status_code=status.HTTP_200_OK,
+    summary="Restore from a backup",
+    response_description="Per-table counts of the restored rows.",
+    responses={
+        400: {"description": "Malformed or incompatible backup payload"},
+        404: {"description": "User not found"},
+    },
+)
 def import_backup(
     user_id: str,
     payload: dict[str, Any] = Body(...),

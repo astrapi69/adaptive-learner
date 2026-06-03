@@ -202,6 +202,19 @@ def _build_ai_caller(
 @imports_router.post(
     "/{conversation_id}/analyze",
     response_model=ImportedConversationDetail,
+    summary="Analyze an imported conversation with AI",
+    description=(
+        "Server-side (API-mode) analysis: decrypts the active provider's key, "
+        "runs the AI completion, and persists the extracted topic / level / "
+        "vocabulary / error patterns onto the conversation. This is an "
+        "AI-credit-burning call and is rate-limited."
+    ),
+    response_description="The conversation with its AI analysis attached.",
+    responses={
+        404: {"description": "Conversation not found"},
+        502: {"description": "AI provider unreachable"},
+        429: {"description": "Rate limit exceeded"},
+    },
 )
 def analyze_import(
     conversation_id: str,

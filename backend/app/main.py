@@ -684,7 +684,16 @@ async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content=detail)
 
 
-@app.get("/api/health")
+@app.get(
+    "/api/health",
+    tags=["System"],
+    summary="Health check",
+    description=(
+        "Liveness probe for monitoring. Never rate-limited. Returns the "
+        "running version + debug flag."
+    ),
+    response_description="Service status, version, and debug flag.",
+)
 def health():
     return {"status": "ok", "version": __version__, "debug": DEBUG}
 

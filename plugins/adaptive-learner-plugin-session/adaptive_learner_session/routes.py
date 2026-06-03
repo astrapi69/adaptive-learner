@@ -601,6 +601,19 @@ def _resolve_active_key(db: Session, user_id: str) -> tuple[str | None, str | No
     "/{session_id}/message",
     response_model=_SessionMessageExchangeOut,
     status_code=status.HTTP_201_CREATED,
+    summary="Send a learner message and get the AI reply",
+    description=(
+        "Appends the learner's message to the session, runs the method-aware "
+        "AI completion, persists both turns + the step evaluation. This is an "
+        "AI-credit-burning call and is rate-limited (see X-RateLimit-* / 429)."
+    ),
+    response_description="The learner + assistant turns and the step evaluation.",
+    responses={
+        404: {"description": "Session not found"},
+        409: {"description": "Session already ended"},
+        502: {"description": "AI provider unreachable"},
+        429: {"description": "Rate limit exceeded"},
+    },
 )
 def append_message(
     session_id: str,
