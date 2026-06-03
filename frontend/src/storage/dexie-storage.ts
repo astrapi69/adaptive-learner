@@ -438,12 +438,18 @@ export const dexieStorage: IStorageService = {
      * (``i18n-sync.test.ts``) catches drift.
      */
     get: async (lang: string) => {
+      // Lazy (non-eager) glob: each language catalog is its own
+      // chunk, fetched on demand. Eager loading inlined all 8
+      // catalogs (~215 KB gzip) into the main bundle on every page
+      // load — see docs/audits/performance-audit-2026-06-03.md F-1.
       const catalogs = import.meta.glob<Record<string, unknown>>(
         "../data/i18n/*.json",
-        { eager: true, import: "default" },
+        { import: "default" },
       );
-      const path = `../data/i18n/${lang}.json`;
-      return catalogs[path] ?? catalogs["../data/i18n/en.json"] ?? {};
+      const loader =
+        catalogs[`../data/i18n/${lang}.json`] ??
+        catalogs["../data/i18n/en.json"];
+      return loader ? await loader() : {};
     },
   },
 
@@ -2252,7 +2258,7 @@ export const dexieStorage: IStorageService = {
       const ctx = await loadDexieContext(projectId, {
         renderedAt,
       });
-      const files = renderRepository(ctx, lang);
+      const files = await renderRepository(ctx, lang);
       return {
         project_id: projectId,
         language: lang,
@@ -2267,7 +2273,7 @@ export const dexieStorage: IStorageService = {
       const { renderRepository } =
         await import("../lib/learning-repo/renderer");
       const ctx = await loadDexieContext(projectId);
-      const files = renderRepository(ctx, lang);
+      const files = await renderRepository(ctx, lang);
       const JSZipMod = (await import("jszip")).default;
       const zip = new JSZipMod();
       for (const [path, content] of Object.entries(files)) {

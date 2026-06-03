@@ -35,8 +35,8 @@ describe("DEFAULT_LABELS", () => {
 });
 
 describe("labelsFor", () => {
-    it("returns the EN bundle that matches the default labels", () => {
-        const labels = labelsFor("en");
+    it("returns the EN bundle that matches the default labels", async () => {
+        const labels = await labelsFor("en");
         // The en.yaml catalog ships every repo.* key, so
         // every default should be present. We assert on a
         // few load-bearing fields rather than diffing the
@@ -46,20 +46,20 @@ describe("labelsFor", () => {
         expect(labels.roadmap_title).toBe("Roadmap");
     });
 
-    it("falls back to EN bundle for an unknown language", () => {
-        const labels = labelsFor("xx");
+    it("falls back to EN bundle for an unknown language", async () => {
+        const labels = await labelsFor("xx");
         expect(labels.readme_title).toBe("Learning Project: {topic}");
     });
 
-    it("returns a separate object reference on each call (no shared mutation risk)", () => {
-        const a = labelsFor("en");
-        const b = labelsFor("en");
+    it("returns a separate object reference on each call (no shared mutation risk)", async () => {
+        const a = await labelsFor("en");
+        const b = await labelsFor("en");
         expect(a).not.toBe(b);
         expect(a).toEqual(b);
     });
 
-    it("loads the DE bundle and surfaces the translated strings", () => {
-        const labels = labelsFor("de");
+    it("loads the DE bundle and surfaces the translated strings", async () => {
+        const labels = await labelsFor("de");
         // Both EN and DE should have a non-empty title; only
         // assert here that the key is present + a string,
         // not on the German text itself (which is owned by

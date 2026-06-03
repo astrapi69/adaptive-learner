@@ -4,10 +4,11 @@
  * Used by the lesson viewer's theory markdown (fenced ``` blocks) and
  * by code cards (``card.code_snippet`` + ``expected_output``).
  *
- * highlight.js is loaded LAZILY via dynamic import the first time a code
- * block mounts, so the ~tens-of-KB highlighter never weighs down lessons
- * that have no code. Until it resolves (and if it fails), the code shows
- * as plain escaped text — never blank.
+ * A curated highlight.js (core + ~11 grammars, see ``lib/content/hljs``)
+ * is loaded LAZILY via dynamic import the first time a code block mounts,
+ * so the highlighter never weighs down lessons that have no code. Until
+ * it resolves (and if it fails), the code shows as plain escaped text —
+ * never blank.
  */
 
 import { Check, Copy } from "lucide-react";
@@ -32,7 +33,7 @@ export default function CodeBlock({ code, language, output }: CodeBlockProps) {
     let cancelled = false;
     void (async () => {
       try {
-        const hljs = (await import("highlight.js")).default;
+        const hljs = (await import("../../lib/content/hljs")).default;
         const lang =
           language && hljs.getLanguage(language) ? language : null;
         // highlight.js HTML-escapes the input and only adds its own

@@ -68,8 +68,8 @@ function buildCtx(
 }
 
 describe("renderRepository", () => {
-    it("always produces the 4 meta-files at top level", () => {
-        const tree = renderRepository(buildCtx([]), "en");
+    it("always produces the 4 meta-files at top level", async () => {
+        const tree = await renderRepository(buildCtx([]), "en");
         expect(Object.keys(tree).sort()).toEqual([
             "CHEATSHEET.md",
             "LEARNING_STATS.md",
@@ -78,15 +78,15 @@ describe("renderRepository", () => {
         ]);
     });
 
-    it("each meta-file ends with a newline", () => {
-        const tree = renderRepository(buildCtx([]), "en");
+    it("each meta-file ends with a newline", async () => {
+        const tree = await renderRepository(buildCtx([]), "en");
         for (const content of Object.values(tree)) {
             expect(content.endsWith("\n")).toBe(true);
         }
     });
 
-    it("topic folders are appended under NN_slug/README.md keys", () => {
-        const tree = renderRepository(
+    it("topic folders are appended under NN_slug/README.md keys", async () => {
+        const tree = await renderRepository(
             buildCtx(
                 [
                     makeSession({
@@ -111,14 +111,14 @@ describe("renderRepository", () => {
         expect(stub.endsWith("\n")).toBe(true);
     });
 
-    it("language argument is forwarded to labelsFor", () => {
+    it("language argument is forwarded to labelsFor", async () => {
         // The DE bundle exists in the i18n catalog (the
         // sync_i18n drift pin asserts every language ships
         // the same key set). A render with language="de"
         // should produce a different README title than EN
         // because the German bundle translates it.
-        const en = renderRepository(buildCtx([]), "en");
-        const de = renderRepository(buildCtx([]), "de");
+        const en = await renderRepository(buildCtx([]), "en");
+        const de = await renderRepository(buildCtx([]), "de");
         // Both ALWAYS include the README. The actual TEXT
         // differs because the language differs (assuming
         // the catalog has a translated value).
@@ -130,9 +130,9 @@ describe("renderRepository", () => {
         expect(de["README.md"].split("\n")[0].startsWith("# ")).toBe(true);
     });
 
-    it("default language is 'en' when omitted", () => {
-        const explicit = renderRepository(buildCtx([]), "en");
-        const implicit = renderRepository(buildCtx([]));
+    it("default language is 'en' when omitted", async () => {
+        const explicit = await renderRepository(buildCtx([]), "en");
+        const implicit = await renderRepository(buildCtx([]));
         expect(implicit).toEqual(explicit);
     });
 });

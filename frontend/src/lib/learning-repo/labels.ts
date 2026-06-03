@@ -188,18 +188,19 @@ export const DEFAULT_LABELS: Labels = {
  * the backend YAML by ``scripts/sync_i18n_to_frontend.py``
  * (drift-pinned by ``i18n-sync.test.ts``).
  */
-export function labelsFor(language: string): Labels {
-    // ``import.meta.glob`` resolves the JSON files at build
-    // time so the chunk is available without a dynamic fetch.
-    // Same pattern as ``dexieStorage.i18n.get`` and
-    // ``dexieStorage.pluginSettings.get``.
+export async function labelsFor(language: string): Promise<Labels> {
+    // Lazy (non-eager) glob: each language catalog is its own
+    // chunk fetched on demand, shared with ``dexieStorage.i18n.get``.
+    // Eager loading pulled all 8 catalogs into the consuming chunk —
+    // see docs/audits/performance-audit-2026-06-03.md F-1.
     const catalogs = import.meta.glob<Record<string, unknown>>(
         "../../data/i18n/*.json",
-        {eager: true, import: "default"},
+        {import: "default"},
     );
-    const catalog =
+    const loader =
         catalogs[`../../data/i18n/${language}.json`] ??
         catalogs["../../data/i18n/en.json"];
+    const catalog = loader ? await loader() : undefined;
     if (!catalog) {
         return {...DEFAULT_LABELS};
     }

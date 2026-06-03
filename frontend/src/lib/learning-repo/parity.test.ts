@@ -87,7 +87,7 @@ function listMarkdownGoldens(root: string): string[] {
 }
 
 describe("learning-repo cross-renderer parity", () => {
-    it("TS renderer matches every golden file", () => {
+    it("TS renderer matches every golden file", async () => {
         const data = loadFixture();
         const ctx = buildRenderContext({
             project: data.project,
@@ -98,7 +98,7 @@ describe("learning-repo cross-renderer parity", () => {
             notes: data.notes,
             rendered_at: data.rendered_at,
         });
-        const tree = renderRepository(ctx, "en");
+        const tree = await renderRepository(ctx, "en");
 
         for (const [path, content] of Object.entries(tree)) {
             const goldenPath = join(EXPECTED_DIR, path);
@@ -119,7 +119,7 @@ describe("learning-repo cross-renderer parity", () => {
         }
     });
 
-    it("the golden file set matches the renderer output keys", () => {
+    it("the golden file set matches the renderer output keys", async () => {
         const data = loadFixture();
         const ctx = buildRenderContext({
             project: data.project,
@@ -130,7 +130,7 @@ describe("learning-repo cross-renderer parity", () => {
             notes: data.notes,
             rendered_at: data.rendered_at,
         });
-        const tree = renderRepository(ctx, "en");
+        const tree = await renderRepository(ctx, "en");
         const renderedPaths = Object.keys(tree).sort();
         const goldenPaths = listMarkdownGoldens(EXPECTED_DIR);
         // If this asserts, either a renderer added a new

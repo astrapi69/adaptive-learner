@@ -38,11 +38,11 @@ import {renderTopicFolders} from "./topic-folders";
  * i18n catalog and overlays ``repo.*`` strings onto the
  * English defaults.
  */
-export function renderRepository(
+export async function renderRepository(
     ctx: RenderContext,
     language: string = "en",
-): Record<string, string> {
-    const labels = labelsFor(language);
+): Promise<Record<string, string>> {
+    const labels = await labelsFor(language);
     const tree: Record<string, string> = {
         "README.md": renderReadme(ctx, labels),
         "LEARNING_STATS.md": renderStats(ctx, labels),
