@@ -1,6 +1,8 @@
 /// <reference types="vitest" />
+import {fileURLToPath} from "node:url";
 import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
 import {VitePWA} from "vite-plugin-pwa";
 
 import pkg from "./package.json" with {type: "json"};
@@ -22,6 +24,15 @@ const base = (process.env.VITE_BASE as string) || "/";
 
 export default defineConfig({
     base,
+    resolve: {
+        alias: {
+            // shadcn/ui import alias. Vite does not read tsconfig
+            // ``paths`` on its own, so mirror the ``@/*`` -> ``src/*``
+            // mapping here. Applies to the dev server, the build, AND
+            // the embedded Vitest config below.
+            "@": fileURLToPath(new URL("./src", import.meta.url)),
+        },
+    },
     define: {
         // Single source of truth: package.json. Replaced at build
         // time (and during vitest runs) by the literal string.
@@ -30,6 +41,11 @@ export default defineConfig({
         __APP_VERSION__: JSON.stringify(pkg.version),
     },
     plugins: [
+        // Tailwind v4 Vite plugin. Must run before the React plugin so
+        // the generated utility CSS is available to the module graph.
+        // Phase A install is ADDITIVE — see
+        // docs/development/tailwind-migration.md.
+        tailwindcss(),
         react(),
         VitePWA({
             registerType: "autoUpdate",

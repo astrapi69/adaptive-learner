@@ -23,7 +23,9 @@
 - Functional components with hooks. No class components.
 - Props defined as an interface.
 - Extract complex logic into utility functions or the API client, not into components.
-- Radix UI for dialogs, dropdowns, tooltips, tabs, select. No custom DOM handling for those.
+- Styling: Tailwind CSS (v4) utility classes preferred (adopted v1.54.0+). Do NOT add new entries to global.css; utilities resolve to the existing CSS variables, so theming still works. Existing component CSS is migrated when the component is touched, not proactively. See docs/development/tailwind-migration.md.
+- shadcn/ui: use for UI primitives (Dialog, Tabs, Toast, Button, Input, Select). Add components with `npx shadcn@latest add {component}`. shadcn wraps Radix; prefer it over wiring Radix directly for new UI.
+- Radix UI for dialogs, dropdowns, tooltips, tabs, select where shadcn/ui is not yet wired. No custom DOM handling for those.
 - @dnd-kit for drag-and-drop. No manual DnD.
 - Lucide React for icons. No other icon libraries.
 - react-toastify for user feedback. No window.alert(), no console.log for user info.
@@ -180,7 +182,7 @@ Chain: AdaptiveLearnerError -> API response (detail + traceback) -> ApiError -> 
 New dependencies only after asking. Existing stack:
 
 Backend: FastAPI, SQLAlchemy 2.0, Pydantic v2, pluginforge, aiosqlite, cryptography (Fernet), platformdirs, PyYAML
-Frontend: React 19, TypeScript 6 (strict), TipTap 2 (15+1 extensions), Vite 8, Radix UI, Lucide, react-toastify, Recharts 3, Dexie 4, sql.js + jszip
+Frontend: React 19, TypeScript 6 (strict), TipTap 2 (15+1 extensions), Vite 8, Tailwind CSS 4 + shadcn/ui, Radix UI, Lucide, react-toastify, Recharts 3, Dexie 4, sql.js + jszip
 Testing: pytest, Playwright (E2E), Vitest 4 (happy-dom)
 Linting/formatting: ruff (Python), ESLint + Prettier (TypeScript), pre-commit
 Tooling: Poetry, npm, Docker, Make

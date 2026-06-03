@@ -1,0 +1,87 @@
+/*
+ * Tailwind CSS v4 entry point (Phase A — additive install).
+ *
+ * PREFLIGHT IS INTENTIONALLY NOT IMPORTED.
+ *
+ * Adaptive Learner predates Tailwind. Its global.css + per-component
+ * styles were authored against browser defaults that Tailwind's
+ * preflight reset would silently change app-wide (heading sizes, list
+ * bullets, body/fieldset margins, button font inheritance). Pulling in
+ * preflight during Phase A would alter the look of every page that
+ * touches an un-styled element. The one reset that genuinely matters
+ * everywhere — ``* { box-sizing: border-box }`` — is already declared
+ * in global.css, so utility classes and shadcn/ui components work
+ * without preflight.
+ *
+ * We therefore import ONLY the theme (design-token) and utilities
+ * layers. The cascade-layer order below also guarantees that any
+ * unlayered rule in global.css wins over Tailwind output, which keeps
+ * existing components pixel-identical. Re-introducing a scoped
+ * preflight is a deliberate Phase B+ decision, not an accident of the
+ * default import. See docs/development/tailwind-migration.md.
+ */
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/*
+ * Theme integration (Phase A / commit C2).
+ *
+ * Tailwind v4 is configured CSS-first via @theme, not via a v3-style
+ * tailwind.config.ts (the @tailwindcss/vite plugin does not auto-load a
+ * JS config). ``@theme inline`` is the key: each token below maps a
+ * Tailwind utility onto one of our EXISTING CSS variables and is NOT
+ * re-emitted as a :root variable, so the generated utility reads e.g.
+ * ``background-color: var(--bg-primary)`` directly. Because those vars
+ * are redefined per ``[data-theme]`` in styles/themes/theme-*.css, every
+ * Tailwind utility recolors automatically when the theme switches across
+ * all 6 themes (light / dark / ocean / forest / high-contrast / sepia).
+ * Tailwind CONSUMES our token system; it does not replace it.
+ *
+ * Utility names follow Tailwind's ``{prefix}-{token}`` convention:
+ *   --color-bg-primary  -> bg-bg-primary / text-bg-primary / from-bg-primary
+ *   --color-accent      -> bg-accent / text-accent / border-accent
+ *   --color-accent-fg   -> text-accent-fg / bg-accent-fg
+ *   --radius-app        -> rounded-app
+ *   --font-sans/mono    -> font-sans / font-mono
+ */
+@theme inline {
+  /* Backgrounds */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-elevated: var(--bg-elevated);
+
+  /* Foregrounds / text */
+  --color-fg-primary: var(--fg-primary);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-muted: var(--fg-muted);
+
+  /* Accent / interactive */
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+
+  /* Status */
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+
+  /* Borders */
+  --color-border: var(--border-primary);
+  --color-border-subtle: var(--border-subtle);
+
+  /* Layout tokens */
+  --radius-app: var(--radius-md, 8px);
+
+  /*
+   * No --font-sans / --font-mono mapping is needed. global.css already
+   * declares those exact variable names (Tailwind's own font namespace)
+   * unlayered, so it wins the cascade over Tailwind's layered default and
+   * the ``font-sans`` / ``font-mono`` utilities resolve to our stacks
+   * automatically. Re-declaring them here would only emit a redundant
+   * self-referential ``--font-sans: var(--font-sans)``.
+   */
+}

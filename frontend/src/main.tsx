@@ -2,6 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import {BrowserRouter} from "react-router-dom";
 import App from "./App";
+// Tailwind first: it declares the @layer order (theme, base, components,
+// utilities) and emits only LAYERED CSS, so every unlayered rule in the
+// theme sheets + global.css below always wins. This keeps existing pages
+// pixel-identical while making utility classes available to new code.
+// Phase A — see docs/development/tailwind-migration.md.
+import "./styles/tailwind.css";
 // Theme files first (light before the rest so the active theme wins the
 // equal-specificity tie against :root), then the shared global sheet.
 import "./styles/themes/theme-light.css";
