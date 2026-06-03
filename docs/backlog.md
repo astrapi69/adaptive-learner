@@ -17,7 +17,7 @@ tool into a full learning platform with downloadable content
 sets, interactive exercises, and dual-mode operation
 (Content-only + AI-augmented).
 
-State: **post v1.53.0 (content schema v1.3 + Python course +
+State: **post v1.54.0 (import-time language pipeline + big content release; prior v1.53.0: content schema v1.3 + Python course +
 domain support — 7 sets / 100 lessons; code rendering +
 code-aware exercises; analysis-to-lesson source-language fix).**
 Prior: **v1.52.0 (DE->EN A1 content — 5 sets / 75 lessons —

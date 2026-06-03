@@ -9,12 +9,19 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.53.1** (patch — **bug fixes**: single
-  two-phase button on the Adaptive/Review pages (was showing both
-  Pruefen + Weiter); community-PR file attachment now works for
-  all lesson sizes (create-file flow, never null); + regression
-  pins for analysis-context-on-resume and the lesson-nav
-  hamburger). v1.53.0 = minor — **content schema v1.3
+- **Current state:** **v1.54.0** (minor — **import-time language
+  pipeline + big content release**). Languages are captured at IMPORT
+  time (chat language + auto-detected learning language) and inherited
+  through the whole pipeline — analysis → save-as-lesson → share — so
+  nothing is guessed/patched downstream (``ImportedConversation`` gains
+  ``source_language``/``target_language``; Alembic 0026 + Dexie v25). The
+  analysis prompt gets a learner-language context block; sharing is
+  **domain-aware** (source==target ships as non-language ``knowledge``
+  content). **Content: 10 sets / 200 lessons across 3 domains** — FR/ES/EN
+  **A2** for German speakers, DE→EN A1, Python Grundlagen, Psychologie
+  (65). Folds in the v1.53.1/.2 fixes (single two-phase button on
+  Adaptive/Review; community-PR attachment for all lesson sizes;
+  ShareWizard source inheritance). v1.53.0 = minor — **content schema v1.3
   (technical content) + Python course + domain support**).
   **Schema v1.3:** Card gains optional ``code_snippet`` /
   ``code_language`` / ``expected_output`` / ``hint`` / ``difficulty``
@@ -930,8 +937,8 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.53.1 baseline:** backend 1125 + plugins
-  1009 + Vitest 3045 = **5179 tests**. E2E
+- **v1.54.0 baseline:** backend 1125 + plugins
+  1009 + Vitest 3149 = **5283 tests**. E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
   gate** (23 specs incl. the Phase 61 interactive journeys —

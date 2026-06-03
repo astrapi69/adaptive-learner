@@ -1,7 +1,7 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.53.1-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-5179%20grün-brightgreen)](#tests)
+[![Version](https://img.shields.io/badge/version-v1.54.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-5283%20grün-brightgreen)](#tests)
 [![Lizenz: MIT](https://img.shields.io/badge/Lizenz-MIT-yellow.svg)](LICENSE)
 [![Doku](https://img.shields.io/badge/doku-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/)
 
@@ -296,7 +296,7 @@ Vollständige Setup-Anleitung unter
 
 ```bash
 make dev               # Backend (18001) + Frontend (15174)
-make test              # Backend + Plugins + Vitest (4478 Tests)
+make test              # Backend + Plugins + Vitest (5283 Tests)
 make test-coverage     # Opt-In-Coverage (CI nachts)
 make sync-versions     # Version über 18 Dateien propagieren
 make sync-i18n         # Backend-YAML → Frontend-JSON-Bundles
