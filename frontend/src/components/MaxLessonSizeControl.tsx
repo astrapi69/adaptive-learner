@@ -10,6 +10,7 @@
 
 import {useState} from "react";
 
+import {Input} from "@/components/ui/input";
 import {useI18n} from "../hooks/useI18n";
 import {
     DEFAULT_MAX_LESSON_SIZE,
@@ -57,9 +58,10 @@ export default function MaxLessonSizeControl() {
                         "Steps per part",
                     )}
                 </span>
-                <input
+                <Input
                     type="number"
                     data-testid="settings-max-lesson-size-input"
+                    className="w-24"
                     value={size}
                     min={MIN_MAX_LESSON_SIZE}
                     max={MAX_MAX_LESSON_SIZE}
