@@ -2068,6 +2068,13 @@
     "offline_message": "Você está offline. O conteúdo salvo está disponível.",
     "online_message": "Online novamente!",
     "offline_dismiss": "Fechar",
-    "action_unavailable": "Indisponível offline"
+    "action_unavailable": "Indisponível offline",
+    "cache_heading": "Cache off-line",
+    "cache_summary": "{size} MB · {count} lições em cache",
+    "cache_empty": "Nenhum conteúdo off-line em cache.",
+    "cache_clear": "Limpar cache",
+    "cache_clear_confirm": "Limpar o cache off-line?",
+    "cache_clear_action": "Sim, limpar",
+    "cache_cleared": "Cache off-line limpo."
   }
 }

@@ -2068,6 +2068,13 @@
     "offline_message": "Vous êtes hors ligne. Le contenu enregistré reste disponible.",
     "online_message": "De nouveau en ligne !",
     "offline_dismiss": "Fermer",
-    "action_unavailable": "Indisponible hors ligne"
+    "action_unavailable": "Indisponible hors ligne",
+    "cache_heading": "Cache hors ligne",
+    "cache_summary": "{size} Mo · {count} leçons en cache",
+    "cache_empty": "Aucun contenu hors ligne en cache.",
+    "cache_clear": "Vider le cache",
+    "cache_clear_confirm": "Vider le cache hors ligne ?",
+    "cache_clear_action": "Oui, vider",
+    "cache_cleared": "Cache hors ligne vidé."
   }
 }

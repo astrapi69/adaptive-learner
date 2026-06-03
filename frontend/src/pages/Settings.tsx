@@ -5,6 +5,7 @@ import { ApiError } from "../api/client";
 import AboutTab from "../components/about/AboutTab";
 import IdentitySection from "../components/about/IdentitySection";
 import BackupSection from "../components/BackupSection";
+import CacheManagementSection from "../components/CacheManagementSection";
 import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
 import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
@@ -1171,6 +1172,7 @@ export default function Settings() {
         <BackupSection />
         <ExportSection />
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}
+        <CacheManagementSection />
         <DangerZoneSection />
       </div>
 
