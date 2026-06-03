@@ -79,7 +79,24 @@ def patch_settings(
     return _build_settings_out(db, settings_service.update_settings(db, user_id, payload))
 
 
-@router.post("/{user_id}/api-key", response_model=UserSettingsOut)
+@router.post(
+    "/{user_id}/api-key",
+    response_model=UserSettingsOut,
+    summary="Save an AI provider API key",
+    description=(
+        "Stores an API key for the given provider (anthropic / openai / "
+        "gemini). The key is Fernet-encrypted at rest; AI calls then resolve "
+        "it through the three-layer chain (env > secrets.yaml > DB). Returns "
+        "the updated settings with the per-provider `key_source` so the UI "
+        "can show where the active key comes from."
+    ),
+    response_description="The updated user settings (with key source flags).",
+    responses={
+        404: {"description": "User not found"},
+        422: {"description": "Invalid provider or malformed key"},
+        429: {"description": "Rate limit exceeded"},
+    },
+)
 def set_api_key(
     user_id: str,
     payload: ApiKeySetBody,

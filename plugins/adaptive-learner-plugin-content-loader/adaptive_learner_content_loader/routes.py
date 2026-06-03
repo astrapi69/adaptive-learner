@@ -187,7 +187,17 @@ def _unslugify_source(slug: str) -> str:
 # --- Endpoints --------------------------------------------------------------
 
 
-@router.get("/sets", response_model=SetsListResponse)
+@router.get(
+    "/sets",
+    response_model=SetsListResponse,
+    summary="List available content sets",
+    description=(
+        "Returns every content set discoverable from the configured sources "
+        "(bundled offline content + public GitHub repos), deduped by id with "
+        "the higher version winning. Cheap, frequently polled while browsing."
+    ),
+    response_description="The available sets plus the sources they came from.",
+)
 async def list_sets() -> SetsListResponse:
     service = _build_service()
     try:
@@ -203,6 +213,14 @@ async def list_sets() -> SetsListResponse:
 @router.post(
     "/sets/{source_slug}/{set_id}/download",
     response_model=SetEntryResponse,
+    summary="Download a content set",
+    description=(
+        "Fetches a set's manifest + lessons from its source and caches them "
+        "locally (filesystem in API mode). Idempotent — re-downloading a "
+        "cached set reconciles the version."
+    ),
+    response_description="The cached set entry.",
+    responses={404: {"description": "Set or source not found"}},
 )
 async def download_set(
     source_slug: str,

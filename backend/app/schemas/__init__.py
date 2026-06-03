@@ -75,6 +75,16 @@ class AIProvider(str, Enum):
 
 
 class UserCreate(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "name": "Alex Learner",
+                "email": "alex@example.com",
+                "language": "de",
+            }
+        }
+    )
+
     name: str = Field(min_length=1, max_length=200)
     # EmailStr brings RFC-5321 validation via email-validator
     # (pydantic[email] extra). nullable for single-user desktop
@@ -213,6 +223,10 @@ class ApiKeySetBody(BaseModel):
     :mod:`app.services.crypto`.
     """
 
+    model_config = ConfigDict(
+        json_schema_extra={"example": {"provider": "anthropic", "key": "sk-ant-..."}}
+    )
+
     provider: AIProvider
     key: str = Field(min_length=1)
 
@@ -298,6 +312,19 @@ class LearningProjectCreateBody(BaseModel):
     ``user_id`` — the route prefix supplies that, and accepting it
     in the body would let a client forge cross-user writes.
     """
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "topic": "Spanish B1",
+                "goal": "Hold a 20-minute conversation.",
+                "timeframe": "8 weeks",
+                "daily_minutes": 30,
+                "current_problem": "Confusing ser vs estar.",
+                "active": True,
+            }
+        }
+    )
 
     topic: str = Field(min_length=1, max_length=500)
     goal: str = Field(min_length=1)

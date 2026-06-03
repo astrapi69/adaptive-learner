@@ -38,6 +38,14 @@ from app.database import init_db
 from app.exceptions import AdaptiveLearnerError, NotFoundError
 from app.hookspecs import AdaptiveLearnerHookSpec
 from app.logging_config import setup_logging
+from app.middleware.rate_limit import (
+    RateLimiter,
+    RateLimitMiddleware,
+    load_rate_limit_config,
+    rate_limiting_enabled,
+    resolve_exempt_ips,
+)
+from app.openapi_metadata import OPENAPI_TAGS, ensure_route_metadata
 from app.routers.backup import router as backup_router
 from app.routers.content import router as content_router
 from app.routers.curriculum import (
@@ -471,6 +479,9 @@ async def lifespan(app: FastAPI):
     _log_plugin_diagnostics_pre(enabled_in_config=_enabled_plugins_from_config())
     manager.discover_plugins()
     manager.mount_routes(app)
+    # Backfill OpenAPI tags + summaries on the freshly-mounted plugin
+    # routes (idempotent; explicit decorator metadata is preserved).
+    ensure_route_metadata(app)
     _log_plugin_diagnostics_post(
         active=[p.name for p in manager.get_active_plugins()],
         load_errors=dict(manager.get_load_errors()),
@@ -499,10 +510,21 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Adaptive Learner",
-    description="Adaptive learning system based on the six-method learning model.",
+    title="Adaptive Learner API",
+    description=(
+        "API for the Adaptive Learner platform — an adaptive learning system "
+        "built on the six-method learning model.\n\n"
+        "**Authentication:** this is a single-user, local-first app; endpoints "
+        "require no auth token. AI provider keys are stored encrypted "
+        "(Fernet) and resolved through a three-layer chain "
+        "(env > `~/.config/adaptive_learner/secrets.yaml` > DB).\n\n"
+        "**Rate limiting:** AI / content / settings endpoints are rate-limited "
+        "per client IP (see the `429` responses + `X-RateLimit-*` headers); "
+        "localhost is exempt."
+    ),
     version=__version__,
     lifespan=lifespan,
+    openapi_tags=OPENAPI_TAGS,
     docs_url="/api/docs" if DEBUG else None,
     redoc_url="/api/redoc" if DEBUG else None,
 )
@@ -514,6 +536,16 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
+
+# Per-IP, per-tier API rate limiting (protects AI-credit-burning
+# endpoints from abusive / runaway clients). Switches live on
+# ``app.state`` so they can be inspected / overridden; tiers come from
+# config/rate_limits.yaml + RATE_LIMIT_* env overrides. Localhost is
+# exempt and test mode is off unless RATE_LIMIT_ENABLED=1 forces it on.
+app.state.rate_limiter = RateLimiter(load_rate_limit_config())
+app.state.rate_limit_enabled = rate_limiting_enabled()
+app.state.rate_limit_exempt = resolve_exempt_ips()
+app.add_middleware(RateLimitMiddleware)
 
 # Security headers (defense-in-depth; Phase 61 audit P3 "no CSP header
 # anywhere"). The backend is API-only -- it serves JSON, never an SPA --
@@ -585,6 +617,10 @@ app.include_router(content_router, prefix="/api")
 app.include_router(export_router, prefix="/api")
 app.include_router(help_router, prefix="/api")
 
+# Backfill OpenAPI tags + summaries on the core routers now; plugin
+# routes are backfilled in the lifespan after they mount.
+ensure_route_metadata(app)
+
 
 @app.exception_handler(AdaptiveLearnerError)
 async def adaptive_learner_error_handler(request: Request, exc: AdaptiveLearnerError):
@@ -648,7 +684,16 @@ async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content=detail)
 
 
-@app.get("/api/health")
+@app.get(
+    "/api/health",
+    tags=["System"],
+    summary="Health check",
+    description=(
+        "Liveness probe for monitoring. Never rate-limited. Returns the "
+        "running version + debug flag."
+    ),
+    response_description="Service status, version, and debug flag.",
+)
 def health():
     return {"status": "ok", "version": __version__, "debug": DEBUG}
 
