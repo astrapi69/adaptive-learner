@@ -9,6 +9,8 @@
 
 import {useState} from "react";
 import {GripVertical, Pencil, Plus, Trash2} from "lucide-react";
+
+import {Input} from "@/components/ui/input";
 import {
     DndContext,
     type DragEndEvent,
@@ -130,7 +132,7 @@ export default function CardEditor({
                         <span className="form-label">
                             {t("create_lesson.cards.front_label", "Front (learned)")} *
                         </span>
-                        <input
+                        <Input
                             type="text"
                             data-testid="card-front-input"
                             value={front}
@@ -145,7 +147,7 @@ export default function CardEditor({
                         <span className="form-label">
                             {t("create_lesson.cards.back_label", "Back (your language)")} *
                         </span>
-                        <input
+                        <Input
                             type="text"
                             data-testid="card-back-input"
                             value={back}
@@ -161,7 +163,7 @@ export default function CardEditor({
                     <span className="form-label">
                         {t("create_lesson.cards.notes_label", "Notes (optional)")}
                     </span>
-                    <input
+                    <Input
                         type="text"
                         data-testid="card-notes-input"
                         value={notes}
@@ -172,7 +174,7 @@ export default function CardEditor({
                     <span className="form-label">
                         {t("create_lesson.cards.image_label", "Image reference (optional)")}
                     </span>
-                    <input
+                    <Input
                         type="text"
                         data-testid="card-image-input"
                         value={image}
@@ -409,7 +411,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                 data-testid={`card-row-${card.id}`}
             >
                 <div className="form-row form-row-inline">
-                    <input
+                    <Input
                         type="text"
                         data-testid={`card-edit-front-${card.id}`}
                         value={draft.front}
@@ -417,7 +419,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                             setDraft({...draft, front: e.target.value})
                         }
                     />
-                    <input
+                    <Input
                         type="text"
                         data-testid={`card-edit-back-${card.id}`}
                         value={draft.back}
@@ -426,7 +428,7 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                         }
                     />
                 </div>
-                <input
+                <Input
                     type="text"
                     data-testid={`card-edit-notes-${card.id}`}
                     value={draft.notes}

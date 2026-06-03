@@ -8,6 +8,7 @@
 
 import "@testing-library/jest-dom/vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import {MemoryRouter} from "react-router-dom";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
@@ -67,18 +68,18 @@ describe("CreateLesson — metadata step", () => {
         ).not.toBeInTheDocument();
     });
 
-    it("blocks Next when source and target language match", () => {
+    it("blocks Next when source and target language match", async () => {
+        const user = userEvent.setup();
         renderPage();
         fireEvent.change(screen.getByTestId("create-lesson-title"), {
             target: {value: "My French Basics"},
         });
-        // Force target == source.
-        const source = (
-            screen.getByTestId("create-lesson-source-lang") as HTMLSelectElement
-        ).value;
-        fireEvent.change(screen.getByTestId("create-lesson-target-lang"), {
-            target: {value: source},
-        });
+        // Force target == source by picking the same language in both
+        // shadcn/Radix Selects.
+        await user.click(screen.getByTestId("create-lesson-source-lang"));
+        await user.click(await screen.findByRole("option", {name: "English"}));
+        await user.click(screen.getByTestId("create-lesson-target-lang"));
+        await user.click(await screen.findByRole("option", {name: "English"}));
         fireEvent.click(screen.getByTestId("create-lesson-next"));
         expect(
             screen.getByTestId("create-lesson-same-language-error"),
@@ -270,15 +271,9 @@ describe("CreateLesson — card step gate + draft", () => {
         );
         renderPage();
         fireEvent.click(screen.getByTestId("create-lesson-draft-continue"));
-        // The repaired pair is no longer equal.
-        expect(
-            (
-                screen.getByTestId(
-                    "create-lesson-target-lang",
-                ) as HTMLSelectElement
-            ).value,
-        ).not.toBe("de");
-        // Weiter advances to step 2 instead of silently failing.
+        // The repaired pair is no longer equal: Weiter advances to
+        // step 2 with no same-language error (instead of silently
+        // failing on an equal source/target pair).
         fireEvent.click(screen.getByTestId("create-lesson-next"));
         expect(screen.getByTestId("create-lesson-step-2")).toBeInTheDocument();
         expect(

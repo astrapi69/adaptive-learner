@@ -27,6 +27,14 @@ import {
 } from "../lib/content/language-options";
 import {readContributorName} from "../lib/content/contribution-history";
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import CardEditor, {MIN_CARDS} from "../components/create-lesson/CardEditor";
 import ExerciseGenerator, {
     MIN_EXERCISES,
@@ -360,7 +368,7 @@ export default function CreateLesson() {
                         <span className="form-label">
                             {t("create_lesson.meta.title_label", "Title")} *
                         </span>
-                        <input
+                        <Input
                             type="text"
                             data-testid="create-lesson-title"
                             value={meta.title}
@@ -392,7 +400,7 @@ export default function CreateLesson() {
                                 "Title in target language",
                             )}
                         </span>
-                        <input
+                        <Input
                             type="text"
                             data-testid="create-lesson-title-native"
                             value={meta.titleNative}
@@ -403,7 +411,7 @@ export default function CreateLesson() {
                     </label>
 
                     <div className="form-row form-row-inline">
-                        <label className="form-field">
+                        <div className="form-field">
                             <span className="form-label">
                                 {t(
                                     "create_lesson.meta.target_lang_label",
@@ -411,59 +419,69 @@ export default function CreateLesson() {
                                 )}{" "}
                                 *
                             </span>
-                            <select
-                                data-testid="create-lesson-target-lang"
+                            <Select
                                 value={meta.targetLanguage}
-                                onChange={(e) =>
-                                    update("targetLanguage", e.target.value)
+                                onValueChange={(v) =>
+                                    update("targetLanguage", v)
                                 }
                             >
-                                {LANGUAGE_OPTIONS.map((o) => (
-                                    <option key={o.code} value={o.code}>
-                                        {o.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-                        <label className="form-field">
+                                <SelectTrigger data-testid="create-lesson-target-lang">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {LANGUAGE_OPTIONS.map((o) => (
+                                        <SelectItem key={o.code} value={o.code}>
+                                            {o.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="form-field">
                             <span className="form-label">
                                 {t(
                                     "create_lesson.meta.source_lang_label",
                                     "Your language",
                                 )}
                             </span>
-                            <select
-                                data-testid="create-lesson-source-lang"
+                            <Select
                                 value={meta.sourceLanguage}
-                                onChange={(e) =>
-                                    update("sourceLanguage", e.target.value)
+                                onValueChange={(v) =>
+                                    update("sourceLanguage", v)
                                 }
                             >
-                                {LANGUAGE_OPTIONS.map((o) => (
-                                    <option key={o.code} value={o.code}>
-                                        {o.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
-                        <label className="form-field">
+                                <SelectTrigger data-testid="create-lesson-source-lang">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {LANGUAGE_OPTIONS.map((o) => (
+                                        <SelectItem key={o.code} value={o.code}>
+                                            {o.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="form-field">
                             <span className="form-label">
                                 {t("create_lesson.meta.level_label", "Level")}
                             </span>
-                            <select
-                                data-testid="create-lesson-level"
+                            <Select
                                 value={meta.level}
-                                onChange={(e) =>
-                                    update("level", e.target.value)
-                                }
+                                onValueChange={(v) => update("level", v)}
                             >
-                                {CEFR_LEVELS.map((lvl) => (
-                                    <option key={lvl} value={lvl}>
-                                        {lvl}
-                                    </option>
-                                ))}
-                            </select>
-                        </label>
+                                <SelectTrigger data-testid="create-lesson-level">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {CEFR_LEVELS.map((lvl) => (
+                                        <SelectItem key={lvl} value={lvl}>
+                                            {lvl}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
                     </div>
                     {showError && sameLanguage && (
                         <p
@@ -499,7 +517,7 @@ export default function CreateLesson() {
                         <span className="form-label">
                             {t("create_lesson.meta.author_label", "Author name")}
                         </span>
-                        <input
+                        <Input
                             type="text"
                             data-testid="create-lesson-author"
                             value={meta.author}
