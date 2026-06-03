@@ -37,6 +37,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
 import ImportLessonModal from "../components/content/ImportLessonModal";
 import { useI18n } from "../hooks/useI18n";
 import { useSourceLanguages } from "../hooks/useSourceLanguages";
@@ -496,14 +497,16 @@ export default function ContentPage() {
             {t("content.ai_validation.applied", "applied")}
           </span>
         ) : (
-          <button
+          <Button
             type="button"
-            className="btn btn-secondary content-ai-fix"
+            variant="secondary"
+            size="sm"
+            className="content-ai-fix"
             onClick={() => void applyAutoFix(fixKey, kind, targetId, text)}
             data-testid={`content-ai-fix-${fixKey}`}
           >
             {t("content.ai_validation.auto_fix", "Apply")}
-          </button>
+          </Button>
         )
       ) : null;
     return (
@@ -675,19 +678,20 @@ export default function ContentPage() {
                   : ""}
           </span>
           {isCached && (
-            <button
+            <Button
               type="button"
-              className="btn btn-primary content-set-open-btn"
+              className="content-set-open-btn"
               onClick={() => handleOpenLesson(entry)}
               data-testid={`content-set-${entry.id}-open`}
             >
               <BookOpen size={14} aria-hidden="true" />
               {t("content.action.open", "Open")}
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             type="button"
-            className="btn content-set-download-btn"
+            variant="secondary"
+            className="content-set-download-btn"
             onClick={() => handleDownload(entry)}
             disabled={
               downloadState === "downloading" ||
@@ -716,7 +720,7 @@ export default function ContentPage() {
                 {t("content.action.download", "Download")}
               </>
             )}
-          </button>
+          </Button>
         </div>
       </li>
     );
@@ -838,30 +842,29 @@ export default function ContentPage() {
       >
         <div className="content-section-head">
           <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
-          <button
+          <Button
             type="button"
-            className="btn btn-primary"
             onClick={() => navigate("/create-lesson")}
             data-testid="content-create-lesson"
           >
             + {t("content.create_lesson.button", "Create New Lesson")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="btn btn-secondary"
+            variant="secondary"
             onClick={() => navigate("/learning-path")}
             data-testid="content-learning-path"
           >
             {t("nav.learning_path", "Learning Path")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="btn btn-secondary"
+            variant="secondary"
             onClick={() => setShowImport(true)}
             data-testid="content-import-lesson"
           >
             {t("content.import_lesson.button", "Import Lesson")}
-          </button>
+          </Button>
         </div>
         {userSets.length === 0 ? (
           <p className="content-empty" data-testid="content-my-lessons-empty">
@@ -894,63 +897,62 @@ export default function ContentPage() {
                   </p>
                 </div>
                 <div className="content-set-action">
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-primary"
                     onClick={() => handleOpenLesson(entry)}
                     data-testid={`my-lesson-${entry.id}-play`}
                   >
                     <Play size={14} aria-hidden="true" />
                     {t("content.my_lessons.play", "Play")}
-                  </button>
+                  </Button>
                   {entry.domain === "analysis" && (
-                    <button
+                    <Button
                       type="button"
-                      className="btn btn-secondary"
+                      variant="secondary"
                       onClick={() => handleEditUserSet(entry)}
                       data-testid={`my-lesson-${entry.id}-edit`}
                     >
                       <Pencil size={14} aria-hidden="true" />
                       {t("content.my_lessons.edit", "Edit")}
-                    </button>
+                    </Button>
                   )}
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     onClick={() => void handleExportJson(entry)}
                     data-testid={`my-lesson-${entry.id}-export`}
                   >
                     <Download size={14} aria-hidden="true" />
                     {t("content.my_lessons.export", "Export")}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     onClick={() => void handleExportSet(entry)}
                     data-testid={`my-lesson-${entry.id}-export-set`}
                   >
                     <FolderOpen size={14} aria-hidden="true" />
                     {t("content.my_lessons.export_set", "Export as set")}
-                  </button>
+                  </Button>
                   {COMMUNITY_SHARING_ENABLED && (
-                    <button
+                    <Button
                       type="button"
-                      className="btn btn-secondary"
+                      variant="secondary"
                       onClick={() => void handleShare(entry)}
                       data-testid={`my-lesson-${entry.id}-share`}
                     >
                       {t("content.my_lessons.share", "Share with Community")}
-                    </button>
+                    </Button>
                   )}
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     onClick={() => setDeleteTarget(entry)}
                     data-testid={`my-lesson-${entry.id}-delete`}
                   >
                     <Trash2 size={14} aria-hidden="true" />
                     {t("content.my_lessons.delete", "Delete")}
-                  </button>
+                  </Button>
                 </div>
               </li>
             ))}
@@ -1251,15 +1253,15 @@ export default function ContentPage() {
                         data-testid="content-ai-consent"
                       />
                     </label>
-                    <button
+                    <Button
                       type="button"
-                      className="btn btn-secondary"
+                      variant="secondary"
                       disabled={!aiConsent}
                       onClick={() => void handleRunAiValidation()}
                       data-testid="content-ai-run"
                     >
                       {t("content.ai_validation.run", "Check with AI")}
-                    </button>
+                    </Button>
                   </>
                 )}
                 {aiRunning && (
@@ -1310,18 +1312,18 @@ export default function ContentPage() {
               )}
             </p>
             <div className="form-actions">
-              <button
+              <Button
                 type="button"
-                className="btn btn-secondary"
+                variant="outline"
                 onClick={() => setDeleteTarget(null)}
                 disabled={deleting}
                 data-testid="my-lesson-delete-cancel"
               >
                 {t("common.cancel", "Cancel")}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                className="btn btn-danger"
+                variant="destructive"
                 onClick={handleDeleteUserSet}
                 disabled={deleting}
                 data-testid="my-lesson-delete-confirm"
@@ -1329,7 +1331,7 @@ export default function ContentPage() {
                 {deleting
                   ? t("common.loading", "Loading…")
                   : t("content.my_lessons.delete", "Delete")}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
