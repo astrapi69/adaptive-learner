@@ -29,6 +29,7 @@ import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "rea
 import type {Ref} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
 import {
     instructionKey,
@@ -136,6 +137,8 @@ function MatchingExercise(
         reviewed = null,
         targetLanguage = null,
         sourceLanguage = null,
+        ttsLang = null,
+        codeMode = false,
     }: MatchingExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -329,12 +332,21 @@ function MatchingExercise(
             className="matching-exercise"
             data-testid="matching-exercise"
         >
-            <p
-                className="matching-prompt"
-                data-testid="matching-prompt"
-            >
-                {exercise.prompt}
-            </p>
+            <div className="exercise-prompt-row">
+                <p
+                    className="matching-prompt"
+                    data-testid="matching-prompt"
+                >
+                    {exercise.prompt}
+                </p>
+                {ttsLang && !codeMode && (
+                    <ReadAloudButton
+                        text={exercise.prompt ?? ""}
+                        lang={ttsLang}
+                        testId="matching-prompt"
+                    />
+                )}
+            </div>
 
             <p
                 className="exercise-direction-instruction"

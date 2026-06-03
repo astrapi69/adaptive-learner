@@ -31,6 +31,7 @@ import type {Ref} from "react";
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveClozeAttempts} from "../../lib/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -89,6 +90,7 @@ function ClozeExercise(
         controlled = false,
         onInteraction,
         reviewed = null,
+        ttsLang = null,
     }: ClozeExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -200,9 +202,18 @@ function ClozeExercise(
             data-testid="cloze-exercise"
             data-cloze-mode={mode}
         >
-            <p className="cloze-prompt" data-testid="cloze-prompt">
-                {exercise.prompt}
-            </p>
+            <div className="exercise-prompt-row">
+                <p className="cloze-prompt" data-testid="cloze-prompt">
+                    {exercise.prompt}
+                </p>
+                {ttsLang && !codeMode && (
+                    <ReadAloudButton
+                        text={exercise.prompt ?? ""}
+                        lang={ttsLang}
+                        testId="cloze-prompt"
+                    />
+                )}
+            </div>
 
             <p
                 className={`cloze-sentence${codeMode ? " cloze-sentence-code" : ""}`}

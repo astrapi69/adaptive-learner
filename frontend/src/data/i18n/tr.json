@@ -1346,6 +1346,20 @@
     }
   },
   "lesson": {
+    "tts": {
+      "read_aloud": "Sesli oku",
+      "stop": "Durdur",
+      "auto_read": "Otomatik sesli okuma",
+      "speed": "Hız",
+      "no_voice": "{language} için ses yok",
+      "reading": "Okunuyor…",
+      "read_all": "Tümünü oku",
+      "play": "Oynat",
+      "pause": "Duraklat",
+      "prev_step": "Önceki adım",
+      "next_step": "Sonraki adım",
+      "step_position": "{total} teori adımından {current}. adım"
+    },
     "contributed_by": "{name} tarafından katkıda bulunuldu",
     "page_title": "Ders",
     "set_label": "Set",

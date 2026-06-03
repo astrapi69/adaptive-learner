@@ -1346,6 +1346,20 @@
     }
   },
   "lesson": {
+    "tts": {
+      "read_aloud": "Ler em voz alta",
+      "stop": "Parar",
+      "auto_read": "Leitura automática",
+      "speed": "Velocidade",
+      "no_voice": "Nenhuma voz disponível para {language}",
+      "reading": "Lendo…",
+      "read_all": "Ler tudo",
+      "play": "Reproduzir",
+      "pause": "Pausar",
+      "prev_step": "Passo anterior",
+      "next_step": "Próximo passo",
+      "step_position": "Passo {current} de {total} passos de teoria"
+    },
     "contributed_by": "Contribuído por {name}",
     "page_title": "Lição",
     "set_label": "Conjunto",

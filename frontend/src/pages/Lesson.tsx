@@ -30,9 +30,11 @@ import {
     ChevronRight,
     Download,
     RotateCcw,
+    Square,
     Star,
+    Volume2,
 } from "lucide-react";
-import {useEffect, useMemo, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import Markdown from "react-markdown";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
@@ -49,10 +51,27 @@ import {notify} from "../utils/notify";
 import DiffHighlight from "../components/exercises/DiffHighlight";
 import {
     ExerciseDispatcher,
+    resolveCodeContext,
     SUPPORTED_EXERCISE_TYPES,
 } from "../components/exercises/ExerciseDispatcher";
 import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import Confetti from "../components/feedback/Confetti";
+import ReadAlongText from "../components/lesson/ReadAlongText";
+import LessonTtsMiniPlayer from "../components/lesson/LessonTtsMiniPlayer";
+import {
+    collectTheoryRun,
+    markdownToSpeech,
+    runStepForChar,
+    theoryBlockAround,
+    type TheoryRun,
+} from "../lib/lesson/tts-text";
+import {
+    READ_ALOUD_SPEEDS,
+    readLessonAutoRead,
+    useReadAloud,
+    writeLessonAutoRead,
+    type ReadAloudController,
+} from "../hooks/useReadAloud";
 import {useCountUp} from "../hooks/useCountUp";
 import {useFeedbackIntensity} from "../hooks/useFeedbackIntensity";
 import {useI18n} from "../hooks/useI18n";
@@ -262,6 +281,191 @@ export default function LessonPage() {
         setEnteredReviewed(stored != null);
         setReviewedRaw(stored?.raw_answer ?? null);
     }
+
+    // TTS feature C3 — auto-read mode. The lesson-level engine reads
+    // each new step aloud on display (theory body / exercise prompt);
+    // code/formula exercises are skipped. Off by default; remembered.
+    const tts = useReadAloud();
+    const [autoRead, setAutoRead] = useState(() => readLessonAutoRead());
+    const toggleAutoRead = useCallback(() => {
+        setAutoRead((on) => {
+            const next = !on;
+            writeLessonAutoRead(next);
+            if (!next) tts.stop();
+            return next;
+        });
+    }, [tts]);
+
+    // The speech payload (text + utterance id + lang) for the current
+    // step, or null when there's nothing to read (summary, code
+    // exercise, empty). Shared by auto-read + the keyboard shortcut.
+    const currentStepSpeech = useCallback((): {
+        text: string;
+        id: string;
+        lang?: string;
+    } | null => {
+        if (!lesson) return null;
+        const current = lesson.steps[currentStepIndex];
+        if (!current) return null;
+        const lang = lesson.target_language ?? undefined;
+        if (current.type === "theory") {
+            const text = markdownToSpeech(current.body ?? "");
+            // theory-{id} matches the TheoryStep so the follow-along
+            // highlight renders for auto-read + shortcut too.
+            return text.trim()
+                ? {text, id: `theory-${current.id}`, lang}
+                : null;
+        }
+        if (current.exercise) {
+            const {codeMode} = resolveCodeContext(
+                current.exercise,
+                lesson.cards,
+            );
+            if (!codeMode) {
+                const text = current.exercise.prompt ?? "";
+                return text.trim()
+                    ? {text, id: `prompt-${current.id}`, lang}
+                    : null;
+            }
+        }
+        return null;
+    }, [lesson, currentStepIndex]);
+
+    // Speak the current step when auto-read is on and the step changes.
+    // The ref guard means the effect can safely re-run on unrelated
+    // renders (the tts controller object is recreated each render)
+    // without re-speaking the same step.
+    const autoReadStepRef = useRef(-1);
+    useEffect(() => {
+        if (!autoRead || !tts.enabled || !lesson) return;
+        if (currentStepIndex >= lesson.steps.length || showResumePrompt)
+            return;
+        if (autoReadStepRef.current === currentStepIndex) return;
+        autoReadStepRef.current = currentStepIndex;
+        const payload = currentStepSpeech();
+        if (payload) {
+            tts.speak(payload.text, {lang: payload.lang, id: payload.id});
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        autoRead,
+        currentStepIndex,
+        lesson,
+        showResumePrompt,
+        tts.enabled,
+        currentStepSpeech,
+    ]);
+
+    // Reset the auto-read step guard when auto-read is turned off so
+    // re-enabling it re-reads the current step.
+    useEffect(() => {
+        if (!autoRead) autoReadStepRef.current = -1;
+    }, [autoRead]);
+
+    // Keyboard shortcut (TTS feature, item 8): "R" toggles read-aloud
+    // of the current step. Ignored while typing in an input / textarea
+    // / contenteditable, or with a modifier held.
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key !== "r" && e.key !== "R") return;
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            const el = document.activeElement as HTMLElement | null;
+            const tag = el?.tagName;
+            if (
+                tag === "INPUT" ||
+                tag === "TEXTAREA" ||
+                tag === "SELECT" ||
+                el?.isContentEditable
+            ) {
+                return;
+            }
+            if (!tts.enabled) return;
+            e.preventDefault();
+            if (tts.speaking) {
+                tts.stop();
+                return;
+            }
+            const payload = currentStepSpeech();
+            if (payload) {
+                tts.speak(payload.text, {
+                    lang: payload.lang,
+                    id: payload.id,
+                });
+            }
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [tts, currentStepSpeech]);
+
+    // TTS feature C7 — continuous theory reading. "Read all" speaks a
+    // run of consecutive theory steps as ONE utterance and auto-
+    // advances the viewer as the engine crosses each step boundary,
+    // stopping at the first exercise.
+    const CONTINUOUS_ID = "theory-run";
+    const [theoryRun, setTheoryRun] = useState<TheoryRun | null>(null);
+    const startContinuous = useCallback(() => {
+        if (!lesson) return;
+        const run = collectTheoryRun(lesson.steps, currentStepIndex);
+        if (run.indices.length < 2 || !run.text.trim()) return;
+        setTheoryRun(run);
+        const lang = lesson.target_language ?? undefined;
+        tts.speak(run.text, {lang, id: CONTINUOUS_ID});
+    }, [lesson, currentStepIndex, tts]);
+
+    // Auto-advance the viewer while the continuous run plays. When the
+    // engine stops, clear the run.
+    const isContinuous = tts.speaking && tts.activeId === CONTINUOUS_ID;
+
+    // TTS feature C8 — mini-player step skip. Read a specific theory
+    // step (navigating to it first) so the player's prev/next re-read
+    // the right step with its follow-along highlight.
+    const readTheoryStepAt = useCallback(
+        (index: number) => {
+            if (!lesson) return;
+            const s = lesson.steps[index];
+            if (!s || s.type !== "theory") return;
+            const text = markdownToSpeech(s.body ?? "");
+            goToStep(index);
+            if (text.trim()) {
+                tts.speak(text, {
+                    lang: lesson.target_language ?? undefined,
+                    id: `theory-${s.id}`,
+                });
+            }
+        },
+        [lesson, goToStep, tts],
+    );
+    // The contiguous theory block around the current step drives the
+    // mini-player's "Step X of N" + prev/next availability.
+    const theoryBlock = useMemo(
+        () =>
+            lesson ? theoryBlockAround(lesson.steps, currentStepIndex) : null,
+        [lesson, currentStepIndex],
+    );
+
+    // "Read all" is offered only on a theory step that begins a run of
+    // at least two consecutive theory steps.
+    const continuousAvailable = useMemo(() => {
+        if (!lesson) return false;
+        const cur = lesson.steps[currentStepIndex];
+        if (!cur || cur.type !== "theory") return false;
+        return (
+            collectTheoryRun(lesson.steps, currentStepIndex).indices.length >=
+            2
+        );
+    }, [lesson, currentStepIndex]);
+    useEffect(() => {
+        if (!theoryRun) return;
+        if (!isContinuous) {
+            setTheoryRun(null);
+            return;
+        }
+        const target = runStepForChar(theoryRun, tts.boundaryIndex);
+        if (target >= 0 && target !== currentStepIndex) {
+            goToStep(target);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [tts.boundaryIndex, isContinuous, theoryRun]);
 
     // Phase 46A — fetch the set's lesson list so the summary
     // screen's "Next lesson" button knows whether there's a
@@ -536,6 +740,101 @@ export default function LessonPage() {
                 </span>
             </div>
 
+            {!isSummary && tts.enabled && (
+                <div
+                    className="lesson-tts-controls"
+                    data-testid="lesson-tts-controls"
+                >
+                    <button
+                        type="button"
+                        className={`lesson-tts-autoread${
+                            autoRead ? " is-on" : ""
+                        }`}
+                        data-testid="lesson-tts-autoread"
+                        aria-pressed={autoRead}
+                        onClick={toggleAutoRead}
+                    >
+                        <Volume2 size={14} aria-hidden="true" />
+                        {t("lesson.tts.auto_read", "Auto read-aloud")}
+                    </button>
+
+                    {/* Continuous theory reading (C7) — reads the whole
+                        run of consecutive theory steps, auto-advancing
+                        the viewer; stops at the next exercise. */}
+                    {continuousAvailable && (
+                        <button
+                            type="button"
+                            className={`lesson-tts-autoread${
+                                isContinuous ? " is-on" : ""
+                            }`}
+                            data-testid="lesson-tts-readall"
+                            aria-pressed={isContinuous}
+                            onClick={() =>
+                                isContinuous ? tts.stop() : startContinuous()
+                            }
+                        >
+                            {isContinuous ? (
+                                <Square size={14} aria-hidden="true" />
+                            ) : (
+                                <Volume2 size={14} aria-hidden="true" />
+                            )}
+                            {isContinuous
+                                ? t("lesson.tts.stop", "Stop")
+                                : t("lesson.tts.read_all", "Read all")}
+                        </button>
+                    )}
+
+                    {/* Inline speed control — only while a stream is
+                        playing (C4). Changing it restarts the current
+                        read at the new rate. */}
+                    {tts.speaking && (
+                        <div
+                            className="lesson-tts-speed"
+                            data-testid="lesson-tts-speed"
+                            role="group"
+                            aria-label={t("lesson.tts.speed", "Speed")}
+                        >
+                            <span className="lesson-tts-speed-label">
+                                {t("lesson.tts.speed", "Speed")}
+                            </span>
+                            {READ_ALOUD_SPEEDS.map((s) => (
+                                <button
+                                    key={s}
+                                    type="button"
+                                    className={`lesson-tts-speed-btn${
+                                        tts.speed === s ? " is-active" : ""
+                                    }`}
+                                    data-testid={`lesson-tts-speed-${s}`}
+                                    aria-pressed={tts.speed === s}
+                                    onClick={() => tts.setSpeed(s)}
+                                >
+                                    {s}x
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* No-voice warning — the requested language has no
+                        installed voice; playback falls back to the
+                        engine default. */}
+                    {!tts.voiceAvailable && (
+                        <span
+                            className="lesson-tts-novoice"
+                            data-testid="lesson-tts-novoice"
+                            role="status"
+                        >
+                            {t(
+                                "lesson.tts.no_voice",
+                                "No voice available for {language}",
+                            ).replace(
+                                "{language}",
+                                lesson.target_language ?? "",
+                            )}
+                        </span>
+                    )}
+                </div>
+            )}
+
             {isSummary ? (
                 <LessonSummary
                     lesson={lesson}
@@ -614,6 +913,9 @@ export default function LessonPage() {
                     {step!.type === "theory" ? (
                         <TheoryStep
                             body={step!.body ?? ""}
+                            stepId={step!.id}
+                            ttsLang={lesson.target_language}
+                            tts={tts}
                             lessonRewriteFn={(s) =>
                                 rewriteAnchors(s, lesson)
                             }
@@ -762,6 +1064,31 @@ export default function LessonPage() {
                         </button>
                     ))}
             </nav>
+
+            {/* Floating read-aloud mini-player (C8) — visible while the
+                engine is active; step-based skip through the theory
+                block + play/pause + stop. */}
+            {tts.speaking && (
+                <LessonTtsMiniPlayer
+                    paused={tts.paused}
+                    position={theoryBlock?.position ?? 0}
+                    total={theoryBlock?.total ?? 0}
+                    hasPrev={
+                        theoryBlock !== null &&
+                        currentStepIndex > theoryBlock.start
+                    }
+                    hasNext={
+                        theoryBlock !== null &&
+                        currentStepIndex < theoryBlock.end
+                    }
+                    onPrev={() => readTheoryStepAt(currentStepIndex - 1)}
+                    onPlayPause={() =>
+                        tts.paused ? tts.resume() : tts.pause()
+                    }
+                    onNext={() => readTheoryStepAt(currentStepIndex + 1)}
+                    onStop={() => tts.stop()}
+                />
+            )}
         </main>
     );
 }
@@ -774,25 +1101,90 @@ export default function LessonPage() {
 
 interface TheoryStepProps {
     body: string;
+    /** Stable id of this theory step (keys the engine's active read). */
+    stepId: string;
+    /** TTS feature C2 — lesson target language for read-aloud. */
+    ttsLang?: string | null;
+    /** TTS feature C5 — the shared lesson read-aloud engine, so the
+     *  theory button drives it (manual + auto both emit boundaries)
+     *  and the follow-along highlight can track the spoken word. */
+    tts: ReadAloudController;
     lessonRewriteFn: (body: string) => string;
     onAnchorClick: (stepId: string) => void;
 }
 
 function TheoryStep({
     body,
+    stepId,
+    ttsLang = null,
+    tts,
     lessonRewriteFn,
     onAnchorClick,
 }: TheoryStepProps) {
+    const {t} = useI18n();
     const rewritten = useMemo(
         () => lessonRewriteFn(body),
         [body, lessonRewriteFn],
     );
+    // Plain-text projection of the body for read-aloud (markdown
+    // syntax + code blocks stripped).
+    const speechText = useMemo(() => markdownToSpeech(body), [body]);
+    const utteranceId = `theory-${stepId}`;
+    const isReading = tts.speaking && tts.activeId === utteranceId;
+    const canRead = tts.enabled && !!ttsLang && speechText.length > 0;
+    const readLabel = isReading
+        ? t("lesson.tts.stop", "Stop")
+        : t("lesson.tts.read_aloud", "Read aloud");
     return (
         <div
             className="lesson-theory markdown-body"
             data-testid="lesson-theory-body"
         >
-            <Markdown
+            {canRead && (
+                <div className="lesson-theory-tts">
+                    <button
+                        type="button"
+                        className={`read-aloud-button${
+                            isReading ? " is-speaking" : ""
+                        }`}
+                        data-testid="read-aloud-theory"
+                        data-speaking={isReading ? "true" : "false"}
+                        aria-label={readLabel}
+                        onClick={() =>
+                            isReading
+                                ? tts.stop()
+                                : tts.speak(speechText, {
+                                      lang: ttsLang ?? undefined,
+                                      id: utteranceId,
+                                  })
+                        }
+                    >
+                        <span
+                            className="read-aloud-button__icon"
+                            aria-hidden="true"
+                        >
+                            {isReading ? (
+                                <Square size={14} />
+                            ) : (
+                                <Volume2 size={14} />
+                            )}
+                        </span>
+                        <span className="read-aloud-button__label">
+                            {readLabel}
+                        </span>
+                    </button>
+                </div>
+            )}
+            {/* While the engine reads this step, swap the rich Markdown
+                for a plain-text follow-along that highlights the spoken
+                word; restore Markdown when idle. */}
+            {isReading ? (
+                <ReadAlongText
+                    text={speechText}
+                    activeChar={tts.boundaryIndex}
+                />
+            ) : (
+                <Markdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}
                 components={{
@@ -839,9 +1231,10 @@ function TheoryStep({
                         );
                     },
                 }}
-            >
-                {rewritten}
-            </Markdown>
+                >
+                    {rewritten}
+                </Markdown>
+            )}
         </div>
     );
 }

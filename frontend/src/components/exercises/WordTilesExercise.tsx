@@ -64,6 +64,7 @@ import type {Ref} from "react";
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveWordTilesAttempt} from "../../lib/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
 import type {ContentLessonExercise} from "../../storage/types";
@@ -283,6 +284,8 @@ function WordTilesExercise(
         controlled = false,
         onInteraction,
         reviewed = null,
+        ttsLang = null,
+        codeMode = false,
     }: WordTilesExerciseProps,
     ref: Ref<ExerciseHandle>,
 ) {
@@ -477,12 +480,21 @@ function WordTilesExercise(
             className="word-tiles-exercise"
             data-testid="word-tiles-exercise"
         >
-            <p
-                className="word-tiles-prompt"
-                data-testid="word-tiles-prompt"
-            >
-                {exercise.prompt}
-            </p>
+            <div className="exercise-prompt-row">
+                <p
+                    className="word-tiles-prompt"
+                    data-testid="word-tiles-prompt"
+                >
+                    {exercise.prompt}
+                </p>
+                {ttsLang && !codeMode && (
+                    <ReadAloudButton
+                        text={exercise.prompt ?? ""}
+                        lang={ttsLang}
+                        testId="word-tiles-prompt"
+                    />
+                )}
+            </div>
 
             <DirectionInstruction exercise={exercise} />
 
