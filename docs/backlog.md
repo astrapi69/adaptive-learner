@@ -116,6 +116,18 @@ tiebreaker.
 
 ## P3 — Lower Value or Large Effort
 
+- [ ] **BADGE-EVAL-NPLUS1-01**: Badge evaluation fires one query per
+  badge. `evaluateBadgesForUser` (`frontend/src/storage/badges.ts`) and
+  `badge_service.evaluate_user` (gamification plugin) both load the
+  catalog + earned rows (2 queries), then iterate ~28 evaluators where
+  ~14 predicate / tier-metric helpers EACH run their own query, many
+  re-scanning the SAME tables (sessions, lessonProgress, elementErrors,
+  userXp) -> ~16-30 queries per evaluation. NOT on a page-load path
+  (runs after lesson/session completion). Fix: build a shared metrics
+  snapshot once and thread it through all predicates, in BOTH modes
+  (keep the cross-language parity golden green). Cross-cutting refactor
+  of 14+ functions x2 modes -> deferred. Filed from the 2026-06-03
+  performance audit (B-1 / C-1).
 - [ ] **PERF-EAGER-GLOBS-01**: Remaining `eager: true`
   `import.meta.glob` sites bundle all-language data into their consuming
   chunk. `src/lib/praise/phrase-picker.ts:45` (praise, 72 KB dir, lands
