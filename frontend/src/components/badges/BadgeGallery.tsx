@@ -16,11 +16,16 @@
  * No route — a transient overlay, exactly like HelpDrawer.
  */
 
-import * as Dialog from "@radix-ui/react-dialog";
 import {X} from "lucide-react";
 import {useMemo, useState} from "react";
 
 import {Badge} from "@/components/ui/badge";
+import {
+    Sheet,
+    SheetClose,
+    SheetContent,
+    SheetTitle,
+} from "@/components/ui/sheet";
 import {useI18n} from "../../hooks/useI18n";
 import {
     generateBadgeSvg,
@@ -115,43 +120,23 @@ export default function BadgeGallery({
         t(`gamification.tier.${tier}`, tier);
 
     return (
-        <Dialog.Root
+        <Sheet
             open={open}
             onOpenChange={(o) => {
                 if (!o) onClose();
             }}
         >
-            <Dialog.Portal>
-                <Dialog.Overlay
-                    style={{
-                        position: "fixed",
-                        inset: 0,
-                        background: "var(--bg-overlay)",
-                        zIndex: 1200,
-                    }}
-                />
-                <Dialog.Content
-                    data-testid="badge-gallery"
-                    style={{
-                        position: "fixed",
-                        top: 0,
-                        right: 0,
-                        bottom: 0,
-                        width: "min(640px, 100vw)",
-                        background: "var(--surface)",
-                        borderLeft: "1px solid var(--border)",
-                        boxShadow: "var(--shadow-elevated)",
-                        zIndex: 1201,
-                        display: "flex",
-                        flexDirection: "column",
-                        overflow: "hidden",
-                    }}
-                >
+            <SheetContent
+                side="right"
+                showCloseButton={false}
+                data-testid="badge-gallery"
+                className="gap-0 overflow-hidden p-0"
+            >
                     <div className="badge-gallery-header">
                         <div>
-                            <Dialog.Title className="badge-gallery-title">
+                            <SheetTitle className="badge-gallery-title">
                                 {t("gamification.gallery.title", "Badges")}
-                            </Dialog.Title>
+                            </SheetTitle>
                             <p
                                 className="badge-gallery-count"
                                 data-testid="badge-gallery-count"
@@ -164,16 +149,16 @@ export default function BadgeGallery({
                                     .replace("{total}", String(all.length))}
                             </p>
                         </div>
-                        <Dialog.Close asChild>
+                        <SheetClose asChild>
                             <button
                                 type="button"
-                                className="badge-gallery-close"
+                                className="badge-gallery-close min-h-11 min-w-11"
                                 aria-label={t("ui.common.close", "Close")}
                                 data-testid="badge-gallery-close"
                             >
                                 <X size={20} />
                             </button>
-                        </Dialog.Close>
+                        </SheetClose>
                     </div>
 
                     <div className="badge-gallery-controls">
@@ -456,8 +441,7 @@ export default function BadgeGallery({
                             );
                         })}
                     </div>
-                </Dialog.Content>
-            </Dialog.Portal>
-        </Dialog.Root>
+            </SheetContent>
+        </Sheet>
     );
 }
