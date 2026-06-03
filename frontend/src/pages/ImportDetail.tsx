@@ -24,6 +24,13 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
 import {Button} from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import HelpLink from "../components/help/HelpLink";
 import SaveOfflineLessonModal from "../components/content/SaveOfflineLessonModal";
@@ -529,50 +536,62 @@ export default function ImportDetail({
             flexWrap: "wrap",
           }}
         >
-          <label className="form-row">
+          <div className="form-row">
             <span className="form-label">
               {t("import.chat_language", "Chat language (you speak)")}
             </span>
-            <select
-              value={sourceLang}
-              onChange={(e) => {
-                setSourceLang(e.target.value);
-                void persistLanguages({ source: e.target.value });
+            <Select
+              value={sourceLang || undefined}
+              onValueChange={(v) => {
+                setSourceLang(v);
+                void persistLanguages({ source: v });
               }}
-              data-testid="import-source-language"
             >
-              <option value="">
-                {t("import.select_language", "Select a language…")}
-              </option>
-              {LANGUAGE_OPTIONS.map((opt) => (
-                <option key={opt.code} value={opt.code}>
-                  {opt.name} ({opt.code})
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="form-row">
+              <SelectTrigger data-testid="import-source-language">
+                <SelectValue
+                  placeholder={t(
+                    "import.select_language",
+                    "Select a language…",
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {LANGUAGE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.code} value={opt.code}>
+                    {opt.name} ({opt.code})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="form-row">
             <span className="form-label">
               {t("import.learning_language", "Learning language")}
             </span>
-            <select
-              value={targetLang}
-              onChange={(e) => {
-                setTargetLang(e.target.value);
-                void persistLanguages({ target: e.target.value });
+            <Select
+              value={targetLang || undefined}
+              onValueChange={(v) => {
+                setTargetLang(v);
+                void persistLanguages({ target: v });
               }}
-              data-testid="import-target-language"
             >
-              <option value="">
-                {t("import.select_language", "Select a language…")}
-              </option>
-              {LANGUAGE_OPTIONS.map((opt) => (
-                <option key={opt.code} value={opt.code}>
-                  {opt.name} ({opt.code})
-                </option>
-              ))}
-            </select>
-          </label>
+              <SelectTrigger data-testid="import-target-language">
+                <SelectValue
+                  placeholder={t(
+                    "import.select_language",
+                    "Select a language…",
+                  )}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {LANGUAGE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.code} value={opt.code}>
+                    {opt.name} ({opt.code})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <div
           style={{
