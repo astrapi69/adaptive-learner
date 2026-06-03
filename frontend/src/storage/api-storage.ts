@@ -10,6 +10,7 @@
  */
 
 import { api } from "../api/client";
+import { enqueueRequest } from "../lib/pwa/sync-queue";
 import type { ApiKeyTestResult, IStorageService } from "./types";
 
 export const apiStorage: IStorageService = {
@@ -263,7 +264,25 @@ export const apiStorage: IStorageService = {
     list: (userId) => api.lessonProgress.list(userId),
     get: (userId, source, setId, filename) =>
       api.lessonProgress.get(userId, source, setId, filename),
-    upsert: (userId, body) => api.lessonProgress.upsert(userId, body),
+    upsert: async (userId, body) => {
+      try {
+        return await api.lessonProgress.upsert(userId, body);
+      } catch (err) {
+        // S3 — if the upsert failed because we're offline, queue the
+        // POST so the progress isn't lost; it replays on reconnect.
+        // Re-throw either way so the caller's existing handling is
+        // unchanged (zero behaviour regression; this only ADDS the
+        // eventual sync). Online failures (5xx/4xx) are NOT queued.
+        if (typeof navigator !== "undefined" && !navigator.onLine) {
+          enqueueRequest(
+            `/users/${encodeURIComponent(userId)}/lesson-progress`,
+            "POST",
+            body,
+          );
+        }
+        throw err;
+      }
+    },
   },
 
   // --- Element Errors (Phase 46B / EXP-007 / P-129) ---------------------

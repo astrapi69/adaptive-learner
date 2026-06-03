@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import {BrowserRouter} from "react-router-dom";
 import App from "./App";
+import {initSyncQueueReplay} from "./lib/pwa/sync-queue";
 // Tailwind first: it declares the @layer order (theme, base, components,
 // utilities) and emits only LAYERED CSS, so every unlayered rule in the
 // theme sheets + global.css below always wins. This keeps existing pages
@@ -46,6 +47,10 @@ if (import.meta.env.DEV) {
         axe(React, ReactDOM, 1000);
     });
 }
+
+// S3 (PWA hardening) — replay any lesson-progress upserts that were
+// queued while offline, on reconnect + once at startup if online.
+initSyncQueueReplay();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
