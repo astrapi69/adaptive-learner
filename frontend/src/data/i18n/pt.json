@@ -1581,6 +1581,13 @@
     }
   },
   "content": {
+    "search": {
+      "placeholder": "Procurar lições...",
+      "results": "{count} resultados",
+      "no_results": "Sem resultados para '{query}'",
+      "hint": "Tenta outro termo de pesquisa",
+      "clear": "Limpar pesquisa"
+    },
     "save_adaptive": {
       "button": "Salvar esta lição?"
     },

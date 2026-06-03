@@ -1581,6 +1581,13 @@
     }
   },
   "content": {
+    "search": {
+      "placeholder": "Buscar lecciones...",
+      "results": "{count} resultados",
+      "no_results": "Sin resultados para '{query}'",
+      "hint": "Prueba otro término de búsqueda",
+      "clear": "Borrar búsqueda"
+    },
     "save_adaptive": {
       "button": "¿Guardar esta lección?"
     },

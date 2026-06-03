@@ -1581,6 +1581,13 @@
     }
   },
   "content": {
+    "search": {
+      "placeholder": "レッスンを検索...",
+      "results": "{count} 件の結果",
+      "no_results": "'{query}' の結果がありません",
+      "hint": "別の検索語を試してください",
+      "clear": "検索をクリア"
+    },
     "save_adaptive": {
       "button": "このレッスンを保存しますか？"
     },
