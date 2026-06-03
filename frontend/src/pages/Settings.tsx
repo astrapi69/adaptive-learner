@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
+import {Input} from "@/components/ui/input";
 import AboutTab from "../components/about/AboutTab";
 import IdentitySection from "../components/about/IdentitySection";
 import BackupSection from "../components/BackupSection";
@@ -833,7 +834,7 @@ export default function Settings() {
                 <span
                   className={`api-key-input-wrap api-key-format-${formatState}`}
                 >
-                  <input
+                  <Input
                     data-testid={`api-key-input-${provider}`}
                     type="password"
                     placeholder={

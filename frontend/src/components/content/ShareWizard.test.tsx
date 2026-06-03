@@ -9,6 +9,7 @@
 
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import ShareWizard from "./ShareWizard";
@@ -411,33 +412,33 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
   it("blocks a non-CEFR 'imported' level until a real level is chosen", () => {
     // BUG C: an "imported" level is never valid for the community tree.
     renderWizard({ entry: entry({ level: "imported" }) });
-    // The level select shows the placeholder (the bad value is rejected).
-    const level = screen.getByTestId(
-      "share-wizard-edit-level",
-    ) as HTMLSelectElement;
-    // estimateLevel pre-fills a CEFR default, so the lesson is NOT
-    // blocked on level once a valid one is in place — assert the select
-    // never carries the bad "imported" value.
-    expect(level.value).not.toBe("imported");
-    expect((CEFR_LEVELS as readonly string[]).includes(level.value)).toBe(true);
+    // estimateLevel pre-fills a CEFR default, so the trigger never shows
+    // the bad "imported" value (nor the "— Select level —" clear item).
+    const level = screen.getByTestId("share-wizard-edit-level");
+    expect(level).not.toHaveTextContent("imported");
+    expect(level.textContent ?? "").toMatch(
+      new RegExp(`\\b(${(CEFR_LEVELS as readonly string[]).join("|")})\\b`),
+    );
   });
 
-  it("blocks Continue when no CEFR level is selected", () => {
-    // BUG C: clearing the level (the placeholder) blocks sharing — a
-    // lesson must declare a real CEFR band before it can be shared.
+  it("blocks Continue when no CEFR level is selected", async () => {
+    // BUG C: the user can explicitly clear the level via the "— Select
+    // level —" item; an empty level then blocks sharing — a lesson must
+    // declare a real CEFR band before it can be shared.
+    const user = userEvent.setup();
     renderWizard();
-    fireEvent.change(screen.getByTestId("share-wizard-edit-level"), {
-      target: { value: "" },
-    });
+    await user.click(screen.getByTestId("share-wizard-edit-level"));
+    await user.click(await screen.findByRole("option", { name: /Select level/i }));
     expect(screen.getByTestId("share-wizard-step1-errors")).toHaveTextContent(
       "CEFR",
     );
     expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
   });
 
-  it("lets the user correct source, target and level (old bad lesson)", () => {
+  it("lets the user correct source, target and level (old bad lesson)", async () => {
     // BUG A: an old lesson saved before the source-language fix has
     // source == target == "en" and a bad level. The user fixes it here.
+    const user = userEvent.setup();
     renderWizard({
       entry: entry({
         source_language: "en",
@@ -446,21 +447,17 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
         level: "imported",
       }),
     });
-    const source = screen.getByTestId(
-      "share-wizard-edit-source",
-    ) as HTMLSelectElement;
-    const target = screen.getByTestId(
-      "share-wizard-edit-target",
-    ) as HTMLSelectElement;
-    const level = screen.getByTestId(
-      "share-wizard-edit-level",
-    ) as HTMLSelectElement;
+    const source = screen.getByTestId("share-wizard-edit-source");
+    const target = screen.getByTestId("share-wizard-edit-target");
     // Defaults already repaired the source==target collision.
-    expect(source.value).not.toBe(target.value);
+    expect(source.textContent).not.toBe(target.textContent);
     // The user sets a clean DE -> ES B1 pair.
-    fireEvent.change(source, { target: { value: "de" } });
-    fireEvent.change(target, { target: { value: "es" } });
-    fireEvent.change(level, { target: { value: "B1" } });
+    await user.click(source);
+    await user.click(await screen.findByRole("option", { name: "German (de)" }));
+    await user.click(target);
+    await user.click(await screen.findByRole("option", { name: "Spanish (es)" }));
+    await user.click(screen.getByTestId("share-wizard-edit-level"));
+    await user.click(await screen.findByRole("option", { name: "B1" }));
     // No blocking errors -> Continue enabled, placement reflects edits.
     expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
     expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
@@ -471,14 +468,15 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
     );
   });
 
-  it("allows source == target as knowledge (non-language) domain content", () => {
+  it("allows source == target as knowledge (non-language) domain content", async () => {
     // v1.54.0 domain-aware sharing: a same-language lesson is NOT blocked;
     // it ships as non-language content (the validator + content-repo CI
     // allow source == target for domain != language). A hint explains it.
+    const user = userEvent.setup();
     renderWizard(); // default source de, target fr
-    fireEvent.change(screen.getByTestId("share-wizard-edit-target"), {
-      target: { value: "de" }, // now source == target == de
-    });
+    await user.click(screen.getByTestId("share-wizard-edit-target"));
+    // now source == target == de
+    await user.click(await screen.findByRole("option", { name: "German (de)" }));
     expect(screen.getByTestId("share-wizard-domain-hint")).toBeInTheDocument();
     expect(screen.queryByTestId("share-wizard-step1-errors")).toBeNull();
     expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
@@ -492,10 +490,10 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
     // language. (English-for-French lesson shared by a German user.)
     i18nMock.lang = "de";
     renderWizard({ entry: entry({ source_language: "en", target_language: "fr" }) });
-    const source = screen.getByTestId(
-      "share-wizard-edit-source",
-    ) as HTMLSelectElement;
-    expect(source.value).toBe("en");
+    // The trigger renders the selected option's text ("English (en)").
+    expect(screen.getByTestId("share-wizard-edit-source")).toHaveTextContent(
+      "English",
+    );
   });
 
   it("overrides an old lesson's bad 'en' source with the app language", () => {
@@ -510,14 +508,12 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
         language: "en",
       }),
     });
-    const source = screen.getByTestId(
-      "share-wizard-edit-source",
-    ) as HTMLSelectElement;
-    expect(source.value).toBe("de");
-    expect(source.value).not.toBe("en");
+    const source = screen.getByTestId("share-wizard-edit-source");
+    expect(source).toHaveTextContent("German");
+    expect(source).not.toHaveTextContent("English");
   });
 
-  it("changing the languages to a valid distinct pair enables Continue", () => {
+  it("changing the languages to a valid distinct pair enables Continue", async () => {
     // Old pre-pipeline lesson with source == target == "de": source
     // falls back to the app language (de), the target collides and
     // defaults empty -> blocked until the user picks a real target.
@@ -526,33 +522,34 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
       entry: entry({ source_language: "de", target_language: "de" }),
       lessons: [lesson("mine", ["word0", "word1", "word2"])],
     });
-    const target = screen.getByTestId(
-      "share-wizard-edit-target",
-    ) as HTMLSelectElement;
-    expect(target.value).toBe(""); // de target collides with de source -> empty
+    const user = userEvent.setup();
+    const target = screen.getByTestId("share-wizard-edit-target");
+    // de target collides with de source -> empty -> placeholder shown.
+    expect(target).toHaveTextContent(/Select a language/i);
     expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
     // Pick a real, different target -> the gate re-runs and enables.
-    fireEvent.change(target, { target: { value: "fr" } });
+    await user.click(target);
+    await user.click(await screen.findByRole("option", { name: "French (fr)" }));
     expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
   });
 
-  it("a source dropdown change updates the placement immediately", () => {
+  it("a source dropdown change updates the placement immediately", async () => {
     // Reactivity pin: the placement breadcrumb recomputes from form
     // state the moment the source dropdown changes.
+    const user = userEvent.setup();
     i18nMock.lang = "de";
     renderWizard(); // de -> fr
     expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
       "DE → FR",
     );
-    fireEvent.change(screen.getByTestId("share-wizard-edit-source"), {
-      target: { value: "es" },
-    });
+    await user.click(screen.getByTestId("share-wizard-edit-source"));
+    await user.click(await screen.findByRole("option", { name: "Spanish (es)" }));
     expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
       "ES → FR",
     );
   });
 
-  it("a same-language lesson validates as domain content (step 3 ok)", () => {
+  it("a same-language lesson validates as domain content (step 3 ok)", async () => {
     // The recomputed validator must NOT raise same_source_target for a
     // source == target lesson (it's treated as a non-language domain).
     renderWizard({
@@ -647,9 +644,9 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
       ],
     });
     // Set target = source so it's same-language domain content.
-    fireEvent.change(screen.getByTestId("share-wizard-edit-target"), {
-      target: { value: "de" },
-    });
+    const user = userEvent.setup();
+    await user.click(screen.getByTestId("share-wizard-edit-target"));
+    await user.click(await screen.findByRole("option", { name: "German (de)" }));
     expect(screen.getByTestId("share-wizard-domain-hint")).toBeInTheDocument();
     expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
     // Advance to the quality step — no same_source_target issue.

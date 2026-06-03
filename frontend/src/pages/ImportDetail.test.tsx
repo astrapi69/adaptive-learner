@@ -6,6 +6,7 @@ import "fake-indexeddb/auto";
 
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import {MemoryRouter, Route, Routes} from "react-router-dom";
 
 import ImportDetail from "./ImportDetail";
@@ -162,14 +163,15 @@ describe("ImportDetail page", () => {
         await waitFor(() => {
             expect(screen.getByTestId("import-language-pickers")).toBeTruthy();
         });
-        const source = screen.getByTestId(
-            "import-source-language",
-        ) as HTMLSelectElement;
-        const target = screen.getByTestId(
-            "import-target-language",
-        ) as HTMLSelectElement;
-        expect(source.value).not.toBe(""); // the app language
-        expect(target.value).toBe("fr"); // detected from the French content
+        // shadcn/Radix Select: the chosen value renders as the
+        // trigger's text (no native .value). Source shows a real
+        // language (not the placeholder); target shows detected French.
+        expect(
+            screen.getByTestId("import-source-language"),
+        ).not.toHaveTextContent(/Select a language/i);
+        expect(
+            screen.getByTestId("import-target-language"),
+        ).toHaveTextContent(/French/);
     });
 
     it("persists a language change onto the import record", async () => {
@@ -183,11 +185,11 @@ describe("ImportDetail page", () => {
                 { role: "assistant", content: "oui" },
             ],
         });
+        const ue = userEvent.setup();
         renderDetail(conv.id);
-        const target = (await screen.findByTestId(
-            "import-target-language",
-        )) as HTMLSelectElement;
-        fireEvent.change(target, { target: { value: "es" } });
+        const target = await screen.findByTestId("import-target-language");
+        await ue.click(target);
+        await ue.click(await screen.findByRole("option", {name: "Spanish (es)"}));
         await waitFor(async () => {
             const reread = await dexieStorage.imports.get(conv.id);
             expect(reread.target_language).toBe("es");
