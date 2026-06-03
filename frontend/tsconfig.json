@@ -17,6 +17,9 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "types": ["node", "vite/client"],
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,

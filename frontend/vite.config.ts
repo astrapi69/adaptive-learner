@@ -1,4 +1,5 @@
 /// <reference types="vitest" />
+import {fileURLToPath} from "node:url";
 import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -23,6 +24,15 @@ const base = (process.env.VITE_BASE as string) || "/";
 
 export default defineConfig({
     base,
+    resolve: {
+        alias: {
+            // shadcn/ui import alias. Vite does not read tsconfig
+            // ``paths`` on its own, so mirror the ``@/*`` -> ``src/*``
+            // mapping here. Applies to the dev server, the build, AND
+            // the embedded Vitest config below.
+            "@": fileURLToPath(new URL("./src", import.meta.url)),
+        },
+    },
     define: {
         // Single source of truth: package.json. Replaced at build
         // time (and during vitest runs) by the literal string.
