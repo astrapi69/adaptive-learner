@@ -162,6 +162,10 @@ export default function ContentPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [searchIndex, setSearchIndex] = useState<IndexedSet[]>([]);
+  // The index loads every cached lesson, so build it LAZILY — only once
+  // the learner actually engages the search (focus or first keystroke).
+  // This keeps the /content mount cheap for the (common) browse case.
+  const [searchActivated, setSearchActivated] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Debounce the query (300ms) so the index isn't re-scanned on every
@@ -193,6 +197,7 @@ export default function ContentPage() {
     .join(",");
   useEffect(() => {
     let cancelled = false;
+    if (!searchActivated) return;
     const downloaded = sets.filter(
       (entry) => entry.source !== USER_GENERATED_SOURCE,
     );
@@ -262,7 +267,7 @@ export default function ContentPage() {
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [downloadedSig]);
+  }, [downloadedSig, searchActivated]);
 
   const searchResult = useMemo(
     () => searchContentIndex(searchIndex, debouncedQuery),
@@ -1175,7 +1180,11 @@ export default function ContentPage() {
           ref={searchInputRef}
           type="search"
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onFocus={() => setSearchActivated(true)}
+          onChange={(e) => {
+            setSearchActivated(true);
+            setSearchQuery(e.target.value);
+          }}
           placeholder={t("content.search.placeholder", "Search lessons...")}
           aria-label={t("content.search.placeholder", "Search lessons...")}
           className="pl-10 pr-10"
