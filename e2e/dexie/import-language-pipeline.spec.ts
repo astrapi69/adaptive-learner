@@ -19,6 +19,8 @@
 
 import { expect, test, type Page } from "@playwright/test";
 
+import { createTestUser } from "../helpers/onboarding";
+
 // A format-valid Anthropic key (prefix + length) so Settings accepts it.
 const FAKE_KEY = "sk-ant-" + "a".repeat(95);
 
@@ -61,7 +63,9 @@ async function mockProvider(page: Page): Promise<void> {
 }
 
 async function setAnthropicKey(page: Page): Promise<void> {
-  await page.goto("/settings");
+  // The API-key inputs live in the AI tab, which is hidden unless
+  // active — deep-link straight to it (?tab=ai) so the input renders.
+  await page.goto("/settings?tab=ai");
   const input = page.getByTestId("api-key-input-anthropic");
   await expect(input).toBeVisible({ timeout: 15000 });
   await input.fill(FAKE_KEY);
@@ -73,16 +77,17 @@ async function setAnthropicKey(page: Page): Promise<void> {
 test.describe("Language pipeline: import -> analyze -> save -> share", () => {
   test.use({ viewport: { width: 375, height: 720 } });
 
-  // Authored but not yet validated in a real run (the authoring
-  // environment can't execute Playwright). Marked fixme so it doesn't
-  // block the Dexie gate; unskip once validated. The deterministic
-  // inheritance contract is already covered by the C5 unit/integration
-  // suites (analysis prompt, save-modal inheritance, ImportDetail
-  // pickers + persistence, language-pipeline.test).
-  test.fixme("German speaker learning French keeps de -> fr at every step", async ({
+  // Validated under the Dexie gate (E2E hardening). The deterministic
+  // inheritance contract is additionally covered by the C5
+  // unit/integration suites (analysis prompt, save-modal inheritance,
+  // ImportDetail pickers + persistence, language-pipeline.test).
+  test("German speaker learning French keeps de -> fr at every step", async ({
     page,
   }) => {
     await mockProvider(page);
+    // Settings + Import need a learner: without one, /settings redirects
+    // to onboarding (no api-key UI). Onboard first, then set the key.
+    await createTestUser(page);
     await setAnthropicKey(page);
 
     // 1-2. Import + paste a German chat about French, then analyze.
