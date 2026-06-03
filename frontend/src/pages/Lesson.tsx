@@ -46,6 +46,7 @@ import LessonExitDialog from "../components/lesson/LessonExitDialog";
 import LessonResumeDialog from "../components/lesson/LessonResumeDialog";
 import NextStepSuggestions from "../components/lesson/NextStepSuggestions";
 import {useNextStepSuggestions} from "../hooks/useNextStepSuggestions";
+import {collectFailedExercises} from "../lib/lesson/error-replay";
 import CorrectionBlock from "../components/exercises/CorrectionBlock";
 import {notify} from "../utils/notify";
 import DiffHighlight from "../components/exercises/DiffHighlight";
@@ -1364,6 +1365,13 @@ function LessonSummary({
         };
     }, [userId, setId, lessonFilename]);
 
+    // The exact exercises failed in THIS run — drives the
+    // "Retry Errors" card + the ErrorReplay page (via router state).
+    const failedExercises = useMemo(
+        () => collectFailedExercises(lesson, progress),
+        [lesson, progress],
+    );
+
     const suggestions = useNextStepSuggestions({
         source,
         setId,
@@ -1371,6 +1379,7 @@ function LessonSummary({
         userId,
         stars,
         sessionErrors,
+        failedExerciseCount: failedExercises.length,
     });
 
     // Count the score percentage up from 0 (instant under
@@ -1652,6 +1661,16 @@ function LessonSummary({
                 suggestions={suggestions}
                 setId={setId}
                 setSlug={setSlug}
+                lessonFilename={lessonFilename}
+                errorReplay={
+                    failedExercises.length > 0
+                        ? {
+                              exercises: failedExercises,
+                              cards: lesson.cards,
+                              lessonTitle: lesson.title,
+                          }
+                        : undefined
+                }
             />
 
             <div className="lesson-summary-secondary-actions">

@@ -1378,7 +1378,8 @@
       "next": "Weiter",
       "finish": "Lektion abschließen",
       "back_to_browser": "Zurück zur Inhaltsübersicht",
-      "open_browser": "Inhalts-Browser öffnen"
+      "open_browser": "Inhalts-Browser öffnen",
+      "back_to_lesson": "Zurück zur Lektion"
     },
     "button": {
       "check": "Prüfen",
@@ -1475,6 +1476,14 @@
         "productive_hint": "Antwort produzieren"
       }
     },
+    "error_replay": {
+      "title": "Fehler wiederholen: {lesson}",
+      "heading": "Wiederholung abgeschlossen",
+      "score": "{correct}/{total} jetzt richtig!",
+      "done": "Zurück zur Lektion",
+      "empty": "Nichts zu wiederholen — öffne dies nach einer Lektion mit Fehlern aus der Zusammenfassung.",
+      "summary_aria": "Zusammenfassung der Fehlerwiederholung"
+    },
     "next_step": {
       "title": "Was möchtest du als nächstes?",
       "next_lesson": "Nächste Lektion",
@@ -1484,6 +1493,10 @@
       "adaptive": "Adaptive Lektion",
       "adaptive_focus": "Fokus auf: {topic}",
       "adaptive_errors": "{count} Fehler in dieser Lektion",
+      "error_replay": "Fehler wiederholen",
+      "error_replay_detail": "{count} Aufgaben nochmal",
+      "errors_corrected": "Alle Fehler korrigiert!",
+      "still_errors": "Noch {count} Fehler. Nochmal?",
       "review": "Wiederholung",
       "review_due": "{count} Elemente fällig",
       "set_complete": "Set abgeschlossen!",

@@ -1378,7 +1378,8 @@
       "next": "次へ",
       "finish": "レッスンを終了",
       "back_to_browser": "コンテンツブラウザに戻る",
-      "open_browser": "コンテンツブラウザを開く"
+      "open_browser": "コンテンツブラウザを開く",
+      "back_to_lesson": "レッスンに戻る"
     },
     "button": {
       "check": "確認",
@@ -1475,6 +1476,14 @@
         "productive_hint": "答えを産出する"
       }
     },
+    "error_replay": {
+      "title": "間違いをやり直す：{lesson}",
+      "heading": "やり直し完了",
+      "score": "{correct}/{total}が正解になりました！",
+      "done": "レッスンに戻る",
+      "empty": "やり直す項目がありません。間違えた後、レッスンの概要から開いてください。",
+      "summary_aria": "間違いやり直しの概要"
+    },
     "next_step": {
       "title": "次は何をしますか？",
       "next_lesson": "次のレッスン",
@@ -1484,6 +1493,10 @@
       "adaptive": "アダプティブレッスン",
       "adaptive_focus": "重点: {topic}",
       "adaptive_errors": "このレッスンで {count} 件の誤り",
+      "error_replay": "間違いをやり直す",
+      "error_replay_detail": "{count}問をもう一度",
+      "errors_corrected": "すべての間違いを修正しました！",
+      "still_errors": "まだ{count}個の間違い。もう一度？",
       "review": "復習",
       "review_due": "{count} 項目が期限です",
       "set_complete": "セット完了！",
