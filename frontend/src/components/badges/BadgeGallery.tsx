@@ -20,6 +20,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import {X} from "lucide-react";
 import {useMemo, useState} from "react";
 
+import {Badge} from "@/components/ui/badge";
 import {useI18n} from "../../hooks/useI18n";
 import {
     generateBadgeSvg,
@@ -274,17 +275,38 @@ export default function BadgeGallery({
                                         <span className="badge-card-name">
                                             {t(badge.name_key, badge.key)}
                                         </span>
-                                        <span
-                                            className="badge-card-tier"
+                                        <Badge
+                                            variant={
+                                                badge.earned
+                                                    ? "secondary"
+                                                    : "outline"
+                                            }
+                                            className="gap-1.5 text-[0.6875rem] uppercase tracking-[0.04em]"
                                             data-testid={`badge-card-tier-${badge.key}`}
                                         >
+                                            {/* Tier identity dot (same palette
+                                                as the badge glyph) — reads in
+                                                every theme since the pill text
+                                                stays theme-aware. */}
+                                            <span
+                                                className="size-1.5 rounded-full"
+                                                style={{
+                                                    background:
+                                                        TIER_PALETTE[
+                                                            (badge.earned
+                                                                ? badge.tier
+                                                                : "locked") as BadgeTier
+                                                        ].primary,
+                                                }}
+                                                aria-hidden="true"
+                                            />
                                             {badge.earned
                                                 ? tierLabel(badge.tier)
                                                 : t(
                                                       "gamification.tier.locked",
                                                       "Locked",
                                                   )}
-                                        </span>
+                                        </Badge>
                                         {/* Tier-progress pips for dynamic badges. */}
                                         {dynamic && (
                                             <span
