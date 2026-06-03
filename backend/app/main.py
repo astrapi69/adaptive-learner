@@ -38,6 +38,13 @@ from app.database import init_db
 from app.exceptions import AdaptiveLearnerError, NotFoundError
 from app.hookspecs import AdaptiveLearnerHookSpec
 from app.logging_config import setup_logging
+from app.middleware.rate_limit import (
+    RateLimiter,
+    RateLimitMiddleware,
+    load_rate_limit_config,
+    rate_limiting_enabled,
+    resolve_exempt_ips,
+)
 from app.routers.backup import router as backup_router
 from app.routers.content import router as content_router
 from app.routers.curriculum import (
@@ -514,6 +521,16 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
+
+# Per-IP, per-tier API rate limiting (protects AI-credit-burning
+# endpoints from abusive / runaway clients). Switches live on
+# ``app.state`` so they can be inspected / overridden; tiers come from
+# config/rate_limits.yaml + RATE_LIMIT_* env overrides. Localhost is
+# exempt and test mode is off unless RATE_LIMIT_ENABLED=1 forces it on.
+app.state.rate_limiter = RateLimiter(load_rate_limit_config())
+app.state.rate_limit_enabled = rate_limiting_enabled()
+app.state.rate_limit_exempt = resolve_exempt_ips()
+app.add_middleware(RateLimitMiddleware)
 
 # Security headers (defense-in-depth; Phase 61 audit P3 "no CSP header
 # anywhere"). The backend is API-only -- it serves JSON, never an SPA --

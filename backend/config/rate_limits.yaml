@@ -1,0 +1,24 @@
+# API rate-limit tiers (per client IP). Read at startup by
+# app.middleware.rate_limit.load_rate_limit_config. Every value is
+# overridable via an environment variable of the shape
+# RATE_LIMIT_<TIER>_PER_MINUTE / RATE_LIMIT_<TIER>_BURST, e.g.
+# RATE_LIMIT_AI_PER_MINUTE=60.
+#
+# Tiers map to endpoint groups (see classify_tier):
+#   ai       — POST /api/ai/*, /api/plugins/session/{id}/message[/stream],
+#              /api/imports/{id}/analyze (AI-credit-burning calls)
+#   content  — GET /api/plugins/content-loader/* (cheap browsing)
+#   settings — /api/settings/*, /api/backup/* (rarely called in a loop)
+#
+# Health / version / docs / i18n are intentionally unlisted -> never
+# limited (monitoring + first paint need them). Localhost and any
+# RATE_LIMIT_EXEMPT_IPS are exempt; test mode is exempt unless
+# RATE_LIMIT_ENABLED=1 forces it on.
+rate_limits:
+  ai:
+    per_minute: 30
+    burst: 5
+  content:
+    per_minute: 60
+  settings:
+    per_minute: 20
