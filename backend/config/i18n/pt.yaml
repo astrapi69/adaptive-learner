@@ -1579,6 +1579,7 @@ content:
     err_level: Escolha um nível CEFR (A1-C2).
     err_empty: Esta lição não tem exercícios. Por favor, recrie a lição.
     regenerate: Regenerar
+    same_language_domain_hint: Mesmo idioma de origem e destino - partilhado como conteúdo de conhecimento (não linguístico).
     step_label: Passo {n} de {total}
     lands_under: A sua lição será colocada em
     new_set: Novo conjunto! É o primeiro a contribuir aqui.

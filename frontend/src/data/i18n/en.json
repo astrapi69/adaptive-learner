@@ -1725,6 +1725,7 @@
       "err_level": "Choose a CEFR level (A1-C2).",
       "err_empty": "This lesson has no exercises. Please recreate the lesson.",
       "regenerate": "Regenerate",
+      "same_language_domain_hint": "Same source and target language - this will be shared as knowledge (non-language) content.",
       "step_label": "Step {n} of {total}",
       "lands_under": "Your lesson lands under",
       "new_set": "New set! You're the first to contribute here.",

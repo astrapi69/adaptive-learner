@@ -1725,6 +1725,7 @@
       "err_level": "Bitte ein CEFR-Niveau wählen (A1-C2).",
       "err_empty": "Diese Lektion hat keine Übungen. Bitte erstelle die Lektion neu.",
       "regenerate": "Neu generieren",
+      "same_language_domain_hint": "Gleiche Ausgangs- und Zielsprache - wird als Wissensinhalt (nicht sprachlich) geteilt.",
       "step_label": "Schritt {n} von {total}",
       "lands_under": "Deine Lektion wird eingeordnet unter",
       "new_set": "Neues Set! Du bist der Erste, der hier beiträgt.",

@@ -126,6 +126,16 @@ function isCefr(level: string | null | undefined): boolean {
   return CEFR_SET.has((level || "").trim().toUpperCase());
 }
 
+/** Content domains the share validator recognises as NON-language —
+ *  source == target is allowed for these (mirrors the content repo's
+ *  validate_content.py domain relaxation). */
+const KNOWN_CONTENT_DOMAINS: ReadonlySet<string> = new Set([
+  "knowledge",
+  "programming",
+  "psychology",
+  "math",
+]);
+
 function defaultOpen(url: string): boolean {
   // window.open returns null when the popup is blocked; the caller
   // uses that to show a manual fallback link.
@@ -225,6 +235,22 @@ export default function ShareWizard({
   );
   const minutes = lessons.reduce((n, l) => n + (l.estimated_minutes || 0), 0);
 
+  // v1.54.0 — domain-aware sharing. A LANGUAGE set needs source !=
+  // target; when they're equal the material is non-language (grammar, a
+  // subject, …) and ships as a NON-language domain, which the validator
+  // + content-repo CI allow with source == target. Honour an explicit
+  // content domain on the set; otherwise infer from the language pair.
+  const sameLanguage =
+    isIsoLang(editSource) &&
+    isIsoLang(editTarget) &&
+    baseLang(editSource) === baseLang(editTarget);
+  const resolvedDomain =
+    entry.domain && KNOWN_CONTENT_DOMAINS.has(entry.domain.toLowerCase())
+      ? entry.domain.toLowerCase()
+      : sameLanguage
+        ? "knowledge"
+        : "language";
+
   // The corrected metadata that drives placement, validation, and the
   // pull request — NOT the (possibly broken) saved entry values.
   const editedMeta: ValidationMeta = {
@@ -233,6 +259,7 @@ export default function ShareWizard({
     source_language: editSource,
     target_language: editTarget,
     level: editLevel,
+    domain: resolvedDomain,
   };
 
   const placement = computePlacement({
@@ -273,17 +300,8 @@ export default function ShareWizard({
     step1Errors.push(
       t("content.wizard.err_target", "Choose the target language."),
     );
-  if (
-    isIsoLang(editSource) &&
-    isIsoLang(editTarget) &&
-    baseLang(editSource) === baseLang(editTarget)
-  )
-    step1Errors.push(
-      t(
-        "content.wizard.err_same_language",
-        "Source and target language must differ.",
-      ),
-    );
+  // No same-language block: source == target is allowed and ships as
+  // non-language (knowledge) domain content (see resolvedDomain).
   if (!isCefr(editLevel))
     step1Errors.push(
       t("content.wizard.err_level", "Choose a CEFR level (A1-C2)."),
@@ -352,6 +370,7 @@ export default function ShareWizard({
       ...l,
       source_language: editSource,
       target_language: editTarget,
+      domain: resolvedDomain,
       ...(author ? { contributed_by: author, contributed_at: stampedAt } : {}),
     }));
     return shipped;
@@ -608,6 +627,17 @@ export default function ShareWizard({
                 {" · "}
                 <span>~{minutes} min</span>
               </p>
+              {sameLanguage && (
+                <p
+                  className="share-wizard-domain-hint"
+                  data-testid="share-wizard-domain-hint"
+                >
+                  {t(
+                    "content.wizard.same_language_domain_hint",
+                    "Same source and target language - this will be shared as knowledge (non-language) content.",
+                  )}
+                </p>
+              )}
             </div>
 
             {step1Blocked && (

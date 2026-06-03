@@ -471,15 +471,17 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
     );
   });
 
-  it("blocks Continue when source and target are the same language", () => {
-    renderWizard();
+  it("allows source == target as knowledge (non-language) domain content", () => {
+    // v1.54.0 domain-aware sharing: a same-language lesson is NOT blocked;
+    // it ships as non-language content (the validator + content-repo CI
+    // allow source == target for domain != language). A hint explains it.
+    renderWizard(); // default source de, target fr
     fireEvent.change(screen.getByTestId("share-wizard-edit-target"), {
-      target: { value: "de" }, // source defaults to "de"
+      target: { value: "de" }, // now source == target == de
     });
-    expect(screen.getByTestId("share-wizard-step1-errors")).toHaveTextContent(
-      "must differ",
-    );
-    expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
+    expect(screen.getByTestId("share-wizard-domain-hint")).toBeInTheDocument();
+    expect(screen.queryByTestId("share-wizard-step1-errors")).toBeNull();
+    expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
   });
 
   // --- BUG (recurring): source ALWAYS defaults to the app language ---
@@ -534,21 +536,125 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
     expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
   });
 
-  it("validation re-runs immediately on a source dropdown change", () => {
-    // Default de -> fr is valid -> enabled. Changing the SOURCE to
-    // collide must disable on the spot, and changing it away re-enables.
+  it("a source dropdown change updates the placement immediately", () => {
+    // Reactivity pin: the placement breadcrumb recomputes from form
+    // state the moment the source dropdown changes.
     i18nMock.lang = "de";
-    renderWizard();
-    const source = screen.getByTestId(
-      "share-wizard-edit-source",
-    ) as HTMLSelectElement;
-    expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
-    fireEvent.change(source, { target: { value: "fr" } }); // == target
-    expect(screen.getByTestId("share-wizard-step1-errors")).toHaveTextContent(
-      "must differ",
+    renderWizard(); // de -> fr
+    expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
+      "DE → FR",
     );
-    expect(screen.getByTestId("share-wizard-next")).toBeDisabled();
-    fireEvent.change(source, { target: { value: "es" } }); // != target
+    fireEvent.change(screen.getByTestId("share-wizard-edit-source"), {
+      target: { value: "es" },
+    });
+    expect(screen.getByTestId("share-wizard-placement")).toHaveTextContent(
+      "ES → FR",
+    );
+  });
+
+  it("a same-language lesson validates as domain content (step 3 ok)", () => {
+    // The recomputed validator must NOT raise same_source_target for a
+    // source == target lesson (it's treated as a non-language domain).
+    renderWizard({
+      entry: entry({
+        source_language: "de",
+        target_language: "de",
+        title_native: "Grammatik",
+      }),
+      lessons: [
+        // A fully shareable same-language lesson (>=5 exercises, 2 types).
+        {
+          id: "g",
+          title: "Grammatik",
+          estimated_minutes: 10,
+          cards: [
+            { id: "c1", front: "der Tisch", back: "der Tisch", tags: [] },
+            { id: "c2", front: "die Lampe", back: "die Lampe", tags: [] },
+            { id: "c3", front: "das Buch", back: "das Buch", tags: [] },
+          ],
+          steps: [
+            { id: "t", type: "theory", body: "Artikel" },
+            {
+              id: "e1",
+              type: "exercise",
+              exercise: {
+                id: "e1",
+                type: "free_text" as never,
+                prompt: "p",
+                card_ids: ["c1"],
+                accept: ["der Tisch", "Tisch"],
+                distractors: ["x"],
+              },
+            },
+            {
+              id: "e2",
+              type: "exercise",
+              exercise: {
+                id: "e2",
+                type: "matching" as never,
+                prompt: "m",
+                card_ids: ["c1", "c2", "c3"],
+                pairs: [
+                  { left: "der Tisch", right: "der Tisch" },
+                  { left: "die Lampe", right: "die Lampe" },
+                  { left: "das Buch", right: "das Buch" },
+                ],
+                distractors: [],
+              },
+            },
+            {
+              id: "e3",
+              type: "exercise",
+              exercise: {
+                id: "e3",
+                type: "free_text" as never,
+                prompt: "p",
+                card_ids: ["c2"],
+                accept: ["die Lampe", "Lampe"],
+                distractors: ["y"],
+              },
+            },
+            {
+              id: "e4",
+              type: "exercise",
+              exercise: {
+                id: "e4",
+                type: "matching" as never,
+                prompt: "m",
+                card_ids: ["c1", "c2", "c3"],
+                pairs: [
+                  { left: "der Tisch", right: "der Tisch" },
+                  { left: "die Lampe", right: "die Lampe" },
+                  { left: "das Buch", right: "das Buch" },
+                ],
+                distractors: [],
+              },
+            },
+            {
+              id: "e5",
+              type: "exercise",
+              exercise: {
+                id: "e5",
+                type: "free_text" as never,
+                prompt: "p",
+                card_ids: ["c3"],
+                accept: ["das Buch", "Buch"],
+                distractors: ["z"],
+              },
+            },
+          ],
+        },
+      ],
+    });
+    // Set target = source so it's same-language domain content.
+    fireEvent.change(screen.getByTestId("share-wizard-edit-target"), {
+      target: { value: "de" },
+    });
+    expect(screen.getByTestId("share-wizard-domain-hint")).toBeInTheDocument();
     expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
+    // Advance to the quality step — no same_source_target issue.
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    fireEvent.click(screen.getByTestId("share-wizard-next"));
+    expect(screen.getByTestId("share-wizard-quality-ok")).toBeInTheDocument();
   });
 });

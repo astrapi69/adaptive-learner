@@ -918,4 +918,3 @@ describe("BUG P1: exactly one two-phase button, no internal submit", () => {
         expect(screen.queryByTestId("free-text-submit")).toBeNull();
     });
 });
-

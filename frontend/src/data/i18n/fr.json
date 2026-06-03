@@ -1725,6 +1725,7 @@
       "err_level": "Choisissez un niveau CECR (A1-C2).",
       "err_empty": "Cette leçon n'a aucun exercice. Veuillez recréer la leçon.",
       "regenerate": "Régénérer",
+      "same_language_domain_hint": "Langue source et cible identiques - partagé comme contenu de connaissances (non linguistique).",
       "step_label": "Étape {n} sur {total}",
       "lands_under": "Votre leçon sera classée sous",
       "new_set": "Nouvel ensemble ! Vous êtes le premier à contribuer ici.",
