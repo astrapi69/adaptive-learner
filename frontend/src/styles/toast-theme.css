@@ -1,0 +1,26 @@
+/*
+ * D5 — react-toastify theme alignment (Tailwind Phase D).
+ *
+ * We keep react-toastify (decided in Phase C) but align its colours
+ * with our design tokens. The ToastContainer runs theme="colored",
+ * so the toast background IS the status colour; mapping those vars to
+ * --success / --error / --warning / --info means toasts recolour with
+ * the active theme (all 6) instead of react-toastify's fixed palette.
+ *
+ * Imported AFTER "react-toastify/dist/ReactToastify.css" in App.tsx so
+ * this wins the cascade regardless of bundle order.
+ */
+
+:root {
+    --toastify-color-success: var(--success);
+    --toastify-color-error: var(--error);
+    --toastify-color-warning: var(--warning);
+    --toastify-color-info: var(--info);
+
+    /* Icons + progress bar inherit the status colour on the colored
+       theme; pin them explicitly so they track our tokens too. */
+    --toastify-icon-color-success: var(--success);
+    --toastify-icon-color-error: var(--error);
+    --toastify-icon-color-warning: var(--warning);
+    --toastify-icon-color-info: var(--info);
+}
