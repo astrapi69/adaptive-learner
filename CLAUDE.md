@@ -9,8 +9,26 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.55.0** (minor — **Tailwind CSS v4 +
-  shadcn/ui foundation (Phase A) + Error Replay**). Adopts **Tailwind
+- **Current state:** **v1.56.0** (minor — **performance + PWA
+  hardening**). **Perf:** ~460 KB gzip saved via lazy per-language i18n
+  catalogs (main chunk 446→233 KB gzip, off every page) + a curated
+  highlight.js (296→21 KB gzip on code lessons); bundle audit at
+  ``docs/audits/performance-audit-2026-06-03.md``; Dexie + backend query
+  layers audited healthy (no page-load N+1; ``BADGE-EVAL-NPLUS1-01`` P3
+  filed). **PWA:** offline indicator + network-aware buttons, a
+  localStorage background-sync queue for offline lesson-progress upserts,
+  cache-management UI in Settings→Data, a 7-day/standalone-aware install
+  prompt, and a service-worker StaleWhileRevalidate route for API-mode
+  lesson caching. Also carries the **Tailwind/shadcn migration (Phases
+  B + C** — buttons/Card/Badge, Lesson + Share dialogs, form inputs to
+  shadcn Input/Select; 44px touch targets) and **backend API rate
+  limiting (3-tier token-bucket) + OpenAPI docs** that landed since
+  v1.55.0. **Fix:** restored the per-theory read-aloud control in Dexie
+  mode (``getLessonDexie`` now injects the set's language pair/domain;
+  closes ``TTS-E2E-HEADLESS-GUARD-01``). Content library at 215+ lessons
+  (80 psychology, ~46h).
+  v1.55.0 = minor — **Tailwind CSS v4 +
+  shadcn/ui foundation (Phase A) + Error Replay**. Adopts **Tailwind
   CSS v4.3.0 + shadcn/ui** as the styling framework, installed
   ADDITIVELY (Phase A — the migration is incremental: components
   convert when touched, no Big Bang). Tailwind is configured CSS-first
