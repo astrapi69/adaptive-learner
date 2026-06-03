@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-notebooklm"
-version = "1.56.0"
+version = "1.57.0"
 description = "Adaptive Learner: NotebookLM-optimized study materials + active-recall questions (Phase 32)."
 authors = ["Asterios Raptis"]
 license = "MIT"

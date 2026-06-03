@@ -9,8 +9,31 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.56.0** (minor — **performance + PWA
-  hardening**). **Perf:** ~460 KB gzip saved via lazy per-language i18n
+- **Current state:** **v1.57.0** (minor — **community PR automation +
+  Content Browser search**). **GitHub PR automation:** sharing a lesson
+  now creates a real pull request programmatically (fork → commit →
+  PR) instead of a pre-filled URL — backend ``github_service`` +
+  ``/api/github/*`` proxy (token server-side) in API mode,
+  browser-direct ``lib/github/github-api.ts`` in Dexie mode, via the
+  new ``IStorageService.github`` namespace; graceful fallback to the
+  URL flow on no-token / multi-lesson / failure. **GitHub PAT** stored
+  Fernet-encrypted in ``secrets.yaml`` (``github.token_encrypted``),
+  managed in **Settings → Integrations** (format-validated, Test shows
+  the username, source line, Remove). **Content Browser search:** a
+  full-width, debounced (300ms), case/diacritic-insensitive +
+  German-digraph-aware instant filter over the cached library (set
+  titles/descriptions/domain + lesson titles + card fronts/backs +
+  tags) in ``lib/content/content-search.ts``; results replace the tree
+  with highlighting + count + empty state, Cmd/Ctrl+K focus, index
+  built lazily on first interaction (no backend, no new dep). Carries
+  the **Tailwind Phase D** work merged since v1.56.0 (shadcn Progress
+  XP bar + a11y fix, badge-tier dots, toast token alignment, Lucide
+  nav + 44px targets, Help Drawer → shadcn Sheet, E2E Radix-Select
+  migration). Content library at **225+ lessons / 10 sets / 4 domains
+  (90 psychology** — full university course incl. the Intelligenz
+  block 86-90).
+  v1.56.0 = minor — **performance + PWA
+  hardening**. **Perf:** ~460 KB gzip saved via lazy per-language i18n
   catalogs (main chunk 446→233 KB gzip, off every page) + a curated
   highlight.js (296→21 KB gzip on code lessons); bundle audit at
   ``docs/audits/performance-audit-2026-06-03.md``; Dexie + backend query
