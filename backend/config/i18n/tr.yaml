@@ -1429,6 +1429,12 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  search:
+    placeholder: "Ders ara..."
+    results: "{count} sonuç"
+    no_results: "'{query}' için sonuç yok"
+    hint: "Farklı bir arama terimi dene"
+    clear: "Aramayı temizle"
   save_adaptive:
     button: "Bu dersi kaydet?"
   create_lesson:

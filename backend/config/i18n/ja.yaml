@@ -1429,6 +1429,12 @@ lesson:
     action_restart: "最初からやり直す"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  search:
+    placeholder: "レッスンを検索..."
+    results: "{count} 件の結果"
+    no_results: "'{query}' の結果がありません"
+    hint: "別の検索語を試してください"
+    clear: "検索をクリア"
   save_adaptive:
     button: "このレッスンを保存しますか？"
   create_lesson:

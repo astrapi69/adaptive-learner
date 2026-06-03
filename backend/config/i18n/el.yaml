@@ -1431,6 +1431,12 @@ lesson:
     action_restart: "Επανεκκίνηση"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  search:
+    placeholder: "Αναζήτηση μαθημάτων..."
+    results: "{count} αποτελέσματα"
+    no_results: "Κανένα αποτέλεσμα για '{query}'"
+    hint: "Δοκίμασε διαφορετικό όρο αναζήτησης"
+    clear: "Καθαρισμός αναζήτησης"
   save_adaptive:
     button: "Αποθήκευση αυτού του μαθήματος;"
   create_lesson:

@@ -1440,6 +1440,12 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  search:
+    placeholder: "Search lessons..."
+    results: "{count} results"
+    no_results: "No results for '{query}'"
+    hint: "Try a different search term"
+    clear: "Clear search"
   save_adaptive:
     button: "Save this lesson?"
   create_lesson:

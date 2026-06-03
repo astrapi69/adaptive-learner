@@ -32,13 +32,24 @@ import {
   Pencil,
   Play,
   RefreshCw,
+  Search,
   Trash2,
+  X,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import ImportLessonModal from "../components/content/ImportLessonModal";
+import {
+  buildLessonHaystack,
+  buildSetHaystack,
+  searchContentIndex,
+  splitHighlight,
+  type IndexedLesson,
+  type IndexedSet,
+} from "../lib/content/content-search";
 import { useI18n } from "../hooks/useI18n";
 import { useOnlineStatus } from "../hooks/useOnlineStatus";
 import { useSourceLanguages } from "../hooks/useSourceLanguages";
@@ -147,6 +158,129 @@ export default function ContentPage() {
   const [appliedFixes, setAppliedFixes] = useState<Set<string>>(new Set());
   const { hasKey, activeProvider } = useApiKeyStatus();
 
+  // --- Content Browser search -----------------------------------------
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [searchIndex, setSearchIndex] = useState<IndexedSet[]>([]);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Debounce the query (300ms) so the index isn't re-scanned on every
+  // keystroke.
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQuery(searchQuery), 300);
+    return () => clearTimeout(id);
+  }, [searchQuery]);
+
+  // Cmd/Ctrl+K focuses the search input from anywhere on the page.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  // Build the search index once the downloaded sets are known. Loads
+  // every CACHED lesson (title + cards) so card-content search works;
+  // not-yet-downloaded sets are indexed at set level only. Keyed on a
+  // signature of the downloaded sets so it rebuilds after a download.
+  const downloadedSig = sets
+    .filter((entry) => entry.source !== USER_GENERATED_SOURCE)
+    .map((entry) => `${entry.source}#${entry.id}@${entry.cached_version ?? ""}`)
+    .join(",");
+  useEffect(() => {
+    let cancelled = false;
+    const downloaded = sets.filter(
+      (entry) => entry.source !== USER_GENERATED_SOURCE,
+    );
+    if (downloaded.length === 0) {
+      setSearchIndex([]);
+      return;
+    }
+    void (async () => {
+      const built: IndexedSet[] = [];
+      for (const entry of downloaded) {
+        const domainLbl = t(
+          `content.tree.domain_${entry.domain ?? "language"}`,
+          entry.domain ?? "",
+        );
+        const indexed: IndexedSet = {
+          setId: entry.id,
+          source: entry.source,
+          setHaystack: buildSetHaystack(
+            entry.title,
+            entry.description,
+            domainLbl,
+            entry.tags ?? [],
+          ),
+          lessons: [],
+        };
+        // Only cached sets have readable lessons; skip the rest so we
+        // don't fire doomed listLessons calls.
+        if (entry.cached_version) {
+          try {
+            const listing = await getStorage().contentLoader.listLessons(
+              entry.source,
+              entry.id,
+            );
+            const lessons = await Promise.all(
+              listing.lessons.map(async (filename) => {
+                try {
+                  const lesson = await getStorage().contentLoader.getLesson(
+                    entry.source,
+                    entry.id,
+                    filename,
+                  );
+                  return {
+                    filename,
+                    title: lesson.title,
+                    haystack: buildLessonHaystack(
+                      lesson.title,
+                      lesson.cards ?? [],
+                    ),
+                  } satisfies IndexedLesson;
+                } catch {
+                  return null;
+                }
+              }),
+            );
+            indexed.lessons = lessons.filter(
+              (lesson): lesson is IndexedLesson => lesson !== null,
+            );
+          } catch {
+            /* set not cached / unreadable -> set-level index only */
+          }
+        }
+        built.push(indexed);
+      }
+      if (!cancelled) setSearchIndex(built);
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [downloadedSig]);
+
+  const searchResult = useMemo(
+    () => searchContentIndex(searchIndex, debouncedQuery),
+    [searchIndex, debouncedQuery],
+  );
+
+  /** Highlight raw query occurrences inside a label. */
+  const highlightNodes = (text: string, query: string) =>
+    splitHighlight(text, query).map((seg, i) =>
+      seg.match ? (
+        <mark key={i} className="bg-transparent font-semibold text-accent">
+          {seg.text}
+        </mark>
+      ) : (
+        <span key={i}>{seg.text}</span>
+      ),
+    );
+
   const loadSets = useCallback(async () => {
     try {
       const data = await getStorage().contentLoader.listSets();
@@ -174,6 +308,14 @@ export default function ContentPage() {
 
   const setKey = (entry: ContentSetEntry): string =>
     `${entry.source}#${entry.id}`;
+
+  /** Navigate to a specific lesson file (used by search results). */
+  const openLessonFile = (source: string, id: string, filename: string) => {
+    const slug = source.replace(/\//g, "--");
+    navigate(
+      `/lesson/${encodeURIComponent(slug)}/${encodeURIComponent(id)}/${encodeURIComponent(filename)}`,
+    );
+  };
 
   const handleOpenLesson = async (entry: ContentSetEntry) => {
     // Phase 44 / EXP-002 / 3B: jump to the set's first
@@ -1018,6 +1160,123 @@ export default function ContentPage() {
         </section>
       )}
 
+      {/* Content Browser search — instant client-side filter over the
+          cached library (sets + lessons + cards). */}
+      <div
+        className="relative mb-4 flex items-center"
+        data-testid="content-search-bar"
+      >
+        <Search
+          size={18}
+          className="pointer-events-none absolute left-3 text-muted-foreground"
+          aria-hidden="true"
+        />
+        <Input
+          ref={searchInputRef}
+          type="search"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={t("content.search.placeholder", "Search lessons...")}
+          aria-label={t("content.search.placeholder", "Search lessons...")}
+          className="pl-10 pr-10"
+          data-testid="content-search-input"
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            className="absolute right-2 flex h-8 w-8 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+            onClick={() => setSearchQuery("")}
+            aria-label={t("content.search.clear", "Clear search")}
+            data-testid="content-search-clear"
+          >
+            <X size={16} aria-hidden="true" />
+          </button>
+        )}
+      </div>
+
+      {searchResult.active ? (
+        <section
+          className="content-search-results space-y-4"
+          data-testid="content-search-results"
+        >
+          {searchResult.matches.length === 0 ? (
+            <div
+              className="content-empty"
+              data-testid="content-search-empty"
+            >
+              <p>
+                {t(
+                  "content.search.no_results",
+                  "No results for '{query}'",
+                ).replace("{query}", searchResult.query.trim())}
+              </p>
+              <p className="muted">
+                {t("content.search.hint", "Try a different search term")}
+              </p>
+            </div>
+          ) : (
+            <>
+              <p
+                className="text-sm text-muted-foreground"
+                data-testid="content-search-count"
+              >
+                {t("content.search.results", "{count} results").replace(
+                  "{count}",
+                  String(searchResult.lessonCount),
+                )}
+              </p>
+              {searchResult.matches.map((match) => {
+                const entry = downloadedSets.find(
+                  (s) => s.source === match.source && s.id === match.setId,
+                );
+                if (!entry) return null;
+                return (
+                  <div
+                    key={`${match.source}#${match.setId}`}
+                    data-testid={`content-search-set-${match.setId}`}
+                  >
+                    <h3 className="font-semibold">
+                      {highlightNodes(entry.title, searchResult.query)}
+                      <span className="ml-1 text-sm font-normal text-muted-foreground">
+                        ·{" "}
+                        {(entry.source_language || "").toUpperCase()}
+                        {entry.target_language
+                          ? ` → ${entry.target_language.toUpperCase()}`
+                          : ""}{" "}
+                        {entry.level}
+                      </span>
+                    </h3>
+                    <ul className="mt-1 space-y-1 pl-4">
+                      {match.matchedLessons.map((lessonRef) => (
+                        <li key={lessonRef.filename}>
+                          <button
+                            type="button"
+                            className="text-left text-accent hover:underline"
+                            onClick={() =>
+                              openLessonFile(
+                                match.source,
+                                match.setId,
+                                lessonRef.filename,
+                              )
+                            }
+                            data-testid={`content-search-lesson-${match.setId}-${lessonRef.filename}`}
+                          >
+                            {highlightNodes(
+                              lessonRef.title,
+                              searchResult.query,
+                            )}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </>
+          )}
+        </section>
+      ) : (
+        <>
       {/* Phase 64E — encouraging gap suggestions ("Can you help?"). */}
       {(() => {
         const gaps = detectGaps(downloadedSets).slice(0, 5);
@@ -1187,6 +1446,8 @@ export default function ContentPage() {
             </section>
           )}
         </div>
+      )}
+        </>
       )}
 
       <ImportLessonModal

@@ -1560,6 +1560,13 @@
     }
   },
   "content": {
+    "search": {
+      "placeholder": "Rechercher des leçons...",
+      "results": "{count} résultats",
+      "no_results": "Aucun résultat pour '{query}'",
+      "hint": "Essaie un autre terme de recherche",
+      "clear": "Effacer la recherche"
+    },
     "save_adaptive": {
       "button": "Enregistrer cette leçon ?"
     },
