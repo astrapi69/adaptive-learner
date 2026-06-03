@@ -11,7 +11,11 @@
 
 import { api } from "../api/client";
 import { enqueueRequest } from "../lib/pwa/sync-queue";
-import type { ApiKeyTestResult, IStorageService } from "./types";
+import type {
+  ApiKeyTestResult,
+  GitHubVerifyKind,
+  IStorageService,
+} from "./types";
 
 export const apiStorage: IStorageService = {
   mode: "api",
@@ -362,6 +366,46 @@ export const apiStorage: IStorageService = {
       api.learningRepo.render(projectId, language),
     exportZip: (projectId, language) =>
       api.learningRepo.exportZip(projectId, language),
+  },
+
+  // GitHub community-PR automation. The token stays server-side
+  // (secrets.yaml); the backend proxy runs the fork -> branch ->
+  // commit -> PR flow so the browser never holds the PAT in API mode.
+  github: {
+    getStatus: () => api.github.getStatus(),
+    setToken: (token) => api.github.setToken(token),
+    clearToken: () => api.github.clearToken(),
+    verifyToken: async (token) => {
+      const wire = await api.github.verifyToken(token);
+      return {
+        valid: wire.valid,
+        username: wire.username,
+        kind: wire.kind as GitHubVerifyKind,
+      };
+    },
+    createLessonPr: async (args) => {
+      const wire = await api.github.createPr({
+        upstream: args.upstream,
+        base_branch: args.baseBranch,
+        branch_name: args.branchName,
+        file_path: args.filePath,
+        file_content: args.fileContent,
+        commit_message: args.commitMessage,
+        pr_title: args.prTitle,
+        pr_body: args.prBody,
+        manifest_update: args.manifestUpdate
+          ? {
+              set_path: args.manifestUpdate.setPath,
+              lesson_filename: args.manifestUpdate.lessonFilename,
+            }
+          : null,
+      });
+      return {
+        url: wire.url,
+        number: wire.number,
+        manifestUpdated: wire.manifest_updated,
+      };
+    },
   },
 
   // Phase 41F Danger Zone: typed-confirm reset. ApiStorage hands
