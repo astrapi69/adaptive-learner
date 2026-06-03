@@ -56,6 +56,7 @@ from app.routers.curriculum import (
 )
 from app.routers.element_errors import router as element_errors_router
 from app.routers.export import router as export_router
+from app.routers.github import router as github_router
 from app.routers.help import router as help_router
 from app.routers.identity import router as identity_router
 from app.routers.imports import imports_router, users_imports_router
@@ -615,6 +616,7 @@ app.include_router(system_router, prefix="/api")
 app.include_router(backup_router, prefix="/api")
 app.include_router(content_router, prefix="/api")
 app.include_router(export_router, prefix="/api")
+app.include_router(github_router, prefix="/api")
 app.include_router(help_router, prefix="/api")
 
 # Backfill OpenAPI tags + summaries on the core routers now; plugin
