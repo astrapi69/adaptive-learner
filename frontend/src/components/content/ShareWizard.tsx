@@ -44,6 +44,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ApiError } from "../../api/client";
 import { useI18n } from "../../hooks/useI18n";
 import { useOnlineStatus } from "../../hooks/useOnlineStatus";
 import {
@@ -69,8 +70,10 @@ import {
   communityPrUrl,
   communityUploadUrl,
   downloadLessonJson,
+  lessonJson,
   type CommunityPrDetails,
 } from "../../lib/content/lesson-export";
+import { lessonBranchName } from "../../lib/github/github-api";
 import {
   autoDetectTargetLanguage,
   computePlacement,
@@ -78,6 +81,7 @@ import {
   suggestFilename,
 } from "../../lib/content/placement-engine";
 import { emitCelebration } from "../../lib/praise/celebration-bus";
+import { getStorage } from "../../storage";
 import type { ContentLesson, ContentSetEntry } from "../../storage/types";
 
 export interface ShareWizardProps {
@@ -204,6 +208,16 @@ export default function ShareWizard({
   const [prefilled, setPrefilled] = useState(true);
   const [prBody, setPrBody] = useState("");
   const [copied, setCopied] = useState(false);
+  // GitHub PR automation. ``tokenConfigured`` is loaded async; only a
+  // confirmed ``true`` triggers the programmatic flow — null/false fall
+  // back to the pre-filled-URL flow. ``prStage`` drives the phased
+  // progress + error UI on step 4 ("automated" path only).
+  const [tokenConfigured, setTokenConfigured] = useState<boolean | null>(null);
+  const [automated, setAutomated] = useState(false);
+  const [prStage, setPrStage] = useState<
+    "idle" | "preparing" | "uploading" | "creating" | "done" | "error"
+  >("idle");
+  const [prError, setPrError] = useState<string | null>(null);
   // Phase 64C-2 — optional author credit, remembered across shares.
   const [authorName, setAuthorName] = useState(() => readContributorName());
   const [showName, setShowName] = useState(() => readContributorName() !== "");
@@ -363,6 +377,24 @@ export default function ShareWizard({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
+  // Load the GitHub token status once so step 4 can pick the automated
+  // (programmatic PR) path vs the URL fallback. Failure -> not
+  // configured (the URL flow is the graceful degradation).
+  useEffect(() => {
+    let cancelled = false;
+    getStorage()
+      .github.getStatus()
+      .then((s) => {
+        if (!cancelled) setTokenConfigured(s.configured);
+      })
+      .catch(() => {
+        if (!cancelled) setTokenConfigured(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   /** Apply the variation/supplement choice (single-lesson only) and
    *  the optional author credit, returning the lesson(s) to ship. */
   function computeShippedLessons(author?: string): ContentLesson[] {
@@ -396,7 +428,18 @@ export default function ShareWizard({
     return shipped;
   }
 
-  function doShare(): void {
+  interface ShareContext {
+    shipped: ContentLesson[];
+    primaryShip: ContentLesson | null;
+    filePath: string;
+    prTitle: string;
+    body: string;
+  }
+
+  /** Compute the shipped lesson(s), file path, and PR title/body from
+   *  the current (corrected) form state. Shared by the automated +
+   *  URL-fallback paths. */
+  function buildShareContext(): ShareContext {
     // Remember the name for next time (or clear it if blanked).
     writeContributorName(authorName);
     const author =
@@ -424,6 +467,99 @@ export default function ShareWizard({
     const prTitle = buildPrTitle(details);
     const body = buildPrBody(details);
     setPrBody(body);
+    return { shipped, primaryShip, filePath, prTitle, body };
+  }
+
+  function doShare(): void {
+    const ctx = buildShareContext();
+    // Automated programmatic PR: a single lesson + a configured GitHub
+    // token (the token commits the file + opens the PR directly). Only a
+    // confirmed ``true`` qualifies — null (still loading) / false fall
+    // back to the pre-filled-URL flow, as do multi-lesson sets.
+    if (singleLesson && ctx.primaryShip && tokenConfigured === true) {
+      void runAutomatedShare(ctx);
+      return;
+    }
+    runUrlShare(ctx);
+  }
+
+  /** Programmatic PR: fork -> commit -> open PR via the GitHub token.
+   *  On failure, surfaces a friendly error + a manual fallback. */
+  async function runAutomatedShare(ctx: ShareContext): Promise<void> {
+    const lesson = ctx.primaryShip;
+    if (!lesson) return;
+    setAutomated(true);
+    setShareMethod("pr");
+    setPrError(null);
+    setPrStage("preparing");
+    try {
+      // ``new Date()`` is also used by computeShippedLessons + onShared
+      // below; the date keeps re-shares of the same lesson off the same
+      // branch.
+      const date = new Date().toISOString().slice(0, 10);
+      const branchName = lessonBranchName(editTitle || lesson.title, date);
+      setPrStage("uploading");
+      const result = await getStorage().github.createLessonPr({
+        upstream: repo,
+        baseBranch: branch,
+        branchName,
+        filePath: ctx.filePath,
+        fileContent: lessonJson(lesson),
+        commitMessage: ctx.prTitle,
+        prTitle: ctx.prTitle,
+        prBody: ctx.body,
+        // Best-effort manifest listing (skipped server-/client-side when
+        // the set has no manifest yet — the "you're the first" case).
+        manifestUpdate: {
+          setPath: placement.path,
+          lessonFilename: placement.filename,
+        },
+      });
+      setPrStage("done");
+      // The file is committed on the PR branch — no download / paste.
+      setPrefilled(true);
+      setPopupBlocked(false);
+      setSharedUrl(result.url);
+      onShared(result.url, editTitle);
+      emitCelebration({ type: "confetti" });
+    } catch (error) {
+      setPrStage("error");
+      setPrError(shareErrorMessage(error));
+    }
+  }
+
+  /** Map a programmatic-share failure to a friendly, actionable message. */
+  function shareErrorMessage(error: unknown): string {
+    if (error instanceof ApiError) {
+      if (error.status === 401 || error.status === 403) {
+        return t(
+          "share.pr.err_auth",
+          "Your GitHub token was rejected. Check it in Settings > Integrations.",
+        );
+      }
+      if (error.status === 429) {
+        return t(
+          "share.pr.err_rate",
+          "GitHub rate limit reached. Please try again later.",
+        );
+      }
+      return t("share.pr.err_github", "GitHub rejected the request: {detail}").replace(
+        "{detail}",
+        error.detail,
+      );
+    }
+    return t(
+      "share.pr.err_network",
+      "Could not reach GitHub. Check your connection and try again.",
+    );
+  }
+
+  /** Pre-filled-URL share (the fallback / no-token / multi-lesson path,
+   *  unchanged behaviour). */
+  function runUrlShare(ctx: ShareContext): void {
+    const { shipped, primaryShip, filePath, prTitle, body } = ctx;
+    setAutomated(false);
+    setPrStage("idle");
 
     // A SINGLE lesson always goes through the create-file (`/new/`)
     // flow: it creates the new nested path (the "you're the first"
@@ -937,7 +1073,11 @@ export default function ShareWizard({
                 <p className="share-wizard-thanks">
                   {t("content.wizard.thanks", "Thanks for sharing! Your contribution helps other learners.")}
                 </p>
-                {shareMethod === "pr" && prefilled ? (
+                {automated ? (
+                  <p data-testid="share-wizard-pr-created">
+                    {t("share.pr.success", "Pull request created! Your lesson was committed and a pull request opened on GitHub — the content-repo CI validates it automatically.")}
+                  </p>
+                ) : shareMethod === "pr" && prefilled ? (
                   <p data-testid="share-wizard-pr-instructions">
                     {t("content.wizard.submitted", "A pull request was opened on GitHub with your lesson pre-filled. Review it and click \"Create pull request\" — the content-repo CI validates it automatically.")}
                   </p>
@@ -1009,23 +1149,66 @@ export default function ShareWizard({
               </div>
             ) : (
               <div data-testid="share-wizard-confirm">
-                <p>
-                  {t("content.wizard.ready_to_share", "Everything's ready. Share your lesson as a pull request?")}
-                </p>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={doShare}
-                  disabled={!online}
-                  title={
-                    !online
-                      ? t("pwa.action_unavailable", "Not available offline")
-                      : undefined
-                  }
-                  data-testid="share-wizard-share"
-                >
-                  {t("content.wizard.share_button", "Share")}
-                </button>
+                {prStage === "preparing" ||
+                prStage === "uploading" ||
+                prStage === "creating" ? (
+                  <p
+                    className="share-wizard-pr-progress"
+                    data-testid="share-wizard-pr-progress"
+                    role="status"
+                  >
+                    {prStage === "preparing"
+                      ? t("share.pr.preparing", "Preparing repository…")
+                      : prStage === "creating"
+                        ? t("share.pr.creating", "Creating pull request…")
+                        : t("share.pr.uploading", "Uploading lesson…")}
+                  </p>
+                ) : prStage === "error" ? (
+                  <div
+                    className="content-share-failed"
+                    data-testid="share-wizard-pr-error"
+                    role="alert"
+                  >
+                    <p>{prError}</p>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      onClick={() => runUrlShare(buildShareContext())}
+                      disabled={!online}
+                      data-testid="share-wizard-pr-fallback"
+                    >
+                      {t("share.pr.fallback", "Share manually via GitHub instead")}
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <p>
+                      {t("content.wizard.ready_to_share", "Everything's ready. Share your lesson as a pull request?")}
+                    </p>
+                    {tokenConfigured === false && (
+                      <p
+                        className="muted"
+                        data-testid="share-wizard-no-token"
+                      >
+                        {t("share.pr.no_token", "Tip: add a GitHub token in Settings > Integrations to create the pull request automatically.")}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={doShare}
+                      disabled={!online}
+                      title={
+                        !online
+                          ? t("pwa.action_unavailable", "Not available offline")
+                          : undefined
+                      }
+                      data-testid="share-wizard-share"
+                    >
+                      {t("content.wizard.share_button", "Share")}
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </section>

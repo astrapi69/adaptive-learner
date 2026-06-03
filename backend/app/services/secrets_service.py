@@ -178,6 +178,67 @@ def read_api_key(provider: str) -> str | None:
     return None
 
 
+def write_github_token(plaintext: str) -> None:
+    """Encrypt + store the GitHub Personal Access Token in secrets.yaml.
+
+    Stored under the top-level ``github.token_encrypted`` block (sibling
+    of the ``ai.*`` provider keys). Overwrites any existing value and
+    drops a stale hand-written plaintext ``token`` field.
+    """
+    ciphertext = crypto.encrypt_api_key(plaintext)
+    data = _load()
+    github = data.get("github")
+    if not isinstance(github, dict):
+        github = {}
+    github["token_encrypted"] = ciphertext
+    github.pop("token", None)
+    data["github"] = github
+    _write(data)
+
+
+def clear_github_token() -> None:
+    """Remove the GitHub token block from secrets.yaml (idempotent).
+    Removes the file entirely if nothing else remains."""
+    data = _load()
+    if "github" not in data:
+        return
+    data.pop("github", None)
+    if data:
+        _write(data)
+    else:
+        try:
+            secrets_path().unlink()
+        except OSError:
+            pass
+
+
+def read_github_token() -> str | None:
+    """Return the decrypted GitHub token from secrets.yaml.
+
+    Prefers the encrypted ``token_encrypted`` field; falls back to a
+    legacy plaintext ``token``. Returns ``None`` when absent or when
+    decryption fails (e.g. the secret.key changed) — the caller then
+    falls through to the next layer instead of crashing.
+    """
+    github = _load().get("github")
+    if not isinstance(github, dict):
+        return None
+    encrypted = github.get("token_encrypted")
+    if isinstance(encrypted, str) and encrypted.strip():
+        try:
+            return crypto.decrypt_api_key(encrypted.strip())
+        except crypto.CryptoDecryptionError:
+            logger.warning(
+                "Could not decrypt the stored GitHub token — the "
+                "secret.key may have changed; the user must re-enter it."
+            )
+            return None
+    plaintext = github.get("token")
+    if isinstance(plaintext, str) and plaintext.strip():
+        return plaintext.strip()
+    return None
+
+
 def migrate_db_keys(db: Session) -> dict[str, list[str]]:
     """Move legacy DB-encrypted keys into secrets.yaml at startup.
 
@@ -241,9 +302,12 @@ def migrate_db_keys(db: Session) -> dict[str, list[str]]:
 __all__ = [
     "PROVIDERS",
     "clear_api_key",
+    "clear_github_token",
     "migrate_db_keys",
     "read_api_key",
+    "read_github_token",
     "secrets_path",
     "warn_if_permissions_too_open",
     "write_api_key",
+    "write_github_token",
 ]

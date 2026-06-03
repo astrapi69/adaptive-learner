@@ -322,6 +322,26 @@ progress:
   step_eval_backward: 後退遷移
   step_eval_stickiest_label: '最も時間を費やしたステップ:'
 settings:
+  tab_integrations: "連携"
+  github:
+    title: "GitHub 連携"
+    intro: "レッスンをプルリクエストとして共有するために必要です。'repo' 権限を持つトークンを作成してください。"
+    token: "GitHub トークン"
+    format_invalid: "GitHub トークンは 'ghp_' または 'github_pat_' で始まります。"
+    test: "テスト"
+    testing: "テスト中..."
+    save: "保存"
+    remove: "削除"
+    saved: "GitHub トークンを保存しました。"
+    removed: "GitHub トークンを削除しました。"
+    test_success: "{username} として接続しました"
+    test_invalid: "トークンが無効です。"
+    test_rate_limit: "GitHub のレート制限に達しました。後でもう一度お試しください。"
+    test_network: "GitHub に接続できませんでした。"
+    test_no_token: "テストするトークンがありません。"
+    source_file: "secrets.yaml に保存"
+    source_env: "環境変数で管理"
+    source_browser: "このブラウザに保存"
   title: 設定
   help_intro: "アプリ内の用語集を閲覧・検索できます。各エントリをクリックすると詳しい記事が開きます。"
   section_language: 言語
@@ -1882,3 +1902,15 @@ pwa:
   cache_clear_confirm: "オフラインキャッシュを消去しますか？"
   cache_clear_action: "はい、消去"
   cache_cleared: "オフラインキャッシュを消去しました。"
+share:
+  pr:
+    preparing: "リポジトリを準備しています..."
+    uploading: "レッスンをアップロードしています..."
+    creating: "プルリクエストを作成しています..."
+    success: "プルリクエストを作成しました！レッスンがコミットされ、GitHub にプルリクエストが開かれました。コンテンツリポジトリの CI が自動的に検証します。"
+    no_token: "ヒント: 設定 > 連携 で GitHub トークンを追加すると、プルリクエストが自動的に作成されます。"
+    fallback: "代わりに GitHub で手動で共有"
+    err_auth: "GitHub トークンが拒否されました。設定 > 連携 で確認してください。"
+    err_rate: "GitHub のレート制限に達しました。後でもう一度お試しください。"
+    err_github: "GitHub がリクエストを拒否しました: {detail}"
+    err_network: "GitHub に接続できませんでした。接続を確認してもう一度お試しください。"

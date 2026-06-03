@@ -9,6 +9,7 @@ import BackupSection from "../components/BackupSection";
 import CacheManagementSection from "../components/CacheManagementSection";
 import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
+import GitHubIntegrationSection from "../components/GitHubIntegrationSection";
 import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import DirectionStrategyControl from "../components/DirectionStrategyControl";
@@ -81,6 +82,7 @@ const SETTINGS_TABS = [
   "learning",
   "plugins",
   "data",
+  "integrations",
   "help",
   "about",
 ] as const;
@@ -99,6 +101,10 @@ const SETTINGS_TAB_LABELS: Record<
   learning: { key: "settings.tab_learning", fallback: "Learning" },
   plugins: { key: "settings.tab_plugins", fallback: "Plugins" },
   data: { key: "settings.tab_data", fallback: "Data" },
+  integrations: {
+    key: "settings.tab_integrations",
+    fallback: "Integrations",
+  },
   help: { key: "settings.tab_help", fallback: "Help" },
   about: { key: "settings.tab_about", fallback: "About" },
 };
@@ -1175,6 +1181,16 @@ export default function Settings() {
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}
         <CacheManagementSection />
         <DangerZoneSection />
+      </div>
+
+      {/* --- Integrations tab (GitHub) ---------------------- */}
+      <div
+        className="settings-tabpanel"
+        role="tabpanel"
+        hidden={activeTab !== "integrations"}
+        data-testid="settings-panel-integrations"
+      >
+        <GitHubIntegrationSection />
       </div>
 
       {/* --- Help tab (glossary / article browser) ---------- */}

@@ -586,6 +586,47 @@ export const api = {
       ),
   },
 
+  // --- GitHub integration (community PR automation) -------------------
+
+  github: {
+    /** Token status: configured + source (env / secrets.yaml / none).
+     *  The token itself is never returned. */
+    getStatus: () =>
+      apiCall<{ configured: boolean; source: string }>(`/github/token`),
+    /** Store a GitHub PAT (Fernet-encrypted in secrets.yaml). */
+    setToken: (token: string) =>
+      apiCall<{ configured: boolean; source: string }>(`/github/token`, {
+        method: "POST",
+        body: { token },
+      }),
+    clearToken: () =>
+      apiCall<{ configured: boolean; source: string }>(`/github/token`, {
+        method: "DELETE",
+      }),
+    /** Verify a token (or the configured one when omitted). */
+    verifyToken: (token?: string) =>
+      apiCall<{ valid: boolean; username: string | null; kind: string }>(
+        `/github/verify-token`,
+        { method: "POST", body: { token: token ?? null } },
+      ),
+    /** Run the fork -> branch -> commit -> PR flow server-side. */
+    createPr: (body: {
+      upstream: string;
+      base_branch: string;
+      branch_name: string;
+      file_path: string;
+      file_content: string;
+      commit_message: string;
+      pr_title: string;
+      pr_body: string;
+      manifest_update?: { set_path: string; lesson_filename: string } | null;
+    }) =>
+      apiCall<{ url: string; number: number; manifest_updated: boolean }>(
+        `/github/create-pr`,
+        { method: "POST", body },
+      ),
+  },
+
   // --- Assessment plugin ----------------------------------------------
 
   assessment: {

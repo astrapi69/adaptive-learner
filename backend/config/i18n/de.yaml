@@ -322,6 +322,26 @@ progress:
   step_eval_backward: Schritt-Rückwärts
   step_eval_stickiest_label: 'Meiste Zeit bei:'
 settings:
+  tab_integrations: "Integrationen"
+  github:
+    title: "GitHub-Integration"
+    intro: "Wird benötigt, um Lektionen als Pull Request zu teilen. Erstelle einen Token mit der Berechtigung 'repo'."
+    token: "GitHub-Token"
+    format_invalid: "Ein GitHub-Token beginnt mit 'ghp_' oder 'github_pat_'."
+    test: "Testen"
+    testing: "Wird getestet..."
+    save: "Speichern"
+    remove: "Entfernen"
+    saved: "GitHub-Token gespeichert."
+    removed: "GitHub-Token entfernt."
+    test_success: "Verbunden als {username}"
+    test_invalid: "Token ungültig."
+    test_rate_limit: "GitHub-Ratenlimit erreicht. Versuche es später erneut."
+    test_network: "GitHub konnte nicht erreicht werden."
+    test_no_token: "Kein Token zum Testen."
+    source_file: "In secrets.yaml gespeichert"
+    source_env: "Über Umgebungsvariable verwaltet"
+    source_browser: "In diesem Browser gespeichert"
   title: Einstellungen
   help_intro: "Durchsuche das integrierte Glossar. Klicke auf einen Eintrag, um den vollständigen Artikel zu öffnen."
   section_language: Sprache
@@ -1886,3 +1906,15 @@ pwa:
   cache_clear_confirm: "Offline-Cache wirklich leeren?"
   cache_clear_action: "Ja, leeren"
   cache_cleared: "Offline-Cache geleert."
+share:
+  pr:
+    preparing: "Repository wird vorbereitet..."
+    uploading: "Lektion wird hochgeladen..."
+    creating: "Pull Request wird erstellt..."
+    success: "Pull Request erstellt! Deine Lektion wurde committet und ein Pull Request auf GitHub geöffnet, die CI des Content-Repos prüft ihn automatisch."
+    no_token: "Tipp: Hinterlege einen GitHub-Token unter Einstellungen > Integrationen, um den Pull Request automatisch zu erstellen."
+    fallback: "Stattdessen manuell über GitHub teilen"
+    err_auth: "Dein GitHub-Token wurde abgelehnt. Prüfe es unter Einstellungen > Integrationen."
+    err_rate: "GitHub-Ratenlimit erreicht. Bitte versuche es später erneut."
+    err_github: "GitHub hat die Anfrage abgelehnt: {detail}"
+    err_network: "GitHub konnte nicht erreicht werden. Prüfe deine Verbindung und versuche es erneut."

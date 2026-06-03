@@ -277,6 +277,75 @@ class ApiKeyBackupInfoOut(BaseModel):
     tested_at: datetime | None = None
 
 
+class GitHubTokenSetBody(BaseModel):
+    """POST body for ``/api/github/token`` — store a GitHub Personal
+    Access Token (Fernet-encrypted in secrets.yaml). The token needs
+    only the ``repo`` scope (fork + push + open PRs)."""
+
+    token: str = Field(min_length=1)
+
+
+class GitHubTokenStatusOut(BaseModel):
+    """Whether a GitHub token is configured and where it lives.
+
+    ``source`` is one of ``environment`` / ``secrets.yaml`` / ``none``
+    (mirrors the AI-key source display). The token itself is never
+    returned.
+    """
+
+    configured: bool
+    source: str
+
+
+class GitHubVerifyBody(BaseModel):
+    """POST body for ``/api/github/verify-token``. When ``token`` is
+    given that token is verified (pre-save check); when omitted the
+    configured token (env > secrets.yaml) is verified."""
+
+    token: str | None = None
+
+
+class GitHubVerifyOut(BaseModel):
+    """Result of a GitHub token verification. ``kind`` is a stable
+    machine code: ok / invalid / rate_limit / network / error /
+    no_token."""
+
+    valid: bool
+    username: str | None = None
+    kind: str
+
+
+class GitHubManifestUpdate(BaseModel):
+    """Best-effort manifest patch passed alongside a PR request."""
+
+    set_path: str
+    lesson_filename: str
+
+
+class GitHubCreatePrBody(BaseModel):
+    """POST body for ``/api/github/create-pr`` — the proxy reads the
+    stored token and runs the fork -> branch -> commit -> PR flow."""
+
+    upstream: str = Field(min_length=1)
+    base_branch: str = Field(min_length=1)
+    branch_name: str = Field(min_length=1)
+    file_path: str = Field(min_length=1)
+    file_content: str = Field(min_length=1)
+    commit_message: str = Field(min_length=1)
+    pr_title: str = Field(min_length=1)
+    pr_body: str
+    manifest_update: GitHubManifestUpdate | None = None
+
+
+class GitHubCreatePrOut(BaseModel):
+    """A created pull request: its web URL + number + whether the set
+    manifest was updated as part of the same PR."""
+
+    url: str
+    number: int
+    manifest_updated: bool
+
+
 class AvailableModelOut(BaseModel):
     """One row returned by ``GET /api/settings/{user_id}/available-models``.
 
@@ -952,6 +1021,14 @@ __all__ = [
     "ApiKeySetBody",
     "SettingsPatchBody",
     "UserSettingsOut",
+    # GitHub integration (community PR automation)
+    "GitHubTokenSetBody",
+    "GitHubTokenStatusOut",
+    "GitHubVerifyBody",
+    "GitHubVerifyOut",
+    "GitHubManifestUpdate",
+    "GitHubCreatePrBody",
+    "GitHubCreatePrOut",
     # LearningProject
     "LearningProjectCreate",
     "LearningProjectCreateBody",

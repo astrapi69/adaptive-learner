@@ -322,6 +322,26 @@ progress:
   step_eval_backward: Geri geçişler
   step_eval_stickiest_label: 'En çok zaman:'
 settings:
+  tab_integrations: "Entegrasyonlar"
+  github:
+    title: "GitHub Entegrasyonu"
+    intro: "Dersleri pull request olarak paylaşmak için gereklidir. 'repo' iznine sahip bir token oluştur."
+    token: "GitHub belirteci"
+    format_invalid: "Bir GitHub belirteci 'ghp_' veya 'github_pat_' ile başlar."
+    test: "Test et"
+    testing: "Test ediliyor..."
+    save: "Kaydet"
+    remove: "Kaldır"
+    saved: "GitHub belirteci kaydedildi."
+    removed: "GitHub belirteci kaldırıldı."
+    test_success: "{username} olarak bağlanıldı"
+    test_invalid: "Belirteç geçersiz."
+    test_rate_limit: "GitHub hız sınırına ulaşıldı. Daha sonra tekrar dene."
+    test_network: "GitHub'a ulaşılamadı."
+    test_no_token: "Test edilecek belirteç yok."
+    source_file: "secrets.yaml içinde saklanıyor"
+    source_env: "Ortam değişkeniyle yönetiliyor"
+    source_browser: "Bu tarayıcıda saklanıyor"
   title: Ayarlar
   help_intro: "Uygulama içi sözlüğü gözden geçir ve ara. Tam makaleyi açmak için bir girdiye tıkla."
   section_language: Dil
@@ -1882,3 +1902,15 @@ pwa:
   cache_clear_confirm: "Çevrimdışı önbellek temizlensin mi?"
   cache_clear_action: "Evet, temizle"
   cache_cleared: "Çevrimdışı önbellek temizlendi."
+share:
+  pr:
+    preparing: "Depo hazırlanıyor..."
+    uploading: "Ders yükleniyor..."
+    creating: "Pull request oluşturuluyor..."
+    success: "Pull request oluşturuldu! Dersin işlendi ve GitHub'da bir pull request açıldı, içerik deposunun CI'si bunu otomatik olarak doğrular."
+    no_token: "İpucu: pull request'i otomatik oluşturmak için Ayarlar > Entegrasyonlar bölümüne bir GitHub belirteci ekle."
+    fallback: "Bunun yerine GitHub üzerinden elle paylaş"
+    err_auth: "GitHub belirtecin reddedildi. Ayarlar > Entegrasyonlar bölümünden kontrol et."
+    err_rate: "GitHub hız sınırına ulaşıldı. Lütfen daha sonra tekrar dene."
+    err_github: "GitHub isteği reddetti: {detail}"
+    err_network: "GitHub'a ulaşılamadı. Bağlantını kontrol edip tekrar dene."
