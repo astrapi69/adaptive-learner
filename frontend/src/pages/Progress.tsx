@@ -99,7 +99,7 @@ export default function Progress() {
                 <h1>{t("progress.title", "Progress")}</h1>
             </header>
 
-            <section className="dashboard-grid">
+            <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <article className="dashboard-card dashboard-card-wide">
                     <h2 className="dashboard-card-title">
                         {t("progress.chart_timeline", "Understanding and stress over time")}

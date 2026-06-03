@@ -829,17 +829,10 @@ select:focus {
   font-size: 1.75rem;
 }
 
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-4);
-}
-
-@media (max-width: 720px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* .dashboard-grid migrated to Tailwind utilities (grid grid-cols-1
+   gap-4 sm:grid-cols-2) on its two consumers (Dashboard, Progress) —
+   Phase B / B3. The .dashboard-card* rules stay until each widget is
+   migrated organically (shared by 10+ components). */
 
 .dashboard-card {
   background: var(--surface);
@@ -2732,26 +2725,10 @@ select:focus {
   color: var(--fg);
 }
 
-.lesson-nav {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-4);
-}
-
-.lesson-nav-prev {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-}
-
-.lesson-nav-next {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  margin-left: auto;
-}
+/* .lesson-nav / .lesson-nav-prev / .lesson-nav-next migrated to Tailwind
+   utilities in Lesson.tsx (Phase B / B2) — sticky footer + responsive
+   flex. Rules removed per the "delete the competing global rule when you
+   migrate" contract in docs/development/tailwind-migration.md. */
 
 .lesson-not-cached-body {
   padding: var(--space-3);
@@ -3474,17 +3451,7 @@ select:focus {
 }
 
 @media (max-width: 600px) {
-  .lesson-nav {
-    flex-direction: column;
-  }
-  .lesson-nav-next {
-    margin-left: 0;
-  }
-  .lesson-nav-prev,
-  .lesson-nav-next {
-    width: 100%;
-    justify-content: center;
-  }
+  /* .lesson-nav* responsive rules migrated to Tailwind (Phase B / B2). */
   .lesson-summary-actions .btn {
     width: 100%;
   }
