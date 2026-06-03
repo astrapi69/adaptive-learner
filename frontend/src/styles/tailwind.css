@@ -77,6 +77,47 @@
   --radius-app: var(--radius-md, 8px);
 
   /*
+   * shadcn/ui semantic-token bridge (Phase B / B1).
+   *
+   * shadcn components reference semantic Tailwind utilities
+   * (bg-primary, text-primary-foreground, bg-background, bg-card,
+   * bg-popover, bg-secondary, bg-muted, text-muted-foreground,
+   * bg-accent [a hover surface], bg-destructive, border-input,
+   * ring-ring, ...). Map each onto our themed vars so every shadcn
+   * component recolors across all 6 themes by construction. ``inline``
+   * means these read the runtime var directly, so a [data-theme] switch
+   * recolors shadcn components with the rest of the page.
+   *
+   *   - primary      = brand accent (the main CTA colour)
+   *   - background/foreground/card/popover = our surface + text vars
+   *   - secondary/muted = subtle surface; muted-foreground = muted text
+   *   - destructive  = error
+   *   - input/ring   = border / brand accent
+   *   - ``--color-accent`` (brand) above is left UNCHANGED; shadcn's own
+   *     ``accent`` (a muted hover surface) therefore resolves to the
+   *     brand tint. This is the one token the migration guide flags for
+   *     a deliberate visual call (see the PR notes); ``accent-foreground``
+   *     keeps text on that hover surface legible.
+   */
+  --color-primary: var(--accent);
+  --color-primary-foreground: var(--accent-fg);
+  --color-background: var(--bg-primary);
+  --color-foreground: var(--fg-primary);
+  --color-card: var(--bg-surface);
+  --color-card-foreground: var(--fg-primary);
+  --color-popover: var(--bg-elevated);
+  --color-popover-foreground: var(--fg-primary);
+  --color-secondary: var(--bg-secondary);
+  --color-secondary-foreground: var(--fg-primary);
+  --color-muted: var(--bg-secondary);
+  --color-muted-foreground: var(--fg-muted);
+  --color-accent-foreground: var(--fg-primary);
+  --color-destructive: var(--error);
+  --color-destructive-foreground: var(--fg-inverse);
+  --color-input: var(--border-primary);
+  --color-ring: var(--accent);
+
+  /*
    * No --font-sans / --font-mono mapping is needed. global.css already
    * declares those exact variable names (Tailwind's own font namespace)
    * unlayered, so it wins the cascade over Tailwind's layered default and

@@ -313,7 +313,7 @@ export default function Dashboard() {
                 />
             )}
 
-            <section className="dashboard-grid">
+            <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
                         <HelpTooltip glossaryKey="learning_profile">
