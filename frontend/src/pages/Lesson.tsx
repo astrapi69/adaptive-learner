@@ -283,6 +283,18 @@ export default function LessonPage() {
         setReviewedRaw(stored?.raw_answer ?? null);
     }
 
+    // B2 (Tailwind migration) — scroll the viewport to the top on every
+    // step change so a long step doesn't leave the learner mid-page.
+    // Guarded for the headless test env (scrollTo may be a stub).
+    useEffect(() => {
+        try {
+            document.getElementById("root")?.scrollTo({top: 0});
+            window.scrollTo({top: 0});
+        } catch {
+            /* no-op in environments without a real scroll. */
+        }
+    }, [currentStepIndex]);
+
     // TTS feature C3 — auto-read mode. The lesson-level engine reads
     // each new step aloud on display (theory body / exercise prompt);
     // code/formula exercises are skipped. Off by default; remembered.
@@ -1013,7 +1025,7 @@ export default function LessonPage() {
             )}
 
             <nav
-                className="lesson-nav"
+                className="sticky bottom-0 z-10 mt-4 flex flex-col gap-2 border-t border-border bg-bg-primary py-3 sm:flex-row"
                 aria-label={t(
                     "lesson.nav.aria_label",
                     "Step navigation",
@@ -1021,7 +1033,7 @@ export default function LessonPage() {
             >
                 <button
                     type="button"
-                    className="btn lesson-nav-prev"
+                    className="btn w-full justify-center gap-1.5 sm:w-auto"
                     onClick={goPrev}
                     disabled={currentStepIndex === 0}
                     data-testid="lesson-prev"
@@ -1033,7 +1045,7 @@ export default function LessonPage() {
                     (isExerciseStep && !checked && !enteredReviewed ? (
                         <button
                             type="button"
-                            className="btn btn-primary lesson-nav-check"
+                            className="btn btn-primary w-full justify-center gap-1.5 sm:ml-auto sm:w-auto"
                             onClick={() => exerciseRef.current?.submit()}
                             disabled={!answerable}
                             title={
@@ -1051,7 +1063,7 @@ export default function LessonPage() {
                     ) : (
                         <button
                             type="button"
-                            className="btn btn-primary lesson-nav-next"
+                            className="btn btn-primary w-full justify-center gap-1.5 sm:ml-auto sm:w-auto"
                             onClick={goNext}
                             data-testid="lesson-next"
                         >
