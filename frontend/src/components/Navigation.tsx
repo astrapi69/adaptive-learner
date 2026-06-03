@@ -1,4 +1,4 @@
-import {HelpCircle} from "lucide-react";
+import {ArrowLeftRight, Circle, HelpCircle, Menu, Moon, Sun, X} from "lucide-react";
 import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
@@ -147,7 +147,11 @@ export default function Navigation() {
                 aria-controls="app-nav-links"
                 onClick={() => setMenuOpen((v) => !v)}
             >
-                <span aria-hidden="true">{menuOpen ? "✕" : "☰"}</span>
+                {menuOpen ? (
+                    <X size={20} aria-hidden="true" />
+                ) : (
+                    <Menu size={20} aria-hidden="true" />
+                )}
             </button>
             <div
                 id="app-nav-links"
@@ -259,7 +263,11 @@ export default function Navigation() {
                         : t("nav.sync_unpaired", "Sync: not paired")
                 }
             >
-                <span aria-hidden="true">{syncPaired ? "⇄" : "○"}</span>
+                {syncPaired ? (
+                    <ArrowLeftRight size={16} aria-hidden="true" />
+                ) : (
+                    <Circle size={16} aria-hidden="true" />
+                )}
             </NavLink>
             <span
                 className={`nav-online-indicator${online ? " is-online" : " is-offline"}`}
@@ -280,7 +288,7 @@ export default function Navigation() {
             </span>
             <button
                 type="button"
-                className="nav-theme-toggle"
+                className="nav-theme-toggle min-h-11 min-w-11"
                 data-testid="nav-theme-toggle"
                 onClick={toggle}
                 aria-label={`Toggle ${theme === "dark" ? "light" : "dark"} theme`}
@@ -290,7 +298,11 @@ export default function Navigation() {
                         : undefined
                 }
             >
-                {theme === "dark" ? "☀" : "☾"}
+                {theme === "dark" ? (
+                    <Sun size={18} aria-hidden="true" />
+                ) : (
+                    <Moon size={18} aria-hidden="true" />
+                )}
             </button>
         </nav>
     );
