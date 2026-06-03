@@ -31,6 +31,11 @@
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useI18n } from "../../hooks/useI18n";
 import {
   readContributorName,
@@ -482,17 +487,21 @@ export default function ShareWizard({
     .replace("{total}", String(TOTAL_STEPS));
 
   return (
-    <div className="modal-overlay" data-testid="content-share-wizard">
-      <div
-        className="modal-card share-wizard"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="share-wizard-title"
+    <Dialog
+      open
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
+    >
+      <DialogContent
+        data-testid="content-share-wizard"
+        aria-describedby={undefined}
+        className="max-h-[90vh] overflow-y-auto"
       >
         <header className="share-wizard-header">
-          <h2 id="share-wizard-title" className="modal-title">
+          <DialogTitle id="share-wizard-title" className="modal-title">
             {t("content.wizard.title", "Share with the community")}
-          </h2>
+          </DialogTitle>
           <p
             className="share-wizard-progress"
             data-testid="share-wizard-progress"
@@ -1011,7 +1020,7 @@ export default function ShareWizard({
             </button>
           )}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
