@@ -29,6 +29,7 @@
 import {ArrowRight, Play, RefreshCw, RotateCcw, Target, Trophy} from "lucide-react";
 import {Link} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/useI18n";
 import type {ErrorTag} from "../../lib/adaptive/error-classifier";
 import {prefersReducedMotion} from "../../lib/feedback/feedbackPref";
@@ -171,16 +172,17 @@ export default function NextStepSuggestions({
                             </span>
                         )}
                 </span>
-                <Link
-                    to={href}
-                    className={`btn ${isPrimary ? "btn-primary" : ""}`.trim()}
-                    data-testid="next-step-cta-next"
+                <Button
+                    asChild
+                    variant={isPrimary ? "default" : "secondary"}
                 >
-                    {nextLesson.isPaused
-                        ? t("lesson.next_step.resume", "Resume")
-                        : t("lesson.next_step.start", "Start")}
-                    <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                    <Link to={href} data-testid="next-step-cta-next">
+                        {nextLesson.isPaused
+                            ? t("lesson.next_step.resume", "Resume")
+                            : t("lesson.next_step.start", "Start")}
+                        <ArrowRight aria-hidden="true" />
+                    </Link>
+                </Button>
             </div>,
         );
     }
@@ -216,15 +218,19 @@ export default function NextStepSuggestions({
                         )}
                     </span>
                 </span>
-                <Link
-                    to={`/error-replay/${setSlug}/${setId}/${lessonFilename}`}
-                    state={errorReplayPayload}
-                    className={`btn ${isPrimary ? "btn-primary" : ""}`.trim()}
-                    data-testid="next-step-cta-error-replay"
+                <Button
+                    asChild
+                    variant={isPrimary ? "default" : "secondary"}
                 >
-                    {t("lesson.next_step.start", "Start")}
-                    <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                    <Link
+                        to={`/error-replay/${setSlug}/${setId}/${lessonFilename}`}
+                        state={errorReplayPayload}
+                        data-testid="next-step-cta-error-replay"
+                    >
+                        {t("lesson.next_step.start", "Start")}
+                        <ArrowRight aria-hidden="true" />
+                    </Link>
+                </Button>
             </div>,
         );
     }
@@ -266,14 +272,18 @@ export default function NextStepSuggestions({
                         ).replace("{count}", String(adaptiveLesson.errorCount))}
                     </span>
                 </span>
-                <Link
-                    to={`/adaptive-lesson/${setIdEnc}`}
-                    className={`btn ${isPrimary ? "btn-primary" : ""}`.trim()}
-                    data-testid="next-step-cta-adaptive"
+                <Button
+                    asChild
+                    variant={isPrimary ? "default" : "secondary"}
                 >
-                    {t("lesson.next_step.start", "Start")}
-                    <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                    <Link
+                        to={`/adaptive-lesson/${setIdEnc}`}
+                        data-testid="next-step-cta-adaptive"
+                    >
+                        {t("lesson.next_step.start", "Start")}
+                        <ArrowRight aria-hidden="true" />
+                    </Link>
+                </Button>
             </div>,
         );
     }
@@ -309,14 +319,18 @@ export default function NextStepSuggestions({
                         )}
                     </span>
                 </span>
-                <Link
-                    to={`/review/${setIdEnc}`}
-                    className={`btn ${isPrimary ? "btn-primary" : ""}`.trim()}
-                    data-testid="next-step-cta-review"
+                <Button
+                    asChild
+                    variant={isPrimary ? "default" : "secondary"}
                 >
-                    {t("lesson.next_step.start", "Start")}
-                    <ArrowRight size={14} aria-hidden="true" />
-                </Link>
+                    <Link
+                        to={`/review/${setIdEnc}`}
+                        data-testid="next-step-cta-review"
+                    >
+                        {t("lesson.next_step.start", "Start")}
+                        <ArrowRight aria-hidden="true" />
+                    </Link>
+                </Button>
             </div>,
         );
     }
@@ -357,14 +371,15 @@ export default function NextStepSuggestions({
                     )}
                 </span>
                 {suggestedSet && (
-                    <Link
-                        to="/content"
-                        className="btn"
-                        data-testid="next-step-cta-view-set"
-                    >
-                        {t("lesson.next_step.view_set", "View Set")}
-                        <ArrowRight size={14} aria-hidden="true" />
-                    </Link>
+                    <Button asChild variant="secondary">
+                        <Link
+                            to="/content"
+                            data-testid="next-step-cta-view-set"
+                        >
+                            {t("lesson.next_step.view_set", "View Set")}
+                            <ArrowRight aria-hidden="true" />
+                        </Link>
+                    </Button>
                 )}
             </div>,
         );
