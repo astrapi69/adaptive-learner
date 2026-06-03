@@ -783,9 +783,10 @@ On a conflict between this file and the rules, **the rules win**.
   Pydantic v2, Alembic, aiosqlite, cryptography (Fernet),
   platformdirs, pluginforge ^0.10.0, Poetry
 - **Frontend:** React 19, TypeScript 6 (strict), Vite 8,
-  Vitest 4, react-router-dom 7, react-toastify, Recharts 3,
-  TipTap 2 (StarterKit + 15 extensions), Dexie 4 (IndexedDB),
-  html5-qrcode, sql.js + jszip (Anki .apkg)
+  Vitest 4, react-router-dom 7, Tailwind CSS 4 + shadcn/ui
+  (adopted v1.54.0+, incremental migration), react-toastify,
+  Recharts 3, TipTap 2 (StarterKit + 15 extensions),
+  Dexie 4 (IndexedDB), html5-qrcode, sql.js + jszip (Anki .apkg)
 - **PWA:** vite-plugin-pwa, Workbox SW (NetworkFirst on GET
   `/api/`), SVG + maskable PNG icons
 - **Testing:** pytest ^9, Vitest 4 (happy-dom), Playwright (E2E)

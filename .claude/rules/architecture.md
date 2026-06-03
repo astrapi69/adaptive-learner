@@ -84,7 +84,8 @@ Third-party plugins are installed as a ZIP through Settings > Plugins:
 
 | Library | Purpose |
 |---------|---------|
-| Radix UI | Unstyled accessible primitives (Dialog, Tabs, Dropdown, Select, Tooltip) |
+| Tailwind CSS + shadcn/ui | CSS framework (adopted v1.54.0+). Utility classes for styling; shadcn/ui for UI primitives. Migration is INCREMENTAL — see docs/development/tailwind-migration.md. |
+| Radix UI | Unstyled accessible primitives (Dialog, Tabs, Dropdown, Select, Tooltip). shadcn/ui wraps these going forward; existing direct usage stays until migrated. |
 | TipTap 2 | Rich-text editor in session notes, curriculum descriptions, lesson content (StarterKit + 15 extensions) |
 | Lucide React | Icons |
 | react-toastify | Toast notifications |
@@ -92,13 +93,26 @@ Third-party plugins are installed as a ZIP through Settings > Plugins:
 | html5-qrcode | QR scanner for AI provider keys |
 | Dexie 4 | IndexedDB wrapper for the Dexie-mode storage backing |
 
-Rejected: shadcn/ui (requires Tailwind), MUI (too opinionated), Ant Design (too heavy).
+**CSS Framework: Tailwind CSS + shadcn/ui (adopted v1.54.0+).** New
+components MUST use Tailwind utility classes. Existing components are
+migrated when touched, not proactively (no Big Bang rewrite). The 6
+themes continue to work through CSS variables — Tailwind CONSUMES them
+(theme integration: CSS variables mapped into the Tailwind config). See
+docs/development/tailwind-migration.md.
+
+Rejected: MUI (too opinionated), Ant Design (too heavy).
 
 ### Theming
 
 - 5 themes: Classic, Cool Modern, Nord, Notebook, Studio (each with Light + Dark = 10 variants). Audit recipe to verify the current count: `grep -oE 'data-app-theme="[a-z-]+"' frontend/src/styles/global.css | sort -u`.
-- Everything via CSS variables. New UI elements MUST use CSS variables.
-- No Tailwind. Custom properties in frontend/src/styles/global.css.
+- Everything via CSS variables. The canonical tokens live in
+  frontend/src/styles/global.css + styles/themes/theme-*.css.
+- Tailwind CSS (v4) consumes those CSS variables via a `@theme` mapping
+  in frontend/src/styles/tailwind.css (theme integration: CSS variables
+  mapped into the Tailwind config). Switching `[data-theme]` flips the
+  variables, so every Tailwind utility recolors automatically across all
+  6 themes. New UI uses Tailwind utilities (which still resolve to the
+  CSS variables); do not add new hand-written rules to global.css.
 
 ### Plugin UI (manifest-driven)
 
