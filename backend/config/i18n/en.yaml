@@ -559,7 +559,7 @@ toast:
   method_switched: Method switched.
 install:
   title: Add to home screen
-  subtitle: Open Adaptive Learner like a real app — no browser tab needed.
+  subtitle: "Install Adaptive Learner as an app for better offline use."
   install: Install
   dismiss: Not now
   aria_label: Install Adaptive Learner

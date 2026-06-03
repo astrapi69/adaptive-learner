@@ -559,7 +559,7 @@ toast:
   method_switched: Methode gewechselt.
 install:
   title: Zum Startbildschirm hinzufügen
-  subtitle: Adaptive Learner wie eine echte App öffnen — ohne Browser-Tab.
+  subtitle: "Adaptive Learner als App installieren — für bessere Offline-Nutzung."
   install: Installieren
   dismiss: Nicht jetzt
   aria_label: Adaptive Learner installieren

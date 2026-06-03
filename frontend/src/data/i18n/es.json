@@ -608,7 +608,7 @@
   },
   "install": {
     "title": "Anadir a la pantalla de inicio",
-    "subtitle": "Abre Adaptive Learner como una app real — sin pestana del navegador.",
+    "subtitle": "Instala Adaptive Learner como app para un mejor uso sin conexión.",
     "install": "Instalar",
     "dismiss": "Ahora no",
     "aria_label": "Instalar Adaptive Learner"

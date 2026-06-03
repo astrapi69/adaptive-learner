@@ -559,7 +559,7 @@ toast:
   method_switched: 方法を切り替えました。
 install:
   title: ホーム画面に追加
-  subtitle: Adaptive Learner を本物のアプリのように開きます — ブラウザのタブは 不要です。
+  subtitle: "オフラインでより快適に使うには、Adaptive Learner をアプリとしてインストールしてください。"
   install: インストール
   dismiss: 今はしない
   aria_label: Adaptive Learner をインストール

@@ -559,7 +559,7 @@ toast:
   method_switched: Método trocado.
 install:
   title: Adicionar à tela inicial
-  subtitle: Abra o Adaptive Learner como um aplicativo de verdade — sem precisar de aba do navegador.
+  subtitle: "Instale o Adaptive Learner como app para melhor uso off-line."
   install: Instalar
   dismiss: Agora não
   aria_label: Instalar o Adaptive Learner

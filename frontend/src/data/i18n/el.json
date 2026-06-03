@@ -608,7 +608,7 @@
   },
   "install": {
     "title": "Προσθήκη στην αρχική οθόνη",
-    "subtitle": "Άνοιξε το Adaptive Learner ως πραγματική εφαρμογή — χωρίς καρτέλα.",
+    "subtitle": "Εγκαταστήστε το Adaptive Learner ως εφαρμογή για καλύτερη χρήση εκτός σύνδεσης.",
     "install": "Εγκατάσταση",
     "dismiss": "Όχι τώρα",
     "aria_label": "Εγκατάσταση Adaptive Learner"

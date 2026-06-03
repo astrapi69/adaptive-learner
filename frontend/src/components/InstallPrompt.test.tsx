@@ -65,7 +65,7 @@ describe("InstallPrompt", () => {
         expect(localStorage.getItem("adaptive-learner.install_dismissed")).toBeNull();
     });
 
-    it("native prompt dismissed → flag persisted to localStorage", async () => {
+    it("native prompt dismissed → 7-day dismissal timestamp persisted", async () => {
         render(<InstallPrompt />);
         await act(async () => {
             fireBeforeInstallPrompt("dismissed");
@@ -77,12 +77,11 @@ describe("InstallPrompt", () => {
         await waitFor(() =>
             expect(screen.queryByTestId("install-prompt")).not.toBeInTheDocument(),
         );
-        expect(localStorage.getItem("adaptive-learner.install_dismissed")).toBe(
-            "1",
-        );
+        const stored = localStorage.getItem("adaptive-learner.install_dismissed");
+        expect(Number(stored)).toBeGreaterThan(0);
     });
 
-    it("clicking Not now persists dismissed flag", async () => {
+    it("clicking Later persists a dismissal timestamp", async () => {
         render(<InstallPrompt />);
         await act(async () => {
             fireBeforeInstallPrompt();
@@ -92,12 +91,65 @@ describe("InstallPrompt", () => {
         await waitFor(() =>
             expect(screen.queryByTestId("install-prompt")).not.toBeInTheDocument(),
         );
-        expect(localStorage.getItem("adaptive-learner.install_dismissed")).toBe(
-            "1",
+        const stored = localStorage.getItem("adaptive-learner.install_dismissed");
+        expect(Number.isFinite(Number(stored))).toBe(true);
+        expect(Number(stored)).toBeGreaterThan(0);
+    });
+
+    it("stays hidden within the 7-day dismissal window", async () => {
+        // Dismissed 1 day ago — still inside the 7-day window.
+        localStorage.setItem(
+            "adaptive-learner.install_dismissed",
+            String(Date.now() - 24 * 60 * 60 * 1000),
+        );
+        render(<InstallPrompt />);
+        await act(async () => {
+            fireBeforeInstallPrompt();
+        });
+        expect(screen.queryByTestId("install-prompt")).not.toBeInTheDocument();
+    });
+
+    it("re-offers after the 7-day dismissal window expires", async () => {
+        // Dismissed 8 days ago — window expired, should re-offer.
+        localStorage.setItem(
+            "adaptive-learner.install_dismissed",
+            String(Date.now() - 8 * 24 * 60 * 60 * 1000),
+        );
+        render(<InstallPrompt />);
+        await act(async () => {
+            fireBeforeInstallPrompt();
+        });
+        await waitFor(() =>
+            expect(screen.getByTestId("install-prompt")).toBeInTheDocument(),
         );
     });
 
-    it("does NOT render again on remount when previously dismissed", async () => {
+    it("does NOT render when the app is already installed (standalone)", async () => {
+        const original = window.matchMedia;
+        window.matchMedia = vi.fn().mockImplementation((q: string) => ({
+            matches: q.includes("standalone"),
+            media: q,
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+            addListener: vi.fn(),
+            removeListener: vi.fn(),
+            onchange: null,
+            dispatchEvent: vi.fn(),
+        })) as unknown as typeof window.matchMedia;
+        try {
+            render(<InstallPrompt />);
+            await act(async () => {
+                fireBeforeInstallPrompt();
+            });
+            expect(
+                screen.queryByTestId("install-prompt"),
+            ).not.toBeInTheDocument();
+        } finally {
+            window.matchMedia = original;
+        }
+    });
+
+    it("does NOT render again on remount when legacy-permanently dismissed", async () => {
         localStorage.setItem("adaptive-learner.install_dismissed", "1");
         const {rerender} = render(<InstallPrompt />);
         // Even if the event fires, the dismissed flag wins.

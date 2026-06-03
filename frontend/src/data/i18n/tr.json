@@ -608,7 +608,7 @@
   },
   "install": {
     "title": "Ana ekrana ekle",
-    "subtitle": "Adaptive Learner'ı gerçek bir uygulama gibi aç — tarayıcı sekmesi gerekmez.",
+    "subtitle": "Daha iyi çevrimdışı kullanım için Adaptive Learner'ı uygulama olarak yükleyin.",
     "install": "Yükle",
     "dismiss": "Şimdi değil",
     "aria_label": "Adaptive Learner'ı yükle"

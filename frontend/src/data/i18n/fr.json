@@ -608,7 +608,7 @@
   },
   "install": {
     "title": "Ajouter a l'ecran d'accueil",
-    "subtitle": "Ouvre Adaptive Learner comme une vraie app — sans onglet de navigateur.",
+    "subtitle": "Installez Adaptive Learner comme une app pour une meilleure utilisation hors ligne.",
     "install": "Installer",
     "dismiss": "Plus tard",
     "aria_label": "Installer Adaptive Learner"
