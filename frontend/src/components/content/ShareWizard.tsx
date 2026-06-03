@@ -36,6 +36,14 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useI18n } from "../../hooks/useI18n";
 import {
   readContributorName,
@@ -147,6 +155,11 @@ function defaultOpen(url: string): boolean {
   const win = window.open(url, "_blank", "noopener,noreferrer");
   return win != null;
 }
+
+// Radix Select forbids a literal empty-string item value, so the
+// explicit "no level" choice uses this sentinel and maps back to ""
+// in onValueChange — keeping the empty-level validation gate reachable.
+const LEVEL_NONE = "__none__";
 
 export default function ShareWizard({
   entry,
@@ -556,70 +569,93 @@ export default function ShareWizard({
                 <span className="form-label">
                   {t("content.wizard.edit_title", "Title")}
                 </span>
-                <input
+                <Input
                   type="text"
                   value={editTitle}
                   onChange={(e) => setEditTitle(e.target.value)}
                   data-testid="share-wizard-edit-title"
                 />
               </label>
-              <label className="form-row">
+              <div className="form-row">
                 <span className="form-label">
                   {t("content.wizard.edit_source", "Source language (you speak)")}
                 </span>
-                <select
-                  value={editSource}
-                  onChange={(e) => setEditSource(e.target.value)}
-                  data-testid="share-wizard-edit-source"
+                <Select
+                  value={editSource || undefined}
+                  onValueChange={(v) => setEditSource(v)}
                 >
-                  <option value="">
-                    {t("content.wizard.select_language", "Select a language…")}
-                  </option>
-                  {LANGUAGE_OPTIONS.map((opt) => (
-                    <option key={opt.code} value={opt.code}>
-                      {opt.name} ({opt.code})
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="form-row">
+                  <SelectTrigger data-testid="share-wizard-edit-source">
+                    <SelectValue
+                      placeholder={t(
+                        "content.wizard.select_language",
+                        "Select a language…",
+                      )}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGE_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.code} value={opt.code}>
+                        {opt.name} ({opt.code})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="form-row">
                 <span className="form-label">
                   {t("content.wizard.edit_target", "Target language (you learn)")}
                 </span>
-                <select
-                  value={editTarget}
-                  onChange={(e) => setEditTarget(e.target.value)}
-                  data-testid="share-wizard-edit-target"
+                <Select
+                  value={editTarget || undefined}
+                  onValueChange={(v) => setEditTarget(v)}
                 >
-                  <option value="">
-                    {t("content.wizard.select_language", "Select a language…")}
-                  </option>
-                  {LANGUAGE_OPTIONS.map((opt) => (
-                    <option key={opt.code} value={opt.code}>
-                      {opt.name} ({opt.code})
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="form-row">
+                  <SelectTrigger data-testid="share-wizard-edit-target">
+                    <SelectValue
+                      placeholder={t(
+                        "content.wizard.select_language",
+                        "Select a language…",
+                      )}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LANGUAGE_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.code} value={opt.code}>
+                        {opt.name} ({opt.code})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="form-row">
                 <span className="form-label">
                   {t("content.wizard.edit_level", "Level (CEFR)")}
                 </span>
-                <select
-                  value={isCefr(editLevel) ? editLevel.toUpperCase() : ""}
-                  onChange={(e) => setEditLevel(e.target.value)}
-                  data-testid="share-wizard-edit-level"
+                <Select
+                  value={
+                    isCefr(editLevel) ? editLevel.toUpperCase() : LEVEL_NONE
+                  }
+                  onValueChange={(v) =>
+                    setEditLevel(v === LEVEL_NONE ? "" : v)
+                  }
                 >
-                  <option value="">
-                    {t("content.wizard.select_level", "Select a level…")}
-                  </option>
-                  {CEFR_LEVELS.map((lvl) => (
-                    <option key={lvl} value={lvl}>
-                      {lvl}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  <SelectTrigger data-testid="share-wizard-edit-level">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* Explicit "no level" — suggest a CEFR guess but let
+                        the user clear it; the empty-level gate then blocks
+                        Continue (BUG C). */}
+                    <SelectItem value={LEVEL_NONE}>
+                      {t("content.wizard.select_level", "— Select level —")}
+                    </SelectItem>
+                    {CEFR_LEVELS.map((lvl) => (
+                      <SelectItem key={lvl} value={lvl}>
+                        {lvl}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <p className="share-wizard-counts">
                 <span data-testid="share-wizard-exercise-count">
                   {t("content.wizard.exercises_label", "Exercises")}:{" "}
@@ -704,7 +740,7 @@ export default function ShareWizard({
                 <span className="form-label">
                   {t("content.credit.name_label", "Your name (optional)")}
                 </span>
-                <input
+                <Input
                   type="text"
                   className="share-wizard-author-name"
                   placeholder={t("content.credit.name_placeholder", "e.g. Maria S.")}
