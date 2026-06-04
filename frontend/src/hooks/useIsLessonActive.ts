@@ -11,6 +11,7 @@ import {useLocation} from "react-router-dom";
  *   - /lesson/:setSlug/:setId/:filename
  *   - /review/:setId
  *   - /adaptive-lesson/:setId
+ *   - /error-replay/:setSlug/:setId/:filename
  *
  * Prefix-matched (not exact) so the dynamic params don't matter.
  */
@@ -18,6 +19,7 @@ export const LESSON_ROUTE_PREFIXES: readonly string[] = [
     "/lesson/",
     "/review/",
     "/adaptive-lesson/",
+    "/error-replay/",
 ];
 
 export function isLessonRoute(pathname: string): boolean {
