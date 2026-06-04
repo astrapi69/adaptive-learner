@@ -3475,99 +3475,16 @@ select:focus {
 /* Phase 44 / EXP-002 / 3C — MatchingExercise. Mobile-first;
    columns stack tightly on narrow viewports while keeping the
    44px touch-target rule for each tile. */
-.matching-exercise {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.matching-prompt {
-  margin: 0;
-  font-weight: 500;
-}
-
-.matching-counter {
-  margin: 0;
-  font-size: 0.8125rem;
-  color: var(--fg-muted);
-}
-
-.matching-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-}
-
-.matching-column {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.matching-tile {
-  width: 100%;
-  min-height: 44px;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  color: var(--fg);
-  cursor: pointer;
-  text-align: left;
-  font-size: 0.9375rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: background 0.15s ease, border-color 0.15s ease;
-}
-
-.matching-tile:hover {
-  background: var(--surface-2);
-}
-
-/* Selected state must be OBVIOUS, not subtle (UX bugfix): thick
-   accent border + tint + slight scale + a glow box-shadow (the glow
-   doubles as the touch affordance since :hover doesn't exist on
-   touch) + a gentle attention pulse. */
-.matching-tile.is-selected {
-  border: 3px solid var(--exercise-selected);
-  background: color-mix(in srgb, var(--exercise-selected) 15%, var(--surface));
-  transform: scale(1.02);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--exercise-selected) 30%, transparent);
-  animation: matching-pulse 0.5s ease-in-out infinite alternate;
-}
-
+/* MatchingExercise styling migrated to Tailwind utilities
+   (MatchingExercise.tsx). These @keyframes remain because the
+   component references them via `motion-safe:animate-[matching-* ...]`
+   utilities — Tailwind ships no plugin that generates them, and
+   @keyframes are global (not @layer-scoped), so the utilities resolve
+   them. The prefers-reduced-motion handling is now the `motion-safe:`
+   variant on the animation/scale utilities. */
 @keyframes matching-pulse {
   from { opacity: 0.8; }
   to { opacity: 1; }
-}
-
-.matching-tile.is-paired {
-  border-style: dashed;
-  border-color: var(--exercise-matched);
-  background: color-mix(in srgb, var(--exercise-matched) 12%, var(--surface));
-}
-
-/* Dim a paired-but-not-yet-graded tile so the remaining UNpaired
-   pairs stand out (UX bugfix). The :not() guard keeps the
-   post-submit green / red feedback at full opacity. */
-.matching-tile.is-paired:not(.is-correct):not(.is-wrong) {
-  opacity: 0.6;
-}
-
-.matching-tile.is-correct {
-  border-color: var(--exercise-correct);
-  background: color-mix(in srgb, var(--exercise-correct) 18%, var(--surface));
-  color: var(--fg);
-}
-
-.matching-tile.is-wrong {
-  border-color: var(--exercise-wrong);
-  background: color-mix(in srgb, var(--exercise-wrong) 12%, var(--surface));
-  animation: matching-shake 0.2s ease-in-out;
 }
 
 @keyframes matching-shake {
@@ -3581,20 +3498,9 @@ select:focus {
   50% { background: color-mix(in srgb, var(--exercise-wrong) 25%, var(--surface)); }
 }
 
-.matching-tile.is-flash {
-  animation: matching-flash 600ms ease;
-}
-
-/* Instructions + first-pair flow hint (UX bugfix). */
-.matching-instructions {
-  margin: 0;
-  font-size: 0.8125rem;
-  color: var(--fg-muted);
-}
-
 /* EXP-018 / Phase 62 — subtle per-direction instruction line under
    an exercise prompt (receptive vs productive), with an eye/pencil
-   icon hint. */
+   icon hint. SHARED by DirectionInstruction across all renderers. */
 .exercise-direction-instruction {
   display: flex;
   align-items: center;
@@ -3603,76 +3509,6 @@ select:focus {
   font-size: 0.8125rem;
   font-style: italic;
   color: var(--fg-muted);
-}
-
-.matching-flow-hint {
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  align-self: flex-start;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
-  border: 1px dashed var(--accent);
-  font-size: 0.8125rem;
-  font-weight: 500;
-}
-
-.matching-flow-hint-arrow {
-  color: var(--accent);
-  font-weight: 700;
-}
-
-/* Per-column wrapper so each column can carry a visible header. */
-.matching-column-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-
-.matching-column-header {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--fg-muted);
-}
-
-/* prefers-reduced-motion: no pulse / shake / flash / scale; state
-   changes are instant but still visually obvious via colour + border. */
-@media (prefers-reduced-motion: reduce) {
-  .matching-tile.is-selected {
-    transform: none;
-    animation: none;
-  }
-  .matching-tile.is-wrong,
-  .matching-tile.is-flash {
-    animation: none;
-  }
-}
-
-.matching-tile:disabled {
-  cursor: not-allowed;
-}
-
-.matching-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.matching-result {
-  margin: 0;
-  font-weight: 600;
-}
-
-@media (max-width: 600px) {
-  .matching-columns {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Phase 45 / EXP-002 / 3E — FreeTextExercise. Single input
