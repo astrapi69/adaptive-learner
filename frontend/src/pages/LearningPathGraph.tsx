@@ -1,5 +1,5 @@
 /**
- * /learning-path — Visual Learning Path (Phase 66 / EXP-022).
+ * Learning Path — Graph view (Phase 66 / EXP-022).
  *
  * An interactive, zoomable graph (React Flow / @xyflow) laid as a
  * pure presentation layer over real data: downloaded content sets,
@@ -7,7 +7,12 @@
  * recommendation (66E). Nodes are draggable with per-user persisted
  * positions (66D); a Reset button restores the dagre auto-layout.
  *
- * Lazy-loaded (xyflow is ~100 KB) via App.tsx's React.lazy.
+ * Since the learning-path redesign this is the ALTERNATIVE view: the
+ * default route renders the personal two-level list
+ * (LearningPathPersonal) and lazy-loads THIS component (with its
+ * ~100 KB xyflow dependency) only when the user switches to the graph
+ * view — keeping xyflow out of the default bundle. ``headerExtra``
+ * lets the parent inject the view switcher into the toolbar.
  */
 
 import {useCallback, useEffect, useMemo, useState} from "react";
@@ -63,7 +68,14 @@ const CLUSTER_TAG_LABELS: Record<ErrorTag, [string, string]> = {
     word_order: ["dashboard.focus_areas.tag.word_order", "Word order"],
 };
 
-export default function LearningPath() {
+export interface LearningPathGraphProps {
+    /** Optional view switcher injected by the parent (personal page). */
+    headerExtra?: React.ReactNode;
+}
+
+export default function LearningPathGraph({
+    headerExtra,
+}: LearningPathGraphProps) {
     const {t} = useI18n();
     const userId = useMemo(() => readLearnerState().userId ?? "", []);
     const {state, built, clusters} = useLearningPathData(userId);
@@ -160,6 +172,7 @@ export default function LearningPath() {
                     )}
                 </p>
                 <div className="learning-path-toolbar">
+                    {headerExtra}
                     <Link
                         to="/content"
                         className="btn btn-secondary"

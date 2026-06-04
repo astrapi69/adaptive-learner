@@ -2057,6 +2057,36 @@
     }
   },
   "learning_path": {
+    "continue": "Resume",
+    "start": "Start",
+    "completed": "Completed",
+    "next_level": "Next level available",
+    "not_started": "Not started yet",
+    "not_downloaded": "Not downloaded",
+    "download": "Download",
+    "filter_mine": "Only mine",
+    "filter_all": "All sets",
+    "filter_label": "Filter sets",
+    "adaptive": "Start adaptive lesson",
+    "error_replay": "Retry errors",
+    "personal": {
+      "title": "Your Learning Path",
+      "empty": "Download a lesson set to begin.",
+      "all_done": "All {n} lessons completed!",
+      "downloaded": "Downloaded",
+      "lesson_count": "{n} lessons",
+      "track_aria": "{done} of {total} lessons done"
+    },
+    "view": {
+      "label": "View",
+      "personal": "Personal",
+      "graph": "Graph"
+    },
+    "mastery": {
+      "receptive": "receptive",
+      "productive": "productive",
+      "mastered": "mastered"
+    },
     "title": "Learning Path",
     "subtitle": "Where you are and what comes next.",
     "aria_canvas": "Learning path graph",

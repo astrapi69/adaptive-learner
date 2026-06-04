@@ -2057,6 +2057,36 @@
     }
   },
   "learning_path": {
+    "continue": "Continuar",
+    "start": "Começar",
+    "completed": "Concluído",
+    "next_level": "Próximo nível disponível",
+    "not_started": "Ainda não iniciado",
+    "not_downloaded": "Não baixado",
+    "download": "Baixar",
+    "filter_mine": "Apenas os meus",
+    "filter_all": "Todos os conjuntos",
+    "filter_label": "Filtrar conjuntos",
+    "adaptive": "Iniciar lição adaptativa",
+    "error_replay": "Repetir erros",
+    "personal": {
+      "title": "O teu percurso de aprendizagem",
+      "empty": "Baixa um conjunto de lições para começar.",
+      "all_done": "Todas as {n} lições concluídas!",
+      "downloaded": "Baixado",
+      "lesson_count": "{n} lições",
+      "track_aria": "{done} de {total} lições concluídas"
+    },
+    "view": {
+      "label": "Vista",
+      "personal": "Pessoal",
+      "graph": "Gráfico"
+    },
+    "mastery": {
+      "receptive": "receptivo",
+      "productive": "produtivo",
+      "mastered": "dominado"
+    },
     "title": "Percurso de aprendizagem",
     "subtitle": "Onde está e o que vem a seguir.",
     "aria_canvas": "Gráfico do percurso de aprendizagem",

@@ -1,9 +1,10 @@
 # Learning Path
 
-The **Learning Path** page (`/learning-path`) shows your entire lesson
-journey as an interactive, zoomable graph. Every lesson set you have
-downloaded appears as a group node; each lesson inside it is a node
-that you can click to start.
+The **Learning Path** page (`/learning-path`) answers two questions at
+a glance: *where am I, and what comes next?* By default it shows your
+**Personal** path — a compact, two-level list of the lesson sets you
+have downloaded, sorted by your most recent activity. An interactive
+**Graph** view is still available as an alternative.
 
 ## Opening the Learning Path
 
@@ -11,90 +12,97 @@ that you can click to start.
 - On the Dashboard, use the **🗺️ Learning Path** quick-action button.
 - On the Content Browser (My Lessons section), click **Learning Path**.
 
-## Reading the graph
+## Personal view (default)
 
-### Lesson nodes
+### Level 1 — set overview
 
-Each lesson node shows:
+Each downloaded set is **one row**:
 
 | Element | Meaning |
 |---------|---------|
-| Number and title | Lesson sequence within its set |
-| ★ stars (0–3) | Best score achieved so far |
-| **R ✓** badge | Receptive (recognition) mastery reached |
-| **P ✓** badge | Productive (production) mastery reached |
-| XP badge | Experience points earned from this lesson |
-| Status colour | Not started / In progress / Paused / Completed / Mastered |
-| Pulsing accent | Recommended next lesson based on your error history |
-| Lock icon | Lesson locked until a prerequisite is met |
+| Domain icon + title | The course (brain = psychology, flag = language, code = programming) |
+| Mini progress track | One dot per lesson — filled = done, half = in progress, hollow = not started |
+| Percentage | Share of the set's lessons completed |
+| Last activity | When you last worked on this set ("yesterday", "3 days ago") |
+| Current lesson | The lesson you should do next |
+| Action button | **Resume** / **Start** / **Next level available** / **Completed** |
 
-### Set group nodes
+Sets are sorted by last activity (most recent first). Untouched
+downloaded sets sink to the bottom. When you finish every lesson of a
+course and the next CEFR level exists, the row offers **Next level
+available**.
 
-A set group node wraps all lessons from one content set. It shows the
-set title, the source → target language pair, a progress bar
-(completed / total), and a receptive / productive mastery summary.
-Click the group header to collapse or expand its lessons.
+### Level 2 — lesson detail
 
-## Navigating
+Click a set row to expand it inline (no page change). Each lesson
+shows its number and title, stars (0–3, or — if never attempted),
+per-direction mastery (**receptive** / **productive**), and the date
+of your last attempt. The ▶ marker highlights the set's current
+lesson. Click any lesson to start or resume it.
 
-Click any unlocked lesson node to go straight to that lesson. Locked
-nodes are disabled; hover for the lock reason.
+At the bottom of the expanded set:
 
-## Controls
+- **Start adaptive lesson** — a lesson generated from your errors in
+  this set.
+- **Retry errors (N)** — review the set's outstanding mistakes (shown
+  only when there are any).
 
-### Filters
+Click the set row again to collapse it.
 
-- **Status filter** — show all lessons, or only Not started, In
-  progress, or Mastered lessons.
-- **Direction filter** — show all lessons, or only those where
-  receptive or productive mastery is still incomplete.
+### Only mine / All sets
 
-### Search
+The **[Only mine] [All sets]** toggle controls how prominent the
+*Not downloaded* section at the bottom is. **Only mine** (default)
+keeps it collapsed; **All sets** expands it so you can browse and
+download more courses. Your choice is remembered.
 
-Type in the search box to highlight matching lessons. Press **Enter**
-to navigate directly to the first matching lesson.
+### Not downloaded
 
-### Stats
+A collapsible section at the bottom lists content sets you have not
+downloaded yet, each with a **Download** button. Downloading a set
+moves it up into your active list.
 
-Click **Stats** to open (or close) the statistics sidebar:
+## Graph view (alternative)
 
-- **Lessons**: completed vs. total.
-- **Receptive**: lessons with receptive mastery.
-- **Productive**: lessons with productive mastery.
+Use the **Personal / Graph** switch in the header to open the
+interactive, zoomable graph. It lays every downloaded set and lesson
+out as nodes you can drag, filter, search, and inspect. The graph
+(and its larger drawing library) loads only when you switch to it, so
+the default Personal view stays fast.
 
-### Error clusters
+### Lesson and set nodes
 
-Click **Show error clusters** to reveal shared error patterns across
-your lessons. A cluster groups lessons where you made the same type
-of mistake (e.g. *article gender*, *verb conjugation*).
+Each lesson node shows its number and title, stars, per-direction
+mastery (**R ✓** / **P ✓**), XP, a status colour, a pulsing accent on
+the recommended next lesson, and a lock icon when a prerequisite is
+unmet. A set group node wraps a set's lessons with a progress bar and
+mastery summary; click its header to collapse or expand.
 
-- Click a cluster name to highlight those lessons in the graph.
-- Click **Start adaptive lesson** to launch an adaptive lesson
-  focused on that error pattern.
+### Graph controls
 
-## Repositioning nodes
-
-You can drag any node to rearrange the graph. Your layout is saved
-automatically per user (in browser storage) and restored the next
-time you open the page.
-
-Click **Reset layout** in the page header to return to the automatic
-dagre-computed top-to-bottom layout and clear your saved positions.
+- **Status filter** — all / not started / in progress / mastered.
+- **Direction filter** — all, or only lessons missing receptive or
+  productive mastery.
+- **Search** — highlight matches; press **Enter** to jump to the
+  first one.
+- **Stats** — lessons completed, receptive mastered, productive
+  mastered.
+- **Show error clusters** — shared mistake patterns (e.g. *article
+  gender*) with a one-click adaptive lesson.
+- **Reset layout** — restore the automatic layout and clear your
+  dragged positions (saved per user in browser storage).
 
 ## Keyboard access
 
-All controls are reachable by keyboard:
-
-- **Tab** moves focus between controls and nodes.
-- **Enter / Space** activates a focused lesson node or button.
-- The search input announces *"press Enter to navigate to the first
-  match"* to assistive technology.
+All controls are reachable by keyboard: **Tab** moves focus, **Enter
+/ Space** activates a row, lesson, or button. Touch targets are at
+least 44 px and the page reflows cleanly down to 375 px wide.
 
 ## Tips
 
-- The **Recommended** badge marks the lesson the adaptive engine
-  considers your best next step. It is based on your current error
-  patterns, not just lesson order.
-- A lesson stays **In progress** if you paused it. Resume it from
-  the node or from the Dashboard Paused Lessons card.
-- Once both R ✓ and P ✓ badges appear, the lesson is **Mastered**.
+- The **current lesson** (▶) is always your best next step — based on
+  your error history, not just lesson order.
+- A paused lesson stays resumable from its row or the Dashboard Paused
+  Lessons card.
+- Once both **receptive** and **productive** mastery are reached, a
+  lesson counts as fully mastered.

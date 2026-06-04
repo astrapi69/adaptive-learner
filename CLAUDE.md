@@ -889,8 +889,14 @@ Progress, Settings, Import, ImportDetail, Anki, Pronunciation,
 Content, Lesson, Review, AdaptiveLesson, LearningRepo,
 CreateLesson (Phase 65 / EXP-021 — the standalone 4-step Lesson
 Creator at ``/create-lesson``),
-LearningPath (Phase 66 / EXP-022 — interactive @xyflow/react
-graph at ``/learning-path``), NotFound.
+LearningPath (``/learning-path`` — since the redesign the default is
+``LearningPathPersonal``, a two-level personal list: one SetRow per
+downloaded set sorted by last activity (Level 1) that expands inline
+to per-lesson detail (Level 2), built by ``buildPersonalPath`` /
+``usePersonalPath``; the original @xyflow/react graph from Phase 66 /
+EXP-022 is kept as ``LearningPathGraph``, lazy-loaded only when the
+user picks the Graph view so xyflow leaves the default bundle),
+NotFound.
 
 **Dual storage** (since v0.7.0): `IStorageService` interface with
 two implementations. `ApiStorage` talks to the FastAPI backend

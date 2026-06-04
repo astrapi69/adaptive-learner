@@ -24,7 +24,7 @@ const AnkiPage = lazy(() => import("./pages/Anki"));
 const Assessment = lazy(() => import("./pages/Assessment"));
 const ContentPage = lazy(() => import("./pages/Content"));
 const CreateLesson = lazy(() => import("./pages/CreateLesson"));
-const LearningPath = lazy(() => import("./pages/LearningPath"));
+const LearningPath = lazy(() => import("./pages/LearningPathPersonal"));
 const Curriculum = lazy(() => import("./pages/Curriculum"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const LessonPage = lazy(() => import("./pages/Lesson"));

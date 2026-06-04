@@ -1,17 +1,17 @@
 /**
- * Learning Path (/learning-path) — graph render + navigation
- * (E2E hardening). Dexie build, NO backend.
+ * Learning Path (/learning-path) — personal two-level view + the
+ * lazy graph alternative (learning-path redesign). Dexie build, NO
+ * backend.
  *
- *   - Fresh visit (no progress): the empty state renders and its
+ *   - Fresh visit (no downloads): the empty state renders and its
  *     "browse content" action navigates to /content.
- *   - After playing a real bundled lesson: the @xyflow graph renders
- *     with a lesson node for the played lesson; clicking that node
- *     navigates into the lesson viewer.
+ *   - After playing a real bundled lesson: the set appears as a
+ *     Level-1 row; expanding it reveals Level-2 lesson rows; clicking
+ *     a lesson row navigates into the viewer.
+ *   - At 375px the page does not overflow horizontally.
+ *   - Switching to the Graph view lazy-loads the xyflow canvas.
  *
- * STABLE SELECTORS ONLY (Phase-B-proof): ``data-testid`` anchors +
- * routes. The graph canvas/node interaction uses the node's own
- * ``lesson-node-{setId}-{filename}`` testid (a real <button>), not a
- * canvas-coordinate click.
+ * STABLE SELECTORS ONLY: ``data-testid`` anchors + routes.
  */
 
 import {expect, test, type Page} from "@playwright/test";
@@ -19,7 +19,7 @@ import {expect, test, type Page} from "@playwright/test";
 const SET_ID = "fr-a1-from-en";
 
 /** Download the bundled set and play its first lesson to the summary
- *  (any answers — we only need recorded progress for the graph). */
+ *  (any answers — we only need recorded progress for the path). */
 async function playFirstLesson(page: Page): Promise<void> {
     await page.goto("/content");
     await expect(page.getByTestId("content-tree")).toBeVisible({timeout: 15000});
@@ -67,7 +67,7 @@ async function playFirstLesson(page: Page): Promise<void> {
     await expect(page.getByTestId("lesson-summary")).toBeVisible({timeout: 15000});
 }
 
-test.describe("Learning Path — graph + navigation", () => {
+test.describe("Learning Path — personal view + graph", () => {
     test("fresh visit shows the empty state and links to content", async ({
         page,
     }) => {
@@ -78,7 +78,7 @@ test.describe("Learning Path — graph + navigation", () => {
         await expect(page.getByTestId("learning-path-page")).toBeVisible({
             timeout: 15000,
         });
-        // No progress yet -> empty state with a "browse content" action.
+        // No downloads yet -> empty state with a "browse content" action.
         await expect(page.getByTestId("learning-path-empty")).toBeVisible();
         await page.getByTestId("learning-path-to-content").click();
         await expect(page.getByTestId("content-tree")).toBeVisible({
@@ -88,7 +88,7 @@ test.describe("Learning Path — graph + navigation", () => {
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });
 
-    test("after playing a lesson, the graph renders a node that opens it", async ({
+    test("after playing a lesson, the set row expands and a lesson opens", async ({
         page,
     }) => {
         const errors: string[] = [];
@@ -100,20 +100,62 @@ test.describe("Learning Path — graph + navigation", () => {
         await expect(page.getByTestId("learning-path-page")).toBeVisible({
             timeout: 15000,
         });
-        await expect(page.getByTestId("learning-path-canvas")).toBeVisible({
-            timeout: 15000,
-        });
+        const row = page.getByTestId(`set-row-${SET_ID}`);
+        await expect(row).toBeVisible({timeout: 15000});
 
-        // A node for the played set is present; the played lesson is
-        // unlocked, so clicking it navigates into the lesson viewer.
-        const node = page
-            .locator(`[data-testid^="lesson-node-${SET_ID}-"]`)
+        // Expand to Level 2 and open a lesson.
+        await page.getByTestId(`set-toggle-${SET_ID}`).click();
+        await expect(page.getByTestId(`set-detail-${SET_ID}`)).toBeVisible();
+        const lessonRow = page
+            .locator(`[data-testid^="lesson-row-${SET_ID}-"]`)
             .first();
-        await expect(node).toBeVisible({timeout: 10000});
-        await node.click();
+        await expect(lessonRow).toBeVisible({timeout: 10000});
+        await lessonRow.click();
         await expect(page.getByTestId("lesson-page")).toBeVisible({
             timeout: 15000,
         });
+
+        expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
+    });
+
+    test("renders without horizontal overflow at 375px", async ({page}) => {
+        await page.setViewportSize({width: 375, height: 800});
+        await playFirstLesson(page);
+        await page.goto("/learning-path");
+        await expect(page.getByTestId(`set-row-${SET_ID}`)).toBeVisible({
+            timeout: 15000,
+        });
+        await page.getByTestId(`set-toggle-${SET_ID}`).click();
+        await expect(page.getByTestId(`set-detail-${SET_ID}`)).toBeVisible();
+
+        const overflow = await page.evaluate(
+            () =>
+                document.documentElement.scrollWidth -
+                document.documentElement.clientWidth,
+        );
+        expect(overflow, "horizontal overflow at 375px").toBeLessThanOrEqual(1);
+    });
+
+    test("switching to the graph view lazy-loads the xyflow canvas", async ({
+        page,
+    }) => {
+        const errors: string[] = [];
+        page.on("pageerror", (e) => errors.push(e.message));
+
+        await playFirstLesson(page);
+        await page.goto("/learning-path");
+        await expect(page.getByTestId("learning-path-page")).toBeVisible({
+            timeout: 15000,
+        });
+
+        await page.getByTestId("learning-path-view-graph").click();
+        await expect(page.getByTestId("learning-path-canvas")).toBeVisible({
+            timeout: 15000,
+        });
+        // A lesson node for the played set renders in the graph.
+        await expect(
+            page.locator(`[data-testid^="lesson-node-${SET_ID}-"]`).first(),
+        ).toBeVisible({timeout: 10000});
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
     });

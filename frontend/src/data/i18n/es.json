@@ -2057,6 +2057,36 @@
     }
   },
   "learning_path": {
+    "continue": "Continuar",
+    "start": "Empezar",
+    "completed": "Completado",
+    "next_level": "Siguiente nivel disponible",
+    "not_started": "Aún no empezado",
+    "not_downloaded": "No descargado",
+    "download": "Descargar",
+    "filter_mine": "Solo los míos",
+    "filter_all": "Todos los sets",
+    "filter_label": "Filtrar sets",
+    "adaptive": "Iniciar lección adaptativa",
+    "error_replay": "Repetir errores",
+    "personal": {
+      "title": "Tu ruta de aprendizaje",
+      "empty": "Descarga un conjunto de lecciones para empezar.",
+      "all_done": "¡Las {n} lecciones completadas!",
+      "downloaded": "Descargado",
+      "lesson_count": "{n} lecciones",
+      "track_aria": "{done} de {total} lecciones completadas"
+    },
+    "view": {
+      "label": "Vista",
+      "personal": "Personal",
+      "graph": "Gráfico"
+    },
+    "mastery": {
+      "receptive": "receptivo",
+      "productive": "productivo",
+      "mastered": "dominado"
+    },
     "title": "Ruta de aprendizaje",
     "subtitle": "Dónde estás y qué sigue.",
     "aria_canvas": "Gráfico de la ruta de aprendizaje",
