@@ -227,27 +227,43 @@ export default function ShareWizard({
 
   // BUG A/C — editable lesson metadata, still correctable by the user.
   const appLang = baseLang(lang);
+  // An explicit NON-language content domain marks a same-language pair as
+  // intentional (German grammar for German speakers), not a legacy en/en
+  // mistake. The lesson carries it (set at save time, schema v1.3); a
+  // downloaded set carries it on the set itself. (User-generated sets
+  // overload the SET's ``domain`` to store the origin, so the lesson's
+  // domain is the authoritative content-domain signal there.)
+  const knownDomain = (d: string | null | undefined): string | null => {
+    const v = (d || "").toLowerCase();
+    return KNOWN_CONTENT_DOMAINS.has(v) ? v : null;
+  };
+  const explicitDomain = knownDomain(primary?.domain) ?? knownDomain(entry.domain);
+  const isDomainContent = explicitDomain !== null;
   const [editTitle, setEditTitle] = useState(() => entry.title || "");
   // SOURCE (the language the learner SPEAKS). v1.54.0: now that the
   // import pipeline sets languages correctly, INHERIT the lesson's saved
   // source when it's a valid ISO code DIFFERENT from the target. Fall
   // back to the app language only when it's missing, invalid, or
   // collides with the target (old pre-pipeline lessons saved with a bad
-  // "en"/"en"). The dropdown stays editable for the remaining edge
-  // cases. (Supersedes the v1.53.2 "always app language" stopgap.)
+  // "en"/"en"). The collision repair is SKIPPED for explicit domain
+  // content, where source == target is intentional and inherited as-is.
+  // The dropdown stays editable for the remaining edge cases.
+  // (Supersedes the v1.53.2 "always app language" stopgap.)
   const initialSource =
     isIsoLang(entry.source_language) &&
-    baseLang(entry.source_language) !== baseLang(entry.target_language)
+    (isDomainContent ||
+      baseLang(entry.source_language) !== baseLang(entry.target_language))
       ? baseLang(entry.source_language)
       : appLang;
   const [editSource, setEditSource] = useState(initialSource);
   // TARGET (the language the learner LEARNS) keeps the saved value when
-  // it's a valid, different language; otherwise content detection;
-  // otherwise empty so the user picks it.
+  // it's a valid, different language (or explicit domain content, where
+  // source == target is allowed); otherwise content detection; otherwise
+  // empty so the user picks it.
   const [editTarget, setEditTarget] = useState(() => {
     if (
       isIsoLang(entry.target_language) &&
-      baseLang(entry.target_language) !== initialSource
+      (isDomainContent || baseLang(entry.target_language) !== initialSource)
     )
       return baseLang(entry.target_language);
     const detected = autoDetectTargetLanguage(
@@ -273,17 +289,14 @@ export default function ShareWizard({
   // target; when they're equal the material is non-language (grammar, a
   // subject, …) and ships as a NON-language domain, which the validator
   // + content-repo CI allow with source == target. Honour an explicit
-  // content domain on the set; otherwise infer from the language pair.
+  // content domain (lesson or set); otherwise infer from the language
+  // pair (equal pair -> knowledge, differing pair -> language).
   const sameLanguage =
     isIsoLang(editSource) &&
     isIsoLang(editTarget) &&
     baseLang(editSource) === baseLang(editTarget);
   const resolvedDomain =
-    entry.domain && KNOWN_CONTENT_DOMAINS.has(entry.domain.toLowerCase())
-      ? entry.domain.toLowerCase()
-      : sameLanguage
-        ? "knowledge"
-        : "language";
+    explicitDomain ?? (sameLanguage ? "knowledge" : "language");
 
   // The corrected metadata that drives placement, validation, and the
   // pull request — NOT the (possibly broken) saved entry values.
