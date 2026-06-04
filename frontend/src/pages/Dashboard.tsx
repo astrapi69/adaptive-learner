@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
+import ContinueLearning from "../components/ContinueLearning";
 import DashboardFilterBar from "../components/DashboardFilterBar";
 import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
@@ -215,6 +216,14 @@ export default function Dashboard() {
                 {error && <p className="error-text" role="alert">{error}</p>}
             </header>
 
+            {/* UX overhaul C4 — Continue Learning at the TOP: answers
+                "where was I, what next?" before any gamification. */}
+            {userId && (
+                <div className="mb-4">
+                    <ContinueLearning userId={userId} maxItems={3} />
+                </div>
+            )}
+
             {showApiKeyBanner && (
                 <div
                     className="api-key-skip-banner"
@@ -313,7 +322,47 @@ export default function Dashboard() {
                 />
             )}
 
+            {/* UX overhaul C4 — widgets reordered around the learning
+                flow: actionable first (paused, missions, focus, review),
+                then motivational (XP / streak / badges), then the
+                analytical panels. */}
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {userId && <PausedLessonsCard userId={userId} />}
+
+                {userId && (
+                    <article className="dashboard-card dashboard-card-wide">
+                        <DailyMissionsCard userId={userId} />
+                    </article>
+                )}
+
+                {userId && <FocusAreasCard userId={userId} />}
+                {userId && <ReviewQueueCard userId={userId} />}
+
+                <article className="dashboard-card">
+                    <h2 className="dashboard-card-title">
+                        <HelpTooltip glossaryKey="feature_gamification">
+                            {t("gamification.card_xp", "XP & Level")}
+                        </HelpTooltip>
+                        <HelpLink glossaryKey="feature_gamification" />
+                    </h2>
+                    <XPWidget state={xpState} />
+                </article>
+
+                <article className="dashboard-card dashboard-card-wide">
+                    <h2 className="dashboard-card-title">
+                        {t("gamification.card_streak", "Streak")}
+                    </h2>
+                    <StreakWidget state={streakState} />
+                    <StreakCalendar entries={heatmap} />
+                </article>
+
+                <article className="dashboard-card dashboard-card-wide">
+                    <h2 className="dashboard-card-title">
+                        {t("gamification.card_badges", "Badges")}
+                    </h2>
+                    <DashboardBadgeWidget badges={badges} />
+                </article>
+
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
                         <HelpTooltip glossaryKey="learning_profile">
@@ -338,37 +387,6 @@ export default function Dashboard() {
                         <HelpLink glossaryKey="learning_session" />
                     </h2>
                     <SessionCounter summary={summary} />
-                </article>
-
-                <article className="dashboard-card">
-                    <h2 className="dashboard-card-title">
-                        <HelpTooltip glossaryKey="feature_gamification">
-                            {t("gamification.card_xp", "XP & Level")}
-                        </HelpTooltip>
-                        <HelpLink glossaryKey="feature_gamification" />
-                    </h2>
-                    <XPWidget state={xpState} />
-                </article>
-
-                <article className="dashboard-card dashboard-card-wide">
-                    <h2 className="dashboard-card-title">
-                        {t("gamification.card_streak", "Streak")}
-                    </h2>
-                    <StreakWidget state={streakState} />
-                    <StreakCalendar entries={heatmap} />
-                </article>
-
-                {userId && (
-                    <article className="dashboard-card dashboard-card-wide">
-                        <DailyMissionsCard userId={userId} />
-                    </article>
-                )}
-
-                <article className="dashboard-card dashboard-card-wide">
-                    <h2 className="dashboard-card-title">
-                        {t("gamification.card_badges", "Badges")}
-                    </h2>
-                    <DashboardBadgeWidget badges={badges} />
                 </article>
 
                 <article className="dashboard-card dashboard-card-wide">
@@ -404,10 +422,6 @@ export default function Dashboard() {
                     </h2>
                     <SpacedRecommendations cards={spaced} />
                 </article>
-
-                {userId && <PausedLessonsCard userId={userId} />}
-                {userId && <FocusAreasCard userId={userId} />}
-                {userId && <ReviewQueueCard userId={userId} />}
 
                 <article className="dashboard-card dashboard-card-wide">
                     <h2 className="dashboard-card-title">
