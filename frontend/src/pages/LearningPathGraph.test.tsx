@@ -26,7 +26,7 @@ vi.mock("../hooks/useLearningPathData", () => ({
     useLearningPathData: () => useDataMock(),
 }));
 
-import LearningPath from "./LearningPath";
+import LearningPath from "./LearningPathGraph";
 
 function renderPage() {
     return render(
