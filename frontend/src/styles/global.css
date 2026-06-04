@@ -214,29 +214,9 @@ code {
   font-size: 0.82rem;
 }
 
-/* Code-aware exercise inputs (schema v1.3). Monospace, no spellcheck. */
-.free-text-code-wrap {
-  position: relative;
-}
-.free-text-code-lang {
-  position: absolute;
-  top: 0.25rem;
-  right: 0.5rem;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-muted);
-  pointer-events: none;
-}
-.free-text-input-code {
-  font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
-  white-space: pre;
-  overflow-wrap: normal;
-  overflow-x: auto;
-  width: 100%;
-  resize: vertical;
-  tab-size: 2;
-}
+/* Code-aware exercise input — Cloze (schema v1.3). Monospace.
+   FreeText's code-input styling migrated to Tailwind
+   (FreeTextExercise.tsx). */
 .cloze-sentence-code {
   font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
 }
@@ -3511,97 +3491,8 @@ select:focus {
   color: var(--fg-muted);
 }
 
-/* Phase 45 / EXP-002 / 3E — FreeTextExercise. Single input
-   row, optional hint, Submit becomes a result + Try-again
-   pair after submit. Same 44px touch-target floor as
-   matching/picture. */
-.free-text-exercise {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.free-text-prompt {
-  margin: 0;
-  font-weight: 500;
-}
-
-.free-text-input {
-  width: 100%;
-  min-height: 44px;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  color: var(--fg);
-  font-size: 1rem;
-}
-
-.free-text-input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 30%, transparent);
-}
-
-.free-text-input:disabled {
-  background: var(--surface-2);
-  cursor: not-allowed;
-}
-
-.free-text-hint-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.free-text-hint-toggle {
-  background: none;
-  border: none;
-  padding: 0;
-  color: var(--accent);
-  cursor: pointer;
-  font-size: 0.875rem;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.free-text-hint-toggle:hover {
-  color: var(--accent);
-  text-decoration: none;
-}
-
-.free-text-hint {
-  margin: 0;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
-  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
-  color: var(--fg);
-  font-size: 0.875rem;
-}
-
-.free-text-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-.free-text-result {
-  margin: 0;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.free-text-result[data-result="correct"] {
-  color: var(--exercise-correct);
-}
-
-.free-text-result[data-result="wrong"] {
-  color: var(--exercise-wrong);
-}
+/* FreeTextExercise styling migrated to Tailwind utilities
+   (FreeTextExercise.tsx). */
 
 /* Phase 45 / EXP-002 / 3F — WordTilesExercise. Two stacked
    tile zones: the user's answer row at top, the scrambled
