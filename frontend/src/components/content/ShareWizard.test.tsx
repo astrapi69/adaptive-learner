@@ -8,7 +8,7 @@
  */
 
 import "@testing-library/jest-dom/vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -507,6 +507,53 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
     // Shipped as knowledge content: the hint shows, no blocking errors.
     expect(screen.getByTestId("share-wizard-domain-hint")).toBeInTheDocument();
     expect(screen.queryByTestId("share-wizard-step1-errors")).toBeNull();
+    expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
+  });
+
+  it("inherits the same-language domain pair when lessons load AFTER mount", async () => {
+    // Regression (Dexie release gate): the share page mounts the wizard
+    // with an EMPTY lessons array and fetches the lessons asynchronously
+    // (Content.handleShare), so the pair useState initializers can't see
+    // the lesson's content domain at mount and a same-language pair
+    // collapses to the placeholder. Once the knowledge-domain lesson
+    // arrives, the effect must re-apply the inherited de -> de pair.
+    i18nMock.lang = "de";
+    const knowledgeLesson: ContentLesson = {
+      ...lesson("mine", ["wort0", "wort1", "wort2"]),
+      domain: "knowledge",
+    };
+    const baseProps = {
+      entry: entry({ source_language: "de", target_language: "de" }),
+      validation: okValidation,
+      checking: false,
+      knownSets: [] as ContentSetEntry[],
+      existingFilenames: [] as string[],
+      loadSimilarLessons: vi.fn(async () => [] as ContentLesson[]),
+      validationMessage: (i: { code: string }) => i.code,
+      repo: "astrapi69/adaptive-learner-content",
+      branch: "main",
+      onShared: vi.fn(),
+      onClose: vi.fn(),
+      openUrl: vi.fn((_url: string) => true),
+      downloadLesson: vi.fn(),
+    };
+    // Mount with no lessons yet: the same-language pair has no domain
+    // signal, so the target collapses to the placeholder.
+    const { rerender } = render(<ShareWizard {...baseProps} lessons={[]} />);
+    expect(screen.getByTestId("share-wizard-edit-target")).toHaveTextContent(
+      /Select a language/i,
+    );
+    // Lessons arrive (async) carrying the knowledge domain.
+    rerender(<ShareWizard {...baseProps} lessons={[knowledgeLesson]} />);
+    await waitFor(() =>
+      expect(screen.getByTestId("share-wizard-edit-target")).toHaveTextContent(
+        "German",
+      ),
+    );
+    expect(screen.getByTestId("share-wizard-edit-source")).toHaveTextContent(
+      "German",
+    );
+    expect(screen.getByTestId("share-wizard-domain-hint")).toBeInTheDocument();
     expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
   });
 
