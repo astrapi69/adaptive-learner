@@ -87,6 +87,17 @@ function lessonStepTotal(lesson: ContentLesson | null): number | undefined {
     return lesson.steps?.length ?? undefined;
 }
 
+/** Run an async read, swallowing failures (including a synchronous
+ *  throw from a missing storage namespace) to null so a single
+ *  unreachable source never breaks the whole section. */
+async function safe<T>(fn: () => Promise<T>): Promise<T | null> {
+    try {
+        return await fn();
+    } catch {
+        return null;
+    }
+}
+
 export default function ContinueLearning({
     userId,
     maxItems = 5,
@@ -103,45 +114,47 @@ export default function ContinueLearning({
         let cancelled = false;
         void (async () => {
             const storage = getStorage();
-            const [progress, sets] = await Promise.all([
-                storage.lessonProgress.list(userId).catch(() => []),
-                storage.contentLoader.listSets().then((r) => r.sets).catch(
-                    () => [] as ContentSetEntry[],
-                ),
+            const [progress, setsRes] = await Promise.all([
+                safe(() => storage.lessonProgress.list(userId)),
+                safe(() => storage.contentLoader.listSets()),
             ]);
             if (cancelled) return;
+            const sets: ContentSetEntry[] = setsRes?.sets ?? [];
 
-            const groups = groupRecentProgress(progress, maxItems);
+            const groups = groupRecentProgress(progress ?? [], maxItems);
             const resolved = await Promise.all(
                 groups.map(async (group) => {
-                    const listing = await storage.contentLoader
-                        .listLessons(group.source, group.setId)
-                        .catch(() => ({lessons: [] as string[]}));
+                    const listing = await safe(() =>
+                        storage.contentLoader.listLessons(
+                            group.source,
+                            group.setId,
+                        ),
+                    );
                     const action = resolveContinueAction(
                         group.mostRecent,
-                        listing.lessons,
+                        listing?.lessons ?? [],
                     );
 
                     // Fetch lesson detail for the displayed lessons —
                     // bounded by maxItems, cheap from the local cache,
                     // and guarded so a miss falls back to a filename
                     // label.
-                    const rowLesson = await storage.contentLoader
-                        .getLesson(
+                    const rowLesson = await safe(() =>
+                        storage.contentLoader.getLesson(
                             group.source,
                             group.setId,
                             group.mostRecent.lesson_filename,
-                        )
-                        .catch(() => null);
+                        ),
+                    );
                     const nextLesson =
                         action.mode === "next"
-                            ? await storage.contentLoader
-                                  .getLesson(
+                            ? await safe(() =>
+                                  storage.contentLoader.getLesson(
                                       group.source,
                                       group.setId,
                                       action.targetFilename,
-                                  )
-                                  .catch(() => null)
+                                  ),
+                              )
                             : null;
 
                     const lessonTitle =

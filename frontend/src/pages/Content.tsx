@@ -29,11 +29,15 @@ import {
   Download,
   FolderOpen,
   GraduationCap,
+  Map as MapIcon,
+  MessageSquare,
   Pencil,
   Play,
+  Plus,
   RefreshCw,
   Search,
   Trash2,
+  Upload,
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -41,6 +45,7 @@ import { useNavigate } from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
+import ContinueLearning from "../components/ContinueLearning";
 import ImportLessonModal from "../components/content/ImportLessonModal";
 import {
   buildLessonHaystack,
@@ -157,6 +162,7 @@ export default function ContentPage() {
   // flips to "applied" and isn't re-run).
   const [appliedFixes, setAppliedFixes] = useState<Set<string>>(new Set());
   const { hasKey, activeProvider } = useApiKeyStatus();
+  const userId = readLearnerState().userId;
 
   // --- Content Browser search -----------------------------------------
   const [searchQuery, setSearchQuery] = useState("");
@@ -990,36 +996,130 @@ export default function ContentPage() {
         </p>
       )}
 
-      {/* Phase 59C — My Lessons (user-generated sets). */}
+      {/* UX overhaul C1 — compact toolbar: search FIRST (full width),
+          then icon-only action buttons (icon + label from md up). */}
+      <div
+        className="mb-4 flex flex-wrap items-center gap-2"
+        data-testid="content-toolbar"
+      >
+        <div
+          className="relative flex min-w-[200px] flex-1 items-center"
+          data-testid="content-search-bar"
+        >
+          <Search
+            size={18}
+            className="pointer-events-none absolute left-3 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Input
+            ref={searchInputRef}
+            type="search"
+            value={searchQuery}
+            onFocus={() => setSearchActivated(true)}
+            onChange={(e) => {
+              setSearchActivated(true);
+              setSearchQuery(e.target.value);
+            }}
+            placeholder={t("content.search.placeholder", "Search lessons...")}
+            aria-label={t("content.search.placeholder", "Search lessons...")}
+            className="pl-10 pr-10"
+            data-testid="content-search-input"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              className="absolute right-2 flex h-8 w-8 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+              onClick={() => setSearchQuery("")}
+              aria-label={t("content.search.clear", "Clear search")}
+              data-testid="content-search-clear"
+            >
+              <X size={16} aria-hidden="true" />
+            </button>
+          )}
+        </div>
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            className="min-h-[44px] gap-2"
+            onClick={() => setShowImport(true)}
+            title={t("content.import_lesson.button", "Import Lesson")}
+            aria-label={t("content.import_lesson.button", "Import Lesson")}
+            data-testid="content-import-lesson"
+          >
+            <Upload className="h-5 w-5" aria-hidden="true" />
+            <span className="hidden md:inline">
+              {t("content.import_lesson.button", "Import Lesson")}
+            </span>
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            className="min-h-[44px] gap-2"
+            onClick={() => navigate("/import")}
+            title={t("content.import_chat.button", "Import Chat")}
+            aria-label={t("content.import_chat.button", "Import Chat")}
+            data-testid="content-import-chat"
+          >
+            <MessageSquare className="h-5 w-5" aria-hidden="true" />
+            <span className="hidden md:inline">
+              {t("content.import_chat.button", "Import Chat")}
+            </span>
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            className="min-h-[44px] gap-2"
+            onClick={() => navigate("/learning-path")}
+            title={t("nav.learning_path", "Learning Path")}
+            aria-label={t("nav.learning_path", "Learning Path")}
+            data-testid="content-learning-path"
+          >
+            <MapIcon className="h-5 w-5" aria-hidden="true" />
+            <span className="hidden md:inline">
+              {t("nav.learning_path", "Learning Path")}
+            </span>
+          </Button>
+          <Button
+            type="button"
+            className="min-h-[44px] gap-2"
+            onClick={() => navigate("/create-lesson")}
+            title={t("content.create_lesson.button", "Create New Lesson")}
+            aria-label={t("content.create_lesson.button", "Create New Lesson")}
+            data-testid="content-create-lesson"
+          >
+            <Plus className="h-5 w-5" aria-hidden="true" />
+            <span className="hidden md:inline">
+              {t("content.create_lesson.button", "Create New Lesson")}
+            </span>
+          </Button>
+        </div>
+      </div>
+
+      {/* UX overhaul C3 — Continue Learning: the learner's recent
+          activity, directly below the search, above the tree. Hidden
+          while a search is active (results replace the browse view)
+          and when there is no recent activity (the tree covers
+          discovery). */}
+      {!searchResult.active && userId && (
+        <div className="mb-4">
+          <ContinueLearning
+            userId={userId}
+            maxItems={5}
+            showWhenEmpty={false}
+          />
+        </div>
+      )}
+
+      {/* Phase 59C — My Lessons (user-generated sets). Hidden while a
+          search is active (results replace the browse view). */}
+      {!searchResult.active && (
       <section
         className="content-section content-my-lessons"
         data-testid="content-my-lessons"
       >
         <div className="content-section-head">
           <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
-          <Button
-            type="button"
-            onClick={() => navigate("/create-lesson")}
-            data-testid="content-create-lesson"
-          >
-            + {t("content.create_lesson.button", "Create New Lesson")}
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => navigate("/learning-path")}
-            data-testid="content-learning-path"
-          >
-            {t("nav.learning_path", "Learning Path")}
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => setShowImport(true)}
-            data-testid="content-import-lesson"
-          >
-            {t("content.import_lesson.button", "Import Lesson")}
-          </Button>
         </div>
         {userSets.length === 0 ? (
           <p className="content-empty" data-testid="content-my-lessons-empty">
@@ -1114,9 +1214,10 @@ export default function ContentPage() {
           </ul>
         )}
       </section>
+      )}
 
       {/* Phase 64D — My Contributions (local sharing history). */}
-      {contributions.length > 0 && (
+      {!searchResult.active && contributions.length > 0 && (
         <section
           className="content-section content-my-contributions"
           data-testid="content-my-contributions"
@@ -1164,44 +1265,6 @@ export default function ContentPage() {
           </ul>
         </section>
       )}
-
-      {/* Content Browser search — instant client-side filter over the
-          cached library (sets + lessons + cards). */}
-      <div
-        className="relative mb-4 flex items-center"
-        data-testid="content-search-bar"
-      >
-        <Search
-          size={18}
-          className="pointer-events-none absolute left-3 text-muted-foreground"
-          aria-hidden="true"
-        />
-        <Input
-          ref={searchInputRef}
-          type="search"
-          value={searchQuery}
-          onFocus={() => setSearchActivated(true)}
-          onChange={(e) => {
-            setSearchActivated(true);
-            setSearchQuery(e.target.value);
-          }}
-          placeholder={t("content.search.placeholder", "Search lessons...")}
-          aria-label={t("content.search.placeholder", "Search lessons...")}
-          className="pl-10 pr-10"
-          data-testid="content-search-input"
-        />
-        {searchQuery && (
-          <button
-            type="button"
-            className="absolute right-2 flex h-8 w-8 items-center justify-center rounded text-muted-foreground hover:text-foreground"
-            onClick={() => setSearchQuery("")}
-            aria-label={t("content.search.clear", "Clear search")}
-            data-testid="content-search-clear"
-          >
-            <X size={16} aria-hidden="true" />
-          </button>
-        )}
-      </div>
 
       {searchResult.active ? (
         <section
