@@ -64,6 +64,7 @@ import type {Ref} from "react";
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveWordTilesAttempt} from "../../lib/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
@@ -87,6 +88,14 @@ export interface WordTilesExerciseProps extends ControlledExerciseProps {
      *  total) plus the single-attempt SRS payload. */
     onComplete: (result: ExerciseScored) => void;
 }
+
+/** Shared tile box styling (was .word-tile / .word-tile-placed).
+ *  Reused by the scrambled tile, the placed tile, and the floating
+ *  DragOverlay copy so they render identically. 44px min touch target. */
+const WORD_TILE_BASE =
+    "min-h-11 cursor-pointer rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2 text-[0.9375rem] font-medium text-[var(--fg)] transition-[background,border-color] duration-150 enabled:hover:bg-[var(--surface-2)] disabled:cursor-not-allowed";
+const WORD_TILE_PLACED =
+    "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_12%,var(--surface))]";
 
 /** Deterministic Fisher-Yates shuffle keyed by ``seed`` so
  *  reshuffling on every render does NOT move tiles under the
@@ -214,12 +223,16 @@ function PlacedTile({
         <li
             ref={setNodeRef}
             style={style}
-            className={`word-tile-slot${isDragging ? " is-dragging" : ""}`}
+            className={cn(
+                "inline-flex cursor-grab items-center gap-0.5 motion-safe:transition-[transform,box-shadow] motion-safe:duration-150",
+                isDragging &&
+                    "is-dragging cursor-grabbing opacity-85 shadow-[var(--shadow-elevated)] motion-safe:scale-105",
+            )}
         >
             {!submitted && (
                 <button
                     type="button"
-                    className="word-tile-move word-tile-move-left"
+                    className="inline-flex min-h-11 min-w-6 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent px-0.5 text-[var(--fg-muted)] enabled:hover:bg-[var(--surface-2)] enabled:hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-30"
                     onClick={() => onMove(slotIndex, slotIndex - 1)}
                     disabled={slotIndex === 0}
                     tabIndex={-1}
@@ -236,9 +249,16 @@ function PlacedTile({
                 type="button"
                 {...attributes}
                 {...listeners}
-                className={`word-tile word-tile-placed${
-                    submitted && isCorrect ? " is-correct" : ""
-                }${submitted && !isCorrect ? " is-wrong" : ""}`}
+                className={cn(
+                    WORD_TILE_BASE,
+                    WORD_TILE_PLACED,
+                    submitted &&
+                        isCorrect &&
+                        "is-correct border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]",
+                    submitted &&
+                        !isCorrect &&
+                        "is-wrong border-[var(--exercise-wrong)] bg-[color-mix(in_srgb,var(--exercise-wrong)_12%,var(--surface))]",
+                )}
                 onClick={() => onRemove(tileIndex)}
                 onKeyDown={(e) => onKeyReorder(slotIndex, e)}
                 disabled={submitted}
@@ -258,7 +278,7 @@ function PlacedTile({
             {!submitted && (
                 <button
                     type="button"
-                    className="word-tile-move word-tile-move-right"
+                    className="inline-flex min-h-11 min-w-6 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent px-0.5 text-[var(--fg-muted)] enabled:hover:bg-[var(--surface-2)] enabled:hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-30"
                     onClick={() => onMove(slotIndex, slotIndex + 1)}
                     disabled={slotIndex === total - 1}
                     tabIndex={-1}
@@ -477,12 +497,12 @@ function WordTilesExercise(
 
     return (
         <section
-            className="word-tiles-exercise"
+            className="flex flex-col gap-3"
             data-testid="word-tiles-exercise"
         >
             <div className="exercise-prompt-row">
                 <p
-                    className="word-tiles-prompt"
+                    className="m-0 font-medium"
                     data-testid="word-tiles-prompt"
                 >
                     {exercise.prompt}
@@ -499,7 +519,7 @@ function WordTilesExercise(
             <DirectionInstruction exercise={exercise} />
 
             <p
-                className="word-tiles-instructions"
+                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
                 data-testid="word-tiles-instructions"
             >
                 {t(
@@ -516,7 +536,7 @@ function WordTilesExercise(
                 onDragCancel={() => setActiveId(null)}
             >
                 <div
-                    className="word-tiles-answer-row"
+                    className="min-h-16 rounded-sm border border-dashed border-[var(--border-strong)] bg-[var(--surface-2)] p-2"
                     data-testid="word-tiles-answer-row"
                     aria-label={t(
                         "lesson.exercise.word_tiles.answer_label",
@@ -526,7 +546,7 @@ function WordTilesExercise(
                 >
                     {placed.length === 0 ? (
                         <p
-                            className="word-tiles-answer-empty"
+                            className="m-0 p-2 text-center text-sm italic text-[var(--fg-muted)]"
                             data-testid="word-tiles-answer-empty"
                         >
                             {t(
@@ -540,7 +560,7 @@ function WordTilesExercise(
                             strategy={rectSortingStrategy}
                         >
                             <ul
-                                className="word-tiles-list word-tiles-list-placed"
+                                className="m-0 flex list-none flex-wrap gap-2 p-0"
                                 ref={placedListRef}
                             >
                                 {placed.map((tileIndex, slotIndex) => (
@@ -567,7 +587,7 @@ function WordTilesExercise(
                 <DragOverlay>
                     {activeId !== null ? (
                         <div
-                            className="word-tile word-tile-placed"
+                            className={cn(WORD_TILE_BASE, WORD_TILE_PLACED)}
                             data-testid="word-tile-drag-overlay"
                             style={{
                                 cursor: "grabbing",
@@ -587,7 +607,7 @@ function WordTilesExercise(
             </DndContext>
 
             <div
-                className="word-tiles-scrambled-row"
+                className="rounded-sm border border-border bg-[var(--surface)] p-2"
                 data-testid="word-tiles-scrambled-row"
                 aria-label={t(
                     "lesson.exercise.word_tiles.scrambled_label",
@@ -596,7 +616,7 @@ function WordTilesExercise(
             >
                 {scrambledIndices.length === 0 ? (
                     <p
-                        className="word-tiles-scrambled-empty"
+                        className="m-0 p-2 text-center text-sm text-[var(--fg-muted)]"
                         data-testid="word-tiles-scrambled-empty"
                     >
                         {t(
@@ -605,12 +625,12 @@ function WordTilesExercise(
                         )}
                     </p>
                 ) : (
-                    <ul className="word-tiles-list word-tiles-list-scrambled">
+                    <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
                         {scrambledIndices.map((tileIndex) => (
                             <li key={tileIndex}>
                                 <button
                                     type="button"
-                                    className="word-tile word-tile-scrambled"
+                                    className={WORD_TILE_BASE}
                                     onClick={() => handlePlace(tileIndex)}
                                     disabled={submitted}
                                     data-testid={`word-tile-scrambled-${tileIndex}`}
@@ -624,11 +644,11 @@ function WordTilesExercise(
             </div>
 
             {exercise.hint && !submitted && (
-                <div className="word-tiles-hint-row">
+                <div className="flex items-center gap-2">
                     {!showHint ? (
                         <button
                             type="button"
-                            className="word-tiles-hint-toggle"
+                            className="inline-flex min-h-11 cursor-pointer items-center border-0 bg-transparent p-0 text-sm text-[var(--accent)] underline underline-offset-2 hover:no-underline"
                             onClick={() => setShowHint(true)}
                             data-testid="word-tiles-hint-show"
                         >
@@ -639,7 +659,7 @@ function WordTilesExercise(
                         </button>
                     ) : (
                         <p
-                            className="word-tiles-hint"
+                            className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
                             data-testid="word-tiles-hint"
                         >
                             {exercise.hint}
@@ -648,7 +668,7 @@ function WordTilesExercise(
                 </div>
             )}
 
-            <div className="word-tiles-actions">
+            <div className="flex flex-wrap items-center gap-3">
                 {!submitted && !controlled && (
                     <button
                         type="button"
@@ -666,9 +686,12 @@ function WordTilesExercise(
                 {submitted && (
                     <>
                         <p
-                            className={`word-tiles-result answer-feedback${
-                                isCorrect ? " is-correct" : " is-wrong"
-                            }`}
+                            className={cn(
+                                "answer-feedback m-0 inline-flex items-center gap-1.5 font-semibold",
+                                isCorrect
+                                    ? "is-correct text-[var(--exercise-correct)]"
+                                    : "is-wrong text-[var(--danger)]",
+                            )}
                             data-testid="word-tiles-result"
                             data-result={isCorrect ? "correct" : "wrong"}
                         >
