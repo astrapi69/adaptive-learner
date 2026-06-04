@@ -9,7 +9,31 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.58.0** (minor — **user-centric UX overhaul**).
+- **Current state:** **v1.59.0** (minor — **Learning Path Redesign:
+  personal path with zoom levels**). The old ``/learning-path``
+  rendered all ~225 lessons as one xyflow graph (unusable); it now
+  answers *"Wo bin ich? Was kommt als Nächstes?"* with a two-level
+  personal view (``pages/LearningPathPersonal.tsx`` + pure
+  ``lib/learning-path/personal-path.ts`` +
+  ``hooks/usePersonalPath.ts``). **Level 1**: one ``SetRow`` per
+  *downloaded* set, sorted by last activity — domain icon, mini
+  progress track (● done / ◐ in-progress / ○ not-started), percentage,
+  relative last-activity (``lib/utils/relative-time.ts``, Intl, 8
+  langs), current/next lesson, one action (Fortsetzen / Starten /
+  Nächstes Level verfügbar / Abgeschlossen). **Level 2**: click a row
+  to expand inline (accordion) to ``LessonRow``s (stars, per-direction
+  mastery, last attempt, ▶ current) + ``SetDetail`` actions (adaptive
+  lesson, set-wide Fehler wiederholen → ``/review/:setId``). A
+  **[Nur meine]/[Alle Sets]** toggle + a collapsible
+  ``NotDownloadedSection`` (per-set download), both persisted in
+  localStorage. A completed course offers its **next CEFR level** when
+  one exists. The original graph is renamed ``LearningPathGraph`` and
+  kept as an **alternative view**, lazy-loaded via a Persönlich/Graph
+  switch — so **xyflow (~177 KB) leaves the default bundle** (personal
+  chunk ~21 KB; performance win). New ``learning_path.*`` strings in
+  all 8 catalogs; all Tailwind, 6 themes, 44px targets, 375px-safe.
+  Also folds in the mobile nav **hamburger moved to the left**.
+  v1.58.0 = minor — **user-centric UX overhaul**.
   A shared **Continue Learning** ("Weitermachen") section
   (``components/ContinueLearning.tsx`` + pure helpers in
   ``lib/content/continue-learning.ts``) surfaces the most
