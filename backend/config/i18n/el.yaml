@@ -1451,6 +1451,15 @@ lesson:
     action_restart: "Επανεκκίνηση"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  continue_learning:
+    title: "Συνέχεια μάθησης"
+    resume: "Συνέχεια"
+    next: "Επόμενο μάθημα"
+    completed: "Το σετ ολοκληρώθηκε"
+    empty: "Ξεκινήστε το πρώτο σας μάθημα!"
+    progress: "Βήμα {n}/{total}"
+  import_chat:
+    button: "Εισαγωγή συνομιλίας"
   search:
     placeholder: "Αναζήτηση μαθημάτων..."
     results: "{count} αποτελέσματα"

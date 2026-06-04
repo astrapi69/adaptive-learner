@@ -1,7 +1,9 @@
+import {Map as MapIcon, Mic, Pencil} from "lucide-react";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
+import ContinueLearning from "../components/ContinueLearning";
 import DashboardFilterBar from "../components/DashboardFilterBar";
 import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
@@ -215,6 +217,14 @@ export default function Dashboard() {
                 {error && <p className="error-text" role="alert">{error}</p>}
             </header>
 
+            {/* UX overhaul C4 — Continue Learning at the TOP: answers
+                "where was I, what next?" before any gamification. */}
+            {userId && (
+                <div className="mb-4">
+                    <ContinueLearning userId={userId} maxItems={3} />
+                </div>
+            )}
+
             {showApiKeyBanner && (
                 <div
                     className="api-key-skip-banner"
@@ -271,40 +281,62 @@ export default function Dashboard() {
                 disabled={!apiKey.ready || !apiKey.hasKey}
             />
 
-            {pronunciationEligible && (
+            {/* UX overhaul C5 — secondary action buttons: icon-only on
+                mobile (min 44px touch target), icon + label from md up. */}
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+                {pronunciationEligible && (
+                    <button
+                        type="button"
+                        className="btn btn-secondary dashboard-pronunciation-quick-start flex min-h-[44px] items-center gap-2"
+                        onClick={() => navigate("/pronunciation")}
+                        title={t(
+                            "dashboard.pronunciation_quick_start",
+                            "Pronunciation Practice",
+                        )}
+                        aria-label={t(
+                            "dashboard.pronunciation_quick_start",
+                            "Pronunciation Practice",
+                        )}
+                        data-testid="dashboard-pronunciation-button"
+                    >
+                        <Mic className="h-5 w-5" aria-hidden="true" />
+                        <span className="hidden md:inline">
+                            {t(
+                                "dashboard.pronunciation_quick_start",
+                                "Pronunciation Practice",
+                            )}
+                        </span>
+                    </button>
+                )}
+
                 <button
                     type="button"
-                    className="btn btn-secondary dashboard-pronunciation-quick-start"
-                    onClick={() => navigate("/pronunciation")}
-                    data-testid="dashboard-pronunciation-button"
+                    className="btn btn-secondary dashboard-create-lesson flex min-h-[44px] items-center gap-2"
+                    onClick={() => navigate("/create-lesson")}
+                    title={t("dashboard.create_lesson", "Create a lesson")}
+                    aria-label={t("dashboard.create_lesson", "Create a lesson")}
+                    data-testid="dashboard-create-lesson"
                 >
-                    🎤{" "}
-                    {t(
-                        "dashboard.pronunciation_quick_start",
-                        "Pronunciation Practice",
-                    )}
+                    <Pencil className="h-5 w-5" aria-hidden="true" />
+                    <span className="hidden md:inline">
+                        {t("dashboard.create_lesson", "Create a lesson")}
+                    </span>
                 </button>
-            )}
 
-            <button
-                type="button"
-                className="btn btn-secondary dashboard-create-lesson"
-                onClick={() => navigate("/create-lesson")}
-                data-testid="dashboard-create-lesson"
-            >
-                ✏️{" "}
-                {t("dashboard.create_lesson", "Create a lesson")}
-            </button>
-
-            <button
-                type="button"
-                className="btn btn-secondary dashboard-learning-path"
-                onClick={() => navigate("/learning-path")}
-                data-testid="dashboard-learning-path"
-            >
-                🗺️{" "}
-                {t("nav.learning_path", "Learning Path")}
-            </button>
+                <button
+                    type="button"
+                    className="btn btn-secondary dashboard-learning-path flex min-h-[44px] items-center gap-2"
+                    onClick={() => navigate("/learning-path")}
+                    title={t("nav.learning_path", "Learning Path")}
+                    aria-label={t("nav.learning_path", "Learning Path")}
+                    data-testid="dashboard-learning-path"
+                >
+                    <MapIcon className="h-5 w-5" aria-hidden="true" />
+                    <span className="hidden md:inline">
+                        {t("nav.learning_path", "Learning Path")}
+                    </span>
+                </button>
+            </div>
 
             {userId && (
                 <DashboardFilterBar
@@ -313,7 +345,47 @@ export default function Dashboard() {
                 />
             )}
 
+            {/* UX overhaul C4 — widgets reordered around the learning
+                flow: actionable first (paused, missions, focus, review),
+                then motivational (XP / streak / badges), then the
+                analytical panels. */}
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {userId && <PausedLessonsCard userId={userId} />}
+
+                {userId && (
+                    <article className="dashboard-card dashboard-card-wide">
+                        <DailyMissionsCard userId={userId} />
+                    </article>
+                )}
+
+                {userId && <FocusAreasCard userId={userId} />}
+                {userId && <ReviewQueueCard userId={userId} />}
+
+                <article className="dashboard-card">
+                    <h2 className="dashboard-card-title">
+                        <HelpTooltip glossaryKey="feature_gamification">
+                            {t("gamification.card_xp", "XP & Level")}
+                        </HelpTooltip>
+                        <HelpLink glossaryKey="feature_gamification" />
+                    </h2>
+                    <XPWidget state={xpState} />
+                </article>
+
+                <article className="dashboard-card dashboard-card-wide">
+                    <h2 className="dashboard-card-title">
+                        {t("gamification.card_streak", "Streak")}
+                    </h2>
+                    <StreakWidget state={streakState} />
+                    <StreakCalendar entries={heatmap} />
+                </article>
+
+                <article className="dashboard-card dashboard-card-wide">
+                    <h2 className="dashboard-card-title">
+                        {t("gamification.card_badges", "Badges")}
+                    </h2>
+                    <DashboardBadgeWidget badges={badges} />
+                </article>
+
                 <article className="dashboard-card">
                     <h2 className="dashboard-card-title">
                         <HelpTooltip glossaryKey="learning_profile">
@@ -338,37 +410,6 @@ export default function Dashboard() {
                         <HelpLink glossaryKey="learning_session" />
                     </h2>
                     <SessionCounter summary={summary} />
-                </article>
-
-                <article className="dashboard-card">
-                    <h2 className="dashboard-card-title">
-                        <HelpTooltip glossaryKey="feature_gamification">
-                            {t("gamification.card_xp", "XP & Level")}
-                        </HelpTooltip>
-                        <HelpLink glossaryKey="feature_gamification" />
-                    </h2>
-                    <XPWidget state={xpState} />
-                </article>
-
-                <article className="dashboard-card dashboard-card-wide">
-                    <h2 className="dashboard-card-title">
-                        {t("gamification.card_streak", "Streak")}
-                    </h2>
-                    <StreakWidget state={streakState} />
-                    <StreakCalendar entries={heatmap} />
-                </article>
-
-                {userId && (
-                    <article className="dashboard-card dashboard-card-wide">
-                        <DailyMissionsCard userId={userId} />
-                    </article>
-                )}
-
-                <article className="dashboard-card dashboard-card-wide">
-                    <h2 className="dashboard-card-title">
-                        {t("gamification.card_badges", "Badges")}
-                    </h2>
-                    <DashboardBadgeWidget badges={badges} />
                 </article>
 
                 <article className="dashboard-card dashboard-card-wide">
@@ -404,10 +445,6 @@ export default function Dashboard() {
                     </h2>
                     <SpacedRecommendations cards={spaced} />
                 </article>
-
-                {userId && <PausedLessonsCard userId={userId} />}
-                {userId && <FocusAreasCard userId={userId} />}
-                {userId && <ReviewQueueCard userId={userId} />}
 
                 <article className="dashboard-card dashboard-card-wide">
                     <h2 className="dashboard-card-title">

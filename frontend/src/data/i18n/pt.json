@@ -1581,6 +1581,17 @@
     }
   },
   "content": {
+    "continue_learning": {
+      "title": "Continuar a aprender",
+      "resume": "Retomar",
+      "next": "Próxima lição",
+      "completed": "Conjunto concluído",
+      "empty": "Comece a sua primeira lição!",
+      "progress": "Passo {n}/{total}"
+    },
+    "import_chat": {
+      "button": "Importar conversa"
+    },
     "search": {
       "placeholder": "Procurar lições...",
       "results": "{count} resultados",

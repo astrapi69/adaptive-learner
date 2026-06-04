@@ -1451,6 +1451,15 @@ lesson:
     action_restart: "Empezar de nuevo"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  continue_learning:
+    title: "Continuar aprendiendo"
+    resume: "Reanudar"
+    next: "Siguiente lección"
+    completed: "Conjunto completado"
+    empty: "¡Comienza tu primera lección!"
+    progress: "Paso {n}/{total}"
+  import_chat:
+    button: "Importar chat"
   search:
     placeholder: "Buscar lecciones..."
     results: "{count} resultados"

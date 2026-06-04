@@ -476,6 +476,35 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(screen.getByTestId("import-lesson-modal")).toBeInTheDocument();
   });
 
+  it("renders the search bar before the action toolbar (search-first)", async () => {
+    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
+    renderPage();
+    await screen.findByTestId("content-page");
+    const search = screen.getByTestId("content-search-bar");
+    const importBtn = screen.getByTestId("content-import-lesson");
+    // Search sits before the action buttons in document order.
+    expect(
+      search.compareDocumentPosition(importBtn) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it("toolbar action buttons are icon-only on mobile (label hidden below md)", async () => {
+    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
+    renderPage();
+    await screen.findByTestId("content-page");
+    const importBtn = screen.getByTestId("content-import-lesson");
+    // Icon always present (an inline svg).
+    expect(importBtn.querySelector("svg")).toBeInTheDocument();
+    // The text label is rendered but CSS-hidden until md.
+    const label = importBtn.querySelector("span.hidden");
+    expect(label).not.toBeNull();
+    expect(label).toHaveClass("md:inline");
+    expect(label).toHaveTextContent(/Import Lesson/i);
+    // Accessible name survives even when the label is visually hidden.
+    expect(importBtn).toHaveAccessibleName(/Import Lesson/i);
+  });
+
   it("walks the wizard and shares a flagged lesson anyway", async () => {
     // USER_ENTRY: no title_native + a trivial lesson -> rule check
     // flags issues. The wizard's quality step is informational; the
