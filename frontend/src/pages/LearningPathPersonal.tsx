@@ -21,7 +21,7 @@
 
 import {lazy, Suspense, useMemo, useState} from "react";
 import {Link} from "react-router-dom";
-import {LayoutList, Network} from "lucide-react";
+import {LayoutList, Map as MapIcon, Network} from "lucide-react";
 
 import {useI18n} from "../hooks/useI18n";
 import {usePersonalPath} from "../hooks/usePersonalPath";
@@ -32,17 +32,19 @@ import NotDownloadedSection from "../components/learning-path/NotDownloadedSecti
 import {cn} from "../lib/utils";
 
 const LearningPathGraph = lazy(() => import("./LearningPathGraph"));
+const LearningPathMap = lazy(() => import("./LearningPathMap"));
 
-type ViewMode = "personal" | "graph";
+type ViewMode = "personal" | "graph" | "map";
 type FilterMode = "mine" | "all";
 const VIEW_KEY = "adaptive-learner.learning-path-view";
 const FILTER_KEY = "adaptive-learner.learning-path-filter";
 
 function loadView(): ViewMode {
     try {
-        return localStorage.getItem(VIEW_KEY) === "graph"
-            ? "graph"
-            : "personal";
+        const v = localStorage.getItem(VIEW_KEY);
+        if (v === "graph") return "graph";
+        if (v === "map") return "map";
+        return "personal";
     } catch {
         return "personal";
     }
@@ -133,6 +135,11 @@ function ViewSwitcher({
                 <LayoutList size={16} aria-hidden="true" />,
             )}
             {btn(
+                "map",
+                t("learning_path.view.map", "Map"),
+                <MapIcon size={16} aria-hidden="true" />,
+            )}
+            {btn(
                 "graph",
                 t("learning_path.view.graph", "Graph"),
                 <Network size={16} aria-hidden="true" />,
@@ -169,17 +176,25 @@ export default function LearningPathPersonal() {
 
     const switcher = <ViewSwitcher view={view} onChange={changeView} />;
 
+    const viewFallback = (
+        <main id="main" className="page" data-testid="learning-path-page">
+            <p className="muted" role="status" aria-live="polite">
+                {t("learning_path.loading", "Building your learning path…")}
+            </p>
+        </main>
+    );
+
+    if (view === "map") {
+        return (
+            <Suspense fallback={viewFallback}>
+                <LearningPathMap headerExtra={switcher} />
+            </Suspense>
+        );
+    }
+
     if (view === "graph") {
         return (
-            <Suspense
-                fallback={
-                    <main id="main" className="page" data-testid="learning-path-page">
-                        <p className="muted" role="status" aria-live="polite">
-                            {t("learning_path.loading", "Building your learning path…")}
-                        </p>
-                    </main>
-                }
-            >
+            <Suspense fallback={viewFallback}>
                 <LearningPathGraph headerExtra={switcher} />
             </Suspense>
         );
