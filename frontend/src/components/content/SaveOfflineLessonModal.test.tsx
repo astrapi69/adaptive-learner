@@ -245,4 +245,43 @@ describe("SaveOfflineLessonModal", () => {
     expect(arg.source_language).toBe("de");
     expect(arg.target_language).toBe("de");
   });
+
+  it("stamps a knowledge content domain on the lessons when source == target", async () => {
+    // A same-language lesson (German grammar for German speakers) is
+    // non-language ("knowledge") content. The stamp lets the Share Wizard
+    // inherit the same-language pair as intentional domain content instead
+    // of repairing it as a legacy en/en mistake.
+    saveUserSet.mockResolvedValue({});
+    renderModal();
+    fireEvent.change(screen.getByTestId("save-lesson-target-lang"), {
+      target: { value: "de" },
+    });
+    fireEvent.change(screen.getByTestId("save-lesson-source-lang"), {
+      target: { value: "de" },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("save-lesson-save"));
+    });
+    await waitFor(() => expect(saveUserSet).toHaveBeenCalled());
+    const arg = saveUserSet.mock.calls[0][0] as {
+      lessons: Array<{ domain?: string }>;
+    };
+    expect(arg.lessons.length).toBeGreaterThanOrEqual(1);
+    expect(arg.lessons.every((l) => l.domain === "knowledge")).toBe(true);
+  });
+
+  it("leaves the content domain unset for a normal language pair", async () => {
+    // source (app language) != target -> a language lesson, no content
+    // domain stamped (the set lands in the normal source->target tree).
+    saveUserSet.mockResolvedValue({});
+    renderModal(); // es content, source app-lang (en) != target
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("save-lesson-save"));
+    });
+    await waitFor(() => expect(saveUserSet).toHaveBeenCalled());
+    const arg = saveUserSet.mock.calls[0][0] as {
+      lessons: Array<{ domain?: string }>;
+    };
+    expect(arg.lessons.some((l) => l.domain === "knowledge")).toBe(false);
+  });
 });

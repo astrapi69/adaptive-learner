@@ -13,8 +13,10 @@
  *
  * NOTE: authored to the spec; run it with ``make test-dexie-smoke``
  * (Playwright is not executed in the authoring environment). Variant 2
- * (German-only domain content, source == target) is skipped pending
- * domain-content share support in the wizard — see the fixme below.
+ * (German-only domain content, source == target == de) now ships as
+ * knowledge content end to end: the save flow stamps a non-language
+ * domain on the lesson and the share wizard inherits the same-language
+ * pair instead of repairing it (IMPORT-LANG-PIPELINE-SELECT-MIGRATION-01).
  */
 
 import { expect, test, type Page } from "@playwright/test";
@@ -50,13 +52,43 @@ const GERMAN_ABOUT_FRENCH =
   "Merci. Erklär mir bitte das passé composé mit être und avoir.\n" +
   "Bonjour heißt Hallo, merci heißt danke.";
 
-async function mockProvider(page: Page): Promise<void> {
+// Variant 2 — a German speaker drilling German grammar (source ==
+// target == de). The vocab is German-in-German so the generated lesson
+// is non-language ("knowledge") domain content.
+const ANALYSIS_JSON_DE = JSON.stringify({
+  topic: "Deutsche Grammatik: Artikel und Fälle",
+  user_level: "beginner",
+  summary: "Der, die, das und die vier Fälle.",
+  strengths: ["Nominativ"],
+  weaknesses: ["Dativ", "Genitiv"],
+  error_patterns: ["Artikel im Dativ"],
+  recommended_method: "deductive",
+  recommended_focus: "Mehr Übung mit Fällen",
+  vocabulary: [
+    { word: "der Tisch", translation: "maskulin, Nominativ", example: "Der Tisch ist groß." },
+    { word: "die Lampe", translation: "feminin, Nominativ", example: "Die Lampe ist hell." },
+    { word: "das Buch", translation: "neutrum, Nominativ", example: "Das Buch ist dick." },
+    { word: "dem Mann", translation: "maskulin, Dativ", example: "Ich gebe dem Mann das Buch." },
+    { word: "der Frau", translation: "feminin, Dativ", example: "Ich helfe der Frau." },
+    { word: "des Kindes", translation: "neutrum, Genitiv", example: "Das Spielzeug des Kindes." },
+  ],
+  suggested_curriculum: [
+    { title: "Die vier Fälle", description: "Nominativ bis Genitiv", priority: 1 },
+  ],
+});
+
+const GERMAN_ABOUT_GERMAN =
+  "Erklär mir bitte die deutschen Artikel und Fälle. Wann benutzt man " +
+  "der, die, das? Und wie dekliniert man im Dativ und Genitiv?\n" +
+  "Der Tisch, die Lampe, das Buch. Ich gebe dem Mann das Buch.";
+
+async function mockProvider(page: Page, analysisJson: string): Promise<void> {
   await page.route("**/api.anthropic.com/**", async (route) => {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
-        content: [{ type: "text", text: ANALYSIS_JSON }],
+        content: [{ type: "text", text: analysisJson }],
       }),
     });
   });
@@ -88,7 +120,7 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
   test("German speaker learning French keeps de -> fr at every step", async ({
     page,
   }) => {
-    await mockProvider(page);
+    await mockProvider(page, ANALYSIS_JSON);
     // Settings + Import need a learner: without one, /settings redirects
     // to onboarding (no api-key UI). Onboard first, then set the key.
     await createTestUser(page);
@@ -151,15 +183,71 @@ test.describe("Language pipeline: import -> analyze -> save -> share", () => {
   });
 
   // Variant 2 — German-only domain content (source == target == de).
-  // The wizard currently treats source == target as a language-domain
-  // error ("must differ"); sharing domain content needs the wizard to
-  // honour a non-language domain. Tracked as a follow-up; unskip once
-  // domain-content sharing is supported end to end.
-  test.fixme(
-    "German domain content (de -> de) shares without a same-language error",
-    async () => {
-      // Pending: domain-aware share gate (source == target allowed when
-      // the set's domain is non-language).
-    },
-  );
+  // The learner SPEAKS and LEARNS German (grammar drill), so the material
+  // is non-language ("knowledge") content. The save flow stamps that
+  // domain on the lesson, and the share wizard inherits the same-language
+  // pair (no en/en-style repair) and ships it without a same-language
+  // error (IMPORT-LANG-PIPELINE-SELECT-MIGRATION-01).
+  test("German domain content (de -> de) shares as knowledge without a same-language error", async ({
+    page,
+  }) => {
+    await mockProvider(page, ANALYSIS_JSON_DE);
+    await createTestUser(page);
+    await setAnthropicKey(page);
+
+    // 1-2. Import + paste a German chat about German grammar, then analyze.
+    await page.goto("/import");
+    await page.getByTestId("quick-paste-textarea").fill(GERMAN_ABOUT_GERMAN);
+    await page.getByTestId("quick-analyze-button").click();
+    await expect(page.getByTestId("conversation-transcript")).toBeVisible({
+      timeout: 20000,
+    });
+
+    // 3. Force BOTH languages to German (source == target == de) — domain
+    // content. The pickers are shadcn (Radix) Selects: click the trigger,
+    // then the "German (de)" option in the portal-rendered list.
+    await page.getByTestId("import-source-language").click();
+    await page.getByRole("option", { name: "German (de)" }).click();
+    await page.getByTestId("import-target-language").click();
+    await page.getByRole("option", { name: "German (de)" }).click();
+    await expect(page.getByTestId("import-source-language")).toContainText(
+      "(de)",
+    );
+    await expect(page.getByTestId("import-target-language")).toContainText(
+      "(de)",
+    );
+
+    // 6-7. Save as offline lesson — the modal INHERITS de -> de. The
+    // same-language hint shows, but Save stays enabled (a native-language
+    // grammar lesson is legitimate).
+    await page.getByTestId("save-offline-lesson-button").click();
+    await expect(page.getByTestId("save-offline-lesson-modal")).toBeVisible();
+    await expect(page.getByTestId("save-lesson-source-lang")).toHaveValue("de");
+    await expect(page.getByTestId("save-lesson-target-lang")).toHaveValue("de");
+    await expect(page.getByTestId("save-lesson-same-language")).toBeVisible();
+    // 8. Save -> navigates to /content (My Lessons).
+    await page.getByTestId("save-lesson-save").click();
+    await expect(page.getByTestId("content-my-lessons")).toBeVisible({
+      timeout: 15000,
+    });
+
+    // 10-13. Share the saved lesson; ShareWizard Step 1 inherits de -> de
+    // as knowledge content (no same-language reset, no blocking error).
+    const shareBtn = page
+      .locator('[data-testid^="my-lesson-"][data-testid$="-share"]')
+      .first();
+    await shareBtn.click();
+    await expect(page.getByTestId("share-wizard-step-1")).toBeVisible();
+    await expect(page.getByTestId("share-wizard-edit-source")).toContainText(
+      "(de)",
+    );
+    await expect(page.getByTestId("share-wizard-edit-target")).toContainText(
+      "(de)",
+    );
+    // The domain hint explains it ships as knowledge; no step-1 errors;
+    // Continue is enabled.
+    await expect(page.getByTestId("share-wizard-domain-hint")).toBeVisible();
+    await expect(page.getByTestId("share-wizard-step1-errors")).toHaveCount(0);
+    await expect(page.getByTestId("share-wizard-next")).toBeEnabled();
+  });
 });

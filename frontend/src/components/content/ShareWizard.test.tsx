@@ -482,6 +482,34 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
     expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
   });
 
+  it("inherits a same-language pair for explicit non-language domain content", () => {
+    // IMPORT-LANG-PIPELINE-SELECT-MIGRATION-01: a lesson saved with
+    // source == target == de AND an explicit knowledge domain (German
+    // grammar for German speakers, stamped at save time) is intentional
+    // domain content. The wizard INHERITS the pair verbatim — no en/en
+    // collision repair — and ships it as knowledge content. (Contrast the
+    // "changing the languages" test below: a same-language pair WITHOUT a
+    // content domain is still repaired as a legacy mistake.)
+    i18nMock.lang = "de";
+    const knowledgeLesson: ContentLesson = {
+      ...lesson("mine", ["wort0", "wort1", "wort2"]),
+      domain: "knowledge",
+    };
+    renderWizard({
+      entry: entry({ source_language: "de", target_language: "de" }),
+      lessons: [knowledgeLesson],
+    });
+    const source = screen.getByTestId("share-wizard-edit-source");
+    const target = screen.getByTestId("share-wizard-edit-target");
+    // Both inherited as German (de) — the pair is NOT reset.
+    expect(source).toHaveTextContent("German");
+    expect(target).toHaveTextContent("German");
+    // Shipped as knowledge content: the hint shows, no blocking errors.
+    expect(screen.getByTestId("share-wizard-domain-hint")).toBeInTheDocument();
+    expect(screen.queryByTestId("share-wizard-step1-errors")).toBeNull();
+    expect(screen.getByTestId("share-wizard-next")).not.toBeDisabled();
+  });
+
   // --- BUG (recurring): source ALWAYS defaults to the app language ---
 
   it("inherits a valid lesson source language different from the target", () => {

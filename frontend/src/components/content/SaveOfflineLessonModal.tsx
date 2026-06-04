@@ -140,10 +140,18 @@ export default function SaveOfflineLessonModal({
     setSaving(true);
     try {
       const finalTitle = title.trim() || baseLesson.title;
+      // v1.54.0 domain content — when the learner SPEAKS and LEARNS the
+      // same language (e.g. German grammar for German speakers), the
+      // material is non-language ("knowledge"). Stamp the content domain
+      // on each lesson part (schema v1.3) so the Share Wizard inherits the
+      // same-language pair as intentional domain content (source == target
+      // is allowed for a non-language domain) instead of repairing it as a
+      // legacy en/en mistake. The set's ``domain`` keeps storing the origin.
+      const contentDomain = sourceLang === targetLang ? "knowledge" : undefined;
       const parts = splitLesson(
         {...baseLesson, title: finalTitle},
         {maxStepsPerPart},
-      );
+      ).map((part) => (contentDomain ? {...part, domain: contentDomain} : part));
       const entry = await getStorage().contentLoader.saveUserSet({
         set_id: setId,
         title: finalTitle,
