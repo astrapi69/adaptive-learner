@@ -132,6 +132,36 @@ describe("LearningPathPersonal", () => {
         expect(screen.getByTestId("set-detail-psych")).toBeInTheDocument();
     });
 
+    it("renders the not-downloaded section and persists the filter", () => {
+        useHookMock.mockReturnValue({
+            state: "ready",
+            data: {
+                activeSets: [set()],
+                notDownloadedSets: [
+                    {
+                        source: "src",
+                        setId: "fra2",
+                        title: "Französisch A2",
+                        domain: "language",
+                        lessonCount: 15,
+                    },
+                ],
+            },
+        });
+        renderPage();
+        expect(
+            screen.getByTestId("learning-path-not-downloaded"),
+        ).toBeInTheDocument();
+        // Default filter = mine → section collapsed.
+        expect(screen.queryByTestId("not-downloaded-list")).toBeNull();
+        // Switch to "Alle Sets" → expands + persists.
+        fireEvent.click(screen.getByTestId("learning-path-filter-all"));
+        expect(screen.getByTestId("not-downloaded-list")).toBeInTheDocument();
+        expect(
+            localStorage.getItem("adaptive-learner.learning-path-filter"),
+        ).toBe("all");
+    });
+
     it("switches to the lazy graph view and persists the choice", async () => {
         useHookMock.mockReturnValue({
             state: "ready",

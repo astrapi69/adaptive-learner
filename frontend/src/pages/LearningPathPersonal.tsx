@@ -28,12 +28,15 @@ import {usePersonalPath} from "../hooks/usePersonalPath";
 import {readLearnerState} from "../lib/learnerState";
 import SetRow from "../components/learning-path/SetRow";
 import SetDetail from "../components/learning-path/SetDetail";
+import NotDownloadedSection from "../components/learning-path/NotDownloadedSection";
 import {cn} from "../lib/utils";
 
 const LearningPathGraph = lazy(() => import("./LearningPathGraph"));
 
 type ViewMode = "personal" | "graph";
+type FilterMode = "mine" | "all";
 const VIEW_KEY = "adaptive-learner.learning-path-view";
+const FILTER_KEY = "adaptive-learner.learning-path-filter";
 
 function loadView(): ViewMode {
     try {
@@ -43,6 +46,53 @@ function loadView(): ViewMode {
     } catch {
         return "personal";
     }
+}
+
+function loadFilter(): FilterMode {
+    try {
+        return localStorage.getItem(FILTER_KEY) === "all" ? "all" : "mine";
+    } catch {
+        return "mine";
+    }
+}
+
+/** [Nur meine ◉] [Alle Sets ○] — controls how prominent the
+ *  not-downloaded section is (collapsed vs expanded). */
+function FilterToggle({
+    filter,
+    onChange,
+}: {
+    filter: FilterMode;
+    onChange: (f: FilterMode) => void;
+}) {
+    const {t} = useI18n();
+    const btn = (mode: FilterMode, label: string) => (
+        <button
+            type="button"
+            onClick={() => onChange(mode)}
+            aria-pressed={filter === mode}
+            data-testid={`learning-path-filter-${mode}`}
+            className={cn(
+                "inline-flex min-h-[44px] items-center rounded-app px-3 py-2 text-sm font-medium",
+                filter === mode
+                    ? "bg-accent text-accent-fg"
+                    : "text-fg-secondary hover:bg-muted",
+            )}
+        >
+            {label}
+        </button>
+    );
+    return (
+        <div
+            role="group"
+            aria-label={t("learning_path.filter.label", "Filter sets")}
+            className="inline-flex items-center gap-1 rounded-app border border-border p-0.5"
+            data-testid="learning-path-filter-switch"
+        >
+            {btn("mine", t("learning_path.filter_mine", "Only mine"))}
+            {btn("all", t("learning_path.filter_all", "All sets"))}
+        </div>
+    );
 }
 
 function ViewSwitcher({
@@ -94,8 +144,9 @@ function ViewSwitcher({
 export default function LearningPathPersonal() {
     const {t} = useI18n();
     const userId = useMemo(() => readLearnerState().userId ?? "", []);
-    const {state, data} = usePersonalPath(userId);
+    const {state, data, reload} = usePersonalPath(userId);
     const [view, setView] = useState<ViewMode>(loadView);
+    const [filter, setFilter] = useState<FilterMode>(loadFilter);
     const [expanded, setExpanded] = useState<string | null>(null);
 
     const changeView = (v: ViewMode) => {
@@ -104,6 +155,15 @@ export default function LearningPathPersonal() {
             localStorage.setItem(VIEW_KEY, v);
         } catch {
             /* private mode — view simply doesn't persist */
+        }
+    };
+
+    const changeFilter = (f: FilterMode) => {
+        setFilter(f);
+        try {
+            localStorage.setItem(FILTER_KEY, f);
+        } catch {
+            /* private mode — filter simply doesn't persist */
         }
     };
 
@@ -138,12 +198,15 @@ export default function LearningPathPersonal() {
                     </h1>
                     {switcher}
                 </div>
-                <p className="text-sm text-fg-muted">
-                    {t(
-                        "learning_path.subtitle",
-                        "Where you are and what comes next.",
-                    )}
-                </p>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-sm text-fg-muted">
+                        {t(
+                            "learning_path.subtitle",
+                            "Where you are and what comes next.",
+                        )}
+                    </p>
+                    <FilterToggle filter={filter} onChange={changeFilter} />
+                </div>
             </header>
 
             {state === "loading" && (
@@ -212,6 +275,14 @@ export default function LearningPathPersonal() {
                         </li>
                     ))}
                 </ul>
+            )}
+
+            {(state === "ready" || state === "empty") && data && (
+                <NotDownloadedSection
+                    sets={data.notDownloadedSets}
+                    expanded={filter === "all"}
+                    onDownloaded={reload}
+                />
             )}
         </main>
     );
