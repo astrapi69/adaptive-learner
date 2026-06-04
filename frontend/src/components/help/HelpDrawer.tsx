@@ -26,6 +26,7 @@ import remarkGfm from "remark-gfm";
 import {Sheet, SheetClose, SheetContent, SheetTitle} from "../ui/sheet";
 import {useHelp} from "../../contexts/HelpContext";
 import {useButtonTooltips} from "../../hooks/useButtonTooltips";
+import {useGlossary} from "../../hooks/useGlossary";
 import {useI18n} from "../../hooks/useI18n";
 import {getGlossaryEntry, listGlossaryEntries} from "../../lib/help-glossary";
 import type {GlossaryEntry} from "../../types/help";
@@ -58,6 +59,10 @@ export default function HelpDrawer() {
     const {openKey, openHelp, closeHelp} = useHelp();
     const {t, lang} = useI18n();
     const tooltipsOn = useButtonTooltips();
+    // Lazily load the active language's glossary chunk + re-render when it
+    // lands (English is eager). Called before the early return so the hook
+    // order stays stable.
+    useGlossary(lang);
     const entry = openKey ? getGlossaryEntry(openKey, lang) : null;
 
     if (!entry) return null;

@@ -13,12 +13,20 @@
  * - Category filter narrows the list.
  */
 
-import {describe, expect, it} from "vitest";
+import {beforeAll, describe, expect, it} from "vitest";
 
 import {
     getGlossaryEntry,
     listGlossaryEntries,
+    loadGlossaryLanguage,
 } from "./help-glossary";
+
+// English is bundled eagerly; the other languages are lazy per-language
+// chunks (PERF-HELP-GLOSSARY-LAZY-01). The German-specific assertions
+// below need the DE chunk in memory first.
+beforeAll(async () => {
+    await loadGlossaryLanguage("de");
+});
 
 describe("getGlossaryEntry", () => {
     it("returns the German entry for a known key + lang", () => {

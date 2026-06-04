@@ -15,6 +15,7 @@ import {useMemo, useState} from "react";
 import {BookOpen, Search} from "lucide-react";
 
 import {useHelp} from "../../contexts/HelpContext";
+import {useGlossary} from "../../hooks/useGlossary";
 import {useI18n} from "../../hooks/useI18n";
 import {listGlossaryEntries} from "../../lib/help-glossary";
 import type {GlossaryCategory, GlossaryEntry} from "../../types/help";
@@ -46,7 +47,10 @@ export default function HelpBrowser() {
     const {openHelp} = useHelp();
     const [query, setQuery] = useState("");
 
-    const allEntries = useMemo(() => listGlossaryEntries(lang), [lang]);
+    // Lazily load the active language's glossary chunk (English is eager);
+    // `loaded` flips when the localized entries land so the list recomputes.
+    const loaded = useGlossary(lang);
+    const allEntries = useMemo(() => listGlossaryEntries(lang), [lang, loaded]);
 
     const filtered = useMemo(() => {
         if (!query.trim()) return allEntries;

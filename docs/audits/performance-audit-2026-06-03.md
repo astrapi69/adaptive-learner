@@ -127,6 +127,18 @@ in the `index` treemap) is partly baked into the main bundle. The
 init or a provider-level preload. Filed as a backlog item with measured
 impact rather than rushed into this pass.
 
+**RESOLVED (PERF-HELP-GLOSSARY-LAZY-01).** ENGLISH stays eager (the
+lingua-franca fallback, ~35 KB, keeps the getters synchronous and
+never-null); the other seven languages are now lazy per-language chunks
+loaded on demand via `loadGlossaryLanguage` + the `useGlossary` hook
+(re-renders consumers when the localized text lands — EN first, then the
+translation). Measured `npm run build`: the main `index` chunk dropped
+**731.71 → 449.51 KB (gzip 244.87 → 138.44 KB, −106 KB gzip)**, and the
+help content moved to 28 on-demand chunks (~7-16 KB each); a non-EN user
+fetches only their own language (~16 KB gzip). No EN duplication (the
+lazy glob excludes `*.en.json`). All getters stay synchronous, so the
+existing en/de component tests are unchanged.
+
 #### F-4 (P3) — praise + plugin-config eager globs
 
 `src/lib/praise/phrase-picker.ts:45` (praise, 72 KB dir) and
