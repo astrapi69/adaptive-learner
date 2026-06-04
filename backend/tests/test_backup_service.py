@@ -21,6 +21,7 @@ from datetime import UTC, date, datetime, timedelta
 import pytest
 from fastapi.testclient import TestClient
 
+from app.database import Base
 from app.exceptions import NotFoundError, ValidationError
 from app.models import (
     AnkiCardSuggestion,
@@ -656,28 +657,120 @@ def test_export_and_restore_cover_the_same_tables():
 
 
 def test_restore_order_respects_fk_dependencies():
-    """Parents must precede children so inserts never violate an FK."""
+    """COMPREHENSIVE FK-order pin: for EVERY cross-table foreign key in
+    the model metadata, the referenced table must come strictly before
+    the referencing table in the restore order.
+
+    This enumerates the FK graph from SQLAlchemy metadata rather than a
+    hand-maintained list of pairs — the previous version checked only a
+    handful of known pairs and so MISSED
+    ``curriculums``/``learning_sessions`` -> ``imported_conversations``
+    (both carry an ``imported_conversation_id`` FK), which produced a
+    real FK-violation data-loss bug on restore. A new FK can no longer
+    silently create a gap; this test fails the moment one does.
+
+    Self-referential FKs (``learning_topics.parent_id``,
+    ``subjects.parent_id``) are intentionally NOT checked here — table
+    ordering cannot satisfy them (a child row may precede its parent in
+    the same table's list); they are handled by
+    ``PRAGMA defer_foreign_keys=ON`` in ``restore_backup`` and covered by
+    the round-trip regression test below.
+    """
     position = {table: i for i, table in enumerate(RESTORE_ORDER)}
+    sync = set(SYNC_TABLES)
 
-    def precedes(parent: str, child: str) -> None:
-        assert position[parent] < position[child], f"{parent} must come before {child}"
+    checked = 0
+    violations: list[str] = []
+    for table in Base.metadata.sorted_tables:
+        if table.name not in sync:
+            continue
+        for fk in table.foreign_keys:
+            ref = fk.column.table.name
+            src = table.name
+            if ref == src:
+                continue  # self-referential — see PRAGMA defer_foreign_keys
+            assert ref in position, (
+                f"{src}.{fk.parent.name} references {ref}, which is not in "
+                f"the restore order"
+            )
+            checked += 1
+            if position[ref] >= position[src]:
+                violations.append(
+                    f"{ref} (pos {position[ref]}) must come BEFORE {src} "
+                    f"(pos {position[src]}) — FK {src}.{fk.parent.name}"
+                )
+    assert not violations, "Restore-order FK violations:\n" + "\n".join(violations)
+    # Guard against the enumeration silently checking nothing.
+    assert checked >= 15, f"expected many cross-table FKs, only saw {checked}"
 
-    precedes("users", "user_settings")
-    precedes("users", "learning_projects")
-    precedes("learning_projects", "learning_sessions")
-    precedes("learning_sessions", "session_messages")
-    precedes("learning_sessions", "session_notes")
-    precedes("learning_sessions", "step_evaluations")
-    precedes("curriculums", "learning_topics")
-    precedes("curriculums", "lessons")
-    precedes("imported_conversations", "imported_messages")
-    # M:N association rows after both of their parents.
-    precedes("subjects", "project_subjects")
-    precedes("learning_projects", "project_subjects")
-    precedes("tags", "project_tags")
-    precedes("learning_projects", "project_tags")
-    # The catalog before the earned-badge rows that reference it.
-    precedes("badges", "user_badges")
+    # Explicit regression markers for the exact bug that motivated this:
+    assert position["imported_conversations"] < position["curriculums"]
+    assert position["imported_conversations"] < position["learning_sessions"]
+
+
+def test_restore_curriculum_from_import_and_nested_topics(db_session):
+    """Regression for the restore FK-violation data-loss bug
+    (BACKUP-RESTORE-FK-ORDER). The user-reported failure was
+    ``INSERT INTO learning_topics ... FOREIGN KEY constraint failed`` on
+    a topic TREE: ``learning_topics.parent_id`` is a self-FK, so a child
+    row can be inserted before its parent within the same table — table
+    ordering cannot fix that, only deferring FK checks to commit can.
+
+    This seeds a parent/child topic tree (+ a curriculum + an imported
+    conversation so the surrounding tables are populated) and asserts the
+    export -> wipe -> restore round-trip succeeds with ZERO FK errors and
+    preserves the parent/child link.
+
+    (Note: ``Curriculum.imported_conversation_id`` is not part of the
+    curriculums sync column set today, so that link is intentionally not
+    asserted here — its column coverage is a separate concern from the
+    restore ORDER this test pins.)
+    """
+    user = User(name="Tester", email=None, language="de")
+    db_session.add(user)
+    db_session.flush()
+
+    conversation = ImportedConversation(user_id=user.id, title="Bayes chat")
+    db_session.add(conversation)
+    db_session.flush()
+
+    curriculum = Curriculum(
+        user_id=user.id,
+        title="Intro",
+        language="de",
+        imported_conversation_id=conversation.id,
+    )
+    db_session.add(curriculum)
+    db_session.flush()
+
+    parent = LearningTopic(
+        curriculum_id=curriculum.id, title="Parent", order_index=0
+    )
+    db_session.add(parent)
+    db_session.flush()
+    child = LearningTopic(
+        curriculum_id=curriculum.id,
+        parent_id=parent.id,
+        title="Child",
+        order_index=1,
+    )
+    db_session.add(child)
+    db_session.flush()
+
+    payload = create_backup(db_session, user.id)
+    _wipe_all_tables(db_session)
+    assert db_session.query(Curriculum).count() == 0
+
+    summary = restore_backup(db_session, payload)
+    assert summary["errors"] == [], summary["errors"]
+
+    assert db_session.query(ImportedConversation).count() == 1
+    assert db_session.query(Curriculum).count() == 1
+    topics = {t.title: t for t in db_session.query(LearningTopic).all()}
+    assert set(topics) == {"Parent", "Child"}
+    # The self-referential link survives the round-trip — the crux of the
+    # bug (would 500 on restore before PRAGMA defer_foreign_keys).
+    assert topics["Child"].parent_id == topics["Parent"].id
 
 
 def test_export_and_restore_all_thirty_tables(db_session):

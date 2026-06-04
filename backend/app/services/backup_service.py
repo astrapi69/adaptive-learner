@@ -42,9 +42,11 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app import __version__
+from app.database import Base
 from app.exceptions import NotFoundError, ValidationError
 from app.models import User
 from app.services.sync_service import (
@@ -310,13 +312,30 @@ def _record_belongs_to_user(table: str, record: dict[str, Any], user_id: str) ->
     return True
 
 
-# Restore order: parents before children. Derived from the SAME
-# source as the export (``sync_service.TABLES``) so the two sides
-# can never drift again (BACKUP-API-RESTORE-01). ``TableSpec.order``
-# already encodes FK dependency — lower numbers (parents) go first —
-# which is exactly the order a restore must apply rows in.
+# Restore order: parents before children. Derived from SQLAlchemy's
+# metadata, whose ``sorted_tables`` is a TOPOLOGICAL sort over the
+# real FK graph (a referenced table always precedes the tables that
+# reference it), intersected with the sync surface so the export and
+# restore can never drift on the table SET (BACKUP-API-RESTORE-01).
+#
+# This replaces the previous hand-assigned ``TableSpec.order`` integers,
+# which had a silent gap: ``curriculums`` and ``learning_sessions`` both
+# carry an ``imported_conversation_id`` FK, but ``imported_conversations``
+# was ordered AFTER them — so restoring a curriculum/session that came
+# from a chat import violated the FK. Deriving from the FK graph makes
+# that class of bug impossible (a new FK is auto-ordered), and the
+# comprehensive FK-position pin test guards it.
+#
+# Intra-table self-referential FKs (``learning_topics.parent_id``,
+# ``subjects.parent_id``) cannot be solved by TABLE ordering — a child
+# row may precede its parent within the same table's row list — so the
+# restore additionally defers FK enforcement to commit (see
+# ``restore_backup``: ``PRAGMA defer_foreign_keys=ON``).
+_SYNC_TABLE_NAMES: frozenset[str] = frozenset(SYNC_TABLES)
 _RESTORE_ORDER: tuple[str, ...] = tuple(
-    name for name, _spec_ in sorted(SYNC_TABLES.items(), key=lambda kv: kv[1].order)
+    table.name
+    for table in Base.metadata.sorted_tables
+    if table.name in _SYNC_TABLE_NAMES
 )
 
 
@@ -338,6 +357,17 @@ def restore_backup(
         raise ValidationError("Backup payload missing 'user_id'.")
 
     data: dict[str, list[dict[str, Any]]] = payload["data"]
+
+    # Defer FK enforcement to the final commit for THIS transaction.
+    # _RESTORE_ORDER already inserts parent TABLES before child tables,
+    # but self-referential FKs (learning_topics.parent_id,
+    # subjects.parent_id) can still see a child row inserted before its
+    # parent row within the same table — table ordering can't fix that.
+    # Deferring checks until commit lets the rows land in any order as
+    # long as the final, fully-restored state is FK-consistent. SQLite
+    # resets this pragma at the end of the transaction automatically.
+    db.execute(text("PRAGMA defer_foreign_keys=ON"))
+
     per_table: dict[str, Any] = {}
     total_inserted = 0
     total_updated = 0
