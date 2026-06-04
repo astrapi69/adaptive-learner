@@ -1,111 +1,119 @@
 # Lernpfad
 
-Die Seite **Lernpfad** (`/learning-path`) zeigt deine gesamte
-Lernreise als interaktiven, zoombaren Graphen. Jedes heruntergeladene
-Lektionenset erscheint als Gruppenknoten; jede Lektion darin ist ein
-Knoten, den du anklicken kannst, um sie zu starten.
+Die Seite **Lernpfad** (`/learning-path`) beantwortet auf einen Blick
+zwei Fragen: *Wo stehe ich, und was kommt als Nächstes?* Standardmäßig
+zeigt sie deinen **persönlichen** Pfad — eine kompakte, zweistufige
+Liste der heruntergeladenen Lektionssets, sortiert nach deiner
+letzten Aktivität. Eine interaktive **Graph**-Ansicht steht weiterhin
+als Alternative zur Verfügung.
 
 ## Lernpfad öffnen
 
-- Klicke in der oberen Navigation auf **Lernpfad**.
-- Auf dem Dashboard findest du die Schnellaktionsschaltfläche
-  **🗺️ Lernpfad**.
-- Im Content-Browser (Abschnitt „Meine Lektionen") gibt es ebenfalls
-  eine **Lernpfad**-Schaltfläche.
+- Klicke in der oberen Navigationsleiste auf **Lernpfad**.
+- Nutze auf dem Dashboard die Schnellaktion **🗺️ Lernpfad**.
+- Klicke im Content Browser (Abschnitt „Meine Lektionen") auf
+  **Lernpfad**.
 
-## Den Graphen lesen
+## Persönliche Ansicht (Standard)
 
-### Lektionsknoten
+### Ebene 1 — Set-Übersicht
 
-Jeder Lektionsknoten zeigt:
+Jedes heruntergeladene Set ist **eine Zeile**:
 
 | Element | Bedeutung |
 |---------|-----------|
-| Nummer und Titel | Reihenfolge innerhalb des Sets |
-| ★ Sterne (0–3) | Bisher bestes Ergebnis |
-| **R ✓** Abzeichen | Rezeptive Meisterschaft (Erkennen) erreicht |
-| **P ✓** Abzeichen | Produktive Meisterschaft (Produzieren) erreicht |
-| XP-Abzeichen | Erfahrungspunkte aus dieser Lektion |
-| Statusfarbe | Nicht begonnen / In Bearbeitung / Pausiert / Abgeschlossen / Gemeistert |
-| Pulsierende Hervorhebung | Empfohlene nächste Lektion laut Fehleranalyse |
-| Schlosssymbol | Lektion gesperrt, bis eine Voraussetzung erfüllt ist |
+| Domänen-Symbol + Titel | Der Kurs (Gehirn = Psychologie, Flagge = Sprache, Code = Programmierung) |
+| Mini-Fortschrittsleiste | Ein Punkt pro Lektion — gefüllt = erledigt, halb = in Arbeit, leer = nicht begonnen |
+| Prozent | Anteil der abgeschlossenen Lektionen des Sets |
+| Letzte Aktivität | Wann du zuletzt an diesem Set gearbeitet hast („gestern", „vor 3 Tagen") |
+| Aktuelle Lektion | Die Lektion, die als Nächstes ansteht |
+| Aktionsschaltfläche | **Fortsetzen** / **Starten** / **Nächstes Level verfügbar** / **Abgeschlossen** |
 
-### Gruppenknoten
+Die Sets sind nach letzter Aktivität sortiert (neueste zuerst). Noch
+nicht begonnene heruntergeladene Sets rutschen nach unten. Wenn du
+alle Lektionen eines Kurses abgeschlossen hast und das nächste
+CEFR-Level existiert, bietet die Zeile **Nächstes Level verfügbar**
+an.
 
-Ein Gruppenknoten fasst alle Lektionen eines Content-Sets zusammen.
-Er zeigt Titel, Sprach­paar (Quell­sprache → Zielsprache), einen
-Fortschrittsbalken (abgeschlossen / gesamt) sowie eine
-Zusammenfassung der rezeptiven und produktiven Meisterschaft. Ein
-Klick auf den Gruppen­header klappt die Lektionen ein oder aus.
+### Ebene 2 — Lektionsdetail
 
-## Navigation
+Klicke auf eine Set-Zeile, um sie direkt aufzuklappen (kein
+Seitenwechsel). Jede Lektion zeigt Nummer und Titel, Sterne (0–3 oder
+— wenn nie versucht), Beherrschung pro Richtung (**rezeptiv** /
+**produktiv**) und das Datum deines letzten Versuchs. Der Marker ▶
+hebt die aktuelle Lektion des Sets hervor. Klicke auf eine Lektion,
+um sie zu starten oder fortzusetzen.
 
-Klicke auf einen entsperrten Lektionsknoten, um die Lektion direkt
-zu öffnen. Gesperrte Knoten sind deaktiviert; halte die Maus darüber,
-um den Grund anzuzeigen.
+Am Ende des aufgeklappten Sets:
 
-## Steuerung
+- **Adaptive Lektion starten** — eine aus deinen Fehlern in diesem
+  Set erzeugte Lektion.
+- **Fehler wiederholen (N)** — wiederhole die offenen Fehler des Sets
+  (nur sichtbar, wenn es welche gibt).
 
-### Filter
+Klicke erneut auf die Set-Zeile, um sie wieder einzuklappen.
 
-- **Statusfilter** – alle Lektionen oder nur Nicht begonnen,
-  In Bearbeitung oder Gemeistert anzeigen.
-- **Richtungsfilter** – alle Lektionen oder nur solche anzeigen,
-  bei denen rezeptive oder produktive Meisterschaft noch fehlt.
+### Nur meine / Alle Sets
 
-### Suche
+Der Umschalter **[Nur meine] [Alle Sets]** steuert, wie prominent der
+Abschnitt *Nicht heruntergeladen* am Ende ist. **Nur meine**
+(Standard) hält ihn eingeklappt; **Alle Sets** klappt ihn auf, damit
+du weitere Kurse durchsuchen und herunterladen kannst. Deine Auswahl
+wird gespeichert.
 
-Tippe im Suchfeld, um passende Lektionen hervorzuheben. Drücke
-**Enter**, um direkt zur ersten Übereinstimmung zu navigieren.
+### Nicht heruntergeladen
 
-### Statistik
+Ein einklappbarer Abschnitt am Ende listet Lektionssets auf, die du
+noch nicht heruntergeladen hast — jeweils mit einer Schaltfläche
+**Herunterladen**. Beim Herunterladen rückt das Set nach oben in deine
+aktive Liste.
 
-Klicke auf **Statistik**, um die Statistikseitenleiste zu öffnen
-oder zu schließen:
+## Graph-Ansicht (Alternative)
 
-- **Lektionen**: abgeschlossen vs. gesamt.
-- **Rezeptiv**: Lektionen mit rezeptiver Meisterschaft.
-- **Produktiv**: Lektionen mit produktiver Meisterschaft.
+Nutze den Umschalter **Persönlich / Graph** in der Kopfzeile, um den
+interaktiven, zoombaren Graphen zu öffnen. Er stellt jedes
+heruntergeladene Set und jede Lektion als Knoten dar, die du ziehen,
+filtern, durchsuchen und inspizieren kannst. Der Graph (und seine
+größere Zeichenbibliothek) wird erst geladen, wenn du dorthin
+wechselst, damit die persönliche Standardansicht schnell bleibt.
 
-### Fehlercluster
+### Lektions- und Set-Knoten
 
-Klicke auf **Fehlercluster anzeigen**, um gemeinsame Fehlermuster
-deiner Lektionen zu sehen. Ein Cluster gruppiert Lektionen, bei
-denen du denselben Fehlertyp gemacht hast (z. B. *Artikelgeschlecht*,
-*Verbkonjugation*).
+Jeder Lektionsknoten zeigt Nummer und Titel, Sterne, Beherrschung pro
+Richtung (**R ✓** / **P ✓**), XP, eine Statusfarbe, einen pulsierenden
+Akzent auf der empfohlenen nächsten Lektion und ein Schloss-Symbol,
+wenn eine Voraussetzung fehlt. Ein Set-Gruppenknoten umfasst die
+Lektionen eines Sets mit Fortschrittsbalken und Beherrschungs-
+Zusammenfassung; klicke auf die Kopfzeile zum Ein- oder Ausklappen.
 
-- Klicke auf einen Clusternamen, um die zugehörigen Lektionen im
-  Graphen hervorzuheben.
-- Klicke auf **Adaptive Lektion starten**, um eine auf dieses
-  Fehlermuster zugeschnittene Lektion zu beginnen.
+### Graph-Steuerung
 
-## Knoten verschieben
-
-Du kannst jeden Knoten per Drag-and-drop neu anordnen. Dein Layout
-wird automatisch pro Benutzer (im Browser-Speicher) gespeichert und
-beim nächsten Öffnen wiederhergestellt.
-
-Klicke im Seitenkopf auf **Layout zurücksetzen**, um zum automatisch
-berechneten Dagre-Layout zurückzukehren und dein gespeichertes Layout
-zu löschen.
+- **Statusfilter** — alle / nicht begonnen / in Arbeit / gemeistert.
+- **Richtungsfilter** — alle, oder nur Lektionen ohne rezeptive bzw.
+  produktive Beherrschung.
+- **Suche** — Treffer hervorheben; mit **Enter** zum ersten Treffer
+  springen.
+- **Statistik** — abgeschlossene Lektionen, rezeptiv gemeistert,
+  produktiv gemeistert.
+- **Fehler-Cluster anzeigen** — gemeinsame Fehlermuster (z. B.
+  *Artikelgeschlecht*) mit adaptiver Lektion per Klick.
+- **Layout zurücksetzen** — das automatische Layout wiederherstellen
+  und deine gezogenen Positionen löschen (pro Benutzer im
+  Browser-Speicher).
 
 ## Tastaturzugang
 
-Alle Steuerelemente sind per Tastatur erreichbar:
-
-- **Tab** bewegt den Fokus zwischen Steuerelementen und Knoten.
-- **Enter / Leertaste** aktiviert einen fokussierten Lektionsknoten
-  oder eine Schaltfläche.
-- Das Suchfeld teilt Hilfstechnologien mit: *„Enter drücken, um zur
-  ersten Übereinstimmung zu navigieren"*.
+Alle Steuerelemente sind per Tastatur erreichbar: **Tab** bewegt den
+Fokus, **Enter / Leertaste** aktiviert eine Zeile, Lektion oder
+Schaltfläche. Berührungsziele sind mindestens 44 px groß, und die
+Seite läuft bis hinunter zu 375 px Breite sauber um.
 
 ## Tipps
 
-- Das **Empfohlen**-Abzeichen markiert die Lektion, die die adaptive
-  Engine als nächsten besten Schritt einschätzt. Es basiert auf
-  deinen aktuellen Fehlermustern, nicht nur auf der Reihenfolge.
-- Eine Lektion bleibt **In Bearbeitung**, wenn du sie pausiert hast.
-  Du kannst sie über den Knoten oder die Karte „Pausierte Lektionen"
-  auf dem Dashboard fortsetzen.
-- Sobald sowohl **R ✓** als auch **P ✓** angezeigt werden, ist die
-  Lektion **Gemeistert**.
+- Die **aktuelle Lektion** (▶) ist immer dein bester nächster Schritt
+  — basierend auf deiner Fehlerhistorie, nicht nur auf der
+  Lektionsreihenfolge.
+- Eine pausierte Lektion bleibt über ihre Zeile oder die
+  Dashboard-Karte „Pausierte Lektionen" fortsetzbar.
+- Sobald sowohl **rezeptive** als auch **produktive** Beherrschung
+  erreicht sind, gilt eine Lektion als vollständig gemeistert.
