@@ -37,6 +37,7 @@ import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "rea
 
 import {useAsset} from "../../hooks/useAsset";
 import {useI18n} from "../../hooks/useI18n";
+import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
 import {derivePictureChoiceAttempt} from "../../lib/element-attempt";
@@ -187,12 +188,12 @@ function PictureChoiceExercise(
 
     return (
         <section
-            className="picture-exercise"
+            className="flex flex-col gap-3"
             data-testid="picture-exercise"
         >
             <div className="exercise-prompt-row">
                 <p
-                    className="picture-prompt"
+                    className="m-0 font-medium"
                     data-testid="picture-prompt"
                 >
                     {exercise.prompt}
@@ -209,7 +210,7 @@ function PictureChoiceExercise(
             <DirectionInstruction exercise={exercise} />
 
             <ul
-                className="picture-grid"
+                className="m-0 grid list-none grid-cols-2 gap-2 p-0 min-[600px]:grid-cols-4"
                 data-testid="picture-grid"
                 aria-label={t(
                     "lesson.exercise.picture.grid_label",
@@ -231,7 +232,7 @@ function PictureChoiceExercise(
                 ))}
             </ul>
 
-            <div className="picture-actions">
+            <div className="flex flex-wrap items-center gap-3">
                 {!submitted && !controlled && (
                     <button
                         type="button"
@@ -249,11 +250,12 @@ function PictureChoiceExercise(
                 {submitted && (
                     <>
                         <p
-                            className={`picture-result answer-feedback${
+                            className={cn(
+                                "answer-feedback m-0 font-semibold",
                                 result && result.correct > 0
-                                    ? " is-correct"
-                                    : " is-wrong"
-                            }`}
+                                    ? "is-correct text-[var(--exercise-correct)]"
+                                    : "is-wrong text-[var(--exercise-wrong)]",
+                            )}
                             data-testid="picture-result"
                             data-result={
                                 result && result.correct > 0
@@ -363,13 +365,18 @@ function PictureChoiceTile({
     return (
         <button
             type="button"
-            className={`picture-tile${isSelected ? " is-selected" : ""}${
-                showAsCorrect ? " is-correct" : ""
-            }${showAsWrong ? " is-wrong" : ""}${
-                useTextFallback ? " is-text-fallback" : ""
-            }${isLoading ? " is-loading" : ""}${
-                isPlaceholder ? " is-placeholder" : ""
-            }`}
+            className={cn(
+                "relative flex min-h-[88px] w-full cursor-pointer flex-col items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] p-2 text-center text-sm text-[var(--fg)] enabled:hover:bg-[var(--surface-2)]",
+                isSelected &&
+                    "is-selected border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_12%,var(--surface))]",
+                showAsCorrect &&
+                    "is-correct border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]",
+                showAsWrong &&
+                    "is-wrong border-[var(--exercise-wrong)] bg-[color-mix(in_srgb,var(--exercise-wrong)_12%,var(--surface))]",
+                useTextFallback && "is-text-fallback justify-center",
+                isLoading && "is-loading",
+                isPlaceholder && "is-placeholder",
+            )}
             onClick={onSelect}
             aria-pressed={isSelected}
             disabled={submitted}
@@ -383,9 +390,10 @@ function PictureChoiceTile({
                     aria-hidden="true"
                 />
             ) : useTextFallback ? (
-                <span className="picture-tile-fallback">{choice.label}</span>
+                <span className="text-base font-semibold">{choice.label}</span>
             ) : (
                 <img
+                    className="aspect-square h-auto w-full rounded-sm object-cover"
                     src={imgSrc as string}
                     alt={choice.label}
                     onError={() => setImgFailed(true)}
@@ -401,10 +409,10 @@ function PictureChoiceTile({
                     height={100}
                 />
             )}
-            <span className="picture-tile-label">{choice.label}</span>
+            <span className="leading-[1.3]">{choice.label}</span>
             {showAsCorrect && (
                 <span
-                    className="picture-tile-badge picture-tile-badge-correct"
+                    className="absolute right-1.5 top-1.5 inline-flex h-[22px] w-[22px] items-center justify-center rounded-full border border-border bg-[var(--surface)] text-[var(--exercise-correct)]"
                     aria-label={t(
                         "lesson.exercise.picture.correct_label",
                         "Correct",
@@ -415,7 +423,7 @@ function PictureChoiceTile({
             )}
             {showAsWrong && (
                 <span
-                    className="picture-tile-badge picture-tile-badge-wrong"
+                    className="absolute right-1.5 top-1.5 inline-flex h-[22px] w-[22px] items-center justify-center rounded-full border border-border bg-[var(--surface)] text-[var(--exercise-wrong)]"
                     aria-label={t(
                         "lesson.exercise.picture.wrong_label",
                         "Wrong",
