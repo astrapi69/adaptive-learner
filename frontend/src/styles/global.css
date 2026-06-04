@@ -5432,17 +5432,6 @@ select:focus {
 .xp-widget__total {
     color: var(--text-muted);
 }
-.xp-widget__bar {
-    height: 8px;
-    border-radius: 4px;
-    background: var(--border);
-    overflow: hidden;
-}
-.xp-widget__bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent-hover));
-    transition: width 600ms ease-out;
-}
 .xp-widget__footer {
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -5484,9 +5473,6 @@ select:focus {
 @media (prefers-reduced-motion: reduce) {
     .xp-notification {
         animation: none;
-    }
-    .xp-widget__bar-fill {
-        transition: none;
     }
 }
 
@@ -6530,11 +6516,6 @@ select:focus {
 
 .api-key-test-result.is-warning {
   color: var(--warning);
-}
-
-.api-key-last-test {
-  font-size: 0.8rem;
-  color: var(--fg-muted);
 }
 
 .api-key-rollback {
