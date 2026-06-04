@@ -1,6 +1,6 @@
-import {fireEvent, render, screen} from "@testing-library/react";
+import {act, fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
-import {describe, expect, it} from "vitest";
+import {afterEach, beforeEach, describe, expect, it} from "vitest";
 
 import Navigation from "./Navigation";
 
@@ -194,5 +194,89 @@ describe("Navigation", () => {
                 );
             }
         }
+    });
+});
+
+// --- lesson header auto-hide on scroll --------------------------------
+
+describe("Navigation: lesson header auto-hide", () => {
+    // The nav observes the #root scroll container (html/body are
+    // overflow-locked; #root provides the scroll). Provide one + drive it.
+    let root: HTMLElement;
+
+    beforeEach(() => {
+        root = document.createElement("div");
+        root.id = "root";
+        document.body.appendChild(root);
+    });
+
+    afterEach(() => {
+        root.remove();
+    });
+
+    function scrollTo(y: number): void {
+        root.scrollTop = y;
+        act(() => {
+            root.dispatchEvent(new Event("scroll"));
+        });
+    }
+
+    const LESSON_PATH = "/lesson/astrapi69--content/es-a1/01.json";
+
+    it("hides the header on scroll-down during a lesson", () => {
+        renderAt(LESSON_PATH);
+        const nav = screen.getByTestId("app-nav");
+        expect(nav.getAttribute("data-nav-hidden")).toBe("false");
+        scrollTo(120);
+        expect(nav.getAttribute("data-nav-hidden")).toBe("true");
+        expect(nav.className).toContain("-translate-y-full");
+    });
+
+    it("reveals the header on scroll-up during a lesson", () => {
+        renderAt(LESSON_PATH);
+        const nav = screen.getByTestId("app-nav");
+        scrollTo(120); // down -> hidden
+        expect(nav.getAttribute("data-nav-hidden")).toBe("true");
+        scrollTo(40); // up -> visible
+        expect(nav.getAttribute("data-nav-hidden")).toBe("false");
+        expect(nav.className).not.toContain("-translate-y-full");
+    });
+
+    it("keeps the header visible at the top of a lesson", () => {
+        renderAt(LESSON_PATH);
+        const nav = screen.getByTestId("app-nav");
+        scrollTo(120); // down
+        scrollTo(0); // back to top
+        expect(nav.getAttribute("data-nav-hidden")).toBe("false");
+    });
+
+    it("also auto-hides on /error-replay (a lesson surface)", () => {
+        renderAt("/error-replay/astrapi69--content/es-a1/01.json");
+        const nav = screen.getByTestId("app-nav");
+        scrollTo(120);
+        expect(nav.getAttribute("data-nav-hidden")).toBe("true");
+    });
+
+    it("never hides the header outside a lesson, even on scroll-down", () => {
+        renderAt("/dashboard");
+        const nav = screen.getByTestId("app-nav");
+        scrollTo(200);
+        expect(nav.getAttribute("data-nav-hidden")).toBe("false");
+        expect(nav.className).not.toContain("-translate-y-full");
+    });
+
+    it("keeps the header visible while the menu drawer is open", () => {
+        renderAt(LESSON_PATH);
+        const nav = screen.getByTestId("app-nav");
+        fireEvent.click(screen.getByTestId("nav-hamburger")); // open drawer
+        scrollTo(200); // scrolling down, but the drawer is open
+        expect(nav.getAttribute("data-nav-hidden")).toBe("false");
+    });
+
+    it("applies a reduced-motion-safe slide transition", () => {
+        renderAt(LESSON_PATH);
+        const nav = screen.getByTestId("app-nav");
+        expect(nav.className).toContain("transition-transform");
+        expect(nav.className).toContain("motion-reduce:transition-none");
     });
 });

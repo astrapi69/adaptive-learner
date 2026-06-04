@@ -9,6 +9,7 @@ import {useDevMode} from "../hooks/useDevMode";
 import {useI18n} from "../hooks/useI18n";
 import {useIsLessonActive} from "../hooks/useIsLessonActive";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
+import {useScrollDirection} from "../hooks/useScrollDirection";
 import {useTheme} from "../hooks/useTheme";
 import {readSyncConfig} from "../storage/sync-engine";
 
@@ -40,7 +41,15 @@ export default function Navigation() {
     // lesson reclaims vertical space. CSS drives the actual layout
     // off the ``is-lesson-compact`` modifier.
     const lessonActive = useIsLessonActive();
+    // Auto-hide the sticky nav while reading a lesson: scrolling DOWN
+    // slides it up out of view (more content space), scrolling UP (or
+    // reaching the top) reveals it again. Only during active lessons,
+    // and never while the menu drawer is open. The slide is a CSS
+    // transform transition (``-translate-y-full`` + ``transition-
+    // transform``) so it respects ``prefers-reduced-motion``.
+    const scrollDir = useScrollDirection();
     const [menuOpen, setMenuOpen] = useState(false);
+    const navHidden = lessonActive && !menuOpen && scrollDir === "down";
     const [syncPaired, setSyncPaired] = useState<boolean>(
         () => readSyncConfig() !== null,
     );
@@ -70,11 +79,14 @@ export default function Navigation() {
 
     return (
         <nav
-            className={`app-nav${menuOpen ? " is-menu-open" : ""}${
-                lessonActive ? " is-lesson-compact" : ""
+            className={`app-nav transition-transform duration-300 motion-reduce:transition-none${
+                menuOpen ? " is-menu-open" : ""
+            }${lessonActive ? " is-lesson-compact" : ""}${
+                navHidden ? " -translate-y-full" : ""
             }`}
             data-testid="app-nav"
             data-lesson-compact={lessonActive ? "true" : "false"}
+            data-nav-hidden={navHidden ? "true" : "false"}
         >
             {/* Hamburger first in the DOM so it sits on the LEFT on
                 mobile (primary nav action, thumb-reachable). `ml-0!`

@@ -3,7 +3,7 @@ import {describe, expect, it} from "vitest";
 import {isLessonRoute, LESSON_ROUTE_PREFIXES} from "./useIsLessonActive";
 
 describe("isLessonRoute", () => {
-    it("matches the three active-learning route families", () => {
+    it("matches the four active-learning route families", () => {
         expect(
             isLessonRoute(
                 "/lesson/astrapi69--adaptive-learner-content/es-a1/01.json",
@@ -11,6 +11,11 @@ describe("isLessonRoute", () => {
         ).toBe(true);
         expect(isLessonRoute("/review/es-a1")).toBe(true);
         expect(isLessonRoute("/adaptive-lesson/es-a1")).toBe(true);
+        expect(
+            isLessonRoute(
+                "/error-replay/astrapi69--adaptive-learner-content/es-a1/01.json",
+            ),
+        ).toBe(true);
     });
 
     it("does not match non-lesson routes", () => {
