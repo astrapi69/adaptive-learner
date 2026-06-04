@@ -9,30 +9,46 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.59.0** (minor — **Learning Path Redesign:
-  personal path with zoom levels**). The old ``/learning-path``
-  rendered all ~225 lessons as one xyflow graph (unusable); it now
-  answers *"Wo bin ich? Was kommt als Nächstes?"* with a two-level
-  personal view (``pages/LearningPathPersonal.tsx`` + pure
-  ``lib/learning-path/personal-path.ts`` +
-  ``hooks/usePersonalPath.ts``). **Level 1**: one ``SetRow`` per
-  *downloaded* set, sorted by last activity — domain icon, mini
-  progress track (● done / ◐ in-progress / ○ not-started), percentage,
-  relative last-activity (``lib/utils/relative-time.ts``, Intl, 8
-  langs), current/next lesson, one action (Fortsetzen / Starten /
-  Nächstes Level verfügbar / Abgeschlossen). **Level 2**: click a row
-  to expand inline (accordion) to ``LessonRow``s (stars, per-direction
-  mastery, last attempt, ▶ current) + ``SetDetail`` actions (adaptive
-  lesson, set-wide Fehler wiederholen → ``/review/:setId``). A
-  **[Nur meine]/[Alle Sets]** toggle + a collapsible
-  ``NotDownloadedSection`` (per-set download), both persisted in
-  localStorage. A completed course offers its **next CEFR level** when
-  one exists. The original graph is renamed ``LearningPathGraph`` and
-  kept as an **alternative view**, lazy-loaded via a Persönlich/Graph
-  switch — so **xyflow (~177 KB) leaves the default bundle** (personal
-  chunk ~21 KB; performance win). New ``learning_path.*`` strings in
-  all 8 catalogs; all Tailwind, 6 themes, 44px targets, 375px-safe.
-  Also folds in the mobile nav **hamburger moved to the left**.
+- **Current state:** **v1.60.0** (minor — **lesson-reading UX +
+  Learning Path Achievement Map + Tailwind exercise renderers +
+  help-glossary perf + B1 content complete**). **Auto-hide header
+  during lessons:** scrolling down slides the sticky nav up (more
+  reading space), scrolling up / reaching the top reveals it — scoped to
+  ``/lesson`` / ``/review`` / ``/adaptive-lesson`` / ``/error-replay``
+  via the new ``hooks/useScrollDirection.ts`` (observes the ``#root``
+  scroll, 10px threshold) + a Tailwind ``-translate-y-full`` transform
+  (``motion-reduce``-safe, no layout shift; the sticky lesson footer
+  stays visible). **Learning Path now has 3 views — Persönlich / Map /
+  Graph**: the new ``LearningPathMap`` groups progress by domain
+  (bird's-eye mastery overview). **Settings** secondary actions go
+  **icon-only on mobile** (consistent with Dashboard + Content).
+  **Tailwind:** all **5 exercise renderers** (PictureChoice, Matching,
+  FreeText, Cloze, WordTiles) migrated → app **~85-90% on Tailwind**; a
+  post-migration theme audit (43-token parity, themed Dialog overlay) +
+  dead-CSS removal. **Perf:** the help glossary is **lazy-loaded per
+  language** — EN stays eager (synchronous fallback), the other 7 are
+  on-demand chunks (``loadGlossaryLanguage`` + ``hooks/useGlossary.ts``),
+  dropping the main ``index`` chunk **731→449 KB raw / 245→138 KB gzip**
+  (closes ``PERF-HELP-GLOSSARY-LAZY-01``). **Fixes:** same-language chat
+  imports (German grammar for German speakers, source==target) are
+  auto-detected as **knowledge** domain content — the Save flow stamps
+  the lesson domain (schema v1.3) and the Share Wizard inherits the pair
+  instead of repairing it (E2E ``import-language-pipeline`` variant 2
+  un-fixme'd; plus a Dexie async-load timing fix for the wizard, and a
+  ``github_service`` mypy ``no-any-return`` cast). **Content: B1 roadmap
+  complete** — new **de→es B1 / de→en B1 / de→fr B1** (15 lessons each),
+  so de→en, de→es, de→fr each ship full **A1→A2→B1**; library now at
+  **271 lessons / 13 sets / 4 domains** (~66h; 90 Psychologie).
+  v1.59.0 = minor — **Learning Path Redesign: personal path with zoom
+  levels** (the old ``/learning-path`` rendered all ~225 lessons as one
+  xyflow graph; replaced by a two-level personal view —
+  ``pages/LearningPathPersonal.tsx`` + pure
+  ``lib/learning-path/personal-path.ts`` + ``hooks/usePersonalPath.ts``:
+  per-downloaded-set rows sorted by last activity → inline accordion to
+  per-lesson detail, ``[Nur meine]/[Alle Sets]`` toggle, next-CEFR-level
+  offer; the original graph kept as ``LearningPathGraph``, lazy-loaded
+  so **xyflow ~177 KB leaves the default bundle**). Also moved the mobile
+  nav **hamburger to the left**.
   v1.58.0 = minor — **user-centric UX overhaul**.
   A shared **Continue Learning** ("Weitermachen") section
   (``components/ContinueLearning.tsx`` + pure helpers in
@@ -1051,11 +1067,11 @@ adaptive-learner/
 ## Tests
 
 - `make test` must stay green after every change.
-- **v1.54.0 baseline:** backend 1125 + plugins
-  1009 + Vitest 3149 = **5283 tests**. E2E
+- **v1.60.0 baseline:** backend 1158 (+1 skipped) + plugins
+  1009 + Vitest 3393 = **5560 tests**. E2E
   smoke (17 spec files) runs separately via
   `cd e2e && npx playwright test`. **Dexie-mode release
-  gate** (23 specs incl. the Phase 61 interactive journeys —
+  gate** (71 specs incl. the Phase 61 interactive journeys —
   full lesson playthrough across all 5 exercise types,
   Content Browser tree + language filter, adaptive lesson —
   plus /import/:id and the Phase 49 Learning Repository

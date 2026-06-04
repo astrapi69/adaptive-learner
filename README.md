@@ -1,7 +1,7 @@
 # Adaptive Learner
 
-[![Version](https://img.shields.io/badge/version-v1.59.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
-[![Tests](https://img.shields.io/badge/tests-5283%20green-brightgreen)](#tests)
+[![Version](https://img.shields.io/badge/version-v1.60.0-blue)](https://github.com/astrapi69/adaptive-learner/releases/latest)
+[![Tests](https://img.shields.io/badge/tests-5560%20green-brightgreen)](#tests)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-online-blue)](https://astrapi69.github.io/adaptive-learner/docs/en/)
 
