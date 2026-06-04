@@ -9,8 +9,29 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.57.0** (minor — **community PR automation +
-  Content Browser search**). **GitHub PR automation:** sharing a lesson
+- **Current state:** **v1.58.0** (minor — **user-centric UX overhaul**).
+  A shared **Continue Learning** ("Weitermachen") section
+  (``components/ContinueLearning.tsx`` + pure helpers in
+  ``lib/content/continue-learning.ts``) surfaces the most
+  recently-touched lesson per set (newest first) with one action each —
+  **resume** an in-flight/paused lesson (step n/total), **next** lesson
+  pointer + stars after a completed one, or **set complete** — reading
+  ``lessonProgress`` + set manifests through ``getStorage()`` so both
+  storage modes carry it (each read ``safe()``-guarded; renders nothing
+  while loading / no user). It lands on the **Content Browser** (top 5)
+  and the **Dashboard** (top 3). The **Content Browser** is reordered
+  around the learning flow: **search first** (full width), a compact
+  **icon-only mobile action toolbar** (Import Lesson / Import Chat /
+  Learning Path / Create — icon + label from ``md`` up, 44px targets),
+  then Continue Learning above the set tree (My Lessons + Contributions
+  hide while searching). The **Dashboard** leads with Continue Learning,
+  then the actionable cards (paused / missions / focus / review), then
+  gamification (XP / streak / badges), then the analytical panels. A
+  **responsive button pattern** (icon-only on mobile, icon + text from
+  ``md`` up; ``aria-label``/``title`` keep the accessible name) is
+  applied to the secondary toolbars. 23 new frontend tests.
+  v1.57.0 = minor — **community PR automation +
+  Content Browser search**. **GitHub PR automation:** sharing a lesson
   now creates a real pull request programmatically (fork → commit →
   PR) instead of a pre-filled URL — backend ``github_service`` +
   ``/api/github/*`` proxy (token server-side) in API mode,
