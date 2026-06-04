@@ -29,7 +29,7 @@
  */
 
 import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Dialog,
@@ -277,6 +277,23 @@ export default function ShareWizard({
       ? entry.level.trim().toUpperCase()
       : estimateLevel(primary?.cards ?? []),
   );
+
+  // The pair useState initializers run ONCE at mount — but the share page
+  // loads the lessons asynchronously (Content.handleShare mounts the
+  // wizard with an empty lessons array, then fetches), so the explicit
+  // content domain on the lesson is not visible yet and a same-language
+  // pair gets repaired to empty. Re-apply the inherited pair the first
+  // time the lessons reveal a known content domain (it lands within a
+  // tick, before any user interaction, so it never clobbers a manual edit).
+  const domainPairAppliedRef = useRef(false);
+  useEffect(() => {
+    if (!isDomainContent || domainPairAppliedRef.current) return;
+    domainPairAppliedRef.current = true;
+    if (isIsoLang(entry.source_language))
+      setEditSource(baseLang(entry.source_language));
+    if (isIsoLang(entry.target_language))
+      setEditTarget(baseLang(entry.target_language));
+  }, [isDomainContent, entry.source_language, entry.target_language]);
 
   const cardCount = lessons.reduce((n, l) => n + l.cards.length, 0);
   const exerciseCount = lessons.reduce(
