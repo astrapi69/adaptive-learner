@@ -28,6 +28,7 @@ import * as HoverCard from "@radix-ui/react-hover-card";
 import {type ReactNode} from "react";
 
 import {useHelp} from "../../contexts/HelpContext";
+import {useGlossary} from "../../hooks/useGlossary";
 import {useI18n} from "../../hooks/useI18n";
 import {getGlossaryEntry} from "../../lib/help-glossary";
 
@@ -53,6 +54,9 @@ export default function HelpTooltip({
 }: Props) {
     const {t, lang} = useI18n();
     const {openHelp} = useHelp();
+    // Lazily load the active language's glossary chunk + re-render when it
+    // lands (English is eager, so this is a no-op for EN).
+    useGlossary(lang);
     const entry = getGlossaryEntry(glossaryKey, lang);
 
     if (!entry) {
