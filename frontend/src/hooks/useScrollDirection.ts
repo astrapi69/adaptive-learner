@@ -35,13 +35,22 @@ export function useScrollDirection(
 
         const handleScroll = () => {
             const currentY = container.scrollTop;
+            // Near the top: always show, and reset the reference point.
             if (currentY <= threshold) {
                 setDirection("top");
-            } else if (currentY > lastScrollY.current + threshold) {
-                setDirection("down");
-            } else if (currentY < lastScrollY.current - threshold) {
-                setDirection("up");
+                lastScrollY.current = currentY;
+                return;
             }
+            // Measure movement since the last COMMITTED reference, not since
+            // the previous event. Real momentum scrolling fires many small
+            // deltas; updating the reference on every event would mean a
+            // slow read-scroll never accumulates past the threshold, so the
+            // direction would never flip to "down". Only commit a direction
+            // (and move the reference) once the cumulative movement since the
+            // last commit crosses the threshold.
+            const delta = currentY - lastScrollY.current;
+            if (Math.abs(delta) < threshold) return;
+            setDirection(delta > 0 ? "down" : "up");
             lastScrollY.current = currentY;
         };
 

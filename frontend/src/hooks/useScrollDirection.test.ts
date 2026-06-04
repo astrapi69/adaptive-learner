@@ -72,6 +72,26 @@ describe("useScrollDirection", () => {
         expect(result.current).toBe("down");
     });
 
+    it("commits 'down' for small incremental scrolls that accumulate past the threshold", () => {
+        // Regression (P1): real momentum scrolling fires many small deltas.
+        // The reference must NOT advance on every event, or a slow scroll
+        // never accumulates past the threshold and the header never hides.
+        const {result} = renderHook(() => useScrollDirection(10));
+        scrollTo(root, 6); // still "top" (<= threshold)
+        scrollTo(root, 12); // +6 since the last commit (ref=6) -> no commit yet
+        expect(result.current).toBe("top");
+        scrollTo(root, 18); // +12 since ref=6 -> crosses threshold -> "down"
+        expect(result.current).toBe("down");
+    });
+
+    it("commits 'up' for small incremental upward scrolls", () => {
+        const {result} = renderHook(() => useScrollDirection(10));
+        scrollTo(root, 100); // down (ref=100)
+        scrollTo(root, 95); // -5 (< threshold) -> no commit
+        scrollTo(root, 88); // -12 since ref=100 -> "up"
+        expect(result.current).toBe("up");
+    });
+
     it("is a no-op (stays 'top') when the container is absent", () => {
         root.remove();
         const {result} = renderHook(() => useScrollDirection());
