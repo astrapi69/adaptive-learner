@@ -353,6 +353,73 @@ describe("buildPersonalPath — lesson detail (stars, mastery, dots)", () => {
     });
 });
 
+describe("buildPersonalPath — next level", () => {
+    it("points a completed A1 set at an available (not-downloaded) A2", () => {
+        const sets = [
+            setInput("fra1", "Französisch A1", ["01.json"], {
+                level: "a1",
+                domain: "language",
+                source_language: "de",
+                target_language: "fr",
+            }),
+        ];
+        const result = build({
+            sets,
+            progress: {
+                [lessonKey("fra1", "01.json")]: progress("fra1", "01.json"),
+            },
+            notDownloaded: [
+                entry({
+                    id: "fra2",
+                    title: "Französisch A2",
+                    level: "a2",
+                    domain: "language",
+                    source_language: "de",
+                    target_language: "fr",
+                    cached_version: null,
+                }),
+            ],
+        });
+        const set = result.activeSets[0];
+        expect(set.nextLevel?.setId).toBe("fra2");
+        expect(set.nextLevel?.downloaded).toBe(false);
+    });
+
+    it("leaves nextLevel null when no higher level exists", () => {
+        const sets = [
+            setInput("fra1", "Französisch A1", ["01.json"], {level: "a1"}),
+        ];
+        const result = build({sets});
+        expect(result.activeSets[0].nextLevel).toBeNull();
+    });
+
+    it("matches the next level only for the same language pair + domain", () => {
+        const sets = [
+            setInput("fra1", "Französisch A1", ["01.json"], {
+                level: "a1",
+                source_language: "de",
+                target_language: "fr",
+                domain: "language",
+            }),
+        ];
+        const result = build({
+            sets,
+            notDownloaded: [
+                entry({
+                    id: "esa2",
+                    title: "Spanisch A2",
+                    level: "a2",
+                    source_language: "de",
+                    target_language: "es",
+                    domain: "language",
+                    cached_version: null,
+                }),
+            ],
+        });
+        expect(result.activeSets[0].nextLevel).toBeNull();
+    });
+});
+
 describe("buildPersonalPath — not-downloaded section", () => {
     it("lists not-downloaded sets sorted by domain then title", () => {
         const result = build({

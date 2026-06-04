@@ -78,6 +78,20 @@ export interface PersonalPathSet {
     mode: SetActionMode;
     /** Active (non-mastered) element errors across the set. */
     errorCount: number;
+    /** When this set is complete and a higher CEFR level of the same
+     *  course exists, a pointer to it (so the row can offer "next
+     *  level available"). Null otherwise. Filled by
+     *  {@link attachNextLevels}. */
+    nextLevel: NextLevelPointer | null;
+}
+
+export interface NextLevelPointer {
+    source: string;
+    setId: string;
+    title: string;
+    level: string;
+    /** Whether the learner already downloaded the next-level set. */
+    downloaded: boolean;
 }
 
 export interface NotDownloadedSet {
@@ -242,7 +256,58 @@ function buildSet(
         currentLesson: current,
         mode,
         errorCount,
+        nextLevel: null,
     };
+}
+
+/** CEFR ladder used to find "the next level" of a language course. */
+const CEFR_LADDER = ["a1", "a2", "b1", "b2", "c1", "c2"];
+
+/** A minimal view of a content set for next-level matching. */
+interface LevelCandidate {
+    source: string;
+    setId: string;
+    title: string;
+    level: string;
+    sourceLanguage: string;
+    targetLanguage: string;
+    domain: string;
+    downloaded: boolean;
+}
+
+/**
+ * For each completed-ready set, attach a pointer to the next CEFR
+ * level of the SAME course (same source/target language + domain) if
+ * one exists among the known sets (downloaded or not). Mutates the
+ * passed sets and returns them.
+ */
+function attachNextLevels(
+    sets: PersonalPathSet[],
+    candidates: LevelCandidate[],
+): PersonalPathSet[] {
+    for (const set of sets) {
+        const idx = CEFR_LADDER.indexOf(set.level.toLowerCase());
+        if (idx < 0 || idx >= CEFR_LADDER.length - 1) continue;
+        const nextLevel = CEFR_LADDER[idx + 1];
+        const match = candidates.find(
+            (c) =>
+                c.setId !== set.setId &&
+                c.level.toLowerCase() === nextLevel &&
+                c.sourceLanguage === set.sourceLanguage &&
+                c.targetLanguage === set.targetLanguage &&
+                c.domain === set.domain,
+        );
+        if (match) {
+            set.nextLevel = {
+                source: match.source,
+                setId: match.setId,
+                title: match.title,
+                level: match.level,
+                downloaded: match.downloaded,
+            };
+        }
+    }
+    return sets;
 }
 
 /**
@@ -267,6 +332,30 @@ export function buildPersonalPath(
             if (b.lastActivity) return 1;
             return a.title.localeCompare(b.title);
         });
+
+    const candidates: LevelCandidate[] = [
+        ...input.sets.map((s) => ({
+            source: s.entry.source,
+            setId: s.entry.id,
+            title: s.entry.title,
+            level: s.entry.level,
+            sourceLanguage: s.entry.source_language,
+            targetLanguage: s.entry.target_language,
+            domain: s.entry.domain,
+            downloaded: true,
+        })),
+        ...input.notDownloaded.map((e) => ({
+            source: e.source,
+            setId: e.id,
+            title: e.title,
+            level: e.level,
+            sourceLanguage: e.source_language,
+            targetLanguage: e.target_language,
+            domain: e.domain,
+            downloaded: false,
+        })),
+    ];
+    attachNextLevels(activeSets, candidates);
 
     const notDownloadedSets: NotDownloadedSet[] = input.notDownloaded
         .map((entry) => ({

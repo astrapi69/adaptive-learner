@@ -1,0 +1,163 @@
+import {describe, it, expect, vi} from "vitest";
+import {render, screen, fireEvent} from "@testing-library/react";
+import {MemoryRouter} from "react-router-dom";
+
+import SetRow from "./SetRow";
+import type {
+    PersonalPathLesson,
+    PersonalPathSet,
+} from "../../lib/learning-path/personal-path";
+
+function lesson(
+    n: number,
+    overrides: Partial<PersonalPathLesson> = {},
+): PersonalPathLesson {
+    return {
+        source: "src",
+        setId: "psych",
+        filename: `0${n}.json`,
+        number: n,
+        title: `Lesson ${n}`,
+        stars: 3,
+        status: "completed",
+        dot: "done",
+        receptive: "na",
+        productive: "na",
+        lastActivity: "2026-06-01T10:00:00Z",
+        isCurrent: false,
+        ...overrides,
+    };
+}
+
+function setFixture(overrides: Partial<PersonalPathSet> = {}): PersonalPathSet {
+    return {
+        source: "src",
+        setId: "psych",
+        title: "Psychologie",
+        titleNative: null,
+        domain: "psychology",
+        sourceLanguage: "de",
+        targetLanguage: "de",
+        level: "a1",
+        lessons: [
+            lesson(1, {dot: "done"}),
+            lesson(2, {dot: "in_progress", status: "in_progress"}),
+            lesson(3, {dot: "not_started", status: "not_started"}),
+        ],
+        completedCount: 1,
+        totalCount: 3,
+        percentComplete: 33,
+        lastActivity: "2026-06-01T10:00:00Z",
+        currentLesson: lesson(2, {
+            dot: "in_progress",
+            status: "in_progress",
+            isCurrent: true,
+        }),
+        mode: "resume",
+        errorCount: 0,
+        nextLevel: null,
+        ...overrides,
+    };
+}
+
+function renderRow(set: PersonalPathSet, isExpanded = false, onToggle = vi.fn()) {
+    return render(
+        <MemoryRouter>
+            <SetRow set={set} isExpanded={isExpanded} onToggle={onToggle}>
+                <div data-testid="detail">expanded detail</div>
+            </SetRow>
+        </MemoryRouter>,
+    );
+}
+
+describe("SetRow", () => {
+    it("renders the percentage and one dot per lesson", () => {
+        renderRow(setFixture());
+        expect(screen.getByTestId("set-percent-psych")).toHaveTextContent(
+            "33%",
+        );
+        const dots = screen
+            .getByTestId("set-track-psych")
+            .querySelectorAll("[data-dot]");
+        expect(dots).toHaveLength(3);
+        expect(dots[0].getAttribute("data-dot")).toBe("done");
+        expect(dots[1].getAttribute("data-dot")).toBe("in_progress");
+        expect(dots[2].getAttribute("data-dot")).toBe("not_started");
+    });
+
+    it("renders a resume action linking to the current lesson", () => {
+        renderRow(setFixture());
+        const action = screen.getByTestId("set-action-psych");
+        expect(action.getAttribute("data-mode")).toBe("resume");
+        expect(action).toHaveAttribute("href", "/lesson/src/psych/02.json");
+    });
+
+    it("renders a start action for an untouched set", () => {
+        renderRow(
+            setFixture({
+                mode: "start",
+                percentComplete: 0,
+                currentLesson: lesson(1, {status: "not_started", isCurrent: true}),
+                lessons: [lesson(1, {dot: "not_started", status: "not_started"})],
+                completedCount: 0,
+                lastActivity: null,
+            }),
+        );
+        expect(screen.getByTestId("set-action-psych").getAttribute("data-mode")).toBe(
+            "start",
+        );
+    });
+
+    it("shows a completed state with no next level", () => {
+        renderRow(
+            setFixture({
+                mode: "set_complete",
+                percentComplete: 100,
+                currentLesson: null,
+                nextLevel: null,
+            }),
+        );
+        const action = screen.getByTestId("set-action-psych");
+        expect(action.getAttribute("data-mode")).toBe("completed");
+    });
+
+    it("offers the next level when one exists", () => {
+        renderRow(
+            setFixture({
+                mode: "set_complete",
+                percentComplete: 100,
+                currentLesson: null,
+                nextLevel: {
+                    source: "src",
+                    setId: "psych-a2",
+                    title: "Psychologie A2",
+                    level: "a2",
+                    downloaded: false,
+                },
+            }),
+        );
+        const action = screen.getByTestId("set-action-psych");
+        expect(action.getAttribute("data-mode")).toBe("next_level");
+        expect(action).toHaveAttribute("href", "/content");
+    });
+
+    it("toggles on row click and reveals children when expanded", () => {
+        const onToggle = vi.fn();
+        const {rerender} = renderRow(setFixture(), false, onToggle);
+        fireEvent.click(screen.getByTestId("set-toggle-psych"));
+        expect(onToggle).toHaveBeenCalledTimes(1);
+        expect(screen.queryByTestId("detail")).toBeNull();
+        rerender(
+            <MemoryRouter>
+                <SetRow set={setFixture()} isExpanded onToggle={onToggle}>
+                    <div data-testid="detail">expanded detail</div>
+                </SetRow>
+            </MemoryRouter>,
+        );
+        expect(screen.getByTestId("detail")).toBeInTheDocument();
+        expect(screen.getByTestId("set-toggle-psych")).toHaveAttribute(
+            "aria-expanded",
+            "true",
+        );
+    });
+});
