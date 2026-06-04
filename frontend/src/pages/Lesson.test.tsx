@@ -918,3 +918,65 @@ describe("BUG P1: exactly one two-phase button, no internal submit", () => {
         expect(screen.queryByTestId("free-text-submit")).toBeNull();
     });
 });
+
+describe("LessonPage: button icons + 'Lektion pausieren' rename", () => {
+    function _ready(stepIndex: number) {
+        useLessonMock.mockReturnValue({
+            status: "ready",
+            lesson: LESSON,
+            progress: PROGRESS,
+            currentStepIndex: stepIndex,
+            error: null,
+            goNext: vi.fn(),
+            goPrev: vi.fn(),
+            goToStep: vi.fn(),
+            goToStepById: vi.fn(),
+            recordStepResult: vi.fn(),
+            markCompleted: vi.fn(),
+            refresh: vi.fn(),
+        });
+    }
+
+    it("the pause button is labelled 'Pause lesson' (renamed from back-to-browser)", () => {
+        _ready(0);
+        renderAtPath(VALID_PATH);
+        const pause = screen.getByTestId("lesson-back-btn");
+        expect(pause).toHaveAttribute("aria-label", "Pause lesson");
+        // Desktop label present in the DOM (hidden on mobile via md:inline).
+        const label = pause.querySelector("span.hidden.md\\:inline");
+        expect(label).not.toBeNull();
+        expect(label).toHaveTextContent("Pause lesson");
+        expect(pause).toHaveClass("min-h-[44px]");
+    });
+
+    it("clicking pause opens the exit dialog (unchanged Phase 63 behavior)", () => {
+        _ready(0);
+        renderAtPath(VALID_PATH);
+        expect(screen.queryByTestId("lesson-exit-dialog")).toBeNull();
+        fireEvent.click(screen.getByTestId("lesson-back-btn"));
+        expect(screen.getByTestId("lesson-exit-dialog")).toBeInTheDocument();
+    });
+
+    it("the Previous button is icon-only on mobile (label hidden) with a 44px target", () => {
+        _ready(0);
+        renderAtPath(VALID_PATH);
+        const prev = screen.getByTestId("lesson-prev");
+        expect(prev).toHaveAttribute("aria-label", "Previous");
+        expect(prev).toHaveClass("min-h-[44px]");
+        expect(prev).toHaveClass("min-w-[44px]");
+        expect(prev.querySelector("span.hidden.md\\:inline")).toHaveTextContent(
+            "Previous",
+        );
+        // The icon is always present (the affordance on mobile).
+        expect(prev.querySelector("svg")).not.toBeNull();
+    });
+
+    it("the Check button always keeps its text label plus an icon", () => {
+        _ready(1); // exercise step, not yet checked -> Check button shows
+        renderAtPath(VALID_PATH);
+        const check = screen.getByTestId("lesson-check");
+        expect(check).toHaveTextContent("Check");
+        expect(check.querySelector("svg")).not.toBeNull();
+        expect(check).toHaveClass("min-h-[44px]");
+    });
+});

@@ -1289,6 +1289,7 @@ lesson:
     next: "Seguinte"
     finish: "Terminar lição"
     back_to_browser: "Voltar ao explorador de conteúdo"
+    pause: "Pausar lição"
     open_browser: "Abrir explorador de conteúdo"
     back_to_lesson: "Voltar à lição"
   button:

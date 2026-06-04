@@ -1300,6 +1300,7 @@ lesson:
     next: "Next"
     finish: "Finish lesson"
     back_to_browser: "Back to content browser"
+    pause: "Pause lesson"
     open_browser: "Open content browser"
     back_to_lesson: "Back to lesson"
   button:

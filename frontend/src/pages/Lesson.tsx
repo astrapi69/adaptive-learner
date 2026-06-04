@@ -23,12 +23,12 @@
  */
 
 import {
-    ArrowLeft,
-    ArrowRight,
-    BookOpen,
+    Check,
     CheckCircle2,
+    ChevronLeft,
     ChevronRight,
     Download,
+    Pause,
     RotateCcw,
     Square,
     Star,
@@ -658,12 +658,14 @@ export default function LessonPage() {
             <header className="lesson-header">
                 <button
                     type="button"
-                    className="lesson-back-btn"
+                    className="lesson-back-btn min-h-[44px]"
                     onClick={() => {
                         // Phase 63B — only intercept while the
                         // lesson is in progress. Completed /
                         // abandoned rows behave like before and
-                        // navigate straight away.
+                        // navigate straight away. Semantically this is
+                        // PAUSING the lesson (the dialog offers
+                        // pause/abandon/continue), not just "going back".
                         if (isInProgress) {
                             setExitOpen(true);
                         } else {
@@ -671,13 +673,13 @@ export default function LessonPage() {
                         }
                     }}
                     data-testid="lesson-back-btn"
-                    aria-label={t(
-                        "lesson.action.back_to_browser",
-                        "Back to content browser",
-                    )}
+                    aria-label={t("lesson.action.pause", "Pause lesson")}
+                    title={t("lesson.action.pause", "Pause lesson")}
                 >
-                    <BookOpen size={16} aria-hidden="true" />
-                    {t("lesson.action.back_to_browser", "Back to content browser")}
+                    <Pause size={16} aria-hidden="true" />
+                    <span className="hidden md:inline">
+                        {t("lesson.action.pause", "Pause lesson")}
+                    </span>
                 </button>
                 <LessonExitDialog
                     open={exitOpen}
@@ -1026,7 +1028,7 @@ export default function LessonPage() {
             )}
 
             <nav
-                className="sticky bottom-0 z-10 mt-4 flex flex-col gap-2 border-t border-border bg-bg-primary py-3 sm:flex-row"
+                className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary py-3"
                 aria-label={t(
                     "lesson.nav.aria_label",
                     "Step navigation",
@@ -1034,19 +1036,23 @@ export default function LessonPage() {
             >
                 <button
                     type="button"
-                    className="btn w-full justify-center gap-1.5 sm:w-auto"
+                    className="btn min-h-[44px] min-w-[44px] justify-center gap-1.5"
                     onClick={goPrev}
                     disabled={currentStepIndex === 0}
                     data-testid="lesson-prev"
+                    aria-label={t("lesson.action.prev", "Previous")}
+                    title={t("lesson.action.prev", "Previous")}
                 >
-                    <ArrowLeft size={14} aria-hidden="true" />
-                    {t("lesson.action.prev", "Previous")}
+                    <ChevronLeft size={20} aria-hidden="true" />
+                    <span className="hidden md:inline">
+                        {t("lesson.action.prev", "Previous")}
+                    </span>
                 </button>
                 {!isSummary &&
                     (isExerciseStep && !checked && !enteredReviewed ? (
                         <button
                             type="button"
-                            className="btn btn-primary w-full justify-center gap-1.5 sm:ml-auto sm:w-auto"
+                            className="btn btn-primary ml-auto min-h-[44px] justify-center gap-1.5"
                             onClick={() => exerciseRef.current?.submit()}
                             disabled={!answerable}
                             title={
@@ -1059,12 +1065,13 @@ export default function LessonPage() {
                             }
                             data-testid="lesson-check"
                         >
+                            <Check size={20} aria-hidden="true" />
                             {t("lesson.button.check", "Check")}
                         </button>
                     ) : (
                         <button
                             type="button"
-                            className="btn btn-primary w-full justify-center gap-1.5 sm:ml-auto sm:w-auto"
+                            className="btn btn-primary ml-auto min-h-[44px] justify-center gap-1.5"
                             onClick={goNext}
                             data-testid="lesson-next"
                         >
@@ -1074,7 +1081,7 @@ export default function LessonPage() {
                                       "Finish lesson",
                                   )
                                 : t("lesson.button.next", "Next")}
-                            <ArrowRight size={14} aria-hidden="true" />
+                            <ChevronRight size={20} aria-hidden="true" />
                         </button>
                     ))}
             </nav>
