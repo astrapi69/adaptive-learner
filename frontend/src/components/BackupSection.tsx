@@ -15,6 +15,7 @@
  * branches on mode beyond the helper text.
  */
 
+import {Download, Upload} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 
 import {BackupCompare} from "./BackupCompare";
@@ -489,21 +490,48 @@ export default function BackupSection() {
                     onClick={handleExport}
                     disabled={busy !== null}
                     data-testid="backup-export"
-                    className="primary"
+                    className="primary inline-flex min-h-[44px] items-center justify-center gap-2"
+                    aria-label={
+                        busy === "export"
+                            ? t("backup.exporting", "Exporting…")
+                            : t("backup.export", "Create Backup")
+                    }
+                    title={
+                        busy === "export"
+                            ? t("backup.exporting", "Exporting…")
+                            : t("backup.export", "Create Backup")
+                    }
                 >
-                    {busy === "export"
-                        ? t("backup.exporting", "Exporting…")
-                        : t("backup.export", "Create Backup")}
+                    <Download className="h-5 w-5" aria-hidden="true" />
+                    <span className="hidden md:inline">
+                        {busy === "export"
+                            ? t("backup.exporting", "Exporting…")
+                            : t("backup.export", "Create Backup")}
+                    </span>
                 </button>
                 <button
                     type="button"
                     onClick={handlePickFile}
                     disabled={busy !== null}
                     data-testid="backup-import"
+                    className="inline-flex min-h-[44px] items-center justify-center gap-2"
+                    aria-label={
+                        busy === "import"
+                            ? t("backup.importing", "Restoring…")
+                            : t("backup.import", "Restore from Backup")
+                    }
+                    title={
+                        busy === "import"
+                            ? t("backup.importing", "Restoring…")
+                            : t("backup.import", "Restore from Backup")
+                    }
                 >
-                    {busy === "import"
-                        ? t("backup.importing", "Restoring…")
-                        : t("backup.import", "Restore from Backup")}
+                    <Upload className="h-5 w-5" aria-hidden="true" />
+                    <span className="hidden md:inline">
+                        {busy === "import"
+                            ? t("backup.importing", "Restoring…")
+                            : t("backup.import", "Restore from Backup")}
+                    </span>
                 </button>
                 <input
                     ref={fileInputRef}

@@ -74,12 +74,17 @@ export default function CacheManagementSection() {
         <Button
           type="button"
           variant="secondary"
+          className="min-h-[44px]"
           onClick={() => setConfirming(true)}
           disabled={empty || info === null}
           data-testid="cache-clear-button"
+          aria-label={t("pwa.cache_clear", "Clear cache")}
+          title={t("pwa.cache_clear", "Clear cache")}
         >
-          <Trash2 size={14} aria-hidden="true" />
-          {t("pwa.cache_clear", "Clear cache")}
+          <Trash2 className="h-5 w-5" aria-hidden="true" />
+          <span className="hidden md:inline">
+            {t("pwa.cache_clear", "Clear cache")}
+          </span>
         </Button>
       ) : (
         <div

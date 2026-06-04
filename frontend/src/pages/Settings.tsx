@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { FlaskConical, Save, Trash2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
@@ -875,7 +876,7 @@ export default function Settings() {
                 </span>
                 <button
                   type="button"
-                  className="btn btn-primary"
+                  className="btn btn-primary min-h-[44px]"
                   data-testid={`api-key-save-${provider}`}
                   onClick={() => handleSaveKey(provider)}
                   disabled={
@@ -883,34 +884,58 @@ export default function Settings() {
                     formatState !== "valid" ||
                     externallyManaged
                   }
+                  aria-label={t("settings.api_key_set", "Save key")}
+                  title={t("settings.api_key_set", "Save key")}
                 >
-                  {t("settings.api_key_set", "Save key")}
+                  <Save className="h-5 w-5" aria-hidden="true" />
+                  <span className="hidden md:inline">
+                    {t("settings.api_key_set", "Save key")}
+                  </span>
                 </button>
                 {(has || formatState === "valid") && (
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-secondary min-h-[44px]"
                     data-testid={`api-key-test-${provider}`}
                     onClick={() => handleTestKey(provider)}
                     disabled={busy === `test-${provider}`}
+                    aria-label={
+                      busy === `test-${provider}`
+                        ? t("settings.api_key.testing", "Testing…")
+                        : t("settings.api_key.test", "Test")
+                    }
+                    title={
+                      busy === `test-${provider}`
+                        ? t("settings.api_key.testing", "Testing…")
+                        : t("settings.api_key.test", "Test")
+                    }
                   >
-                    {busy === `test-${provider}` && (
+                    {busy === `test-${provider}` ? (
                       <span className="btn-spinner" aria-hidden="true" />
+                    ) : (
+                      <FlaskConical className="h-5 w-5" aria-hidden="true" />
                     )}
-                    {busy === `test-${provider}`
-                      ? t("settings.api_key.testing", "Testing…")
-                      : t("settings.api_key.test", "Test")}
+                    <span className="hidden md:inline">
+                      {busy === `test-${provider}`
+                        ? t("settings.api_key.testing", "Testing…")
+                        : t("settings.api_key.test", "Test")}
+                    </span>
                   </button>
                 )}
                 {has && !externallyManaged && (
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="btn btn-danger min-h-[44px]"
                     data-testid={`api-key-delete-${provider}`}
                     onClick={() => handleDeleteKey(provider)}
                     disabled={busy === `delete-${provider}`}
+                    aria-label={t("settings.api_key_delete", "Remove key")}
+                    title={t("settings.api_key_delete", "Remove key")}
                   >
-                    {t("settings.api_key_delete", "Remove key")}
+                    <Trash2 className="h-5 w-5" aria-hidden="true" />
+                    <span className="hidden md:inline">
+                      {t("settings.api_key_delete", "Remove key")}
+                    </span>
                   </button>
                 )}
               </div>
