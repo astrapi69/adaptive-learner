@@ -1,3 +1,4 @@
+import {Map as MapIcon, Mic, Pencil} from "lucide-react";
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
@@ -280,40 +281,62 @@ export default function Dashboard() {
                 disabled={!apiKey.ready || !apiKey.hasKey}
             />
 
-            {pronunciationEligible && (
+            {/* UX overhaul C5 — secondary action buttons: icon-only on
+                mobile (min 44px touch target), icon + label from md up. */}
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+                {pronunciationEligible && (
+                    <button
+                        type="button"
+                        className="btn btn-secondary dashboard-pronunciation-quick-start flex min-h-[44px] items-center gap-2"
+                        onClick={() => navigate("/pronunciation")}
+                        title={t(
+                            "dashboard.pronunciation_quick_start",
+                            "Pronunciation Practice",
+                        )}
+                        aria-label={t(
+                            "dashboard.pronunciation_quick_start",
+                            "Pronunciation Practice",
+                        )}
+                        data-testid="dashboard-pronunciation-button"
+                    >
+                        <Mic className="h-5 w-5" aria-hidden="true" />
+                        <span className="hidden md:inline">
+                            {t(
+                                "dashboard.pronunciation_quick_start",
+                                "Pronunciation Practice",
+                            )}
+                        </span>
+                    </button>
+                )}
+
                 <button
                     type="button"
-                    className="btn btn-secondary dashboard-pronunciation-quick-start"
-                    onClick={() => navigate("/pronunciation")}
-                    data-testid="dashboard-pronunciation-button"
+                    className="btn btn-secondary dashboard-create-lesson flex min-h-[44px] items-center gap-2"
+                    onClick={() => navigate("/create-lesson")}
+                    title={t("dashboard.create_lesson", "Create a lesson")}
+                    aria-label={t("dashboard.create_lesson", "Create a lesson")}
+                    data-testid="dashboard-create-lesson"
                 >
-                    🎤{" "}
-                    {t(
-                        "dashboard.pronunciation_quick_start",
-                        "Pronunciation Practice",
-                    )}
+                    <Pencil className="h-5 w-5" aria-hidden="true" />
+                    <span className="hidden md:inline">
+                        {t("dashboard.create_lesson", "Create a lesson")}
+                    </span>
                 </button>
-            )}
 
-            <button
-                type="button"
-                className="btn btn-secondary dashboard-create-lesson"
-                onClick={() => navigate("/create-lesson")}
-                data-testid="dashboard-create-lesson"
-            >
-                ✏️{" "}
-                {t("dashboard.create_lesson", "Create a lesson")}
-            </button>
-
-            <button
-                type="button"
-                className="btn btn-secondary dashboard-learning-path"
-                onClick={() => navigate("/learning-path")}
-                data-testid="dashboard-learning-path"
-            >
-                🗺️{" "}
-                {t("nav.learning_path", "Learning Path")}
-            </button>
+                <button
+                    type="button"
+                    className="btn btn-secondary dashboard-learning-path flex min-h-[44px] items-center gap-2"
+                    onClick={() => navigate("/learning-path")}
+                    title={t("nav.learning_path", "Learning Path")}
+                    aria-label={t("nav.learning_path", "Learning Path")}
+                    data-testid="dashboard-learning-path"
+                >
+                    <MapIcon className="h-5 w-5" aria-hidden="true" />
+                    <span className="hidden md:inline">
+                        {t("nav.learning_path", "Learning Path")}
+                    </span>
+                </button>
+            </div>
 
             {userId && (
                 <DashboardFilterBar
