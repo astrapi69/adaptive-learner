@@ -2080,7 +2080,13 @@
     "view": {
       "label": "Görünüm",
       "personal": "Kişisel",
-      "graph": "Grafik"
+      "graph": "Grafik",
+      "map": "Harita"
+    },
+    "map": {
+      "languages": "Diller",
+      "knowledge": "Bilgi",
+      "total": "Toplam: %{n} tamamlandı"
     },
     "mastery": {
       "receptive": "alımlayıcı",

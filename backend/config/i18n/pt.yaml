@@ -1888,6 +1888,11 @@ learning_path:
     label: "Vista"
     personal: "Pessoal"
     graph: "Gráfico"
+    map: "Mapa"
+  map:
+    languages: "Idiomas"
+    knowledge: "Conhecimento"
+    total: "Total: {n}% concluído"
   mastery:
     receptive: "receptivo"
     productive: "produtivo"

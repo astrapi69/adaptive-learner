@@ -25,6 +25,15 @@ vi.mock("./LearningPathGraph", () => ({
     ),
 }));
 
+vi.mock("./LearningPathMap", () => ({
+    default: ({headerExtra}: {headerExtra?: React.ReactNode}) => (
+        <main data-testid="learning-path-page">
+            <div data-testid="map-mock">map</div>
+            {headerExtra}
+        </main>
+    ),
+}));
+
 vi.mock("../lib/learnerState", () => ({
     readLearnerState: () => ({userId: "u1"}),
 }));
@@ -108,6 +117,33 @@ describe("LearningPathPersonal", () => {
         useHookMock.mockReturnValue({state: "error", data: null});
         renderPage();
         expect(screen.getByTestId("learning-path-error")).toBeInTheDocument();
+    });
+
+    it("switches to the map view and persists the selection", async () => {
+        useHookMock.mockReturnValue({
+            state: "ready",
+            data: {activeSets: [set()], notDownloadedSets: []},
+        });
+        renderPage();
+        fireEvent.click(screen.getByTestId("learning-path-view-map"));
+        await waitFor(() =>
+            expect(screen.getByTestId("map-mock")).toBeInTheDocument(),
+        );
+        expect(
+            localStorage.getItem("adaptive-learner.learning-path-view"),
+        ).toBe("map");
+    });
+
+    it("loads the map view from a persisted selection", async () => {
+        localStorage.setItem("adaptive-learner.learning-path-view", "map");
+        useHookMock.mockReturnValue({
+            state: "ready",
+            data: {activeSets: [set()], notDownloadedSets: []},
+        });
+        renderPage();
+        await waitFor(() =>
+            expect(screen.getByTestId("map-mock")).toBeInTheDocument(),
+        );
     });
 
     it("renders one SetRow per active set", () => {

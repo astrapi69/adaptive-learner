@@ -1888,6 +1888,11 @@ learning_path:
     label: "表示"
     personal: "パーソナル"
     graph: "グラフ"
+    map: "マップ"
+  map:
+    languages: "言語"
+    knowledge: "知識"
+    total: "合計: {n}% 完了"
   mastery:
     receptive: "受容"
     productive: "産出"

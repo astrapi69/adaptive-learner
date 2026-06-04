@@ -2080,7 +2080,13 @@
     "view": {
       "label": "Vista",
       "personal": "Personal",
-      "graph": "Gráfico"
+      "graph": "Gráfico",
+      "map": "Mapa"
+    },
+    "map": {
+      "languages": "Idiomas",
+      "knowledge": "Conocimiento",
+      "total": "Total: {n}% completado"
     },
     "mastery": {
       "receptive": "receptivo",

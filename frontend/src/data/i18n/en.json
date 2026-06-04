@@ -2080,7 +2080,13 @@
     "view": {
       "label": "View",
       "personal": "Personal",
-      "graph": "Graph"
+      "graph": "Graph",
+      "map": "Map"
+    },
+    "map": {
+      "languages": "Languages",
+      "knowledge": "Knowledge",
+      "total": "Total: {n}% complete"
     },
     "mastery": {
       "receptive": "receptive",
