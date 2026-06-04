@@ -20,6 +20,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { FlaskConical, Save, Trash2 } from "lucide-react";
 
 import { ApiError } from "../api/client";
 import { useI18n } from "../hooks/useI18n";
@@ -216,33 +217,56 @@ export default function GitHubIntegrationSection() {
           <div className="form-actions">
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn btn-secondary min-h-[44px]"
               onClick={handleTest}
               disabled={!canTest}
               data-testid="settings-github-test"
+              aria-label={
+                test.kind === "testing"
+                  ? t("settings.github.testing", "Testing…")
+                  : t("settings.github.test", "Test")
+              }
+              title={
+                test.kind === "testing"
+                  ? t("settings.github.testing", "Testing…")
+                  : t("settings.github.test", "Test")
+              }
             >
-              {test.kind === "testing"
-                ? t("settings.github.testing", "Testing…")
-                : t("settings.github.test", "Test")}
+              <FlaskConical className="h-5 w-5" aria-hidden="true" />
+              <span className="hidden md:inline">
+                {test.kind === "testing"
+                  ? t("settings.github.testing", "Testing…")
+                  : t("settings.github.test", "Test")}
+              </span>
             </button>
             <button
               type="button"
-              className="btn btn-primary"
+              className="btn btn-primary min-h-[44px]"
               onClick={handleSave}
               disabled={!formatValid || saving}
               data-testid="settings-github-save"
+              aria-label={t("settings.github.save", "Save")}
+              title={t("settings.github.save", "Save")}
             >
-              {t("settings.github.save", "Save")}
+              <Save className="h-5 w-5" aria-hidden="true" />
+              <span className="hidden md:inline">
+                {t("settings.github.save", "Save")}
+              </span>
             </button>
             {status?.configured && (
               <button
                 type="button"
-                className="btn btn-link"
+                className="btn btn-link min-h-[44px]"
                 onClick={handleClear}
                 disabled={saving}
                 data-testid="settings-github-clear"
+                aria-label={t("settings.github.remove", "Remove")}
+                title={t("settings.github.remove", "Remove")}
               >
-                {t("settings.github.remove", "Remove")}
+                <Trash2 className="h-5 w-5" aria-hidden="true" />
+                <span className="hidden md:inline">
+                  {t("settings.github.remove", "Remove")}
+                </span>
               </button>
             )}
           </div>
