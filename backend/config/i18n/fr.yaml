@@ -1867,6 +1867,33 @@ create_lesson:
       desc: "5 emplacements de carte, tuiles de mots + texte à trous."
 
 learning_path:
+  continue: "Continuer"
+  start: "Commencer"
+  completed: "Terminé"
+  next_level: "Niveau suivant disponible"
+  not_started: "Pas encore commencé"
+  not_downloaded: "Non téléchargé"
+  download: "Télécharger"
+  filter_mine: "Seulement les miens"
+  filter_all: "Tous les ensembles"
+  filter_label: "Filtrer les ensembles"
+  adaptive: "Démarrer une leçon adaptative"
+  error_replay: "Réviser les erreurs"
+  personal:
+    title: "Ton parcours d'apprentissage"
+    empty: "Télécharge un ensemble de leçons pour commencer."
+    all_done: "Les {n} leçons terminées !"
+    downloaded: "Téléchargé"
+    lesson_count: "{n} leçons"
+    track_aria: "{done} sur {total} leçons terminées"
+  view:
+    label: "Vue"
+    personal: "Personnel"
+    graph: "Graphe"
+  mastery:
+    receptive: "réceptif"
+    productive: "productif"
+    mastered: "maîtrisé"
   title: "Parcours d'apprentissage"
   subtitle: "Où vous en êtes et ce qui suit."
   aria_canvas: "Graphe du parcours d'apprentissage"

@@ -1867,6 +1867,33 @@ create_lesson:
       desc: "5 θέσεις κάρτας, πλακίδια λέξεων + συμπλήρωση κενών."
 
 learning_path:
+  continue: "Συνέχεια"
+  start: "Έναρξη"
+  completed: "Ολοκληρώθηκε"
+  next_level: "Διαθέσιμο επόμενο επίπεδο"
+  not_started: "Δεν έχει ξεκινήσει ακόμη"
+  not_downloaded: "Δεν έχει ληφθεί"
+  download: "Λήψη"
+  filter_mine: "Μόνο τα δικά μου"
+  filter_all: "Όλα τα σετ"
+  filter_label: "Φιλτράρισμα σετ"
+  adaptive: "Έναρξη προσαρμοστικού μαθήματος"
+  error_replay: "Επανάληψη λαθών"
+  personal:
+    title: "Η διαδρομή μάθησής σου"
+    empty: "Κατέβασε ένα σετ μαθημάτων για να ξεκινήσεις."
+    all_done: "Όλα τα {n} μαθήματα ολοκληρώθηκαν!"
+    downloaded: "Λήφθηκε"
+    lesson_count: "{n} μαθήματα"
+    track_aria: "{done} από {total} μαθήματα ολοκληρώθηκαν"
+  view:
+    label: "Προβολή"
+    personal: "Προσωπικό"
+    graph: "Γράφημα"
+  mastery:
+    receptive: "αναγνώρισης"
+    productive: "παραγωγής"
+    mastered: "κατακτημένο"
   title: "Διαδρομή μάθησης"
   subtitle: "Πού βρίσκεστε και τι ακολουθεί."
   aria_canvas: "Γράφημα διαδρομής μάθησης"

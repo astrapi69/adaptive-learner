@@ -1869,6 +1869,33 @@ create_lesson:
       desc: "5 Kartenplätze, Wort-Kacheln + Lückentext."
 
 learning_path:
+  continue: "Fortsetzen"
+  start: "Starten"
+  completed: "Abgeschlossen"
+  next_level: "Nächstes Level verfügbar"
+  not_started: "Noch nicht gestartet"
+  not_downloaded: "Nicht heruntergeladen"
+  download: "Herunterladen"
+  filter_mine: "Nur meine"
+  filter_all: "Alle Sets"
+  filter_label: "Sets filtern"
+  adaptive: "Adaptive Lektion starten"
+  error_replay: "Fehler wiederholen"
+  personal:
+    title: "Dein Lernpfad"
+    empty: "Lade ein Lektionsset herunter, um zu beginnen."
+    all_done: "Alle {n} Lektionen abgeschlossen!"
+    downloaded: "Heruntergeladen"
+    lesson_count: "{n} Lektionen"
+    track_aria: "{done} von {total} Lektionen abgeschlossen"
+  view:
+    label: "Ansicht"
+    personal: "Persönlich"
+    graph: "Graph"
+  mastery:
+    receptive: "rezeptiv"
+    productive: "produktiv"
+    mastered: "gemeistert"
   title: "Lernpfad"
   subtitle: "Wo du stehst und was als Nächstes kommt."
   aria_canvas: "Lernpfad-Graph"

@@ -74,15 +74,21 @@ function ProgressTrack({set}: {set: PersonalPathSet}) {
     );
 }
 
-/** The single context-aware action for the set (resume/start/etc.). */
+/** The single context-aware action for the set (resume/start/etc.).
+ *  Responsive: icon-only on mobile (label hidden, kept as the
+ *  accessible name), icon + text from sm up. */
 function SetAction({set}: {set: PersonalPathSet}) {
     const {t} = useI18n();
     const base =
-        "inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-app px-3 py-2 text-sm font-medium";
+        "inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-app px-3 py-2 text-sm font-medium";
 
     if (set.mode === "set_complete") {
         // Completed — offer the next CEFR level when one exists.
         if (set.nextLevel) {
+            const label = t(
+                "learning_path.next_level",
+                "Next level available",
+            );
             const to = set.nextLevel.downloaded
                 ? "/learning-path"
                 : "/content";
@@ -92,20 +98,25 @@ function SetAction({set}: {set: PersonalPathSet}) {
                     className={cn(base, "bg-accent text-accent-fg")}
                     data-testid={`set-action-${set.setId}`}
                     data-mode="next_level"
+                    aria-label={label}
+                    title={label}
                 >
                     <ArrowRight size={16} aria-hidden="true" />
-                    {t("learning_path.next_level", "Next level available")}
+                    <span className="hidden sm:inline">{label}</span>
                 </Link>
             );
         }
+        const label = t("learning_path.completed", "Completed");
         return (
             <span
                 className={cn(base, "text-success")}
                 data-testid={`set-action-${set.setId}`}
                 data-mode="completed"
+                aria-label={label}
+                title={label}
             >
                 <CheckCircle2 size={16} aria-hidden="true" />
-                {t("learning_path.completed", "Completed")}
+                <span className="hidden sm:inline">{label}</span>
             </span>
         );
     }
@@ -124,9 +135,11 @@ function SetAction({set}: {set: PersonalPathSet}) {
             className={cn(base, "bg-accent text-accent-fg")}
             data-testid={`set-action-${set.setId}`}
             data-mode={set.mode}
+            aria-label={label}
+            title={label}
         >
             <Play size={16} aria-hidden="true" />
-            {label}
+            <span className="hidden sm:inline">{label}</span>
         </Link>
     );
 }

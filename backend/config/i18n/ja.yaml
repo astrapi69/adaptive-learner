@@ -1865,6 +1865,33 @@ create_lesson:
       desc: "5枚のカード枠、単語タイル + 穴埋め。"
 
 learning_path:
+  continue: "続ける"
+  start: "開始"
+  completed: "完了"
+  next_level: "次のレベルが利用可能"
+  not_started: "まだ開始していません"
+  not_downloaded: "ダウンロードされていません"
+  download: "ダウンロード"
+  filter_mine: "自分のみ"
+  filter_all: "すべてのセット"
+  filter_label: "セットを絞り込む"
+  adaptive: "アダプティブレッスンを開始"
+  error_replay: "間違いを復習"
+  personal:
+    title: "あなたの学習パス"
+    empty: "始めるにはレッスンセットをダウンロードしてください。"
+    all_done: "{n}件のレッスンすべて完了！"
+    downloaded: "ダウンロード済み"
+    lesson_count: "{n}件のレッスン"
+    track_aria: "{total}件中{done}件のレッスンが完了"
+  view:
+    label: "表示"
+    personal: "パーソナル"
+    graph: "グラフ"
+  mastery:
+    receptive: "受容"
+    productive: "産出"
+    mastered: "習得済み"
   title: "学習パス"
   subtitle: "現在地と次のステップ。"
   aria_canvas: "学習パスのグラフ"

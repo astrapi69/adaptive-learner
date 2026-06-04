@@ -1865,6 +1865,33 @@ create_lesson:
       desc: "5 kart yuvası, kelime parçaları + boşluk doldurma."
 
 learning_path:
+  continue: "Devam et"
+  start: "Başla"
+  completed: "Tamamlandı"
+  next_level: "Sonraki seviye mevcut"
+  not_started: "Henüz başlanmadı"
+  not_downloaded: "İndirilmedi"
+  download: "İndir"
+  filter_mine: "Sadece benimkiler"
+  filter_all: "Tüm setler"
+  filter_label: "Setleri filtrele"
+  adaptive: "Uyarlanabilir dersi başlat"
+  error_replay: "Hataları tekrarla"
+  personal:
+    title: "Öğrenme yolun"
+    empty: "Başlamak için bir ders seti indir."
+    all_done: "{n} dersin tümü tamamlandı!"
+    downloaded: "İndirildi"
+    lesson_count: "{n} ders"
+    track_aria: "{total} dersten {done} tanesi tamamlandı"
+  view:
+    label: "Görünüm"
+    personal: "Kişisel"
+    graph: "Grafik"
+  mastery:
+    receptive: "alımlayıcı"
+    productive: "üretici"
+    mastered: "ustalaşıldı"
   title: "Öğrenme yolu"
   subtitle: "Neredesiniz ve sırada ne var."
   aria_canvas: "Öğrenme yolu grafiği"

@@ -85,7 +85,7 @@ function FilterToggle({
     return (
         <div
             role="group"
-            aria-label={t("learning_path.filter.label", "Filter sets")}
+            aria-label={t("learning_path.filter_label", "Filter sets")}
             className="inline-flex items-center gap-1 rounded-app border border-border p-0.5"
             data-testid="learning-path-filter-switch"
         >
