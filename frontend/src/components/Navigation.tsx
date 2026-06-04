@@ -76,7 +76,36 @@ export default function Navigation() {
             data-testid="app-nav"
             data-lesson-compact={lessonActive ? "true" : "false"}
         >
-            <NavLink to="/dashboard" className="nav-brand">
+            {/* Hamburger first in the DOM so it sits on the LEFT on
+                mobile (primary nav action, thumb-reachable). `ml-0!`
+                overrides the global.css `.nav-hamburger { margin-left:
+                auto }` (unlayered, so the important modifier is what
+                makes the Tailwind utility win). The show/hide across
+                mobile / lesson-compact / landscape stays driven by the
+                existing global.css media rules. */}
+            <button
+                type="button"
+                className="nav-hamburger ml-0!"
+                data-testid="nav-hamburger"
+                aria-label={t("nav.menu", "Menu")}
+                title={tooltipsOn ? t("nav.menu", "Menu") : undefined}
+                aria-expanded={menuOpen}
+                aria-controls="app-nav-links"
+                onClick={() => setMenuOpen((v) => !v)}
+            >
+                {menuOpen ? (
+                    <X size={20} aria-hidden="true" />
+                ) : (
+                    <Menu size={20} aria-hidden="true" />
+                )}
+            </button>
+            {/* Brand grows + centres on mobile (between the hamburger and
+                the right-hand cluster), reverts to left-aligned and
+                natural width from md up. */}
+            <NavLink
+                to="/dashboard"
+                className="nav-brand flex-1 justify-center md:flex-none md:justify-start"
+            >
                 <img
                     src={`${import.meta.env.BASE_URL}icon-192.svg`}
                     alt=""
@@ -137,22 +166,6 @@ export default function Navigation() {
                         : t("nav.mode_badge_content", "Content")}
                 </NavLink>
             )}
-            <button
-                type="button"
-                className="nav-hamburger"
-                data-testid="nav-hamburger"
-                aria-label={t("nav.menu", "Menu")}
-                title={tooltipsOn ? t("nav.menu", "Menu") : undefined}
-                aria-expanded={menuOpen}
-                aria-controls="app-nav-links"
-                onClick={() => setMenuOpen((v) => !v)}
-            >
-                {menuOpen ? (
-                    <X size={20} aria-hidden="true" />
-                ) : (
-                    <Menu size={20} aria-hidden="true" />
-                )}
-            </button>
             <div
                 id="app-nav-links"
                 className={`nav-links${menuOpen ? " is-open" : ""}`}
