@@ -29,6 +29,7 @@ import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "rea
 import type {Ref} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
 import {
@@ -329,12 +330,12 @@ function MatchingExercise(
 
     return (
         <section
-            className="matching-exercise"
+            className="flex flex-col gap-3"
             data-testid="matching-exercise"
         >
             <div className="exercise-prompt-row">
                 <p
-                    className="matching-prompt"
+                    className="m-0 font-medium"
                     data-testid="matching-prompt"
                 >
                     {exercise.prompt}
@@ -356,7 +357,7 @@ function MatchingExercise(
             </p>
 
             <p
-                className="matching-counter"
+                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
                 aria-live="polite"
                 data-testid="matching-counter"
             >
@@ -387,7 +388,7 @@ function MatchingExercise(
             </span>
 
             <p
-                className="matching-instructions"
+                className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
                 data-testid="matching-instructions"
             >
                 {t(
@@ -400,31 +401,30 @@ function MatchingExercise(
                 made their first pair (they understand the mechanic). */}
             {matches.size === 0 && !submitted && (
                 <p
-                    className="matching-flow-hint"
+                    className="m-0 inline-flex items-center gap-2 self-start rounded-sm border border-dashed border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_10%,var(--surface))] px-2.5 py-1 text-[0.8125rem] font-medium"
                     data-testid="matching-flow-hint"
                 >
-                    <span className="matching-flow-hint-left">
-                        {leftLabel}
-                    </span>
-                    <span className="matching-flow-hint-arrow" aria-hidden="true">
+                    <span>{leftLabel}</span>
+                    <span
+                        className="font-bold text-[var(--accent)]"
+                        aria-hidden="true"
+                    >
                         &rarr;
                     </span>
-                    <span className="matching-flow-hint-right">
-                        {rightLabel}
-                    </span>
+                    <span>{rightLabel}</span>
                 </p>
             )}
 
-            <div className="matching-columns">
-                <div className="matching-column-wrap">
+            <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
+                <div className="flex min-w-0 flex-col gap-2">
                     <div
-                        className="matching-column-header"
+                        className="text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
                         data-testid="matching-left-header"
                     >
                         {leftLabel}
                     </div>
                     <ul
-                        className="matching-column matching-column-left"
+                        className="m-0 flex list-none flex-col gap-2 p-0"
                         data-testid="matching-left"
                         aria-label={leftLabel}
                     >
@@ -442,11 +442,20 @@ function MatchingExercise(
                             <li key={tile.index}>
                                 <button
                                     type="button"
-                                    className={`matching-tile matching-tile-left${
-                                        isSelected ? " is-selected" : ""
-                                    }${isPaired ? " is-paired" : ""}${
-                                        isCorrect ? " is-correct" : ""
-                                    }${isWrong ? " is-wrong" : ""}`}
+                                    className={cn(
+                                        "inline-flex min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-left text-[0.9375rem] text-[var(--fg)] transition-[background,border-color] duration-150 hover:bg-[var(--surface-2)] disabled:cursor-not-allowed",
+                                        isSelected &&
+                                            "is-selected border-[3px] border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_15%,var(--surface))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--exercise-selected)_30%,transparent)] motion-safe:scale-[1.02] motion-safe:animate-[matching-pulse_0.5s_ease-in-out_infinite_alternate]",
+                                        isPaired && "is-paired",
+                                        isPaired &&
+                                            !isCorrect &&
+                                            !isWrong &&
+                                            "border-dashed border-[var(--exercise-matched)] bg-[color-mix(in_srgb,var(--exercise-matched)_12%,var(--surface))] opacity-60",
+                                        isCorrect &&
+                                            "is-correct border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]",
+                                        isWrong &&
+                                            "is-wrong border-[var(--exercise-wrong)] bg-[color-mix(in_srgb,var(--exercise-wrong)_12%,var(--surface))] motion-safe:animate-[matching-shake_0.2s_ease-in-out]",
+                                    )}
                                     onClick={() =>
                                         handleLeftClick(tile.index)
                                     }
@@ -467,15 +476,15 @@ function MatchingExercise(
                     })}
                     </ul>
                 </div>
-                <div className="matching-column-wrap">
+                <div className="flex min-w-0 flex-col gap-2">
                     <div
-                        className="matching-column-header"
+                        className="text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
                         data-testid="matching-right-header"
                     >
                         {rightLabel}
                     </div>
                     <ul
-                        className="matching-column matching-column-right"
+                        className="m-0 flex list-none flex-col gap-2 p-0"
                         data-testid="matching-right"
                         aria-label={rightLabel}
                     >
@@ -490,9 +499,13 @@ function MatchingExercise(
                             <li key={tile.originalIndex}>
                                 <button
                                     type="button"
-                                    className={`matching-tile matching-tile-right${
-                                        isPaired ? " is-paired" : ""
-                                    }${flashing ? " is-flash" : ""}`}
+                                    className={cn(
+                                        "inline-flex min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-left text-[0.9375rem] text-[var(--fg)] transition-[background,border-color] duration-150 hover:bg-[var(--surface-2)] disabled:cursor-not-allowed",
+                                        isPaired &&
+                                            "is-paired border-dashed border-[var(--exercise-matched)] bg-[color-mix(in_srgb,var(--exercise-matched)_12%,var(--surface))] opacity-60",
+                                        flashing &&
+                                            "is-flash motion-safe:animate-[matching-flash_600ms_ease]",
+                                    )}
                                     onClick={() =>
                                         handleRightClick(
                                             tile.originalIndex,
@@ -510,7 +523,7 @@ function MatchingExercise(
                 </div>
             </div>
 
-            <div className="matching-actions">
+            <div className="flex flex-wrap items-center gap-3">
                 {!submitted && !controlled && (
                     <button
                         type="button"
@@ -525,9 +538,12 @@ function MatchingExercise(
                 {submitted && (
                     <>
                         <p
-                            className={`matching-result answer-feedback${
-                                matchingAllCorrect ? " is-correct" : " is-wrong"
-                            }`}
+                            className={cn(
+                                "answer-feedback m-0 font-semibold",
+                                matchingAllCorrect
+                                    ? "is-correct text-[var(--exercise-correct)]"
+                                    : "is-wrong text-[var(--exercise-wrong)]",
+                            )}
                             data-testid="matching-result"
                             data-result={
                                 matchingAllCorrect ? "correct" : "wrong"

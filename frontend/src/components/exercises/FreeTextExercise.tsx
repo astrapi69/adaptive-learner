@@ -32,6 +32,7 @@ import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveFreeTextAttempt} from "../../lib/element-attempt";
 import {tokenDiff} from "../../lib/exercises/token-diff";
@@ -230,14 +231,19 @@ function FreeTextExercise(
 
     const isCorrect = result !== null && result.correct > 0;
 
+    // Shared input/textarea styling (was .free-text-input). 44px min
+    // height; accent focus ring; muted disabled state.
+    const inputBase =
+        "w-full min-h-11 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-base text-[var(--fg)] focus:border-[var(--accent)] focus:outline-none focus:shadow-[0_0_0_2px_color-mix(in_srgb,var(--accent)_30%,transparent)] disabled:cursor-not-allowed disabled:bg-[var(--surface-2)]";
+
     return (
         <section
-            className="free-text-exercise"
+            className="flex flex-col gap-3"
             data-testid="free-text-exercise"
         >
             <div className="exercise-prompt-row">
                 <p
-                    className="free-text-prompt"
+                    className="m-0 font-medium"
                     data-testid="free-text-prompt"
                 >
                     {exercise.prompt}
@@ -254,17 +260,20 @@ function FreeTextExercise(
             <DirectionInstruction exercise={exercise} />
 
             {codeMode ? (
-                <div className="free-text-code-wrap">
+                <div className="relative">
                     {codeLanguage && (
                         <span
-                            className="free-text-code-lang"
+                            className="pointer-events-none absolute right-2 top-1 text-[0.7rem] uppercase tracking-[0.04em] text-[var(--text-muted)]"
                             data-testid="free-text-code-lang"
                         >
                             {codeLanguage}
                         </span>
                     )}
                     <textarea
-                        className="free-text-input free-text-input-code"
+                        className={cn(
+                            inputBase,
+                            "free-text-input-code resize-y overflow-x-auto whitespace-pre font-mono [overflow-wrap:normal] [tab-size:2]",
+                        )}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyDown={handleKeyDown}
@@ -288,7 +297,7 @@ function FreeTextExercise(
             ) : (
                 <input
                     type="text"
-                    className="free-text-input"
+                    className={inputBase}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
@@ -309,11 +318,11 @@ function FreeTextExercise(
             )}
 
             {exercise.hint && !submitted && (
-                <div className="free-text-hint-row">
+                <div className="flex items-center gap-2">
                     {!showHint ? (
                         <button
                             type="button"
-                            className="free-text-hint-toggle"
+                            className="inline-flex min-h-11 cursor-pointer items-center border-0 bg-transparent p-0 text-sm text-[var(--accent)] underline underline-offset-2 hover:no-underline"
                             onClick={() => setShowHint(true)}
                             data-testid="free-text-hint-show"
                         >
@@ -324,7 +333,7 @@ function FreeTextExercise(
                         </button>
                     ) : (
                         <p
-                            className="free-text-hint"
+                            className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
                             data-testid="free-text-hint"
                         >
                             {exercise.hint}
@@ -333,7 +342,7 @@ function FreeTextExercise(
                 </div>
             )}
 
-            <div className="free-text-actions">
+            <div className="flex flex-wrap items-center gap-3">
                 {!submitted && !controlled && (
                     <button
                         type="button"
@@ -351,9 +360,12 @@ function FreeTextExercise(
                 {submitted && (
                     <>
                         <p
-                            className={`free-text-result answer-feedback${
-                                isCorrect ? " is-correct" : " is-wrong"
-                            }`}
+                            className={cn(
+                                "answer-feedback m-0 inline-flex items-center gap-1.5 font-semibold",
+                                isCorrect
+                                    ? "is-correct text-[var(--exercise-correct)]"
+                                    : "is-wrong text-[var(--exercise-wrong)]",
+                            )}
                             data-testid="free-text-result"
                             data-result={isCorrect ? "correct" : "wrong"}
                         >
