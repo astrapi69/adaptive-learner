@@ -216,7 +216,7 @@ def _base_sha(client: httpx.Client, token: str, fork: str, base_branch: str) -> 
         f"{_GITHUB_API}/repos/{fork}/git/ref/heads/{base_branch}",
         token,
     )
-    return resp.json()["object"]["sha"]
+    return str(resp.json()["object"]["sha"])
 
 
 def _create_branch(client: httpx.Client, token: str, fork: str, branch: str, from_sha: str) -> None:
