@@ -1581,6 +1581,17 @@
     }
   },
   "content": {
+    "continue_learning": {
+      "title": "Continuer l'apprentissage",
+      "resume": "Reprendre",
+      "next": "Leçon suivante",
+      "completed": "Ensemble terminé",
+      "empty": "Commencez votre première leçon !",
+      "progress": "Étape {n}/{total}"
+    },
+    "import_chat": {
+      "button": "Importer un chat"
+    },
     "search": {
       "placeholder": "Rechercher des leçons...",
       "results": "{count} résultats",

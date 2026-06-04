@@ -1581,6 +1581,17 @@
     }
   },
   "content": {
+    "continue_learning": {
+      "title": "学習を続ける",
+      "resume": "再開",
+      "next": "次のレッスン",
+      "completed": "セット完了",
+      "empty": "最初のレッスンを始めましょう！",
+      "progress": "ステップ {n}/{total}"
+    },
+    "import_chat": {
+      "button": "チャットをインポート"
+    },
     "search": {
       "placeholder": "レッスンを検索...",
       "results": "{count} 件の結果",

@@ -1449,6 +1449,15 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  continue_learning:
+    title: "Öğrenmeye devam et"
+    resume: "Devam et"
+    next: "Sonraki ders"
+    completed: "Set tamamlandı"
+    empty: "İlk dersine başla!"
+    progress: "Adım {n}/{total}"
+  import_chat:
+    button: "Sohbeti içe aktar"
   search:
     placeholder: "Ders ara..."
     results: "{count} sonuç"

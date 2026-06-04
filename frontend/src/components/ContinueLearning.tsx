@@ -108,7 +108,10 @@ export default function ContinueLearning({
 
     useEffect(() => {
         if (!userId) {
-            setItems([]);
+            // No identified user — render nothing (null = the same
+            // "render nothing" path as loading). The Dashboard +
+            // Content Browser already gate on userId; this is defensive.
+            setItems(null);
             return;
         }
         let cancelled = false;
