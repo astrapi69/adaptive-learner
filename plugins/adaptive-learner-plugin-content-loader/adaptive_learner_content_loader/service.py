@@ -27,6 +27,7 @@ from .cache import (
     is_set_cached,
     latest_cached_version,
     list_cached_versions,
+    prune_old_versions,
     read_lesson,
     read_manifest,
     reconcile_set_version,
@@ -472,6 +473,7 @@ class ContentLoaderService:
                 lessons=lessons,
                 assets=assets if assets else None,
             )
+            prune_old_versions(self.cache_root, source, set_id)
             return SetEntry(
                 source=source,
                 branch=branch,

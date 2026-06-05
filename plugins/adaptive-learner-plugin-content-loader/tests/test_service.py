@@ -479,6 +479,58 @@ class TestDownloadSet:
             entry = await service.download_set(SOURCE, BRANCH, SET_ID)
         assert entry.cached_version == "1.0.0"
 
+    async def test_download_prunes_stale_version_on_update(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Regression #62: a re-download at a newer content version
+        invalidates (prunes) the previously cached version instead of
+        letting stale set versions accumulate."""
+        v1_transport = _make_mock_transport(
+            {
+                f"/{SOURCE}/{BRANCH}/manifest.yaml": REPO_MANIFEST,
+                f"/{SOURCE}/{BRANCH}/sets/{SET_ID}/manifest.yaml": SET_MANIFEST,
+                f"/{SOURCE}/{BRANCH}/sets/{SET_ID}/lessons/01-greetings.json": _make_lesson(
+                    "01-greetings",
+                    "Greetings",
+                ),
+                f"/{SOURCE}/{BRANCH}/sets/{SET_ID}/lessons/02-numbers.json": _make_lesson(
+                    "02-numbers",
+                    "Numbers",
+                ),
+            },
+        )
+        service = ContentLoaderService(
+            cache_root=tmp_path,
+            sources=[SourceRef(source=SOURCE, branch=BRANCH)],
+        )
+        with _install_mock(v1_transport):
+            await service.download_set(SOURCE, BRANCH, SET_ID)
+        assert list_cached_versions(tmp_path, SOURCE, SET_ID) == ["1.0.0"]
+
+        repo_v2 = REPO_MANIFEST.replace("'1.0.0'", "'2.0.0'")
+        set_v2 = SET_MANIFEST.replace("'1.0.0'", "'2.0.0'")
+        v2_transport = _make_mock_transport(
+            {
+                f"/{SOURCE}/{BRANCH}/manifest.yaml": repo_v2,
+                f"/{SOURCE}/{BRANCH}/sets/{SET_ID}/manifest.yaml": set_v2,
+                f"/{SOURCE}/{BRANCH}/sets/{SET_ID}/lessons/01-greetings.json": _make_lesson(
+                    "01-greetings",
+                    "Greetings v2",
+                ),
+                f"/{SOURCE}/{BRANCH}/sets/{SET_ID}/lessons/02-numbers.json": _make_lesson(
+                    "02-numbers",
+                    "Numbers v2",
+                ),
+            },
+        )
+        with _install_mock(v2_transport):
+            entry = await service.download_set(SOURCE, BRANCH, SET_ID)
+
+        assert entry.cached_version == "2.0.0"
+        assert list_cached_versions(tmp_path, SOURCE, SET_ID) == ["2.0.0"]
+        assert not is_set_cached(tmp_path, SOURCE, SET_ID, "1.0.0")
+
     async def test_unknown_set_id_raises_404(
         self,
         tmp_path: Path,

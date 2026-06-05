@@ -308,6 +308,40 @@ describe("Dexie content-loader: downloadSet", () => {
     expect(filenames).toContain("manifest.yaml");
   });
 
+  it("prunes the stale version when re-downloading a newer version (#62)", async () => {
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]: SET_MANIFEST,
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+    });
+    await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+
+    installFetchMock({
+      [`/${SOURCE}/${BRANCH}/manifest.yaml`]: REPO_MANIFEST.replace(
+        /'1\.0\.0'/g,
+        "'2.0.0'",
+      ),
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/manifest.yaml`]:
+        SET_MANIFEST.replace(/'1\.0\.0'/g, "'2.0.0'"),
+      [`/${SOURCE}/${BRANCH}/sets/${SET_ID}/lessons/01-greetings.json`]:
+        LESSON_JSON,
+    });
+    const entry = await downloadSetDexie(SOURCE, SET_ID, [
+      { source: SOURCE, branch: BRANCH },
+    ]);
+    expect(entry.cached_version).toBe("2.0.0");
+
+    const db = getDb();
+    const rows = await db.contentSets.toArray();
+    expect(rows).toHaveLength(1);
+    expect(rows[0].version).toBe("2.0.0");
+    const files = await db.contentSetFiles.toArray();
+    expect(files.every((f) => f.set_pk === rows[0].id)).toBe(true);
+  });
+
   it("fetches from the set's `path` (source-language tree)", async () => {
     // Phase 60: a set declaring ``path: sets/de/fr-a1`` is
     // downloaded from that directory, not ``sets/{id}``.
