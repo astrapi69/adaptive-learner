@@ -10,6 +10,7 @@
 import {useState} from "react";
 import {GripVertical, Pencil, Plus, Trash2} from "lucide-react";
 
+import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {
     DndContext,
@@ -183,24 +184,23 @@ export default function CardEditor({
                     />
                 </label>
                 <div className="form-actions">
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         data-testid="card-add-button"
                         onClick={handleAdd}
                         disabled={!canAdd}
                     >
                         <Plus size={14} aria-hidden="true" />
                         {t("create_lesson.cards.add", "Add card")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn"
+                        variant="outline"
                         data-testid="card-csv-toggle"
                         onClick={() => setShowCsv((v) => !v)}
                     >
                         {t("create_lesson.cards.import_csv", "Import CSV")}
-                    </button>
+                    </Button>
                 </div>
             </div>
 
@@ -259,9 +259,8 @@ export default function CardEditor({
                                     </li>
                                 ))}
                             </ul>
-                            <button
+                            <Button
                                 type="button"
-                                className="btn btn-primary"
                                 data-testid="card-csv-import"
                                 onClick={handleImport}
                                 disabled={validParsed.length === 0}
@@ -270,7 +269,7 @@ export default function CardEditor({
                                     "create_lesson.cards.csv_add",
                                     "Add {n} cards",
                                 ).replace("{n}", String(validParsed.length))}
-                            </button>
+                            </Button>
                         </div>
                     )}
                 </div>
@@ -296,14 +295,14 @@ export default function CardEditor({
                     </span>
                 )}
                 {cards.length > 0 && (
-                    <button
+                    <Button
                         type="button"
-                        className="lesson-summary-link"
+                        variant="link"
                         data-testid="card-clear-all"
                         onClick={() => setConfirmClear(true)}
                     >
                         {t("create_lesson.cards.clear_all", "Clear all")}
-                    </button>
+                    </Button>
                 )}
             </div>
 
@@ -343,17 +342,16 @@ export default function CardEditor({
                             )}
                         </h2>
                         <div className="form-actions">
-                            <button
+                            <Button
                                 type="button"
-                                className="btn btn-secondary"
+                                variant="secondary"
                                 data-testid="card-clear-cancel"
                                 onClick={() => setConfirmClear(false)}
                             >
                                 {t("create_lesson.cancel", "Cancel")}
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 type="button"
-                                className="btn btn-primary"
                                 data-testid="card-clear-confirm-ok"
                                 onClick={() => {
                                     onClearAll();
@@ -364,7 +362,7 @@ export default function CardEditor({
                                     "create_lesson.cards.clear_all",
                                     "Clear all",
                                 )}
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 </div>
@@ -437,9 +435,9 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                     }
                 />
                 <div className="form-actions">
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         data-testid={`card-edit-cancel-${card.id}`}
                         onClick={() => {
                             setDraft(card);
@@ -447,15 +445,14 @@ function SortableCardRow({card, onUpdate, onDelete}: SortableCardRowProps) {
                         }}
                     >
                         {t("create_lesson.cancel", "Cancel")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         data-testid={`card-edit-save-${card.id}`}
                         onClick={saveEdit}
                     >
                         {t("create_lesson.cards.save_edit", "Save")}
-                    </button>
+                    </Button>
                 </div>
             </li>
         );

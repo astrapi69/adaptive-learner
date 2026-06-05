@@ -12,6 +12,8 @@
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
+
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {filterStandardProjects} from "../lib/learning-project";
@@ -268,9 +270,8 @@ export default function AnkiPage() {
                             .replace("{total}", String(totalCount))}
                     </span>
                 </div>
-                <button
+                <Button
                     type="button"
-                    className="btn btn-primary"
                     onClick={exportApkg}
                     disabled={exporting || acceptedCount === 0}
                     data-testid="anki-export-button"
@@ -278,7 +279,7 @@ export default function AnkiPage() {
                     {exporting
                         ? t("anki.exporting", "Generating .apkg…")
                         : t("anki.export_button", "Export as .apkg")}
-                </button>
+                </Button>
             </section>
 
             {loading ? (
@@ -362,22 +363,23 @@ export default function AnkiPage() {
                                             </select>
                                         </label>
                                         <div className="anki-card__actions">
-                                            <button
-                                                className="btn btn-primary"
+                                            <Button
+                                                type="button"
                                                 onClick={saveEdit}
                                                 data-testid={`anki-save-${card.id}`}
                                             >
                                                 {t("common.save", "Save")}
-                                            </button>
-                                            <button
-                                                className="btn"
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
                                                 onClick={() => {
                                                     setEditingCardId(null);
                                                     setEditDraft(null);
                                                 }}
                                             >
                                                 {t("common.cancel", "Cancel")}
-                                            </button>
+                                            </Button>
                                         </div>
                                     </>
                                 ) : (
@@ -401,12 +403,12 @@ export default function AnkiPage() {
                                             </div>
                                         )}
                                         <div className="anki-card__actions">
-                                            <button
-                                                className={
-                                                    "btn " +
-                                                    (card.accepted
-                                                        ? "btn-secondary"
-                                                        : "btn-primary")
+                                            <Button
+                                                type="button"
+                                                variant={
+                                                    card.accepted
+                                                        ? "secondary"
+                                                        : "default"
                                                 }
                                                 onClick={() => toggleAccept(card)}
                                                 data-testid={`anki-toggle-${card.id}`}
@@ -417,25 +419,28 @@ export default function AnkiPage() {
                                                           "Unaccept",
                                                       )
                                                     : t("anki.accept", "Accept")}
-                                            </button>
-                                            <button
-                                                className="btn"
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
                                                 onClick={() => startEdit(card)}
                                             >
                                                 {t("common.edit", "Edit")}
-                                            </button>
-                                            <button
-                                                className="btn"
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
                                                 onClick={() => reject(card)}
                                             >
                                                 {t("anki.reject", "Reject")}
-                                            </button>
-                                            <button
-                                                className="btn btn-destructive"
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
                                                 onClick={() => remove(card)}
                                             >
                                                 {t("common.delete", "Delete")}
-                                            </button>
+                                            </Button>
                                         </div>
                                     </>
                                 )}

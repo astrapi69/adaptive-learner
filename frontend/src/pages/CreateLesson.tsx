@@ -19,6 +19,7 @@
 
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {Download, Share2} from "lucide-react";
 
 import {useI18n} from "../hooks/useI18n";
 import {
@@ -648,6 +649,7 @@ export default function CreateLesson() {
                             disabled={!allChecksPass(draftChecks) || saving}
                             onClick={() => void saveLocally()}
                         >
+                            <Download className="h-5 w-5" aria-hidden="true" />
                             {saving
                                 ? t("common.loading", "Loading…")
                                 : t("create_lesson.save.save_local", "Save locally")}
@@ -659,6 +661,7 @@ export default function CreateLesson() {
                             disabled={!allChecksPass(draftChecks) || saving}
                             onClick={() => void saveAndShare()}
                         >
+                            <Share2 className="h-5 w-5" aria-hidden="true" />
                             {t("create_lesson.save.save_share", "Save and share")}
                         </Button>
                     </div>

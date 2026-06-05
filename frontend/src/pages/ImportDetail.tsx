@@ -800,14 +800,14 @@ export default function ImportDetail({
             </p>
           )}
           {!analysisDone && (
-            <button
-              type="button"
-              className="analysis-cancel-link"
+            <Button
+              variant="link"
               data-testid="cancel-analysis-button"
               onClick={cancelAnalysis}
+              type="button"
             >
               {t("import.analysis_cancel", "Cancel")}
-            </button>
+            </Button>
           )}
         </section>
       )}
