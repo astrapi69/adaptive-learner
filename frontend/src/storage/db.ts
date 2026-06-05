@@ -477,6 +477,11 @@ export interface LessonProgressRow {
     score_correct: number;
     score_total: number;
     time_spent_seconds: number;
+    /** BUG #41 — the step the user is on, so a paused lesson resumes
+     *  at the exact step. Non-indexed, so no Dexie version bump is
+     *  needed; pre-feature rows read back as undefined → coalesced
+     *  to 0 (start of lesson, the old behaviour). */
+    current_step?: number;
     started_at: string;
     updated_at: string;
     completed_at: string | null;

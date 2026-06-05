@@ -105,6 +105,16 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
     // whole. The viewer uses this for the summary screen.
     const stepEntryTimeRef = useRef<number>(performance.now());
 
+    // BUG #41 — mirror currentStepIndex into a ref so the persist
+    // callbacks (recordStepResult / autosave / pause) read the live
+    // position without being recreated on every navigation. The
+    // value is sent as ``current_step`` so a paused lesson resumes
+    // at the exact step (theory steps never write a step_result).
+    const currentStepIndexRef = useRef(0);
+    useEffect(() => {
+        currentStepIndexRef.current = currentStepIndex;
+    }, [currentStepIndex]);
+
     const fetchInitial = useCallback(async () => {
         setStatus("loading");
         setError(null);
@@ -162,6 +172,14 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                     nextIndex = i + 1;
                 }
             }
+            // BUG #41 — the persisted ``current_step`` is the real
+            // navigation position (theory steps + the current
+            // unanswered exercise write no step_result, so the
+            // result-derived index alone snaps back toward step 0).
+            // Take whichever is further along; pre-feature rows have
+            // current_step === 0 so they fall back to the old
+            // result-derived behaviour.
+            nextIndex = Math.max(nextIndex, loadedProgress.current_step ?? 0);
             if (loadedProgress.status === "completed") {
                 nextIndex = loadedLesson.steps.length;  // summary view
             }
@@ -237,6 +255,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                         lesson_filename: lessonFilename,
                         step_result: result,
                         time_spent_seconds_delta: timeDelta,
+                        current_step: currentStepIndexRef.current,
                     });
                 setProgress(updated);
             } catch (err) {
@@ -306,6 +325,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                         set_id: setId,
                         lesson_filename: lessonFilename,
                         time_spent_seconds_delta: timeDelta,
+                        current_step: currentStepIndexRef.current,
                         [flag]: true,
                     });
                 setProgress(updated);
@@ -356,6 +376,7 @@ export function useLesson(opts: UseLessonOptions): UseLessonResult {
                 set_id: setId,
                 lesson_filename: lessonFilename,
                 time_spent_seconds_delta: delta,
+                current_step: currentStepIndexRef.current,
             });
         } catch {
             // Non-fatal — next interval or step-result write will
