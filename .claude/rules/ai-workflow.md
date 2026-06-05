@@ -15,6 +15,26 @@ When the user says "continue", "next item", "go on" or similar:
 2. Name the first open item (unchecked checkbox).
 3. Wait for confirmation, do NOT start implementing immediately.
 
+## Issues as a work queue ("weiter" / "arbeite Bugs ab")
+
+When the user says "weiter", "arbeite Bugs ab", "work through the
+bugs", "next bug" or similar, treat the GitHub issue tracker as the
+queue (this is the counterpart to GITHUB-ISSUE-PFLICHT — every bug
+already has an issue):
+
+1. Read the open bug issues:
+   `gh issue list --label bug --state open`.
+2. Work them in priority order. Priority signals, in order: an
+   explicit `P0`..`P5` label or a priority note in the issue body;
+   then data-integrity / data-loss / restore / security issues;
+   then a reproducible crash with a stack trace; then the rest.
+   Break ties by smallest scope first.
+3. For each: follow GITHUB-ISSUE-PFLICHT (the issue already exists),
+   fix, add a regression test in the same commit, conventional
+   commit citing the issue (`(#NN)`), open a PR.
+4. Report status after each issue; do not wait for confirmation
+   between issues when the user asked to work through them.
+
 ## Order for new features
 
 1. Check whether the feature belongs in a plugin or in the core.
