@@ -487,28 +487,63 @@ logger.info(f"Ended {session}")   # no objects inside messages, use extra
 
 ---
 
-## Inline documentation
+## Documentation: docstrings over inline comments
 
-### When to write comments
+DOC-DOCSTRINGS-NOT-INLINE (applies to all agents and all repos):
+prefer self-explanatory code (speaking variable + function names) and
+put explanation in a docstring / doc-block, NOT in an inline comment.
+
+**Forbidden:**
+- Inline `#` / `//` comments that explain WHAT the code does
+  (`# increment counter`, `// set the value`).
+- Inline comments that belong in the commit message
+  (`# this fixes the bug`).
+- Authorship / tooling markers (`# added by CC`, `# AI-generated`) —
+  already banned in coding-standards.md.
+- Commented-out code. Delete it; git keeps the history.
+
+**Still allowed:**
+- `TODO:` / `FIXME:` WITH an issue reference
+  (`# TODO(#53): extract to shared util`).
+- A short inline note for a genuinely non-obvious WHY that has no
+  natural docstring home — a regex, a tricky algorithm step, a
+  workaround for an external quirk. Reach for this last, not first.
+- License headers.
+
+**Required:**
+- Google-style docstrings for every public Python function, class,
+  and method (see the format below).
+- TSDoc (`/** ... */`) for every exported TS function, hook, and
+  component.
 
 ```python
-# RIGHT: the why, not the what
-# Cycle 7 was the historical exit step; v1.4.0 moved exit to
-# step 7 of any cycle. Don't reintroduce the cycle-only check.
-if step >= 7:
-    completed_cycles += 1
+def restore_backup(backup_data: dict, user_id: str) -> RestoreResult:
+    """Restore a user's data from a backup archive.
 
-# WRONG: commenting the obvious
-# Create a new project
-project = LearningProject(topic=topic, goal=goal)
+    Matches seeded catalog rows by natural key to avoid UNIQUE
+    constraint violations on re-seeded databases.
+
+    Args:
+        backup_data: Parsed backup archive contents.
+        user_id: Target user for the restore operation.
+
+    Returns:
+        RestoreResult with counts of added, updated, skipped rows.
+
+    Raises:
+        IntegrityError: If a natural key conflict cannot be resolved.
+    """
 ```
 
-**Rules:**
-- Comments explain WHY, not WHAT.
-- Docstrings for every public Python function (Google style).
-- TypeScript: JSDoc only for exported functions with non-obvious parameters.
-- TODOs only with context: `# TODO(EXP-013): per-element grouping in review session`
-- No commented-out code blocks. Git is the versioning.
+```typescript
+/**
+ * Renders the backup section in Settings > Data.
+ * Hidden in Dexie mode (no backend available).
+ *
+ * @param userId - Active user ID for backup operations.
+ */
+export function BackupSection({userId}: BackupSectionProps) {
+```
 
 ### Docstring format (Python)
 
