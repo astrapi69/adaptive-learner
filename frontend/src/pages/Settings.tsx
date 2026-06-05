@@ -1199,7 +1199,11 @@ export default function Settings() {
         hidden={activeTab !== "data"}
         data-testid="settings-panel-data"
       >
-        <SyncSection />
+        {/* Sync needs a reachable backend (pairing token + sync
+            endpoints). In Dexie mode (GitHub Pages / PWA-only) there
+            is none, so the section is not offered at all — no QR, no
+            dead "Sync Now". See issue #51. */}
+        {resolveStorageMode() === "api" && <SyncSection />}
         <BackupSection />
         <ExportSection />
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}
