@@ -578,6 +578,19 @@ export async function downloadSetDexie(
       encoding: "text",
     });
     await db.contentSetFiles.bulkPut(files);
+
+    const staleRows = await db.contentSets
+      .where("set_id")
+      .equals(setId)
+      .filter((r) => r.source === source && r.id !== setPk)
+      .toArray();
+    for (const staleRow of staleRows) {
+      await db.contentSetFiles
+        .where("set_pk")
+        .equals(staleRow.id)
+        .delete();
+      await db.contentSets.delete(staleRow.id);
+    }
   });
 
   return asContentSetEntry(src, target, target.version);
