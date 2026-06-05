@@ -145,7 +145,14 @@ def _commit_and_maybe_tag(repo: Path, ctx: RenderContext) -> tuple[str, str | No
     _run_git(repo, "add", ".")
     message = _build_commit_message(ctx)
     try:
-        _run_git(repo, "commit", "-m", message)
+        # ``-c commit.gpgsign=false`` keeps these machine-generated
+        # artifact commits self-contained: a global ``commit.gpgsign=true``
+        # (common on signing-enabled dev VMs / CI) would otherwise route the
+        # commit through the user's GPG/SSH signer and fail with exit 128
+        # ("failed to write commit object") for an automated, unattended
+        # commit. Same intent as the deterministic local identity above —
+        # the plugin's commits never depend on ambient git config.
+        _run_git(repo, "-c", "commit.gpgsign=false", "commit", "-m", message)
     except subprocess.CalledProcessError as exc:
         if "nothing to commit" not in (exc.stdout or "") + (exc.stderr or ""):
             raise
