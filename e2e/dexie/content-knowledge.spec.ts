@@ -46,6 +46,10 @@ test.describe("Content Browser — Wissen (knowledge) section", () => {
     test("download a knowledge set and open its first lesson", async ({
         page,
     }) => {
+        // The psychology set grew to 105 lessons; caching them all into
+        // IndexedDB on download takes ~18s and approaches the default 30s
+        // per-test cap. Give this slow-by-nature test generous headroom.
+        test.setTimeout(120_000);
         const errors: string[] = [];
         page.on("pageerror", (e) => errors.push(e.message));
 
@@ -55,10 +59,14 @@ test.describe("Content Browser — Wissen (knowledge) section", () => {
         });
 
         // Download (idempotent) then open -> the lesson viewer renders a
-        // non-language (source == target) lesson.
+        // non-language (source == target) lesson. The psychology set has
+        // grown to 105 lessons; caching them all into IndexedDB takes
+        // ~18s in isolation and tips past a 20s wait under full-gate
+        // parallel load, so allow generous headroom here (the download
+        // is the slow step; opening the cached first lesson is fast).
         await page.getByTestId(`content-set-${KNOWLEDGE_SET}-action`).click();
         const openBtn = page.getByTestId(`content-set-${KNOWLEDGE_SET}-open`);
-        await expect(openBtn).toBeVisible({timeout: 20000});
+        await expect(openBtn).toBeVisible({timeout: 60000});
         await openBtn.click();
         await expect(page.getByTestId("lesson-page")).toBeVisible({
             timeout: 15000,
