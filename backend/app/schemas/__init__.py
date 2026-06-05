@@ -1397,6 +1397,15 @@ class LessonProgressUpsert(BaseModel):
     lesson_filename: str = Field(..., min_length=1, max_length=200)
     step_result: StepResultIn | None = None
     time_spent_seconds_delta: int = Field(default=0, ge=0)
+    current_step: int | None = Field(
+        default=None,
+        ge=0,
+        description=(
+            "BUG #41 — the step index the user is currently on, so a "
+            "paused lesson resumes at the exact step. Omitted leaves "
+            "the stored value unchanged."
+        ),
+    )
     mark_completed: bool = Field(
         default=False,
         description=(
@@ -1458,6 +1467,7 @@ class LessonProgressOut(BaseModel):
     score_correct: int
     score_total: int
     time_spent_seconds: int
+    current_step: int = 0
     started_at: datetime
     updated_at: datetime
     completed_at: datetime | None = None

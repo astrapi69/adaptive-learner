@@ -1375,6 +1375,17 @@ class LessonProgress(Base):
         nullable=False,
         default=0,
     )
+    # BUG #41 — the step index the user is currently on, persisted
+    # so a paused lesson resumes at the exact step (theory steps
+    # never write a step_result, so step_results alone cannot
+    # reconstruct the navigation position). Reset to 0 on
+    # abandon / restart.
+    current_step: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=0,
+        server_default="0",
+    )
     started_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,

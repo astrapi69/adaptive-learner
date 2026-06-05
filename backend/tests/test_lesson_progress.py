@@ -362,6 +362,88 @@ def test_mark_paused_stamps_paused_at_and_keeps_step_results(
     assert body["score_correct"] == 1
 
 
+def test_current_step_persists_and_resume_position_survives_pause(
+    client: TestClient,
+) -> None:
+    """BUG #41 — the navigation position is persisted on pause so the
+    lesson resumes at the exact step, even with no step_results
+    (theory steps + an unanswered exercise write none)."""
+    user_id = _make_user(client)
+    # No step_result yet — the user only read theory and paused on
+    # step 4.
+    r = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "current_step": 4,
+            "mark_paused": True,
+        },
+    )
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["status"] == "paused"
+    assert body["current_step"] == 4
+    assert body["step_results"] == {}
+    # A fresh GET (the resume read) still sees the saved position.
+    got = client.get(
+        f"/api/users/{user_id}/lesson-progress/"
+        f"{SOURCE_SLUG}/{SET_ID}/{LESSON}"
+    )
+    assert got.status_code == 200, got.text
+    assert got.json()["current_step"] == 4
+
+
+def test_current_step_resets_on_restart_and_abandon(
+    client: TestClient,
+) -> None:
+    """BUG #41 — restart / abandon discard the attempt, so the resume
+    position must reset to 0 (start of lesson)."""
+    user_id = _make_user(client)
+    client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "current_step": 5,
+        },
+    )
+    restarted = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_restarted": True,
+        },
+    )
+    assert restarted.status_code == 200, restarted.text
+    assert restarted.json()["current_step"] == 0
+    # Advance again, then abandon -> reset.
+    client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "current_step": 3,
+        },
+    )
+    abandoned = client.post(
+        f"/api/users/{user_id}/lesson-progress",
+        json={
+            "source": SOURCE,
+            "set_id": SET_ID,
+            "lesson_filename": LESSON,
+            "mark_abandoned": True,
+        },
+    )
+    assert abandoned.status_code == 200, abandoned.text
+    assert abandoned.json()["current_step"] == 0
+
+
 def test_mark_abandoned_clears_step_results_and_stamps_abandoned_at(
     client: TestClient,
 ) -> None:

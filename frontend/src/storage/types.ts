@@ -689,6 +689,10 @@ export interface LessonProgressUpsertBody {
   lesson_filename: string;
   step_result?: LessonStepResult;
   time_spent_seconds_delta?: number;
+  /** BUG #41 — the step index the user is currently on, so a paused
+   *  lesson resumes at the exact step. Omitting it leaves the stored
+   *  value unchanged. */
+  current_step?: number;
   mark_completed?: boolean;
   /** Phase 63A — flip the row to ``paused`` and stamp
    *  ``paused_at``. ``step_results`` stay intact for the resume. */
@@ -740,6 +744,11 @@ export interface LessonProgress {
   score_correct: number;
   score_total: number;
   time_spent_seconds: number;
+  /** BUG #41 — the step index the user is currently on; drives
+   *  resume-at-paused-step. Always emitted by both storage backends
+   *  (defaults to 0); optional on the wire type so pre-feature
+   *  fixtures/rows that omit it still type-check. Read with `?? 0`. */
+  current_step?: number;
   started_at: string;
   updated_at: string;
   completed_at: string | null;

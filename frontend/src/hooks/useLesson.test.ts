@@ -149,6 +149,62 @@ describe("useLesson: load + status transitions", () => {
         expect(result.current.currentStepIndex).toBe(1);
     });
 
+    it("BUG #41 — resumes at the saved current_step even when no step_results exist", async () => {
+        // The user read theory (steps never write a step_result) and
+        // paused on step 2 (an unanswered exercise). Before the fix
+        // the resume index was reconstructed from step_results only
+        // and snapped back to 0; current_step is the real position.
+        getLessonMock.mockResolvedValue(LESSON_PAYLOAD);
+        getProgressMock.mockResolvedValue({
+            ...FRESH_PROGRESS,
+            status: "paused" as const,
+            paused_at: "2026-06-05T00:05:00Z",
+            step_results: {},
+            current_step: 2,
+        });
+        const {result} = renderHook(() =>
+            useLesson({
+                source: SOURCE,
+                setId: SET_ID,
+                lessonFilename: LESSON,
+            }),
+        );
+        await waitFor(() => {
+            expect(result.current.status).toBe("ready");
+        });
+        expect(result.current.currentStepIndex).toBe(2);
+    });
+
+    it("BUG #41 — resume takes the furthest of current_step and step_results", async () => {
+        // step_results says step 0 is done (→ index 1) but the user
+        // navigated forward to step 2; the further position wins.
+        getLessonMock.mockResolvedValue(LESSON_PAYLOAD);
+        getProgressMock.mockResolvedValue({
+            ...FRESH_PROGRESS,
+            status: "paused" as const,
+            step_results: {
+                intro: {
+                    correct: 0,
+                    total: 0,
+                    attempts: 1,
+                    completed_at: "2026-06-05T00:01:00Z",
+                },
+            },
+            current_step: 2,
+        });
+        const {result} = renderHook(() =>
+            useLesson({
+                source: SOURCE,
+                setId: SET_ID,
+                lessonFilename: LESSON,
+            }),
+        );
+        await waitFor(() => {
+            expect(result.current.status).toBe("ready");
+        });
+        expect(result.current.currentStepIndex).toBe(2);
+    });
+
     it("lands on the summary view when status=completed", async () => {
         getLessonMock.mockResolvedValue(LESSON_PAYLOAD);
         getProgressMock.mockResolvedValue({

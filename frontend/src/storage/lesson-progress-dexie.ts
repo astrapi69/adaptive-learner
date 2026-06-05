@@ -46,6 +46,9 @@ function rowToWire(row: LessonProgressRow): LessonProgress {
         score_correct: row.score_correct,
         score_total: row.score_total,
         time_spent_seconds: row.time_spent_seconds,
+        // BUG #41 — coalesce undefined → 0 so pre-feature rows
+        // resume at the start (the old behaviour).
+        current_step: row.current_step ?? 0,
         started_at: row.started_at,
         updated_at: row.updated_at,
         completed_at: row.completed_at,
@@ -137,6 +140,7 @@ export async function upsertLessonProgressDexie(
               score_correct: 0,
               score_total: 0,
               time_spent_seconds: 0,
+              current_step: 0,
               started_at: now,
               updated_at: now,
               completed_at: null,
@@ -175,6 +179,12 @@ export async function upsertLessonProgressDexie(
         row.time_spent_seconds += body.time_spent_seconds_delta;
     }
 
+    // BUG #41 — persist the live navigation position so a paused
+    // lesson resumes where the user left off. Clamped to >= 0.
+    if (body.current_step != null) {
+        row.current_step = Math.max(0, body.current_step);
+    }
+
     if (body.mark_completed && row.status !== "completed") {
         row.status = "completed";
         row.completed_at = now;
@@ -205,6 +215,7 @@ export async function upsertLessonProgressDexie(
         row.step_results = {};
         row.score_correct = 0;
         row.score_total = 0;
+        row.current_step = 0;
     } else if (body.mark_resumed && row.status === "paused") {
         row.status = "in_progress";
         row.paused_at = null;
@@ -215,6 +226,7 @@ export async function upsertLessonProgressDexie(
         row.step_results = {};
         row.score_correct = 0;
         row.score_total = 0;
+        row.current_step = 0;
         row.paused_at = null;
         row.abandoned_at = null;
     }

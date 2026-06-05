@@ -128,6 +128,7 @@ def upsert_progress(
     lesson_filename: str,
     step_result: dict[str, Any] | None = None,
     time_spent_seconds_delta: int = 0,
+    current_step: int | None = None,
     mark_completed: bool = False,
     mark_paused: bool = False,
     mark_abandoned: bool = False,
@@ -223,6 +224,12 @@ def upsert_progress(
     if time_spent_seconds_delta > 0:
         row.time_spent_seconds = row.time_spent_seconds + time_spent_seconds_delta
 
+    # BUG #41 — track the live navigation position so a paused
+    # lesson resumes where the user left off. Persisted on every
+    # autosave / step / pause; clamped to >= 0.
+    if current_step is not None:
+        row.current_step = max(0, current_step)
+
     just_completed = False
     if mark_completed and row.status != "completed":
         row.status = "completed"
@@ -247,6 +254,7 @@ def upsert_progress(
         row.step_results = "{}"
         row.score_correct = 0
         row.score_total = 0
+        row.current_step = 0
     elif mark_resumed and row.status == "paused":
         row.status = "in_progress"
         row.paused_at = None
@@ -257,6 +265,7 @@ def upsert_progress(
         row.step_results = "{}"
         row.score_correct = 0
         row.score_total = 0
+        row.current_step = 0
         row.paused_at = None
         row.abandoned_at = None
 
@@ -311,6 +320,7 @@ def _row_to_wire(row: LessonProgress) -> dict[str, Any]:
         "score_correct": row.score_correct,
         "score_total": row.score_total,
         "time_spent_seconds": row.time_spent_seconds,
+        "current_step": row.current_step,
         "started_at": row.started_at,
         "updated_at": row.updated_at,
         "completed_at": row.completed_at,

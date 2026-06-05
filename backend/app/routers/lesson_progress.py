@@ -87,6 +87,7 @@ def upsert_lesson_progress(
         lesson_filename=payload.lesson_filename,
         step_result=step_result,
         time_spent_seconds_delta=payload.time_spent_seconds_delta,
+        current_step=payload.current_step,
         mark_completed=payload.mark_completed,
         mark_paused=payload.mark_paused,
         mark_abandoned=payload.mark_abandoned,

@@ -574,6 +574,7 @@ TABLES: dict[str, TableSpec] = {
             "score_correct",
             "score_total",
             "time_spent_seconds",
+            "current_step",
             "started_at",
             "updated_at",
             "completed_at",
