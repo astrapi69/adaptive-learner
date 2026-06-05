@@ -23,6 +23,8 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+import {Button} from "@/components/ui/button";
+
 import {Sheet, SheetClose, SheetContent, SheetTitle} from "../ui/sheet";
 import {useHelp} from "../../contexts/HelpContext";
 import {useButtonTooltips} from "../../hooks/useButtonTooltips";
@@ -94,7 +96,9 @@ export default function HelpDrawer() {
                         {entry.title}
                     </SheetTitle>
                     <SheetClose asChild>
-                        <button
+                        <Button
+                            variant="ghost"
+                            size="icon"
                             type="button"
                             aria-label={t("ui.common.close", "Close")}
                             title={
@@ -103,10 +107,10 @@ export default function HelpDrawer() {
                                     : undefined
                             }
                             data-testid="help-drawer-close"
-                            className="inline-flex size-11 items-center justify-center rounded-sm text-[var(--fg-muted)] hover:bg-[var(--surface-2)]"
+                            className="rounded-sm text-[var(--fg-muted)] hover:bg-[var(--surface-2)]"
                         >
                             <X size={20} />
-                        </button>
+                        </Button>
                     </SheetClose>
                 </div>
                 <div

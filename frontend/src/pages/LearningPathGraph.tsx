@@ -30,6 +30,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {useLearningPathData} from "../hooks/useLearningPathData";
 import LessonNode from "../components/learning-path/LessonNode";
@@ -173,22 +174,23 @@ export default function LearningPathGraph({
                 </p>
                 <div className="learning-path-toolbar">
                     {headerExtra}
-                    <Link
-                        to="/content"
-                        className="btn btn-secondary"
-                        data-testid="learning-path-to-content"
-                    >
-                        {t("learning_path.to_content", "Content Browser")}
-                    </Link>
+                    <Button asChild variant="secondary">
+                        <Link
+                            to="/content"
+                            data-testid="learning-path-to-content"
+                        >
+                            {t("learning_path.to_content", "Content Browser")}
+                        </Link>
+                    </Button>
                     {state === "ready" && (
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
                             data-testid="learning-path-reset"
                             onClick={resetLayout}
                         >
                             {t("learning_path.reset_layout", "Reset layout")}
-                        </button>
+                        </Button>
                     )}
                 </div>
             </header>
@@ -215,9 +217,11 @@ export default function LearningPathGraph({
                             "Download a lesson set first to see your learning path.",
                         )}
                     </p>
-                    <Link to="/content" className="btn btn-primary">
-                        {t("learning_path.empty_cta", "Browse content")}
-                    </Link>
+                    <Button asChild variant="default">
+                        <Link to="/content">
+                            {t("learning_path.empty_cta", "Browse content")}
+                        </Link>
+                    </Button>
                 </div>
             )}
 
@@ -322,18 +326,18 @@ export default function LearningPathGraph({
                         }
                         onKeyDown={onSearchKeyDown}
                     />
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         data-testid="learning-path-stats-toggle"
                         aria-expanded={statsOpen}
                         onClick={() => setStatsOpen((v) => !v)}
                     >
                         {t("learning_path.stats.title", "Stats")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         data-testid="learning-path-clusters-toggle"
                         aria-pressed={showClusters}
                         onClick={() => setShowClusters((v) => !v)}
@@ -342,7 +346,7 @@ export default function LearningPathGraph({
                             "learning_path.clusters.toggle",
                             "Show error clusters",
                         )}
-                    </button>
+                    </Button>
                 </div>
             )}
 
@@ -390,9 +394,9 @@ export default function LearningPathGraph({
                                         "{n} lessons",
                                     ).replace("{n}", String(c.lessonKeys.length))}
                                 </button>
-                                <button
+                                <Button
                                     type="button"
-                                    className="btn btn-primary"
+                                    variant="default"
                                     data-testid={`cluster-adaptive-${c.tag}`}
                                     onClick={() =>
                                         navigate(
@@ -406,7 +410,7 @@ export default function LearningPathGraph({
                                         "learning_path.clusters.start_adaptive",
                                         "Start adaptive lesson",
                                     )}
-                                </button>
+                                </Button>
                             </div>
                         ))
                     )}

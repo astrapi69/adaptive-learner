@@ -13,6 +13,8 @@
 
 import {Pause, Play, SkipBack, SkipForward, Square} from "lucide-react";
 
+import {Button} from "@/components/ui/button";
+
 import {useI18n} from "../../hooks/useI18n";
 
 interface LessonTtsMiniPlayerProps {
@@ -50,7 +52,9 @@ export default function LessonTtsMiniPlayer({
             role="group"
             aria-label={t("lesson.tts.reading", "Reading…")}
         >
-            <button
+            <Button
+                variant="ghost"
+                size="icon"
                 type="button"
                 className="lesson-tts-player-btn"
                 data-testid="lesson-tts-player-prev"
@@ -59,8 +63,10 @@ export default function LessonTtsMiniPlayer({
                 onClick={onPrev}
             >
                 <SkipBack size={16} aria-hidden="true" />
-            </button>
-            <button
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon"
                 type="button"
                 className="lesson-tts-player-btn lesson-tts-player-playpause"
                 data-testid="lesson-tts-player-playpause"
@@ -73,8 +79,10 @@ export default function LessonTtsMiniPlayer({
                 ) : (
                     <Pause size={18} aria-hidden="true" />
                 )}
-            </button>
-            <button
+            </Button>
+            <Button
+                variant="ghost"
+                size="icon"
                 type="button"
                 className="lesson-tts-player-btn"
                 data-testid="lesson-tts-player-next"
@@ -83,7 +91,7 @@ export default function LessonTtsMiniPlayer({
                 onClick={onNext}
             >
                 <SkipForward size={16} aria-hidden="true" />
-            </button>
+            </Button>
             {total > 0 && (
                 <span
                     className="lesson-tts-player-pos"
@@ -97,7 +105,9 @@ export default function LessonTtsMiniPlayer({
                         .replace("{total}", String(total))}
                 </span>
             )}
-            <button
+            <Button
+                variant="ghost"
+                size="icon"
                 type="button"
                 className="lesson-tts-player-btn lesson-tts-player-stop"
                 data-testid="lesson-tts-player-stop"
@@ -105,7 +115,7 @@ export default function LessonTtsMiniPlayer({
                 onClick={onStop}
             >
                 <Square size={14} aria-hidden="true" />
-            </button>
+            </Button>
         </div>
     );
 }

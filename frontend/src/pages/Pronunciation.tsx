@@ -17,6 +17,7 @@
 import {useCallback, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
 import ApiKeyRequiredNotice from "../components/ApiKeyRequiredNotice";
 import MicButton from "../components/MicButton";
 import SpeechButton from "../components/SpeechButton";
@@ -154,13 +155,13 @@ export default function PronunciationPage() {
                         "Pronunciation practice is available for language-learning projects. Add a subject under 'Languages' to your project to enable it.",
                     )}
                 </p>
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     onClick={() => navigate("/dashboard")}
                 >
                     {t("common.back", "Back")}
-                </button>
+                </Button>
             </main>
         );
     }
@@ -211,9 +212,9 @@ export default function PronunciationPage() {
                         )}
                     />
                 )}
-                <button
+                <Button
                     type="button"
-                    className="btn btn-primary"
+                    variant="default"
                     onClick={generatePhrase}
                     disabled={
                         generating || !apiKey.ready || !apiKey.hasKey
@@ -233,7 +234,7 @@ export default function PronunciationPage() {
                         : target
                           ? t("pronunciation.next_phrase", "Next phrase")
                           : t("pronunciation.generate", "Generate phrase")}
-                </button>
+                </Button>
             </section>
 
             {target && (
@@ -258,9 +259,9 @@ export default function PronunciationPage() {
                         rows={2}
                         data-testid="pronunciation-attempt-input"
                     />
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
+                        variant="default"
                         onClick={submitAttempt}
                         disabled={judging || !actual.trim()}
                         data-testid="pronunciation-submit"
@@ -268,7 +269,7 @@ export default function PronunciationPage() {
                         {judging
                             ? t("pronunciation.judging", "Scoring…")
                             : t("pronunciation.submit", "Submit attempt")}
-                    </button>
+                    </Button>
                 </section>
             )}
 

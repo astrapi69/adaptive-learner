@@ -2,6 +2,7 @@ import {useState, type FormEvent} from "react";
 import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
+import {Button} from "@/components/ui/button";
 import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import RichTextEditor from "./editor/RichTextEditor";
@@ -89,14 +90,13 @@ export default function LessonList({
                     )}
                     disabled={submitting}
                 />
-                <button
+                <Button
                     type="submit"
-                    className="btn btn-primary"
                     data-testid="lesson-create"
                     disabled={submitting || newTitle.trim().length === 0}
                 >
                     {t("curriculum.add_lesson", "Add lesson")}
-                </button>
+                </Button>
             </form>
 
             {lessons.length === 0 ? (
@@ -140,18 +140,17 @@ export default function LessonList({
                                     )}
                                 />
                                 <div className="lesson-row-actions">
-                                    <button
+                                    <Button
                                         type="button"
-                                        className="btn btn-secondary"
+                                        variant="outline"
                                         data-testid={`lesson-edit-cancel-${lesson.id}`}
                                         onClick={cancelEdit}
                                         disabled={submitting}
                                     >
                                         {t("common.cancel", "Cancel")}
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
                                         type="button"
-                                        className="btn btn-primary"
                                         data-testid={`lesson-edit-save-${lesson.id}`}
                                         onClick={() => void submitEdit(lesson.id)}
                                         disabled={
@@ -159,7 +158,7 @@ export default function LessonList({
                                         }
                                     >
                                         {t("common.save", "Save")}
-                                    </button>
+                                    </Button>
                                 </div>
                             </li>
                         ) : (
@@ -171,9 +170,10 @@ export default function LessonList({
                                 <div className="lesson-row-head">
                                     <strong className="lesson-title">{lesson.title}</strong>
                                     <div className="lesson-row-actions">
-                                        <button
+                                        <Button
                                             type="button"
-                                            className="topic-action-btn"
+                                            variant="ghost"
+                                            size="icon"
                                             data-testid={`lesson-edit-${lesson.id}`}
                                             onClick={() => startEdit(lesson)}
                                             aria-label={t(
@@ -190,10 +190,11 @@ export default function LessonList({
                                             }
                                         >
                                             ✎
-                                        </button>
-                                        <button
+                                        </Button>
+                                        <Button
                                             type="button"
-                                            className="topic-action-btn is-danger"
+                                            variant="destructive"
+                                            size="icon"
                                             data-testid={`lesson-delete-${lesson.id}`}
                                             onClick={() => void onDelete(lesson.id)}
                                             aria-label={t(
@@ -210,7 +211,7 @@ export default function LessonList({
                                             }
                                         >
                                             ✕
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                                 {lesson.content && parseEditorContent(lesson.content) ? (

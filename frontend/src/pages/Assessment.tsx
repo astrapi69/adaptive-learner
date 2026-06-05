@@ -1,6 +1,7 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
 import AssessmentProgress from "../components/AssessmentProgress";
 import ProfileRadar from "../components/ProfileRadar";
 import QuestionCard from "../components/QuestionCard";
@@ -299,17 +300,17 @@ export default function Assessment() {
                         label={t("assessment.read_summary", "Read summary")}
                         testId="assessment-result"
                     />
-                    <button
+                    <Button
                         type="button"
                         data-testid="assessment-continue"
-                        className="btn btn-primary"
+                        variant="default"
                         onClick={() => navigate("/dashboard")}
                     >
                         {t(
                             "assessment.continue_to_dashboard",
                             "Continue to dashboard",
                         )}
-                    </button>
+                    </Button>
                 </div>
             </main>
         );
@@ -373,9 +374,9 @@ export default function Assessment() {
             )}
 
             <div className="form-actions">
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     data-testid="assessment-prev"
                     onClick={() => {
                         dismissHint();
@@ -384,12 +385,12 @@ export default function Assessment() {
                     disabled={currentIndex === 0 || submitting}
                 >
                     {t("assessment.prev_question", "Previous question")}
-                </button>
+                </Button>
 
                 {currentIndex < total - 1 ? (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
+                        variant="default"
                         data-testid="assessment-next"
                         onClick={() => {
                             dismissHint();
@@ -401,11 +402,11 @@ export default function Assessment() {
                         }
                     >
                         {t("assessment.next_question", "Next question")}
-                    </button>
+                    </Button>
                 ) : (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
+                        variant="default"
                         data-testid="assessment-submit"
                         onClick={() => {
                             dismissHint();
@@ -416,7 +417,7 @@ export default function Assessment() {
                         {submitting
                             ? t("assessment.evaluating", "Evaluating…")
                             : t("assessment.submit", "Evaluate")}
-                    </button>
+                    </Button>
                 )}
             </div>
         </main>

@@ -1,4 +1,5 @@
 import HelpLink from "./help/HelpLink";
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {METHOD_COLORS, type LearningMethod} from "../lib/constants";
 import {bestTextOn} from "../styles/contrast";
@@ -54,22 +55,22 @@ export default function MethodSwitchBanner({
                 {reason ?? t("session.switch_recommended_subtitle")}
             </p>
             <div className="method-switch-actions">
-                <button
+                <Button
+                    variant="secondary"
                     type="button"
-                    className="btn btn-secondary"
                     data-testid="method-switch-dismiss"
                     onClick={onDismiss}
                 >
                     {t("session.switch_dismiss", "Keep current method")}
-                </button>
-                <button
+                </Button>
+                <Button
+                    variant="default"
                     type="button"
-                    className="btn btn-primary"
                     data-testid="method-switch-accept"
                     onClick={onAccept}
                 >
                     {t("session.switch_accept", "Switch method")}
-                </button>
+                </Button>
             </div>
         </aside>
     );

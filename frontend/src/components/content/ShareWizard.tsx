@@ -31,6 +31,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -709,14 +710,13 @@ export default function ShareWizard({
                   )}
                 </p>
                 {onRegenerate && (
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-primary"
                     onClick={onRegenerate}
                     data-testid="share-wizard-regenerate"
                   >
                     {t("content.wizard.regenerate", "Regenerate")}
-                  </button>
+                  </Button>
                 )}
               </div>
             )}
@@ -1040,14 +1040,14 @@ export default function ShareWizard({
                     />
                   )}
 
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-link"
+                    variant="link"
                     onClick={() => setShowDiff((v) => !v)}
                     data-testid="share-wizard-toggle-diff"
                   >
                     {t("content.wizard.show_differences", "Show differences")}
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}
@@ -1127,16 +1127,16 @@ export default function ShareWizard({
                       </p>
                     )}
                     <div className="share-wizard-copy-body">
-                      <button
+                      <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         onClick={copyPrBody}
                         data-testid="share-wizard-copy-pr-body"
                       >
                         {copied
                           ? t("content.wizard.copy_pr_body_done", "Copied!")
                           : t("content.wizard.copy_pr_body", "Copy pull-request description")}
-                      </button>
+                      </Button>
                       <textarea
                         className="share-wizard-pr-body"
                         data-testid="share-wizard-pr-body"
@@ -1200,15 +1200,15 @@ export default function ShareWizard({
                     role="alert"
                   >
                     <p>{prError}</p>
-                    <button
+                    <Button
                       type="button"
-                      className="btn btn-secondary"
+                      variant="secondary"
                       onClick={() => runUrlShare(buildShareContext())}
                       disabled={!online}
                       data-testid="share-wizard-pr-fallback"
                     >
                       {t("share.pr.fallback", "Share manually via GitHub instead")}
-                    </button>
+                    </Button>
                   </div>
                 ) : (
                   <>
@@ -1223,9 +1223,8 @@ export default function ShareWizard({
                         {t("share.pr.no_token", "Tip: add a GitHub token in Settings > Integrations to create the pull request automatically.")}
                       </p>
                     )}
-                    <button
+                    <Button
                       type="button"
-                      className="btn btn-primary"
                       onClick={doShare}
                       disabled={!online}
                       title={
@@ -1236,7 +1235,7 @@ export default function ShareWizard({
                       data-testid="share-wizard-share"
                     >
                       {t("content.wizard.share_button", "Share")}
-                    </button>
+                    </Button>
                   </>
                 )}
               </div>
@@ -1245,36 +1244,35 @@ export default function ShareWizard({
         )}
 
         <div className="form-actions share-wizard-nav">
-          <button
+          <Button
             type="button"
-            className="btn btn-secondary"
+            variant="secondary"
             onClick={onClose}
             data-testid="share-wizard-close"
           >
             {sharedUrl
               ? t("content.wizard.done", "Done")
               : t("content.validation.cancel", "Close")}
-          </button>
+          </Button>
           {step > 1 && !sharedUrl && (
-            <button
+            <Button
               type="button"
-              className="btn btn-secondary"
+              variant="secondary"
               onClick={() => setStep((s) => (s - 1) as Step)}
               data-testid="share-wizard-back"
             >
               {t("content.wizard.back", "Back")}
-            </button>
+            </Button>
           )}
           {step < TOTAL_STEPS && (
-            <button
+            <Button
               type="button"
-              className="btn btn-primary"
               onClick={() => setStep((s) => (s + 1) as Step)}
               disabled={step === 1 && step1Blocked}
               data-testid="share-wizard-next"
             >
               {t("content.wizard.next", "Continue")}
-            </button>
+            </Button>
           )}
         </div>
       </DialogContent>

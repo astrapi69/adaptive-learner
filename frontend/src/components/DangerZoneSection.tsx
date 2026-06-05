@@ -36,6 +36,7 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {clearLearnerState, readLearnerState} from "../lib/learnerState";
@@ -170,22 +171,21 @@ export default function DangerZoneSection() {
                         "Create a backup first?",
                     )}
                 </span>
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     data-testid="danger-zone-backup-btn"
                     onClick={handleBackup}
                     disabled={busy !== null}
                 >
                     {t("settings.danger_zone_backup_button", "Create backup")}
-                </button>
+                </Button>
             </div>
 
             {step === "idle" && (
-                <button
+                <Button
                     type="button"
-                    className="btn"
-                    style={dangerButtonStyle}
+                    variant="destructive"
                     data-testid="danger-zone-reset-btn"
                     onClick={() => setStep("confirm")}
                     disabled={busy !== null}
@@ -195,7 +195,7 @@ export default function DangerZoneSection() {
                     )}
                 >
                     ⚠️ {t("settings.danger_zone_reset_button", "Reset Everything")}
-                </button>
+                </Button>
             )}
 
             {step !== "idle" && (
@@ -263,19 +263,19 @@ export default function DangerZoneSection() {
                             </div>
                         )}
                         <div className="form-actions" style={{marginTop: 24}}>
-                            <button
+                            <Button
                                 type="button"
-                                className="btn btn-secondary"
+                                variant="secondary"
                                 data-testid="danger-zone-cancel"
                                 onClick={reset}
                                 disabled={busy === "reset"}
                             >
                                 {t("settings.danger_zone_cancel", "Cancel")}
-                            </button>
+                            </Button>
                             {step === "confirm" && (
-                                <button
+                                <Button
                                     type="button"
-                                    className="btn btn-primary"
+                                    variant="default"
                                     data-testid="danger-zone-continue"
                                     onClick={() => setStep("typed")}
                                 >
@@ -283,17 +283,12 @@ export default function DangerZoneSection() {
                                         "settings.danger_zone_continue",
                                         "Continue",
                                     )}
-                                </button>
+                                </Button>
                             )}
                             {step === "typed" && (
-                                <button
+                                <Button
                                     type="button"
-                                    className="btn"
-                                    style={
-                                        canSubmit
-                                            ? dangerButtonStyle
-                                            : dangerButtonDisabledStyle
-                                    }
+                                    variant="destructive"
                                     data-testid="danger-zone-final-btn"
                                     onClick={handleReset}
                                     disabled={!canSubmit}
@@ -304,7 +299,7 @@ export default function DangerZoneSection() {
                                               "settings.danger_zone_final_button",
                                               "Delete permanently",
                                           )}
-                                </button>
+                                </Button>
                             )}
                         </div>
                     </div>
@@ -330,20 +325,4 @@ const backupOfferStyle: React.CSSProperties = {
     borderRadius: 6,
     marginTop: 12,
     marginBottom: 16,
-};
-
-const dangerButtonStyle: React.CSSProperties = {
-    background: "var(--danger)",
-    color: "white",
-    border: "none",
-    padding: "0.5rem 1rem",
-    cursor: "pointer",
-    borderRadius: 4,
-    fontWeight: 600,
-};
-
-const dangerButtonDisabledStyle: React.CSSProperties = {
-    ...dangerButtonStyle,
-    background: "var(--surface-3)",
-    cursor: "not-allowed",
 };

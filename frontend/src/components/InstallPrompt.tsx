@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 
 /**
@@ -141,22 +142,22 @@ export default function InstallPrompt() {
                 </span>
             </div>
             <div className="install-prompt-actions">
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     data-testid="install-prompt-dismiss"
                     onClick={handleDismiss}
                 >
                     {t("install.dismiss", "Not now")}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
-                    className="btn btn-primary"
+                    variant="default"
                     data-testid="install-prompt-install"
                     onClick={handleInstall}
                 >
                     {t("install.install", "Install")}
-                </button>
+                </Button>
             </div>
         </div>
     );

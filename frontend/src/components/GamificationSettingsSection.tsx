@@ -16,6 +16,7 @@
 
 import {useEffect, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {
     readGamificationPrefs,
@@ -197,14 +198,14 @@ export default function GamificationSettingsSection() {
                         {t("gamification.gallery.title", "Badges")}
                     </span>
                 </span>
-                <button
+                <Button
                     type="button"
-                    className="btn"
+                    variant="secondary"
                     data-testid="settings-view-all-badges"
                     onClick={handleOpenGallery}
                 >
                     {t("gamification.gallery.view_all", "View all badges")}
-                </button>
+                </Button>
             </div>
 
             <BadgeGallery
@@ -273,14 +274,9 @@ export default function GamificationSettingsSection() {
                         )}
                     </span>
                 </span>
-                <button
+                <Button
                     type="button"
-                    className={
-                        "btn " +
-                        (confirmCount === 0
-                            ? "btn-secondary"
-                            : "btn-destructive")
-                    }
+                    variant={confirmCount === 0 ? "secondary" : "destructive"}
                     data-testid="settings-reset-progress-button"
                     data-confirm-count={confirmCount}
                     disabled={resetting || !userId}
@@ -297,7 +293,7 @@ export default function GamificationSettingsSection() {
                                 "settings.reset_confirm_second",
                                 "Click once more to delete forever",
                             )}
-                </button>
+                </Button>
             </div>
         </section>
     );

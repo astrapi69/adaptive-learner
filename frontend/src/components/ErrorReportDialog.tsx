@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import {Bug, Check, ChevronDown, ChevronUp, Copy} from "lucide-react";
 
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {copyToClipboard} from "../utils/clipboard";
@@ -286,9 +287,9 @@ export default function ErrorReportDialog({
                             )}{" "}
                             ({events.length})
                             {events.length > 0 && (
-                                <button
+                                <Button
                                     type="button"
-                                    className="btn btn-secondary"
+                                    variant="secondary"
                                     onClick={() =>
                                         setShowHistory(!showHistory)
                                     }
@@ -296,8 +297,6 @@ export default function ErrorReportDialog({
                                         marginLeft: 4,
                                         padding: "1px 6px",
                                         fontSize: "0.75rem",
-                                        display: "inline-flex",
-                                        alignItems: "center",
                                         gap: 2,
                                     }}
                                 >
@@ -310,7 +309,7 @@ export default function ErrorReportDialog({
                                         "ui.error_report.view",
                                         "View",
                                     )}
-                                </button>
+                                </Button>
                             )}
                         </label>
                     </div>
@@ -358,9 +357,9 @@ export default function ErrorReportDialog({
                             marginTop: "var(--space-2)",
                         }}
                     >
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
                             onClick={() => setShowPreview(!showPreview)}
                             data-testid="error-report-toggle-preview"
                         >
@@ -373,17 +372,13 @@ export default function ErrorReportDialog({
                                       "ui.error_report.preview",
                                       "Show preview",
                                   )}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
                             onClick={handleCopyPreview}
                             data-testid="error-report-copy-preview"
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: 4,
-                            }}
+                            style={{gap: 4}}
                         >
                             {copyState === "ok" ? (
                                 <Check size={14} />
@@ -401,33 +396,28 @@ export default function ErrorReportDialog({
                                         "ui.error_report.copy_preview",
                                         "Copy preview",
                                     )}
-                        </button>
+                        </Button>
                         <div style={{flexGrow: 1}} />
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
                             onClick={onClose}
                             data-testid="error-report-close"
                         >
                             {t("ui.error_report.close", "Close")}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
-                            className="btn btn-primary"
                             onClick={handleSubmit}
                             data-testid="error-report-submit"
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                gap: 4,
-                            }}
+                            style={{gap: 4}}
                         >
                             <Bug size={14} />
                             {t(
                                 "ui.error_report.open_github",
                                 "Open on GitHub",
                             )}
-                        </button>
+                        </Button>
                     </div>
                 </Dialog.Content>
             </Dialog.Portal>

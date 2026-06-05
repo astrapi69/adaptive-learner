@@ -15,6 +15,7 @@
 
 import {useEffect, useMemo, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {
@@ -246,18 +247,17 @@ export default function ExportSection() {
                 <div className="export-row-label">{label}</div>
                 {children}
                 <div className="export-row-actions">
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         disabled={busy !== null}
                         onClick={() => void showPreview(type)}
                         data-testid={`export-preview-${type}`}
                     >
                         {t("export.preview", "Preview")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         disabled={busy !== null}
                         onClick={() => void performExport(type, "md")}
                         data-testid={`export-md-${type}`}
@@ -265,10 +265,9 @@ export default function ExportSection() {
                         {busy === `${type}-md`
                             ? t("export.busy", "Working...")
                             : t("export.download_md", "Markdown")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         disabled={busy !== null}
                         onClick={() => void performExport(type, "pdf")}
                         data-testid={`export-pdf-${type}`}
@@ -276,7 +275,7 @@ export default function ExportSection() {
                         {busy === `${type}-pdf`
                             ? t("export.busy", "Working...")
                             : t("export.download_pdf", "PDF")}
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -349,13 +348,13 @@ export default function ExportSection() {
                 >
                     <div className="export-preview-header">
                         <h3>{t("export.preview_title", "Preview")}</h3>
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
                             onClick={() => setPreview(null)}
                         >
                             {t("export.preview_close", "Close")}
-                        </button>
+                        </Button>
                     </div>
                     <pre className="export-preview-body">
                         {shortPreview(preview.markdown, 30)}

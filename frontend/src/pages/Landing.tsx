@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {toast} from "react-toastify";
 
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {SUPPORTED_LANGUAGES, type SupportedLanguage} from "../lib/constants";
@@ -204,14 +205,15 @@ export default function Landing() {
                 </div>
             </section>
 
-            <button
+            <Button
                 type="button"
                 data-testid="landing-start"
+                variant="default"
                 className="landing-cta"
                 onClick={() => navigate("/onboarding")}
             >
                 {t("landing.start_button", "Start your learning journey")}
-            </button>
+            </Button>
 
             <p className="landing-secondary">
                 <a

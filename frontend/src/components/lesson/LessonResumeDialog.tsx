@@ -16,6 +16,7 @@
 
 import {PlayCircle, RotateCcw} from "lucide-react";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/useI18n";
 
 export interface LessonResumeDialogProps {
@@ -54,24 +55,23 @@ export default function LessonResumeDialog({
                     ).replace("{title}", lessonTitle)}
                 </p>
                 <div className="lesson-resume-actions">
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         onClick={onResume}
                         data-testid="lesson-resume-continue"
                     >
                         <PlayCircle size={16} aria-hidden="true" />
                         {t("lesson.resume.action_resume", "Continue")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn"
+                        variant="outline"
                         onClick={onStartOver}
                         data-testid="lesson-resume-restart"
                     >
                         <RotateCcw size={16} aria-hidden="true" />
                         {t("lesson.resume.action_restart", "Start over")}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

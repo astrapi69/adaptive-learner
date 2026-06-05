@@ -26,6 +26,7 @@ import {useEffect, useState} from "react";
 import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import RichTextEditor from "./editor/RichTextEditor";
 import EditorToolbar from "./editor/EditorToolbar";
@@ -118,16 +119,16 @@ export default function CurriculumDescriptionEditor({
                     </p>
                 )}
                 <div className="curriculum-description-actions">
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         data-testid={`${testidNamespace}-edit`}
                         onClick={startEdit}
                     >
                         {hasDescription
                             ? t("curriculum.edit_description", "Edit description")
                             : t("curriculum.add_description", "Add description")}
-                    </button>
+                    </Button>
                 </div>
             </div>
         );
@@ -159,24 +160,24 @@ export default function CurriculumDescriptionEditor({
                 )}
             />
             <div className="curriculum-description-actions">
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     data-testid={`${testidNamespace}-cancel`}
                     onClick={cancelEdit}
                     disabled={submitting}
                 >
                     {t("common.cancel", "Cancel")}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
-                    className="btn btn-primary"
+                    variant="default"
                     data-testid={`${testidNamespace}-save`}
                     onClick={() => void submitEdit()}
                     disabled={submitting}
                 >
                     {t("common.save", "Save")}
-                </button>
+                </Button>
             </div>
         </div>
     );

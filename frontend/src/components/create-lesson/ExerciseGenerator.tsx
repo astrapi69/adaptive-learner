@@ -31,6 +31,7 @@ import {
 } from "@dnd-kit/sortable";
 import {CSS} from "@dnd-kit/utilities";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/useI18n";
 import type {
     ExerciseGenConfig,
@@ -167,9 +168,8 @@ export default function ExerciseGenerator({
                 </label>
 
                 <div className="form-actions">
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         data-testid="exercise-generate"
                         onClick={onGenerate}
                         disabled={config.types.length === 0}
@@ -181,7 +181,7 @@ export default function ExerciseGenerator({
                                   "Auto-generate exercises",
                               )
                             : t("create_lesson.exercises.regenerate", "Regenerate")}
-                    </button>
+                    </Button>
                 </div>
             </div>
 

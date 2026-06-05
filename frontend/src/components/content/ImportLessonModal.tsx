@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { useI18n } from "../../hooks/useI18n";
 import {
   parseImportFile,
@@ -128,18 +129,17 @@ export default function ImportLessonModal({
           </p>
         )}
         <div className="form-actions">
-          <button
+          <Button
             type="button"
-            className="btn btn-secondary"
+            variant="secondary"
             data-testid="import-lesson-cancel"
             onClick={onCancel}
             disabled={importing}
           >
             {t("common.cancel", "Cancel")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="btn btn-primary"
             data-testid="import-lesson-confirm"
             onClick={doImport}
             disabled={importing || !parsed}
@@ -147,7 +147,7 @@ export default function ImportLessonModal({
             {importing
               ? t("common.loading", "Loading…")
               : t("content.import_lesson.import", "Import")}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

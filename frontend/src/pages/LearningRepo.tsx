@@ -24,6 +24,7 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 
+import {Button} from "@/components/ui/button";
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {getStorage, resolveStorageMode} from "../storage";
@@ -150,25 +151,35 @@ export default function LearningRepoPage() {
             <header className="learning-repo-header">
                 <h1>{t("repo.page.title", "Learning Repository")}</h1>
                 <div className="learning-repo-actions">
-                    <button
+                    <Button
                         type="button"
+                        variant="secondary"
                         onClick={loadRepo}
                         data-testid="repo-rerender-btn"
                         aria-label={t("repo.action.rerender", "Re-render")}
+                        title={t("repo.action.rerender", "Re-render")}
                     >
                         <RefreshCw size={16} />
-                        {t("repo.action.rerender", "Re-render")}
-                    </button>
-                    <button
+                        <span className="hidden md:inline">
+                            {t("repo.action.rerender", "Re-render")}
+                        </span>
+                    </Button>
+                    <Button
                         type="button"
+                        variant="secondary"
                         onClick={handleDownloadZip}
                         data-testid="repo-download-zip-btn"
+                        aria-label={t("repo.action.download_zip", "Download ZIP")}
+                        title={t("repo.action.download_zip", "Download ZIP")}
                     >
                         <Download size={16} />
-                        {t("repo.action.download_zip", "Download ZIP")}
-                    </button>
-                    <button
+                        <span className="hidden md:inline">
+                            {t("repo.action.download_zip", "Download ZIP")}
+                        </span>
+                    </Button>
+                    <Button
                         type="button"
+                        variant="secondary"
                         onClick={handlePersist}
                         // Phase 49G: persist needs a server-
                         // side filesystem + git binary;
@@ -176,9 +187,10 @@ export default function LearningRepoPage() {
                         // friendly tooltip explaining why.
                         // Decision F from the v1.32.0 plan.
                         disabled={persisting || storageMode !== "api"}
+                        aria-label={t("repo.action.persist", "Persist to git")}
                         title={
                             storageMode === "api"
-                                ? undefined
+                                ? t("repo.action.persist", "Persist to git")
                                 : t(
                                       "repo.action.persist_dexie_tooltip",
                                       "Git versioning is only available in server mode.",
@@ -187,10 +199,12 @@ export default function LearningRepoPage() {
                         data-testid="repo-persist-btn"
                     >
                         <GitCommit size={16} />
-                        {persisting
-                            ? t("repo.action.persisting", "Persisting…")
-                            : t("repo.action.persist", "Persist to git")}
-                    </button>
+                        <span className="hidden md:inline">
+                            {persisting
+                                ? t("repo.action.persisting", "Persisting…")
+                                : t("repo.action.persist", "Persist to git")}
+                        </span>
+                    </Button>
                 </div>
             </header>
             <p className="learning-repo-meta">

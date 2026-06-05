@@ -3,6 +3,7 @@ import { FlaskConical, Save, Trash2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
+import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import AboutTab from "../components/about/AboutTab";
 import IdentitySection from "../components/about/IdentitySection";
@@ -702,25 +703,24 @@ export default function Settings() {
                     (settings[`has_${provider}_key`] as boolean) ?? false
                   }
                 />
-                <button
+                <Button
                   type="button"
-                  className="btn btn-primary"
                   data-testid={`model-override-save-${provider}`}
                   onClick={() => handleSaveModel(provider)}
                   disabled={busy === `save-model-${provider}` || !dirty}
                 >
                   {t("settings.model_override_save", "Save model")}
-                </button>
+                </Button>
                 {current && (
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     data-testid={`model-override-clear-${provider}`}
                     onClick={() => handleClearModel(provider)}
                     disabled={busy === `clear-model-${provider}`}
                   >
                     {t("settings.model_override_clear", "Use default")}
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -874,9 +874,8 @@ export default function Settings() {
                     </span>
                   )}
                 </span>
-                <button
+                <Button
                   type="button"
-                  className="btn btn-primary min-h-[44px]"
                   data-testid={`api-key-save-${provider}`}
                   onClick={() => handleSaveKey(provider)}
                   disabled={
@@ -891,11 +890,11 @@ export default function Settings() {
                   <span className="hidden md:inline">
                     {t("settings.api_key_set", "Save key")}
                   </span>
-                </button>
+                </Button>
                 {(has || formatState === "valid") && (
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-secondary min-h-[44px]"
+                    variant="secondary"
                     data-testid={`api-key-test-${provider}`}
                     onClick={() => handleTestKey(provider)}
                     disabled={busy === `test-${provider}`}
@@ -920,12 +919,12 @@ export default function Settings() {
                         ? t("settings.api_key.testing", "Testing…")
                         : t("settings.api_key.test", "Test")}
                     </span>
-                  </button>
+                  </Button>
                 )}
                 {has && !externallyManaged && (
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-danger min-h-[44px]"
+                    variant="destructive"
                     data-testid={`api-key-delete-${provider}`}
                     onClick={() => handleDeleteKey(provider)}
                     disabled={busy === `delete-${provider}`}
@@ -936,7 +935,7 @@ export default function Settings() {
                     <span className="hidden md:inline">
                       {t("settings.api_key_delete", "Remove key")}
                     </span>
-                  </button>
+                  </Button>
                 )}
               </div>
               {testResults[provider] && (
@@ -991,35 +990,34 @@ export default function Settings() {
                     )}
                   </p>
                   <div className="api-key-rollback-actions">
-                    <button
+                    <Button
                       type="button"
-                      className="btn btn-primary"
                       data-testid={`api-key-rollback-keep-${provider}`}
                       onClick={() => handleKeepOldKey(provider)}
                     >
                       {t("settings.api_key.rollback_keep_old", "Keep old key")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
-                      className="btn btn-secondary"
+                      variant="secondary"
                       data-testid={`api-key-rollback-save-anyway-${provider}`}
                       onClick={() => handleSaveAnyway(provider)}
                       disabled={busy === `save-${provider}`}
                     >
                       {t("settings.api_key.rollback_save_anyway", "Save anyway")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
-                      className="btn btn-link"
+                      variant="link"
                       data-testid={`api-key-rollback-cancel-${provider}`}
                       onClick={handleDismissRollback}
                     >
                       {t("settings.api_key.rollback_cancel", "Cancel")}
-                    </button>
+                    </Button>
                     {backupAvailable[provider] && (
-                      <button
+                      <Button
                         type="button"
-                        className="btn btn-link"
+                        variant="link"
                         data-testid={`api-key-restore-${provider}`}
                         onClick={() => handleRestoreBackup(provider)}
                         disabled={busy === `restore-${provider}`}
@@ -1028,7 +1026,7 @@ export default function Settings() {
                           "settings.api_key.rollback_restore",
                           "Restore last working key",
                         )}
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -1037,9 +1035,10 @@ export default function Settings() {
                 rollbackPrompt?.provider !== provider &&
                 testResults[provider] &&
                 !testResults[provider]!.success && (
-                  <button
+                  <Button
                     type="button"
-                    className="btn btn-link api-key-restore-link"
+                    variant="link"
+                    className="api-key-restore-link"
                     data-testid={`api-key-restore-link-${provider}`}
                     onClick={() => handleRestoreBackup(provider)}
                     disabled={busy === `restore-${provider}`}
@@ -1048,7 +1047,7 @@ export default function Settings() {
                       "settings.api_key.rollback_restore",
                       "Restore last working key",
                     )}
-                  </button>
+                  </Button>
                 )}
             </div>
           );
