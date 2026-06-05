@@ -105,6 +105,13 @@ class TableSpec:
     append_only: bool
     order: int
     scope: str = "direct"
+    # Optional NATURAL unique key (a non-PK column with a UNIQUE
+    # constraint, e.g. ``badges.key``). Seeded catalog tables get a
+    # random ``id`` per install, so a backup row's ``id`` may not match
+    # the locally-seeded row that shares the same natural key. Restore
+    # matches on this key when the id lookup misses, updating the local
+    # row in place instead of INSERTing a duplicate key (issue #49).
+    natural_key: str | None = None
 
 
 # Common timestamp fields per table. Append-only tables use their
@@ -468,6 +475,9 @@ TABLES: dict[str, TableSpec] = {
         append_only=False,
         order=24,
         scope="global",
+        # Seeded catalog: random id per install, UNIQUE on key. Restore
+        # must match on key, not the (install-specific) id (issue #49).
+        natural_key="key",
     ),
     # v1.16.0 / Phase 29B — earned-badge record. Unique on
     # (user_id, badge_id). v1.40.0 / Phase 57: MUTABLE (was

@@ -229,15 +229,32 @@ def _apply_columns(table: str, record: dict[str, Any], target: Any, *, allow_pk:
         setattr(target, col, coerced.get(col, record[col]))
 
 
+# Cross-install FK remap (issue #49). When a parent row is matched by
+# its NATURAL key under a different id than the backup carried, child
+# rows that reference it by id must be redirected to the LOCAL id.
+# ``{child_table: {fk_column: parent_table}}`` — the parent is always
+# restored first (FK-topological _RESTORE_ORDER), so its remap is ready.
+_FK_REMAP: dict[str, dict[str, str]] = {
+    "user_badges": {"badge_id": "badges"},
+}
+
+
 def _restore_table(
     db: Session,
     table: str,
     records: list[dict[str, Any]],
     user_id: str,
+    id_remap: dict[str, dict[str, str]],
 ) -> dict[str, Any]:
-    """Restore one table's worth of records. Returns per-table summary."""
+    """Restore one table's worth of records. Returns per-table summary.
+
+    ``id_remap`` accumulates ``{parent_table: {backup_id: local_id}}``
+    so a natural-key match on a seeded catalog row (e.g. ``badges``)
+    redirects child FKs (e.g. ``user_badges.badge_id``) to the local id.
+    """
     spec = _spec(table)
     model = spec.model
+    fk_remap = _FK_REMAP.get(table, {})
     inserted = 0
     updated = 0
     skipped = 0
@@ -248,8 +265,31 @@ def _restore_table(
             skipped += 1
             errors.append(f"{table}: record missing 'id'")
             continue
+        # Redirect any FK columns whose parent was matched by natural
+        # key under a different local id (issue #49).
+        for fk_col, parent_table in fk_remap.items():
+            fk_value = record.get(fk_col)
+            if not isinstance(fk_value, str):
+                continue
+            mapped = id_remap.get(parent_table, {}).get(fk_value)
+            if mapped is not None and mapped != fk_value:
+                record = {**record, fk_col: mapped}
         try:
             existing = db.get(model, record_id)
+            # Seeded-catalog fallback: the backup id missed, but a row
+            # with the same natural key exists locally under a different
+            # id (the install re-seeded the catalog). Match it, update in
+            # place, and remember the id mapping for child FKs.
+            if existing is None and spec.natural_key is not None:
+                key_value = record.get(spec.natural_key)
+                if key_value is not None:
+                    existing = (
+                        db.query(model)
+                        .filter(getattr(model, spec.natural_key) == key_value)
+                        .one_or_none()
+                    )
+                    if existing is not None:
+                        id_remap.setdefault(table, {})[record_id] = existing.id
             if existing is None:
                 # Defensive user-scope check: never insert a row
                 # claiming to belong to a different user.
@@ -371,13 +411,16 @@ def restore_backup(
     total_updated = 0
     total_skipped = 0
     all_errors: list[str] = []
+    # Accumulates {parent_table: {backup_id: local_id}} for natural-key
+    # matches so child FKs are redirected to the local id (issue #49).
+    id_remap: dict[str, dict[str, str]] = {}
 
     for table in _RESTORE_ORDER:
         records = data.get(table, [])
         if not isinstance(records, list):
             all_errors.append(f"{table}: expected list, got {type(records).__name__}")
             continue
-        summary = _restore_table(db, table, records, user_id)
+        summary = _restore_table(db, table, records, user_id, id_remap)
         # Flush after each table so the explicit FK-safe _RESTORE_ORDER
         # (parents first) is what actually drives insert order. The
         # session runs with autoflush=False and a single commit would
