@@ -18,6 +18,7 @@
 import {Download, Upload} from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {BackupCompare} from "./BackupCompare";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
@@ -105,6 +106,9 @@ export default function BackupSection() {
     const storage = getStorage();
     const storageMode = resolveStorageMode();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    // Bug 2: after a restore (success or failure) scroll the section
+    // back to the top so the prominent action buttons stay visible.
+    const sectionRef = useRef<HTMLElement>(null);
     const {userId} = readLearnerState();
 
     const [busy, setBusy] = useState<"export" | "import" | null>(null);
@@ -414,6 +418,18 @@ export default function BackupSection() {
         }
     }
 
+    function scrollSectionToTop() {
+        // Bug 2: keep the prominent action buttons in view after a
+        // restore. The lesson/settings scroll container is ``#root``;
+        // ``scrollIntoView`` walks to whichever ancestor scrolls.
+        requestAnimationFrame(() => {
+            sectionRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        });
+    }
+
     async function handleConfirmRestore() {
         if (pendingPayload === null || userId === null) {
             return;
@@ -459,6 +475,7 @@ export default function BackupSection() {
             );
         } finally {
             setBusy(null);
+            scrollSectionToTop();
         }
     }
 
@@ -471,6 +488,7 @@ export default function BackupSection() {
 
     return (
         <section
+            ref={sectionRef}
             className="settings-section"
             data-testid="settings-backup"
         >
@@ -484,13 +502,14 @@ export default function BackupSection() {
                 )}
             </p>
 
-            <div className="backup-actions">
-                <button
+            <div className="backup-actions flex flex-col gap-2 md:flex-row">
+                <Button
                     type="button"
+                    variant="default"
                     onClick={handleExport}
                     disabled={busy !== null}
                     data-testid="backup-export"
-                    className="primary inline-flex min-h-[44px] items-center justify-center gap-2"
+                    className="w-full md:w-auto"
                     aria-label={
                         busy === "export"
                             ? t("backup.exporting", "Exporting…")
@@ -508,13 +527,14 @@ export default function BackupSection() {
                             ? t("backup.exporting", "Exporting…")
                             : t("backup.export", "Create Backup")}
                     </span>
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
+                    variant="outline"
                     onClick={handlePickFile}
                     disabled={busy !== null}
                     data-testid="backup-import"
-                    className="inline-flex min-h-[44px] items-center justify-center gap-2"
+                    className="w-full md:w-auto"
                     aria-label={
                         busy === "import"
                             ? t("backup.importing", "Restoring…")
@@ -532,7 +552,7 @@ export default function BackupSection() {
                             ? t("backup.importing", "Restoring…")
                             : t("backup.import", "Restore from Backup")}
                     </span>
-                </button>
+                </Button>
                 <input
                     ref={fileInputRef}
                     type="file"
