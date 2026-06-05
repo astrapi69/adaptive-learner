@@ -1,3 +1,8 @@
+// The Dexie-mode regression test (issue #51) drives the storage-row-count
+// effect down the Dexie branch, which opens IndexedDB. Provide an
+// in-memory implementation so it resolves instead of throwing.
+import "fake-indexeddb/auto";
+
 import {
   render,
   screen,
@@ -48,6 +53,17 @@ vi.mock("../api/client", async () => {
       },
     },
   };
+});
+
+// Issue #51 — drive resolveStorageMode() without touching the real
+// storage factory (so the page still loads via the mocked api client).
+// Mutated per-test; defaults to "api" so every existing test is
+// unaffected.
+const storageState = vi.hoisted(() => ({ mode: "api" as "api" | "dexie" }));
+vi.mock("../storage", async () => {
+  const actual =
+    await vi.importActual<typeof import("../storage")>("../storage");
+  return { ...actual, resolveStorageMode: () => storageState.mode };
 });
 
 const toastSuccess = vi.fn();
@@ -112,9 +128,32 @@ describe("Settings page", () => {
     toastError.mockReset();
     localStorage.clear();
     localStorage.setItem("adaptive-learner.user_id", "u-1");
+    storageState.mode = "api";
   });
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  // Issue #51 — Sync needs a reachable backend; it must not be
+  // offered in Dexie mode (GitHub Pages / PWA-only, no backend).
+  it("renders the Sync section in the Data tab when a backend is available (API mode)", async () => {
+    storageState.mode = "api";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    expect(screen.getByTestId("settings-sync")).toBeInTheDocument();
+  });
+
+  it("hides the Sync section in Dexie mode (no backend)", async () => {
+    storageState.mode = "dexie";
+    apiGet.mockResolvedValue(BASE);
+    renderSettings("/settings?tab=data");
+    await screen.findByTestId("settings");
+    // The Data panel still renders (Backup stays available)...
+    expect(screen.getByTestId("settings-panel-data")).toBeVisible();
+    expect(screen.getByTestId("settings-backup")).toBeInTheDocument();
+    // ...but the Sync section is not in the DOM at all.
+    expect(screen.queryByTestId("settings-sync")).not.toBeInTheDocument();
   });
 
   it("redirects to /onboarding when user_id is missing", async () => {
