@@ -38,8 +38,8 @@ import argparse
 import datetime
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
-from typing import Iterator
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ROADMAP = REPO_ROOT / "docs" / "ROADMAP.md"
@@ -48,9 +48,12 @@ ARCHIVE_DIR = REPO_ROOT / "docs" / "roadmap-archive"
 
 # ``- [x] **TASK-ID**: description``  (the optional colon + space matches both
 # styles seen in the wild; the ID prefix mirrors the project's naming
-# convention.)
+# convention.) The ID is one-or-more uppercase-alnum segments joined by
+# hyphens and ending in ``-NN`` (optional trailing lowercase, e.g. ``T-01a``),
+# so BOTH single-segment (``T-01``, ``DEP-09``) and multi-segment IDs
+# (``BACKUP-API-RESTORE-01``, ``BADGE-EVAL-NPLUS1-01``) match.
 DONE_RE = re.compile(
-    r"^(\s*)-\s*\[x\]\s*\*\*([A-Z]+-[0-9]+[a-z]*)\*\*:?\s*(.*)$"
+    r"^(\s*)-\s*\[x\]\s*\*\*([A-Z][A-Z0-9]*(?:-[A-Z0-9]+)*-[0-9]+[a-z]*)\*\*:?\s*(.*)$"
 )
 SECTION_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
 
