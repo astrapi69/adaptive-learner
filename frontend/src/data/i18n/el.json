@@ -2167,5 +2167,19 @@
       "err_github": "Το GitHub απέρριψε το αίτημα: {detail}",
       "err_network": "Δεν ήταν δυνατή η σύνδεση με το GitHub. Έλεγξε τη σύνδεσή σου και δοκίμασε ξανά."
     }
+  },
+  "taxonomy": {
+    "filter_title": "Φιλτράρισμα έργων",
+    "loading": "Φόρτωση φίλτρων…",
+    "filter_load_failed": "Αποτυχία φόρτωσης δεδομένων φίλτρου.",
+    "subject": "Θέμα",
+    "all_subjects": "Όλα τα θέματα",
+    "all_projects": "Όλα τα έργα ({count})",
+    "filtered_projects": "Έργα που ταιριάζουν ({count})",
+    "clear_filters": "Εκκαθάριση φίλτρων",
+    "tags": "Ετικέτες",
+    "no_user_tags_short": "Δεν υπάρχουν ακόμη ετικέτες.",
+    "no_matching_projects": "Δεν υπάρχουν έργα που να ταιριάζουν.",
+    "no_projects": "Δεν υπάρχουν ακόμη έργα."
   }
 }

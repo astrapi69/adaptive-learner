@@ -2167,5 +2167,19 @@
       "err_github": "GitHub a refusé la requête : {detail}",
       "err_network": "Impossible de joindre GitHub. Vérifie ta connexion et réessaie."
     }
+  },
+  "taxonomy": {
+    "filter_title": "Filtrer les projets",
+    "loading": "Chargement des filtres…",
+    "filter_load_failed": "Échec du chargement des données de filtre.",
+    "subject": "Matière",
+    "all_subjects": "Toutes les matières",
+    "all_projects": "Tous les projets ({count})",
+    "filtered_projects": "Projets correspondants ({count})",
+    "clear_filters": "Effacer les filtres",
+    "tags": "Étiquettes",
+    "no_user_tags_short": "Pas encore d'étiquettes.",
+    "no_matching_projects": "Aucun projet correspondant.",
+    "no_projects": "Pas encore de projets."
   }
 }

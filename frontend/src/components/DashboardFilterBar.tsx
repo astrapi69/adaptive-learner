@@ -296,8 +296,14 @@ export default function DashboardFilterBar({
             >
                 <h3>
                     {hasFilter
-                        ? t("taxonomy.filtered_projects", `Matching projects (${matched.length})`)
-                        : t("taxonomy.all_projects", `All projects (${projects.length})`)}
+                        ? t(
+                              "taxonomy.filtered_projects",
+                              "Matching projects ({count})",
+                          ).replace("{count}", String(matched.length))
+                        : t(
+                              "taxonomy.all_projects",
+                              "All projects ({count})",
+                          ).replace("{count}", String(projects.length))}
                 </h3>
                 {matched.length === 0 ? (
                     <p

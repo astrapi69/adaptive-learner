@@ -2167,5 +2167,19 @@
       "err_github": "O GitHub rejeitou o pedido: {detail}",
       "err_network": "Não foi possível contactar o GitHub. Verifica a tua ligação e tenta novamente."
     }
+  },
+  "taxonomy": {
+    "filter_title": "Filtrar projetos",
+    "loading": "A carregar filtros…",
+    "filter_load_failed": "Falha ao carregar os dados de filtro.",
+    "subject": "Disciplina",
+    "all_subjects": "Todas as disciplinas",
+    "all_projects": "Todos os projetos ({count})",
+    "filtered_projects": "Projetos correspondentes ({count})",
+    "clear_filters": "Limpar filtros",
+    "tags": "Etiquetas",
+    "no_user_tags_short": "Ainda não há etiquetas.",
+    "no_matching_projects": "Nenhum projeto corresponde.",
+    "no_projects": "Ainda não há projetos."
   }
 }

@@ -1973,3 +1973,17 @@ share:
     err_rate: "GitHub rate limit reached. Please try again later."
     err_github: "GitHub rejected the request: {detail}"
     err_network: "Could not reach GitHub. Check your connection and try again."
+
+taxonomy:
+  filter_title: "Filter projects"
+  loading: "Loading filters…"
+  filter_load_failed: "Failed to load filter data."
+  subject: "Subject"
+  all_subjects: "All subjects"
+  all_projects: "All projects ({count})"
+  filtered_projects: "Matching projects ({count})"
+  clear_filters: "Clear filters"
+  tags: "Tags"
+  no_user_tags_short: "No tags yet."
+  no_matching_projects: "No projects match."
+  no_projects: "No projects yet."

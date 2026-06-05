@@ -1967,3 +1967,17 @@ share:
     err_rate: "GitHub-Ratenlimit erreicht. Bitte versuche es später erneut."
     err_github: "GitHub hat die Anfrage abgelehnt: {detail}"
     err_network: "GitHub konnte nicht erreicht werden. Prüfe deine Verbindung und versuche es erneut."
+
+taxonomy:
+  filter_title: "Projekte filtern"
+  loading: "Filter werden geladen…"
+  filter_load_failed: "Filterdaten konnten nicht geladen werden."
+  subject: "Fach"
+  all_subjects: "Alle Fächer"
+  all_projects: "Alle Projekte ({count})"
+  filtered_projects: "Passende Projekte ({count})"
+  clear_filters: "Filter zurücksetzen"
+  tags: "Schlagwörter"
+  no_user_tags_short: "Noch keine Schlagwörter."
+  no_matching_projects: "Keine passenden Projekte."
+  no_projects: "Noch keine Projekte."
