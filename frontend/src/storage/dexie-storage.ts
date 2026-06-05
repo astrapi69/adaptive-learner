@@ -1688,8 +1688,8 @@ export const dexieStorage: IStorageService = {
           repository_url: "https://github.com/astrapi69/adaptive-learner",
           issues_url: "https://github.com/astrapi69/adaptive-learner/issues",
           docs_url: "https://astrapi69.github.io/adaptive-learner/docs/",
-          build_hash: "unknown",
-          build_date: "unknown",
+          build_hash: __BUILD_HASH__,
+          build_date: __BUILD_DATE__,
         },
         runtime: {
           python_version: null,
