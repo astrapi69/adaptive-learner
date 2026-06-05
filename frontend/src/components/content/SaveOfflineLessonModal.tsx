@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { useI18n } from "../../hooks/useI18n";
 import {
   cefrFromAnalysisLevel,
@@ -325,18 +326,17 @@ export default function SaveOfflineLessonModal({
           </p>
         )}
         <div className="form-actions">
-          <button
+          <Button
             type="button"
-            className="btn btn-secondary"
+            variant="secondary"
             data-testid="save-lesson-cancel"
             onClick={onCancel}
             disabled={saving}
           >
             {t("common.cancel", "Cancel")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="btn btn-primary"
             data-testid="save-lesson-save"
             onClick={save}
             disabled={saving || !canSave}
@@ -344,7 +344,7 @@ export default function SaveOfflineLessonModal({
             {saving
               ? t("common.loading", "Loading…")
               : t("content.save_lesson.save", "Save")}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

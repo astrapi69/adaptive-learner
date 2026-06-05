@@ -24,6 +24,7 @@ import DashboardBadgeWidget from "../components/badges/DashboardBadgeWidget";
 import DailyMissionsCard from "../components/DailyMissionsCard";
 import StreakCalendar from "../components/StreakCalendar";
 import StreakWidget from "../components/StreakWidget";
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useApiKeyStatus} from "../hooks/useApiKeyStatus";
 import {useI18n} from "../hooks/useI18n";
@@ -249,22 +250,22 @@ export default function Dashboard() {
                             "Configure an API key in Settings to use AI features.",
                         )}
                     </span>
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
+                        variant="default"
                         onClick={() => navigate("/settings#api-keys")}
                         data-testid="api-key-skip-banner-settings"
                     >
                         {t("ui.api_key.open_settings", "Open Settings")} →
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         onClick={dismissApiKeyBanner}
                         data-testid="api-key-skip-banner-dismiss"
                     >
                         {t("ui.api_key.skip_banner_dismiss", "Dismiss")}
-                    </button>
+                    </Button>
                 </div>
             )}
             {apiKey.ready && !apiKey.hasKey && (
@@ -285,9 +286,10 @@ export default function Dashboard() {
                 mobile (min 44px touch target), icon + label from md up. */}
             <div className="mb-4 flex flex-wrap items-center gap-2">
                 {pronunciationEligible && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary dashboard-pronunciation-quick-start flex min-h-[44px] items-center gap-2"
+                        variant="secondary"
+                        className="dashboard-pronunciation-quick-start"
                         onClick={() => navigate("/pronunciation")}
                         title={t(
                             "dashboard.pronunciation_quick_start",
@@ -306,12 +308,13 @@ export default function Dashboard() {
                                 "Pronunciation Practice",
                             )}
                         </span>
-                    </button>
+                    </Button>
                 )}
 
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary dashboard-create-lesson flex min-h-[44px] items-center gap-2"
+                    variant="secondary"
+                    className="dashboard-create-lesson"
                     onClick={() => navigate("/create-lesson")}
                     title={t("dashboard.create_lesson", "Create a lesson")}
                     aria-label={t("dashboard.create_lesson", "Create a lesson")}
@@ -321,11 +324,12 @@ export default function Dashboard() {
                     <span className="hidden md:inline">
                         {t("dashboard.create_lesson", "Create a lesson")}
                     </span>
-                </button>
+                </Button>
 
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary dashboard-learning-path flex min-h-[44px] items-center gap-2"
+                    variant="secondary"
+                    className="dashboard-learning-path"
                     onClick={() => navigate("/learning-path")}
                     title={t("nav.learning_path", "Learning Path")}
                     aria-label={t("nav.learning_path", "Learning Path")}
@@ -335,7 +339,7 @@ export default function Dashboard() {
                     <span className="hidden md:inline">
                         {t("nav.learning_path", "Learning Path")}
                     </span>
-                </button>
+                </Button>
             </div>
 
             {userId && (

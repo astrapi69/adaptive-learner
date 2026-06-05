@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import type {SpacedRecommendation} from "../types";
 
@@ -122,23 +123,22 @@ export default function SpacedRecommendations({cards}: Props) {
                         </p>
                     </div>
                     <div className="spaced-rec-actions">
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary"
                             data-testid={`spaced-rec-start-${card.id}`}
                             onClick={() => handleStart(card)}
                         >
                             {t("dashboard.spaced_start", "Start")}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
                             data-testid={`spaced-rec-dismiss-${card.id}`}
                             onClick={() => handleDismiss(card)}
                             aria-label={t("dashboard.spaced_dismiss", "Dismiss")}
                         >
                             {t("dashboard.spaced_dismiss", "Dismiss")}
-                        </button>
+                        </Button>
                     </div>
                 </li>
             ))}

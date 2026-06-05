@@ -36,6 +36,7 @@ import {
   Plus,
   RefreshCw,
   Search,
+  Share2,
   Trash2,
   Upload,
   X,
@@ -1196,6 +1197,7 @@ export default function ContentPage() {
                       onClick={() => void handleShare(entry)}
                       data-testid={`my-lesson-${entry.id}-share`}
                     >
+                      <Share2 className="h-5 w-5" aria-hidden="true" />
                       {t("content.my_lessons.share", "Share with Community")}
                     </Button>
                   )}

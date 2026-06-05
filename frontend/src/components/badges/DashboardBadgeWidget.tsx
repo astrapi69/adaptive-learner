@@ -11,6 +11,7 @@
 
 import {useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/useI18n";
 import {generateBadgeSvg, type BadgeTier} from "../../lib/badges/badge-svg";
 import type {BadgeWithProgress} from "../../storage/types";
@@ -112,14 +113,15 @@ export default function DashboardBadgeWidget({
                 </button>
             )}
 
-            <button
+            <Button
                 type="button"
-                className="btn badge-widget-view-all"
+                variant="secondary"
+                className="badge-widget-view-all"
                 data-testid="badge-widget-view-all"
                 onClick={() => openGallery()}
             >
                 {t("gamification.gallery.view_all", "View all badges")}
-            </button>
+            </Button>
 
             <BadgeGallery
                 key={category ?? "all"}

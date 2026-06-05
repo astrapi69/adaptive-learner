@@ -19,6 +19,7 @@
 import {useEffect, useMemo, useState} from "react";
 import {useSearchParams} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {filterStandardProjects} from "../lib/learning-project";
 import {readLearnerState, setProjectId} from "../lib/learnerState";
@@ -219,14 +220,15 @@ export default function DashboardFilterBar({
             <header className="dashboard-filter-header">
                 <h2>{t("taxonomy.filter_title", "Filter projects")}</h2>
                 {hasFilter && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary btn-sm"
+                        variant="secondary"
+                        size="sm"
                         data-testid="dashboard-filter-clear"
                         onClick={clearFilters}
                     >
                         {t("taxonomy.clear_filters", "Clear filters")}
-                    </button>
+                    </Button>
                 )}
             </header>
 
