@@ -25,6 +25,16 @@ Workflow:
 This is the codified form of the standing "GitHub issue before every
 bugfix" guidance.
 
+### ISSUE-LIFECYCLE: an issue is closed by its fix commit
+
+Every GitHub issue is closed by the fix, not by hand:
+
+- The fix commit message OR the PR body contains `Closes #NN` / `Fixes
+  #NN` so merging auto-closes the issue.
+- No manual closing without a commit/PR reference.
+- No open issue may remain after its fix is merged. After merging, the
+  referenced issues must be in the `closed` state.
+
 ## Session start
 
 On the first message of a session:
