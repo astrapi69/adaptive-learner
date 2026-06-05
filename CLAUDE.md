@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.61.0** (minor — **app-wide shadcn button
+- **Current state:** **v1.62.0** (minor — **app-wide shadcn button
   conformance + lesson resume-at-paused-step + cross-repo content
   validation + backup-restore data-integrity fixes**). **Button audit:**
   ~200 action buttons across all 13 page areas converted to shadcn
