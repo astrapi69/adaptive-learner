@@ -1303,6 +1303,7 @@ lesson:
   exercise:
     loading: "Chargement de l'exercice…"
     coming_soon: "Ce type d'exercice ({type}) arrivera dans une version future. Passe à l'étape suivante."
+    missing_type: "Le type de cet exercice est manquant. Merci de mettre à jour le contenu."
     matching:
       submit: "Vérifier les réponses"
       retry: "Réessayer"

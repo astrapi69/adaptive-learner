@@ -1414,6 +1414,7 @@
     "exercise": {
       "loading": "Cargando ejercicio…",
       "coming_soon": "Este tipo de ejercicio ({type}) llegará en una versión futura. Salta al siguiente paso.",
+      "missing_type": "A este ejercicio le falta el tipo. Actualiza el contenido.",
       "matching": {
         "submit": "Comprobar respuestas",
         "retry": "Intentar de nuevo",

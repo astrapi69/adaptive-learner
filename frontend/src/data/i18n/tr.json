@@ -1414,6 +1414,7 @@
     "exercise": {
       "loading": "Alıştırma yükleniyor…",
       "coming_soon": "Bu alıştırma türü ({type}) sonraki sürümlerde gelecek. Bir sonraki adıma geç.",
+      "missing_type": "Bu alıştırmanın türü eksik. Lütfen içeriği güncelle.",
       "matching": {
         "submit": "Cevapları kontrol et",
         "retry": "Tekrar dene",
