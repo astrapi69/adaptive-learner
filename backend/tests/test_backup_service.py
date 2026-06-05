@@ -955,3 +955,94 @@ def test_restore_accepts_string_timestamp_on_imported_messages(db_session):
     assert isinstance(restored.timestamp, datetime)
     assert restored.timestamp.year == 2026
     assert restored.timestamp.month == 4
+
+
+# --- BACKUP-RESTORE-FK-ORDER-01 (#64): imported_messages FK -----------
+
+
+def test_restore_all_tables_to_empty_db_preserves_fk_chain(db_session):
+    """Regression #64: restoring a full backup (incl. imported
+    conversations + their messages) onto a wiped DB must not raise a
+    FOREIGN KEY failure on imported_messages.conversation_id.
+    """
+    user = _seed_all_tables(db_session)
+    payload = create_backup(db_session, user.id)
+    assert payload["data"].get("imported_conversations")
+    assert payload["data"].get("imported_messages")
+
+    _wipe_all_tables(db_session)
+
+    summary = restore_backup(db_session, payload)
+    assert summary["user_id"] == user.id
+    assert db_session.query(ImportedConversation).count() >= 1
+    assert db_session.query(ImportedMessage).count() >= 1
+
+
+def test_restore_all_tables_to_nonempty_db_preserves_fk_chain(db_session):
+    """Regression #64: restore onto a DB that already holds the rows
+    (idempotent re-restore) must also keep the conversation->message FK
+    chain intact.
+    """
+    user = _seed_all_tables(db_session)
+    payload = create_backup(db_session, user.id)
+    summary = restore_backup(db_session, payload)
+    assert summary["user_id"] == user.id
+    assert db_session.query(ImportedMessage).count() >= 1
+
+
+def test_restore_skips_orphan_imported_message_instead_of_aborting(db_session):
+    """Regression #64: a single imported_messages row whose
+    imported_conversations parent is absent must be skipped (recorded in
+    errors), NOT abort the entire restore with a deferred FOREIGN KEY
+    failure at commit. Every valid row still lands.
+    """
+    user = _seed_all_tables(db_session)
+    payload = create_backup(db_session, user.id)
+    valid_message_count = len(payload["data"]["imported_messages"])
+    payload["data"]["imported_messages"].append(
+        {
+            "id": "orphan-msg-1",
+            "conversation_id": "conversation-that-does-not-exist",
+            "role": "user",
+            "content": "orphaned message",
+            "order_index": 99,
+            "timestamp": "2026-04-05T08:39:38",
+            "created_at": "2026-04-05T08:39:38",
+        }
+    )
+
+    _wipe_all_tables(db_session)
+
+    summary = restore_backup(db_session, payload)
+    assert summary["user_id"] == user.id
+    assert db_session.query(ImportedMessage).count() == valid_message_count
+    assert (
+        db_session.query(ImportedMessage).filter(ImportedMessage.id == "orphan-msg-1").first()
+        is None
+    )
+    assert any("missing" in err for err in summary["errors"])
+
+
+def test_missing_fk_parent_detects_orphan_and_passes_valid(db_session):
+    from app.services import backup_service as bs
+
+    _seed_all_tables(db_session)
+    conversation = db_session.query(ImportedConversation).first()
+    assert conversation is not None
+
+    assert (
+        bs._missing_fk_parent(
+            db_session,
+            "imported_messages",
+            {"id": "m1", "conversation_id": conversation.id},
+        )
+        is None
+    )
+    assert (
+        bs._missing_fk_parent(
+            db_session,
+            "imported_messages",
+            {"id": "m2", "conversation_id": "nope"},
+        )
+        == "imported_conversations"
+    )

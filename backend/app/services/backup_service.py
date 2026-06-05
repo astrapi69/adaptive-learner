@@ -265,6 +265,43 @@ _FK_REMAP: dict[str, dict[str, str]] = {
 }
 
 
+def _missing_fk_parent(db: Session, table: str, record: dict[str, Any]) -> str | None:
+    """Return a referenced parent table whose row is absent, else None.
+
+    Restore inserts parents before children (FK-topological
+    ``_RESTORE_ORDER``, flushed per table), so by the time a child
+    record is processed every legitimate parent already exists. A
+    non-null FK that still resolves to no row marks an orphan whose
+    insert would abort the WHOLE restore with a deferred FOREIGN KEY
+    failure at commit (issue #64 — e.g. an ``imported_messages`` row
+    whose ``imported_conversations`` parent is gone). Self-referential
+    FKs are skipped; they are handled by ``PRAGMA defer_foreign_keys``.
+
+    Args:
+        db: Active restore session (parents already flushed).
+        table: The child table being restored.
+        record: The backup record about to be inserted.
+
+    Returns:
+        The missing parent table name, or None when all parents exist.
+    """
+    model = _spec(table).model
+    for column in model.__table__.columns:
+        for foreign_key in column.foreign_keys:
+            parent_table = foreign_key.column.table.name
+            if parent_table == table:
+                continue
+            fk_value = record.get(column.name)
+            if fk_value is None:
+                continue
+            parent_spec = SYNC_TABLES.get(parent_table)
+            if parent_spec is None:
+                continue
+            if db.get(parent_spec.model, fk_value) is None:
+                return parent_table
+    return None
+
+
 def _restore_table(
     db: Session,
     table: str,
@@ -321,6 +358,13 @@ def _restore_table(
                 # claiming to belong to a different user.
                 if not _record_belongs_to_user(table, record, user_id):
                     skipped += 1
+                    continue
+                missing_parent = _missing_fk_parent(db, table, record)
+                if missing_parent is not None:
+                    skipped += 1
+                    errors.append(
+                        f"{table}: {record_id} skipped — references a missing {missing_parent} row"
+                    )
                     continue
                 fresh = model()
                 _apply_columns(table, record, fresh, allow_pk=True)
