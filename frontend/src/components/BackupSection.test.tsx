@@ -28,6 +28,39 @@ vi.mock("../utils/notify", () => ({
     notify: {error: vi.fn(), success: vi.fn(), info: vi.fn(), warning: vi.fn()},
 }));
 
+// Issue #53 — the auto-backup list (and its Restore / Delete /
+// Compare-A / Compare-B buttons) only renders in Dexie mode and only
+// when at least one auto-backup exists. Mock the auto-backup module so
+// the list is populated without a real IndexedDB run.
+const autoMock = vi.hoisted(() => ({
+    entries: [] as {id: string; created_at: string; total_records: number}[],
+}));
+// NOTE: plain functions (not vi.fn) on purpose — the file's afterEach
+// runs vi.restoreAllMocks(), which would strip vi.fn implementations
+// and make listAutoBackups() return undefined for later tests.
+vi.mock("../storage/auto-backup", () => ({
+    isAutoBackupEnabled: () => true,
+    setAutoBackupEnabled: () => undefined,
+    listAutoBackups: async () => autoMock.entries,
+    estimateStoragePressure: async () => ({
+        is_pressured: false,
+        usage_ratio: 0,
+    }),
+    checkTimeTrigger: () => null,
+    maybeRunAutoBackup: async () => undefined,
+    runAutoBackupNow: async () => undefined,
+    getAutoBackupPayload: async () => null,
+    deleteAutoBackup: async () => undefined,
+    restoreFromAutoBackup: async () => ({
+        user_id: "",
+        inserted: 0,
+        updated: 0,
+        skipped: 0,
+        errors: [],
+        tables: {},
+    }),
+}));
+
 const SEED_USER_ID = "user-12345678";
 
 const samplePayload: BackupPayload = {
@@ -75,6 +108,63 @@ describe("BackupSection", () => {
         expect(screen.getByTestId("settings-backup")).toBeInTheDocument();
         expect(screen.getByTestId("backup-export")).toBeInTheDocument();
         expect(screen.getByTestId("backup-import")).toBeInTheDocument();
+    });
+
+    // Issue #53 — the Backup section's buttons must be shadcn <Button>s
+    // (correct variant + the 44px touch target the kit enforces via
+    // min-h-11), not raw <button>s. This pins the auto-backup list
+    // buttons that the button audit (#40) missed.
+    it("renders the auto-backup buttons as shadcn Buttons with 44px targets (Dexie mode)", async () => {
+        localStorage.setItem("adaptive-learner.storage_mode", "dexie");
+        _resetStorageCacheForTests();
+        // The I18nProvider caches the loaded catalog in a module-level
+        // variable. In Dexie mode i18n.get() resolves with the bundled
+        // German catalog and would poison that cache for the other
+        // (English-fallback) tests in this file. Reject it so the cache
+        // stays empty, exactly as it does in API mode (ECONNREFUSED).
+        vi.spyOn(getStorage().i18n, "get").mockRejectedValue(
+            new Error("i18n offline (test)"),
+        );
+        autoMock.entries = [
+            {
+                id: "ab-1",
+                created_at: "2026-05-20T10:00:00.000Z",
+                total_records: 42,
+            },
+        ];
+
+        renderSection();
+
+        // The auto-backup list renders only after the refresh effect
+        // pulls the (mocked) entries.
+        await waitFor(() => {
+            expect(
+                screen.getByTestId("backup-auto-restore-ab-1"),
+            ).toBeInTheDocument();
+        });
+
+        const buttonIds = [
+            "backup-auto-run", // "Back up now" — primary
+            "backup-auto-restore-ab-1", // "Restore" — secondary
+            "backup-auto-delete-ab-1", // "Delete" — destructive
+            "backup-auto-compare-a-ab-1", // "Compare as A" — outline
+            "backup-auto-compare-b-ab-1", // "Compare as B" — outline
+        ];
+        for (const id of buttonIds) {
+            const btn = screen.getByTestId(id);
+            expect(btn.tagName).toBe("BUTTON");
+            // shadcn Button enforces the 44px touch target via min-h-11
+            // on every size variant. A raw <button> would not carry it.
+            expect(btn.className).toContain("min-h-11");
+        }
+        // Variant spot-checks: Delete is destructive, "Back up now" is
+        // the brand primary.
+        expect(screen.getByTestId("backup-auto-delete-ab-1").className).toContain(
+            "bg-destructive",
+        );
+        expect(screen.getByTestId("backup-auto-run").className).toContain(
+            "bg-primary",
+        );
     });
 
     it("Create Backup triggers a download and persists last-backup timestamp", async () => {
