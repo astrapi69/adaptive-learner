@@ -25,6 +25,7 @@
 
 import {useEffect, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {useButtonTooltips} from "../../hooks/useButtonTooltips";
 import QRImageUpload from "./QRImageUpload";
 import QRScanner, {type QRScannerError} from "./QRScanner";
@@ -110,8 +111,10 @@ export default function QRScannerModal({
                     position: "relative",
                 }}
             >
-                <button
+                <Button
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     onClick={onClose}
                     data-testid="qr-scanner-close"
                     aria-label={t("common.close", "Close")}
@@ -124,16 +127,13 @@ export default function QRScannerModal({
                         position: "absolute",
                         top: 8,
                         right: 8,
-                        background: "transparent",
-                        border: 0,
                         fontSize: "1.5rem",
-                        cursor: "pointer",
                         color: "var(--text)",
                         lineHeight: 1,
                     }}
                 >
                     ×
-                </button>
+                </Button>
                 <h3 style={{marginTop: 0, paddingRight: "2rem"}}>
                     {t("sync.scan_qr")}
                 </h3>
@@ -264,22 +264,22 @@ function ErrorPanel({
                     marginBottom: "0.75rem",
                 }}
             >
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     onClick={onRetry}
                     data-testid="qr-scanner-retry"
                 >
                     {t("sync.scan_again")}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     onClick={onClose}
                     data-testid="qr-scanner-error-close"
                 >
                     {t("common.close", "Close")}
-                </button>
+                </Button>
             </div>
             {/* The image-upload fallback works even when the camera
                 doesn't (in-app browsers, older PWAs, desktop with

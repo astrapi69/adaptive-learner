@@ -1,5 +1,6 @@
 import {useNavigate} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 
 /**
@@ -28,14 +29,14 @@ export default function NotFound() {
             <p style={{margin: 0, opacity: 0.7}}>
                 {t("errors.not_found", "Not found.")}
             </p>
-            <button
+            <Button
                 type="button"
-                className="btn btn-primary"
+                variant="default"
                 data-testid="not-found-home"
                 onClick={() => navigate("/")}
             >
                 {t("nav.home", "Home")}
-            </button>
+            </Button>
         </main>
     );
 }

@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 
 interface AddTopicDialogProps {
@@ -89,23 +90,22 @@ export default function AddTopicDialog({
                         />
                     </label>
                     <div className="form-actions">
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
                             data-testid="add-topic-cancel"
                             onClick={onCancel}
                             disabled={submitting}
                         >
                             {t("common.cancel", "Cancel")}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="submit"
-                            className="btn btn-primary"
                             data-testid="add-topic-submit"
                             disabled={submitting || title.trim().length === 0}
                         >
                             {t("common.save", "Save")}
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </div>

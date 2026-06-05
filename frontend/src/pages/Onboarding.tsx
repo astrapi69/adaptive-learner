@@ -1,6 +1,7 @@
 import {useEffect, useMemo, useState, type FormEvent} from "react";
 import {useNavigate} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
@@ -244,15 +245,16 @@ export default function Onboarding() {
                         6-field form below. The bottom "Later" button
                         is the same handler — kept for users who
                         scroll to the form actions. */}
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary onboarding-skip-top"
+                        variant="secondary"
+                        className="onboarding-skip-top"
                         onClick={handleSkip}
                         disabled={submitting}
                         data-testid="onboarding-skip-top"
                     >
                         {t("onboarding.skip_top", "Skip for now →")}
-                    </button>
+                    </Button>
                 </div>
                 <p className="onboarding-intro">{t("onboarding.intro")}</p>
                 <p
@@ -466,34 +468,34 @@ export default function Onboarding() {
                 </label>
 
                 <div className="form-actions">
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         onClick={() => navigate("/")}
                         disabled={submitting}
                         data-testid="onboarding-back"
                     >
                         {t("common.back", "Back")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         onClick={handleSkip}
                         disabled={submitting}
                         data-testid="onboarding-skip"
                     >
                         {t("onboarding.skip", "Later")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="submit"
                         data-testid="onboarding-submit"
-                        className="btn btn-primary"
+                        variant="default"
                         disabled={!allRequiredFilled || submitting}
                     >
                         {submitting
                             ? t("onboarding.creating", "Creating project…")
                             : t("onboarding.submit", "Create project and start assessment")}
-                    </button>
+                    </Button>
                 </div>
                 <p className="form-hint onboarding-skip-hint">
                     {t(

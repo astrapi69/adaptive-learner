@@ -25,6 +25,7 @@
 
 import {useEffect, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {extractJsonObject} from "../lib/extract-json";
@@ -235,22 +236,21 @@ export default function SyncConflictDialog({
                         marginTop: "1.5rem",
                     }}
                 >
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         onClick={onCancel}
                         data-testid="sync-conflict-cancel"
                     >
                         {t("sync.conflict_cancel")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         onClick={handleApply}
                         data-testid="sync-conflict-apply"
                     >
                         {t("sync.conflict_apply")}
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>
@@ -345,18 +345,18 @@ function ConflictRow({
                     testid={`sync-conflict-${index}-merged`}
                 />
                 {state.aiAvailable === true && (
-                    <button
+                    <Button
                         type="button"
                         onClick={onSmartMerge}
                         disabled={state.aiBusy}
-                        className="btn btn-secondary"
+                        variant="secondary"
                         data-testid={`sync-conflict-${index}-smart`}
                         style={{marginLeft: "auto"}}
                     >
                         {state.aiBusy
                             ? t("sync.smart_merge_running")
                             : t("sync.smart_merge")}
-                    </button>
+                    </Button>
                 )}
             </fieldset>
             {state.chosen === "merged" && (

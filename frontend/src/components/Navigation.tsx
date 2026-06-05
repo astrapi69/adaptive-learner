@@ -2,6 +2,8 @@ import {ArrowLeftRight, Circle, HelpCircle, Menu, Moon, Sun, X} from "lucide-rea
 import {useEffect, useState} from "react";
 import {NavLink, useLocation} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
+
 import {useHelp} from "../contexts/HelpContext";
 import {useAppMode} from "../hooks/useAppMode";
 import {useButtonTooltips} from "../hooks/useButtonTooltips";
@@ -95,7 +97,9 @@ export default function Navigation() {
                 makes the Tailwind utility win). The show/hide across
                 mobile / lesson-compact / landscape stays driven by the
                 existing global.css media rules. */}
-            <button
+            <Button
+                variant="ghost"
+                size="icon"
                 type="button"
                 className="nav-hamburger ml-0!"
                 data-testid="nav-hamburger"
@@ -110,7 +114,7 @@ export default function Navigation() {
                 ) : (
                     <Menu size={20} aria-hidden="true" />
                 )}
-            </button>
+            </Button>
             {/* Brand grows + centres on mobile (between the hamburger and
                 the right-hand cluster), reverts to left-aligned and
                 natural width from md up. */}
@@ -252,7 +256,8 @@ export default function Navigation() {
                     which is the broadest concept and exposes
                     related-concept links to the rest of the
                     glossary. */}
-                <button
+                <Button
+                    variant="ghost"
                     type="button"
                     className="nav-link nav-link-button"
                     data-testid="nav-help"
@@ -270,7 +275,7 @@ export default function Navigation() {
                         }}
                     />
                     {t("nav.help", "Help")}
-                </button>
+                </Button>
             </div>
             <NavLink
                 to="/settings"
@@ -311,9 +316,11 @@ export default function Navigation() {
                     {online ? t("nav.online", "Online") : t("nav.offline", "Offline")}
                 </span>
             </span>
-            <button
+            <Button
+                variant="ghost"
+                size="icon"
                 type="button"
-                className="nav-theme-toggle min-h-11 min-w-11"
+                className="nav-theme-toggle"
                 data-testid="nav-theme-toggle"
                 onClick={toggle}
                 aria-label={`Toggle ${theme === "dark" ? "light" : "dark"} theme`}
@@ -328,7 +335,7 @@ export default function Navigation() {
                 ) : (
                     <Moon size={18} aria-hidden="true" />
                 )}
-            </button>
+            </Button>
         </nav>
     );
 }
