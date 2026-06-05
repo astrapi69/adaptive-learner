@@ -1,0 +1,112 @@
+"""Regression tests for scripts/validate_bundled_content.py (issue #47).
+
+Drives the real CLI via subprocess against a throwaway fake content
+repo + a temp README, so the exit-code contract is pinned end-to-end:
+
+- ``--check-readme`` exits 0 when the README matches the content repo;
+- ``--check-readme`` exits 1 when a count in the README is manipulated;
+- both modes SKIP (exit 0) when the content repo is not present.
+"""
+
+from __future__ import annotations
+
+import subprocess
+import sys
+from pathlib import Path
+
+import yaml
+
+SCRIPT = (
+    Path(__file__).resolve().parents[2] / "scripts" / "validate_bundled_content.py"
+)
+
+
+def _make_content_repo(root: Path) -> None:
+    """Two sets, 2 + 3 lesson files, a root manifest that matches."""
+    # (path, n_lessons, source, target, level, domain, title)
+    specs: list[tuple[str, int, str, str, str, str, str]] = [
+        ("sets/en/fr-a1", 2, "en", "fr", "A1", "language", "French A1"),
+        ("sets/de/py", 3, "de", "de", "A1", "programming", "Python"),
+    ]
+    manifest_sets: list[dict[str, object]] = []
+    for path, n_lessons, src, tgt, level, domain, title in specs:
+        set_dir = root / path
+        (set_dir / "lessons").mkdir(parents=True)
+        # Per-set manifest (presence is what the orphan check looks at).
+        (set_dir / "manifest.yaml").write_text("metadata:\n  lessons: []\n", "utf-8")
+        for i in range(n_lessons):
+            (set_dir / "lessons" / f"{i:02d}-x.json").write_text("{}", "utf-8")
+        manifest_sets.append(
+            {
+                "id": path.replace("/", "-"),
+                "title": title,
+                "source_language": src,
+                "target_language": tgt,
+                "level": level,
+                "path": path,
+                "lesson_count": n_lessons,
+                "domain": domain,
+            }
+        )
+    (root / "manifest.yaml").write_text(
+        yaml.safe_dump({"schema_version": "1.2", "sets": manifest_sets}), "utf-8"
+    )
+
+
+def _run(mode: str, *, content_dir: Path | None, readme: Path) -> int:
+    env = {
+        "PATH": __import__("os").environ["PATH"],
+        "VALIDATE_BUNDLED_CONTENT_README": str(readme),
+    }
+    if content_dir is not None:
+        env["ADAPTIVE_LEARNER_CONTENT_DIR"] = str(content_dir)
+    return subprocess.run(
+        [sys.executable, str(SCRIPT), mode],
+        env=env,
+        capture_output=True,
+        text=True,
+    ).returncode
+
+
+def test_check_passes_when_readme_matches(tmp_path: Path) -> None:
+    content = tmp_path / "content"
+    content.mkdir()
+    _make_content_repo(content)
+    readme = tmp_path / "README.md"
+    readme.write_text("# App\n\n## Install\n", "utf-8")
+    # Populate the block, then it must verify clean (5 lessons / 2 sets).
+    assert _run("--write-readme", content_dir=content, readme=readme) == 0
+    assert "5 lessons" in readme.read_text("utf-8")
+    assert _run("--check-readme", content_dir=content, readme=readme) == 0
+
+
+def test_check_fails_when_number_manipulated(tmp_path: Path) -> None:
+    content = tmp_path / "content"
+    content.mkdir()
+    _make_content_repo(content)
+    readme = tmp_path / "README.md"
+    readme.write_text("# App\n\n## Install\n", "utf-8")
+    _run("--write-readme", content_dir=content, readme=readme)
+    text = readme.read_text("utf-8").replace("5 lessons", "999 lessons")
+    readme.write_text(text, "utf-8")
+    assert _run("--check-readme", content_dir=content, readme=readme) == 1
+
+
+def test_check_fails_on_manifest_count_drift(tmp_path: Path) -> None:
+    """Manifest lesson_count not matching the files on disk is a drift."""
+    content = tmp_path / "content"
+    content.mkdir()
+    _make_content_repo(content)
+    # Add an extra lesson file without bumping the manifest count.
+    (content / "sets/en/fr-a1/lessons" / "99-extra.json").write_text("{}", "utf-8")
+    readme = tmp_path / "README.md"
+    readme.write_text("# App\n\n## Install\n", "utf-8")
+    assert _run("--check-readme", content_dir=content, readme=readme) == 1
+
+
+def test_skips_when_content_repo_absent(tmp_path: Path) -> None:
+    readme = tmp_path / "README.md"
+    readme.write_text("# App\n\n## Install\n", "utf-8")
+    missing = tmp_path / "does-not-exist"
+    assert _run("--check-readme", content_dir=missing, readme=readme) == 0
+    assert _run("--write-readme", content_dir=missing, readme=readme) == 0

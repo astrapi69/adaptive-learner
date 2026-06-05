@@ -51,3 +51,16 @@ repos:
         files: ^plugins/adaptive-learner-plugin-[^/]+/pyproject\.toml$
         pass_filenames: true
         stages: [pre-commit]
+
+      # Issue #47 — keep the README CONTENT-STATS block in lock-step
+      # with the content repo. Fires only when README.md is staged;
+      # skips (exit 0) when the content repo isn't checked out locally.
+      # The authoritative gate is the CI job (fresh content checkout).
+      - id: validate-bundled-content
+        name: Validate content repo stats in README
+        entry: python scripts/validate_bundled_content.py --write-readme
+        language: python
+        additional_dependencies: ["pyyaml>=6"]
+        pass_filenames: false
+        files: ^README\.md$
+        stages: [pre-commit]
