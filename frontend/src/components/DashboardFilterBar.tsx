@@ -328,15 +328,17 @@ export default function DashboardFilterBar({
                                     className={`dashboard-project-item${isActive ? " dashboard-project-item-active" : ""}`}
                                     data-testid={`dashboard-project-item-${project.id}`}
                                 >
-                                    <button
+                                    <Button
                                         type="button"
+                                        variant="ghost"
+                                        className="w-full justify-start"
                                         onClick={() => {
                                             setProjectId(project.id);
                                             onSelectProject?.(project.id);
                                         }}
                                     >
                                         {project.topic}
-                                    </button>
+                                    </Button>
                                 </li>
                             );
                         })}
