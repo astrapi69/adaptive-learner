@@ -207,6 +207,7 @@
     "read_summary": "Read summary"
   },
   "dashboard": {
+    "no_data": "No data yet.",
     "title": "Dashboard",
     "welcome": "Welcome back",
     "quick_start": "Start a new session",

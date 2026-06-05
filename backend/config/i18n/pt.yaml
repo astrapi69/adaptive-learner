@@ -195,6 +195,7 @@ assessment:
   continue_to_dashboard: Ir para o painel
   read_summary: Ler resumo
 dashboard:
+  no_data: "Ainda não há dados."
   title: Painel
   welcome: Bem-vindo de volta
   quick_start: Iniciar uma nova sessão

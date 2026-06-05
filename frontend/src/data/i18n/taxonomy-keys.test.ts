@@ -61,3 +61,14 @@ describe("taxonomy.* i18n coverage (#76)", () => {
     );
   });
 });
+
+describe("dashboard.no_data i18n coverage (#84)", () => {
+  for (const [lang, catalog] of Object.entries(CATALOGS)) {
+    it(`${lang} defines dashboard.no_data`, () => {
+      const dashboard = catalog.dashboard as
+        | Record<string, string>
+        | undefined;
+      expect(dashboard?.no_data, `${lang}.dashboard.no_data missing`).toBeTruthy();
+    });
+  }
+});
