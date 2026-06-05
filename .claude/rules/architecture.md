@@ -198,6 +198,35 @@ A feature that ships in API mode without a Dexie path
 message) is a release blocker — see lessons-learned.md
 "Dexie-mode is part of the contract: same-commit or not at all".
 
+### SYNC-UI-GATE: render sync UI only for the role that can use it
+
+The sync feature is seen from three device roles, each needing a
+different slice of the UI (or none):
+
+| Role | Storage mode | Sync UI |
+|------|--------------|---------|
+| Desktop (server) | API | generate QR, sync status, "Sync Now" |
+| Mobile (client) | Dexie | scan QR / paste link, sync status after pairing |
+| PWA-only | Dexie | none |
+
+- **Current (Phase 1 LAN Mode not implemented):** the Sync section
+  is gated API-only — `resolveStorageMode() === "api" && <SyncSection />`
+  in `Settings.tsx`. Correct, because without a working pairing flow the
+  Mobile-client UI would run into nothing.
+- **Later (when Phase 1 LAN Mode lands):** rebuild the binary gate
+  (API vs Dexie) into the three-way gate above. `resolveStorageMode()`
+  is binary and cannot distinguish Mobile-client from PWA-only — that
+  distinction (device detection vs an explicit "I am a mobile client"
+  flow) is an open architecture decision; do NOT reintroduce the
+  pairing UI in Dexie mode until it is made, or it becomes a dead
+  control on the PWA-only deployment.
+- **General rule:** a function that is not available is not offered —
+  no dead buttons, no greyed-out placeholders, no "not available"
+  hints. If it does not work for this role, the UI does not exist.
+
+Full reference: [docs/SYNC-ARCHITECTURE.md](../../docs/SYNC-ARCHITECTURE.md).
+Origin: issue #51.
+
 ## Data flow
 
 ```
