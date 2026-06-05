@@ -111,7 +111,7 @@
   --color-secondary-foreground: var(--fg-primary);
   --color-muted: var(--bg-secondary);
   --color-muted-foreground: var(--fg-muted);
-  --color-accent-foreground: var(--fg-primary);
+  --color-accent-foreground: var(--accent-fg);
   --color-destructive: var(--error);
   --color-destructive-foreground: var(--fg-inverse);
   --color-input: var(--border-primary);

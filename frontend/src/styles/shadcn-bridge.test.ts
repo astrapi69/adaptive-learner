@@ -33,7 +33,7 @@ describe("shadcn semantic-token bridge", () => {
         "--color-secondary": "--bg-secondary",
         "--color-muted": "--bg-secondary",
         "--color-muted-foreground": "--fg-muted",
-        "--color-accent-foreground": "--fg-primary",
+        "--color-accent-foreground": "--accent-fg",
         "--color-destructive": "--error",
         "--color-destructive-foreground": "--fg-inverse",
         "--color-input": "--border-primary",
