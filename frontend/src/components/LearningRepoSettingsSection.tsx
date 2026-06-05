@@ -21,6 +21,7 @@
 
 import {useEffect, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {getStorage} from "../storage";
@@ -153,8 +154,9 @@ export default function LearningRepoSettingsSection() {
             </label>
 
             <div className="settings-row">
-                <button
+                <Button
                     type="button"
+                    variant="default"
                     onClick={handleSave}
                     disabled={saving}
                     data-testid="learning-repo-settings-save"
@@ -162,7 +164,7 @@ export default function LearningRepoSettingsSection() {
                     {saving
                         ? t("repo.settings.saving", "Saving…")
                         : t("repo.settings.save", "Save settings")}
-                </button>
+                </Button>
             </div>
         </section>
     );
