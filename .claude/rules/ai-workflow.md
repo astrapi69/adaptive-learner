@@ -1,5 +1,30 @@
 # AI Workflow
 
+## GITHUB-ISSUE-PFLICHT: every bug/fix needs an issue first
+
+Every bug and every issue MUST have a GitHub issue BEFORE the fix
+begins. This is mandatory, not advisory. It applies to ALL agents and
+ALL repositories (app repo, content repo, any other).
+
+Workflow:
+
+1. **Search first.** Look for an existing issue
+   (`gh issue list --search "<keywords>" --state all`). If it exists
+   and was closed but the bug recurred, REOPEN it rather than filing a
+   duplicate.
+2. **No fix without an issue.** If none exists, create one
+   (`gh issue create`, `bug` label, enough context that the fix is
+   actionable without follow-up) BEFORE touching code.
+3. **No commit without an issue reference.** The commit subject (and
+   the PR) cite the issue number — `(#NN)` or `(fixes #NN)`.
+4. **Verify the premise before filing.** If a pre-implementation audit
+   shows the reported defect does not actually exist (spec-vs-reality
+   drift), do NOT file a misleading issue — surface the finding to the
+   user instead. A false issue is worse than no issue.
+
+This is the codified form of the standing "GitHub issue before every
+bugfix" guidance.
+
 ## Session start
 
 On the first message of a session:
