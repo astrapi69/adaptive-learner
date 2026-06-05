@@ -1414,6 +1414,7 @@
     "exercise": {
       "loading": "Übung wird geladen…",
       "coming_soon": "Dieser Übungstyp ({type}) folgt in einer späteren Version. Springe zum nächsten Schritt.",
+      "missing_type": "Dieser Übung fehlt ein Übungstyp. Bitte aktualisiere die Inhalte.",
       "matching": {
         "submit": "Antworten prüfen",
         "retry": "Erneut versuchen",

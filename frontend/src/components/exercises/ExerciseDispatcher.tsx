@@ -196,23 +196,51 @@ export function ExerciseStepPlaceholder({
     step: ContentLessonStep;
 }) {
     const {t} = useI18n();
-    const exerciseType = step.exercise?.type ?? "unknown";
-    const supported = SUPPORTED_EXERCISE_TYPES.has(exerciseType);
+    const rawType = step.exercise?.type;
+    // Three distinct reasons we land on the placeholder, NOT one
+    // "unknown":
+    //   1. missing  — the exercise carries no type at all (empty /
+    //      null / whitespace). This is a CONTENT defect (e.g. the
+    //      de/psych-intro lessons before the content fix); the
+    //      renderer exists, the data is incomplete.
+    //   2. supported — a known type momentarily on the placeholder
+    //      path (loading race); the real renderer is coming.
+    //   3. unsupported — a non-empty type the app does not (yet)
+    //      render; THIS is the "ships in a future version" case.
+    const missingType =
+        rawType === undefined ||
+        rawType === null ||
+        (typeof rawType === "string" && rawType.trim() === "");
+    const exerciseType = missingType ? "unknown" : rawType;
+    const supported =
+        !missingType && SUPPORTED_EXERCISE_TYPES.has(exerciseType);
+
+    let state: "missing" | "loading" | "unsupported";
+    let message: string;
+    if (missingType) {
+        state = "missing";
+        message = t(
+            "lesson.exercise.missing_type",
+            "This exercise is missing its type. Please update the content.",
+        );
+    } else if (supported) {
+        state = "loading";
+        message = t("lesson.exercise.loading", "Exercise loading…");
+    } else {
+        state = "unsupported";
+        message = t(
+            "lesson.exercise.coming_soon",
+            "This exercise type ({type}) ships in a future version. Skip to the next step.",
+        ).replace("{type}", exerciseType);
+    }
+
     return (
         <div
             className="lesson-exercise-placeholder"
             data-testid={`lesson-exercise-placeholder-${exerciseType}`}
         >
-            <p>
-                {supported
-                    ? t(
-                          "lesson.exercise.loading",
-                          "Exercise loading…",
-                      )
-                    : t(
-                          "lesson.exercise.coming_soon",
-                          "This exercise type ({type}) ships in a future version. Skip to the next step.",
-                      ).replace("{type}", exerciseType)}
+            <p data-testid={`lesson-exercise-placeholder-${state}`}>
+                {message}
             </p>
             {step.exercise?.prompt && (
                 <p className="lesson-exercise-prompt-preview">
