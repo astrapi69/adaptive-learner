@@ -49,14 +49,24 @@ These are interactive widgets, not action buttons. Converting them to `<Button>`
 | 6 | Modals / Dialogs + Nav + Help + misc | 15 | 38 | 0 | 20+ |
 | | **TOTAL** | **~67** | **~201** | **~81** | **~60+** |
 
-## Fix progress (per-page commits)
+## Fix progress (per-page commits) — ALL DONE
 
-- [ ] 1. Settings tabs — Settings.tsx, SyncSection, ExportSection, NotebookLMSection, GamificationSettingsSection, GitHubIntegrationSection, ModelPicker, DangerZoneSection, BackupCompare
-- [ ] 2. Lesson viewer — Lesson.tsx, Review.tsx, AdaptiveLesson.tsx, ErrorReplayLesson.tsx, LessonTtsMiniPlayer, LessonResumeDialog, LessonList + exercise hint/submit/retry buttons
-- [ ] 3. Dashboard + Content — Dashboard.tsx, DashboardBadgeWidget, Content.tsx (Share icon), ShareWizard, SaveOfflineLessonModal, ImportLessonModal, SpacedRecommendations, DashboardFilterBar
-- [ ] 4. Create Lesson + Import — CreateLesson (icons), CardEditor, ExerciseGenerator, ImportDetail, Anki
-- [ ] 5. Learning Path + Session — LearningPathPersonal/Map/Graph, NotDownloadedSection, SetRow/LessonRow/SetDetail, Session, Curriculum, RatingDialog, MethodSwitchBanner
-- [ ] 6. Modals/Nav/Help — Navigation, HelpDrawer, ErrorReportDialog, SyncConflictDialog, AddTopicDialog, QRScannerModal, InstallPrompt, Onboarding, Assessment, Landing, Pronunciation, LearningRepo, NotFound, CurriculumDescriptionEditor
+- [x] 1. Settings tabs — Settings.tsx, SyncSection, ExportSection, NotebookLMSection, GamificationSettingsSection, GitHubIntegrationSection, ModelPicker, DangerZoneSection, BackupCompare
+- [x] 2. Lesson viewer — Lesson.tsx, Review.tsx, AdaptiveLesson.tsx, ErrorReplayLesson.tsx, LessonTtsMiniPlayer, LessonResumeDialog, LessonList + exercise hint/submit/retry buttons
+- [x] 3. Dashboard + Content — Dashboard.tsx, DashboardBadgeWidget, Content.tsx (Share icon), ShareWizard, SaveOfflineLessonModal, ImportLessonModal, SpacedRecommendations, DashboardFilterBar
+- [x] 4. Create Lesson + Import — CreateLesson (icons), CardEditor, ExerciseGenerator, ImportDetail, Anki
+- [x] 5. Learning Path + Session — LearningPathPersonal/Map/Graph, NotDownloadedSection, Session, Curriculum, RatingDialog, MethodSwitchBanner
+- [x] 6. Modals/Nav/Help — Navigation, HelpDrawer, ErrorReportDialog, SyncConflictDialog, AddTopicDialog, QRScannerModal, InstallPrompt, Onboarding, Assessment, Landing, Pronunciation, LearningRepo, NotFound, CurriculumDescriptionEditor
+
+### Decisions taken during the fix (kept INTENTIONAL-RAW, not converted)
+
+- **SetRow / LessonRow / SetDetail** (learning-path list rows) — `<Link>`/`<span>` styled with `cn()` Tailwind, already 44px + accessible. Converting routing-heavy list rows to `<Button asChild>` is high-risk / low-gain; left raw.
+- **RatingDialog** 1–5 rating selectors, **Landing** language picker (role="radio"), **Onboarding** subject chips (`tag-badge`), **HelpDrawer** related-concept pills, **DashboardFilterBar** tag chips, **DashboardBadgeWidget** badge tiles — radio-group / chip / card-tile widgets, not action buttons.
+- **EditorToolbar** (~20 toggles), exercise option tiles, xyflow graph nodes, curriculum TopicNode + CardEditor/ExerciseGenerator drag handles + icon-only row actions — interactive widgets, out of scope.
+
+### Test-pin update
+
+`Lesson.test.tsx` had three 44px-target pins asserting the literal `min-h-[44px]`; updated to `min-h-11` (shadcn Button's 44px class). No behavior change.
 
 ---
 
