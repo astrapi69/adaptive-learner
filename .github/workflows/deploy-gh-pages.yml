@@ -86,6 +86,11 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: Compute build metadata
+        run: |
+          echo "VITE_BUILD_HASH=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
+          echo "VITE_BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
       - name: Build frontend
         working-directory: frontend
         run: npm run build
@@ -94,6 +99,10 @@ jobs:
           # checkout (above). Absolute path so it resolves
           # independent of the frontend working-directory.
           ADAPTIVE_LEARNER_CONTENT_DIR: ${{ github.workspace }}/adaptive-learner-content
+          # Build provenance shown in Settings -> About (the GH-Pages
+          # build runs Dexie mode, which has no backend git to read).
+          VITE_BUILD_HASH: ${{ env.VITE_BUILD_HASH }}
+          VITE_BUILD_DATE: ${{ env.VITE_BUILD_DATE }}
 
       # The default SPA-router fallback for GH Pages is to copy
       # index.html to 404.html. Without it, any direct hit on a

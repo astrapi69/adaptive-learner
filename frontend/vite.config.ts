@@ -39,6 +39,8 @@ export default defineConfig({
         // Downstream code reads __APP_VERSION__ instead of
         // re-declaring a hardcoded constant.
         __APP_VERSION__: JSON.stringify(pkg.version),
+        __BUILD_HASH__: JSON.stringify(process.env.VITE_BUILD_HASH || "unknown"),
+        __BUILD_DATE__: JSON.stringify(process.env.VITE_BUILD_DATE || "unknown"),
     },
     plugins: [
         // Tailwind v4 Vite plugin. Must run before the React plugin so
