@@ -175,17 +175,20 @@ def _validate_payload(payload: Any) -> dict[str, Any]:
     return payload
 
 
-# Per-table set of datetime/date column names, derived from the
-# SQLAlchemy model. Cached because the model schema is static.
-# Using the column TYPE (not a name heuristic) is what makes restore
-# robust: a DateTime column whose name does not end in ``_at`` — e.g.
-# ``imported_messages.timestamp``, ``user_streaks.last_freeze_used_on``,
-# ``user_missions.assigned_date`` — would otherwise reach the INSERT as a
-# raw ISO string and SQLite rejects it (BACKUP-RESTORE-DATETIME-01).
 _DATETIME_FIELDS_CACHE: dict[str, frozenset[str]] = {}
 
 
 def _datetime_fields(table: str) -> frozenset[str]:
+    """Return the datetime/date column names of ``table`` from its model.
+
+    Keying coercion off the column TYPE (not a name heuristic) is what
+    makes restore robust: a DateTime column whose name does not end in
+    ``_at`` — ``imported_messages.timestamp``,
+    ``user_streaks.last_freeze_used_on``, ``user_missions.assigned_date``
+    — would otherwise reach the INSERT as a raw ISO string and SQLite
+    rejects it (BACKUP-RESTORE-DATETIME-01). Cached; the model schema is
+    static.
+    """
     cached = _DATETIME_FIELDS_CACHE.get(table)
     if cached is not None:
         return cached

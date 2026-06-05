@@ -190,6 +190,15 @@ function ExerciseDispatcher(
 const ForwardedExerciseDispatcher = forwardRef(ExerciseDispatcher);
 export {ForwardedExerciseDispatcher as ExerciseDispatcher};
 
+/**
+ * Fallback shown when an exercise step can't render its real widget.
+ * Distinguishes three reasons rather than collapsing to one "unknown":
+ * - `missing` — the exercise carries no type (empty/null/whitespace): a
+ *   CONTENT defect (the renderer exists, the data is incomplete).
+ * - `loading` — a supported type momentarily on the placeholder path.
+ * - `unsupported` — a non-empty type the app does not (yet) render: the
+ *   genuine "ships in a future version" case.
+ */
 export function ExerciseStepPlaceholder({
     step,
 }: {
@@ -197,16 +206,6 @@ export function ExerciseStepPlaceholder({
 }) {
     const {t} = useI18n();
     const rawType = step.exercise?.type;
-    // Three distinct reasons we land on the placeholder, NOT one
-    // "unknown":
-    //   1. missing  — the exercise carries no type at all (empty /
-    //      null / whitespace). This is a CONTENT defect (e.g. the
-    //      de/psych-intro lessons before the content fix); the
-    //      renderer exists, the data is incomplete.
-    //   2. supported — a known type momentarily on the placeholder
-    //      path (loading race); the real renderer is coming.
-    //   3. unsupported — a non-empty type the app does not (yet)
-    //      render; THIS is the "ships in a future version" case.
     const missingType =
         rawType === undefined ||
         rawType === null ||
