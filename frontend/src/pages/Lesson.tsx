@@ -560,9 +560,11 @@ export default function LessonPage() {
                         "No lesson selected. Browse content sets to pick one.",
                     )}
                 </p>
-                <Link to="/content" className="btn">
-                    {t("lesson.action.open_browser", "Open content browser")}
-                </Link>
+                <Button asChild variant="default">
+                    <Link to="/content">
+                        {t("lesson.action.open_browser", "Open content browser")}
+                    </Link>
+                </Button>
             </main>
         );
     }
@@ -596,15 +598,14 @@ export default function LessonPage() {
                     )}
                 </p>
                 <p>
-                    <button
+                    <Button
                         type="button"
-                        className="btn"
                         onClick={() => navigate("/content")}
                         data-testid="lesson-goto-content"
                     >
                         <Download size={14} aria-hidden="true" />
                         {t("lesson.action.open_browser", "Open content browser")}
-                    </button>
+                    </Button>
                 </p>
             </main>
         );
@@ -621,13 +622,12 @@ export default function LessonPage() {
                     {t("lesson.error.load_failed", "Could not load lesson.")}
                     {error ? ` (${error})` : ""}
                 </p>
-                <button
+                <Button
                     type="button"
-                    className="btn"
                     onClick={() => navigate("/content")}
                 >
                     {t("lesson.action.open_browser", "Open content browser")}
-                </button>
+                </Button>
             </main>
         );
     }
@@ -656,9 +656,10 @@ export default function LessonPage() {
             data-testid="lesson-page"
         >
             <header className="lesson-header">
-                <button
+                <Button
                     type="button"
-                    className="lesson-back-btn min-h-[44px]"
+                    variant="ghost"
+                    className="lesson-back-btn"
                     onClick={() => {
                         // Phase 63B — only intercept while the
                         // lesson is in progress. Completed /
@@ -680,7 +681,7 @@ export default function LessonPage() {
                     <span className="hidden md:inline">
                         {t("lesson.action.pause", "Pause lesson")}
                     </span>
-                </button>
+                </Button>
                 <LessonExitDialog
                     open={exitOpen}
                     onContinue={() => setExitOpen(false)}
@@ -761,8 +762,10 @@ export default function LessonPage() {
                     className="lesson-tts-controls"
                     data-testid="lesson-tts-controls"
                 >
-                    <button
+                    <Button
                         type="button"
+                        variant="ghost"
+                        size="sm"
                         className={`lesson-tts-autoread${
                             autoRead ? " is-on" : ""
                         }`}
@@ -772,14 +775,16 @@ export default function LessonPage() {
                     >
                         <Volume2 size={14} aria-hidden="true" />
                         {t("lesson.tts.auto_read", "Auto read-aloud")}
-                    </button>
+                    </Button>
 
                     {/* Continuous theory reading (C7) — reads the whole
                         run of consecutive theory steps, auto-advancing
                         the viewer; stops at the next exercise. */}
                     {continuousAvailable && (
-                        <button
+                        <Button
                             type="button"
+                            variant="ghost"
+                            size="sm"
                             className={`lesson-tts-autoread${
                                 isContinuous ? " is-on" : ""
                             }`}
@@ -797,7 +802,7 @@ export default function LessonPage() {
                             {isContinuous
                                 ? t("lesson.tts.stop", "Stop")
                                 : t("lesson.tts.read_all", "Read all")}
-                        </button>
+                        </Button>
                     )}
 
                     {/* Inline speed control — only while a stream is
@@ -814,9 +819,11 @@ export default function LessonPage() {
                                 {t("lesson.tts.speed", "Speed")}
                             </span>
                             {READ_ALOUD_SPEEDS.map((s) => (
-                                <button
+                                <Button
                                     key={s}
                                     type="button"
+                                    variant="ghost"
+                                    size="sm"
                                     className={`lesson-tts-speed-btn${
                                         tts.speed === s ? " is-active" : ""
                                     }`}
@@ -825,7 +832,7 @@ export default function LessonPage() {
                                     onClick={() => tts.setSpeed(s)}
                                 >
                                     {s}x
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     )}
@@ -1034,9 +1041,10 @@ export default function LessonPage() {
                     "Step navigation",
                 )}
             >
-                <button
+                <Button
                     type="button"
-                    className="btn min-h-[44px] min-w-[44px] justify-center gap-1.5"
+                    variant="outline"
+                    className="min-w-[44px]"
                     onClick={goPrev}
                     disabled={currentStepIndex === 0}
                     data-testid="lesson-prev"
@@ -1047,12 +1055,12 @@ export default function LessonPage() {
                     <span className="hidden md:inline">
                         {t("lesson.action.prev", "Previous")}
                     </span>
-                </button>
+                </Button>
                 {!isSummary &&
                     (isExerciseStep && !checked && !enteredReviewed ? (
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary ml-auto min-h-[44px] justify-center gap-1.5"
+                            className="ml-auto"
                             onClick={() => exerciseRef.current?.submit()}
                             disabled={!answerable}
                             title={
@@ -1067,11 +1075,11 @@ export default function LessonPage() {
                         >
                             <Check size={20} aria-hidden="true" />
                             {t("lesson.button.check", "Check")}
-                        </button>
+                        </Button>
                     ) : (
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary ml-auto min-h-[44px] justify-center gap-1.5"
+                            className="ml-auto"
                             onClick={goNext}
                             data-testid="lesson-next"
                         >
@@ -1082,7 +1090,7 @@ export default function LessonPage() {
                                   )
                                 : t("lesson.button.next", "Next")}
                             <ChevronRight size={20} aria-hidden="true" />
-                        </button>
+                        </Button>
                     ))}
             </nav>
 

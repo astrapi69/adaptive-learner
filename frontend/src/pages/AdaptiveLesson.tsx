@@ -42,6 +42,7 @@ import {
   SUPPORTED_EXERCISE_TYPES,
 } from "../components/exercises/ExerciseDispatcher";
 import type { ExerciseHandle } from "../components/exercises/exercise-control";
+import { Button } from "@/components/ui/button";
 import { useI18n } from "../hooks/useI18n";
 import { useAdaptiveLesson } from "../hooks/useAdaptiveLesson";
 import type { ErrorTag } from "../lib/adaptive/error-classifier";
@@ -160,15 +161,15 @@ export default function AdaptiveLessonPage() {
           )}
         </p>
         <p>
-          <button
+          <Button
             type="button"
-            className="btn"
+            variant="outline"
             onClick={() => navigate("/dashboard")}
             data-testid="adaptive-lesson-back-to-dashboard"
           >
             <ArrowLeft size={14} aria-hidden="true" />
             {t("adaptive.back_to_dashboard", "Back to Dashboard")}
-          </button>
+          </Button>
         </p>
       </main>
     );
@@ -191,15 +192,14 @@ export default function AdaptiveLessonPage() {
           )}
         </p>
         <p>
-          <button
+          <Button
             type="button"
-            className="btn"
             onClick={() => navigate("/content")}
             data-testid="adaptive-lesson-goto-content"
           >
             <Download size={14} aria-hidden="true" />
             {t("lesson.action.open_browser", "Open content browser")}
-          </button>
+          </Button>
         </p>
       </main>
     );
@@ -219,14 +219,14 @@ export default function AdaptiveLessonPage() {
           )}
           {error ? ` (${error})` : ""}
         </p>
-        <button
+        <Button
           type="button"
-          className="btn"
+          variant="outline"
           onClick={() => navigate("/dashboard")}
         >
           <ArrowLeft size={14} aria-hidden="true" />
           {t("adaptive.back_to_dashboard", "Back to Dashboard")}
-        </button>
+        </Button>
       </main>
     );
   }
@@ -331,21 +331,22 @@ export default function AdaptiveLessonPage() {
         className="lesson-nav"
         aria-label={t("lesson.nav.aria_label", "Step navigation")}
       >
-        <button
+        <Button
           type="button"
-          className="btn lesson-nav-prev"
+          variant="outline"
+          className="lesson-nav-prev"
           onClick={goPrev}
           disabled={currentStepIndex === 0}
           data-testid="adaptive-lesson-prev"
         >
           <ArrowLeft size={14} aria-hidden="true" />
           {t("lesson.action.prev", "Previous")}
-        </button>
+        </Button>
         {!isSummary &&
           (isExerciseStep && !checked ? (
-            <button
+            <Button
               type="button"
-              className="btn btn-primary lesson-nav-check"
+              className="lesson-nav-check"
               onClick={() => exerciseRef.current?.submit()}
               disabled={!answerable}
               title={
@@ -359,11 +360,11 @@ export default function AdaptiveLessonPage() {
               data-testid="adaptive-lesson-check"
             >
               {t("lesson.button.check", "Check")}
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               type="button"
-              className="btn btn-primary lesson-nav-next"
+              className="lesson-nav-next"
               onClick={goNext}
               data-testid="adaptive-lesson-next"
             >
@@ -371,7 +372,7 @@ export default function AdaptiveLessonPage() {
                 ? t("lesson.action.finish", "Finish lesson")
                 : t("lesson.action.next", "Next")}
               <ArrowRight size={14} aria-hidden="true" />
-            </button>
+            </Button>
           ))}
       </nav>
     </main>
@@ -493,14 +494,13 @@ function AdaptiveSummary({
         )}
       </p>
       <div className="lesson-summary-actions">
-        <button
+        <Button
           type="button"
-          className="btn btn-primary"
           onClick={onExit}
           data-testid="adaptive-summary-exit"
         >
           {t("adaptive.back_to_dashboard", "Back to Dashboard")}
-        </button>
+        </Button>
       </div>
     </section>
   );

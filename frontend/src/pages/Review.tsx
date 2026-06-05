@@ -30,6 +30,7 @@ import {
     SUPPORTED_EXERCISE_TYPES,
 } from "../components/exercises/ExerciseDispatcher";
 import type {ExerciseHandle} from "../components/exercises/exercise-control";
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {useReviewLesson} from "../hooks/useReviewLesson";
 
@@ -120,9 +121,9 @@ export default function ReviewPage() {
                     )}
                 </p>
                 <p>
-                    <button
+                    <Button
                         type="button"
-                        className="btn"
+                        variant="outline"
                         onClick={() => navigate("/dashboard")}
                         data-testid="review-back-to-dashboard"
                     >
@@ -131,7 +132,7 @@ export default function ReviewPage() {
                             "review.back_to_dashboard",
                             "Back to Dashboard",
                         )}
-                    </button>
+                    </Button>
                 </p>
             </main>
         );
@@ -154,9 +155,8 @@ export default function ReviewPage() {
                     )}
                 </p>
                 <p>
-                    <button
+                    <Button
                         type="button"
-                        className="btn"
                         onClick={() => navigate("/content")}
                         data-testid="review-goto-content"
                     >
@@ -165,7 +165,7 @@ export default function ReviewPage() {
                             "lesson.action.open_browser",
                             "Open content browser",
                         )}
-                    </button>
+                    </Button>
                 </p>
             </main>
         );
@@ -182,14 +182,14 @@ export default function ReviewPage() {
                     {t("review.error.load_failed", "Could not load review session.")}
                     {error ? ` (${error})` : ""}
                 </p>
-                <button
+                <Button
                     type="button"
-                    className="btn"
+                    variant="outline"
                     onClick={() => navigate("/dashboard")}
                 >
                     <ArrowLeft size={14} aria-hidden="true" />
                     {t("review.back_to_dashboard", "Back to Dashboard")}
-                </button>
+                </Button>
             </main>
         );
     }
@@ -315,21 +315,22 @@ export default function ReviewPage() {
                     "Step navigation",
                 )}
             >
-                <button
+                <Button
                     type="button"
-                    className="btn lesson-nav-prev"
+                    variant="outline"
+                    className="lesson-nav-prev"
                     onClick={goPrev}
                     disabled={currentStepIndex === 0}
                     data-testid="review-prev"
                 >
                     <ArrowLeft size={14} aria-hidden="true" />
                     {t("lesson.action.prev", "Previous")}
-                </button>
+                </Button>
                 {!isSummary &&
                     (isExerciseStep && !checked ? (
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary lesson-nav-check"
+                            className="lesson-nav-check"
                             onClick={() => exerciseRef.current?.submit()}
                             disabled={!answerable}
                             title={
@@ -343,11 +344,11 @@ export default function ReviewPage() {
                             data-testid="review-check"
                         >
                             {t("lesson.button.check", "Check")}
-                        </button>
+                        </Button>
                     ) : (
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary lesson-nav-next"
+                            className="lesson-nav-next"
                             onClick={goNext}
                             data-testid="review-next"
                         >
@@ -358,7 +359,7 @@ export default function ReviewPage() {
                                   )
                                 : t("lesson.action.next", "Next")}
                             <ArrowRight size={14} aria-hidden="true" />
-                        </button>
+                        </Button>
                     ))}
             </nav>
         </main>
@@ -416,14 +417,13 @@ function ReviewSummary({correct, total, onExit}: ReviewSummaryProps) {
                 )}
             </p>
             <div className="lesson-summary-actions">
-                <button
+                <Button
                     type="button"
-                    className="btn btn-primary"
                     onClick={onExit}
                     data-testid="review-summary-exit"
                 >
                     {t("review.back_to_dashboard", "Back to Dashboard")}
-                </button>
+                </Button>
             </div>
         </section>
     );

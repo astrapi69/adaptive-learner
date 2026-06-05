@@ -23,6 +23,8 @@ import {ArrowRight, BookOpen, PartyPopper, RotateCcw} from "lucide-react";
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 
+import {Button} from "@/components/ui/button";
+
 import Confetti from "../components/feedback/Confetti";
 import {
     ExerciseDispatcher,
@@ -109,15 +111,15 @@ export default function ErrorReplayLesson() {
                         "Nothing to retry — open this from a lesson summary after making some mistakes.",
                     )}
                 </p>
-                <button
+                <Button
                     type="button"
-                    className="btn"
+                    variant="outline"
                     onClick={() => navigate("/content")}
                     data-testid="error-replay-exit"
                 >
                     <BookOpen size={14} aria-hidden="true" />
                     {t("lesson.action.open_browser", "Open content browser")}
-                </button>
+                </Button>
             </main>
         );
     }
@@ -228,9 +230,9 @@ export default function ErrorReplayLesson() {
                     aria-label={t("lesson.nav.aria_label", "Step navigation")}
                 >
                     {isExerciseStep && !checked ? (
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary lesson-nav-check"
+                            className="lesson-nav-check"
                             onClick={() => exerciseRef.current?.submit()}
                             disabled={!answerable}
                             title={
@@ -244,11 +246,11 @@ export default function ErrorReplayLesson() {
                             data-testid="error-replay-check"
                         >
                             {t("lesson.button.check", "Check")}
-                        </button>
+                        </Button>
                     ) : (
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary lesson-nav-next"
+                            className="lesson-nav-next"
                             onClick={() => setIndex((i) => i + 1)}
                             data-testid="error-replay-next"
                         >
@@ -256,7 +258,7 @@ export default function ErrorReplayLesson() {
                                 ? t("lesson.action.finish", "Finish lesson")
                                 : t("lesson.action.next", "Next")}
                             <ArrowRight size={14} aria-hidden="true" />
-                        </button>
+                        </Button>
                     )}
                 </nav>
             )}
@@ -319,19 +321,17 @@ function ErrorReplaySummary({
             </p>
             <div className="lesson-summary-actions">
                 {allCorrected ? (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         onClick={onDone}
                         data-testid="error-replay-summary-done"
                     >
                         {t("lesson.error_replay.done", "Back to lesson")}
-                    </button>
+                    </Button>
                 ) : (
                     <>
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-primary"
                             onClick={onRetry}
                             data-testid="error-replay-summary-retry"
                         >
@@ -340,15 +340,15 @@ function ErrorReplaySummary({
                                 "lesson.next_step.still_errors",
                                 "Still {count} errors. Try again?",
                             ).replace("{count}", String(stillWrong))}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
-                            className="btn"
+                            variant="outline"
                             onClick={onDone}
                             data-testid="error-replay-summary-done"
                         >
                             {t("lesson.error_replay.done", "Back to lesson")}
-                        </button>
+                        </Button>
                     </>
                 )}
             </div>

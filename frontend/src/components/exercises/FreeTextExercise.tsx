@@ -32,6 +32,7 @@ import type {KeyboardEvent, Ref} from "react";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveFreeTextAttempt} from "../../lib/element-attempt";
@@ -320,9 +321,11 @@ function FreeTextExercise(
             {exercise.hint && !submitted && (
                 <div className="flex items-center gap-2">
                     {!showHint ? (
-                        <button
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             type="button"
-                            className="inline-flex min-h-11 cursor-pointer items-center border-0 bg-transparent p-0 text-sm text-[var(--accent)] underline underline-offset-2 hover:no-underline"
+                            className="text-[var(--accent)] underline underline-offset-2 hover:no-underline"
                             onClick={() => setShowHint(true)}
                             data-testid="free-text-hint-show"
                         >
@@ -330,7 +333,7 @@ function FreeTextExercise(
                                 "lesson.exercise.free_text.hint_show",
                                 "Need a hint?",
                             )}
-                        </button>
+                        </Button>
                     ) : (
                         <p
                             className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
@@ -344,9 +347,8 @@ function FreeTextExercise(
 
             <div className="flex flex-wrap items-center gap-3">
                 {!submitted && !controlled && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         disabled={isInputEmpty}
                         onClick={handleSubmit}
                         data-testid="free-text-submit"
@@ -355,7 +357,7 @@ function FreeTextExercise(
                             "lesson.exercise.free_text.submit",
                             "Check answer",
                         )}
-                    </button>
+                    </Button>
                 )}
                 {submitted && (
                     <>
@@ -400,9 +402,10 @@ function FreeTextExercise(
                         )}
                         <AnswerCelebration isCorrect={isCorrect} />
                         {!controlled && (
-                            <button
+                            <Button
+                                variant="outline"
+                                size="sm"
                                 type="button"
-                                className="btn"
                                 onClick={handleReset}
                                 data-testid="free-text-retry"
                             >
@@ -411,7 +414,7 @@ function FreeTextExercise(
                                     "lesson.exercise.free_text.retry",
                                     "Try again",
                                 )}
-                            </button>
+                            </Button>
                         )}
                     </>
                 )}

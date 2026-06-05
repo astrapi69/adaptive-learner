@@ -29,6 +29,7 @@ import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "rea
 import type {Ref} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveMatchingAttempts} from "../../lib/element-attempt";
@@ -525,15 +526,14 @@ function MatchingExercise(
 
             <div className="flex flex-wrap items-center gap-3">
                 {!submitted && !controlled && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         disabled={!allPaired}
                         onClick={handleSubmit}
                         data-testid="matching-submit"
                     >
                         {t("lesson.exercise.matching.submit", "Check answers")}
-                    </button>
+                    </Button>
                 )}
                 {submitted && (
                     <>
@@ -564,9 +564,10 @@ function MatchingExercise(
                         </p>
                         <AnswerCelebration isCorrect={matchingAllCorrect} />
                         {!controlled && (
-                            <button
+                            <Button
+                                variant="outline"
+                                size="sm"
                                 type="button"
-                                className="btn"
                                 onClick={handleReset}
                                 data-testid="matching-retry"
                             >
@@ -575,7 +576,7 @@ function MatchingExercise(
                                     "lesson.exercise.matching.retry",
                                     "Try again",
                                 )}
-                            </button>
+                            </Button>
                         )}
                     </>
                 )}

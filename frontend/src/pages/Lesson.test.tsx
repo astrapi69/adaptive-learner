@@ -946,7 +946,8 @@ describe("LessonPage: button icons + 'Lektion pausieren' rename", () => {
         const label = pause.querySelector("span.hidden.md\\:inline");
         expect(label).not.toBeNull();
         expect(label).toHaveTextContent("Pause lesson");
-        expect(pause).toHaveClass("min-h-[44px]");
+        // 44px touch target now via shadcn Button (min-h-11 = 44px).
+        expect(pause).toHaveClass("min-h-11");
     });
 
     it("clicking pause opens the exit dialog (unchanged Phase 63 behavior)", () => {
@@ -962,7 +963,8 @@ describe("LessonPage: button icons + 'Lektion pausieren' rename", () => {
         renderAtPath(VALID_PATH);
         const prev = screen.getByTestId("lesson-prev");
         expect(prev).toHaveAttribute("aria-label", "Previous");
-        expect(prev).toHaveClass("min-h-[44px]");
+        // 44px touch target now via shadcn Button (min-h-11 = 44px).
+        expect(prev).toHaveClass("min-h-11");
         expect(prev).toHaveClass("min-w-[44px]");
         expect(prev.querySelector("span.hidden.md\\:inline")).toHaveTextContent(
             "Previous",
@@ -977,6 +979,7 @@ describe("LessonPage: button icons + 'Lektion pausieren' rename", () => {
         const check = screen.getByTestId("lesson-check");
         expect(check).toHaveTextContent("Check");
         expect(check.querySelector("svg")).not.toBeNull();
-        expect(check).toHaveClass("min-h-[44px]");
+        // 44px touch target now via shadcn Button (min-h-11 = 44px).
+        expect(check).toHaveClass("min-h-11");
     });
 });

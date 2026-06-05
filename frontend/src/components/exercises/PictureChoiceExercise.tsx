@@ -37,6 +37,7 @@ import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "rea
 
 import {useAsset} from "../../hooks/useAsset";
 import {useI18n} from "../../hooks/useI18n";
+import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {generatePlaceholderSvg} from "../../lib/content/placeholder-svg";
@@ -234,9 +235,8 @@ function PictureChoiceExercise(
 
             <div className="flex flex-wrap items-center gap-3">
                 {!submitted && !controlled && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         disabled={selected === null}
                         onClick={handleSubmit}
                         data-testid="picture-submit"
@@ -245,7 +245,7 @@ function PictureChoiceExercise(
                             "lesson.exercise.picture.submit",
                             "Check answer",
                         )}
-                    </button>
+                    </Button>
                 )}
                 {submitted && (
                     <>
@@ -277,9 +277,10 @@ function PictureChoiceExercise(
                             isCorrect={!!result && result.correct > 0}
                         />
                         {!controlled && (
-                            <button
+                            <Button
+                                variant="outline"
+                                size="sm"
                                 type="button"
-                                className="btn"
                                 onClick={handleReset}
                                 data-testid="picture-retry"
                             >
@@ -288,7 +289,7 @@ function PictureChoiceExercise(
                                     "lesson.exercise.picture.retry",
                                     "Try again",
                                 )}
-                            </button>
+                            </Button>
                         )}
                     </>
                 )}

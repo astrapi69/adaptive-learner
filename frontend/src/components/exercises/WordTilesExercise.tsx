@@ -64,6 +64,7 @@ import type {Ref} from "react";
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveWordTilesAttempt} from "../../lib/element-attempt";
@@ -646,9 +647,11 @@ function WordTilesExercise(
             {exercise.hint && !submitted && (
                 <div className="flex items-center gap-2">
                     {!showHint ? (
-                        <button
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             type="button"
-                            className="inline-flex min-h-11 cursor-pointer items-center border-0 bg-transparent p-0 text-sm text-[var(--accent)] underline underline-offset-2 hover:no-underline"
+                            className="text-[var(--accent)] underline underline-offset-2 hover:no-underline"
                             onClick={() => setShowHint(true)}
                             data-testid="word-tiles-hint-show"
                         >
@@ -656,7 +659,7 @@ function WordTilesExercise(
                                 "lesson.exercise.word_tiles.hint_show",
                                 "Need a hint?",
                             )}
-                        </button>
+                        </Button>
                     ) : (
                         <p
                             className="m-0 rounded-sm border px-3 py-2 text-sm text-[var(--fg)] bg-[color-mix(in_srgb,var(--accent)_8%,var(--surface))] border-[color-mix(in_srgb,var(--accent)_25%,var(--border))]"
@@ -670,9 +673,8 @@ function WordTilesExercise(
 
             <div className="flex flex-wrap items-center gap-3">
                 {!submitted && !controlled && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         disabled={!allPlaced}
                         onClick={handleSubmit}
                         data-testid="word-tiles-submit"
@@ -681,7 +683,7 @@ function WordTilesExercise(
                             "lesson.exercise.word_tiles.submit",
                             "Check answer",
                         )}
-                    </button>
+                    </Button>
                 )}
                 {submitted && (
                     <>
@@ -729,9 +731,10 @@ function WordTilesExercise(
                         )}
                         <AnswerCelebration isCorrect={isCorrect} />
                         {!controlled && (
-                            <button
+                            <Button
+                                variant="outline"
+                                size="sm"
                                 type="button"
-                                className="btn"
                                 onClick={handleReset}
                                 data-testid="word-tiles-retry"
                             >
@@ -740,7 +743,7 @@ function WordTilesExercise(
                                     "lesson.exercise.word_tiles.retry",
                                     "Try again",
                                 )}
-                            </button>
+                            </Button>
                         )}
                     </>
                 )}

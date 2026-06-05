@@ -31,6 +31,7 @@ import type {Ref} from "react";
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
+import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import ReadAloudButton from "../lesson/ReadAloudButton";
 import {deriveClozeAttempts} from "../../lib/element-attempt";
@@ -355,9 +356,11 @@ function ClozeExercise(
             {exercise.hint && !submitted && (
                 <div className="flex items-center gap-2">
                     {!showHint ? (
-                        <button
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             type="button"
-                            className="inline-flex min-h-11 cursor-pointer items-center border-0 bg-transparent p-0 text-sm text-[var(--accent)] hover:underline"
+                            className="text-[var(--accent)] hover:underline"
                             onClick={() => setShowHint(true)}
                             data-testid="cloze-hint-show"
                         >
@@ -365,7 +368,7 @@ function ClozeExercise(
                                 "lesson.exercise.cloze.hint_show",
                                 "Need a hint?",
                             )}
-                        </button>
+                        </Button>
                     ) : (
                         <p
                             className="m-0 rounded-sm bg-[var(--surface-2)] p-2 text-sm text-[var(--fg-muted)]"
@@ -379,9 +382,8 @@ function ClozeExercise(
 
             <div className="flex flex-wrap items-center gap-2">
                 {!submitted && !controlled && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
                         disabled={!allFilled}
                         onClick={handleSubmit}
                         data-testid="cloze-submit"
@@ -390,7 +392,7 @@ function ClozeExercise(
                             "lesson.exercise.cloze.submit",
                             "Check answers",
                         )}
-                    </button>
+                    </Button>
                 )}
                 {submitted && (
                     <>
@@ -453,9 +455,10 @@ function ClozeExercise(
                         )}
                         <AnswerCelebration isCorrect={isAllCorrect} />
                         {!controlled && (
-                            <button
+                            <Button
+                                variant="outline"
+                                size="sm"
                                 type="button"
-                                className="btn"
                                 onClick={handleReset}
                                 data-testid="cloze-retry"
                             >
@@ -464,7 +467,7 @@ function ClozeExercise(
                                     "lesson.exercise.cloze.retry",
                                     "Try again",
                                 )}
-                            </button>
+                            </Button>
                         )}
                     </>
                 )}
