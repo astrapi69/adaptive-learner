@@ -14,7 +14,10 @@ Workflow:
    duplicate.
 2. **No fix without an issue.** If none exists, create one
    (`gh issue create`, `bug` label, enough context that the fix is
-   actionable without follow-up) BEFORE touching code.
+   actionable without follow-up) BEFORE touching code. This applies
+   RETROACTIVELY: if you discover a NEW bug while working on another
+   one, file a SEPARATE issue for it before fixing it — never fold an
+   unrelated fix into the current one without its own issue.
 3. **No commit without an issue reference.** The commit subject (and
    the PR) cite the issue number — `(#NN)` or `(fixes #NN)`.
 4. **Verify the premise before filing.** If a pre-implementation audit
