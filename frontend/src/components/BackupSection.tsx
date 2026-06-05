@@ -683,13 +683,13 @@ export default function BackupSection() {
                         />
                     )}
 
-                    <div className="backup-actions">
-                        <button
+                    <div className="backup-actions flex flex-wrap gap-2">
+                        <Button
                             type="button"
+                            variant="default"
                             onClick={handleConfirmRestore}
                             disabled={busy !== null}
                             data-testid="backup-confirm"
-                            className="primary"
                         >
                             {busy === "import"
                                 ? t("backup.importing", "Restoring…")
@@ -707,15 +707,16 @@ export default function BackupSection() {
                                             String(restoreDiffCounts.changed),
                                         )
                                   : t("backup.confirm", "Confirm restore")}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
+                            variant="outline"
                             onClick={handleCancelRestore}
                             disabled={busy !== null}
                             data-testid="backup-cancel"
                         >
                             {t("common.cancel", "Cancel")}
-                        </button>
+                        </Button>
                     </div>
                 </div>
             )}
@@ -799,9 +800,10 @@ export default function BackupSection() {
                         </p>
                     )}
 
-                    <div className="backup-actions">
-                        <button
+                    <div className="backup-actions flex flex-wrap gap-2">
+                        <Button
                             type="button"
+                            variant="default"
                             onClick={async () => {
                                 if (userId === null) {
                                     return;
@@ -839,7 +841,7 @@ export default function BackupSection() {
                             {autoBusy === "run"
                                 ? t("backup.exporting", "Exporting…")
                                 : t("backup.auto_run", "Back up now")}
-                        </button>
+                        </Button>
                     </div>
 
                     {autoBackups.length === 0 ? (
@@ -858,7 +860,10 @@ export default function BackupSection() {
                             data-testid="backup-auto-list"
                         >
                             {autoBackups.map((entry) => (
-                                <li key={entry.id}>
+                                <li
+                                    key={entry.id}
+                                    className="flex flex-wrap items-center gap-2"
+                                >
                                     <span className="backup-auto-when">
                                         {new Date(entry.created_at).toLocaleString()}
                                     </span>
@@ -871,8 +876,10 @@ export default function BackupSection() {
                                             String(entry.total_records),
                                         )}
                                     </span>
-                                    <button
+                                    <Button
                                         type="button"
+                                        variant="secondary"
+                                        size="sm"
                                         onClick={async () => {
                                             if (userId === null) {
                                                 return;
@@ -910,9 +917,11 @@ export default function BackupSection() {
                                         data-testid={`backup-auto-restore-${entry.id}`}
                                     >
                                         {t("backup.auto_restore", "Restore")}
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
                                         type="button"
+                                        variant="destructive"
+                                        size="sm"
                                         onClick={async () => {
                                             if (userId === null) {
                                                 return;
@@ -931,11 +940,13 @@ export default function BackupSection() {
                                         data-testid={`backup-auto-delete-${entry.id}`}
                                     >
                                         {t("common.delete", "Delete")}
-                                    </button>
+                                    </Button>
                                     {/* v1.12.0 / Phase 25D — load this auto-backup
                                         slot into the Compare section as A or B. */}
-                                    <button
+                                    <Button
                                         type="button"
+                                        variant="outline"
+                                        size="sm"
                                         onClick={() =>
                                             void handleLoadAutoIntoCompare(entry, "a")
                                         }
@@ -946,9 +957,11 @@ export default function BackupSection() {
                                             "backup.auto_compare_as_a",
                                             "Compare as A",
                                         )}
-                                    </button>
-                                    <button
+                                    </Button>
+                                    <Button
                                         type="button"
+                                        variant="outline"
+                                        size="sm"
                                         onClick={() =>
                                             void handleLoadAutoIntoCompare(entry, "b")
                                         }
@@ -959,7 +972,7 @@ export default function BackupSection() {
                                             "backup.auto_compare_as_b",
                                             "Compare as B",
                                         )}
-                                    </button>
+                                    </Button>
                                 </li>
                             ))}
                         </ul>
@@ -984,16 +997,17 @@ export default function BackupSection() {
                         <label className="backup-compare-slot-label">
                             {t("backup.compare_slot_a", "Backup A (older)")}
                         </label>
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
+                            className="max-w-full whitespace-normal break-words text-left"
                             onClick={() => compareInputARef.current?.click()}
                             data-testid="backup-compare-pick-a"
                         >
                             {compareA
                                 ? compareA.label
                                 : t("backup.compare_pick", "Pick file…")}
-                        </button>
+                        </Button>
                         <input
                             ref={compareInputARef}
                             type="file"
@@ -1007,19 +1021,20 @@ export default function BackupSection() {
                         <label className="backup-compare-slot-label">
                             {t("backup.compare_slot_b", "Backup B (newer)")}
                         </label>
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
+                            className="max-w-full whitespace-normal break-words text-left"
                             onClick={() => compareInputBRef.current?.click()}
                             data-testid="backup-compare-pick-b"
                         >
                             {compareB
                                 ? compareB.label
                                 : t("backup.compare_pick", "Pick file…")}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="button"
-                            className="btn"
+                            variant="outline"
                             onClick={() => void handleCompareWithCurrent()}
                             data-testid="backup-compare-use-current"
                         >
@@ -1027,7 +1042,7 @@ export default function BackupSection() {
                                 "backup.compare_use_current",
                                 "Use current state",
                             )}
-                        </button>
+                        </Button>
                         <input
                             ref={compareInputBRef}
                             type="file"
@@ -1038,14 +1053,14 @@ export default function BackupSection() {
                         />
                     </div>
                     {(compareA || compareB) && (
-                        <button
+                        <Button
                             type="button"
-                            className="btn"
+                            variant="ghost"
                             onClick={handleClearCompare}
                             data-testid="backup-compare-clear"
                         >
                             {t("backup.compare_clear", "Clear")}
-                        </button>
+                        </Button>
                     )}
                 </div>
                 {compareError !== null && (
