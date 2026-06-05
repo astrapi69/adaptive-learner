@@ -1139,6 +1139,7 @@ export default function Settings() {
         hidden={activeTab !== "learning"}
         data-testid="settings-panel-learning"
       >
+        <SourceLanguagesControl />
         <section
           className="settings-section"
           data-testid="settings-section-feedback"
@@ -1150,7 +1151,6 @@ export default function Settings() {
           <SoundSettingsControl />
         </section>
         <MissionSettingsControl />
-        <SourceLanguagesControl />
         <DirectionStrategyControl />
         <PausedLessonsRetentionControl />
         <MaxLessonSizeControl />
