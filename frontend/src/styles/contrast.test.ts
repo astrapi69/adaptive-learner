@@ -94,6 +94,32 @@ describe("Phase 58D — WCAG AA contrast (all themes)", () => {
     }
 });
 
+describe("shadcn accent-foreground passes AA on the brand accent (#82)", () => {
+    const bridge = readFileSync(resolve(HERE, "tailwind.css"), "utf-8");
+
+    it("maps --color-accent-foreground to --accent-fg, not --fg-primary", () => {
+        const match = bridge.match(
+            /--color-accent-foreground:\s*var\((--[a-z-]+)\)/,
+        );
+        expect(match?.[1], "accent-foreground mapping not found").toBeTruthy();
+        expect(match?.[1]).toBe("--accent-fg");
+    });
+
+    for (const id of THEME_IDS) {
+        it(`theme=${id}: accent-fg on accent passes AA; fg-primary on accent would fail`, () => {
+            const tokens = THEME_TOKENS[id];
+            expect(
+                contrastRatio(tokens["accent-fg"], tokens["accent"]),
+                "accent-fg on accent (shipped ghost/outline hover)",
+            ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+            expect(
+                contrastRatio(tokens["fg-primary"], tokens["accent"]),
+                "fg-primary on accent (the regressed mapping) must fail AA",
+            ).toBeLessThan(AA_NORMAL_TEXT);
+        });
+    }
+});
+
 describe("Phase 39 C5 — method-badge contrast (WCAG SC 1.4.3)", () => {
     for (const method of LEARNING_METHODS) {
         it(`method=${method}: text color picked by bestTextOn meets AA`, () => {
