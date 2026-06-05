@@ -187,6 +187,7 @@ TABLES: dict[str, TableSpec] = {
         columns=(
             "id",
             "user_id",
+            "imported_conversation_id",
             "title",
             "description",
             "language",
@@ -236,6 +237,7 @@ TABLES: dict[str, TableSpec] = {
         columns=(
             "id",
             "project_id",
+            "imported_conversation_id",
             "method",
             "started_at",
             "ended_at",

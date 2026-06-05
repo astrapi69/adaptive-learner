@@ -719,12 +719,8 @@ def test_restore_curriculum_from_import_and_nested_topics(db_session):
     This seeds a parent/child topic tree (+ a curriculum + an imported
     conversation so the surrounding tables are populated) and asserts the
     export -> wipe -> restore round-trip succeeds with ZERO FK errors and
-    preserves the parent/child link.
-
-    (Note: ``Curriculum.imported_conversation_id`` is not part of the
-    curriculums sync column set today, so that link is intentionally not
-    asserted here — its column coverage is a separate concern from the
-    restore ORDER this test pins.)
+    preserves both the parent/child topic link AND the curriculum's
+    ``imported_conversation_id`` (now part of the curriculums sync columns).
     """
     user = User(name="Tester", email=None, language="de")
     db_session.add(user)
@@ -757,6 +753,27 @@ def test_restore_curriculum_from_import_and_nested_topics(db_session):
     db_session.add(child)
     db_session.flush()
 
+    # A session that also came from the same chat import — its
+    # imported_conversation_id must round-trip too.
+    project = LearningProject(
+        user_id=user.id,
+        topic="Bayes",
+        goal="Master it",
+        timeframe="1 week",
+        daily_minutes=20,
+    )
+    db_session.add(project)
+    db_session.flush()
+    session = LearningSession(
+        project_id=project.id,
+        method="deductive",
+        cycle_step=1,
+        status="active",
+        imported_conversation_id=conversation.id,
+    )
+    db_session.add(session)
+    db_session.flush()
+
     payload = create_backup(db_session, user.id)
     _wipe_all_tables(db_session)
     assert db_session.query(Curriculum).count() == 0
@@ -765,12 +782,17 @@ def test_restore_curriculum_from_import_and_nested_topics(db_session):
     assert summary["errors"] == [], summary["errors"]
 
     assert db_session.query(ImportedConversation).count() == 1
-    assert db_session.query(Curriculum).count() == 1
+    restored_curriculum = db_session.query(Curriculum).one()
+    # The chat-import link survives now that imported_conversation_id is a
+    # curriculums sync column (was silently dropped before).
+    assert restored_curriculum.imported_conversation_id == conversation.id
     topics = {t.title: t for t in db_session.query(LearningTopic).all()}
     assert set(topics) == {"Parent", "Child"}
     # The self-referential link survives the round-trip — the crux of the
-    # bug (would 500 on restore before PRAGMA defer_foreign_keys).
+    # FK bug (would 500 on restore before PRAGMA defer_foreign_keys).
     assert topics["Child"].parent_id == topics["Parent"].id
+    restored_session = db_session.query(LearningSession).one()
+    assert restored_session.imported_conversation_id == conversation.id
 
 
 def test_export_and_restore_all_thirty_tables(db_session):
