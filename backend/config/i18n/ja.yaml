@@ -195,6 +195,7 @@ assessment:
   continue_to_dashboard: ダッシュボードへ進む
   read_summary: サマリーを読み上げ
 dashboard:
+  no_data: "まだデータがありません。"
   title: ダッシュボード
   welcome: おかえりなさい
   quick_start: 新しいセッションを開始

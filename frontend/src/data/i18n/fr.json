@@ -207,6 +207,7 @@
     "read_summary": "Lire le résumé"
   },
   "dashboard": {
+    "no_data": "Pas encore de données.",
     "title": "Tableau de bord",
     "welcome": "Bon retour",
     "quick_start": "Demarrer une nouvelle session",

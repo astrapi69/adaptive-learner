@@ -195,6 +195,7 @@ assessment:
   continue_to_dashboard: Συνέχεια στον πίνακα
   read_summary: Ανάγνωση περίληψης
 dashboard:
+  no_data: "Δεν υπάρχουν ακόμη δεδομένα."
   title: Πίνακας
   welcome: Καλώς ήρθες ξανά
   quick_start: Έναρξη νέας συνεδρίας

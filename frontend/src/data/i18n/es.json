@@ -207,6 +207,7 @@
     "read_summary": "Leer resumen"
   },
   "dashboard": {
+    "no_data": "Aún no hay datos.",
     "title": "Panel",
     "welcome": "Bienvenido de nuevo",
     "quick_start": "Empezar una nueva sesion",

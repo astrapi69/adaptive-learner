@@ -207,6 +207,7 @@
     "read_summary": "Özeti oku"
   },
   "dashboard": {
+    "no_data": "Henüz veri yok.",
     "title": "Pano",
     "welcome": "Tekrar hoş geldin",
     "quick_start": "Yeni bir oturum başlat",
