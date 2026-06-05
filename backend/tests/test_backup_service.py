@@ -690,8 +690,7 @@ def test_restore_order_respects_fk_dependencies():
             if ref == src:
                 continue  # self-referential — see PRAGMA defer_foreign_keys
             assert ref in position, (
-                f"{src}.{fk.parent.name} references {ref}, which is not in "
-                f"the restore order"
+                f"{src}.{fk.parent.name} references {ref}, which is not in the restore order"
             )
             checked += 1
             if position[ref] >= position[src]:
@@ -739,9 +738,7 @@ def test_restore_curriculum_from_import_and_nested_topics(db_session):
     db_session.add(curriculum)
     db_session.flush()
 
-    parent = LearningTopic(
-        curriculum_id=curriculum.id, title="Parent", order_index=0
-    )
+    parent = LearningTopic(curriculum_id=curriculum.id, title="Parent", order_index=0)
     db_session.add(parent)
     db_session.flush()
     child = LearningTopic(
@@ -895,3 +892,66 @@ def test_get_backup_stats_covers_all_tables(db_session):
     user = _seed_all_tables(db_session)
     stats = get_backup_stats(db_session, user.id)
     assert set(stats["tables"].keys()) == set(ALL_BACKUP_TABLES)
+
+
+# --- BACKUP-RESTORE-DATETIME-01: type-driven datetime coercion ---------
+
+
+def test_datetime_fields_cover_non_at_datetime_columns():
+    """Regression: restore coercion must key off the column TYPE, not a
+    name heuristic. DateTime/Date columns whose name does not end in
+    ``_at`` were silently passed to the INSERT as ISO strings.
+    """
+    from app.services import backup_service as bs
+
+    assert "timestamp" in bs._datetime_fields("imported_messages")
+    assert "created_at" in bs._datetime_fields("imported_messages")
+    assert bs._datetime_fields("user_streaks") >= {
+        "last_freeze_earned_on",
+        "last_freeze_used_on",
+    }
+    assert "assigned_date" in bs._datetime_fields("user_missions")
+
+
+def test_coerce_record_converts_string_timestamp_to_datetime():
+    from app.services import backup_service as bs
+
+    coerced = bs._coerce_record(
+        "imported_messages",
+        {
+            "id": "m1",
+            "timestamp": "2026-04-05T08:39:38",
+            "created_at": "2026-04-05T08:39:38",
+        },
+    )
+    assert isinstance(coerced["timestamp"], datetime)
+    assert isinstance(coerced["created_at"], datetime)
+    # A null datetime stays null.
+    assert bs._coerce_record("imported_messages", {"timestamp": None})["timestamp"] is None
+
+
+def test_restore_accepts_string_timestamp_on_imported_messages(db_session):
+    """Regression: BACKUP-RESTORE-DATETIME-01 (#57). The
+    ``imported_messages.timestamp`` DateTime column (name does not end in
+    ``_at``) arrives as an ISO string from a JSON backup. Restore must
+    coerce it instead of handing SQLite a raw str (HTTP 500 TypeError).
+    """
+    user = _seed_all_tables(db_session)
+    payload = create_backup(db_session, user.id)
+    msgs = payload["data"]["imported_messages"]
+    assert msgs, "seed should include at least one imported message"
+    # The seeded message carries timestamp=None; set a string form (as a
+    # real exported backup does for messages that had a source timestamp).
+    msgs[0]["timestamp"] = "2026-04-05T08:39:38"
+
+    _wipe_all_tables(db_session)
+
+    # Must not raise "SQLite DateTime type only accepts ... datetime".
+    summary = restore_backup(db_session, payload)
+    assert summary["user_id"] == user.id
+
+    restored = db_session.query(ImportedMessage).filter(ImportedMessage.id == msgs[0]["id"]).first()
+    assert restored is not None
+    assert isinstance(restored.timestamp, datetime)
+    assert restored.timestamp.year == 2026
+    assert restored.timestamp.month == 4

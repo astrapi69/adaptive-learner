@@ -42,7 +42,7 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import text
+from sqlalchemy import Date, DateTime, text
 from sqlalchemy.orm import Session
 
 from app import __version__
@@ -175,9 +175,36 @@ def _validate_payload(payload: Any) -> dict[str, Any]:
     return payload
 
 
+# Per-table set of datetime/date column names, derived from the
+# SQLAlchemy model. Cached because the model schema is static.
+# Using the column TYPE (not a name heuristic) is what makes restore
+# robust: a DateTime column whose name does not end in ``_at`` — e.g.
+# ``imported_messages.timestamp``, ``user_streaks.last_freeze_used_on``,
+# ``user_missions.assigned_date`` — would otherwise reach the INSERT as a
+# raw ISO string and SQLite rejects it (BACKUP-RESTORE-DATETIME-01).
+_DATETIME_FIELDS_CACHE: dict[str, frozenset[str]] = {}
+
+
+def _datetime_fields(table: str) -> frozenset[str]:
+    cached = _DATETIME_FIELDS_CACHE.get(table)
+    if cached is not None:
+        return cached
+    spec = _spec(table)
+    table_columns = spec.model.__table__.columns
+    fields = frozenset(
+        col
+        for col in spec.columns
+        if (column := table_columns.get(col)) is not None
+        and isinstance(column.type, (DateTime, Date))
+    )
+    _DATETIME_FIELDS_CACHE[table] = fields
+    return fields
+
+
 def _coerce_record(table: str, record: dict[str, Any]) -> dict[str, Any]:
     """Per-column type coercion (ISO strings to datetimes)."""
     spec = _spec(table)
+    datetime_fields = _datetime_fields(table)
     coerced: dict[str, Any] = {}
     for col in spec.columns:
         if col not in record:
@@ -186,9 +213,8 @@ def _coerce_record(table: str, record: dict[str, Any]) -> dict[str, Any]:
         if value is None:
             coerced[col] = None
             continue
-        if col.endswith("_at") or col == "assessed_at":
-            if isinstance(value, str):
-                value = _from_iso(value)
+        if col in datetime_fields and isinstance(value, str):
+            value = _from_iso(value)
         coerced[col] = value
     return coerced
 
