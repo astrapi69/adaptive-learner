@@ -80,27 +80,6 @@ tiebreaker.
 
 ## P1 — Architecture / Hygiene Debt
 
-- [ ] **BACKUP-API-RESTORE-01**: Backend ``_RESTORE_ORDER`` covers
-  only 18 of the 30 exported tables. ``backup_service.py``'s
-  ``_gather_user_rows`` iterates the full ``sync_service.TABLES``
-  surface on EXPORT (30 tables incl. gamification, lesson_progress,
-  element_errors, missions, subjects/tags taxonomy), but
-  ``_RESTORE_ORDER`` stops at ``imported_messages`` — so a backup
-  restored in API mode silently IGNORES every gamification /
-  progress / SRS / missions / taxonomy row in the file. The data is
-  exported but un-restorable on the API side. Surfaced while fixing
-  the Dexie-side equivalent (BACKUP-DIR-EXPORT-01, which extended
-  the Dexie ``RESTORE_ORDER`` to all 30 tables — the frontend is now
-  complete; the backend is the remaining half). Fix: extend
-  ``_RESTORE_ORDER`` to mirror the Dexie order (badges before
-  user_badges; subjects/tags before project_* M:N rows), then add a
-  full-surface export->wipe->restore roundtrip test asserting the
-  gamification/progress tables come back. Not active production data
-  loss (the rows still live in the DB; only a cross-install / post-
-  reset restore loses them), but it makes API-mode backups a partial
-  lie the same way the Dexie bug did. Low risk: ``_restore_table``
-  is generic; the new tables are direct user-scope mutable rows.
-
 ## P2 — Medium Value, Medium Effort
 
 ## P3 — Lower Value or Large Effort
@@ -125,25 +104,6 @@ tiebreaker.
   i18n glob fix (F-1). Low impact — praise loads during lessons,
   plugin-config is small. Opportunistic. Filed from the 2026-06-03
   performance audit (F-4).
-- [ ] **IMPORT-LANG-PIPELINE-SELECT-MIGRATION-01**: the Dexie E2E spec
-  `e2e/dexie/import-language-pipeline.spec.ts` ("German speaker learning
-  French keeps de -> fr at every step") was `test.fixme`'d at v1.56.0
-  because the Tailwind Phase-C4 migration moved the language pickers
-  (`import-target-language`, `save-lesson-*-lang`, share-wizard
-  `edit-*`) from native `<input>` to shadcn (Radix) Select, so its 8
-  `toHaveValue()` assertions fail with "Not an input element". The
-  feature works; rewrite the spec to drive Radix Selects (open trigger →
-  pick option; assert the trigger's displayed value) and un-fixme it.
-  The inheritance contract stays covered by the C5 unit/integration
-  suites meanwhile. Pairs with the now-closed TTS-E2E-HEADLESS-GUARD-01.
-- [ ] **TTS-E2E-HEADLESS-GUARD-01**: `e2e/dexie/lesson-tts.spec.ts` fails
-  the Dexie gate under headless chromium because `speechSynthesis` has no
-  voices, so the `lesson-tts-autoread` toggle never flips `aria-pressed`
-  (the read-aloud feature works in real browsers). Guard the autoread
-  assertions with a no-voices skip, or stub `speechSynthesis` in the
-  spec. Surfaced cutting v1.54.0 (3 failing tts E2E tests; not a
-  v1.54.0 regression). Also validate + unskip the `test.fixme` import
-  language-pipeline spec.
 - [ ] **DEP-MYPY-2-01**: Upgrade mypy 1.x -> 2.0 (held back in the
   v1.41.0 dep sweep — caret ``^1.20`` caps it). Major version;
   needs a dedicated migration session (new/renamed error classes,
