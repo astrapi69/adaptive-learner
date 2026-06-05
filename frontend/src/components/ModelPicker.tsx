@@ -28,6 +28,7 @@
 
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import type {AIProvider} from "../lib/constants";
@@ -175,16 +176,17 @@ export function ModelPicker({
                     disabled={disabled}
                     aria-expanded={open}
                 />
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary model-picker-toggle"
+                    variant="secondary"
+                    className="model-picker-toggle"
                     data-testid={`model-picker-toggle-${provider}`}
                     onClick={() => (open ? setOpen(false) : openPicker())}
                     disabled={disabled}
                     aria-label={t("settings.model_picker_open", "Open model list")}
                 >
                     {open ? "▲" : "▼"}
-                </button>
+                </Button>
             </div>
 
             {selectedModel && (
@@ -249,14 +251,14 @@ export function ModelPicker({
                                 )}
                             </p>
                             <p className="muted">{fetchState.detail}</p>
-                            <button
+                            <Button
                                 type="button"
-                                className="btn btn-secondary"
+                                variant="secondary"
                                 onClick={() => void performFetch()}
                                 data-testid={`model-picker-retry-${provider}`}
                             >
                                 {t("settings.model_picker_retry", "Retry")}
-                            </button>
+                            </Button>
                         </div>
                     )}
                     {fetchState.kind === "loaded" && recommended.length > 0 && (
@@ -303,15 +305,16 @@ export function ModelPicker({
                                 )}
                             </div>
                             {staticSuggestions.map((id) => (
-                                <button
+                                <Button
                                     type="button"
                                     key={id}
-                                    className="model-picker-row"
+                                    variant="ghost"
+                                    className="model-picker-row w-full justify-start"
                                     onClick={() => handleSelect(id)}
                                     data-testid={`model-picker-suggestion-${provider}-${id}`}
                                 >
                                     <span className="model-picker-row-name">{id}</span>
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     )}
@@ -333,9 +336,10 @@ function ModelRow({
     provider: AIProvider;
 }) {
     return (
-        <button
+        <Button
             type="button"
-            className={`model-picker-row${selected ? " is-selected" : ""}`}
+            variant="ghost"
+            className={`model-picker-row w-full justify-start${selected ? " is-selected" : ""}`}
             onClick={onSelect}
             data-testid={`model-picker-option-${provider}-${model.id}`}
             role="option"
@@ -348,7 +352,7 @@ function ModelRow({
                     {formatContextWindow(model.context_window)}
                 </span>
             )}
-        </button>
+        </Button>
     );
 }
 

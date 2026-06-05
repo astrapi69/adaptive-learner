@@ -21,6 +21,7 @@
 import {lazy, Suspense, useEffect, useRef, useState} from "react";
 import QRCode from "qrcode";
 
+import {Button} from "@/components/ui/button";
 import {api, ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
@@ -308,9 +309,9 @@ function PairedView({
                         flexWrap: "wrap",
                     }}
                 >
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-primary"
+                        variant="default"
                         onClick={onSyncNow}
                         disabled={busy !== ""}
                         data-testid="sync-now-button"
@@ -318,16 +319,16 @@ function PairedView({
                         {busy === "sync"
                             ? t("sync.syncing")
                             : t("sync.now")}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         onClick={onUnpair}
                         disabled={busy !== ""}
                         data-testid="sync-unpair-button"
                     >
                         {t("sync.unpair")}
-                    </button>
+                    </Button>
                 </div>
                 {storageMode === "api" && (
                     <p
@@ -466,9 +467,9 @@ function DesktopUnpairedView({
                         style={{padding: "0.35rem 0.5rem", width: 100}}
                     />
                 </label>
-                <button
+                <Button
                     type="button"
-                    className="btn btn-primary"
+                    variant="default"
                     onClick={generatePairing}
                     disabled={busy}
                     data-testid="sync-generate-button"
@@ -476,7 +477,7 @@ function DesktopUnpairedView({
                     {busy
                         ? t("sync.generating")
                         : t("sync.generate")}
-                </button>
+                </Button>
             </div>
             {qrDataUrl && link && (
                 <div
@@ -510,14 +511,14 @@ function DesktopUnpairedView({
                         {link}
                     </p>
                     <div style={{display: "flex", gap: "0.5rem", flexWrap: "wrap"}}>
-                        <button
+                        <Button
                             type="button"
-                            className="btn btn-secondary"
+                            variant="secondary"
                             onClick={copyLink}
                             data-testid="sync-copy-link"
                         >
                             {t("sync.copy_link")}
-                        </button>
+                        </Button>
                         {expiresAt && (
                             <small
                                 style={{
@@ -562,16 +563,16 @@ function PhoneUnpairedView({
             <p className="muted">
                 {t("sync.phone_hint_v17")}
             </p>
-            <button
+            <Button
                 type="button"
-                className="btn btn-primary"
+                variant="default"
                 onClick={onScanClick}
                 disabled={busy !== ""}
                 data-testid="sync-scan-button"
                 style={{marginBottom: "0.75rem", width: "100%", maxWidth: 320}}
             >
                 {t("sync.scan_qr")}
-            </button>
+            </Button>
             <details
                 data-testid="sync-paste-fallback"
                 style={{marginTop: "0.5rem"}}
@@ -605,9 +606,9 @@ function PhoneUnpairedView({
                     data-testid="sync-pair-input"
                     disabled={busy !== ""}
                 />
-                <button
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     onClick={onConnect}
                     disabled={!pairingLink.trim() || busy !== ""}
                     data-testid="sync-pair-button"
@@ -616,7 +617,7 @@ function PhoneUnpairedView({
                     {busy === "pair"
                         ? t("sync.pairing")
                         : t("sync.connect")}
-                </button>
+                </Button>
             </details>
         </div>
     );

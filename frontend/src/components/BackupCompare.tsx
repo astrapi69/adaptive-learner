@@ -23,6 +23,7 @@
 
 import {useEffect, useMemo, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {
     diffBackups,
@@ -212,14 +213,14 @@ export function BackupCompare({
                     </select>
                 </label>
                 {!hideExport && (
-                    <button
+                    <Button
                         type="button"
-                        className="btn btn-secondary"
+                        variant="secondary"
                         data-testid="backup-compare-export-md"
                         onClick={handleExportMarkdown}
                     >
                         {t("backup.compare_export_md", "Export as Markdown")}
-                    </button>
+                    </Button>
                 )}
             </div>
 
@@ -326,9 +327,10 @@ function BackupCompareTableCard({
             className="backup-compare-table-card"
             data-testid={`backup-compare-table-${table.table}`}
         >
-            <button
+            <Button
                 type="button"
-                className="backup-compare-table-head"
+                variant="ghost"
+                className="backup-compare-table-head w-full justify-between"
                 onClick={onToggleTable}
                 aria-expanded={expanded}
                 data-testid={`backup-compare-toggle-${table.table}`}
@@ -359,7 +361,7 @@ function BackupCompareTableCard({
                 <span className="backup-compare-toggle-icon">
                     {expanded ? "▾" : "▸"}
                 </span>
-            </button>
+            </Button>
             {expanded && (
                 <div
                     className="backup-compare-table-body"
@@ -464,9 +466,10 @@ function ChangedSection({
                             key={rec.id}
                             data-testid={`backup-compare-record-changed-${table}-${rec.id}`}
                         >
-                            <button
+                            <Button
                                 type="button"
-                                className="backup-compare-changed-head"
+                                variant="ghost"
+                                className="backup-compare-changed-head w-full justify-between"
                                 onClick={() => onToggleRecord(recordKey)}
                                 aria-expanded={isOpen}
                                 data-testid={`backup-compare-changed-toggle-${table}-${rec.id}`}
@@ -480,7 +483,7 @@ function ChangedSection({
                                 <span className="backup-compare-toggle-icon">
                                     {isOpen ? "▾" : "▸"}
                                 </span>
-                            </button>
+                            </Button>
                             {isOpen && (
                                 <table
                                     className="backup-compare-field-table"

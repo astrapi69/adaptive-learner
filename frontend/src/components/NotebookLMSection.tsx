@@ -16,6 +16,7 @@
 import {useCallback, useEffect, useState} from "react";
 
 import {ApiError} from "../api/client";
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {buildNotebookLMPackage} from "../lib/export/notebooklm-package";
 import {readLearnerState} from "../lib/learnerState";
@@ -197,9 +198,8 @@ export default function NotebookLMSection({projectId}: NotebookLMSectionProps) {
             </h2>
 
             <div className="notebooklm-actions">
-                <button
+                <Button
                     type="button"
-                    className="btn btn-primary"
                     disabled={generating}
                     onClick={generateQuestions}
                     data-testid="notebooklm-generate-questions"
@@ -213,10 +213,10 @@ export default function NotebookLMSection({projectId}: NotebookLMSectionProps) {
                               "notebooklm.generate_questions",
                               "Generate study questions",
                           )}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     disabled={exportingZip}
                     onClick={downloadZip}
                     data-testid="notebooklm-download-zip"
@@ -227,10 +227,10 @@ export default function NotebookLMSection({projectId}: NotebookLMSectionProps) {
                               "notebooklm.download_zip",
                               "Download NotebookLM package",
                           )}
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
-                    className="btn btn-secondary"
+                    variant="secondary"
                     disabled={generatingGuide}
                     onClick={downloadStudyGuide}
                     data-testid="notebooklm-study-guide"
@@ -244,7 +244,7 @@ export default function NotebookLMSection({projectId}: NotebookLMSectionProps) {
                               "notebooklm.study_guide",
                               "Download study guide",
                           )}
-                </button>
+                </Button>
             </div>
 
             <div className="notebooklm-filter">
@@ -321,13 +321,13 @@ export default function NotebookLMSection({projectId}: NotebookLMSectionProps) {
                                 </p>
                             )}
                             <div className="notebooklm-question__actions">
-                                <button
+                                <Button
                                     type="button"
-                                    className="btn btn-destructive"
+                                    variant="destructive"
                                     onClick={() => removeQuestion(q)}
                                 >
                                     {t("common.delete", "Delete")}
-                                </button>
+                                </Button>
                             </div>
                         </li>
                     ))}

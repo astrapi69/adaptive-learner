@@ -22,6 +22,7 @@
 import { useEffect, useState } from "react";
 import { FlaskConical, Save, Trash2 } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { ApiError } from "../api/client";
 import { useI18n } from "../hooks/useI18n";
 import { isValidGitHubTokenFormat } from "../lib/github/github-api";
@@ -215,9 +216,9 @@ export default function GitHubIntegrationSection() {
           )}
 
           <div className="form-actions">
-            <button
+            <Button
               type="button"
-              className="btn btn-secondary min-h-[44px]"
+              variant="secondary"
               onClick={handleTest}
               disabled={!canTest}
               data-testid="settings-github-test"
@@ -238,10 +239,10 @@ export default function GitHubIntegrationSection() {
                   ? t("settings.github.testing", "Testing…")
                   : t("settings.github.test", "Test")}
               </span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              className="btn btn-primary min-h-[44px]"
+              variant="default"
               onClick={handleSave}
               disabled={!formatValid || saving}
               data-testid="settings-github-save"
@@ -252,11 +253,11 @@ export default function GitHubIntegrationSection() {
               <span className="hidden md:inline">
                 {t("settings.github.save", "Save")}
               </span>
-            </button>
+            </Button>
             {status?.configured && (
-              <button
+              <Button
                 type="button"
-                className="btn btn-link min-h-[44px]"
+                variant="link"
                 onClick={handleClear}
                 disabled={saving}
                 data-testid="settings-github-clear"
@@ -267,7 +268,7 @@ export default function GitHubIntegrationSection() {
                 <span className="hidden md:inline">
                   {t("settings.github.remove", "Remove")}
                 </span>
-              </button>
+              </Button>
             )}
           </div>
 
