@@ -9,9 +9,29 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.60.0** (minor — **lesson-reading UX +
+- **Current state:** **v1.61.0** (minor — **app-wide shadcn button
+  conformance + lesson resume-at-paused-step + cross-repo content
+  validation + backup-restore data-integrity fixes**). **Button audit:**
+  ~200 action buttons across all 13 page areas converted to shadcn
+  ``<Button>`` (correct variant, 44px, lucide icon + responsive label,
+  preserved a11y/testids; exercise tiles / editor toggles / graph nodes
+  left raw by design — ``docs/audits/button-audit.md``); the backup
+  actions are prominent (Create=default, Restore=outline) and scroll to
+  top after restore. **Resume:** a paused lesson resumes at the exact
+  step — ``LessonProgress.current_step`` (Alembic 0027 + Dexie, no
+  version bump), persisted on step/autosave/pause, resumed at
+  ``max(step_results-derived, current_step)``. **Content validation:**
+  ``scripts/validate_bundled_content.py`` makes the content repo the
+  single authority for the README CONTENT-STATS block (pre-commit writes,
+  a ``Content stats drift`` CI job checks a FRESH content checkout,
+  deploy double-checks); README now reports **330 lessons / 16 sets**.
+  **Fixes:** backup restore UNIQUE-on-``badges.key`` (natural-key upsert
+  + ``user_badges.badge_id`` remap), FK-topological ``_RESTORE_ORDER``,
+  ``imported_conversation_id`` in backup columns, ``learning-repo`` git
+  commits disable GPG signing.
+  v1.60.0 = minor — **lesson-reading UX +
   Learning Path Achievement Map + Tailwind exercise renderers +
-  help-glossary perf + B1 content complete**). **Auto-hide header
+  help-glossary perf + B1 content complete**. **Auto-hide header
   during lessons:** scrolling down slides the sticky nav up (more
   reading space), scrolling up / reaching the top reveals it — scoped to
   ``/lesson`` / ``/review`` / ``/adaptive-lesson`` / ``/error-replay``
