@@ -1963,3 +1963,17 @@ share:
     err_rate: "GitHub hız sınırına ulaşıldı. Lütfen daha sonra tekrar dene."
     err_github: "GitHub isteği reddetti: {detail}"
     err_network: "GitHub'a ulaşılamadı. Bağlantını kontrol edip tekrar dene."
+
+taxonomy:
+  filter_title: "Projeleri filtrele"
+  loading: "Filtreler yükleniyor…"
+  filter_load_failed: "Filtre verileri yüklenemedi."
+  subject: "Konu"
+  all_subjects: "Tüm konular"
+  all_projects: "Tüm projeler ({count})"
+  filtered_projects: "Eşleşen projeler ({count})"
+  clear_filters: "Filtreleri temizle"
+  tags: "Etiketler"
+  no_user_tags_short: "Henüz etiket yok."
+  no_matching_projects: "Eşleşen proje yok."
+  no_projects: "Henüz proje yok."
