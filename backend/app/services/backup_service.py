@@ -333,9 +333,7 @@ def _record_belongs_to_user(table: str, record: dict[str, Any], user_id: str) ->
 # ``restore_backup``: ``PRAGMA defer_foreign_keys=ON``).
 _SYNC_TABLE_NAMES: frozenset[str] = frozenset(SYNC_TABLES)
 _RESTORE_ORDER: tuple[str, ...] = tuple(
-    table.name
-    for table in Base.metadata.sorted_tables
-    if table.name in _SYNC_TABLE_NAMES
+    table.name for table in Base.metadata.sorted_tables if table.name in _SYNC_TABLE_NAMES
 )
 
 
