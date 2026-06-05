@@ -10,6 +10,7 @@ import MethodBadge from "../components/MethodBadge";
 import MethodSwitchBanner from "../components/MethodSwitchBanner";
 import RatingDialog, {type RatingValues} from "../components/RatingDialog";
 import SessionChat, {type ChatMessage} from "../components/SessionChat";
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {useOnlineStatus} from "../hooks/useOnlineStatus";
@@ -694,14 +695,14 @@ export default function Session() {
             />
 
             <div className="form-actions">
-                <button
+                <Button
+                    variant="destructive"
                     type="button"
-                    className="btn btn-danger"
                     data-testid="session-end"
                     onClick={() => setShowRating(true)}
                 >
                     {t("session.end_session", "End session")}
-                </button>
+                </Button>
             </div>
 
             <RatingDialog

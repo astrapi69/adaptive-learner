@@ -2,6 +2,7 @@ import {useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent} f
 import type {Editor} from "@tiptap/react";
 import type {JSONContent} from "@tiptap/core";
 
+import {Button} from "@/components/ui/button";
 import {useButtonTooltips} from "../hooks/useButtonTooltips";
 import {useI18n} from "../hooks/useI18n";
 import RichTextEditor from "./editor/RichTextEditor";
@@ -221,23 +222,23 @@ export default function RatingDialog({
                         </div>
                     </div>
                     <div className="form-actions">
-                        <button
+                        <Button
+                            variant="secondary"
                             type="button"
-                            className="btn btn-secondary"
                             data-testid="rating-cancel"
                             onClick={onCancel}
                             disabled={submitting}
                         >
                             {t("common.cancel", "Cancel")}
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                            variant="default"
                             type="submit"
-                            className="btn btn-primary"
                             data-testid="rating-submit"
                             disabled={submitting}
                         >
                             {t("session.rating_submit", "Submit rating")}
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </div>

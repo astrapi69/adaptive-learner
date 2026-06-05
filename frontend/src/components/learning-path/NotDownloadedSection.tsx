@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 
 import {useI18n} from "../../hooks/useI18n";
+import {Button} from "@/components/ui/button";
 import {cn} from "../../lib/utils";
 import {getStorage} from "../../storage";
 import {notify} from "../../utils/notify";
@@ -86,11 +87,13 @@ export default function NotDownloadedSection({
             className="mt-6"
             data-testid="learning-path-not-downloaded"
         >
-            <button
+            <Button
+                variant="ghost"
+                size="sm"
                 type="button"
                 onClick={() => setOpen((v) => !v)}
                 aria-expanded={open}
-                className="flex min-h-[44px] w-full items-center gap-2 text-sm font-medium text-fg-muted"
+                className="flex w-full items-center justify-start gap-2 text-sm font-medium text-fg-muted"
                 data-testid="not-downloaded-toggle"
             >
                 <ChevronDown
@@ -103,7 +106,7 @@ export default function NotDownloadedSection({
                 />
                 {t("learning_path.not_downloaded", "Not downloaded")} (
                 {sets.length})
-            </button>
+            </Button>
 
             {open && (
                 <ul
@@ -128,11 +131,13 @@ export default function NotDownloadedSection({
                                     "{n} lessons",
                                 ).replace("{n}", String(entry.lessonCount))}
                             </span>
-                            <button
+                            <Button
+                                variant="outline"
                                 type="button"
                                 onClick={() => download(entry)}
                                 disabled={busy === entry.setId}
-                                className="inline-flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-app border border-border px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted disabled:opacity-60"
+                                aria-label={t("learning_path.download", "Download")}
+                                className="shrink-0 gap-1.5 rounded-app px-3 py-1.5 text-sm font-medium text-foreground"
                                 data-testid={`not-downloaded-download-${entry.setId}`}
                             >
                                 {busy === entry.setId ? (
@@ -147,7 +152,7 @@ export default function NotDownloadedSection({
                                 <span className="hidden sm:inline">
                                     {t("learning_path.download", "Download")}
                                 </span>
-                            </button>
+                            </Button>
                         </li>
                     ))}
                 </ul>

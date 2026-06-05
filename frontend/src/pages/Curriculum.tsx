@@ -7,6 +7,7 @@ import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
 import LessonList from "../components/LessonList";
 import TopicTree from "../components/TopicTree";
+import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
@@ -325,16 +326,16 @@ export default function Curriculum() {
                         )}
                         disabled={creatingCurriculum}
                     />
-                    <button
+                    <Button
+                        variant="default"
                         type="submit"
-                        className="btn btn-primary"
                         data-testid="curriculum-create"
                         disabled={
                             creatingCurriculum || newCurriculumTitle.trim().length === 0
                         }
                     >
                         {t("curriculum.create", "Create curriculum")}
-                    </button>
+                    </Button>
                 </form>
             </section>
 
@@ -344,14 +345,14 @@ export default function Curriculum() {
                         <h2 className="dashboard-card-title">
                             {curricula.find((c) => c.id === selectedId)?.title ?? ""}
                         </h2>
-                        <button
+                        <Button
+                            variant="secondary"
                             type="button"
-                            className="btn btn-secondary"
                             data-testid="curriculum-add-root"
                             onClick={() => setDialog({kind: "add-root"})}
                         >
                             {t("curriculum.add_root_topic", "Add root topic")}
-                        </button>
+                        </Button>
                     </div>
                     <CurriculumDescriptionEditor
                         key={selectedId}

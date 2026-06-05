@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 
 import {Progress} from "../components/ui/progress";
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {usePersonalPath} from "../hooks/usePersonalPath";
 import {readLearnerState} from "../lib/learnerState";
@@ -73,12 +74,13 @@ function SetMapRow({
     const Chevron = isExpanded ? ChevronUp : ChevronDown;
     return (
         <li>
-            <button
+            <Button
+                variant="ghost"
                 type="button"
                 onClick={onToggle}
                 aria-expanded={isExpanded}
                 data-testid={`map-set-${set.setId}`}
-                className="flex min-h-[44px] w-full flex-col gap-2 rounded-app border border-border bg-card p-3 text-left hover:bg-muted"
+                className="flex w-full flex-col gap-2 rounded-app border border-border bg-card p-3 text-left hover:bg-muted"
             >
                 <div className="flex items-center gap-2">
                     <DomainIcon domain={set.domain} />
@@ -109,7 +111,7 @@ function SetMapRow({
                         ).replace("{n}", String(set.totalCount))}
                     </span>
                 </div>
-            </button>
+            </Button>
             {isExpanded && (
                 <ul
                     className="mt-1 flex flex-col"
@@ -239,13 +241,15 @@ export default function LearningPathMap({headerExtra}: LearningPathMapProps) {
                             "Download a lesson set to begin.",
                         )}
                     </p>
-                    <Link
-                        to="/content"
-                        className="inline-flex min-h-[44px] items-center rounded-app bg-accent px-4 py-2 font-medium text-accent-fg"
-                        data-testid="learning-path-to-content"
-                    >
-                        {t("learning_path.empty_cta", "Browse content")}
-                    </Link>
+                    <Button asChild variant="default">
+                        <Link
+                            to="/content"
+                            className="rounded-app bg-accent font-medium text-accent-fg"
+                            data-testid="learning-path-to-content"
+                        >
+                            {t("learning_path.empty_cta", "Browse content")}
+                        </Link>
+                    </Button>
                 </div>
             )}
 
