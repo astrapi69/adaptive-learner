@@ -162,6 +162,31 @@ Full documentation (German default at `/docs/`, English at
   `backend/config/i18n/` mirrored to the frontend Dexie
   bundle via `make sync-i18n`.
 
+### Bundled Content
+
+<!-- CONTENT-STATS:START -->
+**330 lessons · 16 sets · 3 domain(s)** (language, programming, psychology) — bundled offline into the GitHub Pages build from [astrapi69/adaptive-learner-content](https://github.com/astrapi69/adaptive-learner-content).
+
+| Set | Source | Target | Level | Lessons |
+|-----|--------|--------|-------|--------:|
+| French A1 (for English speakers) | en | fr | A1 | 15 |
+| Spanish A1 (for English speakers) | en | es | A1 | 15 |
+| Spanish A2 — Elementary | en | es | A2 | 15 |
+| Spanish B1 — Intermediate | en | es | B1 | 15 |
+| French A2 — Elementary | en | fr | A2 | 15 |
+| Französisch A1 (für Deutschsprachige) | de | fr | A1 | 15 |
+| Französisch A2 — Grundlagen | de | fr | A2 | 15 |
+| Französisch B1 — Mittelstufe | de | fr | B1 | 15 |
+| Spanisch A1 (für Deutschsprachige) | de | es | A1 | 15 |
+| Spanisch A2 — Grundlagen | de | es | A2 | 15 |
+| Spanisch B1 — Mittelstufe | de | es | B1 | 15 |
+| Englisch A1 (für Deutschsprachige) | de | en | A1 | 15 |
+| Englisch A2 — Grundlagen | de | en | A2 | 15 |
+| Englisch B1 — Mittelstufe | de | en | B1 | 15 |
+| Psychologie — Grundlagen | de | de | A1 | 105 |
+| Python — Grundlagen | de | de | A1 | 15 |
+<!-- CONTENT-STATS:END -->
+
 ## Install
 
 Four ways to run Adaptive Learner, in order of friction.

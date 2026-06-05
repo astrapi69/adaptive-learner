@@ -66,6 +66,17 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Issue #47 — double-safety drift gate on the deploy path
+      # (the PR gate lives in ci.yml). Fails the deploy if the README
+      # CONTENT-STATS block drifted from the content repo we are about
+      # to bundle.
+      - name: Validate README content stats against the content repo
+        env:
+          ADAPTIVE_LEARNER_CONTENT_DIR: ${{ github.workspace }}/adaptive-learner-content
+        run: |
+          pip install pyyaml
+          python3 scripts/validate_bundled_content.py --check-readme
+
       - name: Install Poetry
         run: pipx install poetry
 
