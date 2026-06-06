@@ -460,6 +460,8 @@
     "missions_reset_failed": "Görevler sıfırlanamadı.",
     "gestures": "Kaydırma Hareketleri",
     "gestures_description": "Değerlendirme, Oturum ve Müfredat'ta gezinmek için kaydır.",
+    "lesson_shortcuts": "Derslerde klavye kısayolları",
+    "lesson_shortcuts_description": "Cevabınızı kontrol etmek için Enter'a, sonraki adıma geçmek için tekrar Enter'a basın.",
     "button_tooltips": "Buton ipuçlarını göster",
     "button_tooltips_description": "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır.",
     "developer_mode": "Geliştirici Modu",

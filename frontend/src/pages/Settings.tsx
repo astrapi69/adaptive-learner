@@ -43,6 +43,10 @@ import {
 import { API_KEY_PREFIX, isValidApiKeyFormat } from "../lib/apiKeyFormat";
 import type { ApiKeyTestResult } from "../storage/types";
 import { readGesturePref, writeGesturePref } from "../lib/gesturePref";
+import {
+  readLessonShortcutsEnabled,
+  setLessonShortcutsEnabled,
+} from "../lib/lesson/lessonShortcutsPref";
 import { readLearnerState, setLanguage } from "../lib/learnerState";
 import {
   getStorage,
@@ -143,6 +147,17 @@ export default function Settings() {
   const handleGesturesToggle = (next: boolean) => {
     setGesturesOn(next);
     writeGesturePref(next);
+  };
+
+  // Lesson Enter-key shortcut (#103). localStorage-backed so the
+  // lesson player (``useLessonShortcuts``) reads the same flag.
+  const [lessonShortcutsOn, setLessonShortcutsOn] = useState<boolean>(() =>
+    readLessonShortcutsEnabled(),
+  );
+
+  const handleLessonShortcutsToggle = (next: boolean) => {
+    setLessonShortcutsOn(next);
+    setLessonShortcutsEnabled(next);
   };
 
   // Phase 38 — button-tooltip preference. ``useButtonTooltips``
@@ -1176,6 +1191,25 @@ export default function Settings() {
               data-testid="settings-gestures-toggle"
               checked={gesturesOn}
               onChange={(e) => handleGesturesToggle(e.target.checked)}
+            />
+          </label>
+          <label className="form-row form-row-toggle">
+            <span className="form-label-stack">
+              <span className="form-label">
+                {t("settings.lesson_shortcuts", "Lesson keyboard shortcuts")}
+              </span>
+              <span className="form-hint">
+                {t(
+                  "settings.lesson_shortcuts_description",
+                  "Press Enter to check your answer, then Enter again to go to the next step.",
+                )}
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              data-testid="settings-lesson-shortcuts-toggle"
+              checked={lessonShortcutsOn}
+              onChange={(e) => handleLessonShortcutsToggle(e.target.checked)}
             />
           </label>
         </section>

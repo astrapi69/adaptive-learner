@@ -460,6 +460,8 @@
     "missions_reset_failed": "Αδυναμία επαναφοράς αποστολών.",
     "gestures": "Swipe Gestures",
     "gestures_description": "Swipe to navigate in Assessment, Session, and Curriculum.",
+    "lesson_shortcuts": "Συντομεύσεις πληκτρολογίου στα μαθήματα",
+    "lesson_shortcuts_description": "Πατήστε Enter για να ελέγξετε την απάντησή σας και ξανά Enter για να προχωρήσετε στο επόμενο βήμα.",
     "button_tooltips": "Show button tooltips",
     "button_tooltips_description": "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
     "developer_mode": "Λειτουργία προγραμματιστή",

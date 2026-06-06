@@ -460,6 +460,8 @@
     "missions_reset_failed": "Missionen konnten nicht zurückgesetzt werden.",
     "gestures": "Wischgesten",
     "gestures_description": "Wischen zum Navigieren in Assessment, Session und Curriculum.",
+    "lesson_shortcuts": "Tastenkürzel in Lektionen",
+    "lesson_shortcuts_description": "Drücke die Eingabetaste, um deine Antwort zu prüfen, und erneut, um zum nächsten Schritt zu gehen.",
     "button_tooltips": "Button-Tooltips anzeigen",
     "button_tooltips_description": "Zeigt beim Überfahren von Icon-Buttons einen Tooltip mit der Funktion. Screenreader-Beschriftungen bleiben unabhängig davon immer aktiv.",
     "developer_mode": "Entwicklermodus",
