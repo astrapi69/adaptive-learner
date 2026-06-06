@@ -16,6 +16,7 @@ import OfflineIndicator from "./components/OfflineIndicator";
 import {HelpProvider} from "./contexts/HelpContext";
 import {I18nProvider} from "./hooks/useI18n";
 import {useTheme} from "./hooks/useTheme";
+import {useContentRepoAutoSync} from "./hooks/useContentRepoAutoSync";
 import Landing from "./pages/Landing";
 import SkipToContent from "./components/SkipToContent";
 
@@ -80,6 +81,9 @@ const ErrorReportDialog = lazyWithReload(
  */
 export default function App() {
     useTheme();
+    // EXP-023 Phase A — background-sync a connected user content repo on
+    // app start when its cache is older than 24h.
+    useContentRepoAutoSync();
 
     // Phase 37 — error-report dialog state, opened via custom
     // event dispatched from the "Report Issue" button inside the
