@@ -741,3 +741,56 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(list.querySelectorAll("li").length).toBeGreaterThan(0);
   });
 });
+
+describe("ContentPage — source filter + origin badge (#118)", () => {
+  const USER_ENTRY = {
+    ...SAMPLE_ENTRY,
+    source: "jane/my-content",
+    id: "jane-deck",
+    title: "Jane's Deck",
+    cached_version: "1.0.0",
+  };
+
+  it("hides the source filter when only official sets exist", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [SAMPLE_ENTRY],
+      sources: [{ source: SAMPLE_ENTRY.source, branch: "main" }],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+    expect(screen.queryByTestId("content-source-filter")).toBeNull();
+    // Official sets carry no "Your repo" origin badge.
+    expect(screen.queryByTestId("content-set-language-fr-a1-origin")).toBeNull();
+  });
+
+  it("badges a user-repo set and filters by source", async () => {
+    listSetsMock.mockResolvedValue({
+      sets: [SAMPLE_ENTRY, USER_ENTRY],
+      sources: [
+        { source: SAMPLE_ENTRY.source, branch: "main" },
+        { source: USER_ENTRY.source, branch: "main" },
+      ],
+    });
+    renderPage();
+    await screen.findByTestId("content-page");
+
+    // The user-repo set carries the origin badge; the official one does not.
+    expect(screen.getByTestId("content-set-jane-deck-origin")).toBeInTheDocument();
+
+    // Filtering to "Official" drops the user-repo row from the tree.
+    fireEvent.click(screen.getByTestId("content-source-filter-official"));
+    await waitFor(() => {
+      expect(screen.queryByTestId("content-set-jane-deck")).toBeNull();
+    });
+    expect(
+      screen.getByTestId("content-set-language-fr-a1"),
+    ).toBeInTheDocument();
+
+    // Filtering to "Your repo" drops the official row instead.
+    fireEvent.click(screen.getByTestId("content-source-filter-user"));
+    await waitFor(() => {
+      expect(screen.queryByTestId("content-set-language-fr-a1")).toBeNull();
+    });
+    expect(screen.getByTestId("content-set-jane-deck")).toBeInTheDocument();
+  });
+});

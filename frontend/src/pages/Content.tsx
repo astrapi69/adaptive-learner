@@ -90,6 +90,7 @@ import {
 } from "../lib/content/lesson-export";
 import { getStorage } from "../storage";
 import { USER_GENERATED_SOURCE } from "../storage/types";
+import { isOfficialSource } from "../lib/content/content-repos";
 import type {
   ContentLesson,
   ContentSetEntry,
@@ -140,6 +141,10 @@ export default function ContentPage() {
     setCollapsed((prev) => ({ ...prev, [nodeId]: !prev[nodeId] }));
   // "Other source languages" section is collapsed by default.
   const [otherExpanded, setOtherExpanded] = useState(false);
+  // EXP-023 Phase A — source filter over the content tree.
+  const [sourceFilter, setSourceFilter] = useState<
+    "all" | "official" | "user"
+  >("all");
   // Phase 60 — community-share validation gate.
   const [shareTarget, setShareTarget] = useState<ContentSetEntry | null>(null);
   const [shareResult, setShareResult] = useState<ValidationResult | null>(null);
@@ -760,7 +765,18 @@ export default function ContentPage() {
 
   // Phase 60 — group downloaded sets into the source -> target ->
   // level tree, ranked by the learner's active source languages.
-  const tree = buildContentTree(downloadedSets, activeSources);
+  // EXP-023 Phase A — when a user repo is connected, offer a source
+  // filter (Alle / Offiziell / Eigenes Repo) over the tree.
+  const hasUserRepoSets = downloadedSets.some(
+    (s) => !isOfficialSource(s.source),
+  );
+  const visibleSets = downloadedSets.filter((s) => {
+    if (sourceFilter === "all") return true;
+    return sourceFilter === "official"
+      ? isOfficialSource(s.source)
+      : !isOfficialSource(s.source);
+  });
+  const tree = buildContentTree(visibleSets, activeSources);
 
   const renderSetRow = (entry: ContentSetEntry) => {
     const key = setKey(entry);
@@ -786,6 +802,14 @@ export default function ContentPage() {
                 ? t("content.source.bundled", "Bundled")
                 : t("content.source.github", "GitHub")}
             </span>
+            {!isOfficialSource(entry.source) && (
+              <span
+                className="ml-1 rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]"
+                data-testid={`content-set-${entry.id}-origin`}
+              >
+                {t("content.origin.user", "Your repo")}
+              </span>
+            )}
           </h4>
           <p className="content-set-tags">
             <span>
@@ -1406,6 +1430,35 @@ export default function ContentPage() {
       <h2 className="content-section-title">
         {t("content.my_lessons.downloaded_title", "Downloaded sets")}
       </h2>
+      {hasUserRepoSets && (
+        <div
+          className="mb-3 flex flex-wrap items-center gap-1"
+          role="group"
+          aria-label={t("content.filter.aria", "Filter by source")}
+          data-testid="content-source-filter"
+        >
+          {(
+            [
+              ["all", t("content.filter.all", "All")],
+              ["official", t("content.filter.official", "Official")],
+              ["user", t("content.filter.user", "Your repo")],
+            ] as const
+          ).map(([value, label]) => (
+            <Button
+              key={value}
+              type="button"
+              size="sm"
+              variant={sourceFilter === value ? "default" : "outline"}
+              className="min-h-11"
+              aria-pressed={sourceFilter === value}
+              onClick={() => setSourceFilter(value)}
+              data-testid={`content-source-filter-${value}`}
+            >
+              {label}
+            </Button>
+          ))}
+        </div>
+      )}
       {downloadedSets.length === 0 ? (
         <p className="content-empty" data-testid="content-empty">
           {t(
