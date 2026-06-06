@@ -42,7 +42,7 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import Date, DateTime, text
+from sqlalchemy import Date, DateTime, UniqueConstraint, text
 from sqlalchemy.orm import Session
 
 from app import __version__
@@ -258,14 +258,82 @@ def _apply_columns(table: str, record: dict[str, Any], target: Any, *, allow_pk:
         setattr(target, col, coerced.get(col, record[col]))
 
 
-# Cross-install FK remap (issue #49). When a parent row is matched by
-# its NATURAL key under a different id than the backup carried, child
-# rows that reference it by id must be redirected to the LOCAL id.
-# ``{child_table: {fk_column: parent_table}}`` — the parent is always
+# Cross-install FK remap (issues #49 + #115). When a parent row is
+# matched by a UNIQUE key under a different id than the backup carried,
+# child rows that reference it by id must be redirected to the LOCAL id.
+# Derived from the real FK graph (``{child_table: {fk_column:
+# parent_table}}``) so EVERY parent that gets unique-matched redirects
+# its children — not just the one hand-listed ``user_badges -> badges``
+# pair the original #49 fix covered. Self-referential FKs are excluded
+# (handled by ``PRAGMA defer_foreign_keys``); the parent is always
 # restored first (FK-topological _RESTORE_ORDER), so its remap is ready.
-_FK_REMAP: dict[str, dict[str, str]] = {
-    "user_badges": {"badge_id": "badges"},
-}
+def _derive_fk_parents() -> dict[str, dict[str, str]]:
+    parents: dict[str, dict[str, str]] = {}
+    for table_name, spec in SYNC_TABLES.items():
+        columns: dict[str, str] = {}
+        for column in spec.model.__table__.columns:
+            for foreign_key in column.foreign_keys:
+                parent_table = foreign_key.column.table.name
+                if parent_table != table_name and parent_table in SYNC_TABLES:
+                    columns[column.name] = parent_table
+        if columns:
+            parents[table_name] = columns
+    return parents
+
+
+_FK_PARENTS: dict[str, dict[str, str]] = _derive_fk_parents()
+
+
+def _unique_match_keys(model: type[Any]) -> list[tuple[str, ...]]:
+    """UNIQUE column-groups of ``model`` other than the primary key.
+
+    Covers both column-level ``unique=True`` (e.g. ``badges.key``,
+    ``user_settings.user_id``) and table-level composite
+    ``UniqueConstraint`` (e.g. ``element_errors``'s six-column key).
+    These are the keys a restore must reconcile on when the backup's id
+    misses but the row already exists locally under a different id
+    (#115).
+    """
+    table = model.__table__
+    pk = {col.name for col in table.primary_key.columns}
+    seen: set[tuple[str, ...]] = set()
+    keys: list[tuple[str, ...]] = []
+    for column in table.columns:
+        if column.unique and column.name not in pk:
+            key = (column.name,)
+            if key not in seen:
+                seen.add(key)
+                keys.append(key)
+    for constraint in table.constraints:
+        if isinstance(constraint, UniqueConstraint):
+            cols = tuple(col.name for col in constraint.columns)
+            if cols and set(cols) != pk and cols not in seen:
+                seen.add(cols)
+                keys.append(cols)
+    return keys
+
+
+def _find_existing_by_unique(
+    db: Session, model: type[Any], record: dict[str, Any]
+) -> Any | None:
+    """Find a local row matching any of ``model``'s UNIQUE keys.
+
+    Returns the first existing row whose unique-key columns all equal the
+    record's values, or None. Keys with a null component are skipped (a
+    NULL never participates in a UNIQUE match), so e.g. a user with no
+    email is matched by id only, never by a null email.
+    """
+    for cols in _unique_match_keys(model):
+        values = [record.get(col) for col in cols]
+        if any(value is None for value in values):
+            continue
+        query = db.query(model)
+        for col, value in zip(cols, values, strict=True):
+            query = query.filter(getattr(model, col) == value)
+        existing = query.one_or_none()
+        if existing is not None:
+            return existing
+    return None
 
 
 def _missing_fk_parent(db: Session, table: str, record: dict[str, Any]) -> str | None:
@@ -320,7 +388,7 @@ def _restore_table(
     """
     spec = _spec(table)
     model = spec.model
-    fk_remap = _FK_REMAP.get(table, {})
+    fk_remap = _FK_PARENTS.get(table, {})
     inserted = 0
     updated = 0
     skipped = 0
@@ -342,19 +410,19 @@ def _restore_table(
                 record = {**record, fk_col: mapped}
         try:
             existing = db.get(model, record_id)
-            # Seeded-catalog fallback: the backup id missed, but a row
-            # with the same natural key exists locally under a different
-            # id (the install re-seeded the catalog). Match it, update in
-            # place, and remember the id mapping for child FKs.
-            if existing is None and spec.natural_key is not None:
-                key_value = record.get(spec.natural_key)
-                if key_value is not None:
-                    existing = (
-                        db.query(model)
-                        .filter(getattr(model, spec.natural_key) == key_value)
-                        .one_or_none()
-                    )
-                    if existing is not None:
+            # Unique-key fallback (#115, generalises the #49 badges fix):
+            # the backup id missed, but a row with the same UNIQUE key
+            # exists locally under a different id — an older backup, a
+            # clean install that auto-seeded a user_settings/xp/streak
+            # singleton, or a re-seeded catalog. Match it, update in
+            # place, and remember the id mapping so child FKs redirect to
+            # the local id.
+            matched_by_unique = False
+            if existing is None:
+                existing = _find_existing_by_unique(db, model, record)
+                if existing is not None:
+                    matched_by_unique = True
+                    if existing.id != record_id:
                         id_remap.setdefault(table, {})[record_id] = existing.id
             if existing is None:
                 # Defensive user-scope check: never insert a row
@@ -379,8 +447,21 @@ def _restore_table(
                 skipped += 1
                 continue
             if spec.append_only:
-                # History is immutable; do not touch.
+                # History is immutable; an append-only row already
+                # present (by id OR by its unique key) is left untouched.
                 skipped += 1
+                continue
+            if matched_by_unique:
+                # The row exists only under a DIFFERENT id — a placeholder
+                # the install auto-seeded (e.g. an empty user_settings /
+                # user_xp) occupying the unique slot. A restore reclaims
+                # it: the backup is the source of truth, so overwrite
+                # regardless of timestamp (#115). Without this, a fresh
+                # install's newer-but-empty placeholder would beat the
+                # backup under merge's newer-wins rule and silently drop
+                # the restored data.
+                _apply_columns(table, record, existing, allow_pk=False)
+                updated += 1
                 continue
             remote_ts = _record_timestamp(spec, record)
             local_ts = _row_timestamp(spec, existing)
@@ -388,7 +469,8 @@ def _restore_table(
                 _apply_columns(table, record, existing, allow_pk=False)
                 updated += 1
             else:
-                # Local is newer (or equal). Merge keeps the newer side.
+                # Same row by id, local is newer (or equal). Merge keeps
+                # the newer side.
                 skipped += 1
         except Exception as exc:  # pragma: no cover — defensive
             db.rollback()
