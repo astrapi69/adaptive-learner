@@ -334,28 +334,27 @@ def test_create_backup_returns_canonical_envelope(db_session):
 
 
 def test_create_backup_includes_every_known_table(db_session):
+    """Export carries the seeded tables and nothing outside the known
+    surface; empty tables are omitted from the payload (#117)."""
     user = _seed_user(db_session)
     payload = create_backup(db_session, user.id)
     data = payload["data"]
+    # No unknown tables leak in, and no empty table rides along.
+    for table, rows in data.items():
+        assert table in ALL_BACKUP_TABLES, f"unknown table: {table}"
+        assert len(rows) > 0, f"empty table not omitted: {table}"
+    # The seeded core tables are present.
     for table in (
         "users",
         "user_settings",
         "learning_projects",
         "learning_profiles",
         "curriculums",
-        "learning_topics",
         "lessons",
         "learning_sessions",
         "session_messages",
-        "session_ratings",
-        "session_notes",
-        "progress_commits",
-        "method_switches",
-        "step_evaluations",
-        "imported_conversations",
-        "imported_messages",
     ):
-        assert table in data, f"missing table: {table}"
+        assert table in data, f"seeded table missing: {table}"
 
 
 def test_create_backup_excludes_api_keys(db_session):

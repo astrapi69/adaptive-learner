@@ -23,6 +23,8 @@ older-backup id mismatch) and assert per-table integrity afterwards.
 
 from __future__ import annotations
 
+import json
+
 from app.database import SessionLocal
 from app.models import (
     Badge,
@@ -208,3 +210,64 @@ def test_restore_order_is_fk_topological():
         ("project_subjects", "subjects"),
     ]:
         assert position[parent] < position[child], f"{parent} must precede {child}"
+
+
+def test_restore_coerces_json_text_column_from_object():
+    """A backup whose JSON-in-text column (badges.tier_thresholds) is a
+    parsed OBJECT — an older / Dexie-origin export — must be serialized
+    on restore, not bound as a dict ("type 'dict' is not supported")."""
+    db = _session()
+    try:
+        user = _seed(db)
+        db.add(
+            Badge(
+                key="lessons_10",
+                name_key="badge.lessons_10.name",
+                description_key="badge.lessons_10.desc",
+                tier_thresholds=json.dumps({"bronze": {"threshold": 10}}),
+            )
+        )
+        db.commit()
+        backup = create_backup(db, user.id)
+
+        # Simulate the older/Dexie backup shape: an object, not a string.
+        # Bump the timestamp so the merge actually applies the update
+        # (and thus exercises the coercion on the way to the DB).
+        for record in backup["data"]["badges"]:
+            if record["key"] == "lessons_10":
+                record["tier_thresholds"] = {
+                    "bronze": {"threshold": 10, "xp_bonus": 50},
+                    "silver": {"threshold": 50, "xp_bonus": 150},
+                }
+                record["updated_at"] = "2099-01-01T00:00:00+00:00"
+
+        result = restore_backup(db, backup)
+        assert result["errors"] == []
+
+        stored = db.query(Badge).filter(Badge.key == "lessons_10").one()
+        assert isinstance(stored.tier_thresholds, str)
+        assert json.loads(stored.tier_thresholds)["silver"]["xp_bonus"] == 150
+    finally:
+        db.close()
+
+
+def test_empty_tables_are_not_in_payload():
+    """Tables with no rows for the user are omitted from the export
+    (#117): smaller payload, smaller error surface. Restore still works
+    because absent tables are tolerated."""
+    db = _session()
+    try:
+        user = _seed(db)
+        backup = create_backup(db, user.id)
+
+        present = set(backup["data"].keys())
+        # The seed touches these; they must be present.
+        assert {"users", "user_settings", "user_xp", "learning_projects"} <= present
+        # The user has no sessions / messages / curriculums — omitted.
+        for empty in ("session_messages", "learning_sessions", "curriculums"):
+            assert empty not in present, f"{empty} should be omitted when empty"
+
+        # And a restore of the trimmed payload still succeeds.
+        assert restore_backup(db, backup)["errors"] == []
+    finally:
+        db.close()

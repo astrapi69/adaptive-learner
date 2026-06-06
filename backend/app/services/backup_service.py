@@ -38,11 +38,12 @@ rows on every API-mode restore).
 
 from __future__ import annotations
 
+import json
 import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import Date, DateTime, UniqueConstraint, text
+from sqlalchemy import Date, DateTime, String, Text, UniqueConstraint, text
 from sqlalchemy.orm import Session
 
 from app import __version__
@@ -92,10 +93,19 @@ def _strip_excluded_fields(table: str, record: dict[str, Any]) -> dict[str, Any]
 
 
 def _gather_user_rows(db: Session, user_id: str) -> dict[str, list[dict[str, Any]]]:
-    """Build the ``data`` segment: every backup table, scoped to the user."""
+    """Build the ``data`` segment: every NON-EMPTY backup table, scoped
+    to the user.
+
+    Empty tables are omitted entirely (#117): a 0-row table adds nothing
+    to a restore and only enlarges the payload + the error surface.
+    Restore tolerates absent tables (``data.get(table, [])``), so the
+    wire format stays compatible.
+    """
     data: dict[str, list[dict[str, Any]]] = {}
     for table in SYNC_TABLES:
         rows = _scoped_query(db, table, user_id).all()
+        if not rows:
+            continue
         data[table] = [_strip_excluded_fields(table, serialize_row(table, row)) for row in rows]
     return data
 
@@ -143,7 +153,11 @@ def get_backup_stats(db: Session, user_id: str) -> dict[str, Any]:
         raise NotFoundError(f"User {user_id!r} not found.")
     tables: dict[str, int] = {}
     for table in SYNC_TABLES:
-        tables[table] = _scoped_query(db, table, user_id).count()
+        count = _scoped_query(db, table, user_id).count()
+        # Omit empty tables so the stats match the trimmed export
+        # payload (#117).
+        if count:
+            tables[table] = count
     return {
         "user_id": user_id,
         "total_records": sum(tables.values()),
@@ -176,6 +190,7 @@ def _validate_payload(payload: Any) -> dict[str, Any]:
 
 
 _DATETIME_FIELDS_CACHE: dict[str, frozenset[str]] = {}
+_TEXT_FIELDS_CACHE: dict[str, frozenset[str]] = {}
 
 
 def _datetime_fields(table: str) -> frozenset[str]:
@@ -204,10 +219,39 @@ def _datetime_fields(table: str) -> frozenset[str]:
     return fields
 
 
+def _text_fields(table: str) -> frozenset[str]:
+    """Return the String/Text column names of ``table`` from its model.
+
+    JSON-in-text columns (``badges.tier_thresholds``, ``lessons``'
+    content, etc.) are declared ``Text`` and store a JSON STRING. A
+    backup produced where the value was a parsed object — an older
+    export, or a Dexie-origin file — carries it as a dict/list, which
+    SQLite cannot bind to a text column ("type 'dict' is not
+    supported"). Keying off the column TYPE lets the coercer re-serialize
+    those values regardless of the backup's origin. Cached; the schema is
+    static.
+    """
+    cached = _TEXT_FIELDS_CACHE.get(table)
+    if cached is not None:
+        return cached
+    spec = _spec(table)
+    table_columns = spec.model.__table__.columns
+    fields = frozenset(
+        col
+        for col in spec.columns
+        if (column := table_columns.get(col)) is not None
+        and isinstance(column.type, (String, Text))
+    )
+    _TEXT_FIELDS_CACHE[table] = fields
+    return fields
+
+
 def _coerce_record(table: str, record: dict[str, Any]) -> dict[str, Any]:
-    """Per-column type coercion (ISO strings to datetimes)."""
+    """Per-column type coercion (ISO strings to datetimes; dict/list to
+    JSON strings for text columns)."""
     spec = _spec(table)
     datetime_fields = _datetime_fields(table)
+    text_fields = _text_fields(table)
     coerced: dict[str, Any] = {}
     for col in spec.columns:
         if col not in record:
@@ -218,6 +262,11 @@ def _coerce_record(table: str, record: dict[str, Any]) -> dict[str, Any]:
             continue
         if col in datetime_fields and isinstance(value, str):
             value = _from_iso(value)
+        elif col in text_fields and isinstance(value, (dict, list)):
+            # A JSON-in-text column (e.g. badges.tier_thresholds) whose
+            # backup value is a parsed object — serialize it so SQLite
+            # can bind it to the text column.
+            value = json.dumps(value)
         coerced[col] = value
     return coerced
 
@@ -574,6 +623,10 @@ def restore_backup(
         records = data.get(table, [])
         if not isinstance(records, list):
             all_errors.append(f"{table}: expected list, got {type(records).__name__}")
+            continue
+        # Skip a table with no backup rows entirely (#117) — nothing to
+        # apply, so don't run the matcher or the per-table flush.
+        if not records:
             continue
         summary = _restore_table(db, table, records, user_id, id_remap)
         # Flush after each table so the explicit FK-safe _RESTORE_ORDER
