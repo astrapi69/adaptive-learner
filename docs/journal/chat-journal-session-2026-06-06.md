@@ -114,3 +114,20 @@ systematic i18n audit (#80) and cut **v1.63.0**.
   `v1.65.0` pushed; GitHub release published; CI Release Gate green;
   launchers + Pages deploy triggered. Issues #101/#103/#105/#106/#108
   closed (via their merged PRs #102/#104/#107/#110/#109).
+
+## Release v1.66.0 (20:16)
+
+- Maintenance release: systematic backup-restore fix (#115 unique-key
+  matching + FK-graph child remap + placeholder reclaim; #117 JSON
+  serialization for dict/list in Text columns + empty-table skip),
+  GH-Pages stale-deploy lazy-route reload (#113), subject-filter UX
+  (#111). PRs #112/#114/#116 merged.
+- Backup round-trip verified end-to-end through the real backup API
+  (export -> import incl. the dict-tier_thresholds shape): HTTP 200,
+  updated 2, 0 errors. The exact ProgrammingError the user hit is gone.
+- Gates: make release-test green (backend + plugins + Vitest 3729 +
+  dexie 76/76 + docs + plugin-locks), ruff + mypy clean, launcher
+  PyInstaller build OK.
+- Commits: changelog + chore(release) bump 1.65.0 -> 1.66.0 (sync-versions,
+  19 files) + README/CLAUDE/ROADMAP/backlog. Tag v1.66.0 pushed; GitHub
+  release published. Issues #111/#113/#115/#117 closed.
