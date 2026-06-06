@@ -5,57 +5,60 @@ import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
+import OnboardingWizard, {
+    type WizardValues,
+} from "../components/onboarding/OnboardingWizard";
 import {useI18n} from "../hooks/useI18n";
 import {setProjectId, setUserId} from "../lib/learnerState";
 import {translateSubjectPath} from "../lib/subjectI18n";
 import {suggestSubjects, type SubjectSuggestion} from "../lib/subjectSuggest";
 import {getStorage} from "../storage";
-import type {Subject} from "../types/domain";
+import type {LearningProject, Subject} from "../types/domain";
 import {notify} from "../utils/notify";
 
 /** Default daily-practice minutes when the learner doesn't set one. */
 const DEFAULT_DAILY_MINUTES = 15;
 
+/** The three screens of the onboarding flow. */
+type Phase = "form" | "invite" | "wizard";
+
 /**
  * Onboarding page (project-reference §8 row ``/onboarding``).
  *
- * Two backend roundtrips on submit:
+ * Three-phase, beginner-friendly flow:
  *
- *   1. ``POST /api/users``        — creates the User row, returns id.
- *   2. ``POST /api/users/{id}/projects`` — creates the LearningProject.
+ *   1. **Quick start** (#92): name + topic are the ONLY required
+ *      fields. Submitting creates the User + LearningProject with
+ *      sensible defaults (goal "Learn {topic}", timeframe "Flexible",
+ *      15 min/day) and assigns any picked subjects.
+ *   2. **Invitation** (#94): "Want to set up your profile in more
+ *      detail?" — "Jump right in" goes straight to the Dashboard;
+ *      "Set up profile" opens the wizard.
+ *   3. **Wizard** (#94): one optional question per screen (goal /
+ *      timeframe / minutes / current problem), each pre-filled with a
+ *      default, then an assessment offer. Finishing patches the project
+ *      via ``projects.update`` and routes to /assessment or /dashboard.
  *
- * Both ids are written to localStorage; downstream pages
- * (Assessment, Dashboard, Session, Settings) read them via
- * ``readLearnerState``. On success we route the user straight
- * to ``/assessment``.
- *
- * Beginner-friendly (#92): only **name + topic** are required — enough
- * to create a project and start. Goal / time frame / minutes-per-day /
- * current problem / tags live in a collapsed "More details" disclosure
- * and fall back to sensible defaults (the backend's
- * ``LearningProjectCreate`` requires ``goal`` / ``timeframe`` non-empty,
- * so the defaults are applied at submit time rather than sent empty).
- * There is no Skip / Later button — the required form is short enough
- * that one isn't needed.
+ * No Skip / Later button — the required form is short enough not to
+ * need one.
  */
 export default function Onboarding() {
     const {t, lang} = useI18n();
     const navigate = useNavigate();
+    const [phase, setPhase] = useState<Phase>("form");
     const [submitting, setSubmitting] = useState(false);
 
     const [name, setName] = useState("");
     const [topic, setTopic] = useState("");
-    const [goal, setGoal] = useState("");
-    const [timeframe, setTimeframe] = useState("");
-    const [dailyMinutes, setDailyMinutes] = useState(DEFAULT_DAILY_MINUTES);
-    const [currentProblem, setCurrentProblem] = useState("");
+    const [createdProject, setCreatedProject] = useState<LearningProject | null>(
+        null,
+    );
 
-    // v22F — Subject + Tag picker.
+    // v22F — Subject picker (contextual to the topic).
     const [subjects, setSubjects] = useState<Subject[]>([]);
     const [selectedSubjectIds, setSelectedSubjectIds] = useState<Set<string>>(
         new Set(),
     );
-    const [tagInput, setTagInput] = useState("");
 
     useEffect(() => {
         let cancelled = false;
@@ -91,48 +94,16 @@ export default function Onboarding() {
         });
     }
 
-    function parseTagInput(value: string): string[] {
-        return value
-            .split(",")
-            .map((t) => t.trim())
-            .filter((t) => t.length > 0);
-    }
-
     /**
-     * After the project + user are created, assign every picked
-     * subject + create-and-assign every entered tag. Failures here
-     * do not block onboarding — surface a soft toast and continue
-     * to the next page so a partial taxonomy assignment never
-     * traps the user before the Assessment.
+     * Assign every picked subject to the new project. Failures here do
+     * not block onboarding — they soft-fail so a partial taxonomy
+     * assignment never traps the learner before the next screen.
      */
-    async function applyTaxonomy(userId: string, projectId: string) {
+    async function assignSubjects(projectId: string) {
         const storage = getStorage();
         for (const subjectId of selectedSubjectIds) {
             try {
                 await storage.projectTaxonomy.assignSubject(projectId, subjectId);
-            } catch {
-                /* soft-fail; surfaced once below */
-            }
-        }
-        const tagNames = parseTagInput(tagInput);
-        for (const tagName of tagNames) {
-            try {
-                let tag;
-                try {
-                    tag = await storage.tags.create(userId, {name: tagName});
-                } catch (err) {
-                    // 409 means the tag already exists for this
-                    // user — re-fetch the list to find its id.
-                    if (err instanceof ApiError && err.status === 409) {
-                        const existing = await storage.tags.list(userId);
-                        tag = existing.find((t) => t.name === tagName);
-                    } else {
-                        throw err;
-                    }
-                }
-                if (tag) {
-                    await storage.projectTaxonomy.assignTag(projectId, tag.id);
-                }
             } catch {
                 /* soft-fail */
             }
@@ -142,6 +113,8 @@ export default function Onboarding() {
     const allRequiredFilled =
         name.trim().length > 0 && topic.trim().length > 0;
 
+    const defaultTimeframe = t("onboarding.wizard.timeframe_flexible", "Flexible");
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (submitting || !allRequiredFilled) return;
@@ -150,33 +123,27 @@ export default function Onboarding() {
             const trimmedTopic = topic.trim();
             // Only name + topic are required; the backend's
             // LearningProjectCreate still requires a non-empty goal +
-            // timeframe, so apply sensible defaults when the learner
-            // skipped the optional "More details" section.
-            const resolvedGoal =
-                goal.trim() ||
-                t("onboarding.default_goal", "Learn {topic}").replace(
-                    "{topic}",
-                    trimmedTopic,
-                );
-            const resolvedTimeframe =
-                timeframe.trim() ||
-                t("onboarding.default_timeframe", "Flexible");
-            const resolvedDailyMinutes =
-                dailyMinutes > 0 ? dailyMinutes : DEFAULT_DAILY_MINUTES;
+            // timeframe, so the project is created with defaults the
+            // wizard can later refine.
+            const defaultGoal = t(
+                "onboarding.default_goal",
+                "Learn {topic}",
+            ).replace("{topic}", trimmedTopic);
             const user = await getStorage().users.create({name: name.trim(), language: lang});
             setUserId(user.id);
             const project = await getStorage().users.projects.create(user.id, {
                 topic: trimmedTopic,
-                goal: resolvedGoal,
-                timeframe: resolvedTimeframe,
-                daily_minutes: resolvedDailyMinutes,
-                current_problem: currentProblem.trim() || null,
+                goal: defaultGoal,
+                timeframe: defaultTimeframe,
+                daily_minutes: DEFAULT_DAILY_MINUTES,
+                current_problem: null,
                 active: true,
             });
             setProjectId(project.id);
-            await applyTaxonomy(user.id, project.id);
+            await assignSubjects(project.id);
+            setCreatedProject(project);
             notify.success(t("toast.project_created", "Project created."));
-            navigate("/assessment");
+            setPhase("invite");
         } catch (err) {
             const detail =
                 err instanceof ApiError ? err.detail : t("common.error", "Something went wrong.");
@@ -185,6 +152,105 @@ export default function Onboarding() {
             setSubmitting(false);
         }
     };
+
+    /**
+     * Persist the wizard's refined values onto the already-created
+     * project, then route. Goal / current problem are only sent when
+     * non-empty (the backend rejects an empty goal); timeframe +
+     * minutes always carry a value.
+     */
+    const handleWizardFinish = async (
+        values: WizardValues,
+        startAssessment: boolean,
+    ) => {
+        if (submitting || !createdProject) return;
+        setSubmitting(true);
+        try {
+            const trimmedGoal = values.goal.trim();
+            const trimmedProblem = values.currentProblem.trim();
+            await getStorage().projects.update(createdProject.id, {
+                timeframe: values.timeframe,
+                daily_minutes: values.dailyMinutes,
+                ...(trimmedGoal ? {goal: trimmedGoal} : {}),
+                ...(trimmedProblem ? {current_problem: trimmedProblem} : {}),
+            });
+            navigate(startAssessment ? "/assessment" : "/dashboard");
+        } catch (err) {
+            const detail =
+                err instanceof ApiError ? err.detail : t("common.error", "Something went wrong.");
+            notify.error(detail);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    if (phase === "invite") {
+        return (
+            <main
+                id="main"
+                data-testid="onboarding-invite"
+                className="onboarding-page"
+            >
+                <div className="mx-auto flex w-full max-w-xl flex-col gap-6 text-center">
+                    <h1>
+                        {t(
+                            "onboarding.invite_title",
+                            "Want to set up your learning profile in more detail?",
+                        )}
+                    </h1>
+                    <p className="onboarding-intro">
+                        {t(
+                            "onboarding.invite_subtitle",
+                            "It takes a minute and tailors your sessions — you can also do it later.",
+                        )}
+                    </p>
+                    <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+                        <Button
+                            type="button"
+                            variant="default"
+                            onClick={() => navigate("/dashboard")}
+                            disabled={submitting}
+                            data-testid="onboarding-invite-start-now"
+                        >
+                            {t("onboarding.invite_start_now", "Jump right in")}
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => setPhase("wizard")}
+                            disabled={submitting}
+                            data-testid="onboarding-invite-setup-profile"
+                        >
+                            {t("onboarding.invite_setup_profile", "Set up profile")}
+                        </Button>
+                    </div>
+                </div>
+            </main>
+        );
+    }
+
+    if (phase === "wizard" && createdProject) {
+        return (
+            <main
+                id="main"
+                data-testid="onboarding-wizard-page"
+                className="onboarding-page"
+            >
+                <OnboardingWizard
+                    defaults={{
+                        goal: "",
+                        timeframe: createdProject.timeframe || defaultTimeframe,
+                        dailyMinutes:
+                            createdProject.daily_minutes || DEFAULT_DAILY_MINUTES,
+                        currentProblem: "",
+                    }}
+                    onFinish={handleWizardFinish}
+                    onExit={() => setPhase("invite")}
+                    busy={submitting}
+                />
+            </main>
+        );
+    }
 
     return (
         <main id="main" data-testid="onboarding" className="onboarding-page">
@@ -302,118 +368,6 @@ export default function Onboarding() {
                         </ul>
                     </div>
                 )}
-
-                <details
-                    className="onboarding-more-details"
-                    data-testid="onboarding-more-details"
-                >
-                    <summary className="onboarding-more-details-summary flex min-h-11 cursor-pointer select-none items-center font-medium">
-                        {t("onboarding.more_details", "More details (optional)")}
-                    </summary>
-
-                <label className="form-row">
-                    <span className="form-label">
-                        {t("onboarding.field_tags", "Tags")}{" "}
-                        <span className="form-optional">
-                            ({t("common.optional", "optional")})
-                        </span>
-                    </span>
-                    <input
-                        data-testid="onboarding-tags"
-                        type="text"
-                        value={tagInput}
-                        onChange={(e) => setTagInput(e.target.value)}
-                        placeholder={t(
-                            "onboarding.field_tags_placeholder",
-                            "exam-prep, daily-practice",
-                        )}
-                        disabled={submitting}
-                    />
-                    <span className="form-hint">
-                        {t(
-                            "onboarding.field_tags_hint",
-                            "Comma-separated. Reuse existing tags or create new ones on the fly.",
-                        )}
-                    </span>
-                </label>
-
-                <label className="form-row">
-                    <span className="form-label">
-                        {t("onboarding.field_goal", "Goal")}{" "}
-                        <span className="form-optional">
-                            ({t("common.optional", "optional")})
-                        </span>
-                    </span>
-                    <textarea
-                        data-testid="onboarding-goal"
-                        rows={3}
-                        value={goal}
-                        onChange={(e) => setGoal(e.target.value)}
-                        placeholder={t(
-                            "onboarding.default_goal",
-                            "Learn {topic}",
-                        ).replace("{topic}", topic.trim() || "…")}
-                        disabled={submitting}
-                    />
-                    <span className="form-hint">{t("onboarding.field_goal_hint")}</span>
-                </label>
-
-                <label className="form-row">
-                    <span className="form-label">
-                        {t("onboarding.field_timeframe", "Time frame")}{" "}
-                        <span className="form-optional">
-                            ({t("common.optional", "optional")})
-                        </span>
-                    </span>
-                    <input
-                        data-testid="onboarding-timeframe"
-                        type="text"
-                        value={timeframe}
-                        onChange={(e) => setTimeframe(e.target.value)}
-                        placeholder={t("onboarding.default_timeframe", "Flexible")}
-                        disabled={submitting}
-                    />
-                    <span className="form-hint">{t("onboarding.field_timeframe_hint")}</span>
-                </label>
-
-                <label className="form-row">
-                    <span className="form-label">
-                        {t("onboarding.field_daily_minutes", "Minutes per day")}{" "}
-                        <span className="form-optional">
-                            ({t("common.optional", "optional")})
-                        </span>
-                    </span>
-                    <input
-                        data-testid="onboarding-daily-minutes"
-                        type="number"
-                        min={5}
-                        max={600}
-                        step={5}
-                        value={dailyMinutes}
-                        onChange={(e) => setDailyMinutes(Number(e.target.value) || 0)}
-                        disabled={submitting}
-                    />
-                </label>
-
-                <label className="form-row">
-                    <span className="form-label">
-                        {t("onboarding.field_current_problem", "Current problem")}{" "}
-                        <span className="form-optional">
-                            ({t("common.optional", "optional")})
-                        </span>
-                    </span>
-                    <textarea
-                        data-testid="onboarding-current-problem"
-                        rows={2}
-                        value={currentProblem}
-                        onChange={(e) => setCurrentProblem(e.target.value)}
-                        disabled={submitting}
-                    />
-                    <span className="form-hint">
-                        {t("onboarding.field_current_problem_hint")}
-                    </span>
-                </label>
-                </details>
 
                 <div className="form-actions">
                     <Button

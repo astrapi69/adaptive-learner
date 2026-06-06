@@ -44,21 +44,25 @@ export async function completeOnboarding(
 ): Promise<void> {
     const merged = {...DEFAULTS, ...args};
     await page.goto("/onboarding");
+    // Quick start (#92): only name + topic are required.
     await page.getByTestId("onboarding-name").fill(merged.name);
     await page.getByTestId("onboarding-topic").fill(merged.topic);
-    // Since #92 only name + topic are required; goal / timeframe /
-    // minutes live in a collapsed "More details" disclosure. Open it
-    // before filling those optional fields.
-    await page
-        .getByTestId("onboarding-more-details")
-        .locator("summary")
-        .click();
-    await page.getByTestId("onboarding-goal").fill(merged.goal);
-    await page.getByTestId("onboarding-timeframe").fill(merged.timeframe);
-    await page
-        .getByTestId("onboarding-daily-minutes")
-        .fill(String(merged.dailyMinutes));
     await page.getByTestId("onboarding-submit").click();
+    // Optional-profile invitation (#94). "Jump right in" goes to the
+    // Dashboard; the path to /assessment runs through the wizard, so
+    // open it and walk the five steps. (The timeframe arg is no longer
+    // free text — the wizard offers fixed choices; the default
+    // "flexible" is kept.)
+    await page.getByTestId("onboarding-invite-setup-profile").click();
+    await page.getByTestId("onboarding-wizard-goal").fill(merged.goal);
+    await page.getByTestId("onboarding-wizard-next").click(); // -> timeframe
+    await page.getByTestId("onboarding-wizard-next").click(); // -> minutes
+    await page
+        .getByTestId("onboarding-wizard-minutes")
+        .fill(String(merged.dailyMinutes));
+    await page.getByTestId("onboarding-wizard-next").click(); // -> problem
+    await page.getByTestId("onboarding-wizard-next").click(); // -> done
+    await page.getByTestId("onboarding-wizard-start-assessment").click();
     await page.waitForURL("**/assessment");
 }
 

@@ -189,13 +189,29 @@ onboarding:
   field_current_problem_hint: optional — was bremst dich gerade?
   submit: Projekt anlegen und Assessment starten
   creating: Projekt wird angelegt …
-  field_tags: "Schlagwörter"
-  field_tags_hint: "Kommagetrennt. Vorhandene Schlagwörter wiederverwenden oder neue spontan erstellen."
-  field_tags_placeholder: "exam-prep, daily-practice"
   subject_suggestions: "Vorgeschlagene Fächer (zum Zuordnen tippen):"
-  more_details: "Weitere Details (optional)"
   default_goal: "{topic} lernen"
-  default_timeframe: "Flexibel"
+  invite_title: "Möchtest du dein Lernprofil genauer einrichten?"
+  invite_subtitle: "Dauert eine Minute und passt deine Sitzungen an — geht auch später."
+  invite_start_now: "Direkt loslegen"
+  invite_setup_profile: "Profil einrichten"
+  wizard:
+    step_label: "Schritt {current} von {total}"
+    next: "Weiter"
+    back: "Zurück"
+    goal_title: "Was ist dein Lernziel?"
+    timeframe_title: "Wie viel Zeit hast du?"
+    timeframe_4w: "4 Wochen"
+    timeframe_3m: "3 Monate"
+    timeframe_semester: "1 Semester"
+    timeframe_flexible: "Flexibel"
+    minutes_title: "Wie viele Minuten pro Tag?"
+    minutes_value: "{n} Min/Tag"
+    problem_title: "Was bremst dich gerade?"
+    done_title: "Fertig! Starte den Assessment-Test?"
+    done_subtitle: "Der 12-Fragen-Test erstellt dein Lernprofil."
+    start_assessment: "Ja, starten"
+    later: "Später"
 assessment:
   title: Lerntyp-Assessment
   intro: Zwölf kurze Fragen ermitteln dein Lernprofil. Es gibt kein richtig oder falsch — antworte intuitiv.

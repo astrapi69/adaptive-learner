@@ -189,13 +189,29 @@ onboarding:
   field_current_problem_hint: opcional — o que está te travando agora?
   submit: Criar projeto e iniciar avaliação
   creating: Criando projeto…
-  field_tags: "Etiquetas"
-  field_tags_hint: "Separadas por vírgulas. Reutilize etiquetas existentes ou crie novas na hora."
-  field_tags_placeholder: "exam-prep, daily-practice"
   subject_suggestions: "Disciplinas sugeridas (toque para atribuir):"
-  more_details: "Mais detalhes (opcional)"
   default_goal: "Aprender {topic}"
-  default_timeframe: "Flexível"
+  invite_title: "Quer configurar seu perfil de aprendizagem com mais detalhes?"
+  invite_subtitle: "Leva um minuto e personaliza suas sessões — você também pode fazer depois."
+  invite_start_now: "Começar agora"
+  invite_setup_profile: "Configurar perfil"
+  wizard:
+    step_label: "Passo {current} de {total}"
+    next: "Avançar"
+    back: "Voltar"
+    goal_title: "Qual é o seu objetivo de aprendizagem?"
+    timeframe_title: "Quanto tempo você tem?"
+    timeframe_4w: "4 semanas"
+    timeframe_3m: "3 meses"
+    timeframe_semester: "1 semestre"
+    timeframe_flexible: "Flexível"
+    minutes_title: "Quantos minutos por dia?"
+    minutes_value: "{n} min/dia"
+    problem_title: "O que está te travando agora?"
+    done_title: "Tudo pronto! Iniciar a avaliação?"
+    done_subtitle: "A avaliação de 12 perguntas cria seu perfil de aprendizagem."
+    start_assessment: "Sim, iniciar"
+    later: "Depois"
 assessment:
   title: Avaliação de tipo de aprendizado
   intro: Doze perguntas curtas determinam seu perfil de aprendizado. Não existe resposta certa ou errada — vá no instinto.
