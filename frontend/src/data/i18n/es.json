@@ -22,7 +22,8 @@
     "no": "No",
     "optional": "opcional",
     "required": "obligatorio",
-    "minutes": "minutos"
+    "minutes": "minutos",
+    "close": "Cerrar"
   },
   "nav": {
     "learning_path": "Ruta de aprendizaje",
@@ -46,7 +47,9 @@
     "mode_badge_tooltip_content": "Sin clave API configurada — solo contenido predefinido. Añade una clave en Ajustes para activar funciones de IA.",
     "mode_badge_tooltip_ai": "Proveedor de IA configurado — los ejercicios usan IA para distractores y pistas. Pulsa para explorar los sets.",
     "mode_badge_label_content": "Modo: Solo contenido",
-    "mode_badge_label_ai": "Modo: IA + Contenido"
+    "mode_badge_label_ai": "Modo: IA + Contenido",
+    "sync_paired": "Sinc.: emparejado (Ajustes > Sinc.)",
+    "sync_unpaired": "Sinc.: sin emparejar (Ajustes > Sinc.)"
   },
   "import": {
     "title": "Importar una conversacion",
@@ -126,7 +129,10 @@
     "delete_confirm": "¿Eliminar esta conversación importada? No se puede deshacer.",
     "delete_success": "Conversación eliminada.",
     "delete_error": "No se pudo eliminar la conversación.",
-    "duplicate_detected": "Esta conversación ya fue importada. Mostrando la entrada existente."
+    "duplicate_detected": "Esta conversación ya fue importada. Mostrando la entrada existente.",
+    "chat_language": "Idioma del chat (que hablas)",
+    "learning_language": "Idioma de aprendizaje",
+    "select_language": "Selecciona un idioma…"
   },
   "curriculum": {
     "title": "Curriculo",
@@ -151,7 +157,15 @@
     "lesson_created": "Lesson created.",
     "lesson_saved": "Lesson saved.",
     "lesson_deleted": "Lesson deleted.",
-    "lesson_delete_confirm": "Delete this lesson?"
+    "lesson_delete_confirm": "Delete this lesson?",
+    "add_description": "Añadir descripción",
+    "description_aria": "Descripción del currículo",
+    "description_placeholder": "¿Por qué este currículo? ¿Qué abarca?",
+    "description_saved": "Descripción guardada.",
+    "edit_description": "Editar descripción",
+    "lesson_content_aria": "Contenido de la lección",
+    "lesson_content_placeholder": "Contenido de la lección — admite encabezados, listas, bloques de código, enlaces.",
+    "no_description": "Aún no hay descripción."
   },
   "landing": {
     "title": "Adaptive Learner",
@@ -191,7 +205,11 @@
     "skip_default_name": "Aprendiz",
     "skip_default_topic": "Mi aprendizaje",
     "skip_default_goal": "Descubrir mi estilo de aprendizaje.",
-    "skip_default_timeframe": "Flexible"
+    "skip_default_timeframe": "Flexible",
+    "field_tags": "Etiquetas",
+    "field_tags_hint": "Separadas por comas. Reutiliza etiquetas existentes o crea nuevas sobre la marcha.",
+    "field_tags_placeholder": "exam-prep, daily-practice",
+    "subject_suggestions": "Materias sugeridas (toca para asignar):"
   },
   "assessment": {
     "title": "Evaluacion del tipo de aprendizaje",
@@ -204,7 +222,8 @@
     "result_title": "Tu perfil de aprendizaje",
     "dominant_method": "Metodo preferido",
     "continue_to_dashboard": "Continuar al panel",
-    "read_summary": "Leer resumen"
+    "read_summary": "Leer resumen",
+    "swipe_hint": "Desliza a la izquierda / derecha (o usa las teclas de flecha) para navegar."
   },
   "dashboard": {
     "no_data": "Aún no hay datos.",
@@ -241,7 +260,18 @@
         "word_order": "Orden de palabras"
       },
       "mastery_split": "Receptivo: {receptive} · Productivo: {productive}"
-    }
+    },
+    "create_lesson": "Crear una lección",
+    "metric_mean_stress": "Estrés medio",
+    "metric_mean_understanding": "Comprensión media",
+    "metric_streak": "Racha de días",
+    "metric_total_minutes": "Minutos totales",
+    "metric_total_sessions": "Sesiones totales",
+    "pronunciation_quick_start": "Práctica de pronunciación",
+    "spaced_dismiss": "Descartar",
+    "spaced_empty": "Nada que repasar ahora mismo. ¡Buen ritmo!",
+    "spaced_interval_label": "Repasar en",
+    "spaced_start": "Comenzar"
   },
   "adaptive": {
     "page_title": "Lección adaptativa",
@@ -326,7 +356,10 @@
     "cycles_completed": "Cycles completed",
     "next_topic": "Next topic:",
     "step_reason_tooltip": "Por que este paso?",
-    "offline_start_blocked": "Estas sin conexion. Las nuevas sesiones necesitan red — las anteriores siguen siendo legibles desde el Dashboard."
+    "offline_start_blocked": "Estas sin conexion. Las nuevas sesiones necesitan red — las anteriores siguen siendo legibles desde el Dashboard.",
+    "peek_step_prefix": "Paso",
+    "rating_notes_aria": "Notas de la sesión",
+    "rating_notes_placeholder": "Qué funcionó, qué no, qué probar la próxima vez…"
   },
   "progress": {
     "title": "Progreso",
@@ -345,7 +378,9 @@
     "step_eval_repeats": "Veces que la IA dijo 'aun no'",
     "step_eval_advances": "Avances de paso",
     "step_eval_backward": "Retrocesos",
-    "step_eval_stickiest_label": "Mas tiempo en:"
+    "step_eval_stickiest_label": "Mas tiempo en:",
+    "commit_notes_aria": "Notas de la sesión",
+    "session_count": "Sesiones"
   },
   "settings": {
     "tab_integrations": "Integraciones",
@@ -555,7 +590,21 @@
       "hint": "Al guardar un análisis de chat largo como lección sin conexión, las lecciones con más pasos que este número se dividen automáticamente en varias partes.",
       "label": "Pasos por parte",
       "range_hint": "(predeterminado {default}, rango {min}–{max})"
-    }
+    },
+    "danger_zone_backup_button": "Crear copia de seguridad",
+    "danger_zone_backup_offer": "¿Crear primero una copia de seguridad?",
+    "danger_zone_cancel": "Cancelar",
+    "danger_zone_complete_toast": "Se han eliminado todos los datos.",
+    "danger_zone_confirm_prompt": "Escribe RESET para confirmar",
+    "danger_zone_continue": "Continuar",
+    "danger_zone_failed_toast": "Error al restablecer:",
+    "danger_zone_final_button": "Eliminar permanentemente",
+    "danger_zone_heading": "Zona de peligro",
+    "danger_zone_input_placeholder": "RESET",
+    "danger_zone_intro": "Elimina permanentemente todo el estado de aprendizaje en este dispositivo.",
+    "danger_zone_reset_button": "Restablecer todo",
+    "danger_zone_warning": "Esto elimina TODOS tus datos de aprendizaje de forma permanente: sesiones, progreso, perfiles, currículos, importaciones, tarjetas Anki, ajustes y claves de API. Esta acción NO se puede deshacer.",
+    "section_sync": "Sincronización"
   },
   "methods": {
     "deductive": {
@@ -629,7 +678,8 @@
     "api_key_saved": "Clave API guardada.",
     "api_key_restored": "Se restauró la última clave que funcionó.",
     "api_key_deleted": "Clave API eliminada.",
-    "method_switched": "Metodo cambiado."
+    "method_switched": "Metodo cambiado.",
+    "onboarding_skipped": "¡Bienvenido! Puedes ajustarlo más tarde."
   },
   "install": {
     "title": "Anadir a la pantalla de inicio",
@@ -1134,7 +1184,8 @@
       "server": "Se produjo un error interno.",
       "network": "Sin conexión con el servidor.",
       "timeout": "La solicitud tardó demasiado.",
-      "generic": "Algo salió mal. Inténtalo de nuevo más tarde."
+      "generic": "Algo salió mal. Inténtalo de nuevo más tarde.",
+      "unexpected": "Algo salió mal."
     },
     "error_report": {
       "dialog_title": "Report an issue",
@@ -1183,7 +1234,8 @@
       "feature_pronunciation": "for pronunciation practice"
     },
     "common": {
-      "close": "Close"
+      "close": "Close",
+      "loading": "Cargando…"
     },
     "a11y": {
       "skip_to_content": "Skip to main content",
@@ -1198,7 +1250,8 @@
       "chart_distribution_label": "Method distribution bar chart",
       "chart_distribution_summary": "Most-used method: {method} ({count} sessions, {pct}%)",
       "streak_cell_label": "{count} sessions on {date}",
-      "streak_cell_label_zero": "No sessions on {date}"
+      "streak_cell_label_zero": "No sessions on {date}",
+      "chart_radar_value": "Puntuación"
     },
     "tooltips": {
       "delete": "Delete",
@@ -1345,7 +1398,8 @@
       "rerender": "Regenerar",
       "download_zip": "Descargar ZIP",
       "persist": "Guardar en git",
-      "persisting": "Guardando…"
+      "persisting": "Guardando…",
+      "persist_dexie_tooltip": "El control de versiones con Git solo está disponible en modo servidor."
     },
     "toast": {
       "zip_downloaded": "ZIP descargado",
@@ -1359,7 +1413,8 @@
     },
     "widget": {
       "title": "Repositorio de aprendizaje",
-      "open": "Abrir repositorio"
+      "open": "Abrir repositorio",
+      "subtitle": "Instantánea versionada del progreso, las notas y la hoja de ruta de este proyecto."
     },
     "settings": {
       "title": "Repositorio de aprendizaje",
@@ -1373,7 +1428,9 @@
       "error": {
         "load": "No se pudieron cargar los ajustes",
         "save": "No se pudieron guardar los ajustes"
-      }
+      },
+      "description": "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git confirma cada generación para que puedas explorar el historial con cualquier cliente git.",
+      "enable_git": "Activar persistencia git (endpoint POST /persist)"
     }
   },
   "lesson": {
@@ -1750,7 +1807,8 @@
       "non_cefr_level": "El nivel '{level}' no es una banda CEFR (A1-C2).",
       "level_too_complex": "Lección '{lesson}': el texto promedia {avg} palabras por lado, alto para el nivel {level} (se esperan unas {cap}).",
       "source_language_heuristic": "Los reversos contienen caracteres propios de {found}, pero el idioma de origen es '{lang}'.",
-      "target_language_heuristic": "Los anversos contienen caracteres propios de {found}, pero el idioma de destino es '{lang}'."
+      "target_language_heuristic": "Los anversos contienen caracteres propios de {found}, pero el idioma de destino es '{lang}'.",
+      "failed_share_anyway": "La comprobación de calidad encontró problemas. Puedes compartir de todos modos: los revisores verán los hallazgos anotados en el pull request."
     },
     "ai_validation": {
       "intro": "Una IA puede comprobar además la precisión de la traducción, la gramática y el nivel.",
@@ -2121,11 +2179,13 @@
       "locked": "Bloqueado",
       "receptive_short": "R",
       "productive_short": "P",
-      "exercises": "{n} ejercicios"
+      "exercises": "{n} ejercicios",
+      "xp": "XP"
     },
     "group": {
       "mastery": "{r} receptivo, {p} productivo dominados",
-      "progress_aria": "{completed} de {total} lecciones completadas"
+      "progress_aria": "{completed} de {total} lecciones completadas",
+      "toggle_aria": "Conjunto {title} — {completed} de {total} lecciones completadas"
     },
     "search_placeholder": "Buscar lecciones…",
     "filter": {
@@ -2142,14 +2202,20 @@
       "title": "Estadísticas",
       "lessons": "Lecciones",
       "receptive": "Receptivo",
-      "productive": "Productivo"
+      "productive": "Productivo",
+      "lessons_aria": "{done} de {total} lecciones completadas",
+      "productive_aria": "{n} lecciones dominadas de forma productiva",
+      "receptive_aria": "{n} lecciones dominadas de forma receptiva",
+      "region_label": "Estadísticas de la ruta de aprendizaje"
     },
     "clusters": {
       "toggle": "Mostrar grupos de errores",
       "empty": "Aún no hay patrones de error comunes — sigue practicando.",
       "lessons": "{n} lecciones",
-      "start_adaptive": "Iniciar lección adaptativa"
-    }
+      "start_adaptive": "Iniciar lección adaptativa",
+      "region_label": "Panel de grupos de errores"
+    },
+    "search_label": "Buscar lecciones — pulsa Enter para ir a la primera coincidencia"
   },
   "pwa": {
     "offline_message": "Estás sin conexión. El contenido guardado está disponible.",
@@ -2191,5 +2257,95 @@
     "no_user_tags_short": "Aún no hay etiquetas.",
     "no_matching_projects": "No hay proyectos que coincidan.",
     "no_projects": "Aún no hay proyectos."
+  },
+  "subjects": {
+    "languages": "Idiomas",
+    "mathematics": "Matemáticas",
+    "programming": "Programación",
+    "sciences": "Ciencias",
+    "music": "Música",
+    "humanities": "Humanidades",
+    "social_sciences": "Ciencias Sociales",
+    "skills": "Habilidades",
+    "english": "Inglés",
+    "spanish": "Español",
+    "french": "Francés",
+    "german": "Alemán",
+    "greek": "Griego",
+    "italian": "Italiano",
+    "portuguese": "Portugués",
+    "japanese": "Japonés",
+    "chinese": "Chino",
+    "turkish": "Turco",
+    "grammar": "Gramática",
+    "vocabulary": "Vocabulario",
+    "conversation": "Conversación",
+    "arithmetic": "Aritmética",
+    "algebra": "Álgebra",
+    "geometry": "Geometría",
+    "trigonometry": "Trigonometría",
+    "calculus": "Cálculo",
+    "statistics": "Estadística",
+    "linear_algebra": "Álgebra Lineal",
+    "discrete_mathematics": "Matemática Discreta",
+    "basics": "Fundamentos",
+    "frameworks": "Frameworks",
+    "data_science": "Ciencia de Datos",
+    "algorithms": "Algoritmos",
+    "data_structures": "Estructuras de Datos",
+    "design_patterns": "Patrones de Diseño",
+    "databases": "Bases de Datos",
+    "physics": "Física",
+    "chemistry": "Química",
+    "biology": "Biología",
+    "astronomy": "Astronomía",
+    "earth_sciences": "Ciencias de la Tierra",
+    "theory": "Teoría",
+    "piano": "Piano",
+    "guitar": "Guitarra",
+    "violin": "Violín",
+    "singing": "Canto",
+    "composition": "Composición",
+    "history": "Historia",
+    "philosophy": "Filosofía",
+    "literature": "Literatura",
+    "art_history": "Historia del Arte",
+    "economics": "Economía",
+    "psychology": "Psicología",
+    "sociology": "Sociología",
+    "political_science": "Ciencia Política",
+    "writing": "Escritura",
+    "public_speaking": "Oratoria",
+    "photography": "Fotografía",
+    "design": "Diseño",
+    "cooking": "Cocina"
+  },
+  "editor": {
+    "align_center": "Centrar",
+    "align_left": "Alinear a la izquierda",
+    "align_right": "Alinear a la derecha",
+    "blockquote": "Cita",
+    "bold": "Negrita (Ctrl+B)",
+    "bullet_list": "Lista con viñetas",
+    "character_count": "{count} caracteres",
+    "code_block": "Bloque de código",
+    "code_block_copied": "Copiado",
+    "code_block_copy": "Copiar código",
+    "code_block_language": "Lenguaje del bloque de código",
+    "h1": "Encabezado 1",
+    "h2": "Encabezado 2",
+    "h3": "Encabezado 3",
+    "highlight": "Resaltar",
+    "inline_code": "Código en línea",
+    "italic": "Cursiva (Ctrl+I)",
+    "link": "Insertar enlace",
+    "link_prompt": "URL (déjalo vacío para quitar el enlace)",
+    "ordered_list": "Lista numerada",
+    "redo": "Rehacer (Ctrl+Shift+Z)",
+    "strike": "Tachado",
+    "task_list": "Lista de tareas",
+    "toolbar_label": "Formato de texto",
+    "underline": "Subrayado (Ctrl+U)",
+    "undo": "Deshacer (Ctrl+Z)"
   }
 }

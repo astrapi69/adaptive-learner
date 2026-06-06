@@ -21,6 +21,7 @@ common:
   optional: optionnel
   required: obligatoire
   minutes: minutes
+  close: "Fermer"
 nav:
   learning_path: "Parcours d'apprentissage"
   dashboard: Tableau de bord
@@ -44,6 +45,8 @@ nav:
   mode_badge_tooltip_ai: "Fournisseur IA configuré — les exercices utilisent l'IA pour les distracteurs et les indices. Touche pour parcourir les sets."
   mode_badge_label_content: "Mode : Contenu uniquement"
   mode_badge_label_ai: "Mode : IA + Contenu"
+  sync_paired: "Sync : appairé (Paramètres > Sync)"
+  sync_unpaired: "Sync : non appairé (Paramètres > Sync)"
 import:
   title: Importer une conversation
   subtitle: Colle ou televerse une conversation avec ChatGPT, Claude ou Gemini et obtiens des insights d'apprentissage immediats.
@@ -120,6 +123,9 @@ import:
   delete_success: Conversation supprimée.
   delete_error: Impossible de supprimer la conversation.
   duplicate_detected: Cette conversation a déjà été importée. L'entrée existante est affichée.
+  chat_language: "Langue du chat (que vous parlez)"
+  learning_language: "Langue d'apprentissage"
+  select_language: "Sélectionnez une langue…"
 curriculum:
   title: Programme
   active: Programme actif
@@ -144,6 +150,14 @@ curriculum:
   lesson_saved: Lesson saved.
   lesson_deleted: Lesson deleted.
   lesson_delete_confirm: Delete this lesson?
+  add_description: "Ajouter une description"
+  description_aria: "Description du programme"
+  description_placeholder: "Pourquoi ce programme ? Que couvre-t-il ?"
+  description_saved: "Description enregistrée."
+  edit_description: "Modifier la description"
+  lesson_content_aria: "Contenu de la leçon"
+  lesson_content_placeholder: "Contenu de la leçon — prend en charge titres, listes, blocs de code, liens."
+  no_description: "Pas encore de description."
 landing:
   title: Adaptive Learner
   subtitle: Un apprentissage qui s'adapte a toi.
@@ -182,6 +196,10 @@ onboarding:
   skip_default_topic: Mon apprentissage
   skip_default_goal: Decouvrir mon style d'apprentissage.
   skip_default_timeframe: Flexible
+  field_tags: "Étiquettes"
+  field_tags_hint: "Séparées par des virgules. Réutilisez des étiquettes existantes ou créez-en de nouvelles à la volée."
+  field_tags_placeholder: "exam-prep, daily-practice"
+  subject_suggestions: "Matières suggérées (touchez pour attribuer) :"
 assessment:
   title: Evaluation du type d'apprentissage
   intro: Douze courtes questions determinent ton profil. Il n'y a ni bonne ni mauvaise reponse — repond a l'instinct.
@@ -194,6 +212,7 @@ assessment:
   dominant_method: Methode preferee
   continue_to_dashboard: Continuer vers le tableau de bord
   read_summary: Lire le résumé
+  swipe_hint: "Balayez vers la gauche / droite (ou utilisez les flèches) pour naviguer."
 dashboard:
   no_data: "Pas encore de données."
   title: Tableau de bord
@@ -227,6 +246,17 @@ dashboard:
       verb_conjugation: "Conjugaison verbale"
       word_order: "Ordre des mots"
     mastery_split: 'Réceptif : {receptive} · Productif : {productive}'
+  create_lesson: "Créer une leçon"
+  metric_mean_stress: "Stress moyen"
+  metric_mean_understanding: "Compréhension moyenne"
+  metric_streak: "Série de jours"
+  metric_total_minutes: "Minutes totales"
+  metric_total_sessions: "Sessions totales"
+  pronunciation_quick_start: "Exercice de prononciation"
+  spaced_dismiss: "Ignorer"
+  spaced_empty: "Rien à réviser pour le moment. Beau rythme !"
+  spaced_interval_label: "Réviser dans"
+  spaced_start: "Démarrer"
 adaptive:
   page_title: "Leçon adaptative"
   session_title: "Leçon adaptative"
@@ -304,6 +334,9 @@ session:
   next_topic: 'Next topic:'
   step_reason_tooltip: Pourquoi cette etape ?
   offline_start_blocked: Tu es hors ligne. Les nouvelles sessions necessitent une connexion — les sessions passees restent lisibles depuis le Dashboard.
+  peek_step_prefix: "Étape"
+  rating_notes_aria: "Notes de session"
+  rating_notes_placeholder: "Ce qui a marché, ce qui n'a pas marché, à essayer la prochaine fois…"
 progress:
   title: Progres
   chart_timeline: Comprehension et stress au fil du temps
@@ -322,6 +355,8 @@ progress:
   step_eval_advances: Progressions d'etape
   step_eval_backward: Retours en arriere
   step_eval_stickiest_label: 'Plus de temps sur :'
+  commit_notes_aria: "Notes de session"
+  session_count: "Sessions"
 settings:
   tab_integrations: "Intégrations"
   github:
@@ -524,6 +559,20 @@ settings:
     hint: "Lors de l'enregistrement d'une longue analyse de chat comme leçon hors ligne, les leçons avec plus d'étapes que ce nombre sont automatiquement divisées en plusieurs parties."
     label: Étapes par partie
     range_hint: "(défaut {default}, plage {min}–{max})"
+  danger_zone_backup_button: "Créer une sauvegarde"
+  danger_zone_backup_offer: "Créer d'abord une sauvegarde ?"
+  danger_zone_cancel: "Annuler"
+  danger_zone_complete_toast: "Toutes les données ont été supprimées."
+  danger_zone_confirm_prompt: "Tapez RESET pour confirmer"
+  danger_zone_continue: "Continuer"
+  danger_zone_failed_toast: "Échec de la réinitialisation :"
+  danger_zone_final_button: "Supprimer définitivement"
+  danger_zone_heading: "Zone de danger"
+  danger_zone_input_placeholder: "RESET"
+  danger_zone_intro: "Supprimez définitivement tout l'état d'apprentissage sur cet appareil."
+  danger_zone_reset_button: "Tout réinitialiser"
+  danger_zone_warning: "Cela supprime DÉFINITIVEMENT toutes vos données d'apprentissage — sessions, progression, profils, programmes, imports, cartes Anki, paramètres et clés d'API. Cette action est IRRÉVERSIBLE."
+  section_sync: "Synchronisation"
 methods:
   deductive:
     label: Deductif
@@ -581,6 +630,7 @@ toast:
   api_key_restored: "La derniere cle fonctionnelle a ete restauree."
   api_key_deleted: Cle API supprimee.
   method_switched: Methode changee.
+  onboarding_skipped: "Bienvenue ! Vous pourrez affiner plus tard."
 install:
   title: Ajouter a l'ecran d'accueil
   subtitle: "Installez Adaptive Learner comme une app pour une meilleure utilisation hors ligne."
@@ -1042,6 +1092,7 @@ ui:
     network: "Pas de connexion au serveur."
     timeout: "La requête a pris trop de temps."
     generic: "Une erreur s'est produite. Réessaie plus tard."
+    unexpected: "Une erreur s'est produite."
   error_report:
     dialog_title: "Report an issue"
     intro: "Adaptive Learner caught an error and can prepare a bug report for the developer."
@@ -1086,6 +1137,7 @@ ui:
     feature_pronunciation: "for pronunciation practice"
   common:
     close: "Close"
+    loading: "Chargement…"
   a11y:
     # Phase 39 (WCAG 2.1 AA). EN passthrough per the existing
     # project convention (es/fr/el inherit EN for ui.* keys).
@@ -1102,6 +1154,7 @@ ui:
     chart_distribution_summary: "Most-used method: {method} ({count} sessions, {pct}%)"
     streak_cell_label: "{count} sessions on {date}"
     streak_cell_label_zero: "No sessions on {date}"
+    chart_radar_value: "Score"
   tooltips:
     # Generic icon-button labels. Aim: 1-3 words, action-oriented.
     delete: "Delete"
@@ -1248,6 +1301,7 @@ repo:
     download_zip: "Télécharger le ZIP"
     persist: "Enregistrer dans git"
     persisting: "Enregistrement…"
+    persist_dexie_tooltip: "La gestion de versions Git n'est disponible qu'en mode serveur."
   toast:
     zip_downloaded: "ZIP téléchargé"
     persisted: "Enregistré dans git"
@@ -1259,6 +1313,7 @@ repo:
   widget:
     title: "Dépôt d'apprentissage"
     open: "Ouvrir le dépôt"
+    subtitle: "Instantané versionné de la progression, des notes et de la feuille de route de ce projet."
   settings:
     title: "Dépôt d'apprentissage"
     loading: "Chargement…"
@@ -1271,6 +1326,8 @@ repo:
       load: "Impossible de charger les paramètres"
       save: "Impossible d'enregistrer les paramètres"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
+    description: "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de vos données de session. L'intégration git facultative valide chaque génération pour que vous puissiez parcourir l'historique avec n'importe quel client git."
+    enable_git: "Activer la persistance git (point de terminaison POST /persist)"
 lesson:
   tts:
     read_aloud: "Lire à voix haute"
@@ -1605,6 +1662,7 @@ content:
     level_too_complex: "Leçon '{lesson}' : le texte fait en moyenne {avg} mots par côté, élevé pour le niveau {level} (environ {cap} attendus)."
     source_language_heuristic: Le verso des cartes contient des caractères propres à {found}, mais la langue source est '{lang}'.
     target_language_heuristic: Le recto des cartes contient des caractères propres à {found}, mais la langue cible est '{lang}'.
+    failed_share_anyway: "Le contrôle qualité a détecté des problèmes. Vous pouvez quand même partager — les relecteurs verront les remarques notées dans la pull request."
   ai_validation:
     intro: Une IA peut en plus vérifier l'exactitude des traductions, la grammaire et le niveau.
     privacy: Le contenu de votre leçon sera envoyé à {provider}. Aucune donnée personnelle n'est transmise.
@@ -1928,9 +1986,11 @@ learning_path:
     receptive_short: "R"
     productive_short: "P"
     exercises: "{n} exercices"
+    xp: "XP"
   group:
     mastery: "{r} réceptif, {p} productif maîtrisés"
     progress_aria: "{completed} sur {total} leçons terminées"
+    toggle_aria: "Ensemble {title} — {completed} sur {total} leçons terminées"
   search_placeholder: "Rechercher des leçons…"
   filter:
     status: "Filtre d'état"
@@ -1946,11 +2006,17 @@ learning_path:
     lessons: "Leçons"
     receptive: "Réceptif"
     productive: "Productif"
+    lessons_aria: "{done} sur {total} leçons terminées"
+    productive_aria: "{n} leçons maîtrisées en production"
+    receptive_aria: "{n} leçons maîtrisées en réception"
+    region_label: "Statistiques du parcours d'apprentissage"
   clusters:
     toggle: "Afficher les groupes d'erreurs"
     empty: "Pas encore de schémas d'erreurs communs — continuez."
     lessons: "{n} leçons"
     start_adaptive: "Lancer une leçon adaptative"
+    region_label: "Panneau des groupes d'erreurs"
+  search_label: "Rechercher des leçons — appuyez sur Entrée pour aller au premier résultat"
 pwa:
   offline_message: "Vous êtes hors ligne. Le contenu enregistré reste disponible."
   online_message: "De nouveau en ligne !"
@@ -1989,3 +2055,96 @@ taxonomy:
   no_user_tags_short: "Pas encore d'étiquettes."
   no_matching_projects: "Aucun projet correspondant."
   no_projects: "Pas encore de projets."
+
+# Noms des matières (data-i18n). Clé = nom anglais normalisé
+# (backend/config/seed/subjects.yaml). Les noms propres (Python,
+# JavaScript, React, ...) n'ont pas de clé et reviennent à
+# subject.name dans toutes les langues.
+subjects:
+  languages: "Langues"
+  mathematics: "Mathématiques"
+  programming: "Programmation"
+  sciences: "Sciences"
+  music: "Musique"
+  humanities: "Sciences humaines"
+  social_sciences: "Sciences sociales"
+  skills: "Compétences"
+  english: "Anglais"
+  spanish: "Espagnol"
+  french: "Français"
+  german: "Allemand"
+  greek: "Grec"
+  italian: "Italien"
+  portuguese: "Portugais"
+  japanese: "Japonais"
+  chinese: "Chinois"
+  turkish: "Turc"
+  grammar: "Grammaire"
+  vocabulary: "Vocabulaire"
+  conversation: "Conversation"
+  arithmetic: "Arithmétique"
+  algebra: "Algèbre"
+  geometry: "Géométrie"
+  trigonometry: "Trigonométrie"
+  calculus: "Calcul"
+  statistics: "Statistiques"
+  linear_algebra: "Algèbre linéaire"
+  discrete_mathematics: "Mathématiques discrètes"
+  basics: "Bases"
+  frameworks: "Frameworks"
+  data_science: "Science des données"
+  algorithms: "Algorithmes"
+  data_structures: "Structures de données"
+  design_patterns: "Patrons de conception"
+  databases: "Bases de données"
+  physics: "Physique"
+  chemistry: "Chimie"
+  biology: "Biologie"
+  astronomy: "Astronomie"
+  earth_sciences: "Sciences de la Terre"
+  theory: "Théorie"
+  piano: "Piano"
+  guitar: "Guitare"
+  violin: "Violon"
+  singing: "Chant"
+  composition: "Composition"
+  history: "Histoire"
+  philosophy: "Philosophie"
+  literature: "Littérature"
+  art_history: "Histoire de l'art"
+  economics: "Économie"
+  psychology: "Psychologie"
+  sociology: "Sociologie"
+  political_science: "Science politique"
+  writing: "Écriture"
+  public_speaking: "Prise de parole en public"
+  photography: "Photographie"
+  design: "Design"
+  cooking: "Cuisine"
+editor:
+  align_center: "Centrer"
+  align_left: "Aligner à gauche"
+  align_right: "Aligner à droite"
+  blockquote: "Citation"
+  bold: "Gras (Ctrl+B)"
+  bullet_list: "Liste à puces"
+  character_count: "{count} caractères"
+  code_block: "Bloc de code"
+  code_block_copied: "Copié"
+  code_block_copy: "Copier le code"
+  code_block_language: "Langage du bloc de code"
+  h1: "Titre 1"
+  h2: "Titre 2"
+  h3: "Titre 3"
+  highlight: "Surligner"
+  inline_code: "Code en ligne"
+  italic: "Italique (Ctrl+I)"
+  link: "Insérer un lien"
+  link_prompt: "URL (laisser vide pour supprimer le lien)"
+  ordered_list: "Liste numérotée"
+  redo: "Rétablir (Ctrl+Maj+Z)"
+  strike: "Barré"
+  task_list: "Liste de tâches"
+  toolbar_label: "Mise en forme du texte"
+  underline: "Souligné (Ctrl+U)"
+  undo: "Annuler (Ctrl+Z)"

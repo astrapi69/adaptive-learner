@@ -21,6 +21,7 @@ common:
   optional: προαιρετικό
   required: υποχρεωτικό
   minutes: λεπτά
+  close: "Κλείσιμο"
 nav:
   learning_path: "Διαδρομή μάθησης"
   dashboard: Πίνακας
@@ -44,6 +45,8 @@ nav:
   mode_badge_tooltip_ai: "Πάροχος AI ρυθμισμένος — οι ασκήσεις χρησιμοποιούν AI για αποπροσανατολιστές και υποδείξεις. Πατήστε για περιήγηση."
   mode_badge_label_content: "Λειτουργία: Μόνο περιεχόμενο"
   mode_badge_label_ai: "Λειτουργία: AI + Περιεχόμενο"
+  sync_paired: "Συγχρ.: συζευγμένο (Ρυθμίσεις > Συγχρ.)"
+  sync_unpaired: "Συγχρ.: μη συζευγμένο (Ρυθμίσεις > Συγχρ.)"
 import:
   title: Εισαγωγή συνομιλίας
   subtitle: Επικόλλησε ή ανέβασε μια συνομιλία με ChatGPT, Claude ή Gemini και πάρε άμεσα μαθησιακές ιδέες.
@@ -120,6 +123,9 @@ import:
   delete_success: Η συνομιλία διαγράφηκε.
   delete_error: Δεν ήταν δυνατή η διαγραφή της συνομιλίας.
   duplicate_detected: Αυτή η συνομιλία είχε ήδη εισαχθεί. Εμφανίζεται η υπάρχουσα εγγραφή.
+  chat_language: "Γλώσσα συνομιλίας (που μιλάτε)"
+  learning_language: "Γλώσσα εκμάθησης"
+  select_language: "Επιλέξτε γλώσσα…"
 curriculum:
   title: Πρόγραμμα
   active: Ενεργό πρόγραμμα
@@ -144,6 +150,14 @@ curriculum:
   lesson_saved: Lesson saved.
   lesson_deleted: Lesson deleted.
   lesson_delete_confirm: Delete this lesson?
+  add_description: "Προσθήκη περιγραφής"
+  description_aria: "Περιγραφή προγράμματος σπουδών"
+  description_placeholder: "Γιατί αυτό το πρόγραμμα; Τι καλύπτει;"
+  description_saved: "Η περιγραφή αποθηκεύτηκε."
+  edit_description: "Επεξεργασία περιγραφής"
+  lesson_content_aria: "Περιεχόμενο μαθήματος"
+  lesson_content_placeholder: "Περιεχόμενο μαθήματος — υποστηρίζει επικεφαλίδες, λίστες, μπλοκ κώδικα, συνδέσμους."
+  no_description: "Δεν υπάρχει ακόμη περιγραφή."
 landing:
   title: Adaptive Learner
   subtitle: Μάθηση που προσαρμόζεται σε σένα.
@@ -182,6 +196,10 @@ onboarding:
   skip_default_topic: Η μάθησή μου
   skip_default_goal: Να ανακαλύψω το στυλ μάθησής μου.
   skip_default_timeframe: Ευέλικτο
+  field_tags: "Ετικέτες"
+  field_tags_hint: "Διαχωρισμένες με κόμμα. Επαναχρησιμοποιήστε υπάρχουσες ετικέτες ή δημιουργήστε νέες άμεσα."
+  field_tags_placeholder: "exam-prep, daily-practice"
+  subject_suggestions: "Προτεινόμενα μαθήματα (πατήστε για ανάθεση):"
 assessment:
   title: Αξιολόγηση τύπου μάθησης
   intro: Δώδεκα σύντομες ερωτήσεις καθορίζουν το προφίλ μάθησής σου. Δεν υπάρχει σωστή ή λανθασμένη απάντηση — απάντησε διαισθητικά.
@@ -194,6 +212,7 @@ assessment:
   dominant_method: Προτιμώμενη μέθοδος
   continue_to_dashboard: Συνέχεια στον πίνακα
   read_summary: Ανάγνωση περίληψης
+  swipe_hint: "Σύρετε αριστερά / δεξιά (ή χρησιμοποιήστε τα βέλη) για πλοήγηση."
 dashboard:
   no_data: "Δεν υπάρχουν ακόμη δεδομένα."
   title: Πίνακας
@@ -227,6 +246,17 @@ dashboard:
       verb_conjugation: "Κλίση ρημάτων"
       word_order: "Σειρά λέξεων"
     mastery_split: 'Αναγνώριση: {receptive} · Παραγωγή: {productive}'
+  create_lesson: "Δημιουργία μαθήματος"
+  metric_mean_stress: "Μέσο άγχος"
+  metric_mean_understanding: "Μέση κατανόηση"
+  metric_streak: "Σερί ημερών"
+  metric_total_minutes: "Συνολικά λεπτά"
+  metric_total_sessions: "Συνολικές συνεδρίες"
+  pronunciation_quick_start: "Εξάσκηση προφοράς"
+  spaced_dismiss: "Απόρριψη"
+  spaced_empty: "Τίποτα για ανανέωση αυτή τη στιγμή. Τέλειος ρυθμός!"
+  spaced_interval_label: "Επανάληψη σε"
+  spaced_start: "Έναρξη"
 adaptive:
   page_title: "Προσαρμοστικό μάθημα"
   session_title: "Προσαρμοστικό μάθημα"
@@ -304,6 +334,9 @@ session:
   next_topic: 'Next topic:'
   step_reason_tooltip: Γιατί αυτό το βήμα;
   offline_start_blocked: Είσαι εκτός σύνδεσης. Οι νέες συνεδρίες χρειάζονται δίκτυο — οι προηγούμενες διαβάζονται κανονικά από το Dashboard.
+  peek_step_prefix: "Βήμα"
+  rating_notes_aria: "Σημειώσεις συνεδρίας"
+  rating_notes_placeholder: "Τι λειτούργησε, τι όχι, τι να δοκιμάσετε την επόμενη φορά…"
 progress:
   title: Πρόοδος
   chart_timeline: Κατανόηση και άγχος στον χρόνο
@@ -322,6 +355,8 @@ progress:
   step_eval_advances: Προωθήσεις βήματος
   step_eval_backward: Επιστροφές
   step_eval_stickiest_label: 'Περισσότερος χρόνος σε:'
+  commit_notes_aria: "Σημειώσεις συνεδρίας"
+  session_count: "Συνεδρίες"
 settings:
   tab_integrations: "Ενσωματώσεις"
   github:
@@ -524,6 +559,20 @@ settings:
     hint: "Κατά την αποθήκευση μιας μεγάλης ανάλυσης συνομιλίας ως μάθημα εκτός σύνδεσης, τα μαθήματα με περισσότερα βήματα από αυτόν τον αριθμό χωρίζονται αυτόματα σε πολλά μέρη."
     label: Βήματα ανά μέρος
     range_hint: "(προεπιλογή {default}, εύρος {min}–{max})"
+  danger_zone_backup_button: "Δημιουργία αντιγράφου ασφαλείας"
+  danger_zone_backup_offer: "Δημιουργία αντιγράφου ασφαλείας πρώτα;"
+  danger_zone_cancel: "Άκυρο"
+  danger_zone_complete_toast: "Όλα τα δεδομένα διαγράφηκαν."
+  danger_zone_confirm_prompt: "Πληκτρολογήστε RESET για επιβεβαίωση"
+  danger_zone_continue: "Συνέχεια"
+  danger_zone_failed_toast: "Η επαναφορά απέτυχε:"
+  danger_zone_final_button: "Οριστική διαγραφή"
+  danger_zone_heading: "Ζώνη κινδύνου"
+  danger_zone_input_placeholder: "RESET"
+  danger_zone_intro: "Διαγράψτε οριστικά κάθε στοιχείο της κατάστασης μάθησης σε αυτή τη συσκευή."
+  danger_zone_reset_button: "Επαναφορά όλων"
+  danger_zone_warning: "Αυτό διαγράφει ΟΛΑ τα δεδομένα μάθησής σας οριστικά — συνεδρίες, πρόοδο, προφίλ, προγράμματα σπουδών, εισαγωγές, κάρτες Anki, ρυθμίσεις και κλειδιά API. Αυτή η ενέργεια ΔΕΝ μπορεί να αναιρεθεί."
+  section_sync: "Συγχρονισμός"
 methods:
   deductive:
     label: Επαγωγική (από γενικό)
@@ -581,6 +630,7 @@ toast:
   api_key_restored: "Το τελευταίο λειτουργικό κλειδί επαναφέρθηκε."
   api_key_deleted: Το κλειδί API αφαιρέθηκε.
   method_switched: Η μέθοδος άλλαξε.
+  onboarding_skipped: "Καλώς ήρθατε! Μπορείτε να το βελτιώσετε αργότερα."
 install:
   title: Προσθήκη στην αρχική οθόνη
   subtitle: "Εγκαταστήστε το Adaptive Learner ως εφαρμογή για καλύτερη χρήση εκτός σύνδεσης."
@@ -1042,6 +1092,7 @@ ui:
     network: "Δεν υπάρχει σύνδεση με τον διακομιστή."
     timeout: "Το αίτημα διήρκεσε υπερβολικά."
     generic: "Κάτι πήγε στραβά. Δοκίμασε ξανά αργότερα."
+    unexpected: "Κάτι πήγε στραβά."
   error_report:
     dialog_title: "Report an issue"
     intro: "Adaptive Learner caught an error and can prepare a bug report for the developer."
@@ -1086,6 +1137,7 @@ ui:
     feature_pronunciation: "for pronunciation practice"
   common:
     close: "Close"
+    loading: "Φόρτωση…"
   a11y:
     # Phase 39 (WCAG 2.1 AA). EN passthrough per the existing
     # project convention (es/fr/el inherit EN for ui.* keys).
@@ -1102,6 +1154,7 @@ ui:
     chart_distribution_summary: "Most-used method: {method} ({count} sessions, {pct}%)"
     streak_cell_label: "{count} sessions on {date}"
     streak_cell_label_zero: "No sessions on {date}"
+    chart_radar_value: "Βαθμολογία"
   tooltips:
     # Generic icon-button labels. Aim: 1-3 words, action-oriented.
     delete: "Delete"
@@ -1248,6 +1301,7 @@ repo:
     download_zip: "Λήψη ZIP"
     persist: "Αποθήκευση σε git"
     persisting: "Αποθήκευση…"
+    persist_dexie_tooltip: "Η έκδοση με Git είναι διαθέσιμη μόνο σε λειτουργία διακομιστή."
   toast:
     zip_downloaded: "Λήφθηκε ZIP"
     persisted: "Αποθηκεύτηκε σε git"
@@ -1259,6 +1313,7 @@ repo:
   widget:
     title: "Αποθετήριο μάθησης"
     open: "Άνοιγμα αποθετηρίου"
+    subtitle: "Εκδοχή στιγμιότυπου της προόδου, των σημειώσεων και του οδικού χάρτη αυτού του έργου."
   settings:
     title: "Αποθετήριο μάθησης"
     loading: "Φόρτωση…"
@@ -1271,6 +1326,8 @@ repo:
       load: "Αδυναμία φόρτωσης ρυθμίσεων"
       save: "Αδυναμία αποθήκευσης ρυθμίσεων"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
+    description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
+    enable_git: "Ενεργοποίηση εμμονής git (endpoint POST /persist)"
 lesson:
   tts:
     read_aloud: "Ανάγνωση φωναχτά"
@@ -1605,6 +1662,7 @@ content:
     level_too_complex: "Μάθημα '{lesson}': το κείμενο έχει κατά μέσο όρο {avg} λέξεις ανά πλευρά, πολλές για το επίπεδο {level} (αναμένονται περίπου {cap})."
     source_language_heuristic: Οι πίσω όψεις περιέχουν χαρακτήρες της {found}, αλλά η γλώσσα προέλευσης είναι '{lang}'.
     target_language_heuristic: Οι μπροστινές όψεις περιέχουν χαρακτήρες της {found}, αλλά η γλώσσα-στόχος είναι '{lang}'.
+    failed_share_anyway: "Ο έλεγχος ποιότητας εντόπισε προβλήματα. Μπορείτε να μοιραστείτε ούτως ή άλλως — οι κριτές θα δουν τα ευρήματα που σημειώνονται στο pull request."
   ai_validation:
     intro: Μια ΤΝ μπορεί επιπλέον να ελέγξει την ακρίβεια μετάφρασης, τη γραμματική και το επίπεδο.
     privacy: Το περιεχόμενο του μαθήματός σου θα σταλεί στο {provider}. Δεν μεταδίδονται προσωπικά δεδομένα.
@@ -1928,9 +1986,11 @@ learning_path:
     receptive_short: "Α"
     productive_short: "Π"
     exercises: "{n} ασκήσεις"
+    xp: "XP"
   group:
     mastery: "{r} δεκτικά, {p} παραγωγικά κατακτημένα"
     progress_aria: "{completed} από {total} μαθήματα ολοκληρώθηκαν"
+    toggle_aria: "Σετ {title} — {completed} από {total} μαθήματα ολοκληρώθηκαν"
   search_placeholder: "Αναζήτηση μαθημάτων…"
   filter:
     status: "Φίλτρο κατάστασης"
@@ -1946,11 +2006,17 @@ learning_path:
     lessons: "Μαθήματα"
     receptive: "Δεκτικά"
     productive: "Παραγωγικά"
+    lessons_aria: "{done} από {total} μαθήματα ολοκληρώθηκαν"
+    productive_aria: "{n} μαθήματα κατακτημένα παραγωγικά"
+    receptive_aria: "{n} μαθήματα κατακτημένα αναγνωριστικά"
+    region_label: "Στατιστικά διαδρομής μάθησης"
   clusters:
     toggle: "Εμφάνιση ομάδων σφαλμάτων"
     empty: "Δεν υπάρχουν ακόμη κοινά μοτίβα σφαλμάτων — συνεχίστε."
     lessons: "{n} μαθήματα"
     start_adaptive: "Έναρξη προσαρμοστικού μαθήματος"
+    region_label: "Πίνακας ομάδων σφαλμάτων"
+  search_label: "Αναζήτηση μαθημάτων — πατήστε Enter για μετάβαση στο πρώτο αποτέλεσμα"
 pwa:
   offline_message: "Είστε εκτός σύνδεσης. Το αποθηκευμένο περιεχόμενο είναι διαθέσιμο."
   online_message: "Ξανά συνδεδεμένοι!"
@@ -1989,3 +2055,96 @@ taxonomy:
   no_user_tags_short: "Δεν υπάρχουν ακόμη ετικέτες."
   no_matching_projects: "Δεν υπάρχουν έργα που να ταιριάζουν."
   no_projects: "Δεν υπάρχουν ακόμη έργα."
+
+# Ονόματα γνωστικών αντικειμένων (data-i18n). Κλειδί = κανονικοποιημένο
+# αγγλικό όνομα (backend/config/seed/subjects.yaml). Τα κύρια ονόματα
+# (Python, JavaScript, React, ...) δεν έχουν κλειδί και επιστρέφουν στο
+# subject.name σε κάθε γλώσσα.
+subjects:
+  languages: "Γλώσσες"
+  mathematics: "Μαθηματικά"
+  programming: "Προγραμματισμός"
+  sciences: "Επιστήμες"
+  music: "Μουσική"
+  humanities: "Ανθρωπιστικές επιστήμες"
+  social_sciences: "Κοινωνικές επιστήμες"
+  skills: "Δεξιότητες"
+  english: "Αγγλικά"
+  spanish: "Ισπανικά"
+  french: "Γαλλικά"
+  german: "Γερμανικά"
+  greek: "Ελληνικά"
+  italian: "Ιταλικά"
+  portuguese: "Πορτογαλικά"
+  japanese: "Ιαπωνικά"
+  chinese: "Κινεζικά"
+  turkish: "Τουρκικά"
+  grammar: "Γραμματική"
+  vocabulary: "Λεξιλόγιο"
+  conversation: "Συνομιλία"
+  arithmetic: "Αριθμητική"
+  algebra: "Άλγεβρα"
+  geometry: "Γεωμετρία"
+  trigonometry: "Τριγωνομετρία"
+  calculus: "Λογισμός"
+  statistics: "Στατιστική"
+  linear_algebra: "Γραμμική Άλγεβρα"
+  discrete_mathematics: "Διακριτά Μαθηματικά"
+  basics: "Βασικά"
+  frameworks: "Frameworks"
+  data_science: "Επιστήμη Δεδομένων"
+  algorithms: "Αλγόριθμοι"
+  data_structures: "Δομές Δεδομένων"
+  design_patterns: "Πρότυπα Σχεδίασης"
+  databases: "Βάσεις Δεδομένων"
+  physics: "Φυσική"
+  chemistry: "Χημεία"
+  biology: "Βιολογία"
+  astronomy: "Αστρονομία"
+  earth_sciences: "Γεωεπιστήμες"
+  theory: "Θεωρία"
+  piano: "Πιάνο"
+  guitar: "Κιθάρα"
+  violin: "Βιολί"
+  singing: "Τραγούδι"
+  composition: "Σύνθεση"
+  history: "Ιστορία"
+  philosophy: "Φιλοσοφία"
+  literature: "Λογοτεχνία"
+  art_history: "Ιστορία της Τέχνης"
+  economics: "Οικονομικά"
+  psychology: "Ψυχολογία"
+  sociology: "Κοινωνιολογία"
+  political_science: "Πολιτική Επιστήμη"
+  writing: "Γραφή"
+  public_speaking: "Δημόσια Ομιλία"
+  photography: "Φωτογραφία"
+  design: "Σχεδιασμός"
+  cooking: "Μαγειρική"
+editor:
+  align_center: "Στοίχιση στο κέντρο"
+  align_left: "Στοίχιση αριστερά"
+  align_right: "Στοίχιση δεξιά"
+  blockquote: "Παράθεση"
+  bold: "Έντονα (Ctrl+B)"
+  bullet_list: "Λίστα κουκκίδων"
+  character_count: "{count} χαρακτήρες"
+  code_block: "Μπλοκ κώδικα"
+  code_block_copied: "Αντιγράφηκε"
+  code_block_copy: "Αντιγραφή κώδικα"
+  code_block_language: "Γλώσσα μπλοκ κώδικα"
+  h1: "Επικεφαλίδα 1"
+  h2: "Επικεφαλίδα 2"
+  h3: "Επικεφαλίδα 3"
+  highlight: "Επισήμανση"
+  inline_code: "Ενσωματωμένος κώδικας"
+  italic: "Πλάγια (Ctrl+I)"
+  link: "Εισαγωγή συνδέσμου"
+  link_prompt: "URL (αφήστε κενό για αφαίρεση του συνδέσμου)"
+  ordered_list: "Αριθμημένη λίστα"
+  redo: "Επανάληψη (Ctrl+Shift+Z)"
+  strike: "Διαγραφή"
+  task_list: "Λίστα εργασιών"
+  toolbar_label: "Μορφοποίηση κειμένου"
+  underline: "Υπογράμμιση (Ctrl+U)"
+  undo: "Αναίρεση (Ctrl+Z)"

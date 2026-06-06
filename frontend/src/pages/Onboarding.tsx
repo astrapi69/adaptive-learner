@@ -8,6 +8,7 @@ import HelpTooltip from "../components/help/HelpTooltip";
 import {useI18n} from "../hooks/useI18n";
 import {SUPPORTED_LANGUAGES} from "../lib/constants";
 import {setProjectId, setUserId} from "../lib/learnerState";
+import {translateSubjectPath} from "../lib/subjectI18n";
 import {suggestSubjects, type SubjectSuggestion} from "../lib/subjectSuggest";
 import {getStorage} from "../storage";
 import type {Subject} from "../types/domain";
@@ -357,7 +358,10 @@ export default function Onboarding() {
                                             }
                                             disabled={submitting}
                                         >
-                                            {suggestion.path}
+                                            {translateSubjectPath(
+                                                suggestion.path,
+                                                t,
+                                            )}
                                         </button>
                                     </li>
                                 );

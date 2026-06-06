@@ -22,7 +22,8 @@
     "no": "Hayır",
     "optional": "isteğe bağlı",
     "required": "zorunlu",
-    "minutes": "dakika"
+    "minutes": "dakika",
+    "close": "Kapat"
   },
   "nav": {
     "learning_path": "Öğrenme yolu",
@@ -46,7 +47,9 @@
     "mode_badge_tooltip_content": "Yapılandırılmış API anahtarı yok — yalnızca hazır içerik kullanılıyor. Yapay zeka özelliklerini etkinleştirmek için Ayarlar'dan anahtar ekleyin.",
     "mode_badge_tooltip_ai": "Yapay zeka sağlayıcısı yapılandırıldı — alıştırmalar dikkat dağıtıcılar ve ipuçları için yapay zeka kullanır. İçerik setlerine göz atmak için dokunun.",
     "mode_badge_label_content": "Mod: Yalnızca içerik",
-    "mode_badge_label_ai": "Mod: Yapay Zeka + İçerik"
+    "mode_badge_label_ai": "Mod: Yapay Zeka + İçerik",
+    "sync_paired": "Eşitleme: eşleşti (Ayarlar > Eşitleme)",
+    "sync_unpaired": "Eşitleme: eşleşmedi (Ayarlar > Eşitleme)"
   },
   "import": {
     "title": "Bir konuşmayı içe aktar",
@@ -126,7 +129,10 @@
     "delete_confirm": "Bu içe aktarılan konuşma silinsin mi? Bu işlem geri alınamaz.",
     "delete_success": "Konuşma silindi.",
     "delete_error": "Konuşma silinemedi.",
-    "duplicate_detected": "Bu konuşma zaten içe aktarılmıştı. Mevcut kayıt gösteriliyor."
+    "duplicate_detected": "Bu konuşma zaten içe aktarılmıştı. Mevcut kayıt gösteriliyor.",
+    "chat_language": "Sohbet dili (konuştuğunuz)",
+    "learning_language": "Öğrenme dili",
+    "select_language": "Bir dil seçin…"
   },
   "curriculum": {
     "title": "Müfredat",
@@ -151,7 +157,15 @@
     "lesson_created": "Ders oluşturuldu.",
     "lesson_saved": "Ders kaydedildi.",
     "lesson_deleted": "Ders silindi.",
-    "lesson_delete_confirm": "Bu ders silinsin mi?"
+    "lesson_delete_confirm": "Bu ders silinsin mi?",
+    "add_description": "Açıklama ekle",
+    "description_aria": "Müfredat açıklaması",
+    "description_placeholder": "Neden bu müfredat? Neleri kapsıyor?",
+    "description_saved": "Açıklama kaydedildi.",
+    "edit_description": "Açıklamayı düzenle",
+    "lesson_content_aria": "Ders içeriği",
+    "lesson_content_placeholder": "Ders içeriği — başlıkları, listeleri, kod bloklarını, bağlantıları destekler.",
+    "no_description": "Henüz açıklama yok."
   },
   "landing": {
     "title": "Adaptive Learner",
@@ -191,7 +205,11 @@
     "skip_default_name": "Öğrenci",
     "skip_default_topic": "Öğrenmem",
     "skip_default_goal": "Öğrenme tarzımı keşfetmek.",
-    "skip_default_timeframe": "Esnek"
+    "skip_default_timeframe": "Esnek",
+    "field_tags": "Etiketler",
+    "field_tags_hint": "Virgülle ayrılmış. Mevcut etiketleri yeniden kullanın veya anında yenilerini oluşturun.",
+    "field_tags_placeholder": "exam-prep, daily-practice",
+    "subject_suggestions": "Önerilen konular (atamak için dokunun):"
   },
   "assessment": {
     "title": "Öğrenme tipi değerlendirmesi",
@@ -204,7 +222,8 @@
     "result_title": "Öğrenme profilin",
     "dominant_method": "Tercih edilen yöntem",
     "continue_to_dashboard": "Panoya devam et",
-    "read_summary": "Özeti oku"
+    "read_summary": "Özeti oku",
+    "swipe_hint": "Gezinmek için sola / sağa kaydırın (veya ok tuşlarını kullanın)."
   },
   "dashboard": {
     "no_data": "Henüz veri yok.",
@@ -241,7 +260,18 @@
         "word_order": "Kelime sırası"
       },
       "mastery_split": "Tanıma: {receptive} · Üretim: {productive}"
-    }
+    },
+    "create_lesson": "Ders oluştur",
+    "metric_mean_stress": "Ortalama stres",
+    "metric_mean_understanding": "Ortalama anlama",
+    "metric_streak": "Gün serisi",
+    "metric_total_minutes": "Toplam dakika",
+    "metric_total_sessions": "Toplam oturum",
+    "pronunciation_quick_start": "Telaffuz alıştırması",
+    "spaced_dismiss": "Kapat",
+    "spaced_empty": "Şu an tazelenecek bir şey yok. Harika tempo!",
+    "spaced_interval_label": "Tekrar:",
+    "spaced_start": "Başla"
   },
   "adaptive": {
     "page_title": "Uyarlanabilir ders",
@@ -326,7 +356,10 @@
     "cycles_completed": "Tamamlanan döngüler",
     "next_topic": "Sonraki konu:",
     "step_reason_tooltip": "Neden bu adım?",
-    "offline_start_blocked": "Çevrimdışısın. Yeni oturumlar için ağ bağlantısı gerekli — geçmiş oturumlar Pano'dan okunabilir kalır."
+    "offline_start_blocked": "Çevrimdışısın. Yeni oturumlar için ağ bağlantısı gerekli — geçmiş oturumlar Pano'dan okunabilir kalır.",
+    "peek_step_prefix": "Adım",
+    "rating_notes_aria": "Oturum notları",
+    "rating_notes_placeholder": "Ne işe yaradı, ne yaramadı, bir dahaki sefere ne denenmeli…"
   },
   "progress": {
     "title": "İlerleme",
@@ -345,7 +378,9 @@
     "step_eval_repeats": "YZ'nin 'henüz hazır değil' dediği zamanlar",
     "step_eval_advances": "Adım ilerlemeleri",
     "step_eval_backward": "Geri geçişler",
-    "step_eval_stickiest_label": "En çok zaman:"
+    "step_eval_stickiest_label": "En çok zaman:",
+    "commit_notes_aria": "Oturum notları",
+    "session_count": "Oturumlar"
   },
   "settings": {
     "tab_integrations": "Entegrasyonlar",
@@ -555,7 +590,21 @@
       "hint": "Uzun bir sohbet analizini çevrimdışı ders olarak kaydederken, bu sayıdan fazla adıma sahip dersler otomatik olarak birden fazla parçaya bölünür.",
       "label": "Bölüm başına adım sayısı",
       "range_hint": "(varsayılan {default}, aralık {min}–{max})"
-    }
+    },
+    "danger_zone_backup_button": "Yedek oluştur",
+    "danger_zone_backup_offer": "Önce bir yedek oluşturulsun mu?",
+    "danger_zone_cancel": "İptal",
+    "danger_zone_complete_toast": "Tüm veriler silindi.",
+    "danger_zone_confirm_prompt": "Onaylamak için RESET yazın",
+    "danger_zone_continue": "Devam",
+    "danger_zone_failed_toast": "Sıfırlama başarısız:",
+    "danger_zone_final_button": "Kalıcı olarak sil",
+    "danger_zone_heading": "Tehlikeli bölge",
+    "danger_zone_input_placeholder": "RESET",
+    "danger_zone_intro": "Bu cihazdaki tüm öğrenme durumunu kalıcı olarak silin.",
+    "danger_zone_reset_button": "Her şeyi sıfırla",
+    "danger_zone_warning": "Bu, TÜM öğrenme verilerinizi kalıcı olarak siler — oturumlar, ilerleme, profiller, müfredatlar, içe aktarmalar, Anki kartları, ayarlar ve API anahtarları. Bu işlem GERİ ALINAMAZ.",
+    "section_sync": "Eşitleme"
   },
   "methods": {
     "deductive": {
@@ -629,7 +678,8 @@
     "api_key_saved": "API anahtarı kaydedildi.",
     "api_key_restored": "Son çalışan anahtar geri yüklendi.",
     "api_key_deleted": "API anahtarı kaldırıldı.",
-    "method_switched": "Yöntem değiştirildi."
+    "method_switched": "Yöntem değiştirildi.",
+    "onboarding_skipped": "Hoş geldiniz! Daha sonra ince ayar yapabilirsiniz."
   },
   "install": {
     "title": "Ana ekrana ekle",
@@ -1134,7 +1184,8 @@
       "server": "Bir iç hata oluştu.",
       "network": "Sunucuya bağlanılamıyor.",
       "timeout": "İstek çok uzun sürdü.",
-      "generic": "Bir şeyler ters gitti. Lütfen daha sonra tekrar dene."
+      "generic": "Bir şeyler ters gitti. Lütfen daha sonra tekrar dene.",
+      "unexpected": "Bir şeyler ters gitti."
     },
     "error_report": {
       "dialog_title": "Bir sorun bildir",
@@ -1183,7 +1234,8 @@
       "feature_pronunciation": "for pronunciation practice"
     },
     "common": {
-      "close": "Kapat"
+      "close": "Kapat",
+      "loading": "Yükleniyor…"
     },
     "a11y": {
       "skip_to_content": "Ana içeriğe atla",
@@ -1198,7 +1250,8 @@
       "chart_distribution_label": "Yöntem dağılımı çubuk grafiği",
       "chart_distribution_summary": "En çok kullanılan yöntem: {method} ({count} oturum, {pct}%)",
       "streak_cell_label": "{date} tarihinde {count} oturum",
-      "streak_cell_label_zero": "{date} tarihinde oturum yok"
+      "streak_cell_label_zero": "{date} tarihinde oturum yok",
+      "chart_radar_value": "Puan"
     },
     "tooltips": {
       "delete": "Sil",
@@ -1345,7 +1398,8 @@
       "rerender": "Yeniden oluştur",
       "download_zip": "ZIP indir",
       "persist": "Git'e kaydet",
-      "persisting": "Kaydediliyor…"
+      "persisting": "Kaydediliyor…",
+      "persist_dexie_tooltip": "Git sürümleme yalnızca sunucu modunda kullanılabilir."
     },
     "toast": {
       "zip_downloaded": "ZIP indirildi",
@@ -1359,7 +1413,8 @@
     },
     "widget": {
       "title": "Öğrenme deposu",
-      "open": "Depoyu aç"
+      "open": "Depoyu aç",
+      "subtitle": "Bu projenin ilerlemesinin, notlarının ve yol haritasının sürümlenmiş anlık görüntüsü."
     },
     "settings": {
       "title": "Öğrenme deposu",
@@ -1373,7 +1428,9 @@
       "error": {
         "load": "Ayarlar yüklenemedi",
         "save": "Ayarlar kaydedilemedi"
-      }
+      },
+      "description": "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz.",
+      "enable_git": "Git kalıcılığını etkinleştir (POST /persist uç noktası)"
     }
   },
   "lesson": {
@@ -1750,7 +1807,8 @@
       "non_cefr_level": "'{level}' seviyesi bir CEFR bandı değil (A1-C2).",
       "level_too_complex": "'{lesson}' dersi: metin yüzde ortalama {avg} kelime, {level} seviyesi için yüksek (yaklaşık {cap} beklenir).",
       "source_language_heuristic": "Kart arka yüzleri {found} diline özgü karakterler içeriyor, ancak kaynak dil '{lang}'.",
-      "target_language_heuristic": "Kart ön yüzleri {found} diline özgü karakterler içeriyor, ancak hedef dil '{lang}'."
+      "target_language_heuristic": "Kart ön yüzleri {found} diline özgü karakterler içeriyor, ancak hedef dil '{lang}'.",
+      "failed_share_anyway": "Kalite kontrolü sorunlar buldu. Yine de paylaşabilirsiniz — incelemeciler bulguları pull request'te görecek."
     },
     "ai_validation": {
       "intro": "Bir yapay zekâ ayrıca çeviri doğruluğunu, dil bilgisini ve seviye uygunluğunu kontrol edebilir.",
@@ -2121,11 +2179,13 @@
       "locked": "Kilitli",
       "receptive_short": "A",
       "productive_short": "Ü",
-      "exercises": "{n} alıştırma"
+      "exercises": "{n} alıştırma",
+      "xp": "XP"
     },
     "group": {
       "mastery": "{r} alımlayıcı, {p} üretici ustalaşıldı",
-      "progress_aria": "{total} dersin {completed} tanesi tamamlandı"
+      "progress_aria": "{total} dersin {completed} tanesi tamamlandı",
+      "toggle_aria": "{title} seti — {total} dersten {completed} tanesi tamamlandı"
     },
     "search_placeholder": "Ders ara…",
     "filter": {
@@ -2142,14 +2202,20 @@
       "title": "İstatistikler",
       "lessons": "Dersler",
       "receptive": "Alımlayıcı",
-      "productive": "Üretici"
+      "productive": "Üretici",
+      "lessons_aria": "{total} dersten {done} tanesi tamamlandı",
+      "productive_aria": "{n} ders üretici olarak öğrenildi",
+      "receptive_aria": "{n} ders algısal olarak öğrenildi",
+      "region_label": "Öğrenme yolu istatistikleri"
     },
     "clusters": {
       "toggle": "Hata kümelerini göster",
       "empty": "Henüz ortak hata deseni yok — pratiğe devam edin.",
       "lessons": "{n} ders",
-      "start_adaptive": "Uyarlanabilir ders başlat"
-    }
+      "start_adaptive": "Uyarlanabilir ders başlat",
+      "region_label": "Hata kümeleri paneli"
+    },
+    "search_label": "Dersleri ara — ilk eşleşmeye gitmek için Enter'a basın"
   },
   "pwa": {
     "offline_message": "Çevrimdışısınız. Kaydedilen içerik kullanılabilir.",
@@ -2191,5 +2257,95 @@
     "no_user_tags_short": "Henüz etiket yok.",
     "no_matching_projects": "Eşleşen proje yok.",
     "no_projects": "Henüz proje yok."
+  },
+  "subjects": {
+    "languages": "Diller",
+    "mathematics": "Matematik",
+    "programming": "Programlama",
+    "sciences": "Bilimler",
+    "music": "Müzik",
+    "humanities": "Beşeri Bilimler",
+    "social_sciences": "Sosyal Bilimler",
+    "skills": "Beceriler",
+    "english": "İngilizce",
+    "spanish": "İspanyolca",
+    "french": "Fransızca",
+    "german": "Almanca",
+    "greek": "Yunanca",
+    "italian": "İtalyanca",
+    "portuguese": "Portekizce",
+    "japanese": "Japonca",
+    "chinese": "Çince",
+    "turkish": "Türkçe",
+    "grammar": "Dilbilgisi",
+    "vocabulary": "Kelime Bilgisi",
+    "conversation": "Konuşma",
+    "arithmetic": "Aritmetik",
+    "algebra": "Cebir",
+    "geometry": "Geometri",
+    "trigonometry": "Trigonometri",
+    "calculus": "Kalkülüs",
+    "statistics": "İstatistik",
+    "linear_algebra": "Doğrusal Cebir",
+    "discrete_mathematics": "Ayrık Matematik",
+    "basics": "Temeller",
+    "frameworks": "Çatılar",
+    "data_science": "Veri Bilimi",
+    "algorithms": "Algoritmalar",
+    "data_structures": "Veri Yapıları",
+    "design_patterns": "Tasarım Desenleri",
+    "databases": "Veritabanları",
+    "physics": "Fizik",
+    "chemistry": "Kimya",
+    "biology": "Biyoloji",
+    "astronomy": "Astronomi",
+    "earth_sciences": "Yer Bilimleri",
+    "theory": "Teori",
+    "piano": "Piyano",
+    "guitar": "Gitar",
+    "violin": "Keman",
+    "singing": "Şarkı Söyleme",
+    "composition": "Kompozisyon",
+    "history": "Tarih",
+    "philosophy": "Felsefe",
+    "literature": "Edebiyat",
+    "art_history": "Sanat Tarihi",
+    "economics": "Ekonomi",
+    "psychology": "Psikoloji",
+    "sociology": "Sosyoloji",
+    "political_science": "Siyaset Bilimi",
+    "writing": "Yazma",
+    "public_speaking": "Topluluk Önünde Konuşma",
+    "photography": "Fotoğrafçılık",
+    "design": "Tasarım",
+    "cooking": "Yemek Pişirme"
+  },
+  "editor": {
+    "align_center": "Ortala",
+    "align_left": "Sola hizala",
+    "align_right": "Sağa hizala",
+    "blockquote": "Alıntı",
+    "bold": "Kalın (Ctrl+B)",
+    "bullet_list": "Madde işaretli liste",
+    "character_count": "{count} karakter",
+    "code_block": "Kod bloğu",
+    "code_block_copied": "Kopyalandı",
+    "code_block_copy": "Kodu kopyala",
+    "code_block_language": "Kod bloğu dili",
+    "h1": "Başlık 1",
+    "h2": "Başlık 2",
+    "h3": "Başlık 3",
+    "highlight": "Vurgula",
+    "inline_code": "Satır içi kod",
+    "italic": "İtalik (Ctrl+I)",
+    "link": "Bağlantı ekle",
+    "link_prompt": "URL (bağlantıyı kaldırmak için boş bırakın)",
+    "ordered_list": "Numaralı liste",
+    "redo": "Yinele (Ctrl+Shift+Z)",
+    "strike": "Üstü çizili",
+    "task_list": "Görev listesi",
+    "toolbar_label": "Metin biçimlendirme",
+    "underline": "Altı çizili (Ctrl+U)",
+    "undo": "Geri al (Ctrl+Z)"
   }
 }

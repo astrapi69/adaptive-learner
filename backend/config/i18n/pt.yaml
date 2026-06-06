@@ -21,6 +21,7 @@ common:
   optional: opcional
   required: obrigatório
   minutes: minutos
+  close: "Fechar"
 nav:
   learning_path: "Percurso de aprendizagem"
   dashboard: Painel
@@ -44,6 +45,8 @@ nav:
   mode_badge_tooltip_ai: "Fornecedor de IA configurado — os exercícios usam IA para distratores e dicas. Toca para explorar os conjuntos."
   mode_badge_label_content: "Modo: Apenas conteúdo"
   mode_badge_label_ai: "Modo: IA + Conteúdo"
+  sync_paired: "Sinc.: emparelhado (Configurações > Sinc.)"
+  sync_unpaired: "Sinc.: não emparelhado (Configurações > Sinc.)"
 import:
   title: Importar uma conversa
   subtitle: Cole ou envie uma conversa com o ChatGPT, Claude ou Gemini e obtenha insights de aprendizado na hora.
@@ -120,6 +123,9 @@ import:
   delete_success: Conversa eliminada.
   delete_error: Não foi possível eliminar a conversa.
   duplicate_detected: Esta conversa já foi importada. Mostrando a entrada existente.
+  chat_language: "Idioma do chat (que você fala)"
+  learning_language: "Idioma de aprendizagem"
+  select_language: "Selecione um idioma…"
 curriculum:
   title: Currículo
   active: Currículo ativo
@@ -144,6 +150,14 @@ curriculum:
   lesson_saved: Aula salva.
   lesson_deleted: Aula excluída.
   lesson_delete_confirm: Excluir esta aula?
+  add_description: "Adicionar descrição"
+  description_aria: "Descrição do currículo"
+  description_placeholder: "Por que este currículo? O que ele abrange?"
+  description_saved: "Descrição salva."
+  edit_description: "Editar descrição"
+  lesson_content_aria: "Conteúdo da lição"
+  lesson_content_placeholder: "Conteúdo da lição — suporta títulos, listas, blocos de código, links."
+  no_description: "Ainda sem descrição."
 landing:
   title: Adaptive Learner
   subtitle: Aprendizado que se adapta a você.
@@ -182,6 +196,10 @@ onboarding:
   skip_default_topic: Meu aprendizado
   skip_default_goal: Descobrir meu estilo de aprendizado.
   skip_default_timeframe: Flexível
+  field_tags: "Etiquetas"
+  field_tags_hint: "Separadas por vírgulas. Reutilize etiquetas existentes ou crie novas na hora."
+  field_tags_placeholder: "exam-prep, daily-practice"
+  subject_suggestions: "Disciplinas sugeridas (toque para atribuir):"
 assessment:
   title: Avaliação de tipo de aprendizado
   intro: Doze perguntas curtas determinam seu perfil de aprendizado. Não existe resposta certa ou errada — vá no instinto.
@@ -194,6 +212,7 @@ assessment:
   dominant_method: Método preferido
   continue_to_dashboard: Ir para o painel
   read_summary: Ler resumo
+  swipe_hint: "Deslize para a esquerda / direita (ou use as setas) para navegar."
 dashboard:
   no_data: "Ainda não há dados."
   title: Painel
@@ -227,6 +246,17 @@ dashboard:
       verb_conjugation: "Conjugação verbal"
       word_order: "Ordem das palavras"
     mastery_split: 'Receptivo: {receptive} · Produtivo: {productive}'
+  create_lesson: "Criar uma lição"
+  metric_mean_stress: "Estresse médio"
+  metric_mean_understanding: "Compreensão média"
+  metric_streak: "Sequência de dias"
+  metric_total_minutes: "Minutos totais"
+  metric_total_sessions: "Sessões totais"
+  pronunciation_quick_start: "Prática de pronúncia"
+  spaced_dismiss: "Dispensar"
+  spaced_empty: "Nada para revisar agora. Ótimo ritmo!"
+  spaced_interval_label: "Revisar em"
+  spaced_start: "Iniciar"
 adaptive:
   page_title: "Lição adaptativa"
   session_title: "Lição adaptativa"
@@ -304,6 +334,9 @@ session:
   next_topic: 'Próximo tópico:'
   step_reason_tooltip: Por que este passo?
   offline_start_blocked: Você está offline. Novas sessões precisam de conexão de rede — as sessões anteriores continuam acessíveis no Painel.
+  peek_step_prefix: "Passo"
+  rating_notes_aria: "Notas da sessão"
+  rating_notes_placeholder: "O que funcionou, o que não, o que tentar da próxima vez…"
 progress:
   title: Progresso
   chart_timeline: Compreensão e estresse ao longo do tempo
@@ -322,6 +355,8 @@ progress:
   step_eval_advances: Avanços de passo
   step_eval_backward: Transições para trás
   step_eval_stickiest_label: 'Mais tempo em:'
+  commit_notes_aria: "Notas da sessão"
+  session_count: "Sessões"
 settings:
   tab_integrations: "Integrações"
   github:
@@ -524,6 +559,20 @@ settings:
     hint: "Ao salvar uma longa análise de chat como aula offline, as aulas com mais etapas que este número são automaticamente divididas em várias partes."
     label: Etapas por parte
     range_hint: "(padrão {default}, intervalo {min}–{max})"
+  danger_zone_backup_button: "Criar backup"
+  danger_zone_backup_offer: "Criar um backup primeiro?"
+  danger_zone_cancel: "Cancelar"
+  danger_zone_complete_toast: "Todos os dados foram excluídos."
+  danger_zone_confirm_prompt: "Digite RESET para confirmar"
+  danger_zone_continue: "Continuar"
+  danger_zone_failed_toast: "Falha ao redefinir:"
+  danger_zone_final_button: "Excluir permanentemente"
+  danger_zone_heading: "Zona de perigo"
+  danger_zone_input_placeholder: "RESET"
+  danger_zone_intro: "Exclua permanentemente todo o estado de aprendizagem neste dispositivo."
+  danger_zone_reset_button: "Redefinir tudo"
+  danger_zone_warning: "Isto exclui TODOS os seus dados de aprendizagem permanentemente — sessões, progresso, perfis, currículos, importações, cartões Anki, configurações e chaves de API. Esta ação NÃO pode ser desfeita."
+  section_sync: "Sincronização"
 methods:
   deductive:
     label: Dedutivo
@@ -581,6 +630,7 @@ toast:
   api_key_restored: "A última chave que funcionou foi restaurada."
   api_key_deleted: Chave de API removida.
   method_switched: Método trocado.
+  onboarding_skipped: "Bem-vindo! Você pode ajustar depois."
 install:
   title: Adicionar à tela inicial
   subtitle: "Instale o Adaptive Learner como app para melhor uso off-line."
@@ -1042,6 +1092,7 @@ ui:
     network: "Sem ligação ao servidor."
     timeout: "O pedido demorou demasiado."
     generic: "Algo correu mal. Tenta novamente mais tarde."
+    unexpected: "Algo deu errado."
   error_report:
     dialog_title: "Comunicar um problema"
     intro: "Adaptive Learner detetou um erro e pode preparar um relatório de bug para o programador."
@@ -1086,6 +1137,7 @@ ui:
     feature_pronunciation: "for pronunciation practice"
   common:
     close: "Fechar"
+    loading: "Carregando…"
   a11y:
     # Phase 39 (WCAG 2.1 AA). Skip link for SC 2.4.1.
     skip_to_content: "Saltar para o conteúdo principal"
@@ -1101,6 +1153,7 @@ ui:
     chart_distribution_summary: "Método mais usado: {method} ({count} sessões, {pct}%)"
     streak_cell_label: "{count} sessões em {date}"
     streak_cell_label_zero: "Sem sessões em {date}"
+    chart_radar_value: "Pontuação"
   tooltips:
     delete: "Eliminar"
     edit: "Editar"
@@ -1246,6 +1299,7 @@ repo:
     download_zip: "Baixar ZIP"
     persist: "Salvar no git"
     persisting: "Salvando…"
+    persist_dexie_tooltip: "O versionamento Git só está disponível no modo servidor."
   toast:
     zip_downloaded: "ZIP baixado"
     persisted: "Salvo no git"
@@ -1257,6 +1311,7 @@ repo:
   widget:
     title: "Repositório de aprendizagem"
     open: "Abrir repositório"
+    subtitle: "Instantâneo versionado do progresso, das notas e do roteiro deste projeto."
   settings:
     title: "Repositório de aprendizagem"
     loading: "Carregando…"
@@ -1269,6 +1324,8 @@ repo:
       load: "Não foi possível carregar as definições"
       save: "Não foi possível salvar as definições"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
+    description: "Gera automaticamente artefatos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das suas sessões. A integração git opcional faz commit de cada geração para que você possa navegar pelo histórico com qualquer cliente git."
+    enable_git: "Ativar persistência git (endpoint POST /persist)"
 lesson:
   tts:
     read_aloud: "Ler em voz alta"
@@ -1603,6 +1660,7 @@ content:
     level_too_complex: "Lição '{lesson}': o texto tem em média {avg} palavras por lado, alto para o nível {level} (cerca de {cap} esperadas)."
     source_language_heuristic: Os versos contêm caracteres próprios de {found}, mas o idioma de origem é '{lang}'.
     target_language_heuristic: As frentes contêm caracteres próprios de {found}, mas o idioma de destino é '{lang}'.
+    failed_share_anyway: "A verificação de qualidade encontrou problemas. Você pode compartilhar mesmo assim — os revisores verão as observações no pull request."
   ai_validation:
     intro: Uma IA pode também verificar a exatidão da tradução, a gramática e a adequação ao nível.
     privacy: O conteúdo da sua lição será enviado para {provider}. Nenhum dado pessoal é transmitido.
@@ -1926,9 +1984,11 @@ learning_path:
     receptive_short: "R"
     productive_short: "P"
     exercises: "{n} exercícios"
+    xp: "XP"
   group:
     mastery: "{r} recetivo, {p} produtivo dominados"
     progress_aria: "{completed} de {total} lições concluídas"
+    toggle_aria: "Conjunto {title} — {completed} de {total} lições concluídas"
   search_placeholder: "Pesquisar lições…"
   filter:
     status: "Filtro de estado"
@@ -1944,11 +2004,17 @@ learning_path:
     lessons: "Lições"
     receptive: "Recetivo"
     productive: "Produtivo"
+    lessons_aria: "{done} de {total} lições concluídas"
+    productive_aria: "{n} lições dominadas produtivamente"
+    receptive_aria: "{n} lições dominadas receptivamente"
+    region_label: "Estatísticas da trilha de aprendizagem"
   clusters:
     toggle: "Mostrar grupos de erros"
     empty: "Ainda não há padrões de erro comuns — continue a praticar."
     lessons: "{n} lições"
     start_adaptive: "Iniciar lição adaptativa"
+    region_label: "Painel de agrupamentos de erros"
+  search_label: "Buscar lições — pressione Enter para ir à primeira correspondência"
 pwa:
   offline_message: "Você está offline. O conteúdo salvo está disponível."
   online_message: "Online novamente!"
@@ -1987,3 +2053,96 @@ taxonomy:
   no_user_tags_short: "Ainda não há etiquetas."
   no_matching_projects: "Nenhum projeto corresponde."
   no_projects: "Ainda não há projetos."
+
+# Nomes de disciplinas (data-i18n). Chave = nome em inglês
+# normalizado (backend/config/seed/subjects.yaml). Nomes próprios
+# (Python, JavaScript, React, ...) não têm chave e recorrem a
+# subject.name em todos os idiomas.
+subjects:
+  languages: "Idiomas"
+  mathematics: "Matemática"
+  programming: "Programação"
+  sciences: "Ciências"
+  music: "Música"
+  humanities: "Humanidades"
+  social_sciences: "Ciências Sociais"
+  skills: "Habilidades"
+  english: "Inglês"
+  spanish: "Espanhol"
+  french: "Francês"
+  german: "Alemão"
+  greek: "Grego"
+  italian: "Italiano"
+  portuguese: "Português"
+  japanese: "Japonês"
+  chinese: "Chinês"
+  turkish: "Turco"
+  grammar: "Gramática"
+  vocabulary: "Vocabulário"
+  conversation: "Conversação"
+  arithmetic: "Aritmética"
+  algebra: "Álgebra"
+  geometry: "Geometria"
+  trigonometry: "Trigonometria"
+  calculus: "Cálculo"
+  statistics: "Estatística"
+  linear_algebra: "Álgebra Linear"
+  discrete_mathematics: "Matemática Discreta"
+  basics: "Fundamentos"
+  frameworks: "Frameworks"
+  data_science: "Ciência de Dados"
+  algorithms: "Algoritmos"
+  data_structures: "Estruturas de Dados"
+  design_patterns: "Padrões de Projeto"
+  databases: "Bancos de Dados"
+  physics: "Física"
+  chemistry: "Química"
+  biology: "Biologia"
+  astronomy: "Astronomia"
+  earth_sciences: "Ciências da Terra"
+  theory: "Teoria"
+  piano: "Piano"
+  guitar: "Guitarra"
+  violin: "Violino"
+  singing: "Canto"
+  composition: "Composição"
+  history: "História"
+  philosophy: "Filosofia"
+  literature: "Literatura"
+  art_history: "História da Arte"
+  economics: "Economia"
+  psychology: "Psicologia"
+  sociology: "Sociologia"
+  political_science: "Ciência Política"
+  writing: "Escrita"
+  public_speaking: "Oratória"
+  photography: "Fotografia"
+  design: "Design"
+  cooking: "Culinária"
+editor:
+  align_center: "Centralizar"
+  align_left: "Alinhar à esquerda"
+  align_right: "Alinhar à direita"
+  blockquote: "Citação"
+  bold: "Negrito (Ctrl+B)"
+  bullet_list: "Lista com marcadores"
+  character_count: "{count} caracteres"
+  code_block: "Bloco de código"
+  code_block_copied: "Copiado"
+  code_block_copy: "Copiar código"
+  code_block_language: "Linguagem do bloco de código"
+  h1: "Título 1"
+  h2: "Título 2"
+  h3: "Título 3"
+  highlight: "Realçar"
+  inline_code: "Código embutido"
+  italic: "Itálico (Ctrl+I)"
+  link: "Inserir link"
+  link_prompt: "URL (deixe vazio para remover o link)"
+  ordered_list: "Lista numerada"
+  redo: "Refazer (Ctrl+Shift+Z)"
+  strike: "Tachado"
+  task_list: "Lista de tarefas"
+  toolbar_label: "Formatação de texto"
+  underline: "Sublinhado (Ctrl+U)"
+  undo: "Desfazer (Ctrl+Z)"

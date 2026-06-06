@@ -22,7 +22,8 @@
     "no": false,
     "optional": "optional",
     "required": "required",
-    "minutes": "minutes"
+    "minutes": "minutes",
+    "close": "Close"
   },
   "nav": {
     "learning_path": "Learning Path",
@@ -46,7 +47,9 @@
     "mode_badge_tooltip_content": "No API key configured — using pre-built content only. Add a key in Settings to enable AI features.",
     "mode_badge_tooltip_ai": "AI provider configured — exercises use AI for distractors + hints. Tap to browse content sets.",
     "mode_badge_label_content": "Mode: Content only",
-    "mode_badge_label_ai": "Mode: AI + Content"
+    "mode_badge_label_ai": "Mode: AI + Content",
+    "sync_paired": "Sync: paired (Settings > Sync)",
+    "sync_unpaired": "Sync: not paired (Settings > Sync)"
   },
   "import": {
     "title": "Import a conversation",
@@ -126,7 +129,10 @@
     "delete_confirm": "Delete this imported conversation? This cannot be undone.",
     "delete_success": "Conversation deleted.",
     "delete_error": "Could not delete the conversation.",
-    "duplicate_detected": "This conversation was already imported. Showing the existing entry."
+    "duplicate_detected": "This conversation was already imported. Showing the existing entry.",
+    "chat_language": "Chat language (you speak)",
+    "learning_language": "Learning language",
+    "select_language": "Select a language…"
   },
   "curriculum": {
     "title": "Curriculum",
@@ -151,7 +157,15 @@
     "lesson_created": "Lesson created.",
     "lesson_saved": "Lesson saved.",
     "lesson_deleted": "Lesson deleted.",
-    "lesson_delete_confirm": "Delete this lesson?"
+    "lesson_delete_confirm": "Delete this lesson?",
+    "add_description": "Add description",
+    "description_aria": "Curriculum description",
+    "description_placeholder": "Why this curriculum? What does it cover?",
+    "description_saved": "Description saved.",
+    "edit_description": "Edit description",
+    "lesson_content_aria": "Lesson content",
+    "lesson_content_placeholder": "Lesson content — supports headings, lists, code blocks, links.",
+    "no_description": "No description yet."
   },
   "landing": {
     "title": "Adaptive Learner",
@@ -191,7 +205,11 @@
     "skip_default_name": "Learner",
     "skip_default_topic": "My learning",
     "skip_default_goal": "Discover my learning style.",
-    "skip_default_timeframe": "Flexible"
+    "skip_default_timeframe": "Flexible",
+    "field_tags": "Tags",
+    "field_tags_hint": "Comma-separated. Reuse existing tags or create new ones on the fly.",
+    "field_tags_placeholder": "exam-prep, daily-practice",
+    "subject_suggestions": "Suggested subjects (tap to assign):"
   },
   "assessment": {
     "title": "Learning-type assessment",
@@ -204,7 +222,8 @@
     "result_title": "Your learning profile",
     "dominant_method": "Preferred method",
     "continue_to_dashboard": "Continue to dashboard",
-    "read_summary": "Read summary"
+    "read_summary": "Read summary",
+    "swipe_hint": "Swipe left / right (or use arrow keys) to navigate."
   },
   "dashboard": {
     "no_data": "No data yet.",
@@ -241,7 +260,18 @@
         "word_order": "Word order"
       },
       "mastery_split": "Receptive: {receptive} · Productive: {productive}"
-    }
+    },
+    "create_lesson": "Create a lesson",
+    "metric_mean_stress": "Mean stress",
+    "metric_mean_understanding": "Mean understanding",
+    "metric_streak": "Day streak",
+    "metric_total_minutes": "Total minutes",
+    "metric_total_sessions": "Total sessions",
+    "pronunciation_quick_start": "Pronunciation Practice",
+    "spaced_dismiss": "Dismiss",
+    "spaced_empty": "Nothing to refresh right now. Great rhythm!",
+    "spaced_interval_label": "Review in",
+    "spaced_start": "Start"
   },
   "adaptive": {
     "page_title": "Adaptive Lesson",
@@ -326,7 +356,10 @@
     "cycles_completed": "Cycles completed",
     "next_topic": "Next topic:",
     "step_reason_tooltip": "Why this step?",
-    "offline_start_blocked": "You're offline. New sessions need a network connection — past sessions stay readable from the Dashboard."
+    "offline_start_blocked": "You're offline. New sessions need a network connection — past sessions stay readable from the Dashboard.",
+    "peek_step_prefix": "Step",
+    "rating_notes_aria": "Session notes",
+    "rating_notes_placeholder": "What worked, what didn't, what to try next time..."
   },
   "progress": {
     "title": "Progress",
@@ -345,7 +378,9 @@
     "step_eval_repeats": "Times AI said 'not ready yet'",
     "step_eval_advances": "Step advances",
     "step_eval_backward": "Backward transitions",
-    "step_eval_stickiest_label": "Most time on:"
+    "step_eval_stickiest_label": "Most time on:",
+    "commit_notes_aria": "Session notes",
+    "session_count": "Sessions"
   },
   "settings": {
     "tab_integrations": "Integrations",
@@ -555,7 +590,21 @@
       "hint": "When saving a long chat analysis as an offline lesson, lessons with more than this many steps are automatically split into multiple parts.",
       "label": "Steps per part",
       "range_hint": "(default {default}, range {min}–{max})"
-    }
+    },
+    "danger_zone_backup_button": "Create backup",
+    "danger_zone_backup_offer": "Create a backup first?",
+    "danger_zone_cancel": "Cancel",
+    "danger_zone_complete_toast": "All data has been deleted.",
+    "danger_zone_confirm_prompt": "Type RESET to confirm",
+    "danger_zone_continue": "Continue",
+    "danger_zone_failed_toast": "Reset failed:",
+    "danger_zone_final_button": "Delete permanently",
+    "danger_zone_heading": "Danger Zone",
+    "danger_zone_input_placeholder": "RESET",
+    "danger_zone_intro": "Permanently delete every piece of learner state on this device.",
+    "danger_zone_reset_button": "Reset Everything",
+    "danger_zone_warning": "This deletes ALL your learning data permanently — sessions, progress, profiles, curricula, imports, Anki cards, settings and API keys. This action CANNOT be undone.",
+    "section_sync": "Sync"
   },
   "methods": {
     "deductive": {
@@ -629,7 +678,8 @@
     "api_key_saved": "API key saved.",
     "api_key_restored": "Last working key restored.",
     "api_key_deleted": "API key removed.",
-    "method_switched": "Method switched."
+    "method_switched": "Method switched.",
+    "onboarding_skipped": "Welcome! You can refine later."
   },
   "install": {
     "title": "Add to home screen",
@@ -1134,7 +1184,8 @@
       "server": "An internal error occurred.",
       "network": "No connection to the server.",
       "timeout": "The request took too long.",
-      "generic": "Something went wrong. Please try again later."
+      "generic": "Something went wrong. Please try again later.",
+      "unexpected": "Something went wrong."
     },
     "error_report": {
       "dialog_title": "Report an issue",
@@ -1183,7 +1234,8 @@
       "feature_pronunciation": "for pronunciation practice"
     },
     "common": {
-      "close": "Close"
+      "close": "Close",
+      "loading": "Loading…"
     },
     "a11y": {
       "skip_to_content": "Skip to main content",
@@ -1198,7 +1250,8 @@
       "chart_distribution_label": "Method distribution bar chart",
       "chart_distribution_summary": "Most-used method: {method} ({count} sessions, {pct}%)",
       "streak_cell_label": "{count} sessions on {date}",
-      "streak_cell_label_zero": "No sessions on {date}"
+      "streak_cell_label_zero": "No sessions on {date}",
+      "chart_radar_value": "Score"
     },
     "tooltips": {
       "delete": "Delete",
@@ -1345,7 +1398,8 @@
       "rerender": "Re-render",
       "download_zip": "Download ZIP",
       "persist": "Persist to git",
-      "persisting": "Persisting…"
+      "persisting": "Persisting…",
+      "persist_dexie_tooltip": "Git versioning is only available in server mode."
     },
     "toast": {
       "zip_downloaded": "ZIP downloaded",
@@ -1359,7 +1413,8 @@
     },
     "widget": {
       "title": "Learning Repository",
-      "open": "Open repository"
+      "open": "Open repository",
+      "subtitle": "Versioned snapshot of this project's progress, notes, and roadmap."
     },
     "settings": {
       "title": "Learning Repository",
@@ -1373,7 +1428,9 @@
       "error": {
         "load": "Could not load settings",
         "save": "Could not save settings"
-      }
+      },
+      "description": "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client.",
+      "enable_git": "Enable git persistence (POST /persist endpoint)"
     }
   },
   "lesson": {
@@ -1750,7 +1807,8 @@
       "non_cefr_level": "Level '{level}' is not a CEFR band (A1-C2).",
       "level_too_complex": "Lesson '{lesson}': text averages {avg} words per side, high for level {level} (about {cap} expected).",
       "source_language_heuristic": "Card backs contain {found}-specific characters but the source language is '{lang}'.",
-      "target_language_heuristic": "Card fronts contain {found}-specific characters but the target language is '{lang}'."
+      "target_language_heuristic": "Card fronts contain {found}-specific characters but the target language is '{lang}'.",
+      "failed_share_anyway": "Quality check found issues. You can share anyway — reviewers will see the findings noted in the pull request."
     },
     "ai_validation": {
       "intro": "An AI can additionally check translation accuracy, grammar and level fit.",
@@ -2121,11 +2179,13 @@
       "locked": "Locked",
       "receptive_short": "R",
       "productive_short": "P",
-      "exercises": "{n} exercises"
+      "exercises": "{n} exercises",
+      "xp": "XP"
     },
     "group": {
       "mastery": "{r} receptive, {p} productive mastered",
-      "progress_aria": "{completed} of {total} lessons completed"
+      "progress_aria": "{completed} of {total} lessons completed",
+      "toggle_aria": "{title} set — {completed} of {total} lessons completed"
     },
     "search_placeholder": "Search lessons…",
     "filter": {
@@ -2142,14 +2202,20 @@
       "title": "Stats",
       "lessons": "Lessons",
       "receptive": "Receptive",
-      "productive": "Productive"
+      "productive": "Productive",
+      "lessons_aria": "{done} of {total} lessons completed",
+      "productive_aria": "{n} lessons productive mastered",
+      "receptive_aria": "{n} lessons receptive mastered",
+      "region_label": "Learning path statistics"
     },
     "clusters": {
       "toggle": "Show error clusters",
       "empty": "No shared error patterns yet — keep practising.",
       "lessons": "{n} lessons",
-      "start_adaptive": "Start adaptive lesson"
-    }
+      "start_adaptive": "Start adaptive lesson",
+      "region_label": "Error clusters panel"
+    },
+    "search_label": "Search lessons — press Enter to navigate to the first match"
   },
   "pwa": {
     "offline_message": "You're offline. Saved content is available.",
@@ -2191,5 +2257,95 @@
     "no_user_tags_short": "No tags yet.",
     "no_matching_projects": "No projects match.",
     "no_projects": "No projects yet."
+  },
+  "subjects": {
+    "languages": "Languages",
+    "mathematics": "Mathematics",
+    "programming": "Programming",
+    "sciences": "Sciences",
+    "music": "Music",
+    "humanities": "Humanities",
+    "social_sciences": "Social Sciences",
+    "skills": "Skills",
+    "english": "English",
+    "spanish": "Spanish",
+    "french": "French",
+    "german": "German",
+    "greek": "Greek",
+    "italian": "Italian",
+    "portuguese": "Portuguese",
+    "japanese": "Japanese",
+    "chinese": "Chinese",
+    "turkish": "Turkish",
+    "grammar": "Grammar",
+    "vocabulary": "Vocabulary",
+    "conversation": "Conversation",
+    "arithmetic": "Arithmetic",
+    "algebra": "Algebra",
+    "geometry": "Geometry",
+    "trigonometry": "Trigonometry",
+    "calculus": "Calculus",
+    "statistics": "Statistics",
+    "linear_algebra": "Linear Algebra",
+    "discrete_mathematics": "Discrete Mathematics",
+    "basics": "Basics",
+    "frameworks": "Frameworks",
+    "data_science": "Data Science",
+    "algorithms": "Algorithms",
+    "data_structures": "Data Structures",
+    "design_patterns": "Design Patterns",
+    "databases": "Databases",
+    "physics": "Physics",
+    "chemistry": "Chemistry",
+    "biology": "Biology",
+    "astronomy": "Astronomy",
+    "earth_sciences": "Earth Sciences",
+    "theory": "Theory",
+    "piano": "Piano",
+    "guitar": "Guitar",
+    "violin": "Violin",
+    "singing": "Singing",
+    "composition": "Composition",
+    "history": "History",
+    "philosophy": "Philosophy",
+    "literature": "Literature",
+    "art_history": "Art History",
+    "economics": "Economics",
+    "psychology": "Psychology",
+    "sociology": "Sociology",
+    "political_science": "Political Science",
+    "writing": "Writing",
+    "public_speaking": "Public Speaking",
+    "photography": "Photography",
+    "design": "Design",
+    "cooking": "Cooking"
+  },
+  "editor": {
+    "align_center": "Align center",
+    "align_left": "Align left",
+    "align_right": "Align right",
+    "blockquote": "Quote",
+    "bold": "Bold (Ctrl+B)",
+    "bullet_list": "Bullet list",
+    "character_count": "{count} characters",
+    "code_block": "Code block",
+    "code_block_copied": "Copied",
+    "code_block_copy": "Copy code",
+    "code_block_language": "Code block language",
+    "h1": "Heading 1",
+    "h2": "Heading 2",
+    "h3": "Heading 3",
+    "highlight": "Highlight",
+    "inline_code": "Inline code",
+    "italic": "Italic (Ctrl+I)",
+    "link": "Insert link",
+    "link_prompt": "URL (leave empty to remove the link)",
+    "ordered_list": "Ordered list",
+    "redo": "Redo (Ctrl+Shift+Z)",
+    "strike": "Strikethrough",
+    "task_list": "Task list",
+    "toolbar_label": "Text formatting",
+    "underline": "Underline (Ctrl+U)",
+    "undo": "Undo (Ctrl+Z)"
   }
 }

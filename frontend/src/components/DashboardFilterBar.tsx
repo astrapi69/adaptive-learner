@@ -22,6 +22,7 @@ import {useSearchParams} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {filterStandardProjects} from "../lib/learning-project";
+import {translateSubjectName} from "../lib/subjectI18n";
 import {readLearnerState, setProjectId} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import type {
@@ -264,7 +265,7 @@ export default function DashboardFilterBar({
                             {visibleSubjects.map((subject) => (
                                 <option key={subject.id} value={subject.id}>
                                     {subject.icon ? `${subject.icon} ` : ""}
-                                    {subject.name}
+                                    {translateSubjectName(subject.name, t)}
                                 </option>
                             ))}
                         </select>
