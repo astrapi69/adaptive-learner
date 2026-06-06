@@ -6,14 +6,16 @@ this file for granular items + status.
 
 ## Strategic Expansion: Content-Repository MVP
 
-> **EXP-023 Phase A implemented (#118, on branch — pending release).**
-> One user content repository can be connected in Settings > Data
-> (GitHub URL + branch, reusing the Integrations token), validated
-> client-side, synced (manual + 24h auto on app start), cached in both
-> storage modes, and browsed with a "Your repo" badge + source filter.
-> Official repo stays the default + non-removable. Multi-repo, community
-> repos, trust levels, coach features, and Share-Wizard direct-push are
-> deferred to Phase B/C. See
+> **EXP-023 Phase A merged (#118) + Phase B implemented (#122, on branch
+> — pending release).** Phase A: one user content repository (connect /
+> validate / sync / cache / browse, both modes). Phase B: **multiple**
+> repos (list / add / remove / reorder = precedence, legacy single-repo
+> migrated), share via `/add-repo` deep link + QR, automatic technical
+> validation (Trust 0→1, re-checked each sync), per-repo source filter,
+> and private/coach repos via a per-repo token. Official repo stays the
+> default + non-removable. Community ratings, curated list, central index,
+> coach progress aggregation, one-time invite tokens, and Share-Wizard
+> direct-push are deferred to Phase C. See
 > [EXP-023](explorations/EXP-023-multi-content-repository.md).
 
 See [docs/explorations/](explorations/) for the full strategic plan:
