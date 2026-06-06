@@ -94,3 +94,23 @@ systematic i18n audit (#80) and cut **v1.63.0**.
   `v1.64.0` pushed; GitHub release published; CI Release Gate +
   Launcher (Linux/macOS/Windows) + Deploy GitHub Pages all green.
   Issues #42/#43/#92/#94/#96 closed.
+
+## Release v1.65.0 (18:34)
+
+- Prompt: "is merged, make a new release" (after PR #110 merged).
+- Goal: cut v1.65.0 per release-workflow.md.
+- Scope (v1.64.0..HEAD): resumable assessment (#106), Enter-key lesson
+  shortcut (#103), design-token architecture (#101), matching pair
+  distinction (#108), assessment profile overlap fix (#105) + the
+  EXP-023 exploration doc. Multiple `feat:` -> minor bump.
+- Gates: `make test` green (backend + plugins + Vitest 322 files /
+  3717), ruff + mypy (65) + tsc clean, `npm run build` clean,
+  `make test-dexie-smoke` 76/76, launcher PyInstaller build OK,
+  `make verify-docs-discipline` 0 FAIL, plugin locks in sync.
+- Bump: `backend/pyproject.toml` 1.64.0 -> 1.65.0 + `make sync-versions`
+  (19 files) + README/README-de badges + CLAUDE.md / ROADMAP.md /
+  backlog.md headers. Pins verified.
+- Commits: `fd30535f` (changelog), `ef8bb2c7` (version bump). Tag
+  `v1.65.0` pushed; GitHub release published; CI Release Gate green;
+  launchers + Pages deploy triggered. Issues #101/#103/#105/#106/#108
+  closed (via their merged PRs #102/#104/#107/#110/#109).
