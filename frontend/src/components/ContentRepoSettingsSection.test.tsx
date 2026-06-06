@@ -20,13 +20,15 @@ vi.mock("../storage", () => ({
   }),
 }));
 
-const { notifyError, notifySuccess } = vi.hoisted(() => ({
+const { notifyError, notifySuccess, validateUserRepo } = vi.hoisted(() => ({
   notifyError: vi.fn(),
   notifySuccess: vi.fn(),
+  validateUserRepo: vi.fn(),
 }));
 vi.mock("../utils/notify", () => ({
   notify: { error: notifyError, success: notifySuccess },
 }));
+vi.mock("../lib/content/content-repo-validate", () => ({ validateUserRepo }));
 
 import ContentRepoSettingsSection from "./ContentRepoSettingsSection";
 
@@ -37,6 +39,8 @@ beforeEach(() => {
   githubGetStatus.mockReset();
   notifyError.mockReset();
   notifySuccess.mockReset();
+  validateUserRepo.mockReset();
+  validateUserRepo.mockResolvedValue({ ok: true, setCount: 2, lessonCount: 12 });
   pluginGet.mockResolvedValue({
     plugin: "content-loader",
     settings: { default_sources: [{ source: "official", branch: "main" }] },
@@ -79,21 +83,45 @@ describe("ContentRepoSettingsSection", () => {
     expect(pluginUpdate).not.toHaveBeenCalled();
   });
 
-  it("saves a valid repo config (read-modify-write preserves sources)", async () => {
+  it("validates then saves a valid repo (read-modify-write preserves sources)", async () => {
     render(<ContentRepoSettingsSection />);
     fireEvent.change(await screen.findByTestId("content-repo-url"), {
       target: { value: "https://github.com/jane/my-content" },
     });
     fireEvent.click(screen.getByTestId("content-repo-connect"));
     await waitFor(() => expect(pluginUpdate).toHaveBeenCalled());
+    expect(validateUserRepo).toHaveBeenCalledWith({
+      owner: "jane",
+      repo: "my-content",
+      branch: "main",
+    });
     const [, body] = pluginUpdate.mock.calls[0];
     expect(body.settings.default_sources).toBeDefined();
     expect(body.settings.user_repo).toMatchObject({
       owner: "jane",
       repo: "my-content",
       branch: "main",
-      connected: false,
+      connected: true,
+      set_count: 2,
+      lesson_count: 12,
     });
+  });
+
+  it("shows the failure reason and does not save on invalid content", async () => {
+    validateUserRepo.mockResolvedValue({
+      ok: false,
+      setCount: 0,
+      lessonCount: 0,
+      reason: "manifest.yaml lists no sets.",
+    });
+    render(<ContentRepoSettingsSection />);
+    fireEvent.change(await screen.findByTestId("content-repo-url"), {
+      target: { value: "https://github.com/jane/empty" },
+    });
+    fireEvent.click(screen.getByTestId("content-repo-connect"));
+    const result = await screen.findByTestId("content-repo-result");
+    expect(result).toHaveTextContent("no sets");
+    expect(pluginUpdate).not.toHaveBeenCalled();
   });
 
   it("hints to set a token when none is configured", async () => {

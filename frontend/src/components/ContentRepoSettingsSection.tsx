@@ -29,11 +29,11 @@ import {
   OFFICIAL_SOURCE,
   isOfficialSource,
   parseGitHubRepoUrl,
-  userRepoSource,
   readUserRepo,
   writeUserRepo,
   type UserContentRepo,
 } from "../lib/content/content-repos";
+import { validateUserRepo } from "../lib/content/content-repo-validate";
 import { notify } from "../utils/notify";
 
 interface OfficialSummary {
@@ -51,6 +51,9 @@ export default function ContentRepoSettingsSection() {
   const [url, setUrl] = useState("");
   const [branch, setBranch] = useState("main");
   const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<
+    { ok: boolean; message: string } | null
+  >(null);
 
   const refresh = useCallback(async () => {
     const storage = getStorage();
@@ -99,22 +102,47 @@ export default function ContentRepoSettingsSection() {
       return;
     }
     setBusy(true);
+    setResult(null);
     try {
       const branchName = branch.trim() || "main";
+      const validation = await validateUserRepo({
+        owner: parsed.owner,
+        repo: parsed.repo,
+        branch: branchName,
+      });
+      if (!validation.ok) {
+        setResult({
+          ok: false,
+          message: t(
+            "content_repo.validation.failed",
+            "Validation failed: {reason}",
+          ).replace("{reason}", validation.reason ?? ""),
+        });
+        return;
+      }
       const next: UserContentRepo = {
         url: url.trim(),
         owner: parsed.owner,
         repo: parsed.repo,
         branch: branchName,
-        connected: false,
+        connected: true,
         last_synced: null,
-        set_count: 0,
-        lesson_count: 0,
+        set_count: validation.setCount,
+        lesson_count: validation.lessonCount,
       };
       await writeUserRepo(next);
       setRepo(next);
+      setResult({
+        ok: true,
+        message: t(
+          "content_repo.validation.passed",
+          "Validation passed: {sets} sets, {lessons} lessons. Sync to load them.",
+        )
+          .replace("{sets}", String(validation.setCount))
+          .replace("{lessons}", String(validation.lessonCount)),
+      });
       notify.success(
-        t("content_repo.saved", "Repository saved. Sync to load its lessons."),
+        t("content_repo.saved", "Repository connected. Sync to load lessons."),
       );
     } catch {
       notify.error(
@@ -302,6 +330,20 @@ export default function ContentRepoSettingsSection() {
             </Button>
           )}
         </div>
+
+        {result && (
+          <p
+            className={
+              result.ok
+                ? "m-0 mt-3 text-sm font-medium text-[var(--success)]"
+                : "m-0 mt-3 text-sm font-medium text-[var(--error)]"
+            }
+            role="status"
+            data-testid="content-repo-result"
+          >
+            {result.message}
+          </p>
+        )}
       </div>
     </section>
   );
