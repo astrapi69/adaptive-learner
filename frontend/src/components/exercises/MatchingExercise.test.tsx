@@ -275,3 +275,22 @@ describe("MatchingExercise: selection visibility + language labels + a11y (UX bu
         ).toHaveTextContent("Translation");
     });
 });
+
+describe("MatchingExercise: side distinction (#108)", () => {
+    it("each header carries a non-color A / B letter cue", () => {
+        // The two sides are tinted via design tokens; an aria-hidden
+        // letter chip in each header reinforces the distinction for
+        // color-vision-deficient users (color is not the only signal).
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        const leftChip = screen
+            .getByTestId("matching-left-header")
+            .querySelector("[aria-hidden='true']");
+        const rightChip = screen
+            .getByTestId("matching-right-header")
+            .querySelector("[aria-hidden='true']");
+        expect(leftChip).not.toBeNull();
+        expect(rightChip).not.toBeNull();
+        expect(leftChip).toHaveTextContent("A");
+        expect(rightChip).toHaveTextContent("B");
+    });
+});
