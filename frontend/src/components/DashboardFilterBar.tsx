@@ -23,6 +23,12 @@ import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {filterStandardProjects} from "../lib/learning-project";
 import {translateSubjectName} from "../lib/subjectI18n";
+import {
+    countProjectsPerSubject,
+    groupSubjectsByCategory,
+    rankSubjects,
+    SUBJECT_GROUP_THRESHOLD,
+} from "../lib/dashboard/subjectFilter";
 import {readLearnerState, setProjectId} from "../lib/learnerState";
 import {getStorage} from "../storage";
 import type {
@@ -179,6 +185,32 @@ export default function DashboardFilterBar({
         return allSubjects.filter((subject) => used.has(subject.id));
     }, [index, allSubjects, selectedSubjectId]);
 
+    // #111 — present the user's subjects most-used-first, and once the
+    // list grows past the threshold, group them by category (the parent
+    // subject) so a long flat <select> stays scannable.
+    const subjectUsage = useMemo(
+        () =>
+            index === null
+                ? new Map<string, number>()
+                : countProjectsPerSubject(index.subjectsByProject),
+        [index],
+    );
+    const rankedSubjects = useMemo(
+        () => rankSubjects(visibleSubjects, subjectUsage),
+        [visibleSubjects, subjectUsage],
+    );
+    const subjectGroups = useMemo(
+        () =>
+            rankedSubjects.length > SUBJECT_GROUP_THRESHOLD
+                ? groupSubjectsByCategory(
+                      rankedSubjects,
+                      allSubjects,
+                      subjectUsage,
+                  )
+                : null,
+        [rankedSubjects, allSubjects, subjectUsage],
+    );
+
     useEffect(() => {
         onMatchedProjectsChange?.(matched);
     }, [matched, onMatchedProjectsChange]);
@@ -217,6 +249,13 @@ export default function DashboardFilterBar({
 
     const hasFilter = selectedSubjectId !== null || selectedTagIds.size > 0;
 
+    const renderSubjectOption = (subject: Subject) => (
+        <option key={subject.id} value={subject.id}>
+            {subject.icon ? `${subject.icon} ` : ""}
+            {translateSubjectName(subject.name, t)}
+        </option>
+    );
+
     if (loading) {
         return (
             <div
@@ -249,7 +288,7 @@ export default function DashboardFilterBar({
             </header>
 
             <div className="dashboard-filter-controls">
-                {visibleSubjects.length > 0 && (
+                {rankedSubjects.length > 1 && (
                     <label className="dashboard-filter-row">
                         <span>{t("taxonomy.subject", "Subject")}</span>
                         <select
@@ -262,12 +301,23 @@ export default function DashboardFilterBar({
                             <option value="">
                                 {t("taxonomy.all_subjects", "All subjects")}
                             </option>
-                            {visibleSubjects.map((subject) => (
-                                <option key={subject.id} value={subject.id}>
-                                    {subject.icon ? `${subject.icon} ` : ""}
-                                    {translateSubjectName(subject.name, t)}
-                                </option>
-                            ))}
+                            {subjectGroups
+                                ? subjectGroups.map((group) => (
+                                      <optgroup
+                                          key={group.categoryId ?? "_uncategorized"}
+                                          label={
+                                              group.categoryName
+                                                  ? translateSubjectName(
+                                                        group.categoryName,
+                                                        t,
+                                                    )
+                                                  : t("taxonomy.subject", "Subject")
+                                          }
+                                      >
+                                          {group.subjects.map(renderSubjectOption)}
+                                      </optgroup>
+                                  ))
+                                : rankedSubjects.map(renderSubjectOption)}
                         </select>
                     </label>
                 )}
