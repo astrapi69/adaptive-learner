@@ -325,7 +325,7 @@ function FreeTextExercise(
                             variant="ghost"
                             size="sm"
                             type="button"
-                            className="text-[var(--accent)] underline underline-offset-2 hover:no-underline"
+                            className="text-[var(--accent-text)] underline underline-offset-2 hover:no-underline"
                             onClick={() => setShowHint(true)}
                             data-testid="free-text-hint-show"
                         >

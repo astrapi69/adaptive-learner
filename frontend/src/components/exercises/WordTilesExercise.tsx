@@ -233,7 +233,7 @@ function PlacedTile({
             {!submitted && (
                 <button
                     type="button"
-                    className="inline-flex min-h-11 min-w-6 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent px-0.5 text-[var(--fg-muted)] enabled:hover:bg-[var(--surface-2)] enabled:hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-30"
+                    className="inline-flex min-h-11 min-w-6 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent px-0.5 text-[var(--fg-muted)] enabled:hover:bg-[var(--surface-2)] enabled:hover:text-[var(--accent-text)] disabled:cursor-not-allowed disabled:opacity-30"
                     onClick={() => onMove(slotIndex, slotIndex - 1)}
                     disabled={slotIndex === 0}
                     tabIndex={-1}
@@ -279,7 +279,7 @@ function PlacedTile({
             {!submitted && (
                 <button
                     type="button"
-                    className="inline-flex min-h-11 min-w-6 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent px-0.5 text-[var(--fg-muted)] enabled:hover:bg-[var(--surface-2)] enabled:hover:text-[var(--accent)] disabled:cursor-not-allowed disabled:opacity-30"
+                    className="inline-flex min-h-11 min-w-6 cursor-pointer items-center justify-center rounded-sm border-0 bg-transparent px-0.5 text-[var(--fg-muted)] enabled:hover:bg-[var(--surface-2)] enabled:hover:text-[var(--accent-text)] disabled:cursor-not-allowed disabled:opacity-30"
                     onClick={() => onMove(slotIndex, slotIndex + 1)}
                     disabled={slotIndex === total - 1}
                     tabIndex={-1}
@@ -651,7 +651,7 @@ function WordTilesExercise(
                             variant="ghost"
                             size="sm"
                             type="button"
-                            className="text-[var(--accent)] underline underline-offset-2 hover:no-underline"
+                            className="text-[var(--accent-text)] underline underline-offset-2 hover:no-underline"
                             onClick={() => setShowHint(true)}
                             data-testid="word-tiles-hint-show"
                         >

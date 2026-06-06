@@ -41,8 +41,8 @@ describe("Phase 58D — theme system", () => {
 
     it("the reference (light) theme defines the full canonical set", () => {
         // Sanity floor: backgrounds(5) + text(4) + borders(3) +
-        // interactive(4) + accent(5) + status(8) + exercise(4) +
-        // star(1) + charts(6) + shadows(3) = 43.
+        // interactive(4) + accent(6, incl. accent-text #96) + status(8) +
+        // exercise(4) + star(1) + charts(6) + shadows(3) = 44.
         expect(reference.size).toBeGreaterThanOrEqual(43);
         for (const required of [
             "bg-primary",

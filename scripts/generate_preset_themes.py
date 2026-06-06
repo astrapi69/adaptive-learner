@@ -52,6 +52,10 @@ def gen(tid, s):
     fg_muted = ensure(s["muted-foreground"] or mix(fg,bg,0.45), bg, 4.5)
     fg_secondary = ensure(mix(fg, fg_muted, 0.35), bg, 4.5)
     accent_fg = best_text_on(primary)               # guarantees primary-button AA
+    # accent-as-text (ghost hint / link): primary as a fill is not always
+    # readable as text (e.g. supabase mint on white = 1.54). Darken/lighten
+    # toward AA on the worse of bg/surface so the hint/link text passes (#96).
+    accent_text = ensure(primary, surface if ratio(primary, surface) < ratio(primary, bg) else bg, 4.5)
     accent_hover = mix(primary, '#ffffff' if dark else '#000000', 0.14)
     fg_inverse = best_text_on(dest)                 # destructive-foreground
     st=STATUS[fam]
@@ -68,7 +72,7 @@ def gen(tid, s):
       "border-primary":border,"border-subtle":mix(border,bg,0.5),"border-accent":mix(border,fg,0.2),
       "interactive-bg":mix(bg,fg,0.06),"interactive-hover":mix(bg,fg,0.1),
       "interactive-active":mix(bg,fg,0.16),"interactive-disabled":secondary,
-      "accent":primary,"accent-hover":accent_hover,"accent-fg":accent_fg,
+      "accent":primary,"accent-hover":accent_hover,"accent-fg":accent_fg,"accent-text":accent_text,
       "accent-subtle":rgba(primary,0.12),"accent-rgb":rgbstr(primary),
       "success":success,"success-bg":rgba(success,0.15),"error":error,"error-bg":rgba(error,0.15),
       "warning":warning,"warning-bg":rgba(warning,0.15),"info":info,"info-bg":rgba(info,0.15),
@@ -81,7 +85,9 @@ def gen(tid, s):
     }
     # verify
     checks=[("fg/bg",ratio(fg,bg)),("fg-sec/bg",ratio(fg_secondary,bg)),("fg-muted/bg",ratio(fg_muted,bg)),
-            ("accent-fg/accent",ratio(accent_fg,primary)),("success/bg",ratio(success,bg)),
+            ("accent-fg/accent",ratio(accent_fg,primary)),
+            ("accent-text/p",ratio(accent_text,bg)),("accent-text/c",ratio(accent_text,surface)),
+            ("success/bg",ratio(success,bg)),
             ("warning/bg",ratio(warning,bg)),("info/bg",ratio(info,bg)),("error/bg",ratio(error,bg)),
             ("fg-inv/error",ratio(fg_inverse,error)),
             ("ex-correct/surf",ratio(ex_correct,surface)),("ex-wrong/surf",ratio(ex_wrong,surface))]
@@ -91,7 +97,7 @@ ORDER=["bg-primary","bg-secondary","bg-surface","bg-elevated","bg-overlay",
  "fg-primary","fg-secondary","fg-muted","fg-inverse",
  "border-primary","border-subtle","border-accent",
  "interactive-bg","interactive-hover","interactive-active","interactive-disabled",
- "accent","accent-hover","accent-fg","accent-subtle","accent-rgb",
+ "accent","accent-hover","accent-fg","accent-text","accent-subtle","accent-rgb",
  "success","success-bg","error","error-bg","warning","warning-bg","info","info-bg",
  "exercise-correct","exercise-wrong","exercise-selected","exercise-matched","star",
  "chart-1","chart-2","chart-3","chart-4","chart-5","chart-6",
