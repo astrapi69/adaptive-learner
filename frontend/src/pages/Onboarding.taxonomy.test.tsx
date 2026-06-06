@@ -11,7 +11,7 @@
 import "fake-indexeddb/auto";
 
 import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
-import {act, fireEvent, render, screen, waitFor} from "@testing-library/react";
+import {act, fireEvent, render, screen} from "@testing-library/react";
 import {MemoryRouter} from "react-router-dom";
 
 import Onboarding from "./Onboarding";
@@ -57,20 +57,13 @@ function renderOnboarding() {
 }
 
 function fillFormFields(topic: string) {
+    // Quick-start only takes name + topic (#92); the rest is the
+    // optional post-creation wizard.
     fireEvent.change(screen.getByTestId("onboarding-name"), {
         target: {value: "Aster"},
     });
     fireEvent.change(screen.getByTestId("onboarding-topic"), {
         target: {value: topic},
-    });
-    fireEvent.change(screen.getByTestId("onboarding-goal"), {
-        target: {value: "Reach B1"},
-    });
-    fireEvent.change(screen.getByTestId("onboarding-timeframe"), {
-        target: {value: "3 months"},
-    });
-    fireEvent.change(screen.getByTestId("onboarding-daily-minutes"), {
-        target: {value: "30"},
     });
 }
 
@@ -112,7 +105,7 @@ describe("Onboarding taxonomy integration", () => {
         expect(chip).toBeInTheDocument();
     });
 
-    it("submitting assigns the picked subject + parses comma-separated tags", async () => {
+    it("submitting assigns the picked subject and lands on the invite screen", async () => {
         const {grammar} = await seedSubjectTree();
         renderOnboarding();
         await screen.findByTestId("onboarding-topic");
@@ -124,20 +117,15 @@ describe("Onboarding taxonomy integration", () => {
         );
         fireEvent.click(chip);
 
-        // Enter two tags.
-        fireEvent.change(screen.getByTestId("onboarding-tags"), {
-            target: {value: "exam-prep, daily-practice"},
-        });
-
         await act(async () => {
             fireEvent.click(screen.getByTestId("onboarding-submit"));
         });
 
-        await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith("/assessment");
-        });
+        // Quick-start lands on the optional-profile invitation (#94),
+        // not straight on /assessment.
+        await screen.findByTestId("onboarding-invite");
+        expect(mockNavigate).not.toHaveBeenCalled();
 
-        // Verify against the actual storage.
         const projectId = localStorage.getItem("adaptive-learner.project_id");
         const userId = localStorage.getItem("adaptive-learner.user_id");
         expect(projectId).toBeTruthy();
@@ -147,53 +135,9 @@ describe("Onboarding taxonomy integration", () => {
             projectId!,
         );
         expect(assignedSubjects.map((s) => s.id)).toEqual([grammar.id]);
-
-        const assignedTags = await getStorage().projectTaxonomy.listTags(
-            projectId!,
-        );
-        const tagNames = assignedTags.map((t) => t.name).sort();
-        expect(tagNames).toEqual(["daily-practice", "exam-prep"]);
     });
 
-    it("reuses an existing tag instead of duplicating", async () => {
-        const {grammar} = await seedSubjectTree();
-        renderOnboarding();
-        await screen.findByTestId("onboarding-topic");
-
-        fillFormFields("Spanish Grammar");
-
-        // Pre-create the user + a tag they already have. The
-        // create flow creates a NEW user — but the soft-fail path
-        // catches the 409 on the new user's empty tag list. So
-        // this test only verifies that the parse+create flow
-        // doesn't crash when the user typed comma-separated names
-        // including potentially-duplicate tokens.
-        fireEvent.change(screen.getByTestId("onboarding-tags"), {
-            target: {value: "duplicate, duplicate, unique"},
-        });
-
-        const chip = await screen.findByTestId(
-            `onboarding-subject-suggestion-${grammar.id}`,
-        );
-        fireEvent.click(chip);
-
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("onboarding-submit"));
-        });
-
-        await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith("/assessment");
-        });
-
-        const projectId = localStorage.getItem("adaptive-learner.project_id");
-        const assignedTags = await getStorage().projectTaxonomy.listTags(
-            projectId!,
-        );
-        const tagNames = assignedTags.map((t) => t.name).sort();
-        expect(tagNames).toEqual(["duplicate", "unique"]);
-    });
-
-    it("submission still works when no subject + no tags are picked", async () => {
+    it("submission still works when no subject is picked", async () => {
         await seedSubjectTree();
         renderOnboarding();
         await screen.findByTestId("onboarding-topic");
@@ -203,9 +147,7 @@ describe("Onboarding taxonomy integration", () => {
             fireEvent.click(screen.getByTestId("onboarding-submit"));
         });
 
-        await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith("/assessment");
-        });
+        await screen.findByTestId("onboarding-invite");
 
         const projectId = localStorage.getItem("adaptive-learner.project_id");
         const assignedSubjects = await getStorage().projectTaxonomy.listSubjects(

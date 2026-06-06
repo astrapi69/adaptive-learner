@@ -189,13 +189,29 @@ onboarding:
   field_current_problem_hint: opcional — que te bloquea ahora mismo?
   submit: Crear proyecto e iniciar evaluacion
   creating: Creando proyecto...
-  field_tags: "Etiquetas"
-  field_tags_hint: "Separadas por comas. Reutiliza etiquetas existentes o crea nuevas sobre la marcha."
-  field_tags_placeholder: "exam-prep, daily-practice"
   subject_suggestions: "Materias sugeridas (toca para asignar):"
-  more_details: "Más detalles (opcional)"
   default_goal: "Aprender {topic}"
-  default_timeframe: "Flexible"
+  invite_title: "¿Quieres configurar tu perfil de aprendizaje con más detalle?"
+  invite_subtitle: "Tarda un minuto y personaliza tus sesiones; también puedes hacerlo más tarde."
+  invite_start_now: "Empezar ya"
+  invite_setup_profile: "Configurar perfil"
+  wizard:
+    step_label: "Paso {current} de {total}"
+    next: "Siguiente"
+    back: "Atrás"
+    goal_title: "¿Cuál es tu objetivo de aprendizaje?"
+    timeframe_title: "¿Cuánto tiempo tienes?"
+    timeframe_4w: "4 semanas"
+    timeframe_3m: "3 meses"
+    timeframe_semester: "1 semestre"
+    timeframe_flexible: "Flexible"
+    minutes_title: "¿Cuántos minutos al día?"
+    minutes_value: "{n} min/día"
+    problem_title: "¿Qué te frena ahora mismo?"
+    done_title: "¡Listo! ¿Empezar la evaluación?"
+    done_subtitle: "La evaluación de 12 preguntas crea tu perfil de aprendizaje."
+    start_assessment: "Sí, empezar"
+    later: "Más tarde"
 assessment:
   title: Evaluacion del tipo de aprendizaje
   intro: Doce preguntas cortas determinan tu perfil de aprendizaje. No hay respuestas correctas o incorrectas — responde por intuicion.

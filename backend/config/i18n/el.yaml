@@ -189,13 +189,29 @@ onboarding:
   field_current_problem_hint: προαιρετικό — τι σε μπλοκάρει αυτή τη στιγμή;
   submit: Δημιουργία έργου και έναρξη αξιολόγησης
   creating: Δημιουργία έργου...
-  field_tags: "Ετικέτες"
-  field_tags_hint: "Διαχωρισμένες με κόμμα. Επαναχρησιμοποιήστε υπάρχουσες ετικέτες ή δημιουργήστε νέες άμεσα."
-  field_tags_placeholder: "exam-prep, daily-practice"
   subject_suggestions: "Προτεινόμενα μαθήματα (πατήστε για ανάθεση):"
-  more_details: "Περισσότερες λεπτομέρειες (προαιρετικό)"
   default_goal: "Μάθε {topic}"
-  default_timeframe: "Ευέλικτο"
+  invite_title: "Θέλεις να ρυθμίσεις το προφίλ μάθησής σου πιο αναλυτικά;"
+  invite_subtitle: "Παίρνει ένα λεπτό και προσαρμόζει τις συνεδρίες σου — μπορείς και αργότερα."
+  invite_start_now: "Ξεκίνα αμέσως"
+  invite_setup_profile: "Ρύθμιση προφίλ"
+  wizard:
+    step_label: "Βήμα {current} από {total}"
+    next: "Επόμενο"
+    back: "Πίσω"
+    goal_title: "Ποιος είναι ο στόχος μάθησής σου;"
+    timeframe_title: "Πόσο χρόνο έχεις;"
+    timeframe_4w: "4 εβδομάδες"
+    timeframe_3m: "3 μήνες"
+    timeframe_semester: "1 εξάμηνο"
+    timeframe_flexible: "Ευέλικτο"
+    minutes_title: "Πόσα λεπτά την ημέρα;"
+    minutes_value: "{n} λεπτά/ημέρα"
+    problem_title: "Τι σε δυσκολεύει αυτή τη στιγμή;"
+    done_title: "Έτοιμο! Να ξεκινήσει η αξιολόγηση;"
+    done_subtitle: "Η αξιολόγηση 12 ερωτήσεων δημιουργεί το προφίλ μάθησής σου."
+    start_assessment: "Ναι, έναρξη"
+    later: "Αργότερα"
 assessment:
   title: Αξιολόγηση τύπου μάθησης
   intro: Δώδεκα σύντομες ερωτήσεις καθορίζουν το προφίλ μάθησής σου. Δεν υπάρχει σωστή ή λανθασμένη απάντηση — απάντησε διαισθητικά.

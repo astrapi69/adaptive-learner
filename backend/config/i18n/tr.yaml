@@ -189,13 +189,29 @@ onboarding:
   field_current_problem_hint: isteğe bağlı — şu an seni neyin engelliyor?
   submit: Projeyi oluştur ve değerlendirmeye başla
   creating: Proje oluşturuluyor…
-  field_tags: "Etiketler"
-  field_tags_hint: "Virgülle ayrılmış. Mevcut etiketleri yeniden kullanın veya anında yenilerini oluşturun."
-  field_tags_placeholder: "exam-prep, daily-practice"
   subject_suggestions: "Önerilen konular (atamak için dokunun):"
-  more_details: "Daha fazla ayrıntı (isteğe bağlı)"
   default_goal: "{topic} öğren"
-  default_timeframe: "Esnek"
+  invite_title: "Öğrenme profilini daha ayrıntılı ayarlamak ister misin?"
+  invite_subtitle: "Bir dakika sürer ve oturumlarını kişiselleştirir — daha sonra da yapabilirsin."
+  invite_start_now: "Hemen başla"
+  invite_setup_profile: "Profili ayarla"
+  wizard:
+    step_label: "Adım {current} / {total}"
+    next: "İleri"
+    back: "Geri"
+    goal_title: "Öğrenme hedefin nedir?"
+    timeframe_title: "Ne kadar zamanın var?"
+    timeframe_4w: "4 hafta"
+    timeframe_3m: "3 ay"
+    timeframe_semester: "1 dönem"
+    timeframe_flexible: "Esnek"
+    minutes_title: "Günde kaç dakika?"
+    minutes_value: "{n} dk/gün"
+    problem_title: "Şu anda seni ne engelliyor?"
+    done_title: "Hazır! Değerlendirmeyi başlatalım mı?"
+    done_subtitle: "12 soruluk değerlendirme öğrenme profilini oluşturur."
+    start_assessment: "Evet, başla"
+    later: "Sonra"
 assessment:
   title: Öğrenme tipi değerlendirmesi
   intro: On iki kısa soru öğrenme profilini belirler. Doğru ya da yanlış cevap yok — içgüdüne güven.

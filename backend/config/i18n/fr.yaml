@@ -189,13 +189,29 @@ onboarding:
   field_current_problem_hint: optionnel — qu'est-ce qui te bloque ?
   submit: Creer le projet et lancer l'evaluation
   creating: Creation du projet...
-  field_tags: "Étiquettes"
-  field_tags_hint: "Séparées par des virgules. Réutilisez des étiquettes existantes ou créez-en de nouvelles à la volée."
-  field_tags_placeholder: "exam-prep, daily-practice"
   subject_suggestions: "Matières suggérées (touchez pour attribuer) :"
-  more_details: "Plus de détails (facultatif)"
   default_goal: "Apprendre {topic}"
-  default_timeframe: "Flexible"
+  invite_title: "Vous voulez configurer votre profil d'apprentissage plus en détail ?"
+  invite_subtitle: "Cela prend une minute et adapte vos sessions — vous pouvez aussi le faire plus tard."
+  invite_start_now: "Commencer tout de suite"
+  invite_setup_profile: "Configurer le profil"
+  wizard:
+    step_label: "Étape {current} sur {total}"
+    next: "Suivant"
+    back: "Retour"
+    goal_title: "Quel est votre objectif d'apprentissage ?"
+    timeframe_title: "De combien de temps disposez-vous ?"
+    timeframe_4w: "4 semaines"
+    timeframe_3m: "3 mois"
+    timeframe_semester: "1 semestre"
+    timeframe_flexible: "Flexible"
+    minutes_title: "Combien de minutes par jour ?"
+    minutes_value: "{n} min/jour"
+    problem_title: "Qu'est-ce qui vous bloque en ce moment ?"
+    done_title: "C'est prêt ! Commencer l'évaluation ?"
+    done_subtitle: "L'évaluation de 12 questions construit votre profil d'apprentissage."
+    start_assessment: "Oui, commencer"
+    later: "Plus tard"
 assessment:
   title: Evaluation du type d'apprentissage
   intro: Douze courtes questions determinent ton profil. Il n'y a ni bonne ni mauvaise reponse — repond a l'instinct.

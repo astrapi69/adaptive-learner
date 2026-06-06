@@ -17,6 +17,7 @@ vi.mock("react-router-dom", async () => {
 // the canned User / LearningProject shapes.
 const apiUserCreate = vi.fn();
 const apiProjectCreate = vi.fn();
+const apiProjectUpdate = vi.fn();
 vi.mock("../api/client", async () => {
     const actual = await vi.importActual<typeof import("../api/client")>(
         "../api/client",
@@ -33,9 +34,12 @@ vi.mock("../api/client", async () => {
                 get: vi.fn(),
                 update: vi.fn(),
             },
-            // Spread the real shapes for the rest so anything else
-            // the page might transitively import keeps compiling.
-            projects: actual.api.projects,
+            // The wizard patches the project through the projects
+            // namespace (not users.projects).
+            projects: {
+                ...actual.api.projects,
+                update: (...args: unknown[]) => apiProjectUpdate(...args),
+            },
             settings: actual.api.settings,
             assessment: actual.api.assessment,
             session: actual.api.session,
@@ -70,20 +74,12 @@ function renderOnboarding() {
 }
 
 function fillForm() {
+    // The quick-start form only has the two required fields (#92).
     fireEvent.change(screen.getByTestId("onboarding-name"), {
         target: {value: "Asterios"},
     });
     fireEvent.change(screen.getByTestId("onboarding-topic"), {
         target: {value: "Spanisch B1"},
-    });
-    fireEvent.change(screen.getByTestId("onboarding-goal"), {
-        target: {value: "Konversation mit Kunden"},
-    });
-    fireEvent.change(screen.getByTestId("onboarding-timeframe"), {
-        target: {value: "8 Wochen"},
-    });
-    fireEvent.change(screen.getByTestId("onboarding-daily-minutes"), {
-        target: {value: "45"},
     });
 }
 
@@ -92,6 +88,7 @@ describe("Onboarding page", () => {
         mockNavigate.mockClear();
         apiUserCreate.mockReset();
         apiProjectCreate.mockReset();
+        apiProjectUpdate.mockReset();
         toastError.mockReset();
         toastSuccess.mockReset();
         localStorage.clear();
@@ -100,15 +97,16 @@ describe("Onboarding page", () => {
         vi.restoreAllMocks();
     });
 
-    it("renders the form with the canonical field set", () => {
+    it("renders only the two required fields up front (#92)", () => {
         renderOnboarding();
         expect(screen.getByTestId("onboarding")).toBeInTheDocument();
         expect(screen.getByTestId("onboarding-name")).toBeInTheDocument();
         expect(screen.getByTestId("onboarding-topic")).toBeInTheDocument();
-        expect(screen.getByTestId("onboarding-goal")).toBeInTheDocument();
-        expect(screen.getByTestId("onboarding-timeframe")).toBeInTheDocument();
-        expect(screen.getByTestId("onboarding-daily-minutes")).toBeInTheDocument();
-        expect(screen.getByTestId("onboarding-current-problem")).toBeInTheDocument();
+        // The profile fields now live in the post-creation wizard, not
+        // the quick-start form.
+        expect(screen.queryByTestId("onboarding-goal")).toBeNull();
+        expect(screen.queryByTestId("onboarding-timeframe")).toBeNull();
+        expect(screen.queryByTestId("onboarding-daily-minutes")).toBeNull();
     });
 
     it("Submit needs only name + topic — the 2 required fields (#92)", () => {
@@ -127,25 +125,7 @@ describe("Onboarding page", () => {
         expect(submit.disabled).toBe(false);
     });
 
-    it("the optional fields live in a collapsed More-details disclosure (#92)", () => {
-        renderOnboarding();
-        const details = screen.getByTestId(
-            "onboarding-more-details",
-        ) as HTMLDetailsElement;
-        expect(details).toBeInTheDocument();
-        // Collapsed by default — beginner sees only name + topic.
-        expect(details.open).toBe(false);
-        // The optional fields are nested inside it.
-        expect(details.contains(screen.getByTestId("onboarding-goal"))).toBe(true);
-        expect(
-            details.contains(screen.getByTestId("onboarding-timeframe")),
-        ).toBe(true);
-        expect(
-            details.contains(screen.getByTestId("onboarding-daily-minutes")),
-        ).toBe(true);
-    });
-
-    it("creates user then project, stores ids and navigates to /assessment", async () => {
+    it("creates user + project with defaults, then shows the invite (#94)", async () => {
         apiUserCreate.mockResolvedValue({
             id: "u-1",
             name: "Asterios",
@@ -158,9 +138,9 @@ describe("Onboarding page", () => {
             id: "p-1",
             user_id: "u-1",
             topic: "Spanisch B1",
-            goal: "Konversation mit Kunden",
-            timeframe: "8 Wochen",
-            daily_minutes: 45,
+            goal: "Spanisch B1 lernen",
+            timeframe: "Flexibel",
+            daily_minutes: 15,
             current_problem: null,
             active: true,
             created_at: "2026-05-18T00:00:00Z",
@@ -174,22 +154,90 @@ describe("Onboarding page", () => {
             fireEvent.click(screen.getByTestId("onboarding-submit"));
         });
 
+        // Lands on the optional-profile invitation, not /assessment.
+        await screen.findByTestId("onboarding-invite");
+        expect(mockNavigate).not.toHaveBeenCalled();
+
+        expect(apiUserCreate).toHaveBeenCalledWith({name: "Asterios", language: "de"});
+        const projectCall = apiProjectCreate.mock.calls[0][1] as {
+            topic: string;
+            goal: string;
+            timeframe: string;
+            daily_minutes: number;
+            current_problem: string | null;
+        };
+        expect(projectCall.topic).toBe("Spanisch B1");
+        expect(projectCall.goal.length).toBeGreaterThan(0);
+        expect(projectCall.timeframe.length).toBeGreaterThan(0);
+        expect(projectCall.daily_minutes).toBe(15);
+        expect(projectCall.current_problem).toBeNull();
+        expect(localStorage.getItem("adaptive-learner.user_id")).toBe("u-1");
+        expect(localStorage.getItem("adaptive-learner.project_id")).toBe("p-1");
+    });
+
+    it("invite: Jump right in goes to /dashboard without the wizard", async () => {
+        apiUserCreate.mockResolvedValue({id: "u-2", name: "A", language: "de"});
+        apiProjectCreate.mockResolvedValue({
+            id: "p-2",
+            topic: "T",
+            goal: "g",
+            timeframe: "Flexibel",
+            daily_minutes: 15,
+            current_problem: null,
+        });
+        renderOnboarding();
+        fillForm();
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("onboarding-submit"));
+        });
+        await screen.findByTestId("onboarding-invite");
+        fireEvent.click(screen.getByTestId("onboarding-invite-start-now"));
+        expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
+        expect(apiProjectUpdate).not.toHaveBeenCalled();
+    });
+
+    it("invite: Set up profile opens the wizard; finishing patches + routes", async () => {
+        apiUserCreate.mockResolvedValue({id: "u-3", name: "A", language: "de"});
+        apiProjectCreate.mockResolvedValue({
+            id: "p-3",
+            topic: "T",
+            goal: "g",
+            timeframe: "Flexibel",
+            daily_minutes: 15,
+            current_problem: null,
+        });
+        apiProjectUpdate.mockResolvedValue({id: "p-3"});
+
+        renderOnboarding();
+        fillForm();
+        await act(async () => {
+            fireEvent.click(screen.getByTestId("onboarding-submit"));
+        });
+        await screen.findByTestId("onboarding-invite");
+        fireEvent.click(screen.getByTestId("onboarding-invite-setup-profile"));
+
+        // Wizard appears; walk to the final step via "Next" x4.
+        await screen.findByTestId("onboarding-wizard");
+        for (let i = 0; i < 4; i++) {
+            fireEvent.click(screen.getByTestId("onboarding-wizard-next"));
+        }
+        await act(async () => {
+            fireEvent.click(
+                screen.getByTestId("onboarding-wizard-start-assessment"),
+            );
+        });
+
         await waitFor(() => {
             expect(mockNavigate).toHaveBeenCalledWith("/assessment");
         });
-
-        expect(apiUserCreate).toHaveBeenCalledWith({name: "Asterios", language: "de"});
-        expect(apiProjectCreate).toHaveBeenCalledWith("u-1", {
-            topic: "Spanisch B1",
-            goal: "Konversation mit Kunden",
-            timeframe: "8 Wochen",
-            daily_minutes: 45,
-            current_problem: null,
-            active: true,
-        });
-        expect(localStorage.getItem("adaptive-learner.user_id")).toBe("u-1");
-        expect(localStorage.getItem("adaptive-learner.project_id")).toBe("p-1");
-        expect(toastSuccess).toHaveBeenCalled();
+        expect(apiProjectUpdate).toHaveBeenCalledTimes(1);
+        const [projectId, body] = apiProjectUpdate.mock.calls[0] as [
+            string,
+            {timeframe: string; daily_minutes: number},
+        ];
+        expect(projectId).toBe("p-3");
+        expect(body.daily_minutes).toBe(15);
+        expect(body.timeframe.length).toBeGreaterThan(0);
     });
 
     it("surfaces an ApiError detail to the user", async () => {
@@ -225,33 +273,20 @@ describe("Onboarding page", () => {
         expect(screen.queryByTestId("onboarding-skip-top")).toBeNull();
     });
 
-    // --- #92 regression: a new user starts with ONLY name + topic -------
+    // --- #92 regression: the default goal is derived from the topic ----
 
-    it("creates a project from name + topic alone, applying defaults", async () => {
-        apiUserCreate.mockResolvedValue({
-            id: "u-min",
-            name: "Asterios",
-            email: null,
-            language: "de",
-            created_at: "2026-06-06T00:00:00Z",
-            updated_at: "2026-06-06T00:00:00Z",
-        });
+    it("derives the default goal from the topic (name + topic only)", async () => {
+        apiUserCreate.mockResolvedValue({id: "u-min", name: "Asterios", language: "de"});
         apiProjectCreate.mockResolvedValue({
             id: "p-min",
-            user_id: "u-min",
             topic: "Spanisch B1",
             goal: "Spanisch B1 lernen",
             timeframe: "Flexibel",
             daily_minutes: 15,
             current_problem: null,
-            active: true,
-            created_at: "2026-06-06T00:00:00Z",
-            updated_at: "2026-06-06T00:00:00Z",
         });
 
         renderOnboarding();
-        // Only the two required fields — the optional disclosure stays
-        // collapsed and untouched.
         fireEvent.change(screen.getByTestId("onboarding-name"), {
             target: {value: "Asterios"},
         });
@@ -263,29 +298,10 @@ describe("Onboarding page", () => {
             fireEvent.click(screen.getByTestId("onboarding-submit"));
         });
 
-        await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith("/assessment");
-        });
-
-        expect(apiUserCreate).toHaveBeenCalledTimes(1);
-        const projectCall = apiProjectCreate.mock.calls[0][1] as {
-            topic: string;
-            goal: string;
-            timeframe: string;
-            daily_minutes: number;
-            current_problem: string | null;
-            active: boolean;
-        };
-        expect(projectCall.topic).toBe("Spanisch B1");
-        // Goal + timeframe default (non-empty — the backend requires it);
-        // minutes default to 15; current_problem stays null.
-        expect(projectCall.goal.length).toBeGreaterThan(0);
+        await screen.findByTestId("onboarding-invite");
+        const projectCall = apiProjectCreate.mock.calls[0][1] as {goal: string};
+        // The default goal interpolates the topic (e.g. "Learn Spanisch
+        // B1" / "Spanisch B1 lernen") — non-empty and topic-derived.
         expect(projectCall.goal).toContain("Spanisch B1");
-        expect(projectCall.timeframe.length).toBeGreaterThan(0);
-        expect(projectCall.daily_minutes).toBe(15);
-        expect(projectCall.current_problem).toBeNull();
-        expect(projectCall.active).toBe(true);
-        expect(localStorage.getItem("adaptive-learner.user_id")).toBe("u-min");
-        expect(localStorage.getItem("adaptive-learner.project_id")).toBe("p-min");
     });
 });
