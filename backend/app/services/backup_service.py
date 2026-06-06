@@ -362,9 +362,7 @@ def _unique_match_keys(model: type[Any]) -> list[tuple[str, ...]]:
     return keys
 
 
-def _find_existing_by_unique(
-    db: Session, model: type[Any], record: dict[str, Any]
-) -> Any | None:
+def _find_existing_by_unique(db: Session, model: type[Any], record: dict[str, Any]) -> Any | None:
     """Find a local row matching any of ``model``'s UNIQUE keys.
 
     Returns the first existing row whose unique-key columns all equal the

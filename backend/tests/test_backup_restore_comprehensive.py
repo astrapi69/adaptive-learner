@@ -162,7 +162,9 @@ def test_user_badge_fk_remaps_to_reseeded_badge():
     db = _session()
     try:
         user = _seed(db)
-        badge = Badge(key="streak_7", name_key="badge.streak_7.name", description_key="badge.streak_7.desc")
+        badge = Badge(
+            key="streak_7", name_key="badge.streak_7.name", description_key="badge.streak_7.desc"
+        )
         db.add(badge)
         db.flush()
         db.add(UserBadge(user_id=user.id, badge_id=badge.id))
