@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-tracking"
-version = "1.63.0"
+version = "1.64.0"
 description = "Adaptive Learner: writes ProgressCommit on session_complete + dashboard summary aggregator."
 authors = ["Asterios Raptis"]
 license = "MIT"

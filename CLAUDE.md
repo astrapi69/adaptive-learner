@@ -9,9 +9,30 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.63.0** (minor — **6 recommended WCAG-AA theme
+- **Current state:** **v1.64.0** (minor — **onboarding overhaul: a
+  two-field quick start + an optional one-question-per-screen profile
+  wizard, with the assessment now opt-in**). **Onboarding (#92, #94):**
+  the quick-start form requires only **name + topic** (the rest take
+  defaults); submitting then offers an invite — "Jump right in" goes
+  straight to the Dashboard, "Set up profile" enters the new
+  ``OnboardingWizard`` (goal / timeframe / daily minutes / current
+  problem / opt-in assessment, one question per screen, each pre-filled
+  so "Next" always advances, progress bar + Back, persists via
+  ``getStorage().projects.update`` so both storage modes work). The
+  assessment is **no longer mandatory** — reachable only from the
+  wizard's final step. **Fixes:** the Content Browser (and any tall page)
+  no longer shows a second scrollbar — ``html``/``body`` lock both axes
+  (``overflow: hidden``) so ``#root`` is the sole scroll container (#42);
+  the sticky lesson footer is pinned to the viewport bottom across steps
+  (no mid-screen float / vertical jump; ``lesson-page`` fills the
+  viewport, the step grows to absorb slack; regression pin
+  ``e2e/dexie/lesson-footer-stability.spec.ts``) (#43); a WCAG contrast
+  pin for ``--accent``-as-text (≥4.5:1 on bg-primary/surface, ≥3:1 on
+  bg-elevated) plus a catppuccin-mocha nudge so all 12 themes pass
+  computationally (#96).
+  v1.63.0 = minor — **6 recommended WCAG-AA theme
   presets + systematic i18n audit + dashboard subject filter scoped to
-  the user**). **Theme presets:** the Appearance picker leads with a
+  the user**. **Theme presets:** the Appearance picker leads with a
   **Recommended** sub-tab — `catppuccin-latte`/`supabase`/`graphite`
   (light) + `catppuccin-mocha`/`soft-pop`/`amethyst-haze` (dark),
   generated from tweakcn presets by
