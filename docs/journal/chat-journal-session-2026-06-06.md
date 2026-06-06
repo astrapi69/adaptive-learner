@@ -69,3 +69,28 @@ systematic i18n audit (#80) and cut **v1.63.0**.
   landed my first #80 commit on local `main` and dropped the feature
   branch. Recovered by recreating `fix/i18n-audit-80` at the commit and
   resetting `main` to `origin/main` before pushing the PR.
+
+## Release v1.64.0 (12:47)
+
+- Original prompt: "all issues are fixed, proceed with release"
+- Goal: cut v1.64.0 per `.claude/rules/release-workflow.md`.
+- Result: minor release shipped. Range `v1.63.0..HEAD` = onboarding
+  overhaul (two-field quick start #92 + optional profile wizard #94,
+  assessment now opt-in) + three fixes (Content Browser single
+  scrollbar #42, lesson sticky-footer stability #43, WCAG
+  accent-as-text contrast pin #96). **Shared-checkout note:** PR #100
+  (#42) merged onto `main` at 12:16 *during* the release prep — caught
+  by re-reading HEAD before tagging; folded #42 into the changelog +
+  doc headers and re-ran `make test` (320 files / 3528 Vitest, +1 file
+  = #42's `single-scroll-container.test.ts`) at the confirmed HEAD.
+- Gates: `make test` green (backend + plugins + Vitest 3528), ruff +
+  mypy (65 files) + tsc clean, `npm run build` clean,
+  `make test-dexie-smoke` 74/74 (rebuilt with #42), launcher
+  PyInstaller build OK, `make verify-docs-discipline` 0 FAIL.
+- Bump: `backend/pyproject.toml` 1.63.0 -> 1.64.0 + `make sync-versions`
+  (19 files) + README/README-de badges (verify-docs-fix) + CLAUDE.md /
+  ROADMAP.md / backlog.md headers by hand. Pins verified.
+- Commits: `359bed7d` (changelog), `7931a8e3` (version bump). Tag
+  `v1.64.0` pushed; GitHub release published; CI Release Gate +
+  Launcher (Linux/macOS/Windows) + Deploy GitHub Pages all green.
+  Issues #42/#43/#92/#94/#96 closed.
