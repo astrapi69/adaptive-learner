@@ -163,6 +163,21 @@ export default function DashboardFilterBar({
         return applyFilter(projects, index, selectedSubjectId, selectedTagIds);
     }, [projects, index, selectedSubjectId, selectedTagIds]);
 
+    // #72 — only offer subjects the user actually uses (those attached to
+    // at least one of their projects), not the whole global catalog. An
+    // empty filter is dead UI. The active selection is kept visible even
+    // if its last project was archived, so the <select> never shows a
+    // value that isn't in its options.
+    const visibleSubjects = useMemo(() => {
+        if (index === null) return [];
+        const used = new Set<string>();
+        for (const ids of index.subjectsByProject.values()) {
+            for (const id of ids) used.add(id);
+        }
+        if (selectedSubjectId) used.add(selectedSubjectId);
+        return allSubjects.filter((subject) => used.has(subject.id));
+    }, [index, allSubjects, selectedSubjectId]);
+
     useEffect(() => {
         onMatchedProjectsChange?.(matched);
     }, [matched, onMatchedProjectsChange]);
@@ -233,26 +248,28 @@ export default function DashboardFilterBar({
             </header>
 
             <div className="dashboard-filter-controls">
-                <label className="dashboard-filter-row">
-                    <span>{t("taxonomy.subject", "Subject")}</span>
-                    <select
-                        data-testid="dashboard-filter-subject-select"
-                        value={selectedSubjectId ?? ""}
-                        onChange={(e) =>
-                            setSubject(e.target.value === "" ? null : e.target.value)
-                        }
-                    >
-                        <option value="">
-                            {t("taxonomy.all_subjects", "All subjects")}
-                        </option>
-                        {allSubjects.map((subject) => (
-                            <option key={subject.id} value={subject.id}>
-                                {subject.icon ? `${subject.icon} ` : ""}
-                                {subject.name}
+                {visibleSubjects.length > 0 && (
+                    <label className="dashboard-filter-row">
+                        <span>{t("taxonomy.subject", "Subject")}</span>
+                        <select
+                            data-testid="dashboard-filter-subject-select"
+                            value={selectedSubjectId ?? ""}
+                            onChange={(e) =>
+                                setSubject(e.target.value === "" ? null : e.target.value)
+                            }
+                        >
+                            <option value="">
+                                {t("taxonomy.all_subjects", "All subjects")}
                             </option>
-                        ))}
-                    </select>
-                </label>
+                            {visibleSubjects.map((subject) => (
+                                <option key={subject.id} value={subject.id}>
+                                    {subject.icon ? `${subject.icon} ` : ""}
+                                    {subject.name}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                )}
 
                 <div className="dashboard-filter-tags">
                     <span>{t("taxonomy.tags", "Tags")}</span>

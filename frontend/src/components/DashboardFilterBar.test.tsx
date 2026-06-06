@@ -258,4 +258,47 @@ describe("DashboardFilterBar", () => {
         // The pseudo-project's topic must NOT appear in the picker.
         expect(screen.queryByText("Content Lessons")).toBeNull();
     });
+
+    it("only offers subjects attached to the user's projects (#72)", async () => {
+        const {userId} = await seedScenario();
+        // A global subject nobody uses must not pollute the filter.
+        await getStorage().subjects.create({name: "Astrophysics"});
+
+        renderBar(userId);
+        const select = (await screen.findByTestId(
+            "dashboard-filter-subject-select",
+        )) as HTMLSelectElement;
+        await waitFor(() => {
+            expect(select.querySelectorAll("option").length).toBeGreaterThan(1);
+        });
+        const options = Array.from(select.querySelectorAll("option")).map(
+            (o) => o.textContent ?? "",
+        );
+        expect(options.some((o) => o.includes("Languages"))).toBe(true);
+        expect(options.some((o) => o.includes("Programming"))).toBe(true);
+        expect(options.some((o) => o.includes("Astrophysics"))).toBe(false);
+    });
+
+    it("hides the subject filter entirely when no project has a subject (#72)", async () => {
+        const storage = getStorage();
+        const user = await storage.users.create({name: "Solo"});
+        await storage.users.projects.create(user.id, {
+            topic: "Untagged goal",
+            goal: "x",
+            timeframe: "1m",
+            daily_minutes: 10,
+        });
+        // A global subject exists but is attached to no project.
+        await storage.subjects.create({name: "Astrophysics"});
+
+        renderBar(user.id);
+        await waitFor(() => {
+            expect(
+                screen.getByTestId("dashboard-filter-project-list"),
+            ).toBeInTheDocument();
+        });
+        expect(
+            screen.queryByTestId("dashboard-filter-subject-select"),
+        ).toBeNull();
+    });
 });
