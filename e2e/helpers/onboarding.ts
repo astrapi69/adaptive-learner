@@ -46,6 +46,13 @@ export async function completeOnboarding(
     await page.goto("/onboarding");
     await page.getByTestId("onboarding-name").fill(merged.name);
     await page.getByTestId("onboarding-topic").fill(merged.topic);
+    // Since #92 only name + topic are required; goal / timeframe /
+    // minutes live in a collapsed "More details" disclosure. Open it
+    // before filling those optional fields.
+    await page
+        .getByTestId("onboarding-more-details")
+        .locator("summary")
+        .click();
     await page.getByTestId("onboarding-goal").fill(merged.goal);
     await page.getByTestId("onboarding-timeframe").fill(merged.timeframe);
     await page

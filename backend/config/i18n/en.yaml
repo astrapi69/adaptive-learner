@@ -189,17 +189,13 @@ onboarding:
   field_current_problem_hint: optional — what is blocking you right now?
   submit: Create project and start assessment
   creating: Creating project…
-  skip: Later
-  skip_top: Skip for now →
-  skip_hint: Not sure yet? Tap Later to jump in — you can fill this in from the Curriculum page anytime.
-  skip_default_name: Learner
-  skip_default_topic: My learning
-  skip_default_goal: Discover my learning style.
-  skip_default_timeframe: Flexible
   field_tags: "Tags"
   field_tags_hint: "Comma-separated. Reuse existing tags or create new ones on the fly."
   field_tags_placeholder: "exam-prep, daily-practice"
   subject_suggestions: "Suggested subjects (tap to assign):"
+  more_details: "More details (optional)"
+  default_goal: "Learn {topic}"
+  default_timeframe: "Flexible"
 assessment:
   title: Learning-type assessment
   intro: Twelve short questions determine your learning profile. There is no right or wrong answer — go with your gut.
@@ -630,7 +626,6 @@ toast:
   api_key_restored: "Last working key restored."
   api_key_deleted: API key removed.
   method_switched: Method switched.
-  onboarding_skipped: "Welcome! You can refine later."
 install:
   title: Add to home screen
   subtitle: "Install Adaptive Learner as an app for better offline use."
