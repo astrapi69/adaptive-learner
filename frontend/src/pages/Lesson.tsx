@@ -550,7 +550,7 @@ export default function LessonPage() {
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="page lesson-page flex flex-col min-h-full"
                 data-testid="lesson-missing-params"
             >
                 <h1>{t("lesson.page_title", "Lesson")}</h1>
@@ -573,7 +573,7 @@ export default function LessonPage() {
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="page lesson-page flex flex-col min-h-full"
                 data-testid="lesson-loading"
             >
                 <p>{t("lesson.loading", "Loading lesson…")}</p>
@@ -585,7 +585,7 @@ export default function LessonPage() {
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="page lesson-page flex flex-col min-h-full"
                 data-testid="lesson-not-cached"
             >
                 <header className="lesson-header">
@@ -615,7 +615,7 @@ export default function LessonPage() {
         return (
             <main
                 id="main"
-                className="page lesson-page"
+                className="page lesson-page flex flex-col min-h-full"
                 data-testid="lesson-error"
             >
                 <p>
@@ -652,7 +652,7 @@ export default function LessonPage() {
     return (
         <main
             id="main"
-            className="page lesson-page"
+            className="page lesson-page flex flex-col min-h-full"
             data-testid="lesson-page"
         >
             <header className="lesson-header">
@@ -928,7 +928,7 @@ export default function LessonPage() {
             ) : (
                 <article
                     key={step!.id}
-                    className="lesson-step"
+                    className="lesson-step flex-auto"
                     data-testid={`lesson-step-${step!.id}`}
                     data-step-type={step!.type}
                 >
@@ -1036,6 +1036,7 @@ export default function LessonPage() {
 
             <nav
                 className="sticky bottom-0 z-10 mt-4 flex flex-row items-center gap-2 border-t border-border bg-bg-primary py-3"
+                data-testid="lesson-footer"
                 aria-label={t(
                     "lesson.nav.aria_label",
                     "Step navigation",
