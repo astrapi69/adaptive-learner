@@ -232,6 +232,9 @@ dashboard:
   quick_start: Yeni bir oturum başlat
   quick_start_subtitle: Yöntem profilinden seçildi.
   card_profile: Öğrenme profili
+  profile_incomplete: "Öğrenme profili eksik."
+  profile_resume: "Öğrenme profiline devam et"
+  profile_start: "Öğrenme profili oluştur"
   card_progress: İlerleme
   card_distribution: Yöntem dağılımı
   card_counter: Oturumlar
@@ -433,6 +436,13 @@ settings:
   missions_reset_failed: "Görevler sıfırlanamadı."
   gestures: Kaydırma Hareketleri
   gestures_description: Değerlendirme, Oturum ve Müfredat'ta gezinmek için kaydır.
+  profile_title: "Öğrenme profili"
+  profile_resume: "Öğrenme profiline devam et"
+  profile_redo: "Öğrenme profilini yeniden yap"
+  profile_create: "Öğrenme profili oluştur"
+  profile_incomplete_hint: "Tamamlanmamış bir değerlendirmeniz var."
+  profile_redo_hint: "Öğrenme profilinizi güncellemek için değerlendirmeyi yeniden yapın."
+  profile_create_hint: "Kişiselleştirilmiş bir öğrenme profili için kısa bir değerlendirme yapın."
   lesson_shortcuts: "Derslerde klavye kısayolları"
   lesson_shortcuts_description: "Cevabınızı kontrol etmek için Enter'a, sonraki adıma geçmek için tekrar Enter'a basın."
   button_tooltips: Buton ipuçlarını göster

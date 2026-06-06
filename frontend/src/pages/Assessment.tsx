@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
@@ -15,6 +15,11 @@ import {
     readGesturePref,
 } from "../lib/gesturePref";
 import {readLearnerState} from "../lib/learnerState";
+import {
+    clearAssessmentProgress,
+    readAssessmentProgress,
+    writeAssessmentProgress,
+} from "../lib/assessment/assessmentProgress";
 import {METHOD_COLORS} from "../lib/constants";
 import {getStorage} from "../storage";
 import {bestTextOn} from "../styles/contrast";
@@ -100,6 +105,45 @@ export default function Assessment() {
     const total = questions?.length ?? 0;
     const current = questions?.[currentIndex];
 
+    // Resumable assessment (#106). ``restoredRef`` guards the one-shot
+    // restore; ``startedAtRef`` preserves the original start time
+    // across saves.
+    const restoredRef = useRef(false);
+    const startedAtRef = useRef<string | null>(null);
+
+    // Restore a saved, incomplete assessment once the questions load.
+    useEffect(() => {
+        if (!questions || restoredRef.current || profile) return;
+        restoredRef.current = true;
+        const saved = readAssessmentProgress(readLearnerState().projectId);
+        if (saved && Object.keys(saved.answers).length > 0) {
+            startedAtRef.current = saved.startedAt;
+            setAnswers(saved.answers);
+            setCurrentIndex(
+                Math.min(
+                    Math.max(0, saved.currentQuestion),
+                    questions.length - 1,
+                ),
+            );
+        }
+    }, [questions, profile]);
+
+    // Persist progress as the learner answers / navigates, so an exit
+    // mid-flow can be resumed. Only writes once the restore has run and
+    // at least one answer exists; stops once the profile is computed.
+    useEffect(() => {
+        if (!questions || profile || !restoredRef.current) return;
+        if (Object.keys(answers).length === 0) return;
+        if (!startedAtRef.current) {
+            startedAtRef.current = new Date().toISOString();
+        }
+        writeAssessmentProgress(readLearnerState().projectId, {
+            currentQuestion: currentIndex,
+            answers,
+            startedAt: startedAtRef.current,
+        });
+    }, [answers, currentIndex, questions, profile]);
+
     const allAnswered = useMemo(() => {
         if (!questions || questions.length === 0) return false;
         return questions.every((q) => (answers[q.id]?.length ?? 0) > 0);
@@ -143,6 +187,10 @@ export default function Assessment() {
                 })),
             });
             setProfile(result);
+            // The profile is computed + saved — discard the resumable
+            // working state so the Dashboard/Settings no longer offer
+            // to resume (#106).
+            clearAssessmentProgress(projectId);
             notify.success(t("toast.assessment_saved", "Profile saved."));
             // v1.16.0 / Phase 29A — award 100 XP for completing
             // the assessment. Errors are non-fatal: gamification

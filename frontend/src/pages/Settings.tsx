@@ -15,6 +15,7 @@ import GitHubIntegrationSection from "../components/GitHubIntegrationSection";
 import FeedbackIntensityControl from "../components/FeedbackIntensityControl";
 import GamificationSettingsSection from "../components/GamificationSettingsSection";
 import DirectionStrategyControl from "../components/DirectionStrategyControl";
+import LearningProfileControl from "../components/LearningProfileControl";
 import MaxLessonSizeControl from "../components/MaxLessonSizeControl";
 import PausedLessonsRetentionControl from "../components/PausedLessonsRetentionControl";
 import LearningRepoSettingsSection from "../components/LearningRepoSettingsSection";
@@ -1155,6 +1156,7 @@ export default function Settings() {
         data-testid="settings-panel-learning"
       >
         <SourceLanguagesControl />
+        <LearningProfileControl />
         <section
           className="settings-section"
           data-testid="settings-section-feedback"

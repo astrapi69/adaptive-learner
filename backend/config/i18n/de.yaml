@@ -232,6 +232,9 @@ dashboard:
   quick_start: Neue Session starten
   quick_start_subtitle: Methode kommt aus deinem Profil.
   card_profile: Lernprofil
+  profile_incomplete: "Lernprofil unvollständig."
+  profile_resume: "Lernprofil fortsetzen"
+  profile_start: "Lernprofil erstellen"
   card_progress: Fortschritt
   card_distribution: Methodenverteilung
   card_counter: Sessions
@@ -433,6 +436,13 @@ settings:
   missions_reset_failed: "Missionen konnten nicht zurückgesetzt werden."
   gestures: Wischgesten
   gestures_description: Wischen zum Navigieren in Assessment, Session und Curriculum.
+  profile_title: "Lernprofil"
+  profile_resume: "Lernprofil fortsetzen"
+  profile_redo: "Lernprofil erneut machen"
+  profile_create: "Lernprofil erstellen"
+  profile_incomplete_hint: "Du hast eine unvollständige Einstufung."
+  profile_redo_hint: "Mache die Einstufung erneut, um dein Lernprofil zu aktualisieren."
+  profile_create_hint: "Mach eine kurze Einstufung für ein persönliches Lernprofil."
   lesson_shortcuts: "Tastenkürzel in Lektionen"
   lesson_shortcuts_description: "Drücke die Eingabetaste, um deine Antwort zu prüfen, und erneut, um zum nächsten Schritt zu gehen."
   button_tooltips: Button-Tooltips anzeigen

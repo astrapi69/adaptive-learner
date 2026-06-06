@@ -232,6 +232,9 @@ dashboard:
   quick_start: Έναρξη νέας συνεδρίας
   quick_start_subtitle: Μέθοδος επιλεγμένη από το προφίλ σου.
   card_profile: Προφίλ μάθησης
+  profile_incomplete: "Το προφίλ μάθησης είναι ημιτελές."
+  profile_resume: "Συνέχεια προφίλ μάθησης"
+  profile_start: "Δημιουργία προφίλ μάθησης"
   card_progress: Πρόοδος
   card_distribution: Κατανομή μεθόδων
   card_counter: Συνεδρίες
@@ -433,6 +436,13 @@ settings:
   missions_reset_failed: "Αδυναμία επαναφοράς αποστολών."
   gestures: Swipe Gestures
   gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
+  profile_title: "Προφίλ μάθησης"
+  profile_resume: "Συνέχεια προφίλ μάθησης"
+  profile_redo: "Επανάληψη προφίλ μάθησης"
+  profile_create: "Δημιουργία προφίλ μάθησης"
+  profile_incomplete_hint: "Έχετε μια ημιτελή αξιολόγηση."
+  profile_redo_hint: "Επαναλάβετε την αξιολόγηση για να ενημερώσετε το προφίλ μάθησής σας."
+  profile_create_hint: "Κάντε μια σύντομη αξιολόγηση για ένα εξατομικευμένο προφίλ μάθησης."
   lesson_shortcuts: "Συντομεύσεις πληκτρολογίου στα μαθήματα"
   lesson_shortcuts_description: "Πατήστε Enter για να ελέγξετε την απάντησή σας και ξανά Enter για να προχωρήσετε στο επόμενο βήμα."
   button_tooltips: Show button tooltips

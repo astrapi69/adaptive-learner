@@ -232,6 +232,9 @@ dashboard:
   quick_start: Demarrer une nouvelle session
   quick_start_subtitle: Methode choisie depuis ton profil.
   card_profile: Profil d'apprentissage
+  profile_incomplete: "Profil d'apprentissage incomplet."
+  profile_resume: "Continuer le profil d'apprentissage"
+  profile_start: "Créer le profil d'apprentissage"
   card_progress: Progres
   card_distribution: Distribution des methodes
   card_counter: Sessions
@@ -433,6 +436,13 @@ settings:
   missions_reset_failed: "Impossible de réinitialiser les missions."
   gestures: Swipe Gestures
   gestures_description: Swipe to navigate in Assessment, Session, and Curriculum.
+  profile_title: "Profil d'apprentissage"
+  profile_resume: "Continuer le profil d'apprentissage"
+  profile_redo: "Refaire le profil d'apprentissage"
+  profile_create: "Créer le profil d'apprentissage"
+  profile_incomplete_hint: "Vous avez une évaluation inachevée."
+  profile_redo_hint: "Refaites l'évaluation pour mettre à jour votre profil d'apprentissage."
+  profile_create_hint: "Faites une courte évaluation pour obtenir un profil d'apprentissage personnalisé."
   lesson_shortcuts: "Raccourcis clavier dans les leçons"
   lesson_shortcuts_description: "Appuyez sur Entrée pour vérifier votre réponse, puis à nouveau pour passer à l'étape suivante."
   button_tooltips: Show button tooltips
