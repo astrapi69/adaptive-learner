@@ -9,9 +9,26 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.65.0** (minor — **resumable assessment + an
+- **Current state:** **v1.66.0** (maintenance — **systematic
+  backup-restore fix + deploy-safe lazy-route reload + subject-filter UX
+  polish**). **Backup restore (#115, #117):** a generic type-coercion +
+  matching layer replaces the prior point-fixes — unique-key matching
+  for the 13 non-id-UNIQUE tables (the ``user_settings``/``user_xp``/
+  ``user_streaks`` singletons + composite keys) with FK-graph-derived
+  child remap and placeholder reclaim (older backup / clean-install no
+  longer hit a UNIQUE violation), JSON serialization for dict/list
+  values bound to Text columns (``badges.tier_thresholds``, lesson/note
+  content, anki tags — fixes ``sqlite3.ProgrammingError: type 'dict' is
+  not supported``), and empty-table skip on export + import; verified
+  end-to-end through the real backup API. **Lazy-route reload (#113):**
+  the GH-Pages build auto-reloads once on a stale-deploy chunk-fetch
+  failure (``lazyWithReload`` + Workbox ``cleanupOutdatedCaches``)
+  instead of crashing with "Failed to fetch dynamically imported
+  module". **Subject filter (#111):** the Dashboard filter hides at ≤1
+  subject, orders most-used-first, and groups by category above 5.
+  v1.65.0 = minor — **resumable assessment + an
   Enter-key lesson shortcut + clearer matching exercises + a
-  design-token architecture pass**). **Resumable assessment (#106):**
+  design-token architecture pass**. **Resumable assessment (#106):**
   abandoning the assessment partway persists the in-flight progress
   (current question + answers + start time, project-scoped in
   localStorage, mode-agnostic), the learner resumes where they left off,

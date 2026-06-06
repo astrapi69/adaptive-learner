@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-ai-gemini"
-version = "1.65.0"
+version = "1.66.0"
 description = "Adaptive Learner: Google Gemini provider for the ai_complete hook."
 authors = ["Asterios Raptis"]
 license = "MIT"
