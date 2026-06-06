@@ -44,6 +44,7 @@ import {
   type AiValidationResult,
 } from "../lib/content/ai-content-validator";
 import type { ContentSetRow, ContentSetFileRow } from "./db";
+import { resolveRepoToken } from "../lib/content/repo-token";
 
 const RAW_BASE = "https://raw.githubusercontent.com";
 const BUNDLED_PREFIX = "bundled:";
@@ -165,8 +166,19 @@ function fileKey(setPk: string, filename: string): string {
   return `${setPk}#${filename}`;
 }
 
-async function fetchText(url: string): Promise<string> {
-  const response = await fetch(url);
+/** Build fetch init with an optional Bearer token (private user repos). */
+function authInit(token: string): RequestInit | undefined {
+  return token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+}
+
+/** Per-source token: per-repo / shared for GitHub sources, none for the
+ *  bundled (same-origin static) source. EXP-023 Phase B. */
+function tokenForSource(source: string): string {
+  return source.startsWith(BUNDLED_PREFIX) ? "" : resolveRepoToken(source);
+}
+
+async function fetchText(url: string, token = ""): Promise<string> {
+  const response = await fetch(url, authInit(token));
   if (!response.ok) {
     const err: Error & { status?: number } = new Error(
       `Upstream HTTP ${response.status} for ${url}`,
@@ -180,8 +192,11 @@ async function fetchText(url: string): Promise<string> {
 /** Phase 54 / v1.37.0 — fetch raw bytes for an asset.
  *  Returns null on 404 so the download orchestrator can skip
  *  missing assets instead of failing the whole set download. */
-async function fetchBytesOptional(url: string): Promise<ArrayBuffer | null> {
-  const response = await fetch(url);
+async function fetchBytesOptional(
+  url: string,
+  token = "",
+): Promise<ArrayBuffer | null> {
+  const response = await fetch(url, authInit(token));
   if (response.status === 404) return null;
   if (!response.ok) {
     const err: Error & { status?: number } = new Error(
@@ -456,10 +471,12 @@ export async function listSetsDexie(
 ): Promise<ContentSetsList> {
   const entries: ContentSetEntry[] = [];
   for (const src of sources) {
+    const token = tokenForSource(src.source);
     let manifest: ParsedManifest | null = null;
     try {
       const text = await fetchText(
         rawUrl(src.source, src.branch, "manifest.yaml"),
+        token,
       );
       manifest = (parseYaml(text) ?? null) as ParsedManifest | null;
     } catch (err) {
@@ -521,10 +538,12 @@ export async function downloadSetDexie(
     source,
     branch: "main",
   };
+  const token = tokenForSource(src.source);
 
   // Repo manifest → find the target set entry.
   const repoText = await fetchText(
     rawUrl(src.source, src.branch, "manifest.yaml"),
+    token,
   );
   const repoManifest = parseYaml(repoText) as ParsedManifest;
   const target = (repoManifest.sets ?? []).find((s) => s.id === setId);
@@ -547,6 +566,7 @@ export async function downloadSetDexie(
   const basePath = setBasePath(target);
   const setManifestText = await fetchText(
     rawUrl(src.source, src.branch, `${basePath}/manifest.yaml`),
+    token,
   );
   const setManifest = parseYaml(setManifestText) as ParsedManifest;
   let lessonFilenames: string[];
@@ -569,6 +589,7 @@ export async function downloadSetDexie(
   for (const filename of lessonFilenames) {
     lessonBodies[filename] = await fetchText(
       rawUrl(src.source, src.branch, `${basePath}/lessons/${filename}`),
+      token,
     );
   }
 
@@ -584,6 +605,7 @@ export async function downloadSetDexie(
   for (const asset of target.assets ?? []) {
     const buf = await fetchBytesOptional(
       rawUrl(src.source, src.branch, `${basePath}/assets/${asset.path}`),
+      token,
     );
     if (buf === null) continue;
     assetBodies[asset.path] = arrayBufferToBase64(buf);

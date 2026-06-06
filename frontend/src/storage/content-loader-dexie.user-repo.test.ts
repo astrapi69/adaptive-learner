@@ -7,11 +7,12 @@
  */
 
 import "fake-indexeddb/auto";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   activeSourcesDexie,
   dedupeContentEntries,
+  listSetsDexie,
 } from "./content-loader-dexie";
 import { _resetDbForTests, getDb } from "./db";
 import type { ContentSetEntry } from "./types";
@@ -133,5 +134,38 @@ describe("dedupeContentEntries — user repo wins a collision", () => {
     ]);
     expect(result).toHaveLength(1);
     expect(result[0].source).toBe("bob/b");
+  });
+});
+
+describe("per-repo token auth on fetch (coach/private)", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("sends the per-repo Bearer token when fetching a user source", async () => {
+    vi.stubGlobal("localStorage", {
+      getItem: (k: string) =>
+        k === "adaptive-learner.content_repo_token::jane/private"
+          ? "ghp_coach"
+          : null,
+      setItem: () => {},
+      removeItem: () => {},
+    });
+    const fetchMock = vi.fn(async (_url: string, _init?: RequestInit) => ({
+      ok: true,
+      status: 200,
+      text: async () => "sets: []",
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await listSetsDexie([{ source: "jane/private", branch: "main" }]);
+
+    const call = fetchMock.mock.calls.find((c) =>
+      String(c[0]).includes("jane/private"),
+    );
+    expect(call).toBeTruthy();
+    expect((call?.[1] as RequestInit | undefined)?.headers).toMatchObject({
+      Authorization: "Bearer ghp_coach",
+    });
   });
 });
