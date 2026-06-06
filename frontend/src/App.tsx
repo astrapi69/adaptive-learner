@@ -26,6 +26,7 @@ import SkipToContent from "./components/SkipToContent";
 const AnkiPage = lazyWithReload(() => import("./pages/Anki"));
 const Assessment = lazyWithReload(() => import("./pages/Assessment"));
 const ContentPage = lazyWithReload(() => import("./pages/Content"));
+const AddRepo = lazyWithReload(() => import("./pages/AddRepo"));
 const CreateLesson = lazyWithReload(() => import("./pages/CreateLesson"));
 const LearningPath = lazyWithReload(() => import("./pages/LearningPathPersonal"));
 const Curriculum = lazyWithReload(() => import("./pages/Curriculum"));
@@ -141,6 +142,7 @@ export default function App() {
                         />
                         <Route path="/anki" element={<AnkiPage />} />
                         <Route path="/content" element={<ContentPage />} />
+                        <Route path="/add-repo" element={<AddRepo />} />
                         <Route
                             path="/learning-path"
                             element={<LearningPath />}

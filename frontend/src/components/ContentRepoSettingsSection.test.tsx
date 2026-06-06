@@ -30,6 +30,9 @@ vi.mock("../utils/notify", () => ({
   notify: { error: notifyError, success: notifySuccess },
 }));
 vi.mock("../lib/content/content-repo-validate", () => ({ validateUserRepo }));
+vi.mock("qrcode", () => ({
+  default: { toDataURL: vi.fn(async () => "data:image/png;base64,QR") },
+}));
 vi.mock("../lib/content/repo-token", () => ({
   resolveRepoToken: () => "",
   writeRepoToken: vi.fn(),
@@ -174,5 +177,21 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     expect(
       await screen.findByTestId("content-repo-token-hint"),
     ).toBeInTheDocument();
+  });
+
+  it("toggles a share panel with a link + QR for a repo", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [REPO] },
+    });
+    render(<ContentRepoSettingsSection />);
+    fireEvent.click(await screen.findByTestId("content-repo-share-jane-deck"));
+    const panel = await screen.findByTestId(
+      "content-repo-share-panel-jane-deck",
+    );
+    expect(panel).toBeInTheDocument();
+    const link = screen.getByTestId("content-repo-share-link") as HTMLInputElement;
+    expect(link.value).toContain("/add-repo?url=jane%2Fdeck");
+    expect(await screen.findByTestId("content-repo-share-qr")).toBeInTheDocument();
   });
 });

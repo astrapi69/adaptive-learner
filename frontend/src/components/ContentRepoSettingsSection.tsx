@@ -16,19 +16,23 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
+import QRCode from "qrcode";
 import {
   ArrowDown,
   ArrowUp,
   BookOpen,
+  Copy,
   FolderGit2,
   Link2,
   RefreshCw,
+  Share2,
   Shield,
   Trash2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { buildAddRepoLink } from "../lib/content/share-link";
 import { useI18n } from "../hooks/useI18n";
 import { getStorage } from "../storage";
 import {
@@ -66,6 +70,9 @@ export default function ContentRepoSettingsSection() {
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [result, setResult] = useState<
     { ok: boolean; message: string } | null
+  >(null);
+  const [share, setShare] = useState<
+    { source: string; link: string; qr: string } | null
   >(null);
 
   const refresh = useCallback(async () => {
@@ -204,6 +211,37 @@ export default function ContentRepoSettingsSection() {
       }
     },
     [confirmRemove, refresh],
+  );
+
+  const handleShare = useCallback(
+    async (repo: UserContentRepo) => {
+      const source = userRepoSource(repo.owner, repo.repo);
+      if (share?.source === source) {
+        setShare(null);
+        return;
+      }
+      const link = buildAddRepoLink({ url: source, branch: repo.branch });
+      let qr = "";
+      try {
+        qr = await QRCode.toDataURL(link, { margin: 1, width: 180 });
+      } catch {
+        /* QR is a nice-to-have; the copyable link still works */
+      }
+      setShare({ source, link, qr });
+    },
+    [share],
+  );
+
+  const handleCopyLink = useCallback(
+    async (link: string) => {
+      try {
+        await navigator.clipboard.writeText(link);
+        notify.success(t("content_repo.share.copied", "Link copied."));
+      } catch {
+        notify.error(t("content_repo.share.copy_failed", "Could not copy."));
+      }
+    },
+    [t],
   );
 
   const handleMove = useCallback(
@@ -372,6 +410,18 @@ export default function ContentRepoSettingsSection() {
                   </Button>
                   <Button
                     type="button"
+                    variant="outline"
+                    size="sm"
+                    className="min-h-11 gap-2"
+                    onClick={() => handleShare(repo)}
+                    disabled={busy}
+                    data-testid={`content-repo-share-${repo.owner}-${repo.repo}`}
+                  >
+                    <Share2 className="h-4 w-4" aria-hidden="true" />
+                    {t("content_repo.action.share", "Share")}
+                  </Button>
+                  <Button
+                    type="button"
                     variant={confirmRemove === source ? "destructive" : "outline"}
                     size="sm"
                     className="min-h-11 gap-2"
@@ -385,6 +435,49 @@ export default function ContentRepoSettingsSection() {
                       : t("content_repo.action.remove", "Remove")}
                   </Button>
                 </div>
+                {share?.source === source && (
+                  <div
+                    className="mt-3 rounded-sm border border-[var(--border)] bg-[var(--bg-elevated)] p-3"
+                    data-testid={`content-repo-share-panel-${repo.owner}-${repo.repo}`}
+                  >
+                    <p className="m-0 text-sm text-[var(--fg-muted)]">
+                      {t(
+                        "content_repo.share.hint",
+                        "Share this link so others can add this PUBLIC repo. For a private repo, send the URL + a read-only token separately.",
+                      )}
+                    </p>
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <Input
+                        type="text"
+                        readOnly
+                        value={share.link}
+                        className="min-w-[16rem] flex-1"
+                        data-testid="content-repo-share-link"
+                        onFocus={(e) => e.currentTarget.select()}
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="min-h-11 gap-2"
+                        onClick={() => handleCopyLink(share.link)}
+                        data-testid="content-repo-share-copy"
+                      >
+                        <Copy className="h-4 w-4" aria-hidden="true" />
+                        {t("content_repo.share.copy", "Copy")}
+                      </Button>
+                    </div>
+                    {share.qr && (
+                      <img
+                        src={share.qr}
+                        alt={t("content_repo.share.qr_alt", "QR code for the share link")}
+                        className="mt-3 rounded-sm"
+                        width={180}
+                        height={180}
+                        data-testid="content-repo-share-qr"
+                      />
+                    )}
+                  </div>
+                )}
               </li>
             );
           })}
