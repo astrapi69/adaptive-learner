@@ -9,9 +9,41 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.62.0** (minor — **app-wide shadcn button
+- **Current state:** **v1.63.0** (minor — **6 recommended WCAG-AA theme
+  presets + systematic i18n audit + dashboard subject filter scoped to
+  the user**). **Theme presets:** the Appearance picker leads with a
+  **Recommended** sub-tab — `catppuccin-latte`/`supabase`/`graphite`
+  (light) + `catppuccin-mocha`/`soft-pop`/`amethyst-haze` (dark),
+  generated from tweakcn presets by
+  ``scripts/generate_preset_themes.py`` as full 43-token themes with
+  **computationally-enforced WCAG AA** (`contrast.test.ts` across all 12
+  themes); the classic 6 are unchanged. **i18n audit (#80):** the 77
+  seeded subject/category names rendered English everywhere — a new
+  ``subjects.*`` catalog (60 keys × 8 langs) + ``lib/subjectI18n.ts``
+  (`translateSubjectName`/`translateSubjectPath`, fallback to
+  ``subject.name`` for proper nouns) translate them; plus **92 `t()`
+  keys called in code but missing from every catalog** (the whole
+  `editor.*` toolbar, danger-zone, dashboard metrics, learning-path aria)
+  added + translated in all 8 langs. **Filter (#72):** the Dashboard
+  subject filter lists only the user's subjects (hidden when none).
+  **Fixes:** theme `accent-foreground` uses the on-accent colour for AA
+  (#82); `dashboard.no_data` key added (#84); a `backup_service` mypy
+  `no-any-return` (#87).
+  v1.62.0 = minor — **backup-restore data-integrity hardening +
+  GitHub-Pages build provenance + content cache-bust + UI/i18n
+  conformance**. Type-driven restore datetime coercion (#57) +
+  orphaned-child-row skip with a full FK-order audit (#64); Vite
+  ``__BUILD_HASH__``/``__BUILD_DATE__`` provenance so About stops showing
+  "unknown" (#66); content cache pruned on version change in both storage
+  modes (#62); sync section hidden without a backend (#51),
+  missing-vs-unsupported `exercise_type` fallback (#55), dashboard
+  ``taxonomy.*`` i18n keys (#76), shadcn buttons (#53/#68/#78), Language
+  panel first in the Learning tab (#69); new `.claude/rules` governance
+  (GITHUB-ISSUE-PFLICHT + ISSUE-LIFECYCLE, issues-as-queue,
+  docstrings-over-inline) + Bibliogon issue templates/labels.
+  v1.61.0 = minor — **app-wide shadcn button
   conformance + lesson resume-at-paused-step + cross-repo content
-  validation + backup-restore data-integrity fixes**). **Button audit:**
+  validation + backup-restore data-integrity fixes**. **Button audit:**
   ~200 action buttons across all 13 page areas converted to shadcn
   ``<Button>`` (correct variant, 44px, lucide icon + responsive label,
   preserved a11y/testids; exercise tiles / editor toggles / graph nodes
