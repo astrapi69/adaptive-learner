@@ -966,6 +966,7 @@ Detailed rules in `.claude/rules/`:
 
 **On demand:**
 - `code-hygiene.md` — linting, error handling, API conventions
+- `design-tokens.md` — design-token architecture (no hardcoded colors; see `docs/DESIGN-TOKENS.md`)
 - `lessons-learned.md` — known pitfalls
 - `quality-checks.md` — test strategy, pre-commit checklists
 - `ai-workflow.md` — feature/plugin order, docs protocol
