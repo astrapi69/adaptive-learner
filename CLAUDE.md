@@ -9,9 +9,30 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.64.0** (minor — **onboarding overhaul: a
+- **Current state:** **v1.65.0** (minor — **resumable assessment + an
+  Enter-key lesson shortcut + clearer matching exercises + a
+  design-token architecture pass**). **Resumable assessment (#106):**
+  abandoning the assessment partway persists the in-flight progress
+  (current question + answers + start time, project-scoped in
+  localStorage, mode-agnostic), the learner resumes where they left off,
+  and the Dashboard/Settings actively invite "Continue / Create / Retake
+  learning profile"; progress is cleared once the profile is computed.
+  **Enter-key shortcut (#103):** Enter checks an answered exercise then
+  advances; free-text/cloze fields submit on Enter (no newline); steps
+  aside for controls that own Enter; Settings > Learning toggle
+  (default on). **Design tokens (#101):** the last hardcoded colors in
+  ``global.css`` (danger text, highlighter mark, highlight.js palette,
+  toast shadow) route through tokens; the ``no-hardcoded-colors`` guard
+  now also covers non-theme CSS + fixed-palette Tailwind classes; new
+  ``docs/DESIGN-TOKENS.md`` + ``.claude`` rule. **Matching distinction
+  (#108):** the term/definition columns get theme-derived blue/green
+  tints + an aria-hidden A/B chip (not colour-only), via ``color-mix()``
+  tokens across all 12 themes, AA-verified. **Fix:** the assessment
+  result no longer overlaps the radar summary / table link with the
+  preferred-method badge (#105).
+  v1.64.0 = minor — **onboarding overhaul: a
   two-field quick start + an optional one-question-per-screen profile
-  wizard, with the assessment now opt-in**). **Onboarding (#92, #94):**
+  wizard, with the assessment now opt-in**. **Onboarding (#92, #94):**
   the quick-start form requires only **name + topic** (the rest take
   defaults); submitting then offers an invite — "Jump right in" goes
   straight to the Dashboard, "Set up profile" enters the new
