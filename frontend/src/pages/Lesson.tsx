@@ -78,6 +78,11 @@ import {useCountUp} from "../hooks/useCountUp";
 import {useFeedbackIntensity} from "../hooks/useFeedbackIntensity";
 import {useI18n} from "../hooks/useI18n";
 import {useLesson} from "../hooks/useLesson";
+import {useLessonShortcuts} from "../hooks/useLessonShortcuts";
+import {
+    decideLessonEnterAction,
+    type LessonEnterState,
+} from "../lib/lesson/lessonShortcutsPref";
 import {
     captureCelebrationSnapshot,
     celebrateProgressSince,
@@ -249,6 +254,15 @@ export default function LessonPage() {
     const exerciseRef = useRef<ExerciseHandle>(null);
     const [answerable, setAnswerable] = useState(false);
     const [checked, setChecked] = useState(false);
+    // Enter-key shortcut (#103). The listener is registered once and
+    // reads the latest step state through a ref (the state is computed
+    // after the loading guards, below). ``enterLockRef`` blocks a
+    // double Check between ``submit()`` and the ``checked`` flip.
+    const lessonShortcutsEnabled = useLessonShortcuts();
+    const enterStateRef = useRef<
+        (LessonEnterState & {goNext: () => void}) | null
+    >(null);
+    const enterLockRef = useRef(false);
     // BUG P1 / Problem 2 — when a step is ENTERED with a result
     // already stored, it renders locked (reviewed) so the learner
     // cannot re-answer it. ``reviewedRaw`` carries the persisted
@@ -282,6 +296,7 @@ export default function LessonPage() {
         setChecked(false);
         setEnteredReviewed(stored != null);
         setReviewedRaw(stored?.raw_answer ?? null);
+        enterLockRef.current = false;
     }
 
     // B2 (Tailwind migration) — scroll the viewport to the top on every
@@ -410,6 +425,51 @@ export default function LessonPage() {
         window.addEventListener("keydown", onKey);
         return () => window.removeEventListener("keydown", onKey);
     }, [tts, currentStepSpeech]);
+
+    // Keyboard shortcut (#103): Enter drives the two-phase Check / Next
+    // button. The listener reads the latest step state through
+    // ``enterStateRef`` (updated each render after the loading guards).
+    // It steps aside when another control owns Enter: a focused BUTTON
+    // / link (the footer Check/Next and the tile/option exercises
+    // activate natively), a TEXTAREA / SELECT (newlines / native), or
+    // an event a child already handled (FreeText submit calls
+    // ``preventDefault``). A plain text INPUT is left to this handler so
+    // Cloze blanks submit on Enter. ``enterLockRef`` blocks a double
+    // Check between ``submit()`` and the ``checked`` flip.
+    useEffect(() => {
+        if (!lessonShortcutsEnabled) return;
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key !== "Enter") return;
+            if (e.shiftKey || e.ctrlKey || e.metaKey || e.altKey) return;
+            if (e.isComposing || e.defaultPrevented) return;
+            const el = document.activeElement as HTMLElement | null;
+            const tag = el?.tagName;
+            if (
+                tag === "BUTTON" ||
+                tag === "A" ||
+                tag === "TEXTAREA" ||
+                tag === "SELECT" ||
+                el?.isContentEditable ||
+                el?.getAttribute("role") === "button"
+            ) {
+                return;
+            }
+            const nav = enterStateRef.current;
+            if (!nav) return;
+            const action = decideLessonEnterAction(nav);
+            if (action === "none") return;
+            e.preventDefault();
+            if (action === "check") {
+                if (enterLockRef.current) return;
+                enterLockRef.current = true;
+                exerciseRef.current?.submit();
+            } else {
+                nav.goNext();
+            }
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [lessonShortcutsEnabled]);
 
     // TTS feature C7 — continuous theory reading. "Read all" speaks a
     // run of consecutive theory steps as ONE utterance and auto-
@@ -645,6 +705,16 @@ export default function LessonPage() {
         step.exercise != null &&
         SUPPORTED_EXERCISE_TYPES.has(step.exercise.type);
     const isLastStep = currentStepIndex + 1 === totalSteps;
+    // Keep the Enter-shortcut listener (#103) reading the latest step
+    // state without re-subscribing on every render.
+    enterStateRef.current = {
+        isSummary,
+        isExerciseStep,
+        checked,
+        enteredReviewed,
+        answerable,
+        goNext,
+    };
     const progressPct = totalSteps === 0
         ? 100
         : Math.round((currentStepIndex / totalSteps) * 100);

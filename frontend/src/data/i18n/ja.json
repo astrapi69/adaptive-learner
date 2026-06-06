@@ -460,6 +460,8 @@
     "missions_reset_failed": "ミッションをリセットできませんでした。",
     "gestures": "スワイプジェスチャー",
     "gestures_description": "評価、セッション、カリキュラムをスワイプして移動します。",
+    "lesson_shortcuts": "レッスンのキーボードショートカット",
+    "lesson_shortcuts_description": "Enterキーで回答を確認し、もう一度Enterキーで次のステップに進みます。",
     "button_tooltips": "ボタンのツールチップを表示",
     "button_tooltips_description": "アイコンボタンにカーソルを合わせたとき、その機能を説明するツールチップを表示します。スクリーンリーダー用のラベルは、この設定に関わらず常に有効です。",
     "developer_mode": "開発者モード",
