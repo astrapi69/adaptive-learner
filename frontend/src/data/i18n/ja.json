@@ -470,6 +470,8 @@
     "profile_incomplete_hint": "未完了の診断があります。",
     "profile_redo_hint": "学習プロファイルを更新するには診断をやり直してください。",
     "profile_create_hint": "短い診断を受けて、パーソナライズされた学習プロファイルを取得しましょう。",
+    "lesson_shortcuts": "レッスンのキーボードショートカット",
+    "lesson_shortcuts_description": "Enterキーで回答を確認し、もう一度Enterキーで次のステップに進みます。",
     "button_tooltips": "ボタンのツールチップを表示",
     "button_tooltips_description": "アイコンボタンにカーソルを合わせたとき、その機能を説明するツールチップを表示します。スクリーンリーダー用のラベルは、この設定に関わらず常に有効です。",
     "developer_mode": "開発者モード",

@@ -57,24 +57,28 @@ export default function ProfileRadar({profile, height = 320}: ProfileRadarProps)
     );
     return (
         <div
-            className="profile-radar"
+            className="profile-radar flex flex-col gap-3"
             data-testid="profile-radar"
             role="img"
             aria-label={`${chartLabel}. ${summary}`}
-            // ``minHeight`` + ``minWidth: 0`` are load-bearing —
-            // see ProgressTimeline for the full explanation. The
-            // chart sits inside ``.dashboard-card`` which is
-            // ``display: flex; flex-direction: column``, so a
-            // child without explicit ``min-height`` collapses to
-            // 0 during the first layout pass.
-            style={{
-                width: "100%",
-                minWidth: 0,
-                height,
-                minHeight: height,
-            }}
+            style={{width: "100%", minWidth: 0}}
         >
-            <ResponsiveContainer
+            {/* The chart wrapper carries the explicit height so the
+                ``ChartSummary`` below can flow naturally instead of
+                overflowing a fixed-height box and overlapping the
+                next element (#105). ``minHeight`` + ``minWidth: 0``
+                are load-bearing — a 100%-height chart child collapses
+                to 0 on the first layout pass inside a flex column
+                (here and in ``.dashboard-card``) without them. */}
+            <div
+                style={{
+                    width: "100%",
+                    minWidth: 0,
+                    height,
+                    minHeight: height,
+                }}
+            >
+                <ResponsiveContainer
                 width="100%"
                 height="100%"
                 minWidth={0}
@@ -112,6 +116,7 @@ export default function ProfileRadar({profile, height = 320}: ProfileRadarProps)
                     />
                 </RadarChart>
             </ResponsiveContainer>
+            </div>
             <ChartSummary
                 summary={summary}
                 tableHeaders={[

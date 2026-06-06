@@ -470,6 +470,8 @@
     "profile_incomplete_hint": "Vous avez une évaluation inachevée.",
     "profile_redo_hint": "Refaites l'évaluation pour mettre à jour votre profil d'apprentissage.",
     "profile_create_hint": "Faites une courte évaluation pour obtenir un profil d'apprentissage personnalisé.",
+    "lesson_shortcuts": "Raccourcis clavier dans les leçons",
+    "lesson_shortcuts_description": "Appuyez sur Entrée pour vérifier votre réponse, puis à nouveau pour passer à l'étape suivante.",
     "button_tooltips": "Show button tooltips",
     "button_tooltips_description": "Show a hover tooltip on icon buttons explaining what they do. Screen-reader labels stay on regardless.",
     "developer_mode": "Mode développeur",

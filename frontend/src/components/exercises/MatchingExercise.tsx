@@ -419,9 +419,15 @@ function MatchingExercise(
             <div className="grid grid-cols-1 gap-3 min-[600px]:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-2">
                     <div
-                        className="text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
+                        className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
                         data-testid="matching-left-header"
                     >
+                        <span
+                            aria-hidden="true"
+                            className="inline-flex h-4 w-4 items-center justify-center rounded-[3px] bg-[var(--matching-side-a-bg)] text-[0.625rem] font-bold text-[var(--matching-side-a-fg)] ring-1 ring-[var(--border-strong)]"
+                        >
+                            A
+                        </span>
                         {leftLabel}
                     </div>
                     <ul
@@ -444,14 +450,14 @@ function MatchingExercise(
                                 <button
                                     type="button"
                                     className={cn(
-                                        "inline-flex min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-left text-[0.9375rem] text-[var(--fg)] transition-[background,border-color] duration-150 hover:bg-[var(--surface-2)] disabled:cursor-not-allowed",
+                                        "inline-flex min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-a-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-a-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
                                         isSelected &&
                                             "is-selected border-[3px] border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_15%,var(--surface))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--exercise-selected)_30%,transparent)] motion-safe:scale-[1.02] motion-safe:animate-[matching-pulse_0.5s_ease-in-out_infinite_alternate]",
                                         isPaired && "is-paired",
                                         isPaired &&
                                             !isCorrect &&
                                             !isWrong &&
-                                            "border-dashed border-[var(--exercise-matched)] bg-[color-mix(in_srgb,var(--exercise-matched)_12%,var(--surface))] opacity-60",
+                                            "border-dashed border-[var(--exercise-matched)] bg-[var(--matching-paired-bg)] text-[var(--matching-paired-fg)] opacity-60",
                                         isCorrect &&
                                             "is-correct border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]",
                                         isWrong &&
@@ -479,9 +485,15 @@ function MatchingExercise(
                 </div>
                 <div className="flex min-w-0 flex-col gap-2">
                     <div
-                        className="text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
+                        className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.04em] text-[var(--fg-muted)]"
                         data-testid="matching-right-header"
                     >
+                        <span
+                            aria-hidden="true"
+                            className="inline-flex h-4 w-4 items-center justify-center rounded-[3px] bg-[var(--matching-side-b-bg)] text-[0.625rem] font-bold text-[var(--matching-side-b-fg)] ring-1 ring-[var(--border-strong)]"
+                        >
+                            B
+                        </span>
                         {rightLabel}
                     </div>
                     <ul
@@ -501,9 +513,9 @@ function MatchingExercise(
                                 <button
                                     type="button"
                                     className={cn(
-                                        "inline-flex min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3 py-2 text-left text-[0.9375rem] text-[var(--fg)] transition-[background,border-color] duration-150 hover:bg-[var(--surface-2)] disabled:cursor-not-allowed",
+                                        "inline-flex min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-b-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-b-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
                                         isPaired &&
-                                            "is-paired border-dashed border-[var(--exercise-matched)] bg-[color-mix(in_srgb,var(--exercise-matched)_12%,var(--surface))] opacity-60",
+                                            "is-paired border-dashed border-[var(--exercise-matched)] bg-[var(--matching-paired-bg)] text-[var(--matching-paired-fg)] opacity-60",
                                         flashing &&
                                             "is-flash motion-safe:animate-[matching-flash_600ms_ease]",
                                     )}

@@ -443,6 +443,8 @@ settings:
   profile_incomplete_hint: "Você tem uma avaliação inacabada."
   profile_redo_hint: "Refaça a avaliação para atualizar o seu perfil de aprendizagem."
   profile_create_hint: "Faça uma breve avaliação para obter um perfil de aprendizagem personalizado."
+  lesson_shortcuts: "Atalhos de teclado nas lições"
+  lesson_shortcuts_description: "Pressione Enter para verificar a sua resposta e Enter novamente para ir para o próximo passo."
   button_tooltips: Mostrar dicas dos botões
   button_tooltips_description: "Mostra uma dica ao passar o cursor sobre botões com ícones explicando o que fazem. As legendas para leitores de ecrã permanecem ativas independentemente."
   developer_mode: Modo desenvolvedor

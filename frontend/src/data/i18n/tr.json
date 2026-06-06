@@ -470,6 +470,8 @@
     "profile_incomplete_hint": "Tamamlanmamış bir değerlendirmeniz var.",
     "profile_redo_hint": "Öğrenme profilinizi güncellemek için değerlendirmeyi yeniden yapın.",
     "profile_create_hint": "Kişiselleştirilmiş bir öğrenme profili için kısa bir değerlendirme yapın.",
+    "lesson_shortcuts": "Derslerde klavye kısayolları",
+    "lesson_shortcuts_description": "Cevabınızı kontrol etmek için Enter'a, sonraki adıma geçmek için tekrar Enter'a basın.",
     "button_tooltips": "Buton ipuçlarını göster",
     "button_tooltips_description": "Simge butonlarının üzerine gelindiğinde ne yaptıklarını açıklayan bir ipucu gösterir. Ekran okuyucu etiketleri ayardan bağımsız olarak her zaman açık kalır.",
     "developer_mode": "Geliştirici Modu",
