@@ -22,10 +22,23 @@ beforeEach(() => {
 });
 
 describe("ThemePicker", () => {
-    it("renders a card for auto plus all six themes", () => {
+    it("renders auto + the recommended themes by default; the Classic tab reveals the rest", () => {
         render(<ThemePicker />);
         for (const id of [
             "auto",
+            "catppuccin-latte",
+            "supabase",
+            "graphite",
+            "catppuccin-mocha",
+            "soft-pop",
+            "amethyst-haze",
+        ]) {
+            expect(screen.getByTestId(`settings-theme-${id}`)).toBeTruthy();
+        }
+        // Classic themes are hidden until the Classic sub-tab is selected.
+        expect(screen.queryByTestId("settings-theme-forest")).toBeNull();
+        fireEvent.click(screen.getByTestId("theme-group-classic"));
+        for (const id of [
             "light",
             "dark",
             "ocean",
@@ -39,6 +52,7 @@ describe("ThemePicker", () => {
 
     it("switching to a theme persists the choice and applies data-theme", () => {
         render(<ThemePicker />);
+        fireEvent.click(screen.getByTestId("theme-group-classic"));
         fireEvent.click(screen.getByTestId("settings-theme-forest"));
         expect(localStorage.getItem("adaptive-learner.theme")).toBe("forest");
         expect(document.documentElement.getAttribute("data-theme")).toBe("forest");

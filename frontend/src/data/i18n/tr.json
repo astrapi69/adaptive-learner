@@ -385,6 +385,9 @@
     "section_appearance": "Gorunum",
     "theme": "Tema",
     "theme_description": "Uygulamanin nasil gorunecegini secin. Otomatik, sisteminizin acik/koyu ayarini izler.",
+    "theme_group_recommended": "Önerilen",
+    "theme_group_classic": "Klasik",
+    "theme_groups": "Tema grupları",
     "tab_general": "Genel",
     "tab_ai": "Yapay zeka",
     "tab_learning": "Öğrenme",
@@ -1107,6 +1110,12 @@
   },
   "ui": {
     "themes": {
+      "catppuccin-latte": "Catppuccin Latte",
+      "supabase": "Supabase",
+      "graphite": "Graphite",
+      "catppuccin-mocha": "Catppuccin Mocha",
+      "soft-pop": "Soft Pop",
+      "amethyst-haze": "Amethyst Haze",
       "light": "Acik",
       "dark": "Koyu",
       "ocean": "Okyanus",

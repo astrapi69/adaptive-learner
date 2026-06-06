@@ -359,6 +359,9 @@ settings:
   section_appearance: "外観"
   theme: "テーマ"
   theme_description: "アプリの見た目を選びます。自動はシステムのライト/ダーク設定に従います。"
+  theme_group_recommended: "おすすめ"
+  theme_group_classic: "クラシック"
+  theme_groups: "テーマグループ"
   tab_general: "一般"
   tab_ai: "AI"
   tab_learning: "学習"
@@ -1015,6 +1018,12 @@ notebooklm:
 
 ui:
   themes:
+    "catppuccin-latte": "Catppuccin Latte"
+    "supabase": "Supabase"
+    "graphite": "Graphite"
+    "catppuccin-mocha": "Catppuccin Mocha"
+    "soft-pop": "Soft Pop"
+    "amethyst-haze": "Amethyst Haze"
     light: "ライト"
     dark: "ダーク"
     ocean: "オーシャン"

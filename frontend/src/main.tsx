@@ -17,6 +17,12 @@ import "./styles/themes/theme-ocean.css";
 import "./styles/themes/theme-forest.css";
 import "./styles/themes/theme-high-contrast.css";
 import "./styles/themes/theme-sepia.css";
+import "./styles/themes/theme-catppuccin-latte.css";
+import "./styles/themes/theme-supabase.css";
+import "./styles/themes/theme-graphite.css";
+import "./styles/themes/theme-catppuccin-mocha.css";
+import "./styles/themes/theme-soft-pop.css";
+import "./styles/themes/theme-amethyst-haze.css";
 import "./styles/global.css";
 
 /**

@@ -1,0 +1,50 @@
+/*
+ * Soft Pop (dark) — adopted from tweakcn soft-pop.
+ * WCAG AA verified (all text pairs >= 4.5:1; exercise/UI >= 3:1).
+ * Generated; see scripts/generate_preset_themes.py + issue #86.
+ */
+[data-theme="soft-pop"] {
+  --bg-primary: #000000;
+  --bg-secondary: #2dd4bf;
+  --bg-surface: #1a212b;
+  --bg-elevated: #1a212b;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --fg-primary: #ffffff;
+  --fg-secondary: #ededed;
+  --fg-muted: #cccccc;
+  --fg-inverse: #0a0a0a;
+  --border-primary: #545454;
+  --border-subtle: #2a2a2a;
+  --border-accent: #767676;
+  --interactive-bg: #0f0f0f;
+  --interactive-hover: #1a1a1a;
+  --interactive-active: #292929;
+  --interactive-disabled: #2dd4bf;
+  --accent: #818cf8;
+  --accent-hover: #939cf9;
+  --accent-fg: #0a0a0a;
+  --accent-subtle: rgba(129, 140, 248, 0.12);
+  --accent-rgb: 129, 140, 248;
+  --success: #4ade80;
+  --success-bg: rgba(74, 222, 128, 0.15);
+  --error: #f87171;
+  --error-bg: rgba(248, 113, 113, 0.15);
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.15);
+  --info: #60a5fa;
+  --info-bg: rgba(96, 165, 250, 0.15);
+  --exercise-correct: #4ade80;
+  --exercise-wrong: #f87171;
+  --exercise-selected: #818cf8;
+  --exercise-matched: #2dd4bf;
+  --star: #fbbf24;
+  --chart-1: #818cf8;
+  --chart-2: #2dd4bf;
+  --chart-3: #fcd34d;
+  --chart-4: #f472b6;
+  --chart-5: #4ade80;
+  --chart-6: #818cf8;
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.35), 0 8px 24px rgba(0,0,0,0.50);
+  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.50), 0 24px 48px rgba(0,0,0,0.70);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.55);
+}

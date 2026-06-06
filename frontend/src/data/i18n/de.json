@@ -385,6 +385,9 @@
     "section_appearance": "Darstellung",
     "theme": "Farbschema",
     "theme_description": "Lege fest, wie die App aussieht. Automatisch folgt der Hell-/Dunkel-Einstellung deines Systems.",
+    "theme_group_recommended": "Empfohlen",
+    "theme_group_classic": "Klassisch",
+    "theme_groups": "Theme-Gruppen",
     "tab_general": "Allgemein",
     "tab_ai": "KI",
     "tab_learning": "Lernen",
@@ -1107,6 +1110,12 @@
   },
   "ui": {
     "themes": {
+      "catppuccin-latte": "Catppuccin Latte",
+      "supabase": "Supabase",
+      "graphite": "Graphite",
+      "catppuccin-mocha": "Catppuccin Mocha",
+      "soft-pop": "Soft Pop",
+      "amethyst-haze": "Amethyst Haze",
       "light": "Hell",
       "dark": "Dunkel",
       "ocean": "Ozean",

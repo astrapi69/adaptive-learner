@@ -1,0 +1,50 @@
+/*
+ * Catppuccin Mocha (dark) — adopted from tweakcn catppuccin (Mocha).
+ * WCAG AA verified (all text pairs >= 4.5:1; exercise/UI >= 3:1).
+ * Generated; see scripts/generate_preset_themes.py + issue #86.
+ */
+[data-theme="catppuccin-mocha"] {
+  --bg-primary: #181825;
+  --bg-secondary: #585b70;
+  --bg-surface: #1e1e2e;
+  --bg-elevated: #45475a;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+  --fg-primary: #cdd6f4;
+  --fg-secondary: #bfc8e5;
+  --fg-muted: #a6adc8;
+  --fg-inverse: #0a0a0a;
+  --border-primary: #313244;
+  --border-subtle: #242534;
+  --border-accent: #505367;
+  --interactive-bg: #232331;
+  --interactive-hover: #2a2b3a;
+  --interactive-active: #353646;
+  --interactive-disabled: #585b70;
+  --accent: #cba6f7;
+  --accent-hover: #d2b2f8;
+  --accent-fg: #0a0a0a;
+  --accent-subtle: rgba(203, 166, 247, 0.12);
+  --accent-rgb: 203, 166, 247;
+  --success: #4ade80;
+  --success-bg: rgba(74, 222, 128, 0.15);
+  --error: #f38ba8;
+  --error-bg: rgba(243, 139, 168, 0.15);
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.15);
+  --info: #60a5fa;
+  --info-bg: rgba(96, 165, 250, 0.15);
+  --exercise-correct: #4ade80;
+  --exercise-wrong: #f38ba8;
+  --exercise-selected: #cba6f7;
+  --exercise-matched: #2dd4bf;
+  --star: #fbbf24;
+  --chart-1: #cba6f7;
+  --chart-2: #89dceb;
+  --chart-3: #a6e3a1;
+  --chart-4: #fab387;
+  --chart-5: #f5e0dc;
+  --chart-6: #cba6f7;
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.35), 0 8px 24px rgba(0,0,0,0.50);
+  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.50), 0 24px 48px rgba(0,0,0,0.70);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.55);
+}
