@@ -117,6 +117,25 @@ export function namespacedSetId(owner: string, setId: string): string {
   return `${owner}/${setId}`;
 }
 
+/** Auto-sync threshold: re-sync a connected user repo on app start when
+ *  the last sync is older than this (EXP-023 Phase A). */
+export const SYNC_THRESHOLD_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * True when a connected repo is due for an automatic sync: never synced,
+ * or last synced more than {@link SYNC_THRESHOLD_MS} ago. An unparseable
+ * timestamp is treated as due (re-sync rather than skip forever).
+ */
+export function isUserRepoSyncDue(
+  lastSynced: string | null,
+  now: number = Date.now(),
+): boolean {
+  if (!lastSynced) return true;
+  const when = Date.parse(lastSynced);
+  if (Number.isNaN(when)) return true;
+  return now - when > SYNC_THRESHOLD_MS;
+}
+
 /**
  * Read the persisted user-repo config, or ``null`` when none is
  * configured. Never throws — a missing/oversized settings row resolves to
