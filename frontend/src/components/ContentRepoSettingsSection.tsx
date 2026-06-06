@@ -27,6 +27,7 @@ import {
   RefreshCw,
   Share2,
   Shield,
+  ShieldQuestion,
   Trash2,
 } from "lucide-react";
 
@@ -176,13 +177,22 @@ export default function ContentRepoSettingsSection() {
     async (source: string) => {
       setBusy(true);
       try {
-        const { setCount, lessonCount } = await syncUserRepo(source);
+        const { setCount, lessonCount, trust } = await syncUserRepo(source);
         await refresh();
-        notify.success(
-          t("content_repo.synced", "Synced: {sets} sets, {lessons} lessons.")
-            .replace("{sets}", String(setCount))
-            .replace("{lessons}", String(lessonCount)),
-        );
+        if (trust === 0) {
+          notify.error(
+            t(
+              "content_repo.trust.dropped",
+              "Synced, but validation failed — this repository is now marked Unverified.",
+            ),
+          );
+        } else {
+          notify.success(
+            t("content_repo.synced", "Synced: {sets} sets, {lessons} lessons.")
+              .replace("{sets}", String(setCount))
+              .replace("{lessons}", String(lessonCount)),
+          );
+        }
       } catch {
         notify.error(
           t("content_repo.error.sync_failed", "Sync failed. Try again."),
@@ -342,13 +352,21 @@ export default function ContentRepoSettingsSection() {
                   <span className="text-xs text-[var(--fg-muted)]">
                     @{repo.branch}
                   </span>
-                  {repo.trust === 1 && (
+                  {repo.trust === 1 ? (
                     <span
                       className="inline-flex items-center gap-1 rounded-sm bg-[var(--success-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--success)]"
                       data-testid={`content-repo-trust-${repo.owner}-${repo.repo}`}
                     >
                       <Shield className="h-3 w-3" aria-hidden="true" />
                       {t("content_repo.trust.validated", "Validated")}
+                    </span>
+                  ) : (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-sm bg-[var(--warning-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--warning)]"
+                      data-testid={`content-repo-trust-${repo.owner}-${repo.repo}`}
+                    >
+                      <ShieldQuestion className="h-3 w-3" aria-hidden="true" />
+                      {t("content_repo.trust.unknown", "Unverified")}
                     </span>
                   )}
                   {repo.coach && (

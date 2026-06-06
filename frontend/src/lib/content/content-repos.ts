@@ -19,6 +19,8 @@
  */
 
 import { getStorage } from "../../storage";
+import { validateUserRepo } from "./content-repo-validate";
+import { resolveRepoToken } from "./repo-token";
 
 /** Plugin whose settings hold the content sources + the user repos. */
 export const CONTENT_LOADER_PLUGIN = "content-loader";
@@ -242,13 +244,17 @@ export async function moveUserRepo(
 export interface SyncResult {
   setCount: number;
   lessonCount: number;
+  /** Trust level after the sync's automatic re-validation. */
+  trust: TrustLevel;
 }
 
 /**
- * Download + cache every set ONE user repo advertises, then persist its
- * refreshed counts + ``last_synced``. Storage-agnostic (goes through
- * ``getStorage().contentLoader``); both modes already include the repo in
- * their active sources. Throws when the source is not in the list.
+ * Download + cache every set ONE user repo advertises, re-validate it, and
+ * persist refreshed counts + ``last_synced`` + ``trust``. Storage-agnostic
+ * (via ``getStorage().contentLoader``); both modes already include the repo
+ * in their active sources. Re-validation runs on every sync — a repo that
+ * stops passing drops to trust 0 (the caller can warn). Throws when the
+ * source is not in the list.
  */
 export async function syncUserRepo(source: string): Promise<SyncResult> {
   const repos = await readUserRepos();
@@ -258,6 +264,7 @@ export async function syncUserRepo(source: string): Promise<SyncResult> {
   if (index === -1) {
     throw new Error(`Repository ${source} is not connected.`);
   }
+  const target = repos[index];
   const storage = getStorage();
   const { sets } = await storage.contentLoader.listSets();
   const repoSets = sets.filter((entry) => entry.source === source);
@@ -266,13 +273,19 @@ export async function syncUserRepo(source: string): Promise<SyncResult> {
     await storage.contentLoader.downloadSet(entry.source, entry.id);
     lessonCount += entry.lesson_count ?? 0;
   }
+  const validation = await validateUserRepo(
+    { owner: target.owner, repo: target.repo, branch: target.branch },
+    resolveRepoToken(source),
+  );
+  const trust: TrustLevel = validation.ok ? 1 : 0;
   repos[index] = {
-    ...repos[index],
+    ...target,
     connected: true,
     last_synced: new Date().toISOString(),
     set_count: repoSets.length,
     lesson_count: lessonCount,
+    trust,
   };
   await writeUserRepos(repos);
-  return { setCount: repoSets.length, lessonCount };
+  return { setCount: repoSets.length, lessonCount, trust };
 }

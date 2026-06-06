@@ -90,7 +90,11 @@ import {
 } from "../lib/content/lesson-export";
 import { getStorage } from "../storage";
 import { USER_GENERATED_SOURCE } from "../storage/types";
-import { isOfficialSource } from "../lib/content/content-repos";
+import {
+  isOfficialSource,
+  readUserRepos,
+  userRepoSource,
+} from "../lib/content/content-repos";
 import type {
   ContentLesson,
   ContentSetEntry,
@@ -142,6 +146,27 @@ export default function ContentPage() {
   // "Other source languages" section is collapsed by default.
   const [otherExpanded, setOtherExpanded] = useState(false);
   // EXP-023 Phase A — source filter over the content tree.
+  // EXP-023 Phase B — per-repo trust/coach lookup for source badges.
+  const [repoMeta, setRepoMeta] = useState<
+    Record<string, { trust: number; coach: boolean }>
+  >({});
+  useEffect(() => {
+    let cancelled = false;
+    void readUserRepos().then((repos) => {
+      if (cancelled) return;
+      const map: Record<string, { trust: number; coach: boolean }> = {};
+      for (const r of repos) {
+        map[userRepoSource(r.owner, r.repo)] = {
+          trust: r.trust ?? 0,
+          coach: Boolean(r.coach),
+        };
+      }
+      setRepoMeta(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const [sourceFilter, setSourceFilter] = useState<
     "all" | "official" | "user"
   >("all");
@@ -803,12 +828,28 @@ export default function ContentPage() {
                 : t("content.source.github", "GitHub")}
             </span>
             {!isOfficialSource(entry.source) && (
-              <span
-                className="ml-1 rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]"
-                data-testid={`content-set-${entry.id}-origin`}
-              >
-                {t("content.origin.user", "Your repo")}
-              </span>
+              <>
+                <span
+                  className="ml-1 rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]"
+                  data-testid={`content-set-${entry.id}-origin`}
+                >
+                  {repoMeta[entry.source]?.coach
+                    ? t("content.origin.coach", "Coach")
+                    : t("content.origin.user", "Your repo")}
+                </span>
+                <span
+                  className={
+                    repoMeta[entry.source]?.trust === 1
+                      ? "ml-1 rounded-sm bg-[var(--success-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--success)]"
+                      : "ml-1 rounded-sm bg-[var(--warning-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--warning)]"
+                  }
+                  data-testid={`content-set-${entry.id}-trust`}
+                >
+                  {repoMeta[entry.source]?.trust === 1
+                    ? t("content.trust.validated", "Validated")
+                    : t("content.trust.unknown", "Unverified")}
+                </span>
+              </>
             )}
           </h4>
           <p className="content-set-tags">

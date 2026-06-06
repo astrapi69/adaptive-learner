@@ -18,6 +18,10 @@ vi.mock("../../storage", () => ({
   }),
 }));
 
+const { validateUserRepo } = vi.hoisted(() => ({ validateUserRepo: vi.fn() }));
+vi.mock("./content-repo-validate", () => ({ validateUserRepo }));
+vi.mock("./repo-token", () => ({ resolveRepoToken: () => "" }));
+
 import {
   addUserRepo,
   isOfficialSource,
@@ -50,6 +54,8 @@ beforeEach(() => {
   update.mockReset();
   listSets.mockReset();
   downloadSet.mockReset();
+  validateUserRepo.mockReset();
+  validateUserRepo.mockResolvedValue({ ok: true, setCount: 0, lessonCount: 0 });
   update.mockResolvedValue({ plugin: "content-loader", settings: {} });
 });
 
@@ -173,7 +179,7 @@ describe("syncUserRepo(source)", () => {
     downloadSet.mockResolvedValue({});
 
     const res = await syncUserRepo("jane/a");
-    expect(res).toEqual({ setCount: 2, lessonCount: 12 });
+    expect(res).toEqual({ setCount: 2, lessonCount: 12, trust: 1 });
     expect(downloadSet).toHaveBeenCalledTimes(2);
     expect(downloadSet).toHaveBeenCalledWith("jane/a", "deck-1");
 
@@ -181,8 +187,20 @@ describe("syncUserRepo(source)", () => {
     const jane = body.settings.user_repos.find(
       (r: UserContentRepo) => r.repo === "a",
     );
-    expect(jane).toMatchObject({ set_count: 2, lesson_count: 12 });
+    expect(jane).toMatchObject({ set_count: 2, lesson_count: 12, trust: 1 });
     expect(jane.last_synced).toEqual(expect.any(String));
+  });
+
+  it("re-validation failure drops trust to 0", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a")] },
+    });
+    listSets.mockResolvedValue({ sets: [{ source: "jane/a", id: "d", lesson_count: 1 }] });
+    downloadSet.mockResolvedValue({});
+    validateUserRepo.mockResolvedValue({ ok: false, reason: "bad" });
+    const res = await syncUserRepo("jane/a");
+    expect(res.trust).toBe(0);
   });
 
   it("throws when the source is not connected", async () => {
