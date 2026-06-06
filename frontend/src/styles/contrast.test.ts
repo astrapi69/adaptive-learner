@@ -116,6 +116,47 @@ describe("shadcn accent-foreground passes AA on the brand accent (#82)", () => {
     }
 });
 
+describe("#96 — --accent used as TEXT (ghost hint / link) passes AA", () => {
+    // The exercise ghost-hint + reveal links render `--accent-text` as
+    // normal text on the exercise surface / page background (e.g.
+    // ClozeExercise / FreeTextExercise / WordTilesExercise /
+    // MatchingExercise). `--accent` itself is a FILL color and is not
+    // always readable as text (supabase mint on white = 1.54), so the
+    // readable `--accent-text` token exists for that purpose and is what
+    // this pin guards. bg-elevated only needs large-text/UI AA (the hint
+    // never renders there).
+    for (const id of THEME_IDS) {
+        const t = () => THEME_TOKENS[id];
+
+        it(`theme=${id}: accent-text on bg-primary + surface passes normal-text AA`, () => {
+            for (const bg of ["bg-primary", "bg-surface"]) {
+                expect(
+                    contrastRatio(t()["accent-text"], t()[bg]),
+                    `accent-text on ${bg}`,
+                ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+            }
+        });
+
+        it(`theme=${id}: accent-text on bg-elevated passes large-text/UI AA`, () => {
+            expect(
+                contrastRatio(t()["accent-text"], t()["bg-elevated"]),
+                "accent-text on bg-elevated",
+            ).toBeGreaterThanOrEqual(AA_LARGE_TEXT_OR_UI);
+        });
+    }
+
+    it("catppuccin-mocha: --accent on bg-elevated meets normal-text AA (#96 nudge)", () => {
+        // The reported gap: mocha's accent (#cba6f7) on the old elevated
+        // surface (#45475a) was 4.49 — a hair under AA. bg-elevated was
+        // nudged to Catppuccin surface0 (#313244) to clear 4.5.
+        const tokens = THEME_TOKENS["catppuccin-mocha"];
+        expect(
+            contrastRatio(tokens["accent"], tokens["bg-elevated"]),
+            "mocha accent on bg-elevated",
+        ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+    });
+});
+
 describe("Phase 39 C5 — method-badge contrast (WCAG SC 1.4.3)", () => {
     for (const method of LEARNING_METHODS) {
         it(`method=${method}: text color picked by bestTextOn meets AA`, () => {

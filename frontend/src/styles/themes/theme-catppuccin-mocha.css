@@ -7,7 +7,7 @@
   --bg-primary: #181825;
   --bg-secondary: #585b70;
   --bg-surface: #1e1e2e;
-  --bg-elevated: #45475a;
+  --bg-elevated: #313244;
   --bg-overlay: rgba(0, 0, 0, 0.6);
   --fg-primary: #cdd6f4;
   --fg-secondary: #bfc8e5;
@@ -23,6 +23,7 @@
   --accent: #cba6f7;
   --accent-hover: #d2b2f8;
   --accent-fg: #0a0a0a;
+  --accent-text: #cba6f7;
   --accent-subtle: rgba(203, 166, 247, 0.12);
   --accent-rgb: 203, 166, 247;
   --success: #4ade80;

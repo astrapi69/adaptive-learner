@@ -360,7 +360,7 @@ function ClozeExercise(
                             variant="ghost"
                             size="sm"
                             type="button"
-                            className="text-[var(--accent)] hover:underline"
+                            className="text-[var(--accent-text)] hover:underline"
                             onClick={() => setShowHint(true)}
                             data-testid="cloze-hint-show"
                         >

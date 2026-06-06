@@ -407,7 +407,7 @@ function MatchingExercise(
                 >
                     <span>{leftLabel}</span>
                     <span
-                        className="font-bold text-[var(--accent)]"
+                        className="font-bold text-[var(--accent-text)]"
                         aria-hidden="true"
                     >
                         &rarr;
