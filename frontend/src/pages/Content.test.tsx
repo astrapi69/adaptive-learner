@@ -786,8 +786,10 @@ describe("ContentPage — source filter + origin badge (#118)", () => {
       screen.getByTestId("content-set-language-fr-a1"),
     ).toBeInTheDocument();
 
-    // Filtering to "Your repo" drops the official row instead.
-    fireEvent.click(screen.getByTestId("content-source-filter-user"));
+    // Filtering to the specific user repo drops the official row instead.
+    fireEvent.click(
+      screen.getByTestId("content-source-filter-jane/my-content"),
+    );
     await waitFor(() => {
       expect(screen.queryByTestId("content-set-language-fr-a1")).toBeNull();
     });

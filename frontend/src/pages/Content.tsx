@@ -167,9 +167,9 @@ export default function ContentPage() {
       cancelled = true;
     };
   }, []);
-  const [sourceFilter, setSourceFilter] = useState<
-    "all" | "official" | "user"
-  >("all");
+  // EXP-023 Phase B — source filter: "all" / "official" / a specific
+  // user-repo source ("owner/repo").
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
   // Phase 60 — community-share validation gate.
   const [shareTarget, setShareTarget] = useState<ContentSetEntry | null>(null);
   const [shareResult, setShareResult] = useState<ValidationResult | null>(null);
@@ -792,14 +792,18 @@ export default function ContentPage() {
   // level tree, ranked by the learner's active source languages.
   // EXP-023 Phase A — when a user repo is connected, offer a source
   // filter (Alle / Offiziell / Eigenes Repo) over the tree.
-  const hasUserRepoSets = downloadedSets.some(
-    (s) => !isOfficialSource(s.source),
-  );
+  const userRepoSources = [
+    ...new Set(
+      downloadedSets
+        .filter((s) => !isOfficialSource(s.source))
+        .map((s) => s.source),
+    ),
+  ];
+  const hasUserRepoSets = userRepoSources.length > 0;
   const visibleSets = downloadedSets.filter((s) => {
     if (sourceFilter === "all") return true;
-    return sourceFilter === "official"
-      ? isOfficialSource(s.source)
-      : !isOfficialSource(s.source);
+    if (sourceFilter === "official") return isOfficialSource(s.source);
+    return s.source === sourceFilter;
   });
   const tree = buildContentTree(visibleSets, activeSources);
 
@@ -1478,13 +1482,16 @@ export default function ContentPage() {
           aria-label={t("content.filter.aria", "Filter by source")}
           data-testid="content-source-filter"
         >
-          {(
-            [
-              ["all", t("content.filter.all", "All")],
-              ["official", t("content.filter.official", "Official")],
-              ["user", t("content.filter.user", "Your repo")],
-            ] as const
-          ).map(([value, label]) => (
+          {[
+            ["all", t("content.filter.all", "All")] as [string, string],
+            ["official", t("content.filter.official", "Official")] as [
+              string,
+              string,
+            ],
+            ...userRepoSources.map(
+              (src) => [src, src] as [string, string],
+            ),
+          ].map(([value, label]) => (
             <Button
               key={value}
               type="button"
