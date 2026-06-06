@@ -9,6 +9,7 @@ import AboutTab from "../components/about/AboutTab";
 import IdentitySection from "../components/about/IdentitySection";
 import BackupSection from "../components/BackupSection";
 import CacheManagementSection from "../components/CacheManagementSection";
+import ContentRepoSettingsSection from "../components/ContentRepoSettingsSection";
 import DangerZoneSection from "../components/DangerZoneSection";
 import ExportSection from "../components/ExportSection";
 import GitHubIntegrationSection from "../components/GitHubIntegrationSection";
@@ -1244,6 +1245,7 @@ export default function Settings() {
         <BackupSection />
         <ExportSection />
         {resolveStorageMode() === "api" && <IdentitySection t={t} />}
+        <ContentRepoSettingsSection />
         <CacheManagementSection />
         <DangerZoneSection />
       </div>
