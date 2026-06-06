@@ -359,6 +359,9 @@ settings:
   section_appearance: "Appearance"
   theme: "Theme"
   theme_description: "Choose how the app looks. Auto follows your system light/dark setting."
+  theme_group_recommended: "Recommended"
+  theme_group_classic: "Classic"
+  theme_groups: "Theme groups"
   tab_general: "General"
   tab_ai: "AI"
   tab_learning: "Learning"
@@ -1015,6 +1018,12 @@ notebooklm:
 
 ui:
   themes:
+    "catppuccin-latte": "Catppuccin Latte"
+    "supabase": "Supabase"
+    "graphite": "Graphite"
+    "catppuccin-mocha": "Catppuccin Mocha"
+    "soft-pop": "Soft Pop"
+    "amethyst-haze": "Amethyst Haze"
     light: "Light"
     dark: "Dark"
     ocean: "Ocean"

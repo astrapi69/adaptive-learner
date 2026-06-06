@@ -385,6 +385,9 @@
     "section_appearance": "Aparencia",
     "theme": "Tema",
     "theme_description": "Escolha a aparencia do aplicativo. Automatico segue a configuracao clara/escura do sistema.",
+    "theme_group_recommended": "Recomendados",
+    "theme_group_classic": "Clássicos",
+    "theme_groups": "Grupos de temas",
     "tab_general": "Geral",
     "tab_ai": "IA",
     "tab_learning": "Aprendizagem",
@@ -1107,6 +1110,12 @@
   },
   "ui": {
     "themes": {
+      "catppuccin-latte": "Catppuccin Latte",
+      "supabase": "Supabase",
+      "graphite": "Graphite",
+      "catppuccin-mocha": "Catppuccin Mocha",
+      "soft-pop": "Soft Pop",
+      "amethyst-haze": "Amethyst Haze",
       "light": "Claro",
       "dark": "Escuro",
       "ocean": "Oceano",

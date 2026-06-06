@@ -18,7 +18,13 @@ export type ThemeId =
     | "ocean"
     | "forest"
     | "high-contrast"
-    | "sepia";
+    | "sepia"
+    | "catppuccin-latte"
+    | "supabase"
+    | "graphite"
+    | "catppuccin-mocha"
+    | "soft-pop"
+    | "amethyst-haze";
 
 /** The user's selectable choice: a concrete theme or OS-follow. */
 export type ThemeChoice = ThemeId | "auto";
@@ -29,6 +35,12 @@ export interface ThemeMeta {
     label: string;
     /** Whether the theme is light- or dark-family (used for grouping). */
     family: "light" | "dark";
+    /**
+     * Settings sub-tab grouping. ``recommended`` are the WCAG-AA-verified
+     * open-source shadcn presets (default tab); ``classic`` are the
+     * original hand-built themes, kept so nobody's active choice breaks.
+     */
+    group: "recommended" | "classic";
     /** Representative colors for the Settings preview card. */
     swatch: {
         bg: string;
@@ -40,39 +52,87 @@ export interface ThemeMeta {
 
 export const THEMES: readonly ThemeMeta[] = [
     {
+        id: "catppuccin-latte",
+        label: "Catppuccin Latte",
+        family: "light",
+        group: "recommended",
+        swatch: {bg: "#eff1f5", surface: "#ffffff", accent: "#8839ef", fg: "#4c4f69"},
+    },
+    {
+        id: "supabase",
+        label: "Supabase",
+        family: "light",
+        group: "recommended",
+        swatch: {bg: "#fcfcfc", surface: "#fcfcfc", accent: "#72e3ad", fg: "#171717"},
+    },
+    {
+        id: "graphite",
+        label: "Graphite",
+        family: "light",
+        group: "recommended",
+        swatch: {bg: "#f0f0f0", surface: "#f5f5f5", accent: "#606060", fg: "#333333"},
+    },
+    {
+        id: "catppuccin-mocha",
+        label: "Catppuccin Mocha",
+        family: "dark",
+        group: "recommended",
+        swatch: {bg: "#181825", surface: "#1e1e2e", accent: "#cba6f7", fg: "#cdd6f4"},
+    },
+    {
+        id: "soft-pop",
+        label: "Soft Pop",
+        family: "dark",
+        group: "recommended",
+        swatch: {bg: "#000000", surface: "#1a212b", accent: "#818cf8", fg: "#ffffff"},
+    },
+    {
+        id: "amethyst-haze",
+        label: "Amethyst Haze",
+        family: "dark",
+        group: "recommended",
+        swatch: {bg: "#1a1823", surface: "#232030", accent: "#a995c9", fg: "#e0ddef"},
+    },
+    {
         id: "light",
         label: "Light",
         family: "light",
+        group: "classic",
         swatch: {bg: "#ffffff", surface: "#f8fafc", accent: "#4f46e5", fg: "#1a1a1a"},
     },
     {
         id: "dark",
         label: "Dark",
         family: "dark",
+        group: "classic",
         swatch: {bg: "#0f0f10", surface: "#1c1c20", accent: "#818cf8", fg: "#ececec"},
     },
     {
         id: "ocean",
         label: "Ocean",
         family: "dark",
+        group: "classic",
         swatch: {bg: "#0b1f33", surface: "#123150", accent: "#38bdf8", fg: "#e6f0fa"},
     },
     {
         id: "forest",
         label: "Forest",
         family: "dark",
+        group: "classic",
         swatch: {bg: "#14201a", surface: "#1f322a", accent: "#e0a458", fg: "#eef3ec"},
     },
     {
         id: "high-contrast",
         label: "High Contrast",
         family: "dark",
+        group: "classic",
         swatch: {bg: "#000000", surface: "#0a0a0a", accent: "#ffff00", fg: "#ffffff"},
     },
     {
         id: "sepia",
         label: "Sepia",
         family: "light",
+        group: "classic",
         swatch: {bg: "#f4ecd8", surface: "#faf3e0", accent: "#9a5b2d", fg: "#3b2f1e"},
     },
 ];

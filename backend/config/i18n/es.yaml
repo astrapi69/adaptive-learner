@@ -359,6 +359,9 @@ settings:
   section_appearance: "Apariencia"
   theme: "Tema"
   theme_description: "Elige el aspecto de la aplicacion. Automatico sigue la configuracion clara/oscura del sistema."
+  theme_group_recommended: "Recomendados"
+  theme_group_classic: "Clásicos"
+  theme_groups: "Grupos de temas"
   tab_general: "General"
   tab_ai: "IA"
   tab_learning: "Aprendizaje"
@@ -1015,6 +1018,12 @@ notebooklm:
 
 ui:
   themes:
+    "catppuccin-latte": "Catppuccin Latte"
+    "supabase": "Supabase"
+    "graphite": "Graphite"
+    "catppuccin-mocha": "Catppuccin Mocha"
+    "soft-pop": "Soft Pop"
+    "amethyst-haze": "Amethyst Haze"
     light: "Claro"
     dark: "Oscuro"
     ocean: "Oceano"

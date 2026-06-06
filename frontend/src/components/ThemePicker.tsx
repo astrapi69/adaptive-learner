@@ -13,6 +13,8 @@
  * come from the themes registry (data), not from hardcoded literals.
  */
 
+import {useState} from "react";
+
 import {useI18n} from "../hooks/useI18n";
 import {useTheme} from "../hooks/useTheme";
 import {THEMES, type ThemeChoice} from "../lib/themes";
@@ -50,8 +52,15 @@ function ThemeSwatch({
 export default function ThemePicker() {
     const {t} = useI18n();
     const {choice, setChoice} = useTheme();
-    const light = THEMES[0].swatch;
-    const dark = THEMES[1].swatch;
+    // Open the sub-tab that holds the user's active theme so an existing
+    // (classic) choice stays visible; new users land on Recommended.
+    const [group, setGroup] = useState<"recommended" | "classic">(() => {
+        const active = THEMES.find((meta) => meta.id === choice);
+        return active?.group ?? "recommended";
+    });
+    const light = THEMES.find((meta) => meta.family === "light")!.swatch;
+    const dark = THEMES.find((meta) => meta.family === "dark")!.swatch;
+    const groupThemes = THEMES.filter((meta) => meta.group === group);
 
     const renderCard = (
         id: ThemeChoice,
@@ -89,6 +98,32 @@ export default function ThemePicker() {
                     "Choose how the app looks. Auto follows your system light/dark setting.",
                 )}
             </span>
+            <div
+                className="mb-3 inline-flex gap-1 rounded-md border border-border p-1"
+                role="tablist"
+                aria-label={t("settings.theme_groups", "Theme groups")}
+            >
+                {(["recommended", "classic"] as const).map((groupId) => (
+                    <button
+                        key={groupId}
+                        type="button"
+                        role="tab"
+                        aria-selected={group === groupId}
+                        onClick={() => setGroup(groupId)}
+                        data-testid={`theme-group-${groupId}`}
+                        className={
+                            "min-h-11 rounded px-3 text-sm font-medium transition-colors " +
+                            (group === groupId
+                                ? "bg-accent text-accent-fg"
+                                : "text-fg-muted hover:text-fg-primary")
+                        }
+                    >
+                        {groupId === "recommended"
+                            ? t("settings.theme_group_recommended", "Recommended")
+                            : t("settings.theme_group_classic", "Classic")}
+                    </button>
+                ))}
+            </div>
             <div className="theme-picker-grid" role="presentation">
                 {renderCard(
                     "auto",
@@ -101,7 +136,7 @@ export default function ThemePicker() {
                         <span style={{background: dark.bg}} />
                     </span>,
                 )}
-                {THEMES.map((meta) =>
+                {groupThemes.map((meta) =>
                     renderCard(
                         meta.id,
                         t(`ui.themes.${meta.id}`, meta.label),

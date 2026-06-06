@@ -385,6 +385,9 @@
     "section_appearance": "Εμφάνιση",
     "theme": "Θέμα",
     "theme_description": "Επίλεξε πώς φαίνεται η εφαρμογή. Το αυτόματο ακολουθεί τη ρύθμιση φωτεινό/σκούρο του συστήματος.",
+    "theme_group_recommended": "Προτεινόμενα",
+    "theme_group_classic": "Κλασικά",
+    "theme_groups": "Ομάδες θεμάτων",
     "tab_general": "Γενικά",
     "tab_ai": "ΤΝ",
     "tab_learning": "Μάθηση",
@@ -1107,6 +1110,12 @@
   },
   "ui": {
     "themes": {
+      "catppuccin-latte": "Catppuccin Latte",
+      "supabase": "Supabase",
+      "graphite": "Graphite",
+      "catppuccin-mocha": "Catppuccin Mocha",
+      "soft-pop": "Soft Pop",
+      "amethyst-haze": "Amethyst Haze",
       "light": "Φωτεινό",
       "dark": "Σκούρο",
       "ocean": "Ωκεανός",

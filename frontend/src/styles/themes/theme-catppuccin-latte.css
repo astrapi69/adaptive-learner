@@ -1,0 +1,50 @@
+/*
+ * Catppuccin Latte (light) — adopted from tweakcn catppuccin (Latte).
+ * WCAG AA verified (all text pairs >= 4.5:1; exercise/UI >= 3:1).
+ * Generated; see scripts/generate_preset_themes.py + issue #86.
+ */
+[data-theme="catppuccin-latte"] {
+  --bg-primary: #eff1f5;
+  --bg-secondary: #ccd0da;
+  --bg-surface: #ffffff;
+  --bg-elevated: #ccd0da;
+  --bg-overlay: rgba(0, 0, 0, 0.45);
+  --fg-primary: #4c4f69;
+  --fg-secondary: #555870;
+  --fg-muted: #67697e;
+  --fg-inverse: #ffffff;
+  --border-primary: #bcc0cc;
+  --border-subtle: #d6d8e0;
+  --border-accent: #a6a9b8;
+  --interactive-bg: #e5e7ed;
+  --interactive-hover: #dfe1e7;
+  --interactive-active: #d5d7df;
+  --interactive-disabled: #ccd0da;
+  --accent: #8839ef;
+  --accent-hover: #7531ce;
+  --accent-fg: #ffffff;
+  --accent-subtle: rgba(136, 57, 239, 0.12);
+  --accent-rgb: 136, 57, 239;
+  --success: #147a3a;
+  --success-bg: rgba(20, 122, 58, 0.15);
+  --error: #d20f39;
+  --error-bg: rgba(210, 15, 57, 0.15);
+  --warning: #ab4f09;
+  --warning-bg: rgba(171, 79, 9, 0.15);
+  --info: #1d4ed8;
+  --info-bg: rgba(29, 78, 216, 0.15);
+  --exercise-correct: #147a3a;
+  --exercise-wrong: #d20f39;
+  --exercise-selected: #8839ef;
+  --exercise-matched: #0d9488;
+  --star: #d97706;
+  --chart-1: #8839ef;
+  --chart-2: #04a5e5;
+  --chart-3: #40a02b;
+  --chart-4: #fe640b;
+  --chart-5: #dc8a78;
+  --chart-6: #8839ef;
+  --shadow-card: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+  --shadow-elevated: 0 4px 12px rgba(0,0,0,0.06), 0 24px 48px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.07);
+}
