@@ -91,34 +91,48 @@ const OFFICIAL_SOURCE = "astrapi69/adaptive-learner-content";
 const CONTENT_LOADER_PLUGIN = "content-loader";
 
 /**
- * The user's own content repository as a source, read from the
- * ``content-loader`` plugin settings (``user_repo``). Returns null when
- * no repo is connected. EXP-023 Phase A.
+ * The connected user repos as sources, read from the ``content-loader``
+ * plugin settings (``user_repos`` array; Phase A single ``user_repo`` is
+ * migrated). Returns them in list order (precedence: later wins).
+ * EXP-023 Phase B.
  */
-async function userContentSource(): Promise<ContentSetSource | null> {
+async function userContentSources(): Promise<ContentSetSource[]> {
   try {
     const row = await getDb().pluginSettings.get(CONTENT_LOADER_PLUGIN);
-    const repo = (row?.settings as Record<string, unknown> | undefined)
-      ?.user_repo as
-      | { owner?: string; repo?: string; branch?: string; connected?: boolean }
-      | undefined;
-    if (!repo?.owner || !repo?.repo || !repo.connected) return null;
-    return {
-      source: `${repo.owner}/${repo.repo}`,
-      branch: repo.branch || "main",
-    };
+    const bag = row?.settings as Record<string, unknown> | undefined;
+    const list = Array.isArray(bag?.user_repos)
+      ? (bag.user_repos as unknown[])
+      : bag?.user_repo
+        ? [bag.user_repo]
+        : [];
+    const out: ContentSetSource[] = [];
+    for (const item of list) {
+      const repo = item as {
+        owner?: string;
+        repo?: string;
+        branch?: string;
+        connected?: boolean;
+      };
+      if (repo?.owner && repo?.repo && repo.connected) {
+        out.push({
+          source: `${repo.owner}/${repo.repo}`,
+          branch: repo.branch || "main",
+        });
+      }
+    }
+    return out;
   } catch {
-    return null;
+    return [];
   }
 }
 
 /**
- * The sources the loader should consult: the official defaults plus the
- * connected user repo (additive, official first). EXP-023 Phase A.
+ * The sources the loader should consult: the official defaults plus every
+ * connected user repo (additive, official first; user repos in list order
+ * so a later repo wins a collision). EXP-023 Phase A/B.
  */
 export async function activeSourcesDexie(): Promise<ContentSetSource[]> {
-  const user = await userContentSource();
-  return user ? [...DEFAULT_SOURCES, user] : [...DEFAULT_SOURCES];
+  return [...DEFAULT_SOURCES, ...(await userContentSources())];
 }
 
 /**
@@ -361,12 +375,18 @@ export function dedupeContentEntries(
       winners.set(entry.id, entry);
       continue;
     }
-    // EXP-023 Phase A — the user's own repo always wins a same-id
-    // collision with the official content, regardless of version.
+    // EXP-023 Phase A/B — a user repo always wins a same-id collision
+    // with the official content. Between two user repos, the one later
+    // in the source order (= later in the user's repo list, higher
+    // precedence) wins.
     const currentOfficial = isOfficial(current.source);
     const entryOfficial = isOfficial(entry.source);
     if (currentOfficial !== entryOfficial) {
       if (currentOfficial) winners.set(entry.id, entry);
+      continue;
+    }
+    if (!entryOfficial) {
+      winners.set(entry.id, entry);
       continue;
     }
     const cmp = compareVersions(entry.version, current.version);

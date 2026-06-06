@@ -13,8 +13,9 @@ import { useEffect } from "react";
 
 import {
   isUserRepoSyncDue,
-  readUserRepo,
+  readUserRepos,
   syncUserRepo,
+  userRepoSource,
 } from "../lib/content/content-repos";
 
 export function useContentRepoAutoSync(): void {
@@ -24,13 +25,15 @@ export function useContentRepoAutoSync(): void {
       if (typeof navigator !== "undefined" && navigator.onLine === false) {
         return;
       }
-      const repo = await readUserRepo();
-      if (cancelled || !repo?.connected) return;
-      if (!isUserRepoSyncDue(repo.last_synced)) return;
-      try {
-        await syncUserRepo();
-      } catch {
-        /* background sync is best-effort; manual Sync is the recovery path */
+      const repos = await readUserRepos();
+      for (const repo of repos) {
+        if (cancelled) return;
+        if (!repo.connected || !isUserRepoSyncDue(repo.last_synced)) continue;
+        try {
+          await syncUserRepo(userRepoSource(repo.owner, repo.repo));
+        } catch {
+          /* background sync is best-effort; manual Sync is the recovery */
+        }
       }
     })();
     return () => {

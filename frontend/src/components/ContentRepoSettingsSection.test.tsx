@@ -1,6 +1,6 @@
 /**
- * Render + interaction tests for the content-repository settings section
- * (EXP-023 Phase A, commit 1 — config UI).
+ * Render + interaction tests for the multi-repo content-repository section
+ * (EXP-023 Phase B).
  */
 
 import "@testing-library/jest-dom/vitest";
@@ -10,12 +10,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const pluginGet = vi.fn();
 const pluginUpdate = vi.fn();
 const listSets = vi.fn();
+const downloadSet = vi.fn();
 const githubGetStatus = vi.fn();
 
 vi.mock("../storage", () => ({
   getStorage: () => ({
     pluginSettings: { get: pluginGet, update: pluginUpdate },
-    contentLoader: { listSets },
+    contentLoader: { listSets, downloadSet },
     github: { getStatus: githubGetStatus },
   }),
 }));
@@ -29,24 +30,50 @@ vi.mock("../utils/notify", () => ({
   notify: { error: notifyError, success: notifySuccess },
 }));
 vi.mock("../lib/content/content-repo-validate", () => ({ validateUserRepo }));
+vi.mock("../lib/content/repo-token", () => ({
+  resolveRepoToken: () => "",
+  writeRepoToken: vi.fn(),
+  clearRepoToken: vi.fn(),
+}));
 
 import ContentRepoSettingsSection from "./ContentRepoSettingsSection";
+
+const REPO = {
+  url: "https://github.com/jane/deck",
+  owner: "jane",
+  repo: "deck",
+  branch: "main",
+  connected: true,
+  last_synced: "2026-06-06T10:00:00.000Z",
+  set_count: 2,
+  lesson_count: 12,
+  trust: 1 as const,
+};
 
 beforeEach(() => {
   pluginGet.mockReset();
   pluginUpdate.mockReset();
   listSets.mockReset();
+  downloadSet.mockReset();
   githubGetStatus.mockReset();
   notifyError.mockReset();
   notifySuccess.mockReset();
   validateUserRepo.mockReset();
-  validateUserRepo.mockResolvedValue({ ok: true, setCount: 2, lessonCount: 12 });
-  pluginGet.mockResolvedValue({
-    plugin: "content-loader",
-    settings: { default_sources: [{ source: "official", branch: "main" }] },
-  });
-  pluginUpdate.mockResolvedValue({ plugin: "content-loader", settings: {} });
+  validateUserRepo.mockResolvedValue({ ok: true, setCount: 1, lessonCount: 4 });
+  downloadSet.mockResolvedValue({});
   githubGetStatus.mockResolvedValue({ configured: true, source: "browser" });
+  // Stateful settings so read-modify-write (add -> sync) reflects writes.
+  let settings: Record<string, unknown> = {
+    default_sources: [{ source: "official", branch: "main" }],
+  };
+  pluginGet.mockImplementation(async () => ({
+    plugin: "content-loader",
+    settings,
+  }));
+  pluginUpdate.mockImplementation(async (_name, body) => {
+    settings = body.settings;
+    return { plugin: "content-loader", settings };
+  });
   listSets.mockResolvedValue({
     sets: [
       {
@@ -54,26 +81,35 @@ beforeEach(() => {
         id: "fr-a1",
         lesson_count: 10,
       },
-      {
-        source: "bundled:adaptive-learner-content",
-        id: "es-a1",
-        lesson_count: 5,
-      },
-      { source: "jane/my-content", id: "x", lesson_count: 99 },
+      { source: "jane/deck", id: "d1", lesson_count: 4 },
     ],
   });
 });
 
-describe("ContentRepoSettingsSection", () => {
-  it("shows the official repo with cached counts (official only)", async () => {
+describe("ContentRepoSettingsSection (multi-repo)", () => {
+  it("shows the official card with official-only counts", async () => {
     render(<ContentRepoSettingsSection />);
     const counts = await screen.findByTestId("content-repo-official-counts");
-    // 2 official sets (canonical + bundled), 15 lessons; the user set excluded.
-    expect(counts).toHaveTextContent("2");
-    expect(counts).toHaveTextContent("15");
+    expect(counts).toHaveTextContent("1");
+    expect(counts).toHaveTextContent("10");
   });
 
-  it("rejects an invalid URL without saving", async () => {
+  it("lists connected repos with trust badge", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [REPO] },
+    });
+    render(<ContentRepoSettingsSection />);
+    expect(await screen.findByTestId("content-repo-list")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("content-repo-item-jane-deck"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("content-repo-trust-jane-deck"),
+    ).toBeInTheDocument();
+  });
+
+  it("rejects an invalid URL without writing", async () => {
     render(<ContentRepoSettingsSection />);
     fireEvent.change(await screen.findByTestId("content-repo-url"), {
       target: { value: "not a repo" },
@@ -83,31 +119,25 @@ describe("ContentRepoSettingsSection", () => {
     expect(pluginUpdate).not.toHaveBeenCalled();
   });
 
-  it("validates then saves a valid repo (read-modify-write preserves sources)", async () => {
+  it("validates, adds (appends to user_repos), and syncs", async () => {
     render(<ContentRepoSettingsSection />);
     fireEvent.change(await screen.findByTestId("content-repo-url"), {
-      target: { value: "https://github.com/jane/my-content" },
+      target: { value: "https://github.com/jane/deck" },
     });
     fireEvent.click(screen.getByTestId("content-repo-connect"));
     await waitFor(() => expect(pluginUpdate).toHaveBeenCalled());
-    expect(validateUserRepo).toHaveBeenCalledWith({
-      owner: "jane",
-      repo: "my-content",
-      branch: "main",
-    });
+    expect(validateUserRepo).toHaveBeenCalled();
+    expect(downloadSet).toHaveBeenCalledWith("jane/deck", "d1");
     const [, body] = pluginUpdate.mock.calls[0];
-    expect(body.settings.default_sources).toBeDefined();
-    expect(body.settings.user_repo).toMatchObject({
+    expect(body.settings.user_repos[0]).toMatchObject({
       owner: "jane",
-      repo: "my-content",
-      branch: "main",
+      repo: "deck",
       connected: true,
-      set_count: 2,
-      lesson_count: 12,
+      trust: 1,
     });
   });
 
-  it("shows the failure reason and does not save on invalid content", async () => {
+  it("shows the failure reason and does not write on invalid content", async () => {
     validateUserRepo.mockResolvedValue({
       ok: false,
       setCount: 0,
@@ -119,30 +149,23 @@ describe("ContentRepoSettingsSection", () => {
       target: { value: "https://github.com/jane/empty" },
     });
     fireEvent.click(screen.getByTestId("content-repo-connect"));
-    const result = await screen.findByTestId("content-repo-result");
-    expect(result).toHaveTextContent("no sets");
+    await screen.findByText(/no sets/i);
     expect(pluginUpdate).not.toHaveBeenCalled();
   });
 
-  it("shows the Sync button once a repo is connected", async () => {
+  it("removes a repo only after a confirm click", async () => {
     pluginGet.mockResolvedValue({
       plugin: "content-loader",
-      settings: {
-        default_sources: [],
-        user_repo: {
-          url: "https://github.com/jane/my-content",
-          owner: "jane",
-          repo: "my-content",
-          branch: "main",
-          connected: true,
-          last_synced: null,
-          set_count: 2,
-          lesson_count: 12,
-        },
-      },
+      settings: { user_repos: [REPO] },
     });
     render(<ContentRepoSettingsSection />);
-    expect(await screen.findByTestId("content-repo-sync")).toBeInTheDocument();
+    const remove = await screen.findByTestId("content-repo-remove-jane-deck");
+    fireEvent.click(remove);
+    expect(pluginUpdate).not.toHaveBeenCalled(); // first click = arm confirm
+    fireEvent.click(screen.getByTestId("content-repo-remove-jane-deck"));
+    await waitFor(() => expect(pluginUpdate).toHaveBeenCalled());
+    const [, body] = pluginUpdate.mock.calls[0];
+    expect(body.settings.user_repos).toEqual([]);
   });
 
   it("hints to set a token when none is configured", async () => {
