@@ -1124,7 +1124,7 @@ All under `plugins/`. Routes mounted at `/api/plugins/<name>/*`.
 | anki | /cards CRUD, /extract/{session,conversation}, /mark-exported | AI-extracted flashcards + .apkg export |
 | notebooklm | /questions CRUD, /generate/{session,project}, /study-guide/{id} | Active-recall questions + study guide + ZIP export |
 | learning-repo | /render/{id}, /export-zip/{id}, /persist/{id} | Article-3 Git-backed Learning Repository (Markdown artefacts + opt-in `git commit` + `cycle-N-mastered` tags) |
-| content-loader | /sets, /sets/{src}/{id}/download, /sets/{src}/{id}/lessons[/{filename}] | EXP-002 — downloads structured lesson sets from public GitHub repos, caches locally (FS + Dexie). Foundation of the v1.27.0 no-API-key path. |
+| content-loader | /sets, /sets/{src}/{id}/download, /sets/{src}/{id}/lessons[/{filename}] | EXP-002 — downloads structured lesson sets from public GitHub repos, caches locally (FS + Dexie). Foundation of the v1.27.0 no-API-key path. EXP-023 Phase A (#118): besides the official repo, one **user content repository** can be connected (Settings > Data), validated, synced (manual + 24h auto), cached, and browsed with a source badge/filter — both modes, source-as-identifier + `isOfficialSource()`. |
 | missions | /templates, /today/{user_id}, /regenerate/{user_id} | EXP-010 — daily missions: deterministic adaptive per-user/per-day goals (static catalog) evaluated against existing data; `UserMission` is the only new table. |
 
 All 10 hooks live in `backend/app/hookspecs.py`:
