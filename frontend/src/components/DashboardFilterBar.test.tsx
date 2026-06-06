@@ -274,8 +274,13 @@ describe("DashboardFilterBar", () => {
         const options = Array.from(select.querySelectorAll("option")).map(
             (o) => o.textContent ?? "",
         );
-        expect(options.some((o) => o.includes("Languages"))).toBe(true);
-        expect(options.some((o) => o.includes("Programming"))).toBe(true);
+        // The placeholder + the two attached subjects (Languages,
+        // Programming) — exactly three options. Seeded subject names are
+        // translated via subjects.* (#80), so assert by structure rather
+        // than the English label. The unused global subject is custom
+        // (no catalog key) and renders verbatim, so its absence is a
+        // direct text check.
+        expect(options.length).toBe(3);
         expect(options.some((o) => o.includes("Astrophysics"))).toBe(false);
     });
 

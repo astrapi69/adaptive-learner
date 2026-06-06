@@ -72,3 +72,34 @@ describe("dashboard.no_data i18n coverage (#84)", () => {
     });
   }
 });
+
+describe("subjects.* data-i18n coverage (#80)", () => {
+  const enSubjects = en.subjects as Record<string, string>;
+  const enKeys = Object.keys(enSubjects).sort();
+
+  it("en defines a non-empty subjects section", () => {
+    expect(enKeys.length).toBeGreaterThan(0);
+  });
+
+  for (const [lang, catalog] of Object.entries(CATALOGS)) {
+    it(`${lang} defines exactly the same subjects keys as en`, () => {
+      const subjects = catalog.subjects as
+        | Record<string, string>
+        | undefined;
+      expect(subjects, `${lang} has no subjects section`).toBeTruthy();
+      expect(Object.keys(subjects ?? {}).sort()).toEqual(enKeys);
+      for (const key of enKeys) {
+        expect(
+          subjects?.[key],
+          `${lang}.subjects.${key} is empty`,
+        ).toBeTruthy();
+      }
+    });
+  }
+
+  it("category names are actually translated in de (regression for the bug report)", () => {
+    const de = CATALOGS.de.subjects as Record<string, string>;
+    expect(de.sciences).toBe("Naturwissenschaften");
+    expect(de.mathematics).toBe("Mathematik");
+  });
+});

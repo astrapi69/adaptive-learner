@@ -21,6 +21,7 @@ common:
   optional: isteğe bağlı
   required: zorunlu
   minutes: dakika
+  close: "Kapat"
 nav:
   learning_path: "Öğrenme yolu"
   dashboard: Pano
@@ -44,6 +45,8 @@ nav:
   mode_badge_tooltip_ai: "Yapay zeka sağlayıcısı yapılandırıldı — alıştırmalar dikkat dağıtıcılar ve ipuçları için yapay zeka kullanır. İçerik setlerine göz atmak için dokunun."
   mode_badge_label_content: "Mod: Yalnızca içerik"
   mode_badge_label_ai: "Mod: Yapay Zeka + İçerik"
+  sync_paired: "Eşitleme: eşleşti (Ayarlar > Eşitleme)"
+  sync_unpaired: "Eşitleme: eşleşmedi (Ayarlar > Eşitleme)"
 import:
   title: Bir konuşmayı içe aktar
   subtitle: ChatGPT, Claude veya Gemini ile yaptığın bir konuşmayı yapıştır ya da yükle ve anında öğrenme içgörüleri al.
@@ -120,6 +123,9 @@ import:
   delete_success: Konuşma silindi.
   delete_error: Konuşma silinemedi.
   duplicate_detected: Bu konuşma zaten içe aktarılmıştı. Mevcut kayıt gösteriliyor.
+  chat_language: "Sohbet dili (konuştuğunuz)"
+  learning_language: "Öğrenme dili"
+  select_language: "Bir dil seçin…"
 curriculum:
   title: Müfredat
   active: Aktif müfredat
@@ -144,6 +150,14 @@ curriculum:
   lesson_saved: Ders kaydedildi.
   lesson_deleted: Ders silindi.
   lesson_delete_confirm: Bu ders silinsin mi?
+  add_description: "Açıklama ekle"
+  description_aria: "Müfredat açıklaması"
+  description_placeholder: "Neden bu müfredat? Neleri kapsıyor?"
+  description_saved: "Açıklama kaydedildi."
+  edit_description: "Açıklamayı düzenle"
+  lesson_content_aria: "Ders içeriği"
+  lesson_content_placeholder: "Ders içeriği — başlıkları, listeleri, kod bloklarını, bağlantıları destekler."
+  no_description: "Henüz açıklama yok."
 landing:
   title: Adaptive Learner
   subtitle: Sana uyum sağlayan öğrenme.
@@ -182,6 +196,10 @@ onboarding:
   skip_default_topic: Öğrenmem
   skip_default_goal: Öğrenme tarzımı keşfetmek.
   skip_default_timeframe: Esnek
+  field_tags: "Etiketler"
+  field_tags_hint: "Virgülle ayrılmış. Mevcut etiketleri yeniden kullanın veya anında yenilerini oluşturun."
+  field_tags_placeholder: "exam-prep, daily-practice"
+  subject_suggestions: "Önerilen konular (atamak için dokunun):"
 assessment:
   title: Öğrenme tipi değerlendirmesi
   intro: On iki kısa soru öğrenme profilini belirler. Doğru ya da yanlış cevap yok — içgüdüne güven.
@@ -194,6 +212,7 @@ assessment:
   dominant_method: Tercih edilen yöntem
   continue_to_dashboard: Panoya devam et
   read_summary: Özeti oku
+  swipe_hint: "Gezinmek için sola / sağa kaydırın (veya ok tuşlarını kullanın)."
 dashboard:
   no_data: "Henüz veri yok."
   title: Pano
@@ -227,6 +246,17 @@ dashboard:
       verb_conjugation: "Fiil çekimi"
       word_order: "Kelime sırası"
     mastery_split: 'Tanıma: {receptive} · Üretim: {productive}'
+  create_lesson: "Ders oluştur"
+  metric_mean_stress: "Ortalama stres"
+  metric_mean_understanding: "Ortalama anlama"
+  metric_streak: "Gün serisi"
+  metric_total_minutes: "Toplam dakika"
+  metric_total_sessions: "Toplam oturum"
+  pronunciation_quick_start: "Telaffuz alıştırması"
+  spaced_dismiss: "Kapat"
+  spaced_empty: "Şu an tazelenecek bir şey yok. Harika tempo!"
+  spaced_interval_label: "Tekrar:"
+  spaced_start: "Başla"
 adaptive:
   page_title: "Uyarlanabilir ders"
   session_title: "Uyarlanabilir ders"
@@ -304,6 +334,9 @@ session:
   next_topic: 'Sonraki konu:'
   step_reason_tooltip: Neden bu adım?
   offline_start_blocked: Çevrimdışısın. Yeni oturumlar için ağ bağlantısı gerekli — geçmiş oturumlar Pano'dan okunabilir kalır.
+  peek_step_prefix: "Adım"
+  rating_notes_aria: "Oturum notları"
+  rating_notes_placeholder: "Ne işe yaradı, ne yaramadı, bir dahaki sefere ne denenmeli…"
 progress:
   title: İlerleme
   chart_timeline: Zaman içinde anlayış ve stres
@@ -322,6 +355,8 @@ progress:
   step_eval_advances: Adım ilerlemeleri
   step_eval_backward: Geri geçişler
   step_eval_stickiest_label: 'En çok zaman:'
+  commit_notes_aria: "Oturum notları"
+  session_count: "Oturumlar"
 settings:
   tab_integrations: "Entegrasyonlar"
   github:
@@ -524,6 +559,20 @@ settings:
     hint: "Uzun bir sohbet analizini çevrimdışı ders olarak kaydederken, bu sayıdan fazla adıma sahip dersler otomatik olarak birden fazla parçaya bölünür."
     label: Bölüm başına adım sayısı
     range_hint: "(varsayılan {default}, aralık {min}–{max})"
+  danger_zone_backup_button: "Yedek oluştur"
+  danger_zone_backup_offer: "Önce bir yedek oluşturulsun mu?"
+  danger_zone_cancel: "İptal"
+  danger_zone_complete_toast: "Tüm veriler silindi."
+  danger_zone_confirm_prompt: "Onaylamak için RESET yazın"
+  danger_zone_continue: "Devam"
+  danger_zone_failed_toast: "Sıfırlama başarısız:"
+  danger_zone_final_button: "Kalıcı olarak sil"
+  danger_zone_heading: "Tehlikeli bölge"
+  danger_zone_input_placeholder: "RESET"
+  danger_zone_intro: "Bu cihazdaki tüm öğrenme durumunu kalıcı olarak silin."
+  danger_zone_reset_button: "Her şeyi sıfırla"
+  danger_zone_warning: "Bu, TÜM öğrenme verilerinizi kalıcı olarak siler — oturumlar, ilerleme, profiller, müfredatlar, içe aktarmalar, Anki kartları, ayarlar ve API anahtarları. Bu işlem GERİ ALINAMAZ."
+  section_sync: "Eşitleme"
 methods:
   deductive:
     label: Tümdengelimsel
@@ -581,6 +630,7 @@ toast:
   api_key_restored: "Son çalışan anahtar geri yüklendi."
   api_key_deleted: API anahtarı kaldırıldı.
   method_switched: Yöntem değiştirildi.
+  onboarding_skipped: "Hoş geldiniz! Daha sonra ince ayar yapabilirsiniz."
 install:
   title: Ana ekrana ekle
   subtitle: "Daha iyi çevrimdışı kullanım için Adaptive Learner'ı uygulama olarak yükleyin."
@@ -1042,6 +1092,7 @@ ui:
     network: "Sunucuya bağlanılamıyor."
     timeout: "İstek çok uzun sürdü."
     generic: "Bir şeyler ters gitti. Lütfen daha sonra tekrar dene."
+    unexpected: "Bir şeyler ters gitti."
   error_report:
     dialog_title: "Bir sorun bildir"
     intro: "Adaptive Learner bir hata yakaladı ve geliştirici için bir hata raporu hazırlayabilir."
@@ -1086,6 +1137,7 @@ ui:
     feature_pronunciation: "for pronunciation practice"
   common:
     close: "Kapat"
+    loading: "Yükleniyor…"
   a11y:
     # Phase 39 (WCAG 2.1 AA). Skip link for SC 2.4.1.
     skip_to_content: "Ana içeriğe atla"
@@ -1101,6 +1153,7 @@ ui:
     chart_distribution_summary: "En çok kullanılan yöntem: {method} ({count} oturum, {pct}%)"
     streak_cell_label: "{date} tarihinde {count} oturum"
     streak_cell_label_zero: "{date} tarihinde oturum yok"
+    chart_radar_value: "Puan"
   tooltips:
     delete: "Sil"
     edit: "Düzenle"
@@ -1246,6 +1299,7 @@ repo:
     download_zip: "ZIP indir"
     persist: "Git'e kaydet"
     persisting: "Kaydediliyor…"
+    persist_dexie_tooltip: "Git sürümleme yalnızca sunucu modunda kullanılabilir."
   toast:
     zip_downloaded: "ZIP indirildi"
     persisted: "Git'e kaydedildi"
@@ -1257,6 +1311,7 @@ repo:
   widget:
     title: "Öğrenme deposu"
     open: "Depoyu aç"
+    subtitle: "Bu projenin ilerlemesinin, notlarının ve yol haritasının sürümlenmiş anlık görüntüsü."
   settings:
     title: "Öğrenme deposu"
     loading: "Yükleniyor…"
@@ -1269,6 +1324,8 @@ repo:
       load: "Ayarlar yüklenemedi"
       save: "Ayarlar kaydedilemedi"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
+    description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
+    enable_git: "Git kalıcılığını etkinleştir (POST /persist uç noktası)"
 lesson:
   tts:
     read_aloud: "Sesli oku"
@@ -1603,6 +1660,7 @@ content:
     level_too_complex: "'{lesson}' dersi: metin yüzde ortalama {avg} kelime, {level} seviyesi için yüksek (yaklaşık {cap} beklenir)."
     source_language_heuristic: Kart arka yüzleri {found} diline özgü karakterler içeriyor, ancak kaynak dil '{lang}'.
     target_language_heuristic: Kart ön yüzleri {found} diline özgü karakterler içeriyor, ancak hedef dil '{lang}'.
+    failed_share_anyway: "Kalite kontrolü sorunlar buldu. Yine de paylaşabilirsiniz — incelemeciler bulguları pull request'te görecek."
   ai_validation:
     intro: Bir yapay zekâ ayrıca çeviri doğruluğunu, dil bilgisini ve seviye uygunluğunu kontrol edebilir.
     privacy: Dersinizin içeriği {provider} sağlayıcısına gönderilecek. Hiçbir kişisel veri iletilmez.
@@ -1926,9 +1984,11 @@ learning_path:
     receptive_short: "A"
     productive_short: "Ü"
     exercises: "{n} alıştırma"
+    xp: "XP"
   group:
     mastery: "{r} alımlayıcı, {p} üretici ustalaşıldı"
     progress_aria: "{total} dersin {completed} tanesi tamamlandı"
+    toggle_aria: "{title} seti — {total} dersten {completed} tanesi tamamlandı"
   search_placeholder: "Ders ara…"
   filter:
     status: "Durum filtresi"
@@ -1944,11 +2004,17 @@ learning_path:
     lessons: "Dersler"
     receptive: "Alımlayıcı"
     productive: "Üretici"
+    lessons_aria: "{total} dersten {done} tanesi tamamlandı"
+    productive_aria: "{n} ders üretici olarak öğrenildi"
+    receptive_aria: "{n} ders algısal olarak öğrenildi"
+    region_label: "Öğrenme yolu istatistikleri"
   clusters:
     toggle: "Hata kümelerini göster"
     empty: "Henüz ortak hata deseni yok — pratiğe devam edin."
     lessons: "{n} ders"
     start_adaptive: "Uyarlanabilir ders başlat"
+    region_label: "Hata kümeleri paneli"
+  search_label: "Dersleri ara — ilk eşleşmeye gitmek için Enter'a basın"
 pwa:
   offline_message: "Çevrimdışısınız. Kaydedilen içerik kullanılabilir."
   online_message: "Tekrar çevrimiçi!"
@@ -1987,3 +2053,96 @@ taxonomy:
   no_user_tags_short: "Henüz etiket yok."
   no_matching_projects: "Eşleşen proje yok."
   no_projects: "Henüz proje yok."
+
+# Konu adları (data-i18n). Anahtar = normalleştirilmiş İngilizce ad
+# (backend/config/seed/subjects.yaml). Özel adlar (Python, JavaScript,
+# React, ...) anahtara sahip değildir ve her dilde subject.name değerine
+# geri döner.
+subjects:
+  languages: "Diller"
+  mathematics: "Matematik"
+  programming: "Programlama"
+  sciences: "Bilimler"
+  music: "Müzik"
+  humanities: "Beşeri Bilimler"
+  social_sciences: "Sosyal Bilimler"
+  skills: "Beceriler"
+  english: "İngilizce"
+  spanish: "İspanyolca"
+  french: "Fransızca"
+  german: "Almanca"
+  greek: "Yunanca"
+  italian: "İtalyanca"
+  portuguese: "Portekizce"
+  japanese: "Japonca"
+  chinese: "Çince"
+  turkish: "Türkçe"
+  grammar: "Dilbilgisi"
+  vocabulary: "Kelime Bilgisi"
+  conversation: "Konuşma"
+  arithmetic: "Aritmetik"
+  algebra: "Cebir"
+  geometry: "Geometri"
+  trigonometry: "Trigonometri"
+  calculus: "Kalkülüs"
+  statistics: "İstatistik"
+  linear_algebra: "Doğrusal Cebir"
+  discrete_mathematics: "Ayrık Matematik"
+  basics: "Temeller"
+  frameworks: "Çatılar"
+  data_science: "Veri Bilimi"
+  algorithms: "Algoritmalar"
+  data_structures: "Veri Yapıları"
+  design_patterns: "Tasarım Desenleri"
+  databases: "Veritabanları"
+  physics: "Fizik"
+  chemistry: "Kimya"
+  biology: "Biyoloji"
+  astronomy: "Astronomi"
+  earth_sciences: "Yer Bilimleri"
+  theory: "Teori"
+  piano: "Piyano"
+  guitar: "Gitar"
+  violin: "Keman"
+  singing: "Şarkı Söyleme"
+  composition: "Kompozisyon"
+  history: "Tarih"
+  philosophy: "Felsefe"
+  literature: "Edebiyat"
+  art_history: "Sanat Tarihi"
+  economics: "Ekonomi"
+  psychology: "Psikoloji"
+  sociology: "Sosyoloji"
+  political_science: "Siyaset Bilimi"
+  writing: "Yazma"
+  public_speaking: "Topluluk Önünde Konuşma"
+  photography: "Fotoğrafçılık"
+  design: "Tasarım"
+  cooking: "Yemek Pişirme"
+editor:
+  align_center: "Ortala"
+  align_left: "Sola hizala"
+  align_right: "Sağa hizala"
+  blockquote: "Alıntı"
+  bold: "Kalın (Ctrl+B)"
+  bullet_list: "Madde işaretli liste"
+  character_count: "{count} karakter"
+  code_block: "Kod bloğu"
+  code_block_copied: "Kopyalandı"
+  code_block_copy: "Kodu kopyala"
+  code_block_language: "Kod bloğu dili"
+  h1: "Başlık 1"
+  h2: "Başlık 2"
+  h3: "Başlık 3"
+  highlight: "Vurgula"
+  inline_code: "Satır içi kod"
+  italic: "İtalik (Ctrl+I)"
+  link: "Bağlantı ekle"
+  link_prompt: "URL (bağlantıyı kaldırmak için boş bırakın)"
+  ordered_list: "Numaralı liste"
+  redo: "Yinele (Ctrl+Shift+Z)"
+  strike: "Üstü çizili"
+  task_list: "Görev listesi"
+  toolbar_label: "Metin biçimlendirme"
+  underline: "Altı çizili (Ctrl+U)"
+  undo: "Geri al (Ctrl+Z)"

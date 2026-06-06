@@ -22,7 +22,8 @@
     "no": "いいえ",
     "optional": "任意",
     "required": "必須",
-    "minutes": "分"
+    "minutes": "分",
+    "close": "閉じる"
   },
   "nav": {
     "learning_path": "学習パス",
@@ -46,7 +47,9 @@
     "mode_badge_tooltip_content": "API キーが設定されていません — 既製コンテンツのみを使用します。AI 機能を有効にするには設定でキーを追加してください。",
     "mode_badge_tooltip_ai": "AI プロバイダー設定済み — 演習で AI による誤答候補とヒントを使用します。タップしてコンテンツを閲覧。",
     "mode_badge_label_content": "モード: コンテンツのみ",
-    "mode_badge_label_ai": "モード: AI + コンテンツ"
+    "mode_badge_label_ai": "モード: AI + コンテンツ",
+    "sync_paired": "同期：ペアリング済み（設定 > 同期）",
+    "sync_unpaired": "同期：未ペアリング（設定 > 同期）"
   },
   "import": {
     "title": "会話をインポート",
@@ -126,7 +129,10 @@
     "delete_confirm": "このインポートされた会話を削除しますか？元に戻せません。",
     "delete_success": "会話を削除しました。",
     "delete_error": "会話を削除できませんでした。",
-    "duplicate_detected": "この会話はすでにインポートされています。既存のエントリを表示します。"
+    "duplicate_detected": "この会話はすでにインポートされています。既存のエントリを表示します。",
+    "chat_language": "チャットの言語（あなたが話す）",
+    "learning_language": "学習言語",
+    "select_language": "言語を選択…"
   },
   "curriculum": {
     "title": "カリキュラム",
@@ -151,7 +157,15 @@
     "lesson_created": "レッスンが作成されました。",
     "lesson_saved": "レッスンを保存しました。",
     "lesson_deleted": "レッスンを削除しました。",
-    "lesson_delete_confirm": "このレッスンを削除しますか?"
+    "lesson_delete_confirm": "このレッスンを削除しますか?",
+    "add_description": "説明を追加",
+    "description_aria": "カリキュラムの説明",
+    "description_placeholder": "なぜこのカリキュラム？何をカバーしますか？",
+    "description_saved": "説明を保存しました。",
+    "edit_description": "説明を編集",
+    "lesson_content_aria": "レッスンの内容",
+    "lesson_content_placeholder": "レッスンの内容 — 見出し、リスト、コードブロック、リンクに対応。",
+    "no_description": "まだ説明はありません。"
   },
   "landing": {
     "title": "Adaptive Learner",
@@ -191,7 +205,11 @@
     "skip_default_name": "学習者",
     "skip_default_topic": "私の学習",
     "skip_default_goal": "自分の学習スタイルを見つける。",
-    "skip_default_timeframe": "柔軟"
+    "skip_default_timeframe": "柔軟",
+    "field_tags": "タグ",
+    "field_tags_hint": "カンマ区切り。既存のタグを再利用するか、その場で新規作成できます。",
+    "field_tags_placeholder": "exam-prep, daily-practice",
+    "subject_suggestions": "おすすめの科目（タップで割り当て）："
   },
   "assessment": {
     "title": "学習タイプ評価",
@@ -204,7 +222,8 @@
     "result_title": "あなたの学習プロフィール",
     "dominant_method": "好まれる方法",
     "continue_to_dashboard": "ダッシュボードへ進む",
-    "read_summary": "サマリーを読み上げ"
+    "read_summary": "サマリーを読み上げ",
+    "swipe_hint": "スワイプで左右に移動（または矢印キーを使用）。"
   },
   "dashboard": {
     "no_data": "まだデータがありません。",
@@ -241,7 +260,18 @@
         "word_order": "語順"
       },
       "mastery_split": "認識: {receptive} · 産出: {productive}"
-    }
+    },
+    "create_lesson": "レッスンを作成",
+    "metric_mean_stress": "平均ストレス",
+    "metric_mean_understanding": "平均理解度",
+    "metric_streak": "連続日数",
+    "metric_total_minutes": "合計分数",
+    "metric_total_sessions": "合計セッション数",
+    "pronunciation_quick_start": "発音練習",
+    "spaced_dismiss": "閉じる",
+    "spaced_empty": "今は復習するものはありません。良いペースです！",
+    "spaced_interval_label": "復習まで",
+    "spaced_start": "開始"
   },
   "adaptive": {
     "page_title": "アダプティブレッスン",
@@ -326,7 +356,10 @@
     "cycles_completed": "完了したサイクル",
     "next_topic": "次のトピック:",
     "step_reason_tooltip": "なぜこのステップ?",
-    "offline_start_blocked": "オフラインです。新しいセッションにはネットワーク接続が必要です — 過去の セッションはダッシュボードから読み続けられます。"
+    "offline_start_blocked": "オフラインです。新しいセッションにはネットワーク接続が必要です — 過去の セッションはダッシュボードから読み続けられます。",
+    "peek_step_prefix": "ステップ",
+    "rating_notes_aria": "セッションのメモ",
+    "rating_notes_placeholder": "うまくいったこと、いかなかったこと、次に試すこと…"
   },
   "progress": {
     "title": "進捗",
@@ -345,7 +378,9 @@
     "step_eval_repeats": "AI が「まだ準備ができていない」と言った回数",
     "step_eval_advances": "ステップ前進",
     "step_eval_backward": "後退遷移",
-    "step_eval_stickiest_label": "最も時間を費やしたステップ:"
+    "step_eval_stickiest_label": "最も時間を費やしたステップ:",
+    "commit_notes_aria": "セッションのメモ",
+    "session_count": "セッション"
   },
   "settings": {
     "tab_integrations": "連携",
@@ -555,7 +590,21 @@
       "hint": "長いチャット分析をオフラインレッスンとして保存する場合、このステップ数を超えるレッスンは自動的に複数のパートに分割されます。",
       "label": "パートあたりのステップ数",
       "range_hint": "（デフォルト {default}、範囲 {min}–{max}）"
-    }
+    },
+    "danger_zone_backup_button": "バックアップを作成",
+    "danger_zone_backup_offer": "先にバックアップを作成しますか？",
+    "danger_zone_cancel": "キャンセル",
+    "danger_zone_complete_toast": "すべてのデータが削除されました。",
+    "danger_zone_confirm_prompt": "確認のため RESET と入力",
+    "danger_zone_continue": "続行",
+    "danger_zone_failed_toast": "リセットに失敗しました：",
+    "danger_zone_final_button": "完全に削除",
+    "danger_zone_heading": "危険ゾーン",
+    "danger_zone_input_placeholder": "RESET",
+    "danger_zone_intro": "このデバイス上のすべての学習状態を完全に削除します。",
+    "danger_zone_reset_button": "すべてリセット",
+    "danger_zone_warning": "これにより、すべての学習データ（セッション、進捗、プロファイル、カリキュラム、インポート、Anki カード、設定、API キー）が完全に削除されます。この操作は元に戻せません。",
+    "section_sync": "同期"
   },
   "methods": {
     "deductive": {
@@ -629,7 +678,8 @@
     "api_key_saved": "API キーを保存しました。",
     "api_key_restored": "最後に動作したキーを復元しました。",
     "api_key_deleted": "API キーを削除しました。",
-    "method_switched": "方法を切り替えました。"
+    "method_switched": "方法を切り替えました。",
+    "onboarding_skipped": "ようこそ！後で調整できます。"
   },
   "install": {
     "title": "ホーム画面に追加",
@@ -1134,7 +1184,8 @@
       "server": "内部エラーが発生しました。",
       "network": "サーバーに接続できません。",
       "timeout": "リクエストに時間がかかりすぎました。",
-      "generic": "問題が発生しました。あとでもう一度お試しください。"
+      "generic": "問題が発生しました。あとでもう一度お試しください。",
+      "unexpected": "問題が発生しました。"
     },
     "error_report": {
       "dialog_title": "問題を報告する",
@@ -1183,7 +1234,8 @@
       "feature_pronunciation": "for pronunciation practice"
     },
     "common": {
-      "close": "閉じる"
+      "close": "閉じる",
+      "loading": "読み込み中…"
     },
     "a11y": {
       "skip_to_content": "メインコンテンツへスキップ",
@@ -1198,7 +1250,8 @@
       "chart_distribution_label": "メソッド分布の棒グラフ",
       "chart_distribution_summary": "最も使われたメソッド: {method} ({count} セッション, {pct}%)",
       "streak_cell_label": "{date} に {count} セッション",
-      "streak_cell_label_zero": "{date} はセッションなし"
+      "streak_cell_label_zero": "{date} はセッションなし",
+      "chart_radar_value": "スコア"
     },
     "tooltips": {
       "delete": "削除",
@@ -1345,7 +1398,8 @@
       "rerender": "再生成",
       "download_zip": "ZIP をダウンロード",
       "persist": "Git に保存",
-      "persisting": "保存中…"
+      "persisting": "保存中…",
+      "persist_dexie_tooltip": "Git バージョン管理はサーバーモードでのみ利用できます。"
     },
     "toast": {
       "zip_downloaded": "ZIP をダウンロードしました",
@@ -1359,7 +1413,8 @@
     },
     "widget": {
       "title": "学習リポジトリ",
-      "open": "リポジトリを開く"
+      "open": "リポジトリを開く",
+      "subtitle": "このプロジェクトの進捗、メモ、ロードマップのバージョン管理されたスナップショット。"
     },
     "settings": {
       "title": "学習リポジトリ",
@@ -1373,7 +1428,9 @@
       "error": {
         "load": "設定を読み込めませんでした",
         "save": "設定を保存できませんでした"
-      }
+      },
+      "description": "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。",
+      "enable_git": "git 永続化を有効にする（POST /persist エンドポイント）"
     }
   },
   "lesson": {
@@ -1750,7 +1807,8 @@
       "non_cefr_level": "レベル '{level}' は CEFR の区分（A1〜C2）ではありません。",
       "level_too_complex": "レッスン '{lesson}': 片面あたり平均 {avg} 語で、レベル {level} には多めです（目安は約 {cap} 語）。",
       "source_language_heuristic": "カードの裏面に {found} 特有の文字が含まれていますが、出発言語は '{lang}' です。",
-      "target_language_heuristic": "カードの表面に {found} 特有の文字が含まれていますが、対象言語は '{lang}' です。"
+      "target_language_heuristic": "カードの表面に {found} 特有の文字が含まれていますが、対象言語は '{lang}' です。",
+      "failed_share_anyway": "品質チェックで問題が見つかりました。それでも共有できます。レビュアーはプルリクエストに記載された指摘を確認できます。"
     },
     "ai_validation": {
       "intro": "AIは翻訳の正確さ、文法、レベルの適切さも確認できます。",
@@ -2121,11 +2179,13 @@
       "locked": "ロック中",
       "receptive_short": "受",
       "productive_short": "産",
-      "exercises": "{n} 個の演習"
+      "exercises": "{n} 個の演習",
+      "xp": "XP"
     },
     "group": {
       "mastery": "受容 {r}、産出 {p} 習得済み",
-      "progress_aria": "{total} レッスン中 {completed} 完了"
+      "progress_aria": "{total} レッスン中 {completed} 完了",
+      "toggle_aria": "{title} セット — {total} 件中 {completed} 件のレッスンが完了"
     },
     "search_placeholder": "レッスンを検索…",
     "filter": {
@@ -2142,14 +2202,20 @@
       "title": "統計",
       "lessons": "レッスン",
       "receptive": "受容",
-      "productive": "産出"
+      "productive": "産出",
+      "lessons_aria": "{total} 件中 {done} 件のレッスンが完了",
+      "productive_aria": "{n} 件のレッスンを産出で習得",
+      "receptive_aria": "{n} 件のレッスンを受容で習得",
+      "region_label": "学習パスの統計"
     },
     "clusters": {
       "toggle": "エラークラスタを表示",
       "empty": "共通のエラーパターンはまだありません — 練習を続けましょう。",
       "lessons": "{n} レッスン",
-      "start_adaptive": "アダプティブレッスンを開始"
-    }
+      "start_adaptive": "アダプティブレッスンを開始",
+      "region_label": "エラークラスターパネル"
+    },
+    "search_label": "レッスンを検索 — Enter キーで最初の一致に移動"
   },
   "pwa": {
     "offline_message": "オフラインです。保存済みのコンテンツは利用できます。",
@@ -2191,5 +2257,95 @@
     "no_user_tags_short": "タグはまだありません。",
     "no_matching_projects": "一致するプロジェクトはありません。",
     "no_projects": "プロジェクトはまだありません。"
+  },
+  "subjects": {
+    "languages": "言語",
+    "mathematics": "数学",
+    "programming": "プログラミング",
+    "sciences": "科学",
+    "music": "音楽",
+    "humanities": "人文学",
+    "social_sciences": "社会科学",
+    "skills": "スキル",
+    "english": "英語",
+    "spanish": "スペイン語",
+    "french": "フランス語",
+    "german": "ドイツ語",
+    "greek": "ギリシャ語",
+    "italian": "イタリア語",
+    "portuguese": "ポルトガル語",
+    "japanese": "日本語",
+    "chinese": "中国語",
+    "turkish": "トルコ語",
+    "grammar": "文法",
+    "vocabulary": "語彙",
+    "conversation": "会話",
+    "arithmetic": "算術",
+    "algebra": "代数",
+    "geometry": "幾何学",
+    "trigonometry": "三角法",
+    "calculus": "微積分",
+    "statistics": "統計",
+    "linear_algebra": "線形代数",
+    "discrete_mathematics": "離散数学",
+    "basics": "基礎",
+    "frameworks": "フレームワーク",
+    "data_science": "データサイエンス",
+    "algorithms": "アルゴリズム",
+    "data_structures": "データ構造",
+    "design_patterns": "デザインパターン",
+    "databases": "データベース",
+    "physics": "物理学",
+    "chemistry": "化学",
+    "biology": "生物学",
+    "astronomy": "天文学",
+    "earth_sciences": "地球科学",
+    "theory": "音楽理論",
+    "piano": "ピアノ",
+    "guitar": "ギター",
+    "violin": "バイオリン",
+    "singing": "歌唱",
+    "composition": "作曲",
+    "history": "歴史",
+    "philosophy": "哲学",
+    "literature": "文学",
+    "art_history": "美術史",
+    "economics": "経済学",
+    "psychology": "心理学",
+    "sociology": "社会学",
+    "political_science": "政治学",
+    "writing": "ライティング",
+    "public_speaking": "パブリックスピーキング",
+    "photography": "写真",
+    "design": "デザイン",
+    "cooking": "料理"
+  },
+  "editor": {
+    "align_center": "中央揃え",
+    "align_left": "左揃え",
+    "align_right": "右揃え",
+    "blockquote": "引用",
+    "bold": "太字 (Ctrl+B)",
+    "bullet_list": "箇条書き",
+    "character_count": "{count} 文字",
+    "code_block": "コードブロック",
+    "code_block_copied": "コピーしました",
+    "code_block_copy": "コードをコピー",
+    "code_block_language": "コードブロックの言語",
+    "h1": "見出し1",
+    "h2": "見出し2",
+    "h3": "見出し3",
+    "highlight": "ハイライト",
+    "inline_code": "インラインコード",
+    "italic": "斜体 (Ctrl+I)",
+    "link": "リンクを挿入",
+    "link_prompt": "URL（空にするとリンクを削除）",
+    "ordered_list": "番号付きリスト",
+    "redo": "やり直し (Ctrl+Shift+Z)",
+    "strike": "取り消し線",
+    "task_list": "タスクリスト",
+    "toolbar_label": "テキストの書式設定",
+    "underline": "下線 (Ctrl+U)",
+    "undo": "元に戻す (Ctrl+Z)"
   }
 }
