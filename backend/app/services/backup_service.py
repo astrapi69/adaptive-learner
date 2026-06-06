@@ -291,7 +291,7 @@ def _missing_fk_parent(db: Session, table: str, record: dict[str, Any]) -> str |
     model = _spec(table).model
     for column in model.__table__.columns:
         for foreign_key in column.foreign_keys:
-            parent_table = foreign_key.column.table.name
+            parent_table: str = foreign_key.column.table.name
             if parent_table == table:
                 continue
             fk_value = record.get(column.name)
