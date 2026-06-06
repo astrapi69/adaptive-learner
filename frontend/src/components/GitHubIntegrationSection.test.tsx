@@ -69,6 +69,13 @@ describe("GitHubIntegrationSection", () => {
     ).toBeInTheDocument();
   });
 
+  it("contains the password input inside a <form> (Chrome DOM warning #119)", async () => {
+    renderSection();
+    const input = await screen.findByTestId("settings-github-token-input");
+    expect(input).toHaveAttribute("type", "password");
+    expect(input.closest("form")).not.toBeNull();
+  });
+
   it("warns on a malformed token and gates Save", async () => {
     renderSection();
     await waitFor(() =>

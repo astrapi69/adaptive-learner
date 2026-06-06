@@ -772,10 +772,11 @@ export default function Settings() {
                 ? "valid"
                 : "invalid";
           return (
-            <div
+            <form
               key={provider}
               className={`api-key-row${isActive ? " is-active-provider" : ""}`}
               data-testid={`api-key-row-${provider}`}
+              onSubmit={(e) => e.preventDefault()}
             >
               <div className="api-key-row-head">
                 <strong>{t(`settings.provider_${provider}`, provider)}</strong>
@@ -1065,7 +1066,7 @@ export default function Settings() {
                     )}
                   </Button>
                 )}
-            </div>
+            </form>
           );
         })}
       </section>
