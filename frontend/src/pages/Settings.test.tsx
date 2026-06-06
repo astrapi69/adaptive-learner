@@ -303,6 +303,17 @@ describe("Settings page", () => {
     });
   });
 
+  it("wraps each provider's password input in a <form> (Chrome DOM warning #119)", async () => {
+    apiGet.mockResolvedValue(BASE);
+    renderSettings();
+    await screen.findByTestId("settings");
+    for (const provider of ["anthropic", "openai", "gemini"]) {
+      const input = screen.getByTestId(`api-key-input-${provider}`);
+      expect(input).toHaveAttribute("type", "password");
+      expect(input.closest("form")).not.toBeNull();
+    }
+  });
+
   it("Save key is disabled until the draft is a valid-format key", async () => {
     apiGet.mockResolvedValue(BASE);
     renderSettings();

@@ -185,7 +185,7 @@ export default function GitHubIntegrationSection() {
       )}
 
       {!envManaged && (
-        <>
+        <form onSubmit={(e) => e.preventDefault()}>
           <label className="form-row">
             <span className="form-label">
               {t("settings.github.token", "GitHub token")}
@@ -289,7 +289,7 @@ export default function GitHubIntegrationSection() {
               {testMessage(test)}
             </p>
           )}
-        </>
+        </form>
       )}
     </section>
   );
