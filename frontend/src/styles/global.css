@@ -79,6 +79,35 @@
   --text-muted: var(--fg-muted);
   --muted: var(--fg-muted);
   --danger: var(--error);
+
+  /* --------------------------------------------------------------
+   * Theme-agnostic semantic tokens. These values are the SAME in
+   * every theme by construction, so they live here in :root rather
+   * than in each theme-*.css (themes.test.ts parity is unaffected).
+   * -------------------------------------------------------------- */
+
+  /* On-danger foreground: white, because --danger/--error is a
+   * saturated red in every theme. Mirrors --accent-fg for --accent. */
+  --danger-fg: #ffffff;
+
+  /* TipTap highlighter ("mark") — a translucent amber drawn from the
+   * --method-contextual brand hue, layered over any surface. The
+   * toolbar swatch sits a touch stronger; both gain a dark override
+   * in the [data-theme="dark"] block below. */
+  --mark-bg: rgba(245, 158, 11, 0.3);
+  --mark-swatch-bg: rgba(245, 158, 11, 0.4);
+
+  /* Code syntax palette (highlight.js). One semantic token per token
+   * class; the dark-mode variants live in the [data-theme="dark"]
+   * block alongside the rules that consume them. Light defaults: */
+  --code-keyword: #8b5cf6;
+  --code-string: #10b981;
+  --code-number: #f59e0b;
+  --code-comment: #94a3b8;
+  --code-function: #3b82f6;
+  --code-tag: #ef4444;
+  --code-attr: #6366f1;
+  --code-meta: #64748b;
 }
 
 * {
@@ -400,7 +429,7 @@ select:focus {
 
 .btn-danger {
   background: var(--danger);
-  color: #ffffff;
+  color: var(--danger-fg);
 }
 
 .btn-danger:hover:not(:disabled) {
@@ -1300,7 +1329,7 @@ select:focus {
   position: absolute;
   width: 32px;
   height: 32px;
-  border-color: rgba(255, 255, 255, 0.95);
+  border-color: rgba(255, 255, 255, 0.95); /* token-exempt: camera viewfinder frame, white over the live feed */
   border-style: solid;
   border-width: 0;
 }
@@ -2205,7 +2234,7 @@ select:focus {
   padding: 2px 6px;
   border-radius: var(--radius-sm);
   background: var(--danger);
-  color: #fff;
+  color: var(--danger-fg);
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -5103,7 +5132,7 @@ select:focus {
 }
 
 .rich-text-prosemirror mark {
-    background: rgba(245, 158, 11, 0.3);
+    background: var(--mark-bg);
     color: inherit;
     border-radius: 2px;
     padding: 0 0.1em;
@@ -5226,7 +5255,7 @@ select:focus {
 }
 
 .editor-toolbar-highlight-swatch {
-    background: rgba(245, 158, 11, 0.4);
+    background: var(--mark-swatch-bg);
     padding: 0 0.25em;
     border-radius: 2px;
 }
@@ -5252,14 +5281,12 @@ select:focus {
     padding: 4px 8px;
 }
 
-/* Dark theme overrides — the CSS variable cascade already
- * flips most surfaces, but the highlight swatch and
- * code-block need explicit dark adjustments. */
-[data-theme="dark"] .rich-text-prosemirror mark {
-    background: rgba(245, 158, 11, 0.35);
-}
-[data-theme="dark"] .editor-toolbar-highlight-swatch {
-    background: rgba(245, 158, 11, 0.45);
+/* Dark theme overrides — the highlight mark/swatch sit slightly
+ * stronger so the amber stays visible over dark surfaces. Driven
+ * through the tokens so the consuming rules stay value-free. */
+[data-theme="dark"] {
+    --mark-bg: rgba(245, 158, 11, 0.35);
+    --mark-swatch-bg: rgba(245, 158, 11, 0.45);
 }
 
 /* Progress page: each commit row may be followed by a notes
@@ -5347,30 +5374,30 @@ select:focus {
 .rich-text-prosemirror .hljs-keyword,
 .rich-text-prosemirror .hljs-built_in,
 .rich-text-prosemirror .hljs-literal {
-    color: #8b5cf6;
+    color: var(--code-keyword);
 }
 .rich-text-prosemirror .hljs-string,
 .rich-text-prosemirror .hljs-meta-string {
-    color: #10b981;
+    color: var(--code-string);
 }
 .rich-text-prosemirror .hljs-number,
 .rich-text-prosemirror .hljs-symbol {
-    color: #f59e0b;
+    color: var(--code-number);
 }
 .rich-text-prosemirror .hljs-comment,
 .rich-text-prosemirror .hljs-quote {
-    color: #94a3b8;
+    color: var(--code-comment);
     font-style: italic;
 }
 .rich-text-prosemirror .hljs-title,
 .rich-text-prosemirror .hljs-function,
 .rich-text-prosemirror .hljs-class .hljs-title {
-    color: #3b82f6;
+    color: var(--code-function);
 }
 .rich-text-prosemirror .hljs-tag,
 .rich-text-prosemirror .hljs-name,
 .rich-text-prosemirror .hljs-selector-tag {
-    color: #ef4444;
+    color: var(--code-tag);
 }
 .rich-text-prosemirror .hljs-attr,
 .rich-text-prosemirror .hljs-attribute,
@@ -5378,38 +5405,23 @@ select:focus {
 .rich-text-prosemirror .hljs-selector-id,
 .rich-text-prosemirror .hljs-selector-class,
 .rich-text-prosemirror .hljs-variable {
-    color: #6366f1;
+    color: var(--code-attr);
 }
 .rich-text-prosemirror .hljs-meta {
-    color: #64748b;
+    color: var(--code-meta);
 }
 
 /* Dark-mode override: the palette stays the same family but
  * brighter so contrast against --surface stays readable. */
-[data-theme="dark"] .rich-text-prosemirror .hljs-keyword,
-[data-theme="dark"] .rich-text-prosemirror .hljs-built_in,
-[data-theme="dark"] .rich-text-prosemirror .hljs-literal {
-    color: #c4b5fd;
-}
-[data-theme="dark"] .rich-text-prosemirror .hljs-string {
-    color: #6ee7b7;
-}
-[data-theme="dark"] .rich-text-prosemirror .hljs-number {
-    color: #fbbf24;
-}
-[data-theme="dark"] .rich-text-prosemirror .hljs-comment {
-    color: #64748b;
-}
-[data-theme="dark"] .rich-text-prosemirror .hljs-title,
-[data-theme="dark"] .rich-text-prosemirror .hljs-function {
-    color: #93c5fd;
-}
-[data-theme="dark"] .rich-text-prosemirror .hljs-tag,
-[data-theme="dark"] .rich-text-prosemirror .hljs-name {
-    color: #fca5a5;
-}
-[data-theme="dark"] .rich-text-prosemirror .hljs-attr {
-    color: #a5b4fc;
+[data-theme="dark"] {
+    --code-keyword: #c4b5fd;
+    --code-string: #6ee7b7;
+    --code-number: #fbbf24;
+    --code-comment: #64748b;
+    --code-function: #93c5fd;
+    --code-tag: #fca5a5;
+    --code-attr: #a5b4fc;
+    /* --code-meta keeps its light value (no dark override existed). */
 }
 
 /* --- Gamification (Phase 29A) ------------------------------------ */
@@ -5454,7 +5466,7 @@ select:focus {
     color: var(--accent-fg);
     padding: 10px 16px;
     border-radius: 8px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+    box-shadow: var(--shadow-elevated);
     display: flex;
     flex-direction: column;
     gap: 4px;
