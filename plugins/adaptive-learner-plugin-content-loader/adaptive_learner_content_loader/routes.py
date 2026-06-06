@@ -52,6 +52,7 @@ from .service import (
     ContentLoaderService,
     SetEntry,
     parse_source_refs_from_settings,
+    user_source_from_settings,
 )
 
 
@@ -91,6 +92,9 @@ def _build_service() -> ContentLoaderService:
     source_refs = parse_source_refs_from_settings(
         settings.get("default_sources"),
     )
+    user_ref = user_source_from_settings(settings.get("user_repo"))
+    if user_ref is not None:
+        source_refs.append(user_ref)
     cache_root = get_cache_dir() / CACHE_SUBDIR
     token = config_resolver.resolve_github_token(settings)
     return ContentLoaderService(

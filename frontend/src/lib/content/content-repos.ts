@@ -153,3 +153,44 @@ export async function writeUserRepo(
   }
   await storage.pluginSettings.update(CONTENT_LOADER_PLUGIN, { settings: next });
 }
+
+/** Result of a {@link syncUserRepo} run. */
+export interface SyncResult {
+  setCount: number;
+  lessonCount: number;
+}
+
+/**
+ * Download + cache every set the connected user repo advertises, then
+ * persist the refreshed counts + ``last_synced``. Storage-agnostic: it
+ * goes through ``getStorage().contentLoader`` so Dexie caches to IndexedDB
+ * and API mode caches on the backend filesystem — both already include the
+ * user repo in their active sources.
+ *
+ * Throws when no repo is connected (the caller gates the Sync button on a
+ * connected repo).
+ */
+export async function syncUserRepo(): Promise<SyncResult> {
+  const config = await readUserRepo();
+  if (!config) {
+    throw new Error("No user content repository is connected.");
+  }
+  const source = userRepoSource(config.owner, config.repo);
+  const storage = getStorage();
+  const { sets } = await storage.contentLoader.listSets();
+  const userSets = sets.filter((entry) => entry.source === source);
+  let lessonCount = 0;
+  for (const entry of userSets) {
+    await storage.contentLoader.downloadSet(entry.source, entry.id);
+    lessonCount += entry.lesson_count ?? 0;
+  }
+  const updated: UserContentRepo = {
+    ...config,
+    connected: true,
+    last_synced: new Date().toISOString(),
+    set_count: userSets.length,
+    lesson_count: lessonCount,
+  };
+  await writeUserRepo(updated);
+  return { setCount: userSets.length, lessonCount };
+}

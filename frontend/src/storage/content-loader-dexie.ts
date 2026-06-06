@@ -83,6 +83,44 @@ function slugifySource(source: string): string {
   return source.replace(/[/:]/g, "--");
 }
 
+/** Canonical official source (everything else from a user repo). */
+const OFFICIAL_SOURCE = "astrapi69/adaptive-learner-content";
+
+/** Plugin whose settings hold the connected user repo (avoids a circular
+ *  import on ``content-repos``, which depends on the storage barrel). */
+const CONTENT_LOADER_PLUGIN = "content-loader";
+
+/**
+ * The user's own content repository as a source, read from the
+ * ``content-loader`` plugin settings (``user_repo``). Returns null when
+ * no repo is connected. EXP-023 Phase A.
+ */
+async function userContentSource(): Promise<ContentSetSource | null> {
+  try {
+    const row = await getDb().pluginSettings.get(CONTENT_LOADER_PLUGIN);
+    const repo = (row?.settings as Record<string, unknown> | undefined)
+      ?.user_repo as
+      | { owner?: string; repo?: string; branch?: string; connected?: boolean }
+      | undefined;
+    if (!repo?.owner || !repo?.repo || !repo.connected) return null;
+    return {
+      source: `${repo.owner}/${repo.repo}`,
+      branch: repo.branch || "main",
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * The sources the loader should consult: the official defaults plus the
+ * connected user repo (additive, official first). EXP-023 Phase A.
+ */
+export async function activeSourcesDexie(): Promise<ContentSetSource[]> {
+  const user = await userContentSource();
+  return user ? [...DEFAULT_SOURCES, user] : [...DEFAULT_SOURCES];
+}
+
 /**
  * Resolve a content source + relative path to a fetchable URL.
  *
@@ -311,12 +349,24 @@ function isBundledSource(source: string): boolean {
  * entry carries its own ``source``, so the UI badge reflects where
  * the surfaced version came from.
  */
-function dedupeContentEntries(entries: ContentSetEntry[]): ContentSetEntry[] {
+export function dedupeContentEntries(
+  entries: ContentSetEntry[],
+): ContentSetEntry[] {
+  const isOfficial = (source: string): boolean =>
+    source === OFFICIAL_SOURCE || isBundledSource(source);
   const winners = new Map<string, ContentSetEntry>();
   for (const entry of entries) {
     const current = winners.get(entry.id);
     if (!current) {
       winners.set(entry.id, entry);
+      continue;
+    }
+    // EXP-023 Phase A — the user's own repo always wins a same-id
+    // collision with the official content, regardless of version.
+    const currentOfficial = isOfficial(current.source);
+    const entryOfficial = isOfficial(entry.source);
+    if (currentOfficial !== entryOfficial) {
+      if (currentOfficial) winners.set(entry.id, entry);
       continue;
     }
     const cmp = compareVersions(entry.version, current.version);

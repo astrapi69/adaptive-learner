@@ -105,6 +105,7 @@ import { computeContentHash } from "../chat_import/content-hash";
 import {
   aiValidateDexie,
   deleteSetDexie,
+  activeSourcesDexie,
   downloadSetDexie,
   getAssetDexie,
   getLessonDexie,
@@ -2238,8 +2239,9 @@ export const dexieStorage: IStorageService = {
   // ``content-loader-dexie.ts`` (Settings UI for editing
   // the sources ships later — v1.27.0 is read-only).
   contentLoader: {
-    listSets: () => listSetsDexie(),
-    downloadSet: (source, setId) => downloadSetDexie(source, setId),
+    listSets: async () => listSetsDexie(await activeSourcesDexie()),
+    downloadSet: async (source, setId) =>
+      downloadSetDexie(source, setId, await activeSourcesDexie()),
     listLessons: (source, setId) => listLessonsDexie(source, setId),
     getLesson: (source, setId, filename) =>
       getLessonDexie(source, setId, filename),

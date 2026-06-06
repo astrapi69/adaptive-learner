@@ -10,9 +10,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const get = vi.fn();
 const update = vi.fn();
+const listSets = vi.fn();
+const downloadSet = vi.fn();
 
 vi.mock("../../storage", () => ({
-  getStorage: () => ({ pluginSettings: { get, update } }),
+  getStorage: () => ({
+    pluginSettings: { get, update },
+    contentLoader: { listSets, downloadSet },
+  }),
 }));
 
 import {
@@ -20,6 +25,7 @@ import {
   namespacedSetId,
   parseGitHubRepoUrl,
   readUserRepo,
+  syncUserRepo,
   userRepoSource,
   writeUserRepo,
   type UserContentRepo,
@@ -39,6 +45,8 @@ const REPO: UserContentRepo = {
 beforeEach(() => {
   get.mockReset();
   update.mockReset();
+  listSets.mockReset();
+  downloadSet.mockReset();
 });
 
 describe("parseGitHubRepoUrl", () => {
@@ -139,5 +147,44 @@ describe("readUserRepo / writeUserRepo", () => {
     expect(update).toHaveBeenCalledWith("content-loader", {
       settings: { default_sources: [] },
     });
+  });
+});
+
+describe("syncUserRepo", () => {
+  it("downloads only the user repo's sets and persists fresh counts", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repo: { ...REPO, last_synced: null, set_count: 0 } },
+    });
+    listSets.mockResolvedValue({
+      sets: [
+        { source: "astrapi69/adaptive-learner-content", id: "fr-a1", lesson_count: 10 },
+        { source: "jane/my-content", id: "deck-1", lesson_count: 7 },
+        { source: "jane/my-content", id: "deck-2", lesson_count: 5 },
+      ],
+    });
+    downloadSet.mockResolvedValue({});
+
+    const res = await syncUserRepo();
+
+    expect(res).toEqual({ setCount: 2, lessonCount: 12 });
+    expect(downloadSet).toHaveBeenCalledTimes(2);
+    expect(downloadSet).toHaveBeenCalledWith("jane/my-content", "deck-1");
+    expect(downloadSet).not.toHaveBeenCalledWith(
+      "astrapi69/adaptive-learner-content",
+      "fr-a1",
+    );
+    const [, body] = update.mock.calls[0];
+    expect(body.settings.user_repo).toMatchObject({
+      set_count: 2,
+      lesson_count: 12,
+      connected: true,
+    });
+    expect(body.settings.user_repo.last_synced).toEqual(expect.any(String));
+  });
+
+  it("throws when no repo is connected", async () => {
+    get.mockResolvedValue({ plugin: "content-loader", settings: {} });
+    await expect(syncUserRepo()).rejects.toThrow();
   });
 });

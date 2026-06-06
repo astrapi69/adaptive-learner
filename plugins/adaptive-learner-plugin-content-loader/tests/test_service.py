@@ -28,6 +28,7 @@ from adaptive_learner_content_loader.service import (
     ContentLoaderService,
     SourceRef,
     parse_source_refs_from_settings,
+    user_source_from_settings,
 )
 
 
@@ -163,6 +164,38 @@ class TestParseSourceRefs:
             ],
         )
         assert refs == [SourceRef(source="owner/repo")]
+
+
+class TestUserSourceFromSettings:
+    """EXP-023 Phase A — the connected user repo joins the sources."""
+
+    def test_none_when_missing_or_not_connected(self) -> None:
+        assert user_source_from_settings(None) is None
+        assert user_source_from_settings({}) is None
+        assert (
+            user_source_from_settings(
+                {"owner": "jane", "repo": "x", "connected": False},
+            )
+            is None
+        )
+
+    def test_builds_ref_when_connected(self) -> None:
+        ref = user_source_from_settings(
+            {"owner": "jane", "repo": "x", "branch": "dev", "connected": True},
+        )
+        assert ref == SourceRef(source="jane/x", branch="dev")
+
+    def test_defaults_branch_to_main(self) -> None:
+        ref = user_source_from_settings(
+            {"owner": "jane", "repo": "x", "connected": True},
+        )
+        assert ref == SourceRef(source="jane/x", branch="main")
+
+    def test_none_when_owner_or_repo_missing(self) -> None:
+        assert (
+            user_source_from_settings({"owner": "jane", "connected": True})
+            is None
+        )
 
 
 # --- list_sets --------------------------------------------------------

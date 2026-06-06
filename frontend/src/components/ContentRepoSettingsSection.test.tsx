@@ -124,6 +124,27 @@ describe("ContentRepoSettingsSection", () => {
     expect(pluginUpdate).not.toHaveBeenCalled();
   });
 
+  it("shows the Sync button once a repo is connected", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: {
+        default_sources: [],
+        user_repo: {
+          url: "https://github.com/jane/my-content",
+          owner: "jane",
+          repo: "my-content",
+          branch: "main",
+          connected: true,
+          last_synced: null,
+          set_count: 2,
+          lesson_count: 12,
+        },
+      },
+    });
+    render(<ContentRepoSettingsSection />);
+    expect(await screen.findByTestId("content-repo-sync")).toBeInTheDocument();
+  });
+
   it("hints to set a token when none is configured", async () => {
     githubGetStatus.mockResolvedValue({ configured: false, source: "none" });
     render(<ContentRepoSettingsSection />);

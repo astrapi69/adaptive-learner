@@ -639,3 +639,24 @@ def parse_source_refs_from_settings(
             continue
         refs.append(SourceRef(source=source, branch=branch))
     return refs
+
+
+def user_source_from_settings(
+    user_repo: dict[str, object] | None,
+) -> SourceRef | None:
+    """Build the connected user repo's SourceRef, or None.
+
+    EXP-023 Phase A — the user's own content repository
+    (Settings > Data > Content repositories) is persisted in the
+    plugin settings under ``user_repo``. When present and
+    connected it is appended to the official sources so the
+    list / download / lessons routes serve it too.
+    """
+    if not isinstance(user_repo, dict) or not user_repo.get("connected"):
+        return None
+    owner = user_repo.get("owner")
+    repo = user_repo.get("repo")
+    if not owner or not repo:
+        return None
+    branch = user_repo.get("branch") or "main"
+    return SourceRef(source=f"{owner}/{repo}", branch=str(branch))

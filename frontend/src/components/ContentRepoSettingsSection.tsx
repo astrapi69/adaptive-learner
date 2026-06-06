@@ -19,7 +19,7 @@
  */
 
 import { useCallback, useEffect, useState } from "react";
-import { BookOpen, FolderGit2, Link2, Trash2 } from "lucide-react";
+import { BookOpen, FolderGit2, Link2, RefreshCw, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,6 +31,7 @@ import {
   parseGitHubRepoUrl,
   readUserRepo,
   writeUserRepo,
+  syncUserRepo,
   type UserContentRepo,
 } from "../lib/content/content-repos";
 import { validateUserRepo } from "../lib/content/content-repo-validate";
@@ -152,6 +153,30 @@ export default function ContentRepoSettingsSection() {
       setBusy(false);
     }
   }, [url, branch, t]);
+
+  const handleSync = useCallback(async () => {
+    setBusy(true);
+    setResult(null);
+    try {
+      const { setCount, lessonCount } = await syncUserRepo();
+      await refresh();
+      setResult({
+        ok: true,
+        message: t(
+          "content_repo.synced",
+          "Synced: {sets} sets, {lessons} lessons cached.",
+        )
+          .replace("{sets}", String(setCount))
+          .replace("{lessons}", String(lessonCount)),
+      });
+    } catch {
+      notify.error(
+        t("content_repo.error.sync_failed", "Sync failed. Try again."),
+      );
+    } finally {
+      setBusy(false);
+    }
+  }, [refresh, t]);
 
   const handleDisconnect = useCallback(async () => {
     setBusy(true);
@@ -316,6 +341,19 @@ export default function ContentRepoSettingsSection() {
             <Link2 className="h-5 w-5" aria-hidden="true" />
             {t("content_repo.action.connect", "Connect repository")}
           </Button>
+          {repo?.connected && (
+            <Button
+              type="button"
+              variant="secondary"
+              className="min-h-11 gap-2"
+              onClick={handleSync}
+              disabled={busy}
+              data-testid="content-repo-sync"
+            >
+              <RefreshCw className="h-5 w-5" aria-hidden="true" />
+              {t("content_repo.action.sync", "Sync now")}
+            </Button>
+          )}
           {repo && (
             <Button
               type="button"
