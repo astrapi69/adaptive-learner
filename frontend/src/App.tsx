@@ -1,4 +1,6 @@
-import {lazy, Suspense, useCallback, useEffect, useState} from "react";
+import {Suspense, useCallback, useEffect, useState} from "react";
+
+import {lazyWithReload} from "./lib/lazyWithReload";
 import {Routes, Route} from "react-router-dom";
 import {ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -20,34 +22,34 @@ import SkipToContent from "./components/SkipToContent";
 // Route-level code-splitting. Landing stays in the main bundle as
 // the entry route; everything else loads on first navigation. See
 // BUNDLE-SIZE-DYNAMIC-IMPORT-01.
-const AnkiPage = lazy(() => import("./pages/Anki"));
-const Assessment = lazy(() => import("./pages/Assessment"));
-const ContentPage = lazy(() => import("./pages/Content"));
-const CreateLesson = lazy(() => import("./pages/CreateLesson"));
-const LearningPath = lazy(() => import("./pages/LearningPathPersonal"));
-const Curriculum = lazy(() => import("./pages/Curriculum"));
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const LessonPage = lazy(() => import("./pages/Lesson"));
-const ReviewPage = lazy(() => import("./pages/Review"));
-const AdaptiveLessonPage = lazy(() => import("./pages/AdaptiveLesson"));
-const ErrorReplayLessonPage = lazy(() => import("./pages/ErrorReplayLesson"));
-const Import = lazy(() => import("./pages/Import"));
-const ImportDetail = lazy(() => import("./pages/ImportDetail"));
-const LearningRepoPage = lazy(() => import("./pages/LearningRepo"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const Onboarding = lazy(() => import("./pages/Onboarding"));
-const Progress = lazy(() => import("./pages/Progress"));
-const Pronunciation = lazy(() => import("./pages/Pronunciation"));
-const Session = lazy(() => import("./pages/Session"));
-const Settings = lazy(() => import("./pages/Settings"));
+const AnkiPage = lazyWithReload(() => import("./pages/Anki"));
+const Assessment = lazyWithReload(() => import("./pages/Assessment"));
+const ContentPage = lazyWithReload(() => import("./pages/Content"));
+const CreateLesson = lazyWithReload(() => import("./pages/CreateLesson"));
+const LearningPath = lazyWithReload(() => import("./pages/LearningPathPersonal"));
+const Curriculum = lazyWithReload(() => import("./pages/Curriculum"));
+const Dashboard = lazyWithReload(() => import("./pages/Dashboard"));
+const LessonPage = lazyWithReload(() => import("./pages/Lesson"));
+const ReviewPage = lazyWithReload(() => import("./pages/Review"));
+const AdaptiveLessonPage = lazyWithReload(() => import("./pages/AdaptiveLesson"));
+const ErrorReplayLessonPage = lazyWithReload(() => import("./pages/ErrorReplayLesson"));
+const Import = lazyWithReload(() => import("./pages/Import"));
+const ImportDetail = lazyWithReload(() => import("./pages/ImportDetail"));
+const LearningRepoPage = lazyWithReload(() => import("./pages/LearningRepo"));
+const NotFound = lazyWithReload(() => import("./pages/NotFound"));
+const Onboarding = lazyWithReload(() => import("./pages/Onboarding"));
+const Progress = lazyWithReload(() => import("./pages/Progress"));
+const Pronunciation = lazyWithReload(() => import("./pages/Pronunciation"));
+const Session = lazyWithReload(() => import("./pages/Session"));
+const Settings = lazyWithReload(() => import("./pages/Settings"));
 
 // Lazy-loaded so ``eventRecorder`` (statically imported inside both
 // components) lands in its own chunk instead of the main bundle.
 // See BUNDLE-SIZE-DYNAMIC-IMPORT-01.
-const EventRecorderSetup = lazy(
+const EventRecorderSetup = lazyWithReload(
     () => import("./components/EventRecorderSetup"),
 );
-const ErrorReportDialog = lazy(
+const ErrorReportDialog = lazyWithReload(
     () => import("./components/ErrorReportDialog"),
 );
 

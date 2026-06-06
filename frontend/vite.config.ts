@@ -100,6 +100,11 @@ export default defineConfig({
                 // is one of them so the SW can serve it without a
                 // network roundtrip.
                 globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
+                // Purge the previous build's precached chunks when the
+                // SW updates, so a stale index can't keep pointing at a
+                // hashed chunk this deploy removed (#113 — pairs with
+                // the lazyWithReload route wrapper).
+                cleanupOutdatedCaches: true,
                 // navigateFallback must include the base prefix so it
                 // matches the precached index.html entry (which is
                 // resolved against the SW's directory). Same with the
