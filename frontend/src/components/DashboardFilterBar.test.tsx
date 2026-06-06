@@ -306,4 +306,28 @@ describe("DashboardFilterBar", () => {
             screen.queryByTestId("dashboard-filter-subject-select"),
         ).toBeNull();
     });
+
+    it("hides the subject filter when the user has only one subject (#111)", async () => {
+        const storage = getStorage();
+        const user = await storage.users.create({name: "Mono"});
+        const project = await storage.users.projects.create(user.id, {
+            topic: "Single",
+            goal: "x",
+            timeframe: "1m",
+            daily_minutes: 10,
+        });
+        const only = await storage.subjects.create({name: "Languages"});
+        await storage.projectTaxonomy.assignSubject(project.id, only.id);
+
+        renderBar(user.id);
+        await waitFor(() => {
+            expect(
+                screen.getByTestId("dashboard-filter-project-list"),
+            ).toBeInTheDocument();
+        });
+        // A filter with a single option is not a filter — it is hidden.
+        expect(
+            screen.queryByTestId("dashboard-filter-subject-select"),
+        ).toBeNull();
+    });
 });
