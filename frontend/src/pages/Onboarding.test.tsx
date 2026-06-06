@@ -111,12 +111,38 @@ describe("Onboarding page", () => {
         expect(screen.getByTestId("onboarding-current-problem")).toBeInTheDocument();
     });
 
-    it("Submit is disabled until all required fields are filled", () => {
+    it("Submit needs only name + topic — the 2 required fields (#92)", () => {
         renderOnboarding();
         const submit = screen.getByTestId("onboarding-submit") as HTMLButtonElement;
         expect(submit.disabled).toBe(true);
-        fillForm();
+        fireEvent.change(screen.getByTestId("onboarding-name"), {
+            target: {value: "Asterios"},
+        });
+        // Name alone is not enough.
+        expect(submit.disabled).toBe(true);
+        fireEvent.change(screen.getByTestId("onboarding-topic"), {
+            target: {value: "Spanisch B1"},
+        });
+        // Name + topic alone enables submit — no other field required.
         expect(submit.disabled).toBe(false);
+    });
+
+    it("the optional fields live in a collapsed More-details disclosure (#92)", () => {
+        renderOnboarding();
+        const details = screen.getByTestId(
+            "onboarding-more-details",
+        ) as HTMLDetailsElement;
+        expect(details).toBeInTheDocument();
+        // Collapsed by default — beginner sees only name + topic.
+        expect(details.open).toBe(false);
+        // The optional fields are nested inside it.
+        expect(details.contains(screen.getByTestId("onboarding-goal"))).toBe(true);
+        expect(
+            details.contains(screen.getByTestId("onboarding-timeframe")),
+        ).toBe(true);
+        expect(
+            details.contains(screen.getByTestId("onboarding-daily-minutes")),
+        ).toBe(true);
     });
 
     it("creates user then project, stores ids and navigates to /assessment", async () => {
@@ -193,110 +219,55 @@ describe("Onboarding page", () => {
         expect(mockNavigate).toHaveBeenCalledWith("/");
     });
 
-    // --- v0.4.0: Skip / Later flow --------------------------------------
-
-    it("renders a Skip / Later button visible alongside Submit + Back", () => {
+    it("has no Skip / Later affordance any more (#92)", () => {
         renderOnboarding();
-        expect(screen.getByTestId("onboarding-skip")).toBeInTheDocument();
-        expect(screen.getByTestId("onboarding-back")).toBeInTheDocument();
-        expect(screen.getByTestId("onboarding-submit")).toBeInTheDocument();
+        expect(screen.queryByTestId("onboarding-skip")).toBeNull();
+        expect(screen.queryByTestId("onboarding-skip-top")).toBeNull();
     });
 
-    it("renders a top-right Skip button in the header (above the fold)", () => {
-        renderOnboarding();
-        const topSkip = screen.getByTestId("onboarding-skip-top");
-        expect(topSkip).toBeInTheDocument();
-        // The top-right Skip is inside the onboarding header, NOT
-        // the form-actions block. Pinning that DOM location pins
-        // the "visible above the fold" property — a future refactor
-        // that pushes it back into the action row will fail this.
-        const header = topSkip.closest(".onboarding-header");
-        expect(header).not.toBeNull();
-    });
+    // --- #92 regression: a new user starts with ONLY name + topic -------
 
-    it("top-right Skip fires the same handler as the bottom Skip", async () => {
+    it("creates a project from name + topic alone, applying defaults", async () => {
         apiUserCreate.mockResolvedValue({
-            id: "u-top-skip",
-            name: "Learner",
+            id: "u-min",
+            name: "Asterios",
             email: null,
-            language: "en",
-            created_at: "2026-05-18T00:00:00Z",
-            updated_at: "2026-05-18T00:00:00Z",
+            language: "de",
+            created_at: "2026-06-06T00:00:00Z",
+            updated_at: "2026-06-06T00:00:00Z",
         });
         apiProjectCreate.mockResolvedValue({
-            id: "p-top-skip",
-            user_id: "u-top-skip",
-            topic: "My learning",
-            goal: "Discover my learning style.",
-            timeframe: "Flexible",
-            daily_minutes: 30,
+            id: "p-min",
+            user_id: "u-min",
+            topic: "Spanisch B1",
+            goal: "Spanisch B1 lernen",
+            timeframe: "Flexibel",
+            daily_minutes: 15,
             current_problem: null,
             active: true,
-            created_at: "2026-05-18T00:00:00Z",
-            updated_at: "2026-05-18T00:00:00Z",
+            created_at: "2026-06-06T00:00:00Z",
+            updated_at: "2026-06-06T00:00:00Z",
         });
+
         renderOnboarding();
+        // Only the two required fields — the optional disclosure stays
+        // collapsed and untouched.
+        fireEvent.change(screen.getByTestId("onboarding-name"), {
+            target: {value: "Asterios"},
+        });
+        fireEvent.change(screen.getByTestId("onboarding-topic"), {
+            target: {value: "Spanisch B1"},
+        });
+
         await act(async () => {
-            fireEvent.click(screen.getByTestId("onboarding-skip-top"));
-        });
-        await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
-        });
-        expect(apiUserCreate).toHaveBeenCalledTimes(1);
-        expect(apiProjectCreate).toHaveBeenCalledTimes(1);
-    });
-
-    it("Skip is enabled regardless of form completeness", () => {
-        renderOnboarding();
-        // No fields filled — Submit is disabled, but Skip is not.
-        const submit = screen.getByTestId("onboarding-submit") as HTMLButtonElement;
-        const skip = screen.getByTestId("onboarding-skip") as HTMLButtonElement;
-        expect(submit.disabled).toBe(true);
-        expect(skip.disabled).toBe(false);
-    });
-
-    it("Skip creates user + placeholder project + navigates to /dashboard", async () => {
-        apiUserCreate.mockResolvedValue({
-            id: "u-skip",
-            name: "Learner",
-            email: null,
-            language: "en",
-            created_at: "2026-05-18T00:00:00Z",
-            updated_at: "2026-05-18T00:00:00Z",
-        });
-        apiProjectCreate.mockResolvedValue({
-            id: "p-skip",
-            user_id: "u-skip",
-            topic: "My learning",
-            goal: "Discover my learning style.",
-            timeframe: "Flexible",
-            daily_minutes: 30,
-            current_problem: null,
-            active: true,
-            created_at: "2026-05-18T00:00:00Z",
-            updated_at: "2026-05-18T00:00:00Z",
-        });
-
-        renderOnboarding();
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("onboarding-skip"));
+            fireEvent.click(screen.getByTestId("onboarding-submit"));
         });
 
         await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
+            expect(mockNavigate).toHaveBeenCalledWith("/assessment");
         });
 
-        // The user call carries SOME name + language; the project
-        // carries the four placeholder fields with 30 min/day.
         expect(apiUserCreate).toHaveBeenCalledTimes(1);
-        const userCall = apiUserCreate.mock.calls[0][0] as {
-            name: string;
-            language: string;
-        };
-        expect(userCall.name.length).toBeGreaterThan(0);
-        expect(userCall.language.length).toBeGreaterThan(0);
-
-        expect(apiProjectCreate).toHaveBeenCalledTimes(1);
         const projectCall = apiProjectCreate.mock.calls[0][1] as {
             topic: string;
             goal: string;
@@ -305,30 +276,16 @@ describe("Onboarding page", () => {
             current_problem: string | null;
             active: boolean;
         };
-        expect(projectCall.topic.length).toBeGreaterThan(0);
+        expect(projectCall.topic).toBe("Spanisch B1");
+        // Goal + timeframe default (non-empty — the backend requires it);
+        // minutes default to 15; current_problem stays null.
         expect(projectCall.goal.length).toBeGreaterThan(0);
+        expect(projectCall.goal).toContain("Spanisch B1");
         expect(projectCall.timeframe.length).toBeGreaterThan(0);
-        expect(projectCall.daily_minutes).toBe(30);
+        expect(projectCall.daily_minutes).toBe(15);
         expect(projectCall.current_problem).toBeNull();
         expect(projectCall.active).toBe(true);
-
-        expect(localStorage.getItem("adaptive-learner.user_id")).toBe("u-skip");
-        expect(localStorage.getItem("adaptive-learner.project_id")).toBe(
-            "p-skip",
-        );
-        expect(toastSuccess).toHaveBeenCalled();
-    });
-
-    it("Skip surfaces ApiError details + does not navigate on failure", async () => {
-        const {ApiError} = await import("../api/client");
-        apiUserCreate.mockRejectedValue(new ApiError(500, "DB down"));
-        renderOnboarding();
-        await act(async () => {
-            fireEvent.click(screen.getByTestId("onboarding-skip"));
-        });
-        await waitFor(() => {
-            expect(toastError).toHaveBeenCalledWith("DB down");
-        });
-        expect(mockNavigate).not.toHaveBeenCalledWith("/dashboard");
+        expect(localStorage.getItem("adaptive-learner.user_id")).toBe("u-min");
+        expect(localStorage.getItem("adaptive-learner.project_id")).toBe("p-min");
     });
 });

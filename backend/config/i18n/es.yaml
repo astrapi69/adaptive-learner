@@ -189,17 +189,13 @@ onboarding:
   field_current_problem_hint: opcional — que te bloquea ahora mismo?
   submit: Crear proyecto e iniciar evaluacion
   creating: Creando proyecto...
-  skip: Mas tarde
-  skip_top: Saltar por ahora →
-  skip_hint: No estas seguro? Toca Mas tarde para empezar — puedes completarlo despues en la pagina Curriculum.
-  skip_default_name: Aprendiz
-  skip_default_topic: Mi aprendizaje
-  skip_default_goal: Descubrir mi estilo de aprendizaje.
-  skip_default_timeframe: Flexible
   field_tags: "Etiquetas"
   field_tags_hint: "Separadas por comas. Reutiliza etiquetas existentes o crea nuevas sobre la marcha."
   field_tags_placeholder: "exam-prep, daily-practice"
   subject_suggestions: "Materias sugeridas (toca para asignar):"
+  more_details: "Más detalles (opcional)"
+  default_goal: "Aprender {topic}"
+  default_timeframe: "Flexible"
 assessment:
   title: Evaluacion del tipo de aprendizaje
   intro: Doce preguntas cortas determinan tu perfil de aprendizaje. No hay respuestas correctas o incorrectas — responde por intuicion.
@@ -630,7 +626,6 @@ toast:
   api_key_restored: "Se restauró la última clave que funcionó."
   api_key_deleted: Clave API eliminada.
   method_switched: Metodo cambiado.
-  onboarding_skipped: "¡Bienvenido! Puedes ajustarlo más tarde."
 install:
   title: Anadir a la pantalla de inicio
   subtitle: "Instala Adaptive Learner como app para un mejor uso sin conexión."

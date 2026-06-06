@@ -6,7 +6,6 @@ import {ApiError} from "../api/client";
 import HelpLink from "../components/help/HelpLink";
 import HelpTooltip from "../components/help/HelpTooltip";
 import {useI18n} from "../hooks/useI18n";
-import {SUPPORTED_LANGUAGES} from "../lib/constants";
 import {setProjectId, setUserId} from "../lib/learnerState";
 import {translateSubjectPath} from "../lib/subjectI18n";
 import {suggestSubjects, type SubjectSuggestion} from "../lib/subjectSuggest";
@@ -14,19 +13,8 @@ import {getStorage} from "../storage";
 import type {Subject} from "../types/domain";
 import {notify} from "../utils/notify";
 
-/**
- * Pick a sensible starting language for the Skip flow. The
- * browser ``navigator.language`` returns e.g. "en-US" or
- * "de-DE"; we accept the 2-char prefix when it's one of the
- * supported catalog languages, otherwise fall back to English.
- */
-function defaultLanguageFromBrowser(): string {
-    const raw = (typeof navigator !== "undefined" && navigator.language) || "en";
-    const prefix = raw.slice(0, 2).toLowerCase();
-    return (SUPPORTED_LANGUAGES as readonly string[]).includes(prefix)
-        ? prefix
-        : "en";
-}
+/** Default daily-practice minutes when the learner doesn't set one. */
+const DEFAULT_DAILY_MINUTES = 15;
 
 /**
  * Onboarding page (project-reference §8 row ``/onboarding``).
@@ -41,13 +29,14 @@ function defaultLanguageFromBrowser(): string {
  * ``readLearnerState``. On success we route the user straight
  * to ``/assessment``.
  *
- * The form is one column: name + topic + goal + timeframe +
- * daily_minutes are required (matching the Pydantic
- * ``LearningProjectCreateBody`` constraints); current_problem
- * is optional. Validation is permissive in the markup (we let
- * the backend's Pydantic schema be the authority) but we trim
- * whitespace + require non-empty before submitting to avoid an
- * obvious 422 round-trip on empty input.
+ * Beginner-friendly (#92): only **name + topic** are required — enough
+ * to create a project and start. Goal / time frame / minutes-per-day /
+ * current problem / tags live in a collapsed "More details" disclosure
+ * and fall back to sensible defaults (the backend's
+ * ``LearningProjectCreate`` requires ``goal`` / ``timeframe`` non-empty,
+ * so the defaults are applied at submit time rather than sent empty).
+ * There is no Skip / Later button — the required form is short enough
+ * that one isn't needed.
  */
 export default function Onboarding() {
     const {t, lang} = useI18n();
@@ -58,7 +47,7 @@ export default function Onboarding() {
     const [topic, setTopic] = useState("");
     const [goal, setGoal] = useState("");
     const [timeframe, setTimeframe] = useState("");
-    const [dailyMinutes, setDailyMinutes] = useState(30);
+    const [dailyMinutes, setDailyMinutes] = useState(DEFAULT_DAILY_MINUTES);
     const [currentProblem, setCurrentProblem] = useState("");
 
     // v22F — Subject + Tag picker.
@@ -151,73 +140,36 @@ export default function Onboarding() {
     }
 
     const allRequiredFilled =
-        name.trim().length > 0 &&
-        topic.trim().length > 0 &&
-        goal.trim().length > 0 &&
-        timeframe.trim().length > 0 &&
-        dailyMinutes > 0;
-
-    /**
-     * v0.4.0 — "Later" / skip path. Creates a User row with the
-     * detected browser language (or English) plus a generic
-     * placeholder project, drops both ids in localStorage, and
-     * lands on /dashboard. The Dashboard's empty-state cards
-     * (no profile yet, zero sessions) already handle this
-     * gracefully. The user can edit / refine the project from
-     * the Curriculum page later.
-     *
-     * No fields required — the goal is for a curious visitor
-     * to land in the app in two clicks.
-     */
-    const handleSkip = async () => {
-        if (submitting) return;
-        setSubmitting(true);
-        try {
-            const language = lang || defaultLanguageFromBrowser();
-            const user = await getStorage().users.create({
-                name: t("onboarding.skip_default_name", "Learner"),
-                language,
-            });
-            setUserId(user.id);
-            const project = await getStorage().users.projects.create(user.id, {
-                topic: t("onboarding.skip_default_topic", "My learning"),
-                goal: t(
-                    "onboarding.skip_default_goal",
-                    "Discover my learning style.",
-                ),
-                timeframe: t("onboarding.skip_default_timeframe", "Flexible"),
-                daily_minutes: 30,
-                current_problem: null,
-                active: true,
-            });
-            setProjectId(project.id);
-            notify.success(
-                t("toast.onboarding_skipped", "Welcome! You can refine later."),
-            );
-            navigate("/dashboard");
-        } catch (err) {
-            const detail =
-                err instanceof ApiError
-                    ? err.detail
-                    : t("common.error", "Something went wrong.");
-            notify.error(detail);
-        } finally {
-            setSubmitting(false);
-        }
-    };
+        name.trim().length > 0 && topic.trim().length > 0;
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (submitting || !allRequiredFilled) return;
         setSubmitting(true);
         try {
+            const trimmedTopic = topic.trim();
+            // Only name + topic are required; the backend's
+            // LearningProjectCreate still requires a non-empty goal +
+            // timeframe, so apply sensible defaults when the learner
+            // skipped the optional "More details" section.
+            const resolvedGoal =
+                goal.trim() ||
+                t("onboarding.default_goal", "Learn {topic}").replace(
+                    "{topic}",
+                    trimmedTopic,
+                );
+            const resolvedTimeframe =
+                timeframe.trim() ||
+                t("onboarding.default_timeframe", "Flexible");
+            const resolvedDailyMinutes =
+                dailyMinutes > 0 ? dailyMinutes : DEFAULT_DAILY_MINUTES;
             const user = await getStorage().users.create({name: name.trim(), language: lang});
             setUserId(user.id);
             const project = await getStorage().users.projects.create(user.id, {
-                topic: topic.trim(),
-                goal: goal.trim(),
-                timeframe: timeframe.trim(),
-                daily_minutes: dailyMinutes,
+                topic: trimmedTopic,
+                goal: resolvedGoal,
+                timeframe: resolvedTimeframe,
+                daily_minutes: resolvedDailyMinutes,
                 current_problem: currentProblem.trim() || null,
                 active: true,
             });
@@ -237,26 +189,7 @@ export default function Onboarding() {
     return (
         <main id="main" data-testid="onboarding" className="onboarding-page">
             <header className="onboarding-header">
-                <div className="onboarding-header-row">
-                    <h1>{t("onboarding.title", "Create a learning project")}</h1>
-                    {/* Prominent skip affordance, visible above the
-                        fold without scrolling. Sits at the top-right
-                        of the header so a curious visitor can land in
-                        the app in one click without filling the
-                        6-field form below. The bottom "Later" button
-                        is the same handler — kept for users who
-                        scroll to the form actions. */}
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        className="onboarding-skip-top"
-                        onClick={handleSkip}
-                        disabled={submitting}
-                        data-testid="onboarding-skip-top"
-                    >
-                        {t("onboarding.skip_top", "Skip for now →")}
-                    </Button>
-                </div>
+                <h1>{t("onboarding.title", "Create a learning project")}</h1>
                 <p className="onboarding-intro">{t("onboarding.intro")}</p>
                 <p
                     className="onboarding-intro"
@@ -370,6 +303,14 @@ export default function Onboarding() {
                     </div>
                 )}
 
+                <details
+                    className="onboarding-more-details"
+                    data-testid="onboarding-more-details"
+                >
+                    <summary className="onboarding-more-details-summary flex min-h-11 cursor-pointer select-none items-center font-medium">
+                        {t("onboarding.more_details", "More details (optional)")}
+                    </summary>
+
                 <label className="form-row">
                     <span className="form-label">
                         {t("onboarding.field_tags", "Tags")}{" "}
@@ -399,16 +340,19 @@ export default function Onboarding() {
                 <label className="form-row">
                     <span className="form-label">
                         {t("onboarding.field_goal", "Goal")}{" "}
-                        <span className="form-required" aria-hidden="true">
-                            *
+                        <span className="form-optional">
+                            ({t("common.optional", "optional")})
                         </span>
                     </span>
                     <textarea
                         data-testid="onboarding-goal"
-                        required
                         rows={3}
                         value={goal}
                         onChange={(e) => setGoal(e.target.value)}
+                        placeholder={t(
+                            "onboarding.default_goal",
+                            "Learn {topic}",
+                        ).replace("{topic}", topic.trim() || "…")}
                         disabled={submitting}
                     />
                     <span className="form-hint">{t("onboarding.field_goal_hint")}</span>
@@ -417,16 +361,16 @@ export default function Onboarding() {
                 <label className="form-row">
                     <span className="form-label">
                         {t("onboarding.field_timeframe", "Time frame")}{" "}
-                        <span className="form-required" aria-hidden="true">
-                            *
+                        <span className="form-optional">
+                            ({t("common.optional", "optional")})
                         </span>
                     </span>
                     <input
                         data-testid="onboarding-timeframe"
                         type="text"
-                        required
                         value={timeframe}
                         onChange={(e) => setTimeframe(e.target.value)}
+                        placeholder={t("onboarding.default_timeframe", "Flexible")}
                         disabled={submitting}
                     />
                     <span className="form-hint">{t("onboarding.field_timeframe_hint")}</span>
@@ -435,8 +379,8 @@ export default function Onboarding() {
                 <label className="form-row">
                     <span className="form-label">
                         {t("onboarding.field_daily_minutes", "Minutes per day")}{" "}
-                        <span className="form-required" aria-hidden="true">
-                            *
+                        <span className="form-optional">
+                            ({t("common.optional", "optional")})
                         </span>
                     </span>
                     <input
@@ -445,7 +389,6 @@ export default function Onboarding() {
                         min={5}
                         max={600}
                         step={5}
-                        required
                         value={dailyMinutes}
                         onChange={(e) => setDailyMinutes(Number(e.target.value) || 0)}
                         disabled={submitting}
@@ -470,6 +413,7 @@ export default function Onboarding() {
                         {t("onboarding.field_current_problem_hint")}
                     </span>
                 </label>
+                </details>
 
                 <div className="form-actions">
                     <Button
@@ -482,15 +426,6 @@ export default function Onboarding() {
                         {t("common.back", "Back")}
                     </Button>
                     <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={handleSkip}
-                        disabled={submitting}
-                        data-testid="onboarding-skip"
-                    >
-                        {t("onboarding.skip", "Later")}
-                    </Button>
-                    <Button
                         type="submit"
                         data-testid="onboarding-submit"
                         variant="default"
@@ -501,12 +436,6 @@ export default function Onboarding() {
                             : t("onboarding.submit", "Create project and start assessment")}
                     </Button>
                 </div>
-                <p className="form-hint onboarding-skip-hint">
-                    {t(
-                        "onboarding.skip_hint",
-                        "Not sure yet? Tap Later to jump in — you can fill this in from the Curriculum page anytime.",
-                    )}
-                </p>
             </form>
         </main>
     );

@@ -199,17 +199,13 @@
     "field_current_problem_hint": "optional — was bremst dich gerade?",
     "submit": "Projekt anlegen und Assessment starten",
     "creating": "Projekt wird angelegt …",
-    "skip": "Später",
-    "skip_top": "Überspringen →",
-    "skip_hint": "Noch unsicher? Tippe auf Später, um direkt loszulegen — du kannst die Angaben jederzeit unter Curriculum nachtragen.",
-    "skip_default_name": "Lernender",
-    "skip_default_topic": "Mein Lernen",
-    "skip_default_goal": "Meinen Lernstil entdecken.",
-    "skip_default_timeframe": "Flexibel",
     "field_tags": "Schlagwörter",
     "field_tags_hint": "Kommagetrennt. Vorhandene Schlagwörter wiederverwenden oder neue spontan erstellen.",
     "field_tags_placeholder": "exam-prep, daily-practice",
-    "subject_suggestions": "Vorgeschlagene Fächer (zum Zuordnen tippen):"
+    "subject_suggestions": "Vorgeschlagene Fächer (zum Zuordnen tippen):",
+    "more_details": "Weitere Details (optional)",
+    "default_goal": "{topic} lernen",
+    "default_timeframe": "Flexibel"
   },
   "assessment": {
     "title": "Lerntyp-Assessment",
@@ -678,8 +674,7 @@
     "api_key_saved": "API-Key gespeichert.",
     "api_key_restored": "Letzter funktionierender Schlüssel wiederhergestellt.",
     "api_key_deleted": "API-Key entfernt.",
-    "method_switched": "Methode gewechselt.",
-    "onboarding_skipped": "Willkommen! Du kannst es später verfeinern."
+    "method_switched": "Methode gewechselt."
   },
   "install": {
     "title": "Zum Startbildschirm hinzufügen",

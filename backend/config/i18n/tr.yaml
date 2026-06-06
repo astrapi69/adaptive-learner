@@ -189,17 +189,13 @@ onboarding:
   field_current_problem_hint: isteğe bağlı — şu an seni neyin engelliyor?
   submit: Projeyi oluştur ve değerlendirmeye başla
   creating: Proje oluşturuluyor…
-  skip: Sonra
-  skip_top: Şimdilik atla →
-  skip_hint: Henüz emin değil misin? Başlamak için Sonra'ya dokun — Müfredat sayfasından istediğin zaman doldurabilirsin.
-  skip_default_name: Öğrenci
-  skip_default_topic: Öğrenmem
-  skip_default_goal: Öğrenme tarzımı keşfetmek.
-  skip_default_timeframe: Esnek
   field_tags: "Etiketler"
   field_tags_hint: "Virgülle ayrılmış. Mevcut etiketleri yeniden kullanın veya anında yenilerini oluşturun."
   field_tags_placeholder: "exam-prep, daily-practice"
   subject_suggestions: "Önerilen konular (atamak için dokunun):"
+  more_details: "Daha fazla ayrıntı (isteğe bağlı)"
+  default_goal: "{topic} öğren"
+  default_timeframe: "Esnek"
 assessment:
   title: Öğrenme tipi değerlendirmesi
   intro: On iki kısa soru öğrenme profilini belirler. Doğru ya da yanlış cevap yok — içgüdüne güven.
@@ -630,7 +626,6 @@ toast:
   api_key_restored: "Son çalışan anahtar geri yüklendi."
   api_key_deleted: API anahtarı kaldırıldı.
   method_switched: Yöntem değiştirildi.
-  onboarding_skipped: "Hoş geldiniz! Daha sonra ince ayar yapabilirsiniz."
 install:
   title: Ana ekrana ekle
   subtitle: "Daha iyi çevrimdışı kullanım için Adaptive Learner'ı uygulama olarak yükleyin."
