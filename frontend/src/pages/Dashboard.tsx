@@ -27,6 +27,7 @@ import StreakWidget from "../components/StreakWidget";
 import {Button} from "@/components/ui/button";
 import {ApiError} from "../api/client";
 import {useApiKeyStatus} from "../hooks/useApiKeyStatus";
+import {useHasIncompleteAssessment} from "../hooks/useAssessmentProgress";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {getStorage} from "../storage";
@@ -85,6 +86,11 @@ export default function Dashboard() {
     }
 
     const [profile, setProfile] = useState<LearningProfile | null>(null);
+    // #106 — when no profile yet, offer to resume an abandoned
+    // assessment (active invitation), else to start one.
+    const incompleteAssessment = useHasIncompleteAssessment(
+        readLearnerState().projectId,
+    );
     const [summary, setSummary] = useState<TrackingSummary | null>(null);
     const [tools, setTools] = useState<ToolRecommendation[]>([]);
     const [spaced, setSpaced] = useState<SpacedRecommendation[]>([]);
@@ -399,9 +405,45 @@ export default function Dashboard() {
                     </h2>
                     {profile ? (
                         <ProfileRadar profile={profile} height={280} />
+                    ) : incompleteAssessment ? (
+                        <div
+                            className="tile flex flex-col items-start gap-2"
+                            data-testid="dashboard-profile-resume"
+                        >
+                            <p>
+                                {t(
+                                    "dashboard.profile_incomplete",
+                                    "Learning profile incomplete.",
+                                )}
+                            </p>
+                            <Button
+                                type="button"
+                                data-testid="dashboard-profile-resume-btn"
+                                onClick={() => navigate("/assessment")}
+                            >
+                                {t(
+                                    "dashboard.profile_resume",
+                                    "Continue learning profile",
+                                )}
+                            </Button>
+                        </div>
                     ) : (
-                        <div className="tile" data-testid="dashboard-profile-empty">
+                        <div
+                            className="tile flex flex-col items-start gap-2"
+                            data-testid="dashboard-profile-empty"
+                        >
                             <p className="muted">{t("dashboard.no_data")}</p>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                data-testid="dashboard-profile-start-btn"
+                                onClick={() => navigate("/assessment")}
+                            >
+                                {t(
+                                    "dashboard.profile_start",
+                                    "Create learning profile",
+                                )}
+                            </Button>
                         </div>
                     )}
                 </article>

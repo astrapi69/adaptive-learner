@@ -232,6 +232,9 @@ dashboard:
   quick_start: 新しいセッションを開始
   quick_start_subtitle: プロフィールから方法を選択しました。
   card_profile: 学習プロフィール
+  profile_incomplete: "学習プロファイルが未完了です。"
+  profile_resume: "学習プロファイルを続ける"
+  profile_start: "学習プロファイルを作成"
   card_progress: 進捗
   card_distribution: 方法の分布
   card_counter: セッション
@@ -433,6 +436,13 @@ settings:
   missions_reset_failed: "ミッションをリセットできませんでした。"
   gestures: スワイプジェスチャー
   gestures_description: 評価、セッション、カリキュラムをスワイプして移動します。
+  profile_title: "学習プロファイル"
+  profile_resume: "学習プロファイルを続ける"
+  profile_redo: "学習プロファイルをやり直す"
+  profile_create: "学習プロファイルを作成"
+  profile_incomplete_hint: "未完了の診断があります。"
+  profile_redo_hint: "学習プロファイルを更新するには診断をやり直してください。"
+  profile_create_hint: "短い診断を受けて、パーソナライズされた学習プロファイルを取得しましょう。"
   button_tooltips: ボタンのツールチップを表示
   button_tooltips_description: "アイコンボタンにカーソルを合わせたとき、その機能を説明するツールチップを表示します。スクリーンリーダー用のラベルは、この設定に関わらず常に有効です。"
   developer_mode: 開発者モード
