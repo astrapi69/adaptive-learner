@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-06-01
-**Anzahl EXPs:** 21
+**Stand:** 2026-06-06
+**Anzahl EXPs:** 22
 
 ## Kategorisierung
 
@@ -36,6 +36,7 @@
 | 020 | Lektions-Flusssteuerung (Prüfen/Weiter)     | Feature      | 2     | Hoch      | 001, 003, 006      |
 | 021 | Lektions-Creator (eigenständig)             | Feature      | 2     | Hoch      | 002, 003, 006, 013 |
 | 022 | Visueller Lernpfad (xyflow/React Flow)      | Feature      | Zukunft | Mittel  | 002, 013, 007, 021 |
+| 023 | Multi-Content-Repository Architektur        | Vision       | A/B/C | Sehr hoch | 002, 003, 021      |
 
 ## Phasen-Definition
 
