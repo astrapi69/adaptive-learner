@@ -186,3 +186,59 @@ describe("Phase 39 C5 — contrast helper sanity", () => {
         );
     });
 });
+
+describe("#108 — matching side tints pass WCAG AA (text on the tinted tile)", () => {
+    // The matching tokens are color-mix(in srgb, <src> p%, var(--bg-surface)).
+    // ``color-mix(in srgb)`` interpolates the gamma-encoded sRGB channels
+    // linearly, so we replicate it here from the real per-theme token hexes
+    // and pin the rendered tile color against its text (--fg-primary) at
+    // normal-text AA. This is the computational (relative-luminance) WCAG
+    // check the design tokens promise. The mix percentages mirror the CSS
+    // (sides 16%, paired 22%); keep them in sync with theme-*.css + the
+    // generator if they change.
+    function parseHex(hex: string): [number, number, number] {
+        let h = hex.replace("#", "");
+        if (h.length === 3) {
+            h = h
+                .split("")
+                .map((c) => c + c)
+                .join("");
+        }
+        return [
+            parseInt(h.slice(0, 2), 16),
+            parseInt(h.slice(2, 4), 16),
+            parseInt(h.slice(4, 6), 16),
+        ];
+    }
+
+    /** color-mix(in srgb, src `frac`%, surface) — src fraction in [0,1]. */
+    function mixSrgb(srcHex: string, surfaceHex: string, frac: number): string {
+        const src = parseHex(srcHex);
+        const surf = parseHex(surfaceHex);
+        const ch = (i: number) =>
+            Math.round(frac * src[i] + (1 - frac) * surf[i])
+                .toString(16)
+                .padStart(2, "0");
+        return `#${ch(0)}${ch(1)}${ch(2)}`;
+    }
+
+    for (const id of THEME_IDS) {
+        const t = () => THEME_TOKENS[id];
+
+        it(`theme=${id}: side-a / side-b / paired tints meet normal-text AA`, () => {
+            const surface = t()["bg-surface"];
+            const fg = t()["fg-primary"];
+            const tints: Array<[string, string]> = [
+                ["side-a", mixSrgb(t()["info"], surface, 0.16)],
+                ["side-b", mixSrgb(t()["success"], surface, 0.16)],
+                ["paired", mixSrgb(t()["exercise-matched"], surface, 0.22)],
+            ];
+            for (const [name, bg] of tints) {
+                expect(
+                    contrastRatio(fg, bg),
+                    `matching ${name} fg on tint`,
+                ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+            }
+        });
+    }
+});
