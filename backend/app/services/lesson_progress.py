@@ -21,10 +21,12 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy.orm import Session
-
 from app.exceptions import NotFoundError, ValidationError
 from app.models import LessonProgress, User
+from app.repositories.lesson_progress_repo import LessonProgressRepository
+from app.repositories.lesson_session_unification_repo import (
+    LessonSessionUnificationRepository,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -60,34 +62,30 @@ def _recompute_score(results: dict[str, Any]) -> tuple[int, int]:
     return correct, total
 
 
-def _ensure_user(db: Session, user_id: str) -> User:
-    user = db.get(User, user_id)
+def _ensure_user(repo: LessonProgressRepository, user_id: str) -> User:
+    user = repo.get_user(user_id)
     if user is None:
         raise NotFoundError(f"User {user_id} not found.")
     return user
 
 
 def _find_row(
-    db: Session,
+    repo: LessonProgressRepository,
     user_id: str,
     source: str,
     set_id: str,
     lesson_filename: str,
 ) -> LessonProgress | None:
-    return (
-        db.query(LessonProgress)
-        .filter(
-            LessonProgress.user_id == user_id,
-            LessonProgress.source == source,
-            LessonProgress.set_id == set_id,
-            LessonProgress.lesson_filename == lesson_filename,
-        )
-        .one_or_none()
+    return repo.find(
+        user_id=user_id,
+        source=source,
+        set_id=set_id,
+        lesson_filename=lesson_filename,
     )
 
 
 def get_progress(
-    db: Session,
+    repo: LessonProgressRepository,
     user_id: str,
     source: str,
     set_id: str,
@@ -97,30 +95,26 @@ def get_progress(
     (with ``step_results`` already parsed) or ``None`` when
     no row exists yet — the viewer treats that as 'fresh
     start'."""
-    _ensure_user(db, user_id)
-    row = _find_row(db, user_id, source, set_id, lesson_filename)
+    _ensure_user(repo, user_id)
+    row = _find_row(repo, user_id, source, set_id, lesson_filename)
     return _row_to_wire(row) if row else None
 
 
 def list_progress(
-    db: Session,
+    repo: LessonProgressRepository,
     user_id: str,
 ) -> list[dict[str, Any]]:
     """Every progress row for a user. The Set Browser future
     enhancements may surface per-set aggregates; for v1.28.0
     only the lesson viewer reads this."""
-    _ensure_user(db, user_id)
-    rows = (
-        db.query(LessonProgress)
-        .filter(LessonProgress.user_id == user_id)
-        .order_by(LessonProgress.updated_at.desc())
-        .all()
-    )
+    _ensure_user(repo, user_id)
+    rows = repo.list_for_user(user_id)
     return [_row_to_wire(row) for row in rows]
 
 
 def upsert_progress(
-    db: Session,
+    repo: LessonProgressRepository,
+    unification_repo: LessonSessionUnificationRepository,
     user_id: str,
     *,
     source: str,
@@ -172,8 +166,8 @@ def upsert_progress(
             "mark_abandoned / mark_resumed / mark_restarted "
             "may be true per call."
         )
-    _ensure_user(db, user_id)
-    row = _find_row(db, user_id, source, set_id, lesson_filename)
+    _ensure_user(repo, user_id)
+    row = _find_row(repo, user_id, source, set_id, lesson_filename)
     now = _utcnow()
     if row is None:
         row = LessonProgress(
@@ -189,10 +183,10 @@ def upsert_progress(
             started_at=now,
             updated_at=now,
         )
-        db.add(row)
+        repo.add(row)
         # Flush so the new id is visible if the caller looks it
         # up immediately after.
-        db.flush()
+        repo.flush()
 
     results = _decode_results(row)
     if step_result is not None:
@@ -270,8 +264,8 @@ def upsert_progress(
         row.abandoned_at = None
 
     row.updated_at = now
-    db.commit()
-    db.refresh(row)
+    repo.commit()
+    repo.refresh(row)
 
     if just_completed:
         # v1.31.0 / Phase 46F: write a LearningSession row +
@@ -286,7 +280,7 @@ def upsert_progress(
             )
 
             record_lesson_completion_session(
-                db,
+                unification_repo,
                 user_id=user_id,
                 lesson_progress_id=row.id,
                 score_correct=row.score_correct,

@@ -17,11 +17,10 @@ reads via ``element_errors_service.list_for_user`` directly
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import get_element_errors_repo
 from app.exceptions import NotFoundError
-from app.models import User
+from app.repositories.element_errors_repo import ElementErrorsRepository
 from app.schemas import (
     ElementAttemptsIn,
     ElementErrorOut,
@@ -33,9 +32,8 @@ from app.services import element_srs as element_srs_service
 router = APIRouter(prefix="/users", tags=["element-errors"])
 
 
-def _require_user(db: Session, user_id: str) -> None:
-    user = db.get(User, user_id)
-    if user is None:
+def _require_user(repo: ElementErrorsRepository, user_id: str) -> None:
+    if repo.get_user(user_id) is None:
         raise NotFoundError(f"User {user_id} not found")
 
 
@@ -58,11 +56,11 @@ def list_element_errors(
             "(mastered elements are excluded from review)."
         ),
     ),
-    db: Session = Depends(get_db),
+    repo: ElementErrorsRepository = Depends(get_element_errors_repo),
 ) -> list[ElementErrorOut]:
-    _require_user(db, user_id)
+    _require_user(repo, user_id)
     rows = element_errors_service.list_for_user(
-        db,
+        repo,
         user_id,
         set_id=set_id,
         include_mastered=include_mastered,
@@ -83,7 +81,7 @@ def review_queue(
             "review queue across all sets the user has touched."
         ),
     ),
-    db: Session = Depends(get_db),
+    repo: ElementErrorsRepository = Depends(get_element_errors_repo),
 ) -> list[ReviewQueueItemOut]:
     """SRS review queue for the user (Phase 46C / P-129).
 
@@ -94,9 +92,9 @@ def review_queue(
     Dashboard widget (C13) renders the most urgent items
     first.
     """
-    _require_user(db, user_id)
+    _require_user(repo, user_id)
     items = element_srs_service.compute_review_queue(
-        db,
+        repo,
         user_id,
         set_id=set_id,
     )
@@ -110,7 +108,7 @@ def review_queue(
 def record_element_attempts(
     user_id: str,
     payload: ElementAttemptsIn,
-    db: Session = Depends(get_db),
+    repo: ElementErrorsRepository = Depends(get_element_errors_repo),
 ) -> list[ElementErrorOut]:
     """Bulk upsert; preserves input order in the response.
 
@@ -118,11 +116,11 @@ def record_element_attempts(
     this once per exercise submit with the attempts the
     exercise-side deriver produced. Per the Pydantic schema
     in C4 the body caps at 100 attempts per call."""
-    _require_user(db, user_id)
+    _require_user(repo, user_id)
     rows = element_errors_service.record_attempts(
-        db,
+        repo,
         user_id,
         payload.attempts,
     )
-    db.commit()
+    repo.commit()
     return [ElementErrorOut.model_validate(row) for row in rows]

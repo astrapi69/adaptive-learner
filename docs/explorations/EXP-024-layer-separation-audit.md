@@ -185,12 +185,8 @@ Reihenfolge nach Blast-Radius (klein zuerst), Pilot = `imports`.
 
 **Clean-CRUD-Tier abgeschlossen.** Rest = „harter Tier" (gekoppelt /
 high-ripple / gross):
-- [ ] **Lesson-Cluster** lesson_progress + lesson_session_unification +
-      element_errors + element_srs: gekoppelt. `lesson_progress.upsert_progress`
-      ruft bei Completion `record_lesson_completion_session` (unification ->
-      gamification-Hook) — Service-zu-Service-Write; als Einheit migrieren,
-      mit Test-Rewrites (element_errors/element_srs/lesson_session_unification
-      haben Direkt-Test-Caller).
+- [x] **Lesson-Cluster** (lesson_progress + lesson_session_unification +
+      element_errors + element_srs) — als Einheit migriert, mit Test-Rewrites.
 - [ ] settings (6 Test-Caller, von Routern + github/imports konsumiert;
       nutzt das file-basierte `secrets_service`)
 - [ ] reset_service (db_guard-Bulk-Delete, 2 Test-Caller — heikel)
@@ -250,6 +246,18 @@ tracking (2), anki (1), missions (1).
 - **taxonomy migriert:** `TaxonomyRepository` (Subject global / Tag per-user /
   Project-M:N). Tag-Uniqueness via `repo.find_tag_by_name(..., exclude_id=)`,
   Ownership-/Idempotenz-Regeln bleiben im Service. Backend-Suite 1181 passed.
+- **Lesson-Cluster migriert (als Einheit):** drei neue Repos
+  (`ElementErrorsRepository` mit explizitem `flush()`/`commit()` fuer die
+  Bulk-Upsert-Transaktionsgrenze; `LessonProgressRepository`;
+  `LessonSessionUnificationRepository`). `element_srs` braucht **kein** eigenes
+  Repo — es reicht den `ElementErrorsRepository` an `element_errors.list_for_user`
+  weiter. Die Transition-Matrix (element_errors), die Lifecycle-/Score-Logik
+  (lesson_progress) und der `on_session_complete`-Hook-Fire (unification)
+  bleiben im Service. `lesson_progress.upsert_progress` bekommt **zwei** Repos
+  injiziert (progress + unification) und ruft die Completion-Unification ueber
+  das unification-Repo. Test-Rewrites in 3 Dateien (element_errors/element_srs:
+  `db`->`repo`-Wrap; unification: Inline-Wrap, da nicht alle `db`-Bloecke
+  Service-Calls sind). ruff + mypy sauber.
 
 ---
 

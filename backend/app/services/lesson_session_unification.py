@@ -38,12 +38,9 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy.orm import Session
-
-from app.models import (
-    LEARNING_PROJECT_KIND_CONTENT,
-    LearningProject,
-    LearningSession,
+from app.models import LearningProject, LearningSession
+from app.repositories.lesson_session_unification_repo import (
+    LessonSessionUnificationRepository,
 )
 
 logger = logging.getLogger(__name__)
@@ -70,41 +67,31 @@ _PSEUDO_PROJECT_TIMEFRAME = "ongoing"
 _PSEUDO_PROJECT_DAILY_MINUTES = 1
 
 
-def find_or_create_content_pseudo_project(db: Session, user_id: str) -> LearningProject:
+def find_or_create_content_pseudo_project(
+    repo: LessonSessionUnificationRepository, user_id: str
+) -> LearningProject:
     """Return the user's content pseudo-project, creating it if missing.
 
     Identified by ``(user_id, kind="content")``. Idempotent:
     callers that complete multiple lessons in the same
     request reuse the same row. The caller is responsible
-    for committing — this helper ``flush`` es so the new id
+    for committing — the create path ``flush`` es so the new id
     is visible inside the transaction but does not commit.
     """
-    proj = (
-        db.query(LearningProject)
-        .filter(
-            LearningProject.user_id == user_id,
-            LearningProject.kind == LEARNING_PROJECT_KIND_CONTENT,
-        )
-        .one_or_none()
-    )
+    proj = repo.get_content_pseudo_project(user_id)
     if proj is not None:
         return proj
-    proj = LearningProject(
+    return repo.create_pseudo_project(
         user_id=user_id,
         topic=_PSEUDO_PROJECT_TOPIC,
         goal=_PSEUDO_PROJECT_GOAL,
         timeframe=_PSEUDO_PROJECT_TIMEFRAME,
         daily_minutes=_PSEUDO_PROJECT_DAILY_MINUTES,
-        kind=LEARNING_PROJECT_KIND_CONTENT,
-        active=True,
     )
-    db.add(proj)
-    db.flush()
-    return proj
 
 
 def record_lesson_completion_session(
-    db: Session,
+    repo: LessonSessionUnificationRepository,
     *,
     user_id: str,
     lesson_progress_id: str,
@@ -126,9 +113,9 @@ def record_lesson_completion_session(
     compute the per-star bonus. Existing handlers that
     ignore unknown keys keep working unchanged.
     """
-    project = find_or_create_content_pseudo_project(db, user_id)
+    project = find_or_create_content_pseudo_project(repo, user_id)
     now = datetime.now(UTC)
-    sess = LearningSession(
+    sess = repo.create_completed_session(
         project_id=project.id,
         method=CONTENT_LESSON_METHOD,
         started_at=now,
@@ -136,9 +123,6 @@ def record_lesson_completion_session(
         cycle_step=1,
         status="completed",
     )
-    db.add(sess)
-    db.commit()
-    db.refresh(sess)
 
     _fire_on_session_complete(
         session={

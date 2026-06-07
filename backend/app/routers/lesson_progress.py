@@ -18,10 +18,16 @@ dict.
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import (
+    get_lesson_progress_repo,
+    get_lesson_session_unification_repo,
+)
 from app.exceptions import NotFoundError
+from app.repositories.lesson_progress_repo import LessonProgressRepository
+from app.repositories.lesson_session_unification_repo import (
+    LessonSessionUnificationRepository,
+)
 from app.schemas import LessonProgressOut, LessonProgressUpsert
 from app.services import lesson_progress as lesson_progress_service
 
@@ -38,9 +44,9 @@ def _unslug(source_slug: str) -> str:
 )
 def list_lesson_progress(
     user_id: str,
-    db: Session = Depends(get_db),
+    repo: LessonProgressRepository = Depends(get_lesson_progress_repo),
 ) -> list[LessonProgressOut]:
-    rows = lesson_progress_service.list_progress(db, user_id)
+    rows = lesson_progress_service.list_progress(repo, user_id)
     return [LessonProgressOut.model_validate(row) for row in rows]
 
 
@@ -53,10 +59,10 @@ def get_lesson_progress(
     source_slug: str,
     set_id: str,
     lesson_filename: str,
-    db: Session = Depends(get_db),
+    repo: LessonProgressRepository = Depends(get_lesson_progress_repo),
 ) -> LessonProgressOut:
     row = lesson_progress_service.get_progress(
-        db,
+        repo,
         user_id,
         source=_unslug(source_slug),
         set_id=set_id,
@@ -76,11 +82,15 @@ def get_lesson_progress(
 def upsert_lesson_progress(
     user_id: str,
     payload: LessonProgressUpsert,
-    db: Session = Depends(get_db),
+    repo: LessonProgressRepository = Depends(get_lesson_progress_repo),
+    unification_repo: LessonSessionUnificationRepository = Depends(
+        get_lesson_session_unification_repo
+    ),
 ) -> LessonProgressOut:
     step_result = payload.step_result.model_dump() if payload.step_result is not None else None
     row = lesson_progress_service.upsert_progress(
-        db,
+        repo,
+        unification_repo,
         user_id,
         source=payload.source,
         set_id=payload.set_id,

@@ -1,11 +1,12 @@
 """ElementError service — record attempts + mastery detection
-(Phase 46B / C5 / P-129).
+(Phase 46B / C5 / P-129; EXP-024 repository migration).
 
 The service owns the upsert transition matrix for the
-``element_errors`` table. Routes (commit C6) delegate to
-``record_attempts`` for the bulk-upsert endpoint; the SRS
-queue computation (commit C11) reads ``ElementError`` rows
-directly via SQLAlchemy.
+``element_errors`` table. Persistence goes through
+:class:`ElementErrorsRepository`. Routes (commit C6) delegate to
+``record_attempts`` for the bulk-upsert endpoint and own the
+transaction boundary (``repo.commit()`` after the batch); the SRS
+queue computation (commit C11) reads via ``list_for_user``.
 
 Transition matrix:
 
@@ -27,10 +28,6 @@ Transition matrix:
 Mastery threshold is hardcoded to 3 per D4 (Phase 46 plan).
 Making this configurable is a documented future-phase change;
 no plugin setting yet because nobody asked.
-
-The service is decoupled from the route layer: takes a
-``Session`` + plain Python values, returns ORM rows. Tests
-can call it directly without HTTP.
 """
 
 from __future__ import annotations
@@ -38,10 +35,8 @@ from __future__ import annotations
 from collections.abc import Iterable
 from datetime import UTC, datetime
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
-
 from app.models import ElementError
+from app.repositories.element_errors_repo import ElementErrorsRepository
 from app.schemas import ElementAttemptIn
 
 # D4 (Phase 46 plan): 3 consecutive correct = mastered. The
@@ -57,27 +52,24 @@ def _utcnow() -> datetime:
 
 
 def _find_row(
-    db: Session,
+    repo: ElementErrorsRepository,
     user_id: str,
     attempt: ElementAttemptIn,
 ) -> ElementError | None:
     """Return the existing element-error row for the
     composite key, or ``None`` if first attempt."""
-    stmt = select(ElementError).where(
-        ElementError.user_id == user_id,
-        ElementError.set_id == attempt.set_id,
-        ElementError.lesson_id == attempt.lesson_id,
-        ElementError.exercise_id == attempt.exercise_id,
-        ElementError.element_key == attempt.element_key,
-        # EXP-018 / Phase 62: a card's receptive and productive
-        # rows are distinct identities; never collapse them.
-        ElementError.direction == attempt.direction,
+    return repo.find(
+        user_id=user_id,
+        set_id=attempt.set_id,
+        lesson_id=attempt.lesson_id,
+        exercise_id=attempt.exercise_id,
+        element_key=attempt.element_key,
+        direction=attempt.direction,
     )
-    return db.execute(stmt).scalar_one_or_none()
 
 
 def record_attempt(
-    db: Session,
+    repo: ElementErrorsRepository,
     user_id: str,
     attempt: ElementAttemptIn,
 ) -> ElementError:
@@ -88,7 +80,7 @@ def record_attempt(
     Returns the post-state row.
     """
     now = _utcnow()
-    row = _find_row(db, user_id, attempt)
+    row = _find_row(repo, user_id, attempt)
 
     if row is None:
         # First time we see this element for this user.
@@ -111,8 +103,8 @@ def record_attempt(
             created_at=now,
             updated_at=now,
         )
-        db.add(row)
-        db.flush()
+        repo.add(row)
+        repo.flush()
         return row
 
     # Existing row — apply the transition matrix.
@@ -140,12 +132,12 @@ def record_attempt(
         row.error_count += 1
         row.last_error_at = now
 
-    db.flush()
+    repo.flush()
     return row
 
 
 def record_attempts(
-    db: Session,
+    repo: ElementErrorsRepository,
     user_id: str,
     attempts: list[ElementAttemptIn],
 ) -> list[ElementError]:
@@ -158,11 +150,11 @@ def record_attempts(
     """
     if not attempts:
         return []
-    return [record_attempt(db, user_id, a) for a in attempts]
+    return [record_attempt(repo, user_id, a) for a in attempts]
 
 
 def list_for_user(
-    db: Session,
+    repo: ElementErrorsRepository,
     user_id: str,
     *,
     set_id: str | None = None,
@@ -175,13 +167,7 @@ def list_for_user(
     (commit C11; that path passes ``include_mastered=False``
     since mastered elements are excluded from review).
     """
-    stmt = select(ElementError).where(ElementError.user_id == user_id)
-    if set_id is not None:
-        stmt = stmt.where(ElementError.set_id == set_id)
-    if not include_mastered:
-        stmt = stmt.where(ElementError.mastered.is_(False))
-    stmt = stmt.order_by(ElementError.updated_at.desc())
-    return list(db.execute(stmt).scalars().all())
+    return repo.list_for_user(user_id, set_id=set_id, include_mastered=include_mastered)
 
 
 def is_fully_mastered(rows: Iterable[ElementError]) -> bool:

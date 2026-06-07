@@ -22,9 +22,21 @@ from app.repositories.curriculum_repo import (
     CurriculumRepository,
     SqlAlchemyCurriculumRepository,
 )
+from app.repositories.element_errors_repo import (
+    ElementErrorsRepository,
+    SqlAlchemyElementErrorsRepository,
+)
 from app.repositories.imports_repo import (
     ImportsRepository,
     SqlAlchemyImportsRepository,
+)
+from app.repositories.lesson_progress_repo import (
+    LessonProgressRepository,
+    SqlAlchemyLessonProgressRepository,
+)
+from app.repositories.lesson_session_unification_repo import (
+    LessonSessionUnificationRepository,
+    SqlAlchemyLessonSessionUnificationRepository,
 )
 from app.repositories.projects_repo import (
     ProjectsRepository,
@@ -65,9 +77,29 @@ def get_taxonomy_repo(db: Session = Depends(get_db)) -> TaxonomyRepository:
     return SqlAlchemyTaxonomyRepository(db)
 
 
+def get_element_errors_repo(db: Session = Depends(get_db)) -> ElementErrorsRepository:
+    """Provide an :class:`ElementErrorsRepository` bound to the request session."""
+    return SqlAlchemyElementErrorsRepository(db)
+
+
+def get_lesson_progress_repo(db: Session = Depends(get_db)) -> LessonProgressRepository:
+    """Provide a :class:`LessonProgressRepository` bound to the request session."""
+    return SqlAlchemyLessonProgressRepository(db)
+
+
+def get_lesson_session_unification_repo(
+    db: Session = Depends(get_db),
+) -> LessonSessionUnificationRepository:
+    """Provide a :class:`LessonSessionUnificationRepository` bound to the session."""
+    return SqlAlchemyLessonSessionUnificationRepository(db)
+
+
 __all__ = [
     "get_curriculum_repo",
+    "get_element_errors_repo",
     "get_imports_repo",
+    "get_lesson_progress_repo",
+    "get_lesson_session_unification_repo",
     "get_projects_repo",
     "get_taxonomy_repo",
     "get_users_repo",
