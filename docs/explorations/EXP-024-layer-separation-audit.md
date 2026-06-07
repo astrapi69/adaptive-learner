@@ -196,6 +196,21 @@ tracking (2), anki (1), missions (1).
   `imports_service` verschoben; toter `LearningSession`-Modellimport entfernt.
   Kein API-Vertrags-Wechsel. 34 imports-Router-Tests grün; Backend-Suite
   (1181 passed, 1 skipped) grün.
+- **Phase 0 + Pilot `imports` erledigt:**
+  - `app/repositories/{__init__,base}.py` — `Repository`-Basis (HTTP-freie
+    Daten-Schicht-Vertraege).
+  - `app/repositories/imports_repo.py` — `ImportsRepository` (ABC) +
+    `SqlAlchemyImportsRepository` (alle Persistenz-Primitive des imports-
+    Aggregats).
+  - `app/deps.py` — Composition-Root mit `get_imports_repo` (einzige Stelle,
+    die FastAPI + konkrete Impl kennt).
+  - `imports`-Service migriert: `db: Session` -> `repo: ImportsRepository`;
+    kein `Session`/`query`/`selectinload`/`db.add`/`db.commit` mehr im
+    Service. Domain-Fehler bleiben im Service; Repo gibt `None` zurueck.
+  - `imports`-Router auf `Depends(get_imports_repo)` umgestellt; der
+    `db.get(User, ...)`-Guard in `analyze_import` laeuft jetzt ueber
+    `repo.get_user`.
+  - ruff + mypy sauber; 34 imports-Router-Tests grün.
 
 ---
 

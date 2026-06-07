@@ -24,8 +24,9 @@ from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.deps import get_imports_repo
 from app.exceptions import ValidationError
-from app.models import User
+from app.repositories.imports_repo import ImportsRepository
 from app.schemas import (
     AIProvider,
     CurriculumOut,
@@ -57,9 +58,9 @@ users_imports_router = APIRouter(prefix="/users", tags=["imports"])
 def create_import(
     user_id: str,
     payload: ImportedConversationCreate,
-    db: Session = Depends(get_db),
+    repo: ImportsRepository = Depends(get_imports_repo),
 ) -> ImportedConversationOut:
-    conv = imports_service.create_conversation(db, user_id, payload)
+    conv = imports_service.create_conversation(repo, user_id, payload)
     return ImportedConversationOut.model_validate(imports_service.to_out_dict(conv))
 
 
@@ -67,10 +68,12 @@ def create_import(
     "/{user_id}/imports",
     response_model=list[ImportedConversationOut],
 )
-def list_imports(user_id: str, db: Session = Depends(get_db)) -> list[ImportedConversationOut]:
+def list_imports(
+    user_id: str, repo: ImportsRepository = Depends(get_imports_repo)
+) -> list[ImportedConversationOut]:
     return [
         ImportedConversationOut.model_validate(imports_service.to_out_dict(c))
-        for c in imports_service.list_conversations(db, user_id)
+        for c in imports_service.list_conversations(repo, user_id)
     ]
 
 
@@ -83,8 +86,10 @@ imports_router = APIRouter(prefix="/imports", tags=["imports"])
     "/{conversation_id}",
     response_model=ImportedConversationDetail,
 )
-def get_import(conversation_id: str, db: Session = Depends(get_db)) -> ImportedConversationDetail:
-    conv = imports_service.get_conversation(db, conversation_id, with_messages=True)
+def get_import(
+    conversation_id: str, repo: ImportsRepository = Depends(get_imports_repo)
+) -> ImportedConversationDetail:
+    conv = imports_service.get_conversation(repo, conversation_id, with_messages=True)
     return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))
 
 
@@ -95,9 +100,9 @@ def get_import(conversation_id: str, db: Session = Depends(get_db)) -> ImportedC
 def update_import(
     conversation_id: str,
     payload: ImportedConversationUpdate,
-    db: Session = Depends(get_db),
+    repo: ImportsRepository = Depends(get_imports_repo),
 ) -> ImportedConversationOut:
-    conv = imports_service.update_conversation(db, conversation_id, payload)
+    conv = imports_service.update_conversation(repo, conversation_id, payload)
     return ImportedConversationOut.model_validate(imports_service.to_out_dict(conv))
 
 
@@ -105,8 +110,10 @@ def update_import(
     "/{conversation_id}",
     status_code=status.HTTP_204_NO_CONTENT,
 )
-def delete_import(conversation_id: str, db: Session = Depends(get_db)) -> Response:
-    imports_service.delete_conversation(db, conversation_id)
+def delete_import(
+    conversation_id: str, repo: ImportsRepository = Depends(get_imports_repo)
+) -> Response:
+    imports_service.delete_conversation(repo, conversation_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -115,7 +122,9 @@ def delete_import(conversation_id: str, db: Session = Depends(get_db)) -> Respon
     response_model=CurriculumOut | None,
 )
 def get_curriculum_for_import(
-    conversation_id: str, db: Session = Depends(get_db)
+    conversation_id: str,
+    db: Session = Depends(get_db),
+    repo: ImportsRepository = Depends(get_imports_repo),
 ) -> CurriculumOut | None:
     """Phase 36 Bug 3 — return the curriculum auto-generated from
     this conversation, or ``null`` if none exists. The frontend
@@ -124,7 +133,7 @@ def get_curriculum_for_import(
     generate duplicates."""
     # Guard the conversation exists — falls through to
     # NotFoundError handled by the global exception handler.
-    imports_service.get_conversation(db, conversation_id)
+    imports_service.get_conversation(repo, conversation_id)
     row = curriculum_service.get_curriculum_for_conversation(db, conversation_id)
     if row is None:
         return None
@@ -136,14 +145,14 @@ def get_curriculum_for_import(
     response_model=LearningSessionOut | None,
 )
 def get_active_session_for_import(
-    conversation_id: str, db: Session = Depends(get_db)
+    conversation_id: str, repo: ImportsRepository = Depends(get_imports_repo)
 ) -> LearningSessionOut | None:
     """Phase 36 Bug 4 — return the most recent active session
     started from this conversation, or ``null`` if none exists.
     Lets ImportDetail flip the "Start session" CTA into a
     "Continue session" navigate when there is one already
     running."""
-    row = imports_service.get_active_session_for_conversation(db, conversation_id)
+    row = imports_service.get_active_session_for_conversation(repo, conversation_id)
     if row is None:
         return None
     return LearningSessionOut.model_validate(row)
@@ -156,10 +165,10 @@ def get_active_session_for_import(
 def save_analysis(
     conversation_id: str,
     payload: ImportedConversationAnalysis,
-    db: Session = Depends(get_db),
+    repo: ImportsRepository = Depends(get_imports_repo),
 ) -> ImportedConversationDetail:
-    imports_service.save_analysis(db, conversation_id, payload)
-    conv = imports_service.get_conversation(db, conversation_id, with_messages=True)
+    imports_service.save_analysis(repo, conversation_id, payload)
+    conv = imports_service.get_conversation(repo, conversation_id, with_messages=True)
     return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))
 
 
@@ -210,6 +219,7 @@ def _build_ai_caller(
 def analyze_import(
     conversation_id: str,
     db: Session = Depends(get_db),
+    repo: ImportsRepository = Depends(get_imports_repo),
 ) -> ImportedConversationDetail:
     """Server-side conversation analysis.
 
@@ -219,7 +229,7 @@ def analyze_import(
     instead of the browser-direct path because cleartext API
     keys never leave the server.
     """
-    conv = imports_service.get_conversation(db, conversation_id, with_messages=True)
+    conv = imports_service.get_conversation(repo, conversation_id, with_messages=True)
 
     settings = settings_service.get_or_create_settings(db, conv.user_id)
     provider_key = settings.active_provider
@@ -260,7 +270,7 @@ def analyze_import(
     # English. Fallback to "de" matches the User.language column
     # default; ``build_system_prompt`` itself clamps unknown codes to
     # English so an exotic value never breaks analysis.
-    user = db.get(User, conv.user_id)
+    user = repo.get_user(conv.user_id)
     lang = user.language if user and user.language else "de"
 
     messages = [Message(role=m.role, content=m.content) for m in conv.messages]
@@ -275,9 +285,9 @@ def analyze_import(
     )
 
     imports_service.save_analysis(
-        db,
+        repo,
         conversation_id,
         ImportedConversationAnalysis(analysis_result=result),
     )
-    conv = imports_service.get_conversation(db, conversation_id, with_messages=True)
+    conv = imports_service.get_conversation(repo, conversation_id, with_messages=True)
     return ImportedConversationDetail.model_validate(imports_service.to_detail_dict(conv))

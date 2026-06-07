@@ -12,16 +12,9 @@ import hashlib
 import json
 from collections.abc import Iterable
 
-from sqlalchemy.orm import Session, selectinload
-
 from app.exceptions import ConflictError, NotFoundError, ValidationError
-from app.models import (
-    ImportedConversation,
-    ImportedMessage,
-    LearningProject,
-    LearningSession,
-    User,
-)
+from app.models import ImportedConversation, LearningSession
+from app.repositories.imports_repo import ImportsRepository
 from app.schemas import (
     ImportedConversationAnalysis,
     ImportedConversationCreate,
@@ -126,7 +119,7 @@ def to_detail_dict(row: ImportedConversation) -> dict[str, object]:
 
 
 def create_conversation(
-    db: Session, user_id: str, payload: ImportedConversationCreate
+    repo: ImportsRepository, user_id: str, payload: ImportedConversationCreate
 ) -> ImportedConversation:
     """Insert a new imported conversation + its messages.
 
@@ -139,10 +132,10 @@ def create_conversation(
     carrying the existing id in ``extra["existing_id"]`` so the
     frontend can navigate the user to the existing record.
     """
-    if db.get(User, user_id) is None:
+    if repo.get_user(user_id) is None:
         raise NotFoundError(f"User {user_id!r} not found.")
     if payload.project_id is not None:
-        project = db.get(LearningProject, payload.project_id)
+        project = repo.get_project(payload.project_id)
         if project is None:
             raise NotFoundError(f"LearningProject {payload.project_id!r} not found.")
         if project.user_id != user_id:
@@ -150,20 +143,17 @@ def create_conversation(
                 f"Project {payload.project_id!r} does not belong to user {user_id!r}."
             )
     content_hash = compute_content_hash(payload.messages)
-    existing = (
-        db.query(ImportedConversation)
-        .filter(
-            ImportedConversation.user_id == user_id,
-            ImportedConversation.content_hash == content_hash,
-        )
-        .first()
-    )
+    existing = repo.find_by_content_hash(user_id, content_hash)
     if existing is not None:
         raise ConflictError(
             "Conversation already imported with the same content.",
             extra={"existing_id": existing.id},
         )
-    conv = ImportedConversation(
+    messages = [
+        {"role": msg.role.value, "content": msg.content, "timestamp": msg.timestamp}
+        for msg in payload.messages
+    ]
+    return repo.create_conversation(
         user_id=user_id,
         project_id=payload.project_id,
         source=payload.source.value,
@@ -175,77 +165,50 @@ def create_conversation(
         content_hash=content_hash,
         source_language=payload.source_language,
         target_language=payload.target_language,
+        messages=messages,
     )
-    db.add(conv)
-    db.flush()  # so conv.id is populated for message FKs
-    for idx, msg in enumerate(payload.messages):
-        db.add(
-            ImportedMessage(
-                conversation_id=conv.id,
-                role=msg.role.value,
-                content=msg.content,
-                timestamp=msg.timestamp,
-                order_index=idx,
-            )
-        )
-    db.commit()
-    db.refresh(conv)
-    return conv
 
 
-def list_conversations(db: Session, user_id: str) -> list[ImportedConversation]:
-    if db.get(User, user_id) is None:
+def list_conversations(repo: ImportsRepository, user_id: str) -> list[ImportedConversation]:
+    if repo.get_user(user_id) is None:
         raise NotFoundError(f"User {user_id!r} not found.")
-    return (
-        db.query(ImportedConversation)
-        .filter(ImportedConversation.user_id == user_id)
-        .order_by(ImportedConversation.imported_at.desc())
-        .all()
-    )
+    return repo.list_by_user(user_id)
 
 
 def get_conversation(
-    db: Session, conversation_id: str, *, with_messages: bool = False
+    repo: ImportsRepository, conversation_id: str, *, with_messages: bool = False
 ) -> ImportedConversation:
-    query = db.query(ImportedConversation).filter(ImportedConversation.id == conversation_id)
-    if with_messages:
-        query = query.options(selectinload(ImportedConversation.messages))
-    conv = query.one_or_none()
+    conv = repo.get_by_id(conversation_id, with_messages=with_messages)
     if conv is None:
         raise NotFoundError(f"ImportedConversation {conversation_id!r} not found.")
     return conv
 
 
 def update_conversation(
-    db: Session,
+    repo: ImportsRepository,
     conversation_id: str,
     payload: ImportedConversationUpdate,
 ) -> ImportedConversation:
-    conv = get_conversation(db, conversation_id)
+    conv = get_conversation(repo, conversation_id)
     fields = payload.model_dump(exclude_unset=True)
     if "project_id" in fields and fields["project_id"] is not None:
-        project = db.get(LearningProject, fields["project_id"])
+        project = repo.get_project(fields["project_id"])
         if project is None:
             raise NotFoundError(f"LearningProject {fields['project_id']!r} not found.")
         if project.user_id != conv.user_id:
             raise ValidationError(
                 f"Project {fields['project_id']!r} does not belong to user {conv.user_id!r}."
             )
-    for key, value in fields.items():
-        setattr(conv, key, value)
-    db.commit()
-    db.refresh(conv)
-    return conv
+    return repo.apply_update(conv, fields)
 
 
-def delete_conversation(db: Session, conversation_id: str) -> None:
-    conv = get_conversation(db, conversation_id)
-    db.delete(conv)
-    db.commit()
+def delete_conversation(repo: ImportsRepository, conversation_id: str) -> None:
+    conv = get_conversation(repo, conversation_id)
+    repo.delete(conv)
 
 
 def save_analysis(
-    db: Session,
+    repo: ImportsRepository,
     conversation_id: str,
     payload: ImportedConversationAnalysis,
 ) -> ImportedConversation:
@@ -255,16 +218,12 @@ def save_analysis(
     and POSTs the resulting JSON envelope here. Marks the row
     ``analyzed=True`` so the UI knows not to re-prompt.
     """
-    conv = get_conversation(db, conversation_id)
-    conv.analysis_result = _serialise_analysis(payload.analysis_result)
-    conv.analyzed = True
-    db.commit()
-    db.refresh(conv)
-    return conv
+    conv = get_conversation(repo, conversation_id)
+    return repo.save_analysis(conv, _serialise_analysis(payload.analysis_result))
 
 
 def get_active_session_for_conversation(
-    db: Session, conversation_id: str
+    repo: ImportsRepository, conversation_id: str
 ) -> LearningSession | None:
     """Most recent ``active`` session started from this conversation.
 
@@ -273,23 +232,15 @@ def get_active_session_for_conversation(
     so the caller need not pre-check.
 
     Args:
-        db: SQLAlchemy session.
+        repo: The imports repository.
         conversation_id: The imported conversation to look under.
 
     Returns:
         The newest active ``LearningSession`` for the conversation,
         or ``None``.
     """
-    get_conversation(db, conversation_id)
-    return (
-        db.query(LearningSession)
-        .filter(
-            LearningSession.imported_conversation_id == conversation_id,
-            LearningSession.status == "active",
-        )
-        .order_by(LearningSession.started_at.desc())
-        .first()
-    )
+    get_conversation(repo, conversation_id)
+    return repo.get_active_session_for_conversation(conversation_id)
 
 
 __all__ = [
