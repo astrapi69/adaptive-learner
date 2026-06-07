@@ -163,25 +163,38 @@ grün. Präfix: `refactor(architecture): ...`.
 - [ ] `backend/app/repositories/base.py` — `Repository`-Basis (ABC).
 - [ ] `backend/app/deps.py` — FastAPI-Repository-Provider (Composition-Root).
 
-### Phase 1 — Backend-Services (15 DB-Services)
+### Nicht-Migrationsziele (Bootstrap / File-based, kein Request-Service)
+Diese „Services" sind **keine** Request-Layer-DB-Services und bleiben bewusst
+ausserhalb der Repository-Migration (der S4-Befund zielt auf die
+Request-Service-Schicht):
+- `identity_service` — schreibt `identity.yaml` (kein `Session`).
+- `conversation_analysis`, `adaptive_lesson` — Session-frei (rechnen auf
+  uebergebenen Daten).
+- `subjects_seed` — Startup-Seeder, aus der `main.py`-Lifespan mit direkt
+  erzeugter Session aufgerufen (keine Request-DI).
+- `secrets_service` — datei-basiert (`secrets.yaml`); einziges `Session`-
+  Vorkommen ist die einmalige Lifespan-Migration `migrate_db_keys`.
+
+### Phase 1 — Request-Layer-DB-Services
 Reihenfolge nach Blast-Radius (klein zuerst), Pilot = `imports`.
-Hinweis: `identity_service` nutzt **kein** `Session` (YAML-Datei) und ist
-daher kein Migrationsziel; `conversation_analysis`/`adaptive_lesson` sind
-ebenfalls Session-frei.
 - [x] imports (Pilot)
 - [x] users (führt `UniqueViolationError` ein)
 - [x] projects
 - [x] curriculum (Curriculum/LearningTopic/Lesson; auch imports-Router-Handler)
 - [x] taxonomy (Subject/Tag/Project-Assoziationen)
-- [ ] subjects_seed, reset_service (reset_service: db_guard-Bulk-Delete!)
-- [ ] **Cluster** lesson_progress + lesson_session_unification + element_errors +
-      element_srs: gekoppelt. `lesson_progress.upsert_progress` ruft bei
-      Completion `record_lesson_completion_session` (unification ->
+
+**Clean-CRUD-Tier abgeschlossen.** Rest = „harter Tier" (gekoppelt /
+high-ripple / gross):
+- [ ] **Lesson-Cluster** lesson_progress + lesson_session_unification +
+      element_errors + element_srs: gekoppelt. `lesson_progress.upsert_progress`
+      ruft bei Completion `record_lesson_completion_session` (unification ->
       gamification-Hook) — Service-zu-Service-Write; als Einheit migrieren,
       mit Test-Rewrites (element_errors/element_srs/lesson_session_unification
       haben Direkt-Test-Caller).
-- [ ] secrets_service, settings (settings: 6 Test-Caller, ueberall konsumiert)
-- [ ] backup_service (inkl. S3-Pragma), export_service, sync_service
+- [ ] settings (6 Test-Caller, von Routern + github/imports konsumiert;
+      nutzt das file-basierte `secrets_service`)
+- [ ] reset_service (db_guard-Bulk-Delete, 2 Test-Caller — heikel)
+- [ ] backup_service (inkl. S3-Pragma), export_service, sync_service (1039 Z.)
 
 ### Phase 2 — Plugin-Service-Module (18 Module / 7 Plugins)
 session (4), gamification (4), learning-repo (4), notebooklm (2),
