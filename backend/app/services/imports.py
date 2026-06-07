@@ -15,7 +15,13 @@ from collections.abc import Iterable
 from sqlalchemy.orm import Session, selectinload
 
 from app.exceptions import ConflictError, NotFoundError, ValidationError
-from app.models import ImportedConversation, ImportedMessage, LearningProject, User
+from app.models import (
+    ImportedConversation,
+    ImportedMessage,
+    LearningProject,
+    LearningSession,
+    User,
+)
 from app.schemas import (
     ImportedConversationAnalysis,
     ImportedConversationCreate,
@@ -257,10 +263,40 @@ def save_analysis(
     return conv
 
 
+def get_active_session_for_conversation(
+    db: Session, conversation_id: str
+) -> LearningSession | None:
+    """Most recent ``active`` session started from this conversation.
+
+    Returns ``None`` when no active session exists. Validates the
+    conversation exists first (raising ``NotFoundError`` otherwise),
+    so the caller need not pre-check.
+
+    Args:
+        db: SQLAlchemy session.
+        conversation_id: The imported conversation to look under.
+
+    Returns:
+        The newest active ``LearningSession`` for the conversation,
+        or ``None``.
+    """
+    get_conversation(db, conversation_id)
+    return (
+        db.query(LearningSession)
+        .filter(
+            LearningSession.imported_conversation_id == conversation_id,
+            LearningSession.status == "active",
+        )
+        .order_by(LearningSession.started_at.desc())
+        .first()
+    )
+
+
 __all__ = [
     "compute_content_hash",
     "create_conversation",
     "delete_conversation",
+    "get_active_session_for_conversation",
     "get_conversation",
     "list_conversations",
     "save_analysis",

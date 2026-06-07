@@ -25,7 +25,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.exceptions import ValidationError
-from app.models import LearningSession, User
+from app.models import User
 from app.schemas import (
     AIProvider,
     CurriculumOut,
@@ -143,16 +143,7 @@ def get_active_session_for_import(
     Lets ImportDetail flip the "Start session" CTA into a
     "Continue session" navigate when there is one already
     running."""
-    imports_service.get_conversation(db, conversation_id)
-    row = (
-        db.query(LearningSession)
-        .filter(
-            LearningSession.imported_conversation_id == conversation_id,
-            LearningSession.status == "active",
-        )
-        .order_by(LearningSession.started_at.desc())
-        .first()
-    )
+    row = imports_service.get_active_session_for_conversation(db, conversation_id)
     if row is None:
         return None
     return LearningSessionOut.model_validate(row)
