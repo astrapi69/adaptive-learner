@@ -22,15 +22,17 @@
 import type {EntityTable} from "dexie";
 
 import {getDb, nowIso, type AdaptiveLearnerDB} from "./db";
+import type {ContentSetRow, ContentSetFileRow} from "./db";
 import type {
     BackupPayload,
     BackupStats,
+    ContentSetBackupEntry,
     RestoreSummary,
     RestoreTableSummary,
 } from "../types/domain";
 
 export const BACKUP_FORMAT = "adaptive-learner-backup" as const;
-export const BACKUP_VERSION = "1.2.0";
+export const BACKUP_VERSION = "1.3.0";
 
 export const EXCLUDED_USER_SETTINGS_FIELDS: ReadonlySet<string> = new Set([
     "api_key_anthropic",
@@ -495,6 +497,7 @@ export async function createDexieBackup(
         tables[name] = rows.length;
         total += rows.length;
     }
+    const contentSets = await dumpDexieContentSets(db);
     return {
         format: BACKUP_FORMAT,
         version: BACKUP_VERSION,
@@ -503,8 +506,41 @@ export async function createDexieBackup(
         user_id: userId,
         storage_mode: "dexie",
         data,
-        stats: {total_records: total, tables},
+        content_sets: contentSets,
+        stats: {total_records: total, tables, content_sets: contentSets.length},
     };
+}
+
+/**
+ * Serialise every downloaded content set from IndexedDB into the backup
+ * wire model (#130). Content is install-global (not user-scoped); the
+ * whole local cache is carried so a restore is self-contained and
+ * user-generated sets — which exist ONLY in this cache — survive.
+ */
+async function dumpDexieContentSets(
+    db: AdaptiveLearnerDB,
+): Promise<ContentSetBackupEntry[]> {
+    const rows = await db.contentSets.toArray();
+    const entries: ContentSetBackupEntry[] = [];
+    for (const row of rows) {
+        const files = await db.contentSetFiles
+            .where("set_pk")
+            .equals(row.id)
+            .toArray();
+        entries.push({
+            source: row.source,
+            set_id: row.set_id,
+            version: row.version,
+            branch: row.branch,
+            meta: {...row},
+            files: files.map((file) => ({
+                filename: file.filename,
+                body: file.body,
+                encoding: file.encoding,
+            })),
+        });
+    }
+    return entries;
 }
 
 function emptyTableSummary(): RestoreTableSummary {
@@ -638,6 +674,9 @@ export async function restoreDexieBackup(
         totalSkipped += summary.skipped;
         allErrors.push(...summary.errors);
     }
+    // Restore downloaded content sets into the cache (#130).
+    const contentSummary = await restoreDexieContentSets(db, payload.content_sets);
+    allErrors.push(...contentSummary.errors);
     return {
         user_id: userId,
         inserted: totalInserted,
@@ -645,5 +684,92 @@ export async function restoreDexieBackup(
         skipped: totalSkipped,
         errors: allErrors,
         tables: perTable,
+        content_sets: contentSummary,
+    };
+}
+
+/** Slugify a ``owner/name`` source the same way the content cache key
+ *  does (matches the backend ``slugify_source`` + Dexie ``cacheKey``). */
+function slugifyContentSource(source: string): string {
+    return source.replace(/\//g, "--");
+}
+
+/**
+ * Restore downloaded content sets into IndexedDB (#130). A set already
+ * present locally is skipped; a missing set is written to ``contentSets``
+ * + ``contentSetFiles``. When the entry carries Dexie ``meta`` (a
+ * Dexie-origin backup) the row is restored verbatim; otherwise (an
+ * API-origin backup) a minimal row is synthesised from the manifest so
+ * the lesson viewer — which reads ``contentSetFiles`` — can open lessons.
+ */
+async function restoreDexieContentSets(
+    db: AdaptiveLearnerDB,
+    entries: ContentSetBackupEntry[] | undefined,
+): Promise<{restored: number; skipped: number; errors: string[]}> {
+    const result = {restored: 0, skipped: 0, errors: [] as string[]};
+    if (!Array.isArray(entries)) {
+        return result;
+    }
+    for (const entry of entries) {
+        const label = `${entry.source}/${entry.set_id}@v${entry.version}`;
+        try {
+            const setPk =
+                typeof entry.meta?.id === "string" && entry.meta.id !== ""
+                    ? (entry.meta.id as string)
+                    : `${slugifyContentSource(entry.source)}/${entry.set_id}/${entry.version}`;
+            if ((await db.contentSets.get(setPk)) != null) {
+                result.skipped += 1;
+                continue;
+            }
+            const row = buildContentSetRow(setPk, entry);
+            const files: ContentSetFileRow[] = entry.files.map((file) => ({
+                id: `${setPk}#${file.filename}`,
+                set_pk: setPk,
+                filename: file.filename,
+                body: file.body,
+                encoding: file.encoding,
+            }));
+            await db.transaction("rw", db.contentSets, db.contentSetFiles, async () => {
+                await db.contentSets.put(row);
+                await db.contentSetFiles.bulkPut(files);
+            });
+            result.restored += 1;
+        } catch (err) {
+            const message = err instanceof Error ? err.message : String(err);
+            result.errors.push(`${label}: ${message}`);
+        }
+    }
+    return result;
+}
+
+/** Build a ``ContentSetRow`` for restore: prefer the carried Dexie
+ *  ``meta``, else synthesise minimal metadata (lessons still open since
+ *  the viewer reads the files, not the row). */
+function buildContentSetRow(setPk: string, entry: ContentSetBackupEntry): ContentSetRow {
+    const manifest = entry.files.find((file) => file.filename === "manifest.yaml");
+    const titleFromManifest = manifest?.body.match(/^title:\s*(.+)$/m)?.[1]?.trim();
+    const meta = (entry.meta ?? {}) as Partial<ContentSetRow>;
+    const lessonCount = entry.files.filter((file) =>
+        file.filename.startsWith("lessons/"),
+    ).length;
+    return {
+        id: setPk,
+        source: entry.source,
+        branch: entry.branch ?? meta.branch ?? "main",
+        set_id: entry.set_id,
+        version: entry.version,
+        title: meta.title ?? titleFromManifest ?? entry.set_id,
+        title_native: meta.title_native ?? null,
+        language: meta.language ?? meta.target_language ?? "",
+        target_language: meta.target_language ?? meta.language ?? "",
+        source_language: meta.source_language ?? "en",
+        level: meta.level ?? "",
+        domain: meta.domain ?? "language",
+        lesson_count: meta.lesson_count ?? lessonCount,
+        description: meta.description ?? null,
+        tags: meta.tags ?? "[]",
+        cover_image: meta.cover_image ?? null,
+        downloaded_at: meta.downloaded_at ?? nowIso(),
+        manifest_yaml: meta.manifest_yaml ?? manifest?.body ?? "",
     };
 }

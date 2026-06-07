@@ -388,3 +388,79 @@ describe("dexieStorage.backup namespace", () => {
         expect(summary.errors).toEqual([]);
     });
 });
+
+describe("content sets in backup (#130)", () => {
+    async function seedContentSet() {
+        const db = getDb();
+        const setPk = "astrapi69--adaptive-learner-content/fr-a1/1.3.0";
+        await db.contentSets.put({
+            id: setPk,
+            source: "astrapi69/adaptive-learner-content",
+            branch: "main",
+            set_id: "fr-a1",
+            version: "1.3.0",
+            title: "French A1",
+            title_native: null,
+            language: "fr",
+            target_language: "fr",
+            source_language: "en",
+            level: "A1",
+            domain: "language",
+            lesson_count: 1,
+            description: null,
+            tags: "[]",
+            cover_image: null,
+            downloaded_at: new Date().toISOString(),
+            manifest_yaml: "title: French A1\n",
+        });
+        await db.contentSetFiles.bulkPut([
+            {id: `${setPk}#manifest.yaml`, set_pk: setPk, filename: "manifest.yaml", body: "title: French A1\n", encoding: "text"},
+            {id: `${setPk}#lessons/01.json`, set_pk: setPk, filename: "lessons/01.json", body: '{"id":"01"}', encoding: "text"},
+        ]);
+        return setPk;
+    }
+
+    it("exports downloaded content sets with their files", async () => {
+        const {user} = await seedUser();
+        await seedContentSet();
+        const payload = await createDexieBackup(user.id, "test");
+        expect(payload.content_sets).toHaveLength(1);
+        const entry = payload.content_sets![0];
+        expect(entry.source).toBe("astrapi69/adaptive-learner-content");
+        expect(entry.set_id).toBe("fr-a1");
+        expect(entry.files.map((f) => f.filename).sort()).toEqual([
+            "lessons/01.json",
+            "manifest.yaml",
+        ]);
+        expect(payload.stats.content_sets).toBe(1);
+    });
+
+    it("restores content sets into an empty IndexedDB cache", async () => {
+        const {user} = await seedUser();
+        await seedContentSet();
+        const payload = await createDexieBackup(user.id, "test");
+
+        // Wipe the content cache to mimic a fresh install.
+        const db = getDb();
+        await db.contentSets.clear();
+        await db.contentSetFiles.clear();
+        expect(await db.contentSets.count()).toBe(0);
+
+        const summary = await restoreDexieBackup(user.id, payload);
+        expect(summary.content_sets).toEqual({restored: 1, skipped: 0, errors: []});
+        // The set + its files came back, so the viewer can open the lesson.
+        expect(await db.contentSets.count()).toBe(1);
+        const lesson = await db.contentSetFiles.get(
+            "astrapi69--adaptive-learner-content/fr-a1/1.3.0#lessons/01.json",
+        );
+        expect(lesson?.body).toBe('{"id":"01"}');
+    });
+
+    it("skips a content set that is already cached", async () => {
+        const {user} = await seedUser();
+        await seedContentSet();
+        const payload = await createDexieBackup(user.id, "test");
+        const summary = await restoreDexieBackup(user.id, payload);
+        expect(summary.content_sets).toEqual({restored: 0, skipped: 1, errors: []});
+    });
+});

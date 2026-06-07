@@ -695,6 +695,8 @@ export interface SystemInfo {
 export interface BackupStats {
     total_records: number;
     tables: Record<string, number>;
+    /** Number of downloaded content sets carried in the backup (#130). */
+    content_sets?: number;
 }
 
 /**
@@ -707,6 +709,29 @@ export interface BackupStats {
  * snake_case dict mirroring the SQLAlchemy column list, minus the
  * three ``api_key_*`` fields on ``user_settings`` (security).
  */
+/** One file inside a backed-up content set (#130). ``filename`` is the
+ *  relative path inside the set version dir (``manifest.yaml``,
+ *  ``lessons/01.json``, ``assets/img/x.png``) — the same keying the FS
+ *  cache and Dexie ``contentSetFiles`` both use. */
+export interface ContentSetBackupFile {
+    filename: string;
+    body: string;
+    encoding: "text" | "base64";
+}
+
+/** A downloaded content set carried in a backup (#130). ``meta`` holds
+ *  the Dexie ``contentSetRow`` fields when the backup was made in Dexie
+ *  mode (absent for an API-origin backup, where the row is synthesised
+ *  from the manifest on import). */
+export interface ContentSetBackupEntry {
+    source: string;
+    set_id: string;
+    version: string;
+    branch?: string;
+    meta?: Record<string, unknown>;
+    files: ContentSetBackupFile[];
+}
+
 export interface BackupPayload {
     format: "adaptive-learner-backup";
     version: string;
@@ -715,6 +740,8 @@ export interface BackupPayload {
     user_id: string;
     storage_mode: "api" | "dexie";
     data: Record<string, Record<string, unknown>[]>;
+    /** Downloaded lesson content (#130). Absent in pre-1.3.0 backups. */
+    content_sets?: ContentSetBackupEntry[];
     stats: BackupStats;
 }
 
@@ -732,6 +759,9 @@ export interface RestoreSummary {
     skipped: number;
     errors: string[];
     tables: Record<string, RestoreTableSummary>;
+    /** Content-set cache restore counts (#130). Absent for pre-1.3.0
+     *  backups / older backends. */
+    content_sets?: {restored: number; skipped: number; errors: string[]};
 }
 
 // --- Taxonomy: Subject + Tag (Phase 22) ---------------------------------

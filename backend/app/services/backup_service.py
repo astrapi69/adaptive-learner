@@ -50,6 +50,7 @@ from app import __version__
 from app.database import Base
 from app.exceptions import NotFoundError, ValidationError
 from app.models import User
+from app.services.content_backup import dump_content_sets, restore_content_sets
 from app.services.sync_service import (
     TABLES as SYNC_TABLES,
 )
@@ -63,7 +64,7 @@ from app.services.sync_service import (
 
 logger = logging.getLogger(__name__)
 
-BACKUP_VERSION = "1.2.0"
+BACKUP_VERSION = "1.3.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
 # API keys are sensitive; the backup file is meant to travel
@@ -110,12 +111,16 @@ def _gather_user_rows(db: Session, user_id: str) -> dict[str, list[dict[str, Any
     return data
 
 
-def _build_stats(data: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
+def _build_stats(
+    data: dict[str, list[dict[str, Any]]],
+    content_sets: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """Per-table counts + grand total. Cheap derived field for the UI."""
     tables = {table: len(rows) for table, rows in data.items()}
     return {
         "total_records": sum(tables.values()),
         "tables": tables,
+        "content_sets": len(content_sets) if content_sets else 0,
     }
 
 
@@ -133,6 +138,10 @@ def create_backup(db: Session, user_id: str, storage_mode: str = "api") -> dict[
     if db.get(User, user_id) is None:
         raise NotFoundError(f"User {user_id!r} not found.")
     data = _gather_user_rows(db, user_id)
+    # Downloaded lesson CONTENT lives outside the 30 sync tables (#130).
+    # Include it so a restore is self-contained — and so user-generated
+    # sets, which exist ONLY in this cache, are not lost.
+    content_sets = dump_content_sets()
     return {
         "format": BACKUP_FORMAT,
         "version": BACKUP_VERSION,
@@ -141,7 +150,8 @@ def create_backup(db: Session, user_id: str, storage_mode: str = "api") -> dict[
         "user_id": user_id,
         "storage_mode": storage_mode,
         "data": data,
-        "stats": _build_stats(data),
+        "content_sets": content_sets,
+        "stats": _build_stats(data, content_sets),
     }
 
 
@@ -824,6 +834,14 @@ def restore_backup(
     if all_errors:
         for err in all_errors:
             logger.error("Restore error: %s", err)
+
+    # Restore downloaded content sets into the cache (#130). Done AFTER the
+    # DB commit so a content-write failure can never roll back user data;
+    # the content cache is a filesystem store, independent of the DB
+    # transaction. Absent in pre-1.3.0 backups -> a no-op.
+    content_summary = restore_content_sets(payload.get("content_sets"))
+    all_errors.extend(content_summary["errors"])
+
     return {
         "user_id": user_id,
         "inserted": total_inserted,
@@ -831,6 +849,7 @@ def restore_backup(
         "skipped": total_skipped,
         "errors": all_errors,
         "tables": per_table,
+        "content_sets": content_summary,
     }
 
 
