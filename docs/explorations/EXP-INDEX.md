@@ -1,7 +1,7 @@
 # EXP-INDEX: Übersicht aller Explorations
 
-**Stand:** 2026-06-06
-**Anzahl EXPs:** 22
+**Stand:** 2026-06-07
+**Anzahl EXPs:** 23
 
 ## Kategorisierung
 
@@ -37,6 +37,7 @@
 | 021 | Lektions-Creator (eigenständig)             | Feature      | 2     | Hoch      | 002, 003, 006, 013 |
 | 022 | Visueller Lernpfad (xyflow/React Flow)      | Feature      | Zukunft | Mittel  | 002, 013, 007, 021 |
 | 023 | Multi-Content-Repository Architektur        | Vision       | A/B/C | Sehr hoch | 002, 003, 021      |
+| 024 | Strikte Schichtentrennung (Layer-Audit)     | Querschnitt  | laufend | Hoch    | -                  |
 
 ## Phasen-Definition
 
