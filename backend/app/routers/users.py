@@ -13,9 +13,9 @@ Thin: every handler is one line of routing + one call into
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import get_users_repo
+from app.repositories.users_repo import UsersRepository
 from app.schemas import UserCreate, UserOut, UserUpdate
 from app.services import users as users_service
 
@@ -23,15 +23,19 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post("", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-def create_user(payload: UserCreate, db: Session = Depends(get_db)) -> UserOut:
-    return UserOut.model_validate(users_service.create_user(db, payload))
+def create_user(
+    payload: UserCreate, repo: UsersRepository = Depends(get_users_repo)
+) -> UserOut:
+    return UserOut.model_validate(users_service.create_user(repo, payload))
 
 
 @router.get("/{user_id}", response_model=UserOut)
-def get_user(user_id: str, db: Session = Depends(get_db)) -> UserOut:
-    return UserOut.model_validate(users_service.get_user(db, user_id))
+def get_user(user_id: str, repo: UsersRepository = Depends(get_users_repo)) -> UserOut:
+    return UserOut.model_validate(users_service.get_user(repo, user_id))
 
 
 @router.patch("/{user_id}", response_model=UserOut)
-def update_user(user_id: str, payload: UserUpdate, db: Session = Depends(get_db)) -> UserOut:
-    return UserOut.model_validate(users_service.update_user(db, user_id, payload))
+def update_user(
+    user_id: str, payload: UserUpdate, repo: UsersRepository = Depends(get_users_repo)
+) -> UserOut:
+    return UserOut.model_validate(users_service.update_user(repo, user_id, payload))

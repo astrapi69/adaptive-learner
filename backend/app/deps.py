@@ -22,6 +22,14 @@ from app.repositories.imports_repo import (
     ImportsRepository,
     SqlAlchemyImportsRepository,
 )
+from app.repositories.projects_repo import (
+    ProjectsRepository,
+    SqlAlchemyProjectsRepository,
+)
+from app.repositories.users_repo import (
+    SqlAlchemyUsersRepository,
+    UsersRepository,
+)
 
 
 def get_imports_repo(db: Session = Depends(get_db)) -> ImportsRepository:
@@ -29,4 +37,14 @@ def get_imports_repo(db: Session = Depends(get_db)) -> ImportsRepository:
     return SqlAlchemyImportsRepository(db)
 
 
-__all__ = ["get_imports_repo"]
+def get_users_repo(db: Session = Depends(get_db)) -> UsersRepository:
+    """Provide a :class:`UsersRepository` bound to the request session."""
+    return SqlAlchemyUsersRepository(db)
+
+
+def get_projects_repo(db: Session = Depends(get_db)) -> ProjectsRepository:
+    """Provide a :class:`ProjectsRepository` bound to the request session."""
+    return SqlAlchemyProjectsRepository(db)
+
+
+__all__ = ["get_imports_repo", "get_projects_repo", "get_users_repo"]
