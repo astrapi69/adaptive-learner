@@ -437,6 +437,13 @@ export default function BackupSection() {
         setBusy("import");
         try {
             const summary = await storage.backup.import(userId, pendingPayload);
+            // #126 — surface the full result in the browser console so a
+            // real Export -> Import round-trip is debuggable without a
+            // backend log. Errors are logged separately as a list.
+            console.log("[Backup] Import result:", summary);
+            if (summary.errors.length > 0) {
+                console.error("[Backup] Import errors:", summary.errors);
+            }
             setRestoreSummary(summary);
             setPendingPayload(null);
             setComparison(null);
@@ -455,15 +462,19 @@ export default function BackupSection() {
                     "{{n}}",
                     String(summary.skipped),
                 ),
+                t("backup.restored_errors", "Errors: {{n}}").replace(
+                    "{{n}}",
+                    String(summary.errors.length),
+                ),
             ];
-            notify.success(parts.join(" — "));
+            const summaryMsg = parts.join(" — ");
             if (summary.errors.length > 0) {
-                notify.warning(
-                    t("backup.restored_with_errors", "{{n}} records could not be restored.").replace(
-                        "{{n}}",
-                        String(summary.errors.length),
-                    ),
-                );
+                // Persistent error toast (does not auto-dismiss): the user
+                // must see that some rows failed. Per-table + per-row detail
+                // is rendered in the scrollable summary panel below.
+                notify.error(summaryMsg);
+            } else {
+                notify.success(summaryMsg);
             }
         } catch (err) {
             const detail = err instanceof Error ? err.message : String(err);
@@ -757,6 +768,79 @@ export default function BackupSection() {
                             </li>
                         )}
                     </ul>
+
+                    {/* Per-table breakdown (#126). Scrollable so all 30
+                        tables stay reachable without pushing the page. */}
+                    <div
+                        className="backup-summary-tables max-h-72 overflow-y-auto"
+                        data-testid="backup-summary-tables"
+                    >
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr>
+                                    <th className="text-left">
+                                        {t("backup.table_header", "Table")}
+                                    </th>
+                                    <th className="text-right">
+                                        {t("backup.col_inserted", "Ins.")}
+                                    </th>
+                                    <th className="text-right">
+                                        {t("backup.col_updated", "Upd.")}
+                                    </th>
+                                    <th className="text-right">
+                                        {t("backup.col_skipped", "Skip")}
+                                    </th>
+                                    <th className="text-right">
+                                        {t("backup.col_errors", "Err.")}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {Object.entries(restoreSummary.tables)
+                                    .sort(([a], [b]) => a.localeCompare(b))
+                                    .map(([table, counts]) => (
+                                        <tr
+                                            key={table}
+                                            data-testid={`backup-summary-row-${table}`}
+                                            className={
+                                                counts.errors.length > 0
+                                                    ? "text-[var(--error)]"
+                                                    : undefined
+                                            }
+                                        >
+                                            <td className="text-left">{table}</td>
+                                            <td className="text-right">{counts.inserted}</td>
+                                            <td className="text-right">{counts.updated}</td>
+                                            <td className="text-right">{counts.skipped}</td>
+                                            <td className="text-right">
+                                                {counts.errors.length}
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {restoreSummary.errors.length > 0 && (
+                        <div
+                            className="backup-summary-errors max-h-48 overflow-y-auto"
+                            data-testid="backup-summary-errors"
+                        >
+                            <p className="font-semibold text-[var(--error)]">
+                                {t("backup.error_details", "Error details")}
+                            </p>
+                            <ul>
+                                {restoreSummary.errors.map((err, idx) => (
+                                    <li
+                                        key={idx}
+                                        className="text-[var(--error)] break-words"
+                                    >
+                                        {err}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
             )}
 

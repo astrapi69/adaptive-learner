@@ -725,6 +725,11 @@ backup:
   restored_updated: 'Updated: {{n}}'
   restored_skipped: 'Skipped: {{n}}'
   restored_errors: 'Errors: {{n}}'
+  col_inserted: 'Ins.'
+  col_updated: 'Maj'
+  col_skipped: 'Ign.'
+  col_errors: 'Err.'
+  error_details: 'Détails des erreurs'
   restored_with_errors: '{{n}} records could not be restored.'
   last_backup: 'Last backup: {{when}}'
   reminder_overdue: It has been more than {{days}} days since your last backup.

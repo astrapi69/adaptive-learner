@@ -897,6 +897,15 @@ class Subject(Base):
         order_by="Subject.name",
     )
 
+    # (parent_id, name) is the natural identity of a taxonomy node: the
+    # seed reconciles on exactly this key, so a re-seed never duplicates.
+    # Declaring it UNIQUE lets the backup-restore matcher reconcile
+    # backup subjects against the locally-seeded tree by natural key
+    # (issue #127), the same way ``badges.key`` works (#49). Without it,
+    # a restore onto a fresh install (which auto-seeds the taxonomy under
+    # different ids) inserted every subject a second time.
+    __table_args__ = (UniqueConstraint("parent_id", "name", name="uq_subjects_parent_name"),)
+
     def __repr__(self) -> str:
         return f"<Subject {self.id!r} name={self.name!r} parent={self.parent_id!r}>"
 
