@@ -18,6 +18,10 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.repositories.curriculum_repo import (
+    CurriculumRepository,
+    SqlAlchemyCurriculumRepository,
+)
 from app.repositories.imports_repo import (
     ImportsRepository,
     SqlAlchemyImportsRepository,
@@ -37,6 +41,11 @@ def get_imports_repo(db: Session = Depends(get_db)) -> ImportsRepository:
     return SqlAlchemyImportsRepository(db)
 
 
+def get_curriculum_repo(db: Session = Depends(get_db)) -> CurriculumRepository:
+    """Provide a :class:`CurriculumRepository` bound to the request session."""
+    return SqlAlchemyCurriculumRepository(db)
+
+
 def get_users_repo(db: Session = Depends(get_db)) -> UsersRepository:
     """Provide a :class:`UsersRepository` bound to the request session."""
     return SqlAlchemyUsersRepository(db)
@@ -47,4 +56,9 @@ def get_projects_repo(db: Session = Depends(get_db)) -> ProjectsRepository:
     return SqlAlchemyProjectsRepository(db)
 
 
-__all__ = ["get_imports_repo", "get_projects_repo", "get_users_repo"]
+__all__ = [
+    "get_curriculum_repo",
+    "get_imports_repo",
+    "get_projects_repo",
+    "get_users_repo",
+]

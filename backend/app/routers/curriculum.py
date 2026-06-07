@@ -23,9 +23,9 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, status
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import get_curriculum_repo
+from app.repositories.curriculum_repo import CurriculumRepository
 from app.schemas import (
     CurriculumOut,
     CurriculumUpdate,
@@ -95,22 +95,24 @@ lessons_router = APIRouter(prefix="/lessons", tags=["curriculum"])
 def create_curriculum(
     user_id: str,
     payload: _CurriculumCreateBody,
-    db: Session = Depends(get_db),
+    repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> CurriculumOut:
     from app.schemas import CurriculumCreate
 
     create_payload = CurriculumCreate(user_id=user_id, **payload.model_dump())
-    return CurriculumOut.model_validate(curriculum_service.create_curriculum(db, create_payload))
+    return CurriculumOut.model_validate(curriculum_service.create_curriculum(repo, create_payload))
 
 
 @users_curricula_router.get(
     "/{user_id}/curricula",
     response_model=list[CurriculumOut],
 )
-def list_curricula(user_id: str, db: Session = Depends(get_db)) -> list[CurriculumOut]:
+def list_curricula(
+    user_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
+) -> list[CurriculumOut]:
     return [
         CurriculumOut.model_validate(c)
-        for c in curriculum_service.list_curriculums_for_user(db, user_id)
+        for c in curriculum_service.list_curriculums_for_user(repo, user_id)
     ]
 
 
@@ -118,24 +120,28 @@ def list_curricula(user_id: str, db: Session = Depends(get_db)) -> list[Curricul
 
 
 @curricula_router.get("/{curriculum_id}", response_model=CurriculumOut)
-def get_curriculum(curriculum_id: str, db: Session = Depends(get_db)) -> CurriculumOut:
-    return CurriculumOut.model_validate(curriculum_service.get_curriculum(db, curriculum_id))
+def get_curriculum(
+    curriculum_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
+) -> CurriculumOut:
+    return CurriculumOut.model_validate(curriculum_service.get_curriculum(repo, curriculum_id))
 
 
 @curricula_router.patch("/{curriculum_id}", response_model=CurriculumOut)
 def update_curriculum(
     curriculum_id: str,
     payload: CurriculumUpdate,
-    db: Session = Depends(get_db),
+    repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> CurriculumOut:
     return CurriculumOut.model_validate(
-        curriculum_service.update_curriculum(db, curriculum_id, payload)
+        curriculum_service.update_curriculum(repo, curriculum_id, payload)
     )
 
 
 @curricula_router.delete("/{curriculum_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_curriculum(curriculum_id: str, db: Session = Depends(get_db)) -> Response:
-    curriculum_service.delete_curriculum(db, curriculum_id)
+def delete_curriculum(
+    curriculum_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
+) -> Response:
+    curriculum_service.delete_curriculum(repo, curriculum_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -146,10 +152,12 @@ def delete_curriculum(curriculum_id: str, db: Session = Depends(get_db)) -> Resp
     "/{curriculum_id}/topics",
     response_model=list[LearningTopicOut],
 )
-def list_topics(curriculum_id: str, db: Session = Depends(get_db)) -> list[LearningTopicOut]:
+def list_topics(
+    curriculum_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
+) -> list[LearningTopicOut]:
     return [
         LearningTopicOut.model_validate(t)
-        for t in curriculum_service.list_topics(db, curriculum_id)
+        for t in curriculum_service.list_topics(repo, curriculum_id)
     ]
 
 
@@ -161,12 +169,12 @@ def list_topics(curriculum_id: str, db: Session = Depends(get_db)) -> list[Learn
 def create_topic(
     curriculum_id: str,
     payload: _TopicCreateBody,
-    db: Session = Depends(get_db),
+    repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> LearningTopicOut:
     from app.schemas import LearningTopicCreate
 
     create_payload = LearningTopicCreate(curriculum_id=curriculum_id, **payload.model_dump())
-    return LearningTopicOut.model_validate(curriculum_service.create_topic(db, create_payload))
+    return LearningTopicOut.model_validate(curriculum_service.create_topic(repo, create_payload))
 
 
 # --- /curricula/{id}/lessons ----------------------------------------------
@@ -176,9 +184,12 @@ def create_topic(
     "/{curriculum_id}/lessons",
     response_model=list[LessonOut],
 )
-def list_lessons(curriculum_id: str, db: Session = Depends(get_db)) -> list[LessonOut]:
+def list_lessons(
+    curriculum_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
+) -> list[LessonOut]:
     return [
-        LessonOut.model_validate(row) for row in curriculum_service.list_lessons(db, curriculum_id)
+        LessonOut.model_validate(row)
+        for row in curriculum_service.list_lessons(repo, curriculum_id)
     ]
 
 
@@ -190,34 +201,38 @@ def list_lessons(curriculum_id: str, db: Session = Depends(get_db)) -> list[Less
 def create_lesson(
     curriculum_id: str,
     payload: _LessonCreateBody,
-    db: Session = Depends(get_db),
+    repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> LessonOut:
     from app.schemas import LessonCreate
 
     create_payload = LessonCreate(curriculum_id=curriculum_id, **payload.model_dump())
-    return LessonOut.model_validate(curriculum_service.create_lesson(db, create_payload))
+    return LessonOut.model_validate(curriculum_service.create_lesson(repo, create_payload))
 
 
 # --- /topics/{id} ----------------------------------------------------------
 
 
 @topics_router.get("/{topic_id}", response_model=LearningTopicOut)
-def get_topic(topic_id: str, db: Session = Depends(get_db)) -> LearningTopicOut:
-    return LearningTopicOut.model_validate(curriculum_service.get_topic(db, topic_id))
+def get_topic(
+    topic_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
+) -> LearningTopicOut:
+    return LearningTopicOut.model_validate(curriculum_service.get_topic(repo, topic_id))
 
 
 @topics_router.patch("/{topic_id}", response_model=LearningTopicOut)
 def update_topic(
     topic_id: str,
     payload: LearningTopicUpdate,
-    db: Session = Depends(get_db),
+    repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> LearningTopicOut:
-    return LearningTopicOut.model_validate(curriculum_service.update_topic(db, topic_id, payload))
+    return LearningTopicOut.model_validate(curriculum_service.update_topic(repo, topic_id, payload))
 
 
 @topics_router.delete("/{topic_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_topic(topic_id: str, db: Session = Depends(get_db)) -> Response:
-    curriculum_service.delete_topic(db, topic_id)
+def delete_topic(
+    topic_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
+) -> Response:
+    curriculum_service.delete_topic(repo, topic_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
@@ -225,20 +240,24 @@ def delete_topic(topic_id: str, db: Session = Depends(get_db)) -> Response:
 
 
 @lessons_router.get("/{lesson_id}", response_model=LessonOut)
-def get_lesson(lesson_id: str, db: Session = Depends(get_db)) -> LessonOut:
-    return LessonOut.model_validate(curriculum_service.get_lesson(db, lesson_id))
+def get_lesson(
+    lesson_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
+) -> LessonOut:
+    return LessonOut.model_validate(curriculum_service.get_lesson(repo, lesson_id))
 
 
 @lessons_router.patch("/{lesson_id}", response_model=LessonOut)
 def update_lesson(
     lesson_id: str,
     payload: LessonUpdate,
-    db: Session = Depends(get_db),
+    repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> LessonOut:
-    return LessonOut.model_validate(curriculum_service.update_lesson(db, lesson_id, payload))
+    return LessonOut.model_validate(curriculum_service.update_lesson(repo, lesson_id, payload))
 
 
 @lessons_router.delete("/{lesson_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_lesson(lesson_id: str, db: Session = Depends(get_db)) -> Response:
-    curriculum_service.delete_lesson(db, lesson_id)
+def delete_lesson(
+    lesson_id: str, repo: CurriculumRepository = Depends(get_curriculum_repo)
+) -> Response:
+    curriculum_service.delete_lesson(repo, lesson_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)

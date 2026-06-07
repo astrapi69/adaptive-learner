@@ -24,8 +24,9 @@ from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.deps import get_imports_repo
+from app.deps import get_curriculum_repo, get_imports_repo
 from app.exceptions import ValidationError
+from app.repositories.curriculum_repo import CurriculumRepository
 from app.repositories.imports_repo import ImportsRepository
 from app.schemas import (
     AIProvider,
@@ -123,8 +124,8 @@ def delete_import(
 )
 def get_curriculum_for_import(
     conversation_id: str,
-    db: Session = Depends(get_db),
     repo: ImportsRepository = Depends(get_imports_repo),
+    curriculum_repo: CurriculumRepository = Depends(get_curriculum_repo),
 ) -> CurriculumOut | None:
     """Phase 36 Bug 3 — return the curriculum auto-generated from
     this conversation, or ``null`` if none exists. The frontend
@@ -134,7 +135,7 @@ def get_curriculum_for_import(
     # Guard the conversation exists — falls through to
     # NotFoundError handled by the global exception handler.
     imports_service.get_conversation(repo, conversation_id)
-    row = curriculum_service.get_curriculum_for_conversation(db, conversation_id)
+    row = curriculum_service.get_curriculum_for_conversation(curriculum_repo, conversation_id)
     if row is None:
         return None
     return CurriculumOut.model_validate(row)

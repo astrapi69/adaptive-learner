@@ -171,11 +171,12 @@ ebenfalls Session-frei.
 - [x] imports (Pilot)
 - [x] users (führt `UniqueViolationError` ein)
 - [x] projects
+- [x] curriculum (Curriculum/LearningTopic/Lesson; auch imports-Router-Handler)
+- [ ] taxonomy, lesson_progress (ebenfalls test-frei, nur HTTP)
 - [ ] subjects_seed, reset_service
-- [ ] element_errors + element_srs (gekoppelt, als Einheit)
-- [ ] lesson_session_unification, lesson_progress
-- [ ] curriculum, taxonomy
-- [ ] secrets_service, settings
+- [ ] element_errors + element_srs (gekoppelt, als Einheit; Test-Rewrite)
+- [ ] lesson_session_unification
+- [ ] secrets_service, settings (settings: 6 Test-Caller)
 - [ ] backup_service (inkl. S3-Pragma), export_service, sync_service
 
 ### Phase 2 — Plugin-Service-Module (18 Module / 7 Plugins)
@@ -223,6 +224,12 @@ tracking (2), anki (1), missions (1).
   bleibt im Service. Backend-Suite 1181 passed.
 - **projects migriert:** `ProjectsRepository`; identity.yaml-Seiteneffekte
   (`active`-Flip / Erstanlage) bleiben im Service. Backend-Suite 1181 passed.
+- **curriculum migriert:** `CurriculumRepository` ueber alle drei Aggregate
+  (Curriculum / LearningTopic / Lesson). Tree-Integritaet (Cross-Curriculum-
+  Parenting, Zyklus-Check `_would_create_cycle`) bleibt im Service und liest
+  via `repo.get_topic_by_id`. Auch der imports-Router-Handler
+  `get_curriculum_for_import` zieht jetzt einen `CurriculumRepository`.
+  Backend-Suite 1181 passed.
 
 ---
 
