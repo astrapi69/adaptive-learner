@@ -52,6 +52,11 @@ import {
 import { validateUserRepo } from "../lib/content/content-repo-validate";
 import { clearRepoToken, resolveRepoToken, writeRepoToken } from "../lib/content/repo-token";
 import {
+  clearRepoRating,
+  readRepoRating,
+  writeRepoRating,
+} from "../lib/content/repo-rating";
+import {
   fetchRecommendedRepos,
   isRecommendedSource,
   recommendedSource,
@@ -83,6 +88,7 @@ export default function ContentRepoSettingsSection() {
   const [share, setShare] = useState<
     { source: string; link: string; qr: string } | null
   >(null);
+  const [ratings, setRatings] = useState<Record<string, number>>({});
 
   const refresh = useCallback(async () => {
     const storage = getStorage();
@@ -97,6 +103,13 @@ export default function ContentRepoSettingsSection() {
     setRepos(stored);
     setRecommended(recommendedList);
     setTokenConfigured(Boolean(tokenStatus.configured));
+    const ratingMap: Record<string, number> = {};
+    for (const r of stored) {
+      ratingMap[userRepoSource(r.owner, r.repo)] = readRepoRating(
+        userRepoSource(r.owner, r.repo),
+      );
+    }
+    setRatings(ratingMap);
     try {
       const { sets } = await storage.contentLoader.listSets();
       const officialSets = sets.filter((s) => isOfficialSource(s.source));
@@ -229,6 +242,15 @@ export default function ContentRepoSettingsSection() {
     [refresh, t],
   );
 
+  const handleRate = useCallback((source: string, rating: number) => {
+    // Toggle off when the same star is clicked again.
+    setRatings((prev) => {
+      const next = prev[source] === rating ? 0 : rating;
+      writeRepoRating(source, next);
+      return { ...prev, [source]: next };
+    });
+  }, []);
+
   const handleSync = useCallback(
     async (source: string) => {
       setBusy(true);
@@ -270,6 +292,7 @@ export default function ContentRepoSettingsSection() {
       try {
         await removeUserRepo(source);
         clearRepoToken(source);
+        clearRepoRating(source);
         setConfirmRemove(null);
         await refresh();
       } finally {
@@ -452,6 +475,40 @@ export default function ContentRepoSettingsSection() {
                     .replace("{sets}", String(repo.set_count))
                     .replace("{lessons}", String(repo.lesson_count))}
                 </p>
+                <div
+                  className="mt-2 flex items-center gap-1"
+                  role="radiogroup"
+                  aria-label={t("content_repo.rating.aria", "Your rating")}
+                  data-testid={`content-repo-rating-${repo.owner}-${repo.repo}`}
+                >
+                  <span className="mr-1 text-xs text-[var(--fg-muted)]">
+                    {t("content_repo.rating.label", "Your rating")}
+                  </span>
+                  {[1, 2, 3, 4, 5].map((n) => {
+                    const rated = (ratings[source] ?? 0) >= n;
+                    return (
+                      <button
+                        key={n}
+                        type="button"
+                        className="inline-flex h-11 w-7 items-center justify-center text-[var(--star)]"
+                        onClick={() => handleRate(source, n)}
+                        role="radio"
+                        aria-checked={(ratings[source] ?? 0) === n}
+                        aria-label={t(
+                          "content_repo.rating.star",
+                          "Rate {n} of 5",
+                        ).replace("{n}", String(n))}
+                        data-testid={`content-repo-rating-${repo.owner}-${repo.repo}-star-${n}`}
+                      >
+                        <Star
+                          className="h-4 w-4"
+                          aria-hidden="true"
+                          fill={rated ? "currentColor" : "none"}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Button
                     type="button"

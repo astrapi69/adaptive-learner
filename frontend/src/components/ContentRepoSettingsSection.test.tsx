@@ -222,6 +222,23 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     expect(screen.queryByTestId("content-repo-recommended")).toBeNull();
   });
 
+  it("records a local star rating for a repo", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [REPO] },
+    });
+    render(<ContentRepoSettingsSection />);
+    const star = await screen.findByTestId(
+      "content-repo-rating-jane-deck-star-4",
+    );
+    fireEvent.click(star);
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("content-repo-rating-jane-deck-star-4"),
+      ).toHaveAttribute("aria-checked", "true"),
+    );
+  });
+
   it("toggles a share panel with a link + QR for a repo", async () => {
     pluginGet.mockResolvedValue({
       plugin: "content-loader",
