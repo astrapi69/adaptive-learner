@@ -194,6 +194,15 @@ Definition of Done:
 
 ### Phase C — Community-Ökosystem (viel später)
 
+> **Status: slice implemented (#124, on branch — pending release).** The
+> no-server pieces are done: a curated recommended-repos list (static
+> `recommended-repos.json` in the official repo) drives in-app discovery +
+> one-click add + an "Officially recommended" (Trust 3) badge, plus
+> local-only per-repo star ratings. Everything needing a shared backend —
+> community star aggregation, Trust 2 (community-verified), the central
+> index server, coach progress aggregation, one-time invite tokens — stays
+> deferred until that infrastructure exists.
+
 - Verifizierungs-Workflow in der App
 - Community-Rating / Sterne-Bewertung pro Repo
 - "Verifiziert" und "Offiziell empfohlen" Badges

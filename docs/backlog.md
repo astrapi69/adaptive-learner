@@ -13,10 +13,13 @@ this file for granular items + status.
 > migrated), share via `/add-repo` deep link + QR, automatic technical
 > validation (Trust 0→1, re-checked each sync), per-repo source filter,
 > and private/coach repos via a per-repo token. Official repo stays the
-> default + non-removable. Community ratings, curated list, central index,
-> coach progress aggregation, one-time invite tokens, and Share-Wizard
-> direct-push are deferred to Phase C. See
-> [EXP-023](explorations/EXP-023-multi-content-repository.md).
+> default + non-removable. **Phase C slice implemented (#124, on branch):**
+> a curated `recommended-repos.json` drives a discovery section + one-click
+> add + an "Officially recommended" (Trust 3) badge, plus local-only
+> per-repo star ratings. Still deferred (need a shared backend): community
+> ratings, Trust 2 (community-verified), central index server, coach
+> progress aggregation, one-time invite tokens, Share-Wizard direct-push.
+> See [EXP-023](explorations/EXP-023-multi-content-repository.md).
 
 See [docs/explorations/](explorations/) for the full strategic plan:
 
