@@ -682,24 +682,69 @@ _RESTORE_ORDER: tuple[str, ...] = tuple(
 )
 
 
+def _remap_user_identity(
+    data: dict[str, Any], source_user_id: str, target_user_id: str
+) -> dict[str, list[dict[str, Any]]]:
+    """Re-home every backup row from ``source_user_id`` to ``target_user_id``.
+
+    The disaster-recovery case (#129): the backup was made under a prior
+    identity (a wiped/re-created install, or a Dexie-origin file), so its
+    ``users.id`` and every ``user_id`` column carry the OLD id. The merge
+    restore scopes by user, so without re-homing, every user-scoped PARENT
+    (conversations, curriculums, projects, sessions) is rejected and all
+    their children cascade-fail with "missing parent". Substituting the
+    user identity makes the whole backup belong to the importing user, so
+    parents insert and children resolve.
+
+    Only the user identity is remapped; all other ids (project, session,
+    conversation, ...) keep their backup values and reconcile through the
+    existing id/natural-key matching.
+    """
+    remapped: dict[str, list[dict[str, Any]]] = {}
+    for table, records in data.items():
+        if not isinstance(records, list):
+            remapped[table] = records
+            continue
+        new_records: list[dict[str, Any]] = []
+        for record in records:
+            if not isinstance(record, dict):
+                new_records.append(record)
+                continue
+            updated = dict(record)
+            if table == "users" and updated.get("id") == source_user_id:
+                updated["id"] = target_user_id
+            if updated.get("user_id") == source_user_id:
+                updated["user_id"] = target_user_id
+            new_records.append(updated)
+        remapped[table] = new_records
+    return remapped
+
+
 def restore_backup(
     db: Session, payload: Any, *, target_user_id: str | None = None
 ) -> dict[str, Any]:
     """Apply a backup payload to the database. Merge semantics.
 
-    ``target_user_id`` overrides the user_id stored in the backup
-    file. Default behaviour uses the backup's own ``user_id`` so a
-    user can restore on the same install they exported from. The
-    override path exists for cross-install transfers (a future
-    feature; currently unexercised but the parameter is wired so
-    the router can pass it explicitly).
+    ``target_user_id`` overrides the user_id stored in the backup file.
+    Default behaviour uses the backup's own ``user_id`` so a user can
+    restore on the same install they exported from. When the override
+    differs from the backup's own ``user_id`` (disaster recovery onto a
+    fresh/re-created install, or a Dexie-origin backup), the entire backup
+    is re-homed to the importing user via :func:`_remap_user_identity`
+    (#129).
     """
     payload = _validate_payload(payload)
-    user_id = target_user_id or payload.get("user_id")
+    source_user_id = payload.get("user_id")
+    user_id = target_user_id or source_user_id
     if not isinstance(user_id, str) or not user_id:
         raise ValidationError("Backup payload missing 'user_id'.")
 
     data: dict[str, list[dict[str, Any]]] = payload["data"]
+
+    # Re-home a cross-identity backup to the importing user (#129).
+    if isinstance(source_user_id, str) and source_user_id and source_user_id != user_id:
+        logger.info("Backup restore re-homing identity %s -> %s", source_user_id, user_id)
+        data = _remap_user_identity(data, source_user_id, user_id)
 
     # Defer FK enforcement to the final commit for THIS transaction.
     # _RESTORE_ORDER already inserts parent TABLES before child tables,

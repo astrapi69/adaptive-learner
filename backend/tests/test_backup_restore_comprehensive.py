@@ -28,7 +28,11 @@ import json
 from app.database import SessionLocal
 from app.models import (
     Badge,
+    Curriculum,
+    ImportedConversation,
+    ImportedMessage,
     LearningProject,
+    LearningTopic,
     Subject,
     User,
     UserBadge,
@@ -327,5 +331,62 @@ def test_subjects_reconcile_by_natural_key_no_duplication():
         spanisch = db.query(Subject).filter(Subject.name == "Spanisch").one()
         sprachen = db.query(Subject).filter(Subject.name == "Sprachen").one()
         assert spanisch.parent_id == sprachen.id
+    finally:
+        db.close()
+
+
+def test_restore_rehomes_cross_identity_backup_to_importing_user():
+    """A backup from a PRIOR identity restores onto a fresh install (#129).
+
+    The disaster-recovery case: the DB was wiped/re-created, so the current
+    user has a different id than the backup. Without re-homing, every
+    user-scoped parent (conversation, curriculum) is rejected and its
+    children cascade-fail with "missing parent". The restore must remap the
+    backup's user identity to the importing user so the whole tree lands.
+    """
+    db = _session()
+    try:
+        author = User(name="Author", language="de")
+        db.add(author)
+        db.flush()
+        conversation = ImportedConversation(
+            user_id=author.id, source="chatgpt", title="Chat", message_count=1
+        )
+        db.add(conversation)
+        db.flush()
+        db.add(
+            ImportedMessage(
+                conversation_id=conversation.id, role="user", content="hi", order_index=0
+            )
+        )
+        curriculum = Curriculum(user_id=author.id, title="Plan")
+        db.add(curriculum)
+        db.flush()
+        db.add(LearningTopic(curriculum_id=curriculum.id, title="Topic", order_index=0))
+        db.commit()
+        backup = create_backup(db, author.id)
+
+        # Fresh identity: the author is gone, a NEW user holds the install.
+        for model in (ImportedMessage, ImportedConversation, LearningTopic, Curriculum):
+            for row in db.query(model).all():
+                db.delete(row)
+        db.delete(db.get(User, author.id))
+        db.flush()
+        importer = User(name="Importer", language="de")
+        db.add(importer)
+        db.commit()
+
+        result = restore_backup(db, backup, target_user_id=importer.id)
+        assert result["errors"] == []
+
+        # The whole tree landed under the importing user, none dropped.
+        convs = db.query(ImportedConversation).all()
+        assert len(convs) == 1
+        assert convs[0].user_id == importer.id
+        assert db.query(ImportedMessage).count() == 1
+        curricula = db.query(Curriculum).all()
+        assert len(curricula) == 1
+        assert curricula[0].user_id == importer.id
+        assert db.query(LearningTopic).count() == 1
     finally:
         db.close()
