@@ -28,6 +28,7 @@ import {
   Share2,
   Shield,
   ShieldQuestion,
+  Star,
   Trash2,
 } from "lucide-react";
 
@@ -52,6 +53,7 @@ import { validateUserRepo } from "../lib/content/content-repo-validate";
 import { clearRepoToken, resolveRepoToken, writeRepoToken } from "../lib/content/repo-token";
 import {
   fetchRecommendedRepos,
+  isRecommendedSource,
   recommendedSource,
   type RecommendedRepo,
 } from "../lib/content/recommended-repos";
@@ -426,6 +428,15 @@ export default function ContentRepoSettingsSection() {
                   {repo.coach && (
                     <span className="rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]">
                       {t("content_repo.badge.coach", "Coach")}
+                    </span>
+                  )}
+                  {isRecommendedSource(source, recommended) && (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-sm bg-[color-mix(in_srgb,var(--accent)_16%,var(--bg-surface))] px-1.5 py-0.5 text-xs font-semibold text-[var(--accent-text)]"
+                      data-testid={`content-repo-recommended-badge-${repo.owner}-${repo.repo}`}
+                    >
+                      <Star className="h-3 w-3" aria-hidden="true" />
+                      {t("content_repo.trust.recommended", "Officially recommended")}
                     </span>
                   )}
                 </div>

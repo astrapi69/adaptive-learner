@@ -95,6 +95,10 @@ import {
   readUserRepos,
   userRepoSource,
 } from "../lib/content/content-repos";
+import {
+  fetchRecommendedRepos,
+  recommendedSource,
+} from "../lib/content/recommended-repos";
 import type {
   ContentLesson,
   ContentSetEntry,
@@ -150,6 +154,9 @@ export default function ContentPage() {
   const [repoMeta, setRepoMeta] = useState<
     Record<string, { trust: number; coach: boolean }>
   >({});
+  const [recommendedSources, setRecommendedSources] = useState<Set<string>>(
+    new Set(),
+  );
   useEffect(() => {
     let cancelled = false;
     void readUserRepos().then((repos) => {
@@ -162,6 +169,15 @@ export default function ContentPage() {
         };
       }
       setRepoMeta(map);
+    });
+    void fetchRecommendedRepos().then((list) => {
+      if (cancelled) return;
+      const set = new Set<string>();
+      for (const rec of list) {
+        const s = recommendedSource(rec);
+        if (s) set.add(s);
+      }
+      setRecommendedSources(set);
     });
     return () => {
       cancelled = true;
@@ -853,6 +869,14 @@ export default function ContentPage() {
                     ? t("content.trust.validated", "Validated")
                     : t("content.trust.unknown", "Unverified")}
                 </span>
+                {recommendedSources.has(entry.source) && (
+                  <span
+                    className="ml-1 rounded-sm bg-[color-mix(in_srgb,var(--accent)_16%,var(--bg-surface))] px-1.5 py-0.5 text-xs font-semibold text-[var(--accent-text)]"
+                    data-testid={`content-set-${entry.id}-recommended`}
+                  >
+                    {t("content.trust.recommended", "Recommended")}
+                  </span>
+                )}
               </>
             )}
           </h4>
