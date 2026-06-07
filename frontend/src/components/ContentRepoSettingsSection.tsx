@@ -50,6 +50,11 @@ import {
 } from "../lib/content/content-repos";
 import { validateUserRepo } from "../lib/content/content-repo-validate";
 import { clearRepoToken, resolveRepoToken, writeRepoToken } from "../lib/content/repo-token";
+import {
+  fetchRecommendedRepos,
+  recommendedSource,
+  type RecommendedRepo,
+} from "../lib/content/recommended-repos";
 import { notify } from "../utils/notify";
 
 interface OfficialSummary {
@@ -61,6 +66,7 @@ export default function ContentRepoSettingsSection() {
   const { t } = useI18n();
   const [official, setOfficial] = useState<OfficialSummary | null>(null);
   const [repos, setRepos] = useState<UserContentRepo[]>([]);
+  const [recommended, setRecommended] = useState<RecommendedRepo[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [tokenConfigured, setTokenConfigured] = useState(false);
 
@@ -78,14 +84,16 @@ export default function ContentRepoSettingsSection() {
 
   const refresh = useCallback(async () => {
     const storage = getStorage();
-    const [stored, tokenStatus] = await Promise.all([
+    const [stored, tokenStatus, recommendedList] = await Promise.all([
       readUserRepos(),
       storage.github.getStatus().catch(() => ({
         configured: false,
         source: "none" as const,
       })),
+      fetchRecommendedRepos(),
     ]);
     setRepos(stored);
+    setRecommended(recommendedList);
     setTokenConfigured(Boolean(tokenStatus.configured));
     try {
       const { sets } = await storage.contentLoader.listSets();
@@ -172,6 +180,52 @@ export default function ContentRepoSettingsSection() {
       setBusy(false);
     }
   }, [url, branch, token, refresh, t]);
+
+  const handleAddRecommended = useCallback(
+    async (rec: RecommendedRepo) => {
+      const parsed = parseGitHubRepoUrl(rec.url);
+      if (!parsed) return;
+      setBusy(true);
+      try {
+        const source = userRepoSource(parsed.owner, parsed.repo);
+        const validation = await validateUserRepo({
+          owner: parsed.owner,
+          repo: parsed.repo,
+          branch: rec.branch,
+        });
+        if (!validation.ok) {
+          notify.error(
+            t("content_repo.validation.failed", "Validation failed: {reason}").replace(
+              "{reason}",
+              validation.reason ?? "",
+            ),
+          );
+          return;
+        }
+        await addUserRepo({
+          url: rec.url,
+          owner: parsed.owner,
+          repo: parsed.repo,
+          branch: rec.branch,
+          connected: true,
+          last_synced: null,
+          set_count: validation.setCount,
+          lesson_count: validation.lessonCount,
+          trust: 1,
+        });
+        await syncUserRepo(source);
+        await refresh();
+        notify.success(t("content_repo.added", "Repository added."));
+      } catch {
+        notify.error(
+          t("content_repo.error.save_failed", "Could not add the repository."),
+        );
+      } finally {
+        setBusy(false);
+      }
+    },
+    [refresh, t],
+  );
 
   const handleSync = useCallback(
     async (source: string) => {
@@ -501,6 +555,57 @@ export default function ContentRepoSettingsSection() {
           })}
         </ul>
       )}
+
+      {/* Recommended repositories (curated discovery, EXP-023 Phase C). */}
+      {(() => {
+        const connected = new Set(
+          repos.map((r) => userRepoSource(r.owner, r.repo)),
+        );
+        const available = recommended.filter((rec) => {
+          const s = recommendedSource(rec);
+          return s !== null && !connected.has(s);
+        });
+        if (available.length === 0) return null;
+        return (
+          <div
+            className="mb-4 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
+            data-testid="content-repo-recommended"
+          >
+            <h3 className="m-0 text-base font-semibold">
+              {t("content_repo.recommended.title", "Recommended repositories")}
+            </h3>
+            <ul className="m-0 mt-2 flex list-none flex-col gap-2 p-0">
+              {available.map((rec) => {
+                const source = recommendedSource(rec) as string;
+                return (
+                  <li
+                    key={source}
+                    className="flex flex-wrap items-center gap-2"
+                    data-testid={`content-repo-recommended-${source}`}
+                  >
+                    <span className="font-medium">{rec.title ?? source}</span>
+                    {rec.description && (
+                      <span className="text-sm text-[var(--fg-muted)]">
+                        {rec.description}
+                      </span>
+                    )}
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="ml-auto min-h-11"
+                      onClick={() => handleAddRecommended(rec)}
+                      disabled={busy}
+                      data-testid={`content-repo-recommended-add-${source}`}
+                    >
+                      {t("content_repo.action.add", "Add repository")}
+                    </Button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })()}
 
       {/* Add a repository. */}
       <div
