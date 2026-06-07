@@ -30,6 +30,10 @@ from app.repositories.projects_repo import (
     ProjectsRepository,
     SqlAlchemyProjectsRepository,
 )
+from app.repositories.taxonomy_repo import (
+    SqlAlchemyTaxonomyRepository,
+    TaxonomyRepository,
+)
 from app.repositories.users_repo import (
     SqlAlchemyUsersRepository,
     UsersRepository,
@@ -56,9 +60,15 @@ def get_projects_repo(db: Session = Depends(get_db)) -> ProjectsRepository:
     return SqlAlchemyProjectsRepository(db)
 
 
+def get_taxonomy_repo(db: Session = Depends(get_db)) -> TaxonomyRepository:
+    """Provide a :class:`TaxonomyRepository` bound to the request session."""
+    return SqlAlchemyTaxonomyRepository(db)
+
+
 __all__ = [
     "get_curriculum_repo",
     "get_imports_repo",
     "get_projects_repo",
+    "get_taxonomy_repo",
     "get_users_repo",
 ]
