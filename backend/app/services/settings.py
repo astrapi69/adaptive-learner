@@ -1,9 +1,10 @@
-"""UserSettings CRUD service (Phase 1C-D).
+"""UserSettings CRUD service (Phase 1C-D; EXP-024 repository migration).
 
 Spans two tables: :class:`UserSettings` (per-user provider +
 encrypted API-key columns) and :class:`User` (the ``language``
 field, which the frontend Settings page edits through this same
-endpoint).
+endpoint), plus :class:`ApiKeyBackup`. Persistence goes through
+:class:`SettingsRepository`.
 
 API-key writes go through :func:`set_api_key` / :func:`delete_api_key`
 only; the PATCH endpoint cannot touch them. Plaintext keys never
@@ -17,11 +18,9 @@ from __future__ import annotations
 import os
 from typing import Any
 
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
-
 from app.exceptions import NotFoundError, ValidationError
 from app.models import ApiKeyBackup, User, UserSettings
+from app.repositories.settings_repo import SettingsRepository
 from app.schemas import AIProvider, ApiKeySetBody, ApiKeySource, SettingsPatchBody
 from app.services import crypto, secrets_service
 
@@ -45,56 +44,37 @@ def _column_for(provider: AIProvider) -> str:
     return column
 
 
-def _get_user(db: Session, user_id: str) -> User:
-    user = db.get(User, user_id)
+def _get_user(repo: SettingsRepository, user_id: str) -> User:
+    user = repo.get_user(user_id)
     if user is None:
         raise NotFoundError(f"User {user_id!r} not found.")
     return user
 
 
-def get_or_create_settings(db: Session, user_id: str) -> UserSettings:
+def get_or_create_settings(repo: SettingsRepository, user_id: str) -> UserSettings:
     """Return the user's settings row, creating it on first access.
 
     The frontend Settings page expects ``GET /api/settings/{id}`` to
     always return a row; an empty / default UserSettings is the
     natural shape for a brand-new account. The auto-create is
-    idempotent and stays in one transaction.
-
-    Concurrent first-access (React 18 strict-mode double-effect or
-    parallel GET requests) used to race: both callers passed the
-    ``user.settings is None`` check, both INSERTed, the second hit
-    the ``unique=True`` constraint on ``user_id`` and bubbled up as
-    HTTP 500. Catch the IntegrityError, roll back the doomed insert,
-    and re-read the row the other request just committed.
+    idempotent and race-safe (handled in the repository).
     Raises :class:`NotFoundError` when the user does not exist.
     """
-    user = _get_user(db, user_id)
-    if user.settings is not None:
-        return user.settings
-    settings = UserSettings(user_id=user.id)
-    db.add(settings)
-    try:
-        db.commit()
-    except IntegrityError:
-        db.rollback()
-        db.refresh(user, attribute_names=["settings"])
-        if user.settings is None:
-            raise
-        return user.settings
-    db.refresh(settings)
-    _ = settings.user
-    return settings
+    user = _get_user(repo, user_id)
+    return repo.get_or_create_settings(user)
 
 
-def update_settings(db: Session, user_id: str, payload: SettingsPatchBody) -> UserSettings:
+def update_settings(
+    repo: SettingsRepository, user_id: str, payload: SettingsPatchBody
+) -> UserSettings:
     """Apply a partial PATCH across UserSettings + User.
 
     Only fields the client explicitly set are written. The User
     update happens in the same transaction as the UserSettings
     update so the response always reflects a consistent snapshot.
     """
-    user = _get_user(db, user_id)
-    settings = get_or_create_settings(db, user_id)
+    user = _get_user(repo, user_id)
+    settings = get_or_create_settings(repo, user_id)
     fields = payload.model_dump(exclude_unset=True)
     if "active_provider" in fields and fields["active_provider"] is not None:
         # Pydantic coerces the AIProvider enum back to its string
@@ -115,12 +95,11 @@ def update_settings(db: Session, user_id: str, payload: SettingsPatchBody) -> Us
         if column in fields and fields[column] is not None:
             stripped = fields[column].strip()
             setattr(settings, column, stripped or None)
-    db.commit()
-    db.refresh(settings)
+    repo.persist(settings)
     return settings
 
 
-def set_api_key(db: Session, user_id: str, payload: ApiKeySetBody) -> UserSettings:
+def set_api_key(repo: SettingsRepository, user_id: str, payload: ApiKeySetBody) -> UserSettings:
     """Persist the API key to ``secrets.yaml``, Fernet-encrypted under
     the machine-local stable key.
 
@@ -130,89 +109,69 @@ def set_api_key(db: Session, user_id: str, payload: ApiKeySetBody) -> UserSettin
     fallback for not-yet-migrated legacy keys. Returns the settings
     row so the router can build the response (the source will resolve
     to ``secrets.yaml``)."""
-    settings = get_or_create_settings(db, user_id)
+    settings = get_or_create_settings(repo, user_id)
     secrets_service.write_api_key(payload.provider.value, payload.key)
     return settings
 
 
-def delete_api_key(db: Session, user_id: str, provider: AIProvider) -> UserSettings:
+def delete_api_key(repo: SettingsRepository, user_id: str, provider: AIProvider) -> UserSettings:
     """Idempotently clear the stored API key for the given provider.
 
     Returns the updated settings row even if the column was already
     NULL — the frontend's UX expects DELETE to succeed unconditionally
     so the user sees the "key removed" toast either way.
     """
-    settings = get_or_create_settings(db, user_id)
+    settings = get_or_create_settings(repo, user_id)
     # Clear from BOTH the secrets.yaml store (primary) and the legacy
     # DB column, so a delete is total regardless of where the key lived.
     secrets_service.clear_api_key(provider.value)
     column = _column_for(provider)
     setattr(settings, column, None)
-    db.commit()
-    db.refresh(settings)
+    repo.persist(settings)
     return settings
 
 
-def backup_api_key(db: Session, user_id: str, provider: AIProvider, key: str) -> None:
+def backup_api_key(repo: SettingsRepository, user_id: str, provider: AIProvider, key: str) -> None:
     """Cache ``key`` as the last-known-good backup for (user, provider).
 
     Called by the save flow ONLY after the key tested successfully.
     Fernet-encrypts the key and upserts the single per-(user, provider)
     ApiKeyBackup row.
     """
-    existing = (
-        db.query(ApiKeyBackup)
-        .filter(
-            ApiKeyBackup.user_id == user_id,
-            ApiKeyBackup.provider == provider.value,
-        )
-        .one_or_none()
-    )
     ciphertext = crypto.encrypt_api_key(key)
-    if existing is None:
-        db.add(
-            ApiKeyBackup(
-                user_id=user_id,
-                provider=provider.value,
-                encrypted_key=ciphertext,
-                works=True,
-            )
-        )
-    else:
-        existing.encrypted_key = ciphertext
-        existing.works = True
-    db.commit()
-
-
-def get_api_key_backup(db: Session, user_id: str, provider: AIProvider) -> ApiKeyBackup | None:
-    """Return the backup row for (user, provider), or ``None``."""
-    return (
-        db.query(ApiKeyBackup)
-        .filter(
-            ApiKeyBackup.user_id == user_id,
-            ApiKeyBackup.provider == provider.value,
-        )
-        .one_or_none()
+    repo.upsert_api_key_backup(
+        user_id=user_id, provider_value=provider.value, encrypted_key=ciphertext
     )
 
 
-def restore_api_key_backup(db: Session, user_id: str, provider: AIProvider) -> UserSettings:
+def get_api_key_backup(
+    repo: SettingsRepository, user_id: str, provider: AIProvider
+) -> ApiKeyBackup | None:
+    """Return the backup row for (user, provider), or ``None``."""
+    return repo.get_api_key_backup(user_id, provider.value)
+
+
+def restore_api_key_backup(
+    repo: SettingsRepository, user_id: str, provider: AIProvider
+) -> UserSettings:
     """Restore the cached last-known-good key as the active key.
 
     Decrypts the backup and writes it through the normal save path
     (secrets.yaml). Raises :class:`NotFoundError` when no backup
     exists for the provider.
     """
-    backup = get_api_key_backup(db, user_id, provider)
+    backup = get_api_key_backup(repo, user_id, provider)
     if backup is None:
         raise NotFoundError(f"No API-key backup for provider {provider.value}")
     plaintext = crypto.decrypt_api_key(backup.encrypted_key)
-    settings = get_or_create_settings(db, user_id)
+    settings = get_or_create_settings(repo, user_id)
     secrets_service.write_api_key(provider.value, plaintext)
     return settings
 
 
-def get_decrypted_api_key(db: Session, user_id: str, provider: AIProvider) -> str | None:
+def get_decrypted_api_key(
+    repo: SettingsRepository, user_id: str, provider: AIProvider
+) -> str | None:
     """Decrypt + return the stored plaintext API key from the DB.
 
     DB-only primitive — does NOT consult env vars or
@@ -224,7 +183,7 @@ def get_decrypted_api_key(db: Session, user_id: str, provider: AIProvider) -> st
     :class:`app.services.crypto.CryptoDecryptionError` when the
     encryption key was rotated without re-encrypting the row.
     """
-    settings = get_or_create_settings(db, user_id)
+    settings = get_or_create_settings(repo, user_id)
     ciphertext = getattr(settings, _column_for(provider))
     if ciphertext is None:
         return None
@@ -275,7 +234,9 @@ def _read_secrets_yaml_block(provider: AIProvider) -> dict[str, Any]:
     return provider_block
 
 
-def detect_api_key_source(db: Session, user_id: str, provider: AIProvider) -> ApiKeySource:
+def detect_api_key_source(
+    repo: SettingsRepository, user_id: str, provider: AIProvider
+) -> ApiKeySource:
     """Resolve the per-provider key source for the Settings UI.
 
     Precedence matches :func:`resolve_api_key`. The Settings GET
@@ -300,14 +261,14 @@ def detect_api_key_source(db: Session, user_id: str, provider: AIProvider) -> Ap
         return ApiKeySource.ENV
     if yaml_value:
         return ApiKeySource.SECRETS_YAML
-    settings = get_or_create_settings(db, user_id)
+    settings = get_or_create_settings(repo, user_id)
     if getattr(settings, _column_for(provider)) is not None:
         return ApiKeySource.SETTINGS
     return ApiKeySource.NONE
 
 
 def resolve_api_key(
-    db: Session, user_id: str, provider: AIProvider
+    repo: SettingsRepository, user_id: str, provider: AIProvider
 ) -> tuple[str | None, ApiKeySource]:
     """Resolve a plaintext API key + its source.
 
@@ -338,13 +299,15 @@ def resolve_api_key(
         return env_value, ApiKeySource.ENV
     if yaml_value:
         return yaml_value, ApiKeySource.SECRETS_YAML
-    db_key = get_decrypted_api_key(db, user_id, provider)
+    db_key = get_decrypted_api_key(repo, user_id, provider)
     if db_key:
         return db_key, ApiKeySource.SETTINGS
     return None, ApiKeySource.NONE
 
 
-def resolve_default_model(db: Session, user_id: str, provider: AIProvider) -> str | None:
+def resolve_default_model(
+    repo: SettingsRepository, user_id: str, provider: AIProvider
+) -> str | None:
     """Resolve the per-provider default model.
 
     Precedence (highest wins):
@@ -367,7 +330,7 @@ def resolve_default_model(db: Session, user_id: str, provider: AIProvider) -> st
     yaml_value = yaml_block.get("default_model") if isinstance(yaml_block, dict) else None
     if isinstance(yaml_value, str) and yaml_value.strip():
         return yaml_value.strip()
-    settings = get_or_create_settings(db, user_id)
+    settings = get_or_create_settings(repo, user_id)
     override_attr = f"model_override_{provider.value}"
     override = getattr(settings, override_attr, None)
     if isinstance(override, str) and override.strip():
@@ -376,12 +339,15 @@ def resolve_default_model(db: Session, user_id: str, provider: AIProvider) -> st
 
 
 __all__ = [
+    "backup_api_key",
     "delete_api_key",
     "detect_api_key_source",
+    "get_api_key_backup",
     "get_decrypted_api_key",
     "get_or_create_settings",
     "resolve_api_key",
     "resolve_default_model",
+    "restore_api_key_backup",
     "set_api_key",
     "update_settings",
 ]

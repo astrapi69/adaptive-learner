@@ -21,13 +21,12 @@ the result. The browser never sees the cleartext key.
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Response, status
-from sqlalchemy.orm import Session
 
-from app.database import get_db
-from app.deps import get_curriculum_repo, get_imports_repo
+from app.deps import get_curriculum_repo, get_imports_repo, get_settings_repo
 from app.exceptions import ValidationError
 from app.repositories.curriculum_repo import CurriculumRepository
 from app.repositories.imports_repo import ImportsRepository
+from app.repositories.settings_repo import SettingsRepository
 from app.schemas import (
     AIProvider,
     CurriculumOut,
@@ -219,8 +218,8 @@ def _build_ai_caller(
 )
 def analyze_import(
     conversation_id: str,
-    db: Session = Depends(get_db),
     repo: ImportsRepository = Depends(get_imports_repo),
+    settings_repo: SettingsRepository = Depends(get_settings_repo),
 ) -> ImportedConversationDetail:
     """Server-side conversation analysis.
 
@@ -232,7 +231,7 @@ def analyze_import(
     """
     conv = imports_service.get_conversation(repo, conversation_id, with_messages=True)
 
-    settings = settings_service.get_or_create_settings(db, conv.user_id)
+    settings = settings_service.get_or_create_settings(settings_repo, conv.user_id)
     provider_key = settings.active_provider
     try:
         provider_enum = AIProvider(provider_key)
@@ -242,7 +241,7 @@ def analyze_import(
         ) from exc
 
     # Phase 34 — env > secrets.yaml > DB resolution.
-    api_key, _source = settings_service.resolve_api_key(db, conv.user_id, provider_enum)
+    api_key, _source = settings_service.resolve_api_key(settings_repo, conv.user_id, provider_enum)
     if not api_key:
         raise ValidationError(
             f"User {conv.user_id!r} has no stored API key for provider {provider_key!r}."

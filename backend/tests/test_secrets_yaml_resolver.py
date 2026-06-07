@@ -27,6 +27,7 @@ import yaml
 from app.database import SessionLocal
 from app.main import _load_override_file
 from app.models import User, UserSettings
+from app.repositories.settings_repo import SqlAlchemySettingsRepository
 from app.schemas import AIProvider, ApiKeySource
 from app.services import crypto
 from app.services import settings as settings_service
@@ -95,7 +96,9 @@ def test_resolve_api_key_env_wins(
     the DB column."""
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
     monkeypatch.setenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", "env-key")
-    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+    key, source = settings_service.resolve_api_key(
+        SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+    )
     assert key == "env-key"
     assert source is ApiKeySource.ENV
 
@@ -109,7 +112,9 @@ def test_resolve_api_key_secrets_yaml_wins_over_db(
     """secrets.yaml beats the DB-encrypted column when env is empty."""
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
-    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+    key, source = settings_service.resolve_api_key(
+        SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+    )
     assert key == "yaml-key"
     assert source is ApiKeySource.SECRETS_YAML
 
@@ -124,7 +129,9 @@ def test_resolve_api_key_db_when_no_env_no_yaml(
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
     # fake_secrets_path file does not exist; loader returns {}.
     assert not fake_secrets_path.exists()
-    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+    key, source = settings_service.resolve_api_key(
+        SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+    )
     assert key == "db-key-anthropic"
     assert source is ApiKeySource.SETTINGS
 
@@ -138,7 +145,9 @@ def test_resolve_api_key_none_when_nothing_set(
     db.commit()
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
     assert not fake_secrets_path.exists()
-    key, source = settings_service.resolve_api_key(db, user.id, AIProvider.ANTHROPIC)
+    key, source = settings_service.resolve_api_key(
+        SqlAlchemySettingsRepository(db), user.id, AIProvider.ANTHROPIC
+    )
     assert key is None
     assert source is ApiKeySource.NONE
 
@@ -154,7 +163,9 @@ def test_env_equals_yaml_attributed_to_yaml(
     ``_hydrate_env_from_config`` populated the env at startup."""
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "same-key"}}})
     monkeypatch.setenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", "same-key")
-    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+    key, source = settings_service.resolve_api_key(
+        SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+    )
     assert key == "same-key"
     assert source is ApiKeySource.SECRETS_YAML
 
@@ -168,7 +179,9 @@ def test_env_differs_from_yaml_attributed_to_env(
     """env set directly (different value) -> ENV wins, source ENV."""
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
     monkeypatch.setenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", "shell-key")
-    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+    key, source = settings_service.resolve_api_key(
+        SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+    )
     assert key == "shell-key"
     assert source is ApiKeySource.ENV
 
@@ -185,7 +198,9 @@ def test_other_providers_unaffected_by_anthropic_yaml(
     monkeypatch.delenv("ADAPTIVE_LEARNER_GEMINI_API_KEY", raising=False)
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
     for provider in (AIProvider.OPENAI, AIProvider.GEMINI):
-        key, source = settings_service.resolve_api_key(db, user_with_db_key.id, provider)
+        key, source = settings_service.resolve_api_key(
+            SqlAlchemySettingsRepository(db), user_with_db_key.id, provider
+        )
         assert key is None
         assert source is ApiKeySource.NONE
 
@@ -200,7 +215,9 @@ def test_resolve_api_key_blank_yaml_value_falls_through(
     "not set" so we fall through to the DB."""
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "   "}}})
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
-    key, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+    key, source = settings_service.resolve_api_key(
+        SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+    )
     assert key == "db-key-anthropic"
     assert source is ApiKeySource.SETTINGS
 
@@ -219,7 +236,9 @@ def test_resolve_default_model_env_wins(
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"default_model": "yaml-model"}}})
     monkeypatch.setenv("ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL", "env-model")
     assert (
-        settings_service.resolve_default_model(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+        settings_service.resolve_default_model(
+            SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+        )
         == "env-model"
     )
 
@@ -233,13 +252,17 @@ def test_resolve_default_model_yaml_beats_ui_override(
     """Per the v1.20.0 decision (Q2): secrets.yaml beats the UI
     override. Power users who configure files expect file-level
     config to win over the UI."""
-    settings = settings_service.get_or_create_settings(db, user_with_db_key.id)
+    settings = settings_service.get_or_create_settings(
+        SqlAlchemySettingsRepository(db), user_with_db_key.id
+    )
     settings.model_override_anthropic = "ui-model"
     db.commit()
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"default_model": "yaml-model"}}})
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL", raising=False)
     assert (
-        settings_service.resolve_default_model(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+        settings_service.resolve_default_model(
+            SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+        )
         == "yaml-model"
     )
 
@@ -250,13 +273,17 @@ def test_resolve_default_model_ui_override_when_no_env_no_yaml(
     fake_secrets_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    settings = settings_service.get_or_create_settings(db, user_with_db_key.id)
+    settings = settings_service.get_or_create_settings(
+        SqlAlchemySettingsRepository(db), user_with_db_key.id
+    )
     settings.model_override_anthropic = "ui-model"
     db.commit()
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL", raising=False)
     assert not fake_secrets_path.exists()
     assert (
-        settings_service.resolve_default_model(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+        settings_service.resolve_default_model(
+            SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+        )
         == "ui-model"
     )
 
@@ -270,7 +297,9 @@ def test_resolve_default_model_none_when_nothing_set(
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_DEFAULT_MODEL", raising=False)
     assert not fake_secrets_path.exists()
     assert (
-        settings_service.resolve_default_model(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+        settings_service.resolve_default_model(
+            SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+        )
         is None
     )
 
@@ -291,9 +320,13 @@ def test_detect_api_key_source_matches_resolver(
     resolve_api_key returns at the same instant."""
     monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
     _write_yaml(fake_secrets_path, {"ai": {"anthropic": {"api_key": "yaml-key"}}})
-    _, source = settings_service.resolve_api_key(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+    _, source = settings_service.resolve_api_key(
+        SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+    )
     assert (
-        settings_service.detect_api_key_source(db, user_with_db_key.id, AIProvider.ANTHROPIC)
+        settings_service.detect_api_key_source(
+            SqlAlchemySettingsRepository(db), user_with_db_key.id, AIProvider.ANTHROPIC
+        )
         == source
     )
 

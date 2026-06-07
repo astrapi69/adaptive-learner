@@ -12,6 +12,7 @@ import httpx
 import pytest
 from fastapi.testclient import TestClient
 
+from app.repositories.settings_repo import SqlAlchemySettingsRepository
 from app.routers.settings import router as settings_router
 from app.routers.users import router as users_router
 from app.schemas import AIProvider
@@ -55,18 +56,14 @@ def test_test_api_key_no_key_short_circuits():
 
 
 def test_test_api_key_success(monkeypatch):
-    monkeypatch.setattr(
-        api_key_test.httpx, "post", lambda *a, **k: _FakeResponse(200)
-    )
+    monkeypatch.setattr(api_key_test.httpx, "post", lambda *a, **k: _FakeResponse(200))
     result = api_key_test.test_api_key(AIProvider.OPENAI, "sk-whatever")
     assert result.success is True
     assert result.kind == "ok"
 
 
 def test_test_api_key_invalid(monkeypatch):
-    monkeypatch.setattr(
-        api_key_test.httpx, "post", lambda *a, **k: _FakeResponse(401)
-    )
+    monkeypatch.setattr(api_key_test.httpx, "post", lambda *a, **k: _FakeResponse(401))
     result = api_key_test.test_api_key(AIProvider.ANTHROPIC, "sk-ant-bad")
     assert result.success is False
     assert result.kind == "invalid"
@@ -110,17 +107,17 @@ def test_backup_roundtrip_encrypts_and_keeps_single_row(client):
     db = SessionLocal()
     try:
         settings_service.backup_api_key(
-            db, user_id, AIProvider.ANTHROPIC, "sk-ant-secret-A"
+            SqlAlchemySettingsRepository(db), user_id, AIProvider.ANTHROPIC, "sk-ant-secret-A"
         )
         backup = settings_service.get_api_key_backup(
-            db, user_id, AIProvider.ANTHROPIC
+            SqlAlchemySettingsRepository(db), user_id, AIProvider.ANTHROPIC
         )
         assert backup is not None
         # Stored ciphertext, not plaintext.
         assert backup.encrypted_key != "sk-ant-secret-A"
         # Overwriting keeps exactly one row per provider.
         settings_service.backup_api_key(
-            db, user_id, AIProvider.ANTHROPIC, "sk-ant-secret-B"
+            SqlAlchemySettingsRepository(db), user_id, AIProvider.ANTHROPIC, "sk-ant-secret-B"
         )
         rows = (
             db.query(ApiKeyBackup)
@@ -154,9 +151,7 @@ def test_backup_info_endpoint(client):
 
 def test_restore_without_backup_is_404(client):
     user_id = _make_user(client)
-    resp = client.post(
-        f"/api/settings/{user_id}/api-key-backup/anthropic/restore"
-    )
+    resp = client.post(f"/api/settings/{user_id}/api-key-backup/anthropic/restore")
     assert resp.status_code == 404
 
 
@@ -172,9 +167,7 @@ def test_restore_writes_the_key_back(client, monkeypatch):
         f"/api/settings/{user_id}/api-key-backup",
         json={"provider": "openai", "key": "sk-openai-secret-key"},
     )
-    resp = client.post(
-        f"/api/settings/{user_id}/api-key-backup/openai/restore"
-    )
+    resp = client.post(f"/api/settings/{user_id}/api-key-backup/openai/restore")
     assert resp.status_code == 200, resp.text
     # Restore decrypted the backup and wrote it back via secrets.yaml.
     assert written.get("openai") == "sk-openai-secret-key"

@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 from app.database import SessionLocal
 from app.main import app, manager
 from app.models import ProjectSubject, Subject, UserSettings
+from app.repositories.settings_repo import SqlAlchemySettingsRepository
 
 
 @pytest.fixture()
@@ -44,20 +45,14 @@ def _seed_provider_key(user_id: str) -> None:
         from app.schemas import AIProvider, ApiKeySetBody
         from app.services import settings as settings_service
 
-        settings_service.get_or_create_settings(db, user_id)
+        settings_service.get_or_create_settings(SqlAlchemySettingsRepository(db), user_id)
         settings_service.set_api_key(
-            db,
+            SqlAlchemySettingsRepository(db),
             user_id,
-            ApiKeySetBody(
-                provider=AIProvider.ANTHROPIC, key="test-key-1234567890"
-            ),
+            ApiKeySetBody(provider=AIProvider.ANTHROPIC, key="test-key-1234567890"),
         )
         # Set as active provider.
-        row = (
-            db.query(UserSettings)
-            .filter(UserSettings.user_id == user_id)
-            .first()
-        )
+        row = db.query(UserSettings).filter(UserSettings.user_id == user_id).first()
         assert row is not None
         row.active_provider = "anthropic"
         db.commit()
@@ -70,9 +65,7 @@ def _assign_language_subject(project_id: str) -> None:
     a subject under the seeded ``Languages`` root."""
     db = SessionLocal()
     try:
-        langs = (
-            db.query(Subject).filter(Subject.name == "Languages").first()
-        )
+        langs = db.query(Subject).filter(Subject.name == "Languages").first()
         assert langs is not None, "Languages subject not seeded"
         # Find a leaf under it (or use the root itself).
         db.add(ProjectSubject(project_id=project_id, subject_id=langs.id))
@@ -88,10 +81,7 @@ def test_router_paths_mounted(client: TestClient) -> None:
     paths = {r.path for r in app.routes if hasattr(r, "path")}
     assert "/api/plugins/session/pronunciation/phrase" in paths
     assert "/api/plugins/session/pronunciation/judge" in paths
-    assert (
-        "/api/plugins/session/pronunciation/eligibility/{project_id}"
-        in paths
-    )
+    assert "/api/plugins/session/pronunciation/eligibility/{project_id}" in paths
 
 
 # --- Eligibility -----------------------------------------------------------
@@ -99,9 +89,7 @@ def test_router_paths_mounted(client: TestClient) -> None:
 
 def test_eligibility_false_without_subjects(client: TestClient) -> None:
     _, project_id = _make_user_and_project(client)
-    r = client.get(
-        f"/api/plugins/session/pronunciation/eligibility/{project_id}"
-    )
+    r = client.get(f"/api/plugins/session/pronunciation/eligibility/{project_id}")
     assert r.status_code == 200
     assert r.json() == {"eligible": False}
 
@@ -111,9 +99,7 @@ def test_eligibility_true_with_language_subject(
 ) -> None:
     _, project_id = _make_user_and_project(client)
     _assign_language_subject(project_id)
-    r = client.get(
-        f"/api/plugins/session/pronunciation/eligibility/{project_id}"
-    )
+    r = client.get(f"/api/plugins/session/pronunciation/eligibility/{project_id}")
     assert r.status_code == 200
     assert r.json() == {"eligible": True}
 
@@ -121,9 +107,7 @@ def test_eligibility_true_with_language_subject(
 def test_eligibility_unknown_project_returns_404(
     client: TestClient,
 ) -> None:
-    r = client.get(
-        "/api/plugins/session/pronunciation/eligibility/nope"
-    )
+    r = client.get("/api/plugins/session/pronunciation/eligibility/nope")
     assert r.status_code == 404
 
 
@@ -134,9 +118,7 @@ def test_phrase_generates_via_mocked_ai(client: TestClient) -> None:
     user_id, project_id = _make_user_and_project(client)
     _seed_provider_key(user_id)
     mock_response = json.dumps({"phrase": "Yo hablo español"})
-    with patch.object(
-        manager._pm.hook, "ai_complete", return_value=mock_response
-    ):
+    with patch.object(manager._pm.hook, "ai_complete", return_value=mock_response):
         r = client.post(
             "/api/plugins/session/pronunciation/phrase",
             json={"project_id": project_id, "language": "Spanish"},
@@ -150,9 +132,7 @@ def test_phrase_generates_via_mocked_ai(client: TestClient) -> None:
 def test_phrase_400_when_ai_parse_fails(client: TestClient) -> None:
     user_id, project_id = _make_user_and_project(client)
     _seed_provider_key(user_id)
-    with patch.object(
-        manager._pm.hook, "ai_complete", return_value="not json at all"
-    ):
+    with patch.object(manager._pm.hook, "ai_complete", return_value="not json at all"):
         r = client.post(
             "/api/plugins/session/pronunciation/phrase",
             json={"project_id": project_id, "language": "es"},
@@ -190,9 +170,7 @@ def test_judge_returns_verdict(client: TestClient) -> None:
             "missed_sounds": ["h"],
         }
     )
-    with patch.object(
-        manager._pm.hook, "ai_complete", return_value=mock_response
-    ):
+    with patch.object(manager._pm.hook, "ai_complete", return_value=mock_response):
         r = client.post(
             "/api/plugins/session/pronunciation/judge",
             json={

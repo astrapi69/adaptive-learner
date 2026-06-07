@@ -187,8 +187,11 @@ Reihenfolge nach Blast-Radius (klein zuerst), Pilot = `imports`.
 high-ripple / gross):
 - [x] **Lesson-Cluster** (lesson_progress + lesson_session_unification +
       element_errors + element_srs) — als Einheit migriert, mit Test-Rewrites.
-- [ ] settings (6 Test-Caller, von Routern + github/imports konsumiert;
-      nutzt das file-basierte `secrets_service`)
+- [x] **settings** — `SettingsRepository` (UserSettings get-or-create-Race +
+      ApiKeyBackup); env/yaml/crypto-Logik bleibt im Service. Ripple migriert:
+      settings/content/imports-Router + 3 Plugin-Routes (anki/notebooklm/session,
+      nur die settings-Call-Sites inline-gewrappt — volle Plugin-Migration bleibt
+      Phase 2) + 6 Test-Dateien. Backend 1181 + Plugin-Suites (20/27/219) grün.
 - [ ] reset_service (db_guard-Bulk-Delete, 2 Test-Caller — heikel)
 - [ ] backup_service (inkl. S3-Pragma), export_service, sync_service (1039 Z.)
 
@@ -246,6 +249,16 @@ tracking (2), anki (1), missions (1).
 - **taxonomy migriert:** `TaxonomyRepository` (Subject global / Tag per-user /
   Project-M:N). Tag-Uniqueness via `repo.find_tag_by_name(..., exclude_id=)`,
   Ownership-/Idempotenz-Regeln bleiben im Service. Backend-Suite 1181 passed.
+- **settings migriert (high-ripple):** `SettingsRepository` kapselt
+  UserSettings (get-or-create inkl. First-Access-Race -> IntegrityError-Re-Read)
+  + ApiKeyBackup. Provider-Spaltenmapping, env>yaml>DB-Resolver, Fernet-Crypto,
+  Domain-Fehler bleiben im Service. Ripple: settings/content/imports-Router auf
+  `Depends(get_settings_repo)`; die 3 Plugins (anki/notebooklm/session) wrappen
+  `SqlAlchemySettingsRepository(db)` inline an ihren settings-Call-Sites (ihre
+  eigenen DB-Zugriffe bleiben — volle Plugin-Migration ist Phase 2); 6
+  Test-Dateien (28 Call-Sites) inline-gewrappt. Hinweis: ein **vorbestehender**
+  E402 (session routes.py:1788) ist nicht Teil dieses Diffs und wird nicht
+  angefasst. ruff + mypy (backend) sauber.
 - **Lesson-Cluster migriert (als Einheit):** drei neue Repos
   (`ElementErrorsRepository` mit explizitem `flush()`/`commit()` fuer die
   Bulk-Upsert-Transaktionsgrenze; `LessonProgressRepository`;

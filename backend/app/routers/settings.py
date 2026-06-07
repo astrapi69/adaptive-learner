@@ -20,9 +20,9 @@ every Settings focus event.
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import get_settings_repo
+from app.repositories.settings_repo import SettingsRepository
 from app.schemas import (
     AIProvider,
     ApiKeyBackupBody,
@@ -41,7 +41,7 @@ from app.services import settings as settings_service
 router = APIRouter(prefix="/settings", tags=["settings"])
 
 
-def _build_settings_out(db: Session, settings) -> UserSettingsOut:
+def _build_settings_out(repo: SettingsRepository, settings) -> UserSettingsOut:
     """Wrap the ORM row + per-provider key-source attribution into
     a ``UserSettingsOut``.
 
@@ -59,24 +59,26 @@ def _build_settings_out(db: Session, settings) -> UserSettingsOut:
         (AIProvider.OPENAI, "key_source_openai", "has_openai_key"),
         (AIProvider.GEMINI, "key_source_gemini", "has_gemini_key"),
     ):
-        source = settings_service.detect_api_key_source(db, settings.user_id, provider)
+        source = settings_service.detect_api_key_source(repo, settings.user_id, provider)
         setattr(out, source_attr, source)
         setattr(out, has_attr, source != ApiKeySource.NONE)
     return out
 
 
 @router.get("/{user_id}", response_model=UserSettingsOut)
-def get_settings(user_id: str, db: Session = Depends(get_db)) -> UserSettingsOut:
-    return _build_settings_out(db, settings_service.get_or_create_settings(db, user_id))
+def get_settings(
+    user_id: str, repo: SettingsRepository = Depends(get_settings_repo)
+) -> UserSettingsOut:
+    return _build_settings_out(repo, settings_service.get_or_create_settings(repo, user_id))
 
 
 @router.patch("/{user_id}", response_model=UserSettingsOut)
 def patch_settings(
     user_id: str,
     payload: SettingsPatchBody,
-    db: Session = Depends(get_db),
+    repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
-    return _build_settings_out(db, settings_service.update_settings(db, user_id, payload))
+    return _build_settings_out(repo, settings_service.update_settings(repo, user_id, payload))
 
 
 @router.post(
@@ -100,32 +102,32 @@ def patch_settings(
 def set_api_key(
     user_id: str,
     payload: ApiKeySetBody,
-    db: Session = Depends(get_db),
+    repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
-    return _build_settings_out(db, settings_service.set_api_key(db, user_id, payload))
+    return _build_settings_out(repo, settings_service.set_api_key(repo, user_id, payload))
 
 
 @router.delete("/{user_id}/api-key/{provider}", response_model=UserSettingsOut)
 def delete_api_key(
     user_id: str,
     provider: AIProvider,
-    db: Session = Depends(get_db),
+    repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
-    return _build_settings_out(db, settings_service.delete_api_key(db, user_id, provider))
+    return _build_settings_out(repo, settings_service.delete_api_key(repo, user_id, provider))
 
 
 @router.post("/{user_id}/test-api-key", response_model=ApiKeyTestOut)
 def test_api_key(
     user_id: str,
     payload: ApiKeyTestBody,
-    db: Session = Depends(get_db),
+    repo: SettingsRepository = Depends(get_settings_repo),
 ) -> ApiKeyTestOut:
     # Test the caller-supplied key when given (the pre-save check),
     # otherwise resolve the user's configured key (env > secrets.yaml
     # > DB) and test that. Never saves anything.
     key = payload.key
     if not key:
-        key, _source = settings_service.resolve_api_key(db, user_id, payload.provider)
+        key, _source = settings_service.resolve_api_key(repo, user_id, payload.provider)
     result = api_key_test.test_api_key(payload.provider, key)
     return ApiKeyTestOut(success=result.success, kind=result.kind)
 
@@ -134,12 +136,12 @@ def test_api_key(
 def backup_api_key(
     user_id: str,
     payload: ApiKeyBackupBody,
-    db: Session = Depends(get_db),
+    repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
     # Cache a tested-good key as the last-known-good backup. The
     # caller (save flow) invokes this only after a successful test.
-    settings_service.backup_api_key(db, user_id, payload.provider, payload.key)
-    return _build_settings_out(db, settings_service.get_or_create_settings(db, user_id))
+    settings_service.backup_api_key(repo, user_id, payload.provider, payload.key)
+    return _build_settings_out(repo, settings_service.get_or_create_settings(repo, user_id))
 
 
 @router.get(
@@ -149,9 +151,9 @@ def backup_api_key(
 def get_api_key_backup_info(
     user_id: str,
     provider: AIProvider,
-    db: Session = Depends(get_db),
+    repo: SettingsRepository = Depends(get_settings_repo),
 ) -> ApiKeyBackupInfoOut:
-    backup = settings_service.get_api_key_backup(db, user_id, provider)
+    backup = settings_service.get_api_key_backup(repo, user_id, provider)
     if backup is None:
         return ApiKeyBackupInfoOut(has=False, tested_at=None)
     return ApiKeyBackupInfoOut(has=True, tested_at=backup.tested_at)
@@ -164,10 +166,12 @@ def get_api_key_backup_info(
 def restore_api_key_backup(
     user_id: str,
     provider: AIProvider,
-    db: Session = Depends(get_db),
+    repo: SettingsRepository = Depends(get_settings_repo),
 ) -> UserSettingsOut:
     # NotFoundError (no backup) maps to 404 via the global handler.
-    return _build_settings_out(db, settings_service.restore_api_key_backup(db, user_id, provider))
+    return _build_settings_out(
+        repo, settings_service.restore_api_key_backup(repo, user_id, provider)
+    )
 
 
 @router.get(
@@ -177,12 +181,12 @@ def restore_api_key_backup(
 def list_available_models(
     user_id: str,
     provider: AIProvider = Query(..., description="Provider to query for available models."),
-    db: Session = Depends(get_db),
+    repo: SettingsRepository = Depends(get_settings_repo),
 ) -> list[AvailableModelOut]:
     # Phase 34 — resolve via env > secrets.yaml > DB so the
     # model picker works for desktop users whose key lives in
     # ``~/.config/adaptive_learner/secrets.yaml``.
-    api_key, _source = settings_service.resolve_api_key(db, user_id, provider)
+    api_key, _source = settings_service.resolve_api_key(repo, user_id, provider)
     if not api_key:
         return []
     models = model_discovery.fetch_models(provider, api_key)

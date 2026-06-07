@@ -42,6 +42,10 @@ from app.repositories.projects_repo import (
     ProjectsRepository,
     SqlAlchemyProjectsRepository,
 )
+from app.repositories.settings_repo import (
+    SettingsRepository,
+    SqlAlchemySettingsRepository,
+)
 from app.repositories.taxonomy_repo import (
     SqlAlchemyTaxonomyRepository,
     TaxonomyRepository,
@@ -77,6 +81,11 @@ def get_taxonomy_repo(db: Session = Depends(get_db)) -> TaxonomyRepository:
     return SqlAlchemyTaxonomyRepository(db)
 
 
+def get_settings_repo(db: Session = Depends(get_db)) -> SettingsRepository:
+    """Provide a :class:`SettingsRepository` bound to the request session."""
+    return SqlAlchemySettingsRepository(db)
+
+
 def get_element_errors_repo(db: Session = Depends(get_db)) -> ElementErrorsRepository:
     """Provide an :class:`ElementErrorsRepository` bound to the request session."""
     return SqlAlchemyElementErrorsRepository(db)
@@ -101,6 +110,7 @@ __all__ = [
     "get_lesson_progress_repo",
     "get_lesson_session_unification_repo",
     "get_projects_repo",
+    "get_settings_repo",
     "get_taxonomy_repo",
     "get_users_repo",
 ]
