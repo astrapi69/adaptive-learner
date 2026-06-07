@@ -30,6 +30,24 @@ export const KNOWN_EXERCISE_TYPES = [
 /** Schema major the app understands (CURRENT_SCHEMA_VERSION is 1.x). */
 const SUPPORTED_SCHEMA_MAJOR = 1;
 
+/**
+ * Patterns that must not appear in lesson content (EXP-023 Phase B —
+ * "no executable code"). Content is plain JSON rendered as markdown/text;
+ * a script tag / inline handler / eval call signals an untrusted repo.
+ */
+const SUSPICIOUS_PATTERNS: RegExp[] = [
+  /<script\b/i,
+  /javascript:/i,
+  /\bon\w+\s*=\s*["']/i, // inline event handlers (onerror=, onclick=, …)
+  /\beval\s*\(/i,
+  /\bnew\s+Function\s*\(/i,
+];
+
+/** True when ``text`` contains a suspicious (executable) pattern. */
+export function hasSuspiciousContent(text: string): boolean {
+  return SUSPICIOUS_PATTERNS.some((pattern) => pattern.test(text));
+}
+
 const RAW_BASE = "https://raw.githubusercontent.com";
 
 /** localStorage key holding the GitHub PAT in Dexie (GH-Pages) mode. */
@@ -177,8 +195,17 @@ export async function validateUserRepo(
   }
 
   const lessonCount = sets.reduce((sum, s) => sum + (s.lesson_count ?? 0), 0);
+  if (lessonCount < 1) {
+    return {
+      ok: false,
+      setCount: sets.length,
+      lessonCount: 0,
+      reason: "No lessons found in any set.",
+    };
+  }
 
-  // Sample the first set's first lesson and confirm its exercise types.
+  // Sample the first set's first lesson and confirm its exercise types +
+  // that it carries no executable content.
   const firstSet = sets[0];
   try {
     const base = setBasePath(firstSet);
@@ -193,6 +220,14 @@ export async function validateUserRepo(
       `${base}/lessons/${firstLessonFilename(setManifest)}`,
       token,
     );
+    if (hasSuspiciousContent(lessonText)) {
+      return {
+        ok: false,
+        setCount: sets.length,
+        lessonCount,
+        reason: "Lesson content contains disallowed executable code.",
+      };
+    }
     const lesson = (JSON.parse(lessonText) ?? {}) as ParsedLesson;
     const known = new Set<string>(KNOWN_EXERCISE_TYPES);
     for (const type of lessonExerciseTypes(lesson)) {

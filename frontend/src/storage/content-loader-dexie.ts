@@ -44,6 +44,7 @@ import {
   type AiValidationResult,
 } from "../lib/content/ai-content-validator";
 import type { ContentSetRow, ContentSetFileRow } from "./db";
+import { resolveRepoToken } from "../lib/content/repo-token";
 
 const RAW_BASE = "https://raw.githubusercontent.com";
 const BUNDLED_PREFIX = "bundled:";
@@ -91,34 +92,48 @@ const OFFICIAL_SOURCE = "astrapi69/adaptive-learner-content";
 const CONTENT_LOADER_PLUGIN = "content-loader";
 
 /**
- * The user's own content repository as a source, read from the
- * ``content-loader`` plugin settings (``user_repo``). Returns null when
- * no repo is connected. EXP-023 Phase A.
+ * The connected user repos as sources, read from the ``content-loader``
+ * plugin settings (``user_repos`` array; Phase A single ``user_repo`` is
+ * migrated). Returns them in list order (precedence: later wins).
+ * EXP-023 Phase B.
  */
-async function userContentSource(): Promise<ContentSetSource | null> {
+async function userContentSources(): Promise<ContentSetSource[]> {
   try {
     const row = await getDb().pluginSettings.get(CONTENT_LOADER_PLUGIN);
-    const repo = (row?.settings as Record<string, unknown> | undefined)
-      ?.user_repo as
-      | { owner?: string; repo?: string; branch?: string; connected?: boolean }
-      | undefined;
-    if (!repo?.owner || !repo?.repo || !repo.connected) return null;
-    return {
-      source: `${repo.owner}/${repo.repo}`,
-      branch: repo.branch || "main",
-    };
+    const bag = row?.settings as Record<string, unknown> | undefined;
+    const list = Array.isArray(bag?.user_repos)
+      ? (bag.user_repos as unknown[])
+      : bag?.user_repo
+        ? [bag.user_repo]
+        : [];
+    const out: ContentSetSource[] = [];
+    for (const item of list) {
+      const repo = item as {
+        owner?: string;
+        repo?: string;
+        branch?: string;
+        connected?: boolean;
+      };
+      if (repo?.owner && repo?.repo && repo.connected) {
+        out.push({
+          source: `${repo.owner}/${repo.repo}`,
+          branch: repo.branch || "main",
+        });
+      }
+    }
+    return out;
   } catch {
-    return null;
+    return [];
   }
 }
 
 /**
- * The sources the loader should consult: the official defaults plus the
- * connected user repo (additive, official first). EXP-023 Phase A.
+ * The sources the loader should consult: the official defaults plus every
+ * connected user repo (additive, official first; user repos in list order
+ * so a later repo wins a collision). EXP-023 Phase A/B.
  */
 export async function activeSourcesDexie(): Promise<ContentSetSource[]> {
-  const user = await userContentSource();
-  return user ? [...DEFAULT_SOURCES, user] : [...DEFAULT_SOURCES];
+  return [...DEFAULT_SOURCES, ...(await userContentSources())];
 }
 
 /**
@@ -151,8 +166,19 @@ function fileKey(setPk: string, filename: string): string {
   return `${setPk}#${filename}`;
 }
 
-async function fetchText(url: string): Promise<string> {
-  const response = await fetch(url);
+/** Build fetch init with an optional Bearer token (private user repos). */
+function authInit(token: string): RequestInit | undefined {
+  return token ? { headers: { Authorization: `Bearer ${token}` } } : undefined;
+}
+
+/** Per-source token: per-repo / shared for GitHub sources, none for the
+ *  bundled (same-origin static) source. EXP-023 Phase B. */
+function tokenForSource(source: string): string {
+  return source.startsWith(BUNDLED_PREFIX) ? "" : resolveRepoToken(source);
+}
+
+async function fetchText(url: string, token = ""): Promise<string> {
+  const response = await fetch(url, authInit(token));
   if (!response.ok) {
     const err: Error & { status?: number } = new Error(
       `Upstream HTTP ${response.status} for ${url}`,
@@ -166,8 +192,11 @@ async function fetchText(url: string): Promise<string> {
 /** Phase 54 / v1.37.0 — fetch raw bytes for an asset.
  *  Returns null on 404 so the download orchestrator can skip
  *  missing assets instead of failing the whole set download. */
-async function fetchBytesOptional(url: string): Promise<ArrayBuffer | null> {
-  const response = await fetch(url);
+async function fetchBytesOptional(
+  url: string,
+  token = "",
+): Promise<ArrayBuffer | null> {
+  const response = await fetch(url, authInit(token));
   if (response.status === 404) return null;
   if (!response.ok) {
     const err: Error & { status?: number } = new Error(
@@ -361,12 +390,18 @@ export function dedupeContentEntries(
       winners.set(entry.id, entry);
       continue;
     }
-    // EXP-023 Phase A — the user's own repo always wins a same-id
-    // collision with the official content, regardless of version.
+    // EXP-023 Phase A/B — a user repo always wins a same-id collision
+    // with the official content. Between two user repos, the one later
+    // in the source order (= later in the user's repo list, higher
+    // precedence) wins.
     const currentOfficial = isOfficial(current.source);
     const entryOfficial = isOfficial(entry.source);
     if (currentOfficial !== entryOfficial) {
       if (currentOfficial) winners.set(entry.id, entry);
+      continue;
+    }
+    if (!entryOfficial) {
+      winners.set(entry.id, entry);
       continue;
     }
     const cmp = compareVersions(entry.version, current.version);
@@ -436,10 +471,12 @@ export async function listSetsDexie(
 ): Promise<ContentSetsList> {
   const entries: ContentSetEntry[] = [];
   for (const src of sources) {
+    const token = tokenForSource(src.source);
     let manifest: ParsedManifest | null = null;
     try {
       const text = await fetchText(
         rawUrl(src.source, src.branch, "manifest.yaml"),
+        token,
       );
       manifest = (parseYaml(text) ?? null) as ParsedManifest | null;
     } catch (err) {
@@ -501,10 +538,12 @@ export async function downloadSetDexie(
     source,
     branch: "main",
   };
+  const token = tokenForSource(src.source);
 
   // Repo manifest → find the target set entry.
   const repoText = await fetchText(
     rawUrl(src.source, src.branch, "manifest.yaml"),
+    token,
   );
   const repoManifest = parseYaml(repoText) as ParsedManifest;
   const target = (repoManifest.sets ?? []).find((s) => s.id === setId);
@@ -527,6 +566,7 @@ export async function downloadSetDexie(
   const basePath = setBasePath(target);
   const setManifestText = await fetchText(
     rawUrl(src.source, src.branch, `${basePath}/manifest.yaml`),
+    token,
   );
   const setManifest = parseYaml(setManifestText) as ParsedManifest;
   let lessonFilenames: string[];
@@ -549,6 +589,7 @@ export async function downloadSetDexie(
   for (const filename of lessonFilenames) {
     lessonBodies[filename] = await fetchText(
       rawUrl(src.source, src.branch, `${basePath}/lessons/${filename}`),
+      token,
     );
   }
 
@@ -564,6 +605,7 @@ export async function downloadSetDexie(
   for (const asset of target.assets ?? []) {
     const buf = await fetchBytesOptional(
       rawUrl(src.source, src.branch, `${basePath}/assets/${asset.path}`),
+      token,
     );
     if (buf === null) continue;
     assetBodies[asset.path] = arrayBufferToBase64(buf);

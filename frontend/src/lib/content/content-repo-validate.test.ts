@@ -5,7 +5,7 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { validateUserRepo } from "./content-repo-validate";
+import { hasSuspiciousContent, validateUserRepo } from "./content-repo-validate";
 
 const REF = { owner: "jane", repo: "content", branch: "main" };
 
@@ -109,6 +109,40 @@ describe("validateUserRepo", () => {
     const res = await validateUserRepo(REF, "");
     expect(res.ok).toBe(false);
     expect(res.reason).toMatch(/mystery/);
+  });
+
+  it("fails when no set has any lessons", async () => {
+    mockFetchSequence((url) =>
+      url.endsWith("manifest.yaml")
+        ? ok(`schema_version: "1.3"\nsets:\n  - id: x\n    lesson_count: 0\n`)
+        : notFound(),
+    );
+    const res = await validateUserRepo(REF, "");
+    expect(res.ok).toBe(false);
+    expect(res.reason).toMatch(/no lessons/i);
+  });
+
+  it("rejects lessons that carry executable content", async () => {
+    const evil = JSON.stringify({
+      exercises: [{ type: "matching" }],
+      note: "<script>alert(1)</script>",
+    });
+    mockFetchSequence((url) => {
+      if (url.endsWith("/main/manifest.yaml")) return ok(ROOT_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/manifest.yaml")) return ok(SET_MANIFEST);
+      if (url.endsWith("/sets/de/fr-a1/lessons/01.json")) return ok(evil);
+      return notFound();
+    });
+    const res = await validateUserRepo(REF, "");
+    expect(res.ok).toBe(false);
+    expect(res.reason).toMatch(/executable/i);
+  });
+
+  it("hasSuspiciousContent flags scripts / handlers / eval", () => {
+    expect(hasSuspiciousContent("<script>x</script>")).toBe(true);
+    expect(hasSuspiciousContent('a onerror="x"')).toBe(true);
+    expect(hasSuspiciousContent("eval(1)")).toBe(true);
+    expect(hasSuspiciousContent("bonjour = hello")).toBe(false);
   });
 
   it("sends a Bearer header when a token is given", async () => {

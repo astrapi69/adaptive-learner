@@ -153,6 +153,8 @@ Existiert bereits für Lern-Repository:
 
 ### Phase A — MVP (v1.64-65)
 
+> **Status: implemented (#118, merged).**
+
 Scope:
 - Offizielles Repo bleibt Default, immer geladen, nicht entfernbar
 - User kann EIN eigenes Repo setzen in S > Inhalte (GitHub URL + Branch + Token)
@@ -177,6 +179,12 @@ Definition of Done:
 - Tests: Verbindung, Sync, Cache, Offline, Badge-Anzeige
 
 ### Phase B — Multi-Repo + Teilen (später)
+
+> **Status: implemented (#122, on branch — pending release).** Trust
+> Level 0→1 (technical validation), per-repo source filter, deep-link +
+> QR sharing, and private/coach repos via a per-repo token are done.
+> Deferred to Phase C: Trust Level 2/3 (community-verified / officially
+> recommended), one-time invite tokens.
 
 - User kann MEHRERE Repos setzen
 - Repos teilen (URL kopieren, QR-Code)

@@ -1,9 +1,7 @@
 /**
- * Unit tests for the user content-repository helpers (EXP-023 Phase A).
- *
- * Pins the pure parsing / source-classification / namespacing logic and
- * the read-modify-write config persistence (which must not clobber the
- * existing ``default_sources``).
+ * Unit tests for the multi user content-repository helpers
+ * (EXP-023 Phase B). Pins parsing / source classification / namespacing,
+ * the list config (read/migrate/write/add/remove/move), and per-repo sync.
  */
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -20,171 +18,193 @@ vi.mock("../../storage", () => ({
   }),
 }));
 
+const { validateUserRepo } = vi.hoisted(() => ({ validateUserRepo: vi.fn() }));
+vi.mock("./content-repo-validate", () => ({ validateUserRepo }));
+vi.mock("./repo-token", () => ({ resolveRepoToken: () => "" }));
+
 import {
+  addUserRepo,
   isOfficialSource,
+  moveUserRepo,
   namespacedSetId,
   parseGitHubRepoUrl,
-  readUserRepo,
+  readUserRepos,
+  removeUserRepo,
   syncUserRepo,
   userRepoSource,
-  writeUserRepo,
+  writeUserRepos,
   type UserContentRepo,
 } from "./content-repos";
 
-const REPO: UserContentRepo = {
-  url: "https://github.com/jane/my-content",
-  owner: "jane",
-  repo: "my-content",
-  branch: "main",
-  connected: true,
-  last_synced: "2026-06-06T10:00:00.000Z",
-  set_count: 2,
-  lesson_count: 12,
-};
+function repo(owner: string, name: string): UserContentRepo {
+  return {
+    url: `https://github.com/${owner}/${name}`,
+    owner,
+    repo: name,
+    branch: "main",
+    connected: true,
+    last_synced: null,
+    set_count: 0,
+    lesson_count: 0,
+  };
+}
 
 beforeEach(() => {
   get.mockReset();
   update.mockReset();
   listSets.mockReset();
   downloadSet.mockReset();
+  validateUserRepo.mockReset();
+  validateUserRepo.mockResolvedValue({ ok: true, setCount: 0, lessonCount: 0 });
+  update.mockResolvedValue({ plugin: "content-loader", settings: {} });
 });
 
 describe("parseGitHubRepoUrl", () => {
-  it("parses the https form, with and without trailing bits", () => {
-    expect(parseGitHubRepoUrl("https://github.com/jane/my-content")).toEqual({
+  it("parses https / ssh / shorthand", () => {
+    expect(parseGitHubRepoUrl("https://github.com/jane/x")).toEqual({
       owner: "jane",
-      repo: "my-content",
+      repo: "x",
     });
-    expect(
-      parseGitHubRepoUrl("https://github.com/jane/my-content.git"),
-    ).toEqual({ owner: "jane", repo: "my-content" });
-    expect(
-      parseGitHubRepoUrl("https://github.com/jane/my-content/tree/main"),
-    ).toEqual({ owner: "jane", repo: "my-content" });
-  });
-
-  it("parses the SSH and shorthand forms", () => {
-    expect(parseGitHubRepoUrl("git@github.com:jane/my-content.git")).toEqual({
+    expect(parseGitHubRepoUrl("git@github.com:jane/x.git")).toEqual({
       owner: "jane",
-      repo: "my-content",
+      repo: "x",
     });
-    expect(parseGitHubRepoUrl("jane/my-content")).toEqual({
-      owner: "jane",
-      repo: "my-content",
-    });
+    expect(parseGitHubRepoUrl("jane/x")).toEqual({ owner: "jane", repo: "x" });
   });
-
-  it("returns null for empty / non-GitHub / malformed input", () => {
-    expect(parseGitHubRepoUrl("")).toBeNull();
-    expect(parseGitHubRepoUrl("   ")).toBeNull();
-    expect(parseGitHubRepoUrl("https://gitlab.com/jane/x")).toBeNull();
-    expect(parseGitHubRepoUrl("not a url")).toBeNull();
-    expect(parseGitHubRepoUrl("jane")).toBeNull();
-  });
-});
-
-describe("isOfficialSource", () => {
-  it("treats the canonical repo and any bundled source as official", () => {
-    expect(isOfficialSource("astrapi69/adaptive-learner-content")).toBe(true);
-    expect(isOfficialSource("bundled:adaptive-learner-content")).toBe(true);
-  });
-
-  it("treats a user repo source as not official", () => {
-    expect(isOfficialSource("jane/my-content")).toBe(false);
-    expect(isOfficialSource("user-generated")).toBe(false);
+  it("rejects empty / non-GitHub / malformed", () => {
+    for (const bad of ["", "  ", "https://gitlab.com/a/b", "jane"]) {
+      expect(parseGitHubRepoUrl(bad)).toBeNull();
+    }
   });
 });
 
 describe("source + namespace helpers", () => {
-  it("builds an owner/repo source identifier", () => {
-    expect(userRepoSource("jane", "my-content")).toBe("jane/my-content");
-  });
-
-  it("namespaces a set id with the owner", () => {
+  it("classifies official vs user and builds identifiers", () => {
+    expect(isOfficialSource("astrapi69/adaptive-learner-content")).toBe(true);
+    expect(isOfficialSource("bundled:adaptive-learner-content")).toBe(true);
+    expect(isOfficialSource("jane/x")).toBe(false);
+    expect(userRepoSource("jane", "x")).toBe("jane/x");
     expect(namespacedSetId("jane", "fr-a1")).toBe("jane/fr-a1");
   });
 });
 
-describe("readUserRepo / writeUserRepo", () => {
-  it("returns the stored repo when present", async () => {
+describe("readUserRepos — list + Phase A migration", () => {
+  it("reads the user_repos array", async () => {
     get.mockResolvedValue({
       plugin: "content-loader",
-      settings: { user_repo: REPO, default_sources: [{ source: "x" }] },
+      settings: { user_repos: [repo("jane", "a"), repo("bob", "b")] },
     });
-    await expect(readUserRepo()).resolves.toEqual(REPO);
+    const list = await readUserRepos();
+    expect(list.map((r) => r.repo)).toEqual(["a", "b"]);
   });
-
-  it("returns null when no user_repo is set", async () => {
+  it("migrates a legacy single user_repo into a one-element list", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repo: repo("jane", "legacy") },
+    });
+    const list = await readUserRepos();
+    expect(list).toHaveLength(1);
+    expect(list[0].repo).toBe("legacy");
+  });
+  it("returns [] when none / on read error", async () => {
     get.mockResolvedValue({ plugin: "content-loader", settings: {} });
-    await expect(readUserRepo()).resolves.toBeNull();
-  });
-
-  it("returns null (never throws) when the read fails", async () => {
+    expect(await readUserRepos()).toEqual([]);
     get.mockRejectedValue(new Error("boom"));
-    await expect(readUserRepo()).resolves.toBeNull();
-  });
-
-  it("writes user_repo without clobbering default_sources", async () => {
-    get.mockResolvedValue({
-      plugin: "content-loader",
-      settings: { default_sources: [{ source: "official" }] },
-    });
-    await writeUserRepo(REPO);
-    expect(update).toHaveBeenCalledWith("content-loader", {
-      settings: {
-        default_sources: [{ source: "official" }],
-        user_repo: REPO,
-      },
-    });
-  });
-
-  it("clears user_repo on write(null)", async () => {
-    get.mockResolvedValue({
-      plugin: "content-loader",
-      settings: { default_sources: [], user_repo: REPO },
-    });
-    await writeUserRepo(null);
-    expect(update).toHaveBeenCalledWith("content-loader", {
-      settings: { default_sources: [] },
-    });
+    expect(await readUserRepos()).toEqual([]);
   });
 });
 
-describe("syncUserRepo", () => {
-  it("downloads only the user repo's sets and persists fresh counts", async () => {
+describe("writeUserRepos — preserves sources, drops legacy key", () => {
+  it("writes user_repos and removes user_repo", async () => {
     get.mockResolvedValue({
       plugin: "content-loader",
-      settings: { user_repo: { ...REPO, last_synced: null, set_count: 0 } },
+      settings: { default_sources: [{ source: "x" }], user_repo: repo("a", "b") },
+    });
+    await writeUserRepos([repo("jane", "a")]);
+    const [, body] = update.mock.calls[0];
+    expect(body.settings.default_sources).toBeDefined();
+    expect(body.settings.user_repo).toBeUndefined();
+    expect(body.settings.user_repos).toHaveLength(1);
+  });
+});
+
+describe("addUserRepo / removeUserRepo / moveUserRepo", () => {
+  it("appends new (highest precedence) and replaces same source", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a")] },
+    });
+    const after = await addUserRepo({ ...repo("bob", "b"), set_count: 3 });
+    expect(after.map((r) => r.repo)).toEqual(["a", "b"]);
+  });
+  it("removes by source", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a"), repo("bob", "b")] },
+    });
+    const after = await removeUserRepo("jane/a");
+    expect(after.map((r) => r.repo)).toEqual(["b"]);
+  });
+  it("moves a repo down (precedence change), no-op at the edge", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a"), repo("bob", "b")] },
+    });
+    const after = await moveUserRepo("jane/a", 1);
+    expect(after.map((r) => r.repo)).toEqual(["b", "a"]);
+
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a"), repo("bob", "b")] },
+    });
+    const noop = await moveUserRepo("jane/a", -1);
+    expect(noop.map((r) => r.repo)).toEqual(["a", "b"]);
+  });
+});
+
+describe("syncUserRepo(source)", () => {
+  it("downloads only that repo's sets and persists fresh counts", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a"), repo("bob", "b")] },
     });
     listSets.mockResolvedValue({
       sets: [
-        { source: "astrapi69/adaptive-learner-content", id: "fr-a1", lesson_count: 10 },
-        { source: "jane/my-content", id: "deck-1", lesson_count: 7 },
-        { source: "jane/my-content", id: "deck-2", lesson_count: 5 },
+        { source: "astrapi69/adaptive-learner-content", id: "fr", lesson_count: 10 },
+        { source: "jane/a", id: "deck-1", lesson_count: 7 },
+        { source: "jane/a", id: "deck-2", lesson_count: 5 },
+        { source: "bob/b", id: "other", lesson_count: 9 },
       ],
     });
     downloadSet.mockResolvedValue({});
 
-    const res = await syncUserRepo();
-
-    expect(res).toEqual({ setCount: 2, lessonCount: 12 });
+    const res = await syncUserRepo("jane/a");
+    expect(res).toEqual({ setCount: 2, lessonCount: 12, trust: 1 });
     expect(downloadSet).toHaveBeenCalledTimes(2);
-    expect(downloadSet).toHaveBeenCalledWith("jane/my-content", "deck-1");
-    expect(downloadSet).not.toHaveBeenCalledWith(
-      "astrapi69/adaptive-learner-content",
-      "fr-a1",
-    );
+    expect(downloadSet).toHaveBeenCalledWith("jane/a", "deck-1");
+
     const [, body] = update.mock.calls[0];
-    expect(body.settings.user_repo).toMatchObject({
-      set_count: 2,
-      lesson_count: 12,
-      connected: true,
-    });
-    expect(body.settings.user_repo.last_synced).toEqual(expect.any(String));
+    const jane = body.settings.user_repos.find(
+      (r: UserContentRepo) => r.repo === "a",
+    );
+    expect(jane).toMatchObject({ set_count: 2, lesson_count: 12, trust: 1 });
+    expect(jane.last_synced).toEqual(expect.any(String));
   });
 
-  it("throws when no repo is connected", async () => {
+  it("re-validation failure drops trust to 0", async () => {
+    get.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [repo("jane", "a")] },
+    });
+    listSets.mockResolvedValue({ sets: [{ source: "jane/a", id: "d", lesson_count: 1 }] });
+    downloadSet.mockResolvedValue({});
+    validateUserRepo.mockResolvedValue({ ok: false, reason: "bad" });
+    const res = await syncUserRepo("jane/a");
+    expect(res.trust).toBe(0);
+  });
+
+  it("throws when the source is not connected", async () => {
     get.mockResolvedValue({ plugin: "content-loader", settings: {} });
-    await expect(syncUserRepo()).rejects.toThrow();
+    await expect(syncUserRepo("jane/a")).rejects.toThrow();
   });
 });

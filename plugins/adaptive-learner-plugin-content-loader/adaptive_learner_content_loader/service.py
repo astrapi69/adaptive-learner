@@ -644,13 +644,11 @@ def parse_source_refs_from_settings(
 def user_source_from_settings(
     user_repo: dict[str, object] | None,
 ) -> SourceRef | None:
-    """Build the connected user repo's SourceRef, or None.
+    """Build one connected user repo's SourceRef, or None.
 
-    EXP-023 Phase A — the user's own content repository
-    (Settings > Data > Content repositories) is persisted in the
-    plugin settings under ``user_repo``. When present and
-    connected it is appended to the official sources so the
-    list / download / lessons routes serve it too.
+    EXP-023 Phase A — a single connected user content repository
+    (Settings > Data) maps to a SourceRef appended to the official
+    sources so the list / download / lessons routes serve it too.
     """
     if not isinstance(user_repo, dict) or not user_repo.get("connected"):
         return None
@@ -660,3 +658,25 @@ def user_source_from_settings(
         return None
     branch = user_repo.get("branch") or "main"
     return SourceRef(source=f"{owner}/{repo}", branch=str(branch))
+
+
+def user_sources_from_settings(
+    settings: dict[str, object],
+) -> list[SourceRef]:
+    """Build the connected user repos' SourceRefs (EXP-023 Phase B).
+
+    Reads the ``user_repos`` array, falling back to a single
+    legacy ``user_repo`` (Phase A). Returns them in list order
+    (precedence: later wins), skipping not-connected / malformed
+    entries.
+    """
+    raw_list = settings.get("user_repos")
+    if not isinstance(raw_list, list):
+        legacy = settings.get("user_repo")
+        raw_list = [legacy] if isinstance(legacy, dict) else []
+    refs: list[SourceRef] = []
+    for entry in raw_list:
+        ref = user_source_from_settings(entry if isinstance(entry, dict) else None)
+        if ref is not None:
+            refs.append(ref)
+    return refs

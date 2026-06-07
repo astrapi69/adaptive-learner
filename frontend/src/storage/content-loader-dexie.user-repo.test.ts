@@ -7,11 +7,12 @@
  */
 
 import "fake-indexeddb/auto";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   activeSourcesDexie,
   dedupeContentEntries,
+  listSetsDexie,
 } from "./content-loader-dexie";
 import { _resetDbForTests, getDb } from "./db";
 import type { ContentSetEntry } from "./types";
@@ -51,7 +52,7 @@ describe("activeSourcesDexie", () => {
     expect(sources.some((s) => s.source === "jane/my-content")).toBe(false);
   });
 
-  it("appends a connected user repo (additive, official first)", async () => {
+  it("migrates a legacy single user_repo into the active sources", async () => {
     await getDb().pluginSettings.put({
       name: "content-loader",
       settings: {
@@ -69,6 +70,27 @@ describe("activeSourcesDexie", () => {
       source: "jane/my-content",
       branch: "dev",
     });
+  });
+
+  it("appends every connected user repo in list order", async () => {
+    await getDb().pluginSettings.put({
+      name: "content-loader",
+      settings: {
+        user_repos: [
+          { owner: "jane", repo: "a", branch: "main", connected: true },
+          { owner: "bob", repo: "b", branch: "dev", connected: true },
+          { owner: "kim", repo: "c", branch: "main", connected: false },
+        ],
+      },
+      updated_at: new Date().toISOString(),
+    });
+    const sources = await activeSourcesDexie();
+    const tail = sources.slice(-2);
+    expect(tail).toEqual([
+      { source: "jane/a", branch: "main" },
+      { source: "bob/b", branch: "dev" },
+    ]);
+    expect(sources.some((s) => s.source === "kim/c")).toBe(false);
   });
 
   it("ignores a saved-but-not-connected repo", async () => {
@@ -101,5 +123,49 @@ describe("dedupeContentEntries — user repo wins a collision", () => {
     ]);
     expect(result).toHaveLength(1);
     expect(result[0].version).toBe("2.0.0");
+  });
+
+  it("between two user repos, the later (higher precedence) wins", () => {
+    // Entries arrive in source order: jane first, bob later. bob wins
+    // regardless of version (precedence = list order, later wins).
+    const result = dedupeContentEntries([
+      entry("jane/a", "shared", "9.0.0"),
+      entry("bob/b", "shared", "1.0.0"),
+    ]);
+    expect(result).toHaveLength(1);
+    expect(result[0].source).toBe("bob/b");
+  });
+});
+
+describe("per-repo token auth on fetch (coach/private)", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it("sends the per-repo Bearer token when fetching a user source", async () => {
+    vi.stubGlobal("localStorage", {
+      getItem: (k: string) =>
+        k === "adaptive-learner.content_repo_token::jane/private"
+          ? "ghp_coach"
+          : null,
+      setItem: () => {},
+      removeItem: () => {},
+    });
+    const fetchMock = vi.fn(async (_url: string, _init?: RequestInit) => ({
+      ok: true,
+      status: 200,
+      text: async () => "sets: []",
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await listSetsDexie([{ source: "jane/private", branch: "main" }]);
+
+    const call = fetchMock.mock.calls.find((c) =>
+      String(c[0]).includes("jane/private"),
+    );
+    expect(call).toBeTruthy();
+    expect((call?.[1] as RequestInit | undefined)?.headers).toMatchObject({
+      Authorization: "Bearer ghp_coach",
+    });
   });
 });

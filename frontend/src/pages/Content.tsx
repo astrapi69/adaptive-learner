@@ -90,7 +90,11 @@ import {
 } from "../lib/content/lesson-export";
 import { getStorage } from "../storage";
 import { USER_GENERATED_SOURCE } from "../storage/types";
-import { isOfficialSource } from "../lib/content/content-repos";
+import {
+  isOfficialSource,
+  readUserRepos,
+  userRepoSource,
+} from "../lib/content/content-repos";
 import type {
   ContentLesson,
   ContentSetEntry,
@@ -142,9 +146,30 @@ export default function ContentPage() {
   // "Other source languages" section is collapsed by default.
   const [otherExpanded, setOtherExpanded] = useState(false);
   // EXP-023 Phase A — source filter over the content tree.
-  const [sourceFilter, setSourceFilter] = useState<
-    "all" | "official" | "user"
-  >("all");
+  // EXP-023 Phase B — per-repo trust/coach lookup for source badges.
+  const [repoMeta, setRepoMeta] = useState<
+    Record<string, { trust: number; coach: boolean }>
+  >({});
+  useEffect(() => {
+    let cancelled = false;
+    void readUserRepos().then((repos) => {
+      if (cancelled) return;
+      const map: Record<string, { trust: number; coach: boolean }> = {};
+      for (const r of repos) {
+        map[userRepoSource(r.owner, r.repo)] = {
+          trust: r.trust ?? 0,
+          coach: Boolean(r.coach),
+        };
+      }
+      setRepoMeta(map);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  // EXP-023 Phase B — source filter: "all" / "official" / a specific
+  // user-repo source ("owner/repo").
+  const [sourceFilter, setSourceFilter] = useState<string>("all");
   // Phase 60 — community-share validation gate.
   const [shareTarget, setShareTarget] = useState<ContentSetEntry | null>(null);
   const [shareResult, setShareResult] = useState<ValidationResult | null>(null);
@@ -767,14 +792,18 @@ export default function ContentPage() {
   // level tree, ranked by the learner's active source languages.
   // EXP-023 Phase A — when a user repo is connected, offer a source
   // filter (Alle / Offiziell / Eigenes Repo) over the tree.
-  const hasUserRepoSets = downloadedSets.some(
-    (s) => !isOfficialSource(s.source),
-  );
+  const userRepoSources = [
+    ...new Set(
+      downloadedSets
+        .filter((s) => !isOfficialSource(s.source))
+        .map((s) => s.source),
+    ),
+  ];
+  const hasUserRepoSets = userRepoSources.length > 0;
   const visibleSets = downloadedSets.filter((s) => {
     if (sourceFilter === "all") return true;
-    return sourceFilter === "official"
-      ? isOfficialSource(s.source)
-      : !isOfficialSource(s.source);
+    if (sourceFilter === "official") return isOfficialSource(s.source);
+    return s.source === sourceFilter;
   });
   const tree = buildContentTree(visibleSets, activeSources);
 
@@ -803,12 +832,28 @@ export default function ContentPage() {
                 : t("content.source.github", "GitHub")}
             </span>
             {!isOfficialSource(entry.source) && (
-              <span
-                className="ml-1 rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]"
-                data-testid={`content-set-${entry.id}-origin`}
-              >
-                {t("content.origin.user", "Your repo")}
-              </span>
+              <>
+                <span
+                  className="ml-1 rounded-sm bg-[var(--info-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--info)]"
+                  data-testid={`content-set-${entry.id}-origin`}
+                >
+                  {repoMeta[entry.source]?.coach
+                    ? t("content.origin.coach", "Coach")
+                    : t("content.origin.user", "Your repo")}
+                </span>
+                <span
+                  className={
+                    repoMeta[entry.source]?.trust === 1
+                      ? "ml-1 rounded-sm bg-[var(--success-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--success)]"
+                      : "ml-1 rounded-sm bg-[var(--warning-bg)] px-1.5 py-0.5 text-xs font-semibold text-[var(--warning)]"
+                  }
+                  data-testid={`content-set-${entry.id}-trust`}
+                >
+                  {repoMeta[entry.source]?.trust === 1
+                    ? t("content.trust.validated", "Validated")
+                    : t("content.trust.unknown", "Unverified")}
+                </span>
+              </>
             )}
           </h4>
           <p className="content-set-tags">
@@ -1437,13 +1482,16 @@ export default function ContentPage() {
           aria-label={t("content.filter.aria", "Filter by source")}
           data-testid="content-source-filter"
         >
-          {(
-            [
-              ["all", t("content.filter.all", "All")],
-              ["official", t("content.filter.official", "Official")],
-              ["user", t("content.filter.user", "Your repo")],
-            ] as const
-          ).map(([value, label]) => (
+          {[
+            ["all", t("content.filter.all", "All")] as [string, string],
+            ["official", t("content.filter.official", "Official")] as [
+              string,
+              string,
+            ],
+            ...userRepoSources.map(
+              (src) => [src, src] as [string, string],
+            ),
+          ].map(([value, label]) => (
             <Button
               key={value}
               type="button"

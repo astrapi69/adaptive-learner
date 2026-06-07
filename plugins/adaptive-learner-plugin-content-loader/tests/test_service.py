@@ -29,6 +29,7 @@ from adaptive_learner_content_loader.service import (
     SourceRef,
     parse_source_refs_from_settings,
     user_source_from_settings,
+    user_sources_from_settings,
 )
 
 
@@ -196,6 +197,34 @@ class TestUserSourceFromSettings:
             user_source_from_settings({"owner": "jane", "connected": True})
             is None
         )
+
+
+class TestUserSourcesFromSettings:
+    """EXP-023 Phase B — the user_repos list (+ legacy migration)."""
+
+    def test_empty_when_no_keys(self) -> None:
+        assert user_sources_from_settings({}) == []
+
+    def test_reads_the_list_in_order_skipping_unconnected(self) -> None:
+        refs = user_sources_from_settings(
+            {
+                "user_repos": [
+                    {"owner": "jane", "repo": "a", "connected": True},
+                    {"owner": "bob", "repo": "b", "branch": "dev", "connected": True},
+                    {"owner": "kim", "repo": "c", "connected": False},
+                ],
+            },
+        )
+        assert refs == [
+            SourceRef(source="jane/a", branch="main"),
+            SourceRef(source="bob/b", branch="dev"),
+        ]
+
+    def test_migrates_legacy_single_user_repo(self) -> None:
+        refs = user_sources_from_settings(
+            {"user_repo": {"owner": "jane", "repo": "legacy", "connected": True}},
+        )
+        assert refs == [SourceRef(source="jane/legacy", branch="main")]
 
 
 # --- list_sets --------------------------------------------------------
