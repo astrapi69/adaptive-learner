@@ -28,7 +28,12 @@ import json
 from app.database import SessionLocal
 from app.models import (
     Badge,
+    Curriculum,
+    ImportedConversation,
+    ImportedMessage,
     LearningProject,
+    LearningTopic,
+    Subject,
     User,
     UserBadge,
     UserSettings,
@@ -37,6 +42,7 @@ from app.models import (
 )
 from app.services.backup_service import (
     _RESTORE_ORDER,
+    ALL_BACKUP_TABLES,
     create_backup,
     get_backup_stats,
     restore_backup,
@@ -253,23 +259,134 @@ def test_restore_coerces_json_text_column_from_object():
         db.close()
 
 
-def test_empty_tables_are_not_in_payload():
-    """Tables with no rows for the user are omitted from the export
-    (#117): smaller payload, smaller error surface. Restore still works
-    because absent tables are tolerated."""
+def test_all_tables_present_even_when_empty():
+    """A backup is a COMPLETE snapshot: every one of the 30 tables is
+    present, even with zero rows (#126, reverting the #117 skip-empty
+    optimization). An absent table must never be ambiguous with an empty
+    one — that ambiguity was the bug class chased across #49/#57/#64/#115.
+    """
     db = _session()
     try:
         user = _seed(db)
         backup = create_backup(db, user.id)
 
         present = set(backup["data"].keys())
-        # The seed touches these; they must be present.
-        assert {"users", "user_settings", "user_xp", "learning_projects"} <= present
-        # The user has no sessions / messages / curriculums — omitted.
+        # ALL backup tables are present, regardless of row count.
+        assert present == set(ALL_BACKUP_TABLES)
+        # The user has no sessions / messages / curriculums — present, empty.
         for empty in ("session_messages", "learning_sessions", "curriculums"):
-            assert empty not in present, f"{empty} should be omitted when empty"
+            assert empty in present, f"{empty} must be present even when empty"
+            assert backup["data"][empty] == [], f"{empty} should be an empty list"
 
-        # And a restore of the trimmed payload still succeeds.
-        assert restore_backup(db, backup)["errors"] == []
+        # And the restore covers all 30 tables in its per-table summary.
+        result = restore_backup(db, backup)
+        assert result["errors"] == []
+        assert set(result["tables"].keys()) == set(ALL_BACKUP_TABLES)
+    finally:
+        db.close()
+
+
+def test_subjects_reconcile_by_natural_key_no_duplication():
+    """Restore must NOT duplicate the subjects taxonomy when the local
+    tree was re-seeded under different ids (#127).
+
+    Reproduces the fresh-install restore: a backup carries a subject
+    tree (root + child) with ids B*. The local DB holds the SAME tree
+    by ``(parent_id, name)`` but under different ids L*. Restore must
+    match both nodes by natural key and update in place — the child's
+    self-referential ``parent_id`` redirected to the local root — never
+    insert a second copy.
+    """
+    db = _session()
+    try:
+        user = _seed(db)
+        root = Subject(name="Sprachen")
+        db.add(root)
+        db.flush()
+        child = Subject(name="Spanisch", parent_id=root.id)
+        db.add(child)
+        db.commit()
+        backup = create_backup(db, user.id)
+
+        # Re-seed the SAME tree under NEW ids (a fresh install's taxonomy).
+        db.delete(child)
+        db.delete(root)
+        db.flush()
+        new_root = Subject(name="Sprachen")
+        db.add(new_root)
+        db.flush()
+        new_child = Subject(name="Spanisch", parent_id=new_root.id)
+        db.add(new_child)
+        db.commit()
+
+        result = restore_backup(db, backup)
+        assert result["errors"] == []
+
+        # Exactly two subjects — reconciled, not duplicated.
+        all_subjects = db.query(Subject).all()
+        assert len(all_subjects) == 2, [s.name for s in all_subjects]
+        names = sorted(s.name for s in all_subjects)
+        assert names == ["Spanisch", "Sprachen"]
+        # The child still points at the local root (self-ref intact).
+        spanisch = db.query(Subject).filter(Subject.name == "Spanisch").one()
+        sprachen = db.query(Subject).filter(Subject.name == "Sprachen").one()
+        assert spanisch.parent_id == sprachen.id
+    finally:
+        db.close()
+
+
+def test_restore_rehomes_cross_identity_backup_to_importing_user():
+    """A backup from a PRIOR identity restores onto a fresh install (#129).
+
+    The disaster-recovery case: the DB was wiped/re-created, so the current
+    user has a different id than the backup. Without re-homing, every
+    user-scoped parent (conversation, curriculum) is rejected and its
+    children cascade-fail with "missing parent". The restore must remap the
+    backup's user identity to the importing user so the whole tree lands.
+    """
+    db = _session()
+    try:
+        author = User(name="Author", language="de")
+        db.add(author)
+        db.flush()
+        conversation = ImportedConversation(
+            user_id=author.id, source="chatgpt", title="Chat", message_count=1
+        )
+        db.add(conversation)
+        db.flush()
+        db.add(
+            ImportedMessage(
+                conversation_id=conversation.id, role="user", content="hi", order_index=0
+            )
+        )
+        curriculum = Curriculum(user_id=author.id, title="Plan")
+        db.add(curriculum)
+        db.flush()
+        db.add(LearningTopic(curriculum_id=curriculum.id, title="Topic", order_index=0))
+        db.commit()
+        backup = create_backup(db, author.id)
+
+        # Fresh identity: the author is gone, a NEW user holds the install.
+        for model in (ImportedMessage, ImportedConversation, LearningTopic, Curriculum):
+            for row in db.query(model).all():
+                db.delete(row)
+        db.delete(db.get(User, author.id))
+        db.flush()
+        importer = User(name="Importer", language="de")
+        db.add(importer)
+        db.commit()
+
+        result = restore_backup(db, backup, target_user_id=importer.id)
+        assert result["errors"] == []
+
+        # The whole tree landed under the importing user, none dropped.
+        convs = db.query(ImportedConversation).all()
+        assert len(convs) == 1
+        assert convs[0].user_id == importer.id
+        assert db.query(ImportedMessage).count() == 1
+        curricula = db.query(Curriculum).all()
+        assert len(curricula) == 1
+        assert curricula[0].user_id == importer.id
+        assert db.query(LearningTopic).count() == 1
     finally:
         db.close()

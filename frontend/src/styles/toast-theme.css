@@ -24,3 +24,14 @@
     --toastify-icon-color-warning: var(--warning);
     --toastify-icon-color-info: var(--info);
 }
+
+/*
+ * Persistent error toasts (#126) do not auto-dismiss, so several
+ * failures can stack at once. Cap the container height to the
+ * viewport and let it scroll instead of pushing toasts off-screen
+ * where the user can neither read nor close them.
+ */
+.Toastify__toast-container {
+    max-height: 100vh;
+    overflow-y: auto;
+}

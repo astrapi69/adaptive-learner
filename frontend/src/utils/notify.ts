@@ -185,6 +185,12 @@ export const notify = {
         // bug report. Dev/prod mode only affects what is rendered
         // in the toast, never what the recorder stores.
         recordToast("error", message);
+        // Error toasts NEVER auto-dismiss: a failure the user did not
+        // read is a failure they cannot act on. They stay until the
+        // user closes them via the X button (closeOnClick / drag would
+        // dismiss them by accident, so both are off). The ``persistent``
+        // option is kept for call-site compatibility but is now the
+        // only behaviour.
         return toast.error(
             React.createElement(ErrorContent, {
                 displayMessage,
@@ -192,8 +198,9 @@ export const notify = {
                 apiError: opts?.apiError,
             }),
             {
-                autoClose: opts?.persistent ? (false as const) : 15000,
+                autoClose: false,
                 closeOnClick: false,
+                draggable: false,
             },
         );
     },

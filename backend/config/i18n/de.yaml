@@ -725,6 +725,11 @@ backup:
   restored_updated: 'Aktualisiert: {{n}}'
   restored_skipped: 'Übersprungen: {{n}}'
   restored_errors: 'Fehler: {{n}}'
+  col_inserted: 'Eingef.'
+  col_updated: 'Aktual.'
+  col_skipped: 'Übersp.'
+  col_errors: 'Fehler'
+  error_details: 'Fehlerdetails'
   restored_with_errors: '{{n}} Datensätze konnten nicht wiederhergestellt werden.'
   last_backup: 'Letzte Sicherung: {{when}}'
   reminder_overdue: Deine letzte Sicherung ist mehr als {{days}} Tage her.
