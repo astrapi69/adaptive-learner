@@ -1,23 +1,22 @@
-"""LearningProject CRUD service (Phase 1C-C).
+"""LearningProject CRUD service (Phase 1C-C; EXP-024 repository migration).
 
-Same shape as :mod:`app.services.users`: pure DB-facing functions
-that raise :class:`AdaptiveLearnerError` subclasses. The router
-calls one of these per endpoint and never touches SQLAlchemy
-directly.
+Same shape as :mod:`app.services.users`: business-layer functions that
+validate, raise :class:`AdaptiveLearnerError` subclasses, and
+orchestrate the identity-file side effect. Persistence goes through
+:class:`ProjectsRepository`; the service never touches SQLAlchemy.
 """
 
 from __future__ import annotations
 
-from sqlalchemy.orm import Session
-
 from app.exceptions import NotFoundError
-from app.models import LearningProject, User
+from app.models import LearningProject
+from app.repositories.projects_repo import ProjectsRepository
 from app.schemas import LearningProjectCreateBody, LearningProjectUpdate
 from app.services import identity_service
 
 
 def create_project(
-    db: Session, user_id: str, payload: LearningProjectCreateBody
+    repo: ProjectsRepository, user_id: str, payload: LearningProjectCreateBody
 ) -> LearningProject:
     """Insert a project owned by ``user_id``.
 
@@ -26,9 +25,9 @@ def create_project(
     a client cannot forge a cross-user write through the API.
     Raises :class:`NotFoundError` when the user does not exist.
     """
-    if db.get(User, user_id) is None:
+    if repo.get_user(user_id) is None:
         raise NotFoundError(f"User {user_id!r} not found.")
-    project = LearningProject(
+    project = repo.create(
         user_id=user_id,
         topic=payload.topic,
         goal=payload.goal,
@@ -37,9 +36,6 @@ def create_project(
         current_problem=payload.current_problem,
         active=payload.active,
     )
-    db.add(project)
-    db.commit()
-    db.refresh(project)
     # Phase 41A: the freshly created project is by default what the
     # user is now working on - persist it as active_project_id so a
     # recovery after browser wipe lands on the right dashboard.
@@ -47,38 +43,32 @@ def create_project(
     return project
 
 
-def list_projects(db: Session, user_id: str) -> list[LearningProject]:
+def list_projects(repo: ProjectsRepository, user_id: str) -> list[LearningProject]:
     """All projects owned by ``user_id``, newest first.
 
     Raises :class:`NotFoundError` when the user does not exist so a
     GET ``/users/{stale_id}/projects`` returns 404 instead of an
     empty list (which would mask a stale client cache).
     """
-    if db.get(User, user_id) is None:
+    if repo.get_user(user_id) is None:
         raise NotFoundError(f"User {user_id!r} not found.")
-    return (
-        db.query(LearningProject)
-        .filter(LearningProject.user_id == user_id)
-        .order_by(LearningProject.created_at.desc())
-        .all()
-    )
+    return repo.list_by_user(user_id)
 
 
-def get_project(db: Session, project_id: str) -> LearningProject:
-    project = db.get(LearningProject, project_id)
+def get_project(repo: ProjectsRepository, project_id: str) -> LearningProject:
+    project = repo.get_by_id(project_id)
     if project is None:
         raise NotFoundError(f"LearningProject {project_id!r} not found.")
     return project
 
 
-def update_project(db: Session, project_id: str, payload: LearningProjectUpdate) -> LearningProject:
+def update_project(
+    repo: ProjectsRepository, project_id: str, payload: LearningProjectUpdate
+) -> LearningProject:
     """Partial update; only fields the client set are written."""
-    project = get_project(db, project_id)
+    project = get_project(repo, project_id)
     fields = payload.model_dump(exclude_unset=True)
-    for key, value in fields.items():
-        setattr(project, key, value)
-    db.commit()
-    db.refresh(project)
+    project = repo.apply_update(project, fields)
     # Phase 41A: an active=True flip is the project-switch signal -
     # refresh identity.yaml's active_project_id so post-wipe recovery
     # lands on the project the user actually picked last.

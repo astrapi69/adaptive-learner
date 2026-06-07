@@ -163,14 +163,20 @@ grün. Präfix: `refactor(architecture): ...`.
 - [ ] `backend/app/repositories/base.py` — `Repository`-Basis (ABC).
 - [ ] `backend/app/deps.py` — FastAPI-Repository-Provider (Composition-Root).
 
-### Phase 1 — Backend-Services (16)
-Reihenfolge nach Blast-Radius (klein zuerst), Pilot = `imports`:
-- [ ] imports (Pilot, S1 bereits vorgezogen)
-- [ ] projects, users, settings, identity, taxonomy, subjects
-- [ ] curriculum, lesson_progress, element_errors, element_srs
-- [ ] conversation_analysis, adaptive_lesson
-- [ ] backup_service (inkl. S3-Pragma), sync_service, export_service,
-      reset_service
+### Phase 1 — Backend-Services (15 DB-Services)
+Reihenfolge nach Blast-Radius (klein zuerst), Pilot = `imports`.
+Hinweis: `identity_service` nutzt **kein** `Session` (YAML-Datei) und ist
+daher kein Migrationsziel; `conversation_analysis`/`adaptive_lesson` sind
+ebenfalls Session-frei.
+- [x] imports (Pilot)
+- [x] users (führt `UniqueViolationError` ein)
+- [x] projects
+- [ ] subjects_seed, reset_service
+- [ ] element_errors + element_srs (gekoppelt, als Einheit)
+- [ ] lesson_session_unification, lesson_progress
+- [ ] curriculum, taxonomy
+- [ ] secrets_service, settings
+- [ ] backup_service (inkl. S3-Pragma), export_service, sync_service
 
 ### Phase 2 — Plugin-Service-Module (18 Module / 7 Plugins)
 session (4), gamification (4), learning-repo (4), notebooklm (2),
@@ -211,6 +217,12 @@ tracking (2), anki (1), missions (1).
     `db.get(User, ...)`-Guard in `analyze_import` laeuft jetzt ueber
     `repo.get_user`.
   - ruff + mypy sauber; 34 imports-Router-Tests grün.
+- **users migriert:** `UsersRepository` + `UniqueViolationError`-Foundation
+  (Repo uebersetzt SQLAlchemy-`IntegrityError` in ein backend-neutrales
+  Signal; Service mappt es auf `ConflictError`). identity.yaml-Seiteneffekt
+  bleibt im Service. Backend-Suite 1181 passed.
+- **projects migriert:** `ProjectsRepository`; identity.yaml-Seiteneffekte
+  (`active`-Flip / Erstanlage) bleiben im Service. Backend-Suite 1181 passed.
 
 ---
 

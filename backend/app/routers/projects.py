@@ -16,9 +16,9 @@ hand-writing full paths on a single router.
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import get_projects_repo
+from app.repositories.projects_repo import ProjectsRepository
 from app.schemas import (
     LearningProjectCreateBody,
     LearningProjectOut,
@@ -39,18 +39,20 @@ users_projects_router = APIRouter(prefix="/users", tags=["projects"])
 def create_project(
     user_id: str,
     payload: LearningProjectCreateBody,
-    db: Session = Depends(get_db),
+    repo: ProjectsRepository = Depends(get_projects_repo),
 ) -> LearningProjectOut:
-    return LearningProjectOut.model_validate(projects_service.create_project(db, user_id, payload))
+    return LearningProjectOut.model_validate(projects_service.create_project(repo, user_id, payload))
 
 
 @users_projects_router.get(
     "/{user_id}/projects",
     response_model=list[LearningProjectOut],
 )
-def list_projects(user_id: str, db: Session = Depends(get_db)) -> list[LearningProjectOut]:
+def list_projects(
+    user_id: str, repo: ProjectsRepository = Depends(get_projects_repo)
+) -> list[LearningProjectOut]:
     return [
-        LearningProjectOut.model_validate(p) for p in projects_service.list_projects(db, user_id)
+        LearningProjectOut.model_validate(p) for p in projects_service.list_projects(repo, user_id)
     ]
 
 
@@ -60,16 +62,18 @@ projects_router = APIRouter(prefix="/projects", tags=["projects"])
 
 
 @projects_router.get("/{project_id}", response_model=LearningProjectOut)
-def get_project(project_id: str, db: Session = Depends(get_db)) -> LearningProjectOut:
-    return LearningProjectOut.model_validate(projects_service.get_project(db, project_id))
+def get_project(
+    project_id: str, repo: ProjectsRepository = Depends(get_projects_repo)
+) -> LearningProjectOut:
+    return LearningProjectOut.model_validate(projects_service.get_project(repo, project_id))
 
 
 @projects_router.patch("/{project_id}", response_model=LearningProjectOut)
 def update_project(
     project_id: str,
     payload: LearningProjectUpdate,
-    db: Session = Depends(get_db),
+    repo: ProjectsRepository = Depends(get_projects_repo),
 ) -> LearningProjectOut:
     return LearningProjectOut.model_validate(
-        projects_service.update_project(db, project_id, payload)
+        projects_service.update_project(repo, project_id, payload)
     )
