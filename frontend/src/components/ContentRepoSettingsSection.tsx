@@ -28,6 +28,7 @@ import {
   Share2,
   Shield,
   ShieldQuestion,
+  Star,
   Trash2,
 } from "lucide-react";
 
@@ -50,6 +51,17 @@ import {
 } from "../lib/content/content-repos";
 import { validateUserRepo } from "../lib/content/content-repo-validate";
 import { clearRepoToken, resolveRepoToken, writeRepoToken } from "../lib/content/repo-token";
+import {
+  clearRepoRating,
+  readRepoRating,
+  writeRepoRating,
+} from "../lib/content/repo-rating";
+import {
+  fetchRecommendedRepos,
+  isRecommendedSource,
+  recommendedSource,
+  type RecommendedRepo,
+} from "../lib/content/recommended-repos";
 import { notify } from "../utils/notify";
 
 interface OfficialSummary {
@@ -61,6 +73,7 @@ export default function ContentRepoSettingsSection() {
   const { t } = useI18n();
   const [official, setOfficial] = useState<OfficialSummary | null>(null);
   const [repos, setRepos] = useState<UserContentRepo[]>([]);
+  const [recommended, setRecommended] = useState<RecommendedRepo[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [tokenConfigured, setTokenConfigured] = useState(false);
 
@@ -75,18 +88,28 @@ export default function ContentRepoSettingsSection() {
   const [share, setShare] = useState<
     { source: string; link: string; qr: string } | null
   >(null);
+  const [ratings, setRatings] = useState<Record<string, number>>({});
 
   const refresh = useCallback(async () => {
     const storage = getStorage();
-    const [stored, tokenStatus] = await Promise.all([
+    const [stored, tokenStatus, recommendedList] = await Promise.all([
       readUserRepos(),
       storage.github.getStatus().catch(() => ({
         configured: false,
         source: "none" as const,
       })),
+      fetchRecommendedRepos(),
     ]);
     setRepos(stored);
+    setRecommended(recommendedList);
     setTokenConfigured(Boolean(tokenStatus.configured));
+    const ratingMap: Record<string, number> = {};
+    for (const r of stored) {
+      ratingMap[userRepoSource(r.owner, r.repo)] = readRepoRating(
+        userRepoSource(r.owner, r.repo),
+      );
+    }
+    setRatings(ratingMap);
     try {
       const { sets } = await storage.contentLoader.listSets();
       const officialSets = sets.filter((s) => isOfficialSource(s.source));
@@ -173,6 +196,61 @@ export default function ContentRepoSettingsSection() {
     }
   }, [url, branch, token, refresh, t]);
 
+  const handleAddRecommended = useCallback(
+    async (rec: RecommendedRepo) => {
+      const parsed = parseGitHubRepoUrl(rec.url);
+      if (!parsed) return;
+      setBusy(true);
+      try {
+        const source = userRepoSource(parsed.owner, parsed.repo);
+        const validation = await validateUserRepo({
+          owner: parsed.owner,
+          repo: parsed.repo,
+          branch: rec.branch,
+        });
+        if (!validation.ok) {
+          notify.error(
+            t("content_repo.validation.failed", "Validation failed: {reason}").replace(
+              "{reason}",
+              validation.reason ?? "",
+            ),
+          );
+          return;
+        }
+        await addUserRepo({
+          url: rec.url,
+          owner: parsed.owner,
+          repo: parsed.repo,
+          branch: rec.branch,
+          connected: true,
+          last_synced: null,
+          set_count: validation.setCount,
+          lesson_count: validation.lessonCount,
+          trust: 1,
+        });
+        await syncUserRepo(source);
+        await refresh();
+        notify.success(t("content_repo.added", "Repository added."));
+      } catch {
+        notify.error(
+          t("content_repo.error.save_failed", "Could not add the repository."),
+        );
+      } finally {
+        setBusy(false);
+      }
+    },
+    [refresh, t],
+  );
+
+  const handleRate = useCallback((source: string, rating: number) => {
+    // Toggle off when the same star is clicked again.
+    setRatings((prev) => {
+      const next = prev[source] === rating ? 0 : rating;
+      writeRepoRating(source, next);
+      return { ...prev, [source]: next };
+    });
+  }, []);
+
   const handleSync = useCallback(
     async (source: string) => {
       setBusy(true);
@@ -214,6 +292,7 @@ export default function ContentRepoSettingsSection() {
       try {
         await removeUserRepo(source);
         clearRepoToken(source);
+        clearRepoRating(source);
         setConfirmRemove(null);
         await refresh();
       } finally {
@@ -374,6 +453,15 @@ export default function ContentRepoSettingsSection() {
                       {t("content_repo.badge.coach", "Coach")}
                     </span>
                   )}
+                  {isRecommendedSource(source, recommended) && (
+                    <span
+                      className="inline-flex items-center gap-1 rounded-sm bg-[color-mix(in_srgb,var(--accent)_16%,var(--bg-surface))] px-1.5 py-0.5 text-xs font-semibold text-[var(--accent-text)]"
+                      data-testid={`content-repo-recommended-badge-${repo.owner}-${repo.repo}`}
+                    >
+                      <Star className="h-3 w-3" aria-hidden="true" />
+                      {t("content_repo.trust.recommended", "Officially recommended")}
+                    </span>
+                  )}
                 </div>
                 <p className="m-0 mt-1 text-sm text-[var(--fg-muted)]">
                   {repo.last_synced
@@ -387,6 +475,40 @@ export default function ContentRepoSettingsSection() {
                     .replace("{sets}", String(repo.set_count))
                     .replace("{lessons}", String(repo.lesson_count))}
                 </p>
+                <div
+                  className="mt-2 flex items-center gap-1"
+                  role="radiogroup"
+                  aria-label={t("content_repo.rating.aria", "Your rating")}
+                  data-testid={`content-repo-rating-${repo.owner}-${repo.repo}`}
+                >
+                  <span className="mr-1 text-xs text-[var(--fg-muted)]">
+                    {t("content_repo.rating.label", "Your rating")}
+                  </span>
+                  {[1, 2, 3, 4, 5].map((n) => {
+                    const rated = (ratings[source] ?? 0) >= n;
+                    return (
+                      <button
+                        key={n}
+                        type="button"
+                        className="inline-flex h-11 w-7 items-center justify-center text-[var(--star)]"
+                        onClick={() => handleRate(source, n)}
+                        role="radio"
+                        aria-checked={(ratings[source] ?? 0) === n}
+                        aria-label={t(
+                          "content_repo.rating.star",
+                          "Rate {n} of 5",
+                        ).replace("{n}", String(n))}
+                        data-testid={`content-repo-rating-${repo.owner}-${repo.repo}-star-${n}`}
+                      >
+                        <Star
+                          className="h-4 w-4"
+                          aria-hidden="true"
+                          fill={rated ? "currentColor" : "none"}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <Button
                     type="button"
@@ -501,6 +623,57 @@ export default function ContentRepoSettingsSection() {
           })}
         </ul>
       )}
+
+      {/* Recommended repositories (curated discovery, EXP-023 Phase C). */}
+      {(() => {
+        const connected = new Set(
+          repos.map((r) => userRepoSource(r.owner, r.repo)),
+        );
+        const available = recommended.filter((rec) => {
+          const s = recommendedSource(rec);
+          return s !== null && !connected.has(s);
+        });
+        if (available.length === 0) return null;
+        return (
+          <div
+            className="mb-4 rounded-md border border-[var(--border)] bg-[var(--surface)] p-4"
+            data-testid="content-repo-recommended"
+          >
+            <h3 className="m-0 text-base font-semibold">
+              {t("content_repo.recommended.title", "Recommended repositories")}
+            </h3>
+            <ul className="m-0 mt-2 flex list-none flex-col gap-2 p-0">
+              {available.map((rec) => {
+                const source = recommendedSource(rec) as string;
+                return (
+                  <li
+                    key={source}
+                    className="flex flex-wrap items-center gap-2"
+                    data-testid={`content-repo-recommended-${source}`}
+                  >
+                    <span className="font-medium">{rec.title ?? source}</span>
+                    {rec.description && (
+                      <span className="text-sm text-[var(--fg-muted)]">
+                        {rec.description}
+                      </span>
+                    )}
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="ml-auto min-h-11"
+                      onClick={() => handleAddRecommended(rec)}
+                      disabled={busy}
+                      data-testid={`content-repo-recommended-add-${source}`}
+                    >
+                      {t("content_repo.action.add", "Add repository")}
+                    </Button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })()}
 
       {/* Add a repository. */}
       <div

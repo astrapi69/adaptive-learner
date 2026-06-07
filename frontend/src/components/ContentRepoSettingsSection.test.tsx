@@ -33,6 +33,13 @@ vi.mock("../lib/content/content-repo-validate", () => ({ validateUserRepo }));
 vi.mock("qrcode", () => ({
   default: { toDataURL: vi.fn(async () => "data:image/png;base64,QR") },
 }));
+const { fetchRecommendedRepos } = vi.hoisted(() => ({
+  fetchRecommendedRepos: vi.fn(),
+}));
+vi.mock("../lib/content/recommended-repos", async (orig) => ({
+  ...(await orig<typeof import("../lib/content/recommended-repos")>()),
+  fetchRecommendedRepos,
+}));
 vi.mock("../lib/content/repo-token", () => ({
   resolveRepoToken: () => "",
   writeRepoToken: vi.fn(),
@@ -62,6 +69,8 @@ beforeEach(() => {
   notifyError.mockReset();
   notifySuccess.mockReset();
   validateUserRepo.mockReset();
+  fetchRecommendedRepos.mockReset();
+  fetchRecommendedRepos.mockResolvedValue([]);
   validateUserRepo.mockResolvedValue({ ok: true, setCount: 1, lessonCount: 4 });
   downloadSet.mockResolvedValue({});
   githubGetStatus.mockResolvedValue({ configured: true, source: "browser" });
@@ -177,6 +186,57 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     expect(
       await screen.findByTestId("content-repo-token-hint"),
     ).toBeInTheDocument();
+  });
+
+  it("lists recommended repos and one-click adds one", async () => {
+    fetchRecommendedRepos.mockResolvedValue([
+      { url: "jane/deck", branch: "main", title: "Jane Deck" },
+    ]);
+    render(<ContentRepoSettingsSection />);
+    expect(
+      await screen.findByTestId("content-repo-recommended"),
+    ).toBeInTheDocument();
+    fireEvent.click(
+      screen.getByTestId("content-repo-recommended-add-jane/deck"),
+    );
+    await waitFor(() => expect(pluginUpdate).toHaveBeenCalled());
+    expect(validateUserRepo).toHaveBeenCalled();
+    const [, body] = pluginUpdate.mock.calls[0];
+    expect(body.settings.user_repos[0]).toMatchObject({
+      owner: "jane",
+      repo: "deck",
+      trust: 1,
+    });
+  });
+
+  it("hides a recommended repo that is already connected", async () => {
+    fetchRecommendedRepos.mockResolvedValue([
+      { url: "jane/deck", branch: "main" },
+    ]);
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [REPO] },
+    });
+    render(<ContentRepoSettingsSection />);
+    await screen.findByTestId("content-repo-list");
+    expect(screen.queryByTestId("content-repo-recommended")).toBeNull();
+  });
+
+  it("records a local star rating for a repo", async () => {
+    pluginGet.mockResolvedValue({
+      plugin: "content-loader",
+      settings: { user_repos: [REPO] },
+    });
+    render(<ContentRepoSettingsSection />);
+    const star = await screen.findByTestId(
+      "content-repo-rating-jane-deck-star-4",
+    );
+    fireEvent.click(star);
+    await waitFor(() =>
+      expect(
+        screen.getByTestId("content-repo-rating-jane-deck-star-4"),
+      ).toHaveAttribute("aria-checked", "true"),
+    );
   });
 
   it("toggles a share panel with a link + QR for a repo", async () => {
