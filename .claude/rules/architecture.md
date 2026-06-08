@@ -60,6 +60,47 @@ plugins/adaptive-learner-plugin-{name}/
 - Plugin dependencies as a class attribute: `depends_on = ["session"]`.
 - All plugins are free (MIT). Licensing infrastructure exists but is dormant (`LICENSING_ENABLED = False`).
 
+### Repository pattern (data layer, EXP-024)
+
+The request-service layer talks to the database ONLY through a
+repository interface, never through a SQLAlchemy `Session` directly.
+This is the strict three-layer contract (UI -> service -> repository ->
+data) the EXP-024 audit established; Phase 1 migrated all 13
+request-layer DB services.
+
+- **`backend/app/repositories/`** holds the contracts + SQLAlchemy
+  implementations (`<name>_repo.py`: an abstract `XRepository(Repository)`
+  plus a `SqlAlchemyXRepository`). The package is **HTTP-free** — it
+  never imports `fastapi`. Repositories return domain entities
+  (SQLAlchemy models) or `None`; they do NOT raise domain errors.
+- **`backend/app/deps.py`** is the composition root — the ONLY module
+  that knows both FastAPI (`Depends`) and the concrete implementations.
+  Each `get_<x>_repo(db = Depends(get_db))` binds a repository to the
+  request-scoped session. Routers inject `Depends(get_<x>_repo)` and pass
+  the repo into the service; a handler that needs two aggregates injects
+  two repos (FastAPI caches `get_db`, so they share one session and one
+  transaction).
+- **Business logic stays in the service**: validation, orchestration,
+  transaction-boundary decisions, and raising `AdaptiveLearnerError`
+  subclasses. A repository signals a persistence-level condition (e.g. a
+  UNIQUE violation) in backend-neutral terms via `RepositoryError` /
+  `UniqueViolationError` (`repositories/base.py`); the service maps that
+  onto the appropriate domain error.
+- **Deliberate exceptions** (not request-layer DB services, so not
+  migrated): `identity_service` / `conversation_analysis` /
+  `adaptive_lesson` are `Session`-free; `subjects_seed` and
+  `secrets_service.migrate_db_keys` are bootstrap code invoked from the
+  lifespan, not via request DI. The one shared **data-layer primitive**
+  that legitimately keeps a `Session` parameter is
+  `sync_service._scoped_query` (the per-table user-scoping query builder)
+  — consumed by BOTH `SyncRepository` and `BackupRepository` (EXP-024
+  Option A: one scoping primitive, not rebuilt in two places).
+- **Plugins are NOT yet migrated** (EXP-024 Phase 2). Plugin route
+  modules still use `Session` directly; where a plugin handler resolves
+  an API key it wraps `SqlAlchemySettingsRepository(db)` inline at the
+  call site. New CORE services use the repository pattern; new plugin
+  services may keep direct `Session` until Phase 2 lands.
+
 ### Plugin installation (ZIP)
 
 Third-party plugins are installed as a ZIP through Settings > Plugins:
@@ -230,11 +271,13 @@ Origin: issue #51.
 ## Data flow
 
 ```
-API mode:    UI (React) -> getStorage() (ApiStorage) -> api.* -> FastAPI router -> service/plugin -> SQLAlchemy -> SQLite
+API mode:    UI (React) -> getStorage() (ApiStorage) -> api.* -> FastAPI router -> service -> repository -> SQLAlchemy -> SQLite
 Dexie mode:  UI (React) -> getStorage() (DexieStorage) -> Dexie -> IndexedDB
 ```
 
-Unidirectional. No direct DB access from routers. No frontend
+Unidirectional. No direct DB access from routers. Core request
+services reach the DB only through a repository interface (EXP-024;
+plugins still use SQLAlchemy directly pending Phase 2). No frontend
 code in the backend. No `fetch()` or `api.*` calls outside the
 storage abstraction.
 

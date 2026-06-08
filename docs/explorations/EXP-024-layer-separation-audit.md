@@ -229,9 +229,12 @@ tracking (2), anki (1), missions (1).
 - [ ] Komponenten von `api.*` auf `getStorage()` umstellen.
 
 ### Phase 4 — Abschluss
-- [ ] `architecture.md` auf Repository-Standard aktualisieren.
+- [x] `architecture.md` auf Repository-Standard aktualisieren (neuer
+      `### Repository pattern (data layer, EXP-024)`-Abschnitt + Data-Flow-
+      Diagramm zeigt jetzt `service -> repository -> SQLAlchemy`).
 - [ ] MINOR-Aufräumung (S2 Guards, S3 Pragma-Kapselung) nach Abwägung.
-- [ ] `make test` + `make test-dexie-smoke` grün.
+- [ ] `make test-dexie-smoke` grün (Frontend unverändert in Phase 1; Gate
+      bleibt für Phase 3).
 
 ---
 
