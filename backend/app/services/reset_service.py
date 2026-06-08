@@ -38,10 +38,9 @@ import logging
 from pathlib import Path
 
 import yaml
-from sqlalchemy.orm import Session
 
-from app.database import Base
 from app.paths import get_config_dir
+from app.repositories.reset_repo import ResetRepository
 from app.services import identity_service
 
 logger = logging.getLogger(__name__)
@@ -66,18 +65,15 @@ def secrets_path() -> Path:
     return get_config_dir() / _SECRETS_FILENAME
 
 
-def reset_all(db: Session) -> int:
+def reset_all(repo: ResetRepository) -> int:
     """Wipe every table + every identity / API-key trace on disk.
 
     Returns the number of tables touched (i.e. the count of
-    SQLAlchemy ``Table`` objects in :attr:`Base.metadata`). The
-    count reflects work attempted, not row counts - the success
-    signal for the frontend is "no exception".
+    SQLAlchemy ``Table`` objects truncated). The count reflects work
+    attempted, not row counts - the success signal for the frontend
+    is "no exception".
     """
-    tables = list(reversed(Base.metadata.sorted_tables))
-    for table in tables:
-        db.execute(table.delete())
-    db.commit()
+    count = repo.truncate_all_tables()
 
     # Filesystem side-effects after the DB commit succeeds. Any
     # filesystem failure here is logged but does NOT roll back the
@@ -86,7 +82,7 @@ def reset_all(db: Session) -> int:
     identity_service.clear_identity()
     _scrub_secrets_ai_block()
 
-    return len(tables)
+    return count
 
 
 def _scrub_secrets_ai_block() -> None:
