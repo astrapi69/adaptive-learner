@@ -21,6 +21,7 @@ from fastapi.testclient import TestClient
 
 from app.database import SessionLocal
 from app.main import app
+from app.repositories.element_errors_repo import SqlAlchemyElementErrorsRepository
 from app.schemas import ElementAttemptIn
 from app.services import element_errors as element_errors_service
 from app.services.element_srs import (
@@ -99,8 +100,9 @@ def test_interval_negative_streak_defensive_returns_1() -> None:
 
 def test_empty_user_returns_empty_queue(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        assert compute_review_queue(db, user_id) == []
+        assert compute_review_queue(repo, user_id) == []
     finally:
         db.close()
 
@@ -108,29 +110,29 @@ def test_empty_user_returns_empty_queue(user_id: str) -> None:
 def test_mastered_elements_excluded(user_id: str) -> None:
     """3 consecutive corrects → mastered → excluded from queue."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         for _ in range(3):
-            element_errors_service.record_attempt(
-                db,
+            element_errors_service.record_attempt(repo,
                 user_id,
                 _attempt(correct=True),
             )
         db.commit()
-        assert compute_review_queue(db, user_id) == []
+        assert compute_review_queue(repo, user_id) == []
     finally:
         db.close()
 
 
 def test_active_element_appears_in_queue(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        element_errors_service.record_attempt(
-            db,
+        element_errors_service.record_attempt(repo,
             user_id,
             _attempt(correct=False),
         )
         db.commit()
-        queue = compute_review_queue(db, user_id)
+        queue = compute_review_queue(repo, user_id)
         assert len(queue) == 1
         assert queue[0].element_key == "merci"
         assert queue[0].correct_streak == 0
@@ -143,14 +145,14 @@ def test_suggested_review_is_last_attempt_plus_interval(
     user_id: str,
 ) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        row = element_errors_service.record_attempt(
-            db,
+        row = element_errors_service.record_attempt(repo,
             user_id,
             _attempt(correct=False),
         )
         db.commit()
-        queue = compute_review_queue(db, user_id)
+        queue = compute_review_queue(repo, user_id)
         item = queue[0]
         last = item.last_attempt_at
         if last.tzinfo is None:
@@ -169,9 +171,9 @@ def test_suggested_review_is_last_attempt_plus_interval(
 
 def test_overdue_flag_against_injected_clock(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        element_errors_service.record_attempt(
-            db,
+        element_errors_service.record_attempt(repo,
             user_id,
             _attempt(correct=False),
         )
@@ -179,11 +181,11 @@ def test_overdue_flag_against_injected_clock(user_id: str) -> None:
         # Inject a clock 2 days in the future — the 1-day
         # suggested-review must be overdue.
         future = datetime.now(UTC) + timedelta(days=2)
-        queue = compute_review_queue(db, user_id, now=future)
+        queue = compute_review_queue(repo, user_id, now=future)
         assert queue[0].overdue is True
         # Inject a clock 1 second in the past — must be NOT overdue.
         present = datetime.now(UTC)
-        queue_now = compute_review_queue(db, user_id, now=present)
+        queue_now = compute_review_queue(repo, user_id, now=present)
         assert queue_now[0].overdue is False
     finally:
         db.close()
@@ -194,14 +196,13 @@ def test_overdue_flag_against_injected_clock(user_id: str) -> None:
 
 def test_overdue_items_come_before_non_overdue(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        element_errors_service.record_attempt(
-            db,
+        element_errors_service.record_attempt(repo,
             user_id,
             _attempt(element_key="overdue-one", correct=False),
         )
-        element_errors_service.record_attempt(
-            db,
+        element_errors_service.record_attempt(repo,
             user_id,
             _attempt(element_key="fresh-one", correct=False),
         )
@@ -222,7 +223,7 @@ def test_overdue_items_come_before_non_overdue(user_id: str) -> None:
         row.last_attempt_at = datetime.now(UTC) - timedelta(days=10)
         db.commit()
 
-        queue = compute_review_queue(db, user_id)
+        queue = compute_review_queue(repo, user_id)
         assert queue[0].element_key == "overdue-one"
         assert queue[0].overdue is True
         assert queue[1].element_key == "fresh-one"
@@ -233,16 +234,15 @@ def test_overdue_items_come_before_non_overdue(user_id: str) -> None:
 
 def test_higher_error_count_wins_among_overdue(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         # 'high' gets 3 errors; 'low' gets 1.
         for _ in range(3):
-            element_errors_service.record_attempt(
-                db,
+            element_errors_service.record_attempt(repo,
                 user_id,
                 _attempt(element_key="high", correct=False),
             )
-        element_errors_service.record_attempt(
-            db,
+        element_errors_service.record_attempt(repo,
             user_id,
             _attempt(element_key="low", correct=False),
         )
@@ -253,7 +253,7 @@ def test_higher_error_count_wins_among_overdue(user_id: str) -> None:
         for row in db.query(ElementError).all():
             row.last_attempt_at = datetime.now(UTC) - timedelta(days=10)
         db.commit()
-        queue = compute_review_queue(db, user_id)
+        queue = compute_review_queue(repo, user_id)
         assert queue[0].element_key == "high"
         assert queue[0].error_count == 3
         assert queue[1].element_key == "low"
@@ -267,19 +267,18 @@ def test_higher_error_count_wins_among_overdue(user_id: str) -> None:
 
 def test_set_id_filter_scopes_the_queue(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        element_errors_service.record_attempt(
-            db,
+        element_errors_service.record_attempt(repo,
             user_id,
             _attempt(set_id="set-a", correct=False),
         )
-        element_errors_service.record_attempt(
-            db,
+        element_errors_service.record_attempt(repo,
             user_id,
             _attempt(set_id="set-b", correct=False),
         )
         db.commit()
-        a_queue = compute_review_queue(db, user_id, set_id="set-a")
+        a_queue = compute_review_queue(repo, user_id, set_id="set-a")
         assert len(a_queue) == 1
         assert a_queue[0].set_id == "set-a"
     finally:
@@ -290,14 +289,14 @@ def test_returned_items_are_review_queue_items(user_id: str) -> None:
     """Pins the dataclass shape so consumers can trust the
     fields land in the wire schema."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        element_errors_service.record_attempt(
-            db,
+        element_errors_service.record_attempt(repo,
             user_id,
             _attempt(correct=False),
         )
         db.commit()
-        queue = compute_review_queue(db, user_id)
+        queue = compute_review_queue(repo, user_id)
         assert isinstance(queue[0], ReviewQueueItem)
         for fld in (
             "id",
@@ -330,10 +329,11 @@ def test_productive_error_outranks_receptive_with_equal_count(user_id: str) -> N
     from app.models import ElementError
 
     db = SessionLocal()
+
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         for _ in range(2):
-            element_errors_service.record_attempt(
-                db,
+            element_errors_service.record_attempt(repo,
                 user_id,
                 _attempt(
                     element_key="recep",
@@ -341,8 +341,7 @@ def test_productive_error_outranks_receptive_with_equal_count(user_id: str) -> N
                     correct=False,
                 ),
             )
-            element_errors_service.record_attempt(
-                db,
+            element_errors_service.record_attempt(repo,
                 user_id,
                 _attempt(
                     element_key="prod",
@@ -354,7 +353,7 @@ def test_productive_error_outranks_receptive_with_equal_count(user_id: str) -> N
         for row in db.query(ElementError).all():
             row.last_attempt_at = datetime.now(UTC) - timedelta(days=10)
         db.commit()
-        queue = compute_review_queue(db, user_id)
+        queue = compute_review_queue(repo, user_id)
         assert [q.direction for q in queue][0] == "source_to_target"
         assert queue[0].element_key == "prod"
         assert queue[0].error_count == queue[1].error_count == 2
@@ -366,15 +365,14 @@ def test_productive_error_outranks_receptive_with_equal_count(user_id: str) -> N
 def test_same_element_both_directions_appear_twice(user_id: str) -> None:
     """A card wrong in both directions yields two queue items."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        element_errors_service.record_attempt(
-            db, user_id, _attempt(direction="target_to_source", correct=False)
+        element_errors_service.record_attempt(repo, user_id, _attempt(direction="target_to_source", correct=False)
         )
-        element_errors_service.record_attempt(
-            db, user_id, _attempt(direction="source_to_target", correct=False)
+        element_errors_service.record_attempt(repo, user_id, _attempt(direction="source_to_target", correct=False)
         )
         db.commit()
-        queue = compute_review_queue(db, user_id)
+        queue = compute_review_queue(repo, user_id)
         assert len(queue) == 2
         assert {q.direction for q in queue} == {
             "target_to_source",

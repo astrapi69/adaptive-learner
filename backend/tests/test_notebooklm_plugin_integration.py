@@ -21,6 +21,7 @@ from fastapi.testclient import TestClient
 from app.database import SessionLocal
 from app.main import app, manager
 from app.models import UserSettings
+from app.repositories.settings_repo import SqlAlchemySettingsRepository
 
 
 @pytest.fixture()
@@ -53,19 +54,13 @@ def _seed_provider_key(user_id: str) -> None:
         from app.schemas import AIProvider, ApiKeySetBody
         from app.services import settings as settings_service
 
-        settings_service.get_or_create_settings(db, user_id)
+        settings_service.get_or_create_settings(SqlAlchemySettingsRepository(db), user_id)
         settings_service.set_api_key(
-            db,
+            SqlAlchemySettingsRepository(db),
             user_id,
-            ApiKeySetBody(
-                provider=AIProvider.ANTHROPIC, key="test-key-1234567890"
-            ),
+            ApiKeySetBody(provider=AIProvider.ANTHROPIC, key="test-key-1234567890"),
         )
-        row = (
-            db.query(UserSettings)
-            .filter(UserSettings.user_id == user_id)
-            .first()
-        )
+        row = db.query(UserSettings).filter(UserSettings.user_id == user_id).first()
         assert row is not None
         row.active_provider = "anthropic"
         db.commit()
@@ -99,14 +94,8 @@ def test_router_paths_mounted(client: TestClient) -> None:
     assert "/api/plugins/notebooklm/questions/{user_id}" in paths
     assert "/api/plugins/notebooklm/questions" in paths
     assert "/api/plugins/notebooklm/questions/{qid}" in paths
-    assert (
-        "/api/plugins/notebooklm/questions/generate/session/{session_id}"
-        in paths
-    )
-    assert (
-        "/api/plugins/notebooklm/questions/generate/project/{project_id}"
-        in paths
-    )
+    assert "/api/plugins/notebooklm/questions/generate/session/{session_id}" in paths
+    assert "/api/plugins/notebooklm/questions/generate/project/{project_id}" in paths
     assert "/api/plugins/notebooklm/study-guide/{project_id}" in paths
 
 
@@ -226,19 +215,13 @@ def test_list_filters_by_difficulty_and_topic(client: TestClient) -> None:
             },
         )
     # All three.
-    body = client.get(
-        f"/api/plugins/notebooklm/questions/{user_id}"
-    ).json()
+    body = client.get(f"/api/plugins/notebooklm/questions/{user_id}").json()
     assert len(body) == 3
     # Difficulty filter.
-    body = client.get(
-        f"/api/plugins/notebooklm/questions/{user_id}?difficulty=easy"
-    ).json()
+    body = client.get(f"/api/plugins/notebooklm/questions/{user_id}?difficulty=easy").json()
     assert [b["question"] for b in body] == ["E1"]
     # Topic filter — case-insensitive substring.
-    body = client.get(
-        f"/api/plugins/notebooklm/questions/{user_id}?topic=VOCAB"
-    ).json()
+    body = client.get(f"/api/plugins/notebooklm/questions/{user_id}?topic=VOCAB").json()
     questions = {b["question"] for b in body}
     assert questions == {"E1", "M1"}
 
@@ -250,9 +233,7 @@ def test_list_unknown_user_404(client: TestClient) -> None:
 
 def test_list_bad_difficulty_400(client: TestClient) -> None:
     user_id, _ = _make_user_and_project(client)
-    r = client.get(
-        f"/api/plugins/notebooklm/questions/{user_id}?difficulty=oops"
-    )
+    r = client.get(f"/api/plugins/notebooklm/questions/{user_id}?difficulty=oops")
     assert r.status_code == 400
 
 
@@ -281,12 +262,8 @@ def test_generate_from_session_persists_rows(client: TestClient) -> None:
             },
         ]
     )
-    with patch.object(
-        manager._pm.hook, "ai_complete", return_value=mock
-    ):
-        r = client.post(
-            f"/api/plugins/notebooklm/questions/generate/session/{session_id}"
-        )
+    with patch.object(manager._pm.hook, "ai_complete", return_value=mock):
+        r = client.post(f"/api/plugins/notebooklm/questions/generate/session/{session_id}")
     assert r.status_code == 200
     body = r.json()
     assert len(body) == 2
@@ -296,9 +273,7 @@ def test_generate_from_session_persists_rows(client: TestClient) -> None:
 
 
 def test_generate_from_session_unknown_404(client: TestClient) -> None:
-    r = client.post(
-        "/api/plugins/notebooklm/questions/generate/session/nope"
-    )
+    r = client.post("/api/plugins/notebooklm/questions/generate/session/nope")
     assert r.status_code == 404
 
 
@@ -307,9 +282,7 @@ def test_generate_from_session_400_when_no_provider(
 ) -> None:
     user_id, project_id = _make_user_and_project(client)
     session_id = _run_session(client, project_id)
-    r = client.post(
-        f"/api/plugins/notebooklm/questions/generate/session/{session_id}"
-    )
+    r = client.post(f"/api/plugins/notebooklm/questions/generate/session/{session_id}")
     # User has no AI provider/key → validation 400.
     assert r.status_code == 400
 
@@ -328,9 +301,7 @@ def test_generate_from_session_returns_empty_on_bad_ai_output(
         "ai_complete",
         return_value="Sorry, I can't help with that.",
     ):
-        r = client.post(
-            f"/api/plugins/notebooklm/questions/generate/session/{session_id}"
-        )
+        r = client.post(f"/api/plugins/notebooklm/questions/generate/session/{session_id}")
     assert r.status_code == 200
     assert r.json() == []
 
@@ -352,12 +323,8 @@ def test_generate_from_project_persists_with_null_session(
             }
         ]
     )
-    with patch.object(
-        manager._pm.hook, "ai_complete", return_value=mock
-    ):
-        r = client.post(
-            f"/api/plugins/notebooklm/questions/generate/project/{project_id}"
-        )
+    with patch.object(manager._pm.hook, "ai_complete", return_value=mock):
+        r = client.post(f"/api/plugins/notebooklm/questions/generate/project/{project_id}")
     assert r.status_code == 200
     body = r.json()
     assert len(body) == 1
@@ -372,12 +339,8 @@ def test_study_guide_returns_markdown(client: TestClient) -> None:
     _seed_provider_key(user_id)
     _run_session(client, project_id)
     mock = "# Spanish Study Guide\n\n## Overview\n\nA project to learn Spanish."
-    with patch.object(
-        manager._pm.hook, "ai_complete", return_value=mock
-    ):
-        r = client.post(
-            f"/api/plugins/notebooklm/study-guide/{project_id}"
-        )
+    with patch.object(manager._pm.hook, "ai_complete", return_value=mock):
+        r = client.post(f"/api/plugins/notebooklm/study-guide/{project_id}")
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("text/markdown")
     assert "Spanish Study Guide" in r.text
@@ -388,12 +351,8 @@ def test_study_guide_strips_outer_fence(client: TestClient) -> None:
     _seed_provider_key(user_id)
     _run_session(client, project_id)
     fenced = "```markdown\n# Title\n\nBody.\n```"
-    with patch.object(
-        manager._pm.hook, "ai_complete", return_value=fenced
-    ):
-        r = client.post(
-            f"/api/plugins/notebooklm/study-guide/{project_id}"
-        )
+    with patch.object(manager._pm.hook, "ai_complete", return_value=fenced):
+        r = client.post(f"/api/plugins/notebooklm/study-guide/{project_id}")
     assert r.status_code == 200
     # Outer fence stripped; inner content preserved.
     assert r.text.startswith("# Title")
@@ -403,17 +362,11 @@ def test_study_guide_strips_outer_fence(client: TestClient) -> None:
 def test_study_guide_400_when_ai_returns_empty(client: TestClient) -> None:
     user_id, project_id = _make_user_and_project(client)
     _seed_provider_key(user_id)
-    with patch.object(
-        manager._pm.hook, "ai_complete", return_value=""
-    ):
-        r = client.post(
-            f"/api/plugins/notebooklm/study-guide/{project_id}"
-        )
+    with patch.object(manager._pm.hook, "ai_complete", return_value=""):
+        r = client.post(f"/api/plugins/notebooklm/study-guide/{project_id}")
     assert r.status_code == 400
 
 
 def test_study_guide_404_unknown_project(client: TestClient) -> None:
-    r = client.post(
-        "/api/plugins/notebooklm/study-guide/nope"
-    )
+    r = client.post("/api/plugins/notebooklm/study-guide/nope")
     assert r.status_code == 404

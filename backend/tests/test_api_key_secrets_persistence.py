@@ -26,6 +26,7 @@ from fastapi.testclient import TestClient
 
 from app.database import SessionLocal
 from app.models import User, UserSettings
+from app.repositories.settings_repo import SqlAlchemySettingsRepository
 from app.routers.settings import router as settings_router
 from app.routers.users import router as users_router
 from app.schemas import AIProvider
@@ -169,17 +170,23 @@ def test_3_layer_priority(file_key_env, monkeypatch):
         # env layer (highest).
         monkeypatch.setenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", "env-key")
 
-        key, source = settings_service.resolve_api_key(db, user.id, AIProvider.ANTHROPIC)
+        key, source = settings_service.resolve_api_key(
+            SqlAlchemySettingsRepository(db), user.id, AIProvider.ANTHROPIC
+        )
         assert key == "env-key"
         assert source.value == "env"
 
         monkeypatch.delenv("ADAPTIVE_LEARNER_ANTHROPIC_API_KEY", raising=False)
-        key, source = settings_service.resolve_api_key(db, user.id, AIProvider.ANTHROPIC)
+        key, source = settings_service.resolve_api_key(
+            SqlAlchemySettingsRepository(db), user.id, AIProvider.ANTHROPIC
+        )
         assert key == "yaml-key"
         assert source.value == "secrets_yaml"
 
         secrets_service.clear_api_key("anthropic")
-        key, source = settings_service.resolve_api_key(db, user.id, AIProvider.ANTHROPIC)
+        key, source = settings_service.resolve_api_key(
+            SqlAlchemySettingsRepository(db), user.id, AIProvider.ANTHROPIC
+        )
         assert key == "db-key"
         assert source.value == "settings"
     finally:
@@ -248,7 +255,9 @@ def test_migration_from_db_to_yaml(file_key_env):
         db.refresh(settings)
         assert settings.api_key_anthropic is None
         # ... and still resolvable.
-        key, _source = settings_service.resolve_api_key(db, user.id, AIProvider.ANTHROPIC)
+        key, _source = settings_service.resolve_api_key(
+            SqlAlchemySettingsRepository(db), user.id, AIProvider.ANTHROPIC
+        )
         assert key == "db-key"
     finally:
         db.close()

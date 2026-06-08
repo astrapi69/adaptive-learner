@@ -40,6 +40,7 @@ from app.models import (
     UserStreak,
     UserXP,
 )
+from app.repositories.backup_repo import SqlAlchemyBackupRepository
 from app.services.backup_service import (
     _RESTORE_ORDER,
     ALL_BACKUP_TABLES,
@@ -83,7 +84,7 @@ def test_reimport_with_reseeded_singletons_does_not_violate_unique():
     db = _session()
     try:
         user = _seed(db)
-        backup = create_backup(db, user.id)
+        backup = create_backup(SqlAlchemyBackupRepository(db), user.id)
 
         # Simulate the real trigger: the local singleton rows now carry
         # DIFFERENT ids than the backup (older backup, or a clean
@@ -98,7 +99,7 @@ def test_reimport_with_reseeded_singletons_does_not_violate_unique():
         db.commit()
 
         # Must not raise IntegrityError; must reconcile by unique key.
-        result = restore_backup(db, backup)
+        result = restore_backup(SqlAlchemyBackupRepository(db), backup)
         assert result["errors"] == []
 
         # The backup's values won (newer timestamp), matched in place —
@@ -115,7 +116,7 @@ def test_reimport_with_reseeded_singletons_does_not_violate_unique():
 
 def _counts(db, user_id) -> dict[str, int]:
     """Per-table row counts the export sees for this user."""
-    return get_backup_stats(db, user_id)["tables"]
+    return get_backup_stats(SqlAlchemyBackupRepository(db), user_id)["tables"]
 
 
 def test_clean_install_restores_every_table():
@@ -123,7 +124,7 @@ def test_clean_install_restores_every_table():
     db = _session()
     try:
         user = _seed(db)
-        backup = create_backup(db, user.id)
+        backup = create_backup(SqlAlchemyBackupRepository(db), user.id)
         before = _counts(db, user.id)
 
         # Wipe the user (FK CASCADE removes the user-scoped rows) to
@@ -132,7 +133,7 @@ def test_clean_install_restores_every_table():
         db.commit()
         assert db.get(User, user.id) is None
 
-        result = restore_backup(db, backup)
+        result = restore_backup(SqlAlchemyBackupRepository(db), backup)
         assert result["errors"] == []
 
         after = _counts(db, user.id)
@@ -147,12 +148,12 @@ def test_reimport_is_idempotent_no_duplicates():
     db = _session()
     try:
         user = _seed(db)
-        backup = create_backup(db, user.id)
+        backup = create_backup(SqlAlchemyBackupRepository(db), user.id)
         before = _counts(db, user.id)
 
-        first = restore_backup(db, backup)
+        first = restore_backup(SqlAlchemyBackupRepository(db), backup)
         assert first["errors"] == []
-        second = restore_backup(db, backup)
+        second = restore_backup(SqlAlchemyBackupRepository(db), backup)
         assert second["errors"] == []
 
         after = _counts(db, user.id)
@@ -175,7 +176,7 @@ def test_user_badge_fk_remaps_to_reseeded_badge():
         db.flush()
         db.add(UserBadge(user_id=user.id, badge_id=badge.id))
         db.commit()
-        backup = create_backup(db, user.id)
+        backup = create_backup(SqlAlchemyBackupRepository(db), user.id)
 
         # Re-seed the badge under a NEW id (a fresh install's catalog).
         # Deleting the badge CASCADE-removes the local user_badge, so the
@@ -191,7 +192,7 @@ def test_user_badge_fk_remaps_to_reseeded_badge():
         db.commit()
         assert local_badge.id != badge.id
 
-        result = restore_backup(db, backup)
+        result = restore_backup(SqlAlchemyBackupRepository(db), backup)
         assert result["errors"] == []
 
         rows = db.query(UserBadge).filter(UserBadge.user_id == user.id).all()
@@ -236,7 +237,7 @@ def test_restore_coerces_json_text_column_from_object():
             )
         )
         db.commit()
-        backup = create_backup(db, user.id)
+        backup = create_backup(SqlAlchemyBackupRepository(db), user.id)
 
         # Simulate the older/Dexie backup shape: an object, not a string.
         # Bump the timestamp so the merge actually applies the update
@@ -249,7 +250,7 @@ def test_restore_coerces_json_text_column_from_object():
                 }
                 record["updated_at"] = "2099-01-01T00:00:00+00:00"
 
-        result = restore_backup(db, backup)
+        result = restore_backup(SqlAlchemyBackupRepository(db), backup)
         assert result["errors"] == []
 
         stored = db.query(Badge).filter(Badge.key == "lessons_10").one()
@@ -268,7 +269,7 @@ def test_all_tables_present_even_when_empty():
     db = _session()
     try:
         user = _seed(db)
-        backup = create_backup(db, user.id)
+        backup = create_backup(SqlAlchemyBackupRepository(db), user.id)
 
         present = set(backup["data"].keys())
         # ALL backup tables are present, regardless of row count.
@@ -279,7 +280,7 @@ def test_all_tables_present_even_when_empty():
             assert backup["data"][empty] == [], f"{empty} should be an empty list"
 
         # And the restore covers all 30 tables in its per-table summary.
-        result = restore_backup(db, backup)
+        result = restore_backup(SqlAlchemyBackupRepository(db), backup)
         assert result["errors"] == []
         assert set(result["tables"].keys()) == set(ALL_BACKUP_TABLES)
     finally:
@@ -306,7 +307,7 @@ def test_subjects_reconcile_by_natural_key_no_duplication():
         child = Subject(name="Spanisch", parent_id=root.id)
         db.add(child)
         db.commit()
-        backup = create_backup(db, user.id)
+        backup = create_backup(SqlAlchemyBackupRepository(db), user.id)
 
         # Re-seed the SAME tree under NEW ids (a fresh install's taxonomy).
         db.delete(child)
@@ -319,7 +320,7 @@ def test_subjects_reconcile_by_natural_key_no_duplication():
         db.add(new_child)
         db.commit()
 
-        result = restore_backup(db, backup)
+        result = restore_backup(SqlAlchemyBackupRepository(db), backup)
         assert result["errors"] == []
 
         # Exactly two subjects — reconciled, not duplicated.
@@ -364,7 +365,7 @@ def test_restore_rehomes_cross_identity_backup_to_importing_user():
         db.flush()
         db.add(LearningTopic(curriculum_id=curriculum.id, title="Topic", order_index=0))
         db.commit()
-        backup = create_backup(db, author.id)
+        backup = create_backup(SqlAlchemyBackupRepository(db), author.id)
 
         # Fresh identity: the author is gone, a NEW user holds the install.
         for model in (ImportedMessage, ImportedConversation, LearningTopic, Curriculum):
@@ -376,7 +377,7 @@ def test_restore_rehomes_cross_identity_backup_to_importing_user():
         db.add(importer)
         db.commit()
 
-        result = restore_backup(db, backup, target_user_id=importer.id)
+        result = restore_backup(SqlAlchemyBackupRepository(db), backup, target_user_id=importer.id)
         assert result["errors"] == []
 
         # The whole tree landed under the importing user, none dropped.

@@ -16,6 +16,7 @@ from datetime import UTC, datetime
 import pytest
 
 from app.models import Badge, User, UserBadge
+from app.repositories.backup_repo import SqlAlchemyBackupRepository
 from app.services.backup_service import create_backup, restore_backup
 
 
@@ -70,7 +71,7 @@ def test_restore_remaps_badges_by_key_no_unique_crash(db) -> None:
     )
     db.commit()
 
-    payload = create_backup(db, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db), user.id)
 
     # Simulate a different install / re-seed: same keys, NEW ids.
     db.query(UserBadge).delete()
@@ -81,7 +82,7 @@ def test_restore_remaps_badges_by_key_no_unique_crash(db) -> None:
     db.commit()
 
     # Must not raise UNIQUE constraint failed: badges.key.
-    summary = restore_backup(db, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db), payload)
     assert not summary["errors"], summary["errors"]
 
     # Catalog: exactly 2 badges, not duplicated, LOCAL ids preserved.
@@ -113,8 +114,8 @@ def test_restore_same_install_badges_unchanged(db) -> None:
     )
     db.commit()
 
-    payload = create_backup(db, user.id)
-    summary = restore_backup(db, payload)
+    payload = create_backup(SqlAlchemyBackupRepository(db), user.id)
+    summary = restore_backup(SqlAlchemyBackupRepository(db), payload)
     assert not summary["errors"], summary["errors"]
     assert [b.id for b in db.query(Badge).all()] == ["b-1"]
     earned = db.query(UserBadge).filter(UserBadge.user_id == user.id).all()

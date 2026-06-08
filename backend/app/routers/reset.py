@@ -14,9 +14,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import get_reset_repo
+from app.repositories.reset_repo import ResetRepository
 from app.services import reset_service
 
 router = APIRouter(prefix="/reset", tags=["reset"])
@@ -46,7 +46,7 @@ class ResetResult(BaseModel):
 @router.post("", response_model=ResetResult)
 def reset(
     payload: ResetRequest,
-    db: Session = Depends(get_db),
+    repo: ResetRepository = Depends(get_reset_repo),
 ) -> ResetResult:
     """Wipe every learner row + every identity / API-key trace.
 
@@ -61,5 +61,5 @@ def reset(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Confirmation token mismatch.",
         )
-    count = reset_service.reset_all(db)
+    count = reset_service.reset_all(repo)
     return ResetResult(reset=True, tables_cleared=count)

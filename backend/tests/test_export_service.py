@@ -40,6 +40,7 @@ from app.models import (
     StepEvaluation,
     User,
 )
+from app.repositories.export_repo import SqlAlchemyExportRepository
 from app.services.export_service import (
     EXPORT_FORMAT,
     EXPORT_VERSION,
@@ -156,7 +157,7 @@ def _seed_full_progress(db, user, project) -> LearningSession:
 
 def test_progress_report_envelope(db_session):
     user, _ = _seed_user_with_project(db_session)
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     assert payload["format"] == EXPORT_FORMAT
     assert payload["version"] == EXPORT_VERSION
     assert payload["type"] == "progress_report"
@@ -168,7 +169,7 @@ def test_progress_report_envelope(db_session):
 def test_session_detail_envelope(db_session):
     user, project = _seed_user_with_project(db_session)
     session = _seed_full_progress(db_session, user, project)
-    payload = build_session_detail(db_session, session.id, lang="en")
+    payload = build_session_detail(SqlAlchemyExportRepository(db_session), session.id, lang="en")
     assert payload["type"] == "session_detail"
     assert payload["lang"] == "en"
     assert payload["format"] == EXPORT_FORMAT
@@ -179,7 +180,7 @@ def test_curriculum_overview_envelope(db_session):
     curriculum = Curriculum(user_id=user.id, title="Intro", language="de")
     db_session.add(curriculum)
     db_session.commit()
-    payload = build_curriculum_overview(db_session, curriculum.id)
+    payload = build_curriculum_overview(SqlAlchemyExportRepository(db_session), curriculum.id)
     assert payload["type"] == "curriculum_overview"
     assert payload["format"] == EXPORT_FORMAT
 
@@ -189,12 +190,12 @@ def test_curriculum_overview_envelope(db_session):
 
 def test_progress_report_unknown_user_raises_404(db_session):
     with pytest.raises(NotFoundError):
-        build_progress_report(db_session, "nonexistent-id")
+        build_progress_report(SqlAlchemyExportRepository(db_session), "nonexistent-id")
 
 
 def test_progress_report_user_without_data(db_session):
     user = _seed_minimal_user(db_session)
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     assert payload["user"]["id"] == user.id
     assert payload["user"]["name"] == "Aster"
     assert payload["profile"] is None
@@ -207,7 +208,7 @@ def test_progress_report_user_without_data(db_session):
 def test_progress_report_includes_profile(db_session):
     user, project = _seed_user_with_project(db_session)
     _seed_full_progress(db_session, user, project)
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     profile = payload["profile"]
     assert profile is not None
     assert profile["deductive"] == 0.7
@@ -244,7 +245,7 @@ def test_progress_report_picks_latest_profile(db_session):
     )
     db_session.add_all([older, newer])
     db_session.commit()
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     assert payload["profile"]["version"] == 2
     assert payload["profile"]["inductive"] == 0.9
 
@@ -252,7 +253,7 @@ def test_progress_report_picks_latest_profile(db_session):
 def test_progress_report_project_summary(db_session):
     user, project = _seed_user_with_project(db_session)
     _seed_full_progress(db_session, user, project)
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     assert len(payload["projects"]) == 1
     proj = payload["projects"][0]
     assert proj["topic"] == "Bayes-Statistik"
@@ -277,7 +278,7 @@ def test_progress_report_includes_method_switches(db_session):
         )
     )
     db_session.commit()
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     switches = payload["projects"][0]["method_switches"]
     assert len(switches) == 1
     assert switches[0]["from_method"] == "deductive"
@@ -299,7 +300,7 @@ def test_progress_report_recent_sessions_newest_first(db_session):
             )
         )
     db_session.commit()
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     sessions = payload["recent_sessions"]
     assert len(sessions) == 3
     # Newest first
@@ -324,7 +325,7 @@ def test_progress_report_step_insights_aggregates_by_from_step(db_session):
         )
     )
     db_session.commit()
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     insights = payload["step_evaluation_insights"]
     assert insights is not None
     step_1 = [e for e in insights if e["step"] == 1][0]
@@ -342,9 +343,7 @@ def test_progress_report_extractions_only_includes_analyzed(db_session):
         title="Bayes Tutoring",
         message_count=10,
         analyzed=True,
-        analysis_result=json.dumps(
-            {"topic": "Bayes", "key_gaps": ["priors", "posteriors"]}
-        ),
+        analysis_result=json.dumps({"topic": "Bayes", "key_gaps": ["priors", "posteriors"]}),
         topic_tag="bayes",
     )
     pending = ImportedConversation(
@@ -356,7 +355,7 @@ def test_progress_report_extractions_only_includes_analyzed(db_session):
     )
     db_session.add_all([analyzed, pending])
     db_session.commit()
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     assert len(payload["extractions"]) == 1
     assert payload["extractions"][0]["title"] == "Bayes Tutoring"
     assert payload["extractions"][0]["analysis"]["topic"] == "Bayes"
@@ -377,7 +376,7 @@ def test_progress_report_excludes_other_users_projects(db_session):
         )
     )
     db_session.commit()
-    payload = build_progress_report(db_session, user_a.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user_a.id)
     assert payload["projects"] == []
 
 
@@ -386,13 +385,13 @@ def test_progress_report_excludes_other_users_projects(db_session):
 
 def test_session_detail_unknown_id_raises_404(db_session):
     with pytest.raises(NotFoundError):
-        build_session_detail(db_session, "nonexistent-id")
+        build_session_detail(SqlAlchemyExportRepository(db_session), "nonexistent-id")
 
 
 def test_session_detail_full_payload(db_session):
     user, project = _seed_user_with_project(db_session)
     session = _seed_full_progress(db_session, user, project)
-    payload = build_session_detail(db_session, session.id)
+    payload = build_session_detail(SqlAlchemyExportRepository(db_session), session.id)
     assert payload["session"]["id"] == session.id
     assert payload["session"]["method"] == "deductive"
     assert payload["session"]["duration_minutes"] == 30
@@ -422,7 +421,7 @@ def test_session_detail_unrated_session(db_session):
     )
     db_session.add(session)
     db_session.commit()
-    payload = build_session_detail(db_session, session.id)
+    payload = build_session_detail(SqlAlchemyExportRepository(db_session), session.id)
     assert payload["rating"] is None
     assert payload["messages"] == []
     assert payload["step_evaluations"] == []
@@ -434,7 +433,7 @@ def test_session_detail_unrated_session(db_session):
 
 def test_curriculum_overview_unknown_id_raises_404(db_session):
     with pytest.raises(NotFoundError):
-        build_curriculum_overview(db_session, "nonexistent-id")
+        build_curriculum_overview(SqlAlchemyExportRepository(db_session), "nonexistent-id")
 
 
 def test_curriculum_overview_empty(db_session):
@@ -444,7 +443,7 @@ def test_curriculum_overview_empty(db_session):
     )
     db_session.add(curriculum)
     db_session.commit()
-    payload = build_curriculum_overview(db_session, curriculum.id)
+    payload = build_curriculum_overview(SqlAlchemyExportRepository(db_session), curriculum.id)
     assert payload["curriculum"]["title"] == "Empty curriculum"
     assert payload["topics"] == []
     assert payload["lessons"] == []
@@ -456,12 +455,8 @@ def test_curriculum_overview_topic_tree_depth(db_session):
     db_session.add(curriculum)
     db_session.flush()
 
-    root_a = LearningTopic(
-        curriculum_id=curriculum.id, title="Root A", order_index=0
-    )
-    root_b = LearningTopic(
-        curriculum_id=curriculum.id, title="Root B", order_index=1
-    )
+    root_a = LearningTopic(curriculum_id=curriculum.id, title="Root A", order_index=0)
+    root_b = LearningTopic(curriculum_id=curriculum.id, title="Root B", order_index=1)
     db_session.add_all([root_a, root_b])
     db_session.flush()
 
@@ -483,7 +478,7 @@ def test_curriculum_overview_topic_tree_depth(db_session):
     db_session.add(grandchild)
     db_session.commit()
 
-    payload = build_curriculum_overview(db_session, curriculum.id)
+    payload = build_curriculum_overview(SqlAlchemyExportRepository(db_session), curriculum.id)
     topics = payload["topics"]
     titles = [t["title"] for t in topics]
     depths = {t["title"]: t["depth"] for t in topics}
@@ -517,7 +512,7 @@ def test_curriculum_overview_includes_lessons(db_session):
         )
     )
     db_session.commit()
-    payload = build_curriculum_overview(db_session, curriculum.id)
+    payload = build_curriculum_overview(SqlAlchemyExportRepository(db_session), curriculum.id)
     assert len(payload["lessons"]) == 2
     assert payload["lessons"][0]["title"] == "Lesson 1"
     assert payload["lessons"][1]["title"] == "Lesson 2"
@@ -531,7 +526,7 @@ def test_progress_report_never_includes_api_keys(db_session):
     payload has no fields whose name suggests a secret."""
     user, project = _seed_user_with_project(db_session)
     _seed_full_progress(db_session, user, project)
-    payload = build_progress_report(db_session, user.id)
+    payload = build_progress_report(SqlAlchemyExportRepository(db_session), user.id)
     text = json.dumps(payload, default=str)
     assert "api_key" not in text
     assert "sk-" not in text

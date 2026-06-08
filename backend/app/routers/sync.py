@@ -28,7 +28,9 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.deps import get_sync_repo
 from app.exceptions import NotFoundError, ValidationError
+from app.repositories.sync_repo import SyncRepository
 from app.schemas import UserOut
 from app.services import pairing as pairing_service
 from app.services import sync_service
@@ -123,18 +125,18 @@ class StatusResponse(BaseModel):
 
 
 @router.get("/status", response_model=StatusResponse)
-def sync_status(user_id: str, db: Session = Depends(get_db)) -> StatusResponse:
-    summary = compute_status(db, user_id)
+def sync_status(user_id: str, repo: SyncRepository = Depends(get_sync_repo)) -> StatusResponse:
+    summary = compute_status(repo, user_id)
     return StatusResponse(**summary)
 
 
 @router.post("/push", response_model=PushResponse)
-def sync_push(payload: PushBody, db: Session = Depends(get_db)) -> PushResponse:
+def sync_push(payload: PushBody, repo: SyncRepository = Depends(get_sync_repo)) -> PushResponse:
     if payload.table not in sync_service.TABLES:
         raise ValidationError(f"Unknown sync table: {payload.table!r}")
     since = sync_service._from_iso(payload.since) if payload.since else None
     outcome = push_records(
-        db,
+        repo,
         user_id=payload.user_id,
         table=payload.table,
         records=payload.records,
@@ -156,18 +158,20 @@ def sync_push(payload: PushBody, db: Session = Depends(get_db)) -> PushResponse:
 
 
 @router.post("/pull", response_model=PullResponse)
-def sync_pull(payload: PullBody, db: Session = Depends(get_db)) -> PullResponse:
+def sync_pull(payload: PullBody, repo: SyncRepository = Depends(get_sync_repo)) -> PullResponse:
     tables = tuple(payload.tables) if payload.tables else ALL_SYNC_TABLES
     unknown = [t for t in tables if t not in sync_service.TABLES]
     if unknown:
         raise ValidationError(f"Unknown sync tables: {unknown}")
     since = sync_service._from_iso(payload.since) if payload.since else None
-    records = pull_records(db, payload.user_id, tables, since)
+    records = pull_records(repo, payload.user_id, tables, since)
     return PullResponse(records=records)
 
 
 @router.post("/resolve", response_model=ResolveResponse)
-def sync_resolve(payload: ResolveBody, db: Session = Depends(get_db)) -> ResolveResponse:
+def sync_resolve(
+    payload: ResolveBody, repo: SyncRepository = Depends(get_sync_repo)
+) -> ResolveResponse:
     resolutions = [
         Resolution(
             table=r.table,
@@ -177,7 +181,7 @@ def sync_resolve(payload: ResolveBody, db: Session = Depends(get_db)) -> Resolve
         )
         for r in payload.resolutions
     ]
-    outcome = apply_resolutions(db, payload.user_id, resolutions)
+    outcome = apply_resolutions(repo, payload.user_id, resolutions)
     return ResolveResponse(**outcome)
 
 

@@ -29,6 +29,7 @@ from app.schemas import (
     AnkiCardSuggestionUpdate,
 )
 from app.services import settings as settings_service
+from app.repositories.settings_repo import SqlAlchemySettingsRepository
 
 from . import card_extraction
 
@@ -83,7 +84,7 @@ def _build_ai_caller(db: Session, user_id: str):
     """
     from app.main import manager  # lazy: cycle-avoidance + tests
 
-    settings = settings_service.get_or_create_settings(db, user_id)
+    settings = settings_service.get_or_create_settings(SqlAlchemySettingsRepository(db), user_id)
     provider_key = settings.active_provider
     try:
         provider_enum = AIProvider(provider_key)
@@ -92,8 +93,7 @@ def _build_ai_caller(db: Session, user_id: str):
             f"User {user_id!r} has no valid active AI provider configured."
         ) from exc
     # Phase 34 — env > secrets.yaml > DB resolution.
-    api_key, _source = settings_service.resolve_api_key(
-        db, user_id, provider_enum
+    api_key, _source = settings_service.resolve_api_key(SqlAlchemySettingsRepository(db), user_id, provider_enum
     )
     if not api_key:
         raise ValidationError(

@@ -36,7 +36,7 @@ import logging
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy.orm import Session
 
@@ -73,6 +73,13 @@ from app.models import (
     UserStreak,
     UserXP,
 )
+
+if TYPE_CHECKING:
+    # Type-only import: the orchestration functions take a SyncRepository,
+    # but sync_repo imports _scoped_query / TABLES from THIS module at
+    # runtime (EXP-024 Option A). PEP 563 string annotations + this guard
+    # keep that a one-way runtime dependency (sync_repo -> sync_service).
+    from app.repositories.sync_repo import SyncRepository
 
 logger = logging.getLogger(__name__)
 
@@ -780,7 +787,7 @@ def _row_belongs_to_user(table: str, row: Any, user_id: str) -> bool:
 
 
 def push_records(
-    db: Session,
+    repo: SyncRepository,
     user_id: str,
     table: str,
     records: list[dict[str, Any]],
@@ -804,7 +811,7 @@ def push_records(
         if not isinstance(record_id, str) or not record_id:
             result.skipped.append("<no-id>")
             continue
-        existing = db.get(model, record_id)
+        existing = repo.get_by_pk(model, record_id)
         if spec.append_only:
             if existing is not None:
                 result.skipped.append(record_id)
@@ -814,7 +821,7 @@ def push_records(
                 # Skip rows that don't scope to this user, defensively.
                 result.skipped.append(record_id)
                 continue
-            db.add(row)
+            repo.add(row)
             result.accepted.append(record_id)
             continue
 
@@ -825,7 +832,7 @@ def push_records(
             if not _row_belongs_to_user(table, row, user_id):
                 result.skipped.append(record_id)
                 continue
-            db.add(row)
+            repo.add(row)
             result.accepted.append(record_id)
             continue
         if not _row_belongs_to_user(table, existing, user_id):
@@ -865,9 +872,9 @@ def push_records(
     if result.accepted or result.conflicts == [] and result.accepted == []:
         # Always commit even on empty acceptance so subsequent
         # cascading reads see a clean transaction.
-        db.commit()
+        repo.commit()
     else:
-        db.flush()
+        repo.flush()
     return result
 
 
@@ -916,7 +923,7 @@ def _scoped_query(db: Session, table: str, user_id: str):
 
 
 def pull_records(
-    db: Session,
+    repo: SyncRepository,
     user_id: str,
     tables: Iterable[str],
     since: datetime | None,
@@ -928,16 +935,8 @@ def pull_records(
     for table in tables:
         if table not in TABLES:
             continue
-        spec = TABLES[table]
-        query = _scoped_query(db, table, user_id)
-        if since is not None:
-            ts_col = getattr(spec.model, spec.timestamp_field)
-            query = query.filter(ts_col > since)
-        # Order so child rows always follow parents inside one
-        # batch — the client applies in order.
-        ts_col = getattr(spec.model, spec.timestamp_field)
-        query = query.order_by(ts_col.asc())
-        out[table] = [serialize_row(table, row) for row in query.all()]
+        rows = repo.scoped_rows_since(table, user_id, since)
+        out[table] = [serialize_row(table, row) for row in rows]
     return out
 
 
@@ -955,7 +954,7 @@ class Resolution:
 
 
 def apply_resolutions(
-    db: Session, user_id: str, resolutions: list[Resolution]
+    repo: SyncRepository, user_id: str, resolutions: list[Resolution]
 ) -> dict[str, list[str]]:
     """Apply user-decided conflict resolutions.
 
@@ -975,7 +974,7 @@ def apply_resolutions(
         if spec is None:
             skipped.append(resolution.record_id)
             continue
-        existing = db.get(spec.model, resolution.record_id)
+        existing = repo.get_by_pk(spec.model, resolution.record_id)
         if resolution.chosen == "local":
             if existing is None:
                 skipped.append(resolution.record_id)
@@ -990,11 +989,11 @@ def apply_resolutions(
             _apply_record(resolution.table, payload, existing)
             if existing is None and payload.get("id"):
                 row = _apply_record(resolution.table, payload, None)
-                db.add(row)
+                repo.add(row)
             applied.append(resolution.record_id)
         else:
             skipped.append(resolution.record_id)
-    db.commit()
+    repo.commit()
     return {"applied": applied, "skipped": skipped}
 
 
@@ -1003,18 +1002,18 @@ def apply_resolutions(
 # ---------------------------------------------------------------------------
 
 
-def compute_status(db: Session, user_id: str) -> dict[str, Any]:
+def compute_status(repo: SyncRepository, user_id: str) -> dict[str, Any]:
     """Per-table row counts, scoped to the user.
 
     Used by the Settings sync panel + the periodic
     "is there anything to sync" check. Cheap — single COUNT(*)
     per table.
     """
-    if db.get(User, user_id) is None:
+    if not repo.user_exists(user_id):
         raise NotFoundError(f"User {user_id!r} not found.")
     counts: dict[str, int] = {}
     for table in TABLES:
-        counts[table] = _scoped_query(db, table, user_id).count()
+        counts[table] = repo.scoped_count(table, user_id)
     return {
         "user_id": user_id,
         "counts": counts,

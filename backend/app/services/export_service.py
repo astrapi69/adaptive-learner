@@ -28,25 +28,15 @@ import json
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy.orm import Session
-
 from app import __version__
 from app.exceptions import NotFoundError
 from app.models import (
-    Curriculum,
-    ImportedConversation,
-    LearningProfile,
     LearningProject,
-    LearningSession,
     LearningTopic,
-    Lesson,
-    MethodSwitch,
-    ProgressCommit,
-    SessionMessage,
     SessionRating,
     StepEvaluation,
-    User,
 )
+from app.repositories.export_repo import ExportRepository
 
 EXPORT_VERSION = "1.3.0"
 EXPORT_FORMAT = "adaptive-learner-export"
@@ -93,7 +83,7 @@ def _envelope(export_type: str) -> dict[str, Any]:
 
 
 def build_progress_report(
-    db: Session,
+    repo: ExportRepository,
     user_id: str,
     *,
     lang: str = "de",
@@ -104,22 +94,17 @@ def build_progress_report(
     renderers. Empty collections instead of ``None`` so renderers
     can map over fields without conditional fallbacks.
     """
-    user = db.query(User).filter(User.id == user_id).first()
+    user = repo.get_user(user_id)
     if user is None:
         raise NotFoundError(f"User {user_id} not found")
 
-    projects = (
-        db.query(LearningProject)
-        .filter(LearningProject.user_id == user_id)
-        .order_by(LearningProject.created_at.asc())
-        .all()
-    )
-    projects_data = [_project_summary(db, p) for p in projects]
+    projects = repo.list_projects_by_user(user_id)
+    projects_data = [_project_summary(repo, p) for p in projects]
 
-    latest_profile = _latest_profile(db, user_id)
-    recent_sessions = _recent_sessions(db, [p.id for p in projects], limit=10)
-    step_insights = _step_evaluation_insights(db, [p.id for p in projects])
-    extractions = _extraction_summaries(db, user_id)
+    latest_profile = _latest_profile(repo, user_id)
+    recent_sessions = _recent_sessions(repo, [p.id for p in projects], limit=10)
+    step_insights = _step_evaluation_insights(repo, [p.id for p in projects])
+    extractions = _extraction_summaries(repo, user_id)
 
     return {
         **_envelope("progress_report"),
@@ -137,15 +122,10 @@ def build_progress_report(
     }
 
 
-def _latest_profile(db: Session, user_id: str) -> dict[str, Any] | None:
+def _latest_profile(repo: ExportRepository, user_id: str) -> dict[str, Any] | None:
     """Most recent :class:`LearningProfile` row for the user, or
     ``None`` if the user never completed the assessment."""
-    row = (
-        db.query(LearningProfile)
-        .filter(LearningProfile.user_id == user_id)
-        .order_by(LearningProfile.assessed_at.desc())
-        .first()
-    )
+    row = repo.latest_profile(user_id)
     if row is None:
         return None
     return {
@@ -161,23 +141,13 @@ def _latest_profile(db: Session, user_id: str) -> dict[str, Any] | None:
     }
 
 
-def _project_summary(db: Session, project: LearningProject) -> dict[str, Any]:
+def _project_summary(repo: ExportRepository, project: LearningProject) -> dict[str, Any]:
     """Per-project aggregate: counts, mean rating, method
     distribution, switch history. Reads :class:`ProgressCommit`
     rows directly so the same numbers Dashboard shows turn up
     here."""
-    commits = (
-        db.query(ProgressCommit)
-        .filter(ProgressCommit.project_id == project.id)
-        .order_by(ProgressCommit.committed_at.asc())
-        .all()
-    )
-    switches = (
-        db.query(MethodSwitch)
-        .filter(MethodSwitch.project_id == project.id)
-        .order_by(MethodSwitch.switched_at.asc())
-        .all()
-    )
+    commits = repo.list_commits_for_project(project.id)
+    switches = repo.list_method_switches_for_project(project.id)
 
     session_count = len(commits)
     total_minutes = sum(c.duration_minutes for c in commits)
@@ -226,7 +196,7 @@ def _project_summary(db: Session, project: LearningProject) -> dict[str, Any]:
 
 
 def _recent_sessions(
-    db: Session, project_ids: list[str], *, limit: int = 10
+    repo: ExportRepository, project_ids: list[str], *, limit: int = 10
 ) -> list[dict[str, Any]]:
     """Last ``limit`` sessions across all the user's projects,
     newest first. Each row carries the parent project's topic
@@ -234,31 +204,16 @@ def _recent_sessions(
     lookup."""
     if not project_ids:
         return []
-    sessions = (
-        db.query(LearningSession)
-        .filter(LearningSession.project_id.in_(project_ids))
-        .order_by(LearningSession.started_at.desc())
-        .limit(limit)
-        .all()
-    )
-    topic_by_id = {
-        p.id: p.topic
-        for p in db.query(LearningProject).filter(LearningProject.id.in_(project_ids)).all()
-    }
+    sessions = repo.list_recent_sessions(project_ids, limit=limit)
+    topic_by_id = {p.id: p.topic for p in repo.list_projects_by_ids(project_ids)}
     # Pre-fetch the latest rating per session in ONE query (was an
     # N+1: a per-session SessionRating query inside the loop). Rows
     # come back newest-first, so the first seen per session_id is the
     # latest — ``setdefault`` keeps it.
     session_ids = [s.id for s in sessions]
     rating_by_session: dict[str, SessionRating] = {}
-    if session_ids:
-        for r in (
-            db.query(SessionRating)
-            .filter(SessionRating.session_id.in_(session_ids))
-            .order_by(SessionRating.created_at.desc())
-            .all()
-        ):
-            rating_by_session.setdefault(r.session_id, r)
+    for r in repo.list_ratings_for_sessions(session_ids):
+        rating_by_session.setdefault(r.session_id, r)
     out: list[dict[str, Any]] = []
     for s in sessions:
         rating = rating_by_session.get(s.id)
@@ -280,20 +235,19 @@ def _recent_sessions(
     return out
 
 
-def _step_evaluation_insights(db: Session, project_ids: list[str]) -> list[dict[str, Any]] | None:
+def _step_evaluation_insights(
+    repo: ExportRepository, project_ids: list[str]
+) -> list[dict[str, Any]] | None:
     """Per-cycle-step aggregates: how often each step was reached,
     advance rate, mean confidence. Returns ``None`` when the user
     has no step-evaluations yet (the section is rendered only when
     there is data to show)."""
     if not project_ids:
         return None
-    session_ids = [
-        s.id
-        for s in db.query(LearningSession).filter(LearningSession.project_id.in_(project_ids)).all()
-    ]
+    session_ids = [s.id for s in repo.list_sessions_for_projects(project_ids)]
     if not session_ids:
         return None
-    evaluations = db.query(StepEvaluation).filter(StepEvaluation.session_id.in_(session_ids)).all()
+    evaluations = repo.list_step_evaluations_for_sessions(session_ids)
     if not evaluations:
         return None
 
@@ -323,20 +277,14 @@ def _step_evaluation_insights(db: Session, project_ids: list[str]) -> list[dict[
     return out
 
 
-def _extraction_summaries(db: Session, user_id: str) -> list[dict[str, Any]]:
+def _extraction_summaries(repo: ExportRepository, user_id: str) -> list[dict[str, Any]]:
     """Imported-conversation analysis summaries (Phase 16E hook).
 
     Returns analyzed conversations only; pending imports are
     excluded so the report stays focused on actionable data.
     Empty list when the user has no analyzed conversations.
     """
-    rows = (
-        db.query(ImportedConversation)
-        .filter(ImportedConversation.user_id == user_id)
-        .filter(ImportedConversation.analyzed.is_(True))
-        .order_by(ImportedConversation.imported_at.desc())
-        .all()
-    )
+    rows = repo.list_analyzed_conversations(user_id)
     out: list[dict[str, Any]] = []
     for r in rows:
         analysis: dict[str, Any] = {}
@@ -366,36 +314,21 @@ def _extraction_summaries(db: Session, user_id: str) -> list[dict[str, Any]]:
 
 
 def build_session_detail(
-    db: Session,
+    repo: ExportRepository,
     session_id: str,
     *,
     lang: str = "de",
 ) -> dict[str, Any]:
     """Aggregate one session with full transcript + ratings +
     step-evaluation timeline."""
-    session = db.query(LearningSession).filter(LearningSession.id == session_id).first()
+    session = repo.get_session(session_id)
     if session is None:
         raise NotFoundError(f"Session {session_id} not found")
 
-    project = db.query(LearningProject).filter(LearningProject.id == session.project_id).first()
-    messages = (
-        db.query(SessionMessage)
-        .filter(SessionMessage.session_id == session_id)
-        .order_by(SessionMessage.created_at.asc())
-        .all()
-    )
-    rating = (
-        db.query(SessionRating)
-        .filter(SessionRating.session_id == session_id)
-        .order_by(SessionRating.created_at.desc())
-        .first()
-    )
-    evaluations = (
-        db.query(StepEvaluation)
-        .filter(StepEvaluation.session_id == session_id)
-        .order_by(StepEvaluation.evaluated_at.asc())
-        .all()
-    )
+    project = repo.get_project(session.project_id)
+    messages = repo.list_messages_for_session(session_id)
+    rating = repo.latest_rating_for_session(session_id)
+    evaluations = repo.list_step_evaluations_for_session(session_id)
 
     return {
         **_envelope("session_detail"),
@@ -470,7 +403,7 @@ def _duration_minutes(started_at: datetime | None, ended_at: datetime | None) ->
 
 
 def build_curriculum_overview(
-    db: Session,
+    repo: ExportRepository,
     curriculum_id: str,
     *,
     lang: str = "de",
@@ -482,22 +415,12 @@ def build_curriculum_overview(
     by depth. Order is depth-first traversal of the parent_id
     tree, falling back to insertion order for orphans.
     """
-    curriculum = db.query(Curriculum).filter(Curriculum.id == curriculum_id).first()
+    curriculum = repo.get_curriculum(curriculum_id)
     if curriculum is None:
         raise NotFoundError(f"Curriculum {curriculum_id} not found")
 
-    topics = (
-        db.query(LearningTopic)
-        .filter(LearningTopic.curriculum_id == curriculum_id)
-        .order_by(LearningTopic.order_index.asc(), LearningTopic.created_at.asc())
-        .all()
-    )
-    lessons = (
-        db.query(Lesson)
-        .filter(Lesson.curriculum_id == curriculum_id)
-        .order_by(Lesson.order_index.asc(), Lesson.created_at.asc())
-        .all()
-    )
+    topics = repo.list_topics_for_curriculum(curriculum_id)
+    lessons = repo.list_lessons_for_curriculum(curriculum_id)
 
     topic_data = _flatten_topic_tree(topics)
 

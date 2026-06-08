@@ -19,10 +19,10 @@ from typing import Any
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import get_settings_repo
 from app.exceptions import ExternalServiceError, ValidationError
+from app.repositories.settings_repo import SettingsRepository
 from app.schemas import AIProvider
 from app.services import content_validation
 from app.services import settings as settings_service
@@ -72,16 +72,16 @@ def _resolve_model(provider_key: str, settings: Any) -> str:
 @router.post("/validate-lesson", response_model=ValidationResultResponse)
 def validate_lesson(
     body: ValidateLessonRequest,
-    db: Session = Depends(get_db),
+    repo: SettingsRepository = Depends(get_settings_repo),
 ) -> ValidationResultResponse:
-    settings = settings_service.get_or_create_settings(db, body.user_id)
+    settings = settings_service.get_or_create_settings(repo, body.user_id)
     provider_key = settings.active_provider
     try:
         provider_enum = AIProvider(provider_key)
     except ValueError as exc:
         raise ValidationError(f"User {body.user_id!r} has no valid active AI provider.") from exc
 
-    api_key, _source = settings_service.resolve_api_key(db, body.user_id, provider_enum)
+    api_key, _source = settings_service.resolve_api_key(repo, body.user_id, provider_enum)
     if not api_key:
         raise ValidationError(
             f"User {body.user_id!r} has no API key for provider {provider_key!r}."

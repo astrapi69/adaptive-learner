@@ -38,9 +38,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy.orm import Session
-
 from app.models import ElementError
+from app.repositories.element_errors_repo import ElementErrorsRepository
 from app.services import element_errors as element_errors_service
 
 
@@ -162,7 +161,7 @@ def _sort_key(item: ReviewQueueItem) -> tuple[int, float, int]:
 
 
 def compute_review_queue(
-    db: Session,
+    repo: ElementErrorsRepository,
     user_id: str,
     *,
     set_id: str | None = None,
@@ -175,7 +174,7 @@ def compute_review_queue(
     """
     clock = now if now is not None else _utcnow()
     rows = element_errors_service.list_for_user(
-        db,
+        repo,
         user_id,
         set_id=set_id,
         include_mastered=False,

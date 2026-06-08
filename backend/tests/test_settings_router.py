@@ -19,6 +19,7 @@ from fastapi.testclient import TestClient
 
 from app.database import SessionLocal
 from app.models import UserSettings
+from app.repositories.settings_repo import SqlAlchemySettingsRepository
 from app.routers.settings import router as settings_router
 from app.routers.users import router as users_router
 from app.services import secrets_service
@@ -107,7 +108,9 @@ def test_get_or_create_settings_survives_concurrent_first_access(client: TestCli
         # ``user.settings is None`` will route it through the insert
         # branch; the commit must hit IntegrityError, recover, and
         # return the winner's row.
-        result = settings_service.get_or_create_settings(db_loser, user_id)
+        result = settings_service.get_or_create_settings(
+            SqlAlchemySettingsRepository(db_loser), user_id
+        )
         assert result.id == winner_id
     finally:
         db_loser.close()

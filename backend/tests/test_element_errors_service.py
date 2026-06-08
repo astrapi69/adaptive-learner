@@ -33,6 +33,7 @@ from fastapi.testclient import TestClient
 from app.database import SessionLocal
 from app.main import app
 from app.models import ElementError
+from app.repositories.element_errors_repo import SqlAlchemyElementErrorsRepository
 from app.schemas import ElementAttemptIn
 from app.services.element_errors import (
     MASTERY_THRESHOLD,
@@ -102,9 +103,9 @@ def test_no_row_then_correct_creates_fresh_row_with_streak_1(
     user_id: str,
 ) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        row = record_attempt(
-            db,
+        row = record_attempt(repo,
             user_id,
             _attempt(correct=True, user_answer="merci"),
         )
@@ -123,9 +124,9 @@ def test_no_row_then_wrong_creates_fresh_row_with_error_1(
     user_id: str,
 ) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        row = record_attempt(
-            db,
+        row = record_attempt(repo,
             user_id,
             _attempt(correct=False, user_answer="bonjour"),
         )
@@ -144,9 +145,10 @@ def test_no_row_then_wrong_creates_fresh_row_with_error_1(
 
 def test_wrong_then_wrong_increments_error_count(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        record_attempt(db, user_id, _attempt(correct=False))
-        row = record_attempt(db, user_id, _attempt(correct=False))
+        record_attempt(repo, user_id, _attempt(correct=False))
+        row = record_attempt(repo, user_id, _attempt(correct=False))
         db.commit()
         assert row.error_count == 2
         assert row.correct_streak == 0
@@ -156,9 +158,10 @@ def test_wrong_then_wrong_increments_error_count(user_id: str) -> None:
 
 def test_wrong_then_correct_starts_streak_at_1(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        record_attempt(db, user_id, _attempt(correct=False))
-        row = record_attempt(db, user_id, _attempt(correct=True))
+        record_attempt(repo, user_id, _attempt(correct=False))
+        row = record_attempt(repo, user_id, _attempt(correct=True))
         db.commit()
         # error_count NOT decremented (lifetime monotonic)
         assert row.error_count == 1
@@ -170,9 +173,10 @@ def test_wrong_then_correct_starts_streak_at_1(user_id: str) -> None:
 
 def test_correct_streak_grows(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         for _ in range(MASTERY_THRESHOLD - 1):
-            row = record_attempt(db, user_id, _attempt(correct=True))
+            row = record_attempt(repo, user_id, _attempt(correct=True))
         db.commit()
         assert row.correct_streak == MASTERY_THRESHOLD - 1
         assert row.mastered is False
@@ -183,10 +187,11 @@ def test_correct_streak_grows(user_id: str) -> None:
 
 def test_mastered_flips_at_threshold(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         # Three consecutive corrects flip mastered.
         for _ in range(MASTERY_THRESHOLD):
-            row = record_attempt(db, user_id, _attempt(correct=True))
+            row = record_attempt(repo, user_id, _attempt(correct=True))
         db.commit()
         assert row.correct_streak == MASTERY_THRESHOLD
         assert row.mastered is True
@@ -199,16 +204,17 @@ def test_mastered_stays_true_on_further_corrects(user_id: str) -> None:
     """Once flipped, mastered_at does NOT bounce on every
     subsequent correct. The transition is once-per-cycle."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         for _ in range(MASTERY_THRESHOLD):
-            row = record_attempt(db, user_id, _attempt(correct=True))
+            row = record_attempt(repo, user_id, _attempt(correct=True))
         # SQLite strips tzinfo on roundtrip; compare naive values
         # so an attribute re-read after flush doesn't break the
         # equality test on otherwise-identical timestamps.
         first_mastered_at = row.mastered_at.replace(tzinfo=None)
         # Two more corrects.
-        record_attempt(db, user_id, _attempt(correct=True))
-        row = record_attempt(db, user_id, _attempt(correct=True))
+        record_attempt(repo, user_id, _attempt(correct=True))
+        row = record_attempt(repo, user_id, _attempt(correct=True))
         db.commit()
         assert row.mastered is True
         later = row.mastered_at.replace(tzinfo=None) if row.mastered_at else None
@@ -222,11 +228,12 @@ def test_mastered_demotes_on_wrong(user_id: str) -> None:
     """Pedagogical decision: a wrong answer on a mastered
     element flips it back so SRS schedules another review."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         for _ in range(MASTERY_THRESHOLD):
-            record_attempt(db, user_id, _attempt(correct=True))
+            record_attempt(repo, user_id, _attempt(correct=True))
         # Now wrong.
-        row = record_attempt(db, user_id, _attempt(correct=False))
+        row = record_attempt(repo, user_id, _attempt(correct=False))
         db.commit()
         assert row.mastered is False
         assert row.mastered_at is None
@@ -243,14 +250,13 @@ def test_user_answer_and_correct_answer_track_latest_attempt(
     """On every attempt, user_answer + correct_answer overwrite
     so the review screen can surface the most recent context."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        record_attempt(
-            db,
+        record_attempt(repo,
             user_id,
             _attempt(correct=False, user_answer="bonjour"),
         )
-        row = record_attempt(
-            db,
+        row = record_attempt(repo,
             user_id,
             _attempt(correct=False, user_answer="salut"),
         )
@@ -266,15 +272,15 @@ def test_user_answer_and_correct_answer_track_latest_attempt(
 
 def test_different_element_keys_get_separate_rows(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        record_attempt(db, user_id, _attempt(element_key="merci", correct=False))
-        record_attempt(
-            db,
+        record_attempt(repo, user_id, _attempt(element_key="merci", correct=False))
+        record_attempt(repo,
             user_id,
             _attempt(element_key="bonjour", correct=False),
         )
         db.commit()
-        all_rows = list_for_user(db, user_id)
+        all_rows = list_for_user(repo, user_id)
         keys = {r.element_key for r in all_rows}
         assert keys == {"merci", "bonjour"}
     finally:
@@ -287,19 +293,18 @@ def test_same_element_different_lesson_gets_separate_rows(
     """D2 lesson-scoped element keys: same word in two
     different lessons = two rows."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        record_attempt(
-            db,
+        record_attempt(repo,
             user_id,
             _attempt(lesson_id="01-greetings.json", correct=False),
         )
-        record_attempt(
-            db,
+        record_attempt(repo,
             user_id,
             _attempt(lesson_id="02-numbers.json", correct=False),
         )
         db.commit()
-        rows = list_for_user(db, user_id)
+        rows = list_for_user(repo, user_id)
         lesson_ids = {r.lesson_id for r in rows}
         assert lesson_ids == {"01-greetings.json", "02-numbers.json"}
         # Both rows count as 1 error each — they're separate
@@ -317,13 +322,14 @@ def test_different_users_isolated(user_id: str, client: TestClient) -> None:
     assert other.status_code in (200, 201)
     other_id = other.json()["id"]
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        record_attempt(db, user_id, _attempt(correct=False))
+        record_attempt(repo, user_id, _attempt(correct=False))
         # other user same composite key — should be a separate row.
-        record_attempt(db, other_id, _attempt(correct=False))
+        record_attempt(repo, other_id, _attempt(correct=False))
         db.commit()
-        assert len(list_for_user(db, user_id)) == 1
-        assert len(list_for_user(db, other_id)) == 1
+        assert len(list_for_user(repo, user_id)) == 1
+        assert len(list_for_user(repo, other_id)) == 1
     finally:
         db.close()
 
@@ -333,13 +339,14 @@ def test_different_users_isolated(user_id: str, client: TestClient) -> None:
 
 def test_record_attempts_preserves_input_order(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         attempts = [
             _attempt(element_key="merci", correct=False),
             _attempt(element_key="bonjour", correct=True),
             _attempt(element_key="au-revoir", correct=False),
         ]
-        rows = record_attempts(db, user_id, attempts)
+        rows = record_attempts(repo, user_id, attempts)
         db.commit()
         assert [r.element_key for r in rows] == [
             "merci",
@@ -352,8 +359,9 @@ def test_record_attempts_preserves_input_order(user_id: str) -> None:
 
 def test_record_attempts_empty_input_returns_empty(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        assert record_attempts(db, user_id, []) == []
+        assert record_attempts(repo, user_id, []) == []
         # No write either.
         assert db.query(ElementError).count() == 0
     finally:
@@ -368,9 +376,10 @@ def test_record_attempts_within_same_call_compounds_state(
     mastered — proves the intra-call dispatcher updates the
     in-session row, not just three separate inserts."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         attempts = [_attempt(correct=True) for _ in range(MASTERY_THRESHOLD)]
-        rows = record_attempts(db, user_id, attempts)
+        rows = record_attempts(repo, user_id, attempts)
         db.commit()
         # All three returned references point at the same row.
         assert rows[0].id == rows[-1].id
@@ -384,11 +393,12 @@ def test_record_attempts_within_same_call_compounds_state(
 
 def test_list_for_user_filters_by_set_id(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        record_attempt(db, user_id, _attempt(set_id="set-a", correct=False))
-        record_attempt(db, user_id, _attempt(set_id="set-b", correct=False))
+        record_attempt(repo, user_id, _attempt(set_id="set-a", correct=False))
+        record_attempt(repo, user_id, _attempt(set_id="set-b", correct=False))
         db.commit()
-        a_only = list_for_user(db, user_id, set_id="set-a")
+        a_only = list_for_user(repo, user_id, set_id="set-a")
         assert len(a_only) == 1
         assert a_only[0].set_id == "set-a"
     finally:
@@ -397,19 +407,19 @@ def test_list_for_user_filters_by_set_id(user_id: str) -> None:
 
 def test_list_for_user_can_exclude_mastered(user_id: str) -> None:
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         # Mastered element.
         for _ in range(MASTERY_THRESHOLD):
-            record_attempt(db, user_id, _attempt(correct=True))
+            record_attempt(repo, user_id, _attempt(correct=True))
         # Unmastered element (different key).
-        record_attempt(
-            db,
+        record_attempt(repo,
             user_id,
             _attempt(element_key="bonjour", correct=False),
         )
         db.commit()
-        all_rows = list_for_user(db, user_id, include_mastered=True)
-        active_only = list_for_user(db, user_id, include_mastered=False)
+        all_rows = list_for_user(repo, user_id, include_mastered=True)
+        active_only = list_for_user(repo, user_id, include_mastered=False)
         assert len(all_rows) == 2
         assert len(active_only) == 1
         assert active_only[0].element_key == "bonjour"
@@ -424,12 +434,11 @@ def test_two_directions_are_independent_rows(user_id: str) -> None:
     """Same element_key, two directions → two distinct rows, each
     with its own error/streak state."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
-        receptive = record_attempt(
-            db, user_id, _attempt(direction="target_to_source", correct=True)
+        receptive = record_attempt(repo, user_id, _attempt(direction="target_to_source", correct=True)
         )
-        productive = record_attempt(
-            db, user_id, _attempt(direction="source_to_target", correct=False)
+        productive = record_attempt(repo, user_id, _attempt(direction="source_to_target", correct=False)
         )
         db.commit()
         assert receptive.id != productive.id
@@ -439,7 +448,7 @@ def test_two_directions_are_independent_rows(user_id: str) -> None:
         assert receptive.error_count == 0
         assert productive.correct_streak == 0
         assert productive.error_count == 1
-        rows = list_for_user(db, user_id)
+        rows = list_for_user(repo, user_id)
         assert len(rows) == 2
     finally:
         db.close()
@@ -449,12 +458,13 @@ def test_mastering_receptive_does_not_master_productive(user_id: str) -> None:
     """Three correct receptive attempts master the receptive row only;
     the productive row stays unmastered."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         for _ in range(MASTERY_THRESHOLD):
-            record_attempt(db, user_id, _attempt(direction="target_to_source", correct=True))
-        record_attempt(db, user_id, _attempt(direction="source_to_target", correct=True))
+            record_attempt(repo, user_id, _attempt(direction="target_to_source", correct=True))
+        record_attempt(repo, user_id, _attempt(direction="source_to_target", correct=True))
         db.commit()
-        rows = {r.direction: r for r in list_for_user(db, user_id)}
+        rows = {r.direction: r for r in list_for_user(repo, user_id)}
         assert rows["target_to_source"].mastered is True
         assert rows["source_to_target"].mastered is False
     finally:
@@ -465,19 +475,21 @@ def test_is_fully_mastered_requires_both_directions(user_id: str) -> None:
     from app.services.element_errors import is_fully_mastered
 
     db = SessionLocal()
+
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         # Master receptive only.
         for _ in range(MASTERY_THRESHOLD):
-            record_attempt(db, user_id, _attempt(direction="target_to_source", correct=True))
+            record_attempt(repo, user_id, _attempt(direction="target_to_source", correct=True))
         db.commit()
-        rows = list_for_user(db, user_id)
+        rows = list_for_user(repo, user_id)
         assert is_fully_mastered(rows) is False  # productive missing
 
         # Now master productive too.
         for _ in range(MASTERY_THRESHOLD):
-            record_attempt(db, user_id, _attempt(direction="source_to_target", correct=True))
+            record_attempt(repo, user_id, _attempt(direction="source_to_target", correct=True))
         db.commit()
-        rows = list_for_user(db, user_id)
+        rows = list_for_user(repo, user_id)
         assert is_fully_mastered(rows) is True
     finally:
         db.close()
@@ -486,6 +498,7 @@ def test_is_fully_mastered_requires_both_directions(user_id: str) -> None:
 def test_direction_defaults_to_receptive_when_omitted(user_id: str) -> None:
     """An attempt with no explicit direction records receptive."""
     db = SessionLocal()
+    repo = SqlAlchemyElementErrorsRepository(db)
     try:
         attempt = ElementAttemptIn(
             set_id="s",
@@ -494,7 +507,7 @@ def test_direction_defaults_to_receptive_when_omitted(user_id: str) -> None:
             element_key="k",
             correct=True,
         )
-        row = record_attempt(db, user_id, attempt)
+        row = record_attempt(repo, user_id, attempt)
         db.commit()
         assert row.direction == "target_to_source"
     finally:

@@ -34,6 +34,9 @@ from app.models import (
     LearningSession,
     UserXP,
 )
+from app.repositories.lesson_session_unification_repo import (
+    SqlAlchemyLessonSessionUnificationRepository,
+)
 from app.services.lesson_session_unification import (
     CONTENT_LESSON_METHOD,
     find_or_create_content_pseudo_project,
@@ -84,7 +87,9 @@ def test_find_or_create_pseudo_project_creates_on_first_call(client: TestClient)
         )
         assert existing == 0
 
-        proj = find_or_create_content_pseudo_project(db, user_id)
+        proj = find_or_create_content_pseudo_project(
+            SqlAlchemyLessonSessionUnificationRepository(db), user_id
+        )
         db.commit()
 
         assert proj.user_id == user_id
@@ -100,9 +105,13 @@ def test_find_or_create_pseudo_project_is_idempotent(client: TestClient):
     user_id = _make_user(client, name="Lazy-B")
     db = SessionLocal()
     try:
-        first = find_or_create_content_pseudo_project(db, user_id)
+        first = find_or_create_content_pseudo_project(
+            SqlAlchemyLessonSessionUnificationRepository(db), user_id
+        )
         db.commit()
-        second = find_or_create_content_pseudo_project(db, user_id)
+        second = find_or_create_content_pseudo_project(
+            SqlAlchemyLessonSessionUnificationRepository(db), user_id
+        )
         db.commit()
 
         assert first.id == second.id
@@ -126,8 +135,12 @@ def test_pseudo_project_isolated_per_user(client: TestClient):
     user_b = _make_user(client, name="Lazy-D")
     db = SessionLocal()
     try:
-        proj_a = find_or_create_content_pseudo_project(db, user_a)
-        proj_b = find_or_create_content_pseudo_project(db, user_b)
+        proj_a = find_or_create_content_pseudo_project(
+            SqlAlchemyLessonSessionUnificationRepository(db), user_a
+        )
+        proj_b = find_or_create_content_pseudo_project(
+            SqlAlchemyLessonSessionUnificationRepository(db), user_b
+        )
         db.commit()
         assert proj_a.id != proj_b.id
         assert proj_a.user_id == user_a
@@ -146,7 +159,7 @@ def test_record_session_creates_session_against_pseudo_project(
     db = SessionLocal()
     try:
         sess = record_lesson_completion_session(
-            db,
+            SqlAlchemyLessonSessionUnificationRepository(db),
             user_id=user_id,
             lesson_progress_id="lp-fake-1",
             score_correct=8,
@@ -169,14 +182,14 @@ def test_record_session_twice_reuses_pseudo_project(client: TestClient):
     db = SessionLocal()
     try:
         s1 = record_lesson_completion_session(
-            db,
+            SqlAlchemyLessonSessionUnificationRepository(db),
             user_id=user_id,
             lesson_progress_id="lp-1",
             score_correct=4,
             score_total=4,
         )
         s2 = record_lesson_completion_session(
-            db,
+            SqlAlchemyLessonSessionUnificationRepository(db),
             user_id=user_id,
             lesson_progress_id="lp-2",
             score_correct=3,
