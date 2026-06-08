@@ -58,6 +58,10 @@ from app.repositories.settings_repo import (
     SettingsRepository,
     SqlAlchemySettingsRepository,
 )
+from app.repositories.sync_repo import (
+    SqlAlchemySyncRepository,
+    SyncRepository,
+)
 from app.repositories.taxonomy_repo import (
     SqlAlchemyTaxonomyRepository,
     TaxonomyRepository,
@@ -113,6 +117,11 @@ def get_backup_repo(db: Session = Depends(get_db)) -> BackupRepository:
     return SqlAlchemyBackupRepository(db)
 
 
+def get_sync_repo(db: Session = Depends(get_db)) -> SyncRepository:
+    """Provide a :class:`SyncRepository` bound to the request session."""
+    return SqlAlchemySyncRepository(db)
+
+
 def get_element_errors_repo(db: Session = Depends(get_db)) -> ElementErrorsRepository:
     """Provide an :class:`ElementErrorsRepository` bound to the request session."""
     return SqlAlchemyElementErrorsRepository(db)
@@ -141,6 +150,7 @@ __all__ = [
     "get_projects_repo",
     "get_reset_repo",
     "get_settings_repo",
+    "get_sync_repo",
     "get_taxonomy_repo",
     "get_users_repo",
 ]

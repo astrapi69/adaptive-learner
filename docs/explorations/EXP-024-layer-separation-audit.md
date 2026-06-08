@@ -205,8 +205,18 @@ high-ripple / gross):
       wählt Keys / Repo führt Query (Punkt b). BACKUP-AKZEPTANZTEST bestanden:
       echter HTTP-Round-Trip (Export → Wipe → Cross-Identity-Import + Content-
       Sets), 0 Errors. Merge mit main (v1.67.0) zuvor sauber integriert.
-- [ ] sync_service (1039 Z.) — letzter + größter; eigener Block, frischer
-      Kontext
+- [x] **sync_service** — `SyncRepository` (7 Primitive: user_exists, get_by_pk,
+      add, flush, commit, scoped_rows_since, scoped_count). Die 4 Orchestrierungs-
+      Funktionen (push/pull/resolve/status) behalten ihre Geschäftslogik
+      (append-only vs. mutable, Conflict-Detection, Timestamp-Vergleich,
+      Resolution-Semantik). **Option A**: `_scoped_query` + `TABLES` + serialize/
+      iso bleiben Daten-Schicht-Primitive in sync_service, von **beiden** Repos
+      (sync + backup) genutzt — kein Umbau an zwei Stellen. Zyklus via
+      `TYPE_CHECKING`-Import vermieden. pairing-Handler unangetastet (anderer
+      Service). Kein Direkt-Test-Rewrite (Orchestrierung ist HTTP-getestet).
+
+**→ EXP-024 Phase 1 KOMPLETT: 13 Request-Layer-DB-Services + Fundament
+migriert. Kein `db.*`/`Session` mehr in der Request-Service-Schicht.**
 
 ### Phase 2 — Plugin-Service-Module (18 Module / 7 Plugins)
 session (4), gamification (4), learning-repo (4), notebooklm (2),
@@ -295,6 +305,16 @@ tracking (2), anki (1), missions (1).
   Confirmation-Token bleiben im Service; der db_guard-Pfad ist unberührt
   (gleiche Engine/Statements). Test-Wrap an 6 Call-Sites; der Token-Mismatch-
   Monkeypatch bleibt signatur-kompatibel.
+- **sync_service migriert (letzter Block — Phase 1 komplett):** `SyncRepository`
+  (7 Primitive). Die 30-Tabellen-`TABLES`-Registry, `TableSpec`, serialize/coerce/
+  iso-Helfer, die Dataclasses und **`_scoped_query`** bleiben als Daten-Schicht-
+  Toolkit in sync_service (Option A — `_scoped_query` ist das gemeinsame
+  Scoping-Primitiv von sync- **und** backup-Repo, kein Zwei-Stellen-Umbau). Die 4
+  Orchestrierungs-Funktionen (push/pull/resolve/status) behalten ihre
+  Geschäftslogik. Import-Zyklus (sync_repo -> sync_service -> SyncRepository)
+  via `if TYPE_CHECKING`-Import + PEP-563-String-Annotations aufgelöst. Die 2
+  pairing-Router-Handler (eigener `pairing_service`, kein direktes Session-sync)
+  bleiben unverändert. ruff + mypy sauber, kein Import-Zyklus.
 - **export_service migriert:** reiner read-only-Aggregator -> `ExportRepository`
   mit 19 intent-benannten Reads (progress report / session detail / curriculum
   overview). Alle DTO-Shaping-Helfer, der Tree-Flatten und die Envelope-
