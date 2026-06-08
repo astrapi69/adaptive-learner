@@ -130,9 +130,7 @@ def create_topic(repo: CurriculumRepository, payload: LearningTopicCreate) -> Le
     )
 
 
-def _would_create_cycle(
-    repo: CurriculumRepository, topic_id: str, new_parent_id: str
-) -> bool:
+def _would_create_cycle(repo: CurriculumRepository, topic_id: str, new_parent_id: str) -> bool:
     """Walk up from ``new_parent_id`` toward the root; if we hit
     ``topic_id`` along the way, the proposed move would create a
     cycle."""

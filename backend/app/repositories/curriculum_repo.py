@@ -146,9 +146,7 @@ class SqlAlchemyCurriculumRepository(CurriculumRepository):
             .all()
         )
 
-    def apply_curriculum_update(
-        self, row: Curriculum, fields: Mapping[str, object]
-    ) -> Curriculum:
+    def apply_curriculum_update(self, row: Curriculum, fields: Mapping[str, object]) -> Curriculum:
         for field, value in fields.items():
             setattr(row, field, value)
         self._db.commit()
@@ -192,9 +190,7 @@ class SqlAlchemyCurriculumRepository(CurriculumRepository):
         self._db.refresh(row)
         return row
 
-    def apply_topic_update(
-        self, row: LearningTopic, fields: Mapping[str, object]
-    ) -> LearningTopic:
+    def apply_topic_update(self, row: LearningTopic, fields: Mapping[str, object]) -> LearningTopic:
         for field, value in fields.items():
             setattr(row, field, value)
         self._db.commit()

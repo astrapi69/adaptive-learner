@@ -41,7 +41,9 @@ def create_project(
     payload: LearningProjectCreateBody,
     repo: ProjectsRepository = Depends(get_projects_repo),
 ) -> LearningProjectOut:
-    return LearningProjectOut.model_validate(projects_service.create_project(repo, user_id, payload))
+    return LearningProjectOut.model_validate(
+        projects_service.create_project(repo, user_id, payload)
+    )
 
 
 @users_projects_router.get(
