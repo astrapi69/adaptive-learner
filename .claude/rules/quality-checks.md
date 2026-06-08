@@ -1,5 +1,35 @@
 # Quality checks and test strategy
 
+## BACKUP-AKZEPTANZTEST (acceptance gate, MANDATORY)
+
+No backup-touching PR merges until a REAL round-trip in `make dev`
+runs to completion: click Export, click Import, it MUST work — with
+REAL data, not synthetic fixtures. Unit tests are necessary but NOT
+sufficient; the manual round-trip is the gate. The full console
+output (backend per-table INFO log + frontend `[Backup]` console
+lines) MUST be attached to the PR as proof.
+
+Origin: five consecutive "fixed" backup releases (#49, #57, #64,
+#115, #117) each shipped with passing unit tests yet none produced a
+working end-to-end import — the tests proved the fix in isolation but
+never exercised the actual use case (user clicks Import, real backup,
+real data). Building an engine and only checking it starts, never
+that the car drives.
+
+Rules:
+- A backup PR's description includes the captured console output of
+  a successful Export -> Import round-trip against real data.
+- The round-trip is run AFTER the code changes are live (restart /
+  reload the backend so the new logging is active).
+- "It passes `make test`" is never the merge justification for a
+  backup change. The round-trip is.
+- If the round-trip crashes: fix the next error, re-import, re-capture
+  — repeat until the import completes with zero unexpected errors. No
+  commit before a clean round-trip exists.
+- This pairs with the general rule "Operational gaps masquerade as
+  wired infrastructure" in lessons-learned.md: a feature that works
+  in a unit test is not the same as a feature that works.
+
 ## Quick check after every change
 
 ### 1. Run the tests

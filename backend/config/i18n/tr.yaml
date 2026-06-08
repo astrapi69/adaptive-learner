@@ -725,6 +725,11 @@ backup:
   restored_updated: 'Güncellenen: {{n}}'
   restored_skipped: 'Atlanan: {{n}}'
   restored_errors: 'Hatalar: {{n}}'
+  col_inserted: 'Ekl.'
+  col_updated: 'Günc.'
+  col_skipped: 'Atla'
+  col_errors: 'Hata'
+  error_details: 'Hata ayrıntıları'
   restored_with_errors: '{{n}} kayıt geri yüklenemedi.'
   last_backup: 'Son yedek: {{when}}'
   reminder_overdue: Son yedeğinden bu yana {{days}} günden fazla zaman geçti.

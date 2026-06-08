@@ -50,6 +50,7 @@ from app import __version__
 from app.database import Base
 from app.exceptions import NotFoundError, ValidationError
 from app.models import User
+from app.services.content_backup import dump_content_sets, restore_content_sets
 from app.services.sync_service import (
     TABLES as SYNC_TABLES,
 )
@@ -63,7 +64,7 @@ from app.services.sync_service import (
 
 logger = logging.getLogger(__name__)
 
-BACKUP_VERSION = "1.2.0"
+BACKUP_VERSION = "1.3.0"
 BACKUP_FORMAT = "adaptive-learner-backup"
 
 # API keys are sensitive; the backup file is meant to travel
@@ -93,29 +94,33 @@ def _strip_excluded_fields(table: str, record: dict[str, Any]) -> dict[str, Any]
 
 
 def _gather_user_rows(db: Session, user_id: str) -> dict[str, list[dict[str, Any]]]:
-    """Build the ``data`` segment: every NON-EMPTY backup table, scoped
-    to the user.
+    """Build the ``data`` segment: ALL backup tables, scoped to the user.
 
-    Empty tables are omitted entirely (#117): a 0-row table adds nothing
-    to a restore and only enlarges the payload + the error surface.
-    Restore tolerates absent tables (``data.get(table, [])``), so the
-    wire format stays compatible.
+    Every one of the 30 tables is ALWAYS present, even with zero rows
+    (an empty list). A backup is a COMPLETE snapshot of the user's
+    state: an empty table is information ("this table had no rows"),
+    and a table that is merely absent is ambiguous — was it empty, or
+    did the export forget it? That ambiguity was the exact bug class
+    chased across #49/#57/#64/#115/#117. The earlier #117 "skip empty
+    tables" optimization is intentionally reverted (#126).
     """
     data: dict[str, list[dict[str, Any]]] = {}
     for table in SYNC_TABLES:
         rows = _scoped_query(db, table, user_id).all()
-        if not rows:
-            continue
         data[table] = [_strip_excluded_fields(table, serialize_row(table, row)) for row in rows]
     return data
 
 
-def _build_stats(data: dict[str, list[dict[str, Any]]]) -> dict[str, Any]:
+def _build_stats(
+    data: dict[str, list[dict[str, Any]]],
+    content_sets: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     """Per-table counts + grand total. Cheap derived field for the UI."""
     tables = {table: len(rows) for table, rows in data.items()}
     return {
         "total_records": sum(tables.values()),
         "tables": tables,
+        "content_sets": len(content_sets) if content_sets else 0,
     }
 
 
@@ -133,6 +138,10 @@ def create_backup(db: Session, user_id: str, storage_mode: str = "api") -> dict[
     if db.get(User, user_id) is None:
         raise NotFoundError(f"User {user_id!r} not found.")
     data = _gather_user_rows(db, user_id)
+    # Downloaded lesson CONTENT lives outside the 30 sync tables (#130).
+    # Include it so a restore is self-contained — and so user-generated
+    # sets, which exist ONLY in this cache, are not lost.
+    content_sets = dump_content_sets()
     return {
         "format": BACKUP_FORMAT,
         "version": BACKUP_VERSION,
@@ -141,7 +150,8 @@ def create_backup(db: Session, user_id: str, storage_mode: str = "api") -> dict[
         "user_id": user_id,
         "storage_mode": storage_mode,
         "data": data,
-        "stats": _build_stats(data),
+        "content_sets": content_sets,
+        "stats": _build_stats(data, content_sets),
     }
 
 
@@ -153,11 +163,10 @@ def get_backup_stats(db: Session, user_id: str) -> dict[str, Any]:
         raise NotFoundError(f"User {user_id!r} not found.")
     tables: dict[str, int] = {}
     for table in SYNC_TABLES:
-        count = _scoped_query(db, table, user_id).count()
-        # Omit empty tables so the stats match the trimmed export
-        # payload (#117).
-        if count:
-            tables[table] = count
+        # ALL 30 tables, even at zero rows (#126): the pre-restore
+        # "current vs incoming" dialog shows the COMPLETE state so the
+        # user sees every table, not just the non-empty ones.
+        tables[table] = _scoped_query(db, table, user_id).count()
     return {
         "user_id": user_id,
         "total_records": sum(tables.values()),
@@ -266,6 +275,7 @@ def _coerce_record(table: str, record: dict[str, Any]) -> dict[str, Any]:
             # A JSON-in-text column (e.g. badges.tier_thresholds) whose
             # backup value is a parsed object — serialize it so SQLite
             # can bind it to the text column.
+            logger.debug("Coerced %s.%s: %s -> json string", table, col, type(value).__name__)
             value = json.dumps(value)
         coerced[col] = value
     return coerced
@@ -333,6 +343,78 @@ def _derive_fk_parents() -> dict[str, dict[str, str]]:
 _FK_PARENTS: dict[str, dict[str, str]] = _derive_fk_parents()
 
 
+def _derive_self_ref_columns() -> dict[str, tuple[str, ...]]:
+    """``{table: (self_referential_fk_column, ...)}``.
+
+    A self-referential FK (``subjects.parent_id -> subjects``,
+    ``learning_topics.parent_id -> learning_topics``) is excluded from
+    ``_FK_PARENTS`` (which only maps cross-table parents). But when a row
+    is reconciled to a DIFFERENT local id by natural key (#127 subjects),
+    its CHILDREN in the same table reference the old backup id and must be
+    redirected to the local id too — otherwise the child either inserts a
+    dangling FK or fails to match. This map drives that remap; the
+    restore additionally orders a self-ref table's rows parent-before-
+    child so the parent's id mapping is known by the time the child is
+    processed.
+    """
+    self_refs: dict[str, tuple[str, ...]] = {}
+    for table_name, spec in SYNC_TABLES.items():
+        cols = tuple(
+            column.name
+            for column in spec.model.__table__.columns
+            for foreign_key in column.foreign_keys
+            if foreign_key.column.table.name == table_name
+        )
+        if cols:
+            self_refs[table_name] = cols
+    return self_refs
+
+
+_SELF_REF_COLUMNS: dict[str, tuple[str, ...]] = _derive_self_ref_columns()
+
+
+def _order_parent_before_child(
+    records: list[dict[str, Any]], self_ref_cols: tuple[str, ...]
+) -> list[dict[str, Any]]:
+    """Sort records of a self-referential table so a row's in-table
+    parent always precedes it.
+
+    Rows whose self-ref FK is null, or points outside this batch, are
+    roots and come first. A cycle (should never happen in a tree) falls
+    back to appending the remainder in input order so no record is lost.
+    """
+    by_id = {r.get("id"): r for r in records if isinstance(r.get("id"), str)}
+    ordered: list[dict[str, Any]] = []
+    placed: set[str] = set()
+
+    def parents_in_batch(record: dict[str, Any]) -> list[str]:
+        result: list[str] = []
+        for col in self_ref_cols:
+            parent_id = record.get(col)
+            if isinstance(parent_id, str) and parent_id in by_id and parent_id != record.get("id"):
+                result.append(parent_id)
+        return result
+
+    def place(record: dict[str, Any], guard: set[str]) -> None:
+        record_id = record.get("id")
+        if not isinstance(record_id, str) or record_id in placed or record_id in guard:
+            return
+        guard.add(record_id)
+        for parent_id in parents_in_batch(record):
+            place(by_id[parent_id], guard)
+        if record_id not in placed:
+            placed.add(record_id)
+            ordered.append(record)
+
+    for record in records:
+        place(record, set())
+    # Append anything without a usable id (handled/skipped downstream).
+    for record in records:
+        if not isinstance(record.get("id"), str):
+            ordered.append(record)
+    return ordered
+
+
 def _unique_match_keys(model: type[Any]) -> list[tuple[str, ...]]:
     """UNIQUE column-groups of ``model`` other than the primary key.
 
@@ -366,17 +448,27 @@ def _find_existing_by_unique(db: Session, model: type[Any], record: dict[str, An
     """Find a local row matching any of ``model``'s UNIQUE keys.
 
     Returns the first existing row whose unique-key columns all equal the
-    record's values, or None. Keys with a null component are skipped (a
-    NULL never participates in a UNIQUE match), so e.g. a user with no
-    email is matched by id only, never by a null email.
+    record's values, or None.
+
+    Null handling differs by key shape:
+    - A SINGLE-column key whose value is null is skipped — a NULL never
+      participates in a UNIQUE match (a user with no email is matched by
+      id only, never by a null email).
+    - A COMPOSITE key with a null component is still a precise locator
+      (``parent_id IS NULL AND name = 'X'`` identifies exactly one root
+      subject), so it matches with ``IS NULL`` on the null part instead
+      of being skipped. This is what lets a restore reconcile root-level
+      ``subjects`` against the seeded tree (#127). The only composite key
+      with a nullable component is ``subjects.(parent_id, name)``.
     """
     for cols in _unique_match_keys(model):
         values = [record.get(col) for col in cols]
-        if any(value is None for value in values):
+        if len(cols) == 1 and values[0] is None:
             continue
         query = db.query(model)
         for col, value in zip(cols, values, strict=True):
-            query = query.filter(getattr(model, col) == value)
+            column = getattr(model, col)
+            query = query.filter(column.is_(None) if value is None else column == value)
         existing = query.one_or_none()
         if existing is not None:
             return existing
@@ -436,6 +528,12 @@ def _restore_table(
     spec = _spec(table)
     model = spec.model
     fk_remap = _FK_PARENTS.get(table, {})
+    self_ref_cols = _SELF_REF_COLUMNS.get(table, ())
+    # A self-referential table must process parents before children so a
+    # parent reconciled to a different local id is already in ``id_remap``
+    # when its child is redirected (#127 subjects).
+    if self_ref_cols:
+        records = _order_parent_before_child(records, self_ref_cols)
     inserted = 0
     updated = 0
     skipped = 0
@@ -455,6 +553,15 @@ def _restore_table(
             mapped = id_remap.get(parent_table, {}).get(fk_value)
             if mapped is not None and mapped != fk_value:
                 record = {**record, fk_col: mapped}
+        # Redirect self-referential FK columns (e.g. subjects.parent_id)
+        # through this table's own accumulated id remap (#127).
+        for self_col in self_ref_cols:
+            fk_value = record.get(self_col)
+            if not isinstance(fk_value, str):
+                continue
+            mapped = id_remap.get(table, {}).get(fk_value)
+            if mapped is not None and mapped != fk_value:
+                record = {**record, self_col: mapped}
         try:
             existing = db.get(model, record_id)
             # Unique-key fallback (#115, generalises the #49 badges fix):
@@ -521,8 +628,14 @@ def _restore_table(
                 skipped += 1
         except Exception as exc:  # pragma: no cover — defensive
             db.rollback()
-            errors.append(f"{table}: {exc}")
-            logger.exception("Backup restore failed for %s/%s", table, record_id)
+            errors.append(f"{table}: {record_id}: {exc}")
+            logger.error(
+                "Failed to restore row in %r (id=%s): %s",
+                table,
+                record_id,
+                exc,
+                exc_info=True,
+            )
             skipped += 1
     return {
         "inserted": inserted,
@@ -579,24 +692,69 @@ _RESTORE_ORDER: tuple[str, ...] = tuple(
 )
 
 
+def _remap_user_identity(
+    data: dict[str, Any], source_user_id: str, target_user_id: str
+) -> dict[str, list[dict[str, Any]]]:
+    """Re-home every backup row from ``source_user_id`` to ``target_user_id``.
+
+    The disaster-recovery case (#129): the backup was made under a prior
+    identity (a wiped/re-created install, or a Dexie-origin file), so its
+    ``users.id`` and every ``user_id`` column carry the OLD id. The merge
+    restore scopes by user, so without re-homing, every user-scoped PARENT
+    (conversations, curriculums, projects, sessions) is rejected and all
+    their children cascade-fail with "missing parent". Substituting the
+    user identity makes the whole backup belong to the importing user, so
+    parents insert and children resolve.
+
+    Only the user identity is remapped; all other ids (project, session,
+    conversation, ...) keep their backup values and reconcile through the
+    existing id/natural-key matching.
+    """
+    remapped: dict[str, list[dict[str, Any]]] = {}
+    for table, records in data.items():
+        if not isinstance(records, list):
+            remapped[table] = records
+            continue
+        new_records: list[dict[str, Any]] = []
+        for record in records:
+            if not isinstance(record, dict):
+                new_records.append(record)
+                continue
+            updated = dict(record)
+            if table == "users" and updated.get("id") == source_user_id:
+                updated["id"] = target_user_id
+            if updated.get("user_id") == source_user_id:
+                updated["user_id"] = target_user_id
+            new_records.append(updated)
+        remapped[table] = new_records
+    return remapped
+
+
 def restore_backup(
     db: Session, payload: Any, *, target_user_id: str | None = None
 ) -> dict[str, Any]:
     """Apply a backup payload to the database. Merge semantics.
 
-    ``target_user_id`` overrides the user_id stored in the backup
-    file. Default behaviour uses the backup's own ``user_id`` so a
-    user can restore on the same install they exported from. The
-    override path exists for cross-install transfers (a future
-    feature; currently unexercised but the parameter is wired so
-    the router can pass it explicitly).
+    ``target_user_id`` overrides the user_id stored in the backup file.
+    Default behaviour uses the backup's own ``user_id`` so a user can
+    restore on the same install they exported from. When the override
+    differs from the backup's own ``user_id`` (disaster recovery onto a
+    fresh/re-created install, or a Dexie-origin backup), the entire backup
+    is re-homed to the importing user via :func:`_remap_user_identity`
+    (#129).
     """
     payload = _validate_payload(payload)
-    user_id = target_user_id or payload.get("user_id")
+    source_user_id = payload.get("user_id")
+    user_id = target_user_id or source_user_id
     if not isinstance(user_id, str) or not user_id:
         raise ValidationError("Backup payload missing 'user_id'.")
 
     data: dict[str, list[dict[str, Any]]] = payload["data"]
+
+    # Re-home a cross-identity backup to the importing user (#129).
+    if isinstance(source_user_id, str) and source_user_id and source_user_id != user_id:
+        logger.info("Backup restore re-homing identity %s -> %s", source_user_id, user_id)
+        data = _remap_user_identity(data, source_user_id, user_id)
 
     # Defer FK enforcement to the final commit for THIS transaction.
     # _RESTORE_ORDER already inserts parent TABLES before child tables,
@@ -617,25 +775,47 @@ def restore_backup(
     # matches so child FKs are redirected to the local id (issue #49).
     id_remap: dict[str, dict[str, str]] = {}
 
+    incoming = sum(len(v) for v in data.values() if isinstance(v, list))
+    logger.info(
+        "Backup restore starting for user %s: %d records across %d tables in payload",
+        user_id,
+        incoming,
+        len(data),
+    )
+
     for table in _RESTORE_ORDER:
         records = data.get(table, [])
         if not isinstance(records, list):
             all_errors.append(f"{table}: expected list, got {type(records).__name__}")
+            logger.error(
+                "Restoring table %r skipped: expected list, got %s", table, type(records).__name__
+            )
             continue
-        # Skip a table with no backup rows entirely (#117) — nothing to
-        # apply, so don't run the matcher or the per-table flush.
-        if not records:
-            continue
-        summary = _restore_table(db, table, records, user_id, id_remap)
-        # Flush after each table so the explicit FK-safe _RESTORE_ORDER
-        # (parents first) is what actually drives insert order. The
-        # session runs with autoflush=False and a single commit would
-        # otherwise reorder inserts by ORM relationship() topology — and
-        # the gamification / SRS / content tables are deliberately
-        # decoupled (FK columns, no relationships), so the unit-of-work
-        # has no way to know a child must follow its parent. Flushing
-        # per table in our own order sidesteps that entirely.
-        db.flush()
+        summary: dict[str, Any]
+        if records:
+            summary = _restore_table(db, table, records, user_id, id_remap)
+            # Flush after each table so the explicit FK-safe _RESTORE_ORDER
+            # (parents first) is what actually drives insert order. The
+            # session runs with autoflush=False and a single commit would
+            # otherwise reorder inserts by ORM relationship() topology — and
+            # the gamification / SRS / content tables are deliberately
+            # decoupled (FK columns, no relationships), so the unit-of-work
+            # has no way to know a child must follow its parent. Flushing
+            # per table in our own order sidesteps that entirely.
+            db.flush()
+        else:
+            # An empty table is still recorded (#126) so the per-table
+            # summary covers all 30 tables, not just the non-empty ones.
+            summary = {"inserted": 0, "updated": 0, "skipped": 0, "errors": []}
+        logger.info(
+            "Restoring table %r: %d rows (insert: %d, update: %d, skip: %d, errors: %d)",
+            table,
+            len(records),
+            summary["inserted"],
+            summary["updated"],
+            summary["skipped"],
+            len(summary["errors"]),
+        )
         per_table[table] = summary
         total_inserted += summary["inserted"]
         total_updated += summary["updated"]
@@ -643,6 +823,25 @@ def restore_backup(
         all_errors.extend(summary["errors"])
 
     db.commit()
+    logger.info(
+        "Restore complete: %d total, %d inserted, %d updated, %d skipped, %d errors",
+        total_inserted + total_updated + total_skipped,
+        total_inserted,
+        total_updated,
+        total_skipped,
+        len(all_errors),
+    )
+    if all_errors:
+        for err in all_errors:
+            logger.error("Restore error: %s", err)
+
+    # Restore downloaded content sets into the cache (#130). Done AFTER the
+    # DB commit so a content-write failure can never roll back user data;
+    # the content cache is a filesystem store, independent of the DB
+    # transaction. Absent in pre-1.3.0 backups -> a no-op.
+    content_summary = restore_content_sets(payload.get("content_sets"))
+    all_errors.extend(content_summary["errors"])
+
     return {
         "user_id": user_id,
         "inserted": total_inserted,
@@ -650,6 +849,7 @@ def restore_backup(
         "skipped": total_skipped,
         "errors": all_errors,
         "tables": per_table,
+        "content_sets": content_summary,
     }
 
 

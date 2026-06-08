@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive_learner"
-version = "1.66.0"
+version = "1.67.0"
 description = "Adaptive learning system based on the six-method learning model."
 authors = ["Asterios Raptis"]
 license = "MIT"
@@ -96,6 +96,12 @@ ignore_missing_imports = true
 # Other plugins load through PluginForge entry points and don't
 # need an explicit override.
 module = "adaptive_learner_gamification.*"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Content-loader plugin (no py.typed marker) — imported by the
+# content-set backup module (#130) to reach the FS cache helpers.
+module = "adaptive_learner_content_loader.*"
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

@@ -17,6 +17,8 @@
 
 import { expect, test } from "@playwright/test";
 
+import { createTestUser } from "../helpers/onboarding";
+
 const OWNER_REPO = "jane/test-content";
 
 const ROOT_MANIFEST = `
@@ -85,6 +87,7 @@ test.describe("EXP-023 Phase A — user content repository", () => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await mockUserRepo(page);
+    await createTestUser(page);
 
     // --- Settings > Data: the section renders. -----------------------
     await page.goto("/settings?tab=data");
@@ -107,11 +110,12 @@ test.describe("EXP-023 Phase A — user content repository", () => {
     await expect(result).toBeVisible();
     await expect(result).toContainText(/passed/i);
 
-    // --- Sync: cache the content. ------------------------------------
-    await page.getByTestId("content-repo-sync").click();
-    await expect(page.getByTestId("content-repo-result")).toContainText(
-      /synced/i,
-    );
+    // --- Connecting adds the repo to the list AND caches its content
+    // in one step (#132 — Phase B reworked the old single-repo "Sync"
+    // button into a per-repo list; there is no separate sync step). ---
+    await expect(
+      page.getByTestId("content-repo-item-jane-test-content"),
+    ).toBeVisible();
 
     // --- Browse: the user set carries the "Your repo" badge. ---------
     await page.goto("/content");
@@ -122,7 +126,7 @@ test.describe("EXP-023 Phase A — user content repository", () => {
 
     // The source filter appears and narrows to the user repo.
     await expect(page.getByTestId("content-source-filter")).toBeVisible();
-    await page.getByTestId("content-source-filter-user").click();
+    await page.getByTestId(`content-source-filter-${OWNER_REPO}`).click();
     await expect(page.getByTestId("content-set-demo")).toBeVisible();
 
     // --- Offline: cached user content stays browseable. --------------

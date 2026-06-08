@@ -63,15 +63,21 @@ function getErrorContentProps(): {
 }
 
 describe("notify.error", () => {
-    it("renders an ErrorContent element with the message", () => {
+    it("renders an ErrorContent element and never auto-dismisses (#126)", () => {
         notify.error("boom");
         expect(toast.error).toHaveBeenCalledOnce();
         const [body, opts] = vi.mocked(toast.error).mock.calls[0];
         expect(React.isValidElement(body)).toBe(true);
-        expect(opts).toMatchObject({autoClose: 15000, closeOnClick: false});
+        // Error toasts stay until the user closes them (X button); a
+        // click or drag must not dismiss them.
+        expect(opts).toMatchObject({
+            autoClose: false,
+            closeOnClick: false,
+            draggable: false,
+        });
     });
 
-    it("respects the persistent option (autoClose=false)", () => {
+    it("stays non-auto-closing even with the persistent option (#126)", () => {
         notify.error("stuck", {persistent: true});
         const [, opts] = vi.mocked(toast.error).mock.calls[0];
         expect(opts).toMatchObject({autoClose: false, closeOnClick: false});

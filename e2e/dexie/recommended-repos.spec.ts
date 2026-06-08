@@ -12,6 +12,8 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
+import { createTestUser } from "../helpers/onboarding";
+
 const RECOMMENDED_JSON = JSON.stringify({
   repos: [{ url: "jane/alpha", branch: "main", title: "Jane Alpha" }],
 });
@@ -85,6 +87,7 @@ test.describe("EXP-023 Phase C — recommended repos + local ratings", () => {
     const errors: string[] = [];
     page.on("pageerror", (e) => errors.push(e.message));
     await mockRoutes(page);
+    await createTestUser(page);
 
     // --- Discovery: the curated repo is offered. ---------------------
     await page.goto("/settings?tab=data");

@@ -15,6 +15,8 @@
 import { expect, test } from "@playwright/test";
 import type { Page } from "@playwright/test";
 
+import { createTestUser } from "../helpers/onboarding";
+
 function rootManifest(setId: string): string {
   return `
 schema_version: "1.3"
@@ -91,6 +93,7 @@ test.describe("EXP-023 Phase B — multi content repository", () => {
     await mockRepo(page, "jane/alpha", "alpha");
     await mockRepo(page, "bob/beta", "beta");
     await mockRepo(page, "kim/gamma", "gamma");
+    await createTestUser(page);
 
     // --- Connect two repos in Settings. -----------------------------
     await page.goto("/settings?tab=data");

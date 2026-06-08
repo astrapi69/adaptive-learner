@@ -334,16 +334,19 @@ def test_create_backup_returns_canonical_envelope(db_session):
 
 
 def test_create_backup_includes_every_known_table(db_session):
-    """Export carries the seeded tables and nothing outside the known
-    surface; empty tables are omitted from the payload (#117)."""
+    """Export carries ALL known tables and nothing outside the surface;
+    every table is present even when empty (#126, reverting #117). A
+    complete snapshot makes an absent table impossible to confuse with
+    an empty one."""
     user = _seed_user(db_session)
     payload = create_backup(db_session, user.id)
     data = payload["data"]
-    # No unknown tables leak in, and no empty table rides along.
-    for table, rows in data.items():
+    # Exactly the known surface — no more, no less.
+    assert set(data.keys()) == set(ALL_BACKUP_TABLES)
+    # No unknown tables leak in (every key is a known table).
+    for table in data:
         assert table in ALL_BACKUP_TABLES, f"unknown table: {table}"
-        assert len(rows) > 0, f"empty table not omitted: {table}"
-    # The seeded core tables are present.
+    # The seeded core tables carry rows.
     for table in (
         "users",
         "user_settings",
