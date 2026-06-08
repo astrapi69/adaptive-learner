@@ -12,8 +12,8 @@ from __future__ import annotations
 import base64
 
 import pytest
-
 from adaptive_learner_content_loader.cache import is_set_cached, store_set
+
 from app.paths import get_cache_dir
 from app.services.content_backup import (
     CONTENT_LOADER_DIR,
@@ -111,6 +111,94 @@ def test_restore_rejects_path_traversal_filename():
 
 def test_restore_tolerates_non_list():
     assert restore_content_sets(None) == {"restored": 0, "skipped": 0, "errors": []}
+
+
+def test_restore_synthesizes_manifest_for_dexie_user_set():
+    """A Dexie-origin user-generated set carries its title in ``meta`` and
+    ships NO manifest.yaml (#134). Restore must synthesise a manifest so
+    the API cache resolves the real title (not the raw set_id) and the
+    lesson is loadable — otherwise the Dashboard shows the set_id and the
+    step-progress count collapses to a bare "resume".
+    """
+    from adaptive_learner_content_loader.cache import read_manifest
+    from adaptive_learner_content_loader.service import USER_GENERATED_SOURCE
+
+    set_id = "analysis-ed08d0f5"
+    lesson = (
+        '{"id": "analysis-ed08d0f5", "title": "Deutsche Grammatik", '
+        '"estimated_minutes": 10, "steps": []}'
+    )
+    payload = [
+        {
+            "source": USER_GENERATED_SOURCE,
+            "set_id": set_id,
+            "version": "1.0.0",
+            # meta = the Dexie contentSets row; title lives here, not in a file.
+            "meta": {
+                "title": "Deutsche Grammatik (Analyse)",
+                "target_language": "de",
+                "source_language": "de",
+                "level": "A1",
+                "domain": "knowledge",
+                "lesson_count": 1,
+                "tags": "[]",
+                "manifest_yaml": "",
+            },
+            # No manifest.yaml — only the lesson file.
+            "files": [
+                {"filename": f"lessons/{set_id}.json", "body": lesson, "encoding": "text"},
+            ],
+        }
+    ]
+
+    summary = restore_content_sets(payload)
+    assert summary == {"restored": 1, "skipped": 0, "errors": []}
+
+    # A manifest now exists and carries the real title from meta.
+    assert is_set_cached(_cache_root(), USER_GENERATED_SOURCE, set_id, "1.0.0")
+    manifest = read_manifest(_cache_root(), USER_GENERATED_SOURCE, set_id, "1.0.0")
+    assert manifest.sets[0].title == "Deutsche Grammatik (Analyse)"
+    assert manifest.sets[0].id == set_id
+    # The lesson file is preserved so the step-total resolves.
+    version_dir = _cache_root() / USER_GENERATED_SOURCE / set_id / "v1.0.0"
+    assert (version_dir / "lessons" / f"{set_id}.json").is_file()
+
+
+def test_restore_replaces_incomplete_manifestless_version_dir():
+    """A prior restore that landed manifest-less (the #134 bug) must be
+    replaced, not nested into, when re-importing a backup with meta."""
+    from adaptive_learner_content_loader.service import USER_GENERATED_SOURCE
+
+    set_id = "analysis-broken"
+    # Pre-existing manifest-LESS dir (the broken state).
+    broken = _cache_root() / USER_GENERATED_SOURCE / set_id / "v1.0.0" / "lessons"
+    broken.mkdir(parents=True, exist_ok=True)
+    (broken / f"{set_id}.json").write_text("{}", encoding="utf-8")
+
+    payload = [
+        {
+            "source": USER_GENERATED_SOURCE,
+            "set_id": set_id,
+            "version": "1.0.0",
+            "meta": {
+                "title": "Recovered",
+                "target_language": "de",
+                "level": "A1",
+                "lesson_count": 1,
+            },
+            "files": [
+                {
+                    "filename": f"lessons/{set_id}.json",
+                    "body": '{"id": "x", "title": "Recovered", "estimated_minutes": 5, "steps": []}',
+                    "encoding": "text",
+                },
+            ],
+        }
+    ]
+    summary = restore_content_sets(payload)
+    assert summary["errors"] == []
+    assert summary["restored"] == 1
+    assert is_set_cached(_cache_root(), USER_GENERATED_SOURCE, set_id, "1.0.0")
 
 
 @pytest.fixture(autouse=True)
