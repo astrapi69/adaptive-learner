@@ -40,9 +40,7 @@ class ImportsRepository(Repository):
         """Return the project row, or ``None`` when it does not exist."""
 
     @abstractmethod
-    def find_by_content_hash(
-        self, user_id: str, content_hash: str
-    ) -> ImportedConversation | None:
+    def find_by_content_hash(self, user_id: str, content_hash: str) -> ImportedConversation | None:
         """Return this user's conversation with the given hash, if any."""
 
     @abstractmethod
@@ -95,9 +93,7 @@ class ImportsRepository(Repository):
         """Persist the serialized analysis blob and mark analyzed."""
 
     @abstractmethod
-    def get_active_session_for_conversation(
-        self, conversation_id: str
-    ) -> LearningSession | None:
+    def get_active_session_for_conversation(self, conversation_id: str) -> LearningSession | None:
         """Return the newest ``active`` session for the conversation."""
 
 
@@ -113,9 +109,7 @@ class SqlAlchemyImportsRepository(ImportsRepository):
     def get_project(self, project_id: str) -> LearningProject | None:
         return self._db.get(LearningProject, project_id)
 
-    def find_by_content_hash(
-        self, user_id: str, content_hash: str
-    ) -> ImportedConversation | None:
+    def find_by_content_hash(self, user_id: str, content_hash: str) -> ImportedConversation | None:
         return (
             self._db.query(ImportedConversation)
             .filter(
@@ -210,9 +204,7 @@ class SqlAlchemyImportsRepository(ImportsRepository):
         self._db.refresh(conv)
         return conv
 
-    def get_active_session_for_conversation(
-        self, conversation_id: str
-    ) -> LearningSession | None:
+    def get_active_session_for_conversation(self, conversation_id: str) -> LearningSession | None:
         return (
             self._db.query(LearningSession)
             .filter(

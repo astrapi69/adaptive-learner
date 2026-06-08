@@ -23,9 +23,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 
 @router.post("", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-def create_user(
-    payload: UserCreate, repo: UsersRepository = Depends(get_users_repo)
-) -> UserOut:
+def create_user(payload: UserCreate, repo: UsersRepository = Depends(get_users_repo)) -> UserOut:
     return UserOut.model_validate(users_service.create_user(repo, payload))
 
 
