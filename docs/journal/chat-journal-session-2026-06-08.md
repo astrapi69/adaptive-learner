@@ -52,3 +52,27 @@ was visible from unit tests.
 
 - PRs: #128 (#126/#127/#129), #131 (#130) — both merged.
 - Issues closed: #126, #127, #129, #130, #132 (+ #119 earlier).
+
+## v1.67.1 patch — user-generated lesson title + step progress (#134)
+
+P0 caught via the BACKUP-AKZEPTANZTEST gate with real data: after import,
+a user-generated lesson showed the raw `set_id` instead of its title and
+its step progress collapsed to a bare `Fortsetzen`.
+
+Root cause (verified before coding, not the user's cross-identity
+hypothesis): Dexie `saveUserSet` stores a user-generated set's title in
+the `contentSets` row (`manifest_yaml: ""`) and writes only lesson files —
+no `manifest.yaml`. The API `restore_content_sets` (#130) wrote `files[]`
+but ignored `meta`, so the set landed manifest-less in the FS cache (which
+derives all metadata from the manifest): title fell back to `set_id`, the
+set wasn't recognised as cached so the lesson couldn't load (step-total
+unknown), and a re-export silently dropped it.
+
+Fix: synthesise a one-set `manifest.yaml` from `meta` on restore when
+none is present, and replace an incomplete manifest-less version dir.
+Proven via a real Dexie-style backup -> fresh API install round-trip
+(title resolves, lesson reads HTTP 200, `current_step` + `step_results`
+preserved). PR #135. Also carried the EXP-024 Phase 1 repository refactor
+(#133) and a ruff-format catch-up on 5 #133 files.
+
+Released v1.67.1; all gates green incl. dexie-smoke 79.
