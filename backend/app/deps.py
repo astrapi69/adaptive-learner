@@ -26,6 +26,10 @@ from app.repositories.element_errors_repo import (
     ElementErrorsRepository,
     SqlAlchemyElementErrorsRepository,
 )
+from app.repositories.export_repo import (
+    ExportRepository,
+    SqlAlchemyExportRepository,
+)
 from app.repositories.imports_repo import (
     ImportsRepository,
     SqlAlchemyImportsRepository,
@@ -41,6 +45,10 @@ from app.repositories.lesson_session_unification_repo import (
 from app.repositories.projects_repo import (
     ProjectsRepository,
     SqlAlchemyProjectsRepository,
+)
+from app.repositories.reset_repo import (
+    ResetRepository,
+    SqlAlchemyResetRepository,
 )
 from app.repositories.settings_repo import (
     SettingsRepository,
@@ -86,6 +94,16 @@ def get_settings_repo(db: Session = Depends(get_db)) -> SettingsRepository:
     return SqlAlchemySettingsRepository(db)
 
 
+def get_reset_repo(db: Session = Depends(get_db)) -> ResetRepository:
+    """Provide a :class:`ResetRepository` bound to the request session."""
+    return SqlAlchemyResetRepository(db)
+
+
+def get_export_repo(db: Session = Depends(get_db)) -> ExportRepository:
+    """Provide an :class:`ExportRepository` bound to the request session."""
+    return SqlAlchemyExportRepository(db)
+
+
 def get_element_errors_repo(db: Session = Depends(get_db)) -> ElementErrorsRepository:
     """Provide an :class:`ElementErrorsRepository` bound to the request session."""
     return SqlAlchemyElementErrorsRepository(db)
@@ -106,10 +124,12 @@ def get_lesson_session_unification_repo(
 __all__ = [
     "get_curriculum_repo",
     "get_element_errors_repo",
+    "get_export_repo",
     "get_imports_repo",
     "get_lesson_progress_repo",
     "get_lesson_session_unification_repo",
     "get_projects_repo",
+    "get_reset_repo",
     "get_settings_repo",
     "get_taxonomy_repo",
     "get_users_repo",

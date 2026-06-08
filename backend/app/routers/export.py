@@ -19,9 +19,9 @@ import logging
 from typing import Any
 
 from fastapi import APIRouter, Depends
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import get_export_repo
+from app.repositories.export_repo import ExportRepository
 from app.services.export_service import (
     build_curriculum_overview,
     build_progress_report,
@@ -37,7 +37,7 @@ router = APIRouter(prefix="/export", tags=["export"])
 def export_progress_report(
     user_id: str,
     lang: str = "de",
-    db: Session = Depends(get_db),
+    repo: ExportRepository = Depends(get_export_repo),
 ) -> dict[str, Any]:
     """Aggregate the user's full learning journey.
 
@@ -45,25 +45,25 @@ def export_progress_report(
     ``app.services.export_service.build_progress_report``). The
     frontend renders Markdown or PDF from this payload.
     """
-    return build_progress_report(db, user_id, lang=lang)
+    return build_progress_report(repo, user_id, lang=lang)
 
 
 @router.get("/session/{session_id}")
 def export_session_detail(
     session_id: str,
     lang: str = "de",
-    db: Session = Depends(get_db),
+    repo: ExportRepository = Depends(get_export_repo),
 ) -> dict[str, Any]:
     """Aggregate one session with its full transcript + ratings
     + step-evaluation timeline."""
-    return build_session_detail(db, session_id, lang=lang)
+    return build_session_detail(repo, session_id, lang=lang)
 
 
 @router.get("/curriculum/{curriculum_id}")
 def export_curriculum_overview(
     curriculum_id: str,
     lang: str = "de",
-    db: Session = Depends(get_db),
+    repo: ExportRepository = Depends(get_export_repo),
 ) -> dict[str, Any]:
     """Aggregate a curriculum with its topic tree + lessons."""
-    return build_curriculum_overview(db, curriculum_id, lang=lang)
+    return build_curriculum_overview(repo, curriculum_id, lang=lang)

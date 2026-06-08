@@ -192,8 +192,13 @@ high-ripple / gross):
       settings/content/imports-Router + 3 Plugin-Routes (anki/notebooklm/session,
       nur die settings-Call-Sites inline-gewrappt — volle Plugin-Migration bleibt
       Phase 2) + 6 Test-Dateien. Backend 1181 + Plugin-Suites (20/27/219) grün.
-- [ ] reset_service (db_guard-Bulk-Delete, 2 Test-Caller — heikel)
-- [ ] backup_service (inkl. S3-Pragma), export_service, sync_service (1039 Z.)
+- [x] **reset_service** — `ResetRepository.truncate_all_tables()` kapselt das
+      reverse-FK-Bulk-Delete; FS-Scrubs (identity/secrets ai-Block) +
+      Confirmation-Token bleiben im Service. db_guard unverändert.
+- [x] **export_service** — read-only Aggregator: `ExportRepository` (19 intent-
+      benannte Reads); DTO-Shaping/Tree-Flatten/Envelope bleiben im Service.
+- [ ] backup_service (inkl. S3-Pragma), sync_service (1039 Z.) — die zwei
+      größten/heikelsten, je einzeln mit frischem Kontext
 
 ### Phase 2 — Plugin-Service-Module (18 Module / 7 Plugins)
 session (4), gamification (4), learning-repo (4), notebooklm (2),
@@ -259,6 +264,18 @@ tracking (2), anki (1), missions (1).
   Test-Dateien (28 Call-Sites) inline-gewrappt. Hinweis: ein **vorbestehender**
   E402 (session routes.py:1788) ist nicht Teil dieses Diffs und wird nicht
   angefasst. ruff + mypy (backend) sauber.
+- **reset_service migriert:** `ResetRepository.truncate_all_tables()` kapselt
+  die einzige destruktive Primitive (reverse-FK-Delete über
+  `Base.metadata.sorted_tables` + commit, gibt Tabellen-Count zurück). Die
+  Filesystem-Scrubs (identity.yaml, secrets.yaml `ai`-Block) und der
+  Confirmation-Token bleiben im Service; der db_guard-Pfad ist unberührt
+  (gleiche Engine/Statements). Test-Wrap an 6 Call-Sites; der Token-Mismatch-
+  Monkeypatch bleibt signatur-kompatibel.
+- **export_service migriert:** reiner read-only-Aggregator -> `ExportRepository`
+  mit 19 intent-benannten Reads (progress report / session detail / curriculum
+  overview). Alle DTO-Shaping-Helfer, der Tree-Flatten und die Envelope-
+  Konstruktion bleiben im Service. Test-Wrap an 21 build_*-Call-Sites (das
+  Seeding via `db_session` bleibt direkt).
 - **Lesson-Cluster migriert (als Einheit):** drei neue Repos
   (`ElementErrorsRepository` mit explizitem `flush()`/`commit()` fuer die
   Bulk-Upsert-Transaktionsgrenze; `LessonProgressRepository`;
