@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-content-loader"
-version = "1.66.0"
+version = "1.67.0"
 description = "Adaptive Learner: Content-Loader — downloads and caches structured lesson sets from public content repos (Phase 43 / EXP-002). Works in API mode and Dexie / GitHub-Pages mode."
 authors = ["Asterios Raptis"]
 license = "MIT"
