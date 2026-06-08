@@ -55,6 +55,7 @@ from app.models import (
     UserStreak,
     UserXP,
 )
+from app.repositories.backup_repo import SqlAlchemyBackupRepository
 from app.routers.backup import router as backup_router
 from app.routers.users import router as users_router
 from app.services.backup_service import (
@@ -323,7 +324,7 @@ def _wipe_all_tables(db) -> None:
 
 def test_create_backup_returns_canonical_envelope(db_session):
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     assert payload["format"] == BACKUP_FORMAT
     assert payload["version"] == BACKUP_VERSION
     assert payload["user_id"] == user.id
@@ -339,7 +340,7 @@ def test_create_backup_includes_every_known_table(db_session):
     complete snapshot makes an absent table impossible to confuse with
     an empty one."""
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     data = payload["data"]
     # Exactly the known surface — no more, no less.
     assert set(data.keys()) == set(ALL_BACKUP_TABLES)
@@ -362,7 +363,7 @@ def test_create_backup_includes_every_known_table(db_session):
 
 def test_create_backup_excludes_api_keys(db_session):
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     settings = payload["data"]["user_settings"]
     assert len(settings) == 1
     row = settings[0]
@@ -375,13 +376,13 @@ def test_create_backup_excludes_api_keys(db_session):
 
 def test_create_backup_carries_storage_mode_hint(db_session):
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id, storage_mode="dexie")
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id, storage_mode="dexie")
     assert payload["storage_mode"] == "dexie"
 
 
 def test_create_backup_unknown_user_raises_404(db_session):
     with pytest.raises(NotFoundError):
-        create_backup(db_session, "nonexistent-user-id")
+        create_backup(SqlAlchemyBackupRepository(db_session), "nonexistent-user-id")
 
 
 def test_create_backup_filters_to_user(db_session):
@@ -401,14 +402,14 @@ def test_create_backup_filters_to_user(db_session):
     )
     db_session.commit()
 
-    payload = create_backup(db_session, user_a.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user_a.id)
     project_user_ids = {row["user_id"] for row in payload["data"]["learning_projects"]}
     assert project_user_ids == {user_a.id}
 
 
 def test_create_backup_stats_match_row_counts(db_session):
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     stats = payload["stats"]
     for table, rows in payload["data"].items():
         assert stats["tables"].get(table) == len(rows)
@@ -420,14 +421,14 @@ def test_create_backup_stats_match_row_counts(db_session):
 
 def test_get_backup_stats_matches_export(db_session):
     user = _seed_user(db_session)
-    stats = get_backup_stats(db_session, user.id)
-    payload = create_backup(db_session, user.id)
+    stats = get_backup_stats(SqlAlchemyBackupRepository(db_session), user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     assert stats["tables"] == payload["stats"]["tables"]
 
 
 def test_get_backup_stats_unknown_user_raises(db_session):
     with pytest.raises(NotFoundError):
-        get_backup_stats(db_session, "nonexistent")
+        get_backup_stats(SqlAlchemyBackupRepository(db_session), "nonexistent")
 
 
 # ---- Restore tests ---------------------------------------------------------
@@ -435,7 +436,7 @@ def test_get_backup_stats_unknown_user_raises(db_session):
 
 def test_restore_to_empty_db_recreates_all_rows(db_session):
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
 
     # Wipe the database. The restore must be able to repopulate from
     # the backup alone.
@@ -456,7 +457,7 @@ def test_restore_to_empty_db_recreates_all_rows(db_session):
     db_session.commit()
     assert db_session.query(User).count() == 0
 
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     assert summary["user_id"] == user.id
     assert summary["inserted"] >= 11  # user + settings + project + ... at minimum
     assert db_session.query(User).filter(User.id == user.id).first() is not None
@@ -465,8 +466,8 @@ def test_restore_to_empty_db_recreates_all_rows(db_session):
 
 def test_restore_skips_existing_rows_in_append_only_tables(db_session):
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
-    summary = restore_backup(db_session, payload)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     # Append-only rows (messages, ratings, commits, sessions) should
     # be skipped because they already exist.
     assert summary["skipped"] >= 1
@@ -476,7 +477,7 @@ def test_restore_skips_existing_rows_in_append_only_tables(db_session):
 
 def test_restore_uses_newer_timestamp_for_mutable_rows(db_session):
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
 
     # Modify the local user with a newer updated_at after backup.
     future = datetime.now(UTC) + timedelta(days=1)
@@ -485,7 +486,7 @@ def test_restore_uses_newer_timestamp_for_mutable_rows(db_session):
     user_row.updated_at = future
     db_session.commit()
 
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     # Local is newer; backup row should be skipped, not overwrite.
     assert db_session.get(User, user.id).name == "Local-newer"
     assert summary["updated"] == 0
@@ -493,7 +494,7 @@ def test_restore_uses_newer_timestamp_for_mutable_rows(db_session):
 
 def test_restore_overwrites_when_backup_is_newer(db_session):
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
 
     # Forge a newer timestamp on the backup's user row to simulate
     # "backup is from the future".
@@ -503,7 +504,7 @@ def test_restore_overwrites_when_backup_is_newer(db_session):
             row["updated_at"] = future
             row["name"] = "From-backup"
 
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     assert db_session.get(User, user.id).name == "From-backup"
     assert summary["updated"] >= 1
 
@@ -512,7 +513,7 @@ def test_restore_strips_api_keys_even_if_present(db_session):
     """A hand-edited backup carrying api_key_* fields must not poison
     the live UserSettings row."""
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
 
     # Inject API keys into the payload as a malicious user would.
     future = (datetime.now(UTC) + timedelta(days=1)).isoformat()
@@ -523,7 +524,7 @@ def test_restore_strips_api_keys_even_if_present(db_session):
         row["updated_at"] = future
         row["active_provider"] = "gemini"
 
-    restore_backup(db_session, payload)
+    restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     settings = db_session.query(UserSettings).filter(UserSettings.user_id == user.id).first()
     # Live keys survived; injected keys did not land.
     assert settings.api_key_anthropic == "sk-secret-anthropic"
@@ -535,33 +536,41 @@ def test_restore_strips_api_keys_even_if_present(db_session):
 
 def test_restore_rejects_unknown_format(db_session):
     with pytest.raises(ValidationError):
-        restore_backup(db_session, {"format": "not-ours", "version": "1.0", "data": {}})
+        restore_backup(
+            SqlAlchemyBackupRepository(db_session),
+            {"format": "not-ours", "version": "1.0", "data": {}},
+        )
 
 
 def test_restore_rejects_non_dict(db_session):
     with pytest.raises(ValidationError):
-        restore_backup(db_session, "not a dict")
+        restore_backup(SqlAlchemyBackupRepository(db_session), "not a dict")
 
 
 def test_restore_rejects_missing_data_segment(db_session):
     with pytest.raises(ValidationError):
-        restore_backup(db_session, {"format": BACKUP_FORMAT, "version": BACKUP_VERSION})
+        restore_backup(
+            SqlAlchemyBackupRepository(db_session),
+            {"format": BACKUP_FORMAT, "version": BACKUP_VERSION},
+        )
 
 
 def test_restore_rejects_missing_user_id(db_session):
     with pytest.raises(ValidationError):
         restore_backup(
-            db_session,
+            SqlAlchemyBackupRepository(db_session),
             {"format": BACKUP_FORMAT, "version": BACKUP_VERSION, "data": {}},
         )
 
 
 def test_restore_uses_target_user_id_override(db_session):
     user = _seed_user(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     # Drop the user_id from the payload; supply via override.
     payload["user_id"] = None
-    summary = restore_backup(db_session, payload, target_user_id=user.id)
+    summary = restore_backup(
+        SqlAlchemyBackupRepository(db_session), payload, target_user_id=user.id
+    )
     assert summary["user_id"] == user.id
 
 
@@ -773,11 +782,11 @@ def test_restore_curriculum_from_import_and_nested_topics(db_session):
     db_session.add(session)
     db_session.flush()
 
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     _wipe_all_tables(db_session)
     assert db_session.query(Curriculum).count() == 0
 
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     assert summary["errors"] == [], summary["errors"]
 
     assert db_session.query(ImportedConversation).count() == 1
@@ -799,7 +808,7 @@ def test_export_and_restore_all_thirty_tables(db_session):
     wipe, restore, and assert every table's row count is preserved.
     """
     user = _seed_all_tables(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
 
     # Every backup table carries at least one seeded row.
     before_counts = {table: len(rows) for table, rows in payload["data"].items()}
@@ -809,12 +818,15 @@ def test_export_and_restore_all_thirty_tables(db_session):
     _wipe_all_tables(db_session)
     assert db_session.query(User).count() == 0
 
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     assert summary["errors"] == []
 
     # Re-export from the restored DB and compare the per-table counts.
     after_counts = {
-        table: len(rows) for table, rows in create_backup(db_session, user.id)["data"].items()
+        table: len(rows)
+        for table, rows in create_backup(SqlAlchemyBackupRepository(db_session), user.id)[
+            "data"
+        ].items()
     }
     assert after_counts == before_counts
 
@@ -825,9 +837,9 @@ def test_round_trip_preserves_table_data_that_was_being_dropped(db_session):
     backup all come back byte-for-byte after a wipe + restore.
     """
     user = _seed_all_tables(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     _wipe_all_tables(db_session)
-    restore_backup(db_session, payload)
+    restore_backup(SqlAlchemyBackupRepository(db_session), payload)
 
     xp = db_session.query(UserXP).filter(UserXP.user_id == user.id).one()
     assert xp.total_xp == 100
@@ -864,11 +876,11 @@ def test_restore_skips_table_missing_from_backup(db_session):
     """A backup JSON missing a table segment must restore the rest
     without crashing (forward/backward-compat across app versions)."""
     user = _seed_all_tables(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     del payload["data"]["user_missions"]
 
     _wipe_all_tables(db_session)
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
 
     assert summary["errors"] == []
     # The dropped table simply restores nothing; everything else is back.
@@ -880,10 +892,10 @@ def test_restore_ignores_unknown_table_in_backup(db_session):
     """An unknown table segment (e.g. from a newer app version) is
     ignored rather than crashing the restore."""
     user = _seed_all_tables(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     payload["data"]["totally_made_up_table"] = [{"id": "x1", "foo": "bar"}]
 
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
 
     assert summary["errors"] == []
     assert "totally_made_up_table" not in summary["tables"]
@@ -892,7 +904,7 @@ def test_restore_ignores_unknown_table_in_backup(db_session):
 def test_get_backup_stats_covers_all_tables(db_session):
     """The pre-restore stats surface must report every backup table."""
     user = _seed_all_tables(db_session)
-    stats = get_backup_stats(db_session, user.id)
+    stats = get_backup_stats(SqlAlchemyBackupRepository(db_session), user.id)
     assert set(stats["tables"].keys()) == set(ALL_BACKUP_TABLES)
 
 
@@ -939,7 +951,7 @@ def test_restore_accepts_string_timestamp_on_imported_messages(db_session):
     coerce it instead of handing SQLite a raw str (HTTP 500 TypeError).
     """
     user = _seed_all_tables(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     msgs = payload["data"]["imported_messages"]
     assert msgs, "seed should include at least one imported message"
     # The seeded message carries timestamp=None; set a string form (as a
@@ -949,7 +961,7 @@ def test_restore_accepts_string_timestamp_on_imported_messages(db_session):
     _wipe_all_tables(db_session)
 
     # Must not raise "SQLite DateTime type only accepts ... datetime".
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     assert summary["user_id"] == user.id
 
     restored = db_session.query(ImportedMessage).filter(ImportedMessage.id == msgs[0]["id"]).first()
@@ -968,13 +980,13 @@ def test_restore_all_tables_to_empty_db_preserves_fk_chain(db_session):
     FOREIGN KEY failure on imported_messages.conversation_id.
     """
     user = _seed_all_tables(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     assert payload["data"].get("imported_conversations")
     assert payload["data"].get("imported_messages")
 
     _wipe_all_tables(db_session)
 
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     assert summary["user_id"] == user.id
     assert db_session.query(ImportedConversation).count() >= 1
     assert db_session.query(ImportedMessage).count() >= 1
@@ -986,8 +998,8 @@ def test_restore_all_tables_to_nonempty_db_preserves_fk_chain(db_session):
     chain intact.
     """
     user = _seed_all_tables(db_session)
-    payload = create_backup(db_session, user.id)
-    summary = restore_backup(db_session, payload)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     assert summary["user_id"] == user.id
     assert db_session.query(ImportedMessage).count() >= 1
 
@@ -999,7 +1011,7 @@ def test_restore_skips_orphan_imported_message_instead_of_aborting(db_session):
     failure at commit. Every valid row still lands.
     """
     user = _seed_all_tables(db_session)
-    payload = create_backup(db_session, user.id)
+    payload = create_backup(SqlAlchemyBackupRepository(db_session), user.id)
     valid_message_count = len(payload["data"]["imported_messages"])
     payload["data"]["imported_messages"].append(
         {
@@ -1015,7 +1027,7 @@ def test_restore_skips_orphan_imported_message_instead_of_aborting(db_session):
 
     _wipe_all_tables(db_session)
 
-    summary = restore_backup(db_session, payload)
+    summary = restore_backup(SqlAlchemyBackupRepository(db_session), payload)
     assert summary["user_id"] == user.id
     assert db_session.query(ImportedMessage).count() == valid_message_count
     assert (
@@ -1034,7 +1046,7 @@ def test_missing_fk_parent_detects_orphan_and_passes_valid(db_session):
 
     assert (
         bs._missing_fk_parent(
-            db_session,
+            SqlAlchemyBackupRepository(db_session),
             "imported_messages",
             {"id": "m1", "conversation_id": conversation.id},
         )
@@ -1042,7 +1054,7 @@ def test_missing_fk_parent_detects_orphan_and_passes_valid(db_session):
     )
     assert (
         bs._missing_fk_parent(
-            db_session,
+            SqlAlchemyBackupRepository(db_session),
             "imported_messages",
             {"id": "m2", "conversation_id": "nope"},
         )

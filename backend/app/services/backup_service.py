@@ -43,13 +43,12 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 
-from sqlalchemy import Date, DateTime, String, Text, UniqueConstraint, text
-from sqlalchemy.orm import Session
+from sqlalchemy import Date, DateTime, String, Text, UniqueConstraint
 
 from app import __version__
 from app.database import Base
 from app.exceptions import NotFoundError, ValidationError
-from app.models import User
+from app.repositories.backup_repo import BackupRepository
 from app.services.content_backup import dump_content_sets, restore_content_sets
 from app.services.sync_service import (
     TABLES as SYNC_TABLES,
@@ -57,7 +56,6 @@ from app.services.sync_service import (
 from app.services.sync_service import (
     TableSpec,
     _from_iso,
-    _scoped_query,
     _to_iso,
     serialize_row,
 )
@@ -93,7 +91,7 @@ def _strip_excluded_fields(table: str, record: dict[str, Any]) -> dict[str, Any]
     return {k: v for k, v in record.items() if k not in EXCLUDED_USER_SETTINGS_FIELDS}
 
 
-def _gather_user_rows(db: Session, user_id: str) -> dict[str, list[dict[str, Any]]]:
+def _gather_user_rows(repo: BackupRepository, user_id: str) -> dict[str, list[dict[str, Any]]]:
     """Build the ``data`` segment: ALL backup tables, scoped to the user.
 
     Every one of the 30 tables is ALWAYS present, even with zero rows
@@ -106,7 +104,7 @@ def _gather_user_rows(db: Session, user_id: str) -> dict[str, list[dict[str, Any
     """
     data: dict[str, list[dict[str, Any]]] = {}
     for table in SYNC_TABLES:
-        rows = _scoped_query(db, table, user_id).all()
+        rows = repo.scoped_rows(table, user_id)
         data[table] = [_strip_excluded_fields(table, serialize_row(table, row)) for row in rows]
     return data
 
@@ -124,7 +122,9 @@ def _build_stats(
     }
 
 
-def create_backup(db: Session, user_id: str, storage_mode: str = "api") -> dict[str, Any]:
+def create_backup(
+    repo: BackupRepository, user_id: str, storage_mode: str = "api"
+) -> dict[str, Any]:
     """Return the JSON backup payload for ``user_id``.
 
     Raises :class:`NotFoundError` if the user does not exist; the
@@ -135,9 +135,9 @@ def create_backup(db: Session, user_id: str, storage_mode: str = "api") -> dict[
     (the Settings panel shows "this backup was made in Dexie mode"
     on restore). It does not change the wire format.
     """
-    if db.get(User, user_id) is None:
+    if not repo.user_exists(user_id):
         raise NotFoundError(f"User {user_id!r} not found.")
-    data = _gather_user_rows(db, user_id)
+    data = _gather_user_rows(repo, user_id)
     # Downloaded lesson CONTENT lives outside the 30 sync tables (#130).
     # Include it so a restore is self-contained — and so user-generated
     # sets, which exist ONLY in this cache, are not lost.
@@ -155,18 +155,18 @@ def create_backup(db: Session, user_id: str, storage_mode: str = "api") -> dict[
     }
 
 
-def get_backup_stats(db: Session, user_id: str) -> dict[str, Any]:
+def get_backup_stats(repo: BackupRepository, user_id: str) -> dict[str, Any]:
     """Per-table row counts for one user. Used by the UI for the
     pre-restore "current vs incoming" diff.
     """
-    if db.get(User, user_id) is None:
+    if not repo.user_exists(user_id):
         raise NotFoundError(f"User {user_id!r} not found.")
     tables: dict[str, int] = {}
     for table in SYNC_TABLES:
         # ALL 30 tables, even at zero rows (#126): the pre-restore
         # "current vs incoming" dialog shows the COMPLETE state so the
         # user sees every table, not just the non-empty ones.
-        tables[table] = _scoped_query(db, table, user_id).count()
+        tables[table] = repo.scoped_count(table, user_id)
     return {
         "user_id": user_id,
         "total_records": sum(tables.values()),
@@ -444,11 +444,14 @@ def _unique_match_keys(model: type[Any]) -> list[tuple[str, ...]]:
     return keys
 
 
-def _find_existing_by_unique(db: Session, model: type[Any], record: dict[str, Any]) -> Any | None:
+def _find_existing_by_unique(
+    repo: BackupRepository, model: type[Any], record: dict[str, Any]
+) -> Any | None:
     """Find a local row matching any of ``model``'s UNIQUE keys.
 
     Returns the first existing row whose unique-key columns all equal the
-    record's values, or None.
+    record's values, or None. This function owns the BUSINESS rule of
+    WHICH key-groups to try; the repository runs the actual queries.
 
     Null handling differs by key shape:
     - A SINGLE-column key whose value is null is skipped — a NULL never
@@ -461,21 +464,16 @@ def _find_existing_by_unique(db: Session, model: type[Any], record: dict[str, An
       ``subjects`` against the seeded tree (#127). The only composite key
       with a nullable component is ``subjects.(parent_id, name)``.
     """
+    groups: list[list[tuple[str, Any]]] = []
     for cols in _unique_match_keys(model):
         values = [record.get(col) for col in cols]
         if len(cols) == 1 and values[0] is None:
             continue
-        query = db.query(model)
-        for col, value in zip(cols, values, strict=True):
-            column = getattr(model, col)
-            query = query.filter(column.is_(None) if value is None else column == value)
-        existing = query.one_or_none()
-        if existing is not None:
-            return existing
-    return None
+        groups.append(list(zip(cols, values, strict=True)))
+    return repo.find_by_column_groups(model, groups)
 
 
-def _missing_fk_parent(db: Session, table: str, record: dict[str, Any]) -> str | None:
+def _missing_fk_parent(repo: BackupRepository, table: str, record: dict[str, Any]) -> str | None:
     """Return a referenced parent table whose row is absent, else None.
 
     Restore inserts parents before children (FK-topological
@@ -488,7 +486,8 @@ def _missing_fk_parent(db: Session, table: str, record: dict[str, Any]) -> str |
     FKs are skipped; they are handled by ``PRAGMA defer_foreign_keys``.
 
     Args:
-        db: Active restore session (parents already flushed).
+        repo: Backup repository over the active restore session
+            (parents already flushed).
         table: The child table being restored.
         record: The backup record about to be inserted.
 
@@ -507,13 +506,13 @@ def _missing_fk_parent(db: Session, table: str, record: dict[str, Any]) -> str |
             parent_spec = SYNC_TABLES.get(parent_table)
             if parent_spec is None:
                 continue
-            if db.get(parent_spec.model, fk_value) is None:
+            if repo.get_by_pk(parent_spec.model, fk_value) is None:
                 return parent_table
     return None
 
 
 def _restore_table(
-    db: Session,
+    repo: BackupRepository,
     table: str,
     records: list[dict[str, Any]],
     user_id: str,
@@ -563,7 +562,7 @@ def _restore_table(
             if mapped is not None and mapped != fk_value:
                 record = {**record, self_col: mapped}
         try:
-            existing = db.get(model, record_id)
+            existing = repo.get_by_pk(model, record_id)
             # Unique-key fallback (#115, generalises the #49 badges fix):
             # the backup id missed, but a row with the same UNIQUE key
             # exists locally under a different id — an older backup, a
@@ -573,7 +572,7 @@ def _restore_table(
             # the local id.
             matched_by_unique = False
             if existing is None:
-                existing = _find_existing_by_unique(db, model, record)
+                existing = _find_existing_by_unique(repo, model, record)
                 if existing is not None:
                     matched_by_unique = True
                     if existing.id != record_id:
@@ -584,7 +583,7 @@ def _restore_table(
                 if not _record_belongs_to_user(table, record, user_id):
                     skipped += 1
                     continue
-                missing_parent = _missing_fk_parent(db, table, record)
+                missing_parent = _missing_fk_parent(repo, table, record)
                 if missing_parent is not None:
                     skipped += 1
                     errors.append(
@@ -593,7 +592,7 @@ def _restore_table(
                     continue
                 fresh = model()
                 _apply_columns(table, record, fresh, allow_pk=True)
-                db.add(fresh)
+                repo.add(fresh)
                 inserted += 1
                 continue
             # Existing row. Defensive scope check on the row itself.
@@ -627,7 +626,7 @@ def _restore_table(
                 # the newer side.
                 skipped += 1
         except Exception as exc:  # pragma: no cover — defensive
-            db.rollback()
+            repo.rollback()
             errors.append(f"{table}: {record_id}: {exc}")
             logger.error(
                 "Failed to restore row in %r (id=%s): %s",
@@ -731,7 +730,7 @@ def _remap_user_identity(
 
 
 def restore_backup(
-    db: Session, payload: Any, *, target_user_id: str | None = None
+    repo: BackupRepository, payload: Any, *, target_user_id: str | None = None
 ) -> dict[str, Any]:
     """Apply a backup payload to the database. Merge semantics.
 
@@ -764,7 +763,7 @@ def restore_backup(
     # Deferring checks until commit lets the rows land in any order as
     # long as the final, fully-restored state is FK-consistent. SQLite
     # resets this pragma at the end of the transaction automatically.
-    db.execute(text("PRAGMA defer_foreign_keys=ON"))
+    repo.begin_deferred_fk()
 
     per_table: dict[str, Any] = {}
     total_inserted = 0
@@ -793,7 +792,7 @@ def restore_backup(
             continue
         summary: dict[str, Any]
         if records:
-            summary = _restore_table(db, table, records, user_id, id_remap)
+            summary = _restore_table(repo, table, records, user_id, id_remap)
             # Flush after each table so the explicit FK-safe _RESTORE_ORDER
             # (parents first) is what actually drives insert order. The
             # session runs with autoflush=False and a single commit would
@@ -802,7 +801,7 @@ def restore_backup(
             # decoupled (FK columns, no relationships), so the unit-of-work
             # has no way to know a child must follow its parent. Flushing
             # per table in our own order sidesteps that entirely.
-            db.flush()
+            repo.flush()
         else:
             # An empty table is still recorded (#126) so the per-table
             # summary covers all 30 tables, not just the non-empty ones.
@@ -822,7 +821,7 @@ def restore_backup(
         total_skipped += summary["skipped"]
         all_errors.extend(summary["errors"])
 
-    db.commit()
+    repo.commit()
     logger.info(
         "Restore complete: %d total, %d inserted, %d updated, %d skipped, %d errors",
         total_inserted + total_updated + total_skipped,

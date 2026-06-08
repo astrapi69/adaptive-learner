@@ -24,9 +24,9 @@ from typing import Any
 
 from fastapi import APIRouter, Body, Depends, status  # noqa: F401  (Body used as Body(...))
 from fastapi.responses import Response
-from sqlalchemy.orm import Session
 
-from app.database import get_db
+from app.deps import get_backup_repo
+from app.repositories.backup_repo import BackupRepository
 from app.services.backup_service import (
     create_backup,
     get_backup_stats,
@@ -55,7 +55,7 @@ def _filename_for(user_id: str) -> str:
 def export_backup(
     user_id: str,
     storage_mode: str = "api",
-    db: Session = Depends(get_db),
+    repo: BackupRepository = Depends(get_backup_repo),
 ) -> Response:
     """Export the user's full data set as a JSON backup file.
 
@@ -65,7 +65,7 @@ def export_backup(
     readable; users open backups in text editors to verify
     contents before trusting a restore.
     """
-    payload = create_backup(db, user_id, storage_mode=storage_mode)
+    payload = create_backup(repo, user_id, storage_mode=storage_mode)
     body = json.dumps(payload, indent=2, ensure_ascii=False, default=str)
     filename = _filename_for(user_id)
     return Response(
@@ -78,12 +78,12 @@ def export_backup(
 
 
 @router.get("/stats")
-def backup_stats(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
+def backup_stats(user_id: str, repo: BackupRepository = Depends(get_backup_repo)) -> dict[str, Any]:
     """Per-table row counts for the user. Used by the UI to show
     a pre-restore comparison ("Current: X sessions; backup
     contains: Y sessions").
     """
-    return get_backup_stats(db, user_id)
+    return get_backup_stats(repo, user_id)
 
 
 @router.post(
@@ -99,7 +99,7 @@ def backup_stats(user_id: str, db: Session = Depends(get_db)) -> dict[str, Any]:
 def import_backup(
     user_id: str,
     payload: dict[str, Any] = Body(...),
-    db: Session = Depends(get_db),
+    repo: BackupRepository = Depends(get_backup_repo),
 ) -> dict[str, Any]:
     """Restore a previously-exported JSON backup payload.
 
@@ -114,4 +114,4 @@ def import_backup(
     updates mutable rows where the backup's timestamp is newer.
     API keys are ignored even if present in the payload.
     """
-    return restore_backup(db, payload, target_user_id=user_id)
+    return restore_backup(repo, payload, target_user_id=user_id)

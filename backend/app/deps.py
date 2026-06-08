@@ -18,6 +18,10 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.database import get_db
+from app.repositories.backup_repo import (
+    BackupRepository,
+    SqlAlchemyBackupRepository,
+)
 from app.repositories.curriculum_repo import (
     CurriculumRepository,
     SqlAlchemyCurriculumRepository,
@@ -104,6 +108,11 @@ def get_export_repo(db: Session = Depends(get_db)) -> ExportRepository:
     return SqlAlchemyExportRepository(db)
 
 
+def get_backup_repo(db: Session = Depends(get_db)) -> BackupRepository:
+    """Provide a :class:`BackupRepository` bound to the request session."""
+    return SqlAlchemyBackupRepository(db)
+
+
 def get_element_errors_repo(db: Session = Depends(get_db)) -> ElementErrorsRepository:
     """Provide an :class:`ElementErrorsRepository` bound to the request session."""
     return SqlAlchemyElementErrorsRepository(db)
@@ -122,6 +131,7 @@ def get_lesson_session_unification_repo(
 
 
 __all__ = [
+    "get_backup_repo",
     "get_curriculum_repo",
     "get_element_errors_repo",
     "get_export_repo",

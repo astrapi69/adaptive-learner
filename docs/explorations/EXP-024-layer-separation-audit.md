@@ -197,8 +197,16 @@ high-ripple / gross):
       Confirmation-Token bleiben im Service. db_guard unverändert.
 - [x] **export_service** — read-only Aggregator: `ExportRepository` (19 intent-
       benannte Reads); DTO-Shaping/Tree-Flatten/Envelope bleiben im Service.
-- [ ] backup_service (inkl. S3-Pragma), sync_service (1039 Z.) — die zwei
-      größten/heikelsten, je einzeln mit frischem Kontext
+- [x] **backup_service** — `BackupRepository` (10 Primitive: user_exists,
+      scoped_rows/scoped_count [wrappen `sync._scoped_query`], get_by_pk,
+      find_by_column_groups, add/flush/commit/rollback, begin_deferred_fk
+      [S3-PRAGMA]). Der gesamte Matching-/Coercion-/FK-/Identity-Remap-Kern
+      bleibt bit-identisch im Service; `_find_existing_by_unique` = Service
+      wählt Keys / Repo führt Query (Punkt b). BACKUP-AKZEPTANZTEST bestanden:
+      echter HTTP-Round-Trip (Export → Wipe → Cross-Identity-Import + Content-
+      Sets), 0 Errors. Merge mit main (v1.67.0) zuvor sauber integriert.
+- [ ] sync_service (1039 Z.) — letzter + größter; eigener Block, frischer
+      Kontext
 
 ### Phase 2 — Plugin-Service-Module (18 Module / 7 Plugins)
 session (4), gamification (4), learning-repo (4), notebooklm (2),
@@ -264,6 +272,22 @@ tracking (2), anki (1), missions (1).
   Test-Dateien (28 Call-Sites) inline-gewrappt. Hinweis: ein **vorbestehender**
   E402 (session routes.py:1788) ist nicht Teil dieses Diffs und wird nicht
   angefasst. ruff + mypy (backend) sauber.
+- **backup_service migriert (heikelster Block, akzeptanzgetestet):**
+  `BackupRepository` mit 10 Primitiven. Reine Logik (Validation, Stats,
+  Coercion, `_datetime/_text_fields`, `_unique_match_keys`, FK-Graph,
+  Self-Ref-Ordering, `_apply_columns`, `_remap_user_identity`,
+  `_row/_record_belongs_to_user`) bleibt unverändert im Service. Persistenz
+  (scoped reads via `sync._scoped_query`, PK-/Unique-Lookup, add/flush/commit/
+  rollback, `PRAGMA defer_foreign_keys=ON`) wandert hinter das Repo. Punkt (b):
+  `_find_existing_by_unique` baut die `(col,value)`-Gruppen im Service (inkl.
+  Single-Null-Skip + Composite-IS-NULL-Regel), `repo.find_by_column_groups`
+  führt die Queries. backup zuerst, sync danach (Punkt a): `scoped_rows/
+  scoped_count` wrappen `sync._scoped_query`. **BACKUP-AKZEPTANZTEST** als
+  dedizierter `test_backup_acceptance_roundtrip.py`: realer HTTP-Pfad
+  Export → User-Wipe (FK-Cascade) → Cross-Identity-Import + Content-Set-
+  Restore; Beweis-Log: `Restore complete: 115 total, 9 inserted, 0 updated,
+  106 skipped, 0 errors` + `Content-set restore complete: 1 restored`.
+  Backend-Suite + alle backup-Tests grün.
 - **reset_service migriert:** `ResetRepository.truncate_all_tables()` kapselt
   die einzige destruktive Primitive (reverse-FK-Delete über
   `Base.metadata.sorted_tables` + commit, gibt Tabellen-Count zurück). Die
