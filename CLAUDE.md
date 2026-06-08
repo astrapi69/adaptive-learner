@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.67.0** (maintenance — **systematic
+- **Current state:** **v1.67.1** (maintenance — **systematic
   backup-restore fix + deploy-safe lazy-route reload + subject-filter UX
   polish**). **Backup restore (#115, #117):** a generic type-coercion +
   matching layer replaces the prior point-fixes — unique-key matching
