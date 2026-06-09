@@ -205,6 +205,10 @@
     "invite_subtitle": "Cela prend une minute et adapte vos sessions — vous pouvez aussi le faire plus tard.",
     "invite_start_now": "Commencer tout de suite",
     "invite_setup_profile": "Configurer le profil",
+    "restore_hint": "Vous utilisez déjà Adaptive Learner ? Restaurez depuis une sauvegarde.",
+    "restore_backup": "Restaurer depuis une sauvegarde existante",
+    "restoring": "Restauration…",
+    "restore_success": "Sauvegarde restaurée. Bon retour !",
     "wizard": {
       "step_label": "Étape {current} sur {total}",
       "next": "Suivant",
