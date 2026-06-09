@@ -1399,6 +1399,8 @@ lesson:
   reviewed:
     completed: "Abgeschlossen"
   exercise:
+    reread_theory: "Theorie nochmal lesen"
+    back_to_exercise: "Zurück zur Übung"
     loading: "Übung wird geladen…"
     coming_soon: "Dieser Übungstyp ({type}) folgt in einer späteren Version. Springe zum nächsten Schritt."
     missing_type: "Dieser Übung fehlt ein Übungstyp. Bitte aktualisiere die Inhalte."

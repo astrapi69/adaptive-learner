@@ -1394,6 +1394,8 @@ lesson:
   reviewed:
     completed: "Tamamlandı"
   exercise:
+    reread_theory: "Teoriyi tekrar oku"
+    back_to_exercise: "Alıştırmaya dön"
     loading: "Alıştırma yükleniyor…"
     coming_soon: "Bu alıştırma türü ({type}) sonraki sürümlerde gelecek. Bir sonraki adıma geç."
     missing_type: "Bu alıştırmanın türü eksik. Lütfen içeriği güncelle."

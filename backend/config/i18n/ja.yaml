@@ -1394,6 +1394,8 @@ lesson:
   reviewed:
     completed: "完了"
   exercise:
+    reread_theory: "理論をもう一度読む"
+    back_to_exercise: "練習に戻る"
     loading: "演習を読み込み中…"
     coming_soon: "この演習タイプ ({type}) は将来のバージョンで対応予定です。次のステップへ進んでください。"
     missing_type: "この演習にはタイプが設定されていません。コンテンツを更新してください。"

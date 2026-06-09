@@ -23,6 +23,7 @@
  */
 
 import {
+    BookOpen,
     Check,
     CheckCircle2,
     ChevronLeft,
@@ -96,6 +97,7 @@ import {
     lessonResultFilename,
     type LessonResultLabels,
 } from "../lib/lesson/result-export";
+import {findPrecedingTheoryIndex} from "../lib/lesson/theory-link";
 import {localTodayIso} from "../lib/missions/schedule";
 import {celebrateMissions, emitCelebration} from "../lib/praise/celebration-bus";
 import {nextPraise} from "../lib/praise/phrase-picker";
@@ -547,6 +549,44 @@ export default function LessonPage() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [tts.boundaryIndex, isContinuous, theoryRun]);
+
+    // #140 — let an exercise step link back to the theory it
+    // practices. The target is the nearest preceding theory step in
+    // the same lesson (runtime-derived, no schema field). When the
+    // learner follows the link we remember the origin exercise so a
+    // "back to exercise" affordance on the theory step returns them
+    // exactly where they were.
+    const [theoryReturnIndex, setTheoryReturnIndex] = useState<number | null>(
+        null,
+    );
+    const precedingTheoryIndex = useMemo(
+        () =>
+            lesson
+                ? findPrecedingTheoryIndex(lesson.steps, currentStepIndex)
+                : null,
+        [lesson, currentStepIndex],
+    );
+    const openTheoryFromExercise = useCallback(() => {
+        if (precedingTheoryIndex === null) return;
+        setTheoryReturnIndex(currentStepIndex);
+        goToStep(precedingTheoryIndex);
+    }, [precedingTheoryIndex, currentStepIndex, goToStep]);
+    const returnToExercise = useCallback(() => {
+        if (theoryReturnIndex === null) return;
+        const target = theoryReturnIndex;
+        setTheoryReturnIndex(null);
+        goToStep(target);
+    }, [theoryReturnIndex, goToStep]);
+    // Drop the pending return target once the learner is on a
+    // non-theory step again (they returned, or moved on via the
+    // lesson's own prev/next) so the back affordance never lingers.
+    useEffect(() => {
+        if (!lesson) return;
+        const cur = lesson.steps[currentStepIndex];
+        if (cur && cur.type !== "theory" && theoryReturnIndex !== null) {
+            setTheoryReturnIndex(null);
+        }
+    }, [lesson, currentStepIndex, theoryReturnIndex]);
 
     // Phase 46A — fetch the set's lesson list so the summary
     // screen's "Next lesson" button knows whether there's a
@@ -1010,17 +1050,63 @@ export default function LessonPage() {
                     data-step-type={step!.type}
                 >
                     {step!.title && <h2>{step!.title}</h2>}
+                    {/* #140 — re-read the relevant theory from an
+                        exercise step. Rendered once here so all five
+                        renderers inherit it; subtle so it doesn't
+                        distract from practising. */}
+                    {step!.type !== "theory" &&
+                        precedingTheoryIndex !== null && (
+                            <div className="mb-2">
+                                <Button
+                                    type="button"
+                                    variant="link"
+                                    size="sm"
+                                    className="h-auto min-h-11 gap-1.5 px-0 text-[var(--fg-muted)] hover:text-[var(--accent-text)]"
+                                    onClick={openTheoryFromExercise}
+                                    data-testid="exercise-theory-link"
+                                >
+                                    <BookOpen
+                                        size={14}
+                                        aria-hidden="true"
+                                    />
+                                    {t(
+                                        "lesson.exercise.reread_theory",
+                                        "Re-read theory",
+                                    )}
+                                </Button>
+                            </div>
+                        )}
                     {step!.type === "theory" ? (
-                        <TheoryStep
-                            body={step!.body ?? ""}
-                            stepId={step!.id}
-                            ttsLang={lesson.target_language}
-                            tts={tts}
-                            lessonRewriteFn={(s) =>
-                                rewriteAnchors(s, lesson)
-                            }
-                            onAnchorClick={goToStepById}
-                        />
+                        <>
+                            {theoryReturnIndex !== null && (
+                                <div className="mb-2">
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        size="sm"
+                                        className="min-h-11 gap-1.5"
+                                        onClick={returnToExercise}
+                                        data-testid="theory-back-to-exercise"
+                                    >
+                                        <ChevronLeft aria-hidden="true" />
+                                        {t(
+                                            "lesson.exercise.back_to_exercise",
+                                            "Back to exercise",
+                                        )}
+                                    </Button>
+                                </div>
+                            )}
+                            <TheoryStep
+                                body={step!.body ?? ""}
+                                stepId={step!.id}
+                                ttsLang={lesson.target_language}
+                                tts={tts}
+                                lessonRewriteFn={(s) =>
+                                    rewriteAnchors(s, lesson)
+                                }
+                                onAnchorClick={goToStepById}
+                            />
+                        </>
                     ) : enteredReviewed &&
                       reviewedRaw === null &&
                       step!.exercise != null ? (
