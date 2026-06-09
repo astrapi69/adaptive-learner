@@ -80,7 +80,7 @@ describe("buildManifestYaml", () => {
   it("produces a one-entry ContentManifest that re-parses", () => {
     const yaml = buildManifestYaml(META, 1);
     const parsed = parseYaml(yaml);
-    expect(parsed.schema_version).toBe("1.3");
+    expect(parsed.schema_version).toBe("1.4");
     expect(parsed.sets).toHaveLength(1);
     expect(parsed.sets[0].id).toBe("analysis-conv-1");
     expect(parsed.sets[0].language).toBe("es");
@@ -195,9 +195,7 @@ describe("communityPrUrl", () => {
     );
     const qs = new URL(url).searchParams;
     // Auto-numbered placement path (NOT the title-derived filename).
-    expect(qs.get("filename")).toBe(
-      "sets/en/es-a1/lessons/16-greetings.json",
-    );
+    expect(qs.get("filename")).toBe("sets/en/es-a1/lessons/16-greetings.json");
     expect(qs.get("message")).toBe("content: Greetings (en->es A1)");
     expect(qs.get("description")).toContain("New lesson");
     const value = qs.get("value") ?? "";

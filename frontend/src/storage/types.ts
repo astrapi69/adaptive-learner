@@ -405,6 +405,12 @@ export interface ContentLessonStep {
   title?: string | null;
   body?: string | null;
   exercise?: ContentLessonExercise | null;
+  /** Schema v1.4 (#139) — optional external example link rendered under
+   *  a theory step's content (article / video / visualisation). */
+  example_url?: string | null;
+  /** Display text for {@link example_url}; the viewer falls back to a
+   *  localized "View example" label when empty. */
+  example_label?: string | null;
 }
 
 /** Phase 52D / v1.35.0 / P-127 — one blank inside a CLOZE
@@ -661,11 +667,11 @@ export interface SaveUserSetInput {
  * renderers.
  */
 export type RawAnswer =
-  | {kind: "matching"; matches: [number, number][]}
-  | {kind: "picture_choice"; selected: number}
-  | {kind: "free_text"; input: string}
-  | {kind: "word_tiles"; placed: number[]}
-  | {kind: "cloze"; inputs: string[]};
+  | { kind: "matching"; matches: [number, number][] }
+  | { kind: "picture_choice"; selected: number }
+  | { kind: "free_text"; input: string }
+  | { kind: "word_tiles"; placed: number[] }
+  | { kind: "cloze"; inputs: string[] };
 
 export interface LessonStepResult {
   step_id: string;

@@ -170,6 +170,24 @@ Markdown block) or EXERCISE (one of the four exercise types):
 }
 ```
 
+A theory step may carry an optional **example link** (schema v1.4,
+additive — existing lessons stay valid without it). When present, the
+viewer renders an "open example" button under the content:
+
+```json
+{
+  "id": "intro",
+  "type": "theory",
+  "body": "Correlation measures the relationship...",
+  "example_url": "https://example.com/correlation-visualizer",
+  "example_label": "Interactive visualisation"
+}
+```
+
+- `example_url` (optional): must be an `http(s)` URL.
+- `example_label` (optional): the link text; defaults to a localized
+  "View example" when empty.
+
 Or an exercise:
 
 ```json

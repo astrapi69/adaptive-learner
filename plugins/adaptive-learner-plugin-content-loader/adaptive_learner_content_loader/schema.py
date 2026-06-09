@@ -646,6 +646,31 @@ class LessonStep(BaseModel):
         default=None,
         description="EXERCISE: the exercise payload.",
     )
+    example_url: str | None = Field(
+        default=None,
+        description=(
+            "Optional URL to an external example that illustrates the "
+            "theory (article / video / interactive visualisation). "
+            "Rendered as a link button under a THEORY step's content "
+            "(schema v1.4, additive). Must be an http(s) URL."
+        ),
+        max_length=2000,
+    )
+    example_label: str | None = Field(
+        default=None,
+        description=(
+            "Optional display text for the example link. The viewer "
+            "falls back to a localized 'View example' label when empty."
+        ),
+        max_length=200,
+    )
+
+    @field_validator("example_url")
+    @classmethod
+    def _http_example_url(cls, value: str | None) -> str | None:
+        if value is not None and not value.startswith(("http://", "https://")):
+            raise ValueError("example_url must be an http(s) URL")
+        return value
 
     @field_validator("id")
     @classmethod

@@ -39,7 +39,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-CURRENT_SCHEMA_VERSION = "1.3"
+CURRENT_SCHEMA_VERSION = "1.4"
 # v1.2 → v1.3 (technical / programming content):
 #   - ``Card`` gained optional code fields: ``code_snippet``,
 #     ``code_language``, ``expected_output``, ``hint``,

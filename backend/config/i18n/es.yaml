@@ -1359,6 +1359,8 @@ repo:
     description: "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git confirma cada generación para que puedas explorar el historial con cualquier cliente git."
     enable_git: "Activar persistencia git (endpoint POST /persist)"
 lesson:
+  theory:
+    view_example: "Ver ejemplo"
   tts:
     read_aloud: "Leer en voz alta"
     stop: "Detener"
@@ -1703,6 +1705,7 @@ content:
     lesson_too_few_exercises: La lección '{lesson}' tiene {count} ejercicios; se requieren al menos {min}.
     lesson_too_few_types: La lección '{lesson}' usa {count} tipo(s) de ejercicio; se requieren al menos {min}.
     lesson_no_theory: La lección '{lesson}' no tiene paso de teoría.
+    example_url_invalid: "Lección '{lesson}': el paso '{step}' tiene una URL de ejemplo no válida (solo http/https)."
     empty_card: "Lección '{lesson}': la tarjeta '{card}' tiene el anverso o reverso vacío."
     back_language_mismatch: "Lección '{lesson}': el reverso de la tarjeta '{card}' no parece estar en {source}."
     free_text_too_few_accepts: "Lección '{lesson}': el ejercicio de texto libre '{exercise}' necesita al menos {min} respuestas aceptadas."

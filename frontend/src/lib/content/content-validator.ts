@@ -196,16 +196,10 @@ function validateMeta(
 
   // Non-language sets are explained in (and written in) the same
   // language they teach, so source == target is expected and allowed.
-  if (
-    target &&
-    source &&
-    target === source &&
-    setDomain(meta) === "language"
-  )
+  if (target && source && target === source && setDomain(meta) === "language")
     issues.push({ code: "same_source_target", params: { code: target } });
 
-  if (!meta.title || !meta.title.trim())
-    issues.push({ code: "missing_title" });
+  if (!meta.title || !meta.title.trim()) issues.push({ code: "missing_title" });
   if (!meta.title_native || !meta.title_native.trim())
     issues.push({ code: "missing_title_native" });
 
@@ -283,9 +277,11 @@ function validateLesson(
     const wordsOf = (s: string | null | undefined) =>
       s && s.trim() ? s.trim().split(/\s+/).length : 0;
     const frontAvg =
-      lesson.cards.reduce((n, c) => n + wordsOf(c.front), 0) / lesson.cards.length;
+      lesson.cards.reduce((n, c) => n + wordsOf(c.front), 0) /
+      lesson.cards.length;
     const backAvg =
-      lesson.cards.reduce((n, c) => n + wordsOf(c.back), 0) / lesson.cards.length;
+      lesson.cards.reduce((n, c) => n + wordsOf(c.back), 0) /
+      lesson.cards.length;
     const avg = Math.max(frontAvg, backAvg);
     if (avg > cap)
       warnings.push({
@@ -297,7 +293,11 @@ function validateLesson(
   if (exercises.length < QUALITY.minExercisesPerLesson)
     issues.push({
       code: "lesson_too_few_exercises",
-      params: { lesson: id, count: exercises.length, min: QUALITY.minExercisesPerLesson },
+      params: {
+        lesson: id,
+        count: exercises.length,
+        min: QUALITY.minExercisesPerLesson,
+      },
     });
 
   if (types.size < QUALITY.minExerciseTypes)
@@ -309,13 +309,31 @@ function validateLesson(
   if (theoryCount < QUALITY.minTheorySteps)
     issues.push({ code: "lesson_no_theory", params: { lesson: id } });
 
+  // #139 — an optional theory example link (schema v1.4) must be an
+  // http(s) URL when present.
+  for (const step of lesson.steps) {
+    const url = step.example_url?.trim();
+    if (url && !/^https?:\/\//i.test(url))
+      issues.push({
+        code: "example_url_invalid",
+        params: { lesson: id, step: step.id },
+      });
+  }
+
   for (const card of lesson.cards) {
     if (!card.front || !card.front.trim() || !card.back || !card.back.trim()) {
-      issues.push({ code: "empty_card", params: { lesson: id, card: card.id } });
+      issues.push({
+        code: "empty_card",
+        params: { lesson: id, card: card.id },
+      });
     } else if (!backLooksLikeSource(card.back, meta.source_language)) {
       issues.push({
         code: "back_language_mismatch",
-        params: { lesson: id, card: card.id, source: base(meta.source_language) },
+        params: {
+          lesson: id,
+          card: card.id,
+          source: base(meta.source_language),
+        },
       });
     }
   }
@@ -325,7 +343,11 @@ function validateLesson(
       if ((ex.accept?.length ?? 0) < QUALITY.minFreeTextAccepts)
         issues.push({
           code: "free_text_too_few_accepts",
-          params: { lesson: id, exercise: ex.id, min: QUALITY.minFreeTextAccepts },
+          params: {
+            lesson: id,
+            exercise: ex.id,
+            min: QUALITY.minFreeTextAccepts,
+          },
         });
       if (ex.distractors.length === 0)
         issues.push({
@@ -337,7 +359,11 @@ function validateLesson(
       if ((ex.pairs?.length ?? 0) < QUALITY.minMatchingPairs)
         issues.push({
           code: "matching_too_few_pairs",
-          params: { lesson: id, exercise: ex.id, min: QUALITY.minMatchingPairs },
+          params: {
+            lesson: id,
+            exercise: ex.id,
+            min: QUALITY.minMatchingPairs,
+          },
         });
     }
     if (ex.type === "picture_choice") {

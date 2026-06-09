@@ -1357,6 +1357,8 @@ repo:
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
     enable_git: "git 永続化を有効にする（POST /persist エンドポイント）"
 lesson:
+  theory:
+    view_example: "例を見る"
   tts:
     read_aloud: "読み上げ"
     stop: "停止"
@@ -1701,6 +1703,7 @@ content:
     lesson_too_few_exercises: レッスン '{lesson}' の演習は {count} 個です。最低 {min} 個必要です。
     lesson_too_few_types: レッスン '{lesson}' は演習タイプを {count} 種類使用しています。最低 {min} 種類必要です。
     lesson_no_theory: レッスン '{lesson}' に理論ステップがありません。
+    example_url_invalid: "レッスン'{lesson}': ステップ'{step}'の例のURLが無効です（http/httpsのみ）。"
     empty_card: "レッスン '{lesson}': カード '{card}' の表または裏が空です。"
     back_language_mismatch: "レッスン '{lesson}': カード '{card}' の裏面が {source} に見えません。"
     free_text_too_few_accepts: "レッスン '{lesson}': 自由記述演習 '{exercise}' には最低 {min} 個の正解が必要です。"

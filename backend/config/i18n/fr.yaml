@@ -1359,6 +1359,8 @@ repo:
     description: "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de vos données de session. L'intégration git facultative valide chaque génération pour que vous puissiez parcourir l'historique avec n'importe quel client git."
     enable_git: "Activer la persistance git (point de terminaison POST /persist)"
 lesson:
+  theory:
+    view_example: "Voir l'exemple"
   tts:
     read_aloud: "Lire à voix haute"
     stop: "Arrêter"
@@ -1703,6 +1705,7 @@ content:
     lesson_too_few_exercises: La leçon '{lesson}' a {count} exercices ; au moins {min} sont requis.
     lesson_too_few_types: La leçon '{lesson}' utilise {count} type(s) d'exercice ; au moins {min} sont requis.
     lesson_no_theory: La leçon '{lesson}' n'a aucune étape de théorie.
+    example_url_invalid: "Leçon '{lesson}' : l'étape '{step}' a une URL d'exemple non valide (http/https uniquement)."
     empty_card: "Leçon '{lesson}' : la carte '{card}' a un recto ou un verso vide."
     back_language_mismatch: "Leçon '{lesson}' : le verso de la carte '{card}' ne ressemble pas à {source}."
     free_text_too_few_accepts: "Leçon '{lesson}' : l'exercice de texte libre '{exercise}' nécessite au moins {min} réponses acceptées."

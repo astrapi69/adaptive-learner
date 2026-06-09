@@ -20,9 +20,9 @@ from adaptive_learner_content_loader.models import (
 
 
 class TestSchemaVersion:
-    def test_current_is_1_3(self) -> None:
-        # C5: schema bumped 1.2 -> 1.3 for technical/programming content.
-        assert CURRENT_SCHEMA_VERSION == "1.3"
+    def test_current_is_1_4(self) -> None:
+        # #139: schema bumped 1.3 -> 1.4 for theory example links.
+        assert CURRENT_SCHEMA_VERSION == "1.4"
 
     def test_every_1x_minor_is_supported(self) -> None:
         for v in ["1.0", "1.1", "1.2", "1.3", "1.4", "1.0.0", "1.3.2"]:

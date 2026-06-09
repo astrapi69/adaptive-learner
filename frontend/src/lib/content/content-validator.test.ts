@@ -59,17 +59,38 @@ function goodLesson(): ContentLesson {
       {
         id: "e3",
         type: "exercise",
-        exercise: { id: "e3", type: "word_tiles", prompt: "Ordne", card_ids: ["c1"], tiles: ["Bon", "jour"], distractors: [] },
+        exercise: {
+          id: "e3",
+          type: "word_tiles",
+          prompt: "Ordne",
+          card_ids: ["c1"],
+          tiles: ["Bon", "jour"],
+          distractors: [],
+        },
       },
       {
         id: "e4",
         type: "exercise",
-        exercise: { id: "e4", type: "word_tiles", prompt: "Ordne", card_ids: ["c3"], tiles: ["Sa", "lut"], distractors: [] },
+        exercise: {
+          id: "e4",
+          type: "word_tiles",
+          prompt: "Ordne",
+          card_ids: ["c3"],
+          tiles: ["Sa", "lut"],
+          distractors: [],
+        },
       },
       {
         id: "e5",
         type: "exercise",
-        exercise: { id: "e5", type: "word_tiles", prompt: "Ordne", card_ids: ["c2"], tiles: ["Mer", "ci"], distractors: [] },
+        exercise: {
+          id: "e5",
+          type: "word_tiles",
+          prompt: "Ordne",
+          card_ids: ["c2"],
+          tiles: ["Mer", "ci"],
+          distractors: [],
+        },
       },
     ],
   } as ContentLesson;
@@ -155,6 +176,19 @@ describe("validateSetForSharing", () => {
     l.steps = l.steps.filter((s) => s.type !== "theory");
     // also keep >=5 exercises (still 5)
     expect(codes(META, [l])).toContain("lesson_no_theory");
+  });
+
+  it("flags a non-http theory example_url (#139)", () => {
+    const l = goodLesson();
+    l.steps[0].example_url = "ftp://example.com/x";
+    expect(codes(META, [l])).toContain("example_url_invalid");
+  });
+
+  it("accepts a valid https theory example_url (#139)", () => {
+    const l = goodLesson();
+    l.steps[0].example_url = "https://example.com/correlation";
+    l.steps[0].example_label = "Visualisierung";
+    expect(codes(META, [l])).not.toContain("example_url_invalid");
   });
 
   it("requires free_text exercises to have >= 2 accepts", () => {
@@ -278,8 +312,8 @@ describe("validateSetForSharing — warnings (non-blocking)", () => {
   it("does NOT flag the expected target's own marker (Spanish ñ on a Spanish front)", () => {
     const l = goodLesson();
     l.cards[0].front = "el niño"; // ñ is Spanish's own marker
-    expect(
-      warnCodes({ ...META, target_language: "es" }, [l]),
-    ).not.toContain("target_language_heuristic");
+    expect(warnCodes({ ...META, target_language: "es" }, [l])).not.toContain(
+      "target_language_heuristic",
+    );
   });
 });
