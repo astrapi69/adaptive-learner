@@ -464,3 +464,89 @@ describe("content sets in backup (#130)", () => {
         expect(summary.content_sets).toEqual({restored: 0, skipped: 1, errors: []});
     });
 });
+
+describe("content set title recovery on restore (#134)", () => {
+    // The restore-synthesised manifest carries the title under
+    // sets[].title (root `name`), NOT a root-level `title:`. An
+    // API-origin backup also has no Dexie `meta`. This reproduces the
+    // user-reported regression: the Dashboard showed the raw `set_id`
+    // (`analysis-...`) instead of the lesson-set title.
+    const SYNTH_MANIFEST = [
+        "schema_version: '1.3'",
+        "name: Deutsche Grammatik (Analyse)",
+        "sets:",
+        "  - id: analysis-ed08d0f5",
+        "    title: Deutsche Grammatik (Analyse)",
+        "    level: ''",
+        "    version: 1.0.0",
+        "    lesson_count: 1",
+        "    domain: knowledge",
+        "metadata:",
+        "  origin: user-generated",
+        "",
+    ].join("\n");
+
+    it("recovers the title from a synthesised, meta-less backup (real round-trip)", async () => {
+        const {user} = await seedUser();
+        const db = getDb();
+        // Start from a clean content cache regardless of prior tests in
+        // the file (getDb() keeps an open connection across the
+        // beforeEach IDBFactory swap).
+        await db.contentSets.clear();
+        await db.contentSetFiles.clear();
+        const setPk =
+            "astrapi69--adaptive-learner-content/analysis-ed08d0f5/1.0.0";
+        await db.contentSets.put({
+            id: setPk,
+            source: "astrapi69/adaptive-learner-content",
+            branch: "main",
+            set_id: "analysis-ed08d0f5",
+            version: "1.0.0",
+            title: "Deutsche Grammatik (Analyse)",
+            title_native: null,
+            language: "de",
+            target_language: "de",
+            source_language: "de",
+            level: "",
+            domain: "knowledge",
+            lesson_count: 1,
+            description: null,
+            tags: "[]",
+            cover_image: null,
+            downloaded_at: new Date().toISOString(),
+            manifest_yaml: SYNTH_MANIFEST,
+        });
+        await db.contentSetFiles.bulkPut([
+            {id: `${setPk}#manifest.yaml`, set_pk: setPk, filename: "manifest.yaml", body: SYNTH_MANIFEST, encoding: "text"},
+            {id: `${setPk}#lessons/01.json`, set_pk: setPk, filename: "lessons/01.json", body: '{"id":"01"}', encoding: "text"},
+        ]);
+
+        const payload = await createDexieBackup(user.id, "test");
+        // Simulate an API-origin / older backup: strip the Dexie meta
+        // so the title MUST come from the manifest.
+        const entry = payload.content_sets!.find(
+            (e) => e.set_id === "analysis-ed08d0f5",
+        )!;
+        entry.meta = undefined;
+
+        // Fresh install — wipe the local cache, then restore.
+        await db.contentSets.clear();
+        await db.contentSetFiles.clear();
+        const summary = await restoreDexieBackup(user.id, payload);
+        expect(summary.content_sets?.errors).toEqual([]);
+        expect(summary.content_sets?.restored).toBe(1);
+
+        const restored = (await db.contentSets.toArray()).find(
+            (row) => row.set_id === "analysis-ed08d0f5",
+        );
+        // The regression: this used to be the raw set_id.
+        expect(restored?.title).toBe("Deutsche Grammatik (Analyse)");
+        expect(restored?.title).not.toContain("analysis-");
+        expect(restored?.domain).toBe("knowledge");
+        // The lesson file survived, so step progress can resolve.
+        expect(
+            (await db.contentSetFiles.get(`${restored?.id}#lessons/01.json`))
+                ?.body,
+        ).toBe('{"id":"01"}');
+    });
+});

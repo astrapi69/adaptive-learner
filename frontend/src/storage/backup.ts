@@ -20,6 +20,7 @@
  */
 
 import type {EntityTable} from "dexie";
+import {parse as parseYaml} from "yaml";
 
 import {getDb, nowIso, type AdaptiveLearnerDB} from "./db";
 import type {ContentSetRow, ContentSetFileRow} from "./db";
@@ -742,33 +743,107 @@ async function restoreDexieContentSets(
     return result;
 }
 
+/** Minimal shape of a content-set entry inside a ``manifest.yaml``
+ *  (a subset of the content-loader's ``ParsedSet``) — the fields a
+ *  restore needs to rebuild a ``ContentSetRow``. */
+interface ManifestSetMeta {
+    id?: string;
+    title?: string;
+    title_native?: string | null;
+    language?: string;
+    target_language?: string;
+    source_language?: string;
+    level?: string;
+    domain?: string;
+    description?: string | null;
+    lesson_count?: number;
+    tags?: string[];
+    cover_image?: string | null;
+}
+
+/** Extract a set's metadata from a ``manifest.yaml`` body (#134).
+ *
+ *  Handles BOTH the real downloaded shape and the restore-synthesised
+ *  shape, where the title lives under ``sets[].title`` (matched by
+ *  ``set_id``, else the first set), with a root ``name`` / ``title``
+ *  as a last resort. The previous ``/^title:/m`` regex only matched a
+ *  root-level ``title:`` — which the synthesised manifest never has
+ *  (it carries ``name:`` at the root and ``title:`` nested under
+ *  ``sets``), so the title silently fell back to the raw ``set_id``.
+ *
+ *  Returns ``null`` when the body is absent / unparseable so the
+ *  caller falls back to the carried ``meta`` or the ``set_id``. */
+function parseManifestSetMeta(
+    body: string | undefined,
+    setId: string,
+): ManifestSetMeta | null {
+    if (!body) return null;
+    try {
+        const doc = parseYaml(body) as {
+            name?: string;
+            title?: string;
+            sets?: ManifestSetMeta[];
+        } | null;
+        if (!doc) return null;
+        if (Array.isArray(doc.sets) && doc.sets.length > 0) {
+            const match =
+                doc.sets.find((set) => set.id === setId) ?? doc.sets[0];
+            return {
+                ...match,
+                // Inherit the root name/title only when the nested set
+                // omits its own (defensive — synthesised sets carry it).
+                title: match.title ?? doc.title ?? doc.name,
+            };
+        }
+        const flatTitle = doc.title ?? doc.name;
+        return flatTitle ? {title: flatTitle} : null;
+    } catch {
+        return null;
+    }
+}
+
 /** Build a ``ContentSetRow`` for restore: prefer the carried Dexie
- *  ``meta``, else synthesise minimal metadata (lessons still open since
- *  the viewer reads the files, not the row). */
+ *  ``meta``, else recover the metadata from the manifest, else fall
+ *  back to minimal defaults (lessons still open since the viewer reads
+ *  the files, not the row). */
 function buildContentSetRow(setPk: string, entry: ContentSetBackupEntry): ContentSetRow {
     const manifest = entry.files.find((file) => file.filename === "manifest.yaml");
-    const titleFromManifest = manifest?.body.match(/^title:\s*(.+)$/m)?.[1]?.trim();
+    const fromManifest = parseManifestSetMeta(manifest?.body, entry.set_id);
     const meta = (entry.meta ?? {}) as Partial<ContentSetRow>;
     const lessonCount = entry.files.filter((file) =>
         file.filename.startsWith("lessons/"),
     ).length;
+    const manifestTags = Array.isArray(fromManifest?.tags)
+        ? JSON.stringify(fromManifest.tags)
+        : undefined;
     return {
         id: setPk,
         source: entry.source,
         branch: entry.branch ?? meta.branch ?? "main",
         set_id: entry.set_id,
         version: entry.version,
-        title: meta.title ?? titleFromManifest ?? entry.set_id,
-        title_native: meta.title_native ?? null,
-        language: meta.language ?? meta.target_language ?? "",
-        target_language: meta.target_language ?? meta.language ?? "",
-        source_language: meta.source_language ?? "en",
-        level: meta.level ?? "",
-        domain: meta.domain ?? "language",
-        lesson_count: meta.lesson_count ?? lessonCount,
-        description: meta.description ?? null,
-        tags: meta.tags ?? "[]",
-        cover_image: meta.cover_image ?? null,
+        title: meta.title ?? fromManifest?.title ?? entry.set_id,
+        title_native: meta.title_native ?? fromManifest?.title_native ?? null,
+        language:
+            meta.language ??
+            meta.target_language ??
+            fromManifest?.target_language ??
+            fromManifest?.language ??
+            "",
+        target_language:
+            meta.target_language ??
+            meta.language ??
+            fromManifest?.target_language ??
+            fromManifest?.language ??
+            "",
+        source_language:
+            meta.source_language ?? fromManifest?.source_language ?? "en",
+        level: meta.level ?? fromManifest?.level ?? "",
+        domain: meta.domain ?? fromManifest?.domain ?? "language",
+        lesson_count: meta.lesson_count ?? fromManifest?.lesson_count ?? lessonCount,
+        description: meta.description ?? fromManifest?.description ?? null,
+        tags: meta.tags ?? manifestTags ?? "[]",
+        cover_image: meta.cover_image ?? fromManifest?.cover_image ?? null,
         downloaded_at: meta.downloaded_at ?? nowIso(),
         manifest_yaml: meta.manifest_yaml ?? manifest?.body ?? "",
     };
