@@ -1508,6 +1508,8 @@
       "completed": "Concluído"
     },
     "exercise": {
+      "reread_theory": "Reler a teoria",
+      "back_to_exercise": "Voltar ao exercício",
       "loading": "A carregar o exercício…",
       "coming_soon": "Este tipo de exercício ({type}) chegará numa versão futura. Passa para o próximo passo.",
       "missing_type": "Falta o tipo deste exercício. Atualiza o conteúdo.",
@@ -1644,6 +1646,21 @@
       "breakdown_heading": "Detalhe dos exercícios",
       "breakdown_correct_answer": "Resposta certa: {answer}",
       "breakdown_unattempted": "Não tentado",
+      "export": {
+        "copy": "Copiar resultado",
+        "download": "Salvar como arquivo",
+        "copied": "Resultado copiado para a área de transferência",
+        "copy_failed": "Não foi possível copiar para a área de transferência",
+        "title": "Resultado da lição",
+        "date": "Data",
+        "correct": "corretas",
+        "mistakes": "Erros",
+        "no_mistakes": "Sem erros - rodada perfeita!",
+        "question": "Pergunta",
+        "your_answer": "Sua resposta",
+        "correct_answer": "Correto",
+        "weak_areas": "Áreas fracas"
+      },
       "mark_complete": "Marcar como concluída",
       "next_lesson": "Próxima lição",
       "repeat": "Repetir lição",
