@@ -24,11 +24,17 @@ const buttonVariants = cva(
                     "bg-primary text-primary-foreground shadow hover:bg-primary/90",
                 destructive:
                     "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+                // #148 — outline + ghost set no background-tinted text,
+                // so they need an explicit ``text-foreground``. Tailwind
+                // preflight is OFF in this project, so a colorless button
+                // falls back to the UA default (black) and goes invisible
+                // on a dark surface. The other variants already pin a
+                // foreground color.
                 outline:
-                    "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+                    "border border-input bg-background text-foreground shadow-sm hover:bg-accent hover:text-accent-foreground",
                 secondary:
                     "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-                ghost: "hover:bg-accent hover:text-accent-foreground",
+                ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
                 link: "text-primary underline-offset-4 hover:underline",
             },
             size: {

@@ -38,6 +38,15 @@ describe("Button", () => {
         expect(
             screen.getByRole("button", {name: "Subtle"}).className,
         ).toContain("hover:bg-accent");
+        // #148 — outline + ghost must pin an explicit text color or
+        // they fall back to UA black (invisible in dark mode), since
+        // Tailwind preflight is off in this project.
+        expect(
+            screen.getByRole("button", {name: "Cancel"}).className,
+        ).toContain("text-foreground");
+        expect(
+            screen.getByRole("button", {name: "Subtle"}).className,
+        ).toContain("text-foreground");
     });
 
     it("honours disabled", () => {
