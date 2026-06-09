@@ -217,3 +217,77 @@ entries:
       aprendizagem. Só pode ter uma sessão ativa de cada vez;
       isto impede a mistura de tópicos e protege a lógica de
       mudança de método de ruído.
+
+  - key: content_repository
+    title: Repositório de conteúdos
+    short: "Um repositório público no GitHub com conjuntos de lições estruturados que o Adaptive Learner pode carregar como fonte de conteúdo."
+    docs_slug: features/content-repos
+    long: |
+      ## O que é um repositório de conteúdos?
+
+      As lições vêm de repositórios de conteúdos — repositórios
+      públicos no GitHub que agrupam conjuntos de lições. O
+      repositório oficial está sempre carregado; além dele, pode
+      ligar o seu próprio.
+
+      ## Múltiplas fontes
+
+      Em Definições > Dados, gere qualquer número de repositórios
+      (adicionar, remover, ordem = prioridade). Cada conjunto
+      apresenta um selo de origem para que possa ver de onde veio
+      uma lição.
+
+  - key: trust_level
+    title: Nível de confiança
+    short: "A classificação automática de confiança de um repositório de conteúdos ligado, derivada da sua validação técnica."
+    docs_slug: features/content-repos
+    long: |
+      ## O que é um nível de confiança?
+
+      Cada repositório ligado executa uma validação técnica
+      automática a cada sincronização. Isso produz um nível de
+      confiança: 0 (não validado ou falhado), 1 (tecnicamente
+      válido: pelo menos uma lição, sem conteúdo executável) e 3
+      (oficialmente recomendado).
+
+      ## O que NÃO é
+
+      O nível é puramente técnico. Uma classificação baseada em
+      conteúdo/comunidade (confiança 2) precisa de um serviço de
+      backend partilhado e está adiada.
+
+  - key: streak
+    title: Sequência
+    short: "O número de dias consecutivos em que aprendeu — combustível para o multiplicador de XP."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## O que é uma sequência?
+
+      Uma sequência conta os dias de aprendizagem consecutivos.
+      Cada sessão ou lição concluída preenche o mapa de calor e
+      mantém a sequência viva.
+
+      ## Efeito
+
+      A sequência alimenta um multiplicador de XP (+25% por dia
+      consecutivo, limitado a 7 dias). É um espelho da sua
+      consistência, não um castigo — falhar uma missão diária não
+      tem penalização.
+
+  - key: assessment
+    title: Avaliação
+    short: "Um teste curto que determina quais dos seis métodos de aprendizagem lhe convêm."
+    docs_slug: user-guide/assessment
+    long: |
+      ## O que é a avaliação?
+
+      A avaliação faz doze perguntas e, a partir delas, calcula o
+      seu perfil de aprendizagem — a ponderação dos seis métodos
+      em que a aplicação se apoia.
+
+      ## Opcional e retomável
+
+      Desde a reformulação do onboarding, a avaliação é opcional e
+      acessível apenas através do assistente de perfil. Se a
+      abandonar, a aplicação lembra-se do seu progresso para que
+      possa mais tarde retomar onde parou.

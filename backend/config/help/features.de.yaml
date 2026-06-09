@@ -279,3 +279,98 @@ entries:
       (z.B. neuer Anlauf nach langer Pause), kannst du sie in
       den Einstellungen zuruecksetzen. Curriculum, Sessions
       und Bewertungen bleiben erhalten.
+
+  - key: view_dashboard
+    title: Dashboard
+    short: "Deine Startseite: Fortschritt, Streak, XP, Abzeichen, faellige Wiederholungen und schnelle Aktionen."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## Was zeigt das Dashboard?
+
+      Das Dashboard ist deine Kommandozentrale. Oben steht
+      "Weitermachen" mit der zuletzt beruehrten Lektion, darunter
+      die handlungsrelevanten Karten (pausierte Lektionen,
+      Missionen, Fokusbereiche, Wiederholungs-Warteschlange),
+      dann die Gamification (XP, Streak, Abzeichen) und
+      schliesslich die analytischen Panels.
+
+      ## Filter
+
+      Ein Subject-Filter listet nur deine eigenen Fachgebiete,
+      nach haeufigster Nutzung sortiert.
+
+  - key: view_content_browser
+    title: Content Browser
+    short: "Die Seite, auf der du Lektionssaetze findest, herunterlaedst und startest."
+    docs_slug: features/content-browser
+    long: |
+      ## Wie finde ich Lektionen?
+
+      Der Content Browser unter /content ist rund um den
+      Lernfluss gebaut: zuerst die Suche (sofort,
+      akzent-tolerant), dann "Weitermachen", dann der Katalog.
+      Dieser teilt sich in "Sprachen" (Quellsprache >
+      Zielsprache > Niveau) und "Wissen" (Nicht-Sprach-Domaenen).
+
+      ## Quellen und Buecher
+
+      Quell-Badges zeigen, woher ein Satz stammt; ein
+      Quell-Filter blendet einzelne Quellen aus. Zu einer
+      Domaene koennen Buchempfehlungen erscheinen.
+
+  - key: view_lesson
+    title: Lektion
+    short: "Der Viewer, der dich Schritt fuer Schritt durch Theorie und Uebungen einer Lektion fuehrt."
+    docs_slug: user-guide/lessons
+    long: |
+      ## Wie funktionieren die Uebungen?
+
+      Eine Lektion ist eine Folge von Theorie- und
+      Uebungsschritten. Fuenf Uebungstypen kommen vor: Zuordnen
+      (farbige Paare + Nummern-Badges), Bildauswahl, Freitext,
+      Wort-Kacheln und Lueckentext.
+
+      ## Bedienung
+
+      Enter prueft eine beantwortete Uebung und geht weiter. Aus
+      einer Uebung springst du per "Theorie nochmal lesen" zur
+      passenden Theorie. Am Ende siehst du dein Ergebnis mit
+      Sternen und kannst es als Markdown exportieren.
+
+  - key: view_settings
+    title: Einstellungen
+    short: "Alles, was du ohne Code oder YAML aendern kannst — Sprache, KI, Lernen, Daten, Darstellung."
+    docs_slug: user-guide/settings
+    long: |
+      ## Was kann ich einstellen?
+
+      Die Einstellungen buendeln Sprache, KI-Anbieter und
+      -Schluessel, Speichermodus, Lern-Optionen (z.B.
+      Enter-Shortcut, bevorzugte Uebungsrichtung), Daten (Backup,
+      Content-Repositories), Darstellung (12 Themes) und
+      Gamification.
+
+      ## Daten in deiner Hand
+
+      Unter "Daten" erstellst und importierst du Backups und
+      verbindest eigene Content-Repositories. Nichts davon
+      verlaesst dein Geraet ungefragt.
+
+  - key: feature_backup
+    title: Backup und Wiederherstellung
+    short: "Ein vollstaendiger Snapshot deines Lernzustands, den du speichern und woanders wiederherstellen kannst."
+    docs_slug: features/backup
+    long: |
+      ## Was ist ein Backup?
+
+      Ein Backup ist ein vollstaendiger Snapshot: alle Tabellen
+      (Projekte, Sessions, Lektionsfortschritt, Fehler,
+      Gamification, Missionen ...) plus deine heruntergeladenen
+      Content-Sets — als eine JSON-Datei.
+
+      ## Cross-Identity
+
+      Du kannst ein Backup in eine frische Installation oder
+      unter einem anderen Profil einspielen; die
+      Wiederherstellung loest interne Verweise sauber neu auf.
+      Beim Import siehst du eine Zusammenfassung pro Tabelle.

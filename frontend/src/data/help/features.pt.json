@@ -31,6 +31,41 @@
       "title": "Gamificação (XP, Emblemas, Sequências)",
       "short": "Sistema de progresso com pontos de experiência, emblemas e sequências — motivação sem artifícios.",
       "long": "## O que é a camada de gamificação?\n\nTrês mecânicas tornam o progresso de aprendizagem\nvisível e recompensador:\n\n- **XP (pontos de experiência)** — por cada sessão\n  concluída, cada mudança de método, cada cartão de\n  repetição espaçada. Os níveis sobem com XP.\n- **Emblemas** — para marcos temáticos (\"primeira\n  sessão\", \"10 sessões num método\", \"sequência de\n  30 dias\", ...).\n- **Sequências** — séries de aprendizagem diária.\n  Expiram 24 horas sem sessão — com três \"congelamentos\n  de sequência\" por mês como pausas de emergência.\n\n## Como o XP é ganho\n\nDiferentes ações rendem diferentes valores de XP:\n\n- **Submeter uma sessão avaliada**: 50 XP.\n- **Atingir o passo 7 (integração)**: +25 XP de bónus.\n- **Aceitar uma mudança de método**: 10 XP (tomou uma\n  decisão de aprendizagem deliberada).\n- **Cartão de repetição espaçada com confiança > 80%**:\n  5 XP.\n- **Exportação Anki de um conjunto**: 20 XP.\n\nOs níveis escalam com uma função de raiz quadrada\n(nível n = sqrt(XP / 100)) — os primeiros níveis\nsobem rapidamente, os níveis mais altos precisam de\nmais fôlego.\n\n## Os emblemas não são coercivos\n\nOs critérios de emblema não são determinantes para a\ninterface — *não* precisa de um único emblema para\nusar a aplicação de forma produtiva. São um espelho,\nnão um alvo. Se começar a sentir que está a aprender\npara ganhar emblemas em vez de para si próprio,\ndesative a exibição nas definições.\n\n## Congelamentos de sequência\n\nTrês congelamentos de sequência por mês. Se perder um\ndia, um congelamento protege automaticamente a sua\nsequência. Explicitamente concebido como uma \"licença\npor doença\" ou \"dia de viagem\", não como um mecanismo\nde exceção para a preguiça.\n\n## Porquê isto funciona sem artifícios\n\nA investigação em aprendizagem mostra: a recompensa\nextrínseca pode destruir a motivação intrínseca\n(\"efeito de sobre-justificação\"). O Adaptive Learner\nassenta em que as mecânicas sejam um **espelho** do\nprogresso, não um sistema de incentivos. Sem\nclassificações, sem funcionalidades sociais, sem\npartilha de pontos — os dados ficam consigo.\n\n## Reiniciar\n\nSe os valores de gamificação já não correspondem à sua\nsituação (ex.: recomeço após uma longa pausa), pode\nredefini-los nas definições. O currículo, as sessões e\nas avaliações são preservados.\n"
+    },
+    {
+      "key": "view_dashboard",
+      "title": "Painel",
+      "short": "A sua base: progresso, sequência, XP, emblemas, revisões pendentes e ações rápidas.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## O que mostra o painel?\n\nO painel é o seu centro de comando. \"Continuar a aprender\"\nfica no topo com a sua lição mais recentemente acedida,\nseguido dos cartões acionáveis (lições pausadas, missões,\náreas de foco, fila de revisão), depois a gamificação (XP,\nsequência, emblemas) e, por fim, os painéis analíticos.\n\n## Filtro\n\nUm filtro de matérias lista apenas as suas próprias\nmatérias, ordenadas pelas mais usadas primeiro.\n"
+    },
+    {
+      "key": "view_content_browser",
+      "title": "Navegador de conteúdos",
+      "short": "A página onde encontra, descarrega e inicia conjuntos de lições.",
+      "docs_slug": "features/content-browser",
+      "long": "## Como encontro lições?\n\nO navegador de conteúdos em /content é construído em torno\ndo fluxo de aprendizagem: pesquisa primeiro (instantânea,\ntolerante a acentos), depois \"Continuar a aprender\" e a\nseguir o catálogo. O catálogo divide-se em \"Línguas\" (origem\n> destino > nível) e \"Conhecimento\" (domínios não\nlinguísticos).\n\n## Fontes e livros\n\nOs selos de origem mostram de onde vem um conjunto; um\nfiltro de origem oculta fontes individuais. Um domínio pode\napresentar recomendações de livros.\n"
+    },
+    {
+      "key": "view_lesson",
+      "title": "Lição",
+      "short": "O visualizador que o conduz passo a passo pela teoria e pelos exercícios de uma lição.",
+      "docs_slug": "user-guide/lessons",
+      "long": "## Como funcionam os exercícios?\n\nUma lição é uma sequência de passos de teoria e de\nexercício. Surgem cinco tipos de exercício: correspondência\n(pares coloridos + selos numerados), escolha de imagem,\ntexto livre, blocos de palavras e preenchimento de lacunas.\n\n## Controlos\n\nEnter verifica um exercício respondido e avança. A partir de\num exercício, pode saltar para a teoria correspondente via\n\"Reler a teoria\". No final, vê a sua pontuação com estrelas\ne pode exportá-la como Markdown.\n"
+    },
+    {
+      "key": "view_settings",
+      "title": "Definições",
+      "short": "Tudo o que pode alterar sem código ou YAML — idioma, IA, aprendizagem, dados, aparência.",
+      "docs_slug": "user-guide/settings",
+      "long": "## O que posso configurar?\n\nAs definições agrupam idioma, fornecedor de IA e chaves,\nmodo de armazenamento, opções de aprendizagem (ex.: atalho\nEnter, direção de exercício preferida), dados (cópia de\nsegurança, repositórios de conteúdos), aparência (12 temas)\ne gamificação.\n\n## Os seus dados nas suas mãos\n\nEm \"Dados\", cria e importa cópias de segurança e liga os\nseus próprios repositórios de conteúdos. Nada disto sai do\nseu dispositivo sem ser pedido.\n"
+    },
+    {
+      "key": "feature_backup",
+      "title": "Cópia de segurança e restauro",
+      "short": "Um instantâneo completo do seu estado de aprendizagem que pode guardar e restaurar noutro lugar.",
+      "docs_slug": "features/backup",
+      "long": "## O que é uma cópia de segurança?\n\nUma cópia de segurança é um instantâneo completo: todas as\ntabelas (projetos, sessões, progresso de lições, erros,\ngamificação, missões ...) mais os seus conjuntos de\nconteúdos descarregados — num único ficheiro JSON.\n\n## Entre identidades\n\nPode importar uma cópia de segurança para uma instalação\nnova ou sob um perfil diferente; o restauro resolve\nnovamente as referências internas de forma limpa. Ao\nimportar, vê um resumo por tabela.\n"
     }
   ]
 }

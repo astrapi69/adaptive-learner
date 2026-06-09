@@ -269,3 +269,97 @@ entries:
       situación (p. ej., comienzo fresco después de una larga pausa),
       puedes reiniciarlos en los ajustes. El plan de estudios, las
       sesiones y las calificaciones se conservan.
+
+  - key: view_dashboard
+    title: Panel principal
+    short: "Tu base de operaciones: progreso, racha, XP, insignias, repasos pendientes y acciones rápidas."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## ¿Qué muestra el panel principal?
+
+      El panel principal es tu centro de mando. «Continuar
+      aprendiendo» se sitúa arriba con tu lección más reciente,
+      luego las tarjetas accionables (lecciones en pausa, misiones,
+      áreas de enfoque, cola de repaso), después la gamificación
+      (XP, racha, insignias) y, por último, los paneles analíticos.
+
+      ## Filtro
+
+      Un filtro de materias lista solo tus propias materias,
+      ordenadas primero por las más usadas.
+
+  - key: view_content_browser
+    title: Explorador de contenido
+    short: "La página donde encuentras, descargas e inicias conjuntos de lecciones."
+    docs_slug: features/content-browser
+    long: |
+      ## ¿Cómo encuentro lecciones?
+
+      El explorador de contenido en /content está organizado en
+      torno al flujo de aprendizaje: la búsqueda primero (instantánea
+      y tolerante a acentos), luego «Continuar aprendiendo» y después
+      el catálogo. El catálogo se divide en «Idiomas» (origen >
+      destino > nivel) y «Conocimiento» (dominios no lingüísticos).
+
+      ## Fuentes y libros
+
+      Las insignias de fuente muestran de dónde procede un conjunto;
+      un filtro de fuentes oculta fuentes individuales. Un dominio
+      puede mostrar recomendaciones de libros.
+
+  - key: view_lesson
+    title: Lección
+    short: "El visor que te guía paso a paso a través de la teoría y los ejercicios de una lección."
+    docs_slug: user-guide/lessons
+    long: |
+      ## ¿Cómo funcionan los ejercicios?
+
+      Una lección es una secuencia de pasos de teoría y ejercicio.
+      Aparecen cinco tipos de ejercicio: emparejamiento (parejas con
+      colores + insignias numéricas), elección de imagen, texto libre,
+      fichas de palabras y cloze.
+
+      ## Controles
+
+      Enter comprueba un ejercicio respondido y avanza. Desde un
+      ejercicio puedes saltar a la teoría correspondiente mediante
+      «Releer teoría». Al final ves tu puntuación con estrellas y
+      puedes exportarla como Markdown.
+
+  - key: view_settings
+    title: Ajustes
+    short: "Todo lo que puedes cambiar sin código ni YAML: idioma, IA, aprendizaje, datos, apariencia."
+    docs_slug: user-guide/settings
+    long: |
+      ## ¿Qué puedo configurar?
+
+      Los ajustes agrupan el idioma, el proveedor de IA y las claves,
+      el modo de almacenamiento, las opciones de aprendizaje (p. ej.,
+      atajo de Enter, dirección de ejercicio preferida), los datos
+      (copia de seguridad, repositorios de contenido), la apariencia
+      (12 temas) y la gamificación.
+
+      ## Tus datos en tus manos
+
+      En «Datos» creas e importas copias de seguridad y conectas tus
+      propios repositorios de contenido. Nada de ello sale de tu
+      dispositivo sin que lo pidas.
+
+  - key: feature_backup
+    title: Copia de seguridad y restauración
+    short: "Una instantánea completa de tu estado de aprendizaje que puedes guardar y restaurar en otro lugar."
+    docs_slug: features/backup
+    long: |
+      ## ¿Qué es una copia de seguridad?
+
+      Una copia de seguridad es una instantánea completa: cada tabla
+      (proyectos, sesiones, progreso de lecciones, errores,
+      gamificación, misiones...) más tus conjuntos de contenido
+      descargados, como un único archivo JSON.
+
+      ## Entre identidades
+
+      Puedes importar una copia de seguridad en una instalación nueva
+      o bajo un perfil diferente; la restauración vuelve a resolver
+      las referencias internas de forma limpia. Al importar ves un
+      resumen por tabla.

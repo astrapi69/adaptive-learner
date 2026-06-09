@@ -25,6 +25,34 @@
       "title": "Sessão de Aprendizagem",
       "short": "Uma unidade de aprendizagem guiada por IA que segue o ciclo de 7 passos.",
       "long": "## O que é uma sessão de aprendizagem?\n\nUma sessão de aprendizagem é uma unidade de aprendizagem\ncontínua sobre um tópico, conduzida pelo ciclo de 7 passos\n(input, tentativa, erro, feedback, adaptação, repetição,\nintegração). A IA desempenha o papel de professor; você\nconduz o diálogo.\n\n## O que distingue uma sessão de uma conversa?\n\nNuma sessão, o **avaliador de duplo prompt** funciona em\nparalelo: após cada resposta, uma segunda instância da IA\navalia a sua compreensão (confiança de 0-100%) e decide\nse está pronto para o próximo passo. Uma conversa normal\nnão tem esse mecanismo corretivo.\n\n## Streaming\n\nAs respostas da IA aparecem palavra a palavra\n(Server-Sent Events) para que não espere pela resposta\ncompleta. Pode interromper a qualquer momento e fazer\nperguntas adicionais — a sessão decorre até que a encerre\nou o ciclo se complete.\n\n## Quando devo encerrar uma sessão?\n\n- Após o passo 7 (integração), quando o ciclo de\n  aprendizagem está completo.\n- Quando o sistema recomenda uma mudança de método e\n  você aceita a recomendação.\n- Quando a sua avaliação de **stress** esteve acima de 4\n  nas últimas avaliações — uma pausa é mais produtiva do\n  que continuar a forçar.\n\n## As avaliações têm impacto futuro\n\nCada sessão termina com três barras deslizantes\n(compreensão, stress, adequação do método, cada uma de\n1-5). Estes valores alimentam o seu perfil de\naprendizagem e moldam recomendações futuras: stress\nelevado sustentado mais baixa adequação do método\ndesencadeia a recomendação de mudança de método.\n\n## No Adaptive Learner\n\nUma sessão pertence exatamente a um projeto de\naprendizagem. Só pode ter uma sessão ativa de cada vez;\nisto impede a mistura de tópicos e protege a lógica de\nmudança de método de ruído.\n"
+    },
+    {
+      "key": "content_repository",
+      "title": "Repositório de conteúdos",
+      "short": "Um repositório público no GitHub com conjuntos de lições estruturados que o Adaptive Learner pode carregar como fonte de conteúdo.",
+      "docs_slug": "features/content-repos",
+      "long": "## O que é um repositório de conteúdos?\n\nAs lições vêm de repositórios de conteúdos — repositórios\npúblicos no GitHub que agrupam conjuntos de lições. O\nrepositório oficial está sempre carregado; além dele, pode\nligar o seu próprio.\n\n## Múltiplas fontes\n\nEm Definições > Dados, gere qualquer número de repositórios\n(adicionar, remover, ordem = prioridade). Cada conjunto\napresenta um selo de origem para que possa ver de onde veio\numa lição.\n"
+    },
+    {
+      "key": "trust_level",
+      "title": "Nível de confiança",
+      "short": "A classificação automática de confiança de um repositório de conteúdos ligado, derivada da sua validação técnica.",
+      "docs_slug": "features/content-repos",
+      "long": "## O que é um nível de confiança?\n\nCada repositório ligado executa uma validação técnica\nautomática a cada sincronização. Isso produz um nível de\nconfiança: 0 (não validado ou falhado), 1 (tecnicamente\nválido: pelo menos uma lição, sem conteúdo executável) e 3\n(oficialmente recomendado).\n\n## O que NÃO é\n\nO nível é puramente técnico. Uma classificação baseada em\nconteúdo/comunidade (confiança 2) precisa de um serviço de\nbackend partilhado e está adiada.\n"
+    },
+    {
+      "key": "streak",
+      "title": "Sequência",
+      "short": "O número de dias consecutivos em que aprendeu — combustível para o multiplicador de XP.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## O que é uma sequência?\n\nUma sequência conta os dias de aprendizagem consecutivos.\nCada sessão ou lição concluída preenche o mapa de calor e\nmantém a sequência viva.\n\n## Efeito\n\nA sequência alimenta um multiplicador de XP (+25% por dia\nconsecutivo, limitado a 7 dias). É um espelho da sua\nconsistência, não um castigo — falhar uma missão diária não\ntem penalização.\n"
+    },
+    {
+      "key": "assessment",
+      "title": "Avaliação",
+      "short": "Um teste curto que determina quais dos seis métodos de aprendizagem lhe convêm.",
+      "docs_slug": "user-guide/assessment",
+      "long": "## O que é a avaliação?\n\nA avaliação faz doze perguntas e, a partir delas, calcula o\nseu perfil de aprendizagem — a ponderação dos seis métodos\nem que a aplicação se apoia.\n\n## Opcional e retomável\n\nDesde a reformulação do onboarding, a avaliação é opcional e\nacessível apenas através do assistente de perfil. Se a\nabandonar, a aplicação lembra-se do seu progresso para que\npossa mais tarde retomar onde parou.\n"
     }
   ]
 }

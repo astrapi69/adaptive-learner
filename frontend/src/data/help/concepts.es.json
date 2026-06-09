@@ -25,6 +25,34 @@
       "title": "Sesión de aprendizaje",
       "short": "Una unidad de aprendizaje impulsada por IA que sigue el ciclo de 7 pasos. La IA desempeña el rol de docente; el evaluador de doble prompt mide tu comprensión y avanza el ciclo automáticamente.\n",
       "long": "## ¿Qué es una sesión de aprendizaje?\n\nUna sesión de aprendizaje es una unidad continua de aprendizaje\nsobre un tema, impulsada por el ciclo de 7 pasos (entrada,\nintento, error, retroalimentación, adaptación, repetición,\nintegración). La IA desempeña el rol del docente; tú conduces\nel diálogo.\n\n## ¿En qué se diferencia de un chat normal?\n\nEn una sesión, el **evaluador de doble prompt** se ejecuta en\nparalelo: después de cada respuesta tuya, una segunda instancia\nde IA juzga tu comprensión (confianza del 0 al 100 %) y decide\nsi estás listo para el siguiente paso. Un chat normal no tiene\neste corrector.\n\n## Streaming\n\nLas respuestas de la IA aparecen palabra a palabra (Server-Sent\nEvents), de modo que no tienes que esperar la respuesta completa.\nPuedes interrumpir en cualquier momento y hacer preguntas; la\nsesión continúa hasta que la termines o el ciclo se complete.\n\n## ¿Cuándo debería terminar una sesión?\n\n- Después del paso 7 (integración), cuando el ciclo de\n  aprendizaje está completo.\n- Cuando el sistema recomiende un cambio de método y lo\n  aceptes.\n- Cuando tu calificación de **estrés** haya superado el 4\n  en varias calificaciones recientes: un descanso es más\n  productivo que seguir a la fuerza.\n\n## Las calificaciones se acumulan\n\nCada sesión termina con tres controles deslizantes\n(comprensión, estrés, adecuación del método; cada uno del\n1 al 5). Estos valores alimentan tu perfil de aprendizaje y\ndan forma a las recomendaciones futuras: un estrés sostenido\nalto más baja adecuación del método activa la recomendación\nde cambio de método.\n\n## En Adaptive Learner\n\nUna sesión pertenece exactamente a un proyecto de aprendizaje.\nSolo puedes tener una sesión activa a la vez; esto evita mezclar\ntemas y protege la lógica de cambio de método del ruido.\n"
+    },
+    {
+      "key": "content_repository",
+      "title": "Repositorio de contenido",
+      "short": "Un repositorio público de GitHub con conjuntos de lecciones estructurados que Adaptive Learner puede cargar como fuente de contenido.",
+      "docs_slug": "features/content-repos",
+      "long": "## ¿Qué es un repositorio de contenido?\n\nLas lecciones provienen de repositorios de contenido:\nrepositorios públicos de GitHub que agrupan conjuntos de\nlecciones. El repositorio oficial siempre se carga; además\nde ese, puedes conectar el tuyo propio.\n\n## Múltiples fuentes\n\nEn Ajustes > Datos gestionas cualquier número de repositorios\n(añadir, eliminar, orden = prioridad). Cada conjunto lleva una\ninsignia de fuente para que puedas ver de dónde procede una\nlección.\n"
+    },
+    {
+      "key": "trust_level",
+      "title": "Nivel de confianza",
+      "short": "La calificación de confianza automática de un repositorio de contenido conectado, derivada de su validación técnica.",
+      "docs_slug": "features/content-repos",
+      "long": "## ¿Qué es un nivel de confianza?\n\nCada repositorio conectado ejecuta una validación técnica\nautomática en cada sincronización. Eso produce un nivel de\nconfianza: 0 (no validado o fallido), 1 (técnicamente válido:\nal menos una lección, sin contenido ejecutable) y 3\n(recomendado oficialmente).\n\n## Lo que NO es\n\nEl nivel es puramente técnico. Una calificación basada en la\ncomunidad o el contenido (confianza 2) requiere un servicio de\nbackend compartido y está aplazada.\n"
+    },
+    {
+      "key": "streak",
+      "title": "Racha",
+      "short": "El número de días consecutivos que has aprendido: combustible para el multiplicador de XP.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## ¿Qué es una racha?\n\nUna racha cuenta los días de aprendizaje consecutivos. Cada\nsesión o lección completada llena el mapa de calor y mantiene\nla racha viva.\n\n## Efecto\n\nLa racha alimenta un multiplicador de XP (+25% por cada día\nconsecutivo, con un tope de 7 días). Es un espejo de tu\nconstancia, no un palo: una misión diaria no cumplida no\nconlleva penalización.\n"
+    },
+    {
+      "key": "assessment",
+      "title": "Evaluación",
+      "short": "Un breve test que determina cuáles de los seis métodos de aprendizaje se adaptan a ti.",
+      "docs_slug": "user-guide/assessment",
+      "long": "## ¿Qué es la evaluación?\n\nLa evaluación plantea doce preguntas y a partir de ellas\ncalcula tu perfil de aprendizaje: la ponderación de los seis\nmétodos en los que se apoya la aplicación.\n\n## Opcional y reanudable\n\nDesde la renovación del onboarding, la evaluación es opcional\ny solo se accede a ella a través del asistente de perfil. Si la\nabandonas, la aplicación recuerda tu progreso para que más\ntarde puedas continuar donde lo dejaste.\n"
     }
   ]
 }

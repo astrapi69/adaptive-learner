@@ -211,3 +211,78 @@ entries:
       gleichzeitig nur eine aktive Session haben; das verhindert
       Vermischung von Themen und schuetzt die
       Methodenwechsel-Logik vor Rauschen.
+
+  - key: content_repository
+    title: Content-Repository
+    short: "Ein oeffentliches GitHub-Repo mit strukturierten Lektionssaetzen, das Adaptive Learner als Inhaltsquelle laden kann."
+    docs_slug: features/content-repos
+    long: |
+      ## Was ist ein Content-Repository?
+
+      Lektionen kommen aus Content-Repositories — oeffentlichen
+      GitHub-Repos, die Lektionssaetze buendeln. Das offizielle
+      Repo ist immer geladen; zusaetzlich kannst du eigene
+      verbinden.
+
+      ## Mehrere Quellen
+
+      Unter Einstellungen > Daten verwaltest du beliebig viele
+      Repos (hinzufuegen, entfernen, Reihenfolge = Prioritaet).
+      Jeder Satz traegt ein Quell-Badge, damit du siehst, woher
+      eine Lektion stammt.
+
+  - key: trust_level
+    title: Trust-Stufe
+    short: "Die automatische Vertrauensbewertung eines verbundenen Content-Repositories aus der technischen Validierung."
+    docs_slug: features/content-repos
+    long: |
+      ## Was ist eine Trust-Stufe?
+
+      Jedes verbundene Repo durchlaeuft bei jeder
+      Synchronisierung eine automatische technische Validierung.
+      Daraus ergibt sich eine Trust-Stufe: 0 (nicht validiert
+      oder fehlgeschlagen), 1 (technisch gueltig: mindestens eine
+      Lektion, kein ausfuehrbarer Inhalt) und 3 (offiziell
+      empfohlen).
+
+      ## Was sie NICHT ist
+
+      Die Stufe ist rein technisch. Eine inhaltliche,
+      community-basierte Bewertung (Trust 2) braucht einen
+      gemeinsamen Backend-Dienst und ist zurueckgestellt.
+
+  - key: streak
+    title: Streak (Serie)
+    short: "Die Anzahl aufeinanderfolgender Tage, an denen du gelernt hast — Treibstoff fuer den XP-Multiplikator."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## Was ist eine Streak?
+
+      Eine Streak zaehlt aufeinanderfolgende Lerntage. Jede
+      abgeschlossene Session oder Lektion fuellt die Heatmap und
+      haelt die Serie am Leben.
+
+      ## Wirkung
+
+      Die Streak speist einen XP-Multiplikator (+25 % pro Tag in
+      Folge, bei 7 Tagen gedeckelt). Sie ist ein Spiegel deiner
+      Konstanz, kein Druckmittel — eine verpasste taegliche
+      Mission kostet keine Strafe.
+
+  - key: assessment
+    title: Lerntyp-Test
+    short: "Ein kurzer Test, der ermittelt, welche der sechs Lernmethoden zu dir passen."
+    docs_slug: user-guide/assessment
+    long: |
+      ## Was ist der Lerntyp-Test?
+
+      Der Lerntyp-Test (Assessment) stellt zwoelf Fragen und
+      berechnet daraus dein Lernprofil — die Gewichtung der
+      sechs Methoden, auf die die App setzt.
+
+      ## Optional und fortsetzbar
+
+      Seit der Onboarding-Ueberarbeitung ist der Test optional
+      und nur ueber den Profil-Assistenten erreichbar. Brichst
+      du ihn ab, merkt sich die App den Zwischenstand, sodass du
+      spaeter dort weitermachst, wo du aufgehoert hast.

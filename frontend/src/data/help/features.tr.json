@@ -31,6 +31,41 @@
       "title": "Oyunlaştırma (XP, Rozetler, Seriler)",
       "short": "Deneyim puanları, rozetler ve serilerle ilerleme sistemi — numara olmadan motivasyon.",
       "long": "## Oyunlaştırma katmanı nedir?\n\nÜç mekanik, öğrenme ilerlemesini görünür ve ödüllendirici\nkılar:\n\n- **XP (deneyim puanları)** — tamamlanan her oturum,\n  her yöntem değişikliği, her aralıklı tekrar kartı için.\n  Seviyeler XP ile yükselir.\n- **Rozetler** — tematik kilometre taşları için (\"ilk\n  oturum\", \"bir yöntemde 10 oturum\", \"30 günlük seri\",\n  ...).\n- **Seriler** — günlük öğrenme dizileri. Oturumsuz 24\n  saatte sona erer — ayda üç \"seri dondurma\" acil durum\n  molası olarak.\n\n## XP nasıl kazanılır\n\nFarklı eylemler farklı XP değerleri verir:\n\n- **Değerlendirmeli oturum gönderin**: 50 XP.\n- **Adım 7'ye ulaşın (bütünleştirme)**: +25 XP bonusu.\n- **Yöntem değişikliğini kabul edin**: 10 XP (bilinçli\n  bir öğrenme kararı aldınız).\n- **Güveni > %80 olan aralıklı tekrar kartı**: 5 XP.\n- **Bir set Anki dışa aktarımı**: 20 XP.\n\nSeviyeler karekök fonksiyonuyla ölçeklenir (n seviyesi =\nsqrt(XP / 100)) — erken seviyeler hızlı yükselir, yüksek\nseviyeler daha uzun soluk ister.\n\n## Rozetler zorlayıcı değildir\n\nRozet kriterleri UI'da zorunlu değildir — uygulamayı\nverimli kullanmak için tek bir rozete ihtiyaç *yoktur*.\nBunlar bir hedef değil, bir ayna. Kendiniz için değil\nrozetler için öğrendiğinizi hissetmeye başlarsanız\ngörüntülemeyi ayarlardan devre dışı bırakın.\n\n## Seri dondurma\n\nAyda üç seri dondurma. Bir gün kaçırırsanız dondurma\notomatik olarak serinizi korur. Açıkça \"hasta günü\" veya\n\"seyahat günü\" payı olarak tasarlanmıştır, tembellik için\nbir istisna mekanizması olarak değil.\n\n## Bu neden numara olmadan çalışır\n\nÖğrenme araştırmaları açıktır: dışsal ödül içsel motivasyonu\nyok edebilir (\"aşırı gerekçelendirme etkisi\"). Adaptive\nLearner, mekaniklerin bir teşvik sistemi değil, ilerlemenin\nbir **aynası** olmasına dayanır. Lider tablosu yok, sosyal\nözellik yok, puan paylaşımı yok — veriler sizde kalır.\n\n## Sıfırlama\n\nOyunlaştırma değerleri artık durumunuzla örtüşmüyorsa\n(ör. uzun bir aradan sonra taze başlangıç), ayarlardan\nsıfırlayabilirsiniz. Müfredat, oturumlar ve değerlendirmeler\nkorunur.\n"
+    },
+    {
+      "key": "view_dashboard",
+      "title": "Kontrol paneli",
+      "short": "Ana üssünüz: ilerleme, seri, XP, rozetler, vadesi gelen incelemeler ve hızlı eylemler.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## Kontrol paneli neyi gösterir?\n\nKontrol paneli komuta merkezinizdir. En üstte, en son\nüzerinde çalıştığınız dersle \"Öğrenmeye devam et\" yer alır;\nardından eyleme dönük kartlar (duraklatılmış dersler,\ngörevler, odak alanları, inceleme sırası), sonra\noyunlaştırma (XP, seri, rozetler) ve son olarak analitik\npaneller gelir.\n\n## Filtre\n\nBir konu filtresi yalnızca kendi konularınızı, en çok\nkullanılan önce olacak şekilde sıralayarak listeler.\n"
+    },
+    {
+      "key": "view_content_browser",
+      "title": "İçerik tarayıcısı",
+      "short": "Ders setlerini bulduğunuz, indirdiğiniz ve başlattığınız sayfa.",
+      "docs_slug": "features/content-browser",
+      "long": "## Dersleri nasıl bulurum?\n\n/content adresindeki içerik tarayıcısı öğrenme akışı\netrafında kuruludur: önce arama (anlık, aksan toleranslı),\nsonra \"Öğrenmeye devam et\", ardından katalog. Katalog\n\"Diller\" (kaynak > hedef > seviye) ve \"Bilgi\" (dil dışı\nalanlar) olarak ikiye ayrılır.\n\n## Kaynaklar ve kitaplar\n\nKaynak rozetleri bir setin nereden geldiğini gösterir; bir\nkaynak filtresi tekil kaynakları gizler. Bir alan, kitap\nönerileri sunabilir.\n"
+    },
+    {
+      "key": "view_lesson",
+      "title": "Ders",
+      "short": "Bir dersin teorisi ve alıştırmaları boyunca sizi adım adım yönlendiren görüntüleyici.",
+      "docs_slug": "user-guide/lessons",
+      "long": "## Alıştırmalar nasıl çalışır?\n\nBir ders, teori ve alıştırma adımlarından oluşan bir\ndizidir. Beş alıştırma türü görünür: eşleştirme (renkli\nçiftler + numara rozetleri), resim seçme, serbest metin,\nkelime karoları ve boşluk doldurma.\n\n## Denetimler\n\nEnter, yanıtlanmış bir alıştırmayı kontrol eder ve\nilerletir. Bir alıştırmadan \"Teoriyi tekrar oku\" ile ilgili\nteoriye atlayabilirsiniz. Sonunda yıldızlarla puanınızı\ngörür ve bunu Markdown olarak dışa aktarabilirsiniz.\n"
+    },
+    {
+      "key": "view_settings",
+      "title": "Ayarlar",
+      "short": "Kod veya YAML olmadan değiştirebileceğiniz her şey — dil, yapay zeka, öğrenme, veri, görünüm.",
+      "docs_slug": "user-guide/settings",
+      "long": "## Neleri yapılandırabilirim?\n\nAyarlar; dili, yapay zeka sağlayıcısını ve anahtarları,\ndepolama modunu, öğrenme seçeneklerini (ör. Enter kısayolu,\ntercih edilen alıştırma yönü), veriyi (yedekleme, içerik\ndepoları), görünümü (12 tema) ve oyunlaştırmayı bir araya\ngetirir.\n\n## Verileriniz sizin elinizde\n\n\"Veri\" altında yedekler oluşturup içe aktarır ve kendi\niçerik depolarınızı bağlarsınız. Bunların hiçbiri sorulmadan\ncihazınızdan ayrılmaz.\n"
+    },
+    {
+      "key": "feature_backup",
+      "title": "Yedekleme ve geri yükleme",
+      "short": "Öğrenme durumunuzun, kaydedip başka bir yerde geri yükleyebileceğiniz eksiksiz bir anlık görüntüsü.",
+      "docs_slug": "features/backup",
+      "long": "## Yedekleme nedir?\n\nBir yedek, eksiksiz bir anlık görüntüdür: her tablo\n(projeler, oturumlar, ders ilerlemesi, hatalar,\noyunlaştırma, görevler ...) ile indirilen içerik setleriniz\n— tek bir JSON dosyası olarak.\n\n## Kimlikler arası\n\nBir yedeği yeni bir kuruluma veya farklı bir profil altına\niçe aktarabilirsiniz; geri yükleme, dahili referansları\ntemiz biçimde yeniden çözer. İçe aktarımda tablo bazında bir\nözet görürsünüz.\n"
     }
   ]
 }

@@ -25,6 +25,34 @@
       "title": "Learning Session",
       "short": "An AI-driven learning unit that follows the 7-step cycle.",
       "long": "## What is a learning session?\n\nA learning session is a continuous learning unit on one\ntopic, driven by the 7-step cycle (input, attempt, error,\nfeedback, adapt, repeat, integrate). The AI plays the\nteacher role; you drive the dialog.\n\n## What makes a session different from a chat?\n\nIn a session the **dual-prompt evaluator** runs alongside:\nafter every answer, a second AI instance judges your\nunderstanding (0-100% confidence) and decides whether you\nare ready for the next step. A regular chat has no such\ncorrective.\n\n## Streaming\n\nThe AI's answers appear word by word (Server-Sent Events)\nso you do not wait for the full reply. You can interrupt\nat any time and ask follow-ups — the session runs until\nyou end it or the cycle completes.\n\n## When should I end a session?\n\n- After step 7 (integrate), when the learning cycle is\n  complete.\n- When the system recommends a method switch and you\n  accept the recommendation.\n- When your **stress** rating has been above 4 in the\n  last few ratings — a break is more productive than\n  pushing through.\n\n## Ratings carry forward\n\nEvery session ends with three sliders (understanding,\nstress, method fit, each 1-5). These values feed into\nyour learning profile and shape future recommendations:\nsustained high stress plus low method fit triggers the\nmethod-switch recommendation.\n\n## In Adaptive Learner\n\nA session belongs to exactly one learning project. You\ncan have only one active session at a time; this prevents\ntopic mixing and shields the method-switch logic from\nnoise.\n"
+    },
+    {
+      "key": "content_repository",
+      "title": "Content repository",
+      "short": "A public GitHub repo of structured lesson sets that Adaptive Learner can load as a content source.",
+      "docs_slug": "features/content-repos",
+      "long": "## What is a content repository?\n\nLessons come from content repositories - public GitHub\nrepos that bundle lesson sets. The official repo is always\nloaded; on top of that you can connect your own.\n\n## Multiple sources\n\nUnder Settings > Data you manage any number of repos (add,\nremove, order = priority). Each set carries a source badge\nso you can see where a lesson came from.\n"
+    },
+    {
+      "key": "trust_level",
+      "title": "Trust level",
+      "short": "The automatic trust rating of a connected content repository, derived from its technical validation.",
+      "docs_slug": "features/content-repos",
+      "long": "## What is a trust level?\n\nEvery connected repo runs an automatic technical\nvalidation on each sync. That produces a trust level: 0\n(not validated or failed), 1 (technically valid: at least\none lesson, no executable content), and 3 (officially\nrecommended).\n\n## What it is NOT\n\nThe level is purely technical. A content/community-based\nrating (trust 2) needs a shared backend service and is\ndeferred.\n"
+    },
+    {
+      "key": "streak",
+      "title": "Streak",
+      "short": "The number of consecutive days you have learned - fuel for the XP multiplier.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## What is a streak?\n\nA streak counts consecutive learning days. Every completed\nsession or lesson fills the heatmap and keeps the streak\nalive.\n\n## Effect\n\nThe streak feeds an XP multiplier (+25% per consecutive\nday, capped at 7 days). It is a mirror of your consistency,\nnot a stick - a missed daily mission costs no penalty.\n"
+    },
+    {
+      "key": "assessment",
+      "title": "Assessment",
+      "short": "A short test that determines which of the six learning methods suit you.",
+      "docs_slug": "user-guide/assessment",
+      "long": "## What is the assessment?\n\nThe assessment asks twelve questions and computes your\nlearning profile from them - the weighting of the six\nmethods the app leans on.\n\n## Optional and resumable\n\nSince the onboarding overhaul the assessment is optional\nand reachable only through the profile wizard. If you\nabandon it, the app remembers your progress so you can\nlater pick up where you left off.\n"
     }
   ]
 }

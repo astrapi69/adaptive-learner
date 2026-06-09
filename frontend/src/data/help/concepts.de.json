@@ -25,6 +25,34 @@
       "title": "Lernsession",
       "short": "Eine KI-gestuetzte Lerneinheit, die dem 7-Schritte-Zyklus folgt.",
       "long": "## Was ist eine Lernsession?\n\nEine Lernsession ist eine zusammenhaengende Lerneinheit\nzu einem Thema, gesteuert durch den 7-Schritte-Zyklus\n(Input, Versuch, Fehler, Feedback, Anpassung, Wiederholung,\nIntegration). Die AI uebernimmt dabei die Rolle des\nLehrenden; du fuehrst den Dialog.\n\n## Was unterscheidet eine Session vom Chat?\n\nIn einer Session laeuft der **Dual-Prompt-Evaluator** mit:\nNach jeder Antwort beurteilt eine zweite KI-Instanz dein\nVerstaendnis (0-100% Confidence) und entscheidet, ob du\nbereit fuer den naechsten Schritt bist. Ein normaler Chat\nhat dieses Korrektiv nicht.\n\n## Streaming\n\nDie Antworten der AI erscheinen wortweise (Server-Sent\nEvents), damit du nicht auf die fertige Antwort warten\nmusst. Du kannst jederzeit unterbrechen und\nnachfragen — die Session laeuft solange weiter, bis du\nsie beendest oder der Zyklus abgeschlossen ist.\n\n## Wann sollte ich eine Session beenden?\n\n- Nach Schritt 7 (Integration), wenn der Lernzyklus\n  abgeschlossen ist.\n- Wenn das System einen Methodenwechsel vorschlaegt und\n  du den Vorschlag annimmst.\n- Wenn dein **stress** in den letzten Bewertungen ueber 4\n  liegt — Pause ist produktiver als Durchhalten.\n\n## Bewertungen wirken sich aus\n\nJede Session endet mit drei Reglern (Verstaendnis, Stress,\nMethodenpassung, je 1-5). Diese Werte gehen in dein\nLernprofil ein und beeinflussen kuenftige Empfehlungen:\nhoher Stress + niedrige Methodenpassung ueber mehrere\nSessions hinweg loest den Methodenwechsel-Vorschlag aus.\n\n## Im Adaptive Learner\n\nEine Session gehoert zu genau einem Lernprojekt. Du kannst\ngleichzeitig nur eine aktive Session haben; das verhindert\nVermischung von Themen und schuetzt die\nMethodenwechsel-Logik vor Rauschen.\n"
+    },
+    {
+      "key": "content_repository",
+      "title": "Content-Repository",
+      "short": "Ein oeffentliches GitHub-Repo mit strukturierten Lektionssaetzen, das Adaptive Learner als Inhaltsquelle laden kann.",
+      "docs_slug": "features/content-repos",
+      "long": "## Was ist ein Content-Repository?\n\nLektionen kommen aus Content-Repositories — oeffentlichen\nGitHub-Repos, die Lektionssaetze buendeln. Das offizielle\nRepo ist immer geladen; zusaetzlich kannst du eigene\nverbinden.\n\n## Mehrere Quellen\n\nUnter Einstellungen > Daten verwaltest du beliebig viele\nRepos (hinzufuegen, entfernen, Reihenfolge = Prioritaet).\nJeder Satz traegt ein Quell-Badge, damit du siehst, woher\neine Lektion stammt.\n"
+    },
+    {
+      "key": "trust_level",
+      "title": "Trust-Stufe",
+      "short": "Die automatische Vertrauensbewertung eines verbundenen Content-Repositories aus der technischen Validierung.",
+      "docs_slug": "features/content-repos",
+      "long": "## Was ist eine Trust-Stufe?\n\nJedes verbundene Repo durchlaeuft bei jeder\nSynchronisierung eine automatische technische Validierung.\nDaraus ergibt sich eine Trust-Stufe: 0 (nicht validiert\noder fehlgeschlagen), 1 (technisch gueltig: mindestens eine\nLektion, kein ausfuehrbarer Inhalt) und 3 (offiziell\nempfohlen).\n\n## Was sie NICHT ist\n\nDie Stufe ist rein technisch. Eine inhaltliche,\ncommunity-basierte Bewertung (Trust 2) braucht einen\ngemeinsamen Backend-Dienst und ist zurueckgestellt.\n"
+    },
+    {
+      "key": "streak",
+      "title": "Streak (Serie)",
+      "short": "Die Anzahl aufeinanderfolgender Tage, an denen du gelernt hast — Treibstoff fuer den XP-Multiplikator.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## Was ist eine Streak?\n\nEine Streak zaehlt aufeinanderfolgende Lerntage. Jede\nabgeschlossene Session oder Lektion fuellt die Heatmap und\nhaelt die Serie am Leben.\n\n## Wirkung\n\nDie Streak speist einen XP-Multiplikator (+25 % pro Tag in\nFolge, bei 7 Tagen gedeckelt). Sie ist ein Spiegel deiner\nKonstanz, kein Druckmittel — eine verpasste taegliche\nMission kostet keine Strafe.\n"
+    },
+    {
+      "key": "assessment",
+      "title": "Lerntyp-Test",
+      "short": "Ein kurzer Test, der ermittelt, welche der sechs Lernmethoden zu dir passen.",
+      "docs_slug": "user-guide/assessment",
+      "long": "## Was ist der Lerntyp-Test?\n\nDer Lerntyp-Test (Assessment) stellt zwoelf Fragen und\nberechnet daraus dein Lernprofil — die Gewichtung der\nsechs Methoden, auf die die App setzt.\n\n## Optional und fortsetzbar\n\nSeit der Onboarding-Ueberarbeitung ist der Test optional\nund nur ueber den Profil-Assistenten erreichbar. Brichst\ndu ihn ab, merkt sich die App den Zwischenstand, sodass du\nspaeter dort weitermachst, wo du aufgehoert hast.\n"
     }
   ]
 }

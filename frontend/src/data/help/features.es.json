@@ -31,6 +31,41 @@
       "title": "Gamificación (XP, Insignias, Rachas)",
       "short": "Sistema de progreso con puntos de experiencia, insignias y rachas: motivación sin artificios.",
       "long": "## ¿Qué es la capa de gamificación?\n\nTres mecánicas hacen que el progreso de aprendizaje sea visible\ny gratificante:\n\n- **XP (puntos de experiencia)** — por cada sesión completada,\n  cada cambio de método, cada tarjeta de repetición espaciada.\n  Los niveles suben con el XP.\n- **Insignias** — por hitos temáticos («primera sesión»,\n  «10 sesiones en un método», «racha de 30 días», ...).\n- **Rachas** — series de aprendizaje diario. Caducan a las\n  24 horas sin una sesión, con tres «congelaciones de racha»\n  al mes como pausas de emergencia.\n\n## Cómo se gana XP\n\nDiferentes acciones generan diferentes valores de XP:\n\n- **Enviar una sesión calificada**: 50 XP.\n- **Alcanzar el paso 7 (integración)**: +25 XP de bonificación.\n- **Aceptar un cambio de método**: 10 XP (tomaste una decisión\n  de aprendizaje deliberada).\n- **Tarjeta de repetición espaciada con confianza > 80%**: 5 XP.\n- **Exportación de un conjunto a Anki**: 20 XP.\n\nLos niveles escalan con una función de raíz cuadrada\n(nivel n = √(XP / 100)); los niveles iniciales suben rápido,\nlos más altos requieren mayor dedicación.\n\n## Las insignias no son coercitivas\n\nLos criterios de las insignias no son condicionantes de la\ninterfaz: no *necesitas* una sola insignia para usar la\naplicación productivamente. Son un espejo, no un objetivo.\nSi empiezas a sentir que aprendes para obtener insignias en\nlugar de hacerlo para ti mismo, desactiva su visualización\nen los ajustes.\n\n## Congelaciones de racha\n\nTres congelaciones de racha al mes. Si te saltas un día, una\ncongelación protege automáticamente tu racha. Diseñadas\nexplícitamente como permiso para el «día enfermo» o el «día\nde viaje», no como mecanismo de excepción para la pereza.\n\n## Por qué funciona sin artificios\n\nLa investigación educativa lo muestra: la recompensa extrínseca\npuede destruir la motivación intrínseca (el «efecto de\nsobrejustificación»). Adaptive Learner confía en que las\nmecánicas sean un **espejo** del progreso, no un sistema de\nincentivos. Sin clasificaciones, sin características sociales,\nsin intercambio de puntos: los datos se quedan contigo.\n\n## Reinicio\n\nSi los valores de gamificación ya no corresponden a tu\nsituación (p. ej., comienzo fresco después de una larga pausa),\npuedes reiniciarlos en los ajustes. El plan de estudios, las\nsesiones y las calificaciones se conservan.\n"
+    },
+    {
+      "key": "view_dashboard",
+      "title": "Panel principal",
+      "short": "Tu base de operaciones: progreso, racha, XP, insignias, repasos pendientes y acciones rápidas.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## ¿Qué muestra el panel principal?\n\nEl panel principal es tu centro de mando. «Continuar\naprendiendo» se sitúa arriba con tu lección más reciente,\nluego las tarjetas accionables (lecciones en pausa, misiones,\náreas de enfoque, cola de repaso), después la gamificación\n(XP, racha, insignias) y, por último, los paneles analíticos.\n\n## Filtro\n\nUn filtro de materias lista solo tus propias materias,\nordenadas primero por las más usadas.\n"
+    },
+    {
+      "key": "view_content_browser",
+      "title": "Explorador de contenido",
+      "short": "La página donde encuentras, descargas e inicias conjuntos de lecciones.",
+      "docs_slug": "features/content-browser",
+      "long": "## ¿Cómo encuentro lecciones?\n\nEl explorador de contenido en /content está organizado en\ntorno al flujo de aprendizaje: la búsqueda primero (instantánea\ny tolerante a acentos), luego «Continuar aprendiendo» y después\nel catálogo. El catálogo se divide en «Idiomas» (origen >\ndestino > nivel) y «Conocimiento» (dominios no lingüísticos).\n\n## Fuentes y libros\n\nLas insignias de fuente muestran de dónde procede un conjunto;\nun filtro de fuentes oculta fuentes individuales. Un dominio\npuede mostrar recomendaciones de libros.\n"
+    },
+    {
+      "key": "view_lesson",
+      "title": "Lección",
+      "short": "El visor que te guía paso a paso a través de la teoría y los ejercicios de una lección.",
+      "docs_slug": "user-guide/lessons",
+      "long": "## ¿Cómo funcionan los ejercicios?\n\nUna lección es una secuencia de pasos de teoría y ejercicio.\nAparecen cinco tipos de ejercicio: emparejamiento (parejas con\ncolores + insignias numéricas), elección de imagen, texto libre,\nfichas de palabras y cloze.\n\n## Controles\n\nEnter comprueba un ejercicio respondido y avanza. Desde un\nejercicio puedes saltar a la teoría correspondiente mediante\n«Releer teoría». Al final ves tu puntuación con estrellas y\npuedes exportarla como Markdown.\n"
+    },
+    {
+      "key": "view_settings",
+      "title": "Ajustes",
+      "short": "Todo lo que puedes cambiar sin código ni YAML: idioma, IA, aprendizaje, datos, apariencia.",
+      "docs_slug": "user-guide/settings",
+      "long": "## ¿Qué puedo configurar?\n\nLos ajustes agrupan el idioma, el proveedor de IA y las claves,\nel modo de almacenamiento, las opciones de aprendizaje (p. ej.,\natajo de Enter, dirección de ejercicio preferida), los datos\n(copia de seguridad, repositorios de contenido), la apariencia\n(12 temas) y la gamificación.\n\n## Tus datos en tus manos\n\nEn «Datos» creas e importas copias de seguridad y conectas tus\npropios repositorios de contenido. Nada de ello sale de tu\ndispositivo sin que lo pidas.\n"
+    },
+    {
+      "key": "feature_backup",
+      "title": "Copia de seguridad y restauración",
+      "short": "Una instantánea completa de tu estado de aprendizaje que puedes guardar y restaurar en otro lugar.",
+      "docs_slug": "features/backup",
+      "long": "## ¿Qué es una copia de seguridad?\n\nUna copia de seguridad es una instantánea completa: cada tabla\n(proyectos, sesiones, progreso de lecciones, errores,\ngamificación, misiones...) más tus conjuntos de contenido\ndescargados, como un único archivo JSON.\n\n## Entre identidades\n\nPuedes importar una copia de seguridad en una instalación nueva\no bajo un perfil diferente; la restauración vuelve a resolver\nlas referencias internas de forma limpia. Al importar ves un\nresumen por tabla.\n"
     }
   ]
 }

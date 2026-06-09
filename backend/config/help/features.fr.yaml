@@ -271,3 +271,99 @@ entries:
       situation (par ex. nouveau départ après une longue pause),
       vous pouvez les réinitialiser dans les paramètres. Le curriculum,
       les sessions et les évaluations sont préservés.
+
+  - key: view_dashboard
+    title: Tableau de bord
+    short: "Votre base d'accueil : progression, série, XP, badges, révisions dues et actions rapides."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## Qu'affiche le tableau de bord ?
+
+      Le tableau de bord est votre centre de commande. « Continuer
+      l'apprentissage » figure en haut avec votre leçon la plus
+      récemment consultée, puis les cartes actionnables (leçons en
+      pause, missions, domaines de focalisation, file de révision),
+      ensuite la gamification (XP, série, badges), et enfin les
+      panneaux analytiques.
+
+      ## Filtre
+
+      Un filtre par sujet ne liste que vos propres sujets, triés
+      par les plus utilisés en premier.
+
+  - key: view_content_browser
+    title: Navigateur de contenu
+    short: "La page où vous trouvez, téléchargez et démarrez des jeux de leçons."
+    docs_slug: features/content-browser
+    long: |
+      ## Comment trouver des leçons ?
+
+      Le navigateur de contenu sur /content est construit autour du
+      flux d'apprentissage : la recherche d'abord (instantanée,
+      tolérante aux accents), puis « Continuer l'apprentissage »,
+      puis le catalogue. Le catalogue se divise en « Langues »
+      (source > cible > niveau) et « Connaissances » (domaines
+      non linguistiques).
+
+      ## Sources et livres
+
+      Les badges de source montrent d'où provient un jeu ; un filtre
+      de source masque des sources individuelles. Un domaine peut
+      faire remonter des recommandations de livres.
+
+  - key: view_lesson
+    title: Leçon
+    short: "Le lecteur qui vous guide pas à pas à travers la théorie et les exercices d'une leçon."
+    docs_slug: user-guide/lessons
+    long: |
+      ## Comment fonctionnent les exercices ?
+
+      Une leçon est une séquence d'étapes de théorie et d'exercices.
+      Cinq types d'exercices apparaissent : appariement (paires
+      colorées + badges numérotés), choix d'image, texte libre,
+      tuiles de mots et texte à trous.
+
+      ## Commandes
+
+      Entrée vérifie un exercice répondu et avance. Depuis un
+      exercice, vous pouvez accéder à la théorie correspondante via
+      « Relire la théorie ». À la fin, vous voyez votre score avec
+      des étoiles et pouvez l'exporter au format Markdown.
+
+  - key: view_settings
+    title: Paramètres
+    short: "Tout ce que vous pouvez modifier sans code ni YAML — langue, IA, apprentissage, données, apparence."
+    docs_slug: user-guide/settings
+    long: |
+      ## Que puis-je configurer ?
+
+      Les paramètres regroupent la langue, le fournisseur IA et les
+      clés, le mode de stockage, les options d'apprentissage (par ex.
+      le raccourci Entrée, la direction d'exercice préférée), les
+      données (sauvegarde, dépôts de contenu), l'apparence (12 thèmes)
+      et la gamification.
+
+      ## Vos données entre vos mains
+
+      Sous « Données », vous créez et importez des sauvegardes et
+      connectez vos propres dépôts de contenu. Rien de tout cela ne
+      quitte votre appareil sans votre accord.
+
+  - key: feature_backup
+    title: Sauvegarde et restauration
+    short: "Un instantané complet de votre état d'apprentissage que vous pouvez enregistrer et restaurer ailleurs."
+    docs_slug: features/backup
+    long: |
+      ## Qu'est-ce qu'une sauvegarde ?
+
+      Une sauvegarde est un instantané complet : chaque table
+      (projets, sessions, progression des leçons, erreurs,
+      gamification, missions...) plus vos jeux de contenu
+      téléchargés — sous la forme d'un unique fichier JSON.
+
+      ## Inter-identité
+
+      Vous pouvez importer une sauvegarde dans une nouvelle
+      installation ou sous un profil différent ; la restauration
+      réétablit proprement les références internes. À l'import, vous
+      voyez un résumé table par table.

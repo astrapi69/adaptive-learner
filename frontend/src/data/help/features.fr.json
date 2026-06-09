@@ -31,6 +31,41 @@
       "title": "Gamification (XP, badges, séries)",
       "short": "Système de progression avec points d'expérience, badges et séries — motivation sans gadgets.",
       "long": "## Qu'est-ce que la couche de gamification ?\n\nTrois mécaniques rendent la progression de l'apprentissage\nvisible et gratifiante :\n\n- **XP (points d'expérience)** — pour chaque session complétée,\n  chaque changement de méthode, chaque carte de répétition\n  espacée. Le niveau augmente avec les XP.\n- **Badges** — pour des jalons thématiques (« première session »,\n  « 10 sessions dans une méthode », « série de 30 jours », ...).\n- **Séries** — séquences d'apprentissage quotidiennes. Elles\n  expirent après 24 heures sans session — avec trois « gels de\n  série » par mois comme pauses d'urgence.\n\n## Comment les XP sont gagnés\n\nDifférentes actions donnent différentes valeurs de XP :\n\n- **Soumettre une session évaluée** : 50 XP.\n- **Atteindre l'étape 7 (integrate)** : +25 XP de bonus.\n- **Accepter un changement de méthode** : 10 XP (vous avez\n  pris une décision d'apprentissage délibérée).\n- **Carte de répétition espacée avec confiance > 80 %** : 5 XP.\n- **Export Anki d'un jeu** : 20 XP.\n\nLes niveaux s'échelonnent avec une fonction racine carrée\n(niveau n = sqrt(XP / 100)) — les premiers niveaux progressent\nrapidement, les niveaux supérieurs demandent plus de souffle.\n\n## Les badges ne sont pas coercitifs\n\nLes critères de badge ne sont pas liés à l'interface — vous\nn'avez *pas* besoin d'un seul badge pour utiliser l'application\nde manière productive. Ce sont des miroirs, pas des cibles. Si\nvous commencez à avoir l'impression d'apprendre pour les badges\nplutôt que pour vous-même, désactivez l'affichage dans les\nparamètres.\n\n## Gels de série\n\nTrois gels de série par mois. Si vous manquez un jour, un gel\nprotège automatiquement votre série. Conçus explicitement comme\nune journée de maladie ou de voyage, pas comme un mécanisme\nd'exception pour la paresse.\n\n## Pourquoi ça fonctionne sans gadgets\n\nLa recherche en apprentissage montre : la récompense extrinsèque\npeut détruire la motivation intrinsèque (« effet de surjustification »).\nAdaptive Learner s'appuie sur le fait que les mécaniques soient\nun **miroir** de la progression, pas un système d'incitation.\nPas de classements, pas de fonctionnalités sociales, pas de\npartage de points — les données restent avec vous.\n\n## Réinitialisation\n\nSi les valeurs de gamification ne correspondent plus à votre\nsituation (par ex. nouveau départ après une longue pause),\nvous pouvez les réinitialiser dans les paramètres. Le curriculum,\nles sessions et les évaluations sont préservés.\n"
+    },
+    {
+      "key": "view_dashboard",
+      "title": "Tableau de bord",
+      "short": "Votre base d'accueil : progression, série, XP, badges, révisions dues et actions rapides.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## Qu'affiche le tableau de bord ?\n\nLe tableau de bord est votre centre de commande. « Continuer\nl'apprentissage » figure en haut avec votre leçon la plus\nrécemment consultée, puis les cartes actionnables (leçons en\npause, missions, domaines de focalisation, file de révision),\nensuite la gamification (XP, série, badges), et enfin les\npanneaux analytiques.\n\n## Filtre\n\nUn filtre par sujet ne liste que vos propres sujets, triés\npar les plus utilisés en premier.\n"
+    },
+    {
+      "key": "view_content_browser",
+      "title": "Navigateur de contenu",
+      "short": "La page où vous trouvez, téléchargez et démarrez des jeux de leçons.",
+      "docs_slug": "features/content-browser",
+      "long": "## Comment trouver des leçons ?\n\nLe navigateur de contenu sur /content est construit autour du\nflux d'apprentissage : la recherche d'abord (instantanée,\ntolérante aux accents), puis « Continuer l'apprentissage »,\npuis le catalogue. Le catalogue se divise en « Langues »\n(source > cible > niveau) et « Connaissances » (domaines\nnon linguistiques).\n\n## Sources et livres\n\nLes badges de source montrent d'où provient un jeu ; un filtre\nde source masque des sources individuelles. Un domaine peut\nfaire remonter des recommandations de livres.\n"
+    },
+    {
+      "key": "view_lesson",
+      "title": "Leçon",
+      "short": "Le lecteur qui vous guide pas à pas à travers la théorie et les exercices d'une leçon.",
+      "docs_slug": "user-guide/lessons",
+      "long": "## Comment fonctionnent les exercices ?\n\nUne leçon est une séquence d'étapes de théorie et d'exercices.\nCinq types d'exercices apparaissent : appariement (paires\ncolorées + badges numérotés), choix d'image, texte libre,\ntuiles de mots et texte à trous.\n\n## Commandes\n\nEntrée vérifie un exercice répondu et avance. Depuis un\nexercice, vous pouvez accéder à la théorie correspondante via\n« Relire la théorie ». À la fin, vous voyez votre score avec\ndes étoiles et pouvez l'exporter au format Markdown.\n"
+    },
+    {
+      "key": "view_settings",
+      "title": "Paramètres",
+      "short": "Tout ce que vous pouvez modifier sans code ni YAML — langue, IA, apprentissage, données, apparence.",
+      "docs_slug": "user-guide/settings",
+      "long": "## Que puis-je configurer ?\n\nLes paramètres regroupent la langue, le fournisseur IA et les\nclés, le mode de stockage, les options d'apprentissage (par ex.\nle raccourci Entrée, la direction d'exercice préférée), les\ndonnées (sauvegarde, dépôts de contenu), l'apparence (12 thèmes)\net la gamification.\n\n## Vos données entre vos mains\n\nSous « Données », vous créez et importez des sauvegardes et\nconnectez vos propres dépôts de contenu. Rien de tout cela ne\nquitte votre appareil sans votre accord.\n"
+    },
+    {
+      "key": "feature_backup",
+      "title": "Sauvegarde et restauration",
+      "short": "Un instantané complet de votre état d'apprentissage que vous pouvez enregistrer et restaurer ailleurs.",
+      "docs_slug": "features/backup",
+      "long": "## Qu'est-ce qu'une sauvegarde ?\n\nUne sauvegarde est un instantané complet : chaque table\n(projets, sessions, progression des leçons, erreurs,\ngamification, missions...) plus vos jeux de contenu\ntéléchargés — sous la forme d'un unique fichier JSON.\n\n## Inter-identité\n\nVous pouvez importer une sauvegarde dans une nouvelle\ninstallation ou sous un profil différent ; la restauration\nréétablit proprement les références internes. À l'import, vous\nvoyez un résumé table par table.\n"
     }
   ]
 }
