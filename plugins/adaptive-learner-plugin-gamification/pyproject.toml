@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adaptive-learner-plugin-gamification"
-version = "1.67.1"
+version = "1.68.0"
 description = "Adaptive Learner: XP, badges, and enhanced streaks (Phase 29)."
 authors = ["Asterios Raptis"]
 license = "MIT"

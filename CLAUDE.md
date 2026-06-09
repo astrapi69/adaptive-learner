@@ -9,9 +9,40 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.67.1** (maintenance — **systematic
+- **Current state:** **v1.68.0** (minor — **lesson-result export +
+  theory back-links + matched-pair visual overhaul + dark-mode contrast
+  fixes**). **Export results (#138):** the lesson summary gains
+  "Copy result" + "Save as file" — a Markdown report (score,
+  per-exercise mistakes with the learner's answer + the correct answer,
+  still-weak areas) for pasting into an AI assistant; pure builder
+  (``lib/lesson/result-export.ts``), both storage modes.
+  **Theory back-links (#140):** an exercise step shows a subtle
+  "Re-read theory" link to the nearest preceding theory step (runtime-
+  derived, no schema change); the theory step then offers "Back to
+  exercise". Rendered once around the exercise dispatcher, so all five
+  renderers inherit it. **Matched pairs (#145):** both tiles of a
+  paired match share a distinct color (per-theme ``--chart-*`` palette,
+  cycled) + a matching number badge — colorblind-safe (not color
+  alone); slots assigned on pairing, freed on undo. **Domain-aware
+  matching (#149):** a knowledge lesson (non-language domain, or
+  source==target) uses neutral Term/Definition labels, drops the
+  language names, and a non-translation instruction; domain threaded
+  Lesson → Dispatcher → MatchingExercise. **Read-aloud (#147):** no
+  longer swaps the theory body to a plain-text follow-along while
+  speaking — the rendered Markdown (headings/lists/code) stays; audio
+  just plays. **Dark-mode contrast:** ``<Button asChild>`` + router
+  ``<Link>`` anchors keep their variant text color (#146 — the unlayered
+  ``a { color: var(--accent) }`` was overriding the layered utility, so
+  accent text landed on an accent background), and outline/ghost
+  buttons (the lesson "Previous" button) set an explicit
+  ``text-foreground`` so they no longer fall back to invisible UA black
+  with preflight off (#148). **Also (#143):** the search icon moved to
+  the right of the field + uniform matching/word-tile card heights;
+  **About > Credits** now names Claude (Anthropic) for AI assistance
+  (architecture, code, content, documentation). i18n updated in all 8
+  languages. v1.67.1 = maintenance — **systematic
   backup-restore fix + deploy-safe lazy-route reload + subject-filter UX
-  polish**). **Backup restore (#115, #117):** a generic type-coercion +
+  polish**. **Backup restore (#115, #117):** a generic type-coercion +
   matching layer replaces the prior point-fixes — unique-key matching
   for the 13 non-id-UNIQUE tables (the ``user_settings``/``user_xp``/
   ``user_streaks`` singletons + composite keys) with FK-graph-derived
