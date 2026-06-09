@@ -182,14 +182,15 @@ def test_de_en_parity_features():
     )
 
 
-def test_list_entries_no_category_returns_all_22():
+def test_list_entries_no_category_returns_all_31():
     """Pin: with no category filter, we get every entry across
-    all four categories. The 22-count is the Phase 38A canonical
-    total (4 concepts + 6 methods + 7 steps + 5 features)."""
+    all four categories. The 31-count is the canonical total
+    (8 concepts + 6 methods + 7 steps + 10 features) after the
+    #159 context-help additions."""
     for lang in ("de", "en"):
         entries = list_entries(lang)
-        assert len(entries) == 22, (
-            f"{lang}: expected 22 entries (4+6+7+5), got {len(entries)}"
+        assert len(entries) == 31, (
+            f"{lang}: expected 31 entries (8+6+7+10), got {len(entries)}"
         )
 
 
@@ -199,16 +200,14 @@ def test_list_entries_no_category_returns_all_22():
 @pytest.mark.parametrize(
     "lang", ["es", "fr", "el", "pt", "tr", "ja"],
 )
-def test_passthrough_language_has_all_22_entries(lang: str):
+def test_passthrough_language_has_all_31_entries(lang: str):
     """Phase 38F — every secondary language has all four
-    category bundles + the same 22 canonical keys as EN, even
-    when the content is an EN passthrough. The actual
-    translation lives in the ``HELP-CONTENT-TRANSLATIONS-01``
-    backlog item; this pin protects against accidentally
-    shipping a language with missing bundles."""
+    category bundles + the same 31 canonical keys as EN. This
+    pin protects against accidentally shipping a language with
+    missing bundles."""
     entries = list_entries(lang)
-    assert len(entries) == 22, (
-        f"{lang}: expected 22 entries, got {len(entries)}"
+    assert len(entries) == 31, (
+        f"{lang}: expected 31 entries, got {len(entries)}"
     )
 
     en_keys = {e["key"] for e in list_entries("en")}
