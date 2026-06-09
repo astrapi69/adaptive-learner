@@ -16,7 +16,10 @@ import "@testing-library/jest-dom/vitest";
 import {fireEvent, render, screen} from "@testing-library/react";
 import {beforeEach, describe, expect, it, vi} from "vitest";
 
-import MatchingExercise from "./MatchingExercise";
+import MatchingExercise, {
+    MATCHING_PAIR_COLORS,
+    matchingPairColorVar,
+} from "./MatchingExercise";
 import type {ContentLessonExercise} from "../../storage/types";
 
 const EXERCISE: ContentLessonExercise = {
@@ -292,5 +295,99 @@ describe("MatchingExercise: side distinction (#108)", () => {
         expect(rightChip).not.toBeNull();
         expect(leftChip).toHaveTextContent("A");
         expect(rightChip).toHaveTextContent("B");
+    });
+});
+
+describe("MatchingExercise: knowledge-domain wording (#149)", () => {
+    it("uses Term / Definition + a non-translation instruction for a non-language domain", () => {
+        render(
+            <MatchingExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                domain="psychology"
+                targetLanguage="de"
+                sourceLanguage="de"
+            />,
+        );
+        expect(
+            screen.getByTestId("matching-left-header"),
+        ).toHaveTextContent("Term");
+        expect(
+            screen.getByTestId("matching-right-header"),
+        ).toHaveTextContent("Definition");
+        expect(
+            screen.getByTestId("matching-instructions").textContent,
+        ).not.toMatch(/translation/i);
+    });
+
+    it("treats source==target as knowledge even without an explicit domain", () => {
+        render(
+            <MatchingExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                targetLanguage="de"
+                sourceLanguage="de"
+            />,
+        );
+        expect(
+            screen.getByTestId("matching-right-header"),
+        ).toHaveTextContent("Definition");
+    });
+
+    it("keeps the translation wording for a real language pair", () => {
+        render(
+            <MatchingExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                domain="language"
+                targetLanguage="es"
+                sourceLanguage="de"
+            />,
+        );
+        // Language names render when the pair is known; the generic
+        // 'Definition' knowledge label must NOT appear.
+        expect(
+            screen.getByTestId("matching-right-header").textContent,
+        ).not.toContain("Definition");
+    });
+});
+
+describe("MatchingExercise: per-pair color + label (#145)", () => {
+    it("matchingPairColorVar cycles through the chart tokens", () => {
+        expect(matchingPairColorVar(0)).toBe("var(--chart-1)");
+        expect(matchingPairColorVar(2)).toBe("var(--chart-3)");
+        expect(matchingPairColorVar(MATCHING_PAIR_COLORS)).toBe(
+            "var(--chart-1)",
+        );
+    });
+
+    it("labels both tiles of a matched pair with the same number", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        // Pair the first left term with its correct right tile.
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        // Both tiles now carry the pair-1 badge (color + number).
+        expect(
+            screen.getAllByTestId("matching-pair-badge-1"),
+        ).toHaveLength(2);
+    });
+
+    it("assigns the next number to a second pair and frees it on undo", () => {
+        render(<MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />);
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        expect(screen.getAllByTestId("matching-pair-badge-1")).toHaveLength(2);
+        expect(screen.getAllByTestId("matching-pair-badge-2")).toHaveLength(2);
+        // Undo the first pair: its slot (1) is released, so a fresh
+        // pair reuses it rather than climbing to 3.
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        expect(screen.queryAllByTestId("matching-pair-badge-1")).toHaveLength(
+            0,
+        );
+        fireEvent.click(screen.getByTestId("matching-left-2"));
+        fireEvent.click(screen.getByTestId("matching-right-2"));
+        expect(screen.getAllByTestId("matching-pair-badge-1")).toHaveLength(2);
     });
 });

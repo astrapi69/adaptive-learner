@@ -268,7 +268,7 @@ describe("Lesson auto-read (C3)", () => {
         ).toBe("true");
     });
 
-    // --- C5: follow-along highlight --------------------------------
+    // --- C5: manual read-aloud (audio only, no panel swap — #147) ---
 
     it("shows the manual theory read-aloud button on a theory step", () => {
         ready(0);
@@ -278,18 +278,19 @@ describe("Lesson auto-read (C3)", () => {
         expect(btn.getAttribute("data-speaking")).toBe("false");
     });
 
-    it("clicking the theory button reads it and swaps in the follow-along view", () => {
+    it("clicking the theory button reads it without changing the panel (#147)", () => {
         ready(0);
         renderPage();
-        expect(screen.queryByTestId("lesson-read-along")).toBeNull();
         fireEvent.click(screen.getByTestId("read-aloud-theory"));
         expect(speakCalls.length).toBe(1);
         expect(speakCalls[0].text).toContain("Bonjour means hello");
-        // The follow-along view replaces the Markdown while reading.
-        const along = screen.getByTestId("lesson-read-along");
-        expect(along).toBeInTheDocument();
-        expect(along.textContent).toContain("Bonjour means hello");
-        // The button flips to the speaking (Stop) state.
+        // #147 — read-aloud only plays audio: the rendered Markdown
+        // body stays; it is NOT replaced by a plain-text follow-along.
+        expect(screen.queryByTestId("lesson-read-along")).toBeNull();
+        expect(
+            screen.getByTestId("lesson-theory-body"),
+        ).toBeInTheDocument();
+        // The button still flips to the speaking (Stop) state.
         expect(
             screen.getByTestId("read-aloud-theory").getAttribute(
                 "data-speaking",
@@ -297,61 +298,18 @@ describe("Lesson auto-read (C3)", () => {
         ).toBe("true");
     });
 
-    it("auto-read on a theory step renders the follow-along view", () => {
+    it("auto-read on a theory step does not swap the panel formatting (#147)", () => {
         localStorage.setItem(
             "adaptive-learner.voice.lesson_autoread",
             "true",
         );
         ready(0);
         renderPage();
-        expect(screen.getByTestId("lesson-read-along")).toBeInTheDocument();
-    });
-
-    it("advances the highlighted word as the engine crosses boundaries (QA D3)", () => {
-        // Drive the real engine end to end: clicking the theory button
-        // reads the body, then firing the utterance's onboundary moves
-        // the .tts-active word — pinned at the page level (the unit test
-        // covers the tokenizer in isolation).
-        ready(0);
-        renderPage();
-        fireEvent.click(screen.getByTestId("read-aloud-theory"));
-        const utter = speakCalls[0];
-        const text = utter.text; // markdownToSpeech("# Welcome\n\nBonjour means hello.")
-        const along = screen.getByTestId("lesson-read-along");
-        // No active word before any boundary fires.
-        expect(along.querySelector('[data-active="true"]')).toBeNull();
-
-        // Fire a boundary at the start of "Bonjour".
-        const bonjourAt = text.indexOf("Bonjour");
-        expect(bonjourAt).toBeGreaterThan(-1);
-        act(() => {
-            (
-                utter as unknown as {
-                    onboundary?: (e: {name: string; charIndex: number}) => void;
-                }
-            ).onboundary?.({name: "word", charIndex: bonjourAt});
-        });
+        expect(speakCalls.length).toBeGreaterThan(0);
+        expect(screen.queryByTestId("lesson-read-along")).toBeNull();
         expect(
-            screen
-                .getByTestId("lesson-read-along")
-                .querySelector('[data-active="true"]')?.textContent,
-        ).toBe("Bonjour");
-
-        // Advance to "hello" -> the highlight moves. (The word token
-        // keeps its trailing punctuation, e.g. "hello.".)
-        const helloAt = text.indexOf("hello");
-        act(() => {
-            (
-                utter as unknown as {
-                    onboundary?: (e: {name: string; charIndex: number}) => void;
-                }
-            ).onboundary?.({name: "word", charIndex: helloAt});
-        });
-        const active = screen
-            .getByTestId("lesson-read-along")
-            .querySelector('[data-active="true"]');
-        expect(active?.textContent).toContain("hello");
-        expect(active?.textContent).not.toContain("Bonjour");
+            screen.getByTestId("lesson-theory-body"),
+        ).toBeInTheDocument();
     });
 
     // --- C6: keyboard shortcut -------------------------------------
@@ -363,10 +321,19 @@ describe("Lesson auto-read (C3)", () => {
         fireEvent.keyDown(window, {key: "r"});
         expect(speakCalls.length).toBe(1);
         expect(speakCalls[0].text).toContain("Bonjour means hello");
-        // Now reading -> follow-along shows; a second R stops.
-        expect(screen.getByTestId("lesson-read-along")).toBeInTheDocument();
+        // Reading -> the button shows the speaking state; a second R
+        // stops (the panel never swapped, so assert the button state).
+        expect(
+            screen.getByTestId("read-aloud-theory").getAttribute(
+                "data-speaking",
+            ),
+        ).toBe("true");
         fireEvent.keyDown(window, {key: "r"});
-        expect(screen.queryByTestId("lesson-read-along")).toBeNull();
+        expect(
+            screen.getByTestId("read-aloud-theory").getAttribute(
+                "data-speaking",
+            ),
+        ).toBe("false");
     });
 
     it("ignores R while typing in an input", () => {

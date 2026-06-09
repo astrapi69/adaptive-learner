@@ -740,6 +740,8 @@
     "credits_heading": "Créditos",
     "author_label": "Autor",
     "dependencies_label": "Construído com",
+    "ai_assistance_label": "Assistência de IA",
+    "ai_assistance_value": "Claude (Anthropic) - Arquitetura, Código, Conteúdo, Documentação",
     "tagline": "Feito para aprendizes autodirigidos.",
     "donations_heading": "Apoie o desenvolvimento",
     "donations_intro": "O Adaptive Learner é gratuito e de código aberto. Se ele te ajuda, considere contribuir.",
@@ -1524,6 +1526,10 @@
         "empty": "Este exercício não tem pares.",
         "left_label_productive": "Significado",
         "right_label_productive": "Termo",
+        "left_label_knowledge": "Termo",
+        "right_label_knowledge": "Definição",
+        "instruction_knowledge": "Associe cada termo à sua definição.",
+        "instructions_knowledge": "Selecione um item à esquerda e depois o seu correspondente à direita.",
         "selected_sr": "Selecionado: {label}"
       },
       "picture": {

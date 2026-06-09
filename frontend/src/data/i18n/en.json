@@ -740,6 +740,8 @@
     "credits_heading": "Credits",
     "author_label": "Author",
     "dependencies_label": "Built with",
+    "ai_assistance_label": "AI assistance",
+    "ai_assistance_value": "Claude (Anthropic) - Architecture, Code, Content, Documentation",
     "tagline": "Built for self-directed learners.",
     "donations_heading": "Support development",
     "donations_intro": "Adaptive Learner is free and open-source. If it helps you, consider chipping in.",
@@ -1524,6 +1526,10 @@
         "empty": "This matching exercise has no pairs.",
         "left_label_productive": "Meaning",
         "right_label_productive": "Term",
+        "left_label_knowledge": "Term",
+        "right_label_knowledge": "Definition",
+        "instruction_knowledge": "Match each term with its definition.",
+        "instructions_knowledge": "Select an item on the left, then its match on the right.",
         "selected_sr": "Selected: {label}"
       },
       "picture": {

@@ -38,6 +38,15 @@ describe("Button", () => {
         expect(
             screen.getByRole("button", {name: "Subtle"}).className,
         ).toContain("hover:bg-accent");
+        // #148 — outline + ghost must pin an explicit text color or
+        // they fall back to UA black (invisible in dark mode), since
+        // Tailwind preflight is off in this project.
+        expect(
+            screen.getByRole("button", {name: "Cancel"}).className,
+        ).toContain("text-foreground");
+        expect(
+            screen.getByRole("button", {name: "Subtle"}).className,
+        ).toContain("text-foreground");
     });
 
     it("honours disabled", () => {
@@ -54,6 +63,22 @@ describe("Button", () => {
         const link = screen.getByRole("link", {name: "Link"});
         expect(link.tagName).toBe("A");
         expect(link.className).toContain("bg-primary");
+    });
+
+    it("marks the anchor with data-slot=button so global a-color skips it (#146)", () => {
+        // The global ``a { color: var(--accent) }`` rule is unlayered
+        // and would otherwise override the variant's layered text
+        // color, putting accent text on an accent background
+        // (invisible in dark mode). The marker lets the CSS exclude
+        // button-styled anchors.
+        render(
+            <Button asChild>
+                <a href="/x">Link</a>
+            </Button>,
+        );
+        expect(
+            screen.getByRole("link", {name: "Link"}),
+        ).toHaveAttribute("data-slot", "button");
     });
 });
 

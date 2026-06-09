@@ -183,6 +183,13 @@ describe("CreditsSection", () => {
             expect(deps).toContain(name);
         }
     });
+
+    it("credits the AI assistance (Claude / Anthropic)", () => {
+        render(<CreditsSection t={tFn} />);
+        expect(
+            screen.getByTestId("about-ai-assistance").textContent,
+        ).toContain("Claude (Anthropic)");
+    });
 });
 
 // ---- DonationSection ------------------------------------------------

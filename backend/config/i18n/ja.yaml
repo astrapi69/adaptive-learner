@@ -688,6 +688,8 @@ about:
   credits_heading: クレジット
   author_label: 作者
   dependencies_label: 使用技術
+  ai_assistance_label: "AI支援"
+  ai_assistance_value: "Claude (Anthropic) - アーキテクチャ、コード、コンテンツ、ドキュメント"
   tagline: 自律的に学ぶ人のために作られました。
   donations_heading: 開発を支援する
   donations_intro: Adaptive Learner は無料でオープンソースです。役に立ったら、ぜひ 支援を検討してください。
@@ -1410,6 +1412,10 @@ lesson:
       empty: "このマッチング演習にはペアがありません。"
       left_label_productive: 意味
       right_label_productive: 用語
+      left_label_knowledge: "用語"
+      right_label_knowledge: "定義"
+      instruction_knowledge: "各用語を定義と一致させてください。"
+      instructions_knowledge: "左の項目を選んでから、右の対応する項目を選んでください。"
       selected_sr: "選択中: {label}"
     picture:
       submit: "答えを確認"

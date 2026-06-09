@@ -60,7 +60,6 @@ import {
 } from "../components/exercises/ExerciseDispatcher";
 import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import Confetti from "../components/feedback/Confetti";
-import ReadAlongText from "../components/lesson/ReadAlongText";
 import LessonTtsMiniPlayer from "../components/lesson/LessonTtsMiniPlayer";
 import {
     collectTheoryRun,
@@ -1130,6 +1129,7 @@ export default function LessonPage() {
                             source={source}
                             targetLanguage={lesson.target_language}
                             sourceLanguage={lesson.source_language}
+                            domain={lesson.domain}
                             cards={lesson.cards}
                             onComplete={async (scored) => {
                                 if (!step!.exercise) return;
@@ -1368,16 +1368,14 @@ function TheoryStep({
                     </button>
                 </div>
             )}
-            {/* While the engine reads this step, swap the rich Markdown
-                for a plain-text follow-along that highlights the spoken
-                word; restore Markdown when idle. */}
-            {isReading ? (
-                <ReadAlongText
-                    text={speechText}
-                    activeChar={tts.boundaryIndex}
-                />
-            ) : (
-                <Markdown
+            {/* #147 — read-aloud only plays audio; the panel keeps its
+                rendered Markdown formatting. It used to swap to a
+                plain-text follow-along while speaking, which dropped
+                headings / lists / bold / code and visibly reflowed the
+                panel. The spoken-word position still drives continuous
+                reading via tts.boundaryIndex, just without re-rendering
+                the body. */}
+            <Markdown
                 remarkPlugins={[remarkGfm]}
                 rehypePlugins={[rehypeSlug, rehypeAutolinkHeadings]}
                 components={{
@@ -1427,7 +1425,6 @@ function TheoryStep({
                 >
                     {rewritten}
                 </Markdown>
-            )}
         </div>
     );
 }

@@ -740,6 +740,8 @@
     "credits_heading": "Katkılar",
     "author_label": "Yazar",
     "dependencies_label": "Şununla yapıldı",
+    "ai_assistance_label": "Yapay zekâ desteği",
+    "ai_assistance_value": "Claude (Anthropic) - Mimari, Kod, İçerik, Dokümantasyon",
     "tagline": "Kendi kendine öğrenenler için yapıldı.",
     "donations_heading": "Geliştirmeyi destekle",
     "donations_intro": "Adaptive Learner ücretsiz ve açık kaynaktır. Sana yardımcı olduysa katkıda bulunmayı düşün.",
@@ -1524,6 +1526,10 @@
         "empty": "Bu alıştırmada eşleşme yok.",
         "left_label_productive": "Anlam",
         "right_label_productive": "Terim",
+        "left_label_knowledge": "Terim",
+        "right_label_knowledge": "Tanım",
+        "instruction_knowledge": "Her terimi tanımıyla eşleştir.",
+        "instructions_knowledge": "Soldan bir öğe seç, ardından sağdaki eşini seç.",
         "selected_sr": "Seçildi: {label}"
       },
       "picture": {

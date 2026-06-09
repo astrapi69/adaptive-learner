@@ -26,7 +26,7 @@
 
 import {Check, RotateCcw, X} from "lucide-react";
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
-import type {Ref} from "react";
+import type {CSSProperties, Ref} from "react";
 
 import {useI18n} from "../../hooks/useI18n";
 import {Button} from "@/components/ui/button";
@@ -68,6 +68,12 @@ export interface MatchingExerciseProps extends ControlledExerciseProps {
      *  generic labels. */
     targetLanguage?: string | null;
     sourceLanguage?: string | null;
+    /** #149 — the lesson's domain. For a non-language domain (or a
+     *  source==target knowledge set) the renderer drops the
+     *  translation-specific wording: neutral Term / Definition
+     *  column labels, no language names, a "match each term to its
+     *  definition" instruction. Optional; absent = language behaviour. */
+    domain?: string | null;
 }
 
 /** Localised display name for a BCP-47 language code, in the
@@ -100,6 +106,48 @@ function _scoreMatches(
         if (leftIdx === rightOriginal) correct += 1;
     }
     return {correct, total};
+}
+
+/** #145 — number of distinct per-pair colors. Cycles modulo this
+ *  for the rare exercise with more pairs than palette entries. The
+ *  palette reuses the per-theme categorical chart tokens
+ *  (``--chart-1`` … ``--chart-N``) so every theme already defines
+ *  AA-considered, visually distinct hues with no new tokens. */
+export const MATCHING_PAIR_COLORS = 6;
+
+/** Lowest non-negative slot not already assigned to a pair, so
+ *  colors + labels stay compact (1, 2, 3 …) and an existing pair
+ *  keeps its slot when another is added or removed. */
+function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
+    const used = new Set(slots.values());
+    let slot = 0;
+    while (used.has(slot)) slot += 1;
+    return slot;
+}
+
+/** CSS custom-property reference to the pair color for ``slot``.
+ *  Returns a token reference (``var(--chart-N)``), never a literal,
+ *  so it routes through the design-token system. */
+export function matchingPairColorVar(slot: number): string {
+    return `var(--chart-${(slot % MATCHING_PAIR_COLORS) + 1})`;
+}
+
+/** #145 — color + number badge identifying a matched pair. The same
+ *  color AND number appear on both tiles of a pair, so the pairing
+ *  is conveyed redundantly (not by color alone) for color-blind
+ *  users. The number renders in ``--fg-primary`` on ``--bg-surface``
+ *  (always AA); the pair color is the ring. Reads the pair color
+ *  from the ``--matching-pair-color`` custom property the tile sets. */
+function PairBadge({slot}: {slot: number}) {
+    return (
+        <span
+            aria-hidden="true"
+            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 border-[var(--matching-pair-color)] bg-[var(--bg-surface)] text-[0.625rem] font-bold text-[var(--fg-primary)]"
+            data-testid={`matching-pair-badge-${slot + 1}`}
+        >
+            {slot + 1}
+        </span>
+    );
 }
 
 interface LeftTile {
@@ -139,6 +187,7 @@ function MatchingExercise(
         reviewed = null,
         targetLanguage = null,
         sourceLanguage = null,
+        domain = null,
         ttsLang = null,
         codeMode = false,
     }: MatchingExerciseProps,
@@ -155,31 +204,50 @@ function MatchingExercise(
     // unchanged, so pair i still matches right i.
     const direction = resolveConcreteDirection(exercise.direction, exercise.id);
     const productive = direction === "source_to_target";
+    // #149 — a knowledge lesson (non-language domain, or a
+    // source==target set) is not a translation exercise, so the
+    // translation-specific wording (language names, "translation",
+    // receptive/productive framing) does not apply. The explicit
+    // domain wins; source==target is the fallback signal when both
+    // codes are present (Review / Adaptive pass neither and keep the
+    // language behaviour).
+    const isKnowledge =
+        (domain != null && domain !== "language") ||
+        (!!targetLanguage && targetLanguage === sourceLanguage);
     // Each column header names the LANGUAGE of the words shown in
     // it, when the lesson's language pair is known. Receptive keeps
     // the authored orientation (target words left, source right);
     // productive flips it. Falls back to the generic Term /
-    // Translation labels when no language info is available.
+    // Translation labels when no language info is available. In
+    // knowledge mode it uses neutral Term / Definition labels and
+    // never the language names.
     const targetName = _languageName(targetLanguage, lang);
     const sourceName = _languageName(sourceLanguage, lang);
     const leftLangName = productive ? sourceName : targetName;
     const rightLangName = productive ? targetName : sourceName;
-    const leftLabel =
-        leftLangName ??
-        (productive
-            ? t("lesson.exercise.matching.left_label_productive", "Meaning")
-            : t("lesson.exercise.matching.left_label", "Term"));
-    const rightLabel =
-        rightLangName ??
-        (productive
-            ? t("lesson.exercise.matching.right_label_productive", "Term")
-            : t("lesson.exercise.matching.right_label", "Translation"));
-    const instruction = t(
-        instructionKey("matching", direction),
-        productive
-            ? "Match the pairs (Translation)"
-            : "Match the pairs (Recognition)",
-    );
+    const leftLabel = isKnowledge
+        ? t("lesson.exercise.matching.left_label_knowledge", "Term")
+        : (leftLangName ??
+          (productive
+              ? t("lesson.exercise.matching.left_label_productive", "Meaning")
+              : t("lesson.exercise.matching.left_label", "Term")));
+    const rightLabel = isKnowledge
+        ? t("lesson.exercise.matching.right_label_knowledge", "Definition")
+        : (rightLangName ??
+          (productive
+              ? t("lesson.exercise.matching.right_label_productive", "Term")
+              : t("lesson.exercise.matching.right_label", "Translation")));
+    const instruction = isKnowledge
+        ? t(
+              "lesson.exercise.matching.instruction_knowledge",
+              "Match each term with its definition.",
+          )
+        : t(
+              instructionKey("matching", direction),
+              productive
+                  ? "Match the pairs (Translation)"
+                  : "Match the pairs (Recognition)",
+          );
 
     // Stable seed per-mount so reshuffling on every render
     // doesn't move the right column under the user.
@@ -215,6 +283,13 @@ function MatchingExercise(
                 ? new Map(reviewedMatching.matches)
                 : new Map(),
     );
+    /** #145 — per-pair color/label slot, keyed by left index.
+     *  Assigned when a pair is formed, freed when undone, so both
+     *  tiles of a pair share a stable color + number. Only consulted
+     *  before submit (graded tiles switch to correct/wrong colors). */
+    const [slotByLeft, setSlotByLeft] = useState<Map<number, number>>(
+        () => new Map(),
+    );
     const [submitted, setSubmitted] = useState(reviewedMatching != null);
     const [result, setResult] = useState<{correct: number; total: number} | null>(
         () =>
@@ -242,6 +317,15 @@ function MatchingExercise(
         [matches],
     );
 
+    const releaseSlot = (leftIdx: number) => {
+        setSlotByLeft((prev) => {
+            if (!prev.has(leftIdx)) return prev;
+            const next = new Map(prev);
+            next.delete(leftIdx);
+            return next;
+        });
+    };
+
     const handleLeftClick = (idx: number) => {
         if (submitted) return;
         // Tapping a paired left undoes the pair.
@@ -249,6 +333,7 @@ function MatchingExercise(
             const next = new Map(matches);
             next.delete(idx);
             setMatches(next);
+            releaseSlot(idx);
             setSelectedLeft(null);
             return;
         }
@@ -265,12 +350,18 @@ function MatchingExercise(
             const next = new Map(matches);
             next.delete(pairedLeft[0]);
             setMatches(next);
+            releaseSlot(pairedLeft[0]);
             return;
         }
         if (selectedLeft === null) return;
         const next = new Map(matches);
         next.set(selectedLeft, originalIndex);
         setMatches(next);
+        setSlotByLeft((prev) => {
+            const nextSlots = new Map(prev);
+            nextSlots.set(selectedLeft, _nextFreeSlot(prev));
+            return nextSlots;
+        });
         setSelectedLeft(null);
     };
 
@@ -313,6 +404,7 @@ function MatchingExercise(
 
     const handleReset = () => {
         setMatches(new Map());
+        setSlotByLeft(new Map());
         setSelectedLeft(null);
         setSubmitted(false);
         setResult(null);
@@ -392,10 +484,15 @@ function MatchingExercise(
                 className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
                 data-testid="matching-instructions"
             >
-                {t(
-                    "lesson.exercise.matching.instructions",
-                    "Select an item on the left, then its matching translation on the right.",
-                )}
+                {isKnowledge
+                    ? t(
+                          "lesson.exercise.matching.instructions_knowledge",
+                          "Select an item on the left, then its match on the right.",
+                      )
+                    : t(
+                          "lesson.exercise.matching.instructions",
+                          "Select an item on the left, then its matching translation on the right.",
+                      )}
             </p>
 
             {/* First-pair flow hint: disappears once the learner has
@@ -445,19 +542,28 @@ function MatchingExercise(
                             submitted &&
                             isPaired &&
                             matches.get(tile.index) !== tile.index;
+                        const slot = slotByLeft.get(tile.index);
+                        const showPair =
+                            isPaired && !submitted && slot !== undefined;
+                        const pairStyle: CSSProperties | undefined =
+                            slot !== undefined && showPair
+                                ? ({
+                                      "--matching-pair-color":
+                                          matchingPairColorVar(slot),
+                                  } as CSSProperties)
+                                : undefined;
                         return (
                             <li key={tile.index}>
                                 <button
                                     type="button"
+                                    style={pairStyle}
                                     className={cn(
                                         "inline-flex h-full min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-a-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-a-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
                                         isSelected &&
                                             "is-selected border-[3px] border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_15%,var(--surface))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--exercise-selected)_30%,transparent)] motion-safe:scale-[1.02] motion-safe:animate-[matching-pulse_0.5s_ease-in-out_infinite_alternate]",
                                         isPaired && "is-paired",
-                                        isPaired &&
-                                            !isCorrect &&
-                                            !isWrong &&
-                                            "border-dashed border-[var(--exercise-matched)] bg-[var(--matching-paired-bg)] text-[var(--matching-paired-fg)] opacity-60",
+                                        showPair &&
+                                            "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
                                         isCorrect &&
                                             "is-correct border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]",
                                         isWrong &&
@@ -470,7 +576,12 @@ function MatchingExercise(
                                     disabled={submitted && isCorrect}
                                     data-testid={`matching-left-${tile.index}`}
                                 >
-                                    {tile.label}
+                                    {showPair && slot !== undefined && (
+                                        <PairBadge slot={slot} />
+                                    )}
+                                    <span className="min-w-0 flex-1">
+                                        {tile.label}
+                                    </span>
                                     {submitted && isCorrect && (
                                         <Check size={14} aria-hidden="true" />
                                     )}
@@ -505,6 +616,22 @@ function MatchingExercise(
                         const isPaired = pairedRightIndices.has(
                             tile.originalIndex,
                         );
+                        const pairedLeftIdx = [...matches.entries()].find(
+                            ([, ri]) => ri === tile.originalIndex,
+                        )?.[0];
+                        const slot =
+                            pairedLeftIdx !== undefined
+                                ? slotByLeft.get(pairedLeftIdx)
+                                : undefined;
+                        const showPair =
+                            isPaired && !submitted && slot !== undefined;
+                        const pairStyle: CSSProperties | undefined =
+                            slot !== undefined && showPair
+                                ? ({
+                                      "--matching-pair-color":
+                                          matchingPairColorVar(slot),
+                                  } as CSSProperties)
+                                : undefined;
                         const flashing =
                             wrongFlash !== null &&
                             wrongFlash.right === tile.originalIndex;
@@ -512,10 +639,15 @@ function MatchingExercise(
                             <li key={tile.originalIndex}>
                                 <button
                                     type="button"
+                                    style={pairStyle}
                                     className={cn(
                                         "inline-flex h-full min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-b-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-b-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
+                                        showPair &&
+                                            "border-2 border-[var(--matching-pair-color)] bg-[color-mix(in_srgb,var(--matching-pair-color)_18%,var(--bg-surface))] text-[var(--fg-primary)]",
                                         isPaired &&
+                                            !showPair &&
                                             "is-paired border-dashed border-[var(--exercise-matched)] bg-[var(--matching-paired-bg)] text-[var(--matching-paired-fg)] opacity-60",
+                                        isPaired && "is-paired",
                                         flashing &&
                                             "is-flash motion-safe:animate-[matching-flash_600ms_ease]",
                                     )}
@@ -527,7 +659,12 @@ function MatchingExercise(
                                     disabled={submitted}
                                     data-testid={`matching-right-${tile.originalIndex}`}
                                 >
-                                    {tile.label}
+                                    {showPair && slot !== undefined && (
+                                        <PairBadge slot={slot} />
+                                    )}
+                                    <span className="min-w-0 flex-1">
+                                        {tile.label}
+                                    </span>
                                 </button>
                             </li>
                         );
