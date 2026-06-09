@@ -431,7 +431,7 @@ function MatchingExercise(
                         {leftLabel}
                     </div>
                     <ul
-                        className="m-0 flex list-none flex-col gap-2 p-0"
+                        className="m-0 grid list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-left"
                         aria-label={leftLabel}
                     >
@@ -450,7 +450,7 @@ function MatchingExercise(
                                 <button
                                     type="button"
                                     className={cn(
-                                        "inline-flex min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-a-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-a-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
+                                        "inline-flex h-full min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-a-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-a-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
                                         isSelected &&
                                             "is-selected border-[3px] border-[var(--exercise-selected)] bg-[color-mix(in_srgb,var(--exercise-selected)_15%,var(--surface))] shadow-[0_0_0_3px_color-mix(in_srgb,var(--exercise-selected)_30%,transparent)] motion-safe:scale-[1.02] motion-safe:animate-[matching-pulse_0.5s_ease-in-out_infinite_alternate]",
                                         isPaired && "is-paired",
@@ -497,7 +497,7 @@ function MatchingExercise(
                         {rightLabel}
                     </div>
                     <ul
-                        className="m-0 flex list-none flex-col gap-2 p-0"
+                        className="m-0 grid list-none grid-cols-1 [grid-auto-rows:1fr] gap-2 p-0"
                         data-testid="matching-right"
                         aria-label={rightLabel}
                     >
@@ -513,7 +513,7 @@ function MatchingExercise(
                                 <button
                                     type="button"
                                     className={cn(
-                                        "inline-flex min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-b-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-b-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
+                                        "inline-flex h-full min-h-11 w-full cursor-pointer items-center gap-1.5 rounded-sm border border-[var(--border-strong)] bg-[var(--matching-side-b-bg)] px-3 py-2 text-left text-[0.9375rem] text-[var(--matching-side-b-fg)] transition-[background,border-color] duration-150 hover:border-[var(--accent)] disabled:cursor-not-allowed",
                                         isPaired &&
                                             "is-paired border-dashed border-[var(--exercise-matched)] bg-[var(--matching-paired-bg)] text-[var(--matching-paired-fg)] opacity-60",
                                         flashing &&
