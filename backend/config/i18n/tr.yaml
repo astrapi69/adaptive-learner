@@ -195,6 +195,10 @@ onboarding:
   invite_subtitle: "Bir dakika sürer ve oturumlarını kişiselleştirir — daha sonra da yapabilirsin."
   invite_start_now: "Hemen başla"
   invite_setup_profile: "Profili ayarla"
+  restore_hint: "Adaptive Learner'ı zaten kullanıyor musunuz? Bir yedekten geri yükleyin."
+  restore_backup: "Mevcut yedekten geri yükle"
+  restoring: "Geri yükleniyor…"
+  restore_success: "Yedek geri yüklendi. Tekrar hoş geldiniz!"
   wizard:
     step_label: "Adım {current} / {total}"
     next: "İleri"

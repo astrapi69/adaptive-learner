@@ -205,6 +205,10 @@
     "invite_subtitle": "It takes a minute and tailors your sessions — you can also do it later.",
     "invite_start_now": "Jump right in",
     "invite_setup_profile": "Set up profile",
+    "restore_hint": "Already learning with Adaptive Learner? Restore from a backup.",
+    "restore_backup": "Restore from existing backup",
+    "restoring": "Restoring…",
+    "restore_success": "Backup restored. Welcome back!",
     "wizard": {
       "step_label": "Step {current} of {total}",
       "next": "Next",

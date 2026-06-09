@@ -1,4 +1,11 @@
-import {useEffect, useMemo, useState, type FormEvent} from "react";
+import {
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type ChangeEvent,
+    type FormEvent,
+} from "react";
 import {useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
@@ -9,12 +16,21 @@ import OnboardingWizard, {
     type WizardValues,
 } from "../components/onboarding/OnboardingWizard";
 import {useI18n} from "../hooks/useI18n";
-import {setProjectId, setUserId} from "../lib/learnerState";
+import {isEmptyInstall, pickAdoptedIdentity} from "../lib/firstRunRestore";
+import {
+    readLearnerState,
+    setLanguage,
+    setProjectId,
+    setUserId,
+} from "../lib/learnerState";
 import {translateSubjectPath} from "../lib/subjectI18n";
 import {suggestSubjects, type SubjectSuggestion} from "../lib/subjectSuggest";
 import {getStorage} from "../storage";
-import type {LearningProject, Subject} from "../types/domain";
+import type {BackupPayload, LearningProject, Subject} from "../types/domain";
 import {notify} from "../utils/notify";
+
+/** Backup wire-format marker (mirrors ``BackupSection`` validation). */
+const BACKUP_FORMAT = "adaptive-learner-backup";
 
 /** Default daily-practice minutes when the learner doesn't set one. */
 const DEFAULT_DAILY_MINUTES = 15;
@@ -59,6 +75,27 @@ export default function Onboarding() {
     const [selectedSubjectIds, setSelectedSubjectIds] = useState<Set<string>>(
         new Set(),
     );
+
+    // #150 — first-run restore: the "Restore from backup" affordance
+    // only shows on an empty install and runs its own identity-adopting
+    // import (see lib/firstRunRestore.ts).
+    const restoreInputRef = useRef<HTMLInputElement>(null);
+    const [emptyInstall, setEmptyInstall] = useState(false);
+    const [restoring, setRestoring] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        isEmptyInstall(getStorage(), readLearnerState().userId)
+            .then((empty) => {
+                if (!cancelled) setEmptyInstall(empty);
+            })
+            .catch(() => {
+                /* leave the restore affordance hidden on failure */
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, []);
 
     useEffect(() => {
         let cancelled = false;
@@ -181,6 +218,75 @@ export default function Onboarding() {
             notify.error(detail);
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    /**
+     * First-run restore (#150). Reads a backup file, adopts the
+     * backup's identity (so the user-scoped restore actually lands on
+     * an empty install), merges it via ``backup.import``, then routes
+     * to the Dashboard. Storage-mode agnostic.
+     */
+    const handleRestoreFile = async (
+        event: ChangeEvent<HTMLInputElement>,
+    ) => {
+        const input = event.target;
+        const file = input.files?.[0];
+        // Reset so picking the same file twice in a row re-fires.
+        input.value = "";
+        if (!file || restoring) return;
+        setRestoring(true);
+        try {
+            const payload = JSON.parse(await file.text()) as BackupPayload;
+            if (
+                payload.format !== BACKUP_FORMAT ||
+                typeof payload.version !== "string"
+            ) {
+                throw new Error(
+                    t(
+                        "backup.invalid_format",
+                        "This file is not a valid Adaptive Learner backup.",
+                    ),
+                );
+            }
+            const identity = pickAdoptedIdentity(payload);
+            if (identity.userId === "") {
+                throw new Error(
+                    t(
+                        "backup.invalid_format",
+                        "This file is not a valid Adaptive Learner backup.",
+                    ),
+                );
+            }
+            // Adopt the backup's identity BEFORE importing so the
+            // user-scoped restore matches every row.
+            setUserId(identity.userId);
+            if (identity.projectId) setProjectId(identity.projectId);
+            if (identity.language) setLanguage(identity.language);
+            const summary = await getStorage().backup.import(
+                identity.userId,
+                payload,
+            );
+            // #126 parity — surface the round-trip in the console so a
+            // real restore is debuggable without a backend log.
+            console.log("[Backup] First-run restore result:", summary);
+            if (summary.errors.length > 0) {
+                console.error("[Backup] First-run restore errors:", summary.errors);
+            }
+            notify.success(
+                t("onboarding.restore_success", "Backup restored. Welcome back!"),
+            );
+            navigate("/dashboard", {replace: true});
+        } catch (err) {
+            const detail = err instanceof Error ? err.message : String(err);
+            notify.error(
+                t(
+                    "backup.import_parse_error",
+                    "Could not read backup: {{detail}}",
+                ).replace("{{detail}}", detail),
+            );
+        } finally {
+            setRestoring(false);
         }
     };
 
@@ -391,6 +497,42 @@ export default function Onboarding() {
                     </Button>
                 </div>
             </form>
+
+            {emptyInstall && (
+                <section
+                    className="mt-6 flex flex-col items-center gap-3 text-center"
+                    data-testid="onboarding-restore"
+                >
+                    <p className="onboarding-intro">
+                        {t(
+                            "onboarding.restore_hint",
+                            "Already learning with Adaptive Learner? Restore from a backup.",
+                        )}
+                    </p>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        data-testid="onboarding-restore-backup"
+                        onClick={() => restoreInputRef.current?.click()}
+                        disabled={restoring || submitting}
+                    >
+                        {restoring
+                            ? t("onboarding.restoring", "Restoring…")
+                            : t(
+                                  "onboarding.restore_backup",
+                                  "Restore from existing backup",
+                              )}
+                    </Button>
+                    <input
+                        ref={restoreInputRef}
+                        type="file"
+                        accept="application/json,.json"
+                        onChange={handleRestoreFile}
+                        style={{display: "none"}}
+                        data-testid="onboarding-restore-input"
+                    />
+                </section>
+            )}
         </main>
     );
 }

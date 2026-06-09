@@ -195,6 +195,10 @@ onboarding:
   invite_subtitle: "Dauert eine Minute und passt deine Sitzungen an — geht auch später."
   invite_start_now: "Direkt loslegen"
   invite_setup_profile: "Profil einrichten"
+  restore_hint: "Schon mit Adaptive Learner unterwegs? Aus einem Backup wiederherstellen."
+  restore_backup: "Aus bestehendem Backup wiederherstellen"
+  restoring: "Wird wiederhergestellt…"
+  restore_success: "Backup wiederhergestellt. Willkommen zurück!"
   wizard:
     step_label: "Schritt {current} von {total}"
     next: "Weiter"
