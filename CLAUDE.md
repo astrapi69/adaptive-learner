@@ -9,9 +9,33 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.68.0** (minor — **lesson-result export +
-  theory back-links + matched-pair visual overhaul + dark-mode contrast
-  fixes**). **Export results (#138):** the lesson summary gains
+- **Current state:** **v1.69.0** (minor — **theory example links +
+  per-domain book recommendations + Error-Replay Enter shortcut +
+  backup-restore title fix**). **Example links (#139, via Sprint 2 /
+  #153):** a theory step can carry an optional ``example_url`` (+
+  ``example_label``) rendered as a "View example" button; content
+  schema 1.3 -> 1.4 (additive), client + content-repo validators reject
+  a non-http(s) URL. **Book recommendations (#141):** a
+  maintainer-curated ``books.yaml`` at the content repo root maps a
+  domain to recommended books, shown in the Content Browser
+  (``lib/content/book-recommendations.ts``, both storage modes, no
+  backend). **Error-Replay Enter shortcut (#154):** "Fehler
+  wiederholen" honors the same Enter shortcut as the main runner (Enter
+  checks an answered exercise, then advances) via a shared
+  ``useLessonEnterKey`` hook so the two runners can't drift. **Backup
+  title fix (#134, recurrence):** the v1.67.1 synthesised manifest
+  stores the title at ``name:`` (root) + ``sets[].title`` (nested), but
+  the Dexie restore read it with a root-level-only ``/^title:/m`` regex
+  -> never matched -> fell back to the raw ``set_id``
+  (``analysis-<uuid>``) and step progress collapsed. Restore now parses
+  the manifest with the real YAML parser and recovers the title + the
+  other set fields (languages / level / domain / description /
+  lesson_count), preferring the carried ``meta`` when present; proven by
+  a real export->import round-trip through the actual
+  ``createDexieBackup``/``restoreDexieBackup`` against fake-indexeddb.
+  i18n updated in all 8 languages. v1.68.0 = minor — **lesson-result
+  export + theory back-links + matched-pair visual overhaul + dark-mode
+  contrast fixes**. **Export results (#138):** the lesson summary gains
   "Copy result" + "Save as file" — a Markdown report (score,
   per-exercise mistakes with the learner's answer + the correct answer,
   still-weak areas) for pasting into an AI assistant; pure builder
