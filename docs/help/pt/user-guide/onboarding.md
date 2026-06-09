@@ -1,81 +1,72 @@
-<!-- Translation: AI-generated, pending native review -->
+# Onboarding
 
-# Integração
+Desde a **v1.64.0** o início é deliberadamente curto: o **início
+rápido** exige apenas dois campos.
 
-Após o seletor de idioma na página de Início, o fluxo de
-integração recolhe quatro campos obrigatórios mais taxonomia
-opcional:
+1. **Nome** — como a aplicação te deve tratar.
+2. **Tema** — o que queres aprender. "Gramática espanhola",
+   "Fundamentos de machine learning", "Improvisação a solo na
+   guitarra". Sê concreto; este é a âncora do teu projeto.
 
-1. **Tópico** — o que quer aprender. "Gramática espanhola",
-   "Fundamentos de aprendizagem automática", "Improvisação
-   de guitarra principal". Seja específico; a IA usará isto
-   para ancorar cada sessão.
-2. **Objetivo** — como é o sucesso. "Passar no exame B2",
-   "Construir um motor de recomendação de ponta a ponta",
-   "Solo num blues de 12 compassos sobre uma faixa de
-   acompanhamento sem perder o compasso." Objetivos concretos
-   produzem orientação de IA mais útil.
-3. **Prazo** — quando quer atingir o objetivo. "6 semanas",
-   "Fim do verão", "Até ao T3". Usado para calibrar
-   expetativas e definir o alvo de rastreamento de sequência.
-4. **Minutos diários** — quanto tempo pode realisticamente
-   dedicar. 15-45 minutos é o ponto ótimo para aprendizagem
-   adaptativa; a aplicação não recompensa sessões maratona.
+Tudo o resto (objetivo, prazo, minutos por dia, idioma) assume
+**predefinições** sensatas, que podes alterar a qualquer momento.
 
-**Taxonomia de assuntos** (opcional, desde v1.9.0) — um
-sugeridor difuso corresponde o seu tópico à taxonomia semeada
-com mais de 80 nós em Línguas / Matemática / Programação /
-Ciências / Música / Humanidades / Ciências Sociais /
-Competências. Escolher um assunto de Línguas desbloqueia
-a Prática de Pronúncia para o projeto mais tarde.
+## Começar já ou configurar o perfil
 
-**Etiquetas** (opcional) — rótulos de texto livre separados
-por vírgulas ("preparação-exame", "diário", "ao-meu-ritmo")
-que aparecem na barra de filtros do Dashboard mais tarde.
+Após a submissão, a aplicação oferece-te dois caminhos:
 
-Também pode saltar o formulário completamente — um utilizador
-padrão é criado e aterra no Dashboard imediatamente.
+- **Começar já** — aterras imediatamente no Dashboard e podes
+  iniciar uma lição ou sessão.
+- **Configurar o perfil** — abre o **assistente de onboarding**:
+  uma pergunta por ecrã (objetivo → prazo → minutos por dia →
+  problema atual → teste de tipo de aprendizagem opcional), cada
+  uma com pré-preenchimento, de forma que "Continuar" funcione
+  sempre, além de barra de progresso e "Voltar". As respostas são
+  guardadas em ambos os modos de armazenamento.
 
-Também escolhe um **idioma** para o projeto. Este é o idioma
-em que a IA responderá durante as sessões; pode ser diferente
-do idioma da interface (pode preferir a interface no seu idioma
-nativo mas aprender espanhol em espanhol).
+O **teste de tipo de aprendizagem já não é obrigatório** — só é
+acessível através do último passo do assistente. Mais sobre isto em
+[Teste de tipo de aprendizagem](assessment.md).
+
+## Avaliação retomável
+
+Se interrompes o teste de tipo de aprendizagem a meio, a aplicação
+lembra-se do estado intermédio (pergunta atual, respostas
+anteriores, hora de início) por projeto, de forma que **continuas
+de onde paraste**. O Dashboard e as Definições convidam-te
+ativamente a **continuar, criar ou refazer** o perfil de
+aprendizagem. Assim que o perfil é calculado, o estado intermédio é
+descartado.
 
 ## Opcional: problema atual
 
-Um campo "problema atual" permite-lhe trazer uma pergunta
-aberta para o projeto imediatamente. Se o preencher, a primeira
-sessão começa com este obstáculo concreto em vez de um prompt
-aberto "no que quer trabalhar?".
+No passo "problema atual" podes trazer logo uma pergunta em aberto
+para o projeto. Se o preencheres, a primeira sessão de IA arranca
+com esse obstáculo concreto em vez de uma pista aberta de "em que
+queres trabalhar?".
 
-## O que acontece a seguir
+## Subjects e Tags
 
-Quando submete o formulário, três coisas acontecem numa única
-troca:
+Podes atribuir opcionalmente ao teu projeto um **Subject** (área
+temática da árvore de taxonomia semeada) e **Tags** (etiquetas de
+texto livre separadas por vírgulas). Ambos aparecem mais tarde na
+barra de filtros do Dashboard; o filtro de Subject lista apenas os
+teus próprios Subjects, ordenados pelo uso mais frequente. Quem
+escolhe um Subject de idiomas desbloqueia o exercício de pronúncia.
 
-1. Um registo `User` é criado (ou reutilizado — o seu navegador
-   local mantém o mesmo utilizador entre sessões).
-2. Uma linha `LearningProject` fica com o seu tópico / objetivo
-   / prazo / minutos-diários / idioma.
-3. A rota de Avaliação abre automaticamente. Pode saltá-la daqui,
-   mas a aplicação então usa por defeito o método de aprendizagem
-   "dedutivo" até que a faça.
+## Editar o projeto
 
-## Editar o seu projeto
+Os detalhes do projeto não estão gravados em pedra. Na página de
+currículo podes ajustar o tema e o objetivo assim que descobres o
+que realmente queres aprender. O idioma alteras nas Definições.
 
-Os detalhes do projeto não estão gravados em pedra. A página do
-Currículo permite-lhe ajustar o tópico e o objetivo à medida
-que descobre o que realmente quer aprender. A página de
-Definições trata as alterações de idioma.
-
-## O que não é armazenado
+## O que não é guardado
 
 - **Sem e-mail**, sem palavra-passe, sem conta.
-- **Sem análises**, sem rastreadores de terceiros.
-- **Sem telemetria** enviada fora do seu dispositivo no modo Local.
+- **Sem analytics**, sem rastreadores de terceiros.
+- **Nenhuma telemetria** abandona o teu dispositivo no modo local.
 
-O seu fornecedor de IA vê as suas mensagens (esse é o ponto
-principal de perguntar à IA). O próprio Adaptive Learner apenas
-armazena o que escreve — localmente ou no backend FastAPI,
-dependendo do [modo de armazenamento](settings.md#storage-mode)
-que escolheu.
+O teu fornecedor de IA vê as tuas mensagens (esse é justamente o
+sentido do pedido de IA). O próprio Adaptive Learner guarda apenas o
+que escreves — localmente ou no backend FastAPI, consoante o
+[modo de armazenamento](settings.md) definido.

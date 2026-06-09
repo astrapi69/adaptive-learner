@@ -62,6 +62,9 @@ plugins:
             Einstellungen: Settings
             Lob und Belohnungen: Praise and celebrations
             Tägliche Missionen: Daily missions
+            Content Browser: Content browser
+            Mehrere Content-Repositories: Multiple content repositories
+            Backup und Wiederherstellung: Backup and restore
             Konzept: Concept
             Philosophie: Philosophy
             Die sechs Methoden: The six methods
@@ -78,6 +81,10 @@ plugins:
             Belohnungs-Schicht: Celebration layer
             Lektionsinhalte erstellen: Authoring lesson content
             Release-Prozess: Release workflow
+            Für Content-Ersteller: For content creators
+            Überblick: Overview
+            Buchempfehlungen: Book recommendations
+            Design-Tokens: Design tokens
             API-Referenz: API reference
             Übersicht: Overview
             Core-Endpoints: Core endpoints
@@ -102,6 +109,10 @@ plugins:
             Lob und Belohnungen: Elogios y celebraciones
             Tägliche Missionen: Misiones diarias
             FAQ: Preguntas frecuentes
+            Features: Funciones
+            Content Browser: Explorador de contenido
+            Mehrere Content-Repositories: Varios repositorios de contenido
+            Backup und Wiederherstellung: Copia de seguridad y restauración
             Konzept: Concepto
             Philosophie: Filosofía
             Die sechs Methoden: Los seis métodos
@@ -121,6 +132,11 @@ plugins:
             Deployment: Despliegue
             Lektionsinhalte erstellen: Crear contenido de lecciones
             Release-Prozess: Flujo de publicación
+            Für Content-Ersteller: Para creadores de contenido
+            Überblick: Visión general
+            Buchempfehlungen: Recomendaciones de libros
+            Design-Tokens: Tokens de diseño
+            Sync: Sincronización
             API-Referenz: Referencia de la API
             Übersicht: Visión general
             Core-Endpoints: Endpoints principales
@@ -143,6 +159,10 @@ plugins:
             Einstellungen: Paramètres
             Lob und Belohnungen: Encouragements et célébrations
             Tägliche Missionen: Missions quotidiennes
+            Features: Fonctionnalités
+            Content Browser: Explorateur de contenu
+            Mehrere Content-Repositories: Plusieurs dépôts de contenu
+            Backup und Wiederherstellung: Sauvegarde et restauration
             Konzept: Concept
             Die sechs Methoden: Les six méthodes
             Der Sieben-Schritt-Zyklus: Le cycle en sept étapes
@@ -161,6 +181,11 @@ plugins:
             Deployment: Déploiement
             Lektionsinhalte erstellen: Création de contenu de leçon
             Release-Prozess: Processus de publication
+            Für Content-Ersteller: Pour les créateurs de contenu
+            Überblick: Vue d'ensemble
+            Buchempfehlungen: Recommandations de livres
+            Design-Tokens: Jetons de design
+            Sync: Synchronisation
             API-Referenz: Référence de l'API
             Übersicht: Vue d'ensemble
             Core-Endpoints: Endpoints principaux
@@ -185,6 +210,10 @@ plugins:
             Lob und Belohnungen: Έπαινος και γιορτές
             Tägliche Missionen: Καθημερινές αποστολές
             FAQ: Συχνές ερωτήσεις
+            Features: Λειτουργίες
+            Content Browser: Περιήγηση περιεχομένου
+            Mehrere Content-Repositories: Πολλαπλά αποθετήρια περιεχομένου
+            Backup und Wiederherstellung: Αντίγραφο ασφαλείας και επαναφορά
             Konzept: Έννοια
             Philosophie: Φιλοσοφία
             Die sechs Methoden: Οι έξι μέθοδοι
@@ -204,6 +233,11 @@ plugins:
             Deployment: Ανάπτυξη
             Lektionsinhalte erstellen: Δημιουργία περιεχομένου μαθημάτων
             Release-Prozess: Ροή έκδοσης
+            Für Content-Ersteller: Για δημιουργούς περιεχομένου
+            Überblick: Επισκόπηση
+            Buchempfehlungen: Προτάσεις βιβλίων
+            Design-Tokens: Design tokens
+            Sync: Συγχρονισμός
             API-Referenz: Αναφορά API
             Übersicht: Επισκόπηση
             Core-Endpoints: Βασικά endpoints
@@ -228,6 +262,10 @@ plugins:
             Lob und Belohnungen: Elogios e celebrações
             Tägliche Missionen: Missões diárias
             FAQ: Perguntas frequentes
+            Features: Funcionalidades
+            Content Browser: Explorador de conteúdo
+            Mehrere Content-Repositories: Múltiplos repositórios de conteúdo
+            Backup und Wiederherstellung: Backup e restauração
             Konzept: Conceito
             Philosophie: Filosofia
             Die sechs Methoden: Os seis métodos
@@ -247,6 +285,11 @@ plugins:
             Deployment: Implantação
             Lektionsinhalte erstellen: Criar conteúdo de lições
             Release-Prozess: Fluxo de lançamento
+            Für Content-Ersteller: Para criadores de conteúdo
+            Überblick: Visão geral
+            Buchempfehlungen: Recomendações de livros
+            Design-Tokens: Tokens de design
+            Sync: Sincronização
             API-Referenz: Referência da API
             Übersicht: Visão geral
             Core-Endpoints: Endpoints principais
@@ -271,6 +314,10 @@ plugins:
             Lob und Belohnungen: Övgü ve kutlamalar
             Tägliche Missionen: Günlük görevler
             FAQ: SSS
+            Features: Özellikler
+            Content Browser: İçerik tarayıcı
+            Mehrere Content-Repositories: Birden çok içerik deposu
+            Backup und Wiederherstellung: Yedekleme ve geri yükleme
             Konzept: Kavram
             Philosophie: Felsefe
             Die sechs Methoden: Altı yöntem
@@ -290,6 +337,11 @@ plugins:
             Deployment: Dağıtım
             Lektionsinhalte erstellen: Ders içeriği oluşturma
             Release-Prozess: Yayın süreci
+            Für Content-Ersteller: İçerik oluşturanlar için
+            Überblick: Genel bakış
+            Buchempfehlungen: Kitap önerileri
+            Design-Tokens: Tasarım token'ları
+            Sync: Senkronizasyon
             API-Referenz: API başvurusu
             Übersicht: Genel bakış
             Core-Endpoints: Temel endpoint'ler
@@ -314,6 +366,10 @@ plugins:
             Lob und Belohnungen: 称賛とお祝い
             Tägliche Missionen: デイリーミッション
             FAQ: よくある質問
+            Features: 機能
+            Content Browser: コンテンツブラウザ
+            Mehrere Content-Repositories: 複数のコンテンツリポジトリ
+            Backup und Wiederherstellung: バックアップと復元
             Konzept: コンセプト
             Philosophie: 理念
             Die sechs Methoden: 6つのメソッド
@@ -333,12 +389,18 @@ plugins:
             Deployment: デプロイ
             Lektionsinhalte erstellen: レッスンコンテンツの作成
             Release-Prozess: リリースワークフロー
+            Für Content-Ersteller: コンテンツ作成者向け
+            Überblick: 概要
+            Buchempfehlungen: 書籍の推薦
+            Design-Tokens: デザイントークン
+            Sync: 同期
             API-Referenz: APIリファレンス
             Übersicht: 概要
             Core-Endpoints: コアエンドポイント
             Plugin-Endpoints: プラグインエンドポイント
             Modelle: モデル
             Hooks: フック
+            Changelog: 変更履歴
         # AUTO-GENERATED-LANGUAGES-END
 markdown_extensions:
   - admonition
@@ -376,6 +438,10 @@ nav:
   - Lob und Belohnungen: de/user-guide/celebrations.md
   - Tägliche Missionen: de/user-guide/missions.md
   - FAQ: de/user-guide/faq.md
+- Features:
+  - Content Browser: de/features/content-browser.md
+  - Mehrere Content-Repositories: de/features/content-repos.md
+  - Backup und Wiederherstellung: de/features/backup.md
 - Konzept:
   - Philosophie: de/concept/philosophy.md
   - Die sechs Methoden: de/concept/six-methods.md
@@ -397,10 +463,17 @@ nav:
   - i18n: de/developer/i18n.md
   - Lektionsinhalte erstellen: de/developer/authoring-content.md
   - Release-Prozess: de/developer/release.md
+- Für Content-Ersteller:
+  - Überblick: de/content-creation/overview.md
+  - Buchempfehlungen: de/content-creation/books.md
+- Architektur:
+  - Design-Tokens: de/architecture/design-tokens.md
+  - Sync: de/architecture/sync.md
 - API-Referenz:
   - Übersicht: de/api/overview.md
   - Core-Endpoints: de/api/core-endpoints.md
   - Plugin-Endpoints: de/api/plugin-endpoints.md
   - Modelle: de/api/models.md
   - Hooks: de/api/hooks.md
+- Changelog: de/changelog.md
 # AUTO-GENERATED-NAV-END

@@ -1,104 +1,79 @@
 # Premiers pas
 
-## Prérequis
+Adaptive Learner est un compagnon d'apprentissage qui repose sur
+un modèle à six méthodes étayé par la recherche. Tu passes un court
+test qui détermine quelles méthodes te conviennent, puis tu mènes
+des sessions d'apprentissage assistées par IA à travers un cycle en
+sept étapes. L'application apprend avec toi et adapte sa façon
+d'enseigner.
 
-Adaptive Learner peut être utilisé de deux manières :
+## Essayer maintenant
 
-| Mode | Prérequis | Fonctionnalités |
-|------|-----------|-----------------|
-| **Mode API** (par défaut) | Python 3.11+, Node 24+ | Toutes les fonctionnalités |
-| **Mode navigateur** (GitHub Pages) | Navigateur moderne | Leçons de contenu, SRS, missions |
+Le moyen le plus rapide de découvrir Adaptive Learner est la
+version en ligne publique :
 
-Pour le mode API avec fonctionnalités IA complètes, vous aurez besoin
-d'une clé API pour au moins un fournisseur : Anthropic, OpenAI ou Gemini.
+[**Ouvrir l'application**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
----
+Celle-ci fonctionne en **mode local** — toutes tes données restent
+dans ton navigateur (IndexedDB), et les appels IA partent
+directement de la page vers Anthropic, OpenAI ou Google Gemini avec
+ta propre clé d'API. Aucun backend entre les deux.
 
-## Installation (mode API)
+## Installer comme application web progressive
 
-```bash
-# Cloner le dépôt
-git clone https://github.com/astrapi69/adaptive-learner.git
-cd adaptive-learner
+Adaptive Learner est installable. Les navigateurs modernes
+affichent dès la première visite une invite « Installer » ou
+« Ajouter à l'écran d'accueil ». Accepte-la et Adaptive Learner
+devient une application autonome sur ton smartphone ou ton bureau,
+lançable sans onglet de navigateur.
 
-# Installer toutes les dépendances
-make install
+L'application fonctionne hors ligne pour le tableau de bord et les
+sessions passées. Les nouvelles sessions IA nécessitent Internet,
+car le fournisseur d'IA se trouve en dehors du navigateur.
 
-# Démarrer le backend et le frontend
-make dev
-```
+## Ce dont tu as besoin
 
-L'application sera disponible à l'adresse `http://localhost:15174`.
+- **Un navigateur moderne** (Chrome 100+, Firefox 100+, Safari
+  17+, Edge 100+). L'application utilise IndexedDB, les service
+  workers et du JavaScript moderne.
+- **Une clé d'API IA** pour au moins l'un des trois fournisseurs
+  pris en charge (Anthropic, OpenAI ou Google Gemini). Les quotas
+  gratuits suffisent généralement pour débuter ; voir
+  [Paramètres](settings.md) pour la configuration de la clé.
 
----
+## Les cinq premières minutes
 
-## Installation de l'application web progressive (PWA)
+1. **Ouvrir l'application** et choisir la langue. Les 8 langues
+   d'interface sont entièrement traduites (DE, EN, ES, FR, EL, PT,
+   TR, JA).
+2. **Intégration : seulement le nom + le sujet.** Le démarrage
+   rapide ne demande que ces deux champs, tout le reste prend des
+   valeurs par défaut. Ensuite, tu peux choisir « Démarrer
+   directement » ou configurer de façon plus détaillée ton profil
+   dans l'assistant. Voir [Intégration](onboarding.md).
+3. **Démarrer la première leçon** — le moyen le plus rapide sans
+   clé IA : ouvre le
+   [Navigateur de contenu](../features/content-browser.md) sous
+   `/content`, choisis un ensemble de leçons et démarre une leçon.
+   Tu lis une courte théorie et fais des exercices ; à la fin, tu
+   vois ton résultat avec des étoiles. Voir
+   [Leçons et révisions](lessons.md).
+4. **Optionnel : sessions IA.** Si tu préfères la conversation
+   d'apprentissage guidée à six méthodes, dépose une **clé d'API**
+   (Paramètres ou `~/.config/adaptive-learner/secrets.yaml`),
+   passe le [test de style d'apprentissage](assessment.md)
+   optionnel et démarre une [session d'apprentissage](learning-session.md).
+5. **Sauvegarder ton résultat.** Depuis le récapitulatif de la
+   leçon, tu peux copier le résultat en Markdown ou l'enregistrer
+   comme fichier, et créer une [sauvegarde](../features/backup.md)
+   sous **Paramètres → Données**.
 
-Adaptive Learner peut être installé comme une application de bureau depuis
-votre navigateur :
+## Et ensuite
 
-1. Ouvrez `http://localhost:15174` dans Chrome, Edge ou Safari
-2. Cliquez sur l'icône d'installation dans la barre d'adresse (ou le
-   menu du navigateur)
-3. L'application s'ouvre dans sa propre fenêtre et fonctionne hors ligne
-   pour les leçons consultées précédemment
-
----
-
-## Vos 5 premières minutes
-
-### Étape 1 : Configuration de la clé API
-
-Rendez-vous dans **Paramètres → IA** et entrez votre clé API pour au moins
-un fournisseur. La clé est stockée de manière chiffrée dans votre base
-de données locale.
-
-Si vous préférez ne pas entrer de clé dans l'interface, vous pouvez la
-définir via une variable d'environnement :
-
-```bash
-export ANTHROPIC_API_KEY=sk-ant-...
-export OPENAI_API_KEY=sk-...
-export GEMINI_API_KEY=...
-```
-
-### Étape 2 : Test d'évaluation
-
-Depuis le tableau de bord, cliquez sur **Commencer l'évaluation**. Les
-12 questions prennent environ 3 minutes. Le résultat est un profil
-pondéré sur les six méthodes d'apprentissage — votre point de départ
-pour les recommandations de session.
-
-### Étape 3 : Créer un projet d'apprentissage
-
-Cliquez sur **Nouveau projet** et renseignez :
-
-- **Sujet** — que souhaitez-vous apprendre ?
-- **Objectif** — que voulez-vous être capable de faire ?
-- **Calendrier** — pour quand ?
-
-Les autres champs sont facultatifs lors du premier démarrage.
-
-### Étape 4 : Démarrer votre première session
-
-Depuis votre projet, cliquez sur **Nouvelle session**. L'application
-propose une méthode basée sur votre profil — vous pouvez l'accepter
-ou en choisir une autre.
-
-La session se déroule dans une interface de chat. Le cycle en sept étapes
-s'exécute en arrière-plan ; vous n'avez pas besoin d'y penser.
-
-### Étape 5 : Évaluer et terminer
-
-Après avoir atteint l'étape 7 (ou quand vous êtes prêt), cliquez sur
-**Terminer la session**. Notez la compréhension, le stress et l'adéquation
-de la méthode — ces notes influencent les recommandations futures.
-
----
-
-## Prochaines étapes
-
-- [Test d'évaluation](assessment.md) — comprendre votre profil
-- [Sessions d'apprentissage](learning-session.md) — guide détaillé de la session
-- [Leçons de contenu](lessons.md) — apprendre sans clé API
-- [Tableau de bord](dashboard.md) — comprendre votre progression
+- [Leçons et révisions](lessons.md) — le déroulement d'une leçon en détail
+- [Navigateur de contenu](../features/content-browser.md) — trouver et filtrer des leçons
+- [Plusieurs dépôts de contenu](../features/content-repos.md) — connecter ses propres sources de contenu
+- [Sauvegarde et restauration](../features/backup.md)
+- [Comprendre ton tableau de bord](dashboard.md) — progression, série, XP, badges
+- [FAQ — questions fréquentes](faq.md)
+- [L'idée pédagogique derrière l'application](../concept/philosophy.md)

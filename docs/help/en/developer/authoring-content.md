@@ -1,111 +1,108 @@
 # Authoring lesson content
 
-This guide walks through creating a new lesson set for the
-Adaptive Learner content-loader. Anyone who wants to ship a
-language or topic set — for personal use, or as a contribution
-to the public content pool — should read this end-to-end before
-writing any lessons.
+This guide describes, step by step, how to set up a new lesson set
+for the Adaptive Learner content loader. Anyone who wants to build
+a language or topic set — for their own use or as a contribution
+to the public content pool — should read it through once before
+the first lesson.
 
-## What a content set is
+## What is a content set?
 
-A **content set** is a versioned bundle of lessons that a user
-can download from the Set Browser page (`/content`). The
-Content-Loader plugin (shipped in v1.27.0) handles discovery,
-download, caching, and version reconciliation in both storage
-modes.
+A **content set** is a versioned bundle of lessons that a user can
+download via the set browser page (`/content`). The content-loader
+plugin (v1.27.0) handles discovery, download, caching and version
+reconciliation in both storage modes.
 
-A set has three layers:
+A set has three levels:
 
-1. **Root manifest** (`manifest.yaml`) — lists every set the
-   repo ships. Used by the Set Browser to render the source
-   catalogue.
-2. **Set manifest** (`sets/{set-id}/manifest.yaml`) — sister to
-   the root manifest, lists the lesson files inside this
-   specific set.
-3. **Lesson files** (`sets/{set-id}/lessons/NN-slug.json`) —
-   one JSON file per lesson, validated against schema v1.0
-   on every download.
+1. **Root manifest** (`manifest.yaml`) — lists every set in the
+   repo. Read by the set browser for the source catalog.
+2. **Set manifest** (`sets/{set-id}/manifest.yaml`) — sibling of
+   the root manifest, lists the lesson files of the specific set.
+3. **Lesson files** (`sets/{set-id}/lessons/NN-slug.json`) — one
+   JSON file per lesson, validated against schema v1.0 on every
+   download.
 
-The pilot sets that ship with Adaptive Learner live in the separate
+The pilot sets shipped with Adaptive Learner live in the separate
 content repo [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
-(cloned as a sibling `../adaptive-learner-content` and bundled into the
-build by `frontend/scripts/copy-bundled-content.mjs`) and are good
-templates to copy.
+(checked out as a sibling checkout `../adaptive-learner-content` and
+bundled by the build via `frontend/scripts/copy-bundled-content.mjs`)
+and serve well as a template.
 
 ## Language pairs (v1.44.0)
 
 Every content set declares the language PAIR it teaches:
 
-- **`target_language`** — what the learner is LEARNING (e.g. `fr`).
-- **`source_language`** — what the learner ALREADY SPEAKS, i.e. the
-  language the card **`back`** fields, **`notes`**, and **theory**
-  text are written in (e.g. `de`).
+- **`target_language`** — what the learner LEARNS (e.g. `fr`).
+- **`source_language`** — what the learner already SPEAKS, i.e.
+  the language in which the card **`back`** fields, **`notes`** and
+  the **theory** text are written (e.g. `de`).
 
-This is what makes "French for English speakers" a *different* set
-from "French for German speakers": same target (`fr`), different
-source (`en` vs `de`), different explanation language. A learner
-only sees sets whose `source_language` matches a language they
-speak (their app language, plus any extras opted into in
-Settings → Learning).
+This is exactly what makes "French for English speakers" a
+*different* set from "French for German speakers": same target
+(`fr`), different source language (`en` vs. `de`), different
+explanation language. A learner only sees sets whose
+`source_language` matches a language they speak (app language plus
+optional additional languages in Settings → Learning).
 
-Set ids encode the pair as `{target}-{level}-from-{source}`
-(e.g. `fr-a1-from-de`), and each set declares a **`path`** pointing
-at its source-language directory (`sets/de/fr-a1`). A set also
-carries **`title`** (in the source language, what the learner reads)
-and **`title_native`** (in the target language, shown as a
-secondary label).
+Set IDs encode the pair as `{target}-{level}-from-{source}`
+(e.g. `fr-a1-from-de`), and every set declares a **`path`** that
+points to its source-language directory (`sets/de/fr-a1`). A set
+also carries **`title`** (in the source language, what the learner
+reads) and **`title_native`** (in the target language, as a
+secondary title).
 
-Both codes must be 2-letter ISO 639-1, and `source_language` must
-differ from `target_language`. Pre-v1.2 sets without these fields
-still load: the old `language` key is accepted as `target_language`
-and `source_language` defaults to `en`.
+Both codes must be ISO 639-1 (two letters), and `source_language`
+must differ from `target_language`. Sets before v1.2 without these
+fields still load: the old `language` key is accepted as
+`target_language`, and `source_language` falls back to `en`.
 
-## File-system layout
+## Directory layout
 
-The tree is organised by SOURCE language, then target+level:
+The tree is organized by SOURCE LANGUAGE, then target+level:
 
 ```
 my-content-repo/
-  manifest.yaml               # root: lists every set (with path + pair)
+  manifest.yaml               # Root: lists every set (with path + pair)
   sets/
-    de/                       # source language: German
-      fr-a1/                  # target French, level A1  -> id fr-a1-from-de
-        manifest.yaml         # set: lists the lessons
+    de/                       # Source language: German
+      fr-a1/                  # Target French, level A1  -> ID fr-a1-from-de
+        manifest.yaml         # Set: lists the lessons
         lessons/
           01-begruessung.json
           ...
         assets/               # optional images / audio
-    en/                       # source language: English
-      fr-a1/                  # -> id fr-a1-from-en
+    en/                       # Source language: English
+      fr-a1/                  # -> ID fr-a1-from-en
         ...
 ```
 
 ## Manifest format
 
-Both manifest files (root + set) use the same `schema_version:
-'1.0'` shape. Required fields:
+Both manifest files (root + set) use the same shape with
+`schema_version: '1.0'`. Required fields:
 
 ```yaml
 schema_version: '1.0'
-name: My English B1 set
+name: Mein Englisch-B1-Set
 description: >-
-  Optional long-form description.
+  Optionale Langbeschreibung.
 sets:
-  - id: language-en-b1        # slug-safe, unique
-    title: English B1 (Intermediate)
-    language: en              # BCP-47 (e.g. en, fr, zh-Hans)
-    level: B1                 # CEFR for languages, free-form otherwise
-    version: '1.0.0'          # semver — bumped per set release
+  - id: language-en-b1        # slug-sicher, eindeutig
+    title: Englisch B1 (Fortgeschrittene)
+    language: en              # BCP-47 (z.B. en, fr, zh-Hans)
+    level: B1                 # CEFR für Sprachen, frei für andere Domänen
+    version: '1.0.0'          # Semver — pro Set-Release erhöht
     lesson_count: 12
     domain: language          # 'language' / 'math' / 'programming' / ...
     description: >-
-      Optional set-level description.
+      Optionale Set-Beschreibung.
     tags:
       - intermediate
       - business
 metadata:
-  author: Your Name
-  license: CC-BY-SA-4.0       # or whatever
+  author: Dein Name
+  license: CC-BY-SA-4.0       # oder die Lizenz deiner Wahl
 ```
 
 The set manifest additionally lists every lesson file:
@@ -118,18 +115,19 @@ metadata:
     - ...
 ```
 
-The Content-Loader walks `metadata.lessons` in order; the file
-order in the directory doesn't matter, only the manifest order.
+The content loader iterates `metadata.lessons` in the given order;
+the file names on disk are irrelevant — only the manifest order
+counts.
 
 ## Lesson schema (v1.0)
 
-Each lesson is a single JSON file. Top-level shape:
+Each lesson is a single JSON file. Top-level structure:
 
 ```json
 {
   "id": "01-greetings",
-  "title": "Greetings",
-  "description": "Optional 1-2 sentence summary.",
+  "title": "Begrüßungen",
+  "description": "Optionale 1-2-Satz-Zusammenfassung.",
   "estimated_minutes": 12,
   "cards": [ ... ],
   "steps": [ ... ]
@@ -138,55 +136,55 @@ Each lesson is a single JSON file. Top-level shape:
 
 ### Cards
 
-A card is the smallest learnable unit — typically a single term
-or concept. Each card has a stable id (referenced from exercises)
+A card is the smallest learnable unit — typically a single term or
+concept. Every card has a stable id (referenced from exercises)
 and a front/back pair:
 
 ```json
 {
   "id": "art-le",
   "front": "le",
-  "back": "the (masculine singular)",
-  "notes": "Used before consonant-starting masculine nouns. **le chat**, **le livre**.",
+  "back": "der (männlich Singular)",
+  "notes": "Vor konsonantenanfangenden männlichen Substantiven. **le chat**, **le livre**.",
   "tags": ["article", "definite"]
 }
 ```
 
-Notes support Markdown. Use them for pronunciation tips,
-false-friend warnings, irregular-form alerts — anything that
-helps long-term retention. Tags drive SRS filtering.
+`notes` accepts Markdown. Use it for pronunciation rules,
+false-friend warnings, exception hints — anything that improves
+long-term retention. `tags` drive the SRS filtering.
 
 ### Steps
 
-A lesson is a sequence of steps, each one either THEORY (a
+A lesson is a step-by-step sequence, each step either THEORY (a
 Markdown block) or EXERCISE (one of the four exercise types):
 
 ```json
 {
   "id": "intro",
   "type": "theory",
-  "title": "Why articles matter",
-  "body": "# Articles in French\n\nEvery French noun has a gender..."
+  "title": "Warum Artikel wichtig sind",
+  "body": "# Artikel im Französischen\n\nJedes französische Nomen hat ein Geschlecht..."
 }
 ```
 
-A theory step may carry an optional **example link** (schema v1.4,
-additive — existing lessons stay valid without it). When present, the
-viewer renders an "open example" button under the content:
+A theory step can optionally carry an **example link** (schema
+v1.4, additive — existing lessons stay valid without it). If
+present, the viewer renders a button below it to open the example:
 
 ```json
 {
   "id": "intro",
   "type": "theory",
-  "body": "Correlation measures the relationship...",
+  "body": "Die Korrelation misst den Zusammenhang...",
   "example_url": "https://example.com/correlation-visualizer",
-  "example_label": "Interactive visualisation"
+  "example_label": "Interaktive Visualisierung"
 }
 ```
 
 - `example_url` (optional): must be an `http(s)` URL.
-- `example_label` (optional): the link text; defaults to a localized
-  "View example" when empty.
+- `example_label` (optional): the link text; empty becomes a
+  localized "View example".
 
 Or an exercise:
 
@@ -194,14 +192,14 @@ Or an exercise:
 {
   "id": "ex-match-greetings",
   "type": "exercise",
-  "title": "Match greetings",
+  "title": "Begrüßungen zuordnen",
   "exercise": {
     "id": "ex-match-greetings",
     "type": "matching",
-    "prompt": "Match each greeting to its translation.",
+    "prompt": "Ordne jede Begrüßung ihrer Übersetzung zu.",
     "card_ids": ["bonjour", "salut"],
     "pairs": [
-      {"left": "Bonjour", "right": "Hello"},
+      {"left": "Bonjour", "right": "Hallo"},
       {"left": "Salut", "right": "Hi"}
     ]
   }
@@ -218,7 +216,7 @@ Drag-pair exercise. The renderer shuffles before display.
 {
   "id": "ex-id",
   "type": "matching",
-  "prompt": "Match each French noun with its article.",
+  "prompt": "Ordne jedem französischen Nomen seinen Artikel zu.",
   "card_ids": ["noun-1", "noun-2"],
   "pairs": [
     {"left": "chat", "right": "le"},
@@ -231,67 +229,69 @@ Each pair must have exactly two keys: `left` + `right`.
 
 ### picture_choice
 
-Multiple-choice with images. ≥ 2 images, exactly one marked
+Multiple choice with images. ≥ 2 images, exactly one marked
 correct.
 
 ```json
 {
   "id": "ex-id",
   "type": "picture_choice",
-  "prompt": "Which is the evening greeting?",
+  "prompt": "Welche Begrüßung passt zum Abend?",
   "card_ids": ["card-1"],
   "images": [
     {"src": "assets/img/morning.png", "label": "Bonjour"},
     {"src": "assets/img/evening.png", "label": "Bonsoir", "is_correct": "true"}
   ],
-  "hint": "Optional Markdown hint shown on demand.",
+  "hint": "Optionaler Markdown-Tipp auf Knopfdruck.",
   "distractors": ["Bonjour"]
 }
 ```
 
-Note: `is_correct` is a **string** `"true"`, not a JSON boolean.
+Important: `is_correct` is a **string** `"true"`, not a JSON
+boolean.
 
-If `src` points at an asset that doesn't exist, the renderer
-falls back to the `label` text — picture-choice exercises are
-still functional even without illustration assets.
+If the `src` path points to a non-existent file, the renderer
+falls back to the `label` — so picture_choice also works without
+illustration assets.
 
 ### free_text
 
-Type the answer. The renderer does exact-match first, then a
-Levenshtein-tolerant fallback.
+Type the answer. The renderer matches exactly first, then
+Levenshtein-tolerant.
 
 ```json
 {
   "id": "ex-id",
   "type": "free_text",
-  "prompt": "How do you say 'Thank you' in French?",
+  "prompt": "Wie sagt man 'Danke' auf Französisch?",
   "card_ids": ["card-merci"],
   "accept": ["Merci", "merci", "MERCI"],
-  "hint": "It starts with M.",
+  "hint": "Beginnt mit M.",
   "distractors": ["Bonjour", "Salut"]
 }
 ```
 
 `accept[0]` is the canonical answer shown after a wrong attempt.
-Include ≥ 3 variants to cover case and punctuation; the
-renderer normalises whitespace.
+List ≥ 3 variants to cover case + punctuation; whitespace is
+normalized by the renderer.
 
 ### word_tiles
 
-Arrange tiles in order. The renderer shuffles before display.
+Put the tiles in the correct order. The renderer shuffles before
+display.
 
 ```json
 {
   "id": "ex-id",
   "type": "word_tiles",
-  "prompt": "Arrange: I see a cat.",
+  "prompt": "Bring die Kacheln in die Reihenfolge: Ich sehe eine Katze.",
   "card_ids": ["card-1"],
   "tiles": ["Je", "vois", "un", "chat"],
-  "hint": "Same word order as English."
+  "hint": "Gleiche Wortreihenfolge wie im Deutschen."
 }
 ```
 
-If multiple word orders are correct, add `accept_orderings`:
+If several word orderings are correct, add `accept_orderings`:
 
 ```json
 {
@@ -307,60 +307,58 @@ Each ordering is a permutation of the tile indices.
 
 ### cloze (Phase 52 / v1.35.0 — schema 1.1)
 
-Fill-in-the-blank with visible `___` markers in the sentence.
-Each `___` corresponds to one entry in `blanks[]` (left-to-right
-mapping; the loader enforces `sentence.count("___") ==
-len(blanks)`).
+Fill-in-the-blank with visible `___` markers in the sentence. Each
+`___` corresponds to an entry in `blanks[]` (mapped left to right;
+the loader checks `sentence.count("___") == len(blanks)`).
 
 ```json
 {
   "id": "ex-id",
   "type": "cloze",
-  "prompt": "Fill in the indefinite article.",
+  "prompt": "Setze den unbestimmten Artikel ein.",
   "card_ids": ["art-un", "noun-chat"],
   "sentence": "Je vois ___ chat dans le jardin.",
   "blanks": [
     {
       "accept": ["un"],
-      "hint": "masculine indefinite article",
+      "hint": "männlicher unbestimmter Artikel",
       "placeholder": "?"
     }
   ],
   "cloze_mode": "type",
   "distractors": ["le", "la", "les"],
-  "hint": "*un* is the masculine indefinite article."
+  "hint": "*un* ist der männliche unbestimmte Artikel."
 }
 ```
 
 **Render modes** — set per exercise via `cloze_mode`:
 
-- `"type"` (default when omitted): an `<input>` per blank.
-  Validated with the same NFC + Levenshtein-≤-1 matcher
-  free-text uses, so authors only need to enumerate semantic
-  variants (not typos).
-- `"select"`: a `<select>` per blank. Options drawn from
-  `accept[0]` + the exercise's `distractors`, shuffled per
-  blank by a stable seed. **Requires non-empty `distractors`**
-  — the schema validator rejects `cloze_mode: "select"`
-  exercises without them.
+- `"type"` (default when not set): one `<input>` per blank.
+  Validated with the same NFC + Levenshtein-≤-1 matcher as
+  free-text, so authors only need to list semantic variants (no
+  typos).
+- `"select"`: one `<select>` per blank. Options from `accept[0]` +
+  the exercise's `distractors`, shuffled per blank with a stable
+  seed. **Requires non-empty `distractors`** — the schema
+  validator rejects `cloze_mode: "select"` without them.
 
-**Multi-blank cloze** is supported: every `___` in the sentence
-maps to the next entry in `blanks`, in order. Each blank can
-have its own hint + placeholder + accept list. Element-level
-SRS fans out one ElementAttempt per blank, so a learner who
-fluently fills blank A but consistently misses blank B gets
-per-blank mastery tracking.
+**Multiple blanks per cloze** are supported: each `___` in the
+sentence is mapped in order to the next entry in `blanks`. Each
+blank can have its own hint + placeholder + accept list. The
+element SRS fans out one ElementAttempt per blank — someone who
+fills blank A fluently but constantly misses blank B gets
+blank-granular mastery tracking.
 
-**Token-roles on cards (Phase 52I / v1.35.0)** — optional
-metadata on Card that lets the runtime cloze generator (review
-sessions + the lesson-end correction round) target a
-semantically-meaningful blank:
+**Token roles on cards (Phase 52I / v1.35.0)** — optional card
+metadata that lets the cloze generator at runtime (review sessions
++ the end-of-lesson correction round) choose a semantically
+meaningful blank:
 
 ```json
 {
   "id": "art-un",
   "front": "un chat",
-  "back": "a cat",
+  "back": "eine Katze",
   "tags": ["article"],
   "token_roles": [
     {"token": "un", "role": "article"}
@@ -368,21 +366,22 @@ semantically-meaningful blank:
 }
 ```
 
-Closed enum of roles: `article` / `verb` / `noun` / `adjective`
-/ `preposition` / `gender_marker` / `tense_marker`. Adding a
-role is a minor schema_version bump — don't extend in place.
+Closed enum of roles: `article` / `verb` / `noun` /
+`adjective` / `preposition` / `gender_marker` / `tense_marker`.
+Adding a role is a minor schema version bump — do not extend it
+inline.
 
 ## Exercise direction (v1.46.0 / EXP-018)
 
-Every exercise accepts an optional `direction` field that says
-which way the learner drills the card:
+Every exercise accepts an optional `direction` field that
+specifies in which direction the learner practices the card:
 
-- `target_to_source` (default) — RECEPTIVE: the learner is shown
-  the target language and recognises the source language (easier).
-- `source_to_target` — PRODUCTIVE: the learner is shown the source
-  language and produces the target (harder).
-- `both` / `random` — let the renderer / adaptive generator pick a
-  concrete direction per attempt.
+- `target_to_source` (default) — RECEPTIVE: the target language is
+  shown, the source language is recognized (easier).
+- `source_to_target` — PRODUCTIVE: the source language is shown,
+  the target language is produced (harder).
+- `both` / `random` — leaves the choice of a concrete direction
+  per attempt to the renderer / adaptive generator.
 
 ```json
 {
@@ -393,75 +392,74 @@ which way the learner drills the card:
 }
 ```
 
-The field is additive — the schema stays at version 1.2 and
+The field is additive — the schema stays at version 1.2, and
 lessons without `direction` behave exactly as before (receptive).
-The SRS tracks mastery per direction, so a card mastered
-receptively is not yet mastered productively. Cloze exercises are
-in-context and ignore `direction`. For a difficulty progression,
-keep early lessons receptive and introduce `source_to_target` in
-later lessons (the bundled pilot content does exactly this).
+The SRS tracks mastery per direction: a receptively mastered card
+is not yet productively mastered. Cloze exercises are
+context-bound and ignore `direction`. For a difficulty
+progression, keep early lessons receptive and introduce
+`source_to_target` in later lessons (which is exactly what the
+bundled pilot content does).
 
-### Annotations that help the adaptive lesson generator (v1.36.0+)
+### Annotations for the adaptive lesson generator (v1.36.0+)
 
-The Phase 53 adaptive lesson generator
-(`/adaptive-lesson/:setId`, F-114) recombines authored
-exercises to drill the learner's specific weaknesses. The
-generator works without any extra annotations, but two
-fields make it materially smarter:
+The adaptive lesson generator from Phase 53
+(`/adaptive-lesson/:setId`, F-114) recombines the existing
+exercises to target the learner's specific weaknesses. The
+generator works without additional annotations, but two fields
+make it considerably smarter:
 
-1. **Broader `token_roles` coverage on cards.** The generator
-   uses `token_roles` to:
-   - Pick semantically-meaningful blanks when generating
-     cloze variants from errors (covered already in v1.35.0)
-   - Classify errors as `article_gender` / `verb_conjugation`
-     for the Dashboard "Focus areas" chips (53E)
-   - Find ALTERNATIVE exercises that test the same element
-     when the user got the original wrong (53D variation
-     logic — finds candidates whose card has a matching
-     `token_roles` entry)
+1. **Broader `token_roles` coverage on cards.** The generator uses
+   `token_roles` to:
+   - Choose semantically sensible blanks when generating cloze
+     variants from mistakes (already in v1.35.0)
+   - Classify mistakes as `article_gender` / `verb_conjugation`,
+     for the "focus area" chips on the Dashboard (53E)
+   - Find ALTERNATIVE exercises that test the same element when
+     the original exercise was wrong (53D variation logic — finds
+     candidates whose card has a matching `token_roles` entry)
 
-   Add a `token_roles` entry to EVERY card that teaches a
-   discrete grammatical unit — articles, conjugated verb
-   forms, gendered nouns. The cost is one extra JSON entry
-   per card; the payoff is much richer adaptive generation.
+   Add a `token_roles` entry to EVERY card that teaches a distinct
+   grammatical unit (article, conjugated verb forms,
+   gender-marked nouns). Cost: one extra JSON entry per card;
+   benefit: considerably richer adaptive generation.
 
-2. **Card-level grammar tags (`tags: ["article", "masculine"]`,
-   etc.)** are read by the error classifier as a fallback
-   when `token_roles` is absent. They don't replace
-   `token_roles` — they're a low-effort halfway annotation.
+2. **Card tags like `tags: ["article", "masculine"]`** are read by
+   the mistake classifier as a fallback when `token_roles` is
+   missing. They do not replace `token_roles` — they are a cheap
+   halfway annotation.
 
-What we DON'T need yet (deferred to a future schema bump):
+What we do NOT need yet (deferred to a future schema bump):
 
-- `related_cards` cross-references between cards in different
+- `related_cards` cross-references between cards from different
   lessons
-- Per-exercise difficulty ratings (the generator estimates
-  difficulty from `exercise.type` today)
-- Per-card example sentences in `notes` parseable as
-  alternative cloze contexts (the cloze generator uses
-  `front` only)
+- Difficulty ratings per exercise (the generator currently
+  estimates difficulty from `exercise.type`)
+- Per-card example sentences in `notes`, parsable as alternative
+  cloze contexts (the cloze generator uses `front` exclusively)
 
-When in doubt: add `token_roles` to every card teaching a
-grammatical token. That's the single highest-leverage
-authoring habit for the adaptive system.
+Rule of thumb: add `token_roles` to every card that teaches a
+grammatical token. This is by far the most impactful authoring
+habit for the adaptive system.
 
-## Assets (images bundled with a set) — v1.37.0+
+## Assets (images a set ships with) — v1.37.0+
 
-Picture-choice exercises and card cover images come from
-either:
-1. **Authored asset files**, declared in the set-level
-   manifest and shipped alongside the lesson JSON
-2. **Placeholder SVGs**, generated by the runtime when no
-   asset exists (color swatches for color labels, large
-   numerals for digits, avatar-style for everything else)
+Picture-choice exercises and card cover images come from two
+sources:
+1. **Author asset files**, declared in the set manifest and
+   shipped alongside the lesson JSON
+2. **Placeholder SVGs**, generated at runtime when no asset
+   exists (color swatches for color words, large numerals for
+   numbers, avatar style for everything else)
 
-If you publish a set without any assets, picture-choice
-still works — the placeholder SVG generator handles colors
-+ numbers automatically, and falls back to a deterministic
-avatar for everything else.
+If you publish a set without assets, picture-choice still works —
+the placeholder SVG generator covers colors + numbers
+automatically and falls back to a deterministic avatar for
+everything else.
 
 ### Directory layout
 
-Inside a set's directory, assets live under `assets/`:
+Within the set directory, assets live under `assets/`:
 
 ```
 sets/
@@ -480,8 +478,8 @@ sets/
 
 ### Manifest declaration
 
-Each asset must be declared in the set-level `manifest.yaml`
-so the downloader knows what to fetch:
+Every asset must be declared in the set manifest, so the
+downloader knows what to fetch:
 
 ```yaml
 sets:
@@ -498,116 +496,114 @@ sets:
         size_kb: 38
 ```
 
-The `path` is relative to the set's `assets/` directory
-(NOT to the lesson JSON). Inside lesson JSON, picture-choice
-exercises reference assets WITH the `assets/` prefix:
+The `path` is relative to the set's `assets/` directory (NOT to
+the lesson JSON). In the lesson JSON, picture-choice exercises
+reference assets WITH the `assets/` prefix:
 
 ```json
 {
   "type": "picture_choice",
-  "prompt": "Which one is 'chat'?",
+  "prompt": "Welches ist 'chat'?",
   "images": [
-    {"src": "assets/img/chat.png", "label": "Cat", "is_correct": "true"},
-    {"src": "assets/img/chien.png", "label": "Dog"}
+    {"src": "assets/img/chat.png", "label": "Katze", "is_correct": "true"},
+    {"src": "assets/img/chien.png", "label": "Hund"}
   ]
 }
 ```
 
 The frontend strips the `assets/` prefix automatically when
-calling the asset resolver, so the lesson JSON keeps the
-intuitive form authors expect.
+calling the asset resolver, so the lesson JSON stays in the form
+intuitive to authors.
 
 ### Size + format limits
 
-- **Per-asset cap**: 500 KiB. The manifest validator rejects
-  assets whose declared `size_kb` exceeds this. The
-  downloader also rejects assets whose actual byte length
-  exceeds the declared `size_kb` by more than 10% — keeps
-  the manifest honest.
-- **Per-set soft cap**: 10 MiB total assets. The validator
-  warns but doesn't reject.
-- **Accepted formats**: `.png` / `.jpg` / `.jpeg` / `.webp`
-  / `.svg`. No GIF (animated content is a distraction) and
-  no BMP (no compression). For photos, prefer WebP — much
-  smaller than PNG at comparable quality. For icons +
-  diagrams, prefer SVG — scales cleanly + tiny file size.
+- **Per-asset limit**: 500 KiB. The manifest validator rejects
+  assets whose declared `size_kb` exceeds this limit. The
+  downloader also rejects assets whose actual byte size exceeds
+  the declaration by more than 10% — keeps the manifest honest.
+- **Per-set soft limit**: 10 MiB total size. The validator warns
+  but does not reject.
+- **Accepted formats**: `.png` / `.jpg` / `.jpeg` / `.webp` /
+  `.svg`. No GIF (animated content distracts), no BMP (no
+  compression). For photos, prefer WebP — considerably smaller
+  than PNG at comparable quality. For icons + diagrams, prefer
+  SVG — scales cleanly + tiny file size.
 
-### Sizing recommendations
+### Size recommendations
 
-Picture-choice tiles render at max 150x150 px on desktop,
-100x100 px on mobile (`object-fit: contain`). Source images
-of 300x300 px give the best result on retina screens
-without bloat. PNGs above 150 KiB rarely look better than a
-properly-compressed WebP at half the size.
+Picture-choice tiles are rendered up to a maximum of 150x150 px on
+desktop and 100x100 px on mobile (`object-fit: contain`). Source
+images at 300x300 px give the best result on Retina screens
+without unnecessary data demand. PNGs over 150 KiB rarely look
+better than a well-compressed WebP of half the size.
 
-### Skip authored images — let the runtime placeholder cover it
+### When the runtime placeholder is enough
 
-Three lesson types where the runtime placeholder is good
-enough that authored images add no learning value:
+Three lesson types where the runtime placeholder is so good that
+author images add no learning benefit:
 
-- **Colour lessons** (`rouge` / `rojo` / `rot` / `red`):
-  the placeholder generator produces a solid hex swatch
-  keyed to the colour name. Authored swatches are
-  redundant.
+- **Color lessons** (`rouge` / `rojo` / `rot` / `red`): the
+  placeholder generator produces a colored hex tile matching the
+  color name. Author tiles are redundant.
 - **Number lessons** (`7` / `42` / `1492`): the placeholder
-  renders the digits large + centred. Authored images
-  would only matter for non-Arabic numeral systems.
-- **Abstract concepts** without an obvious visual
-  representation (`patience`, `liberté`): the avatar
-  placeholder gives a clean visual anchor without forcing
-  a contested icon choice.
+  renders the digits large + centered. Author images would only
+  make sense for non-Arabic numeral systems.
+- **Abstract concepts** without an obvious visual representation
+  (`patience`, `liberté`): the avatar placeholder provides a clear
+  visual anchor without forcing a contentious icon choice.
 
-For everything else (animals, objects, food, places, body
-parts), authored images materially help recognition + recall.
+For everything else (animals, objects, food, places, body parts)
+author images measurably help recognition + recall.
 
 ## Quality checklist
 
-Before opening a PR for a new lesson, verify:
+Check before the PR for a new lesson:
 
 - [ ] **3-5 theory steps** + **8-12 exercises** per lesson
-- [ ] **At least 3 exercise types** represented (matching, picture-choice, free-text, word-tiles, or cloze — cloze ships in v1.35.0+)
-- [ ] **Theory steps ≤ 200 words** each
+- [ ] **At least 3 exercise types** represented (matching, picture-choice, free-text, word-tiles or cloze — cloze since v1.35.0)
+- [ ] **Theory steps ≤ 200 words** per step
 - [ ] **Free-text exercises**: ≥ 3 accept variants + ≥ 3 distractors
-- [ ] **Word-tiles**: ≥ 3 tiles per exercise
-- [ ] **estimated_minutes**: 10-15 (realistic, not aspirational)
+- [ ] **Word tiles**: ≥ 3 tiles per exercise
+- [ ] **estimated_minutes**: 10-15 (realistic, not idealized)
 - [ ] **Distractors are wrong-but-plausible** — semantically related, never random
-- [ ] **Card notes** carry real value (pronunciation, false-friend, exception flag)
+- [ ] **Card notes** provide real added value (pronunciation, false friends, exception flag)
 - [ ] **Progressive structure**: later concepts build on earlier ones in the same set
-- [ ] **Cultural accuracy**: real-world usage, not textbook-only phrases
+- [ ] **Cultural accuracy**: real language use, not just textbook phrases
 - [ ] **Schema validation**: the lesson loads cleanly via `dict_to_lesson()` (see Local testing)
-- [ ] **Card-id integrity**: every `exercise.card_ids[i]` exists in the lesson's `cards[]`
+- [ ] **Card ID integrity**: every `exercise.card_ids[i]` exists in the lesson's `cards[]`
 - [ ] **Language pair**: `target_language` + `source_language` set (ISO 639-1, different), `title_native` present
 
 ## Validation (two layers, v1.44.0)
 
-Content is gated by two validation layers that run the SAME checks:
+Content is secured by two validation layers with the SAME checks:
 
-1. **In-app, before sharing.** When a learner shares a lesson via
-   *My Lessons → Share with Community*, a rule-based check runs
-   first (always, no AI needed). It enforces the **minimums** below;
-   a set under any of them cannot be shared. If it passes AND an AI
-   key is configured, the learner can OPT IN to a supplementary AI
-   review (translation accuracy, distractor plausibility, grammar,
-   level fit, cultural sensitivity, naturalness). The AI step is
-   never automatic, requires explicit consent (lesson content is
-   sent to the configured provider), and never blocks sharing — the
-   rule-based pass is the gate.
+1. **In the app, before sharing.** When sharing via *My Lessons →
+   Share with Community*, a rule-based check runs first (always,
+   without AI). It enforces the **minimums** below; a set below
+   them cannot be shared. If it passes and an AI key is
+   configured, the learner can OPTIONALLY start a supplementary AI
+   check (translation accuracy, distractor plausibility, grammar,
+   level, cultural sensitivity, naturalness). The AI step is never
+   automatic, requires explicit consent (the lesson content is
+   sent to the configured provider) and never blocks sharing — the
+   rule-based check is the gate.
 2. **In the content repo's CI.** A pull request to
-   `astrapi69/adaptive-learner-content` runs `scripts/validate_content.py`
-   (mirrored in `docs/ci/adaptive-learner-content/`), which re-checks
-   every set with the same rules so a manual PR can't bypass the gate.
+   `astrapi69/adaptive-learner-content` runs
+   `scripts/validate_content.py` (mirrored under
+   `docs/ci/adaptive-learner-content/`) and checks every set with
+   the same rules, so a manual PR cannot bypass the gate.
 
 **Quality minimums (hard gate):** ≥ 5 exercises per lesson, ≥ 2
 exercise types, ≥ 1 theory step, free-text ≥ 2 accepted answers +
-distractors, matching ≥ 3 pairs, picture-choice distractors, no
-empty card front/back, and (for non-Latin source scripts) card
-backs in the source script. These are minimums, not targets — the
+distractors, matching ≥ 3 pairs, picture-choice with distractors,
+no empty card fronts/backs and (for non-Latin source scripts) card
+backs in the source script. These are minimums, not goals — the
 checklist above asks for more.
 
 ## Local testing
 
-The Content-Loader's schema validator runs as part of `make
-test`. To validate a single lesson by hand:
+The content loader's schema validator runs as part of `make test`.
+To validate a single lesson by hand:
 
 ```bash
 cd plugins/adaptive-learner-plugin-content-loader
@@ -617,59 +613,61 @@ from adaptive_learner_content_loader.schema import dict_to_lesson
 path = '../adaptive-learner-content/sets/en/fr-a1/lessons/01-greetings.json'
 with open(path) as f:
     lesson = dict_to_lesson(json.load(f))
-print(f'OK: {lesson.id} — {len(lesson.cards)} cards, {len(lesson.steps)} steps')
+print(f'OK: {lesson.id} — {len(lesson.cards)} Cards, {len(lesson.steps)} Steps')
 "
 ```
 
-To validate every lesson in a content repo at once, use the content
-repo's own validator (the same script its CI runs on every PR):
+To validate all lessons of a content repo at once — with the content
+repo's validator (the same script its CI runs on every PR):
 
 ```bash
 cd ../adaptive-learner-content
 python3 scripts/validate_content.py
 ```
 
-It discovers every set under `sets/{source}/{target-level}/` and checks
-the schema plus the quality minimums (≥5 exercises, ≥2 exercise types,
-≥1 theory step, free-text accepts + distractors, matching pairs, no
-empty cards, card-id integrity) on each. Adding a new lesson is picked
-up automatically — no test edit needed.
+It finds every set under `sets/{source}/{target-level}/` and checks the
+schema plus the quality minimums (≥5 exercises, ≥2 exercise types, ≥1
+theory step, free-text accepts + distractors, matching pairs, no empty
+cards, card-ID integrity). New lessons are detected automatically — no
+test change needed.
 
 ## PR workflow
 
 Once your set is ready:
 
-1. Open a PR against the main adaptive-learner repo (for sets
-   that should ship with the app), OR
+1. Open a PR against the main repo (for sets that should ship with
+   the app), OR
 2. Create your own content repo under your GitHub account and
-   point the Content-Loader at it from
+   configure the content loader via
    `backend/config/plugins/content-loader.yaml` (under
    `default_sources`).
 
-The Content-Loader supports any public GitHub repo as a source.
-Private repos require a personal access token configured via the
-three-layer key chain (`~/.config/adaptive_learner/secrets.yaml`).
+The content loader supports any public GitHub repo as a source.
+Private repos need a personal access token, set via the
+three-layer key management
+(`~/.config/adaptive_learner/secrets.yaml`).
 
 ## Common pitfalls
 
-**Card-id references**: every `card_ids` entry in an exercise
-must exist in the lesson's `cards[]`. If you copy an exercise
-between lessons and forget to copy the card, validation fails.
+**Card ID references**: Every `card_ids` entry in an exercise must
+exist in the lesson's `cards[]`. If you copy an exercise between
+lessons and forget to bring along the associated card, validation
+fails.
 
-**Slug-safe ids**: all ids (lesson, card, step, exercise) must
+**Slug-safe IDs**: All IDs (lesson, card, step, exercise) must
 match `^[a-z0-9]+(-[a-z0-9]+)*$`. No underscores, no apostrophes,
 no uppercase letters, no leading/trailing hyphens.
 
-**`is_correct: "true"`**: it's a string, not a JSON boolean.
-The schema specifically requires `"true"` because the picture-
-choice fields are all dict[str, str] under the hood.
+**`is_correct: "true"`**: It is a string, not a JSON boolean. The
+schema explicitly requires `"true"`, because the picture_choice
+fields are internally modeled as dict[str, str].
 
-**Extra fields**: every model has `extra="forbid"`. Adding a
-field the schema doesn't know about will reject the whole
-lesson. Stick to the documented fields.
+**Extra fields**: Every model has `extra="forbid"`. An
+undocumented field leads to the rejection of the entire lesson.
+Stick to the documented fields.
 
-**Theory body**: theory steps require a non-empty `body` field
-(Markdown). Exercise steps must not carry `body` — use the
+**Theory body**: Theory steps need a non-empty `body` field
+(Markdown). Exercise steps must not carry a `body` — use the
 exercise's `prompt` instead.
 
 ## Reference: the pilot sets
@@ -678,93 +676,104 @@ The two sets shipped with Adaptive Learner are the canonical
 references:
 
 - `sets/en/fr-a1/` — French A1 for English speakers (10 lessons,
-  ~2 hours total); `sets/de/fr-a1/` is the German-source pilot.
-- `sets/en/es-a1/` + `sets/de/es-a1/` — Spanish A1 (15 lessons each
-  source), in the `adaptive-learner-content` repo.
+  ~2 hours); `sets/de/fr-a1/` is the German-source pilot set.
+- `sets/en/es-a1/` + `sets/de/es-a1/` — Spanish A1 (15 lessons per
+  source language), in the `adaptive-learner-content` repo.
 
 Both follow the conventions described in this guide. Reading
-one full lesson end-to-end before authoring your own is the
-fastest way to internalise the structure.
+through a complete lesson is the fastest way to internalize the
+structure.
 
 ---
 
-## Community contribution pathway (v1.42.0)
+## Path to community contribution (v1.42.0)
 
-You don't have to hand-author lessons from scratch. The fastest
-way to contribute is to **create a lesson in the app and share
-it**:
+You do not have to create lessons from scratch by hand. The
+fastest way to contribute is to **create and share a lesson in the
+app**:
 
-1. Import a chat and analyse it, then **Save as Offline Lesson**
+1. Import a chat and analyze it, then **Save as offline lesson**
    (or finish an adaptive lesson and **Save this lesson?**). The
-   lesson appears under **My Lessons** in the Set Browser.
-2. From My Lessons, click **Export as set** to download a
-   content-set `.zip` (manifest + lessons). Exports contain only
-   the lesson content — no progress, no error history, nothing
-   personal.
+   lesson appears under **My Lessons** in the set browser.
+2. In "My Lessons", click **Export as content set** to download a
+   content set as `.zip` (manifest + lessons). Exports contain
+   only the lesson content — no progress, no error history,
+   nothing personal.
 3. Click **Share with Community** to open a pre-filled **pull
-   request** on the content repo — the lesson JSON is committed at
-   its correct tree path, no `.zip` attachment needed.
+   request** in the content repository — the lesson JSON is
+   committed at the correct path in the tree, no `.zip` attachment
+   needed.
 4. The repo's CI validates the PR automatically; a maintainer
-   reviews the lesson, tidies the manifest (id, title, language,
-   level, tags) to match the conventions above, and merges it
-   under `sets/`. Once merged, everyone can download
-   it from the Set Browser.
+   reviews the lesson, brings the manifest (id, title, language,
+   level, tags) in line with the conventions above and merges it
+   under `sets/`. After the merge, everyone can download it from
+   the set browser.
 
-This is the social path: review is **manual** (a maintainer
-curates every addition — nothing is auto-published), and the
-whole flow needs only GitHub. Generated lessons already validate
-against the schema, so a contributed lesson usually needs only
-manifest polish before it ships.
+This is the social path: the review is **manual** (a maintainer
+curates every addition — nothing is published automatically), and
+the whole flow needs only GitHub. Generated lessons are already
+validated against the schema, so a contributed lesson usually only
+needs a bit of manifest polishing.
 
-## Sharing wizard, variations and author credit (Phase 64)
+## Share wizard, variations and author credit (Phase 64)
 
 Sharing a lesson from **My Lessons** opens a four-step wizard
 instead of jumping straight to GitHub:
 
 1. **Preview + placement.** The app computes exactly where the
-   lesson lands in the tree (`sets/{source}/{target}-{level}/`)
-   and an auto-numbered filename (`{nn}-{slug}.json`, the next
-   number after the existing lessons). A brand-new pair + level
-   shows *"New set! You're the first."*
-2. **Duplicate check.** The lesson is compared against the
-   lessons already in that tree path by card overlap and exercise
-   overlap (advisory — it never blocks). If something similar
-   exists you can:
-   - **Share as a variation** — the lesson is tagged
+   lesson lands in the tree (`sets/{source}/{target}-{level}/`) and
+   an auto-numbered file name (`{nn}-{slug}.json`, the next number
+   after the existing lessons). A brand-new pair + level shows
+   *"New set! You're the first."*
+2. **Duplicate scan.** The lesson is compared with the lessons
+   already present in this path (card and exercise overlap —
+   advisory, never blocking). If something similar exists, you
+   can:
+   - **Share as a variation** — the lesson is marked with
      `variation_of: "{original_id}"` plus an optional
-     `variation_note` ("how does your version differ?").
-   - **Suggest only the new exercises** (near-duplicates) — the
-     wizard extracts just the exercises the original lacks, plus
-     the cards they reference, as a supplement variation.
-3. **Quality summary.** The rule-based validator findings (plus
-   the optional AI review); warnings are shown but never block.
+     `variation_note` ("How does your version differ?").
+   - **Suggest only the new exercises** (for near-duplicates) —
+     the wizard extracts exactly the exercises that the original
+     lacks, along with the associated cards, as a supplement
+     variation.
+3. **Quality summary.** The findings of the rule-based validator
+   (plus the optional AI check); warnings are shown but never
+   block.
 4. **Share + celebrate.** One click opens the GitHub pull request
-   (create-file editor for small lessons, upload page for large
-   ones) and the app thanks you with a small celebration.
+   (file editor for small lessons, upload page for large ones),
+   and the app thanks you with a small celebration.
 
-### Variation + credit fields (schema 1.3, all optional)
+### Variation and credit fields (schema 1.3, all optional)
 
 ```json
 {
   "variation_of": "10-passe-compose",
-  "variation_note": "More exercises on agreement",
+  "variation_note": "Mehr Übungen zur Angleichung",
   "contributed_by": "Maria S.",
   "contributed_at": "2026-06-01T14:30:00Z"
 }
 ```
 
 All four are additive and optional; lessons without them behave
-exactly as before. `contributed_by` is set when the author opts
-in to credit while sharing (a *"Your name (optional)"* field that
-is remembered locally for next time). When present, the viewer
-shows a muted *"Contributed by {name}"* line under the title and
-the pull-request body lists the author in its metadata table.
+exactly as before. `contributed_by` is set when the author enables
+the credit on sharing (a *"Your name (optional)"* field, remembered
+locally for next time). If present, the viewer shows a subtle line
+*"Contributed by {name}"* below the title, and the pull request
+body lists the author in its metadata table.
 
 ### Contribution history and gaps
 
 Shared lessons are remembered locally (no account needed) under
 **My Contributions** with a counter and a *Community Contributor*
-recognition at five shares. The Set Browser also surfaces
-**Missing Lessons** — encouraging suggestions for the next CEFR
-level of an existing pair, or a target taught for one source
-language but missing for another ("Can you help?").
+distinction from five shared lessons on. The set browser also
+shows **Missing Lessons** — encouraging suggestions for the next
+CEFR level of an existing pair or a target language that exists for
+one source language but is missing for another ("Can you help?").
+
+---
+
+## Related pages
+
+- [Creating lessons — overview](../content-creation/overview.md) — getting started + the in-app Lesson Creator
+- [Book recommendations](../content-creation/books.md) — maintaining `books.yaml` per domain
+- [Multiple content repositories](../features/content-repos.md) — connect your own repo

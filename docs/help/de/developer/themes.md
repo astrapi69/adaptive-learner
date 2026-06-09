@@ -1,8 +1,26 @@
 # Theme-System
 
 Phase 58 (v1.41.0) ersetzte das alte Hell/Dunkel-Paar durch ein
-System aus sechs Themes auf einer einzigen `data-theme`-Dimension,
-plus eine `auto`-Auswahl, die dem Betriebssystem folgt.
+System aus sechs klassischen Themes auf einer einzigen
+`data-theme`-Dimension, plus eine `auto`-Auswahl, die dem
+Betriebssystem folgt. Phase 63 (v1.63.0) ergänzte sechs
+**empfohlene WCAG-AA-Presets**, sodass der Picker insgesamt **12
+Themes** führt.
+
+## Empfohlene Presets (Phase 63 / v1.63.0)
+
+Der Picker unter Einstellungen → Darstellung führt mit einem
+**Empfohlen**-Unterreiter:
+
+- **Hell:** `catppuccin-latte`, `supabase`, `graphite`
+- **Dunkel:** `catppuccin-mocha`, `soft-pop`, `amethyst-haze`
+
+Sie wurden aus tweakcn-Presets per
+`scripts/generate_preset_themes.py` als vollständige
+44-Token-Themes generiert, mit **rechnerisch erzwungenem
+WCAG AA** (`contrast.test.ts` über alle 12 Themes). Die
+klassischen sechs (`light`, `dark`, `ocean`, `forest`,
+`high-contrast`, `sepia`) bleiben unverändert.
 
 ## Funktionsweise
 
@@ -47,7 +65,9 @@ Text (`--fg-primary/secondary/muted/inverse`), Ränder
 
 `styles/themes/themes.test.ts` schlägt fehl, wenn einem Theme eines
 dieser Tokens fehlt oder es ein zusätzliches hat;
-`styles/contrast.test.ts` prüft WCAG 2.1 AA über alle sechs Themes.
+`styles/contrast.test.ts` prüft WCAG 2.1 AA über alle 12 Themes.
+Die vollständige Token-Referenz steht in
+[Design-Token-Architektur](../architecture/design-tokens.md).
 
 ## Ein neues Theme hinzufügen
 

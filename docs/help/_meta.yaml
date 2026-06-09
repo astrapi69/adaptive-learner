@@ -184,6 +184,47 @@ navigation:
         slug: user-guide/faq
 
   - title:
+      de: Features
+      en: Features
+      es: Funciones
+      fr: Fonctionnalités
+      el: Λειτουργίες
+      pt: Funcionalidades
+      tr: Özellikler
+      ja: 機能
+    children:
+      - title:
+          de: Content Browser
+          en: Content browser
+          es: Explorador de contenido
+          fr: Explorateur de contenu
+          el: Περιήγηση περιεχομένου
+          pt: Explorador de conteúdo
+          tr: İçerik tarayıcı
+          ja: コンテンツブラウザ
+        slug: features/content-browser
+      - title:
+          de: Mehrere Content-Repositories
+          en: Multiple content repositories
+          es: Varios repositorios de contenido
+          fr: Plusieurs dépôts de contenu
+          el: Πολλαπλά αποθετήρια περιεχομένου
+          pt: Múltiplos repositórios de conteúdo
+          tr: Birden çok içerik deposu
+          ja: 複数のコンテンツリポジトリ
+        slug: features/content-repos
+      - title:
+          de: Backup und Wiederherstellung
+          en: Backup and restore
+          es: Copia de seguridad y restauración
+          fr: Sauvegarde et restauration
+          el: Αντίγραφο ασφαλείας και επαναφορά
+          pt: Backup e restauração
+          tr: Yedekleme ve geri yükleme
+          ja: バックアップと復元
+        slug: features/backup
+
+  - title:
       de: Konzept
       en: Concept
       es: Concepto
@@ -396,6 +437,68 @@ navigation:
         slug: developer/release
 
   - title:
+      de: Für Content-Ersteller
+      en: For content creators
+      es: Para creadores de contenido
+      fr: Pour les créateurs de contenu
+      el: Για δημιουργούς περιεχομένου
+      pt: Para criadores de conteúdo
+      tr: İçerik oluşturanlar için
+      ja: コンテンツ作成者向け
+    children:
+      - title:
+          de: Überblick
+          en: Overview
+          es: Visión general
+          fr: Vue d'ensemble
+          el: Επισκόπηση
+          pt: Visão geral
+          tr: Genel bakış
+          ja: 概要
+        slug: content-creation/overview
+      - title:
+          de: Buchempfehlungen
+          en: Book recommendations
+          es: Recomendaciones de libros
+          fr: Recommandations de livres
+          el: Προτάσεις βιβλίων
+          pt: Recomendações de livros
+          tr: Kitap önerileri
+          ja: 書籍の推薦
+        slug: content-creation/books
+
+  - title:
+      de: Architektur
+      en: Architecture
+      es: Arquitectura
+      fr: Architecture
+      el: Αρχιτεκτονική
+      pt: Arquitetura
+      tr: Mimari
+      ja: アーキテクチャ
+    children:
+      - title:
+          de: Design-Tokens
+          en: Design tokens
+          es: Tokens de diseño
+          fr: Jetons de design
+          el: Design tokens
+          pt: Tokens de design
+          tr: Tasarım token'ları
+          ja: デザイントークン
+        slug: architecture/design-tokens
+      - title:
+          de: Sync
+          en: Sync
+          es: Sincronización
+          fr: Synchronisation
+          el: Συγχρονισμός
+          pt: Sincronização
+          tr: Senkronizasyon
+          ja: 同期
+        slug: architecture/sync
+
+  - title:
       de: API-Referenz
       en: API reference
       es: Referencia de la API
@@ -455,3 +558,14 @@ navigation:
           tr: Hooks
           ja: フック
         slug: api/hooks
+
+  - title:
+      de: Changelog
+      en: Changelog
+      es: Changelog
+      fr: Changelog
+      el: Changelog
+      pt: Changelog
+      tr: Changelog
+      ja: 変更履歴
+    slug: changelog

@@ -1,248 +1,272 @@
-<!-- Translation: AI-generated, pending native review -->
-
 # Lições de conteúdo e revisões
 
 Uma **lição de conteúdo** é uma pequena unidade de aprendizagem
-criada manualmente (normalmente 5–10 minutos) descarregada de
-um conjunto de lições público. Corre num visualizador dedicado,
-não na sessão de chat com IA. Após a lição, a aplicação lembra
-exatamente quais palavras, pares ou frases errou e agenda-os
-para uma sessão de revisão focada mais tarde.
+feita à mão (normalmente 5–10 minutos), descarregada de um
+conjunto de lições público. Corre num visualizador próprio, não
+na sessão de chat com IA. Após a lição, a aplicação lembra-se
+exatamente de que palavras, pares ou frases respondeste mal e
+agenda-os para uma sessão de revisão dirigida mais tarde.
 
-As lições são um **caminho alternativo** para aprender que não
-precisa de uma chave de API de IA — perfeito para experimentar
-a aplicação ou para conteúdo onde o material curado supera o
-chat de forma livre.
+As lições são um **caminho de aprendizagem alternativo** que não
+precisa de chave de API de IA — ideal para experimentar a aplicação
+ou para conteúdos em que material curado funciona melhor do que o
+chat livre.
 
 ---
 
 ## De onde vêm as lições
 
-As lições vivem em **conjuntos de conteúdo** — pequenos
-pacotes publicados em repositórios públicos do GitHub. O
-**Navegador de Conjuntos** da aplicação em `/content` lista
-todos os conjuntos disponíveis; clique num para o descarregar.
-O conjunto é armazenado em cache localmente (no sistema de
-ficheiros se executar com um backend, no IndexedDB na
-implementação apenas para navegador), por isso pode estudar
-offline após o primeiro descarregamento.
+As lições vivem em **conjuntos de conteúdo** — pequenos pacotes
+publicados em repos GitHub públicos. O **Navegador de conjuntos**
+em `/content` lista cada conjunto disponível; clica num para o
+descarregar. O conjunto é armazenado localmente em cache (no
+sistema de ficheiros em funcionamento com backend, no IndexedDB no
+modo apenas browser), para que possas aprender offline após o
+primeiro download.
 
-O conjunto piloto v1.27.0 é **Francês A1** (2 lições, 14
-cartões, 9 exercícios cobrindo todos os quatro tipos de
-exercícios). Cada lançamento desde então adiciona mais —
-consulte o [repositório de conjuntos](https://github.com/astrapi69/adaptive-learner-content)
+O conjunto piloto da v1.27.0 é **Francês A1** (2 lições, 14
+cartões, 9 exercícios que cobrem todos os quatro tipos de
+exercício). Cada lançamento desde então adiciona novos — vê o
+[repo de conjuntos](https://github.com/astrapi69/adaptive-learner-content)
 para o catálogo atual.
 
 ---
 
 ## O fluxo da lição
 
-Abra um conjunto, escolha uma lição, e o **visualizador de
-lições** guia-o por cada cartão e exercício passo a passo:
+Abre um conjunto, escolhe uma lição, e o **visualizador de lições**
+conduz-te passo a passo por cada cartão e exercício:
 
-1. **Cartões** apresentam material para ler. Clique em
-   "Seguinte" quando estiver pronto.
-2. **Exercícios** verificam o que se lembra. Quatro tipos
-   incluídos:
-   - **Correspondência** — arrastar pares (palavra ↔
-     tradução).
-   - **Escolha de imagem** — escolher a imagem que corresponde
-     a um prompt.
-   - **Texto livre** — escrever a resposta.
-   - **Mosaicos de palavras** — montar uma frase a partir de
-     mosaicos.
+1. **Cartões** apresentam material para ler. Clica em "Continuar"
+   quando estiveres pronto.
+2. **Exercícios** testam o que memorizaste. Estão disponíveis
+   quatro tipos:
+   - **Correspondência** — arrasta pares (palavra ↔ tradução). Ambas
+     as peças de um par encontrado partilham uma **cor própria** e
+     um **badge numérico**, para que a correspondência seja
+     reconhecível de forma segura para daltónicos (não apenas pela
+     cor).
+   - **Escolha de imagem** — escolhe a imagem que corresponde à
+     pista.
+   - **Texto livre** — escreve a resposta.
+   - **Peças de palavras** — monta uma frase a partir de peças.
+   - **Texto com lacunas** — preenche uma lacuna na frase (surge
+     deliberadamente dos teus erros, ver abaixo).
 
-Uma barra de progresso no topo rastreia até onde está na lição.
-Pode sair a qualquer momento — o seu progresso é guardado por
-passo e retoma onde ficou.
+Um indicador de progresso no topo acompanha até onde estás na
+lição. Podes parar a qualquer momento — o teu progresso é guardado
+por passo e continua de onde paraste.
 
-### O ecrã de resumo
+### Atalho Enter
 
-Quando o último exercício termina, o **resumo da lição** aparece:
+Podes operar toda a lição pelo teclado: **Enter** verifica um
+exercício respondido e depois passa ao passo seguinte; os campos de
+texto livre e de texto com lacunas submetem com Enter (sem quebra de
+linha). Os elementos de controlo que precisam do próprio Enter têm
+precedência. O atalho é comutável em **Definições → Aprendizagem**
+(ativado por predefinição) e aplica-se também no Replay de Erros
+("Repetir erros").
 
-- Uma **classificação de 0–3 estrelas** baseada na sua pontuação:
+### Links de exemplo e de teoria
+
+- **Ver exemplo:** Um passo de teoria pode trazer um link opcional
+  para um exemplo detalhado, que aparece como botão "Ver exemplo".
+- **Reler a teoria:** Um exercício mostra um link discreto para a
+  teoria precedente mais próxima; daí "Voltar ao exercício"
+  leva-te de novo à tarefa. Assim consultas uma regra sem perder o
+  fio.
+
+### O resumo
+
+Quando o último exercício está concluído, aparece o **resumo da
+lição**:
+
+- Uma **classificação por estrelas de 0–3** baseada no teu
+  resultado:
   - **3 estrelas** ≥ 90 % correto
   - **2 estrelas** ≥ 75 %
   - **1 estrela** ≥ 50 %
   - **0 estrelas** abaixo de 50 %
-- Uma **análise por exercício** mostrando quais os exercícios
-  que passou e quais tiveram erros (com a resposta correta
-  revelada para os errados).
-- Botões **Lição seguinte**, **Repetir** e **Voltar ao conjunto**
-  para que a próxima ação seja a um clique.
+- Um **detalhamento exercício a exercício** que mostra quais
+  exercícios passaste e quais continham erros (com a resposta
+  correta para os errados).
+- **Próxima lição**, **Repetir** e **Voltar ao conjunto** como
+  botões, para que a próxima ação esteja a um clique de distância.
 
-Acerte 3 estrelas na primeira tentativa e as estrelas reproduzem
-uma pequena animação comemorativa. (Se ativou a definição "reduzir
-movimento" do SO, a animação respeita isso.)
+Se consegues 3 estrelas à primeira tentativa, toca uma pequena
+animação de celebração. (Se ativaste a definição do SO "reduzir
+movimento", a animação respeita-o.)
+
+### Exportar resultado
+
+O resumo oferece **"Copiar resultado"** e **"Guardar como
+ficheiro"**. Ambos geram um **relatório Markdown** com a tua
+pontuação, um detalhamento erro a erro (a tua resposta + a resposta
+correta) e as áreas ainda fracas. O relatório serve para colar num
+assistente de IA que te ajude de forma dirigida. A exportação é um
+gerador puro sem backend e funciona em ambos os modos de
+armazenamento.
 
 ---
 
-## Rastreamento de erros ao nível de elemento
+## Rastreio de erros ao nível do elemento
 
-Cada resposta errada em cada tipo de exercício escreve uma linha
-vinculada ao **elemento específico que errou** — a palavra, par
-ou frase individual. A aplicação NÃO se lembra apenas de "marcou
-6/10 na lição 3"; lembra "teve dificuldades com *bonjour* e
-*merci* especificamente".
+Cada resposta errada em cada tipo de exercício escreve uma linha que
+aponta para o **elemento concreto que falhaste** — a palavra, o par
+ou a frase individual. A aplicação NÃO se lembra apenas de "atingiste
+6/10 na lição 3"; lembra-se de "tiveste especial dificuldade com
+*bonjour* e *merci*".
 
-Acerte no mesmo elemento **3 vezes seguidas** e passa para
-**dominado** — removido da fila de revisão. Erre um elemento
-dominado mais tarde e **desmove de volta** para a fila. Um
-domínio falhado é um domínio esquecido.
+Se respondes ao mesmo elemento **corretamente 3 vezes seguidas**,
+ele é marcado como **dominado** — e removido da fila de revisão. Se
+respondes mais tarde de forma errada a um elemento dominado, ele
+**volta a descer** para a fila. Um domínio falhado é um domínio
+esquecido.
 
 ---
 
 ## A fila de revisão
 
-Quando tem um ou mais elementos que precisam de revisão, o
-**cartão de fila de revisão** aparece no Dashboard. Mostra:
+Quando tens um ou mais elementos que precisam de revisão, aparece o
+**cartão de revisão** no Dashboard. Mostra:
 
-- Quantos elementos estão em atraso
-- Quantos estão **em atraso** (passada a data de revisão
-  agendada)
-- Um botão **Rever agora** que abre uma mini-sessão focada
-  em `/review/:setId`
+- Quantos elementos estão pendentes
+- Quantos estão **em atraso** (após a data de revisão agendada)
+- Um botão **Rever agora**, que abre uma mini-sessão focada em
+  `/review/:setId`
 
-O agendamento usa três bandas baseadas em quantas vezes acertou
-no elemento seguidas:
+O agendamento usa três níveis, com base na frequência com que
+respondeste ao elemento corretamente em sequência:
 
-| Sequência de acertos | Próxima revisão |
+| Sequência correta | Próxima revisão |
 |---|---|
 | 0 | 1 dia depois |
 | 1 | 3 dias depois |
 | 2 | 7 dias depois |
 | 3 (dominado) | removido da fila |
 
-Dentro da fila, os itens ordenam-se: **em atraso primeiro**,
-depois por **contagem de erros decrescente**, depois pela
-**falha mais recente primeiro**. Por isso os elementos com que
-mais tem dificuldades sobem ao topo.
+Dentro da fila, as entradas ordenam-se: **as em atraso primeiro**,
+depois por **número de erros decrescente**, depois por **erro mais
+recente primeiro**. Assim, os elementos com que mais lutas sobem ao
+topo.
 
 ---
 
 ## Sessões de revisão
 
 Uma sessão de revisão em `/review/:setId` sintetiza uma
-**mini-lição na hora** a partir dos itens do topo da sua fila.
-Estratégia mista a partir do **v1.35.0**:
+**mini-lição em voo** a partir das entradas no topo da tua fila.
+Estratégia mista desde a **v1.35.0**:
 
-- Se originalmente errou uma palavra num exercício de
-  **correspondência** ou **escolha de imagem**, vai refazer
-  esse exercício (com embaralhamento novo, para que não seja
-  pura memória muscular).
-- Se errou algo em **texto livre** ou **mosaicos de palavras**,
-  a revisão tenta gerar um **cloze** ("preencher o espaço")
-  que visa exatamente a palavra que errou. Mesmo conhecimento
-  numa forma diferente — a sua flexibilidade é exercitada,
-  não apenas a sua recordação de um formato específico de
-  exercício.
-- Se a geração de cloze não conseguir construir um espaço
-  limpo para esse item (ex.: o prompt de origem não tinha a
-  resposta em linha), a revisão silenciosamente recua para
-  repetir o original. Nunca vê um passo quebrado ou vazio.
+- Se falhaste uma palavra originalmente num exercício de
+  **correspondência** ou de **escolha de imagem**, fazes exatamente
+  esse exercício de novo (com baralhamento fresco — não apenas
+  memória muscular).
+- Se falhaste algo em **texto livre** ou **peças de palavras**, a
+  revisão tenta gerar um exercício de **texto com lacunas** que
+  visa exatamente a palavra falhada. O mesmo conhecimento noutra
+  forma — treina-se a flexibilidade, não apenas a repetição de um
+  formato de exercício específico.
+- Se não for possível construir um texto com lacunas limpo para um
+  elemento (p. ex. quando a pista original não continha a resposta
+  na frase), a revisão reproduz silenciosamente o exercício
+  original. Nunca recebes um passo partido ou vazio.
 
-Quando termina uma sessão de revisão, a mesma maquinaria de
-pontuação + classificação com estrelas + rastreamento de
-elementos corre. Domine 50 elementos através de revisões e
-ganha o emblema **Mestre de Revisão**.
+Quando concluis uma sessão de revisão, corre a mesma maquinaria de
+avaliação + estrelas + rastreio de elementos. Domina 50 elementos
+através de revisões e ganhas o badge **Mestre da revisão**.
 
-## Ronda de correção no final de cada lição
+## Ronda de correção no fim da lição
 
-Novidade no **v1.35.0**: quando termina uma lição que teve
-respostas erradas, a página de resumo mostra uma pequena
-**ronda de correção** entre a sua pontuação e o botão
-"Lição seguinte". Escolhe até cinco dos seus erros específicos
-desta lição e oferece cada um como um cloze novo direcionado
-à palavra ou artigo exato que errou.
+Novidade na **v1.35.0**: Quando concluis uma lição com erros, a
+página de resumo mostra uma pequena **ronda de correção** entre a
+tua pontuação e o botão "Próxima lição". Ela pega em até cinco erros
+concretos dessa lição e oferece cada um como um texto com lacunas
+fresco que visa exatamente a palavra / o artigo falhado.
 
-- **Pode saltar a qualquer momento.** O botão "Lição seguinte"
-  permanece visível durante todo o processo — a ronda de
-  correção é prática opt-in, não uma barreira.
-- **Só aparece quando há algo para corrigir.** Lições com
-  pontuação perfeita saltam-na inteiramente. Lições cujos
-  erros não podem ser transformados num cloze limpo (raro)
-  também saltam.
-- **Cada cloze concluído conta para o domínio.** A ronda de
-  correção escreve as mesmas linhas de rastreamento de
-  elementos que a lição principal; a sua sequência nesses
-  elementos específicos avança em direção ao limiar de domínio
-  de 3 acertos corretos.
+- **Pode saltar-se a qualquer momento.** O botão "Próxima lição"
+  permanece visível — a ronda de correção é exercício voluntário,
+  não um gate.
+- **Só aparece se houver algo a corrigir.** As lições com pontuação
+  perfeita saltam-na por completo. As lições cujos erros não se
+  podem transformar num texto com lacunas limpo (raro), também.
+- **Cada texto com lacunas concluído conta para o domínio.** A ronda
+  de correção escreve os mesmos registos de rastreio de elementos
+  que a lição principal; a tua sequência nesses elementos avança em
+  direção ao limiar de domínio de 3-corretos.
 
-Uma linha curta "{n} elementos melhorados" aparece no final da
-ronda, para que possa ver o impacto da sua prática extra.
+No final aparece uma breve linha "{n} elementos melhorados", para
+que vejas o efeito do teu exercício adicional.
 
-## Feedback de diferença visual
+## Feedback visual de diff
 
-Também novo no **v1.35.0**: as respostas erradas de texto livre
-e mosaicos de palavras mostram agora uma **diferença ao nível
-do token** entre o que escreveu e a resposta canónica. Três
-cores, nunca apenas por cor:
+Também novidade na **v1.35.0**: As respostas erradas de texto livre
+e de peças de palavras mostram agora um **diff ao nível do token**
+entre a tua entrada e a resposta canónica. Três cores, nunca apenas
+a cor sozinha:
 
-- **Tachado a vermelho** — o que escreveu que não pertence
-  (com um marcador × para leitores de ecrã e utilizadores
-  daltónicos).
-- **Verde** — o que o canónico inclui que faltou (com um
-  marcador +).
-- **Âmbar** com uma seta → — uma palavra que errou ligeiramente,
-  mostrada como `o-que-escreveu` → `esperado`.
+- **Vermelho riscado** — o que escreveste e que não pertencia (com
+  um marcador × para leitores de ecrã e utilizadores daltónicos).
+- **Verde** — o que a resposta canónica contém e que omitiste (com
+  um marcador +).
+- **Amarelo** com seta → — uma palavra ligeiramente errada,
+  representada como `tua-palavra` → `esperada`.
 
-A mesma diferença aparece nas linhas de análise por exercício
-do resumo da lição para qualquer tentativa de texto livre ou
-mosaicos de palavras que o armazenamento v1.35.0+ tem a
-resposta do utilizador.
+O mesmo diff aparece no resumo da lição no detalhamento de cada
+exercício — para cada resposta de texto livre ou de peças de
+palavras cuja entrada do utilizador o armazenamento v1.35.0+ conheça.
 
 ---
 
-## XP e emblemas
+## XP e badges
 
-Cada lição concluída ganha XP sob uma fórmula por estrela:
+Cada lição concluída ganha XP segundo uma fórmula de estrelas:
 
-- **30 XP** base
-- **+10 XP por estrela** ganha (0 → 0, 1 → +10, 2 → +20, 3 → +30)
-- **+20 XP bónus** se ganhar 3 estrelas na primeira tentativa
+- **30 XP** de base
+- **+10 XP por estrela** alcançada (0 → 0, 1 → +10, 2 → +20,
+  3 → +30)
+- **+20 XP de bónus** se alcançares 3 estrelas à primeira tentativa
   (cada passo com tentativas = 1, sem repetições)
-- O mesmo **multiplicador de sequência diária** que as sessões
-  de chat (+25 % por dia consecutivo de atividade, limitado a
-  7 dias)
+- O mesmo **multiplicador de sequência diária** que nas sessões de
+  chat (+25 % por dia consecutivo, com limite aos 7 dias)
 
-Quatro novos emblemas desbloqueiam em torno das lições:
+Quatro novos badges desbloqueiam-se em torno das lições:
 
-- **Primeira Lição** — complete a sua primeira lição de conteúdo.
-- **10 Lições Concluídas** — complete 10 lições de conteúdo.
-- **Sequência de 3 Estrelas** — ganhe 3 estrelas em três lições
-  seguidas.
-- **Mestre de Revisão** — domine 50 elementos através da
-  repetição espaçada.
+- **Primeira lição** — conclui a tua primeira lição de conteúdo.
+- **10 lições concluídas** — conclui 10 lições de conteúdo.
+- **Sequência de 3 estrelas** — alcança três lições seguidas com 3
+  estrelas.
+- **Mestre da revisão** — domina 50 elementos por repetição
+  espaçada.
 
-As conclusões de lições também contam para a sua **sequência
-diária**, por isso estudar com lições de conteúdo preenche o
-mapa de calor da mesma forma que as sessões de chat.
+As conclusões de lições também contam para a tua **sequência
+diária**, de forma que aprender com lições de conteúdo preenche o
+heatmap da mesma maneira que as sessões de chat.
 
 ---
 
 ## Modos de armazenamento
 
-As lições funcionam em **ambos** os modos de armazenamento —
-API (backend) e Dexie (apenas navegador / GitHub Pages). O
-rastreamento de erros ao nível de elemento e o agendamento SRS
-correm de forma idêntica contra o IndexedDB na implementação
-apenas para navegador, por isso os utilizadores que visitam
-o site público GitHub Pages obtêm o loop de revisão completo
-sem um backend.
+As lições funcionam em **ambos** os modos de armazenamento — API
+(backend) e Dexie (apenas browser / GitHub Pages). O rastreio de
+erros ao nível do elemento e o agendamento SRS correm de forma
+idêntica contra o IndexedDB no modo apenas browser, de forma que os
+utilizadores que visitam a página pública do GitHub Pages obtêm o
+ciclo completo de revisão sem backend.
 
-O que é *diferente* no modo apenas para navegador: os efeitos
-colaterais de atribuição de XP / ganho de emblemas apenas
-disparam no modo API (precisam dos hooks de gamificação do
-backend). No modo Dexie ainda ganha XP e emblemas via o
-caminho da sessão de chat; a conclusão da lição simplesmente
-ainda não adiciona a esse total.
+Desde a **v1.33.0** também a gamificação está alinhada: no modo
+apenas browser ganhas pelas lições concluídas os **mesmos XP e
+badges de lição** que no modo servidor — a lógica de estrelas,
+Streak e badges está portada para TypeScript e protegida contra
+valores-ouro idênticos. Já não existe nenhuma diferença de
+funcionalidade entre os modos na conclusão de lições.
 
 ---
 
 ## Privacidade
 
-Todo o progresso da lição, linhas de erro de elemento, estado
-da fila de revisão e dados de agendamento ficam **no seu
-próprio dispositivo** no modo API (sistema de ficheiros) ou
-navegador (IndexedDB). Nada sobre quais palavras tem
-dificuldades é enviado a lado nenhum.
+Todo o progresso das lições, as linhas de erros de elementos, os
+estados da fila de revisão e os dados de agendamento permanecem **no
+teu próprio dispositivo** — no sistema de ficheiros (modo API) ou no
+browser (IndexedDB). Nada sobre as palavras com que lutas é enviado
+para qualquer lado.

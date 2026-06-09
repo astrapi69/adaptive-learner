@@ -804,3 +804,11 @@ ermutigende Vorschläge für das nächste CEFR-Niveau eines
 bestehenden Paars oder eine Zielsprache, die für eine
 Ausgangssprache existiert, für eine andere aber fehlt ("Kannst du
 helfen?").
+
+---
+
+## Verwandte Seiten
+
+- [Lektionen erstellen — Überblick](../content-creation/overview.md) — Einstieg + Lektions-Creator in der App
+- [Buchempfehlungen](../content-creation/books.md) — `books.yaml` pro Domäne pflegen
+- [Mehrere Content-Repositories](../features/content-repos.md) — eigenes Repo verbinden

@@ -1,128 +1,116 @@
-<!-- Translation: AI-generated, pending native review -->
+# Criar conteúdos de lições
 
-# Criar conteúdo de lições
+Este guia descreve passo a passo como configurar um novo conjunto de
+lições para o content-loader do Adaptive Learner. Quem quiser
+construir um conjunto de idiomas ou de tema — para uso próprio ou
+como contribuição para o pool público de conteúdo — deve lê-lo uma
+vez por completo antes da primeira lição.
 
-Este guia explica como criar um novo conjunto de lições para o
-content-loader do Adaptive Learner. Qualquer pessoa que queira
-publicar um conjunto de idioma ou tema — para uso pessoal ou
-como contribuição para o repositório público de conteúdo —
-deve ler isto do início ao fim antes de escrever qualquer
-lição.
+## O que é um conjunto de conteúdo?
 
-## O que é um conjunto de conteúdo
+Um **conjunto de conteúdo** é um pacote versionado de lições que um
+utilizador pode descarregar através da página do navegador de
+conjuntos (`/content`). O plugin content-loader (v1.27.0) trata da
+descoberta, do download, do caching e da reconciliação de versões em
+ambos os modos de armazenamento.
 
-Um **conjunto de conteúdo** é um pacote versionado de lições
-que um utilizador pode descarregar na página do Navegador de
-Conjuntos (`/content`). O plugin Content-Loader (lançado em
-v1.27.0) trata da descoberta, descarga, cache e reconciliação
-de versões em ambos os modos de armazenamento.
+Um conjunto tem três níveis:
 
-Um conjunto tem três camadas:
-
-1. **Manifesto raiz** (`manifest.yaml`) — lista todos os
-   conjuntos enviados pelo repositório. Usado pelo Navegador
-   de Conjuntos para apresentar o catálogo de fontes.
+1. **Manifesto raiz** (`manifest.yaml`) — lista cada conjunto do
+   repo. É lido pelo navegador de conjuntos para o catálogo de
+   origem.
 2. **Manifesto do conjunto** (`sets/{set-id}/manifest.yaml`) —
-   companheiro do manifesto raiz, lista os ficheiros de lições
-   dentro deste conjunto específico.
-3. **Ficheiros de lições** (`sets/{set-id}/lessons/NN-slug.json`) —
-   um ficheiro JSON por lição, validado contra o esquema v1.0
-   em cada descarga.
+   irmão do manifesto raiz, lista os ficheiros de lição do conjunto
+   concreto.
+3. **Ficheiros de lição** (`sets/{set-id}/lessons/NN-slug.json`) —
+   um ficheiro JSON por lição, validado contra o esquema v1.0 em
+   cada download.
 
-Os conjuntos-piloto fornecidos com o Adaptive Learner vivem
-no repositório de conteúdo separado
-[`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
-(clonado como um sibling `../adaptive-learner-content` e
-integrado na compilação por
-`frontend/scripts/copy-bundled-content.mjs`) e são bons
-modelos a copiar.
+Os conjuntos piloto fornecidos com o Adaptive Learner ficam no repo
+de conteúdo separado [`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
+(checkout como irmão `../adaptive-learner-content` e empacotado pela
+build através de `frontend/scripts/copy-bundled-content.mjs`) e
+servem bem como modelo.
 
 ## Pares de idiomas (v1.44.0)
 
-Cada conjunto de conteúdo declara o PAR de idiomas que
-ensina:
+Cada conjunto de conteúdo declara o PAR de idiomas que ensina:
 
-- **`target_language`** — o que o aprendente está a
-  APRENDER (por exemplo, `fr`).
-- **`source_language`** — o que o aprendente JÁ FALA, ou
-  seja, o idioma em que os campos **`back`** das fichas,
-  **`notes`** e texto de **teoria** são escritos
-  (por exemplo, `de`).
+- **`target_language`** — o que o aprendiz APRENDE (p. ex. `fr`).
+- **`source_language`** — o que o aprendiz já FALA, ou seja, o
+  idioma em que os campos **`back`** dos cartões, as **`notes`** e o
+  texto de **teoria** estão escritos (p. ex. `de`).
 
-É por isso que "Francês para falantes de inglês" é um
-conjunto *diferente* de "Francês para falantes de alemão":
-mesmo alvo (`fr`), fonte diferente (`en` vs `de`), idioma
-de explicação diferente. Um aprendente só vê conjuntos cujo
-`source_language` corresponde a um idioma que fala (o seu
-idioma da aplicação, mais quaisquer extras aceites em
-Definições → Aprendizagem).
+É justamente isto que torna "Francês para falantes de inglês" num
+conjunto *diferente* de "Francês para falantes de alemão": mesmo
+destino (`fr`), idioma de origem diferente (`en` vs. `de`), idioma
+de explicação diferente. Um aprendiz só vê conjuntos cujo
+`source_language` corresponda a um idioma que fala (idioma da
+aplicação mais idiomas adicionais opcionais em Definições →
+Aprendizagem).
 
-Os ids dos conjuntos codificam o par como
-`{target}-{level}-from-{source}` (por exemplo,
-`fr-a1-from-de`), e cada conjunto declara um **`path`** que
-aponta para o diretório do idioma de origem
-(`sets/de/fr-a1`). Um conjunto também transporta **`title`**
-(no idioma de origem, o que o aprendente lê) e
-**`title_native`** (no idioma alvo, apresentado como rótulo
+Os IDs de conjunto codificam o par como `{destino}-{nível}-from-{origem}`
+(p. ex. `fr-a1-from-de`), e cada conjunto declara um **`path`**
+que aponta para o seu diretório de idioma de origem (`sets/de/fr-a1`).
+Um conjunto traz ainda **`title`** (no idioma de origem, o que o
+aprendiz lê) e **`title_native`** (no idioma de destino, como título
 secundário).
 
-Ambos os códigos devem ser ISO 639-1 de 2 letras, e
-`source_language` deve ser diferente de `target_language`.
-Conjuntos anteriores a v1.2 sem estes campos ainda carregam:
-a chave antiga `language` é aceite como `target_language` e
-`source_language` assume o padrão `en`.
+Ambos os códigos têm de ser ISO-639-1 (duas letras), e
+`source_language` tem de ser diferente de `target_language`. Os
+conjuntos anteriores à v1.2 sem estes campos continuam a carregar: a
+antiga chave `language` é aceite como `target_language`, e
+`source_language` recai em `en`.
 
-## Estrutura do sistema de ficheiros
+## Layout de diretórios
 
-A árvore está organizada por idioma de ORIGEM, depois
-alvo+nível:
+A árvore está organizada por IDIOMA DE ORIGEM, depois destino+nível:
 
 ```
-my-content-repo/
-  manifest.yaml               # raiz: lista todos os conjuntos (com path + par)
+meu-content-repo/
+  manifest.yaml               # Raiz: lista cada conjunto (com path + par)
   sets/
-    de/                       # idioma de origem: alemão
-      fr-a1/                  # alvo francês, nível A1  -> id fr-a1-from-de
-        manifest.yaml         # conjunto: lista as lições
+    de/                       # Idioma de origem: Alemão
+      fr-a1/                  # Destino Francês, nível A1  -> ID fr-a1-from-de
+        manifest.yaml         # Conjunto: lista as lições
         lessons/
           01-begruessung.json
           ...
         assets/               # imagens / áudio opcionais
-    en/                       # idioma de origem: inglês
-      fr-a1/                  # -> id fr-a1-from-en
+    en/                       # Idioma de origem: Inglês
+      fr-a1/                  # -> ID fr-a1-from-en
         ...
 ```
 
 ## Formato do manifesto
 
-Ambos os ficheiros de manifesto (raiz + conjunto) utilizam a
-mesma forma `schema_version: '1.0'`. Campos obrigatórios:
+Ambos os ficheiros de manifesto (raiz + conjunto) usam a mesma forma
+com `schema_version: '1.0'`. Campos obrigatórios:
 
 ```yaml
 schema_version: '1.0'
-name: My English B1 set
+name: Mein Englisch-B1-Set
 description: >-
-  Optional long-form description.
+  Optionale Langbeschreibung.
 sets:
-  - id: language-en-b1        # seguro para slug, único
-    title: English B1 (Intermediate)
-    language: en              # BCP-47 (por exemplo en, fr, zh-Hans)
-    level: B1                 # CEFR para idiomas, livre noutros casos
-    version: '1.0.0'          # semver — incrementado por versão do conjunto
+  - id: language-en-b1        # slug-sicher, eindeutig
+    title: Englisch B1 (Fortgeschrittene)
+    language: en              # BCP-47 (z.B. en, fr, zh-Hans)
+    level: B1                 # CEFR für Sprachen, frei für andere Domänen
+    version: '1.0.0'          # Semver — pro Set-Release erhöht
     lesson_count: 12
     domain: language          # 'language' / 'math' / 'programming' / ...
     description: >-
-      Optional set-level description.
+      Optionale Set-Beschreibung.
     tags:
       - intermediate
       - business
 metadata:
-  author: Your Name
-  license: CC-BY-SA-4.0       # ou o que for apropriado
+  author: Dein Name
+  license: CC-BY-SA-4.0       # oder die Lizenz deiner Wahl
 ```
 
-O manifesto do conjunto lista adicionalmente todos os
-ficheiros de lições:
+O manifesto do conjunto lista adicionalmente cada ficheiro de lição:
 
 ```yaml
 metadata:
@@ -132,60 +120,77 @@ metadata:
     - ...
 ```
 
-O Content-Loader percorre `metadata.lessons` por ordem;
-a ordem dos ficheiros no diretório não importa, apenas a
-ordem no manifesto.
+O content-loader itera `metadata.lessons` pela ordem dada; os nomes
+dos ficheiros no disco são irrelevantes — só conta a ordem do
+manifesto.
 
-## Esquema de lições (v1.0)
+## Esquema de lição (v1.0)
 
-Cada lição é um único ficheiro JSON. Forma de nível superior:
+Cada lição é um único ficheiro JSON. Estrutura de topo:
 
 ```json
 {
   "id": "01-greetings",
-  "title": "Greetings",
-  "description": "Optional 1-2 sentence summary.",
+  "title": "Begrüßungen",
+  "description": "Optionale 1-2-Satz-Zusammenfassung.",
   "estimated_minutes": 12,
   "cards": [ ... ],
   "steps": [ ... ]
 }
 ```
 
-### Fichas
+### Cards
 
-Uma ficha é a menor unidade de aprendizagem — tipicamente
-um único termo ou conceito. Cada ficha tem um id estável
-(referenciado nos exercícios) e um par frente/verso:
+Um Card é a menor unidade aprendível — tipicamente um único termo ou
+conceito. Cada Card tem um id estável (referenciado a partir dos
+exercícios) e um par front/back:
 
 ```json
 {
   "id": "art-le",
   "front": "le",
-  "back": "the (masculine singular)",
-  "notes": "Used before consonant-starting masculine nouns. **le chat**, **le livre**.",
+  "back": "der (männlich Singular)",
+  "notes": "Vor konsonantenanfangenden männlichen Substantiven. **le chat**, **le livre**.",
   "tags": ["article", "definite"]
 }
 ```
 
-As notas suportam Markdown. Use-as para dicas de
-pronúncia, avisos de falsos amigos, alertas de formas
-irregulares — tudo o que ajuda a retenção a longo prazo.
-As etiquetas gerem a filtragem do SRS.
+`notes` aceita Markdown. Usa-as para regras de pronúncia, avisos de
+falsos amigos, notas de exceção — tudo o que melhore a memorização a
+longo prazo. As `tags` controlam o filtro do SRS.
 
-### Passos
+### Steps
 
-Uma lição é uma sequência de passos, cada um sendo TEORIA
-(um bloco Markdown) ou EXERCÍCIO (um dos quatro tipos de
-exercício):
+Uma lição é uma sequência passo a passo, cada passo ou THEORY (um
+bloco Markdown) ou EXERCISE (um dos quatro tipos de exercício):
 
 ```json
 {
   "id": "intro",
   "type": "theory",
-  "title": "Why articles matter",
-  "body": "# Articles in French\n\nEvery French noun has a gender..."
+  "title": "Warum Artikel wichtig sind",
+  "body": "# Artikel im Französischen\n\nJedes französische Nomen hat ein Geschlecht..."
 }
 ```
+
+Um passo de teoria pode trazer opcionalmente um **link de exemplo**
+(esquema v1.4, aditivo — as lições existentes permanecem válidas sem
+ele). Se presente, o visualizador renderiza por baixo um botão para
+abrir o exemplo:
+
+```json
+{
+  "id": "intro",
+  "type": "theory",
+  "body": "Die Korrelation misst den Zusammenhang...",
+  "example_url": "https://example.com/correlation-visualizer",
+  "example_label": "Interaktive Visualisierung"
+}
+```
+
+- `example_url` (opcional): tem de ser um URL `http(s)`.
+- `example_label` (opcional): o texto do link; vazio torna-se um
+  "Ver exemplo" localizado.
 
 Ou um exercício:
 
@@ -193,32 +198,32 @@ Ou um exercício:
 {
   "id": "ex-match-greetings",
   "type": "exercise",
-  "title": "Match greetings",
+  "title": "Begrüßungen zuordnen",
   "exercise": {
     "id": "ex-match-greetings",
     "type": "matching",
-    "prompt": "Match each greeting to its translation.",
+    "prompt": "Ordne jede Begrüßung ihrer Übersetzung zu.",
     "card_ids": ["bonjour", "salut"],
     "pairs": [
-      {"left": "Bonjour", "right": "Hello"},
+      {"left": "Bonjour", "right": "Hallo"},
       {"left": "Salut", "right": "Hi"}
     ]
   }
 }
 ```
 
-## Referência de tipos de exercício
+## Referência dos tipos de exercício
 
 ### matching
 
-Exercício de arrastar e combinar. O renderer baralha antes
-de apresentar.
+Exercício de arrastar pares. O renderizador baralha antes da
+apresentação.
 
 ```json
 {
   "id": "ex-id",
   "type": "matching",
-  "prompt": "Match each French noun with its article.",
+  "prompt": "Ordne jedem französischen Nomen seinen Artikel zu.",
   "card_ids": ["noun-1", "noun-2"],
   "pairs": [
     {"left": "chat", "right": "le"},
@@ -227,73 +232,73 @@ de apresentar.
 }
 ```
 
-Cada par deve ter exatamente duas chaves: `left` + `right`.
+Cada Pair tem de ter exatamente duas chaves: `left` + `right`.
 
 ### picture_choice
 
-Escolha múltipla com imagens. ≥ 2 imagens, exatamente uma
-marcada como correta.
+Escolha múltipla com imagens. ≥ 2 imagens, exatamente uma marcada
+como correta.
 
 ```json
 {
   "id": "ex-id",
   "type": "picture_choice",
-  "prompt": "Which is the evening greeting?",
+  "prompt": "Welche Begrüßung passt zum Abend?",
   "card_ids": ["card-1"],
   "images": [
     {"src": "assets/img/morning.png", "label": "Bonjour"},
     {"src": "assets/img/evening.png", "label": "Bonsoir", "is_correct": "true"}
   ],
-  "hint": "Optional Markdown hint shown on demand.",
+  "hint": "Optionaler Markdown-Tipp auf Knopfdruck.",
   "distractors": ["Bonjour"]
 }
 ```
 
-Nota: `is_correct` é uma **string** `"true"`, não um booleano
+Importante: `is_correct` é uma **string** `"true"`, não um booleano
 JSON.
 
-Se `src` apontar para um recurso que não existe, o renderer
-volta ao texto `label` — os exercícios picture-choice
-continuam a funcionar mesmo sem imagens ilustrativas.
+Se o caminho `src` aponta para um ficheiro inexistente, o
+renderizador recai no `label` — portanto o picture_choice funciona
+também sem assets de ilustração.
 
 ### free_text
 
-Escrever a resposta. O renderer faz primeiro correspondência
-exata, depois um fallback tolerante a erros por Levenshtein.
+Escrever a resposta. O renderizador faz primeiro correspondência
+exata, depois tolerante a Levenshtein.
 
 ```json
 {
   "id": "ex-id",
   "type": "free_text",
-  "prompt": "How do you say 'Thank you' in French?",
+  "prompt": "Wie sagt man 'Danke' auf Französisch?",
   "card_ids": ["card-merci"],
   "accept": ["Merci", "merci", "MERCI"],
-  "hint": "It starts with M.",
+  "hint": "Beginnt mit M.",
   "distractors": ["Bonjour", "Salut"]
 }
 ```
 
-`accept[0]` é a resposta canónica mostrada após uma tentativa
-errada. Inclua ≥ 3 variantes para cobrir maiúsculas e
-pontuação; o renderer normaliza os espaços.
+`accept[0]` é a resposta canónica, mostrada numa tentativa errada.
+Lista ≥ 3 variantes para cobrir maiúsculas/minúsculas + pontuação; o
+espaço em branco é normalizado pelo renderizador.
 
 ### word_tiles
 
-Arranjar tiles em ordem. O renderer baralha antes de
-apresentar.
+Pôr peças na ordem correta. O renderizador baralha antes da
+apresentação.
 
 ```json
 {
   "id": "ex-id",
   "type": "word_tiles",
-  "prompt": "Arrange: I see a cat.",
+  "prompt": "Bring die Kacheln in die Reihenfolge: Ich sehe eine Katze.",
   "card_ids": ["card-1"],
   "tiles": ["Je", "vois", "un", "chat"],
-  "hint": "Same word order as English."
+  "hint": "Gleiche Wortreihenfolge wie im Deutschen."
 }
 ```
 
-Se múltiplas ordens de palavras estiverem corretas, adicione
+Se várias ordens de palavras forem corretas, acrescenta
 `accept_orderings`:
 
 ```json
@@ -306,66 +311,63 @@ Se múltiplas ordens de palavras estiverem corretas, adicione
 }
 ```
 
-Cada ordenação é uma permutação dos índices dos tiles.
+Cada ordem é uma permutação dos índices das peças.
 
-### cloze (Phase 52 / v1.35.0 — esquema 1.1)
+### cloze (Fase 52 / v1.35.0 — Esquema 1.1)
 
-Preencher os espaços em branco com marcadores `___` visíveis
-na frase. Cada `___` corresponde a uma entrada em `blanks[]`
-(mapeamento da esquerda para a direita; o carregador impõe
-`sentence.count("___") == len(blanks)`).
+Texto com lacunas com marcadores `___` visíveis na frase. Cada
+`___` corresponde a uma entrada em `blanks[]` (mapeamento da
+esquerda para a direita; o loader verifica `sentence.count("___") ==
+len(blanks)`).
 
 ```json
 {
   "id": "ex-id",
   "type": "cloze",
-  "prompt": "Fill in the indefinite article.",
+  "prompt": "Setze den unbestimmten Artikel ein.",
   "card_ids": ["art-un", "noun-chat"],
   "sentence": "Je vois ___ chat dans le jardin.",
   "blanks": [
     {
       "accept": ["un"],
-      "hint": "masculine indefinite article",
+      "hint": "männlicher unbestimmter Artikel",
       "placeholder": "?"
     }
   ],
   "cloze_mode": "type",
   "distractors": ["le", "la", "les"],
-  "hint": "*un* is the masculine indefinite article."
+  "hint": "*un* ist der männliche unbestimmte Artikel."
 }
 ```
 
-**Modos de renderização** — definidos por exercício via
-`cloze_mode`:
+**Modos de renderização** — definidos por exercício via `cloze_mode`:
 
-- `"type"` (padrão quando omitido): um `<input>` por espaço.
-  Validado com o mesmo matcher NFC + Levenshtein-≤-1 que
-  free_text usa, pelo que os autores só precisam de enumerar
-  variantes semânticas (não erros tipográficos).
-- `"select"`: um `<select>` por espaço. Opções retiradas de
-  `accept[0]` + os `distractors` do exercício, baralhados por
-  espaço com uma semente estável. **Requer `distractors`
-  não vazio** — o validador de esquema rejeita exercícios
-  `cloze_mode: "select"` sem eles.
+- `"type"` (padrão, se não definido): um `<input>` por lacuna.
+  Valida com o mesmo matcher NFC + Levenshtein-≤-1 que o texto
+  livre, de forma que os autores só precisam de listar variantes
+  semânticas (sem erros de digitação).
+- `"select"`: um `<select>` por lacuna. As opções vêm de
+  `accept[0]` + `distractors` do exercício, baralhadas por lacuna com
+  uma seed estável. **Requer `distractors` não vazios** — o
+  validador de esquema rejeita `cloze_mode: "select"` sem eles.
 
-**Cloze multi-espaço** é suportado: cada `___` na frase
-mapeia para a próxima entrada em `blanks`, por ordem. Cada
-espaço pode ter a sua própria dica + placeholder + lista
-accept. O SRS ao nível de elemento propaga um ElementAttempt
-por espaço, pelo que um aprendente que preenche fluentemente
-o espaço A mas falha consistentemente o espaço B obtém
-rastreamento de domínio por espaço.
+**Várias lacunas por cloze** são suportadas: cada `___` na frase é
+mapeado por ordem para a entrada seguinte em `blanks`. Cada lacuna
+pode ter o próprio hint + placeholder + lista accept. O SRS de
+elementos desdobra um ElementAttempt por lacuna — quem preenche a
+lacuna A com fluência, mas falha constantemente a lacuna B, obtém um
+rastreio de domínio granular por lacuna.
 
-**Token-roles nas fichas (Phase 52I / v1.35.0)** — metadados
-opcionais na Ficha que permitem ao gerador de cloze em tempo
-de execução (sessões de revisão + ronda de correção no final
-da lição) escolher um espaço semanticamente significativo:
+**Papéis de tokens nos Cards (Fase 52I / v1.35.0)** — metadados
+opcionais de Card com os quais o gerador de cloze pode escolher em
+tempo de execução (sessões de revisão + a ronda de correção no fim
+da lição) uma lacuna semanticamente significativa:
 
 ```json
 {
   "id": "art-un",
   "front": "un chat",
-  "back": "a cat",
+  "back": "eine Katze",
   "tags": ["article"],
   "token_roles": [
     {"token": "un", "role": "article"}
@@ -373,22 +375,22 @@ da lição) escolher um espaço semanticamente significativo:
 }
 ```
 
-Enum fechado de papéis: `article` / `verb` / `noun` /
-`adjective` / `preposition` / `gender_marker` /
-`tense_marker`. Adicionar um papel é um incremento menor de
-schema_version — não estenda no lugar.
+Enum fechada de papéis: `article` / `verb` / `noun` /
+`adjective` / `preposition` / `gender_marker` / `tense_marker`.
+Adicionar um papel é um bump de versão menor do esquema —
+não estender inline.
 
-## Direção dos exercícios (v1.46.0 / EXP-018)
+## Direção do exercício (v1.46.0 / EXP-018)
 
-Cada exercício aceita um campo opcional `direction` que indica
-de que forma o aprendente pratica a ficha:
+Cada exercício aceita um campo opcional `direction`, que indica em
+que direção os aprendizes praticam o cartão:
 
-- `target_to_source` (padrão) — RECETIVO: o aprendente vê o
-  idioma alvo e reconhece o idioma de origem (mais fácil).
-- `source_to_target` — PRODUTIVO: o aprendente vê o idioma
-  de origem e produz o alvo (mais difícil).
-- `both` / `random` — deixar o renderer / gerador adaptativo
-  escolher uma direção concreta por tentativa.
+- `target_to_source` (padrão) — RECETIVO: o idioma de destino é
+  mostrado, o idioma de origem é reconhecido (mais fácil).
+- `source_to_target` — PRODUTIVO: o idioma de origem é mostrado, o
+  idioma de destino é produzido (mais difícil).
+- `both` / `random` — deixa ao renderizador / gerador adaptativo a
+  escolha de uma direção concreta por tentativa.
 
 ```json
 {
@@ -399,85 +401,75 @@ de que forma o aprendente pratica a ficha:
 }
 ```
 
-O campo é aditivo — o esquema permanece na versão 1.2 e
-lições sem `direction` comportam-se exatamente como antes
-(recetivo). O SRS rastreia o domínio por direção, pelo que
-uma ficha dominada recetivamente ainda não está dominada
-produtivamente. Os exercícios cloze são em contexto e
-ignoram `direction`. Para uma progressão de dificuldade,
-mantenha as primeiras lições recetivas e introduza
-`source_to_target` nas lições mais avançadas (o conteúdo
-piloto integrado faz exatamente isto).
+O campo é aditivo — o esquema permanece na versão 1.2, e as lições
+sem `direction` comportam-se exatamente como antes (recetivo). O SRS
+rastreia o domínio por direção: um cartão dominado recetivamente
+ainda não está dominado produtivamente. Os exercícios cloze são
+ligados ao contexto e ignoram `direction`. Para uma progressão de
+dificuldade, mantém-se as primeiras lições recetivas e introduz-se
+`source_to_target` em lições posteriores (é exatamente o que faz o
+conteúdo piloto empacotado).
 
-### Anotações que ajudam o gerador de lições adaptativo (v1.36.0+)
+### Anotações para o gerador de lições adaptativas (v1.36.0+)
 
-O gerador de lições adaptativo da Phase 53
-(`/adaptive-lesson/:setId`, F-114) recombina exercícios
-criados pelo autor para praticar as fraquezas específicas
-do aprendente. O gerador funciona sem anotações extra, mas
-dois campos tornam-no materialmente mais inteligente:
+O gerador de lições adaptativas da Fase 53
+(`/adaptive-lesson/:setId`, F-114) recombina os exercícios
+existentes para abordar de forma dirigida as fraquezas específicas
+dos aprendizes. O gerador funciona sem anotações adicionais, mas dois
+campos tornam-no bastante mais inteligente:
 
-1. **Cobertura mais ampla de `token_roles` nas fichas.** O
-   gerador usa `token_roles` para:
-   - Escolher espaços semanticamente significativos ao
-     gerar variantes cloze a partir de erros (já coberto
-     em v1.35.0)
-   - Classificar erros como `article_gender` /
-     `verb_conjugation` para os chips "Áreas de foco" do
-     Dashboard (53E)
-   - Encontrar exercícios ALTERNATIVOS que testam o mesmo
-     elemento quando o utilizador errou o original (lógica
-     de variação 53D — encontra candidatos cuja ficha tem
-     uma entrada `token_roles` correspondente)
+1. **Cobertura mais ampla de `token_roles` nos cartões.** O gerador
+   usa `token_roles` para:
+   - Escolher lacunas semanticamente sensatas quando gera variantes
+     cloze a partir de erros (já na v1.35.0)
+   - Classificar erros como `article_gender` / `verb_conjugation`
+     para os chips de "foco de exercício" no Dashboard (53E)
+   - Encontrar exercícios ALTERNATIVOS que testam o mesmo elemento
+     quando o exercício original esteve errado (lógica de variações
+     53D — encontra candidatos cujo cartão tenha uma entrada
+     `token_roles` adequada)
 
-   Adicione uma entrada `token_roles` a CADA ficha que
-   ensina uma unidade gramatical discreta — artigos, formas
-   verbais conjugadas, substantivos com género. O custo é
-   uma entrada JSON extra por ficha; a recompensa é uma
-   geração adaptativa muito mais rica.
+   Adiciona a CADA cartão que ensina uma unidade gramatical própria
+   (artigo, formas verbais conjugadas, substantivos com género) uma
+   entrada `token_roles`. Custo: uma entrada JSON adicional por
+   cartão; benefício: uma geração adaptativa bastante mais rica.
 
-2. **Etiquetas de gramática ao nível da ficha
-   (`tags: ["article", "masculine"]`, etc.)** são lidas pelo
-   classificador de erros como fallback quando `token_roles`
-   está ausente. Não substituem `token_roles` — são uma
-   anotação intermédia de baixo esforço.
+2. **Tags de cartão como `tags: ["article", "masculine"]`** são
+   lidas pelo classificador de erros como fallback quando faltam
+   `token_roles`. Não substituem `token_roles` — são uma anotação a
+   meio caminho de baixo custo.
 
-O que ainda NÃO é necessário (adiado para um futuro
-incremento de esquema):
+O que ainda NÃO precisamos (adiado para um futuro bump de esquema):
 
-- Referências cruzadas `related_cards` entre fichas de
-  diferentes lições
-- Classificações de dificuldade por exercício (o gerador
-  estima a dificuldade a partir de `exercise.type` hoje)
-- Frases de exemplo por ficha em `notes` analisáveis como
-  contextos alternativos de cloze (o gerador de cloze usa
-  apenas `front`)
+- Referências cruzadas `related_cards` entre cartões de lições
+  diferentes
+- Classificações de dificuldade por exercício (o gerador estima
+  atualmente a dificuldade a partir de `exercise.type`)
+- Frases de exemplo por cartão em `notes`, parseáveis como
+  contextos cloze alternativos (o gerador de cloze usa exclusivamente
+  `front`)
 
-Em caso de dúvida: adicione `token_roles` a cada ficha que
-ensina um token gramatical. Esse é o hábito de autoria de
-maior impacto para o sistema adaptativo.
+Regra prática: adiciona `token_roles` a cada cartão que ensina um
+token gramatical. É de longe o hábito de autoria mais impactante
+para o sistema adaptativo.
 
-## Recursos (imagens integradas num conjunto) — v1.37.0+
+## Assets (imagens que um conjunto traz) — v1.37.0+
 
-Exercícios picture-choice e imagens de capa das fichas
-provêm de:
-1. **Ficheiros de recursos criados pelo autor**, declarados
-   no manifesto ao nível do conjunto e enviados juntamente
-   com o JSON da lição
-2. **SVGs placeholder**, gerados em tempo de execução quando
-   não existe nenhum recurso (amostras de cor para rótulos
-   de cor, numerais grandes para dígitos, avatar-estilo para
-   tudo o resto)
+Os exercícios de picture-choice e as imagens de capa de cartão vêm
+de duas fontes:
+1. **Ficheiros de asset de autor**, declarados no manifesto do
+   conjunto e fornecidos ao lado do JSON da lição
+2. **SVGs de placeholder**, gerados em tempo de execução quando não
+   existe asset (cartões de cor para palavras de cores, dígitos
+   grandes para números, estilo avatar para tudo o resto)
 
-Se publicar um conjunto sem quaisquer recursos, picture-choice
-ainda funciona — o gerador de SVG placeholder trata as cores
-+ números automaticamente, e volta a um avatar determinístico
-para tudo o resto.
+Se publicas um conjunto sem assets, o picture-choice funciona na
+mesma — o gerador de SVG de placeholder cobre cores + números
+automaticamente e recai para tudo o resto num avatar determinístico.
 
-### Estrutura do diretório
+### Layout de diretórios
 
-Dentro do diretório de um conjunto, os recursos ficam em
-`assets/`:
+Dentro do diretório do conjunto, os assets ficam sob `assets/`:
 
 ```
 sets/
@@ -496,8 +488,8 @@ sets/
 
 ### Declaração no manifesto
 
-Cada recurso deve ser declarado no `manifest.yaml` ao nível
-do conjunto para que o descarregador saiba o que buscar:
+Cada asset tem de ser declarado no manifesto do conjunto, para que o
+downloader saiba o que ir buscar:
 
 ```yaml
 sets:
@@ -514,131 +506,118 @@ sets:
         size_kb: 38
 ```
 
-O `path` é relativo ao diretório `assets/` do conjunto (NÃO
-ao JSON da lição). Dentro do JSON da lição, os exercícios
-picture-choice referenciam os recursos COM o prefixo
-`assets/`:
+O `path` é relativo ao diretório `assets/` do conjunto (NÃO ao JSON
+da lição). No JSON da lição, os exercícios de picture-choice
+referenciam os assets COM o prefixo `assets/`:
 
 ```json
 {
   "type": "picture_choice",
-  "prompt": "Which one is 'chat'?",
+  "prompt": "Welches ist 'chat'?",
   "images": [
-    {"src": "assets/img/chat.png", "label": "Cat", "is_correct": "true"},
-    {"src": "assets/img/chien.png", "label": "Dog"}
+    {"src": "assets/img/chat.png", "label": "Katze", "is_correct": "true"},
+    {"src": "assets/img/chien.png", "label": "Hund"}
   ]
 }
 ```
 
-O frontend remove o prefixo `assets/` automaticamente ao
-chamar o resolvedor de recursos, pelo que o JSON da lição
-mantém a forma intuitiva que os autores esperam.
+O frontend remove o prefixo `assets/` automaticamente ao invocar o
+resolver de assets, de forma que o JSON da lição permanece na forma
+intuitiva para autores.
 
 ### Limites de tamanho + formato
 
-- **Limite por recurso**: 500 KiB. O validador do manifesto
-  rejeita recursos cujo `size_kb` declarado exceda este valor.
-  O descarregador também rejeita recursos cujo comprimento
-  real em bytes exceda o `size_kb` declarado em mais de 10%
-  — mantém o manifesto honesto.
-- **Limite suave por conjunto**: 10 MiB total de recursos.
-  O validador avisa mas não rejeita.
-- **Formatos aceites**: `.png` / `.jpg` / `.jpeg` / `.webp`
-  / `.svg`. Sem GIF (conteúdo animado é uma distração) e sem
-  BMP (sem compressão). Para fotos, prefira WebP — muito
-  menor que PNG com qualidade comparável. Para ícones +
-  diagramas, prefira SVG — escala bem + tamanho de ficheiro
-  pequeno.
+- **Limite por asset**: 500 KiB. O validador de manifesto rejeita
+  assets cujo `size_kb` declarado exceda este limite. O downloader
+  rejeita também assets cujo tamanho real em bytes exceda a
+  declaração em mais de 10% — mantém o manifesto honesto.
+- **Soft-limit por conjunto**: 10 MiB de tamanho total. O validador
+  avisa, mas não rejeita.
+- **Formatos aceites**: `.png` / `.jpg` / `.jpeg` /
+  `.webp` / `.svg`. Sem GIF (conteúdo animado distrai), sem BMP (sem
+  compressão). Para fotos, prefere WebP — bastante mais pequeno do
+  que PNG com qualidade comparável. Para ícones + diagramas, prefere
+  SVG — escala de forma limpa + tamanho de ficheiro minúsculo.
 
-### Recomendações de dimensionamento
+### Recomendações de tamanho
 
-Os tiles picture-choice renderizam com máx. 150x150 px em
-computador, 100x100 px em telemóvel (`object-fit: contain`).
-Imagens de origem de 300x300 px dão o melhor resultado em
-ecrãs Retina sem sobrecarga. PNGs acima de 150 KiB raramente
-ficam melhor do que um WebP devidamente comprimido a metade
-do tamanho.
+As peças de picture-choice são renderizadas até no máximo 150x150 px
+no desktop e 100x100 px no mobile (`object-fit: contain`). Imagens
+de origem com 300x300 px dão o melhor resultado em ecrãs Retina sem
+necessidade de dados desnecessários. PNGs acima de 150 KiB raramente
+ficam melhores do que um WebP bem comprimido de metade do tamanho.
 
-### Ignorar imagens criadas pelo autor — deixar o placeholder de runtime cobrir
+### Quando o placeholder de runtime chega
 
-Três tipos de lições onde o placeholder de runtime é bom o
-suficiente para que imagens criadas pelo autor não acrescentem
-valor de aprendizagem:
+Três tipos de lição em que o placeholder de runtime é tão bom que
+imagens de autor não trazem ganho de aprendizagem:
 
-- **Lições de cores** (`rouge` / `rojo` / `rot` / `red`): o
-  gerador de placeholder produz uma amostra hexadecimal sólida
-  associada ao nome da cor. Amostras criadas pelo autor são
-  redundantes.
+- **Lições de cores** (`rouge` / `rojo` / `rot` / `red`): o gerador
+  de placeholder cria uma peça hex colorida correspondente ao nome
+  da cor. Peças de autor são redundantes.
 - **Lições de números** (`7` / `42` / `1492`): o placeholder
-  renderiza os dígitos grandes + centrados. Imagens criadas
-  pelo autor só importariam para sistemas de numeração
-  não-arábicos.
+  renderiza os dígitos grandes + centrados. Imagens de autor só
+  fariam sentido em sistemas de numeração não arábicos.
 - **Conceitos abstratos** sem representação visual óbvia
-  (`patience`, `liberté`): o placeholder de avatar dá uma
-  âncora visual limpa sem forçar uma escolha de ícone
-  contestada.
+  (`patience`, `liberté`): o placeholder de avatar fornece uma
+  âncora visual clara sem forçar uma escolha de ícone discutível.
 
-Para tudo o resto (animais, objetos, comida, lugares, partes
-do corpo), imagens criadas pelo autor ajudam materialmente
-o reconhecimento + a recordação.
+Para tudo o resto (animais, objetos, comida, lugares, partes do
+corpo), as imagens de autor ajudam de forma mensurável no
+reconhecimento + memorização.
 
 ## Lista de verificação de qualidade
 
-Antes de abrir um PR para uma nova lição, verifique:
+Antes do PR de uma nova lição, verificar:
 
 - [ ] **3-5 passos de teoria** + **8-12 exercícios** por lição
-- [ ] **Pelo menos 3 tipos de exercício** representados (matching, picture-choice, free-text, word-tiles ou cloze — cloze disponível em v1.35.0+)
-- [ ] **Passos de teoria ≤ 200 palavras** cada
-- [ ] **Exercícios free-text**: ≥ 3 variantes accept + ≥ 3 distractors
-- [ ] **Word-tiles**: ≥ 3 tiles por exercício
-- [ ] **estimated_minutes**: 10-15 (realista, não aspiracional)
-- [ ] **Distractors são errados-mas-plausíveis** — semanticamente relacionados, nunca aleatórios
-- [ ] **Notas das fichas** transportam valor real (pronúncia, falso amigo, sinalização de exceção)
-- [ ] **Estrutura progressiva**: conceitos posteriores baseiam-se em anteriores no mesmo conjunto
-- [ ] **Precisão cultural**: uso do mundo real, não apenas frases de manual
-- [ ] **Validação de esquema**: a lição carrega corretamente via `dict_to_lesson()` (ver Testes locais)
-- [ ] **Integridade de card-id**: cada `exercise.card_ids[i]` existe em `cards[]` da lição
+- [ ] **Pelo menos 3 tipos de exercício** representados (matching, picture-choice, free-text, word-tiles ou cloze — cloze a partir da v1.35.0)
+- [ ] **Passos de teoria ≤ 200 palavras** por passo
+- [ ] **Exercícios de free-text**: ≥ 3 variantes accept + ≥ 3 distratores
+- [ ] **Word-tiles**: ≥ 3 peças por exercício
+- [ ] **estimated_minutes**: 10-15 (realista, não idealizado)
+- [ ] **Distratores são errados-mas-plausíveis** — semanticamente relacionados, nunca aleatórios
+- [ ] **Notas de Card** fornecem valor real (pronúncia, falsos amigos, flag de exceção)
+- [ ] **Estrutura progressiva**: conceitos posteriores assentam nos anteriores do mesmo conjunto
+- [ ] **Exatidão cultural**: uso real do idioma, não apenas fórmulas de manual
+- [ ] **Validação de esquema**: a lição carrega de forma limpa via `dict_to_lesson()` (ver Testes locais)
+- [ ] **Integridade de Card-ID**: cada `exercise.card_ids[i]` existe em `cards[]` da lição
 - [ ] **Par de idiomas**: `target_language` + `source_language` definidos (ISO 639-1, diferentes), `title_native` presente
 
-## Validação (duas camadas, v1.44.0)
+## Validação (dois níveis, v1.44.0)
 
-O conteúdo é controlado por duas camadas de validação que
-executam os MESMOS controlos:
+Os conteúdos são protegidos por dois níveis de validação com as
+MESMAS verificações:
 
-1. **Na aplicação, antes de partilhar.** Quando um aprendente
-   partilha uma lição via *As Minhas Lições → Partilhar com
-   a Comunidade*, um controlo baseado em regras é executado
-   primeiro (sempre, sem necessidade de IA). Impõe os
-   **mínimos** abaixo; um conjunto abaixo de qualquer deles
-   não pode ser partilhado. Se passar E uma chave de IA
-   estiver configurada, o aprendente pode ativar uma revisão
-   de IA suplementar (precisão de tradução, plausibilidade
-   dos distractors, gramática, adequação de nível,
-   sensibilidade cultural, naturalidade). O passo de IA
-   nunca é automático, requer consentimento explícito (o
-   conteúdo da lição é enviado ao fornecedor configurado), e
-   nunca bloqueia a partilha — a aprovação baseada em regras
-   é a porta.
-2. **No CI do repositório de conteúdo.** Um pull request para
+1. **Na aplicação, antes de partilhar.** Ao partilhar via *As Minhas
+   Lições → Disponibilizar para a comunidade*, corre primeiro uma
+   verificação baseada em regras (sempre, sem IA). Ela impõe os
+   **valores mínimos** abaixo; um conjunto abaixo deles não pode ser
+   partilhado. Se passar e estiver configurada uma chave de IA, o
+   aprendiz pode iniciar OPCIONALMENTE uma verificação de IA
+   complementar (exatidão da tradução, plausibilidade dos
+   distratores, gramática, nível, sensibilidade cultural,
+   naturalidade). O passo de IA nunca é automático, exige
+   consentimento explícito (o conteúdo da lição é enviado ao
+   fornecedor configurado) e nunca bloqueia a partilha — a
+   verificação baseada em regras é o portão.
+2. **Na CI do repo de conteúdo.** Um Pull Request a
    `astrapi69/adaptive-learner-content` executa
    `scripts/validate_content.py` (espelhado em
-   `docs/ci/adaptive-learner-content/`), que verifica
-   novamente todos os conjuntos com as mesmas regras para que
-   um PR manual não possa contornar a porta.
+   `docs/ci/adaptive-learner-content/`) e verifica cada conjunto com
+   as mesmas regras, para que um PR manual não contorne o portão.
 
-**Mínimos de qualidade (porta obrigatória):** ≥ 5 exercícios
-por lição, ≥ 2 tipos de exercício, ≥ 1 passo de teoria,
-free-text ≥ 2 respostas aceites + distractors, matching ≥ 3
-pares, distractors em picture-choice, sem frente/verso de
-ficha vazios e (para scripts de origem não-latinos) versos
-das fichas no script de origem. Estes são mínimos, não alvos
-— a lista de verificação acima pede mais.
+**Valores mínimos de qualidade (portão rígido):** ≥ 5 exercícios por
+lição, ≥ 2 tipos de exercício, ≥ 1 passo de teoria, free-text ≥ 2
+respostas aceites + distratores, matching ≥ 3 pares, picture-choice
+com distratores, sem frente/verso de cartão vazios e (em escritas de
+origem não latinas) versos de cartão na escrita de origem. Estes são
+valores mínimos, não metas — a lista de verificação acima exige mais.
 
 ## Testes locais
 
-O validador de esquema do Content-Loader é executado como
-parte de `make test`. Para validar uma única lição
-manualmente:
+O validador de esquema do content-loader corre no âmbito de
+`make test`. Validar uma única lição à mão:
 
 ```bash
 cd plugins/adaptive-learner-plugin-content-loader
@@ -648,172 +627,170 @@ from adaptive_learner_content_loader.schema import dict_to_lesson
 path = '../adaptive-learner-content/sets/en/fr-a1/lessons/01-greetings.json'
 with open(path) as f:
     lesson = dict_to_lesson(json.load(f))
-print(f'OK: {lesson.id} — {len(lesson.cards)} cards, {len(lesson.steps)} steps')
+print(f'OK: {lesson.id} — {len(lesson.cards)} Cards, {len(lesson.steps)} Steps')
 "
 ```
 
-Para validar todas as lições de um repositório de conteúdo
-de uma vez, use o próprio validador do repositório de
-conteúdo (o mesmo script que o seu CI executa em cada PR):
+Validar todas as lições de um repo de conteúdo de uma vez — com o
+validador do repo de conteúdo (o mesmo script que a sua CI executa em
+cada PR):
 
 ```bash
 cd ../adaptive-learner-content
 python3 scripts/validate_content.py
 ```
 
-Descobre todos os conjuntos em `sets/{source}/{target-level}/`
-e verifica o esquema mais os mínimos de qualidade (≥5
-exercícios, ≥2 tipos de exercício, ≥1 passo de teoria,
-accept + distractors de free-text, pares de matching, sem
-fichas vazias, integridade de card-id) em cada um. Adicionar
-uma nova lição é detetado automaticamente — não é necessário
-editar nenhum teste.
+Ele encontra cada conjunto sob `sets/{source}/{target-level}/` e
+verifica o esquema mais os valores mínimos de qualidade (≥5
+exercícios, ≥2 tipos de exercício, ≥1 passo de teoria, accepts de
+free-text + distratores, pares de matching, sem cartões vazios,
+integridade de Card-ID). Novas lições são reconhecidas
+automaticamente — sem necessidade de alterar testes.
 
-## Fluxo de trabalho de PR
+## Fluxo de PR
 
-Quando o seu conjunto estiver pronto:
+Assim que o teu conjunto estiver pronto:
 
-1. Abra um PR contra o repositório principal do
-   adaptive-learner (para conjuntos que devem ser enviados
-   com a aplicação), OU
-2. Crie o seu próprio repositório de conteúdo na sua conta
-   GitHub e aponte o Content-Loader para ele a partir de
-   `backend/config/plugins/content-loader.yaml` (em
+1. Abre um PR contra o repo principal (para conjuntos a fornecer com
+   a aplicação), OU
+2. Cria um repo de conteúdo próprio sob a tua conta GitHub e
+   configura o content-loader via
+   `backend/config/plugins/content-loader.yaml` (sob
    `default_sources`).
 
-O Content-Loader suporta qualquer repositório GitHub público
-como fonte. Repositórios privados requerem um token de
-acesso pessoal configurado via a cadeia de chaves de três
-camadas (`~/.config/adaptive_learner/secrets.yaml`).
+O content-loader suporta qualquer repo GitHub público como fonte. Os
+repos privados precisam de um Personal Access Token, definido através
+da gestão de chaves em três camadas
+(`~/.config/adaptive_learner/secrets.yaml`).
 
 ## Armadilhas comuns
 
-**Referências de card-id**: cada entrada `card_ids` num
-exercício deve existir em `cards[]` da lição. Se copiar um
-exercício entre lições e se esquecer de copiar a ficha, a
-validação falha.
+**Referências de Card-ID**: Cada entrada `card_ids` num exercício tem
+de existir em `cards[]` da lição. Se copias um exercício entre lições
+e te esqueces de levar o Card associado, a validação falha.
 
-**Ids seguros para slug**: todos os ids (lição, ficha, passo,
-exercício) devem corresponder a `^[a-z0-9]+(-[a-z0-9]+)*$`.
-Sem sublinhados, sem apóstrofos, sem letras maiúsculas, sem
-hífenes no início/fim.
+**IDs slug-seguros**: Todos os IDs (Lesson, Card, Step, Exercise) têm
+de corresponder a `^[a-z0-9]+(-[a-z0-9]+)*$`. Sem underscores, sem
+apóstrofos, sem maiúsculas, sem hífenes iniciais/finais.
 
-**`is_correct: "true"`**: é uma string, não um booleano JSON.
-O esquema requer especificamente `"true"` porque os campos
-picture-choice são todos dict[str, str] internamente.
+**`is_correct: "true"`**: É uma string, não um booleano JSON. O
+esquema exige explicitamente `"true"`, porque os campos do
+picture_choice são modelados internamente como dict[str, str].
 
-**Campos extra**: cada modelo tem `extra="forbid"`. Adicionar
-um campo que o esquema não conhece irá rejeitar toda a lição.
-Mantenha-se nos campos documentados.
+**Campos adicionais**: Cada modelo tem `extra="forbid"`. Um campo
+não documentado leva à rejeição de toda a lição. Mantém-te nos campos
+documentados.
 
-**Corpo da teoria**: os passos de teoria requerem um campo
-`body` não vazio (Markdown). Os passos de exercício não devem
-ter `body` — use o `prompt` do exercício.
+**Theory-Body**: Os passos de teoria precisam de um campo `body`
+não vazio (Markdown). Os passos de exercício não podem trazer
+`body` — usa em vez disso o `prompt` do exercício.
 
 ## Referência: os conjuntos piloto
 
-Os dois conjuntos enviados com o Adaptive Learner são as
+Os dois conjuntos fornecidos com o Adaptive Learner são as
 referências canónicas:
 
-- `sets/en/fr-a1/` — Francês A1 para falantes de inglês
-  (10 lições, ~2 horas no total); `sets/de/fr-a1/` é o
-  piloto em alemão como fonte.
-- `sets/en/es-a1/` + `sets/de/es-a1/` — Espanhol A1 (15
-  lições cada fonte), no repositório
-  `adaptive-learner-content`.
+- `sets/en/fr-a1/` — Francês A1 para falantes de inglês (10 lições,
+  ~2 horas); `sets/de/fr-a1/` é o conjunto piloto em alemão.
+- `sets/en/es-a1/` + `sets/de/es-a1/` — Espanhol A1 (15 lições por
+  idioma de origem), no repo `adaptive-learner-content`.
 
-Ambos seguem as convenções descritas neste guia. Ler uma
-lição completa do início ao fim antes de criar a sua própria
-é a forma mais rápida de interiorizar a estrutura.
+Ambos seguem as convenções descritas neste guia. Ler uma lição
+completa é o caminho mais rápido para interiorizar a estrutura.
 
 ---
 
-## Via de contribuição para a comunidade (v1.42.0)
+## Caminho para a participação na comunidade (v1.42.0)
 
-Não é necessário criar lições manualmente do zero. A forma
-mais rápida de contribuir é **criar uma lição na aplicação e
-partilhá-la**:
+Não tens de criar lições do zero à mão. O caminho mais rápido para
+contribuir é **criar e partilhar uma lição na aplicação**:
 
-1. Importe uma conversa e analise-a, depois **Guardar como
-   Lição Offline** (ou termine uma lição adaptativa e
-   **Guardar esta lição?**). A lição aparece em **As Minhas
-   Lições** no Navegador de Conjuntos.
-2. Em As Minhas Lições, clique em **Exportar como conjunto**
-   para descarregar um `.zip` de conjunto de conteúdo
-   (manifesto + lições). As exportações contêm apenas o
-   conteúdo da lição — sem progresso, sem histórico de erros,
-   nada pessoal.
-3. Clique em **Partilhar com a Comunidade** para abrir um
-   problema GitHub pré-preenchido no repositório de conteúdo.
-   Anexe o `.zip` exportado.
-4. Um mantenedor revê a lição, organiza o manifesto (id,
-   título, idioma, nível, etiquetas) para corresponder às
-   convenções acima, e adiciona-a em `sets/`. Uma vez fundida,
-   toda a gente pode descarregá-la no Navegador de Conjuntos.
+1. Importa um chat e analisa-o, depois **Guardar como lição
+   offline** (ou termina uma lição adaptativa e **Guardar esta
+   lição?**). A lição aparece sob **As Minhas Lições** no navegador
+   de conjuntos.
+2. Em "As Minhas Lições", clica em **Exportar como conjunto de
+   conteúdo** para descarregar um conjunto de conteúdo como `.zip`
+   (manifesto + lições). As exportações contêm apenas o conteúdo da
+   lição — sem progresso, sem histórico de erros, nada pessoal.
+3. Clica em **Disponibilizar para a comunidade** para abrir um
+   **Pull Request** pré-preenchido no repositório de conteúdo — o
+   JSON da lição é committado no caminho correto da árvore, sem
+   necessidade de anexo `.zip`.
+4. A CI do repo valida o PR automaticamente; um maintainer verifica
+   a lição, alinha o manifesto (id, title, language, level, tags) com
+   as convenções acima e fá-lo o merge sob `sets/`. Após o merge,
+   todos a podem descarregar do navegador de conjuntos.
 
-Este é o caminho social: a revisão é **manual** (um
-mantenedor cuida de cada adição — nada é publicado
-automaticamente), e todo o fluxo requer apenas o GitHub.
-As lições geradas já validam contra o esquema, pelo que uma
-lição contribuída geralmente precisa apenas de polimento do
-manifesto antes de ser lançada.
+Este é o caminho social: a verificação é **manual** (um maintainer
+cura cada adição — nada é publicado automaticamente), e todo o fluxo
+só precisa do GitHub. As lições geradas já são validadas contra o
+esquema, de forma que uma lição contribuída costuma precisar apenas
+de um pouco de afinação do manifesto.
 
-## Assistente de partilha, variações e crédito de autor (Phase 64)
+## Assistente de partilha, variações e crédito de autor (Fase 64)
 
-Partilhar uma lição em **As Minhas Lições** abre um assistente
-de quatro passos em vez de saltar diretamente para o GitHub:
+Partilhar uma lição a partir de **As Minhas Lições** abre um
+assistente de quatro passos, em vez de saltar diretamente para o
+GitHub:
 
-1. **Pré-visualização + colocação.** A aplicação calcula
-   exatamente onde a lição ficará na árvore
-   (`sets/{source}/{target}-{level}/`) e um nome de ficheiro
-   auto-numerado (`{nn}-{slug}.json`, o número seguinte após
-   as lições existentes). Um par + nível completamente novo
-   mostra *"Novo conjunto! Você é o primeiro."*
-2. **Controlo de duplicados.** A lição é comparada com as
-   lições já nesse caminho de árvore por sobreposição de
-   fichas e sobreposição de exercícios (consultivo — nunca
-   bloqueia). Se existir algo semelhante pode:
+1. **Pré-visualização + colocação.** A aplicação calcula exatamente
+   onde a lição aterra na árvore (`sets/{origem}/{destino}-{nível}/`)
+   e um nome de ficheiro numerado automaticamente
+   (`{nn}-{slug}.json`, o número seguinte após as lições
+   existentes). Um par + nível totalmente novo mostra *"Novo
+   conjunto! És o primeiro."*
+2. **Verificação de duplicados.** A lição é comparada com as lições
+   já existentes nesse caminho (sobreposição de cartões e exercícios
+   — consultiva, nunca bloqueante). Se algo semelhante existir,
+   podes:
    - **Partilhar como variação** — a lição é marcada com
-     `variation_of: "{original_id}"` mais uma
-     `variation_note` opcional ("como é que a sua versão
-     difere?").
-   - **Sugerir apenas os novos exercícios** (quase
-     duplicados) — o assistente extrai apenas os exercícios
-     que o original não tem, mais as fichas que eles
-     referenciam, como uma variação suplementar.
-3. **Resumo de qualidade.** Os resultados do validador
-   baseado em regras (mais a revisão de IA opcional); os
-   avisos são apresentados mas nunca bloqueiam.
-4. **Partilhar + celebrar.** Um clique abre o PR/problema do
-   GitHub e a aplicação agradece-lhe com uma pequena
-   celebração.
+     `variation_of: "{original_id}"` mais uma `variation_note`
+     opcional ("Em que difere a tua versão?").
+   - **Sugerir apenas os exercícios novos** (em quase-duplicados) —
+     o assistente extrai exatamente os exercícios que faltam ao
+     original, juntamente com os cartões associados, como variação de
+     complemento.
+3. **Resumo de qualidade.** Os resultados do validador baseado em
+   regras (mais a verificação de IA opcional); os avisos são
+   mostrados, mas nunca bloqueiam.
+4. **Partilhar + celebrar.** Um clique abre o Pull Request do GitHub
+   (editor de ficheiro para lições pequenas, página de upload para
+   grandes), e a aplicação agradece com uma pequena celebração.
 
-### Campos de variação + crédito (esquema 1.3, todos opcionais)
+### Campos de variação e de crédito (Esquema 1.3, todos opcionais)
 
 ```json
 {
   "variation_of": "10-passe-compose",
-  "variation_note": "More exercises on agreement",
+  "variation_note": "Mehr Übungen zur Angleichung",
   "contributed_by": "Maria S.",
   "contributed_at": "2026-06-01T14:30:00Z"
 }
 ```
 
-Todos os quatro são aditivos e opcionais; lições sem eles
-comportam-se exatamente como antes. `contributed_by` é
-definido quando o autor opta por crédito ao partilhar (um
-campo *"O seu nome (opcional)"* que é lembrado localmente
-para a próxima vez). Quando presente, o visualizador mostra
-uma linha discreta *"Contribuído por {nome}"* abaixo do
-título e o problema do GitHub lista o autor na sua tabela
-de metadados.
+Os quatro são aditivos e opcionais; as lições sem eles comportam-se
+exatamente como antes. `contributed_by` é definido quando o autor
+ativa o crédito ao partilhar (um campo *"O teu nome (opcional)"* que
+é lembrado localmente para a próxima vez). Se presente, o
+visualizador mostra uma linha discreta *"Disponibilizado por
+{name}"* sob o título, e o texto do Pull Request lista o autor na sua
+tabela de metadados.
 
 ### Histórico de contribuições e lacunas
 
 As lições partilhadas são lembradas localmente (sem conta
-necessária) em **As Minhas Contribuições** com um contador
-e um reconhecimento de *Contribuidor da Comunidade* nas cinco
-partilhas. O Navegador de Conjuntos também apresenta
-**Lições em Falta** — sugerindo o próximo nível CEFR de um
-par existente, ou um alvo ensinado para um idioma de origem
-mas ausente para outro ("Pode ajudar?").
+necessária) sob **As Minhas Contribuições** com um contador e uma
+distinção *Contribuidor da Comunidade* a partir de cinco lições
+partilhadas. O navegador de conjuntos mostra ainda **Lições em
+falta** — sugestões encorajadoras para o próximo nível CEFR de um
+par existente ou um idioma de destino que existe para um idioma de
+origem mas falta para outro ("Podes ajudar?").
+
+---
+
+## Páginas relacionadas
+
+- [Criar lições — Visão geral](../content-creation/overview.md) — introdução + Criador de Lições na aplicação
+- [Recomendações de livros](../content-creation/books.md) — manter `books.yaml` por domínio
+- [Múltiplos repositórios de conteúdo](../features/content-repos.md) — ligar repo próprio
