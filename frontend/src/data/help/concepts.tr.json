@@ -25,6 +25,34 @@
       "title": "Öğrenme Oturumu",
       "short": "7 adımlı döngüyü izleyen, yapay zeka destekli bir öğrenme birimi.",
       "long": "## Öğrenme oturumu nedir?\n\nBir öğrenme oturumu, 7 adımlı döngüye (girdi, deneme,\nhata, geri bildirim, uyum, tekrar, bütünleştirme)\ndayanan, tek bir konuda kesintisiz bir öğrenme birimidir.\nYapay zeka öğretmen rolünü üstlenir; diyalogu siz\nyönlendirirsiniz.\n\n## Oturum sıradan bir sohbetten nasıl farklıdır?\n\nOturumda **çift istem değerlendiricisi** arka planda\nçalışır: her yanıttan sonra ikinci bir yapay zeka örneği\nanlayışınızı değerlendirir (%0-100 güven) ve bir sonraki\nadıma geçmeye hazır olup olmadığınıza karar verir.\nSıradan bir sohbetin böyle bir düzeltici mekanizması\nyoktur.\n\n## Akış (Streaming)\n\nYapay zekanın yanıtları kelime kelime görünür (Sunucu\nGönderimli Olaylar) — böylece tam yanıt için beklemeniz\ngerekmez. İstediğiniz zaman müdahale edebilir ve ek\nsorular sorabilirsiniz. Oturum, siz sonlandırana veya\ndöngü tamamlanana kadar devam eder.\n\n## Oturumu ne zaman sonlandırmalıyım?\n\n- Adım 7'nin (bütünleştirme) ardından, öğrenme döngüsü\n  tamamlandığında.\n- Sistem bir yöntem değişikliği önerdiğinde ve siz bunu\n  kabul ettiğinizde.\n- Son birkaç değerlendirmede **stres** puanınız 4'ün\n  üzerinde kaldıysa — bir mola, ısrarcı olmaktan daha\n  üreticidir.\n\n## Değerlendirmeler ileriye taşınır\n\nHer oturum üç kaydırıcıyla (anlama, stres, yönteme\nuyum; her biri 1-5) sona erer. Bu değerler öğrenme\nprofilinizi besler ve gelecekteki önerileri şekillendirir:\nsürekli yüksek stres ile düşük yönteme uyum birlikteliği,\nyöntem değiştirme önerisini tetikler.\n\n## Adaptive Learner'da\n\nBir oturum tam olarak bir öğrenme projesine aittir. Aynı\nanda yalnızca bir aktif oturumunuz olabilir; bu, konu\nkarışmasını önler ve yöntem değiştirme mantığını\ngürültüden korur.\n"
+    },
+    {
+      "key": "content_repository",
+      "title": "İçerik deposu",
+      "short": "Adaptive Learner'ın bir içerik kaynağı olarak yükleyebileceği, yapılandırılmış ders setlerinden oluşan herkese açık bir GitHub deposu.",
+      "docs_slug": "features/content-repos",
+      "long": "## İçerik deposu nedir?\n\nDersler içerik depolarından gelir — ders setlerini bir\naraya getiren herkese açık GitHub depoları. Resmi depo her\nzaman yüklenir; bunun üzerine kendi deponuzu da\nbağlayabilirsiniz.\n\n## Birden fazla kaynak\n\nAyarlar > Veri altında istediğiniz sayıda depoyu\nyönetirsiniz (ekleme, kaldırma, sıra = öncelik). Her set,\nbir dersin nereden geldiğini görebilmeniz için bir kaynak\nrozeti taşır.\n"
+    },
+    {
+      "key": "trust_level",
+      "title": "Güven düzeyi",
+      "short": "Bağlı bir içerik deposunun teknik doğrulamasından türetilen otomatik güven derecesi.",
+      "docs_slug": "features/content-repos",
+      "long": "## Güven düzeyi nedir?\n\nBağlı her depo, her senkronizasyonda otomatik bir teknik\ndoğrulama çalıştırır. Bu, bir güven düzeyi üretir: 0\n(doğrulanmadı veya başarısız oldu), 1 (teknik olarak\ngeçerli: en az bir ders, çalıştırılabilir içerik yok) ve 3\n(resmi olarak önerilen).\n\n## Ne DEĞİLDİR\n\nBu düzey tamamen tekniktir. İçerik/topluluk temelli bir\nderecelendirme (güven 2), paylaşımlı bir arka uç hizmeti\ngerektirir ve ertelenmiştir.\n"
+    },
+    {
+      "key": "streak",
+      "title": "Seri",
+      "short": "Üst üste öğrendiğiniz gün sayısı — XP çarpanının yakıtı.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## Seri nedir?\n\nBir seri, art arda gelen öğrenme günlerini sayar.\nTamamlanan her oturum veya ders ısı haritasını doldurur ve\nseriyi canlı tutar.\n\n## Etki\n\nSeri bir XP çarpanını besler (art arda her gün için +%25,\n7 günde sınırlı). Tutarlılığınızın bir aynasıdır, bir\nsopa değil — kaçırılan bir günlük görev hiçbir ceza\ngerektirmez.\n"
+    },
+    {
+      "key": "assessment",
+      "title": "Değerlendirme",
+      "short": "Altı öğrenme yönteminden hangilerinin size uyduğunu belirleyen kısa bir test.",
+      "docs_slug": "user-guide/assessment",
+      "long": "## Değerlendirme nedir?\n\nDeğerlendirme on iki soru sorar ve bunlardan öğrenme\nprofilinizi hesaplar — uygulamanın dayandığı altı yöntemin\nağırlıklandırması.\n\n## İsteğe bağlı ve devam ettirilebilir\n\nOnboarding revizyonundan bu yana değerlendirme isteğe\nbağlıdır ve yalnızca profil sihirbazı üzerinden erişilebilir.\nYarıda bırakırsanız uygulama ilerlemenizi hatırlar; böylece\ndaha sonra kaldığınız yerden devam edebilirsiniz.\n"
     }
   ]
 }

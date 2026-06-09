@@ -207,3 +207,74 @@ entries:
       can have only one active session at a time; this prevents
       topic mixing and shields the method-switch logic from
       noise.
+
+  - key: content_repository
+    title: Content repository
+    short: "A public GitHub repo of structured lesson sets that Adaptive Learner can load as a content source."
+    docs_slug: features/content-repos
+    long: |
+      ## What is a content repository?
+
+      Lessons come from content repositories - public GitHub
+      repos that bundle lesson sets. The official repo is always
+      loaded; on top of that you can connect your own.
+
+      ## Multiple sources
+
+      Under Settings > Data you manage any number of repos (add,
+      remove, order = priority). Each set carries a source badge
+      so you can see where a lesson came from.
+
+  - key: trust_level
+    title: Trust level
+    short: "The automatic trust rating of a connected content repository, derived from its technical validation."
+    docs_slug: features/content-repos
+    long: |
+      ## What is a trust level?
+
+      Every connected repo runs an automatic technical
+      validation on each sync. That produces a trust level: 0
+      (not validated or failed), 1 (technically valid: at least
+      one lesson, no executable content), and 3 (officially
+      recommended).
+
+      ## What it is NOT
+
+      The level is purely technical. A content/community-based
+      rating (trust 2) needs a shared backend service and is
+      deferred.
+
+  - key: streak
+    title: Streak
+    short: "The number of consecutive days you have learned - fuel for the XP multiplier."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## What is a streak?
+
+      A streak counts consecutive learning days. Every completed
+      session or lesson fills the heatmap and keeps the streak
+      alive.
+
+      ## Effect
+
+      The streak feeds an XP multiplier (+25% per consecutive
+      day, capped at 7 days). It is a mirror of your consistency,
+      not a stick - a missed daily mission costs no penalty.
+
+  - key: assessment
+    title: Assessment
+    short: "A short test that determines which of the six learning methods suit you."
+    docs_slug: user-guide/assessment
+    long: |
+      ## What is the assessment?
+
+      The assessment asks twelve questions and computes your
+      learning profile from them - the weighting of the six
+      methods the app leans on.
+
+      ## Optional and resumable
+
+      Since the onboarding overhaul the assessment is optional
+      and reachable only through the profile wizard. If you
+      abandon it, the app remembers your progress so you can
+      later pick up where you left off.

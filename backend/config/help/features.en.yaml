@@ -274,3 +274,94 @@ entries:
       situation (e.g. fresh start after a long break), you
       can reset them in settings. Curriculum, sessions, and
       ratings are preserved.
+
+  - key: view_dashboard
+    title: Dashboard
+    short: "Your home base: progress, streak, XP, badges, due reviews, and quick actions."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## What does the dashboard show?
+
+      The dashboard is your command center. "Continue learning"
+      sits at the top with your most recently touched lesson,
+      then the actionable cards (paused lessons, missions, focus
+      areas, review queue), then gamification (XP, streak,
+      badges), and finally the analytical panels.
+
+      ## Filter
+
+      A subject filter lists only your own subjects, sorted by
+      most-used first.
+
+  - key: view_content_browser
+    title: Content browser
+    short: "The page where you find, download, and start lesson sets."
+    docs_slug: features/content-browser
+    long: |
+      ## How do I find lessons?
+
+      The content browser at /content is built around the
+      learning flow: search first (instant, accent-tolerant),
+      then "Continue learning", then the catalogue. The catalogue
+      splits into "Languages" (source > target > level) and
+      "Knowledge" (non-language domains).
+
+      ## Sources and books
+
+      Source badges show where a set comes from; a source filter
+      hides individual sources. A domain can surface book
+      recommendations.
+
+  - key: view_lesson
+    title: Lesson
+    short: "The viewer that walks you step by step through a lesson's theory and exercises."
+    docs_slug: user-guide/lessons
+    long: |
+      ## How do the exercises work?
+
+      A lesson is a sequence of theory and exercise steps. Five
+      exercise types appear: matching (coloured pairs + number
+      badges), picture choice, free text, word tiles, and cloze.
+
+      ## Controls
+
+      Enter checks an answered exercise and advances. From an
+      exercise you can jump to the matching theory via "Re-read
+      theory". At the end you see your score with stars and can
+      export it as Markdown.
+
+  - key: view_settings
+    title: Settings
+    short: "Everything you can change without code or YAML - language, AI, learning, data, appearance."
+    docs_slug: user-guide/settings
+    long: |
+      ## What can I configure?
+
+      Settings bundle language, AI provider and keys, storage
+      mode, learning options (e.g. Enter shortcut, preferred
+      exercise direction), data (backup, content repositories),
+      appearance (12 themes), and gamification.
+
+      ## Your data in your hands
+
+      Under "Data" you create and import backups and connect your
+      own content repositories. None of it leaves your device
+      unasked.
+
+  - key: feature_backup
+    title: Backup and restore
+    short: "A complete snapshot of your learning state that you can save and restore elsewhere."
+    docs_slug: features/backup
+    long: |
+      ## What is a backup?
+
+      A backup is a complete snapshot: every table (projects,
+      sessions, lesson progress, errors, gamification, missions
+      ...) plus your downloaded content sets - as a single JSON
+      file.
+
+      ## Cross-identity
+
+      You can import a backup into a fresh installation or under
+      a different profile; the restore re-resolves internal
+      references cleanly. On import you see a per-table summary.

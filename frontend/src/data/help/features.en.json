@@ -31,6 +31,41 @@
       "title": "Gamification (XP, Badges, Streaks)",
       "short": "Progress system with experience points, badges and streaks — motivation without gimmickry.",
       "long": "## What is the gamification layer?\n\nThree mechanics make learning progress visible and\nrewarding:\n\n- **XP (experience points)** — for every completed\n  session, every method switch, every\n  spaced-repetition card. Levels rise with XP.\n- **Badges** — for thematic milestones (\"first\n  session\", \"10 sessions in a method\", \"30-day streak\",\n  ...).\n- **Streaks** — daily learning runs. They expire 24\n  hours without a session — with three \"streak freezes\"\n  per month as emergency pauses.\n\n## How XP is earned\n\nDifferent actions yield different XP values:\n\n- **Submit a rated session**: 50 XP.\n- **Reach step 7 (integrate)**: +25 XP bonus.\n- **Accept a method switch**: 10 XP (you made a\n  deliberate learning decision).\n- **Spaced-repetition card with confidence > 80%**:\n  5 XP.\n- **Anki export of a set**: 20 XP.\n\nLevels scale with a square-root function (level n =\nsqrt(XP / 100)) — early levels move quickly, higher\nlevels need longer breath.\n\n## Badges are not coercive\n\nBadge criteria are not UI-load-bearing — you do *not*\nneed a single badge to use the app productively. They\nare a mirror, not a target. If you start to feel like\nyou are learning for badges rather than for yourself,\ndisable the display in settings.\n\n## Streak freezes\n\nThree streak freezes per month. If you miss a day, a\nfreeze automatically protects your streak. Explicitly\ndesigned as a \"sick day\" or \"travel day\" allowance, not\nas an exception mechanism for laziness.\n\n## Why this works without gimmicks\n\nLearning research shows: extrinsic reward can destroy\nintrinsic motivation (\"overjustification effect\").\nAdaptive Learner relies on the mechanics being a\n**mirror** of progress, not an incentive system. No\nleaderboards, no social features, no point-sharing —\nthe data stays with you.\n\n## Reset\n\nIf the gamification values no longer match your\nsituation (e.g. fresh start after a long break), you\ncan reset them in settings. Curriculum, sessions, and\nratings are preserved.\n"
+    },
+    {
+      "key": "view_dashboard",
+      "title": "Dashboard",
+      "short": "Your home base: progress, streak, XP, badges, due reviews, and quick actions.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## What does the dashboard show?\n\nThe dashboard is your command center. \"Continue learning\"\nsits at the top with your most recently touched lesson,\nthen the actionable cards (paused lessons, missions, focus\nareas, review queue), then gamification (XP, streak,\nbadges), and finally the analytical panels.\n\n## Filter\n\nA subject filter lists only your own subjects, sorted by\nmost-used first.\n"
+    },
+    {
+      "key": "view_content_browser",
+      "title": "Content browser",
+      "short": "The page where you find, download, and start lesson sets.",
+      "docs_slug": "features/content-browser",
+      "long": "## How do I find lessons?\n\nThe content browser at /content is built around the\nlearning flow: search first (instant, accent-tolerant),\nthen \"Continue learning\", then the catalogue. The catalogue\nsplits into \"Languages\" (source > target > level) and\n\"Knowledge\" (non-language domains).\n\n## Sources and books\n\nSource badges show where a set comes from; a source filter\nhides individual sources. A domain can surface book\nrecommendations.\n"
+    },
+    {
+      "key": "view_lesson",
+      "title": "Lesson",
+      "short": "The viewer that walks you step by step through a lesson's theory and exercises.",
+      "docs_slug": "user-guide/lessons",
+      "long": "## How do the exercises work?\n\nA lesson is a sequence of theory and exercise steps. Five\nexercise types appear: matching (coloured pairs + number\nbadges), picture choice, free text, word tiles, and cloze.\n\n## Controls\n\nEnter checks an answered exercise and advances. From an\nexercise you can jump to the matching theory via \"Re-read\ntheory\". At the end you see your score with stars and can\nexport it as Markdown.\n"
+    },
+    {
+      "key": "view_settings",
+      "title": "Settings",
+      "short": "Everything you can change without code or YAML - language, AI, learning, data, appearance.",
+      "docs_slug": "user-guide/settings",
+      "long": "## What can I configure?\n\nSettings bundle language, AI provider and keys, storage\nmode, learning options (e.g. Enter shortcut, preferred\nexercise direction), data (backup, content repositories),\nappearance (12 themes), and gamification.\n\n## Your data in your hands\n\nUnder \"Data\" you create and import backups and connect your\nown content repositories. None of it leaves your device\nunasked.\n"
+    },
+    {
+      "key": "feature_backup",
+      "title": "Backup and restore",
+      "short": "A complete snapshot of your learning state that you can save and restore elsewhere.",
+      "docs_slug": "features/backup",
+      "long": "## What is a backup?\n\nA backup is a complete snapshot: every table (projects,\nsessions, lesson progress, errors, gamification, missions\n...) plus your downloaded content sets - as a single JSON\nfile.\n\n## Cross-identity\n\nYou can import a backup into a fresh installation or under\na different profile; the restore re-resolves internal\nreferences cleanly. On import you see a per-table summary.\n"
     }
   ]
 }

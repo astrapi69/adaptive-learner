@@ -1,0 +1,66 @@
+import { describe, expect, it } from "vitest";
+
+import {
+  DEFAULT_HELP_KEY,
+  DOCS_BASE_URL,
+  docsUrlForSlug,
+  helpKeyForPath,
+} from "./help-routes";
+
+describe("helpKeyForPath", () => {
+  it("maps the main views to their glossary entries", () => {
+    expect(helpKeyForPath("/dashboard")).toBe("view_dashboard");
+    expect(helpKeyForPath("/content")).toBe("view_content_browser");
+    expect(helpKeyForPath("/settings")).toBe("view_settings");
+    expect(helpKeyForPath("/assessment")).toBe("assessment");
+  });
+
+  it("matches parameterized lesson-family routes", () => {
+    expect(helpKeyForPath("/lesson/de/es-a1/01.json")).toBe("view_lesson");
+    expect(helpKeyForPath("/review/some-set")).toBe("view_lesson");
+    expect(helpKeyForPath("/adaptive-lesson/some-set")).toBe("view_lesson");
+    expect(helpKeyForPath("/error-replay/a/b/c")).toBe("view_lesson");
+  });
+
+  it("does not match a prefix that is only a substring of another segment", () => {
+    // ``/contentious`` must NOT resolve to the /content view.
+    expect(helpKeyForPath("/contentious")).toBe(DEFAULT_HELP_KEY);
+  });
+
+  it("falls back to the default key for unmapped routes", () => {
+    expect(helpKeyForPath("/")).toBe(DEFAULT_HELP_KEY);
+    expect(helpKeyForPath("/anki")).toBe(DEFAULT_HELP_KEY);
+  });
+});
+
+describe("docsUrlForSlug", () => {
+  it("puts the default language (de) at the docs root", () => {
+    expect(docsUrlForSlug("features/content-browser", "de")).toBe(
+      `${DOCS_BASE_URL}features/content-browser/`,
+    );
+  });
+
+  it("prefixes every other language with its locale", () => {
+    expect(docsUrlForSlug("user-guide/dashboard", "en")).toBe(
+      `${DOCS_BASE_URL}en/user-guide/dashboard/`,
+    );
+    expect(docsUrlForSlug("user-guide/dashboard", "ja")).toBe(
+      `${DOCS_BASE_URL}ja/user-guide/dashboard/`,
+    );
+  });
+
+  it("normalizes region codes to the base language", () => {
+    expect(docsUrlForSlug("features/backup", "de-DE")).toBe(
+      `${DOCS_BASE_URL}features/backup/`,
+    );
+    expect(docsUrlForSlug("features/backup", "pt-BR")).toBe(
+      `${DOCS_BASE_URL}pt/features/backup/`,
+    );
+  });
+
+  it("falls back to the root tree for an unbuilt locale", () => {
+    expect(docsUrlForSlug("features/backup", "zz")).toBe(
+      `${DOCS_BASE_URL}features/backup/`,
+    );
+  });
+});

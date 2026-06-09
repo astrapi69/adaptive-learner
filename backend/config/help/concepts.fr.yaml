@@ -202,3 +202,78 @@ entries:
       ne pouvez avoir qu'une seule session active à la fois ; cela évite
       le mélange de sujets et protège la logique de changement de méthode
       du bruit.
+
+  - key: content_repository
+    title: Dépôt de contenu
+    short: "Un dépôt GitHub public de jeux de leçons structurés qu'Adaptive Learner peut charger comme source de contenu."
+    docs_slug: features/content-repos
+    long: |
+      ## Qu'est-ce qu'un dépôt de contenu ?
+
+      Les leçons proviennent de dépôts de contenu — des dépôts
+      GitHub publics qui regroupent des jeux de leçons. Le dépôt
+      officiel est toujours chargé ; en plus de celui-ci, vous
+      pouvez connecter le vôtre.
+
+      ## Plusieurs sources
+
+      Sous Paramètres > Données, vous gérez un nombre quelconque de
+      dépôts (ajouter, retirer, l'ordre = la priorité). Chaque jeu
+      porte un badge de source pour que vous puissiez voir d'où
+      provient une leçon.
+
+  - key: trust_level
+    title: Niveau de confiance
+    short: "L'évaluation de confiance automatique d'un dépôt de contenu connecté, dérivée de sa validation technique."
+    docs_slug: features/content-repos
+    long: |
+      ## Qu'est-ce qu'un niveau de confiance ?
+
+      Chaque dépôt connecté exécute une validation technique
+      automatique à chaque synchronisation. Celle-ci produit un
+      niveau de confiance : 0 (non validé ou échoué), 1
+      (techniquement valide : au moins une leçon, aucun contenu
+      exécutable) et 3 (officiellement recommandé).
+
+      ## Ce que ce n'est PAS
+
+      Le niveau est purement technique. Une évaluation basée sur
+      le contenu ou la communauté (confiance 2) nécessite un
+      service backend partagé et est reportée.
+
+  - key: streak
+    title: Série
+    short: "Le nombre de jours consécutifs où vous avez appris — le carburant du multiplicateur d'XP."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## Qu'est-ce qu'une série ?
+
+      Une série compte les jours d'apprentissage consécutifs.
+      Chaque session ou leçon complétée remplit la carte de
+      chaleur et maintient la série en vie.
+
+      ## Effet
+
+      La série alimente un multiplicateur d'XP (+25 % par jour
+      consécutif, plafonné à 7 jours). C'est un miroir de votre
+      régularité, pas un bâton — manquer une mission quotidienne
+      ne coûte aucune pénalité.
+
+  - key: assessment
+    title: Évaluation
+    short: "Un court test qui détermine laquelle des six méthodes d'apprentissage vous convient."
+    docs_slug: user-guide/assessment
+    long: |
+      ## Qu'est-ce que l'évaluation ?
+
+      L'évaluation pose douze questions et en calcule votre profil
+      d'apprentissage — la pondération des six méthodes sur
+      lesquelles l'application s'appuie.
+
+      ## Optionnelle et reprenable
+
+      Depuis la refonte de l'accueil, l'évaluation est optionnelle
+      et accessible uniquement via l'assistant de profil. Si vous
+      l'abandonnez, l'application mémorise votre progression pour
+      que vous puissiez plus tard reprendre là où vous vous étiez
+      arrêté.

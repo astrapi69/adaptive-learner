@@ -271,3 +271,98 @@ entries:
       (ör. uzun bir aradan sonra taze başlangıç), ayarlardan
       sıfırlayabilirsiniz. Müfredat, oturumlar ve değerlendirmeler
       korunur.
+
+  - key: view_dashboard
+    title: Kontrol paneli
+    short: "Ana üssünüz: ilerleme, seri, XP, rozetler, vadesi gelen incelemeler ve hızlı eylemler."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## Kontrol paneli neyi gösterir?
+
+      Kontrol paneli komuta merkezinizdir. En üstte, en son
+      üzerinde çalıştığınız dersle "Öğrenmeye devam et" yer alır;
+      ardından eyleme dönük kartlar (duraklatılmış dersler,
+      görevler, odak alanları, inceleme sırası), sonra
+      oyunlaştırma (XP, seri, rozetler) ve son olarak analitik
+      paneller gelir.
+
+      ## Filtre
+
+      Bir konu filtresi yalnızca kendi konularınızı, en çok
+      kullanılan önce olacak şekilde sıralayarak listeler.
+
+  - key: view_content_browser
+    title: İçerik tarayıcısı
+    short: "Ders setlerini bulduğunuz, indirdiğiniz ve başlattığınız sayfa."
+    docs_slug: features/content-browser
+    long: |
+      ## Dersleri nasıl bulurum?
+
+      /content adresindeki içerik tarayıcısı öğrenme akışı
+      etrafında kuruludur: önce arama (anlık, aksan toleranslı),
+      sonra "Öğrenmeye devam et", ardından katalog. Katalog
+      "Diller" (kaynak > hedef > seviye) ve "Bilgi" (dil dışı
+      alanlar) olarak ikiye ayrılır.
+
+      ## Kaynaklar ve kitaplar
+
+      Kaynak rozetleri bir setin nereden geldiğini gösterir; bir
+      kaynak filtresi tekil kaynakları gizler. Bir alan, kitap
+      önerileri sunabilir.
+
+  - key: view_lesson
+    title: Ders
+    short: "Bir dersin teorisi ve alıştırmaları boyunca sizi adım adım yönlendiren görüntüleyici."
+    docs_slug: user-guide/lessons
+    long: |
+      ## Alıştırmalar nasıl çalışır?
+
+      Bir ders, teori ve alıştırma adımlarından oluşan bir
+      dizidir. Beş alıştırma türü görünür: eşleştirme (renkli
+      çiftler + numara rozetleri), resim seçme, serbest metin,
+      kelime karoları ve boşluk doldurma.
+
+      ## Denetimler
+
+      Enter, yanıtlanmış bir alıştırmayı kontrol eder ve
+      ilerletir. Bir alıştırmadan "Teoriyi tekrar oku" ile ilgili
+      teoriye atlayabilirsiniz. Sonunda yıldızlarla puanınızı
+      görür ve bunu Markdown olarak dışa aktarabilirsiniz.
+
+  - key: view_settings
+    title: Ayarlar
+    short: "Kod veya YAML olmadan değiştirebileceğiniz her şey — dil, yapay zeka, öğrenme, veri, görünüm."
+    docs_slug: user-guide/settings
+    long: |
+      ## Neleri yapılandırabilirim?
+
+      Ayarlar; dili, yapay zeka sağlayıcısını ve anahtarları,
+      depolama modunu, öğrenme seçeneklerini (ör. Enter kısayolu,
+      tercih edilen alıştırma yönü), veriyi (yedekleme, içerik
+      depoları), görünümü (12 tema) ve oyunlaştırmayı bir araya
+      getirir.
+
+      ## Verileriniz sizin elinizde
+
+      "Veri" altında yedekler oluşturup içe aktarır ve kendi
+      içerik depolarınızı bağlarsınız. Bunların hiçbiri sorulmadan
+      cihazınızdan ayrılmaz.
+
+  - key: feature_backup
+    title: Yedekleme ve geri yükleme
+    short: "Öğrenme durumunuzun, kaydedip başka bir yerde geri yükleyebileceğiniz eksiksiz bir anlık görüntüsü."
+    docs_slug: features/backup
+    long: |
+      ## Yedekleme nedir?
+
+      Bir yedek, eksiksiz bir anlık görüntüdür: her tablo
+      (projeler, oturumlar, ders ilerlemesi, hatalar,
+      oyunlaştırma, görevler ...) ile indirilen içerik setleriniz
+      — tek bir JSON dosyası olarak.
+
+      ## Kimlikler arası
+
+      Bir yedeği yeni bir kuruluma veya farklı bir profil altına
+      içe aktarabilirsiniz; geri yükleme, dahili referansları
+      temiz biçimde yeniden çözer. İçe aktarımda tablo bazında bir
+      özet görürsünüz.

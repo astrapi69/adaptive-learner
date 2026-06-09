@@ -25,6 +25,34 @@
       "title": "Session d'apprentissage",
       "short": "Une unité d'apprentissage guidée par l'IA qui suit le cycle en 7 étapes.",
       "long": "## Qu'est-ce qu'une session d'apprentissage ?\n\nUne session d'apprentissage est une unité continue sur un sujet,\npilotée par le cycle en 7 étapes (input, attempt, error, feedback,\nadapt, repeat, integrate). L'IA joue le rôle de l'enseignant ;\nvous menez le dialogue.\n\n## En quoi une session diffère-t-elle d'un chat ?\n\nDans une session, l'**évaluateur à double invite** tourne en parallèle :\naprès chaque réponse, une seconde instance IA juge votre compréhension\n(confiance de 0 à 100 %) et décide si vous êtes prêt pour l'étape\nsuivante. Un chat ordinaire n'a pas ce correctif.\n\n## Streaming\n\nLes réponses de l'IA apparaissent mot par mot (Server-Sent Events)\npour que vous n'attendiez pas la réponse complète. Vous pouvez\ninterrompre à tout moment et poser des questions complémentaires —\nla session se poursuit jusqu'à ce que vous la terminiez ou que le\ncycle soit complété.\n\n## Quand terminer une session ?\n\n- Après l'étape 7 (integrate), lorsque le cycle d'apprentissage\n  est complet.\n- Lorsque le système recommande un changement de méthode et que\n  vous acceptez.\n- Lorsque votre note de **stress** est supérieure à 4 lors des\n  dernières évaluations — une pause est plus productive que\n  de s'acharner.\n\n## Les évaluations se transmettent\n\nChaque session se termine par trois curseurs (compréhension, stress,\nadéquation de la méthode, chacun de 1 à 5). Ces valeurs alimentent\nvotre profil d'apprentissage et orientent les recommandations futures :\nun stress élevé soutenu associé à une faible adéquation de méthode\ndéclenche la recommandation de changement de méthode.\n\n## Dans Adaptive Learner\n\nUne session appartient à exactement un projet d'apprentissage. Vous\nne pouvez avoir qu'une seule session active à la fois ; cela évite\nle mélange de sujets et protège la logique de changement de méthode\ndu bruit.\n"
+    },
+    {
+      "key": "content_repository",
+      "title": "Dépôt de contenu",
+      "short": "Un dépôt GitHub public de jeux de leçons structurés qu'Adaptive Learner peut charger comme source de contenu.",
+      "docs_slug": "features/content-repos",
+      "long": "## Qu'est-ce qu'un dépôt de contenu ?\n\nLes leçons proviennent de dépôts de contenu — des dépôts\nGitHub publics qui regroupent des jeux de leçons. Le dépôt\nofficiel est toujours chargé ; en plus de celui-ci, vous\npouvez connecter le vôtre.\n\n## Plusieurs sources\n\nSous Paramètres > Données, vous gérez un nombre quelconque de\ndépôts (ajouter, retirer, l'ordre = la priorité). Chaque jeu\nporte un badge de source pour que vous puissiez voir d'où\nprovient une leçon.\n"
+    },
+    {
+      "key": "trust_level",
+      "title": "Niveau de confiance",
+      "short": "L'évaluation de confiance automatique d'un dépôt de contenu connecté, dérivée de sa validation technique.",
+      "docs_slug": "features/content-repos",
+      "long": "## Qu'est-ce qu'un niveau de confiance ?\n\nChaque dépôt connecté exécute une validation technique\nautomatique à chaque synchronisation. Celle-ci produit un\nniveau de confiance : 0 (non validé ou échoué), 1\n(techniquement valide : au moins une leçon, aucun contenu\nexécutable) et 3 (officiellement recommandé).\n\n## Ce que ce n'est PAS\n\nLe niveau est purement technique. Une évaluation basée sur\nle contenu ou la communauté (confiance 2) nécessite un\nservice backend partagé et est reportée.\n"
+    },
+    {
+      "key": "streak",
+      "title": "Série",
+      "short": "Le nombre de jours consécutifs où vous avez appris — le carburant du multiplicateur d'XP.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## Qu'est-ce qu'une série ?\n\nUne série compte les jours d'apprentissage consécutifs.\nChaque session ou leçon complétée remplit la carte de\nchaleur et maintient la série en vie.\n\n## Effet\n\nLa série alimente un multiplicateur d'XP (+25 % par jour\nconsécutif, plafonné à 7 jours). C'est un miroir de votre\nrégularité, pas un bâton — manquer une mission quotidienne\nne coûte aucune pénalité.\n"
+    },
+    {
+      "key": "assessment",
+      "title": "Évaluation",
+      "short": "Un court test qui détermine laquelle des six méthodes d'apprentissage vous convient.",
+      "docs_slug": "user-guide/assessment",
+      "long": "## Qu'est-ce que l'évaluation ?\n\nL'évaluation pose douze questions et en calcule votre profil\nd'apprentissage — la pondération des six méthodes sur\nlesquelles l'application s'appuie.\n\n## Optionnelle et reprenable\n\nDepuis la refonte de l'accueil, l'évaluation est optionnelle\net accessible uniquement via l'assistant de profil. Si vous\nl'abandonnez, l'application mémorise votre progression pour\nque vous puissiez plus tard reprendre là où vous vous étiez\narrêté.\n"
     }
   ]
 }

@@ -223,3 +223,77 @@ entries:
       Una sesión pertenece exactamente a un proyecto de aprendizaje.
       Solo puedes tener una sesión activa a la vez; esto evita mezclar
       temas y protege la lógica de cambio de método del ruido.
+
+  - key: content_repository
+    title: Repositorio de contenido
+    short: "Un repositorio público de GitHub con conjuntos de lecciones estructurados que Adaptive Learner puede cargar como fuente de contenido."
+    docs_slug: features/content-repos
+    long: |
+      ## ¿Qué es un repositorio de contenido?
+
+      Las lecciones provienen de repositorios de contenido:
+      repositorios públicos de GitHub que agrupan conjuntos de
+      lecciones. El repositorio oficial siempre se carga; además
+      de ese, puedes conectar el tuyo propio.
+
+      ## Múltiples fuentes
+
+      En Ajustes > Datos gestionas cualquier número de repositorios
+      (añadir, eliminar, orden = prioridad). Cada conjunto lleva una
+      insignia de fuente para que puedas ver de dónde procede una
+      lección.
+
+  - key: trust_level
+    title: Nivel de confianza
+    short: "La calificación de confianza automática de un repositorio de contenido conectado, derivada de su validación técnica."
+    docs_slug: features/content-repos
+    long: |
+      ## ¿Qué es un nivel de confianza?
+
+      Cada repositorio conectado ejecuta una validación técnica
+      automática en cada sincronización. Eso produce un nivel de
+      confianza: 0 (no validado o fallido), 1 (técnicamente válido:
+      al menos una lección, sin contenido ejecutable) y 3
+      (recomendado oficialmente).
+
+      ## Lo que NO es
+
+      El nivel es puramente técnico. Una calificación basada en la
+      comunidad o el contenido (confianza 2) requiere un servicio de
+      backend compartido y está aplazada.
+
+  - key: streak
+    title: Racha
+    short: "El número de días consecutivos que has aprendido: combustible para el multiplicador de XP."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## ¿Qué es una racha?
+
+      Una racha cuenta los días de aprendizaje consecutivos. Cada
+      sesión o lección completada llena el mapa de calor y mantiene
+      la racha viva.
+
+      ## Efecto
+
+      La racha alimenta un multiplicador de XP (+25% por cada día
+      consecutivo, con un tope de 7 días). Es un espejo de tu
+      constancia, no un palo: una misión diaria no cumplida no
+      conlleva penalización.
+
+  - key: assessment
+    title: Evaluación
+    short: "Un breve test que determina cuáles de los seis métodos de aprendizaje se adaptan a ti."
+    docs_slug: user-guide/assessment
+    long: |
+      ## ¿Qué es la evaluación?
+
+      La evaluación plantea doce preguntas y a partir de ellas
+      calcula tu perfil de aprendizaje: la ponderación de los seis
+      métodos en los que se apoya la aplicación.
+
+      ## Opcional y reanudable
+
+      Desde la renovación del onboarding, la evaluación es opcional
+      y solo se accede a ella a través del asistente de perfil. Si la
+      abandonas, la aplicación recuerda tu progreso para que más
+      tarde puedas continuar donde lo dejaste.

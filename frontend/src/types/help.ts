@@ -11,16 +11,22 @@
 export type GlossaryCategory = "concepts" | "methods" | "steps" | "features";
 
 export interface GlossaryEntry {
-    /** Stable snake_case identifier — used in URLs and as the
-     *  prop key on ``HelpTooltip`` / ``HelpDrawer``. */
-    key: string;
-    /** Display title (matches the language of the bundle). */
-    title: string;
-    /** 1-2 sentences. Renders inside the tooltip popover. */
-    short: string;
-    /** Markdown, 200-500 words. Renders inside the help
-     *  drawer. */
-    long: string;
-    /** Which YAML category the entry came from. */
-    category: GlossaryCategory;
+  /** Stable snake_case identifier — used in URLs and as the
+   *  prop key on ``HelpTooltip`` / ``HelpDrawer``. */
+  key: string;
+  /** Display title (matches the language of the bundle). */
+  title: string;
+  /** 1-2 sentences. Renders inside the tooltip popover. */
+  short: string;
+  /** Markdown, 200-500 words. Renders inside the help
+   *  drawer. */
+  long: string;
+  /** Which YAML category the entry came from. */
+  category: GlossaryCategory;
+  /** Optional MkDocs help-page slug (e.g.
+   *  ``features/content-browser``). When present, the help
+   *  drawer renders a "Learn more" link to the deployed
+   *  documentation page for this entry. Authored in the YAML;
+   *  passed through verbatim by ``sync_help_to_frontend.py``. */
+  docs_slug?: string;
 }

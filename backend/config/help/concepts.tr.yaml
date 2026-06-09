@@ -217,3 +217,77 @@ entries:
       anda yalnızca bir aktif oturumunuz olabilir; bu, konu
       karışmasını önler ve yöntem değiştirme mantığını
       gürültüden korur.
+
+  - key: content_repository
+    title: İçerik deposu
+    short: "Adaptive Learner'ın bir içerik kaynağı olarak yükleyebileceği, yapılandırılmış ders setlerinden oluşan herkese açık bir GitHub deposu."
+    docs_slug: features/content-repos
+    long: |
+      ## İçerik deposu nedir?
+
+      Dersler içerik depolarından gelir — ders setlerini bir
+      araya getiren herkese açık GitHub depoları. Resmi depo her
+      zaman yüklenir; bunun üzerine kendi deponuzu da
+      bağlayabilirsiniz.
+
+      ## Birden fazla kaynak
+
+      Ayarlar > Veri altında istediğiniz sayıda depoyu
+      yönetirsiniz (ekleme, kaldırma, sıra = öncelik). Her set,
+      bir dersin nereden geldiğini görebilmeniz için bir kaynak
+      rozeti taşır.
+
+  - key: trust_level
+    title: Güven düzeyi
+    short: "Bağlı bir içerik deposunun teknik doğrulamasından türetilen otomatik güven derecesi."
+    docs_slug: features/content-repos
+    long: |
+      ## Güven düzeyi nedir?
+
+      Bağlı her depo, her senkronizasyonda otomatik bir teknik
+      doğrulama çalıştırır. Bu, bir güven düzeyi üretir: 0
+      (doğrulanmadı veya başarısız oldu), 1 (teknik olarak
+      geçerli: en az bir ders, çalıştırılabilir içerik yok) ve 3
+      (resmi olarak önerilen).
+
+      ## Ne DEĞİLDİR
+
+      Bu düzey tamamen tekniktir. İçerik/topluluk temelli bir
+      derecelendirme (güven 2), paylaşımlı bir arka uç hizmeti
+      gerektirir ve ertelenmiştir.
+
+  - key: streak
+    title: Seri
+    short: "Üst üste öğrendiğiniz gün sayısı — XP çarpanının yakıtı."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## Seri nedir?
+
+      Bir seri, art arda gelen öğrenme günlerini sayar.
+      Tamamlanan her oturum veya ders ısı haritasını doldurur ve
+      seriyi canlı tutar.
+
+      ## Etki
+
+      Seri bir XP çarpanını besler (art arda her gün için +%25,
+      7 günde sınırlı). Tutarlılığınızın bir aynasıdır, bir
+      sopa değil — kaçırılan bir günlük görev hiçbir ceza
+      gerektirmez.
+
+  - key: assessment
+    title: Değerlendirme
+    short: "Altı öğrenme yönteminden hangilerinin size uyduğunu belirleyen kısa bir test."
+    docs_slug: user-guide/assessment
+    long: |
+      ## Değerlendirme nedir?
+
+      Değerlendirme on iki soru sorar ve bunlardan öğrenme
+      profilinizi hesaplar — uygulamanın dayandığı altı yöntemin
+      ağırlıklandırması.
+
+      ## İsteğe bağlı ve devam ettirilebilir
+
+      Onboarding revizyonundan bu yana değerlendirme isteğe
+      bağlıdır ve yalnızca profil sihirbazı üzerinden erişilebilir.
+      Yarıda bırakırsanız uygulama ilerlemenizi hatırlar; böylece
+      daha sonra kaldığınız yerden devam edebilirsiniz.

@@ -281,3 +281,98 @@ entries:
       situação (ex.: recomeço após uma longa pausa), pode
       redefini-los nas definições. O currículo, as sessões e
       as avaliações são preservados.
+
+  - key: view_dashboard
+    title: Painel
+    short: "A sua base: progresso, sequência, XP, emblemas, revisões pendentes e ações rápidas."
+    docs_slug: user-guide/dashboard
+    long: |
+      ## O que mostra o painel?
+
+      O painel é o seu centro de comando. "Continuar a aprender"
+      fica no topo com a sua lição mais recentemente acedida,
+      seguido dos cartões acionáveis (lições pausadas, missões,
+      áreas de foco, fila de revisão), depois a gamificação (XP,
+      sequência, emblemas) e, por fim, os painéis analíticos.
+
+      ## Filtro
+
+      Um filtro de matérias lista apenas as suas próprias
+      matérias, ordenadas pelas mais usadas primeiro.
+
+  - key: view_content_browser
+    title: Navegador de conteúdos
+    short: "A página onde encontra, descarrega e inicia conjuntos de lições."
+    docs_slug: features/content-browser
+    long: |
+      ## Como encontro lições?
+
+      O navegador de conteúdos em /content é construído em torno
+      do fluxo de aprendizagem: pesquisa primeiro (instantânea,
+      tolerante a acentos), depois "Continuar a aprender" e a
+      seguir o catálogo. O catálogo divide-se em "Línguas" (origem
+      > destino > nível) e "Conhecimento" (domínios não
+      linguísticos).
+
+      ## Fontes e livros
+
+      Os selos de origem mostram de onde vem um conjunto; um
+      filtro de origem oculta fontes individuais. Um domínio pode
+      apresentar recomendações de livros.
+
+  - key: view_lesson
+    title: Lição
+    short: "O visualizador que o conduz passo a passo pela teoria e pelos exercícios de uma lição."
+    docs_slug: user-guide/lessons
+    long: |
+      ## Como funcionam os exercícios?
+
+      Uma lição é uma sequência de passos de teoria e de
+      exercício. Surgem cinco tipos de exercício: correspondência
+      (pares coloridos + selos numerados), escolha de imagem,
+      texto livre, blocos de palavras e preenchimento de lacunas.
+
+      ## Controlos
+
+      Enter verifica um exercício respondido e avança. A partir de
+      um exercício, pode saltar para a teoria correspondente via
+      "Reler a teoria". No final, vê a sua pontuação com estrelas
+      e pode exportá-la como Markdown.
+
+  - key: view_settings
+    title: Definições
+    short: "Tudo o que pode alterar sem código ou YAML — idioma, IA, aprendizagem, dados, aparência."
+    docs_slug: user-guide/settings
+    long: |
+      ## O que posso configurar?
+
+      As definições agrupam idioma, fornecedor de IA e chaves,
+      modo de armazenamento, opções de aprendizagem (ex.: atalho
+      Enter, direção de exercício preferida), dados (cópia de
+      segurança, repositórios de conteúdos), aparência (12 temas)
+      e gamificação.
+
+      ## Os seus dados nas suas mãos
+
+      Em "Dados", cria e importa cópias de segurança e liga os
+      seus próprios repositórios de conteúdos. Nada disto sai do
+      seu dispositivo sem ser pedido.
+
+  - key: feature_backup
+    title: Cópia de segurança e restauro
+    short: "Um instantâneo completo do seu estado de aprendizagem que pode guardar e restaurar noutro lugar."
+    docs_slug: features/backup
+    long: |
+      ## O que é uma cópia de segurança?
+
+      Uma cópia de segurança é um instantâneo completo: todas as
+      tabelas (projetos, sessões, progresso de lições, erros,
+      gamificação, missões ...) mais os seus conjuntos de
+      conteúdos descarregados — num único ficheiro JSON.
+
+      ## Entre identidades
+
+      Pode importar uma cópia de segurança para uma instalação
+      nova ou sob um perfil diferente; o restauro resolve
+      novamente as referências internas de forma limpa. Ao
+      importar, vê um resumo por tabela.

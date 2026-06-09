@@ -31,6 +31,41 @@
       "title": "Gamification (XP, Badges, Streaks)",
       "short": "Fortschrittssystem mit Erfahrungspunkten, Abzeichen und Lernserien — Motivation ohne Spielerei.",
       "long": "## Was ist die Gamification-Schicht?\n\nDrei Mechaniken machen Lernfortschritt sichtbar und\nbelohnend:\n\n- **XP (Erfahrungspunkte)** — fuer jede abgeschlossene\n  Session, jeden Methodenwechsel, jede Spaced-Repetition-\n  Karte. Levels steigen mit den XP.\n- **Badges** — fuer thematische Meilensteine (\"Erste\n  Session\", \"10 Sessions in einer Methode\", \"30 Tage\n  Streak\", ...).\n- **Streaks** — taegliche Lernserien. Verfallen nach\n  24 Stunden ohne Session — mit drei \"Streak Freezes\"\n  pro Monat als Notfall-Pause.\n\n## Wie XP verdient wird\n\nVerschiedene Aktionen geben verschiedene XP-Werte:\n\n- **Session bewertet abgeben**: 50 XP.\n- **Schritt 7 (Integration) erreicht**: +25 XP Bonus.\n- **Methodenwechsel angenommen**: 10 XP (du nimmst eine\n  bewusste Lernentscheidung).\n- **Spaced-Repetition-Karte mit Confidence > 80%**: 5 XP.\n- **Anki-Export einer Sammlung**: 20 XP.\n\nLevels skalieren mit Wurzel-Funktion (Level n = sqrt(XP /\n100)) — Anfangslevels gehen schnell, hoehere brauchen\nlaengeren Atem.\n\n## Badges sind kein Zwang\n\nBadge-Kriterien sind nicht UI-relevant — du *musst* kein\neinziges Badge holen, um die App produktiv zu nutzen. Sie\nsind ein Spiegel, kein Ziel. Wenn du das Gefuehl\nbekommst, fuer Badges statt fuer dich zu lernen,\ndeaktiviere die Anzeige in den Einstellungen.\n\n## Streak-Freezes\n\nDrei Streak-Freezes pro Monat. Wenn du einen Tag\nverpasst, schuetzt der Freeze deine Streak automatisch.\nDas ist explizit als \"Krankheitstag\" oder \"Reisetag\"\ngedacht, nicht als Ausnahme-Mechanik fuer Faulheit.\n\n## Warum das ohne Gimmicks funktioniert\n\nLernforschung zeigt: extrinsische Belohnung kann\nintrinsische Motivation zerstoeren (\"overjustification\neffect\"). Adaptive Learner setzt darauf, dass die\nMechaniken ein **Spiegel** des Fortschritts sind, kein\nAnreiz-System. Keine Vergleichs-Ranglisten, keine\nSocial-Features, keine Punkte-Sharing — die Daten\nbleiben bei dir.\n\n## Reset\n\nWenn dir die Gamification-Werte nicht mehr passen\n(z.B. neuer Anlauf nach langer Pause), kannst du sie in\nden Einstellungen zuruecksetzen. Curriculum, Sessions\nund Bewertungen bleiben erhalten.\n"
+    },
+    {
+      "key": "view_dashboard",
+      "title": "Dashboard",
+      "short": "Deine Startseite: Fortschritt, Streak, XP, Abzeichen, faellige Wiederholungen und schnelle Aktionen.",
+      "docs_slug": "user-guide/dashboard",
+      "long": "## Was zeigt das Dashboard?\n\nDas Dashboard ist deine Kommandozentrale. Oben steht\n\"Weitermachen\" mit der zuletzt beruehrten Lektion, darunter\ndie handlungsrelevanten Karten (pausierte Lektionen,\nMissionen, Fokusbereiche, Wiederholungs-Warteschlange),\ndann die Gamification (XP, Streak, Abzeichen) und\nschliesslich die analytischen Panels.\n\n## Filter\n\nEin Subject-Filter listet nur deine eigenen Fachgebiete,\nnach haeufigster Nutzung sortiert.\n"
+    },
+    {
+      "key": "view_content_browser",
+      "title": "Content Browser",
+      "short": "Die Seite, auf der du Lektionssaetze findest, herunterlaedst und startest.",
+      "docs_slug": "features/content-browser",
+      "long": "## Wie finde ich Lektionen?\n\nDer Content Browser unter /content ist rund um den\nLernfluss gebaut: zuerst die Suche (sofort,\nakzent-tolerant), dann \"Weitermachen\", dann der Katalog.\nDieser teilt sich in \"Sprachen\" (Quellsprache >\nZielsprache > Niveau) und \"Wissen\" (Nicht-Sprach-Domaenen).\n\n## Quellen und Buecher\n\nQuell-Badges zeigen, woher ein Satz stammt; ein\nQuell-Filter blendet einzelne Quellen aus. Zu einer\nDomaene koennen Buchempfehlungen erscheinen.\n"
+    },
+    {
+      "key": "view_lesson",
+      "title": "Lektion",
+      "short": "Der Viewer, der dich Schritt fuer Schritt durch Theorie und Uebungen einer Lektion fuehrt.",
+      "docs_slug": "user-guide/lessons",
+      "long": "## Wie funktionieren die Uebungen?\n\nEine Lektion ist eine Folge von Theorie- und\nUebungsschritten. Fuenf Uebungstypen kommen vor: Zuordnen\n(farbige Paare + Nummern-Badges), Bildauswahl, Freitext,\nWort-Kacheln und Lueckentext.\n\n## Bedienung\n\nEnter prueft eine beantwortete Uebung und geht weiter. Aus\neiner Uebung springst du per \"Theorie nochmal lesen\" zur\npassenden Theorie. Am Ende siehst du dein Ergebnis mit\nSternen und kannst es als Markdown exportieren.\n"
+    },
+    {
+      "key": "view_settings",
+      "title": "Einstellungen",
+      "short": "Alles, was du ohne Code oder YAML aendern kannst — Sprache, KI, Lernen, Daten, Darstellung.",
+      "docs_slug": "user-guide/settings",
+      "long": "## Was kann ich einstellen?\n\nDie Einstellungen buendeln Sprache, KI-Anbieter und\n-Schluessel, Speichermodus, Lern-Optionen (z.B.\nEnter-Shortcut, bevorzugte Uebungsrichtung), Daten (Backup,\nContent-Repositories), Darstellung (12 Themes) und\nGamification.\n\n## Daten in deiner Hand\n\nUnter \"Daten\" erstellst und importierst du Backups und\nverbindest eigene Content-Repositories. Nichts davon\nverlaesst dein Geraet ungefragt.\n"
+    },
+    {
+      "key": "feature_backup",
+      "title": "Backup und Wiederherstellung",
+      "short": "Ein vollstaendiger Snapshot deines Lernzustands, den du speichern und woanders wiederherstellen kannst.",
+      "docs_slug": "features/backup",
+      "long": "## Was ist ein Backup?\n\nEin Backup ist ein vollstaendiger Snapshot: alle Tabellen\n(Projekte, Sessions, Lektionsfortschritt, Fehler,\nGamification, Missionen ...) plus deine heruntergeladenen\nContent-Sets — als eine JSON-Datei.\n\n## Cross-Identity\n\nDu kannst ein Backup in eine frische Installation oder\nunter einem anderen Profil einspielen; die\nWiederherstellung loest interne Verweise sauber neu auf.\nBeim Import siehst du eine Zusammenfassung pro Tabelle.\n"
     }
   ]
 }
