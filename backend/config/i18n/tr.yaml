@@ -1410,6 +1410,10 @@ lesson:
       empty: "Bu alıştırmada eşleşme yok."
       left_label_productive: Anlam
       right_label_productive: Terim
+      left_label_knowledge: "Terim"
+      right_label_knowledge: "Tanım"
+      instruction_knowledge: "Her terimi tanımıyla eşleştir."
+      instructions_knowledge: "Soldan bir öğe seç, ardından sağdaki eşini seç."
       selected_sr: "Seçildi: {label}"
     picture:
       submit: "Cevabı kontrol et"

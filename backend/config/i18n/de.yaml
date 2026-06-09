@@ -1415,6 +1415,10 @@ lesson:
       empty: "Diese Zuordnungs-Übung hat keine Paare."
       left_label_productive: Bedeutung
       right_label_productive: Begriff
+      left_label_knowledge: "Begriff"
+      right_label_knowledge: "Definition"
+      instruction_knowledge: "Ordne jeden Begriff seiner Definition zu."
+      instructions_knowledge: "Wähle links ein Element, dann rechts die passende Zuordnung."
       selected_sr: "Ausgewählt: {label}"
     picture:
       submit: "Antwort prüfen"

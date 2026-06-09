@@ -1524,6 +1524,10 @@
         "empty": "Este ejercicio no tiene pares.",
         "left_label_productive": "Significado",
         "right_label_productive": "Término",
+        "left_label_knowledge": "Término",
+        "right_label_knowledge": "Definición",
+        "instruction_knowledge": "Relaciona cada término con su definición.",
+        "instructions_knowledge": "Selecciona un elemento a la izquierda y luego su correspondencia a la derecha.",
         "selected_sr": "Seleccionado: {label}"
       },
       "picture": {

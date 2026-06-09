@@ -68,6 +68,12 @@ export interface MatchingExerciseProps extends ControlledExerciseProps {
      *  generic labels. */
     targetLanguage?: string | null;
     sourceLanguage?: string | null;
+    /** #149 — the lesson's domain. For a non-language domain (or a
+     *  source==target knowledge set) the renderer drops the
+     *  translation-specific wording: neutral Term / Definition
+     *  column labels, no language names, a "match each term to its
+     *  definition" instruction. Optional; absent = language behaviour. */
+    domain?: string | null;
 }
 
 /** Localised display name for a BCP-47 language code, in the
@@ -181,6 +187,7 @@ function MatchingExercise(
         reviewed = null,
         targetLanguage = null,
         sourceLanguage = null,
+        domain = null,
         ttsLang = null,
         codeMode = false,
     }: MatchingExerciseProps,
@@ -197,31 +204,50 @@ function MatchingExercise(
     // unchanged, so pair i still matches right i.
     const direction = resolveConcreteDirection(exercise.direction, exercise.id);
     const productive = direction === "source_to_target";
+    // #149 — a knowledge lesson (non-language domain, or a
+    // source==target set) is not a translation exercise, so the
+    // translation-specific wording (language names, "translation",
+    // receptive/productive framing) does not apply. The explicit
+    // domain wins; source==target is the fallback signal when both
+    // codes are present (Review / Adaptive pass neither and keep the
+    // language behaviour).
+    const isKnowledge =
+        (domain != null && domain !== "language") ||
+        (!!targetLanguage && targetLanguage === sourceLanguage);
     // Each column header names the LANGUAGE of the words shown in
     // it, when the lesson's language pair is known. Receptive keeps
     // the authored orientation (target words left, source right);
     // productive flips it. Falls back to the generic Term /
-    // Translation labels when no language info is available.
+    // Translation labels when no language info is available. In
+    // knowledge mode it uses neutral Term / Definition labels and
+    // never the language names.
     const targetName = _languageName(targetLanguage, lang);
     const sourceName = _languageName(sourceLanguage, lang);
     const leftLangName = productive ? sourceName : targetName;
     const rightLangName = productive ? targetName : sourceName;
-    const leftLabel =
-        leftLangName ??
-        (productive
-            ? t("lesson.exercise.matching.left_label_productive", "Meaning")
-            : t("lesson.exercise.matching.left_label", "Term"));
-    const rightLabel =
-        rightLangName ??
-        (productive
-            ? t("lesson.exercise.matching.right_label_productive", "Term")
-            : t("lesson.exercise.matching.right_label", "Translation"));
-    const instruction = t(
-        instructionKey("matching", direction),
-        productive
-            ? "Match the pairs (Translation)"
-            : "Match the pairs (Recognition)",
-    );
+    const leftLabel = isKnowledge
+        ? t("lesson.exercise.matching.left_label_knowledge", "Term")
+        : (leftLangName ??
+          (productive
+              ? t("lesson.exercise.matching.left_label_productive", "Meaning")
+              : t("lesson.exercise.matching.left_label", "Term")));
+    const rightLabel = isKnowledge
+        ? t("lesson.exercise.matching.right_label_knowledge", "Definition")
+        : (rightLangName ??
+          (productive
+              ? t("lesson.exercise.matching.right_label_productive", "Term")
+              : t("lesson.exercise.matching.right_label", "Translation")));
+    const instruction = isKnowledge
+        ? t(
+              "lesson.exercise.matching.instruction_knowledge",
+              "Match each term with its definition.",
+          )
+        : t(
+              instructionKey("matching", direction),
+              productive
+                  ? "Match the pairs (Translation)"
+                  : "Match the pairs (Recognition)",
+          );
 
     // Stable seed per-mount so reshuffling on every render
     // doesn't move the right column under the user.
@@ -458,10 +484,15 @@ function MatchingExercise(
                 className="m-0 text-[0.8125rem] text-[var(--fg-muted)]"
                 data-testid="matching-instructions"
             >
-                {t(
-                    "lesson.exercise.matching.instructions",
-                    "Select an item on the left, then its matching translation on the right.",
-                )}
+                {isKnowledge
+                    ? t(
+                          "lesson.exercise.matching.instructions_knowledge",
+                          "Select an item on the left, then its match on the right.",
+                      )
+                    : t(
+                          "lesson.exercise.matching.instructions",
+                          "Select an item on the left, then its matching translation on the right.",
+                      )}
             </p>
 
             {/* First-pair flow hint: disappears once the learner has

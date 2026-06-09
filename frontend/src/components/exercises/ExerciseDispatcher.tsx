@@ -60,6 +60,12 @@ export interface ExerciseDispatcherProps extends ControlledExerciseProps {
      *  languages. Optional; only the matching renderer reads them. */
     targetLanguage?: string | null;
     sourceLanguage?: string | null;
+    /** #149 — the lesson's domain ("language" | "programming" |
+     *  "psychology" | …). Forwarded to MatchingExercise so a
+     *  knowledge lesson drops the translation-specific wording
+     *  (instructions, column labels) that only fits language sets.
+     *  Optional; defaults to language behaviour when absent. */
+    domain?: string | null;
     /** Schema v1.3 — the lesson's cards, so the dispatcher can read the
      *  referenced card's ``media_type`` / ``code_language`` and switch
      *  the free-text / cloze renderers into code mode (monospace input,
@@ -97,6 +103,7 @@ function ExerciseDispatcher(
         source = "",
         targetLanguage = null,
         sourceLanguage = null,
+        domain = null,
         cards = [],
         onComplete,
         controlled = false,
@@ -134,6 +141,7 @@ function ExerciseDispatcher(
                 lessonId={lessonId}
                 targetLanguage={targetLanguage}
                 sourceLanguage={sourceLanguage}
+                domain={domain}
                 {...shared}
             />
         );

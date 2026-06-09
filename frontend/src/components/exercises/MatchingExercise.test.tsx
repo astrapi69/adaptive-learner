@@ -298,6 +298,60 @@ describe("MatchingExercise: side distinction (#108)", () => {
     });
 });
 
+describe("MatchingExercise: knowledge-domain wording (#149)", () => {
+    it("uses Term / Definition + a non-translation instruction for a non-language domain", () => {
+        render(
+            <MatchingExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                domain="psychology"
+                targetLanguage="de"
+                sourceLanguage="de"
+            />,
+        );
+        expect(
+            screen.getByTestId("matching-left-header"),
+        ).toHaveTextContent("Term");
+        expect(
+            screen.getByTestId("matching-right-header"),
+        ).toHaveTextContent("Definition");
+        expect(
+            screen.getByTestId("matching-instructions").textContent,
+        ).not.toMatch(/translation/i);
+    });
+
+    it("treats source==target as knowledge even without an explicit domain", () => {
+        render(
+            <MatchingExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                targetLanguage="de"
+                sourceLanguage="de"
+            />,
+        );
+        expect(
+            screen.getByTestId("matching-right-header"),
+        ).toHaveTextContent("Definition");
+    });
+
+    it("keeps the translation wording for a real language pair", () => {
+        render(
+            <MatchingExercise
+                exercise={EXERCISE}
+                onComplete={vi.fn()}
+                domain="language"
+                targetLanguage="es"
+                sourceLanguage="de"
+            />,
+        );
+        // Language names render when the pair is known; the generic
+        // 'Definition' knowledge label must NOT appear.
+        expect(
+            screen.getByTestId("matching-right-header").textContent,
+        ).not.toContain("Definition");
+    });
+});
+
 describe("MatchingExercise: per-pair color + label (#145)", () => {
     it("matchingPairColorVar cycles through the chart tokens", () => {
         expect(matchingPairColorVar(0)).toBe("var(--chart-1)");
