@@ -1,82 +1,74 @@
-# Incorporación
+# Onboarding
 
-Después del selector de idioma en la página de inicio, el flujo
-de incorporación recopila cuatro campos obligatorios más una
-taxonomía opcional:
+Desde la **v1.64.0**, el inicio es deliberadamente breve: el
+**inicio rápido** solo requiere dos campos.
 
-1. **Tema** — qué quieres aprender. «Gramática española»,
-   «Fundamentos de aprendizaje automático», «Improvisación de
-   guitarra solista». Sé específico; la IA lo usará para anclar
-   cada sesión.
-2. **Objetivo** — cómo se ve el éxito. «Aprobar el examen B2»,
-   «Construir un motor de recomendaciones de extremo a extremo»,
-   «Tocar un solo en un blues de 12 compases sobre una pista de
-   acompañamiento sin perder el tiempo.» Los objetivos concretos
-   producen una orientación de la IA más útil.
-3. **Plazo** — cuándo quieres alcanzar el objetivo. «6 semanas»,
-   «Antes de fin de verano», «Para el tercer trimestre». Se usa
-   para marcar el ritmo de las expectativas y fijar el objetivo
-   de seguimiento de la racha.
-4. **Minutos diarios** — cuánto tiempo puedes dedicar
-   realísticamente. 15-45 minutos es el punto óptimo para el
-   aprendizaje adaptativo; la aplicación no recompensa las
-   sesiones maratonianas.
+1. **Nombre** — cómo debe dirigirse la app a ti.
+2. **Tema** — qué quieres aprender. "Gramática española",
+   "Fundamentos de machine learning", "Improvisación de guitarra
+   en solitario". Sé concreto; ese es el ancla de tu proyecto.
 
-**Taxonomía de asignaturas** (opcional, desde v1.9.0) — un
-sugeridor difuso relaciona tu tema con la taxonomía sembrada de
-más de 80 nodos en Idiomas / Matemáticas / Programación /
-Ciencias / Música / Humanidades / Ciencias Sociales / Habilidades.
-Elegir una asignatura de Idiomas desbloquea la Práctica de
-Pronunciación para el proyecto más adelante.
+Todo lo demás (objetivo, plazo, minutos por día, idioma) toma
+**valores predeterminados** razonables que puedes cambiar en
+cualquier momento.
 
-**Etiquetas** (opcional) — etiquetas de texto libre separadas por
-comas («preparación-examen», «diario», «ritmo-propio») que
-aparecen en la barra de filtros del Panel principal más adelante.
+## Empezar directamente o configurar el perfil
 
-También puedes omitir el formulario por completo: se crea un
-usuario predeterminado y aterrizas directamente en el Panel
-principal.
+Tras enviar, la app te ofrece dos vías:
 
-También eliges un **idioma** para el proyecto. Este es el idioma
-en que la IA responderá durante las sesiones; puede ser diferente
-del idioma de la interfaz (podrías preferir la interfaz en tu
-idioma nativo pero aprender español en español).
+- **Empezar directamente** — llegas de inmediato al Dashboard y
+  puedes iniciar una lección o sesión.
+- **Configurar el perfil** — abre el **asistente de onboarding**:
+  una pregunta por pantalla (objetivo → plazo → minutos por día →
+  problema actual → prueba de tipo de aprendizaje opcional), cada
+  una con valor previo, de modo que "Siguiente" siempre funcione,
+  además de barra de progreso y "Atrás". Las respuestas se guardan
+  en ambos modos de almacenamiento.
+
+La **prueba de tipo de aprendizaje ya no es obligatoria**; solo se
+puede acceder a ella a través del último paso del asistente. Más
+información en [Prueba de tipo de aprendizaje](assessment.md).
+
+## Evaluación reanudable
+
+Si interrumpes la prueba de tipo de aprendizaje a mitad, la app
+recuerda el estado intermedio (pregunta actual, respuestas
+anteriores, hora de inicio) por proyecto, de modo que **continúes
+donde lo dejaste**. El Dashboard y los Ajustes te invitan
+activamente a **continuar, crear o rehacer** el perfil de
+aprendizaje. En cuanto el perfil está calculado, se descarta el
+estado intermedio.
 
 ## Opcional: problema actual
 
-Un campo de «problema actual» te permite traer una pregunta
-abierta al proyecto de inmediato. Si lo rellenas, la primera
-sesión comienza con este obstáculo concreto en lugar de un
-prompt abierto de «¿en qué quieres trabajar?».
+En el paso "problema actual" puedes incorporar de inmediato una
+pregunta abierta al proyecto. Si lo rellenas, la primera sesión de
+IA arranca con ese obstáculo concreto en lugar de con una consigna
+abierta de "¿en qué quieres trabajar?".
 
-## Qué ocurre a continuación
+## Subjects y tags
 
-Cuando envías el formulario, tres cosas ocurren en un solo viaje
-de ida y vuelta:
+Puedes asignar opcionalmente a tu proyecto un **Subject** (materia
+del árbol de taxonomía precargado) y **tags** (etiquetas de texto
+libre separadas por comas). Ambos aparecen más tarde en la barra
+de filtros del Dashboard; el filtro de Subject solo enumera tus
+propios Subjects, ordenados por uso más frecuente. Quien elija un
+Subject de idiomas desbloquea el ejercicio de pronunciación.
 
-1. Se crea un registro `User` (o se reutiliza: tu navegador local
-   mantiene el mismo usuario entre sesiones).
-2. Una fila `LearningProject` recibe tu tema / objetivo / plazo /
-   minutos-diarios / idioma.
-3. La ruta de Evaluación se abre automáticamente. Puedes omitirla
-   desde aquí, pero entonces la aplicación usará el método de
-   aprendizaje «deductivo» por defecto hasta que la realices.
+## Editar el proyecto
 
-## Editar tu proyecto
+Los detalles del proyecto no están escritos en piedra. En la
+página de currículo puedes ajustar el tema y el objetivo en cuanto
+descubras qué quieres aprender de verdad. El idioma lo cambias en
+los Ajustes.
 
-Los detalles del proyecto no son inamovibles. La página del Plan
-de estudios te permite ajustar el tema y el objetivo a medida que
-descubres qué quieres aprender realmente. La página de Ajustes
-gestiona los cambios de idioma.
-
-## Qué no se almacena
+## Qué no se guarda
 
 - **Sin correo electrónico**, sin contraseña, sin cuenta.
-- **Sin análisis**, sin rastreadores de terceros.
-- **Sin telemetría** enviada fuera de tu dispositivo en el modo Local.
+- **Sin analítica**, sin rastreadores de terceros.
+- **Ninguna telemetría** abandona tu dispositivo en modo local.
 
-Tu proveedor de IA ve tus mensajes (ese es el punto de pedirle
-a la IA). Adaptive Learner en sí mismo solo almacena lo que
-escribes, de forma local o en el backend FastAPI, según el
-[modo de almacenamiento](settings.md#storage-mode) que hayas
-elegido.
+Tu proveedor de IA ve tus mensajes (ese es justamente el sentido
+de la consulta a la IA). Adaptive Learner mismo solo guarda lo que
+escribes, localmente o en el backend de FastAPI, según el
+[modo de almacenamiento](settings.md) configurado.

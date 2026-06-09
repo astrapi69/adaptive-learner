@@ -1,64 +1,58 @@
 # Onboarding
 
-Nach der Sprachauswahl auf der Startseite sammelt das Onboarding
-vier Pflichtfelder plus optionale Taxonomie:
+Seit **v1.64.0** ist der Einstieg bewusst kurz: Der
+**Schnellstart** verlangt nur zwei Felder.
 
-1. **Thema** — was du lernen willst. "Spanische Grammatik",
-   "Machine-Learning-Grundlagen", "Solo-Improvisation auf der
-   Gitarre". Sei konkret; die KI nutzt das als Anker für jede
-   Session.
-2. **Ziel** — wie Erfolg aussieht. "B2-Prüfung bestehen",
-   "Eine Empfehlungs-Engine end-to-end bauen", "Über einen
-   12-Takt-Blues solieren ohne aus dem Takt zu fallen".
-   Konkrete Ziele bringen bessere KI-Unterstützung.
-3. **Zeitrahmen** — bis wann du das Ziel erreichen willst.
-   "6 Wochen", "Bis Ende Sommer", "Bis Q3". Wird genutzt, um
-   Erwartungen zu takten und das Streak-Tracking zu setzen.
-4. **Minuten pro Tag** — wie viel Zeit du realistisch
-   investieren kannst. 15-45 Minuten sind der Sweet Spot für
-   adaptives Lernen; die App belohnt keine Marathon-Sessions.
+1. **Name** — wie die App dich ansprechen soll.
+2. **Thema** — was du lernen willst. „Spanische Grammatik",
+   „Machine-Learning-Grundlagen", „Solo-Improvisation auf der
+   Gitarre". Sei konkret; das ist der Anker für dein Projekt.
 
-Außerdem wählst du eine **Sprache** für das Projekt. Das ist
-die Sprache, in der die KI in den Sessions antwortet; sie darf
-von der UI-Sprache abweichen (du kannst die Oberfläche auf
-Deutsch lassen und trotzdem Spanisch auf Spanisch lernen).
+Alles Weitere (Ziel, Zeitrahmen, Minuten pro Tag, Sprache)
+nimmt sinnvolle **Vorgaben** an, die du jederzeit ändern kannst.
 
-**Subject-Taxonomie** (optional, seit v1.9.0) — ein
-Fuzzy-Suggester gleicht dein Thema mit dem geseedeten
-80+-Knoten-Baum unter Sprachen / Mathematik / Programmierung /
-Naturwissenschaften / Musik / Geisteswissenschaften /
-Sozialwissenschaften / Skills ab. Wer ein Sprachen-Subject
-wählt, schaltet später die Aussprache-Übung für das Projekt
-frei.
+## Direkt loslegen oder Profil einrichten
 
-**Tags** (optional) — komma-getrennte Freitext-Labels
-(„prüfungsvorbereitung", „täglich", „self-paced"), die später
-in der Dashboard-Filter-Leiste auftauchen.
+Nach dem Absenden bietet dir die App zwei Wege:
 
-Du kannst das Formular auch komplett überspringen — dann wird
-ein Default-User angelegt und du landest direkt auf dem
-Dashboard.
+- **Direkt loslegen** — du landest sofort auf dem Dashboard und
+  kannst eine Lektion oder Session starten.
+- **Profil einrichten** — öffnet den **Onboarding-Assistenten**:
+  eine Frage pro Bildschirm (Ziel → Zeitrahmen → Minuten pro Tag
+  → aktuelles Problem → optionaler Lerntyp-Test), jede mit
+  Vorbelegung, sodass „Weiter" immer funktioniert, dazu
+  Fortschrittsbalken und „Zurück". Die Antworten werden in beiden
+  Speichermodi gespeichert.
+
+Der **Lerntyp-Test ist nicht mehr verpflichtend** — er ist nur
+noch über den letzten Schritt des Assistenten erreichbar. Mehr
+dazu unter [Lerntyp-Test](assessment.md).
+
+## Fortsetzbares Assessment
+
+Brichst du den Lerntyp-Test mittendrin ab, merkt sich die App
+den Zwischenstand (aktuelle Frage, bisherige Antworten,
+Startzeit) projektbezogen, sodass du **dort weitermachst, wo du
+aufgehört hast**. Dashboard und Einstellungen laden dich aktiv
+ein, das Lernprofil **fortzusetzen, zu erstellen oder neu zu
+machen**. Sobald das Profil berechnet ist, wird der
+Zwischenstand verworfen.
 
 ## Optional: aktuelles Problem
 
-Im Feld "aktuelles Problem" kannst du eine offene Frage gleich
+Im Schritt „aktuelles Problem" kannst du eine offene Frage gleich
 ins Projekt einbringen. Wenn du es ausfüllst, startet die erste
-Session mit diesem konkreten Hindernis statt mit einem offenen
-"woran willst du arbeiten?"-Prompt.
+KI-Session mit diesem konkreten Hindernis statt mit einem offenen
+„woran willst du arbeiten?"-Prompt.
 
-## Was als Nächstes passiert
+## Subjects und Tags
 
-Beim Absenden des Formulars geschehen drei Dinge in einem
-Roundtrip:
-
-1. Ein `User`-Datensatz wird angelegt (oder wiederverwendet —
-   dein lokaler Browser behält denselben User über Sessions
-   hinweg).
-2. Ein `LearningProject`-Eintrag erhält dein Thema / Ziel /
-   Zeitrahmen / Minuten / Sprache.
-3. Der Lerntyp-Test öffnet sich automatisch. Du kannst ihn von
-   hier aus überspringen; die App fällt dann auf die
-   "deduktive" Methode zurück, bis du ihn nachholst.
+Du kannst deinem Projekt optional ein **Subject** (Fachgebiet
+aus dem geseedeten Taxonomie-Baum) und **Tags** (komma-getrennte
+Freitext-Labels) zuordnen. Beide tauchen später in der
+Dashboard-Filter-Leiste auf; der Subject-Filter listet nur deine
+eigenen Subjects, nach häufigster Nutzung sortiert. Wer ein
+Sprachen-Subject wählt, schaltet die Aussprache-Übung frei.
 
 ## Projekt bearbeiten
 

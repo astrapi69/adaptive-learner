@@ -1,235 +1,252 @@
-<!-- Translation: AI-generated, pending native review -->
+# İçerik dersleri ve tekrarlar
 
-# İçerik dersleri ve incelemeler
+Bir **içerik dersi**, herkese açık bir ders setinden indirilen küçük,
+elle hazırlanmış bir öğrenme birimidir (genellikle 5–10 dakika).
+Yapay zeka sohbet oturumunda değil, kendi görüntüleyicisinde çalışır.
+Dersten sonra uygulama, hangi kelimeleri, çiftleri ya da kalıpları
+yanlış yanıtladığını tam olarak hatırlar ve bunları daha sonra hedefli
+bir tekrar oturumu için planlar.
 
-**İçerik dersi**, genel bir içerik setinden indirilen küçük,
-elle hazırlanmış bir öğrenme birimidir (genellikle 5-10
-dakika). Yapay zeka sohbet oturumunda değil, özel bir
-görüntüleyicide çalışır. Ders tamamlandıktan sonra uygulama,
-hangi kelime, çift veya ifadeyi yanlış yaptığınızı tam olarak
-hatırlar ve bunları daha sonraki odaklı bir inceleme oturumu
-için zamanlar.
-
-Dersler, yapay zeka API anahtarı gerektirmeyen **alternatif bir
-öğrenme yoludur** — uygulamayı denemek veya seçilmiş materyalin
-serbest biçimli sohbetten daha iyi olduğu içerikler için
-mükemmeldir.
+Dersler, bir yapay zeka API anahtarına ihtiyaç duymayan **alternatif
+bir öğrenme yoludur** — uygulamayı denemek ya da küratörlü materyalin
+serbest sohbetten daha iyi işlediği içerikler için idealdir.
 
 ---
 
-## Dersler nereden geliyor
+## Dersler nereden gelir
 
-Dersler, genel GitHub depolarına yayımlanan küçük paketler olan
-**içerik setleri** içinde yer alır. `/content` adresindeki
-uygulamanın **Set Tarayıcısı** mevcut tüm setleri listeler;
-birini indirmek için tıklayın. Set yerel olarak önbelleğe alınır
-(arka uçla çalışıyorsanız dosya sisteminde, yalnızca tarayıcı
-dağıtımında IndexedDB'de), böylece ilk indirmenin ardından
-çevrimdışı çalışabilirsiniz.
+Dersler **içerik setlerinde** bulunur — herkese açık GitHub
+repolarında yayınlanmış küçük paketler. `/content` altındaki
+**Set Tarayıcısı**, mevcut her seti listeler; indirmek için birine
+tıkla. Set yerel olarak önbelleğe alınır (arka uçla çalışırken dosya
+sisteminde, yalnızca tarayıcı modunda IndexedDB'de), böylece ilk
+indirmeden sonra çevrimdışı öğrenebilirsin.
 
-Pilot v1.27.0 seti **Fransızca A1**'dir (2 ders, 14 kart, tüm
-dört alıştırma türünü kapsayan 9 alıştırma). O tarihten bu yana
-her sürümde daha fazlası eklenmektedir — güncel katalog için
-[set deposuna](https://github.com/astrapi69/adaptive-learner-content)
-bakın.
+v1.27.0'dan gelen pilot set **Fransızca A1**'dir (2 ders, 14 kart, 9
+alıştırma; dört alıştırma türünün tümünü kapsar). O zamandan beri her
+sürüm yenilerini ekler — güncel katalog için
+[Set reposuna](https://github.com/astrapi69/adaptive-learner-content)
+bak.
 
 ---
 
 ## Ders akışı
 
-Bir set açın, bir ders seçin ve **ders görüntüleyici** sizi her
-kart ve alıştırmada adım adım götürür:
+Bir set aç, bir ders seç ve **Ders Görüntüleyici** seni her kart ve
+alıştırmadan adım adım geçirir:
 
-1. **Kartlar** okunacak materyal sunar. Hazır olduğunuzda
-   "İleri"ye tıklayın.
-2. **Alıştırmalar** ne hatırladığınızı kontrol eder. Dört tür
-   mevcuttur:
-   - **Eşleştirme** — çiftleri sürükleyin (kelime ↔ çeviri).
-   - **Resim seçimi** — bir komutla eşleşen resmi seçin.
-   - **Serbest metin** — cevabı yazın.
-   - **Kelime kutuları** — kutulardan bir cümle oluşturun.
+1. **Kartlar** okumak için materyal sunar. Hazır olduğunda
+   "Devam"a tıkla.
+2. **Alıştırmalar** neyi hatırladığını sınar. Dört tür mevcuttur:
+   - **Eşleştirme** — çiftleri sürükle (kelime ↔ çeviri). Bulunan bir
+     çiftin her iki karosu **kendi rengini** ve bir **numara
+     rozetini** paylaşır, böylece eşleştirme renk körlüğüne karşı
+     güvenli biçimde tanınır (yalnızca renkle değil).
+   - **Resim seçimi** — ipucuna uyan resmi seç.
+   - **Serbest metin** — yanıtı yaz.
+   - **Kelime karoları** — karolardan bir cümle oluştur.
+   - **Boşluk doldurma** — cümledeki bir boşluğu doldur (hatalarından
+     hedefli olarak oluşur, aşağıya bak).
 
-Üstteki ilerleme çubuğu derste ne kadar ilerlediğinizi
-gösterir. İstediğiniz zaman ayrılabilirsiniz — ilerlemeniz
-adım adım kaydedilir ve kaldığınız yerden devam eder.
+Üstteki bir ilerleme göstergesi, derste ne kadar ilerlediğini izler.
+İstediğin zaman durabilirsin — ilerlemen adım başına kaydedilir ve
+kaldığın yerden devam eder.
 
-### Özet ekranı
+### Enter kısayolu
+
+Tüm dersi klavyeyle kullanabilirsin: **Enter**, yanıtlanmış bir
+alıştırmayı denetler ve ardından sonraki adıma geçer; serbest metin ve
+boşluk doldurma alanları Enter'da gönderir (satır sonu yok). Enter'ın
+kendisine ihtiyaç duyan kontrol öğeleri önceliklerini korur. Kısayol
+**Ayarlar → Öğrenme** altında değiştirilebilir (varsayılan olarak
+açık) ve Hata-Replay'inde de ("Hatayı tekrarla") geçerlidir.
+
+### Örnek ve teori bağlantıları
+
+- **Örneği görüntüle:** Bir teori adımı, "Örneği görüntüle" düğmesi
+  olarak görünen, ayrıntılı bir örneğe isteğe bağlı bir bağlantı
+  taşıyabilir.
+- **Teoriyi tekrar oku:** Bir alıştırma, en yakın önceki teoriye
+  ölçülü bir bağlantı gösterir; oradan "Alıştırmaya geri dön" seni
+  tekrar göreve getirir. Böylece, ipi kaybetmeden bir kuralı ararsın.
+
+### Özet
 
 Son alıştırma tamamlandığında **ders özeti** görünür:
 
-- Puanınıza göre **0-3 yıldız** derecelendirmesi:
+- Sonucuna dayalı **0–3 arası yıldız değerlendirmesi**:
   - **3 yıldız** ≥ %90 doğru
   - **2 yıldız** ≥ %75
   - **1 yıldız** ≥ %50
-  - **0 yıldız** %50'nin altı
-- **Alıştırma başına döküm**, hangi alıştırmaları geçtiğinizi
-  ve hangilerinde hata yaptığınızı gösterir (yanlış olanlar
-  için doğru cevap gösterilir).
-- **Sonraki ders**, **Tekrar** ve **Sete dön** düğmeleri
-  sayesinde bir sonraki eylem tek tıklama uzaklığındadır.
+  - **0 yıldız** %50'nin altında
+- Hangi alıştırmaları geçtiğini ve hangilerinin hata içerdiğini
+  (yanlışlar için doğru yanıtla birlikte) gösteren bir
+  **alıştırma-alıştırma dökümü**.
+- Sonraki eylemin bir tık uzakta olması için **Sonraki ders**,
+  **Tekrarla** ve **Sete geri dön** düğmeleri.
 
-İlk denemede 3 yıldız alırsanız yıldızlar küçük bir kutlama
-animasyonu oynatır. (İşletim sisteminin "hareketi azalt"
-ayarını etkinleştirdiyseniz animasyon buna uyar.)
+İlk denemede 3 yıldız alırsan küçük bir kutlama animasyonu oynar.
+(İşletim sistemi ayarı "Hareketleri azalt" etkinleştirilmişse,
+animasyon buna saygı gösterir.)
 
----
+### Sonucu dışa aktarma
 
-## Öğe düzeyinde hata takibi
-
-Her alıştırma türündeki her yanlış cevap, **kaçırdığınız belirli
-öğeye** — tek kelimeye, çifte veya ifadeye — bağlı bir satır
-yazar. Uygulama sadece "3. derste 6/10 aldınız" diye hatırlamaz;
-"*bonjour* ve *merci* ile özellikle mücadele ettiniz" diye
-hatırlar.
-
-Aynı öğeyi **arka arkaya 3 kez** doğru yaparsanız **ustalaşıldı**
-olarak işaretlenir — inceleme kuyruğundan çıkarılır. Ustalaşılmış
-bir öğeyi daha sonra yanlış yaparsanız **geri düşer** ve kuyruğa
-geri döner. Başarısız bir ustalık unutulmuş bir ustalıktır.
+Özet, **"Sonucu kopyala"** ve **"Dosya olarak kaydet"** sunar. Her
+ikisi de puanını, hata-hata bir döküm (senin yanıtın + doğru yanıt)
+ve hâlâ zayıf olan alanları içeren bir **Markdown raporu** üretir.
+Rapor, sana hedefli olarak yardımcı olacak bir yapay zeka asistanına
+yapıştırmak için uygundur. Dışa aktarma, arka uç olmadan saf bir
+üreteçtir ve her iki depolama modunda da çalışır.
 
 ---
 
-## İnceleme kuyruğu
+## Öğe düzeyinde hata izleme
 
-İnceleme gerektiren bir veya daha fazla öğeniz olduğunda
-**İnceleme kuyruğu kartı** Gösterge Tablosunda görünür. Şunları
-gösterir:
+Her alıştırma türündeki her yanlış yanıt, **kaçırdığın somut öğeye**
+işaret eden bir satır yazar — tek kelime, çift ya da kalıp. Uygulama
+SADECE "Ders 3'te 6/10 aldın" demez; "özellikle *bonjour* ve *merci*
+ile zorlandın" der.
 
-- Kaç öğenin sırada beklediği
-- Kaç tanesinin **gecikmiş** olduğu (planlanan inceleme
-  tarihini geçmiş)
-- `/review/:setId` adresinde odaklı bir mini oturum açan
-  bir **Şimdi İncele** düğmesi
+Aynı öğeyi **üç kez arka arkaya** doğru yanıtlarsan, o **ustalaşıldı**
+olarak işaretlenir — ve tekrar kuyruğundan çıkarılır. Ustalaşılmış bir
+öğeyi daha sonra yanlış yanıtlarsan, **geri kayar**. Kaçırılmış bir
+ustalık, unutulmuş bir ustalıktır.
 
-Zamanlama, öğeyi arka arkaya kaç kez doğru yaptığınıza göre
-üç bant kullanır:
+---
 
-| Doğru serisi | Sonraki inceleme |
+## Tekrar kuyruğu
+
+Tekrar gerektiren bir veya daha çok öğen varsa, Dashboard'da
+**tekrar kartı** görünür. Şunları gösterir:
+
+- Kaç öğenin vakti geldiğini
+- Kaç tanesinin **gecikmiş** olduğunu (planlanan tekrar tarihinden
+  sonra)
+- `/review/:setId` altında odaklı bir mini-oturum açan bir **Şimdi
+  tekrarla** düğmesi
+
+Planlama, öğeyi arka arkaya kaç kez doğru yanıtladığına dayalı üç
+seviye kullanır:
+
+| Doğru serisi | Sonraki tekrar |
 |---|---|
 | 0 | 1 gün sonra |
 | 1 | 3 gün sonra |
 | 2 | 7 gün sonra |
-| 3 (ustalaşıldı) | kuyruktan çıkarılır |
+| 3 (ustalaşıldı) | kuyruktan çıkarıldı |
 
-Kuyruk içinde öğeler şu sırayla sıralanır: **önce gecikmiş**,
-ardından **hata sayısına göre azalan**, ardından **en son
-başarısızlık önce**. Böylece en çok zorlandığınız öğeler öne
-çıkar.
+Kuyruk içinde girişler kendiliğinden sıralanır: **gecikmiş olanlar
+önce**, ardından **hata sayısına göre azalan**, ardından **en son
+hata önce**. Böylece en çok zorlandığın öğeler yukarı çıkar.
 
 ---
 
-## İnceleme oturumları
+## Tekrar oturumları
 
-`/review/:setId` adresindeki bir inceleme oturumu, kuyruğunuzdaki
-üst öğelerden **anında mini bir ders** oluşturur. **v1.35.0**
-itibarıyla karma strateji:
+`/review/:setId` altındaki bir tekrar oturumu, kuyruğunun üst
+girişlerinden uçuş anında bir **mini-ders** sentezler. **v1.35.0**'dan
+beri karma strateji:
 
-- Bir kelimeyi **eşleştirme** veya **resim seçimi** alıştırmasında
-  yanlış yaptıysanız, o alıştırmayı yeniden yapacaksınız (yeni
-  karıştırma ile, saf kas hafızası olmasın diye).
-- **Serbest metin** veya **kelime kutularında** bir şeyi yanlış
-  yaptıysanız, inceleme tam olarak yanlış yaptığınız kelimeyi
-  hedefleyen bir **boşluk doldurma** (cloze) oluşturmaya çalışır.
-  Farklı bir biçimde aynı bilgi — sadece bir alıştırma biçimini
-  hatırlamanız değil, esnekliğiniz test edilir.
-- Boşluk doldurma, o öğe için temiz bir boşluk oluşturamazsa
-  (örneğin kaynak komut cevabı satır içinde taşımıyorsa),
-  inceleme sessizce orijinalini tekrar oynatmaya geri döner.
-  Hiçbir zaman bozuk veya boş bir adım görmezsiniz.
+- Bir kelimeyi başlangıçta bir **eşleştirme** ya da **resim seçimi**
+  alıştırmasında kaçırdıysan, tam olarak bu alıştırmayı yeniden
+  yaparsın (taze karıştırmayla — saf kas hafızası değil).
+- Bir şeyi **serbest metin** ya da **kelime karolarında**
+  kaçırdıysan, tekrar tam olarak kaçırılan kelimeyi hedefleyen bir
+  **boşluk doldurma** alıştırması üretmeye çalışır. Aynı bilgi farklı
+  biçimde — yalnızca belirli bir alıştırma formatının tekrarı değil,
+  esneklik eğitilir.
+- Bir öğe için temiz bir boşluk doldurma oluşturulamıyorsa (örneğin
+  orijinal prompt yanıtı cümlede içermiyorsa), tekrar sessizce orijinal
+  alıştırmayı oynatır. Asla bozuk ya da boş bir adım almazsın.
 
-Bir inceleme oturumunu tamamladığınızda aynı puanlama + yıldız
-derecelendirmesi + öğe takip mekanizması çalışır. İncelemeler
-aracılığıyla 50 öğeye ulaşırsanız **İnceleme Ustası** rozetini
-kazanırsınız.
+Bir tekrar oturumunu tamamladığında aynı değerlendirme + yıldız +
+öğe izleme mekanizması çalışır. Tekrarlar yoluyla 50 öğeye ustalaş ve
+**Tekrar Ustası** rozetini kazan.
 
-## Her dersin sonunda düzeltme turu
+## Ders sonu düzeltme turu
 
-**v1.35.0**'da yeni: Yanlış cevaplarınız olan bir dersi
-tamamladığınızda özet sayfası, puanınız ile "Sonraki ders"
-düğmesi arasında küçük bir **düzeltme turu** gösterir. Bu
-dersten en fazla beş özel hatanızı alır ve her birini tam
-olarak yanlış yaptığınız kelimeye veya makaleye yönelik yeni
-bir boşluk doldurma olarak sunar.
+**v1.35.0**'da yeni: Bir dersi hatalarla tamamladığında, özet sayfası
+puanın ile "Sonraki ders" düğmesi arasında küçük bir **düzeltme turu**
+gösterir. Bu turdan dersteki en fazla beş somut hatayı alır ve her
+birini tam olarak kaçırılan kelimeyi / kaçırılan artikeli hedefleyen
+taze bir boşluk doldurma olarak sunar.
 
-- **İstediğiniz zaman atlayabilirsiniz.** "Sonraki ders"
-  düğmesi boyunca görünür kalır — düzeltme turu isteğe bağlı
-  bir pratiktir, zorunlu bir geçit değildir.
-- **Yalnızca düzeltilecek bir şey olduğunda görünür.**
-  Mükemmel puanlı dersler tamamen atlar. Hataları temiz bir
-  boşluk doldurmaya dönüştürülemeyen dersler (nadir) de atlar.
-- **Tamamlanan her boşluk doldurma ustalığa doğru sayılır.**
-  Düzeltme turu, ana ders ile aynı öğe takip satırlarını yazar;
-  o belirli öğelerdeki seriniz 3 doğru ustalık eşiğine doğru
-  ilerler.
+- **İstediğin zaman atlanabilir.** "Sonraki ders" düğmesi görünür
+  kalır — düzeltme turu gönüllü bir alıştırmadır, bir gate değil.
+- **Yalnızca düzeltilecek bir şey varsa görünür.** Kusursuz puanlı
+  dersler onu tamamen atlar. Hataları temiz bir boşluk doldurmaya
+  dönüştürülemeyen dersler (nadiren) de.
+- **Tamamlanan her boşluk doldurma, ustalığa sayılır.** Düzeltme turu,
+  ana dersle aynı öğe-izleme veri kayıtlarını yazar; bu öğelerdeki
+  serin 3-doğru ustalık eşiğine doğru ilerler.
 
-Turun sonunda kısa bir "{n} öğe iyileştirildi" satırı görünür,
-böylece ekstra pratiğinizin ne kadar etki ettiğini görebilirsiniz.
+Sonunda, ek alıştırmanın etkisini görmen için kısa bir "{n} öğe
+iyileştirildi" satırı görünür.
 
-## Görsel fark geri bildirimi
+## Görsel diff geri bildirimi
 
-Ayrıca **v1.35.0**'da yeni: Yanlış serbest metin ve kelime
-kutusu cevapları artık yazdıklarınız ile standart cevap arasındaki
-**token düzeyinde farkı** gösterir. Üç renk, asla yalnızca renk
-değil:
+Yine **v1.35.0**'da yeni: Yanlış serbest metin ve kelime karosu
+yanıtları artık girdin ile kanonik yanıt arasında **Token düzeyinde
+bir diff** gösterir. Üç renk, asla yalnızca renk değil:
 
-- **Kırmızı üstü çizili** — yazdığınız ama ait olmayan (ekran
-  okuyucular ve renk körü kullanıcılar için × işaretiyle).
-- **Yeşil** — standardın içerdiği ama sizin atladığınız (+
-  işaretiyle).
-- **Sarı** ok ile → — biraz yanlış yaptığınız bir kelime,
-  `yazdığınız` → `beklenen` olarak gösterilir.
+- **Kırmızı üstü çizili** — yazdığın ve oraya ait olmayan (ekran
+  okuyucular ve renk körü kullanıcılar için bir × işaretiyle).
+- **Yeşil** — kanonik yanıtın içerdiği ve senin gözden kaçırdığın (bir
+  + işaretiyle).
+- **Sarı** ok ile → — hafifçe yanlış bir kelime, `senin-kelimen` →
+  `beklenen` olarak gösterilir.
 
-Aynı fark, ders özetinin alıştırma başına döküm satırlarında,
-v1.35.0+ deposunda kullanıcı cevabının bulunduğu serbest metin
-veya kelime kutusu denemesi için görünür.
+Aynı diff, ders özetinde her alıştırmanın dökümünde görünür — kullanıcı
+girdisi v1.35.0+ deposunun bildiği her serbest metin veya kelime karosu
+yanıtı için.
 
 ---
 
 ## XP ve rozetler
 
-Tamamlanan her ders, yıldız başına formül altında XP kazanır:
+Tamamlanan her ders, bir yıldız formülüne göre XP kazandırır:
 
-- **30 XP** temel
-- Kazanılan her yıldız için **+10 XP** (0 → 0, 1 → +10, 2 → +20, 3 → +30)
-- **+20 XP bonusu** ilk denemede 3 yıldız alırsanız
-  (her adım 1 denemede, yeniden deneme yok)
-- Sohbet oturumlarıyla aynı **günlük seri çarpanı**
-  (etkinlik için arka arkaya gün başına +%25, 7 günle sınırlı)
+- **30 XP** taban
+- Kazanılan **her yıldız için +10 XP** (0 → 0, 1 → +10, 2 → +20,
+  3 → +30)
+- İlk denemede 3 yıldız alırsan **+20 XP bonus** (her adım deneme = 1
+  ile, tekrar yok)
+- Sohbet oturumlarındaki ile aynı **günlük seri çarpanı** (arka arkaya
+  her gün +%25, 7 günde sınırlanır)
 
 Dersler etrafında dört yeni rozet açılır:
 
-- **İlk Ders** — ilk içerik dersini tamamlayın.
-- **10 Ders Tamamlandı** — 10 içerik dersini tamamlayın.
-- **3 Yıldız Serisi** — arka arkaya üç derste 3 yıldız kazanın.
-- **İnceleme Ustası** — aralıklı tekrar yoluyla 50 öğeye
-  ulaşın.
+- **İlk ders** — ilk içerik dersini tamamla.
+- **10 ders tamamlandı** — 10 içerik dersini tamamla.
+- **3-yıldız serisi** — arka arkaya üç dersi 3 yıldızla geç.
+- **Tekrar Ustası** — dağıtık tekrar yoluyla 50 öğeye ustalaş.
 
-Ders tamamlamaları **günlük serinize** de sayılır, böylece içerik
-dersleriyle çalışmak ısı haritasını sohbet oturumları gibi
-doldurar.
+Ders tamamlamaları **günlük serine** de sayılır, böylece içerik
+dersleriyle öğrenmek, ısı haritasını sohbet oturumlarıyla aynı şekilde
+doldurur.
 
 ---
 
 ## Depolama modları
 
-Dersler **her iki** depolama modunda da çalışır — API (arka uç)
-ve Dexie (yalnızca tarayıcı / GitHub Pages). Öğe düzeyinde hata
-takibi ve SRS zamanlaması, yalnızca tarayıcı dağıtımında
-IndexedDB'ye karşı aynı şekilde çalışır; bu nedenle genel
-GitHub Pages sitesini ziyaret eden kullanıcılar arka uç olmadan
-tam inceleme döngüsünü alır.
+Dersler **her iki** depolama modunda da çalışır — API (arka uç) ve
+Dexie (yalnızca tarayıcı / GitHub Pages). Öğe düzeyinde hata izleme ve
+SRS planlaması, yalnızca tarayıcı modunda IndexedDB'ye karşı aynı
+şekilde çalışır, böylece herkese açık GitHub Pages sayfasını ziyaret
+eden kullanıcılar, arka uç olmadan tam tekrar döngüsünü alır.
 
-Yalnızca tarayıcı modunda *farklı* olan: XP ödülü / rozet kazanma
-yan etkileri yalnızca API modunda gerçekleşir (arka ucun
-oyunlaştırma kancalarına ihtiyaç duyarlar). Dexie modunda sohbet
-oturumu yoluyla XP ve rozetler kazanmaya devam edersiniz; ders
-tamamlama bu toplamı henüz artırmaz.
+**v1.33.0**'dan beri gamification de eşitlenmiştir: Yalnızca tarayıcı
+modunda, tamamlanan dersler için sunucu modundaki ile **aynı XP ve
+ders rozetlerini** kazanırsın — yıldız, Streak ve rozet mantığı
+TypeScript'e taşınmış ve aynı altın değerlere karşı güvence altına
+alınmıştır. Ders tamamlamada modlar arasında artık işlevsel bir fark
+yoktur.
 
 ---
 
 ## Gizlilik
 
-Tüm ders ilerlemesi, öğe hata satırları, inceleme kuyruğu durumu
-ve zamanlama verileri API modunda (dosya sistemi) veya tarayıcı
-(IndexedDB) **kendi cihazınızda** kalır. Hangi kelimelerle
-mücadele ettiğiniz hiçbir yere gönderilmez.
+Tüm ders ilerlemeleri, öğe-hata satırları, tekrar-kuyruğu durumları ve
+planlama verileri **kendi cihazında** kalır — dosya sisteminde (API
+modu) ya da tarayıcıda (IndexedDB). Hangi kelimelerle zorlandığına dair
+hiçbir şey herhangi bir yere gönderilmez.

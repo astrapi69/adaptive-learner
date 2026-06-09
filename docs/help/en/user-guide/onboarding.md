@@ -1,73 +1,69 @@
 # Onboarding
 
-After the language picker on the Landing page, the Onboarding
-flow collects four required fields plus optional taxonomy:
+Since **v1.64.0** the entry point is deliberately short: the
+**quick start** asks for only two fields.
 
-1. **Topic** — what you want to learn. "Spanish grammar",
-   "Machine learning fundamentals", "Lead guitar improvisation".
-   Be specific; the AI will use this to anchor every session.
-2. **Goal** — what success looks like. "Pass the B2 exam",
-   "Build a recommendation engine end-to-end", "Solo on a
-   12-bar blues over a backing track without losing time."
-   Concrete goals produce more useful AI guidance.
-3. **Timeframe** — when you want to reach the goal. "6 weeks",
-   "End of summer", "By Q3". Used to pace expectations and
-   set the streak-tracking target.
-4. **Daily minutes** — how much time you can realistically
-   give. 15-45 minutes is the sweet spot for adaptive learning;
-   the app doesn't reward marathon sessions.
+1. **Name** — how the app should address you.
+2. **Topic** — what you want to learn. "Spanish grammar",
+   "Machine learning basics", "Solo improvisation on the guitar".
+   Be specific; this is the anchor for your project.
 
-**Subject taxonomy** (optional, since v1.9.0) — a fuzzy
-suggester matches your topic against the seeded 80+-node
-taxonomy under Languages / Mathematics / Programming /
-Sciences / Music / Humanities / Social Sciences / Skills.
-Picking a Languages subject unlocks Pronunciation Practice
-for the project later.
+Everything else (goal, timeframe, minutes per day, language) takes
+sensible **defaults** that you can change at any time.
 
-**Tags** (optional) — comma-separated free-text labels
-("exam-prep", "daily", "self-paced") that show up on the
-Dashboard filter bar later.
+## Jump right in or set up profile
 
-You can also skip the form entirely — a default user is
-created and you land on the Dashboard immediately.
+After submitting, the app offers you two paths:
 
-You also pick a **language** for the project. This is the
-language the AI will respond in during sessions; it can differ
-from the UI language (you might prefer the UI in your native
-language but learn Spanish in Spanish).
+- **Jump right in** — you land straight on the Dashboard and can
+  start a lesson or session.
+- **Set up profile** — opens the **onboarding wizard**: one
+  question per screen (goal → timeframe → minutes per day →
+  current problem → optional learning-style assessment), each
+  pre-filled so "Next" always works, plus a progress bar and
+  "Back". The answers are saved in both storage modes.
+
+The **learning-style assessment is no longer mandatory** — it is
+only reachable via the wizard's final step. More on this under
+[Learning-style assessment](assessment.md).
+
+## Resumable assessment
+
+If you abandon the learning-style assessment partway, the app
+remembers the in-flight progress (current question, answers so
+far, start time) per project, so you **continue where you left
+off**. The Dashboard and Settings actively invite you to
+**continue, create or retake** your learning profile. Once the
+profile is computed, the in-flight progress is discarded.
 
 ## Optional: current problem
 
-A "current problem" field lets you bring an open question into
-the project right away. If you fill it in, the first session
-starts with this concrete obstacle instead of an open-ended
-"what do you want to work on?" prompt.
+In the "current problem" step you can bring an open question
+straight into the project. If you fill it in, the first AI session
+starts with this specific obstacle instead of an open "what do you
+want to work on?" prompt.
 
-## What happens next
+## Subjects and tags
 
-When you submit the form, three things happen in one round-trip:
+You can optionally assign a **subject** (a field from the seeded
+taxonomy tree) and **tags** (comma-separated free-text labels) to
+your project. Both appear later in the Dashboard filter bar; the
+subject filter lists only your own subjects, sorted by most-used.
+Choosing a language subject unlocks the pronunciation exercise.
 
-1. A `User` record is created (or reused — your local browser
-   keeps the same user across sessions).
-2. A `LearningProject` row gets your topic / goal / timeframe /
-   daily-minutes / language.
-3. The Assessment route opens automatically. You can skip it
-   from here, but the app then defaults to the "deductive"
-   learning method until you take it.
+## Editing the project
 
-## Editing your project
+Project details are not set in stone. On the Curriculum page you
+can adjust the topic and goal once you figure out what you really
+want to learn. You change the language in the settings.
 
-Project details aren't carved in stone. The Curriculum page lets
-you adjust the topic and goal as you discover what you actually
-want to learn. The Settings page handles language changes.
-
-## What's not stored
+## What is not stored
 
 - **No email**, no password, no account.
 - **No analytics**, no third-party trackers.
-- **No telemetry** sent off your device in Local mode.
+- **No telemetry** leaves your device in local mode.
 
-Your AI provider sees your messages (that's the whole point of
-asking the AI). Adaptive Learner itself only stores what you
-type — locally or in the FastAPI backend, depending on the
-[storage mode](settings.md#storage-mode) you've chosen.
+Your AI provider sees your messages (that is the point of the AI
+request). Adaptive Learner itself only stores what you type —
+locally or in the FastAPI backend, depending on which
+[storage mode](settings.md) is set.

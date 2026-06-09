@@ -1,74 +1,78 @@
-<!-- Translation: AI-generated, pending native review -->
-
 # Primeiros passos
 
-O Adaptive Learner é um companheiro de aprendizagem construído
-sobre um modelo de seis métodos com base em investigação.
-Faz uma avaliação curta para descobrir quais os métodos que
-melhor se adequam a si, depois realiza sessões com suporte de
-IA através de um ciclo de sete passos. A aplicação aprende
-consigo e adapta a forma como ensina.
+O Adaptive Learner é um companheiro de aprendizagem que assenta
+num modelo de seis métodos apoiado em investigação. Fazes um breve
+teste que descobre que métodos combinam contigo e depois realizas
+sessões de aprendizagem com IA através de um ciclo de sete passos.
+A aplicação aprende contigo e ajusta a forma como ensina.
 
-## Experimente agora
+## Experimenta agora
 
-A forma mais rápida de experimentar o Adaptive Learner é a
-implementação pública:
+A forma mais rápida de conhecer o Adaptive Learner é a versão
+pública online:
 
-[**Abrir a aplicação em direto**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
+[**Abrir aplicação**](https://astrapi69.github.io/adaptive-learner/){ .md-button .md-button--primary }
 
-Isto corre em **modo Local** — todos os seus dados ficam no
-seu navegador (IndexedDB), e as chamadas de IA disparam
-diretamente da página para Anthropic, OpenAI ou Google Gemini
-usando a sua própria chave de API. Sem backend envolvido.
+Esta corre no **modo local** — todos os teus dados permanecem no
+teu browser (IndexedDB), e as chamadas de IA vão diretamente da
+página para a Anthropic, OpenAI ou Google Gemini com a tua própria
+chave de API. Sem backend pelo meio.
 
 ## Instalar como Progressive Web App
 
-O Adaptive Learner é instalável. Em navegadores modernos verá
-um prompt "Instalar" ou "Adicionar ao ecrã inicial" na
-primeira vez que abrir o site. Aceite e o Adaptive Learner
-torna-se uma aplicação autónoma no seu telemóvel ou desktop,
-que pode ser lançada sem um separador de navegador.
+O Adaptive Learner é instalável. Os browsers modernos mostram na
+primeira visita uma sugestão "Instalar" ou "Adicionar ao ecrã
+inicial". Aceita-a e o Adaptive Learner torna-se numa aplicação
+autónoma no teu smartphone ou desktop, iniciável sem separador do
+browser.
 
-A aplicação também funciona offline para o Dashboard e para
-sessões passadas. As novas sessões de IA ainda precisam de
-internet porque o fornecedor de IA vive fora do navegador.
+A aplicação funciona offline para o Dashboard e as sessões
+passadas. Novas sessões de IA precisam de Internet, porque o
+fornecedor de IA fica fora do browser.
 
-## O que precisa
+## O que precisas
 
-- **Um navegador moderno** (Chrome 100+, Firefox 100+,
-  Safari 17+, Edge 100+). A aplicação usa IndexedDB, service
-  workers e JavaScript moderno.
-- **Uma chave de API de IA** para pelo menos um dos
+- **Um browser moderno** (Chrome 100+, Firefox 100+, Safari 17+,
+  Edge 100+). A aplicação usa IndexedDB, service workers e
+  JavaScript moderno.
+- **Uma chave de API de IA** para pelo menos um dos três
   fornecedores suportados (Anthropic, OpenAI ou Google Gemini).
-  Os tiers gratuitos costumam ser suficientes para começar;
-  consulte [Definições](settings.md) para saber como
-  adicionar uma chave.
+  Os planos gratuitos costumam chegar para começar; vê
+  [Definições](settings.md) para a configuração da chave.
 
-## Primeiros cinco minutos
+## Os primeiros cinco minutos
 
-1. **Abra a aplicação** e escolha o seu idioma. Todos os 8
-   idiomas da interface estão totalmente traduzidos
-   (DE, EN, ES, FR, EL, PT, TR, JA).
-2. **Integre o seu projeto de aprendizagem**: tópico, objetivo,
-   prazo, minutos por dia, mais taxonomia de assunto opcional
-   e etiquetas. Consulte [Integração](onboarding.md).
-3. **Faça a avaliação de 12 perguntas** para que a aplicação
-   saiba em quais métodos de aprendizagem se apoiar. Deslize
-   para a esquerda/direita entre perguntas no dispositivo
-   móvel. Consulte [Avaliação](assessment.md).
-4. **Adicione a sua chave de API de IA** em Definições, OU
-   coloque-a em `~/.config/adaptive-learner/secrets.yaml` se
-   executar o lançador de desktop. A interface de Definições
-   mostra de que camada veio a sua chave.
-5. **Inicie a sua primeira sessão**. O botão "Iniciar sessão"
-   do Dashboard leva-o para uma conversa de aprendizagem. As
-   respostas da IA são transmitidas token a token; o avaliador
-   de duplo prompt decide cada passo do ciclo. Consulte
-   [Sessão de aprendizagem](learning-session.md).
+1. **Abrir a aplicação** e escolher o idioma. Todos os 8 idiomas
+   da interface estão totalmente traduzidos (DE, EN, ES, FR, EL,
+   PT, TR, JA).
+2. **Onboarding: apenas Nome + Tema.** O início rápido exige
+   apenas estes dois campos, tudo o resto assume predefinições.
+   Depois podes escolher "Começar já" ou, opcionalmente,
+   configurar o teu perfil com mais detalhe no assistente.
+   Vê [Onboarding](onboarding.md).
+3. **Iniciar a primeira lição** — o caminho mais rápido sem chave
+   de IA: Abre o
+   [Navegador de Conteúdo](../features/content-browser.md) em
+   `/content`, escolhe um conjunto de lições e inicia uma lição.
+   Lês teoria breve e fazes exercícios; no final vês o teu
+   resultado com estrelas. Vê
+   [Lições e revisões](lessons.md).
+4. **Opcional: sessões de IA.** Se preferires a conversa de
+   aprendizagem guiada de seis métodos, define uma **chave de API**
+   (Definições ou `~/.config/adaptive-learner/secrets.yaml`), faz o
+   [teste de tipo de aprendizagem](assessment.md) opcional e inicia
+   uma [sessão de aprendizagem](learning-session.md).
+5. **Salvaguardar o teu resultado.** A partir do resumo da lição
+   podes copiar o resultado como Markdown ou guardá-lo como
+   ficheiro, e em **Definições → Dados** criar um
+   [backup](../features/backup.md).
 
-## Para onde ir a seguir
+## Como continuar
 
-- [O ciclo de aprendizagem de 7 passos explicado](learning-session.md)
-- [Ler o seu Dashboard](dashboard.md)
+- [Lições e revisões](lessons.md) — o fluxo da lição em detalhe
+- [Navegador de Conteúdo](../features/content-browser.md) — encontrar e filtrar lições
+- [Múltiplos repositórios de conteúdo](../features/content-repos.md) — ligar fontes de conteúdo próprias
+- [Backup e restauro](../features/backup.md)
+- [Compreender o teu Dashboard](dashboard.md) — progresso, Streak, XP, Badges
 - [FAQ — perguntas frequentes](faq.md)
-- [O conceito pedagógico por detrás da aplicação](../concept/philosophy.md)
+- [A ideia pedagógica por trás da aplicação](../concept/philosophy.md)

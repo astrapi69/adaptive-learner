@@ -1,116 +1,112 @@
-<!-- Translation: AI-generated, pending native review -->
-
-# Ders içeriği yazma
+# Ders içeriği oluşturma
 
 Bu kılavuz, Adaptive Learner içerik yükleyicisi için yeni bir ders
-seti oluşturmayı adım adım anlatmaktadır. Kişisel kullanım için
-veya genel içerik havuzuna katkı olarak bir dil ya da konu seti
-göndermek isteyen herkes, herhangi bir ders yazmadan önce bunu
+setinin nasıl kurulacağını adım adım açıklar. İster kendi kullanımı
+için ister herkese açık içerik havuzuna katkı olarak bir dil ya da
+konu seti oluşturmak isteyen kişi, ilk dersten önce bunu bir kez
 baştan sona okumalıdır.
 
-## İçerik seti nedir?
+## İçerik Seti nedir?
 
-Bir **içerik seti**, kullanıcının Set Tarayıcısı sayfasından
-(`/content`) indirebileceği sürümlendirilmiş bir ders paketidir.
-İçerik-Yükleyici eklentisi (v1.27.0'da gönderildi), her iki depolama
-modunda da keşif, indirme, önbelleğe alma ve sürüm uzlaşmasını
-yönetir.
+Bir **İçerik Seti**, bir kullanıcının Set Tarayıcısı sayfası
+(`/content`) üzerinden indirebileceği, sürümlenmiş bir ders
+paketidir. İçerik yükleyici eklentisi (v1.27.0), her iki depolama
+modunda keşif, indirme, önbellekleme ve sürüm karşılaştırmasını üstlenir.
 
 Bir setin üç katmanı vardır:
 
-1. **Kök manifest** (`manifest.yaml`) — deponun gönderdiği her seti
-   listeler. Set Tarayıcısı tarafından kaynak katalogunu oluşturmak
-   için kullanılır.
-2. **Set manifesti** (`sets/{set-id}/manifest.yaml`) — kök
-   manifestinin kardeşi, bu özel setin içindeki ders dosyalarını
-   listeler.
-3. **Ders dosyaları** (`sets/{set-id}/lessons/NN-slug.json`) — her
-   ders başına bir JSON dosyası; her indirmede şema v1.0'a göre
-   doğrulanır.
+1. **Root manifest** (`manifest.yaml`) — reponun her setini listeler.
+   Set Tarayıcısı tarafından kaynak kataloğu için okunur.
+2. **Set manifest** (`sets/{set-id}/manifest.yaml`) — root
+   manifest'in kardeşi, ilgili setin ders dosyalarını listeler.
+3. **Ders dosyaları** (`sets/{set-id}/lessons/NN-slug.json`) — ders
+   başına bir JSON dosyası, her indirmede Şema v1.0'a karşı doğrulanır.
 
-Adaptive Learner ile birlikte gönderilen pilot setler, ayrı bir
-içerik deposunda yaşar
-([`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
-— `../adaptive-learner-content` kardeş olarak klonlanır ve
-`frontend/scripts/copy-bundled-content.mjs` tarafından derlemeye
-paketlenir) ve kopyalamak için iyi şablonlardır.
+Adaptive Learner ile gönderilen pilot setler, ayrı içerik reposunda
+[`astrapi69/adaptive-learner-content`](https://github.com/astrapi69/adaptive-learner-content)
+bulunur (kardeş checkout olarak `../adaptive-learner-content` ile
+check-out edilir ve build tarafından
+`frontend/scripts/copy-bundled-content.mjs` üzerinden paketlenir) ve
+şablon olarak iyi işe yarar.
 
 ## Dil çiftleri (v1.44.0)
 
-Her içerik seti öğrettiği dil ÇİFTİni bildirir:
+Her İçerik Seti, aktardığı dil ÇİFTİNİ bildirir:
 
-- **`target_language`** — öğrencinin ÖĞRENDİĞİ dil (örn. `fr`).
-- **`source_language`** — öğrencinin HALİHAZIRDA KONUŞTUĞU dil,
-  yani kartın **`back`** alanlarının, **`notes`**'un ve **teori**
+- **`target_language`** — öğrenenin ÖĞRENDİĞİ (örn. `fr`).
+- **`source_language`** — öğrenenin halihazırda KONUŞTUĞU, yani
+  kartların **`back`** alanlarının, **`notes`** ve **teori**
   metninin yazıldığı dil (örn. `de`).
 
-Bu, "İngilizce konuşanlar için Fransızca"yı "Almanca konuşanlar
-için Fransızca"dan farklı bir set yapar: aynı hedef (`fr`), farklı
-kaynak (`en` ve `de`), farklı açıklama dili. Bir öğrenci yalnızca
-`source_language`'ı konuştukları bir dille eşleşen setleri görür
-(uygulama dilleri artı Ayarlar → Öğrenim'de ekstra seçilenler).
+İşte bu, "İngilizce konuşanlar için Fransızca"yı, "Almanca
+konuşanlar için Fransızca"dan *farklı* bir set yapar: aynı hedef
+(`fr`), farklı başlangıç dili (`en` ya da `de`), farklı açıklama
+dili. Bir öğrenen yalnızca `source_language`'ı konuştuğu bir dile
+uyan setleri görür (uygulama dili artı Ayarlar → Öğrenme altındaki
+isteğe bağlı ek diller).
 
-Set ID'leri çifti `{target}-{level}-from-{source}` olarak kodlar
-(örn. `fr-a1-from-de`) ve her set, kaynak dil dizinini işaret eden
-bir **`path`** bildirir (`sets/de/fr-a1`). Bir set ayrıca
-**`title`** (kaynak dilde, öğrencinin okuduğu) ve **`title_native`**
-(hedef dilde, ikincil etiket olarak gösterilen) taşır.
+Set ID'leri çifti `{hedef}-{seviye}-from-{kaynak}` olarak kodlar
+(örn. `fr-a1-from-de`) ve her set, başlangıç dili dizinine işaret
+eden bir **`path`** bildirir (`sets/de/fr-a1`). Bir set ayrıca
+**`title`** (başlangıç dilinde, öğrenenin okuduğu) ve
+**`title_native`** (hedef dilde, ikinci başlık olarak) taşır.
 
-Her iki kod da 2 harfli ISO 639-1 olmalı ve `source_language`,
-`target_language`'dan farklı olmalıdır. v1.2 öncesi bu alanlara
-sahip olmayan setler yine de yüklenir: eski `language` anahtarı
-`target_language` olarak kabul edilir ve `source_language`
-varsayılan olarak `en`'dir.
+Her iki kod da ISO-639-1 (iki harf) olmalıdır ve `source_language`,
+`target_language`'dan farklı olmalıdır. Bu alanlar olmadan v1.2
+öncesi setler yine de yüklenir: eski `language` anahtarı
+`target_language` olarak kabul edilir ve `source_language` `en`'e
+geri döner.
 
-## Dosya sistemi düzeni
+## Dizin düzeni
 
-Ağaç, KAYNAK dile, ardından hedef+seviyeye göre düzenlenir:
+Ağaç önce BAŞLANGIÇ DİLİNE, ardından hedef+seviyeye göre
+düzenlenmiştir:
 
 ```
-my-content-repo/
-  manifest.yaml               # root: lists every set (with path + pair)
+mein-content-repo/
+  manifest.yaml               # Root: listet jedes Set (mit path + Paar)
   sets/
-    de/                       # source language: German
-      fr-a1/                  # target French, level A1  -> id fr-a1-from-de
-        manifest.yaml         # set: lists the lessons
+    de/                       # Ausgangssprache: Deutsch
+      fr-a1/                  # Ziel Französisch, Niveau A1  -> ID fr-a1-from-de
+        manifest.yaml         # Set: listet die Lektionen
         lessons/
           01-begruessung.json
           ...
-        assets/               # optional images / audio
-    en/                       # source language: English
-      fr-a1/                  # -> id fr-a1-from-en
+        assets/               # optionale Bilder / Audio
+    en/                       # Ausgangssprache: Englisch
+      fr-a1/                  # -> ID fr-a1-from-en
         ...
 ```
 
-## Manifest biçimi
+## Manifest formatı
 
-Her iki manifest dosyası da (kök + set) aynı `schema_version:
-'1.0'` şeklini kullanır. Zorunlu alanlar:
+Her iki manifest dosyası da (root + set) `schema_version: '1.0'` ile
+aynı biçimi kullanır. Zorunlu alanlar:
 
 ```yaml
 schema_version: '1.0'
-name: My English B1 set
+name: Mein Englisch-B1-Set
 description: >-
-  Optional long-form description.
+  Optionale Langbeschreibung.
 sets:
-  - id: language-en-b1        # slug-safe, unique
-    title: English B1 (Intermediate)
-    language: en              # BCP-47 (e.g. en, fr, zh-Hans)
-    level: B1                 # CEFR for languages, free-form otherwise
-    version: '1.0.0'          # semver — bumped per set release
+  - id: language-en-b1        # slug-sicher, eindeutig
+    title: Englisch B1 (Fortgeschrittene)
+    language: en              # BCP-47 (z.B. en, fr, zh-Hans)
+    level: B1                 # CEFR für Sprachen, frei für andere Domänen
+    version: '1.0.0'          # Semver — pro Set-Release erhöht
     lesson_count: 12
     domain: language          # 'language' / 'math' / 'programming' / ...
     description: >-
-      Optional set-level description.
+      Optionale Set-Beschreibung.
     tags:
       - intermediate
       - business
 metadata:
-  author: Your Name
-  license: CC-BY-SA-4.0       # or whatever
+  author: Dein Name
+  license: CC-BY-SA-4.0       # oder die Lizenz deiner Wahl
 ```
 
-Set manifesti ek olarak her ders dosyasını listeler:
+Set manifest ayrıca her ders dosyasını listeler:
 
 ```yaml
 metadata:
@@ -120,73 +116,91 @@ metadata:
     - ...
 ```
 
-İçerik-Yükleyici, `metadata.lessons`'ı sırayla yürütür; dizindeki
-dosya sırası önemli değildir, yalnızca manifest sırası önemlidir.
+İçerik yükleyici, `metadata.lessons` üzerinde verilen sırayla
+yineler; diskteki dosya adları önemsizdir — yalnızca manifest sırası
+sayılır.
 
 ## Ders şeması (v1.0)
 
-Her ders tek bir JSON dosyasıdır. Üst düzey şekil:
+Her ders tek bir JSON dosyasıdır. Üst düzey yapı:
 
 ```json
 {
   "id": "01-greetings",
-  "title": "Greetings",
-  "description": "Optional 1-2 sentence summary.",
+  "title": "Begrüßungen",
+  "description": "Optionale 1-2-Satz-Zusammenfassung.",
   "estimated_minutes": 12,
   "cards": [ ... ],
   "steps": [ ... ]
 }
 ```
 
-### Kartlar
+### Cards
 
-Kart, en küçük öğrenilebilir birimdir — genellikle tek bir terim
-veya kavram. Her kartın sabit bir id'si vardır (alıştırmalardan
-referans alınır) ve bir ön/arka çifti:
+Bir Card en küçük öğrenilebilir birimdir — tipik olarak tek bir
+terim ya da bir kavram. Her Card'ın kararlı bir id'si (alıştırmalardan
+referanslanır) ve bir front/back çifti vardır:
 
 ```json
 {
   "id": "art-le",
   "front": "le",
-  "back": "the (masculine singular)",
-  "notes": "Used before consonant-starting masculine nouns. **le chat**, **le livre**.",
+  "back": "der (männlich Singular)",
+  "notes": "Vor konsonantenanfangenden männlichen Substantiven. **le chat**, **le livre**.",
   "tags": ["article", "definite"]
 }
 ```
 
-Notlar Markdown'ı destekler. Telaffuz ipuçları, yanlış-arkadaş
-uyarıları, düzensiz biçim uyarıları için kullanın — uzun vadeli
-hatırlama için yardımcı olan her şey. Etiketler SRS filtrelemesini
-yönlendirir.
+`notes` Markdown kabul eder. Bunu telaffuz kuralları, yanlış-dost
+uyarıları, istisna ipuçları için kullan — uzun süreli belleği
+iyileştiren her şey. `tags`, SRS filtrelemesini yönlendirir.
 
-### Adımlar
+### Steps
 
-Ders, her biri TEORI (bir Markdown bloğu) veya ALIŞTIRAMA (dört
-alıştırma türünden biri) olan bir adım dizisidir:
+Bir ders, adım adım bir dizidir; her adım ya THEORY (bir Markdown
+bloğu) ya da EXERCISE (dört alıştırma türünden biri):
 
 ```json
 {
   "id": "intro",
   "type": "theory",
-  "title": "Why articles matter",
-  "body": "# Articles in French\n\nEvery French noun has a gender..."
+  "title": "Warum Artikel wichtig sind",
+  "body": "# Artikel im Französischen\n\nJedes französische Nomen hat ein Geschlecht..."
 }
 ```
 
-Veya bir alıştırma:
+Bir teori adımı isteğe bağlı olarak bir **örnek bağlantısı**
+taşıyabilir (Şema v1.4, additif — mevcut dersler onsuz geçerli kalır).
+Varsa, görüntüleyici altına örneği açan bir düğme render eder:
+
+```json
+{
+  "id": "intro",
+  "type": "theory",
+  "body": "Die Korrelation misst den Zusammenhang...",
+  "example_url": "https://example.com/correlation-visualizer",
+  "example_label": "Interaktive Visualisierung"
+}
+```
+
+- `example_url` (isteğe bağlı): bir `http(s)` URL'si olmalıdır.
+- `example_label` (isteğe bağlı): bağlantı metni; boş, yerelleştirilmiş
+  bir "Örneği görüntüle" olur.
+
+Ya da bir alıştırma:
 
 ```json
 {
   "id": "ex-match-greetings",
   "type": "exercise",
-  "title": "Match greetings",
+  "title": "Begrüßungen zuordnen",
   "exercise": {
     "id": "ex-match-greetings",
     "type": "matching",
-    "prompt": "Match each greeting to its translation.",
+    "prompt": "Ordne jede Begrüßung ihrer Übersetzung zu.",
     "card_ids": ["bonjour", "salut"],
     "pairs": [
-      {"left": "Bonjour", "right": "Hello"},
+      {"left": "Bonjour", "right": "Hallo"},
       {"left": "Salut", "right": "Hi"}
     ]
   }
@@ -197,13 +211,13 @@ Veya bir alıştırma:
 
 ### matching
 
-Sürükle-eşleştir alıştırması. Oluşturucu, görüntülemeden önce karıştırır.
+Çift-sürükle alıştırması. Render eden, göstermeden önce karıştırır.
 
 ```json
 {
   "id": "ex-id",
   "type": "matching",
-  "prompt": "Match each French noun with its article.",
+  "prompt": "Ordne jedem französischen Nomen seinen Artikel zu.",
   "card_ids": ["noun-1", "noun-2"],
   "pairs": [
     {"left": "chat", "right": "le"},
@@ -212,72 +226,72 @@ Sürükle-eşleştir alıştırması. Oluşturucu, görüntülemeden önce karı
 }
 ```
 
-Her çiftin tam olarak iki anahtarı olmalıdır: `left` + `right`.
+Her Pair'in tam olarak iki anahtarı olmalıdır: `left` + `right`.
 
 ### picture_choice
 
-Resimlerle çoktan seçmeli. ≥ 2 resim, tam olarak biri doğru
-işaretlenmiş.
+Resimlerle çoktan seçmeli. ≥ 2 resim, tam olarak biri doğru olarak
+işaretlenir.
 
 ```json
 {
   "id": "ex-id",
   "type": "picture_choice",
-  "prompt": "Which is the evening greeting?",
+  "prompt": "Welche Begrüßung passt zum Abend?",
   "card_ids": ["card-1"],
   "images": [
     {"src": "assets/img/morning.png", "label": "Bonjour"},
     {"src": "assets/img/evening.png", "label": "Bonsoir", "is_correct": "true"}
   ],
-  "hint": "Optional Markdown hint shown on demand.",
+  "hint": "Optionaler Markdown-Tipp auf Knopfdruck.",
   "distractors": ["Bonjour"]
 }
 ```
 
-Not: `is_correct` bir JSON boolean değil, **dize** `"true"`'dur.
+Önemli: `is_correct` bir **String** `"true"`'dur, bir JSON boolean
+değil.
 
-`src` mevcut olmayan bir kaynağı işaret ediyorsa, oluşturucu
-`label` metnine geri döner — resim seçme alıştırmaları illüstrasyon
-varlıkları olmadan bile işlevseldir.
+`src` yolu var olmayan bir dosyaya işaret ediyorsa, render eden
+`label`'a geri döner — yani picture_choice, illüstrasyon asset'leri
+olmadan da çalışır.
 
 ### free_text
 
-Cevabı yazın. Oluşturucu önce tam eşleşme, ardından Levenshtein
-toleranslı geri dönüş yapar.
+Yanıtı yaz. Render eden önce tam, ardından Levenshtein-toleranslı
+eşleştirir.
 
 ```json
 {
   "id": "ex-id",
   "type": "free_text",
-  "prompt": "How do you say 'Thank you' in French?",
+  "prompt": "Wie sagt man 'Danke' auf Französisch?",
   "card_ids": ["card-merci"],
   "accept": ["Merci", "merci", "MERCI"],
-  "hint": "It starts with M.",
+  "hint": "Beginnt mit M.",
   "distractors": ["Bonjour", "Salut"]
 }
 ```
 
-`accept[0]`, yanlış bir denemeden sonra gösterilen kanonik yanıttır.
-Büyük/küçük harf ve noktalama işaretlerini kapsamak için ≥ 3
-varyant ekleyin; oluşturucu boşlukları normalize eder.
+`accept[0]`, yanlış bir denemede gösterilen kanonik yanıttır.
+Büyük/küçük harf + noktalama işaretlerini kapsamak için ≥ 3 varyant
+listele; boşluk, render eden tarafından normalleştirilir.
 
 ### word_tiles
 
-Karolarıörüsüyle sıraya dizin. Oluşturucu, görüntülemeden önce
-karıştırır.
+Karoları doğru sıraya getir. Render eden, göstermeden önce karıştırır.
 
 ```json
 {
   "id": "ex-id",
   "type": "word_tiles",
-  "prompt": "Arrange: I see a cat.",
+  "prompt": "Bring die Kacheln in die Reihenfolge: Ich sehe eine Katze.",
   "card_ids": ["card-1"],
   "tiles": ["Je", "vois", "un", "chat"],
-  "hint": "Same word order as English."
+  "hint": "Gleiche Wortreihenfolge wie im Deutschen."
 }
 ```
 
-Birden fazla kelime sırası doğruysa, `accept_orderings` ekleyin:
+Birden çok kelime sırası doğruysa, `accept_orderings` ekle:
 
 ```json
 {
@@ -289,60 +303,61 @@ Birden fazla kelime sırası doğruysa, `accept_orderings` ekleyin:
 }
 ```
 
-Her sıralama, karo endekslerinin bir permütasyonudur.
+Her sıra, karo indekslerinin bir permütasyonudur.
 
-### cloze (Aşama 52 / v1.35.0 — şema 1.1)
+### cloze (Faz 52 / v1.35.0 — Şema 1.1)
 
-Cümlede görünür `___` işaretçileriyle boşluk doldurma.
-Her `___`, `blanks[]`'taki bir girişe karşılık gelir (soldan sağa
-eşleme; yükleyici `sentence.count("___") == len(blanks)` uygular).
+Cümlede görünür `___` işaretleriyle boşluk doldurma. Her `___`,
+`blanks[]` içindeki bir girişe karşılık gelir (soldan sağa
+eşleme; yükleyici `sentence.count("___") == len(blanks)`'i denetler).
 
 ```json
 {
   "id": "ex-id",
   "type": "cloze",
-  "prompt": "Fill in the indefinite article.",
+  "prompt": "Setze den unbestimmten Artikel ein.",
   "card_ids": ["art-un", "noun-chat"],
   "sentence": "Je vois ___ chat dans le jardin.",
   "blanks": [
     {
       "accept": ["un"],
-      "hint": "masculine indefinite article",
+      "hint": "männlicher unbestimmter Artikel",
       "placeholder": "?"
     }
   ],
   "cloze_mode": "type",
   "distractors": ["le", "la", "les"],
-  "hint": "*un* is the masculine indefinite article."
+  "hint": "*un* ist der männliche unbestimmte Artikel."
 }
 ```
 
-**Oluşturma modları** — alıştırma başına `cloze_mode` aracılığıyla ayarlayın:
+**Render modları** — alıştırma başına `cloze_mode` ile ayarlanır:
 
-- `"type"` (atlandığında varsayılan): boşluk başına bir `<input>`.
-  free_text'in kullandığı NFC + Levenshtein-≤-1 eşleştirici ile
-  doğrulanır, bu nedenle yazarların yalnızca anlamsal varyantları
-  numaralandırması gerekir (yazım hatalarını değil).
-- `"select"`: boşluk başına bir `<select>`. Seçenekler
-  `accept[0]` + alıştırmanın `distractors`'ından çizilir,
-  sabit tohum ile boşluk başına karıştırılır.
-  **Boş olmayan `distractors` gerektirir** — şema doğrulayıcısı,
-  distraktörler olmadan `cloze_mode: "select"` alıştırmalarını reddeder.
+- `"type"` (ayarlanmadıysa varsayılan): boşluk başına bir `<input>`.
+  free-text ile aynı NFC + Levenshtein-≤-1 eşleştiriciyle doğrulanır,
+  böylece yazarların yalnızca anlamsal varyantları listelemesi gerekir
+  (yazım hatası yok).
+- `"select"`: boşluk başına bir `<select>`. Seçenekler, alıştırmanın
+  `accept[0]` + `distractors`'ından, boşluk başına kararlı bir tohumla
+  karıştırılır. **Boş olmayan `distractors` gerektirir** — şema
+  doğrulayıcısı, onlar olmadan `cloze_mode: "select"`'i reddeder.
 
-**Çok boşluklu cloze** desteklenir: cümledeki her `___`, `blanks`'taki
-bir sonraki girişe sırayla eşlenir. Her boşluğun kendi ipucu +
-yer tutucu + kabul listesi olabilir. Element düzeyinde SRS, boşluk
-başına bir ElementAttempt'e dönüşür.
+**Cloze başına birden çok boşluk** desteklenir: cümledeki her `___`,
+sırayla `blanks` içindeki bir sonraki girişe eşlenir. Her boşluğun
+kendi ipucu + yer tutucu + accept listesi olabilir. Öğe-SRS, boşluk
+başına bir ElementAttempt açar — boşluk A'yı akıcı dolduran ancak
+boşluk B'yi sürekli kaçıran, boşluk düzeyinde bir mastery izleme alır.
 
-**Kartlardaki token rolleri (Aşama 52I / v1.35.0)** — çalışma zamanı
-cloze oluşturucusunun anlamsal olarak anlamlı bir boşluk hedeflemesine
-izin veren Card'daki isteğe bağlı meta veri:
+**Kartlarda Token rolleri (Faz 52I / v1.35.0)** — cloze üretecinin
+çalışma zamanında (tekrar oturumları + ders sonu düzeltme turu)
+anlamsal olarak anlamlı bir boşluk seçebilmesini sağlayan isteğe bağlı
+kart üst verileri:
 
 ```json
 {
   "id": "art-un",
   "front": "un chat",
-  "back": "a cat",
+  "back": "eine Katze",
   "tags": ["article"],
   "token_roles": [
     {"token": "un", "role": "article"}
@@ -350,21 +365,21 @@ izin veren Card'daki isteğe bağlı meta veri:
 }
 ```
 
-Kapalı rol enum'u: `article` / `verb` / `noun` / `adjective`
-/ `preposition` / `gender_marker` / `tense_marker`. Rol eklemek
-küçük bir schema_version artışıdır — yerinde genişletmeyin.
+Kapalı rol enum'u: `article` / `verb` / `noun` / `adjective` /
+`preposition` / `gender_marker` / `tense_marker`. Bir rol eklemek bir
+minor şema sürüm artışıdır — satır içi genişletme.
 
 ## Alıştırma yönü (v1.46.0 / EXP-018)
 
-Her alıştırma, öğrencinin kartı hangi yönde çalıştırdığını söyleyen
-isteğe bağlı bir `direction` alanını kabul eder:
+Her alıştırma, öğrenenlerin kartı hangi yönde çalıştığını belirten
+isteğe bağlı bir `direction` alanı kabul eder:
 
-- `target_to_source` (varsayılan) — ALICI: öğrenciye hedef dil
-  gösterilir ve kaynak dili tanır (daha kolay).
-- `source_to_target` — ÜRETİCİ: öğrenciye kaynak dil gösterilir
-  ve hedefi üretir (daha zor).
-- `both` / `random` — oluşturucunun / uyarlamalı oluşturucunun
-  deneme başına somut bir yön seçmesine izin verin.
+- `target_to_source` (varsayılan) — REZEPTİF: hedef dil gösterilir,
+  kaynak dil tanınır (daha kolay).
+- `source_to_target` — ÜRETKEN: kaynak dil gösterilir, hedef dil
+  üretilir (daha zor).
+- `both` / `random` — render eden / adaptif üretece deneme başına
+  somut bir yön seçimini bırakır.
 
 ```json
 {
@@ -375,42 +390,71 @@ isteğe bağlı bir `direction` alanını kabul eder:
 }
 ```
 
-Alan katkı niteliğindedir — şema 1.2 sürümünde kalır ve `direction`
-olmayan dersler tam olarak eskisi gibi davranır (alıcı).
+Alan additiftir — şema Sürüm 1.2'de kalır ve `direction` olmayan
+dersler tam olarak öncekisi gibi davranır (rezeptif). SRS, ustalığı
+yön başına izler: rezeptif olarak ustalaşılmış bir kart henüz üretken
+olarak ustalaşılmış değildir. Cloze alıştırmaları bağlama bağlıdır ve
+`direction`'ı yok sayar. Bir zorluk ilerlemesi için erken dersleri
+rezeptif tutar ve sonraki derslerde `source_to_target`'i eklersin (tam
+olarak paketlenmiş pilot içeriğin yaptığı budur).
 
-### Uyarlamalı ders oluşturucusuna yardımcı olan ek açıklamalar (v1.36.0+)
+### Adaptif ders üreteci için ek açıklamalar (v1.36.0+)
 
-Aşama 53 uyarlamalı ders oluşturucusu (`/adaptive-lesson/:setId`,
-F-114), öğrencinin özel zayıflıklarını çalıştırmak için yazılı
-alıştırmaları yeniden birleştirir. İki alan onu daha akıllı kılar:
+Faz 53'ten adaptif ders üreteci (`/adaptive-lesson/:setId`, F-114),
+öğrenenlerin belirli zayıflıklarını hedefli olarak ele almak için
+mevcut alıştırmaları yeniden birleştirir. Üreteç ek açıklamalar
+olmadan çalışır, ancak iki alan onu belirgin biçimde daha akıllı yapar:
 
-1. **Kartlarda daha geniş `token_roles` kapsamı.** Oluşturucu
-   `token_roles`'ü şunlar için kullanır:
-   - Hatalardan cloze varyantları oluştururken anlamsal olarak
-     anlamlı boşlukları seçmek
-   - Hataları Gösterge Tablosu "Odak alanları" çipleri için
-     `article_gender` / `verb_conjugation` olarak sınıflandırmak
-   - Kullanıcı orijinali yanlış yaptığında aynı öğeyi test eden
-     ALTERNATIF alıştırmaları bulmak
+1. **Kartlarda daha geniş `token_roles` kapsamı.** Üreteç,
+   `token_roles`'u şunlar için kullanır:
+   - Hatalardan cloze varyantları üretilirken anlamsal olarak anlamlı
+     boşluklar seçmek (zaten v1.35.0'da)
+   - Dashboard'daki "alıştırma odağı" çipleri için hataları
+     `article_gender` / `verb_conjugation` olarak sınıflandırmak (53E)
+   - Orijinal alıştırma yanlışsa, aynı öğeyi test eden ALTERNATİF
+     alıştırmalar bulmak (53D varyasyon mantığı — kartı uygun bir
+     `token_roles` girişine sahip adayları bulur)
 
-   Her grammatik birimi öğreten HER karta bir `token_roles` girişi
-   ekleyin — makaleler, çekimlenmiş fiil biçimleri, cinsiyetli
-   isimler. Maliyet, kart başına bir ekstra JSON girişidir.
+   Kendi gramatik birimini öğreten HER kartı (artikeller, çekimli fiil
+   formları, cinsiyetli isimler) bir `token_roles` girişiyle ekle.
+   Maliyet: kart başına ek bir JSON girişi; fayda: belirgin biçimde
+   daha zengin adaptif üretim.
 
-2. **Kart düzeyinde gramer etiketleri** (`tags: ["article", "masculine"]` vb.)
-   `token_roles` yokken hata sınıflandırıcısı tarafından geri dönüş
-   olarak okunur.
+2. **`tags: ["article", "masculine"]` gibi kart etiketleri**,
+   `token_roles` eksik olduğunda hata sınıflandırıcısı tarafından geri
+   dönüş olarak okunur. `token_roles`'un yerini almazlar — ucuz, yarı
+   yolda bir ek açıklamadır.
 
-## Varlıklar (bir setle paketlenen resimler) — v1.37.0+
+Henüz İHTİYAÇ DUYMADIKLARIMIZ (gelecekteki bir şema artışına
+ertelendi):
 
-Resim seçimi alıştırmaları ve kart kapak resimleri ya:
-1. Set düzeyi manifestte bildirilen ve ders JSON'ının yanında gönderilen
-   **Yazarlı varlık dosyalarından**, ya da
-2. Çalışma zamanında hiçbir varlık yokken oluşturulan **Yer tutucu SVG'lerden**
-   gelir (renk etiketi için renk örnekleri, rakamlar için büyük
-   rakamlar, diğer her şey için avatar stili).
+- Farklı derslerdeki kartlar arasında `related_cards` çapraz
+  referansları
+- Alıştırma başına zorluk derecelendirmeleri (üreteç şu anda zorluğu
+  `exercise.type`'tan tahmin eder)
+- Alternatif cloze bağlamları olarak ayrıştırılabilir, `notes` içinde
+  kart başına örnek cümleler (cloze üreteci yalnızca `front`'u kullanır)
+
+Pratik kural: gramatik bir Token öğreten her karta `token_roles` ekle.
+Bu, adaptif sistem için açık ara en etkili yazar alışkanlığıdır.
+
+## Asset'ler (bir setin getirdiği resimler) — v1.37.0+
+
+Picture-Choice alıştırmaları ve kart kapak resimleri iki kaynaktan
+gelir:
+1. Set manifest'inde bildirilen ve ders JSON'ının yanında gönderilen
+   **yazar asset dosyaları**
+2. Hiçbir asset yoksa çalışma zamanında üretilen **yer tutucu SVG'ler**
+   (renk kelimeleri için renk tabloları, sayılar için büyük rakamlar,
+   diğer her şey için avatar stili)
+
+Asset'siz bir set yayınlarsan, Picture-Choice yine de çalışır — yer
+tutucu SVG üreteci renkleri + sayıları otomatik kapsar ve diğer her
+şey için deterministik bir avatara geri döner.
 
 ### Dizin düzeni
+
+Set dizini içinde asset'ler `assets/` altında bulunur:
 
 ```
 sets/
@@ -429,6 +473,9 @@ sets/
 
 ### Manifest bildirimi
 
+İndiren neyi alacağını bilsin diye her asset, set manifest'inde
+bildirilmelidir:
+
 ```yaml
 sets:
   - id: language-fr-a1
@@ -444,71 +491,115 @@ sets:
         size_kb: 38
 ```
 
-`path`, setin `assets/` dizinine göredir. Ders JSON içinde,
-resim seçimi alıştırmaları varlıklara `assets/` önekiyle başvurur:
+`path`, setin `assets/` dizinine görelidir (ders JSON'ına DEĞİL).
+Ders JSON'ında Picture-Choice alıştırmaları asset'leri `assets/`
+önekiyle referanslar:
 
 ```json
 {
   "type": "picture_choice",
-  "prompt": "Which one is 'chat'?",
+  "prompt": "Welches ist 'chat'?",
   "images": [
-    {"src": "assets/img/chat.png", "label": "Cat", "is_correct": "true"},
-    {"src": "assets/img/chien.png", "label": "Dog"}
+    {"src": "assets/img/chat.png", "label": "Katze", "is_correct": "true"},
+    {"src": "assets/img/chien.png", "label": "Hund"}
   ]
 }
 ```
 
-### Boyut + biçim sınırları
+Frontend, asset çözücüyü çağırırken `assets/` önekini otomatik
+kaldırır, böylece ders JSON'ı yazarlar için sezgisel biçimde kalır.
 
-- **Varlık başına sınır**: 500 KiB.
-- **Set başına yumuşak sınır**: toplam 10 MiB varlık. Doğrulayıcı
-  uyarır ama reddetmez.
-- **Kabul edilen biçimler**: `.png` / `.jpg` / `.jpeg` / `.webp`
-  / `.svg`. GIF yok (animasyonlu içerik dikkati dağıtır) ve
-  BMP yok (sıkıştırma yok).
+### Boyut + format sınırları
 
-### Boyutlandırma önerileri
+- **Asset başına sınır**: 500 KiB. Manifest doğrulayıcısı, bildirilen
+  `size_kb`'si bu sınırı aşan asset'leri reddeder. İndiren ayrıca
+  gerçek bayt boyutu bildirimi %10'dan fazla aşan asset'leri de
+  reddeder — manifest'i dürüst tutar.
+- **Set başına soft sınır**: toplam 10 MiB boyut. Doğrulayıcı uyarır,
+  ancak reddetmez.
+- **Kabul edilen formatlar**: `.png` / `.jpg` / `.jpeg` / `.webp` /
+  `.svg`. GIF yok (animasyonlu içerik dikkat dağıtır), BMP yok
+  (sıkıştırma yok). Fotoğraflar için WebP tercih edilir — karşılaştırma
+  kalitesinde PNG'den belirgin biçimde daha küçük. Simgeler +
+  diyagramlar için SVG tercih edilir — temiz ölçeklenir + minik dosya
+  boyutu.
 
-Resim seçimi karoları masaüstünde en fazla 150x150 px, mobilde
-100x100 px olarak oluşturulur (`object-fit: contain`). 300x300 px
-kaynak resimler, retina ekranlarda şişmeden en iyi sonucu verir.
+### Boyut önerileri
+
+Picture-Choice karoları masaüstünde en fazla 150x150 px ve mobilde
+100x100 px render edilir (`object-fit: contain`). 300x300 px kaynak
+resimler, gereksiz veri ihtiyacı olmadan Retina ekranlarda en iyi
+sonucu verir. 150 KiB üzeri PNG'ler, yarı boyutlu iyi sıkıştırılmış bir
+WebP'den nadiren daha iyi görünür.
+
+### Çalışma zamanı yer tutucusu ne zaman yeterli olur
+
+Çalışma zamanı yer tutucusunun yazar resimlerinin öğrenme kazancı
+sağlamayacağı kadar iyi olduğu üç ders türü:
+
+- **Renk dersleri** (`rouge` / `rojo` / `rot` / `red`): yer tutucu
+  üreteci, renk adına uyan renkli bir hex karo üretir. Yazar karoları
+  gereksizdir.
+- **Sayı dersleri** (`7` / `42` / `1492`): yer tutucu rakamları büyük +
+  ortalanmış render eder. Yazar resimleri yalnızca Arap olmayan rakam
+  sistemlerinde anlamlı olurdu.
+- **Soyut kavramlar**, bariz bir görsel temsili olmayanlar (`patience`,
+  `liberté`): avatar yer tutucusu, tartışmalı bir simge seçimini
+  zorlamadan net bir görsel çapa sağlar.
+
+Diğer her şey için (hayvanlar, nesneler, yiyecek, yerler, vücut
+parçaları) yazar resimleri tanıma + hatırlamaya ölçülebilir biçimde
+yardımcı olur.
 
 ## Kalite kontrol listesi
 
-Yeni bir ders için PR açmadan önce doğrulayın:
+Yeni bir ders için PR'dan önce kontrol et:
 
 - [ ] Ders başına **3-5 teori adımı** + **8-12 alıştırma**
-- [ ] **En az 3 alıştırma türü** temsil ediliyor
-- [ ] **Teori adımları ≤ 200 kelime** her biri
-- [ ] **Free_text alıştırmaları**: ≥ 3 kabul varyantı + ≥ 3 distraktör
-- [ ] **Word_tiles**: alıştırma başına ≥ 3 karo
-- [ ] **estimated_minutes**: 10-15 (gerçekçi, özlemci değil)
-- [ ] **Distraktörler yanlış-ama-makul** — anlamsal olarak ilişkili, asla rastgele
-- [ ] **Kart notları** gerçek değer taşıyor
-- [ ] **Aşamalı yapı**: sonraki kavramlar aynı setteki öncekiler üzerine inşa eder
-- [ ] **Kültürel doğruluk**: gerçek dünya kullanımı, yalnızca ders kitabı ifadeler değil
-- [ ] **Şema doğrulama**: ders `dict_to_lesson()` aracılığıyla temiz yüklenir
-- [ ] **Kart id bütünlüğü**: her `exercise.card_ids[i]`, dersin `cards[]`'ında mevcuttur
-- [ ] **Dil çifti**: `target_language` + `source_language` ayarlandı (ISO 639-1, farklı), `title_native` mevcut
+- [ ] **En az 3 alıştırma türü** temsil edilmiş (matching, picture-choice, free-text, word-tiles ya da cloze — cloze v1.35.0'dan itibaren)
+- [ ] **Teori adımları her adımda ≤ 200 kelime**
+- [ ] **Free-Text alıştırmaları**: ≥ 3 accept varyantı + ≥ 3 distractor
+- [ ] **Word-Tiles**: alıştırma başına ≥ 3 karo
+- [ ] **estimated_minutes**: 10-15 (gerçekçi, idealize değil)
+- [ ] **Distractor'lar yanlış-ama-makul** — anlamsal olarak ilişkili, asla rastgele değil
+- [ ] **Card-Notes** gerçek katma değer sağlar (telaffuz, yanlış dostlar, istisna bayrağı)
+- [ ] **Progresif yapı**: sonraki kavramlar aynı setteki öncekilerin üzerine kurulur
+- [ ] **Kültürel doğruluk**: gerçek dil kullanımı, yalnızca ders kitabı kalıpları değil
+- [ ] **Şema doğrulaması**: ders `dict_to_lesson()` üzerinden temiz yüklenir (Yerel Test'e bak)
+- [ ] **Card-ID bütünlüğü**: her `exercise.card_ids[i]`, dersin `cards[]`'ında var
+- [ ] **Dil çifti**: `target_language` + `source_language` ayarlı (ISO 639-1, farklı), `title_native` mevcut
 
 ## Doğrulama (iki katman, v1.44.0)
 
-İçerik, aynı kontrolleri çalıştıran iki doğrulama katmanı tarafından
-geçit uygulanır:
+İçerikler, AYNI denetimlere sahip iki doğrulama katmanıyla güvence
+altına alınır:
 
-1. **Uygulama içi, paylaşmadan önce.** Bir öğrenci *Derslerim → Toplulukla Paylaş*
-   aracılığıyla bir ders paylaştığında, önce kural tabanlı bir kontrol çalışır
-   (her zaman, AI gerekmez). Aşağıdaki **minimumları** uygular.
-2. **İçerik deposunun CI'sında.** `astrapi69/adaptive-learner-content`'e
-   açılan bir PR, aynı kurallarla her seti yeniden kontrol eden
-   `scripts/validate_content.py`'yi çalıştırır.
+1. **Uygulamada, paylaşmadan önce.** *Derslerim → Topluluğa sun*
+   üzerinden paylaşırken, önce kural tabanlı bir denetim çalışır
+   (her zaman, yapay zekasız). Aşağıdaki **alt sınırları** zorunlu
+   kılar; bunun altındaki bir set paylaşılamaz. Geçerse ve bir yapay
+   zeka anahtarı yapılandırılmışsa, öğrenen İSTEĞE BAĞLI olarak
+   tamamlayıcı bir yapay zeka denetimi başlatabilir (çeviri doğruluğu,
+   distractor makullüğü, gramer, seviye, kültürel duyarlılık,
+   doğallık). Yapay zeka adımı asla otomatik değildir, açık bir onay
+   gerektirir (ders içeriği yapılandırılmış sağlayıcıya gönderilir) ve
+   paylaşmayı asla engellemez — kural tabanlı denetim kapıdır.
+2. **İçerik reposunun CI'sında.** `astrapi69/adaptive-learner-content`
+   reposuna bir Pull Request, `scripts/validate_content.py`'yi çalıştırır
+   (`docs/ci/adaptive-learner-content/` altında yansıtılmıştır) ve her
+   seti aynı kurallarla denetler, böylece manuel bir PR kapıyı atlamaz.
 
-**Kalite minimumları (sert geçit):** Ders başına ≥ 5 alıştırma,
-≥ 2 alıştırma türü, ≥ 1 teori adımı, free_text ≥ 2 kabul cevabı +
-distraktörler, matching ≥ 3 çift, resim seçimi distraktörleri, boş
-kart ön/arka yok.
+**Kalite alt sınırları (sert kapı):** ders başına ≥ 5 alıştırma, ≥ 2
+alıştırma türü, ≥ 1 teori adımı, Free-Text ≥ 2 kabul edilen yanıt +
+distractor'lar, Matching ≥ 3 çift, distractor'lı Picture-Choice, boş
+kart ön/arka yüzleri yok ve (Latin olmayan başlangıç yazıları için)
+başlangıç yazısında kart arka yüzleri. Bunlar alt sınırlardır, hedef
+değil — yukarıdaki kontrol listesi daha fazlasını ister.
 
 ## Yerel test
+
+İçerik yükleyicisinin şema doğrulayıcısı `make test` kapsamında
+çalışır. Tek bir dersi elle doğrulamak için:
 
 ```bash
 cd plugins/adaptive-learner-plugin-content-loader
@@ -518,107 +609,160 @@ from adaptive_learner_content_loader.schema import dict_to_lesson
 path = '../adaptive-learner-content/sets/en/fr-a1/lessons/01-greetings.json'
 with open(path) as f:
     lesson = dict_to_lesson(json.load(f))
-print(f'OK: {lesson.id} — {len(lesson.cards)} cards, {len(lesson.steps)} steps')
+print(f'OK: {lesson.id} — {len(lesson.cards)} Cards, {len(lesson.steps)} Steps')
 "
 ```
+
+Bir içerik reposunun tüm derslerini tek seferde doğrula — içerik
+reposunun doğrulayıcısıyla (CI'sının her PR'da çalıştırdığı aynı
+script):
 
 ```bash
 cd ../adaptive-learner-content
 python3 scripts/validate_content.py
 ```
 
+Her seti `sets/{source}/{target-level}/` altında bulur ve şemayı artı
+kalite alt sınırlarını denetler (≥5 alıştırma, ≥2 alıştırma türü, ≥1
+teori adımı, Freitext accept'leri + distractor'lar, Matching çiftleri,
+boş kart yok, kart-ID bütünlüğü). Yeni dersler otomatik tanınır — test
+değişikliği gerekmez.
+
 ## PR iş akışı
 
-Setiniz hazır olduğunda:
+Setin hazır olur olmaz:
 
-1. Ana adaptive-learner reposuna bir PR açın, ya da
-2. GitHub hesabınız altında kendi içerik reponuzu oluşturun ve
-   `backend/config/plugins/content-loader.yaml`'dan İçerik-Yükleyici'yi
-   ona yönlendirin (`default_sources` altında).
+1. Ana repoya bir PR aç (uygulamayla gönderilecek setler için), YA DA
+2. GitHub hesabın altında kendi içerik reponu oluştur ve içerik
+   yükleyiciyi `backend/config/plugins/content-loader.yaml` üzerinden
+   (`default_sources` altında) yapılandır.
 
-## Yaygın tuzaklar
+İçerik yükleyici, herhangi bir herkese açık GitHub repoyu kaynak
+olarak destekler. Özel repolar, üç katmanlı anahtar yönetimi üzerinden
+ayarlanan bir Personal Access Token gerektirir
+(`~/.config/adaptive_learner/secrets.yaml`).
 
-**Kart id referansları**: bir alıştırmadaki her `card_ids` girişi
-dersin `cards[]`'ında mevcut olmalıdır.
+## Sık karşılaşılan tuzaklar
 
-**Slug güvenli id'ler**: tüm id'ler (ders, kart, adım, alıştırma)
-`^[a-z0-9]+(-[a-z0-9]+)*$` ile eşleşmelidir. Alt çizgi yok,
-kesme işareti yok, büyük harf yok, baş/sondaki kısa çizgi yok.
+**Card-ID referansları**: Bir alıştırmadaki her `card_ids` girişi,
+dersin `cards[]`'ında var olmalıdır. Bir alıştırmayı dersler arasında
+kopyalar ve ilgili Card'ı birlikte almayı unutursan, doğrulama
+başarısız olur.
 
-**`is_correct: "true"`**: bir JSON boolean değil, dizedir.
+**Slug-güvenli ID'ler**: Tüm ID'ler (Lesson, Card, Step, Exercise)
+`^[a-z0-9]+(-[a-z0-9]+)*$` ile eşleşmelidir. Alt çizgi yok, kesme
+işareti yok, büyük harf yok, başında/sonunda tire yok.
 
-**Ekstra alanlar**: her modelin `extra="forbid"` vardır. Şemanın
-bilmediği bir alan eklemek tüm dersi reddeder.
+**`is_correct: "true"`**: Bu bir String'dir, bir JSON boolean değil.
+Şema açıkça `"true"` ister, çünkü picture_choice alanları dahili olarak
+dict[str, str] olarak modellenmiştir.
 
-**Teori gövdesi**: teori adımları boş olmayan bir `body` alanı
-(Markdown) gerektirir. Alıştırma adımları `body` taşımamalıdır —
-bunun yerine alıştırmanın `prompt`'unu kullanın.
+**Ek alanlar**: Her modelin `extra="forbid"` özelliği vardır.
+Belgelenmemiş bir alan, tüm dersin reddedilmesine yol açar. Belgelenmiş
+alanlara bağlı kal.
+
+**Theory-Body**: Theory adımları boş olmayan bir `body` alanı
+(Markdown) gerektirir. Exercise adımları bir `body` taşıyamaz — bunun
+yerine alıştırmanın `prompt`'unu kullan.
 
 ## Referans: pilot setler
 
-Adaptive Learner ile gönderilen iki set kanonik referanslardır:
+Adaptive Learner ile gönderilen iki set, kanonik referanslardır:
 
-- `sets/en/fr-a1/` — İngilizce konuşanlar için Fransızca A1 (10 ders);
-  `sets/de/fr-a1/` Almanca kaynaklı pilottur.
-- `sets/en/es-a1/` + `sets/de/es-a1/` — İspanyolca A1, `adaptive-learner-content`
-  deposunda.
+- `sets/en/fr-a1/` — İngilizce konuşanlar için Fransızca A1 (10 ders,
+  ~2 saat); `sets/de/fr-a1/` Almanca pilot settir.
+- `sets/en/es-a1/` + `sets/de/es-a1/` — İspanyolca A1 (kaynak dil
+  başına 15 ders), `adaptive-learner-content` reposunda.
+
+Her ikisi de bu kılavuzda açıklanan konvansiyonları izler. Eksiksiz
+bir dersi okumak, yapıyı içselleştirmenin en hızlı yoludur.
 
 ---
 
-## Topluluk katkı yolu (v1.42.0)
+## Topluluk katılımına giden yol (v1.42.0)
 
-Sıfırdan ders yazmak zorunda değilsiniz. Katkıda bulunmanın
-en hızlı yolu **uygulamada bir ders oluşturmak ve paylaşmaktır**:
+Dersleri sıfırdan elle oluşturmana gerek yok. Katkıda bulunmanın en
+hızlı yolu, **uygulamada bir ders oluşturmak ve paylaşmaktır**:
 
-1. Bir sohbet içe aktarın ve analiz edin, ardından **Çevrimdışı Ders
-   Olarak Kaydet**'e tıklayın (veya uyarlamalı bir dersi bitirin ve
-   **Bu dersi kaydet?**'e tıklayın). Ders, Set Tarayıcısı'ndaki
-   **Derslerim** altında görünür.
-2. Derslerim'den, bir içerik seti `.zip`'i (manifest + dersler)
-   indirmek için **Set olarak dışa aktar**'a tıklayın.
-3. İçerik deposunda önceden doldurulmuş bir GitHub sorunu açmak
-   için **Toplulukla Paylaş**'a tıklayın. Dışa aktarılan `.zip`'i
-   ekleyin.
-4. Bir bakıcı dersi inceler, manifestini (id, başlık, dil, seviye,
-   etiketler) yukarıdaki kurallara göre düzenler ve `sets/` altına
-   ekler.
+1. Bir sohbeti içe aktar ve analiz et, ardından **Çevrimdışı ders
+   olarak kaydet** (ya da adaptif bir dersi bitir ve **Bu dersi
+   kaydet?**). Ders, Set Tarayıcısı'nda **Derslerim** altında görünür.
+2. "Derslerim"de **İçerik Seti olarak dışa aktar**'a tıklayarak bir
+   içerik setini `.zip` olarak indir (manifest + dersler). Dışa
+   aktarmalar yalnızca ders içeriğini içerir — ilerleme yok, hata
+   geçmişi yok, kişisel bir şey yok.
+3. **Topluluğa sun**'a tıklayarak içerik repository'sinde önceden
+   doldurulmuş bir **Pull Request** aç — ders JSON'ı ağaçtaki doğru
+   yola commit edilir, `.zip` eki gerekmez.
+4. Reponun CI'sı PR'ı otomatik doğrular; bir maintainer dersi
+   inceler, manifest'i (id, title, language, level, tags) yukarıdaki
+   konvansiyonlarla uyumlu hale getirir ve onu `sets/` altında
+   birleştirir. Merge'den sonra herkes onu Set Tarayıcısı'ndan
+   indirebilir.
 
-## Paylaşım sihirbazı, varyasyonlar ve yazar kredisi (Aşama 64)
+Bu, sosyal yoldur: İnceleme **manuel**'dir (bir maintainer her eklemeyi
+küratörler — hiçbir şey otomatik yayınlanmaz) ve tüm akış yalnızca
+GitHub gerektirir. Üretilen dersler zaten şemaya karşı doğrulanır,
+böylece katkıda bulunulan bir ders genellikle yalnızca biraz manifest
+ince ayarına ihtiyaç duyar.
 
-**Derslerim**'den bir ders paylaşmak, doğrudan GitHub'a atlamak
-yerine dört adımlı bir sihirbaz açar:
+## Paylaşma yardımcısı, varyasyonlar ve yazar Credit'i (Faz 64)
+
+**Derslerim**'den bir dersi paylaşmak, doğrudan GitHub'a atlamak
+yerine dört adımlı bir yardımcı açar:
 
 1. **Önizleme + yerleştirme.** Uygulama, dersin ağaçta tam olarak
-   nereye düştüğünü hesaplar.
-2. **Yineleme kontrolü.** Ders, o ağaç yolundaki mevcut derslerle
-   kart örtüşümü ve alıştırma örtüşümü ile karşılaştırılır (danışman
-   — hiçbir zaman engellemez). Benzer bir şey varsa şunları yapabilirsiniz:
-   - **Bir varyasyon olarak paylaş** — ders `variation_of: "{original_id}"`
-     etiketiyle etiketlenir.
-   - **Yalnızca yeni alıştırmaları önerin** (neredeyse yinelenmiş) — sihirbaz
-     yalnızca orijinalin eksik olduğu alıştırmaları çıkarır.
-3. **Kalite özeti.** Kural tabanlı doğrulayıcı bulguları; uyarılar
-   gösterilir ama hiçbir zaman engellemez.
-4. **Paylaş + kutla.** Tek bir tıklama GitHub PR/sorununu açar.
+   nereye düşeceğini (`sets/{kaynak}/{hedef}-{seviye}/`) ve otomatik
+   numaralandırılmış bir dosya adını (`{nn}-{slug}.json`, mevcut
+   derslerden sonraki numara) hesaplar. Tamamen yeni bir çift + seviye,
+   *"Yeni set! İlk sensin."* gösterir.
+2. **Yineleme denetimi.** Ders, bu yolda zaten var olan derslerle
+   karşılaştırılır (kart ve alıştırma örtüşmesi — danışmanlık niteliğinde,
+   asla engelleyici değil). Benzer bir şey varsa şunları yapabilirsin:
+   - **Varyasyon olarak paylaş** — ders, `variation_of:
+     "{original_id}"` artı isteğe bağlı bir `variation_note` ("Senin
+     sürümün nasıl farklı?") ile işaretlenir.
+   - **Yalnızca yeni alıştırmaları öner** (neredeyse yinelemelerde) —
+     yardımcı, orijinalin eksik olduğu alıştırmaları, ilgili kartlarıyla
+     birlikte bir tamamlama varyasyonu olarak çıkarır.
+3. **Kalite özeti.** Kural tabanlı doğrulayıcının bulguları (artı
+   isteğe bağlı yapay zeka denetimi); uyarılar gösterilir ancak asla
+   engellemez.
+4. **Paylaş + kutla.** Bir tık GitHub Pull Request'ini açar (küçük
+   dersler için dosya düzenleyici, büyükler için yükleme sayfası) ve
+   uygulama küçük bir kutlamayla teşekkür eder.
 
-### Varyasyon + kredi alanları (şema 1.3, hepsi isteğe bağlı)
+### Varyasyon ve Credit alanları (Şema 1.3, hepsi isteğe bağlı)
 
 ```json
 {
   "variation_of": "10-passe-compose",
-  "variation_note": "More exercises on agreement",
+  "variation_note": "Mehr Übungen zur Angleichung",
   "contributed_by": "Maria S.",
   "contributed_at": "2026-06-01T14:30:00Z"
 }
 ```
 
-Dördü de katkı niteliğindedir ve isteğe bağlıdır; bunlar olmayan
-dersler tam olarak eskisi gibi davranır.
+Dördü de additif ve isteğe bağlıdır; onlar olmadan dersler tam olarak
+öncekisi gibi davranır. `contributed_by`, yazar paylaşırken Credit'i
+etkinleştirdiğinde ayarlanır (bir sonraki sefer için yerel olarak
+hatırlanan *"Adın (isteğe bağlı)"* alanı). Varsa, görüntüleyici başlığın
+altında ölçülü bir *"{name} tarafından sağlandı"* satırı gösterir ve
+Pull Request metni yazarı üst veri tablosunda listeler.
 
-### Katkı geçmişi ve boşluklar
+### Katkı geçmişi ve eksikler
 
-Paylaşılan dersler, **Katkılarım** altında yerel olarak hatırlanır
-(hesap gerekmez) ve beş paylaşımda *Topluluk Katkıcısı* tanıması
-yapılır. Set Tarayıcısı ayrıca **Eksik Dersler**'i de gösterir —
-mevcut bir çiftin bir sonraki CEFR seviyesi için teşvik edici
-öneriler.
+Paylaşılan dersler yerel olarak hatırlanır (hesap gerekmez)
+**Katkılarım** altında, bir sayaç ve beş paylaşılan dersten itibaren
+bir *Topluluk Katkıcısı* ödülüyle. Set Tarayıcısı ayrıca **Eksik
+dersler** gösterir — mevcut bir çiftin bir sonraki CEFR seviyesi ya da
+bir başlangıç dili için var olan ancak başka biri için eksik olan bir
+hedef dil için cesaretlendirici öneriler ("Yardım edebilir misin?").
+
+---
+
+## İlgili sayfalar
+
+- [Ders oluşturma — Genel bakış](../content-creation/overview.md) — giriş + uygulamada Ders Oluşturucu
+- [Kitap önerileri](../content-creation/books.md) — alan başına `books.yaml` bakımı
+- [Birden Çok İçerik Repository'si](../features/content-repos.md) — kendi repoyu bağla

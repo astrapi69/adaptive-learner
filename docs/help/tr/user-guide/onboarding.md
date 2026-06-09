@@ -1,74 +1,68 @@
-<!-- Translation: AI-generated, pending native review -->
+# Onboarding
 
-# Başlangıç Kurulumu
+**v1.64.0**'dan beri giriş bilinçli olarak kısadır: **Hızlı
+başlangıç** yalnızca iki alan ister.
 
-Giriş sayfasındaki dil seçicisinin ardından Başlangıç Kurulumu
-akışı dört zorunlu alan ve isteğe bağlı taksonomi toplar:
+1. **Ad** — uygulamanın sana nasıl hitap edeceği.
+2. **Konu** — ne öğrenmek istediğin. "İspanyolca gramer", "Makine
+   öğrenmesi temelleri", "Gitarda solo doğaçlama". Somut ol; bu,
+   projenin çapasıdır.
 
-1. **Konu** — ne öğrenmek istediğiniz. "İspanyolca dilbilgisi",
-   "Makine öğrenmesi temelleri", "Ritim gitarı doğaçlama".
-   Özgül olun; yapay zeka her oturumu buna dayandıracaktır.
-2. **Hedef** — başarının nasıl göründüğü. "B2 sınavını geç",
-   "Uçtan uca bir öneri motoru oluştur", "Tempo kaybetmeden
-   bir yedek parça üzerinde 12 ölçülük blues solo çal."
-   Somut hedefler daha yararlı yapay zeka rehberliği üretir.
-3. **Zaman çerçevesi** — hedefe ne zaman ulaşmak istediğiniz.
-   "6 hafta", "Yazın sonu", "3. çeyreğe kadar". Beklentileri
-   ayarlamak ve seri izleme hedefini belirlemek için kullanılır.
-4. **Günlük dakika** — gerçekçi olarak ne kadar zaman
-   ayırabilirsiniz. 15-45 dakika, uyarlamalı öğrenme için
-   en uygun aralıktır; uygulama maraton oturumlarını ödüllendirmez.
+Geri kalan her şey (hedef, zaman çerçevesi, gün başına dakika, dil)
+istediğin zaman değiştirebileceğin makul **varsayılanları** alır.
 
-**Konu taksonomisi** (isteğe bağlı, v1.9.0'dan itibaren) — belirsiz
-bir öneri aracı, konunuzu Diller / Matematik / Programlama /
-Bilimler / Müzik / Beşeri Bilimler / Sosyal Bilimler / Beceriler
-altındaki 80'den fazla düğümlü eklenmiş taksonomiyle eşleştirir.
-Bir Diller konusu seçmek, proje için daha sonra Telaffuz Pratiğini
-açar.
+## Hemen başla ya da profili kur
 
-**Etiketler** (isteğe bağlı) — virgülle ayrılmış serbest metin
-etiketleri ("sınav-hazırlık", "günlük", "kendi-tempomda") daha
-sonra Kontrol Paneli filtre çubuğunda gösterilir.
+Gönderdikten sonra uygulama sana iki yol sunar:
 
-Formu tamamen atlayabilirsiniz — varsayılan bir kullanıcı oluşturulur
-ve doğrudan Kontrol Paneline ulaşırsınız.
+- **Hemen başla** — anında Dashboard'a düşersin ve bir ders ya da
+  oturum başlatabilirsin.
+- **Profili kur** — **Onboarding yardımcısını** açar: ekran başına bir
+  soru (hedef → zaman çerçevesi → gün başına dakika → güncel sorun →
+  isteğe bağlı öğrenme türü testi), her biri önceden doldurulmuş,
+  böylece "İleri" her zaman çalışır, ayrıca ilerleme çubuğu ve "Geri".
+  Yanıtlar her iki depolama modunda da kaydedilir.
 
-Ayrıca proje için bir **dil** seçersiniz. Bu, yapay zekanın
-oturumlar sırasında yanıt vereceği dildir; arayüz dilinden farklı
-olabilir (arayüzü kendi ana dilinizde tercih edebilir, ama
-İspanyolcayı İspanyolca olarak öğrenebilirsiniz).
+**Öğrenme türü testi artık zorunlu değildir** — yalnızca yardımcının
+son adımı üzerinden erişilebilir. Daha fazlası için
+[Öğrenme türü testi](assessment.md).
 
-## İsteğe bağlı: mevcut problem
+## Sürdürülebilir Assessment
 
-"Mevcut problem" alanı, projeye hemen açık bir soru getirmenizi
-sağlar. Doldurursanız ilk oturum, açık uçlu "Ne üzerinde çalışmak
-istiyorsunuz?" istemi yerine bu somut engelle başlar.
+Öğrenme türü testini yarıda bırakırsan, uygulama ara durumu (güncel
+soru, önceki yanıtlar, başlangıç zamanı) projeye bağlı olarak hatırlar,
+böylece **kaldığın yerden devam edersin**. Dashboard ve Ayarlar, seni
+öğrenme profilini **sürdürmeye, oluşturmaya ya da yeniden yapmaya**
+aktif olarak davet eder. Profil hesaplanır hesaplanmaz ara durum atılır.
 
-## Sonra ne olur
+## İsteğe bağlı: güncel sorun
 
-Formu gönderdiğinizde tek bir gidiş-dönüşte üç şey gerçekleşir:
+"Güncel sorun" adımında, açık bir soruyu hemen projeye getirebilirsin.
+Bunu doldurursan, ilk yapay zeka oturumu, açık bir "ne üzerinde
+çalışmak istiyorsun?" prompt'u yerine bu somut engelle başlar.
 
-1. Bir `User` kaydı oluşturulur (veya yeniden kullanılır — yerel
-   tarayıcınız oturumlar arasında aynı kullanıcıyı tutar).
-2. Bir `LearningProject` satırına konu / hedef / zaman çerçevesi /
-   günlük dakika / dil verileriniz kaydedilir.
-3. Değerlendirme sayfası otomatik olarak açılır. Buradan
-   atlayabilirsiniz, ancak yapay zeka onu yapana kadar varsayılan
-   olarak "tümdengelimli" öğrenme yöntemini kullanır.
+## Subject'ler ve Tag'ler
 
-## Projenizi düzenlemek
+Projene isteğe bağlı olarak bir **Subject** (seed edilmiş taksonomi
+ağacından bir uzmanlık alanı) ve **Tag'ler** (virgülle ayrılmış serbest
+metin etiketleri) atayabilirsin. Her ikisi de daha sonra Dashboard
+filtre çubuğunda ortaya çıkar; Subject filtresi yalnızca kendi
+Subject'lerini, en sık kullanıma göre sıralanmış olarak listeler. Bir
+dil Subject'i seçen, telaffuz alıştırmasının kilidini açar.
 
-Proje ayrıntıları değişmez değildir. Müfredat sayfası, gerçekte
-ne öğrenmek istediğinizi keşfettikçe konu ve hedefi ayarlamanıza
-olanak tanır. Ayarlar sayfası dil değişikliklerini yönetir.
+## Projeyi düzenleme
 
-## Saklanmayanlar
+Proje ayrıntıları taşa kazınmış değildir. Müfredat sayfasında, gerçekte
+ne öğrenmek istediğini keşfettikçe konuyu ve hedefi
+uyarlayabilirsin. Dili Ayarlar'da değiştirirsin.
 
-- **E-posta yok**, şifre yok, hesap yok.
-- **Analitik yok**, üçüncü taraf izleyici yok.
-- **Telemetri yok**: Yerel modda cihazınızdan dışarı gönderilmez.
+## Neyin kaydedilmediği
 
-Yapay zeka sağlayıcınız mesajlarınızı görür (yapay zekaya sormanın
-tüm amacı budur). Adaptive Learner'ın kendisi yalnızca yazdıklarınızı
-depolar — [depolama moduna](settings.md#storage-mode) göre yerel
-olarak veya FastAPI arka ucunda.
+- **E-posta yok**, parola yok, hesap yok.
+- **Analytics yok**, üçüncü taraf izleyiciler yok.
+- Yerel modda **hiçbir telemetri** cihazını terk etmez.
+
+Yapay zeka sağlayıcın mesajlarını görür (yapay zeka isteğinin amacı
+budur). Adaptive Learner'ın kendisi yalnızca yazdığını kaydeder —
+hangi [depolama modunun](settings.md) ayarlı olduğuna bağlı olarak
+yerel olarak ya da FastAPI arka ucunda.

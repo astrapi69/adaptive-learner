@@ -45,26 +45,35 @@ KI-Anbieter außerhalb des Browsers sitzt.
 
 1. **App öffnen** und Sprache wählen. Alle 8 UI-Sprachen
    sind voll übersetzt (DE, EN, ES, FR, EL, PT, TR, JA).
-2. **Lernprojekt anlegen**: Thema, Ziel, Zeitrahmen, Minuten
-   pro Tag plus optionale Subject-Taxonomie und Tags. Siehe
-   [Onboarding](onboarding.md).
-3. **Den 12-Fragen-Test machen**, damit die App weiß, auf
-   welche Methoden sie setzen soll. Auf Mobil swipest du
-   links/rechts zwischen den Fragen. Siehe
-   [Lerntyp-Test](assessment.md).
-4. **API-Schlüssel hinterlegen** in den Einstellungen ODER
-   in `~/.config/adaptive-learner/secrets.yaml`, falls du
-   den Desktop-Launcher nutzt. Die Einstellungs-UI zeigt
-   pro Anbieter, aus welcher Schicht der Schlüssel kommt.
-5. **Deine erste Session starten**. Der „Session starten"-
-   Button im Dashboard öffnet ein Lern-Gespräch. Die
-   KI-Antworten streamen Token für Token; der Dual-Prompt-
-   Evaluator entscheidet pro Zyklus-Schritt. Siehe
+2. **Onboarding: nur Name + Thema.** Der Schnellstart
+   verlangt nur diese zwei Felder, alles andere nimmt
+   Vorgaben. Danach kannst du „Direkt loslegen" wählen oder
+   optional dein Profil im Assistenten genauer einrichten.
+   Siehe [Onboarding](onboarding.md).
+3. **Erste Lektion starten** — der schnellste Weg ohne
+   KI-Schlüssel: Öffne den
+   [Content Browser](../features/content-browser.md) unter
+   `/content`, wähle einen Lektionssatz und starte eine
+   Lektion. Du liest kurze Theorie und machst Übungen; am
+   Ende siehst du dein Ergebnis mit Sternen. Siehe
+   [Lektionen und Wiederholungen](lessons.md).
+4. **Optional: KI-Sessions.** Möchtest du stattdessen das
+   geführte Sechs-Methoden-Lerngespräch, hinterlege einen
+   **API-Schlüssel** (Einstellungen oder
+   `~/.config/adaptive-learner/secrets.yaml`), mach den
+   optionalen [Lerntyp-Test](assessment.md) und starte eine
    [Lern-Session](learning-session.md).
+5. **Dein Ergebnis sichern.** Aus der Lektions-Zusammenfassung
+   kannst du das Ergebnis als Markdown kopieren oder als Datei
+   speichern, und unter **Einstellungen → Daten** ein
+   [Backup](../features/backup.md) erstellen.
 
 ## Wie es weitergeht
 
-- [Der 7-Schritte-Lernzyklus erklärt](learning-session.md)
-- [Dein Dashboard verstehen](dashboard.md)
+- [Lektionen und Wiederholungen](lessons.md) — der Lektionsablauf im Detail
+- [Content Browser](../features/content-browser.md) — Lektionen finden und filtern
+- [Mehrere Content-Repositories](../features/content-repos.md) — eigene Inhaltsquellen verbinden
+- [Backup und Wiederherstellung](../features/backup.md)
+- [Dein Dashboard verstehen](dashboard.md) — Fortschritt, Streak, XP, Badges
 - [FAQ — häufige Fragen](faq.md)
 - [Die pädagogische Idee hinter der App](../concept/philosophy.md)

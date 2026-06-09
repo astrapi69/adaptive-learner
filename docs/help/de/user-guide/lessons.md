@@ -44,17 +44,43 @@ jede Karte und Übung:
    "Weiter", wenn du bereit bist.
 2. **Übungen** prüfen, was du dir gemerkt hast. Vier Typen
    sind verfügbar:
-   - **Zuordnen** — ziehe Paare (Wort ↔ Übersetzung).
+   - **Zuordnen** — ziehe Paare (Wort ↔ Übersetzung). Beide
+     Kacheln eines gefundenen Paares teilen sich eine
+     **eigene Farbe** und ein **Nummern-Badge**, sodass die
+     Zuordnung farbenblind-sicher erkennbar ist (nicht nur
+     über Farbe).
    - **Bildauswahl** — wähle das Bild, das zum Hinweis
      passt.
    - **Freitext** — tippe die Antwort.
    - **Wort-Kacheln** — setze einen Satz aus Kacheln
      zusammen.
+   - **Lückentext** — fülle eine Lücke im Satz (entsteht
+     gezielt aus deinen Fehlern, siehe unten).
 
 Eine Fortschrittsanzeige oben verfolgt, wie weit du in der
 Lektion bist. Du kannst jederzeit aufhören — dein
 Fortschritt wird pro Schritt gespeichert und setzt dort
 fort, wo du aufgehört hast.
+
+### Enter-Shortcut
+
+Du kannst die ganze Lektion über die Tastatur bedienen:
+**Enter** prüft eine beantwortete Übung und geht dann zum
+nächsten Schritt; Freitext- und Lückentext-Felder senden auf
+Enter ab (kein Zeilenumbruch). Steuerelemente, die Enter
+selbst brauchen, behalten Vorrang. Der Shortcut ist in
+**Einstellungen → Lernen** umschaltbar (standardmäßig an) und
+gilt auch im Fehler-Replay („Fehler wiederholen").
+
+### Beispiel- und Theorie-Links
+
+- **Beispiel ansehen:** Ein Theorieschritt kann einen
+  optionalen Link zu einem ausführlichen Beispiel tragen, der
+  als „Beispiel ansehen"-Schaltfläche erscheint.
+- **Theorie nochmal lesen:** Eine Übung zeigt einen dezenten
+  Link zur nächstgelegenen vorangehenden Theorie; von dort
+  bringt dich „Zurück zur Übung" wieder an die Aufgabe. So
+  schlägst du eine Regel nach, ohne den Faden zu verlieren.
 
 ### Die Zusammenfassung
 
@@ -78,6 +104,18 @@ Schaffst du 3 Sterne beim ersten Versuch, spielt eine
 kleine Feieranimation. (Wenn du die OS-Einstellung
 "Bewegungen reduzieren" aktiviert hast, respektiert die
 Animation das.)
+
+### Ergebnis exportieren
+
+Die Zusammenfassung bietet **„Ergebnis kopieren"** und
+**„Als Datei speichern"**. Beide erzeugen einen
+**Markdown-Report** mit deinem Punktestand, einer
+Fehler-für-Fehler-Aufschlüsselung (deine Antwort + die
+richtige Antwort) und den noch schwachen Bereichen. Der
+Report eignet sich zum Einfügen in einen KI-Assistenten, der
+dir gezielt weiterhelfen soll. Der Export ist ein reiner
+Erzeuger ohne Backend und funktioniert in beiden
+Speichermodi.
 
 ---
 
@@ -247,12 +285,13 @@ Nutzer:innen, die die öffentliche GitHub-Pages-Seite
 besuchen, die volle Wiederholungsschleife ohne Backend
 bekommen.
 
-Was im Nur-Browser-Modus *anders* ist: Die
-XP-Vergabe- / Abzeichen-Verdienst-Seiteneffekte feuern nur
-im API-Modus (sie brauchen die Gamification-Hooks des
-Backends). Im Dexie-Modus verdienst du weiterhin XP und
-Abzeichen über den Chat-Session-Pfad; der Lektionsabschluss
-trägt nur noch nicht dazu bei.
+Seit **v1.33.0** ist auch die Gamification angeglichen: Im
+reinen Browser-Modus verdienst du für abgeschlossene
+Lektionen **dieselben XP und Lektions-Abzeichen** wie im
+Server-Modus — die Stern-, Streak- und Abzeichen-Logik ist
+in TypeScript portiert und gegen identische Goldwerte
+abgesichert. Es gibt keinen Funktionsunterschied mehr
+zwischen den Modi beim Lektionsabschluss.
 
 ---
 
