@@ -94,7 +94,7 @@ export interface WordTilesExerciseProps extends ControlledExerciseProps {
  *  Reused by the scrambled tile, the placed tile, and the floating
  *  DragOverlay copy so they render identically. 44px min touch target. */
 const WORD_TILE_BASE =
-    "min-h-11 cursor-pointer rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2 text-[0.9375rem] font-medium text-[var(--fg)] transition-[background,border-color] duration-150 enabled:hover:bg-[var(--surface-2)] disabled:cursor-not-allowed";
+    "inline-flex min-h-11 items-center justify-center cursor-pointer rounded-sm border border-[var(--border-strong)] bg-[var(--surface)] px-3.5 py-2 text-[0.9375rem] font-medium text-[var(--fg)] transition-[background,border-color] duration-150 enabled:hover:bg-[var(--surface-2)] disabled:cursor-not-allowed";
 const WORD_TILE_PLACED =
     "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_12%,var(--surface))]";
 
@@ -253,6 +253,7 @@ function PlacedTile({
                 className={cn(
                     WORD_TILE_BASE,
                     WORD_TILE_PLACED,
+                    "h-full",
                     submitted &&
                         isCorrect &&
                         "is-correct border-[var(--exercise-correct)] bg-[color-mix(in_srgb,var(--exercise-correct)_18%,var(--surface))]",
@@ -631,7 +632,7 @@ function WordTilesExercise(
                             <li key={tileIndex}>
                                 <button
                                     type="button"
-                                    className={WORD_TILE_BASE}
+                                    className={cn(WORD_TILE_BASE, "h-full")}
                                     onClick={() => handlePlace(tileIndex)}
                                     disabled={submitted}
                                     data-testid={`word-tile-scrambled-${tileIndex}`}
