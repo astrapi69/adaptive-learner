@@ -27,6 +27,7 @@ import {
     CheckCircle2,
     ChevronLeft,
     ChevronRight,
+    ClipboardCopy,
     Download,
     Pause,
     RotateCcw,
@@ -89,6 +90,12 @@ import {
 } from "../lib/feedback/celebration-stats";
 import {allowsConfetti} from "../lib/feedback/feedbackPref";
 import {tokenDiff} from "../lib/exercises/token-diff";
+import {
+    buildLessonResultMarkdown,
+    collectWeakAreas,
+    lessonResultFilename,
+    type LessonResultLabels,
+} from "../lib/lesson/result-export";
 import {localTodayIso} from "../lib/missions/schedule";
 import {celebrateMissions, emitCelebration} from "../lib/praise/celebration-bus";
 import {nextPraise} from "../lib/praise/phrase-picker";
@@ -1481,6 +1488,91 @@ function LessonSummary({
         failedExerciseCount: failedExercises.length,
     });
 
+    // #138 — export the result (score + mistakes + weak areas) as
+    // Markdown so the learner can paste it into an AI assistant to
+    // drill the weak spots. Both actions reuse the breakdown already
+    // computed for the on-screen list; no new storage read.
+    const buildResultMarkdown = useCallback(() => {
+        const now = new Date();
+        const dateStr = now.toLocaleDateString(lang || undefined);
+        const labels: LessonResultLabels = {
+            title: t("lesson.summary.export.title", "Lesson result"),
+            date: t("lesson.summary.export.date", "Date"),
+            score: t("lesson.summary.score", "Score"),
+            correctWord: t("lesson.summary.export.correct", "correct"),
+            mistakesHeading: t("lesson.summary.export.mistakes", "Mistakes"),
+            noMistakes: t(
+                "lesson.summary.export.no_mistakes",
+                "No mistakes - perfect run!",
+            ),
+            question: t("lesson.summary.export.question", "Question"),
+            yourAnswer: t("lesson.summary.export.your_answer", "Your answer"),
+            correctAnswer: t(
+                "lesson.summary.export.correct_answer",
+                "Correct",
+            ),
+            weakAreasHeading: t(
+                "lesson.summary.export.weak_areas",
+                "Weak areas",
+            ),
+        };
+        return {
+            markdown: buildLessonResultMarkdown({
+                lessonTitle: lesson.title,
+                dateStr,
+                correct,
+                total,
+                pct: scorePct,
+                breakdown,
+                weakAreas: collectWeakAreas(sessionErrors),
+                labels,
+            }),
+            filename: lessonResultFilename(lesson.title, now),
+        };
+    }, [
+        t,
+        lang,
+        lesson.title,
+        correct,
+        total,
+        scorePct,
+        breakdown,
+        sessionErrors,
+    ]);
+
+    const handleCopyResult = useCallback(async () => {
+        const {markdown} = buildResultMarkdown();
+        try {
+            await navigator.clipboard.writeText(markdown);
+            notify.success(
+                t(
+                    "lesson.summary.export.copied",
+                    "Result copied to clipboard",
+                ),
+            );
+        } catch {
+            notify.error(
+                t(
+                    "lesson.summary.export.copy_failed",
+                    "Could not copy to clipboard",
+                ),
+            );
+        }
+    }, [buildResultMarkdown, t]);
+
+    const handleDownloadResult = useCallback(() => {
+        const {markdown, filename} = buildResultMarkdown();
+        const blob = new Blob([markdown], {type: "text/markdown"});
+        const url = URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = filename;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        URL.revokeObjectURL(url);
+    }, [buildResultMarkdown]);
+
     // Count the score percentage up from 0 (instant under
     // "subtle" / reduced motion - see useCountUp).
     const animatedPct = useCountUp(scorePct, 1000, intensity !== "subtle");
@@ -1706,6 +1798,39 @@ function LessonSummary({
                     </ul>
                 </section>
             )}
+
+            {/* #138 — export the result for AI-assisted practice.
+                Copy to clipboard or download as a .md file. Sits
+                directly under the breakdown it summarizes. */}
+            <div
+                className="lesson-summary-export-actions flex flex-wrap gap-2"
+                data-testid="lesson-summary-export"
+            >
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="min-h-11 gap-2"
+                    onClick={() => {
+                        void handleCopyResult();
+                    }}
+                    data-testid="lesson-summary-copy-result"
+                >
+                    <ClipboardCopy aria-hidden="true" />
+                    {t("lesson.summary.export.copy", "Copy result")}
+                </Button>
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="min-h-11 gap-2"
+                    onClick={handleDownloadResult}
+                    data-testid="lesson-summary-download-result"
+                >
+                    <Download aria-hidden="true" />
+                    {t("lesson.summary.export.download", "Save as file")}
+                </Button>
+            </div>
 
             {/* Phase 52F / v1.35.0 — correction round. Self-hides
                 when the lesson was a perfect score, when no
