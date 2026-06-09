@@ -141,3 +141,50 @@ A manual-test bug batch plus two lesson features, across two sprints.
 - **i18n:** all new strings translated in the eight supported languages.
 - **Open follow-up:** the maintainer runs the #134 manual browser-UI
   backup round-trip on `make dev` to formally close BACKUP-AKZEPTANZTEST.
+
+---
+
+## v1.70.0 release (evening)
+
+Three feature/docs branches were built, reviewed by CI, merged in
+order, and released as v1.70.0.
+
+- **Docs overhaul (#157 -> PR #160):** a feature-oriented MkDocs help
+  branch (Content Browser, multiple content repositories, backup &
+  restore, content creation incl. `books.yaml`, design tokens, sync,
+  changelog) plus refreshed lessons/getting-started/onboarding/themes
+  pages, in all 8 languages (106 files). Fixed a factual error: the
+  lessons page claimed Dexie mode earns no lesson XP (false since
+  v1.33.0). Nav regenerated from `_meta.yaml`; `verify-docs-discipline`
+  0 FAIL. Six languages translated via parallel subagents.
+- **In-app help (#159 -> PR #161):** the nav "?" now opens the current
+  view's glossary entry (`lib/help-routes.ts`), help-drawer articles
+  gain a "Learn more" link to the matching docs page (`docs_slug` +
+  `docsUrlForSlug`), and 9 new glossary terms ship in all 8 languages.
+  Premise check found the MkDocs deploy + About/Landing docs link
+  already existed, so the issue was scoped to the real gaps. Backend +
+  frontend glossary count pins updated 22 -> 31.
+- **Manual test plan (PR #162):** `docs/MANUAL-TESTPLAN.md`, a
+  pre-release QA checklist (Sessions 1-7 + bug template); linked from
+  the Testing developer page.
+
+Release-content correction: the user's list also named EXP-024 Phase 1
+(#133) and Sprint 2 (#153), but git shows #133 shipped in v1.67.1 and
+#153 in v1.69.0 -- both already released. v1.70.0's actual new content
+is #150 (first-run restore, merged earlier as #158), #157, #159, and
+the test plan. The changelog was built from the real `v1.69.0..HEAD`
+diff, not the (partly stale) list.
+
+- **Release:** `92f02958` version bump, `53245aeb` doc updates; tag
+  `v1.70.0`; GitHub Release published. `make sync-versions` propagated
+  to 19 files; pins verified.
+- **Gate findings (filed, all pre-existing non-regressions):** #163
+  (Settings -> About 3px horizontal overflow at 320px, deterministic),
+  #164 (backup cross-identity roundtrip flaky only under pytest-randomly
+  ordering -- green in isolation + deterministic + CI), #165 (lesson
+  TTS read-aloud E2E flaky in headless). None touch v1.70.0 code; the
+  About component and the overflow spec are unchanged since v1.69.0.
+- **Gates:** backend deterministic 1192 passed; frontend tsc + 3858
+  Vitest; ruff + mypy clean; frontend + launcher builds OK;
+  `verify-docs-discipline` 0 FAIL; dexie-smoke 79 passed / 2
+  pre-existing failures (#163, #165).
