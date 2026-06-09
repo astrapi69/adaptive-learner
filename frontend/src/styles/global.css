@@ -258,12 +258,18 @@ code {
   font-family: ui-monospace, "Cascadia Code", "Fira Code", monospace;
 }
 
-a {
+/* #146 — content links carry the accent color, but anchors styled
+ * as buttons (shadcn ``<Button asChild>`` + a router <Link>, marked
+ * with ``data-slot="button"``) must keep their own variant text
+ * color. global.css is unlayered and would otherwise override the
+ * layered Tailwind utility, putting accent text on an accent
+ * background (invisible in dark mode). */
+a:not([data-slot="button"]) {
   color: var(--accent);
   text-decoration: none;
 }
 
-a:hover {
+a:not([data-slot="button"]):hover {
   text-decoration: underline;
 }
 

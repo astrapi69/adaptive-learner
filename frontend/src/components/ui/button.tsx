@@ -59,6 +59,14 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         const Comp = asChild ? Slot : "button";
         return (
             <Comp
+                // #146 — mark button-styled anchors (``asChild`` + a
+                // router <Link>) so the global ``a { color:
+                // var(--accent) }`` rule skips them and the variant's
+                // own text color wins. Without this the unlayered
+                // anchor color overrides the layered Tailwind utility,
+                // putting accent text on an accent background
+                // (invisible in dark mode). Harmless on <button>.
+                data-slot="button"
                 className={cn(buttonVariants({variant, size, className}))}
                 ref={ref}
                 {...props}
