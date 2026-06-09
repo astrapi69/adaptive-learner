@@ -164,3 +164,10 @@ Backend-only — frontend lint runs at CI time, not pre-commit.
 `.github/workflows/release-gate.yml` runs on tag pushes:
 verifies version pins are synced (no drift across 12 files),
 plugin lockfiles match, regenerated artifacts are up to date.
+
+## Manual test plan
+
+What automation cannot cover (layout, readability, touch
+interaction, theme contrast) is checked by a manual checklist
+before every larger release:
+[MANUAL-TESTPLAN.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/MANUAL-TESTPLAN.md).
