@@ -1100,11 +1100,13 @@ export default function ContentPage() {
           className="relative flex min-w-[200px] flex-1 items-center"
           data-testid="content-search-bar"
         >
-          <Search
-            size={18}
-            className="pointer-events-none absolute left-3 text-muted-foreground"
-            aria-hidden="true"
-          />
+          {!searchQuery && (
+            <Search
+              size={18}
+              className="pointer-events-none absolute right-3 text-muted-foreground"
+              aria-hidden="true"
+            />
+          )}
           <Input
             ref={searchInputRef}
             type="search"
@@ -1116,7 +1118,7 @@ export default function ContentPage() {
             }}
             placeholder={t("content.search.placeholder", "Search lessons...")}
             aria-label={t("content.search.placeholder", "Search lessons...")}
-            className="pl-10 pr-10"
+            className="pl-3 pr-10"
             data-testid="content-search-input"
           />
           {searchQuery && (

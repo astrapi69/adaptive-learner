@@ -105,7 +105,7 @@ export default function HelpBrowser() {
                     style={{
                         position: "absolute",
                         top: "50%",
-                        left: 10,
+                        right: 10,
                         transform: "translateY(-50%)",
                         color: "var(--fg-muted)",
                         pointerEvents: "none",
@@ -128,7 +128,7 @@ export default function HelpBrowser() {
                     onChange={(e) => setQuery(e.target.value)}
                     style={{
                         width: "100%",
-                        padding: "8px 12px 8px 32px",
+                        padding: "8px 32px 8px 12px",
                         borderRadius: "var(--radius-sm)",
                         border: "1px solid var(--border-strong)",
                         fontSize: "0.875rem",
