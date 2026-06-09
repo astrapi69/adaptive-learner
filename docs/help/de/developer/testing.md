@@ -170,3 +170,10 @@ jedem PR:
 `.github/workflows/release-gate.yml` läuft bei Tag-Pushes:
 verifiziert Version-Pins (kein Drift über 12 Dateien), Plugin-
 Lockfiles passen, regenerierte Artefakte sind aktuell.
+
+## Manueller Testplan
+
+Was Automatisierung nicht abdeckt (Layout, Lesbarkeit,
+Touch-Bedienung, Theme-Kontraste), prüft eine manuelle
+Checkliste vor jedem größeren Release:
+[MANUAL-TESTPLAN.md](https://github.com/astrapi69/adaptive-learner/blob/main/docs/MANUAL-TESTPLAN.md).
