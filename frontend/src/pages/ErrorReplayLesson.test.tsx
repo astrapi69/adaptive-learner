@@ -117,4 +117,30 @@ describe("ErrorReplayLesson", () => {
         expect(screen.getByTestId("error-replay-step-ex-b")).toBeInTheDocument();
         expect(screen.getByText(/Step 1 of 1/)).toBeInTheDocument();
     });
+
+    it("Enter checks an answered exercise, then advances (#154)", async () => {
+        renderWithState({
+            exercises: [FREE("ex-a", "hola"), FREE("ex-b", "adios")],
+            cards: [],
+            lessonTitle: "Greetings",
+        });
+        fireEvent.change(screen.getByTestId("free-text-input"), {
+            target: {value: "hola"},
+        });
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("error-replay-check"),
+            ).not.toBeDisabled(),
+        );
+        // Enter grades the answer -> the Next button replaces Check.
+        fireEvent.keyDown(window, {key: "Enter"});
+        expect(
+            await screen.findByTestId("error-replay-next"),
+        ).toBeInTheDocument();
+        // Enter again advances to the second failed exercise.
+        fireEvent.keyDown(window, {key: "Enter"});
+        expect(
+            await screen.findByTestId("error-replay-step-ex-b"),
+        ).toBeInTheDocument();
+    });
 });
