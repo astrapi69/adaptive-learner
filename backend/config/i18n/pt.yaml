@@ -1357,6 +1357,8 @@ repo:
     description: "Gera automaticamente artefatos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das suas sessões. A integração git opcional faz commit de cada geração para que você possa navegar pelo histórico com qualquer cliente git."
     enable_git: "Ativar persistência git (endpoint POST /persist)"
 lesson:
+  theory:
+    view_example: "Ver exemplo"
   tts:
     read_aloud: "Ler em voz alta"
     stop: "Parar"
@@ -1568,6 +1570,9 @@ lesson:
     action_restart: "Recomeçar"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  books:
+    title: "Livros recomendados"
+    view_on_amazon: "Ver na Amazon"
   continue_learning:
     title: "Continuar a aprender"
     resume: "Retomar"
@@ -1701,6 +1706,7 @@ content:
     lesson_too_few_exercises: A lição '{lesson}' tem {count} exercícios; são necessários pelo menos {min}.
     lesson_too_few_types: A lição '{lesson}' usa {count} tipo(s) de exercício; são necessários pelo menos {min}.
     lesson_no_theory: A lição '{lesson}' não tem passo de teoria.
+    example_url_invalid: "Lição '{lesson}': a etapa '{step}' tem um URL de exemplo inválido (apenas http/https)."
     empty_card: "Lição '{lesson}': o cartão '{card}' tem a frente ou o verso vazio."
     back_language_mismatch: "Lição '{lesson}': o verso do cartão '{card}' não parece estar em {source}."
     free_text_too_few_accepts: "Lição '{lesson}': o exercício de texto livre '{exercise}' precisa de pelo menos {min} respostas aceites."

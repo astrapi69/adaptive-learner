@@ -1,0 +1,38 @@
+# Per-domain book recommendations (#141).
+#
+# This file is fetched by the app from the ROOT of the official content
+# repository (astrapi69/adaptive-learner-content) as books.yaml. Copy it
+# there to publish. The app maps each `domains.<domain>` block to the
+# matching content-set domain in the Content Browser ("Empfohlene Buecher").
+#
+# Rules: recommendations only, no affiliate links — direct Amazon URLs.
+# A book needs at least `title`, `author`, `url` (http/https); the rest is
+# optional metadata the card shows when present.
+
+domains:
+  ai:
+    books:
+      - title: "KI für Einsteiger: Prompts gestalten ohne Programmierkenntnisse"
+        subtitle: "Entfessle die Kraft der KI, ganz ohne Technik-Vorkenntnisse"
+        author: "Asterios Raptis"
+        isbn: "979-8317093280"
+        asin: "B0F43H6T2M"
+        url: "https://www.amazon.de/dp/B0F43H6T2M/"
+        language: "de"
+        pages: 158
+        year: 2025
+        description: >-
+          Der praxisnahe Einstieg in KI und Prompt Engineering für alle, die
+          ohne Programmierkenntnisse die Möglichkeiten künstlicher Intelligenz
+          nutzen wollen.
+        tags: ["ki", "prompt-engineering", "einsteiger"]
+
+  psychology:
+    books:
+      - title: "Psychologie (Pearson Studium)"
+        author: "Philip Zimbardo, Robert Johnson, Vivian McCann"
+        isbn: "978-3868943238"
+        url: "https://www.amazon.de/dp/3868943234/"
+        language: "de"
+        description: "Das Standardwerk für Psychologie-Einsteiger."
+        tags: ["psychologie", "lehrbuch", "grundlagen"]

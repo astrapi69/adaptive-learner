@@ -1357,6 +1357,8 @@ repo:
     description: "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz."
     enable_git: "Git kalıcılığını etkinleştir (POST /persist uç noktası)"
 lesson:
+  theory:
+    view_example: "Örneği görüntüle"
   tts:
     read_aloud: "Sesli oku"
     stop: "Durdur"
@@ -1568,6 +1570,9 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  books:
+    title: "Önerilen kitaplar"
+    view_on_amazon: "Amazon'da görüntüle"
   continue_learning:
     title: "Öğrenmeye devam et"
     resume: "Devam et"
@@ -1701,6 +1706,7 @@ content:
     lesson_too_few_exercises: "'{lesson}' dersinde {count} alıştırma var; en az {min} gerekir."
     lesson_too_few_types: "'{lesson}' dersi {count} alıştırma türü kullanıyor; en az {min} gerekir."
     lesson_no_theory: "'{lesson}' dersinde teori adımı yok."
+    example_url_invalid: "Ders '{lesson}': '{step}' adımında geçersiz bir örnek URL'si var (yalnızca http/https)."
     empty_card: "'{lesson}' dersi: '{card}' kartının ön veya arka yüzü boş."
     back_language_mismatch: "'{lesson}' dersi: '{card}' kartının arka yüzü {source} gibi görünmüyor."
     free_text_too_few_accepts: "'{lesson}' dersi: serbest metin alıştırması '{exercise}' en az {min} kabul edilen yanıt gerektirir."

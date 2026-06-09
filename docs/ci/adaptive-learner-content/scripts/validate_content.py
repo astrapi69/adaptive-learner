@@ -131,6 +131,13 @@ def validate_lesson(lesson: dict, source: str, label: str, errors: list[str]) ->
     if len(theory) < MIN_THEORY:
         errors.append(f"{label}: no theory step")
 
+    # #139 — an optional theory example link (schema v1.4) must be http(s).
+    for step in steps:
+        url = (step.get("example_url") or "").strip()
+        if url and not url.startswith(("http://", "https://")):
+            sid = step.get("id", "?")
+            errors.append(f"{label}: step '{sid}' example_url must be an http(s) URL")
+
     for card in lesson.get("cards", []):
         front = (card.get("front") or "").strip()
         back = (card.get("back") or "").strip()

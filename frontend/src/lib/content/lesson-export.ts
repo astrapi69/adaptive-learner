@@ -58,7 +58,7 @@ export function buildManifestYaml(
   lessonCount: number,
 ): string {
   const manifest = {
-    schema_version: "1.3",
+    schema_version: "1.4",
     name: meta.title,
     description: meta.description ?? null,
     sets: [

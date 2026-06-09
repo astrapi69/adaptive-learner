@@ -173,6 +173,25 @@ entweder THEORY (ein Markdown-Block) oder EXERCISE (eine der vier
 }
 ```
 
+Ein Theorie-Step kann optional einen **Beispiel-Link** tragen (Schema
+v1.4, additiv — bestehende Lektionen bleiben ohne ihn gültig). Wenn
+vorhanden, rendert der Viewer darunter einen Button zum Öffnen des
+Beispiels:
+
+```json
+{
+  "id": "intro",
+  "type": "theory",
+  "body": "Die Korrelation misst den Zusammenhang...",
+  "example_url": "https://example.com/correlation-visualizer",
+  "example_label": "Interaktive Visualisierung"
+}
+```
+
+- `example_url` (optional): muss eine `http(s)`-URL sein.
+- `example_label` (optional): der Link-Text; leer wird zu einem
+  lokalisierten „Beispiel ansehen".
+
 Oder eine Übung:
 
 ```json

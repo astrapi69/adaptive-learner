@@ -1465,6 +1465,9 @@
     }
   },
   "lesson": {
+    "theory": {
+      "view_example": "Beispiel ansehen"
+    },
     "tts": {
       "read_aloud": "Vorlesen",
       "stop": "Stopp",
@@ -1702,6 +1705,10 @@
     }
   },
   "content": {
+    "books": {
+      "title": "Empfohlene Bücher",
+      "view_on_amazon": "Auf Amazon ansehen"
+    },
     "continue_learning": {
       "title": "Weitermachen",
       "resume": "Fortsetzen",
@@ -1851,6 +1858,7 @@
       "lesson_too_few_exercises": "Lektion '{lesson}' hat {count} Übungen; mindestens {min} sind nötig.",
       "lesson_too_few_types": "Lektion '{lesson}' nutzt {count} Übungstyp(en); mindestens {min} sind nötig.",
       "lesson_no_theory": "Lektion '{lesson}' hat keinen Theorieschritt.",
+      "example_url_invalid": "Lektion '{lesson}': Schritt '{step}' hat eine ungültige Beispiel-URL (nur http/https).",
       "empty_card": "Lektion '{lesson}': Karte '{card}' hat eine leere Vorder- oder Rückseite.",
       "back_language_mismatch": "Lektion '{lesson}': Rückseite von Karte '{card}' sieht nicht nach {source} aus.",
       "free_text_too_few_accepts": "Lektion '{lesson}': Freitext-Übung '{exercise}' braucht mindestens {min} akzeptierte Antworten.",

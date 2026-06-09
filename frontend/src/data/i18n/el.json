@@ -1465,6 +1465,9 @@
     }
   },
   "lesson": {
+    "theory": {
+      "view_example": "Δείτε παράδειγμα"
+    },
     "tts": {
       "read_aloud": "Ανάγνωση φωναχτά",
       "stop": "Διακοπή",
@@ -1702,6 +1705,10 @@
     }
   },
   "content": {
+    "books": {
+      "title": "Προτεινόμενα βιβλία",
+      "view_on_amazon": "Δείτε στο Amazon"
+    },
     "continue_learning": {
       "title": "Συνέχεια μάθησης",
       "resume": "Συνέχεια",
@@ -1851,6 +1858,7 @@
       "lesson_too_few_exercises": "Το μάθημα '{lesson}' έχει {count} ασκήσεις· απαιτούνται τουλάχιστον {min}.",
       "lesson_too_few_types": "Το μάθημα '{lesson}' χρησιμοποιεί {count} τύπο(υς) άσκησης· απαιτούνται τουλάχιστον {min}.",
       "lesson_no_theory": "Το μάθημα '{lesson}' δεν έχει βήμα θεωρίας.",
+      "example_url_invalid": "Μάθημα '{lesson}': το βήμα '{step}' έχει μη έγκυρη διεύθυνση URL παραδείγματος (μόνο http/https).",
       "empty_card": "Μάθημα '{lesson}': η κάρτα '{card}' έχει κενή εμπρός ή πίσω όψη.",
       "back_language_mismatch": "Μάθημα '{lesson}': η πίσω όψη της κάρτας '{card}' δεν μοιάζει με {source}.",
       "free_text_too_few_accepts": "Μάθημα '{lesson}': η άσκηση ελεύθερου κειμένου '{exercise}' χρειάζεται τουλάχιστον {min} αποδεκτές απαντήσεις.",

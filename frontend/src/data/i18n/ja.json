@@ -1465,6 +1465,9 @@
     }
   },
   "lesson": {
+    "theory": {
+      "view_example": "例を見る"
+    },
     "tts": {
       "read_aloud": "読み上げ",
       "stop": "停止",
@@ -1702,6 +1705,10 @@
     }
   },
   "content": {
+    "books": {
+      "title": "おすすめの書籍",
+      "view_on_amazon": "Amazonで見る"
+    },
     "continue_learning": {
       "title": "学習を続ける",
       "resume": "再開",
@@ -1851,6 +1858,7 @@
       "lesson_too_few_exercises": "レッスン '{lesson}' の演習は {count} 個です。最低 {min} 個必要です。",
       "lesson_too_few_types": "レッスン '{lesson}' は演習タイプを {count} 種類使用しています。最低 {min} 種類必要です。",
       "lesson_no_theory": "レッスン '{lesson}' に理論ステップがありません。",
+      "example_url_invalid": "レッスン'{lesson}': ステップ'{step}'の例のURLが無効です（http/httpsのみ）。",
       "empty_card": "レッスン '{lesson}': カード '{card}' の表または裏が空です。",
       "back_language_mismatch": "レッスン '{lesson}': カード '{card}' の裏面が {source} に見えません。",
       "free_text_too_few_accepts": "レッスン '{lesson}': 自由記述演習 '{exercise}' には最低 {min} 個の正解が必要です。",
