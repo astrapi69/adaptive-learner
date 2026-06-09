@@ -1129,6 +1129,7 @@ export default function LessonPage() {
                             source={source}
                             targetLanguage={lesson.target_language}
                             sourceLanguage={lesson.source_language}
+                            domain={lesson.domain}
                             cards={lesson.cards}
                             onComplete={async (scored) => {
                                 if (!step!.exercise) return;
