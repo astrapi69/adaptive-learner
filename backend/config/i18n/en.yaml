@@ -1581,6 +1581,9 @@ lesson:
     action_restart: "Start over"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  books:
+    title: "Recommended books"
+    view_on_amazon: "View on Amazon"
   continue_learning:
     title: "Continue Learning"
     resume: "Resume"

@@ -1572,6 +1572,9 @@ lesson:
     action_restart: "Επανεκκίνηση"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  books:
+    title: "Προτεινόμενα βιβλία"
+    view_on_amazon: "Δείτε στο Amazon"
   continue_learning:
     title: "Συνέχεια μάθησης"
     resume: "Συνέχεια"

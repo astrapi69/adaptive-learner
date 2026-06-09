@@ -1705,6 +1705,10 @@
     }
   },
   "content": {
+    "books": {
+      "title": "Libros recomendados",
+      "view_on_amazon": "Ver en Amazon"
+    },
     "continue_learning": {
       "title": "Continuar aprendiendo",
       "resume": "Reanudar",

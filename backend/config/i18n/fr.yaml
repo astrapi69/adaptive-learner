@@ -1572,6 +1572,9 @@ lesson:
     action_restart: "Recommencer"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  books:
+    title: "Livres recommandés"
+    view_on_amazon: "Voir sur Amazon"
   continue_learning:
     title: "Continuer l'apprentissage"
     resume: "Reprendre"

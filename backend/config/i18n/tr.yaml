@@ -1570,6 +1570,9 @@ lesson:
     action_restart: "Baştan başla"
 # Content-Loader plugin (Phase 43 / EXP-002)
 content:
+  books:
+    title: "Önerilen kitaplar"
+    view_on_amazon: "Amazon'da görüntüle"
   continue_learning:
     title: "Öğrenmeye devam et"
     resume: "Devam et"

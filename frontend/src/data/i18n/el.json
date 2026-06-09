@@ -1705,6 +1705,10 @@
     }
   },
   "content": {
+    "books": {
+      "title": "Προτεινόμενα βιβλία",
+      "view_on_amazon": "Δείτε στο Amazon"
+    },
     "continue_learning": {
       "title": "Συνέχεια μάθησης",
       "resume": "Συνέχεια",

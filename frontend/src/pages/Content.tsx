@@ -44,10 +44,16 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import ContinueLearning from "../components/ContinueLearning";
+import BookRecommendationsSection from "../components/content/BookRecommendations";
 import ImportLessonModal from "../components/content/ImportLessonModal";
+import {
+  type BookRecommendations,
+  booksForDomain,
+  fetchBookRecommendations,
+} from "../lib/content/book-recommendations";
 import {
   buildLessonHaystack,
   buildSetHaystack,
@@ -126,6 +132,9 @@ export default function ContentPage() {
   const navigate = useNavigate();
   const [sets, setSets] = useState<ContentSetEntry[]>([]);
   const [sources, setSources] = useState<ContentSetSource[]>([]);
+  // #141 — per-domain book recommendations, fetched once from the
+  // official content repo (graceful empty on failure / offline).
+  const [bookRecs, setBookRecs] = useState<BookRecommendations>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [perSetState, setPerSetState] = useState<Record<string, DownloadState>>(
@@ -178,6 +187,16 @@ export default function ContentPage() {
         if (s) set.add(s);
       }
       setRecommendedSources(set);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  // #141 — load per-domain book recommendations once on mount.
+  useEffect(() => {
+    let cancelled = false;
+    void fetchBookRecommendations().then((recs) => {
+      if (!cancelled) setBookRecs(recs);
     });
     return () => {
       cancelled = true;
@@ -585,7 +604,9 @@ export default function ContentPage() {
       });
       setShareLessons(next);
       setAppliedFixes((prev) => new Set(prev).add(fixKey));
-      notify.success(t("content.ai_validation.fix_applied", "Suggestion applied."));
+      notify.success(
+        t("content.ai_validation.fix_applied", "Suggestion applied."),
+      );
     } catch (err) {
       const detail = err instanceof Error ? err.message : String(err);
       notify.error(
@@ -714,7 +735,10 @@ export default function ContentPage() {
     return (
       <ul className="content-ai-issues" data-testid="content-ai-issues">
         {aiResult.translation_issues.map((it, i) => (
-          <li key={`tr-${i}`} className="content-ai-issue content-ai-issue-warn">
+          <li
+            key={`tr-${i}`}
+            className="content-ai-issue content-ai-issue-warn"
+          >
             <span>
               {it.card_id}: {it.issue}
               {it.suggestion && ` → ${it.suggestion}`}
@@ -723,7 +747,10 @@ export default function ContentPage() {
           </li>
         ))}
         {aiResult.grammar_issues.map((it, i) => (
-          <li key={`gr-${i}`} className="content-ai-issue content-ai-issue-warn">
+          <li
+            key={`gr-${i}`}
+            className="content-ai-issue content-ai-issue-warn"
+          >
             <span>
               {it.step_id}: {it.issue}
               {it.correction && ` → ${it.correction}`}
@@ -744,7 +771,10 @@ export default function ContentPage() {
           </li>
         ))}
         {aiResult.cultural_flags.map((flag, i) => (
-          <li key={`cf-${i}`} className="content-ai-issue content-ai-issue-flag">
+          <li
+            key={`cf-${i}`}
+            className="content-ai-issue content-ai-issue-flag"
+          >
             {flag}
           </li>
         ))}
@@ -837,7 +867,10 @@ export default function ContentPage() {
           <h4>
             {entry.title}
             {entry.title_native && entry.title_native !== entry.title && (
-              <span className="content-set-native"> · {entry.title_native}</span>
+              <span className="content-set-native">
+                {" "}
+                · {entry.title_native}
+              </span>
             )}
             <span
               className="content-set-source"
@@ -1040,15 +1073,16 @@ export default function ContentPage() {
   };
 
   const renderSourceTargets = (group: SourceGroup) =>
-    group.targets.map((target) => renderTargetGroup(group.sourceLanguage, target));
+    group.targets.map((target) =>
+      renderTargetGroup(group.sourceLanguage, target),
+    );
 
   // Domain icon for the knowledge ("Wissen") section. Unknown domains
   // fall back to a graduation-cap glyph.
   const domainIcon = (domain: string) => {
     if (domain === "programming") return <Code size={16} aria-hidden="true" />;
     if (domain === "psychology") return <Brain size={16} aria-hidden="true" />;
-    if (domain === "math")
-      return <Calculator size={16} aria-hidden="true" />;
+    if (domain === "math") return <Calculator size={16} aria-hidden="true" />;
     return <GraduationCap size={16} aria-hidden="true" />;
   };
 
@@ -1210,107 +1244,107 @@ export default function ContentPage() {
       {/* Phase 59C — My Lessons (user-generated sets). Hidden while a
           search is active (results replace the browse view). */}
       {!searchResult.active && (
-      <section
-        className="content-section content-my-lessons"
-        data-testid="content-my-lessons"
-      >
-        <div className="content-section-head">
-          <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
-        </div>
-        {userSets.length === 0 ? (
-          <p className="content-empty" data-testid="content-my-lessons-empty">
-            {t(
-              "content.my_lessons.empty",
-              "Import a chat and analyze it to create your first lesson.",
-            )}
-          </p>
-        ) : (
-          <ul
-            className="content-set-list"
-            data-testid="content-my-lessons-list"
-          >
-            {userSets.map((entry) => (
-              <li
-                key={setKey(entry)}
-                className="content-set-row"
-                data-testid={`my-lesson-${entry.id}`}
-              >
-                <div className="content-set-meta">
-                  <h3>{entry.title}</h3>
-                  <p className="content-set-tags">
-                    <span>
-                      {entry.language.toUpperCase()}
-                      {" · "}
-                      {entry.lesson_count} {t("content.lessons", "lessons")}
-                      {" · "}
-                      {originLabel(entry)}
-                    </span>
-                  </p>
-                </div>
-                <div className="content-set-action">
-                  <Button
-                    type="button"
-                    onClick={() => handleOpenLesson(entry)}
-                    data-testid={`my-lesson-${entry.id}-play`}
-                  >
-                    <Play size={14} aria-hidden="true" />
-                    {t("content.my_lessons.play", "Play")}
-                  </Button>
-                  {entry.domain === "analysis" && (
+        <section
+          className="content-section content-my-lessons"
+          data-testid="content-my-lessons"
+        >
+          <div className="content-section-head">
+            <h2>{t("content.my_lessons.title", "My Lessons")}</h2>
+          </div>
+          {userSets.length === 0 ? (
+            <p className="content-empty" data-testid="content-my-lessons-empty">
+              {t(
+                "content.my_lessons.empty",
+                "Import a chat and analyze it to create your first lesson.",
+              )}
+            </p>
+          ) : (
+            <ul
+              className="content-set-list"
+              data-testid="content-my-lessons-list"
+            >
+              {userSets.map((entry) => (
+                <li
+                  key={setKey(entry)}
+                  className="content-set-row"
+                  data-testid={`my-lesson-${entry.id}`}
+                >
+                  <div className="content-set-meta">
+                    <h3>{entry.title}</h3>
+                    <p className="content-set-tags">
+                      <span>
+                        {entry.language.toUpperCase()}
+                        {" · "}
+                        {entry.lesson_count} {t("content.lessons", "lessons")}
+                        {" · "}
+                        {originLabel(entry)}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="content-set-action">
+                    <Button
+                      type="button"
+                      onClick={() => handleOpenLesson(entry)}
+                      data-testid={`my-lesson-${entry.id}-play`}
+                    >
+                      <Play size={14} aria-hidden="true" />
+                      {t("content.my_lessons.play", "Play")}
+                    </Button>
+                    {entry.domain === "analysis" && (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => handleEditUserSet(entry)}
+                        data-testid={`my-lesson-${entry.id}-edit`}
+                      >
+                        <Pencil size={14} aria-hidden="true" />
+                        {t("content.my_lessons.edit", "Edit")}
+                      </Button>
+                    )}
                     <Button
                       type="button"
                       variant="secondary"
-                      onClick={() => handleEditUserSet(entry)}
-                      data-testid={`my-lesson-${entry.id}-edit`}
+                      onClick={() => void handleExportJson(entry)}
+                      data-testid={`my-lesson-${entry.id}-export`}
                     >
-                      <Pencil size={14} aria-hidden="true" />
-                      {t("content.my_lessons.edit", "Edit")}
+                      <Download size={14} aria-hidden="true" />
+                      {t("content.my_lessons.export", "Export")}
                     </Button>
-                  )}
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => void handleExportJson(entry)}
-                    data-testid={`my-lesson-${entry.id}-export`}
-                  >
-                    <Download size={14} aria-hidden="true" />
-                    {t("content.my_lessons.export", "Export")}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => void handleExportSet(entry)}
-                    data-testid={`my-lesson-${entry.id}-export-set`}
-                  >
-                    <FolderOpen size={14} aria-hidden="true" />
-                    {t("content.my_lessons.export_set", "Export as set")}
-                  </Button>
-                  {COMMUNITY_SHARING_ENABLED && (
                     <Button
                       type="button"
                       variant="secondary"
-                      onClick={() => void handleShare(entry)}
-                      data-testid={`my-lesson-${entry.id}-share`}
+                      onClick={() => void handleExportSet(entry)}
+                      data-testid={`my-lesson-${entry.id}-export-set`}
                     >
-                      <Share2 className="h-5 w-5" aria-hidden="true" />
-                      {t("content.my_lessons.share", "Share with Community")}
+                      <FolderOpen size={14} aria-hidden="true" />
+                      {t("content.my_lessons.export_set", "Export as set")}
                     </Button>
-                  )}
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => setDeleteTarget(entry)}
-                    data-testid={`my-lesson-${entry.id}-delete`}
-                  >
-                    <Trash2 size={14} aria-hidden="true" />
-                    {t("content.my_lessons.delete", "Delete")}
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+                    {COMMUNITY_SHARING_ENABLED && (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={() => void handleShare(entry)}
+                        data-testid={`my-lesson-${entry.id}-share`}
+                      >
+                        <Share2 className="h-5 w-5" aria-hidden="true" />
+                        {t("content.my_lessons.share", "Share with Community")}
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setDeleteTarget(entry)}
+                      data-testid={`my-lesson-${entry.id}-delete`}
+                    >
+                      <Trash2 size={14} aria-hidden="true" />
+                      {t("content.my_lessons.delete", "Delete")}
+                    </Button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       )}
 
       {/* Phase 64D — My Contributions (local sharing history). */}
@@ -1369,10 +1403,7 @@ export default function ContentPage() {
           data-testid="content-search-results"
         >
           {searchResult.matches.length === 0 ? (
-            <div
-              className="content-empty"
-              data-testid="content-search-empty"
-            >
+            <div className="content-empty" data-testid="content-search-empty">
               <p>
                 {t(
                   "content.search.no_results",
@@ -1407,8 +1438,7 @@ export default function ContentPage() {
                     <h3 className="font-semibold">
                       {highlightNodes(entry.title, searchResult.query)}
                       <span className="ml-1 text-sm font-normal text-muted-foreground">
-                        ·{" "}
-                        {(entry.source_language || "").toUpperCase()}
+                        · {(entry.source_language || "").toUpperCase()}
                         {entry.target_language
                           ? ` → ${entry.target_language.toUpperCase()}`
                           : ""}{" "}
@@ -1446,208 +1476,227 @@ export default function ContentPage() {
         </section>
       ) : (
         <>
-      {/* Phase 64E — encouraging gap suggestions ("Can you help?"). */}
-      {(() => {
-        const gaps = detectGaps(downloadedSets).slice(0, 5);
-        if (gaps.length === 0) return null;
-        return (
-          <section
-            className="content-section content-gaps"
-            data-testid="content-gaps"
-          >
-            <h2>{t("content.gaps.title", "Missing Lessons")}</h2>
-            <p className="content-gaps-intro">
-              {t(
-                "content.gaps.intro",
-                "The community library has a few gaps. Can you help fill one?",
-              )}
-            </p>
-            <ul className="content-gaps-list" data-testid="content-gaps-list">
-              {gaps.map((gap, i) => (
-                <li
-                  key={`${gap.kind}-${gap.source}-${gap.target}-${gap.level}-${i}`}
-                  className="content-gap-row"
-                >
-                  <span>
-                    {(gap.kind === "next_level"
-                      ? t(
-                          "content.gaps.next_level",
-                          "{target} for {source} speakers has lessons, but {level} doesn't exist yet.",
-                        )
-                      : t(
-                          "content.gaps.missing_pair",
-                          "{target} {level} for {source} speakers doesn't exist yet.",
-                        )
-                    )
-                      .replace("{target}", languageDisplayName(gap.target, lang))
-                      .replace("{source}", languageDisplayName(gap.source, lang))
-                      .replace("{level}", gap.level)}
-                  </span>{" "}
-                  <a
-                    href={`https://github.com/${COMMUNITY_REPO}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="content-gap-help"
-                  >
-                    {t("content.gaps.help", "Can you help?")}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        );
-      })()}
-
-      <h2 className="content-section-title">
-        {t("content.my_lessons.downloaded_title", "Downloaded sets")}
-      </h2>
-      {hasUserRepoSets && (
-        <div
-          className="mb-3 flex flex-wrap items-center gap-1"
-          role="group"
-          aria-label={t("content.filter.aria", "Filter by source")}
-          data-testid="content-source-filter"
-        >
-          {[
-            ["all", t("content.filter.all", "All")] as [string, string],
-            ["official", t("content.filter.official", "Official")] as [
-              string,
-              string,
-            ],
-            ...userRepoSources.map(
-              (src) => [src, src] as [string, string],
-            ),
-          ].map(([value, label]) => (
-            <Button
-              key={value}
-              type="button"
-              size="sm"
-              variant={sourceFilter === value ? "default" : "outline"}
-              className="min-h-11"
-              aria-pressed={sourceFilter === value}
-              onClick={() => setSourceFilter(value)}
-              data-testid={`content-source-filter-${value}`}
-            >
-              {label}
-            </Button>
-          ))}
-        </div>
-      )}
-      {downloadedSets.length === 0 ? (
-        <p className="content-empty" data-testid="content-empty">
-          {t(
-            "content.empty",
-            "No content sets available yet. Check your network connection and refresh, or configure a source in Settings.",
-          )}
-        </p>
-      ) : (
-        <div className="content-tree" data-testid="content-tree">
-          {/* Primary: the source language(s) the learner speaks. */}
-          {tree.primary.length > 0 && (
-            <section
-              className="content-source-primary"
-              data-testid="content-source-primary"
-            >
-              <h2 className="content-source-heading">
-                {t("content.tree.i_speak", "I speak")}:{" "}
-                {tree.primary
-                  .map((g) => languageDisplayName(g.sourceLanguage, lang))
-                  .join(", ")}
-              </h2>
-              {tree.primary.map((group) => (
-                <div
-                  key={group.sourceLanguage}
-                  data-testid={`content-source-${group.sourceLanguage}`}
-                >
-                  {tree.primary.length > 1 && (
-                    <h3 className="content-source-sub">
-                      {languageDisplayName(group.sourceLanguage, lang)}
-                    </h3>
-                  )}
-                  {renderSourceTargets(group)}
-                </div>
-              ))}
-            </section>
-          )}
-
-          {tree.primary.length === 0 && (
-            <p className="content-empty" data-testid="content-no-primary">
-              {t(
-                "content.tree.no_primary",
-                "No sets for your language yet. Browse other source languages below.",
-              )}
-            </p>
-          )}
-
-          {/* Other source languages — collapsed by default. */}
-          {tree.other.length > 0 && (
-            <section
-              className="content-source-other"
-              data-testid="content-source-other"
-            >
-              <button
-                type="button"
-                className="content-tree-toggle content-other-toggle"
-                onClick={() => setOtherExpanded((v) => !v)}
-                aria-expanded={otherExpanded}
-                data-testid="content-other-toggle"
+          {/* Phase 64E — encouraging gap suggestions ("Can you help?"). */}
+          {(() => {
+            const gaps = detectGaps(downloadedSets).slice(0, 5);
+            if (gaps.length === 0) return null;
+            return (
+              <section
+                className="content-section content-gaps"
+                data-testid="content-gaps"
               >
-                {otherExpanded ? (
-                  <ChevronDown size={16} aria-hidden="true" />
-                ) : (
-                  <ChevronRight size={16} aria-hidden="true" />
-                )}
-                <span className="content-tree-label">
-                  {t("content.tree.other_sources", "Other source languages")}
-                </span>
-                <span className="content-tree-count">{tree.other.length}</span>
-              </button>
-              {otherExpanded && (
-                <div className="content-other-body">
-                  {tree.other.map((group) => (
+                <h2>{t("content.gaps.title", "Missing Lessons")}</h2>
+                <p className="content-gaps-intro">
+                  {t(
+                    "content.gaps.intro",
+                    "The community library has a few gaps. Can you help fill one?",
+                  )}
+                </p>
+                <ul
+                  className="content-gaps-list"
+                  data-testid="content-gaps-list"
+                >
+                  {gaps.map((gap, i) => (
+                    <li
+                      key={`${gap.kind}-${gap.source}-${gap.target}-${gap.level}-${i}`}
+                      className="content-gap-row"
+                    >
+                      <span>
+                        {(gap.kind === "next_level"
+                          ? t(
+                              "content.gaps.next_level",
+                              "{target} for {source} speakers has lessons, but {level} doesn't exist yet.",
+                            )
+                          : t(
+                              "content.gaps.missing_pair",
+                              "{target} {level} for {source} speakers doesn't exist yet.",
+                            )
+                        )
+                          .replace(
+                            "{target}",
+                            languageDisplayName(gap.target, lang),
+                          )
+                          .replace(
+                            "{source}",
+                            languageDisplayName(gap.source, lang),
+                          )
+                          .replace("{level}", gap.level)}
+                      </span>{" "}
+                      <a
+                        href={`https://github.com/${COMMUNITY_REPO}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="content-gap-help"
+                      >
+                        {t("content.gaps.help", "Can you help?")}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            );
+          })()}
+
+          <h2 className="content-section-title">
+            {t("content.my_lessons.downloaded_title", "Downloaded sets")}
+          </h2>
+          {hasUserRepoSets && (
+            <div
+              className="mb-3 flex flex-wrap items-center gap-1"
+              role="group"
+              aria-label={t("content.filter.aria", "Filter by source")}
+              data-testid="content-source-filter"
+            >
+              {[
+                ["all", t("content.filter.all", "All")] as [string, string],
+                ["official", t("content.filter.official", "Official")] as [
+                  string,
+                  string,
+                ],
+                ...userRepoSources.map((src) => [src, src] as [string, string]),
+              ].map(([value, label]) => (
+                <Button
+                  key={value}
+                  type="button"
+                  size="sm"
+                  variant={sourceFilter === value ? "default" : "outline"}
+                  className="min-h-11"
+                  aria-pressed={sourceFilter === value}
+                  onClick={() => setSourceFilter(value)}
+                  data-testid={`content-source-filter-${value}`}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+          )}
+          {downloadedSets.length === 0 ? (
+            <p className="content-empty" data-testid="content-empty">
+              {t(
+                "content.empty",
+                "No content sets available yet. Check your network connection and refresh, or configure a source in Settings.",
+              )}
+            </p>
+          ) : (
+            <div className="content-tree" data-testid="content-tree">
+              {/* Primary: the source language(s) the learner speaks. */}
+              {tree.primary.length > 0 && (
+                <section
+                  className="content-source-primary"
+                  data-testid="content-source-primary"
+                >
+                  <h2 className="content-source-heading">
+                    {t("content.tree.i_speak", "I speak")}:{" "}
+                    {tree.primary
+                      .map((g) => languageDisplayName(g.sourceLanguage, lang))
+                      .join(", ")}
+                  </h2>
+                  {tree.primary.map((group) => (
                     <div
                       key={group.sourceLanguage}
                       data-testid={`content-source-${group.sourceLanguage}`}
                     >
-                      <h3 className="content-source-sub">
-                        {t("content.tree.for_speakers", "For {lang} speakers").replace(
-                          "{lang}",
-                          languageDisplayName(group.sourceLanguage, lang),
-                        )}
-                      </h3>
+                      {tree.primary.length > 1 && (
+                        <h3 className="content-source-sub">
+                          {languageDisplayName(group.sourceLanguage, lang)}
+                        </h3>
+                      )}
                       {renderSourceTargets(group)}
                     </div>
                   ))}
-                </div>
+                </section>
               )}
-            </section>
-          )}
 
-          {/* v1.3 — Knowledge ("Wissen"): non-language domain sets,
-              grouped by domain with a domain-specific icon. */}
-          {tree.knowledge.length > 0 && (
-            <section
-              className="content-source-knowledge"
-              data-testid="content-knowledge"
-            >
-              <h2 className="content-source-heading">
-                {t("content.tree.knowledge", "Knowledge")}
-              </h2>
-              {tree.knowledge.map((group) => (
-                <div
-                  key={group.domain}
-                  data-testid={`content-domain-${group.domain}`}
+              {tree.primary.length === 0 && (
+                <p className="content-empty" data-testid="content-no-primary">
+                  {t(
+                    "content.tree.no_primary",
+                    "No sets for your language yet. Browse other source languages below.",
+                  )}
+                </p>
+              )}
+
+              {/* Other source languages — collapsed by default. */}
+              {tree.other.length > 0 && (
+                <section
+                  className="content-source-other"
+                  data-testid="content-source-other"
                 >
-                  <h3 className="content-source-sub content-domain-sub">
-                    {domainIcon(group.domain)} {domainLabel(group.domain)}
-                  </h3>
-                  {group.sets.map((entry) => renderSetRow(entry))}
-                </div>
-              ))}
-            </section>
+                  <button
+                    type="button"
+                    className="content-tree-toggle content-other-toggle"
+                    onClick={() => setOtherExpanded((v) => !v)}
+                    aria-expanded={otherExpanded}
+                    data-testid="content-other-toggle"
+                  >
+                    {otherExpanded ? (
+                      <ChevronDown size={16} aria-hidden="true" />
+                    ) : (
+                      <ChevronRight size={16} aria-hidden="true" />
+                    )}
+                    <span className="content-tree-label">
+                      {t(
+                        "content.tree.other_sources",
+                        "Other source languages",
+                      )}
+                    </span>
+                    <span className="content-tree-count">
+                      {tree.other.length}
+                    </span>
+                  </button>
+                  {otherExpanded && (
+                    <div className="content-other-body">
+                      {tree.other.map((group) => (
+                        <div
+                          key={group.sourceLanguage}
+                          data-testid={`content-source-${group.sourceLanguage}`}
+                        >
+                          <h3 className="content-source-sub">
+                            {t(
+                              "content.tree.for_speakers",
+                              "For {lang} speakers",
+                            ).replace(
+                              "{lang}",
+                              languageDisplayName(group.sourceLanguage, lang),
+                            )}
+                          </h3>
+                          {renderSourceTargets(group)}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              )}
+
+              {/* v1.3 — Knowledge ("Wissen"): non-language domain sets,
+              grouped by domain with a domain-specific icon. */}
+              {tree.knowledge.length > 0 && (
+                <section
+                  className="content-source-knowledge"
+                  data-testid="content-knowledge"
+                >
+                  <h2 className="content-source-heading">
+                    {t("content.tree.knowledge", "Knowledge")}
+                  </h2>
+                  {tree.knowledge.map((group) => (
+                    <div
+                      key={group.domain}
+                      data-testid={`content-domain-${group.domain}`}
+                    >
+                      <h3 className="content-source-sub content-domain-sub">
+                        {domainIcon(group.domain)} {domainLabel(group.domain)}
+                      </h3>
+                      {group.sets.map((entry) => renderSetRow(entry))}
+                      <BookRecommendationsSection
+                        domain={group.domain}
+                        books={booksForDomain(bookRecs, group.domain)}
+                      />
+                    </div>
+                  ))}
+                </section>
+              )}
+            </div>
           )}
-        </div>
-      )}
         </>
       )}
 
@@ -1710,11 +1759,17 @@ export default function ContentPage() {
                       {t(
                         "content.ai_validation.privacy",
                         "Your lesson content will be sent to {provider}. No personal data is transmitted.",
-                      ).replace("{provider}", activeProvider ?? "the AI provider")}
+                      ).replace(
+                        "{provider}",
+                        activeProvider ?? "the AI provider",
+                      )}
                     </p>
                     <label className="form-row form-row-toggle">
                       <span className="form-label">
-                        {t("content.ai_validation.consent", "Run AI validation")}
+                        {t(
+                          "content.ai_validation.consent",
+                          "Run AI validation",
+                        )}
                       </span>
                       <input
                         type="checkbox"
@@ -1736,7 +1791,10 @@ export default function ContentPage() {
                 )}
                 {aiRunning && (
                   <p data-testid="content-ai-running">
-                    {t("content.ai_validation.running", "AI is reviewing your lesson…")}
+                    {t(
+                      "content.ai_validation.running",
+                      "AI is reviewing your lesson…",
+                    )}
                   </p>
                 )}
                 {aiResult && (
@@ -1749,9 +1807,14 @@ export default function ContentPage() {
                       }
                     >
                       {aiResult.overall === "pass"
-                        ? t("content.ai_validation.ai_passed", "AI review: looks good.")
-                        : t("content.ai_validation.ai_review", "AI review: suggestions below.")}
-                      {" "}
+                        ? t(
+                            "content.ai_validation.ai_passed",
+                            "AI review: looks good.",
+                          )
+                        : t(
+                            "content.ai_validation.ai_review",
+                            "AI review: suggestions below.",
+                          )}{" "}
                       ({t("content.ai_validation.score", "score")}:{" "}
                       {aiResult.quality_score.toFixed(2)})
                     </p>
