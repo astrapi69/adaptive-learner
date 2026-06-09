@@ -9,9 +9,27 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.69.0** (minor — **theory example links +
+- **Current state:** **v1.70.0** (minor — **first-run backup restore +
+  v1.61-v1.69 documentation overhaul + context-sensitive in-app help +
+  manual test plan**). **First-run restore (#150):** on an empty
+  install the onboarding offers "Restore from backup" instead of a
+  from-scratch start; the offer disappears once data is present.
+  **Docs overhaul (#157):** the MkDocs help site gains a
+  feature-oriented branch (Content Browser, multiple content
+  repositories, backup & restore, content creation incl. ``books.yaml``,
+  design tokens, sync, changelog) in all 8 languages plus refreshed
+  lessons/getting-started/onboarding/themes pages; deployed at
+  ``https://astrapi69.github.io/adaptive-learner/docs/``. **In-app help
+  (#159):** the nav "?" opens the glossary entry for the current view
+  (``lib/help-routes.ts`` ``helpKeyForPath``) instead of a fixed one,
+  each help-drawer article gains a "Learn more" link to the matching
+  docs page (``docs_slug`` + ``docsUrlForSlug``), and 9 new glossary
+  terms (content repository, trust level, streak, assessment + the
+  Dashboard/Content-Browser/Lesson/Settings views + backup) ship in all
+  8 languages. **Manual test plan:** a pre-release QA checklist at
+  ``docs/MANUAL-TESTPLAN.md``. v1.69.0 = minor — **theory example links +
   per-domain book recommendations + Error-Replay Enter shortcut +
-  backup-restore title fix**). **Example links (#139, via Sprint 2 /
+  backup-restore title fix**. **Example links (#139, via Sprint 2 /
   #153):** a theory step can carry an optional ``example_url`` (+
   ``example_label``) rendered as a "View example" button; content
   schema 1.3 -> 1.4 (additive), client + content-repo validators reject
