@@ -32,6 +32,11 @@ import {
 } from "../components/exercises/ExerciseDispatcher";
 import type {ExerciseHandle} from "../components/exercises/exercise-control";
 import {useI18n} from "../hooks/useI18n";
+import {
+    useLessonEnterKey,
+    type LessonEnterNav,
+} from "../hooks/useLessonEnterKey";
+import {useLessonShortcuts} from "../hooks/useLessonShortcuts";
 import {prefersReducedMotion} from "../lib/feedback/feedbackPref";
 import type {
     ContentLessonCard,
@@ -79,9 +84,14 @@ export default function ErrorReplayLesson() {
     const [answerable, setAnswerable] = useState(false);
 
     const exerciseRef = useRef<ExerciseHandle>(null);
+    // #154 — Enter-key shortcut, identical to the main lesson runner.
+    const lessonShortcutsEnabled = useLessonShortcuts();
+    const enterStateRef = useRef<LessonEnterNav | null>(null);
+    const enterLockRef = useRef(false);
     useEffect(() => {
         setChecked(false);
         setAnswerable(false);
+        enterLockRef.current = false;
     }, [index, round]);
 
     const steps = useMemo(() => round.map(toStep), [round]);
@@ -92,6 +102,24 @@ export default function ErrorReplayLesson() {
         step != null &&
         step.exercise != null &&
         SUPPORTED_EXERCISE_TYPES.has(step.exercise.type);
+
+    // Refresh the Enter-decision state every render (no re-subscribe);
+    // the listener reads it through the ref. Error-Replay has no
+    // "reviewed/locked" step, so ``enteredReviewed`` is always false.
+    enterStateRef.current = {
+        isSummary,
+        isExerciseStep,
+        checked,
+        enteredReviewed: false,
+        answerable,
+        goNext: () => setIndex((i) => i + 1),
+    };
+    useLessonEnterKey({
+        enabled: lessonShortcutsEnabled,
+        exerciseRef,
+        enterStateRef,
+        enterLockRef,
+    });
 
     // No exercises to replay (direct nav / refresh lost the state, or a
     // clean run). Offer a graceful exit.
