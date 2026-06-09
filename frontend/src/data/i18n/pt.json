@@ -740,6 +740,8 @@
     "credits_heading": "Créditos",
     "author_label": "Autor",
     "dependencies_label": "Construído com",
+    "ai_assistance_label": "Assistência de IA",
+    "ai_assistance_value": "Claude (Anthropic) - Arquitetura, Código, Conteúdo, Documentação",
     "tagline": "Feito para aprendizes autodirigidos.",
     "donations_heading": "Apoie o desenvolvimento",
     "donations_intro": "O Adaptive Learner é gratuito e de código aberto. Se ele te ajuda, considere contribuir.",

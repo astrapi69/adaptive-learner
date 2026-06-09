@@ -688,6 +688,8 @@ about:
   credits_heading: クレジット
   author_label: 作者
   dependencies_label: 使用技術
+  ai_assistance_label: "AI支援"
+  ai_assistance_value: "Claude (Anthropic) - アーキテクチャ、コード、コンテンツ、ドキュメント"
   tagline: 自律的に学ぶ人のために作られました。
   donations_heading: 開発を支援する
   donations_intro: Adaptive Learner は無料でオープンソースです。役に立ったら、ぜひ 支援を検討してください。

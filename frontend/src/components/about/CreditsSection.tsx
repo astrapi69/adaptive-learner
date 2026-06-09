@@ -57,6 +57,17 @@ export default function CreditsSection({t}: Props) {
                 <dd style={ddStyle} data-testid="about-deps-list">
                     {ACKNOWLEDGED_DEPS.join(" · ")}
                 </dd>
+                <dt>
+                    <strong>
+                        {t("about.ai_assistance_label", "AI assistance")}
+                    </strong>
+                </dt>
+                <dd style={ddStyle} data-testid="about-ai-assistance">
+                    {t(
+                        "about.ai_assistance_value",
+                        "Claude (Anthropic) - Architecture, Code, Content, Documentation",
+                    )}
+                </dd>
             </dl>
             <p
                 style={{

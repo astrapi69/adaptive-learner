@@ -688,6 +688,8 @@ about:
   credits_heading: Mitwirkende
   author_label: Autor
   dependencies_label: Gebaut mit
+  ai_assistance_label: "KI-Assistenz"
+  ai_assistance_value: "Claude (Anthropic) - Architektur, Code, Content, Dokumentation"
   tagline: Gebaut für selbstgesteuert Lernende.
   donations_heading: Entwicklung unterstützen
   donations_intro: Adaptive Learner ist kostenlos und Open Source. Wenn es dir hilft, freuen wir uns über deine Unterstützung.

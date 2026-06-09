@@ -740,6 +740,8 @@
     "credits_heading": "Συντελεστές",
     "author_label": "Συγγραφέας",
     "dependencies_label": "Κατασκευασμένο με",
+    "ai_assistance_label": "Βοήθεια AI",
+    "ai_assistance_value": "Claude (Anthropic) - Αρχιτεκτονική, Κώδικας, Περιεχόμενο, Τεκμηρίωση",
     "tagline": "Φτιαγμένο για αυτοκατευθυνόμενους εκπαιδευόμενους.",
     "donations_heading": "Υποστηρίξτε την ανάπτυξη",
     "donations_intro": "Το Adaptive Learner είναι δωρεάν και ανοιχτού κώδικα. Εάν σας βοηθάει, σκεφτείτε να συμβάλλετε.",
