@@ -9,21 +9,45 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.70.2** (patch — **theme contrast + Matching
-  exercise fixes**). Frontend only, no schema/API change.
-  **Secondary buttons (#179):** soft-pop's `secondary` variant rendered
-  white-on-teal (1.86:1); its `--bg-secondary` is corrected to a
+- **Current state:** **v1.71.0** (minor — **clearer Matching result
+  feedback + Enter in the correction round + a systematic dark-theme
+  button-contrast fix + test-isolation fixes**). Frontend + test infra,
+  no schema/API change. **Matching results (#191):** after checking, a
+  wrong pair spells out both sides instead of relying on colour — a red
+  "Deine Antwort: …" (X icon) and a green, bold "Richtige Antwort: …"
+  (check icon) on separate lines; a correct pair confirms the link as a
+  single "A → B" line (Lucide arrow). New `your_answer` + reworded
+  `correct_hint` i18n in all 8 langs; all colours via the AA-pinned
+  `--matching-correct/-error` tokens. **Correction-round Enter (#187):**
+  the lesson-end `CorrectionBlock` now runs its cloze controlled with an
+  external "Antwort prüfen" button + the shared `useLessonEnterKey`
+  hook, so Enter checks the cloze exactly like the main + error-replay
+  runners (the three surfaces can't drift). **Systematic button
+  contrast (#185):** with Tailwind preflight off a raw `<button>` fell
+  back to the UA `buttontext` (≈ black) on dark surfaces; a base-layer
+  `button { color: inherit }` fixes the whole class while losing to every
+  explicit `text-*` utility, so shadcn `<Button>` variants and
+  intentionally-coloured buttons are untouched (root cause behind the
+  per-surface #146/#148/#177/#179 fixes). **Console warning (#119):** the
+  content-repo token password input is wrapped in a form. **Test
+  isolation:** an autouse fixture resets the session-shared
+  content-loader cache between tests so the cross-identity backup
+  round-trip stops flaking under pytest-randomly (#164), and the lesson
+  read-aloud Dexie-gate spec gets headroom + a retry (#165). **Content
+  (content-repo #33):** the Miller "7 ± 2" cloze accepts keyboard-typeable
+  +/- forms. v1.70.2 = patch — **theme contrast + Matching exercise
+  fixes**. **Secondary buttons (#179):** soft-pop's `secondary` variant
+  rendered white-on-teal (1.86:1); its `--bg-secondary` is corrected to a
   readable dark tone, and `contrast.test.ts` now pins every shadcn
   button-variant colour pair across all 12 themes. **Matching pair
-  colours (#181):** matched pairs no longer use red (red reads as
-  "wrong") — a dedicated red-free `--matching-pair-1..7` palette in
-  `global.css`, decoupled from the shared `--chart-*` data-chart
-  palette. **Matching result state (#183):** after checking, pair number
-  badges stay visible, correct pairs are green on both tiles, wrong
-  pairs are red on both tiles and show the correct partner as a hint,
-  and unmatched tiles stay neutral; new per-theme
-  `--matching-correct-bg/-fg` + `--matching-error-bg/-fg` tokens,
-  WCAG-AA verified. v1.70.1 = patch — **onboarding / assessment /
+  colours (#181):** matched pairs no longer use red — a dedicated
+  red-free `--matching-pair-1..7` palette in `global.css`, decoupled from
+  the shared `--chart-*` data-chart palette. **Matching result state
+  (#183):** after checking, pair number badges stay visible, correct
+  pairs are green on both tiles, wrong pairs are red on both tiles and
+  show the correct partner as a hint, and unmatched tiles stay neutral;
+  new per-theme `--matching-correct-bg/-fg` + `--matching-error-bg/-fg`
+  tokens, WCAG-AA verified. v1.70.1 = patch — **onboarding / assessment /
   content-browser / landing UX fixes**. Frontend only, no schema/API
   change. **Wizard height (#169):** the onboarding profile wizard gives
   its step area a uniform min-height so the panel no longer jumps
