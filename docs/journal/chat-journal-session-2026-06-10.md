@@ -1,9 +1,68 @@
 # Chat journal — 2026-06-10
 
-A focused bug-fix session: five independent UX defects reported one at
-a time, each turned into a GitHub issue + a scoped PR, then all five
-merged and cut as the **v1.70.1** patch release. Frontend only; no
-schema, API or data change.
+A focused bug-fix session: UX + accessibility defects reported one at a
+time, each turned into a GitHub issue + a scoped PR, then merged and cut
+as two patch releases — **v1.70.1** (5 fixes) and **v1.70.2** (3 more,
+theme contrast + Matching). Frontend only; no schema, API or data
+change. Newest first.
+
+---
+
+## v1.70.2 release
+
+### Summary
+
+Three more fixes after v1.70.1, all merged by the user, then released:
+soft-pop secondary-button contrast (#179/#180), red removed from
+Matching pair colours (#181/#182), and the Matching result state made
+legible (#183/#184).
+
+### What shipped
+
+- **#179 / PR #180 — secondary buttons invisible in soft-pop.** A
+  contrast sweep of every shadcn button-variant pair across all 12
+  themes found one failure: `secondary` = white on soft-pop's vivid
+  teal `--bg-secondary` (1.86:1). Fixed soft-pop's `--bg-secondary` to a
+  readable dark tone (`#121821`) and extended `contrast.test.ts` to pin
+  every button-variant `(bg, fg)` pair across all 12 themes, so the
+  whole class is guarded. Not the #146/#148 missing-`text-foreground`
+  cause — the variants already carry a foreground; this was a theme
+  token below AA that no test checked.
+- **#181 / PR #182 — red removed from Matching pair colours.** Matched
+  pairs reused the per-theme `--chart-*` palette, where `--chart-3` is a
+  saturated red in 6 themes — and red reads as "wrong". `--chart-*` is
+  shared with real data charts (where red is a valid series), so instead
+  of editing it, matching pairs now draw from a dedicated, theme-
+  agnostic, red-free `--matching-pair-1..7` palette in `global.css`
+  (blue/green/orange/purple/teal/yellow/pink). A regression pin reads the
+  tokens and fails on any red hue.
+- **#183 / PR #184 — Matching result state.** After checking, the pair
+  number badges vanished and only the left column showed correct/wrong.
+  Now: badges persist (green/red ring), correct pairs green on both
+  tiles, wrong pairs red on both tiles + a "Correct: <partner>" hint,
+  unmatched neutral. New per-theme `--matching-correct-bg/-fg` +
+  `--matching-error-bg/-fg` tokens (resolving through each theme's
+  `--exercise-correct/-wrong` + `--bg-surface`); `contrast.test.ts`
+  computes the CSS `color-mix` and pins `fg-primary` at AA on both. New
+  `lesson.exercise.matching.correct_hint` string in all 8 languages.
+
+### Process notes
+
+- The user merged all three PRs; the two that both touched
+  `MatchingExercise.tsx` (#182 palette, #184 result state) and the two
+  that both touched `contrast.test.ts` (#180, #183) composed cleanly —
+  verified on `main` (696/696 in styles + exercises).
+- Red as a *pair* colour stays forbidden (#181); red as *error feedback*
+  (#183) is correct — both rules are now test-enforced.
+
+### Gates
+
+- `make test` — 3909 pass (342 files, +34). `tsc` clean; `npm run build`
+  clean; `ruff` + `mypy` clean; `pre-commit run --all-files` all passed;
+  `make verify-docs-discipline` 0 FAIL.
+- Release commit `--no-verify` (version-only plugin bumps; same
+  rationale as v1.70.1). Tag `v1.70.2` on `f9c23ff8`.
+- GitHub release: <https://github.com/astrapi69/adaptive-learner/releases/tag/v1.70.2>
 
 ---
 
