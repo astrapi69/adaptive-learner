@@ -90,6 +90,15 @@ describe("Landing page", () => {
         expect(screen.getByTestId("landing-start")).toBeInTheDocument();
     });
 
+    it("opens the documentation link in a new tab without losing context (#173)", async () => {
+        renderLanding();
+        const docsLink = (await screen.findByTestId(
+            "landing-docs-link",
+        )) as HTMLAnchorElement;
+        expect(docsLink.target).toBe("_blank");
+        expect(docsLink.rel).toContain("noopener");
+    });
+
     it("clicking the start button routes to /onboarding", async () => {
         renderLanding();
         await waitFor(() => {

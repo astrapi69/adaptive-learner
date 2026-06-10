@@ -220,6 +220,8 @@ export default function Landing() {
                     href={`${import.meta.env.BASE_URL}docs/`}
                     data-testid="landing-docs-link"
                     className="landing-secondary-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     {t("landing.docs_link", "Read the documentation")}
                 </a>
