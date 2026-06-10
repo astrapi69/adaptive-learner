@@ -1420,7 +1420,8 @@ lesson:
       left_label_productive: Anlam
       right_label_productive: Terim
       left_label_knowledge: "Terim"
-      correct_hint: "Doğru: {label}"
+      correct_hint: "Doğru yanıt: {label}"
+      your_answer: "Senin yanıtın: {label}"
       right_label_knowledge: "Tanım"
       instruction_knowledge: "Her terimi tanımıyla eşleştir."
       instructions_knowledge: "Soldan bir öğe seç, ardından sağdaki eşini seç."

@@ -224,7 +224,11 @@ describe("MatchingExercise: scoring + completion", () => {
         expect(screen.getByTestId("matching-right-1").className).toContain(
             "is-wrong",
         );
-        // The correct partner for left-0 (pairs[0].right = "Hello") is shown.
+        // #191 — the wrong pair spells out BOTH sides: the learner picked
+        // right-1 ("Thank you") for left-0, whose correct partner is "Hello".
+        expect(
+            screen.getByTestId("matching-your-answer-0"),
+        ).toHaveTextContent("Thank you");
         expect(
             screen.getByTestId("matching-correct-hint-0"),
         ).toHaveTextContent("Hello");
