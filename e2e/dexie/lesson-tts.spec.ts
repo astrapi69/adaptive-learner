@@ -111,7 +111,7 @@ test.describe("Lesson read-aloud (TTS)", () => {
     // still fails every attempt.
     test.describe.configure({timeout: 60_000, retries: 2});
 
-    test("theory read-aloud: controls, follow-along, mini-player, stop", async ({
+    test("theory read-aloud: controls, mini-player, stop", async ({
         page,
     }) => {
         const errors: string[] = [];
@@ -126,10 +126,10 @@ test.describe("Lesson read-aloud (TTS)", () => {
         await expect(theoryBtn).toBeVisible();
         await expect(theoryBtn).toHaveAttribute("data-speaking", "false");
 
-        // Read it: follow-along view swaps in + the mini-player appears.
+        // Read it: the rendered Markdown stays in place (no follow-along
+        // swap since #147) and the mini-player appears while speaking.
         await theoryBtn.click();
         await expect(theoryBtn).toHaveAttribute("data-speaking", "true");
-        await expect(page.getByTestId("lesson-read-along")).toBeVisible();
         await expect(page.getByTestId("lesson-tts-player")).toBeVisible();
 
         // Something was actually handed to the engine.
@@ -139,10 +139,9 @@ test.describe("Lesson read-aloud (TTS)", () => {
         expect(spoken.length).toBeGreaterThan(0);
         expect(spoken[0].length).toBeGreaterThan(0);
 
-        // Stop from the mini-player: player + follow-along disappear.
+        // Stop from the mini-player: the player disappears + speaking ends.
         await page.getByTestId("lesson-tts-player-stop").click();
         await expect(page.getByTestId("lesson-tts-player")).toHaveCount(0);
-        await expect(page.getByTestId("lesson-read-along")).toHaveCount(0);
         await expect(theoryBtn).toHaveAttribute("data-speaking", "false");
 
         expect(errors, `page errors: ${errors.join("; ")}`).toEqual([]);
