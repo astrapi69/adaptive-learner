@@ -300,13 +300,19 @@ code {
  * with ``data-slot="button"``) must keep their own variant text
  * color. global.css is unlayered and would otherwise override the
  * layered Tailwind utility, putting accent text on an accent
- * background (invisible in dark mode). */
-a:not([data-slot="button"]) {
+ * background (invisible in dark mode).
+ * #194 — same hazard for hand-rolled button anchors
+ * (``<Link className="btn btn-primary">`` in FocusAreasCard /
+ * ReviewQueueCard): this rule's specificity (0,1,1) beats
+ * ``.btn-primary`` (0,1,0), so accent text landed on the accent
+ * background. Carve out ``.btn`` too so the ``.btn-*`` variant color
+ * wins; ``.btn`` sets its own ``text-decoration: none``. */
+a:not([data-slot="button"]):not(.btn) {
   color: var(--accent);
   text-decoration: none;
 }
 
-a:not([data-slot="button"]):hover {
+a:not([data-slot="button"]):not(.btn):hover {
   text-decoration: underline;
 }
 
@@ -464,6 +470,10 @@ select:focus {
   font-weight: 500;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
+  /* #194 — a ``.btn`` anchor is carved out of the generic anchor
+     rule above, so it no longer inherits ``text-decoration: none``
+     from there; set it here so button-styled <Link>s never underline. */
+  text-decoration: none;
   transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 

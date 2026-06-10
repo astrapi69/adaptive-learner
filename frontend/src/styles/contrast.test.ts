@@ -254,6 +254,43 @@ describe("#185 — raw <button> never falls back to UA black", () => {
     });
 });
 
+describe("#194 — button-styled anchors (.btn) keep their variant color", () => {
+    // `<Link className="btn btn-primary">` renders as `<a class="btn">`. The
+    // generic content-link rule `a:not([data-slot="button"])` has specificity
+    // (0,1,1) and would beat `.btn-primary` (0,1,0), painting accent text on
+    // the accent background (invisible CTAs on FocusAreasCard / ReviewQueueCard).
+    // The rule must carve out `.btn` so the variant color wins.
+    const css = readFileSync(resolve(HERE, "global.css"), "utf-8");
+
+    it("the generic anchor color rule excludes .btn", () => {
+        const rule = css.match(
+            /a:not\(\[data-slot="button"\]\):not\(\.btn\)\s*\{[^}]*color:\s*var\(--accent\)/,
+        );
+        expect(
+            rule,
+            'missing `.btn` carve-out in `a:not([data-slot="button"]):not(.btn)` (see #194)',
+        ).toBeTruthy();
+    });
+
+    it("the bare anchor color rule no longer matches .btn anchors", () => {
+        // A pre-#194 `a:not([data-slot="button"]) { color: var(--accent) }`
+        // WITHOUT the `:not(.btn)` would re-introduce the bug.
+        const unguarded = css.match(
+            /a:not\(\[data-slot="button"\]\)(?!:not\(\.btn\))\s*\{[^}]*color:\s*var\(--accent\)/,
+        );
+        expect(
+            unguarded,
+            "generic anchor color rule must carry the `:not(.btn)` guard (see #194)",
+        ).toBeFalsy();
+    });
+
+    it(".btn sets text-decoration: none (carved-out anchors must not underline)", () => {
+        const btn = css.match(/\n\.btn\s*\{[^}]*\}/);
+        expect(btn?.[0], ".btn rule not found").toBeTruthy();
+        expect(btn?.[0]).toMatch(/text-decoration:\s*none/);
+    });
+});
+
 describe("Phase 39 C5 — method-badge contrast (WCAG SC 1.4.3)", () => {
     for (const method of LEARNING_METHODS) {
         it(`method=${method}: text color picked by bestTextOn meets AA`, () => {
