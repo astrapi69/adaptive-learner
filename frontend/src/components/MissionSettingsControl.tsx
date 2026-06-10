@@ -9,6 +9,7 @@
 
 import {useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../hooks/useI18n";
 import {readLearnerState} from "../lib/learnerState";
 import {
@@ -140,9 +141,9 @@ export default function MissionSettingsControl() {
                     </label>
 
                     <div className="form-row">
-                        <button
+                        <Button
                             type="button"
-                            className="btn"
+                            variant="destructive"
                             data-testid="settings-missions-reset"
                             disabled={resetting}
                             onClick={() => void handleReset()}
@@ -153,7 +154,7 @@ export default function MissionSettingsControl() {
                                       "Confirm reset",
                                   )
                                 : t("settings.missions_reset", "Reset today's missions")}
-                        </button>
+                        </Button>
                     </div>
                 </>
             )}
