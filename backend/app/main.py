@@ -228,7 +228,12 @@ def _load_app_config() -> dict[str, Any]:
     try:
         with open(CONFIG_PATH, encoding="utf-8") as f:
             project = yaml.safe_load(f) or {}
-    except Exception:
+    except (OSError, yaml.YAMLError, UnicodeDecodeError) as exc:
+        logger.warning(
+            "Could not read app.yaml at %s: %s. Continuing with overlay + env config only.",
+            CONFIG_PATH,
+            exc,
+        )
         project = {}
     user_overlay = config_overlay._read_yaml(config_overlay._user_app_path())
     override = _load_override_file(_get_user_override_path())
