@@ -222,6 +222,7 @@ assessment:
   question_progress: Question {current} of {total}
   next_question: Next question
   prev_question: Previous question
+  continue_later: Continue later
   submit: Evaluate
   evaluating: Evaluating…
   result_title: Your learning profile

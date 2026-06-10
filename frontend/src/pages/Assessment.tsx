@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 
 import {Button} from "@/components/ui/button";
 import AssessmentProgress from "../components/AssessmentProgress";
@@ -48,6 +48,15 @@ import type {AssessmentQuestion, LearningProfile} from "../types";
 export default function Assessment() {
     const {t, lang} = useI18n();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Safe destination for the first-step "Continue later" exit (#171).
+    // Callers that route here (the onboarding wizard, the Dashboard
+    // resume/start CTAs) may pass ``state.backTo``; otherwise the
+    // Dashboard is always a safe, non-dead-end target — the assessment
+    // progress is persisted and resumable from there.
+    const backTo =
+        (location.state as {backTo?: string} | null)?.backTo ?? "/dashboard";
 
     const [questions, setQuestions] = useState<AssessmentQuestion[] | null>(null);
     // v0.4.0: answers are now arrays per-question. Single-select
@@ -422,18 +431,37 @@ export default function Assessment() {
             )}
 
             <div className="form-actions">
-                <Button
-                    type="button"
-                    variant="secondary"
-                    data-testid="assessment-prev"
-                    onClick={() => {
-                        dismissHint();
-                        goPrev();
-                    }}
-                    disabled={currentIndex === 0 || submitting}
-                >
-                    {t("assessment.prev_question", "Previous question")}
-                </Button>
+                {currentIndex === 0 ? (
+                    // First question: no previous step to go back to.
+                    // Offer a non-dead-end exit instead of a disabled
+                    // button — the assessment is resumable, so leaving
+                    // keeps the saved progress (#171).
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        data-testid="assessment-exit"
+                        onClick={() => {
+                            dismissHint();
+                            navigate(backTo);
+                        }}
+                        disabled={submitting}
+                    >
+                        {t("assessment.continue_later", "Continue later")}
+                    </Button>
+                ) : (
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        data-testid="assessment-prev"
+                        onClick={() => {
+                            dismissHint();
+                            goPrev();
+                        }}
+                        disabled={submitting}
+                    >
+                        {t("assessment.prev_question", "Previous question")}
+                    </Button>
+                )}
 
                 {currentIndex < total - 1 ? (
                     <Button

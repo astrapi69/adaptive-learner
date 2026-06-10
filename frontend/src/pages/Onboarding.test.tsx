@@ -192,7 +192,11 @@ describe("Onboarding page", () => {
         });
         await screen.findByTestId("onboarding-invite");
         fireEvent.click(screen.getByTestId("onboarding-invite-start-now"));
-        expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
+        // ``replace`` so browser-back can't return to the now-stale
+        // onboarding form (#171).
+        expect(mockNavigate).toHaveBeenCalledWith("/dashboard", {
+            replace: true,
+        });
         expect(apiProjectUpdate).not.toHaveBeenCalled();
     });
 
@@ -228,7 +232,13 @@ describe("Onboarding page", () => {
         });
 
         await waitFor(() => {
-            expect(mockNavigate).toHaveBeenCalledWith("/assessment");
+            // ``replace`` so browser-back can't return to the now-stale
+            // onboarding form, plus a ``backTo`` for the assessment's
+            // first-step "Continue later" exit (#171).
+            expect(mockNavigate).toHaveBeenCalledWith("/assessment", {
+                replace: true,
+                state: {backTo: "/dashboard"},
+            });
         });
         expect(apiProjectUpdate).toHaveBeenCalledTimes(1);
         const [projectId, body] = apiProjectUpdate.mock.calls[0] as [
