@@ -101,7 +101,12 @@ export default function OnboardingWizard({
                 <Progress value={progressValue} />
             </div>
 
-            {/* One question per screen. */}
+            {/* One question per screen, inside a min-height floor sized
+                for the tallest step so stepping forward/back never shifts
+                the layout (#169). The floor is taller on mobile, where the
+                timeframe options stack into one column, and shorter from
+                ``sm`` up, where they sit in a 2-column grid. */}
+            <div className="flex min-h-[240px] flex-col sm:min-h-[190px]">
             {step === 0 && (
                 <div className="flex flex-col gap-3">
                     <label className="form-label" htmlFor="wizard-goal">
@@ -217,6 +222,7 @@ export default function OnboardingWizard({
                     </p>
                 </div>
             )}
+            </div>
 
             {/* Navigation. Back is always present; the final step swaps
                 "Next" for the two terminal actions. */}
