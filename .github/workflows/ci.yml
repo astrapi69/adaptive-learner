@@ -130,6 +130,13 @@ jobs:
         working-directory: frontend
         run: npx vite build
 
+      # Dependency vulnerability scan (#224). --audit-level=high so
+      # moderate/low advisories surface in the log without blocking the
+      # build; a high/critical advisory fails CI for immediate triage.
+      - name: npm audit (high+)
+        working-directory: frontend
+        run: npm audit --audit-level=high
+
   pre-commit:
     name: Pre-commit hooks
     runs-on: ubuntu-latest
@@ -174,6 +181,13 @@ jobs:
       - name: mypy
         working-directory: backend
         run: poetry run mypy app/
+      # Dependency vulnerability scan (#224). pip-audit is a backend dev
+      # dep; --skip-editable skips the local path-dep plugins (no PyPI
+      # advisories). Audits the third-party dependency tree; a known
+      # advisory fails CI for triage.
+      - name: pip-audit (backend deps)
+        working-directory: backend
+        run: poetry run pip-audit --skip-editable
 
   docs-verification:
     name: Docs drift verifier
