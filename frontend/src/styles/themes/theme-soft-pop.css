@@ -5,7 +5,11 @@
  */
 [data-theme="soft-pop"] {
   --bg-primary: #000000;
-  --bg-secondary: #2dd4bf;
+  /* #179 — was #2dd4bf (a vivid teal): fg-primary (#fff) on it is
+     1.86:1, so every secondary button / badge / surface was unreadable.
+     A muted dark surface between primary (#000) and surface (#1a212b)
+     keeps soft-pop's palette while passing AA for text. */
+  --bg-secondary: #121821;
   --bg-surface: #1a212b;
   --bg-elevated: #1a212b;
   --bg-overlay: rgba(0, 0, 0, 0.6);

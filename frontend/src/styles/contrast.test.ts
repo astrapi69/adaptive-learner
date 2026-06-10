@@ -73,6 +73,28 @@ describe("Phase 58D — WCAG AA contrast (all themes)", () => {
                 ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
             });
 
+            // #179 — pin EVERY shadcn button-variant (background, text)
+            // pair, not just the primary one. The semantic tokens map to
+            // these theme tokens in styles/tailwind.css; a variant whose
+            // text drops below AA on its own surface goes invisible in
+            // that theme (soft-pop's secondary was white-on-teal, 1.86:1,
+            // because bg-secondary was never checked as a text surface).
+            it("every button-variant text passes normal-text AA on its surface", () => {
+                const VARIANTS: Array<[string, string, string]> = [
+                    // [variant, background token, foreground token]
+                    ["default", "accent", "accent-fg"],
+                    ["secondary", "bg-secondary", "fg-primary"],
+                    ["outline/ghost", "bg-primary", "fg-primary"],
+                    ["destructive", "error", "fg-inverse"],
+                ];
+                for (const [variant, bg, fg] of VARIANTS) {
+                    expect(
+                        contrastRatio(t()[fg], t()[bg]),
+                        `${variant} button: ${fg} on ${bg}`,
+                    ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+                }
+            });
+
             it("status colors as text pass normal-text AA on the page", () => {
                 for (const status of ["success", "error", "warning", "info"]) {
                     expect(
