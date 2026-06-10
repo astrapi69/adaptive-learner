@@ -412,6 +412,22 @@ button {
   cursor: pointer;
 }
 
+/* #185 — raw <button> elements have no author `color`, so with Tailwind
+   preflight OFF they fall back to the UA stylesheet's `color: buttontext`
+   (~black) instead of inheriting `body { color: var(--fg) }`. On a dark
+   theme that renders the button text/icon black-on-dark = invisible. This
+   `base`-layer default makes every un-colored raw button inherit the page
+   foreground. The cascade-layer order (theme, base, components, utilities)
+   keeps it correct: it beats the UA fallback (author layers win over UA)
+   yet loses to any explicit `text-*` utility (utilities layer) and to the
+   unlayered component classes, so shadcn <Button> variants and
+   intentionally-colored raw buttons are untouched. */
+@layer base {
+  button {
+    color: inherit;
+  }
+}
+
 button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
