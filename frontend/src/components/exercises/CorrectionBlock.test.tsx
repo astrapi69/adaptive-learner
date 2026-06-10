@@ -355,7 +355,16 @@ describe("CorrectionBlock: render + skip + record", () => {
         fireEvent.change(screen.getByTestId("cloze-input-0"), {
             target: {value: "un"},
         });
-        fireEvent.click(screen.getByTestId("cloze-submit"));
+        // #187 — the cloze now runs controlled; the parent owns the
+        // "Check answers" button (enabled once all blanks are filled).
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("lesson-correction-block-check"),
+            ).toBeEnabled(),
+        );
+        fireEvent.click(
+            screen.getByTestId("lesson-correction-block-check"),
+        );
         await waitFor(() =>
             expect(recordBulkMock).toHaveBeenCalled(),
         );
@@ -381,5 +390,95 @@ describe("CorrectionBlock: render + skip + record", () => {
         expect(
             screen.getByTestId("lesson-correction-improvement"),
         ).toHaveTextContent(/1 element/);
+    });
+
+    it("Enter checks the answered cloze (correction-round shortcut, #187)", async () => {
+        recordBulkMock.mockResolvedValue([]);
+        listMock.mockResolvedValue([
+            _error({
+                exercise_id: "ex-1",
+                correct_answer: "un",
+                element_key: "un",
+            }),
+        ]);
+        const onComplete = vi.fn();
+        render(
+            <CorrectionBlock
+                lesson={_lesson()}
+                progress={_progress()}
+                userId="user-1"
+                setId="fr-a1"
+                lessonFilename="03-articles.json"
+                onComplete={onComplete}
+                onSkip={vi.fn()}
+            />,
+        );
+        await waitFor(() =>
+            expect(
+                screen.queryByTestId("cloze-input-0"),
+            ).toBeInTheDocument(),
+        );
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {
+            target: {value: "un"},
+        });
+        // Once answerable, Enter must do what the Check button does.
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("lesson-correction-block-check"),
+            ).toBeEnabled(),
+        );
+        fireEvent.keyDown(window, {key: "Enter"});
+        await waitFor(() =>
+            expect(recordBulkMock).toHaveBeenCalled(),
+        );
+        await waitFor(() =>
+            expect(onComplete).toHaveBeenCalledWith(1),
+        );
+    });
+
+    it("Enter is inert until the cloze is answerable (no double-lock)", async () => {
+        recordBulkMock.mockResolvedValue([]);
+        listMock.mockResolvedValue([
+            _error({
+                exercise_id: "ex-1",
+                correct_answer: "un",
+                element_key: "un",
+            }),
+        ]);
+        const onComplete = vi.fn();
+        render(
+            <CorrectionBlock
+                lesson={_lesson()}
+                progress={_progress()}
+                userId="user-1"
+                setId="fr-a1"
+                lessonFilename="03-articles.json"
+                onComplete={onComplete}
+                onSkip={vi.fn()}
+            />,
+        );
+        await waitFor(() =>
+            expect(
+                screen.queryByTestId("cloze-input-0"),
+            ).toBeInTheDocument(),
+        );
+        // Enter on an EMPTY cloze must not check (Check button disabled).
+        // Critically it must not arm the double-check lock, or the later
+        // real Enter would be swallowed.
+        fireEvent.keyDown(window, {key: "Enter"});
+        expect(recordBulkMock).not.toHaveBeenCalled();
+        // Now fill + Enter — it must still check.
+        fireEvent.change(screen.getByTestId("cloze-input-0"), {
+            target: {value: "un"},
+        });
+        await waitFor(() =>
+            expect(
+                screen.getByTestId("lesson-correction-block-check"),
+            ).toBeEnabled(),
+        );
+        fireEvent.keyDown(window, {key: "Enter"});
+        await waitFor(() =>
+            expect(recordBulkMock).toHaveBeenCalled(),
+        );
     });
 });

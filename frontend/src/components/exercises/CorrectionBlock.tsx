@@ -29,9 +29,15 @@
  */
 
 import {ChevronRight, X} from "lucide-react";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
+import {Button} from "@/components/ui/button";
 import {useI18n} from "../../hooks/useI18n";
+import {useLessonShortcuts} from "../../hooks/useLessonShortcuts";
+import {
+    useLessonEnterKey,
+    type LessonEnterNav,
+} from "../../hooks/useLessonEnterKey";
 import {generateClozeFromError} from "../../lib/exercises/cloze-generator";
 import {getStorage} from "../../storage";
 import type {
@@ -41,6 +47,7 @@ import type {
     ElementError,
     LessonProgress,
 } from "../../storage/types";
+import type {ExerciseHandle} from "./exercise-control";
 import ClozeExercise from "./ClozeExercise";
 
 export interface CorrectionBlockProps {
@@ -84,6 +91,22 @@ export default function CorrectionBlock({
     const [clozes, setClozes] = useState<PreparedCloze[]>([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [correctCount, setCorrectCount] = useState(0);
+
+    // #187 — Enter-key shortcut, identical to the lesson + error-replay
+    // runners. The cloze runs CONTROLLED (ref + onInteraction) so an
+    // external "Check answers" button drives it and Enter checks the
+    // answered cloze via the shared hook. ``answerable`` mirrors the
+    // cloze's "all blanks filled" state; ``enterLockRef`` blocks a double
+    // check between submit() and the advance, reset on each cloze.
+    const exerciseRef = useRef<ExerciseHandle>(null);
+    const lessonShortcutsEnabled = useLessonShortcuts();
+    const enterStateRef = useRef<LessonEnterNav | null>(null);
+    const enterLockRef = useRef(false);
+    const [answerable, setAnswerable] = useState(false);
+    useEffect(() => {
+        setAnswerable(false);
+        enterLockRef.current = false;
+    }, [currentIndex]);
 
     // Filter step_results for wrong attempts. Used to short-circuit
     // the IO call when the lesson was a perfect score.
@@ -215,6 +238,27 @@ export default function CorrectionBlock({
         onSkip();
     }, [onSkip]);
 
+    // Refresh the Enter-decision state every render (no re-subscribe);
+    // the listener reads it through the ref. A cloze is "active" only
+    // in the ready/active status; otherwise the state reads as a summary
+    // so Enter is a no-op. The cloze auto-advances on submit, so there
+    // is no separate "Next" step here — ``goNext`` is unused.
+    const clozeActive = status === "ready" || status === "active";
+    enterStateRef.current = {
+        isSummary: !clozeActive,
+        isExerciseStep: clozeActive,
+        checked: false,
+        enteredReviewed: false,
+        answerable,
+        goNext: () => {},
+    };
+    useLessonEnterKey({
+        enabled: lessonShortcutsEnabled,
+        exerciseRef,
+        enterStateRef,
+        enterLockRef,
+    });
+
     if (status === "loading" || status === "empty") {
         return null;
     }
@@ -296,6 +340,9 @@ export default function CorrectionBlock({
             </header>
             <ClozeExercise
                 key={current.exercise.id}
+                ref={exerciseRef}
+                controlled
+                onInteraction={setAnswerable}
                 exercise={current.exercise}
                 setId={setId}
                 lessonId={lessonFilename}
@@ -303,6 +350,16 @@ export default function CorrectionBlock({
                     void handleClozeComplete(scored);
                 }}
             />
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Button
+                    type="button"
+                    disabled={!answerable}
+                    onClick={() => exerciseRef.current?.submit()}
+                    data-testid="lesson-correction-block-check"
+                >
+                    {t("lesson.exercise.cloze.submit", "Check answers")}
+                </Button>
+            </div>
         </section>
     );
 }
