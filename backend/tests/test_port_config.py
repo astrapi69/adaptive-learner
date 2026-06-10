@@ -7,6 +7,7 @@ import pytest
 from app.main import (
     DEFAULT_BACKEND_PORT,
     DEFAULT_FRONTEND_PORT,
+    _load_app_config,
     resolve_backend_port,
     resolve_cors_origins,
 )
@@ -138,3 +139,39 @@ def test_app_yaml_server_port_matches_default():
     assert port == DEFAULT_BACKEND_PORT, (
         f"backend/config/app.yaml server.port should be {DEFAULT_BACKEND_PORT}, got {port!r}."
     )
+
+
+# --- _load_app_config defensive paths (issue #197) --------------------------
+
+
+def test_load_app_config_malformed_logs_and_degrades(tmp_path, monkeypatch, caplog):
+    """Regression pin (#197): a corrupt app.yaml must NOT be swallowed
+    silently. _load_app_config logs a warning and degrades to the
+    overlay/env layers instead of booting with all-defaults invisibly.
+    """
+    bad = tmp_path / "app.yaml"
+    bad.write_text("server:\n  port: [unbalanced\n", encoding="utf-8")
+    monkeypatch.setattr("app.main.CONFIG_PATH", bad)
+
+    with caplog.at_level("WARNING", logger="app.main"):
+        config = _load_app_config()
+
+    assert isinstance(config, dict)
+    assert any(
+        "app.yaml" in record.getMessage() or str(bad) in record.getMessage()
+        for record in caplog.records
+    ), "a corrupt app.yaml must emit a WARNING, not be swallowed silently"
+
+
+def test_load_app_config_missing_file_logs_and_degrades(tmp_path, monkeypatch, caplog):
+    """The narrowed except must still catch the OSError from a missing
+    config file (the realistic deployment case) and degrade with a log.
+    """
+    missing = tmp_path / "does-not-exist" / "app.yaml"
+    monkeypatch.setattr("app.main.CONFIG_PATH", missing)
+
+    with caplog.at_level("WARNING", logger="app.main"):
+        config = _load_app_config()
+
+    assert isinstance(config, dict)
+    assert caplog.records, "a missing app.yaml must emit a WARNING, not be swallowed"
