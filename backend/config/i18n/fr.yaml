@@ -1362,7 +1362,7 @@ repo:
       save: "Impossible d'enregistrer les paramètres"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
     description: "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de vos données de session. L'intégration git facultative valide chaque génération pour que vous puissiez parcourir l'historique avec n'importe quel client git."
-    enable_git: "Activer la persistance git (point de terminaison POST /persist)"
+    enable_git: "Activer la persistance git"
 lesson:
   theory:
     view_example: "Voir l'exemple"

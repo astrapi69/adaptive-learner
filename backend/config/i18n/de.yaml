@@ -1365,7 +1365,7 @@ repo:
       save: "Einstellungen konnten nicht gespeichert werden"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
     description: "Erzeugt automatisch Markdown-Artefakte (README, STATS, CHEATSHEET, ROADMAP) pro Projekt aus deinen Sitzungsdaten. Die optionale Git-Integration committet jede Erzeugung, sodass du den Verlauf mit jedem Git-Client durchsehen kannst."
-    enable_git: "Git-Persistenz aktivieren (POST /persist-Endpunkt)"
+    enable_git: "Git-Persistenz aktivieren"
 lesson:
   theory:
     view_example: "Beispiel ansehen"

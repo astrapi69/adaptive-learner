@@ -1362,7 +1362,7 @@ repo:
       save: "No se pudieron guardar los ajustes"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
     description: "Genera automáticamente artefactos Markdown (README, STATS, CHEATSHEET, ROADMAP) por proyecto a partir de tus datos de sesión. La integración opcional con git confirma cada generación para que puedas explorar el historial con cualquier cliente git."
-    enable_git: "Activar persistencia git (endpoint POST /persist)"
+    enable_git: "Activar persistencia git"
 lesson:
   theory:
     view_example: "Ver ejemplo"

@@ -1362,7 +1362,7 @@ repo:
       save: "Αδυναμία αποθήκευσης ρυθμίσεων"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
     description: "Δημιουργεί αυτόματα αρχεία Markdown (README, STATS, CHEATSHEET, ROADMAP) ανά έργο από τα δεδομένα των συνεδριών σας. Η προαιρετική ενσωμάτωση git κάνει commit κάθε δημιουργία ώστε να μπορείτε να περιηγηθείτε στο ιστορικό με οποιονδήποτε client git."
-    enable_git: "Ενεργοποίηση εμμονής git (endpoint POST /persist)"
+    enable_git: "Ενεργοποίηση εμμονής git"
 lesson:
   theory:
     view_example: "Δείτε παράδειγμα"

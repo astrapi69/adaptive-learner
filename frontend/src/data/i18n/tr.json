@@ -1466,7 +1466,7 @@
         "save": "Ayarlar kaydedilemedi"
       },
       "description": "Oturum verilerinizden her proje için Markdown çıktıları (README, STATS, CHEATSHEET, ROADMAP) otomatik oluşturur. İsteğe bağlı git entegrasyonu her oluşturmayı commit'ler, böylece geçmişi herhangi bir git istemcisiyle inceleyebilirsiniz.",
-      "enable_git": "Git kalıcılığını etkinleştir (POST /persist uç noktası)"
+      "enable_git": "Git kalıcılığını etkinleştir"
     }
   },
   "lesson": {
