@@ -1532,6 +1532,7 @@ lesson:
     export:
       copy: "Sonucu kopyala"
       download: "Dosya olarak kaydet"
+      download_json: "JSON olarak dışa aktar"
       copied: "Sonuç panoya kopyalandı"
       copy_failed: "Panoya kopyalanamadı"
       title: "Ders sonucu"

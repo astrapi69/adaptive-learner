@@ -31,6 +31,7 @@ import {
   ClipboardCopy,
   Download,
   ExternalLink,
+  FileJson,
   Pause,
   RotateCcw,
   Square,
@@ -92,6 +93,7 @@ import {
 import { allowsConfetti } from "../lib/feedback/feedbackPref";
 import { tokenDiff } from "../lib/exercises/token-diff";
 import {
+  buildLessonResultJson,
   buildLessonResultMarkdown,
   collectWeakAreas,
   formatUserAnswer,
@@ -1348,6 +1350,20 @@ function ReviewedFallbackPanel({
   );
 }
 
+/** Trigger a client-side file download for an in-memory string
+ *  (lesson-result Markdown / JSON export). */
+function downloadBlob(content: string, filename: string, mime: string): void {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
 interface LessonSummaryProps {
   lesson: import("../storage/types").ContentLesson;
   progress: import("../storage/types").LessonProgress | null;
@@ -1514,16 +1530,29 @@ function LessonSummary({
 
   const handleDownloadResult = useCallback(() => {
     const { markdown, filename } = buildResultMarkdown();
-    const blob = new Blob([markdown], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    URL.revokeObjectURL(url);
+    downloadBlob(markdown, filename, "text/markdown");
   }, [buildResultMarkdown]);
+
+  // #167 bug 3 — structured JSON twin of the Markdown export. Carries
+  // the prompt, the learner's answer + verbatim raw answer (#167 bug 4),
+  // the correct answer, pass/fail, and concept tags per exercise.
+  const handleDownloadJson = useCallback(() => {
+    const now = new Date();
+    const result = buildLessonResultJson({
+      lesson,
+      progress,
+      dateStr: now.toISOString().slice(0, 10),
+      correct,
+      total,
+      pct: scorePct,
+      weakAreas: collectWeakAreas(sessionErrors),
+    });
+    downloadBlob(
+      JSON.stringify(result, null, 2),
+      lessonResultFilename(lesson.title, now, "json"),
+      "application/json",
+    );
+  }, [lesson, progress, correct, total, scorePct, sessionErrors]);
 
   // Count the score percentage up from 0 (instant under
   // "subtle" / reduced motion - see useCountUp).
@@ -1760,6 +1789,17 @@ function LessonSummary({
         >
           <Download aria-hidden="true" />
           {t("lesson.summary.export.download", "Save as file")}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="min-h-11 gap-2"
+          onClick={handleDownloadJson}
+          data-testid="lesson-summary-download-json"
+        >
+          <FileJson aria-hidden="true" />
+          {t("lesson.summary.export.download_json", "Export as JSON")}
         </Button>
       </div>
 

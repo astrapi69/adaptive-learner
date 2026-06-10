@@ -1534,6 +1534,7 @@ lesson:
     export:
       copy: "Copiar resultado"
       download: "Guardar como archivo"
+      download_json: "Exportar como JSON"
       copied: "Resultado copiado al portapapeles"
       copy_failed: "No se pudo copiar al portapapeles"
       title: "Resultado de la lección"

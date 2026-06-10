@@ -1532,6 +1532,7 @@ lesson:
     export:
       copy: "結果をコピー"
       download: "ファイルとして保存"
+      download_json: "JSONとしてエクスポート"
       copied: "結果をクリップボードにコピーしました"
       copy_failed: "クリップボードにコピーできませんでした"
       title: "レッスン結果"

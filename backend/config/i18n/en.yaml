@@ -1508,6 +1508,7 @@ lesson:
     export:
       copy: "Copy result"
       download: "Save as file"
+      download_json: "Export as JSON"
       copied: "Result copied to clipboard"
       copy_failed: "Could not copy to clipboard"
       title: "Lesson result"

@@ -13,11 +13,16 @@
  */
 
 import type {
+  ContentLesson,
   ContentLessonExercise,
   ElementError,
+  LessonProgress,
   RawAnswer,
 } from "../../storage/types";
-import type { ExerciseBreakdownEntry } from "../lesson-summary";
+import {
+  deriveCanonicalAnswer,
+  type ExerciseBreakdownEntry,
+} from "../lesson-summary";
 
 /** Localized section labels, resolved by the caller from the
  *  i18n catalog so this module stays language-agnostic. */
@@ -132,10 +137,15 @@ function slugify(value: string): string {
   );
 }
 
-/** ``lesson-result-<slug>-<yyyy-mm-dd>.md`` — ASCII filename. */
-export function lessonResultFilename(lessonTitle: string, date: Date): string {
+/** ``lesson-result-<slug>-<yyyy-mm-dd>.<ext>`` — ASCII filename.
+ *  Defaults to ``md``; the JSON export (#167 bug 3) passes ``json``. */
+export function lessonResultFilename(
+  lessonTitle: string,
+  date: Date,
+  ext: "md" | "json" = "md",
+): string {
   const iso = date.toISOString().slice(0, 10);
-  return `lesson-result-${slugify(lessonTitle)}-${iso}.md`;
+  return `lesson-result-${slugify(lessonTitle)}-${iso}.${ext}`;
 }
 
 interface BuildArgs {
@@ -221,4 +231,98 @@ export function buildLessonResultMarkdown(args: BuildArgs): string {
   }
 
   return lines.join("\n") + "\n";
+}
+
+/** One attempted exercise in the structured JSON export (#167 bug 3). */
+export interface LessonResultJsonExercise {
+  /** The exercise / step id. */
+  question_id: string;
+  prompt: string;
+  /** Normalized, human-readable answer (#167 bug 1). Null when none
+   *  could be reconstructed. */
+  user_answer: string | null;
+  /** Verbatim structured answer as persisted (#167 bug 4) — keeps the
+   *  exact input traceable even after normalization. */
+  raw_answer: RawAnswer | null;
+  correct_answer: string;
+  is_correct: boolean;
+  /** Concept tags gathered from the exercise's referenced cards. */
+  concept_tags: string[];
+}
+
+/** Structured, re-importable lesson result (#167 bug 3). */
+export interface LessonResultJson {
+  schema: "adaptive-learner.lesson-result";
+  version: 1;
+  lesson_title: string;
+  /** ISO 8601 ``yyyy-mm-dd`` (#167 bug 5). */
+  date: string;
+  score: { correct: number; total: number; percent: number };
+  exercises: LessonResultJsonExercise[];
+  weak_areas: WeakArea[];
+}
+
+interface BuildJsonArgs {
+  lesson: ContentLesson;
+  progress: LessonProgress | null;
+  dateStr: string;
+  correct: number;
+  total: number;
+  pct: number;
+  weakAreas: WeakArea[];
+}
+
+/**
+ * Build the structured JSON twin of the Markdown export (#167 bug 3).
+ *
+ * Walks the lesson's attempted exercise steps and emits one entry each
+ * with the prompt, the learner's normalized answer + the verbatim
+ * ``raw_answer`` (#167 bug 4), the correct answer, the pass/fail flag,
+ * and the concept tags of the exercise's cards. Re-importable for
+ * AI-assisted follow-up learning; carries no user identity.
+ */
+export function buildLessonResultJson(args: BuildJsonArgs): LessonResultJson {
+  const { lesson, progress, dateStr, correct, total, pct, weakAreas } = args;
+  const stepResults = progress?.step_results ?? {};
+  const cardsById = new Map(lesson.cards.map((card) => [card.id, card]));
+
+  const exercises: LessonResultJsonExercise[] = [];
+  for (const step of lesson.steps) {
+    if (step.type !== "exercise" || !step.exercise) continue;
+    const stepResult = stepResults[step.id];
+    if (stepResult === undefined) continue;
+    const exercise = step.exercise;
+    const rawAnswer = stepResult.raw_answer ?? null;
+    // Free-text + word-tiles persist a text user_answer directly;
+    // matching + picture-choice reconstruct one from raw_answer.
+    const userAnswer =
+      stepResult.user_answer ?? formatUserAnswer(exercise, rawAnswer);
+    const conceptTags = [
+      ...new Set(
+        exercise.card_ids.flatMap(
+          (cardId) => cardsById.get(cardId)?.tags ?? [],
+        ),
+      ),
+    ];
+    exercises.push({
+      question_id: step.id,
+      prompt: exercise.prompt,
+      user_answer: userAnswer,
+      raw_answer: rawAnswer,
+      correct_answer: deriveCanonicalAnswer(exercise),
+      is_correct:
+        stepResult.total > 0 && stepResult.correct === stepResult.total,
+      concept_tags: conceptTags,
+    });
+  }
+
+  return {
+    schema: "adaptive-learner.lesson-result",
+    version: 1,
+    lesson_title: lesson.title,
+    date: dateStr,
+    score: { correct, total, percent: pct },
+    exercises,
+    weak_areas: weakAreas,
+  };
 }

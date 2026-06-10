@@ -1,8 +1,14 @@
 import { describe, it, expect } from "vitest";
 
-import type { ContentLessonExercise, ElementError } from "../../storage/types";
+import type {
+  ContentLesson,
+  ContentLessonExercise,
+  ElementError,
+  LessonProgress,
+} from "../../storage/types";
 import type { ExerciseBreakdownEntry } from "../lesson-summary";
 import {
+  buildLessonResultJson,
   buildLessonResultMarkdown,
   collectWeakAreas,
   formatUserAnswer,
@@ -239,5 +245,136 @@ describe("lessonResultFilename", () => {
       new Date("2026-06-09T10:00:00Z"),
     );
     expect(name).toBe("lesson-result-grusse-hoflichkeit-2026-06-09.md");
+  });
+
+  it("honors a json extension (#167 bug 3)", () => {
+    const name = lessonResultFilename(
+      "Greetings",
+      new Date("2026-06-09T10:00:00Z"),
+      "json",
+    );
+    expect(name).toBe("lesson-result-greetings-2026-06-09.json");
+  });
+});
+
+describe("buildLessonResultJson", () => {
+  const LESSON: ContentLesson = {
+    id: "01",
+    title: "Greetings",
+    description: "",
+    estimated_minutes: 5,
+    cards: [
+      { id: "c1", front: "hello", back: "hola", tags: ["greeting", "a1"] },
+      { id: "c2", front: "bye", back: "adios", tags: ["a1"] },
+    ],
+    steps: [
+      { id: "intro", type: "theory", title: "Intro", body: "..." },
+      {
+        id: "ex-free",
+        type: "exercise",
+        title: "Say hello",
+        exercise: {
+          id: "ex-free",
+          type: "free_text",
+          prompt: "Translate 'hello'",
+          card_ids: ["c1"],
+          accept: ["hola"],
+          distractors: [],
+        },
+      },
+      {
+        id: "ex-match",
+        type: "exercise",
+        title: "Match",
+        exercise: {
+          id: "ex-match",
+          type: "matching",
+          prompt: "Match the words",
+          card_ids: ["c1", "c2"],
+          pairs: [
+            { left: "hello", right: "hola" },
+            { left: "bye", right: "adios" },
+          ],
+          distractors: [],
+        },
+      },
+    ],
+  } as ContentLesson;
+
+  const PROGRESS: LessonProgress = {
+    step_results: {
+      "ex-free": {
+        correct: 1,
+        total: 1,
+        attempts: 1,
+        completed_at: "2026-06-09",
+        user_answer: "hola",
+        raw_answer: { kind: "free_text", input: "hola " },
+      },
+      "ex-match": {
+        correct: 0,
+        total: 1,
+        attempts: 1,
+        completed_at: "2026-06-09",
+        raw_answer: {
+          kind: "matching",
+          matches: [
+            [0, 1],
+            [1, 0],
+          ],
+        },
+      },
+    },
+  } as unknown as LessonProgress;
+
+  it("emits a structured entry per attempted exercise (#167 bugs 1, 3, 4)", () => {
+    const json = buildLessonResultJson({
+      lesson: LESSON,
+      progress: PROGRESS,
+      dateStr: "2026-06-09",
+      correct: 1,
+      total: 2,
+      pct: 50,
+      weakAreas: [{ label: "adios", count: 2 }],
+    });
+    expect(json.schema).toBe("adaptive-learner.lesson-result");
+    expect(json.version).toBe(1);
+    expect(json.lesson_title).toBe("Greetings");
+    expect(json.date).toBe("2026-06-09");
+    expect(json.score).toEqual({ correct: 1, total: 2, percent: 50 });
+    // Theory step is skipped; both attempted exercises are present.
+    expect(json.exercises).toHaveLength(2);
+
+    const free = json.exercises[0];
+    expect(free.question_id).toBe("ex-free");
+    expect(free.prompt).toBe("Translate 'hello'");
+    expect(free.user_answer).toBe("hola");
+    // Verbatim raw input is preserved (#167 bug 4) — note the typo space.
+    expect(free.raw_answer).toEqual({ kind: "free_text", input: "hola " });
+    expect(free.correct_answer).toBe("hola");
+    expect(free.is_correct).toBe(true);
+    expect(free.concept_tags).toEqual(["greeting", "a1"]);
+
+    const match = json.exercises[1];
+    // Matching reconstructs a readable user_answer from raw_answer.
+    expect(match.user_answer).toBe("hello -> adios, bye -> hola");
+    expect(match.is_correct).toBe(false);
+    // Deduplicated union of both cards' tags.
+    expect(match.concept_tags).toEqual(["greeting", "a1"]);
+
+    expect(json.weak_areas).toEqual([{ label: "adios", count: 2 }]);
+  });
+
+  it("skips exercises that were never attempted", () => {
+    const json = buildLessonResultJson({
+      lesson: LESSON,
+      progress: { step_results: {} } as unknown as LessonProgress,
+      dateStr: "2026-06-09",
+      correct: 0,
+      total: 0,
+      pct: 0,
+      weakAreas: [],
+    });
+    expect(json.exercises).toEqual([]);
   });
 });
