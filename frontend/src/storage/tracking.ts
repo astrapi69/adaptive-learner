@@ -142,6 +142,7 @@ export function aggregateProgress(
         .reverse()
         .map((row) => ({
             id: row.id,
+            session_id: row.session_id,
             method: row.method,
             understanding: row.understanding,
             stress: row.stress,
