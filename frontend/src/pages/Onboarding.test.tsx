@@ -109,6 +109,16 @@ describe("Onboarding page", () => {
         expect(screen.queryByTestId("onboarding-daily-minutes")).toBeNull();
     });
 
+    it("keeps the Topic help icon out of the tab order so Tab flows Name -> Topic (#175)", () => {
+        renderOnboarding();
+        // The help icon sits between the Name and Topic inputs in the
+        // DOM; tabIndex=-1 stops it intercepting the Name -> Topic tab
+        // flow while staying clickable.
+        expect(
+            screen.getByTestId("help-link-learning_project"),
+        ).toHaveAttribute("tabindex", "-1");
+    });
+
     it("Submit needs only name + topic — the 2 required fields (#92)", () => {
         renderOnboarding();
         const submit = screen.getByTestId("onboarding-submit") as HTMLButtonElement;

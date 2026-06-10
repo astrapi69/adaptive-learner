@@ -40,12 +40,20 @@ interface Props {
     /** Override the aria-label. Defaults to the
      *  ``ui.help.open_help`` translation. */
     label?: string;
+    /** Override the button's tab order. Pass ``-1`` to drop the
+     *  icon out of the keyboard tab flow (still clickable) when it
+     *  would otherwise intercept focus between two form fields —
+     *  e.g. on the onboarding form, where the help icon sits in the
+     *  DOM between the Name and Topic inputs. Default (undefined)
+     *  keeps the native, focusable tab order. */
+    tabIndex?: number;
 }
 
 export default function HelpLink({
     glossaryKey,
     size = 14,
     label,
+    tabIndex,
 }: Props) {
     const {openHelp} = useHelp();
     const {t} = useI18n();
@@ -61,6 +69,7 @@ export default function HelpLink({
             }}
             aria-label={ariaLabel}
             title={tooltipsOn ? ariaLabel : undefined}
+            tabIndex={tabIndex}
             data-testid={`help-link-${glossaryKey}`}
             className="help-link"
             style={{
