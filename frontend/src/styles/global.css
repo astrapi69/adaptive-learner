@@ -3638,6 +3638,19 @@ select:focus {
   background: color-mix(in srgb, var(--accent) 10%, var(--surface));
 }
 
+/* #12 — the Help nav item is a <button> (it opens the help drawer), not a
+   <Link>. With Tailwind preflight off it would otherwise carry the UA
+   button chrome (grey background + border + button font-family) and read
+   as a separate raised button next to the anchor nav-links. Reset just
+   that chrome so it matches the .nav-link siblings; color, padding,
+   weight and size still come from .nav-link above. */
+.nav-link-button {
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
 .nav-online-indicator {
   display: inline-flex;
   align-items: center;

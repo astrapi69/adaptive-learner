@@ -322,8 +322,10 @@ export default function DashboardFilterBar({
                     </label>
                 )}
 
-                <div className="dashboard-filter-tags">
-                    <span>{t("taxonomy.tags", "Tags")}</span>
+                <div className="dashboard-filter-tags flex flex-col gap-1.5">
+                    <span className="text-sm font-medium text-fg-primary">
+                        {t("taxonomy.tags", "Tags")}
+                    </span>
                     {allTags.length === 0 ? (
                         <span className="muted">
                             {t("taxonomy.no_user_tags_short", "No tags yet.")}
