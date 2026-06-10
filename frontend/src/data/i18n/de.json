@@ -1662,6 +1662,7 @@
       "export": {
         "copy": "Ergebnis kopieren",
         "download": "Als Datei speichern",
+        "download_json": "Als JSON exportieren",
         "copied": "Ergebnis in Zwischenablage kopiert",
         "copy_failed": "Kopieren in die Zwischenablage fehlgeschlagen",
         "title": "Lektionsergebnis",
@@ -1671,6 +1672,7 @@
         "no_mistakes": "Keine Fehler - perfekter Durchlauf!",
         "question": "Frage",
         "your_answer": "Deine Antwort",
+        "no_answer": "(keine)",
         "correct_answer": "Richtig",
         "weak_areas": "Schwache Bereiche"
       },

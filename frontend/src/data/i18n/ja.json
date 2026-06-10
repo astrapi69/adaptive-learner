@@ -1662,6 +1662,7 @@
       "export": {
         "copy": "結果をコピー",
         "download": "ファイルとして保存",
+        "download_json": "JSONとしてエクスポート",
         "copied": "結果をクリップボードにコピーしました",
         "copy_failed": "クリップボードにコピーできませんでした",
         "title": "レッスン結果",
@@ -1671,6 +1672,7 @@
         "no_mistakes": "間違いなし - 完璧です！",
         "question": "問題",
         "your_answer": "あなたの回答",
+        "no_answer": "(なし)",
         "correct_answer": "正解",
         "weak_areas": "弱点"
       },

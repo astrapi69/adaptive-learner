@@ -1662,6 +1662,7 @@
       "export": {
         "copy": "Copier le résultat",
         "download": "Enregistrer comme fichier",
+        "download_json": "Exporter en JSON",
         "copied": "Résultat copié dans le presse-papiers",
         "copy_failed": "Impossible de copier dans le presse-papiers",
         "title": "Résultat de la leçon",
@@ -1671,6 +1672,7 @@
         "no_mistakes": "Aucune erreur - parcours parfait !",
         "question": "Question",
         "your_answer": "Ta réponse",
+        "no_answer": "(aucune)",
         "correct_answer": "Correct",
         "weak_areas": "Points faibles"
       },

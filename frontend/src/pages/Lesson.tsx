@@ -31,6 +31,7 @@ import {
   ClipboardCopy,
   Download,
   ExternalLink,
+  FileJson,
   Pause,
   RotateCcw,
   Square,
@@ -92,8 +93,10 @@ import {
 import { allowsConfetti } from "../lib/feedback/feedbackPref";
 import { tokenDiff } from "../lib/exercises/token-diff";
 import {
+  buildLessonResultJson,
   buildLessonResultMarkdown,
   collectWeakAreas,
+  formatUserAnswer,
   lessonResultFilename,
   type LessonResultLabels,
 } from "../lib/lesson/result-export";
@@ -1031,26 +1034,21 @@ export default function LessonPage() {
                 // Flip to the "Weiter" phase the moment
                 // the answer is graded (Problem 1).
                 setChecked(true);
-                // Phase 52C / v1.35.0 — persist the
-                // user's text-form answer when the
-                // exercise type carries a coherent
-                // text representation of the whole
-                // answer (free_text + word_tiles).
-                // Matching + picture_choice DO emit
-                // a per-element user_answer through
-                // ElementAttempt for SRS purposes,
-                // but those single tokens (a paired
-                // right-tile, a chosen image label)
-                // are not the "answer" the summary
-                // diff renders against the lesson
-                // canonical — leave them null so the
-                // summary falls back to the
-                // canonical-only line.
+                // Persist the user's text-form answer.
+                // free_text + word_tiles carry a coherent text answer
+                // in the attempt; matching + picture_choice store only
+                // a structured raw_answer, so #167 bug 1 reconstructs a
+                // readable form (the chosen image label / the user's
+                // pairings) instead of leaving it null. cloze stays null
+                // (its blanks are diffed in-context).
                 const exerciseType = step!.exercise.type;
                 const stepUserAnswer =
                   exerciseType === "free_text" || exerciseType === "word_tiles"
                     ? (scored.attempts[0]?.user_answer ?? null)
-                    : null;
+                    : formatUserAnswer(
+                        step!.exercise,
+                        scored.raw_answer ?? null,
+                      );
                 await recordStepResult({
                   step_id: step!.id,
                   correct: scored.correct,
@@ -1352,6 +1350,20 @@ function ReviewedFallbackPanel({
   );
 }
 
+/** Trigger a client-side file download for an in-memory string
+ *  (lesson-result Markdown / JSON export). */
+function downloadBlob(content: string, filename: string, mime: string): void {
+  const blob = new Blob([content], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
 interface LessonSummaryProps {
   lesson: import("../storage/types").ContentLesson;
   progress: import("../storage/types").LessonProgress | null;
@@ -1458,7 +1470,10 @@ function LessonSummary({
   // computed for the on-screen list; no new storage read.
   const buildResultMarkdown = useCallback(() => {
     const now = new Date();
-    const dateStr = now.toLocaleDateString(lang || undefined);
+    // #167 bug 5 — ISO 8601 in the export artifact (filename + body),
+    // consistent with lessonResultFilename. Locale formatting is for
+    // live UI display only, never the exported document.
+    const dateStr = now.toISOString().slice(0, 10);
     const labels: LessonResultLabels = {
       title: t("lesson.summary.export.title", "Lesson result"),
       date: t("lesson.summary.export.date", "Date"),
@@ -1471,6 +1486,7 @@ function LessonSummary({
       ),
       question: t("lesson.summary.export.question", "Question"),
       yourAnswer: t("lesson.summary.export.your_answer", "Your answer"),
+      noAnswer: t("lesson.summary.export.no_answer", "(none)"),
       correctAnswer: t("lesson.summary.export.correct_answer", "Correct"),
       weakAreasHeading: t("lesson.summary.export.weak_areas", "Weak areas"),
     };
@@ -1514,16 +1530,29 @@ function LessonSummary({
 
   const handleDownloadResult = useCallback(() => {
     const { markdown, filename } = buildResultMarkdown();
-    const blob = new Blob([markdown], { type: "text/markdown" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    URL.revokeObjectURL(url);
+    downloadBlob(markdown, filename, "text/markdown");
   }, [buildResultMarkdown]);
+
+  // #167 bug 3 — structured JSON twin of the Markdown export. Carries
+  // the prompt, the learner's answer + verbatim raw answer (#167 bug 4),
+  // the correct answer, pass/fail, and concept tags per exercise.
+  const handleDownloadJson = useCallback(() => {
+    const now = new Date();
+    const result = buildLessonResultJson({
+      lesson,
+      progress,
+      dateStr: now.toISOString().slice(0, 10),
+      correct,
+      total,
+      pct: scorePct,
+      weakAreas: collectWeakAreas(sessionErrors),
+    });
+    downloadBlob(
+      JSON.stringify(result, null, 2),
+      lessonResultFilename(lesson.title, now, "json"),
+      "application/json",
+    );
+  }, [lesson, progress, correct, total, scorePct, sessionErrors]);
 
   // Count the score percentage up from 0 (instant under
   // "subtle" / reduced motion - see useCountUp).
@@ -1760,6 +1789,17 @@ function LessonSummary({
         >
           <Download aria-hidden="true" />
           {t("lesson.summary.export.download", "Save as file")}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="min-h-11 gap-2"
+          onClick={handleDownloadJson}
+          data-testid="lesson-summary-download-json"
+        >
+          <FileJson aria-hidden="true" />
+          {t("lesson.summary.export.download_json", "Export as JSON")}
         </Button>
       </div>
 

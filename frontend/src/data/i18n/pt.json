@@ -1662,6 +1662,7 @@
       "export": {
         "copy": "Copiar resultado",
         "download": "Salvar como arquivo",
+        "download_json": "Exportar como JSON",
         "copied": "Resultado copiado para a área de transferência",
         "copy_failed": "Não foi possível copiar para a área de transferência",
         "title": "Resultado da lição",
@@ -1671,6 +1672,7 @@
         "no_mistakes": "Sem erros - rodada perfeita!",
         "question": "Pergunta",
         "your_answer": "Sua resposta",
+        "no_answer": "(nenhuma)",
         "correct_answer": "Correto",
         "weak_areas": "Áreas fracas"
       },
