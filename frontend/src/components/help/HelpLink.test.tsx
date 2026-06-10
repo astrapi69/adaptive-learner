@@ -73,4 +73,29 @@ describe("HelpLink", () => {
         fireEvent.click(screen.getByTestId("help-link-curriculum"));
         expect(onParentClick).not.toHaveBeenCalled();
     });
+
+    it("is keyboard-focusable by default (no tabIndex override)", () => {
+        render(
+            <HelpProvider>
+                <HelpLink glossaryKey="curriculum" />
+            </HelpProvider>,
+        );
+        // No explicit tabIndex -> a native <button> stays in the tab
+        // order, so the attribute is absent.
+        expect(
+            screen.getByTestId("help-link-curriculum"),
+        ).not.toHaveAttribute("tabindex");
+    });
+
+    it("drops out of the tab order when tabIndex=-1 (#175)", () => {
+        render(
+            <HelpProvider>
+                <HelpLink glossaryKey="curriculum" tabIndex={-1} />
+            </HelpProvider>,
+        );
+        expect(screen.getByTestId("help-link-curriculum")).toHaveAttribute(
+            "tabindex",
+            "-1",
+        );
+    });
 });

@@ -436,7 +436,12 @@ export default function Onboarding() {
                         <span className="form-required" aria-hidden="true">
                             *
                         </span>
-                        <HelpLink glossaryKey="learning_project" />
+                        {/* tabIndex=-1 so Tab flows Name -> Topic input
+                            instead of catching focus on this icon, which
+                            sits between the two inputs in the DOM (#175).
+                            Still clickable; the same term is keyboard-
+                            reachable via the intro paragraph's tooltip. */}
+                        <HelpLink glossaryKey="learning_project" tabIndex={-1} />
                     </span>
                     <input
                         data-testid="onboarding-topic"
