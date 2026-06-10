@@ -376,3 +376,20 @@ describe("#108 — matching side tints pass WCAG AA (text on the tinted tile)", 
         });
     }
 });
+
+describe("#211 — the .btn base class declares a readable text color", () => {
+    // Root-cause guard: a bare ``.btn`` (no .btn-primary/-secondary/-danger
+    // variant) must define a ``color`` so it is never invisible in dark
+    // themes. The variants override it; this pins the base default.
+    const css = readFileSync(resolve(HERE, "global.css"), "utf-8");
+
+    it(".btn { ... } sets a color token", () => {
+        const match = css.match(/\.btn\s*\{([^}]*)\}/);
+        expect(match, ".btn rule not found in global.css").toBeTruthy();
+        const body = match![1];
+        expect(
+            /color:\s*var\(--[a-z0-9-]+\)/.test(body),
+            ".btn base rule must set color: var(--...) so a variant-less .btn stays readable",
+        ).toBe(true);
+    });
+});
