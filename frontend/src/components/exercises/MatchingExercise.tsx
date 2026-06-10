@@ -108,12 +108,15 @@ function _scoreMatches(
     return {correct, total};
 }
 
-/** #145 — number of distinct per-pair colors. Cycles modulo this
- *  for the rare exercise with more pairs than palette entries. The
- *  palette reuses the per-theme categorical chart tokens
- *  (``--chart-1`` … ``--chart-N``) so every theme already defines
- *  AA-considered, visually distinct hues with no new tokens. */
-export const MATCHING_PAIR_COLORS = 6;
+/** #145 / #181 — number of distinct per-pair colors. Cycles modulo
+ *  this for the rare exercise with more pairs than palette entries.
+ *  Draws from the dedicated ``--matching-pair-N`` palette
+ *  (``global.css``), a theme-agnostic, RED-FREE set of distinct hues
+ *  (blue / green / orange / purple / teal / yellow / pink). Red is
+ *  excluded on purpose: it universally reads as "wrong", so a correctly
+ *  matched pair must never be tinted red. NOT the ``--chart-*`` palette
+ *  (those are shared with data charts, where red is a valid series). */
+export const MATCHING_PAIR_COLORS = 7;
 
 /** Lowest non-negative slot not already assigned to a pair, so
  *  colors + labels stay compact (1, 2, 3 …) and an existing pair
@@ -126,10 +129,10 @@ function _nextFreeSlot(slots: ReadonlyMap<number, number>): number {
 }
 
 /** CSS custom-property reference to the pair color for ``slot``.
- *  Returns a token reference (``var(--chart-N)``), never a literal,
- *  so it routes through the design-token system. */
+ *  Returns a token reference (``var(--matching-pair-N)``), never a
+ *  literal, so it routes through the design-token system. */
 export function matchingPairColorVar(slot: number): string {
-    return `var(--chart-${(slot % MATCHING_PAIR_COLORS) + 1})`;
+    return `var(--matching-pair-${(slot % MATCHING_PAIR_COLORS) + 1})`;
 }
 
 /** #145 — color + number badge identifying a matched pair. The same

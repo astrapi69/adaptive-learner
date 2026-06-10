@@ -41,6 +41,23 @@
   --method-contextual: #f59e0b;
   --method-ai_adaptive: #6366f1;
 
+  /* Matching-pair palette (#181) — distinct colors for matched pairs in
+   * the Matching exercise. Theme-agnostic on purpose: like --method-*,
+   * the same hues in every theme (used as a ring + faint tint + number
+   * badge, redundant with the badge number so it is never color-alone).
+   * Deliberately RED-FREE: red universally reads as "wrong", so a
+   * correctly matched pair must never be tinted red. Allowed hues only —
+   * blue, green, orange, purple, teal, yellow, pink. NOT reused from
+   * --chart-* (those are shared with data charts, where red is a valid
+   * categorical color). */
+  --matching-pair-1: #3b82f6; /* blue */
+  --matching-pair-2: #22c55e; /* green */
+  --matching-pair-3: #f97316; /* orange */
+  --matching-pair-4: #a855f7; /* purple */
+  --matching-pair-5: #14b8a6; /* teal */
+  --matching-pair-6: #eab308; /* yellow */
+  --matching-pair-7: #ec4899; /* pink */
+
   /* Layout tokens */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
