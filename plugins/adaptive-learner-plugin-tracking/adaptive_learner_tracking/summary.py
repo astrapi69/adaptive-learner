@@ -23,6 +23,7 @@ without colliding::
             "recent_sessions":             [               # v0.4.0
                 {                                          # newest first,
                     "id": str,                             # up to 5
+                    "session_id": str | None,              # originating session
                     "method": str,
                     "understanding": float,
                     "stress": float,
@@ -216,6 +217,7 @@ def aggregate(
         recent_sessions.append(
             {
                 "id": row.get("id"),
+                "session_id": row.get("session_id"),
                 "method": row.get("method"),
                 "understanding": row.get("understanding"),
                 "stress": row.get("stress"),

@@ -429,6 +429,14 @@ export interface MethodDistributionEntry {
 
 export interface RecentSessionEntry {
     id: string;
+    /**
+     * The originating LearningSession id. ``id`` above is the
+     * ProgressCommit id (a distinct UUID), so anything that loads the
+     * underlying session — e.g. Session Detail export — must use this.
+     * Optional for backend/frontend version skew; consumers fall back
+     * to ``id``.
+     */
+    session_id?: string;
     method: LearningMethod;
     understanding: number;
     stress: number;

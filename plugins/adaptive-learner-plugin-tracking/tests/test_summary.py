@@ -98,6 +98,7 @@ from datetime import date  # noqa: E402  (kept with the v0.4.0 tests for visual 
 def _commit_on(day: date, method: str = "deductive", duration: int = 30) -> dict:
     return {
         "id": f"c-{day.isoformat()}-{method}",
+        "session_id": f"s-{day.isoformat()}-{method}",
         "method": method,
         "understanding": 0.6,
         "stress": 0.4,
@@ -274,6 +275,9 @@ def test_recent_sessions_carries_id_method_duration_and_ratings():
     )
     row = out["recent_sessions"][0]
     assert row["id"] == "c-2026-05-18-dialogic"
+    # #209 — session_id is the originating LearningSession, distinct from the
+    # commit id; Session Detail export must target it, not the commit id.
+    assert row["session_id"] == "s-2026-05-18-dialogic"
     assert row["method"] == "dialogic"
     assert row["duration_minutes"] == 42
     assert row["understanding"] == 0.6

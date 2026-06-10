@@ -114,6 +114,16 @@ describe("aggregateProgress", () => {
         expect(r.recent_sessions[4].id).toBe("c2");
     });
 
+    it("recent_sessions carries the originating session_id, distinct from the commit id (#209)", () => {
+        // The commit id and session id are different UUIDs; Session
+        // Detail export must target session_id, not the commit id.
+        const r = aggregateProgress([
+            commit({id: "commit-1", session_id: "session-1"}),
+        ]);
+        expect(r.recent_sessions[0].id).toBe("commit-1");
+        expect(r.recent_sessions[0].session_id).toBe("session-1");
+    });
+
     it("total_minutes sums duration", () => {
         const r = aggregateProgress([
             commit({duration_minutes: 10}),
