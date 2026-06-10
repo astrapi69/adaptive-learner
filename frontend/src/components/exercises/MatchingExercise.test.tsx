@@ -353,12 +353,17 @@ describe("MatchingExercise: knowledge-domain wording (#149)", () => {
 });
 
 describe("MatchingExercise: per-pair color + label (#145)", () => {
-    it("matchingPairColorVar cycles through the chart tokens", () => {
-        expect(matchingPairColorVar(0)).toBe("var(--chart-1)");
-        expect(matchingPairColorVar(2)).toBe("var(--chart-3)");
+    it("matchingPairColorVar cycles through the red-free matching-pair tokens (#181)", () => {
+        expect(matchingPairColorVar(0)).toBe("var(--matching-pair-1)");
+        expect(matchingPairColorVar(2)).toBe("var(--matching-pair-3)");
+        // Wraps after the last palette entry, never touches --chart-*
+        // (which carries red in several themes).
         expect(matchingPairColorVar(MATCHING_PAIR_COLORS)).toBe(
-            "var(--chart-1)",
+            "var(--matching-pair-1)",
         );
+        for (let slot = 0; slot < MATCHING_PAIR_COLORS * 2; slot += 1) {
+            expect(matchingPairColorVar(slot)).not.toContain("--chart-");
+        }
     });
 
     it("labels both tiles of a matched pair with the same number", () => {
