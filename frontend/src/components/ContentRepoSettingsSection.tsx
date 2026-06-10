@@ -694,7 +694,14 @@ export default function ContentRepoSettingsSection() {
             )}
           </p>
         )}
-        <div className="mt-3 flex flex-col gap-3">
+        {/* #119 — the token field is type="password"; wrapping the field
+            group in a form stops Chrome's "Password field is not contained
+            in a form" warning (password managers / autofill detection). No
+            real submit — connect is a button below, outside the form. */}
+        <form
+          className="mt-3 flex flex-col gap-3"
+          onSubmit={(e) => e.preventDefault()}
+        >
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium">
               {t("content_repo.field.url", "GitHub repository URL")}
@@ -739,7 +746,7 @@ export default function ContentRepoSettingsSection() {
               />
             </label>
           </div>
-        </div>
+        </form>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button
             type="button"

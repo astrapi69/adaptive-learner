@@ -106,6 +106,14 @@ describe("ContentRepoSettingsSection (multi-repo)", () => {
     expect(counts).toHaveTextContent("10");
   });
 
+  it("keeps the password token input inside a <form> (#119)", async () => {
+    render(<ContentRepoSettingsSection />);
+    const token = await screen.findByTestId("content-repo-token");
+    expect(token).toHaveAttribute("type", "password");
+    // Chrome warns when a password field has no <form> ancestor.
+    expect(token.closest("form")).not.toBeNull();
+  });
+
   it("lists connected repos with trust badge", async () => {
     pluginGet.mockResolvedValue({
       plugin: "content-loader",
