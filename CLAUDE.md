@@ -9,7 +9,23 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.70.0** (minor — **first-run backup restore +
+- **Current state:** **v1.70.1** (patch — **onboarding / assessment /
+  content-browser / landing UX fixes**). Frontend only, no schema/API
+  change. **Wizard height (#169):** the onboarding profile wizard gives
+  its step area a uniform min-height so the panel no longer jumps
+  between steps. **Assessment dead-ends (#171):** the first question
+  gains a "Continue later" exit (the assessment is resumable) and
+  leaving onboarding after the project is created navigates with
+  ``replace`` so the browser back button no longer lands on the stale
+  name/topic form. **Docs link (#173):** the landing "Read the
+  documentation" link opens in a new tab (``rel="noopener noreferrer"``).
+  **Tab order (#175):** the Topic help icon gets ``tabIndex={-1}`` so Tab
+  flows Name -> Topic instead of catching the icon between them.
+  **Dark-theme buttons (#177):** the Content Browser secondary actions
+  (Import Lesson / Import Chat / Learning Path) + the Recommended-books
+  toggle move from the surface-less ``ghost`` variant to the bordered
+  ``outline`` variant so they stay visible at WCAG AA across all 12
+  themes. v1.70.0 = minor — **first-run backup restore +
   v1.61-v1.69 documentation overhaul + context-sensitive in-app help +
   manual test plan**). **First-run restore (#150):** on an empty
   install the onboarding offers "Restore from backup" instead of a
