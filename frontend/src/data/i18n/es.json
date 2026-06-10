@@ -1671,6 +1671,7 @@
         "no_mistakes": "¡Sin errores, ronda perfecta!",
         "question": "Pregunta",
         "your_answer": "Tu respuesta",
+        "no_answer": "(ninguna)",
         "correct_answer": "Correcta",
         "weak_areas": "Áreas débiles"
       },

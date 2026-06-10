@@ -1633,6 +1633,7 @@
         "no_mistakes": "No mistakes - perfect run!",
         "question": "Question",
         "your_answer": "Your answer",
+        "no_answer": "(none)",
         "correct_answer": "Correct",
         "weak_areas": "Weak areas"
       },

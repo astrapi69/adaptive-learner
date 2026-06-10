@@ -1541,6 +1541,7 @@ lesson:
       no_mistakes: "間違いなし - 完璧です！"
       question: "問題"
       your_answer: "あなたの回答"
+      no_answer: "(なし)"
       correct_answer: "正解"
       weak_areas: "弱点"
     mark_complete: "完了としてマーク"

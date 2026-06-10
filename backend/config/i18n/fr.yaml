@@ -1543,6 +1543,7 @@ lesson:
       no_mistakes: "Aucune erreur - parcours parfait !"
       question: "Question"
       your_answer: "Ta réponse"
+      no_answer: "(aucune)"
       correct_answer: "Correct"
       weak_areas: "Points faibles"
     mark_complete: "Marquer comme terminée"

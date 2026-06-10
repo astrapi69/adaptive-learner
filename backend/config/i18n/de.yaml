@@ -1546,6 +1546,7 @@ lesson:
       no_mistakes: "Keine Fehler - perfekter Durchlauf!"
       question: "Frage"
       your_answer: "Deine Antwort"
+      no_answer: "(keine)"
       correct_answer: "Richtig"
       weak_areas: "Schwache Bereiche"
     mark_complete: "Als abgeschlossen markieren"

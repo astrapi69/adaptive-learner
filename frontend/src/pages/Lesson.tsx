@@ -94,6 +94,7 @@ import { tokenDiff } from "../lib/exercises/token-diff";
 import {
   buildLessonResultMarkdown,
   collectWeakAreas,
+  formatUserAnswer,
   lessonResultFilename,
   type LessonResultLabels,
 } from "../lib/lesson/result-export";
@@ -1031,26 +1032,21 @@ export default function LessonPage() {
                 // Flip to the "Weiter" phase the moment
                 // the answer is graded (Problem 1).
                 setChecked(true);
-                // Phase 52C / v1.35.0 — persist the
-                // user's text-form answer when the
-                // exercise type carries a coherent
-                // text representation of the whole
-                // answer (free_text + word_tiles).
-                // Matching + picture_choice DO emit
-                // a per-element user_answer through
-                // ElementAttempt for SRS purposes,
-                // but those single tokens (a paired
-                // right-tile, a chosen image label)
-                // are not the "answer" the summary
-                // diff renders against the lesson
-                // canonical — leave them null so the
-                // summary falls back to the
-                // canonical-only line.
+                // Persist the user's text-form answer.
+                // free_text + word_tiles carry a coherent text answer
+                // in the attempt; matching + picture_choice store only
+                // a structured raw_answer, so #167 bug 1 reconstructs a
+                // readable form (the chosen image label / the user's
+                // pairings) instead of leaving it null. cloze stays null
+                // (its blanks are diffed in-context).
                 const exerciseType = step!.exercise.type;
                 const stepUserAnswer =
                   exerciseType === "free_text" || exerciseType === "word_tiles"
                     ? (scored.attempts[0]?.user_answer ?? null)
-                    : null;
+                    : formatUserAnswer(
+                        step!.exercise,
+                        scored.raw_answer ?? null,
+                      );
                 await recordStepResult({
                   step_id: step!.id,
                   correct: scored.correct,
@@ -1458,7 +1454,10 @@ function LessonSummary({
   // computed for the on-screen list; no new storage read.
   const buildResultMarkdown = useCallback(() => {
     const now = new Date();
-    const dateStr = now.toLocaleDateString(lang || undefined);
+    // #167 bug 5 — ISO 8601 in the export artifact (filename + body),
+    // consistent with lessonResultFilename. Locale formatting is for
+    // live UI display only, never the exported document.
+    const dateStr = now.toISOString().slice(0, 10);
     const labels: LessonResultLabels = {
       title: t("lesson.summary.export.title", "Lesson result"),
       date: t("lesson.summary.export.date", "Date"),
@@ -1471,6 +1470,7 @@ function LessonSummary({
       ),
       question: t("lesson.summary.export.question", "Question"),
       yourAnswer: t("lesson.summary.export.your_answer", "Your answer"),
+      noAnswer: t("lesson.summary.export.no_answer", "(none)"),
       correctAnswer: t("lesson.summary.export.correct_answer", "Correct"),
       weakAreasHeading: t("lesson.summary.export.weak_areas", "Weak areas"),
     };

@@ -1541,6 +1541,7 @@ lesson:
       no_mistakes: "Hata yok - kusursuz tur!"
       question: "Soru"
       your_answer: "Senin cevabın"
+      no_answer: "(yok)"
       correct_answer: "Doğru"
       weak_areas: "Zayıf alanlar"
     mark_complete: "Tamamlandı olarak işaretle"

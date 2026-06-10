@@ -1543,6 +1543,7 @@ lesson:
       no_mistakes: "Κανένα λάθος - τέλεια προσπάθεια!"
       question: "Ερώτηση"
       your_answer: "Η απάντησή σου"
+      no_answer: "(καμία)"
       correct_answer: "Σωστό"
       weak_areas: "Αδύναμα σημεία"
     mark_complete: "Σήμανση ως ολοκληρωμένο"
