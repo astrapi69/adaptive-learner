@@ -1065,34 +1065,24 @@ select:focus {
 
 .chart-summary-details > summary {
   cursor: pointer;
-  color: var(--accent);
+  /* #218 — fg-primary, not accent: accent-as-text is only pinned >=3:1 on
+     bg-elevated (where the chart cards live), below the 4.5:1 normal-text
+     AA, so the trigger was barely visible in dark themes. Accent is the
+     hover affordance instead. */
+  color: var(--fg-primary);
+  font-weight: 500;
   user-select: none;
   padding: var(--space-1) 0;
+}
+
+.chart-summary-details > summary:hover {
+  color: var(--accent);
 }
 
 .chart-summary-details > summary:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
   border-radius: var(--radius-sm);
-}
-
-.chart-summary-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: var(--space-2);
-  font-size: 0.85rem;
-}
-
-.chart-summary-table th,
-.chart-summary-table td {
-  padding: var(--space-1) var(--space-2);
-  border-bottom: 1px solid var(--border);
-  text-align: left;
-}
-
-.chart-summary-table th {
-  font-weight: 600;
-  color: var(--fg-muted);
 }
 
 /* --- v0.5.0 / 8D step-evaluation insights ------------------- */

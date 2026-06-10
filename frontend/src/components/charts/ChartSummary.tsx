@@ -1,3 +1,11 @@
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
 import {useI18n} from "../../hooks/useI18n";
 
 interface ChartSummaryProps {
@@ -64,31 +72,27 @@ export default function ChartSummary({
                     data-testid={testid ? `${testid}-table-toggle` : undefined}
                 >
                     <summary>{toggleLabel}</summary>
-                    <table
-                        className="chart-summary-table"
-                        data-testid={
-                            testid ? `${testid}-table` : undefined
-                        }
+                    <Table
+                        className="mt-2"
+                        data-testid={testid ? `${testid}-table` : undefined}
                     >
-                        <thead>
-                            <tr>
+                        <TableHeader>
+                            <TableRow>
                                 {tableHeaders.map((h) => (
-                                    <th key={h} scope="col">
-                                        {h}
-                                    </th>
+                                    <TableHead key={h}>{h}</TableHead>
                                 ))}
-                            </tr>
-                        </thead>
-                        <tbody>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
                             {tableRows.map((row, rIdx) => (
-                                <tr key={rIdx}>
+                                <TableRow key={rIdx}>
                                     {row.map((cell, cIdx) => (
-                                        <td key={cIdx}>{cell}</td>
+                                        <TableCell key={cIdx}>{cell}</TableCell>
                                     ))}
-                                </tr>
+                                </TableRow>
                             ))}
-                        </tbody>
-                    </table>
+                        </TableBody>
+                    </Table>
                 </details>
             )}
         </div>
