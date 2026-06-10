@@ -1711,3 +1711,75 @@ time and inherit.
   original lesson object. The ShareWizard step-1 gate recomputes inline
   every render from the ``editSource`` / ``editTarget`` / ``editLevel``
   state, so a dropdown change re-validates immediately.
+
+## A "flaky" test that fails deterministically on unchanged code is stale, not flaky
+
+Surfaced 2026-06-10 during the v1.71.1 release gate. The `lesson-tts`
+Dexie-smoke spec failed the gate; it carried a `#165` comment declaring
+it an intermittent **timeout flake** on loaded runners (it had been given
+`timeout: 60_000, retries: 2`). The first instinct — "loaded machine,
+re-run it" — was wrong twice over:
+
+1. It failed again on a full re-run, and again **in isolation on an idle
+   machine in 10-30s** (nowhere near the 60s timeout). A genuine timeout
+   flake does not reproduce 3/3 on an idle box in a fraction of the cap.
+2. The assertion (`getByTestId("lesson-read-along")` visible) targeted a
+   view that a **prior release intentionally removed** (#147 in v1.68.0:
+   "read-aloud no longer swaps the theory body to a follow-along"). The
+   `ReadAlongText` component that renders that testid had **zero
+   consumers** — so the element never rendered and the test failed 100%.
+
+The diagnosis that cracked it, in order:
+- **Re-run in isolation, watch the wall-clock.** Deterministic + fast =
+  not a timeout flake, regardless of any "flaky" comment on the test.
+- **`grep` the asserted testid's consumers.** A testid that exists in a
+  component file but has **no JSX consumer** is dead — the element never
+  mounts. (`grep -rn '<ComponentName' src` returning only the definition
+  is the tell.)
+- **`git log <last-release-tag>..HEAD -- <spec> <component-dir>`.** Empty
+  output proves the current change set didn't touch it — so a failure is
+  either pre-existing or environmental, never "your diff broke it".
+
+Rules:
+- A comment calling a test "flaky" is a **hypothesis, not a diagnosis**.
+  Verify it (isolate + time it) before trusting `retries`/`timeout` band-aids.
+- When a feature is **removed/changed by design**, delete or update its
+  tests in the SAME change. A leftover assertion against a removed view is
+  a 100%-failing test that a `retries: 2` will mask as "flaky" until a
+  loaded run finally exposes it. (Pairs with "Operational gaps masquerade
+  as wired infrastructure" — `#193` "stabilised" the spec without a
+  verified green run; the stabilisation hid a stale assertion.)
+- The fix for a stale test is to align it with the intended behaviour
+  (here: drop the follow-along assertions, keep the mini-player + engine
+  checks), not to re-add the removed UI.
+
+## User-reported UI bugs: confirm against a FRESH deploy before fixing
+
+Surfaced 2026-06-10. Aster reported a stream of dark-theme contrast /
+spacing bugs from manual testing of the GitHub-Pages deployment. Several
+(matching result feedback, correction-round Enter, LearningPath tabs,
+"Meine Lektionen" overflow, the FocusAreas/Review buttons) were **already
+correct in `main`** — the deployed build was many merges behind, so they
+were **stale-build artifacts**, not code bugs. Static analysis (and
+compiled-CSS inspection: `bg-card`→`var(--bg-surface)`, `text-fg-*`→
+runtime `var()`) confirmed the source was right.
+
+But the inverse trap is just as real: after Aster **hard-refreshed**, a
+subset persisted and were **genuinely real** ("nicht als stale build
+abtun"). Dismissing those as stale would have been the mirror-image error.
+
+Rules:
+- For a UI bug reported against a **deployed** build, first establish
+  *which build* the user saw. If `main` already contains the fix, the
+  action is **deploy/refresh**, not a code change — say so and verify the
+  deploy is current (the GH-Pages deploy here had silently failed on a
+  transient `actions/deploy-pages` 401, so the fixes weren't even live).
+- Do **not** file or ship a "fix" for code that is already correct
+  (GITHUB-ISSUE-PFLICHT: a false issue is worse than none). Confirm the
+  defect exists in current source first (read the component + the
+  compiled CSS, not just the symptom).
+- Equally, do **not** dismiss a hard-refreshed, still-failing report as
+  "stale build". When static analysis says the code looks correct but the
+  user insists post-refresh, the gap is in the rendered runtime you can't
+  see — ask for the screenshot / DevTools computed `background-color` +
+  `color` + active `data-theme` rather than guess-fixing.

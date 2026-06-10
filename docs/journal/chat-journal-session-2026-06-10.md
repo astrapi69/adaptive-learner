@@ -209,3 +209,78 @@ The Miller "7 ± 2" cloze required the untypeable `±` glyph; broadened
   green.
 - GitHub release: <https://github.com/astrapi69/adaptive-learner/releases/tag/v1.71.0>
 - MkDocs + GH-Pages deploys run automatically on push to `main`.
+
+## v1.71.1 — dark-theme contrast & spacing sweep + Session-Detail export fix + patch release
+
+A manual-testing bug sweep (Aster) plus a data-export fix, shipped as
+one-issue-one-PR fixes, then merged and released as a patch.
+
+### Clean-code audit + P0
+
+- `docs/CLEAN-CODE-AUDIT.md` (PR #196, merged) — full audit of
+  `backend/app` + `plugins` + `frontend/src` + `e2e` via four parallel
+  deep-dive agents. Overall 7.5/10; the strictest rules hold with zero
+  violations. One P0 (silent `app.yaml` swallow) fixed in #198 (#197):
+  narrow the `except` + log, mirroring `_load_override_file`.
+
+### UI / data fixes (each its own issue + PR, all merged)
+
+- #199→#200: Matching `--matching-pair-3` orange → cyan (orange reads as
+  a warning on a correct pair, like red in #181) + a guard pinning the
+  pair palette free of red/orange hues.
+- #201→#202: Donation "preferred" badge → `--accent-fg` token (was a
+  hardcoded `rgba(255,255,255,0.2)`, invisible on dark).
+- #203→#204: Learning-Repo settings layout (`.settings-row` had no CSS —
+  fields collapsed inline) → Tailwind flex + shadcn Input + the dev-only
+  "(POST /persist)" dropped from all 8 i18n catalogs.
+- #205→#206: Missions reset raw `<button class="btn">` → shadcn
+  `Button variant="destructive"`.
+- #207→#208: ThemePicker inactive tab `text-fg-muted` → `text-fg-secondary`
+  (fg-muted fails AA on `bg-elevated` in catppuccin-latte, 3.49:1) + a
+  contrast pin for fg-secondary on surface/elevated across all themes.
+- #209→#210: **Session-Detail export** targeted the ProgressCommit id,
+  but the export builder loads by `LearningSession` id — every export
+  failed "Session … not found" in both modes. `recent_sessions` now
+  carries `session_id` (Dexie tracking + API summary); regression-pinned
+  both sides.
+- #211→#212: **Systematic** — the `.btn` base class set no text colour
+  (only its variants did), so a variant-less `.btn` went invisible on
+  dark. `.btn { color: var(--fg-primary) }` + a guard. Root cause behind
+  the recurring "invisible button" reports; the v1.71.0 #185
+  `button{color:inherit}` only reached raw `<button>`.
+- #213/#214→#215: Dashboard tags-filter spacing + Nav "Help" button
+  (raw `<button>` UA chrome) consistency.
+- #216→#217: Progress › Lernmaterialien action/filter spacing (tokens).
+- #218→#219: Chart data-table "Show as table" trigger `var(--accent)` →
+  `var(--fg-primary)` (accent only ≥3:1 on elevated) + migrate the raw
+  `<table>` to a new dependency-free shadcn `ui/table.tsx`.
+
+### Release
+
+- All 10 PRs squash-merged to `main`. Patch bump → v1.71.1
+  (`sync-versions` 19 files; README/README-de/ROADMAP/backlog/CLAUDE
+  version updated; `verify-docs-discipline` 0 FAIL).
+- Gate: `make release-test` green except the `lesson-tts` Dexie spec,
+  which turned out to be a **stale test** (#221 → commit `abe9689d`):
+  it asserted the `lesson-read-along` follow-along view that v1.68.0
+  #147 removed (the `ReadAlongText` component now has zero consumers),
+  so it failed 100% on unchanged code — not the #165 timeout flake.
+  Dropped the obsolete assertions; gate green (51 dexie specs).
+- Tag `v1.71.1` on `5638b367`, pushed; GitHub release:
+  <https://github.com/astrapi69/adaptive-learner/releases/tag/v1.71.1>
+- The Pages deploy of the merges first failed on a transient
+  `actions/deploy-pages` 401 (build succeeded); a re-run deployed the
+  fixes live.
+
+### Still open
+
+- Bugs 8/10/11/21 (Dashboard project-button / LearningPath tabs +
+  progress-bar / LearningPath card white-bg) — reported real after
+  hard-refresh, but every obvious cause resolves correctly in source
+  (verified via compiled CSS: `bg-card`→`var(--bg-surface)`,
+  `text-fg-secondary`→runtime var, xyflow nodes themed). Awaiting
+  Aster's re-test against the fresh deploy + DevTools computed colors to
+  pinpoint the actual element/theme.
+- Infra-hardening track (ESLint/audit/coverage-gate/madge/Dependabot/
+  Prettier/bundle-analyzer) — not started; ESLint install hit an
+  `eslint-plugin-react` peer-dep conflict to resolve.
