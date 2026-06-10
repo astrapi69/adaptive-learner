@@ -1360,7 +1360,7 @@ repo:
       save: "設定を保存できませんでした"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
     description: "セッションデータからプロジェクトごとに Markdown 成果物（README、STATS、CHEATSHEET、ROADMAP）を自動生成します。オプションの git 連携で各生成をコミットするため、任意の git クライアントで履歴を閲覧できます。"
-    enable_git: "git 永続化を有効にする（POST /persist エンドポイント）"
+    enable_git: "git 永続化を有効にする"
 lesson:
   theory:
     view_example: "例を見る"

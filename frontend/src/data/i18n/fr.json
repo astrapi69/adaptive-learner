@@ -1466,7 +1466,7 @@
         "save": "Impossible d'enregistrer les paramètres"
       },
       "description": "Génère automatiquement des artefacts Markdown (README, STATS, CHEATSHEET, ROADMAP) par projet à partir de vos données de session. L'intégration git facultative valide chaque génération pour que vous puissiez parcourir l'historique avec n'importe quel client git.",
-      "enable_git": "Activer la persistance git (point de terminaison POST /persist)"
+      "enable_git": "Activer la persistance git"
     }
   },
   "lesson": {

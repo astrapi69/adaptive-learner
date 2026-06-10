@@ -1466,7 +1466,7 @@
         "save": "Não foi possível salvar as definições"
       },
       "description": "Gera automaticamente artefatos Markdown (README, STATS, CHEATSHEET, ROADMAP) por projeto a partir dos dados das suas sessões. A integração git opcional faz commit de cada geração para que você possa navegar pelo histórico com qualquer cliente git.",
-      "enable_git": "Ativar persistência git (endpoint POST /persist)"
+      "enable_git": "Ativar persistência git"
     }
   },
   "lesson": {

@@ -1371,7 +1371,7 @@ repo:
       save: "Could not save settings"
 # Lesson viewer (Phase 44 / EXP-002 / F-102 + F-103)
     description: "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client."
-    enable_git: "Enable git persistence (POST /persist endpoint)"
+    enable_git: "Enable git persistence"
 lesson:
   theory:
     view_example: "View example"

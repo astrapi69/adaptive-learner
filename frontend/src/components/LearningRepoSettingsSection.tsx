@@ -22,6 +22,7 @@
 import {useEffect, useState} from "react";
 
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 import {ApiError} from "../api/client";
 import {useI18n} from "../hooks/useI18n";
 import {getStorage} from "../storage";
@@ -112,20 +113,23 @@ export default function LearningRepoSettingsSection() {
 
     return (
         <section
-            className="learning-repo-settings-section"
+            className="flex flex-col gap-4"
             data-testid="learning-repo-settings"
         >
-            <h2>{t("repo.settings.title", "Learning Repository")}</h2>
-            <p className="settings-section-description">
+            <h2 className="m-0 text-lg font-semibold text-[var(--fg-primary)]">
+                {t("repo.settings.title", "Learning Repository")}
+            </h2>
+            <p className="m-0 text-sm text-[var(--fg-muted)]">
                 {t(
                     "repo.settings.description",
                     "Auto-emits Markdown artefacts (README, STATS, CHEATSHEET, ROADMAP) per project from your session data. Optional git integration commits each render so you can browse the history with any git client.",
                 )}
             </p>
 
-            <label className="settings-row">
+            <label className="flex items-center gap-2 text-[var(--fg-primary)]">
                 <input
                     type="checkbox"
+                    className="h-4 w-4 shrink-0 accent-[var(--accent)]"
                     checked={settings.enable_git}
                     onChange={(e) =>
                         setSettings({...settings, enable_git: e.target.checked})
@@ -133,16 +137,15 @@ export default function LearningRepoSettingsSection() {
                     data-testid="learning-repo-settings-enable-git"
                 />
                 <span>
-                    {t(
-                        "repo.settings.enable_git",
-                        "Enable git persistence (POST /persist endpoint)",
-                    )}
+                    {t("repo.settings.enable_git", "Enable git persistence")}
                 </span>
             </label>
 
-            <label className="settings-row settings-row-stacked">
-                <span>{t("repo.settings.repos_dir", "Repositories directory")}</span>
-                <input
+            <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium text-[var(--fg-primary)]">
+                    {t("repo.settings.repos_dir", "Repositories directory")}
+                </span>
+                <Input
                     type="text"
                     value={settings.repos_dir}
                     placeholder={DEFAULT_REPOS_DIR}
@@ -153,7 +156,7 @@ export default function LearningRepoSettingsSection() {
                 />
             </label>
 
-            <div className="settings-row">
+            <div className="mt-2">
                 <Button
                     type="button"
                     variant="default"
