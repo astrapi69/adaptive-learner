@@ -114,6 +114,14 @@ jobs:
         working-directory: frontend
         run: npx tsc --noEmit
 
+      # ESLint (#222). --max-warnings is a ratchet ceiling set at the
+      # current count; it can only go DOWN. New warnings fail CI; the
+      # blocking errors (react-hooks/rules-of-hooks, react/jsx-key) have
+      # zero current violations.
+      - name: ESLint
+        working-directory: frontend
+        run: npx eslint src/ --max-warnings 436
+
       - name: Run Vitest
         working-directory: frontend
         run: npx vitest run
