@@ -1422,6 +1422,7 @@ lesson:
       left_label_productive: Significado
       right_label_productive: Término
       left_label_knowledge: "Término"
+      correct_hint: "Correcto: {label}"
       right_label_knowledge: "Definición"
       instruction_knowledge: "Relaciona cada término con su definición."
       instructions_knowledge: "Selecciona un elemento a la izquierda y luego su correspondencia a la derecha."

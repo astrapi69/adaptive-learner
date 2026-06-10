@@ -1422,6 +1422,7 @@ lesson:
       left_label_productive: Σημασία
       right_label_productive: Όρος
       left_label_knowledge: "Όρος"
+      correct_hint: "Σωστό: {label}"
       right_label_knowledge: "Ορισμός"
       instruction_knowledge: "Αντιστοίχισε κάθε όρο με τον ορισμό του."
       instructions_knowledge: "Επίλεξε ένα στοιχείο αριστερά και μετά το ταίρι του δεξιά."
