@@ -41,6 +41,26 @@ for (const id of THEME_IDS) {
     THEME_TOKENS[id] = readThemeTokens(id);
 }
 
+/** Replicates CSS ``color-mix(in srgb, A pct%, B)`` — a per-channel
+ *  linear blend in gamma-encoded sRGB — so the matching-feedback
+ *  backgrounds (defined as color-mix in global.css) can be contrast-
+ *  checked exactly as the browser computes them (#183). */
+function mixSrgb(a: string, b: string, pct: number): string {
+    const channels = (h: string): number[] => {
+        let s = h.replace("#", "");
+        if (s.length === 3) s = s.split("").map((c) => c + c).join("");
+        return [0, 2, 4].map((i) => parseInt(s.slice(i, i + 2), 16));
+    };
+    const [ar, ag, ab] = channels(a);
+    const [br, bg, bb] = channels(b);
+    const w = pct / 100;
+    const ch = (x: number, y: number) =>
+        Math.round(x * w + y * (1 - w))
+            .toString(16)
+            .padStart(2, "0");
+    return `#${ch(ar, br)}${ch(ag, bg)}${ch(ab, bb)}`;
+}
+
 describe("Phase 58D — WCAG AA contrast (all themes)", () => {
     for (const id of THEME_IDS) {
         const t = () => THEME_TOKENS[id];
@@ -111,6 +131,31 @@ describe("Phase 58D — WCAG AA contrast (all themes)", () => {
                         `${ex} on bg-surface`,
                     ).toBeGreaterThanOrEqual(AA_LARGE_TEXT_OR_UI);
                 }
+            });
+
+            // #183 — the matching result tiles tint the surface with the
+            // exercise-correct / -wrong color (green / red) and render
+            // fg-primary on top (--matching-correct-bg / --matching-error-bg
+            // in global.css). The text must stay AA on the computed tint.
+            it("matching correct/wrong feedback backgrounds keep fg-primary at AA", () => {
+                const correctBg = mixSrgb(
+                    t()["exercise-correct"],
+                    t()["bg-surface"],
+                    22,
+                );
+                const wrongBg = mixSrgb(
+                    t()["exercise-wrong"],
+                    t()["bg-surface"],
+                    22,
+                );
+                expect(
+                    contrastRatio(t()["fg-primary"], correctBg),
+                    "fg-primary on --matching-correct-bg",
+                ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+                expect(
+                    contrastRatio(t()["fg-primary"], wrongBg),
+                    "fg-primary on --matching-error-bg",
+                ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
             });
         });
     }

@@ -107,6 +107,26 @@
    * saturated red in every theme. Mirrors --accent-fg for --accent. */
   --danger-fg: #ffffff;
 
+  /* Matching exercise result feedback (#183). After checking, a
+   * correctly matched pair is tinted GREEN and a wrong pair RED (red as
+   * error feedback is correct here; red as a PAIR color stays forbidden,
+   * see #181). Defined once but resolve PER THEME through each theme's
+   * --exercise-correct / --exercise-wrong + --bg-surface, so they adapt
+   * to all 12 themes. The tint is subtle enough that --fg-primary stays
+   * readable on it; contrast.test.ts pins the computed mix at WCAG AA. */
+  --matching-correct-bg: color-mix(
+    in srgb,
+    var(--exercise-correct) 22%,
+    var(--bg-surface)
+  );
+  --matching-correct-fg: var(--fg-primary);
+  --matching-error-bg: color-mix(
+    in srgb,
+    var(--exercise-wrong) 22%,
+    var(--bg-surface)
+  );
+  --matching-error-fg: var(--fg-primary);
+
   /* TipTap highlighter ("mark") — a translucent amber drawn from the
    * --method-contextual brand hue, layered over any surface. The
    * toolbar swatch sits a touch stronger; both gain a dark override

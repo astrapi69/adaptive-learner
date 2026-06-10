@@ -181,6 +181,66 @@ describe("MatchingExercise: scoring + completion", () => {
         expect(onComplete).toHaveBeenCalledWith(expect.objectContaining({correct: 1, total: 3}));
     });
 
+    it("keeps pair badges visible and marks correct pairs green on BOTH sides after checking (#183)", () => {
+        render(
+            <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
+        );
+        for (let i = 0; i < 3; i++) {
+            fireEvent.click(screen.getByTestId(`matching-left-${i}`));
+            fireEvent.click(screen.getByTestId(`matching-right-${i}`));
+        }
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        // Badges persist after submit (used to vanish), once per side.
+        expect(screen.getAllByTestId("matching-pair-badge-1")).toHaveLength(2);
+        // Both tiles of each correct pair are flagged correct.
+        expect(screen.getByTestId("matching-left-0").className).toContain(
+            "is-correct",
+        );
+        expect(screen.getByTestId("matching-right-0").className).toContain(
+            "is-correct",
+        );
+        // No spurious correct-partner hint when everything is right.
+        expect(
+            screen.queryByTestId("matching-correct-hint-0"),
+        ).not.toBeInTheDocument();
+    });
+
+    it("marks wrong pairs red on both sides and shows the correct partner (#183)", () => {
+        render(
+            <MatchingExercise exercise={EXERCISE} onComplete={vi.fn()} />,
+        );
+        // 0→1 (wrong), 1→0 (wrong), 2→2 (correct)
+        fireEvent.click(screen.getByTestId("matching-left-0"));
+        fireEvent.click(screen.getByTestId("matching-right-1"));
+        fireEvent.click(screen.getByTestId("matching-left-1"));
+        fireEvent.click(screen.getByTestId("matching-right-0"));
+        fireEvent.click(screen.getByTestId("matching-left-2"));
+        fireEvent.click(screen.getByTestId("matching-right-2"));
+        fireEvent.click(screen.getByTestId("matching-submit"));
+        // The wrongly-paired left + the right it chose are both flagged wrong.
+        expect(screen.getByTestId("matching-left-0").className).toContain(
+            "is-wrong",
+        );
+        expect(screen.getByTestId("matching-right-1").className).toContain(
+            "is-wrong",
+        );
+        // The correct partner for left-0 (pairs[0].right = "Hello") is shown.
+        expect(
+            screen.getByTestId("matching-correct-hint-0"),
+        ).toHaveTextContent("Hello");
+        // The one correct pair stays green on both sides.
+        expect(screen.getByTestId("matching-left-2").className).toContain(
+            "is-correct",
+        );
+        expect(screen.getByTestId("matching-right-2").className).toContain(
+            "is-correct",
+        );
+        // Badges still present after checking.
+        expect(
+            screen.getAllByTestId("matching-pair-badge-1").length,
+        ).toBeGreaterThan(0);
+    });
+
     it("'Try again' resets state and re-enables interaction", () => {
         render(
             <MatchingExercise

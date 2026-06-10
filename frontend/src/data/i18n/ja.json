@@ -1535,6 +1535,7 @@
         "left_label_productive": "意味",
         "right_label_productive": "用語",
         "left_label_knowledge": "用語",
+        "correct_hint": "正解: {label}",
         "right_label_knowledge": "定義",
         "instruction_knowledge": "各用語を定義と一致させてください。",
         "instructions_knowledge": "左の項目を選んでから、右の対応する項目を選んでください。",
