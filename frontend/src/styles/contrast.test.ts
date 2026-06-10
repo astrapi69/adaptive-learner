@@ -86,6 +86,20 @@ describe("Phase 58D — WCAG AA contrast (all themes)", () => {
                 ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
             });
 
+            it("secondary text on surface + elevated passes normal-text AA (#207)", () => {
+                // The ThemePicker tablist (and other panel UI) renders on
+                // surface/elevated backgrounds, not bg-primary. Inactive tabs
+                // use --fg-secondary, so it must clear AA there too — fg-muted
+                // does NOT (catppuccin-latte fg-muted on bg-elevated = 3.49),
+                // which is why inactive tabs were switched off fg-muted.
+                for (const bg of ["bg-surface", "bg-elevated"]) {
+                    expect(
+                        contrastRatio(t()["fg-secondary"], t()[bg]),
+                        `fg-secondary on ${bg}`,
+                    ).toBeGreaterThanOrEqual(AA_NORMAL_TEXT);
+                }
+            });
+
             it("accent button text passes normal-text AA", () => {
                 expect(
                     contrastRatio(t()["accent-fg"], t()["accent"]),

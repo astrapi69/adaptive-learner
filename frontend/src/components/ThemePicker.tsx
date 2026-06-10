@@ -115,7 +115,7 @@ export default function ThemePicker() {
                             "min-h-11 rounded px-3 text-sm font-medium transition-colors " +
                             (group === groupId
                                 ? "bg-accent text-accent-fg"
-                                : "text-fg-muted hover:text-fg-primary")
+                                : "text-fg-secondary hover:text-fg-primary")
                         }
                     >
                         {groupId === "recommended"
