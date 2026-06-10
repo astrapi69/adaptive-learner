@@ -100,6 +100,17 @@ async function openFirstLesson(page: Page): Promise<void> {
 }
 
 test.describe("Lesson read-aloud (TTS)", () => {
+    // #165 — this spec's setup (openFirstLesson) downloads the bundled
+    // fr-a1-from-en set into Dexie and renders the lesson before any TTS
+    // assertion runs. On a loaded headless CI runner those serial waits
+    // (content tree + download + lesson page) can approach the 30s default
+    // per-test cap, surfacing as an intermittent timeout — NOT a TTS bug
+    // (the speech engine is faked deterministically below; production TTS
+    // code is unchanged). Give the spec headroom + an extra retry so a
+    // transient slow load doesn't fail the gate, while a real regression
+    // still fails every attempt.
+    test.describe.configure({timeout: 60_000, retries: 2});
+
     test("theory read-aloud: controls, follow-along, mini-player, stop", async ({
         page,
     }) => {
