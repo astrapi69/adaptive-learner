@@ -42,4 +42,13 @@ describe("BookRecommendations", () => {
     expect(link).toHaveAttribute("target", "_blank");
     expect(link).toHaveAttribute("rel", "noopener noreferrer");
   });
+
+  it("renders the toggle with the outline variant so it stays visible in dark themes (#177)", () => {
+    render(<BookRecommendations domain="ai" books={BOOKS} />);
+    // outline gives a bordered surface (the surface-less ghost variant
+    // read as nearly invisible in dark themes); text stays AA.
+    const toggle = screen.getByTestId("book-recommendations-toggle");
+    expect(toggle.className).toContain("border");
+    expect(toggle.className).toContain("text-foreground");
+  });
 });

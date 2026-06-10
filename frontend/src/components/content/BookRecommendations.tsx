@@ -96,7 +96,7 @@ export default function BookRecommendations({
     <section className="mt-2" data-testid={`book-recommendations-${domain}`}>
       <Button
         type="button"
-        variant="ghost"
+        variant="outline"
         size="sm"
         className="min-h-11 gap-1.5 px-2 font-medium"
         aria-expanded={open}
