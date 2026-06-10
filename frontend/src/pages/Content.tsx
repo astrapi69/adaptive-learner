@@ -1281,7 +1281,12 @@ export default function ContentPage() {
                       </span>
                     </p>
                   </div>
-                  <div className="content-set-action">
+                  {/* #226 — My Lessons rows carry up to 6 actions. The
+                      shared .content-set-action is flex-shrink:0, so its
+                      flex-wrap never activates beside the meta and the row
+                      overflowed the card. w-full drops it onto its own
+                      full-width line so the buttons wrap to the next row. */}
+                  <div className="content-set-action w-full">
                     <Button
                       type="button"
                       onClick={() => handleOpenLesson(entry)}
