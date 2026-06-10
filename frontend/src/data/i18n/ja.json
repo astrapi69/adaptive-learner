@@ -234,6 +234,7 @@
     "question_progress": "質問 {current} / {total}",
     "next_question": "次の質問",
     "prev_question": "前の質問",
+    "continue_later": "後で続ける",
     "submit": "評価する",
     "evaluating": "評価中…",
     "result_title": "あなたの学習プロフィール",

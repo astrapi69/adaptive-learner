@@ -99,6 +99,17 @@ function renderAssessment() {
     );
 }
 
+/** Render with a router ``state.backTo`` on the /assessment entry. */
+function renderAssessmentWithBackTo(backTo: string) {
+    return render(
+        <MemoryRouter
+            initialEntries={[{pathname: "/assessment", state: {backTo}}]}
+        >
+            <Assessment />
+        </MemoryRouter>,
+    );
+}
+
 describe("Assessment page", () => {
     beforeEach(() => {
         mockNavigate.mockClear();
@@ -384,5 +395,45 @@ describe("Assessment swipe + keyboard navigation (Phase 23B)", () => {
         });
         // We're still on q01 since the input intercepted it.
         expect(screen.getByTestId("question-card-q01")).toBeInTheDocument();
+    });
+
+    // --- First-step exit / no dead-end (#171) -----------------------------
+
+    it("offers a 'Continue later' exit on the first question, not a disabled Previous", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        // The disabled Previous-question button is replaced by a working
+        // exit so the first step is never a dead-end.
+        expect(screen.queryByTestId("assessment-prev")).toBeNull();
+        const exit = screen.getByTestId("assessment-exit");
+        expect((exit as HTMLButtonElement).disabled).toBe(false);
+    });
+
+    it("the first-step exit navigates to the Dashboard by default", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        fireEvent.click(screen.getByTestId("assessment-exit"));
+        expect(mockNavigate).toHaveBeenCalledWith("/dashboard");
+    });
+
+    it("the first-step exit honours location.state.backTo", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessmentWithBackTo("/settings");
+        await screen.findByTestId("question-card-q01");
+        fireEvent.click(screen.getByTestId("assessment-exit"));
+        expect(mockNavigate).toHaveBeenCalledWith("/settings");
+    });
+
+    it("shows Previous (not the exit) once past the first question", async () => {
+        apiQuestions.mockResolvedValue(Q);
+        renderAssessment();
+        await screen.findByTestId("question-card-q01");
+        fireEvent.click(screen.getByTestId("question-q01-answer-a"));
+        fireEvent.click(screen.getByTestId("assessment-next"));
+        await screen.findByTestId("question-card-q02");
+        expect(screen.queryByTestId("assessment-exit")).toBeNull();
+        expect(screen.getByTestId("assessment-prev")).toBeInTheDocument();
     });
 });

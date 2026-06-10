@@ -211,7 +211,20 @@ export default function Onboarding() {
                 ...(trimmedGoal ? {goal: trimmedGoal} : {}),
                 ...(trimmedProblem ? {current_problem: trimmedProblem} : {}),
             });
-            navigate(startAssessment ? "/assessment" : "/dashboard");
+            // ``replace`` so the browser back button can't return to this
+            // now-stale onboarding page — its phase resets to the
+            // name/topic form on remount, which would look like the
+            // just-created project was lost (#171). The assessment carries
+            // a ``backTo`` so its first-step "Continue later" exit returns
+            // to the Dashboard, where it can be resumed.
+            if (startAssessment) {
+                navigate("/assessment", {
+                    replace: true,
+                    state: {backTo: "/dashboard"},
+                });
+            } else {
+                navigate("/dashboard", {replace: true});
+            }
         } catch (err) {
             const detail =
                 err instanceof ApiError ? err.detail : t("common.error", "Something went wrong.");
@@ -314,7 +327,7 @@ export default function Onboarding() {
                         <Button
                             type="button"
                             variant="default"
-                            onClick={() => navigate("/dashboard")}
+                            onClick={() => navigate("/dashboard", {replace: true})}
                             disabled={submitting}
                             data-testid="onboarding-invite-start-now"
                         >

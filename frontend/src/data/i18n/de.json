@@ -234,6 +234,7 @@
     "question_progress": "Frage {current} von {total}",
     "next_question": "Nächste Frage",
     "prev_question": "Vorherige Frage",
+    "continue_later": "Später fortsetzen",
     "submit": "Auswerten",
     "evaluating": "Auswertung läuft …",
     "result_title": "Dein Lernprofil",

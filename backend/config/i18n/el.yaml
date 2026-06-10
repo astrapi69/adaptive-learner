@@ -222,6 +222,7 @@ assessment:
   question_progress: Ερώτηση {current} από {total}
   next_question: Επόμενη ερώτηση
   prev_question: Προηγούμενη ερώτηση
+  continue_later: Συνέχεια αργότερα
   submit: Αξιολόγηση
   evaluating: Αξιολόγηση...
   result_title: Το προφίλ μάθησής σου

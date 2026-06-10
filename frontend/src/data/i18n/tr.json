@@ -234,6 +234,7 @@
     "question_progress": "Soru {current} / {total}",
     "next_question": "Sonraki soru",
     "prev_question": "Önceki soru",
+    "continue_later": "Daha sonra devam et",
     "submit": "Değerlendir",
     "evaluating": "Değerlendiriliyor…",
     "result_title": "Öğrenme profilin",
