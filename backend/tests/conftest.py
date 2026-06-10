@@ -239,3 +239,30 @@ def _isolate_secrets_files() -> None:
     _clear()
     yield
     _clear()
+
+
+@pytest.fixture(autouse=True)
+def _isolate_content_cache() -> None:
+    """Wipe the content-loader cache between tests (#164).
+
+    ``ADAPTIVE_LEARNER_DATA_DIR`` is set once per session, so
+    ``get_cache_dir() / "content-loader"`` is SHARED across every test.
+    Tests that ``store_set`` (or download) a content set leave it there,
+    and a later test that asserts a clean cache count — notably
+    ``test_backup_acceptance_roundtrip`` (``content_sets == 1`` at export)
+    — fails when pytest-randomly happens to order a polluting test first.
+    Passes in isolation, flakes only on certain random orders: the classic
+    shared-state leak (see lessons-learned 'Module-level caches survive
+    test boundaries'). Reset on BOTH sides so this fixture neither inherits
+    nor leaks cache state.
+    """
+    import shutil
+
+    from app.paths import get_cache_dir
+
+    def _clear() -> None:
+        shutil.rmtree(get_cache_dir() / "content-loader", ignore_errors=True)
+
+    _clear()
+    yield
+    _clear()
