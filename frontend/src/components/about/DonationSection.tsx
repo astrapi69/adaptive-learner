@@ -98,12 +98,8 @@ export default function DonationSection({t}: Props) {
                             {channel.label}
                             {channel.primary && (
                                 <span
-                                    style={{
-                                        fontSize: "0.7rem",
-                                        padding: "0.1em 0.4em",
-                                        borderRadius: 3,
-                                        background: "rgba(255,255,255,0.2)",
-                                    }}
+                                    data-testid="about-donation-preferred-badge"
+                                    className="rounded-[3px] px-[0.4em] py-[0.1em] text-[0.7rem] bg-[color-mix(in_srgb,var(--accent-fg)_22%,transparent)] text-[var(--accent-fg)]"
                                 >
                                     {t("about.donations_primary", "preferred")}
                                 </span>
