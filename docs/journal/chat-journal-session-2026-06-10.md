@@ -151,3 +151,61 @@ release.
 - Tag `v1.70.1` on commit `4d545a9e`, pushed to `main`.
 - GitHub release: <https://github.com/astrapi69/adaptive-learner/releases/tag/v1.70.1>
 - MkDocs + GH-Pages deploys run automatically on push to `main`.
+
+## v1.71.0 — manual-test bug sweep + matching-feedback overhaul + release
+
+A multi-prompt session working the open issue tracker to zero open bugs,
+then a release.
+
+### Bug sweep (premise-checked each before acting)
+
+- **#185 button contrast (dark, systematic)** — real architectural gap:
+  with Tailwind preflight off a raw `<button>` falls back to the UA
+  `buttontext` (≈ black). Fixed the whole class with a base-layer
+  `button { color: inherit }` that loses to explicit `text-*` utilities.
+  PR #186.
+- **#187 Enter in the lesson-end correction round** — `CorrectionBlock`
+  ran its cloze uncontrolled with no Enter wiring. Switched to a
+  controlled cloze + the shared `useLessonEnterKey` hook. PR #188.
+- **#119 Chrome console warning** — already fixed by #120 for the
+  API-key/GitHub fields, but the later content-repo token field
+  reintroduced it; wrapped it in a form. PR #189.
+- **#129 cross-identity backup restore** — already shipped in PR #128
+  (`_remap_user_identity`); verified + closed with reasoning.
+- **#164 flaky backup test** — session-shared content-loader cache leaked
+  across tests; added an autouse reset fixture. PR #190.
+- **#165 flaky TTS E2E** — TTS logic is deterministic under the fake; the
+  flake is the heavy setup vs a 30s cap. Gave the spec headroom + a
+  retry. PR #193.
+- **Bugs 3/4/5/6 from the manual list** (assessment back, docs-link new
+  tab, onboarding tab order, wizard height) — all already fixed by
+  #171/#173/#175/#170; no misleading duplicate issues filed.
+
+### Matching result feedback (#191)
+
+#183 already worked but the hint was tiny + muted. A wrong pair now shows
+**"Deine Antwort: …"** (red, X) and **"Richtige Antwort: …"** (green,
+bold, check) on separate lines; a correct pair confirms **"A → B"**
+(Lucide arrow). New `your_answer` + reworded `correct_hint` i18n in 8
+langs, AA-pinned matching tokens. PR #192.
+
+### Content fix (content-repo #33 / PR #34)
+
+The Miller "7 ± 2" cloze required the untypeable `±` glyph; broadened
+`accept` with keyboard-typeable `+/-` forms. Merged in
+`adaptive-learner-content`; the app deploy bundles it.
+
+### Released
+
+- Issues closed: #185, #187, #119, #129, #164, #165, #191 (app) + #33
+  (content). Only enhancements #142, #97 remain open.
+- Version bumped to v1.71.0 (canonical `backend/pyproject.toml` +
+  `make sync-versions`; `sync-versions-check` + `verify_version_pins`
+  clean).
+- Gates green: `make test` (backend + plugins + 3914 Vitest, exit 0),
+  `tsc --noEmit`, `npm run build`, `ruff`, `mypy`, `pre-commit
+  --all-files`, `verify-docs-discipline` (0 FAIL).
+- Tag `v1.71.0` on commit `c8e21115`, pushed to `main`; Release Gate CI
+  green.
+- GitHub release: <https://github.com/astrapi69/adaptive-learner/releases/tag/v1.71.0>
+- MkDocs + GH-Pages deploys run automatically on push to `main`.
