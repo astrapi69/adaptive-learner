@@ -9,9 +9,27 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.71.0** (minor — **clearer Matching result
+- **Current state:** **v1.71.1** (patch — **dark-theme contrast &
+  spacing sweep + a Session-Detail export fix**). Frontend + one
+  tracking/storage fix; no schema/API/data change. **Session export
+  (#209):** the export dropdown's `recent_sessions` id is the
+  ProgressCommit id, but the export builder loads by `LearningSession`
+  id — so every Session-Detail Markdown/PDF export failed with "Session
+  … not found" in both modes; `recent_sessions` now carries `session_id`
+  and the export targets it. **Bare `.btn` colour (#211):** the `.btn`
+  base class set no text colour (only its variants did), so a
+  variant-less `.btn` went invisible on dark surfaces (the v1.71.0
+  `button{color:inherit}` reset only reached raw `<button>`); `.btn` now
+  sets `color: var(--fg-primary)`, variants override, guard-pinned.
+  **Also:** Missions reset → shadcn destructive (#205), ThemePicker
+  inactive tab → `fg-secondary` + AA pin (#207), Donation badge →
+  `--accent-fg` (#201), chart data-table trigger → `fg-primary` + shadcn
+  `Table` (#218), Matching orange → cyan (#199), Learning-Repo settings
+  layout + dev-info drop (#203), Dashboard tags spacing + Nav Help
+  consistency (#213/#214), Lernmaterialien spacing (#216). v1.71.0 =
+  minor — **clearer Matching result
   feedback + Enter in the correction round + a systematic dark-theme
-  button-contrast fix + test-isolation fixes**). Frontend + test infra,
+  button-contrast fix + test-isolation fixes**. Frontend + test infra,
   no schema/API change. **Matching results (#191):** after checking, a
   wrong pair spells out both sides instead of relying on colour — a red
   "Deine Antwort: …" (X icon) and a green, bold "Richtige Antwort: …"
