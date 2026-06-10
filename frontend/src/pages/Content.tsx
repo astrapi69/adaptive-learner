@@ -1170,7 +1170,7 @@ export default function ContentPage() {
         <div className="flex items-center gap-1">
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             className="min-h-[44px] gap-2"
             onClick={() => setShowImport(true)}
             title={t("content.import_lesson.button", "Import Lesson")}
@@ -1184,7 +1184,7 @@ export default function ContentPage() {
           </Button>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             className="min-h-[44px] gap-2"
             onClick={() => navigate("/import")}
             title={t("content.import_chat.button", "Import Chat")}
@@ -1198,7 +1198,7 @@ export default function ContentPage() {
           </Button>
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             className="min-h-[44px] gap-2"
             onClick={() => navigate("/learning-path")}
             title={t("nav.learning_path", "Learning Path")}

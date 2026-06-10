@@ -510,6 +510,28 @@ describe("Content — My Lessons (Phase 59C)", () => {
     expect(importBtn).toHaveAccessibleName(/Import Lesson/i);
   });
 
+  it("secondary toolbar actions use the outline variant so they stay visible in dark themes (#177)", async () => {
+    listSetsMock.mockResolvedValue({ sets: [], sources: [] });
+    renderPage();
+    await screen.findByTestId("content-page");
+    // The surface-less ghost variant read as nearly invisible in dark
+    // themes; outline gives a bordered surface (border-input +
+    // bg-background) while keeping AA text-foreground.
+    for (const testId of [
+      "content-import-lesson",
+      "content-import-chat",
+      "content-learning-path",
+    ]) {
+      const btn = screen.getByTestId(testId);
+      expect(btn.className).toContain("border");
+      expect(btn.className).toContain("text-foreground");
+    }
+    // The primary CTA stays dominant (no border-* surface utility).
+    expect(
+      screen.getByTestId("content-create-lesson").className,
+    ).toContain("bg-primary");
+  });
+
   it("walks the wizard and shares a flagged lesson anyway", async () => {
     // USER_ENTRY: no title_native + a trivial lesson -> rule check
     // flags issues. The wizard's quality step is informational; the
