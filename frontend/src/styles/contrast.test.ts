@@ -224,6 +224,36 @@ describe("#96 — --accent used as TEXT (ghost hint / link) passes AA", () => {
     });
 });
 
+describe("#185 — raw <button> never falls back to UA black", () => {
+    // Preflight is OFF, so a raw <button> with no author `color` takes the
+    // UA `buttontext` (~black) and goes invisible on dark surfaces. The
+    // base-layer default below makes it inherit the page foreground while
+    // still losing to any explicit text-* utility. Pin the rule so the
+    // architectural fix can't silently regress.
+    const css = readFileSync(resolve(HERE, "global.css"), "utf-8");
+
+    it("global.css declares a base-layer button color fallback", () => {
+        const block = css.match(
+            /@layer base\s*\{\s*button\s*\{\s*color:\s*inherit;?\s*\}\s*\}/,
+        );
+        expect(
+            block,
+            "missing `@layer base { button { color: inherit } }` (see #185)",
+        ).toBeTruthy();
+    });
+
+    it("the unlayered base button rule still sets no color (so utilities win)", () => {
+        // The unlayered `button { font-family; cursor }` rule must NOT gain a
+        // color: an unlayered color would beat the layered shadcn `text-*`
+        // utilities and break every <Button> variant.
+        const unlayered = css.match(
+            /\nbutton\s*\{[^}]*\}/,
+        );
+        expect(unlayered?.[0], "unlayered button rule not found").toBeTruthy();
+        expect(unlayered?.[0]).not.toMatch(/color:/);
+    });
+});
+
 describe("Phase 39 C5 — method-badge contrast (WCAG SC 1.4.3)", () => {
     for (const method of LEARNING_METHODS) {
         it(`method=${method}: text color picked by bestTextOn meets AA`, () => {
