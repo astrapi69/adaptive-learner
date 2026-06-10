@@ -9,8 +9,22 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.70.1** (patch — **onboarding / assessment /
-  content-browser / landing UX fixes**). Frontend only, no schema/API
+- **Current state:** **v1.70.2** (patch — **theme contrast + Matching
+  exercise fixes**). Frontend only, no schema/API change.
+  **Secondary buttons (#179):** soft-pop's `secondary` variant rendered
+  white-on-teal (1.86:1); its `--bg-secondary` is corrected to a
+  readable dark tone, and `contrast.test.ts` now pins every shadcn
+  button-variant colour pair across all 12 themes. **Matching pair
+  colours (#181):** matched pairs no longer use red (red reads as
+  "wrong") — a dedicated red-free `--matching-pair-1..7` palette in
+  `global.css`, decoupled from the shared `--chart-*` data-chart
+  palette. **Matching result state (#183):** after checking, pair number
+  badges stay visible, correct pairs are green on both tiles, wrong
+  pairs are red on both tiles and show the correct partner as a hint,
+  and unmatched tiles stay neutral; new per-theme
+  `--matching-correct-bg/-fg` + `--matching-error-bg/-fg` tokens,
+  WCAG-AA verified. v1.70.1 = patch — **onboarding / assessment /
+  content-browser / landing UX fixes**. Frontend only, no schema/API
   change. **Wizard height (#169):** the onboarding profile wizard gives
   its step area a uniform min-height so the panel no longer jumps
   between steps. **Assessment dead-ends (#171):** the first question
