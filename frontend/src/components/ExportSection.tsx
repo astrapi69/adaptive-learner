@@ -105,7 +105,11 @@ export default function ExportSection() {
                 if (cancelled) return;
                 setSessions(
                     allSessions.map((s) => ({
-                        id: s.id,
+                        // #209 — recent_sessions ``id`` is the ProgressCommit
+                        // id; the export builder loads by LearningSession id,
+                        // so target ``session_id`` (fall back to id for an
+                        // older backend that doesn't send it yet).
+                        id: s.session_id ?? s.id,
                         project_id: s.project_id,
                         method: s.method,
                         started_at: s.committed_at,
