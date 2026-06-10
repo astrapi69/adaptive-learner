@@ -24,7 +24,7 @@
  * ``recordStepResult`` keyed by step id.
  */
 
-import {Check, RotateCcw, X} from "lucide-react";
+import {ArrowRight, Check, RotateCcw, X} from "lucide-react";
 import {forwardRef, useEffect, useImperativeHandle, useMemo, useState} from "react";
 import type {CSSProperties, Ref} from "react";
 
@@ -584,6 +584,16 @@ function MatchingExercise(
                         const correctPartner = productive
                             ? pairs[tile.index]?.left
                             : pairs[tile.index]?.right;
+                        // #191 — the partner the learner actually picked
+                        // (their wrong answer), in the same right-column
+                        // label form as ``correctPartner``.
+                        const chosenRight = matches.get(tile.index);
+                        const chosenPartner =
+                            chosenRight !== undefined
+                                ? productive
+                                    ? pairs[chosenRight]?.left
+                                    : pairs[chosenRight]?.right
+                                : undefined;
                         const pairStyle: CSSProperties | undefined =
                             slot !== undefined && showPair
                                 ? ({
@@ -628,15 +638,77 @@ function MatchingExercise(
                                         <X size={14} aria-hidden="true" />
                                     )}
                                 </button>
-                                {isWrong && correctPartner && (
-                                    <p
-                                        className="m-0 mt-1 px-1 text-[0.75rem] text-[var(--fg-muted)]"
-                                        data-testid={`matching-correct-hint-${tile.index}`}
+                                {/* #191 — after checking, a WRONG pair spells
+                                    out both sides, not color alone: the
+                                    learner's pick ("Deine Antwort", red + X)
+                                    and the correct one ("Richtige Antwort",
+                                    green + Check, bold). Reuses the AA-pinned
+                                    matching-error/-correct tile tokens, so the
+                                    chips stay readable across all 12 themes. */}
+                                {isWrong && (
+                                    <div
+                                        className="mt-1 flex flex-col gap-1"
+                                        data-testid={`matching-feedback-${tile.index}`}
                                     >
-                                        {t(
-                                            "lesson.exercise.matching.correct_hint",
-                                            "Correct: {label}",
-                                        ).replace("{label}", correctPartner)}
+                                        {chosenPartner && (
+                                            <p
+                                                className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-[var(--exercise-wrong)] bg-[var(--matching-error-bg)] px-2 py-1 text-[0.8125rem] text-[var(--matching-error-fg)]"
+                                                data-testid={`matching-your-answer-${tile.index}`}
+                                            >
+                                                <X
+                                                    size={13}
+                                                    aria-hidden="true"
+                                                    className="shrink-0 text-[var(--exercise-wrong)]"
+                                                />
+                                                {t(
+                                                    "lesson.exercise.matching.your_answer",
+                                                    "Your answer: {label}",
+                                                ).replace("{label}", chosenPartner)}
+                                            </p>
+                                        )}
+                                        {correctPartner && (
+                                            <p
+                                                className="m-0 flex items-center gap-1.5 rounded-sm border-l-2 border-dashed border-[var(--exercise-correct)] bg-[var(--matching-correct-bg)] px-2 py-1 text-[0.8125rem] font-semibold text-[var(--matching-correct-fg)]"
+                                                data-testid={`matching-correct-hint-${tile.index}`}
+                                            >
+                                                <Check
+                                                    size={13}
+                                                    aria-hidden="true"
+                                                    className="shrink-0 text-[var(--exercise-correct)]"
+                                                />
+                                                {t(
+                                                    "lesson.exercise.matching.correct_hint",
+                                                    "Correct answer: {label}",
+                                                ).replace("{label}", correctPartner)}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                                {/* #191 — a CORRECT pair confirms the link as
+                                    one line "A -> B" (Lucide ArrowRight, not a
+                                    Unicode glyph); fg-muted text is AA-pinned,
+                                    the Check is the green cue. */}
+                                {isCorrect && correctPartner && (
+                                    <p
+                                        className="m-0 mt-1 flex items-center gap-1 px-1 text-[0.75rem] text-[var(--fg-muted)]"
+                                        data-testid={`matching-pair-correct-${tile.index}`}
+                                    >
+                                        <Check
+                                            size={12}
+                                            aria-hidden="true"
+                                            className="shrink-0 text-[var(--exercise-correct)]"
+                                        />
+                                        <span className="min-w-0 truncate">
+                                            {tile.label}
+                                        </span>
+                                        <ArrowRight
+                                            size={12}
+                                            aria-hidden="true"
+                                            className="shrink-0"
+                                        />
+                                        <span className="min-w-0 truncate">
+                                            {correctPartner}
+                                        </span>
                                     </p>
                                 )}
                             </li>
