@@ -4,6 +4,7 @@ import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import {VitePWA} from "vite-plugin-pwa";
+import {visualizer} from "rollup-plugin-visualizer";
 
 import pkg from "./package.json" with {type: "json"};
 
@@ -195,6 +196,19 @@ export default defineConfig({
                 ],
             },
         }),
+        // Bundle analyzer (#255). Off by default; ``ANALYZE=true npm run
+        // build`` emits ``stats.html`` (treemap of the chunk graph). Dev
+        // tool only — no CI gate, gitignored output.
+        ...(process.env.ANALYZE
+            ? [
+                  visualizer({
+                      filename: "stats.html",
+                      template: "treemap",
+                      gzipSize: true,
+                      brotliSize: true,
+                  }),
+              ]
+            : []),
     ],
     test: {
         environment: "happy-dom",
