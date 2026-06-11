@@ -134,3 +134,52 @@ All gates green (3945 vitest, 81 dexie-smoke, tsc, build, mypy, ruff,
 docs-discipline, madge 0). One dexie-smoke run flaked under load (6 passed)
 — a clean isolated re-run was 81/81, same environment-overlap pattern as
 the v1.72.1 visual suite. **v1.72.1 → v1.72.2 (patch)** via PR #277.
+
+## Release v1.73.0 (minor) — 2026-06-11
+
+A session that closed eight issues and cut a minor release.
+
+- **Feature E2E tests (#278/#279/#280, PRs #282/#283/#284).** Dexie-mode
+  Playwright specs for the no-API-key surfaces: external content-repo import
+  (error paths + external-repo playthrough), Anki extraction-gating + `.apkg`
+  export (cards seeded straight into IndexedDB), NotebookLM package + the
+  three learning-materials actions. Surfaced the gap that became #281.
+- **NotebookLM key-gate (#281, PR #285).** The two AI-backed actions
+  (generate-questions, study-guide) were enabled without a key; now disabled
+  with an `ApiKeyRequiredNotice`, the client-side ZIP stays active. New
+  `ui.api_key.feature_study_questions` (8 langs).
+- **Feature-strategy integration (#286/#287).** The headline change.
+  `@astrapi69/feature-strategy` + its React adapter replace the scattered
+  ad-hoc gating with one registry + a `ConditionalFeatureStrategy` over a
+  memoised, reactive `{mode, hasAiKey}` context. Descriptors carry the
+  `active` default; the strategy holds only the deviation rules (AI →
+  disabled without a key in Dexie; sync/git → hidden in Dexie) and abstains
+  otherwise, failing closed. Foundation built locally (requirements A–D from
+  the library author: real .d.ts, descriptor+abstention, memoised+reactive
+  context, pure conditions) then handed to CCW, who migrated the sites
+  (Import-Detail, Anki, NotebookLM, Dashboard, Pronunciation, Settings Sync,
+  Learning-Repo git) + added the test providers. Deliberate behaviour
+  changes: AI no longer key-gated in API mode; git-persist/sync hidden (not
+  disabled) in Dexie. Settings now calls `refreshApiKeyStatus()` so gates
+  flip without a reload. The `@testing-library/dom` RTL16 peer had to be
+  declared explicitly (a `--legacy-peer-deps` resolve pruned it).
+- **TipTap v2 pin (#267, PR #288).** The Dependabot bumps of
+  `extension-highlight`/`-table-cell`/`-task-item` to 3.x pulled
+  `@tiptap/core@3` against the v2 stack → `MISSING_EXPORT` build break + 9
+  editor test files failing at load. Pinned back to 2.27.2.
+- **Progress.test FeatureProvider wrap (#289, PR #290).** A #287 follow-up
+  miss left `Progress.test` rendering a `useFeature` consumer outside a
+  provider; wrapped in `TestFeatureProvider`. #288 + #290 were interdependent
+  (neither alone greened the suite) — proven green together (3953/0) before
+  merging.
+- **Dependency bumps (#258–#266).** ESLint 10, mypy 2.1, frontend/backend
+  minor-patch groups, GH actions checkout 6 / setup-node 6 / upload-artifact 7.
+
+**Process notes.** #275/#276/#252 were on the requested content list but had
+already shipped in v1.72.2 — excluded. The release commit skipped the
+`plugin-lock-paired-with-pyproject` hook (version-only bump, locks unchanged),
+the established practice. `make release-test` green end-to-end (backend +
+plugins + vitest 3953 + build + dexie-smoke 88 + docs 0 FAIL + version pins).
+The pre-existing `Frontend Tests` CI red (#220, eslint 438 warnings) stays a
+separate task slated for v1.74.0; PRs were admin-merged past it all session.
+Release: tag `v1.73.0`, GitHub release published, main fast-forwarded.
