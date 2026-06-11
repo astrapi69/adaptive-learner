@@ -1,0 +1,47 @@
+# Dependabot (#253, infra block 5).
+#
+# Keeps dependencies current with grouped, labelled PRs. Code ecosystems
+# are checked weekly; GitHub Actions monthly (they move slower). Grouping
+# minor/patch updates into a single PR per ecosystem keeps the review queue
+# small — majors still come as individual PRs so breaking changes get their
+# own dedicated review (matching the release-workflow dep policy).
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    groups:
+      frontend-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "pip"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    groups:
+      backend-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+    groups:
+      actions:
+        update-types:
+          - "minor"
+          - "patch"
