@@ -24,6 +24,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { ApiError } from "../api/client";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -122,15 +123,12 @@ export default function ImportDetail({
   // this conversation (if any). The CTA flips from "Create
   // curriculum" to "Go to curriculum" when set, so users no
   // longer accidentally generate duplicates by clicking twice.
-  const [existingCurriculum, setExistingCurriculum] =
-    useState<Curriculum | null>(null);
+  const [existingCurriculum, setExistingCurriculum] = useState<Curriculum | null>(null);
   // Phase 36 Bug 4 — same idea for sessions: when there's an
   // active session for this conversation, "Start session" flips
   // into "Continue session" and the click resumes instead of
   // creating a duplicate session.
-  const [activeSession, setActiveSession] = useState<LearningSession | null>(
-    null,
-  );
+  const [activeSession, setActiveSession] = useState<LearningSession | null>(null);
   const [startingSession, setStartingSession] = useState(false);
   // Phase 59B — "Save as Offline Lesson" preview modal.
   const [showSaveLesson, setShowSaveLesson] = useState(false);
@@ -156,9 +154,7 @@ export default function ImportDetail({
     langInitRef.current = detail.id;
     const app = (lang || "en").split("-")[0];
     setSourceLang((detail.source_language || app).split("-")[0]);
-    const savedTarget = detail.target_language
-      ? detail.target_language.split("-")[0]
-      : "";
+    const savedTarget = detail.target_language ? detail.target_language.split("-")[0] : "";
     if (savedTarget) {
       setTargetLang(savedTarget);
     } else {
@@ -170,10 +166,7 @@ export default function ImportDetail({
   // Persist the chosen languages onto the import record so every
   // downstream step (analysis, save-as-lesson, share) inherits them.
   // Best-effort: a failed write keeps the local selection usable.
-  const persistLanguages = async (next: {
-    source?: string;
-    target?: string;
-  }): Promise<void> => {
+  const persistLanguages = async (next: { source?: string; target?: string }): Promise<void> => {
     if (!detail) return;
     const source_language = next.source ?? sourceLang;
     const target_language = next.target ?? targetLang;
@@ -199,8 +192,7 @@ export default function ImportDetail({
         // parallel; missing endpoint / null result is
         // non-fatal (the CTA just stays on "Create").
         try {
-          const linked =
-            await getStorage().curricula.getForConversation(conversationId);
+          const linked = await getStorage().curricula.getForConversation(conversationId);
           if (!cancelled) setExistingCurriculum(linked);
         } catch {
           // Older backends without the /curriculum lookup
@@ -210,8 +202,7 @@ export default function ImportDetail({
         // session lookup; missing endpoint / null is
         // non-fatal (CTA stays on "Start session").
         try {
-          const sess =
-            await getStorage().session.getActiveForConversation(conversationId);
+          const sess = await getStorage().session.getActiveForConversation(conversationId);
           if (!cancelled) setActiveSession(sess);
         } catch {
           /* tolerate missing endpoint */
@@ -336,9 +327,7 @@ export default function ImportDetail({
       } else {
         notify.success(t("import.analysis_ready", "Analysis ready."));
       }
-      await new Promise((resolve) =>
-        setTimeout(resolve, ANALYSIS_DONE_FLASH_MS),
-      );
+      await new Promise((resolve) => setTimeout(resolve, ANALYSIS_DONE_FLASH_MS));
       setDetail(updated);
     } catch (err) {
       // A user-triggered cancel returns silently to the
@@ -351,10 +340,7 @@ export default function ImportDetail({
       setAnalysisError(
         err instanceof ApiError
           ? err.detail
-          : t(
-              "import.analysis_failed_inline",
-              "Analysis failed. Please try again.",
-            ),
+          : t("import.analysis_failed_inline", "Analysis failed. Please try again."),
       );
     } finally {
       stopPhaseTimer();
@@ -428,9 +414,7 @@ export default function ImportDetail({
     }
     const lessons = detail.analysis_result.suggested_curriculum ?? [];
     if (lessons.length === 0) {
-      notify.warning(
-        t("import.no_lessons", "The analysis did not suggest any lessons."),
-      );
+      notify.warning(t("import.no_lessons", "The analysis did not suggest any lessons."));
       return;
     }
     setCreatingCurriculum(true);
@@ -442,10 +426,7 @@ export default function ImportDetail({
           t("import.default_curriculum_title", "Imported curriculum"),
         description:
           detail.analysis_result.summary ??
-          t(
-            "import.curriculum_description",
-            "Generated from an imported conversation.",
-          ),
+          t("import.curriculum_description", "Generated from an imported conversation."),
         imported_conversation_id: detail.id,
       });
       setExistingCurriculum(curriculum);
@@ -459,9 +440,7 @@ export default function ImportDetail({
           order_index: i,
         });
       }
-      notify.success(
-        t("import.curriculum_created", "Curriculum created from the analysis."),
-      );
+      notify.success(t("import.curriculum_created", "Curriculum created from the analysis."));
       go(`/curriculum?id=${encodeURIComponent(curriculum.id)}`);
     } catch (err) {
       const msg =
@@ -476,18 +455,14 @@ export default function ImportDetail({
 
   if (loading) {
     return (
-      <main id="main" style={{ padding: "2rem" }}>
+      <main id="main" className="p-8">
         <p>{t("common.loading", "Loading…")}</p>
       </main>
     );
   }
   if (error || !detail) {
     return (
-      <main
-        id="main"
-        style={{ padding: "2rem" }}
-        data-testid="import-detail-error"
-      >
+      <main id="main" className="p-8" data-testid="import-detail-error">
         <h1>{t("errors.not_found", "Not found.")}</h1>
         <p>{error}</p>
         <Button type="button" onClick={() => go("/import")}>
@@ -502,11 +477,10 @@ export default function ImportDetail({
   return (
     <main
       id="main"
-      className="page-import-detail"
+      className="page-import-detail max-w-4xl mx-auto p-6"
       data-testid="page-import-detail"
-      style={{ maxWidth: 1000, margin: "0 auto", padding: "1.5rem" }}
     >
-      <header style={{ marginBottom: "1.5rem" }}>
+      <header className="mb-6">
         <Button
           type="button"
           variant="outline"
@@ -516,34 +490,24 @@ export default function ImportDetail({
         >
           ← {t("import.back_to_list", "Back to imports")}
         </Button>
-        <h1 style={{ margin: 0 }} data-testid="import-detail-title">
+        <h1 className="m-0" data-testid="import-detail-title">
           {importHeadingTitle(detail.title, analysis?.topic)}
         </h1>
-        <p style={{ margin: "0.5rem 0 0", opacity: 0.7, fontSize: "0.9rem" }}>
-          {detail.source} · {detail.message_count}{" "}
-          {t("import.messages", "messages")}
+        <p className="mt-2 mb-0 text-sm text-fg-muted">
+          {detail.source} · {detail.message_count} {t("import.messages", "messages")}
           {detail.model ? ` · ${detail.model}` : ""}
         </p>
         {apiKey.ready && !apiKey.hasKey && (
           <ApiKeyRequiredNotice
-            feature={t(
-              "ui.api_key.feature_analyze",
-              "to analyze conversations",
-            )}
+            feature={t("ui.api_key.feature_analyze", "to analyze conversations")}
           />
         )}
         {/* v1.54.0 — set the language pair BEFORE analysis so it flows
             through the whole pipeline. Source = chat language (app
             default); target = detected learning language. Both editable. */}
         <div
-          className="import-language-pickers"
+          className="import-language-pickers flex flex-wrap gap-4 mt-4"
           data-testid="import-language-pickers"
-          style={{
-            display: "flex",
-            gap: "1rem",
-            marginTop: "1rem",
-            flexWrap: "wrap",
-          }}
         >
           <div className="form-row">
             <span className="form-label">
@@ -557,12 +521,7 @@ export default function ImportDetail({
               }}
             >
               <SelectTrigger data-testid="import-source-language">
-                <SelectValue
-                  placeholder={t(
-                    "import.select_language",
-                    "Select a language…",
-                  )}
-                />
+                <SelectValue placeholder={t("import.select_language", "Select a language…")} />
               </SelectTrigger>
               <SelectContent>
                 {LANGUAGE_OPTIONS.map((opt) => (
@@ -574,9 +533,7 @@ export default function ImportDetail({
             </Select>
           </div>
           <div className="form-row">
-            <span className="form-label">
-              {t("import.learning_language", "Learning language")}
-            </span>
+            <span className="form-label">{t("import.learning_language", "Learning language")}</span>
             <Select
               value={targetLang || undefined}
               onValueChange={(v) => {
@@ -585,12 +542,7 @@ export default function ImportDetail({
               }}
             >
               <SelectTrigger data-testid="import-target-language">
-                <SelectValue
-                  placeholder={t(
-                    "import.select_language",
-                    "Select a language…",
-                  )}
-                />
+                <SelectValue placeholder={t("import.select_language", "Select a language…")} />
               </SelectTrigger>
               <SelectContent>
                 {LANGUAGE_OPTIONS.map((opt) => (
@@ -602,14 +554,7 @@ export default function ImportDetail({
             </Select>
           </div>
         </div>
-        <div
-          style={{
-            display: "flex",
-            gap: "0.5rem",
-            marginTop: "1rem",
-            flexWrap: "wrap",
-          }}
-        >
+        <div className="flex flex-wrap gap-2 mt-4">
           <Button
             type="button"
             onClick={runAnalysis}
@@ -624,11 +569,7 @@ export default function ImportDetail({
             data-testid="analyze-button"
           >
             {analyzing && (
-              <span
-                className="btn-spinner"
-                data-testid="analyze-spinner"
-                aria-hidden="true"
-              />
+              <span className="btn-spinner" data-testid="analyze-spinner" aria-hidden="true" />
             )}
             {analyzing
               ? t("import.analyzing", "Analyzing…")
@@ -651,9 +592,7 @@ export default function ImportDetail({
               onClick={createCurriculumFromAnalysis}
               disabled={creatingCurriculum}
               data-testid={
-                existingCurriculum
-                  ? "goto-curriculum-button"
-                  : "create-curriculum-button"
+                existingCurriculum ? "goto-curriculum-button" : "create-curriculum-button"
               }
             >
               {creatingCurriculum
@@ -691,20 +630,13 @@ export default function ImportDetail({
               // not, so the gate only fires when
               // ``activeSession`` is null).
               onClick={startOrResumeSession}
-              disabled={
-                startingSession ||
-                (!activeSession && apiKey.ready && !apiKey.hasKey)
-              }
+              disabled={startingSession || (!activeSession && apiKey.ready && !apiKey.hasKey)}
               title={
                 !activeSession && apiKey.ready && !apiKey.hasKey
                   ? t("ui.api_key.required", "API key required.")
                   : undefined
               }
-              data-testid={
-                activeSession
-                  ? "continue-session-button"
-                  : "start-session-button"
-              }
+              data-testid={activeSession ? "continue-session-button" : "start-session-button"}
             >
               {startingSession
                 ? t("common.loading", "Loading…")
@@ -728,13 +660,9 @@ export default function ImportDetail({
                 if (!detail) return;
                 setExtractingAnki(true);
                 try {
-                  const cards = await getStorage().anki.extractFromConversation(
-                    detail.id,
-                  );
+                  const cards = await getStorage().anki.extractFromConversation(detail.id);
                   if (cards.length === 0) {
-                    notify.info(
-                      t("import.anki_no_cards", "No Anki cards extracted."),
-                    );
+                    notify.info(t("import.anki_no_cards", "No Anki cards extracted."));
                   } else {
                     notify.success(
                       t(
@@ -747,10 +675,7 @@ export default function ImportDetail({
                   const msg =
                     err instanceof ApiError
                       ? err.detail
-                      : t(
-                          "import.anki_extract_failed",
-                          "Could not extract Anki cards.",
-                        );
+                      : t("import.anki_extract_failed", "Could not extract Anki cards.");
                   notify.error(msg);
                 } finally {
                   setExtractingAnki(false);
@@ -785,25 +710,18 @@ export default function ImportDetail({
             role="progressbar"
             aria-valuemin={0}
             aria-valuemax={100}
-            aria-valuenow={
-              analysisDone ? 100 : ANALYSIS_PHASE_PROGRESS[analysisPhase]
-            }
+            aria-valuenow={analysisDone ? 100 : ANALYSIS_PHASE_PROGRESS[analysisPhase]}
           >
             <div
               className="analysis-progress-fill"
               style={{
-                width: `${
-                  analysisDone ? 100 : ANALYSIS_PHASE_PROGRESS[analysisPhase]
-                }%`,
+                width: `${analysisDone ? 100 : ANALYSIS_PHASE_PROGRESS[analysisPhase]}%`,
               }}
             />
           </div>
           {!analysisDone && (
             <p className="analysis-loading-estimate">
-              {t(
-                "import.analysis_estimate",
-                "Analysis takes approximately 15-30 seconds…",
-              )}
+              {t("import.analysis_estimate", "Analysis takes approximately 15-30 seconds…")}
             </p>
           )}
           {!analysisDone && (
@@ -830,23 +748,14 @@ export default function ImportDetail({
       )}
 
       {analysis && (
-        <section
-          style={{ marginBottom: "2rem" }}
-          className="analysis-results-fade-in"
-          data-testid="analysis-results"
-        >
+        <section className="analysis-results-fade-in mb-8" data-testid="analysis-results">
           <h2>
             {t("import.analysis_title", "Analysis")}
             <HelpLink glossaryKey="feature_conversation_analysis" />
           </h2>
           {analysis.fallback_used && (
             <p
-              style={{
-                background: "var(--warning-bg)",
-                color: "var(--warning)",
-                padding: "0.5rem 0.75rem",
-                borderRadius: 4,
-              }}
+              className="bg-[var(--warning-bg)] text-warning px-3 py-2 rounded"
               data-testid="analysis-fallback-notice"
             >
               {t(
@@ -856,13 +765,7 @@ export default function ImportDetail({
             </p>
           )}
           {analysis.summary && (
-            <p
-              data-testid="analysis-summary"
-              style={{
-                fontStyle: "italic",
-                opacity: 0.9,
-              }}
-            >
+            <p data-testid="analysis-summary" className="italic text-fg-secondary">
               {analysis.summary}
             </p>
           )}
@@ -887,40 +790,27 @@ export default function ImportDetail({
             <ChevronRight aria-hidden="true" />
           )}
           {t("import.show_transcript", "Show raw transcript")}
-          <span className="text-muted-foreground">
-            ({detail.message_count})
-          </span>
+          <span className="text-muted-foreground">({detail.message_count})</span>
         </Button>
         {transcriptOpen && (
           <ol
             id="conversation-transcript-list"
-            style={{
-              listStyle: "none",
-              padding: 0,
-              margin: "0.75rem 0 0",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.75rem",
-            }}
+            className="list-none p-0 mt-3 mb-0 flex flex-col gap-3"
           >
             {detail.messages.map((m) => (
               <li
                 key={m.id}
                 data-testid={`msg-${m.order_index}`}
-                style={{
-                  background:
-                    m.role === "user" ? "var(--surface)" : "var(--bg)",
-                  border: "1px solid var(--border)",
-                  borderRadius: 6,
-                  padding: "0.75rem 1rem",
-                }}
+                className={cn(
+                  "border border-border rounded-app px-4 py-3",
+                  m.role === "user" ? "bg-card" : "bg-background",
+                )}
               >
                 <div
-                  style={{
-                    fontWeight: 600,
-                    marginBottom: "0.25rem",
-                    color: m.role === "user" ? "var(--accent)" : "var(--text)",
-                  }}
+                  className={cn(
+                    "font-semibold mb-1",
+                    m.role === "user" ? "text-accent" : "text-foreground",
+                  )}
                 >
                   {m.role === "user"
                     ? t("import.role_user", "You")
@@ -928,7 +818,7 @@ export default function ImportDetail({
                       ? t("import.role_assistant", "AI")
                       : t("import.role_system", "System")}
                 </div>
-                <div style={{ whiteSpace: "pre-wrap" }}>{m.content}</div>
+                <div className="whitespace-pre-wrap">{m.content}</div>
               </li>
             ))}
           </ol>
@@ -964,56 +854,28 @@ function AnalysisGrid({
   t: (k: string, fb?: string) => string;
 }) {
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-        gap: "0.75rem",
-        marginTop: "1rem",
-      }}
-    >
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3 mt-4">
       {result.topic && (
         <Card title={t("import.field_topic", "Topic")} tone="default">
           {result.topic}
           {result.user_level && (
-            <span
-              style={{
-                marginLeft: "0.5rem",
-                padding: "0.15rem 0.5rem",
-                borderRadius: 3,
-                background: "var(--accent)",
-                color: "white",
-                fontSize: "0.75rem",
-                textTransform: "uppercase",
-              }}
-            >
+            <span className="ml-2 px-2 py-0.5 rounded-sm bg-accent text-accent-foreground text-xs uppercase">
               {result.user_level}
             </span>
           )}
         </Card>
       )}
       {result.recommended_method && (
-        <Card
-          title={t("import.field_method", "Recommended method")}
-          tone="default"
-        >
+        <Card title={t("import.field_method", "Recommended method")} tone="default">
           {result.recommended_method}
           {result.recommended_focus && (
-            <p
-              style={{
-                margin: "0.25rem 0 0",
-                fontSize: "0.85rem",
-                opacity: 0.8,
-              }}
-            >
-              {result.recommended_focus}
-            </p>
+            <p className="mt-1 mb-0 text-sm text-fg-muted">{result.recommended_focus}</p>
           )}
         </Card>
       )}
       {result.strengths && result.strengths.length > 0 && (
         <Card title={t("import.field_strengths", "Strengths")} tone="ok">
-          <ul style={{ margin: 0, paddingLeft: "1.25rem" }}>
+          <ul className="m-0 pl-5">
             {result.strengths.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -1022,7 +884,7 @@ function AnalysisGrid({
       )}
       {result.weaknesses && result.weaknesses.length > 0 && (
         <Card title={t("import.field_weaknesses", "Weaknesses")} tone="bad">
-          <ul style={{ margin: 0, paddingLeft: "1.25rem" }}>
+          <ul className="m-0 pl-5">
             {result.weaknesses.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -1031,7 +893,7 @@ function AnalysisGrid({
       )}
       {result.error_patterns && result.error_patterns.length > 0 && (
         <Card title={t("import.field_errors", "Error patterns")} tone="warn">
-          <ul style={{ margin: 0, paddingLeft: "1.25rem" }}>
+          <ul className="m-0 pl-5">
             {result.error_patterns.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -1043,39 +905,21 @@ function AnalysisGrid({
           {result.subtopics.join(" · ")}
         </Card>
       )}
-      {result.suggested_curriculum &&
-        result.suggested_curriculum.length > 0 && (
-          <Card
-            title={t("import.field_curriculum", "Suggested curriculum")}
-            tone="default"
-            wide
-          >
-            <ol style={{ margin: 0, paddingLeft: "1.25rem" }}>
-              {result.suggested_curriculum.map((l, i) => (
-                <li
-                  key={i}
-                  data-testid={`lesson-${i}`}
-                  style={{ marginBottom: "0.5rem" }}
-                >
-                  <strong>{l.title}</strong>{" "}
-                  <small style={{ opacity: 0.6 }}>
-                    ({t("import.priority", "priority")} {l.priority})
-                  </small>
-                  {l.description && (
-                    <p
-                      style={{
-                        margin: "0.15rem 0 0",
-                        opacity: 0.85,
-                      }}
-                    >
-                      {l.description}
-                    </p>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </Card>
-        )}
+      {result.suggested_curriculum && result.suggested_curriculum.length > 0 && (
+        <Card title={t("import.field_curriculum", "Suggested curriculum")} tone="default" wide>
+          <ol className="m-0 pl-5">
+            {result.suggested_curriculum.map((l, i) => (
+              <li key={i} data-testid={`lesson-${i}`} className="mb-2">
+                <strong>{l.title}</strong>{" "}
+                <small className="text-fg-muted">
+                  ({t("import.priority", "priority")} {l.priority})
+                </small>
+                {l.description && <p className="mt-0.5 mb-0 text-fg-muted">{l.description}</p>}
+              </li>
+            ))}
+          </ol>
+        </Card>
+      )}
     </div>
   );
 }
@@ -1091,33 +935,27 @@ function Card({
   wide?: boolean;
   children: React.ReactNode;
 }) {
-  const toneStyles: Record<typeof tone, React.CSSProperties> = {
-    ok: { borderColor: "var(--success)" },
-    bad: { borderColor: "var(--danger)" },
-    warn: { borderColor: "var(--warning)" },
-    default: {},
+  const toneBorder: Record<typeof tone, string> = {
+    ok: "border-success",
+    bad: "border-destructive",
+    warn: "border-warning",
+    default: "border-border",
   };
   return (
     <div
-      style={{
-        border: "1px solid var(--border)",
-        borderRadius: 6,
-        padding: "0.75rem 1rem",
-        background: "var(--surface)",
-        gridColumn: wide ? "1 / -1" : undefined,
-        ...toneStyles[tone],
-      }}
+      className={cn(
+        "border rounded-app px-4 py-3 bg-card",
+        toneBorder[tone],
+        wide && "col-span-full",
+      )}
     >
-      <h3 style={{ margin: "0 0 0.5rem", fontSize: "1rem" }}>{title}</h3>
+      <h3 className="mt-0 mb-2 text-base">{title}</h3>
       {children}
     </div>
   );
 }
 
-async function readApiKeyFor(
-  userId: string,
-  provider: AIProvider,
-): Promise<string | null> {
+async function readApiKeyFor(userId: string, provider: AIProvider): Promise<string | null> {
   try {
     const db = getDb();
     const row = await db.userSettings.where("user_id").equals(userId).first();
