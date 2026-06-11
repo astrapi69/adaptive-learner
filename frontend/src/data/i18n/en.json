@@ -283,8 +283,8 @@
       "mastery_split": "Receptive: {receptive} · Productive: {productive}"
     },
     "create_lesson": "Create a lesson",
-    "metric_mean_stress": "Mean stress",
-    "metric_mean_understanding": "Mean understanding",
+    "metric_mean_stress": "Ø Stress",
+    "metric_mean_understanding": "Ø Understanding",
     "metric_streak": "Day streak",
     "metric_total_minutes": "Total minutes",
     "metric_total_sessions": "Total sessions",

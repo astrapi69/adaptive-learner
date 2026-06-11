@@ -283,8 +283,8 @@
       "mastery_split": "Tanıma: {receptive} · Üretim: {productive}"
     },
     "create_lesson": "Ders oluştur",
-    "metric_mean_stress": "Ortalama stres",
-    "metric_mean_understanding": "Ortalama anlama",
+    "metric_mean_stress": "Ø Stres",
+    "metric_mean_understanding": "Ø Anlama",
     "metric_streak": "Gün serisi",
     "metric_total_minutes": "Toplam dakika",
     "metric_total_sessions": "Toplam oturum",
