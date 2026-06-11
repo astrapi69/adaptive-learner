@@ -9,7 +9,7 @@ chat-history import + analysis, multi-cycle auto-loop, dual storage
 configuration, gamification, voice, Anki + NotebookLM exports, PWA.
 
 - **Repository:** https://github.com/astrapi69/adaptive-learner
-- **Current state:** **v1.71.1** (patch — **dark-theme contrast &
+- **Current state:** **v1.72.0** (patch — **dark-theme contrast &
   spacing sweep + a Session-Detail export fix**). Frontend + one
   tracking/storage fix; no schema/API/data change. **Session export
   (#209):** the export dropdown's `recent_sessions` id is the
