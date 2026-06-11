@@ -98,7 +98,7 @@ function ClozeExercise(
 ) {
     const {t} = useI18n();
     const sentence = exercise.sentence ?? "";
-    const blanks = exercise.blanks ?? [];
+    const blanks = useMemo(() => exercise.blanks ?? [], [exercise.blanks]);
     const mode: "type" | "select" = exercise.cloze_mode ?? "type";
     const reviewedCloze = reviewed?.kind === "cloze" ? reviewed : null;
 

@@ -86,7 +86,7 @@ export default function BadgeGallery({
     const [sort, setSort] = useState<SortMode>("recent");
     const [expanded, setExpanded] = useState<string | null>(null);
 
-    const all = badges ?? [];
+    const all = useMemo(() => badges ?? [], [badges]);
     const earnedCount = all.filter((b) => b.earned).length;
 
     const visible = useMemo(() => {

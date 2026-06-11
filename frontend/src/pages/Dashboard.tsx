@@ -181,7 +181,7 @@ export default function Dashboard() {
     return () => {
       cancelled = true;
     };
-  }, [lang, navigate, activeProjectVersion]);
+  }, [lang, navigate, activeProjectVersion, userId]);
 
   if (loading) {
     return (

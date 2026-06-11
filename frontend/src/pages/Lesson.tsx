@@ -1503,7 +1503,6 @@ function LessonSummary({
     };
   }, [
     t,
-    lang,
     lesson.title,
     correct,
     total,
