@@ -18,7 +18,7 @@
  * maintainer's E2E run; this spec + the dependency are the harness.
  */
 
-import {expect, test, type Page} from "@playwright/test";
+import {expect, test, type BrowserContext, type Page} from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 import {completeAssessment, completeOnboarding} from "../helpers";
@@ -46,10 +46,15 @@ const KNOWN_ISSUES: Partial<Record<(typeof ROUTES)[number], string[]>> = {};
 
 test.describe.configure({mode: "serial"});
 
+let context: BrowserContext;
 let page: Page;
 
 test.beforeAll(async ({browser}) => {
-    page = await browser.newPage();
+    // axe-core/playwright needs a page from an explicit context
+    // (``page.context().browser()`` must resolve); ``browser.newPage()``
+    // does not satisfy that. Issue #272.
+    context = await browser.newContext();
+    page = await context.newPage();
     await completeOnboarding(page);
     await completeAssessment(page);
     await page.waitForURL("**/dashboard", {timeout: 30_000});
@@ -57,6 +62,7 @@ test.beforeAll(async ({browser}) => {
 
 test.afterAll(async () => {
     await page.close();
+    await context.close();
 });
 
 for (const route of ROUTES) {
