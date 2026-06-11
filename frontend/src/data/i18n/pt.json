@@ -119,6 +119,7 @@
     "continue_session": "Continuar sessão",
     "session_start_error": "Não foi possível iniciar a sessão.",
     "transcript": "Transcrição",
+    "show_transcript": "Mostrar transcrição",
     "anki_extract": "Extrair cartões Anki",
     "anki_extracting": "Extraindo cartões…",
     "anki_extracted": "{n} cartão(ões) Anki extraído(s). Revise na página Anki.",

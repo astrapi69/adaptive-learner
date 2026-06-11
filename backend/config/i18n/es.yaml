@@ -112,6 +112,7 @@ import:
   continue_session: Continuar sesion
   session_start_error: No se pudo iniciar la sesión.
   transcript: Transcripcion
+  show_transcript: Mostrar transcripción
   anki_extract: Extraer tarjetas Anki
   anki_extracting: Extrayendo tarjetas…
   anki_extracted: Se extrajeron {n} tarjeta(s) Anki. Revísalas en la página Anki.

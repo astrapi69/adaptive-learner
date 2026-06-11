@@ -119,6 +119,7 @@
     "continue_session": "Continuer la session",
     "session_start_error": "Impossible de démarrer la session.",
     "transcript": "Transcription",
+    "show_transcript": "Afficher la transcription",
     "anki_extract": "Extraire les cartes Anki",
     "anki_extracting": "Extraction des cartes…",
     "anki_extracted": "{n} carte(s) Anki extraite(s). Examine-les sur la page Anki.",

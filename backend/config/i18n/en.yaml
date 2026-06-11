@@ -112,6 +112,7 @@ import:
   continue_session: Continue session
   session_start_error: Could not start the session.
   transcript: Transcript
+  show_transcript: Show raw transcript
   anki_extract: Extract Anki cards
   anki_extracting: Extracting cards…
   anki_extracted: Extracted {n} Anki card(s). Review them on the Anki page.

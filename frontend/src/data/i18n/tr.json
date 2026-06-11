@@ -119,6 +119,7 @@
     "continue_session": "Oturuma devam et",
     "session_start_error": "Oturum başlatılamadı.",
     "transcript": "Döküm",
+    "show_transcript": "Ham dökümü göster",
     "anki_extract": "Anki kartlarını çıkar",
     "anki_extracting": "Kartlar çıkarılıyor…",
     "anki_extracted": "{n} Anki kartı çıkarıldı. Anki sayfasında incele.",
