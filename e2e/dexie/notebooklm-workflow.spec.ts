@@ -11,10 +11,11 @@
  *    non-empty ``.zip``, even with minimal data.
  *
  * The two AI-backed actions (``notebooklm-generate-questions`` and
- * ``notebooklm-study-guide``) need a real key and are NOT key-gated today
- * (#281), so this spec deliberately does not click them — in Dexie mode they
- * would make a keyless provider call and surface an error toast. Their happy
- * paths are a manual / API-mode check.
+ * ``notebooklm-study-guide``) are key-gated (#281): without a configured
+ * provider key they are disabled and an ``api-key-required-notice`` explains
+ * why, so the spec asserts the disabled state rather than clicking them (a
+ * keyless click would surface an error toast). Their happy paths are a
+ * manual / API-mode check.
  */
 
 import { expect, test } from "@playwright/test";
@@ -37,6 +38,16 @@ test.describe("NotebookLM — study materials surface", () => {
     await expect(page.getByTestId("notebooklm-generate-questions")).toBeVisible();
     await expect(page.getByTestId("notebooklm-download-zip")).toBeVisible();
     await expect(page.getByTestId("notebooklm-study-guide")).toBeVisible();
+
+    // #281 — no key configured (Dexie default): the two AI-backed actions
+    // are disabled with an explanatory notice; the client-side ZIP stays
+    // enabled. The notice appearing proves the key status has resolved.
+    await expect(page.getByTestId("api-key-required-notice")).toBeVisible();
+    await expect(
+      page.getByTestId("notebooklm-generate-questions"),
+    ).toBeDisabled();
+    await expect(page.getByTestId("notebooklm-study-guide")).toBeDisabled();
+    await expect(page.getByTestId("notebooklm-download-zip")).toBeEnabled();
 
     // No questions generated yet (the AI path is a manual check).
     await expect(page.getByTestId("notebooklm-empty")).toBeVisible();

@@ -1271,6 +1271,7 @@
       "feature_session": "um eine Session zu starten",
       "feature_anki": "um Anki-Karten zu extrahieren",
       "feature_study_guide": "um einen Lernleitfaden zu generieren",
+      "feature_study_questions": "um Lernfragen zu generieren",
       "feature_pronunciation": "für die Aussprache-Übung"
     },
     "common": {
