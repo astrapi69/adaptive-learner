@@ -42,6 +42,7 @@ describe("shadcn semantic-token bridge", () => {
 
     for (const [token, themed] of Object.entries(MAP)) {
         it(`maps ${token} → var(${themed})`, () => {
+            // eslint-disable-next-line security/detect-non-literal-regexp -- token/themed are fixed map constants
             const re = new RegExp(
                 `${token}:\\s*var\\(${themed}\\)`.replace(
                     /[-]/g,

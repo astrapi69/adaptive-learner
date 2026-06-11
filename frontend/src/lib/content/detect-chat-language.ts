@@ -76,6 +76,7 @@ function countHits(haystack: string, entry: (typeof KEYWORDS)[number]): number {
     if (/[^a-zà-ÿ]/.test(word)) {
       if (haystack.includes(word)) hits += 1;
     } else {
+      // eslint-disable-next-line security/detect-non-literal-regexp -- word is alphabetic-only here (guarded above), no regex metacharacters
       const re = new RegExp(`\\b${word}\\b`, "u");
       if (re.test(haystack)) hits += 1;
     }

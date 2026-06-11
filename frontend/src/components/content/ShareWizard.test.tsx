@@ -417,6 +417,7 @@ describe("ShareWizard: editable metadata + gating (step 1)", () => {
     const level = screen.getByTestId("share-wizard-edit-level");
     expect(level).not.toHaveTextContent("imported");
     expect(level.textContent ?? "").toMatch(
+      // eslint-disable-next-line security/detect-non-literal-regexp -- CEFR_LEVELS is a fixed internal constant
       new RegExp(`\\b(${(CEFR_LEVELS as readonly string[]).join("|")})\\b`),
     );
   });

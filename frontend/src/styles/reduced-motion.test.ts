@@ -24,7 +24,7 @@ describe("Phase 39 C7 — prefers-reduced-motion catch-all", () => {
         // tolerant regex matches whitespace variations + the
         // ``*::before`` / ``*::after`` siblings we ship.
         const re =
-            /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{\s*\*\s*(?:,[^\{]*?)?\{[^}]*animation-duration[^}]*\}/s;
+            /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{\s*\*\s*(?:,[^{]*?)?\{[^}]*animation-duration[^}]*\}/s;
         expect(CSS).toMatch(re);
     });
 

@@ -126,7 +126,7 @@ export function assignDailyMissions(
         // Prefer the requested difficulty; fall back to any
         // eligible template when that bucket is exhausted (small
         // catalogs / restricted new-user eligibility).
-        let chosen =
+        const chosen =
             pickFrom(order.filter((t) => t.difficulty === difficulty)) ??
             pickFrom(order);
         if (chosen) {
