@@ -364,6 +364,20 @@ test-dexie-smoke: ## Dexie-mode release gate (build + Playwright preview-mode sm
 	@echo "=== Running Dexie-mode Playwright smoke ==="
 	cd e2e && npx playwright test --config=playwright.dexie.config.ts
 
+test-visual: ## Visual regression (build dexie + Playwright screenshot matrix)
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	@echo ""
+	@echo "=== Running visual-regression screenshots ==="
+	cd e2e && npx playwright test --config=playwright.visual.config.ts
+
+test-visual-update: ## Regenerate the visual baseline (REVIEW the diff before committing)
+	@echo "=== Building frontend with VITE_STORAGE_MODE=dexie ==="
+	cd frontend && VITE_STORAGE_MODE=dexie npm run build
+	@echo ""
+	@echo "=== Updating visual-regression baseline (review before committing!) ==="
+	cd e2e && npx playwright test --config=playwright.visual.config.ts --update-snapshots
+
 # --- Version sync ---
 
 sync-versions: ## Propagate backend/pyproject.toml version to all subsystems

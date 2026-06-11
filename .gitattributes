@@ -16,3 +16,7 @@
 *.sh         text eol=lf
 *.template   text eol=lf
 install.sh   text eol=lf
+
+# Visual-regression baseline screenshots (#244): treat as binary so git
+# never CRLF-mangles them and diffs stay clean.
+*.png        binary
