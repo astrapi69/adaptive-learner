@@ -1,22 +1,26 @@
-import {Suspense, useCallback, useEffect, useState} from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { FeatureProvider } from "@astrapi69/feature-strategy-react";
 
-import {lazyWithReload} from "./lib/lazyWithReload";
-import {Routes, Route} from "react-router-dom";
-import {ToastContainer} from "react-toastify";
+import { featureRegistry, type FeatureContext } from "./features/featureConfig";
+import { useApiKeyStatus } from "./hooks/useApiKeyStatus";
+import { resolveStorageMode } from "./storage";
+import { lazyWithReload } from "./lib/lazyWithReload";
+import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./styles/toast-theme.css";
 
-import type {ApiError} from "./api/client";
+import type { ApiError } from "./api/client";
 import ErrorBoundary from "./components/ErrorBoundary";
 import MilestoneHost from "./components/feedback/MilestoneHost";
 import HelpDrawer from "./components/help/HelpDrawer";
 import InstallPrompt from "./components/InstallPrompt";
 import Navigation from "./components/Navigation";
 import OfflineIndicator from "./components/OfflineIndicator";
-import {HelpProvider} from "./contexts/HelpContext";
-import {I18nProvider} from "./hooks/useI18n";
-import {useTheme} from "./hooks/useTheme";
-import {useContentRepoAutoSync} from "./hooks/useContentRepoAutoSync";
+import { HelpProvider } from "./contexts/HelpContext";
+import { I18nProvider } from "./hooks/useI18n";
+import { useTheme } from "./hooks/useTheme";
+import { useContentRepoAutoSync } from "./hooks/useContentRepoAutoSync";
 import Landing from "./pages/Landing";
 import SkipToContent from "./components/SkipToContent";
 
@@ -48,12 +52,8 @@ const Settings = lazyWithReload(() => import("./pages/Settings"));
 // Lazy-loaded so ``eventRecorder`` (statically imported inside both
 // components) lands in its own chunk instead of the main bundle.
 // See BUNDLE-SIZE-DYNAMIC-IMPORT-01.
-const EventRecorderSetup = lazyWithReload(
-    () => import("./components/EventRecorderSetup"),
-);
-const ErrorReportDialog = lazyWithReload(
-    () => import("./components/ErrorReportDialog"),
-);
+const EventRecorderSetup = lazyWithReload(() => import("./components/EventRecorderSetup"));
+const ErrorReportDialog = lazyWithReload(() => import("./components/ErrorReportDialog"));
 
 /**
  * Application root. Three concentric layers:
@@ -81,134 +81,116 @@ const ErrorReportDialog = lazyWithReload(
  * stays focused.
  */
 export default function App() {
-    useTheme();
-    // EXP-023 Phase A — background-sync a connected user content repo on
-    // app start when its cache is older than 24h.
-    useContentRepoAutoSync();
+  useTheme();
+  // EXP-023 Phase A — background-sync a connected user content repo on
+  // app start when its cache is older than 24h.
+  useContentRepoAutoSync();
 
-    // Phase 37 — error-report dialog state, opened via custom
-    // event dispatched from the "Report Issue" button inside the
-    // error toast (``utils/notify.ts``).
-    const [errorReport, setErrorReport] = useState<{
-        open: boolean;
-        message: string;
-        apiError?: ApiError;
-    }>({open: false, message: ""});
+  // Feature-strategy context: the storage mode is fixed for the session,
+  // the AI-key status resolves asynchronously. Memoised so consuming
+  // components re-evaluate only when one of the two actually changes.
+  const [storageMode] = useState(() => resolveStorageMode());
+  const apiKeyStatus = useApiKeyStatus();
+  const featureContext = useMemo<FeatureContext>(
+    () => ({
+      mode: storageMode,
+      hasAiKey: apiKeyStatus.ready && apiKeyStatus.hasKey,
+    }),
+    [storageMode, apiKeyStatus.ready, apiKeyStatus.hasKey],
+  );
 
-    const handleOpenReport = useCallback((e: Event) => {
-        const detail = (e as CustomEvent).detail as {
-            message: string;
-            apiError?: ApiError;
-        };
-        setErrorReport({
-            open: true,
-            message: detail.message,
-            apiError: detail.apiError,
-        });
-    }, []);
+  // Phase 37 — error-report dialog state, opened via custom
+  // event dispatched from the "Report Issue" button inside the
+  // error toast (``utils/notify.ts``).
+  const [errorReport, setErrorReport] = useState<{
+    open: boolean;
+    message: string;
+    apiError?: ApiError;
+  }>({ open: false, message: "" });
 
-    useEffect(() => {
-        window.addEventListener(
-            "adaptive-learner:open-error-report",
-            handleOpenReport,
-        );
-        return () =>
-            window.removeEventListener(
-                "adaptive-learner:open-error-report",
-                handleOpenReport,
-            );
-    }, [handleOpenReport]);
+  const handleOpenReport = useCallback((e: Event) => {
+    const detail = (e as CustomEvent).detail as {
+      message: string;
+      apiError?: ApiError;
+    };
+    setErrorReport({
+      open: true,
+      message: detail.message,
+      apiError: detail.apiError,
+    });
+  }, []);
 
-    return (
-        <ErrorBoundary>
-            <I18nProvider>
-                <HelpProvider>
-                <SkipToContent />
-                <Navigation />
-                <OfflineIndicator />
-                <Suspense fallback={null}>
-                    <Routes>
-                        <Route path="/" element={<Landing />} />
-                        <Route path="/onboarding" element={<Onboarding />} />
-                        <Route path="/assessment" element={<Assessment />} />
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/session" element={<Session />} />
-                        <Route path="/curriculum" element={<Curriculum />} />
-                        <Route path="/progress" element={<Progress />} />
-                        <Route path="/import" element={<Import />} />
-                        <Route
-                            path="/import/:conversationId"
-                            element={<ImportDetail />}
-                        />
-                        <Route path="/anki" element={<AnkiPage />} />
-                        <Route path="/content" element={<ContentPage />} />
-                        <Route path="/add-repo" element={<AddRepo />} />
-                        <Route
-                            path="/learning-path"
-                            element={<LearningPath />}
-                        />
-                        <Route
-                            path="/create-lesson"
-                            element={<CreateLesson />}
-                        />
-                        <Route
-                            path="/lesson/:setSlug/:setId/:filename"
-                            element={<LessonPage />}
-                        />
-                        <Route
-                            path="/review/:setId"
-                            element={<ReviewPage />}
-                        />
-                        <Route
-                            path="/adaptive-lesson/:setId"
-                            element={<AdaptiveLessonPage />}
-                        />
-                        <Route
-                            path="/error-replay/:setSlug/:setId/:filename"
-                            element={<ErrorReplayLessonPage />}
-                        />
-                        <Route
-                            path="/projects/:projectId/learning-repo"
-                            element={<LearningRepoPage />}
-                        />
-                        <Route
-                            path="/pronunciation"
-                            element={<Pronunciation />}
-                        />
-                        <Route path="/settings" element={<Settings />} />
-                        <Route path="*" element={<NotFound />} />
-                    </Routes>
-                </Suspense>
-                <InstallPrompt />
-                <MilestoneHost />
-                <Suspense fallback={null}>
-                    <EventRecorderSetup />
-                </Suspense>
-                <HelpDrawer />
-                {errorReport.open && (
-                    <Suspense fallback={null}>
-                        <ErrorReportDialog
-                            open={errorReport.open}
-                            onClose={() =>
-                                setErrorReport({open: false, message: ""})
-                            }
-                            errorMessage={errorReport.message}
-                            apiError={errorReport.apiError}
-                        />
-                    </Suspense>
-                )}
-                <ToastContainer
-                    position="bottom-right"
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop
-                    closeOnClick={false}
-                    draggable={false}
-                    pauseOnHover
-                    theme="colored"
+  useEffect(() => {
+    window.addEventListener("adaptive-learner:open-error-report", handleOpenReport);
+    return () => window.removeEventListener("adaptive-learner:open-error-report", handleOpenReport);
+  }, [handleOpenReport]);
+
+  return (
+    <ErrorBoundary>
+      <I18nProvider>
+        <FeatureProvider registry={featureRegistry} context={featureContext}>
+          <HelpProvider>
+            <SkipToContent />
+            <Navigation />
+            <OfflineIndicator />
+            <Suspense fallback={null}>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/assessment" element={<Assessment />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/session" element={<Session />} />
+                <Route path="/curriculum" element={<Curriculum />} />
+                <Route path="/progress" element={<Progress />} />
+                <Route path="/import" element={<Import />} />
+                <Route path="/import/:conversationId" element={<ImportDetail />} />
+                <Route path="/anki" element={<AnkiPage />} />
+                <Route path="/content" element={<ContentPage />} />
+                <Route path="/add-repo" element={<AddRepo />} />
+                <Route path="/learning-path" element={<LearningPath />} />
+                <Route path="/create-lesson" element={<CreateLesson />} />
+                <Route path="/lesson/:setSlug/:setId/:filename" element={<LessonPage />} />
+                <Route path="/review/:setId" element={<ReviewPage />} />
+                <Route path="/adaptive-lesson/:setId" element={<AdaptiveLessonPage />} />
+                <Route
+                  path="/error-replay/:setSlug/:setId/:filename"
+                  element={<ErrorReplayLessonPage />}
                 />
-                </HelpProvider>
-            </I18nProvider>
-        </ErrorBoundary>
-    );
+                <Route path="/projects/:projectId/learning-repo" element={<LearningRepoPage />} />
+                <Route path="/pronunciation" element={<Pronunciation />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+            <InstallPrompt />
+            <MilestoneHost />
+            <Suspense fallback={null}>
+              <EventRecorderSetup />
+            </Suspense>
+            <HelpDrawer />
+            {errorReport.open && (
+              <Suspense fallback={null}>
+                <ErrorReportDialog
+                  open={errorReport.open}
+                  onClose={() => setErrorReport({ open: false, message: "" })}
+                  errorMessage={errorReport.message}
+                  apiError={errorReport.apiError}
+                />
+              </Suspense>
+            )}
+            <ToastContainer
+              position="bottom-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick={false}
+              draggable={false}
+              pauseOnHover
+              theme="colored"
+            />
+          </HelpProvider>
+        </FeatureProvider>
+      </I18nProvider>
+    </ErrorBoundary>
+  );
 }

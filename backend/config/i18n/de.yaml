@@ -1105,6 +1105,8 @@ notebooklm:
   guide_ready: Lernleitfaden heruntergeladen.
   guide_failed: Lernleitfaden konnte nicht erstellt werden.
 
+feature:
+  api_key_required: "API-Schlüssel erforderlich. Konfiguriere einen Provider in den Einstellungen."
 ui:
   themes:
     "catppuccin-latte": "Catppuccin Latte"

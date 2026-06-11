@@ -1105,6 +1105,8 @@ notebooklm:
   guide_ready: Guide d'étude téléchargé.
   guide_failed: Impossible de générer le guide d'étude.
 
+feature:
+  api_key_required: "API key required. Configure a provider in Settings."
 ui:
   themes:
     "catppuccin-latte": "Catppuccin Latte"
