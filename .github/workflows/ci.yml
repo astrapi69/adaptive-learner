@@ -179,8 +179,12 @@ jobs:
         # (step 1, ~90% unformatted) would reformat everything and fail. It's
         # a per-commit incremental hook, not an all-files gate; the
         # non-blocking `format:check` step in frontend-tests reports drift.
+        # `eslint` is skipped too (#268): the hook runs `npx eslint src/`,
+        # which needs frontend/node_modules — this job never runs `npm ci`,
+        # so it would fail with `Cannot find package '@eslint/js'`. The
+        # Frontend Tests job already runs ESLint with deps installed.
         env:
-          SKIP: prettier-frontend
+          SKIP: prettier-frontend,eslint
         run: pre-commit run --all-files --show-diff-on-failure
 
   lint-and-type-check:
@@ -217,9 +221,18 @@ jobs:
       # dep; --skip-editable skips the local path-dep plugins (no PyPI
       # advisories). Audits the third-party dependency tree; a known
       # advisory fails CI for triage.
+      #
+      # #268 — pip-audit audits the whole venv, including the build
+      # toolchain (pip/setuptools/wheel). Those get advisories on their own
+      # cadence (e.g. pip 26.1.1 PYSEC-2026-196), which are not OUR deps and
+      # are fixable by keeping the toolchain current — so upgrade it first.
+      # A toolchain advisory with no fix yet can be parked with
+      # `--ignore-vuln <ID>` (document the ID), never by dropping the gate.
       - name: pip-audit (backend deps)
         working-directory: backend
-        run: poetry run pip-audit --skip-editable
+        run: |
+          poetry run pip install --quiet --upgrade pip setuptools wheel
+          poetry run pip-audit --skip-editable
 
   docs-verification:
     name: Docs drift verifier
